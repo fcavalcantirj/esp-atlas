@@ -1,0 +1,18 @@
+# build artifacts — index.json is generated from data/ by CI, never hand-edited
+index.json
+
+# python
+__pycache__/
+*.pyc
+
+# node / site (added in v1)
+node_modules/
+.next/
+out/
+dist/
+
+# secrets — GROQ_API_KEY etc. live in the environment, never in the repo
+.env
+.env.*
+
+.DS_Store

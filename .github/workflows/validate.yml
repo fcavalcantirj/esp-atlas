@@ -1,0 +1,21 @@
+name: validate
+
+on:
+  pull_request:
+    paths: ["data/**", "schema/**", "scripts/**"]
+  push:
+    branches: [main]
+
+jobs:
+  schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install jsonschema pyyaml
+      - name: Validate frontmatter against schema
+        run: python3 scripts/validate.py
+      - name: Build index (proves it compiles)
+        run: python3 scripts/build_index.py
