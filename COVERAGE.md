@@ -16,7 +16,7 @@ below is a board the author is genuinely confident exists. Where the exact
 product-page URL wasn't known at write time, it's marked
 `(url: to-verify)` rather than fabricated. No model numbers are invented.
 
-**Progress: 53 boards done (out of an estimated 90+ known ESP32-family
+**Progress: 61 boards done (out of an estimated 90+ known ESP32-family
 boards across these vendors — the total will firm up as each vendor
 section gets a real audit).**
 
@@ -152,15 +152,18 @@ Official site: https://www.m5stack.com/
 Official site: https://www.lilygo.cc/
 
 - [x] LilyGO T-Display-S3 — https://www.lilygo.cc/products/t-display-s3
-- [ ] LilyGO T-Display (ESP32) — https://www.lilygo.cc/products/lilygo%C2%AE-ttgo-t-display-1-14-inch-lcd-esp32-control-board
-- [ ] LilyGO T-Display-S3 AMOLED — (url: to-verify)
-- [ ] LilyGO T-Watch (ESP32) — (url: to-verify)
+- [x] LilyGO T-Display (ESP32) — https://www.lilygo.cc/products/t-display
+- [x] LilyGO T-Display-S3 AMOLED — https://www.lilygo.cc/products/t-display-s3-amoled
+- [ ] LilyGO T-Watch (ESP32, original/classic) — (url: to-verify; distinct from T-Watch S3 below)
+- [x] LilyGO T-Watch S3 (ESP32-S3) — https://www.lilygo.cc/products/t-watch-s3
 - [ ] LilyGO T-Camera (ESP32) — (url: to-verify)
 - [ ] LilyGO T7 (ESP32) — (url: to-verify)
-- [ ] LilyGO T-QT (ESP32-S3) — (url: to-verify)
-- [ ] LilyGO T-Dongle-S3 (ESP32-S3) — (url: to-verify)
-- [ ] LilyGO TTGO T-Beam (ESP32 + LoRa) — (url: to-verify)
-- [ ] LilyGO T-Deck (ESP32-S3) — (url: to-verify)
+- [ ] LilyGO T-QT (ESP32-S3, base) — (url: to-verify; distinct from T-QT Pro below)
+- [x] LilyGO T-QT Pro (ESP32-S3) — https://www.lilygo.cc/products/t-qt-pro
+- [x] LilyGO T-Dongle-S3 (ESP32-S3) — https://www.lilygo.cc/products/t-dongle-s3
+- [x] LilyGO T-Beam (ESP32 + LoRa) — https://www.lilygo.cc/products/t-beam
+- [x] LilyGO T-Deck (ESP32-S3) — https://www.lilygo.cc/products/t-deck
+- [x] LilyGO T-Embed (ESP32-S3) — https://www.lilygo.cc/products/t-embed
 
 ## Soldered (Dasduino / Inkplate)
 
