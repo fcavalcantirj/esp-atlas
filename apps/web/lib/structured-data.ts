@@ -1,0 +1,109 @@
+// schema.org graphs for the pages that are server-rendered from data the API
+// already returns. No offers, prices, ratings or reviews anywhere: the site is
+// not a shop and `price_tier` is editorial (see SPEC.md anti-goals).
+import type { PartDetail } from "@/lib/api";
+import { firstSentence, typeLabel } from "@/lib/format";
+import { dataFolderUrl, repoUrl } from "@/lib/github";
+import { OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+
+const CONTEXT = "https://schema.org";
+const ORG_ID = `${SITE_URL}/#organization`;
+const SITE_ID = `${SITE_URL}/#website`;
+const DATASET_ID = `${SITE_URL}/#dataset`;
+const CC_BY_SA = "https://creativecommons.org/licenses/by-sa/4.0/";
+
+function organization() {
+  return {
+    "@type": "Organization",
+    "@id": ORG_ID,
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/icon.svg`,
+    sameAs: [repoUrl()],
+  };
+}
+
+function website() {
+  return {
+    "@type": "WebSite",
+    "@id": SITE_ID,
+    name: SITE_NAME,
+    url: SITE_URL,
+    description: SITE_DESCRIPTION,
+    inLanguage: "en",
+    publisher: { "@id": ORG_ID },
+  };
+}
+
+function dataset() {
+  return {
+    "@type": "Dataset",
+    "@id": DATASET_ID,
+    name: "esp-atlas — ESP32 SoCs, modules and dev boards",
+    description:
+      "Datasheet-cited records for the Espressif ESP32 family: SoCs, modules and development boards, " +
+      "each with radios, USB, form factor, dimensions, power and per-field source citations. " +
+      "Stored as markdown with YAML frontmatter, validated against JSON Schema, queryable through a public API.",
+    url: SITE_URL,
+    license: CC_BY_SA,
+    isAccessibleForFree: true,
+    inLanguage: "en",
+    keywords: ["ESP32", "ESP32-S3", "ESP32-C3", "ESP32-C6", "Espressif", "development boards", "modules", "SoC", "datasheet", "Wi-Fi", "Bluetooth LE", "Zigbee", "Thread", "Matter"],
+    creator: { "@id": ORG_ID },
+    distribution: [
+      { "@type": "DataDownload", encodingFormat: "text/markdown", contentUrl: dataFolderUrl() },
+      { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: `${SITE_URL}/api/parts` },
+    ],
+  };
+}
+
+/** Home page: the site, its publisher and the open dataset behind it. */
+export function homeGraph() {
+  return { "@context": CONTEXT, "@graph": [organization(), website(), dataset()] };
+}
+
+/**
+ * Part page: a cited technical reference article about one part, plus the
+ * breadcrumb trail that is visible on the page (Home › part — the middle crumb
+ * is unlinked text, and BreadcrumbList must mirror what users see).
+ */
+export function partGraph(part: PartDetail) {
+  const url = `${SITE_URL}/parts/${encodeURIComponent(part.id)}`;
+  const verified = part.sources.map((s) => s.verified).filter(Boolean).sort();
+  const citation = Array.from(new Set(part.sources.map((s) => s.url).filter(Boolean)));
+  const description = firstSentence(part.body) || `${part.name}: datasheet-verified ESP32 ${part.type} specs on ${SITE_NAME}.`;
+
+  const article = {
+    "@type": "TechArticle",
+    "@id": `${url}#article`,
+    headline: part.name,
+    description,
+    url,
+    mainEntityOfPage: url,
+    inLanguage: "en",
+    image: `${SITE_URL}${OG_IMAGE.url}`,
+    license: CC_BY_SA,
+    isPartOf: { "@id": SITE_ID },
+    author: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
+    ...(verified.length ? { dateModified: verified[verified.length - 1] } : {}),
+    ...(citation.length ? { citation } : {}),
+    about: {
+      "@type": "Product",
+      name: part.name,
+      brand: { "@type": "Brand", name: part.vendor_or_brand },
+      manufacturer: { "@type": "Organization", name: part.vendor_or_brand },
+      category: `ESP32 ${typeLabel(part.type)}`,
+    },
+  };
+
+  const breadcrumb = {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+      { "@type": "ListItem", position: 2, name: part.name },
+    ],
+  };
+
+  return { "@context": CONTEXT, "@graph": [organization(), website(), article, breadcrumb] };
+}
