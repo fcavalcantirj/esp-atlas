@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import JsonLd from "@/components/JsonLd";
 import PartDetailClient from "@/components/part/PartDetailClient";
 import PartDetailView from "@/components/part/PartDetailView";
 import PartViewTracker from "@/components/part/PartViewTracker";
 import { fetchPartDetail } from "@/lib/api-server";
 import { firstSentence, typeLabel } from "@/lib/format";
 import { OG_IMAGE, SITE_NAME } from "@/lib/site";
+import { partGraph } from "@/lib/structured-data";
 
 // Server-rendered so every part page ships with its own title/description for
 // search engines and link previews. The API fetch is cached for an hour; if the
@@ -43,6 +45,7 @@ export default async function PartPage({ params }: PageProps<"/parts/[id]">) {
     <main id="main" className="container" tabIndex={-1}>
       {result.status === "ok" ? (
         <>
+          <JsonLd data={partGraph(result.data)} />
           <PartViewTracker part={result.data} />
           <PartDetailView part={result.data} />
         </>

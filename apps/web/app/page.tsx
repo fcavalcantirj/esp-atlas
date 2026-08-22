@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import HomeView from "@/components/HomeView";
+import JsonLd from "@/components/JsonLd";
 import { SITE_TAGLINE } from "@/lib/site";
+import { homeGraph } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -9,6 +11,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main id="main" className="container container--wide" tabIndex={-1}>
+      <JsonLd data={homeGraph()} />
       <div className="home-intro">
         <h1>{SITE_TAGLINE}</h1>
         <p>
