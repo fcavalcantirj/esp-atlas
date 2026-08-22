@@ -18,7 +18,6 @@ notes:
 - 4 MB flash
 - TP4057 Li-ion charge management chip, max 0.5 A
 - 13 digital I/O ports in a coin-sized form factor
-- Wi-Fi 6, Bluetooth 5, Zigbee 3.0, and Thread 1.3 radio support
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr1117/
@@ -27,4 +26,4 @@ sources:
 
 # DFRobot Beetle ESP32-C6
 
-Coin-sized ESP32-C6 board (25 x 20.5 mm) for wearable and smart-home IoT: USB-C, 4 MB flash, onboard Li-ion charging, and Wi-Fi 6/BLE 5/Zigbee/Thread radios.
+Coin-sized ESP32-C6 board (25 x 20.5 mm) for wearable and smart-home IoT: USB-C, 4 MB flash, onboard Li-ion charging, and 13 digital I/O ports.

@@ -18,7 +18,6 @@ notes:
 - 4 MB flash
 - Supports 5 V solar panel charging via CN3165 MPPT chip, max 0.5 A
 - GDI display connector onboard
-- Wi-Fi 6, Bluetooth 5, Zigbee 3.0, and Thread 1.3 radio support
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr1075/
@@ -27,4 +26,4 @@ sources:
 
 # DFRobot FireBeetle 2 ESP32-C6
 
-Low-power ESP32-C6 IoT board for smart-home control: 4 MB flash, USB-C, Li-ion charging plus 5 V solar/MPPT input, and Wi-Fi 6/BLE 5/Zigbee/Thread radios.
+Low-power ESP32-C6 IoT board for smart-home control: 4 MB flash, USB-C, Li-ion charging plus 5 V solar/MPPT input, and a GDI display connector.
