@@ -1,8 +1,8 @@
 ---
 slug: seo-audit-and-restyle
 date: 2026-08-22
-status: open            # open → in_review → approved | escalated
-round: 0
+status: approved        # open → in_review → approved | escalated
+round: 1
 author_session: prod-polish session that shipped PR #2 (589ef35) to esp-atlas.com and registered the GA4 custom definitions; context at 60%
 ---
 
