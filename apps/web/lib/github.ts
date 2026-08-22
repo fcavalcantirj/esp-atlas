@@ -12,8 +12,34 @@ export function contributingUrl(): string {
   return `${REPO_URL}/blob/main/CONTRIBUTING.md`;
 }
 
+export function agentsUrl(): string {
+  return `${REPO_URL}/blob/main/AGENTS.md`;
+}
+
+export function licenseUrl(): string {
+  return `${REPO_URL}/blob/main/LICENSE`;
+}
+
+export function llmsTxtUrl(): string {
+  return `${REPO_URL}/blob/main/llms.txt`;
+}
+
 export function dataFolderUrl(): string {
   return `${REPO_URL}/tree/main/data`;
+}
+
+export function discussionsUrl(): string {
+  return `${REPO_URL}/discussions`;
+}
+
+export function issuesUrl(): string {
+  return `${REPO_URL}/issues`;
+}
+
+export function newIssueUrl(opts: { title: string; body?: string }): string {
+  const params = new URLSearchParams({ title: opts.title });
+  if (opts.body) params.set("body", opts.body);
+  return `${REPO_URL}/issues/new?${params.toString()}`;
 }
 
 export function editSourceUrl(path: string): string {

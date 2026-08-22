@@ -24,8 +24,9 @@ missing, it's built automatically from `data/**/*.md` via
 ## Endpoints
 
 - `GET /health` -> `{status, count}`
-- `GET /search?q=&type=&radio=&band=&form=&protocol=&ieee802154=&ble=&bt_classic=&usb_native=`
-  -> `{results: [record...]}` — structured filters + free-text, no LLM.
+- `GET /search?q=&type=&radio=&band=&form=&protocol=&soc=&module=&ieee802154=&ble=&bt_classic=&usb_native=`
+  -> `{results: [record...]}` — structured filters + free-text, no LLM. `soc=<id>` /
+  `module=<id>` return only parts built on that SoC / module (exact id match).
 - `POST /wizard` body `{needs: {protocol?, radio?, band?, ble?, bt_classic?,
   usb_native?, ieee802154?, form?, type?, budget?}}` -> `{results: [record + score + reasons...]}`.
   `budget` is one of `cheap` / `medium` / `expensive` (or omitted). It's a
@@ -37,7 +38,17 @@ missing, it's built automatically from `data/**/*.md` via
   never scores (see `price_tier` note below). Omitting `budget` applies no
   price filtering at all.
 - `GET /parts` -> `{results: [record...]}` (every soc/module/board)
-- `GET /parts/{id}` -> a single record, or 404
+- `GET /parts/{id}` -> the record plus everything a detail page needs, or 404:
+  `frontmatter` (the record's full YAML frontmatter — board usb/power/display/extras,
+  module flash/psram, soc cpu/memory/security...), `body` (the markdown prose),
+  `chain: {soc, module}` (the parent records it inherits radios from; a soc has
+  neither, a bare-chip board has no module), `related: [record...]` (other parts on
+  the same soc — and, for a module, boards using it — excluding itself and its chain).
+- `GET /facets` -> distinct values with counts for every filterable column:
+  `type, vendor_or_brand, form_factor, wifi_standard, price_tier, soc_ref` plus the
+  comma-joined columns split into tokens (`wifi_bands`, `ieee802154_protocols`), each a
+  `[{value, count}...]` list sorted by count desc then value. Lets a UI build its
+  dropdowns from the data instead of hardcoding them.
 - `POST /validate` body `{markdown: "<full md w/ frontmatter>"}` or
   `{kind: "soc"|"module"|"board", frontmatter: {...}}` -> `{ok, errors: [string...], kind}` —
   self-check a proposed record (schema, source-or-omit, inheritance refs) before opening a PR.
@@ -64,8 +75,9 @@ python3 -m pytest --cov=esp_atlas_api --cov-report=term-missing
 
 Every endpoint is covered against a real `esp-atlas.db` built once per test
 session from the actual seeded `data/` directory (see `tests/conftest.py`),
-including `band=5` (returns `esp32-c5`) and a `protocol=zigbee` +
-`usb_native=true` wizard case. Core-layer `ValueError`s (unknown filter/need)
+including `band=5` (returns `esp32-c5`), a `protocol=zigbee` + `usb_native=true`
+wizard case, the `/parts/{id}` detail shape (frontmatter, body, chain, related),
+`/facets`, and the `soc=` / `module=` filters. Core-layer `ValueError`s (unknown filter/need)
 are exercised via monkeypatch and surface as HTTP 400; malformed request
 shapes (bad `type`, unknown wizard need) are rejected by Pydantic as 422.
 

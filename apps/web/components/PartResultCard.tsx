@@ -1,34 +1,48 @@
+"use client";
+
 import Link from "next/link";
 import type { PartRecord, WizardRecord } from "@/lib/api";
+import { track, type ResultOrigin } from "@/lib/analytics";
+import { PRICE_TIER_NOTE, priceTierShort, specChips, typeLabel } from "@/lib/format";
 
-function specLine(part: PartRecord): string {
-  const specs: string[] = [];
-  if (part.wifi_standard) {
-    specs.push(`wifi=${part.wifi_standard}${part.wifi_bands ? ` (${part.wifi_bands} GHz)` : ""}`);
-  }
-  if (part.ble_version) specs.push(`ble=${part.ble_version}`);
-  if (part.ieee802154) specs.push(`802.15.4=${part.ieee802154_protocols || "yes"}`);
-  if (part.form_factor) specs.push(`form=${part.form_factor}`);
-  if (part.usb_native) specs.push("usb=native");
-  return specs.join(" · ");
+interface PartResultCardProps {
+  part: PartRecord | WizardRecord;
+  origin: ResultOrigin;
+  position?: number;
 }
 
-export default function PartResultCard({ part }: { part: PartRecord | WizardRecord }) {
-  const wizardPart = "score" in part ? (part as WizardRecord) : null;
+export default function PartResultCard({ part, origin, position }: PartResultCardProps) {
+  const wizardPart = "reasons" in part ? (part as WizardRecord) : null;
+  const chips = specChips(part);
+
   return (
     <li className="part-card">
-      <Link href={`/parts/${encodeURIComponent(part.id)}`}>
-        <strong>{part.name}</strong> <span className="part-type">[{part.type}]</span>
-      </Link>
-      {wizardPart && <span className="part-score"> score {wizardPart.score}</span>}
-      <div className="part-specs">{specLine(part)}</div>
-      {part.price_tier && (
-        <div className="part-price-tier" title="Approximate, editorial street price — not a datasheet-verified spec">
-          ~{part.price_tier}
+      <div className="part-card-title">
+        <Link
+          href={`/parts/${encodeURIComponent(part.id)}`}
+          onClick={() => track("result_click", { part_id: part.id, part_type: part.type, origin, position })}
+        >
+          {part.name}
+        </Link>
+        <span className={`badge badge--${part.type}`}>{typeLabel(part.type)}</span>
+        <span className="part-card-brand">{part.vendor_or_brand}</span>
+        {part.price_tier && (
+          <span className="price-pill part-card-pill" title={PRICE_TIER_NOTE}>
+            {priceTierShort(part.price_tier)}
+          </span>
+        )}
+      </div>
+      {chips.length > 0 && (
+        <div className="spec-chips">
+          {chips.map((chip) => (
+            <span key={chip.label} className={`spec-chip${chip.on ? " spec-chip--on" : ""}`}>
+              {chip.label}
+            </span>
+          ))}
         </div>
       )}
       {wizardPart && wizardPart.reasons.length > 0 && (
-        <ul className="part-reasons">
+        <ul className="part-reasons" aria-label="Why it matches">
           {wizardPart.reasons.map((reason) => (
             <li key={reason}>{reason}</li>
           ))}

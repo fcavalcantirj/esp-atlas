@@ -1,77 +1,133 @@
 "use client";
 
-import { useState } from "react";
-import { searchParts, type SearchFilters, type PartRecord } from "@/lib/api";
-import PartResultCard from "@/components/PartResultCard";
+import type { Facets, PartType, SearchFilters } from "@/lib/api";
 
-export default function SearchBox() {
-  const [q, setQ] = useState("");
-  const [type, setType] = useState("");
-  const [radio, setRadio] = useState("");
-  const [band, setBand] = useState("");
-  const [form, setForm] = useState("");
-  const [protocol, setProtocol] = useState("");
+const TYPE_ORDER: PartType[] = ["board", "module", "soc"];
 
-  const [results, setResults] = useState<PartRecord[] | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+interface SearchBoxProps {
+  facets: Facets | null;
+  value: SearchFilters;
+  onChange: (filters: SearchFilters) => void;
+  onSubmit: () => void;
+  loading: boolean;
+}
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    const filters: SearchFilters = { q };
-    if (type) filters.type = type as SearchFilters["type"];
-    if (radio) filters.radio = radio;
-    if (band) filters.band = Number(band);
-    if (form) filters.form = form;
-    if (protocol) filters.protocol = protocol;
-
-    try {
-      const { results } = await searchParts(filters);
-      setResults(results);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-      setResults(null);
-    } finally {
-      setLoading(false);
-    }
+function withField<K extends keyof SearchFilters>(filters: SearchFilters, key: K, value: SearchFilters[K] | "") {
+  const next = { ...filters };
+  if (value === "" || value === undefined) {
+    if (key === "q") next.q = "";
+    else delete next[key];
+  } else {
+    next[key] = value;
   }
+  return next;
+}
+
+/** "zigbee-3.0" / "thread-1.3" / "matter" -> "zigbee" / "thread" / "matter" (the API matches by substring). */
+function protocolFamilies(facets: Facets | null): string[] {
+  if (!facets) return ["zigbee", "thread", "matter"];
+  const families = new Set<string>();
+  for (const facet of facets.ieee802154_protocols) families.add(facet.value.split("-")[0]);
+  return [...families].sort();
+}
+
+export default function SearchBox({ facets, value, onChange, onSubmit, loading }: SearchBoxProps) {
+  const forms = facets ? facets.form_factor : [];
+  const radios = facets ? facets.wifi_standard.map((f) => f.value).sort() : ["wifi-4", "wifi-6"];
+  const bands = facets
+    ? facets.wifi_bands.map((f) => f.value).sort((a, b) => parseFloat(a) - parseFloat(b))
+    : ["2.4", "5"];
+  const types = facets ? TYPE_ORDER.filter((t) => facets.type.some((f) => f.value === t)) : TYPE_ORDER;
+  const protocols = protocolFamilies(facets);
 
   return (
-    <section>
-      <h2>Search</h2>
-      <form onSubmit={handleSubmit} className="search-form">
+    <form
+      className="panel-form"
+      role="search"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit();
+      }}
+    >
+      <label className="field">
+        <span className="label-row">Keywords</span>
         <input
-          type="text"
-          placeholder="free text, e.g. zigbee"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
+          type="search"
+          placeholder="e.g. zigbee, t-display, lora"
+          value={value.q ?? ""}
+          onChange={(e) => onChange(withField(value, "q", e.target.value))}
+          autoComplete="off"
         />
-        <input type="text" placeholder="type (soc/module/board)" value={type} onChange={(e) => setType(e.target.value)} />
-        <input type="text" placeholder="radio, e.g. wifi-6" value={radio} onChange={(e) => setRadio(e.target.value)} />
-        <input type="text" placeholder="band, e.g. 5" value={band} onChange={(e) => setBand(e.target.value)} />
-        <input type="text" placeholder="form, e.g. xiao" value={form} onChange={(e) => setForm(e.target.value)} />
-        <input
-          type="text"
-          placeholder="protocol, e.g. thread"
-          value={protocol}
-          onChange={(e) => setProtocol(e.target.value)}
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? "Searching…" : "Search"}
-        </button>
-      </form>
-
-      {error && <p className="error">{error}</p>}
-      {results && results.length === 0 && <p>No matches.</p>}
-      {results && results.length > 0 && (
-        <ul className="results-list">
-          {results.map((part) => (
-            <PartResultCard key={part.id} part={part} />
-          ))}
-        </ul>
-      )}
-    </section>
+      </label>
+      <div className="form-grid">
+        <label className="field">
+          <span className="label-row">Type</span>
+          <select
+            value={value.type ?? ""}
+            onChange={(e) => onChange(withField(value, "type", e.target.value as PartType | ""))}
+          >
+            <option value="">any</option>
+            {types.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span className="label-row">Form factor</span>
+          <select value={value.form ?? ""} onChange={(e) => onChange(withField(value, "form", e.target.value))}>
+            <option value="">any</option>
+            {forms.map((f) => (
+              <option key={f.value} value={f.value}>
+                {f.value} ({f.count})
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span className="label-row">Wi-Fi</span>
+          <select value={value.radio ?? ""} onChange={(e) => onChange(withField(value, "radio", e.target.value))}>
+            <option value="">any</option>
+            {radios.map((r) => (
+              <option key={r} value={r}>
+                {r} or newer
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span className="label-row">Band (GHz)</span>
+          <select
+            value={value.band !== undefined ? String(value.band) : ""}
+            onChange={(e) => onChange(withField(value, "band", e.target.value === "" ? "" : Number(e.target.value)))}
+          >
+            <option value="">any</option>
+            {bands.map((b) => (
+              <option key={b} value={b}>
+                {b}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span className="label-row">802.15.4 protocol</span>
+          <select
+            value={value.protocol ?? ""}
+            onChange={(e) => onChange(withField(value, "protocol", e.target.value))}
+          >
+            <option value="">any</option>
+            {protocols.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <button type="submit" className="btn btn--block" disabled={loading}>
+        {loading ? "Searching…" : "Search"}
+      </button>
+    </form>
   );
 }

@@ -1,19 +1,40 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
+import { HELP_TIP_ATTR, useHelpTip } from "@/components/HelpTipProvider";
+import { track } from "@/lib/analytics";
 
-export default function HelpTip({ text }: { text: string }) {
-  const [open, setOpen] = useState(false);
+interface HelpTipProps {
+  text: string;
+  /** Short machine name of the field this tip explains, for analytics (e.g. "form", "budget"). */
+  field: string;
+}
+
+const TIP_WIDTH = 280;
+
+export default function HelpTip({ text, field }: HelpTipProps) {
   const id = useId();
+  const { openId, setOpenId } = useHelpTip();
+  const open = openId === id;
+  const rootRef = useRef<HTMLSpanElement>(null);
+  const [alignRight, setAlignRight] = useState(false);
 
   function toggle(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    setOpen((o) => !o);
+    if (open) {
+      setOpenId(null);
+      return;
+    }
+    // flip to the left when the popover would overflow the viewport (narrow sidebar / mobile)
+    const rect = rootRef.current?.getBoundingClientRect();
+    if (rect) setAlignRight(rect.left + TIP_WIDTH > window.innerWidth - 12);
+    setOpenId(id);
+    track("help_tip_open", { field });
   }
 
   return (
-    <span className="help-tip">
+    <span className="help-tip" ref={rootRef} {...{ [HELP_TIP_ATTR]: id }}>
       <button
         type="button"
         className="help-tip-toggle"
@@ -25,7 +46,7 @@ export default function HelpTip({ text }: { text: string }) {
         ?
       </button>
       {open && (
-        <span id={id} role="note" className="help-tip-text">
+        <span id={id} role="note" className={`help-tip-text${alignRight ? " help-tip-text--right" : ""}`}>
           {text}
         </span>
       )}

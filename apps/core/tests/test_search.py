@@ -1,6 +1,6 @@
 import pytest
 
-from esp_atlas_core.search import search
+from esp_atlas_core.search import get_part, search
 
 
 def test_search_free_text_finds_matching_records(built_db_path):
@@ -132,3 +132,95 @@ def test_search_price_tier_is_none_when_unset(built_db_path):
     results = search("", filters={"type": "soc"}, db_path=built_db_path)
     for r in results:
         assert r["price_tier"] is None
+
+
+# --- soc / module filters -------------------------------------------------------
+
+
+def test_search_soc_filter_returns_only_parts_on_that_soc(built_db_path):
+    results = search("", filters={"soc": "esp32-c6"}, db_path=built_db_path)
+    ids = {r["id"] for r in results}
+    assert {"esp32-c6", "esp32-c6-wroom-1", "esp32-c6-devkitc-1", "xiao-esp32c6"}.issubset(ids)
+    for r in results:
+        assert r["soc_ref"] == "esp32-c6"
+
+
+def test_search_soc_filter_combines_with_type(built_db_path):
+    results = search("", filters={"soc": "esp32-c6", "type": "board"}, db_path=built_db_path)
+    assert results
+    for r in results:
+        assert r["type"] == "board"
+        assert r["soc_ref"] == "esp32-c6"
+
+
+def test_search_module_filter_returns_parts_using_that_module(built_db_path):
+    results = search("", filters={"module": "esp32-c6-wroom-1"}, db_path=built_db_path)
+    ids = {r["id"] for r in results}
+    assert "esp32-c6-devkitc-1" in ids
+    for r in results:
+        assert r["module_ref"] == "esp32-c6-wroom-1"
+
+
+def test_search_unknown_soc_returns_empty(built_db_path):
+    assert search("", filters={"soc": "esp32-nope"}, db_path=built_db_path) == []
+
+
+# --- get_part ---------------------------------------------------------------------
+
+
+def test_get_part_board_returns_detail_shape(built_db_path):
+    part = get_part("esp32-c6-devkitc-1", db_path=built_db_path)
+    assert part is not None
+    # flat record fields are still there
+    assert part["id"] == "esp32-c6-devkitc-1"
+    assert part["wifi_standard"] == "wifi-6"
+    # own frontmatter + prose body
+    assert part["frontmatter"]["usb"]["connector"] == "usb-c"
+    assert part["frontmatter"]["id"] == "esp32-c6-devkitc-1"
+    assert part["body"].startswith("# ESP32-C6-DevKitC-1")
+    # inheritance chain resolved to full records
+    assert part["chain"]["module"]["id"] == "esp32-c6-wroom-1"
+    assert part["chain"]["soc"]["id"] == "esp32-c6"
+    # related = siblings on the same soc, excluding self and the chain parents
+    related_ids = [r["id"] for r in part["related"]]
+    assert "xiao-esp32c6" in related_ids
+    assert "esp32-c6-devkitc-1" not in related_ids
+    assert "esp32-c6" not in related_ids
+    assert "esp32-c6-wroom-1" not in related_ids
+
+
+def test_get_part_bare_soc_board_has_no_module_in_chain(built_db_path):
+    part = get_part("xiao-esp32c6", db_path=built_db_path)
+    assert part["chain"]["module"] is None
+    assert part["chain"]["soc"]["id"] == "esp32-c6"
+    assert part["frontmatter"]["dimensions_mm"] == [21, 17.8]
+
+
+def test_get_part_soc_has_empty_chain_and_lists_parts_built_on_it(built_db_path):
+    part = get_part("esp32-c6", db_path=built_db_path)
+    assert part["chain"] == {"soc": None, "module": None}
+    assert part["frontmatter"]["cpu"]["arch"] == "risc-v"
+    related_ids = [r["id"] for r in part["related"]]
+    assert "esp32-c6-wroom-1" in related_ids
+    assert "xiao-esp32c6" in related_ids
+    assert "esp32-c6" not in related_ids
+
+
+def test_get_part_module_lists_boards_using_it(built_db_path):
+    part = get_part("esp32-c6-wroom-1", db_path=built_db_path)
+    assert part["chain"]["soc"]["id"] == "esp32-c6"
+    assert part["chain"]["module"] is None
+    assert part["frontmatter"]["flash_mb"] == 4
+    related_ids = [r["id"] for r in part["related"]]
+    assert "esp32-c6-devkitc-1" in related_ids
+    assert "esp32-c6" not in related_ids
+
+
+def test_get_part_related_is_ordered_by_type_then_name(built_db_path):
+    part = get_part("esp32-c6", db_path=built_db_path)
+    keys = [(r["type"], r["name"]) for r in part["related"]]
+    assert keys == sorted(keys)
+
+
+def test_get_part_unknown_id_returns_none(built_db_path):
+    assert get_part("does-not-exist", db_path=built_db_path) is None

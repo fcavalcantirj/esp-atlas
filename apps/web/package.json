@@ -10,9 +10,12 @@
     "vercel-build": "rm -rf api/_bundle && mkdir -p api/_bundle && cp -r ../../data ../../schema api/_bundle/ && cp -r ../../apps/core/src/esp_atlas_core ../../apps/api/src/esp_atlas_api api/_bundle/ && next build"
   },
   "dependencies": {
+    "@next/third-parties": "^16.3.2",
     "next": "16.3.2",
+    "next-themes": "^0.4.6",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "react-markdown": "^10.1.0"
   },
   "devDependencies": {
     "@types/node": "^20",

@@ -2,9 +2,9 @@
 // this module only shapes requests/responses; the backend (esp_atlas_core) decides.
 //
 // Same-origin in production (the API is deployed as a Vercel function under
-// /api, routed by the root vercel.json) unless NEXT_PUBLIC_API_URL overrides
+// /api, routed by apps/web/vercel.json) unless NEXT_PUBLIC_API_URL overrides
 // it; local dev talks to the standalone uvicorn server on :8000.
-const API_BASE =
+export const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || (process.env.NODE_ENV === "production" ? "/api" : "http://localhost:8000");
 
 export interface SourceEntry {
@@ -38,6 +38,35 @@ export interface WizardRecord extends PartRecord {
   reasons: string[];
 }
 
+export interface Chain {
+  soc: PartRecord | null;
+  module: PartRecord | null;
+}
+
+/** GET /parts/{id}: the flat record plus its own frontmatter, prose, parents and siblings. */
+export interface PartDetail extends PartRecord {
+  frontmatter: Record<string, unknown>;
+  body: string;
+  chain: Chain;
+  related: PartRecord[];
+}
+
+export interface Facet {
+  value: string;
+  count: number;
+}
+
+export interface Facets {
+  type: Facet[];
+  vendor_or_brand: Facet[];
+  form_factor: Facet[];
+  wifi_standard: Facet[];
+  price_tier: Facet[];
+  soc_ref: Facet[];
+  wifi_bands: Facet[];
+  ieee802154_protocols: Facet[];
+}
+
 export type PartType = "soc" | "module" | "board";
 
 export interface SearchFilters {
@@ -47,6 +76,8 @@ export interface SearchFilters {
   band?: number;
   form?: string;
   protocol?: string;
+  soc?: string;
+  module?: string;
   ieee802154?: boolean;
   ble?: boolean;
   bt_classic?: boolean;
@@ -66,6 +97,18 @@ export interface WizardNeeds {
   budget?: string;
 }
 
+export class ApiError extends Error {
+  status: number;
+  endpoint: string;
+
+  constructor(status: number, endpoint: string, detail: string) {
+    super(`esp-atlas API ${status}: ${detail}`);
+    this.name = "ApiError";
+    this.status = status;
+    this.endpoint = endpoint;
+  }
+}
+
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     ...init,
@@ -79,7 +122,7 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
     } catch {
       // response wasn't JSON — fall back to statusText
     }
-    throw new Error(`esp-atlas API ${res.status}: ${detail}`);
+    throw new ApiError(res.status, path.split("?")[0], detail);
   }
   return res.json() as Promise<T>;
 }
@@ -105,6 +148,10 @@ export function listParts(): Promise<{ results: PartRecord[] }> {
   return apiFetch(`/parts`);
 }
 
-export function getPart(id: string): Promise<PartRecord> {
+export function getPart(id: string): Promise<PartDetail> {
   return apiFetch(`/parts/${encodeURIComponent(id)}`);
+}
+
+export function getFacets(): Promise<Facets> {
+  return apiFetch(`/facets`);
 }

@@ -49,6 +49,36 @@ class WizardRecord(Record):
     reasons: list[str]
 
 
+class Chain(BaseModel):
+    soc: Optional[Record] = None
+    module: Optional[Record] = None
+
+
+class PartDetail(Record):
+    """One part with everything a detail page needs — see esp_atlas_core.search.get_part."""
+
+    frontmatter: dict
+    body: str
+    chain: Chain
+    related: list[Record] = []
+
+
+class Facet(BaseModel):
+    value: str
+    count: int
+
+
+class FacetsResponse(BaseModel):
+    type: list[Facet]
+    vendor_or_brand: list[Facet]
+    form_factor: list[Facet]
+    wifi_standard: list[Facet]
+    price_tier: list[Facet]
+    soc_ref: list[Facet]
+    wifi_bands: list[Facet]
+    ieee802154_protocols: list[Facet]
+
+
 class SearchResponse(BaseModel):
     results: list[Record]
 

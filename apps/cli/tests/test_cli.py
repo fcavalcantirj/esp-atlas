@@ -203,3 +203,11 @@ def test_main_entry_point_runs(built_db_path, monkeypatch):
     with pytest.raises(SystemExit) as exc_info:
         main_module.main()
     assert exc_info.value.code == 0
+
+
+def test_search_command_soc_filter(built_db_path):
+    result = run(["search", "", "--soc", "esp32-c6", "--type", "board"], built_db_path)
+    assert result.exit_code == 0, result.output
+    assert "xiao-esp32c6" in result.output
+    assert "esp32-c6-wroom-1" not in result.output
+    assert "xiao-esp32c3" not in result.output

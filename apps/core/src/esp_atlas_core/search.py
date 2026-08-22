@@ -15,7 +15,7 @@ from esp_atlas_core import db as dbmod
 
 # CLI/public filter key -> parts column (or handler) it maps to
 _BOOL_FILTERS = {"ieee802154", "ble", "bt_classic", "usb_native"}
-_EXACT_FILTERS = {"type", "form"}
+_EXACT_FILTERS = {"type", "form", "soc", "module"}
 _KNOWN_FILTERS = _BOOL_FILTERS | _EXACT_FILTERS | {"band", "protocol", "radio"}
 
 _FTS_SPECIAL = re.compile(r'[^\w\s]')
@@ -67,6 +67,12 @@ def _build_where(filters):
     if "form" in filters:
         clauses.append("LOWER(parts.form_factor) = LOWER(?)")
         params.append(filters["form"])
+    if "soc" in filters:
+        clauses.append("parts.soc_ref = ?")
+        params.append(filters["soc"])
+    if "module" in filters:
+        clauses.append("parts.module_ref = ?")
+        params.append(filters["module"])
     if "band" in filters:
         clauses.append("(',' || parts.wifi_bands || ',') LIKE ?")
         params.append(f"%,{_normalize_band(filters['band'])},%")
@@ -146,5 +152,51 @@ def search(query, filters=None, db_path=None, limit=500):
 
         rows = conn.execute(sql, params).fetchall()
         return [_row_to_record(r) for r in rows]
+    finally:
+        conn.close()
+
+
+def _fetch_record(conn, part_id):
+    row = conn.execute("SELECT * FROM parts WHERE id = ?", (part_id,)).fetchone()
+    return _row_to_record(row) if row else None
+
+
+def get_part(part_id, db_path=None):
+    """One part by id, with everything the detail page needs, or None.
+
+    Returns the flat record (same shape as search()) plus:
+      frontmatter  the record's full YAML frontmatter as a dict (board usb/power/
+                   display/extras, module flash/psram, soc cpu/memory, ...)
+      body         the markdown prose below the frontmatter
+      chain        {"soc": record|None, "module": record|None} — the parents this
+                   part inherits from (a soc has neither; a bare-chip board has no module)
+      related      other parts on the same soc (and, for a module, boards using it),
+                   excluding the part itself, ordered by type then name
+    """
+    conn = dbmod.connect(db_path)
+    try:
+        row = conn.execute("SELECT * FROM parts WHERE id = ?", (part_id,)).fetchone()
+        if row is None:
+            return None
+
+        record = _row_to_record(row)
+        record["frontmatter"] = json.loads(row["frontmatter_json"])
+        record["body"] = row["body"]
+
+        soc_id = row["soc_ref"]
+        module_id = row["module_ref"]
+        record["chain"] = {
+            "soc": _fetch_record(conn, soc_id) if soc_id and soc_id != part_id else None,
+            "module": _fetch_record(conn, module_id) if module_id and module_id != part_id else None,
+        }
+
+        # siblings on the same soc (+ boards using this module), minus self and the chain parents
+        related_rows = conn.execute(
+            "SELECT * FROM parts WHERE id NOT IN (?, ?, ?) AND (soc_ref = ? OR module_ref = ?) "
+            "ORDER BY parts.type, parts.name",
+            (part_id, soc_id or "", module_id or "", soc_id, part_id),
+        ).fetchall()
+        record["related"] = [_row_to_record(r) for r in related_rows]
+        return record
     finally:
         conn.close()

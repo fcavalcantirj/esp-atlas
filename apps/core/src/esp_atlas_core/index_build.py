@@ -81,6 +81,8 @@ def _row_for(content_type, path, fm, body, soc_by_id, module_by_id):
         "usb_native": _bool_to_int(_resolve_usb_native(content_type, fm, soc_fm)),
         "path": str(path.relative_to(REPO_ROOT)),
         "sources_json": _json_dumps(fm.get("sources") or []),
+        "frontmatter_json": _json_dumps(fm),
+        "body": body,
         "aka": " ".join(fm.get("aka") or []),
         "notes": "\n".join(fm.get("notes") or []),
         "prose": body,
@@ -94,7 +96,8 @@ def _bool_to_int(value):
 def _json_dumps(value):
     import json
 
-    return json.dumps(value, ensure_ascii=False)
+    # default=str: an unquoted YAML date would otherwise be a datetime.date and fail
+    return json.dumps(value, ensure_ascii=False, default=str)
 
 
 def _compute_build_id(records):
@@ -123,11 +126,13 @@ def build_index(db_path=None, data_dir=None):
                 INSERT INTO parts (
                     id, type, vendor_or_brand, name, wifi_standard, wifi_bands,
                     ble_version, bt_classic, ieee802154, ieee802154_protocols,
-                    form_factor, price_tier, soc_ref, module_ref, usb_native, path, sources_json
+                    form_factor, price_tier, soc_ref, module_ref, usb_native, path, sources_json,
+                    frontmatter_json, body
                 ) VALUES (
                     :id, :type, :vendor_or_brand, :name, :wifi_standard, :wifi_bands,
                     :ble_version, :bt_classic, :ieee802154, :ieee802154_protocols,
-                    :form_factor, :price_tier, :soc_ref, :module_ref, :usb_native, :path, :sources_json
+                    :form_factor, :price_tier, :soc_ref, :module_ref, :usb_native, :path, :sources_json,
+                    :frontmatter_json, :body
                 )
                 """,
                 row,

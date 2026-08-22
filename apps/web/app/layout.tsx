@@ -1,7 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
-import { contributingUrl, dataFolderUrl, repoUrl } from "@/lib/github";
+import { GoogleAnalytics } from "@next/third-parties/google";
+import Providers from "@/app/providers";
+import SiteFooter from "@/components/SiteFooter";
+import SiteHeader from "@/components/SiteHeader";
+import { FONT_SCALE_KEY, GA_ID, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,39 +18,54 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "esp-atlas",
-  description: "Which ESP32 for what you're building?",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    template: `%s · ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+  },
+  twitter: {
+    card: "summary",
+    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+  },
 };
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f1115" },
+  ],
+};
+
+// Applies the saved text-size before first paint so there is no flash of resized
+// text after hydration (next-themes does the same for the theme attribute).
+const fontScaleScript = `try{var s=localStorage.getItem(${JSON.stringify(
+  FONT_SCALE_KEY,
+)});if(s)document.documentElement.style.setProperty("--font-scale",s)}catch(e){}`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <body>
-        <header className="site-header">
-          <div className="site-header-inner">
-            <Link href="/" className="site-logo">
-              esp-atlas
-            </Link>
-            <nav className="site-nav">
-              <Link href="/compare">compare</Link>
-              <a href={contributingUrl()} target="_blank" rel="noreferrer">
-                Add a part
-              </a>
-              <a href={repoUrl()} target="_blank" rel="noreferrer" className="contribute-link">
-                Contribute on GitHub
-              </a>
-            </nav>
-          </div>
-        </header>
-        {children}
-        <footer className="site-footer">
-          <div className="site-footer-inner">
-            <a href={dataFolderUrl()} target="_blank" rel="noreferrer">
-              Browse data on GitHub
-            </a>
-          </div>
-        </footer>
+        <script dangerouslySetInnerHTML={{ __html: fontScaleScript }} />
+        <Providers>
+          <a href="#main" className="skip-link">
+            Skip to content
+          </a>
+          <SiteHeader />
+          {children}
+          <SiteFooter />
+        </Providers>
       </body>
+      {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
     </html>
   );
 }

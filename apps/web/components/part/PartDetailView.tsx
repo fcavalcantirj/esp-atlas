@@ -1,0 +1,70 @@
+import ChipChain from "@/components/part/ChipChain";
+import PartBody from "@/components/part/PartBody";
+import PartHeader from "@/components/part/PartHeader";
+import RelatedParts from "@/components/part/RelatedParts";
+import SourcesList from "@/components/part/SourcesList";
+import SpecGroups from "@/components/part/SpecGroups";
+import TrackedLink from "@/components/TrackedLink";
+import type { PartDetail } from "@/lib/api";
+import { asStringArray } from "@/lib/frontmatter";
+import { editSourceUrl, newIssueUrl, viewSourceUrl } from "@/lib/github";
+
+// Presentational: used by the server-rendered page and by the client fallback.
+export default function PartDetailView({ part }: { part: PartDetail }) {
+  const notes = asStringArray(part.frontmatter.notes);
+  const issueUrl = newIssueUrl({
+    title: `Data issue: ${part.name} (${part.id})`,
+    body: `Part: ${part.name} (\`${part.id}\`)\nFile: \`${part._path}\`\n\n**What is wrong:**\n\n\n**Official source that shows the correct value:**\n\n`,
+  });
+
+  return (
+    <div className="part-layout">
+      <div className="part-main">
+        <PartHeader part={part} />
+        <ChipChain part={part} />
+        <PartBody body={part.body} />
+        <SpecGroups part={part} />
+        {notes.length > 0 && (
+          <section aria-label="Notes">
+            <h2>Notes</h2>
+            <ul className="part-notes">
+              {notes.map((note) => (
+                <li key={note}>{note}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+      <aside className="part-aside" aria-label="Sources and related parts">
+        <div className="aside-card">
+          <h2>Sources</h2>
+          <SourcesList part={part} />
+        </div>
+        <div className="aside-card">
+          <h2>Contribute</h2>
+          <ul className="aside-links">
+            <li>
+              <TrackedLink href={editSourceUrl(part._path)} linkType="github_edit" extra={{ part_id: part.id }}>
+                Edit this record on GitHub
+              </TrackedLink>
+            </li>
+            <li>
+              <TrackedLink href={viewSourceUrl(part._path)} linkType="github_view" extra={{ part_id: part.id }}>
+                View the markdown source
+              </TrackedLink>
+            </li>
+            <li>
+              <TrackedLink href={issueUrl} linkType="new_issue" extra={{ part_id: part.id }}>
+                Report a wrong or missing spec
+              </TrackedLink>
+            </li>
+          </ul>
+        </div>
+        <div className="aside-card">
+          <h2>Related parts</h2>
+          <RelatedParts part={part} />
+        </div>
+      </aside>
+    </div>
+  );
+}
