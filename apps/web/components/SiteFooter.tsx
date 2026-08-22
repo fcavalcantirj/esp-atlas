@@ -10,7 +10,7 @@ import {
   llmsTxtUrl,
   repoUrl,
 } from "@/lib/github";
-import { SITE_EMOJI, SITE_NAME } from "@/lib/site";
+import { SITE_NAME } from "@/lib/site";
 
 const API_DOCS_PATH = "/api/docs";
 
@@ -20,9 +20,10 @@ export default function SiteFooter() {
       <div className="site-footer-inner">
         <div className="site-footer-grid">
           <section className="footer-col footer-col--about">
-            <h2 className="footer-title">
-              <span aria-hidden="true">{SITE_EMOJI}</span> Why {SITE_NAME}
-            </h2>
+            <h2 className="footer-title">Why {SITE_NAME}</h2>
+            <p className="footer-standfirst">
+              A community wiki for ESP32 hardware, <em>cited to the datasheet</em>.
+            </p>
             <p>
               Picking an ESP32 board means wading through dozens of near-identical models from a dozen vendors,
               each documented in a different place. We — Felipe and his coding agent — kept losing hours to it,

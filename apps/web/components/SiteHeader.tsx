@@ -2,16 +2,13 @@ import Link from "next/link";
 import HeaderControls from "@/components/HeaderControls";
 import TrackedLink from "@/components/TrackedLink";
 import { contributingUrl, repoUrl } from "@/lib/github";
-import { SITE_EMOJI, SITE_NAME } from "@/lib/site";
+import { SITE_NAME } from "@/lib/site";
 
 export default function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-header-inner">
         <Link href="/" className="site-logo" aria-label={`${SITE_NAME} home`}>
-          <span className="site-logo-mark" aria-hidden="true">
-            {SITE_EMOJI}
-          </span>
           <span className="site-logo-text">{SITE_NAME}</span>
         </Link>
         <nav className="site-nav" aria-label="Primary">

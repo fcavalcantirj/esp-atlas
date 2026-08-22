@@ -17,20 +17,24 @@ export default function PartResultCard({ part, origin, position }: PartResultCar
 
   return (
     <li className="part-card">
-      <div className="part-card-title">
-        <Link
-          href={`/parts/${encodeURIComponent(part.id)}`}
-          onClick={() => track("result_click", { part_id: part.id, part_type: part.type, origin, position })}
-        >
-          {part.name}
-        </Link>
-        <span className={`badge badge--${part.type}`}>{typeLabel(part.type)}</span>
-        <span className="part-card-brand">{part.vendor_or_brand}</span>
-        {part.price_tier && (
-          <span className="price-pill part-card-pill" title={PRICE_TIER_NOTE}>
-            {priceTierShort(part.price_tier)}
-          </span>
-        )}
+      <div className="part-card-head">
+        <h3 className="part-card-title">
+          <Link
+            href={`/parts/${encodeURIComponent(part.id)}`}
+            onClick={() => track("result_click", { part_id: part.id, part_type: part.type, origin, position })}
+          >
+            {part.name}
+          </Link>
+        </h3>
+        <p className="part-card-meta">
+          <span className={`badge badge--${part.type}`}>{typeLabel(part.type)}</span>
+          <span className="part-card-brand">{part.vendor_or_brand}</span>
+          {part.price_tier && (
+            <span className="price-pill" title={PRICE_TIER_NOTE}>
+              {priceTierShort(part.price_tier)}
+            </span>
+          )}
+        </p>
       </div>
       {chips.length > 0 && (
         <div className="spec-chips">

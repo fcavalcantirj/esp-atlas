@@ -6,10 +6,35 @@
 
 :root {
   --font-scale: 1;
-  --header-h: 56px;
-  --radius: 8px;
-  --radius-sm: 6px;
-  --radius-pill: 999px;
+  --header-h: 52px;
+
+  /* Squared-off geometry: elegance here comes from type and rules, not roundness. */
+  --radius: 3px;
+  --radius-sm: 2px;
+  --radius-pill: 2px;
+
+  /* Two voices: serif for language, mono for data. */
+  --font-language: var(--font-serif), Iowan Old Style, Georgia, serif;
+  --font-data: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  /* Type scale — one ratio, used everywhere. No ad-hoc sizes. */
+  --t-display: clamp(2.4rem, 5vw, 4.25rem);
+  --t-title: clamp(1.4rem, 2vw, 1.75rem);
+  --t-lede: 1.125rem;
+  --t-body: 1rem;
+  --t-sm: 0.875rem;
+  --t-xs: 0.75rem;
+  --t-micro: 0.6875rem;
+
+  --lead-tight: 1.02;
+  --lead-snug: 1.3;
+  --lead-body: 1.65;
+
+  --track-display: -0.022em;
+  --track-label: 0.16em;
+
+  /* One page gutter, shared by header, main and footer so everything aligns. */
+  --page-x: clamp(1.25rem, 3vw, 3.5rem);
 
   --bg: #ffffff;
   --fg: #16181d;
@@ -55,7 +80,8 @@
 
 html {
   height: 100%;
-  font-size: calc(100% * var(--font-scale, 1));
+  /* 15px base: denser, more considered than the 16px browser default. */
+  font-size: calc(93.75% * var(--font-scale, 1));
   scroll-padding-top: calc(var(--header-h) + 1rem);
 }
 
@@ -71,10 +97,17 @@ body {
   flex-direction: column;
   color: var(--fg);
   background: var(--bg);
-  font-family: var(--font-geist-sans), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.5;
+  font-family: var(--font-language);
+  font-size: var(--t-body);
+  line-height: var(--lead-body);
+  letter-spacing: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Real typographic detail: proper figures, ligatures, hanging punctuation. */
+  font-variant-numeric: oldstyle-nums proportional-nums;
+  font-feature-settings: "liga" 1, "calt" 1, "kern" 1;
+  hanging-punctuation: first last;
 }
 
 a {
@@ -92,25 +125,35 @@ li a,
 }
 
 h1 {
-  font-size: 1.75rem;
-  line-height: 1.2;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.01em;
+  font-size: var(--t-display);
+  line-height: var(--lead-tight);
+  margin-bottom: 0.6rem;
+  letter-spacing: var(--track-display);
+  font-weight: 400;
+  /* Lining figures and tighter optical sizing at display scale. */
+  font-variant-numeric: lining-nums;
+  font-optical-sizing: auto;
 }
 
 h2 {
-  font-size: 1.15rem;
+  font-size: var(--t-title);
+  line-height: var(--lead-snug);
+  letter-spacing: -0.015em;
+  font-weight: 400;
   margin: 0 0 0.5rem;
 }
 
 h3 {
-  font-size: 0.95rem;
+  font-size: var(--t-body);
+  line-height: var(--lead-snug);
+  letter-spacing: -0.01em;
+  font-weight: 600;
   margin: 0 0 0.4rem;
 }
 
 code,
 .mono {
-  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--font-data);
   font-size: 0.92em;
 }
 
@@ -166,9 +209,12 @@ code,
 }
 
 .lead {
-  font-size: 1.05rem;
+  font-size: var(--t-lede);
+  line-height: 1.55;
   color: var(--muted);
   margin-bottom: 1rem;
+  max-width: 62ch;
+  text-wrap: pretty;
 }
 
 /* ==========================================================================
@@ -183,7 +229,9 @@ code,
 }
 
 .container--wide {
-  max-width: 1440px;
+  /* Fluid: use all available width, side padding scales gently with viewport. */
+  max-width: none;
+  padding-inline: var(--page-x);
 }
 
 .container--narrow {
@@ -202,17 +250,15 @@ main:focus {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: saturate(180%) blur(10px);
-  -webkit-backdrop-filter: saturate(180%) blur(10px);
+  background: var(--bg);
   border-bottom: 1px solid var(--border);
 }
 
 .site-header-inner {
-  max-width: 1440px;
+  max-width: none;
   min-height: var(--header-h);
   margin: 0 auto;
-  padding: 0.5rem 1.25rem;
+  padding: 0.6rem var(--page-x);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -220,25 +266,24 @@ main:focus {
 }
 
 .site-logo {
+  /* Pure wordmark — no icon, no emoji. Mono, to read as a catalog stamp. */
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  font-weight: 700;
-  font-size: 1.05rem;
-  letter-spacing: -0.01em;
-}
-
-.site-logo-mark {
-  font-size: 1.35rem;
-  line-height: 1;
+  font-family: var(--font-data);
+  font-weight: 500;
+  font-size: var(--t-sm);
+  letter-spacing: 0.02em;
 }
 
 .site-nav {
+  /* Navigation reads as instrument labels: mono, small, tracked. */
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.25rem 0.5rem;
-  font-size: 0.9rem;
+  gap: 0.25rem 0.6rem;
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  letter-spacing: 0.02em;
   margin-left: auto;
 }
 
@@ -246,17 +291,22 @@ main:focus {
   padding: 0.35rem 0.6rem;
   border-radius: var(--radius-sm);
   color: var(--muted);
+  transition: color 0.12s ease;
 }
 
 .nav-link:hover,
 .nav-link:focus-visible {
   color: var(--fg);
-  background: var(--surface);
 }
 
 .nav-cta {
   color: var(--fg);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--border);
+}
+
+.nav-cta:hover,
+.nav-cta:focus-visible {
+  border-color: var(--border-strong);
 }
 
 .header-controls {
@@ -318,81 +368,125 @@ main:focus {
    ========================================================================== */
 
 .site-footer {
-  margin-top: auto;
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-  font-size: 0.9rem;
+  /* Colophon, not a link dump: paper-white, ruled, on the type system. */
+  margin-top: clamp(3rem, 7vw, 6rem);
+  border-top: 1px solid var(--fg);
+  background: var(--bg);
+  font-size: var(--t-sm);
 }
 
 .site-footer-inner {
-  max-width: 1440px;
+  /* Matches the page container instead of an orphaned 1440px cap. */
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem 1.25rem 1.5rem;
+  padding: clamp(2rem, 4vw, 3.5rem) var(--page-x) clamp(1.25rem, 2vw, 1.75rem);
 }
 
 .site-footer-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.75rem 2rem;
+  grid-template-columns: 1fr;
+  gap: 2rem;
 }
 
-.footer-col--about {
-  grid-column: span 2;
-  max-width: 48ch;
-}
+@media (min-width: 720px) {
+  .site-footer-grid {
+    /* The essay leads; three link columns divided by hairlines. */
+    grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+    gap: 0 clamp(1.5rem, 3vw, 3rem);
+  }
 
-@media (max-width: 599px) {
-  .footer-col--about {
-    grid-column: span 1;
+  .site-footer-grid > .footer-col + .footer-col {
+    border-left: 1px solid var(--border);
+    padding-left: clamp(1.5rem, 3vw, 3rem);
+    margin-left: calc(clamp(1.5rem, 3vw, 3rem) * -0.5);
   }
 }
 
-.footer-title {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  margin-bottom: 0.6rem;
+.footer-col--about {
+  max-width: 52ch;
 }
 
-.footer-col p {
+.footer-title {
+  /* Same mono overline as WIZARD / SEARCH — one label style site-wide. */
+  font-family: var(--font-data);
+  font-size: var(--t-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--muted);
+  margin-bottom: 0.9rem;
+}
+
+.footer-col--about p {
+  color: var(--muted);
+  margin-bottom: 0.7rem;
+  text-wrap: pretty;
+}
+
+/* Colophon statement — the footer's one moment of display type. */
+.footer-standfirst {
+  font-size: var(--t-title);
+  line-height: var(--lead-snug);
+  letter-spacing: -0.015em;
   color: var(--fg);
-  margin-bottom: 0.6rem;
+  margin-bottom: 1.1rem;
+  max-width: 26ch;
+  text-wrap: balance;
+}
+
+.footer-standfirst em {
+  font-style: italic;
+  color: var(--muted);
 }
 
 .footer-links {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.5rem;
 }
 
 .footer-links a {
   color: var(--fg);
   text-decoration: none;
+  /* Hairline underline that grows in, instead of a color change. */
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+  transition: border-color 0.12s ease;
 }
 
 .footer-links a:hover,
 .footer-links a:focus-visible {
-  color: var(--accent);
-  text-decoration: underline;
+  border-bottom-color: var(--fg);
 }
 
 .footer-bottom {
-  margin-top: 1.75rem;
+  margin-top: clamp(2rem, 4vw, 3rem);
   padding-top: 1rem;
   border-top: 1px solid var(--border);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: baseline;
   gap: 0.5rem 1.5rem;
-  font-size: 0.82rem;
+  font-family: var(--font-data);
+  font-size: var(--t-micro);
+  letter-spacing: 0.02em;
   color: var(--muted);
 }
 
 .footer-bottom a {
-  color: inherit;
-  text-decoration: underline;
+  color: var(--fg);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.footer-bottom a:hover {
+  border-bottom-color: var(--fg);
+}
+
+.footer-bottom code {
+  font-size: 1em;
 }
 
 /* ==========================================================================
@@ -410,12 +504,38 @@ textarea {
 input[type="text"],
 input[type="search"],
 select {
+  /* Controls are instruments, not prose: mono, tabular, quiet. */
   width: 100%;
-  min-height: 2.5rem;
-  padding: 0.45rem 0.6rem;
-  border: 1px solid var(--border-strong);
+  min-height: 2.4rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--bg);
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+  transition: border-color 0.12s ease;
+}
+
+select {
+  /* Drop the OS widget and draw our own chevron. */
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2rem;
+  cursor: pointer;
+  /* Thin stroked chevron; the neutral gray reads correctly in both themes. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='6' viewBox='0 0 9 6'%3E%3Cpath d='M1 1l3.5 3.5L8 1' fill='none' stroke='%238a8a8a' stroke-width='1.25' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: calc(100% - 0.7rem) center;
+  background-size: 9px 6px;
+  background-repeat: no-repeat;
+}
+
+input[type="text"]:hover,
+input[type="search"]:hover,
+select:hover {
+  border-color: var(--fg);
 }
 
 select {
@@ -431,10 +551,43 @@ select:focus-visible {
 }
 
 input[type="checkbox"] {
-  width: 1.05rem;
-  height: 1.05rem;
-  accent-color: var(--accent);
+  /* Hairline square that fills with ink when checked — no OS blue. */
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 0.95rem;
+  height: 0.95rem;
+  margin: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
   flex-shrink: 0;
+  cursor: pointer;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease;
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--fg);
+}
+
+input[type="checkbox"]:checked {
+  background: var(--fg);
+  border-color: var(--fg);
+}
+
+/* Check drawn with borders so it never depends on a font glyph. */
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 0.3rem;
+  height: 0.15rem;
+  border-left: 1.5px solid var(--bg);
+  border-bottom: 1.5px solid var(--bg);
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .btn {
@@ -442,13 +595,17 @@ input[type="checkbox"] {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  min-height: 2.5rem;
+  min-height: 2.3rem;
   padding: 0.45rem 0.9rem;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   background: var(--bg);
   color: var(--fg);
+  /* All chrome speaks mono; prose stays serif. */
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
   font-weight: 500;
+  letter-spacing: 0.02em;
   cursor: pointer;
   text-decoration: none !important;
   transition: background 0.12s ease, border-color 0.12s ease;
@@ -460,14 +617,23 @@ input[type="checkbox"] {
 }
 
 .btn--primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-fg);
+  /* The one signature element: a quiet full-width rule of mono capitals. */
+  background: var(--bg);
+  border-color: var(--fg);
+  color: var(--fg);
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
 }
 
 .btn--primary:hover:not(:disabled),
 .btn--primary:focus-visible {
-  background: color-mix(in srgb, var(--accent) 88%, var(--fg));
+  /* Inverts to solid ink — the single deliberate moment of contrast. */
+  background: var(--fg);
+  border-color: var(--fg);
+  color: var(--bg);
 }
 
 .btn--block {
@@ -477,7 +643,7 @@ input[type="checkbox"] {
 .btn--sm {
   min-height: 2rem;
   padding: 0.25rem 0.6rem;
-  font-size: 0.85rem;
+  font-size: var(--t-micro);
 }
 
 .btn:disabled {
@@ -488,15 +654,21 @@ input[type="checkbox"] {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  font-size: 0.85rem;
+  gap: 0.4rem;
+  font-size: var(--t-sm);
 }
 
+/* Field labels are instrument captions: mono, uppercase, tracked. */
 .label-row {
   display: flex;
   align-items: center;
   gap: 0.35rem;
+  font-family: var(--font-data);
+  font-size: var(--t-micro);
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
 }
 
 .form-grid {
@@ -539,25 +711,35 @@ input[type="checkbox"] {
    ========================================================================== */
 
 .panel {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  padding: 1rem;
+  /* Minimal: no card chrome — plain sections separated by whitespace. */
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
 }
 
 .panel + .panel {
-  margin-top: 1rem;
+  margin-top: 1.75rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--border);
 }
 
 .panel-title {
-  font-size: 1.05rem;
-  margin-bottom: 0.15rem;
+  /* Editorial overline: mono, tracked out, quiet. */
+  font-family: var(--font-data);
+  font-size: var(--t-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--muted);
+  margin-bottom: 0.5rem;
 }
 
 .panel-hint {
-  font-size: 0.85rem;
+  font-size: var(--t-sm);
   color: var(--muted);
-  margin-bottom: 0.85rem;
+  margin-bottom: 1.1rem;
+  max-width: 42ch;
 }
 
 .panel-form {
@@ -586,14 +768,20 @@ input[type="checkbox"] {
   display: none;
 }
 
+/* Chevron drawn with borders — crisp at any size, no glyph fallback risk. */
 .wizard-advanced summary::before {
-  content: "▸";
+  content: "";
   display: inline-block;
+  width: 0.34em;
+  height: 0.34em;
+  border-right: 1.25px solid currentColor;
+  border-bottom: 1.25px solid currentColor;
+  transform: rotate(-45deg);
   transition: transform 0.15s ease;
 }
 
 .wizard-advanced[open] summary::before {
-  transform: rotate(90deg);
+  transform: rotate(45deg);
 }
 
 .wizard-advanced summary:hover,
@@ -666,12 +854,44 @@ input[type="checkbox"] {
    ========================================================================== */
 
 .home-intro {
-  margin-bottom: 1.25rem;
+  /* Editorial hero: headline left, standfirst right, hairline rule below. */
+  padding-block: clamp(1.5rem, 3vw, 3rem) clamp(1.5rem, 2.5vw, 2.5rem);
+  margin-bottom: clamp(1.5rem, 2.5vw, 2.5rem);
+  border-bottom: 1px solid var(--border);
+}
+
+.home-intro h1 {
+  margin-bottom: 0.9rem;
+  max-width: 16ch;
+  text-wrap: balance;
 }
 
 .home-intro p {
   color: var(--muted);
-  max-width: 70ch;
+  max-width: 44ch;
+  font-size: var(--t-lede);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+/* Drop cap-adjacent detail: the opening clause carries a little more weight. */
+.home-intro p::first-line {
+  color: var(--fg);
+}
+
+@media (min-width: 1024px) {
+  .home-intro {
+    display: grid;
+    /* Standfirst sits close to the headline, not marooned at the far edge. */
+    grid-template-columns: minmax(0, auto) minmax(0, 46ch);
+    justify-content: start;
+    gap: clamp(2rem, 4vw, 4.5rem);
+    align-items: end;
+  }
+
+  .home-intro h1 {
+    margin-bottom: 0;
+  }
 }
 
 .home-layout {
@@ -682,23 +902,26 @@ input[type="checkbox"] {
 
 @media (min-width: 1024px) {
   .home-layout {
-    grid-template-columns: minmax(340px, 400px) minmax(0, 1fr);
-    gap: 2.5rem;
+    grid-template-columns: minmax(300px, 340px) minmax(0, 1fr);
+    gap: clamp(2rem, 3.5vw, 4.5rem);
     align-items: start;
   }
 
   .home-sidebar {
+    /* No inner scroll: it produced a scrollbar through the column and clipped
+       the help tooltips. The column simply flows with the page. */
     position: sticky;
-    top: calc(var(--header-h) + 1rem);
-    max-height: calc(100dvh - var(--header-h) - 2rem);
-    overflow-y: auto;
-    padding-right: 0.25rem;
+    top: calc(var(--header-h) + 1.5rem);
+    /* Hairline column rule centered in the gap between finder and results. */
+    padding-right: calc(clamp(2rem, 3.5vw, 4.5rem) / 2);
+    margin-right: calc(clamp(2rem, 3.5vw, 4.5rem) / -2);
+    border-right: 1px solid var(--border);
   }
 }
 
 @media (min-width: 1440px) {
   .home-layout {
-    grid-template-columns: 420px minmax(0, 1fr);
+    grid-template-columns: 360px minmax(0, 1fr);
   }
 }
 
@@ -714,14 +937,18 @@ input[type="checkbox"] {
 .results-header {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   gap: 0.5rem 0.75rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .results-count {
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-family: var(--font-data);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 .results-origin {
@@ -743,18 +970,20 @@ input[type="checkbox"] {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  background: var(--surface);
-  font-size: 0.8rem;
+  background: transparent;
+  font-family: var(--font-data);
+  font-size: var(--t-micro);
+  letter-spacing: 0.02em;
   color: var(--fg);
   white-space: nowrap;
 }
 
 .chip--accent {
-  background: var(--accent-soft);
-  border-color: transparent;
+  border-color: var(--border-strong);
+  color: var(--fg);
 }
 
 .chip--button {
@@ -787,53 +1016,85 @@ input[type="checkbox"] {
 }
 
 .results-list {
+  /* An index, not a card wall: full-width rows divided by hairlines. */
   list-style: none;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.75rem;
-}
-
-@media (min-width: 1024px) {
-  .results-list {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  }
+  display: block;
+  border-top: 1px solid var(--border);
 }
 
 .part-card {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  /* Row, not box: name and vendor left, spec readout right on wide screens. */
+  border-bottom: 1px solid var(--border);
   background: var(--bg);
-  padding: 0.85rem 1rem;
+  padding: 0.85rem 0.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  box-shadow: var(--shadow);
-  transition: border-color 0.12s ease, transform 0.12s ease;
+  gap: 0.45rem;
+  transition: background 0.12s ease;
 }
 
 .part-card:hover {
-  border-color: var(--border-strong);
+  background: var(--surface);
+}
+
+@media (min-width: 900px) {
+  .part-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+    align-items: baseline;
+    column-gap: 2rem;
+    row-gap: 0.4rem;
+  }
+
+  .part-card .part-reasons {
+    grid-column: 1 / -1;
+  }
+}
+
+
+
+.part-card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
 }
 
 .part-card-title {
+  margin: 0;
+}
+
+/* Provenance line: type, vendor and price tier, all in mono. */
+.part-card-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.4rem 0.5rem;
+  gap: 0.3rem 0.7rem;
+  margin: 0;
 }
 
 .part-card-title a {
-  font-weight: 600;
-  font-size: 1.02rem;
+  font-family: var(--font-language);
+  font-size: var(--t-lede);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: var(--lead-snug);
+  /* Override the generic li a link style — monochrome, underline on hover only. */
+  color: var(--fg);
+  text-decoration: none;
 }
 
 .part-card-title a:hover,
 .part-card-title a:focus-visible {
-  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
 }
 
 .part-card-brand {
-  font-size: 0.82rem;
+  font-family: var(--font-data);
+  font-size: var(--t-micro);
+  letter-spacing: 0.04em;
   color: var(--muted);
 }
 
@@ -842,41 +1103,37 @@ input[type="checkbox"] {
 }
 
 .badge {
+  /* Technical label: mono, uppercase, no border — type does the work. */
   display: inline-flex;
   align-items: center;
-  padding: 0.1rem 0.45rem;
-  border-radius: var(--radius-pill);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  background: var(--surface-2);
+  background: transparent;
   color: var(--muted);
 }
 
 .badge--board {
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-
-.badge--module {
-  background: color-mix(in srgb, var(--ok) 16%, transparent);
-  color: var(--ok);
-}
-
-.badge--soc {
-  background: var(--surface-2);
   color: var(--fg);
 }
 
+.badge--module {
+  color: var(--muted);
+}
+
+.badge--soc {
+  color: var(--muted);
+}
+
 .price-pill {
+  /* Price readout: plain mono text, no dashed box. */
   display: inline-flex;
   align-items: center;
   gap: 0.2rem;
-  padding: 0.1rem 0.5rem;
-  border-radius: var(--radius-pill);
-  border: 1px dashed var(--border-strong);
-  font-size: 0.75rem;
+  font-family: var(--font-data);
+  font-size: 0.72rem;
   color: var(--muted);
   cursor: help;
 }
@@ -884,20 +1141,32 @@ input[type="checkbox"] {
 .spec-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem;
+  gap: 0.2rem 1rem;
+}
+
+@media (min-width: 900px) {
+  /* Spec readout hangs off the right edge of the row, like a datasheet column. */
+  .part-card .spec-chips {
+    justify-content: flex-end;
+    text-align: right;
+  }
 }
 
 .spec-chip {
-  font-size: 0.78rem;
-  padding: 0.12rem 0.5rem;
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--fg);
+  /* Spec readout: mono type separated by hairlines, not boxed pills. */
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
   white-space: nowrap;
 }
 
+/* No separators: a wrapped line would leave a dangling rule. Gap does the work. */
+
 .spec-chip--on {
-  background: var(--accent-soft);
+  color: var(--fg);
 }
 
 .part-reasons {
@@ -913,8 +1182,9 @@ input[type="checkbox"] {
 }
 
 .part-reasons li::before {
-  content: "✓ ";
-  color: var(--ok);
+  /* Typographic en dash marker rather than a glyph that may not render. */
+  content: "— ";
+  color: var(--border-strong);
 }
 
 .part-reasons-title {
@@ -926,25 +1196,34 @@ input[type="checkbox"] {
 }
 
 .empty-state {
-  border: 1px dashed var(--border-strong);
-  border-radius: var(--radius);
-  padding: 1.5rem 1.25rem;
+  /* Minimal: no box — plain text block aligned with the page rhythm. */
+  border: 0;
+  padding: 0.25rem 0;
   color: var(--muted);
+  max-width: 60ch;
 }
 
 .empty-state h2 {
-  color: var(--fg);
-  font-size: 1.05rem;
+  /* Matches the WIZARD / SEARCH overlines instead of shouting as a heading. */
+  font-family: var(--font-data);
+  font-size: var(--t-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--muted);
+  margin-bottom: 0.5rem;
 }
 
 .empty-state p {
-  margin-bottom: 0.75rem;
+  margin-bottom: 1.1rem;
+  font-size: var(--t-sm);
+  max-width: 52ch;
 }
 
 .preset-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.4rem;
   margin-top: 0.5rem;
 }
 
@@ -1070,6 +1349,13 @@ input[type="checkbox"] {
   border-color: var(--accent);
   color: var(--accent-fg);
   cursor: default;
+}
+
+/* The kind label inside the filled current chip: .badge is transparent + muted
+   text, which is invisible on the accent fill — give it the on-accent colour. */
+.chip-chain-item--current .badge {
+  color: var(--accent-fg);
+  opacity: 0.8;
 }
 
 .chip-chain-arrow {
@@ -1317,12 +1603,18 @@ input[type="checkbox"] {
 }
 
 .compare-picker-mobile > summary::before {
-  content: "▸";
+  content: "";
+  display: inline-block;
+  width: 0.34em;
+  height: 0.34em;
+  border-right: 1.25px solid currentColor;
+  border-bottom: 1.25px solid currentColor;
+  transform: rotate(-45deg);
   transition: transform 0.15s ease;
 }
 
 .compare-picker-mobile[open] > summary::before {
-  transform: rotate(90deg);
+  transform: rotate(45deg);
 }
 
 .compare-picker-body {
@@ -1377,13 +1669,19 @@ input[type="checkbox"] {
 }
 
 .compare-group > summary::before {
-  content: "▸";
+  content: "";
+  display: inline-block;
+  width: 0.34em;
+  height: 0.34em;
+  border-right: 1.25px solid currentColor;
+  border-bottom: 1.25px solid currentColor;
+  transform: rotate(-45deg);
   transition: transform 0.15s ease;
   color: var(--muted);
 }
 
 .compare-group[open] > summary::before {
-  transform: rotate(90deg);
+  transform: rotate(45deg);
 }
 
 .compare-group-count {
