@@ -16,7 +16,7 @@ below is a board the author is genuinely confident exists. Where the exact
 product-page URL wasn't known at write time, it's marked
 `(url: to-verify)` rather than fabricated. No model numbers are invented.
 
-**Progress: 73 boards done (out of an estimated 90+ known ESP32-family
+**Progress: 77 boards done (out of an estimated 90+ known ESP32-family
 boards across these vendors — the total will firm up as each vendor
 section gets a real audit).**
 
@@ -169,12 +169,36 @@ Official site: https://www.lilygo.cc/
 
 Official site: https://soldered.com/
 
-- [ ] Dasduino ConnectPlus (ESP32) — (url: to-verify)
-- [ ] Dasduino Connect (ESP32) — (url: to-verify)
-- [ ] Inkplate 6 (ESP32) — (url: to-verify)
-- [ ] Inkplate 10 (ESP32) — (url: to-verify)
-- [ ] Inkplate 6PLUS (ESP32) — (url: to-verify)
-- [ ] Inkplate 2 (ESP32-C3) — (url: to-verify)
+- [x] Inkplate 2 (ESP32) — https://soldered.com/products/inkplate-2
+- [x] Inkplate 6 (ESP32) — https://soldered.com/products/inkplate-6-6-e-paper-board
+- [x] Inkplate 10 (ESP32) — https://soldered.com/products/inkplate-10
+- [x] Inkplate 6COLOR (ESP32) — https://soldered.com/products/inkplate-6color-e-paper-display
+- [ ] Dasduino ConnectPlus (ESP32) — deferred: no live soldered.com or
+  docs.soldered.com page found this pass. `/products/dasduino-connectplus`,
+  `/product/dasduino-connectplus/`, `/products/dasduino-connect` (its ESP8266
+  sibling), `/products/dasduino-lite`, the `dasduino-arduino` category page,
+  and the `solde.red/333033` shortlink all 404 live; cross-checked against
+  Soldered's own `/products.json` catalog (236 SKUs) — no `dasduino-connect*`
+  handle exists in it. Only third-party listings (welectron, botland, a
+  Mouser-hosted datasheet PDF) and the SolderedElectronics GitHub hardware-design
+  repo are live, none of which qualify as an official soldered.com/docs.soldered.com
+  product source per the no-cross-sourcing rule. Appears to have been pulled
+  from the current catalog (only Dasduino CORE, an ATmega328 board, remains
+  live in that line). Needs a follow-up pass to find a genuine live citation
+  or confirm discontinuation.
+- [ ] Dasduino Connect (ESP8266, not ESP32) — out of scope for this atlas;
+  not an ESP32-family board.
+- [ ] Inkplate 6PLUS (ESP32) — deferred: retired product, page 404s live
+  (`/product/inkplate-6plus-e-paper-display-with-touchscreen-copy/` and the
+  enclosure variant both 404; confirmed absent from `/products.json`). Search
+  engines still index it as "[RETIRED]" but there is no live official page to cite.
+- [ ] Inkplate 6MOTION (ESP32-S3?) — deferred: confirmed live at
+  https://soldered.com/products/inkplate-6-motion (verified 2026-08-22), but
+  the page states its main application processor is a **STM32H743ZIT6**, with
+  an **ESP32-C3 used only as a Wi-Fi/Bluetooth co-processor**. It is not an
+  ESP32-S3 board as assumed in the original target list, and cataloging it
+  under an ESP32-family SoC would misrepresent the hardware — out of scope
+  for this atlas rather than a board to add under a wrong chip.
 
 ## DFRobot
 
