@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "vercel-build": "rm -rf api/_bundle && mkdir -p api/_bundle && cp -r ../../data ../../schema api/_bundle/ && cp -r ../../apps/core/src/esp_atlas_core ../../apps/api/src/esp_atlas_api api/_bundle/ && next build"
   },
   "dependencies": {
     "next": "16.3.2",
