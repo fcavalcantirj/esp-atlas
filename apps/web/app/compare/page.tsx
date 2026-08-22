@@ -1,10 +1,31 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import CompareView from "@/components/compare/CompareView";
+import { OG_IMAGE, SITE_NAME } from "@/lib/site";
 
+const COMPARE_DESCRIPTION = "Side-by-side, datasheet-verified specs for any ESP32 SoCs, modules and dev boards.";
+
+// The tool is client-rendered from ?ids=, so every ?ids= permutation is the
+// same shell: one canonical, kept out of the index, links still followed.
 export const metadata: Metadata = {
   title: "Compare",
-  description: "Side-by-side, datasheet-verified specs for any ESP32 SoCs, modules and dev boards.",
+  description: COMPARE_DESCRIPTION,
+  alternates: { canonical: "/compare" },
+  robots: { index: false, follow: true },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: `Compare · ${SITE_NAME}`,
+    description: COMPARE_DESCRIPTION,
+    url: "/compare",
+    images: [OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Compare · ${SITE_NAME}`,
+    description: COMPARE_DESCRIPTION,
+    images: [OG_IMAGE.url],
+  },
 };
 
 export default function ComparePage() {

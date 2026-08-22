@@ -20,7 +20,7 @@ export default function SiteFooter() {
       <div className="site-footer-inner">
         <div className="site-footer-grid">
           <section className="footer-col footer-col--about">
-            <h2 className="footer-title">Why {SITE_NAME}</h2>
+            <p className="footer-title">Why {SITE_NAME}</p>
             <p className="footer-standfirst">
               A community wiki for ESP32 hardware, <em>cited to the datasheet</em>.
             </p>
@@ -37,7 +37,7 @@ export default function SiteFooter() {
           </section>
 
           <section className="footer-col">
-            <h2 className="footer-title">Contribute</h2>
+            <p className="footer-title">Contribute</p>
             <ul className="footer-links">
               <li>
                 <TrackedLink href={contributingUrl()} linkType="contributing">
@@ -63,7 +63,7 @@ export default function SiteFooter() {
           </section>
 
           <section className="footer-col">
-            <h2 className="footer-title">Data &amp; code</h2>
+            <p className="footer-title">Data &amp; code</p>
             <ul className="footer-links">
               <li>
                 <TrackedLink href={dataFolderUrl()} linkType="data_folder">
@@ -89,7 +89,7 @@ export default function SiteFooter() {
           </section>
 
           <section className="footer-col">
-            <h2 className="footer-title">Explore</h2>
+            <p className="footer-title">Explore</p>
             <ul className="footer-links">
               <li>
                 <Link href="/">Wizard &amp; search</Link>
