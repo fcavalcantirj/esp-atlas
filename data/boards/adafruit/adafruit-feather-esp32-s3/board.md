@@ -5,6 +5,7 @@ brand: adafruit
 name: Adafruit ESP32-S3 Feather (4MB Flash 2MB PSRAM)
 soc: esp32-s3
 form_factor: feather
+price_tier: medium
 dimensions_mm:
 - 52.3
 - 22.7

@@ -8,6 +8,7 @@ from typing import Literal, Optional
 from pydantic import BaseModel, Field
 
 PartType = Literal["soc", "module", "board"]
+BudgetTier = Literal["cheap", "medium", "expensive"]
 
 
 class HealthResponse(BaseModel):
@@ -33,6 +34,7 @@ class Record(BaseModel):
     ieee802154: Optional[bool] = None
     ieee802154_protocols: Optional[str] = None
     form_factor: Optional[str] = None
+    price_tier: Optional[str] = None
     soc_ref: Optional[str] = None
     module_ref: Optional[str] = None
     usb_native: Optional[bool] = None
@@ -65,7 +67,7 @@ class WizardNeeds(BaseModel):
     ieee802154: Optional[bool] = None
     form: Optional[str] = None
     type: Optional[PartType] = None
-    budget: Optional[str] = None
+    budget: Optional[BudgetTier] = None
 
     model_config = {"extra": "forbid"}
 

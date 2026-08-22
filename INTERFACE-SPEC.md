@@ -45,6 +45,8 @@ query ─▶ structured filter (radio/band/protocol/form) + FTS (name/prose/note
 ## Two interaction modes
 1. **Wizard** — deterministic filter over the index. No LLM, no key, no cost, un-abusable.
    Guided questions (band? protocol? form factor? budget?) → ranked parts + why each won.
+   `budget` (cheap/medium/expensive) is a spending ceiling against each board's
+   optional, editorial `price_tier` — never a hard spec, see `SPEC.md`.
 2. **Ask** — natural language → RAG-lite → Groq → grounded, cited, temp 0,
    "not in esp-atlas yet" when unknown. Robust: retrieval + grounding + caching + rate limits.
 

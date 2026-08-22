@@ -4,7 +4,8 @@ type: board
 brand: lilygo
 name: T-Display-S3
 soc: esp32-s3
-form_factor: dev
+form_factor: devkit
+price_tier: medium
 usb:
   connector: usb-c
   bridge: native

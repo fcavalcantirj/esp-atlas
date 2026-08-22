@@ -5,6 +5,7 @@ brand: espressif
 name: ESP32-C6-DevKitC-1
 module: esp32-c6-wroom-1
 form_factor: devkit
+price_tier: cheap
 usb:
   connector: usb-c
 power:

@@ -27,7 +27,15 @@ missing, it's built automatically from `data/**/*.md` via
 - `GET /search?q=&type=&radio=&band=&form=&protocol=&ieee802154=&ble=&bt_classic=&usb_native=`
   -> `{results: [record...]}` — structured filters + free-text, no LLM.
 - `POST /wizard` body `{needs: {protocol?, radio?, band?, ble?, bt_classic?,
-  usb_native?, ieee802154?, form?, type?, budget?}}` -> `{results: [record + score + reasons...]}`
+  usb_native?, ieee802154?, form?, type?, budget?}}` -> `{results: [record + score + reasons...]}`.
+  `budget` is one of `cheap` / `medium` / `expensive` (or omitted). It's a
+  **spending ceiling**, not an exact match: `budget=cheap` keeps only
+  `price_tier: cheap`, `budget=medium` keeps `cheap` + `medium`, and
+  `budget=expensive` keeps everything. A part with no `price_tier` set is
+  **unrated, not free** — it's always kept regardless of `budget`, since an
+  unknown price is never grounds to hide a part. `budget` only filters, it
+  never scores (see `price_tier` note below). Omitting `budget` applies no
+  price filtering at all.
 - `GET /parts` -> `{results: [record...]}` (every soc/module/board)
 - `GET /parts/{id}` -> a single record, or 404
 - `POST /validate` body `{markdown: "<full md w/ frontmatter>"}` or
@@ -37,6 +45,16 @@ missing, it's built automatically from `data/**/*.md` via
 
 CORS is open (`allow_origins=["*"]`) so the Next.js dev server can call it
 directly; tighten this before any public deploy (out of scope for M1).
+
+## `price_tier` — editorial, not a spec
+
+Every record may carry an optional `price_tier: cheap|medium|expensive`. This
+is an **approximate, editorial street-price bucket** set by hand when a board
+is added — it carries no `sources:` entry and is exempt from the
+source-or-omit rule that governs every other field (see `SPEC.md`'s "if it
+isn't verified it isn't stated"). It exists only to power the wizard's
+`budget` filter and is never rendered next to, or mistaken for, a
+datasheet-verified spec.
 
 ## Test
 

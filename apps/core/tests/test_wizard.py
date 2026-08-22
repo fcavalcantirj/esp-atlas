@@ -30,14 +30,54 @@ def test_wizard_combines_multiple_hard_needs(built_db_path):
         assert r["usb_native"] is True
 
 
-def test_wizard_budget_need_is_accepted_but_not_scored(built_db_path):
-    only_budget = wizard({"budget": "low"}, db_path=built_db_path)
-    zigbee_only = wizard({}, db_path=built_db_path)
-    # budget alone doesn't narrow the result set (no price data to filter on)
-    assert len(only_budget) == len(zigbee_only)
-    for r in only_budget:
+def test_wizard_budget_is_not_scored(built_db_path):
+    results = wizard({"budget": "cheap"}, db_path=built_db_path)
+    assert results
+    for r in results:
         assert r["score"] == 0
-        assert any("budget" in reason.lower() and "not modeled" in reason.lower() for reason in r["reasons"])
+        assert any("budget" in reason.lower() for reason in r["reasons"])
+
+
+def test_wizard_budget_cheap_excludes_medium_tier_but_keeps_unknown_tier(built_db_path):
+    results = wizard({"budget": "cheap"}, db_path=built_db_path)
+    ids = {r["id"] for r in results}
+    assert "xiao-esp32c3" in ids  # price_tier: cheap
+    assert "esp32-s3-devkitc-1" not in ids  # price_tier: medium, over the ceiling
+    assert "esp32-c6" in ids  # soc, no price_tier at all -> always included
+
+
+def test_wizard_budget_medium_includes_cheap_and_medium_tiers(built_db_path):
+    results = wizard({"budget": "medium"}, db_path=built_db_path)
+    ids = {r["id"] for r in results}
+    assert "xiao-esp32c3" in ids  # cheap
+    assert "esp32-s3-devkitc-1" in ids  # medium
+    assert "esp32-c6" in ids  # unknown tier, still included
+
+
+def test_wizard_budget_expensive_matches_no_budget_at_all(built_db_path):
+    with_budget = wizard({"budget": "expensive"}, db_path=built_db_path)
+    no_budget = wizard({}, db_path=built_db_path)
+    assert {r["id"] for r in with_budget} == {r["id"] for r in no_budget}
+
+
+def test_wizard_empty_budget_string_means_no_price_filtering(built_db_path):
+    with_empty_budget = wizard({"budget": ""}, db_path=built_db_path)
+    no_budget = wizard({}, db_path=built_db_path)
+    assert {r["id"] for r in with_empty_budget} == {r["id"] for r in no_budget}
+
+
+def test_wizard_rejects_invalid_budget_value(built_db_path):
+    with pytest.raises(ValueError):
+        wizard({"budget": "low"}, db_path=built_db_path)
+
+
+def test_wizard_budget_combines_with_hard_needs(built_db_path):
+    results = wizard({"form": "xiao", "budget": "cheap"}, db_path=built_db_path)
+    assert results
+    ids = {r["id"] for r in results}
+    assert "xiao-esp32c3" in ids
+    for r in results:
+        assert r["form_factor"] == "xiao"
 
 
 def test_wizard_boards_rank_above_socs_at_equal_score(built_db_path):

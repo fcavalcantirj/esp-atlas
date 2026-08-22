@@ -75,6 +75,7 @@ def _row_for(content_type, path, fm, body, soc_by_id, module_by_id):
         "ieee802154": _bool_to_int(ieee.get("present")),
         "ieee802154_protocols": ",".join(ieee_protocols) if ieee_protocols else None,
         "form_factor": fm.get("form_factor"),
+        "price_tier": fm.get("price_tier"),
         "soc_ref": soc_id,
         "module_ref": module_id,
         "usb_native": _bool_to_int(_resolve_usb_native(content_type, fm, soc_fm)),
@@ -122,11 +123,11 @@ def build_index(db_path=None, data_dir=None):
                 INSERT INTO parts (
                     id, type, vendor_or_brand, name, wifi_standard, wifi_bands,
                     ble_version, bt_classic, ieee802154, ieee802154_protocols,
-                    form_factor, soc_ref, module_ref, usb_native, path, sources_json
+                    form_factor, price_tier, soc_ref, module_ref, usb_native, path, sources_json
                 ) VALUES (
                     :id, :type, :vendor_or_brand, :name, :wifi_standard, :wifi_bands,
                     :ble_version, :bt_classic, :ieee802154, :ieee802154_protocols,
-                    :form_factor, :soc_ref, :module_ref, :usb_native, :path, :sources_json
+                    :form_factor, :price_tier, :soc_ref, :module_ref, :usb_native, :path, :sources_json
                 )
                 """,
                 row,

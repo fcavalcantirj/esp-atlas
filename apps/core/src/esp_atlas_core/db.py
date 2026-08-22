@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS parts (
     ieee802154 INTEGER,
     ieee802154_protocols TEXT,
     form_factor TEXT,
+    price_tier TEXT,
     soc_ref TEXT,
     module_ref TEXT,
     usb_native INTEGER,

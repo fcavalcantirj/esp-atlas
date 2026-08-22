@@ -5,6 +5,7 @@ brand: m5stack
 name: CoreS3
 soc: esp32-s3
 form_factor: m5-core
+price_tier: medium
 dimensions_mm:
 - 54.0
 - 54.0

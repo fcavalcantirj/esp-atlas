@@ -25,6 +25,7 @@ export interface PartRecord {
   ieee802154: boolean | null;
   ieee802154_protocols: string | null;
   form_factor: string | null;
+  price_tier: string | null;
   soc_ref: string | null;
   module_ref: string | null;
   usb_native: boolean | null;

@@ -2,11 +2,13 @@
 
     wizard({"protocol": "zigbee", "usb_native": True})
     wizard({"radio": "wifi-6", "band": 5})
+    wizard({"budget": "cheap"})  # spending ceiling over each board's editorial price_tier
 
-Every scored need is grounded in a real `parts` column. `budget` is accepted
-(the interface spec names it as an example need) but esp-atlas carries no
-price data, so it is never used to score or exclude a part — it only adds a
-transparency note, rather than inventing a signal the dataset doesn't have.
+Every scored need is grounded in a real `parts` column. `budget` never scores
+a part (price is editorial, not a hard spec) — it only filters: a part whose
+`price_tier` is above the chosen ceiling is dropped, while a part with no
+`price_tier` at all (unrated) is always kept, since an unknown price is never
+grounds to hide a part.
 """
 from esp_atlas_core.search import search
 
@@ -26,6 +28,23 @@ KNOWN_NEEDS = set(_HARD_NEEDS) | {"budget"}
 
 _TYPE_ORDER = {"board": 0, "module": 1, "soc": 2}
 
+# cumulative spending ceiling: budget=X includes every tier up to and including X
+_BUDGET_TIERS = ("cheap", "medium", "expensive")
+
+
+def _normalize_budget(budget):
+    if budget in (None, ""):
+        return None
+    if budget not in _BUDGET_TIERS:
+        raise ValueError(f"unknown budget tier: {budget!r}, expected one of {_BUDGET_TIERS} or ''")
+    return budget
+
+
+def _within_budget(price_tier, budget):
+    if budget is None or price_tier is None:
+        return True  # no ceiling, or an unrated (unknown) part — never excluded
+    return _BUDGET_TIERS.index(price_tier) <= _BUDGET_TIERS.index(budget)
+
 
 def wizard(needs, db_path=None, limit=50):
     needs = dict(needs or {})
@@ -33,7 +52,7 @@ def wizard(needs, db_path=None, limit=50):
     if unknown:
         raise ValueError(f"unknown wizard need(s): {sorted(unknown)}")
 
-    budget = needs.pop("budget", None)
+    budget = _normalize_budget(needs.pop("budget", None))
     filters = {}
     score_bonus = 0
     reasons = []
@@ -47,9 +66,10 @@ def wizard(needs, db_path=None, limit=50):
             reasons.append(reason)
 
     if budget is not None:
-        reasons.append(f"budget={budget} not modeled — esp-atlas has no price data yet")
+        reasons.append(f"budget={budget}: price_tier <= {budget} (parts with no price_tier are always included)")
 
     records = search("", filters=filters, db_path=db_path, limit=limit * 4)
+    records = [r for r in records if _within_budget(r["price_tier"], budget)]
 
     scored = [{**rec, "score": score_bonus, "reasons": list(reasons)} for rec in records]
     scored.sort(key=lambda r: (-r["score"], _TYPE_ORDER.get(r["type"], 9), r["name"]))

@@ -8,6 +8,8 @@ const PROTOCOLS = ["", "zigbee", "thread", "matter"];
 const RADIOS = ["", "wifi-4", "wifi-6"];
 const BANDS = ["", "2.4", "5"];
 const FORM_TYPES = ["", "soc", "module", "board"];
+const FORM_FACTORS = ["", "devkit", "xiao", "feather", "m5-core"];
+const BUDGETS = ["", "cheap", "medium", "expensive"];
 
 export default function WizardForm() {
   const [protocol, setProtocol] = useState("");
@@ -83,12 +85,13 @@ export default function WizardForm() {
         </label>
         <label>
           Form factor
-          <input
-            type="text"
-            placeholder="e.g. xiao, devkit"
-            value={form}
-            onChange={(e) => setForm(e.target.value)}
-          />
+          <select value={form} onChange={(e) => setForm(e.target.value)}>
+            {FORM_FACTORS.map((f) => (
+              <option key={f} value={f}>
+                {f || "any"}
+              </option>
+            ))}
+          </select>
         </label>
         <label>
           Type
@@ -106,12 +109,13 @@ export default function WizardForm() {
         </label>
         <label>
           Budget
-          <input
-            type="text"
-            placeholder="low / medium / high (not price-modeled yet)"
-            value={budget}
-            onChange={(e) => setBudget(e.target.value)}
-          />
+          <select value={budget} onChange={(e) => setBudget(e.target.value)}>
+            {BUDGETS.map((b) => (
+              <option key={b} value={b}>
+                {b || "any"}
+              </option>
+            ))}
+          </select>
         </label>
         <button type="submit" disabled={loading}>
           {loading ? "Searching…" : "Find parts"}

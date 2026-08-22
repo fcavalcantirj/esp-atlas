@@ -22,6 +22,11 @@ export default function PartResultCard({ part }: { part: PartRecord | WizardReco
       </Link>
       {wizardPart && <span className="part-score"> score {wizardPart.score}</span>}
       <div className="part-specs">{specLine(part)}</div>
+      {part.price_tier && (
+        <div className="part-price-tier" title="Approximate, editorial street price — not a datasheet-verified spec">
+          ~{part.price_tier}
+        </div>
+      )}
       {wizardPart && wizardPart.reasons.length > 0 && (
         <ul className="part-reasons">
           {wizardPart.reasons.map((reason) => (

@@ -5,6 +5,7 @@ brand: espressif
 name: ESP32-S3-DevKitC-1
 module: esp32-s3-wroom-1
 form_factor: devkit
+price_tier: medium
 usb:
   connector: micro-usb
 power:

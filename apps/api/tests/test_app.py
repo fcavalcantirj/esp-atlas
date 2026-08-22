@@ -62,6 +62,13 @@ def test_search_form_filter(client):
     assert any("xiao" in i for i in ids)
 
 
+def test_search_form_filter_includes_price_tier(client):
+    r = client.get("/search", params={"form": "xiao"})
+    assert r.status_code == 200
+    by_id = {rec["id"]: rec for rec in r.json()["results"]}
+    assert by_id["xiao-esp32c3"]["price_tier"] == "cheap"
+
+
 def test_search_invalid_type_rejected(client):
     r = client.get("/search", params={"type": "bogus"})
     assert r.status_code == 422
@@ -123,6 +130,34 @@ def test_wizard_zigbee_and_usb_native(client):
         assert "score" in rec
         assert "reasons" in rec
         assert isinstance(rec["reasons"], list)
+
+
+def test_wizard_budget_cheap_excludes_medium_tier_but_keeps_unrated(client):
+    r = client.post("/wizard", json={"needs": {"budget": "cheap"}})
+    assert r.status_code == 200
+    ids = {rec["id"] for rec in r.json()["results"]}
+    assert "xiao-esp32c3" in ids  # price_tier: cheap
+    assert "esp32-s3-devkitc-1" not in ids  # price_tier: medium
+    assert "esp32-c6" in ids  # no price_tier at all -> always included
+
+
+def test_wizard_budget_medium_includes_cheap_and_medium(client):
+    r = client.post("/wizard", json={"needs": {"budget": "medium"}})
+    assert r.status_code == 200
+    ids = {rec["id"] for rec in r.json()["results"]}
+    assert "xiao-esp32c3" in ids
+    assert "esp32-s3-devkitc-1" in ids
+
+
+def test_wizard_budget_expensive_matches_no_budget(client):
+    with_budget = client.post("/wizard", json={"needs": {"budget": "expensive"}})
+    no_budget = client.post("/wizard", json={"needs": {}})
+    assert {r["id"] for r in with_budget.json()["results"]} == {r["id"] for r in no_budget.json()["results"]}
+
+
+def test_wizard_budget_invalid_value_rejected(client):
+    r = client.post("/wizard", json={"needs": {"budget": "low"}})
+    assert r.status_code == 422
 
 
 def test_wizard_empty_needs_returns_everything(client):

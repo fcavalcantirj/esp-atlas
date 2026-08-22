@@ -34,6 +34,7 @@ from esp_atlas_core.ask import ask
 
 search("zigbee", filters={"form": "xiao"})
 wizard({"protocol": "zigbee", "usb_native": True})
+wizard({"budget": "cheap"})  # spending ceiling over each board's editorial price_tier
 
 # ask() calls Groq — set GROQ_API_KEY (and optionally GROQ_MODEL) first
 ask("Does the ESP32-C6 support Zigbee?")

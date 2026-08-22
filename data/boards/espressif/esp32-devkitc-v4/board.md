@@ -5,6 +5,7 @@ brand: espressif
 name: ESP32-DevKitC V4
 module: esp32-wroom-32e
 form_factor: devkit
+price_tier: cheap
 usb:
   connector: micro-usb
 power:

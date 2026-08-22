@@ -94,3 +94,15 @@ def test_search_is_deterministic(built_db_path):
     r1 = search("wifi", filters={}, db_path=built_db_path)
     r2 = search("wifi", filters={}, db_path=built_db_path)
     assert [r["id"] for r in r1] == [r["id"] for r in r2]
+
+
+def test_search_includes_price_tier_when_set(built_db_path):
+    results = search("", filters={"form": "xiao"}, db_path=built_db_path)
+    ids = {r["id"]: r for r in results}
+    assert ids["xiao-esp32c3"]["price_tier"] == "cheap"
+
+
+def test_search_price_tier_is_none_when_unset(built_db_path):
+    results = search("", filters={"type": "soc"}, db_path=built_db_path)
+    for r in results:
+        assert r["price_tier"] is None

@@ -90,6 +90,7 @@ def _row_to_record(row):
         "ieee802154": None if row["ieee802154"] is None else bool(row["ieee802154"]),
         "ieee802154_protocols": row["ieee802154_protocols"],
         "form_factor": row["form_factor"],
+        "price_tier": row["price_tier"],
         "soc_ref": row["soc_ref"],
         "module_ref": row["module_ref"],
         "usb_native": None if row["usb_native"] is None else bool(row["usb_native"]),

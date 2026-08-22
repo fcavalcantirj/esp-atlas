@@ -129,7 +129,7 @@ def test_wizard_command_all_flags(built_db_path):
     result = run(
         [
             "wizard", "--protocol", "zigbee", "--radio", "wifi-6", "--band", "2.4",
-            "--usb-native", "--form", "xiao", "--type", "board", "--budget", "low", "--no-guided",
+            "--usb-native", "--form", "xiao", "--type", "board", "--budget", "cheap", "--no-guided",
         ],
         built_db_path,
     )
@@ -145,7 +145,7 @@ def test_wizard_command_no_matches(built_db_path):
 
 
 def test_wizard_command_guided_all_answers(built_db_path):
-    result = run(["wizard"], built_db_path, input="zigbee\nwifi-6\ny\nxiao\nlow\n")
+    result = run(["wizard"], built_db_path, input="zigbee\nwifi-6\ny\nxiao\ncheap\n")
     assert result.exit_code == 0, result.output
 
 

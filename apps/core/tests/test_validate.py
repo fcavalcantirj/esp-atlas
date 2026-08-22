@@ -45,6 +45,28 @@ def test_validate_frontmatter_bad_enum_fails(soc_fm):
     assert result["errors"]
 
 
+def test_validate_frontmatter_board_price_tier_valid_enum_passes(board_fm):
+    fm = copy.deepcopy(board_fm)
+    fm["price_tier"] = "cheap"
+    result = validate_frontmatter(fm, "board")
+    assert result == {"ok": True, "errors": []}
+
+
+def test_validate_frontmatter_board_price_tier_bad_enum_fails(board_fm):
+    fm = copy.deepcopy(board_fm)
+    fm["price_tier"] = "priceless"
+    result = validate_frontmatter(fm, "board")
+    assert result["ok"] is False
+    assert result["errors"]
+
+
+def test_validate_frontmatter_board_price_tier_is_optional(board_fm):
+    fm = copy.deepcopy(board_fm)
+    fm.pop("price_tier", None)
+    result = validate_frontmatter(fm, "board")
+    assert result == {"ok": True, "errors": []}
+
+
 def test_validate_frontmatter_board_unknown_module_ref_fails(board_fm):
     fm = copy.deepcopy(board_fm)
     fm["module"] = "does-not-exist-anywhere"

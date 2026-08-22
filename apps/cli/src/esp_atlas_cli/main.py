@@ -83,7 +83,12 @@ def _print_records(results):
 @click.option("--usb-native", "usb_native", is_flag=True, default=False, help="Require native USB")
 @click.option("--form", default=None, help="Form factor, e.g. xiao")
 @click.option("--type", "type_", default=None, type=click.Choice(["soc", "module", "board"]))
-@click.option("--budget", default=None, help="low/medium/high (not price-modeled yet, see reasons)")
+@click.option(
+    "--budget",
+    default=None,
+    type=click.Choice(["cheap", "medium", "expensive"]),
+    help="spending ceiling against each board's editorial price_tier",
+)
 @click.option("--guided/--no-guided", default=None, help="Force (or skip) interactive prompts")
 @click.pass_context
 def wizard(ctx, protocol, radio, band, usb_native, form, type_, budget, guided):
@@ -128,7 +133,12 @@ def _prompt_needs():
     form = click.prompt("Form factor (e.g. xiao, devkit, blank to skip)", default="", show_default=False)
     if form:
         needs["form"] = form
-    budget = click.prompt("Budget (low/medium/high, blank to skip)", default="", show_default=False)
+    budget = click.prompt(
+        "Budget (cheap/medium/expensive, blank to skip)",
+        default="",
+        show_default=False,
+        type=click.Choice(["", "cheap", "medium", "expensive"]),
+    )
     if budget:
         needs["budget"] = budget
     return needs

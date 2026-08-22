@@ -19,6 +19,10 @@
     "module": { "type": "string", "description": "id of the module it uses (must exist in data/modules/)" },
     "soc": { "type": "string", "description": "id of the SoC, when the board uses a bare chip (must exist in data/socs/)" },
     "form_factor": { "type": "string" },
+    "price_tier": {
+      "enum": ["cheap", "medium", "expensive"],
+      "description": "APPROXIMATE, EDITORIAL street-price bucket — NOT a datasheet-verified spec, exempt from the sources rule. Optional; omit rather than guess. Used only by the wizard's budget filter, never rendered alongside hard specs."
+    },
     "dimensions_mm": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 3 },
     "usb": {
       "type": "object", "additionalProperties": false,

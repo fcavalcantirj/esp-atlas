@@ -19,7 +19,7 @@ def test_build_index_creates_structured_and_fts_tables(tmp_path):
     required = {
         "id", "type", "vendor_or_brand", "name", "wifi_standard", "wifi_bands",
         "ble_version", "bt_classic", "ieee802154", "ieee802154_protocols",
-        "form_factor", "soc_ref", "module_ref",
+        "form_factor", "price_tier", "soc_ref", "module_ref",
     }
     assert required.issubset(cols)
 
@@ -104,6 +104,24 @@ def test_build_index_resolves_board_radios_via_direct_soc(tmp_path):
     assert row["module_ref"] is None
     assert row["wifi_standard"] == "wifi-4"
     assert bool(row["ieee802154"]) is False
+
+
+def test_build_index_resolves_board_price_tier_when_set(tmp_path):
+    db_path = tmp_path / "esp-atlas.db"
+    build_index(db_path=db_path)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    row = conn.execute("SELECT * FROM parts WHERE id = 'xiao-esp32c3'").fetchone()
+    assert row["price_tier"] == "cheap"
+
+
+def test_build_index_price_tier_is_null_when_unset(tmp_path):
+    db_path = tmp_path / "esp-atlas.db"
+    build_index(db_path=db_path)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    row = conn.execute("SELECT * FROM parts WHERE id = 'esp32-c6'").fetchone()
+    assert row["price_tier"] is None
 
 
 def test_build_index_fts_table_has_prose_and_notes(tmp_path):

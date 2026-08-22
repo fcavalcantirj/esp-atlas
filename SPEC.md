@@ -29,6 +29,12 @@ Three inherited layers so specs are declared once:
 Frontmatter = queryable YAML (validated by `schema/`); prose = human context. Every
 hard spec carries a `sources:` entry. Fields not verified are omitted, never guessed.
 
+**Exception — `price_tier`:** boards may optionally carry `price_tier:
+cheap|medium|expensive`, an **approximate, editorial** street-price bucket,
+set by hand and never cited to a `sources:` entry. It powers the wizard's
+`budget` filter only — it is not a spec, never presented as one, and always
+visibly separate from the verified fields above it.
+
 ## Interface (three views, one backend)
 1. **Wizard** — "what are you building?" → band/protocol/power/form-factor/budget →
    filter structured data → ranked boards, each with the reason it won.
