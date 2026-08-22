@@ -54,6 +54,52 @@ a {
   padding: 2rem 1.25rem 4rem;
 }
 
+.site-header {
+  border-bottom: 1px solid #444;
+}
+
+.site-header-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0.9rem 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.site-logo {
+  font-weight: bold;
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.contribute-link {
+  border: 1px solid #888;
+  border-radius: 4px;
+  padding: 0.3rem 0.6rem;
+}
+
+.site-footer {
+  margin-top: auto;
+  border-top: 1px solid #444;
+}
+
+.site-footer-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
 h1 {
   font-size: 1.75rem;
   margin-bottom: 0.5rem;
@@ -148,6 +194,11 @@ button {
 
 .error {
   color: #c0392b;
+}
+
+.part-github-links {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
 }
 
 .spec-table {

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getPart, type PartRecord } from "@/lib/api";
+import { editSourceUrl, viewSourceUrl } from "@/lib/github";
 
 const SPEC_ROWS: Array<[string, keyof PartRecord]> = [
   ["Type", "type"],
@@ -66,6 +67,15 @@ function PartDetail({ id }: { id: string }) {
           <h1>
             {part.name} <span className="part-type">[{part.type}]</span>
           </h1>
+          <p className="part-github-links">
+            <a href={editSourceUrl(part._path)} target="_blank" rel="noreferrer">
+              Edit on GitHub
+            </a>{" "}
+            ·{" "}
+            <a href={viewSourceUrl(part._path)} target="_blank" rel="noreferrer">
+              View source
+            </a>
+          </p>
           <table className="spec-table">
             <tbody>
               {SPEC_ROWS.map(([label, key]) => (
