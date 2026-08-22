@@ -11,6 +11,16 @@ open data, git-versioned, source-cited, and machine-queryable. Contributions —
 human or agent — follow search-before-add, copy-template, fill-with-citations,
 self-validate, then PR.
 
+## Site
+
+- [esp-atlas.com](https://esp-atlas.com): the live site — wizard and search on `/`,
+  one page per part at `/parts/<id>` (SoCs, modules, boards), side-by-side `/compare`.
+- [API](https://esp-atlas.com/api/docs): `GET /api/parts`, `GET /api/parts/{id}`,
+  `GET /api/search?q=&soc=&type=`, `GET /api/facets`, `POST /api/wizard` — the same
+  records as JSON, every spec with its source.
+- [sitemap.xml](https://esp-atlas.com/sitemap.xml): every part page, with the date
+  its sources were last verified.
+
 ## Docs
 
 - [README.md](README.md): project overview, data layout, status.

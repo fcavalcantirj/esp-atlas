@@ -7,12 +7,12 @@ import {
   discussionsUrl,
   issuesUrl,
   licenseUrl,
-  llmsTxtUrl,
   repoUrl,
 } from "@/lib/github";
 import { SITE_NAME } from "@/lib/site";
 
 const API_DOCS_PATH = "/api/docs";
+const LLMS_TXT_PATH = "/llms.txt";
 
 export default function SiteFooter() {
   return (
@@ -81,7 +81,7 @@ export default function SiteFooter() {
                 </TrackedLink>
               </li>
               <li>
-                <TrackedLink href={llmsTxtUrl()} linkType="llms_txt">
+                <TrackedLink href={LLMS_TXT_PATH} linkType="llms_txt">
                   llms.txt
                 </TrackedLink>
               </li>
