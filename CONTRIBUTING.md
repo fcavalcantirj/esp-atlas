@@ -2,6 +2,10 @@
 
 Thank you — a wrong number fixed or a board added makes this useful for everyone.
 
+> **AI coding agent?** Read [AGENTS.md](AGENTS.md) instead (or in addition) — it
+> covers the same rules with the search/copy-template/fill/validate/PR workflow
+> spelled out for automated contributors.
+
 ## The one hard rule
 
 **Cite an official source for every spec, or leave it out.** No guessing. If you
@@ -12,18 +16,29 @@ data trustworthy.
 ## What to contribute
 
 - **Fix a spec** — found a wrong value? Correct it and update/point to the source.
-- **Add a board** — `data/boards/<brand>/<board-id>/board.md` (module/board schema coming; open an issue if it's not there yet and you want to add boards now).
-- **Add a module** — `data/modules/<module-id>/module.md`.
+- **Add a board** — `data/boards/<brand>/<board-id>/board.md`, start from
+  [`templates/board.template.md`](templates/board.template.md).
+- **Add a module** — `data/modules/<module-id>/module.md`, start from
+  [`templates/module.template.md`](templates/module.template.md).
+- **Add a SoC** — `data/socs/<soc-id>/chip.md`, start from
+  [`templates/soc.template.md`](templates/soc.template.md).
 - **Improve prose** — the human-readable section below the frontmatter.
+
+Before adding anything new, search the dataset to avoid a duplicate:
+```bash
+esp-atlas search "<name>"      # or: GET /search?q=<name>
+```
 
 ## How
 
 1. Fork, branch.
-2. Edit or add the markdown file. Keep frontmatter conformant to `schema/`.
-3. Run the gate locally:
+2. Copy the matching file from `templates/` and fill it in, or edit an existing
+   record. Keep frontmatter conformant to `schema/`.
+3. Self-check the file(s) you touched, then the full gate:
    ```bash
    pip install jsonschema pyyaml
-   python3 scripts/validate.py
+   esp-atlas validate data/<path>/<file>.md   # or: POST /validate
+   python3 scripts/validate.py                # same checks CI runs, whole dataset
    ```
 4. Open a PR and fill in the template — including your source links.
 

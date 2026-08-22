@@ -1,0 +1,47 @@
+# esp-atlas
+
+> A community-maintained, datasheet-verified knowledge base for the entire ESP32
+> family (SoCs, modules, dev boards) stored as plain markdown with YAML frontmatter.
+> Every hard spec cites an official source — if it isn't verified, it isn't stated.
+> Data is queryable via a search/wizard/ask layer built on the same repo.
+
+esp-atlas exists because most ESP32 guides are one person's blog, frozen at publish
+date, with unverified specs and no way to query them. This repo is the opposite:
+open data, git-versioned, source-cited, and machine-queryable. Contributions —
+human or agent — follow search-before-add, copy-template, fill-with-citations,
+self-validate, then PR.
+
+## Docs
+
+- [README.md](README.md): project overview, data layout, status.
+- [AGENTS.md](AGENTS.md): contributor guide for AI coding agents — data model, hard
+  rules, required workflow.
+- [CONTRIBUTING.md](CONTRIBUTING.md): human contribution guide (same rules as AGENTS.md).
+- [SPEC.md](SPEC.md): project vision, data model, interface layers, phasing.
+- [ARCHITECTURE.md](ARCHITECTURE.md): retrieval design — repo-as-database, index build,
+  grounded chat layer.
+- [INTERFACE-SPEC.md](INTERFACE-SPEC.md): API/CLI/site contracts and milestones.
+
+## Data
+
+- [schema/](schema/): JSON Schema contracts (`soc.schema.json`, `module.schema.json`,
+  `board.schema.json`) — the authoritative field list for every record.
+- [data/](data/): the dataset itself — `socs/`, `modules/`, `boards/`, `brands/`,
+  `companions/`, one markdown file per part, YAML frontmatter + prose.
+- [templates/](templates/): blank soc/module/board templates to copy when adding a
+  new record — every field commented with what it is and its source requirement.
+
+## Tools
+
+- `esp-atlas search "<query>"` (CLI) / `GET /search?q=` (API): search the dataset
+  before adding a record, to avoid duplicates.
+- `esp-atlas validate <file>` (CLI) / `POST /validate` (API): validate a record's
+  frontmatter against schema + source-or-omit + inheritance rules before opening a PR.
+- `python3 scripts/validate.py`: the same validation, run over the whole dataset —
+  the CI gate.
+
+## Optional
+
+- [skills/esp-atlas/SKILL.md](skills/esp-atlas/SKILL.md): the contributor workflow as
+  a portable skill doc for agent frameworks.
+- [LICENSE](LICENSE): code is MIT; data (`data/`, `schema/`) is CC-BY-SA 4.0.
