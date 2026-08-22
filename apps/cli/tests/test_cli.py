@@ -1,7 +1,12 @@
 from click.testing import CliRunner
 
+from esp_atlas_core.paths import REPO_ROOT
+
 from esp_atlas_cli.main import cli
 import esp_atlas_cli.main as main_module
+
+SOC_PATH = REPO_ROOT / "data" / "socs" / "esp32-c6" / "chip.md"
+BOARD_PATH = REPO_ROOT / "data" / "boards" / "espressif" / "esp32-c6-devkitc-1" / "board.md"
 
 
 def run(args, db_path, input=None):
@@ -142,6 +147,53 @@ def test_wizard_command_no_matches(built_db_path):
 def test_wizard_command_guided_all_answers(built_db_path):
     result = run(["wizard"], built_db_path, input="zigbee\nwifi-6\ny\nxiao\nlow\n")
     assert result.exit_code == 0, result.output
+
+
+def test_validate_command_valid_file_passes(built_db_path):
+    result = run(["validate", str(SOC_PATH)], built_db_path)
+    assert result.exit_code == 0, result.output
+    assert "PASS" in result.output
+    assert "1/1 valid, 0 error(s)" in result.output
+
+
+def test_validate_command_invalid_file_fails(built_db_path, tmp_path):
+    bad_dir = tmp_path / "socs" / "esp32-c6"
+    bad_dir.mkdir(parents=True)
+    text = SOC_PATH.read_text(encoding="utf-8")
+    bad_text = text.replace("sources:", "not_sources:")
+    bad_path = bad_dir / "chip.md"
+    bad_path.write_text(bad_text, encoding="utf-8")
+
+    result = run(["validate", str(bad_path)], built_db_path)
+    assert result.exit_code != 0
+    assert "FAIL" in result.output
+    assert "0/1 valid, 1 error(s)" in result.output
+
+
+def test_validate_command_stdin_reads_full_document(built_db_path):
+    text = BOARD_PATH.read_text(encoding="utf-8")
+    result = run(["validate", "-"], built_db_path, input=text)
+    assert result.exit_code == 0, result.output
+    assert "PASS  <stdin>" in result.output
+
+
+def test_validate_command_multiple_paths_reports_each(built_db_path, tmp_path):
+    bad_dir = tmp_path / "socs" / "esp32-c6"
+    bad_dir.mkdir(parents=True)
+    bad_text = SOC_PATH.read_text(encoding="utf-8").replace("sources:", "not_sources:")
+    bad_path = bad_dir / "chip.md"
+    bad_path.write_text(bad_text, encoding="utf-8")
+
+    result = run(["validate", str(SOC_PATH), str(bad_path)], built_db_path)
+    assert result.exit_code != 0
+    assert "1/2 valid, 1 error(s)" in result.output
+
+
+def test_validate_command_missing_file_reports_error_not_crash(built_db_path, tmp_path):
+    missing = tmp_path / "does-not-exist.md"
+    result = run(["validate", str(missing)], built_db_path)
+    assert result.exit_code != 0
+    assert "FAIL" in result.output
 
 
 def test_main_entry_point_runs(built_db_path, monkeypatch):

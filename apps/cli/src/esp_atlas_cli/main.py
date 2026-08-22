@@ -5,6 +5,8 @@ from esp_atlas_core.ask import ask as core_ask
 from esp_atlas_core.index_build import build_index
 from esp_atlas_core.llm import GroqConfigError, GroqRateLimitError
 from esp_atlas_core.search import search as core_search
+from esp_atlas_core.validate import validate_file as core_validate_file
+from esp_atlas_core.validate import validate_markdown as core_validate_markdown
 from esp_atlas_core.wizard import wizard as core_wizard
 
 
@@ -162,6 +164,39 @@ def ask(ctx, question):
             click.echo(f"  - {c['part']} ({c['file']}): {c['source_url']}")
     else:
         click.echo("Sources: none")
+
+
+@cli.command()
+@click.argument("paths", nargs=-1, required=True)
+def validate(paths):
+    """Validate one or more .md records against schema/, source, id/brand, and
+    inheritance rules — the same checks CI runs. Pass `-` to read a full markdown
+    document (frontmatter + body) from stdin instead of a file path."""
+    total = failed = 0
+    for p in paths:
+        total += 1
+        if p == "-":
+            label = "<stdin>"
+            result = core_validate_markdown(click.get_text_stream("stdin").read())
+        else:
+            label = p
+            try:
+                result = core_validate_file(p)
+            except OSError as exc:
+                result = {"ok": False, "errors": [str(exc)]}
+
+        if result["ok"]:
+            click.echo(f"PASS  {label}")
+        else:
+            failed += 1
+            click.echo(f"FAIL  {label}")
+            for err in result["errors"]:
+                click.echo(f"    - {err}")
+
+    click.echo()
+    click.echo(f"{total - failed}/{total} valid, {failed} error(s)")
+    if failed:
+        raise SystemExit(1)
 
 
 def main():

@@ -31,6 +31,11 @@ esp-atlas wizard   # prompts interactively
 # grounded, cited natural-language question (calls Groq — needs GROQ_API_KEY)
 export GROQ_API_KEY=...
 esp-atlas ask "Does the ESP32-C6 support Zigbee?"
+
+# self-check a record against schema/, source-or-omit, id/brand, and inheritance
+# rules — the same checks CI runs — before opening a PR
+esp-atlas validate data/boards/acme/my-board/board.md
+cat draft-board.md | esp-atlas validate -   # read a full doc from stdin
 ```
 
 Every `esp-atlas ask` answer prints a `Sources:` section — citations are
