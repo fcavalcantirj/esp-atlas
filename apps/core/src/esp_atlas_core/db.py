@@ -26,7 +26,9 @@ CREATE TABLE IF NOT EXISTS parts (
     module_ref TEXT,
     usb_native INTEGER,
     path TEXT NOT NULL,
-    sources_json TEXT NOT NULL
+    sources_json TEXT NOT NULL,
+    frontmatter_json TEXT NOT NULL DEFAULT '{}',
+    body TEXT NOT NULL DEFAULT ''
 );
 
 CREATE INDEX IF NOT EXISTS idx_parts_type ON parts(type);
@@ -66,8 +68,24 @@ def connect(db_path=None):
     return conn
 
 
+# Columns added after the first release. CREATE TABLE IF NOT EXISTS never alters an
+# existing table, so a db built by an older version is migrated in place here.
+_ADDED_COLUMNS = {
+    "frontmatter_json": "TEXT NOT NULL DEFAULT '{}'",
+    "body": "TEXT NOT NULL DEFAULT ''",
+}
+
+
+def _ensure_columns(conn):
+    existing = {row["name"] for row in conn.execute("PRAGMA table_info(parts)")}
+    for name, decl in _ADDED_COLUMNS.items():
+        if name not in existing:
+            conn.execute(f"ALTER TABLE parts ADD COLUMN {name} {decl}")
+
+
 def create_schema(conn):
     conn.executescript(SCHEMA)
+    _ensure_columns(conn)
     conn.commit()
 
 

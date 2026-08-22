@@ -28,11 +28,15 @@ or via the CLI: `esp-atlas build-index` (see `apps/cli/README.md`).
 ## Use
 
 ```python
-from esp_atlas_core.search import search
+from esp_atlas_core.facets import facets
+from esp_atlas_core.search import get_part, search
 from esp_atlas_core.wizard import wizard
 from esp_atlas_core.ask import ask
 
 search("zigbee", filters={"form": "xiao"})
+search("", filters={"soc": "esp32-c6", "type": "board"})  # boards built on one SoC
+get_part("xiao-esp32c6")  # record + frontmatter + body + chain + related
+facets()                  # {"form_factor": [{"value": "devkit", "count": 19}, ...], ...}
 wizard({"protocol": "zigbee", "usb_native": True})
 wizard({"budget": "cheap"})  # spending ceiling over each board's editorial price_tier
 
@@ -67,9 +71,13 @@ No test calls the real Groq API — `ask()` tests inject a fake LLM client, and
   for a single soc/module/board record; the shared implementation behind
   `scripts/validate.py` (CI), `esp-atlas validate` (CLI), and `POST /validate` (API)
 - `index_build.py` — resolves soc/module/board radio+USB inheritance into
-  `esp-atlas.db` (`parts` structured table + `parts_fts` FTS5 table)
+  `esp-atlas.db` (`parts` structured table, incl. each record's full frontmatter
+  JSON and prose body, + `parts_fts` FTS5 table); older db files are migrated in
+  place (missing columns are added) on the next build
 - `db.py` — schema DDL + connection helpers
-- `search.py` — structured `WHERE` + FTS5 `MATCH`, no LLM
+- `search.py` — structured `WHERE` + FTS5 `MATCH`, no LLM; `get_part(id)` returns one
+  record with its frontmatter, prose body, inheritance chain and related parts
+- `facets.py` — distinct values + counts per filterable column (data-driven dropdowns)
 - `wizard.py` — deterministic needs -> scored, ranked parts, no LLM
 - `llm.py` — injectable Groq chat-completions client (429 backoff, rate-limit
   headers, lazy key resolution)

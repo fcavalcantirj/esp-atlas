@@ -138,3 +138,44 @@ def test_build_index_is_deterministic_build_id():
     id1 = build_index(db_path=":memory:")
     id2 = build_index(db_path=":memory:")
     assert id1 == id2
+
+
+def test_build_index_stores_frontmatter_json_and_body(tmp_path):
+    import json
+
+    db_path = tmp_path / "esp-atlas.db"
+    build_index(db_path=db_path)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    row = conn.execute("SELECT * FROM parts WHERE id = 'xiao-esp32c6'").fetchone()
+    fm = json.loads(row["frontmatter_json"])
+    assert fm["dimensions_mm"] == [21, 17.8]
+    assert fm["usb"]["connector"] == "usb-c"
+    assert row["body"].startswith("# Seeed Studio XIAO ESP32C6")
+
+
+def test_create_schema_adds_missing_columns_to_an_older_db(tmp_path):
+    """A db built before frontmatter_json/body existed must be migrated in place,
+    not fail on INSERT — CREATE TABLE IF NOT EXISTS alone never alters a table."""
+    db_path = tmp_path / "old.db"
+    conn = sqlite3.connect(db_path)
+    conn.execute(
+        """
+        CREATE TABLE parts (
+            id TEXT PRIMARY KEY, type TEXT NOT NULL, vendor_or_brand TEXT NOT NULL,
+            name TEXT NOT NULL, wifi_standard TEXT, wifi_bands TEXT, ble_version TEXT,
+            bt_classic INTEGER, ieee802154 INTEGER, ieee802154_protocols TEXT,
+            form_factor TEXT, price_tier TEXT, soc_ref TEXT, module_ref TEXT,
+            usb_native INTEGER, path TEXT NOT NULL, sources_json TEXT NOT NULL
+        )
+        """
+    )
+    conn.commit()
+    conn.close()
+
+    build_index(db_path=db_path)
+
+    conn = sqlite3.connect(db_path)
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(parts)")}
+    assert {"frontmatter_json", "body"}.issubset(cols)
+    assert conn.execute("SELECT COUNT(*) FROM parts WHERE body != ''").fetchone()[0] > 0

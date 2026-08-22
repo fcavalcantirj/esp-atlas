@@ -11,16 +11,19 @@ from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from esp_atlas_core import db as dbmod
+from esp_atlas_core.facets import facets as core_facets
 from esp_atlas_core.index_build import build_index
+from esp_atlas_core.search import get_part as core_get_part
 from esp_atlas_core.search import search as core_search
 from esp_atlas_core.validate import validate_frontmatter as core_validate_frontmatter
 from esp_atlas_core.validate import validate_markdown as core_validate_markdown
 from esp_atlas_core.wizard import wizard as core_wizard
 
 from esp_atlas_api.models import (
+    FacetsResponse,
     HealthResponse,
+    PartDetail,
     PartType,
-    Record,
     SearchResponse,
     ValidateRequest,
     ValidateResponse,
@@ -76,6 +79,8 @@ def create_app(db_path=None):
         ble: Optional[bool] = None,
         bt_classic: Optional[bool] = None,
         usb_native: Optional[bool] = None,
+        soc: Optional[str] = None,
+        module: Optional[str] = None,
         db_path=Depends(get_db_path),
     ):
         filters = {}
@@ -87,6 +92,10 @@ def create_app(db_path=None):
             filters["band"] = band
         if form is not None:
             filters["form"] = form
+        if soc is not None:
+            filters["soc"] = soc
+        if module is not None:
+            filters["module"] = module
         if protocol is not None:
             filters["protocol"] = protocol
         if ieee802154 is not None:
@@ -132,13 +141,16 @@ def create_app(db_path=None):
         results = core_search("", filters={}, db_path=db_path, limit=_ALL_PARTS_LIMIT)
         return SearchResponse(results=results)
 
-    @app.get("/parts/{part_id}", response_model=Record)
+    @app.get("/parts/{part_id}", response_model=PartDetail)
     def get_part(part_id: str, db_path=Depends(get_db_path)):
-        results = core_search("", filters={}, db_path=db_path, limit=_ALL_PARTS_LIMIT)
-        for record in results:
-            if record["id"] == part_id:
-                return record
-        raise HTTPException(status_code=404, detail=f"part not found: {part_id}")
+        record = core_get_part(part_id, db_path=db_path)
+        if record is None:
+            raise HTTPException(status_code=404, detail=f"part not found: {part_id}")
+        return record
+
+    @app.get("/facets", response_model=FacetsResponse)
+    def facets(db_path=Depends(get_db_path)):
+        return FacetsResponse(**core_facets(db_path=db_path))
 
     return app
 
