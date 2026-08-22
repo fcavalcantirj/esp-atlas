@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { runWizard, type WizardNeeds, type WizardRecord } from "@/lib/api";
 import PartResultCard from "@/components/PartResultCard";
+import HelpTip from "@/components/HelpTip";
 
 const PROTOCOLS = ["", "zigbee", "thread", "matter"];
 const RADIOS = ["", "wifi-4", "wifi-6"];
@@ -54,7 +55,10 @@ export default function WizardForm() {
       <p>What are you building? Answer what matters, skip the rest.</p>
       <form onSubmit={handleSubmit} className="wizard-form">
         <label>
-          802.15.4 protocol
+          <span className="label-row">
+            802.15.4 protocol
+            <HelpTip text="Low-power mesh radio for smart-home devices (Zigbee, Thread, Matter). Only ESP32-C6 and H2 have this radio." />
+          </span>
           <select value={protocol} onChange={(e) => setProtocol(e.target.value)}>
             {PROTOCOLS.map((p) => (
               <option key={p} value={p}>
@@ -64,7 +68,10 @@ export default function WizardForm() {
           </select>
         </label>
         <label>
-          Wi-Fi standard
+          <span className="label-row">
+            Wi-Fi standard
+            <HelpTip text="wifi-4 (802.11n) is on every ESP32. wifi-6 (802.11ax) is newer — better in crowded networks, lower power — only on ESP32-C5/C6." />
+          </span>
           <select value={radio} onChange={(e) => setRadio(e.target.value)}>
             {RADIOS.map((r) => (
               <option key={r} value={r}>
@@ -74,7 +81,10 @@ export default function WizardForm() {
           </select>
         </label>
         <label>
-          Wi-Fi band (GHz)
+          <span className="label-row">
+            Wi-Fi band (GHz)
+            <HelpTip text="2.4 GHz reaches farther and every chip has it. 5 GHz is faster and less crowded but only the newest chips (ESP32-C5) support it." />
+          </span>
           <select value={band} onChange={(e) => setBand(e.target.value)}>
             {BANDS.map((b) => (
               <option key={b} value={b}>
@@ -84,7 +94,10 @@ export default function WizardForm() {
           </select>
         </label>
         <label>
-          Form factor
+          <span className="label-row">
+            Form factor
+            <HelpTip text="The board’s physical shape and pinout family. xiao = thumbnail-size, feather = Adafruit ecosystem, devkit = the chip maker’s reference board, m5-core = M5Stack modular." />
+          </span>
           <select value={form} onChange={(e) => setForm(e.target.value)}>
             {FORM_FACTORS.map((f) => (
               <option key={f} value={f}>
@@ -94,7 +107,10 @@ export default function WizardForm() {
           </select>
         </label>
         <label>
-          Type
+          <span className="label-row">
+            Type
+            <HelpTip text="soc = the bare chip. module = chip + antenna + shielding (e.g. a WROOM). board = a ready-to-use dev board with USB and a power regulator." />
+          </span>
           <select value={type} onChange={(e) => setType(e.target.value)}>
             {FORM_TYPES.map((t) => (
               <option key={t} value={t}>
@@ -106,9 +122,13 @@ export default function WizardForm() {
         <label className="checkbox-label">
           <input type="checkbox" checked={usbNative} onChange={(e) => setUsbNative(e.target.checked)} />
           Native USB required
+          <HelpTip text="Tick this if your project needs the board to ACT AS a USB device — a keyboard, mouse, or flash drive — or to be flashed without a separate USB-to-serial bridge chip. The classic ESP32 has no built-in USB; the S2, S3, C3, C6 and H2 do." />
         </label>
         <label>
-          Budget
+          <span className="label-row">
+            Budget
+            <HelpTip text="Approximate street-price tier — an editorial estimate, not a datasheet spec. cheap ≈ under $15, medium ≈ $15–50, expensive ≈ $50+. Filters as a spending ceiling." />
+          </span>
           <select value={budget} onChange={(e) => setBudget(e.target.value)}>
             {BUDGETS.map((b) => (
               <option key={b} value={b}>
