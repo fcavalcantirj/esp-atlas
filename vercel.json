@@ -1,34 +1,11 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "apps/web/package.json",
-      "use": "@vercel/next"
-    },
-    {
-      "src": "api/index.py",
-      "use": "@vercel/python",
-      "config": {
-        "includeFiles": [
-          "data/**",
-          "schema/**",
-          "apps/core/src/**",
-          "apps/api/src/**"
-        ]
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "api/index.py"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
-  "env": {
-    "ESP_ATLAS_REPO_ROOT": "/var/task"
-  }
+  "buildCommand": "npm --prefix apps/web install && npm --prefix apps/web run build",
+  "outputDirectory": "apps/web/.next",
+  "framework": "nextjs",
+  "functions": {
+    "api/index.py": { "includeFiles": "{data,schema,apps}/**" }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index" }
+  ]
 }
