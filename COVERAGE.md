@@ -16,7 +16,7 @@ below is a board the author is genuinely confident exists. Where the exact
 product-page URL wasn't known at write time, it's marked
 `(url: to-verify)` rather than fabricated. No model numbers are invented.
 
-**Progress: 25 boards done (out of an estimated 90+ known ESP32-family
+**Progress: 34 boards done (out of an estimated 90+ known ESP32-family
 boards across these vendors — the total will firm up as each vendor
 section gets a real audit).**
 
@@ -60,18 +60,22 @@ Official site: https://www.seeedstudio.com/
 Official site: https://www.adafruit.com/
 
 - [x] Adafruit ESP32-S3 Feather (4MB Flash 2MB PSRAM) — https://www.adafruit.com/product/5477
-- [ ] Adafruit HUZZAH32 – ESP32 Feather Board — https://www.adafruit.com/product/3405
-- [ ] Adafruit HUZZAH32 Breakout Board / ESP32 Feather — (url: to-verify)
-- [ ] Adafruit QT Py ESP32-S3 — https://www.adafruit.com/product/5426
-- [ ] Adafruit QT Py ESP32-S2 — https://www.adafruit.com/product/5325
-- [ ] Adafruit QT Py ESP32-C3 — https://www.adafruit.com/product/5405
+- [x] Adafruit HUZZAH32 – ESP32 Feather Board — https://www.adafruit.com/product/3591
+- [ ] Adafruit HUZZAH32 Breakout Board / ESP32 Feather — (url: to-verify; distinct
+  bare-breakout SKU from the pre-soldered Feather board above, not yet confirmed)
+- [x] Adafruit QT Py ESP32-S3 — https://www.adafruit.com/product/5426
+- [x] Adafruit QT Py ESP32-S2 — https://www.adafruit.com/product/5325
+- [x] Adafruit QT Py ESP32-C3 — https://www.adafruit.com/product/5405
 - [ ] Adafruit MagTag (ESP32-S2) — https://www.adafruit.com/product/4800
 - [ ] Adafruit Metro ESP32-S2 — https://www.adafruit.com/product/4775
-- [ ] Adafruit Feather ESP32-S2 — https://www.adafruit.com/product/5000
+- [x] Adafruit Feather ESP32-S2 — https://www.adafruit.com/product/5000
 - [ ] Adafruit Feather ESP32-S2 TFT — https://www.adafruit.com/product/5300
 - [ ] Adafruit Feather ESP32-S3 TFT — https://www.adafruit.com/product/5483
-- [ ] Adafruit Feather ESP32-S3 Reverse TFT — https://www.adafruit.com/product/5691
-- [ ] Adafruit ESP32 Feather V2 — https://www.adafruit.com/product/5400
+- [x] Adafruit Feather ESP32-S3 Reverse TFT — https://www.adafruit.com/product/5691
+- [x] Adafruit ESP32 Feather V2 — https://www.adafruit.com/product/5400
+- [x] Adafruit Metro ESP32-S3 — https://www.adafruit.com/product/5500
+- [x] Adafruit MatrixPortal S3 — https://www.adafruit.com/product/5778
+- [x] Adafruit ItsyBitsy ESP32 - PCB Antenna — https://www.adafruit.com/product/5889
 
 ## SparkFun
 
