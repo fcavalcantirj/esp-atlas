@@ -1,9 +1,15 @@
 # build artifacts — index.json is generated from data/ by CI, never hand-edited
 index.json
 
+# esp-atlas.db — SQLite FTS5 index built by esp_atlas_core.index_build, never hand-edited
+esp-atlas.db
+
 # python
 __pycache__/
 *.pyc
+*.egg-info/
+.pytest_cache/
+.coverage
 
 # node / site (added in v1)
 node_modules/
