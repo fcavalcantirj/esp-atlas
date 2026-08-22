@@ -30,6 +30,10 @@ missing, it's built automatically from `data/**/*.md` via
   usb_native?, ieee802154?, form?, type?, budget?}}` -> `{results: [record + score + reasons...]}`
 - `GET /parts` -> `{results: [record...]}` (every soc/module/board)
 - `GET /parts/{id}` -> a single record, or 404
+- `POST /validate` body `{markdown: "<full md w/ frontmatter>"}` or
+  `{kind: "soc"|"module"|"board", frontmatter: {...}}` -> `{ok, errors: [string...], kind}` —
+  self-check a proposed record (schema, source-or-omit, inheritance refs) before opening a PR.
+  No auth.
 
 CORS is open (`allow_origins=["*"]`) so the Next.js dev server can call it
 directly; tighten this before any public deploy (out of scope for M1).

@@ -13,6 +13,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from esp_atlas_core import db as dbmod
 from esp_atlas_core.index_build import build_index
 from esp_atlas_core.search import search as core_search
+from esp_atlas_core.validate import validate_frontmatter as core_validate_frontmatter
+from esp_atlas_core.validate import validate_markdown as core_validate_markdown
 from esp_atlas_core.wizard import wizard as core_wizard
 
 from esp_atlas_api.models import (
@@ -20,6 +22,8 @@ from esp_atlas_api.models import (
     PartType,
     Record,
     SearchResponse,
+    ValidateRequest,
+    ValidateResponse,
     WizardRequest,
     WizardResponse,
 )
@@ -108,6 +112,20 @@ def create_app(db_path=None):
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return WizardResponse(results=results)
+
+    @app.post("/validate", response_model=ValidateResponse)
+    def validate(body: ValidateRequest):
+        if body.markdown is not None:
+            result = core_validate_markdown(body.markdown)
+        elif body.kind is not None and body.frontmatter is not None:
+            fm_result = core_validate_frontmatter(body.frontmatter, body.kind)
+            result = {**fm_result, "kind": body.kind}
+        else:
+            raise HTTPException(
+                status_code=422,
+                detail="provide either 'markdown' or both 'kind' and 'frontmatter'",
+            )
+        return ValidateResponse(**result)
 
     @app.get("/parts", response_model=SearchResponse)
     def list_parts(db_path=Depends(get_db_path)):

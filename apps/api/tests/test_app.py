@@ -1,8 +1,13 @@
 import pytest
 from fastapi.testclient import TestClient
 
+from esp_atlas_core.paths import REPO_ROOT
+
 import esp_atlas_api.main as main_module
 from esp_atlas_api.main import create_app
+
+SOC_PATH = REPO_ROOT / "data" / "socs" / "esp32-c6" / "chip.md"
+BOARD_PATH = REPO_ROOT / "data" / "boards" / "espressif" / "esp32-c6-devkitc-1" / "board.md"
 
 
 @pytest.fixture
@@ -166,3 +171,66 @@ def test_parts_by_id_found(client):
 def test_parts_by_id_not_found(client):
     r = client.get("/parts/does-not-exist-at-all")
     assert r.status_code == 404
+
+
+def test_validate_markdown_shape_valid_record_passes(client):
+    r = client.post("/validate", json={"markdown": SOC_PATH.read_text(encoding="utf-8")})
+    assert r.status_code == 200
+    body = r.json()
+    assert body == {"ok": True, "errors": [], "kind": "soc"}
+
+
+def test_validate_markdown_shape_missing_sources_fails(client):
+    text = SOC_PATH.read_text(encoding="utf-8").replace("sources:", "not_sources:")
+    r = client.post("/validate", json={"markdown": text})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["ok"] is False
+    assert any("sources" in e for e in body["errors"])
+    assert body["kind"] == "soc"
+
+
+def test_validate_kind_and_frontmatter_shape_valid_record_passes(client):
+    from esp_atlas_core.frontmatter import parse_frontmatter
+
+    fm, _body = parse_frontmatter(SOC_PATH)
+    r = client.post("/validate", json={"kind": "soc", "frontmatter": fm})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["ok"] is True
+    assert body["errors"] == []
+    assert body["kind"] == "soc"
+
+
+def test_validate_kind_and_frontmatter_shape_bad_enum_fails(client):
+    from esp_atlas_core.frontmatter import parse_frontmatter
+
+    fm, _body = parse_frontmatter(SOC_PATH)
+    fm["cpu"]["arch"] = "bogus-arch"
+    r = client.post("/validate", json={"kind": "soc", "frontmatter": fm})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["ok"] is False
+    assert body["errors"]
+
+
+def test_validate_board_unknown_module_ref_fails(client):
+    from esp_atlas_core.frontmatter import parse_frontmatter
+
+    fm, _body = parse_frontmatter(BOARD_PATH)
+    fm["module"] = "does-not-exist-anywhere"
+    r = client.post("/validate", json={"kind": "board", "frontmatter": fm})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["ok"] is False
+    assert any("does-not-exist-anywhere" in e for e in body["errors"])
+
+
+def test_validate_rejects_neither_shape(client):
+    r = client.post("/validate", json={})
+    assert r.status_code == 422
+
+
+def test_validate_rejects_unknown_fields(client):
+    r = client.post("/validate", json={"markdown": "x", "bogus": "y"})
+    assert r.status_code == 422

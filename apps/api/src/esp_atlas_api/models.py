@@ -72,3 +72,17 @@ class WizardNeeds(BaseModel):
 
 class WizardRequest(BaseModel):
     needs: WizardNeeds = WizardNeeds()
+
+
+class ValidateRequest(BaseModel):
+    markdown: Optional[str] = None
+    kind: Optional[PartType] = None
+    frontmatter: Optional[dict] = None
+
+    model_config = {"extra": "forbid"}
+
+
+class ValidateResponse(BaseModel):
+    ok: bool
+    errors: list[str]
+    kind: Optional[str] = None
