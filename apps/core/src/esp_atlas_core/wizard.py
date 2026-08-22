@@ -20,7 +20,7 @@ _HARD_NEEDS = {
     "ble": lambda v: ("ble", v, 1, "Bluetooth Low Energy"),
     "bt_classic": lambda v: ("bt_classic", v, 1, "Bluetooth Classic (BR/EDR)"),
     "usb_native": lambda v: ("usb_native", v, 2, "Native USB (no external UART bridge)"),
-    "ieee802154": lambda v: ("ieee802154", v, 2, "802.15.4 radio present"),
+    "ieee802154": lambda v: ("ieee802154", v, 3, "802.15.4 mesh radio (Thread/Zigbee/Matter)"),
     "form": lambda v: ("form", v, 1, f"{v} form factor"),
     "type": lambda v: ("type", v, 0, None),
 }

@@ -23,6 +23,28 @@ def test_wizard_usb_native_need(built_db_path):
         assert any("usb" in reason.lower() for reason in r["reasons"])
 
 
+def test_wizard_ieee802154_need_returns_only_802_15_4_capable_parts(built_db_path):
+    results = wizard({"ieee802154": True}, db_path=built_db_path)
+    assert results
+    ids = {r["id"] for r in results}
+    assert "esp32-c6" in ids
+    assert "esp32-h2" in ids
+    assert "esp32-s2" not in ids  # no 802.15.4 at all
+    for r in results:
+        assert r["ieee802154"] is True
+        assert r["score"] > 0
+        assert any("802.15.4" in reason for reason in r["reasons"])
+
+
+def test_wizard_ieee802154_unset_or_false_does_not_filter(built_db_path):
+    no_need = wizard({}, db_path=built_db_path)
+    unset_ids = {r["id"] for r in no_need}
+    false_need = wizard({"ieee802154": False}, db_path=built_db_path)
+    false_ids = {r["id"] for r in false_need}
+    assert unset_ids == false_ids
+    assert "esp32-s2" in unset_ids  # a non-802.15.4 part is still present
+
+
 def test_wizard_combines_multiple_hard_needs(built_db_path):
     results = wizard({"protocol": "zigbee", "usb_native": True}, db_path=built_db_path)
     assert results

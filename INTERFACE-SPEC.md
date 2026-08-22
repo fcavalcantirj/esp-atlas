@@ -47,6 +47,13 @@ query ─▶ structured filter (radio/band/protocol/form) + FTS (name/prose/note
    Guided questions (band? protocol? form factor? budget?) → ranked parts + why each won.
    `budget` (cheap/medium/expensive) is a spending ceiling against each board's
    optional, editorial `price_tier` — never a hard spec, see `SPEC.md`.
+   The site's Wizard UI asks a single plain-language `ieee802154` yes/no
+   ("smart-home mesh — Thread / Zigbee / Matter") instead of the three-way
+   `protocol` picker, since all three share the same C6/H2-only radio; `needs.
+   ieee802154=true` returns only parts with the 802.15.4 radio present (ESP32-C6/
+   H2 and boards built on them). `protocol` stays a valid `/wizard` need for
+   API/power-user callers that want to filter by the specific mesh protocol a
+   part advertises support for.
 2. **Ask** — natural language → RAG-lite → Groq → grounded, cited, temp 0,
    "not in esp-atlas yet" when unknown. Robust: retrieval + grounding + caching + rate limits.
 

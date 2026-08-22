@@ -36,8 +36,9 @@ set by hand and never cited to a `sources:` entry. It powers the wizard's
 visibly separate from the verified fields above it.
 
 ## Interface (three views, one backend)
-1. **Wizard** — "what are you building?" → band/protocol/power/form-factor/budget →
-   filter structured data → ranked boards, each with the reason it won.
+1. **Wizard** — "what are you building?" → band/protocol/smart-home mesh
+   (802.15.4: Thread/Zigbee/Matter)/power/form-factor/budget → filter structured
+   data → ranked boards, each with the reason it won.
 2. **Ask (chat)** — natural language → retrieve matching records → Groq answers,
    grounded + cited, "not in esp-atlas yet" when unknown. Temperature 0.
 3. **Compare / part pages** — auto-generated from the repo.

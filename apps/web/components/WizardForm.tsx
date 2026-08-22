@@ -5,7 +5,6 @@ import { runWizard, type WizardNeeds, type WizardRecord } from "@/lib/api";
 import PartResultCard from "@/components/PartResultCard";
 import HelpTip from "@/components/HelpTip";
 
-const PROTOCOLS = ["", "zigbee", "thread", "matter"];
 const RADIOS = ["", "wifi-4", "wifi-6"];
 const BANDS = ["", "2.4", "5"];
 const FORM_TYPES = ["", "soc", "module", "board"];
@@ -13,12 +12,12 @@ const FORM_FACTORS = ["", "devkit", "xiao", "feather", "m5-core"];
 const BUDGETS = ["", "cheap", "medium", "expensive"];
 
 export default function WizardForm() {
-  const [protocol, setProtocol] = useState("");
   const [radio, setRadio] = useState("");
   const [band, setBand] = useState("");
   const [form, setForm] = useState("");
   const [type, setType] = useState("");
   const [usbNative, setUsbNative] = useState(false);
+  const [ieee802154, setIeee802154] = useState(false);
   const [budget, setBudget] = useState("");
 
   const [results, setResults] = useState<WizardRecord[] | null>(null);
@@ -30,12 +29,12 @@ export default function WizardForm() {
     setLoading(true);
     setError(null);
     const needs: WizardNeeds = {};
-    if (protocol) needs.protocol = protocol;
     if (radio) needs.radio = radio;
     if (band) needs.band = Number(band);
     if (form) needs.form = form;
     if (type) needs.type = type as WizardNeeds["type"];
     if (usbNative) needs.usb_native = true;
+    if (ieee802154) needs.ieee802154 = true;
     if (budget) needs.budget = budget;
 
     try {
@@ -54,19 +53,6 @@ export default function WizardForm() {
       <h2>Wizard</h2>
       <p>What are you building? Answer what matters, skip the rest.</p>
       <form onSubmit={handleSubmit} className="wizard-form">
-        <label>
-          <span className="label-row">
-            802.15.4 protocol
-            <HelpTip text="Low-power mesh radio for smart-home devices (Zigbee, Thread, Matter). Only ESP32-C6 and H2 have this radio." />
-          </span>
-          <select value={protocol} onChange={(e) => setProtocol(e.target.value)}>
-            {PROTOCOLS.map((p) => (
-              <option key={p} value={p}>
-                {p || "any"}
-              </option>
-            ))}
-          </select>
-        </label>
         <label>
           <span className="label-row">
             Wi-Fi standard
@@ -123,6 +109,11 @@ export default function WizardForm() {
           <input type="checkbox" checked={usbNative} onChange={(e) => setUsbNative(e.target.checked)} />
           Native USB required
           <HelpTip text="Tick this if your project needs the board to ACT AS a USB device — a keyboard, mouse, or flash drive — or to be flashed without a separate USB-to-serial bridge chip. The classic ESP32 has no built-in USB; the S2, S3, C3, C6 and H2 do." />
+        </label>
+        <label className="checkbox-label">
+          <input type="checkbox" checked={ieee802154} onChange={(e) => setIeee802154(e.target.checked)} />
+          Smart-home mesh (Thread / Zigbee / Matter)
+          <HelpTip text="Tick this only if your device must join a low-power smart-home mesh — a Thread or Zigbee sensor, or a Matter device over Thread (the kind that pairs with Apple Home, Google Home or Alexa). That needs an ESP32-C6 or H2. If you are just using Wi-Fi or Bluetooth, leave it unchecked." />
         </label>
         <label>
           <span className="label-row">
