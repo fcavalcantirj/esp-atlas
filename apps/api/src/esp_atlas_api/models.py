@@ -1,0 +1,74 @@
+"""Pydantic response/request models for the esp-atlas API.
+
+Field names mirror the records esp_atlas_core.search/wizard already return —
+this module only shapes them for HTTP, it adds no business logic.
+"""
+from typing import Literal, Optional
+
+from pydantic import BaseModel, Field
+
+PartType = Literal["soc", "module", "board"]
+
+
+class HealthResponse(BaseModel):
+    status: str
+    count: int
+
+
+class SourceEntry(BaseModel):
+    field: str
+    url: str
+    verified: str
+
+
+class Record(BaseModel):
+    id: str
+    type: str
+    name: str
+    vendor_or_brand: str
+    wifi_standard: Optional[str] = None
+    wifi_bands: Optional[str] = None
+    ble_version: Optional[str] = None
+    bt_classic: Optional[bool] = None
+    ieee802154: Optional[bool] = None
+    ieee802154_protocols: Optional[str] = None
+    form_factor: Optional[str] = None
+    soc_ref: Optional[str] = None
+    module_ref: Optional[str] = None
+    usb_native: Optional[bool] = None
+    path: str = Field(alias="_path")
+    sources: list[SourceEntry] = []
+
+    model_config = {"populate_by_name": True}
+
+
+class WizardRecord(Record):
+    score: int
+    reasons: list[str]
+
+
+class SearchResponse(BaseModel):
+    results: list[Record]
+
+
+class WizardResponse(BaseModel):
+    results: list[WizardRecord]
+
+
+class WizardNeeds(BaseModel):
+    protocol: Optional[str] = None
+    radio: Optional[str] = None
+    band: Optional[float] = None
+    ble: Optional[bool] = None
+    bt_classic: Optional[bool] = None
+    usb_native: Optional[bool] = None
+    ieee802154: Optional[bool] = None
+    form: Optional[str] = None
+    type: Optional[PartType] = None
+    budget: Optional[str] = None
+
+    model_config = {"extra": "forbid"}
+
+
+class WizardRequest(BaseModel):
+    needs: WizardNeeds = WizardNeeds()
