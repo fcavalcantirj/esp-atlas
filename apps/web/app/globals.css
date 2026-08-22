@@ -1355,7 +1355,6 @@ input[type="checkbox"]:checked::after {
    text, which is invisible on the accent fill — give it the on-accent colour. */
 .chip-chain-item--current .badge {
   color: var(--accent-fg);
-  opacity: 0.8;
 }
 
 .chip-chain-arrow {

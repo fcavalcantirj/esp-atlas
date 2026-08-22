@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import HomeView from "@/components/HomeView";
 import { SITE_TAGLINE } from "@/lib/site";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function Home() {
   return (

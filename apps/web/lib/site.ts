@@ -10,6 +10,16 @@ export const SITE_DESCRIPTION =
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://esp-atlas.com").replace(/\/+$/, "");
 
+// Default social-preview image (public/og-default.png, 1200×630). Pages that
+// define their own `openGraph`/`twitter` objects must include it explicitly:
+// Next replaces nested metadata objects per segment instead of merging them.
+export const OG_IMAGE = {
+  url: "/og-default.png",
+  width: 1200,
+  height: 630,
+  alt: `${SITE_NAME} — ${SITE_TAGLINE}`,
+};
+
 // GA4 measurement ID. Set NEXT_PUBLIC_GA_ID to override; production builds fall
 // back to the esp-atlas.com property so a missing Vercel env var never silently
 // disables analytics. Dev/preview builds send nothing unless the env var is set.
