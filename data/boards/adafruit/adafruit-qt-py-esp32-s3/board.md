@@ -2,7 +2,7 @@
 id: adafruit-qt-py-esp32-s3
 type: board
 brand: adafruit
-name: Adafruit QT Py ESP32-S3 WiFi Dev Board with STEMMA QT (4MB Flash 2MB PSRAM)
+name: Adafruit QT Py ESP32-S3 WiFi Dev Board with STEMMA QT (8MB Flash No PSRAM)
 soc: esp32-s3
 form_factor: qt-py
 price_tier: cheap
@@ -19,7 +19,7 @@ extras:
 - rgb-led
 - stemma-qt
 notes:
-- 'Main variant listed here: 4 MB flash, 2 MB PSRAM; an alternate 8 MB flash / no PSRAM variant is also sold'
+- 8 MB flash, no PSRAM (this product, 5426); a separate 4 MB flash / 2 MB PSRAM variant is sold as product 5700
 - Battery input pads on underside with diode protection for external packs up to 6V; no onboard charging circuit
 sources:
 - field: '*'
@@ -29,4 +29,4 @@ sources:
 
 # Adafruit QT Py ESP32-S3
 
-Tiny ESP32-S3 board with native USB-C, STEMMA QT, RGB NeoPixel, and 4 MB flash / 2 MB PSRAM.
+Tiny ESP32-S3 board with native USB-C, STEMMA QT, RGB NeoPixel, and 8 MB flash / no PSRAM.
