@@ -22,6 +22,19 @@ def _validate_filters(filters):
         raise ValueError(f"unknown search filter(s): {sorted(unknown)}")
 
 
+def _normalize_band(value):
+    """Render a GHz band the same way it's stored: whole numbers with no trailing '.0'.
+
+    CLI options are declared as type=float (so `--band 5` arrives here as `5` for the
+    `5` GHz band), while wifi_bands stores tokens like "2.4,5". Without this, 5.0
+    stringifies to "5.0" and never matches the stored "5" token.
+    """
+    text = str(value)
+    if text.endswith(".0"):
+        text = text[:-2]
+    return text
+
+
 def _build_where(filters):
     clauses = []
     params = []
@@ -37,7 +50,7 @@ def _build_where(filters):
         params.append(filters["form"])
     if "band" in filters:
         clauses.append("(',' || parts.wifi_bands || ',') LIKE ?")
-        params.append(f"%,{filters['band']},%")
+        params.append(f"%,{_normalize_band(filters['band'])},%")
     if "protocol" in filters:
         clauses.append("LOWER(parts.ieee802154_protocols) LIKE LOWER(?)")
         params.append(f"%{filters['protocol']}%")
