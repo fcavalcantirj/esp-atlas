@@ -16,7 +16,7 @@ below is a board the author is genuinely confident exists. Where the exact
 product-page URL wasn't known at write time, it's marked
 `(url: to-verify)` rather than fabricated. No model numbers are invented.
 
-**Progress: 34 boards done (out of an estimated 90+ known ESP32-family
+**Progress: 39 boards done (out of an estimated 90+ known ESP32-family
 boards across these vendors — the total will firm up as each vendor
 section gets a real audit).**
 
@@ -81,13 +81,17 @@ Official site: https://www.adafruit.com/
 
 Official site: https://www.sparkfun.com/
 
-- [ ] SparkFun ESP32 Thing — (url: to-verify)
-- [ ] SparkFun ESP32 Thing Plus — (url: to-verify)
-- [ ] SparkFun ESP32 Thing Plus C — (url: to-verify)
-- [ ] SparkFun ESP32-S2 Thing Plus — (url: to-verify)
+- [x] SparkFun ESP32 Thing — https://www.sparkfun.com/sparkfun-esp32-thing.html
+- [x] SparkFun Thing Plus - ESP32 WROOM (USB-C) — https://www.sparkfun.com/sparkfun-thing-plus-esp32-wroom-usb-c.html
+- [ ] SparkFun ESP32 Thing Plus C — https://www.sparkfun.com/thing-plus-c-esp32-wroom.html
+  (retired SKU WRL-16400-era predecessor; the page itself says it's been
+  retired and points to the current WRL-20168 listing, which is the exact
+  same physical product as "SparkFun Thing Plus - ESP32 WROOM (USB-C)"
+  above. Not tracked as a separate board — would be a duplicate.)
+- [x] SparkFun Thing Plus - ESP32-S2 WROOM — https://www.sparkfun.com/sparkfun-thing-plus-esp32-s2-wroom.html
 - [ ] SparkFun ESP32-C6 Thing Plus — (url: to-verify)
-- [ ] SparkFun Thing Plus – ESP32 WROOM — (url: to-verify)
-- [ ] SparkFun MicroMod ESP32 Processor — (url: to-verify)
+- [x] SparkFun MicroMod ESP32 Processor — https://www.sparkfun.com/sparkfun-micromod-esp32-processor.html
+- [x] SparkFun IoT RedBoard - ESP32 — https://www.sparkfun.com/sparkfun-iot-redboard-esp32-development-board.html
 
 ## LOLIN / Wemos
 
