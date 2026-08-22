@@ -97,6 +97,20 @@ def test_ask_command_surfaces_rate_limit_error(built_db_path, monkeypatch):
     assert "rate limited" in result.output.lower()
 
 
+def test_search_command_band_5_finds_esp32_c5(built_db_path):
+    # --band is a click float option, so "5" arrives at the core as 5.0 (regression: used to
+    # stringify to "5.0" and never match the stored "5" token in wifi_bands).
+    result = run(["search", "", "--band", "5"], built_db_path)
+    assert result.exit_code == 0, result.output
+    assert "esp32-c5" in result.output
+
+
+def test_search_command_band_2_4_still_finds_2_4ghz_parts(built_db_path):
+    result = run(["search", "", "--band", "2.4"], built_db_path)
+    assert result.exit_code == 0, result.output
+    assert "esp32-s3" in result.output
+
+
 def test_search_command_all_filters(built_db_path):
     result = run(
         ["search", "", "--radio", "wifi-6", "--band", "2.4", "--protocol", "zigbee", "--type", "soc"],

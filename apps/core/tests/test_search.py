@@ -38,6 +38,23 @@ def test_search_structured_filter_band(built_db_path):
         assert "5" in (r["wifi_bands"] or "").split(",")
 
 
+def test_search_structured_filter_band_accepts_float(built_db_path):
+    # CLI options are declared as type=float, so 5 arrives as 5.0 — must still match the "5" token.
+    results = search("", filters={"band": 5.0}, db_path=built_db_path)
+    ids = {r["id"] for r in results}
+    assert "esp32-c5" in ids
+    for r in results:
+        assert "5" in (r["wifi_bands"] or "").split(",")
+
+
+def test_search_structured_filter_band_float_2_4_still_matches(built_db_path):
+    results = search("", filters={"band": 2.4}, db_path=built_db_path)
+    ids = {r["id"] for r in results}
+    assert "esp32-s3" in ids
+    for r in results:
+        assert "2.4" in (r["wifi_bands"] or "").split(",")
+
+
 def test_search_structured_filter_radio_standard(built_db_path):
     results = search("", filters={"radio": "wifi-6"}, db_path=built_db_path)
     assert len(results) > 0
