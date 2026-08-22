@@ -195,7 +195,10 @@ Official site: https://heltec.org/
 - [x] Heltec WiFi LoRa 32 (V3) (ESP32-S3) — https://heltec.org/project/wifi-lora-32-v3/
 - [x] Heltec WiFi Kit 32 (V3) (ESP32-S3) — https://heltec.org/project/wifi-kit32-v3/
 - [x] Heltec Wireless Stick (V3) (ESP32-S3) — https://heltec.org/project/wireless-stick-v3/
-- [x] Heltec Wireless Stick Lite (V3) (ESP32-S3) — https://heltec.org/project/wireless-stick-lite-v2/
+- [ ] Heltec Wireless Stick Lite (V3) (ESP32-S3) — deferred: the V3 product page
+  (heltec.org/project/wireless-stick-lite-v3/) returns 404; the only live page is
+  the V2 (different chip generation), so specs cannot be sourced without cross-version
+  guessing. Needs a live V3 source.
 - [x] Heltec Wireless Paper (ESP32-S3) — https://heltec.org/project/wireless-paper/
 - [x] Heltec Wireless Tracker (ESP32-S3) — https://heltec.org/project/wireless-tracker/
 - [ ] Heltec WiFi Kit 32 V2 (ESP32) — deferred: no live product page found on
