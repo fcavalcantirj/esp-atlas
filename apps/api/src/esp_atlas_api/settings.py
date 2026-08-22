@@ -1,10 +1,6 @@
-"""esp-atlas.db path resolution for the API process."""
-import os
-from pathlib import Path
+"""esp-atlas.db path resolution for the API process.
 
-from esp_atlas_core.paths import DEFAULT_DB_PATH
-
-
-def resolve_db_path():
-    raw = os.environ.get("ESP_ATLAS_DB_PATH")
-    return Path(raw) if raw else DEFAULT_DB_PATH
+Delegates to esp_atlas_core.paths.resolve_db_path(), which honors
+ESP_ATLAS_DB_PATH and falls back to /tmp on Vercel or a read-only repo root.
+"""
+from esp_atlas_core.paths import resolve_db_path

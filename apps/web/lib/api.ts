@@ -1,6 +1,11 @@
 // Thin client over the esp-atlas API. No ranking/filtering logic lives here —
 // this module only shapes requests/responses; the backend (esp_atlas_core) decides.
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+//
+// Same-origin in production (the API is deployed as a Vercel function under
+// /api, routed by the root vercel.json) unless NEXT_PUBLIC_API_URL overrides
+// it; local dev talks to the standalone uvicorn server on :8000.
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || (process.env.NODE_ENV === "production" ? "/api" : "http://localhost:8000");
 
 export interface SourceEntry {
   field: string;
