@@ -118,11 +118,12 @@ Official site: https://unexpectedmaker.com/
 
 - [ ] TinyPICO (ESP32) — (url: to-verify)
 - [ ] TinyS2 (ESP32-S2) — (url: to-verify)
-- [ ] TinyS3 (ESP32-S3) — (url: to-verify)
+- [x] TinyS3 (ESP32-S3) — https://unexpectedmaker.com/shop/tinys3
+- [x] NanoS3 (ESP32-S3) — https://unexpectedmaker.com/shop/nanos3
 - [ ] TinyC6 (ESP32-C6) — (url: to-verify)
 - [ ] FeatherS2 (ESP32-S2) — (url: to-verify)
-- [ ] FeatherS3 (ESP32-S3) — (url: to-verify)
-- [ ] ProS3 (ESP32-S3) — (url: to-verify)
+- [x] FeatherS3 (ESP32-S3) — https://unexpectedmaker.com/shop/feathers3
+- [x] ProS3 (ESP32-S3) — https://unexpectedmaker.com/shop/pros3
 - [ ] Nano C6 (ESP32-C6) — (url: to-verify)
 
 ## M5Stack
