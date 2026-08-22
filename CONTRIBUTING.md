@@ -17,7 +17,9 @@ data trustworthy.
 
 - **Fix a spec** — found a wrong value? Correct it and update/point to the source.
 - **Add a board** — `data/boards/<brand>/<board-id>/board.md`, start from
-  [`templates/board.template.md`](templates/board.template.md).
+  [`templates/board.template.md`](templates/board.template.md). See
+  [COVERAGE.md](COVERAGE.md) for the backlog of known boards still needing
+  coverage.
 - **Add a module** — `data/modules/<module-id>/module.md`, start from
   [`templates/module.template.md`](templates/module.template.md).
 - **Add a SoC** — `data/socs/<soc-id>/chip.md`, start from
