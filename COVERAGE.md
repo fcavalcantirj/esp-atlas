@@ -16,7 +16,7 @@ below is a board the author is genuinely confident exists. Where the exact
 product-page URL wasn't known at write time, it's marked
 `(url: to-verify)` rather than fabricated. No model numbers are invented.
 
-**Progress: 15 boards done (out of an estimated 90+ known ESP32-family
+**Progress: 25 boards done (out of an estimated 90+ known ESP32-family
 boards across these vendors — the total will firm up as each vendor
 section gets a real audit).**
 
@@ -29,15 +29,17 @@ Official site: https://www.espressif.com/en/products/devkits
 - [x] ESP32-DevKitC V4 — https://www.espressif.com/en/products/devkits/esp32-devkitc
 - [x] ESP32-S3-DevKitC-1 — https://www.espressif.com/en/products/devkits/esp32-s3-devkitc-1
 - [x] ESP32-C6-DevKitC-1 — https://www.espressif.com/en/products/devkits/esp32-c6-devkitc-1
-- [ ] ESP32-C3-DevKitC-02 — https://www.espressif.com/en/products/devkits/esp32-c3-devkitc-02
-- [ ] ESP32-C3-DevKitM-1 — https://www.espressif.com/en/products/devkits/esp32-c3-devkitm-1
-- [ ] ESP32-S2-DevKitC-1 — https://www.espressif.com/en/products/devkits/esp32-s2-devkitc-1
-- [ ] ESP32-S2-Saola-1 — https://www.espressif.com/en/products/devkits/esp32-s2-saola-1
-- [ ] ESP32-S3-DevKitM-1 — https://www.espressif.com/en/products/devkits/esp32-s3-devkitm-1
+- [x] ESP32-C3-DevKitC-02 — https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitc-02/user_guide.html
+- [x] ESP32-C3-DevKitM-1 — https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/user_guide.html
+- [x] ESP32-S2-DevKitC-1 — https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitc-1/user_guide.html
+- [x] ESP32-S2-Saola-1 — https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html
+- [x] ESP32-S3-DevKitM-1 — https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitm-1/user_guide.html
 - [ ] ESP32-C61-DevKitC-1 — (url: to-verify)
 - [ ] ESP32-C5-DevKitC-1 — (url: to-verify)
-- [ ] ESP32-H2-DevKitM-1 — (url: to-verify)
-- [ ] ESP-WROVER-KIT — https://www.espressif.com/en/products/devkits/esp-wrover-kit
+- [x] ESP32-H2-DevKitM-1 — https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
+- [x] ESP-WROVER-KIT — https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp-wrover-kit/user_guide.html
+- [x] ESP32-DevKitM-1 — https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitm-1/user_guide.html
+- [x] ESP32-PICO-KIT — https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-pico-kit/user_guide.html
 - [ ] ESP32-Ethernet-Kit — (url: to-verify)
 - [ ] ESP32-LyraT / ESP32-LyraTD (audio dev boards) — (url: to-verify)
 
