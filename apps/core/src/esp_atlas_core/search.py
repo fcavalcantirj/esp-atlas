@@ -99,7 +99,7 @@ def _row_to_record(row):
     }
 
 
-def search(query, filters=None, db_path=None, limit=50):
+def search(query, filters=None, db_path=None, limit=500):
     filters = filters or {}
     _validate_filters(filters)
     where_clauses, params = _build_where(filters)

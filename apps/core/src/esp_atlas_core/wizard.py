@@ -46,7 +46,7 @@ def _within_budget(price_tier, budget):
     return _BUDGET_TIERS.index(price_tier) <= _BUDGET_TIERS.index(budget)
 
 
-def wizard(needs, db_path=None, limit=50):
+def wizard(needs, db_path=None, limit=500):
     needs = dict(needs or {})
     unknown = set(needs) - KNOWN_NEEDS
     if unknown:
