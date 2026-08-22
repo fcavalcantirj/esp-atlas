@@ -16,7 +16,7 @@ below is a board the author is genuinely confident exists. Where the exact
 product-page URL wasn't known at write time, it's marked
 `(url: to-verify)` rather than fabricated. No model numbers are invented.
 
-**Progress: 9 boards done (out of an estimated 90+ known ESP32-family
+**Progress: 15 boards done (out of an estimated 90+ known ESP32-family
 boards across these vendors — the total will firm up as each vendor
 section gets a real audit).**
 
@@ -88,15 +88,18 @@ Official site: https://www.sparkfun.com/
 Official site: https://www.wemos.cc/
 
 - [ ] LOLIN32 — (url: to-verify)
-- [ ] LOLIN32 Lite — (url: to-verify)
-- [ ] LOLIN D32 — (url: to-verify)
-- [ ] LOLIN D32 Pro — (url: to-verify)
-- [ ] LOLIN S2 Mini (ESP32-S2) — (url: to-verify)
+- [ ] LOLIN32 Lite — https://wiki.wemos.cc/products:lolin32:lolin32_lite (retired
+  product; only listed on the wiki.wemos.cc subdomain, unreachable from the sandbox
+  that did this pass — DNS/network block on that host specifically, www.wemos.cc
+  resolved fine. Needs a follow-up pass with access to that host.)
+- [x] LOLIN D32 — https://www.wemos.cc/en/latest/d32/d32.html
+- [x] LOLIN D32 Pro — https://www.wemos.cc/en/latest/d32/d32_pro.html
+- [x] LOLIN S2 Mini (ESP32-S2) — https://www.wemos.cc/en/latest/s2/s2_mini.html
 - [ ] LOLIN S2 Pico (ESP32-S2) — (url: to-verify)
-- [ ] LOLIN S3 (ESP32-S3) — (url: to-verify)
-- [ ] LOLIN S3 Mini (ESP32-S3) — (url: to-verify)
+- [x] LOLIN S3 (ESP32-S3) — https://www.wemos.cc/en/latest/s3/s3.html
+- [x] LOLIN S3 Mini (ESP32-S3) — https://www.wemos.cc/en/latest/s3/s3_mini.html
 - [ ] LOLIN S3 Pro (ESP32-S3) — (url: to-verify)
-- [ ] LOLIN C3 Mini (ESP32-C3) — (url: to-verify)
+- [x] LOLIN C3 Mini (ESP32-C3) — https://www.wemos.cc/en/latest/c3/c3_mini.html
 - [ ] LOLIN C3 Pico (ESP32-C3) — (url: to-verify)
 
 ## Unexpected Maker
