@@ -2,7 +2,7 @@ name: validate
 
 on:
   pull_request:
-    paths: ["data/**", "schema/**", "scripts/**"]
+    paths: ["data/**", "schema/**", "scripts/**", "apps/**"]
   push:
     branches: [main]
 
@@ -19,3 +19,27 @@ jobs:
         run: python3 scripts/validate.py
       - name: Build index (proves it compiles)
         run: python3 scripts/build_index.py
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install local packages (core, api, cli)
+        run: pip install -e apps/core[test] -e apps/api[test] -e apps/cli[test]
+      - name: Run full pytest suite (includes wizard oracle invariants)
+        run: python3 -m pytest apps/core/tests apps/api/tests apps/cli/tests
+
+  sources-live:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install httpx pyyaml
+      - name: Check every cited source URL is still live
+        run: python3 scripts/check_sources_live.py

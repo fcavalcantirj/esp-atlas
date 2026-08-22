@@ -44,6 +44,11 @@ esp-atlas search "<name>"      # or: GET /search?q=<name>
    ```
 4. Open a PR and fill in the template — including your source links.
 
+CI enforces all of this automatically, with no human in the loop: a PR adding
+or editing a board must pass schema validation, the full pytest suite
+(including the wizard's oracle invariants), and have every cited source URL
+resolve live before it can merge.
+
 ## Data model
 
 Three layers, specs declared once and inherited: **soc → module → board**. A board
