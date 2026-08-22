@@ -16,7 +16,7 @@ below is a board the author is genuinely confident exists. Where the exact
 product-page URL wasn't known at write time, it's marked
 `(url: to-verify)` rather than fabricated. No model numbers are invented.
 
-**Progress: 68 boards done (out of an estimated 90+ known ESP32-family
+**Progress: 73 boards done (out of an estimated 90+ known ESP32-family
 boards across these vendors — the total will firm up as each vendor
 section gets a real audit).**
 
@@ -192,12 +192,25 @@ Official site: https://www.dfrobot.com/
 
 Official site: https://heltec.org/
 
-- [ ] Heltec WiFi Kit 32 (ESP32) — (url: to-verify)
-- [ ] Heltec WiFi LoRa 32 V3 (ESP32-S3) — (url: to-verify)
-- [ ] Heltec Wireless Stick (ESP32) — (url: to-verify)
-- [ ] Heltec Wireless Stick Lite (ESP32) — (url: to-verify)
-- [ ] Heltec Vision Master E213/T190/etc. (ESP32-S3) — (url: to-verify)
-- [ ] Heltec HTIT-WB32 (ESP32) — (url: to-verify)
+- [x] Heltec WiFi LoRa 32 (V3) (ESP32-S3) — https://heltec.org/project/wifi-lora-32-v3/
+- [x] Heltec WiFi Kit 32 (V3) (ESP32-S3) — https://heltec.org/project/wifi-kit32-v3/
+- [x] Heltec Wireless Stick (V3) (ESP32-S3) — https://heltec.org/project/wireless-stick-v3/
+- [x] Heltec Wireless Stick Lite (V3) (ESP32-S3) — https://heltec.org/project/wireless-stick-lite-v2/
+- [x] Heltec Wireless Paper (ESP32-S3) — https://heltec.org/project/wireless-paper/
+- [x] Heltec Wireless Tracker (ESP32-S3) — https://heltec.org/project/wireless-tracker/
+- [ ] Heltec WiFi Kit 32 V2 (ESP32) — deferred: no live product page found on
+  heltec.org (not in the current product sitemap — likely EOL/replaced by
+  the V3 above) and the only matching docs.heltec.org URL
+  (`/en/node/esp32/wifi_kit_32/index.html`) documents the V3's ESP32-S3FN8
+  hardware, not a genuine V2/ESP32 page — no live official source to cite,
+  so not added per the no-cross-sourcing rule.
+- [ ] Heltec Wireless Stick (original, ESP32) — deferred: superseded by the
+  V3 above in this pass; original ESP32 (non-S3) product page not verified.
+- [ ] Heltec Wireless Stick Lite (original, ESP32) — deferred: same as above.
+- [ ] Heltec Vision Master E213/T190/etc. (ESP32-S3) — (url: to-verify) —
+  deferred, not in this pass's target list.
+- [ ] Heltec HTIT-WB32 (ESP32) — (url: to-verify) — deferred, not in this
+  pass's target list.
 
 ## Olimex
 
