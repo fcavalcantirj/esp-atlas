@@ -1,18 +1,32 @@
 {
   "version": 2,
   "builds": [
-    { "src": "apps/web/package.json", "use": "@vercel/next" },
+    {
+      "src": "apps/web/package.json",
+      "use": "@vercel/next"
+    },
     {
       "src": "api/index.py",
       "use": "@vercel/python",
       "config": {
-        "includeFiles": ["data/**", "schema/**"]
+        "includeFiles": [
+          "data/**",
+          "schema/**",
+          "apps/core/src/**",
+          "apps/api/src/**"
+        ]
       }
     }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "api/index.py" },
-    { "src": "/(.*)", "dest": "/$1" }
+    {
+      "src": "/api/(.*)",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
   ],
   "env": {
     "ESP_ATLAS_REPO_ROOT": "/var/task"
