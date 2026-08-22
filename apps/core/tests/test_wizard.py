@@ -121,6 +121,22 @@ def test_wizard_rejects_unknown_need(built_db_path):
         wizard({"bogus": "x"}, db_path=built_db_path)
 
 
+def test_wizard_radio_need_excludes_no_wifi_parts(built_db_path):
+    results = wizard({"radio": "wifi-4"}, db_path=built_db_path)
+    ids = {r["id"] for r in results}
+    assert "esp32-h2" not in ids  # no Wi-Fi radio at all
+    assert "esp32-h2-devkitm-1" not in ids
+
+
+def test_wizard_thread_plus_wifi4_includes_wifi6_capable_esp32_c6(built_db_path):
+    # Regression: ESP32-C6 is Thread-capable and Wi-Fi 6, which is backward
+    # compatible with the requested wifi-4 minimum — it must not be excluded.
+    results = wizard({"protocol": "thread", "radio": "wifi-4"}, db_path=built_db_path)
+    assert len(results) > 0
+    ids = {r["id"] for r in results}
+    assert "esp32-c6" in ids or "esp32-c6-devkitc-1" in ids
+
+
 def test_wizard_no_needs_returns_everything_unscored(built_db_path):
     results = wizard({}, db_path=built_db_path)
     assert len(results) > 20  # every soc + module + board

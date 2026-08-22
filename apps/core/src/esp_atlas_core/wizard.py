@@ -15,7 +15,7 @@ from esp_atlas_core.search import search
 # need key -> (search filter key, score, reason)
 _HARD_NEEDS = {
     "protocol": lambda v: ("protocol", v, 3, f"Supports {v} over 802.15.4"),
-    "radio": lambda v: ("radio", v, 2, f"{v} Wi-Fi"),
+    "radio": lambda v: ("radio", v, 2, f"{v} Wi-Fi or newer (backward compatible)"),
     "band": lambda v: ("band", v, 1, f"{v} GHz Wi-Fi band"),
     "ble": lambda v: ("ble", v, 1, "Bluetooth Low Energy"),
     "bt_classic": lambda v: ("bt_classic", v, 1, "Bluetooth Classic (BR/EDR)"),

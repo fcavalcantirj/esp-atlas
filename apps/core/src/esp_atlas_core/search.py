@@ -2,6 +2,11 @@
 
     search("zigbee", filters={"form": "xiao"})
     search("", filters={"radio": "wifi-6", "band": 5})
+
+`radio` is a minimum capability, not an exact match: Wi-Fi generations are backward
+compatible, so radio="wifi-4" also matches wifi-6 parts (e.g. ESP32-C6/C5), while
+radio="wifi-6" matches only wifi-6 parts. Parts with no Wi-Fi radio at all (e.g.
+ESP32-H2) never match any radio= request.
 """
 import json
 import re
@@ -10,10 +15,23 @@ from esp_atlas_core import db as dbmod
 
 # CLI/public filter key -> parts column (or handler) it maps to
 _BOOL_FILTERS = {"ieee802154", "ble", "bt_classic", "usb_native"}
-_EXACT_FILTERS = {"type", "radio", "form"}
-_KNOWN_FILTERS = _BOOL_FILTERS | _EXACT_FILTERS | {"band", "protocol"}
+_EXACT_FILTERS = {"type", "form"}
+_KNOWN_FILTERS = _BOOL_FILTERS | _EXACT_FILTERS | {"band", "protocol", "radio"}
 
 _FTS_SPECIAL = re.compile(r'[^\w\s]')
+
+# Wi-Fi generations are backward compatible: a request for wifi-4 must also match
+# newer, wifi-6 parts. Higher rank = newer generation; extend here for wifi-7.
+_WIFI_STANDARD_RANK = {"wifi-4": 4, "wifi-6": 6}
+
+
+def _wifi_standards_at_or_above(min_standard):
+    if min_standard not in _WIFI_STANDARD_RANK:
+        raise ValueError(
+            f"unknown wifi standard: {min_standard!r}, expected one of {sorted(_WIFI_STANDARD_RANK)}"
+        )
+    min_rank = _WIFI_STANDARD_RANK[min_standard]
+    return [s for s, rank in _WIFI_STANDARD_RANK.items() if rank >= min_rank]
 
 
 def _validate_filters(filters):
@@ -43,8 +61,9 @@ def _build_where(filters):
         clauses.append("parts.type = ?")
         params.append(filters["type"])
     if "radio" in filters:
-        clauses.append("parts.wifi_standard = ?")
-        params.append(filters["radio"])
+        standards = _wifi_standards_at_or_above(filters["radio"])
+        clauses.append(f"parts.wifi_standard IN ({','.join('?' for _ in standards)})")
+        params.extend(standards)
     if "form" in filters:
         clauses.append("LOWER(parts.form_factor) = LOWER(?)")
         params.append(filters["form"])

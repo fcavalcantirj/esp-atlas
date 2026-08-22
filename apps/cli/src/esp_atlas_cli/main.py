@@ -29,7 +29,7 @@ def build_index_cmd(ctx):
 
 @cli.command()
 @click.argument("query", required=False, default="")
-@click.option("--radio", default=None, help="Wi-Fi standard, e.g. wifi-6")
+@click.option("--radio", default=None, help="Minimum Wi-Fi standard, e.g. wifi-4 (also matches wifi-6)")
 @click.option("--band", default=None, type=float, help="Wi-Fi band in GHz, e.g. 5")
 @click.option("--form", default=None, help="Form factor, e.g. xiao")
 @click.option("--protocol", default=None, help="802.15.4 protocol substring, e.g. zigbee")
@@ -78,7 +78,7 @@ def _print_records(results):
 
 @cli.command()
 @click.option("--protocol", default=None, help="802.15.4 protocol, e.g. zigbee/thread/matter")
-@click.option("--radio", default=None, help="Wi-Fi standard, e.g. wifi-6")
+@click.option("--radio", default=None, help="Minimum Wi-Fi standard, e.g. wifi-4 (also matches wifi-6)")
 @click.option("--band", default=None, type=float, help="Wi-Fi band in GHz")
 @click.option("--usb-native", "usb_native", is_flag=True, default=False, help="Require native USB")
 @click.option("--form", default=None, help="Form factor, e.g. xiao")

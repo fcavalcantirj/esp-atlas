@@ -62,6 +62,32 @@ def test_search_structured_filter_radio_standard(built_db_path):
         assert r["wifi_standard"] == "wifi-6"
 
 
+def test_search_radio_wifi6_excludes_wifi4_only_parts(built_db_path):
+    results = search("", filters={"radio": "wifi-6"}, db_path=built_db_path)
+    ids = {r["id"] for r in results}
+    assert "esp32-devkitc-v4" not in ids  # classic ESP32 board is wifi-4 only
+
+
+def test_search_radio_wifi4_is_a_minimum_and_also_matches_wifi6_parts(built_db_path):
+    results = search("", filters={"radio": "wifi-4"}, db_path=built_db_path)
+    ids = {r["id"] for r in results}
+    assert "esp32-devkitc-v4" in ids  # wifi-4 board
+    assert "esp32-c6-devkitc-1" in ids  # wifi-6 board, backward compatible with wifi-4
+    for r in results:
+        assert r["wifi_standard"] in ("wifi-4", "wifi-6")
+
+
+def test_search_radio_filter_excludes_parts_with_no_wifi(built_db_path):
+    results = search("", filters={"radio": "wifi-4"}, db_path=built_db_path)
+    ids = {r["id"] for r in results}
+    assert "esp32-h2-devkitm-1" not in ids  # ESP32-H2 has no Wi-Fi radio at all
+
+
+def test_search_radio_unknown_standard_raises(built_db_path):
+    with pytest.raises(ValueError):
+        search("", filters={"radio": "wifi-99"}, db_path=built_db_path)
+
+
 def test_search_combines_query_and_filters(built_db_path):
     results = search("thread", filters={"type": "soc"}, db_path=built_db_path)
     ids = {r["id"] for r in results}

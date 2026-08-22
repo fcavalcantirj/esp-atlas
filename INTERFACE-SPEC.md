@@ -53,7 +53,11 @@ query ─▶ structured filter (radio/band/protocol/form) + FTS (name/prose/note
    ieee802154=true` returns only parts with the 802.15.4 radio present (ESP32-C6/
    H2 and boards built on them). `protocol` stays a valid `/wizard` need for
    API/power-user callers that want to filter by the specific mesh protocol a
-   part advertises support for.
+   part advertises support for. `radio` (and `/search?radio=`) is a **minimum**
+   Wi-Fi generation, not an exact match — Wi-Fi generations are backward
+   compatible, so `radio=wifi-4` also matches wifi-6 parts (e.g. ESP32-C6/C5),
+   while `radio=wifi-6` matches only wifi-6 parts. Parts with no Wi-Fi radio at
+   all (e.g. ESP32-H2) never match a `radio=` request.
 2. **Ask** — natural language → RAG-lite → Groq → grounded, cited, temp 0,
    "not in esp-atlas yet" when unknown. Robust: retrieval + grounding + caching + rate limits.
 
