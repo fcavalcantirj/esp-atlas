@@ -16,7 +16,7 @@ below is a board the author is genuinely confident exists. Where the exact
 product-page URL wasn't known at write time, it's marked
 `(url: to-verify)` rather than fabricated. No model numbers are invented.
 
-**Progress: 61 boards done (out of an estimated 90+ known ESP32-family
+**Progress: 68 boards done (out of an estimated 90+ known ESP32-family
 boards across these vendors — the total will firm up as each vendor
 section gets a real audit).**
 
@@ -180,12 +180,13 @@ Official site: https://soldered.com/
 
 Official site: https://www.dfrobot.com/
 
-- [ ] DFRobot FireBeetle 2 ESP32-E — (url: to-verify)
-- [ ] DFRobot FireBeetle 2 ESP32-S3 — (url: to-verify)
-- [ ] DFRobot FireBeetle 2 ESP32-C6 — (url: to-verify)
-- [ ] DFRobot Beetle ESP32-C3 — (url: to-verify)
-- [ ] DFRobot Beetle ESP32-C6 — (url: to-verify)
-- [ ] DFRobot ESP32-S3 AI Camera — (url: to-verify)
+- [x] DFRobot FireBeetle 2 ESP32-E (DFR0654) — https://wiki.dfrobot.com/dfr0654/
+- [x] DFRobot FireBeetle 2 ESP32-S3 (DFR0975) — https://wiki.dfrobot.com/dfr0975
+- [x] DFRobot FireBeetle 2 ESP32-C6 (DFR1075) — https://wiki.dfrobot.com/dfr1075/
+- [x] DFRobot FireBeetle ESP32 (original, DFR0478) — https://wiki.dfrobot.com/dfr0478/
+- [x] DFRobot Beetle ESP32-C3 (DFR0868) — https://wiki.dfrobot.com/dfr0868/
+- [x] DFRobot Beetle ESP32-C6 (DFR1117) — https://wiki.dfrobot.com/dfr1117/
+- [ ] DFRobot ESP32-S3 AI Camera — (url: to-verify) — deferred, not in this pass's target list
 
 ## Heltec
 
