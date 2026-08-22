@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://esp.wiki/schema/module.schema.json",
+  "title": "ESP Module",
+  "description": "A SoC packaged as a module (shield can, onboard flash/PSRAM, antenna). Inherits radio/CPU specs from its `soc` — do not restate them here. Every added spec carries a source.",
+  "type": "object",
+  "required": ["id", "type", "vendor", "name", "soc", "sources"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "type": { "const": "module" },
+    "vendor": { "type": "string" },
+    "name": { "type": "string" },
+    "aka": { "type": "array", "items": { "type": "string" } },
+    "soc": { "type": "string", "description": "id of the SoC this module is built on (must exist in data/socs/)" },
+    "flash_mb": { "type": "number" },
+    "psram_mb": { "type": "number" },
+    "antenna": { "enum": ["pcb", "ipex", "pcb+ipex", "none"] },
+    "dimensions_mm": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 3 },
+    "certifications": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "sources": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["field", "url", "verified"], "additionalProperties": false,
+        "properties": {
+          "field": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "verified": { "type": "string", "format": "date" }
+        }
+      }
+    }
+  }
+}

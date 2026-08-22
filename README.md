@@ -25,7 +25,12 @@ A board declares its `module`; the module declares its `soc`. Ask about a board 
 
 ## Status
 
-**v0 — seeded.** All 11 current Espressif SoCs are in `data/socs/`, each field verified against its official datasheet (see the `sources:` block in every `chip.md`). Modules, boards, and the query site are next — see [SPEC.md](SPEC.md).
+**v1 in progress — 26 parts seeded, all datasheet-verified:**
+- **11 SoCs** (`data/socs/`) — the full current Espressif lineup.
+- **6 modules** (`data/modules/`) — WROOM-32E, WROVER-E, S3-WROOM-1, C3-MINI-1, C6-WROOM-1, H2-MINI-1.
+- **9 boards** (`data/boards/`) — Espressif DevKits (ESP32 / S3 / C6), Seeed XIAO (C3 / C6 / S3), LilyGO T-Display-S3, M5Stack CoreS3, Adafruit Feather ESP32-S3.
+
+Every field cites its official source; the `soc → module → board` chain is enforced by CI. The query site is next — see [SPEC.md](SPEC.md). New parts are added the same way, by PR (or the oracle-loop bot).
 
 ## Contributing
 
