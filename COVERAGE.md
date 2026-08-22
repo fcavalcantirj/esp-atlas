@@ -16,7 +16,7 @@ below is a board the author is genuinely confident exists. Where the exact
 product-page URL wasn't known at write time, it's marked
 `(url: to-verify)` rather than fabricated. No model numbers are invented.
 
-**Progress: 39 boards done (out of an estimated 90+ known ESP32-family
+**Progress: 53 boards done (out of an estimated 90+ known ESP32-family
 boards across these vendors — the total will firm up as each vendor
 section gets a real audit).**
 
@@ -131,18 +131,21 @@ Official site: https://unexpectedmaker.com/
 Official site: https://www.m5stack.com/
 
 - [x] M5Stack CoreS3 — https://shop.m5stack.com/products/m5stack-cores3-esp32s3-lotdevelopment-kit
-- [ ] M5Stack Core2 (ESP32) — https://shop.m5stack.com/products/m5stack-core2-esp32-iot-development-kit
+- [x] M5Stack Core2 (ESP32) — https://docs.m5stack.com/en/core/core2
 - [ ] M5Stack Core (Basic/Gray/Fire, ESP32) — (url: to-verify)
-- [ ] M5StickC PLUS2 (ESP32) — https://shop.m5stack.com/products/m5stickc-plus2-esp32-mini-iot-development-kit
+- [x] M5StickC PLUS2 (ESP32) — https://docs.m5stack.com/en/core/M5StickC%20PLUS2
 - [ ] M5StickC PLUS (ESP32) — (url: to-verify)
-- [ ] M5Stamp C3 (ESP32-C3) — (url: to-verify)
-- [ ] M5Stamp S3 (ESP32-S3) — (url: to-verify)
+- [x] M5Stamp C3 (ESP32-C3) — https://docs.m5stack.com/en/core/Stamp_C3
+- [x] M5Stamp S3 (ESP32-S3) — https://docs.m5stack.com/en/core/stamps3
 - [ ] M5Stamp Pico (ESP32) — (url: to-verify)
-- [ ] M5Cardputer (ESP32-S3) — https://shop.m5stack.com/products/m5stack-cardputer-kit-w-m5stamps3
-- [ ] M5Atom Lite / Matrix / Echo (ESP32) — (url: to-verify)
-- [ ] M5AtomS3 (ESP32-S3) — https://shop.m5stack.com/products/atoms3-development-kit
-- [ ] M5Dial (ESP32-S3) — (url: to-verify)
-- [ ] M5NanoC6 (ESP32-C6) — (url: to-verify)
+- [x] M5Cardputer (ESP32-S3) — https://docs.m5stack.com/en/core/Cardputer
+- [x] M5Atom Lite (ESP32) — https://docs.m5stack.com/en/core/ATOM%20Lite
+- [ ] M5Atom Matrix / Echo (ESP32) — (url: to-verify; distinct SKUs from Atom Lite,
+  not sourced this pass)
+- [x] M5AtomS3 (ESP32-S3) — https://docs.m5stack.com/en/core/AtomS3
+- [x] M5AtomS3 Lite (ESP32-S3) — https://docs.m5stack.com/en/core/AtomS3%20Lite
+- [x] M5Dial (ESP32-S3) — https://docs.m5stack.com/en/core/M5Dial
+- [x] M5NanoC6 (ESP32-C6) — https://docs.m5stack.com/en/core/M5NanoC6
 
 ## LilyGO
 
