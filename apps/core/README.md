@@ -62,6 +62,9 @@ No test calls the real Groq API — `ask()` tests inject a fake LLM client, and
 ## Layout
 
 - `frontmatter.py` — shared YAML-frontmatter parser for `data/**/*.md`
+- `validate.py` — schema + source-or-omit + id/brand + inheritance-ref validation
+  for a single soc/module/board record; the shared implementation behind
+  `scripts/validate.py` (CI), `esp-atlas validate` (CLI), and `POST /validate` (API)
 - `index_build.py` — resolves soc/module/board radio+USB inheritance into
   `esp-atlas.db` (`parts` structured table + `parts_fts` FTS5 table)
 - `db.py` — schema DDL + connection helpers

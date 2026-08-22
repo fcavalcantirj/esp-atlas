@@ -18,17 +18,29 @@ DATA_PATTERNS = {
 }
 
 
-def parse_frontmatter(path):
-    """Read a data/**/*.md file and return (frontmatter_dict, body_markdown)."""
-    text = Path(path).read_text(encoding="utf-8")
+def parse_frontmatter_text(text):
+    """Parse a full markdown document and return (frontmatter_dict, body_markdown).
+
+    Used both by parse_frontmatter(path) below and by validate_markdown()/stdin/API
+    callers that have a document in hand but no file path.
+    """
     if not text.startswith("---"):
-        raise ValueError(f"{path}: missing YAML frontmatter")
+        raise ValueError("missing YAML frontmatter")
     parts = text.split("---", 2)
     if len(parts) < 3:
-        raise ValueError(f"{path}: malformed frontmatter fences")
+        raise ValueError("malformed frontmatter fences")
     fm = yaml.safe_load(parts[1])
     body = parts[2].strip()
     return fm, body
+
+
+def parse_frontmatter(path):
+    """Read a data/**/*.md file and return (frontmatter_dict, body_markdown)."""
+    text = Path(path).read_text(encoding="utf-8")
+    try:
+        return parse_frontmatter_text(text)
+    except ValueError as e:
+        raise ValueError(f"{path}: {e}") from e
 
 
 def iter_data_files(data_dir=None):
