@@ -25,6 +25,8 @@ SCHEMA_FILES = {
     "module": "module.schema.json",
     "board": "board.schema.json",
     "brand": "brand.schema.json",
+    "firmware": "firmware.schema.json",
+    "recipe": "recipe.schema.json",
 }
 
 
@@ -34,18 +36,47 @@ def _load_schema(kind):
     return json.loads((SCHEMA_DIR / SCHEMA_FILES[kind]).read_text(encoding="utf-8"))
 
 
+def _read_fm(path):
+    try:
+        fm, _body = parse_frontmatter_text(path.read_text(encoding="utf-8"))
+    except (ValueError, yaml.YAMLError):
+        return None
+    return fm if isinstance(fm, dict) and fm.get("id") else None
+
+
 def known_ids(data_dir=None):
-    """Scan data/ for existing soc and module ids, to resolve inheritance refs against."""
-    ids = {"soc": set(), "module": set()}
+    """Scan data/ for existing soc/module/board/firmware ids, to resolve inheritance
+    refs against. Also returns `board_soc`: {board_id: resolved soc id} (via the
+    board's own `soc`, or its `module`'s `soc`), used to check a recipe's
+    `chip_family` against the board it targets."""
+    ids = {"soc": set(), "module": set(), "board": set(), "firmware": set()}
     root = Path(data_dir) if data_dir is not None else DATA_DIR
-    for kind in ids:
-        for path in root.glob(DATA_PATTERNS[kind]):
-            try:
-                fm, _body = parse_frontmatter_text(path.read_text(encoding="utf-8"))
-            except (ValueError, yaml.YAMLError):
-                continue
-            if isinstance(fm, dict) and fm.get("id"):
-                ids[kind].add(fm["id"])
+
+    module_soc = {}
+    for path in root.glob(DATA_PATTERNS["module"]):
+        fm = _read_fm(path)
+        if fm:
+            ids["module"].add(fm["id"])
+            module_soc[fm["id"]] = fm.get("soc")
+
+    for path in root.glob(DATA_PATTERNS["soc"]):
+        fm = _read_fm(path)
+        if fm:
+            ids["soc"].add(fm["id"])
+
+    board_soc = {}
+    for path in root.glob(DATA_PATTERNS["board"]):
+        fm = _read_fm(path)
+        if fm:
+            ids["board"].add(fm["id"])
+            board_soc[fm["id"]] = fm.get("soc") or module_soc.get(fm.get("module"))
+
+    for path in root.glob(DATA_PATTERNS["firmware"]):
+        fm = _read_fm(path)
+        if fm:
+            ids["firmware"].add(fm["id"])
+
+    ids["board_soc"] = board_soc
     return ids
 
 
@@ -58,6 +89,20 @@ def _check_inheritance(fm, kind, ids):
             errors.append(f"module '{fm['module']}' not found in data/modules/")
         if "soc" in fm and fm["soc"] not in ids["soc"]:
             errors.append(f"soc '{fm['soc']}' not found in data/socs/")
+    if kind == "recipe":
+        board_id, firmware_id = fm.get("board"), fm.get("firmware")
+        board_ids, firmware_ids = ids.get("board", set()), ids.get("firmware", set())
+        if board_id is not None and board_id not in board_ids:
+            errors.append(f"board '{board_id}' not found in data/boards/")
+        if firmware_id is not None and firmware_id not in firmware_ids:
+            errors.append(f"firmware '{firmware_id}' not found in data/firmware/")
+        if board_id in board_ids:
+            board_soc = ids.get("board_soc", {}).get(board_id)
+            chip_family = fm.get("chip_family")
+            if board_soc is not None and chip_family is not None and chip_family != board_soc:
+                errors.append(
+                    f"chip_family '{chip_family}' does not match board '{board_id}' soc '{board_soc}'"
+                )
     return errors
 
 

@@ -183,6 +183,23 @@ def test_build_index_count_meta_excludes_brands(tmp_path):
     assert count == parts_count
 
 
+def test_build_index_excludes_firmware_and_recipe_from_parts(tmp_path):
+    """firmware/recipe are first-class entities like brand — never indexed into
+    the queryable parts table, never a /search or /wizard result."""
+    db_path = tmp_path / "esp-atlas.db"
+    build_index(db_path=db_path)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+
+    assert conn.execute("SELECT COUNT(*) FROM parts WHERE type = 'firmware'").fetchone()[0] == 0
+    assert conn.execute("SELECT COUNT(*) FROM parts WHERE type = 'recipe'").fetchone()[0] == 0
+    assert conn.execute("SELECT id FROM parts WHERE id = 'esp32marauder'").fetchone() is None
+    assert (
+        conn.execute("SELECT id FROM parts WHERE id = 'm5cardputer__esp32marauder'").fetchone()
+        is None
+    )
+
+
 def test_create_schema_adds_missing_columns_to_an_older_db(tmp_path):
     """A db built before frontmatter_json/body existed must be migrated in place,
     not fail on INSERT — CREATE TABLE IF NOT EXISTS alone never alters a table."""
