@@ -153,6 +153,29 @@ def test_search_soc_filter_combines_with_type(built_db_path):
         assert r["soc_ref"] == "esp32-c6"
 
 
+def test_search_brand_filter_returns_only_parts_of_that_brand(built_db_path):
+    results = search("", filters={"brand": "adafruit"}, db_path=built_db_path)
+    ids = {r["id"] for r in results}
+    assert "adafruit-feather-esp32-s3" in ids
+    assert results
+    for r in results:
+        assert r["vendor_or_brand"] == "adafruit"
+
+
+def test_search_brand_filter_combines_with_type(built_db_path):
+    results = search("", filters={"brand": "espressif", "type": "soc"}, db_path=built_db_path)
+    ids = {r["id"] for r in results}
+    assert "esp32-c6" in ids
+    for r in results:
+        assert r["type"] == "soc"
+        assert r["vendor_or_brand"] == "espressif"
+
+
+def test_search_brand_filter_is_exact(built_db_path):
+    assert search("", filters={"brand": "Adafruit"}, db_path=built_db_path) == []
+    assert search("", filters={"brand": "no-such-brand"}, db_path=built_db_path) == []
+
+
 def test_search_module_filter_returns_parts_using_that_module(built_db_path):
     results = search("", filters={"module": "esp32-c6-wroom-1"}, db_path=built_db_path)
     ids = {r["id"] for r in results}

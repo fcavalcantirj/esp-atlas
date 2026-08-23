@@ -81,6 +81,7 @@ def create_app(db_path=None):
         usb_native: Optional[bool] = None,
         soc: Optional[str] = None,
         module: Optional[str] = None,
+        brand: Optional[str] = None,
         db_path=Depends(get_db_path),
     ):
         filters = {}
@@ -96,6 +97,8 @@ def create_app(db_path=None):
             filters["soc"] = soc
         if module is not None:
             filters["module"] = module
+        if brand is not None:
+            filters["brand"] = brand
         if protocol is not None:
             filters["protocol"] = protocol
         if ieee802154 is not None:

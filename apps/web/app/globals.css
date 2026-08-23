@@ -1619,8 +1619,13 @@ input[type="checkbox"]:checked::after {
 }
 
 /* SoC hub: the chip's boards and modules as index rows in the main column. */
-.soc-hub h2 {
+.soc-hub h2,
+.brand-group h2 {
   margin-bottom: 0.75rem;
+}
+
+.brand-group + .brand-group {
+  margin-top: 2rem;
 }
 
 .aside-pointer {

@@ -35,8 +35,9 @@ def build_index_cmd(ctx):
 @click.option("--protocol", default=None, help="802.15.4 protocol substring, e.g. zigbee")
 @click.option("--type", "type_", default=None, type=click.Choice(["soc", "module", "board"]))
 @click.option("--soc", default=None, help="Only parts built on this SoC id, e.g. esp32-c6")
+@click.option("--brand", default=None, help="Only parts from this vendor/brand slug, e.g. adafruit")
 @click.pass_context
-def search(ctx, query, radio, band, form, protocol, type_, soc):
+def search(ctx, query, radio, band, form, protocol, type_, soc, brand):
     """Search the esp-atlas dataset (structured filters + free-text)."""
     filters = {}
     if radio:
@@ -51,6 +52,8 @@ def search(ctx, query, radio, band, form, protocol, type_, soc):
         filters["type"] = type_
     if soc:
         filters["soc"] = soc
+    if brand:
+        filters["brand"] = brand
 
     try:
         results = core_search(query, filters=filters, db_path=ctx.obj["db_path"])

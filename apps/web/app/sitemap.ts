@@ -31,10 +31,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .sort()
     .pop();
 
+  // One hub per vendor/brand slug found in the records, dated by its newest part.
+  const byBrand = new Map<string, string | undefined>();
+  for (const part of parts) {
+    const current = byBrand.get(part.vendor_or_brand);
+    const mine = lastVerified(part);
+    if (!byBrand.has(part.vendor_or_brand) || (mine && (!current || mine > current))) byBrand.set(part.vendor_or_brand, mine);
+  }
+  const brandRoutes: MetadataRoute.Sitemap = [...byBrand.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([brand, lastModified]) => ({
+      url: `${SITE_URL}/brands/${encodeURIComponent(brand)}`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    }));
+
   // /compare is noindex (a client-rendered tool), so it is no longer listed here.
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, lastModified: newest, changeFrequency: "daily", priority: 1 },
+    ...(brandRoutes.length ? [{ url: `${SITE_URL}/brands`, lastModified: newest, changeFrequency: "weekly" as const, priority: 0.6 }] : []),
   ];
 
-  return [...staticRoutes, ...partRoutes];
+  return [...staticRoutes, ...brandRoutes, ...partRoutes];
 }

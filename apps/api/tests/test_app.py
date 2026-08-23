@@ -345,6 +345,29 @@ def test_search_soc_filter_combined_with_type(client):
     assert all(rec["type"] == "board" and rec["soc_ref"] == "esp32-c6" for rec in results)
 
 
+def test_search_brand_filter(client):
+    r = client.get("/search", params={"brand": "adafruit"})
+    assert r.status_code == 200
+    results = r.json()["results"]
+    assert results
+    assert all(rec["vendor_or_brand"] == "adafruit" for rec in results)
+    assert any(rec["id"] == "adafruit-feather-esp32-s3" for rec in results)
+
+
+def test_search_brand_filter_combined_with_type(client):
+    r = client.get("/search", params={"brand": "espressif", "type": "soc"})
+    assert r.status_code == 200
+    results = r.json()["results"]
+    assert results
+    assert all(rec["type"] == "soc" and rec["vendor_or_brand"] == "espressif" for rec in results)
+
+
+def test_search_unknown_brand_returns_empty(client):
+    r = client.get("/search", params={"brand": "no-such-brand"})
+    assert r.status_code == 200
+    assert r.json()["results"] == []
+
+
 def test_search_module_filter(client):
     r = client.get("/search", params={"module": "esp32-c6-wroom-1"})
     assert r.status_code == 200

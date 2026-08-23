@@ -17,8 +17,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-function pluralParts(n: number): string {
-  return `${n} ${n === 1 ? "part" : "parts"} on this chip`;
+function pluralParts(n: number, where: string): string {
+  return `${n} ${n === 1 ? "part" : "parts"} ${where}`;
 }
 
 export default async function Home() {
@@ -35,10 +35,22 @@ export default async function Home() {
           .map((f) => ({
             href: `/parts/${encodeURIComponent(f.value)}`,
             name: socName.get(f.value)!,
-            note: pluralParts(f.count),
+            note: pluralParts(f.count, "on this chip"),
             partId: f.value,
             partType: "soc",
           }))
+      : [];
+
+  // /facets.vendor_or_brand → the brand hubs (F5); counts are the core's.
+  const brands: BrowseItem[] =
+    facets.status === "ok"
+      ? facets.data.vendor_or_brand.map((f) => ({
+          href: `/brands/${encodeURIComponent(f.value)}`,
+          name: f.value,
+          note: pluralParts(f.count, "from this brand"),
+          partId: f.value,
+          partType: "brand",
+        }))
       : [];
 
   return (
@@ -58,6 +70,13 @@ export default async function Home() {
         hint="Every SoC in the atlas, with the modules and boards built on it."
         items={chips}
         origin="browse"
+      />
+      <BrowseSection
+        id="browse-brand"
+        title="Browse by brand"
+        hint="Every vendor and brand in the atlas, with the boards and modules they make."
+        items={brands}
+        origin="brand"
       />
     </main>
   );

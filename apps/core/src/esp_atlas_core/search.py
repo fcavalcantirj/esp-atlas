@@ -15,7 +15,7 @@ from esp_atlas_core import db as dbmod
 
 # CLI/public filter key -> parts column (or handler) it maps to
 _BOOL_FILTERS = {"ieee802154", "ble", "bt_classic", "usb_native"}
-_EXACT_FILTERS = {"type", "form", "soc", "module"}
+_EXACT_FILTERS = {"type", "form", "soc", "module", "brand"}
 _KNOWN_FILTERS = _BOOL_FILTERS | _EXACT_FILTERS | {"band", "protocol", "radio"}
 
 _FTS_SPECIAL = re.compile(r'[^\w\s]')
@@ -73,6 +73,10 @@ def _build_where(filters):
     if "module" in filters:
         clauses.append("parts.module_ref = ?")
         params.append(filters["module"])
+    if "brand" in filters:
+        # exact: vendor_or_brand holds the canonical folder slug (e.g. "unexpected-maker")
+        clauses.append("parts.vendor_or_brand = ?")
+        params.append(filters["brand"])
     if "band" in filters:
         clauses.append("(',' || parts.wifi_bands || ',') LIKE ?")
         params.append(f"%,{_normalize_band(filters['band'])},%")
