@@ -1,8 +1,10 @@
 """SQLite schema + connection helpers for esp-atlas.db.
 
 Two-part index: `parts` is the structured table for exact filtering, `parts_fts`
-is an FTS5 virtual table over free text (name/aka/prose/notes). `meta` tracks the
-build id used to key the answer cache in `answer_cache`.
+is an FTS5 virtual table over free text (name/aka/prose/notes). `brands` is a
+small editorial lookup (data/brands/<slug>/brand.md), kept out of `parts` on
+purpose — see esp_atlas_core.brands. `meta` tracks the build id used to key the
+answer cache in `answer_cache`.
 """
 import sqlite3
 
@@ -41,6 +43,12 @@ CREATE VIRTUAL TABLE IF NOT EXISTS parts_fts USING fts5(
     aka,
     prose,
     notes
+);
+
+CREATE TABLE IF NOT EXISTS brands (
+    slug TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    url TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS meta (
@@ -92,6 +100,11 @@ def create_schema(conn):
 def clear_parts(conn):
     conn.execute("DELETE FROM parts")
     conn.execute("DELETE FROM parts_fts")
+    conn.commit()
+
+
+def clear_brands(conn):
+    conn.execute("DELETE FROM brands")
     conn.commit()
 
 

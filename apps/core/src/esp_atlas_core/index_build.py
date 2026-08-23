@@ -109,17 +109,24 @@ def _compute_build_id(records):
 
 
 def build_index(db_path=None, data_dir=None):
-    """Rebuild esp-atlas.db from data/**/*.md. Returns the new build id."""
+    """Rebuild esp-atlas.db from data/**/*.md. Returns the new build id.
+
+    Brand records (data/brands/<slug>/brand.md) are an editorial lookup, not a
+    part — they never enter `parts`/`parts_fts`, only the separate `brands` table.
+    """
     records = _load_all(data_dir)
-    soc_by_id = {fm["id"]: fm for t, _p, fm, _b in records if t == "soc"}
-    module_by_id = {fm["id"]: fm for t, _p, fm, _b in records if t == "module"}
+    part_records = [r for r in records if r[0] != "brand"]
+    brand_records = [r for r in records if r[0] == "brand"]
+    soc_by_id = {fm["id"]: fm for t, _p, fm, _b in part_records if t == "soc"}
+    module_by_id = {fm["id"]: fm for t, _p, fm, _b in part_records if t == "module"}
 
     conn = dbmod.connect(db_path)
     try:
         dbmod.create_schema(conn)
         dbmod.clear_parts(conn)
+        dbmod.clear_brands(conn)
 
-        for content_type, path, fm, body in records:
+        for content_type, path, fm, body in part_records:
             row = _row_for(content_type, path, fm, body, soc_by_id, module_by_id)
             conn.execute(
                 """
@@ -142,10 +149,16 @@ def build_index(db_path=None, data_dir=None):
                 row,
             )
 
+        for _content_type, _path, fm, _body in brand_records:
+            conn.execute(
+                "INSERT INTO brands (slug, name, url) VALUES (:slug, :name, :url)",
+                {"slug": fm["id"], "name": fm["name"], "url": fm["url"]},
+            )
+
         build_id = _compute_build_id(records)
         dbmod.set_meta(conn, "build_id", build_id)
         dbmod.set_meta(conn, "built_at", datetime.now(timezone.utc).isoformat())
-        dbmod.set_meta(conn, "count", str(len(records)))
+        dbmod.set_meta(conn, "count", str(len(part_records)))
         conn.commit()
         return build_id
     finally:

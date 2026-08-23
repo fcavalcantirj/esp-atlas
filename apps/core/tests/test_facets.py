@@ -10,7 +10,10 @@ def test_facets_returns_every_facet_key(built_db_path):
     assert set(result) == set(FACET_KEYS)
     for key in FACET_KEYS:
         for entry in result[key]:
-            assert set(entry) == {"value", "count"}
+            if key == "vendor_or_brand":
+                assert {"value", "count", "display_name"} <= set(entry)
+            else:
+                assert set(entry) == {"value", "count"}
             assert entry["count"] >= 1
 
 
@@ -66,3 +69,64 @@ def test_facets_never_contain_null_or_empty_values(built_db_path):
     result = facets(db_path=built_db_path)
     for key in FACET_KEYS:
         assert all(e["value"] for e in result[key]), key
+
+
+def test_facets_vendor_or_brand_known_slug_gets_editorial_display_name(built_db_path):
+    result = facets(db_path=built_db_path)
+    by_value = {e["value"]: e for e in result["vendor_or_brand"]}
+    assert by_value["espressif"]["display_name"] == "Espressif"
+    assert by_value["espressif"]["url"] == "https://www.espressif.com"
+    assert by_value["unexpected-maker"]["display_name"] == "Unexpected Maker"
+
+
+def test_facets_vendor_or_brand_unknown_slug_falls_back_to_slug(tmp_path, monkeypatch):
+    from esp_atlas_core import index_build
+
+    data_dir = tmp_path / "data"
+    _seed_minimal_dataset(data_dir, brand="no-brand-file")
+    # _row_for stores each record's path relative to REPO_ROOT; a data_dir outside
+    # the real repo needs REPO_ROOT patched to match, same as the tmp_path tree.
+    monkeypatch.setattr(index_build, "REPO_ROOT", tmp_path)
+    db_path = tmp_path / "esp-atlas.db"
+    index_build.build_index(db_path=db_path, data_dir=data_dir)
+
+    result = facets(db_path=db_path)
+    by_value = {e["value"]: e for e in result["vendor_or_brand"]}
+    assert by_value["no-brand-file"]["display_name"] == "no-brand-file"
+    assert "url" not in by_value["no-brand-file"]
+
+
+def _seed_minimal_dataset(data_dir, brand):
+    """A single bare-chip board with no data/brands/<brand>/ record, for testing
+    the facets() display_name fallback in isolation from the real seeded dataset."""
+    soc_dir = data_dir / "socs" / "fake-soc"
+    soc_dir.mkdir(parents=True)
+    (soc_dir / "chip.md").write_text(
+        "---\n"
+        "id: fake-soc\n"
+        "type: soc\n"
+        "vendor: acme\n"
+        "name: Fake SoC\n"
+        "sources:\n"
+        "- field: '*'\n"
+        "  url: https://example.com\n"
+        "  verified: '2026-08-22'\n"
+        "---\n\nFake SoC.\n",
+        encoding="utf-8",
+    )
+    board_dir = data_dir / "boards" / brand / "fake-board"
+    board_dir.mkdir(parents=True)
+    (board_dir / "board.md").write_text(
+        f"---\n"
+        f"id: fake-board\n"
+        f"type: board\n"
+        f"brand: {brand}\n"
+        f"name: Fake Board\n"
+        f"soc: fake-soc\n"
+        f"sources:\n"
+        f"- field: '*'\n"
+        f"  url: https://example.com\n"
+        f"  verified: '2026-08-22'\n"
+        f"---\n\nFake board.\n",
+        encoding="utf-8",
+    )

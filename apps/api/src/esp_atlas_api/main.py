@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from esp_atlas_core import db as dbmod
 from esp_atlas_core.facets import facets as core_facets
 from esp_atlas_core.index_build import build_index
+from esp_atlas_core.search import brand_page as core_brand_page
 from esp_atlas_core.search import get_part as core_get_part
 from esp_atlas_core.search import search as core_search
 from esp_atlas_core.validate import validate_frontmatter as core_validate_frontmatter
@@ -20,6 +21,7 @@ from esp_atlas_core.validate import validate_markdown as core_validate_markdown
 from esp_atlas_core.wizard import wizard as core_wizard
 
 from esp_atlas_api.models import (
+    BrandPageResponse,
     FacetsResponse,
     HealthResponse,
     PartDetail,
@@ -154,6 +156,10 @@ def create_app(db_path=None):
     @app.get("/facets", response_model=FacetsResponse)
     def facets(db_path=Depends(get_db_path)):
         return FacetsResponse(**core_facets(db_path=db_path))
+
+    @app.get("/brands/{slug}", response_model=BrandPageResponse)
+    def brand_page(slug: str, db_path=Depends(get_db_path)):
+        return core_brand_page(slug, db_path=db_path)
 
     return app
 

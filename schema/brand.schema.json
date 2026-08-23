@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://esp.wiki/schema/brand.schema.json",
+  "title": "ESP Atlas Brand",
+  "description": "Editorial identity for a vendor/brand folder under data/boards/<id>/. Provides the human display name and homepage the site renders instead of the raw folder slug. Every claim (name, url) carries a source.",
+  "type": "object",
+  "required": ["id", "type", "name", "url", "sources"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9-]+$", "description": "matches the data/brands/<id>/ (and data/boards/<id>/) folder" },
+    "type": { "const": "brand" },
+    "name": { "type": "string", "description": "human display name, e.g. 'LILYGO'" },
+    "url": { "type": "string", "format": "uri", "description": "official vendor homepage" },
+    "sources": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["field", "url", "verified"], "additionalProperties": false,
+        "properties": {
+          "field": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "verified": { "type": "string", "format": "date" }
+        }
+      }
+    }
+  }
+}

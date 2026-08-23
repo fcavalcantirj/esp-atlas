@@ -68,15 +68,37 @@ class Facet(BaseModel):
     count: int
 
 
+class BrandFacet(Facet):
+    """A vendor_or_brand facet entry, enriched with its editorial display name —
+    see esp_atlas_core.facets. `display_name` falls back to `value` (the slug)
+    when data/brands/<value>/ has no brand.md."""
+
+    display_name: str
+    url: Optional[str] = None
+
+
 class FacetsResponse(BaseModel):
     type: list[Facet]
-    vendor_or_brand: list[Facet]
+    vendor_or_brand: list[BrandFacet]
     form_factor: list[Facet]
     wifi_standard: list[Facet]
     price_tier: list[Facet]
     soc_ref: list[Facet]
     wifi_bands: list[Facet]
     ieee802154_protocols: list[Facet]
+
+
+class Brand(BaseModel):
+    slug: str
+    name: str
+    url: Optional[str] = None
+
+
+class BrandPageResponse(BaseModel):
+    """GET /brands/{slug}: the brand's own identity plus every part from it."""
+
+    brand: Brand
+    results: list[Record]
 
 
 class SearchResponse(BaseModel):

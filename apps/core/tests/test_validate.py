@@ -10,6 +10,7 @@ from esp_atlas_core.validate import known_ids, validate_file, validate_frontmatt
 SOC_PATH = REPO_ROOT / "data" / "socs" / "esp32-c6" / "chip.md"
 MODULE_PATH = REPO_ROOT / "data" / "modules" / "esp32-c6-wroom-1" / "module.md"
 BOARD_PATH = REPO_ROOT / "data" / "boards" / "espressif" / "esp32-c6-devkitc-1" / "board.md"
+BRAND_PATH = REPO_ROOT / "data" / "brands" / "espressif" / "brand.md"
 
 
 @pytest.fixture
@@ -21,6 +22,12 @@ def soc_fm():
 @pytest.fixture
 def board_fm():
     fm, _body = parse_frontmatter(BOARD_PATH)
+    return fm
+
+
+@pytest.fixture
+def brand_fm():
+    fm, _body = parse_frontmatter(BRAND_PATH)
     return fm
 
 
@@ -176,6 +183,44 @@ def test_known_ids_scans_disk_and_includes_seeded_records():
     ids = known_ids()
     assert "esp32-c6" in ids["soc"]
     assert "esp32-c6-wroom-1" in ids["module"]
+
+
+def test_validate_frontmatter_valid_brand_passes(brand_fm):
+    result = validate_frontmatter(brand_fm, "brand")
+    assert result == {"ok": True, "errors": []}
+
+
+def test_validate_frontmatter_brand_missing_required_field_fails(brand_fm):
+    fm = copy.deepcopy(brand_fm)
+    del fm["url"]
+    result = validate_frontmatter(fm, "brand")
+    assert result["ok"] is False
+    assert any("url" in e for e in result["errors"])
+
+
+def test_validate_frontmatter_brand_missing_sources_fails(brand_fm):
+    fm = copy.deepcopy(brand_fm)
+    del fm["sources"]
+    result = validate_frontmatter(fm, "brand")
+    assert result["ok"] is False
+    assert any("sources" in e for e in result["errors"])
+
+
+def test_validate_file_valid_seeded_brand_passes():
+    result = validate_file(BRAND_PATH)
+    assert result == {"ok": True, "errors": [], "kind": "brand"}
+
+
+def test_validate_file_brand_id_folder_mismatch_fails(tmp_path):
+    text = BRAND_PATH.read_text(encoding="utf-8")
+    bad_dir = tmp_path / "brands" / "wrong-folder-name"
+    bad_dir.mkdir(parents=True)
+    bad_path = bad_dir / "brand.md"
+    bad_path.write_text(text, encoding="utf-8")
+
+    result = validate_file(bad_path)
+    assert result["ok"] is False
+    assert any("wrong-folder-name" in e for e in result["errors"])
 
 
 def test_validate_frontmatter_uses_explicit_ids_when_given():

@@ -12,6 +12,7 @@ import json
 import re
 
 from esp_atlas_core import db as dbmod
+from esp_atlas_core.brands import get_brand
 
 # CLI/public filter key -> parts column (or handler) it maps to
 _BOOL_FILTERS = {"ieee802154", "ble", "bt_classic", "usb_native"}
@@ -204,3 +205,13 @@ def get_part(part_id, db_path=None):
         return record
     finally:
         conn.close()
+
+
+def brand_page(slug, db_path=None):
+    """Everything /brands/<slug> needs: the brand's own {slug, name, url} (falling
+    back to the slug itself when data/brands/<slug>/ has no brand.md) plus every
+    part from it. An unknown slug still returns 200 with an empty `results` list,
+    same as search(filters={"brand": slug}) — the caller 404s on empty results."""
+    results = search("", filters={"brand": slug}, db_path=db_path)
+    brand = get_brand(slug, db_path=db_path) or {"slug": slug, "name": slug, "url": None}
+    return {"brand": brand, "results": results}

@@ -7,10 +7,17 @@ them: a new form factor or price tier shows up the moment it is indexed. Multi-
 valued columns (wifi_bands, ieee802154_protocols) are stored comma-joined and are
 split back into individual tokens here. Each list is sorted by count desc, then
 value, and NULL/empty values are dropped.
+
+`vendor_or_brand` entries additionally carry `display_name` (and `url` when
+known) resolved from the `brands` table — see esp_atlas_core.brands — so a UI
+never has to render the raw folder slug. A slug with no data/brands/ record
+falls back to itself as the display name.
 """
 from collections import Counter
 
 from esp_atlas_core import db as dbmod
+
+_VENDOR_OR_BRAND = "vendor_or_brand"
 
 _SINGLE_VALUE_COLUMNS = (
     "type",
@@ -32,6 +39,21 @@ def _sorted_facet(counter):
     ]
 
 
+def _brand_lookup(conn):
+    rows = conn.execute("SELECT slug, name, url FROM brands").fetchall()
+    return {row["slug"]: (row["name"], row["url"]) for row in rows}
+
+
+def _enrich_vendor_or_brand(entries, conn):
+    brands = _brand_lookup(conn)
+    for entry in entries:
+        name, url = brands.get(entry["value"], (None, None))
+        entry["display_name"] = name or entry["value"]
+        if url:
+            entry["url"] = url
+    return entries
+
+
 def facets(db_path=None):
     conn = dbmod.connect(db_path)
     try:
@@ -41,7 +63,10 @@ def facets(db_path=None):
                 f"SELECT {column} AS value, COUNT(*) AS count FROM parts "
                 f"WHERE {column} IS NOT NULL AND {column} != '' GROUP BY {column}"
             ).fetchall()
-            result[column] = _sorted_facet({row["value"]: row["count"] for row in rows})
+            entries = _sorted_facet({row["value"]: row["count"] for row in rows})
+            if column == _VENDOR_OR_BRAND:
+                entries = _enrich_vendor_or_brand(entries, conn)
+            result[column] = entries
 
         for column in _MULTI_VALUE_COLUMNS:
             counter = Counter()
