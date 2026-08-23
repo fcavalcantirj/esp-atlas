@@ -100,10 +100,28 @@ def test_search_returns_expected_record_shape(built_db_path):
     results = search("", filters={"type": "soc", "radio": "wifi-6"}, db_path=built_db_path)
     assert results
     r = results[0]
-    for key in ("id", "type", "name", "_path", "sources"):
+    for key in ("id", "type", "name", "_path", "sources", "brand_name", "brand_url"):
         assert key in r
     assert isinstance(r["sources"], list)
     assert r["sources"][0]["url"].startswith("http")
+
+
+def test_search_includes_brand_name_and_url_for_known_brand(built_db_path):
+    results = search("", filters={"brand": "adafruit"}, db_path=built_db_path)
+    ids = {r["id"]: r for r in results}
+    r = ids["adafruit-feather-esp32-s3"]
+    assert r["brand_name"] == "Adafruit"
+    assert r["brand_url"] == "https://www.adafruit.com"
+    assert r["vendor_or_brand"] == "adafruit"  # slug unchanged
+
+
+def test_search_brand_name_falls_back_to_slug_when_no_brand_file(built_db_path, monkeypatch):
+    # simulate a vendor folder with no data/brands/<slug>/brand.md by emptying the lookup
+    monkeypatch.setattr("esp_atlas_core.search.list_brands", lambda db_path=None: {})
+    results = search("", filters={"brand": "adafruit"}, db_path=built_db_path)
+    r = results[0]
+    assert r["brand_name"] == "adafruit"
+    assert r["brand_url"] is None
 
 
 def test_search_no_results_returns_empty_list(built_db_path):
@@ -197,6 +215,8 @@ def test_get_part_board_returns_detail_shape(built_db_path):
     # flat record fields are still there
     assert part["id"] == "esp32-c6-devkitc-1"
     assert part["wifi_standard"] == "wifi-6"
+    assert part["brand_name"] == "Espressif"
+    assert part["brand_url"] == "https://www.espressif.com"
     # own frontmatter + prose body
     assert part["frontmatter"]["usb"]["connector"] == "usb-c"
     assert part["frontmatter"]["id"] == "esp32-c6-devkitc-1"
@@ -237,6 +257,13 @@ def test_get_part_module_lists_boards_using_it(built_db_path):
     related_ids = [r["id"] for r in part["related"]]
     assert "esp32-c6-devkitc-1" in related_ids
     assert "esp32-c6" not in related_ids
+
+
+def test_get_part_chain_and_related_records_include_brand_name(built_db_path):
+    part = get_part("esp32-c6-devkitc-1", db_path=built_db_path)
+    assert part["chain"]["soc"]["brand_name"] == "Espressif"
+    related = {r["id"]: r for r in part["related"]}
+    assert related["xiao-esp32c6"]["brand_name"] == "Seeed Studio"
 
 
 def test_get_part_related_is_ordered_by_type_then_name(built_db_path):

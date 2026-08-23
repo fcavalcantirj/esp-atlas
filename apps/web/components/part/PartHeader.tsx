@@ -25,7 +25,10 @@ export default function PartHeader({ part }: { part: PartDetail }) {
       </div>
       <div className="part-meta">
         <span>
-          by <strong>{part.vendor_or_brand}</strong>
+          by{" "}
+          <Link href={`/brands/${part.vendor_or_brand}`}>
+            <strong>{part.brand_name}</strong>
+          </Link>
         </span>
         <span className="mono muted">{part.id}</span>
         {part.price_tier && (

@@ -12,7 +12,7 @@ import json
 import re
 
 from esp_atlas_core import db as dbmod
-from esp_atlas_core.brands import get_brand
+from esp_atlas_core.brands import get_brand, list_brands
 
 # CLI/public filter key -> parts column (or handler) it maps to
 _BOOL_FILTERS = {"ieee802154", "ble", "bt_classic", "usb_native"}
@@ -107,12 +107,19 @@ def _fts_query(query):
     return " OR ".join(f'"{t}"' for t in terms)
 
 
-def _row_to_record(row):
+def _row_to_record(row, brands_lookup=None):
+    """`brands_lookup` is {slug: {"name", "url"}} — see esp_atlas_core.brands.list_brands.
+    Loaded once per query and passed in, never fetched per row."""
+    brands_lookup = brands_lookup or {}
+    slug = row["vendor_or_brand"]
+    brand = brands_lookup.get(slug, {})
     return {
         "id": row["id"],
         "type": row["type"],
         "name": row["name"],
-        "vendor_or_brand": row["vendor_or_brand"],
+        "vendor_or_brand": slug,
+        "brand_name": brand.get("name", slug),
+        "brand_url": brand.get("url"),
         "wifi_standard": row["wifi_standard"],
         "wifi_bands": row["wifi_bands"],
         "ble_version": row["ble_version"],
@@ -135,6 +142,7 @@ def search(query, filters=None, db_path=None, limit=500):
     where_clauses, params = _build_where(filters)
     fts_expr = _fts_query(query) if query else None
 
+    brands_lookup = list_brands(db_path=db_path)
     conn = dbmod.connect(db_path)
     try:
         if fts_expr:
@@ -156,14 +164,14 @@ def search(query, filters=None, db_path=None, limit=500):
             params.append(limit)
 
         rows = conn.execute(sql, params).fetchall()
-        return [_row_to_record(r) for r in rows]
+        return [_row_to_record(r, brands_lookup) for r in rows]
     finally:
         conn.close()
 
 
-def _fetch_record(conn, part_id):
+def _fetch_record(conn, part_id, brands_lookup):
     row = conn.execute("SELECT * FROM parts WHERE id = ?", (part_id,)).fetchone()
-    return _row_to_record(row) if row else None
+    return _row_to_record(row, brands_lookup) if row else None
 
 
 def get_part(part_id, db_path=None):
@@ -178,21 +186,22 @@ def get_part(part_id, db_path=None):
       related      other parts on the same soc (and, for a module, boards using it),
                    excluding the part itself, ordered by type then name
     """
+    brands_lookup = list_brands(db_path=db_path)
     conn = dbmod.connect(db_path)
     try:
         row = conn.execute("SELECT * FROM parts WHERE id = ?", (part_id,)).fetchone()
         if row is None:
             return None
 
-        record = _row_to_record(row)
+        record = _row_to_record(row, brands_lookup)
         record["frontmatter"] = json.loads(row["frontmatter_json"])
         record["body"] = row["body"]
 
         soc_id = row["soc_ref"]
         module_id = row["module_ref"]
         record["chain"] = {
-            "soc": _fetch_record(conn, soc_id) if soc_id and soc_id != part_id else None,
-            "module": _fetch_record(conn, module_id) if module_id and module_id != part_id else None,
+            "soc": _fetch_record(conn, soc_id, brands_lookup) if soc_id and soc_id != part_id else None,
+            "module": _fetch_record(conn, module_id, brands_lookup) if module_id and module_id != part_id else None,
         }
 
         # siblings on the same soc (+ boards using this module), minus self and the chain parents
@@ -201,7 +210,7 @@ def get_part(part_id, db_path=None):
             "ORDER BY parts.type, parts.name",
             (part_id, soc_id or "", module_id or "", soc_id, part_id),
         ).fetchall()
-        record["related"] = [_row_to_record(r) for r in related_rows]
+        record["related"] = [_row_to_record(r, brands_lookup) for r in related_rows]
         return record
     finally:
         conn.close()

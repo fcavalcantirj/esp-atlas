@@ -80,6 +80,14 @@ query ─▶ structured filter (radio/band/protocol/form) + FTS (name/prose/note
   brand's own editorial identity (same fallback-to-slug rule as above) plus every
   part with that `vendor_or_brand`. An unknown slug still returns 200 with
   `results: []`, never a 404 — the site 404s on the empty list itself.
+- Every part record (from `/search`, `/wizard`, `/parts/{id}` and its `chain`/
+  `related`, and `/brands/{slug}.results`) carries `vendor_or_brand` (the
+  canonical folder slug, unchanged — used for filtering and `/brands/<slug>`
+  URLs) alongside `brand_name` (the editorial display name, resolved from
+  `data/brands/<slug>/brand.md`, falling back to the slug) and `brand_url`
+  (the brand's homepage, or `null` when unknown). The site renders `brand_name`
+  wherever a brand is shown to a human; `vendor_or_brand` is for hrefs/filters
+  only, never a label.
 - `GET  /index.json` → static passthrough
 
 **Site** (Next.js, SSG)

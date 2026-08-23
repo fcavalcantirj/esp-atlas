@@ -38,7 +38,7 @@ export default function RelatedParts({ part }: { part: PartDetail }) {
                     }
                   >
                     <span>{record.name}</span>
-                    <span className="related-item-brand">{record.vendor_or_brand}</span>
+                    <span className="related-item-brand">{record.brand_name}</span>
                   </Link>
                 </li>
               ))}

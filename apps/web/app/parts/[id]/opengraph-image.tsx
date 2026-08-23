@@ -77,7 +77,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
           <div style={{ display: "flex", alignItems: "center", gap: 16, fontFamily: MONO, fontSize: 20, letterSpacing: 3, textTransform: "uppercase", color: MUTED }}>
             <span>{typeLabel(part.type)}</span>
             <span style={{ color: BORDER }}>·</span>
-            <span>{part.vendor_or_brand}</span>
+            <span>{part.brand_name}</span>
           </div>
           <div style={{ fontSize: nameSize, lineHeight: 1.08, letterSpacing: -1 }}>{part.name}</div>
           {builtOn && (

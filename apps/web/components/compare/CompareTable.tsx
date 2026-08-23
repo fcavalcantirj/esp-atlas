@@ -13,7 +13,7 @@ interface SpecRow {
 
 const ROWS: SpecRow[] = [
   { label: "Type", value: (p) => typeLabel(p.type) },
-  { label: "Vendor / brand", value: (p) => p.vendor_or_brand },
+  { label: "Vendor / brand", value: (p) => p.brand_name },
   { label: "SoC", value: (p) => p.soc_ref },
   { label: "Module", value: (p) => p.module_ref },
   { label: "Form factor", value: (p) => p.form_factor },

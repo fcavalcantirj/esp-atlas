@@ -27,6 +27,8 @@ class Record(BaseModel):
     type: str
     name: str
     vendor_or_brand: str
+    brand_name: str
+    brand_url: Optional[str] = None
     wifi_standard: Optional[str] = None
     wifi_bands: Optional[str] = None
     ble_version: Optional[str] = None

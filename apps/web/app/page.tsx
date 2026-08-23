@@ -46,7 +46,7 @@ export default async function Home() {
     facets.status === "ok"
       ? facets.data.vendor_or_brand.map((f) => ({
           href: `/brands/${encodeURIComponent(f.value)}`,
-          name: f.value,
+          name: f.display_name,
           note: pluralParts(f.count, "from this brand"),
           partId: f.value,
           partType: "brand",
