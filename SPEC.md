@@ -35,7 +35,11 @@ hard spec carries a `sources:` entry. Fields not verified are omitted, never gue
 never a `/search` or `/wizard` result. It exists purely so the site can render
 "LILYGO" instead of the raw folder slug `lilygo`; a folder with no `brand.md`
 yet just falls back to rendering its slug. Populated for every vendor folder
-currently under `data/boards/`.
+currently under `data/boards/`. Every part record the core/API return also
+carries `brand_name`/`brand_url`, resolved from this lookup — the raw slug
+(`vendor_or_brand`) stays on the record for filtering and URLs, but no
+user-facing label anywhere on the site (part pages, result cards, page
+titles, OG images, JSON-LD, brand browse chips) renders it directly.
 
 **Exception — `price_tier`:** boards may optionally carry `price_tier:
 cheap|medium|expensive`, an **approximate, editorial** street-price bucket,

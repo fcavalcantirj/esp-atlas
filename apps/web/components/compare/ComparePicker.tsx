@@ -25,7 +25,7 @@ interface ComparePickerProps {
 // stays in esp_atlas_core.
 function matches(part: PartRecord, needle: string): boolean {
   if (!needle) return true;
-  const haystack = `${part.name} ${part.id} ${part.vendor_or_brand} ${part.soc_ref ?? ""} ${part.form_factor ?? ""}`.toLowerCase();
+  const haystack = `${part.name} ${part.id} ${part.brand_name} ${part.soc_ref ?? ""} ${part.form_factor ?? ""}`.toLowerCase();
   return needle
     .toLowerCase()
     .split(/\s+/)
@@ -52,9 +52,9 @@ export default function ComparePicker({
       const items = list.filter((p) => p.type === t);
       const brands = new Map<string, PartRecord[]>();
       for (const item of items) {
-        const arr = brands.get(item.vendor_or_brand) ?? [];
+        const arr = brands.get(item.brand_name) ?? [];
         arr.push(item);
-        brands.set(item.vendor_or_brand, arr);
+        brands.set(item.brand_name, arr);
       }
       return { type: t, items, brands: [...brands.entries()].sort(([a], [b]) => a.localeCompare(b)) };
     }).filter((g) => g.items.length > 0);
@@ -73,7 +73,7 @@ export default function ComparePicker({
             aria-label={`${checked ? "Remove" : "Add"} ${part.name}`}
           />
           <span>{part.name}</span>
-          <span className="compare-option-brand">{part.vendor_or_brand}</span>
+          <span className="compare-option-brand">{part.brand_name}</span>
         </label>
       </li>
     );

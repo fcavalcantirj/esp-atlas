@@ -201,6 +201,8 @@ def test_parts_by_id_found(client):
     body = r.json()
     assert body["id"] == "esp32-c5"
     assert body["name"]
+    assert body["brand_name"] == "Espressif"
+    assert body["brand_url"] == "https://www.espressif.com"
 
 
 def test_parts_by_id_not_found(client):
@@ -365,6 +367,16 @@ def test_search_brand_filter(client):
     assert results
     assert all(rec["vendor_or_brand"] == "adafruit" for rec in results)
     assert any(rec["id"] == "adafruit-feather-esp32-s3" for rec in results)
+
+
+def test_search_results_include_brand_name_and_url(client):
+    r = client.get("/search", params={"brand": "adafruit"})
+    assert r.status_code == 200
+    results = r.json()["results"]
+    by_id = {rec["id"]: rec for rec in results}
+    r = by_id["adafruit-feather-esp32-s3"]
+    assert r["brand_name"] == "Adafruit"
+    assert r["brand_url"] == "https://www.adafruit.com"
 
 
 def test_search_brand_filter_combined_with_type(client):

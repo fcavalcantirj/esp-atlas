@@ -28,7 +28,7 @@ export default function PartResultCard({ part, origin, position }: PartResultCar
         </h3>
         <p className="part-card-meta">
           <span className={`badge badge--${part.type}`}>{typeLabel(part.type)}</span>
-          <span className="part-card-brand">{part.vendor_or_brand}</span>
+          <span className="part-card-brand">{part.brand_name}</span>
           {part.price_tier && (
             <span className="price-pill" title={PRICE_TIER_NOTE}>
               {priceTierShort(part.price_tier)}

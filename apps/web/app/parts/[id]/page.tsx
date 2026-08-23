@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps<"/parts/[id]">): Pr
     return { title: id, robots: result.status === "not_found" ? { index: false } : undefined };
   }
   const part = result.data;
-  const title = `${part.name} (${part.vendor_or_brand}) — ${typeLabel(part.type)} specs`;
+  const title = `${part.name} (${part.brand_name}) — ${typeLabel(part.type)} specs`;
   const description =
     firstSentence(part.body) || `${part.name}: datasheet-verified ESP32 ${part.type} specs on ${SITE_NAME}.`;
   const path = `/parts/${encodeURIComponent(part.id)}`;

@@ -165,8 +165,8 @@ export function partGraph(part: PartDetail) {
     about: {
       "@type": "Product",
       name: part.name,
-      brand: { "@type": "Brand", name: part.vendor_or_brand },
-      manufacturer: { "@type": "Organization", name: part.vendor_or_brand },
+      brand: { "@type": "Brand", name: part.brand_name },
+      manufacturer: { "@type": "Organization", name: part.brand_name },
       category: `ESP32 ${typeLabel(part.type)}`,
     },
   };

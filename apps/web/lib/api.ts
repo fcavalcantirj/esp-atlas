@@ -18,6 +18,8 @@ export interface PartRecord {
   type: string;
   name: string;
   vendor_or_brand: string;
+  brand_name: string;
+  brand_url: string | null;
   wifi_standard: string | null;
   wifi_bands: string | null;
   ble_version: string | null;
