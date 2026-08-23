@@ -1,7 +1,7 @@
 // schema.org graphs for the pages that are server-rendered from data the API
 // already returns. No offers, prices, ratings or reviews anywhere: the site is
 // not a shop and `price_tier` is editorial (see SPEC.md anti-goals).
-import type { PartDetail } from "@/lib/api";
+import type { Facet, PartDetail, PartRecord } from "@/lib/api";
 import { firstSentence, typeLabel } from "@/lib/format";
 import { dataFolderUrl, repoUrl } from "@/lib/github";
 import { OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
@@ -60,6 +60,80 @@ function dataset() {
 /** Home page: the site, its publisher and the open dataset behind it. */
 export function homeGraph() {
   return { "@context": CONTEXT, "@graph": [organization(), website(), dataset()] };
+}
+
+/** /brands: the list of every vendor/brand in the dataset, as a CollectionPage + ItemList. */
+export function brandsIndexGraph(brands: Facet[]) {
+  const url = `${SITE_URL}/brands`;
+  return {
+    "@context": CONTEXT,
+    "@graph": [
+      organization(),
+      website(),
+      {
+        "@type": "CollectionPage",
+        "@id": url,
+        name: "ESP32 boards and modules by brand",
+        url,
+        isPartOf: { "@id": SITE_ID },
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: brands.length,
+          itemListElement: brands.map((b, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: b.value,
+            url: `${url}/${encodeURIComponent(b.value)}`,
+          })),
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+          { "@type": "ListItem", position: 2, name: "Brands" },
+        ],
+      },
+    ],
+  };
+}
+
+/** /brands/<slug>: every part the core returns for the brand, as a CollectionPage + ItemList. */
+export function brandGraph(brand: string, parts: PartRecord[]) {
+  const url = `${SITE_URL}/brands/${encodeURIComponent(brand)}`;
+  return {
+    "@context": CONTEXT,
+    "@graph": [
+      organization(),
+      website(),
+      {
+        "@type": "CollectionPage",
+        "@id": url,
+        name: `${brand} — ESP32 boards and modules`,
+        url,
+        isPartOf: { "@id": SITE_ID },
+        about: { "@type": "Brand", name: brand },
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: parts.length,
+          itemListElement: parts.map((p, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: p.name,
+            url: `${SITE_URL}/parts/${encodeURIComponent(p.id)}`,
+          })),
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+          { "@type": "ListItem", position: 2, name: "Brands", item: `${SITE_URL}/brands` },
+          { "@type": "ListItem", position: 3, name: brand },
+        ],
+      },
+    ],
+  };
 }
 
 /**

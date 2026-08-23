@@ -60,3 +60,8 @@ export async function fetchAllParts(): Promise<PartRecord[]> {
 export function fetchFacets(): Promise<ServerFetchResult<Facets>> {
   return serverFetch<Facets>(`/facets`);
 }
+
+/** /search?brand=<slug>: the core's exact brand filter; an unknown slug is an empty list, not an error. */
+export function fetchPartsByBrand(brand: string): Promise<ServerFetchResult<{ results: PartRecord[] }>> {
+  return serverFetch<{ results: PartRecord[] }>(`/search?brand=${encodeURIComponent(brand)}`);
+}

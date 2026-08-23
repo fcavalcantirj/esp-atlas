@@ -78,6 +78,7 @@ export interface SearchFilters {
   protocol?: string;
   soc?: string;
   module?: string;
+  brand?: string;
   ieee802154?: boolean;
   ble?: boolean;
   bt_classic?: boolean;
