@@ -16,7 +16,7 @@ never a bot silently rewriting truth.
 | `sources` (every record) | — | HTTP liveness of each `sources.url` | daily |
 | `firmware` releases | weekly | GitHub Releases API per firmware | daily |
 | `recipe` / compat matrix | **highest** | firmware repo (envs, `User_Setup`, `#define`, release `.bin` names, README device lists) + latest release vs recipe `firmware_version` | daily |
-| `board` | monthly | vendor sitemaps/product pages, Launcher catalog, M5Burner API | weekly |
+| `board` | monthly | **Arduino `package_<vendor>_index.json` + `boards.txt`** (official, versioned, machine-readable), Launcher catalog + M5Burner API; vendor sitemaps only as fallback | weekly |
 | `brand` | rare | vendor homepage liveness/redirects | monthly |
 | `soc` | rare | Espressif product/datasheet pages | monthly |
 
@@ -71,5 +71,13 @@ decide.**
   records. Reuses `scripts/check_sources_live.py`; tiny, immediate value.
 - **F2** — firmware-release watcher → recipe-drift Issues (version lag).
 - **F3** — recipe harvesters (per-project adapters) → `unverified` recipe PRs.
-- **F4** — board/brand discovery (vendor sitemaps, Launcher catalog, M5Burner API) → new-part PRs.
+- **F4** — board/brand discovery via the **Arduino Boards Manager package-index
+  ecosystem**: `package_<vendor>_index.json` gives the official, versioned board
+  list (Espressif maintains the reference index at
+  `espressif.github.io/arduino-esp32/`; each vendor — M5Stack, Heltec, LilyGO —
+  ships its own that users add as extra Boards Manager URLs), and the `boards.txt`
+  inside each platform package gives the per-board chip mapping (`build.mcu` /
+  `build.variant`) that the index JSON itself lacks. Machine-readable, versioned,
+  no scraping. Launcher catalog + M5Burner API supplement it; vendor HTML sitemaps
+  are a last-resort fallback only. → new-part PRs.
 - **F5** — `/freshness` dashboard.
