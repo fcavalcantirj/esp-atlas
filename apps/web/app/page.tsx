@@ -1,14 +1,46 @@
 import type { Metadata } from "next";
+import BrowseSection, { type BrowseItem } from "@/components/BrowseSection";
 import HomeView from "@/components/HomeView";
 import JsonLd from "@/components/JsonLd";
+import { fetchAllParts, fetchFacets } from "@/lib/api-server";
 import { SITE_TAGLINE } from "@/lib/site";
 import { homeGraph } from "@/lib/structured-data";
+
+// Incremental static: the browse links below the wizard are rendered from the
+// API's facets (counts) and part list (names), both cached underneath, and the
+// page is regenerated every five minutes. At build time the API is not running,
+// so the first static render omits the section; the first request after deploy
+// fills it in. Nothing here throws — a cold API degrades to "no browse links".
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-export default function Home() {
+function pluralParts(n: number): string {
+  return `${n} ${n === 1 ? "part" : "parts"} on this chip`;
+}
+
+export default async function Home() {
+  const [facets, parts] = await Promise.all([fetchFacets(), fetchAllParts()]);
+
+  // /facets.soc_ref is the core's count per chip (the chip's own record and its
+  // modules included — hence "parts", never "boards"), already sorted by count;
+  // the part list supplies the display name for each id.
+  const socName = new Map(parts.filter((p) => p.type === "soc").map((p) => [p.id, p.name]));
+  const chips: BrowseItem[] =
+    facets.status === "ok"
+      ? facets.data.soc_ref
+          .filter((f) => socName.has(f.value))
+          .map((f) => ({
+            href: `/parts/${encodeURIComponent(f.value)}`,
+            name: socName.get(f.value)!,
+            note: pluralParts(f.count),
+            partId: f.value,
+            partType: "soc",
+          }))
+      : [];
+
   return (
     <main id="main" className="container container--wide" tabIndex={-1}>
       <JsonLd data={homeGraph()} />
@@ -20,6 +52,13 @@ export default function Home() {
         </p>
       </div>
       <HomeView />
+      <BrowseSection
+        id="browse-chip"
+        title="Browse by chip"
+        hint="Every SoC in the atlas, with the modules and boards built on it."
+        items={chips}
+        origin="browse"
+      />
     </main>
   );
 }

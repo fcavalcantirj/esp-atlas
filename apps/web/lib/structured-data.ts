@@ -105,5 +105,25 @@ export function partGraph(part: PartDetail) {
     ],
   };
 
-  return { "@context": CONTEXT, "@graph": [organization(), website(), article, breadcrumb] };
+  // A SoC page lists every module and board built on the chip (the visible
+  // "Boards and modules on …" section); the same list as an ItemList.
+  const hub =
+    part.type === "soc" && part.related.length > 0
+      ? [
+          {
+            "@type": "ItemList",
+            "@id": `${url}#parts`,
+            name: `Boards and modules on ${part.name}`,
+            numberOfItems: part.related.length,
+            itemListElement: part.related.map((r, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              name: r.name,
+              url: `${SITE_URL}/parts/${encodeURIComponent(r.id)}`,
+            })),
+          },
+        ]
+      : [];
+
+  return { "@context": CONTEXT, "@graph": [organization(), website(), article, breadcrumb, ...hub] };
 }

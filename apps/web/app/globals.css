@@ -932,6 +932,71 @@ input[type="checkbox"]:checked::after {
   scroll-margin-top: calc(var(--header-h) + 0.5rem);
 }
 
+/* Browse links below the explorer: a crawlable index of hubs, set like the
+   results rows — full-width hairline rows, name left, count right in mono. */
+.browse-section {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.browse-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 1px solid var(--border);
+}
+
+@media (min-width: 720px) {
+  .browse-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(1.5rem, 3vw, 3rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .browse-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.browse-link {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0.25rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--fg);
+  text-decoration: none;
+  transition: background 0.12s ease;
+}
+
+.browse-link:hover,
+.browse-link:focus-visible {
+  background: var(--surface);
+}
+
+.browse-link-name {
+  font-size: var(--t-body);
+  letter-spacing: -0.01em;
+}
+
+.browse-link:hover .browse-link-name,
+.browse-link:focus-visible .browse-link-name {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.browse-link-note {
+  font-family: var(--font-data);
+  font-size: var(--t-micro);
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
 /* ==========================================================================
    Results
    ========================================================================== */
@@ -1551,6 +1616,24 @@ input[type="checkbox"]:checked::after {
   font-size: 0.78rem;
   color: var(--muted);
   white-space: nowrap;
+}
+
+/* SoC hub: the chip's boards and modules as index rows in the main column. */
+.soc-hub h2 {
+  margin-bottom: 0.75rem;
+}
+
+.aside-pointer {
+  font-size: var(--t-sm);
+}
+
+.aside-pointer a {
+  color: var(--fg);
+}
+
+.aside-pointer a:hover,
+.aside-pointer a:focus-visible {
+  color: var(--accent);
 }
 
 .detail-skeleton {
