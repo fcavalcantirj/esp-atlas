@@ -1385,17 +1385,13 @@ input[type="checkbox"]:checked::after {
 }
 
 .spec-group {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  padding: 0.85rem 1rem;
+  /* Flat section, not a card: a hairline rule above and whitespace below — the
+     same panel idiom as the wizard, the results index and the footer columns. */
+  border-top: 1px solid var(--border);
+  padding: 0.85rem 0 0.25rem;
 }
 
 .spec-group h3 {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
   margin-bottom: 0.6rem;
   display: flex;
   justify-content: space-between;
@@ -1403,6 +1399,8 @@ input[type="checkbox"]:checked::after {
 }
 
 .spec-group-note {
+  font-family: var(--font-language);
+  font-size: var(--t-xs);
   font-weight: normal;
   text-transform: none;
   letter-spacing: 0;
@@ -1454,21 +1452,16 @@ input[type="checkbox"]:checked::after {
 }
 
 .aside-card {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  padding: 0.85rem 1rem;
+  /* Flat, like .spec-group: rule above, no fill, no frame. */
+  border-top: 1px solid var(--border);
+  padding: 0.85rem 0 0.25rem;
 }
 
 .aside-card + .aside-card {
-  margin-top: 1rem;
+  margin-top: 1.25rem;
 }
 
 .aside-card h2 {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
   margin-bottom: 0.6rem;
 }
 
@@ -1528,8 +1521,6 @@ input[type="checkbox"]:checked::after {
 }
 
 .related-group h3 {
-  font-size: 0.82rem;
-  color: var(--muted);
   margin-bottom: 0.35rem;
 }
 
@@ -1595,15 +1586,23 @@ input[type="checkbox"]:checked::after {
 }
 
 .compare-picker {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  padding: 1rem;
+  /* Flat, like the wizard sidebar: rule above on phones, hairline column rule
+     beside the table on wide screens. */
+  border-top: 1px solid var(--border);
+  padding: 0.85rem 0 0;
+}
+
+@media (min-width: 1024px) {
+  .compare-picker {
+    border-top: 0;
+    border-right: 1px solid var(--border);
+    padding: 0 0.75rem 0 0;
+    margin-right: -0.75rem;
+  }
 }
 
 .compare-picker-mobile > summary {
   cursor: pointer;
-  font-weight: 600;
   list-style: none;
   display: flex;
   align-items: center;
@@ -1673,8 +1672,6 @@ input[type="checkbox"]:checked::after {
 
 .compare-group > summary {
   cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 600;
   list-style: none;
   display: flex;
   align-items: center;
@@ -1702,9 +1699,8 @@ input[type="checkbox"]:checked::after {
 }
 
 .compare-group-count {
-  font-weight: normal;
+  font-weight: inherit;
   color: var(--muted);
-  font-size: 0.8rem;
 }
 
 .compare-options {
@@ -1796,6 +1792,25 @@ input[type="checkbox"]:checked::after {
 .compare-col-head a:hover,
 .compare-col-head a:focus-visible {
   color: var(--accent);
+}
+
+/* ==========================================================================
+   Section labels — one label style site-wide
+   The mono overline used by WIZARD / SEARCH and the footer titles, applied to
+   every section label on the part and compare pages.
+   ========================================================================== */
+
+.spec-group h3,
+.aside-card h2,
+.related-group h3,
+.compare-group > summary,
+.compare-picker-mobile > summary {
+  font-family: var(--font-data);
+  font-size: var(--t-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--muted);
 }
 
 /* ==========================================================================
