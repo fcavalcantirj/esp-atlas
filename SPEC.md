@@ -73,6 +73,8 @@ visibly separate from the verified fields above it.
 - **v1:** module & board schemas; seed ~30 popular boards; the static site (compare + part pages).
 - **v2:** wizard + Groq chat; oracle-loop bot live.
 - **v3:** full board coverage; companions (nRF24/CC1101/LTE-GNSS); public launch.
+- **v4:** Flash Wizard + community recipes (`firmware`/`recipe` content types, "what
+  runs on what", in-browser flashing via ESP Web Tools) — see `SPEC-wizard.md`.
 
 ## Anti-goals
 Not a shop / not affiliate bait · not tutorials (link out) · not a forum · not a
