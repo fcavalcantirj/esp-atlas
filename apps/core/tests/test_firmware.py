@@ -42,6 +42,13 @@ def test_list_recipes_includes_every_seeded_recipe():
         "m5cardputer__launcher",
         "m5stick-cplus2__launcher",
         "m5stack-cores3__launcher",
+        "m5stack-core2__launcher",
+        "lilygo-t-deck__launcher",
+        "lilygo-t-embed__launcher",
+        "lilygo-t-display-s3__launcher",
+        "lilygo-t-dongle-s3__launcher",
+        "lilygo-t-watch-s3__launcher",
+        "lilygo-t-display-s3-amoled__launcher",
     }
 
 
@@ -66,6 +73,13 @@ def test_recipes_for_firmware_filters_by_firmware():
         "m5cardputer__launcher",
         "m5stick-cplus2__launcher",
         "m5stack-cores3__launcher",
+        "m5stack-core2__launcher",
+        "lilygo-t-deck__launcher",
+        "lilygo-t-embed__launcher",
+        "lilygo-t-display-s3__launcher",
+        "lilygo-t-dongle-s3__launcher",
+        "lilygo-t-watch-s3__launcher",
+        "lilygo-t-display-s3-amoled__launcher",
     }
 
 
