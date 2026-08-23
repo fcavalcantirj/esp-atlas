@@ -223,9 +223,11 @@ code,
 
 .container {
   width: 100%;
-  max-width: 1200px;
+  /* 1200px of content plus the shared page gutter, so the column's edges meet
+     the header and footer at every width where the column is not centred. */
+  max-width: calc(1200px + 2 * var(--page-x));
   margin: 0 auto;
-  padding: 1.5rem 1.25rem 4rem;
+  padding: 1.5rem var(--page-x) 4rem;
 }
 
 .container--wide {
@@ -235,7 +237,7 @@ code,
 }
 
 .container--narrow {
-  max-width: 720px;
+  max-width: calc(720px + 2 * var(--page-x));
 }
 
 main:focus {
@@ -1262,12 +1264,8 @@ input[type="checkbox"]:checked::after {
     align-items: start;
   }
 
-  .part-aside {
-    position: sticky;
-    top: calc(var(--header-h) + 1rem);
-    max-height: calc(100dvh - var(--header-h) - 2rem);
-    overflow-y: auto;
-  }
+  /* The aside flows with the page — no sticky, no inner scroll: the page is the
+     only thing that scrolls, so every related part stays reachable. */
 }
 
 .part-main {
@@ -1329,13 +1327,26 @@ input[type="checkbox"]:checked::after {
 }
 
 .chip-chain-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
+  /* Inline box, not a flex row: a long name wraps inside its chip on phones and
+     the kind badge follows the last word instead of sitting at the far edge. */
+  display: inline-block;
+  max-width: 100%;
   padding: 0.25rem 0.65rem;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border-strong);
   background: var(--bg);
+}
+
+.chip-chain-item .badge {
+  display: inline;
+  vertical-align: baseline;
+}
+
+/* Arrow + parent chip travel as one unit, so the arrow can never land alone on a line. */
+.chip-chain > .chip-chain {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 .chip-chain-item:hover,
@@ -1563,8 +1574,15 @@ input[type="checkbox"]:checked::after {
 
 .compare-layout {
   display: grid;
-  grid-template-columns: 1fr;
+  /* minmax(0, …): the spec table's min-content width may not widen the column
+     past the viewport; it scrolls inside .compare-table-wrap instead of being
+     clipped by the page on phones. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
+}
+
+.compare-layout > * {
+  min-width: 0;
 }
 
 @media (min-width: 1024px) {
@@ -1573,12 +1591,7 @@ input[type="checkbox"]:checked::after {
     align-items: start;
   }
 
-  .compare-picker {
-    position: sticky;
-    top: calc(var(--header-h) + 1rem);
-    max-height: calc(100dvh - var(--header-h) - 2rem);
-    overflow-y: auto;
-  }
+  /* The picker flows with the page — no sticky, no inner scroll (see .part-aside). */
 }
 
 .compare-picker {
@@ -1621,6 +1634,11 @@ input[type="checkbox"]:checked::after {
   flex-direction: column;
   gap: 0.75rem;
   margin-top: 0.5rem;
+}
+
+.compare-picker-body > .segmented {
+  /* A column flex parent stretches children; the control keeps its own width. */
+  align-self: flex-start;
 }
 
 .segmented {
@@ -1785,12 +1803,17 @@ input[type="checkbox"]:checked::after {
    ========================================================================== */
 
 @media (max-width: 599px) {
+  :root {
+    /* Phone gutter — header, main and footer all read this one token. */
+    --page-x: 1rem;
+  }
+
   .container {
-    padding: 1.25rem 1rem 3rem;
+    padding: 1.25rem var(--page-x) 3rem;
   }
 
   .site-header-inner {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem var(--page-x);
   }
 
   .site-nav {
