@@ -4,7 +4,7 @@
 import type { Facet, PartDetail, PartRecord } from "@/lib/api";
 import { firstSentence, typeLabel } from "@/lib/format";
 import { dataFolderUrl, repoUrl } from "@/lib/github";
-import { OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 const CONTEXT = "https://schema.org";
 const ORG_ID = `${SITE_URL}/#organization`;
@@ -155,7 +155,7 @@ export function partGraph(part: PartDetail) {
     url,
     mainEntityOfPage: url,
     inLanguage: "en",
-    image: `${SITE_URL}${OG_IMAGE.url}`,
+    image: `${url}/opengraph-image`,
     license: CC_BY_SA,
     isPartOf: { "@id": SITE_ID },
     author: { "@id": ORG_ID },
