@@ -2,18 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import CompareEmptyState from "@/components/compare/CompareEmptyState";
 import ComparePicker, { type PickerType } from "@/components/compare/ComparePicker";
 import CompareTable from "@/components/compare/CompareTable";
+import { MAX_COMPARE } from "@/components/compare/presets";
 import { ApiError, listParts, type PartRecord } from "@/lib/api";
 import { track } from "@/lib/analytics";
 
-export const MAX_COMPARE = 6;
-
-const PRESET_COMPARISONS: { label: string; ids: string[] }[] = [
-  { label: "C6 vs H2 (smart-home mesh chips)", ids: ["esp32-c6", "esp32-h2"] },
-  { label: "The three XIAOs", ids: ["xiao-esp32c3", "xiao-esp32c6", "xiao-esp32s3"] },
-  { label: "S3 vs C3 vs classic ESP32", ids: ["esp32-s3", "esp32-c3", "esp32"] },
-];
+export { MAX_COMPARE };
 
 function parseIds(raw: string | null): string[] {
   if (!raw) return [];
@@ -26,22 +22,32 @@ function parseIds(raw: string | null): string[] {
   return [...seen];
 }
 
-export default function CompareView() {
+// `initialParts` is the server-rendered /parts list (app/compare/page.tsx). When
+// it is present the browser never refetches; when it is empty (the build could
+// not reach the API) the client fetches as before.
+export default function CompareView({ initialParts = [] }: { initialParts?: PartRecord[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const selectedIds = useMemo(() => parseIds(searchParams.get("ids")), [searchParams]);
 
-  const [parts, setParts] = useState<PartRecord[] | null>(null);
+  // The server list wins whenever it is present; the client fetch only fills the
+  // gap when it is empty. Derived, not copied into state, so a list that arrives
+  // in a later render (ISR payload after a router.replace) can never leave the
+  // picker stuck on "Loading parts…".
+  const needsFetch = initialParts.length === 0;
+  const [fetched, setFetched] = useState<PartRecord[] | null>(null);
+  const parts = needsFetch ? fetched : initialParts;
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState("");
   const [type, setType] = useState<PickerType>("all");
 
   useEffect(() => {
+    if (!needsFetch) return;
     let cancelled = false;
     listParts()
       .then((r) => {
-        if (!cancelled) setParts(r.results);
+        if (!cancelled) setFetched(r.results);
       })
       .catch((err) => {
         if (cancelled) return;
@@ -51,7 +57,7 @@ export default function CompareView() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [needsFetch]);
 
   const idsKey = selectedIds.join(",");
   useEffect(() => {
@@ -108,25 +114,7 @@ export default function CompareView() {
         {selectedParts.length >= 1 ? (
           <CompareTable parts={selectedParts} onRemove={toggle} onClear={() => setSelection([])} />
         ) : (
-          <div className="empty-state">
-            <h2>Pick 2–6 parts to compare</h2>
-            <p>Use the picker, or start from one of these:</p>
-            <div className="preset-row">
-              {PRESET_COMPARISONS.map((preset) => (
-                <button
-                  key={preset.label}
-                  type="button"
-                  className="chip chip--button"
-                  onClick={() => {
-                    track("preset_click", { preset: `compare:${preset.ids.join(",")}` });
-                    setSelection(preset.ids);
-                  }}
-                >
-                  {preset.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          <CompareEmptyState onPreset={setSelection} />
         )}
       </section>
     </div>
