@@ -3,6 +3,7 @@
 import Link from "next/link";
 import TrackedLink from "@/components/TrackedLink";
 import type { PartDetail } from "@/lib/api";
+import { brandLabel } from "@/lib/brand";
 import { PRICE_TIER_LABEL, PRICE_TIER_NOTE, typeLabel, typePlural } from "@/lib/format";
 import { asStringArray } from "@/lib/frontmatter";
 import { editSourceUrl } from "@/lib/github";
@@ -27,7 +28,7 @@ export default function PartHeader({ part }: { part: PartDetail }) {
         <span>
           by{" "}
           <Link href={`/brands/${part.vendor_or_brand}`}>
-            <strong>{part.brand_name}</strong>
+            <strong>{brandLabel(part)}</strong>
           </Link>
         </span>
         <span className="mono muted">{part.id}</span>

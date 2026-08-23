@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { PartRecord } from "@/lib/api";
 import { track } from "@/lib/analytics";
+import { brandLabel } from "@/lib/brand";
 import { PRICE_TIER_NOTE, bandsLabel, protocolsLabel, typeLabel, wifiLabel, yesNo } from "@/lib/format";
 
 interface SpecRow {
@@ -13,7 +14,7 @@ interface SpecRow {
 
 const ROWS: SpecRow[] = [
   { label: "Type", value: (p) => typeLabel(p.type) },
-  { label: "Vendor / brand", value: (p) => p.brand_name },
+  { label: "Vendor / brand", value: (p) => brandLabel(p) },
   { label: "SoC", value: (p) => p.soc_ref },
   { label: "Module", value: (p) => p.module_ref },
   { label: "Form factor", value: (p) => p.form_factor },

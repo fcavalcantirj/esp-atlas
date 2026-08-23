@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { fetchPartDetail } from "@/lib/api-server";
+import { brandLabel } from "@/lib/brand";
 import { specChips, typeLabel } from "@/lib/format";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 
@@ -77,7 +78,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
           <div style={{ display: "flex", alignItems: "center", gap: 16, fontFamily: MONO, fontSize: 20, letterSpacing: 3, textTransform: "uppercase", color: MUTED }}>
             <span>{typeLabel(part.type)}</span>
             <span style={{ color: BORDER }}>·</span>
-            <span>{part.brand_name}</span>
+            <span>{brandLabel(part)}</span>
           </div>
           <div style={{ fontSize: nameSize, lineHeight: 1.08, letterSpacing: -1 }}>{part.name}</div>
           {builtOn && (

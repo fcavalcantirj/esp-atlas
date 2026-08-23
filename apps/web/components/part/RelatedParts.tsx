@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { PartDetail, PartRecord } from "@/lib/api";
 import { track } from "@/lib/analytics";
+import { brandLabel } from "@/lib/brand";
 import { typePlural } from "@/lib/format";
 
 const TYPE_ORDER = ["board", "module", "soc"];
@@ -38,7 +39,7 @@ export default function RelatedParts({ part }: { part: PartDetail }) {
                     }
                   >
                     <span>{record.name}</span>
-                    <span className="related-item-brand">{record.brand_name}</span>
+                    <span className="related-item-brand">{brandLabel(record)}</span>
                   </Link>
                 </li>
               ))}

@@ -5,6 +5,7 @@ import PartDetailClient from "@/components/part/PartDetailClient";
 import PartDetailView from "@/components/part/PartDetailView";
 import PartViewTracker from "@/components/part/PartViewTracker";
 import { fetchPartDetail } from "@/lib/api-server";
+import { brandLabel } from "@/lib/brand";
 import { firstSentence, typeLabel } from "@/lib/format";
 import { SITE_NAME } from "@/lib/site";
 import { partGraph } from "@/lib/structured-data";
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }: PageProps<"/parts/[id]">): Pr
     return { title: id, robots: result.status === "not_found" ? { index: false } : undefined };
   }
   const part = result.data;
-  const title = `${part.name} (${part.brand_name}) — ${typeLabel(part.type)} specs`;
+  const title = `${part.name} (${brandLabel(part)}) — ${typeLabel(part.type)} specs`;
   const description =
     firstSentence(part.body) || `${part.name}: datasheet-verified ESP32 ${part.type} specs on ${SITE_NAME}.`;
   const path = `/parts/${encodeURIComponent(part.id)}`;
