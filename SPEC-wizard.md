@@ -133,15 +133,20 @@ only; no iOS/mobile). Erase behavior via the manifest's `new_install_prompt_eras
 ESP Web Tools flashes from a manifest:
 ```json
 { "name": "...", "version": "...", "new_install_prompt_erase": false,
-  "builds": [{ "chipFamily": "ESP32-S3", "parts": [{ "path": "<url>", "offset": 0 }] }] }
+  "builds": [{ "chipFamily": "ESP32-S3", "serialType": "cdc",
+               "parts": [{ "path": "<url>", "offset": 0 }] }] }
 ```
 `recipe.flash` maps onto it directly; the wizard branches by `method`:
 
 - **`esp-web-tools` + `manifest_url`** — pass the manifest URL straight to
   `<esp-web-install-button>`. Nothing for esp-atlas to build.
 - **`release-bin`** — esp-atlas **generates** the manifest from the recipe and
-  serves it at `GET /manifest/<recipe-id>.json`, `chipFamily` = `recipe.chip_family`,
-  offsets from the recipe. Two shapes:
+  serves it at `GET /manifest/<recipe-id>.json`: `chipFamily` = `recipe.chip_family`,
+  offsets from the recipe, and **`serialType`** derived from the board's USB —
+  **`cdc`** for native-USB chips (ESP32-S3/C3 flashing over the built-in USB, i.e.
+  most of our catalog: Cardputer, StickS3, CoreS3, T-*), **`uart`** for a USB-to-UART
+  bridge (classic ESP32 boards). Getting this wrong can stop a native-USB board from
+  connecting; the board's `usb` fields (connector + native) are the source. Two shapes:
   - **merged image** (the common web-flasher case, e.g. Launcher's
     `Launcher-<Device>.bin`): one part at `offset: 0` (`flash.bin_url` + `flash.offset`).
   - **multi-part** (`bootloader`/`partitions`/`app`/`data` at chip-specific offsets —
