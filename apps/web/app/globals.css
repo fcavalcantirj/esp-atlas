@@ -1355,7 +1355,8 @@ input[type="checkbox"]:checked::after {
   color: var(--accent);
 }
 
-.chip-chain-item--current {
+.chip-chain-item--current,
+.chip-chain-item--current:hover {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--accent-fg);
@@ -1607,6 +1608,7 @@ input[type="checkbox"]:checked::after {
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  min-height: 1.8rem;
 }
 
 .compare-picker-mobile > summary::-webkit-details-marker {
@@ -1616,8 +1618,9 @@ input[type="checkbox"]:checked::after {
 .compare-picker-mobile > summary::before {
   content: "";
   display: inline-block;
-  width: 0.34em;
-  height: 0.34em;
+  /* rem, not em: the overline label is small but the chevron keeps the wizard's size. */
+  width: 0.3rem;
+  height: 0.3rem;
   border-right: 1.25px solid currentColor;
   border-bottom: 1.25px solid currentColor;
   transform: rotate(-45deg);
@@ -1676,6 +1679,7 @@ input[type="checkbox"]:checked::after {
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  min-height: 1.8rem;
 }
 
 .compare-group > summary::-webkit-details-marker {
@@ -1685,8 +1689,8 @@ input[type="checkbox"]:checked::after {
 .compare-group > summary::before {
   content: "";
   display: inline-block;
-  width: 0.34em;
-  height: 0.34em;
+  width: 0.3rem;
+  height: 0.3rem;
   border-right: 1.25px solid currentColor;
   border-bottom: 1.25px solid currentColor;
   transform: rotate(-45deg);

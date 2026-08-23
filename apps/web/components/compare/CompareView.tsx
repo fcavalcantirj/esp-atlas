@@ -31,8 +31,13 @@ export default function CompareView({ initialParts = [] }: { initialParts?: Part
   const searchParams = useSearchParams();
   const selectedIds = useMemo(() => parseIds(searchParams.get("ids")), [searchParams]);
 
+  // The server list wins whenever it is present; the client fetch only fills the
+  // gap when it is empty. Derived, not copied into state, so a list that arrives
+  // in a later render (ISR payload after a router.replace) can never leave the
+  // picker stuck on "Loading parts…".
   const needsFetch = initialParts.length === 0;
-  const [parts, setParts] = useState<PartRecord[] | null>(needsFetch ? null : initialParts);
+  const [fetched, setFetched] = useState<PartRecord[] | null>(null);
+  const parts = needsFetch ? fetched : initialParts;
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState("");
   const [type, setType] = useState<PickerType>("all");
@@ -42,7 +47,7 @@ export default function CompareView({ initialParts = [] }: { initialParts?: Part
     let cancelled = false;
     listParts()
       .then((r) => {
-        if (!cancelled) setParts(r.results);
+        if (!cancelled) setFetched(r.results);
       })
       .catch((err) => {
         if (cancelled) return;
