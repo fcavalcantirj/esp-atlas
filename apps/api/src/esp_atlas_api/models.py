@@ -142,3 +142,58 @@ class ValidateResponse(BaseModel):
     ok: bool
     errors: list[str]
     kind: Optional[str] = None
+
+
+class FirmwareRecord(BaseModel):
+    """A firmware record straight from data/firmware/<id>/firmware.md — see
+    esp_atlas_core.firmware. First-class like a brand: never in /search, /wizard,
+    or the parts index."""
+
+    id: str
+    type: str
+    name: str
+    url: str
+    category: str
+    maintainer: Optional[str] = None
+    license: Optional[str] = None
+    distribution: list[str] = []
+    manifest_url: Optional[str] = None
+    capabilities: list[str] = []
+    socs: list[str]
+    sources: list[SourceEntry]
+
+
+class FirmwareListResponse(BaseModel):
+    results: list[FirmwareRecord]
+
+
+class RecipeFlash(BaseModel):
+    method: Optional[str] = None
+    manifest_url: Optional[str] = None
+    bin_url: Optional[str] = None
+    offset: Optional[str] = None
+    env: Optional[str] = None
+    partition: Optional[str] = None
+
+
+class RecipeRecord(BaseModel):
+    """A recipe record straight from data/recipes/<id>/recipe.md — see
+    esp_atlas_core.firmware. First-class like a brand: never in /search, /wizard,
+    or the parts index. `chip_family` always equals the referenced board's soc."""
+
+    id: str
+    type: str
+    board: str
+    firmware: str
+    status: str
+    chip_family: str
+    firmware_version: Optional[str] = None
+    flash: Optional[RecipeFlash] = None
+    verified_by: Optional[str] = None
+    verified_at: Optional[str] = None
+    notes: Optional[str] = None
+    sources: list[SourceEntry]
+
+
+class RecipeListResponse(BaseModel):
+    results: list[RecipeRecord]

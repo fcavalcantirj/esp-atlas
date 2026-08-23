@@ -12,6 +12,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from esp_atlas_core import db as dbmod
 from esp_atlas_core.facets import facets as core_facets
+from esp_atlas_core.firmware import get_firmware as core_get_firmware
+from esp_atlas_core.firmware import list_firmware as core_list_firmware
+from esp_atlas_core.firmware import list_recipes as core_list_recipes
+from esp_atlas_core.firmware import recipes_for_board as core_recipes_for_board
+from esp_atlas_core.firmware import recipes_for_firmware as core_recipes_for_firmware
 from esp_atlas_core.index_build import build_index
 from esp_atlas_core.search import brand_page as core_brand_page
 from esp_atlas_core.search import get_part as core_get_part
@@ -23,9 +28,12 @@ from esp_atlas_core.wizard import wizard as core_wizard
 from esp_atlas_api.models import (
     BrandPageResponse,
     FacetsResponse,
+    FirmwareListResponse,
+    FirmwareRecord,
     HealthResponse,
     PartDetail,
     PartType,
+    RecipeListResponse,
     SearchResponse,
     ValidateRequest,
     ValidateResponse,
@@ -160,6 +168,27 @@ def create_app(db_path=None):
     @app.get("/brands/{slug}", response_model=BrandPageResponse)
     def brand_page(slug: str, db_path=Depends(get_db_path)):
         return core_brand_page(slug, db_path=db_path)
+
+    @app.get("/firmware", response_model=FirmwareListResponse)
+    def list_firmware():
+        return FirmwareListResponse(results=core_list_firmware())
+
+    @app.get("/firmware/{firmware_id}", response_model=FirmwareRecord)
+    def get_firmware(firmware_id: str):
+        record = core_get_firmware(firmware_id)
+        if record is None:
+            raise HTTPException(status_code=404, detail=f"firmware not found: {firmware_id}")
+        return record
+
+    @app.get("/recipes", response_model=RecipeListResponse)
+    def list_recipes(board: Optional[str] = None, firmware: Optional[str] = None):
+        if board is not None:
+            results = core_recipes_for_board(board)
+        elif firmware is not None:
+            results = core_recipes_for_firmware(firmware)
+        else:
+            results = core_list_recipes()
+        return RecipeListResponse(results=results)
 
     return app
 

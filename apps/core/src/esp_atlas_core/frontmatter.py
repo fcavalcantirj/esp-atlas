@@ -16,6 +16,8 @@ DATA_PATTERNS = {
     "module": "modules/*/module.md",
     "board": "boards/*/*/board.md",
     "brand": "brands/*/brand.md",
+    "firmware": "firmware/*/firmware.md",
+    "recipe": "recipes/*/recipe.md",
 }
 
 
@@ -45,7 +47,8 @@ def parse_frontmatter(path):
 
 
 def iter_data_files(data_dir=None):
-    """Yield (type, Path) for every data/**/*.md file, type in {soc, module, board, brand}."""
+    """Yield (type, Path) for every data/**/*.md file, type in {soc, module, board,
+    brand, firmware, recipe}."""
     root = Path(data_dir) if data_dir is not None else DATA_DIR
     for content_type, pattern in DATA_PATTERNS.items():
         for path in sorted(root.glob(pattern)):

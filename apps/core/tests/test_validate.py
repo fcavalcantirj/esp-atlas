@@ -11,6 +11,8 @@ SOC_PATH = REPO_ROOT / "data" / "socs" / "esp32-c6" / "chip.md"
 MODULE_PATH = REPO_ROOT / "data" / "modules" / "esp32-c6-wroom-1" / "module.md"
 BOARD_PATH = REPO_ROOT / "data" / "boards" / "espressif" / "esp32-c6-devkitc-1" / "board.md"
 BRAND_PATH = REPO_ROOT / "data" / "brands" / "espressif" / "brand.md"
+FIRMWARE_PATH = REPO_ROOT / "data" / "firmware" / "esp32marauder" / "firmware.md"
+RECIPE_PATH = REPO_ROOT / "data" / "recipes" / "m5cardputer__esp32marauder" / "recipe.md"
 
 
 @pytest.fixture
@@ -28,6 +30,18 @@ def board_fm():
 @pytest.fixture
 def brand_fm():
     fm, _body = parse_frontmatter(BRAND_PATH)
+    return fm
+
+
+@pytest.fixture
+def firmware_fm():
+    fm, _body = parse_frontmatter(FIRMWARE_PATH)
+    return fm
+
+
+@pytest.fixture
+def recipe_fm():
+    fm, _body = parse_frontmatter(RECIPE_PATH)
     return fm
 
 
@@ -234,3 +248,127 @@ def test_validate_frontmatter_uses_explicit_ids_when_given():
     }
     result = validate_frontmatter(fm, "module", ids={"soc": {"provided-soc"}, "module": set()})
     assert result == {"ok": True, "errors": []}
+
+
+def test_validate_frontmatter_valid_firmware_passes(firmware_fm):
+    result = validate_frontmatter(firmware_fm, "firmware")
+    assert result == {"ok": True, "errors": []}
+
+
+def test_validate_frontmatter_firmware_missing_required_field_fails(firmware_fm):
+    fm = copy.deepcopy(firmware_fm)
+    del fm["category"]
+    result = validate_frontmatter(fm, "firmware")
+    assert result["ok"] is False
+    assert any("category" in e for e in result["errors"])
+
+
+def test_validate_frontmatter_firmware_bad_category_enum_fails(firmware_fm):
+    fm = copy.deepcopy(firmware_fm)
+    fm["category"] = "bogus-category"
+    result = validate_frontmatter(fm, "firmware")
+    assert result["ok"] is False
+    assert result["errors"]
+
+
+def test_validate_frontmatter_firmware_empty_socs_fails(firmware_fm):
+    fm = copy.deepcopy(firmware_fm)
+    fm["socs"] = []
+    result = validate_frontmatter(fm, "firmware")
+    assert result["ok"] is False
+    assert result["errors"]
+
+
+def test_validate_frontmatter_firmware_missing_sources_fails(firmware_fm):
+    fm = copy.deepcopy(firmware_fm)
+    del fm["sources"]
+    result = validate_frontmatter(fm, "firmware")
+    assert result["ok"] is False
+    assert any("sources" in e for e in result["errors"])
+
+
+def test_validate_file_valid_seeded_firmware_passes():
+    result = validate_file(FIRMWARE_PATH)
+    assert result == {"ok": True, "errors": [], "kind": "firmware"}
+
+
+def test_validate_file_firmware_id_folder_mismatch_fails(tmp_path):
+    text = FIRMWARE_PATH.read_text(encoding="utf-8")
+    bad_dir = tmp_path / "firmware" / "wrong-folder-name"
+    bad_dir.mkdir(parents=True)
+    bad_path = bad_dir / "firmware.md"
+    bad_path.write_text(text, encoding="utf-8")
+
+    result = validate_file(bad_path)
+    assert result["ok"] is False
+    assert any("wrong-folder-name" in e for e in result["errors"])
+
+
+def test_validate_frontmatter_valid_recipe_passes(recipe_fm):
+    result = validate_frontmatter(recipe_fm, "recipe")
+    assert result == {"ok": True, "errors": []}
+
+
+def test_validate_frontmatter_recipe_missing_required_field_fails(recipe_fm):
+    fm = copy.deepcopy(recipe_fm)
+    del fm["status"]
+    result = validate_frontmatter(fm, "recipe")
+    assert result["ok"] is False
+    assert any("status" in e for e in result["errors"])
+
+
+def test_validate_frontmatter_recipe_bad_status_enum_fails(recipe_fm):
+    fm = copy.deepcopy(recipe_fm)
+    fm["status"] = "bogus-status"
+    result = validate_frontmatter(fm, "recipe")
+    assert result["ok"] is False
+    assert result["errors"]
+
+
+def test_validate_frontmatter_recipe_unknown_board_fails(recipe_fm):
+    fm = copy.deepcopy(recipe_fm)
+    fm["board"] = "no-such-board-anywhere"
+    result = validate_frontmatter(fm, "recipe")
+    assert result["ok"] is False
+    assert any("no-such-board-anywhere" in e for e in result["errors"])
+
+
+def test_validate_frontmatter_recipe_unknown_firmware_fails(recipe_fm):
+    fm = copy.deepcopy(recipe_fm)
+    fm["firmware"] = "no-such-firmware-anywhere"
+    result = validate_frontmatter(fm, "recipe")
+    assert result["ok"] is False
+    assert any("no-such-firmware-anywhere" in e for e in result["errors"])
+
+
+def test_validate_frontmatter_recipe_chip_family_mismatch_fails(recipe_fm):
+    fm = copy.deepcopy(recipe_fm)
+    # m5cardputer's soc is esp32-s3, not plain esp32
+    fm["chip_family"] = "esp32"
+    result = validate_frontmatter(fm, "recipe")
+    assert result["ok"] is False
+    assert any("chip_family" in e for e in result["errors"])
+
+
+def test_validate_file_valid_seeded_recipe_passes():
+    result = validate_file(RECIPE_PATH)
+    assert result == {"ok": True, "errors": [], "kind": "recipe"}
+
+
+def test_validate_file_recipe_id_folder_mismatch_fails(tmp_path):
+    text = RECIPE_PATH.read_text(encoding="utf-8")
+    bad_dir = tmp_path / "recipes" / "wrong-folder-name"
+    bad_dir.mkdir(parents=True)
+    bad_path = bad_dir / "recipe.md"
+    bad_path.write_text(text, encoding="utf-8")
+
+    result = validate_file(bad_path)
+    assert result["ok"] is False
+    assert any("wrong-folder-name" in e for e in result["errors"])
+
+
+def test_known_ids_includes_board_and_firmware_and_board_soc():
+    ids = known_ids()
+    assert "m5cardputer" in ids["board"]
+    assert "esp32marauder" in ids["firmware"]
+    assert ids["board_soc"]["m5cardputer"] == "esp32-s3"

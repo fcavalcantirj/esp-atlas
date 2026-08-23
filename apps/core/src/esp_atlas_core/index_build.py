@@ -113,9 +113,12 @@ def build_index(db_path=None, data_dir=None):
 
     Brand records (data/brands/<slug>/brand.md) are an editorial lookup, not a
     part — they never enter `parts`/`parts_fts`, only the separate `brands` table.
+    Firmware and recipe records (data/firmware/, data/recipes/) are likewise
+    first-class entities, not parts — they are read straight off disk by
+    esp_atlas_core.firmware instead of being indexed here at all.
     """
     records = _load_all(data_dir)
-    part_records = [r for r in records if r[0] != "brand"]
+    part_records = [r for r in records if r[0] not in ("brand", "firmware", "recipe")]
     brand_records = [r for r in records if r[0] == "brand"]
     soc_by_id = {fm["id"]: fm for t, _p, fm, _b in part_records if t == "soc"}
     module_by_id = {fm["id"]: fm for t, _p, fm, _b in part_records if t == "module"}

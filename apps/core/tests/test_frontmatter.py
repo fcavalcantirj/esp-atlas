@@ -21,16 +21,23 @@ def test_parse_frontmatter_rejects_missing_frontmatter(tmp_path):
         pass
 
 
-def test_iter_data_files_finds_all_four_types():
+def test_iter_data_files_finds_all_six_types():
     found = list(iter_data_files())
     types = {t for t, _ in found}
-    assert types == {"soc", "module", "board", "brand"}
+    assert types == {"soc", "module", "board", "brand", "firmware", "recipe"}
     # every real seeded soc shows up
     soc_paths = [p for t, p in found if t == "soc"]
     assert any(p.name == "chip.md" and p.parent.name == "esp32-c6" for p in soc_paths)
     # every real seeded brand shows up
     brand_paths = [p for t, p in found if t == "brand"]
     assert any(p.name == "brand.md" and p.parent.name == "espressif" for p in brand_paths)
+    # every real seeded firmware/recipe shows up
+    firmware_paths = [p for t, p in found if t == "firmware"]
+    assert any(p.name == "firmware.md" and p.parent.name == "esp32marauder" for p in firmware_paths)
+    recipe_paths = [p for t, p in found if t == "recipe"]
+    assert any(
+        p.name == "recipe.md" and p.parent.name == "m5cardputer__esp32marauder" for p in recipe_paths
+    )
 
 
 def test_data_patterns_match_existing_scripts_conventions():
@@ -38,3 +45,5 @@ def test_data_patterns_match_existing_scripts_conventions():
     assert DATA_PATTERNS["module"].endswith("module.md")
     assert DATA_PATTERNS["board"].endswith("board.md")
     assert DATA_PATTERNS["brand"].endswith("brand.md")
+    assert DATA_PATTERNS["firmware"].endswith("firmware.md")
+    assert DATA_PATTERNS["recipe"].endswith("recipe.md")

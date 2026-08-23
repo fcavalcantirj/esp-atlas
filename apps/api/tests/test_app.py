@@ -425,3 +425,56 @@ def test_brand_page_unknown_slug_returns_empty_results_200(client):
     body = r.json()
     assert body["brand"] == {"slug": "no-such-brand", "name": "no-such-brand", "url": None}
     assert body["results"] == []
+
+
+# --- firmware / recipes ---------------------------------------------------------
+
+
+def test_list_firmware_returns_every_seeded_firmware(client):
+    r = client.get("/firmware")
+    assert r.status_code == 200
+    ids = {rec["id"] for rec in r.json()["results"]}
+    assert "esp32marauder" in ids
+    assert "launcher" in ids
+
+
+def test_get_firmware_known_id_returns_record(client):
+    r = client.get("/firmware/esp32marauder")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["name"] == "ESP32 Marauder"
+    assert body["category"] == "pentest"
+
+
+def test_get_firmware_unknown_id_returns_404(client):
+    r = client.get("/firmware/no-such-firmware")
+    assert r.status_code == 404
+
+
+def test_list_recipes_no_params_returns_all(client):
+    r = client.get("/recipes")
+    assert r.status_code == 200
+    ids = {rec["id"] for rec in r.json()["results"]}
+    assert "m5cardputer__esp32marauder" in ids
+
+
+def test_list_recipes_filters_by_board(client):
+    r = client.get("/recipes", params={"board": "m5cardputer"})
+    assert r.status_code == 200
+    results = r.json()["results"]
+    assert results
+    assert all(rec["board"] == "m5cardputer" for rec in results)
+
+
+def test_list_recipes_filters_by_firmware(client):
+    r = client.get("/recipes", params={"firmware": "launcher"})
+    assert r.status_code == 200
+    results = r.json()["results"]
+    assert results
+    assert all(rec["firmware"] == "launcher" for rec in results)
+
+
+def test_list_recipes_unknown_board_returns_empty(client):
+    r = client.get("/recipes", params={"board": "no-such-board"})
+    assert r.status_code == 200
+    assert r.json()["results"] == []

@@ -75,6 +75,8 @@ visibly separate from the verified fields above it.
 - **v3:** full board coverage; companions (nRF24/CC1101/LTE-GNSS); public launch.
 - **v4:** Flash Wizard + community recipes (`firmware`/`recipe` content types, "what
   runs on what", in-browser flashing via ESP Web Tools) — see `SPEC-wizard.md`.
+  **P1 shipped:** schemas + validation wiring + a 6-firmware/6-recipe hand-cited
+  seed + core accessors (no flashing UI yet).
 
 ## Anti-goals
 Not a shop / not affiliate bait · not tutorials (link out) · not a forum · not a

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://esp.wiki/schema/recipe.schema.json",
+  "title": "ESP Atlas Recipe",
+  "description": "One board x one firmware, the atomic 'what runs on what'. First-class entity like `brand`: never indexed into the queryable parts table, never a /search or /wizard result. `chip_family` must equal the referenced board's `soc`. See SPEC-wizard.md.",
+  "type": "object",
+  "required": ["id", "type", "board", "firmware", "status", "chip_family", "sources"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string", "pattern": "^[a-z0-9-]+__[a-z0-9-]+$",
+      "description": "matches the data/recipes/<id>/ folder, <board>__<firmware>"
+    },
+    "type": { "const": "recipe" },
+    "board": { "type": "string", "description": "id of the board (must exist in data/boards/**)" },
+    "firmware": { "type": "string", "description": "id of the firmware (must exist in data/firmware/)" },
+    "status": { "enum": ["known-good", "reported", "unverified", "broken"] },
+    "chip_family": { "type": "string", "description": "must equal the referenced board's soc" },
+    "firmware_version": { "type": "string" },
+    "flash": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "method": { "enum": ["esp-web-tools", "release-bin", "m5burner", "web-flasher"] },
+        "manifest_url": { "type": "string", "format": "uri" },
+        "bin_url": { "type": "string", "format": "uri" },
+        "offset": { "type": "string" },
+        "env": { "type": "string" },
+        "partition": { "type": "string" }
+      }
+    },
+    "verified_by": { "type": "string" },
+    "verified_at": { "type": "string", "format": "date" },
+    "notes": { "type": "string" },
+    "sources": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["field", "url", "verified"], "additionalProperties": false,
+        "properties": {
+          "field": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "verified": { "type": "string", "format": "date" }
+        }
+      }
+    }
+  }
+}
