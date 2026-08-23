@@ -205,6 +205,14 @@ def test_main_entry_point_runs(built_db_path, monkeypatch):
     assert exc_info.value.code == 0
 
 
+def test_search_command_brand_filter(built_db_path):
+    result = run(["search", "", "--brand", "adafruit", "--type", "board"], built_db_path)
+    assert result.exit_code == 0, result.output
+    assert "adafruit-feather-esp32-s3" in result.output
+    assert "xiao-esp32c6" not in result.output
+    assert "m5stack" not in result.output
+
+
 def test_search_command_soc_filter(built_db_path):
     result = run(["search", "", "--soc", "esp32-c6", "--type", "board"], built_db_path)
     assert result.exit_code == 0, result.output
