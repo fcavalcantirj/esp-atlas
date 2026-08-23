@@ -95,6 +95,7 @@ recipes, with a **per-project adapter** because each declares support differentl
 | Marauder / Crystal | `platformio.ini` `[env:*]` + `User_Setup_*.h` | envs → boards |
 | RogueDuck | single board + partition note | one recipe |
 | Launcher | `platformio.ini` (one env per chip family) + `Launcher-<Device>.bin` releases | board-named bins → recipes **+ auto-manifest** |
+| **Launcher [Supported-devices wiki](https://github.com/bmorcelli/Launcher/wiki/Supported-devices)** | a structured **Device × Chip × Added-in-version** table (79 builds, 9 vendors, OTA/beta flags) | `known-good`-candidate `board × launcher` recipes — already chip-mapped and cited to one URL; `Added-in-version` is a built-in freshness signal |
 | Launcher catalog / **M5Burner API** | aggregated firmware+device lists | cross-project `unverified` recipes (attributed) |
 | any | release `.bin` asset names, README device lists | `unverified` recipes |
 
