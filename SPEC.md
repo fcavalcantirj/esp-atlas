@@ -65,7 +65,9 @@ visibly separate from the verified fields above it.
 ## Governance
 - CI gate: `scripts/validate.py` (schema + source rule) on every PR.
 - CODEOWNERS per brand folder (as boards grow).
-- oracle-loop bot opens PRs for missing/stale parts; humans always merge.
+- oracle-loop bot opens PRs for missing/stale parts; humans always merge. The daily
+  freshness engine (link-liveness, firmware-release/recipe drift, board/brand
+  discovery) is specced in `SPEC-freshness.md`.
 - License: data CC-BY-SA 4.0, code MIT.
 
 ## Phasing
