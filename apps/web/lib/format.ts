@@ -62,6 +62,42 @@ export const PRICE_TIER_LABEL: Record<string, string> = {
 export const PRICE_TIER_NOTE =
   "Approximate, editorial street-price tier — not a datasheet-verified spec. Used only by the wizard's budget filter.";
 
+// Trust tiers, most to least trusted (SPEC-wizard.md "the honesty layer").
+export const RECIPE_TIER_ORDER = ["known-good", "reported", "unverified", "broken"] as const;
+
+export const RECIPE_TIER_LABEL: Record<string, string> = {
+  "known-good": "Known good",
+  reported: "Reported",
+  unverified: "Unverified",
+  broken: "Broken",
+};
+
+const FLASH_METHOD_LABEL: Record<string, string> = {
+  "esp-web-tools": "web-serial",
+  "release-bin": "release .bin",
+  m5burner: "M5Burner",
+  "web-flasher": "web flasher",
+};
+
+/** Informational only — never a flash affordance (that's a later phase). */
+export function flashMethodLabel(method: string | null | undefined): string | null {
+  if (!method) return null;
+  return FLASH_METHOD_LABEL[method] ?? method;
+}
+
+const FIRMWARE_CATEGORY_LABEL: Record<string, string> = {
+  pentest: "Pentest",
+  mesh: "Mesh",
+  badusb: "BadUSB",
+  display: "Display",
+  home: "Home",
+  multi: "Multi-purpose",
+};
+
+export function firmwareCategoryLabel(category: string): string {
+  return FIRMWARE_CATEGORY_LABEL[category] ?? category;
+}
+
 export function priceTierShort(tier: string | null | undefined): string | null {
   return tier ? `~${tier}` : null;
 }
