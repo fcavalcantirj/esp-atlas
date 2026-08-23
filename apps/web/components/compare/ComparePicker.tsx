@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import type { PartRecord } from "@/lib/api";
+import { brandLabel } from "@/lib/brand";
 import { typePlural } from "@/lib/format";
 
 export type PickerType = "all" | "board" | "module" | "soc";
@@ -25,7 +26,7 @@ interface ComparePickerProps {
 // stays in esp_atlas_core.
 function matches(part: PartRecord, needle: string): boolean {
   if (!needle) return true;
-  const haystack = `${part.name} ${part.id} ${part.brand_name} ${part.soc_ref ?? ""} ${part.form_factor ?? ""}`.toLowerCase();
+  const haystack = `${part.name} ${part.id} ${brandLabel(part)} ${part.soc_ref ?? ""} ${part.form_factor ?? ""}`.toLowerCase();
   return needle
     .toLowerCase()
     .split(/\s+/)
@@ -52,9 +53,10 @@ export default function ComparePicker({
       const items = list.filter((p) => p.type === t);
       const brands = new Map<string, PartRecord[]>();
       for (const item of items) {
-        const arr = brands.get(item.brand_name) ?? [];
+        const key = brandLabel(item);
+        const arr = brands.get(key) ?? [];
         arr.push(item);
-        brands.set(item.brand_name, arr);
+        brands.set(key, arr);
       }
       return { type: t, items, brands: [...brands.entries()].sort(([a], [b]) => a.localeCompare(b)) };
     }).filter((g) => g.items.length > 0);
@@ -73,7 +75,7 @@ export default function ComparePicker({
             aria-label={`${checked ? "Remove" : "Add"} ${part.name}`}
           />
           <span>{part.name}</span>
-          <span className="compare-option-brand">{part.brand_name}</span>
+          <span className="compare-option-brand">{brandLabel(part)}</span>
         </label>
       </li>
     );

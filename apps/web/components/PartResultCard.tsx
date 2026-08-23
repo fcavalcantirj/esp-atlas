@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { PartRecord, WizardRecord } from "@/lib/api";
 import { track, type ResultOrigin } from "@/lib/analytics";
+import { brandLabel } from "@/lib/brand";
 import { PRICE_TIER_NOTE, priceTierShort, specChips, typeLabel } from "@/lib/format";
 
 interface PartResultCardProps {
@@ -28,7 +29,7 @@ export default function PartResultCard({ part, origin, position }: PartResultCar
         </h3>
         <p className="part-card-meta">
           <span className={`badge badge--${part.type}`}>{typeLabel(part.type)}</span>
-          <span className="part-card-brand">{part.brand_name}</span>
+          <span className="part-card-brand">{brandLabel(part)}</span>
           {part.price_tier && (
             <span className="price-pill" title={PRICE_TIER_NOTE}>
               {priceTierShort(part.price_tier)}

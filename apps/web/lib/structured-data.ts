@@ -2,6 +2,7 @@
 // already returns. No offers, prices, ratings or reviews anywhere: the site is
 // not a shop and `price_tier` is editorial (see SPEC.md anti-goals).
 import type { BrandFacet, PartDetail, PartRecord } from "@/lib/api";
+import { brandLabel } from "@/lib/brand";
 import { firstSentence, typeLabel } from "@/lib/format";
 import { dataFolderUrl, repoUrl } from "@/lib/github";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
@@ -165,8 +166,8 @@ export function partGraph(part: PartDetail) {
     about: {
       "@type": "Product",
       name: part.name,
-      brand: { "@type": "Brand", name: part.brand_name },
-      manufacturer: { "@type": "Organization", name: part.brand_name },
+      brand: { "@type": "Brand", name: brandLabel(part) },
+      manufacturer: { "@type": "Organization", name: brandLabel(part) },
       category: `ESP32 ${typeLabel(part.type)}`,
     },
   };
