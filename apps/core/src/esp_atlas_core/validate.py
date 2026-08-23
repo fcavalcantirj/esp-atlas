@@ -48,7 +48,8 @@ def known_ids(data_dir=None):
     """Scan data/ for existing soc/module/board/firmware ids, to resolve inheritance
     refs against. Also returns `board_soc`: {board_id: resolved soc id} (via the
     board's own `soc`, or its `module`'s `soc`), used to check a recipe's
-    `chip_family` against the board it targets."""
+    `chip_family` against the board it targets, and `recipe_firmware_refs`: every
+    firmware id referenced by at least one recipe, used by check_orphan_firmware()."""
     ids = {"soc": set(), "module": set(), "board": set(), "firmware": set()}
     root = Path(data_dir) if data_dir is not None else DATA_DIR
 
@@ -76,8 +77,27 @@ def known_ids(data_dir=None):
         if fm:
             ids["firmware"].add(fm["id"])
 
+    recipe_firmware_refs = set()
+    for path in root.glob(DATA_PATTERNS["recipe"]):
+        fm = _read_fm(path)
+        if fm and fm.get("firmware"):
+            recipe_firmware_refs.add(fm["firmware"])
+
     ids["board_soc"] = board_soc
+    ids["recipe_firmware_refs"] = recipe_firmware_refs
     return ids
+
+
+def check_orphan_firmware(ids):
+    """Dataset-level check (not per-file): every seeded firmware must be referenced
+    by at least one recipe. Run after per-file validation via scripts/validate.py;
+    an orphan firmware (zero recipes) is a hard CI error, not a warning."""
+    firmware_ids = ids.get("firmware", set())
+    referenced = ids.get("recipe_firmware_refs", set())
+    return [
+        f"orphan firmware: no recipe references '{firmware_id}'"
+        for firmware_id in sorted(firmware_ids - referenced)
+    ]
 
 
 def _check_inheritance(fm, kind, ids):

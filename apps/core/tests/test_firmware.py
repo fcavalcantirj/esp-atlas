@@ -49,6 +49,12 @@ def test_list_recipes_includes_every_seeded_recipe():
         "lilygo-t-dongle-s3__launcher",
         "lilygo-t-watch-s3__launcher",
         "lilygo-t-display-s3-amoled__launcher",
+        "m5stick-s3__launcher",
+        "m5stick-s3__rogueduck",
+        "m5stick-cplus2__infiltra",
+        "m5cardputer__infiltra",
+        "m5stick-cplus2__m5-crystal",
+        "m5stick-s3__m5-crystal",
     }
 
 
@@ -59,6 +65,7 @@ def test_recipes_for_board_filters_by_board():
         "m5cardputer__esp32marauder",
         "m5cardputer__m5stick-nemo",
         "m5cardputer__launcher",
+        "m5cardputer__infiltra",
     }
 
 
@@ -80,11 +87,27 @@ def test_recipes_for_firmware_filters_by_firmware():
         "lilygo-t-dongle-s3__launcher",
         "lilygo-t-watch-s3__launcher",
         "lilygo-t-display-s3-amoled__launcher",
+        "m5stick-s3__launcher",
     }
 
 
 def test_recipes_for_firmware_unknown_firmware_returns_empty():
     assert recipes_for_firmware("no-such-firmware") == []
+
+
+def test_recipes_for_firmware_infiltra_is_no_longer_orphaned():
+    ids = {r["id"] for r in recipes_for_firmware("infiltra")}
+    assert ids == {"m5stick-cplus2__infiltra", "m5cardputer__infiltra"}
+
+
+def test_recipes_for_firmware_m5_crystal_is_no_longer_orphaned():
+    ids = {r["id"] for r in recipes_for_firmware("m5-crystal")}
+    assert ids == {"m5stick-cplus2__m5-crystal", "m5stick-s3__m5-crystal"}
+
+
+def test_recipes_for_firmware_rogueduck_is_no_longer_orphaned():
+    ids = {r["id"] for r in recipes_for_firmware("rogueduck")}
+    assert ids == {"m5stick-s3__rogueduck"}
 
 
 def test_every_recipe_status_is_known_good():

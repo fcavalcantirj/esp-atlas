@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "apps" / "core" 
 
 from esp_atlas_core.frontmatter import iter_data_files  # noqa: E402
 from esp_atlas_core.paths import REPO_ROOT  # noqa: E402
-from esp_atlas_core.validate import known_ids, validate_file  # noqa: E402
+from esp_atlas_core.validate import check_orphan_firmware, known_ids, validate_file  # noqa: E402
 
 
 def main():
@@ -32,6 +32,10 @@ def main():
             errors += 1
             for msg in result["errors"]:
                 print(f"  ✗ {rel}: {msg}")
+
+    for msg in check_orphan_firmware(ids):
+        errors += 1
+        print(f"  ✗ {msg}")
 
     print(f"\n{total - errors}/{total} valid, {errors} error(s)")
     sys.exit(1 if errors else 0)

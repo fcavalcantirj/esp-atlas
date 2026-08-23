@@ -242,12 +242,19 @@ not as a recipe.
   `recipes_for_board`, `recipes_for_firmware`) plus matching `GET /firmware`,
   `GET /firmware/{id}`, `GET /recipes?board=&firmware=` API endpoints. Seeded 6
   firmwares (ESP32 Marauder, M5Stick NEMO, M5 Crystal, Infiltra, M5StickS3
-  RogueDuck, Launcher) x 6 `known-good` recipes on M5Stack boards already in
-  `data/boards/`, hand-cited to each project's own repo. `firmware`/`recipe` stay
-  out of `esp-atlas.db`'s `parts` table and `index.json`, same as `brand`. **No
-  flashing yet** — pure data + schema, the brand-entity move again. The wider
+  RogueDuck, Launcher) x 19 `known-good` recipes on M5Stack/LILYGO boards already
+  in `data/boards/`, hand-cited to each project's own repo. `firmware`/`recipe`
+  stay out of `esp-atlas.db`'s `parts` table and `index.json`, same as `brand`.
+  **No flashing yet** — pure data + schema, the brand-entity move again. The wider
   ~12-firmware catalog (Bruce, MeshCore, Meshtastic, WLED, ESPHome, GhostESP, …)
   is follow-up seeding, not blocked on any schema/wiring work.
+  **Invariant — no orphan firmware:** every seeded `firmware` must be referenced
+  by at least one `recipe`. `esp_atlas_core.validate.check_orphan_firmware()`
+  runs as a dataset-level check (after per-file validation) in
+  `scripts/validate.py`; a firmware with zero recipes is a hard CI error, not a
+  warning. This exists because a bulk firmware seed can land ahead of its
+  recipes — the check makes that state fail CI instead of silently shipping an
+  unreachable firmware page.
 - **P2a (shipped)** — surface the graph on the site (no flashing): board pages show
   "Firmware for this board" grouped by trust tier; `/firmware` index + `/firmware/[id]`
   detail with the reverse "runs on these boards" view; `TrustTierBadge`; nav/footer/

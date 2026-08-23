@@ -5,7 +5,13 @@ import yaml
 
 from esp_atlas_core.frontmatter import parse_frontmatter
 from esp_atlas_core.paths import REPO_ROOT
-from esp_atlas_core.validate import known_ids, validate_file, validate_frontmatter, validate_markdown
+from esp_atlas_core.validate import (
+    check_orphan_firmware,
+    known_ids,
+    validate_file,
+    validate_frontmatter,
+    validate_markdown,
+)
 
 SOC_PATH = REPO_ROOT / "data" / "socs" / "esp32-c6" / "chip.md"
 MODULE_PATH = REPO_ROOT / "data" / "modules" / "esp32-c6-wroom-1" / "module.md"
@@ -372,3 +378,34 @@ def test_known_ids_includes_board_and_firmware_and_board_soc():
     assert "m5cardputer" in ids["board"]
     assert "esp32marauder" in ids["firmware"]
     assert ids["board_soc"]["m5cardputer"] == "esp32-s3"
+
+
+def test_known_ids_includes_recipe_firmware_refs():
+    ids = known_ids()
+    assert "esp32marauder" in ids["recipe_firmware_refs"]
+    assert "infiltra" in ids["recipe_firmware_refs"]
+
+
+def test_check_orphan_firmware_flags_unreferenced_firmware():
+    ids = {"firmware": {"a", "b"}, "recipe_firmware_refs": {"a"}}
+    errors = check_orphan_firmware(ids)
+    assert errors == ["orphan firmware: no recipe references 'b'"]
+
+
+def test_check_orphan_firmware_all_referenced_passes():
+    ids = {"firmware": {"a", "b"}, "recipe_firmware_refs": {"a", "b"}}
+    assert check_orphan_firmware(ids) == []
+
+
+def test_check_orphan_firmware_reports_every_orphan_sorted():
+    ids = {"firmware": {"z", "a"}, "recipe_firmware_refs": set()}
+    errors = check_orphan_firmware(ids)
+    assert errors == [
+        "orphan firmware: no recipe references 'a'",
+        "orphan firmware: no recipe references 'z'",
+    ]
+
+
+def test_check_orphan_firmware_seeded_dataset_passes():
+    ids = known_ids()
+    assert check_orphan_firmware(ids) == []
