@@ -18,6 +18,9 @@ export default function SiteHeader() {
           <Link href="/compare" className="nav-link">
             Compare
           </Link>
+          <Link href="/firmware" className="nav-link">
+            Firmware
+          </Link>
           <TrackedLink href={contributingUrl()} linkType="contributing" className="nav-link">
             Add a part
           </TrackedLink>

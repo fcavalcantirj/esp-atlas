@@ -1,7 +1,7 @@
 // schema.org graphs for the pages that are server-rendered from data the API
 // already returns. No offers, prices, ratings or reviews anywhere: the site is
 // not a shop and `price_tier` is editorial (see SPEC.md anti-goals).
-import type { BrandFacet, PartDetail, PartRecord } from "@/lib/api";
+import type { BrandFacet, Firmware, PartDetail, PartRecord } from "@/lib/api";
 import { brandLabel } from "@/lib/brand";
 import { firstSentence, typeLabel } from "@/lib/format";
 import { dataFolderUrl, repoUrl } from "@/lib/github";
@@ -131,6 +131,89 @@ export function brandGraph(slug: string, name: string, parts: PartRecord[]) {
           { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
           { "@type": "ListItem", position: 2, name: "Brands", item: `${SITE_URL}/brands` },
           { "@type": "ListItem", position: 3, name },
+        ],
+      },
+    ],
+  };
+}
+
+/** /firmware: every flashable firmware project in the dataset, as a CollectionPage + ItemList. */
+export function firmwareIndexGraph(firmware: Firmware[]) {
+  const url = `${SITE_URL}/firmware`;
+  return {
+    "@context": CONTEXT,
+    "@graph": [
+      organization(),
+      website(),
+      {
+        "@type": "CollectionPage",
+        "@id": url,
+        name: "ESP32 firmware — what runs on what",
+        url,
+        isPartOf: { "@id": SITE_ID },
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: firmware.length,
+          itemListElement: firmware.map((fw, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: fw.name,
+            url: `${url}/${encodeURIComponent(fw.id)}`,
+          })),
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+          { "@type": "ListItem", position: 2, name: "Firmware" },
+        ],
+      },
+    ],
+  };
+}
+
+/** /firmware/<id>: the firmware itself plus every board it's a recipe for, as a SoftwareApplication + ItemList. */
+export function firmwareGraph(firmware: Firmware, boards: PartRecord[]) {
+  const url = `${SITE_URL}/firmware/${encodeURIComponent(firmware.id)}`;
+  return {
+    "@context": CONTEXT,
+    "@graph": [
+      organization(),
+      website(),
+      {
+        "@type": "SoftwareApplication",
+        "@id": `${url}#software`,
+        name: firmware.name,
+        url,
+        sameAs: firmware.url,
+        applicationCategory: firmware.category,
+        ...(firmware.license ? { license: firmware.license } : {}),
+        ...(firmware.maintainer ? { author: { "@type": "Person", name: firmware.maintainer } } : {}),
+        isPartOf: { "@id": SITE_ID },
+      },
+      ...(boards.length
+        ? [
+            {
+              "@type": "ItemList",
+              "@id": `${url}#boards`,
+              name: `Boards ${firmware.name} runs on`,
+              numberOfItems: boards.length,
+              itemListElement: boards.map((b, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                name: b.name,
+                url: `${SITE_URL}/parts/${encodeURIComponent(b.id)}`,
+              })),
+            },
+          ]
+        : []),
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+          { "@type": "ListItem", position: 2, name: "Firmware", item: `${SITE_URL}/firmware` },
+          { "@type": "ListItem", position: 3, name: firmware.name },
         ],
       },
     ],

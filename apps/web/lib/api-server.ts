@@ -10,7 +10,7 @@
 // Every call is bounded (3 s) and never throws: callers get a status they can
 // branch on, so a cold/unreachable Python function degrades to the client-side
 // fallback instead of a 500.
-import type { BrandPage, Facets, PartDetail, PartRecord } from "@/lib/api";
+import type { BrandPage, Facets, Firmware, PartDetail, PartRecord, Recipe } from "@/lib/api";
 
 const REVALIDATE_SECONDS = 3600;
 const TIMEOUT_MS = 3000;
@@ -65,4 +65,20 @@ export function fetchFacets(): Promise<ServerFetchResult<Facets>> {
  * exact brand filter); an unknown slug is an empty `results` list, not an error. */
 export function fetchBrandPage(slug: string): Promise<ServerFetchResult<BrandPage>> {
   return serverFetch<BrandPage>(`/brands/${encodeURIComponent(slug)}`);
+}
+
+export async function fetchFirmwareList(): Promise<ServerFetchResult<{ results: Firmware[] }>> {
+  return serverFetch<{ results: Firmware[] }>(`/firmware`);
+}
+
+export function fetchFirmware(id: string): Promise<ServerFetchResult<Firmware>> {
+  return serverFetch<Firmware>(`/firmware/${encodeURIComponent(id)}`);
+}
+
+export function fetchRecipesForBoard(boardId: string): Promise<ServerFetchResult<{ results: Recipe[] }>> {
+  return serverFetch<{ results: Recipe[] }>(`/recipes?board=${encodeURIComponent(boardId)}`);
+}
+
+export function fetchRecipesForFirmware(firmwareId: string): Promise<ServerFetchResult<{ results: Recipe[] }>> {
+  return serverFetch<{ results: Recipe[] }>(`/recipes?firmware=${encodeURIComponent(firmwareId)}`);
 }

@@ -88,6 +88,51 @@ export interface BrandPage {
   results: PartRecord[];
 }
 
+/** GET /firmware, GET /firmware/{id}: a flashable project. First-class like a
+ * brand — never in /search, /wizard, or the parts index. */
+export interface Firmware {
+  id: string;
+  type: string;
+  name: string;
+  url: string;
+  category: string;
+  maintainer: string | null;
+  license: string | null;
+  distribution: string[];
+  manifest_url: string | null;
+  capabilities: string[];
+  socs: string[];
+  sources: SourceEntry[];
+}
+
+export type RecipeStatus = "known-good" | "reported" | "unverified" | "broken";
+
+export interface RecipeFlash {
+  method: string | null;
+  manifest_url: string | null;
+  bin_url: string | null;
+  offset: string | null;
+  env: string | null;
+  partition: string | null;
+}
+
+/** GET /recipes?board=&firmware=: one board × one firmware edge, the atomic
+ * "what runs on what". `status` is a trust tier, see RecipeStatus. */
+export interface Recipe {
+  id: string;
+  type: string;
+  board: string;
+  firmware: string;
+  status: RecipeStatus | string;
+  chip_family: string;
+  firmware_version: string | null;
+  flash: RecipeFlash | null;
+  verified_by: string | null;
+  verified_at: string | null;
+  notes: string | null;
+  sources: SourceEntry[];
+}
+
 export type PartType = "soc" | "module" | "board";
 
 export interface SearchFilters {
