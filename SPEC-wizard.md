@@ -126,6 +126,59 @@ Consent checkbox wired to the ESP Web Tools `activate` slot:
 The `unsupported` slot covers non-Chrome/Edge (Web Serial is desktop Chromium
 only; no iOS/mobile). Erase behavior via the manifest's `new_install_prompt_erase`.
 
+## Flash engine internals (P2b / P3)
+ESP Web Tools flashes from a manifest:
+```json
+{ "name": "...", "version": "...", "new_install_prompt_erase": false,
+  "builds": [{ "chipFamily": "ESP32-S3", "parts": [{ "path": "<url>", "offset": 0 }] }] }
+```
+`recipe.flash` maps onto it directly; the wizard branches by `method`:
+
+- **`esp-web-tools` + `manifest_url`** — pass the manifest URL straight to
+  `<esp-web-install-button>`. Nothing for esp-atlas to build.
+- **`release-bin`** — esp-atlas **generates** the manifest from the recipe and
+  serves it at `GET /manifest/<recipe-id>.json`. The generated JSON's `parts[].path`
+  points at the **upstream release asset** (`flash.bin_url`), never a rehosted copy;
+  `chipFamily` = `recipe.chip_family`; offsets from the recipe. Two shapes:
+  - **merged image** (the common web-flasher case, e.g. Launcher's
+    `Launcher-<Device>.bin`): one part at `offset: 0` (`flash.bin_url` + `flash.offset`).
+  - **multi-part** (`bootloader`/`partitions`/`app`/`data` at chip-specific offsets —
+    ESP32 classic: 0x1000/0x8000/0x10000 + boot_app0 0xe000; S3/C3 bootloader at 0x0):
+    P3 extends `recipe.flash` with an optional `parts: [{url, offset}]`; the generator
+    emits them verbatim.
+- **`m5burner` / `web-flasher`** — no manifest; guided handoff (deep-link + per-board
+  download-mode instructions from the board's `usb`/`form_factor`).
+
+**CORS is the gating reality.** The **browser** fetches each `part.path` directly, so
+the asset host must send `Access-Control-Allow-Origin`. **GitHub release assets are
+CORS-open** → `release-bin` from a GitHub release just works. A non-CORS host
+downgrades that recipe to guided handoff (detected once, recorded on the recipe).
+esp-atlas only ever serves the tiny generated JSON; it never proxies the binary.
+
+**Progress UX** rides ESP Web Tools' `state-changed` events
+(`initializing → manifest → preparing → erasing → writing → finished | error`); the
+wizard renders a step bar and surfaces `error` with the device's message. The
+generated manifest is deterministic → cacheable; the `.bin` is browser↔upstream,
+off esp-atlas's critical path.
+
+## Two delivery rails — Web Serial + on-device OTA
+The same `recipe.flash` (blobs at offsets) projects into **two** installers, because
+Launcher's multi-part `{bootloader,partitions,firmware,data}.bin` is the same shape
+as an ESP Web Tools `parts[]` array:
+
+1. **Web Serial** (this wizard) — browser → USB cable → chip. First install of *any*
+   firmware, needs a cable + Chromium. Projection: **ESP Web Tools manifest** (above).
+2. **On-device OTA** (Launcher-style) — a launcher firmware already on the device
+   pulls updates over Wi-Fi from a catalog, no cable, no PC. Projection: a
+   **Launcher-compatible OTA catalog** of the recipe graph, so a device running
+   Launcher can point its OTA at esp-atlas.
+
+They solve each other's chicken-and-egg: rail 1 installs Launcher over a cable; rail
+2 then updates cable-free. **Caveat:** LauncherHub's catalog schema is not fully
+public — the OTA-catalog projection needs reverse-engineering or, better,
+collaboration with bmorcelli. It is a **stretch phase (P5)**, not a blocker for the
+Web Serial rail.
+
 ## Not a recipe: libraries as capability signals
 **ESPAsyncWebServer** (LGPL-3.0) is a *library*, not flashable firmware — never a
 recipe target. It is a **capability signal**: firmware depending on it exposes an
@@ -147,9 +200,24 @@ not as a recipe.
   flashing yet** — pure data + schema, the brand-entity move again. The wider
   ~12-firmware catalog (Bruce, MeshCore, Meshtastic, WLED, ESPHome, GhostESP, …)
   is follow-up seeding, not blocked on any schema/wiring work.
-- **P2** — Flash Wizard button via ESP Web Tools for recipes that already carry a `manifest_url`; consent gate.
-- **P3** — on-the-fly manifest generation from `release-bin` recipes.
+- **P2a (shipped)** — surface the graph on the site (no flashing): board pages show
+  "Firmware for this board" grouped by trust tier; `/firmware` index + `/firmware/[id]`
+  detail with the reverse "runs on these boards" view; `TrustTierBadge`; nav/footer/
+  sitemap/JSON-LD. All from the P1 API (`fetchFirmwareList`, `fetchFirmware`,
+  `fetchRecipesForBoard`, `fetchRecipesForFirmware`) — dumb client, never renders
+  `undefined`.
+- **P2b** — the flash action for `esp-web-tools` recipes (those carrying a
+  `manifest_url`): the consent gate (checkbox → `activate` slot), `unsupported`/
+  `not-allowed` slots, and the `state-changed` progress bar. First real end-to-end
+  flash + hardware test.
+- **P3** — `GET /manifest/<recipe-id>.json` generator for `release-bin` recipes
+  (merged image → one part at `offset`; optional `flash.parts[]` for multi-part),
+  with the CORS check that downgrades non-CORS hosts to guided handoff. This is what
+  makes **Launcher and Marauder flash in-browser** (their `.bin`s live in GitHub
+  releases → CORS-open).
 - **P4** — oracle-loop harvesters (per-project adapters + Launcher/M5Burner sources) + the collaborative PR/form + tier-promotion workflow.
+- **P5 (stretch)** — Launcher-compatible OTA-catalog projection of the recipe graph
+  (the second delivery rail), pending LauncherHub schema / collaboration with bmorcelli.
 
 ## Anti-goals (extends SPEC.md)
 - Never rehost binaries — link/cite the project's own releases (respects GPL-2.0,
