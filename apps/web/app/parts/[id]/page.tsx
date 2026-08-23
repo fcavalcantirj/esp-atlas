@@ -6,7 +6,7 @@ import PartDetailView from "@/components/part/PartDetailView";
 import PartViewTracker from "@/components/part/PartViewTracker";
 import { fetchPartDetail } from "@/lib/api-server";
 import { firstSentence, typeLabel } from "@/lib/format";
-import { OG_IMAGE, SITE_NAME } from "@/lib/site";
+import { SITE_NAME } from "@/lib/site";
 import { partGraph } from "@/lib/structured-data";
 
 // Server-rendered so every part page ships with its own title/description for
@@ -25,14 +25,15 @@ export async function generateMetadata({ params }: PageProps<"/parts/[id]">): Pr
   const description =
     firstSentence(part.body) || `${part.name}: datasheet-verified ESP32 ${part.type} specs on ${SITE_NAME}.`;
   const path = `/parts/${encodeURIComponent(part.id)}`;
-  // Nested metadata objects replace the root ones wholesale, so siteName, url
-  // and the preview image must be restated here or the page ships without them.
+  // Nested metadata objects replace the root ones wholesale, so siteName and
+  // url must be restated here. The preview image is the segment's own
+  // opengraph-image.tsx (per-part card), which Next adds to both og and twitter.
   return {
     title,
     description,
     alternates: { canonical: path },
-    openGraph: { type: "article", siteName: SITE_NAME, title, description, url: path, images: [OG_IMAGE] },
-    twitter: { card: "summary_large_image", title, description, images: [OG_IMAGE.url] },
+    openGraph: { type: "article", siteName: SITE_NAME, title, description, url: path },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
