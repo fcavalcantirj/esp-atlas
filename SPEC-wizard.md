@@ -108,10 +108,12 @@ Board page → **Flash** → recipes for this board, grouped by trust tier → p
 - **`esp-web-tools` + `manifest_url`** → embed `<esp-web-install-button>`; the
   browser does chip-detect + write. A chip/`chipFamily` mismatch is blocked by the
   tool itself — a hard safety net beneath our board-level assertion.
-- **`release-bin`** (`bin_url` + `offset` + `chip_family`) → esp-atlas **generates
-  the ESP Web Tools manifest on the fly**, pointing at the project's release asset
-  (GitHub release assets are CORS-open) → one-click, **no rehosting**. The feature
-  none of them have.
+- **`release-bin`** (`bin_url` + `offset` + `chip_family`) → esp-atlas generates an
+  ESP Web Tools manifest on the fly, but **whether it flashes in-browser hinges on
+  CORS** (see below): only if the `.bin` host sends `Access-Control-Allow-Origin`.
+  GitHub release assets do **not** (measured 2026-08-23), so Launcher/Marauder-style
+  release bins fall back to **guided handoff** unless esp-atlas proxies the bytes
+  same-origin — an **open decision** (below).
 - **`m5burner` / `web-flasher`** → guided handoff: deep-link + per-board
   download-mode instructions (esp-atlas already models USB connector + form factor
   for exactly this).
@@ -138,9 +140,8 @@ ESP Web Tools flashes from a manifest:
 - **`esp-web-tools` + `manifest_url`** — pass the manifest URL straight to
   `<esp-web-install-button>`. Nothing for esp-atlas to build.
 - **`release-bin`** — esp-atlas **generates** the manifest from the recipe and
-  serves it at `GET /manifest/<recipe-id>.json`. The generated JSON's `parts[].path`
-  points at the **upstream release asset** (`flash.bin_url`), never a rehosted copy;
-  `chipFamily` = `recipe.chip_family`; offsets from the recipe. Two shapes:
+  serves it at `GET /manifest/<recipe-id>.json`, `chipFamily` = `recipe.chip_family`,
+  offsets from the recipe. Two shapes:
   - **merged image** (the common web-flasher case, e.g. Launcher's
     `Launcher-<Device>.bin`): one part at `offset: 0` (`flash.bin_url` + `flash.offset`).
   - **multi-part** (`bootloader`/`partitions`/`app`/`data` at chip-specific offsets —
@@ -150,11 +151,28 @@ ESP Web Tools flashes from a manifest:
 - **`m5burner` / `web-flasher`** — no manifest; guided handoff (deep-link + per-board
   download-mode instructions from the board's `usb`/`form_factor`).
 
-**CORS is the gating reality.** The **browser** fetches each `part.path` directly, so
-the asset host must send `Access-Control-Allow-Origin`. **GitHub release assets are
-CORS-open** → `release-bin` from a GitHub release just works. A non-CORS host
-downgrades that recipe to guided handoff (detected once, recorded on the recipe).
-esp-atlas only ever serves the tiny generated JSON; it never proxies the binary.
+**CORS is the gating reality — and it does not go our way by default.** ESP Web
+Tools' `esptool-js` fetches each `part.path` in the browser, so the `.bin` host must
+send `Access-Control-Allow-Origin`. **Measured 2026-08-23:** a real Launcher release
+`.bin` (now served from `release-assets.githubusercontent.com`) returns **no ACAO
+header** — **GitHub release assets are NOT CORS-open**, so a direct browser fetch from
+`esp-atlas.com` is blocked. (Launcher's own web flasher sidesteps this by serving its
+bins *same-origin* from its GitHub Pages — i.e. it effectively rehosts them.) So
+`release-bin` splits three ways by where the binary lives:
+1. **CORS-open host** (WLED / ESPHome / Meshtastic publish bins/manifests on
+   CORS-enabled CDNs) → direct in-browser flash, no proxy, no rehosting. Ideal, but a
+   minority of projects.
+2. **Non-CORS host** (GitHub releases → Launcher, Marauder, most projects) → **either**
+   a **same-origin proxy** (esp-atlas streams the bytes through its own domain so the
+   fetch is same-origin — pass-through, not stored) **or** guided handoff. The proxy is
+   what makes true one-click work for the majority, but it means esp-atlas serves the
+   bytes — **in tension with the "never rehost" anti-goal. → OPEN DECISION (Felipe).**
+3. **Fallback — guided handoff:** deep-link to the project's own flasher (same-origin
+   for it) + per-board download-mode instructions. Works today; no CORS, no proxy, no
+   rehosting — just not in-page.
+
+**Confirmed 2026-08-23:** Launcher's `webflasher.js` flashes its merged `.bin` at
+`offset: 0` (single part), so the merged-image path above is correct.
 
 **Progress UX** rides ESP Web Tools' `state-changed` events
 (`initializing → manifest → preparing → erasing → writing → finished | error`); the
@@ -207,15 +225,20 @@ not as a recipe.
   sitemap/JSON-LD. All from the P1 API (`fetchFirmwareList`, `fetchFirmware`,
   `fetchRecipesForBoard`, `fetchRecipesForFirmware`) — dumb client, never renders
   `undefined`.
-- **P2b** — the flash action for `esp-web-tools` recipes (those carrying a
-  `manifest_url`): the consent gate (checkbox → `activate` slot), `unsupported`/
-  `not-allowed` slots, and the `state-changed` progress bar. First real end-to-end
-  flash + hardware test.
-- **P3** — `GET /manifest/<recipe-id>.json` generator for `release-bin` recipes
-  (merged image → one part at `offset`; optional `flash.parts[]` for multi-part),
-  with the CORS check that downgrades non-CORS hosts to guided handoff. This is what
-  makes **Launcher and Marauder flash in-browser** (their `.bin`s live in GitHub
-  releases → CORS-open).
+- **P2b (default, works today)** — the flash action as **guided handoff** +
+  direct ESP Web Tools for the *minority* of recipes whose `.bin`/manifest is on a
+  **CORS-open** host (WLED/ESPHome/Meshtastic): consent gate (checkbox → `activate`
+  slot), `unsupported`/`not-allowed` slots, `state-changed` progress bar. For
+  non-CORS release bins (Launcher, Marauder), P2b deep-links to the project's own
+  flasher — real, safe, no CORS/proxy/rehost problem, just not in-page. First
+  end-to-end flash + hardware test happens here (via handoff or a CORS-open target).
+- **P3 (gated on the OPEN DECISION)** — true in-browser flashing of **non-CORS
+  `release-bin`** recipes (Launcher, Marauder). Needs a **same-origin proxy** because
+  GitHub release assets are **not** CORS-open (measured — see *Flash engine
+  internals*). Blocked until Felipe rules on proxy-vs-rehost. Scope once unblocked:
+  `GET /manifest/<recipe-id>.json` + a pass-through `GET /flash-proxy?url=` streaming
+  the upstream `.bin` same-origin; `flash.parts[]` for multi-part; merged image → one
+  part at `offset: 0` (confirmed for Launcher).
 - **P4** — oracle-loop harvesters (per-project adapters + Launcher/M5Burner sources) + the collaborative PR/form + tier-promotion workflow.
 - **P5 (stretch)** — Launcher-compatible OTA-catalog projection of the recipe graph
   (the second delivery rail), pending LauncherHub schema / collaboration with bmorcelli.
@@ -223,5 +246,9 @@ not as a recipe.
 ## Anti-goals (extends SPEC.md)
 - Never rehost binaries — link/cite the project's own releases (respects GPL-2.0,
   LGPL-3.0, and every upstream license; consistent with "cite, don't copy").
+  **Tension (open):** the P3 same-origin **flash proxy** streams an upstream `.bin`
+  through esp-atlas's domain (pass-through, not stored) to defeat CORS. It never
+  *stores* or *lists* binaries, but it does *serve the bytes* — whether that crosses
+  this line is Felipe's call. Until then, guided handoff is the default.
 - Never claim an untested combo works — trust tiers enforce it.
 - Not a firmware forum, not a store. The wizard flashes; it does not sell or host.
