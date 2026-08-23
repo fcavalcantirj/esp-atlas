@@ -1,8 +1,8 @@
 ---
 slug: seo-fixes-and-polish
 date: 2026-08-22
-status: open            # open → in_review → approved | escalated
-round: 0
+status: approved        # open → in_review → approved | escalated
+round: 1
 author_session: builder session of 2026-08-22-seo-audit-and-restyle (shipped PRs #3–#7, wrote docs/seo-audit/2026-08-22.md); context at 67% at hand-off
 ---
 
