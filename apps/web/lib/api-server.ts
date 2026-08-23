@@ -10,7 +10,7 @@
 // Every call is bounded (3 s) and never throws: callers get a status they can
 // branch on, so a cold/unreachable Python function degrades to the client-side
 // fallback instead of a 500.
-import type { PartDetail, PartRecord } from "@/lib/api";
+import type { Facets, PartDetail, PartRecord } from "@/lib/api";
 
 const REVALIDATE_SECONDS = 3600;
 const TIMEOUT_MS = 3000;
@@ -55,4 +55,8 @@ export function fetchPartDetail(id: string): Promise<ServerFetchResult<PartDetai
 export async function fetchAllParts(): Promise<PartRecord[]> {
   const result = await serverFetch<{ results: PartRecord[] }>(`/parts`);
   return result.status === "ok" ? result.data.results : [];
+}
+
+export function fetchFacets(): Promise<ServerFetchResult<Facets>> {
+  return serverFetch<Facets>(`/facets`);
 }

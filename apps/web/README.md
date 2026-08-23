@@ -70,7 +70,7 @@ values the user actually chose. Events:
 | `wizard_submit` / `wizard_results` / `wizard_empty` | `form, budget, radio, band, type, ieee802154, usb_native, needs, needs_count, result_count` |
 | `search_submit` / `search_results` / `search_empty` | `q, type, radio, band, form, protocol, filters, filter_count, has_query, result_count` |
 | `preset_click`, `relax_filter` | `preset` · `removed_key, needs` |
-| `result_click` | `part_id, part_type, origin (wizard\|search\|related\|compare), position` |
+| `result_click` | `part_id, part_type, origin (wizard\|search\|related\|compare\|browse), position` |
 | `part_view`, `chain_click` | `part_id, part_type, brand, soc_ref` · `from_id, to_id, relation` |
 | `compare_add` / `compare_remove` / `compare_view` / `compare_filter` | `part_id, selected_count` · `part_ids, count` · `q, type` |
 | `help_tip_open`, `advanced_filters_toggle` | `field` · `panel, open` |

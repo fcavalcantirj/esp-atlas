@@ -2,6 +2,7 @@ import ChipChain from "@/components/part/ChipChain";
 import PartBody from "@/components/part/PartBody";
 import PartHeader from "@/components/part/PartHeader";
 import RelatedParts from "@/components/part/RelatedParts";
+import SocHub from "@/components/part/SocHub";
 import SourcesList from "@/components/part/SourcesList";
 import SpecGroups from "@/components/part/SpecGroups";
 import TrackedLink from "@/components/TrackedLink";
@@ -12,6 +13,9 @@ import { editSourceUrl, newIssueUrl, viewSourceUrl } from "@/lib/github";
 // Presentational: used by the server-rendered page and by the client fallback.
 export default function PartDetailView({ part }: { part: PartDetail }) {
   const notes = asStringArray(part.frontmatter.notes);
+  // A SoC page is the hub for everything built on the chip: the list is promoted
+  // to the main column (SocHub) and the aside only points at it.
+  const isHub = part.type === "soc" && part.related.length > 0;
   const issueUrl = newIssueUrl({
     title: `Data issue: ${part.name} (${part.id})`,
     body: `Part: ${part.name} (\`${part.id}\`)\nFile: \`${part._path}\`\n\n**What is wrong:**\n\n\n**Official source that shows the correct value:**\n\n`,
@@ -24,6 +28,7 @@ export default function PartDetailView({ part }: { part: PartDetail }) {
         <ChipChain part={part} />
         <PartBody body={part.body} />
         <SpecGroups part={part} />
+        {isHub && <SocHub part={part} />}
         {notes.length > 0 && (
           <section aria-label="Notes">
             <h2>Notes</h2>
@@ -62,7 +67,15 @@ export default function PartDetailView({ part }: { part: PartDetail }) {
         </div>
         <div className="aside-card">
           <h2>Related parts</h2>
-          <RelatedParts part={part} />
+          {isHub ? (
+            <p className="aside-pointer">
+              <a href="#on-chip">
+                All {part.related.length} boards and modules on this chip
+              </a>
+            </p>
+          ) : (
+            <RelatedParts part={part} />
+          )}
         </div>
       </aside>
     </div>

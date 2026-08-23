@@ -46,7 +46,7 @@ export type OutboundLinkType =
   | "llms_txt"
   | "api_docs";
 
-export type ResultOrigin = "wizard" | "search" | "related" | "compare" | "chain";
+export type ResultOrigin = "wizard" | "search" | "related" | "compare" | "chain" | "browse";
 
 type ParamValue = string | number | boolean | undefined | null;
 export type EventParams = Record<string, ParamValue>;
