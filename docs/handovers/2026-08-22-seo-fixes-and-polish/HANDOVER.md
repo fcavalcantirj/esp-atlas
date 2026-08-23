@@ -127,3 +127,8 @@ After APPROVED: `git fetch origin && git checkout -b polish/editorial-consistenc
 - Production https://esp-atlas.com · repo https://github.com/fcavalcantirj/esp-atlas · PRs #3–#7 for the conventions used (bodies list verification steps).
 - Google: GA4 `properties/551132215`; GCP `esp-atlas-ga4`; SA `esp-atlas-ga4-admin@esp-atlas-ga4.iam.gserviceaccount.com` (no key exists; Felipe mints on request, revoke after). GSC property `sc-domain:esp-atlas.com` (SA Restricted).
 - Secrets: none in the repo; `.env*` gitignored; Vercel env in the dashboard (project `flowcoders/esp-atlas`, not reachable from this machine's Vercel CLI).
+
+## SUPERSEDED — 2026-08-23, shipped
+
+Executed by the Builder session after REVIEW-r1 APPROVED (Felipe: "merge all, deploy all"): polish **merged** (#11, `d2aec58`), F4 **merged** (#12, `557580e`), F5 **merged** (#13, `108f745`), F6 **merged** (#14, `157b2e5`); F7 declined. Corrections to the facts above: `/parts/esp32-s3` has 34 related (33 is the board page); the corpus is 94 parts → sitemap was 95 and is 107 after F5; `data/brands/` is empty (brand names = slugs); the chain arrow never stranded at 320–1440 px — the visible defect was the badge parked at the far edge of a wrapped name (fixed by inline chips). Evidence: `assets/polish-findings.md`, the six contact sheets, PR bodies #11–#14.
+
