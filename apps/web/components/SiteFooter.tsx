@@ -101,6 +101,9 @@ export default function SiteFooter() {
                 <Link href="/brands">Brands</Link>
               </li>
               <li>
+                <Link href="/firmware">Firmware</Link>
+              </li>
+              <li>
                 <Link href="/parts/esp32-c6">ESP32-C6</Link> · <Link href="/parts/esp32-s3">ESP32-S3</Link> ·{" "}
                 <Link href="/parts/esp32-h2">ESP32-H2</Link>
               </li>
