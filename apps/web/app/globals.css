@@ -48,6 +48,7 @@
   --accent-soft: #e2f2f7;
   --danger: #c0392b;
   --ok: #2a8a4a;
+  --warn: #a06a00;
   --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.1);
 }
 
@@ -65,6 +66,7 @@
   --accent-soft: #123340;
   --danger: #ff7066;
   --ok: #4cc27a;
+  --warn: #e0a72e;
   --shadow: none;
 }
 
@@ -1194,6 +1196,43 @@ input[type="checkbox"]:checked::after {
   color: var(--muted);
 }
 
+.tier-badge {
+  /* Trust tier: color plus the word — never color alone. */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tier-badge::before {
+  content: "";
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.tier-badge--known-good {
+  color: var(--ok);
+}
+
+.tier-badge--reported {
+  color: var(--warn);
+}
+
+.tier-badge--unverified {
+  color: var(--muted);
+}
+
+.tier-badge--broken {
+  color: var(--danger);
+  text-decoration: line-through;
+}
+
 .price-pill {
   /* Price readout: plain mono text, no dashed box. */
   display: inline-flex;
@@ -1515,6 +1554,55 @@ input[type="checkbox"]:checked::after {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+}
+
+.board-firmware,
+.firmware-boards {
+  margin-top: 1.5rem;
+}
+
+.recipe-tier-group + .recipe-tier-group {
+  margin-top: 1.25rem;
+}
+
+.recipe-tier-title {
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.recipe-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recipe-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.5rem;
+}
+
+.recipe-row-name {
+  font-weight: 500;
+}
+
+.recipe-row-meta,
+.recipe-row-flash {
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  color: var(--muted);
+}
+
+.recipe-row-flash {
+  margin-left: auto;
 }
 
 .aside-card {
