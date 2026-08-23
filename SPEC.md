@@ -63,7 +63,8 @@ visibly separate from the verified fields above it.
 - Content: markdown + YAML. No database.
 
 ## Governance
-- CI gate: `scripts/validate.py` (schema + source rule) on every PR.
+- CI gate: `scripts/validate.py` (schema + source rule, plus the dataset-level
+  no-orphan-firmware check — every `firmware` must have ≥1 `recipe`) on every PR.
 - CODEOWNERS per brand folder (as boards grow).
 - oracle-loop bot opens PRs for missing/stale parts; humans always merge. The daily
   freshness engine (link-liveness, firmware-release/recipe drift, board/brand
@@ -77,8 +78,9 @@ visibly separate from the verified fields above it.
 - **v3:** full board coverage; companions (nRF24/CC1101/LTE-GNSS); public launch.
 - **v4:** Flash Wizard + community recipes (`firmware`/`recipe` content types, "what
   runs on what", in-browser flashing via ESP Web Tools) — see `SPEC-wizard.md`.
-  **P1 shipped:** schemas + validation wiring + a 6-firmware/6-recipe hand-cited
-  seed + core accessors (no flashing UI yet).
+  **P1 shipped:** schemas + validation wiring + a 6-firmware/19-recipe hand-cited
+  seed + core accessors (no flashing UI yet). CI enforces **no orphan firmware**:
+  `scripts/validate.py` fails if any seeded firmware has zero referencing recipes.
 
 ## Anti-goals
 Not a shop / not affiliate bait · not tutorials (link out) · not a forum · not a
