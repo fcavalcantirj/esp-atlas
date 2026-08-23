@@ -133,17 +133,23 @@ on-device web UI. Model that as `capabilities: [on-device-web-ui]` on `firmware`
 not as a recipe.
 
 ## Phasing
-- **P1** — `firmware` + `recipe` schemas; seed ~12 firmwares (Marauder, NEMO,
-  Crystal, Infiltra, RogueDuck, Launcher, Bruce, MeshCore, Meshtastic, WLED,
-  ESPHome, GhostESP) × their `known-good` boards, hand-cited. Render "runs on this
-  board" on board/firmware pages. **No flashing yet** — pure data + schema, the
-  brand-entity move again.
+- **P1 (shipped)** — `firmware` + `recipe` schemas (`schema/firmware.schema.json`,
+  `schema/recipe.schema.json`); validation wired into `scripts/validate.py` /
+  `known_ids()` / `_check_inheritance()` (a recipe's `board` and `firmware` refs
+  must resolve, and `chip_family` must equal the referenced board's `soc`);
+  `esp_atlas_core.firmware` accessors (`list_firmware`, `get_firmware`,
+  `recipes_for_board`, `recipes_for_firmware`) plus matching `GET /firmware`,
+  `GET /firmware/{id}`, `GET /recipes?board=&firmware=` API endpoints. Seeded 6
+  firmwares (ESP32 Marauder, M5Stick NEMO, M5 Crystal, Infiltra, M5StickS3
+  RogueDuck, Launcher) x 6 `known-good` recipes on M5Stack boards already in
+  `data/boards/`, hand-cited to each project's own repo. `firmware`/`recipe` stay
+  out of `esp-atlas.db`'s `parts` table and `index.json`, same as `brand`. **No
+  flashing yet** — pure data + schema, the brand-entity move again. The wider
+  ~12-firmware catalog (Bruce, MeshCore, Meshtastic, WLED, ESPHome, GhostESP, …)
+  is follow-up seeding, not blocked on any schema/wiring work.
 - **P2** — Flash Wizard button via ESP Web Tools for recipes that already carry a `manifest_url`; consent gate.
 - **P3** — on-the-fly manifest generation from `release-bin` recipes.
 - **P4** — oracle-loop harvesters (per-project adapters + Launcher/M5Burner sources) + the collaborative PR/form + tier-promotion workflow.
-
-Recipe #1 is already `known-good` and self-cited: Marauder on an M5StickC S3, run
-in Felipe's own lab.
 
 ## Anti-goals (extends SPEC.md)
 - Never rehost binaries — link/cite the project's own releases (respects GPL-2.0,

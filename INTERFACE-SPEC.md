@@ -89,6 +89,14 @@ query ─▶ structured filter (radio/band/protocol/form) + FTS (name/prose/note
   wherever a brand is shown to a human; `vendor_or_brand` is for hrefs/filters
   only, never a label.
 - `GET  /index.json` → static passthrough
+- `GET  /firmware` → every seeded firmware record (see `SPEC-wizard.md`). First-class
+  like brand: never in `/search`/`/wizard`, never in `index.json` or the `parts` table.
+- `GET  /firmware/{id}` → one firmware record, 404 if unknown.
+- `GET  /recipes?board=&firmware=` → recipe records (the board x firmware edge),
+  optionally filtered by `board` or `firmware` id; no params returns every recipe.
+  Same first-class-entity rule as `firmware`. `chip_family` always equals the
+  referenced board's `soc`; `board`/`firmware` refs are guaranteed to resolve
+  (CI-enforced, see `esp_atlas_core.validate._check_inheritance`).
 
 **Site** (Next.js, SSG)
 - `/` home: wizard + ask box
