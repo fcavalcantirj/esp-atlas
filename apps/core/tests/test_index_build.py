@@ -154,6 +154,35 @@ def test_build_index_stores_frontmatter_json_and_body(tmp_path):
     assert row["body"].startswith("# Seeed Studio XIAO ESP32C6")
 
 
+def test_build_index_brands_table_is_populated_but_not_in_parts(tmp_path):
+    db_path = tmp_path / "esp-atlas.db"
+    build_index(db_path=db_path)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+
+    tables = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'")}
+    assert "brands" in tables
+
+    row = conn.execute("SELECT * FROM brands WHERE slug = 'espressif'").fetchone()
+    assert row["name"] == "Espressif"
+    assert row["url"] == "https://www.espressif.com"
+
+    assert conn.execute("SELECT COUNT(*) FROM parts WHERE type = 'brand'").fetchone()[0] == 0
+    assert conn.execute("SELECT COUNT(*) FROM brands").fetchone()[0] == 11
+
+
+def test_build_index_count_meta_excludes_brands(tmp_path):
+    db_path = tmp_path / "esp-atlas.db"
+    build_index(db_path=db_path)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    from esp_atlas_core import db as dbmod
+
+    count = int(dbmod.get_meta(conn, "count"))
+    parts_count = conn.execute("SELECT COUNT(*) FROM parts").fetchone()[0]
+    assert count == parts_count
+
+
 def test_create_schema_adds_missing_columns_to_an_older_db(tmp_path):
     """A db built before frontmatter_json/body existed must be migrated in place,
     not fail on INSERT — CREATE TABLE IF NOT EXISTS alone never alters a table."""

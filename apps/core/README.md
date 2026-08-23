@@ -77,7 +77,10 @@ No test calls the real Groq API — `ask()` tests inject a fake LLM client, and
 - `db.py` — schema DDL + connection helpers
 - `search.py` — structured `WHERE` + FTS5 `MATCH`, no LLM; `get_part(id)` returns one
   record with its frontmatter, prose body, inheritance chain and related parts
-- `facets.py` — distinct values + counts per filterable column (data-driven dropdowns)
+- `facets.py` — distinct values + counts per filterable column (data-driven dropdowns);
+  `vendor_or_brand` entries are enriched with `display_name`/`url` via `brands.py`
+- `brands.py` — `get_brand(slug)` / `list_brands()`: editorial name + homepage lookup
+  from `data/brands/<slug>/brand.md`, kept out of `parts` on purpose
 - `wizard.py` — deterministic needs -> scored, ranked parts, no LLM
 - `llm.py` — injectable Groq chat-completions client (429 backoff, rate-limit
   headers, lazy key resolution)

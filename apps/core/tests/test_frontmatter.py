@@ -21,16 +21,20 @@ def test_parse_frontmatter_rejects_missing_frontmatter(tmp_path):
         pass
 
 
-def test_iter_data_files_finds_all_three_types():
+def test_iter_data_files_finds_all_four_types():
     found = list(iter_data_files())
     types = {t for t, _ in found}
-    assert types == {"soc", "module", "board"}
+    assert types == {"soc", "module", "board", "brand"}
     # every real seeded soc shows up
     soc_paths = [p for t, p in found if t == "soc"]
     assert any(p.name == "chip.md" and p.parent.name == "esp32-c6" for p in soc_paths)
+    # every real seeded brand shows up
+    brand_paths = [p for t, p in found if t == "brand"]
+    assert any(p.name == "brand.md" and p.parent.name == "espressif" for p in brand_paths)
 
 
 def test_data_patterns_match_existing_scripts_conventions():
     assert DATA_PATTERNS["soc"].endswith("chip.md")
     assert DATA_PATTERNS["module"].endswith("module.md")
     assert DATA_PATTERNS["board"].endswith("board.md")
+    assert DATA_PATTERNS["brand"].endswith("brand.md")

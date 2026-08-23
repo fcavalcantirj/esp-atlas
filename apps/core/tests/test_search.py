@@ -1,6 +1,6 @@
 import pytest
 
-from esp_atlas_core.search import get_part, search
+from esp_atlas_core.search import brand_page, get_part, search
 
 
 def test_search_free_text_finds_matching_records(built_db_path):
@@ -247,3 +247,16 @@ def test_get_part_related_is_ordered_by_type_then_name(built_db_path):
 
 def test_get_part_unknown_id_returns_none(built_db_path):
     assert get_part("does-not-exist", db_path=built_db_path) is None
+
+
+def test_brand_page_known_slug_returns_brand_and_results(built_db_path):
+    page = brand_page("adafruit", db_path=built_db_path)
+    assert page["brand"] == {"slug": "adafruit", "name": "Adafruit", "url": "https://www.adafruit.com"}
+    assert page["results"]
+    assert all(r["vendor_or_brand"] == "adafruit" for r in page["results"])
+
+
+def test_brand_page_unknown_slug_returns_empty_results_and_slug_as_name(built_db_path):
+    page = brand_page("no-such-brand", db_path=built_db_path)
+    assert page["brand"] == {"slug": "no-such-brand", "name": "no-such-brand", "url": None}
+    assert page["results"] == []

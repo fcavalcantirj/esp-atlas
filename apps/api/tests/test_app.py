@@ -317,7 +317,7 @@ def test_facets_endpoint_shape(client):
     assert r.status_code == 200
     body = r.json()
     for key in (
-        "type", "vendor_or_brand", "form_factor", "wifi_standard",
+        "type", "form_factor", "wifi_standard",
         "price_tier", "soc_ref", "wifi_bands", "ieee802154_protocols",
     ):
         assert key in body, key
@@ -326,6 +326,19 @@ def test_facets_endpoint_shape(client):
     assert {e["value"] for e in body["type"]} == {"soc", "module", "board"}
     assert any(e["value"] == "devkit" for e in body["form_factor"])
     assert {e["value"] for e in body["wifi_bands"]} == {"2.4", "5"}
+
+
+def test_facets_endpoint_vendor_or_brand_has_display_name(client):
+    r = client.get("/facets")
+    assert r.status_code == 200
+    body = r.json()
+    assert "vendor_or_brand" in body
+    assert body["vendor_or_brand"]
+    for entry in body["vendor_or_brand"]:
+        assert {"value", "count", "display_name"} <= set(entry)
+    by_value = {e["value"]: e for e in body["vendor_or_brand"]}
+    assert by_value["espressif"]["display_name"] == "Espressif"
+    assert by_value["espressif"]["url"] == "https://www.espressif.com"
 
 
 def test_search_soc_filter(client):
@@ -380,3 +393,23 @@ def test_search_unknown_soc_returns_empty_200(client):
     r = client.get("/search", params={"soc": "esp32-nope"})
     assert r.status_code == 200
     assert r.json()["results"] == []
+
+
+# --- brand page ---------------------------------------------------------------
+
+
+def test_brand_page_known_slug_returns_brand_and_results(client):
+    r = client.get("/brands/lilygo")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["brand"] == {"slug": "lilygo", "name": "LILYGO", "url": "https://lilygo.cc"}
+    assert body["results"]
+    assert all(rec["vendor_or_brand"] == "lilygo" for rec in body["results"])
+
+
+def test_brand_page_unknown_slug_returns_empty_results_200(client):
+    r = client.get("/brands/no-such-brand")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["brand"] == {"slug": "no-such-brand", "name": "no-such-brand", "url": None}
+    assert body["results"] == []

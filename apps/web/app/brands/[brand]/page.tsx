@@ -3,34 +3,36 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import JsonLd from "@/components/JsonLd";
 import PartResultCard from "@/components/PartResultCard";
-import { fetchPartsByBrand } from "@/lib/api-server";
+import { fetchBrandPage } from "@/lib/api-server";
 import type { PartRecord } from "@/lib/api";
 import { typePlural } from "@/lib/format";
 import { OG_IMAGE, SITE_NAME } from "@/lib/site";
 import { brandGraph } from "@/lib/structured-data";
 
-// Brand hub: every part the core returns for /search?brand=<slug>, server-rendered
-// like the part pages. The slug is the dataset's canonical folder name
-// (vendor_or_brand); an unknown slug is a 404. Display names are the slugs for
-// now — editorial names belong in data/brands/ (Felipe's call).
+// Brand hub: the brand's editorial identity (data/brands/<slug>/brand.md) plus
+// every part the core returns for it, server-rendered like the part pages. The
+// slug in the URL is the dataset's canonical folder name (vendor_or_brand); an
+// unknown slug is a 404. The display name always comes from the API — this
+// component only renders what GET /brands/<slug> returns.
 
 const TYPE_ORDER = ["board", "module", "soc"];
 
-function describe(brand: string, parts: PartRecord[]): string {
+function describe(name: string, parts: PartRecord[]): string {
   const counts = TYPE_ORDER.map((t) => [t, parts.filter((p) => p.type === t).length] as const).filter(([, n]) => n > 0);
   const list = counts.map(([t, n]) => `${n} ${n === 1 ? t : typePlural(t).toLowerCase()}`).join(", ");
-  return `${brand}: ${list} in the esp-atlas ESP32 dataset, each spec cited to an official datasheet or product page.`;
+  return `${name}: ${list} in the esp-atlas ESP32 dataset, each spec cited to an official datasheet or product page.`;
 }
 
 export async function generateMetadata({ params }: PageProps<"/brands/[brand]">): Promise<Metadata> {
-  const { brand } = await params;
-  const result = await fetchPartsByBrand(brand);
+  const { brand: slug } = await params;
+  const result = await fetchBrandPage(slug);
   if (result.status !== "ok" || result.data.results.length === 0) {
-    return { title: brand, robots: { index: false, follow: true } };
+    return { title: slug, robots: { index: false, follow: true } };
   }
-  const title = `${brand} — ESP32 boards and modules`;
-  const description = describe(brand, result.data.results);
-  const path = `/brands/${encodeURIComponent(brand)}`;
+  const name = result.data.brand.name;
+  const title = `${name} — ESP32 boards and modules`;
+  const description = describe(name, result.data.results);
+  const path = `/brands/${encodeURIComponent(slug)}`;
   // Nested metadata objects replace the root ones wholesale (see the part page).
   return {
     title,
@@ -42,35 +44,35 @@ export async function generateMetadata({ params }: PageProps<"/brands/[brand]">)
 }
 
 export default async function BrandPage({ params }: PageProps<"/brands/[brand]">) {
-  const { brand } = await params;
-  const result = await fetchPartsByBrand(brand);
+  const { brand: slug } = await params;
+  const result = await fetchBrandPage(slug);
   if (result.status === "ok" && result.data.results.length === 0) notFound();
 
   if (result.status !== "ok") {
     return (
       <main id="main" className="container container--narrow" tabIndex={-1}>
-        <h1>{brand}</h1>
+        <h1>{slug}</h1>
         <p className="lead">The API did not answer in time — this brand page could not be rendered. Try again in a moment.</p>
       </main>
     );
   }
 
-  const parts = result.data.results;
+  const { brand, results: parts } = result.data;
   const groups = TYPE_ORDER.map((type) => ({ type, items: parts.filter((p) => p.type === type) })).filter((g) => g.items.length > 0);
 
   return (
     <main id="main" className="container container--wide" tabIndex={-1}>
-      <JsonLd data={brandGraph(brand, parts)} />
+      <JsonLd data={brandGraph(slug, brand.name, parts)} />
       <nav className="breadcrumb" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
         <span aria-hidden="true">›</span>
         <Link href="/brands">Brands</Link>
         <span aria-hidden="true">›</span>
-        <span aria-current="page">{brand}</span>
+        <span aria-current="page">{brand.name}</span>
       </nav>
-      <h1>{brand}</h1>
+      <h1>{brand.name}</h1>
       <p className="lead">
-        {parts.length} {parts.length === 1 ? "part" : "parts"} in esp-atlas from {brand} — every spec cited to an official source.
+        {parts.length} {parts.length === 1 ? "part" : "parts"} in esp-atlas from {brand.name} — every spec cited to an official source.
       </p>
       {groups.map((group) => (
         <section key={group.type} className="brand-group" aria-labelledby={`brand-${group.type}`}>

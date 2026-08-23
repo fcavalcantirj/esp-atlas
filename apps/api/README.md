@@ -48,7 +48,14 @@ missing, it's built automatically from `data/**/*.md` via
   `type, vendor_or_brand, form_factor, wifi_standard, price_tier, soc_ref` plus the
   comma-joined columns split into tokens (`wifi_bands`, `ieee802154_protocols`), each a
   `[{value, count}...]` list sorted by count desc then value. Lets a UI build its
-  dropdowns from the data instead of hardcoding them.
+  dropdowns from the data instead of hardcoding them. `vendor_or_brand` entries are
+  `{value, count, display_name, url?}` — `display_name`/`url` come from
+  `data/brands/<value>/brand.md` (see `esp_atlas_core.brands`), falling back to the
+  slug itself when no such brand record exists.
+- `GET /brands/{slug}` -> `{brand: {slug, name, url}, results: [record...]}` — every
+  part for that brand slug (same filter as `/search?brand=<slug>`), plus the brand's
+  own editorial identity. An unknown slug still returns 200 with `results: []`, `name`
+  falling back to `slug` and `url: null`.
 - `POST /validate` body `{markdown: "<full md w/ frontmatter>"}` or
   `{kind: "soc"|"module"|"board", frontmatter: {...}}` -> `{ok, errors: [string...], kind}` —
   self-check a proposed record (schema, source-or-omit, inheritance refs) before opening a PR.

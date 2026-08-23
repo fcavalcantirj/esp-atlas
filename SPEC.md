@@ -29,6 +29,14 @@ Three inherited layers so specs are declared once:
 Frontmatter = queryable YAML (validated by `schema/`); prose = human context. Every
 hard spec carries a `sources:` entry. Fields not verified are omitted, never guessed.
 
+**brand** — editorial identity for a `data/boards/<id>/` vendor folder
+(`data/brands/<id>/brand.md`), one per brand: display `name`, homepage `url`,
+`sources`. It is *not* a part: never indexed into the queryable parts table,
+never a `/search` or `/wizard` result. It exists purely so the site can render
+"LILYGO" instead of the raw folder slug `lilygo`; a folder with no `brand.md`
+yet just falls back to rendering its slug. Populated for every vendor folder
+currently under `data/boards/`.
+
 **Exception — `price_tier`:** boards may optionally carry `price_tier:
 cheap|medium|expensive`, an **approximate, editorial** street-price bucket,
 set by hand and never cited to a `sources:` entry. It powers the wizard's

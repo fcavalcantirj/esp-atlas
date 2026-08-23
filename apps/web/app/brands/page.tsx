@@ -34,7 +34,7 @@ export default async function BrandsPage() {
   const brands = facets.status === "ok" ? facets.data.vendor_or_brand : [];
   const items: BrowseItem[] = brands.map((b) => ({
     href: `/brands/${encodeURIComponent(b.value)}`,
-    name: b.value,
+    name: b.display_name,
     note: `${b.count} ${b.count === 1 ? "part" : "parts"}`,
     partId: b.value,
     partType: "brand",

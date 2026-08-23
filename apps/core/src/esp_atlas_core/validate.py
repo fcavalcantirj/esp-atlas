@@ -24,6 +24,7 @@ SCHEMA_FILES = {
     "soc": "soc.schema.json",
     "module": "module.schema.json",
     "board": "board.schema.json",
+    "brand": "brand.schema.json",
 }
 
 

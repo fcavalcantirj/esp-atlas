@@ -69,8 +69,17 @@ query ─▶ structured filter (radio/band/protocol/form) + FTS (name/prose/note
 
 **API** (FastAPI)
 - `POST /ask {question}` → grounded answer + citations
-- `GET  /search?q=&radio=&protocol=&form=` → structured+FTS results
+- `GET  /search?q=&radio=&protocol=&form=&brand=` → structured+FTS results
 - `POST /wizard {needs}` → deterministic ranked parts
+- `GET  /facets` → distinct values + counts per filterable column, for building UI
+  dropdowns from the data. `vendor_or_brand` entries are `{value, count,
+  display_name, url}` — `display_name`/`url` resolved from `data/brands/<value>/
+  brand.md` (falling back to the slug when no such record exists); every other
+  facet key stays a plain `{value, count}` list.
+- `GET  /brands/{slug}` → `{brand: {slug, name, url}, results: [record...]}` — the
+  brand's own editorial identity (same fallback-to-slug rule as above) plus every
+  part with that `vendor_or_brand`. An unknown slug still returns 200 with
+  `results: []`, never a 404 — the site 404s on the empty list itself.
 - `GET  /index.json` → static passthrough
 
 **Site** (Next.js, SSG)

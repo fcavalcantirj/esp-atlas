@@ -1,7 +1,7 @@
 // schema.org graphs for the pages that are server-rendered from data the API
 // already returns. No offers, prices, ratings or reviews anywhere: the site is
 // not a shop and `price_tier` is editorial (see SPEC.md anti-goals).
-import type { Facet, PartDetail, PartRecord } from "@/lib/api";
+import type { BrandFacet, PartDetail, PartRecord } from "@/lib/api";
 import { firstSentence, typeLabel } from "@/lib/format";
 import { dataFolderUrl, repoUrl } from "@/lib/github";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
@@ -63,7 +63,7 @@ export function homeGraph() {
 }
 
 /** /brands: the list of every vendor/brand in the dataset, as a CollectionPage + ItemList. */
-export function brandsIndexGraph(brands: Facet[]) {
+export function brandsIndexGraph(brands: BrandFacet[]) {
   const url = `${SITE_URL}/brands`;
   return {
     "@context": CONTEXT,
@@ -82,7 +82,7 @@ export function brandsIndexGraph(brands: Facet[]) {
           itemListElement: brands.map((b, i) => ({
             "@type": "ListItem",
             position: i + 1,
-            name: b.value,
+            name: b.display_name,
             url: `${url}/${encodeURIComponent(b.value)}`,
           })),
         },
@@ -99,8 +99,8 @@ export function brandsIndexGraph(brands: Facet[]) {
 }
 
 /** /brands/<slug>: every part the core returns for the brand, as a CollectionPage + ItemList. */
-export function brandGraph(brand: string, parts: PartRecord[]) {
-  const url = `${SITE_URL}/brands/${encodeURIComponent(brand)}`;
+export function brandGraph(slug: string, name: string, parts: PartRecord[]) {
+  const url = `${SITE_URL}/brands/${encodeURIComponent(slug)}`;
   return {
     "@context": CONTEXT,
     "@graph": [
@@ -109,10 +109,10 @@ export function brandGraph(brand: string, parts: PartRecord[]) {
       {
         "@type": "CollectionPage",
         "@id": url,
-        name: `${brand} — ESP32 boards and modules`,
+        name: `${name} — ESP32 boards and modules`,
         url,
         isPartOf: { "@id": SITE_ID },
-        about: { "@type": "Brand", name: brand },
+        about: { "@type": "Brand", name },
         mainEntity: {
           "@type": "ItemList",
           numberOfItems: parts.length,
@@ -129,7 +129,7 @@ export function brandGraph(brand: string, parts: PartRecord[]) {
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
           { "@type": "ListItem", position: 2, name: "Brands", item: `${SITE_URL}/brands` },
-          { "@type": "ListItem", position: 3, name: brand },
+          { "@type": "ListItem", position: 3, name },
         ],
       },
     ],

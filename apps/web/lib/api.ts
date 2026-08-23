@@ -56,15 +56,34 @@ export interface Facet {
   count: number;
 }
 
+/** A vendor_or_brand facet entry: `display_name` (and `url` when known) resolved
+ * server-side from data/brands/<value>/brand.md, falling back to the slug. */
+export interface BrandFacet extends Facet {
+  display_name: string;
+  url: string | null;
+}
+
 export interface Facets {
   type: Facet[];
-  vendor_or_brand: Facet[];
+  vendor_or_brand: BrandFacet[];
   form_factor: Facet[];
   wifi_standard: Facet[];
   price_tier: Facet[];
   soc_ref: Facet[];
   wifi_bands: Facet[];
   ieee802154_protocols: Facet[];
+}
+
+export interface Brand {
+  slug: string;
+  name: string;
+  url: string | null;
+}
+
+/** GET /brands/{slug}: the brand's own identity plus every part from it. */
+export interface BrandPage {
+  brand: Brand;
+  results: PartRecord[];
 }
 
 export type PartType = "soc" | "module" | "board";

@@ -10,7 +10,7 @@
 // Every call is bounded (3 s) and never throws: callers get a status they can
 // branch on, so a cold/unreachable Python function degrades to the client-side
 // fallback instead of a 500.
-import type { Facets, PartDetail, PartRecord } from "@/lib/api";
+import type { BrandPage, Facets, PartDetail, PartRecord } from "@/lib/api";
 
 const REVALIDATE_SECONDS = 3600;
 const TIMEOUT_MS = 3000;
@@ -61,7 +61,8 @@ export function fetchFacets(): Promise<ServerFetchResult<Facets>> {
   return serverFetch<Facets>(`/facets`);
 }
 
-/** /search?brand=<slug>: the core's exact brand filter; an unknown slug is an empty list, not an error. */
-export function fetchPartsByBrand(brand: string): Promise<ServerFetchResult<{ results: PartRecord[] }>> {
-  return serverFetch<{ results: PartRecord[] }>(`/search?brand=${encodeURIComponent(brand)}`);
+/** /brands/<slug>: the brand's editorial name/url plus every part from it (core's
+ * exact brand filter); an unknown slug is an empty `results` list, not an error. */
+export function fetchBrandPage(slug: string): Promise<ServerFetchResult<BrandPage>> {
+  return serverFetch<BrandPage>(`/brands/${encodeURIComponent(slug)}`);
 }
