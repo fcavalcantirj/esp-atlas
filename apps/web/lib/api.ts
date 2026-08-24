@@ -31,6 +31,8 @@ export interface PartRecord {
   soc_ref: string | null;
   module_ref: string | null;
   usb_native: boolean | null;
+  flash_mb: number | null;
+  psram_mb: number | null;
   _path: string;
   sources: SourceEntry[];
 }
@@ -65,6 +67,14 @@ export interface BrandFacet extends Facet {
   url: string | null;
 }
 
+/** A minimum-capability tier (psram_min/flash_min): `count` is how many parts
+ * clear that floor, not how many equal it. Only non-empty tiers are returned,
+ * so the UI never offers a dead option. */
+export interface NumericFacet {
+  value: number;
+  count: number;
+}
+
 export interface Facets {
   type: Facet[];
   vendor_or_brand: BrandFacet[];
@@ -74,6 +84,8 @@ export interface Facets {
   soc_ref: Facet[];
   wifi_bands: Facet[];
   ieee802154_protocols: Facet[];
+  psram_min: NumericFacet[];
+  flash_min: NumericFacet[];
 }
 
 export interface Brand {
@@ -162,6 +174,8 @@ export interface WizardNeeds {
   form?: string;
   type?: PartType;
   budget?: string;
+  psram_min?: number;
+  flash_min?: number;
 }
 
 export class ApiError extends Error {

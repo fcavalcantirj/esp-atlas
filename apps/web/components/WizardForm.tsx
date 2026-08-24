@@ -14,6 +14,12 @@ const FALLBACK_FORM_FACTORS: Facet[] = [
 const BUDGET_ORDER = ["cheap", "medium", "expensive"];
 const TYPE_ORDER: PartType[] = ["board", "module", "soc"];
 const COMMON_FORM_FACTOR_MIN_COUNT = 3;
+// Fixed by SPEC-hosting-lane.md; /facets narrows these down to the tiers that
+// actually have >=1 matching part, so a cold /facets still shows the full set.
+const PSRAM_MIN_TIERS = [2, 4, 8];
+const FLASH_MIN_TIERS = [4, 8, 16];
+// 2 MB dedicated PSRAM is the has-headroom line vs. the many zero-PSRAM boards.
+const HOSTING_LANE_PSRAM_MIN = 2;
 
 interface WizardFormProps {
   facets: Facets | null;
@@ -42,6 +48,8 @@ export default function WizardForm({ facets, value, onChange, onSubmit, loading 
     ? facets.wifi_bands.map((f) => f.value).sort((a, b) => parseFloat(a) - parseFloat(b))
     : ["2.4", "5"];
   const types = facets ? TYPE_ORDER.filter((t) => facets.type.some((f) => f.value === t)) : TYPE_ORDER;
+  const psramMinTiers = facets ? facets.psram_min.map((f) => f.value).sort((a, b) => a - b) : PSRAM_MIN_TIERS;
+  const flashMinTiers = facets ? facets.flash_min.map((f) => f.value).sort((a, b) => a - b) : FLASH_MIN_TIERS;
 
   const formOption = (f: Facet) => (
     <option key={f.value} value={f.value}>
@@ -126,6 +134,22 @@ export default function WizardForm({ facets, value, onChange, onSubmit, loading 
             />
           </span>
         </label>
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={value.psram_min === HOSTING_LANE_PSRAM_MIN}
+            onChange={(e) =>
+              onChange(withField(value, "psram_min", e.target.checked ? HOSTING_LANE_PSRAM_MIN : ""))
+            }
+          />
+          <span className="checkbox-text">
+            Runs a web server / heavy app
+            <HelpTip
+              field="psram_min"
+              text="Tick this if the board needs to host a web UI or run something heavier than a simple sensor loop. Requires at least 2 MB of dedicated PSRAM — many ESP32 boards have none. For the heaviest workloads, pick 8 MB PSRAM under Advanced filters."
+            />
+          </span>
+        </label>
       </div>
 
       <details
@@ -187,6 +211,50 @@ export default function WizardForm({ facets, value, onChange, onSubmit, loading 
               {types.map((t) => (
                 <option key={t} value={t}>
                   {t}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="field">
+            <span className="label-row">
+              PSRAM minimum
+              <HelpTip
+                field="psram_min"
+                text="Minimum dedicated PSRAM in MB. A board with no PSRAM data is excluded from any non-'any' choice here — an unknown value is never treated as a match."
+              />
+            </span>
+            <select
+              value={value.psram_min !== undefined ? String(value.psram_min) : ""}
+              onChange={(e) =>
+                onChange(withField(value, "psram_min", e.target.value === "" ? "" : Number(e.target.value)))
+              }
+            >
+              <option value="">any</option>
+              {psramMinTiers.map((tier) => (
+                <option key={tier} value={tier}>
+                  {tier} MB
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="field">
+            <span className="label-row">
+              Flash minimum
+              <HelpTip
+                field="flash_min"
+                text="Minimum flash storage in MB. A board with no flash-size data is excluded from any non-'any' choice here — an unknown value is never treated as a match."
+              />
+            </span>
+            <select
+              value={value.flash_min !== undefined ? String(value.flash_min) : ""}
+              onChange={(e) =>
+                onChange(withField(value, "flash_min", e.target.value === "" ? "" : Number(e.target.value)))
+              }
+            >
+              <option value="">any</option>
+              {flashMinTiers.map((tier) => (
+                <option key={tier} value={tier}>
+                  {tier} MB
                 </option>
               ))}
             </select>
