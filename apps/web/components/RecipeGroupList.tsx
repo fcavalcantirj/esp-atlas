@@ -14,6 +14,9 @@ export interface RecipeRow {
   href: string;
   name: string;
   meta?: string | null;
+  /** Both ends of the edge by display name, for the flash panel's wording. */
+  boardName: string;
+  firmwareName: string;
   /** What the guided handoff may link to; omitted rows fall back to nothing but the reason text. */
   handoff?: FlashHandoff;
   /** The board's cited `usb.connector`, when known on this page. */
@@ -36,7 +39,7 @@ export default function RecipeGroupList({ rows }: { rows: RecipeRow[] }) {
         <div key={group.status} className="recipe-tier-group">
           <h3 className="recipe-tier-title">{RECIPE_TIER_LABEL[group.status] ?? group.status}</h3>
           <ul className="recipe-list">
-            {group.items.map(({ recipe, href, name, meta, handoff, usbConnector }) => {
+            {group.items.map(({ recipe, href, name, meta, boardName, firmwareName, handoff, usbConnector }) => {
               const flash = flashMethodLabel(recipe.flash?.method);
               return (
                 <li key={recipe.id} className="recipe-row">
@@ -53,6 +56,8 @@ export default function RecipeGroupList({ rows }: { rows: RecipeRow[] }) {
                   <FlashAction
                     recipe={recipe}
                     targetName={name}
+                    boardName={boardName}
+                    firmwareName={firmwareName}
                     handoff={handoff ?? { repoUrl: null, flasherUrls: [] }}
                     usbConnector={usbConnector ?? null}
                   />

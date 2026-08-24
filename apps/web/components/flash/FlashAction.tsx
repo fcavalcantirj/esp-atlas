@@ -30,9 +30,29 @@ interface FlashActionProps {
   recipe: Recipe;
   /** Human name of the other end of the edge (the firmware on a board page, the board on a firmware page). */
   targetName: string;
+  boardName: string;
+  firmwareName: string;
   handoff: FlashHandoff;
   /** The board's cited `usb.connector`, when the record has one. */
   usbConnector?: string | null;
+}
+
+// What each trust tier actually asserts (SPEC-wizard "Trust tiers") — the
+// panel says this in words so "validated" never means more than the record does.
+const TIER_CLAIM: Record<string, (board: string) => string> = {
+  "known-good": (board) => `Known-good on ${board} — listed by the maintainer, or verified on real hardware.`,
+  reported: (board) => `Reported on ${board} — community-submitted and cited, not independently verified.`,
+  unverified: (board) => `Unverified on ${board} — harvested from the project's build targets, no human citation yet.`,
+  broken: (board) => `Broken on ${board} — known incompatible or regressed at this version.`,
+};
+
+/** Statically: does the record carry what the in-browser rail needs? The preflight remains the truth. */
+function looksFlashableInBrowser(recipe: Recipe): boolean {
+  const flash = recipe.flash;
+  if (!flash) return false;
+  if (flash.method === "release-bin") return Boolean(flash.bin_url);
+  if (flash.method === "esp-web-tools") return Boolean(flash.manifest_url);
+  return false;
 }
 
 function handoffReason(recipe: Recipe, handoff: FlashHandoff, status: number | null): string {
@@ -48,11 +68,20 @@ function handoffReason(recipe: Recipe, handoff: FlashHandoff, status: number | n
   return "The in-browser flasher could not start here. Use the project's own tools.";
 }
 
-export default function FlashAction({ recipe, targetName, handoff, usbConnector = null }: FlashActionProps) {
+export default function FlashAction({
+  recipe,
+  targetName,
+  boardName,
+  firmwareName,
+  handoff,
+  usbConnector = null,
+}: FlashActionProps) {
   const [phase, setPhase] = useState<Phase>({ kind: "closed" });
   const [consent, setConsent] = useState(false);
   const method = recipe.flash?.method ?? null;
   const methodLabel = flashMethodLabel(method);
+  const inBrowser = looksFlashableInBrowser(recipe);
+  const tierClaim = (TIER_CLAIM[recipe.status] ?? ((board) => `${recipe.status} on ${board}.`))(boardName);
 
   async function open() {
     track("flash_open", { recipe_id: recipe.id, method });
@@ -83,7 +112,7 @@ export default function FlashAction({ recipe, targetName, handoff, usbConnector 
 
   return (
     <details
-      className="flash-action"
+      className={"flash-action" + (inBrowser ? " flash-action--browser" : "")}
       onToggle={(event) => {
         if (event.currentTarget.open) {
           if (phase.kind === "closed") void open();
@@ -94,8 +123,11 @@ export default function FlashAction({ recipe, targetName, handoff, usbConnector 
       }}
     >
       <summary className="flash-action-summary">
-        <span>Flash {targetName}</span>
-        {methodLabel && <span className="flash-action-method">{methodLabel}</span>}
+        <span className="flash-action-title">Flash {targetName}</span>
+        <span className="flash-action-tags">
+          <span className="flash-action-tag">{inBrowser ? "in-browser" : methodLabel ?? "guided"}</span>
+          {recipe.status === "known-good" && <span className="flash-action-tag flash-action-tag--tier">known-good</span>}
+        </span>
       </summary>
 
       <div className="flash-panel">
@@ -107,10 +139,17 @@ export default function FlashAction({ recipe, targetName, handoff, usbConnector 
 
         {phase.kind === "ready" && (
           <>
-            <p className="flash-facts mono">
-              {phase.manifest.name} · {phase.manifest.version} · {phase.manifest.builds.map((b) => b.chipFamily).join(" / ")}
-              {phase.manifest.new_install_prompt_erase ? " · asks before erasing" : ""}
-            </p>
+            <ul className="flash-checks" aria-label="What esp-atlas checked">
+              <li>{tierClaim}</li>
+              <li>
+                Built for {phase.manifest.builds.map((b) => b.chipFamily).join(" / ")} — the same chip family as {boardName}; the
+                flasher re-reads the connected chip and refuses a mismatch before writing.
+              </li>
+              <li>
+                {firmwareName} {phase.manifest.version}, the project&apos;s own release binary, streamed through esp-atlas
+                byte-for-byte{phase.manifest.new_install_prompt_erase ? " — you are asked before any erase" : ""}.
+              </li>
+            </ul>
             <label className="checkbox-label">
               <input
                 type="checkbox"
@@ -126,7 +165,7 @@ export default function FlashAction({ recipe, targetName, handoff, usbConnector 
               <button
                 slot="activate"
                 type="button"
-                className="btn btn--primary"
+                className="btn btn--primary btn--flash"
                 disabled={!consent}
                 onClick={() => track("flash_connect", { recipe_id: recipe.id })}
               >

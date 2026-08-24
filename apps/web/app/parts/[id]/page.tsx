@@ -15,11 +15,11 @@ import { partGraph } from "@/lib/structured-data";
 
 // Two API responses joined for display (lib/recipe-rows.ts); a failed recipes
 // fetch yields no rows rather than an error.
-async function fetchBoardFirmwareRows(boardId: string, usbConnector: string | null): Promise<RecipeRow[]> {
+async function fetchBoardFirmwareRows(boardId: string, boardName: string, usbConnector: string | null): Promise<RecipeRow[]> {
   const [recipesResult, firmwareResult] = await Promise.all([fetchRecipesForBoard(boardId), fetchFirmwareList()]);
   if (recipesResult.status !== "ok") return [];
   const firmware = firmwareResult.status === "ok" ? firmwareResult.data.results : [];
-  return boardFirmwareRows(recipesResult.data.results, firmware, usbConnector);
+  return boardFirmwareRows(recipesResult.data.results, firmware, boardName, usbConnector);
 }
 
 // Server-rendered so every part page ships with its own title/description for
@@ -58,7 +58,9 @@ export default async function PartPage({ params }: PageProps<"/parts/[id]">) {
   // The board's cited USB connector feeds the flash panel's plug-in hint; absent on many records (cite-or-omit).
   const usbConnector = result.status === "ok" ? asString(fmObject(result.data.frontmatter, "usb")?.connector) : null;
   const boardFirmwareRows =
-    result.status === "ok" && result.data.type === "board" ? await fetchBoardFirmwareRows(id, usbConnector) : null;
+    result.status === "ok" && result.data.type === "board"
+      ? await fetchBoardFirmwareRows(id, result.data.name, usbConnector)
+      : null;
 
   return (
     <main id="main" className="container" tabIndex={-1}>

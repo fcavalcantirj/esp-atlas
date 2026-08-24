@@ -2192,30 +2192,150 @@ input[type="checkbox"]:checked::after {
   display: none;
 }
 
+/* The one glowing thing on a record page: the flash affordance. Accent token
+   only (no new colour); the glow is a soft accent halo that breathes on
+   recipes with an in-browser binary, and sits still for guided handoffs. */
 .flash-action-summary {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.6rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.6rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
   font-family: var(--font-data);
   font-size: var(--t-xs);
   letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--accent);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
+  transition: box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .flash-action-summary::before {
-  content: "▸";
-  font-size: 0.7em;
+  content: "⚡";
+  font-size: 0.95em;
+  letter-spacing: 0;
 }
 
-.flash-action[open] .flash-action-summary::before {
-  content: "▾";
+.flash-action-summary:hover,
+.flash-action[open] .flash-action-summary {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent), 0 0 18px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
-.flash-action-method {
+.flash-action--browser .flash-action-summary {
+  animation: flash-breathe 2.6s ease-in-out infinite;
+}
+
+.flash-action--browser[open] .flash-action-summary,
+.flash-action--browser .flash-action-summary:hover {
+  animation: none;
+}
+
+@keyframes flash-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent), 0 0 6px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent), 0 0 16px color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+}
+
+/* Guided handoffs are quiet outlines; only a recipe that can flash in the
+   browser gets the accent fill and the glow — the eye lands on what flashes. */
+.flash-action:not(.flash-action--browser) .flash-action-summary {
+  border-color: var(--border-strong);
+  background: var(--bg);
   color: var(--muted);
+  box-shadow: none;
+}
+
+.flash-action:not(.flash-action--browser) .flash-action-summary:hover,
+.flash-action:not(.flash-action--browser)[open] .flash-action-summary {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.flash-action:not(.flash-action--browser) .flash-action-tag {
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.flash-action-title {
+  font-weight: 600;
+}
+
+.flash-action-tags {
+  display: inline-flex;
+  gap: 0.35rem;
   letter-spacing: 0;
   text-transform: none;
+}
+
+.flash-action-tag {
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  color: var(--accent);
+  font-size: var(--t-micro);
+}
+
+.flash-action-tag--tier {
+  color: var(--ok);
+}
+
+.flash-checks {
+  margin: 0;
+  padding-left: 1.4rem;
+  font-size: var(--t-sm);
+  line-height: var(--lead-snug);
+  list-style: none;
+}
+
+.flash-checks li {
+  position: relative;
+  margin: 0.2rem 0;
+}
+
+.flash-checks li::before {
+  content: "✓";
+  position: absolute;
+  left: -1.3rem;
+  color: var(--ok);
+  font-family: var(--font-data);
+  font-weight: 700;
+}
+
+.btn--flash:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  animation: flash-btn-glow 1.8s ease-in-out infinite;
+}
+
+.btn--flash:not(:disabled):hover,
+.btn--flash:not(:disabled):focus-visible {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+
+@keyframes flash-btn-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 12%, transparent), 0 0 20px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flash-action--browser .flash-action-summary,
+  .btn--flash:not(:disabled) {
+    animation: none;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
 }
 
 .flash-panel {

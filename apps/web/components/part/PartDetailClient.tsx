@@ -29,7 +29,7 @@ async function loadBoardRows(part: PartDetail): Promise<RecipeRow[] | null> {
     listFirmware().then((r) => r.results, () => []),
   ]);
   if (recipes === null) return [];
-  return boardFirmwareRows(recipes, firmware, asString(fmObject(part.frontmatter, "usb")?.connector));
+  return boardFirmwareRows(recipes, firmware, part.name, asString(fmObject(part.frontmatter, "usb")?.connector));
 }
 
 export default function PartDetailClient({ id }: { id: string }) {
