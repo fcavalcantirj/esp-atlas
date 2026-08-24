@@ -2193,3 +2193,72 @@ input[type="checkbox"]:checked::after {
   margin-top: 0.15rem;
   color: var(--accent);
 }
+
+/* ==========================================================================
+   How we work — footer mission line, nav link, the essay page
+   ========================================================================== */
+
+.footer-how {
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.footer-how:hover,
+.footer-how:focus-visible {
+  text-decoration: underline;
+}
+
+/* The one-liner leads the colophon's bottom line, in the language voice. */
+.footer-mission {
+  flex-basis: 100%;
+  font-family: var(--font-language);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--fg);
+  text-wrap: balance;
+}
+
+.prose {
+  padding-bottom: 2rem;
+}
+
+.prose h2 {
+  margin-top: 2.25rem;
+  margin-bottom: 0.6rem;
+}
+
+.prose p {
+  margin-bottom: 1rem;
+  max-width: 68ch;
+  text-wrap: pretty;
+}
+
+.prose .lead {
+  max-width: 68ch;
+}
+
+.how-links {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 0.25rem 0 1.5rem;
+  padding: 0;
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+}
+
+.how-links a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.how-links a:hover,
+.how-links a:focus-visible {
+  border-bottom-color: var(--accent);
+}

@@ -49,3 +49,7 @@ export function editSourceUrl(path: string): string {
 export function viewSourceUrl(path: string): string {
   return `${REPO_URL}/blob/main/${path}`;
 }
+
+export function viewTreeUrl(path: string): string {
+  return `${REPO_URL}/tree/main/${path}`;
+}

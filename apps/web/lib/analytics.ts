@@ -45,7 +45,8 @@ export type OutboundLinkType =
   | "license"
   | "data_folder"
   | "llms_txt"
-  | "api_docs";
+  | "api_docs"
+  | "maintainer_repo";
 
 export type ResultOrigin = "wizard" | "search" | "related" | "compare" | "chain" | "browse" | "brand";
 

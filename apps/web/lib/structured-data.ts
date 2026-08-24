@@ -59,6 +59,26 @@ function dataset() {
 }
 
 /** Home page: the site, its publisher and the open dataset behind it. */
+/** /how-we-work: the project's own account of itself, as an AboutPage. */
+export function howWeWorkGraph(description: string) {
+  const url = `${SITE_URL}/how-we-work`;
+  return {
+    "@context": CONTEXT,
+    "@graph": [
+      organization(),
+      website(),
+      { "@type": "AboutPage", "@id": url, name: "How esp-atlas works", url, description, isPartOf: { "@id": SITE_ID }, about: { "@id": ORG_ID } },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+          { "@type": "ListItem", position: 2, name: "How we work" },
+        ],
+      },
+    ],
+  };
+}
+
 export function homeGraph() {
   return { "@context": CONTEXT, "@graph": [organization(), website(), dataset()] };
 }
