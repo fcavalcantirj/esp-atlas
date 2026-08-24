@@ -10,7 +10,7 @@
 // Every call is bounded (3 s) and never throws: callers get a status they can
 // branch on, so a cold/unreachable Python function degrades to the client-side
 // fallback instead of a 500.
-import type { BrandPage, Facets, Firmware, PartDetail, PartRecord, Recipe } from "@/lib/api";
+import type { BrandPage, Example, Facets, Firmware, PartDetail, PartRecord, Recipe } from "@/lib/api";
 
 const REVALIDATE_SECONDS = 3600;
 const TIMEOUT_MS = 3000;
@@ -59,6 +59,12 @@ export async function fetchAllParts(): Promise<PartRecord[]> {
 
 export function fetchFacets(): Promise<ServerFetchResult<Facets>> {
   return serverFetch<Facets>(`/facets`);
+}
+
+/** /examples: the generated home examples; a cold API degrades to an empty list
+ * at the call site, mirroring the browse sections. */
+export function fetchExamples(): Promise<ServerFetchResult<{ results: Example[] }>> {
+  return serverFetch<{ results: Example[] }>(`/examples`);
 }
 
 /** /brands/<slug>: the brand's editorial name/url plus every part from it (core's

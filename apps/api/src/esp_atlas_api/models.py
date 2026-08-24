@@ -144,6 +144,29 @@ class WizardRequest(BaseModel):
     needs: WizardNeeds = WizardNeeds()
 
 
+ExampleKind = Literal["firmware", "needs"]
+
+
+class ExampleRecord(BaseModel):
+    """A generated home example — a computed projection of the dataset, never a
+    stored entity (the `example` data entity is SPEC-discovery's G2, unspecced).
+    See esp_atlas_core.examples. kind="firmware" carries `firmware` (a firmware
+    id whose page lists the boards it runs on); kind="needs" carries `needs` (a
+    saved wizard query). Every record resolves to >=1 result by construction.
+    """
+
+    id: str
+    label: str
+    kind: ExampleKind
+    firmware: Optional[str] = None
+    needs: Optional[WizardNeeds] = None
+    count: int
+
+
+class ExamplesResponse(BaseModel):
+    results: list[ExampleRecord]
+
+
 class ValidateRequest(BaseModel):
     markdown: Optional[str] = None
     kind: Optional[PartType] = None

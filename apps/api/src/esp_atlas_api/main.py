@@ -11,6 +11,7 @@ from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from esp_atlas_core import db as dbmod
+from esp_atlas_core.examples import generate_examples as core_generate_examples
 from esp_atlas_core.facets import facets as core_facets
 from esp_atlas_core.firmware import get_firmware as core_get_firmware
 from esp_atlas_core.firmware import list_firmware as core_list_firmware
@@ -27,6 +28,7 @@ from esp_atlas_core.wizard import wizard as core_wizard
 
 from esp_atlas_api.models import (
     BrandPageResponse,
+    ExamplesResponse,
     FacetsResponse,
     FirmwareListResponse,
     FirmwareRecord,
@@ -170,6 +172,10 @@ def create_app(db_path=None):
     @app.get("/facets", response_model=FacetsResponse)
     def facets(db_path=Depends(get_db_path)):
         return FacetsResponse(**core_facets(db_path=db_path))
+
+    @app.get("/examples", response_model=ExamplesResponse, response_model_exclude_none=True)
+    def examples(db_path=Depends(get_db_path)):
+        return ExamplesResponse(results=core_generate_examples(db_path=db_path))
 
     @app.get("/brands/{slug}", response_model=BrandPageResponse)
     def brand_page(slug: str, db_path=Depends(get_db_path)):

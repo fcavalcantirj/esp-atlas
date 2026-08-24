@@ -178,6 +178,29 @@ export interface WizardNeeds {
   flash_min?: number;
 }
 
+/** GET /examples: generated one-click starting points — a computed projection of
+ * recipes + parts fields (SPEC-home-explorer §3b), regenerated with the data so
+ * it can never go stale. Every entry resolves to >= 1 result (the G7 oracle).
+ * kind "firmware" links to that firmware's page (the boards it runs on); kind
+ * "needs" replays a saved wizard query. */
+export interface FirmwareExample {
+  id: string;
+  label: string;
+  kind: "firmware";
+  firmware: string;
+  count: number;
+}
+
+export interface NeedsExample {
+  id: string;
+  label: string;
+  kind: "needs";
+  needs: WizardNeeds;
+  count: number;
+}
+
+export type Example = FirmwareExample | NeedsExample;
+
 export class ApiError extends Error {
   status: number;
   endpoint: string;

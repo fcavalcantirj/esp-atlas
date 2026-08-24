@@ -1,8 +1,11 @@
 "use client";
 
 import type { Ref } from "react";
+import Link from "next/link";
 import PartResultCard from "@/components/PartResultCard";
-import { PRESETS, type ExplorerState, type Preset } from "@/lib/explorer";
+import { track } from "@/lib/analytics";
+import type { Example, NeedsExample } from "@/lib/api";
+import type { ExplorerState } from "@/lib/explorer";
 
 const NEED_LABELS: Record<string, string> = {
   form: "form factor",
@@ -46,13 +49,14 @@ function activeChips(query: ExplorerState["lastQuery"]): { key: string; label: s
 
 interface ResultsPanelProps {
   state: ExplorerState;
-  onPreset: (preset: Preset) => void;
+  examples: Example[];
+  onExample: (example: NeedsExample) => void;
   onRelax: (key: string) => void;
   onClear: () => void;
   ref?: Ref<HTMLElement>;
 }
 
-export default function ResultsPanel({ state, onPreset, onRelax, onClear, ref }: ResultsPanelProps) {
+export default function ResultsPanel({ state, examples, onExample, onRelax, onClear, ref }: ResultsPanelProps) {
   const { results, loading, error, lastQuery } = state;
   const origin = lastQuery?.kind ?? null;
   const chips = activeChips(lastQuery);
@@ -63,16 +67,34 @@ export default function ResultsPanel({ state, onPreset, onRelax, onClear, ref }:
         <div className="empty-state">
           <h2>Start with a question</h2>
           <p>
-            Pick what matters in the wizard — form factor, budget, smart-home mesh, native USB — and get every part in
-            the atlas that fits, with the reason it matched. Or try one of these:
+            Tell the wizard what matters and get every part in the atlas that fits, with the reason it matched.
+            {examples.length > 0 && " Or start from one of these — generated from the data, so the list never goes stale:"}
           </p>
-          <div className="preset-row">
-            {PRESETS.map((preset) => (
-              <button key={preset.id} type="button" className="chip chip--button" onClick={() => onPreset(preset)}>
-                {preset.label}
-              </button>
-            ))}
-          </div>
+          {examples.length > 0 && (
+            <div className="preset-row">
+              {examples.map((example) =>
+                example.kind === "firmware" ? (
+                  <Link
+                    key={example.id}
+                    href={`/firmware/${encodeURIComponent(example.firmware)}`}
+                    className="chip chip--button"
+                    onClick={() => track("example_click", { example: example.id, kind: "firmware" })}
+                  >
+                    {example.label}
+                  </Link>
+                ) : (
+                  <button
+                    key={example.id}
+                    type="button"
+                    className="chip chip--button"
+                    onClick={() => onExample(example)}
+                  >
+                    {example.label}
+                  </button>
+                ),
+              )}
+            </div>
+          )}
         </div>
       )}
 
