@@ -43,8 +43,17 @@ const TIER_CLAIM: Record<string, (board: string) => string> = {
   "known-good": (board) => `Known-good on ${board} — listed by the maintainer, or verified on real hardware.`,
   reported: (board) => `Reported on ${board} — community-submitted and cited, not independently verified.`,
   unverified: (board) => `Unverified on ${board} — harvested from the project's build targets, no human citation yet.`,
-  broken: (board) => `Broken on ${board} — known incompatible or regressed at this version.`,
+  broken: (board) => `Broken on ${board} — known incompatible, or regressed at a version.`,
 };
+
+function chips(manifest: Manifest): string {
+  return Array.from(new Set(manifest.builds.map((b) => b.chipFamily))).join(" / ");
+}
+
+/** The manifest's version, unless the recipe recorded none (the generator then writes "unspecified"). */
+function versionText(manifest: Manifest): string {
+  return manifest.version && manifest.version !== "unspecified" ? ` ${manifest.version}` : "";
+}
 
 /** Statically: does the record carry what the in-browser rail needs? The preflight remains the truth. */
 function looksFlashableInBrowser(recipe: Recipe): boolean {
@@ -62,7 +71,8 @@ function handoffReason(recipe: Recipe, handoff: FlashHandoff, status: number | n
     return handoff.flasherUrls.length > 0
       ? "This project ships its own web flasher; use it directly."
       : "This project ships its own flasher, which this recipe does not cite yet — start from the repository.";
-  if (method === "release-bin" && status === 404) return "No verified binary is recorded for this recipe yet, so there is no in-browser flash. Use the project's own tools.";
+  if (method === "release-bin" && status === 404)
+    return "esp-atlas has no in-browser manifest for this recipe — no verified binary is recorded, or the browser flasher does not support its chip. Use the project's own tools.";
   if (method === "esp-web-tools" && !recipe.flash?.manifest_url) return "This project publishes ESP Web Tools manifests, but this recipe does not cite one yet.";
   if (status !== null) return `The flash manifest could not be fetched (HTTP ${status}). Use the project's own tools.`;
   return "The in-browser flasher could not start here. Use the project's own tools.";
@@ -81,6 +91,8 @@ export default function FlashAction({
   const method = recipe.flash?.method ?? null;
   const methodLabel = flashMethodLabel(method);
   const inBrowser = looksFlashableInBrowser(recipe);
+  // Which rail: our generated manifest + streaming proxy, or the project's own manifest.
+  const projectRail = method === "esp-web-tools";
   const tierClaim = (TIER_CLAIM[recipe.status] ?? ((board) => `${recipe.status} on ${board}.`))(boardName);
 
   async function open() {
@@ -141,13 +153,24 @@ export default function FlashAction({
           <>
             <ul className="flash-checks" aria-label="What esp-atlas checked">
               <li>{tierClaim}</li>
+              {projectRail ? (
+                <li>
+                  The project&apos;s own manifest offers builds for {chips(phase.manifest)}; the flasher reads the connected chip and
+                  refuses to write if none matches.
+                </li>
+              ) : (
+                <li>
+                  Built for {chips(phase.manifest)} — the same chip family as {boardName} (CI checks this for every recipe); the flasher
+                  re-reads the connected chip and refuses a mismatch before writing.
+                </li>
+              )}
               <li>
-                Built for {phase.manifest.builds.map((b) => b.chipFamily).join(" / ")} — the same chip family as {boardName}; the
-                flasher re-reads the connected chip and refuses a mismatch before writing.
-              </li>
-              <li>
-                {firmwareName} {phase.manifest.version}, the project&apos;s own release binary, streamed through esp-atlas
-                byte-for-byte{phase.manifest.new_install_prompt_erase ? " — you are asked before any erase" : ""}.
+                {firmwareName}
+                {versionText(phase.manifest)},{" "}
+                {projectRail
+                  ? "fetched from the project's own manifest — esp-atlas never touches the binary"
+                  : "the project's own release binary, streamed through esp-atlas unmodified"}
+                {phase.manifest.new_install_prompt_erase ? " — you are asked before any full-chip erase" : ""}.
               </li>
             </ul>
             <label className="checkbox-label">
