@@ -5,6 +5,7 @@ brand: sparkfun
 name: SparkFun Thing Plus - ESP32-S2 WROOM
 soc: esp32-s2
 flash_mb: 4
+psram_mb: 0
 form_factor: thing-plus
 price_tier: medium
 dimensions_mm:
@@ -22,6 +23,7 @@ notes:
 - Battery charging via onboard MCP73831 charger, JST connector for single-cell LiPo
 - ESP32-S2 omits Bluetooth and 5GHz WiFi; WiFi 802.11b/g/n only
 - Thing Plus form factor is pin-compatible with the Adafruit Feather footprint
+- ESP32-S2-WROOM (as opposed to -WROVER) has no PSRAM, per Espressif's ESP32-S2-WROOM datasheet
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-thing-plus-esp32-s2-wroom.html
@@ -29,6 +31,9 @@ sources:
 - field: dimensions_mm
   url: https://learn.sparkfun.com/tutorials/esp32-s2-thing-plus-hookup-guide/all
   verified: '2026-08-22'
+- field: psram_mb
+  url: https://documentation.espressif.com/esp32-s2-wroom_esp32-s2-wroom-i_datasheet_en.html
+  verified: '2026-08-24'
 ---
 
 # SparkFun Thing Plus - ESP32-S2 WROOM

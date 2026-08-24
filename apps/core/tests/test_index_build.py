@@ -124,7 +124,7 @@ def test_build_index_board_without_flash_mb_omits_it_from_frontmatter_json(tmp_p
     build_index(db_path=db_path)
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    row = conn.execute("SELECT * FROM parts WHERE id = 'soldered-inkplate-10'").fetchone()
+    row = conn.execute("SELECT * FROM parts WHERE id = 'esp32-s2-saola-1'").fetchone()
     fm = json.loads(row["frontmatter_json"])
     assert "flash_mb" not in fm
     assert "psram_mb" not in fm

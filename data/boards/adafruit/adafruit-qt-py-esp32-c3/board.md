@@ -5,6 +5,7 @@ brand: adafruit
 name: Adafruit QT Py ESP32-C3 WiFi Dev Board with STEMMA QT
 soc: esp32-c3
 flash_mb: 4
+psram_mb: 0
 form_factor: qt-py
 price_tier: cheap
 dimensions_mm:
@@ -22,10 +23,14 @@ notes:
 - 4 MB flash
 - USB-to-serial handled by the ESP32-C3's own USB-Serial/JTAG peripheral, not native USB device mode (cannot act as keyboard/disk)
 - Battery input pads on underside with diode protection for external packs up to 6V; no onboard charging circuit
+- ESP32-C3 has no PSRAM interface at all (chip datasheet lists no PSRAM/external-RAM support)
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5405
   verified: '2026-08-22'
+- field: psram_mb
+  url: https://documentation.espressif.com/esp32-c3_datasheet_en.html
+  verified: '2026-08-24'
 ---
 
 # Adafruit QT Py ESP32-C3

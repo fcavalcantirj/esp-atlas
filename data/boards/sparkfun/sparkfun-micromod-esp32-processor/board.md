@@ -5,6 +5,7 @@ brand: sparkfun
 name: SparkFun MicroMod ESP32 Processor
 soc: esp32
 flash_mb: 16
+psram_mb: 0
 form_factor: micromod
 price_tier: cheap
 dimensions_mm:
@@ -14,7 +15,7 @@ usb:
   connector: none
 notes:
 - ESP32-D0WDQ6-V3; 16 MB flash
-- No PSRAM mentioned on product page or hookup guide
+- ESP32-D0WDQ6-V3 chip variant has no PSRAM per Espressif's ESP32 series ordering table
 - M.2-style MicroMod edge connector; requires a MicroMod carrier board (not sold with one). USB is routed through MicroMod connector pads to the carrier board rather than exposed on the processor board itself
 - Onboard status LED and 2.4GHz WiFi/BLE antenna
 sources:
@@ -24,6 +25,9 @@ sources:
 - field: dimensions_mm
   url: https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/all
   verified: '2026-08-22'
+- field: psram_mb
+  url: https://documentation.espressif.com/esp32_datasheet_en.html
+  verified: '2026-08-24'
 ---
 
 # SparkFun MicroMod ESP32 Processor
