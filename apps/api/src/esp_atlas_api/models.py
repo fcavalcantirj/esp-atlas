@@ -40,6 +40,8 @@ class Record(BaseModel):
     soc_ref: Optional[str] = None
     module_ref: Optional[str] = None
     usb_native: Optional[bool] = None
+    flash_mb: Optional[float] = None
+    psram_mb: Optional[float] = None
     path: str = Field(alias="_path")
     sources: list[SourceEntry] = []
 
@@ -79,6 +81,14 @@ class BrandFacet(Facet):
     url: Optional[str] = None
 
 
+class NumericFacet(BaseModel):
+    """A minimum-capability tier (e.g. psram_min/flash_min): `count` is how many
+    parts clear that floor, not how many equal it — see esp_atlas_core.facets."""
+
+    value: int
+    count: int
+
+
 class FacetsResponse(BaseModel):
     type: list[Facet]
     vendor_or_brand: list[BrandFacet]
@@ -88,6 +98,8 @@ class FacetsResponse(BaseModel):
     soc_ref: list[Facet]
     wifi_bands: list[Facet]
     ieee802154_protocols: list[Facet]
+    psram_min: list[NumericFacet]
+    flash_min: list[NumericFacet]
 
 
 class Brand(BaseModel):
@@ -122,6 +134,8 @@ class WizardNeeds(BaseModel):
     form: Optional[str] = None
     type: Optional[PartType] = None
     budget: Optional[BudgetTier] = None
+    psram_min: Optional[int] = None
+    flash_min: Optional[int] = None
 
     model_config = {"extra": "forbid"}
 

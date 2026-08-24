@@ -92,6 +92,8 @@ def create_app(db_path=None):
         soc: Optional[str] = None,
         module: Optional[str] = None,
         brand: Optional[str] = None,
+        psram_min: Optional[int] = None,
+        flash_min: Optional[int] = None,
         db_path=Depends(get_db_path),
     ):
         filters = {}
@@ -119,6 +121,10 @@ def create_app(db_path=None):
             filters["bt_classic"] = bt_classic
         if usb_native is not None:
             filters["usb_native"] = usb_native
+        if psram_min is not None:
+            filters["psram_min"] = psram_min
+        if flash_min is not None:
+            filters["flash_min"] = flash_min
 
         try:
             results = core_search(q, filters=filters, db_path=db_path)
