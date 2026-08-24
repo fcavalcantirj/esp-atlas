@@ -18,14 +18,26 @@ Three principles:
 - **Closes the loop.** intent → board → *why* → recipe → **flash right here.**
   esp-atlas is where you decide AND do it.
 
-## 2. The three home sections (top to bottom)
-| # | Section | Role | Audience |
-|---|---|---|---|
-| 1 | **Wizard** — "What are you building? Answer what matters, skip the rest." | Guided capability picker. Memory/RF/USB/mesh live under **Advanced**. | knows roughly what they need |
-| 2 | **Search** | Free-text / spec lookup. | knows the part or term |
-| 3 | **Start with a question** | The easiest door: dynamic intent chips. | knows only the *goal* |
+## 2. Home layout — intent-first (LOCKED 2026-08-24, mockup-approved)
+Diagnosis of the old home: it led with cold spec dropdowns (form factor / budget /
+jargon checkboxes) on the left and left a dead void on the right. **Inverted.** Top
+to bottom:
 
-This spec is mostly about **§3** (the easiest door) + the **flash hub** it opens onto.
+| Order | Block | Role |
+|---|---|---|
+| 1 | **Hero** — "What do you want to build?" (copy swappable) | Sets the intent framing. |
+| 2 | **Intent door** — one prompt: *"Tell me what you want to build or run…"* + "…or tap an idea below" | The soft entry. Phase 1 → search/examples; Phase 2 → Groq intent→filters (Newcomer Wizard). |
+| 3 | **Rich examples grid** — fills the page; generated, not static | Three soft groups: **Run a firmware** (recipe-graph), **Build a project** (capability filters), **Just show me** (discovery). Each card carries the reason/count. This is §3b. |
+| 4 | **Spec wizard — DEMOTED, not deleted** | A lean drawer "Spec wizard · Open ›" that **expands the full filter panel inline** (collapsed by default). The top-nav **"Wizard" link routes to a full `/wizard` page** (the old left-panel layout relocated there). Reachable two ways; never the cold front. |
+| — | **Search** stays accessible (nav / lightweight bar). | knows the part or term |
+
+**Rulings:** memory/RF/USB/mesh specifics live in the wizard's Advanced (unchanged);
+the "Runs a web server" intent toggle stays top-level in the wizard (SPEC-INDEX C4).
+The wizard is **demoted + relocated, not removed** — full page at `/wizard`, quick
+inline expand on the home.
+
+This spec is mostly about **§3b** (the examples) + the Newcomer Wizard (§3) + the
+**flash hub** it opens onto.
 
 ## 3. The easy wizard for newcomers — classic → Groq prompt (scales FLAT)
 A newcomer can't answer "form factor" or "native USB." So the specifics
