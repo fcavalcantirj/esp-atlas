@@ -501,3 +501,56 @@ def test_examples_needs_round_trip_through_wizard(client):
         r = client.post("/wizard", json={"needs": ex["needs"]})
         assert r.status_code == 200, (ex["id"], r.text)
         assert r.json()["results"], f"{ex['id']}: needs round-trip returned 0 results"
+
+
+class _StubLLM:
+    """Stands in for GroqClient; records the prompts it was handed."""
+
+    def __init__(self, reply="The ESP32-C6 has an 802.15.4 radio."):
+        self.reply = reply
+        self.calls = []
+
+    def complete(self, system_prompt, user_prompt, temperature=0):
+        self.calls.append((system_prompt, user_prompt, temperature))
+        return self.reply
+
+
+def test_ask_returns_grounded_answer_with_citations(built_db_path):
+    stub = _StubLLM()
+    with TestClient(create_app(db_path=built_db_path, llm_client=stub)) as client:
+        r = client.post("/ask", json={"question": "Does the ESP32-C6 have an 802.15.4 radio?"})
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["answer"] == stub.reply
+    assert body["used"], "an answered question should name the records it used"
+    assert body["citations"], "citations come from the records, not the model"
+    for citation in body["citations"]:
+        assert citation["source_url"].startswith("http")
+    # Temperature 0 and the retrieved records must reach the model (INTERFACE-SPEC).
+    system_prompt, user_prompt, temperature = stub.calls[0]
+    assert temperature == 0
+    assert "esp32-c6" in user_prompt.lower()
+
+
+def test_ask_unknown_topic_says_so_without_calling_the_model(built_db_path):
+    stub = _StubLLM()
+    with TestClient(create_app(db_path=built_db_path, llm_client=stub)) as client:
+        r = client.post("/ask", json={"question": "zzzznotathing qqqqunknown"})
+    assert r.status_code == 200
+    assert "not in esp-atlas yet" in r.json()["answer"]
+    assert stub.calls == [], "nothing retrieved -> no reason to spend an LLM call"
+
+
+def test_ask_without_a_groq_key_is_503_not_500(built_db_path, monkeypatch, tmp_path):
+    """The deterministic wizard/search stay up when Groq is not configured."""
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    fresh = tmp_path / "nokey.db"  # a cache hit would mask the missing key
+    with TestClient(create_app(db_path=fresh)) as client:
+        r = client.post("/ask", json={"question": "Which ESP32 has the most PSRAM?"})
+    assert r.status_code == 503
+    assert "Groq API key" in r.json()["detail"]
+
+
+def test_ask_rejects_an_empty_question(built_db_path):
+    with TestClient(create_app(db_path=built_db_path)) as client:
+        assert client.post("/ask", json={"question": ""}).status_code == 422

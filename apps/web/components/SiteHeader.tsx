@@ -15,6 +15,9 @@ export default function SiteHeader() {
           <Link href="/wizard" className="nav-link">
             Wizard
           </Link>
+          <Link href="/ask" className="nav-link">
+            Ask
+          </Link>
           <Link href="/compare" className="nav-link">
             Compare
           </Link>

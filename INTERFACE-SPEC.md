@@ -19,8 +19,13 @@ Confirmed choices:
   `esp-atlas.dev` as alias. *(Felipe registers — needs his account/payment.)*
 - **Repo:** monorepo, `data/` kept pristine.
 - **Visibility:** private until we decide to launch.
-- **LLM:** Groq free tier; model chosen + pinned at build (a current Llama-70B-class
-  instruct model), with response-header rate-limit handling + answer caching.
+- **LLM:** Groq free tier; models pinned at build, with response-header rate-limit
+  handling + answer caching. **`openai/gpt-oss-120b`** for *Ask* (the quality
+  path) and **`openai/gpt-oss-20b`** for the cheap/fast path (intent→filters).
+  Both 131K context, both verified live on the project key 2026-08-24. The model
+  roster is **account-specific**: verify against `GET /v1/models` before changing
+  these, not against Groq's public model list — the previously specced
+  Llama-70B-class model (`llama-3.3-70b-versatile`) returns 404 on this account.
 
 ## Retrieval — scalable, because we map *everything*
 

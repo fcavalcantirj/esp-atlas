@@ -2173,3 +2173,39 @@ input[type="checkbox"]:checked::after {
 .wizard-advanced-checkboxes {
   margin-bottom: 1rem;
 }
+
+/* The Ask page (INTERFACE-SPEC "Ask"): a question box, then a grounded answer
+   with the sources of the records behind it. */
+.ask {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.ask-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.ask-answer-text {
+  margin: 0;
+  font-size: var(--t-lede);
+  line-height: var(--lead-body);
+  white-space: pre-wrap;
+}
+
+.ask-sources {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.ask-source-list {
+  margin: 0.75rem 0 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: var(--t-sm);
+}

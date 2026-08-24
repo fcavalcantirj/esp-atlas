@@ -205,6 +205,20 @@ export interface NeedsExample {
 
 export type Example = FirmwareExample | NeedsExample;
 
+/** POST /ask: a grounded answer plus the sources of the records behind it.
+ * Citations come from those records, not from the model's reply. */
+export interface Citation {
+  part: string;
+  file: string;
+  source_url: string;
+}
+
+export interface AskAnswer {
+  answer: string;
+  citations: Citation[];
+  used: string[];
+}
+
 export class ApiError extends Error {
   status: number;
   endpoint: string;
@@ -262,4 +276,8 @@ export function getPart(id: string): Promise<PartDetail> {
 
 export function getFacets(): Promise<Facets> {
   return apiFetch(`/facets`);
+}
+
+export function askQuestion(question: string): Promise<AskAnswer> {
+  return apiFetch(`/ask`, { method: "POST", body: JSON.stringify({ question }) });
 }

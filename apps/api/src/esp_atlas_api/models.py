@@ -169,6 +169,30 @@ class ExamplesResponse(BaseModel):
     results: list[ExampleRecord]
 
 
+class AskRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=1000)
+
+    model_config = {"extra": "forbid"}
+
+
+class Citation(BaseModel):
+    part: str
+    file: str
+    source_url: str
+
+
+class AskResponse(BaseModel):
+    """A grounded answer plus the sources of the records it was built from.
+
+    `citations` come from the retrieved records' own `sources`, never from the
+    model's reply, so they are trustworthy even if the answer is not.
+    """
+
+    answer: str
+    citations: list[Citation]
+    used: list[str]
+
+
 class ValidateRequest(BaseModel):
     markdown: Optional[str] = None
     kind: Optional[PartType] = None

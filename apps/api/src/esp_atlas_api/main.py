@@ -11,6 +11,8 @@ from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from esp_atlas_core import db as dbmod
+from esp_atlas_core.ask import ask as core_ask
+from esp_atlas_core.llm import GroqConfigError, GroqRateLimitError
 from esp_atlas_core.examples import generate_examples as core_generate_examples
 from esp_atlas_core.facets import facets as core_facets
 from esp_atlas_core.firmware import get_firmware as core_get_firmware
@@ -27,6 +29,8 @@ from esp_atlas_core.validate import validate_markdown as core_validate_markdown
 from esp_atlas_core.wizard import wizard as core_wizard
 
 from esp_atlas_api.models import (
+    AskRequest,
+    AskResponse,
     BrandPageResponse,
     ExamplesResponse,
     FacetsResponse,
@@ -59,9 +63,16 @@ def get_db_path(request: Request):
     return request.app.state.db_path
 
 
-def create_app(db_path=None):
+def get_llm_client(request: Request):
+    """None in production -- ask() then builds a real GroqClient itself. Tests
+    inject a fake here so the suite never makes a network call."""
+    return getattr(request.app.state, "llm_client", None)
+
+
+def create_app(db_path=None, llm_client=None):
     app = FastAPI(title="esp-atlas API", lifespan=_lifespan)
     app.state.db_path = db_path or resolve_db_path()
+    app.state.llm_client = llm_client
 
     app.add_middleware(
         CORSMiddleware,
@@ -168,6 +179,27 @@ def create_app(db_path=None):
         if record is None:
             raise HTTPException(status_code=404, detail=f"part not found: {part_id}")
         return record
+
+    @app.post("/ask", response_model=AskResponse)
+    def ask(payload: AskRequest, db_path=Depends(get_db_path), llm_client=Depends(get_llm_client)):
+        """Grounded answer over the retrieved records (INTERFACE-SPEC "Ask").
+
+        The deterministic wizard/search must stay usable when Groq is not, so a
+        missing key or an exhausted quota is a 503 the UI can explain -- never a
+        500, and never a fabricated answer.
+        """
+        try:
+            return core_ask(payload.question, llm_client=llm_client, db_path=db_path)
+        except GroqConfigError as exc:
+            raise HTTPException(
+                status_code=503,
+                detail="Ask is unavailable: the server has no Groq API key configured.",
+            ) from exc
+        except GroqRateLimitError as exc:
+            raise HTTPException(
+                status_code=503,
+                detail="Ask is rate-limited right now. The wizard and search still work.",
+            ) from exc
 
     @app.get("/facets", response_model=FacetsResponse)
     def facets(db_path=Depends(get_db_path)):

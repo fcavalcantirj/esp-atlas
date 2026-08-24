@@ -20,6 +20,8 @@ dist/
 # secrets — GROQ_API_KEY etc. live in the environment, never in the repo
 .env
 .env.*
+# ...except the committed template, which documents the names and holds no values
+!.env.example
 
 .DS_Store
 .vercel
