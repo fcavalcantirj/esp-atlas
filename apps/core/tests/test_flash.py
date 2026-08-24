@@ -128,3 +128,47 @@ def test_offset_parses_hex_and_decimal():
     assert _offset("0x0") == 0
     assert _offset(None) == 0
     assert _offset(4096) == 4096
+
+
+# ---------------------------------------------------------------------------
+# SSRF via redirect: an allowlisted host that bounces off-allowlist must not be
+# followed. GitHub really does redirect (github.com -> objects.github...), so
+# redirects cannot simply be refused -- every hop is re-validated instead.
+# ---------------------------------------------------------------------------
+
+GITHUB_ASSET = "https://github.com/o/r/releases/download/1/fw.bin"
+
+
+@pytest.mark.parametrize(
+    "location",
+    [
+        "https://evil.example.com/x.bin",            # absolute, off-allowlist
+        "//evil.example.com/x.bin",                  # protocol-relative
+        "http://objects.githubusercontent.com/x.bin",  # allowlisted host, downgraded scheme
+        "https://github.com.evil.example/x.bin",     # suffix confusion
+        "https://169.254.169.254/latest/meta-data/",  # cloud metadata
+        "file:///etc/passwd",
+        "",                                          # redirect with no Location
+        None,
+    ],
+)
+def test_redirect_off_the_allowlist_is_refused(location):
+    from esp_atlas_core.flash import next_hop
+
+    assert next_hop(GITHUB_ASSET, location) is None
+
+
+@pytest.mark.parametrize(
+    "location,expected",
+    [
+        # the real GitHub hop the proxy must keep working
+        ("https://objects.githubusercontent.com/x.bin", "https://objects.githubusercontent.com/x.bin"),
+        ("https://release-assets.githubusercontent.com/y.bin", "https://release-assets.githubusercontent.com/y.bin"),
+        # relative Location resolved against the redirecting URL, then checked
+        ("/o/r/releases/download/1/other.bin", "https://github.com/o/r/releases/download/1/other.bin"),
+    ],
+)
+def test_redirect_that_stays_on_the_allowlist_is_followed(location, expected):
+    from esp_atlas_core.flash import next_hop
+
+    assert next_hop(GITHUB_ASSET, location) == expected

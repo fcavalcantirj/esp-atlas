@@ -13,7 +13,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
 from esp_atlas_core import db as dbmod
+from esp_atlas_core.flash import MAX_REDIRECT_HOPS
 from esp_atlas_core.flash import bin_url_for as core_bin_url_for
+from esp_atlas_core.flash import next_hop as core_next_hop
 from esp_atlas_core.flash import build_manifest as core_build_manifest
 from esp_atlas_core.examples import generate_examples as core_generate_examples
 from esp_atlas_core.facets import facets as core_facets
@@ -49,6 +51,27 @@ from esp_atlas_api.models import (
 from esp_atlas_api.settings import resolve_db_path
 
 _ALL_PARTS_LIMIT = 10_000
+_REDIRECT_CODES = frozenset({301, 302, 303, 307, 308})
+
+
+async def _fetch_following_allowlisted_redirects(client, url, headers):
+    """GET `url`, following redirects only while each hop stays on the allowlist.
+
+    Raises PermissionError the moment a hop points off-allowlist -- that is an
+    SSRF attempt (or a compromised upstream), not a transport failure.
+    """
+    current = url
+    for _ in range(MAX_REDIRECT_HOPS + 1):
+        response = await client.send(client.build_request("GET", current, headers=headers), stream=True)
+        if response.status_code not in _REDIRECT_CODES:
+            return response
+        location = response.headers.get("location")
+        await response.aclose()
+        target = core_next_hop(current, location)
+        if target is None:
+            raise PermissionError(f"redirect to a non-allowlisted host refused: {location!r}")
+        current = target
+    raise PermissionError("too many redirects")
 
 
 @asynccontextmanager
@@ -207,11 +230,15 @@ def create_app(db_path=None):
         # Range must survive in both directions: esptool-js reads the image in
         # chunks, and a dropped Range would restart the flash from zero.
         forwarded = {"Range": request.headers["range"]} if "range" in request.headers else {}
-        client = httpx.AsyncClient(timeout=httpx.Timeout(30.0, read=300.0), follow_redirects=True)
+        # follow_redirects is deliberately OFF: httpx would validate only the
+        # first hop, so an allowlisted host could redirect us anywhere. Each hop
+        # is re-checked against the allowlist before it is followed.
+        client = httpx.AsyncClient(timeout=httpx.Timeout(30.0, read=300.0), follow_redirects=False)
         try:
-            upstream = await client.send(
-                client.build_request("GET", url, headers=forwarded), stream=True
-            )
+            upstream = await _fetch_following_allowlisted_redirects(client, url, forwarded)
+        except PermissionError as exc:
+            await client.aclose()
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
         except httpx.HTTPError as exc:
             await client.aclose()
             raise HTTPException(status_code=502, detail=f"upstream fetch failed: {exc}") from exc

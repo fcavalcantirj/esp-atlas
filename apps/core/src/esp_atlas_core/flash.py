@@ -30,7 +30,7 @@ over either transport, so we emit one build with NO `serialType` and let it matc
 any port. (SPEC-wizard asks us to derive the field from the board's USB fields;
 that reasoning is inverted -- see the note raised with the architect.)
 """
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 from esp_atlas_core.firmware import get_firmware, list_recipes
 from esp_atlas_core.search import get_part
@@ -69,6 +69,34 @@ ALLOWED_BIN_HOSTS = frozenset(
 # under /api on Vercel but served at the root by a standalone uvicorn, so the
 # caller passes the URL it actually resolves to; this is only the fallback.
 PROXY_PATH = "/api/flash-bin"
+
+# Redirects must be followed by hand. GitHub bounces github.com ->
+# objects.githubusercontent.com, so they cannot simply be refused -- but an HTTP
+# client that follows them for us only ever checks the FIRST hop, which means an
+# allowlisted host could redirect the proxy anywhere. Each hop is re-validated.
+MAX_REDIRECT_HOPS = 5
+
+
+def is_allowed_bin_url(url):
+    """True only for an https URL on an allowlisted host."""
+    if not url:
+        return False
+    parsed = urlparse(url)
+    return parsed.scheme == "https" and parsed.hostname in ALLOWED_BIN_HOSTS
+
+
+def next_hop(current_url, location):
+    """The URL a redirect points at, or None if it must not be followed.
+
+    `location` may be relative, so it is resolved against the URL that issued
+    the redirect before the host is checked -- otherwise a relative hop would
+    fail the check for the wrong reason, and an absolute one could slip past a
+    naive string test.
+    """
+    if not location:
+        return None
+    target = urljoin(current_url, location)
+    return target if is_allowed_bin_url(target) else None
 
 
 def get_recipe(recipe_id):
@@ -116,12 +144,7 @@ def bin_url_for(recipe_id, part=None):
     else:
         url = flash.get("bin_url")
 
-    if not url:
-        return None
-    parsed = urlparse(url)
-    if parsed.scheme != "https" or parsed.hostname not in ALLOWED_BIN_HOSTS:
-        return None
-    return url
+    return url if is_allowed_bin_url(url) else None
 
 
 def build_manifest(recipe_id, db_path=None, proxy_url=PROXY_PATH):
