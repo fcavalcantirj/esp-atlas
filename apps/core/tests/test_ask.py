@@ -66,3 +66,51 @@ def test_ask_raises_without_prebuilt_index(tmp_path):
     empty_db = tmp_path / "empty.db"
     with pytest.raises(RuntimeError):
         ask("anything", llm_client=fake, db_path=empty_db)
+
+
+# ---------------------------------------------------------------------------
+# The recipe graph. firmware/recipe records are not in the parts table or the
+# FTS index, so plain retrieval cannot see them and "which boards run Marauder?"
+# used to answer "not in esp-atlas yet" while the site's own firmware page
+# listed the boards. ask() gets an explicit second retrieval path instead.
+# ---------------------------------------------------------------------------
+
+
+def test_ask_answers_which_boards_run_a_firmware(built_db_path):
+    from esp_atlas_core.firmware import recipes_for_firmware
+
+    fake = FakeLLM("...")
+    result = ask("Which boards can run ESP32 Marauder?", llm_client=fake, db_path=built_db_path)
+
+    prompt = fake.calls[0]["user"]
+    expected = recipes_for_firmware("esp32marauder")
+    assert expected, "fixture assumption: Marauder must have recipes"
+    for recipe in expected:
+        assert recipe["board"] in prompt, f"{recipe['board']} missing from the grounding context"
+        assert recipe["id"] in result["used"]
+    assert "esp32marauder" in result["used"]
+    # the tier of each claim must reach the model, not just the board list
+    assert all(r["status"] in prompt for r in expected)
+
+
+def test_ask_cites_the_firmware_record_behind_a_runs_on_answer(built_db_path):
+    fake = FakeLLM("...")
+    result = ask("What boards run Bruce?", llm_client=fake, db_path=built_db_path)
+    urls = {c["source_url"] for c in result["citations"]}
+    assert any("pr3y/Bruce" in url for url in urls), "the firmware's own source must be cited"
+
+
+def test_ask_tells_the_model_what_a_retrieved_board_can_run(built_db_path):
+    """The reverse view: ask about a board, learn what runs on it."""
+    fake = FakeLLM("...")
+    ask("Tell me about the M5Cardputer", llm_client=fake, db_path=built_db_path)
+    prompt = fake.calls[0]["user"]
+    assert "Firmware verified to run on" in prompt
+
+
+def test_firmware_matching_ignores_generic_tokens(built_db_path):
+    """'esp32' appears in nearly every question and must not match a firmware."""
+    from esp_atlas_core.ask import _firmware_named_in
+
+    assert _firmware_named_in("which esp32 board has the most PSRAM?") == []
+    assert [fw["id"] for fw in _firmware_named_in("what runs Bruce")] == ["bruce"]
