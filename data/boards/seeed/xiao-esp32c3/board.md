@@ -4,6 +4,8 @@ type: board
 brand: seeed
 name: Seeed Studio XIAO ESP32C3
 soc: esp32-c3
+flash_mb: 4
+psram_mb: 0
 form_factor: xiao
 price_tier: cheap
 dimensions_mm:

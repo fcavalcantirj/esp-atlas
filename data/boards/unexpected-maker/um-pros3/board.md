@@ -4,6 +4,8 @@ type: board
 brand: unexpected-maker
 name: Unexpected Maker ProS3
 soc: esp32-s3
+flash_mb: 16
+psram_mb: 8
 form_factor: pros3
 price_tier: medium
 dimensions_mm:

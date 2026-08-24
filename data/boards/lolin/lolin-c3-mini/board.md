@@ -4,6 +4,8 @@ type: board
 brand: lolin
 name: LOLIN C3 mini
 soc: esp32-c3
+flash_mb: 4
+psram_mb: 0
 form_factor: lolin-mini
 price_tier: cheap
 dimensions_mm:
@@ -15,14 +17,18 @@ extras:
 - rgb-led
 notes:
 - Based on ESP32-C3, RISC-V single-core Wi-Fi + Bluetooth LE
-- 4 MB flash; PSRAM not stated on the official page (omitted)
+- 4 MB flash
 - 12x digital I/O pins
 - Onboard WS2812B addressable RGB LED
 - 'Weight: 2.6 g'
+- ESP32-C3 has no PSRAM interface at all (chip datasheet lists no PSRAM/external-RAM support)
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/c3/c3_mini.html
   verified: '2026-08-22'
+- field: psram_mb
+  url: https://documentation.espressif.com/esp32-c3_datasheet_en.html
+  verified: '2026-08-24'
 ---
 
 # LOLIN C3 mini

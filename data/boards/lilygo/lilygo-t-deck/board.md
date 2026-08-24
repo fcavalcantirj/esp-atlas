@@ -4,6 +4,8 @@ type: board
 brand: lilygo
 name: T-Deck
 soc: esp32-s3
+flash_mb: 16
+psram_mb: 8
 form_factor: t-deck
 price_tier: medium
 display: 2.8in 320x240 ST7789 SPI IPS

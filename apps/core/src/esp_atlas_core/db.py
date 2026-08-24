@@ -30,7 +30,9 @@ CREATE TABLE IF NOT EXISTS parts (
     path TEXT NOT NULL,
     sources_json TEXT NOT NULL,
     frontmatter_json TEXT NOT NULL DEFAULT '{}',
-    body TEXT NOT NULL DEFAULT ''
+    body TEXT NOT NULL DEFAULT '',
+    flash_mb REAL,
+    psram_mb REAL
 );
 
 CREATE INDEX IF NOT EXISTS idx_parts_type ON parts(type);
@@ -81,7 +83,18 @@ def connect(db_path=None):
 _ADDED_COLUMNS = {
     "frontmatter_json": "TEXT NOT NULL DEFAULT '{}'",
     "body": "TEXT NOT NULL DEFAULT ''",
+    "flash_mb": "REAL",
+    "psram_mb": "REAL",
 }
+
+# Indexes over columns that may only exist after _ensure_columns runs (a fresh
+# CREATE TABLE already includes them, but a migrated older db does not until
+# the ALTER TABLE above lands) -- created here instead of inside SCHEMA so they
+# never run against a not-yet-existing column.
+_POST_MIGRATION_INDEXES = (
+    "CREATE INDEX IF NOT EXISTS idx_parts_psram_mb ON parts(psram_mb)",
+    "CREATE INDEX IF NOT EXISTS idx_parts_flash_mb ON parts(flash_mb)",
+)
 
 
 def _ensure_columns(conn):
@@ -94,6 +107,8 @@ def _ensure_columns(conn):
 def create_schema(conn):
     conn.executescript(SCHEMA)
     _ensure_columns(conn)
+    for stmt in _POST_MIGRATION_INDEXES:
+        conn.execute(stmt)
     conn.commit()
 
 

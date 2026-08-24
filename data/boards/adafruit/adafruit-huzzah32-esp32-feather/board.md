@@ -4,6 +4,8 @@ type: board
 brand: adafruit
 name: Adafruit HUZZAH32 – ESP32 Feather Board
 soc: esp32
+flash_mb: 4
+psram_mb: 0
 form_factor: feather
 price_tier: cheap
 dimensions_mm:

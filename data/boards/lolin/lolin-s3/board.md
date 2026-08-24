@@ -4,6 +4,8 @@ type: board
 brand: lolin
 name: LOLIN S3
 soc: esp32-s3
+flash_mb: 16
+psram_mb: 8
 form_factor: devkit
 price_tier: cheap
 dimensions_mm:

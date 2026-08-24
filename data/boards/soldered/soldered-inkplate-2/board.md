@@ -4,6 +4,8 @@ type: board
 brand: soldered
 name: Inkplate 2
 soc: esp32
+flash_mb: 4
+psram_mb: 8
 form_factor: inkplate
 price_tier: cheap
 dimensions_mm:
@@ -22,6 +24,7 @@ notes:
 - 4 MB flash
 - MCP73831 Li-ion charger IC
 - '8 uA low-power mode current'
+- Official BOM lists the exact module ordering code ESP32-WROVER-IE-N4R8 (4 MB flash, 8 MB PSRAM)
 sources:
 - field: '*'
   url: https://soldered.com/products/inkplate-2
@@ -29,6 +32,9 @@ sources:
 - field: power
   url: https://docs.soldered.com/inkplate/2/hardware/design/
   verified: '2026-08-22'
+- field: psram_mb
+  url: https://raw.githubusercontent.com/SolderedElectronics/Soldered-Inkplate-2-hardware-design/main/OUTPUTS/V1.2.3/Soldered%20Inkplate%202%20BOM.csv
+  verified: '2026-08-24'
 ---
 
 # Inkplate 2

@@ -20,6 +20,10 @@ const NEED_LABELS: Record<string, string> = {
   module: "module",
 };
 
+// The toggle sets psram_min to exactly this value; its chip reads as the
+// friendly "can host a web server" claim instead of the raw MB threshold.
+const HOSTING_LANE_PSRAM_MIN = 2;
+
 function activeChips(query: ExplorerState["lastQuery"]): { key: string; label: string }[] {
   if (!query) return [];
   const source = (query.kind === "wizard" ? query.needs : query.filters) as Record<string, unknown>;
@@ -30,6 +34,12 @@ function activeChips(query: ExplorerState["lastQuery"]): { key: string; label: s
       if (value === true) return { key, label };
       if (key === "band") return { key, label: `${label}: ${String(value)} GHz` };
       if (key === "q") return { key, label: `"${String(value)}"` };
+      if (key === "psram_min") {
+        return value === HOSTING_LANE_PSRAM_MIN
+          ? { key, label: "Can host a web server" }
+          : { key, label: `PSRAM >= ${String(value)} MB` };
+      }
+      if (key === "flash_min") return { key, label: `Flash >= ${String(value)} MB` };
       return { key, label: `${label}: ${String(value)}` };
     });
 }

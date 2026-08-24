@@ -4,6 +4,7 @@ type: board
 brand: espressif
 name: ESP-WROVER-KIT
 soc: esp32
+psram_mb: 8
 form_factor: devkit
 price_tier: medium
 usb:

@@ -4,6 +4,8 @@ type: board
 brand: espressif
 name: ESP32-S3-DevKitM-1
 soc: esp32-s3
+flash_mb: 8
+psram_mb: 0
 form_factor: devkit
 price_tier: cheap
 usb:

@@ -4,6 +4,8 @@ type: board
 brand: adafruit
 name: Adafruit ItsyBitsy ESP32 - PCB Antenna (8MB Flash 2MB PSRAM)
 soc: esp32
+flash_mb: 8
+psram_mb: 2
 form_factor: itsybitsy
 price_tier: cheap
 dimensions_mm:

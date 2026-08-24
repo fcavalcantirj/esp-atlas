@@ -4,6 +4,8 @@ type: board
 brand: sparkfun
 name: SparkFun ESP32 Thing
 soc: esp32
+flash_mb: 4
+psram_mb: 0
 form_factor: devkit
 price_tier: medium
 dimensions_mm:
@@ -18,10 +20,14 @@ notes:
 - 4 MB flash
 - 28 GPIO pins broken out; 10-electrode capacitive touch support
 - 'Integrated LiPo battery charger confirmed on product page; battery connector presence not separately confirmed, so battery_connector is omitted'
+- ESP32-D0WDQ6-V3 chip (per SparkFun's own board docs); this chip variant has no PSRAM per Espressif's ESP32 series ordering table
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-esp32-thing.html
   verified: '2026-08-22'
+- field: psram_mb
+  url: https://documentation.espressif.com/esp32_datasheet_en.html
+  verified: '2026-08-24'
 - field: usb
   url: https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide/all
   verified: '2026-08-22'

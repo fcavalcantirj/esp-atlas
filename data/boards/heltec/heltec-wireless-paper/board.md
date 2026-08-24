@@ -4,6 +4,8 @@ type: board
 brand: heltec
 name: Wireless Paper
 soc: esp32-s3
+flash_mb: 8
+psram_mb: 0
 form_factor: heltec
 price_tier: cheap
 dimensions_mm:
@@ -24,10 +26,17 @@ notes:
 - ESP32-S3FN8
 - SX1262 LoRa transceiver, user-selectable 433/470-510/863-870/902-928 MHz bands
 - E-Ink image persists ~180 days without power; drag-and-drop BMP refresh
+- ESP32-S3FN8 ordering code is 8 MB in-package flash with no PSRAM, per Espressif's ESP32-S3 series datasheet
 sources:
 - field: '*'
   url: https://heltec.org/project/wireless-paper/
   verified: '2026-08-22'
+- field: flash_mb
+  url: https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf
+  verified: '2026-08-24'
+- field: psram_mb
+  url: https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf
+  verified: '2026-08-24'
 ---
 
 # Wireless Paper

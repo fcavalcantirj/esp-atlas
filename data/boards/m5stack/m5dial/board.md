@@ -4,6 +4,8 @@ type: board
 brand: m5stack
 name: Dial
 soc: esp32-s3
+flash_mb: 8
+psram_mb: 0
 form_factor: m5-dial
 price_tier: medium
 dimensions_mm:
@@ -22,7 +24,7 @@ extras:
 - touch
 - speaker
 notes:
-- ESP32-S3FN8; 8 MB flash, PSRAM not stated on the official page (omitted)
+- ESP32-S3FN8; 8 MB flash. ESP32-S3FN8 ordering code has no PSRAM, per Espressif's ESP32-S3 series datasheet
 - BM8563 RTC, WS1850S 13.56MHz RFID, rotary encoder (16 detents/64 pulses per rev),
   80dB buzzer, 1.25mm-2P battery connector with onboard charging circuit (battery
   sold separately), PORT.A/PORT.B GPIO expansion
@@ -30,6 +32,9 @@ sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/M5Dial
   verified: '2026-08-22'
+- field: psram_mb
+  url: https://docs.m5stack.com/en/core/M5Dial
+  verified: '2026-08-24'
 ---
 
 # Dial

@@ -4,6 +4,8 @@ type: board
 brand: espressif
 name: ESP32-C6-DevKitM-1
 soc: esp32-c6
+flash_mb: 4
+psram_mb: 0
 form_factor: devkit
 price_tier: cheap
 usb:

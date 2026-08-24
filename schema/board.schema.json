@@ -18,6 +18,8 @@
     "aka": { "type": "array", "items": { "type": "string" } },
     "module": { "type": "string", "description": "id of the module it uses (must exist in data/modules/)" },
     "soc": { "type": "string", "description": "id of the SoC, when the board uses a bare chip (must exist in data/socs/)" },
+    "flash_mb": { "type": "number" },
+    "psram_mb": { "type": "number" },
     "form_factor": { "type": "string" },
     "price_tier": {
       "enum": ["cheap", "medium", "expensive"],

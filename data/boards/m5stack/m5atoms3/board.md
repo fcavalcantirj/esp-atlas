@@ -4,6 +4,8 @@ type: board
 brand: m5stack
 name: AtomS3
 soc: esp32-s3
+flash_mb: 8
+psram_mb: 0
 form_factor: m5-atom
 price_tier: cheap
 dimensions_mm:

@@ -94,6 +94,47 @@ def test_validate_frontmatter_board_price_tier_is_optional(board_fm):
     assert result == {"ok": True, "errors": []}
 
 
+def test_validate_frontmatter_board_flash_mb_psram_mb_valid_passes(board_fm):
+    fm = copy.deepcopy(board_fm)
+    fm["flash_mb"] = 8
+    fm["psram_mb"] = 2
+    result = validate_frontmatter(fm, "board")
+    assert result == {"ok": True, "errors": []}
+
+
+def test_validate_frontmatter_board_psram_mb_zero_valid_passes(board_fm):
+    fm = copy.deepcopy(board_fm)
+    fm["psram_mb"] = 0
+    result = validate_frontmatter(fm, "board")
+    assert result == {"ok": True, "errors": []}
+
+
+def test_validate_frontmatter_board_flash_mb_psram_mb_are_optional(board_fm):
+    fm = copy.deepcopy(board_fm)
+    fm.pop("flash_mb", None)
+    fm.pop("psram_mb", None)
+    result = validate_frontmatter(fm, "board")
+    assert result == {"ok": True, "errors": []}
+
+
+def test_validate_frontmatter_board_flash_mb_rejects_non_numeric(board_fm):
+    fm = copy.deepcopy(board_fm)
+    fm["flash_mb"] = "8 MB"
+    result = validate_frontmatter(fm, "board")
+    assert result["ok"] is False
+    assert result["errors"]
+
+
+def test_validate_file_seeded_board_with_flash_and_psram_round_trips():
+    path = REPO_ROOT / "data" / "boards" / "m5stack" / "m5cardputer" / "board.md"
+    result = validate_file(path)
+    assert result == {"ok": True, "errors": [], "kind": "board"}
+
+    fm, _body = parse_frontmatter(path)
+    assert fm["flash_mb"] == 8
+    assert fm["psram_mb"] == 0
+
+
 def test_validate_frontmatter_board_unknown_module_ref_fails(board_fm):
     fm = copy.deepcopy(board_fm)
     fm["module"] = "does-not-exist-anywhere"

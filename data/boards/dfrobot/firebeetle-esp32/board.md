@@ -4,6 +4,8 @@ type: board
 brand: dfrobot
 name: DFRobot FireBeetle ESP32
 soc: esp32
+flash_mb: 16
+psram_mb: 0
 form_factor: firebeetle
 price_tier: cheap
 dimensions_mm:
@@ -21,10 +23,14 @@ notes:
 - CH340 USB-to-serial bridge (driver install required)
 - Onboard microSD slot
 - Dual-Core ESP-WROOM-32 module
+- ESP32-WROOM-32/32D/32U modules only ever shipped in non-PSRAM ordering codes (no R-suffix variant exists in Espressif's datasheets)
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr0478/
   verified: '2026-08-22'
+- field: psram_mb
+  url: https://documentation.espressif.com/esp32-wroom-32d_esp32-wroom-32u_datasheet_en.html
+  verified: '2026-08-24'
 ---
 
 # DFRobot FireBeetle ESP32

@@ -23,6 +23,8 @@ from esp_atlas_core.wizard import wizard  # noqa: E402
 
 # Same fixed set as the oracle test's "no dead options" invariant.
 _BUDGET_TIERS = ("cheap", "medium", "expensive")
+_PSRAM_MIN_TIERS = (2, 4, 8)
+_FLASH_MIN_TIERS = (4, 8, 16)
 
 
 def _enumerate_options(db_path):
@@ -42,6 +44,8 @@ def _enumerate_options(db_path):
         + [("band", float(b)) for b in sorted(wifi_bands, key=float)]
         + [("budget", tier) for tier in _BUDGET_TIERS]
         + [("ieee802154", True), ("usb_native", True)]
+        + [("psram_min", t) for t in _PSRAM_MIN_TIERS]
+        + [("flash_min", t) for t in _FLASH_MIN_TIERS]
     )
 
 

@@ -41,6 +41,18 @@ carries `brand_name`/`brand_url`, resolved from this lookup — the raw slug
 user-facing label anywhere on the site (part pages, result cards, page
 titles, OG images, JSON-LD, brand browse chips) renders it directly.
 
+**Board memory (`flash_mb`/`psram_mb`):** most boards don't reference a `module`
+record — they state flash/PSRAM as free-text in `notes:` instead, which made memory
+unqueryable. `schema/board.schema.json` mirrors the module schema's optional
+`flash_mb`/`psram_mb` numeric fields directly on `board`, so a board can carry a
+structured memory size without requiring a `module` link. Like every hard spec, a
+value is set only when the board's own notes/source state it explicitly — never
+inferred from chip/board name (e.g. "ESP32-S3" does not imply 8 MB PSRAM).
+`psram_mb: 0` means the source explicitly says no PSRAM; the field is omitted
+entirely when PSRAM is simply not mentioned. For a module-linked board, the value
+comes from the linked module's resolved flash/PSRAM unless the board's own notes
+state a different, more specific variant.
+
 **Exception — `price_tier`:** boards may optionally carry `price_tier:
 cheap|medium|expensive`, an **approximate, editorial** street-price bucket,
 set by hand and never cited to a `sources:` entry. It powers the wizard's

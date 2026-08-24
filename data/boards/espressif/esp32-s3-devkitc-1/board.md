@@ -4,6 +4,8 @@ type: board
 brand: espressif
 name: ESP32-S3-DevKitC-1
 module: esp32-s3-wroom-1
+flash_mb: 4
+psram_mb: 0
 form_factor: devkit
 price_tier: medium
 usb:

@@ -36,8 +36,10 @@ def build_index_cmd(ctx):
 @click.option("--type", "type_", default=None, type=click.Choice(["soc", "module", "board"]))
 @click.option("--soc", default=None, help="Only parts built on this SoC id, e.g. esp32-c6")
 @click.option("--brand", default=None, help="Only parts from this vendor/brand slug, e.g. adafruit")
+@click.option("--psram-min", "psram_min", default=None, type=int, help="Minimum PSRAM in MB (excludes unknown-PSRAM parts)")
+@click.option("--flash-min", "flash_min", default=None, type=int, help="Minimum flash in MB (excludes unknown-flash parts)")
 @click.pass_context
-def search(ctx, query, radio, band, form, protocol, type_, soc, brand):
+def search(ctx, query, radio, band, form, protocol, type_, soc, brand, psram_min, flash_min):
     """Search the esp-atlas dataset (structured filters + free-text)."""
     filters = {}
     if radio:
@@ -54,6 +56,10 @@ def search(ctx, query, radio, band, form, protocol, type_, soc, brand):
         filters["soc"] = soc
     if brand:
         filters["brand"] = brand
+    if psram_min:
+        filters["psram_min"] = psram_min
+    if flash_min:
+        filters["flash_min"] = flash_min
 
     try:
         results = core_search(query, filters=filters, db_path=ctx.obj["db_path"])
@@ -77,6 +83,10 @@ def _print_records(results):
             specs.append(f"802.15.4={r['ieee802154_protocols'] or 'yes'}")
         if r["form_factor"]:
             specs.append(f"form={r['form_factor']}")
+        if r["flash_mb"] is not None:
+            specs.append(f"flash={r['flash_mb']}MB")
+        if r["psram_mb"] is not None:
+            specs.append(f"psram={r['psram_mb']}MB")
         if specs:
             click.echo("    " + ", ".join(specs))
         click.echo(f"    {r['_path']}")
@@ -95,11 +105,13 @@ def _print_records(results):
     type=click.Choice(["cheap", "medium", "expensive"]),
     help="spending ceiling against each board's editorial price_tier",
 )
+@click.option("--psram-min", "psram_min", default=None, type=int, help="Minimum PSRAM in MB (excludes unknown-PSRAM boards)")
+@click.option("--flash-min", "flash_min", default=None, type=int, help="Minimum flash in MB (excludes unknown-flash boards)")
 @click.option("--guided/--no-guided", default=None, help="Force (or skip) interactive prompts")
 @click.pass_context
-def wizard(ctx, protocol, radio, band, usb_native, form, type_, budget, guided):
+def wizard(ctx, protocol, radio, band, usb_native, form, type_, budget, psram_min, flash_min, guided):
     """Guided or flag-driven part recommendation. Deterministic, no LLM."""
-    any_flag = any([protocol, radio, band is not None, usb_native, form, type_, budget])
+    any_flag = any([protocol, radio, band is not None, usb_native, form, type_, budget, psram_min, flash_min])
     if guided or (guided is None and not any_flag):
         needs = _prompt_needs()
     else:
@@ -118,6 +130,10 @@ def wizard(ctx, protocol, radio, band, usb_native, form, type_, budget, guided):
             needs["type"] = type_
         if budget:
             needs["budget"] = budget
+        if psram_min:
+            needs["psram_min"] = psram_min
+        if flash_min:
+            needs["flash_min"] = flash_min
 
     try:
         results = core_wizard(needs, db_path=ctx.obj["db_path"])

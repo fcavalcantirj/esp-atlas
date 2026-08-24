@@ -4,6 +4,8 @@ type: board
 brand: lilygo
 name: T-Beam
 soc: esp32
+flash_mb: 4
+psram_mb: 8
 form_factor: t-beam
 price_tier: medium
 usb:

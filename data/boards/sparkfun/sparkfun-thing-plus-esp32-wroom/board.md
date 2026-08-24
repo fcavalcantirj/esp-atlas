@@ -4,6 +4,8 @@ type: board
 brand: sparkfun
 name: SparkFun Thing Plus - ESP32 WROOM (USB-C)
 soc: esp32
+flash_mb: 16
+psram_mb: 0
 form_factor: thing-plus
 price_tier: medium
 dimensions_mm:
@@ -24,6 +26,7 @@ notes:
 - Battery charging via onboard MCP73831 linear charge management controller (500mA max), JST connector for single-cell LiPo
 - Onboard MAX17048 LiPo fuel gauge for battery-level monitoring
 - Thing Plus form factor is pin-compatible with the Adafruit Feather footprint
+- SparkFun's hardware overview states the module core is the ESP32-D0WDQ6 chip, an NRND ESP32 variant with no PSRAM per Espressif's ESP32 series ordering table
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-thing-plus-esp32-wroom-usb-c.html
@@ -34,6 +37,9 @@ sources:
 - field: power
   url: https://docs.sparkfun.com/SparkFun_Thing_Plus_ESP32_WROOM_C/hardware_overview/
   verified: '2026-08-22'
+- field: psram_mb
+  url: https://docs.sparkfun.com/SparkFun_Thing_Plus_ESP32_WROOM_C/hardware_overview/
+  verified: '2026-08-24'
 ---
 
 # SparkFun Thing Plus - ESP32 WROOM (USB-C)

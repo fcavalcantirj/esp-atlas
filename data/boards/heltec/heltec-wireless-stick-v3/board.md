@@ -4,6 +4,8 @@ type: board
 brand: heltec
 name: Wireless Stick (V3)
 soc: esp32-s3
+flash_mb: 8
+psram_mb: 0
 form_factor: heltec
 price_tier: medium
 dimensions_mm:

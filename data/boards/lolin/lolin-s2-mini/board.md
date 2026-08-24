@@ -4,6 +4,8 @@ type: board
 brand: lolin
 name: LOLIN S2 mini
 soc: esp32-s2
+flash_mb: 4
+psram_mb: 2
 form_factor: lolin-mini
 price_tier: cheap
 dimensions_mm:
