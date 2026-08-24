@@ -5,7 +5,7 @@ this file pins the generator's shape: one firmware example per recipe-backed
 firmware, needs drawn only from KNOWN_NEEDS, counts that match the wizard, and
 deterministic output.
 """
-from esp_atlas_core.examples import generate_examples
+from esp_atlas_core.examples import GROUPS, RUN_FIRMWARE, generate_examples
 from esp_atlas_core.firmware import list_firmware, recipes_for_firmware
 from esp_atlas_core.wizard import KNOWN_NEEDS, wizard
 
@@ -53,6 +53,14 @@ def test_example_ids_and_labels_are_unique_and_non_empty(built_db_path):
     assert all(ids) and all(labels)
     assert len(set(ids)) == len(ids)
     assert len(set(labels)) == len(labels)
+
+
+def test_every_example_carries_a_known_group(built_db_path):
+    """The three home shelves (SPEC-home-explorer §2) are decided here, not in the client."""
+    for e in generate_examples(db_path=built_db_path):
+        assert e["group"] in GROUPS, f"{e['id']} has unknown group {e['group']!r}"
+        if e["kind"] == "firmware":
+            assert e["group"] == RUN_FIRMWARE
 
 
 def test_generate_examples_is_deterministic(built_db_path):

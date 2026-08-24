@@ -3,7 +3,7 @@ import BrowseSection, { type BrowseItem } from "@/components/BrowseSection";
 import HomeView from "@/components/HomeView";
 import JsonLd from "@/components/JsonLd";
 import { fetchAllParts, fetchExamples, fetchFacets } from "@/lib/api-server";
-import { SITE_TAGLINE } from "@/lib/site";
+
 import { homeGraph } from "@/lib/structured-data";
 
 // Incremental static: the example chips and the browse links below the wizard
@@ -58,10 +58,10 @@ export default async function Home() {
     <main id="main" className="container container--wide" tabIndex={-1}>
       <JsonLd data={homeGraph()} />
       <div className="home-intro">
-        <h1>{SITE_TAGLINE}</h1>
+        <h1>What do you want to build?</h1>
         <p>
-          Every ESP32 SoC, module and dev board in one place, every spec cited to an official datasheet. Tell the wizard
-          what you need and get the parts that fit — nothing guessed, nothing invented.
+          Every ESP32 SoC, module and dev board in one place, every spec cited to an official datasheet. Say what you
+          want to build or run and get the parts that fit — nothing guessed, nothing invented.
         </p>
       </div>
       <HomeView examples={examples.status === "ok" ? examples.data.results : []} />

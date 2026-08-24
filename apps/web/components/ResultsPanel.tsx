@@ -6,57 +6,19 @@ import PartResultCard from "@/components/PartResultCard";
 import { track } from "@/lib/analytics";
 import type { Example, NeedsExample } from "@/lib/api";
 import type { ExplorerState } from "@/lib/explorer";
-
-const NEED_LABELS: Record<string, string> = {
-  form: "form factor",
-  budget: "budget",
-  ieee802154: "smart-home mesh",
-  usb_native: "native USB",
-  radio: "Wi-Fi",
-  band: "band",
-  type: "type",
-  protocol: "protocol",
-  ble: "BLE",
-  bt_classic: "BT Classic",
-  q: "text",
-  soc: "SoC",
-  module: "module",
-};
-
-// The toggle sets psram_min to exactly this value; its chip reads as the
-// friendly "can host a web server" claim instead of the raw MB threshold.
-const HOSTING_LANE_PSRAM_MIN = 2;
-
-function activeChips(query: ExplorerState["lastQuery"]): { key: string; label: string }[] {
-  if (!query) return [];
-  const source = (query.kind === "wizard" ? query.needs : query.filters) as Record<string, unknown>;
-  return Object.entries(source)
-    .filter(([, value]) => value !== undefined && value !== "" && value !== false && value !== null)
-    .map(([key, value]) => {
-      const label = NEED_LABELS[key] ?? key;
-      if (value === true) return { key, label };
-      if (key === "band") return { key, label: `${label}: ${String(value)} GHz` };
-      if (key === "q") return { key, label: `"${String(value)}"` };
-      if (key === "psram_min") {
-        return value === HOSTING_LANE_PSRAM_MIN
-          ? { key, label: "Can host a web server" }
-          : { key, label: `PSRAM >= ${String(value)} MB` };
-      }
-      if (key === "flash_min") return { key, label: `Flash >= ${String(value)} MB` };
-      return { key, label: `${label}: ${String(value)}` };
-    });
-}
+import { activeChips } from "@/lib/need-labels";
 
 interface ResultsPanelProps {
   state: ExplorerState;
-  examples: Example[];
+  /** Optional soft start shown before the first query; the home renders its own grid instead. */
+  examples?: Example[];
   onExample: (example: NeedsExample) => void;
   onRelax: (key: string) => void;
   onClear: () => void;
   ref?: Ref<HTMLElement>;
 }
 
-export default function ResultsPanel({ state, examples, onExample, onRelax, onClear, ref }: ResultsPanelProps) {
+export default function ResultsPanel({ state, examples = [], onExample, onRelax, onClear, ref }: ResultsPanelProps) {
   const { results, loading, error, lastQuery } = state;
   const origin = lastQuery?.kind ?? null;
   const chips = activeChips(lastQuery);

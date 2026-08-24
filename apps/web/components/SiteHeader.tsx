@@ -12,7 +12,7 @@ export default function SiteHeader() {
           <span className="site-logo-text">{SITE_NAME}</span>
         </Link>
         <nav className="site-nav" aria-label="Primary">
-          <Link href="/" className="nav-link">
+          <Link href="/wizard" className="nav-link">
             Wizard
           </Link>
           <Link href="/compare" className="nav-link">
