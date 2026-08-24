@@ -100,6 +100,9 @@ def _row_for(content_type, path, fm, body, soc_by_id, module_by_id):
         "usb_native": _bool_to_int(_resolve_usb_native(content_type, fm, soc_fm)),
         "flash_mb": flash_mb,
         "psram_mb": psram_mb,
+        # A battery connector is the closest thing the dataset has to "runs off
+        # a battery", and it is stated per board rather than inherited.
+        "battery": _bool_to_int((fm.get("power") or {}).get("battery_connector")),
         "path": str(path.relative_to(REPO_ROOT)),
         "sources_json": _json_dumps(fm.get("sources") or []),
         "frontmatter_json": _json_dumps(fm),
@@ -158,12 +161,12 @@ def build_index(db_path=None, data_dir=None):
                     id, type, vendor_or_brand, name, wifi_standard, wifi_bands,
                     ble_version, bt_classic, ieee802154, ieee802154_protocols,
                     form_factor, price_tier, soc_ref, module_ref, usb_native, path, sources_json,
-                    frontmatter_json, body, flash_mb, psram_mb
+                    frontmatter_json, body, flash_mb, psram_mb, battery
                 ) VALUES (
                     :id, :type, :vendor_or_brand, :name, :wifi_standard, :wifi_bands,
                     :ble_version, :bt_classic, :ieee802154, :ieee802154_protocols,
                     :form_factor, :price_tier, :soc_ref, :module_ref, :usb_native, :path, :sources_json,
-                    :frontmatter_json, :body, :flash_mb, :psram_mb
+                    :frontmatter_json, :body, :flash_mb, :psram_mb, :battery
                 )
                 """,
                 row,

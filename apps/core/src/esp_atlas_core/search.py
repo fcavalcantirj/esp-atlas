@@ -20,7 +20,7 @@ from esp_atlas_core import db as dbmod
 from esp_atlas_core.brands import get_brand, list_brands
 
 # CLI/public filter key -> parts column (or handler) it maps to
-_BOOL_FILTERS = {"ieee802154", "ble", "bt_classic", "usb_native"}
+_BOOL_FILTERS = {"ieee802154", "ble", "bt_classic", "usb_native", "battery"}
 _EXACT_FILTERS = {"type", "form", "soc", "module", "brand"}
 _KNOWN_FILTERS = _BOOL_FILTERS | _EXACT_FILTERS | {"band", "protocol", "radio", "psram_min", "flash_min"}
 
@@ -100,6 +100,12 @@ def _build_where(filters):
     if "usb_native" in filters:
         clauses.append("parts.usb_native = ?")
         params.append(1 if filters["usb_native"] else 0)
+    if "battery" in filters:
+        # A board whose power block says nothing cannot be proven either way, so
+        # NULL matches neither true nor false -- the same unknown-exclusion rule
+        # psram_min/flash_min follow (SPEC-hosting-lane).
+        clauses.append("parts.battery = ?")
+        params.append(1 if filters["battery"] else 0)
     if filters.get("psram_min"):  # a 0/None floor imposes no filter -- every part passes, unknowns included
         clauses.append("parts.psram_mb >= ?")
         params.append(filters["psram_min"])

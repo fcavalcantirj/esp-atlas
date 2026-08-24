@@ -2193,3 +2193,33 @@ input[type="checkbox"]:checked::after {
   margin-top: 0.15rem;
   color: var(--accent);
 }
+
+/* What the intent box understood, shown beside the results so a wrong parse is
+   visible and correctable rather than mysterious. */
+.intent-parse {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.intent-parse-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+}
+
+.intent-parse-label {
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.intent-parse-note {
+  margin: 0;
+  font-size: var(--t-sm);
+  color: var(--muted);
+}
