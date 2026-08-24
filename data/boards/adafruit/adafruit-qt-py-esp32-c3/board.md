@@ -4,6 +4,7 @@ type: board
 brand: adafruit
 name: Adafruit QT Py ESP32-C3 WiFi Dev Board with STEMMA QT
 soc: esp32-c3
+flash_mb: 4
 form_factor: qt-py
 price_tier: cheap
 dimensions_mm:

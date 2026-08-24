@@ -4,6 +4,8 @@ type: board
 brand: adafruit
 name: Adafruit QT Py ESP32-S3 WiFi Dev Board with STEMMA QT (8MB Flash No PSRAM)
 soc: esp32-s3
+flash_mb: 8
+psram_mb: 0
 form_factor: qt-py
 price_tier: cheap
 dimensions_mm:

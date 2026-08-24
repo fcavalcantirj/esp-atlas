@@ -4,6 +4,7 @@ type: board
 brand: soldered
 name: Inkplate 2
 soc: esp32
+flash_mb: 4
 form_factor: inkplate
 price_tier: cheap
 dimensions_mm:

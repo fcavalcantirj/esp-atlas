@@ -4,6 +4,8 @@ type: board
 brand: espressif
 name: ESP32-PICO-KIT
 soc: esp32
+flash_mb: 4
+psram_mb: 0
 form_factor: devkit
 price_tier: cheap
 dimensions_mm:

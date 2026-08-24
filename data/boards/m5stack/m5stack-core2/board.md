@@ -4,6 +4,8 @@ type: board
 brand: m5stack
 name: Core2
 soc: esp32
+flash_mb: 16
+psram_mb: 8
 form_factor: m5-core
 price_tier: medium
 dimensions_mm:

@@ -4,6 +4,8 @@ type: board
 brand: lilygo
 name: T-QT Pro
 soc: esp32-s3
+flash_mb: 4
+psram_mb: 2
 form_factor: t-qt
 price_tier: cheap
 power:

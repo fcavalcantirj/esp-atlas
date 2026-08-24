@@ -4,6 +4,7 @@ type: board
 brand: sparkfun
 name: SparkFun Thing Plus - ESP32-S2 WROOM
 soc: esp32-s2
+flash_mb: 4
 form_factor: thing-plus
 price_tier: medium
 dimensions_mm:

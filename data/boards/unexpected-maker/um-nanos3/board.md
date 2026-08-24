@@ -4,6 +4,8 @@ type: board
 brand: unexpected-maker
 name: Unexpected Maker NanoS3
 soc: esp32-s3
+flash_mb: 8
+psram_mb: 8
 form_factor: nanos3
 price_tier: medium
 dimensions_mm:

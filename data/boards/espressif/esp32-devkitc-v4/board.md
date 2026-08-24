@@ -4,6 +4,8 @@ type: board
 brand: espressif
 name: ESP32-DevKitC V4
 module: esp32-wroom-32e
+flash_mb: 4
+psram_mb: 0
 form_factor: devkit
 price_tier: cheap
 usb:

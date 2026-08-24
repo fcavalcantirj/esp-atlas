@@ -4,6 +4,7 @@ type: board
 brand: sparkfun
 name: SparkFun Thing Plus - ESP32 WROOM (USB-C)
 soc: esp32
+flash_mb: 16
 form_factor: thing-plus
 price_tier: medium
 dimensions_mm:

@@ -4,6 +4,8 @@ type: board
 brand: adafruit
 name: Adafruit QT Py ESP32-S2 WiFi Dev Board with STEMMA QT
 soc: esp32-s2
+flash_mb: 4
+psram_mb: 2
 form_factor: qt-py
 price_tier: cheap
 dimensions_mm:

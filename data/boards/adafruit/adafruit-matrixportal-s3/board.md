@@ -4,6 +4,8 @@ type: board
 brand: adafruit
 name: Adafruit MatrixPortal S3
 soc: esp32-s3
+flash_mb: 8
+psram_mb: 2
 form_factor: matrixportal
 price_tier: medium
 dimensions_mm:

@@ -4,6 +4,7 @@ type: board
 brand: m5stack
 name: NanoC6
 soc: esp32-c6
+flash_mb: 4
 form_factor: m5-nano
 price_tier: cheap
 dimensions_mm:

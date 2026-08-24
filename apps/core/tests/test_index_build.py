@@ -1,3 +1,4 @@
+import json
 import sqlite3
 
 from esp_atlas_core.index_build import build_index
@@ -104,6 +105,29 @@ def test_build_index_resolves_board_radios_via_direct_soc(tmp_path):
     assert row["module_ref"] is None
     assert row["wifi_standard"] == "wifi-4"
     assert bool(row["ieee802154"]) is False
+
+
+def test_build_index_board_flash_mb_psram_mb_round_trip_via_frontmatter_json(tmp_path):
+    db_path = tmp_path / "esp-atlas.db"
+    build_index(db_path=db_path)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    row = conn.execute("SELECT * FROM parts WHERE id = 'm5cardputer'").fetchone()
+    assert row["type"] == "board"
+    fm = json.loads(row["frontmatter_json"])
+    assert fm["flash_mb"] == 8
+    assert fm["psram_mb"] == 0
+
+
+def test_build_index_board_without_flash_mb_omits_it_from_frontmatter_json(tmp_path):
+    db_path = tmp_path / "esp-atlas.db"
+    build_index(db_path=db_path)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    row = conn.execute("SELECT * FROM parts WHERE id = 'soldered-inkplate-10'").fetchone()
+    fm = json.loads(row["frontmatter_json"])
+    assert "flash_mb" not in fm
+    assert "psram_mb" not in fm
 
 
 def test_build_index_resolves_board_price_tier_when_set(tmp_path):

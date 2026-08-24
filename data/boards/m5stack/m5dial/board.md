@@ -4,6 +4,7 @@ type: board
 brand: m5stack
 name: Dial
 soc: esp32-s3
+flash_mb: 8
 form_factor: m5-dial
 price_tier: medium
 dimensions_mm:

@@ -4,6 +4,8 @@ type: board
 brand: adafruit
 name: Adafruit ESP32 Feather V2 (8MB Flash 2MB PSRAM)
 soc: esp32
+flash_mb: 8
+psram_mb: 2
 form_factor: feather
 price_tier: medium
 dimensions_mm:

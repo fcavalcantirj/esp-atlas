@@ -4,6 +4,7 @@ type: board
 brand: dfrobot
 name: DFRobot Beetle ESP32-C3
 soc: esp32-c3
+flash_mb: 4
 form_factor: beetle
 price_tier: cheap
 dimensions_mm:

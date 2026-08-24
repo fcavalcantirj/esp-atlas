@@ -4,6 +4,8 @@ type: board
 brand: m5stack
 name: M5StickS3
 soc: esp32-s3
+flash_mb: 8
+psram_mb: 8
 form_factor: m5-stick
 usb:
   connector: usb-c

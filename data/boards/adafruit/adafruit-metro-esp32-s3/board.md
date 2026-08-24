@@ -4,6 +4,8 @@ type: board
 brand: adafruit
 name: Adafruit Metro ESP32-S3 (16MB Flash 8MB PSRAM)
 soc: esp32-s3
+flash_mb: 16
+psram_mb: 8
 form_factor: metro
 price_tier: medium
 usb:

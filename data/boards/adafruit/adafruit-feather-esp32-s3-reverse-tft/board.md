@@ -4,6 +4,8 @@ type: board
 brand: adafruit
 name: Adafruit ESP32-S3 Reverse TFT Feather (4MB Flash 2MB PSRAM)
 soc: esp32-s3
+flash_mb: 4
+psram_mb: 2
 form_factor: feather
 price_tier: medium
 usb:

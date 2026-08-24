@@ -4,6 +4,7 @@ type: board
 brand: lilygo
 name: T-Dongle-S3
 soc: esp32-s3
+flash_mb: 16
 form_factor: t-dongle
 price_tier: cheap
 display: 0.96in 80x160 ST7735 IPS

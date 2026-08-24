@@ -4,6 +4,8 @@ type: board
 brand: espressif
 name: ESP32-S2-DevKitC-1
 soc: esp32-s2
+flash_mb: 8
+psram_mb: 2
 form_factor: devkit
 price_tier: cheap
 usb:

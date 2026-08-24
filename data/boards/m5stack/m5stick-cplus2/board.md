@@ -4,6 +4,8 @@ type: board
 brand: m5stack
 name: StickC-Plus2
 soc: esp32
+flash_mb: 8
+psram_mb: 2
 form_factor: m5-stick
 price_tier: medium
 dimensions_mm:

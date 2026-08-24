@@ -4,6 +4,7 @@ type: board
 brand: lolin
 name: LOLIN D32
 soc: esp32
+flash_mb: 4
 form_factor: devkit
 price_tier: cheap
 dimensions_mm:

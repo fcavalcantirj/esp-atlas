@@ -4,6 +4,8 @@ type: board
 brand: lilygo
 name: T-Watch S3
 soc: esp32-s3
+flash_mb: 16
+psram_mb: 8
 form_factor: t-watch
 price_tier: medium
 extras:

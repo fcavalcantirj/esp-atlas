@@ -4,6 +4,7 @@ type: board
 brand: sparkfun
 name: SparkFun ESP32 Thing
 soc: esp32
+flash_mb: 4
 form_factor: devkit
 price_tier: medium
 dimensions_mm:

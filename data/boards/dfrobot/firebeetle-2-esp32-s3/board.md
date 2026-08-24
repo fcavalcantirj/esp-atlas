@@ -4,6 +4,8 @@ type: board
 brand: dfrobot
 name: DFRobot FireBeetle 2 ESP32-S3
 soc: esp32-s3
+flash_mb: 16
+psram_mb: 8
 form_factor: firebeetle
 price_tier: medium
 dimensions_mm:

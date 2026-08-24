@@ -4,6 +4,7 @@ type: board
 brand: m5stack
 name: Atom-Lite
 soc: esp32
+flash_mb: 4
 form_factor: m5-atom
 price_tier: cheap
 dimensions_mm:

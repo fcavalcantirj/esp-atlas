@@ -4,6 +4,7 @@ type: board
 brand: lolin
 name: LOLIN C3 mini
 soc: esp32-c3
+flash_mb: 4
 form_factor: lolin-mini
 price_tier: cheap
 dimensions_mm:

@@ -4,6 +4,7 @@ type: board
 brand: sparkfun
 name: SparkFun MicroMod ESP32 Processor
 soc: esp32
+flash_mb: 16
 form_factor: micromod
 price_tier: cheap
 dimensions_mm:

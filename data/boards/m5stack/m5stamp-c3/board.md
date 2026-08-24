@@ -4,6 +4,7 @@ type: board
 brand: m5stack
 name: Stamp-C3
 soc: esp32-c3
+flash_mb: 4
 form_factor: m5-stamp
 price_tier: cheap
 dimensions_mm:
