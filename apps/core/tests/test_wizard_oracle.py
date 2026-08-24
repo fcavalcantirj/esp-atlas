@@ -22,6 +22,11 @@ from esp_atlas_core.wizard import wizard
 # still be swept.
 _BUDGET_TIERS = ("cheap", "medium", "expensive")
 
+# Fixed by SPEC-hosting-lane.md's UI dropdowns -- not derived from data, same
+# reasoning as _BUDGET_TIERS above.
+_PSRAM_MIN_TIERS = (2, 4, 8)
+_FLASH_MIN_TIERS = (4, 8, 16)
+
 
 @pytest.fixture(scope="module")
 def all_records(built_db_path):
@@ -83,6 +88,28 @@ def test_band_2_4_is_superset_of_band_5(built_db_path):
     )
 
 
+def test_psram_min_is_superset_monotonic(built_db_path):
+    failures = []
+    for lo, hi in zip(_PSRAM_MIN_TIERS, _PSRAM_MIN_TIERS[1:]):
+        lo_ids = _ids(wizard({"psram_min": lo}, db_path=built_db_path))
+        hi_ids = _ids(wizard({"psram_min": hi}, db_path=built_db_path))
+        missing = hi_ids - lo_ids
+        if missing:
+            failures.append(f"psram_min={lo} must be a superset of psram_min={hi}; missing ids: {sorted(missing)}")
+    assert not failures, "\n".join(failures)
+
+
+def test_flash_min_is_superset_monotonic(built_db_path):
+    failures = []
+    for lo, hi in zip(_FLASH_MIN_TIERS, _FLASH_MIN_TIERS[1:]):
+        lo_ids = _ids(wizard({"flash_min": lo}, db_path=built_db_path))
+        hi_ids = _ids(wizard({"flash_min": hi}, db_path=built_db_path))
+        missing = hi_ids - lo_ids
+        if missing:
+            failures.append(f"flash_min={lo} must be a superset of flash_min={hi}; missing ids: {sorted(missing)}")
+    assert not failures, "\n".join(failures)
+
+
 # ---------------------------------------------------------------------------
 # 2. Subset monotonicity: adding any single filter to any base query must
 #    never grow the result set.
@@ -99,6 +126,8 @@ def test_subset_monotonicity_adding_a_filter_never_grows_results(
         + [("band", float(b)) for b in wifi_bands]
         + [("budget", tier) for tier in _BUDGET_TIERS]
         + [("ieee802154", True), ("usb_native", True)]
+        + [("psram_min", t) for t in _PSRAM_MIN_TIERS]
+        + [("flash_min", t) for t in _FLASH_MIN_TIERS]
     )
     base_queries = [
         {},
@@ -145,6 +174,8 @@ def test_no_dead_wizard_options(
         + [({"budget": tier}, f"budget={tier}") for tier in _BUDGET_TIERS]
         + [({"ieee802154": True}, "ieee802154=True")]
         + [({"usb_native": True}, "usb_native=True")]
+        + [({"psram_min": t}, f"psram_min={t}") for t in _PSRAM_MIN_TIERS]
+        + [({"flash_min": t}, f"flash_min={t}") for t in _FLASH_MIN_TIERS]
     )
 
     dead = [label for need, label in options if not wizard(need, db_path=built_db_path)]
@@ -197,7 +228,27 @@ def test_soundness_every_result_satisfies_its_need(
 
 
 # ---------------------------------------------------------------------------
-# 5. Board<->SoC inheritance consistency: a board's derived radio capabilities
+# 5. Unknown-exclusion: a psram_min/flash_min floor above 0 must never return a
+#    part whose psram_mb/flash_mb is unknown (null) -- an unproven part is not
+#    a match, never a silent 0.
+# ---------------------------------------------------------------------------
+
+
+def test_psram_min_and_flash_min_exclude_unknown_memory(built_db_path):
+    failures = []
+    for t in _PSRAM_MIN_TIERS:
+        for r in wizard({"psram_min": t}, db_path=built_db_path):
+            if r["psram_mb"] is None:
+                failures.append(f"psram_min={t}: {r['id']} has unknown psram_mb but was returned")
+    for t in _FLASH_MIN_TIERS:
+        for r in wizard({"flash_min": t}, db_path=built_db_path):
+            if r["flash_mb"] is None:
+                failures.append(f"flash_min={t}: {r['id']} has unknown flash_mb but was returned")
+    assert not failures, "unknown-exclusion violations:\n" + "\n".join(failures)
+
+
+# ---------------------------------------------------------------------------
+# 6. Board<->SoC inheritance consistency: a board's derived radio capabilities
 #    must equal those of the SoC it (directly or via a module) references.
 # ---------------------------------------------------------------------------
 

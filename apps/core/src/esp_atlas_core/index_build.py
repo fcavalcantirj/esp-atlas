@@ -53,8 +53,27 @@ def _resolve_usb_native(content_type, fm, soc_fm):
     return soc_native
 
 
+def _resolve_memory(content_type, fm, module_fm):
+    """(flash_mb, psram_mb) per SPEC.md: a module's own value is authoritative for
+    itself; a board's own value wins, falling back to its linked module's resolved
+    value when the board states none. A soc carries neither -- out of scope."""
+    if content_type == "module":
+        return fm.get("flash_mb"), fm.get("psram_mb")
+    if content_type == "board":
+        flash_mb = fm.get("flash_mb")
+        if flash_mb is None:
+            flash_mb = module_fm.get("flash_mb")
+        psram_mb = fm.get("psram_mb")
+        if psram_mb is None:
+            psram_mb = module_fm.get("psram_mb")
+        return flash_mb, psram_mb
+    return None, None
+
+
 def _row_for(content_type, path, fm, body, soc_by_id, module_by_id):
     soc_fm, soc_id, module_id = _resolve_soc_and_module(content_type, fm, soc_by_id, module_by_id)
+    module_fm = module_by_id.get(module_id, {}) if module_id else {}
+    flash_mb, psram_mb = _resolve_memory(content_type, fm, module_fm)
     radios = soc_fm.get("radios") or {}
     wifi = radios.get("wifi") or {}
     bluetooth = radios.get("bluetooth") or {}
@@ -79,6 +98,8 @@ def _row_for(content_type, path, fm, body, soc_by_id, module_by_id):
         "soc_ref": soc_id,
         "module_ref": module_id,
         "usb_native": _bool_to_int(_resolve_usb_native(content_type, fm, soc_fm)),
+        "flash_mb": flash_mb,
+        "psram_mb": psram_mb,
         "path": str(path.relative_to(REPO_ROOT)),
         "sources_json": _json_dumps(fm.get("sources") or []),
         "frontmatter_json": _json_dumps(fm),
@@ -137,12 +158,12 @@ def build_index(db_path=None, data_dir=None):
                     id, type, vendor_or_brand, name, wifi_standard, wifi_bands,
                     ble_version, bt_classic, ieee802154, ieee802154_protocols,
                     form_factor, price_tier, soc_ref, module_ref, usb_native, path, sources_json,
-                    frontmatter_json, body
+                    frontmatter_json, body, flash_mb, psram_mb
                 ) VALUES (
                     :id, :type, :vendor_or_brand, :name, :wifi_standard, :wifi_bands,
                     :ble_version, :bt_classic, :ieee802154, :ieee802154_protocols,
                     :form_factor, :price_tier, :soc_ref, :module_ref, :usb_native, :path, :sources_json,
-                    :frontmatter_json, :body
+                    :frontmatter_json, :body, :flash_mb, :psram_mb
                 )
                 """,
                 row,

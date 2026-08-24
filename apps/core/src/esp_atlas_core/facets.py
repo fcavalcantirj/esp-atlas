@@ -12,6 +12,13 @@ value, and NULL/empty values are dropped.
 known) resolved from the `brands` table — see esp_atlas_core.brands — so a UI
 never has to render the raw folder slug. A slug with no data/brands/ record
 falls back to itself as the display name.
+
+`psram_min`/`flash_min` are different in kind: they are minimum-capability
+*tiers*, not exact values (see esp_atlas_core.search/wizard `psram_min`/
+`flash_min`), so each entry's `count` is how many parts clear that floor, not
+how many equal it. The candidate tiers are fixed by SPEC-hosting-lane.md, not
+derived from data — only the ones with >=1 matching part are returned, so the
+UI never offers a dead option.
 """
 from collections import Counter
 
@@ -29,7 +36,13 @@ _SINGLE_VALUE_COLUMNS = (
 )
 _MULTI_VALUE_COLUMNS = ("wifi_bands", "ieee802154_protocols")
 
-FACET_KEYS = _SINGLE_VALUE_COLUMNS + _MULTI_VALUE_COLUMNS
+# need key -> (column, candidate tiers in MB) -- fixed by SPEC-hosting-lane.md
+_MEMORY_MIN_TIERS = {
+    "psram_min": ("psram_mb", (2, 4, 8)),
+    "flash_min": ("flash_mb", (4, 8, 16)),
+}
+
+FACET_KEYS = _SINGLE_VALUE_COLUMNS + _MULTI_VALUE_COLUMNS + tuple(_MEMORY_MIN_TIERS)
 
 
 def _sorted_facet(counter):
@@ -54,6 +67,15 @@ def _enrich_vendor_or_brand(entries, conn):
     return entries
 
 
+def _memory_min_tiers(conn, column, tiers):
+    counter = {}
+    for tier in tiers:
+        count = conn.execute(f"SELECT COUNT(*) AS c FROM parts WHERE {column} >= ?", (tier,)).fetchone()["c"]
+        if count:
+            counter[tier] = count
+    return _sorted_facet(counter)
+
+
 def facets(db_path=None):
     conn = dbmod.connect(db_path)
     try:
@@ -76,6 +98,10 @@ def facets(db_path=None):
                     if token:
                         counter[token] += 1
             result[column] = _sorted_facet(counter)
+
+        for need_key, (column, tiers) in _MEMORY_MIN_TIERS.items():
+            result[need_key] = _memory_min_tiers(conn, column, tiers)
+
         return result
     finally:
         conn.close()

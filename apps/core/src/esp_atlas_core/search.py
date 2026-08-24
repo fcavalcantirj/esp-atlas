@@ -7,6 +7,11 @@
 compatible, so radio="wifi-4" also matches wifi-6 parts (e.g. ESP32-C6/C5), while
 radio="wifi-6" matches only wifi-6 parts. Parts with no Wi-Fi radio at all (e.g.
 ESP32-H2) never match any radio= request.
+
+`psram_min`/`flash_min` are likewise minimum-capability floors in MB: a part
+whose psram_mb/flash_mb is unknown (NULL) never matches a floor > 0, since an
+unknown value can't be proven to clear it. A floor of 0/None imposes no filter
+at all -- unknowns included, same as omitting the filter.
 """
 import json
 import re
@@ -17,7 +22,7 @@ from esp_atlas_core.brands import get_brand, list_brands
 # CLI/public filter key -> parts column (or handler) it maps to
 _BOOL_FILTERS = {"ieee802154", "ble", "bt_classic", "usb_native"}
 _EXACT_FILTERS = {"type", "form", "soc", "module", "brand"}
-_KNOWN_FILTERS = _BOOL_FILTERS | _EXACT_FILTERS | {"band", "protocol", "radio"}
+_KNOWN_FILTERS = _BOOL_FILTERS | _EXACT_FILTERS | {"band", "protocol", "radio", "psram_min", "flash_min"}
 
 _FTS_SPECIAL = re.compile(r'[^\w\s]')
 
@@ -95,6 +100,12 @@ def _build_where(filters):
     if "usb_native" in filters:
         clauses.append("parts.usb_native = ?")
         params.append(1 if filters["usb_native"] else 0)
+    if filters.get("psram_min"):  # a 0/None floor imposes no filter -- every part passes, unknowns included
+        clauses.append("parts.psram_mb >= ?")
+        params.append(filters["psram_min"])
+    if filters.get("flash_min"):
+        clauses.append("parts.flash_mb >= ?")
+        params.append(filters["flash_min"])
 
     return clauses, params
 
@@ -131,6 +142,8 @@ def _row_to_record(row, brands_lookup=None):
         "soc_ref": row["soc_ref"],
         "module_ref": row["module_ref"],
         "usb_native": None if row["usb_native"] is None else bool(row["usb_native"]),
+        "flash_mb": row["flash_mb"],
+        "psram_mb": row["psram_mb"],
         "_path": row["path"],
         "sources": json.loads(row["sources_json"]),
     }
