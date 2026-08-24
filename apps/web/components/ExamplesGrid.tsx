@@ -31,6 +31,7 @@ function ExampleCard({ example, onExample }: { example: Example; onExample: (e: 
         onClick={() => track("example_click", { example: example.id, kind: "firmware" })}
       >
         <span className="example-card-label">{example.label}</span>
+        {example.description && <span className="example-card-desc">{example.description}</span>}
         <span className="example-card-reason">
           Runs on {example.count} {example.count === 1 ? "board" : "boards"}
         </span>
