@@ -15,6 +15,8 @@ instead of relying on a human writing one more example test per regression.
 """
 import pytest
 
+from esp_atlas_core.examples import generate_examples
+from esp_atlas_core.firmware import recipes_for_firmware
 from esp_atlas_core.wizard import wizard
 
 # Fixed by wizard._BUDGET_TIERS / SPEC.md's price_tier field -- not derived
@@ -272,3 +274,29 @@ def test_board_soc_inheritance_consistency(all_records):
                     f"{soc_id} ({field}={soc[field]!r})"
                 )
     assert not mismatches, "board<->soc inheritance mismatches:\n" + "\n".join(mismatches)
+
+
+# ---------------------------------------------------------------------------
+# 7. No dead examples (SPEC-INDEX G7): every generated home example must
+#    resolve to at least one result -- a needs-example through the wizard, a
+#    firmware-example through its recipe list. The generator drops empty
+#    candidates by construction; this is the independent gate that keeps it
+#    honest as data changes.
+# ---------------------------------------------------------------------------
+
+
+def test_no_dead_examples_every_generated_example_resolves(built_db_path):
+    examples = generate_examples(db_path=built_db_path)
+    assert examples, "generate_examples returned nothing at all"
+
+    dead = []
+    for ex in examples:
+        if ex["kind"] == "needs":
+            if not wizard(ex["needs"], db_path=built_db_path):
+                dead.append(f"{ex['id']}: needs={ex['needs']} returns 0 wizard results")
+        elif ex["kind"] == "firmware":
+            if not recipes_for_firmware(ex["firmware"]):
+                dead.append(f"{ex['id']}: firmware={ex['firmware']} has 0 recipes")
+        else:
+            dead.append(f"{ex['id']}: unknown kind {ex['kind']!r}")
+    assert not dead, "dead example(s), 0 results:\n" + "\n".join(dead)

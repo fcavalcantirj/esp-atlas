@@ -69,7 +69,8 @@ values the user actually chose. Events:
 |---|---|
 | `wizard_submit` / `wizard_results` / `wizard_empty` | `form, budget, radio, band, type, ieee802154, usb_native, needs, needs_count, result_count` |
 | `search_submit` / `search_results` / `search_empty` | `q, type, radio, band, form, protocol, filters, filter_count, has_query, result_count` |
-| `preset_click`, `relax_filter` | `preset` · `removed_key, needs` |
+| `preset_click`, `relax_filter` | `preset` (compare page) · `removed_key, needs` |
+| `example_click` | `example, kind (firmware\|needs)` — a generated home example chip |
 | `result_click` | `part_id, part_type, origin (wizard\|search\|related\|compare\|browse\|brand), position` |
 | `part_view`, `chain_click` | `part_id, part_type, brand, soc_ref` · `from_id, to_id, relation` |
 | `compare_add` / `compare_remove` / `compare_view` / `compare_filter` | `part_id, selected_count` · `part_ids, count` · `q, type` |
@@ -82,7 +83,7 @@ Page views come from GA4 enhanced measurement (enable "page changes based on
 browser history events"). Custom parameters are only reportable after you
 register them in GA4 Admin → Custom definitions: dimensions `part_id, part_type,
 origin, q, needs, filters, form, budget, radio, band, protocol, type, field,
-theme, link_type, preset, relation, part_ids, removed_key, host`; metrics
+theme, link_type, preset, example, kind, relation, part_ids, removed_key, host`; metrics
 `result_count, position, scale, selected_count, needs_count, filter_count`.
 
 ## Layout

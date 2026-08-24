@@ -12,7 +12,8 @@ import {
 } from "@/lib/api";
 import { serializeNeeds, track } from "@/lib/analytics";
 import ResultsPanel from "@/components/ResultsPanel";
-import type { ExplorerState, Preset } from "@/lib/explorer";
+import type { Example, NeedsExample } from "@/lib/api";
+import type { ExplorerState } from "@/lib/explorer";
 import SearchBox from "@/components/SearchBox";
 import WizardForm from "@/components/WizardForm";
 
@@ -26,7 +27,7 @@ function reportApiError(endpoint: string, err: unknown) {
   track("api_error", { endpoint, status: err instanceof ApiError ? err.status : "network" });
 }
 
-export default function HomeView() {
+export default function HomeView({ examples }: { examples: Example[] }) {
   const [facets, setFacets] = useState<Facets | null>(null);
   const [needs, setNeeds] = useState<WizardNeeds>({});
   const [filters, setFilters] = useState<SearchFilters>({ q: "" });
@@ -108,10 +109,10 @@ export default function HomeView() {
     [scrollToResultsOnMobile],
   );
 
-  function onPreset(preset: Preset) {
-    track("preset_click", { preset: preset.id });
-    setNeeds(preset.needs);
-    void executeWizard(preset.needs);
+  function onExample(example: NeedsExample) {
+    track("example_click", { example: example.id, kind: "needs" });
+    setNeeds(example.needs);
+    void executeWizard(example.needs);
   }
 
   function onRelax(key: string) {
@@ -165,7 +166,7 @@ export default function HomeView() {
           />
         </section>
       </aside>
-      <ResultsPanel ref={resultsRef} state={state} onPreset={onPreset} onRelax={onRelax} onClear={onClear} />
+      <ResultsPanel ref={resultsRef} state={state} examples={examples} onExample={onExample} onRelax={onRelax} onClear={onClear} />
     </div>
   );
 }

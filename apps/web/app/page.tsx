@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import BrowseSection, { type BrowseItem } from "@/components/BrowseSection";
 import HomeView from "@/components/HomeView";
 import JsonLd from "@/components/JsonLd";
-import { fetchAllParts, fetchFacets } from "@/lib/api-server";
+import { fetchAllParts, fetchExamples, fetchFacets } from "@/lib/api-server";
 import { SITE_TAGLINE } from "@/lib/site";
 import { homeGraph } from "@/lib/structured-data";
 
-// Incremental static: the browse links below the wizard are rendered from the
-// API's facets (counts) and part list (names), both cached underneath, and the
+// Incremental static: the example chips and the browse links below the wizard
+// are rendered from the
+// API's examples, facets (counts) and part list (names), all cached underneath, and the
 // page is regenerated every five minutes. At build time the API is not running,
 // so the first static render omits the section; the first request after deploy
 // fills it in. Nothing here throws — a cold API degrades to "no browse links".
@@ -22,7 +23,7 @@ function pluralParts(n: number, where: string): string {
 }
 
 export default async function Home() {
-  const [facets, parts] = await Promise.all([fetchFacets(), fetchAllParts()]);
+  const [facets, parts, examples] = await Promise.all([fetchFacets(), fetchAllParts(), fetchExamples()]);
 
   // /facets.soc_ref is the core's count per chip (the chip's own record and its
   // modules included — hence "parts", never "boards"), already sorted by count;
@@ -63,7 +64,7 @@ export default async function Home() {
           what you need and get the parts that fit — nothing guessed, nothing invented.
         </p>
       </div>
-      <HomeView />
+      <HomeView examples={examples.status === "ok" ? examples.data.results : []} />
       <BrowseSection
         id="browse-chip"
         title="Browse by chip"

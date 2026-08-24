@@ -478,3 +478,26 @@ def test_list_recipes_unknown_board_returns_empty(client):
     r = client.get("/recipes", params={"board": "no-such-board"})
     assert r.status_code == 200
     assert r.json()["results"] == []
+
+
+def test_examples_endpoint_returns_resolvable_entries(client):
+    r = client.get("/examples")
+    assert r.status_code == 200
+    results = r.json()["results"]
+    assert results
+    for ex in results:
+        assert ex["count"] >= 1, ex["id"]
+        if ex["kind"] == "firmware":
+            assert ex["firmware"] and "needs" not in ex
+        else:
+            assert ex["kind"] == "needs"
+            assert ex["needs"] and "firmware" not in ex
+
+
+def test_examples_needs_round_trip_through_wizard(client):
+    for ex in client.get("/examples").json()["results"]:
+        if ex["kind"] != "needs":
+            continue
+        r = client.post("/wizard", json={"needs": ex["needs"]})
+        assert r.status_code == 200, (ex["id"], r.text)
+        assert r.json()["results"], f"{ex['id']}: needs round-trip returned 0 results"

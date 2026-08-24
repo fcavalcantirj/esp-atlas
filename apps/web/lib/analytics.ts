@@ -15,6 +15,7 @@ export type EventName =
   | "search_results"
   | "search_empty"
   | "preset_click"
+  | "example_click"
   | "relax_filter"
   | "result_click"
   | "part_view"
