@@ -190,6 +190,8 @@ export interface FirmwareExample {
   label: string;
   kind: "firmware";
   group: ExampleGroup;
+  /** What the firmware is, derived server-side from its category + capabilities. */
+  description?: string;
   firmware: string;
   count: number;
 }
