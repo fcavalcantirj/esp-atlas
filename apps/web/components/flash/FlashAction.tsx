@@ -96,7 +96,7 @@ function handoffReason(recipe: Recipe, handoff: FlashHandoff, failure: Preflight
       ? "This project ships its own web flasher; use it directly."
       : "This project ships its own flasher, which this recipe does not cite yet — start from the repository.";
   }
-  const status = failure.startsWith("http_") ? Number(failure.slice(5)) : null;
+  const status = failure === "manifest_404" ? 404 : failure.startsWith("http_") ? Number(failure.slice(5)) : null;
   if (method === "release-bin" && status === 404)
     return "esp-atlas has no in-browser manifest for this recipe — no verified binary is recorded, or the browser flasher does not support its chip. Use the project's own tools.";
   if (method === "esp-web-tools" && !recipe.flash?.manifest_url) return "This project publishes ESP Web Tools manifests, but this recipe does not cite one yet.";
