@@ -52,7 +52,7 @@ No hardcoded list, no taxonomy, no editorial "best of." The examples are
 **alive** — `f(data, signal, analytics)`:
 - **Sourced from N places:** our recipe graph (a real "Run &lt;firmware&gt;" per
   firmware) + external signal (awesome-esp32 lists, new firmware releases, trending
-  r/esp32) via the population/freshness cron.
+  r/esp32) authored by the **discovery adapter pack** (see `SPEC-discovery.md`).
 - **Ordered smartly:** by click-analytics (what people actually pick) + trending.
   Cold-start = neutral order until data accrues.
 - **Optional zero-inference entry: domain buckets** — *IoT · Gardening/sensors ·
@@ -68,13 +68,14 @@ room for assets · runs Bruce via keyboard+screen"). Reasons are derived from re
 fields — never generated prose. This is the teaching layer.
 
 ## 5. Live signal + analytics (the "smart, self-feeding" part)
-- **Click analytics:** rank chips by what users actually click; surface the
-  popular intents first. Cold-start = editorial order until data accrues.
-- **External-signal cron** (extends `SPEC-freshness.md` oracle-loop): a scheduled
-  job ingests *awesome-esp32* GitHub lists, new firmware releases, and trending
-  r/esp32 posts → proposes new firmware/intent chips as **PRs with citations**
-  (same gate: cited + live, human-merged). **No faked trending** — every
-  "trending"/"new" badge cites its source and timestamp.
+This section **consumes** the oracle-loop; it does not define it (see `SPEC-INDEX.md`).
+- **External signal** is authored by the **discovery adapter pack**
+  (`SPEC-discovery.md`) — awesome-esp32, new firmware releases, trending r/esp32 →
+  cited, human-merged records. This spec only **surfaces** them.
+- **Click analytics:** order examples by what users actually click; cold-start =
+  neutral order. ⚠ Global click-analytics needs a runtime store — an open
+  architecture decision vs SPEC.md's "no database" (see `SPEC-INDEX.md` §4). Does
+  not block L1/L2.
 
 ## 6. The flashing HUB (the differentiator)
 Almost no site crosses **all** the flashers. esp-atlas does:
