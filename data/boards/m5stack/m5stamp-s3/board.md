@@ -24,7 +24,7 @@ sources:
   url: https://docs.m5stack.com/en/core/stamps3
   verified: '2026-08-22'
 - field: psram_mb
-  url: https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf
+  url: https://docs.m5stack.com/en/core/StampS3
   verified: '2026-08-24'
 ---
 
