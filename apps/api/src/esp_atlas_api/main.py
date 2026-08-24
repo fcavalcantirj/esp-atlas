@@ -7,10 +7,14 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Optional
 
+import httpx
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 
 from esp_atlas_core import db as dbmod
+from esp_atlas_core.flash import bin_url_for as core_bin_url_for
+from esp_atlas_core.flash import build_manifest as core_build_manifest
 from esp_atlas_core.examples import generate_examples as core_generate_examples
 from esp_atlas_core.facets import facets as core_facets
 from esp_atlas_core.firmware import get_firmware as core_get_firmware
@@ -168,6 +172,77 @@ def create_app(db_path=None):
         if record is None:
             raise HTTPException(status_code=404, detail=f"part not found: {part_id}")
         return record
+
+    @app.get("/manifest/{recipe_id}.json")
+    def manifest(recipe_id: str, request: Request, db_path=Depends(get_db_path)):
+        """An ESP Web Tools manifest derived from the recipe (SPEC-wizard P3).
+
+        404 when the recipe cannot flash in-browser -- unknown, not a
+        `release-bin`, no binary recorded, or a chip ESP Web Tools has no
+        chipFamily for. The wizard falls back to a guided handoff on 404.
+        """
+        proxy_url = str(request.url_for("flash_bin"))
+        result = core_build_manifest(recipe_id, db_path=db_path, proxy_url=proxy_url)
+        if result is None:
+            raise HTTPException(status_code=404, detail=f"no in-browser manifest for recipe: {recipe_id}")
+        return result
+
+    @app.get("/flash-bin", name="flash_bin")
+    async def flash_bin(request: Request, recipe: str, part: Optional[int] = None):
+        """Stream an upstream firmware binary same-origin so ESP Web Tools can fetch it.
+
+        GitHub release assets send no Access-Control-Allow-Origin, so the browser
+        cannot fetch them from our page directly. This passes the bytes through
+        and stores nothing -- we transit, we do not rehost (SPEC-wizard).
+
+        Not an open proxy by construction: the caller names a *recipe*, and the
+        URL is resolved server-side from that record and re-checked against an
+        allowlist. There is no request shape that makes it fetch a caller-chosen
+        host, which is the whole SSRF surface.
+        """
+        url = core_bin_url_for(recipe, part=part)
+        if url is None:
+            raise HTTPException(status_code=403, detail="no allowlisted binary for that recipe")
+
+        # Range must survive in both directions: esptool-js reads the image in
+        # chunks, and a dropped Range would restart the flash from zero.
+        forwarded = {"Range": request.headers["range"]} if "range" in request.headers else {}
+        client = httpx.AsyncClient(timeout=httpx.Timeout(30.0, read=300.0), follow_redirects=True)
+        try:
+            upstream = await client.send(
+                client.build_request("GET", url, headers=forwarded), stream=True
+            )
+        except httpx.HTTPError as exc:
+            await client.aclose()
+            raise HTTPException(status_code=502, detail=f"upstream fetch failed: {exc}") from exc
+
+        if upstream.status_code >= 400:
+            await upstream.aclose()
+            await client.aclose()
+            raise HTTPException(status_code=502, detail=f"upstream returned {upstream.status_code}")
+
+        async def body():
+            try:
+                async for chunk in upstream.aiter_bytes():
+                    yield chunk
+            finally:
+                await upstream.aclose()
+                await client.aclose()
+
+        passthrough = {
+            key: upstream.headers[key]
+            for key in ("content-length", "content-range", "accept-ranges")
+            if key in upstream.headers
+        }
+        # A released binary is immutable for its version, so it caches hard at
+        # the edge. That is a transient CDN cache, not a stored artifact.
+        passthrough["Cache-Control"] = "public, max-age=3600, s-maxage=31536000, immutable"
+        return StreamingResponse(
+            body(),
+            status_code=upstream.status_code,
+            media_type="application/octet-stream",
+            headers=passthrough,
+        )
 
     @app.get("/facets", response_model=FacetsResponse)
     def facets(db_path=Depends(get_db_path)):

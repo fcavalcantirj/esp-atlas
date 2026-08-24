@@ -501,3 +501,35 @@ def test_examples_needs_round_trip_through_wizard(client):
         r = client.post("/wizard", json={"needs": ex["needs"]})
         assert r.status_code == 200, (ex["id"], r.text)
         assert r.json()["results"], f"{ex['id']}: needs round-trip returned 0 results"
+
+
+def test_manifest_endpoint_serves_an_absolute_same_origin_proxy_url(client):
+    r = client.get("/manifest/m5cardputer__launcher.json")
+    assert r.status_code == 200
+    build = r.json()["builds"][0]
+    assert build["chipFamily"] == "ESP32-S3"
+    assert "serialType" not in build
+    # The path must resolve against this deployment (the API sits at /api on
+    # Vercel but at the root under uvicorn), so it is built from the request.
+    assert build["parts"][0]["path"].startswith("http://testserver/flash-bin?recipe=")
+
+
+def test_manifest_404s_when_a_recipe_cannot_flash_in_browser(client):
+    assert client.get("/manifest/nope__nope.json").status_code == 404
+    # web-flasher recipes are guided handoffs, not in-browser flashes
+    assert client.get("/manifest/m5cardputer__m5stick-nemo.json").status_code == 404
+
+
+def test_flash_bin_refuses_a_recipe_it_cannot_resolve(client):
+    """The proxy only ever fetches what a record points at."""
+    assert client.get("/flash-bin?recipe=nope__nope").status_code == 403
+    # a release-bin recipe with no recorded binary is still a refusal
+    assert client.get("/flash-bin?recipe=m5cardputer__esp32marauder").status_code == 403
+
+
+def test_flash_bin_takes_no_caller_supplied_url(client):
+    """There must be no request shape that turns this into an open proxy."""
+    r = client.get("/flash-bin?url=https://evil.example.com/x.bin")
+    assert r.status_code == 422  # `recipe` is required; `url` is not a parameter
+    r = client.get("/flash-bin?recipe=m5cardputer__launcher&url=https://evil.example.com/x.bin")
+    assert r.status_code in (200, 502)  # the stray param is ignored, never honoured
