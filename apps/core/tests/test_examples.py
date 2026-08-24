@@ -65,3 +65,28 @@ def test_every_example_carries_a_known_group(built_db_path):
 
 def test_generate_examples_is_deterministic(built_db_path):
     assert generate_examples(db_path=built_db_path) == generate_examples(db_path=built_db_path)
+
+
+def test_firmware_examples_describe_themselves_from_real_fields(built_db_path):
+    """The card's middle tier is derived, never editorial copy.
+
+    Every firmware carries a `category`, so every firmware example must describe
+    itself; and the description may only contain that category's label plus
+    capabilities the record actually declares.
+    """
+    from esp_atlas_core.examples import _CATEGORY_LABELS
+    from esp_atlas_core.firmware import get_firmware
+
+    for e in _by_kind(generate_examples(db_path=built_db_path), "firmware"):
+        description = e.get("description")
+        assert description, f"{e['id']} has no description"
+        fw = get_firmware(e["firmware"])
+        assert description.startswith(_CATEGORY_LABELS.get(fw["category"], fw["category"]))
+        for capability in description.split(" · ")[1].split(", ") if " · " in description else []:
+            assert capability in fw["capabilities"], f"{e['id']}: invented capability {capability!r}"
+
+
+def test_needs_examples_have_no_description(built_db_path):
+    """Their query already says what they select for; a second tier would repeat it."""
+    for e in _by_kind(generate_examples(db_path=built_db_path), "needs"):
+        assert "description" not in e

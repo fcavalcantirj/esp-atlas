@@ -2174,6 +2174,26 @@ input[type="checkbox"]:checked::after {
   margin-bottom: 1rem;
 }
 
+/* Example cards read as three tiers (title / what it is / how many + why).
+   The accent is the one already in the system -- the same token as the help
+   circles and the primary button -- so the page gains a little colour without
+   introducing a second one. */
+.example-card-label {
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.example-card-desc {
+  font-size: var(--t-sm);
+  line-height: var(--lead-snug);
+  color: var(--muted);
+}
+
+.example-card-reason {
+  margin-top: 0.15rem;
+  color: var(--accent);
+}
+
 /* ==========================================================================
    Flash Wizard — per-recipe flash action (SPEC-wizard P2b)
    ========================================================================== */

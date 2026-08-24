@@ -54,8 +54,35 @@ _NEEDS_CANDIDATES = (
 # (heltec, inkplate, firebeetle, ...) read as brand names, not intents, and the
 # free-string form_factor column has 32 values — so only curated ones become
 # examples. Extend the map to surface another.
+# firmware `category` (a fixed enum) rendered for humans. The card's middle tier
+# says what a firmware IS, and it is derived from the record -- never editorial
+# copy someone typed, which the project does not do.
+_CATEGORY_LABELS = {
+    "pentest": "Pentest",
+    "mesh": "Mesh",
+    "badusb": "BadUSB",
+    "display": "Display",
+    "home": "Home automation",
+    "multi": "Multi-tool",
+}
+_DESCRIPTION_CAPABILITIES = 3
+
 _FORM_LABELS = {"xiao": "XIAO-sized", "feather": "Feather-sized", "m5-core": "M5-core-sized"}
 _FORM_EXAMPLE_LIMIT = 2
+
+
+def _describe(fw):
+    """"Pentest · wifi, ble, sub-ghz" — the category plus what it can do.
+
+    Capabilities that merely restate the category are dropped, so a badusb
+    firmware whose only capability is `badusb` reads "BadUSB", not "BadUSB · badusb".
+    """
+    category = fw.get("category")
+    label = _CATEGORY_LABELS.get(category, category)
+    caps = [c for c in (fw.get("capabilities") or []) if c != category][:_DESCRIPTION_CAPABILITIES]
+    if label and caps:
+        return f"{label} · {', '.join(caps)}"
+    return label or (", ".join(caps) if caps else None)
 
 
 def _firmware_examples():
@@ -64,16 +91,18 @@ def _firmware_examples():
         recipes = recipes_for_firmware(fw["id"])
         if not recipes:
             continue
-        examples.append(
-            {
-                "id": f"run-{fw['id']}",
-                "label": f"Run {fw['name']}",
-                "kind": "firmware",
-                "group": RUN_FIRMWARE,
-                "firmware": fw["id"],
-                "count": len(recipes),
-            }
-        )
+        example = {
+            "id": f"run-{fw['id']}",
+            "label": f"Run {fw['name']}",
+            "kind": "firmware",
+            "group": RUN_FIRMWARE,
+            "firmware": fw["id"],
+            "count": len(recipes),
+        }
+        description = _describe(fw)
+        if description:
+            example["description"] = description
+        examples.append(example)
     examples.sort(key=lambda e: (-e["count"], e["label"]))
     return examples
 

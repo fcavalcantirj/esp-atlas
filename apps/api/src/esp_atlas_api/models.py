@@ -160,6 +160,9 @@ class ExampleRecord(BaseModel):
     label: str
     kind: ExampleKind
     group: ExampleGroup
+    #: What the firmware is, derived from its category + capabilities. Absent on
+    #: needs-examples, whose query already says what they select for.
+    description: Optional[str] = None
     firmware: Optional[str] = None
     needs: Optional[WizardNeeds] = None
     count: int

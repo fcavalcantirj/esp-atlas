@@ -13,7 +13,15 @@
 import type { BrandPage, Example, Facets, Firmware, PartDetail, PartRecord, Recipe } from "@/lib/api";
 
 const REVALIDATE_SECONDS = 3600;
+// The API is a serverless Python function that boots an interpreter, imports
+// FastAPI/pydantic/jsonschema and builds the SQLite index before it can answer.
+// Warm, that is well under a second; cold, it is seconds -- and a fresh deploy
+// or a low-traffic preview is always cold, which is when a human is most likely
+// to be looking. One short attempt keeps a warm-but-broken API failing fast; the
+// retry, with a longer budget, is what a cold start actually needs, and the
+// first attempt has already begun warming the function.
 const TIMEOUT_MS = 3000;
+const COLD_START_TIMEOUT_MS = 9000;
 
 function stripSlash(url: string): string {
   return url.replace(/\/+$/, "");
@@ -34,17 +42,27 @@ export type ServerFetchResult<T> =
   | { status: "not_found" }
   | { status: "error"; message: string };
 
+async function attempt<T>(path: string, timeoutMs: number): Promise<ServerFetchResult<T>> {
+  const res = await fetch(`${serverApiBase()}${path}`, {
+    next: { revalidate: REVALIDATE_SECONDS },
+    signal: AbortSignal.timeout(timeoutMs),
+  });
+  if (res.status === 404) return { status: "not_found" };
+  if (!res.ok) return { status: "error", message: `HTTP ${res.status}` };
+  return { status: "ok", data: (await res.json()) as T };
+}
+
 async function serverFetch<T>(path: string): Promise<ServerFetchResult<T>> {
   try {
-    const res = await fetch(`${serverApiBase()}${path}`, {
-      next: { revalidate: REVALIDATE_SECONDS },
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-    });
-    if (res.status === 404) return { status: "not_found" };
-    if (!res.ok) return { status: "error", message: `HTTP ${res.status}` };
-    return { status: "ok", data: (await res.json()) as T };
-  } catch (err) {
-    return { status: "error", message: err instanceof Error ? err.message : String(err) };
+    return await attempt<T>(path, TIMEOUT_MS);
+  } catch {
+    // Only a timeout or a transport failure reaches here — an HTTP status,
+    // including 404, already returned above and is never retried.
+    try {
+      return await attempt<T>(path, COLD_START_TIMEOUT_MS);
+    } catch (err) {
+      return { status: "error", message: err instanceof Error ? err.message : String(err) };
+    }
   }
 }
 
