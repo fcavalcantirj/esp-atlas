@@ -7,30 +7,19 @@ import PartViewTracker from "@/components/part/PartViewTracker";
 import type { RecipeRow } from "@/components/RecipeGroupList";
 import { fetchFirmwareList, fetchPartDetail, fetchRecipesForBoard } from "@/lib/api-server";
 import { brandLabel } from "@/lib/brand";
-import { handoffFor } from "@/lib/esp-web-tools";
 import { firstSentence, typeLabel } from "@/lib/format";
 import { asString, fmObject } from "@/lib/frontmatter";
+import { boardFirmwareRows } from "@/lib/recipe-rows";
 import { SITE_NAME } from "@/lib/site";
 import { partGraph } from "@/lib/structured-data";
 
-// Recipes name their firmware only by id; the display name/category comes
-// from a join against GET /firmware (small dataset, fetched once), never
-// recomputed — just two API responses joined for display.
+// Two API responses joined for display (lib/recipe-rows.ts); a failed recipes
+// fetch yields no rows rather than an error.
 async function fetchBoardFirmwareRows(boardId: string, usbConnector: string | null): Promise<RecipeRow[]> {
   const [recipesResult, firmwareResult] = await Promise.all([fetchRecipesForBoard(boardId), fetchFirmwareList()]);
   if (recipesResult.status !== "ok") return [];
-  const firmwareById = new Map(firmwareResult.status === "ok" ? firmwareResult.data.results.map((fw) => [fw.id, fw]) : []);
-  return recipesResult.data.results.map((recipe) => {
-    const firmware = firmwareById.get(recipe.firmware);
-    return {
-      recipe,
-      href: `/firmware/${encodeURIComponent(recipe.firmware)}`,
-      name: firmware?.name || recipe.firmware,
-      meta: firmware?.category ?? null,
-      handoff: handoffFor(firmware),
-      usbConnector,
-    };
-  });
+  const firmware = firmwareResult.status === "ok" ? firmwareResult.data.results : [];
+  return boardFirmwareRows(recipesResult.data.results, firmware, usbConnector);
 }
 
 // Server-rendered so every part page ships with its own title/description for

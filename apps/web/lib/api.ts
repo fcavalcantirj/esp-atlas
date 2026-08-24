@@ -263,3 +263,11 @@ export function getPart(id: string): Promise<PartDetail> {
 export function getFacets(): Promise<Facets> {
   return apiFetch(`/facets`);
 }
+
+export function listFirmware(): Promise<{ results: Firmware[] }> {
+  return apiFetch(`/firmware`);
+}
+
+export function getRecipesForBoard(boardId: string): Promise<{ results: Recipe[] }> {
+  return apiFetch(`/recipes?board=${encodeURIComponent(boardId)}`);
+}
