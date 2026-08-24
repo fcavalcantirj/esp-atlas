@@ -142,11 +142,21 @@ ESP Web Tools flashes from a manifest:
   `<esp-web-install-button>`. Nothing for esp-atlas to build.
 - **`release-bin`** — esp-atlas **generates** the manifest from the recipe and
   serves it at `GET /manifest/<recipe-id>.json`: `chipFamily` = `recipe.chip_family`,
-  offsets from the recipe, and **`serialType`** derived from the board's USB —
-  **`cdc`** for native-USB chips (ESP32-S3/C3 flashing over the built-in USB, i.e.
-  most of our catalog: Cardputer, StickS3, CoreS3, T-*), **`uart`** for a USB-to-UART
-  bridge (classic ESP32 boards). Getting this wrong can stop a native-USB board from
-  connecting; the board's `usb` fields (connector + native) are the source. Two shapes:
+  offsets from the recipe, and — **CORRECTED (verified against esp-web-tools 10.4.0
+  `src/const.ts` + `src/flash.ts`; the original rule below was INVERTED):**
+  **emit ONE build with NO `serialType`.** `serialType` does *not* configure the
+  serial link — esp-web-tools detects cdc-vs-uart itself from the port's USB VID/PID
+  (Espressif VID `0x303a` + known native PIDs → cdc; else → uart). `serialType` is only
+  a *label* to pick among *several* builds of the same chip:
+  `builds.find(chipFamily===chip && serialType===detected) || builds.find(chipFamily===chip && serialType===undefined)`.
+  The fallback matches only a build whose `serialType` is **undefined** — a build
+  labelled for the *other* transport is never used. So emitting one *labelled* build is
+  the exact failure mode the old rule feared: any board exposing both native USB **and**
+  a UART bridge (Cardputer, many S3 boards) fails with "not supported" whenever the user
+  plugs into the transport we didn't predict. `serialType: null` ≠ `undefined` and also
+  breaks the fallback. Our recipes map to one merged binary that flashes over either
+  transport → **ship it unlabelled** (no `serialType` key). (To offer transport-specific
+  builds later, ship BOTH labelled variants, never one.) Two shapes:
   - **merged image** (the common web-flasher case, e.g. Launcher's
     `Launcher-<Device>.bin`): one part at `offset: 0` (`flash.bin_url` + `flash.offset`).
   - **multi-part** (`bootloader`/`partitions`/`app`/`data` at chip-specific offsets —
