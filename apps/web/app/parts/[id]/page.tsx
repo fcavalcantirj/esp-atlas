@@ -7,14 +7,16 @@ import PartViewTracker from "@/components/part/PartViewTracker";
 import type { RecipeRow } from "@/components/RecipeGroupList";
 import { fetchFirmwareList, fetchPartDetail, fetchRecipesForBoard } from "@/lib/api-server";
 import { brandLabel } from "@/lib/brand";
+import { handoffFor } from "@/lib/esp-web-tools";
 import { firstSentence, typeLabel } from "@/lib/format";
+import { asString, fmObject } from "@/lib/frontmatter";
 import { SITE_NAME } from "@/lib/site";
 import { partGraph } from "@/lib/structured-data";
 
 // Recipes name their firmware only by id; the display name/category comes
 // from a join against GET /firmware (small dataset, fetched once), never
 // recomputed — just two API responses joined for display.
-async function fetchBoardFirmwareRows(boardId: string): Promise<RecipeRow[]> {
+async function fetchBoardFirmwareRows(boardId: string, usbConnector: string | null): Promise<RecipeRow[]> {
   const [recipesResult, firmwareResult] = await Promise.all([fetchRecipesForBoard(boardId), fetchFirmwareList()]);
   if (recipesResult.status !== "ok") return [];
   const firmwareById = new Map(firmwareResult.status === "ok" ? firmwareResult.data.results.map((fw) => [fw.id, fw]) : []);
@@ -25,6 +27,8 @@ async function fetchBoardFirmwareRows(boardId: string): Promise<RecipeRow[]> {
       href: `/firmware/${encodeURIComponent(recipe.firmware)}`,
       name: firmware?.name || recipe.firmware,
       meta: firmware?.category ?? null,
+      handoff: handoffFor(firmware),
+      usbConnector,
     };
   });
 }
@@ -62,7 +66,10 @@ export default async function PartPage({ params }: PageProps<"/parts/[id]">) {
   const result = await fetchPartDetail(id);
   if (result.status === "not_found") notFound();
 
-  const boardFirmwareRows = result.status === "ok" && result.data.type === "board" ? await fetchBoardFirmwareRows(id) : null;
+  // The board's cited USB connector feeds the flash panel's plug-in hint; absent on many records (cite-or-omit).
+  const usbConnector = result.status === "ok" ? asString(fmObject(result.data.frontmatter, "usb")?.connector) : null;
+  const boardFirmwareRows =
+    result.status === "ok" && result.data.type === "board" ? await fetchBoardFirmwareRows(id, usbConnector) : null;
 
   return (
     <main id="main" className="container" tabIndex={-1}>

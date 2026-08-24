@@ -1,17 +1,23 @@
 import Link from "next/link";
+import FlashAction from "@/components/flash/FlashAction";
 import TrustTierBadge from "@/components/TrustTierBadge";
 import type { Recipe } from "@/lib/api";
+import type { FlashHandoff } from "@/lib/esp-web-tools";
 import { flashMethodLabel, RECIPE_TIER_LABEL, RECIPE_TIER_ORDER } from "@/lib/format";
 
 // The board <-> firmware edge, from either side: a board page groups its
 // recipes by firmware, a firmware page groups its recipes by board. Both are
 // the same "recipes, grouped by trust tier" shape — this renders that shape,
-// informational only (no flash affordance yet, see SPEC-wizard.md P1/P2).
+// each row carrying the Flash Wizard's action for that edge (SPEC-wizard P2b).
 export interface RecipeRow {
   recipe: Recipe;
   href: string;
   name: string;
   meta?: string | null;
+  /** What the guided handoff may link to; omitted rows fall back to nothing but the reason text. */
+  handoff?: FlashHandoff;
+  /** The board's cited `usb.connector`, when known on this page. */
+  usbConnector?: string | null;
 }
 
 export default function RecipeGroupList({ rows }: { rows: RecipeRow[] }) {
@@ -30,7 +36,7 @@ export default function RecipeGroupList({ rows }: { rows: RecipeRow[] }) {
         <div key={group.status} className="recipe-tier-group">
           <h3 className="recipe-tier-title">{RECIPE_TIER_LABEL[group.status] ?? group.status}</h3>
           <ul className="recipe-list">
-            {group.items.map(({ recipe, href, name, meta }) => {
+            {group.items.map(({ recipe, href, name, meta, handoff, usbConnector }) => {
               const flash = flashMethodLabel(recipe.flash?.method);
               return (
                 <li key={recipe.id} className="recipe-row">
@@ -40,10 +46,16 @@ export default function RecipeGroupList({ rows }: { rows: RecipeRow[] }) {
                   <TrustTierBadge status={recipe.status} />
                   {meta && <span className="recipe-row-meta">{meta}</span>}
                   {flash && (
-                    <span className="recipe-row-flash" title="How this firmware is flashed — informational only">
+                    <span className="recipe-row-flash" title="How this firmware is distributed">
                       {flash}
                     </span>
                   )}
+                  <FlashAction
+                    recipe={recipe}
+                    targetName={name}
+                    handoff={handoff ?? { repoUrl: null, flasherUrls: [] }}
+                    usbConnector={usbConnector ?? null}
+                  />
                 </li>
               );
             })}

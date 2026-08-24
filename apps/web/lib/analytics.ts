@@ -30,7 +30,13 @@ export type EventName =
   | "font_size_change"
   | "outbound_click"
   | "api_error"
-  | "not_found";
+  | "not_found"
+  // Flash Wizard (SPEC-wizard P2b): panel opened, rail decided, consent, connect click.
+  | "flash_open"
+  | "flash_ready"
+  | "flash_handoff"
+  | "flash_consent"
+  | "flash_connect";
 
 export type OutboundLinkType =
   | "source"
@@ -45,7 +51,8 @@ export type OutboundLinkType =
   | "license"
   | "data_folder"
   | "llms_txt"
-  | "api_docs";
+  | "api_docs"
+  | "flash_handoff";
 
 export type ResultOrigin = "wizard" | "search" | "related" | "compare" | "chain" | "browse" | "brand";
 

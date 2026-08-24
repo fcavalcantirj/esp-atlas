@@ -6,6 +6,7 @@ import JsonLd from "@/components/JsonLd";
 import RecipeGroupList, { type RecipeRow } from "@/components/RecipeGroupList";
 import TrackedLink from "@/components/TrackedLink";
 import { fetchAllParts, fetchFirmware, fetchRecipesForFirmware } from "@/lib/api-server";
+import { handoffFor } from "@/lib/esp-web-tools";
 import type { PartRecord } from "@/lib/api";
 import { brandLabel } from "@/lib/brand";
 import { firmwareCategoryLabel } from "@/lib/format";
@@ -70,6 +71,7 @@ export default async function FirmwarePage({ params }: PageProps<"/firmware/[id]
   const recipes = recipesResult.status === "ok" ? recipesResult.data.results : [];
   const boardById = new Map(allParts.map((p) => [p.id, p]));
 
+  const handoff = handoffFor(firmware);
   const rows: RecipeRow[] = recipes.map((recipe) => {
     const board = boardById.get(recipe.board);
     return {
@@ -77,6 +79,7 @@ export default async function FirmwarePage({ params }: PageProps<"/firmware/[id]
       href: `/parts/${encodeURIComponent(recipe.board)}`,
       name: board?.name || recipe.board,
       meta: board ? brandLabel(board) : null,
+      handoff,
     };
   });
 

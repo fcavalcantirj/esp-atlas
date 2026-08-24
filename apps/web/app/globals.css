@@ -2173,3 +2173,108 @@ input[type="checkbox"]:checked::after {
 .wizard-advanced-checkboxes {
   margin-bottom: 1rem;
 }
+
+/* ==========================================================================
+   Flash Wizard — per-recipe flash action (SPEC-wizard P2b)
+   ========================================================================== */
+
+.recipe-row .flash-action {
+  flex-basis: 100%;
+  margin-top: 0.25rem;
+}
+
+.flash-action summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.flash-action summary::-webkit-details-marker {
+  display: none;
+}
+
+.flash-action-summary {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.flash-action-summary::before {
+  content: "▸";
+  font-size: 0.7em;
+}
+
+.flash-action[open] .flash-action-summary::before {
+  content: "▾";
+}
+
+.flash-action-method {
+  color: var(--muted);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.flash-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0.6rem 0 0.4rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.flash-disclaimer {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--warn);
+  font-size: var(--t-sm);
+  line-height: var(--lead-snug);
+}
+
+.flash-disclaimer .tier-badge {
+  margin-right: 0.35rem;
+}
+
+.flash-facts {
+  margin: 0;
+  font-size: var(--t-xs);
+  color: var(--muted);
+}
+
+.flash-panel esp-web-install-button {
+  display: block;
+}
+
+.flash-slot-note {
+  display: block;
+  font-size: var(--t-sm);
+  color: var(--muted);
+}
+
+.flash-hint {
+  margin: 0;
+  font-size: var(--t-xs);
+}
+
+.flash-handoff {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.flash-handoff p {
+  margin: 0;
+  font-size: var(--t-sm);
+}
+
+.flash-handoff-links {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: var(--t-sm);
+}

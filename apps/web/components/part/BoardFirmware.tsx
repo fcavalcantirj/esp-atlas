@@ -3,7 +3,7 @@ import TrackedLink from "@/components/TrackedLink";
 import { contributingUrl } from "@/lib/github";
 
 // Board page section: every recipe targeting this board, grouped by trust
-// tier. Informational only — no flash button yet (SPEC-wizard.md P2+).
+// tier, each with its Flash Wizard action (SPEC-wizard.md P2b).
 export default function BoardFirmware({ rows }: { rows: RecipeRow[] }) {
   return (
     <section className="board-firmware" aria-labelledby="board-firmware">
