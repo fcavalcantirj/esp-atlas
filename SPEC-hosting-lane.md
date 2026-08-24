@@ -1,5 +1,11 @@
 # SPEC — hosting-lane memory filter (wizard Step 2)
 
+> **Terminology (see `SPEC-INDEX.md`):** this is the **server-capable** lane —
+> "hosting" here means *a board runs a web server*, NOT re-hosting binaries
+> (`SPEC-wizard.md`). **UI (C4):** the intent toggle "Runs a web server / heavy app"
+> is a **top-level** control; the raw `psram_min`/`flash_min` MB dropdowns go to
+> **Advanced** — the toggle is exempt from home-explorer's "memory→Advanced" rule.
+
 ## Goal
 Filter boards by memory capability to surface ones that can host a web server / run heavier apps, using the populated psram_mb / flash_mb fields.
 

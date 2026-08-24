@@ -79,5 +79,7 @@ decide.**
   inside each platform package gives the per-board chip mapping (`build.mcu` /
   `build.variant`) that the index JSON itself lacks. Machine-readable, versioned,
   no scraping. Launcher catalog + M5Burner API supplement it; vendor HTML sitemaps
-  are a last-resort fallback only. → new-part PRs.
+  are a last-resort fallback only. → **detects new-board candidates only; authoring
+  the record is handed to `SPEC-data-population.md`** (per `SPEC-INDEX.md` C2).
+  F4 does not itself open new-part PRs.
 - **F5** — `/freshness` dashboard.
