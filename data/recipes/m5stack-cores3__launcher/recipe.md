@@ -5,9 +5,15 @@ board: m5stack-cores3
 firmware: launcher
 status: known-good
 chip_family: esp32-s3
+firmware_version: 2.8.0
 flash:
-  method: web-flasher
+  method: release-bin
+  bin_url: https://github.com/bmorcelli/Launcher/releases/download/2.8.0/Launcher-m5stack-cores3.bin
+  offset: '0x0'
 sources:
+- field: 'flash.bin_url'
+  url: https://github.com/bmorcelli/Launcher/releases/download/2.8.0/Launcher-m5stack-cores3.bin
+  verified: '2026-08-24'
 - field: '*'
   url: https://github.com/bmorcelli/Launcher
   verified: '2026-08-23'

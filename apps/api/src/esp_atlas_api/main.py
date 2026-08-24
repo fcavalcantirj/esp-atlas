@@ -7,10 +7,16 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Optional
 
+import httpx
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 
 from esp_atlas_core import db as dbmod
+from esp_atlas_core.flash import MAX_REDIRECT_HOPS
+from esp_atlas_core.flash import bin_url_for as core_bin_url_for
+from esp_atlas_core.flash import next_hop as core_next_hop
+from esp_atlas_core.flash import build_manifest as core_build_manifest
 from esp_atlas_core.examples import generate_examples as core_generate_examples
 from esp_atlas_core.facets import facets as core_facets
 from esp_atlas_core.firmware import get_firmware as core_get_firmware
@@ -45,6 +51,27 @@ from esp_atlas_api.models import (
 from esp_atlas_api.settings import resolve_db_path
 
 _ALL_PARTS_LIMIT = 10_000
+_REDIRECT_CODES = frozenset({301, 302, 303, 307, 308})
+
+
+async def _fetch_following_allowlisted_redirects(client, url, headers):
+    """GET `url`, following redirects only while each hop stays on the allowlist.
+
+    Raises PermissionError the moment a hop points off-allowlist -- that is an
+    SSRF attempt (or a compromised upstream), not a transport failure.
+    """
+    current = url
+    for _ in range(MAX_REDIRECT_HOPS + 1):
+        response = await client.send(client.build_request("GET", current, headers=headers), stream=True)
+        if response.status_code not in _REDIRECT_CODES:
+            return response
+        location = response.headers.get("location")
+        await response.aclose()
+        target = core_next_hop(current, location)
+        if target is None:
+            raise PermissionError(f"redirect to a non-allowlisted host refused: {location!r}")
+        current = target
+    raise PermissionError("too many redirects")
 
 
 @asynccontextmanager
@@ -168,6 +195,81 @@ def create_app(db_path=None):
         if record is None:
             raise HTTPException(status_code=404, detail=f"part not found: {part_id}")
         return record
+
+    @app.get("/manifest/{recipe_id}.json")
+    def manifest(recipe_id: str, request: Request, db_path=Depends(get_db_path)):
+        """An ESP Web Tools manifest derived from the recipe (SPEC-wizard P3).
+
+        404 when the recipe cannot flash in-browser -- unknown, not a
+        `release-bin`, no binary recorded, or a chip ESP Web Tools has no
+        chipFamily for. The wizard falls back to a guided handoff on 404.
+        """
+        proxy_url = str(request.url_for("flash_bin"))
+        result = core_build_manifest(recipe_id, db_path=db_path, proxy_url=proxy_url)
+        if result is None:
+            raise HTTPException(status_code=404, detail=f"no in-browser manifest for recipe: {recipe_id}")
+        return result
+
+    @app.get("/flash-bin", name="flash_bin")
+    async def flash_bin(request: Request, recipe: str, part: Optional[int] = None):
+        """Stream an upstream firmware binary same-origin so ESP Web Tools can fetch it.
+
+        GitHub release assets send no Access-Control-Allow-Origin, so the browser
+        cannot fetch them from our page directly. This passes the bytes through
+        and stores nothing -- we transit, we do not rehost (SPEC-wizard).
+
+        Not an open proxy by construction: the caller names a *recipe*, and the
+        URL is resolved server-side from that record and re-checked against an
+        allowlist. There is no request shape that makes it fetch a caller-chosen
+        host, which is the whole SSRF surface.
+        """
+        url = core_bin_url_for(recipe, part=part)
+        if url is None:
+            raise HTTPException(status_code=403, detail="no allowlisted binary for that recipe")
+
+        # Range must survive in both directions: esptool-js reads the image in
+        # chunks, and a dropped Range would restart the flash from zero.
+        forwarded = {"Range": request.headers["range"]} if "range" in request.headers else {}
+        # follow_redirects is deliberately OFF: httpx would validate only the
+        # first hop, so an allowlisted host could redirect us anywhere. Each hop
+        # is re-checked against the allowlist before it is followed.
+        client = httpx.AsyncClient(timeout=httpx.Timeout(30.0, read=300.0), follow_redirects=False)
+        try:
+            upstream = await _fetch_following_allowlisted_redirects(client, url, forwarded)
+        except PermissionError as exc:
+            await client.aclose()
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
+        except httpx.HTTPError as exc:
+            await client.aclose()
+            raise HTTPException(status_code=502, detail=f"upstream fetch failed: {exc}") from exc
+
+        if upstream.status_code >= 400:
+            await upstream.aclose()
+            await client.aclose()
+            raise HTTPException(status_code=502, detail=f"upstream returned {upstream.status_code}")
+
+        async def body():
+            try:
+                async for chunk in upstream.aiter_bytes():
+                    yield chunk
+            finally:
+                await upstream.aclose()
+                await client.aclose()
+
+        passthrough = {
+            key: upstream.headers[key]
+            for key in ("content-length", "content-range", "accept-ranges")
+            if key in upstream.headers
+        }
+        # A released binary is immutable for its version, so it caches hard at
+        # the edge. That is a transient CDN cache, not a stored artifact.
+        passthrough["Cache-Control"] = "public, max-age=3600, s-maxage=31536000, immutable"
+        return StreamingResponse(
+            body(),
+            status_code=upstream.status_code,
+            media_type="application/octet-stream",
+            headers=passthrough,
+        )
 
     @app.get("/facets", response_model=FacetsResponse)
     def facets(db_path=Depends(get_db_path)):
