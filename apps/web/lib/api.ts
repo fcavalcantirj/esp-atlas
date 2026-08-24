@@ -183,10 +183,13 @@ export interface WizardNeeds {
  * it can never go stale. Every entry resolves to >= 1 result (the G7 oracle).
  * kind "firmware" links to that firmware's page (the boards it runs on); kind
  * "needs" replays a saved wizard query. */
+export type ExampleGroup = "run-firmware" | "build-project" | "just-show-me";
+
 export interface FirmwareExample {
   id: string;
   label: string;
   kind: "firmware";
+  group: ExampleGroup;
   firmware: string;
   count: number;
 }
@@ -195,6 +198,7 @@ export interface NeedsExample {
   id: string;
   label: string;
   kind: "needs";
+  group: ExampleGroup;
   needs: WizardNeeds;
   count: number;
 }

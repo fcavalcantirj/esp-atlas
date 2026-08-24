@@ -2025,3 +2025,151 @@ input[type="checkbox"]:checked::after {
     font-size: 1.6rem;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Intent-first home (SPEC-home-explorer §2): the prompt and the generated
+   examples lead; the spec wizard is a drawer underneath. Single column — the
+   old two-column explorer moved to /wizard and keeps .home-layout above.
+   --------------------------------------------------------------------------- */
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 4vw, 3.25rem);
+}
+
+.intent-prompt {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.intent-prompt-label {
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.intent-prompt-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.intent-prompt-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.85rem 1rem;
+  font-family: inherit;
+  font-size: var(--t-lede);
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+
+.intent-prompt-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.intent-prompt-hint {
+  margin: 0;
+  font-size: var(--t-sm);
+  color: var(--muted);
+}
+
+.examples {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.example-group-title {
+  margin: 0;
+  font-size: var(--t-title);
+  letter-spacing: var(--track-display);
+}
+
+.example-group-hint {
+  margin: 0.25rem 0 1rem;
+  font-size: var(--t-sm);
+  color: var(--muted);
+}
+
+.example-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+}
+
+/* A card is either a <button> (replays a saved query) or an <a> (a firmware
+   page); both must read identically, so reset the button chrome. */
+.example-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.9rem 1rem;
+  text-align: left;
+  font: inherit;
+  color: var(--fg);
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.example-card:hover,
+.example-card:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.example-card-label {
+  font-size: var(--t-body);
+  line-height: var(--lead-snug);
+}
+
+.example-card-reason {
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  color: var(--muted);
+}
+
+.spec-wizard summary {
+  cursor: pointer;
+}
+
+.spec-wizard-summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+.spec-wizard-open {
+  color: var(--accent);
+}
+
+.spec-wizard[open] .spec-wizard-summary {
+  margin-bottom: 0.75rem;
+}
+
+.spec-wizard-search {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Mesh / native-USB moved under Advanced with the rest of the specifics
+   (SPEC-home-explorer §2); only Budget and the "runs a web server" intent
+   toggle (SPEC-INDEX C4) stay top-level. */
+.wizard-advanced-checkboxes {
+  margin-bottom: 1rem;
+}

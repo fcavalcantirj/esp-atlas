@@ -68,26 +68,6 @@ export default function WizardForm({ facets, value, onChange, onSubmit, loading 
       <div className="form-grid">
         <label className="field">
           <span className="label-row">
-            Form factor
-            <HelpTip
-              field="form"
-              text="The board's physical shape and pinout family. xiao = thumbnail-size, feather = Adafruit ecosystem, devkit = the chip maker's reference board, m5-core = M5Stack modular. Counts are how many parts in the atlas have that shape."
-            />
-          </span>
-          <select value={value.form ?? ""} onChange={(e) => onChange(withField(value, "form", e.target.value))}>
-            <option value="">any</option>
-            {otherForms.length > 0 ? (
-              <>
-                <optgroup label="Common">{commonForms.map(formOption)}</optgroup>
-                <optgroup label="Other">{otherForms.map(formOption)}</optgroup>
-              </>
-            ) : (
-              commonForms.map(formOption)
-            )}
-          </select>
-        </label>
-        <label className="field">
-          <span className="label-row">
             Budget
             <HelpTip
               field="budget"
@@ -106,6 +86,30 @@ export default function WizardForm({ facets, value, onChange, onSubmit, loading 
       </div>
 
       <div className="checkbox-stack">
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={value.psram_min === HOSTING_LANE_PSRAM_MIN}
+            onChange={(e) =>
+              onChange(withField(value, "psram_min", e.target.checked ? HOSTING_LANE_PSRAM_MIN : ""))
+            }
+          />
+          <span className="checkbox-text">
+            Runs a web server / heavy app
+            <HelpTip
+              field="psram_min"
+              text="Tick this if the board needs to host a web UI or run something heavier than a simple sensor loop. Requires at least 2 MB of dedicated PSRAM — many ESP32 boards have none. For the heaviest workloads, pick 8 MB PSRAM under Advanced filters."
+            />
+          </span>
+        </label>
+      </div>
+
+      <details
+        className="wizard-advanced"
+        onToggle={(e) => track("advanced_filters_toggle", { panel: "wizard", open: e.currentTarget.open })}
+      >
+        <summary>Advanced filters</summary>
+        <div className="checkbox-stack wizard-advanced-checkboxes">
         <label className="checkbox-label">
           <input
             type="checkbox"
@@ -134,30 +138,28 @@ export default function WizardForm({ facets, value, onChange, onSubmit, loading 
             />
           </span>
         </label>
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={value.psram_min === HOSTING_LANE_PSRAM_MIN}
-            onChange={(e) =>
-              onChange(withField(value, "psram_min", e.target.checked ? HOSTING_LANE_PSRAM_MIN : ""))
-            }
-          />
-          <span className="checkbox-text">
-            Runs a web server / heavy app
+        </div>
+        <div className="form-grid wizard-advanced-fields">
+        <label className="field">
+          <span className="label-row">
+            Form factor
             <HelpTip
-              field="psram_min"
-              text="Tick this if the board needs to host a web UI or run something heavier than a simple sensor loop. Requires at least 2 MB of dedicated PSRAM — many ESP32 boards have none. For the heaviest workloads, pick 8 MB PSRAM under Advanced filters."
+              field="form"
+              text="The board's physical shape and pinout family. xiao = thumbnail-size, feather = Adafruit ecosystem, devkit = the chip maker's reference board, m5-core = M5Stack modular. Counts are how many parts in the atlas have that shape."
             />
           </span>
+          <select value={value.form ?? ""} onChange={(e) => onChange(withField(value, "form", e.target.value))}>
+            <option value="">any</option>
+            {otherForms.length > 0 ? (
+              <>
+                <optgroup label="Common">{commonForms.map(formOption)}</optgroup>
+                <optgroup label="Other">{otherForms.map(formOption)}</optgroup>
+              </>
+            ) : (
+              commonForms.map(formOption)
+            )}
+          </select>
         </label>
-      </div>
-
-      <details
-        className="wizard-advanced"
-        onToggle={(e) => track("advanced_filters_toggle", { panel: "wizard", open: e.currentTarget.open })}
-      >
-        <summary>Advanced filters</summary>
-        <div className="form-grid wizard-advanced-fields">
           <label className="field">
             <span className="label-row">
               Wi-Fi standard

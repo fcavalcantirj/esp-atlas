@@ -145,6 +145,7 @@ class WizardRequest(BaseModel):
 
 
 ExampleKind = Literal["firmware", "needs"]
+ExampleGroup = Literal["run-firmware", "build-project", "just-show-me"]
 
 
 class ExampleRecord(BaseModel):
@@ -158,6 +159,7 @@ class ExampleRecord(BaseModel):
     id: str
     label: str
     kind: ExampleKind
+    group: ExampleGroup
     firmware: Optional[str] = None
     needs: Optional[WizardNeeds] = None
     count: int

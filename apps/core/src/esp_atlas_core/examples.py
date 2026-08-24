@@ -1,10 +1,11 @@
 """Generated home examples — a computed projection of real data, never stored.
 
     generate_examples()  # -> [{"id": "run-launcher", "label": "Run Launcher",
-                         #      "kind": "firmware", "firmware": "launcher", "count": 11}, ...
+                         #      "kind": "firmware", "group": "run-firmware",
+                         #      "firmware": "launcher", "count": 11}, ...
                          #     {"id": "server-capable", "label": "Runs a web server / heavy app",
-                         #      "kind": "needs", "needs": {"psram_min": 2, "type": "board"},
-                         #      "count": 35}, ...]
+                         #      "kind": "needs", "group": "build-project",
+                         #      "needs": {"psram_min": 2, "type": "board"}, "count": 35}, ...]
 
 The `example` DATA ENTITY is owned by SPEC-discovery (G2, not yet specced); this
 module deliberately creates no schema and no data/ folder. Every example is
@@ -22,6 +23,11 @@ recomputed from the records already in the repo, so the list can never go stale:
   surfaced example can never be a dead end (the SPEC-INDEX G7 invariant; the
   oracle in apps/core/tests/test_wizard_oracle.py gates it).
 
+`group` is the home's three soft shelves (SPEC-home-explorer §2): "run-firmware"
+(the recipe graph), "build-project" (capability filters), "just-show-me"
+(discovery). It is a property of the example, not of how a page paints it, so it
+is decided here rather than re-derived in the client.
+
 Output is deterministic for a given dataset — no analytics, no randomness
 (cold-start-neutral order per SPEC-home-explorer §3b; click-ordering is L3).
 """
@@ -29,14 +35,19 @@ from esp_atlas_core.facets import facets
 from esp_atlas_core.firmware import list_firmware, recipes_for_firmware
 from esp_atlas_core.wizard import wizard
 
-# (id, label, needs) — fixed candidates over real fields; only those with >=1
-# wizard() result are emitted. Labels are user-facing UI copy.
+RUN_FIRMWARE = "run-firmware"
+BUILD_PROJECT = "build-project"
+JUST_SHOW_ME = "just-show-me"
+GROUPS = (RUN_FIRMWARE, BUILD_PROJECT, JUST_SHOW_ME)
+
+# (id, label, group, needs) — fixed candidates over real fields; only those with
+# >=1 wizard() result are emitted. Labels are user-facing UI copy.
 _NEEDS_CANDIDATES = (
-    ("server-capable", "Runs a web server / heavy app", {"psram_min": 2, "type": "board"}),
-    ("mesh", "Smart-home mesh (Thread / Zigbee / Matter)", {"ieee802154": True, "type": "board"}),
-    ("cheap-native-usb", "Cheap board with native USB", {"usb_native": True, "budget": "cheap", "type": "board"}),
-    ("wifi-6", "Wi-Fi 6", {"radio": "wifi-6"}),
-    ("band-5ghz", "5 GHz Wi-Fi", {"band": 5}),
+    ("server-capable", "Runs a web server / heavy app", BUILD_PROJECT, {"psram_min": 2, "type": "board"}),
+    ("mesh", "Smart-home mesh (Thread / Zigbee / Matter)", BUILD_PROJECT, {"ieee802154": True, "type": "board"}),
+    ("cheap-native-usb", "Cheap board with native USB", BUILD_PROJECT, {"usb_native": True, "budget": "cheap", "type": "board"}),
+    ("wifi-6", "Wi-Fi 6", JUST_SHOW_ME, {"radio": "wifi-6"}),
+    ("band-5ghz", "5 GHz Wi-Fi", JUST_SHOW_ME, {"band": 5}),
 )
 
 # form factors with a recognizable size identity; vendor-specific values
@@ -58,6 +69,7 @@ def _firmware_examples():
                 "id": f"run-{fw['id']}",
                 "label": f"Run {fw['name']}",
                 "kind": "firmware",
+                "group": RUN_FIRMWARE,
                 "firmware": fw["id"],
                 "count": len(recipes),
             }
@@ -72,7 +84,7 @@ def _form_candidates(db_path):
         value = entry["value"]
         if value not in _FORM_LABELS:
             continue
-        candidates.append((f"form-{value}", _FORM_LABELS[value], {"form": value}))
+        candidates.append((f"form-{value}", _FORM_LABELS[value], JUST_SHOW_ME, {"form": value}))
         if len(candidates) >= _FORM_EXAMPLE_LIMIT:
             break
     return candidates
@@ -80,12 +92,19 @@ def _form_candidates(db_path):
 
 def _needs_examples(db_path):
     examples = []
-    for example_id, label, needs in tuple(_NEEDS_CANDIDATES) + tuple(_form_candidates(db_path)):
+    for example_id, label, group, needs in tuple(_NEEDS_CANDIDATES) + tuple(_form_candidates(db_path)):
         count = len(wizard(needs, db_path=db_path))
         if not count:
             continue
         examples.append(
-            {"id": example_id, "label": label, "kind": "needs", "needs": dict(needs), "count": count}
+            {
+                "id": example_id,
+                "label": label,
+                "kind": "needs",
+                "group": group,
+                "needs": dict(needs),
+                "count": count,
+            }
         )
     return examples
 
