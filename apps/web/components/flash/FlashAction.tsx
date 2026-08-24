@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import TrackedLink from "@/components/TrackedLink";
 import TrustTierBadge from "@/components/TrustTierBadge";
 import type { Recipe } from "@/lib/api";
@@ -88,9 +88,11 @@ export default function FlashAction({
 }: FlashActionProps) {
   const [phase, setPhase] = useState<Phase>({ kind: "closed" });
   const [consent, setConsent] = useState(false);
+  const consentId = useId();
   const method = recipe.flash?.method ?? null;
   const methodLabel = flashMethodLabel(method);
-  const inBrowser = looksFlashableInBrowser(recipe);
+  // The record's own claim until the preflight rules; a handoff result corrects the pill.
+  const inBrowser = phase.kind === "handoff" ? false : looksFlashableInBrowser(recipe);
   // Which rail: our generated manifest + streaming proxy, or the project's own manifest.
   const projectRail = method === "esp-web-tools";
   const tierClaim = (TIER_CLAIM[recipe.status] ?? ((board) => `${recipe.status} on ${board}.`))(boardName);
@@ -137,12 +139,14 @@ export default function FlashAction({
       <summary className="flash-action-summary">
         <span className="flash-action-title">Flash {targetName}</span>
         <span className="flash-action-tags">
-          <span className="flash-action-tag">{inBrowser ? "in-browser" : methodLabel ?? "guided"}</span>
+          <span className="flash-action-tag">
+            {inBrowser ? "in-browser" : phase.kind === "handoff" ? "guided handoff" : (methodLabel ?? "guided")}
+          </span>
           {recipe.status === "known-good" && <span className="flash-action-tag flash-action-tag--tier">known-good</span>}
         </span>
       </summary>
 
-      <div className="flash-panel">
+      <div className="flash-panel" aria-live="polite">
         <p className="flash-disclaimer">
           <TrustTierBadge status={recipe.status} /> {DISCLAIMER}
         </p>
@@ -151,7 +155,7 @@ export default function FlashAction({
 
         {phase.kind === "ready" && (
           <>
-            <ul className="flash-checks" aria-label="What esp-atlas checked">
+            <ul className="flash-checks" role="list" aria-label="What esp-atlas checked">
               <li>{tierClaim}</li>
               {projectRail ? (
                 <li>
@@ -182,7 +186,9 @@ export default function FlashAction({
                   track("flash_consent", { recipe_id: recipe.id, checked: e.target.checked });
                 }}
               />
-              <span className="checkbox-text">I understand — enable the flash button</span>
+              <span className="checkbox-text" id={consentId}>
+                I understand — enable the flash button
+              </span>
             </label>
             <esp-web-install-button manifest={phase.manifestUrl}>
               <button
@@ -190,6 +196,7 @@ export default function FlashAction({
                 type="button"
                 className="btn btn--primary btn--flash"
                 disabled={!consent}
+                aria-describedby={consentId}
                 onClick={() => track("flash_connect", { recipe_id: recipe.id })}
               >
                 Connect and flash

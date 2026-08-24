@@ -2213,7 +2213,8 @@ input[type="checkbox"]:checked::after {
 }
 
 .flash-action-summary::before {
-  content: "⚡";
+  /* Decorative; the "/ \"\"" alternative text keeps screen readers from reading "high voltage". */
+  content: "⚡" / "";
   font-size: 0.95em;
   letter-spacing: 0;
 }
@@ -2224,7 +2225,8 @@ input[type="checkbox"]:checked::after {
 }
 
 .flash-action--browser .flash-action-summary {
-  animation: flash-breathe 2.6s ease-in-out infinite;
+  /* Breathes for ~20 s after load, then settles (WCAG 2.2.2 — no indefinite motion). */
+  animation: flash-breathe 2.6s ease-in-out 8;
 }
 
 .flash-action--browser[open] .flash-action-summary,
@@ -2282,7 +2284,8 @@ input[type="checkbox"]:checked::after {
 }
 
 .flash-action-tag--tier {
-  color: var(--ok);
+  /* --ok alone is 4.35:1 on white at this size; darkened toward the ink to clear AA. */
+  color: color-mix(in srgb, var(--ok) 80%, var(--fg));
 }
 
 .flash-checks {
@@ -2299,7 +2302,7 @@ input[type="checkbox"]:checked::after {
 }
 
 .flash-checks li::before {
-  content: "✓";
+  content: "✓" / "";
   position: absolute;
   left: -1.3rem;
   color: var(--ok);
@@ -2331,7 +2334,8 @@ input[type="checkbox"]:checked::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .flash-action--browser .flash-action-summary,
+  /* Static glow instead of motion; :hover / [open] keep their own halo. */
+  .flash-action--browser:not([open]) .flash-action-summary:not(:hover),
   .btn--flash:not(:disabled) {
     animation: none;
     box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 40%, transparent);
@@ -2359,12 +2363,6 @@ input[type="checkbox"]:checked::after {
 
 .flash-disclaimer .tier-badge {
   margin-right: 0.35rem;
-}
-
-.flash-facts {
-  margin: 0;
-  font-size: var(--t-xs);
-  color: var(--muted);
 }
 
 .flash-panel esp-web-install-button {
