@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import TrackedLink from "@/components/TrackedLink";
 import TrustTierBadge from "@/components/TrustTierBadge";
 import type { Recipe } from "@/lib/api";
@@ -64,13 +64,39 @@ function looksFlashableInBrowser(recipe: Recipe): boolean {
   return false;
 }
 
-function handoffReason(recipe: Recipe, handoff: FlashHandoff, status: number | null): string {
+const PREFLIGHT_TIMEOUT_MS = 10_000;
+const LOADER_TIMEOUT_MS = 15_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number, what: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`${what} timed out`)), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (err) => {
+        clearTimeout(timer);
+        reject(err);
+      },
+    );
+  });
+}
+
+type PreflightFailure = "no_rail" | "manifest_404" | "manifest_invalid" | "load_failed" | `http_${number}`;
+
+function handoffReason(recipe: Recipe, handoff: FlashHandoff, failure: PreflightFailure): string {
   const method = recipe.flash?.method;
+  if (failure === "manifest_invalid")
+    return "esp-atlas's flash manifest for this recipe did not validate — please report it. Use the project's own tools meanwhile.";
   if (method === "m5burner") return "This firmware is distributed through M5Burner, M5Stack's desktop flasher — not flashable from a browser.";
-  if (method === "web-flasher")
+  if (method === "web-flasher") {
+    if (!handoff.known) return "This project ships its own flasher, but its record could not be loaded right now — open the firmware page or retry.";
     return handoff.flasherUrls.length > 0
       ? "This project ships its own web flasher; use it directly."
       : "This project ships its own flasher, which this recipe does not cite yet — start from the repository.";
+  }
+  const status = failure.startsWith("http_") ? Number(failure.slice(5)) : null;
   if (method === "release-bin" && status === 404)
     return "esp-atlas has no in-browser manifest for this recipe — no verified binary is recorded, or the browser flasher does not support its chip. Use the project's own tools.";
   if (method === "esp-web-tools" && !recipe.flash?.manifest_url) return "This project publishes ESP Web Tools manifests, but this recipe does not cite one yet.";
@@ -89,48 +115,76 @@ export default function FlashAction({
   const [phase, setPhase] = useState<Phase>({ kind: "closed" });
   const [consent, setConsent] = useState(false);
   const consentId = useId();
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+  // Each open() gets a generation; a result from a superseded run is dropped.
+  const generation = useRef(0);
   const method = recipe.flash?.method ?? null;
   const methodLabel = flashMethodLabel(method);
-  // The record's own claim until the preflight rules; a handoff result corrects the pill.
-  const inBrowser = phase.kind === "handoff" ? false : looksFlashableInBrowser(recipe);
+  const broken = recipe.status === "broken";
+  // The record's own claim until the preflight rules; a handoff result corrects
+  // the pill, and a recipe recorded as broken never glows.
+  const inBrowser = !broken && phase.kind !== "handoff" && looksFlashableInBrowser(recipe);
   // Which rail: our generated manifest + streaming proxy, or the project's own manifest.
   const projectRail = method === "esp-web-tools";
   const tierClaim = (TIER_CLAIM[recipe.status] ?? ((board) => `${recipe.status} on ${board}.`))(boardName);
 
   async function open() {
+    const gen = ++generation.current;
+    const current = () => gen === generation.current;
     track("flash_open", { recipe_id: recipe.id, method });
     const manifestUrl = manifestUrlFor(recipe);
     if (!manifestUrl) {
-      const reason = handoffReason(recipe, handoff, null);
       track("flash_handoff", { recipe_id: recipe.id, method, reason: "no_rail" });
-      setPhase({ kind: "handoff", reason });
+      setPhase({ kind: "handoff", reason: handoffReason(recipe, handoff, "no_rail") });
       return;
     }
     setPhase({ kind: "loading" });
-    let status: number | null = null;
+    let failure: PreflightFailure = "load_failed";
     try {
-      const [, res] = await Promise.all([ensureEspWebTools(), fetch(manifestUrl)]);
-      status = res.status;
-      const body: unknown = res.ok ? await res.json() : null;
-      if (res.ok && isManifest(body)) {
-        track("flash_ready", { recipe_id: recipe.id, chip: body.builds.map((b) => b.chipFamily).join(","), version: body.version });
-        setPhase({ kind: "ready", manifest: body, manifestUrl });
-        return;
+      const [, res] = await Promise.all([
+        withTimeout(ensureEspWebTools(), LOADER_TIMEOUT_MS, "esp-web-tools"),
+        fetch(manifestUrl, { signal: AbortSignal.timeout(PREFLIGHT_TIMEOUT_MS) }),
+      ]);
+      if (res.ok) {
+        let body: unknown = null;
+        try {
+          body = await res.json();
+        } catch {
+          body = null;
+        }
+        if (isManifest(body)) {
+          if (!current()) return;
+          track("flash_ready", { recipe_id: recipe.id, chip: body.builds.map((b) => b.chipFamily).join(","), version: body.version });
+          setPhase({ kind: "ready", manifest: body, manifestUrl });
+          return;
+        }
+        failure = "manifest_invalid";
+      } else {
+        failure = res.status === 404 ? "manifest_404" : `http_${res.status}`;
       }
     } catch {
-      // loader or network failure — fall through to the handoff
+      failure = "load_failed"; // loader, network, or timeout
     }
-    track("flash_handoff", { recipe_id: recipe.id, method, reason: status === 404 ? "manifest_404" : status ? `http_${status}` : "load_failed" });
-    setPhase({ kind: "handoff", reason: handoffReason(recipe, handoff, status) });
+    if (!current()) return;
+    track("flash_handoff", { recipe_id: recipe.id, method, reason: failure });
+    setPhase({ kind: "handoff", reason: handoffReason(recipe, handoff, failure) });
   }
+
+  // A <details> toggled open before hydration never fires onToggle: catch up on mount.
+  useEffect(() => {
+    if (detailsRef.current?.open && phase.kind === "closed") void open();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <details
+      ref={detailsRef}
       className={"flash-action" + (inBrowser ? " flash-action--browser" : "")}
       onToggle={(event) => {
         if (event.currentTarget.open) {
           if (phase.kind === "closed") void open();
         } else {
+          generation.current++; // drop any preflight still in flight
           setPhase({ kind: "closed" });
           setConsent(false);
         }
@@ -143,6 +197,7 @@ export default function FlashAction({
             {inBrowser ? "in-browser" : phase.kind === "handoff" ? "guided handoff" : (methodLabel ?? "guided")}
           </span>
           {recipe.status === "known-good" && <span className="flash-action-tag flash-action-tag--tier">known-good</span>}
+          {broken && <span className="flash-action-tag flash-action-tag--broken">broken</span>}
         </span>
       </summary>
 

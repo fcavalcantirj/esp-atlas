@@ -2288,6 +2288,10 @@ input[type="checkbox"]:checked::after {
   color: color-mix(in srgb, var(--ok) 80%, var(--fg));
 }
 
+.flash-action-tag--broken {
+  color: var(--danger);
+}
+
 .flash-checks {
   margin: 0;
   padding-left: 1.4rem;

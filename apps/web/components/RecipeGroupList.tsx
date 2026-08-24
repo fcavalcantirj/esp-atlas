@@ -2,7 +2,7 @@ import Link from "next/link";
 import FlashAction from "@/components/flash/FlashAction";
 import TrustTierBadge from "@/components/TrustTierBadge";
 import type { Recipe } from "@/lib/api";
-import type { FlashHandoff } from "@/lib/esp-web-tools";
+import { UNKNOWN_HANDOFF, type FlashHandoff } from "@/lib/esp-web-tools";
 import { flashMethodLabel, RECIPE_TIER_LABEL, RECIPE_TIER_ORDER } from "@/lib/format";
 
 // The board <-> firmware edge, from either side: a board page groups its
@@ -58,7 +58,7 @@ export default function RecipeGroupList({ rows }: { rows: RecipeRow[] }) {
                     targetName={name}
                     boardName={boardName}
                     firmwareName={firmwareName}
-                    handoff={handoff ?? { repoUrl: null, flasherUrls: [] }}
+                    handoff={handoff ?? UNKNOWN_HANDOFF}
                     usbConnector={usbConnector ?? null}
                   />
                 </li>

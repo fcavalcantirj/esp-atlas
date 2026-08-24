@@ -48,15 +48,19 @@ export function manifestUrlFor(recipe: Recipe): string | null {
 
 /** Everything the guided handoff may link to — only URLs the firmware record cites. */
 export interface FlashHandoff {
+  /** False when the firmware record could not be loaded — then "no links" means unknown, not "cites none". */
+  known: boolean;
   repoUrl: string | null;
   /** `sources[].field == "distribution"` entries: the project's own flasher / installer pages. */
   flasherUrls: string[];
 }
 
+export const UNKNOWN_HANDOFF: FlashHandoff = { known: false, repoUrl: null, flasherUrls: [] };
+
 export function handoffFor(firmware: Firmware | null | undefined): FlashHandoff {
-  if (!firmware) return { repoUrl: null, flasherUrls: [] };
+  if (!firmware) return UNKNOWN_HANDOFF;
   const urls = firmware.sources.filter((s) => s.field === "distribution").map((s) => s.url);
-  return { repoUrl: firmware.url || null, flasherUrls: Array.from(new Set(urls)) };
+  return { known: true, repoUrl: firmware.url || null, flasherUrls: Array.from(new Set(urls)) };
 }
 
 let loading: Promise<void> | null = null;
