@@ -71,7 +71,7 @@ _FORM_LABELS = {"xiao": "XIAO-sized", "feather": "Feather-sized", "m5-core": "M5
 _FORM_EXAMPLE_LIMIT = 2
 
 
-def _describe(fw):
+def describe_firmware(fw):
     """"Pentest · wifi, ble, sub-ghz" — the category plus what it can do.
 
     Capabilities that merely restate the category are dropped, so a badusb
@@ -99,7 +99,7 @@ def _firmware_examples():
             "firmware": fw["id"],
             "count": len(recipes),
         }
-        description = _describe(fw)
+        description = describe_firmware(fw)
         if description:
             example["description"] = description
         examples.append(example)

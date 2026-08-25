@@ -31,6 +31,7 @@ import re
 from datetime import datetime, timezone
 
 from esp_atlas_core import db as dbmod
+from esp_atlas_core.examples import describe_firmware
 from esp_atlas_core.facets import facets
 from esp_atlas_core.firmware import list_firmware, recipes_for_firmware
 from esp_atlas_core.llm import FAST_MODEL, GroqClient
@@ -275,12 +276,25 @@ def parse_intent(query, llm_client=None, db_path=None, use_cache=True):
     named = firmware_named_in(normalized)
     if named:
         firmware = named[0]
-        boards = [r["board"] for r in recipes_for_firmware(firmware["id"])]
+        recipes = recipes_for_firmware(firmware["id"])
         return {
             "kind": "firmware",
             "firmware": firmware["id"],
             "firmware_name": firmware["name"],
-            "boards": boards,
+            "firmware_description": describe_firmware(firmware),
+            "boards": [r["board"] for r in recipes],
+            # The cited reason each board is here -- never invented, only what
+            # the recipe itself already states (SPEC-wizard.md trust tiers).
+            "board_reasons": [
+                {
+                    "board": r["board"],
+                    "status": r.get("status"),
+                    "chip_family": r.get("chip_family"),
+                    "sources": r.get("sources") or [],
+                    "reason": r.get("reason"),
+                }
+                for r in recipes
+            ],
             "filters": {},
             "understood": [f"runs {firmware['name']}"],
             "unmapped": [],

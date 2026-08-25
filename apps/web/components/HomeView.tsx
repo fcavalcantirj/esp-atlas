@@ -13,7 +13,7 @@ import WizardForm from "@/components/WizardForm";
 import { track } from "@/lib/analytics";
 import { listParts, parseIntent, type Example, type IntentParse, type NeedsExample, type PartRecord } from "@/lib/api";
 import { useExplorer } from "@/lib/use-explorer";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function HomeView({ examples }: { examples: Example[] }) {
   const {
@@ -41,6 +41,12 @@ export default function HomeView({ examples }: { examples: Example[] }) {
   // this is the board data for that answer, resolved from the ids /intent returns.
   const [firmwareBoards, setFirmwareBoards] = useState<PartRecord[] | null>(null);
   const [firmwareBoardsLoading, setFirmwareBoardsLoading] = useState(false);
+  // The recipe's cited reason for each board, keyed by board id, so the answer
+  // can show WHY a board runs the firmware, not just that it does.
+  const boardReasonById = useMemo(
+    () => new Map((parse?.board_reasons ?? []).map((reason) => [reason.board, reason])),
+    [parse],
+  );
 
   function onExample(example: NeedsExample) {
     track("example_click", { example: example.id, kind: "needs" });
@@ -132,6 +138,11 @@ export default function HomeView({ examples }: { examples: Example[] }) {
 
       {parse && parse.kind === "firmware" && parse.firmware && (
         <section className="home-results" aria-label="Boards that run it" aria-live="polite" aria-busy={firmwareBoardsLoading}>
+          {parse.firmware_description && (
+            <p className="intent-parse-note">
+              {parse.firmware_name || parse.firmware} — {parse.firmware_description}
+            </p>
+          )}
           {firmwareBoardsLoading && <p className="results-loading">Loading boards…</p>}
           {!firmwareBoardsLoading && firmwareBoards && (
             <div className="results-header">
@@ -145,7 +156,13 @@ export default function HomeView({ examples }: { examples: Example[] }) {
           {!firmwareBoardsLoading && firmwareBoards && firmwareBoards.length > 0 && (
             <ul className="results-list">
               {firmwareBoards.map((part, index) => (
-                <PartResultCard key={part.id} part={part} origin="intent" position={index + 1} />
+                <PartResultCard
+                  key={part.id}
+                  part={part}
+                  origin="intent"
+                  position={index + 1}
+                  boardReason={boardReasonById.get(part.id)}
+                />
               ))}
             </ul>
           )}

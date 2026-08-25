@@ -481,6 +481,25 @@ def test_list_recipes_unknown_board_returns_empty(client):
     assert r.json()["results"] == []
 
 
+def test_intent_firmware_query_surfaces_cited_board_reasons(client):
+    """Acceptance case: /intent for 'marauder' must answer with WHY, not just
+    WHICH -- status, chip_family, a cited source url and the reason sentence
+    per board, all grounded in the recipe data (never model-generated)."""
+    r = client.post("/intent", json={"query": "marauder"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["kind"] == "firmware"
+    assert body["firmware"] == "esp32marauder"
+    assert body["firmware_description"]
+    reasons = body["board_reasons"]
+    assert reasons and len(reasons) == len(body["boards"])
+    for reason in reasons:
+        assert reason["status"] == "known-good"
+        assert reason["chip_family"]
+        assert reason["sources"] and all(s["url"] for s in reason["sources"])
+        assert reason["reason"]
+
+
 def test_examples_endpoint_returns_resolvable_entries(client):
     r = client.get("/examples")
     assert r.status_code == 200
