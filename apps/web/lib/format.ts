@@ -1,5 +1,5 @@
 // Display-only formatting of record fields. No decisions, no ranking — just labels.
-import type { PartRecord } from "@/lib/api";
+import type { PartRecord, RunGuideBoard } from "@/lib/api";
 
 export function typeLabel(type: string): string {
   switch (type) {
@@ -124,6 +124,60 @@ export function specChips(part: PartRecord): { label: string; on?: boolean }[] {
   if (part.usb_native) chips.push({ label: "Native USB", on: true });
   if (part.form_factor) chips.push({ label: part.form_factor });
   return chips;
+}
+
+// data/firmware/*/firmware.md `requires`/`not_required` capability vocab -> the
+// human label the run-guide answer teaches with. Mirrors esp_atlas_core.run_guide
+// _CAP_LABELS -- kept in sync by hand since the two apps don't share code.
+const CAPABILITY_LABEL: Record<string, string> = {
+  wifi: "2.4GHz Wi-Fi",
+  ble: "Bluetooth LE",
+  bt_classic: "Bluetooth Classic",
+  badusb: "USB HID (native USB)",
+  "native-usb": "native USB",
+  lora: "LoRa radio",
+  gps: "GPS",
+  "sub-ghz": "Sub-GHz radio",
+  "rfid-nfc": "RFID/NFC",
+  nfc: "NFC",
+  ir: "IR blaster/receiver",
+  mesh: "802.15.4 mesh radio",
+  ethernet: "Ethernet",
+  display: "a display",
+  storage: "storage",
+  psram: "PSRAM",
+};
+
+export function capabilityLabel(capability: string): string {
+  return CAPABILITY_LABEL[capability] ?? capability;
+}
+
+// run_guide's per-board fit (esp_atlas_core.run_guide._fit_for): hard
+// requirements gate it, benefits refine fit once hardware is fully met.
+export const RUN_GUIDE_FIT_ORDER = ["ideal", "works", "partial", "unconfirmed"] as const;
+
+export const FIT_LABEL: Record<string, string> = {
+  ideal: "Ideal fit",
+  works: "Works, with a tradeoff",
+  partial: "Partial fit",
+  unconfirmed: "Fit unconfirmed",
+};
+
+const BENEFIT_REASON_RE = /^benefits from (.+?) -> /;
+
+/** The distinct benefit capabilities named across a run-guide's boards
+ * (esp_atlas_core.run_guide._benefit_reasons emits "benefits from <label> ->
+ * ..." lines per board) -- read back out into one deduped chip row instead of
+ * repeating them inside every board's own reasons list. */
+export function runGuideBenefits(boards: RunGuideBoard[]): string[] {
+  const labels = new Set<string>();
+  for (const board of boards) {
+    for (const reason of board.reasons) {
+      const match = BENEFIT_REASON_RE.exec(reason);
+      if (match) labels.add(match[1].replace(/^an? /, ""));
+    }
+  }
+  return [...labels];
 }
 
 export function firstSentence(text: string): string {

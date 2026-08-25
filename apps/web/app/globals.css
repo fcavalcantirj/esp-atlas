@@ -2342,3 +2342,189 @@ input[type="checkbox"]:checked::after {
   font-size: var(--t-sm);
   color: var(--muted);
 }
+
+/* ==========================================================================
+   Run guide (grounded firmware answer on the home intent box)
+   ========================================================================== */
+
+.run-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
+  padding: 1.25rem clamp(1rem, 2.5vw, 1.75rem);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.run-guide-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.run-guide-title {
+  font-family: var(--font-language);
+  font-size: var(--t-title);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.run-guide-summary {
+  font-size: var(--t-body);
+  line-height: var(--lead-body);
+  max-width: 68ch;
+}
+
+.run-guide-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.run-guide-section-title {
+  font-family: var(--font-data);
+  font-size: var(--t-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--accent);
+}
+
+.run-guide-req-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.run-guide-req {
+  font-size: var(--t-sm);
+  line-height: var(--lead-snug);
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--border-strong);
+}
+
+/* "Does not need" reads as a headline teaching, not fine print -- same weight
+   as "Needs", marked green (the ok token) instead of the neutral rule. */
+.run-guide-section--not-required .run-guide-req {
+  border-left-color: var(--ok);
+}
+
+.run-guide-req-cap {
+  font-weight: 600;
+}
+
+.run-guide-req-why {
+  color: var(--muted);
+}
+
+.run-guide-boards {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.run-guide-board {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.run-guide-board-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.run-guide-board-name {
+  margin: 0;
+  font-family: var(--font-language);
+  font-size: var(--t-lede);
+  font-weight: 400;
+}
+
+.run-guide-board-name a {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.run-guide-board-name a:hover,
+.run-guide-board-name a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.run-guide-board-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.25rem 0 0;
+}
+
+.run-guide-board-chip {
+  font-family: var(--font-data);
+  font-size: var(--t-micro);
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.run-guide-board-note {
+  margin: 0.5rem 0 0;
+  font-size: var(--t-sm);
+  color: var(--fg);
+}
+
+.run-guide-board-source {
+  margin: 0.5rem 0 0;
+  font-size: var(--t-xs);
+}
+
+.run-guide-excluded {
+  font-size: var(--t-xs);
+  color: var(--muted);
+}
+
+.fit-badge {
+  /* Fit tier: dot plus the word, same honesty convention as .tier-badge --
+     never color alone. */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  font-family: var(--font-data);
+  font-size: var(--t-micro);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.fit-badge::before {
+  content: "";
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.fit-badge--ideal {
+  color: var(--ok);
+}
+
+.fit-badge--works {
+  color: var(--accent);
+}
+
+.fit-badge--partial {
+  color: var(--warn);
+}
+
+.fit-badge--unconfirmed {
+  color: var(--muted);
+}
