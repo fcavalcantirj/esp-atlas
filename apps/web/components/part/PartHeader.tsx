@@ -7,16 +7,18 @@ import { brandLabel } from "@/lib/brand";
 import { PRICE_TIER_LABEL, PRICE_TIER_NOTE, typeLabel, typePlural } from "@/lib/format";
 import { asStringArray } from "@/lib/frontmatter";
 import { editSourceUrl } from "@/lib/github";
+import { typeIndexPath } from "@/lib/routes";
 
 export default function PartHeader({ part }: { part: PartDetail }) {
   const aka = asStringArray(part.frontmatter.aka);
+  const indexPath = typeIndexPath(part.type);
 
   return (
     <header className="part-header">
       <nav className="breadcrumb" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
         <span aria-hidden="true">›</span>
-        <span>{typePlural(part.type)}</span>
+        {indexPath ? <Link href={indexPath}>{typePlural(part.type)}</Link> : <span>{typePlural(part.type)}</span>}
         <span aria-hidden="true">›</span>
         <span aria-current="page">{part.name}</span>
       </nav>

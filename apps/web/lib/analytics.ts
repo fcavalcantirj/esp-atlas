@@ -31,6 +31,7 @@ export type EventName =
   | "outbound_click"
   | "api_error"
   | "not_found"
+  | "shelf_see_all"
   // Flash Wizard (SPEC-wizard P2b): panel opened, rail decided, consent, connect click.
   | "flash_open"
   | "flash_ready"
