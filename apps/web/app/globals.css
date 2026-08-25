@@ -2193,3 +2193,53 @@ input[type="checkbox"]:checked::after {
   margin-top: 0.15rem;
   color: var(--accent);
 }
+
+/* ==========================================================================
+   Home shelves as navigation — every card a link, every shelf a "see all"
+   ========================================================================== */
+
+.example-group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.example-group-seeall {
+  flex-shrink: 0;
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.example-group-seeall:hover,
+.example-group-seeall:focus-visible {
+  text-decoration: underline;
+}
+
+/* A card reads as a destination: a chevron in the corner, accent on hover. */
+.example-card {
+  position: relative;
+  padding-right: 2rem;
+  text-decoration: none;
+}
+
+.example-card::after {
+  content: "›";
+  position: absolute;
+  top: 0.55rem;
+  right: 0.8rem;
+  font-family: var(--font-data);
+  font-size: var(--t-body);
+  color: var(--muted);
+  transition: color 0.12s ease, transform 0.12s ease;
+}
+
+.example-card:hover::after,
+.example-card:focus-visible::after {
+  color: var(--accent);
+  transform: translateX(2px);
+}
