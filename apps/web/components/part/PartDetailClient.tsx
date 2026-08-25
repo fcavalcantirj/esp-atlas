@@ -4,27 +4,43 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import PartDetailView from "@/components/part/PartDetailView";
 import PartViewTracker from "@/components/part/PartViewTracker";
+import type { RecipeRow } from "@/components/RecipeGroupList";
 import TrackedLink from "@/components/TrackedLink";
-import { ApiError, getPart, type PartDetail } from "@/lib/api";
+import { ApiError, getPart, getRecipesForBoard, listFirmware, type PartDetail } from "@/lib/api";
 import { track } from "@/lib/analytics";
+import { asString, fmObject } from "@/lib/frontmatter";
 import { contributingUrl } from "@/lib/github";
+import { boardFirmwareRows } from "@/lib/recipe-rows";
 
 type State =
   | { status: "loading" }
-  | { status: "ok"; part: PartDetail }
+  | { status: "ok"; part: PartDetail; rows: RecipeRow[] | null }
   | { status: "not_found" }
   | { status: "error"; message: string };
 
 // Fallback when the server could not reach the API in time (cold function,
-// preview deployment protection, ...): fetch from the browser instead.
+// preview deployment protection, ...): fetch from the browser instead. Boards
+// also load their recipes here, so the Flash Wizard's action renders on this
+// path too instead of silently disappearing with the firmware section.
+async function loadBoardRows(part: PartDetail): Promise<RecipeRow[] | null> {
+  if (part.type !== "board") return null;
+  const [recipes, firmware] = await Promise.all([
+    getRecipesForBoard(part.id).then((r) => r.results, () => null),
+    listFirmware().then((r) => r.results, () => []),
+  ]);
+  if (recipes === null) return [];
+  return boardFirmwareRows(recipes, firmware, part.name, asString(fmObject(part.frontmatter, "usb")?.connector));
+}
+
 export default function PartDetailClient({ id }: { id: string }) {
   const [state, setState] = useState<State>({ status: "loading" });
 
   useEffect(() => {
     let cancelled = false;
     getPart(id)
-      .then((part) => {
-        if (!cancelled) setState({ status: "ok", part });
+      .then(async (part) => {
+        const rows = await loadBoardRows(part);
+        if (!cancelled) setState({ status: "ok", part, rows });
       })
       .catch((err) => {
         if (cancelled) return;
@@ -88,7 +104,7 @@ export default function PartDetailClient({ id }: { id: string }) {
   return (
     <>
       <PartViewTracker part={state.part} />
-      <PartDetailView part={state.part} />
+      <PartDetailView part={state.part} boardFirmwareRows={state.rows} />
     </>
   );
 }

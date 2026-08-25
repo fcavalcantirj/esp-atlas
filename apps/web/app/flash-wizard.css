@@ -1,0 +1,245 @@
+/* Flash Wizard (SPEC-wizard P2b) styles live in their own sheet, imported by
+   app/layout.tsx right after globals.css, so feature CSS never appends to the
+   global file and PRs stop colliding there. Tokens come from globals.css. */
+
+/* ==========================================================================
+   Flash Wizard — per-recipe flash action (SPEC-wizard P2b)
+   ========================================================================== */
+
+.recipe-row .flash-action {
+  flex-basis: 100%;
+  margin-top: 0.25rem;
+}
+
+.flash-action summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.flash-action summary::-webkit-details-marker {
+  display: none;
+}
+
+/* The one glowing thing on a record page: the flash affordance. Accent token
+   only (no new colour); the glow is a soft accent halo that breathes on
+   recipes with an in-browser binary, and sits still for guided handoffs. */
+.flash-action-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.85rem 0.45rem 0.7rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  font-family: var(--font-data);
+  font-size: var(--t-sm);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--accent);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.flash-action-summary::before {
+  /* Decorative; the "/ \"\"" alternative text keeps screen readers from reading "high voltage". */
+  content: "⚡" / "";
+  font-size: 0.95em;
+  letter-spacing: 0;
+}
+
+.flash-action-summary:hover,
+.flash-action[open] .flash-action-summary {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent), 0 0 18px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.flash-action--browser .flash-action-summary {
+  /* Keeps breathing (Felipe: the flashable row must read as alive); hover / open
+     pause it, and prefers-reduced-motion replaces it with a static glow. */
+  animation: flash-breathe 2.2s ease-in-out infinite;
+}
+
+.flash-action--browser[open] .flash-action-summary,
+.flash-action--browser .flash-action-summary:hover {
+  animation: none;
+}
+
+@keyframes flash-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent), 0 0 6px color-mix(in srgb, var(--accent) 25%, transparent);
+    border-color: var(--accent);
+  }
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent), 0 0 22px color-mix(in srgb, var(--accent) 60%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 70%, var(--fg));
+  }
+}
+
+/* Guided handoffs are quiet outlines; only a recipe that can flash in the
+   browser gets the accent fill and the glow — the eye lands on what flashes. */
+.flash-action:not(.flash-action--browser) .flash-action-summary {
+  /* Reads as "not enabled here": dashed outline, muted, no glow — still opens the handoff links. */
+  border-style: dashed;
+  border-color: var(--border-strong);
+  background: var(--bg);
+  color: var(--muted);
+  opacity: 0.85;
+  box-shadow: none;
+}
+
+.flash-action:not(.flash-action--browser) .flash-action-summary:hover,
+.flash-action:not(.flash-action--browser)[open] .flash-action-summary {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.flash-action:not(.flash-action--browser) .flash-action-tag {
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.flash-action-title {
+  font-weight: 600;
+}
+
+.flash-action-tags {
+  display: inline-flex;
+  gap: 0.35rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.flash-action-tag {
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  color: var(--accent);
+  font-size: var(--t-micro);
+}
+
+.flash-action-tag--tier {
+  /* --ok alone is 4.35:1 on white at this size; darkened toward the ink to clear AA. */
+  color: color-mix(in srgb, var(--ok) 80%, var(--fg));
+}
+
+.flash-action-tag--broken {
+  color: var(--danger);
+}
+
+.flash-checks {
+  margin: 0;
+  padding-left: 1.4rem;
+  font-size: var(--t-sm);
+  line-height: var(--lead-snug);
+  list-style: none;
+}
+
+.flash-checks li {
+  position: relative;
+  margin: 0.2rem 0;
+}
+
+.flash-checks li::before {
+  content: "✓" / "";
+  position: absolute;
+  left: -1.3rem;
+  color: var(--ok);
+  font-family: var(--font-data);
+  font-weight: 700;
+}
+
+.btn--flash:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  animation: flash-btn-glow 1.8s ease-in-out infinite;
+}
+
+.btn--flash:not(:disabled):hover,
+.btn--flash:not(:disabled):focus-visible {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+
+@keyframes flash-btn-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 12%, transparent), 0 0 20px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Static glow instead of motion; :hover / [open] keep their own halo. */
+  .flash-action--browser:not([open]) .flash-action-summary:not(:hover),
+  .btn--flash:not(:disabled) {
+    animation: none;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+}
+
+.flash-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0.6rem 0 0.4rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.flash-disclaimer {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--warn);
+  font-size: var(--t-sm);
+  line-height: var(--lead-snug);
+}
+
+.flash-disclaimer .tier-badge {
+  margin-right: 0.35rem;
+}
+
+.flash-panel esp-web-install-button {
+  display: block;
+}
+
+.flash-slot-note {
+  display: block;
+  font-size: var(--t-sm);
+  color: var(--muted);
+}
+
+.flash-hint {
+  margin: 0;
+  font-size: var(--t-xs);
+}
+
+.flash-handoff {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.flash-handoff p {
+  margin: 0;
+  font-size: var(--t-sm);
+}
+
+.flash-handoff-links {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: var(--t-sm);
+}
+
+/* The "?" on the pill — the site's HelpTip, kept clear of the summary's toggle. */
+.flash-action-help {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.15rem;
+  letter-spacing: 0;
+  text-transform: none;
+}

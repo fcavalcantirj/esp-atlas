@@ -79,7 +79,7 @@ const FLASH_METHOD_LABEL: Record<string, string> = {
   "web-flasher": "web flasher",
 };
 
-/** Informational only — never a flash affordance (that's a later phase). */
+/** Display label for a recipe's distribution method; the flash affordance itself is components/flash/FlashAction. */
 export function flashMethodLabel(method: string | null | undefined): string | null {
   if (!method) return null;
   return FLASH_METHOD_LABEL[method] ?? method;

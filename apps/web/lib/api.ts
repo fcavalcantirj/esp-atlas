@@ -374,6 +374,22 @@ export function getFacets(): Promise<Facets> {
   return apiFetch(`/facets`);
 }
 
+export function listFirmware(): Promise<{ results: Firmware[] }> {
+  return apiFetch(`/firmware`);
+}
+
+export function getRecipesForBoard(boardId: string): Promise<{ results: Recipe[] }> {
+  return apiFetch(`/recipes?board=${encodeURIComponent(boardId)}`);
+}
+
+export function getFirmware(id: string): Promise<Firmware> {
+  return apiFetch(`/firmware/${encodeURIComponent(id)}`);
+}
+
+export function getRecipesForFirmware(firmwareId: string): Promise<{ results: Recipe[] }> {
+  return apiFetch(`/recipes?firmware=${encodeURIComponent(firmwareId)}`);
+}
+
 export function parseIntent(query: string): Promise<IntentParse> {
   return apiFetch(`/intent`, { method: "POST", body: JSON.stringify({ query }) });
 }
