@@ -21,6 +21,9 @@ export default function SiteHeader() {
           <Link href="/firmware" className="nav-link">
             Firmware
           </Link>
+          <Link href="/how-we-work" className="nav-link">
+            How we work
+          </Link>
           <TrackedLink href={contributingUrl()} linkType="contributing" className="nav-link">
             Add a part
           </TrackedLink>

@@ -25,14 +25,13 @@ export default function SiteFooter() {
               A community wiki for ESP32 hardware, <em>cited to the datasheet</em>.
             </p>
             <p>
-              Picking an ESP32 board means wading through dozens of near-identical models from a dozen vendors,
-              each documented in a different place. We — Felipe and his coding agent — kept losing hours to it,
-              so we built the community wiki we wished existed: every spec cited to an official datasheet,
-              queryable, and fixable by pull request.
+              A bot watches the sources every day and proposes what changed; humans review it; nothing lands
+              without a source. If it isn&apos;t verified, it isn&apos;t stated.
             </p>
             <p>
-              If it isn&apos;t verified, it isn&apos;t stated. Found a wrong number or a missing board? That&apos;s a
-              one-file PR away.
+              <Link href="/how-we-work" className="footer-how">
+                How we work →
+              </Link>
             </p>
           </section>
 
@@ -112,6 +111,7 @@ export default function SiteFooter() {
         </div>
 
         <div className="footer-bottom">
+          <strong className="footer-mission">esp-atlas — the ESP32 world, chewed daily by a bot, checked by humans, fixable by anyone in one PR.</strong>
           <span>
             Data (<code>data/</code>, <code>schema/</code>) is{" "}
             <TrackedLink href="https://creativecommons.org/licenses/by-sa/4.0/" linkType="license">
