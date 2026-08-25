@@ -286,16 +286,17 @@ class RecipeListResponse(BaseModel):
 
 class RunGuideBoard(BaseModel):
     """One board's grounded, reasoned fit for a firmware -- see
-    esp_atlas_core.run_guide. `reasons` and `fit` are always deterministic,
-    computed straight from this board's own real record; `note` is the only
-    field an LLM ever contributes, and only after surviving the grounding
-    validator (a hallucinated board, spec, or source is rejected outright,
-    never sanitized into something safer)."""
+    esp_atlas_core.run_guide. `reasons`, `particularities`, and `fit` are always
+    deterministic, computed straight from this board's own real record; `note`
+    is the only field an LLM ever contributes, and only after surviving the
+    grounding validator (a hallucinated board, spec, or source is rejected
+    outright, never sanitized into something safer)."""
 
     board_id: str
     board_name: str
     fit: str
     reasons: list[str] = []
+    particularities: list[str] = []
     status: Optional[str] = None
     chip_family: Optional[str] = None
     sources: list[SourceEntry] = []
