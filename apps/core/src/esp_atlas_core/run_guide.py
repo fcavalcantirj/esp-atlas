@@ -409,6 +409,32 @@ def _board_reasons(requires, board):
     return reasons, hardware_match, matched_count, total_hardware
 
 
+# Display order for boards[]: best fit first. "works-with-tradeoff" is kept
+# alongside "works" (same rank) in case a future fit label uses that exact
+# spelling; any fit value not named here (e.g. "partial", or a future/unknown
+# value) sorts last -- defensive, so an unrecognized fit never jumps the queue.
+_FIT_RANK = {
+    "ideal": 0,
+    "works": 1,
+    "works-with-tradeoff": 1,
+    "unconfirmed": 2,
+}
+_UNRANKED_FIT = max(_FIT_RANK.values()) + 1
+
+
+def _board_sort_key(board_out):
+    """boards[] ranks by fit first (ideal, then works[-with-tradeoff], then
+    unconfirmed, then anything else last); within the same fit, a known-good
+    recipe sorts before other statuses, then board display name A->Z -- both
+    stable, deterministic tie-breakers so the order never depends on recipe
+    graph iteration order."""
+    return (
+        _FIT_RANK.get(board_out["fit"], _UNRANKED_FIT),
+        0 if board_out["status"] == "known-good" else 1,
+        board_out["board_name"],
+    )
+
+
 def _fit_for(hardware_match, benefit_match):
     """Hard requirements gate fit; benefits refine it once hardware is fully met --
     "ideal" needs every benefit too, "works" names the specific one missing. A
@@ -710,6 +736,8 @@ def run_guide(firmware_id, constraints=None, llm_client=None, db_path=None):
         if note and note["note"]:
             out["note"] = note["note"]
         boards_out.append(out)
+
+    boards_out.sort(key=_board_sort_key)
 
     result = {
         "firmware": firmware["id"],
