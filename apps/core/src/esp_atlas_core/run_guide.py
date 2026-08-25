@@ -12,8 +12,10 @@ or invents a fact.
     run_guide("esp32marauder")
     # -> {"firmware": "esp32marauder", "firmware_name": "ESP32 Marauder",
     #     "summary": "...", "requirements": ["2.4GHz Wi-Fi", "Bluetooth LE"],
-    #     "boards": [{"board_id": "m5cardputer", "fit": "strong",
-    #                  "reasons": ["needs 2.4GHz Wi-Fi -> Cardputer has Wi-Fi wifi-4 (2.4 GHz)", ...],
+    #     "boards": [{"board_id": "m5cardputer", "fit": "ideal",
+    #                  "reasons": ["needs 2.4GHz Wi-Fi -> Cardputer has Wi-Fi wifi-4 (2.4 GHz)", ...,
+    #                              "benefits from storage -> Cardputer has a microSD card slot"],
+    #                  "particularities": ["esp32-s3 chip", "no PSRAM -- ESP32 Marauder does not need it", ...],
     #                  "status": "known-good", "chip_family": "esp32-s3",
     #                  "sources": [...], "note": "..."}, ...],
     #     "flash_next": [...], "citations": [...], "grounded": True}
@@ -111,6 +113,127 @@ def _match_usb_native(board):
 
 _MATCHERS = {"wifi": _match_wifi, "ble": _match_ble, "bt_classic": _match_bt_classic, "badusb": _match_usb_native}
 
+# firmware.schema.json `benefits_from` -- a closed vocab of SOFT/UX capabilities a
+# firmware benefits from beyond its hard `capabilities`, each provable (present or
+# absent) from a board's own structured frontmatter fields. Never a gate on fit,
+# only a teaching point: a firmware missing one still runs, just with a named
+# tradeoff (see `_fit_for`).
+_BENEFIT_LABELS = {
+    "display": "a display",
+    "storage": "storage",
+    "battery": "a battery",
+    "usb-native": "native USB",
+}
+
+
+def _benefit_display(board):
+    display = (board.get("frontmatter") or {}).get("display")
+    if display:
+        return True, f"has a {display} display"
+    return False, "record shows no on-board display"
+
+
+def _benefit_storage(board):
+    extras = (board.get("frontmatter") or {}).get("extras") or []
+    if "sd-card" in extras:
+        return True, "has a microSD card slot"
+    return False, "record shows no on-board microSD to store captures"
+
+
+def _benefit_battery(board):
+    battery = ((board.get("frontmatter") or {}).get("power") or {}).get("battery_connector")
+    if battery:
+        return True, "has a battery connector"
+    return False, "record shows no battery connector"
+
+
+def _benefit_usb_native(board):
+    if board.get("usb_native") is True:
+        return True, "has native USB"
+    return False, "record shows no native USB (bridge chip only)"
+
+
+_BENEFIT_MATCHERS = {
+    "display": _benefit_display,
+    "storage": _benefit_storage,
+    "battery": _benefit_battery,
+    "usb-native": _benefit_usb_native,
+}
+
+
+def _benefit_reasons(benefits, board):
+    """Every soft benefit a firmware's own `benefits_from` names, checked against
+    ONE board's real record -- same honesty contract as `_board_reasons`: teach
+    the tradeoff by name (e.g. no microSD) rather than staying silent on it.
+    Returns (reasons, benefit_match) -- benefit_match is {benefit: bool}."""
+    reasons = []
+    benefit_match = {}
+    board_name = board["name"]
+    for benefit in benefits or []:
+        matcher = _BENEFIT_MATCHERS.get(benefit)
+        if matcher is None:
+            continue
+        matched, clause = matcher(board)
+        benefit_match[benefit] = matched
+        label = _BENEFIT_LABELS.get(benefit, benefit)
+        reasons.append(f"benefits from {label} -> {board_name} {clause}")
+    return reasons, benefit_match
+
+
+def _mb(value):
+    """Render a MB figure the way the dataset states it: whole numbers with no
+    trailing '.0' -- flash_mb/psram_mb round-trip through sqlite as floats."""
+    number = float(value)
+    return str(int(number)) if number.is_integer() else str(number)
+
+
+def _board_particularities(board, firmware_name):
+    """Salient, grounded facts about ONE board's real record -- chip generation,
+    PSRAM framed explicitly against this firmware's needs (never implying PSRAM
+    is required; this dataset's capability vocab never requires it), flash size,
+    form factor/dimensions, battery, and USB type. Always board-derived, never
+    firmware-gated -- unlike `_benefit_reasons`, these are taught regardless of
+    whether the firmware declares any `benefits_from`."""
+    fm = board.get("frontmatter") or {}
+    facts = []
+
+    soc = board.get("soc_ref") or fm.get("soc")
+    if soc:
+        facts.append(f"{soc} chip")
+
+    psram_mb = board.get("psram_mb")
+    if psram_mb == 0:
+        facts.append(f"no PSRAM -- {firmware_name} does not need it")
+    elif psram_mb:
+        facts.append(f"{_mb(psram_mb)}MB PSRAM on board (not required by {firmware_name})")
+
+    flash_mb = board.get("flash_mb")
+    if flash_mb:
+        facts.append(f"{_mb(flash_mb)}MB flash")
+
+    form_factor = fm.get("form_factor") or board.get("form_factor")
+    dims = fm.get("dimensions_mm")
+    if form_factor and dims:
+        facts.append(f"{form_factor} form factor ({'x'.join(str(d) for d in dims)}mm)")
+    elif form_factor:
+        facts.append(f"{form_factor} form factor")
+
+    power = fm.get("power") or {}
+    if power.get("battery_connector"):
+        facts.append("onboard battery connector (rechargeable)" if power.get("charging") else "onboard battery connector")
+    else:
+        facts.append("no onboard battery connector")
+
+    usb = fm.get("usb") or {}
+    if usb.get("connector"):
+        facts.append(f"{usb['connector']} USB connector")
+    elif usb.get("bridge") == "native":
+        facts.append("native USB (no separate bridge chip)")
+    elif usb.get("bridge"):
+        facts.append(f"USB via {usb['bridge']} bridge chip")
+
+    return facts
+
 # Chip ids this dataset seeds (data/socs/*/chip.md), longest/most-specific
 # form first so "esp32-s3" wins over the bare "esp32" it contains.
 _CHIP_IDS = (
@@ -183,12 +306,19 @@ def _board_reasons(capabilities, board):
     return reasons, hardware_match, matched_count, total_hardware
 
 
-def _fit_for(matched, total):
+def _fit_for(hardware_match, benefit_match):
+    """Hard requirements gate fit; benefits refine it once hardware is fully met --
+    "ideal" needs every benefit too, "works" names the specific one missing. A
+    firmware with no `benefits_from` at all still reaches "ideal" on full hardware
+    match, same as the old all-boards-"strong" case, just honestly renamed."""
+    total = len(hardware_match)
     if total == 0:
         return "unconfirmed"
-    ratio = matched / total
+    ratio = sum(1 for v in hardware_match.values() if v) / total
     if ratio == 1:
-        return "strong"
+        if benefit_match and not all(benefit_match.values()):
+            return "works"
+        return "ideal"
     if ratio >= 0.5:
         return "works"
     if ratio > 0:
@@ -258,13 +388,18 @@ def _not_found(firmware_id):
     }
 
 
-SYSTEM_PROMPT = """You explain, in plain language, why a firmware runs well on a set of boards.
+SYSTEM_PROMPT = """You explain, in plain language, why a firmware runs well -- or with
+which named tradeoff -- on a set of boards.
 
 You are given the firmware's name and requirements, and for EACH board a list
 of facts already verified against that board's own real specs -- the exact
-requirement-to-capability matches, already decided. You do not decide fit and
-you do not invent facts: you only phrase what is already given, using ONLY the
-board ids, specs, and source URLs present in the data below.
+requirement-to-capability matches, the benefit matches, its particularities
+(chip, PSRAM, flash, form factor, battery, USB), and its already-decided fit.
+You do not decide fit and you do not invent facts: you only phrase what is
+already given, using ONLY the board ids, specs, and source URLs present in the
+data below. When fit is "works" rather than "ideal", say what the board lacks
+using only the given facts -- never invent a missing spec, and never state
+that PSRAM is required.
 
 Reply with JSON only, no prose, in exactly this shape:
 {"summary": "<=2 sentences: what the firmware is and why these boards run it>",
@@ -291,6 +426,9 @@ def _build_prompt(firmware, requirements, board_entries, chip_constraint):
         lines.append(f"Board {board['id']} ({board['name']}, chip_family={recipe.get('chip_family')}, status={recipe.get('status')}):")
         for reason in entry["reasons"]:
             lines.append(f"  - {reason}")
+        for fact in entry["particularities"]:
+            lines.append(f"  - particularity: {fact}")
+        lines.append(f"  fit: {entry['fit']}")
         lines.append(f"  sources: {sources or 'none'}")
         lines.append("")
     return "\n".join(lines)
@@ -314,6 +452,8 @@ def _parse_json(text):
 
 _MB_CLAIM_RE = re.compile(r"(\d+(?:\.\d+)?)\s*mb\s*(psram|flash)?")
 _5GHZ_RE = re.compile(r"5\s*ghz")
+_SD_CARD_RE = re.compile(r"microsd|sd[\s-]?card")
+_PSRAM_REQUIRED_RE = re.compile(r"(needs?|requires?)\s+psram|psram\s+(?:is\s+)?(?:required|needed)")
 
 
 def _has_ungrounded_spec_claim(note, board, hardware_match):
@@ -327,6 +467,12 @@ def _has_ungrounded_spec_claim(note, board, hardware_match):
     if _5GHZ_RE.search(text):
         bands = [b.strip() for b in (board.get("wifi_bands") or "").split(",") if b.strip()]
         if "5" not in bands:
+            return True
+    if _PSRAM_REQUIRED_RE.search(text):
+        return True  # this dataset's capability vocab never requires PSRAM
+    if _SD_CARD_RE.search(text):
+        extras = (board.get("frontmatter") or {}).get("extras") or []
+        if "sd-card" not in extras:
             return True
     for value, kind in _MB_CLAIM_RE.findall(text):
         if not kind:
@@ -400,14 +546,17 @@ def run_guide(firmware_id, constraints=None, llm_client=None, db_path=None):
         board = get_part(recipe["board"], db_path=db_path)
         if board is None:
             continue
-        reasons, hardware_match, matched, total = _board_reasons(firmware.get("capabilities"), board)
+        reasons, hardware_match, _matched, _total = _board_reasons(firmware.get("capabilities"), board)
+        benefit_reasons, benefit_match = _benefit_reasons(firmware.get("benefits_from"), board)
         board_entries.append(
             {
                 "recipe": recipe,
                 "board": board,
-                "reasons": reasons,
+                "reasons": reasons + benefit_reasons,
                 "hardware_match": hardware_match,
-                "fit": _fit_for(matched, total),
+                "benefit_match": benefit_match,
+                "particularities": _board_particularities(board, firmware["name"]),
+                "fit": _fit_for(hardware_match, benefit_match),
             }
         )
 
@@ -444,6 +593,7 @@ def run_guide(firmware_id, constraints=None, llm_client=None, db_path=None):
             "board_name": board["name"],
             "fit": entry["fit"],
             "reasons": entry["reasons"],
+            "particularities": entry["particularities"],
             "status": recipe.get("status"),
             "chip_family": recipe.get("chip_family"),
             "sources": recipe.get("sources") or [],

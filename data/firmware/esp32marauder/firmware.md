@@ -15,6 +15,9 @@ distribution:
 capabilities:
 - wifi
 - ble
+benefits_from:
+- display
+- storage
 sources:
 - field: '*'
   url: https://github.com/justcallmekoko/ESP32Marauder
@@ -23,4 +26,4 @@ sources:
 
 # ESP32 Marauder
 
-ESP32 Marauder is a Wi-Fi and Bluetooth pentesting suite for a range of ESP32 boards.
+ESP32 Marauder is a Wi-Fi and Bluetooth pentesting suite for a range of ESP32 boards. Its menu system is navigated on an onboard display, and it writes packet/PCAP captures to a microSD card.
