@@ -6,14 +6,14 @@
 import Link from "next/link";
 import ExamplesGrid from "@/components/ExamplesGrid";
 import IntentPrompt from "@/components/IntentPrompt";
-import PartResultCard from "@/components/PartResultCard";
 import ResultsPanel from "@/components/ResultsPanel";
+import RunGuideAnswer from "@/components/RunGuideAnswer";
 import SearchBox from "@/components/SearchBox";
 import WizardForm from "@/components/WizardForm";
 import { track } from "@/lib/analytics";
-import { listParts, parseIntent, type Example, type IntentParse, type NeedsExample, type PartRecord } from "@/lib/api";
+import { ApiError, parseIntent, runGuide, type Example, type IntentParse, type NeedsExample, type RunGuideResponse } from "@/lib/api";
 import { useExplorer } from "@/lib/use-explorer";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 export default function HomeView({ examples }: { examples: Example[] }) {
   const {
@@ -37,16 +37,11 @@ export default function HomeView({ examples }: { examples: Example[] }) {
   // why they got what they got.
   const [parse, setParse] = useState<IntentParse | null>(null);
   const [parsing, setParsing] = useState(false);
-  // The firmware branch answers inline (recipe boards), never navigates away —
-  // this is the board data for that answer, resolved from the ids /intent returns.
-  const [firmwareBoards, setFirmwareBoards] = useState<PartRecord[] | null>(null);
-  const [firmwareBoardsLoading, setFirmwareBoardsLoading] = useState(false);
-  // The recipe's cited reason for each board, keyed by board id, so the answer
-  // can show WHY a board runs the firmware, not just that it does.
-  const boardReasonById = useMemo(
-    () => new Map((parse?.board_reasons ?? []).map((reason) => [reason.board, reason])),
-    [parse],
-  );
+  // The firmware branch answers inline (the grounded run_guide teaching), never
+  // navigates away — this is that answer, resolved from GET /run/{firmware_id}.
+  const [guide, setGuide] = useState<RunGuideResponse | null>(null);
+  const [guideLoading, setGuideLoading] = useState(false);
+  const [guideError, setGuideError] = useState<string | null>(null);
 
   function onExample(example: NeedsExample) {
     track("example_click", { example: example.id, kind: "needs" });
@@ -54,36 +49,33 @@ export default function HomeView({ examples }: { examples: Example[] }) {
     void executeWizard(example.needs, scrollToResults);
   }
 
-  async function loadFirmwareBoards(boardIds: string[]) {
-    if (boardIds.length === 0) {
-      setFirmwareBoards([]);
-      return;
-    }
-    setFirmwareBoardsLoading(true);
+  async function loadRunGuide(firmwareId: string) {
+    setGuideLoading(true);
+    setGuideError(null);
     try {
-      const { results } = await listParts();
-      const byId = new Map(results.map((part) => [part.id, part]));
-      setFirmwareBoards(boardIds.map((id) => byId.get(id)).filter((part): part is PartRecord => part !== undefined));
-    } catch {
-      setFirmwareBoards([]);
+      setGuide(await runGuide(firmwareId));
+    } catch (err) {
+      setGuide(null);
+      setGuideError(err instanceof ApiError ? err.message : "The API did not answer in time.");
     } finally {
-      setFirmwareBoardsLoading(false);
+      setGuideLoading(false);
     }
   }
 
   async function onIntent(text: string) {
     setParsing(true);
     setParse(null);
-    setFirmwareBoards(null);
+    setGuide(null);
+    setGuideError(null);
     try {
       const parsed = await parseIntent(text);
       setParse(parsed);
       track("intent_parse", { q: text, kind: parsed.kind, cached: parsed.cached });
 
       if (parsed.kind === "firmware" && parsed.firmware) {
-        // Answer inline, from the recipe graph — the reasoning above plus the
-        // boards below. The full firmware page stays one click away, never automatic.
-        void loadFirmwareBoards(parsed.boards);
+        // Answer inline, grounded against the recipe graph. The full firmware
+        // page stays one click away, never automatic.
+        void loadRunGuide(parsed.firmware);
         return;
       }
       if (parsed.kind === "filters") {
@@ -137,35 +129,16 @@ export default function HomeView({ examples }: { examples: Example[] }) {
       )}
 
       {parse && parse.kind === "firmware" && parse.firmware && (
-        <section className="home-results" aria-label="Boards that run it" aria-live="polite" aria-busy={firmwareBoardsLoading}>
-          {parse.firmware_description && (
-            <p className="intent-parse-note">
-              {parse.firmware_name || parse.firmware} — {parse.firmware_description}
-            </p>
-          )}
-          {firmwareBoardsLoading && <p className="results-loading">Loading boards…</p>}
-          {!firmwareBoardsLoading && firmwareBoards && (
-            <div className="results-header">
-              <span className="results-count">
-                {firmwareBoards.length === 0
-                  ? "No boards recorded for this firmware yet"
-                  : `Runs on ${firmwareBoards.length} board${firmwareBoards.length === 1 ? "" : "s"}`}
-              </span>
+        <section className="home-results" aria-label="Run guide" aria-live="polite" aria-busy={guideLoading}>
+          {guideLoading && <p className="results-loading">Working out why…</p>}
+          {!guideLoading && guideError && (
+            <div className="empty-state">
+              <h2>The API did not answer</h2>
+              <p className="error mono">{guideError}</p>
+              <p>Try again in a moment — the dataset itself lives on GitHub and is fine.</p>
             </div>
           )}
-          {!firmwareBoardsLoading && firmwareBoards && firmwareBoards.length > 0 && (
-            <ul className="results-list">
-              {firmwareBoards.map((part, index) => (
-                <PartResultCard
-                  key={part.id}
-                  part={part}
-                  origin="intent"
-                  position={index + 1}
-                  boardReason={boardReasonById.get(part.id)}
-                />
-              ))}
-            </ul>
-          )}
+          {!guideLoading && !guideError && guide && <RunGuideAnswer guide={guide} />}
           <p>
             <Link
               href={`/firmware/${encodeURIComponent(parse.firmware)}`}

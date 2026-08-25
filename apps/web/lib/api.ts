@@ -235,6 +235,86 @@ export interface IntentParse {
   cached: boolean;
 }
 
+/** One `requires` entry from data/firmware/<id>/firmware.md -- the author's own
+ * verbatim rationale for why a firmware needs a capability. `board_signal` names
+ * the structured board field esp_atlas_core.run_guide checks to state met/unmet
+ * for a given board, or is null when the capability can't be proven or disproven
+ * from any board's structured record (e.g. sub-GHz, NFC, IR). */
+export interface FirmwareRequirement {
+  capability: string;
+  why?: string | null;
+  board_signal?: string | null;
+}
+
+/** One `not_required` entry -- a capability the firmware explicitly does NOT
+ * need, taught regardless of what any one board happens to carry. */
+export interface FirmwareNotRequired {
+  capability: string;
+  why?: string | null;
+}
+
+/** run_guide's per-board fit (esp_atlas_core.run_guide._fit_for): hard
+ * requirements gate it, benefits refine it once hardware is fully met. */
+export type RunGuideFit = "ideal" | "works" | "partial" | "unconfirmed" | string;
+
+/** One board's grounded, reasoned fit for a firmware -- see esp_atlas_core.run_guide.
+ * `reasons`, `particularities`, `requires` and `not_required` are always deterministic,
+ * computed straight from this board's own real record; `note` is the only field an
+ * LLM ever contributes, and only after surviving the grounding validator (a
+ * hallucinated board, spec, or source is rejected outright, never sanitized). */
+export interface RunGuideBoard {
+  board_id: string;
+  board_name: string;
+  fit: RunGuideFit;
+  reasons: string[];
+  particularities: string[];
+  /** Grounded requirement-rationale teaching for THIS board -- each `requires`
+   * entry stated met/unmet against its real record, or named unverifiable. */
+  requires: string[];
+  not_required: string[];
+  status?: RecipeStatus | string | null;
+  chip_family?: string | null;
+  sources: SourceEntry[];
+  note?: string | null;
+}
+
+export interface RunGuideFlashNext {
+  board: string;
+  recipe_id: string;
+  manifest_url: string;
+}
+
+export interface RunGuideConstraint {
+  chip: string;
+}
+
+export interface RunGuideExcludedBoard {
+  board: string;
+  reason: string;
+}
+
+/** GET /run/{firmware_id} -- the grounded "why does this firmware run on these
+ * boards" answer. `grounded` is False only for an unknown/misspelled firmware
+ * id, in which case `summary` is the honest not-found message and every list
+ * is empty -- never a guess. */
+export interface RunGuideResponse {
+  firmware: string;
+  firmware_name?: string | null;
+  summary: string;
+  requirements: string[];
+  /** The firmware's own declared requirement-rationale, verbatim from
+   * data/firmware/<id>/firmware.md. Per-board grounded teaching (met/unmet)
+   * lives on each RunGuideBoard instead. */
+  requires: FirmwareRequirement[];
+  not_required: FirmwareNotRequired[];
+  boards: RunGuideBoard[];
+  flash_next: RunGuideFlashNext[];
+  citations: string[];
+  grounded: boolean;
+  constraint?: RunGuideConstraint | null;
+  excluded_boards?: RunGuideExcludedBoard[];
+}
+
 export class ApiError extends Error {
   status: number;
   endpoint: string;
@@ -296,4 +376,9 @@ export function getFacets(): Promise<Facets> {
 
 export function parseIntent(query: string): Promise<IntentParse> {
   return apiFetch(`/intent`, { method: "POST", body: JSON.stringify({ query }) });
+}
+
+export function runGuide(firmwareId: string, constraints?: string): Promise<RunGuideResponse> {
+  const qs = constraints ? `?constraints=${encodeURIComponent(constraints)}` : "";
+  return apiFetch(`/run/${encodeURIComponent(firmwareId)}${qs}`);
 }
