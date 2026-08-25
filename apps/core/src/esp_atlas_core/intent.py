@@ -82,23 +82,30 @@ Reply with JSON only, no prose, in exactly this shape:
 
 Omit any key you are not confident about. An empty filters object is a valid answer.
 
-Read the GOAL, not just the words. A project implies needs even when unstated:
-- anything that MONITORS or MEASURES something and reports it (plants, weather,
-  rooms, tanks) is an IoT sensor node: it needs Wi-Fi to report, and it sits
-  away from a socket, so it needs a battery -> {"radio": "wifi-4", "battery": true}
-- anything WEARABLE, PORTABLE, outdoors or handheld -> {"battery": true}
-- anything serving a web page, dashboard or camera stream -> {"psram_min": 2, "radio": "wifi-4"}
-- the SENSOR ITSELF (humidity, temperature, motion, camera) is still `unmapped`:
-  the catalogue has no sensor field. Infer the board's needs, never the sensor.
+Map ONLY what the maker actually said. This project's one promise is "nothing
+guessed, nothing invented" — so NEVER infer a need they did not state. Do NOT add
+`battery` unless they say portable/wearable/outdoors/battery/solar. Do NOT add
+`radio` unless they name Wi-Fi or say the thing reports/streams/connects over a
+network. A bare "plant humidity sensor" could be mains-powered and wired — add
+neither. Add a filter ONLY when the words state it or literally require it (you
+cannot "host a web dashboard" without Wi-Fi + some memory; "wearable" states
+portable → battery; "reports over Wi-Fi" states Wi-Fi).
 
-`unmapped` lists the parts of the goal this catalogue has NO field for — sensors of any
-kind, cameras, screens, motors, waterproofing, GPS, LoRa, specific pin counts. Put them
-there verbatim-ish and short. NEVER invent a filter key to cover them.
+When the heart of the goal is something the catalogue can't filter (a sensor,
+camera, screen, motor) and nothing else is clearly stated, return an EMPTY or
+minimal `filters` and put that need in `unmapped`. A short honest "I couldn't
+narrow this — tell me more (portable? Wi-Fi? cheap?)" beats a long list padded
+with guesses. An empty filters object is a GOOD answer, not a failure.
+
+`unmapped` lists the parts of the goal this catalogue has NO field for — sensors of
+any kind, cameras, screens, motors, waterproofing, GPS, LoRa, specific pin counts.
+Put them there verbatim-ish and short. NEVER invent a filter key to cover them.
 
 Examples:
-"a battery powered plant humidity sensor" -> {"filters": {"type": "board", "battery": true, "radio": "wifi-4"}, "unmapped": ["humidity sensor"]}
+"a plant humidity sensor" -> {"filters": {"type": "board"}, "unmapped": ["humidity sensor"]}
+"a battery-powered plant sensor that reports over Wi-Fi" -> {"filters": {"type": "board", "battery": true, "radio": "wifi-4"}, "unmapped": ["humidity sensor"]}
 "esp32-s3 with 8mb psram" -> {"filters": {"type": "board", "psram_min": 8}, "unmapped": []}
-"something to host a web dashboard" -> {"filters": {"type": "board", "psram_min": 2, "radio": "wifi-4"}, "unmapped": []}
+"a board to host a web dashboard" -> {"filters": {"type": "board", "psram_min": 2, "radio": "wifi-4"}, "unmapped": []}
 "asdfqwer zzzz" -> {"filters": {}, "unmapped": ["asdfqwer zzzz"]}"""
 
 
