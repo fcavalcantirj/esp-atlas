@@ -27,6 +27,7 @@ from esp_atlas_core.firmware import list_recipes as core_list_recipes
 from esp_atlas_core.firmware import recipes_for_board as core_recipes_for_board
 from esp_atlas_core.firmware import recipes_for_firmware as core_recipes_for_firmware
 from esp_atlas_core.index_build import build_index
+from esp_atlas_core.run_guide import run_guide as core_run_guide
 from esp_atlas_core.search import brand_page as core_brand_page
 from esp_atlas_core.search import get_part as core_get_part
 from esp_atlas_core.search import search as core_search
@@ -46,6 +47,7 @@ from esp_atlas_api.models import (
     PartDetail,
     PartType,
     RecipeListResponse,
+    RunGuideResponse,
     SearchResponse,
     ValidateRequest,
     ValidateResponse,
@@ -330,6 +332,15 @@ def create_app(db_path=None, llm_client=None):
         else:
             results = core_list_recipes()
         return RecipeListResponse(results=results)
+
+    @app.get("/run/{firmware_id}", response_model=RunGuideResponse, response_model_exclude_none=True)
+    def run(firmware_id: str, constraints: Optional[str] = None, db_path=Depends(get_db_path), llm_client=Depends(get_llm_client)):
+        """Grounded, reasoned "why does this firmware run on these boards"
+        (esp_atlas_core.run_guide). Degrades honestly rather than 500s or
+        4xx-ing: an unknown firmware, a down/rate-limited model, or a garbage
+        model reply all fall back to a deterministic, fully-grounded answer.
+        """
+        return core_run_guide(firmware_id, constraints=constraints, llm_client=llm_client, db_path=db_path)
 
     return app
 
