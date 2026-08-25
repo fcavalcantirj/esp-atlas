@@ -13,6 +13,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
 from esp_atlas_core import db as dbmod
+from esp_atlas_core.intent import parse_intent as core_parse_intent
+from esp_atlas_core.llm import GroqConfigError, GroqRateLimitError
 from esp_atlas_core.flash import MAX_REDIRECT_HOPS
 from esp_atlas_core.flash import bin_url_for as core_bin_url_for
 from esp_atlas_core.flash import next_hop as core_next_hop
@@ -34,6 +36,8 @@ from esp_atlas_core.wizard import wizard as core_wizard
 
 from esp_atlas_api.models import (
     BrandPageResponse,
+    IntentRequest,
+    IntentResponse,
     ExamplesResponse,
     FacetsResponse,
     FirmwareListResponse,
@@ -86,9 +90,16 @@ def get_db_path(request: Request):
     return request.app.state.db_path
 
 
-def create_app(db_path=None):
+def get_llm_client(request: Request):
+    """None in production -- the caller builds a real GroqClient itself. Tests
+    inject a fake here so the suite never makes a network call."""
+    return getattr(request.app.state, "llm_client", None)
+
+
+def create_app(db_path=None, llm_client=None):
     app = FastAPI(title="esp-atlas API", lifespan=_lifespan)
     app.state.db_path = db_path or resolve_db_path()
+    app.state.llm_client = llm_client
 
     app.add_middleware(
         CORSMiddleware,
@@ -270,6 +281,22 @@ def create_app(db_path=None):
             media_type="application/octet-stream",
             headers=passthrough,
         )
+
+    @app.post("/intent", response_model=IntentResponse, response_model_exclude_none=True)
+    def intent(payload: IntentRequest, db_path=Depends(get_db_path), llm_client=Depends(get_llm_client)):
+        """Plain-language goal -> the wizard's own filters (SPEC-INDEX G4).
+
+        Groq reads the query, never the catalogue, so cost is per-unique-phrasing
+        and flat in the number of boards. If inference is unavailable the caller
+        gets 503 and falls back to keyword search -- the prompt must never be a
+        dead end just because a model is down.
+        """
+        try:
+            return core_parse_intent(payload.query, llm_client=llm_client, db_path=db_path)
+        except GroqConfigError as exc:
+            raise HTTPException(status_code=503, detail="Intent parsing is unavailable: no Groq API key configured.") from exc
+        except GroqRateLimitError as exc:
+            raise HTTPException(status_code=503, detail="Intent parsing is rate-limited right now.") from exc
 
     @app.get("/facets", response_model=FacetsResponse)
     def facets(db_path=Depends(get_db_path)):

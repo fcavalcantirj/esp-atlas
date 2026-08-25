@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS parts (
     frontmatter_json TEXT NOT NULL DEFAULT '{}',
     body TEXT NOT NULL DEFAULT '',
     flash_mb REAL,
-    psram_mb REAL
+    psram_mb REAL,
+    battery INTEGER
 );
 
 CREATE INDEX IF NOT EXISTS idx_parts_type ON parts(type);
@@ -67,6 +68,18 @@ CREATE TABLE IF NOT EXISTS answer_cache (
     used_json TEXT NOT NULL,
     created_at TEXT NOT NULL
 );
+
+-- Intent parses are cached by QUERY STRING alone, deliberately without a
+-- build_id: what "a battery-powered sensor" means does not change when a board
+-- is added, so re-indexing must not throw the cache away. That is what keeps
+-- the Groq bill per-unique-phrasing and flat in catalogue size
+-- (SPEC-home-explorer §3); answer_cache is index-versioned because a RAG answer
+-- genuinely does go stale when the data changes.
+CREATE TABLE IF NOT EXISTS intent_cache (
+    query TEXT PRIMARY KEY,
+    parsed_json TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
 """
 
 
@@ -85,6 +98,7 @@ _ADDED_COLUMNS = {
     "body": "TEXT NOT NULL DEFAULT ''",
     "flash_mb": "REAL",
     "psram_mb": "REAL",
+    "battery": "INTEGER",
 }
 
 # Indexes over columns that may only exist after _ensure_columns runs (a fresh
@@ -94,6 +108,7 @@ _ADDED_COLUMNS = {
 _POST_MIGRATION_INDEXES = (
     "CREATE INDEX IF NOT EXISTS idx_parts_psram_mb ON parts(psram_mb)",
     "CREATE INDEX IF NOT EXISTS idx_parts_flash_mb ON parts(flash_mb)",
+    "CREATE INDEX IF NOT EXISTS idx_parts_battery ON parts(battery)",
 )
 
 
