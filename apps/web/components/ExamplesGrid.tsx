@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { track } from "@/lib/analytics";
-import type { Example, ExampleGroup, NeedsExample } from "@/lib/api";
+import type { Example, ExampleGroup } from "@/lib/api";
 import { countLabel, explainNeeds } from "@/lib/need-labels";
+import { exampleHref, SHELF_SEE_ALL } from "@/lib/routes";
 
 // The three soft shelves of SPEC-home-explorer §2, in the order the home shows
 // them. Which shelf an example belongs to is decided by the API (its `group`),
-// not here — this only names them.
+// not here — this only names them. Every card is a real link (a firmware hub,
+// or the wizard pre-filled with that query) and every shelf has a "see all", so
+// each suggestion leads somewhere concrete, the way the spec wizard does.
 const GROUPS: { id: ExampleGroup; title: string; hint: string }[] = [
   {
     id: "run-firmware",
@@ -22,14 +25,13 @@ const GROUPS: { id: ExampleGroup; title: string; hint: string }[] = [
   { id: "just-show-me", title: "Just show me", hint: "Browse by the specs people actually ask for." },
 ];
 
-function ExampleCard({ example, onExample }: { example: Example; onExample: (e: NeedsExample) => void }) {
+function ExampleCard({ example }: { example: Example }) {
+  const href = exampleHref(example);
+  const onClick = () => track("example_click", { example: example.id, kind: example.kind });
+
   if (example.kind === "firmware") {
     return (
-      <Link
-        href={`/firmware/${encodeURIComponent(example.firmware)}`}
-        className="example-card"
-        onClick={() => track("example_click", { example: example.id, kind: "firmware" })}
-      >
+      <Link href={href} className="example-card" onClick={onClick}>
         <span className="example-card-label">{example.label}</span>
         {example.description && <span className="example-card-desc">{example.description}</span>}
         <span className="example-card-reason">
@@ -44,23 +46,17 @@ function ExampleCard({ example, onExample }: { example: Example; onExample: (e: 
   const reason = explainNeeds(example.needs);
 
   return (
-    <button type="button" className="example-card" onClick={() => onExample(example)}>
+    <Link href={href} className="example-card" onClick={onClick}>
       <span className="example-card-label">{example.label}</span>
       <span className="example-card-reason">
         {countLabel(example.count, example.needs)}
         {reason && ` · ${reason}`}
       </span>
-    </button>
+    </Link>
   );
 }
 
-export default function ExamplesGrid({
-  examples,
-  onExample,
-}: {
-  examples: Example[];
-  onExample: (example: NeedsExample) => void;
-}) {
+export default function ExamplesGrid({ examples }: { examples: Example[] }) {
   if (examples.length === 0) return null;
 
   return (
@@ -68,15 +64,25 @@ export default function ExamplesGrid({
       {GROUPS.map((group) => {
         const inGroup = examples.filter((e) => e.group === group.id);
         if (inGroup.length === 0) return null;
+        const seeAll = SHELF_SEE_ALL[group.id];
         return (
           <section className="example-group" key={group.id} aria-labelledby={`examples-${group.id}`}>
-            <h2 className="example-group-title" id={`examples-${group.id}`}>
-              {group.title}
-            </h2>
+            <div className="example-group-head">
+              <h2 className="example-group-title" id={`examples-${group.id}`}>
+                {group.title}
+              </h2>
+              <Link
+                href={seeAll.href}
+                className="example-group-seeall"
+                onClick={() => track("shelf_see_all", { shelf: group.id, href: seeAll.href })}
+              >
+                {seeAll.label} ›
+              </Link>
+            </div>
             <p className="example-group-hint">{group.hint}</p>
             <div className="example-grid">
               {inGroup.map((example) => (
-                <ExampleCard key={example.id} example={example} onExample={onExample} />
+                <ExampleCard key={example.id} example={example} />
               ))}
             </div>
           </section>

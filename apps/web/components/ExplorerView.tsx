@@ -6,6 +6,7 @@
 import ResultsPanel from "@/components/ResultsPanel";
 import SearchBox from "@/components/SearchBox";
 import WizardForm from "@/components/WizardForm";
+import { useEffect, useRef } from "react";
 import { track } from "@/lib/analytics";
 import type { Example, NeedsExample } from "@/lib/api";
 import { useExplorer } from "@/lib/use-explorer";
@@ -30,6 +31,23 @@ export default function ExplorerView({ examples }: { examples: Example[] }) {
     setNeeds(example.needs);
     void executeWizard(example.needs);
   }
+
+  // A home card is a real link to /wizard?example=<id>: on arrival, run that
+  // query so the link lands on its results. Read client-side so the page stays
+  // static; an unknown id (a stale link) just shows the empty wizard.
+  const ranFromUrl = useRef(false);
+  useEffect(() => {
+    if (ranFromUrl.current) return;
+    const id = new URLSearchParams(window.location.search).get("example");
+    if (!id) return;
+    const example = examples.find((e): e is NeedsExample => e.kind === "needs" && e.id === id);
+    if (!example) return;
+    ranFromUrl.current = true;
+    track("example_click", { example: example.id, kind: "needs", via: "url" });
+    setNeeds(example.needs);
+    void executeWizard(example.needs);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [examples]);
 
   return (
     <div className="home-layout">
