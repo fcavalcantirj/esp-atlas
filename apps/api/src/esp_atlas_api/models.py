@@ -180,6 +180,18 @@ class IntentRequest(BaseModel):
     model_config = {"extra": "forbid"}
 
 
+class BoardReason(BaseModel):
+    """Why one board runs a firmware -- the recipe's own cited justification
+    (SPEC-wizard.md trust tiers), never invented prose. See
+    esp_atlas_core.firmware.list_recipes / esp_atlas_core.intent.parse_intent."""
+
+    board: str
+    status: str
+    chip_family: str
+    sources: list[SourceEntry] = []
+    reason: Optional[str] = None
+
+
 class IntentResponse(BaseModel):
     """What the intent box understood, and what it could not.
 
@@ -194,7 +206,12 @@ class IntentResponse(BaseModel):
     unmapped: list[str] = []
     firmware: Optional[str] = None
     firmware_name: Optional[str] = None
+    #: What the firmware is, derived server-side from its category + capabilities
+    #: (esp_atlas_core.examples.describe_firmware) -- data only, never generated prose.
+    firmware_description: Optional[str] = None
     boards: list[str] = []
+    #: Per-board cited justification, parallel to `boards` -- see BoardReason.
+    board_reasons: list[BoardReason] = []
     cached: bool = False
 
 
