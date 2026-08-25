@@ -146,6 +146,46 @@ def test_run_case(built_db_path, case):
         assert _board(result, board_id)["fit"] == expected_fit, f"{case['fw']} x {board_id}"
 
 
+# --- 1b. run_guide board ORDER: fit-ranked, best-fit-first --------------------
+#
+# boards[] must read best-fit-first: "ideal" boards before "works"/
+# "works-with-tradeoff", and "unconfirmed" last of all -- a maker scanning top
+# to bottom should never hit a lesser-fit board before a better one. This is
+# an ordering contract distinct from the `fit` values themselves (pinned
+# above via `board_fits`), so it gets its own rank map here rather than
+# reaching into run_guide's private `_FIT_RANK`.
+
+_ORDER_RANK = {"ideal": 0, "works": 1, "works-with-tradeoff": 1, "unconfirmed": 2}
+
+
+def _fit_rank(fit):
+    return _ORDER_RANK.get(fit, max(_ORDER_RANK.values()) + 1)
+
+
+def test_bruce_ideal_boards_all_rank_before_works_boards(built_db_path):
+    result = run_guide("bruce", llm_client=_DEAD, db_path=built_db_path)
+    boards = result["boards"]
+    ideal_indexes = [i for i, b in enumerate(boards) if b["fit"] == "ideal"]
+    works_indexes = [i for i, b in enumerate(boards) if b["fit"] in ("works", "works-with-tradeoff")]
+    assert ideal_indexes and works_indexes, "bruce must have both ideal and works boards to pin this"
+    assert max(ideal_indexes) < min(works_indexes), boards
+
+
+def test_launcher_unconfirmed_board_is_last(built_db_path):
+    result = run_guide("launcher", llm_client=_DEAD, db_path=built_db_path)
+    boards = result["boards"]
+    unconfirmed_indexes = [i for i, b in enumerate(boards) if b["fit"] == "unconfirmed"]
+    assert unconfirmed_indexes, "launcher must have an unconfirmed board to pin this"
+    assert unconfirmed_indexes[-1] == len(boards) - 1, boards
+
+
+@pytest.mark.parametrize("fw", ["bruce", "launcher", "esp32marauder"])
+def test_board_fit_rank_sequence_is_non_decreasing(built_db_path, fw):
+    result = run_guide(fw, llm_client=_DEAD, db_path=built_db_path)
+    ranks = [_fit_rank(b["fit"]) for b in result["boards"]]
+    assert ranks == sorted(ranks), f"{fw}: {[(b['board_id'], b['fit']) for b in result['boards']]}"
+
+
 # --- 2. Meshtastic: LoRa/GPS reason must read MET/unconfirmed by real extras,
 # never a stale "not verifiable" -- pins the same bug the run_guide oracle
 # suite (test_run_guide_oracle.py) already guards, kept here too so the
