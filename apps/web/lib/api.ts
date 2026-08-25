@@ -207,6 +207,17 @@ export interface NeedsExample {
 
 export type Example = FirmwareExample | NeedsExample;
 
+/** Why one board runs a firmware -- the recipe's own cited justification,
+ * parallel to IntentParse.boards. Never invented: status/chip_family/sources
+ * come straight off the recipe frontmatter, `reason` off its markdown body. */
+export interface BoardReason {
+  board: string;
+  status: RecipeStatus | string;
+  chip_family: string;
+  sources: SourceEntry[];
+  reason?: string;
+}
+
 /** POST /intent: a plain-language goal mapped onto the wizard's own filters.
  * kind "firmware" means the query named one (answered from the recipe graph);
  * "unreadable" means say so plainly rather than dumping a keyword search. */
@@ -217,7 +228,10 @@ export interface IntentParse {
   unmapped: string[];
   firmware?: string;
   firmware_name?: string;
+  /** What the firmware is, derived server-side -- data only, never generated prose. */
+  firmware_description?: string;
   boards: string[];
+  board_reasons: BoardReason[];
   cached: boolean;
 }
 
