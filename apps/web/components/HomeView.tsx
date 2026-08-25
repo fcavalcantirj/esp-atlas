@@ -3,15 +3,16 @@
 // The intent-first home (SPEC-home-explorer §2, locked 2026-08-24): the prompt
 // and the generated examples lead; the spec wizard is a drawer below them, and
 // also lives in full at /wizard. Results only appear once something is asked.
+import Link from "next/link";
 import ExamplesGrid from "@/components/ExamplesGrid";
 import IntentPrompt from "@/components/IntentPrompt";
+import PartResultCard from "@/components/PartResultCard";
 import ResultsPanel from "@/components/ResultsPanel";
 import SearchBox from "@/components/SearchBox";
 import WizardForm from "@/components/WizardForm";
 import { track } from "@/lib/analytics";
-import { parseIntent, type Example, type IntentParse, type NeedsExample } from "@/lib/api";
+import { listParts, parseIntent, type Example, type IntentParse, type NeedsExample, type PartRecord } from "@/lib/api";
 import { useExplorer } from "@/lib/use-explorer";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function HomeView({ examples }: { examples: Example[] }) {
@@ -31,12 +32,15 @@ export default function HomeView({ examples }: { examples: Example[] }) {
   } = useExplorer();
 
   const asked = state.lastQuery !== null || state.loading;
-  const router = useRouter();
   // What the intent box understood about the last thing typed. Kept beside the
   // results so the user can see the parse and correct it, rather than guessing
   // why they got what they got.
   const [parse, setParse] = useState<IntentParse | null>(null);
   const [parsing, setParsing] = useState(false);
+  // The firmware branch answers inline (recipe boards), never navigates away —
+  // this is the board data for that answer, resolved from the ids /intent returns.
+  const [firmwareBoards, setFirmwareBoards] = useState<PartRecord[] | null>(null);
+  const [firmwareBoardsLoading, setFirmwareBoardsLoading] = useState(false);
 
   function onExample(example: NeedsExample) {
     track("example_click", { example: example.id, kind: "needs" });
@@ -44,17 +48,36 @@ export default function HomeView({ examples }: { examples: Example[] }) {
     void executeWizard(example.needs, scrollToResults);
   }
 
+  async function loadFirmwareBoards(boardIds: string[]) {
+    if (boardIds.length === 0) {
+      setFirmwareBoards([]);
+      return;
+    }
+    setFirmwareBoardsLoading(true);
+    try {
+      const { results } = await listParts();
+      const byId = new Map(results.map((part) => [part.id, part]));
+      setFirmwareBoards(boardIds.map((id) => byId.get(id)).filter((part): part is PartRecord => part !== undefined));
+    } catch {
+      setFirmwareBoards([]);
+    } finally {
+      setFirmwareBoardsLoading(false);
+    }
+  }
+
   async function onIntent(text: string) {
     setParsing(true);
     setParse(null);
+    setFirmwareBoards(null);
     try {
       const parsed = await parseIntent(text);
       setParse(parsed);
       track("intent_parse", { q: text, kind: parsed.kind, cached: parsed.cached });
 
       if (parsed.kind === "firmware" && parsed.firmware) {
-        // The recipe graph already answers this better than any filter could.
-        router.push(`/firmware/${encodeURIComponent(parsed.firmware)}`);
+        // Answer inline, from the recipe graph — the reasoning above plus the
+        // boards below. The full firmware page stays one click away, never automatic.
+        void loadFirmwareBoards(parsed.boards);
         return;
       }
       if (parsed.kind === "filters") {
@@ -105,6 +128,37 @@ export default function HomeView({ examples }: { examples: Example[] }) {
             </p>
           )}
         </div>
+      )}
+
+      {parse && parse.kind === "firmware" && parse.firmware && (
+        <section className="home-results" aria-label="Boards that run it" aria-live="polite" aria-busy={firmwareBoardsLoading}>
+          {firmwareBoardsLoading && <p className="results-loading">Loading boards…</p>}
+          {!firmwareBoardsLoading && firmwareBoards && (
+            <div className="results-header">
+              <span className="results-count">
+                {firmwareBoards.length === 0
+                  ? "No boards recorded for this firmware yet"
+                  : `Runs on ${firmwareBoards.length} board${firmwareBoards.length === 1 ? "" : "s"}`}
+              </span>
+            </div>
+          )}
+          {!firmwareBoardsLoading && firmwareBoards && firmwareBoards.length > 0 && (
+            <ul className="results-list">
+              {firmwareBoards.map((part, index) => (
+                <PartResultCard key={part.id} part={part} origin="intent" position={index + 1} />
+              ))}
+            </ul>
+          )}
+          <p>
+            <Link
+              href={`/firmware/${encodeURIComponent(parse.firmware)}`}
+              className="example-group-seeall"
+              onClick={() => track("shelf_see_all", { shelf: "firmware_page", href: `/firmware/${parse.firmware}` })}
+            >
+              See the full {parse.firmware_name || parse.firmware} page ›
+            </Link>
+          </p>
+        </section>
       )}
 
       {asked && (
