@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import HelpTip from "@/components/HelpTip";
 import TrackedLink from "@/components/TrackedLink";
 import TrustTierBadge from "@/components/TrustTierBadge";
 import type { Recipe } from "@/lib/api";
@@ -198,6 +199,23 @@ export default function FlashAction({
           </span>
           {recipe.status === "known-good" && <span className="flash-action-tag flash-action-tag--tier">known-good</span>}
           {broken && <span className="flash-action-tag flash-action-tag--broken">broken</span>}
+        </span>
+        {/* The tip must not toggle the drawer: stop the click before <summary> sees it. */}
+        <span
+          className="flash-action-help"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <HelpTip
+            field="flash_action"
+            text={
+              inBrowser
+                ? `Flashes ${firmwareName} onto ${boardName} straight from this page over USB — Chrome or Edge on a desktop, no install. The binary is the project's own release, streamed through esp-atlas; the flasher checks the chip before writing and asks before any full erase.`
+                : `${firmwareName} is not flashed from this page: the project distributes it through its own flasher or M5Burner. Open this to get the cited links and the plug-in steps.`
+            }
+          />
         </span>
       </summary>
 

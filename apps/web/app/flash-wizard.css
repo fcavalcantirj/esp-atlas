@@ -27,12 +27,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.35rem 0.75rem 0.35rem 0.6rem;
+  padding: 0.45rem 0.85rem 0.45rem 0.7rem;
   border: 1px solid var(--accent);
   border-radius: var(--radius-pill);
   background: var(--accent-soft);
   font-family: var(--font-data);
-  font-size: var(--t-xs);
+  font-size: var(--t-sm);
   letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--accent);
@@ -53,8 +53,9 @@
 }
 
 .flash-action--browser .flash-action-summary {
-  /* Breathes for ~20 s after load, then settles (WCAG 2.2.2 — no indefinite motion). */
-  animation: flash-breathe 2.6s ease-in-out 8;
+  /* Keeps breathing (Felipe: the flashable row must read as alive); hover / open
+     pause it, and prefers-reduced-motion replaces it with a static glow. */
+  animation: flash-breathe 2.2s ease-in-out infinite;
 }
 
 .flash-action--browser[open] .flash-action-summary,
@@ -66,18 +67,23 @@
   0%,
   100% {
     box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent), 0 0 6px color-mix(in srgb, var(--accent) 25%, transparent);
+    border-color: var(--accent);
   }
   50% {
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent), 0 0 16px color-mix(in srgb, var(--accent) 50%, transparent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent), 0 0 22px color-mix(in srgb, var(--accent) 60%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 70%, var(--fg));
   }
 }
 
 /* Guided handoffs are quiet outlines; only a recipe that can flash in the
    browser gets the accent fill and the glow — the eye lands on what flashes. */
 .flash-action:not(.flash-action--browser) .flash-action-summary {
+  /* Reads as "not enabled here": dashed outline, muted, no glow — still opens the handoff links. */
+  border-style: dashed;
   border-color: var(--border-strong);
   background: var(--bg);
   color: var(--muted);
+  opacity: 0.85;
   box-shadow: none;
 }
 
@@ -227,4 +233,13 @@
   margin: 0;
   padding-left: 1.1rem;
   font-size: var(--t-sm);
+}
+
+/* The "?" on the pill — the site's HelpTip, kept clear of the summary's toggle. */
+.flash-action-help {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.15rem;
+  letter-spacing: 0;
+  text-transform: none;
 }
