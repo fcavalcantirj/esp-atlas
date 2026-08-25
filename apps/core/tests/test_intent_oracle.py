@@ -126,6 +126,39 @@ def test_firmware_routes_resolve_to_real_boards(built_db_path):
         assert parsed["boards"], f"{fw['id']} routed to zero boards"
 
 
+def test_firmware_routes_carry_a_grounded_reason_per_board(built_db_path):
+    """The answer must show WHY, not just WHICH -- every board reason is the
+    recipe's own cited justification, never invented prose."""
+    from esp_atlas_core.firmware import list_firmware
+
+    for fw in list_firmware():
+        parsed = parse_intent(f"run {fw['name']}", db_path=built_db_path, use_cache=False)
+        assert parsed["firmware_description"], f"{fw['id']} has no firmware description"
+        reasons = parsed["board_reasons"]
+        assert len(reasons) == len(parsed["boards"])
+        for reason in reasons:
+            assert reason["status"], f"{reason['board']} x {fw['id']} has no status"
+            assert reason["chip_family"], f"{reason['board']} x {fw['id']} has no chip_family"
+            assert reason["sources"], f"{reason['board']} x {fw['id']} has no cited source"
+            assert all(s.get("url") for s in reason["sources"])
+            assert reason["reason"], f"{reason['board']} x {fw['id']} has no reason text"
+
+
+def test_marauder_query_surfaces_known_good_cited_boards(built_db_path):
+    """The acceptance case: 'marauder' must answer with status, chip_family, a
+    cited source url and the reason sentence for each board -- not just ids."""
+    parsed = parse_intent("marauder", db_path=built_db_path, use_cache=False)
+    assert parsed["kind"] == "firmware"
+    assert parsed["firmware"] == "esp32marauder"
+    reasons = {r["board"]: r for r in parsed["board_reasons"]}
+    assert "m5cardputer" in reasons
+    cardputer = reasons["m5cardputer"]
+    assert cardputer["status"] == "known-good"
+    assert cardputer["chip_family"] == "esp32-s3"
+    assert cardputer["sources"][0]["url"] == "https://github.com/justcallmekoko/ESP32Marauder"
+    assert cardputer["reason"] == "ESP32 Marauder lists the M5Cardputer among its supported devices."
+
+
 # --- 4. Every understood parse actually resolves ----------------------------
 
 def test_understood_filters_are_described_for_a_human(built_db_path):
