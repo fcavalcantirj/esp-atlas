@@ -19,6 +19,15 @@ distribution:
 capabilities:
 - ota
 - firmware-store
+requires:
+- capability: display
+  why: its whole function is an on-device menu to browse and flash firmware; no screen, no use
+  board_signal: display
+not_required:
+- capability: psram
+- capability: ble
+- capability: wifi
+  why: radios are irrelevant to the loader itself
 sources:
 - field: '*'
   url: https://github.com/bmorcelli/Launcher

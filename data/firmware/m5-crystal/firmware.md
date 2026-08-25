@@ -16,6 +16,19 @@ capabilities:
 - ble
 - nfc
 - ir
+requires:
+- capability: wifi
+  board_signal: radio-wifi
+- capability: ble
+  board_signal: radio-ble
+- capability: rfid-nfc
+  why: NFC tool needs an on-board reader
+  board_signal: null
+- capability: ir
+  why: IR tool needs an IR LED
+  board_signal: null
+not_required:
+- capability: psram
 sources:
 - field: '*'
   url: https://github.com/Dlazder/m5_crystal_firmware

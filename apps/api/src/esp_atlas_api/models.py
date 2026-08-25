@@ -180,6 +180,38 @@ class IntentRequest(BaseModel):
     model_config = {"extra": "forbid"}
 
 
+class FirmwareRequirement(BaseModel):
+    """One `requires` entry from data/firmware/<id>/firmware.md -- the author's
+    own verbatim rationale for why a firmware needs a capability. `board_signal`
+    names the structured board field esp_atlas_core.run_guide checks to state
+    met/unmet for a given board, or is None when the capability can't be proven
+    or disproven from any board's structured record (e.g. sub-GHz, NFC, IR)."""
+
+    capability: str
+    why: Optional[str] = None
+    board_signal: Optional[str] = None
+
+
+class FirmwareNotRequired(BaseModel):
+    """One `not_required` entry -- a capability the firmware explicitly does
+    NOT need, taught regardless of what any one board happens to carry."""
+
+    capability: str
+    why: Optional[str] = None
+
+
+class BoardReason(BaseModel):
+    """Why one board runs a firmware -- the recipe's own cited justification
+    (SPEC-wizard.md trust tiers), never invented prose. See
+    esp_atlas_core.firmware.list_recipes / esp_atlas_core.intent.parse_intent."""
+
+    board: str
+    status: str
+    chip_family: str
+    sources: list[SourceEntry] = []
+    reason: Optional[str] = None
+
+
 class IntentResponse(BaseModel):
     """What the intent box understood, and what it could not.
 
@@ -194,7 +226,16 @@ class IntentResponse(BaseModel):
     unmapped: list[str] = []
     firmware: Optional[str] = None
     firmware_name: Optional[str] = None
+    #: What the firmware is, derived server-side from its category + capabilities
+    #: (esp_atlas_core.examples.describe_firmware) -- data only, never generated prose.
+    firmware_description: Optional[str] = None
     boards: list[str] = []
+    #: Per-board cited justification, parallel to `boards` -- see BoardReason.
+    board_reasons: list[BoardReason] = []
+    #: The firmware's own declared requirement-rationale (data/firmware/<id>/
+    #: firmware.md `requires`/`not_required`), only populated for kind=="firmware".
+    requires: list[FirmwareRequirement] = []
+    not_required: list[FirmwareNotRequired] = []
     cached: bool = False
 
 
@@ -227,6 +268,9 @@ class FirmwareRecord(BaseModel):
     distribution: list[str] = []
     manifest_url: Optional[str] = None
     capabilities: list[str] = []
+    benefits_from: list[str] = []
+    requires: list[FirmwareRequirement] = []
+    not_required: list[FirmwareNotRequired] = []
     socs: list[str]
     sources: list[SourceEntry]
 
@@ -265,3 +309,66 @@ class RecipeRecord(BaseModel):
 
 class RecipeListResponse(BaseModel):
     results: list[RecipeRecord]
+
+
+class RunGuideBoard(BaseModel):
+    """One board's grounded, reasoned fit for a firmware -- see
+    esp_atlas_core.run_guide. `reasons`, `particularities`, and `fit` are always
+    deterministic, computed straight from this board's own real record; `note`
+    is the only field an LLM ever contributes, and only after surviving the
+    grounding validator (a hallucinated board, spec, or source is rejected
+    outright, never sanitized into something safer)."""
+
+    board_id: str
+    board_name: str
+    fit: str
+    reasons: list[str] = []
+    particularities: list[str] = []
+    #: Grounded requirement-rationale teaching for THIS board -- each
+    #: `requires` entry stated met/unmet against its real record (or named as
+    #: unverifiable when `board_signal` is null); `not_required` is the same
+    #: for every board of this firmware (see esp_atlas_core.run_guide).
+    requires: list[str] = []
+    not_required: list[str] = []
+    status: Optional[str] = None
+    chip_family: Optional[str] = None
+    sources: list[SourceEntry] = []
+    note: Optional[str] = None
+
+
+class RunGuideFlashNext(BaseModel):
+    board: str
+    recipe_id: str
+    manifest_url: str
+
+
+class RunGuideConstraint(BaseModel):
+    chip: str
+
+
+class RunGuideExcludedBoard(BaseModel):
+    board: str
+    reason: str
+
+
+class RunGuideResponse(BaseModel):
+    """GET /run/{firmware_id} -- the grounded "why does this firmware run on
+    these boards" answer. `grounded` is False only for an unknown/misspelled
+    firmware id, in which case `summary` is the honest not-found message and
+    every list is empty -- never a guess."""
+
+    firmware: str
+    firmware_name: Optional[str] = None
+    summary: str
+    requirements: list[str] = []
+    #: The firmware's own declared requirement-rationale, verbatim from
+    #: data/firmware/<id>/firmware.md -- see FirmwareRequirement/FirmwareNotRequired.
+    #: Per-board grounded teaching (met/unmet) lives on each RunGuideBoard instead.
+    requires: list[FirmwareRequirement] = []
+    not_required: list[FirmwareNotRequired] = []
+    boards: list[RunGuideBoard] = []
+    flash_next: list[RunGuideFlashNext] = []
+    citations: list[str] = []
+    grounded: bool
+    constraint: Optional[RunGuideConstraint] = None
+    excluded_boards: list[RunGuideExcludedBoard] = []

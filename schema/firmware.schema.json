@@ -20,6 +20,40 @@
     },
     "manifest_url": { "type": "string", "format": "uri" },
     "capabilities": { "type": "array", "items": { "type": "string" } },
+    "benefits_from": {
+      "type": "array",
+      "items": { "enum": ["display", "storage", "battery", "usb-native", "gps"] },
+      "description": "OPTIONAL soft/UX capabilities the firmware benefits from beyond its hard `capabilities` -- a closed vocab of things a board's own structured fields can prove: an onboard `display`, a microSD in `extras` (`storage`), `power.battery_connector`, native `usb`, or a `gps` module in `extras`. Never a hard requirement; run_guide reasons about presence/absence to teach fit, never to gate it."
+    },
+    "requires": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["capability", "board_signal"],
+        "additionalProperties": false,
+        "properties": {
+          "capability": { "type": "string" },
+          "why": { "type": "string" },
+          "board_signal": {
+            "enum": ["radio-wifi", "radio-ble", "native-usb", "display", "storage", "lora", "gps", null]
+          }
+        }
+      },
+      "description": "OPTIONAL, grounded requirement-rationale: hard capabilities this firmware needs and WHY, authored verbatim by the maintainer/dataset author. `board_signal` names the structured board field run_guide checks to state met/unmet for a given board (see esp_atlas_core.run_guide's signal matchers), or is `null` when the capability cannot be proven or disproven from any board's structured record (e.g. sub-GHz radio, NFC, IR) -- taught as a need, never asserted met/unmet."
+    },
+    "not_required": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["capability"],
+        "additionalProperties": false,
+        "properties": {
+          "capability": { "type": "string" },
+          "why": { "type": "string" }
+        }
+      },
+      "description": "OPTIONAL, grounded rationale for a capability this firmware explicitly does NOT need (e.g. PSRAM) -- authored verbatim, never a gate, only a teaching point run_guide surfaces regardless of what a given board happens to carry."
+    },
     "socs": {
       "type": "array", "minItems": 1, "items": { "type": "string" },
       "description": "SoC families the project builds for"

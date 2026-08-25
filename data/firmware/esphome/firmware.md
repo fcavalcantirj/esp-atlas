@@ -28,6 +28,13 @@ capabilities:
 - ota
 - on-device-web-ui
 - display
+requires:
+- capability: wifi
+  why: reports to Home Assistant over Wi-Fi (or Ethernet)
+  board_signal: radio-wifi
+not_required:
+- capability: psram
+  why: NOT needed for small/no-display configs — but IS needed when driving a large display framebuffer that exceeds the ~520KB ESP32 SRAM (e.g. the 9.7in Inkplate-10, which ships 8MB PSRAM). PSRAM need depends on the board framebuffer size, not the firmware
 sources:
 - field: '*'
   url: https://github.com/esphome/esphome

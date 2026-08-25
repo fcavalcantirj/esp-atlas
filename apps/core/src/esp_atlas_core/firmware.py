@@ -18,6 +18,14 @@ def _records(kind):
     return [parse_frontmatter(path)[0] for k, path in iter_data_files() if k == kind]
 
 
+def _reason_text(body):
+    """A recipe's cited justification: the markdown body minus its leading
+    "# board x firmware" heading, which only repeats what the frontmatter
+    already states."""
+    heading, _, rest = body.partition("\n")
+    return rest.strip() if heading.strip().startswith("#") else body.strip()
+
+
 def list_firmware():
     """Every seeded firmware record's frontmatter."""
     return _records("firmware")
@@ -29,8 +37,17 @@ def get_firmware(firmware_id):
 
 
 def list_recipes():
-    """Every seeded recipe record's frontmatter."""
-    return _records("recipe")
+    """Every seeded recipe record's frontmatter, plus the cited `reason` text
+    from its markdown body -- e.g. "ESP32 Marauder lists the M5Cardputer among
+    its supported devices." -- the grounded justification for this board x
+    firmware edge, never invented."""
+    records = []
+    for kind, path in iter_data_files():
+        if kind != "recipe":
+            continue
+        frontmatter, body = parse_frontmatter(path)
+        records.append({**frontmatter, "reason": _reason_text(body)})
+    return records
 
 
 def recipes_for_board(board_id):

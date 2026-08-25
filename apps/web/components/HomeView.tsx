@@ -3,15 +3,16 @@
 // The intent-first home (SPEC-home-explorer §2, locked 2026-08-24): the prompt
 // and the generated examples lead; the spec wizard is a drawer below them, and
 // also lives in full at /wizard. Results only appear once something is asked.
+import Link from "next/link";
 import ExamplesGrid from "@/components/ExamplesGrid";
 import IntentPrompt from "@/components/IntentPrompt";
 import ResultsPanel from "@/components/ResultsPanel";
+import RunGuideAnswer from "@/components/RunGuideAnswer";
 import SearchBox from "@/components/SearchBox";
 import WizardForm from "@/components/WizardForm";
 import { track } from "@/lib/analytics";
-import { parseIntent, type Example, type IntentParse, type NeedsExample } from "@/lib/api";
+import { ApiError, parseIntent, runGuide, type Example, type IntentParse, type NeedsExample, type RunGuideResponse } from "@/lib/api";
 import { useExplorer } from "@/lib/use-explorer";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function HomeView({ examples }: { examples: Example[] }) {
@@ -31,12 +32,16 @@ export default function HomeView({ examples }: { examples: Example[] }) {
   } = useExplorer();
 
   const asked = state.lastQuery !== null || state.loading;
-  const router = useRouter();
   // What the intent box understood about the last thing typed. Kept beside the
   // results so the user can see the parse and correct it, rather than guessing
   // why they got what they got.
   const [parse, setParse] = useState<IntentParse | null>(null);
   const [parsing, setParsing] = useState(false);
+  // The firmware branch answers inline (the grounded run_guide teaching), never
+  // navigates away — this is that answer, resolved from GET /run/{firmware_id}.
+  const [guide, setGuide] = useState<RunGuideResponse | null>(null);
+  const [guideLoading, setGuideLoading] = useState(false);
+  const [guideError, setGuideError] = useState<string | null>(null);
 
   function onExample(example: NeedsExample) {
     track("example_click", { example: example.id, kind: "needs" });
@@ -44,17 +49,33 @@ export default function HomeView({ examples }: { examples: Example[] }) {
     void executeWizard(example.needs, scrollToResults);
   }
 
+  async function loadRunGuide(firmwareId: string) {
+    setGuideLoading(true);
+    setGuideError(null);
+    try {
+      setGuide(await runGuide(firmwareId));
+    } catch (err) {
+      setGuide(null);
+      setGuideError(err instanceof ApiError ? err.message : "The API did not answer in time.");
+    } finally {
+      setGuideLoading(false);
+    }
+  }
+
   async function onIntent(text: string) {
     setParsing(true);
     setParse(null);
+    setGuide(null);
+    setGuideError(null);
     try {
       const parsed = await parseIntent(text);
       setParse(parsed);
       track("intent_parse", { q: text, kind: parsed.kind, cached: parsed.cached });
 
       if (parsed.kind === "firmware" && parsed.firmware) {
-        // The recipe graph already answers this better than any filter could.
-        router.push(`/firmware/${encodeURIComponent(parsed.firmware)}`);
+        // Answer inline, grounded against the recipe graph. The full firmware
+        // page stays one click away, never automatic.
+        void loadRunGuide(parsed.firmware);
         return;
       }
       if (parsed.kind === "filters") {
@@ -105,6 +126,29 @@ export default function HomeView({ examples }: { examples: Example[] }) {
             </p>
           )}
         </div>
+      )}
+
+      {parse && parse.kind === "firmware" && parse.firmware && (
+        <section className="home-results" aria-label="Run guide" aria-live="polite" aria-busy={guideLoading}>
+          {guideLoading && <p className="results-loading">Working out why…</p>}
+          {!guideLoading && guideError && (
+            <div className="empty-state">
+              <h2>The API did not answer</h2>
+              <p className="error mono">{guideError}</p>
+              <p>Try again in a moment — the dataset itself lives on GitHub and is fine.</p>
+            </div>
+          )}
+          {!guideLoading && !guideError && guide && <RunGuideAnswer guide={guide} />}
+          <p>
+            <Link
+              href={`/firmware/${encodeURIComponent(parse.firmware)}`}
+              className="example-group-seeall"
+              onClick={() => track("shelf_see_all", { shelf: "firmware_page", href: `/firmware/${parse.firmware}` })}
+            >
+              See the full {parse.firmware_name || parse.firmware} page ›
+            </Link>
+          </p>
+        </section>
       )}
 
       {asked && (

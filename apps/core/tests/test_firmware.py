@@ -96,3 +96,14 @@ def test_every_recipe_carries_a_valid_trust_tier():
 def test_every_recipe_cites_at_least_one_source():
     uncited = [r["id"] for r in list_recipes() if not r.get("sources")]
     assert not uncited, f"uncited recipe(s): {uncited}"
+
+
+def test_list_recipes_carries_the_cited_reason_text():
+    recipe = next(r for r in list_recipes() if r["id"] == "m5cardputer__esp32marauder")
+    assert recipe["reason"] == "ESP32 Marauder lists the M5Cardputer among its supported devices."
+
+
+def test_every_recipe_has_non_empty_reason_text():
+    """The reason is the recipe body itself -- every seeded recipe has one."""
+    empty = [r["id"] for r in list_recipes() if not r.get("reason")]
+    assert not empty, f"recipe(s) with no reason text: {empty}"

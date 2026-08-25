@@ -1,4 +1,5 @@
 import asyncio
+import json
 import pytest
 from fastapi.testclient import TestClient
 
@@ -16,6 +17,23 @@ def client(built_db_path):
     app = create_app(db_path=built_db_path)
     with TestClient(app) as c:
         yield c
+
+
+class _StubLLM:
+    """A fake GroqClient for /run tests -- no test here may reach real Groq."""
+
+    def __init__(self, payload):
+        self.payload = payload
+        self.calls = []
+
+    def complete(self, system_prompt, user_prompt, temperature=0):
+        self.calls.append(user_prompt)
+        return self.payload if isinstance(self.payload, str) else json.dumps(self.payload)
+
+
+def _client_with_llm(built_db_path, payload):
+    app = create_app(db_path=built_db_path, llm_client=_StubLLM(payload))
+    return TestClient(app)
 
 
 def test_lifespan_builds_missing_db(tmp_path):
@@ -479,6 +497,82 @@ def test_list_recipes_unknown_board_returns_empty(client):
     r = client.get("/recipes", params={"board": "no-such-board"})
     assert r.status_code == 200
     assert r.json()["results"] == []
+
+
+def test_intent_firmware_query_surfaces_cited_board_reasons(client):
+    """Acceptance case: /intent for 'marauder' must answer with WHY, not just
+    WHICH -- status, chip_family, a cited source url and the reason sentence
+    per board, all grounded in the recipe data (never model-generated)."""
+    r = client.post("/intent", json={"query": "marauder"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["kind"] == "firmware"
+    assert body["firmware"] == "esp32marauder"
+    assert body["firmware_description"]
+    reasons = body["board_reasons"]
+    assert reasons and len(reasons) == len(body["boards"])
+    for reason in reasons:
+        assert reason["status"] == "known-good"
+        assert reason["chip_family"]
+        assert reason["sources"] and all(s["url"] for s in reason["sources"])
+        assert reason["reason"]
+
+
+# --- /run (grounded run-answer) ---------------------------------------------------------
+
+
+def test_run_marauder_returns_grounded_boards_and_reasons(built_db_path):
+    client = _client_with_llm(built_db_path, {"summary": "", "boards": []})
+    with client:
+        r = client.get("/run/esp32marauder")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["firmware"] == "esp32marauder"
+    assert body["grounded"] is True
+    assert "2.4GHz Wi-Fi" in body["requirements"]
+    assert "Bluetooth LE" in body["requirements"]
+    board_ids = {b["board_id"] for b in body["boards"]}
+    assert board_ids == {"m5cardputer", "m5stick-cplus2"}
+    for board in body["boards"]:
+        assert board["reasons"]
+        assert board["sources"] and all(s["url"] for s in board["sources"])
+    assert set(body["citations"]) == {"https://github.com/justcallmekoko/ESP32Marauder"}
+
+
+def test_run_chip_constraint_restricts_boards(built_db_path):
+    client = _client_with_llm(built_db_path, {"summary": "", "boards": []})
+    with client:
+        r = client.get("/run/esp32marauder", params={"constraints": "on a esp32"})
+    assert r.status_code == 200
+    body = r.json()
+    assert {b["board_id"] for b in body["boards"]} == {"m5stick-cplus2"}
+    assert body["constraint"] == {"chip": "esp32"}
+    assert {e["board"] for e in body["excluded_boards"]} == {"m5cardputer"}
+
+
+def test_run_unknown_firmware_is_honest_not_found_not_a_404(built_db_path):
+    client = _client_with_llm(built_db_path, {"summary": "", "boards": []})
+    with client:
+        r = client.get("/run/no-such-firmware")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["grounded"] is False
+    assert body["boards"] == []
+
+
+def test_run_strips_a_hallucinated_board_from_the_model(built_db_path):
+    client = _client_with_llm(
+        built_db_path,
+        {
+            "summary": "ok",
+            "boards": [{"board_id": "not-a-real-board", "note": "invented", "source_url": "https://not-real.example"}],
+        },
+    )
+    with client:
+        r = client.get("/run/esp32marauder")
+    body = r.json()
+    board_ids = {b["board_id"] for b in body["boards"]}
+    assert board_ids == {"m5cardputer", "m5stick-cplus2"}
 
 
 def test_examples_endpoint_returns_resolvable_entries(client):

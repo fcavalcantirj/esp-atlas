@@ -12,6 +12,16 @@ distribution:
 - releases
 capabilities:
 - badusb
+requires:
+- capability: native-usb
+  why: BadUSB = USB HID device mode, which needs native USB-OTG on esp32-s2/s3; the classic esp32 cannot
+  board_signal: native-usb
+not_required:
+- capability: wifi
+  why: HID only
+- capability: ble
+- capability: psram
+- capability: storage
 sources:
 - field: '*'
   url: https://github.com/M5RogueOps/M5StickS3-RogueDuck
