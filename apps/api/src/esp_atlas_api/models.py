@@ -125,6 +125,8 @@ class WizardResponse(BaseModel):
 
 class WizardNeeds(BaseModel):
     protocol: Optional[str] = None
+    soc: Optional[str] = None
+    battery: Optional[bool] = None
     radio: Optional[str] = None
     band: Optional[float] = None
     ble: Optional[bool] = None
@@ -170,6 +172,30 @@ class ExampleRecord(BaseModel):
 
 class ExamplesResponse(BaseModel):
     results: list[ExampleRecord]
+
+
+class IntentRequest(BaseModel):
+    query: str = Field(min_length=1, max_length=500)
+
+    model_config = {"extra": "forbid"}
+
+
+class IntentResponse(BaseModel):
+    """What the intent box understood, and what it could not.
+
+    `kind` is "firmware" (the query named one — answer from the recipe graph),
+    "filters" (mapped onto real fields), or "unreadable" (say so plainly rather
+    than dumping a keyword search under an AI-looking prompt).
+    """
+
+    kind: Literal["firmware", "filters", "unreadable"]
+    filters: WizardNeeds = WizardNeeds()
+    understood: list[str] = []
+    unmapped: list[str] = []
+    firmware: Optional[str] = None
+    firmware_name: Optional[str] = None
+    boards: list[str] = []
+    cached: bool = False
 
 
 class ValidateRequest(BaseModel):

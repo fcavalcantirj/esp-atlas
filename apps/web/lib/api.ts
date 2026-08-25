@@ -207,6 +207,20 @@ export interface NeedsExample {
 
 export type Example = FirmwareExample | NeedsExample;
 
+/** POST /intent: a plain-language goal mapped onto the wizard's own filters.
+ * kind "firmware" means the query named one (answered from the recipe graph);
+ * "unreadable" means say so plainly rather than dumping a keyword search. */
+export interface IntentParse {
+  kind: "firmware" | "filters" | "unreadable";
+  filters: WizardNeeds;
+  understood: string[];
+  unmapped: string[];
+  firmware?: string;
+  firmware_name?: string;
+  boards: string[];
+  cached: boolean;
+}
+
 export class ApiError extends Error {
   status: number;
   endpoint: string;
@@ -280,4 +294,8 @@ export function getFirmware(id: string): Promise<Firmware> {
 
 export function getRecipesForFirmware(firmwareId: string): Promise<{ results: Recipe[] }> {
   return apiFetch(`/recipes?firmware=${encodeURIComponent(firmwareId)}`);
+}
+
+export function parseIntent(query: string): Promise<IntentParse> {
+  return apiFetch(`/intent`, { method: "POST", body: JSON.stringify({ query }) });
 }

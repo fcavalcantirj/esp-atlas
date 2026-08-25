@@ -20,8 +20,10 @@ _HARD_NEEDS = {
     "ble": lambda v: ("ble", v, 1, "Bluetooth Low Energy"),
     "bt_classic": lambda v: ("bt_classic", v, 1, "Bluetooth Classic (BR/EDR)"),
     "usb_native": lambda v: ("usb_native", v, 2, "Native USB (no external UART bridge)"),
+    "battery": lambda v: ("battery", v, 2, "Has a battery connector (can run off a battery)"),
     "ieee802154": lambda v: ("ieee802154", v, 3, "802.15.4 mesh radio (Thread/Zigbee/Matter)"),
     "form": lambda v: ("form", v, 1, f"{v} form factor"),
+    "soc": lambda v: ("soc", v, 2, f"Built on the {v}"),
     "type": lambda v: ("type", v, 0, None),
     "psram_min": lambda v: (
         "psram_min",
@@ -70,7 +72,7 @@ def wizard(needs, db_path=None, limit=500):
     reasons = []
     for key, value in needs.items():
         filter_key, filter_value, points, reason = _HARD_NEEDS[key](value)
-        if key in ("ble", "bt_classic", "usb_native", "ieee802154", "psram_min", "flash_min") and not value:
+        if key in ("ble", "bt_classic", "usb_native", "ieee802154", "battery", "psram_min", "flash_min") and not value:
             continue  # a falsy need (False, or a 0/None floor) doesn't filter or score
         filters[filter_key] = filter_value
         score_bonus += points

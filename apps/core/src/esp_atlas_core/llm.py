@@ -3,8 +3,12 @@ chat-completions endpoint; tests inject a fake implementing the same
 `.complete(system_prompt, user_prompt, temperature=0) -> str` interface so no
 network call is ever made off of `pytest`.
 
-Model: env GROQ_MODEL, default a current Llama-70B-class Groq instruct model.
-Key:   env GROQ_API_KEY, resolved lazily — missing key raises only when a real
+Model: env GROQ_MODEL, default DEFAULT_MODEL below. The models a key can reach
+       are account-specific -- verify against GET /v1/models rather than Groq's
+       public model list before changing these (measured 2026-08-24: no Llama
+       chat model is reachable on this account; the previous default,
+       llama-3.3-70b-versatile, 404s).
+Key:   env GROQ_API_KEY, resolved lazily -- missing key raises only when a real
        call is actually attempted, never at import/construction time.
 """
 import os
@@ -12,7 +16,12 @@ import os
 import httpx
 
 GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions"
-DEFAULT_MODEL = "llama-3.3-70b-versatile"
+
+# Pinned at build per INTERFACE-SPEC. Both verified active on this account and
+# both 131K context. gpt-oss models also return a `reasoning` field alongside
+# `content`; only `content` is read, which is the answer text.
+DEFAULT_MODEL = "openai/gpt-oss-120b"  # Ask (RAG) -- the quality path
+FAST_MODEL = "openai/gpt-oss-20b"  # cheap/fast path (intent->filters, later)
 DEFAULT_MAX_RETRIES = 3
 DEFAULT_BACKOFF_CAP_SECONDS = 30
 
