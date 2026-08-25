@@ -111,7 +111,7 @@ export default function HomeView({ examples }: { examples: Example[] }) {
         <ResultsPanel ref={resultsRef} state={state} onExample={onExample} onRelax={onRelax} onClear={onClear} />
       )}
 
-      <ExamplesGrid examples={examples} onExample={onExample} />
+      <ExamplesGrid examples={examples} />
 
       <details
         className="panel spec-wizard"

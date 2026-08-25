@@ -31,7 +31,8 @@ export type EventName =
   | "font_size_change"
   | "outbound_click"
   | "api_error"
-  | "not_found";
+  | "not_found"
+  | "shelf_see_all";
 
 export type OutboundLinkType =
   | "source"

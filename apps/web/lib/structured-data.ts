@@ -3,7 +3,8 @@
 // not a shop and `price_tier` is editorial (see SPEC.md anti-goals).
 import type { BrandFacet, Firmware, PartDetail, PartRecord } from "@/lib/api";
 import { brandLabel } from "@/lib/brand";
-import { firstSentence, typeLabel } from "@/lib/format";
+import { firstSentence, typeLabel, typePlural } from "@/lib/format";
+import { typeIndexPath } from "@/lib/routes";
 import { dataFolderUrl, repoUrl } from "@/lib/github";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
@@ -59,6 +60,26 @@ function dataset() {
 }
 
 /** Home page: the site, its publisher and the open dataset behind it. */
+/** /how-we-work: the project's own account of itself, as an AboutPage. */
+export function howWeWorkGraph(description: string) {
+  const url = `${SITE_URL}/how-we-work`;
+  return {
+    "@context": CONTEXT,
+    "@graph": [
+      organization(),
+      website(),
+      { "@type": "AboutPage", "@id": url, name: "How esp-atlas works", url, description, isPartOf: { "@id": SITE_ID }, about: { "@id": ORG_ID } },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+          { "@type": "ListItem", position: 2, name: "How we work" },
+        ],
+      },
+    ],
+  };
+}
+
 export function homeGraph() {
   return { "@context": CONTEXT, "@graph": [organization(), website(), dataset()] };
 }
@@ -220,10 +241,46 @@ export function firmwareGraph(firmware: Firmware, boards: PartRecord[]) {
   };
 }
 
+/** A typed index (/boards, /modules, /socs): the list as a CollectionPage, mirroring /brands. */
+export function partTypeIndexGraph(type: string, name: string, path: string, parts: PartRecord[]) {
+  const url = `${SITE_URL}${path}`;
+  return {
+    "@context": CONTEXT,
+    "@graph": [
+      organization(),
+      website(),
+      {
+        "@type": "CollectionPage",
+        "@id": url,
+        name,
+        url,
+        isPartOf: { "@id": SITE_ID },
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: parts.length,
+          itemListElement: parts.map((p, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: p.name,
+            url: `${SITE_URL}/parts/${encodeURIComponent(p.id)}`,
+          })),
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+          { "@type": "ListItem", position: 2, name: typePlural(type) },
+        ],
+      },
+    ],
+  };
+}
+
 /**
  * Part page: a cited technical reference article about one part, plus the
- * breadcrumb trail that is visible on the page (Home › part — the middle crumb
- * is unlinked text, and BreadcrumbList must mirror what users see).
+ * breadcrumb trail that is visible on the page (Home › Boards › part — every
+ * ancestor crumb is a link, and BreadcrumbList must mirror what users see).
  */
 export function partGraph(part: PartDetail) {
   const url = `${SITE_URL}/parts/${encodeURIComponent(part.id)}`;
@@ -255,11 +312,13 @@ export function partGraph(part: PartDetail) {
     },
   };
 
+  const indexPath = typeIndexPath(part.type);
   const breadcrumb = {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
-      { "@type": "ListItem", position: 2, name: part.name },
+      ...(indexPath ? [{ "@type": "ListItem", position: 2, name: typePlural(part.type), item: `${SITE_URL}${indexPath}` }] : []),
+      { "@type": "ListItem", position: indexPath ? 3 : 2, name: part.name },
     ],
   };
 
