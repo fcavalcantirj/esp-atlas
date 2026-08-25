@@ -21,6 +21,21 @@ capabilities:
 - wifi
 - gps
 - telemetry
+benefits_from:
+- gps
+- display
+requires:
+- capability: lora
+  why: off-grid mesh runs on a LoRa transceiver the ESP32 chip lacks; the board must carry an SX126x/SX127x
+  board_signal: lora
+- capability: ble
+  why: pairs to a phone over BLE
+  board_signal: radio-ble
+not_required:
+- capability: psram
+  why: small text/telemetry payloads
+- capability: display
+  why: headless nodes are fine; a screen is optional
 sources:
 - field: '*'
   url: https://github.com/meshtastic/firmware

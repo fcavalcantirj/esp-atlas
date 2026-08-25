@@ -22,6 +22,28 @@ capabilities:
 - rfid-nfc
 - ir
 - badusb
+requires:
+- capability: wifi
+  why: core Wi-Fi tools, on-chip
+  board_signal: radio-wifi
+- capability: ble
+  why: core BLE tools, on-chip
+  board_signal: radio-ble
+- capability: native-usb
+  why: BadUSB tools need native USB (esp32-s2/s3)
+  board_signal: native-usb
+- capability: sub-ghz
+  why: sub-GHz tools need an on-board CC1101
+  board_signal: null
+- capability: rfid-nfc
+  why: RFID/NFC tools need an on-board PN532
+  board_signal: null
+- capability: ir
+  why: IR tools need an IR LED
+  board_signal: null
+not_required:
+- capability: psram
+  why: tool buffers fit SRAM
 sources:
 - field: '*'
   url: https://github.com/pr3y/Bruce

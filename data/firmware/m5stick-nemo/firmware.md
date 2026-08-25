@@ -15,6 +15,16 @@ capabilities:
 - wifi
 - ble
 - ir
+requires:
+- capability: wifi
+  board_signal: radio-wifi
+- capability: ble
+  board_signal: radio-ble
+- capability: ir
+  why: IR tool needs an IR LED
+  board_signal: null
+not_required:
+- capability: psram
 sources:
 - field: '*'
   url: https://github.com/n0xa/m5stick-nemo

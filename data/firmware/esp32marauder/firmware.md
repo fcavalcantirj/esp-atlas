@@ -18,6 +18,18 @@ capabilities:
 benefits_from:
 - display
 - storage
+requires:
+- capability: wifi
+  why: 2.4GHz Wi-Fi recon, on-chip
+  board_signal: radio-wifi
+- capability: ble
+  why: BLE recon, on-chip
+  board_signal: radio-ble
+not_required:
+- capability: psram
+  why: capture buffers are small and fit the chip SRAM (Cardputer runs it with 0 PSRAM)
+- capability: lora
+  why: no LoRa in its toolset
 sources:
 - field: '*'
   url: https://github.com/justcallmekoko/ESP32Marauder

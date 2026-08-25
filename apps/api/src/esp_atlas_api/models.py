@@ -180,6 +180,26 @@ class IntentRequest(BaseModel):
     model_config = {"extra": "forbid"}
 
 
+class FirmwareRequirement(BaseModel):
+    """One `requires` entry from data/firmware/<id>/firmware.md -- the author's
+    own verbatim rationale for why a firmware needs a capability. `board_signal`
+    names the structured board field esp_atlas_core.run_guide checks to state
+    met/unmet for a given board, or is None when the capability can't be proven
+    or disproven from any board's structured record (e.g. sub-GHz, NFC, IR)."""
+
+    capability: str
+    why: Optional[str] = None
+    board_signal: Optional[str] = None
+
+
+class FirmwareNotRequired(BaseModel):
+    """One `not_required` entry -- a capability the firmware explicitly does
+    NOT need, taught regardless of what any one board happens to carry."""
+
+    capability: str
+    why: Optional[str] = None
+
+
 class BoardReason(BaseModel):
     """Why one board runs a firmware -- the recipe's own cited justification
     (SPEC-wizard.md trust tiers), never invented prose. See
@@ -212,6 +232,10 @@ class IntentResponse(BaseModel):
     boards: list[str] = []
     #: Per-board cited justification, parallel to `boards` -- see BoardReason.
     board_reasons: list[BoardReason] = []
+    #: The firmware's own declared requirement-rationale (data/firmware/<id>/
+    #: firmware.md `requires`/`not_required`), only populated for kind=="firmware".
+    requires: list[FirmwareRequirement] = []
+    not_required: list[FirmwareNotRequired] = []
     cached: bool = False
 
 
@@ -244,6 +268,9 @@ class FirmwareRecord(BaseModel):
     distribution: list[str] = []
     manifest_url: Optional[str] = None
     capabilities: list[str] = []
+    benefits_from: list[str] = []
+    requires: list[FirmwareRequirement] = []
+    not_required: list[FirmwareNotRequired] = []
     socs: list[str]
     sources: list[SourceEntry]
 
@@ -297,6 +324,12 @@ class RunGuideBoard(BaseModel):
     fit: str
     reasons: list[str] = []
     particularities: list[str] = []
+    #: Grounded requirement-rationale teaching for THIS board -- each
+    #: `requires` entry stated met/unmet against its real record (or named as
+    #: unverifiable when `board_signal` is null); `not_required` is the same
+    #: for every board of this firmware (see esp_atlas_core.run_guide).
+    requires: list[str] = []
+    not_required: list[str] = []
     status: Optional[str] = None
     chip_family: Optional[str] = None
     sources: list[SourceEntry] = []
@@ -328,6 +361,11 @@ class RunGuideResponse(BaseModel):
     firmware_name: Optional[str] = None
     summary: str
     requirements: list[str] = []
+    #: The firmware's own declared requirement-rationale, verbatim from
+    #: data/firmware/<id>/firmware.md -- see FirmwareRequirement/FirmwareNotRequired.
+    #: Per-board grounded teaching (met/unmet) lives on each RunGuideBoard instead.
+    requires: list[FirmwareRequirement] = []
+    not_required: list[FirmwareNotRequired] = []
     boards: list[RunGuideBoard] = []
     flash_next: list[RunGuideFlashNext] = []
     citations: list[str] = []
