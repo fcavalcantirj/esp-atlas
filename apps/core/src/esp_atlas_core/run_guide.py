@@ -27,10 +27,11 @@ Three things keep this honest ("nothing guessed, nothing invented"):
    which boards run a firmware, only to explain a fit that was already decided
    by deterministic retrieval.
 2. **Every reason is grounded in a real `parts` column**, computed here, never
-   by the model: `_board_reasons` checks the board's own wifi/ble/bt_classic/
-   usb_native fields (the same columns esp_atlas_core.search filters on) and
-   states plainly when a capability cannot be proven from structured data,
-   rather than guessing either way.
+   by the model: `_board_reasons` checks each of the firmware's own authored
+   `requires` entries (never the looser `capabilities` list) against the
+   board_signal it names -- the same columns esp_atlas_core.search filters on
+   -- and states plainly when a capability cannot be proven from structured
+   data, rather than guessing either way.
 3. **A grounding validator (`validate_grounded_output`) gates every LLM
    sentence** before it can reach the response: a board id outside the recipe
    set, a source URL outside that board's own recorded sources, or a spec
@@ -52,37 +53,6 @@ from esp_atlas_core.search import get_part
 
 NOT_FOUND_ANSWER = "That's not in esp-atlas yet — you can add it with a pull request."
 
-# capability (data/firmware/*/firmware.md `capabilities`) -> the human requirement
-# label it implies, restricted to capabilities this dataset can actually PROVE
-# or DISPROVE from a board's own structured columns (see _MATCHERS below).
-_HARDWARE_REQUIREMENTS = {
-    "wifi": "2.4GHz Wi-Fi",
-    "ble": "Bluetooth LE",
-    "bt_classic": "Bluetooth Classic",
-    "badusb": "USB HID (native USB)",
-}
-
-# capabilities that ARE a real requirement but have no structured board column
-# to check them against (board records only carry these, if at all, as
-# free-text `notes`/`extras`) -- named as a requirement, never silently
-# claimed true or false for any specific board.
-_UNGROUNDABLE_REQUIREMENTS = {
-    "sub-ghz": "Sub-GHz radio",
-    "rfid-nfc": "RFID/NFC",
-    "nfc": "NFC",
-    "ir": "IR blaster/receiver",
-    "lora": "LoRa radio",
-    "gps": "GPS",
-    "mesh": "802.15.4 mesh radio",
-    "ethernet": "Ethernet",
-}
-
-# capabilities that describe a software feature, not a hardware requirement
-# (they ride on wifi, which is already its own capability when needed).
-_SOFTWARE_ONLY_CAPABILITIES = frozenset(
-    {"ota", "firmware-store", "telemetry", "on-device-web-ui", "mqtt", "e131", "artnet", "ddp"}
-)
-
 
 def _match_wifi(board):
     standard = board.get("wifi_standard")
@@ -99,20 +69,6 @@ def _match_ble(board):
     return False, f"ble_version={version!r}"
 
 
-def _match_bt_classic(board):
-    if board.get("bt_classic") is True:
-        return True, "Bluetooth Classic"
-    return False, f"bt_classic={board.get('bt_classic')!r}"
-
-
-def _match_usb_native(board):
-    if board.get("usb_native") is True:
-        return True, "native USB"
-    return False, f"usb_native={board.get('usb_native')!r}"
-
-
-_MATCHERS = {"wifi": _match_wifi, "ble": _match_ble, "bt_classic": _match_bt_classic, "badusb": _match_usb_native}
-
 # firmware.schema.json `benefits_from` -- a closed vocab of SOFT/UX capabilities a
 # firmware benefits from beyond its hard `capabilities`, each provable (present or
 # absent) from a board's own structured frontmatter fields. Never a gate on fit,
@@ -123,6 +79,7 @@ _BENEFIT_LABELS = {
     "storage": "storage",
     "battery": "a battery",
     "usb-native": "native USB",
+    "gps": "GPS",
 }
 
 
@@ -153,11 +110,19 @@ def _benefit_usb_native(board):
     return False, "record shows no native USB (bridge chip only)"
 
 
+def _benefit_gps(board):
+    extras = (board.get("frontmatter") or {}).get("extras") or []
+    if "gps" in extras:
+        return True, "has an on-board GPS module"
+    return False, "record shows no on-board GPS module"
+
+
 _BENEFIT_MATCHERS = {
     "display": _benefit_display,
     "storage": _benefit_storage,
     "battery": _benefit_battery,
     "usb-native": _benefit_usb_native,
+    "gps": _benefit_gps,
 }
 
 
@@ -234,6 +199,134 @@ def _board_particularities(board, firmware_name):
 
     return facts
 
+
+# capability (data/firmware/*/firmware.md `requires`/`not_required`) -> the
+# human label run_guide's requirement-rationale teaching uses. This is the
+# SOLE source for a firmware's hard "needs" labels (`requirements_for_firmware`,
+# `_board_reasons`) -- the legacy `capabilities` list is never consulted here:
+# it names what the firmware DOES, not what a board must have to run it.
+_CAP_LABELS = {
+    "wifi": "2.4GHz Wi-Fi",
+    "ble": "Bluetooth LE",
+    "bt_classic": "Bluetooth Classic",
+    "badusb": "USB HID (native USB)",
+    "native-usb": "native USB",
+    "lora": "LoRa radio",
+    "gps": "GPS",
+    "sub-ghz": "Sub-GHz radio",
+    "rfid-nfc": "RFID/NFC",
+    "nfc": "NFC",
+    "ir": "IR blaster/receiver",
+    "mesh": "802.15.4 mesh radio",
+    "ethernet": "Ethernet",
+    "display": "a display",
+    "storage": "storage",
+    "psram": "PSRAM",
+}
+
+
+def _signal_native_usb(board):
+    """board_signal "native-usb": usb.bridge=='native' OR the board's own SoC
+    is esp32-s2/esp32-s3 -- the narrower "can run BadUSB/HID" test, distinct
+    from the broader `usb_native` column (which also covers RISC-V SoCs whose
+    native USB is serial-JTAG only, not a HID-capable OTG device)."""
+    fm = board.get("frontmatter") or {}
+    bridge = (fm.get("usb") or {}).get("bridge")
+    soc = board.get("soc_ref")
+    if bridge == "native":
+        return True, "usb.bridge=native"
+    if soc in ("esp32-s2", "esp32-s3"):
+        return True, f"{soc} has native USB-OTG"
+    return False, f"soc={soc!r}, usb.bridge={bridge!r}"
+
+
+def _signal_display(board):
+    display = (board.get("frontmatter") or {}).get("display")
+    if display:
+        return True, display
+    return False, "record shows no on-board display"
+
+
+def _signal_storage(board):
+    extras = (board.get("frontmatter") or {}).get("extras") or []
+    if "sd-card" in extras:
+        return True, "has a microSD card slot"
+    return False, "record shows no on-board microSD"
+
+
+def _signal_lora(board):
+    extras = (board.get("frontmatter") or {}).get("extras") or []
+    if "lora" in extras:
+        return True, "extras include a LoRa radio"
+    return False, "record shows no on-board LoRa radio"
+
+
+def _signal_gps(board):
+    extras = (board.get("frontmatter") or {}).get("extras") or []
+    if "gps" in extras:
+        return True, "extras include GPS"
+    return False, "record shows no on-board GPS"
+
+
+# board_signal (schema/firmware.schema.json `requires[].board_signal`) -> the
+# matcher that proves it true/false from ONE board's own structured record.
+# radio-wifi/radio-ble reuse the same real columns _match_wifi/_match_ble
+# already check; the rest read frontmatter fields no `capabilities` matcher
+# above touches. A capability's board_signal is `null` (absent here) when this
+# dataset cannot prove or disprove it from any board's structured record.
+_SIGNAL_MATCHERS = {
+    "radio-wifi": _match_wifi,
+    "radio-ble": _match_ble,
+    "native-usb": _signal_native_usb,
+    "display": _signal_display,
+    "storage": _signal_storage,
+    "lora": _signal_lora,
+    "gps": _signal_gps,
+}
+
+
+def _requires_teaching(firmware, board):
+    """Every `requires` entry a firmware declares, taught against ONE board:
+    a grounded met/unmet statement when `board_signal` names a checkable field,
+    or an honest "can't verify from structured data" note when it's `null` --
+    never a silent guess either way. `why` is the author's own rationale,
+    encoded verbatim; entries without one are still taught, just undecorated."""
+    lines = []
+    board_name = board["name"]
+    for req in firmware.get("requires") or []:
+        capability = req.get("capability")
+        if not capability:
+            continue
+        label = _CAP_LABELS.get(capability, capability)
+        why = req.get("why")
+        need = f"needs {label} ({why})" if why else f"needs {label}"
+        signal = req.get("board_signal")
+        matcher = _SIGNAL_MATCHERS.get(signal) if signal else None
+        if matcher is None:
+            lines.append(f"{need} -> check your board has this peripheral (not in structured specs)")
+            continue
+        matched, fact = matcher(board)
+        state = f"{board_name} has it ({fact})" if matched else f"{board_name} lacks it ({fact})"
+        lines.append(f"{need} -> {state}")
+    return lines
+
+
+def _not_required_teaching(firmware):
+    """Every `not_required` entry a firmware declares -- board-independent by
+    design (see PART C: PSRAM is taught as not-needed the same way whether a
+    board carries 0MB or 8MB; the point is to teach the firmware's own need,
+    not to react to what one board happens to have)."""
+    lines = []
+    for entry in firmware.get("not_required") or []:
+        capability = entry.get("capability")
+        if not capability:
+            continue
+        label = _CAP_LABELS.get(capability, capability)
+        why = entry.get("why")
+        lines.append(f"does not need {label}: {why}" if why else f"does not need {label}")
+    return lines
+
+
 # Chip ids this dataset seeds (data/socs/*/chip.md), longest/most-specific
 # form first so "esp32-s3" wins over the bare "esp32" it contains.
 _CHIP_IDS = (
@@ -261,45 +354,55 @@ def parse_chip_constraint(text):
 
 
 def requirements_for_firmware(firmware):
-    """The human-readable requirements a firmware's own `capabilities` imply --
-    hardware ones this dataset can check, plus ones it can only name."""
+    """The human-readable HARD requirements a firmware declares -- sourced
+    SOLELY from its authored `requires` array (schema/firmware.schema.json),
+    never from the legacy `capabilities` list. `capabilities` describes what a
+    firmware DOES (its feature set, e.g. meshtastic also does gps/telemetry/
+    mesh-software), which is not the same claim as "a board must have this
+    hardware to run it" -- conflating the two produced false/wrong needs (e.g.
+    meshtastic's `capabilities` include `gps`, but a maker's board with no GPS
+    still runs Meshtastic fine; GPS is a `benefits_from`, not a `requires`)."""
     labels = []
-    for cap in firmware.get("capabilities") or []:
-        label = _HARDWARE_REQUIREMENTS.get(cap) or _UNGROUNDABLE_REQUIREMENTS.get(cap)
+    for req in firmware.get("requires") or []:
+        capability = req.get("capability")
+        label = _CAP_LABELS.get(capability, capability)
         if label and label not in labels:
             labels.append(label)
     return labels
 
 
-def _board_reasons(capabilities, board):
-    """Every requirement this firmware implies, checked against ONE board's
-    real record. Returns (reasons, hardware_match, matched_count, total_hardware)
-    -- hardware_match is {capability: bool}, used later by the grounding
-    validator to catch an LLM claiming a capability the board record denies."""
+def _board_reasons(requires, board):
+    """Every HARD requirement this firmware's own `requires` array declares,
+    checked against ONE board's real record via that entry's `board_signal` --
+    the SAME signal matchers `_requires_teaching` uses (see BUG 2: a
+    board_signal of "lora"/"gps" is met when the board's `extras` names it, not
+    a permanent "not verifiable"). Requirement entries with no board_signal
+    (e.g. sub-ghz, rfid-nfc, ir) are named honestly as unverifiable, never
+    guessed either way. Returns (reasons, hardware_match, matched_count,
+    total_hardware) -- hardware_match is {capability: bool}, used later by the
+    grounding validator to catch an LLM claiming a capability the board record
+    denies."""
     reasons = []
     hardware_match = {}
     seen = set()
     board_name = board["name"]
-    for cap in capabilities or []:
-        if cap in _HARDWARE_REQUIREMENTS:
-            label = _HARDWARE_REQUIREMENTS[cap]
-            if label in seen:
-                continue
-            seen.add(label)
-            matched, fact = _MATCHERS[cap](board)
-            hardware_match[cap] = matched
-            if matched:
-                reasons.append(f"needs {label} -> {board_name} has {fact}")
-            else:
-                reasons.append(f"needs {label} -> {board_name} record shows no {label} ({fact})")
-        elif cap in _UNGROUNDABLE_REQUIREMENTS:
-            label = _UNGROUNDABLE_REQUIREMENTS[cap]
-            if label in seen:
-                continue
-            seen.add(label)
-            reasons.append(f"needs {label} -> not verifiable from {board_name}'s structured board record")
-        elif cap not in _SOFTWARE_ONLY_CAPABILITIES:
+    for req in requires or []:
+        capability = req.get("capability")
+        if not capability or capability in seen:
             continue
+        seen.add(capability)
+        label = _CAP_LABELS.get(capability, capability)
+        signal = req.get("board_signal")
+        matcher = _SIGNAL_MATCHERS.get(signal) if signal else None
+        if matcher is None:
+            reasons.append(f"needs {label} -> not verifiable from {board_name}'s structured board record")
+            continue
+        matched, fact = matcher(board)
+        hardware_match[capability] = matched
+        if matched:
+            reasons.append(f"needs {label} -> {board_name} has {fact}")
+        else:
+            reasons.append(f"needs {label} -> {board_name} record shows no {label} ({fact})")
 
     total_hardware = sum(1 for v in hardware_match.values())
     matched_count = sum(1 for v in hardware_match.values() if v)
@@ -462,7 +565,7 @@ def _has_ungrounded_spec_claim(note, board, hardware_match):
     text = note.lower()
     if "bluetooth classic" in text and hardware_match.get("bt_classic") is False:
         return True
-    if ("native usb" in text or "usb hid" in text) and hardware_match.get("badusb") is False:
+    if ("native usb" in text or "usb hid" in text) and hardware_match.get("native-usb") is False:
         return True
     if _5GHZ_RE.search(text):
         bands = [b.strip() for b in (board.get("wifi_bands") or "").split(",") if b.strip()]
@@ -540,13 +643,14 @@ def run_guide(firmware_id, constraints=None, llm_client=None, db_path=None):
     chip_constraint = parse_chip_constraint(constraints)
     included_recipes, excluded = _apply_chip_constraint(all_recipes, chip_constraint)
     requirements = requirements_for_firmware(firmware)
+    not_required_lines = _not_required_teaching(firmware)
 
     board_entries = []
     for recipe in included_recipes:
         board = get_part(recipe["board"], db_path=db_path)
         if board is None:
             continue
-        reasons, hardware_match, _matched, _total = _board_reasons(firmware.get("capabilities"), board)
+        reasons, hardware_match, _matched, _total = _board_reasons(firmware.get("requires"), board)
         benefit_reasons, benefit_match = _benefit_reasons(firmware.get("benefits_from"), board)
         board_entries.append(
             {
@@ -557,6 +661,8 @@ def run_guide(firmware_id, constraints=None, llm_client=None, db_path=None):
                 "benefit_match": benefit_match,
                 "particularities": _board_particularities(board, firmware["name"]),
                 "fit": _fit_for(hardware_match, benefit_match),
+                "requires": _requires_teaching(firmware, board),
+                "not_required": not_required_lines,
             }
         )
 
@@ -594,6 +700,8 @@ def run_guide(firmware_id, constraints=None, llm_client=None, db_path=None):
             "fit": entry["fit"],
             "reasons": entry["reasons"],
             "particularities": entry["particularities"],
+            "requires": entry["requires"],
+            "not_required": entry["not_required"],
             "status": recipe.get("status"),
             "chip_family": recipe.get("chip_family"),
             "sources": recipe.get("sources") or [],
@@ -608,6 +716,8 @@ def run_guide(firmware_id, constraints=None, llm_client=None, db_path=None):
         "firmware_name": firmware["name"],
         "summary": summary,
         "requirements": requirements,
+        "requires": firmware.get("requires") or [],
+        "not_required": firmware.get("not_required") or [],
         "boards": boards_out,
         "flash_next": _flash_next([e["recipe"] for e in board_entries]),
         "citations": _citations(firmware, [e["recipe"] for e in board_entries]),
