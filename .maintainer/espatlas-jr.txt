@@ -1,0 +1,11 @@
+        ___________
+       |  _______  |        E S P A T L A S   J r.   🤖
+       | |  o o  | |        ~ autonomous data-maintainer ~
+       | |   ^   | |
+       | |  \_/  | |     · watches the ESP32 world every day
+       | |_______| |     · opens cited PRs — never merges
+       |___________|     · a human always decides
+        |  |   |  |      · "we'd rather say 'not verified' than guess"
+       [O]  [___]  [O]
+        |___|   |___|      bot proposes · humans dispose · cite or omit
+       runs on: fx-open + Groq/OpenRouter, daily, on a Raspberry Pi

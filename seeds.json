@@ -1,0 +1,26 @@
+{
+  "$comment": "Seeds = the sources EspAtlas Jr. (our autonomous data-maintainer) watches every day. It reads these, notices what changed, and opens a cited PR; a human merges. ADD YOUR OWN: append an entry below in a one-file PR — an awesome-list, a firmware repo, a vendor catalog, a subreddit. Official/machine-readable sources preferred; no ToS-violating scraping. See SPEC-data-maintainer.md + SPEC-discovery.md.",
+  "version": 1,
+  "board_catalogs": [
+    { "id": "arduino-esp32-official", "url": "https://espressif.github.io/arduino-esp32/package_esp32_index.json", "kind": "arduino-package-index", "note": "Espressif's official versioned board index (+ boards.txt per platform for build.mcu/variant)" },
+    { "id": "launcher-supported-devices", "url": "https://github.com/bmorcelli/Launcher/wiki/Supported-devices", "kind": "wiki-device-table", "note": "Device × chip × added-in-version table; known-good recipe candidates, already chip-mapped" },
+    { "id": "m5burner-catalog", "url": "https://github.com/m5stack/M5Burner", "kind": "m5burner", "note": "M5Stack firmware catalog / M5Burner API" },
+    { "id": "espressif-products", "url": "https://www.espressif.com/en/products/socs", "kind": "vendor-products", "note": "SoC/datasheet reference pages (rare drift, monthly)" }
+  ],
+  "firmware_releases": [
+    { "id": "bruce", "url": "https://github.com/pr3y/Bruce/releases", "kind": "github-releases", "note": "Pentest multitool" },
+    { "id": "wled", "url": "https://github.com/wled/WLED/releases", "kind": "github-releases", "note": "Addressable-LED controller" },
+    { "id": "meshtastic", "url": "https://github.com/meshtastic/firmware/releases", "kind": "github-releases", "note": "Off-grid LoRa mesh" },
+    { "id": "esphome", "url": "https://github.com/esphome/esphome/releases", "kind": "github-releases", "note": "Home-automation firmware" },
+    { "id": "esp32marauder", "url": "https://github.com/justcallmekoko/ESP32Marauder/releases", "kind": "github-releases", "note": "Wi-Fi/BT recon" },
+    { "id": "launcher", "url": "https://github.com/bmorcelli/Launcher/releases", "kind": "github-releases", "note": "Board-named .bin assets → release-bin recipes" },
+    { "id": "periscope-os", "url": "https://github.com/M5RogueOps/Periscope-OS", "kind": "github-releases", "note": "M5RogueOps Periscope-OS — firmware/recipes candidate" },
+    { "id": "esp-claw", "url": "https://github.com/espressif/esp-claw", "kind": "github-releases", "note": "Espressif esp-claw — official project, firmware/recipes candidate" }
+  ],
+  "community_signal": [
+    { "id": "awesome-esp32", "url": "https://github.com/agucova/awesome-esp", "kind": "awesome-list", "note": "Curated firehose of ESP projects (with-code gate applies)" },
+    { "id": "reddit-esp32", "url": "https://www.reddit.com/r/esp32.json", "kind": "reddit-api", "note": "Trending posts that LINK A REPO (with-code gate)" },
+    { "id": "hn-esp32", "url": "https://hn.algolia.com/api/v1/search_by_date?query=esp32&tags=story", "kind": "hn-api", "note": "HN stories that link a repo (with-code gate)" },
+    { "id": "github-trending-esp32", "url": "https://api.github.com/search/repositories?q=topic:esp32&sort=updated", "kind": "github-search", "note": "New & rising ESP32 projects" }
+  ]
+}
