@@ -24,6 +24,17 @@ capabilities:
 - artnet
 - ddp
 - ota
+requires:
+- capability: wifi
+  why: serves its web UI over Wi-Fi
+  board_signal: radio-wifi
+not_required:
+- capability: psram
+  why: web assets fit in 4MB flash
+- capability: display
+  why: no screen needed
+- capability: ble
+- capability: storage
 sources:
 - field: '*'
   url: https://github.com/wled/WLED

@@ -295,6 +295,10 @@ def parse_intent(query, llm_client=None, db_path=None, use_cache=True):
                 }
                 for r in recipes
             ],
+            # The firmware's own declared requirement-rationale, verbatim from
+            # data/firmware/<id>/firmware.md -- never invented, see run_guide.
+            "requires": firmware.get("requires") or [],
+            "not_required": firmware.get("not_required") or [],
             "filters": {},
             "understood": [f"runs {firmware['name']}"],
             "unmapped": [],

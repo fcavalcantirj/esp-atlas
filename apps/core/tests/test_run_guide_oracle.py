@@ -386,3 +386,198 @@ def test_requirements_for_firmware_never_duplicates_a_label():
 def test_get_firmware_still_works_as_the_id_lookup_run_guide_relies_on():
     assert get_firmware("esp32marauder")["name"] == "ESP32 Marauder"
     assert get_firmware("no-such-firmware") is None
+
+
+# --- 7. requirement-rationale teaching: requires/not_required, grounded per board ---
+#
+# These 12 cases pin the NEW "teach why, not just what" layer: `requires`/
+# `not_required` are authored verbatim on each firmware.md (schema/firmware.
+# schema.json), and run_guide grounds each `requires` entry against a real
+# board field via its `board_signal` (met/unmet), or names it as an unverifiable
+# peripheral when `board_signal` is null -- never a guess either way.
+
+
+def _board(result, board_id):
+    return next(b for b in result["boards"] if b["board_id"] == board_id)
+
+
+def test_1_marauder_cardputer_requires_wifi_ble_met_and_benefits_met(built_db_path):
+    result = run_guide("esp32marauder", llm_client=_QUIET, db_path=built_db_path)
+    cardputer = _board(result, "m5cardputer")
+    assert any("needs 2.4GHz Wi-Fi" in r and "has it" in r for r in cardputer["requires"])
+    assert any("needs Bluetooth LE" in r and "has it" in r for r in cardputer["requires"])
+    assert any("benefits from a display" in r for r in cardputer["reasons"])
+    assert any("benefits from storage" in r for r in cardputer["reasons"])
+
+
+def test_2_marauder_not_required_psram_taught_regardless_of_actual_psram(built_db_path):
+    result = run_guide("esp32marauder", llm_client=_QUIET, db_path=built_db_path)
+    cardputer = _board(result, "m5cardputer")  # psram_mb=0
+    stick = _board(result, "m5stick-cplus2")  # psram_mb=2
+    for board in (cardputer, stick):
+        assert any(
+            "does not need PSRAM" in r and "capture buffers are small" in r for r in board["not_required"]
+        ), board["board_id"]
+    assert cardputer["status"] == "known-good"
+
+
+def test_3_meshtastic_requires_lora_and_recipe_set_excludes_non_lora_boards(built_db_path):
+    board_ids = {r["board"] for r in recipes_for_firmware("meshtastic")}
+    assert "m5cardputer" not in board_ids
+    assert {"lilygo-t-beam", "heltec-wifi-lora-32-v3"} & board_ids
+
+    result = run_guide("meshtastic", llm_client=_QUIET, db_path=built_db_path)
+    tbeam = _board(result, "lilygo-t-beam")
+    assert any("needs LoRa radio" in r and "has it" in r for r in tbeam["requires"])
+
+
+def test_4_rogueduck_requires_native_usb_met_on_s3_stickcplus2_not_a_recipe(built_db_path):
+    board_ids = {r["board"] for r in recipes_for_firmware("rogueduck")}
+    assert board_ids == {"m5stick-s3"}
+    assert "m5stick-cplus2" not in board_ids
+
+    result = run_guide("rogueduck", llm_client=_QUIET, db_path=built_db_path)
+    stick_s3 = _board(result, "m5stick-s3")
+    assert any("needs native USB" in r and "has it" in r for r in stick_s3["requires"])
+
+
+def test_5_wled_requires_wifi_only_not_required_psram_and_display_on_c3(built_db_path):
+    result = run_guide("wled", llm_client=_QUIET, db_path=built_db_path)
+    board = _board(result, "esp32-c3-devkitm-1")
+    assert any("needs 2.4GHz Wi-Fi" in r and "has it" in r for r in board["requires"])
+    assert not any("needs Bluetooth" in r for r in board["requires"])
+    assert any("does not need PSRAM" in r and "web assets fit in 4MB flash" in r for r in board["not_required"])
+    assert any("does not need a display" in r and "no screen needed" in r for r in board["not_required"])
+
+
+def test_6_esphome_not_required_psram_teaches_inkplate10_conditional(built_db_path):
+    result = run_guide("esphome", llm_client=_QUIET, db_path=built_db_path)
+    board = _board(result, "soldered-inkplate-10")
+    assert any("Inkplate-10" in r and "framebuffer" in r for r in board["not_required"])
+
+
+def test_7_bruce_requires_wifi_ble_advisory_native_usb_unmet_on_core2(built_db_path):
+    result = run_guide("bruce", llm_client=_QUIET, db_path=built_db_path)
+    board = _board(result, "m5stack-core2")
+    assert any("needs 2.4GHz Wi-Fi" in r and "has it" in r for r in board["requires"])
+    assert any("needs Bluetooth LE" in r and "has it" in r for r in board["requires"])
+    assert any("needs native USB" in r and "lacks it" in r for r in board["requires"])
+    assert any("needs Sub-GHz radio" in r and "not in structured specs" in r for r in board["requires"])
+    assert any("needs RFID/NFC" in r and "not in structured specs" in r for r in board["requires"])
+    assert any("needs IR blaster/receiver" in r and "not in structured specs" in r for r in board["requires"])
+
+
+def test_8_lilygo_t_beam_meshtastic_lora_and_gps_present(built_db_path):
+    result = run_guide("meshtastic", llm_client=_QUIET, db_path=built_db_path)
+    board = _board(result, "lilygo-t-beam")
+    assert any("needs LoRa radio" in r and "has it" in r for r in board["requires"])
+    assert any("benefits from GPS" in r and "has" in r for r in board["reasons"])
+
+
+def test_9_meshtastic_xiao_esp32s3_lora_unmet_never_claims_onboard_lora(built_db_path):
+    result = run_guide("meshtastic", llm_client=_QUIET, db_path=built_db_path)
+    board = _board(result, "xiao-esp32s3")
+    lora_lines = [r for r in board["requires"] if "LoRa" in r]
+    assert lora_lines
+    assert all("lacks it" in r for r in lora_lines)
+    assert not any("has it" in r for r in lora_lines)
+
+
+def test_10_marauder_stickcplus2_storage_unmet_limitation_named(built_db_path):
+    result = run_guide("esp32marauder", llm_client=_QUIET, db_path=built_db_path)
+    board = _board(result, "m5stick-cplus2")
+    assert board["fit"] == "works"
+    assert any("benefits from storage" in r and "no on-board microSD" in r for r in board["reasons"])
+
+
+def test_11_launcher_requires_display_unmet_on_display_less_board(built_db_path):
+    result = run_guide("launcher", llm_client=_QUIET, db_path=built_db_path)
+    board = _board(result, "lilygo-t-watch-s3")
+    assert any("needs a display" in r and "lacks it" in r for r in board["requires"])
+
+
+def test_12_no_firmware_ever_requires_psram_and_validator_still_rejects_it(built_db_path):
+    for fw in list_firmware():
+        capabilities = {r.get("capability") for r in (fw.get("requires") or [])}
+        assert "psram" not in capabilities, fw["id"]
+
+    result = _validate({"summary": "ok", "boards": [{"board_id": "m5cardputer", "note": "16MB PSRAM onboard"}]})
+    assert "m5cardputer" not in result["notes"]
+
+
+# --- 8. hard requirements are SOLE-sourced from `requires`, never from the
+# legacy `capabilities` auto-mapping -- and board_signal "lora"/"gps" read the
+# board's own `extras`, never a false "not verifiable" ------------------------
+
+
+def test_13_meshtastic_requires_is_exactly_lora_and_ble_no_double_sourcing():
+    """Meshtastic's `capabilities` (lora, mesh, ble, wifi, gps, telemetry) describe
+    what the firmware DOES -- only its authored `requires` (lora, ble) are HARD
+    needs. mesh/gps/wifi/telemetry must never be promoted to a "needs" gate."""
+    firmware = get_firmware("meshtastic")
+    capability_ids = {r["capability"] for r in firmware["requires"]}
+    assert capability_ids == {"lora", "ble"}
+
+
+def test_14_meshtastic_top_level_requirements_have_no_double_sourced_needs(built_db_path):
+    result = run_guide("meshtastic", llm_client=_QUIET, db_path=built_db_path)
+    assert result["requirements"] == ["LoRa radio", "Bluetooth LE"]
+    assert "802.15.4 mesh radio" not in result["requirements"]
+    assert "GPS" not in result["requirements"]
+    assert "2.4GHz Wi-Fi" not in result["requirements"]
+
+
+def test_15_meshtastic_summary_needs_list_has_no_mesh_gps_or_wifi(built_db_path):
+    result = run_guide("meshtastic", llm_client=_QUIET, db_path=built_db_path)
+    summary = result["summary"]
+    assert "It needs: LoRa radio, Bluetooth LE." in summary
+    assert "802.15.4" not in summary
+    assert "GPS" not in summary
+    assert "Wi-Fi" not in summary
+
+
+def test_16_meshtastic_lora_reason_met_on_boards_with_lora_in_extras(built_db_path):
+    """heltec-wifi-lora-32-v3 and lilygo-t-beam both carry `lora` in their
+    `extras` -- the per-board reason must read MET, never "not verifiable"."""
+    result = run_guide("meshtastic", llm_client=_QUIET, db_path=built_db_path)
+    for board_id in ("heltec-wifi-lora-32-v3", "lilygo-t-beam"):
+        board = _board(result, board_id)
+        lora_reasons = [r for r in board["reasons"] if "LoRa" in r]
+        assert lora_reasons, board_id
+        assert all("not verifiable" not in r for r in lora_reasons), board_id
+        assert any("has" in r for r in lora_reasons), board_id
+
+
+def test_17_meshtastic_gps_benefit_met_on_boards_with_gps_in_extras(built_db_path):
+    result = run_guide("meshtastic", llm_client=_QUIET, db_path=built_db_path)
+    for board_id in ("heltec-wireless-tracker", "lilygo-t-beam"):
+        board = _board(result, board_id)
+        assert any(
+            "benefits from GPS" in r and "has an on-board GPS" in r for r in board["reasons"]
+        ), board_id
+    for board_id in ("lilygo-t-deck", "lilygo-t-watch-s3", "m5stack-cores3", "xiao-esp32s3"):
+        board = _board(result, board_id)
+        assert any(
+            "benefits from GPS" in r and "no on-board GPS" in r for r in board["reasons"]
+        ), board_id
+
+
+def test_18_meshtastic_xiao_esp32s3_lora_not_confirmed_no_false_onboard_claim(built_db_path):
+    result = run_guide("meshtastic", llm_client=_QUIET, db_path=built_db_path)
+    board = _board(result, "xiao-esp32s3")
+    lora_reasons = [r for r in board["reasons"] if "LoRa" in r]
+    assert lora_reasons
+    assert not any("has" in r for r in lora_reasons)
+
+
+def test_19_marauder_requires_and_reasons_are_unchanged_by_the_sole_source_fix(built_db_path):
+    result = run_guide("esp32marauder", llm_client=_QUIET, db_path=built_db_path)
+    assert result["requirements"] == ["2.4GHz Wi-Fi", "Bluetooth LE"]
+    firmware = get_firmware("esp32marauder")
+    assert {r["capability"] for r in firmware["requires"]} == {"wifi", "ble"}
+    cardputer = _board(result, "m5cardputer")
+    assert any("needs 2.4GHz Wi-Fi" in r and "has" in r for r in cardputer["reasons"])
+    assert any("needs Bluetooth LE" in r and "has" in r for r in cardputer["reasons"])
+    assert any(
+        "does not need PSRAM" in r and "capture buffers are small" in r for r in cardputer["not_required"]
+    )

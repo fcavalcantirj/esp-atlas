@@ -16,6 +16,16 @@ capabilities:
 - wifi
 - ble
 - sub-ghz
+requires:
+- capability: wifi
+  board_signal: radio-wifi
+- capability: ble
+  board_signal: radio-ble
+- capability: sub-ghz
+  why: sub-GHz tools need an on-board CC1101
+  board_signal: null
+not_required:
+- capability: psram
 sources:
 - field: '*'
   url: https://github.com/D3CRYPT-1/Infiltra-Firmware
