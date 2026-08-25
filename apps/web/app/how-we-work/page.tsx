@@ -12,8 +12,6 @@ const TITLE = "How esp-atlas works";
 const DESCRIPTION =
   "A small agent watches the ESP32 world every day and proposes what changed; humans review it; nothing lands without a source. What esp-atlas promises, and what it doesn't.";
 
-const MAINTAINER_REPO = "https://github.com/fcavalcantirj/fx-open";
-
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
@@ -66,11 +64,6 @@ export default function HowWeWorkPage() {
         hidden.
       </p>
       <ul className="how-links" aria-label="EspAtlas Jr. links">
-        <li>
-          <TrackedLink href={MAINTAINER_REPO} linkType="maintainer_repo">
-            EspAtlas Jr.&apos;s code (fx-open)
-          </TrackedLink>
-        </li>
         <li>
           <TrackedLink href={viewSourceUrl("SPEC-data-maintainer.md")} linkType="github_view" extra={{ doc: "SPEC-data-maintainer.md" }}>
             How it&apos;s specced
