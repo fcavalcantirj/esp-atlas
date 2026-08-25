@@ -282,3 +282,54 @@ class RecipeRecord(BaseModel):
 
 class RecipeListResponse(BaseModel):
     results: list[RecipeRecord]
+
+
+class RunGuideBoard(BaseModel):
+    """One board's grounded, reasoned fit for a firmware -- see
+    esp_atlas_core.run_guide. `reasons` and `fit` are always deterministic,
+    computed straight from this board's own real record; `note` is the only
+    field an LLM ever contributes, and only after surviving the grounding
+    validator (a hallucinated board, spec, or source is rejected outright,
+    never sanitized into something safer)."""
+
+    board_id: str
+    board_name: str
+    fit: str
+    reasons: list[str] = []
+    status: Optional[str] = None
+    chip_family: Optional[str] = None
+    sources: list[SourceEntry] = []
+    note: Optional[str] = None
+
+
+class RunGuideFlashNext(BaseModel):
+    board: str
+    recipe_id: str
+    manifest_url: str
+
+
+class RunGuideConstraint(BaseModel):
+    chip: str
+
+
+class RunGuideExcludedBoard(BaseModel):
+    board: str
+    reason: str
+
+
+class RunGuideResponse(BaseModel):
+    """GET /run/{firmware_id} -- the grounded "why does this firmware run on
+    these boards" answer. `grounded` is False only for an unknown/misspelled
+    firmware id, in which case `summary` is the honest not-found message and
+    every list is empty -- never a guess."""
+
+    firmware: str
+    firmware_name: Optional[str] = None
+    summary: str
+    requirements: list[str] = []
+    boards: list[RunGuideBoard] = []
+    flash_next: list[RunGuideFlashNext] = []
+    citations: list[str] = []
+    grounded: bool
+    constraint: Optional[RunGuideConstraint] = None
+    excluded_boards: list[RunGuideExcludedBoard] = []
