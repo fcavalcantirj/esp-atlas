@@ -64,7 +64,16 @@ export type OutboundLinkType =
   | "flash_handoff"
   | "roadmap";
 
-export type ResultOrigin = "wizard" | "search" | "related" | "compare" | "chain" | "browse" | "brand" | "intent";
+export type ResultOrigin =
+  | "wizard"
+  | "search"
+  | "related"
+  | "compare"
+  | "chain"
+  | "browse"
+  | "brand"
+  | "intent"
+  | "build_guide";
 
 type ParamValue = string | number | boolean | undefined | null;
 export type EventParams = Record<string, ParamValue>;

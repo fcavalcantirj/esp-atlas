@@ -2,6 +2,29 @@
 
 ## Shipped
 
+### Build guide — a grounded answer for "build a plant health monitor"
+
+`SPEC-build-guide.md`: `POST /intent` correctly calls a goal like "build a
+plant health monitor" `kind="unmapped"` (the catalog has no board FIELD for
+"plant health monitor") but that used to leave the home with only "I can't
+narrow this — try Battery/Wi-Fi/Cheap/Native USB", honest but not helpful.
+`esp_atlas_core.build_guide.build_guide()` turns that into an actual answer:
+Groq picks ONE firmware id from the real catalog (or `null`, validated —
+an invented id is rejected outright), board recommendation is 100%
+deterministic (the firmware's own recipe boards, or cheap Wi-Fi boards from
+`wizard()` when nothing fits — the model never names a board, so it cannot
+invent one), and whatever the goal needs beyond a firmware+board (a sensor,
+camera, motor...) is named honestly as an add-on, never silently dropped.
+Mirrors `ask()`/`run_guide()`'s grounding discipline throughout, including a
+deterministic keyword-firmware fallback when Groq is unreachable or garbage
+(never a 500, never invented). New `POST /build` endpoint; the web renders it
+(`BuildGuideAnswer`, reusing `RunGuideAnswer`'s `.run-guide*` CSS verbatim) as
+the primary answer for an "unmapped" intent, with the spec clarifier chips
+demoted to a secondary "or narrow by spec" row. Unit-tested with a fake LLM
+(`apps/core/tests/test_build_guide.py`); a live-Groq golden matrix
+(`apps/core/tests/data/build_guide_golden.py`, `make build-guide-oracle`) is
+on-demand, not CI-blocking, same pattern as the intent oracle.
+
 ### Debug — "Verify my board"
 
 Client-side debug rail (`SPEC-verify.md`), complementing the flash rail

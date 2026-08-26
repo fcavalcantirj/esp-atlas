@@ -319,6 +319,38 @@ export interface RunGuideResponse {
   excluded_boards?: RunGuideExcludedBoard[];
 }
 
+/** The single firmware `build_guide` picked, constrained to the real catalog
+ * -- see esp_atlas_core.build_guide. `why` is the only LLM-authored field on
+ * the whole response; everything else is deterministic. */
+export interface BuildGuideFirmware {
+  id: string;
+  name: string;
+  why: string;
+}
+
+/** One recommended board -- NEVER chosen by the model: either from the
+ * matched firmware's own recipe graph, or cheap Wi-Fi boards from the
+ * catalog when no firmware fits. `why` is built from this board's own real
+ * columns, never LLM prose. */
+export interface BuildGuideBoard {
+  board_id: string;
+  board_name: string;
+  why: string;
+}
+
+/** POST /build -- the grounded "here's what you need" answer for a project
+ * goal that POST /intent correctly calls kind=="unmapped" (SPEC-build-guide.md).
+ * `firmware` is null (may be absent -- response_model_exclude_none) only when
+ * nothing in the catalog fits; `boards` is still populated in that case. */
+export interface BuildGuide {
+  goal: string;
+  needs: string[];
+  firmware?: BuildGuideFirmware | null;
+  boards: BuildGuideBoard[];
+  add_ons: string[];
+  note?: string | null;
+}
+
 export class ApiError extends Error {
   status: number;
   endpoint: string;
@@ -401,4 +433,8 @@ export function parseIntent(query: string): Promise<IntentParse> {
 export function runGuide(firmwareId: string, constraints?: string): Promise<RunGuideResponse> {
   const qs = constraints ? `?constraints=${encodeURIComponent(constraints)}` : "";
   return apiFetch(`/run/${encodeURIComponent(firmwareId)}${qs}`);
+}
+
+export function buildGuide(query: string): Promise<BuildGuide> {
+  return apiFetch(`/build`, { method: "POST", body: JSON.stringify({ query }) });
 }
