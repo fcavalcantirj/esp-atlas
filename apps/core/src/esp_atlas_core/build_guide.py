@@ -77,6 +77,31 @@ def _channel_count(query):
     return count
 
 
+def _output_groups(query):
+    """Each `_CHANNEL_NOUN_RE` match's count -- one independent output group
+    per match. Distinct from `_channel_count`, which SUMS these plus the
+    sensor/uart allowance for the GPIO-count exclusion; `_deterministic_io_heavy`
+    instead needs to know how many separate groups exist and how big each one
+    is, since a bare total can't tell "2 fans + 2 motors" (two groups) apart
+    from "4 fans" (one group) even though both sum to 4."""
+    return [int(n) for n in _CHANNEL_NOUN_RE.findall(query)]
+
+
+def _deterministic_io_heavy(query):
+    """Deterministic-first io_heavy (BIBLE-PLAN.md Task A1): code-computed
+    from the goal text alone, true when it names >=2 independent multi-count
+    output groups (e.g. "4 LED strips" AND "4 fans" = 2 groups), or a single
+    explicit group of >=4 channels. Groq's own io_heavy boolean is still OR'd
+    on top in `build_guide()` as a tiebreak for phrasings this regex misses,
+    but can never pull a deterministically io_heavy goal back to False --
+    fixing the prod bug where Groq unreliably returned io_heavy=false for
+    goals that obviously needed it (SPEC-io-power.md §1)."""
+    groups = _output_groups(query)
+    if sum(1 for count in groups if count > 1) >= 2:
+        return True
+    return any(count >= 4 for count in groups)
+
+
 def _board_known_gpio(board):
     """The board's best-known usable GPIO count: `gpio_free` when cited, else
     `gpio_exposed`, else None (absence -- never invented, never excluded on)."""
@@ -452,6 +477,7 @@ def build_guide(query, llm_client=None, db_path=None, answered_context=None):
         add_ons = []
 
     firmware_id, why, traits = _apply_answered_context(firmware_id, why, traits, valid_ids, answered_context)
+    traits["io_heavy"] = traits.get("io_heavy", False) or _deterministic_io_heavy(query)
 
     firmware_record = get_firmware(firmware_id) if firmware_id else None
     channel_count = _channel_count(query)
