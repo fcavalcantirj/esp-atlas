@@ -54,7 +54,8 @@ export type OutboundLinkType =
   | "data_folder"
   | "llms_txt"
   | "api_docs"
-  | "flash_handoff";
+  | "flash_handoff"
+  | "roadmap";
 
 export type ResultOrigin = "wizard" | "search" | "related" | "compare" | "chain" | "browse" | "brand" | "intent";
 

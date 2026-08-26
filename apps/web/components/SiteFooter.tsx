@@ -8,6 +8,7 @@ import {
   issuesUrl,
   licenseUrl,
   repoUrl,
+  roadmapDebugUrl,
 } from "@/lib/github";
 import { SITE_NAME } from "@/lib/site";
 
@@ -100,7 +101,12 @@ export default function SiteFooter() {
                 <Link href="/brands">Brands</Link>
               </li>
               <li>
-                <Link href="/firmware">Firmware</Link>
+                <Link href="/firmware">Flash a board</Link>
+              </li>
+              <li>
+                <TrackedLink href={roadmapDebugUrl()} linkType="roadmap" className="footer-links-soon">
+                  Debug <span className="muted">— on the roadmap</span>
+                </TrackedLink>
               </li>
               <li>
                 <Link href="/parts/esp32-c6">ESP32-C6</Link> · <Link href="/parts/esp32-s3">ESP32-S3</Link> ·{" "}
@@ -111,7 +117,10 @@ export default function SiteFooter() {
         </div>
 
         <div className="footer-bottom">
-          <strong className="footer-mission">esp-atlas — the ESP32 world, chewed daily by a bot, checked by humans, fixable by anyone in one PR.</strong>
+          <strong className="footer-mission">
+            esp-atlas — every ESP32, mapped and cited: find the board, see what runs, flash it, debug it. Chewed
+            daily by a bot, checked by humans, fixable by anyone in one PR.
+          </strong>
           <span>
             Data (<code>data/</code>, <code>schema/</code>) is{" "}
             <TrackedLink href="https://creativecommons.org/licenses/by-sa/4.0/" linkType="license">
