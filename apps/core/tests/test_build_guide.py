@@ -318,30 +318,35 @@ def test_io_heavy_supplements_from_the_deterministic_fallback_when_no_recipe_boa
     built_db_path,
 ):
     """The general SPEC-io-power.md §6 addendum mechanism, independent of the
-    esphome-specific recipe fix above: `launcher`'s own recipe graph is
-    entirely m5/lilygo display and tiny boards, none with a cited GPIO count
-    meeting the goal's channel need (a couple are hard-excluded on their own
-    cited count; the rest are merely neutral -- never disproven, never
-    proven). With no board in the recipe pool CONFIRMED adequate, a
-    confirmed-adequate high-`gpio_free` board from the same deterministic
-    `wizard()` pool `_boards_fallback` draws from must supplement the
-    candidate set, so an io_heavy goal is never stranded on a firmware whose
-    own recipe graph happens to be pin-poor."""
+    esphome-specific recipe fix above: `meshtastic`'s own recipe graph is
+    entirely lora/wearable/tiny boards, none with a cited GPIO count meeting
+    the goal's channel need (a couple are hard-excluded on their own cited
+    count -- xiao-esp32s3=10, m5stack-cores3=6, both below the goal's 11 --
+    the rest are merely neutral, never disproven, never proven). With no
+    board in the recipe pool CONFIRMED adequate, a confirmed-adequate high-
+    `gpio_free` board from the same deterministic `wizard()` pool
+    `_boards_fallback` draws from must supplement the candidate set, so an
+    io_heavy goal is never stranded on a firmware whose own recipe graph
+    happens to be pin-poor. (Was `launcher` until BIBLE-PLAN.md A2 batch 1
+    gave `m5stick-s3` a cited `gpio_free: 11` -- exactly the goal's channel
+    need -- making it a genuine CONFIRMED-adequate member of `launcher`'s own
+    recipe graph and retiring `launcher` from this scenario; `meshtastic`
+    still has no confirmed-adequate recipe member.)"""
     from esp_atlas_core.firmware import recipes_for_firmware
 
     llm = _stub(
         {
-            "firmware_id": "launcher",
-            "why": "Loads other firmwares from a menu.",
+            "firmware_id": "meshtastic",
+            "why": "Open-source mesh networking firmware.",
             "traits": {"wifi": True, "battery": False, "cheap": True, "io_heavy": True},
             "add_ons": [],
         }
     )
     result = build_guide(_IO_HEAVY_QUERY, llm_client=llm, db_path=built_db_path)
 
-    recipe_boards = {r["board"] for r in recipes_for_firmware("launcher")}
+    recipe_boards = {r["board"] for r in recipes_for_firmware("meshtastic")}
     board_ids = {b["board_id"] for b in result["boards"]}
-    assert board_ids - recipe_boards, "expected a supplemented board outside launcher's own recipe graph"
+    assert board_ids - recipe_boards, "expected a supplemented board outside meshtastic's own recipe graph"
 
     for board in result["boards"]:
         record = get_part(board["board_id"], db_path=built_db_path)
