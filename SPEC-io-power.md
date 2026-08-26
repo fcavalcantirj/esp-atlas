@@ -179,6 +179,80 @@ exclusion — the LLM only sets a boolean, exactly as for `wifi`/`battery`/`chea
 - **`why`** appends `"{gpio_free} usable GPIO"` when present — the reason a board
   is chosen stays grounded in its own cited column.
 
+### 6.1 Addendum (2026-08-26) — the hard exclusion alone still stranded the answer
+
+**The bug, verified on a fresh index with real Groq.** `_boards_for_firmware`
+draws its candidates ONLY from the matched firmware's own recipe graph
+(`recipes_for_firmware`). For *"4 LED strips + 4 fans + sensors + UART"* Groq
+correctly matches `esphome` — but esphome's recipe graph carried no
+full-header devkit, only pin-poor m5 display/tiny boards. §6's hard exclusion
+correctly dropped `m5atoms3-lite` (cited `gpio_exposed: 6` < the goal's ~11
+channels), but the *remaining* recipe boards (`m5nanoc6`, `m5stack-core2`,
+`m5stack-cores3`, `m5dial`) had no cited `io` at all — so §6's own "absence is
+neutral" rule correctly kept them, and **no board in the pool could ever be
+adequate**, because the adequate boards simply weren't recipe members. `/build`
+recommended four boards that physically cannot drive the project, and the
+shipped golden test never caught it: it stubbed a firmware (`wled`) whose
+recipe graph happens to already carry two full-header devkits, so it exercised
+ranking-among-adequate-boards, never the fallback machinery — the real,
+`esphome`-shaped prod path had zero coverage.
+
+**Two independent fixes, both real, neither a workaround:**
+
+1. **Data — the recipe graph itself was incomplete.** ESPHome's `esp32:`
+   component targets a standard Espressif devkit per chip variant by default
+   (`esphome.io/components/esp32.html`: *"If `variant` alone is specified …
+   the board configuration will be automatically filled using a standard
+   Espressif devkit board"*) — so `esp32-devkitc-v4`, `esp32-s3-devkitc-1`,
+   and `esp32-c6-devkitc-1` are genuine, standard `esphome` targets that were
+   simply missing recipes. Added, schema-valid, cited. Once a firmware's own
+   recipe graph legitimately includes an adequate board, no supplement is
+   needed at all — this is the normal, preferred path.
+2. **Code — a firmware's recipe graph can still be legitimately pin-poor.**
+   Not every firmware has (or should have) a devkit recipe — a firmware built
+   for a specific enclosure/display unit may never fit a bare devkit. For
+   that case, `_boards_for_firmware` now checks whether the filtered recipe
+   pool contains at least one board **CONFIRMED** adequate (`known gpio_free`/
+   `gpio_exposed >= channel_count`) — not merely neutral (no cited count, kept
+   by §6's absence rule but never proven to fit). If none is confirmed, the
+   pool is supplemented with confirmed-adequate boards from the SAME
+   deterministic `wizard()` pool `_boards_fallback` already draws from when no
+   firmware fits at all — filtered by the same `wifi`/`battery`/`cheap`
+   traits, never by a model. Groq still only ever sets the `io_heavy`
+   boolean; which board wins is 100% deterministic.
+3. **Ranking follows.** For an `io_heavy` goal, the combined pool (recipe +
+   any supplement) ranks by each board's own known `gpio_free`/`gpio_exposed`
+   **first** — higher wins — before the existing wifi/battery/cheap score, so
+   a supplemented devkit actually surfaces instead of losing to a neutral
+   board on the old three-axis score alone. A board with no cited `io` still
+   sorts as if it had none: never excluded, never favored — absence stays
+   neutral on both ends of §6, exclusion and ranking alike.
+4. **Data — the pin-poor recipe boards themselves gained cited counts.**
+   `m5nanoc6`, `m5stack-core2`, `m5stack-cores3`, and `m5dial` had no `io` at
+   all, so they rode on §6's "absence is neutral" rule rather than being
+   provably excluded. Each vendor pinout page states the board's *dedicated*
+   Grove/Port expansion pins as an explicit pin list (Tier B: `M5NanoC6`'s
+   HY2.0-4P Grove `G1`/`G2`; `Core2`'s `PORT-A/B/C`; `CoreS3`'s
+   `PORT.A/B/C`; `Dial`'s `PORT.A/B`) — distinct from the shared 40-pin M-Bus
+   header, which re-exposes pins already hard-consumed by the same board's
+   onboard LCD/SD/camera/mic and so is **not** free for independent use and
+   is excluded from the count. Subtracting each SoC's `reserved_pins`
+   (strapping/input-only/usb-flash-tied) that land on those dedicated pins
+   gives a derived `gpio_free` (Tier C, §5.3), math shown in `notes`, cited to
+   the vendor pinout URL: NanoC6 `2 - 0 = 2`, Core2 `6 - 1 = 5` (G36 is
+   `input_only`), CoreS3 `6 - 0 = 6`, Dial `4 - 0 = 4`. All four are honestly,
+   provably below the ~11-channel goal — §6 now excludes them on a real
+   number instead of merely tolerating their absence.
+
+**Coverage.** `apps/core/tests/test_build_guide.py`'s io_heavy goldens now
+drive the REAL recipe path: `firmware_id: "esphome"` (the id Groq actually
+returns for this query), asserting `m5atoms3-lite` and the four newly-cited
+pin-poor boards are excluded AND a full-header devkit surfaces with its
+`gpio_free` in the `why`. A second golden (`firmware_id: "launcher"`, whose
+recipe graph has no devkit recipe at all) drives the general
+supplement-from-fallback mechanism directly, independent of the esphome-
+specific recipe fix, so both fixes have real, isolated coverage.
+
 ## 7. The whole experience — this steps up all three lanes, not just /build
 
 **7.1 `/ask` (the Groq answer steps up).** Today Groq can't answer "can an
