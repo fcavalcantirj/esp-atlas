@@ -62,3 +62,15 @@ Tracked here as future work; see that document for full detail on each.
   `not_required` back to required) or a firmware-level conditional rule keyed
   on a board's own `display` field size. Either way, this should turn today's
   prose-only `why` explanation into something `_fit_for` can actually gate on.
+
+### 3. Debug
+
+Once a board is flashed (browser flashing shipped via `/firmware`), there is
+no way to see what it's doing — **no in-browser debugging is built today**.
+
+Planned shape: an in-browser serial monitor for a flashed board (reading the
+device's UART log over WebSerial, the same transport the flash flow already
+uses), and longer term a JTAG-style step-through for boards that expose it.
+Not built, not scheduled — this entry tracks the direction the mission line
+now advertises ("flash it, debug it"), so the gap is visible instead of
+silent.

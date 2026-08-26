@@ -464,6 +464,19 @@ main:focus {
   border-bottom-color: var(--fg);
 }
 
+/* Debug isn't built yet — reads as "on the roadmap", not a working feature. */
+.footer-links a.footer-links-soon {
+  color: var(--muted);
+  border-bottom-style: dashed;
+  border-bottom-color: var(--border-strong);
+}
+
+.footer-links a.footer-links-soon:hover,
+.footer-links a.footer-links-soon:focus-visible {
+  color: var(--fg);
+  border-bottom-color: var(--border-strong);
+}
+
 .footer-bottom {
   margin-top: clamp(2rem, 4vw, 3rem);
   padding-top: 1rem;
