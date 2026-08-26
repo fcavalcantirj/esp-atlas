@@ -24,6 +24,11 @@ notes:
   supports a total of 12 general purpose IO pins, 7 of which are used on the ESP32
   Processor, on top of the 6 dedicated pins" -- 7 general-purpose + 6 dedicated
   = 13, summing the two vendor-stated integers directly (no estimation)'
+- 'io.gpio_free intentionally OMITTED: this is a MicroMod M.2-style edge-card
+  processor board with no standalone header -- its pins land on a card-edge
+  connector meant to mate with a separate MicroMod carrier board, not a
+  breadboard-style GPIO header a user can wire into directly. gpio_free
+  presumes a usable header; it does not apply here'
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-micromod-esp32-processor.html
