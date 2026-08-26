@@ -1,5 +1,20 @@
 # Roadmap
 
+## In progress / this PR
+
+### Debug — "Verify my board"
+
+Client-side debug rail (`SPEC-verify.md`), complementing the flash rail
+(#43): a board page can now check esp-atlas's cited `soc`/`flash_mb`/
+`psram_mb` against the live connected chip over Web Serial (esptool-js
+`ESPLoader.detectChip()`, read-only — no stub upload, no flash write), and
+open a serial monitor to watch the firmware's own UART output live. No
+backend involved; the pure field-comparison matcher (`lib/verify-board.ts`)
+is unit-tested, the Web Serial/esptool-js I/O path is browser-only and
+verified by build + manual hardware test. Per-board GPIO pinout (below)
+remains future work — this closes the "debug it" half of the tagline, not
+the wiring-level question.
+
 ## Future
 
 ### 1. Per-board GPIO pinout data
@@ -63,14 +78,9 @@ Tracked here as future work; see that document for full detail on each.
   on a board's own `display` field size. Either way, this should turn today's
   prose-only `why` explanation into something `_fit_for` can actually gate on.
 
-### 3. Debug
+### 3. JTAG step-through debugging
 
-Once a board is flashed (browser flashing shipped via `/firmware`), there is
-no way to see what it's doing — **no in-browser debugging is built today**.
-
-Planned shape: an in-browser serial monitor for a flashed board (reading the
-device's UART log over WebSerial, the same transport the flash flow already
-uses), and longer term a JTAG-style step-through for boards that expose it.
-Not built, not scheduled — this entry tracks the direction the mission line
-now advertises ("flash it, debug it"), so the gap is visible instead of
-silent.
+"Verify my board" (see **In progress / this PR** above) shipped the chip-
+identity check and the live serial monitor. A JTAG-style step-through for
+boards that expose it is a further-out extension of the same debug rail —
+not built, not scheduled.
