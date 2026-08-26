@@ -24,10 +24,6 @@ export function llmsTxtUrl(): string {
   return `${REPO_URL}/blob/main/llms.txt`;
 }
 
-export function roadmapDebugUrl(): string {
-  return `${REPO_URL}/blob/main/ROADMAP.md#3-debug`;
-}
-
 export function dataFolderUrl(): string {
   return `${REPO_URL}/tree/main/data`;
 }

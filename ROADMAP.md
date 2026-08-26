@@ -1,19 +1,22 @@
 # Roadmap
 
-## In progress / this PR
+## Shipped
 
 ### Debug — "Verify my board"
 
 Client-side debug rail (`SPEC-verify.md`), complementing the flash rail
-(#43): a board page can now check esp-atlas's cited `soc`/`flash_mb`/
-`psram_mb` against the live connected chip over Web Serial (esptool-js
+(#43): a board page checks esp-atlas's cited `soc`/`flash_mb`/`psram_mb`
+against the live connected chip over Web Serial (esptool-js
 `ESPLoader.detectChip()`, read-only — no stub upload, no flash write), and
-open a serial monitor to watch the firmware's own UART output live. No
-backend involved; the pure field-comparison matcher (`lib/verify-board.ts`)
-is unit-tested, the Web Serial/esptool-js I/O path is browser-only and
-verified by build + manual hardware test. Per-board GPIO pinout (below)
-remains future work — this closes the "debug it" half of the tagline, not
-the wiring-level question.
+opens a serial monitor to watch the firmware's own UART output live. Live
+on every board page (`VerifyBoard`, full match verdict against the cited
+record) and standalone at `/debug` (same component, detect-only mode: chip
+readout without a board to match against, for makers with a bare chip or
+one not yet in the dataset). No backend involved; the pure
+field-comparison matcher (`lib/verify-board.ts`) is unit-tested, the Web
+Serial/esptool-js I/O path is browser-only and verified by build + manual
+hardware test. Per-board GPIO pinout (below) remains future work — this
+closes the "debug it" half of the tagline, not the wiring-level question.
 
 ## Future
 
@@ -80,7 +83,7 @@ Tracked here as future work; see that document for full detail on each.
 
 ### 3. JTAG step-through debugging
 
-"Verify my board" (see **In progress / this PR** above) shipped the chip-
-identity check and the live serial monitor. A JTAG-style step-through for
-boards that expose it is a further-out extension of the same debug rail —
-not built, not scheduled.
+"Verify my board" (see **Shipped** above) shipped the chip-identity check
+and the live serial monitor. A JTAG-style step-through for boards that
+expose it is a further-out extension of the same debug rail — not built,
+not scheduled.
