@@ -265,8 +265,11 @@ def parse_intent(query, llm_client=None, db_path=None, use_cache=True):
     """A plain-language goal -> {kind, filters, understood, unmapped, ...}.
 
     kind is "firmware" (the query names one — answered from the recipe graph),
-    "filters" (mapped onto real fields), or "unreadable" (nothing could be
-    mapped, and the caller should say so rather than pretend).
+    "filters" (mapped onto at least one real field), "unmapped" (Groq
+    understood the goal but the atlas has no board field for it — a sensor,
+    camera, screen, motor, etc — so `unmapped` is the whole answer), or
+    "unreadable" (the model returned nothing at all, or the query was empty:
+    no signal to report, not even an unmapped need).
     """
     normalized = _normalize(query)
     if not normalized:
@@ -317,10 +320,16 @@ def parse_intent(query, llm_client=None, db_path=None, use_cache=True):
 
     # `type` alone is scoping, not understanding -- it must not count as a hit.
     understood_anything = any(key != "type" for key in filters)
+    if understood_anything:
+        kind = "filters"
+    elif unmapped:
+        kind = "unmapped"
+    else:
+        kind = "unreadable"
     parsed = {
-        "kind": "filters" if understood_anything else "unreadable",
-        "filters": filters if understood_anything else {},
-        "understood": describe(filters) if understood_anything else [],
+        "kind": kind,
+        "filters": filters if kind == "filters" else {},
+        "understood": describe(filters) if kind == "filters" else [],
         "unmapped": unmapped,
         "cached": False,
     }

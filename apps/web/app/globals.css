@@ -2356,6 +2356,26 @@ input[type="checkbox"]:checked::after {
   color: var(--muted);
 }
 
+/* The keyword fallback for an "unmapped" parse -- kept available, but quiet
+   and collapsed, since the clarifier chips above are the primary answer. */
+.intent-secondary-results summary {
+  cursor: pointer;
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.intent-secondary-results summary:hover,
+.intent-secondary-results summary:focus-visible {
+  color: var(--accent);
+}
+
+.intent-secondary-results[open] summary {
+  margin-bottom: 0.75rem;
+}
+
 /* ==========================================================================
    Run guide (grounded firmware answer on the home intent box)
    ========================================================================== */

@@ -80,17 +80,46 @@ def test_malformed_model_output_degrades_honestly(built_db_path, garbage):
 
 # --- 2. Honest fallback, never a silent keyword dump ------------------------
 
-def test_nothing_mappable_is_explicitly_unreadable(built_db_path):
+def test_nothing_mappable_but_something_unmapped_is_explicitly_unmapped(built_db_path):
+    """Groq understood the goal (it named a real unmapped need) but the atlas
+    has no field for it -- that is "unmapped", not "unreadable"."""
     parsed = _parse(built_db_path, {"filters": {}, "unmapped": ["blorp"]})
-    assert parsed["kind"] == "unreadable"
+    assert parsed["kind"] == "unmapped"
     assert parsed["filters"] == {}
     assert parsed["unmapped"] == ["blorp"]
 
 
-def test_type_alone_is_not_understanding(built_db_path):
-    """'board' is scoping. Returning every board is the noise we are replacing."""
+def test_type_alone_with_an_unmapped_need_is_unmapped(built_db_path):
+    """'board' is scoping, not understanding -- but a real unmapped need still
+    makes this an "unmapped" answer, not a blank "unreadable" one."""
     parsed = _parse(built_db_path, {"filters": {"type": "board"}, "unmapped": ["waterproof"]})
-    assert parsed["kind"] == "unreadable", "type-only must not masquerade as a understood intent"
+    assert parsed["kind"] == "unmapped", "type-only must not masquerade as understood filters"
+    assert parsed["filters"] == {}
+
+
+def test_plant_health_monitor_is_unmapped_not_unreadable(built_db_path):
+    """Acceptance case: "Build a plant health monitor" -- Groq understands the
+    goal (a sensor project) but the atlas has no board field for "sensor", so
+    filters is empty and unmapped names it. That must read as "unmapped", not
+    the honest-but-misleading "unreadable" (which implies Groq understood
+    nothing at all)."""
+    parsed = _parse(
+        built_db_path,
+        {"filters": {"type": "board"}, "unmapped": ["plant health monitor"]},
+        query="Build a plant health monitor",
+    )
+    assert parsed["kind"] == "unmapped"
+    assert parsed["filters"] == {}
+    assert parsed["unmapped"] == ["plant health monitor"]
+
+
+def test_truly_nothing_mapped_or_unmapped_is_unreadable(built_db_path):
+    """No filter, no unmapped need -- the model returned genuinely nothing, so
+    there is no signal at all to report."""
+    parsed = _parse(built_db_path, {"filters": {}, "unmapped": []})
+    assert parsed["kind"] == "unreadable"
+    assert parsed["filters"] == {}
+    assert parsed["unmapped"] == []
 
 
 # --- 3. Firmware routing never depends on a model ---------------------------
