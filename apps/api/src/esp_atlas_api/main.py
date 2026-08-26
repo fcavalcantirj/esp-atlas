@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
 from esp_atlas_core import db as dbmod
+from esp_atlas_core.build_guide import build_guide as core_build_guide
 from esp_atlas_core.intent import parse_intent as core_parse_intent
 from esp_atlas_core.llm import GroqConfigError, GroqRateLimitError
 from esp_atlas_core.flash import MAX_REDIRECT_HOPS
@@ -37,6 +38,8 @@ from esp_atlas_core.wizard import wizard as core_wizard
 
 from esp_atlas_api.models import (
     BrandPageResponse,
+    BuildGuideRequest,
+    BuildGuideResponse,
     IntentRequest,
     IntentResponse,
     ExamplesResponse,
@@ -299,6 +302,16 @@ def create_app(db_path=None, llm_client=None):
             raise HTTPException(status_code=503, detail="Intent parsing is unavailable: no Groq API key configured.") from exc
         except GroqRateLimitError as exc:
             raise HTTPException(status_code=503, detail="Intent parsing is rate-limited right now.") from exc
+
+    @app.post("/build", response_model=BuildGuideResponse, response_model_exclude_none=True)
+    def build(payload: BuildGuideRequest, db_path=Depends(get_db_path), llm_client=Depends(get_llm_client)):
+        """The grounded "here's what you need" answer for a project goal
+        (SPEC-build-guide.md, esp_atlas_core.build_guide) -- the web calls this
+        when POST /intent returns kind=="unmapped". Always 200: build_guide()
+        degrades to a deterministic, still-grounded answer on its own rather
+        than ever raising, so this route needs no exception handling.
+        """
+        return core_build_guide(payload.query, llm_client=llm_client, db_path=db_path)
 
     @app.get("/facets", response_model=FacetsResponse)
     def facets(db_path=Depends(get_db_path)):

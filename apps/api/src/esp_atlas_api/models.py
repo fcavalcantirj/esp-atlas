@@ -242,6 +242,48 @@ class IntentResponse(BaseModel):
     cached: bool = False
 
 
+class BuildGuideRequest(BaseModel):
+    query: str = Field(min_length=1, max_length=500)
+
+    model_config = {"extra": "forbid"}
+
+
+class BuildGuideFirmware(BaseModel):
+    """The single firmware `build_guide` picked, constrained to the real
+    catalog -- see esp_atlas_core.build_guide. `why` is the only LLM-authored
+    field on the whole response; everything else is deterministic."""
+
+    id: str
+    name: str
+    why: str
+
+
+class BuildGuideBoard(BaseModel):
+    """One recommended board -- NEVER chosen by the model (see
+    esp_atlas_core.build_guide module docstring): either from the matched
+    firmware's own recipe graph, or cheap Wi-Fi boards from the catalog when
+    no firmware fits. `why` is built from this board's own real columns."""
+
+    board_id: str
+    board_name: str
+    why: str
+
+
+class BuildGuideResponse(BaseModel):
+    """POST /build -- the grounded "here's what you need" answer for a project
+    goal (SPEC-build-guide.md). `firmware` is null only when nothing in the
+    catalog fits the goal; `boards` is still populated in that case (cheap
+    Wi-Fi boards). Always 200 -- never raises for a down/rate-limited/garbage
+    model, same contract as GET /run/{firmware_id}."""
+
+    goal: str
+    needs: list[str] = []
+    firmware: Optional[BuildGuideFirmware] = None
+    boards: list[BuildGuideBoard] = []
+    add_ons: list[str] = []
+    note: Optional[str] = None
+
+
 class ValidateRequest(BaseModel):
     markdown: Optional[str] = None
     kind: Optional[PartType] = None

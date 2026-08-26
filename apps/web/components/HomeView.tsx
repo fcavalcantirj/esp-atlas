@@ -4,6 +4,7 @@
 // and the generated examples lead; the spec wizard is a drawer below them, and
 // also lives in full at /wizard. Results only appear once something is asked.
 import Link from "next/link";
+import BuildGuideAnswer from "@/components/BuildGuideAnswer";
 import ExamplesGrid from "@/components/ExamplesGrid";
 import IntentPrompt from "@/components/IntentPrompt";
 import ResultsPanel from "@/components/ResultsPanel";
@@ -13,8 +14,10 @@ import WizardForm from "@/components/WizardForm";
 import { track } from "@/lib/analytics";
 import {
   ApiError,
+  buildGuide,
   parseIntent,
   runGuide,
+  type BuildGuide,
   type Example,
   type IntentParse,
   type NeedsExample,
@@ -61,6 +64,11 @@ export default function HomeView({ examples }: { examples: Example[] }) {
   const [guide, setGuide] = useState<RunGuideResponse | null>(null);
   const [guideLoading, setGuideLoading] = useState(false);
   const [guideError, setGuideError] = useState<string | null>(null);
+  // The "unmapped" branch answers inline too -- the grounded build_guide
+  // teaching, replacing the old "I can't narrow this" copy (POST /build).
+  const [buildGuideData, setBuildGuideData] = useState<BuildGuide | null>(null);
+  const [buildGuideLoading, setBuildGuideLoading] = useState(false);
+  const [buildGuideError, setBuildGuideError] = useState<string | null>(null);
 
   function onExample(example: NeedsExample) {
     track("example_click", { example: example.id, kind: "needs" });
@@ -91,11 +99,26 @@ export default function HomeView({ examples }: { examples: Example[] }) {
     }
   }
 
+  async function loadBuildGuide(text: string) {
+    setBuildGuideLoading(true);
+    setBuildGuideError(null);
+    try {
+      setBuildGuideData(await buildGuide(text));
+    } catch (err) {
+      setBuildGuideData(null);
+      setBuildGuideError(err instanceof ApiError ? err.message : "The API did not answer in time.");
+    } finally {
+      setBuildGuideLoading(false);
+    }
+  }
+
   async function onIntent(text: string) {
     setParsing(true);
     setParse(null);
     setGuide(null);
     setGuideError(null);
+    setBuildGuideData(null);
+    setBuildGuideError(null);
     try {
       const parsed = await parseIntent(text);
       setParse(parsed);
@@ -113,9 +136,11 @@ export default function HomeView({ examples }: { examples: Example[] }) {
         return;
       }
       if (parsed.kind === "unmapped") {
-        // Groq understood the goal but the atlas has no board field for it --
-        // the clarifier chips are the primary answer, so keyword matches run
-        // quietly in the background instead of pulling focus down the page.
+        // Groq understood the goal but the atlas has no board FIELD for it --
+        // the build guide (firmware + real boards + honest add-on note) is
+        // the primary answer now, so keyword matches run quietly in the
+        // background instead of pulling focus down the page.
+        void loadBuildGuide(text);
         const next = { q: text };
         setFilters(next);
         void executeSearch(next);
@@ -159,27 +184,6 @@ export default function HomeView({ examples }: { examples: Example[] }) {
                 I couldn&apos;t read that as a build goal, so these are keyword matches instead.
               </p>
             )}
-            {parse.kind === "unmapped" && (
-              <>
-                <p className="intent-parse-note">
-                  Understood: {parse.unmapped.join(", ")} — esp-atlas catalogs boards, not what you build
-                  with them, so I can&apos;t narrow this by a board spec alone.
-                </p>
-                <p className="intent-parse-row">
-                  <span className="intent-parse-label">Narrow by</span>
-                  {UNMAPPED_CLARIFIERS.map((clarifier) => (
-                    <button
-                      key={clarifier.label}
-                      type="button"
-                      className="chip chip--button"
-                      onClick={() => onClarifier(clarifier.needs)}
-                    >
-                      {clarifier.label}
-                    </button>
-                  ))}
-                </p>
-              </>
-            )}
             {parse.kind === "filters" && parse.unmapped.length > 0 && (
               <p className="intent-parse-note">
                 No field for {parse.unmapped.join(", ")} in the atlas yet — results don&apos;t account for
@@ -208,6 +212,33 @@ export default function HomeView({ examples }: { examples: Example[] }) {
             >
               See the full {parse.firmware_name || parse.firmware} page ›
             </Link>
+          </p>
+        </section>
+      )}
+
+      {parse && parse.kind === "unmapped" && (
+        <section className="home-results" aria-label="Build guide" aria-live="polite" aria-busy={buildGuideLoading}>
+          {buildGuideLoading && <p className="results-loading">Working out what you need…</p>}
+          {!buildGuideLoading && buildGuideError && (
+            <div className="empty-state">
+              <h2>The API did not answer</h2>
+              <p className="error mono">{buildGuideError}</p>
+              <p>Try again in a moment — the dataset itself lives on GitHub and is fine.</p>
+            </div>
+          )}
+          {!buildGuideLoading && !buildGuideError && buildGuideData && <BuildGuideAnswer guide={buildGuideData} />}
+          <p className="intent-parse-row">
+            <span className="intent-parse-label">Or narrow by spec</span>
+            {UNMAPPED_CLARIFIERS.map((clarifier) => (
+              <button
+                key={clarifier.label}
+                type="button"
+                className="chip chip--button"
+                onClick={() => onClarifier(clarifier.needs)}
+              >
+                {clarifier.label}
+              </button>
+            ))}
           </p>
         </section>
       )}

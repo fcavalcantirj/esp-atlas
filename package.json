@@ -5,6 +5,7 @@
   "scripts": {
     "test": "python3 -m pytest apps/core/tests apps/api/tests apps/cli/tests",
     "test:coverage": "scripts/coverage.sh",
-    "inference:oracle": "python3 scripts/inference_oracle.py"
+    "inference:oracle": "python3 scripts/inference_oracle.py",
+    "build-guide:oracle": "python3 scripts/build_guide_oracle.py"
   }
 }

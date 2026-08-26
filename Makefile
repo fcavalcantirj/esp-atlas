@@ -1,4 +1,4 @@
-.PHONY: coverage validate inference-oracle
+.PHONY: coverage validate inference-oracle build-guide-oracle
 
 # Re-runnable evidence that run_guide/parse_intent stay grounded across
 # diverse ESP32 kinds/purposes -- see docs/coverage-matrix.md and
@@ -16,3 +16,8 @@ validate:
 # docs/coverage-matrix.md for what it checks and why the fast suite can't.
 inference-oracle:
 	python3 scripts/inference_oracle.py
+
+# ON-DEMAND, not CI: same idea as inference-oracle, for build_guide's
+# project->firmware picks -- see apps/core/tests/data/build_guide_golden.py.
+build-guide-oracle:
+	python3 scripts/build_guide_oracle.py

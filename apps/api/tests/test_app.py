@@ -575,6 +575,68 @@ def test_run_strips_a_hallucinated_board_from_the_model(built_db_path):
     assert board_ids == {"m5cardputer", "m5stick-cplus2"}
 
 
+# --- /build (grounded build-guide) ------------------------------------------
+
+
+def test_build_plant_health_monitor_returns_esphome_and_real_boards(built_db_path):
+    payload = {
+        "firmware_id": "esphome",
+        "why": "Reads sensors and reports to Home Assistant over Wi-Fi.",
+        "traits": {"wifi": True, "battery": False, "cheap": True},
+        "add_ons": ["soil-moisture sensor"],
+    }
+    client = _client_with_llm(built_db_path, payload)
+    with client:
+        r = client.post("/build", json={"query": "build a plant health monitor"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["goal"] == "build a plant health monitor"
+    assert body["firmware"]["id"] == "esphome"
+    assert body["boards"]
+    board_ids = {b["board_id"] for b in body["boards"]}
+    for board_id in board_ids:
+        assert client.get(f"/parts/{board_id}").status_code == 200
+    assert body["add_ons"] == ["soil-moisture sensor"]
+    assert "soil-moisture sensor" in body["note"]
+
+
+def test_build_rejects_an_invented_firmware_id_from_the_model(built_db_path):
+    payload = {
+        "firmware_id": "totally-invented-firmware-xyz",
+        "why": "invented",
+        "traits": {"wifi": True, "battery": False, "cheap": True},
+        "add_ons": [],
+    }
+    client = _client_with_llm(built_db_path, payload)
+    with client:
+        r = client.post("/build", json={"query": "build a plant health monitor"})
+    assert r.status_code == 200
+    assert r.json().get("firmware") is None
+    assert r.json()["boards"], "must still recommend boards rather than dead-end"
+
+
+def test_build_no_firmware_fits_is_honest_and_still_200(built_db_path):
+    payload = {
+        "firmware_id": None,
+        "why": "nothing fits",
+        "traits": {"wifi": True, "battery": True, "cheap": True},
+        "add_ons": ["motor driver"],
+    }
+    client = _client_with_llm(built_db_path, payload)
+    with client:
+        r = client.post("/build", json={"query": "a line-following robot"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body.get("firmware") is None
+    assert body["boards"]
+    assert "no ready-made firmware" in body["note"].lower()
+
+
+def test_build_empty_query_is_422(client):
+    r = client.post("/build", json={"query": ""})
+    assert r.status_code == 422
+
+
 def test_examples_endpoint_returns_resolvable_entries(client):
     r = client.get("/examples")
     assert r.status_code == 200
