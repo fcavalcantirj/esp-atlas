@@ -284,6 +284,51 @@ class BuildGuideResponse(BaseModel):
     note: Optional[str] = None
 
 
+class ClarifyRequest(BaseModel):
+    query: str = Field(min_length=1, max_length=500)
+    answers: Optional[dict[str, str]] = None
+
+    model_config = {"extra": "forbid"}
+
+
+class ClarifyOption(BaseModel):
+    """One choice for a clarifying question -- `needs` is a code-defined delta
+    from the fixed dimension catalog (SPEC-clarify.md §3), never LLM prose."""
+
+    label: str
+    value: str
+    needs: dict = {}
+
+
+class ClarifyQuestion(BaseModel):
+    """One clarifying question -- `id` is a fixed dimension id from
+    esp_atlas_core.clarify._CATALOG; Groq may pick and order these ids but
+    never author the prompt or options themselves."""
+
+    id: str
+    prompt: str
+    options: list[ClarifyOption] = []
+
+
+class ClarifyAnsweredContext(BaseModel):
+    needs: dict = {}
+    firmware_hint: Optional[str] = None
+
+
+class ClarifyResponse(BaseModel):
+    """POST /clarify -- SPEC-clarify.md. `confident` gates whether `questions`
+    is populated: True means the goal (plus any answers already folded in)
+    is answerable outright, so `questions` is empty; False means 1-3 grounded
+    questions from the fixed catalog are returned instead. Always 200 --
+    the confidence gate is deterministic and question selection degrades to
+    a fixed default order rather than ever raising."""
+
+    confident: bool
+    confidence: float
+    questions: list[ClarifyQuestion] = []
+    answered_context: ClarifyAnsweredContext = ClarifyAnsweredContext()
+
+
 class ValidateRequest(BaseModel):
     markdown: Optional[str] = None
     kind: Optional[PartType] = None

@@ -287,11 +287,43 @@ def _resolve_parse(query, llm_client, valid_ids):
     return _validate_llm_output(raw, valid_ids)
 
 
-def build_guide(query, llm_client=None, db_path=None):
+def _apply_answered_context(firmware_id, why, traits, valid_ids, answered_context):
+    """Fold a clarify()-shaped answered_context (esp_atlas_core.clarify,
+    SPEC-clarify.md §6) into the LLM/fallback pick -- the user directly told
+    us these things, so there is nothing left to infer. `firmware_hint`
+    OVERRIDES whatever firmware_id was picked upstream, same grounding rule as
+    everywhere else: only a real catalog id, never anything else."""
+    if not answered_context:
+        return firmware_id, why, traits
+
+    needs = answered_context.get("needs") or {}
+    traits = dict(traits)
+    if needs.get("battery"):
+        traits["battery"] = True
+    if needs.get("radio"):
+        traits["wifi"] = True
+    if needs.get("budget") == "cheap":
+        traits["cheap"] = True
+
+    hint = answered_context.get("firmware_hint")
+    if hint in valid_ids:
+        firmware_id = hint
+        why = why or f"Matches what you told us: runs {hint}."
+
+    return firmware_id, why, traits
+
+
+def build_guide(query, llm_client=None, db_path=None, answered_context=None):
     """A grounded "here's what you need" answer for a project goal -- see
     module docstring for the shape and the honesty guarantees. Never raises:
     a down/rate-limited/garbage model degrades to a deterministic, still-
-    grounded answer (keyword firmware match + cheap Wi-Fi boards)."""
+    grounded answer (keyword firmware match + cheap Wi-Fi boards).
+
+    `answered_context` is the optional `{"needs": {...}, "firmware_hint":
+    ...}` clarify() returns once confident (SPEC-clarify.md §6) -- when given,
+    it anchors traits and can override the picked firmware outright. Default
+    None, so every existing call site (including POST /build) is unaffected.
+    """
     valid_ids = _valid_firmware_ids()
     parsed = _resolve_parse(query, llm_client, valid_ids)
 
@@ -306,6 +338,8 @@ def build_guide(query, llm_client=None, db_path=None):
         why = None
         traits = dict(_DEFAULT_TRAITS)
         add_ons = []
+
+    firmware_id, why, traits = _apply_answered_context(firmware_id, why, traits, valid_ids, answered_context)
 
     firmware_record = get_firmware(firmware_id) if firmware_id else None
 
