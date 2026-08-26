@@ -16,6 +16,12 @@ notes:
 - Display active area 19.8x44.22mm, full IPS-equivalent viewing angle; touch and non-touch variants
 - Battery voltage detection on IO04
 - Wi-Fi 2.4GHz + Bluetooth 5 (LE)
+- 'io OMITTED: the official GitHub repo''s pin-definition header
+  (examples/factory/pins_config.h) only names pins consumed by the onboard
+  AMOLED QSPI display, LED, battery-ADC, and 2 buttons (GPIO 0,4,5,6,7,17,18,
+  21,38,47,48); no expansion-header pin list or exposed-pad count is given in
+  text anywhere in the repo or product page -- the only pinout artifact is an
+  un-OCR''d image, so gpio_exposed/gpio_free are left unset per cite-or-omit'
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-display-s3-amoled
