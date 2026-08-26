@@ -4,6 +4,7 @@
   "description": "Repo-root convenience scripts. The actual apps live in apps/*; this file only exists so `npm test`/`npm run test:coverage` gives contributors a familiar entrypoint into the Python test suite.",
   "scripts": {
     "test": "python3 -m pytest apps/core/tests apps/api/tests apps/cli/tests",
-    "test:coverage": "scripts/coverage.sh"
+    "test:coverage": "scripts/coverage.sh",
+    "inference:oracle": "python3 scripts/inference_oracle.py"
   }
 }

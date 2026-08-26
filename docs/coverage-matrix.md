@@ -54,6 +54,40 @@ above is deterministically checkable against the live index (`wifi-6`,
 `esp32-s3`, `esp32-c6`, `psram_min=8` are all real facet values; the boolean
 needs `ieee802154`/`battery`/`usb_native` require no data lookup at all).
 
+## Golden oracle — real-Groq acceptance (not this file's test)
+
+The five BUILD/intent cases above (and every case in
+`apps/core/tests/test_intent_oracle.py`) inject a stub/fake LLM: they prove
+our own plumbing (validation, kind selection) never breaks, but they cannot
+catch Groq itself being inconsistent about WHEN to infer a spec from a vague
+purpose noun. Measured on prod (2026-08-25): "cheap wearable" → `battery`,
+"esp32 with a camera" → `psram_min:2`, but "waterproof gps tracker" and
+"build a plant monitoring system" → nothing. Same rule, applied unevenly.
+
+`apps/core/tests/data/inference_golden.py` pins ~20 curated queries against
+the ONE consistent rule the tightened `SYSTEM_PROMPT` (`esp_atlas_core.intent`)
+now states explicitly: map a filter only when a word names a spec directly,
+or the goal is literally unavoidable without it (camera → PSRAM framebuffer,
+worn/wearable → battery, serve-a-web-UI → Wi-Fi + PSRAM). A bare purpose noun
+— monitor, tracker, system, gadget, detector, sensor — is never a guessed
+filter; it goes to `unmapped`.
+
+Two ways to run the SAME matrix against REAL inference (network required,
+non-deterministic, therefore never in the blocking CI job):
+
+```
+make inference-oracle                                   # HTTP against prod by default
+ESP_ATLAS_API=http://localhost:8000 make inference-oracle
+GROQ_API_KEY=... make inference-oracle                   # direct GroqClient, no HTTP hop
+# or, as a pytest run (skipped unless one of the above env vars is set):
+pytest -m inference
+```
+
+`scripts/inference_oracle.py` prints a per-query PASS/FAIL table and a
+summary, and exits non-zero on any failure — the acceptance gate for this
+work is pasting that table's output, not a green fast suite alone (the fast
+suite cannot exercise Groq's actual judgment at all).
+
 ## Coverage table: firmware → covered?
 
 | Firmware | RUN case | Boards in recipe graph |

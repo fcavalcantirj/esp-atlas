@@ -88,9 +88,19 @@ guessed, nothing invented" — so NEVER infer a need they did not state. Do NOT 
 `battery` unless they say portable/wearable/outdoors/battery/solar. Do NOT add
 `radio` unless they name Wi-Fi or say the thing reports/streams/connects over a
 network. A bare "plant humidity sensor" could be mains-powered and wired — add
-neither. Add a filter ONLY when the words state it or literally require it (you
-cannot "host a web dashboard" without Wi-Fi + some memory; "wearable" states
-portable → battery; "reports over Wi-Fi" states Wi-Fi).
+neither.
+
+THE RULE, stated once, crisply: infer a filter ONLY when a word names a spec
+directly (Wi-Fi, PSRAM, a chip id, a form factor), OR the goal is UNAVOIDABLE
+without it — a camera cannot exist without a framebuffer (PSRAM), a thing
+that is worn or carried cannot be wired to the wall (battery), a thing that
+serves a web UI cannot do so without a network and headroom (Wi-Fi + PSRAM).
+A bare PURPOSE NOUN — monitor, tracker, system, gadget, detector, sensor,
+plug — names a goal, not a spec: it always goes to `unmapped`, NEVER a
+guessed filter, even when the purpose sounds technical or IoT-flavored.
+"a plant monitoring system" and "a gps tracker" state a purpose, not a
+requirement — they get an empty (or type-only) `filters` and the purpose
+goes to `unmapped`, exactly like "a plant humidity sensor" below.
 
 When the heart of the goal is something the catalogue can't filter (a sensor,
 camera, screen, motor) and nothing else is clearly stated, return an EMPTY or
@@ -107,6 +117,10 @@ Examples:
 "a battery-powered plant sensor that reports over Wi-Fi" -> {"filters": {"type": "board", "battery": true, "radio": "wifi-4"}, "unmapped": ["humidity sensor"]}
 "esp32-s3 with 8mb psram" -> {"filters": {"type": "board", "psram_min": 8}, "unmapped": []}
 "a board to host a web dashboard" -> {"filters": {"type": "board", "psram_min": 2, "radio": "wifi-4"}, "unmapped": []}
+"cheap wearable" -> {"filters": {"type": "board", "battery": true, "budget": "cheap"}, "unmapped": []}
+"esp32 with a camera" -> {"filters": {"type": "board", "psram_min": 2}, "unmapped": ["camera"]}
+"a plant monitoring system" -> {"filters": {"type": "board"}, "unmapped": ["plant monitoring"]}
+"a gps tracker" -> {"filters": {"type": "board"}, "unmapped": ["gps"]}
 "asdfqwer zzzz" -> {"filters": {}, "unmapped": ["asdfqwer zzzz"]}"""
 
 
