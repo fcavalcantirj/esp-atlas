@@ -40,10 +40,10 @@ export default function PartDetailView({
         <ChipChain part={part} />
         <PartBody body={part.body} />
         <SpecGroups part={part} />
-        {part.type === "board" && boardFirmwareRows !== null && <BoardFirmware rows={boardFirmwareRows} />}
         {part.type === "board" && (
           <VerifyBoard boardName={part.name} board={{ soc: part.soc_ref, flashMb: part.flash_mb, psramMb: part.psram_mb }} />
         )}
+        {part.type === "board" && boardFirmwareRows !== null && <BoardFirmware rows={boardFirmwareRows} />}
         {isHub && <SocHub part={part} />}
         {notes.length > 0 && (
           <section aria-label="Notes">

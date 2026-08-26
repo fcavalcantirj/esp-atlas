@@ -1,15 +1,6 @@
 import Link from "next/link";
 import TrackedLink from "@/components/TrackedLink";
-import {
-  agentsUrl,
-  contributingUrl,
-  dataFolderUrl,
-  discussionsUrl,
-  issuesUrl,
-  licenseUrl,
-  repoUrl,
-  roadmapDebugUrl,
-} from "@/lib/github";
+import { agentsUrl, contributingUrl, dataFolderUrl, discussionsUrl, issuesUrl, licenseUrl, repoUrl } from "@/lib/github";
 import { SITE_NAME } from "@/lib/site";
 
 const API_DOCS_PATH = "/api/docs";
@@ -104,9 +95,7 @@ export default function SiteFooter() {
                 <Link href="/firmware">Flash a board</Link>
               </li>
               <li>
-                <TrackedLink href={roadmapDebugUrl()} linkType="roadmap" className="footer-links-soon">
-                  Debug <span className="muted">— on the roadmap</span>
-                </TrackedLink>
+                <Link href="/debug">Debug</Link>
               </li>
               <li>
                 <Link href="/parts/esp32-c6">ESP32-C6</Link> · <Link href="/parts/esp32-s3">ESP32-S3</Link> ·{" "}
@@ -132,6 +121,7 @@ export default function SiteFooter() {
             </TrackedLink>
             .
           </span>
+          <span className="muted">Flash &amp; verify need a Chromium browser (Chrome, Edge).</span>
           <span className="muted">Uses Google Analytics to learn how people search for parts.</span>
         </div>
       </div>

@@ -5,18 +5,31 @@ import HelpTip from "@/components/HelpTip";
 import SerialMonitor from "@/components/verify/SerialMonitor";
 import VerdictBadge from "@/components/verify/VerdictBadge";
 import { track } from "@/lib/analytics";
-import { matchBoard, type BoardRecord, type VerifyResult } from "@/lib/verify-board";
+import { matchBoard, type BoardRecord, type DetectedChip, type VerifyResult } from "@/lib/verify-board";
 import { detectChip } from "@/lib/verify-serial";
 
 // The debug rail (SPEC-verify.md): Rail A here, Rail B in SerialMonitor.
 // Both are click-gated — nothing connects to the port until the human asks,
 // same consent pattern as the Flash Wizard's FlashAction.
 
-type Phase = { kind: "idle" } | { kind: "connecting" } | { kind: "result"; result: VerifyResult } | { kind: "error"; message: string };
+type Phase =
+  | { kind: "idle" }
+  | { kind: "connecting" }
+  | { kind: "result"; result: VerifyResult }
+  | { kind: "detected"; detected: DetectedChip }
+  | { kind: "error"; message: string };
 
 interface VerifyBoardProps {
-  boardName: string;
-  board: BoardRecord;
+  /** Board name for the cited-value comparison copy/analytics — omitted in detect-only mode. */
+  boardName?: string;
+  /** When omitted, this renders detect-only: chip readout only, no esp-atlas comparison (e.g. the standalone /debug page). */
+  board?: BoardRecord;
+}
+
+function psramText(psram: DetectedChip["psram"]): string {
+  if (psram === null) return "not read";
+  if (!psram.present) return "no PSRAM";
+  return psram.sizeMb !== null ? `${psram.sizeMb} MB` : "present (size unknown)";
 }
 
 // Server snapshot is always false so SSR/first-client-render stay identical;
@@ -50,9 +63,14 @@ export default function VerifyBoard({ boardName, board }: VerifyBoardProps) {
     try {
       track("verify_connect", { board: boardName });
       const detected = await detectChip(port);
-      const result = matchBoard(detected, board);
-      track("verify_result", { board: boardName, overall: result.overall });
-      setPhase({ kind: "result", result });
+      if (board) {
+        const result = matchBoard(detected, board);
+        track("verify_result", { board: boardName, overall: result.overall });
+        setPhase({ kind: "result", result });
+      } else {
+        track("verify_result", { overall: "detected" });
+        setPhase({ kind: "detected", detected });
+      }
     } catch (err) {
       track("verify_error", { board: boardName });
       setPhase({
@@ -62,13 +80,15 @@ export default function VerifyBoard({ boardName, board }: VerifyBoardProps) {
     }
   }
 
+  const heading = board ? "Verify my board" : "Read my board";
+  const intro = board
+    ? `Reads the connected chip over USB and checks it against what esp-atlas cites for ${boardName} — over Web Serial, no backend, nothing leaves your browser.`
+    : "Reads the connected chip over USB — chip family, flash size, PSRAM and MAC — over Web Serial, no backend, nothing leaves your browser.";
+
   return (
     <section className="verify-board" aria-labelledby="verify-board">
-      <h2 id="verify-board">Verify my board</h2>
-      <p className="muted verify-intro">
-        Reads the connected chip over USB and checks it against what esp-atlas cites for {boardName} — over Web Serial, no backend, nothing
-        leaves your browser.
-      </p>
+      <h2 id="verify-board">{heading}</h2>
+      <p className="muted verify-intro">{intro}</p>
 
       {supported === false ? (
         <p className="verify-unsupported">
@@ -77,7 +97,7 @@ export default function VerifyBoard({ boardName, board }: VerifyBoardProps) {
       ) : (
         <div className="verify-panel">
           <button type="button" className="btn btn--sm" onClick={() => void verify()} disabled={phase.kind === "connecting"}>
-            {phase.kind === "connecting" ? "Connecting…" : "Verify my board"}
+            {phase.kind === "connecting" ? "Connecting…" : heading}
           </button>
 
           {phase.kind === "error" && <p className="verify-error">{phase.message}</p>}
@@ -110,6 +130,38 @@ export default function VerifyBoard({ boardName, board }: VerifyBoardProps) {
                 <p className="muted verify-mac">
                   MAC address: <span className="mono">{phase.result.mac}</span> — informational only, esp-atlas cites no per-unit MAC to
                   check it against.
+                </p>
+              )}
+            </>
+          )}
+
+          {phase.kind === "detected" && (
+            <>
+              <table className="verify-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Field</th>
+                    <th scope="col">Chip says</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Chip family</th>
+                    <td className="mono">{phase.detected.chipFamily ?? "not read"}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Flash size</th>
+                    <td className="mono">{phase.detected.flashMb === null ? "not read" : `${phase.detected.flashMb} MB`}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">PSRAM</th>
+                    <td className="mono">{psramText(phase.detected.psram)}</td>
+                  </tr>
+                </tbody>
+              </table>
+              {phase.detected.mac && (
+                <p className="muted verify-mac">
+                  MAC address: <span className="mono">{phase.detected.mac}</span>
                 </p>
               )}
             </>
