@@ -1,0 +1,150 @@
+/* Verify rail (SPEC-verify.md) styles live in their own sheet, imported by
+   app/layout.tsx after flash-wizard.css, so feature CSS never appends to the
+   global file. Tokens and the flash panel's look come from globals.css /
+   flash-wizard.css — this reuses that system, it doesn't invent a new one. */
+
+.verify-board {
+  margin-top: 1.75rem;
+}
+
+.verify-intro {
+  margin: 0.2rem 0 0.6rem;
+  font-size: var(--t-sm);
+}
+
+.verify-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.verify-unsupported {
+  margin: 0 0 1rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--warn);
+  font-size: var(--t-sm);
+  line-height: var(--lead-snug);
+  color: var(--muted);
+}
+
+.verify-error {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--danger);
+  font-size: var(--t-sm);
+  line-height: var(--lead-snug);
+}
+
+.verify-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-sm);
+}
+
+.verify-table th,
+.verify-table td {
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.verify-table thead th {
+  font-family: var(--font-data);
+  font-size: var(--t-micro);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.verify-table tbody th[scope="row"] {
+  font-weight: 600;
+}
+
+.verify-mac {
+  margin: 0;
+  font-size: var(--t-xs);
+}
+
+/* Match / mismatch / unknown: color plus the word, same rule as .tier-badge. */
+.verdict-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.verdict-badge::before {
+  content: "";
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.verdict-badge--match {
+  color: var(--ok);
+}
+
+.verdict-badge--mismatch {
+  color: var(--danger);
+}
+
+.verdict-badge--unknown {
+  color: var(--muted);
+}
+
+.verify-monitor-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.verify-monitor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.verify-monitor-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.verify-monitor-baud {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-data);
+  font-size: var(--t-sm);
+  color: var(--muted);
+}
+
+.verify-console {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  height: 16rem;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  line-height: var(--lead-snug);
+  white-space: pre-wrap;
+  word-break: break-word;
+}

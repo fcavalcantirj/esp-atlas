@@ -38,7 +38,13 @@ export type EventName =
   | "flash_ready"
   | "flash_handoff"
   | "flash_consent"
-  | "flash_connect";
+  | "flash_connect"
+  // Verify rail (SPEC-verify.md): connect, result, and serial monitor use.
+  | "verify_connect"
+  | "verify_result"
+  | "verify_error"
+  | "monitor_connect"
+  | "monitor_disconnect";
 
 export type OutboundLinkType =
   | "source"
