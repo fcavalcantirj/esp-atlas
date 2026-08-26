@@ -36,6 +36,7 @@ discipline to turn "I can't narrow this" into an actual answer:
    without a `why` sentence or add-ons a down model can't be asked for.
 """
 import json
+import re
 
 from esp_atlas_core.examples import describe_firmware
 from esp_atlas_core.firmware import get_firmware, list_firmware, recipes_for_firmware
@@ -47,6 +48,54 @@ _BOARD_LIMIT = 4
 _MAX_ADD_ONS = 5
 
 _NO_FIRMWARE_NOTE = "No ready-made firmware in esp-atlas fits this goal -- you'd write your own on a Wi-Fi ESP32."
+
+# Deterministic channel-count estimate for the io_heavy hard exclusion
+# (SPEC-io-power.md §6) -- code-computed from the goal text, never LLM-picked,
+# so the model still only ever sets the io_heavy boolean. Sums explicit
+# "N <output-ish noun>" mentions (e.g. "4 LED strips", "4 fans") and adds a
+# fixed allowance for a bare "sensors" mention (+1 signal line) and "uart"
+# (+2, RX and TX) -- matching SPEC-io-power.md §1's own worked count ("4
+# strips + 4 fans + sensors + UART in/out ~= 11 signal lines").
+_CHANNEL_NOUN_RE = re.compile(
+    r"(\d+)\s+(?:independent\s+|separate\s+)?"
+    r"(?:led\s+strips?|strips?|fans?|motors?|relays?|servos?|channels?|outputs?)\b",
+    re.IGNORECASE,
+)
+
+
+def _channel_count(query):
+    count = sum(int(n) for n in _CHANNEL_NOUN_RE.findall(query))
+    lowered = query.lower()
+    if "sensor" in lowered:
+        count += 1
+    if "uart" in lowered:
+        count += 2
+    return count
+
+
+def _board_known_gpio(board):
+    """The board's best-known usable GPIO count: `gpio_free` when cited, else
+    `gpio_exposed`, else None (absence -- never invented, never excluded on)."""
+    io = (board.get("frontmatter") or {}).get("io") or {}
+    free = io.get("gpio_free")
+    if free is not None:
+        return free
+    return io.get("gpio_exposed")
+
+
+def _filter_io_heavy(boards, traits, channel_count):
+    """Hard exclusion, not soft demotion (SPEC-io-power.md §6): drop any board
+    whose KNOWN usable-GPIO count is below the goal's channel count. A board
+    with no io data is never excluded -- absence is neutral, never inventive."""
+    if not traits.get("io_heavy") or channel_count <= 0:
+        return boards
+    kept = []
+    for board in boards:
+        known = _board_known_gpio(board)
+        if known is not None and known < channel_count:
+            continue
+        kept.append(board)
+    return kept
 
 # The SAME project->firmware intuition taught to Groq as few-shot below, kept
 # here as a deterministic keyword matcher for when the model is unreachable
@@ -87,7 +136,7 @@ catalog, and name what a board for it needs.
 Reply with JSON only, no prose, in exactly this shape:
 {"firmware_id": "<an id from the catalog below, or null>",
  "why": "<=1 sentence: why this firmware fits the goal>",
- "traits": {"wifi": true|false, "battery": true|false, "cheap": true|false},
+ "traits": {"wifi": true|false, "battery": true|false, "cheap": true|false, "io_heavy": true|false},
  "add_ons": ["<a physical thing the goal needs that is NOT a firmware or a board -- a sensor, camera, screen, motor>", ...]}
 
 RULES:
@@ -100,6 +149,11 @@ RULES:
   outdoor, or battery/solar power. Otherwise false -- never guess portable.
 - cheap: true by default. false only if the goal explicitly asks for a
   premium/high-end part.
+- io_heavy: true ONLY when the goal names MULTIPLE independent physical
+  outputs/channels -- several LED strips, fans, motors, relays, or servos
+  wired at once. false for a goal with at most one output (a single sensor
+  reading, one LED, one relay). You only set this boolean; you never count
+  channels or pick a board -- that stays deterministic code.
 - add_ons: name the physical thing(s) the goal needs beyond a board+firmware --
   short, plain nouns (e.g. "soil-moisture sensor", "camera module"). Empty
   list if the goal needs nothing beyond a board and firmware.
@@ -170,6 +224,7 @@ def _validate_llm_output(raw, valid_ids):
         "wifi": bool(traits_raw.get("wifi", True)),
         "battery": bool(traits_raw.get("battery", False)),
         "cheap": bool(traits_raw.get("cheap", True)),
+        "io_heavy": bool(traits_raw.get("io_heavy", False)),
     }
 
     return {
@@ -180,7 +235,7 @@ def _validate_llm_output(raw, valid_ids):
     }
 
 
-_DEFAULT_TRAITS = {"wifi": True, "battery": False, "cheap": True}
+_DEFAULT_TRAITS = {"wifi": True, "battery": False, "cheap": True, "io_heavy": False}
 
 
 def _board_why(board, traits):
@@ -194,6 +249,9 @@ def _board_why(board, traits):
         facts.append("has a battery connector" if has_battery else "no battery connector -- wired power only")
     if board.get("price_tier"):
         facts.append(f"{board['price_tier']} price tier")
+    gpio_free = ((board.get("frontmatter") or {}).get("io") or {}).get("gpio_free")
+    if gpio_free is not None:
+        facts.append(f"{gpio_free} usable GPIO")
     return ", ".join(facts) if facts else f"{board['name']} is in the esp-atlas catalog"
 
 
@@ -214,16 +272,17 @@ def _rank_boards(boards, traits):
     return sorted(boards, key=lambda b: (-_board_score(b, traits), b["name"]))
 
 
-def _boards_for_firmware(firmware_id, traits, db_path):
+def _boards_for_firmware(firmware_id, traits, db_path, channel_count=0):
     boards = []
     for recipe in recipes_for_firmware(firmware_id):
         board = get_part(recipe["board"], db_path=db_path)
         if board is not None:
             boards.append(board)
+    boards = _filter_io_heavy(boards, traits, channel_count)
     return _rank_boards(boards, traits)[:_BOARD_LIMIT]
 
 
-def _boards_fallback(traits, db_path):
+def _boards_fallback(traits, db_path, channel_count=0):
     needs = {"type": "board"}
     if traits.get("wifi", True):
         needs["radio"] = "wifi-4"
@@ -237,6 +296,7 @@ def _boards_fallback(traits, db_path):
         board = get_part(record["id"], db_path=db_path)
         if board is not None:
             boards.append(board)
+    boards = _filter_io_heavy(boards, traits, channel_count)
     return _rank_boards(boards, traits)[:_BOARD_LIMIT]
 
 
@@ -342,13 +402,14 @@ def build_guide(query, llm_client=None, db_path=None, answered_context=None):
     firmware_id, why, traits = _apply_answered_context(firmware_id, why, traits, valid_ids, answered_context)
 
     firmware_record = get_firmware(firmware_id) if firmware_id else None
+    channel_count = _channel_count(query)
 
     if firmware_record:
-        boards = _boards_for_firmware(firmware_record["id"], traits, db_path)
-        if not boards:  # a recipe-less firmware would otherwise be a dead end -- degrade to the catalog
-            boards = _boards_fallback(traits, db_path)
+        boards = _boards_for_firmware(firmware_record["id"], traits, db_path, channel_count)
+        if not boards:  # a recipe-less firmware (or an io_heavy wipeout) would otherwise be a dead end
+            boards = _boards_fallback(traits, db_path, channel_count)
     else:
-        boards = _boards_fallback(traits, db_path)
+        boards = _boards_fallback(traits, db_path, channel_count)
 
     firmware_out = None
     if firmware_record:

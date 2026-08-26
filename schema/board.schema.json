@@ -42,6 +42,23 @@
     },
     "display": { "type": "string", "description": "e.g. '1.9in 170x320 IPS' — only if the board has an onboard display" },
     "extras": { "type": "array", "items": { "type": "string" }, "description": "onboard peripherals: sd-card, imu, mic, rgb-led, gps, etc." },
+    "io": {
+      "type": "object", "additionalProperties": false,
+      "description": "Usable GPIO exposure and external-load power delivery — board-level, vendor-sourced (SPEC-io-power.md §2). Every field cite-or-omit; absence is neutral, never inventive.",
+      "properties": {
+        "gpio_exposed": { "type": "number", "description": "count of GPIO pads routed to a header/pin, as printed by the vendor (e.g. 'IO x6')" },
+        "gpio_free": { "type": "number", "description": "gpio_exposed minus the SoC's exposed reserved_pins (strapping/input-only/usb-flash-tied) and any pins hard-consumed onboard; DERIVED unless the vendor states it directly — record the subtraction in notes" },
+        "input_only": { "type": "number", "description": "count of exposed pads that are input-only (no output capability)" },
+        "power_out": {
+          "type": "object", "additionalProperties": false,
+          "properties": {
+            "rail_v": { "type": "array", "items": { "type": "number" } },
+            "rail_ma_max": { "type": "number" },
+            "high_side_switch": { "type": "boolean" }
+          }
+        }
+      }
+    },
     "notes": { "type": "array", "items": { "type": "string" } },
     "sources": {
       "type": "array", "minItems": 1,

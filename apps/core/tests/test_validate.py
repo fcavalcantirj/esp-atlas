@@ -72,6 +72,51 @@ def test_validate_frontmatter_bad_enum_fails(soc_fm):
     assert result["errors"]
 
 
+def test_validate_frontmatter_board_io_valid_passes(board_fm):
+    fm = copy.deepcopy(board_fm)
+    fm["io"] = {"gpio_exposed": 22, "gpio_free": 16}
+    result = validate_frontmatter(fm, "board")
+    assert result == {"ok": True, "errors": []}
+
+
+def test_validate_frontmatter_board_rejects_drive_owner_violation(board_fm):
+    """`drive` is a soc-only field (SPEC-io-power.md §2) -- a board record
+    physically cannot cite Espressif for its own per-pad current."""
+    fm = copy.deepcopy(board_fm)
+    fm["drive"] = {"gpio_source_ma_max": 40}
+    result = validate_frontmatter(fm, "board")
+    assert result["ok"] is False
+    assert result["errors"]
+
+
+def test_validate_frontmatter_board_rejects_reserved_pins_owner_violation(board_fm):
+    """`reserved_pins` is a soc-only field -- same owner rule as `drive`."""
+    fm = copy.deepcopy(board_fm)
+    fm["reserved_pins"] = {"strapping": [0, 2]}
+    result = validate_frontmatter(fm, "board")
+    assert result["ok"] is False
+    assert result["errors"]
+
+
+def test_validate_frontmatter_soc_io_valid_passes(soc_fm):
+    fm = copy.deepcopy(soc_fm)
+    fm["drive"] = {"gpio_source_ma_max": 40, "gpio_sink_ma_max": 40}
+    fm["reserved_pins"] = {"strapping": [8, 9, 15]}
+    result = validate_frontmatter(fm, "soc")
+    assert result == {"ok": True, "errors": []}
+
+
+def test_validate_frontmatter_soc_rejects_io_owner_violation(soc_fm):
+    """`io` (exposed/free GPIO count, power_out) is a board-only field -- the
+    SoC has ~40 pads total, but only the *board* decides how many are broken
+    out and free (SPEC-io-power.md §2). Espressif cannot know this."""
+    fm = copy.deepcopy(soc_fm)
+    fm["io"] = {"gpio_exposed": 6}
+    result = validate_frontmatter(fm, "soc")
+    assert result["ok"] is False
+    assert result["errors"]
+
+
 def test_validate_frontmatter_board_price_tier_valid_enum_passes(board_fm):
     fm = copy.deepcopy(board_fm)
     fm["price_tier"] = "cheap"

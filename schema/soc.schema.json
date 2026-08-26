@@ -82,6 +82,24 @@
     },
     "interfaces": { "type": "array", "items": { "type": "string" } },
     "security": { "type": "array", "items": { "type": "string" } },
+    "drive": {
+      "type": "object", "additionalProperties": false,
+      "description": "Per-pad GPIO electrical drive limits — silicon-level, datasheet-sourced (SPEC-io-power.md §2). Abs-max; per-pin defaults go in notes, not this scalar.",
+      "properties": {
+        "gpio_source_ma_max": { "type": "number" },
+        "gpio_sink_ma_max": { "type": "number" },
+        "gpio_pads_total": { "type": "number" }
+      }
+    },
+    "reserved_pins": {
+      "type": "object", "additionalProperties": false,
+      "description": "Pads that don't count toward a board's usable GPIO — official, Espressif Hardware Design Guidelines-sourced (SPEC-io-power.md §3a).",
+      "properties": {
+        "strapping": { "type": "array", "items": { "type": "number" } },
+        "input_only": { "type": "array", "items": { "type": "number" } },
+        "usb_flash_tied": { "type": "array", "items": { "type": "number" } }
+      }
+    },
     "notes": { "type": "array", "items": { "type": "string" } },
     "sources": {
       "type": "array",

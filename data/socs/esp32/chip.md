@@ -33,6 +33,25 @@ security:
 - sha-2
 - rsa
 - rng
+reserved_pins:
+  strapping:
+  - 0
+  - 2
+  - 5
+  - 12
+  - 15
+  input_only:
+  - 34
+  - 35
+  - 36
+  - 39
+  usb_flash_tied:
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
 notes:
 - Wi-Fi promiscuous mode supported
 - Secure Boot v2 only on chip rev v3.0+
@@ -40,6 +59,9 @@ sources:
 - field: '*'
   url: https://documentation.espressif.com/esp32_datasheet_en.pdf
   verified: '2026-08-21'
+- field: reserved_pins
+  url: https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32/schematic-checklist.html
+  verified: '2026-08-26'
 ---
 
 # ESP32

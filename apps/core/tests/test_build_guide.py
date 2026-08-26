@@ -238,6 +238,90 @@ def test_deterministic_fallback_still_maps_led_sign_to_wled_by_keyword(built_db_
     assert result["firmware"]["id"] == "wled"
 
 
+# --- io_heavy: hard exclusion on cited GPIO counts (SPEC-io-power.md §6) ----
+
+_IO_HEAVY_QUERY = "4 LED strips + 4 fans + sensors + UART data going in and out"
+
+_FULL_HEADER_DEVKITS = {"esp32-s3-devkitc-1", "esp32-devkitc-v4", "esp32-c6-devkitc-1"}
+
+
+def test_io_heavy_excludes_pin_poor_board_ranked_on_its_own_cited_count(built_db_path):
+    """Without the fix, m5atoms3-lite (esphome recipe, cheap+wifi) tops this
+    exact ranking on the old three-axis score alone -- SPEC-io-power.md §1's
+    real prod bug. With io_heavy set, its OWN cited `io.gpio_exposed: 6`
+    (docs.m5stack.com) is below the goal's ~11-line channel count, so it's
+    hard-excluded, not merely demoted."""
+    llm = _stub(
+        {
+            "firmware_id": "esphome",
+            "why": "Reads sensors and reports over Wi-Fi.",
+            "traits": {"wifi": True, "battery": False, "cheap": True, "io_heavy": True},
+            "add_ons": [],
+        }
+    )
+    result = build_guide(_IO_HEAVY_QUERY, llm_client=llm, db_path=built_db_path)
+
+    board_ids = {b["board_id"] for b in result["boards"]}
+    assert "m5atoms3-lite" not in board_ids
+
+    # confirm the exclusion -- not a coincidence of ranking -- by proving the
+    # SAME query without io_heavy set puts m5atoms3-lite right back on top.
+    baseline_llm = _stub(
+        {
+            "firmware_id": "esphome",
+            "why": "Reads sensors and reports over Wi-Fi.",
+            "traits": {"wifi": True, "battery": False, "cheap": True, "io_heavy": False},
+            "add_ons": [],
+        }
+    )
+    baseline = build_guide(_IO_HEAVY_QUERY, llm_client=baseline_llm, db_path=built_db_path)
+    assert baseline["boards"][0]["board_id"] == "m5atoms3-lite"
+
+
+def test_io_heavy_surfaces_a_full_header_devkit_with_its_gpio_count_in_why(built_db_path):
+    """A full-header devkit (derived `io.gpio_free` well above the ~11-line
+    channel count, SPEC-io-power.md §5.3) must be surfaced, not just an
+    un-excluded pin-poor board -- and its `why` must ground the pick in its
+    own cited GPIO column."""
+    llm = _stub(
+        {
+            "firmware_id": "wled",
+            "why": "Drives addressable LED strips from a web UI.",
+            "traits": {"wifi": True, "battery": False, "cheap": True, "io_heavy": True},
+            "add_ons": [],
+        }
+    )
+    result = build_guide(_IO_HEAVY_QUERY, llm_client=llm, db_path=built_db_path)
+
+    devkits = [b for b in result["boards"] if b["board_id"] in _FULL_HEADER_DEVKITS]
+    assert devkits, f"expected a full-header devkit in {[b['board_id'] for b in result['boards']]}"
+    assert "usable GPIO" in devkits[0]["why"]
+
+
+def test_io_heavy_never_excludes_a_board_with_no_cited_io_data(built_db_path):
+    """Absence is neutral, never inventive (SPEC-io-power.md §7.3/§8.3): a
+    board with no `io` record at all (most of the catalog, still) is never
+    excluded and never gets an invented GPIO count -- it just can't win the
+    `io_heavy` `why` bonus."""
+    llm = _stub(
+        {
+            "firmware_id": "esphome",
+            "why": "Reads sensors and reports over Wi-Fi.",
+            "traits": {"wifi": True, "battery": False, "cheap": True, "io_heavy": True},
+            "add_ons": [],
+        }
+    )
+    result = build_guide(_IO_HEAVY_QUERY, llm_client=llm, db_path=built_db_path)
+    assert result["boards"], "io_heavy must never wipe the list down to nothing"
+    for board in result["boards"]:
+        record = get_part(board["board_id"], db_path=built_db_path)
+        io = (record["frontmatter"] or {}).get("io") or {}
+        if io.get("gpio_free") is None and io.get("gpio_exposed") is None:
+            continue  # no cited count -- correctly kept despite io_heavy
+        known = io.get("gpio_free", io.get("gpio_exposed"))
+        assert known >= 11, f"{board['board_id']} has a known count below the channel need and should be excluded"
+
+
 # --- 6. Board recommendation is capped and real ------------------------------
 
 

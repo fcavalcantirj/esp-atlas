@@ -37,6 +37,18 @@ security:
 - rsa-ds
 - rng
 - clock-glitch-detection
+reserved_pins:
+  strapping:
+  - 0
+  - 3
+  - 45
+  - 46
+  usb_flash_tied:
+  - 19
+  - 20
+  - 35
+  - 36
+  - 37
 notes:
 - 802.11mc FTM ranging
 - SIMD for on-device ML/DSP
@@ -44,6 +56,9 @@ sources:
 - field: '*'
   url: https://documentation.espressif.com/esp32-s3_datasheet_en.pdf
   verified: '2026-08-21'
+- field: reserved_pins
+  url: https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/schematic-checklist.html
+  verified: '2026-08-26'
 ---
 
 # ESP32-S3

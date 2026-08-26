@@ -5,7 +5,10 @@
     { "id": "arduino-esp32-official", "url": "https://espressif.github.io/arduino-esp32/package_esp32_index.json", "kind": "arduino-package-index", "note": "Espressif's official versioned board index (+ boards.txt per platform for build.mcu/variant)" },
     { "id": "launcher-supported-devices", "url": "https://github.com/bmorcelli/Launcher/wiki/Supported-devices", "kind": "wiki-device-table", "note": "Device × chip × added-in-version table; known-good recipe candidates, already chip-mapped" },
     { "id": "m5burner-catalog", "url": "https://github.com/m5stack/M5Burner", "kind": "m5burner", "note": "M5Stack firmware catalog / M5Burner API" },
-    { "id": "espressif-products", "url": "https://www.espressif.com/en/products/socs", "kind": "vendor-products", "note": "SoC/datasheet reference pages (rare drift, monthly)" }
+    { "id": "espressif-products", "url": "https://www.espressif.com/en/products/socs", "kind": "vendor-products", "note": "SoC/datasheet reference pages (rare drift, monthly)" },
+    { "id": "espressif-datasheets", "url": "https://documentation.espressif.com/", "kind": "soc-datasheet", "note": "Per-SoC datasheet PDFs — DC-Characteristics table is the ONLY citable source for soc.drive (per-pad GPIO source/sink mA); see SPEC-io-power.md §3/§5.1" },
+    { "id": "m5stack-docs", "url": "https://docs.m5stack.com/en/products", "kind": "vendor-spec-docs", "note": "M5Stack per-board spec pages — source for board.io (gpio_exposed 'IO ×N + pin list') and power_out.rail_ma_max ('Grove/rail max output current'); INCONSISTENTLY published, cite-or-omit per SPEC-io-power.md §3/§5.2" },
+    { "id": "espressif-hw-design-guidelines", "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/", "kind": "soc-hardware-guidelines", "note": "Per-SoC (dropdown) schematic-checklist — strapping pins + IO MUX pin-function table as machine-readable text ('GPIO8/9/25 are strapping pins'). OFFICIAL source for soc.reserved_pins (the gpio_free subtraction rules); see SPEC-io-power.md §3/§5.3" }
   ],
   "firmware_releases": [
     { "id": "bruce", "url": "https://github.com/pr3y/Bruce/releases", "kind": "github-releases", "note": "Pentest multitool" },

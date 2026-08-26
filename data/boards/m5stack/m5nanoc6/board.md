@@ -16,11 +16,18 @@ usb:
   connector: usb-c
 extras:
 - rgb-led
+io:
+  power_out:
+    rail_v:
+    - 5
+    rail_ma_max: 600
 notes:
 - ESP32-C6FH4; 4 MB flash
 - WS2812 programmable RGB LED, IR transmitter, button on GPIO9, Grove interface,
   ceramic antenna, no onboard battery
 - ESP32-C6 has no PSRAM interface at all (chip datasheet lists no PSRAM/external-RAM support)
+- 'io.power_out QUOTED: vendor page states "Grove Maximum Output Current: DC 5V@600mA
+  (depends on USB supply)"'
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/M5NanoC6
@@ -28,6 +35,9 @@ sources:
 - field: psram_mb
   url: https://documentation.espressif.com/esp32-c6_datasheet_en.html
   verified: '2026-08-24'
+- field: io.power_out
+  url: https://docs.m5stack.com/en/core/M5NanoC6
+  verified: '2026-08-26'
 ---
 
 # NanoC6

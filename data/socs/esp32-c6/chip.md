@@ -41,12 +41,25 @@ security:
 - sha
 - rsa-ds
 - rng
+reserved_pins:
+  strapping:
+  - 8
+  - 9
+  - 10
+  - 11
+  - 15
+  usb_flash_tied:
+  - 12
+  - 13
 notes:
 - Wi-Fi / BLE / 802.15.4 coexist on a shared antenna
 sources:
 - field: '*'
   url: https://documentation.espressif.com/esp32-c6_datasheet_en.pdf
   verified: '2026-08-21'
+- field: reserved_pins
+  url: https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32c6/schematic-checklist.html
+  verified: '2026-08-26'
 ---
 
 # ESP32-C6
