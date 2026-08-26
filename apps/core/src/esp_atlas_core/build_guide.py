@@ -21,9 +21,13 @@ discipline to turn "I can't narrow this" into an actual answer:
 2. **Boards are never chosen by the model at all.** Selection is 100%
    deterministic: the firmware's own `recipes_for_firmware()` set (ranked by
    real board columns against the traits Groq named), or -- no firmware fits
-   -- cheap Wi-Fi boards straight from `wizard()`. The LLM's reply is never
-   even read for a board id, so a hostile model naming a fake board has
-   nowhere to leak it.
+   -- cheap Wi-Fi boards straight from `wizard()`. When the goal is
+   `io_heavy` and the firmware's OWN recipe pool has no board CONFIRMED to
+   meet the channel count (SPEC-io-power.md §6 addendum), that same
+   deterministic `wizard()` pool supplements it with confirmed-adequate
+   boards -- so a pin-poor recipe graph can't strand the answer on boards
+   that were merely never disproven. The LLM's reply is never even read for
+   a board id, so a hostile model naming a fake board has nowhere to leak it.
 3. **Every board's `why` is built from that board's own real record**
    (Wi-Fi standard/bands, price tier, battery connector) -- never LLM prose.
 4. **Add-ons are named, not dropped.** Whatever the goal needs beyond a
@@ -96,6 +100,36 @@ def _filter_io_heavy(boards, traits, channel_count):
             continue
         kept.append(board)
     return kept
+
+
+def _has_confirmed_adequate_board(boards, channel_count):
+    """True when at least one board's KNOWN gpio_free/gpio_exposed is proven
+    to meet the goal's channel count -- as opposed to merely surviving
+    `_filter_io_heavy` by having no cited io data at all (neutral, not
+    confirmed). Used to decide whether a firmware's recipe pool alone can
+    honestly answer an io_heavy goal (SPEC-io-power.md §6 addendum)."""
+    return any((known := _board_known_gpio(board)) is not None and known >= channel_count for board in boards)
+
+
+def _supplement_io_heavy_boards(boards, traits, channel_count, db_path):
+    """SPEC-io-power.md §6 addendum: a firmware's own recipe graph can be
+    entirely pin-poor (every board is either hard-excluded or merely neutral)
+    while a real full-header devkit that fits the same traits sits in the
+    deterministic wizard pool untapped -- today's prod bug. When the recipe
+    pool has no board CONFIRMED to meet the channel count, pull in
+    confirmed-adequate boards from that same deterministic fallback pool
+    (`_boards_fallback` uses), so an adequate board can still surface. Groq
+    still never picks a board; this only widens the deterministic candidate
+    set with boards that already pass the same traits filter every fallback
+    board does."""
+    existing_ids = {board["id"] for board in boards}
+    supplement = []
+    for board in _filter_io_heavy(_fallback_pool(traits, db_path), traits, channel_count):
+        known = _board_known_gpio(board)
+        if board["id"] in existing_ids or known is None or known < channel_count:
+            continue
+        supplement.append(board)
+    return boards + supplement
 
 # The SAME project->firmware intuition taught to Groq as few-shot below, kept
 # here as a deterministic keyword matcher for when the model is unreachable
@@ -268,21 +302,22 @@ def _board_score(board, traits):
     return score
 
 
-def _rank_boards(boards, traits):
+def _rank_boards(boards, traits, channel_count=0):
+    """Deterministic ranking (SPEC-build-guide.md §2). For an io_heavy goal,
+    a board's own KNOWN gpio_free/gpio_exposed leads the sort -- higher wins
+    -- so a supplemented full-header devkit actually surfaces instead of
+    being buried behind wifi/battery/cheap score alone (SPEC-io-power.md §6
+    addendum). A board with no cited io data sorts as if it had none (never
+    excluded, just never favored) -- absence stays neutral, never inventive."""
+    if traits.get("io_heavy") and channel_count > 0:
+        return sorted(
+            boards,
+            key=lambda b: (-(_board_known_gpio(b) if _board_known_gpio(b) is not None else -1), -_board_score(b, traits), b["name"]),
+        )
     return sorted(boards, key=lambda b: (-_board_score(b, traits), b["name"]))
 
 
-def _boards_for_firmware(firmware_id, traits, db_path, channel_count=0):
-    boards = []
-    for recipe in recipes_for_firmware(firmware_id):
-        board = get_part(recipe["board"], db_path=db_path)
-        if board is not None:
-            boards.append(board)
-    boards = _filter_io_heavy(boards, traits, channel_count)
-    return _rank_boards(boards, traits)[:_BOARD_LIMIT]
-
-
-def _boards_fallback(traits, db_path, channel_count=0):
+def _fallback_pool(traits, db_path):
     needs = {"type": "board"}
     if traits.get("wifi", True):
         needs["radio"] = "wifi-4"
@@ -296,8 +331,25 @@ def _boards_fallback(traits, db_path, channel_count=0):
         board = get_part(record["id"], db_path=db_path)
         if board is not None:
             boards.append(board)
+    return boards
+
+
+def _boards_for_firmware(firmware_id, traits, db_path, channel_count=0):
+    boards = []
+    for recipe in recipes_for_firmware(firmware_id):
+        board = get_part(recipe["board"], db_path=db_path)
+        if board is not None:
+            boards.append(board)
     boards = _filter_io_heavy(boards, traits, channel_count)
-    return _rank_boards(boards, traits)[:_BOARD_LIMIT]
+    if traits.get("io_heavy") and channel_count > 0 and not _has_confirmed_adequate_board(boards, channel_count):
+        boards = _supplement_io_heavy_boards(boards, traits, channel_count, db_path)
+    return _rank_boards(boards, traits, channel_count)[:_BOARD_LIMIT]
+
+
+def _boards_fallback(traits, db_path, channel_count=0):
+    boards = _fallback_pool(traits, db_path)
+    boards = _filter_io_heavy(boards, traits, channel_count)
+    return _rank_boards(boards, traits, channel_count)[:_BOARD_LIMIT]
 
 
 def _needs_lines(firmware, traits, add_ons):
