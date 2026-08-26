@@ -46,9 +46,11 @@
 
 ## Phase B — 🏆 The crown jewel: Pin Planner + Power Budget
 
-- [ ] **B1 — SPEC + data-sufficiency spike** *(spec)*
-  `SPEC-pin-planner.md`. Spike FIRST: is `reserved_pins` + `io` + peripheral
-  pin-need data enough to assign real pins? Prove on 2-3 boards before building.
+- [~] **B1 — SPEC + data-sufficiency spike** *(spec)* — `SPEC-pin-planner.md` WRITTEN.
+  Spike finding: `gpio_free` is a count, real pin NUMBERS are prose-only, `reserved_pins`
+  is structured. BLOCKER → new `io.gpio_pins` field (structurable from existing notes).
+  Awaiting Felipe red-pen (Q1 v1-scope, Q2 structure-notes, Q3 plan-across-all-boards)
+  before B1-data + B2 build.
 
 - [ ] **B2 — Pin Planner backend** *(code · `/plan`)*
   Input: peripherals (I²C, SPI, UART, N strips, M PWM, ADC…). Output for a board:
