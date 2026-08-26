@@ -1,5 +1,7 @@
 # esp-atlas → the Bible of ESP32 — delivery plan
 
+> **MOTTO: 100% of esp-atlas info is verified and verifiable.** (see `CLAUDE.md`)
+>
 > Living tracker. **One task at a time, slowly, each verified + landed before the
 > next.** North star: answer the question no other resource answers well — *"will
 > THIS board do MY project, and exactly how do I wire it?"* Every task obeys the

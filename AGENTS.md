@@ -1,5 +1,9 @@
 # AGENTS.md — esp-atlas contributor guide for AI agents
 
+> **MOTTO: 100% of esp-atlas info is verified and verifiable.** Cite-or-omit every
+> hard spec; derived values show their math and cite every input; never assert from
+> memory. See `CLAUDE.md`. A smaller true catalog beats a larger guessed one.
+
 esp-atlas is a community-maintained, datasheet-verified knowledge base for the ESP32
 family of chips and the boards built on them, stored as plain markdown with YAML
 frontmatter and validated by schema + CI. This file tells an agent how to add or fix

@@ -107,11 +107,19 @@ per-peripheral draw table:
 - **B3:** power verdict in `/plan`. *(code)*
 - **B4:** planner UI. *(web · dogfood)*
 
-## 9. Open questions for Felipe
+## 9. Decisions (Felipe, 2026-08-26)
 
-- **Q1** — v1 digital/PWM only (ADC "any free pin, verify"), ship the capability
-  table (§3b) as v2? I lean yes — it fully answers the driving cases now.
-- **Q2** — `gpio_pins` populated by *structuring existing notes* (cheap, no re-fetch)
-  vs re-deriving from source. I lean structure-the-notes, spot-verify against source.
-- **Q3** — planner input: pick a board first then plan, or "plan across all boards →
-  here's the cheapest that fits"? The latter is more Bible-like (and reuses io_heavy).
+- **Q1 → build the robust, best version.** v1 = solid digital/PWM/data assignment
+  (fully answers the driving cases); the §3b per-SoC ADC/capability table is built
+  too where it makes assignment correct, not deferred as an afterthought — ADC needs
+  get a real capability check, never a silent mis-assign.
+- **Q2 → verified AND verifiable (the motto).** `gpio_pins` is seeded from the pin
+  lists already in notes but **every list is re-checked against the cited official
+  pinout** before it lands — not blind note-structuring. A list that can't be
+  verified is omitted. Validator asserts `len(gpio_pins − reserved − consumed) ==
+  gpio_free` as a cross-check.
+- **Q3 → the latter: plan across all boards → cheapest that fits.** `/plan` takes a
+  project (optionally a board); with no board it evaluates every plannable board,
+  reuses `io_heavy`/`channel_count`, and returns the cheapest board that fully fits
+  WITH its concrete pin map — plus honest "these boards can't" for the rest.
+  Do it fully, inspect, run through the oracle-loop/data-agent (specs exist).
