@@ -37,12 +37,12 @@ export default function PartDetailView({
     <div className="part-layout">
       <div className="part-main">
         <PartHeader part={part} />
-        <ChipChain part={part} />
-        <PartBody body={part.body} />
-        <SpecGroups part={part} />
         {part.type === "board" && (
           <VerifyBoard boardName={part.name} board={{ soc: part.soc_ref, flashMb: part.flash_mb, psramMb: part.psram_mb }} />
         )}
+        <ChipChain part={part} />
+        <PartBody body={part.body} />
+        <SpecGroups part={part} />
         {part.type === "board" && boardFirmwareRows !== null && <BoardFirmware rows={boardFirmwareRows} />}
         {isHub && <SocHub part={part} />}
         {notes.length > 0 && (
