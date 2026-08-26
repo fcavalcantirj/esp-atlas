@@ -15,6 +15,8 @@ usb:
   bridge: native
 extras:
 - rgb-led
+io:
+  gpio_exposed: 27
 notes:
 - Based on ESP32-S3FH4R2; 4 MB flash, 2 MB PSRAM
 - 27x digital I/O pins
@@ -22,10 +24,16 @@ notes:
 - Native ESP32-S3 USB OTG; physical connector shape not stated on the official page
   (omitted)
 - 'Weight: 3 g'
+- 'io.gpio_exposed=27 QUOTED: vendor page states "27x IO" (Features) and "Digital
+  I/O Pins | 27" (Technical specs table); no enumerated GPIO pin-list/table is
+  published, so gpio_free and power_out are omitted'
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/s3/s3_mini.html
   verified: '2026-08-22'
+- field: io.gpio_exposed
+  url: https://www.wemos.cc/en/latest/s3/s3_mini.html
+  verified: '2026-08-26'
 ---
 
 # LOLIN S3 mini

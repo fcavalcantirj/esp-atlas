@@ -45,14 +45,37 @@ security:
 - apm
 - tee
 - glitch-detector
+drive:
+  gpio_source_ma_max: 40
+  gpio_sink_ma_max: 28
+  gpio_pads_total: 29
+reserved_pins:
+  strapping:
+  - 2
+  - 3
+  - 7
+  - 25
+  - 26
+  - 27
+  - 28
+  usb_flash_tied:
+  - 13
+  - 14
 notes:
 - First Espressif chip with 5 GHz Wi-Fi (5180-5885 MHz)
 - Datasheet notes 'Bluetooth Core 6.0 certified'; product page markets 'BLE 5' — BLE-only
   either way
+- 'Default drive strength: GPIO13/14 = 40 mA, others 20 mA.'
 sources:
 - field: '*'
   url: https://documentation.espressif.com/esp32-c5_datasheet_en.html
   verified: '2026-08-21'
+- field: drive
+  url: https://documentation.espressif.com/esp32-c5_datasheet_en.html
+  verified: '2026-08-26'
+- field: reserved_pins
+  url: https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32c5/schematic-checklist.html
+  verified: '2026-08-26'
 ---
 
 # ESP32-C5

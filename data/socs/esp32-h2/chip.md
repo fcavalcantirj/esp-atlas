@@ -31,12 +31,32 @@ security:
 - ecdsa-ds
 - hmac
 - crypto-accelerators
+drive:
+  gpio_source_ma_max: 40
+  gpio_sink_ma_max: 28
+  gpio_pads_total: 19
+reserved_pins:
+  strapping:
+  - 8
+  - 9
+  - 25
+  usb_flash_tied:
+  - 26
+  - 27
 notes:
 - No Wi-Fi radio — 802.15.4 + BLE only
+- No in-package flash pins bonded out as GPIOs.
+- 'Default drive strength: GPIO26/27 (USB) = 40 mA, others 20 mA.'
 sources:
 - field: '*'
   url: https://documentation.espressif.com/esp32-h2_datasheet_en.html
   verified: '2026-08-21'
+- field: drive
+  url: https://documentation.espressif.com/esp32-h2_datasheet_en.html
+  verified: '2026-08-26'
+- field: reserved_pins
+  url: https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32h2/schematic-checklist.html
+  verified: '2026-08-26'
 ---
 
 # ESP32-H2

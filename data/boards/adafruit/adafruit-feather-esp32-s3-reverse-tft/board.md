@@ -18,16 +18,26 @@ display: 1.14in 240x135 IPS ST7789
 extras:
 - rgb-led
 - stemma-qt
+io:
+  power_out:
+    rail_v:
+    - 3.3
+    rail_ma_max: 500
 notes:
 - 4 MB flash, 2 MB PSRAM, 512 KB SRAM
 - Display mounted on the reverse side of the board
 - LiPoly battery with built-in USB-C charging; MAX17048 I2C battery monitor
 - Three user tactile buttons (D0, D1, D2); STEMMA QT connector with switchable power
 - Dimensions not specified on the product page (omitted)
+- 'io.power_out QUOTED: vendor page states "3.3V - These pins are the output from
+  the 3.3V regulator, they can supply 500mA peak."'
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5691
   verified: '2026-08-22'
+- field: io.power_out
+  url: https://learn.adafruit.com/esp32-s3-reverse-tft-feather/pinouts
+  verified: '2026-08-26'
 ---
 
 # Adafruit ESP32-S3 Reverse TFT Feather

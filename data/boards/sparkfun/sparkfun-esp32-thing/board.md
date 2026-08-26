@@ -16,11 +16,19 @@ usb:
   bridge: ft231x
 power:
   charging: true
+io:
+  gpio_exposed: 28
+  power_out:
+    rail_v: [3.3]
+    rail_ma_max: 600
 notes:
 - 4 MB flash
 - 28 GPIO pins broken out; 10-electrode capacitive touch support
 - 'Integrated LiPo battery charger confirmed on product page; battery connector presence not separately confirmed, so battery_connector is omitted'
 - ESP32-D0WDQ6-V3 chip (per SparkFun's own board docs); this chip variant has no PSRAM per Espressif's ESP32 series ordering table
+- 'io.gpio_exposed=28 QUOTED: vendor product page Features & Specs state "28 GPIO"'
+- 'io.power_out QUOTED: vendor hookup guide states "The 3.3V regulator on the ESP32
+  Thing can reliably supply up to 600mA"'
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-esp32-thing.html
@@ -34,6 +42,12 @@ sources:
 - field: dimensions_mm
   url: https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide/all
   verified: '2026-08-22'
+- field: io.gpio_exposed
+  url: https://www.sparkfun.com/sparkfun-esp32-thing.html
+  verified: '2026-08-26'
+- field: io.power_out
+  url: https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide/all
+  verified: '2026-08-26'
 ---
 
 # SparkFun ESP32 Thing

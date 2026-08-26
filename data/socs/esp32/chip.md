@@ -33,6 +33,10 @@ security:
 - sha-2
 - rsa
 - rng
+drive:
+  gpio_source_ma_max: 40
+  gpio_sink_ma_max: 28
+  gpio_pads_total: 34
 reserved_pins:
   strapping:
   - 0
@@ -55,12 +59,17 @@ reserved_pins:
 notes:
 - Wi-Fi promiscuous mode supported
 - Secure Boot v2 only on chip rev v3.0+
+- 'Source current is domain-dependent: 40 mA on VDD3P3_CPU/RTC pins, 20 mA on
+  VDD_SDIO pins; sink is 28 mA across all pads.'
 sources:
 - field: '*'
   url: https://documentation.espressif.com/esp32_datasheet_en.pdf
   verified: '2026-08-21'
 - field: reserved_pins
   url: https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32/schematic-checklist.html
+  verified: '2026-08-26'
+- field: drive
+  url: https://documentation.espressif.com/esp32_datasheet_en.pdf
   verified: '2026-08-26'
 ---
 

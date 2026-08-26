@@ -17,6 +17,8 @@ power:
   charging: true
 extras:
 - sd-card
+io:
+  gpio_exposed: 22
 notes:
 - ESP32 Wi-Fi + Bluetooth chip; 16 MB or 4 MB flash (variant-dependent), 4 MB PSRAM
 - TF (Micro SD) card slot, SPI mode
@@ -26,10 +28,18 @@ notes:
 - Built-in LED on GPIO5
 - Physical USB connector shape not stated on the official page (omitted)
 - 'Weight: 7.5 g'
+- 'io.gpio_exposed=22 QUOTED: vendor page Technical specs table states "Digital
+  I/O Pins | 22"; no enumerated GPIO pin-list/table is published (only partial
+  Analog Input/Output pin numbers and LED_BUILTIN=GPIO5), so gpio_free is omitted.
+  The 500 mA figure on this page is LiPo charging current, not a GPIO/rail output
+  rating, so power_out is omitted'
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/d32/d32_pro.html
   verified: '2026-08-22'
+- field: io.gpio_exposed
+  url: https://www.wemos.cc/en/latest/d32/d32_pro.html
+  verified: '2026-08-26'
 ---
 
 # LOLIN D32 Pro

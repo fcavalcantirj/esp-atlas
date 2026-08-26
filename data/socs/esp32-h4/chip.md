@@ -37,14 +37,22 @@ security:
 - ecdsa-ds
 - crypto-accelerators
 - trng
+drive:
+  gpio_pads_total: 40
 notes:
 - No Wi-Fi radio
 - Product page notes Bluetooth 6.0 certification; functional core spec is BLE 5.4
 - 'Ultra-low-power: integrated DC-DC, multiple low-power modes'
+- No public datasheet or Hardware Design Guidelines page exists yet for ESP32-H4
+  (checked 2026-08-26) — drive currents and reserved_pins omitted, not guessed.
+  gpio_pads_total=40 is the product-page GPIO count for the bare-die SKUs.
 sources:
 - field: '*'
   url: https://www.espressif.com/en/products/socs/esp32-h4
   verified: '2026-08-21'
+- field: drive
+  url: https://www.espressif.com/en/products/socs/esp32-h4
+  verified: '2026-08-26'
 ---
 
 # ESP32-H4

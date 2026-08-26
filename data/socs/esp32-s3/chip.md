@@ -37,6 +37,10 @@ security:
 - rsa-ds
 - rng
 - clock-glitch-detection
+drive:
+  gpio_source_ma_max: 40
+  gpio_sink_ma_max: 28
+  gpio_pads_total: 45
 reserved_pins:
   strapping:
   - 0
@@ -52,12 +56,16 @@ reserved_pins:
 notes:
 - 802.11mc FTM ranging
 - SIMD for on-device ML/DSP
+- 'Default drive strength: GPIO17/18 = 10 mA, GPIO19/20 = 40 mA, others 20 mA.'
 sources:
 - field: '*'
   url: https://documentation.espressif.com/esp32-s3_datasheet_en.pdf
   verified: '2026-08-21'
 - field: reserved_pins
   url: https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/schematic-checklist.html
+  verified: '2026-08-26'
+- field: drive
+  url: https://documentation.espressif.com/esp32-s3_datasheet_en.pdf
   verified: '2026-08-26'
 ---
 

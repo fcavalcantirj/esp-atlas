@@ -13,16 +13,24 @@ dimensions_mm:
 - 25.4
 usb:
   connector: usb-c
+io:
+  gpio_exposed: 31
 notes:
 - Based on ESP32-S3-WROOM-1; 16 MB flash (Quad SPI), 8 MB PSRAM (Octal SPI)
 - 31x digital I/O pins
 - 'Two Type-C USB ports: one native USB OTG, one UART bridge'
 - Onboard LOLIN I2C port
 - 'Weight: 9.0 g'
+- 'io.gpio_exposed=31 QUOTED: vendor page states "31x IO" (Features) and "Digital
+  I/O Pins | 31" (Technical specs table); no enumerated GPIO pin-list/table is
+  published, so gpio_free and power_out are omitted'
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/s3/s3.html
   verified: '2026-08-22'
+- field: io.gpio_exposed
+  url: https://www.wemos.cc/en/latest/s3/s3.html
+  verified: '2026-08-26'
 ---
 
 # LOLIN S3

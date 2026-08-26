@@ -41,6 +41,10 @@ security:
 - sha
 - rsa-ds
 - rng
+drive:
+  gpio_source_ma_max: 40
+  gpio_sink_ma_max: 28
+  gpio_pads_total: 30
 reserved_pins:
   strapping:
   - 8
@@ -53,12 +57,16 @@ reserved_pins:
   - 13
 notes:
 - Wi-Fi / BLE / 802.15.4 coexist on a shared antenna
+- 'Default drive strength: GPIO12/13 = 40 mA, others 20 mA.'
 sources:
 - field: '*'
   url: https://documentation.espressif.com/esp32-c6_datasheet_en.pdf
   verified: '2026-08-21'
 - field: reserved_pins
   url: https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32c6/schematic-checklist.html
+  verified: '2026-08-26'
+- field: drive
+  url: https://documentation.espressif.com/esp32-c6_datasheet_en.pdf
   verified: '2026-08-26'
 ---
 

@@ -16,11 +16,15 @@ usb:
 power:
   battery_connector: true
   charging: true
+io:
+  gpio_exposed: 13
 notes:
 - 4 MB flash
 - TP4057 Li-ion charge management chip, max 0.5 A
 - 13 digital I/O ports in a coin-sized form factor
 - ESP32-C6 has no PSRAM interface at all (chip datasheet lists no PSRAM/external-RAM support)
+- 'io.gpio_exposed=13 QUOTED: vendor page states "has 13 IOs" and "Digital I/O
+  x13"'
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr1117/
@@ -28,6 +32,9 @@ sources:
 - field: psram_mb
   url: https://documentation.espressif.com/esp32-c6_datasheet_en.html
   verified: '2026-08-24'
+- field: io.gpio_exposed
+  url: https://wiki.dfrobot.com/dfr1117/
+  verified: '2026-08-26'
 ---
 
 # DFRobot Beetle ESP32-C6

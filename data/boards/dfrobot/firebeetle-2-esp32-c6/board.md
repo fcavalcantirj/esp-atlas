@@ -16,11 +16,14 @@ usb:
 power:
   battery_connector: true
   charging: true
+io:
+  gpio_exposed: 19
 notes:
 - 4 MB flash
 - Supports 5 V solar panel charging via CN3165 MPPT chip, max 0.5 A
 - GDI display connector onboard
 - ESP32-C6 has no PSRAM interface at all (chip datasheet lists no PSRAM/external-RAM support)
+- 'io.gpio_exposed=19 QUOTED: vendor page states "Digital I/O: x19"'
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr1075/
@@ -28,6 +31,9 @@ sources:
 - field: psram_mb
   url: https://documentation.espressif.com/esp32-c6_datasheet_en.html
   verified: '2026-08-24'
+- field: io.gpio_exposed
+  url: https://wiki.dfrobot.com/dfr1075/
+  verified: '2026-08-26'
 ---
 
 # DFRobot FireBeetle 2 ESP32-C6
