@@ -63,6 +63,10 @@ def _check(entry, result, board_exists):
 
 
 def _run_http(golden, url):
+    """Runs the /build POSTs *and* the board_exists() /parts checks against the
+    same live client, never letting either escape the `with` block -- board_exists
+    is a closure over `client`, so _check() (which calls it) must run before the
+    client is closed, not after in main()."""
     import httpx
 
     results = []
@@ -78,13 +82,17 @@ def _run_http(golden, url):
             try:
                 response = client.post(f"{url}/build", json={"query": entry["query"]})
                 response.raise_for_status()
-                results.append((entry, response.json(), board_exists, None))
+                reasons = _check(entry, response.json(), board_exists)
             except Exception as exc:  # network/HTTP error -- record as a failed run, don't crash the table
-                results.append((entry, {}, board_exists, str(exc)))
+                reasons = [f"error: {exc}"]
+            results.append((entry, reasons))
     return results
 
 
 def _run_direct(golden):
+    """Same lifetime rule as _run_http: board_exists() reads the sqlite db under
+    the tempdir, so _check() must run before the `with tempfile...` block exits,
+    not after in main()."""
     sys.path.insert(0, str(CORE_SRC))
     from esp_atlas_core.build_guide import build_guide
     from esp_atlas_core.index_build import build_index
@@ -93,6 +101,7 @@ def _run_direct(golden):
 
     import tempfile
 
+    results = []
     with tempfile.TemporaryDirectory() as tmp:
         db_path = Path(tmp) / "esp-atlas.db"
         build_index(db_path=db_path)
@@ -101,13 +110,13 @@ def _run_direct(golden):
         def board_exists(board_id):
             return get_part(board_id, db_path=db_path) is not None
 
-        results = []
         for entry in golden:
             try:
                 result = build_guide(entry["query"], llm_client=client, db_path=db_path)
-                results.append((entry, result, board_exists, None))
+                reasons = _check(entry, result, board_exists)
             except Exception as exc:
-                results.append((entry, {}, board_exists, str(exc)))
+                reasons = [f"error: {exc}"]
+            results.append((entry, reasons))
     return results
 
 
@@ -128,13 +137,8 @@ def main():
 
     passed = 0
     failures_by_query = []
-    for entry, parsed, board_exists, error in results:
-        if error is not None:
-            status = "FAIL"
-            reasons = [f"error: {error}"]
-        else:
-            reasons = _check(entry, parsed, board_exists)
-            status = "PASS" if not reasons else "FAIL"
+    for entry, reasons in results:
+        status = "PASS" if not reasons else "FAIL"
 
         if status == "PASS":
             passed += 1
