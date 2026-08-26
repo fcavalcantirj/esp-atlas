@@ -318,35 +318,37 @@ def test_io_heavy_supplements_from_the_deterministic_fallback_when_no_recipe_boa
     built_db_path,
 ):
     """The general SPEC-io-power.md §6 addendum mechanism, independent of the
-    esphome-specific recipe fix above: `meshtastic`'s own recipe graph is
-    entirely lora/wearable/tiny boards, none with a cited GPIO count meeting
-    the goal's channel need (a couple are hard-excluded on their own cited
-    count -- xiao-esp32s3=10, m5stack-cores3=6, both below the goal's 11 --
-    the rest are merely neutral, never disproven, never proven). With no
-    board in the recipe pool CONFIRMED adequate, a confirmed-adequate high-
-    `gpio_free` board from the same deterministic `wizard()` pool
+    esphome-specific recipe fix above: `openmqttgateway`'s own recipe graph is
+    a single board (esp32-c3-devkitm-1) with a cited GPIO count of 10, below
+    the goal's channel need of 11 -- confirmed inadequate, not merely neutral.
+    With no board in the recipe pool CONFIRMED adequate, a confirmed-adequate
+    high-`gpio_free` board from the same deterministic `wizard()` pool
     `_boards_fallback` draws from must supplement the candidate set, so an
     io_heavy goal is never stranded on a firmware whose own recipe graph
-    happens to be pin-poor. (Was `launcher` until BIBLE-PLAN.md A2 batch 1
-    gave `m5stick-s3` a cited `gpio_free: 11` -- exactly the goal's channel
-    need -- making it a genuine CONFIRMED-adequate member of `launcher`'s own
-    recipe graph and retiring `launcher` from this scenario; `meshtastic`
-    still has no confirmed-adequate recipe member.)"""
+    happens to be pin-poor. (Was `launcher` until BIBLE-PLAN.md A2 batch 1 gave
+    `m5stick-s3` a cited `gpio_free: 11` -- exactly the goal's channel need --
+    retiring `launcher` from this scenario; then `meshtastic` until BIBLE-PLAN.md
+    A2 batch 6 gave three Heltec LoRa+display boards (`heltec-wifi-lora-32-v3`
+    gpio_free=18, `heltec-wireless-paper`=14, `heltec-wireless-tracker`=11)
+    cited `gpio_free` counts meeting the goal's channel need, making them
+    genuine CONFIRMED-adequate members of `meshtastic`'s own recipe graph and
+    retiring `meshtastic` from this scenario; `openmqttgateway` still has no
+    confirmed-adequate recipe member.)"""
     from esp_atlas_core.firmware import recipes_for_firmware
 
     llm = _stub(
         {
-            "firmware_id": "meshtastic",
-            "why": "Open-source mesh networking firmware.",
+            "firmware_id": "openmqttgateway",
+            "why": "MQTT gateway bridging BLE/433MHz/IR devices onto the network.",
             "traits": {"wifi": True, "battery": False, "cheap": True, "io_heavy": True},
             "add_ons": [],
         }
     )
     result = build_guide(_IO_HEAVY_QUERY, llm_client=llm, db_path=built_db_path)
 
-    recipe_boards = {r["board"] for r in recipes_for_firmware("meshtastic")}
+    recipe_boards = {r["board"] for r in recipes_for_firmware("openmqttgateway")}
     board_ids = {b["board_id"] for b in result["boards"]}
-    assert board_ids - recipe_boards, "expected a supplemented board outside meshtastic's own recipe graph"
+    assert board_ids - recipe_boards, "expected a supplemented board outside openmqttgateway's own recipe graph"
 
     for board in result["boards"]:
         record = get_part(board["board_id"], db_path=built_db_path)
