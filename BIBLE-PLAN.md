@@ -20,12 +20,18 @@
 
 ## Phase A — Foundation: completeness + reliability (feeds everything)
 
-- [ ] **A1 — Deterministic-first classification** *(code · reliability)*
+- [~] **A1 — Deterministic-first classification** *(code · reliability)*
   The `io_heavy` / `clarify confidence:0.0` LLM gates are unreliable (the bug we
   just fixed was a symptom). Set `io_heavy` deterministically when the query names
   ≥2 independent output groups (reuse `_channel_count`), LLM only as a tiebreak;
   same pattern for clarify. *Verify:* golden asserting the 4+4 query is io_heavy
   with a NO-op/False stub LLM.
+  - [x] `io_heavy` half done: `_deterministic_io_heavy()` (`build_guide.py`) ORs a
+    code-computed signal onto Groq's boolean, never lets the model pull a
+    deterministically io_heavy goal back to False. Golden + unit-table
+    coverage in `test_build_guide.py`; SPEC-io-power.md §6.2 addendum.
+  - [ ] `clarify confidence:0.0` half NOT done — separate task, own SPEC-clarify.md
+    surface, out of scope for this pass.
 
 - [ ] **A2 — io coverage wide** *(data · oracle-loop population)*
   Fill `io.gpio_free` / `gpio_exposed` / `power_out` across all 78 boards

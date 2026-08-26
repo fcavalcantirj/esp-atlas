@@ -253,6 +253,33 @@ recipe graph has no devkit recipe at all) drives the general
 supplement-from-fallback mechanism directly, independent of the esphome-
 specific recipe fix, so both fixes have real, isolated coverage.
 
+### 6.2 Addendum (2026-08-26) — `io_heavy` is deterministic-first (BIBLE-PLAN.md A1)
+
+Everything in §6 already assumed a correct `io_heavy` boolean; it didn't say
+where that boolean had to come from, and until now it came solely from Groq.
+That is a reliability gap on its own: Groq unreliably returns `io_heavy: false`
+for goals that obviously need it — the exact symptom behind the §6.1 prod bug.
+A boolean that the exclusion depends on for correctness should not depend on
+an LLM's mood for a goal as explicit as *"4 LED strips and 4 fans."*
+
+`build_guide.py` now computes `io_heavy` deterministic-first: `_deterministic_io_heavy(query)`
+reuses `_CHANNEL_NOUN_RE` (the same regex `_channel_count` sums) to look at
+each matched output group individually rather than only their total. It is
+`True` when the goal names **>=2 independent multi-count output groups**
+(e.g. "4 LED strips" AND "4 fans" — two groups, each counted >1) or **a
+single explicit group of >=4 channels** ("4 fans" alone). `build_guide()` ORs
+this onto Groq's own `io_heavy` boolean — `traits["io_heavy"] = traits.get("io_heavy",
+False) or _deterministic_io_heavy(query)` — so Groq can still flag `io_heavy`
+True for phrasings the regex misses (a tiebreak), but can never pull a
+deterministically io_heavy goal back to `False`. The model still only ever
+proposes a boolean; it is never the sole source of one.
+
+A single-peripheral goal ("a plant monitor", "1 LED strip") stays `False`
+under this predicate — one group, count of 1, doesn't cross either
+threshold — so this changes nothing for the common non-io_heavy case, only
+closes the reliability gap for goals that were always supposed to be
+io_heavy.
+
 ## 7. The whole experience — this steps up all three lanes, not just /build
 
 **7.1 `/ask` (the Groq answer steps up).** Today Groq can't answer "can an
