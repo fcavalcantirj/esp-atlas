@@ -8,6 +8,7 @@ import SourcesList from "@/components/part/SourcesList";
 import SpecGroups from "@/components/part/SpecGroups";
 import type { RecipeRow } from "@/components/RecipeGroupList";
 import TrackedLink from "@/components/TrackedLink";
+import VerifyBoard from "@/components/verify/VerifyBoard";
 import type { PartDetail } from "@/lib/api";
 import { asStringArray } from "@/lib/frontmatter";
 import { editSourceUrl, newIssueUrl, viewSourceUrl } from "@/lib/github";
@@ -40,6 +41,9 @@ export default function PartDetailView({
         <PartBody body={part.body} />
         <SpecGroups part={part} />
         {part.type === "board" && boardFirmwareRows !== null && <BoardFirmware rows={boardFirmwareRows} />}
+        {part.type === "board" && (
+          <VerifyBoard boardName={part.name} board={{ soc: part.soc_ref, flashMb: part.flash_mb, psramMb: part.psram_mb }} />
+        )}
         {isHub && <SocHub part={part} />}
         {notes.length > 0 && (
           <section aria-label="Notes">

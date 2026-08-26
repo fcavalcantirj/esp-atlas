@@ -7,6 +7,7 @@ import SiteHeader from "@/components/SiteHeader";
 import { FONT_SCALE_KEY, GA_ID, OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 import "./globals.css";
 import "./flash-wizard.css";
+import "./verify.css";
 
 // Language is set in a high-contrast serif; data is set in mono. Two voices only.
 const newsreader = Newsreader({

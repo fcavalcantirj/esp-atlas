@@ -1,0 +1,130 @@
+"use client";
+
+import { useState, useSyncExternalStore } from "react";
+import HelpTip from "@/components/HelpTip";
+import SerialMonitor from "@/components/verify/SerialMonitor";
+import VerdictBadge from "@/components/verify/VerdictBadge";
+import { track } from "@/lib/analytics";
+import { matchBoard, type BoardRecord, type VerifyResult } from "@/lib/verify-board";
+import { detectChip } from "@/lib/verify-serial";
+
+// The debug rail (SPEC-verify.md): Rail A here, Rail B in SerialMonitor.
+// Both are click-gated — nothing connects to the port until the human asks,
+// same consent pattern as the Flash Wizard's FlashAction.
+
+type Phase = { kind: "idle" } | { kind: "connecting" } | { kind: "result"; result: VerifyResult } | { kind: "error"; message: string };
+
+interface VerifyBoardProps {
+  boardName: string;
+  board: BoardRecord;
+}
+
+// Server snapshot is always false so SSR/first-client-render stay identical;
+// the real value only appears once the client subscribes, same pattern as
+// HeaderControls' useMounted (avoids a setState-in-effect hydration hack).
+function useSerialSupported(): boolean {
+  return useSyncExternalStore(
+    () => () => {},
+    () => "serial" in navigator,
+    () => false,
+  );
+}
+
+export default function VerifyBoard({ boardName, board }: VerifyBoardProps) {
+  const [phase, setPhase] = useState<Phase>({ kind: "idle" });
+  const supported = useSerialSupported();
+
+  async function verify() {
+    if (!("serial" in navigator)) {
+      setPhase({ kind: "error", message: "In-browser verify needs Web Serial: Chrome or Edge on a desktop." });
+      return;
+    }
+    setPhase({ kind: "connecting" });
+    let port: SerialPort;
+    try {
+      port = await navigator.serial.requestPort();
+    } catch {
+      setPhase({ kind: "idle" }); // user dismissed the picker — not an error
+      return;
+    }
+    try {
+      track("verify_connect", { board: boardName });
+      const detected = await detectChip(port);
+      const result = matchBoard(detected, board);
+      track("verify_result", { board: boardName, overall: result.overall });
+      setPhase({ kind: "result", result });
+    } catch (err) {
+      track("verify_error", { board: boardName });
+      setPhase({
+        kind: "error",
+        message: err instanceof Error ? err.message : "Could not read the chip — check the connection and try again.",
+      });
+    }
+  }
+
+  return (
+    <section className="verify-board" aria-labelledby="verify-board">
+      <h2 id="verify-board">Verify my board</h2>
+      <p className="muted verify-intro">
+        Reads the connected chip over USB and checks it against what esp-atlas cites for {boardName} — over Web Serial, no backend, nothing
+        leaves your browser.
+      </p>
+
+      {supported === false ? (
+        <p className="verify-unsupported">
+          In-browser verify needs Web Serial: Chrome or Edge on a desktop. Safari, Firefox and phones cannot do it.
+        </p>
+      ) : (
+        <div className="verify-panel">
+          <button type="button" className="btn btn--sm" onClick={() => void verify()} disabled={phase.kind === "connecting"}>
+            {phase.kind === "connecting" ? "Connecting…" : "Verify my board"}
+          </button>
+
+          {phase.kind === "error" && <p className="verify-error">{phase.message}</p>}
+
+          {phase.kind === "result" && (
+            <>
+              <table className="verify-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Field</th>
+                    <th scope="col">Chip says</th>
+                    <th scope="col">esp-atlas cites</th>
+                    <th scope="col">Verdict</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {phase.result.fields.map((f) => (
+                    <tr key={f.name}>
+                      <th scope="row">{f.name}</th>
+                      <td className="mono">{f.detected}</td>
+                      <td className="mono">{f.cited}</td>
+                      <td>
+                        <VerdictBadge verdict={f.verdict} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {phase.result.mac && (
+                <p className="muted verify-mac">
+                  MAC address: <span className="mono">{phase.result.mac}</span> — informational only, esp-atlas cites no per-unit MAC to
+                  check it against.
+                </p>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      <h3 className="verify-monitor-heading">
+        Serial monitor
+        <HelpTip
+          field="serial_monitor"
+          text="Streams whatever the firmware prints to UART, live, once the port is open — the plain 'watch it boot' debug loop."
+        />
+      </h3>
+      <SerialMonitor />
+    </section>
+  );
+}
