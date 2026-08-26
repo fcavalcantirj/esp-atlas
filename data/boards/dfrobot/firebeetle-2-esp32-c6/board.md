@@ -18,12 +18,23 @@ power:
   charging: true
 io:
   gpio_exposed: 19
+  gpio_free: 16
 notes:
 - 4 MB flash
 - Supports 5 V solar panel charging via CN3165 MPPT chip, max 0.5 A
 - GDI display connector onboard
 - ESP32-C6 has no PSRAM interface at all (chip datasheet lists no PSRAM/external-RAM support)
 - 'io.gpio_exposed=19 QUOTED: vendor page states "Digital I/O: x19"'
+- 'io.gpio_free=16 DERIVED (SPEC-io-power.md §5.3): the vendor page has no text
+  pin table, so the 19 exposed GPIOs are identified from the official schematic
+  netlist (P1/P2 headers plus the GDI FPC connector, which shares the same nets):
+  {1,2,3,4,5,6,7,8,9,14,15,16,17,18,19,20,21,22,23} -- 19 unique GPIOs, matching
+  the vendor count exactly. Subtracting esp32-c6''s soc.reserved_pins that are exposed
+  -- strapping {8,9,15}: all 3 present; usb_flash_tied {12,13}: 0 present (native
+  USB pins are not broken out) -- gives 19 - 3 = 16. GDI-shared pins (IO14/IO15,
+  display backlight/reset) are not additionally subtracted since GDI is an optional
+  plug-in connector, not a permanently populated display. Math not vendor-stated;
+  verify before treating as exact.'
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr1075/
@@ -33,6 +44,9 @@ sources:
   verified: '2026-08-24'
 - field: io.gpio_exposed
   url: https://wiki.dfrobot.com/dfr1075/
+  verified: '2026-08-26'
+- field: io.gpio_free
+  url: https://dfimg.dfrobot.com/wiki/20576/DFR1075_firebeetle-esp32-c6-microcontroller_schematics_v1.zip
   verified: '2026-08-26'
 ---
 
