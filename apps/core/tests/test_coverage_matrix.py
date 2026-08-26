@@ -117,6 +117,43 @@ RUN_MATRIX = [
         fw="m5stick-nemo",
         requires_superset={"wifi", "ble", "ir"},
     ),
+    dict(
+        id="11_xiaozhi-esp32",
+        fw="xiaozhi-esp32",
+        requires_exact={"wifi"},
+        boards_exact={"m5stack-cores3"},
+    ),
+    dict(
+        id="12_tasmota",
+        fw="tasmota",
+        requires_exact={"wifi"},
+        not_required_exact={"display"},
+        boards_exact={"esp32-devkitc-v4"},
+    ),
+    dict(
+        id="13_esp32-bit-pirate",
+        fw="esp32-bit-pirate",
+        requires_exact={"wifi"},
+        boards_exact={"m5cardputer"},
+    ),
+    dict(
+        id="14_openmqttgateway",
+        fw="openmqttgateway",
+        requires_exact={"wifi", "ble"},
+        boards_exact={"esp32-c3-devkitm-1"},
+    ),
+    dict(
+        id="15_usbarmyknife",
+        fw="usbarmyknife",
+        requires_exact={"native-usb"},
+        boards_exact={"lilygo-t-dongle-s3"},
+    ),
+    dict(
+        id="16_nerdminer-v2",
+        fw="nerdminer-v2",
+        requires_exact={"wifi", "display"},
+        boards_exact={"m5stick-cplus2"},
+    ),
 ]
 
 
@@ -239,27 +276,27 @@ class _FilterStub:
 
 
 BUILD_MATRIX = [
-    dict(id="11_wifi6", query="a wifi 6 board", filters={"radio": "wifi-6"}, expect={"radio": "wifi-6"}),
+    dict(id="17_wifi6", query="a wifi 6 board", filters={"radio": "wifi-6"}, expect={"radio": "wifi-6"}),
     dict(
-        id="12_thread_zigbee_matter",
+        id="18_thread_zigbee_matter",
         query="thread zigbee matter smart-home mesh",
         filters={"ieee802154": True},
         expect={"ieee802154": True},
     ),
     dict(
-        id="13_s3_8mb_psram",
+        id="19_s3_8mb_psram",
         query="esp32-s3 board with 8mb psram",
         filters={"soc": "esp32-s3", "psram_min": 8},
         expect={"soc": "esp32-s3", "psram_min": 8},
     ),
     dict(
-        id="14_battery_wearable",
+        id="20_battery_wearable",
         query="a battery powered wearable",
         filters={"battery": True},
         expect={"battery": True},
     ),
     dict(
-        id="15_c6_native_usb",
+        id="21_c6_native_usb",
         query="esp32-c6 with native usb",
         filters={"soc": "esp32-c6", "usb_native": True},
         expect={"soc": "esp32-c6", "usb_native": True},

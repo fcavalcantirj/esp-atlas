@@ -34,16 +34,22 @@ retrieval, validation, and fallback logic.
 | 8 | `infiltra` | requires ⊇ {wifi, ble, sub-ghz} |
 | 9 | `m5-crystal` | requires ⊇ {wifi, ble, rfid-nfc, ir} |
 | 10 | `m5stick-nemo` | requires ⊇ {wifi, ble, ir} |
+| 11 | `xiaozhi-esp32` | requires = {wifi}; boards = {`m5stack-cores3`} |
+| 12 | `tasmota` | requires = {wifi}; not_required = {display}; boards = {`esp32-devkitc-v4`} |
+| 13 | `esp32-bit-pirate` | requires = {wifi}; boards = {`m5cardputer`} |
+| 14 | `openmqttgateway` | requires = {wifi, ble}; boards = {`esp32-c3-devkitm-1`} |
+| 15 | `usbarmyknife` | requires = {native-usb}; boards = {`lilygo-t-dongle-s3`} |
+| 16 | `nerdminer-v2` | requires = {wifi, display}; boards = {`m5stick-cplus2`} |
 
 ## BUILD/intent cases (`parse_intent(query)`)
 
 | # | Query | Mapped filters asserted |
 |---|-------|--------------------------|
-| 11 | "a wifi 6 board" | `filters.radio == "wifi-6"` |
-| 12 | "thread zigbee matter smart-home mesh" | `filters.ieee802154 == true` |
-| 13 | "esp32-s3 board with 8mb psram" | `filters.psram_min == 8` and `filters.soc == "esp32-s3"` |
-| 14 | "a battery powered wearable" | `filters.battery == true` |
-| 15 | "esp32-c6 with native usb" | `filters.soc == "esp32-c6"` and `filters.usb_native == true` |
+| 17 | "a wifi 6 board" | `filters.radio == "wifi-6"` |
+| 18 | "thread zigbee matter smart-home mesh" | `filters.ieee802154 == true` |
+| 19 | "esp32-s3 board with 8mb psram" | `filters.psram_min == 8` and `filters.soc == "esp32-s3"` |
+| 20 | "a battery powered wearable" | `filters.battery == true` |
+| 21 | "esp32-c6 with native usb" | `filters.soc == "esp32-c6"` and `filters.usb_native == true` |
 
 These five inject a stub LLM that returns the on-target filter mapping (the
 NL→filters judgment call is a model call, not a deterministic function) and
