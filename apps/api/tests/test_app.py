@@ -637,6 +637,57 @@ def test_build_empty_query_is_422(client):
     assert r.status_code == 422
 
 
+# --- /clarify (confidence-gated clarification) -------------------------------
+
+
+def test_clarify_run_marauder_is_confident_with_no_questions(client):
+    r = client.post("/clarify", json={"query": "run marauder"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["confident"] is True
+    assert body["confidence"] == 1.0
+    assert body["questions"] == []
+
+
+def test_clarify_plant_health_monitor_returns_grounded_questions(built_db_path):
+    payload = {"filters": {"type": "board"}, "unmapped": ["plant health monitor"]}
+    client = _client_with_llm(built_db_path, payload)
+    with client:
+        r = client.post("/clarify", json={"query": "build a plant health monitor"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["confident"] is False
+    assert 1 <= len(body["questions"]) <= 3
+    for question in body["questions"]:
+        assert question["id"]
+        assert question["prompt"]
+        assert question["options"]
+        for option in question["options"]:
+            assert option["label"]
+            assert isinstance(option["needs"], dict)
+
+
+def test_clarify_answers_fold_in_and_can_become_confident(built_db_path):
+    payload = {"filters": {"type": "board"}, "unmapped": ["plant health monitor"]}
+    client = _client_with_llm(built_db_path, payload)
+    with client:
+        r = client.post(
+            "/clarify",
+            json={"query": "build a plant health monitor", "answers": {"target": "ha", "power": "battery"}},
+        )
+    assert r.status_code == 200
+    body = r.json()
+    assert body["confident"] is True
+    assert body["questions"] == []
+    assert body["answered_context"]["needs"] == {"radio": "wifi-4", "battery": True}
+    assert body["answered_context"]["firmware_hint"] == "esphome"
+
+
+def test_clarify_empty_query_is_422(client):
+    r = client.post("/clarify", json={"query": ""})
+    assert r.status_code == 422
+
+
 def test_examples_endpoint_returns_resolvable_entries(client):
     r = client.get("/examples")
     assert r.status_code == 200

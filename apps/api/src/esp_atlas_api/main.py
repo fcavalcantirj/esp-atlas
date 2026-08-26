@@ -14,6 +14,7 @@ from fastapi.responses import StreamingResponse
 
 from esp_atlas_core import db as dbmod
 from esp_atlas_core.build_guide import build_guide as core_build_guide
+from esp_atlas_core.clarify import clarify as core_clarify
 from esp_atlas_core.intent import parse_intent as core_parse_intent
 from esp_atlas_core.llm import GroqConfigError, GroqRateLimitError
 from esp_atlas_core.flash import MAX_REDIRECT_HOPS
@@ -40,6 +41,8 @@ from esp_atlas_api.models import (
     BrandPageResponse,
     BuildGuideRequest,
     BuildGuideResponse,
+    ClarifyRequest,
+    ClarifyResponse,
     IntentRequest,
     IntentResponse,
     ExamplesResponse,
@@ -312,6 +315,17 @@ def create_app(db_path=None, llm_client=None):
         than ever raising, so this route needs no exception handling.
         """
         return core_build_guide(payload.query, llm_client=llm_client, db_path=db_path)
+
+    @app.post("/clarify", response_model=ClarifyResponse)
+    def clarify(payload: ClarifyRequest, db_path=Depends(get_db_path), llm_client=Depends(get_llm_client)):
+        """Confidence-gated clarification (SPEC-clarify.md): a deterministic
+        gate over parse_intent()'s own output either answers directly
+        (confident=True, no questions) or returns 1-3 grounded questions from
+        a fixed catalog. Always 200 -- the gate is pure code, and question
+        selection degrades to a deterministic default order rather than ever
+        raising when Groq is down/rate-limited/garbage.
+        """
+        return core_clarify(payload.query, answers=payload.answers, llm_client=llm_client, db_path=db_path)
 
     @app.get("/facets", response_model=FacetsResponse)
     def facets(db_path=Depends(get_db_path)):

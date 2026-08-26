@@ -271,6 +271,91 @@ def test_no_duplicate_boards_recommended(built_db_path):
 # --- 7. Never touches the model for firmware selection when it's told null --
 
 
+# --- 8. answered_context (esp_atlas_core.clarify, SPEC-clarify.md §6) ------
+
+
+def test_answered_context_firmware_hint_overrides_the_llm_pick(built_db_path):
+    """A clarify()-shaped answered_context's firmware_hint anchors the answer
+    even when the LLM (or fallback) picked something else entirely."""
+    llm = _stub(
+        {
+            "firmware_id": "wled",
+            "why": "a guess unrelated to the clarified answer",
+            "traits": {"wifi": True, "battery": False, "cheap": True},
+            "add_ons": [],
+        }
+    )
+    result = build_guide(
+        "build a plant health monitor",
+        llm_client=llm,
+        db_path=built_db_path,
+        answered_context={"needs": {"radio": "wifi-4"}, "firmware_hint": "esphome"},
+    )
+    assert result["firmware"]["id"] == "esphome"
+    assert result["boards"]
+
+
+def test_answered_context_battery_need_surfaces_a_battery_capable_board(built_db_path):
+    llm = _stub(
+        {
+            "firmware_id": "esphome",
+            "why": "ok",
+            "traits": {"wifi": True, "battery": False, "cheap": True},
+            "add_ons": [],
+        }
+    )
+    result = build_guide(
+        "build a plant health monitor",
+        llm_client=llm,
+        db_path=built_db_path,
+        answered_context={"needs": {"battery": True}, "firmware_hint": None},
+    )
+    boards = result["boards"]
+    assert boards
+    top = get_part(boards[0]["board_id"], db_path=built_db_path)
+    assert ((top.get("frontmatter") or {}).get("power") or {}).get("battery_connector") is True
+
+
+def test_answered_context_with_an_invented_firmware_hint_is_ignored(built_db_path):
+    """A firmware_hint outside the real catalog must never surface -- same
+    grounding rule as the LLM's own firmware_id (see test 4 above)."""
+    llm = _stub(
+        {
+            "firmware_id": None,
+            "why": "nothing fits",
+            "traits": {"wifi": True, "battery": False, "cheap": True},
+            "add_ons": [],
+        }
+    )
+    result = build_guide(
+        "build a plant health monitor",
+        llm_client=llm,
+        db_path=built_db_path,
+        answered_context={"needs": {}, "firmware_hint": "totally-invented-firmware-xyz"},
+    )
+    assert result["firmware"] is None
+    assert result["boards"]
+
+
+def test_answered_context_none_is_a_no_op(built_db_path):
+    """Default None must reproduce the exact same answer as omitting the
+    argument entirely -- every existing call site (POST /build) is unaffected."""
+    llm_a = _stub(
+        {
+            "firmware_id": "esphome",
+            "why": "ok",
+            "traits": {"wifi": True, "battery": False, "cheap": True},
+            "add_ons": [],
+        }
+    )
+    llm_b = _stub(llm_a.payload)
+    without = build_guide("build a plant health monitor", llm_client=llm_a, db_path=built_db_path)
+    with_none = build_guide(
+        "build a plant health monitor", llm_client=llm_b, db_path=built_db_path, answered_context=None
+    )
+    assert without == with_none
+
+
 def test_firmware_null_from_llm_produces_wifi_boards_from_the_full_catalog(built_db_path):
     llm = _stub(
         {

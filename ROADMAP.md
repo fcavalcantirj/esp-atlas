@@ -2,6 +2,36 @@
 
 ## Shipped
 
+### Clarify — confidence-gated clarification (backend + API only)
+
+`SPEC-clarify.md`: `parse_intent`/`build_guide` always answer immediately,
+even off a vague goal ("build a plant health monitor") or a single weak spec
+("cheap"). `esp_atlas_core.clarify.clarify(query, answers=None)` adds a gate
+in front: a DETERMINISTIC function of `parse_intent`'s own `kind`/`filters`
+(never an LLM-reported confidence number) decides whether to answer outright
+or return 1-3 grounded clarifying questions drawn from a fixed, code-defined
+dimension catalog (`power`/`environment`/`target`/`interaction`/`budget` —
+Groq may only select and order which ids to ask, never author a prompt,
+option, or `needs` value). A follow-up call with the user's answers folds
+them into `answered_context` and re-evaluates — enough answered dimensions
+can cross the confidence line even starting from an "unmapped" goal.
+`build_guide()` gained an optional `answered_context` argument that anchors
+its firmware pick and board traits on that folded context (e.g. answering
+"Home Assistant" + "battery-powered" forces `esphome` and surfaces a
+battery-capable board), with `POST /build` itself left unchanged. New
+`POST /clarify` endpoint (`GET /intent`/`POST /build`/`GET /run` untouched).
+Same grounding discipline as `build_guide`/`run_guide` throughout: a
+hallucinated dimension id or firmware hint is rejected outright, and a
+down/rate-limited/garbage model degrades to a deterministic default question
+order rather than ever raising. Unit-tested with a fake LLM
+(`apps/core/tests/test_clarify.py`); a live-Groq golden matrix for question
+selection (`apps/core/tests/data/clarify_golden.py`, `make clarify-oracle`)
+is on-demand, not CI-blocking, same pattern as the other oracles.
+**Backend + API only** — no web/UI wiring yet; that is future work (the UI
+would call `clarify()` from a wizard-style flow and pass its
+`answered_context` into `build_guide()`, but nothing in `apps/web` changed
+here).
+
 ### Build guide — a grounded answer for "build a plant health monitor"
 
 `SPEC-build-guide.md`: `POST /intent` correctly calls a goal like "build a

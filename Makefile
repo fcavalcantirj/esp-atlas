@@ -1,4 +1,4 @@
-.PHONY: coverage validate inference-oracle build-guide-oracle
+.PHONY: coverage validate inference-oracle build-guide-oracle clarify-oracle
 
 # Re-runnable evidence that run_guide/parse_intent stay grounded across
 # diverse ESP32 kinds/purposes -- see docs/coverage-matrix.md and
@@ -21,3 +21,9 @@ inference-oracle:
 # project->firmware picks -- see apps/core/tests/data/build_guide_golden.py.
 build-guide-oracle:
 	python3 scripts/build_guide_oracle.py
+
+# ON-DEMAND, not CI: same idea as inference-oracle/build-guide-oracle, for
+# clarify()'s question-selection picks -- see
+# apps/core/tests/data/clarify_golden.py.
+clarify-oracle:
+	python3 scripts/clarify_oracle.py
