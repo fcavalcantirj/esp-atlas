@@ -16,7 +16,7 @@ import json
 
 import pytest
 
-from esp_atlas_core.build_guide import build_guide
+from esp_atlas_core.build_guide import _deterministic_io_heavy, build_guide
 from esp_atlas_core.firmware import list_firmware
 from esp_atlas_core.llm import GroqConfigError, GroqRateLimitError
 from esp_atlas_core.search import get_part
@@ -264,8 +264,12 @@ def test_io_heavy_excludes_pin_poor_board_ranked_on_its_own_cited_count(built_db
     board_ids = {b["board_id"] for b in result["boards"]}
     assert "m5atoms3-lite" not in board_ids
 
-    # confirm the exclusion -- not a coincidence of ranking -- by proving the
-    # SAME query without io_heavy set puts m5atoms3-lite right back on top.
+    # confirm the exclusion -- not a coincidence of ranking -- by proving that
+    # a genuinely non-io_heavy goal (no output groups at all, so the A1
+    # deterministic signal stays False too) puts m5atoms3-lite right back on
+    # top. Reusing _IO_HEAVY_QUERY here would no longer prove anything: as of
+    # BIBLE-PLAN.md A1 that exact query is DETERMINISTICALLY io_heavy no
+    # matter what the stub says (see the A1 section below).
     baseline_llm = _stub(
         {
             "firmware_id": "esphome",
@@ -274,7 +278,7 @@ def test_io_heavy_excludes_pin_poor_board_ranked_on_its_own_cited_count(built_db
             "add_ons": [],
         }
     )
-    baseline = build_guide(_IO_HEAVY_QUERY, llm_client=baseline_llm, db_path=built_db_path)
+    baseline = build_guide("a plant health monitor", llm_client=baseline_llm, db_path=built_db_path)
     assert baseline["boards"][0]["board_id"] == "m5atoms3-lite"
 
 
@@ -369,6 +373,75 @@ def test_io_heavy_never_excludes_a_board_with_no_cited_io_data(built_db_path):
             continue  # no cited count -- correctly kept despite io_heavy
         known = io.get("gpio_free", io.get("gpio_exposed"))
         assert known >= 11, f"{board['board_id']} has a known count below the channel need and should be excluded"
+
+
+# --- A1: deterministic-first io_heavy classification (BIBLE-PLAN.md A1) -----
+# io_heavy must never depend solely on Groq's boolean -- the prod bug
+# SPEC-io-power.md §1 documents was exactly Groq unreliably returning false
+# for a goal that obviously needed it. The deterministic signal is OR'd with
+# Groq's boolean and can never be pulled back to False by the model.
+
+
+@pytest.mark.parametrize(
+    "query, expected",
+    [
+        ("build a plant health monitor", False),
+        ("a plant monitor", False),
+        ("1 LED strip", False),
+        ("a scrolling LED sign", False),
+        ("off-grid text messaging", False),
+        ("3 relays", False),
+        ("1 relay and 1 servo", False),
+        ("4 LED strips", True),
+        ("4 LED strips + 4 fans + sensors + UART data going in and out", True),
+        ("2 fans and 2 motors", True),
+        ("2 relays and 3 servos", True),
+    ],
+)
+def test_deterministic_io_heavy_predicate_table(query, expected):
+    assert _deterministic_io_heavy(query) is expected
+
+
+def test_io_heavy_fires_deterministically_even_when_the_llm_says_false(built_db_path):
+    """Same exclusion/surfacing assertions as the io_heavy goldens above, but
+    with the LLM explicitly stubbed io_heavy=False -- proving the DETERMINISTIC
+    signal alone (not Groq's boolean) drives the exclusion and the
+    full-header-devkit surfacing."""
+    llm = _stub(
+        {
+            "firmware_id": "esphome",
+            "why": "Reads sensors and reports over Wi-Fi.",
+            "traits": {"wifi": True, "battery": False, "cheap": True, "io_heavy": False},
+            "add_ons": [],
+        }
+    )
+    result = build_guide(_IO_HEAVY_QUERY, llm_client=llm, db_path=built_db_path)
+
+    board_ids = {b["board_id"] for b in result["boards"]}
+    for excluded in {"m5atoms3-lite", "m5nanoc6", "m5stack-core2", "m5stack-cores3", "m5dial"}:
+        assert excluded not in board_ids, f"{excluded} should be excluded by the deterministic signal alone"
+
+    devkits = [b for b in result["boards"] if b["board_id"] in _FULL_HEADER_DEVKITS]
+    assert devkits, f"expected a full-header devkit even with a false-stubbed LLM, got {sorted(board_ids)}"
+    assert "usable GPIO" in devkits[0]["why"]
+
+
+def test_single_peripheral_goal_is_not_treated_io_heavy_despite_a_false_stub(built_db_path):
+    """A single-peripheral goal must never be spuriously excluded -- confirms
+    the deterministic signal is not a blanket True, using the exact goal
+    BIBLE-PLAN.md A1 names."""
+    llm = _stub(
+        {
+            "firmware_id": "esphome",
+            "why": "Reads sensors and reports to Home Assistant over Wi-Fi.",
+            "traits": {"wifi": True, "battery": False, "cheap": True, "io_heavy": False},
+            "add_ons": ["soil-moisture sensor"],
+        }
+    )
+    result = build_guide("build a plant health monitor", llm_client=llm, db_path=built_db_path)
+    assert result["boards"], "must still recommend real boards"
+    board_ids = {b["board_id"] for b in result["boards"]}
+    assert "m5atoms3-lite" in board_ids, "a single-peripheral goal must not spuriously exclude a pin-poor board"
 
 
 # --- 6. Board recommendation is capped and real ------------------------------
