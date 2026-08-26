@@ -8,7 +8,7 @@
     { "id": "espressif-products", "url": "https://www.espressif.com/en/products/socs", "kind": "vendor-products", "note": "SoC/datasheet reference pages (rare drift, monthly)" },
     { "id": "espressif-datasheets", "url": "https://documentation.espressif.com/", "kind": "soc-datasheet", "note": "Per-SoC datasheet PDFs — DC-Characteristics table is the ONLY citable source for soc.drive (per-pad GPIO source/sink mA); see SPEC-io-power.md §3/§5.1" },
     { "id": "m5stack-docs", "url": "https://docs.m5stack.com/en/products", "kind": "vendor-spec-docs", "note": "M5Stack per-board spec pages — source for board.io (gpio_exposed 'IO ×N + pin list') and power_out.rail_ma_max ('Grove/rail max output current'); INCONSISTENTLY published, cite-or-omit per SPEC-io-power.md §3/§5.2" },
-    { "id": "espressif-hw-design-guidelines", "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/", "kind": "soc-hardware-guidelines", "note": "Per-SoC (dropdown) schematic-checklist — strapping pins + IO MUX pin-function table as machine-readable text ('GPIO8/9/25 are strapping pins'). OFFICIAL source for soc.reserved_pins (the gpio_free subtraction rules); see SPEC-io-power.md §3/§5.3" }
+    { "id": "espressif-hw-design-guidelines", "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/", "kind": "soc-hardware-guidelines", "note": "Per-SoC (dropdown) schematic-checklist — strapping pins + IO MUX pin-function table as machine-readable text ('GPIO8/9/25 are strapping pins'). OFFICIAL source for soc.reserved_pins (the gpio_free subtraction rules); see SPEC-io-power.md §3/§5.3. URL pattern per SoC: .../esp-hardware-design-guidelines/en/latest/<socslug>/schematic-checklist.html (socslug = esp32, esp32c3, esp32c61, esp32s3, esp32s31, …)" }
   ],
   "firmware_releases": [
     { "id": "bruce", "url": "https://github.com/pr3y/Bruce/releases", "kind": "github-releases", "note": "Pentest multitool" },
@@ -18,12 +18,16 @@
     { "id": "esp32marauder", "url": "https://github.com/justcallmekoko/ESP32Marauder/releases", "kind": "github-releases", "note": "Wi-Fi/BT recon" },
     { "id": "launcher", "url": "https://github.com/bmorcelli/Launcher/releases", "kind": "github-releases", "note": "Board-named .bin assets → release-bin recipes" },
     { "id": "periscope-os", "url": "https://github.com/M5RogueOps/Periscope-OS", "kind": "github-releases", "note": "M5RogueOps Periscope-OS — firmware/recipes candidate" },
-    { "id": "esp-claw", "url": "https://github.com/espressif/esp-claw", "kind": "github-releases", "note": "Espressif esp-claw — official project, firmware/recipes candidate" }
+    { "id": "esp-claw", "url": "https://github.com/espressif/esp-claw", "kind": "github-releases", "note": "Espressif esp-claw — official project, firmware/recipes candidate" },
+    { "id": "tasmota", "url": "https://github.com/arendst/Tasmota/releases", "kind": "github-releases", "note": "ESP32/ESP8266 device firmware (MQTT/Home Assistant, huge install base)" },
+    { "id": "openmqttgateway", "url": "https://github.com/1technophile/OpenMQTTGateway/releases", "kind": "github-releases", "note": "ESP32 multi-radio↔MQTT/HA gateway (BLE, 433MHz, IR, LoRa)" },
+    { "id": "esp-miner", "url": "https://github.com/skot/ESP-Miner/releases", "kind": "github-releases", "note": "Bitaxe ESP32-S3 open-source Bitcoin miner firmware" }
   ],
   "community_signal": [
     { "id": "awesome-esp32", "url": "https://github.com/agucova/awesome-esp", "kind": "awesome-list", "note": "Curated firehose of ESP projects (with-code gate applies)" },
     { "id": "reddit-esp32", "url": "https://www.reddit.com/r/esp32.json", "kind": "reddit-api", "note": "Trending posts that LINK A REPO (with-code gate)" },
     { "id": "hn-esp32", "url": "https://hn.algolia.com/api/v1/search_by_date?query=esp32&tags=story", "kind": "hn-api", "note": "HN stories that link a repo (with-code gate)" },
-    { "id": "github-trending-esp32", "url": "https://api.github.com/search/repositories?q=topic:esp32&sort=updated", "kind": "github-search", "note": "New & rising ESP32 projects" }
+    { "id": "github-trending-esp32", "url": "https://api.github.com/search/repositories?q=topic:esp32&sort=updated", "kind": "github-search", "note": "New & rising ESP32 projects" },
+    { "id": "launcherhub-catalog", "url": "https://api.launcherhub.net/giveMeTheList", "kind": "launcherhub-api", "note": "Launcher/M5Burner community firmware catalog (~2650 entries, ~1487 with a github link). DISCOVERY ONLY — never bulk-ingest (would break the trust bar, SPEC-data-population §1). Each entry carries github+category+esp target; the with-code gate (SPEC-discovery §3) drops the ~44% with no repo and the hobby/one-off noise, surfacing real repo-backed firmware (e.g. geo-tp/esp32-bus-pirate, jaylikesbunda/ghost_esp, 7h30th3r0n3/evil-m5project)." }
   ]
 }

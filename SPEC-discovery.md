@@ -19,6 +19,7 @@ cited, code-backed, and human-merged — never a bot inventing hype.
 | **GitHub trending + releases** | GitHub Search/Releases API | new & rising firmware, projects-with-code |
 | **Reddit r/esp32** | Reddit API (OAuth, rate-limited) | trending posts **that link a repo** |
 | **Hacker News** | HN Firebase API | ESP32 stories **that link a repo** |
+| **Launcher / M5Burner catalog** | `api.launcherhub.net/giveMeTheList` (JSON) | community firmware, each with a `github` + `category` + `esp` target — the with-code gate reads the `github` field directly |
 
 Rate-limit-aware, read-only. **No ToS-violating scraping** (inherited from freshness).
 
@@ -26,6 +27,13 @@ Rate-limit-aware, read-only. **No ToS-violating scraping** (inherited from fresh
 A candidate is admissible **only if it resolves to a real, public repo** (or a
 release `.bin`). No repo → dropped. This is what separates a prompt recipe / cool-
 firmware entry from linkbait: every surfaced item is grounded in runnable code.
+
+> The Launcher/M5Burner adapter is the gate's clearest case: of ~2650 catalog
+> entries only ~1487 carry a `github` value, and much of that is Cardputer/StickC
+> hobby one-offs. The gate keeps only entries whose `github` resolves to a public
+> repo, then normal `status: unverified` + human trust-promotion (§4/§6) applies.
+> **Never bulk-import the catalog** — that would drown the trust bar
+> (`SPEC-data-population §1`). It is a discovery *firehose*, not a source of record.
 
 ## 4. Outputs (what discovery authors)
 1. **firmware** candidate → the existing firmware/recipe flow (owned by wizard/freshness).
