@@ -30,11 +30,14 @@
     already deterministic (LLM only picks question ids), so this is a smarter-default
     concern for its own SPEC-clarify.md pass, not a reliability bug. Tracked, not now.
 
-- [~] **A2 — io coverage wide** *(data · oracle-loop population)*
-  Fill `io.gpio_free` / `gpio_exposed` / `power_out` across all 78 boards
-  (currently 33/78) + `reserved_pins` for `esp32-h4` when a source exists. Derive
-  from official pinouts minus `reserved_pins`, cite-or-omit, human-verify derived.
-  *Verify:* coverage report; pin planner (Phase B) is only as good as this.
+- [x] **A2 — io coverage wide** *(data)* — DONE. `gpio_free` **33→72/78 (92%)**, any-io 75/78.
+  Run as 8 vendor batches (buffer-safe, compact sources) after the all-at-once run hit
+  the 1MB message-buffer crash. 6 honest omits (5 LilyGo display/wearable + sparkfun
+  micromod M.2) — no defensible official pinout, correctly left blank. All cited.
+  *(esp32-h4 reserved_pins still omitted — no official source yet.)*
+
+- [ ] **B moved ahead of A3.** Rationale: io data is now rich enough (72/78) to build
+  the crown jewel; A3 (wider board catalog) is open-ended breadth that doesn't block B.
 
 - [ ] **A3 — board catalog wide** *(data · big, batched)*
   Grow beyond 78 toward the real ESP32 board universe (official Arduino index,
