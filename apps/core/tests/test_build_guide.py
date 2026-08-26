@@ -279,23 +279,72 @@ def test_io_heavy_excludes_pin_poor_board_ranked_on_its_own_cited_count(built_db
 
 
 def test_io_heavy_surfaces_a_full_header_devkit_with_its_gpio_count_in_why(built_db_path):
-    """A full-header devkit (derived `io.gpio_free` well above the ~11-line
-    channel count, SPEC-io-power.md §5.3) must be surfaced, not just an
-    un-excluded pin-poor board -- and its `why` must ground the pick in its
-    own cited GPIO column."""
+    """Drives the REAL recipe path (SPEC-io-power.md §6 addendum): esphome is
+    the firmware Groq actually matches for this exact goal (SPEC-io-power.md
+    §1), and esphome's own recipe graph carries NO full-header devkit -- only
+    pin-poor m5 display/tiny boards. The prior version of this golden stubbed
+    firmware_id="wled" instead, whose recipe graph already ships two
+    full-header devkits, so it passed without ever exercising the
+    supplement-from-fallback path -- the actual prod bug (esphome's recipe
+    pool having no adequate board) was invisible to it. m5atoms3-lite AND the
+    now-cited pin-poor esphome boards (m5nanoc6, m5stack-core2,
+    m5stack-cores3, m5dial) must all be excluded on their own cited/derived
+    GPIO counts, and a full-header devkit must still surface, grounded in its
+    own `gpio_free`."""
     llm = _stub(
         {
-            "firmware_id": "wled",
-            "why": "Drives addressable LED strips from a web UI.",
+            "firmware_id": "esphome",
+            "why": "Reads sensors and reports over Wi-Fi.",
             "traits": {"wifi": True, "battery": False, "cheap": True, "io_heavy": True},
             "add_ons": [],
         }
     )
     result = build_guide(_IO_HEAVY_QUERY, llm_client=llm, db_path=built_db_path)
 
+    board_ids = {b["board_id"] for b in result["boards"]}
+    for excluded in {"m5atoms3-lite", "m5nanoc6", "m5stack-core2", "m5stack-cores3", "m5dial"}:
+        assert excluded not in board_ids, f"{excluded} has a known GPIO count below the goal's channel need"
+
     devkits = [b for b in result["boards"] if b["board_id"] in _FULL_HEADER_DEVKITS]
-    assert devkits, f"expected a full-header devkit in {[b['board_id'] for b in result['boards']]}"
+    assert devkits, f"expected a full-header devkit in {sorted(board_ids)}"
     assert "usable GPIO" in devkits[0]["why"]
+
+
+def test_io_heavy_supplements_from_the_deterministic_fallback_when_no_recipe_board_is_confirmed_adequate(
+    built_db_path,
+):
+    """The general SPEC-io-power.md §6 addendum mechanism, independent of the
+    esphome-specific recipe fix above: `launcher`'s own recipe graph is
+    entirely m5/lilygo display and tiny boards, none with a cited GPIO count
+    meeting the goal's channel need (a couple are hard-excluded on their own
+    cited count; the rest are merely neutral -- never disproven, never
+    proven). With no board in the recipe pool CONFIRMED adequate, a
+    confirmed-adequate high-`gpio_free` board from the same deterministic
+    `wizard()` pool `_boards_fallback` draws from must supplement the
+    candidate set, so an io_heavy goal is never stranded on a firmware whose
+    own recipe graph happens to be pin-poor."""
+    from esp_atlas_core.firmware import recipes_for_firmware
+
+    llm = _stub(
+        {
+            "firmware_id": "launcher",
+            "why": "Loads other firmwares from a menu.",
+            "traits": {"wifi": True, "battery": False, "cheap": True, "io_heavy": True},
+            "add_ons": [],
+        }
+    )
+    result = build_guide(_IO_HEAVY_QUERY, llm_client=llm, db_path=built_db_path)
+
+    recipe_boards = {r["board"] for r in recipes_for_firmware("launcher")}
+    board_ids = {b["board_id"] for b in result["boards"]}
+    assert board_ids - recipe_boards, "expected a supplemented board outside launcher's own recipe graph"
+
+    for board in result["boards"]:
+        record = get_part(board["board_id"], db_path=built_db_path)
+        io = (record["frontmatter"] or {}).get("io") or {}
+        known = io.get("gpio_free", io.get("gpio_exposed"))
+        if board["board_id"] not in recipe_boards:
+            assert known is not None and known >= 11, "a supplemented board must be a CONFIRMED-adequate board"
 
 
 def test_io_heavy_never_excludes_a_board_with_no_cited_io_data(built_db_path):
