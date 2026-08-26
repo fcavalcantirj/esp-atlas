@@ -18,6 +18,8 @@ extras:
 - rgb-led
 - stemma-qt
 io:
+  gpio_exposed: 25
+  gpio_free: 24
   power_out:
     rail_v:
     - 3.3
@@ -30,12 +32,27 @@ notes:
 - 'io.power_out QUOTED: vendor page states "This is the output pin from the 3.3V
   regulator, you can grab up to 400mA from this regulator for accessories, it''s
   also used by the ESP32-S3 which can have spiky current draw."'
+- 'io.gpio_exposed=25 QUOTED: vendor pinouts page lists RX/TX (D0/D1), D2-D13 (12
+  digital pins), A0-A5 (6 analog), SCL/SDA (I2C), and SCK/MOSI/MISO (ICSP header)
+  = 25 GPIO-capable pads. io.gpio_free=24 DERIVED: cross-referencing the vendor
+  firmware repo''s own CircuitPython board pin-definition (pins.c) maps every
+  header pad to a GPIO -- of esp32-s3''s soc.reserved_pins, only GPIO3 (D3,
+  strapping) is exposed; the onboard MicroSD slot shares the same ICSP SCK/MOSI/
+  MISO bus (not exclusive) but its SD_CS (GPIO45, itself strapping) is a
+  dedicated internal signal with no header pad, and NeoPixel (GPIO46) is
+  likewise off-header -- so 25 - 1 = 24'
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5500
   verified: '2026-08-22'
 - field: io.power_out
   url: https://learn.adafruit.com/adafruit-metro-esp32-s3/pinouts
+  verified: '2026-08-26'
+- field: io.gpio_exposed
+  url: https://learn.adafruit.com/adafruit-metro-esp32-s3/pinouts
+  verified: '2026-08-26'
+- field: io.gpio_free
+  url: https://github.com/adafruit/circuitpython/blob/main/ports/espressif/boards/adafruit_metro_esp32s3/pins.c
   verified: '2026-08-26'
 ---
 
