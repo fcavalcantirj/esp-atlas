@@ -167,6 +167,7 @@ export interface WizardNeeds {
   protocol?: string;
   radio?: string;
   band?: number;
+  battery?: boolean;
   ble?: boolean;
   bt_classic?: boolean;
   usb_native?: boolean;
@@ -220,9 +221,12 @@ export interface BoardReason {
 
 /** POST /intent: a plain-language goal mapped onto the wizard's own filters.
  * kind "firmware" means the query named one (answered from the recipe graph);
- * "unreadable" means say so plainly rather than dumping a keyword search. */
+ * "filters" mapped onto at least one real field; "unmapped" means Groq
+ * understood the goal but the atlas has no board field for it (say so, offer
+ * clarifiers); "unreadable" means the model returned nothing at all -- say so
+ * plainly rather than dumping a keyword search. */
 export interface IntentParse {
-  kind: "firmware" | "filters" | "unreadable";
+  kind: "firmware" | "filters" | "unmapped" | "unreadable";
   filters: WizardNeeds;
   understood: string[];
   unmapped: string[];

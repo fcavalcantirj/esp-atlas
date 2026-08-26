@@ -15,6 +15,7 @@ export type EventName =
   | "search_results"
   | "search_empty"
   | "intent_parse"
+  | "intent_clarifier_click"
   | "preset_click"
   | "example_click"
   | "relax_filter"

@@ -216,11 +216,14 @@ class IntentResponse(BaseModel):
     """What the intent box understood, and what it could not.
 
     `kind` is "firmware" (the query named one — answer from the recipe graph),
-    "filters" (mapped onto real fields), or "unreadable" (say so plainly rather
-    than dumping a keyword search under an AI-looking prompt).
+    "filters" (mapped onto at least one real field), "unmapped" (Groq
+    understood the goal but the atlas has no board field for it — say so, and
+    offer to narrow by what it CAN filter), or "unreadable" (the model
+    returned nothing at all — say so plainly rather than dumping a keyword
+    search under an AI-looking prompt).
     """
 
-    kind: Literal["firmware", "filters", "unreadable"]
+    kind: Literal["firmware", "filters", "unmapped", "unreadable"]
     filters: WizardNeeds = WizardNeeds()
     understood: list[str] = []
     unmapped: list[str] = []
