@@ -7,10 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "node --test lib/*.test.ts",
     "vercel-build": "rm -rf api/_bundle && mkdir -p api/_bundle && cp -r ../../data ../../schema api/_bundle/ && cp -r ../../apps/core/src/esp_atlas_core ../../apps/api/src/esp_atlas_api api/_bundle/ && next build"
   },
   "dependencies": {
     "@next/third-parties": "^16.3.2",
+    "esptool-js": "0.6.1",
     "next": "16.3.2",
     "next-themes": "^0.4.6",
     "react": "19.2.8",
@@ -21,6 +23,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/w3c-web-serial": "1.0.8",
     "eslint": "^9",
     "eslint-config-next": "16.3.2",
     "typescript": "^5"
