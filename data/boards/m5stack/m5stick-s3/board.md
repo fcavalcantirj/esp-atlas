@@ -18,6 +18,8 @@ extras:
 - mic
 - speaker
 io:
+  gpio_exposed: 13
+  gpio_free: 11
   power_out:
     rail_v:
     - 5
@@ -28,11 +30,26 @@ notes:
 - 'io.power_out QUOTED: vendor Specifications table states "Grove Load Capacity
   -- No load: 5V; Max: 4.88V@0.38A" (voltage sags to 4.88V at the 380 mA max-load
   point)'
+- 'io.gpio_exposed=13 COUNTED: the Hat2-Bus (2.54-16P) header table lists Boot
+  (=GPIO0, boot-mode strap) plus G1/G8 (left column) and G5/G4/G6/G7/G43/G44/G2/G3
+  (right column) = {0,1,2,3,4,5,6,7,8,43,44}, 11 pads; the separate PORT.A HY2.0-4P
+  Grove connector adds G9/G10, 2 pads -- total 13. Buttons (G11/G12), IR (G46/G42),
+  and audio codec (G14/G15/G16/G17/G18/G47/G48) are internal, not on either header.
+  io.gpio_free=11 DERIVED: subtracting esp32-s3''s soc.reserved_pins that land
+  in the exposed set -- G0 and G3 are both strapping -- gives 13 - 2 = 11; no
+  usb_flash_tied pin ({19,20,35,36,37}) overlaps, and no display/PSRAM pin overlaps
+  (PSRAM is on the SIP module, doesn''t consume header pads).'
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/StickS3
   verified: '2026-08-23'
 - field: io.power_out
+  url: https://docs.m5stack.com/en/core/StickS3
+  verified: '2026-08-26'
+- field: io.gpio_exposed
+  url: https://docs.m5stack.com/en/core/StickS3
+  verified: '2026-08-26'
+- field: io.gpio_free
   url: https://docs.m5stack.com/en/core/StickS3
   verified: '2026-08-26'
 ---
