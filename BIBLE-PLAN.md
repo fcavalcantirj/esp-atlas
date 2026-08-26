@@ -20,20 +20,17 @@
 
 ## Phase A — Foundation: completeness + reliability (feeds everything)
 
-- [~] **A1 — Deterministic-first classification** *(code · reliability)*
-  The `io_heavy` / `clarify confidence:0.0` LLM gates are unreliable (the bug we
-  just fixed was a symptom). Set `io_heavy` deterministically when the query names
-  ≥2 independent output groups (reuse `_channel_count`), LLM only as a tiebreak;
-  same pattern for clarify. *Verify:* golden asserting the 4+4 query is io_heavy
-  with a NO-op/False stub LLM.
-  - [x] `io_heavy` half done: `_deterministic_io_heavy()` (`build_guide.py`) ORs a
-    code-computed signal onto Groq's boolean, never lets the model pull a
-    deterministically io_heavy goal back to False. Golden + unit-table
-    coverage in `test_build_guide.py`; SPEC-io-power.md §6.2 addendum.
-  - [ ] `clarify confidence:0.0` half NOT done — separate task, own SPEC-clarify.md
-    surface, out of scope for this pass.
+- [x] **A1 — Deterministic-first `io_heavy`** *(code · reliability)* — SHIPPED `87d7191`
+  `_deterministic_io_heavy()` ORs a code-computed signal onto Groq's boolean and
+  never lets the model pull a clearly-io-heavy goal back to False. Verified with a
+  False-returning stub LLM: 4+4 and "6 relays + 3 servos" surface 3 devkits (pin-
+  poor excluded); "plant monitor" / "blink one LED" stay non-io-heavy. Golden +
+  unit-table in `test_build_guide.py`; SPEC-io-power.md §6.2.
+  - [ ] *(deferred, separate)* `clarify` question-selection: its confidence gate is
+    already deterministic (LLM only picks question ids), so this is a smarter-default
+    concern for its own SPEC-clarify.md pass, not a reliability bug. Tracked, not now.
 
-- [ ] **A2 — io coverage wide** *(data · oracle-loop population)*
+- [~] **A2 — io coverage wide** *(data · oracle-loop population)*
   Fill `io.gpio_free` / `gpio_exposed` / `power_out` across all 78 boards
   (currently 33/78) + `reserved_pins` for `esp32-h4` when a source exists. Derive
   from official pinouts minus `reserved_pins`, cite-or-omit, human-verify derived.
