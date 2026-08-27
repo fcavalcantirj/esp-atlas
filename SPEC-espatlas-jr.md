@@ -1,8 +1,8 @@
 # SPEC — EspAtlas Jr. 🤖 (the data keeper)
 
-> Status: **CONVERGED** (all interview `⟨Q⟩`s resolved 2026-08-27; harness = smolagents on
-> Groq free `gpt-oss-120b` — see §8a). `⟨Q…⟩` markers are kept as a resolved-decision log,
-> each now prefixed **RESOLVED**. `fx-open` is permanently out of scope (§0/§9).
+> Status: **CONVERGED — building.** (All interview `⟨Q⟩`s resolved 2026-08-27; harness = **Agno**
+> on Groq free `gpt-oss-120b` — see §8a.) `⟨Q…⟩` markers are kept as a resolved-decision log,
+> each prefixed **RESOLVED**. `fx-open` is permanently out of scope (§0/§9).
 > **This spec converges and REPLACES the four data-lane specs** — `SPEC-freshness.md`,
 > `SPEC-data-population.md`, `SPEC-discovery.md`, `SPEC-data-maintainer.md` — keeping
 > the good of each, nothing duplicated. Those become historical once this lands.
@@ -28,12 +28,12 @@ Jr's purpose is one sentence: **keep 100% of esp-atlas verified and verifiable �
 scale and over time.**
 
 **Jr's body is a LEAN, provider-agnostic coding agent — NOT the full DasBrowCoder
-stack.** **RESOLVED (2026-08-27): the body is `smolagents`** (HF, ~1000 LoC Python; model
-client via `OpenAIServerModel` → Groq free `gpt-oss-120b`), smoke-tested live on the Pi
-(see §8a). Chosen for being Python — Felipe's turf, so the guard→PR call, hooks, and memory
-ledger bolt on as ordinary functions. Whatever the harness, Jr needs bolted on: the guard→PR
-pipeline, a structured-ledger memory, browser/fetch, crons, and the 3 inbound hooks.
-*(`fx-open` was evaluated and permanently rejected — see §0/§9. Not to be reintroduced.)*
+stack.** **RESOLVED (2026-08-27): the body is `Agno` 3.x** (Python, model-agnostic, native
+Groq) on Groq free `gpt-oss-120b`, tested 3/3 live on the Pi (see §8a). Chosen because it
+ships Jr's two hardest requirements natively — **persistent memory** (§8) and the **e2e/
+health/trigger server** (§7) — while staying lean and Python (Felipe's turf). Still bolted on:
+the guard→PR tool, crons, and the Telegram notify path. *(smolagents runner-up; `fx-open`
+permanently rejected — see §0/§9. Not to be reintroduced.)*
 
 ### 1a. Why a cheap/free model is SAFE (the structural unlock)
 
@@ -274,17 +274,20 @@ and leave a one-line tombstone in each old spec pointing here.
   Jr's multi-step authoring loop** unless a **BYOK Poolside key** (own rate limits) or **paid
   Laguna** ($0.09/1M) is used. Groq free is the fast/reliable loop lane; Laguna is the secondary.
   Free-tier trains on I/O — a non-issue because **Jr only touches public atlas data**.
-- **Harness: RESOLVED (2026-08-27) → `smolagents`** (HF, ~1000 LoC Python; model client via
-  `OpenAIServerModel` → Groq). **Smoke-tested live on the Pi**: one-shot ask, on-disk
-  read→write→read round-trip (`ALPHA-SM`), and a shell round-trip (`42`), all on Groq
-  `gpt-oss-120b`. Chosen because it's **Python** (Felipe's turf — the guard→PR call, the 3
-  hooks, and the memory ledger bolt on as ordinary functions he can own and tweak) and
-  **HF-maintained**. Caveat carried forward: smolagents runs the model's Python in a
-  restricted interpreter — widen `additional_authorized_imports` for file/shell/git work.
-  *(fx-open is permanently rejected — see §0/§9. Do not reintroduce it.)*
-- **Still bolted on by us** (smolagents gives loop+tools+model client; the rest is ours):
-  the crons (systemd timers on the Pi), the 3 inbound hooks (Telegram trigger / git-merge
-  webhook / health ping), and the structured-ledger memory (§8).
+- **Harness: RESOLVED (2026-08-27) → `Agno` 3.x** (Python, model-agnostic; native `Groq`
+  model class). Chosen over smolagents because it **ships the two things Jr needs that smol
+  makes you hand-build** — §8 persistent memory and the §7 e2e/health/trigger surface — while
+  running the same free Groq loop. **Tested 3/3 live on the Pi**: (a) multi-step tool loop on
+  Groq `gpt-oss-120b` (`ALPHA-AGN`); (b) **persistent memory across a fresh process** — a
+  second agent recalled a stored vendor quirk *"use the compact product-page pinout… Hookup
+  Guide pages exceed the buffer"* from `SqliteDb`; (c) **AgentOS FastAPI serve** — 88 endpoints
+  incl. `/health` (the health ping) and `POST /agents/{id}/runs` (the on-demand trigger).
+  Python + Groq-native + Felipe's turf. *(smolagents was runner-up; fx-open permanently
+  rejected — §0/§9. Do not reintroduce fx-open.)*
+- **What Agno gives natively vs. what we still add:** Agno provides the loop, tools,
+  **persistent memory (`SqliteDb`)**, and the **AgentOS server** (§7's health + trigger
+  endpoints). We still add: the **crons** (systemd timers on the Pi), the **guard→PR tool**
+  (shell → `validate.py`/`check_sources_live.py` → `gh` PR), and the **Telegram** notify path.
 - **Cost is bounded structurally:** free Groq model = ~$0 for authoring; the free req cap
   *is* the natural rate-limit. Premium delegate stays available for the rare hard record,
   but the default lane is free.
@@ -292,7 +295,8 @@ and leave a one-line tombstone in each old spec pointing here.
   so human review stays humane; excess authored records queue to the next day.
 
 ## 11. Open questions (consolidated)
-- **RESOLVED ⟨Q1b⟩ — harness = `smolagents`** (Python; smoke-tested on the Pi; see §8a).
+- **RESOLVED ⟨Q1b⟩ — harness = `Agno` 3.x** (Python; tested 3/3 on the Pi — loop, persistent
+  memory, AgentOS serve; see §8a). smolagents was runner-up.
 - **RESOLVED ⟨Q8b⟩ — ≤ 10 PRs/day** (see §8a).
 - **RESOLVED ⟨Q9⟩ — B/C-series deferred.** Jr v1 owns the A-series live-data lanes (§3).
   B/C-series (`gpio_pins` pin-planner, schematic images) is a later phase, not v1 scope.
@@ -309,4 +313,5 @@ and leave a one-line tombstone in each old spec pointing here.
 cadence + liveness-privileged) · Q4 (auto-author cheap, Issue for judgment) · Q5 (keep
 `example`, defer `prompt-recipe`) · Q6 (trust-promotion mechanism) · Q7 (3 inbound hooks,
 Felipe-only) · Q8 (Groq free `gpt-oss-120b` primary; Laguna deferred, throttled) · Q8b (≤10 PRs/day)
-· Q9 (B/C-series deferred).*
+· Q9 (B/C-series deferred) · Q10 (defer companion) · Q11 (Reddit title+selftext+top-10, score>50)
+· Q12 (all 8 makers) · Q13 (PlatformIO + ESP Component registries) · **Q1b (harness = Agno)**.*

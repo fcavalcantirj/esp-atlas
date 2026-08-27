@@ -179,12 +179,12 @@ repeat:
 
 ## 9. Runtime (at a glance)
 
-A **lean Python coding agent** on a **free Groq model (`gpt-oss-120b`)** — proven the reliable
-free lane — with the guard→PR→human-merge pipeline, box-local memory, crons, and the three
-channels above. Runs as its **own instance on its own box** (the Pi it was tested on), with a
-separate identity and GitHub bot token from the main DasBrowCoder. The final harness selection
-is being settled separately; this charter is body-agnostic — the soul and the responsibilities
-hold whichever lean body carries them.
+**Body: Agno 3.x** (Python, model-agnostic) on a **free Groq model (`gpt-oss-120b`)** — proven
+the reliable free lane. Agno natively carries Jr's **persistent memory** (`SqliteDb`) and its
+**e2e/health/trigger server** (AgentOS FastAPI: `/health`, `POST /agents/{id}/runs`); we add
+the guard→PR tool, crons, and the Telegram notify path. Runs as its **own instance on its own
+box** (the Pi it was tested on), separate identity + GitHub bot token from the main
+DasBrowCoder. The guard→PR→human-merge pipeline is the guarantee; the model is just a proposer.
 
 ---
 
