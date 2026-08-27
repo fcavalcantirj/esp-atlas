@@ -164,6 +164,14 @@ RUN_MATRIX = [
         id="18_cathack",
         fw="cathack",
     ),
+    dict(
+        id="19_advanceos-cardputer",
+        fw="advanceos-cardputer",
+    ),
+    dict(
+        id="20_porkchop",
+        fw="porkchop",
+    ),
 ]
 
 
