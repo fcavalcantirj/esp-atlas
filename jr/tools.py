@@ -198,6 +198,38 @@ def author_firmware_record(
     return {"path": str(path.relative_to(REPO))}
 
 
+def open_batch_pr(firmware_ids: list[str], label: str, base: str = "main") -> dict:
+    """Open ONE PR bundling many authored firmware (+ their recipes + the coverage run-cases) —
+    a reviewable daily batch instead of a flood of PRs. Assumes each passed triple_validate.
+    `label` makes the branch unique (e.g. a date). Returns {"ok","pr_url","count"}."""
+    if not firmware_ids:
+        return {"ok": False, "error": "empty batch"}
+    branch = f"jr/batch-{label}"
+    paths = ["apps/core/tests/test_coverage_matrix.py"]
+    for fid in firmware_ids:
+        paths.append(f"data/firmware/{fid}")
+        for rdir in (REPO / "data/recipes").glob(f"*__{fid}"):
+            paths.append(str(rdir.relative_to(REPO)))
+    def git(*a): return subprocess.run(["git", *a], cwd=REPO, capture_output=True, text=True)
+    git("checkout", "-B", branch)
+    git("add", *paths)
+    git("commit", "-m", f"feat(firmware): batch add {len(firmware_ids)} firmware (unverified) — {label}")
+    git("push", "-u", "origin", branch, "--force-with-lease")
+    rows = "\n".join(f"- `{f}` → " + ", ".join(
+        r.name.split("__")[0] for r in (REPO / "data/recipes").glob(f"*__{f}")) for f in firmware_ids)
+    body = (f"**TL;DR** — Jr's daily batch: **{len(firmware_ids)} new firmware** (all `unverified`, "
+            f"triple-validated, socs derived from board records).\n\n### Firmware (firmware → boards)\n{rows}\n\n"
+            "Discovered via the Launcher/M5Burner catalog, with-code gated. Guard green, coverage run-cases "
+            "included. **Bot proposes, humans dispose** — skim, then merge (or drop any you don't want).\n\n"
+            "— 🤖 **EspAtlas Jr** · autonomous data-keeper")
+    pr = subprocess.run(["gh", "pr", "create", "--base", base, "--head", branch,
+                         "--title", f"feat(firmware): batch add {len(firmware_ids)} firmware ({label})",
+                         "--body", body], cwd=REPO, capture_output=True, text=True)
+    git("checkout", "main")
+    return {"ok": pr.returncode == 0, "pr_url": pr.stdout.strip(), "count": len(firmware_ids),
+            "error": pr.stderr.strip()[:200]}
+
+
 def build_firmware_pr_body(firmware_id: str, recipe_id: str) -> str:
     """Deterministically build a HUMAN-friendly PR body — TL;DR, clickable links, what/why —
     from the authored records + live repo stars. Not left to the model. Jr signs its own PRs."""
@@ -293,6 +325,22 @@ def author_run_case(firmware_id: str) -> dict:
     entry = f'    dict(\n        id="{n}_{firmware_id}",\n        fw="{firmware_id}",\n    ),\n'
     p.write_text(txt[: end + 1] + entry + txt[end + 1:])
     return {"path": "apps/core/tests/test_coverage_matrix.py", "case": f"{n}_{firmware_id}"}
+
+
+def remove_run_case(firmware_id: str) -> None:
+    """Remove a firmware's RUN_MATRIX block (used when a batch firmware is rejected, so its
+    orphan run-case can't red the CI test for the rest of the batch)."""
+    p = REPO / "apps/core/tests/test_coverage_matrix.py"
+    lines = p.read_text().splitlines(keepends=True)
+    out, i = [], 0
+    while i < len(lines):
+        if lines[i].strip() == "dict(" and any(f'fw="{firmware_id}"' in l for l in lines[i:i + 5]):
+            while i < len(lines) and lines[i].strip() != "),":
+                i += 1
+            i += 1  # skip the closing "),"
+            continue
+        out.append(lines[i]); i += 1
+    p.write_text("".join(out))
 
 
 def _frontmatter(md_path: Path) -> dict:

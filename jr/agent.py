@@ -50,17 +50,23 @@ Add ONE genuinely-new firmware + its recipe this run:
 6. triple_validate(firmware_id, recipe_id=the first recipe id it returned). If a gate fails, READ
    it, fix, retry (≤3). Report the verdict + firmware_id + recipe_id. Be terse."""
 
-jr = Agent(
-    name="EspAtlasJr",
-    model=Groq(id="openai/gpt-oss-120b"),
-    db=SqliteDb(db_file=str(Path(__file__).parent / "jr_memory.db")),
-    session_id="jr-firmware",
-    tools=[tools.schema_enums, tools.uncatalogued_with_code, tools.fetch_github_repo,
-           tools.fetch_github_readme, tools.author_firmware_and_recipes,
-           tools.run_guard, tools.triple_validate],
-    instructions=INSTRUCTIONS,
-    markdown=False,
-)
+def make_jr(session_id: str = "jr-firmware") -> Agent:
+    """Fresh agent — batch draining passes a unique session_id per firmware so each authoring
+    starts with clean context (no history bloat / cross-contamination across the batch)."""
+    return Agent(
+        name="EspAtlasJr",
+        model=Groq(id="openai/gpt-oss-120b"),
+        db=SqliteDb(db_file=str(Path(__file__).parent / "jr_memory.db")),
+        session_id=session_id,
+        tools=[tools.schema_enums, tools.uncatalogued_with_code, tools.fetch_github_repo,
+               tools.fetch_github_readme, tools.author_firmware_and_recipes,
+               tools.run_guard, tools.triple_validate],
+        instructions=INSTRUCTIONS,
+        markdown=False,
+    )
+
+
+jr = make_jr()
 
 if __name__ == "__main__":
     r = jr.run("Add the single top genuinely-new firmware and its recipe. Cite-or-omit, guard, "

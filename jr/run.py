@@ -53,6 +53,49 @@ def drain_once() -> dict:
     return {"action": "pr", "fid": fid, "rid": rid, "pr_url": pr.get("pr_url"), "ok": pr.get("ok")}
 
 
+def drain_batch(n: int = 20, label: str | None = None) -> dict:
+    """Author up to n new firmware (fresh agent each, for clean context), triple-validate each,
+    and bundle the valid ones into ONE reviewable daily batch PR. Rejected ones are fully cleaned
+    up (record + recipes + run-case). Funded (paid Groq) — the constraint is human review, so one
+    batch PR/day, not a flood."""
+    import datetime as dt
+    from agent import make_jr
+    label = label or dt.date.today().isoformat()
+    authored: list[str] = []
+    for i in range(n):
+        if not tools.uncatalogued_with_code(1):
+            break
+        before_fw, before_rc = tools.catalogued_firmware_ids(), _recipe_dirs()
+        try:
+            make_jr(session_id=f"batch-{label}-{i}").run(
+                "Add the top genuinely-new firmware. Read READMEs, choose category+boards only, "
+                "then author_firmware_and_recipes, then triple_validate.")
+        except Exception:
+            continue
+        new_fw = sorted(tools.catalogued_firmware_ids() - before_fw)
+        new_rc = _recipe_dirs() - before_rc
+        if not new_fw:
+            continue
+        fid = new_fw[0]
+        rid = next((r for r in new_rc if fid in r), None)
+        verdict = tools.triple_validate(fid, rid) if rid else {"pass": False}
+        if verdict.get("pass"):
+            authored.append(fid)
+        else:  # reject: remove record, recipes, and its run-case so the batch stays green
+            _cleanup(fid, None)
+            for r in new_rc:
+                shutil.rmtree(tools.REPO / "data/recipes" / r, ignore_errors=True)
+            tools.remove_run_case(fid)
+    if not authored:
+        notify.send_telegram("🤖 *Jr batch* — ran, nothing authorable this pass.")
+        return {"action": "none"}
+    pr = tools.open_batch_pr(authored, label)
+    notify.send_telegram(
+        f"🤖 *Jr daily batch* — **{len(authored)} new firmware** for review: "
+        f"[PR]({pr.get('pr_url')})\n" + ", ".join(f"`{a}`" for a in authored[:15]))
+    return {"action": "batch", "count": len(authored), "pr_url": pr.get("pr_url"), "firmware": authored}
+
+
 def daily() -> dict:
     """The scheduled run. One consolidated outcome nudge (open_pr already nudges on a real PR)."""
     r = drain_once()
