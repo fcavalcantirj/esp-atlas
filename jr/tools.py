@@ -42,19 +42,45 @@ def fetch_launcher_catalog() -> list[dict]:
     return data if isinstance(data, list) else data.get("data", [])
 
 
+def _catalogued_repos_and_tokens() -> tuple[set[str], set[str]]:
+    """(repo full_names, name-tokens) of catalogued firmware — the dedup fingerprint. A launcher
+    entry that shares a repo owner/name or a firmware-name token is a PORT/variant, not new."""
+    import re
+    repos, tokens = set(), set()
+    for d in (FIRMWARE_DIR.iterdir() if FIRMWARE_DIR.exists() else []):
+        if not d.is_dir():
+            continue
+        tokens.add(d.name.lower())
+        for part in re.split(r"[-_]", d.name.lower()):
+            if len(part) >= 4:
+                tokens.add(part)                        # e.g. 'bruce', 'marauder', 'nemo'
+        md = (d / "firmware.md").read_text() if (d / "firmware.md").exists() else ""
+        for line in md.splitlines():
+            if line.startswith("url:") and "github.com/" in line:
+                fn = line.split("github.com/", 1)[1].strip().rstrip("/").lower()
+                repos.add("/".join(fn.split("/")[:2]))  # owner/repo
+                repos.add(fn.split("/")[0])             # owner (catches other repos by same owner)
+    return repos, tokens
+
+
 def uncatalogued_with_code(limit: int = 5) -> list[dict]:
-    """Launcher-catalog entries NOT yet in the atlas that pass the with-code gate (resolve to a
-    real GitHub repo). Ranked by `download` as a popularity proxy (real GitHub-star ranking is a
-    follow-up — the API's own like-count must never be used, SPEC §3b). Returns compact dicts."""
-    have = catalogued_firmware_ids()
+    """Launcher-catalog entries that are GENUINELY NEW firmware (not ports/forks of catalogued
+    ones) and pass the with-code gate (resolve to a real GitHub repo). Dedup skips any entry
+    sharing a repo owner/name or a firmware-name token with the catalogue (SPEC §3b: skip
+    forks/mirrors). Ranked by `download` popularity proxy. Returns compact dicts."""
+    repos, tokens = _catalogued_repos_and_tokens()
     out = []
     for e in fetch_launcher_catalog():
         gh = (e.get("github") or "").strip()
         if not gh or not gh.startswith("http"):
-            continue                                    # with-code gate: must resolve to a repo
-        slug = gh.rstrip("/").split("/")[-1].lower()
-        if slug in have or e.get("name", "").lower() in have:
-            continue                                    # dedup vs catalogued
+            continue                                    # with-code gate
+        fn = gh.rstrip("/").replace("https://github.com/", "").lower()
+        owner_repo = "/".join(fn.split("/")[:2])
+        if owner_repo in repos or fn.split("/")[0] in repos:
+            continue                                    # same repo/owner as a catalogued firmware
+        name_l = (e.get("name") or "").lower()
+        if any(t in name_l for t in tokens):
+            continue                                    # name shares a catalogued firmware token → port
         out.append({
             "name": e.get("name"), "github": gh, "category": e.get("category"),
             "author": e.get("author"), "download": e.get("download", 0),
@@ -62,6 +88,42 @@ def uncatalogued_with_code(limit: int = 5) -> list[dict]:
         })
     out.sort(key=lambda x: x.get("download") or 0, reverse=True)
     return out[:limit]
+
+
+def schema_enums() -> dict:
+    """The valid values authoring MUST choose from (so the model can't invent `stickc`/`ESP32-C5`).
+    Pulled live from the schemas + data dirs. Call this BEFORE authoring."""
+    import json
+    fw = json.loads((REPO / "schema/firmware.schema.json").read_text())["properties"]
+    boards = sorted(b.name for b in (REPO / "data/boards").glob("*/*") if b.is_dir())
+    socs = sorted(s.name for s in (REPO / "data/socs").iterdir() if s.is_dir())
+    return {
+        "firmware_category": fw["category"].get("enum"),
+        "firmware_distribution": fw["distribution"].get("enum"),
+        "recipe_status": ["known-good", "reported", "unverified", "broken"],
+        "soc_ids": socs,
+        "board_ids": boards,
+    }
+
+
+def author_recipe(recipe_id: str, board: str, firmware: str, chip_family: str,
+                  sources: list[dict], body: str, status: str = "unverified",
+                  flash: dict | None = None) -> dict:
+    """Write a recipe pairing a firmware to a CATALOGUED board (resolves the orphan rule —
+    firmware can't stand alone). `board` must be a catalogued board id, `chip_family` a valid soc
+    id, `status` defaults to `unverified` (trust is human-only). Returns {"path": ...}."""
+    import yaml
+    rec: dict = {"id": recipe_id, "type": "recipe", "board": board, "firmware": firmware,
+                 "status": status, "chip_family": chip_family}
+    if flash:
+        rec["flash"] = flash
+    rec["sources"] = sources
+    front = yaml.safe_dump(rec, sort_keys=False, default_flow_style=False).strip()
+    d = REPO / "data" / "recipes" / recipe_id
+    d.mkdir(parents=True, exist_ok=True)
+    path = d / "recipe.md"
+    path.write_text(f"---\n{front}\n---\n\n{body.strip()}\n")
+    return {"path": str(path.relative_to(REPO))}
 
 
 def fetch_github_repo(url: str) -> dict:
@@ -112,14 +174,19 @@ def author_firmware_record(
     return {"path": str(path.relative_to(REPO))}
 
 
-def open_pr(firmware_id: str, title: str, body: str, base: str = "main") -> dict:
-    """Open a cited PR for an authored record on branch `jr/firmware-<id>` (never writes `main`;
-    SPEC §2.3 bot-proposes-humans-dispose). Assumes run_guard() passed. Returns {"ok","pr_url"}."""
+def open_pr(firmware_id: str, title: str, body: str, recipe_id: str | None = None,
+            base: str = "main") -> dict:
+    """Open a cited PR for an authored firmware (+ its recipe) on branch `jr/firmware-<id>`
+    (never writes `main`; SPEC §2.3 bot-proposes-humans-dispose). Stages BOTH the firmware and
+    the recipe so the branch is never orphaned. Assumes triple_validate() passed. Returns
+    {"ok","pr_url"}."""
     branch = f"jr/firmware-{firmware_id}"
-    rel = f"data/firmware/{firmware_id}/firmware.md"
+    paths = [f"data/firmware/{firmware_id}"]
+    if recipe_id:
+        paths.append(f"data/recipes/{recipe_id}")
     def git(*a): return subprocess.run(["git", *a], cwd=REPO, capture_output=True, text=True)
     git("checkout", "-B", branch)
-    git("add", rel)
+    git("add", *paths)
     c = git("commit", "-m", title)
     git("push", "-u", "origin", branch, "--force-with-lease")
     pr = subprocess.run(
@@ -129,6 +196,72 @@ def open_pr(firmware_id: str, title: str, body: str, base: str = "main") -> dict
     git("checkout", "main")  # leave main clean; the record lives on the branch/PR
     return {"ok": pr.returncode == 0, "pr_url": pr.stdout.strip(),
             "error": (pr.stderr or c.stderr).strip()[:300]}
+
+
+def _frontmatter(md_path: Path) -> dict:
+    import yaml
+    txt = md_path.read_text()
+    if txt.startswith("---"):
+        return yaml.safe_load(txt.split("---", 2)[1]) or {}
+    return {}
+
+
+def triple_validate(firmware_id: str, recipe_id: str) -> dict:
+    """THREE independent gates before a PR (Felipe's hard rule — never propose an unvalidated
+    record). Returns {"pass": bool, "gate1_guard", "gate2_source", "gate3_structure"} with
+    per-gate detail. A PR may open ONLY when pass=True."""
+    en = schema_enums()
+    fw_md = FIRMWARE_DIR / firmware_id / "firmware.md"
+    rc_md = REPO / "data/recipes" / recipe_id / "recipe.md"
+    problems = {"gate1": [], "gate2": [], "gate3": []}
+
+    # GATE 1 — the deterministic guard (schema + oracle + no-orphan)
+    g = run_guard()
+    if not g["ok"]:
+        problems["gate1"].append(g["output"].splitlines()[-1] if g["output"] else "guard failed")
+
+    # GATE 2 — every cited field re-checked against the REAL github source (cite-or-omit holds)
+    fw = _frontmatter(fw_md) if fw_md.exists() else {}
+    if not fw:
+        problems["gate2"].append("firmware record missing/unparseable")
+    else:
+        repo = fetch_github_repo(fw.get("url", ""))
+        if not repo or repo.get("error"):
+            problems["gate2"].append(f"repo unresolved: {fw.get('url')}")
+        else:
+            if fw.get("license") and repo.get("license") and fw["license"] != repo["license"]:
+                problems["gate2"].append(f"license {fw['license']} != repo {repo['license']}")
+            if fw.get("category") not in (en["firmware_category"] or []):
+                problems["gate2"].append(f"category '{fw.get('category')}' not a valid enum")
+            for s in fw.get("socs", []):
+                if s not in en["soc_ids"]:
+                    problems["gate2"].append(f"soc '{s}' not a known soc id")
+        for src in fw.get("sources", []):
+            u = src.get("url", "")
+            try:
+                req = urllib.request.Request(u, method="HEAD", headers={"User-Agent": "esp-atlas-jr"})
+                urllib.request.urlopen(req, timeout=15)
+            except Exception as e:
+                problems["gate2"].append(f"source not live: {u} ({type(e).__name__})")
+
+    # GATE 3 — structural: recipe pairs firmware to a catalogued board (kills the orphan)
+    rc = _frontmatter(rc_md) if rc_md.exists() else {}
+    if not rc:
+        problems["gate3"].append("recipe missing/unparseable (firmware would be orphan)")
+    else:
+        if rc.get("firmware") != firmware_id:
+            problems["gate3"].append(f"recipe.firmware '{rc.get('firmware')}' != '{firmware_id}'")
+        if rc.get("board") not in en["board_ids"]:
+            problems["gate3"].append(f"recipe.board '{rc.get('board')}' not catalogued")
+        if rc.get("chip_family") not in en["soc_ids"]:
+            problems["gate3"].append(f"chip_family '{rc.get('chip_family')}' not a known soc")
+        if rc.get("status") not in en["recipe_status"]:
+            problems["gate3"].append(f"status '{rc.get('status')}' invalid (must be unverified for new)")
+
+    ok = not any(problems.values())
+    return {"pass": ok, "gate1_guard": problems["gate1"] or "green",
+            "gate2_source": problems["gate2"] or "cited fields match source",
+            "gate3_structure": problems["gate3"] or "recipe pairs to catalogued board, no orphan"}
 
 
 if __name__ == "__main__":  # self-test against the REAL repo + REAL source
