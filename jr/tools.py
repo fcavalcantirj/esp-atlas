@@ -87,6 +87,41 @@ def mark_proposed(url: str) -> None:
     _LEDGER.write_text(json.dumps(sorted(s)))
 
 
+MONTHLY_CAP_USD = 5.0
+_SPEND = Path(__file__).resolve().parent / "spend.json"
+_PRICE_IN, _PRICE_OUT = 0.15 / 1e6, 0.60 / 1e6          # Groq gpt-oss-120b paid, $/token
+
+
+def _spend_data() -> dict:
+    if _SPEND.exists():
+        try:
+            return json.loads(_SPEND.read_text())
+        except Exception:
+            return {}
+    return {}
+
+
+def month_spend(month: str | None = None) -> float:
+    """This calendar month's Jr spend in USD (the hard-cap check)."""
+    import datetime as dt
+    month = month or dt.date.today().strftime("%Y-%m")
+    return _spend_data().get(month, {}).get("cost", 0.0)
+
+
+def record_spend(input_tokens: int, output_tokens: int) -> float:
+    """Add a run's token cost to this month's ledger; returns the month's running cost."""
+    import datetime as dt
+    month = dt.date.today().strftime("%Y-%m")
+    d = _spend_data()
+    m = d.setdefault(month, {"tokens_in": 0, "tokens_out": 0, "cost": 0.0, "runs": 0})
+    m["tokens_in"] += int(input_tokens or 0)
+    m["tokens_out"] += int(output_tokens or 0)
+    m["cost"] = round(m["tokens_in"] * _PRICE_IN + m["tokens_out"] * _PRICE_OUT, 4)
+    m["runs"] += 1
+    _SPEND.write_text(json.dumps(d, indent=1))
+    return m["cost"]
+
+
 def uncatalogued_with_code(limit: int = 5) -> list[dict]:
     """Launcher-catalog entries that are GENUINELY NEW firmware (not ports/forks of catalogued
     ones) and pass the with-code gate (resolve to a real GitHub repo). Dedup skips any entry

@@ -64,13 +64,17 @@ def drain_batch(n: int = 20, label: str | None = None) -> dict:
     authored: list[str] = []
     urls: dict[str, str] = {}
     for i in range(n):
+        if tools.month_spend() >= tools.MONTHLY_CAP_USD:   # hard $5/month cap
+            break
         if not tools.uncatalogued_with_code(1):
             break
         before_fw, before_rc = tools.catalogued_firmware_ids(), _recipe_dirs()
         try:
-            make_jr(session_id=f"batch-{label}-{i}").run(
+            resp = make_jr(session_id=f"batch-{label}-{i}").run(
                 "Add the top genuinely-new firmware. Read READMEs, choose category+boards only, "
                 "then author_firmware_and_recipes, then triple_validate.")
+            m = getattr(resp, "metrics", None)
+            tools.record_spend(getattr(m, "input_tokens", 0), getattr(m, "output_tokens", 0))
         except Exception:
             continue
         new_fw = sorted(tools.catalogued_firmware_ids() - before_fw)
@@ -96,7 +100,8 @@ def drain_batch(n: int = 20, label: str | None = None) -> dict:
         tools.mark_proposed(urls.get(fid, ""))
     notify.send_telegram(
         f"🤖 *Jr daily batch* — **{len(authored)} new firmware** for review: "
-        f"[PR]({pr.get('pr_url')})\n" + ", ".join(f"`{a}`" for a in authored[:15]))
+        f"[PR]({pr.get('pr_url')})\n" + ", ".join(f"`{a}`" for a in authored[:15])
+        + f"\n💵 month-to-date: ${tools.month_spend():.2f} / ${tools.MONTHLY_CAP_USD:.0f}")
     return {"action": "batch", "count": len(authored), "pr_url": pr.get("pr_url"), "firmware": authored}
 
 
