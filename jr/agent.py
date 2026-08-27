@@ -33,8 +33,12 @@ Add ONE genuinely-new firmware + its recipe this run:
    runs on, using the repo/description as evidence. If you CANNOT map it to a catalogued board_id
    with evidence, STOP and report "needs human Issue" — do NOT force a wrong board.
 5. author_firmware_record(): category from firmware_category enum ONLY; socs from soc_ids ONLY
-   and only chips the repo names; license from the repo; sources = [{field,url,verified:"2026-08-27"}]
-   pointing at the github url; a short factual body.
+   and only chips the repo names; license from the repo. Also POPULATE these when the repo
+   evidences them (cite-or-omit — omit if unsure, never guess): `maintainer` (the repo owner),
+   `capabilities` (from the description, e.g. wifi/ble/rf), `distribution` (from
+   firmware_distribution enum — `releases` if the repo has GitHub releases, `web-flasher` if it
+   has a web installer). sources = [{field,url,verified:"2026-08-27"}] per cited field, pointing
+   at the github url; a short factual body.
 6. author_recipe(): recipe_id = f"{board}__{firmware_id}", board = the catalogued board_id,
    firmware = the firmware id, chip_family = a soc_id, status = "unverified", cite the source.
 7. run_guard(). If ok=False, READ the error, fix the record(s), and retry (up to 3 times).

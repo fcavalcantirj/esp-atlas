@@ -231,8 +231,17 @@ def open_pr(firmware_id: str, title: str, body: str | None = None, recipe_id: st
         ["gh", "pr", "create", "--base", base, "--head", branch, "--title", title, "--body", body],
         cwd=REPO, capture_output=True, text=True,
     )
+    pr_url = pr.stdout.strip()
+    if pr.returncode == 0:                              # nudge Felipe (§7) while the record is still on disk
+        try:
+            import notify
+            fw = _frontmatter(FIRMWARE_DIR / firmware_id / "firmware.md")
+            board = _frontmatter(REPO / "data/recipes" / recipe_id / "recipe.md").get("board", "") if recipe_id else ""
+            notify.nudge_pr(firmware_id, fw.get("name", firmware_id), pr_url, board)
+        except Exception:
+            pass
     git("checkout", "main")  # leave main clean; the record lives on the branch/PR
-    return {"ok": pr.returncode == 0, "pr_url": pr.stdout.strip(),
+    return {"ok": pr.returncode == 0, "pr_url": pr_url,
             "error": (pr.stderr or c.stderr).strip()[:300]}
 
 
