@@ -5,17 +5,6 @@ name: AdvanceOS for Cardputer
 url: https://github.com/bomberman30/AdvanceOS-for-cardputer
 category: multi
 maintainer: bomberman30
-capabilities:
-- Media playback (MP3, WAV)
-- File explorer
-- Painter
-- Infrared emitter/editor
-- 3D renderer
-- Music composer
-- Games (NES, GBC, Arduboy)
-- Alarm clock
-- Password vault
-- Voice recorder
 socs:
 - esp32-s3
 sources:

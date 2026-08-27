@@ -5,15 +5,6 @@ name: M5PORKCHOP
 url: https://github.com/0ct0sec/M5PORKCHOP
 category: pentest
 maintainer: 0ct0sec
-capabilities:
-- "promiscuous Wi\u2011Fi packet capture and EAPOL extraction"
-- GPS wardriving with WiGLE export
-- "2.4\u202FGHz spectrum analysis with client tracking"
-- BLE notification spam (Apple/Android/Samsung/Windows)
-- Beacon injection with vendor IE fingerprinting
-- "ESP\u2011NOW device\u2011to\u2011device sync (PigSync)"
-- file manager over HTTP (SD card)
-- personality system with mood, avatar, weather effects
 socs:
 - esp32-s3
 sources:
