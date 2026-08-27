@@ -107,7 +107,7 @@ def drain_batch(n: int = 20, label: str | None = None) -> dict:
 
 def daily() -> dict:
     """The scheduled run — a batch of up to 20 firmware into ONE reviewable PR (paid Groq)."""
-    return drain_batch(20)
+    return drain_batch(2)  # budget-safe at real per-run cost; raise once tokens are trimmed
 
 
 if __name__ == "__main__":
