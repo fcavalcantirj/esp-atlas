@@ -160,6 +160,10 @@ RUN_MATRIX = [
         id="17_evil-m5project",
         fw="evil-m5project",
     ),
+    dict(
+        id="18_cathack",
+        fw="cathack",
+    ),
 ]
 
 
