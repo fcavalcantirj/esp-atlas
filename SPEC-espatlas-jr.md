@@ -225,9 +225,9 @@ data-priority tie-in make it the natural home), under the hard boundary above: m
 steer-data only — never a growth lever.
 
 **RESOLVED ⟨Q15⟩ — both outputs**: a **weekly Telegram summary** AND a committed
-`docs/telemetry/<date>.md` snapshot (git-tracked history, so trends are auditable). Target date
-for 1MM is Felipe's to set — strawman **2027-08-22** (one year from domain creation) drives the
-WoW-pace math until he fixes it.
+`docs/telemetry/<date>.md` snapshot (git-tracked history, so trends are auditable).
+**1MM target date: 2026-11-27** (3 months from 2026-08-27, set by Felipe) — the digest reports
+required weekly-active-user growth pace vs. this deadline.
 
 ## 4. Anatomy of one job (the loop)
 
