@@ -160,6 +160,13 @@ that's a coverage hole to close, not a silent gap.
      first-class correction trigger**: Jr reads it, verifies against the cited source, and opens a
      **fix PR** (or replies asking for specifics). Framed as a *polled job*, so it does **not**
      add a 4th inbound channel — §7's "exactly three inbound" stays intact.
+- **Firmware coverage (a firmware is not "done" at one recipe):** when Jr adds or maintains a
+  firmware, it authors a recipe for **every catalogued board the repo says it supports** — not
+  just the first. Boards the firmware supports but that aren't catalogued yet are omitted
+  (cite-or-omit) and can seed a board-population candidate. A firmware whose page lists only one
+  board when the repo names several is a **coverage gap** Jr should close (e.g. Evil-M5Project →
+  Cardputer + AtomS3 + Core2). Runs as part of authoring and as a periodic re-check of catalogued
+  firmware against newly-added boards.
 - **Seed self-expansion:** when discovery surfaces a productive new firmware repo, vendor, or
   list not in `seeds.json`, Jr proposes adding it (one-file PR) — the seed set grows itself.
 

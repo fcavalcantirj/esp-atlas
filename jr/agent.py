@@ -39,8 +39,10 @@ Add ONE genuinely-new firmware + its recipe this run:
    firmware_distribution enum — `releases` if the repo has GitHub releases, `web-flasher` if it
    has a web installer). sources = [{field,url,verified:"2026-08-27"}] per cited field, pointing
    at the github url; a short factual body.
-6. author_recipe(): recipe_id = f"{board}__{firmware_id}", board = the catalogued board_id,
-   firmware = the firmware id, chip_family = a soc_id, status = "unverified", cite the source.
+6. author_recipe() for EVERY catalogued board this firmware supports — FIRMWARE COVERAGE, don't
+   stop at one. For each board_id the repo evidences support for: recipe_id = f"{board}__{firmware_id}",
+   board = the catalogued board_id, firmware = the firmware id, chip_family = that board's soc_id,
+   status = "unverified", cite the source. Omit boards not in board_ids (cite-or-omit).
 7. run_guard(). If ok=False, READ the error, fix the record(s), and retry (up to 3 times).
 8. triple_validate(firmware_id, recipe_id) and report its result verbatim, plus the firmware_id
    and recipe_id. Be terse."""
