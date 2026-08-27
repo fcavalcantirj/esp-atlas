@@ -87,6 +87,7 @@ propose cited PR** — differing only in source and cadence. Seeds live in `seed
 | **Community discovery** | periodic | awesome-esp32, HN, GitHub-trending, **r/esp32 (`score > 50` only)** | firmware / `example` candidates, **with-code gated** |
 | **Brand/vendor upkeep** | monthly | vendor homepages (per `brand`) | brand liveness/redirects; **auto-create `brand`** on a newly-seen vendor |
 | **Seed self-expansion** | as-found | Jr's own discovery output | propose new `seeds.json` entries (new firmware repo / vendor / list) via one-file PR |
+| **Growth telemetry** | **weekly** | GA4 Data API + Search Console API (`esp-atlas.com`) | **consolidated performance digest → Telegram/webhook**; GSC top-demand queries → data-priority signal (§3d) |
 
 **RESOLVED ⟨Q2⟩ — hybrid cadence.** The high-drift, cheap jobs run on a fixed daily
 tick: **liveness · firmware-releases · recipe-drift**. The expensive jobs —
@@ -191,6 +192,40 @@ else the vendor product/wiki page. Each is one `board_catalogs`/vendor-spec seed
 **RESOLVED ⟨Q13⟩ — add both registries** as firmware/library catalog seeds: **PlatformIO
 Registry** (`api.registry.platformio.org`) and **ESP Component Registry**
 (`components.espressif.com/api`). Both live; exact query params are an implementation detail.
+
+### 3d. Growth telemetry & the 1,000,000-user north-star
+
+North-star: **1MM users on `esp-atlas.com`.** You can't steer there blind — so Jr consolidates
+the site's analytics and reports weekly. **This stays inside Jr's nature: MEASURE + STEER-DATA +
+REPORT. It is NOT marketing** — launch/visibility/experiments/monetisation are Felipe's call
+(*propose, do not implement* — the SEO-handover governance rule).
+
+**Wiring (verified, already provisioned):** GA4 property `properties/551132215` (GCP project
+`esp-atlas-ga4`), Search Console `sc-domain:esp-atlas.com`, read via the service account
+`esp-atlas-ga4-admin@esp-atlas-ga4.iam.gserviceaccount.com` (**read-only**; key minted-on-request
+and revoked after — a secret, never in the repo). APIs: `analyticsdata` + `searchconsole`
+(+ `pagespeedonline` optional). The 2026-08-22 SEO audit already pulled both via this SA — the
+path is proven.
+
+**Weekly digest (Jr → Telegram/webhook), consolidated GA4 + GSC:**
+- **Users / traffic**: active users, new users, sessions, week-over-week Δ, and **progress toward 1MM**.
+- **Acquisition**: top channels, top landing pages, top countries.
+- **Search (GSC)**: total clicks/impressions/CTR/avg-position Δ; **top queries**; **rising queries**;
+  **high-impression / low-CTR pages** (title/desc opportunities); indexed-coverage changes.
+- **Health**: Core Web Vitals / PSI trend; 404s (feeds the liveness/NotFound signal).
+
+**The steering loop (this is why it's Jr's, not a bystander's):** GSC **demand** is a first-class
+**data-priority signal** — queries with impressions but no matching record, or a thin one, jump
+the staleness/population queue. *People are searching for a board/firmware we don't cover well →
+Jr prioritizes authoring/deepening it.* Analytics thus steers **which data Jr keeps**, closing the
+loop between what users want and what the atlas provides — without Jr ever touching growth levers.
+
+⟨Q14 — **home for this job:** host the telemetry cron + digest **inside Jr** (its crons + §7
+outbound + the data-priority tie-in make it the natural host), or split it into a sibling "growth"
+lane to keep §0 pristine? My lean: **Jr hosts it**, with the hard boundary above (measure/report/
+prioritize-data only). Confirm.⟩
+⟨Q15 — digest **cadence/format**: weekly Telegram summary + a committed `docs/telemetry/<date>.md`
+snapshot for history? And the **1MM target date** (drives the WoW pace math)?⟩
 
 ## 4. Anatomy of one job (the loop)
 

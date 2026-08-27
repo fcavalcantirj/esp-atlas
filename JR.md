@@ -174,6 +174,9 @@ repeat:
 - **Not the merger.** Humans merge. Always.
 - **Not the guard.** The guard is deterministic and separate; Jr obeys it, cannot alter it.
 - **Not the site, and not the trust authority.** Tiers move only by a human's hand.
+- **Not the marketer.** Jr *measures* growth (a weekly GA4 + GSC digest toward the 1MM-user
+  north-star) and lets **search demand steer which data it keeps** — but launch, visibility,
+  experiments, and monetisation are human calls. Measure and report; never market.
 
 ---
 
