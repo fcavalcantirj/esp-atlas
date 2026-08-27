@@ -303,6 +303,40 @@ def _frontmatter(md_path: Path) -> dict:
     return {}
 
 
+def board_soc(board_id: str) -> str | None:
+    """The chip_family (soc) of a catalogued board, read from its record — GROUND TRUTH so Jr
+    never guesses a chip. Returns None if the board or its soc is unknown."""
+    for bmd in (REPO / "data/boards").glob(f"*/{board_id}/board.md"):
+        return _frontmatter(bmd).get("soc")
+    return None
+
+
+def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category: str,
+                                boards: list[str], body: str, capabilities: list[str] | None = None,
+                                maintainer: str | None = None, license: str | None = None,
+                                distribution: list[str] | None = None) -> dict:
+    """DETERMINISTIC authoring — the model supplies ONLY judgment (category, which catalogued
+    `boards` it runs on, capabilities from the README). `socs` and every recipe's `chip_family`
+    are DERIVED from the board records — the model never touches a chip id (kills the
+    soc-fabrication class, e.g. CatHack's esp32-s3). Writes the firmware + one recipe per board +
+    the coverage run-case, all consistent by construction."""
+    boards = [b for b in dict.fromkeys(boards) if board_soc(b)]   # catalogued, known-soc, deduped
+    if not boards:
+        return {"error": "no catalogued board with a known soc — open an Issue, do not author"}
+    socs = sorted({board_soc(b) for b in boards})
+    src = [{"field": "*", "url": url, "verified": "2026-08-27"}]
+    author_firmware_record(firmware_id, name, url, category, socs, src, body,
+                           maintainer=maintainer, license=license,
+                           distribution=distribution, capabilities=capabilities)
+    recipes = []
+    for b in boards:
+        rid = f"{b}__{firmware_id}"
+        author_recipe(rid, b, firmware_id, board_soc(b), src,
+                      f"{name} on the {b} ({board_soc(b)}). `unverified`; the repo lists {b} as a supported device.")
+        recipes.append(rid)
+    return {"firmware": firmware_id, "socs": socs, "recipes": recipes, "run_case": author_run_case(firmware_id)}
+
+
 def triple_validate(firmware_id: str, recipe_id: str) -> dict:
     """THREE independent gates before a PR (Felipe's hard rule — never propose an unvalidated
     record). Returns {"pass": bool, "gate1_guard", "gate2_source", "gate3_structure"} with

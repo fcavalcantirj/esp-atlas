@@ -33,27 +33,22 @@ Add ONE genuinely-new firmware + its recipe this run:
 3. For each candidate until one works, read BOTH fetch_github_repo(github) AND
    **fetch_github_readme(github)** — the README is your richest source (API description/topics are
    often EMPTY, e.g. CatHack). Also use the candidate's own launcher name/description/category.
-4. From that evidence determine: `category` (firmware_category enum), `socs` (the chips the repo
-   names — most M5 Cardputer/AtomS3/StickC tools run esp32-s3; a "Cardputer" tool → board
-   `m5cardputer`/esp32-s3, "StickC Plus2" → `m5stick-cplus2`), and the catalogued board_id(s) it
-   supports. A candidate is only un-citable if BOTH repo AND README give no usable evidence — then
-   skip to the next. Only after ALL 5 candidates fail do you report "needs human Issue".
-5. author_firmware_record(): category from firmware_category enum ONLY; socs from soc_ids ONLY
-   and only chips the repo names; license from the repo. Also POPULATE these when the repo
-   evidences them (cite-or-omit — omit if unsure, never guess): `maintainer` (the repo owner),
-   `capabilities` (from the description, e.g. wifi/ble/rf), `distribution` (from
-   firmware_distribution enum — `releases` if the repo has GitHub releases, `web-flasher` if it
-   has a web installer). sources = [{field,url,verified:"2026-08-27"}] per cited field, pointing
-   at the github url; a short factual body.
-6. author_recipe() for EVERY catalogued board this firmware supports — FIRMWARE COVERAGE, don't
-   stop at one. For each board_id the repo evidences support for: recipe_id = f"{board}__{firmware_id}",
-   board = the catalogued board_id, firmware = the firmware id, chip_family = that board's soc_id,
-   status = "unverified", cite the source. Omit boards not in board_ids (cite-or-omit).
-7. author_run_case(firmware_id) — register the firmware's coverage RUN case so the CI invariant
-   `test_every_firmware_has_a_run_case` stays green (the gap that once red main).
-8. run_guard(). If ok=False, READ the error, fix the record(s), and retry (up to 3 times).
-8. triple_validate(firmware_id, recipe_id) and report its result verbatim, plus the firmware_id
-   and recipe_id. Be terse."""
+4. From the evidence, decide ONLY TWO things (this is all the judgment you make):
+   a. `category` — from the firmware_category enum.
+   b. `boards` — the list of catalogued board_ids the repo/README names it runs on. "M5StickC
+      Plus2" → `m5stick-cplus2`; "Cardputer" → `m5cardputer`; "AtomS3" → `m5atoms3`; "Core2" →
+      `m5stack-core2`. Include EVERY catalogued board it supports (coverage). Only board_ids from
+      schema_enums are valid; ignore boards not catalogued.
+   You do NOT choose socs or chips — those are DERIVED from the board records. NEVER pass a chip.
+   A candidate is un-citable only if repo AND README give no board evidence → skip to the next.
+   Only after ALL 5 candidates fail do you report "needs human Issue".
+5. author_firmware_and_recipes(firmware_id, name, url, category, boards=[...], body,
+   capabilities=[...] (from README, cite-or-omit), maintainer=<repo owner>). This ONE call writes
+   the firmware (socs derived from the boards), a recipe per board (chip derived), and the coverage
+   run-case — all consistent by construction. If it returns {"error": ...}, that candidate had no
+   usable catalogued board — move to the next candidate.
+6. triple_validate(firmware_id, recipe_id=the first recipe id it returned). If a gate fails, READ
+   it, fix, retry (≤3). Report the verdict + firmware_id + recipe_id. Be terse."""
 
 jr = Agent(
     name="EspAtlasJr",
@@ -61,8 +56,8 @@ jr = Agent(
     db=SqliteDb(db_file=str(Path(__file__).parent / "jr_memory.db")),
     session_id="jr-firmware",
     tools=[tools.schema_enums, tools.uncatalogued_with_code, tools.fetch_github_repo,
-           tools.fetch_github_readme, tools.author_firmware_record, tools.author_recipe,
-           tools.author_run_case, tools.run_guard, tools.triple_validate],
+           tools.fetch_github_readme, tools.author_firmware_and_recipes,
+           tools.run_guard, tools.triple_validate],
     instructions=INSTRUCTIONS,
     markdown=False,
 )
