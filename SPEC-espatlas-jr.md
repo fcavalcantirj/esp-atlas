@@ -160,6 +160,13 @@ that's a coverage hole to close, not a silent gap.
      first-class correction trigger**: Jr reads it, verifies against the cited source, and opens a
      **fix PR** (or replies asking for specifics). Framed as a *polled job*, so it does **not**
      add a 4th inbound channel — §7's "exactly three inbound" stays intact.
+- **Firmware coverage (a firmware is not "done" at one recipe):** when Jr adds or maintains a
+  firmware, it authors a recipe for **every catalogued board the repo says it supports** — not
+  just the first. Boards the firmware supports but that aren't catalogued yet are omitted
+  (cite-or-omit) and can seed a board-population candidate. A firmware whose page lists only one
+  board when the repo names several is a **coverage gap** Jr should close (e.g. Evil-M5Project →
+  Cardputer + AtomS3 + Core2). Runs as part of authoring and as a periodic re-check of catalogued
+  firmware against newly-added boards.
 - **Seed self-expansion:** when discovery surfaces a productive new firmware repo, vendor, or
   list not in `seeds.json`, Jr proposes adding it (one-file PR) — the seed set grows itself.
 
@@ -200,12 +207,16 @@ the site's analytics and reports weekly. **This stays inside Jr's nature: MEASUR
 REPORT. It is NOT marketing** — launch/visibility/experiments/monetisation are Felipe's call
 (*propose, do not implement* — the SEO-handover governance rule).
 
-**Wiring (verified, already provisioned):** GA4 property `properties/551132215` (GCP project
-`esp-atlas-ga4`), Search Console `sc-domain:esp-atlas.com`, read via the service account
-`esp-atlas-ga4-admin@esp-atlas-ga4.iam.gserviceaccount.com` (**read-only**; key minted-on-request
-and revoked after — a secret, never in the repo). APIs: `analyticsdata` + `searchconsole`
-(+ `pagespeedonline` optional). The 2026-08-22 SEO audit already pulled both via this SA — the
-path is proven.
+**Wiring (RESOLVED + PROVEN LIVE 2026-08-27 — no service-account key):** GA4 property
+`properties/551132215` + Search Console `sc-domain:esp-atlas.com`, pulled through the **Composio
+SDK** (`~/.composio-venv`, API key at `~/.composio.key`, entity `7UQIn73xcX…`) using the
+`google_analytics` + `google_search_console` toolkits (OAuth-connected for Jr's entity — the auth
+was the missing piece; connected via `connected_accounts.initiate` links). Actions:
+`GOOGLE_ANALYTICS_RUN_REPORT`, `GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY` / `LIST_SITES`.
+First live pull: 79 users / 245 impressions / pos 32.2. **`jr/telemetry.py`, weekly cron
+`jr-telemetry` (Mon 09:07).** The SA-key route is abandoned — Composio OAuth is simpler and
+proven. *(Lesson: a Composio toolkit being connected in the dashboard ≠ connected for the
+agent's entity — initiate the connection per-entity and send the OAuth link.)*
 
 **Weekly digest (Jr → Telegram/webhook), consolidated GA4 + GSC:**
 - **Users / traffic**: active users, new users, sessions, week-over-week Δ, and **progress toward 1MM**.

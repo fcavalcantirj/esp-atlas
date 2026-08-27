@@ -154,6 +154,12 @@ RUN_MATRIX = [
         requires_exact={"wifi", "display"},
         boards_exact={"m5stick-cplus2"},
     ),
+    dict(
+        # thin record (no capabilities/requires yet) — grounds via its recipe; enrich later
+        # to assert requires ⊇ {wifi} once the firmware record carries capabilities.
+        id="17_evil-m5project",
+        fw="evil-m5project",
+    ),
 ]
 
 
