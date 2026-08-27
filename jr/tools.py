@@ -152,6 +152,25 @@ def fetch_github_repo(url: str) -> dict:
     }
 
 
+def fetch_github_readme(url: str, max_chars: int = 3500) -> str:
+    """Fetch the repo's README text — the RICHEST citable source (API description/topics are
+    often empty, as with CatHack). Read this to source category / socs / capabilities / which
+    boards a firmware supports. Returns '' if none."""
+    parts = url.rstrip("/").replace("https://github.com/", "").split("/")
+    if len(parts) < 2:
+        return ""
+    owner, repo = parts[0], parts[1]
+    p = subprocess.run(["gh", "api", f"repos/{owner}/{repo}/readme", "--jq", ".content"],
+                       capture_output=True, text=True, timeout=30)
+    if p.returncode != 0 or not p.stdout.strip():
+        return ""
+    import base64
+    try:
+        return base64.b64decode(p.stdout.strip()).decode("utf-8", "ignore")[:max_chars]
+    except Exception:
+        return ""
+
+
 def author_firmware_record(
     firmware_id: str, name: str, url: str, category: str,
     socs: list[str], sources: list[dict], body: str,
@@ -336,6 +355,9 @@ def triple_validate(firmware_id: str, recipe_id: str) -> dict:
             problems["gate3"].append(f"recipe.board '{rc.get('board')}' not catalogued")
         if rc.get("chip_family") not in en["soc_ids"]:
             problems["gate3"].append(f"chip_family '{rc.get('chip_family')}' not a known soc")
+        if rc.get("chip_family") and fw.get("socs") and rc["chip_family"] not in fw["socs"]:
+            problems["gate3"].append(  # the cathack-class semantic error the deterministic guard misses
+                f"soc mismatch: recipe chip '{rc['chip_family']}' not in firmware socs {fw.get('socs')}")
         if rc.get("status") not in en["recipe_status"]:
             problems["gate3"].append(f"status '{rc.get('status')}' invalid (must be unverified for new)")
 
