@@ -22,11 +22,24 @@ not Jr's runtime, not mentioned again.
 
 ## 1. What Jr is
 
-Jr is a **full DasBrowCoder/Hermes agent instance** (provisioned from
-`github.com/fcavalcantirj/dasbrow-hermes-coder` + a `box.env`), whose entire purpose is
-one sentence: **keep 100% of esp-atlas verified and verifiable — at scale and over time.**
+Jr's purpose is one sentence: **keep 100% of esp-atlas verified and verifiable — at
+scale and over time.**
 
-He is a peer agent, not a job. From the substrate he gets:
+**Jr's body is a LEAN, provider-agnostic coding agent — NOT necessarily the full
+DasBrowCoder stack.** Candidates (research-open): **Kimi Code CLI** (MIT, TypeScript,
+provider-configurable, subagents — lacks Telegram, addable), **picoclaw**, or another
+lean tweakable harness. Runs on a **free/cheap model** (see §8). Whatever the harness,
+he needs: the guard→PR pipeline, memory, browser/fetch, crons, and the 4 inbound hooks.
+
+### 1a. Why a cheap/free model is SAFE (the structural unlock)
+
+Jr's verifiability guarantee lives in the **deterministic guard + human-merge, NOT the
+model.** A weak model that hallucinates a spec is **blocked** — `sources-live`/schema/
+oracle fail — and a human merges regardless. The worst a cheap model does is *waste a
+PR that gets rejected*. So the motto is protected by the pipeline, and Jr's authoring
+model can be as lean as we like. This is what makes a free OpenRouter/Groq model viable.
+
+From the harness he needs:
 - **The delegate → guard → merge pipeline** — he authors records, a *deterministic*
   guard (zero-LLM) gates them, he opens a **cited PR**; a **human merges**. (The exact
   flow proven across this whole session.)
@@ -114,9 +127,15 @@ promote?") but never sets the tier itself. ⟨Q6 — this mechanism OK?⟩
 
 Jr is reachable and reaches out:
 - **Outbound:** Telegram/webhook on every proposed PR, dead-source alert, needs-judgment Issue, and a periodic freshness digest.
-- **Inbound (support / e2e):** ⟨Q7 — what should Jr accept inbound? e.g. "Jr, refresh the
-  M5 boards" on demand, a webhook from GitHub on merge, a health/e2e ping? Who's authorised
-  to command him — you only, or a maintainers channel?⟩
+- **Inbound (Felipe, resolved):** exactly three, and they're minimal (not bespoke
+  "channels" — gitmerge + health are things most agents already have):
+  1. **On-demand via channel** — a Telegram command (e.g. *"Jr, refresh the M5 boards"*)
+     triggers a job now. **Authorised: Felipe only** (his chat id).
+  2. **Git-merge webhook** — GitHub fires on merge so Jr learns what got accepted
+     (updates memory, clears the staleness item, never re-proposes it).
+  3. **Health / e2e ping** — a liveness endpoint so we know Jr is alive and his last
+     run's status.
+  No other inbound surface. Telegram is the one human channel; the other two are plumbing.
 
 ## 8. Memory (what Jr keeps)
 
@@ -135,8 +154,26 @@ On acceptance: fold the good of `SPEC-freshness / -data-population / -discovery 
 -data-maintainer` into this file, update `SPEC-INDEX.md` ownership (one row replaces four),
 and leave a one-line tombstone in each old spec pointing here.
 
-## 11. Open questions (consolidated) — Q1–Q7 above, plus:
-- ⟨Q8 — cost envelope: authoring runs on the premium delegate cost ~$2–16 each this
-  session. A per-day or per-job budget cap for Jr? What's comfortable?⟩
-- ⟨Q9 — does Jr also own **B/C-series data** (pin planner `gpio_pins`, schematic images)
-  as regular jobs once those ship, or is that one-off human-triggered work?⟩
+## 8a. Runtime & model (Felipe, resolved — free-first, research-open)
+
+- **Model:** free-tier first. **Start: Poolside Laguna (via OpenRouter)** — `laguna-s-2.1`
+  (118B-A8B, 70% Terminal-Bench, free 256K ctx, 200 req/day) or the leaner `laguna-xs-2.1`
+  (33B). Fallback / second lane: **Groq free tier**. Free-tier trains on I/O — a non-issue
+  because **Jr only touches public atlas data**.
+- **Harness:** research-open, lean + tweakable preferred — **Kimi Code CLI** (MIT/TS,
+  provider-configurable → point at OpenRouter) or **picoclaw**. Low memory footprint.
+- **Cost is bounded structurally:** free model = ~$0 for authoring; the 200 req/day free
+  cap *is* the natural rate-limit. Premium delegate stays available for the rare hard
+  record, but the default lane is free. ⟨Q8b — a hard per-day request/PR cap on top of
+  the free-tier limit, so review stays humane? e.g. ≤ N PRs/day.⟩
+
+## 11. Open questions (consolidated)
+- ⟨Q1b — pick the harness: **Kimi Code CLI** vs **picoclaw** vs other. I can spike both
+  lean-first (memory footprint, OpenRouter wiring, how hard the 3 inbound hooks are).⟩
+- ⟨Q8b — daily PR/request cap (above).⟩
+- ⟨Q9 — does Jr also own **B/C-series data** (pin-planner `gpio_pins`, schematic images)
+  as recurring jobs once shipped, or is that one-off human-triggered work?⟩
+
+*Resolved: Q1 (lean provider-agnostic body, not full DasBrowCoder) · Q2/Q3 (leans) ·
+Q4/Q5/Q6 (leans) · Q7 (3 inbound: on-demand-via-Telegram + gitmerge webhook + health
+ping, Felipe-only) · Q8 (free model, Laguna-via-OpenRouter first).*
