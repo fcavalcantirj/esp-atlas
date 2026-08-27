@@ -1,6 +1,8 @@
 # SPEC — EspAtlas Jr. 🤖 (the data keeper)
 
-> Status: DRAFT (interview in progress — `⟨Q…⟩` marks a pending Felipe decision).
+> Status: **CONVERGED** (all interview `⟨Q⟩`s resolved 2026-08-27; harness = smolagents on
+> Groq free `gpt-oss-120b` — see §8a). `⟨Q…⟩` markers are kept as a resolved-decision log,
+> each now prefixed **RESOLVED**. `fx-open` is permanently out of scope (§0/§9).
 > **This spec converges and REPLACES the four data-lane specs** — `SPEC-freshness.md`,
 > `SPEC-data-population.md`, `SPEC-discovery.md`, `SPEC-data-maintainer.md` — keeping
 > the good of each, nothing duplicated. Those become historical once this lands.
@@ -13,7 +15,7 @@ esp-atlas is two fully-decoupled systems:
 |---|---|---|
 | Does | answers user queries over retrieved records | keeps the atlas fresh + growing |
 | Data | **reads part** of the atlas | **writes** the whole atlas (via cited PRs) |
-| LLM | **Groq** (always improving) | Claude (agent) + deterministic guard |
+| LLM | **Groq** (always improving) | **lean free model** (Groq free `gpt-oss-120b`) + deterministic guard |
 | Owner | `INTERFACE-SPEC.md` | **this spec** |
 
 The only coupling is one-way: **Jr writes the atlas; Home Search reads it.** Jr never
@@ -25,11 +27,13 @@ not Jr's runtime, not mentioned again.
 Jr's purpose is one sentence: **keep 100% of esp-atlas verified and verifiable — at
 scale and over time.**
 
-**Jr's body is a LEAN, provider-agnostic coding agent — NOT necessarily the full
-DasBrowCoder stack.** Candidates (research-open): **Kimi Code CLI** (MIT, TypeScript,
-provider-configurable, subagents — lacks Telegram, addable), **picoclaw**, or another
-lean tweakable harness. Runs on a **free/cheap model** (see §8). Whatever the harness,
-he needs: the guard→PR pipeline, memory, browser/fetch, crons, and the 4 inbound hooks.
+**Jr's body is a LEAN, provider-agnostic coding agent — NOT the full DasBrowCoder
+stack.** **RESOLVED (2026-08-27): the body is `smolagents`** (HF, ~1000 LoC Python; model
+client via `OpenAIServerModel` → Groq free `gpt-oss-120b`), smoke-tested live on the Pi
+(see §8a). Chosen for being Python — Felipe's turf, so the guard→PR call, hooks, and memory
+ledger bolt on as ordinary functions. Whatever the harness, Jr needs bolted on: the guard→PR
+pipeline, a structured-ledger memory, browser/fetch, crons, and the 3 inbound hooks.
+*(`fx-open` was evaluated and permanently rejected — see §0/§9. Not to be reintroduced.)*
 
 ### 1a. Why a cheap/free model is SAFE (the structural unlock)
 
@@ -74,17 +78,119 @@ propose cited PR** — differing only in source and cadence. Seeds live in `seed
 |---|---|---|---|
 | **Liveness sweep** | daily | HTTP-check every `sources[].url` | dead-source PR/Issue + freshness age |
 | **Firmware releases** | daily | GitHub Releases per firmware | version-drift PR |
+| **Issue/Discussion/bug watch** | daily-cheap | firmware repos' GitHub **Issues + Discussions**; **our own** esp-atlas Issues/Discussions | upstream compat-break/new-device/bug → recipe-drift PR, trust demotion, or our Issue; **user-reported bad data on our repo → correction PR** |
 | **Recipe / compat drift** | daily (highest volatility) | firmware repos vs recipes (`User_Setup`, `#define`, release `.bin` names, README device lists) | recipe PR / Issue |
 | **Pin & io refresh** | periodic | re-verify `gpio_pins`/`reserved_pins`/`power_out` against the cited pinout/datasheet | corrected io PR (the motto's *over-time* guarantee) |
 | **Board population** | weekly, vendor-batched | Arduino `package_*_index.json` + `boards.txt`, Launcher devices, vendor spec pages | new `board`/`module`/`soc` records |
-| **Community discovery** | periodic | seeds: awesome-esp32, HN, Reddit, GitHub-trending, **launcherhub** | firmware / `example` candidates, **with-code gated** |
+| **Manufacturer watch** | daily-cheap | Espressif products/datasheets/HW-guidelines, M5Stack docs, M5Burner | **new `soc`/`module`/`board`/`brand` the day a vendor posts it**; datasheet-revision `io`/spec PRs |
+| **launcherhub backlog-drain** | staleness queue | launcherhub `giveMeTheList` (hundreds, mostly uncatalogued) | drain into `unverified` firmware + valid recipe; dedup vs catalogued; rank by **REAL** GitHub stars |
+| **Community discovery** | periodic | awesome-esp32, HN, GitHub-trending, **r/esp32 (`score > 50` only)** | firmware / `example` candidates, **with-code gated** |
+| **Brand/vendor upkeep** | monthly | vendor homepages (per `brand`) | brand liveness/redirects; **auto-create `brand`** on a newly-seen vendor |
+| **Seed self-expansion** | as-found | Jr's own discovery output | propose new `seeds.json` entries (new firmware repo / vendor / list) via one-file PR |
 
-⟨Q2 — cadence: keep this daily/weekly split, or a single staleness-driven queue (oldest
-`verified` record wins each tick)? My lean: liveness/releases/recipe daily (cheap,
-high-drift); population/discovery/pin-refresh on a **staleness queue** within a budget.⟩
+**RESOLVED ⟨Q2⟩ — hybrid cadence.** The high-drift, cheap jobs run on a fixed daily
+tick: **liveness · firmware-releases · recipe-drift**. The expensive jobs —
+**board-population · community-discovery · pin&io-refresh** — run off a single
+**staleness queue** (oldest-`verified` record wins each tick) within the daily budget.
+Fixed cadence for what drifts fast and cheaply; staleness queue for what's expensive and
+slow-moving.
 
-⟨Q3 — priority when budget is tight: **liveness always runs** (keeps the motto true);
-the rest compete by staleness. Agree?⟩
+**RESOLVED ⟨Q3⟩ — liveness is privileged.** When the budget is tight, **liveness always
+runs first** (it is what keeps the motto true); every other job competes by staleness for
+the remaining budget.
+
+### 3a. Full responsibility map (every entity has an owner — no orphans)
+
+Jr's job is `keep 100% verified & verifiable — at scale, over time`, applied to **all 7
+entities** across four verbs. Every cell below is owned by a job above; if a cell is empty,
+that's a coverage hole to close, not a silent gap.
+
+| Entity | DISCOVER (find new) | POPULATE (author) | VERIFY (keep true) | PRUNE (dead) |
+|---|---|---|---|---|
+| **soc** | Manufacturer watch (Espressif) | Manufacturer watch | Pin&io refresh + datasheet-drift | Liveness |
+| **module** | Manufacturer watch (Espressif/vendor module datasheets) | Manufacturer watch | datasheet-drift (flash/psram/antenna/certs) | Liveness |
+| **board** | Board population + Manufacturer watch + Community discovery | Board population | Pin&io refresh | Liveness |
+| **brand** | auto-create on new vendor | Brand/vendor upkeep | Brand upkeep (monthly homepage liveness/redirect) | Liveness |
+| **firmware** | Community discovery + **launcherhub drain** | releases + launcherhub drain | version-drift + **Issue/Discussion/bug watch** | Liveness |
+| **recipe** | Board population + launcherhub drain | recipe authoring | **Recipe/compat drift** + **Issue/Discussion watch** (compat breaks) | orphan-check (guard) |
+| **example** *(⚠ not real yet — no dir/schema; create in v1)* | Community discovery ("what people built") | Community discovery, `unverified` | staleness re-check | Liveness |
+| **companion** *(⚠ stub — `.gitkeep` only, no schema)* | ⟨Q10⟩ | ⟨Q10⟩ | ⟨Q10⟩ | ⟨Q10⟩ |
+
+> **Entity reality check (verified 2026-08-27):** 6 schemas exist (board·brand·firmware·module·
+> soc·recipe) + 7 data dirs (those + `companions`). **`companions` is a stub** (no schema) and
+> **`example` does not exist** (aspirational). v1 scope decision: **create the `example` entity**
+> (dir + schema) since Community discovery + Home Search both need it; **defer `companion`** (⟨Q10⟩).
+
+### 3b. Named source rules (the specifics, resolved)
+
+- **r/esp32 (`reddit-esp32` seed):** poll `r/esp32.json`; **admit only posts with `score > 50`**
+  (Felipe's bar — signal over noise). Extract repo/firmware/board mentions from the post +
+  top comments; **with-code gate** (must resolve to a real public repo or release `.bin`);
+  dedup vs catalogued; auto-author `unverified` or open an Issue if it needs judgment.
+- **THE LAUNCHER CATALOG = the primary firmware source, drained FIRST.** The Launcher's
+  catalog page (`bmorcelli.github.io/Launcher/catalog.html`) is JS-rendered off
+  **`api.launcherhub.net/giveMeTheList`**, which returns **2,487 firmware entries** (verified
+  2026-08-27) vs. our **16** catalogued — this is the real firmware backlog. Each entry carries
+  `fid, name, description, category, tags, author, **github**, download, versions`. Strategy:
+  - **Drain this backlog before any other firmware discovery.** Each tick take the top-N
+    not-already-catalogued, ranked by **REAL GitHub stars** (fetch via the `github` field — the
+    API's own `star`/like count is a near-zero internal counter, **never use it**; `download`
+    is a fair secondary popularity signal). Skip forks/mirrors (e.g. `bmorcelli/esp32marauder`
+    ≈ Marauder). Author `unverified` firmware + a valid recipe against a catalogued board.
+  - **Persist a `seen/drained` ledger over all 2,487 `fid`s** so the backlog monotonically
+    shrinks, nothing is re-proposed, and new upstream additions are detected on re-fetch.
+  - Second firmware source in the same family: **M5Burner API** (`m5burner-api.m5stack.com`,
+    live) for the M5Stack ecosystem.
+  - **Only after the launcher backlog is drained** do the long-tail sources (below) matter for
+    *new* firmware — they catch what never made it into the Launcher catalog.
+- **Manufacturer watch (Espressif, M5Stack, …):** the `espressif-products` /
+  `-datasheets` / `-hw-design-guidelines` and `m5stack-docs` / `m5burner` seeds are watched
+  **daily-cheap** for *new parts* — a new ESP32 variant, module, or dev board should become a
+  cited `unverified` record the day it's posted (this is how Jr catches parts past my training
+  cutoff — the `esp32-s31` lesson). Datasheet **revisions** trigger `io`/spec re-verify PRs.
+- **Issues / Discussions / bugs (new source class):** watch two surfaces via the GitHub API
+  (official, rate-limited — no scraping):
+  1. **Upstream** — each catalogued firmware repo's `/issues` + `/discussions`. Signal to mine:
+     *compat breaks* ("Bruce v2.x bricks Cardputer") → recipe-drift PR or a **trust-demotion PR**
+     (human-merged — Jr never sets `trust_tier` itself, per §6);
+     *new-device support* → recipe/firmware candidate; *recurring bug* → note on the record or
+     our Issue. Filter by reactions/engagement to stay above noise (mirror the `score > 50` spirit).
+  2. **Our own** esp-atlas `/issues` + `/discussions` — **a user reporting bad/stale data is a
+     first-class correction trigger**: Jr reads it, verifies against the cited source, and opens a
+     **fix PR** (or replies asking for specifics). Framed as a *polled job*, so it does **not**
+     add a 4th inbound channel — §7's "exactly three inbound" stays intact.
+- **Seed self-expansion:** when discovery surfaces a productive new firmware repo, vendor, or
+  list not in `seeds.json`, Jr proposes adding it (one-file PR) — the seed set grows itself.
+
+⟨Q10 — **`companion` entity** (1 record today): is it in Jr v1 scope (which source seeds it,
+what cadence), or deferred like `prompt-recipe`? My lean: **defer** — no seed feeds it and its
+purpose is thin; revisit when a real companion-data need appears.⟩
+
+⟨Q11 — **Reddit ingest depth:** post-title + selftext + top-N comments, or title/link only?
+My lean: title + selftext + top ~10 comments (that's where the repo links live), still
+`score > 50` gated.⟩
+
+### 3c. Firmware discovery — priority order (the part that needed improvement)
+
+Firmware is Jr's weakest-covered entity today (16 records). Ordered pipeline:
+
+1. **Launcher catalog** (`giveMeTheList`, 2,487) — **drain first**, real-star ranked (§3b).
+2. **M5Burner API** — M5Stack ecosystem firmware.
+3. **Release-tracking** — the 11 `firmware_releases` seeds, for version drift on what's catalogued.
+4. **Long-tail discovery** (only for what's *not* in 1–2) — GOOD places for genuinely new firmware:
+   `awesome-esp` lists · **r/esp32 `score > 50`** · GitHub trending `topic:esp32` · HN · Issues/
+   Discussions of catalogued repos (new-project mentions) · ⟨Q13⟩ **PlatformIO / ESP Component
+   Registry** as additional catalogs?
+
+**RESOLVED ⟨Q12⟩ — expand Manufacturer watch to ALL major ESP32 board makers** (verified
+reachable 2026-08-27): **Espressif · M5Stack · LilyGO · Heltec · Seeed (XIAO) · DFRobot ·
+Waveshare · Adafruit**. Prefer each vendor's **machine-readable Arduino package index** where
+it exists (Adafruit ships `package_adafruit_index.json` — gold; Espressif already seeded),
+else the vendor product/wiki page. Each is one `board_catalogs`/vendor-spec seed.
+
+**RESOLVED ⟨Q13⟩ — add both registries** as firmware/library catalog seeds: **PlatformIO
+Registry** (`api.registry.platformio.org`) and **ESP Component Registry**
+(`components.espressif.com/api`). Both live; exact query params are an implementation detail.
 
 ## 4. Anatomy of one job (the loop)
 
@@ -110,18 +216,21 @@ Admissible only if it resolves to a **real public repo** (or release `.bin`). Th
 - **rank by REAL GitHub stars** (the API's `star` field is a near-zero internal like-count — do NOT use it);
 - author the top-N not-already-catalogued as `unverified` firmware + a valid recipe against a catalogued board.
 
-⟨Q4 — auto-author vs flag: **auto-author `unverified`** for a firmware with a resolvable
-repo (cheap to reject), **Issue-only** when a hardware/compat claim needs human judgment. Agree?⟩
+**RESOLVED ⟨Q4⟩ — auto-author when it's cheap to reject.** For a firmware whose repo/`.bin`
+resolves to a real public artifact, Jr **auto-authors an `unverified` record** (a bad one
+just gets rejected — cheap). When the claim needs hardware/compat human judgment, Jr opens
+an **Issue only**, never a record.
 
-⟨Q5 — entity scope: keep the **`example`** entity ("what people built", surfaced by Home
-Search) and **cut/defer `prompt-recipe`**? Or keep both?⟩
+**RESOLVED ⟨Q5⟩ — keep `example`, defer `prompt-recipe`.** The `example` entity ("what
+people built", surfaced by Home Search) stays. `prompt-recipe` is **deferred** — not in
+Jr v1's scope; revisit only if a real need shows up.
 
 ## 6. Trust promotion
 
 `unverified → trusted` (or a compat/trust-tier claim) is done by a **human editing
 `trust_tier` in a normal PR** through the same guard — git-tracked, auditable, no separate
 system. Jr may *surface a promotion candidate* (an Issue "these 6 have been live 30 days,
-promote?") but never sets the tier itself. ⟨Q6 — this mechanism OK?⟩
+promote?") but never sets the tier itself. **RESOLVED ⟨Q6⟩ — mechanism accepted as-is.**
 
 ## 7. Channels & support (the webhook / e2e ask)
 
@@ -156,24 +265,48 @@ and leave a one-line tombstone in each old spec pointing here.
 
 ## 8a. Runtime & model (Felipe, resolved — free-first, research-open)
 
-- **Model:** free-tier first. **Start: Poolside Laguna (via OpenRouter)** — `laguna-s-2.1`
-  (118B-A8B, 70% Terminal-Bench, free 256K ctx, 200 req/day) or the leaner `laguna-xs-2.1`
-  (33B). Fallback / second lane: **Groq free tier**. Free-tier trains on I/O — a non-issue
-  because **Jr only touches public atlas data**.
-- **Harness:** research-open, lean + tweakable preferred — **Kimi Code CLI** (MIT/TS,
-  provider-configurable → point at OpenRouter) or **picoclaw**. Low memory footprint.
-- **Cost is bounded structurally:** free model = ~$0 for authoring; the 200 req/day free
-  cap *is* the natural rate-limit. Premium delegate stays available for the rare hard
-  record, but the default lane is free. ⟨Q8b — a hard per-day request/PR cap on top of
-  the free-tier limit, so review stays humane? e.g. ≤ N PRs/day.⟩
+- **Model: RESOLVED (2026-08-27) → Groq free `openai/gpt-oss-120b` is the PRIMARY lane.**
+  Proven reliable live (5/5 HTTP 200 under sequential load; seconds/call). **Free Laguna 2.1 S
+  (`poolside/laguna-s-2.1:free`, $0, 262K ctx) WORKS but is per-minute rate-limited**: a single
+  spaced call is clean (200, "OK"), and smolagents' one-shot passes with backoff — but a
+  multi-step agent loop crawls (every call re-hits the RPM cap → backoff; a file round-trip took
+  ~4 min and still flaked). So Laguna free = fine for single/low-freq calls, **too slow/flaky for
+  Jr's multi-step authoring loop** unless a **BYOK Poolside key** (own rate limits) or **paid
+  Laguna** ($0.09/1M) is used. Groq free is the fast/reliable loop lane; Laguna is the secondary.
+  Free-tier trains on I/O — a non-issue because **Jr only touches public atlas data**.
+- **Harness: RESOLVED (2026-08-27) → `smolagents`** (HF, ~1000 LoC Python; model client via
+  `OpenAIServerModel` → Groq). **Smoke-tested live on the Pi**: one-shot ask, on-disk
+  read→write→read round-trip (`ALPHA-SM`), and a shell round-trip (`42`), all on Groq
+  `gpt-oss-120b`. Chosen because it's **Python** (Felipe's turf — the guard→PR call, the 3
+  hooks, and the memory ledger bolt on as ordinary functions he can own and tweak) and
+  **HF-maintained**. Caveat carried forward: smolagents runs the model's Python in a
+  restricted interpreter — widen `additional_authorized_imports` for file/shell/git work.
+  *(fx-open is permanently rejected — see §0/§9. Do not reintroduce it.)*
+- **Still bolted on by us** (smolagents gives loop+tools+model client; the rest is ours):
+  the crons (systemd timers on the Pi), the 3 inbound hooks (Telegram trigger / git-merge
+  webhook / health ping), and the structured-ledger memory (§8).
+- **Cost is bounded structurally:** free Groq model = ~$0 for authoring; the free req cap
+  *is* the natural rate-limit. Premium delegate stays available for the rare hard record,
+  but the default lane is free.
+- **RESOLVED ⟨Q8b⟩ — hard daily cap ≤ 10 PRs/day** (on top of the provider's free req cap),
+  so human review stays humane; excess authored records queue to the next day.
 
 ## 11. Open questions (consolidated)
-- ⟨Q1b — pick the harness: **Kimi Code CLI** vs **picoclaw** vs other. I can spike both
-  lean-first (memory footprint, OpenRouter wiring, how hard the 3 inbound hooks are).⟩
-- ⟨Q8b — daily PR/request cap (above).⟩
-- ⟨Q9 — does Jr also own **B/C-series data** (pin-planner `gpio_pins`, schematic images)
-  as recurring jobs once shipped, or is that one-off human-triggered work?⟩
+- **RESOLVED ⟨Q1b⟩ — harness = `smolagents`** (Python; smoke-tested on the Pi; see §8a).
+- **RESOLVED ⟨Q8b⟩ — ≤ 10 PRs/day** (see §8a).
+- **RESOLVED ⟨Q9⟩ — B/C-series deferred.** Jr v1 owns the A-series live-data lanes (§3).
+  B/C-series (`gpio_pins` pin-planner, schematic images) is a later phase, not v1 scope.
+- **RESOLVED ⟨Q1 host⟩ — Jr is its own always-on instance** on a dedicated low-spec box
+  (the aarch64 Pi it was tested on is the natural home), separate `box.env` / identity /
+  GitHub bot token from the main DasBrowCoder. Exact host is a deploy detail, not a spec one.
 
-*Resolved: Q1 (lean provider-agnostic body, not full DasBrowCoder) · Q2/Q3 (leans) ·
-Q4/Q5/Q6 (leans) · Q7 (3 inbound: on-demand-via-Telegram + gitmerge webhook + health
-ping, Felipe-only) · Q8 (free model, Laguna-via-OpenRouter first).*
+### Remaining real-world TODOs (not spec decisions — deploy/ops)
+- **Model lane**: Groq free `gpt-oss-120b` is the proven default. Laguna-via-OpenRouter stays
+  parked until a BYOK Poolside key (private rate limits) makes the free pool usable in a loop.
+- **Secrets**: keys live at `~/.config/jr/keys.env` (mode 600, non-repo). Deploy reads from there.
+
+*Resolved: Q1 (own instance on the Pi) · Q1b (harness = smolagents, tested) · Q2/Q3 (hybrid
+cadence + liveness-privileged) · Q4 (auto-author cheap, Issue for judgment) · Q5 (keep
+`example`, defer `prompt-recipe`) · Q6 (trust-promotion mechanism) · Q7 (3 inbound hooks,
+Felipe-only) · Q8 (Groq free `gpt-oss-120b` primary; Laguna deferred, throttled) · Q8b (≤10 PRs/day)
+· Q9 (B/C-series deferred).*

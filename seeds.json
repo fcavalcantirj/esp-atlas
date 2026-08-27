@@ -1,6 +1,6 @@
 {
   "$comment": "Seeds = the sources EspAtlas Jr. (our autonomous data-maintainer) watches every day. It reads these, notices what changed, and opens a cited PR; a human merges. ADD YOUR OWN: append an entry below in a one-file PR — an awesome-list, a firmware repo, a vendor catalog, a subreddit. Official/machine-readable sources preferred; no ToS-violating scraping. See SPEC-data-maintainer.md + SPEC-discovery.md.",
-  "version": 1,
+  "version": 2,
   "board_catalogs": [
     { "id": "arduino-esp32-official", "url": "https://espressif.github.io/arduino-esp32/package_esp32_index.json", "kind": "arduino-package-index", "note": "Espressif's official versioned board index (+ boards.txt per platform for build.mcu/variant)" },
     { "id": "launcher-supported-devices", "url": "https://github.com/bmorcelli/Launcher/wiki/Supported-devices", "kind": "wiki-device-table", "note": "Device × chip × added-in-version table; known-good recipe candidates, already chip-mapped" },
@@ -8,7 +8,13 @@
     { "id": "espressif-products", "url": "https://www.espressif.com/en/products/socs", "kind": "vendor-products", "note": "SoC/datasheet reference pages (rare drift, monthly)" },
     { "id": "espressif-datasheets", "url": "https://documentation.espressif.com/", "kind": "soc-datasheet", "note": "Per-SoC datasheet PDFs — DC-Characteristics table is the ONLY citable source for soc.drive (per-pad GPIO source/sink mA); see SPEC-io-power.md §3/§5.1" },
     { "id": "m5stack-docs", "url": "https://docs.m5stack.com/en/products", "kind": "vendor-spec-docs", "note": "M5Stack per-board spec pages — source for board.io (gpio_exposed 'IO ×N + pin list') and power_out.rail_ma_max ('Grove/rail max output current'); INCONSISTENTLY published, cite-or-omit per SPEC-io-power.md §3/§5.2" },
-    { "id": "espressif-hw-design-guidelines", "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/", "kind": "soc-hardware-guidelines", "note": "Per-SoC (dropdown) schematic-checklist — strapping pins + IO MUX pin-function table as machine-readable text ('GPIO8/9/25 are strapping pins'). OFFICIAL source for soc.reserved_pins (the gpio_free subtraction rules); see SPEC-io-power.md §3/§5.3. URL pattern per SoC: .../esp-hardware-design-guidelines/en/latest/<socslug>/schematic-checklist.html (socslug = esp32, esp32c3, esp32c61, esp32s3, esp32s31, …)" }
+    { "id": "espressif-hw-design-guidelines", "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/", "kind": "soc-hardware-guidelines", "note": "Per-SoC (dropdown) schematic-checklist — strapping pins + IO MUX pin-function table as machine-readable text ('GPIO8/9/25 are strapping pins'). OFFICIAL source for soc.reserved_pins (the gpio_free subtraction rules); see SPEC-io-power.md §3/§5.3. URL pattern per SoC: .../esp-hardware-design-guidelines/en/latest/<socslug>/schematic-checklist.html (socslug = esp32, esp32c3, esp32c61, esp32s3, esp32s31, …)" },
+    { "id": "adafruit-boards", "url": "https://adafruit.github.io/arduino-board-index/package_adafruit_index.json", "kind": "arduino-package-index", "note": "Adafruit's official versioned board index (Feather / QT Py / Metro ESP32-S2/S3) — machine-readable, gold source for Adafruit boards" },
+    { "id": "heltec-boards", "url": "https://resource.heltec.cn/download/package_heltec_esp32_index.json", "kind": "arduino-package-index", "note": "Heltec's official ESP32 board index (WiFi LoRa 32, Wireless Tracker/Paper/Stick) — machine-readable" },
+    { "id": "lilygo-products", "url": "https://lilygo.cc/", "kind": "vendor-products", "note": "LilyGO catalog (T-Display, T-Deck, T-Beam, T-Watch); no Arduino index (rides the Espressif core) — board specs + pinouts from product pages and the Xinyuan-LilyGO GitHub org" },
+    { "id": "seeed-xiao-docs", "url": "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/", "kind": "vendor-spec-docs", "note": "Seeed Studio XIAO ESP32 series (C3/S3/C6) wiki — spec + pinout pages" },
+    { "id": "dfrobot-docs", "url": "https://wiki.dfrobot.com/", "kind": "vendor-spec-docs", "note": "DFRobot FireBeetle / Beetle ESP32 boards — wiki spec pages" },
+    { "id": "waveshare-docs", "url": "https://www.waveshare.com/wiki/Main_Page", "kind": "vendor-spec-docs", "note": "Waveshare ESP32 dev boards (ESP32-S3-Touch, ESP32-C6, …) — wiki spec pages" }
   ],
   "firmware_releases": [
     { "id": "bruce", "url": "https://github.com/pr3y/Bruce/releases", "kind": "github-releases", "note": "Pentest multitool" },
@@ -29,5 +35,9 @@
     { "id": "hn-esp32", "url": "https://hn.algolia.com/api/v1/search_by_date?query=esp32&tags=story", "kind": "hn-api", "note": "HN stories that link a repo (with-code gate)" },
     { "id": "github-trending-esp32", "url": "https://api.github.com/search/repositories?q=topic:esp32&sort=updated", "kind": "github-search", "note": "New & rising ESP32 projects" },
     { "id": "launcherhub-catalog", "url": "https://api.launcherhub.net/giveMeTheList", "kind": "launcherhub-api", "note": "Launcher/M5Burner community firmware catalog (~2650 entries, ~1487 with a github link). DISCOVERY ONLY — never bulk-ingest (would break the trust bar, SPEC-data-population §1). Each entry carries github+category+esp target; the with-code gate (SPEC-discovery §3) drops the ~44% with no repo and the hobby/one-off noise, surfacing real repo-backed firmware (e.g. geo-tp/esp32-bus-pirate, jaylikesbunda/ghost_esp, 7h30th3r0n3/evil-m5project)." }
+  ],
+  "registries": [
+    { "id": "platformio-registry", "url": "https://api.registry.platformio.org/v3/search?q=esp32", "kind": "registry-api", "note": "PlatformIO Registry API — libraries/platforms/tools catalog; the esp32 query surfaces firmware/library candidates (with-code gate applies; exact query params an implementation detail)" },
+    { "id": "esp-component-registry", "url": "https://components.espressif.com/api/components", "kind": "component-registry", "note": "ESP Component Registry — official Espressif ESP-IDF managed-components catalog" }
   ]
 }
