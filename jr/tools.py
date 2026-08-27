@@ -168,6 +168,7 @@ def schema_enums() -> dict:
         "recipe_status": ["known-good", "reported", "unverified", "broken"],
         "soc_ids": socs,
         "board_ids": boards,
+        "capabilities": sorted(capability_vocab()),   # ONLY these tokens — never freeform phrases
     }
 
 
@@ -364,8 +365,8 @@ def open_pr(firmware_id: str, title: str, body: str | None = None, recipe_id: st
 def run_ci_tests() -> dict:
     """Run the coverage-matrix invariant CI test (the one #69 broke) so Jr never proposes a PR
     that reds main. Uses system python3 (has esp_atlas_core + pytest). {"ok","output"}."""
-    p = subprocess.run(["python3", "-m", "pytest", "apps/core/tests/test_coverage_matrix.py", "-q"],
-                       cwd=REPO, capture_output=True, text=True, timeout=180)
+    p = subprocess.run(["python3", "-m", "pytest", "apps/core/tests", "-q"],
+                       cwd=REPO, capture_output=True, text=True, timeout=300)
     return {"ok": p.returncode == 0, "output": (p.stdout + p.stderr).strip()[-1500:]}
 
 
@@ -419,6 +420,21 @@ def board_soc(board_id: str) -> str | None:
     return None
 
 
+def capability_vocab() -> set[str]:
+    """The controlled capability vocabulary — the tokens existing firmware use (wifi, ble, ir,
+    display, ota, sub-ghz…). Jr may ONLY use these; freeform capabilities like
+    'Media playback (MP3, WAV)' break test_examples (comma-split). Derived from live records."""
+    vocab: set[str] = set()
+    for d in (FIRMWARE_DIR.iterdir() if FIRMWARE_DIR.exists() else []):
+        md = d / "firmware.md"
+        if md.is_dir() or not md.exists():
+            continue
+        for c in (_frontmatter(md).get("capabilities") or []):
+            if isinstance(c, str):
+                vocab.add(c)
+    return vocab
+
+
 def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category: str,
                                 boards: list[str], body: str, capabilities: list[str] | None = None,
                                 maintainer: str | None = None, license: str | None = None,
@@ -432,6 +448,9 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
     if not boards:
         return {"error": "no catalogued board with a known soc — open an Issue, do not author"}
     socs = sorted({board_soc(b) for b in boards})
+    if capabilities:                                    # keep ONLY controlled-vocab tokens — no freeform
+        vocab = capability_vocab()
+        capabilities = [c for c in capabilities if isinstance(c, str) and c in vocab] or None
     src = [{"field": "*", "url": url, "verified": "2026-08-27"}]
     author_firmware_record(firmware_id, name, url, category, socs, src, body,
                            maintainer=maintainer, license=license,

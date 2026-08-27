@@ -43,7 +43,9 @@ Add ONE genuinely-new firmware + its recipe this run:
    A candidate is un-citable only if repo AND README give no board evidence → skip to the next.
    Only after ALL 5 candidates fail do you report "needs human Issue".
 5. author_firmware_and_recipes(firmware_id, name, url, category, boards=[...], body,
-   capabilities=[...] (from README, cite-or-omit), maintainer=<repo owner>). This ONE call writes
+   capabilities=[...] — ONLY simple tokens from schema_enums['capabilities'] (e.g. wifi, ble, ir,
+   display, gps); map README features to those tokens ("WiFi deauth"→wifi, "BLE spam"→ble); OMIT
+   anything with no matching token — NEVER freeform phrases. maintainer=<repo owner>). This ONE call writes
    the firmware (socs derived from the boards), a recipe per board (chip derived), and the coverage
    run-case — all consistent by construction. If it returns {"error": ...}, that candidate had no
    usable catalogued board — move to the next candidate.
