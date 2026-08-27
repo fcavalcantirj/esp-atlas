@@ -15,6 +15,39 @@ power:
   charging: false
 io:
   gpio_free: 17
+  gpio_pins:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 21
+  - 22
+  - 23
+  - 25
+  - 26
+  - 27
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 39
 notes:
 - Single micro-USB (power/flash/comms via on-board USB-to-UART bridge); classic ESP32
   has no native USB
@@ -32,6 +65,9 @@ sources:
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
   verified: '2026-08-21'
 - field: io.gpio_free
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
+  verified: '2026-08-26'
+- field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
   verified: '2026-08-26'
 ---

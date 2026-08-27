@@ -14,6 +14,29 @@ extras:
 - rgb-led
 io:
   gpio_free: 17
+  gpio_pins:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
 notes:
 - 'Two USB Type-C ports: a UART-bridge port and the native ESP32-C6 USB port'
 - Bridge chip model not named in the official user guide (omitted)
@@ -33,6 +56,9 @@ sources:
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitm-1/user_guide.html
   verified: '2026-08-22'
 - field: io.gpio_free
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitm-1/user_guide.html
+  verified: '2026-08-26'
+- field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitm-1/user_guide.html
   verified: '2026-08-26'
 ---

@@ -17,6 +17,43 @@ extras:
 - rgb-led
 io:
   gpio_free: 27
+  gpio_pins:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
 notes:
 - 'Two micro-USB: a UART-bridge port and the native ESP32-S3 full-speed USB OTG port'
 - Addressable RGB LED (GPIO38 on v1.1, GPIO48 on v1.0)
@@ -32,6 +69,9 @@ sources:
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html
   verified: '2026-08-21'
 - field: io.gpio_free
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html
+  verified: '2026-08-26'
+- field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html
   verified: '2026-08-26'
 ---

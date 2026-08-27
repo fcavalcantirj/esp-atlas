@@ -14,6 +14,26 @@ extras:
 - rgb-led
 io:
   gpio_free: 14
+  gpio_pins:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
 notes:
 - 'Two USB Type-C ports: a UART-bridge port and the native ESP32-H2 USB port (USB
   2.0 full speed, up to 12 Mbps)'
@@ -32,6 +52,9 @@ sources:
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
   verified: '2026-08-22'
 - field: io.gpio_free
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
+  verified: '2026-08-26'
+- field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
   verified: '2026-08-26'
 ---

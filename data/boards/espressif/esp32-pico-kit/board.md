@@ -16,6 +16,41 @@ usb:
   connector: micro-usb
 io:
   gpio_free: 19
+  gpio_pins:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 21
+  - 22
+  - 23
+  - 25
+  - 26
+  - 27
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
 notes:
 - Micro-USB UART-bridge port; bridge chip is CP2102 on v4 (up to 1 Mbps) or CP2102N
   on v4.1 (up to 3 Mbps) — version-dependent, so usb.bridge left unset
@@ -33,6 +68,9 @@ sources:
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-pico-kit/user_guide.html
   verified: '2026-08-22'
 - field: io.gpio_free
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-pico-kit/user_guide.html
+  verified: '2026-08-26'
+- field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-pico-kit/user_guide.html
   verified: '2026-08-26'
 ---

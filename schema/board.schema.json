@@ -48,6 +48,7 @@
       "properties": {
         "gpio_exposed": { "type": "number", "description": "count of GPIO pads routed to a header/pin, as printed by the vendor (e.g. 'IO x6')" },
         "gpio_free": { "type": "number", "description": "gpio_exposed minus the SoC's exposed reserved_pins (strapping/input-only/usb-flash-tied) and any pins hard-consumed onboard; DERIVED unless the vendor states it directly — record the subtraction in notes" },
+        "gpio_pins": { "type": "array", "items": { "type": "number" }, "description": "the GPIO numbers broken out to a user-accessible header (the raw exposed set, before subtracting reserved). Cited to the same pinout source as gpio_exposed/gpio_free; cite-or-omit." },
         "input_only": { "type": "number", "description": "count of exposed pads that are input-only (no output capability)" },
         "power_out": {
           "type": "object", "additionalProperties": false,

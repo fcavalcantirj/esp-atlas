@@ -14,6 +14,22 @@ extras:
 - rgb-led
 io:
   gpio_free: 10
+  gpio_pins:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 18
+  - 19
+  - 20
+  - 21
 notes:
 - Single micro-USB (power/flash/comms via on-board USB-to-UART bridge)
 - Bridge chip model not named in the official user guide (omitted)
@@ -30,6 +46,9 @@ sources:
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/user_guide.html
   verified: '2026-08-22'
 - field: io.gpio_free
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/user_guide.html
+  verified: '2026-08-26'
+- field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/user_guide.html
   verified: '2026-08-26'
 ---

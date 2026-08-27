@@ -12,6 +12,35 @@ usb:
   connector: micro-usb
 io:
   gpio_free: 17
+  gpio_pins:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 9
+  - 10
+  - 12
+  - 13
+  - 14
+  - 15
+  - 18
+  - 19
+  - 21
+  - 22
+  - 23
+  - 25
+  - 26
+  - 27
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
 notes:
 - Single micro-USB (power/flash/comms via on-board USB-to-UART bridge); classic
   ESP32 has no native USB
@@ -31,6 +60,9 @@ sources:
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitm-1/user_guide.html
   verified: '2026-08-22'
 - field: io.gpio_free
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitm-1/user_guide.html
+  verified: '2026-08-26'
+- field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitm-1/user_guide.html
   verified: '2026-08-26'
 ---

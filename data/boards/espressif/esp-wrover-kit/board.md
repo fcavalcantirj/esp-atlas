@@ -14,6 +14,29 @@ extras:
 - rgb-led
 io:
   gpio_free: 13
+  gpio_pins:
+  - 0
+  - 2
+  - 4
+  - 5
+  - 12
+  - 13
+  - 14
+  - 15
+  - 18
+  - 19
+  - 21
+  - 22
+  - 23
+  - 25
+  - 26
+  - 27
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 39
 notes:
 - USB 2.0 A-to-Micro-B cable; FT2232HL provides both the UART bridge and on-board
   JTAG debugging
@@ -34,6 +57,9 @@ sources:
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp-wrover-kit/user_guide.html
   verified: '2026-08-22'
 - field: io.gpio_free
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp-wrover-kit/user_guide.html
+  verified: '2026-08-26'
+- field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp-wrover-kit/user_guide.html
   verified: '2026-08-26'
 ---
