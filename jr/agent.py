@@ -42,7 +42,9 @@ Add ONE genuinely-new firmware + its recipe this run:
    You do NOT choose socs or chips — those are DERIVED from the board records. NEVER pass a chip.
    A candidate is un-citable only if repo AND README give no board evidence → skip to the next.
    Only after ALL 5 candidates fail do you report "needs human Issue".
-5. author_firmware_and_recipes(firmware_id, name, url, category, boards=[...], body,
+5. author_firmware_and_recipes(firmware_id, name, url, category, boards=[...], body, ...).
+   `firmware_id` = ONE clean lowercase-hyphen slug of the tool/repo name (e.g. `m5stick-shark`,
+   `porkchop`) — ONE record per firmware, NEVER per-version or with dates (`shark-2024-08-1` is wrong).
    capabilities=[...] — ONLY simple tokens from schema_enums['capabilities'] (e.g. wifi, ble, ir,
    display, gps); map README features to those tokens ("WiFi deauth"→wifi, "BLE spam"→ble); OMIT
    anything with no matching token — NEVER freeform phrases. maintainer=<repo owner>). This ONE call writes

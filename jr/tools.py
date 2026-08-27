@@ -365,8 +365,11 @@ def open_pr(firmware_id: str, title: str, body: str | None = None, recipe_id: st
 def run_ci_tests() -> dict:
     """Run the coverage-matrix invariant CI test (the one #69 broke) so Jr never proposes a PR
     that reds main. Uses system python3 (has esp_atlas_core + pytest). {"ok","output"}."""
-    p = subprocess.run(["python3", "-m", "pytest", "apps/core/tests", "-q"],
-                       cwd=REPO, capture_output=True, text=True, timeout=300)
+    p = subprocess.run(["python3", "-m", "pytest",
+                        "apps/core/tests/test_coverage_matrix.py",   # run-case coverage
+                        "apps/core/tests/test_examples.py",          # capabilities / labels
+                        "apps/core/tests/test_intent_oracle.py",     # routable-by-name
+                        "-q"], cwd=REPO, capture_output=True, text=True, timeout=200)
     return {"ok": p.returncode == 0, "output": (p.stdout + p.stderr).strip()[-1500:]}
 
 
@@ -444,6 +447,10 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
     are DERIVED from the board records — the model never touches a chip id (kills the
     soc-fabrication class, e.g. CatHack's esp32-s3). Writes the firmware + one recipe per board +
     the coverage run-case, all consistent by construction."""
+    import re
+    if not re.fullmatch(r"[a-z][a-z0-9-]{1,39}", firmware_id or "") or re.search(r"\d{4}-\d\d", firmware_id):
+        return {"error": f"bad firmware id '{firmware_id}' — use ONE clean slug (the repo/tool name), "
+                         "lowercase-hyphen, NO dates/versions (e.g. 'm5stick-shark', not 'shark-2024-08-1')"}
     boards = [b for b in dict.fromkeys(boards) if board_soc(b)]   # catalogued, known-soc, deduped
     if not boards:
         return {"error": "no catalogued board with a known soc — open an Issue, do not author"}
