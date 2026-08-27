@@ -220,12 +220,14 @@ the staleness/population queue. *People are searching for a board/firmware we do
 Jr prioritizes authoring/deepening it.* Analytics thus steers **which data Jr keeps**, closing the
 loop between what users want and what the atlas provides — without Jr ever touching growth levers.
 
-⟨Q14 — **home for this job:** host the telemetry cron + digest **inside Jr** (its crons + §7
-outbound + the data-priority tie-in make it the natural host), or split it into a sibling "growth"
-lane to keep §0 pristine? My lean: **Jr hosts it**, with the hard boundary above (measure/report/
-prioritize-data only). Confirm.⟩
-⟨Q15 — digest **cadence/format**: weekly Telegram summary + a committed `docs/telemetry/<date>.md`
-snapshot for history? And the **1MM target date** (drives the WoW pace math)?⟩
+**RESOLVED ⟨Q14⟩ — Jr hosts the telemetry cron + digest** (its crons + §7 outbound + the
+data-priority tie-in make it the natural home), under the hard boundary above: measure / report /
+steer-data only — never a growth lever.
+
+**RESOLVED ⟨Q15⟩ — both outputs**: a **weekly Telegram summary** AND a committed
+`docs/telemetry/<date>.md` snapshot (git-tracked history, so trends are auditable). Target date
+for 1MM is Felipe's to set — strawman **2027-08-22** (one year from domain creation) drives the
+WoW-pace math until he fixes it.
 
 ## 4. Anatomy of one job (the loop)
 

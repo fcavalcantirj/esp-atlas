@@ -174,7 +174,43 @@ def author_firmware_record(
     return {"path": str(path.relative_to(REPO))}
 
 
-def open_pr(firmware_id: str, title: str, body: str, recipe_id: str | None = None,
+def build_firmware_pr_body(firmware_id: str, recipe_id: str) -> str:
+    """Deterministically build a HUMAN-friendly PR body — TL;DR, clickable links, what/why —
+    from the authored records + live repo stars. Not left to the model. Jr signs its own PRs."""
+    fw = _frontmatter(FIRMWARE_DIR / firmware_id / "firmware.md")
+    rc = _frontmatter(REPO / "data/recipes" / recipe_id / "recipe.md")
+    repo = fetch_github_repo(fw.get("url", "")) or {}
+    stars = f" ({repo['stars']:,}★)" if repo.get("stars") else ""
+    name = fw.get("name", firmware_id)
+    ghurl = fw.get("url", "")
+    board = rc.get("board", "")
+    desc = (repo.get("description") or "").strip().rstrip(".")
+    socs = ", ".join(f"`{s}`" for s in fw.get("socs", []))
+    body_md = (fw_md_body := (FIRMWARE_DIR / firmware_id / "firmware.md").read_text().split("---", 2)[-1].strip())
+    return f"""**TL;DR** — Add **[{name}]({ghurl})**{stars}, a `{fw.get('category')}` firmware, for the **[{board}](https://esp-atlas.com/parts/{board})** — as an `unverified` firmware + recipe for review.
+
+### What it is
+{desc or body_md.splitlines()[0] if body_md else name}
+
+### What this PR adds
+| | |
+|---|---|
+| 🔌 Firmware | **[{name}]({ghurl})** — category `{fw.get('category')}`, socs {socs} |
+| 🧩 Recipe | **{board} × {firmware_id}** — chip `{rc.get('chip_family')}`, `status: {rc.get('status')}` |
+| 🔗 Board | [{board}](https://esp-atlas.com/parts/{board}) · (firmware page → `esp-atlas.com/firmware/{firmware_id}` once merged) |
+
+### Why
+Top uncatalogued firmware by downloads in the **[Launcher / M5Burner catalog](https://bmorcelli.github.io/Launcher/catalog.html)** — a real, repo-backed tool people flash today.
+
+### Provenance & validation
+Discovered via launcherhub `giveMeTheList`, with-code gated on its GitHub repo. Authored **cite-or-omit**{" — `license` omitted (repo declares none; no fabrication)" if not fw.get("license") else ""}. **Triple-validated:** deterministic guard green · every field re-checked against the source · recipe pairs to a catalogued board (no orphan).
+
+> **Bot proposes, humans dispose** — trust-tier promotion is human-only. Please review + merge.
+>
+> — 🤖 **EspAtlas Jr** · autonomous data-keeper (Agno + Groq `gpt-oss-120b`)"""
+
+
+def open_pr(firmware_id: str, title: str, body: str | None = None, recipe_id: str | None = None,
             base: str = "main") -> dict:
     """Open a cited PR for an authored firmware (+ its recipe) on branch `jr/firmware-<id>`
     (never writes `main`; SPEC §2.3 bot-proposes-humans-dispose). Stages BOTH the firmware and
@@ -189,6 +225,8 @@ def open_pr(firmware_id: str, title: str, body: str, recipe_id: str | None = Non
     git("add", *paths)
     c = git("commit", "-m", title)
     git("push", "-u", "origin", branch, "--force-with-lease")
+    if body is None and recipe_id:
+        body = build_firmware_pr_body(firmware_id, recipe_id)   # human-friendly, deterministic
     pr = subprocess.run(
         ["gh", "pr", "create", "--base", base, "--head", branch, "--title", title, "--body", body],
         cwd=REPO, capture_output=True, text=True,
