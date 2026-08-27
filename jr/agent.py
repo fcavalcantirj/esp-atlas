@@ -43,7 +43,9 @@ Add ONE genuinely-new firmware + its recipe this run:
    stop at one. For each board_id the repo evidences support for: recipe_id = f"{board}__{firmware_id}",
    board = the catalogued board_id, firmware = the firmware id, chip_family = that board's soc_id,
    status = "unverified", cite the source. Omit boards not in board_ids (cite-or-omit).
-7. run_guard(). If ok=False, READ the error, fix the record(s), and retry (up to 3 times).
+7. author_run_case(firmware_id) — register the firmware's coverage RUN case so the CI invariant
+   `test_every_firmware_has_a_run_case` stays green (the gap that once red main).
+8. run_guard(). If ok=False, READ the error, fix the record(s), and retry (up to 3 times).
 8. triple_validate(firmware_id, recipe_id) and report its result verbatim, plus the firmware_id
    and recipe_id. Be terse."""
 
@@ -53,7 +55,8 @@ jr = Agent(
     db=SqliteDb(db_file=str(Path(__file__).parent / "jr_memory.db")),
     session_id="jr-firmware",
     tools=[tools.schema_enums, tools.uncatalogued_with_code, tools.fetch_github_repo,
-           tools.author_firmware_record, tools.author_recipe, tools.run_guard, tools.triple_validate],
+           tools.author_firmware_record, tools.author_recipe, tools.author_run_case,
+           tools.run_guard, tools.triple_validate],
     instructions=INSTRUCTIONS,
     markdown=False,
 )

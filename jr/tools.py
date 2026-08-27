@@ -81,6 +81,11 @@ def uncatalogued_with_code(limit: int = 5) -> list[dict]:
         name_l = (e.get("name") or "").lower()
         if any(t in name_l for t in tokens):
             continue                                    # name shares a catalogued firmware token → port
+        NOISE = ("doom", "gameboy", "game boy", "emulator", "tetris", "pacman", "pac-man", "snake",
+                 "nes", "snes", "pokemon", "arduboy", "chip-8", "chip8", "uiflow", "micropython",
+                 "tamagotchi", "flappy", "2048", " game", "demo", "hello world", "test")
+        if any(t in name_l for t in NOISE):
+            continue                                    # games/emulators/platforms — not atlas firmware
         out.append({
             "name": e.get("name"), "github": gh, "category": e.get("category"),
             "author": e.get("author"), "download": e.get("download", 0),
@@ -217,7 +222,7 @@ def open_pr(firmware_id: str, title: str, body: str | None = None, recipe_id: st
     the recipe so the branch is never orphaned. Assumes triple_validate() passed. Returns
     {"ok","pr_url"}."""
     branch = f"jr/firmware-{firmware_id}"
-    paths = [f"data/firmware/{firmware_id}"]
+    paths = [f"data/firmware/{firmware_id}", "apps/core/tests/test_coverage_matrix.py"]
     if recipe_id:
         paths.append(f"data/recipes/{recipe_id}")
     def git(*a): return subprocess.run(["git", *a], cwd=REPO, capture_output=True, text=True)
@@ -245,6 +250,32 @@ def open_pr(firmware_id: str, title: str, body: str | None = None, recipe_id: st
             "error": (pr.stderr or c.stderr).strip()[:300]}
 
 
+def run_ci_tests() -> dict:
+    """Run the coverage-matrix invariant CI test (the one #69 broke) so Jr never proposes a PR
+    that reds main. Uses system python3 (has esp_atlas_core + pytest). {"ok","output"}."""
+    p = subprocess.run(["python3", "-m", "pytest", "apps/core/tests/test_coverage_matrix.py", "-q"],
+                       cwd=REPO, capture_output=True, text=True, timeout=180)
+    return {"ok": p.returncode == 0, "output": (p.stdout + p.stderr).strip()[-1500:]}
+
+
+def author_run_case(firmware_id: str) -> dict:
+    """Register a firmware's coverage RUN case in test_coverage_matrix.py's RUN_MATRIX, so the
+    `test_every_firmware_has_a_run_case` invariant stays green (the gap that broke main on #69).
+    Minimal case (id + fw) — grounds via the recipe; capability asserts can be tightened later."""
+    import re
+    p = REPO / "apps/core/tests/test_coverage_matrix.py"
+    txt = p.read_text()
+    if f'fw="{firmware_id}"' in txt:
+        return {"skipped": "run case already present"}
+    start = txt.index("RUN_MATRIX = [")
+    end = txt.index("\n]", start)                       # the newline right before RUN_MATRIX's ]
+    nums = [int(m) for m in re.findall(r'id="(\d+)_', txt[start:end])]
+    n = (max(nums) + 1) if nums else 1
+    entry = f'    dict(\n        id="{n}_{firmware_id}",\n        fw="{firmware_id}",\n    ),\n'
+    p.write_text(txt[: end + 1] + entry + txt[end + 1:])
+    return {"path": "apps/core/tests/test_coverage_matrix.py", "case": f"{n}_{firmware_id}"}
+
+
 def _frontmatter(md_path: Path) -> dict:
     import yaml
     txt = md_path.read_text()
@@ -262,10 +293,13 @@ def triple_validate(firmware_id: str, recipe_id: str) -> dict:
     rc_md = REPO / "data/recipes" / recipe_id / "recipe.md"
     problems = {"gate1": [], "gate2": [], "gate3": []}
 
-    # GATE 1 — the deterministic guard (schema + oracle + no-orphan)
+    # GATE 1 — the deterministic guard (schema + oracle + no-orphan) + the CI coverage invariant
     g = run_guard()
     if not g["ok"]:
         problems["gate1"].append(g["output"].splitlines()[-1] if g["output"] else "guard failed")
+    ci = run_ci_tests()   # the pytest invariant #69 broke — never propose a PR that reds main
+    if not ci["ok"]:
+        problems["gate1"].append("CI test red: " + (ci["output"].splitlines()[-1] if ci["output"] else "pytest failed"))
 
     # GATE 2 — every cited field re-checked against the REAL github source (cite-or-omit holds)
     fw = _frontmatter(fw_md) if fw_md.exists() else {}
