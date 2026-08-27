@@ -63,12 +63,37 @@ def _catalogued_repos_and_tokens() -> tuple[set[str], set[str]]:
     return repos, tokens
 
 
+_LEDGER = Path(__file__).resolve().parent / "proposed.json"
+
+
+def _proposed_repos() -> set[str]:
+    """owner/repo of every firmware Jr has already PROPOSED — so it's never re-proposed while a PR
+    is open, and stays skipped if that PR was closed/rejected (SPEC §8: never re-propose rejected)."""
+    if _LEDGER.exists():
+        try:
+            return set(json.loads(_LEDGER.read_text()))
+        except Exception:
+            return set()
+    return set()
+
+
+def mark_proposed(url: str) -> None:
+    """Record a firmware's repo as proposed (called after it lands in a PR)."""
+    fn = url.rstrip("/").replace("https://github.com/", "").lower()
+    owner_repo = "/".join(fn.split("/")[:2])
+    if not owner_repo:
+        return
+    s = _proposed_repos(); s.add(owner_repo)
+    _LEDGER.write_text(json.dumps(sorted(s)))
+
+
 def uncatalogued_with_code(limit: int = 5) -> list[dict]:
     """Launcher-catalog entries that are GENUINELY NEW firmware (not ports/forks of catalogued
     ones) and pass the with-code gate (resolve to a real GitHub repo). Dedup skips any entry
     sharing a repo owner/name or a firmware-name token with the catalogue (SPEC §3b: skip
     forks/mirrors). Ranked by `download` popularity proxy. Returns compact dicts."""
     repos, tokens = _catalogued_repos_and_tokens()
+    repos |= _proposed_repos()                          # also skip firmware already in an open/closed PR
     out = []
     for e in fetch_launcher_catalog():
         gh = (e.get("github") or "").strip()

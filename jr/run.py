@@ -62,6 +62,7 @@ def drain_batch(n: int = 20, label: str | None = None) -> dict:
     from agent import make_jr
     label = label or dt.date.today().isoformat()
     authored: list[str] = []
+    urls: dict[str, str] = {}
     for i in range(n):
         if not tools.uncatalogued_with_code(1):
             break
@@ -81,6 +82,7 @@ def drain_batch(n: int = 20, label: str | None = None) -> dict:
         verdict = tools.triple_validate(fid, rid) if rid else {"pass": False}
         if verdict.get("pass"):
             authored.append(fid)
+            urls[fid] = tools._frontmatter(tools.FIRMWARE_DIR / fid / "firmware.md").get("url", "")
         else:  # reject: remove record, recipes, and its run-case so the batch stays green
             _cleanup(fid, None)
             for r in new_rc:
@@ -90,6 +92,8 @@ def drain_batch(n: int = 20, label: str | None = None) -> dict:
         notify.send_telegram("🤖 *Jr batch* — ran, nothing authorable this pass.")
         return {"action": "none"}
     pr = tools.open_batch_pr(authored, label)
+    for fid in authored:                                # never re-propose these while their PR is open
+        tools.mark_proposed(urls.get(fid, ""))
     notify.send_telegram(
         f"🤖 *Jr daily batch* — **{len(authored)} new firmware** for review: "
         f"[PR]({pr.get('pr_url')})\n" + ", ".join(f"`{a}`" for a in authored[:15]))
@@ -97,18 +101,8 @@ def drain_batch(n: int = 20, label: str | None = None) -> dict:
 
 
 def daily() -> dict:
-    """The scheduled run. One consolidated outcome nudge (open_pr already nudges on a real PR)."""
-    r = drain_once()
-    if r["action"] == "pr" and r.get("ok"):
-        pass  # open_pr already fired the PR nudge with the link
-    elif r["action"] == "rejected":
-        notify.send_telegram(
-            f"🤖 *Jr daily* — authored `{r.get('fid')}` but it failed triple-validate; "
-            f"**no PR** (the guard did its job). I'll try a different candidate next run.")
-    else:
-        notify.send_telegram("🤖 *Jr daily* — ran clean, **nothing new to propose** today. "
-                             "Atlas is fresh. ✅")
-    return r
+    """The scheduled run — a batch of up to 20 firmware into ONE reviewable PR (paid Groq)."""
+    return drain_batch(20)
 
 
 if __name__ == "__main__":
