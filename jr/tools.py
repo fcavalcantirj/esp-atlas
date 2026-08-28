@@ -13,6 +13,8 @@ import subprocess
 import urllib.request
 from pathlib import Path
 
+from oracle import oracle_review  # noqa: F401 — re-exported so run.py keeps calling tools.oracle_review
+
 REPO = Path(__file__).resolve().parent.parent           # the esp-atlas repo root
 FIRMWARE_DIR = REPO / "data" / "firmware"
 BOARDS_DIR = REPO / "data" / "boards"

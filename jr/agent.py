@@ -13,6 +13,7 @@ from agno.agent import Agent
 from agno.models.groq import Groq
 from agno.db.sqlite import SqliteDb
 
+import models
 import tools
 
 # --- keys (box-local, mode 600, never in the repo) ---
@@ -122,12 +123,16 @@ Add ONE genuinely-new board this run:
 
 
 def make_jr_board(session_id: str = "jr-board") -> Agent:
-    """Fresh agent for the board-authoring lane (SPEC §3a "board population") — same Groq free
-    model as make_jr(), its own session so board runs never share context with firmware runs, and
-    a batch passes a unique session_id per board (no history bloat / cross-contamination)."""
+    """Fresh agent for the board-authoring lane (SPEC §3a "board population") — its own session
+    so board runs never share context with firmware runs, and a batch passes a unique session_id
+    per board (no history bloat / cross-contamination). The drafter model is configurable via
+    JR_BOARD_MODEL ("provider:model_id", see models.py) — defaults to the same free Groq model
+    used before this was configurable. Its output still goes through oracle_review (a stronger
+    model, JR_ORACLE_MODEL) and board_triple_validate before it can be proposed."""
+    spec = os.environ.get("JR_BOARD_MODEL", models.DEFAULT_BOARD_MODEL)
     return Agent(
         name="EspAtlasJrBoard",
-        model=Groq(id="openai/gpt-oss-120b"),
+        model=models.make_agno_model(spec),
         db=SqliteDb(db_file=str(Path(__file__).parent / "jr_memory.db")),
         session_id=session_id,
         tools=[tools.board_refs, tools.coverage_backlog, tools.fetch_url, tools.author_board,

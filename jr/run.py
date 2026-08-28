@@ -116,24 +116,54 @@ def drain_batch(n: int = 20, label: str | None = None) -> dict:
     return {"action": "batch", "count": len(authored), "pr_url": pr.get("pr_url"), "firmware": authored}
 
 
+_BOARD_SCHEMA_SUMMARY = (
+    "board record: id (== folder), brand (== folder), name; exactly one of soc (a data/socs/ "
+    "id) or module (a data/modules/ id) — must match the chip family named on the source page; "
+    "optional dimensions_mm/usb/power/display/extras/io/notes/aka/flash_mb/psram_mb, each cited "
+    "by a sources[] entry (field+url+verified)."
+)
+
+
+def _oracle_check(brand: str, board_id: str) -> dict:
+    """oracle_review() a freshly-authored board against its own first cited source page — an
+    ADDITIONAL quality gate before board_triple_validate (SPEC: the deterministic guard stays
+    the final authority; the oracle only catches things it can't, like the MagTag-class wrong-
+    chip bug, before a PR is even proposed)."""
+    board_md = tools.BOARDS_DIR / brand / board_id / "board.md"
+    if not board_md.exists():
+        return {"approve": False, "issues": ["board.md not found"], "notes": ""}
+    fm = tools._frontmatter(board_md)
+    sources = fm.get("sources") or []
+    page_url = sources[0].get("url") if sources else None
+    page_text = tools.fetch_url(page_url).get("text", "") if page_url else ""
+    return tools.oracle_review(board_md.read_text(), page_text, _BOARD_SCHEMA_SUMMARY)
+
+
 def boards_batch(n: int = 2, vendor: str | None = None, label: str | None = None) -> dict:
     """Author up to n new boards from the COVERAGE.md backlog (fresh agent/session each, for
-    clean context), triple-validate each, and bundle the valid ones into ONE reviewable batch PR
-    — mirrors drain_batch() for firmware. `vendor` optionally restricts to one COVERAGE.md
-    section (e.g. 'Espressif'). Rejected boards are fully cleaned up (dir removed)."""
+    clean context), then gate each through oracle_review (a stronger model fact-checking the
+    draft against its own source page) AND board_triple_validate (the deterministic, FINAL
+    authority) before bundling the valid ones into ONE reviewable batch PR — mirrors
+    drain_batch() for firmware. `vendor` optionally restricts to one COVERAGE.md section (e.g.
+    'Espressif'). A board the oracle rejects gets ONE retry (fed the oracle's issues) before
+    being cleaned up. Enforces the $/month cap (SPEC: defense-in-depth even on free models)."""
     import datetime as dt
     from agent import make_jr_board
     label = label or dt.date.today().isoformat()
     authored: list[tuple[str, str]] = []
     for i in range(n):
+        if tools.month_spend() >= tools.MONTHLY_CAP_USD:   # hard $/month cap (defense-in-depth)
+            break
         backlog = tools.coverage_backlog()
         if vendor:
             backlog = [b for b in backlog if b.get("vendor") == vendor]
         if not backlog:
             break
         before = _board_dirs()
+        board_agent = None
         try:
-            make_jr_board(session_id=f"board-batch-{label}-{i}").run(
+            board_agent = make_jr_board(session_id=f"board-batch-{label}-{i}")
+            board_agent.run(
                 "Pick ONE backlog board via coverage_backlog(), fetch its official page, author "
                 "ONLY citable fields (omit anything the page doesn't state), then "
                 "board_triple_validate; retry <=3 on a red gate.")
@@ -143,6 +173,25 @@ def boards_batch(n: int = 2, vendor: str | None = None, label: str | None = None
         if not new:
             continue
         brand, board_id = next(iter(new))
+
+        oracle_verdict = _oracle_check(brand, board_id)
+        if not oracle_verdict.get("approve") and board_agent is not None:
+            issues = "; ".join(oracle_verdict.get("issues") or []) or "unspecified"
+            try:
+                board_agent.run(
+                    f"An independent fact-checker REJECTED this board record: {issues}. "
+                    "Re-check the source page and fix it (call author_board again with the "
+                    "corrected soc/module/fields), then board_triple_validate again.")
+            except Exception:
+                pass
+            new = _board_dirs() - before
+            if new:
+                brand, board_id = next(iter(new))
+                oracle_verdict = _oracle_check(brand, board_id)
+        if not oracle_verdict.get("approve"):
+            _cleanup_board(brand, board_id)
+            continue
+
         verdict = tools.board_triple_validate(board_id)
         if verdict.get("pass"):
             authored.append((brand, board_id))
