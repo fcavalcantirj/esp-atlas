@@ -66,7 +66,9 @@ def test_make_agno_model_groq_builds_groq_client(monkeypatch):
     assert isinstance(m, Groq)
     assert m.id == "openai/gpt-oss-120b"
     assert m.api_key == "g-key"
-    assert m.base_url == "https://api.groq.com/openai/v1"
+    # No base_url override: passing one double-appends "/openai/v1" onto the Groq SDK's
+    # client base_url and 404s. Agno's own default (None here -> SDK default) is correct.
+    assert m.base_url is None
 
 
 def test_make_agno_model_openrouter_builds_openrouter_client(monkeypatch):
@@ -78,7 +80,22 @@ def test_make_agno_model_openrouter_builds_openrouter_client(monkeypatch):
     assert isinstance(m, OpenRouter)
     assert m.id == "z-ai/glm-5.2:free"
     assert m.api_key == "or-key"
-    assert m.base_url == "https://openrouter.ai/api/v1"
+    # No base_url override passed in — this is Agno's OWN class default, not ours.
+    assert m.base_url == OpenRouter.base_url
+
+
+def test_make_agno_model_groq_client_base_url_is_not_double_appended(monkeypatch):
+    """Regression test for the live-run bug: passing base_url="https://api.groq.com/openai/v1"
+    into Agno's Groq(...) made the underlying Groq SDK client base_url
+    "https://api.groq.com/openai/v1/", and the SDK then appends "/openai/v1/chat/completions"
+    onto THAT, producing a 404 (nothing authored in that run). Without a base_url override,
+    the SDK client resolves its own correct base_url: "https://api.groq.com"."""
+    monkeypatch.setenv("GROQ_API_KEY", "g-key")
+
+    m = models.make_agno_model("groq:openai/gpt-oss-120b")
+    client = m.get_client()
+
+    assert str(client.base_url) == "https://api.groq.com"
 
 
 def test_make_agno_model_unknown_provider_errors_clearly():

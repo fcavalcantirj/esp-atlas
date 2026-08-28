@@ -46,11 +46,14 @@ def client_config(spec: str) -> dict:
 
 def make_agno_model(spec: str):
     """The Agno model instance for `spec`, for wiring an Agent(model=...) (e.g. make_jr_board).
-    Uses the SAME provider table as client_config() so the drafter and the oracle never
-    disagree about which endpoint/key a provider means."""
+    Uses the SAME provider table as client_config() to pick the api key, but deliberately
+    does NOT pass base_url to Agno's Groq/OpenRouter classes: Agno already sets the correct
+    endpoint internally, and overriding it double-appends the "/openai/v1" path segment for
+    Groq's SDK client, producing 404s. The base_url in _PROVIDERS is still used by
+    client_config() for the raw-HTTP oracle path — that one needs it and is unaffected."""
     cfg = client_config(spec)
     if cfg["provider"] == "groq":
         from agno.models.groq import Groq
-        return Groq(id=cfg["model_id"], api_key=cfg["api_key"] or None, base_url=cfg["base_url"])
+        return Groq(id=cfg["model_id"], api_key=cfg["api_key"] or None)
     from agno.models.openrouter import OpenRouter
-    return OpenRouter(id=cfg["model_id"], api_key=cfg["api_key"] or None, base_url=cfg["base_url"])
+    return OpenRouter(id=cfg["model_id"], api_key=cfg["api_key"] or None)
