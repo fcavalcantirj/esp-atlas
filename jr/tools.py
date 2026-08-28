@@ -15,6 +15,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent           # the esp-atlas repo root
 FIRMWARE_DIR = REPO / "data" / "firmware"
 BOARDS_DIR = REPO / "data" / "boards"
+SOCS_DIR = REPO / "data" / "socs"
+MODULES_DIR = REPO / "data" / "modules"
 COVERAGE_MD = REPO / "COVERAGE.md"
 LAUNCHERHUB = "https://api.launcherhub.net/giveMeTheList"
 FETCH_USER_AGENT = "esp-atlas-jr/0.1 (+https://esp-atlas.com; board-authoring bot)"
@@ -592,6 +594,16 @@ def _existing_board_names() -> set[str]:
     return names
 
 
+def board_refs() -> dict:
+    """The ONLY valid soc/module ids the board agent may reference for `soc:`/`module:` — call
+    this FIRST, before author_board. Pulled live from data/socs/ and data/modules/ (dirs only) so
+    a weak model can never invent a chip/module id, and never needs a filesystem-browsing tool
+    (e.g. list_directory) it doesn't have."""
+    soc_ids = sorted(d.name for d in SOCS_DIR.iterdir() if d.is_dir()) if SOCS_DIR.exists() else []
+    module_ids = sorted(d.name for d in MODULES_DIR.iterdir() if d.is_dir()) if MODULES_DIR.exists() else []
+    return {"soc_ids": soc_ids, "module_ids": module_ids}
+
+
 def coverage_backlog() -> list[dict]:
     """Parse ../COVERAGE.md into the still-unchecked `[ ]` boards, as {name, vendor, url}. `url`
     is None where COVERAGE.md itself has no live link yet (e.g. '(url: to-verify)') — Jr must not
@@ -670,11 +682,15 @@ def _field_covered(field: str, sources: list[dict]) -> bool:
 
 
 def author_board(board_id: str, brand: str, name: str, fields: dict, sources: list[dict],
-                 body: str, soc: str | None = None, module: str | None = None) -> dict:
+                 body: str, soc: str | None = None, module: str | None = None, **extra) -> dict:
     """Write data/boards/<brand>/<board_id>/board.md from templates/board.template.md's shape —
     id==folder, brand==folder, EXACTLY one of soc/module, ONLY the fields in `fields` (cite-or-
     omit — SPEC §2.2), each covered by a sources[] entry. Returns {"board_id","path"} or
-    {"error"}. Does NOT touch git or run the guard — call run_guard()/board_triple_validate() next."""
+    {"error"}. Does NOT touch git or run the guard — call run_guard()/board_triple_validate() next.
+    Tolerant of a weak model: accepts (and ignores) stray extra kwargs instead of raising; a
+    stray top-level `verified`/`url` (which belongs inside sources[] entries) is folded into any
+    sources[] entry missing that key. Every sources[] entry still needs field+url+verified or the
+    board is rejected — cite-or-omit is unchanged."""
     import re
     import yaml
     if not re.fullmatch(r"[a-z0-9-]+", board_id or ""):
@@ -685,6 +701,18 @@ def author_board(board_id: str, brand: str, name: str, fields: dict, sources: li
         return {"error": "exactly one of soc/module is required (not both, not neither)"}
     if not sources:
         return {"error": "sources[] is required — cite-or-omit, no exceptions"}
+    stray_verified = extra.get("verified")
+    stray_url = extra.get("url")
+    if stray_verified is not None or stray_url is not None:
+        sources = [dict(s) for s in sources]
+        for s in sources:
+            if stray_verified is not None and not s.get("verified"):
+                s["verified"] = stray_verified
+            if stray_url is not None and not s.get("url"):
+                s["url"] = stray_url
+    bad_sources = [s for s in sources if not (s.get("field") and s.get("url") and s.get("verified"))]
+    if bad_sources:
+        return {"error": f"every sources[] entry needs field+url+verified (cite-or-omit) — bad entries: {bad_sources}"}
     unknown = set(fields) - set(_BOARD_OPTIONAL_FIELDS)
     if unknown:
         return {"error": f"unknown board field(s) {sorted(unknown)} — not in schema/board.schema.json"}

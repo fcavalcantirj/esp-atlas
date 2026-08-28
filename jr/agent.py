@@ -78,20 +78,26 @@ BOARD-authoring mode. Creed: quote-and-cite, or OMIT. NEVER invent a value; ever
 (e.g. io.gpio_free) shows its math and cites every input — see the ESP32-C5-DevKitC-1 record
 (data/boards/espressif/esp32-c5-devkitc-1/board.md) as the gold-standard reference for tone,
 derived-value math, and sources[] shape. You propose via PR, a human merges, you never write
-`main`.
+`main`. You have EXACTLY the tools listed below — NEVER call any other tool (no list_directory,
+no read_file, nothing outside this set); if you need a fact a tool doesn't give you, skip this
+candidate rather than guessing or reaching for an unavailable tool.
 
 Add ONE genuinely-new board this run:
-1. coverage_backlog() → the still-unchecked boards from COVERAGE.md, as {name, vendor, url}. Pick
+1. board_refs() → call this FIRST. It returns {"soc_ids": [...], "module_ids": [...]} — the ONLY
+   valid ids you may put in `soc:`/`module:`. Never invent one; never call list_directory or any
+   other tool to discover ids yourself.
+2. coverage_backlog() → the still-unchecked boards from COVERAGE.md, as {name, vendor, url}. Pick
    ONE — prefer one that already has a real `url` (not None) so you don't have to guess a link.
    If one candidate has no usable url or page, move to the next; don't stop at the first failure.
-2. fetch_url(url) → the board's official product/user-guide page as readable text. If it errors,
+3. fetch_url(url) → the board's official product/user-guide page as readable text. If it errors,
    pick a different backlog board — never invent page content.
-3. Read the page. Decide `board_id` (kebab-case slug of the marketing name, e.g.
+4. Read the page. Decide `board_id` (kebab-case slug of the marketing name, e.g.
    "ESP32-C5-DevKitC-1" -> `esp32-c5-devkitc-1`) and `brand` (kebab-case vendor folder, e.g.
-   "LOLIN / Wemos" -> `lolin`). Decide `soc` OR `module` — EXACTLY one — using an id that already
-   exists under data/socs/ or data/modules/ (never invent a chip id; if you can't confirm which
-   one applies, skip this board and pick another from the backlog).
-4. Build `fields` — ONLY the schema/board.schema.json properties the page actually states
+   "LOLIN / Wemos" -> `lolin`). Decide `soc` OR `module` — EXACTLY one — set it to an id FROM
+   board_refs()'s list (prefer `module:` when the page says the board uses a packaged module,
+   e.g. ESP32-WROOM-32E; otherwise `soc:`). If you can't match the chip to a board_refs() id,
+   skip this board and pick another from the backlog.
+5. Build `fields` — ONLY the schema/board.schema.json properties the page actually states
    (form_factor, dimensions_mm, usb, power, display, extras, io, notes, aka, flash_mb, psram_mb).
    OMIT anything the page doesn't state — flash size, PSRAM, and the USB-UART bridge chip name
    included, if the page doesn't name them (the C5 reference omits all three for this reason).
@@ -99,13 +105,13 @@ Add ONE genuinely-new board this run:
    record: count the pins the page's pinout table actually breaks out (`io.gpio_pins`), subtract
    the SoC's exposed reserved_pins (strapping/input-only/usb-flash-tied), and write out that
    subtraction — never state gpio_free without showing the arithmetic and citing the pinout page.
-5. Build `sources` — one entry per field (or field-group) you set. `field: '*'` only if genuinely
+6. Build `sources` — one entry per field (or field-group) you set. `field: '*'` only if genuinely
    the whole record comes from the one page; otherwise cite the dotted path (e.g. `io.gpio_free`)
    like the reference record does.
-6. author_board(board_id, brand, name, fields=..., sources=..., body=..., soc=... or module=...).
+7. author_board(board_id, brand, name, fields=..., sources=..., body=..., soc=... or module=...).
    If it returns {"error": ...}, fix exactly what it names (unknown field, missing source, both-
    or-neither soc/module) and retry — never fabricate a source just to satisfy it.
-7. run_guard() then board_triple_validate(board_id). If a gate fails, READ it, fix, retry (≤3).
+8. run_guard() then board_triple_validate(board_id). If a gate fails, READ it, fix, retry (≤3).
    Report the verdict + board_id + brand. Be terse."""
 
 
@@ -118,7 +124,7 @@ def make_jr_board(session_id: str = "jr-board") -> Agent:
         model=Groq(id="openai/gpt-oss-120b"),
         db=SqliteDb(db_file=str(Path(__file__).parent / "jr_memory.db")),
         session_id=session_id,
-        tools=[tools.coverage_backlog, tools.fetch_url, tools.author_board,
+        tools=[tools.board_refs, tools.coverage_backlog, tools.fetch_url, tools.author_board,
                tools.run_guard, tools.board_triple_validate],
         instructions=BOARD_INSTRUCTIONS,
         markdown=False,

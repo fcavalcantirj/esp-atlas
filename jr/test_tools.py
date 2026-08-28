@@ -71,6 +71,42 @@ class _FakeGetResponse:
         return _H()
 
 
+# ─────────────────────────── board_refs ───────────────────────────
+
+def test_board_refs_returns_real_ids_from_the_repo():
+    refs = tools.board_refs()
+
+    assert "esp32-c5" in refs["soc_ids"]                  # real soc dir under data/socs/
+    assert "esp32-s3-wroom-1" in refs["module_ids"]        # real module dir under data/modules/
+    assert refs["soc_ids"] == sorted(refs["soc_ids"])
+    assert refs["module_ids"] == sorted(refs["module_ids"])
+
+
+def test_board_refs_excludes_non_dirs(monkeypatch, tmp_path):
+    socs_dir = tmp_path / "socs"
+    socs_dir.mkdir()
+    (socs_dir / "esp32-c5").mkdir()
+    (socs_dir / "esp32").mkdir()
+    (socs_dir / "README.md").write_text("not a soc")      # stray file — must be excluded
+    modules_dir = tmp_path / "modules"
+    modules_dir.mkdir()
+    (modules_dir / "esp32-s3-wroom-1").mkdir()
+    (modules_dir / "NOTES.txt").write_text("not a module")
+    monkeypatch.setattr(tools, "SOCS_DIR", socs_dir)
+    monkeypatch.setattr(tools, "MODULES_DIR", modules_dir)
+
+    refs = tools.board_refs()
+
+    assert refs == {"soc_ids": ["esp32", "esp32-c5"], "module_ids": ["esp32-s3-wroom-1"]}
+
+
+def test_board_refs_missing_dirs_returns_empty_lists(monkeypatch, tmp_path):
+    monkeypatch.setattr(tools, "SOCS_DIR", tmp_path / "no-socs")
+    monkeypatch.setattr(tools, "MODULES_DIR", tmp_path / "no-modules")
+
+    assert tools.board_refs() == {"soc_ids": [], "module_ids": []}
+
+
 # ─────────────────────────── coverage_backlog ───────────────────────────
 
 COVERAGE_FIXTURE = """# Board Coverage Backlog
@@ -279,6 +315,66 @@ def test_author_board_rejects_unknown_field(real_board_dir):
     )
 
     assert "error" in result
+
+
+def test_author_board_ignores_unknown_stray_kwarg(real_board_dir):
+    """A weak model's stray top-level kwarg (unrelated to sources) must never crash the call —
+    it's accepted (via **extra) and simply ignored."""
+    result = tools.author_board(
+        "stray-kwarg-board", TEST_BRAND, "Stray Kwarg Board",
+        fields={"form_factor": "devkit"},
+        sources=[{"field": "*", "url": "https://example.com", "verified": "2026-08-28"}],
+        body="x", soc="esp32-c5",
+        confidence=0.9,                                    # not a real author_board param
+    )
+
+    assert "error" not in result
+    assert (real_board_dir / "stray-kwarg-board").exists()
+
+
+def test_author_board_folds_top_level_verified_into_sources(real_board_dir):
+    """The exact crash from the live run: the model passed a top-level `verified=True` instead of
+    putting it inside each sources[] entry. author_board must fold it in rather than raise."""
+    result = tools.author_board(
+        "folded-verified-board", TEST_BRAND, "Folded Verified Board",
+        fields={"form_factor": "devkit"},
+        sources=[{"field": "*", "url": "https://example.com"}],   # missing 'verified'
+        body="x", soc="esp32-c5",
+        verified=True,
+    )
+
+    assert "error" not in result, result
+    fm = yaml.safe_load((REPO / result["path"]).read_text().split("---", 2)[1])
+    assert fm["sources"][0]["verified"] is True
+
+
+def test_author_board_folds_top_level_url_into_sources(real_board_dir):
+    result = tools.author_board(
+        "folded-url-board", TEST_BRAND, "Folded Url Board",
+        fields={"form_factor": "devkit"},
+        sources=[{"field": "*", "verified": "2026-08-28"}],       # missing 'url'
+        body="x", soc="esp32-c5",
+        url="https://example.com/fallback",
+    )
+
+    assert "error" not in result, result
+    fm = yaml.safe_load((REPO / result["path"]).read_text().split("---", 2)[1])
+    assert fm["sources"][0]["url"] == "https://example.com/fallback"
+
+
+def test_author_board_still_rejects_source_missing_field_after_fold(real_board_dir):
+    """Folding a stray top-level verified/url must not paper over a genuinely broken sources[]
+    entry (e.g. missing 'field') — cite-or-omit stays enforced, as a clean error, not a raise."""
+    result = tools.author_board(
+        "bad-source-board", TEST_BRAND, "Bad Source Board",
+        fields={"form_factor": "devkit"},
+        sources=[{"url": "https://example.com"}],          # no 'field' at all
+        body="x", soc="esp32-c5",
+        verified="2026-08-28",
+    )
+
+    assert "error" in result
+    assert not (real_board_dir / "bad-source-board").exists()
 
 
 # ─────────────────────────── board_triple_validate ───────────────────────────
