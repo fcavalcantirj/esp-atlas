@@ -14,7 +14,10 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent           # the esp-atlas repo root
 FIRMWARE_DIR = REPO / "data" / "firmware"
+BOARDS_DIR = REPO / "data" / "boards"
+COVERAGE_MD = REPO / "COVERAGE.md"
 LAUNCHERHUB = "https://api.launcherhub.net/giveMeTheList"
+FETCH_USER_AGENT = "esp-atlas-jr/0.1 (+https://esp-atlas.com; board-authoring bot)"
 
 
 def run_guard() -> dict:
@@ -533,6 +536,231 @@ def triple_validate(firmware_id: str, recipe_id: str) -> dict:
     return {"pass": ok, "gate1_guard": problems["gate1"] or "green",
             "gate2_source": problems["gate2"] or "cited fields match source",
             "gate3_structure": problems["gate3"] or "recipe pairs to catalogued board, no orphan"}
+
+
+def open_board_batch_pr(boards: list[tuple[str, str]], label: str, base: str = "main") -> dict:
+    """Open ONE PR bundling many authored boards — mirrors open_batch_pr() for firmware. `boards`
+    is a list of (brand, board_id) pairs. Assumes each passed board_triple_validate. `label` makes
+    the branch unique (e.g. a date). Returns {"ok","pr_url","count"}."""
+    if not boards:
+        return {"ok": False, "error": "empty batch"}
+    branch = f"jr/boards-{label}"
+    paths = [f"data/boards/{brand}/{board_id}" for brand, board_id in boards]
+    def git(*a): return subprocess.run(["git", *a], cwd=REPO, capture_output=True, text=True)
+    git("checkout", "-B", branch)
+    git("add", *paths)
+    git("commit", "-m", f"feat(boards): batch add {len(boards)} board(s) — {label}")
+    git("push", "-u", "origin", branch, "--force-with-lease")
+    rows = "\n".join(f"- `{brand}/{board_id}`" for brand, board_id in boards)
+    body = (f"**TL;DR** — Jr's board batch: **{len(boards)} new board(s)**, cite-or-omit, "
+            f"triple-validated.\n\n### Boards\n{rows}\n\n"
+            "Discovered via the COVERAGE.md backlog against each vendor's official product/"
+            "user-guide page. **Bot proposes, humans dispose** — skim, then merge (or drop any "
+            "you don't want).\n\n— 🤖 **EspAtlas Jr** · autonomous data-keeper")
+    pr = subprocess.run(["gh", "pr", "create", "--base", base, "--head", branch,
+                         "--title", f"feat(boards): batch add {len(boards)} board(s) ({label})",
+                         "--body", body], cwd=REPO, capture_output=True, text=True)
+    git("checkout", "main")
+    return {"ok": pr.returncode == 0, "pr_url": pr.stdout.strip(), "count": len(boards),
+            "error": pr.stderr.strip()[:200]}
+
+
+# ─────────────────────────── board authoring (SPEC §3a "board population") ───────────────────────────
+
+def _slugify(text: str) -> str:
+    """kebab-case a free-text name for id-dedup matching (not necessarily the real board_id —
+    boards use hand-picked ids; this is only a fuzzy dedup key)."""
+    import re
+    s = re.sub(r"[^a-z0-9]+", "-", (text or "").lower()).strip("-")
+    return re.sub(r"-{2,}", "-", s)
+
+
+def _existing_board_ids() -> set[str]:
+    return {d.name for d in BOARDS_DIR.glob("*/*") if d.is_dir()} if BOARDS_DIR.exists() else set()
+
+
+def _existing_board_names() -> set[str]:
+    """Normalized (alnum-only, lowercase) `name:` of every already-authored board — a second,
+    fuzzier dedup signal alongside the id-slug match (board ids don't always slugify 1:1 from the
+    marketing name, e.g. 'm5stick-cplus2')."""
+    import re
+    names = set()
+    for md in (BOARDS_DIR.glob("*/*/board.md") if BOARDS_DIR.exists() else []):
+        n = _frontmatter(md).get("name")
+        if n:
+            names.add(re.sub(r"[^a-z0-9]", "", n.lower()))
+    return names
+
+
+def coverage_backlog() -> list[dict]:
+    """Parse ../COVERAGE.md into the still-unchecked `[ ]` boards, as {name, vendor, url}. `url`
+    is None where COVERAGE.md itself has no live link yet (e.g. '(url: to-verify)') — Jr must not
+    invent one. Skips any entry that already has a board dir under data/boards/ (by id-slug or by
+    matching `name:`), even if the checkbox in COVERAGE.md hasn't been flipped yet."""
+    import re
+    if not COVERAGE_MD.exists():
+        return []
+    existing_ids, existing_names = _existing_board_ids(), _existing_board_names()
+    lines = COVERAGE_MD.read_text().splitlines()
+    out: list[dict] = []
+    vendor = None
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if line.startswith("## "):
+            vendor = line[3:].strip()
+            i += 1
+            continue
+        m = re.match(r"^- \[([ xX])\]\s*(.+)$", line)
+        if not m:
+            i += 1
+            continue
+        checked, rest = m.group(1).strip().lower() == "x", m.group(2)
+        entry_lines = [rest]
+        j = i + 1
+        while j < len(lines) and lines[j].startswith("  ") and not re.match(r"^\s*- \[", lines[j]):
+            entry_lines.append(lines[j].strip())
+            j += 1
+        if not checked:
+            name = rest.split("—", 1)[0].strip()
+            url_match = re.search(r"https?://\S+", " ".join(entry_lines))
+            url = url_match.group(0).rstrip(".,;)") if url_match else None
+            if _slugify(name) not in existing_ids and re.sub(r"[^a-z0-9]", "", name.lower()) not in existing_names:
+                out.append({"name": name, "vendor": vendor, "url": url})
+        i = j
+    return out
+
+
+def fetch_url(url: str) -> dict:
+    """GET a public official product/user-guide page and return its readable text (tags/scripts/
+    styles stripped). SPEC §2.5: official pages only, rate-limited, no ToS-violating scraping — a
+    single plain GET with a UA and a short timeout, no crawling, no JS rendering. Returns
+    {"url","text"} or {"error"}."""
+    import html
+    import re
+    if not url or not url.startswith(("http://", "https://")):
+        return {"error": f"not an http(s) url: {url!r}"}
+    req = urllib.request.Request(url, headers={"User-Agent": FETCH_USER_AGENT})
+    try:
+        with urllib.request.urlopen(req, timeout=15) as r:
+            charset = r.headers.get_content_charset() or "utf-8"
+            raw = r.read(1_500_000).decode(charset, "ignore")
+    except Exception as e:
+        return {"error": f"{type(e).__name__}: {e}"}
+    text = re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", raw)
+    text = re.sub(r"(?s)<[^>]+>", " ", text)
+    text = html.unescape(text)
+    text = re.sub(r"[ \t]+", " ", text)
+    text = "\n".join(l.strip() for l in text.splitlines() if l.strip())
+    return {"url": url, "text": text[:20000]}
+
+
+_BOARD_OPTIONAL_FIELDS = ("aka", "flash_mb", "psram_mb", "form_factor", "price_tier",
+                          "dimensions_mm", "usb", "power", "display", "extras", "io", "notes")
+
+
+def _field_covered(field: str, sources: list[dict]) -> bool:
+    """A top-level field is cited if some sources[] entry is '*' (whole record), exactly that
+    field, or a dotted path under it (e.g. field='io' is covered by 'io.gpio_free')."""
+    for s in sources or []:
+        f = s.get("field", "")
+        if f == "*" or f == field or f.startswith(field + "."):
+            return True
+    return False
+
+
+def author_board(board_id: str, brand: str, name: str, fields: dict, sources: list[dict],
+                 body: str, soc: str | None = None, module: str | None = None) -> dict:
+    """Write data/boards/<brand>/<board_id>/board.md from templates/board.template.md's shape —
+    id==folder, brand==folder, EXACTLY one of soc/module, ONLY the fields in `fields` (cite-or-
+    omit — SPEC §2.2), each covered by a sources[] entry. Returns {"board_id","path"} or
+    {"error"}. Does NOT touch git or run the guard — call run_guard()/board_triple_validate() next."""
+    import re
+    import yaml
+    if not re.fullmatch(r"[a-z0-9-]+", board_id or ""):
+        return {"error": f"bad board id '{board_id}' — kebab-case only"}
+    if not re.fullmatch(r"[a-z0-9-]+", brand or ""):
+        return {"error": f"bad brand '{brand}' — kebab-case only"}
+    if bool(soc) == bool(module):
+        return {"error": "exactly one of soc/module is required (not both, not neither)"}
+    if not sources:
+        return {"error": "sources[] is required — cite-or-omit, no exceptions"}
+    unknown = set(fields) - set(_BOARD_OPTIONAL_FIELDS)
+    if unknown:
+        return {"error": f"unknown board field(s) {sorted(unknown)} — not in schema/board.schema.json"}
+    uncited = [f for f in fields if fields.get(f) not in (None, [], {}) and not _field_covered(f, sources)]
+    if uncited:
+        return {"error": f"missing source for field(s) {sorted(uncited)} — cite-or-omit, "
+                         "every field you set needs a sources[] entry"}
+
+    rec: dict = {"id": board_id, "type": "board", "brand": brand, "name": name}
+    if soc:
+        rec["soc"] = soc
+    if module:
+        rec["module"] = module
+    for k in _BOARD_OPTIONAL_FIELDS:
+        if fields.get(k) not in (None, [], {}):
+            rec[k] = fields[k]
+    rec["sources"] = sources
+    front = yaml.safe_dump(rec, sort_keys=False, default_flow_style=False).strip()
+    d = BOARDS_DIR / brand / board_id
+    d.mkdir(parents=True, exist_ok=True)
+    path = d / "board.md"
+    path.write_text(f"---\n{front}\n---\n\n{body.strip()}\n")
+    return {"board_id": board_id, "path": str(path.relative_to(REPO))}
+
+
+def board_triple_validate(board_id: str) -> dict:
+    """THREE independent gates before a board PR, mirroring triple_validate() for firmware (SPEC
+    §2.6): (1) the deterministic schema guard over the whole dataset, (2) every cited source URL
+    is live, (3) id/brand/soc-or-module ref integrity AND every set field is cite-covered (the
+    part JSON Schema alone can't catch). A PR may open ONLY when pass=True."""
+    board_path = next(iter(BOARDS_DIR.glob(f"*/{board_id}/board.md")), None)
+    if not board_path:
+        return {"pass": False, "gate1_guard": ["board.md not found"],
+                "gate2_sources_live": ["n/a"], "gate3_integrity": ["board.md not found"]}
+    problems = {"gate1": [], "gate2": [], "gate3": []}
+
+    # GATE 1 — the deterministic guard (schema + oracle + no-orphan) over the whole dataset
+    g = run_guard()
+    if not g["ok"]:
+        problems["gate1"].append(g["output"].splitlines()[-1] if g["output"] else "guard failed")
+
+    fm = _frontmatter(board_path)
+
+    # GATE 2 — every cited source URL is live (same tolerance as scripts/check_sources_live.py)
+    for src in fm.get("sources", []):
+        u = src.get("url", "")
+        try:
+            req = urllib.request.Request(u, method="HEAD", headers={"User-Agent": "esp-atlas-jr"})
+            urllib.request.urlopen(req, timeout=15)
+        except Exception as e:
+            problems["gate2"].append(f"source not live: {u} ({type(e).__name__})")
+
+    # GATE 3 — id/brand/ref integrity + per-field cite-or-omit coverage
+    folder_id, brand_dir = board_path.parent.name, board_path.parent.parent.name
+    if fm.get("id") != folder_id:
+        problems["gate3"].append(f"id '{fm.get('id')}' != folder '{folder_id}'")
+    if fm.get("brand") != brand_dir:
+        problems["gate3"].append(f"brand '{fm.get('brand')}' != folder '{brand_dir}'")
+    has_soc, has_module = bool(fm.get("soc")), bool(fm.get("module"))
+    if has_soc == has_module:
+        problems["gate3"].append("exactly one of soc/module required")
+    en = schema_enums()
+    if has_soc and fm["soc"] not in en["soc_ids"]:
+        problems["gate3"].append(f"soc '{fm['soc']}' not a known soc id")
+    if has_module and not (REPO / "data/modules" / fm["module"] / "module.md").exists():
+        problems["gate3"].append(f"module '{fm['module']}' not found in data/modules/")
+    if not fm.get("sources"):
+        problems["gate3"].append("sources[] missing")
+    for field in _BOARD_OPTIONAL_FIELDS:
+        if field in fm and not _field_covered(field, fm.get("sources", [])):
+            problems["gate3"].append(f"field '{field}' set but not covered by any sources[] entry")
+
+    ok = not any(problems.values())
+    return {"pass": ok, "gate1_guard": problems["gate1"] or "green",
+            "gate2_sources_live": problems["gate2"] or "all cited sources live",
+            "gate3_integrity": problems["gate3"] or "id/brand/ref integrity ok, all fields cited"}
 
 
 if __name__ == "__main__":  # self-test against the REAL repo + REAL source

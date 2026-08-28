@@ -31,6 +31,17 @@ def _cleanup(fid: str | None, rid: str | None) -> None:
         shutil.rmtree(tools.REPO / "data/recipes" / rid, ignore_errors=True)
 
 
+def _board_dirs() -> set[tuple[str, str]]:
+    d = tools.BOARDS_DIR
+    return {(b.parent.name, b.name) for b in d.glob("*/*") if b.is_dir()} if d.exists() else set()
+
+
+def _cleanup_board(brand: str | None, board_id: str | None) -> None:
+    """Remove a rejected authored board dir so main/branch stays clean (mirrors _cleanup)."""
+    if brand and board_id:
+        shutil.rmtree(tools.BOARDS_DIR / brand / board_id, ignore_errors=True)
+
+
 def drain_once() -> dict:
     """Author the top genuinely-new firmware + recipe, then INDEPENDENTLY triple-validate
     (never trusting the agent's self-report) and open a PR only if clean."""
@@ -105,9 +116,57 @@ def drain_batch(n: int = 20, label: str | None = None) -> dict:
     return {"action": "batch", "count": len(authored), "pr_url": pr.get("pr_url"), "firmware": authored}
 
 
+def boards_batch(n: int = 2, vendor: str | None = None, label: str | None = None) -> dict:
+    """Author up to n new boards from the COVERAGE.md backlog (fresh agent/session each, for
+    clean context), triple-validate each, and bundle the valid ones into ONE reviewable batch PR
+    — mirrors drain_batch() for firmware. `vendor` optionally restricts to one COVERAGE.md
+    section (e.g. 'Espressif'). Rejected boards are fully cleaned up (dir removed)."""
+    import datetime as dt
+    from agent import make_jr_board
+    label = label or dt.date.today().isoformat()
+    authored: list[tuple[str, str]] = []
+    for i in range(n):
+        backlog = tools.coverage_backlog()
+        if vendor:
+            backlog = [b for b in backlog if b.get("vendor") == vendor]
+        if not backlog:
+            break
+        before = _board_dirs()
+        try:
+            make_jr_board(session_id=f"board-batch-{label}-{i}").run(
+                "Pick ONE backlog board via coverage_backlog(), fetch its official page, author "
+                "ONLY citable fields (omit anything the page doesn't state), then "
+                "board_triple_validate; retry <=3 on a red gate.")
+        except Exception:
+            continue
+        new = _board_dirs() - before
+        if not new:
+            continue
+        brand, board_id = next(iter(new))
+        verdict = tools.board_triple_validate(board_id)
+        if verdict.get("pass"):
+            authored.append((brand, board_id))
+        else:
+            _cleanup_board(brand, board_id)
+    if not authored:
+        notify.send_telegram("🤖 *Jr board batch* — ran, nothing authorable this pass.")
+        return {"action": "none"}
+    pr = tools.open_board_batch_pr(authored, label)
+    notify.send_telegram(
+        f"🤖 *Jr board batch* — **{len(authored)} new board(s)** for review: "
+        f"[PR]({pr.get('pr_url')})\n" + ", ".join(f"`{b}`" for _, b in authored[:15]))
+    return {"action": "batch", "count": len(authored), "pr_url": pr.get("pr_url"),
+            "boards": [b for _, b in authored]}
+
+
 def daily() -> dict:
     """The scheduled run — a batch of up to 20 firmware into ONE reviewable PR (paid Groq)."""
     return drain_batch(2)  # budget-safe at real per-run cost; raise once tokens are trimmed
+
+
+def boards() -> dict:
+    """The scheduled board-population run — a small batch (staleness-queue budget, SPEC §3)."""
+    return boards_batch(2)
 
 
 if __name__ == "__main__":
