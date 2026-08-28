@@ -408,10 +408,11 @@ def test_author_board_still_rejects_source_missing_field(real_board_dir):
 # ─────────────────────────── author_board tool schema (Agno) ───────────────────────────
 
 def test_author_board_agno_schema_has_no_extra_required_property():
-    """The prior bug: `**extra` in author_board's signature makes Agno's auto-generated
-    tool-call JSON schema mark a required `extra` property, which Groq gpt-oss-120b's live tool
-    call never supplies -> 'parameters for tool author_board did not match schema: missing
-    properties: extra' -> no board is ever authored. Introspect the REAL registered tool off the
+    """Same bug class as the fixed `**extra` issue: any author_board param with no default gets
+    marked REQUIRED in Agno's auto-generated tool-call JSON schema. When Groq gpt-oss-120b omits
+    an optional-in-spirit param like `body`, the call hard-fails with 'missing properties: body'
+    and the board is lost. Only board_id/brand/name are genuinely required — fields, sources,
+    body, soc, module, today must all be optional. Introspect the REAL registered tool off the
     REAL agent (agent.make_jr_board()), exactly as Agno hands it to the model."""
     from agno.tools.function import Function
     from agent import make_jr_board
@@ -420,10 +421,23 @@ def test_author_board_agno_schema_has_no_extra_required_property():
     author_board_fn = next(t for t in a.tools if getattr(t, "__name__", None) == "author_board")
     schema = Function.from_callable(author_board_fn).parameters
 
-    # board_id/brand/name/fields/sources/body have no default -> Agno marks all six required;
-    # soc/module/today default to None -> optional. The bug was the extra required "extra" prop.
-    assert set(schema["required"]) == {"board_id", "brand", "name", "fields", "sources", "body"}
+    assert set(schema["required"]) == {"board_id", "brand", "name"}
     assert "extra" not in schema["properties"]
+
+
+def test_author_board_callable_with_body_omitted(real_board_dir):
+    """The live-failure shape: Groq omits `body` entirely. Must not raise, and must still write a
+    valid (empty-body) record rather than hard-failing on a missing required schema property."""
+    result = tools.author_board(
+        "no-body-board", TEST_BRAND, "No Body Board",
+        fields={"form_factor": "devkit"},
+        sources=[{"field": "*", "url": "https://example.com", "verified": "2026-08-28"}],
+        soc="esp32-c5",
+    )
+
+    assert "error" not in result, result
+    path = REPO / result["path"]
+    assert path.read_text().strip().endswith("---")   # empty body after the frontmatter, no raise
 
 
 # ─────────────────────────── author_board replay (live-failure payload) ───────────────────────────
@@ -495,3 +509,82 @@ def test_board_triple_validate_unknown_board(monkeypatch, tmp_path):
     monkeypatch.setattr(tools, "BOARDS_DIR", tmp_path / "boards")
     result = tools.board_triple_validate("does-not-exist")
     assert result["pass"] is False
+
+
+# ─────────────── board_triple_validate — chip-family cross-check (the MagTag guard gap) ───────────────
+
+def _write_board(boards_dir, brand, board_id, *, soc=None, module=None, source_url):
+    d = boards_dir / brand / board_id
+    d.mkdir(parents=True)
+    ref = f"soc: {soc}\n" if soc else f"module: {module}\n"
+    (d / "board.md").write_text(
+        "---\n"
+        f"id: {board_id}\n"
+        "type: board\n"
+        f"brand: {brand}\n"
+        "name: Adafruit MagTag ESP32-S2\n"
+        f"{ref}"
+        "sources:\n"
+        "- field: '*'\n"
+        f"  url: {source_url}\n"
+        "  verified: '2026-08-28'\n"
+        "---\n\n# Adafruit MagTag\n"
+    )
+    return d / "board.md"
+
+
+_MAGTAG_PAGE_TEXT = (
+    "Adafruit MagTag - 2.9\" Grayscale E-Ink WiFi Display, ESP32-S2\n"
+    "4 MB Flash, 2 MB PSRAM, USB-C, native USB. Powered by the ESP32-S2 chip.\n"
+)
+
+
+def test_board_triple_validate_fails_on_chip_family_mismatch(monkeypatch, tmp_path):
+    """The live wrong-ref bug: an Adafruit MagTag (real chip: ESP32-S2, per
+    https://www.adafruit.com/product/4800) authored with module: esp32-wrover-e — a classic
+    dual-core ESP32 module, wrong chip family entirely. board_triple_validate must catch this
+    even though the module id itself is a valid ref (the gap the guard didn't check before)."""
+    boards_dir = tmp_path / "boards"
+    _write_board(boards_dir, "adafruit", "magtag", module="esp32-wrover-e",
+                source_url="https://www.adafruit.com/product/4800")
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "fetch_url", lambda url: {"url": url, "text": _MAGTAG_PAGE_TEXT})
+    monkeypatch.setattr(tools.urllib.request, "urlopen", _fake_urlopen_alive)
+
+    result = tools.board_triple_validate("magtag")
+
+    assert result["pass"] is False
+    assert any("chip-family mismatch" in p and "esp32-s2" in p and "esp32-wrover-e" in p
+              for p in result["gate3_integrity"]), result
+
+
+def test_board_triple_validate_passes_chip_family_check_when_correct(monkeypatch, tmp_path):
+    """The fixed MagTag: soc: esp32-s2 (matching the page) instead of module: esp32-wrover-e."""
+    boards_dir = tmp_path / "boards"
+    _write_board(boards_dir, "adafruit", "magtag", soc="esp32-s2",
+                source_url="https://www.adafruit.com/product/4800")
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "fetch_url", lambda url: {"url": url, "text": _MAGTAG_PAGE_TEXT})
+    monkeypatch.setattr(tools.urllib.request, "urlopen", _fake_urlopen_alive)
+
+    result = tools.board_triple_validate("magtag")
+
+    assert not any("chip-family mismatch" in p for p in
+                  (result["gate3_integrity"] if isinstance(result["gate3_integrity"], list) else []))
+
+
+def test_board_triple_validate_skips_chip_family_check_when_page_names_no_chip(monkeypatch, tmp_path):
+    """A page that never mentions any ESP32-family token can't verify or refute the record's
+    chip — skip the cross-check rather than failing on it (can't-verify != wrong)."""
+    boards_dir = tmp_path / "boards"
+    _write_board(boards_dir, "adafruit", "magtag", module="esp32-wrover-e",
+                source_url="https://www.adafruit.com/product/4800")
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "fetch_url",
+                        lambda url: {"url": url, "text": "A lovely e-ink display board with WiFi."})
+    monkeypatch.setattr(tools.urllib.request, "urlopen", _fake_urlopen_alive)
+
+    result = tools.board_triple_validate("magtag")
+
+    assert not any("chip-family mismatch" in p for p in
+                  (result["gate3_integrity"] if isinstance(result["gate3_integrity"], list) else []))

@@ -8,6 +8,7 @@ Jr proposes via PR; it never writes `main`.
 """
 from __future__ import annotations
 import json
+import re
 import subprocess
 import urllib.request
 from pathlib import Path
@@ -684,9 +685,9 @@ def _field_covered(field: str, sources: list[dict]) -> bool:
 _USB_CONNECTORS = {"usb-c", "micro-usb", "mini-usb", "none"}
 
 
-def author_board(board_id: str, brand: str, name: str, fields: dict, sources: list[dict],
-                 body: str, soc: str | None = None, module: str | None = None,
-                 today: str | None = None) -> dict:
+def author_board(board_id: str, brand: str, name: str, fields: dict | None = None,
+                 sources: list[dict] | None = None, body: str = "", soc: str | None = None,
+                 module: str | None = None, today: str | None = None) -> dict:
     """Write data/boards/<brand>/<board_id>/board.md from templates/board.template.md's shape —
     id==folder, brand==folder, EXACTLY one of soc/module, ONLY the fields in `fields` (cite-or-
     omit — SPEC §2.2), each covered by a sources[] entry. Returns {"board_id","path"} or
@@ -696,9 +697,14 @@ def author_board(board_id: str, brand: str, name: str, fields: dict, sources: li
     is dropped silently; a bare `usb` string like "USB-C" is coerced to {"connector":"usb-c"} (an
     unrecognized string is dropped); if `today` (an ISO date) is given, any sources[] `verified`
     that is still a bool or missing is normalized to `today`. Every sources[] entry still needs
-    field+url+verified or the board is rejected — cite-or-omit is unchanged."""
+    field+url+verified or the board is rejected — cite-or-omit is unchanged. Only board_id/brand/
+    name are truly required (Agno's schema marks anything without a default as required, and a
+    weak model that omits e.g. `body` must never hard-fail the call — same bug class as the fixed
+    `**extra` issue)."""
     import re
     import yaml
+    fields = fields or {}
+    sources = sources or []
     if not re.fullmatch(r"[a-z0-9-]+", board_id or ""):
         return {"error": f"bad board id '{board_id}' — kebab-case only"}
     if not re.fullmatch(r"[a-z0-9-]+", brand or ""):
@@ -748,6 +754,54 @@ def author_board(board_id: str, brand: str, name: str, fields: dict, sources: li
     return {"board_id": board_id, "path": str(path.relative_to(REPO))}
 
 
+# most-specific variant first, so "esp32-c61" isn't miscounted as "esp32-c6" and "esp32-s2" isn't
+# miscounted as bare "esp32" (regex alternation picks the first alternative that matches)
+_CHIP_FAMILY_RE = re.compile(
+    r"esp32-c61|esp32-s2|esp32-s3|esp32-c2|esp32-c3|esp32-c5|esp32-c6|"
+    r"esp32-h2|esp32-h4|esp32-p4|esp32",
+    re.IGNORECASE,
+)
+
+
+def _page_chip_families(text: str) -> set[str]:
+    """The ESP32-family chip tokens actually named on a page, e.g. {'esp32-s2'}."""
+    return {m.group(0).lower() for m in _CHIP_FAMILY_RE.finditer(text or "")}
+
+
+def _record_chip_family(fm: dict) -> tuple[str | None, str | None]:
+    """(effective_family, ref_value) for a board record. `ref_value` is the literal soc:/module:
+    value; `effective_family` is the ESP32 family it belongs to (module: resolves through that
+    module's own module.md `soc:`, which is already a family id — e.g. esp32-wrover-e -> esp32)."""
+    if fm.get("soc"):
+        return fm["soc"], fm["soc"]
+    if fm.get("module"):
+        mod_soc = _frontmatter(MODULES_DIR / fm["module"] / "module.md").get("soc")
+        return mod_soc, fm["module"]
+    return None, None
+
+
+def _chip_family_mismatch(fm: dict) -> str | None:
+    """The MagTag-class guard gap: board_triple_validate's ref-integrity check only confirms
+    soc:/module: NAMES something real, not that it's the right chip — a board authored with
+    module: esp32-wrover-e (classic dual-core ESP32) passed even when its own source page named
+    an ESP32-S2. Cross-checks the record's effective chip family against the family named on its
+    primary source page (fetched fresh, not cached). Returns a mismatch reason, or None when the
+    families agree OR the page names no ESP32 variant at all (can't verify -> skip, not a fail)."""
+    family, ref = _record_chip_family(fm)
+    if not family:
+        return None
+    sources = fm.get("sources") or []
+    if not sources or not sources[0].get("url"):
+        return None
+    page = fetch_url(sources[0]["url"])
+    page_families = _page_chip_families(page.get("text", ""))
+    if not page_families or family in page_families:
+        return None
+    page_str = ", ".join(sorted(page_families))
+    ref_str = family if ref == family else f"{ref} ({family})"
+    return f"chip-family mismatch: page says {page_str}, record uses {ref_str}"
+
+
 def board_triple_validate(board_id: str) -> dict:
     """THREE independent gates before a board PR, mirroring triple_validate() for firmware (SPEC
     §2.6): (1) the deterministic schema guard over the whole dataset, (2) every cited source URL
@@ -794,6 +848,10 @@ def board_triple_validate(board_id: str) -> dict:
     for field in _BOARD_OPTIONAL_FIELDS:
         if field in fm and not _field_covered(field, fm.get("sources", [])):
             problems["gate3"].append(f"field '{field}' set but not covered by any sources[] entry")
+
+    mismatch = _chip_family_mismatch(fm)   # the MagTag-class guard gap: a valid ref, wrong chip
+    if mismatch:
+        problems["gate3"].append(mismatch)
 
     ok = not any(problems.values())
     return {"pass": ok, "gate1_guard": problems["gate1"] or "green",

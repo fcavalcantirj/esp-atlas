@@ -95,8 +95,13 @@ Add ONE genuinely-new board this run:
    "ESP32-C5-DevKitC-1" -> `esp32-c5-devkitc-1`) and `brand` (kebab-case vendor folder, e.g.
    "LOLIN / Wemos" -> `lolin`). Decide `soc` OR `module` — EXACTLY one — set it to an id FROM
    board_refs()'s list (prefer `module:` when the page says the board uses a packaged module,
-   e.g. ESP32-WROOM-32E; otherwise `soc:`). If you can't match the chip to a board_refs() id,
-   skip this board and pick another from the backlog.
+   e.g. ESP32-WROOM-32E; otherwise `soc:`). The chosen soc/module MUST match the EXACT chip family
+   named on the product page — if the page says "ESP32-S2", use `soc: esp32-s2` (or an S2 module),
+   NEVER a different family (an ESP32-S2 board is NOT a plain ESP32 — e.g. the Adafruit MagTag is
+   ESP32-S2, single-core with native USB; `esp32-wrover-e` is a classic dual-core ESP32 module and
+   would be WRONG for it). Call board_refs() and pick the id whose family matches the page, not
+   just any id that happens to exist. If you can't match the chip to a board_refs() id, skip this
+   board and pick another from the backlog.
 5. Build `fields` — ONLY the schema/board.schema.json properties the page actually states
    (form_factor, dimensions_mm, usb, power, display, extras, io, notes, aka, flash_mb, psram_mb).
    OMIT anything the page doesn't state — flash size, PSRAM, and the USB-UART bridge chip name
