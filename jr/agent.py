@@ -108,9 +108,10 @@ Add ONE genuinely-new board this run:
 6. Build `sources` — one entry per field (or field-group) you set. `field: '*'` only if genuinely
    the whole record comes from the one page; otherwise cite the dotted path (e.g. `io.gpio_free`)
    like the reference record does.
-7. author_board(board_id, brand, name, fields=..., sources=..., body=..., soc=... or module=...).
-   If it returns {"error": ...}, fix exactly what it names (unknown field, missing source, both-
-   or-neither soc/module) and retry — never fabricate a source just to satisfy it.
+7. author_board(board_id, brand, name, fields=..., sources=..., body=..., soc=... or module=...,
+   today=<today's ISO date>). Pass `today` so a bare True/False `verified` in sources[] gets
+   normalized to a real date. If it returns {"error": ...}, fix exactly what it names (missing
+   source, both-or-neither soc/module) and retry — never fabricate a source just to satisfy it.
 8. run_guard() then board_triple_validate(board_id). If a gate fails, READ it, fix, retry (≤3).
    Report the verdict + board_id + brand. Be terse."""
 

@@ -681,16 +681,22 @@ def _field_covered(field: str, sources: list[dict]) -> bool:
     return False
 
 
+_USB_CONNECTORS = {"usb-c", "micro-usb", "mini-usb", "none"}
+
+
 def author_board(board_id: str, brand: str, name: str, fields: dict, sources: list[dict],
-                 body: str, soc: str | None = None, module: str | None = None, **extra) -> dict:
+                 body: str, soc: str | None = None, module: str | None = None,
+                 today: str | None = None) -> dict:
     """Write data/boards/<brand>/<board_id>/board.md from templates/board.template.md's shape —
     id==folder, brand==folder, EXACTLY one of soc/module, ONLY the fields in `fields` (cite-or-
     omit — SPEC §2.2), each covered by a sources[] entry. Returns {"board_id","path"} or
     {"error"}. Does NOT touch git or run the guard — call run_guard()/board_triple_validate() next.
-    Tolerant of a weak model: accepts (and ignores) stray extra kwargs instead of raising; a
-    stray top-level `verified`/`url` (which belongs inside sources[] entries) is folded into any
-    sources[] entry missing that key. Every sources[] entry still needs field+url+verified or the
-    board is rejected — cite-or-omit is unchanged."""
+    Tolerant of a weak model, but ONLY within `fields`/`sources` (no signature catch-all, so the
+    Agno-generated tool schema stays minimal/correct): any key in `fields` not in the board schema
+    is dropped silently; a bare `usb` string like "USB-C" is coerced to {"connector":"usb-c"} (an
+    unrecognized string is dropped); if `today` (an ISO date) is given, any sources[] `verified`
+    that is still a bool or missing is normalized to `today`. Every sources[] entry still needs
+    field+url+verified or the board is rejected — cite-or-omit is unchanged."""
     import re
     import yaml
     if not re.fullmatch(r"[a-z0-9-]+", board_id or ""):
@@ -701,21 +707,25 @@ def author_board(board_id: str, brand: str, name: str, fields: dict, sources: li
         return {"error": "exactly one of soc/module is required (not both, not neither)"}
     if not sources:
         return {"error": "sources[] is required — cite-or-omit, no exceptions"}
-    stray_verified = extra.get("verified")
-    stray_url = extra.get("url")
-    if stray_verified is not None or stray_url is not None:
-        sources = [dict(s) for s in sources]
+
+    fields = {k: v for k, v in fields.items() if k in _BOARD_OPTIONAL_FIELDS}
+    usb = fields.get("usb")
+    if isinstance(usb, str):
+        connector = usb.strip().lower()
+        if connector in _USB_CONNECTORS:
+            fields["usb"] = {"connector": connector}
+        else:
+            del fields["usb"]
+
+    sources = [dict(s) for s in sources]
+    if today is not None:
         for s in sources:
-            if stray_verified is not None and not s.get("verified"):
-                s["verified"] = stray_verified
-            if stray_url is not None and not s.get("url"):
-                s["url"] = stray_url
+            if s.get("verified") is None or isinstance(s.get("verified"), bool):
+                s["verified"] = today
+
     bad_sources = [s for s in sources if not (s.get("field") and s.get("url") and s.get("verified"))]
     if bad_sources:
         return {"error": f"every sources[] entry needs field+url+verified (cite-or-omit) — bad entries: {bad_sources}"}
-    unknown = set(fields) - set(_BOARD_OPTIONAL_FIELDS)
-    if unknown:
-        return {"error": f"unknown board field(s) {sorted(unknown)} — not in schema/board.schema.json"}
     uncited = [f for f in fields if fields.get(f) not in (None, [], {}) and not _field_covered(f, sources)]
     if uncited:
         return {"error": f"missing source for field(s) {sorted(uncited)} — cite-or-omit, "

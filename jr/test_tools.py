@@ -31,6 +31,16 @@ def real_board_dir():
     shutil.rmtree(REPO / "data/boards" / TEST_BRAND, ignore_errors=True)
 
 
+@pytest.fixture
+def real_metro_board_dir():
+    """The replay test's payload uses the real `adafruit` brand (matching the exact live-failure
+    payload) rather than TEST_BRAND, so it needs its own narrow cleanup: only the one throwaway
+    board_id dir under the real adafruit/ brand, never the whole (real, populated) brand dir."""
+    d = REPO / "data/boards/adafruit/metro-esp32-s2"
+    yield d
+    shutil.rmtree(d, ignore_errors=True)
+
+
 class _FakeHeadResponse:
     """A HEAD response that never raises — simulates every cited source being alive."""
 
@@ -306,41 +316,74 @@ def test_author_board_rejects_missing_source(real_board_dir):
     assert not (real_board_dir / "uncited-board").exists()
 
 
-def test_author_board_rejects_unknown_field(real_board_dir):
+def test_author_board_drops_unknown_field_silently(real_board_dir):
+    """A weak model's unknown field key must never crash/reject the call — it's silently
+    omitted, not a schema property author_board raises or errors on (SPEC: cite-or-omit applies
+    to what IS written; junk keys just never make it into the record)."""
     result = tools.author_board(
         "weird-board", TEST_BRAND, "Weird Board",
-        fields={"clock_speed_ghz": 0.24},          # not a board.schema.json property
+        fields={"clock_speed_ghz": 0.24, "form_factor": "devkit"},  # clock_speed_ghz: not a board.schema.json property
         sources=[{"field": "*", "url": "https://example.com", "verified": "2026-08-28"}],
         body="x", soc="esp32-c5",
     )
 
-    assert "error" in result
+    assert "error" not in result, result
+    fm = yaml.safe_load((REPO / result["path"]).read_text().split("---", 2)[1])
+    assert "clock_speed_ghz" not in fm
+    assert fm["form_factor"] == "devkit"
 
 
-def test_author_board_ignores_unknown_stray_kwarg(real_board_dir):
-    """A weak model's stray top-level kwarg (unrelated to sources) must never crash the call —
-    it's accepted (via **extra) and simply ignored."""
+def test_author_board_coerces_bare_usb_string(real_board_dir):
     result = tools.author_board(
-        "stray-kwarg-board", TEST_BRAND, "Stray Kwarg Board",
-        fields={"form_factor": "devkit"},
+        "usb-string-board", TEST_BRAND, "USB String Board",
+        fields={"usb": "USB-C"},
         sources=[{"field": "*", "url": "https://example.com", "verified": "2026-08-28"}],
         body="x", soc="esp32-c5",
-        confidence=0.9,                                    # not a real author_board param
     )
 
-    assert "error" not in result
-    assert (real_board_dir / "stray-kwarg-board").exists()
+    assert "error" not in result, result
+    fm = yaml.safe_load((REPO / result["path"]).read_text().split("---", 2)[1])
+    assert fm["usb"] == {"connector": "usb-c"}
+    jsonschema.validate(fm, BOARD_SCHEMA)
 
 
-def test_author_board_folds_top_level_verified_into_sources(real_board_dir):
-    """The exact crash from the live run: the model passed a top-level `verified=True` instead of
-    putting it inside each sources[] entry. author_board must fold it in rather than raise."""
+def test_author_board_drops_unrecognized_usb_string(real_board_dir):
     result = tools.author_board(
-        "folded-verified-board", TEST_BRAND, "Folded Verified Board",
-        fields={"form_factor": "devkit"},
-        sources=[{"field": "*", "url": "https://example.com"}],   # missing 'verified'
+        "usb-junk-board", TEST_BRAND, "USB Junk Board",
+        fields={"usb": "some-nonsense-connector", "form_factor": "devkit"},
+        sources=[{"field": "*", "url": "https://example.com", "verified": "2026-08-28"}],
         body="x", soc="esp32-c5",
-        verified=True,
+    )
+
+    assert "error" not in result, result
+    fm = yaml.safe_load((REPO / result["path"]).read_text().split("---", 2)[1])
+    assert "usb" not in fm
+
+
+def test_author_board_normalizes_bool_verified_when_today_given(real_board_dir):
+    """A weak model sometimes emits a bare bool `verified` instead of a date. When the caller
+    supplies `today`, that bool (or a missing verified) is normalized to a real ISO date."""
+    result = tools.author_board(
+        "today-normalized-board", TEST_BRAND, "Today Normalized Board",
+        fields={"form_factor": "devkit"},
+        sources=[{"field": "*", "url": "https://example.com", "verified": True}],
+        body="x", soc="esp32-c5",
+        today="2026-08-28",
+    )
+
+    assert "error" not in result, result
+    fm = yaml.safe_load((REPO / result["path"]).read_text().split("---", 2)[1])
+    assert fm["sources"][0]["verified"] == "2026-08-28"
+
+
+def test_author_board_leaves_verified_alone_when_today_is_none(real_board_dir):
+    """Without `today`, a bool `verified` is left as-is (still truthy, still accepted) rather
+    than silently rewritten — no datetime call happens at all."""
+    result = tools.author_board(
+        "no-today-board", TEST_BRAND, "No Today Board",
+        fields={"form_factor": "devkit"},
+        sources=[{"field": "*", "url": "https://example.com", "verified": True}],
+        body="x", soc="esp32-c5",
     )
 
     assert "error" not in result, result
@@ -348,33 +391,66 @@ def test_author_board_folds_top_level_verified_into_sources(real_board_dir):
     assert fm["sources"][0]["verified"] is True
 
 
-def test_author_board_folds_top_level_url_into_sources(real_board_dir):
-    result = tools.author_board(
-        "folded-url-board", TEST_BRAND, "Folded Url Board",
-        fields={"form_factor": "devkit"},
-        sources=[{"field": "*", "verified": "2026-08-28"}],       # missing 'url'
-        body="x", soc="esp32-c5",
-        url="https://example.com/fallback",
-    )
-
-    assert "error" not in result, result
-    fm = yaml.safe_load((REPO / result["path"]).read_text().split("---", 2)[1])
-    assert fm["sources"][0]["url"] == "https://example.com/fallback"
-
-
-def test_author_board_still_rejects_source_missing_field_after_fold(real_board_dir):
-    """Folding a stray top-level verified/url must not paper over a genuinely broken sources[]
-    entry (e.g. missing 'field') — cite-or-omit stays enforced, as a clean error, not a raise."""
+def test_author_board_still_rejects_source_missing_field(real_board_dir):
+    """cite-or-omit stays enforced as a clean error, never a raise, for a genuinely broken
+    sources[] entry (e.g. missing 'field')."""
     result = tools.author_board(
         "bad-source-board", TEST_BRAND, "Bad Source Board",
         fields={"form_factor": "devkit"},
-        sources=[{"url": "https://example.com"}],          # no 'field' at all
+        sources=[{"url": "https://example.com", "verified": "2026-08-28"}],  # no 'field' at all
         body="x", soc="esp32-c5",
-        verified="2026-08-28",
     )
 
     assert "error" in result
     assert not (real_board_dir / "bad-source-board").exists()
+
+
+# ─────────────────────────── author_board tool schema (Agno) ───────────────────────────
+
+def test_author_board_agno_schema_has_no_extra_required_property():
+    """The prior bug: `**extra` in author_board's signature makes Agno's auto-generated
+    tool-call JSON schema mark a required `extra` property, which Groq gpt-oss-120b's live tool
+    call never supplies -> 'parameters for tool author_board did not match schema: missing
+    properties: extra' -> no board is ever authored. Introspect the REAL registered tool off the
+    REAL agent (agent.make_jr_board()), exactly as Agno hands it to the model."""
+    from agno.tools.function import Function
+    from agent import make_jr_board
+
+    a = make_jr_board()
+    author_board_fn = next(t for t in a.tools if getattr(t, "__name__", None) == "author_board")
+    schema = Function.from_callable(author_board_fn).parameters
+
+    # board_id/brand/name/fields/sources/body have no default -> Agno marks all six required;
+    # soc/module/today default to None -> optional. The bug was the extra required "extra" prop.
+    assert set(schema["required"]) == {"board_id", "brand", "name", "fields", "sources", "body"}
+    assert "extra" not in schema["properties"]
+
+
+# ─────────────────────────── author_board replay (live-failure payload) ───────────────────────────
+
+def test_author_board_replay_of_live_failure_payload_never_raises(real_metro_board_dir):
+    """The exact payload from the live Groq run that crashed on the missing `extra` schema
+    property. It must always come back as a dict (success or {"error": ...}), never raise, and
+    board_triple_validate() must then return a real verdict for it."""
+    result = tools.author_board(
+        board_id="metro-esp32-s2", brand="adafruit", name="Adafruit Metro ESP32-S2",
+        soc="esp32-s2",
+        fields={
+            "form_factor": "UNO", "dimensions_mm": [53.2, 72, 14.8], "usb": "USB-C",
+            "power": "6-12V barrel jack, USB-C, LiPo",
+            "extras": "STEMMA QT connector, MAX17048 battery monitor, JTAG pads",
+            "flash_mb": 4, "psram_mb": 2,
+            "notes": "Single-core 240 MHz ESP32-S2, no Bluetooth.",
+        },
+        sources=[{"field": "*", "url": "https://www.adafruit.com/product/4775", "verified": True}],
+        body="",
+    )
+
+    assert isinstance(result, dict)
+
+    verdict = tools.board_triple_validate("metro-esp32-s2")
+    assert isinstance(verdict, dict)
+    assert "pass" in verdict
 
 
 # ─────────────────────────── board_triple_validate ───────────────────────────
