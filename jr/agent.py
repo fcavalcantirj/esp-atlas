@@ -118,8 +118,9 @@ Add ONE genuinely-new board this run:
    today=<today's ISO date>). Pass `today` so a bare True/False `verified` in sources[] gets
    normalized to a real date. If it returns {"error": ...}, fix exactly what it names (missing
    source, both-or-neither soc/module) and retry — never fabricate a source just to satisfy it.
-8. run_guard() then board_triple_validate(board_id). If a gate fails, READ it, fix, retry (≤3).
-   Report the verdict + board_id + brand. Be terse."""
+8. After author_board returns success, you are DONE — do not call any other tool, do not attempt
+   to guard/validate/verify the record yourself (you have no such tool; the pipeline validates
+   and proposes it after you return). Report the board_id + brand. Be terse."""
 
 
 def make_jr_board(session_id: str = "jr-board") -> Agent:
@@ -135,8 +136,7 @@ def make_jr_board(session_id: str = "jr-board") -> Agent:
         model=models.make_agno_model(spec),
         db=SqliteDb(db_file=str(Path(__file__).parent / "jr_memory.db")),
         session_id=session_id,
-        tools=[tools.board_refs, tools.coverage_backlog, tools.fetch_url, tools.author_board,
-               tools.run_guard, tools.board_triple_validate],
+        tools=[tools.board_refs, tools.coverage_backlog, tools.fetch_url, tools.author_board],
         instructions=BOARD_INSTRUCTIONS,
         markdown=False,
     )
