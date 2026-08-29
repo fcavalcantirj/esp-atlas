@@ -407,6 +407,114 @@ def test_boards_batch_logs_board_pick_oracle_verdict_triple_validate_and_disposi
     assert "proposed" in text                            # final disposition is legible
 
 
+# ─────────────── _oracle_check — oracle spend accounting (paid-oracle hardening) ───────────────
+
+def _write_magtag_board(boards_dir):
+    d = boards_dir / "adafruit" / "magtag"
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "board.md").write_text(
+        "---\nid: magtag\ntype: board\nbrand: adafruit\nname: Adafruit MagTag\nsoc: esp32-s2\n"
+        "sources:\n- field: '*'\n  url: https://example.com\n  verified: '2026-08-28'\n---\n\nx\n"
+    )
+
+
+def test_oracle_check_records_spend_from_oracle_usage_tokens(monkeypatch, tmp_path):
+    boards_dir = tmp_path / "boards"
+    _write_magtag_board(boards_dir)
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "fetch_url", lambda url: {"url": url, "text": "ESP32-S2 wireless module"})
+    monkeypatch.setattr(tools, "oracle_review", lambda md, page, schema: {
+        "approve": True, "issues": [], "notes": "ok",
+        "usage": {"prompt_tokens": 1000, "completion_tokens": 500},
+    })
+    monkeypatch.setenv("JR_ORACLE_MODEL", "openrouter:z-ai/glm-5.2:free")
+
+    run._oracle_check("adafruit", "magtag")
+
+    price_in, price_out = tools._price_per_token("z-ai/glm-5.2:free")
+    assert tools.month_spend() == pytest.approx(1000 * price_in + 500 * price_out)
+
+
+def test_oracle_check_records_spend_with_oracle_model_stripped_of_provider_prefix(monkeypatch, tmp_path):
+    boards_dir = tmp_path / "boards"
+    _write_magtag_board(boards_dir)
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "fetch_url", lambda url: {"url": url, "text": "ESP32-S2 wireless module"})
+    monkeypatch.setattr(tools, "oracle_review", lambda md, page, schema: {
+        "approve": True, "issues": [], "notes": "ok",
+        "usage": {"prompt_tokens": 42, "completion_tokens": 7},
+    })
+    monkeypatch.setenv("JR_ORACLE_MODEL", "groq:llama-3.1-70b")
+    calls = []
+    monkeypatch.setattr(tools, "record_spend", lambda *a, **k: calls.append((a, k)) or 0.0)
+
+    run._oracle_check("adafruit", "magtag")
+
+    assert calls == [((42, 7), {"model": "llama-3.1-70b"})]
+
+
+def test_oracle_check_records_zero_spend_when_usage_absent(monkeypatch, tmp_path):
+    boards_dir = tmp_path / "boards"
+    _write_magtag_board(boards_dir)
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "fetch_url", lambda url: {"url": url, "text": "ESP32-S2 wireless module"})
+    monkeypatch.setattr(tools, "oracle_review",
+                        lambda md, page, schema: {"approve": True, "issues": [], "notes": "ok"})
+    calls = []
+    monkeypatch.setattr(tools, "record_spend", lambda *a, **k: calls.append((a, k)) or 0.0)
+
+    run._oracle_check("adafruit", "magtag")
+
+    assert calls[0][0] == (0, 0)
+
+
+def test_oracle_check_does_not_record_spend_when_board_md_missing(monkeypatch, tmp_path):
+    boards_dir = tmp_path / "boards"
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    calls = []
+    monkeypatch.setattr(tools, "record_spend", lambda *a, **k: calls.append((a, k)) or 0.0)
+
+    result = run._oracle_check("adafruit", "does-not-exist")
+
+    assert result["approve"] is False
+    assert not calls
+
+
+# ─────────────── run.py __main__ CLI — default INFO logging ───────────────
+
+def test_run_cli_configures_info_logging_before_dispatching_the_job(monkeypatch):
+    calls = []
+    monkeypatch.setattr(run.logging, "basicConfig", lambda **kwargs: calls.append(kwargs))
+    monkeypatch.setattr(sys, "argv", ["run.py", "noop_job"])
+    monkeypatch.setitem(run.__dict__, "noop_job", lambda: {"action": "none"})
+
+    run._run_cli()
+
+    assert calls == [{"level": logging.INFO}]
+
+
+def test_run_cli_dispatches_to_the_named_job(monkeypatch, capsys):
+    monkeypatch.setattr(run.logging, "basicConfig", lambda **kwargs: None)
+    monkeypatch.setattr(sys, "argv", ["run.py", "fake_job"])
+    monkeypatch.setitem(run.__dict__, "fake_job", lambda: {"action": "batch", "count": 1})
+
+    run._run_cli()
+
+    out = capsys.readouterr().out
+    assert "fake_job" in out and "batch" in out
+
+
+def test_run_cli_defaults_to_daily_job_when_no_argv(monkeypatch):
+    monkeypatch.setattr(run.logging, "basicConfig", lambda **kwargs: None)
+    monkeypatch.setattr(sys, "argv", ["run.py"])
+    calls = []
+    monkeypatch.setitem(run.__dict__, "daily", lambda: calls.append("daily") or {"action": "none"})
+
+    run._run_cli()
+
+    assert calls == ["daily"]
+
+
 def test_boards_batch_logs_rejection_reason_when_triple_validate_fails(monkeypatch, tmp_path, caplog):
     boards_dir = tmp_path / "boards"
     monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)

@@ -141,7 +141,14 @@ def _oracle_check(brand: str, board_id: str) -> dict:
     sources = fm.get("sources") or []
     page_url = sources[0].get("url") if sources else None
     page_text = tools.fetch_url(page_url).get("text", "") if page_url else ""
-    return tools.oracle_review(board_md.read_text(), page_text, _BOARD_SCHEMA_SUMMARY)
+    verdict = tools.oracle_review(board_md.read_text(), page_text, _BOARD_SCHEMA_SUMMARY)
+
+    usage = verdict.get("usage") or {}
+    oracle_spec = os.environ.get("JR_ORACLE_MODEL", models.DEFAULT_ORACLE_MODEL)
+    _, oracle_model_id = models.parse_model_spec(oracle_spec)
+    tools.record_spend(usage.get("prompt_tokens", 0), usage.get("completion_tokens", 0),
+                       model=oracle_model_id)
+    return verdict
 
 
 def boards_batch(n: int = 2, vendor: str | None = None, label: str | None = None) -> dict:
@@ -253,6 +260,14 @@ def boards() -> dict:
     return boards_batch(2)
 
 
-if __name__ == "__main__":
+def _run_cli() -> None:
+    """The `python run.py <job>` entrypoint (daily.sh/cron). Configures INFO logging first so the
+    boards_batch disposition/oracle/verdict lines actually emit — with no handler configured they
+    were silently swallowed — then dispatches to the named job."""
+    logging.basicConfig(level=logging.INFO)
     job = sys.argv[1] if len(sys.argv) > 1 else "daily"
     print(job, "→", globals()[job]())
+
+
+if __name__ == "__main__":
+    _run_cli()

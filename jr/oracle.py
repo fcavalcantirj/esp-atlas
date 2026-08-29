@@ -22,9 +22,20 @@ import models
 ORACLE_SYSTEM_PROMPT = (
     "You are a hardware-datasheet fact-checker. Given this proposed board record and the text "
     "of its official source page, list any field that is (a) not supported by the page, (b) the "
-    "WRONG chip family/module, or (c) mis-cited. Approve ONLY if every hard spec is backed by "
-    "the page and the soc/module matches the chip named on the page. Respond with ONLY a JSON "
-    'object, no prose, no markdown fences: {"approve": true|false, "issues": ["..."], "notes": "..."}.'
+    "WRONG chip family/module, or (c) mis-cited.\n\n"
+    "The record's soc/module value is a CANONICAL catalog identifier — it is NOT expected to "
+    "appear literally on the page. Treat the soc/module as correct if the page names the SAME "
+    "chip FAMILY semantically: a page that says \"ESP32-S2\" or \"ESP32-S2 module\" or \"ESP32-S2 "
+    "wireless module\" fully supports soc: esp32-s2 (or an esp32-s2-* module). Do NOT reject just "
+    "because the exact hyphenated identifier string is absent from the page — no vendor product "
+    "page ever spells out the literal catalog id.\n\n"
+    "Only flag a chip mismatch when the page names a DIFFERENT family (e.g. page says ESP32-S3 "
+    "but the record says esp32-s2), or a spec VALUE (flash, psram, usb, display, dimensions, "
+    "extras) that the page does not support. Stay strict on spec-value support and wrong-family "
+    "mismatches — loosen ONLY on identifier-string literalism.\n\n"
+    "Approve ONLY if every hard spec is backed by the page and the soc/module's chip family "
+    "matches the family named on the page. Respond with ONLY a JSON object, no prose, no markdown "
+    'fences: {"approve": true|false, "issues": ["..."], "notes": "..."}.'
 )
 
 
@@ -71,6 +82,7 @@ def oracle_review(board_md_text: str, page_text: str, schema_summary: str) -> di
             )},
         ],
     }
+    no_usage = {"prompt_tokens": 0, "completion_tokens": 0}
     try:
         resp = requests.post(
             f"{cfg['base_url']}/chat/completions",
@@ -78,11 +90,19 @@ def oracle_review(board_md_text: str, page_text: str, schema_summary: str) -> di
             json=payload, timeout=30,
         )
         resp.raise_for_status()
-        content = resp.json()["choices"][0]["message"]["content"]
+        data = resp.json()
+        content = data["choices"][0]["message"]["content"]
     except Exception as e:
-        return {"approve": False, "issues": [f"oracle request failed: {type(e).__name__}: {e}"], "notes": ""}
+        return {"approve": False, "issues": [f"oracle request failed: {type(e).__name__}: {e}"],
+                "notes": "", "usage": no_usage}
+
+    usage = data.get("usage") or {}
+    usage = {"prompt_tokens": usage.get("prompt_tokens", 0) or 0,
+             "completion_tokens": usage.get("completion_tokens", 0) or 0}
 
     verdict = _parse_oracle_json(content)
     if verdict is None:
-        return {"approve": False, "issues": ["oracle response unparseable"], "notes": str(content)[:500]}
+        return {"approve": False, "issues": ["oracle response unparseable"], "notes": str(content)[:500],
+                "usage": usage}
+    verdict["usage"] = usage
     return verdict
