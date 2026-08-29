@@ -279,3 +279,100 @@ def test_oracle_review_usage_defaults_to_zero_on_network_error(monkeypatch):
     result = oracle.oracle_review(_BOARD_MD, _PAGE_TEXT, _SCHEMA_SUMMARY)
 
     assert result["usage"] == {"prompt_tokens": 0, "completion_tokens": 0}
+
+
+# ────────────── module hierarchy calibration (WROOM/WROVER/MINI package the base soc) ──────────────
+# Live bug: the SparkFun ESP32 Thing Plus C has soc: esp32 and the page says "ESP32 WROOM" — the
+# oracle wrongly rejected it as "soc esp32 does not match chip family ESP32 WROOM". WROOM is a
+# MODULE (silicon + flash + antenna can) that PACKAGES the base esp32 soc, not a separate family.
+
+_THING_PLUS_MD = (
+    "---\nid: sparkfun-esp32-thing-plus-c\ntype: board\nbrand: sparkfun\n"
+    "name: SparkFun ESP32 Thing Plus C\nsoc: esp32\nsources:\n"
+    "- field: '*'\n  url: https://www.sparkfun.com/products/17381\n"
+    "  verified: '2026-08-28'\n---\n\n# SparkFun ESP32 Thing Plus C\n"
+)
+
+
+def test_oracle_review_approves_soc_esp32_when_page_names_wroom_module(monkeypatch):
+    """Regression for the live SparkFun ESP32 Thing Plus C false-reject: the page says
+    'ESP32-WROOM-32 module' / 'ESP32 WROOM' (no -S2/-S3 suffix) which packages the base esp32
+    soc. Asserts the system prompt ACTUALLY sent teaches the module hierarchy (not just that the
+    mocked verdict says approve=true) — this must FAIL before the module-hierarchy paragraph is
+    added to ORACLE_SYSTEM_PROMPT, and PASS after."""
+    calls = []
+
+    def _capture(url, headers=None, json=None, timeout=None):
+        calls.append(json)
+        return _FakeResponse('{"approve": true, "issues": [], '
+                             '"notes": "ESP32-WROOM-32 module packages the base esp32 soc"}')
+
+    monkeypatch.setenv("OPENROUTER_API_KEY", "or-key")
+    monkeypatch.setattr(oracle.requests, "post", _capture)
+
+    page_text = "SparkFun ESP32 Thing Plus C - powered by the ESP32-WROOM-32 module. ESP32 WROOM."
+    result = oracle.oracle_review(_THING_PLUS_MD, page_text, _SCHEMA_SUMMARY)
+
+    system_msg = calls[0]["messages"][0]["content"].lower()
+    assert "wroom" in system_msg
+    assert "packages the base esp32 soc" in system_msg or "contain the base esp32 soc" in system_msg
+    assert result["approve"] is True
+
+
+def test_oracle_review_approves_soc_esp32_s3_when_page_names_s3_wroom_module(monkeypatch):
+    board_md = (
+        "---\nid: some-s3-board\ntype: board\nbrand: espressif\nname: Some S3 Board\n"
+        "soc: esp32-s3\nsources:\n- field: '*'\n  url: https://example.com/s3-board\n"
+        "  verified: '2026-08-28'\n---\n\n# Some S3 Board\n"
+    )
+    page_text = "Powered by the ESP32-S3-WROOM-1 module."
+    verdict_json = ('{"approve": true, "issues": [], '
+                    '"notes": "ESP32-S3-WROOM-1 module contains the esp32-s3 soc"}')
+    monkeypatch.setenv("OPENROUTER_API_KEY", "or-key")
+    monkeypatch.setattr(oracle.requests, "post", lambda *a, **k: _FakeResponse(verdict_json))
+
+    result = oracle.oracle_review(board_md, page_text, _SCHEMA_SUMMARY)
+
+    assert result["approve"] is True
+
+
+def test_oracle_review_still_rejects_esp32_s2_when_page_names_s3(monkeypatch):
+    """Module-hierarchy loosening must NOT loosen the wrong-family check."""
+    board_md = (
+        "---\nid: some-s2-board\ntype: board\nbrand: espressif\nname: Some S2 Board\n"
+        "soc: esp32-s2\nsources:\n- field: '*'\n  url: https://example.com/s2-board\n"
+        "  verified: '2026-08-28'\n---\n\n# Some S2 Board\n"
+    )
+    page_text = "Powered by the ESP32-S3-WROOM-1 module."
+    verdict_json = ('{"approve": false, "issues": '
+                    '["page names ESP32-S3-WROOM-1 (esp32-s3), record uses esp32-s2 — different '
+                    'chip family"], "notes": ""}')
+    monkeypatch.setenv("OPENROUTER_API_KEY", "or-key")
+    monkeypatch.setattr(oracle.requests, "post", lambda *a, **k: _FakeResponse(verdict_json))
+
+    result = oracle.oracle_review(board_md, page_text, _SCHEMA_SUMMARY)
+
+    assert result["approve"] is False
+    assert any("esp32-s3" in i.lower() for i in result["issues"])
+
+
+def test_oracle_review_rejects_when_primary_chip_is_non_esp_coprocessor(monkeypatch):
+    """A non-ESP primary MCU (e.g. STM32) with the ESP chip only as a secondary radio
+    co-processor must still be flagged, even though the ESP chip family itself matches."""
+    board_md = (
+        "---\nid: some-stm32-board\ntype: board\nbrand: acme\nname: Some STM32 Board\n"
+        "soc: esp32-c3\nsources:\n- field: '*'\n  url: https://example.com/stm32-board\n"
+        "  verified: '2026-08-28'\n---\n\n# Some STM32 Board\n"
+    )
+    page_text = ("Powered by an STM32H743 microcontroller as the main application processor, "
+                 "with an ESP32-C3 module onboard providing Wi-Fi/BLE connectivity.")
+    verdict_json = ('{"approve": false, "issues": '
+                    '["board primary processor is STM32H743, ESP32-C3 is only a secondary '
+                    'radio co-processor"], "notes": ""}')
+    monkeypatch.setenv("OPENROUTER_API_KEY", "or-key")
+    monkeypatch.setattr(oracle.requests, "post", lambda *a, **k: _FakeResponse(verdict_json))
+
+    result = oracle.oracle_review(board_md, page_text, _SCHEMA_SUMMARY)
+
+    assert result["approve"] is False
+    assert any("stm32" in i.lower() for i in result["issues"])
