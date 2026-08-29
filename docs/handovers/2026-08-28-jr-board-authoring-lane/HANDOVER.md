@@ -4,6 +4,17 @@
 Map every remaining ESP32-family board in `COVERAGE.md` (62 backlog at session start,
 76 already done) — **using EspAtlas Jr** to author cited board records autonomously.
 
+## ⚠️ REALITY CHECK — Jr does NOT work yet
+**Jr has NEVER successfully authored a single board. Not once.** Across every live run
+this session (gpt-oss-120b free, then paid gpt-4o-mini drafter+oracle) the outcome was
+always the same: `{'action': 'none'}` → "🤖 Jr board batch — 0 new boards proposed."
+**Zero cited PRs. Zero boards on main from Jr.** The 4 Espressif boards were authored by
+the coding *delegate*, not by Jr.
+
+"Built + 99 unit tests green + cost-capped + observable" is TRUE but is NOT "working" —
+the end-to-end pipeline has produced nothing. Do not call this done, solid, or working
+until a run actually opens a real cited board PR that survives review. It has not.
+
 ## What shipped today (all merged to `origin/main`, each validated before merge)
 1. **4 Espressif boards** hand-driven via delegate — `esp32-c5-devkitc-1`,
    `esp32-c61-devkitc-1`, `esp32-ethernet-kit`, `esp32-lyrat`. (`8348733`)
@@ -26,13 +37,13 @@ Map every remaining ESP32-family board in `COVERAGE.md` (62 backlog at session s
 - **`$5/month` hard cap** now tracked (`jr/spend.json`) on the board path. Unknown models
   priced at a conservative `$1/$3` per M so the cap trips early. **Spend so far ≈ $0.47.**
 
-## Current state — the chip-identity saga is SOLVED
-The oracle now understands the `soc ← module ← board` model:
-- "ESP32-WROOM" (no suffix) → `soc: esp32`; "ESP32-S3-WROOM-1" → `esp32-s3`; etc.
-- Correctly **flags non-ESP-primary** boards (Inkplate 6MOTION = STM32H743 primary,
-  ESP32-C3 only a co-processor).
-Jr runs **end-to-end, fully observable, cost-capped.** No garbage ever reached main —
-every failed draft was rejected by the guards (the "100% verified" guarantee held).
+## Current state — subproblems fixed, SYSTEM STILL 0/0
+Individual bugs got fixed (chip-identity: the oracle now understands `soc ← module ←
+board`, "ESP32-WROOM"→`esp32`, and flags non-ESP-primary boards like the Inkplate's
+STM32). But **the system as a whole has still never produced a board.** Each fix just
+revealed the next rejection reason. The guards work (no garbage reached main), but that
+is only half the job — nothing *good* has made it through either. Net board output from
+Jr: **0.**
 
 ## The remaining blocker (start here tomorrow)
 Latest run (`adafruit-metro-esp32-s2`) passed chip-identity but the oracle rejected
