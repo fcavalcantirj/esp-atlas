@@ -3,14 +3,24 @@ non-retryable `tool_use_failed` on one board (root-caused to the board agent lac
 discover valid soc/module ids) must not abort the rest of the batch — boards_batch()'s per-board
 try/except must catch it and move on. Network/model are always mocked; no live Groq call.
 """
+import logging
 import sys
 from pathlib import Path
+
+import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import agent
 import run
 import tools
 from agno.exceptions import ModelProviderError
+
+
+@pytest.fixture(autouse=True)
+def _isolated_spend(monkeypatch, tmp_path):
+    """Every boards_batch() call now records real spend as a side effect — isolate the ledger so
+    no test in this module ever touches the real jr/spend.json."""
+    monkeypatch.setattr(tools, "_SPEND", tmp_path / "spend.json")
 
 
 class _FakeBoardAgent:
@@ -232,3 +242,188 @@ def test_boards_batch_stops_at_month_spend_cap(monkeypatch, tmp_path):
 
     assert not calls                                     # never even asked for a candidate
     assert result == {"action": "none"}
+
+
+# ─────────────── boards_batch — real per-model spend accounting (paid drafter hardening) ───────────────
+
+class _FakeMetrics:
+    def __init__(self, input_tokens=0, output_tokens=0):
+        self.input_tokens = input_tokens
+        self.output_tokens = output_tokens
+
+
+class _FakeResp:
+    def __init__(self, metrics=None):
+        self.metrics = metrics
+
+
+class _MeteredBoardAgent:
+    """Stands in for a real Agno agent whose .run() returns a response carrying .metrics — the
+    shape drain_batch() already relies on, now mirrored for the board lane."""
+
+    def __init__(self, brand, board_id, input_tokens, output_tokens):
+        self._brand, self._board_id = brand, board_id
+        self._metrics = _FakeMetrics(input_tokens, output_tokens)
+
+    def run(self, msg):
+        _write_fake_board(tools.BOARDS_DIR, self._brand, self._board_id, "soc: esp32-c5")
+        return _FakeResp(self._metrics)
+
+
+def _approve_everything(monkeypatch):
+    monkeypatch.setattr(tools, "board_triple_validate", lambda board_id: {"pass": True})
+    monkeypatch.setattr(run, "_oracle_check",
+                        lambda brand, board_id: {"approve": True, "issues": [], "notes": ""})
+    monkeypatch.setattr(tools, "open_board_batch_pr",
+                        lambda boards, label, base="main": {"ok": True, "pr_url": "https://pr.example/1",
+                                                            "count": len(boards)})
+    monkeypatch.setattr(run.notify, "send_telegram", lambda text: {"ok": True})
+
+
+def test_boards_batch_records_spend_every_iteration(monkeypatch, tmp_path):
+    boards_dir = tmp_path / "boards"
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "coverage_backlog", lambda: [
+        {"name": "Board A", "vendor": "V", "url": "https://a.example.com"},
+    ])
+    monkeypatch.setenv("JR_BOARD_MODEL", "openrouter:openai/gpt-4o-mini")
+    _approve_everything(monkeypatch)
+    monkeypatch.setattr(agent, "make_jr_board",
+                        lambda session_id: _MeteredBoardAgent("vendorx", "board-a", 1_000_000, 1_000_000))
+
+    assert tools.month_spend() == 0.0
+    result = run.boards_batch(n=1, label="test-batch")
+
+    assert result["action"] == "batch"
+    assert tools.month_spend() == pytest.approx(0.75)   # 1M in @$0.15/Mtok + 1M out @$0.60/Mtok
+
+
+def test_boards_batch_stops_once_accumulated_spend_reaches_cap(monkeypatch, tmp_path):
+    boards_dir = tmp_path / "boards"
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "coverage_backlog", lambda: [
+        {"name": "Board A", "vendor": "V", "url": "https://a.example.com"},
+        {"name": "Board B", "vendor": "V", "url": "https://b.example.com"},
+        {"name": "Board C", "vendor": "V", "url": "https://c.example.com"},
+    ])
+    monkeypatch.setenv("JR_BOARD_MODEL", "openrouter:openai/gpt-4o-mini")
+    _approve_everything(monkeypatch)
+
+    calls = []
+
+    def fake_make_jr_board(session_id):
+        calls.append(session_id)
+        # 10M tokens each way @ gpt-4o-mini pricing = $1.50 + $6.00 = $7.50 -- blows the $5 cap
+        # on the very first iteration.
+        return _MeteredBoardAgent("vendorx", f"board-{len(calls)}", 10_000_000, 10_000_000)
+
+    monkeypatch.setattr(agent, "make_jr_board", fake_make_jr_board)
+
+    result = run.boards_batch(n=3, label="test-batch")
+
+    assert len(calls) == 1                          # the 2nd/3rd iterations never even started
+    assert tools.month_spend() >= tools.MONTHLY_CAP_USD
+    assert result["action"] == "batch"               # the one board authored before the cap tripped still ships
+
+
+def test_unknown_model_spend_trips_cap_faster_than_a_priced_one(monkeypatch, tmp_path):
+    """An unrecognized JR_BOARD_MODEL must OVER-price (never under), so the cap trips at least as
+    early as it would for a known model at the same token volume."""
+    boards_dir = tmp_path / "boards"
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "coverage_backlog", lambda: [
+        {"name": "Board A", "vendor": "V", "url": "https://a.example.com"},
+        {"name": "Board B", "vendor": "V", "url": "https://b.example.com"},
+    ])
+    monkeypatch.setenv("JR_BOARD_MODEL", "openrouter:some-vendor/unpriced-model")
+    _approve_everything(monkeypatch)
+    calls = []
+
+    def fake_make_jr_board(session_id):
+        calls.append(session_id)
+        return _MeteredBoardAgent("vendorx", f"board-{len(calls)}", 2_000_000, 1_000_000)
+
+    monkeypatch.setattr(agent, "make_jr_board", fake_make_jr_board)
+
+    run.boards_batch(n=3, label="test-batch")
+
+    # 2M in @$1.00/Mtok + 1M out @$3.00/Mtok = $5.00 -- caps out on the first iteration alone
+    assert tools.month_spend() == pytest.approx(5.0)
+    assert len(calls) == 1
+
+
+# ─────────────── boards_batch — crash cleanup (no orphan board dirs) ───────────────
+
+class _CrashingBoardAgent:
+    """Simulates a drafter that authors a board dir (a real author_board() call succeeded) and
+    THEN crashes on a later tool call in the same .run() — the partial dir must never survive."""
+
+    def __init__(self, brand, board_id):
+        self._brand, self._board_id = brand, board_id
+
+    def run(self, msg):
+        _write_fake_board(tools.BOARDS_DIR, self._brand, self._board_id, "soc: esp32-c5")
+        raise RuntimeError("simulated mid-run crash after authoring")
+
+
+def test_boards_batch_crash_mid_iteration_leaves_no_orphan_board_dir(monkeypatch, tmp_path):
+    boards_dir = tmp_path / "boards"
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "coverage_backlog", lambda: [
+        {"name": "Board A", "vendor": "V", "url": "https://a.example.com"},
+    ])
+    monkeypatch.setattr(run.notify, "send_telegram", lambda text: {"ok": True})
+    monkeypatch.setattr(agent, "make_jr_board",
+                        lambda session_id: _CrashingBoardAgent("vendorx", "board-crash"))
+
+    result = run.boards_batch(n=1, label="test-batch")
+
+    assert result == {"action": "none"}
+    assert not (boards_dir / "vendorx" / "board-crash").exists()   # no orphan left behind
+    assert not any(boards_dir.rglob("board.md"))                   # nothing at all survives
+
+
+# ─────────────── boards_batch — observability (legible disposition per candidate) ───────────────
+
+def test_boards_batch_logs_board_pick_oracle_verdict_triple_validate_and_disposition(
+        monkeypatch, tmp_path, caplog):
+    boards_dir = tmp_path / "boards"
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "coverage_backlog", lambda: [
+        {"name": "Board A", "vendor": "V", "url": "https://a.example.com"},
+    ])
+    _approve_everything(monkeypatch)
+    monkeypatch.setattr(agent, "make_jr_board",
+                        lambda session_id: _MeteredBoardAgent("vendorx", "board-a", 100, 100))
+
+    with caplog.at_level(logging.INFO, logger="run"):
+        result = run.boards_batch(n=1, label="test-batch")
+
+    assert result["action"] == "batch"
+    text = "\n".join(r.message for r in caplog.records)
+    assert "vendorx/board-a" in text                    # board picked is legible
+    assert "approve=True" in text                        # oracle verdict is legible
+    assert "board_triple_validate" in text and "pass=True" in text
+    assert "proposed" in text                            # final disposition is legible
+
+
+def test_boards_batch_logs_rejection_reason_when_triple_validate_fails(monkeypatch, tmp_path, caplog):
+    boards_dir = tmp_path / "boards"
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "coverage_backlog", lambda: [
+        {"name": "Board A", "vendor": "V", "url": "https://a.example.com"},
+    ])
+    monkeypatch.setattr(tools, "board_triple_validate",
+                        lambda board_id: {"pass": False, "gate3_integrity": ["bad ref"]})
+    monkeypatch.setattr(run, "_oracle_check",
+                        lambda brand, board_id: {"approve": True, "issues": [], "notes": ""})
+    monkeypatch.setattr(run.notify, "send_telegram", lambda text: {"ok": True})
+    monkeypatch.setattr(agent, "make_jr_board",
+                        lambda session_id: _MeteredBoardAgent("vendorx", "board-a", 100, 100))
+
+    with caplog.at_level(logging.INFO, logger="run"):
+        result = run.boards_batch(n=1, label="test-batch")
+
+    assert result == {"action": "none"}
+    text = "\n".join(r.message for r in caplog.records)
+    assert "rejected" in text and "board_triple_validate failed" in text

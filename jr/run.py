@@ -8,6 +8,8 @@ with the outcome — including a quiet "nothing today" so he knows Jr is alive. 
     python run.py drain        # just the launcher-drain job (for testing)
 """
 from __future__ import annotations
+import logging
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -15,7 +17,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import tools
 import notify
+import models
 from agent import jr
+
+logger = logging.getLogger(__name__)
 
 
 def _recipe_dirs() -> set[str]:
@@ -146,13 +151,21 @@ def boards_batch(n: int = 2, vendor: str | None = None, label: str | None = None
     authority) before bundling the valid ones into ONE reviewable batch PR — mirrors
     drain_batch() for firmware. `vendor` optionally restricts to one COVERAGE.md section (e.g.
     'Espressif'). A board the oracle rejects gets ONE retry (fed the oracle's issues) before
-    being cleaned up. Enforces the $/month cap (SPEC: defense-in-depth even on free models)."""
+    being cleaned up. Enforces the $/month cap (SPEC: defense-in-depth even on free models) —
+    spend is recorded on EVERY drafter call, including a board later rejected (tokens were still
+    spent), priced by the ACTUAL active JR_BOARD_MODEL (tools.record_spend) so a paid drafter's
+    cap can actually trip. A drafter crash mid-iteration cleans up any partially-authored board
+    dir from that same iteration so it can't orphan-poison coverage_backlog() dedup."""
     import datetime as dt
     from agent import make_jr_board
     label = label or dt.date.today().isoformat()
+    active_model = os.environ.get("JR_BOARD_MODEL", models.DEFAULT_BOARD_MODEL)
     authored: list[tuple[str, str]] = []
     for i in range(n):
-        if tools.month_spend() >= tools.MONTHLY_CAP_USD:   # hard $/month cap (defense-in-depth)
+        spend = tools.month_spend()
+        if spend >= tools.MONTHLY_CAP_USD:   # hard $/month cap (defense-in-depth)
+            logger.info("boards_batch[%d]: stopping — month spend $%.2f >= cap $%.2f",
+                       i, spend, tools.MONTHLY_CAP_USD)
             break
         backlog = tools.coverage_backlog()
         if vendor:
@@ -163,40 +176,62 @@ def boards_batch(n: int = 2, vendor: str | None = None, label: str | None = None
         board_agent = None
         try:
             board_agent = make_jr_board(session_id=f"board-batch-{label}-{i}")
-            board_agent.run(
+            resp = board_agent.run(
                 "Pick ONE backlog board via coverage_backlog(), fetch its official page, author "
                 "ONLY citable fields (omit anything the page doesn't state), then "
                 "board_triple_validate; retry <=3 on a red gate.")
+            m = getattr(resp, "metrics", None)
+            tools.record_spend(getattr(m, "input_tokens", 0), getattr(m, "output_tokens", 0),
+                               model=active_model)
         except Exception:
+            logger.info("boards_batch[%d]: drafter crashed — cleaning up any partial board dir", i)
+            for orphan_brand, orphan_board_id in _board_dirs() - before:
+                _cleanup_board(orphan_brand, orphan_board_id)
             continue
         new = _board_dirs() - before
         if not new:
+            logger.info("boards_batch[%d]: drafter authored nothing this iteration", i)
             continue
         brand, board_id = next(iter(new))
+        logger.info("boards_batch[%d]: board picked %s/%s", i, brand, board_id)
 
         oracle_verdict = _oracle_check(brand, board_id)
+        logger.info("boards_batch[%d]: oracle verdict for %s/%s: approve=%s issues=%s",
+                   i, brand, board_id, oracle_verdict.get("approve"), oracle_verdict.get("issues"))
         if not oracle_verdict.get("approve") and board_agent is not None:
             issues = "; ".join(oracle_verdict.get("issues") or []) or "unspecified"
             try:
-                board_agent.run(
+                retry_resp = board_agent.run(
                     f"An independent fact-checker REJECTED this board record: {issues}. "
                     "Re-check the source page and fix it (call author_board again with the "
                     "corrected soc/module/fields), then board_triple_validate again.")
+                m = getattr(retry_resp, "metrics", None)
+                tools.record_spend(getattr(m, "input_tokens", 0), getattr(m, "output_tokens", 0),
+                                   model=active_model)
             except Exception:
                 pass
             new = _board_dirs() - before
             if new:
                 brand, board_id = next(iter(new))
                 oracle_verdict = _oracle_check(brand, board_id)
+                logger.info("boards_batch[%d]: oracle verdict after retry for %s/%s: approve=%s issues=%s",
+                           i, brand, board_id, oracle_verdict.get("approve"), oracle_verdict.get("issues"))
         if not oracle_verdict.get("approve"):
             _cleanup_board(brand, board_id)
+            logger.info("boards_batch[%d]: disposition rejected %s/%s — reason: oracle rejected (%s)",
+                       i, brand, board_id, "; ".join(oracle_verdict.get("issues") or []) or "unspecified")
             continue
 
         verdict = tools.board_triple_validate(board_id)
+        logger.info("boards_batch[%d]: board_triple_validate for %s/%s: pass=%s",
+                   i, brand, board_id, verdict.get("pass"))
         if verdict.get("pass"):
             authored.append((brand, board_id))
+            logger.info("boards_batch[%d]: disposition proposed %s/%s", i, brand, board_id)
         else:
             _cleanup_board(brand, board_id)
+            logger.info("boards_batch[%d]: disposition rejected %s/%s — reason: board_triple_validate failed (%s)",
+                       i, brand, board_id, verdict)
     if not authored:
         notify.send_telegram("🤖 *Jr board batch* — ran, nothing authorable this pass.")
         return {"action": "none"}

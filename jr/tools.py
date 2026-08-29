@@ -8,11 +8,13 @@ Jr proposes via PR; it never writes `main`.
 """
 from __future__ import annotations
 import json
+import os
 import re
 import subprocess
 import urllib.request
 from pathlib import Path
 
+import models
 from oracle import oracle_review  # noqa: F401 — re-exported so run.py keeps calling tools.oracle_review
 
 REPO = Path(__file__).resolve().parent.parent           # the esp-atlas repo root
@@ -97,7 +99,20 @@ def mark_proposed(url: str) -> None:
 
 MONTHLY_CAP_USD = 5.0
 _SPEND = Path(__file__).resolve().parent / "spend.json"
-_PRICE_IN, _PRICE_OUT = 0.15 / 1e6, 0.60 / 1e6          # Groq gpt-oss-120b paid, $/token
+
+# $/million-tokens (input, output) by model id, provider prefix stripped — priced by the ACTUAL
+# active drafter model so month_spend() reflects real dollars, never a silent $0 for a paid one.
+PRICE_PER_MTOK = {"openai/gpt-4o-mini": (0.15, 0.60), "openai/gpt-oss-120b": (0.15, 0.60)}  # Groq
+_UNKNOWN_MODEL_PRICE_PER_MTOK = (1.00, 3.00)   # unrecognized model prices HIGH -> trips the cap early
+
+
+def _price_per_token(model: str | None) -> tuple[float, float]:
+    """$/token (in, out) for `model`; defaults to JR_BOARD_MODEL/DEFAULT_BOARD_MODEL, prefix stripped."""
+    if model is None:
+        model = os.environ.get("JR_BOARD_MODEL", models.DEFAULT_BOARD_MODEL)
+    model_id = model.partition(":")[2] or model
+    price_in, price_out = PRICE_PER_MTOK.get(model_id, _UNKNOWN_MODEL_PRICE_PER_MTOK)
+    return price_in / 1e6, price_out / 1e6
 
 
 def _spend_data() -> dict:
@@ -116,15 +131,19 @@ def month_spend(month: str | None = None) -> float:
     return _spend_data().get(month, {}).get("cost", 0.0)
 
 
-def record_spend(input_tokens: int, output_tokens: int) -> float:
-    """Add a run's token cost to this month's ledger; returns the month's running cost."""
+def record_spend(input_tokens: int, output_tokens: int, model: str | None = None) -> float:
+    """Add a run's token cost to this month's ledger, priced by `model` (default: the active
+    JR_BOARD_MODEL). Returns the month's running cost. Priced and added per-call, so a month
+    mixing a free drafter and a paid one still totals correctly."""
     import datetime as dt
     month = dt.date.today().strftime("%Y-%m")
+    price_in, price_out = _price_per_token(model)
     d = _spend_data()
     m = d.setdefault(month, {"tokens_in": 0, "tokens_out": 0, "cost": 0.0, "runs": 0})
-    m["tokens_in"] += int(input_tokens or 0)
-    m["tokens_out"] += int(output_tokens or 0)
-    m["cost"] = round(m["tokens_in"] * _PRICE_IN + m["tokens_out"] * _PRICE_OUT, 4)
+    input_tokens, output_tokens = int(input_tokens or 0), int(output_tokens or 0)
+    m["tokens_in"] += input_tokens
+    m["tokens_out"] += output_tokens
+    m["cost"] = round(m.get("cost", 0.0) + input_tokens * price_in + output_tokens * price_out, 4)
     m["runs"] += 1
     _SPEND.write_text(json.dumps(d, indent=1))
     return m["cost"]
