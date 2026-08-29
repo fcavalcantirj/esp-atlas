@@ -151,6 +151,27 @@ def _oracle_check(brand: str, board_id: str) -> dict:
     return verdict
 
 
+def _triple_validate_reason(verdict: dict) -> str:
+    """Flatten board_triple_validate()'s per-gate problem lists into one reason string."""
+    parts = []
+    for key in ("gate1_guard", "gate2_sources_live", "gate3_integrity"):
+        v = verdict.get(key)
+        if isinstance(v, list) and v:
+            parts.append("; ".join(v))
+    return "; ".join(parts) or "failed"
+
+
+def _format_tried_lines(tried: list[dict], limit: int = 5) -> str:
+    """Render rejected candidates as a bullet list for the Telegram notify, truncated to `limit`
+    with a "…and N more" tail so a long batch doesn't blow up the message."""
+    rejected = [t for t in tried if t["status"] == "rejected"]
+    lines = [f"• `{t['board'].rsplit('/', 1)[-1]}` — rejected ({t['reason']})" for t in rejected[:limit]]
+    extra = len(rejected) - limit
+    if extra > 0:
+        lines.append(f"…and {extra} more")
+    return "\n".join(lines)
+
+
 def boards_batch(n: int = 2, vendor: str | None = None, label: str | None = None) -> dict:
     """Author up to n new boards from the COVERAGE.md backlog (fresh agent/session each, for
     clean context), then gate each through oracle_review (a stronger model fact-checking the
@@ -162,12 +183,16 @@ def boards_batch(n: int = 2, vendor: str | None = None, label: str | None = None
     spend is recorded on EVERY drafter call, including a board later rejected (tokens were still
     spent), priced by the ACTUAL active JR_BOARD_MODEL (tools.record_spend) so a paid drafter's
     cap can actually trip. A drafter crash mid-iteration cleans up any partially-authored board
-    dir from that same iteration so it can't orphan-poison coverage_backlog() dedup."""
+    dir from that same iteration so it can't orphan-poison coverage_backlog() dedup. Every
+    candidate's disposition (board id + oracle/triple_validate rejection reason, or "drafter
+    authored nothing"/"drafter crashed" when no board was even authored) is collected into
+    `tried` so the Telegram notify is informative even when nothing gets proposed."""
     import datetime as dt
     from agent import make_jr_board
     label = label or dt.date.today().isoformat()
     active_model = os.environ.get("JR_BOARD_MODEL", models.DEFAULT_BOARD_MODEL)
     authored: list[tuple[str, str]] = []
+    tried: list[dict] = []
     for i in range(n):
         spend = tools.month_spend()
         if spend >= tools.MONTHLY_CAP_USD:   # hard $/month cap (defense-in-depth)
@@ -192,12 +217,20 @@ def boards_batch(n: int = 2, vendor: str | None = None, label: str | None = None
                                model=active_model)
         except Exception:
             logger.info("boards_batch[%d]: drafter crashed — cleaning up any partial board dir", i)
-            for orphan_brand, orphan_board_id in _board_dirs() - before:
+            orphans = _board_dirs() - before
+            for orphan_brand, orphan_board_id in orphans:
                 _cleanup_board(orphan_brand, orphan_board_id)
+                tried.append({"board": f"{orphan_brand}/{orphan_board_id}", "status": "rejected",
+                             "reason": "drafter crashed"})
+            if not orphans:
+                tried.append({"board": f"candidate #{i + 1}", "status": "rejected",
+                             "reason": "drafter crashed"})
             continue
         new = _board_dirs() - before
         if not new:
             logger.info("boards_batch[%d]: drafter authored nothing this iteration", i)
+            tried.append({"board": f"candidate #{i + 1}", "status": "rejected",
+                         "reason": "drafter authored nothing"})
             continue
         brand, board_id = next(iter(new))
         logger.info("boards_batch[%d]: board picked %s/%s", i, brand, board_id)
@@ -225,8 +258,11 @@ def boards_batch(n: int = 2, vendor: str | None = None, label: str | None = None
                            i, brand, board_id, oracle_verdict.get("approve"), oracle_verdict.get("issues"))
         if not oracle_verdict.get("approve"):
             _cleanup_board(brand, board_id)
+            issues = "; ".join(oracle_verdict.get("issues") or []) or "unspecified"
             logger.info("boards_batch[%d]: disposition rejected %s/%s — reason: oracle rejected (%s)",
-                       i, brand, board_id, "; ".join(oracle_verdict.get("issues") or []) or "unspecified")
+                       i, brand, board_id, issues)
+            tried.append({"board": f"{brand}/{board_id}", "status": "rejected",
+                         "reason": f"oracle: {issues}"})
             continue
 
         verdict = tools.board_triple_validate(board_id)
@@ -234,18 +270,29 @@ def boards_batch(n: int = 2, vendor: str | None = None, label: str | None = None
                    i, brand, board_id, verdict.get("pass"))
         if verdict.get("pass"):
             authored.append((brand, board_id))
+            tried.append({"board": f"{brand}/{board_id}", "status": "proposed", "reason": ""})
             logger.info("boards_batch[%d]: disposition proposed %s/%s", i, brand, board_id)
         else:
             _cleanup_board(brand, board_id)
+            reason = _triple_validate_reason(verdict)
             logger.info("boards_batch[%d]: disposition rejected %s/%s — reason: board_triple_validate failed (%s)",
                        i, brand, board_id, verdict)
+            tried.append({"board": f"{brand}/{board_id}", "status": "rejected",
+                         "reason": f"triple_validate: {reason}"})
     if not authored:
-        notify.send_telegram("🤖 *Jr board batch* — ran, nothing authorable this pass.")
+        if tried:
+            notify.send_telegram(
+                "🤖 *Jr board batch* — 0 new boards proposed.\nTried:\n" + _format_tried_lines(tried))
+        else:
+            notify.send_telegram("🤖 *Jr board batch* — ran, nothing authorable this pass.")
         return {"action": "none"}
     pr = tools.open_board_batch_pr(authored, label)
-    notify.send_telegram(
-        f"🤖 *Jr board batch* — **{len(authored)} new board(s)** for review: "
-        f"[PR]({pr.get('pr_url')})\n" + ", ".join(f"`{b}`" for _, b in authored[:15]))
+    msg = (f"🤖 *Jr board batch* — **{len(authored)} new board(s)** for review: "
+           f"[PR]({pr.get('pr_url')})\n" + ", ".join(f"`{b}`" for _, b in authored[:15]))
+    rejected_count = sum(1 for t in tried if t["status"] == "rejected")
+    if rejected_count:
+        msg += f"\n⚠️ {rejected_count} candidate(s) rejected this pass — see logs for reasons."
+    notify.send_telegram(msg)
     return {"action": "batch", "count": len(authored), "pr_url": pr.get("pr_url"),
             "boards": [b for _, b in authored]}
 

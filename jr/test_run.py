@@ -535,3 +535,149 @@ def test_boards_batch_logs_rejection_reason_when_triple_validate_fails(monkeypat
     assert result == {"action": "none"}
     text = "\n".join(r.message for r in caplog.records)
     assert "rejected" in text and "board_triple_validate failed" in text
+
+
+# ─────────────── boards_batch — informative Telegram notify (tried boards + reasons) ───────────────
+
+def test_boards_batch_notifies_tried_boards_and_reasons_when_all_rejected(monkeypatch, tmp_path):
+    """When 0 boards are proposed, the notify must say WHAT was tried and WHY, not just
+    'nothing authorable this pass'."""
+    boards_dir = tmp_path / "boards"
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "coverage_backlog", lambda: [
+        {"name": "Adafruit Metro ESP32-S2", "vendor": "Adafruit", "url": "https://a.example.com"},
+        {"name": "Inkplate 6MOTION", "vendor": "Soldered", "url": "https://b.example.com"},
+    ])
+    monkeypatch.setattr(tools, "fetch_url", lambda url: {"url": url, "text": "irrelevant"})
+
+    def fake_oracle_review(md, page, schema):
+        if "adafruit-metro-esp32-s2" in md:
+            return {"approve": False,
+                    "issues": ["form_factor, dimensions_mm, io not supported by page"], "notes": ""}
+        return {"approve": False,
+                "issues": ["primary chip is STM32, ESP only co-processor"], "notes": ""}
+
+    monkeypatch.setattr(tools, "oracle_review", fake_oracle_review)
+    sent = []
+    monkeypatch.setattr(run.notify, "send_telegram", lambda text: sent.append(text) or {"ok": True})
+
+    calls = []
+
+    def fake_make_jr_board(session_id):
+        calls.append(session_id)
+        if len(calls) == 1:   # make_jr_board is called once per outer iteration, not per retry
+            return _FakeBoardAgent(board_to_create=("adafruit", "adafruit-metro-esp32-s2"))
+        return _FakeBoardAgent(board_to_create=("soldered", "inkplate-6motion"))
+
+    monkeypatch.setattr(agent, "make_jr_board", fake_make_jr_board)
+
+    result = run.boards_batch(n=2, label="test-batch")
+
+    assert result == {"action": "none"}
+    assert len(sent) == 1
+    msg = sent[0]
+    assert "adafruit-metro-esp32-s2" in msg
+    assert "form_factor, dimensions_mm, io not supported by page" in msg
+    assert "inkplate-6motion" in msg
+    assert "primary chip is STM32, ESP only co-processor" in msg
+    assert "nothing authorable this pass" not in msg
+
+
+class _NoOpBoardAgent:
+    """Authors nothing at all (no dir, no crash) — the 'drafter authored nothing' disposition."""
+
+    def run(self, msg):
+        return None
+
+
+def test_boards_batch_notify_truncates_tried_list_with_more_count(monkeypatch, tmp_path):
+    boards_dir = tmp_path / "boards"
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "coverage_backlog", lambda: [
+        {"name": f"Board {i}", "vendor": "V", "url": f"https://{i}.example.com"} for i in range(7)
+    ])
+    sent = []
+    monkeypatch.setattr(run.notify, "send_telegram", lambda text: sent.append(text) or {"ok": True})
+    monkeypatch.setattr(agent, "make_jr_board", lambda session_id: _NoOpBoardAgent())
+
+    result = run.boards_batch(n=7, label="test-batch")
+
+    assert result == {"action": "none"}
+    msg = sent[0]
+    assert "drafter authored nothing" in msg
+    assert msg.count("candidate #") == 5
+    assert "…and 2 more" in msg
+
+
+def test_boards_batch_success_message_lists_board_and_pr_link(monkeypatch, tmp_path):
+    boards_dir = tmp_path / "boards"
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "coverage_backlog", lambda: [
+        {"name": "MagTag", "vendor": "Adafruit", "url": "https://a.example.com"},
+    ])
+    monkeypatch.setattr(tools, "board_triple_validate", lambda board_id: {"pass": True})
+    monkeypatch.setattr(tools, "fetch_url", lambda url: {"url": url, "text": "Powered by ESP32-S2."})
+    monkeypatch.setattr(tools, "oracle_review",
+                        lambda md, page, schema: {"approve": True, "issues": [], "notes": "matches"})
+    monkeypatch.setattr(tools, "open_board_batch_pr",
+                        lambda boards, label, base="main": {"ok": True, "pr_url": "https://pr.example/1",
+                                                            "count": len(boards)})
+    sent = []
+    monkeypatch.setattr(run.notify, "send_telegram", lambda text: sent.append(text) or {"ok": True})
+
+    def fake_make_jr_board(session_id):
+        _write_fake_board(boards_dir, "adafruit", "magtag", "soc: esp32-s2")
+        return _FakeBoardAgent(board_to_create=("adafruit", "magtag"))
+
+    monkeypatch.setattr(agent, "make_jr_board", fake_make_jr_board)
+
+    result = run.boards_batch(n=1, label="test-batch")
+
+    assert result["action"] == "batch"
+    msg = sent[0]
+    assert "magtag" in msg
+    assert "https://pr.example/1" in msg
+
+
+def test_boards_batch_success_message_notes_rejections_on_partial_pass(monkeypatch, tmp_path):
+    """A partial pass (some proposed, some rejected) must stay legible — the success message
+    still lists the proposed board(s) + PR link, plus a one-line note about the rejections."""
+    boards_dir = tmp_path / "boards"
+    monkeypatch.setattr(tools, "BOARDS_DIR", boards_dir)
+    monkeypatch.setattr(tools, "coverage_backlog", lambda: [
+        {"name": "Board A", "vendor": "V", "url": "https://a.example.com"},
+        {"name": "Board B", "vendor": "V", "url": "https://b.example.com"},
+    ])
+    monkeypatch.setattr(tools, "fetch_url", lambda url: {"url": url, "text": "irrelevant"})
+    monkeypatch.setattr(tools, "board_triple_validate", lambda board_id: {"pass": True})
+
+    def fake_oracle_review(md, page, schema):
+        if "board-a" in md:
+            return {"approve": False, "issues": ["wrong chip"], "notes": ""}
+        return {"approve": True, "issues": [], "notes": "ok"}
+
+    monkeypatch.setattr(tools, "oracle_review", fake_oracle_review)
+    monkeypatch.setattr(tools, "open_board_batch_pr",
+                        lambda boards, label, base="main": {"ok": True, "pr_url": "https://pr.example/1",
+                                                            "count": len(boards)})
+    sent = []
+    monkeypatch.setattr(run.notify, "send_telegram", lambda text: sent.append(text) or {"ok": True})
+
+    calls = []
+
+    def fake_make_jr_board(session_id):
+        calls.append(session_id)
+        if len(calls) == 1:   # make_jr_board is called once per outer iteration, not per retry
+            return _FakeBoardAgent(board_to_create=("vendorx", "board-a"))
+        return _FakeBoardAgent(board_to_create=("vendorx", "board-b"))
+
+    monkeypatch.setattr(agent, "make_jr_board", fake_make_jr_board)
+
+    result = run.boards_batch(n=2, label="test-batch")
+
+    assert result["action"] == "batch"
+    assert result["boards"] == ["board-b"]
+    msg = sent[0]
+    assert "board-b" in msg
+    assert "https://pr.example/1" in msg
+    assert "1 candidate(s) rejected" in msg
