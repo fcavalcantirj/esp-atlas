@@ -1,5 +1,9 @@
 # esp-atlas — Freshness / daily oracle-loop spec
 
+> **STATUS: ROADMAP — NOT BUILT (2026-08-30).** Only F1 (the sources-live CI check in
+> `.github/workflows/validate.yml`) exists. There is NO scheduled cron — the daily engine
+> has never run; F2–F5 are unbuilt. The real (partial) agent lives in `SPEC-espatlas-jr.md`.
+>
 > Extends `SPEC.md` governance ("oracle-loop bot opens PRs for missing/stale parts;
 > humans always merge") into a continuous, automated freshness engine. Companion to
 > `SPEC-wizard.md`, whose `recipe` records are the most volatile data of all.

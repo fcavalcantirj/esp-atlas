@@ -1,9 +1,10 @@
 # SPEC — I/O exposure & power delivery: the two axes esp-atlas is blind to
 
-> Status: DRAFT (living). Extends `SPEC.md` (entity model, source-or-omit),
-> `SPEC-data-population.md` / `SPEC-data-maintainer.md` (how EspAtlas Jr. authors
-> + cites these fields), and feeds `SPEC-build-guide.md` §2, `SPEC-clarify.md`,
-> and the `/ask` grounding (`INTERFACE-SPEC.md`). **No build until agreed.**
+> Status: **SHIPPED (2026-08-30)** — the schema fields, the data, and the `io_heavy`
+> ranking are live; the §9 "open questions" below are historical. Extends `SPEC.md`
+> (entity model, source-or-omit), `SPEC-data-population.md` / `SPEC-espatlas-jr.md`
+> (how EspAtlas Jr. authors + cites these fields), and feeds `SPEC-build-guide.md` §2,
+> `SPEC-clarify.md`, and the `/ask` grounding (`INTERFACE-SPEC.md`). **Built & shipped.**
 > Every field carries a source; `price_tier` stays the ONLY editorial exemption.
 >
 > **This spec was spiked against real sources before writing (§3).** The spike

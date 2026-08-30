@@ -4,6 +4,19 @@
 > agent never gets contradictory instructions. Every other spec defers here for
 > ownership boundaries and vocabulary.
 
+## 0. Implementation status (2026-08-30)
+- **Shipped & live:** `SPEC.md` (core), `INTERFACE-SPEC.md`, `SPEC-wizard.md` (Flash
+  Wizard), `SPEC-verify.md` (`/debug`), `SPEC-hosting-lane.md`, `SPEC-clarify.md`,
+  `SPEC-build-guide.md`, `SPEC-io-power.md`, `SPEC-home-explorer.md` (L1/L2),
+  `SPEC-espatlas-jr.md` (telemetry lane only).
+- **Roadmap — NOT built:** `SPEC-freshness.md`, `SPEC-data-population.md`,
+  `SPEC-discovery.md`, `SPEC-pin-planner.md`, and `SPEC-flash-catalog.md` (new plan). The
+  single "oracle-loop" cron and Jr's board-authoring lane do **not** run yet (net board
+  output = 0).
+- **Deleted 2026-08-30:** `SPEC-phases.md` (stale roadmap — Phase-2 fx/Kimi plan superseded
+  by Jr/Agno) and `SPEC-data-maintainer.md` (dead fx-open design, superseded by
+  `SPEC-espatlas-jr.md`).
+
 ## 1. Ownership map (exclusive scope per spec)
 | Spec | Owns |
 |---|---|

@@ -1,6 +1,10 @@
 # SPEC — agent-driven data population (78 → hundreds)
 
-> Status: DRAFT. How esp-atlas scales its catalog from ~78 boards to hundreds using
+> Status: **ROADMAP — NOT BUILT (2026-08-30).** The specced adapters (Arduino index,
+> M5Burner) do not exist; the catalog was hand/delegate-authored. The real (partial) agent
+> work lives in `jr/` / `SPEC-espatlas-jr.md`.
+>
+> How esp-atlas scales its catalog from ~78 boards to hundreds using
 > sourced, CI-gated agents — WITHOUT lowering the cite-or-omit bar. Extends `SPEC.md`
 > governance and reuses `SPEC-freshness.md`'s detect→propose→gate machinery.
 > Population = the freshness loop's **detect stage run WIDE + agents authoring each

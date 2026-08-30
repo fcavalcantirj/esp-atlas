@@ -161,7 +161,7 @@ exactly as today.
   - grounding validator: a fake LLM returning a non-existent `firmware_id` (or
     any board-naming field at all, since the module never reads one) never
     surfaces past validation.
-- Golden inference matrix (`scripts/inference_oracle.py` /
-  `apps/core/tests/data/inference_golden_build_guide.py`): live-Groq,
+- Golden inference matrix (`scripts/build_guide_oracle.py` /
+  `apps/core/tests/data/build_guide_golden.py`): live-Groq,
   skip-gated the same way `test_intent_golden_live.py` is — not part of the
   blocking suite.

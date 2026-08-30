@@ -1,5 +1,11 @@
 # esp-atlas — Flash Wizard + Recipes spec
 
+> **STATUS: SHIPPED & LIVE (2026-08-30).** Flash Wizard, `/api/manifest`, `/api/flash-bin`,
+> and the `/debug` rail are in production (`FlashAction.tsx`, `apps/core/.../flash.py`).
+> Recipes live in a **folder** — `data/recipes/<board>__<firmware>/recipe.md`, not a flat
+> file. Current data: **18 firmwares / 67 recipes** (13 in-browser-flashable). Populating
+> `flash` artifacts across the rest is tracked in `SPEC-flash-catalog.md`.
+>
 > Extends `SPEC.md`. Distinct from the existing **Wizard** (interface view #1, the
 > "which ESP for X?" board picker). This is the **Flash Wizard**: pick a board →
 > see what firmware is verified to run on it → flash it in the browser, with a
@@ -42,7 +48,7 @@ socs: [esp32, esp32-s2, esp32-s3]       # chip families the project builds for
 sources: [...]                          # repo/wiki/release proving the above
 ```
 
-### recipe — `data/recipes/<board>__<firmware>.md`
+### recipe — `data/recipes/<board>__<firmware>/recipe.md`
 The **edge** — one board × one firmware, the atomic "what runs on what". This is
 the collaborative, oracle-loopable unit.
 ```yaml

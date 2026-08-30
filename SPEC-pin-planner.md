@@ -1,6 +1,10 @@
 # SPEC — Pin Planner + Power Budget (the crown jewel)
 
-> Status: DRAFT (living). The feature that makes esp-atlas the Bible: **"will THIS
+> Status: **ROADMAP — NOT BUILT (2026-08-30).** No `/plan` route, no planner module, no UI
+> exist; only the `gpio_pins` data prereq is partially seeded (15 devkits — so even §2's
+> "no gpio_pins" spike note is now partly stale). Crown-jewel, still aspirational.
+>
+> The feature that makes esp-atlas the Bible: **"will THIS
 > board do MY project, and exactly how do I wire it?"** Builds directly on the
 > io-power layer (`SPEC-io-power.md`). No build until agreed. Spiked against real
 > data first (§2) — the spike changed the plan.

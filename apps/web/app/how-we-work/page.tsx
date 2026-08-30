@@ -65,7 +65,7 @@ export default function HowWeWorkPage() {
       </p>
       <ul className="how-links" aria-label="EspAtlas Jr. links">
         <li>
-          <TrackedLink href={viewSourceUrl("SPEC-data-maintainer.md")} linkType="github_view" extra={{ doc: "SPEC-data-maintainer.md" }}>
+          <TrackedLink href={viewSourceUrl("SPEC-espatlas-jr.md")} linkType="github_view" extra={{ doc: "SPEC-espatlas-jr.md" }}>
             How it&apos;s specced
           </TrackedLink>
         </li>

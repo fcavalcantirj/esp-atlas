@@ -80,13 +80,15 @@ visibly separate from the verified fields above it.
 - CODEOWNERS per brand folder (as boards grow).
 - oracle-loop bot opens PRs for missing/stale parts; humans always merge. The daily
   freshness engine (link-liveness, firmware-release/recipe drift, board/brand
-  discovery) is specced in `SPEC-freshness.md`.
+  discovery) is specced in `SPEC-freshness.md`. **(ROADMAP — not built as of 2026-08-30:
+  no scheduled cron runs; only the sources-live CI check exists. Real agent work lives in
+  `jr/` / `SPEC-espatlas-jr.md`.)**
 - License: data CC-BY-SA 4.0, code MIT.
 
 ## Phasing
-- **v0 (done):** repo + schema + CI + validator + index builder + 11 datasheet-verified SoCs.
+- **v0 (done):** repo + schema + CI + validator + index builder + 12 datasheet-verified SoCs.
 - **v1:** module & board schemas; seed ~30 popular boards; the static site (compare + part pages).
-- **v2:** wizard + Groq chat; oracle-loop bot live.
+- **v2:** wizard + Groq chat (shipped). *oracle-loop bot: ROADMAP, not running.*
 - **v3:** full board coverage; companions (nRF24/CC1101/LTE-GNSS); public launch.
 - **v4:** Flash Wizard + community recipes (`firmware`/`recipe` content types, "what
   runs on what", in-browser flashing via ESP Web Tools) — see `SPEC-wizard.md`.

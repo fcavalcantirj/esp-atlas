@@ -1,6 +1,9 @@
 # SPEC — discovery engine (community/social signal → cited content)
 
-> Status: DRAFT. The **third face of the cron.** `SPEC-freshness.md` keeps records
+> Status: **ROADMAP — NOT BUILT (2026-08-30).** No adapters exist (awesome-esp32/reddit/HN);
+> the `prompt-recipe` (G1) and `example` (G2) entities were never created.
+>
+> The **third face of the cron.** `SPEC-freshness.md` keeps records
 > live; `SPEC-data-population.md` seeds boards from official catalogs; **discovery**
 > harvests the *cool, trending* ESP32 world — new firmware, projects-with-code,
 > prompt recipes — from community/social sources and turns it into cited, human-

@@ -3,9 +3,10 @@
 > Status: **CONVERGED — building.** (All interview `⟨Q⟩`s resolved 2026-08-27; harness = **Agno**
 > on Groq free `gpt-oss-120b` — see §8a.) `⟨Q…⟩` markers are kept as a resolved-decision log,
 > each prefixed **RESOLVED**. `fx-open` is permanently out of scope (§0/§9).
-> **This spec converges and REPLACES the four data-lane specs** — `SPEC-freshness.md`,
-> `SPEC-data-population.md`, `SPEC-discovery.md`, `SPEC-data-maintainer.md` — keeping
-> the good of each, nothing duplicated. Those become historical once this lands.
+> **This spec converges and REPLACES the data-lane specs** — `SPEC-freshness.md`,
+> `SPEC-data-population.md`, `SPEC-discovery.md` — keeping the good of each, nothing
+> duplicated. Those become historical once this lands. (`SPEC-data-maintainer.md` was
+> deleted 2026-08-30 — its dead fx-open design is superseded by this file.)
 
 ## 0. The one hard separation (do not blur again)
 
@@ -307,9 +308,9 @@ Not Home Search (no Groq, no answering users). Not the merger (humans merge). No
 validator/guard (deterministic, separate). Not the site. Not `fx`.
 
 ## 10. Migration
-On acceptance: fold the good of `SPEC-freshness / -data-population / -discovery /
--data-maintainer` into this file, update `SPEC-INDEX.md` ownership (one row replaces four),
-and leave a one-line tombstone in each old spec pointing here.
+On acceptance: fold the good of `SPEC-freshness / -data-population / -discovery` into this
+file (`SPEC-data-maintainer.md` already deleted 2026-08-30, superseded here), update
+`SPEC-INDEX.md` ownership, and leave a one-line tombstone in each old spec pointing here.
 
 ## 8a. Runtime & model (Felipe, resolved — free-first, research-open)
 
@@ -357,7 +358,7 @@ and leave a one-line tombstone in each old spec pointing here.
   parked until a BYOK Poolside key (private rate limits) makes the free pool usable in a loop.
 - **Secrets**: keys live at `~/.config/jr/keys.env` (mode 600, non-repo). Deploy reads from there.
 
-*Resolved: Q1 (own instance on the Pi) · Q1b (harness = smolagents, tested) · Q2/Q3 (hybrid
+*Resolved: Q1 (own instance on the Pi) · Q1b (harness = Agno, tested) · Q2/Q3 (hybrid
 cadence + liveness-privileged) · Q4 (auto-author cheap, Issue for judgment) · Q5 (keep
 `example`, defer `prompt-recipe`) · Q6 (trust-promotion mechanism) · Q7 (3 inbound hooks,
 Felipe-only) · Q8 (Groq free `gpt-oss-120b` primary; Laguna deferred, throttled) · Q8b (≤10 PRs/day)
