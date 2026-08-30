@@ -4,9 +4,11 @@
 >
 > Living tracker. **One task at a time, slowly, each verified + landed before the
 > next.** North star: answer the question no other resource answers well — *"will
-> THIS board do MY project, and exactly how do I wire it?"* Every task obeys the
-> house rules: SPEC before code, oracle/TDD first, cite-or-omit, verify the real
-> path before declaring done, land on main.
+> THIS board do MY project, and exactly how do I wire it?"* — delivered as the
+> **"🔌 Plug my board" hub** (`SPEC-board-hub.md`, pillar #1): plug it in, the page
+> becomes your workbench for that board (flash · debug · pins · specs · projects ·
+> learn). Every task obeys the house rules: SPEC before code, oracle/TDD first,
+> cite-or-omit, verify the real path before declaring done, land on main.
 >
 > Legend: `[ ]` todo · `[~]` in progress · `[x]` done+verified+shipped.
 > Each task notes its kind (spec/code/data/web) and how it will be verified.
