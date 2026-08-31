@@ -1,0 +1,873 @@
+{
+  "_provenance": "Real entries pulled live from api.launcherhub.net/giveMeTheList (2671 entries, fetched 2026-08-31 via tools.fetch_launcher_catalog — the same code path Jr already uses) + real `gh api repos/<owner>/<repo>` responses fetched the same day. repo_meta is a frozen snapshot so tests run offline/deterministically. catalogued_repos/catalogued_tokens is a frozen snapshot of tools._catalogued_repos_and_tokens() from the same day. EXTENDED 2026-08-31 (at-scale promotion pass): +17 new hard cases (29 total) hand-picked from a full run of score_entry() over the REAL live catalog (2671 entries, same giveMeTheList fetch) with real `gh api` repo metadata for all 941 unique referenced repos — spanning non-firmware noise, wrong-chip-via-name-lookalike, fused device-name spelling, multi-device-per-repo, described (non-fork) ports of catalogued repos, malformed github URLs, fork-of-uncatalogued, and new board coverage (nanoc6/stampc3/t-deck). Every new entry/repo_meta pair is a REAL frozen snapshot, not synthesized.",
+  "catalogued_repos": [
+    "1technophile",
+    "1technophile/openmqttgateway",
+    "78",
+    "78/xiaozhi-esp32",
+    "7h30th3r0n3",
+    "7h30th3r0n3/evil-m5project",
+    "arendst",
+    "arendst/tasmota",
+    "bitmaker-hub",
+    "bitmaker-hub/nerdminer_v2",
+    "bmorcelli",
+    "bmorcelli/launcher",
+    "d3crypt-1",
+    "d3crypt-1/infiltra-firmware",
+    "dlazder",
+    "dlazder/m5_crystal_firmware",
+    "esphome",
+    "esphome/esphome",
+    "geo-tp",
+    "geo-tp/esp32-bit-pirate",
+    "i-am-shodan",
+    "i-am-shodan/usbarmyknife",
+    "justcallmekoko",
+    "justcallmekoko/esp32marauder",
+    "m5rogueops",
+    "m5rogueops/m5sticks3-rogueduck",
+    "meshtastic",
+    "meshtastic/firmware",
+    "n0xa",
+    "n0xa/m5stick-nemo",
+    "pr3y",
+    "pr3y/bruce",
+    "stachugit",
+    "stachugit/cathack",
+    "wled",
+    "wled/wled"
+  ],
+  "catalogued_tokens": [
+    "bruce",
+    "cathack",
+    "crystal",
+    "esp32",
+    "esp32-bit-pirate",
+    "esp32marauder",
+    "esphome",
+    "evil",
+    "evil-m5project",
+    "infiltra",
+    "launcher",
+    "m5-crystal",
+    "m5project",
+    "m5stick",
+    "m5stick-nemo",
+    "meshtastic",
+    "nemo",
+    "nerdminer",
+    "nerdminer-v2",
+    "openmqttgateway",
+    "pirate",
+    "rogueduck",
+    "tasmota",
+    "usbarmyknife",
+    "wled",
+    "xiaozhi",
+    "xiaozhi-esp32"
+  ],
+  "cases": [
+    {
+      "id": "fork_of_catalogued_direct",
+      "failure_mode": "fork (#74 Marauder pattern) — direct fork",
+      "entry": {
+        "name": "Marauder for Cardputer",
+        "description": null,
+        "category": "cardputer",
+        "esp": "s3",
+        "github": "https://github.com/marivaaldo/ESP32Marauder/tree/feature/add-m5cardputer-support",
+        "download": 36718
+      },
+      "repo_meta": {
+        "full_name": "marivaaldo/ESP32Marauder",
+        "fork": true,
+        "source_full_name": "justcallmekoko/ESP32Marauder",
+        "stars": 79,
+        "description": "A suite of WiFi/Bluetooth offensive and defensive tools for the ESP32"
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "fork_of_catalogued"
+      }
+    },
+    {
+      "id": "fork_of_catalogued_transitive",
+      "failure_mode": "fork (#74 Marauder pattern) — fork-of-a-fork, must resolve via GitHub `source`, not just `parent`",
+      "entry": {
+        "name": "Marauder for M5 Cardputer (GPS Enabled)",
+        "description": null,
+        "category": "cardputer",
+        "esp": "s3",
+        "github": "https://github.com/serialgeist/ESP32Marauder/tree/feature/add-m5cardputer-support",
+        "download": 4565
+      },
+      "repo_meta": {
+        "full_name": "serialgeist/ESP32Marauder",
+        "fork": true,
+        "source_full_name": "justcallmekoko/ESP32Marauder",
+        "stars": 0,
+        "description": "A suite of WiFi/Bluetooth offensive and defensive tools for the ESP32"
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "fork_of_catalogued"
+      }
+    },
+    {
+      "id": "already_catalogued_bruce",
+      "failure_mode": "dedup — exact repo already in the atlas (not a fork, a re-listing)",
+      "entry": {
+        "name": "Bruce 1.9.1 For StickC PLUS 2",
+        "description": null,
+        "category": "stickc",
+        "esp": "32",
+        "github": "https://github.com/pr3y/Bruce/releases/tag/1.9.1",
+        "download": 975
+      },
+      "repo_meta": {
+        "full_name": "BruceDevices/firmware",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 6610,
+        "description": "Predatory ESP32 Firmware"
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "already_catalogued"
+      }
+    },
+    {
+      "id": "already_catalogued_cathack_regression",
+      "failure_mode": "#71 CatHack — HISTORICAL: the LLM fabricated esp32-s3 for this exact repo; it was hand-corrected and merged, so it is now already in the atlas. This case proves the scorer recognizes that and does NOT re-propose it (the chip-derivation fix itself is proven separately in test_scorer.py::test_cathack_chip_derivation_is_not_fabricated, directly against this repo's real README title, since the full pipeline now short-circuits on dedup before reaching board/chip derivation).",
+      "entry": {
+        "name": "CatHack",
+        "description": null,
+        "category": "stickc",
+        "esp": "32",
+        "github": "https://github.com/Stachugit/CatHack",
+        "download": 1200
+      },
+      "repo_meta": {
+        "full_name": "Stachugit/CatHack",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 766,
+        "description": null,
+        "readme_title": "CatHack Firmware for M5StickCPlus2"
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "already_catalogued"
+      }
+    },
+    {
+      "id": "no_github_with_code_gate",
+      "failure_mode": "with-code gate — no repo to cite, must skip (cite-or-omit)",
+      "entry": {
+        "name": "433Mhz Rx/Tx for M5StickC Plus 2",
+        "description": null,
+        "category": "stickc",
+        "esp": "32",
+        "github": null,
+        "download": 682
+      },
+      "repo_meta": null,
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "no_github"
+      }
+    },
+    {
+      "id": "unmappable_bare_core",
+      "failure_mode": "no catalogued board — launcher's 'core' category is ambiguous (Core/Core2/CoreS3) and the name names none of them explicitly",
+      "entry": {
+        "name": "M5HamRadio Core",
+        "description": "The M5HamRadio project is a compilation, in one huge firmware, of my stable HamRadio projects on M5Stack. It include 4 applications for Icom IC-705, IC-7300 and IC-9700: ICSMeter (default application), ICMultiMeter, ICKeyer and DXTracker.",
+        "category": "core",
+        "esp": "32",
+        "github": "https://github.com/armel/M5HamRadio",
+        "download": 494
+      },
+      "repo_meta": {
+        "full_name": "armel/M5HamRadio",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 167,
+        "description": "M5HamRadio Firmwares"
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "no_board_evidence"
+      }
+    },
+    {
+      "id": "freeform_capabilities_advanceos",
+      "failure_mode": "#73 porkchop/advanceos — README describes features in prose ('media playback (MP3, WAV)', 'viewing and editing text'); none of it is a controlled-vocab token, so capabilities must come back EMPTY, never freeform phrases",
+      "entry": {
+        "name": "AdvanceOS For Cardputer ADV",
+        "description": "AdvanceOS is software for cardputerADV, primarily designed for media playback and file display. Currently, it can play MP3 WAV files, features for viewing and editing text, as well as viewing images.",
+        "category": "cardputer",
+        "esp": "s3",
+        "github": "https://github.com/bomberman30/AdvanceOS-for-cardputer",
+        "download": 23983
+      },
+      "repo_meta": {
+        "full_name": "bomberman30/AdvanceOS-for-cardputer",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 89,
+        "description": "AdvanceOS is software for cardputerADV, primarily designed for media playback and file display.  Currently, it can play MP3 WAV files, features for viewing and editing text, as well as viewing images."
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "advanceos-for-cardputer",
+          "name": "AdvanceOS For Cardputer ADV",
+          "url": "https://github.com/bomberman30/AdvanceOS-for-cardputer",
+          "category": "multi",
+          "board": "m5cardputer",
+          "chip": "esp32-s3",
+          "capabilities": [],
+          "maintainer": "bomberman30"
+        }
+      }
+    },
+    {
+      "id": "clean_core2_kyoshin",
+      "failure_mode": "clean device-in-name + wrong-chip risk (Core2 is esp32, easy to confuse with the esp32-s3 CoreS3 next to it)",
+      "entry": {
+        "name": "Kyoshin Monitor for Core2",
+        "description": "Display Kyoshin Monitor provided by NIED on M5Stack Core2",
+        "category": "core2",
+        "esp": "32",
+        "github": "https://github.com/Hiroki-Kawakami/kyoshin",
+        "download": 26
+      },
+      "repo_meta": {
+        "full_name": "Hiroki-Kawakami/kyoshin",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 1,
+        "description": "M5Stackに強震モニタを表示"
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "kyoshin",
+          "name": "Kyoshin Monitor for Core2",
+          "url": "https://github.com/Hiroki-Kawakami/kyoshin",
+          "category": "multi",
+          "board": "m5stack-core2",
+          "chip": "esp32",
+          "capabilities": [],
+          "maintainer": "hiroki-kawakami"
+        }
+      }
+    },
+    {
+      "id": "clean_cardputer_minicar",
+      "failure_mode": "clean device-in-name",
+      "entry": {
+        "name": "Car Dashboard for Cardputer",
+        "description": "This car dashboard is just for fun; it was enjoyable to fit all of these on a 240x135 display.",
+        "category": "cardputer",
+        "esp": "s3",
+        "github": "https://github.com/VolosR/miniCar",
+        "download": 4535
+      },
+      "repo_meta": {
+        "full_name": "VolosR/miniCar",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 11,
+        "description": null
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "minicar",
+          "name": "Car Dashboard for Cardputer",
+          "url": "https://github.com/VolosR/miniCar",
+          "category": "multi",
+          "board": "m5cardputer",
+          "chip": "esp32-s3",
+          "capabilities": [],
+          "maintainer": "volosr"
+        }
+      }
+    },
+    {
+      "id": "clean_cardputer_chameleon_noisy_esp_field",
+      "failure_mode": "clean device-in-name + noisy `esp` field (catalog says esp32, real board is esp32-s3 — proves the scorer trusts board_soc(), never entry['esp'])",
+      "entry": {
+        "name": "M5 Chameleon Ultra for Cardputer",
+        "description": "Use your Cardputer as a host controller for the Chamelon Ultra. Read, Write, Clone and Emulate RFID tags. Save and load dumps from memory. Works with HF (13.56MHz) and LF (125kHz) tags.",
+        "category": "cardputer",
+        "esp": "32",
+        "github": "https://github.com/rennancockles/m5-chameleon-ultra",
+        "download": 3488
+      },
+      "repo_meta": {
+        "full_name": "rennancockles/m5-chameleon-ultra",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 7,
+        "description": "Chameleon Ultra host controller using M5stack's devices"
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "m5-chameleon-ultra",
+          "name": "M5 Chameleon Ultra for Cardputer",
+          "url": "https://github.com/rennancockles/m5-chameleon-ultra",
+          "category": "pentest",
+          "board": "m5cardputer",
+          "chip": "esp32-s3",
+          "capabilities": [
+            "rfid-nfc"
+          ],
+          "maintainer": "rennancockles"
+        }
+      }
+    },
+    {
+      "id": "clean_atoms3_grovenfc",
+      "failure_mode": "clean device-in-name + capability token found in the name itself",
+      "entry": {
+        "name": "GroveNFC Demo for AtomS3",
+        "description": "GroveNFC is an open NFC communication solution compatible with AtomS3, M5StickC, M5StickS3, Core series, CardPuter, and other devices with Grove communication interfaces.",
+        "category": "atoms3",
+        "esp": "s3",
+        "github": "https://github.com/whywilson/GroveNFC.git",
+        "download": 24
+      },
+      "repo_meta": {
+        "full_name": "whywilson/GroveNFC",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 1,
+        "description": null
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "grovenfc",
+          "name": "GroveNFC Demo for AtomS3",
+          "url": "https://github.com/whywilson/GroveNFC",
+          "category": "pentest",
+          "board": "m5atoms3",
+          "chip": "esp32-s3",
+          "capabilities": [
+            "nfc"
+          ],
+          "maintainer": "whywilson"
+        }
+      }
+    },
+    {
+      "id": "clean_stamps3_porkchop",
+      "failure_mode": "clean device-in-name via category fallback (bare 'M5PORKCHOP' name has no device token) + noisy esp field (catalog says esp32, board is esp32-s3)",
+      "entry": {
+        "name": "M5PORKCHOP",
+        "description": "==0ct0 Inc.== Volume Zero, Issue 1, Phile 8.1 of ? M5PORKCHOP v0.1.8b-PSTH - POST-TRAUMATIC SLAB HEAP DISORDER (PRE-RELEASE)",
+        "category": "stamps3",
+        "esp": "32",
+        "github": "https://github.com/0ct0sec/M5PORKCHOP",
+        "download": 23
+      },
+      "repo_meta": {
+        "full_name": "0ct0sec/M5PORKCHOP",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 846,
+        "description": "ON NO! Someone put an RPG in a packet sniffer"
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "m5porkchop",
+          "name": "M5PORKCHOP",
+          "url": "https://github.com/0ct0sec/M5PORKCHOP",
+          "category": "multi",
+          "board": "m5stamp-s3",
+          "chip": "esp32-s3",
+          "capabilities": [],
+          "maintainer": "0ct0sec"
+        }
+      }
+    },
+    {
+      "id": "noise_uiflow_cardputer",
+      "failure_mode": "non-firmware junk — UIFlow2.0 is M5Stack's block-programming PLATFORM, re-listed once per board variant in the catalog, not a single piece of firmware; at-scale this + games/emulators were ~10% of what an earlier scorer draft wrongly authored",
+      "entry": {
+        "name": "UIFlow2.0",
+        "description": "UIFlow2.0 for Cardputer\r\n\r\nNotice: You may use fn+arrow keys to navigate.",
+        "category": "cardputer",
+        "esp": "s3",
+        "github": "https://github.com/m5stack/uiflow-micropython",
+        "download": 43583
+      },
+      "repo_meta": {
+        "full_name": "m5stack/uiflow-micropython",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 207,
+        "description": "uiflow micropython project",
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "noise_non_firmware"
+      }
+    },
+    {
+      "id": "wrong_chip_dial_lookalike",
+      "failure_mode": "wrong-chip via device-name lookalike — entry says \"M5 Dial\" (matches the m5dial device pattern) but the repo (fbiego/esp32-c3-mini) is an unrelated generic ESP32-C3 round-display board, not an M5Stack Dial; the #71 wrong-chip class arriving through name-match instead of a noisy `esp` field",
+      "entry": {
+        "name": "M5 Dial LVGL Smartwatch UI",
+        "description": "Feature-packed smartwatch firmware with LVGL and BLE sync via the Chronos App.\nHighlights:\n- Custom Watchfaces – Time, date, day, weather\n- Weather Forecasts – Current, hourly , and 7-day\n- Notifications – Up to 10, with icons, previews, and call alerts\n- Settings – Brightness, timeout, battery, about\n- Controls – Music, find phone, camera\n- Extras – QR codes, contacts, mini-apps (Simon Says, PIO bot)\n- Navigation – Google Maps directions on watch\nSync with Chronos App to unlock full features.",
+        "category": "dial",
+        "esp": "s3",
+        "github": "https://github.com/fbiego/esp32-c3-mini",
+        "download": 1080
+      },
+      "repo_meta": {
+        "full_name": "fbiego/esp32-c3-mini",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 535,
+        "description": "LVGL UI for ESP32 C3 mini 240*240  board (ESP32-2424S012)",
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "chip_family_mismatch"
+      }
+    },
+    {
+      "id": "multi_device_hamradio_core2",
+      "failure_mode": "multi-device firmware, variant 1 of 2 — same upstream repo (armel/M5HamRadio) listed once per supported board in the catalog; this variant's description carries no capability signal",
+      "entry": {
+        "name": "M5HamRadio Core2",
+        "description": "The M5HamRadio project is a compilation, in one huge firmware, of my stable HamRadio projects on M5Stack. It include 4 applications for Icom IC-705, IC-7300 and IC-9700: ICSMeter (default application), ICMultiMeter, ICKeyer and DXTracker. All theses applications are available for free and for all. Please, take a look to the GitHub page for instructions.",
+        "category": "core2",
+        "esp": "32",
+        "github": "https://github.com/armel/M5HamRadio",
+        "download": 3261
+      },
+      "repo_meta": {
+        "full_name": "armel/M5HamRadio",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 167,
+        "description": "M5HamRadio Firmwares",
+        "archived": false
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "m5hamradio",
+          "name": "M5HamRadio Core2",
+          "url": "https://github.com/armel/M5HamRadio",
+          "category": "multi",
+          "board": "m5stack-core2",
+          "chip": "esp32",
+          "capabilities": [],
+          "maintainer": "armel"
+        }
+      }
+    },
+    {
+      "id": "multi_device_hamradio_cores3",
+      "failure_mode": "multi-device firmware, variant 2 of 2 (same repo as multi_device_hamradio_core2) — CoreS3 variant's description mentions Bluetooth explicitly, so board/chip/capabilities/category all legitimately differ despite sharing one firmware id (documented residual: score_entry() is per-catalog-entry, a future authoring caller must group by repo before writing records or the second write clobbers the first)",
+      "entry": {
+        "name": "M5HamRadio CoreS3",
+        "description": "The M5HamRadio project is a compilation, in one huge firmware, of my stable HamRadio projects on M5Stack. It include 4 applications for Icom IC-705, IC-7300 and IC-9700: ICSMeter (default application), ICMultiMeter, ICKeyer and DXTracker. All theses applications are available for free and for all. Please, take a look to the GitHub page for instructions. \n\nSupport for the M5Stack Core S3 is still experimental. By the way, the M5Stack Core S3 only supports Bluetooth 5.0 (BLE - Bluetooth Low Energy), but not anymore Bluetooth 4.2 (Classic). Therefore, classical Bluetooth serial connexion won't work on the M5Stack Core S3. So, you will need to use ICUSBProxy(https://github.com/armel/ICUSBProxy). So, if you plan to use the Bluetooth connection, get an M5Stack Core or Core2 instead !",
+        "category": "cores3",
+        "esp": "s3",
+        "github": "https://github.com/armel/M5HamRadio",
+        "download": 1011
+      },
+      "repo_meta": {
+        "full_name": "armel/M5HamRadio",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 167,
+        "description": "M5HamRadio Firmwares",
+        "archived": false
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "m5hamradio",
+          "name": "M5HamRadio CoreS3",
+          "url": "https://github.com/armel/M5HamRadio",
+          "category": "pentest",
+          "board": "m5stack-cores3",
+          "chip": "esp32-s3",
+          "capabilities": [
+            "ble"
+          ],
+          "maintainer": "armel"
+        }
+      }
+    },
+    {
+      "id": "described_port_shark_nemo",
+      "failure_mode": "described (non-git-fork) port of a catalogued repo — not a GitHub API fork of n0xa/m5stick-nemo, but its own description literally says \"Updated version of M5Stickc-NEMO https://github.com/n0xa/m5stick-nemo.\" — dedup signal from prose, not repo metadata",
+      "entry": {
+        "name": "Shark Firmware",
+        "description": "PLEASE CHOOSE RIGHT LANGUAGE!\n\nDEV 1.0.5\n\nRFID (With SD)\n\nDEV 1.0.4\n\nBtn G0 presst After Startup: no Startupsound\nadd an option to disable the Startupsound\n2 new language: Italian (IT_IT), French (FR_FR)\nFixed IRAH Bug\n\nUpdated version of M5Stickc-NEMO https://github.com/n0xa/m5stick-nemo.\n\nPlease Report Bugs on Github",
+        "category": "cardputer",
+        "esp": "s3",
+        "github": "https://github.com/AH2005NA/m5stick-shark",
+        "download": 20101
+      },
+      "repo_meta": {
+        "full_name": "AH2005NA/m5stick-shark",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 118,
+        "description": null,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "described_port_of_catalogued"
+      }
+    },
+    {
+      "id": "fused_device_name_m5dial_userdemo",
+      "failure_mode": "fused device-name spelling — \"M5Dial-UserDemo\" has no space/hyphen between \"M5\" and \"Dial\", which a bare \\bdial\\b regex misses (no word boundary inside \"m5dial\"); also proves \"UserDemo\" alone must NOT be treated as noise (this is M5Stack's own official factory demo firmware)",
+      "entry": {
+        "name": "M5Dial-UserDemo",
+        "description": "M5Dial-UserDemo firmware for the M5Stack M5Dial with StampS3. This is the official firmware, developed by M5Stack, which was present on my M5Dial when I took it out of the packaging. \n\nOf course, I'll remove it if official images are posted from M5Stack.",
+        "category": "dial",
+        "esp": "s3",
+        "github": "https://github.com/m5stack/M5Dial-UserDemo",
+        "download": 3089
+      },
+      "repo_meta": {
+        "full_name": "m5stack/M5Dial-UserDemo",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 62,
+        "description": "M5Dial user demo for hardware evaluation.",
+        "archived": false
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "m5dial-userdemo",
+          "name": "M5Dial-UserDemo",
+          "url": "https://github.com/m5stack/M5Dial-UserDemo",
+          "category": "multi",
+          "board": "m5dial",
+          "chip": "esp32-s3",
+          "capabilities": [],
+          "maintainer": "m5stack"
+        }
+      }
+    },
+    {
+      "id": "unmapped_board_cyd_streamdeck",
+      "failure_mode": "genuinely unmappable — \"CYD\" (Cheap Yellow Display) is a real, popular ESP32 board family, but it is not currently catalogued in data/boards/ at all, so no device-map fix can resolve it; correctly abstains rather than guessing",
+      "entry": {
+        "name": "Stream Deck",
+        "description": null,
+        "category": "CYD",
+        "esp": "32",
+        "github": "https://github.com/gahingwoo/cyd-stream-deck",
+        "download": 2957
+      },
+      "repo_meta": {
+        "full_name": "gahingwoo/cyd-stream-deck",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 23,
+        "description": "A media controller based on ESP32-Cheap-Yellow-Display that controls media playback and volume via Bluetooth. Perfect for scenarios requiring quick media control",
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "no_board_evidence"
+      }
+    },
+    {
+      "id": "noise_core2_tetris",
+      "failure_mode": "non-firmware junk — Tetris clone, not atlas firmware",
+      "entry": {
+        "name": "Core2 Tetris - Ghost Piece - Hold - Touch Control",
+        "description": "M5Core2 Tetris\nA classic Tetris game adapted for the M5Stack Core2 with touch screen controls.\n\nFeatures\nFull Tetris gameplay with modern features:\n\nHold piece functionality\nGhost piece preview\nLine clearing with scoring\nProgressive speed increase\nLock delay system\nTouch-based controls optimized for M5Core2:\n\nLeft side tap or hold: Move piece left\nRight side tap or hold: Move piece right\nTap in gameplay area: Rotate piece\nHold gameplay area: Soft drop\nSwipe UP: Hard drop\nButton A: Hold piece (the touch button under the screen)\n\nCreated by Coreymillia",
+        "category": "core2",
+        "esp": "32",
+        "github": "https://github.com/Coreymillia/M5Core2-ESP32-Tetris-Touch",
+        "download": 132
+      },
+      "repo_meta": {
+        "full_name": "Coreymillia/M5Core2-ESP32-Tetris-Touch",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 0,
+        "description": "Tetris clone built for the Core2",
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "noise_non_firmware"
+      }
+    },
+    {
+      "id": "noise_cardputer_doom",
+      "failure_mode": "non-firmware junk — Doom port, not atlas firmware",
+      "entry": {
+        "name": "Cardputer ADV Doom with multiplayer support by Szilamer",
+        "description": "This is for Cardputer ADV only!\nDoom port based on Romalik's port, but this version has modified keyboard handling so it will work with ADV. Sound / music is also working, plus it has grove cable multiplayer support. Please check out this video: https://www.youtube.com/shorts/8cms7cv2U9g",
+        "category": "cardputer",
+        "esp": "32",
+        "github": "https://github.com/zspuspoki/CardPuterAdvancedDoom/",
+        "download": 3557
+      },
+      "repo_meta": {
+        "full_name": "zspuspoki/CardPuterAdvancedDoom",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 12,
+        "description": null,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "noise_non_firmware"
+      }
+    },
+    {
+      "id": "ambiguous_bare_stickc_plus_no2",
+      "failure_mode": "deliberately-ambiguous bare device name — \"M5StickC Plus\" (no \"2\") is NOT catalogued (only m5stick-cplus2 exists); device_map.py's documented design refuses to guess, must stay a skip",
+      "entry": {
+        "name": "M5StickC Plus Resistor Calculator",
+        "description": "A very simple M5Stick C Plus colour-ring resistor calculator",
+        "category": "stickc",
+        "esp": "32",
+        "github": "https://github.com/IcingTomato/StickC-Resistor-Calculator",
+        "download": 2439
+      },
+      "repo_meta": {
+        "full_name": "IcingTomato/M5StickC-Resistor-Calculator",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 15,
+        "description": "It's a very simple M5Stick C Plus colour-ring resistor calculator",
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "no_board_evidence"
+      }
+    },
+    {
+      "id": "malformed_non_github_url",
+      "failure_mode": "with-code gate on a non-github URL — `github` field is a live http(s) link (douyin.com) but not a github.com repo at all; the gate must not treat \"has an http prefix\" as \"has a citable repo\"",
+      "entry": {
+        "name": "ATOMbluetooth keyboard",
+        "description": "A must-have keyboard for programmers，No bells and whistles, just copy and paste，Bluetooth keyboard nameATOM_BleKeyboardfactorym5stack，Click the red button to copy when external button，Click the blue button to paste，Standalone useATOM LiteDouble click on the onboard button to copy，Click to paste，The green light is on when copying，Paste green light goes out，The light alternates between red and blue when no device is connected.",
+        "category": "atom",
+        "esp": "32",
+        "github": "https://www.douyin.com/user/self?modal_id=7306815996239564032",
+        "download": 77
+      },
+      "repo_meta": {
+        "error": "HTTP 404"
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "no_github"
+      }
+    },
+    {
+      "id": "owner_only_github_url",
+      "failure_mode": "with-code gate on a github.com URL with no repo path — \"https://github.com/Rymicka\" names an owner, not an owner/repo; must not be treated as a resolvable repo",
+      "entry": {
+        "name": "IR TV",
+        "description": "IR remote TV By Rymicka",
+        "category": "stickc",
+        "esp": "32",
+        "github": "https://github.com/Rymicka",
+        "download": 4957
+      },
+      "repo_meta": null,
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "no_github"
+      }
+    },
+    {
+      "id": "fork_of_uncatalogued_anarch",
+      "failure_mode": "fork of an UNcatalogued upstream (espboy-edu/espboy_anarch) — the original 12-case set only tested fork-of-CATALOGUED; forks must skip regardless of whether the fork parent happens to be in the atlas",
+      "entry": {
+        "name": "Anarch on Cardputer",
+        "description": "This is a port of Anarch game made by Miloslav Číž @drummyfish .\nAnarch is an minimalistic game engine and a Doom clone made to work on bare metal hardware with extremely limited resources.",
+        "category": "cardputer",
+        "esp": "32",
+        "github": "https://github.com/TheBricktop/Anarch-Cardputer",
+        "download": 852
+      },
+      "repo_meta": {
+        "full_name": "TheBricktop/Anarch-Cardputer",
+        "fork": true,
+        "source_full_name": "ESPboy-edu/ESPboy_Anarch",
+        "stars": 14,
+        "description": "Port of Anarch Game from ESPBoy to M5 Stack Cardputer",
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "fork_of_uncatalogued"
+      }
+    },
+    {
+      "id": "wrong_chip_atom_plane_tracker",
+      "failure_mode": "wrong-chip via short-circuit device match — \"Atom Plane Tracker\" (bare \"Atom\", no chip hint) is the ENTRY NAME, but the description explicitly says \"M5Stack Atom S3R\"/\"ESP32-S3 firmware\"; a text-major device_from_text returns on the weak name-only match before ever checking the description's strong signal — the fix is pattern-major matching (try the more specific \"atom s3\" pattern against ALL texts before falling back to the loose bare-\"atom\" pattern). Also proves capability derivation must not false-positive: naive substring matching would fabricate a `ble` capability out of \"configura-BLE SCAN-radius\" (no Bluetooth evidence at all)",
+      "entry": {
+        "name": "Atom Plane Tracker",
+        "description": "Atom Plane Tracker turns your M5Stack Atom S3R into a live aircraft radar. It queries a free public ADS-B API — no account or API key required — and displays real-time flight information for any aircraft passing within a configurable radius of your location.\n\nWhat it shows\n\nWhen an aircraft enters your radius, the screen lights up with the callsign, aircraft type, altitude, and a live ETA countdown until it exits. The screen color changes by aircraft class — red for military, blue for medevac, green for commercial, yellow for private. Up to 5 recent flights are stored in history for the current session.\n\nPush notifications\n\nOptional push alerts via https://ntfy.sh (free tier, no credit card). Choose which aircraft classes trigger alerts — military, medevac, commercial, private, or all of them. Firmware update notifications are also supported.\n\nEasy setup — no coding required\n\nFlash the firmware once using a browser-based tool, then configure everything over WiFi through the built-in web UI. No software installation needed after the initial flash. Future firmware updates are delivered wirelessly with one click from the web UI.\n\nKey features\n\n- Live aircraft display with class-based color coding\n- Real-time ETA countdown between API polls\n- Configurable scan radius, coordinates, and poll interval\n- Up to 5 aircraft in history per session\n- Built-in web UI with live screen preview\n- Optional ntfy push notifications by aircraft class and emergency codes\n- Automatic daily firmware update checks with OTA install\n\nRequires: WiFi connection",
+        "category": "atoms3",
+        "esp": "s3",
+        "github": "https://github.com/JTCozart/atom-plane-tracker",
+        "download": 33
+      },
+      "repo_meta": {
+        "full_name": "JTCozart/atom-plane-tracker",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 0,
+        "description": "ESP32-S3 firmware for the M5Stack Atom S3R — tracks live aircraft overhead via ADS-B, with color-coded alerts, emergency squawk detection, push notifications, and a built-in config web UI. No API key required.",
+        "archived": false
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "atom-plane-tracker",
+          "name": "Atom Plane Tracker",
+          "url": "https://github.com/JTCozart/atom-plane-tracker",
+          "category": "pentest",
+          "board": "m5atoms3",
+          "chip": "esp32-s3",
+          "capabilities": [
+            "on-device-web-ui",
+            "wifi"
+          ],
+          "maintainer": "jtcozart"
+        }
+      }
+    },
+    {
+      "id": "clean_nanoc6_openthread",
+      "failure_mode": "clean device-in-name, new board coverage (m5nanoc6/esp32-c6) — the original 12-case set never exercised the nanoc6 pattern",
+      "entry": {
+        "name": "NanoC6 OpenThread RCP",
+        "description": "OpenThread RCP (Radio Coprocessor) firmware in ESP-IDF for NanoC6.\nYou can use this firmware with PC via USB-UART adapter, or with another NanoC6 with OTBR firmware to form an OpenThread border router to connect Thread devices to your Wi-Fi network.",
+        "category": "nanoc6",
+        "esp": "c6",
+        "github": "https://github.com/ciniml/m5stack_matter_examples",
+        "download": 106
+      },
+      "repo_meta": {
+        "full_name": "ciniml/m5stack_matter_examples",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 10,
+        "description": "Matter device firmware examples for M5Stack devices.",
+        "archived": false
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "m5stack-matter-examples",
+          "name": "NanoC6 OpenThread RCP",
+          "url": "https://github.com/ciniml/m5stack_matter_examples",
+          "category": "pentest",
+          "board": "m5nanoc6",
+          "chip": "esp32-c6",
+          "capabilities": [
+            "wifi"
+          ],
+          "maintainer": "ciniml"
+        }
+      }
+    },
+    {
+      "id": "clean_stampc3_0n3porkweb",
+      "failure_mode": "clean device-in-name, new board coverage (m5stamp-c3/esp32-c3) — the original 12-case set never exercised the stampc3 pattern",
+      "entry": {
+        "name": "0n3Pork W3b v0.3.0",
+        "description": "0n3Pork W3b v0.3.0\nYour pocket pig. First Stamp C3 web release by lexilexiko.\n\nFlash\nFile: 0n3Pork-W3b-v0.3.0-stampc3.bin\nBoard: M5Stamp C3 (ESP32-C3, 4 MB, USB-C)\nIf LittleFS / partition errors: erase flash, then upload\nesptool.py --chip esp32c3 --port COMx write_flash 0x0 0n3Pork-W3b-v0.3.0-stampc3.bin\nOr PlatformIO: pio run -t erase then pio run -t upload.\n\nDefault Wi-Fi\nSSID\t0n3Pork W3b\nPassword\ton3pork123\nUI\thttp://192.168.4.1 or http://on3pork.local\nChange name/password in the web UI after connect.\n\nHighlights\nLight capture (web START light) vs aggressive (GPIO3 button: hop 1-13 + deauth)\nClassic .pcap (WPA-Sec) + hashcat .22000 / _hs.22000\nAP + STA: stay on the local AP while the board has internet\nWPA-Sec and Pwncrack sync + potfile lists\nAP name/password editable in the web UI\nOur pig. Our barn.\nLegal\nUse only on networks you own or have written permission to test.",
+        "category": "stamp",
+        "esp": "c3",
+        "github": "https://github.com/lexilexiko/0n3Pork-W3b",
+        "download": 2
+      },
+      "repo_meta": {
+        "full_name": "lexilexiko/0n3Pork-W3b",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 1,
+        "description": "0n3Pork W3b — pocket pig for M5Stamp C3. Web UI handshake/PMKID box by lexilexiko.",
+        "archived": false
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "0n3pork-w3b",
+          "name": "0n3Pork W3b v0.3.0",
+          "url": "https://github.com/lexilexiko/0n3Pork-W3b",
+          "category": "pentest",
+          "board": "m5stamp-c3",
+          "chip": "esp32-c3",
+          "capabilities": [
+            "on-device-web-ui",
+            "wifi"
+          ],
+          "maintainer": "lexilexiko"
+        }
+      }
+    },
+    {
+      "id": "clean_tdeck_saitama_lora_mesh",
+      "failure_mode": "clean device-in-name, new board coverage (lilygo-t-deck) + mesh/lora capability derivation — the original 12-case set never exercised a non-M5Stack (LilyGo) board or the mesh category",
+      "entry": {
+        "name": "Saitama",
+        "description": "Open-source standalone firmware for LoRa mesh devices. Built on MeshCore, designed for the LilyGo T-Deck and T-Deck Plus.",
+        "category": "t-deck",
+        "esp": "s3",
+        "github": "https://github.com/868meshbot/Saitama",
+        "download": 164
+      },
+      "repo_meta": {
+        "full_name": "868meshbot/Saitama",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 18,
+        "description": "Meshcore firmware for the Lilygo TDeck plus",
+        "archived": false
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "saitama",
+          "name": "Saitama",
+          "url": "https://github.com/868meshbot/Saitama",
+          "category": "mesh",
+          "board": "lilygo-t-deck",
+          "chip": "esp32-s3",
+          "capabilities": [
+            "lora",
+            "mesh"
+          ],
+          "maintainer": "868meshbot"
+        }
+      }
+    }
+  ]
+}
