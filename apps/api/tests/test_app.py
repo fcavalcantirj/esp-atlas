@@ -532,11 +532,15 @@ def test_run_marauder_returns_grounded_boards_and_reasons(built_db_path):
     assert "2.4GHz Wi-Fi" in body["requirements"]
     assert "Bluetooth LE" in body["requirements"]
     board_ids = {b["board_id"] for b in body["boards"]}
-    assert board_ids == {"m5cardputer", "m5stick-cplus2"}
+    assert board_ids == {"m5cardputer", "m5stick-cplus2", "esp32-c5-devkitc-1"}
     for board in body["boards"]:
         assert board["reasons"]
         assert board["sources"] and all(s["url"] for s in board["sources"])
-    assert set(body["citations"]) == {"https://github.com/justcallmekoko/ESP32Marauder"}
+    assert set(body["citations"]) == {
+        "https://github.com/justcallmekoko/ESP32Marauder",
+        "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_esp32c5devkitc1.bin",
+        "https://github.com/justcallmekoko/ESP32Marauder/wiki/ESP32%E2%80%90C5%E2%80%90DevKitC%E2%80%901",
+    }
 
 
 def test_run_chip_constraint_restricts_boards(built_db_path):
@@ -547,7 +551,7 @@ def test_run_chip_constraint_restricts_boards(built_db_path):
     body = r.json()
     assert {b["board_id"] for b in body["boards"]} == {"m5stick-cplus2"}
     assert body["constraint"] == {"chip": "esp32"}
-    assert {e["board"] for e in body["excluded_boards"]} == {"m5cardputer"}
+    assert {e["board"] for e in body["excluded_boards"]} == {"m5cardputer", "esp32-c5-devkitc-1"}
 
 
 def test_run_unknown_firmware_is_honest_not_found_not_a_404(built_db_path):
@@ -572,7 +576,7 @@ def test_run_strips_a_hallucinated_board_from_the_model(built_db_path):
         r = client.get("/run/esp32marauder")
     body = r.json()
     board_ids = {b["board_id"] for b in body["boards"]}
-    assert board_ids == {"m5cardputer", "m5stick-cplus2"}
+    assert board_ids == {"m5cardputer", "m5stick-cplus2", "esp32-c5-devkitc-1"}
 
 
 # --- /build (grounded build-guide) ------------------------------------------

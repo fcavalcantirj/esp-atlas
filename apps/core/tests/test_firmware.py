@@ -28,7 +28,7 @@ def test_get_firmware_known_id_returns_full_record():
     assert fm["name"] == "ESP32 Marauder"
     assert fm["url"] == "https://github.com/justcallmekoko/ESP32Marauder"
     assert fm["category"] == "pentest"
-    assert set(fm["socs"]) == {"esp32", "esp32-s2", "esp32-s3"}
+    assert set(fm["socs"]) == {"esp32", "esp32-s2", "esp32-s3", "esp32-c5"}
 
 
 def test_get_firmware_unknown_id_returns_none():
