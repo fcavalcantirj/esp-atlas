@@ -16,6 +16,27 @@ class HealthResponse(BaseModel):
     count: int
 
 
+ComponentStatus = Literal["ok", "warn", "down"]
+OverallStatus = Literal["operational", "degraded", "down"]
+
+
+class StatusComponent(BaseModel):
+    """One GET /status component -- see esp_atlas_core.status."""
+
+    name: str
+    status: ComponentStatus
+    detail: str
+
+
+class StatusResponse(BaseModel):
+    """GET /status -- INTERFACE-SPEC.md. Always 200, never leaves a component
+    out: a failing probe reports as warn/down, it never crashes the response."""
+
+    status: OverallStatus
+    generated_at: str
+    components: list[StatusComponent]
+
+
 class SourceEntry(BaseModel):
     field: str
     url: str

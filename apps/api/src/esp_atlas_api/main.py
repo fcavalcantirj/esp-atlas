@@ -4,6 +4,7 @@ All ranking/filtering logic lives in esp_atlas_core (search/wizard); this
 module only maps HTTP in/out to that library's public functions.
 """
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -36,6 +37,7 @@ from esp_atlas_core.run_guide import run_guide as core_run_guide
 from esp_atlas_core.search import brand_page as core_brand_page
 from esp_atlas_core.search import get_part as core_get_part
 from esp_atlas_core.search import search as core_search
+from esp_atlas_core.status import compute_status as core_compute_status
 from esp_atlas_core.validate import validate_frontmatter as core_validate_frontmatter
 from esp_atlas_core.validate import validate_markdown as core_validate_markdown
 from esp_atlas_core.wizard import wizard as core_wizard
@@ -58,6 +60,7 @@ from esp_atlas_api.models import (
     RecipeListResponse,
     RunGuideResponse,
     SearchResponse,
+    StatusResponse,
     ValidateRequest,
     ValidateResponse,
     WizardRequest,
@@ -140,6 +143,22 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
         return HealthResponse(status="ok", count=count)
 
     limiter.exempt(health)  # uptime/monitoring checks must never 429
+
+    @app.get("/status", response_model=StatusResponse)
+    def status(db_path=Depends(get_db_path)):
+        """Public live health snapshot (INTERFACE-SPEC.md `GET /status`).
+
+        esp_atlas_core.status wraps every component probe individually, so it
+        already never raises -- this except is defense in depth against a
+        genuinely unexpected failure, so the page still renders "down" rather
+        than a bare 500.
+        """
+        try:
+            return core_compute_status(db_path=db_path)
+        except Exception:
+            return StatusResponse(status="down", generated_at=datetime.now(timezone.utc).isoformat(), components=[])
+
+    limiter.exempt(status)  # public status page polls every 30s, must never 429
 
     @app.get("/search", response_model=SearchResponse)
     def search(

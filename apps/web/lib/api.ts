@@ -446,3 +446,22 @@ export function runGuide(firmwareId: string, constraints?: string): Promise<RunG
 export function buildGuide(query: string): Promise<BuildGuide> {
   return apiFetch(`/build`, { method: "POST", body: JSON.stringify({ query }) });
 }
+
+export type ComponentStatus = "ok" | "warn" | "down";
+export type OverallStatus = "operational" | "degraded" | "down";
+
+export interface StatusComponent {
+  name: string;
+  status: ComponentStatus;
+  detail: string;
+}
+
+export interface Status {
+  status: OverallStatus;
+  generated_at: string;
+  components: StatusComponent[];
+}
+
+export function getStatus(): Promise<Status> {
+  return apiFetch(`/status`);
+}

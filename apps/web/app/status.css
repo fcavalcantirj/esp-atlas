@@ -1,0 +1,135 @@
+/* /status page styles live in their own sheet, imported by app/layout.tsx after
+   verify.css, so feature CSS never appends to the global file. Tokens and the
+   dot-plus-word badge pattern come from globals.css / verify.css's
+   .verdict-badge — this reuses that system, it doesn't invent a new one. */
+
+.status-banner {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin: 0 0 1.25rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--muted);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.status-banner--operational {
+  border-left-color: var(--ok);
+}
+
+.status-banner--degraded {
+  border-left-color: var(--warn);
+}
+
+.status-banner--down {
+  border-left-color: var(--danger);
+}
+
+.status-banner-label {
+  font-family: var(--font-data);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.status-banner--operational .status-banner-label {
+  color: var(--ok);
+}
+
+.status-banner--degraded .status-banner-label {
+  color: var(--warn);
+}
+
+.status-banner--down .status-banner-label {
+  color: var(--danger);
+}
+
+.status-banner-updated {
+  font-size: var(--t-xs);
+  color: var(--muted);
+}
+
+.status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.status-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.status-row:last-child {
+  border-bottom: none;
+}
+
+/* Dot plus the word, same rule as .verdict-badge -- color is never the only signal. */
+.status-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  flex: 0 0 auto;
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.status-dot::before {
+  content: "";
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-dot--ok {
+  color: var(--ok);
+}
+
+.status-dot--warn {
+  color: var(--warn);
+}
+
+.status-dot--down {
+  color: var(--danger);
+}
+
+.status-row-name {
+  flex: 0 0 auto;
+  font-weight: 600;
+  min-width: 8rem;
+}
+
+.status-row-detail {
+  color: var(--muted);
+  font-size: var(--t-sm);
+}
+
+.status-refresh-note {
+  margin-top: 0.75rem;
+  font-size: var(--t-xs);
+  color: var(--muted);
+}
+
+.status-error {
+  margin: 0 0 1.25rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--danger);
+  font-size: var(--t-sm);
+  line-height: var(--lead-snug);
+}
