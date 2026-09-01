@@ -1,0 +1,170 @@
+{
+ "date": "2026-08-31",
+ "window": {
+  "start": "2026-08-03",
+  "end": "2026-08-31"
+ },
+ "weight_formula_version": "v1",
+ "d2_available": false,
+ "count": 6,
+ "items": [
+  {
+   "term": "esp32-c6",
+   "raw_terms": [
+    "esp32-c6"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 35,
+   "clicks": 1,
+   "ctr": 0.0286,
+   "position": 28.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 95.54,
+   "resolved": {
+    "board": null,
+    "chip": "esp32-c6",
+    "firmware_token": null,
+    "capability": []
+   },
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/parts/esp32-c6",
+   "first_seen": "2026-08-31",
+   "last_seen": "2026-08-31"
+  },
+  {
+   "term": "esp32 c6",
+   "raw_terms": [
+    "esp32 c6"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 27,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 32.3,
+   "events": null,
+   "zero_result": null,
+   "weight": 87.21,
+   "resolved": {
+    "board": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": []
+   },
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/parts/esp32-c6",
+   "first_seen": "2026-08-31",
+   "last_seen": "2026-08-31"
+  },
+  {
+   "term": "esp32 h2",
+   "raw_terms": [
+    "esp32 h2"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 17,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 31.8,
+   "events": null,
+   "zero_result": null,
+   "weight": 54.06,
+   "resolved": {
+    "board": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": []
+   },
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/parts/esp32-h2",
+   "first_seen": "2026-08-31",
+   "last_seen": "2026-08-31"
+  },
+  {
+   "term": "m5 stick s3",
+   "raw_terms": [
+    "m5 stick s3",
+    "m5stack stick s3"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 22,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 18.5,
+   "events": null,
+   "zero_result": null,
+   "weight": 40.7,
+   "resolved": {
+    "board": "m5stick-s3",
+    "chip": "esp32-s3",
+    "firmware_token": null,
+    "capability": []
+   },
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/parts/m5stick-s3",
+   "first_seen": "2026-08-31",
+   "last_seen": "2026-08-31"
+  },
+  {
+   "term": "launcher esp32",
+   "raw_terms": [
+    "esp32 launcher",
+    "launcher esp32"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 33,
+   "clicks": 1,
+   "ctr": 0.0303,
+   "position": 7.0,
+   "events": null,
+   "zero_result": null,
+   "weight": 22.4,
+   "resolved": {
+    "board": null,
+    "chip": "esp32",
+    "firmware_token": "launcher",
+    "capability": []
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/launcher",
+   "first_seen": "2026-08-31",
+   "last_seen": "2026-08-31"
+  },
+  {
+   "term": "bruce esp32",
+   "raw_terms": [
+    "bruce esp32"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 10,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 7.8,
+   "events": null,
+   "zero_result": null,
+   "weight": 7.8,
+   "resolved": {
+    "board": null,
+    "chip": "esp32",
+    "firmware_token": "bruce",
+    "capability": []
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/bruce",
+   "first_seen": "2026-08-31",
+   "last_seen": "2026-08-31"
+  }
+ ]
+}
