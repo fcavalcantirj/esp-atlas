@@ -6,56 +6,32 @@
  },
  "weight_formula_version": "v1",
  "d2_available": false,
- "count": 6,
+ "count": 5,
  "items": [
   {
    "term": "esp32-c6",
    "raw_terms": [
+    "esp32 c6",
     "esp32-c6"
    ],
    "source": [
     "gsc_query"
    ],
-   "impressions": 35,
+   "impressions": 62,
    "clicks": 1,
-   "ctr": 0.0286,
-   "position": 28.1,
+   "ctr": 0.0161,
+   "position": 29.9,
    "events": null,
    "zero_result": null,
-   "weight": 95.54,
+   "weight": 182.4,
    "resolved": {
     "board": null,
     "chip": "esp32-c6",
     "firmware_token": null,
-    "capability": []
+    "capability": [],
+    "part": "esp32-c6"
    },
-   "gap": "UNRESOLVED",
-   "landing_page": "https://esp-atlas.com/parts/esp32-c6",
-   "first_seen": "2026-08-31",
-   "last_seen": "2026-08-31"
-  },
-  {
-   "term": "esp32 c6",
-   "raw_terms": [
-    "esp32 c6"
-   ],
-   "source": [
-    "gsc_query"
-   ],
-   "impressions": 27,
-   "clicks": null,
-   "ctr": 0.0,
-   "position": 32.3,
-   "events": null,
-   "zero_result": null,
-   "weight": 87.21,
-   "resolved": {
-    "board": null,
-    "chip": "esp32",
-    "firmware_token": null,
-    "capability": []
-   },
-   "gap": "UNRESOLVED",
+   "gap": "RANKS_POORLY",
    "landing_page": "https://esp-atlas.com/parts/esp32-c6",
    "first_seen": "2026-08-31",
    "last_seen": "2026-08-31"
@@ -79,9 +55,10 @@
     "board": null,
     "chip": "esp32",
     "firmware_token": null,
-    "capability": []
+    "capability": [],
+    "part": "esp32-h2"
    },
-   "gap": "UNRESOLVED",
+   "gap": "COVERED_OK",
    "landing_page": "https://esp-atlas.com/parts/esp32-h2",
    "first_seen": "2026-08-31",
    "last_seen": "2026-08-31"
@@ -106,7 +83,8 @@
     "board": "m5stick-s3",
     "chip": "esp32-s3",
     "firmware_token": null,
-    "capability": []
+    "capability": [],
+    "part": null
    },
    "gap": "UNRESOLVED",
    "landing_page": "https://esp-atlas.com/parts/m5stick-s3",
@@ -133,7 +111,8 @@
     "board": null,
     "chip": "esp32",
     "firmware_token": "launcher",
-    "capability": []
+    "capability": [],
+    "part": null
    },
    "gap": "COVERED_OK",
    "landing_page": "https://esp-atlas.com/firmware/launcher",
@@ -159,7 +138,8 @@
     "board": null,
     "chip": "esp32",
     "firmware_token": "bruce",
-    "capability": []
+    "capability": [],
+    "part": null
    },
    "gap": "COVERED_OK",
    "landing_page": "https://esp-atlas.com/firmware/bruce",
