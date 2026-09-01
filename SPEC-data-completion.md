@@ -33,6 +33,20 @@ implement:
 - **Community signal** — thriving posts on **r/esp32**, Hacker News, maker blogs → surfaces hot
   new *firmware* AND new *boards/projects* the catalog + manufacturer-watch miss → **both tracks**.
 
+## What counts as "complete" (per finite entity)
+Baseline = schema-`required` fields (the guard already enforces these → always 100%). The gauge
+measures the **usefulness fields** *beyond* baseline that make a record actually useful, each of
+which must be **cited** (cite-or-omit) to count:
+- **board (the priority):** `download_mode`, `usb_serial`, `io.gpio_pins` (pinout),
+  `dimensions_mm`, `form_factor`, `usb.connector`, and a getting-started link / board-diagram
+  (field to add).
+- **soc / module:** the datasheet-cited key specs per its schema (cpu cores/freq, ram, flash,
+  wifi/ble/radio, gpio count, native-usb); module adds flash / psram / antenna / certs.
+- **brand:** homepage present + liveness-verified.
+
+Overall finite-completion % = mean of per-entity completion, **weighted so boards dominate**
+(they're what First-Flash needs).
+
 ## The data completion gauge (to build)
 A single report over the FINITE entities — per entity type and per required field, the % of
 records complete (cited):
