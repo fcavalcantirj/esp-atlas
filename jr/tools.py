@@ -52,24 +52,25 @@ def fetch_launcher_catalog() -> list[dict]:
     return data if isinstance(data, list) else data.get("data", [])
 
 
+GENERIC_NAME_TOKENS = {"esp32", "esp8266", "esp", "m5stack", "m5", "firmware", "board", "device"}  # too generic alone
+
+
 def _catalogued_repos_and_tokens() -> tuple[set[str], set[str]]:
-    """(repo full_names, name-tokens) of catalogued firmware — the dedup fingerprint. A launcher
-    entry that shares a repo owner/name or a firmware-name token is a PORT/variant, not new."""
-    import re
+    """(repo full_names, name-tokens) of catalogued firmware — dedup fingerprint from both the firmware id AND its `name:` field ('esp32marauder' has no delimiter to split, but "ESP32 Marauder" does)."""
     repos, tokens = set(), set()
     for d in (FIRMWARE_DIR.iterdir() if FIRMWARE_DIR.exists() else []):
         if not d.is_dir():
             continue
         tokens.add(d.name.lower())
-        for part in re.split(r"[-_]", d.name.lower()):
-            if len(part) >= 4:
-                tokens.add(part)                        # e.g. 'bruce', 'marauder', 'nemo'
+        tokens |= {t for t in re.split(r"[-_\s]", d.name.lower()) if len(t) >= 4 and t not in GENERIC_NAME_TOKENS}
         md = (d / "firmware.md").read_text() if (d / "firmware.md").exists() else ""
         for line in md.splitlines():
             if line.startswith("url:") and "github.com/" in line:
                 fn = line.split("github.com/", 1)[1].strip().rstrip("/").lower()
                 repos.add("/".join(fn.split("/")[:2]))  # owner/repo
                 repos.add(fn.split("/")[0])             # owner (catches other repos by same owner)
+            elif line.startswith("name:"):
+                tokens |= {t for t in re.split(r"[-_\s]", line[5:].strip().lower()) if len(t) >= 4 and t not in GENERIC_NAME_TOKENS}
     return repos, tokens
 
 

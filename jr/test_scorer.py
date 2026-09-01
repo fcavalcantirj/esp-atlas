@@ -21,7 +21,7 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from scorer import score_entry  # noqa: E402
+from scorer import score_entry, _repo_name_from_url, _slug  # noqa: E402
 from device_map import device_from_text  # noqa: E402
 
 JR_DIR = Path(__file__).resolve().parent
@@ -154,3 +154,138 @@ def test_accuracy_report(capsys):
         print(report)
 
     assert fully_correct == total, f"scorer only got {fully_correct}/{total} fully correct"
+
+
+# ─────────────────────── Bug 1: garbage id slug (id derivation) ───────────────────────
+# Real bug from a live drain run: github.com/sosprz/meshcore-cardputer-adv/releases was
+# authored with id 'releases' — the id took the URL's trailing path segment instead of the
+# repo name. Fixed via scorer._repo_name_from_url + scorer._slug's marketing-noise strip.
+
+@pytest.mark.parametrize("url,expected_repo_name", [
+    ("https://github.com/sosprz/meshcore-cardputer-adv/releases", "meshcore-cardputer-adv"),
+    ("https://github.com/sosprz/meshcore-cardputer-adv/releases/latest", "meshcore-cardputer-adv"),
+    ("https://github.com/someone/some-repo/tree/main", "some-repo"),
+    ("https://github.com/someone/some-repo/tree/feature/branch-name", "some-repo"),
+    ("https://github.com/someone/some-repo/blob/main/README.md", "some-repo"),
+    ("https://github.com/someone/some-repo/archive/refs/heads/main.zip", "some-repo"),
+    ("https://github.com/someone/some-repo?tab=readme-ov-file", "some-repo"),
+    ("https://github.com/someone/some-repo#readme", "some-repo"),
+    ("https://github.com/someone/some-repo.git", "some-repo"),
+], ids=["releases", "releases-latest", "tree-branch", "tree-nested-branch", "blob", "archive",
+       "query", "fragment", "dot-git"])
+def test_repo_name_from_url_strips_trailing_path_query_and_fragment(url, expected_repo_name):
+    assert _repo_name_from_url(url) == expected_repo_name
+
+
+def test_slug_of_meshcore_releases_url_is_the_repo_not_releases():
+    """DIRECT regression for the reported bug: a github url pointing at a repo's /releases page
+    must slug to the repo name, never the trailing path segment 'releases'."""
+    repo_name = _repo_name_from_url("https://github.com/sosprz/meshcore-cardputer-adv/releases")
+    assert _slug(repo_name) == "meshcore-cardputer-adv"
+
+
+def test_slug_strips_parenthetical_marketing_noise():
+    assert _slug("MP3Player for Cardputer & ADV( load 2000+ songs)") == "mp3player-for-cardputer-adv"
+    assert _slug("M5stickC Plus 2 Marauder (BLE Fix)") == "m5stickc-plus-2-marauder"
+
+
+def test_score_entry_meshcore_releases_url_authors_clean_repo_name_id():
+    """End-to-end regression for the exact reported case: the catalog entry's github url points
+    at the repo's /releases page, and the authored record's id must be the clean repo slug."""
+    entry = {
+        "name": "Meshcore for Cardputer ADV",
+        "description": "Meshcore firmware port for the M5Stack Cardputer ADV.",
+        "category": "cardputer",
+        "github": "https://github.com/sosprz/meshcore-cardputer-adv/releases",
+        "download": 1200,
+    }
+    repo_meta = {
+        "full_name": "sosprz/meshcore-cardputer-adv",
+        "fork": False,
+        "source_full_name": None,
+        "stars": 5,
+        "description": "Meshcore firmware port for the M5Stack Cardputer ADV.",
+    }
+    result = score_entry(entry, repo_meta, set(), set())
+    assert result["decision"] == "authored"
+    assert result["record"]["id"] == "meshcore-cardputer-adv"
+
+
+def test_score_entry_strips_parenthetical_from_authored_name():
+    entry = {
+        "name": "MP3Player for Cardputer & ADV( load 2000+ songs)",
+        "description": None,
+        "category": "cardputer",
+        "github": "https://github.com/someone/cardputer-mp3-player",
+        "download": 800,
+    }
+    repo_meta = {
+        "full_name": "someone/cardputer-mp3-player",
+        "fork": False,
+        "source_full_name": None,
+        "stars": 3,
+        "description": None,
+    }
+    result = score_entry(entry, repo_meta, set(), set())
+    assert result["decision"] == "authored"
+    assert result["record"]["name"] == "MP3Player for Cardputer & ADV"
+    assert "(" not in result["record"]["name"]
+
+
+# ─────────────────────── Bug 2: fork/variant dedup miss ───────────────────────
+# Real bug from a live drain run: 'M5stickC Plus 2 Marauder (BLE Fix)' at ATOMNFT/M5stick-
+# Marauder was authored as NEW even though ESP32Marauder (justcallmekoko/ESP32Marauder) is
+# already catalogued — a device-port fork slipped dedup because the catalogued firmware id
+# ('esp32marauder') has no delimiter to split its core token ('marauder') out of. Fixed in
+# tools._catalogued_repos_and_tokens() (see test_tools.py); these tests exercise score_entry()
+# with the tokens that fixed function now produces.
+
+MARAUDER_CATALOGUED_TOKENS = {"esp32marauder", "marauder"}   # what the FIXED
+# tools._catalogued_repos_and_tokens() now yields for the catalogued esp32marauder firmware
+# (id token 'esp32marauder' + core name-token 'marauder' from its 'ESP32 Marauder' frontmatter
+# name — 'esp32' itself is excluded as a generic vendor/chip token).
+
+
+def test_score_entry_skips_marauder_style_device_port_as_variant():
+    """Real reported case: a device-port fork of the catalogued ESP32Marauder must be skipped
+    as a variant, not authored as new firmware."""
+    entry = {
+        "name": "M5stickC Plus 2 Marauder (BLE Fix)",
+        "description": None,
+        "category": "stickc",
+        "github": "https://github.com/ATOMNFT/M5stick-Marauder",
+        "download": 300,
+    }
+    repo_meta = {
+        "full_name": "ATOMNFT/M5stick-Marauder",
+        "fork": False,
+        "source_full_name": None,
+        "stars": 2,
+        "description": None,
+    }
+    result = score_entry(entry, repo_meta, set(), MARAUDER_CATALOGUED_TOKENS)
+    assert result["decision"] == "skip"
+    assert "name_token_matches_catalogued" in result["reason"]
+
+
+def test_score_entry_generic_shared_word_alone_does_not_false_skip():
+    """A candidate that shares only the GENERIC chip word 'esp32' with a catalogued firmware
+    (not its actual core name-token) must NOT be treated as a port — over-matching on a common
+    word would false-skip genuinely different, genuinely-new firmware."""
+    entry = {
+        "name": "ESP32 Weather Station for Cardputer",
+        "description": None,
+        "category": "cardputer",
+        "github": "https://github.com/coolusername/esp32-weather-cardputer",
+        "download": 150,
+    }
+    repo_meta = {
+        "full_name": "coolusername/esp32-weather-cardputer",
+        "fork": False,
+        "source_full_name": None,
+        "stars": 1,
+        "description": None,
+    }
+    result = score_entry(entry, repo_meta, set(), MARAUDER_CATALOGUED_TOKENS)
+    assert result["decision"] == "authored"
+    assert result["record"]["board"] == "m5cardputer"

@@ -66,12 +66,36 @@ _GITHUB_MENTION_RE = re.compile(r"github\.com/([\w.-]+/[\w.-]+)", re.IGNORECASE)
 
 
 def _owner_repo(github_url: str) -> str:
-    fn = (github_url or "").rstrip("/").replace("https://github.com/", "").lower()
+    fn = (github_url or "").split("?", 1)[0].split("#", 1)[0]
+    fn = fn.rstrip("/").replace("https://github.com/", "").lower()
     return "/".join(fn.split("/")[:2])
 
 
+def _repo_name_from_url(github_url: str) -> str:
+    """The bare repo NAME (not owner/repo) a launcher-catalog github url points at — the path
+    segment immediately after the owner. `_owner_repo` already keeps only the first two path
+    segments, so any trailing sub-page (/releases, /releases/latest, /tree/<branch>, /blob/...,
+    /archive/...) is dropped generically, not special-cased per suffix — a url pointing at a
+    repo's /releases page must still slug to the REPO, e.g. github.com/sosprz/meshcore-cardputer
+    -adv/releases -> 'meshcore-cardputer-adv', never the bare last path segment 'releases' (the
+    real garbage-id bug this fixes)."""
+    owner_repo = _owner_repo(github_url)
+    repo = owner_repo.split("/")[-1] if owner_repo else ""
+    return re.sub(r"\.git$", "", repo)
+
+
+_MARKETING_NOISE_RE = re.compile(r"\s*\([^)]*\)")
+
+
+def _clean_marketing(text: str) -> str:
+    """Strip parenthetical marketing/feature asides (e.g. '(BLE Fix)', '( load 2000+ songs)')
+    from a catalog entry's display name — noise that pollutes both the shown name and any slug
+    derived from it, not a signal that this is actually a different board/variant."""
+    return re.sub(r"\s+", " ", _MARKETING_NOISE_RE.sub("", text or "")).strip()
+
+
 def _slug(repo_name: str) -> str:
-    s = re.sub(r"[^a-z0-9]+", "-", (repo_name or "").lower()).strip("-")
+    s = re.sub(r"[^a-z0-9]+", "-", _clean_marketing(repo_name).lower()).strip("-")
     return s[:40]
 
 
@@ -160,13 +184,11 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
     capabilities = [c for c in capabilities_from_text(*text_pool) if c in vocab]
     category = _category_from_capabilities(capabilities)
 
-    repo_name = github.rstrip("/").split("/")[-1]
-    repo_name = re.sub(r"\.git$", "", repo_name)
-    firmware_id = _slug(repo_name)
+    firmware_id = _slug(_repo_name_from_url(github))
 
     record = {
         "id": firmware_id,
-        "name": name,
+        "name": _clean_marketing(name),
         "url": f"https://github.com/{repo_meta.get('full_name', owner_repo)}",
         "category": category,
         "board": board,
