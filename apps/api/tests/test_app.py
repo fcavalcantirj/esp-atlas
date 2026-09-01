@@ -333,6 +333,21 @@ def test_parts_by_id_soc_has_empty_chain_and_lists_boards(client):
     assert "esp32-c6-wroom-1" in related_ids
 
 
+def test_parts_by_id_soc_includes_grounded_faq(client):
+    r = client.get("/parts/esp32-c6")
+    assert r.status_code == 200
+    faq = r.json()["faq"]
+    assert len(faq) >= 4
+    assert all(set(item) == {"id", "question", "answer"} for item in faq)
+    assert any(item["id"] == "vs-sibling" and "ESP32-C3" in item["question"] for item in faq)
+
+
+def test_parts_by_id_board_has_empty_faq(client):
+    r = client.get("/parts/esp32-c6-devkitc-1")
+    assert r.status_code == 200
+    assert r.json()["faq"] == []
+
+
 def test_facets_endpoint_shape(client):
     r = client.get("/facets")
     assert r.status_code == 200

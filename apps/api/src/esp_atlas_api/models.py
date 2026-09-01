@@ -58,6 +58,16 @@ class Chain(BaseModel):
     module: Optional[Record] = None
 
 
+class FaqItem(BaseModel):
+    """One grounded Q&A pair — see esp_atlas_core.faq. Only ever populated for
+    type=="soc" parts; every claim behind `answer` has already passed the
+    faq_grounding build-time guard before this response is built."""
+
+    id: str
+    question: str
+    answer: str
+
+
 class PartDetail(Record):
     """One part with everything a detail page needs — see esp_atlas_core.search.get_part."""
 
@@ -65,6 +75,7 @@ class PartDetail(Record):
     body: str
     chain: Chain
     related: list[Record] = []
+    faq: list[FaqItem] = []
 
 
 class Facet(BaseModel):

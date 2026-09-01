@@ -12,6 +12,7 @@ import hashlib
 from datetime import datetime, timezone
 
 from esp_atlas_core import db as dbmod
+from esp_atlas_core import faq as faqmod
 from esp_atlas_core.frontmatter import iter_data_files, parse_frontmatter
 from esp_atlas_core.paths import REPO_ROOT
 
@@ -108,9 +109,24 @@ def _row_for(content_type, path, fm, body, soc_by_id, module_by_id):
         "frontmatter_json": _json_dumps(fm),
         "body": body,
         "aka": " ".join(fm.get("aka") or []),
-        "notes": "\n".join(fm.get("notes") or []),
+        "notes": _notes_for(content_type, fm, soc_by_id),
         "prose": body,
     }
+
+
+def _notes_for(content_type, fm, soc_by_id):
+    """The free-text FTS `notes` column: the record's own `notes` list, plus --
+    for a soc record only -- its generated, grounded FAQ text appended, so a
+    query like "pinout" can find a soc through its FAQ without a db schema
+    change (see esp_atlas_core.faq's module docstring and REPORT.md (d))."""
+    notes = "\n".join(fm.get("notes") or [])
+    if content_type != "soc":
+        return notes
+    items = faqmod.generate_faq(fm["id"], fm, soc_by_id)
+    text = faqmod.faq_text(items)
+    if not text:
+        return notes
+    return f"{notes}\n{text}".strip()
 
 
 def _bool_to_int(value):
