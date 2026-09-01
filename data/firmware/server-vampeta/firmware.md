@@ -3,7 +3,7 @@ id: server-vampeta
 type: firmware
 name: Server vampeta
 url: https://github.com/elguesabal/Server-vampeta
-category: home
+category: multi
 maintainer: elguesabal
 capabilities:
 - on-device-web-ui
