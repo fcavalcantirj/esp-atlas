@@ -5,7 +5,9 @@ search (D2 `searchTerm`) via **Composio** — reusing `telemetry.py`'s exact aut
 (same `KEY`/`ENTITY`/`GA4_PROPERTY`/`GSC_SITE`, same `_ex()` executor; not forked here, see
 `_pull_live()`). Normalizes, floor-filters, dedups/merges, weights (a pure versioned
 formula), resolves each term to a catalog entity by REUSING `scorer.py`'s `device_map` /
-`capability_map` (zero LLM, no new guessing — SPEC §4), and classifies the gap against the
+`capability_map` (zero LLM, no new guessing — SPEC §4) plus a deterministic chip/part id match
+against the atlas's real socs/modules (`tools.board_refs()` — same ground truth `index.json`'s
+`/parts/<id>` pages are built from, no hardcoded chip list), and classifies the gap against the
 current atlas (`data/firmware/`, `data/recipes/` — the same ground truth `tools.py` already
 reads) into one of UNCOVERED / RANKS_POORLY / COVERED_OK / UNRESOLVED.
 
@@ -118,28 +120,53 @@ def _chip_from_term(term: str) -> str | None:
     return "esp32" if "esp32" in families else None
 
 
+# a SHAPE match (any esp32-<letter><1-2 digits> variant), not a hardcoded chip list — this is
+# what lets a real-but-not-yet-catalogued chip (e.g. a future esp32-c9) still resolve to a
+# candidate part id and classify structurally as UNCOVERED, rather than falling through to
+# UNRESOLVED just because it isn't in the catalog yet (§4's part/chip fix). The optional
+# `[\s-]?` separator is what makes 'esp32 c6' and 'esp32-c6' canonicalize to the same id.
+_CHIP_VARIANT_RE = re.compile(r"esp32[\s-]?([a-z]\d{1,2})\b")
+
+
+def _chip_part_candidate(term: str) -> str | None:
+    """A candidate 'esp32-<variant>' PART id parsed out of the term by shape, e.g. both
+    'esp32-c6' and 'esp32 c6' -> 'esp32-c6'. Existence in the atlas is NOT checked here (that's
+    classify_gap's job, against the live `part_ids` catalog) — same division of labor as
+    `firmware_token` above."""
+    m = _CHIP_VARIANT_RE.search(term)
+    return f"esp32-{m.group(1)}" if m else None
+
+
 def resolve_entity(term: str, firmware_ids: set[str]) -> dict:
     """Term -> entity candidates, PARSING ONLY via the scorer's existing maps (§4.1): no new
     intelligence, no LLM. `board` via `device_map.device_from_text` (only ever a catalogued
     board id, by construction). `chip` from the board's ground-truth soc if a board matched,
     else any specific chip family named directly in the term. `firmware_token` via substring
-    match against catalogued firmware ids. `capability` via `capability_map`'s controlled
+    match against catalogued firmware ids. `part` via `_chip_part_candidate` — a SHAPE-matched
+    esp32-<variant> chip/part id (§4's part/chip fix; existence checked later by classify_gap
+    against the live catalog, never here). `capability` via `capability_map`'s controlled
     vocabulary. Any of these may be None/[] — the caller decides what that means (classify_gap)."""
     board = device_from_text(term)
     chip = tools.board_soc(board) if board else _chip_from_term(term)
     firmware_token = _firmware_token_match(_words(term), firmware_ids)
     capability = capabilities_from_text(term)
-    return {"board": board, "chip": chip, "firmware_token": firmware_token, "capability": capability}
+    part = _chip_part_candidate(term)
+    return {"board": board, "chip": chip, "firmware_token": firmware_token,
+            "capability": capability, "part": part}
 
 
 def _dedup_key(term: str, resolved: dict) -> tuple:
     """Merge key for §3.5 dedup — SAME resolved entity, however it was worded, becomes ONE
-    item. Only `firmware_token`/`board` are concrete enough entities to merge different wordings
-    on (a shared bare `chip` token is NOT — two otherwise-unrelated terms that both merely
-    mention 'esp32' must stay separate items, not collapse into one bucket). Falls back to the
-    normalized term itself in every other case (nothing to merge on but the exact text)."""
+    item. `firmware_token`/`part`/`board` are the concrete-enough entities to merge different
+    wordings on (a shared bare `chip` token is NOT — two otherwise-unrelated terms that both
+    merely mention 'esp32' must stay separate items, not collapse into one bucket). `part` sits
+    between `firmware_token` and `board` so spacing/hyphen variants of the same chip ('esp32-c6'
+    / 'esp32 c6') merge into one item regardless of exact wording. Falls back to the normalized
+    term itself in every other case (nothing to merge on but the exact text)."""
     if resolved.get("firmware_token"):
         return ("fw", resolved["firmware_token"], resolved.get("board") or "")
+    if resolved.get("part"):
+        return ("part", resolved["part"])
     if resolved.get("board"):
         return ("board", resolved["board"])
     return ("term", term)
@@ -152,6 +179,16 @@ def _recipe_pairs() -> set[str]:
     return {p.name for p in d.iterdir() if p.is_dir()} if d.exists() else set()
 
 
+def _catalogued_part_ids() -> set[str]:
+    """The real chip/part ids already in the atlas — REUSES `tools.board_refs()`'s existing
+    ground-truth read of `data/socs/` + `data/modules/` (the exact dirs the atlas's `/parts/<id>`
+    pages are built from — the same source `esp32-c6` already has 71 hits in via `index.json`).
+    Zero new intelligence, zero hardcoded chip list: this stays correct as parts are added (§4's
+    part/chip fix)."""
+    refs = tools.board_refs()
+    return set(refs.get("soc_ids") or []) | set(refs.get("module_ids") or [])
+
+
 def _rank_or_covered(metrics: dict) -> str:
     imp = metrics.get("impressions") or 0
     ctr = metrics.get("ctr")
@@ -162,12 +199,13 @@ def _rank_or_covered(metrics: dict) -> str:
     return GAP_COVERED_OK
 
 
-def classify_gap(resolved: dict, firmware_ids: set[str], recipe_pairs: set[str], metrics: dict) -> str:
+def classify_gap(resolved: dict, firmware_ids: set[str], recipe_pairs: set[str], metrics: dict,
+                 part_ids: set[str] | None = None) -> str:
     """§4 gap classification — the crux of the miner.
 
-    A `firmware_token` is the required anchor for anything but UNRESOLVED: with zero-LLM,
-    reuse-only resolution, `board`/`chip`/`capability` alone never identify a SPECIFIC missing
-    catalog entity (a board-only match is by construction an ALREADY-catalogued board —
+    A `firmware_token` or a `part` is the required anchor for anything but UNRESOLVED: with
+    zero-LLM, reuse-only resolution, `board`/`chip`/`capability` alone never identify a SPECIFIC
+    missing catalog entity (a board-only match is by construction an ALREADY-catalogued board —
     device_map only maps to those — so it can't signal a gap; a bare chip or capability token
     is too generic to say what's missing). Those partial-signal terms are exactly what §4 means
     by UNRESOLVED: "high-volume unresolved clusters are a signal to Felipe" for possible new
@@ -180,16 +218,30 @@ def classify_gap(resolved: dict, firmware_ids: set[str], recipe_pairs: set[str],
     - `board` given and `{board}__{firmware_token}` has no recipe -> UNCOVERED (the firmware is
       catalogued, but not for this board — a genuine populate/pairing gap, §6).
     - otherwise the entity already exists -> RANKS_POORLY or COVERED_OK by the D1 metrics
-      (§4's high-impression/low-CTR/weak-position test, `_rank_or_covered`)."""
+      (§4's high-impression/low-CTR/weak-position test, `_rank_or_covered`).
+
+    Else, given a `part` (chip/part demand — the CHIP/PART-blindness fix, e.g. 'esp32-c6'):
+    - not in `part_ids` -> UNCOVERED (a plausible chip/part id, shape-matched, that isn't
+      actually catalogued yet — a real populate gap, no `board` pairing concept for parts).
+    - otherwise it already exists in the atlas -> RANKS_POORLY or COVERED_OK by the same D1
+      metrics test as firmware (⟨Q3 RESOLVED⟩: RANKS_POORLY is a report for Felipe+us, never an
+      authoring target for Jr, same as the firmware case above)."""
     firmware_token = resolved.get("firmware_token")
-    if not firmware_token:
-        return GAP_UNRESOLVED
-    if firmware_token not in firmware_ids:
-        return GAP_UNCOVERED
-    board = resolved.get("board")
-    if board and f"{board}__{firmware_token}" not in recipe_pairs:
-        return GAP_UNCOVERED
-    return _rank_or_covered(metrics)
+    if firmware_token:
+        if firmware_token not in firmware_ids:
+            return GAP_UNCOVERED
+        board = resolved.get("board")
+        if board and f"{board}__{firmware_token}" not in recipe_pairs:
+            return GAP_UNCOVERED
+        return _rank_or_covered(metrics)
+
+    part = resolved.get("part")
+    if part:
+        if part not in (part_ids or set()):
+            return GAP_UNCOVERED
+        return _rank_or_covered(metrics)
+
+    return GAP_UNRESOLVED
 
 
 # ═══════════════════════════ weight (SPEC §3.6) — pure, versioned ═══════════════════════════
@@ -306,13 +358,17 @@ def build_demand_items(
     recipe_pairs: set[str] | None = None,
     today: str | None = None,
     prior_first_seen: dict[str, str] | None = None,
+    part_ids: set[str] | None = None,
 ) -> list[dict]:
     """The pure miner (§3): normalize -> floor-filter -> resolve -> dedup/merge -> weight ->
     classify -> emit a ranked `List[DemandItem]` (schema §9), NO network. `gsc_query_rows` /
     `gsc_query_page_rows` / `ga4_searchterm_raw_rows` are the raw Composio row shapes (see
-    `_pull_live`) — pass realistic fixtures here for offline testing."""
+    `_pull_live`) — pass realistic fixtures here for offline testing. `part_ids` is the
+    catalogued chip/part id universe (`_catalogued_part_ids()` in the live pipeline) that
+    `classify_gap` checks part demand against (§4's part/chip fix)."""
     firmware_ids = firmware_ids if firmware_ids is not None else set()
     recipe_pairs = recipe_pairs if recipe_pairs is not None else set()
+    part_ids = part_ids if part_ids is not None else set()
     today = today or dt.date.today().isoformat()
     prior_first_seen = prior_first_seen or {}
 
@@ -358,7 +414,7 @@ def build_demand_items(
         weight = round(
             gsc_weight(impressions, clicks, ctr, position) + firstparty_weight(events, g["zero_result"]), 2)
         gap = classify_gap(g["resolved"], firmware_ids, recipe_pairs,
-                           {"impressions": impressions, "ctr": ctr, "position": position})
+                           {"impressions": impressions, "ctr": ctr, "position": position}, part_ids)
         term = g["display_term"]
         resolved_out = g["resolved"] if any(g["resolved"].values()) else None
         items.append({
@@ -507,6 +563,7 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
     live = _pull_live(days)
     firmware_ids = tools.catalogued_firmware_ids()
     recipe_pairs = _recipe_pairs()
+    part_ids = _catalogued_part_ids()
     today = dt.date.today().isoformat()
     prior_first_seen = _prior_first_seen_map(_latest_prior_snapshot(demand_dir))
 
@@ -516,7 +573,7 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
     items = build_demand_items(
         live["gsc_query_rows"], live["gsc_query_page_rows"], ga4_raw,
         firmware_ids=firmware_ids, recipe_pairs=recipe_pairs,
-        today=today, prior_first_seen=prior_first_seen,
+        today=today, prior_first_seen=prior_first_seen, part_ids=part_ids,
     )
     write_snapshot(items, d2_available, live["window"], today, demand_dir)
     write_unresolved(items, demand_dir)
