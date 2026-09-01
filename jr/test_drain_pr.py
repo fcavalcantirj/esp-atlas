@@ -189,6 +189,73 @@ def test_authored_does_not_record_when_pr_creation_fails(fixture_firmware, tmp_p
     assert not ledger_path.exists()
 
 
+# ─────────────────────────── (e) authored: Telegram nudge on stdout (summary + PR link) ───────────────────────────
+
+# A coding-domain batch where one entry is DELIBERATELY mislabeled so the deterministic "⚠️ Review"
+# flag fires with NO LLM — exactly the real cron box (no GROQ_API_KEY).
+NUDGE_IDS = ["zzz-test-fixture-nudge-bruce", "zzz-test-fixture-nudge-radio"]
+NUDGE_FW = {
+    "zzz-test-fixture-nudge-bruce": {
+        "name": "Bruce", "url": "https://github.com/pr3y/Bruce",
+        "category": "pentest", "caps": "[wifi, ble, ir]",
+    },
+    # Labeled `home` but it is clearly a media/audio player -> Jr flags its own uncertain call.
+    "zzz-test-fixture-nudge-radio": {
+        "name": "ESP32 Internet Radio Player", "url": "https://github.com/example/esp32-internet-radio",
+        "category": "home", "caps": "[wifi, audio]",
+    },
+}
+
+
+@pytest.fixture
+def nudge_firmware():
+    for fid, m in NUDGE_FW.items():
+        d = tools.FIRMWARE_DIR / fid
+        d.mkdir(parents=True, exist_ok=True)
+        (d / "firmware.md").write_text(
+            f"---\nid: {fid}\nname: {m['name']}\nurl: {m['url']}\n"
+            f"category: {m['category']}\ncapabilities: {m['caps']}\nsocs: [esp32-s3]\n---\n\nFirmware.\n"
+        )
+    yield
+    for fid in NUDGE_FW:
+        shutil.rmtree(tools.FIRMWARE_DIR / fid, ignore_errors=True)
+
+
+def test_authored_prints_summary_and_pr_link_to_stdout(nudge_firmware, capsys, monkeypatch):
+    """On the real cron box there is NO GROQ_API_KEY, yet main() must still print the DETERMINISTIC
+    summary (category breakdown + the ⚠️ Review flag) AND the PR link to stdout — that stdout block
+    is what the Telegram cron delivers verbatim."""
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)  # cron box has no key -> deterministic body
+    git, gh = _recorder(), _recorder(stdout="https://github.com/x/y/pull/42\n")
+
+    drain_pr.main(run_drain=lambda: {"authored": NUDGE_IDS}, git=git, gh=gh, now=NOW)
+
+    out = capsys.readouterr().out
+    # Deterministic category breakdown reached stdout (no LLM required).
+    assert "Categories:" in out and "home 1" in out and "pentest 1" in out
+    # The self-flagged low-confidence call is surfaced in the nudge.
+    assert "Review" in out
+    assert "zzz-test-fixture-nudge-radio" in out and "labeled home" in out
+    # The PR link + branch are on the final line so the maintainer can jump to the PR.
+    assert "https://github.com/x/y/pull/42" in out
+    assert "jr-drain-20260901-0846" in out
+
+
+def test_authored_still_opens_pr_when_summary_present(nudge_firmware, monkeypatch):
+    """The summary is prepended to the PR body AND the PR is still opened normally."""
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    git, gh = _recorder(), _recorder(stdout="https://github.com/x/y/pull/42\n")
+
+    result = drain_pr.main(run_drain=lambda: {"authored": NUDGE_IDS}, git=git, gh=gh, now=NOW)
+
+    pr_call = next(c for c in gh.calls if c[:2] == ("pr", "create"))
+    body = pr_call[pr_call.index("--body") + 1]
+    assert "Categories:" in body  # the same summary content is reused in the PR body
+    assert "guard" in body.lower() and "green" in body.lower()
+    assert result["pr"]["pr_ok"] is True
+    assert "Categories:" in result["pr"]["summary"]  # summary computed once, returned for reuse
+
+
 # ─────────────────────────── (b) authored empty: no branch, no commit, no PR ───────────────────────────
 
 def test_empty_authored_touches_no_git_or_gh(capsys):

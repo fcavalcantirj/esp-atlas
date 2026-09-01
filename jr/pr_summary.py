@@ -1,17 +1,23 @@
-"""EspAtlas Jr — best-effort LLM smart-summary for the catalog-drain PR DESCRIPTION only.
+"""EspAtlas Jr — deterministic drain summary (with an optional LLM headline garnish).
 
-This module writes PROSE for the top of a drain PR body. It NEVER writes into any data/ file,
-source, firmware.md, recipe, or the cited list — the deterministic drain (jr/drain.py) and the
-guard stay 100% LLM-free. Everything here is strictly additive to the PR description and strictly
-best-effort: if GROQ_API_KEY is unset, the groq/httpx client isn't importable, the call errors,
-or it exceeds a short timeout, `summarize()` returns None and drain_pr.py falls back to its terse
-cited template. The drain PR MUST always open — nothing here may block, crash, or slow it.
+This module builds the summary that goes BOTH at the top of a drain PR body AND, verbatim, into
+the Telegram cron nudge (so the maintainer can read the batch without opening the PR). It NEVER
+writes into any data/ file, source, firmware.md, recipe, or the cited list — the deterministic
+drain (jr/drain.py) and the guard stay 100% LLM-free. Everything here is strictly additive and
+strictly best-effort: the drain PR MUST always open — nothing here may block, crash, or slow it.
 
 The summary is derived ONLY from the deterministic facts the drain already authored (id, name,
-category, url, capabilities, board, and optional stars). The LLM writes ONLY the natural-language
-headline; the category breakdown, the notable picks, and — most importantly — the "Review these"
-low-confidence flags are computed deterministically here so Jr can flag its OWN uncertain category
-calls without an LLM ever inventing firmware, versions, or claims.
+category, url, capabilities, board, and optional stars). The category breakdown, the notable picks,
+and — most importantly — the "⚠️ Review" low-confidence flags are computed deterministically here
+so Jr can flag its OWN uncertain category calls without an LLM ever inventing firmware, versions,
+or claims. These deterministic parts ALWAYS render whenever `facts` is non-empty.
+
+The LLM writes ONLY an optional one-line headline that is PREPENDED as garnish when a client
+resolves (GROQ_API_KEY present or an injected client) AND the call succeeds. On any LLM
+failure/timeout/missing key the headline is simply omitted and the deterministic body is still
+returned. `summarize()` returns None ONLY when `facts` is empty. The rendering is deliberately
+plain (Telegram-friendly): a headline line, a "Categories:" line, a "Notable:" line, an
+"⚠️ Review:" line, and an "Entries:" line — no heavy markdown that reads badly in Telegram.
 
 Interface mirrors esp_atlas_core.llm.GroqClient: any injected `client` must expose
 `.complete(system_prompt, user_prompt, temperature=0) -> str` — tests inject a fake, so no real
@@ -136,38 +142,47 @@ def _call_headline(client, system_prompt: str, user_prompt: str, timeout: float)
 
 
 def summarize(facts: list[dict], *, client=None, timeout: float = DEFAULT_TIMEOUT_SECONDS, env=None):
-    """Return a markdown smart-summary string for the drain PR body, or None (best-effort).
+    """Return the plain, Telegram-friendly drain summary string, or None only when `facts` is empty.
 
     `facts` is the batch's deterministic facts: a list of {id, name, category, url, capabilities,
-    board} (optional `stars`). The category breakdown, notable picks, and low-confidence "Review
-    these" flags are computed here deterministically; the LLM writes only the headline. Returns
-    None whenever no headline could be produced (no key, no client, error, timeout, empty) so the
-    caller falls back to the terse cited template. Never raises."""
+    board} (optional `stars`). The category breakdown, notable picks, and low-confidence "⚠️ Review"
+    flags are computed here deterministically and ALWAYS render for a non-empty batch — no LLM
+    needed. An optional one-line LLM headline is PREPENDED as garnish, but only when a client
+    resolves (GROQ_API_KEY present or an injected client) AND the call succeeds; on any LLM
+    failure/timeout/missing key it is simply omitted and the deterministic body is still returned.
+    The same string is delivered verbatim to Telegram and prepended to the PR body. Never raises."""
     try:
         if not facts:
             return None
         env = os.environ if env is None else env
         breakdown = _breakdown(facts)
 
-        resolved = _resolve_client(client, env)
-        if resolved is None:
-            return None
-        headline = _call_headline(resolved, SYSTEM_PROMPT, _build_user_prompt(facts, breakdown), timeout)
-        if not headline:
-            return None
+        parts: list[str] = []
 
-        parts = [headline, "", f"**Categories:** {breakdown}"]
+        # Optional LLM headline — garnish only. Any miss (no key, no client, error, timeout, empty)
+        # just omits this line; the deterministic body below always renders.
+        resolved = _resolve_client(client, env)
+        if resolved is not None:
+            headline = _call_headline(resolved, SYSTEM_PROMPT, _build_user_prompt(facts, breakdown), timeout)
+            if headline:
+                parts.append(headline)
+
+        parts.append(f"Categories: {breakdown}")
 
         notable = _notable(facts)
         if notable:
-            picks = " · ".join(f"`{e.get('id', '')}` ({e.get('category', '?')})" for e in notable)
-            parts += ["", f"**Notable:** {picks}"]
+            picks = " · ".join(f"{e.get('id', '')} ({e.get('category', '?')})" for e in notable)
+            parts.append(f"Notable: {picks}")
 
         flags = _review_flags(facts)
         if flags:
-            parts += ["", "**⚠️ Review these** — Jr's own low-confidence category calls, please double-check:"]
-            for f in flags:
-                parts.append(f"- `{f['id']}` — labeled `{f['category']}`, but {f['reason']}")
+            review = " · ".join(
+                f"{f['id']} (labeled {f['category']} — {f['reason']})" for f in flags
+            )
+            parts.append(f"⚠️ Review: {review}")
+
+        entries = " · ".join(str(e.get("id", "")) for e in facts)
+        parts.append(f"Entries: {entries}")
 
         return "\n".join(parts)
     except Exception:
