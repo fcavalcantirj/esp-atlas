@@ -276,6 +276,20 @@ def test_get_part_unknown_id_returns_none(built_db_path):
     assert get_part("does-not-exist", db_path=built_db_path) is None
 
 
+def test_get_part_soc_includes_grounded_faq(built_db_path):
+    part = get_part("esp32-c6", db_path=built_db_path)
+    assert len(part["faq"]) >= 4
+    assert {"id", "question", "answer"} == set(part["faq"][0])
+    ids = [item["id"] for item in part["faq"]]
+    assert "specs" in ids
+    assert "vs-sibling" in ids
+
+
+def test_get_part_board_and_module_have_empty_faq(built_db_path):
+    assert get_part("esp32-c6-devkitc-1", db_path=built_db_path)["faq"] == []
+    assert get_part("esp32-c6-wroom-1", db_path=built_db_path)["faq"] == []
+
+
 def test_brand_page_known_slug_returns_brand_and_results(built_db_path):
     page = brand_page("adafruit", db_path=built_db_path)
     assert page["brand"] == {"slug": "adafruit", "name": "Adafruit", "url": "https://www.adafruit.com"}

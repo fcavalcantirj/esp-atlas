@@ -47,12 +47,20 @@ export interface Chain {
   module: PartRecord | null;
 }
 
+/** One grounded Q&A pair (esp_atlas_core.faq) — only ever non-empty for type=="soc". */
+export interface FaqItem {
+  id: string;
+  question: string;
+  answer: string;
+}
+
 /** GET /parts/{id}: the flat record plus its own frontmatter, prose, parents and siblings. */
 export interface PartDetail extends PartRecord {
   frontmatter: Record<string, unknown>;
   body: string;
   chain: Chain;
   related: PartRecord[];
+  faq: FaqItem[];
 }
 
 export interface Facet {

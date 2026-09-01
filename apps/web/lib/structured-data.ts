@@ -3,6 +3,7 @@
 // not a shop and `price_tier` is editorial (see SPEC.md anti-goals).
 import type { BrandFacet, Firmware, PartDetail, PartRecord } from "@/lib/api";
 import { brandLabel } from "@/lib/brand";
+import { faqPage } from "@/lib/faq";
 import { firstSentence, typeLabel, typePlural } from "@/lib/format";
 import { typeIndexPath } from "@/lib/routes";
 import { dataFolderUrl, repoUrl } from "@/lib/github";
@@ -342,5 +343,7 @@ export function partGraph(part: PartDetail) {
         ]
       : [];
 
-  return { "@context": CONTEXT, "@graph": [organization(), website(), article, breadcrumb, ...hub] };
+  const faq = part.type === "soc" && part.faq.length > 0 ? [faqPage(url, part.faq)] : [];
+
+  return { "@context": CONTEXT, "@graph": [organization(), website(), article, breadcrumb, ...hub, ...faq] };
 }

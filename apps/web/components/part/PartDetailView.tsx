@@ -1,6 +1,7 @@
 import BoardFirmware from "@/components/part/BoardFirmware";
 import ChipChain from "@/components/part/ChipChain";
 import PartBody from "@/components/part/PartBody";
+import PartFaq from "@/components/part/PartFaq";
 import PartHeader from "@/components/part/PartHeader";
 import RelatedParts from "@/components/part/RelatedParts";
 import SocHub from "@/components/part/SocHub";
@@ -45,6 +46,7 @@ export default function PartDetailView({
         <SpecGroups part={part} />
         {part.type === "board" && boardFirmwareRows !== null && <BoardFirmware rows={boardFirmwareRows} />}
         {isHub && <SocHub part={part} />}
+        {part.type === "soc" && <PartFaq items={part.faq} />}
         {notes.length > 0 && (
           <section aria-label="Notes">
             <h2>Notes</h2>

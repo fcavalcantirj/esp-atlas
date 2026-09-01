@@ -17,6 +17,7 @@ import json
 import re
 
 from esp_atlas_core import db as dbmod
+from esp_atlas_core import faq as faqmod
 from esp_atlas_core.brands import get_brand, list_brands
 
 # CLI/public filter key -> parts column (or handler) it maps to
@@ -193,6 +194,13 @@ def _fetch_record(conn, part_id, brands_lookup):
     return _row_to_record(row, brands_lookup) if row else None
 
 
+def _load_soc_frontmatters(conn):
+    """{soc_id: frontmatter_dict} for every soc in the db -- what faq.generate_faq
+    needs to pick a vs-sibling comparison for one soc's own FAQ."""
+    rows = conn.execute("SELECT id, frontmatter_json FROM parts WHERE type = 'soc'").fetchall()
+    return {r["id"]: json.loads(r["frontmatter_json"]) for r in rows}
+
+
 def get_part(part_id, db_path=None):
     """One part by id, with everything the detail page needs, or None.
 
@@ -204,6 +212,7 @@ def get_part(part_id, db_path=None):
                    part inherits from (a soc has neither; a bare-chip board has no module)
       related      other parts on the same soc (and, for a module, boards using it),
                    excluding the part itself, ordered by type then name
+      faq          grounded Q&A pairs (esp_atlas_core.faq), soc parts only — [] otherwise
     """
     brands_lookup = list_brands(db_path=db_path)
     conn = dbmod.connect(db_path)
@@ -230,6 +239,14 @@ def get_part(part_id, db_path=None):
             (part_id, soc_id or "", module_id or "", soc_id, part_id),
         ).fetchall()
         record["related"] = [_row_to_record(r, brands_lookup) for r in related_rows]
+
+        if record["type"] == "soc":
+            soc_by_id = _load_soc_frontmatters(conn)
+            items = faqmod.generate_faq(part_id, record["frontmatter"], soc_by_id)
+            record["faq"] = faqmod.public_items(items)
+        else:
+            record["faq"] = []
+
         return record
     finally:
         conn.close()
