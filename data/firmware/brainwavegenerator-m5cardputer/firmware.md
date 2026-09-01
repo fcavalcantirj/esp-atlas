@@ -3,7 +3,7 @@ id: brainwavegenerator-m5cardputer
 type: firmware
 name: BrainWaveGenerator-M5Cardputer
 url: https://github.com/aat440hz/BrainWaveGenerator-M5Cardputer
-category: home
+category: multi
 maintainer: aat440hz
 capabilities:
 - on-device-web-ui
