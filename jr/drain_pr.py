@@ -21,10 +21,44 @@ _JR_DIR = Path(__file__).resolve().parent
 if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
 import ledger  # noqa: E402
+import pr_summary  # noqa: E402
 import tools  # noqa: E402
 from drain import run_drain as _run_drain  # noqa: E402
 
 REPO = tools.REPO
+
+
+def _facts(authored: list[str]) -> list[dict]:
+    """The deterministic facts for each authored id — {id, name, category, url, capabilities,
+    board} — read straight off the freshly-authored firmware.md frontmatter (and its recipe's
+    board), never invented. Feeds the best-effort smart summary only; never written back."""
+    facts = []
+    for fid in authored:
+        fw = tools._frontmatter(tools.FIRMWARE_DIR / fid / "firmware.md")
+        board = ""
+        for rdir in sorted((REPO / "data/recipes").glob(f"*__{fid}")):
+            board = tools._frontmatter(rdir / "recipe.md").get("board", "") or ""
+            if board:
+                break
+        facts.append({
+            "id": fid,
+            "name": fw.get("name", fid),
+            "category": fw.get("category", ""),
+            "url": fw.get("url", ""),
+            "capabilities": fw.get("capabilities") or [],
+            "board": board,
+        })
+    return facts
+
+
+def _smart_summary(authored: list[str]) -> str | None:
+    """Best-effort LLM smart summary for the PR description. ANY failure — no key, no client,
+    error, timeout — yields None so the PR still opens with the terse cited template. Never
+    raises: a summary problem must never stop the drain PR."""
+    try:
+        return pr_summary.summarize(_facts(authored))
+    except Exception:
+        return None
 
 
 def default_git(*args: str) -> subprocess.CompletedProcess:
@@ -54,10 +88,15 @@ def _new_paths(authored: list[str]) -> list[str]:
     return paths
 
 
-def _pr_body(authored: list[str]) -> str:
+def _pr_body(authored: list[str], summary: str | None = None) -> str:
     """Every authored firmware id with its source URL, plus a guard-green statement — read
-    straight off the freshly-authored firmware.md frontmatter, never invented."""
-    lines = ["Jr's catalog drain — new entries this run:", ""]
+    straight off the freshly-authored firmware.md frontmatter, never invented. If a best-effort
+    smart `summary` was produced it is prepended ABOVE the terse cited list (prose only — the
+    cited list below is unchanged and remains the ground truth)."""
+    lines = []
+    if summary:
+        lines += [summary, "", "---", ""]
+    lines += ["Jr's catalog drain — new entries this run:", ""]
     for fid in authored:
         fw = tools._frontmatter(tools.FIRMWARE_DIR / fid / "firmware.md")
         lines.append(f"- `{fid}` — {fw.get('url', '')}")
@@ -111,7 +150,7 @@ def open_drain_pr(authored: list[str], git=default_git, gh=default_gh,
     git("commit", "-m", subject)
     git("push", "-u", "origin", branch)
     pr = gh("pr", "create", "--base", "main", "--head", branch,
-           "--title", subject, "--body", _pr_body(authored))
+           "--title", subject, "--body", _pr_body(authored, _smart_summary(authored)))
     pr_ok = pr.returncode == 0
     pr_url = pr.stdout.strip()
     if pr_ok:
