@@ -46,11 +46,16 @@ notes:
 - Wi-Fi 6 / BLE 5 / Zigbee 3.0 / Thread 1.3 (802.15.4)
 - Dimensions only in a separate Dimensions PDF (omitted)
 - 'io.gpio_free=17 DERIVED, not quoted (SPEC-io-power.md §5.3). Headers J1+J3 break
-  out 22 pads total (quoted from the user guide pin tables: J1 = GPIO 0-8,14; J3
-  = GPIO 9,12-13,15-23). Subtracting esp32-c6''s soc.reserved_pins that are exposed
+  out 22 pads total (quoted from the user guide pin tables: J1 = GPIO 0-8,14; J3 =
+  GPIO 9,12-13,15-23). Subtracting esp32-c6''s soc.reserved_pins that are exposed
   -- strapping {8,9,15} exposed out of {8,9,10,11,15} (3) and usb_flash_tied {12,13}
   (2) -- gives 22 - 3 - 2 = 17. Math not vendor-stated; verify before treating as
   exact.'
+download_mode:
+  mode: manual
+  steps: Holding down Boot and then pressing Reset initiates Firmware Download mode
+    for downloading firmware through the serial port
+getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitm-1/user_guide.html
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitm-1/user_guide.html
@@ -61,6 +66,12 @@ sources:
 - field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitm-1/user_guide.html
   verified: '2026-08-26'
+- field: download_mode
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitm-1/user_guide.html
+  verified: '2026-09-01'
+- field: getting_started
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitm-1/user_guide.html
+  verified: '2026-09-01'
 ---
 
 # ESP32-C6-DevKitM-1

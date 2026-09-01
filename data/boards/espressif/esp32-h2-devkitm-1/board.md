@@ -43,10 +43,15 @@ notes:
 - Addressable RGB LED on GPIO8
 - Dimensions only in a separate Dimensions PDF (omitted)
 - 'io.gpio_free=14 DERIVED, not quoted (SPEC-io-power.md §5.3). Headers J1+J3 break
-  out all 19 pads on the chip (quoted from the user guide pin tables: J1 = GPIO
-  0-5,13-14; J3 = GPIO 8-12,22-27). Subtracting esp32-h2''s soc.reserved_pins that
-  are exposed -- strapping {8,9,25} (3) and usb_flash_tied {26,27} (2) -- gives
-  19 - 3 - 2 = 14. Math not vendor-stated; verify before treating as exact.'
+  out all 19 pads on the chip (quoted from the user guide pin tables: J1 = GPIO 0-5,13-14;
+  J3 = GPIO 8-12,22-27). Subtracting esp32-h2''s soc.reserved_pins that are exposed
+  -- strapping {8,9,25} (3) and usb_flash_tied {26,27} (2) -- gives 19 - 3 - 2 = 14.
+  Math not vendor-stated; verify before treating as exact.'
+download_mode:
+  mode: manual
+  steps: Holding down Boot and then pressing Reset initiates Firmware Download mode
+    for downloading firmware through the serial port
+getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
@@ -57,6 +62,12 @@ sources:
 - field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
   verified: '2026-08-26'
+- field: download_mode
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
+  verified: '2026-09-01'
+- field: getting_started
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
+  verified: '2026-09-01'
 ---
 
 # ESP32-H2-DevKitM-1

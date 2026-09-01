@@ -42,8 +42,8 @@ io:
   - 38
   - 39
 notes:
-- Single micro-USB (power/flash/comms via on-board USB-to-UART bridge); classic
-  ESP32 has no native USB
+- Single micro-USB (power/flash/comms via on-board USB-to-UART bridge); classic ESP32
+  has no native USB
 - Bridge chip model not named in the official user guide (omitted)
 - Carries ESP32-MINI-1 or -1U SiP module, 4 MB flash integrated in the chip package;
   no PSRAM
@@ -55,6 +55,11 @@ notes:
   (5), input_only {34,35,36,39} (4), and usb_flash_tied {9,10} exposed out of {6,7,8,9,10,11}
   (2) -- gives 28 - 5 - 4 - 2 = 17. Math not vendor-stated; verify before treating
   as exact.'
+download_mode:
+  mode: manual
+  steps: Holding down Boot and then pressing Reset initiates Firmware Download mode
+    for downloading firmware through the serial port
+getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitm-1/user_guide.html
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitm-1/user_guide.html
@@ -65,6 +70,12 @@ sources:
 - field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitm-1/user_guide.html
   verified: '2026-08-26'
+- field: download_mode
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitm-1/user_guide.html
+  verified: '2026-09-01'
+- field: getting_started
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitm-1/user_guide.html
+  verified: '2026-09-01'
 ---
 
 # ESP32-DevKitM-1
