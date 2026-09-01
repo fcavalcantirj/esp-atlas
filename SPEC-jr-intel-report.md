@@ -43,15 +43,17 @@ same convention the cron layer already uses — so it's a signal, not noise.
 | # | Signal | Source · fetch | Warn trigger | Status |
 |---|---|---|---|---|
 | S1 | **Demand** | GSC/GA4 via Composio (`jr/demand.py`) | new high-weight `UNCOVERED`; a `RANKS_POORLY` worsening | **built ✅** |
-| S2 | **Upstream issues/discussions** | GitHub Issues + Discussions on each catalogued firmware repo, via `gh` | a **new-device request**, a **compat break**, a **bug** affecting a recipe we publish | **new — build first** |
-| S3 | **Our-repo issues/discussions** | esp-atlas's own GitHub Issues/Discussions, via `gh` | a **user-reported bad-data** report on one of our pages | new |
+| S2 | **Upstream firmware READMEs** | each catalogued firmware repo's **README** (raw/`gh api`) | the README **adds a new device/board** we don't cover, **changes a capability**, or **drops a device** (compat) — diffed vs our catalog | **new — build first** |
+| S3 | **OUR-repo bugs + discussions** | **esp-atlas's own** GitHub **Issues + Discussions** (fcavalcantirj/esp-atlas), via `gh` | a **user-reported bug / bad-data** on our pages, a feature request, a question | **new — build first** |
 | S4 | **Firmware releases** | GitHub Releases per catalogued firmware | a release whose `.bin`/device list **drifts** from our recipe | new |
 | S5 | **Liveness / dead sources** | HTTP-check every cited `sources[].url` | a **dead citation** (motto broken) or a redirect | new (reuse `check_sources_live` if present) |
 | S6 | **Recipe/compat drift** | firmware repo `User_Setup`/`#define`/README device lists vs our recipes | a recipe that **stopped matching** upstream | new |
 | S7 | **Manufacturer watch** | Espressif products/datasheets, M5 docs/M5Burner | a **new chip/board** the day a vendor posts it | new |
 
-Build order (§6) front-loads **S2/S3** — the discussions/bugs watch — because that's the
-signal Felipe is fully blind on today and explicitly asked for.
+Build order (§6) front-loads **S2/S3** — the two are *different sources* (do not conflate):
+**S2 = OTHER repos' READMEs** (what upstream firmware now supports, vs our catalog);
+**S3 = OUR repo's bugs + discussions** (what users report about esp-atlas itself). This is the
+signal Felipe is blind on today and explicitly asked for.
 
 ---
 
@@ -106,10 +108,13 @@ rule: **if it doesn't need Felipe, it isn't a warning.**
 
 ## 6. Build order (one signal at a time, validate each — Felipe's rule)
 
-1. **S2 + S3 — issues/discussions/bug watch** *(first, per Felipe)*: `gh`-fetch new
-   Issues/Discussions on catalogued firmware repos + our own repo, classify
-   (new-device / compat / bug / bad-data), resolve entity via scorer maps, ledger-dedup,
-   emit rows + warnings. TDD with fixture GitHub payloads. Read-only.
+1. **S2 + S3 — the watch** *(first, per Felipe)* — two distinct sources:
+   - **S2 = OTHER repos' READMEs:** fetch each catalogued firmware repo's README, diff vs
+     last-seen (ledger) and vs our catalog → new device/board support, capability change,
+     dropped device. Resolve entity via scorer maps.
+   - **S3 = OUR repo's bugs + discussions:** `gh`-fetch new Issues + Discussions on
+     fcavalcantirj/esp-atlas, classify (bug / bad-data / feature-request / question).
+   Both ledger-deduped, emit rows + warnings. TDD with fixture payloads. Read-only.
 2. **S5 — liveness/dead-sources**: HTTP-check cited sources, warn on dead/redirect.
 3. **S4 — release/version-drift**: GitHub Releases vs our recipe version.
 4. **Consolidate — the report**: daily pulse + weekly deep, WARNINGS section, `docs/intel/`
