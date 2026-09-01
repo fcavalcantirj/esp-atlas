@@ -3,6 +3,7 @@ import FlashAction from "@/components/flash/FlashAction";
 import TrustTierBadge from "@/components/TrustTierBadge";
 import type { Recipe } from "@/lib/api";
 import { UNKNOWN_HANDOFF, type FlashHandoff } from "@/lib/esp-web-tools";
+import type { DownloadMode } from "@/lib/troubleshooter";
 import { flashMethodLabel, RECIPE_TIER_LABEL, RECIPE_TIER_ORDER } from "@/lib/format";
 
 // The board <-> firmware edge, from either side: a board page groups its
@@ -21,6 +22,8 @@ export interface RecipeRow {
   handoff?: FlashHandoff;
   /** The board's cited `usb.connector`, when known on this page. */
   usbConnector?: string | null;
+  /** The board's cited `download_mode` (board page only) — feeds the flash panel's download-mode hint. */
+  downloadMode?: DownloadMode | null;
 }
 
 export default function RecipeGroupList({ rows }: { rows: RecipeRow[] }) {
@@ -39,7 +42,7 @@ export default function RecipeGroupList({ rows }: { rows: RecipeRow[] }) {
         <div key={group.status} className="recipe-tier-group">
           <h3 className="recipe-tier-title">{RECIPE_TIER_LABEL[group.status] ?? group.status}</h3>
           <ul className="recipe-list">
-            {group.items.map(({ recipe, href, name, meta, boardName, firmwareName, handoff, usbConnector }) => {
+            {group.items.map(({ recipe, href, name, meta, boardName, firmwareName, handoff, usbConnector, downloadMode }) => {
               const flash = flashMethodLabel(recipe.flash?.method);
               return (
                 <li key={recipe.id} className="recipe-row">
@@ -60,6 +63,7 @@ export default function RecipeGroupList({ rows }: { rows: RecipeRow[] }) {
                     firmwareName={firmwareName}
                     handoff={handoff ?? UNKNOWN_HANDOFF}
                     usbConnector={usbConnector ?? null}
+                    downloadMode={downloadMode ?? null}
                   />
                 </li>
               );

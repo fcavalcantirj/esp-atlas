@@ -9,6 +9,7 @@ import { track } from "@/lib/analytics";
 import { ensureEspWebTools, isManifest, manifestUrlFor, type FlashHandoff, type Manifest } from "@/lib/esp-web-tools";
 import { flashMethodLabel } from "@/lib/format";
 import { hostOf } from "@/lib/analytics";
+import { downloadModeView, type DownloadMode } from "@/lib/troubleshooter";
 
 // The Flash Wizard's per-recipe action (SPEC-wizard "The Flash Wizard" + P2b).
 // Opening the panel decides the rail: the manifest URL is preflighted and only a
@@ -36,6 +37,8 @@ interface FlashActionProps {
   handoff: FlashHandoff;
   /** The board's cited `usb.connector`, when the record has one. */
   usbConnector?: string | null;
+  /** The board's cited `download_mode` (board page), for the plug-in hint. Absent -> generic BOOT line. */
+  downloadMode?: DownloadMode | null;
 }
 
 // What each trust tier actually asserts (SPEC-wizard "Trust tiers") — the
@@ -112,6 +115,7 @@ export default function FlashAction({
   firmwareName,
   handoff,
   usbConnector = null,
+  downloadMode = null,
 }: FlashActionProps) {
   const [phase, setPhase] = useState<Phase>({ kind: "closed" });
   const [consent, setConsent] = useState(false);
@@ -128,6 +132,10 @@ export default function FlashAction({
   // Which rail: our generated manifest + streaming proxy, or the project's own manifest.
   const projectRail = method === "esp-web-tools";
   const tierClaim = (TIER_CLAIM[recipe.status] ?? ((board) => `${recipe.status} on ${board}.`))(boardName);
+  // The board's cited download-mode steps when known; otherwise the generic
+  // BOOT line. The esp-web-install-button behavior is unaffected by this hint.
+  const dmView = downloadModeView(downloadMode);
+  const usbText = usbConnector ? ` (${usbConnector.toUpperCase()})` : "";
 
   async function open() {
     const gen = ++generation.current;
@@ -280,9 +288,12 @@ export default function FlashAction({
               <span slot="not-allowed" className="flash-slot-note">Web Serial only works on HTTPS pages (or localhost).</span>
             </esp-web-install-button>
             <p className="muted flash-hint">
-              Plug the board in over USB{usbConnector ? ` (${usbConnector.toUpperCase()})` : ""} and pick its port. The flasher resets
-              the chip itself; hold BOOT while connecting only if it fails to enter download mode.
+              Plug the board in over USB{usbText} and pick its port.{" "}
+              {dmView.isGeneric
+                ? "The flasher resets the chip itself; hold BOOT while connecting only if it fails to enter download mode."
+                : dmView.steps}
             </p>
+            {!dmView.isGeneric && dmView.note && <p className="muted flash-hint">{dmView.note}</p>}
           </>
         )}
 
@@ -308,9 +319,12 @@ export default function FlashAction({
               </ul>
             )}
             <p className="muted flash-hint">
-              Plug the board in over USB{usbConnector ? ` (${usbConnector.toUpperCase()})` : ""}; that flasher resets the chip itself.
-              Hold BOOT while connecting only if it fails to enter download mode.
+              Plug the board in over USB{usbText}; that flasher resets the chip itself.{" "}
+              {dmView.isGeneric
+                ? "Hold BOOT while connecting only if it fails to enter download mode."
+                : dmView.steps}
             </p>
+            {!dmView.isGeneric && dmView.note && <p className="muted flash-hint">{dmView.note}</p>}
           </div>
         )}
       </div>

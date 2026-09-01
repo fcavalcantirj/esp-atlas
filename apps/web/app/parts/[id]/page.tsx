@@ -12,14 +12,30 @@ import { asString, fmObject } from "@/lib/frontmatter";
 import { boardFirmwareRows } from "@/lib/recipe-rows";
 import { SITE_NAME } from "@/lib/site";
 import { partGraph } from "@/lib/structured-data";
+import type { DownloadMode } from "@/lib/troubleshooter";
 
 // Two API responses joined for display (lib/recipe-rows.ts); a failed recipes
 // fetch yields no rows rather than an error.
-async function fetchBoardFirmwareRows(boardId: string, boardName: string, usbConnector: string | null): Promise<RecipeRow[]> {
+async function fetchBoardFirmwareRows(
+  boardId: string,
+  boardName: string,
+  usbConnector: string | null,
+  downloadMode: DownloadMode | null,
+): Promise<RecipeRow[]> {
   const [recipesResult, firmwareResult] = await Promise.all([fetchRecipesForBoard(boardId), fetchFirmwareList()]);
   if (recipesResult.status !== "ok") return [];
   const firmware = firmwareResult.status === "ok" ? firmwareResult.data.results : [];
-  return boardFirmwareRows(recipesResult.data.results, firmware, boardName, usbConnector);
+  return boardFirmwareRows(recipesResult.data.results, firmware, boardName, usbConnector, downloadMode);
+}
+
+// The board's cited download_mode frontmatter (mode/steps/note), for the flash
+// panel's per-board download-mode hint. Absent on many records (cite-or-omit).
+function downloadModeFromFrontmatter(fm: Record<string, unknown>): DownloadMode | null {
+  const dm = fmObject(fm, "download_mode");
+  if (!dm) return null;
+  const mode = asString(dm.mode);
+  if (!mode) return null;
+  return { mode, steps: asString(dm.steps), note: asString(dm.note) };
 }
 
 // Server-rendered so every part page ships with its own title/description for
@@ -57,9 +73,10 @@ export default async function PartPage({ params }: PageProps<"/parts/[id]">) {
 
   // The board's cited USB connector feeds the flash panel's plug-in hint; absent on many records (cite-or-omit).
   const usbConnector = result.status === "ok" ? asString(fmObject(result.data.frontmatter, "usb")?.connector) : null;
+  const downloadMode = result.status === "ok" ? downloadModeFromFrontmatter(result.data.frontmatter) : null;
   const boardFirmwareRows =
     result.status === "ok" && result.data.type === "board"
-      ? await fetchBoardFirmwareRows(id, result.data.name, usbConnector)
+      ? await fetchBoardFirmwareRows(id, result.data.name, usbConnector, downloadMode)
       : null;
 
   return (

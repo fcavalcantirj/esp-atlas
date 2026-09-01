@@ -2,6 +2,7 @@ import type { RecipeRow } from "@/components/RecipeGroupList";
 import type { Firmware, PartRecord, Recipe } from "@/lib/api";
 import { brandLabel } from "@/lib/brand";
 import { handoffFor } from "@/lib/esp-web-tools";
+import type { DownloadMode } from "@/lib/troubleshooter";
 
 // A board page's "Firmware for this board" rows: recipes name their firmware
 // only by id, so the display name/category and the handoff links come from a
@@ -12,6 +13,7 @@ export function boardFirmwareRows(
   firmware: Firmware[],
   boardName: string,
   usbConnector: string | null,
+  downloadMode: DownloadMode | null = null,
 ): RecipeRow[] {
   const firmwareById = new Map(firmware.map((fw) => [fw.id, fw]));
   return recipes.map((recipe) => {
@@ -26,6 +28,7 @@ export function boardFirmwareRows(
       firmwareName,
       handoff: handoffFor(fw),
       usbConnector,
+      downloadMode,
     };
   });
 }

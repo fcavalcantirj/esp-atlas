@@ -33,17 +33,17 @@ export interface DownloadModeView {
 }
 
 /**
- * Resolve the download-mode instructions to show for a selected board.
+ * Resolve the download-mode instructions to show for a bare `download_mode`
+ * record (from a board's frontmatter or GET /api/boards/boot).
  *
- * No board (default option) -> the generic ESP32 sequence. An 'auto' board
- * needs no buttons at all. A 'manual' board shows its cited `steps`, falling
- * back to the generic sequence only if the record somehow carries none.
+ * No record -> the generic ESP32 sequence. An 'auto' board needs no buttons at
+ * all. A 'manual' board shows its cited `steps`, falling back to the generic
+ * sequence only if the record somehow carries none.
  */
-export function resolveDownloadMode(board: BootBoard | null | undefined): DownloadModeView {
-  if (!board || !board.download_mode) {
+export function downloadModeView(dm: DownloadMode | null | undefined): DownloadModeView {
+  if (!dm) {
     return { steps: GENERIC_DOWNLOAD_STEPS, note: null, isGeneric: true };
   }
-  const dm = board.download_mode;
   const note = dm.note && dm.note.trim() ? dm.note : null;
   if (dm.mode === "auto") {
     return {
@@ -54,4 +54,12 @@ export function resolveDownloadMode(board: BootBoard | null | undefined): Downlo
   }
   const steps = dm.steps && dm.steps.trim() ? dm.steps : GENERIC_DOWNLOAD_STEPS;
   return { steps, note, isGeneric: false };
+}
+
+/**
+ * Resolve the download-mode instructions to show for a selected board.
+ * Thin wrapper over {@link downloadModeView} for the troubleshooter picker.
+ */
+export function resolveDownloadMode(board: BootBoard | null | undefined): DownloadModeView {
+  return downloadModeView(board?.download_mode);
 }

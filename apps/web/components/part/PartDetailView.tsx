@@ -39,7 +39,11 @@ export default function PartDetailView({
       <div className="part-main">
         <PartHeader part={part} />
         {part.type === "board" && (
-          <VerifyBoard boardName={part.name} board={{ soc: part.soc_ref, flashMb: part.flash_mb, psramMb: part.psram_mb }} />
+          <VerifyBoard
+            boardName={part.name}
+            board={{ soc: part.soc_ref, flashMb: part.flash_mb, psramMb: part.psram_mb }}
+            defaultBoardId={part.id}
+          />
         )}
         <ChipChain part={part} />
         <PartBody body={part.body} />

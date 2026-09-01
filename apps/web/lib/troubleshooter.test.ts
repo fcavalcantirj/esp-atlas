@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { GENERIC_DOWNLOAD_STEPS, resolveDownloadMode, type BootBoard } from "./troubleshooter.ts";
+import { downloadModeView, GENERIC_DOWNLOAD_STEPS, resolveDownloadMode, type BootBoard } from "./troubleshooter.ts";
 
 // The real GET /api/boards/boot record for esp32-c5-devkitc-1 (see its
 // board.md frontmatter) — the board the /debug troubleshooter prefills.
@@ -44,4 +44,24 @@ test("an 'auto' board says no buttons are needed, not the generic sequence", () 
   assert.notEqual(view.steps, GENERIC_DOWNLOAD_STEPS);
   assert.match(view.steps, /automatically/i);
   assert.equal(view.isGeneric, false);
+});
+
+// downloadModeView is what the flash panel (FlashAction) uses directly, from a
+// board's frontmatter `download_mode` — no BootBoard wrapper.
+test("downloadModeView(undefined) is the generic fallback (board with no cited steps)", () => {
+  const view = downloadModeView(undefined);
+  assert.equal(view.steps, GENERIC_DOWNLOAD_STEPS);
+  assert.equal(view.isGeneric, true);
+  assert.equal(view.note, null);
+});
+
+test("downloadModeView renders a manual board's cited steps + note", () => {
+  const view = downloadModeView(C5.download_mode);
+  assert.equal(view.steps, C5.download_mode.steps);
+  assert.equal(view.note, C5.download_mode.note);
+  assert.equal(view.isGeneric, false);
+});
+
+test("resolveDownloadMode delegates to downloadModeView on the board's download_mode", () => {
+  assert.deepEqual(resolveDownloadMode(C5), downloadModeView(C5.download_mode));
 });

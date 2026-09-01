@@ -7,6 +7,7 @@ import SerialMonitor from "@/components/verify/SerialMonitor";
 import VerdictBadge from "@/components/verify/VerdictBadge";
 import { track } from "@/lib/analytics";
 import type { BootBoard } from "@/lib/troubleshooter";
+import { friendlySerialError } from "@/lib/serial-errors";
 import { matchBoard, type BoardRecord, type DetectedChip, type VerifyResult } from "@/lib/verify-board";
 import { detectChip } from "@/lib/verify-serial";
 
@@ -81,7 +82,10 @@ export default function VerifyBoard({ boardName, board, bootBoards, defaultBoard
       track("verify_error", { board: boardName });
       setPhase({
         kind: "error",
-        message: err instanceof Error ? err.message : "Could not read the chip — check the connection and try again.",
+        message: friendlySerialError(
+          err,
+          err instanceof Error ? err.message : "Could not read the chip — check the connection and try again.",
+        ),
       });
     }
   }
@@ -187,7 +191,7 @@ export default function VerifyBoard({ boardName, board, bootBoards, defaultBoard
           text="Streams whatever the firmware prints to UART, live, once the port is open — the plain 'watch it boot' debug loop."
         />
       </h3>
-      <SerialMonitor bootBoards={bootBoards} defaultBoardId={defaultBoardId} />
+      <SerialMonitor />
     </section>
   );
 }
