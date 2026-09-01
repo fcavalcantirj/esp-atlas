@@ -331,11 +331,11 @@ def test_default_fetch_meta_short_circuits_on_repo_error(monkeypatch):
 
 def test_run_drain_full_pipeline_authors_a_clean_candidate(cleanup_fixture):
     entry = {
-        "name": "Cardputer Zzz Test Fixture Firmware", "description": "WiFi recon tool for the Cardputer.",
+        "name": "Cardputer Zzz Test Fixture Firmware", "description": "WiFi deauth tool for the Cardputer.",
         "category": "cardputer", "github": f"https://github.com/octocat/{FIXTURE_ID}", "download": 777,
     }
     meta = {"full_name": f"octocat/{FIXTURE_ID}", "fork": False, "source_full_name": None, "stars": 55,
-            "description": "WiFi recon tool for the Cardputer.", "license": None, "readme_title": None}
+            "description": "WiFi deauth tool for the Cardputer.", "license": None, "readme_title": None}
 
     report = drain.run_drain(fetch_catalog=lambda: [entry], fetch_meta=lambda url: meta)
 

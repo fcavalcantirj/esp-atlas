@@ -268,6 +268,80 @@ def test_score_entry_skips_marauder_style_device_port_as_variant():
     assert "name_token_matches_catalogued" in result["reason"]
 
 
+# ─────────────── Bug 3: firmware_category mislabeled purely from bare wifi/ble ───────────────
+# Real bug: _category_from_capabilities() derived firmware_category from capability tokens alone,
+# and wifi/ble were in the pentest signal set — so ANY firmware that merely uses wifi (an
+# internet radio, an mp3 streamer, a brainwave generator) was labeled pentest. Fixed by
+# categorizing on PURPOSE first (a keyword classifier over the entry name + repo_meta
+# description/readme_title) and only falling back to capability signals when no purpose keyword
+# matches — with bare wifi/ble removed from that fallback's pentest signals.
+
+def _cardputer_entry(name, github, description=None):
+    return {
+        "name": name,
+        "description": description,
+        "category": "cardputer",
+        "github": github,
+        "download": 100,
+    }
+
+
+def _cardputer_repo_meta(full_name, description=None):
+    return {
+        "full_name": full_name,
+        "fork": False,
+        "source_full_name": None,
+        "stars": 5,
+        "description": description,
+    }
+
+
+@pytest.mark.parametrize("name,github,entry_desc,repo_desc,expected_category", [
+    ("WebRadio for M5Cardputer", "https://github.com/someone/m5cardputer-webradio",
+     "Internet radio streaming player for M5Stack Cardputer over WiFi.",
+     "Stream internet radio stations on your Cardputer over WiFi.",
+     "multi"),
+    ("MP3 Player for M5Cardputer", "https://github.com/someone/mp3playerform5cardputer",
+     "Local MP3 audio player for M5Stack Cardputer, browse and play files from an SD card.",
+     None,
+     "multi"),
+    ("Brainwave Generator", "https://github.com/someone/brainwavegenerator",
+     "Binaural beat and brainwave frequency generator for M5Stack, plays tones for meditation.",
+     None,
+     "multi"),
+    ("Ghost ESP", "https://github.com/someone/ghost-esp",
+     "WiFi/BLE offensive security toolkit for ESP32 — recon, capture, and more.",
+     "Ghost ESP — an offensive WiFi/BLE toolkit.",
+     "pentest"),
+    ("M5Gotchi", "https://github.com/someone/m5gotchi",
+     "A companion for M5Stack devices.",
+     "Pwnagotchi-inspired WiFi/BLE hacking companion for M5Stack devices.",
+     "pentest"),
+    ("Meshcore for Cardputer ADV", "https://github.com/sosprz/meshcore-cardputer-adv",
+     "Meshcore firmware port for the M5Stack Cardputer ADV.",
+     "Meshcore firmware port for the M5Stack Cardputer ADV.",
+     "mesh"),
+    ("BadCard", "https://github.com/someone/badcard",
+     "A HID device for M5Stamp.",
+     "BadCard turns your M5Stamp into a BadUSB keystroke-injection device.",
+     "badusb"),
+    ("Generic WiFi Sensor Node", "https://github.com/someone/generic-wifi-sensor",
+     "Connects to WiFi and reports sensor data periodically.",
+     "Connects to WiFi and reports sensor data periodically.",
+     "multi"),
+], ids=["m5cardputer-webradio", "mp3playerform5cardputer", "brainwavegenerator", "ghost-esp",
+       "m5gotchi", "meshcore-cardputer-adv", "badcard", "wifi-only-no-purpose-keyword"])
+def test_score_entry_categorizes_by_purpose_not_bare_wifi_or_ble(
+        name, github, entry_desc, repo_desc, expected_category):
+    entry = _cardputer_entry(name, github, entry_desc)
+    full_name = github.replace("https://github.com/", "")
+    repo_meta = _cardputer_repo_meta(full_name, repo_desc)
+    result = score_entry(entry, repo_meta, set(), set())
+    assert result["decision"] == "authored", f"{name}: expected authored, got {result}"
+    assert result["record"]["category"] == expected_category, (
+        f"{name}: expected category={expected_category!r}, got {result['record']['category']!r}")
+
+
 def test_score_entry_generic_shared_word_alone_does_not_false_skip():
     """A candidate that shares only the GENERIC chip word 'esp32' with a catalogued firmware
     (not its actual core name-token) must NOT be treated as a port — over-matching on a common
