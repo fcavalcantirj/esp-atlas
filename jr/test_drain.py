@@ -22,6 +22,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import drain  # noqa: E402
+import ledger  # noqa: E402
 import tools  # noqa: E402
 
 REPO = tools.REPO
@@ -77,6 +78,64 @@ def test_prefilter_keeps_clean_new_entry_sorted_by_download_desc():
 
 def test_prefilter_treats_missing_download_as_zero():
     entries = [{"name": "No Download Field", "github": "https://github.com/a/nodl"}]
+    kept = drain.prefilter(entries, CATALOGUED_REPOS, CATALOGUED_TOKENS)
+    assert len(kept) == 1
+
+
+# ─────────────────────────── prefilter x ledger (repo already proposed/rejected — deliverable 3) ───────────────────────────
+
+def _ledger_with(repo: str, status: str) -> dict:
+    """A ledger_state dict with one record for `repo`, at `status` — built through the real
+    ledger.py helpers (a tmp path, never the real jr/proposed_ledger.json) so this exercises the
+    actual on-disk shape drain.py will see, not a hand-rolled stand-in."""
+    import tempfile
+    tmp = Path(tempfile.mkstemp(suffix=".json")[1])
+    try:
+        firmware_id = repo.split("/")[-1]
+        ledger.record_proposed(firmware_id, repo, path=tmp)
+        if status != "proposed":
+            ledger.update_status(firmware_id, status, path=tmp)
+        return ledger.load_ledger(tmp)
+    finally:
+        tmp.unlink(missing_ok=True)
+
+
+def test_prefilter_drops_candidate_already_in_ledger_as_proposed():
+    """(a) a candidate already in the ledger as proposed is skipped by the drain."""
+    entries = [{"name": "Ghost ESP", "github": "https://github.com/jorgen/ghostesp", "download": 500}]
+    ledger_state = _ledger_with("jorgen/ghostesp", "proposed")
+    kept = drain.prefilter(entries, CATALOGUED_REPOS, CATALOGUED_TOKENS, ledger_state=ledger_state)
+    assert kept == []
+
+
+def test_prefilter_drops_candidate_already_in_ledger_as_rejected():
+    """(b) a candidate in the ledger as rejected is skipped by the drain."""
+    entries = [{"name": "Ghost ESP", "github": "https://github.com/jorgen/ghostesp", "download": 500}]
+    ledger_state = _ledger_with("jorgen/ghostesp", "rejected")
+    kept = drain.prefilter(entries, CATALOGUED_REPOS, CATALOGUED_TOKENS, ledger_state=ledger_state)
+    assert kept == []
+
+
+def test_prefilter_keeps_candidate_not_in_ledger():
+    """(c) a brand-new candidate not in the ledger passes prefilter."""
+    entries = [{"name": "Ghost ESP", "github": "https://github.com/jorgen/ghostesp", "download": 500}]
+    ledger_state = _ledger_with("someoneelse/unrelated-repo", "proposed")
+    kept = drain.prefilter(entries, CATALOGUED_REPOS, CATALOGUED_TOKENS, ledger_state=ledger_state)
+    assert len(kept) == 1
+
+
+def test_prefilter_keeps_candidate_merged_in_ledger():
+    """merged is not a blocking status via the ledger — catalogued-in-main dedup already covers
+    a genuinely merged repo (it would be in CATALOGUED_REPOS by then)."""
+    entries = [{"name": "Ghost ESP", "github": "https://github.com/jorgen/ghostesp", "download": 500}]
+    ledger_state = _ledger_with("jorgen/ghostesp", "merged")
+    kept = drain.prefilter(entries, CATALOGUED_REPOS, CATALOGUED_TOKENS, ledger_state=ledger_state)
+    assert len(kept) == 1
+
+
+def test_prefilter_with_no_ledger_state_behaves_as_before():
+    """Backward compatible: omitting ledger_state (None default) does not filter anything extra."""
+    entries = [{"name": "Ghost ESP", "github": "https://github.com/jorgen/ghostesp", "download": 500}]
     kept = drain.prefilter(entries, CATALOGUED_REPOS, CATALOGUED_TOKENS)
     assert len(kept) == 1
 
@@ -143,6 +202,48 @@ def test_score_candidates_skips_when_repo_unresolved():
 
     assert scored == []
     assert "repo_unresolved" in skipped[0]["reason"]
+
+
+# ─────────────────────────── score_candidates x ledger (id-level dedup — deliverable 3) ───────────────────────────
+
+def test_score_candidates_skips_entry_whose_scored_id_is_already_proposed():
+    entry = {"name": "Cardputer Ghost ESP", "description": "WiFi tools for the Cardputer",
+              "category": "cardputer", "github": "https://github.com/jorgen/ghostesp", "download": 500}
+    meta = _fake_meta(full_name="jorgen/ghostesp", stars=42, description="WiFi tools for the Cardputer")
+    ledger_state = _ledger_with("jorgen/ghostesp", "proposed")
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta, ledger_state=ledger_state)
+
+    assert scored == []
+    assert "already_proposed" in skipped[0]["reason"]
+
+
+def test_score_candidates_skips_entry_whose_scored_id_is_already_rejected():
+    entry = {"name": "Cardputer Ghost ESP", "description": "WiFi tools for the Cardputer",
+              "category": "cardputer", "github": "https://github.com/jorgen/ghostesp", "download": 500}
+    meta = _fake_meta(full_name="jorgen/ghostesp", stars=42, description="WiFi tools for the Cardputer")
+    ledger_state = _ledger_with("jorgen/ghostesp", "rejected")
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta, ledger_state=ledger_state)
+
+    assert scored == []
+    assert "already_rejected" in skipped[0]["reason"]
+
+
+def test_score_candidates_authors_entry_not_in_ledger():
+    entry = {"name": "Cardputer Ghost ESP", "description": "WiFi tools for the Cardputer",
+              "category": "cardputer", "github": "https://github.com/jorgen/ghostesp", "download": 500}
+    meta = _fake_meta(full_name="jorgen/ghostesp", stars=42, description="WiFi tools for the Cardputer")
+    ledger_state = _ledger_with("someoneelse/unrelated-repo", "proposed")
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta, ledger_state=ledger_state)
+
+    assert skipped == []
+    assert len(scored) == 1
+    assert scored[0]["record"]["id"] == "ghostesp"
 
 
 # ─────────────────────────── rank_juicy (popularity = downloads combined with stars) ───────────────────────────
@@ -363,3 +464,23 @@ def test_run_drain_reports_skips_and_authors_nothing_when_catalog_is_all_noise()
     assert report["scored_clean"] == 0
     assert report["authored"] == []
     assert report["guard"]["ok"] is True
+
+
+def test_run_drain_skips_a_candidate_already_proposed_in_an_injected_ledger(tmp_path, cleanup_fixture):
+    """A second run within the same review window (same ledger, unmerged) must NOT re-author an
+    id it already proposed — the end-to-end proof of deliverable 3."""
+    entry = {
+        "name": "Cardputer Zzz Test Fixture Firmware", "description": "WiFi deauth tool for the Cardputer.",
+        "category": "cardputer", "github": f"https://github.com/octocat/{FIXTURE_ID}", "download": 777,
+    }
+    meta = {"full_name": f"octocat/{FIXTURE_ID}", "fork": False, "source_full_name": None, "stars": 55,
+            "description": "WiFi deauth tool for the Cardputer.", "license": None, "readme_title": None}
+    ledger_path = tmp_path / "proposed_ledger.json"
+    ledger.record_proposed(FIXTURE_ID, f"octocat/{FIXTURE_ID}", pr_ref="https://github.com/x/y/pull/1",
+                           path=ledger_path)
+
+    report = drain.run_drain(fetch_catalog=lambda: [entry], fetch_meta=lambda url: meta, ledger_path=ledger_path)
+
+    assert report["prefiltered"] == 0        # blocked at prefilter, before any (fake) network fetch
+    assert report["authored"] == []
+    assert not (tools.FIRMWARE_DIR / FIXTURE_ID).exists()

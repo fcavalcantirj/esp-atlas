@@ -36,6 +36,7 @@ from pathlib import Path
 _JR_DIR = Path(__file__).resolve().parent
 if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
+import ledger  # noqa: E402
 import tools  # noqa: E402
 from scorer import NOISE_TOKENS, score_entry  # noqa: E402
 
@@ -49,13 +50,23 @@ BATCH_SIZE = 20
 PREFILTER_LIMIT = 120
 
 
-def prefilter(entries: list[dict], catalogued_repos: set[str], catalogued_tokens: set[str]) -> list[dict]:
+def _owner_repo(github_url: str) -> str:
+    fn = (github_url or "").strip().rstrip("/").replace("https://github.com/", "").lower()
+    return "/".join(fn.split("/")[:2])
+
+
+def prefilter(entries: list[dict], catalogued_repos: set[str], catalogued_tokens: set[str],
+             ledger_state: dict | None = None) -> list[dict]:
     """Cheap, no-network pre-filter over the FULL launcher catalog. Mirrors the dedup checks
     score_entry() itself performs (repo/owner match, name-token port/variant match) plus
     scorer.NOISE_TOKENS (games/emulators/platforms) — run BEFORE any GitHub API call, not
     instead of the real scorer gate later (score_entry() is still the authority; this only
-    bounds how many entries reach it). Returns the survivors sorted by launcher `download`
-    popularity, descending."""
+    bounds how many entries reach it). Also skips any entry whose repo is already in
+    `ledger_state` (jr/ledger.py) with a BLOCKING status (proposed/rejected) — the repo-level half
+    of deliverable 3's dedup gate, so a second drain within the same review window doesn't even
+    fetch metadata for something it already proposed or a human already rejected. `ledger_state`
+    defaults to None (no ledger check) so this stays backward compatible with callers that never
+    pass one. Returns the survivors sorted by launcher `download` popularity, descending."""
     out = []
     for e in entries:
         gh = (e.get("github") or "").strip()
@@ -66,6 +77,8 @@ def prefilter(entries: list[dict], catalogued_repos: set[str], catalogued_tokens
         if not owner_repo or "/" not in owner_repo:
             continue
         if owner_repo in catalogued_repos or fn.split("/")[0] in catalogued_repos:
+            continue
+        if ledger_state and ledger.is_blocked(ledger_state, repo=owner_repo):
             continue
         name = e.get("name") or ""
         name_tokens = {t for t in re.split(r"[-_\s]", name.lower()) if len(t) >= 4}
@@ -102,12 +115,17 @@ def default_fetch_meta(github_url: str) -> dict:
 
 
 def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued_tokens: set[str],
-                     fetch_meta=default_fetch_meta) -> tuple[list[dict], list[dict]]:
+                     fetch_meta=default_fetch_meta, ledger_state: dict | None = None) -> tuple[list[dict], list[dict]]:
     """Fetch real GitHub metadata for each (already-prefiltered) entry and hand it to
-    score_entry() — the ONE judgment call in this whole pipeline, and it's deterministic.
-    Returns (scored, skipped): `scored` entries carry the authored record plus the popularity
-    signals (`download`, `stars`) and a citable `description` for the firmware body; `skipped`
-    entries carry {name, github, reason} for reporting."""
+    score_entry() — the ONE judgment call in this whole pipeline, and it's deterministic. Once
+    score_entry() derives the candidate's firmware id (only knowable after a live fetch — the id
+    is slugged from the repo name), also checks that id (and its repo) against `ledger_state`: an
+    id already proposed or rejected is skipped here even if its repo slipped past prefilter's
+    cheaper repo-only check (e.g. two different repos that would slug to the same id) —
+    deliverable 3's id-level half of the dedup gate. `ledger_state` defaults to None (no ledger
+    check). Returns (scored, skipped): `scored` entries carry the authored record plus the
+    popularity signals (`download`, `stars`) and a citable `description` for the firmware body;
+    `skipped` entries carry {name, github, reason} for reporting."""
     scored, skipped = [], []
     for e in entries:
         gh = (e.get("github") or "").strip()
@@ -120,8 +138,15 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
         if result["decision"] != "authored":
             skipped.append({"name": e.get("name"), "github": gh, "reason": result["reason"]})
             continue
+        rec = result["record"]
+        if ledger_state:
+            ledger_record = ledger.lookup(ledger_state, firmware_id=rec["id"], repo=_owner_repo(gh))
+            if ledger_record and ledger_record["status"] in ledger.BLOCKING_STATUSES:
+                skipped.append({"name": e.get("name"), "github": gh,
+                                "reason": f"already_{ledger_record['status']}: '{rec['id']}' is in the proposed ledger"})
+                continue
         scored.append({
-            "record": result["record"],
+            "record": rec,
             "download": e.get("download") or 0,
             "stars": meta.get("stars") or 0,
             "description": (meta.get("description") or e.get("description") or "").strip(),
@@ -218,14 +243,20 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None) 
 
 def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
              max_per_category: int = MAX_PER_CATEGORY, fetch_catalog=tools.fetch_launcher_catalog,
-             fetch_meta=default_fetch_meta) -> dict:
+             fetch_meta=default_fetch_meta, ledger_path=ledger.DEFAULT_LEDGER_PATH) -> dict:
     """The full drain, end to end. Additive-only: writes new data/firmware/<id>/ +
     data/recipes/<board>__<id>/ dirs (plus their coverage run-case) and never touches jr-daily
-    (agent.py/run.py) or scorer.py's public behavior."""
+    (agent.py/run.py) or scorer.py's public behavior. Loads jr/ledger.py's proposed-ledger
+    (`ledger_path`, injectable for tests) once and threads it through prefilter/score_candidates
+    so a candidate already proposed or rejected in an earlier run is skipped before it's ever
+    re-authored (deliverable 3) — catalogued-in-main dedup (catalogued_repos/catalogued_tokens)
+    continues to cover merged the same way it always has."""
     entries = fetch_catalog()
     catalogued_repos, catalogued_tokens = tools._catalogued_repos_and_tokens()
-    prefiltered = prefilter(entries, catalogued_repos, catalogued_tokens)[:fetch_limit]
-    scored, skipped = score_candidates(prefiltered, catalogued_repos, catalogued_tokens, fetch_meta=fetch_meta)
+    ledger_state = ledger.load_ledger(ledger_path)
+    prefiltered = prefilter(entries, catalogued_repos, catalogued_tokens, ledger_state=ledger_state)[:fetch_limit]
+    scored, skipped = score_candidates(prefiltered, catalogued_repos, catalogued_tokens,
+                                       fetch_meta=fetch_meta, ledger_state=ledger_state)
     ranked = rank_juicy(scored)
     selected, dropped_cap = cap_categories(ranked, max_per_category=max_per_category, batch_size=batch_size)
     authored, dropped_guard = author_selected(selected)

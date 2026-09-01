@@ -20,6 +20,7 @@ from types import SimpleNamespace
 import pytest
 
 import drain_pr
+import ledger
 import tools
 
 REPO = tools.REPO
@@ -65,6 +66,14 @@ def fixture_firmware():
 
 
 NOW = datetime(2026, 9, 1, 8, 46, 0, tzinfo=timezone.utc)
+
+
+@pytest.fixture(autouse=True)
+def _isolated_ledger(monkeypatch, tmp_path):
+    """Every test here writes to a throwaway ledger — never the real jr/proposed_ledger.json.
+    open_drain_pr/main resolve `ledger.DEFAULT_LEDGER_PATH` lazily (not as a bound default)
+    specifically so this monkeypatch reaches every caller that doesn't pass ledger_path itself."""
+    monkeypatch.setattr(ledger, "DEFAULT_LEDGER_PATH", tmp_path / "proposed_ledger.json")
 
 
 # ─────────────────────────── (a) authored non-empty: branch + commit + PR ───────────────────────────
@@ -130,6 +139,54 @@ def test_authored_returns_a_report_with_the_pr_result(fixture_firmware):
     assert result["authored"] == FIXTURE_IDS
     assert result["pr"]["pr_ok"] is True
     assert result["pr"]["branch"] == "jr-drain-20260901-0846"
+
+
+# ─────────────────────────── (d) authoring records every id as proposed with its PR ref ───────────────────────────
+
+def test_authored_records_every_id_in_the_ledger_as_proposed_with_pr_ref(fixture_firmware, tmp_path):
+    git, gh = _recorder(), _recorder(stdout="https://github.com/x/y/pull/1\n")
+    ledger_path = tmp_path / "proposed_ledger.json"
+
+    drain_pr.main(run_drain=lambda: {"authored": FIXTURE_IDS}, git=git, gh=gh, now=NOW, ledger_path=ledger_path)
+
+    data = ledger.load_ledger(ledger_path)
+    for fid in FIXTURE_IDS:
+        record = data["by_id"][fid]
+        assert record["status"] == "proposed"
+        assert record["pr_ref"] == "https://github.com/x/y/pull/1"
+        expected_repo = drain_pr._owner_repo_from_url(FIXTURE_URLS[fid])
+        assert record["repo"] == expected_repo
+        assert data["by_repo"][expected_repo] == fid
+
+
+def test_authored_ledger_record_timestamp_matches_injected_now(fixture_firmware, tmp_path):
+    git, gh = _recorder(), _recorder(stdout="https://github.com/x/y/pull/1\n")
+    ledger_path = tmp_path / "proposed_ledger.json"
+
+    drain_pr.main(run_drain=lambda: {"authored": FIXTURE_IDS}, git=git, gh=gh, now=NOW, ledger_path=ledger_path)
+
+    data = ledger.load_ledger(ledger_path)
+    assert data["by_id"][FIXTURE_IDS[0]]["timestamp"] == NOW.isoformat()
+
+
+def test_empty_authored_does_not_touch_the_ledger(tmp_path):
+    git, gh = _recorder(), _recorder()
+    ledger_path = tmp_path / "proposed_ledger.json"
+
+    drain_pr.main(run_drain=lambda: {"authored": []}, git=git, gh=gh, now=NOW, ledger_path=ledger_path)
+
+    assert not ledger_path.exists()
+
+
+def test_authored_does_not_record_when_pr_creation_fails(fixture_firmware, tmp_path):
+    """No real PR exists to reference, so nothing is recorded — a retry on the next cron run
+    must still be free to try opening a PR for the same ids."""
+    git, gh = _recorder(), _recorder(returncode=1, stdout="")
+    ledger_path = tmp_path / "proposed_ledger.json"
+
+    drain_pr.main(run_drain=lambda: {"authored": FIXTURE_IDS}, git=git, gh=gh, now=NOW, ledger_path=ledger_path)
+
+    assert not ledger_path.exists()
 
 
 # ─────────────────────────── (b) authored empty: no branch, no commit, no PR ───────────────────────────
