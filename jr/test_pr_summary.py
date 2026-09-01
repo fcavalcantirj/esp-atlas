@@ -60,63 +60,77 @@ def test_normal_batch_returns_summary_with_headline_and_category_breakdown():
     assert out is not None
     assert fake.calls, "the LLM client was consulted for the headline"
     assert fake.reply in out  # the LLM-written headline is included verbatim
+    assert out.splitlines()[0] == fake.reply  # the headline is PREPENDED as the first line
     # Deterministic category breakdown: pentest 3, then multi/mesh/home 1 each (count desc, name asc).
     assert "pentest 3" in out
     assert "home 1" in out and "mesh 1" in out and "multi 1" in out
-    assert "**Categories:**" in out
+    assert "Categories:" in out
 
 
-def test_miscategorized_entry_is_flagged_under_review_these():
+def test_miscategorized_entry_is_flagged_under_review():
     out = pr_summary.summarize(BATCH, client=FakeGroq())
 
     assert out is not None
-    assert "Review these" in out
+    assert "Review" in out
     # The internet-radio labeled `home` is Jr's own low-confidence call and must be surfaced.
-    assert "`internet-radio`" in out
-    assert "labeled `home`" in out
+    assert "internet-radio" in out
+    assert "labeled home" in out
     # The factory demo mislabeled `multi` is flagged too.
-    assert "`cardputer-factory-test`" in out
+    assert "cardputer-factory-test" in out
 
 
 def test_notable_entries_ranked_by_stars_when_available():
     out = pr_summary.summarize(BATCH, client=FakeGroq())
 
-    assert "**Notable:**" in out
+    assert "Notable:" in out
     # Top by stars is Meshtastic (6000) then Marauder (5100) then Bruce (4200).
-    notable_line = next(ln for ln in out.splitlines() if ln.startswith("**Notable:**"))
-    assert "`meshtastic`" in notable_line
-    assert "`internet-radio`" not in notable_line  # 120 stars, not notable
+    notable_line = next(ln for ln in out.splitlines() if ln.startswith("Notable:"))
+    assert "meshtastic" in notable_line
+    # internet-radio (120 stars) is not among the top-3 notable picks.
+    assert "internet-radio" not in notable_line
 
 
-def test_returns_none_when_client_raises():
+def test_deterministic_body_still_returned_when_client_raises():
+    """LLM outage -> headline omitted, but the deterministic body (breakdown + review) still
+    renders. Only an EMPTY batch yields None."""
     out = pr_summary.summarize(BATCH, client=FakeGroq(raises=True))
-    assert out is None
+    assert out is not None
+    assert "Categories:" in out and "pentest 3" in out
+    assert "internet-radio" in out  # the review flag is deterministic, no LLM needed
+    assert "mostly pentest launchers" not in out  # no headline garnish on failure
 
 
-def test_returns_none_when_client_returns_empty():
+def test_deterministic_body_still_returned_when_client_returns_empty():
     out = pr_summary.summarize(BATCH, client=FakeGroq(reply="   "))
-    assert out is None
+    assert out is not None
+    assert "Categories:" in out
+    assert out.splitlines()[0].startswith("Categories:")  # no headline prepended
 
 
-def test_returns_none_when_no_client_and_no_api_key():
-    # No injected client and no GROQ_API_KEY -> strictly best-effort no-op.
+def test_deterministic_body_returned_when_no_client_and_no_api_key():
+    # No injected client and no GROQ_API_KEY -> the DETERMINISTIC summary must STILL render.
+    # This is the real cron box: no key, but the maintainer must still get the nudge.
     out = pr_summary.summarize(BATCH, env={})
-    assert out is None
+    assert out is not None
+    assert "Categories:" in out and "pentest 3" in out
+    # The "review these" entry must be present even with no LLM at all.
+    assert "internet-radio" in out and "labeled home" in out
+    assert out.splitlines()[0].startswith("Categories:")  # no headline, body only
 
 
 def test_returns_none_on_empty_batch():
     assert pr_summary.summarize([], client=FakeGroq()) is None
+    assert pr_summary.summarize([], env={}) is None
 
 
 def test_summary_derived_only_from_facts_no_invention():
-    """Every id that appears in the summary must come from the batch — nothing invented."""
-    out = pr_summary.summarize(BATCH, client=FakeGroq())
+    """Every entry id that appears in the summary must come from the batch — nothing invented."""
+    out = pr_summary.summarize(BATCH, env={})  # deterministic body only
     ids = {e["id"] for e in BATCH}
-    categories = {e["category"] for e in BATCH}
-    import re
-    cited = set(re.findall(r"`([a-z0-9-]+)`", out))
-    # Every backticked token is either a real batch id or a real batch category — nothing invented.
-    assert cited <= (ids | categories)
+    entries_line = next(ln for ln in out.splitlines() if ln.startswith("Entries:"))
+    cited = {tok.strip() for tok in entries_line[len("Entries:"):].split("·")}
+    # Every listed entry id is a real batch id — nothing invented.
+    assert cited == ids
 
 
 def test_drain_pr_body_falls_back_to_terse_template_when_summary_is_none():

@@ -138,8 +138,9 @@ def open_drain_pr(authored: list[str], git=default_git, gh=default_gh,
     ledger.DEFAULT_LEDGER_PATH lazily — NOT as a bound default — so a test fixture can monkeypatch
     ledger.DEFAULT_LEDGER_PATH and every caller that omits ledger_path picks it up) as proposed
     with the PR's URL the moment the PR is opened (deliverable 2) — the prerequisite for
-    deliverable 3's drain dedup to ever see it on the next run. Returns
-    {"branch", "pr_ok", "pr_url"}."""
+    deliverable 3's drain dedup to ever see it on the next run. The summary is computed ONCE here
+    and reused for BOTH the PR body and the returned dict (so the cron can deliver it to Telegram
+    without rebuilding it). Returns {"branch", "pr_ok", "pr_url", "summary"}."""
     now = now or datetime.now(timezone.utc)
     ledger_path = ledger.DEFAULT_LEDGER_PATH if ledger_path is None else ledger_path
     branch = branch_name(now)
@@ -149,13 +150,14 @@ def open_drain_pr(authored: list[str], git=default_git, gh=default_gh,
     subject = f"feat(firmware): jr drain batch of {len(authored)} new entries"
     git("commit", "-m", subject)
     git("push", "-u", "origin", branch)
+    summary = _smart_summary(authored)  # computed ONCE — reused for PR body AND stdout/Telegram.
     pr = gh("pr", "create", "--base", "main", "--head", branch,
-           "--title", subject, "--body", _pr_body(authored, _smart_summary(authored)))
+           "--title", subject, "--body", _pr_body(authored, summary))
     pr_ok = pr.returncode == 0
     pr_url = pr.stdout.strip()
     if pr_ok:
         _record_proposed(authored, pr_url or None, ledger_path, now)
-    return {"branch": branch, "pr_ok": pr_ok, "pr_url": pr_url}
+    return {"branch": branch, "pr_ok": pr_ok, "pr_url": pr_url, "summary": summary}
 
 
 def main(run_drain=_run_drain, git=default_git, gh=default_gh, now: datetime | None = None,
@@ -166,7 +168,15 @@ def main(run_drain=_run_drain, git=default_git, gh=default_gh, now: datetime | N
         print("jr-drain: no new entries")
         return {"authored": [], "pr": None}
     pr = open_drain_pr(authored, git=git, gh=gh, now=now, ledger_path=ledger_path)
-    print(f"jr-drain: authored {len(authored)} entries -> branch {pr['branch']} (pr_ok={pr['pr_ok']})")
+    # Telegram-friendly nudge: the summary text (verbatim, deterministic body + optional headline),
+    # then a final line linking the PR and naming the branch — so the maintainer can read the batch
+    # straight from the cron message without opening the PR.
+    summary = pr.get("summary")
+    if summary:
+        print(summary)
+        print("")
+    link = pr.get("pr_url") or "(PR creation failed)"
+    print(f"jr-drain: {len(authored)} new entries — PR {link} · branch {pr['branch']}")
     return {"authored": authored, "pr": pr}
 
 
