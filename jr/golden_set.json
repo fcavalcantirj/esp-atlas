@@ -389,7 +389,7 @@
           "id": "m5porkchop",
           "name": "M5PORKCHOP",
           "url": "https://github.com/0ct0sec/M5PORKCHOP",
-          "category": "multi",
+          "category": "pentest",
           "board": "m5stamp-s3",
           "chip": "esp32-s3",
           "capabilities": [],
@@ -503,7 +503,7 @@
           "id": "m5hamradio",
           "name": "M5HamRadio CoreS3",
           "url": "https://github.com/armel/M5HamRadio",
-          "category": "pentest",
+          "category": "multi",
           "board": "m5stack-cores3",
           "chip": "esp32-s3",
           "capabilities": [
@@ -751,7 +751,7 @@
           "id": "atom-plane-tracker",
           "name": "Atom Plane Tracker",
           "url": "https://github.com/JTCozart/atom-plane-tracker",
-          "category": "pentest",
+          "category": "home",
           "board": "m5atoms3",
           "chip": "esp32-s3",
           "capabilities": [
@@ -787,7 +787,7 @@
           "id": "m5stack-matter-examples",
           "name": "NanoC6 OpenThread RCP",
           "url": "https://github.com/ciniml/m5stack_matter_examples",
-          "category": "pentest",
+          "category": "multi",
           "board": "m5nanoc6",
           "chip": "esp32-c6",
           "capabilities": [

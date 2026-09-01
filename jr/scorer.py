@@ -38,13 +38,34 @@ FIRMWARE_CATEGORY_ENUM = ("pentest", "mesh", "badusb", "display", "home", "multi
 # order (a record with both "wifi" and "mesh" tokens is a mesh firmware first — mesh is the
 # more specific claim). "home"/"display"-only firmware fall through to those buckets; anything
 # left with no capability signal at all defaults to "multi" (never invented, always the safest
-# guess when the evidence doesn't single out one category).
+# guess when the evidence doesn't single out one category). This is the WEAK FALLBACK, only
+# consulted when _category_from_purpose() below found no purpose keyword — wifi/ble are
+# deliberately absent (see _category_from_purpose's docstring: wifi/ble are ubiquitous, not
+# evidence of a hacking tool; nfc/rfid-nfc/sub-ghz/subghz are narrow enough radio protocols to
+# stay a weak pentest hint).
 _CATEGORY_SIGNALS = (
     ("mesh", {"mesh"}),
     ("badusb", {"badusb"}),
-    ("pentest", {"wifi", "ble", "nfc", "rfid-nfc", "ir", "sub-ghz", "subghz", "gps", "lora"}),
+    ("pentest", {"nfc", "rfid-nfc", "sub-ghz", "subghz"}),
     ("display", {"display"}),
     ("home", {"mqtt", "ota", "on-device-web-ui", "ethernet", "artnet", "e131", "ddp"}),
+)
+
+# Purpose keywords checked BEFORE any capability signal, in the same mesh > badusb > pentest >
+# display > home priority as _CATEGORY_SIGNALS. This is the PRIMARY classifier: wifi and ble are
+# ubiquitous radios present in an internet radio, an mp3 streamer, or a brainwave generator just
+# as much as in an actual hacking tool — their mere presence is not evidence of intent. Only an
+# explicit offensive-security/mesh/badusb/display/home-automation keyword in the entry's own name
+# or its repo_meta description/README title counts as evidence; everything else falls through to
+# the weak capability fallback above, and ultimately to "multi" if nothing matches at all.
+_PURPOSE_SIGNALS = (
+    ("mesh", ("mesh", "meshtastic", "meshcore")),
+    ("badusb", ("badusb", "ducky", "rubber-ducky", "hid-attack", "keystroke-injection")),
+    ("pentest", ("marauder", "deauth", "deauther", "sniff", "sniffer", "pwn", "pwnagotchi",
+                 "evil-portal", "evilportal", "wardriv", "jammer", "spoof", "nemo", "ghost",
+                 "pcap", "handshake", "packet-monitor", "rogue", "bruce")),
+    ("display", ("clock", "badge")),
+    ("home", ("esphome", "home-assistant", "mqtt sensor", "smart-home", "thermostat")),
 )
 
 # Games/emulators/platforms — not atlas firmware. A NARROWER list than tools.uncatalogued_with_code()'s
@@ -97,6 +118,22 @@ def _clean_marketing(text: str) -> str:
 def _slug(repo_name: str) -> str:
     s = re.sub(r"[^a-z0-9]+", "-", _clean_marketing(repo_name).lower()).strip("-")
     return s[:40]
+
+
+def _category_from_purpose(name: str, repo_description: str | None,
+                            readme_title: str | None) -> str | None:
+    """Purpose-first classifier: an offensive-security/mesh/badusb/display/home-automation
+    keyword in the entry name or repo_meta's own description/README title, checked BEFORE any
+    capability token. Returns None (never "pentest" or anything else) when no keyword matches —
+    the caller falls back to the weak capability signals, and ultimately to "multi"."""
+    pool = " ".join(t for t in (name, repo_description, readme_title) if t).lower()
+    if not pool:
+        return None
+    pool = f" {pool} "
+    for category, keywords in _PURPOSE_SIGNALS:
+        if any(keyword in pool for keyword in keywords):
+            return category
+    return None
 
 
 def _category_from_capabilities(capabilities: list[str]) -> str:
@@ -182,7 +219,8 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
     text_pool = (name, entry.get("description"), repo_meta.get("description"))
     vocab = tools.capability_vocab()
     capabilities = [c for c in capabilities_from_text(*text_pool) if c in vocab]
-    category = _category_from_capabilities(capabilities)
+    category = (_category_from_purpose(name, repo_meta.get("description"), repo_meta.get("readme_title"))
+                or _category_from_capabilities(capabilities))
 
     firmware_id = _slug(_repo_name_from_url(github))
 
