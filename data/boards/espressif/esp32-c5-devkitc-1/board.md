@@ -9,6 +9,13 @@ usb:
   connector: usb-c
 extras:
 - rgb-led
+download_mode:
+  mode: manual
+  steps: 'Hold down Boot, then press Reset, then release Boot to enter Firmware
+    Download mode'
+  note: 'Two USB-C ports: the USB-to-UART port for serial flashing, or the native
+    ESP32-C5 USB port (USB-Serial-JTAG).'
+usb_serial: native-usb-serial-jtag
 io:
   gpio_free: 12
   gpio_pins:
@@ -61,6 +68,12 @@ sources:
 - field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
   verified: '2026-08-28'
+- field: download_mode
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
+  verified: '2026-09-01'
+- field: usb_serial
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
+  verified: '2026-09-01'
 ---
 
 # ESP32-C5-DevKitC-1

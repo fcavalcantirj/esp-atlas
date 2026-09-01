@@ -60,6 +60,31 @@
         }
       }
     },
+    "download_mode": {
+      "type": "object", "additionalProperties": false,
+      "description": "How to enter Firmware Download mode for flashing (SPEC-first-flash.md P0). Cite-or-omit to the board's own user guide -- hardware steps must be verifiable, never guessed.",
+      "required": ["mode"],
+      "properties": {
+        "mode": { "enum": ["auto", "manual"], "description": "'auto' -- USB-serial bridge toggles EN/IO0 via DTR/RTS, just click flash. 'manual' -- the exact button sequence, given in `steps`." },
+        "steps": { "type": "string", "description": "the exact manual sequence, e.g. 'hold BOOT/IO0, tap RESET/EN, release BOOT'; required when mode is 'manual'" },
+        "note": { "type": "string", "description": "board-specific gotcha, e.g. which of multiple USB ports to use" }
+      },
+      "if": { "properties": { "mode": { "const": "manual" } } },
+      "then": { "required": ["steps"] }
+    },
+    "usb_serial": {
+      "enum": [
+        "native-usb-serial-jtag",
+        "cp2102",
+        "cp2102n",
+        "ch340",
+        "ch343",
+        "ch9102",
+        "usb-uart-bridge-unspecified",
+        "other"
+      ],
+      "description": "USB-UART bridge chip actually used to flash -- drives which driver the troubleshooter recommends (SPEC-first-flash.md P0)."
+    },
     "notes": { "type": "array", "items": { "type": "string" } },
     "sources": {
       "type": "array", "minItems": 1,
