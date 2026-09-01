@@ -109,9 +109,7 @@ export default function VerifyBoard({ boardName, board, bootBoards, defaultBoard
           {phase.kind === "error" && (
             <>
               <p className="verify-error">{phase.message}</p>
-              {bootBoards && bootBoards.length > 0 && (
-                <ConnectTroubleshooter bootBoards={bootBoards} defaultBoardId={defaultBoardId} onRetry={() => void verify()} />
-              )}
+              <ConnectTroubleshooter bootBoards={bootBoards} defaultBoardId={defaultBoardId} onRetry={() => void verify()} />
             </>
           )}
 

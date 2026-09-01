@@ -140,9 +140,7 @@ export default function SerialMonitor({ bootBoards, defaultBoardId }: SerialMoni
       {error && (
         <>
           <p className="verify-error">{error}</p>
-          {bootBoards && bootBoards.length > 0 && (
-            <ConnectTroubleshooter bootBoards={bootBoards} defaultBoardId={defaultBoardId} onRetry={() => void connect()} />
-          )}
+          <ConnectTroubleshooter bootBoards={bootBoards} defaultBoardId={defaultBoardId} onRetry={() => void connect()} />
         </>
       )}
       <pre className="verify-console" ref={consoleRef} aria-live="polite" aria-label="Serial monitor output">

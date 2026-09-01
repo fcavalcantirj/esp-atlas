@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { API_BASE } from "@/lib/api";
 import { resolveDownloadMode, type BootBoard } from "@/lib/troubleshooter";
 
 // Shown below a Web Serial connect error on /debug (VerifyBoard's "Read my
@@ -8,19 +9,45 @@ import { resolveDownloadMode, type BootBoard } from "@/lib/troubleshooter";
 // a working connection instead of a dead-end error. Step 2's button sequence is
 // board-specific and cited — resolveDownloadMode (unit-tested) decides what to
 // show; this component only renders it and re-invokes the caller's own connect.
+//
+// The panel ALWAYS renders on a connect error — even with zero board data it
+// shows the generic ESP32 sequence. The board list may arrive empty when the
+// server-side fetch was cold/unreachable, so we also fetch it client-side as a
+// fallback to populate the picker with per-board cited steps.
 interface ConnectTroubleshooterProps {
-  /** Boards that cite a download_mode (GET /api/boards/boot). */
-  bootBoards: BootBoard[];
-  /** Board id to prefill the picker with, when present in `bootBoards`. */
+  /** Boards that cite a download_mode (GET /api/boards/boot). Optional — fetched client-side if absent. */
+  bootBoards?: BootBoard[];
+  /** Board id to prefill the picker with, when present. */
   defaultBoardId?: string;
   /** Re-invokes the caller's existing connect handler — no connect logic is duplicated here. */
   onRetry: () => void;
 }
 
-export default function ConnectTroubleshooter({ bootBoards, defaultBoardId, onRetry }: ConnectTroubleshooterProps) {
-  const hasDefault = Boolean(defaultBoardId && bootBoards.some((b) => b.id === defaultBoardId));
-  const [selectedId, setSelectedId] = useState(hasDefault ? defaultBoardId! : "");
-  const selected = bootBoards.find((b) => b.id === selectedId) ?? null;
+export default function ConnectTroubleshooter({ bootBoards = [], defaultBoardId, onRetry }: ConnectTroubleshooterProps) {
+  const [boards, setBoards] = useState<BootBoard[]>(bootBoards);
+  const [selectedId, setSelectedId] = useState(
+    defaultBoardId && bootBoards.some((b) => b.id === defaultBoardId) ? defaultBoardId : "",
+  );
+
+  // Fallback fetch when the server-side list came back empty.
+  useEffect(() => {
+    if (boards.length > 0) return;
+    let cancelled = false;
+    fetch(`${API_BASE}/boards/boot`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => { if (!cancelled && Array.isArray(data)) setBoards(data as BootBoard[]); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [boards.length]);
+
+  // Prefill the default board once it becomes available (from prop or fetch).
+  useEffect(() => {
+    if (!selectedId && defaultBoardId && boards.some((b) => b.id === defaultBoardId)) {
+      setSelectedId(defaultBoardId);
+    }
+  }, [boards, defaultBoardId, selectedId]);
+
+  const selected = boards.find((b) => b.id === selectedId) ?? null;
   const view = resolveDownloadMode(selected);
 
   return (
@@ -37,7 +64,7 @@ export default function ConnectTroubleshooter({ bootBoards, defaultBoardId, onRe
             My board
             <select value={selectedId} onChange={(e) => setSelectedId(e.target.value)}>
               <option value="">Generic ESP32</option>
-              {bootBoards.map((b) => (
+              {boards.map((b) => (
                 <option key={b.id} value={b.id}>
                   {b.name}
                 </option>
