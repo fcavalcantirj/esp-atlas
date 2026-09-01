@@ -11,6 +11,9 @@ import httpx
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 
 from esp_atlas_core import db as dbmod
 from esp_atlas_core.build_guide import build_guide as core_build_guide
@@ -60,6 +63,7 @@ from esp_atlas_api.models import (
     WizardRequest,
     WizardResponse,
 )
+from esp_atlas_api.security import build_limiter, resolve_cors_origins, resolve_rate_limits
 from esp_atlas_api.settings import resolve_db_path
 
 _ALL_PARTS_LIMIT = 10_000
@@ -104,17 +108,27 @@ def get_llm_client(request: Request):
     return getattr(request.app.state, "llm_client", None)
 
 
-def create_app(db_path=None, llm_client=None):
+def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=None):
     app = FastAPI(title="esp-atlas API", lifespan=_lifespan)
     app.state.db_path = db_path or resolve_db_path()
     app.state.llm_client = llm_client
 
+    # Same-origin frontend (apps/web/lib/api.ts) needs no cross-origin
+    # access at all; the allowlist exists for local dev and nothing else.
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
-        allow_methods=["*"],
+        allow_origins=cors_origins if cors_origins is not None else resolve_cors_origins(),
+        allow_methods=["GET", "POST"],
         allow_headers=["*"],
     )
+
+    limits = rate_limits if rate_limits is not None else resolve_rate_limits()
+    limiter = build_limiter(limits)
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    # Enforces the generous default_limits (see security.py) on every route
+    # that isn't itself @limiter.limit()-decorated or limiter.exempt()-ed.
+    app.add_middleware(SlowAPIMiddleware)
 
     @app.get("/health", response_model=HealthResponse)
     def health(db_path=Depends(get_db_path)):
@@ -124,6 +138,8 @@ def create_app(db_path=None, llm_client=None):
         finally:
             conn.close()
         return HealthResponse(status="ok", count=count)
+
+    limiter.exempt(health)  # uptime/monitoring checks must never 429
 
     @app.get("/search", response_model=SearchResponse)
     def search(
@@ -181,7 +197,8 @@ def create_app(db_path=None, llm_client=None):
         return SearchResponse(results=results)
 
     @app.post("/wizard", response_model=WizardResponse)
-    def wizard(body: WizardRequest = WizardRequest(), db_path=Depends(get_db_path)):
+    @limiter.limit(limits["llm"])
+    def wizard(request: Request, body: WizardRequest = WizardRequest(), db_path=Depends(get_db_path)):
         needs = body.needs.model_dump(exclude_none=True)
         try:
             results = core_wizard(needs, db_path=db_path)
@@ -230,6 +247,7 @@ def create_app(db_path=None, llm_client=None):
         return result
 
     @app.get("/flash-bin", name="flash_bin")
+    @limiter.limit(limits["flash"])
     async def flash_bin(request: Request, recipe: str, part: Optional[int] = None):
         """Stream an upstream firmware binary same-origin so ESP Web Tools can fetch it.
 
@@ -291,7 +309,8 @@ def create_app(db_path=None, llm_client=None):
         )
 
     @app.post("/intent", response_model=IntentResponse, response_model_exclude_none=True)
-    def intent(payload: IntentRequest, db_path=Depends(get_db_path), llm_client=Depends(get_llm_client)):
+    @limiter.limit(limits["llm"])
+    def intent(request: Request, payload: IntentRequest, db_path=Depends(get_db_path), llm_client=Depends(get_llm_client)):
         """Plain-language goal -> the wizard's own filters (SPEC-INDEX G4).
 
         Groq reads the query, never the catalogue, so cost is per-unique-phrasing
@@ -307,7 +326,8 @@ def create_app(db_path=None, llm_client=None):
             raise HTTPException(status_code=503, detail="Intent parsing is rate-limited right now.") from exc
 
     @app.post("/build", response_model=BuildGuideResponse, response_model_exclude_none=True)
-    def build(payload: BuildGuideRequest, db_path=Depends(get_db_path), llm_client=Depends(get_llm_client)):
+    @limiter.limit(limits["llm"])
+    def build(request: Request, payload: BuildGuideRequest, db_path=Depends(get_db_path), llm_client=Depends(get_llm_client)):
         """The grounded "here's what you need" answer for a project goal
         (SPEC-build-guide.md, esp_atlas_core.build_guide) -- the web calls this
         when POST /intent returns kind=="unmapped". Always 200: build_guide()
@@ -317,7 +337,8 @@ def create_app(db_path=None, llm_client=None):
         return core_build_guide(payload.query, llm_client=llm_client, db_path=db_path)
 
     @app.post("/clarify", response_model=ClarifyResponse)
-    def clarify(payload: ClarifyRequest, db_path=Depends(get_db_path), llm_client=Depends(get_llm_client)):
+    @limiter.limit(limits["llm"])
+    def clarify(request: Request, payload: ClarifyRequest, db_path=Depends(get_db_path), llm_client=Depends(get_llm_client)):
         """Confidence-gated clarification (SPEC-clarify.md): a deterministic
         gate over parse_intent()'s own output either answers directly
         (confident=True, no questions) or returns 1-3 grounded questions from
