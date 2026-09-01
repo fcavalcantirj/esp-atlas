@@ -58,6 +58,7 @@ def test_client_config_unknown_provider_errors_clearly():
 
 
 def test_make_agno_model_groq_builds_groq_client(monkeypatch):
+    pytest.importorskip("agno")
     monkeypatch.setenv("GROQ_API_KEY", "g-key")
     from agno.models.groq import Groq
 
@@ -72,6 +73,7 @@ def test_make_agno_model_groq_builds_groq_client(monkeypatch):
 
 
 def test_make_agno_model_openrouter_builds_openrouter_client(monkeypatch):
+    pytest.importorskip("agno")
     monkeypatch.setenv("OPENROUTER_API_KEY", "or-key")
     from agno.models.openrouter import OpenRouter
 
@@ -90,6 +92,7 @@ def test_make_agno_model_groq_client_base_url_is_not_double_appended(monkeypatch
     "https://api.groq.com/openai/v1/", and the SDK then appends "/openai/v1/chat/completions"
     onto THAT, producing a 404 (nothing authored in that run). Without a base_url override,
     the SDK client resolves its own correct base_url: "https://api.groq.com"."""
+    pytest.importorskip("agno")
     monkeypatch.setenv("GROQ_API_KEY", "g-key")
 
     m = models.make_agno_model("groq:openai/gpt-oss-120b")

@@ -414,6 +414,7 @@ def test_author_board_agno_schema_has_no_extra_required_property():
     and the board is lost. Only board_id/brand/name are genuinely required — fields, sources,
     body, soc, module, today must all be optional. Introspect the REAL registered tool off the
     REAL agent (agent.make_jr_board()), exactly as Agno hands it to the model."""
+    pytest.importorskip("agno")
     from agno.tools.function import Function
     from agent import make_jr_board
 

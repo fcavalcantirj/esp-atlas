@@ -9,6 +9,8 @@ from pathlib import Path
 
 import pytest
 
+pytest.importorskip("agno")
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import agent
 import run
