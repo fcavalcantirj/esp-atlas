@@ -13,12 +13,25 @@
 
 ## The allocation rule
 Each Jr run allocates effort by the **finite-ground completion gauge**:
-- **Finite ground = 100% covered → spend ALL effort on new (firmware/recipes).**
-- **Finite ground has gaps → SPLIT effort:** part to *completing the finite ground* (backfill
-  missing board fields, add missing boards/parts, complete docs), part to new firmware.
+- **Finite ground has gaps → SPLIT effort, favoring the finite backfill** (missing board
+  fields, missing boards/parts, docs) over new firmware.
+- **Finite ground "complete" → most effort to new firmware/discovery, but NEVER zero on finite.**
+  "Complete" is a *moment, not forever*: **manufacturers keep shipping new boards/parts** (C5,
+  P4, C61…), so a thin **manufacturer-watch always runs**. When it finds a new board/part, the
+  finite ground re-opens and the split swings back toward Track A until it's covered again.
 
-The split favors whichever is more starved; the finite part is the floor — the basics get
-covered before pouring into the infinite.
+The split favors whichever is more starved; the finite part is the floor — basics covered
+before pouring into the infinite — but the floor is a moving target, never permanently closed.
+
+## Discovery is multi-source (not just the launcher catalog)
+Jr finds new work from several signals, feeding BOTH tracks — this matches JR.md's *Discover*
+columns (manufacturer watch + community), which the current launcher-only drain doesn't yet
+implement:
+- **Launcher / M5Burner catalog + GitHub popularity** (downloads × stars) — the current drain.
+- **Manufacturer watch** — Espressif + third-party vendors' new board/part releases → **Track A**
+  (perpetual; keeps the finite ground current).
+- **Community signal** — thriving posts on **r/esp32**, Hacker News, maker blogs → surfaces hot
+  new *firmware* AND new *boards/projects* the catalog + manufacturer-watch miss → **both tracks**.
 
 ## The data completion gauge (to build)
 A single report over the FINITE entities — per entity type and per required field, the % of
