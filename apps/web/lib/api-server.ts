@@ -11,6 +11,7 @@
 // branch on, so a cold/unreachable Python function degrades to the client-side
 // fallback instead of a 500.
 import type { BrandPage, Example, Facets, Firmware, PartDetail, PartRecord, Recipe } from "@/lib/api";
+import type { BootBoard } from "@/lib/troubleshooter";
 
 const REVALIDATE_SECONDS = 3600;
 // The API is a serverless Python function that boots an interpreter, imports
@@ -105,4 +106,12 @@ export function fetchRecipesForBoard(boardId: string): Promise<ServerFetchResult
 
 export function fetchRecipesForFirmware(firmwareId: string): Promise<ServerFetchResult<{ results: Recipe[] }>> {
   return serverFetch<{ results: Recipe[] }>(`/recipes?firmware=${encodeURIComponent(firmwareId)}`);
+}
+
+/** /boards/boot: boards that cite a download_mode, for the /debug connect
+ * troubleshooter. A cold/unreachable API degrades to an empty list — the page
+ * still renders, the troubleshooter just falls back to the generic sequence. */
+export async function fetchBootBoards(): Promise<BootBoard[]> {
+  const result = await serverFetch<BootBoard[]>(`/boards/boot`);
+  return result.status === "ok" ? result.data : [];
 }

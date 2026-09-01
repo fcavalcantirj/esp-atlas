@@ -102,6 +102,56 @@
   color: var(--muted);
 }
 
+/* Connect troubleshooter (SPEC-first-flash.md P0): shown under a connect error,
+   below it, never replacing the panel. Reuses the surface/border/token look. */
+.verify-troubleshooter {
+  margin-top: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--warn);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: var(--t-sm);
+  line-height: var(--lead-snug);
+}
+
+.verify-troubleshooter-heading {
+  margin: 0 0 0.5rem;
+  font-size: var(--t-sm);
+}
+
+.verify-troubleshooter-steps {
+  margin: 0 0 0.75rem;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.verify-troubleshooter-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.4rem 0 0.35rem;
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+  color: var(--muted);
+}
+
+.verify-troubleshooter-mode {
+  margin: 0;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius);
+  background: var(--bg);
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+}
+
+.verify-troubleshooter-note {
+  margin: 0.35rem 0 0;
+  font-size: var(--t-xs);
+}
+
 .verify-monitor-heading {
   display: inline-flex;
   align-items: center;

@@ -16,6 +16,25 @@ class HealthResponse(BaseModel):
     count: int
 
 
+class DownloadMode(BaseModel):
+    """How to enter Firmware Download mode for a board (board.md `download_mode`).
+    'auto' -- the USB-serial bridge toggles EN/IO0 itself; 'manual' -- `steps`
+    is the exact button sequence. See SPEC-first-flash.md P0."""
+
+    mode: str
+    steps: Optional[str] = None
+    note: Optional[str] = None
+
+
+class BootBoard(BaseModel):
+    """One board's cited flash-mode data, for the /debug connect troubleshooter."""
+
+    id: str
+    name: str
+    download_mode: DownloadMode
+    usb_serial: Optional[str] = None
+
+
 ComponentStatus = Literal["ok", "warn", "down"]
 OverallStatus = Literal["operational", "degraded", "down"]
 

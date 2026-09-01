@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import ConnectTroubleshooter from "@/components/verify/ConnectTroubleshooter";
 import { track } from "@/lib/analytics";
+import type { BootBoard } from "@/lib/troubleshooter";
+
+interface SerialMonitorProps {
+  /** Boards with cited download-mode data (GET /api/boards/boot). When provided, a connect error shows the troubleshooter. */
+  bootBoards?: BootBoard[];
+  /** Board id to prefill the troubleshooter's picker with. */
+  defaultBoardId?: string;
+}
 
 // Rail B (SPEC-verify.md "Serial monitor"): plain Web Serial, decoded text
 // streamed into a scrollable console. No esptool-js here — this rail never
@@ -11,7 +20,7 @@ const BAUD_RATES = [9600, 74880, 115200, 921600];
 // Keeps a long-running session's console from growing without bound.
 const MAX_LINES = 2000;
 
-export default function SerialMonitor() {
+export default function SerialMonitor({ bootBoards, defaultBoardId }: SerialMonitorProps = {}) {
   const [baud, setBaud] = useState(115200);
   const [connected, setConnected] = useState(false);
   const [lines, setLines] = useState<string[]>([]);
@@ -128,7 +137,14 @@ export default function SerialMonitor() {
           Clear
         </button>
       </div>
-      {error && <p className="verify-error">{error}</p>}
+      {error && (
+        <>
+          <p className="verify-error">{error}</p>
+          {bootBoards && bootBoards.length > 0 && (
+            <ConnectTroubleshooter bootBoards={bootBoards} defaultBoardId={defaultBoardId} onRetry={() => void connect()} />
+          )}
+        </>
+      )}
       <pre className="verify-console" ref={consoleRef} aria-live="polite" aria-label="Serial monitor output">
         {lines.length > 0 ? lines.join("\n") : connected ? "Connected — waiting for output…" : "Not connected."}
       </pre>

@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
+import ConnectTroubleshooter from "@/components/verify/ConnectTroubleshooter";
 import HelpTip from "@/components/HelpTip";
 import SerialMonitor from "@/components/verify/SerialMonitor";
 import VerdictBadge from "@/components/verify/VerdictBadge";
 import { track } from "@/lib/analytics";
+import type { BootBoard } from "@/lib/troubleshooter";
 import { matchBoard, type BoardRecord, type DetectedChip, type VerifyResult } from "@/lib/verify-board";
 import { detectChip } from "@/lib/verify-serial";
 
@@ -24,6 +26,10 @@ interface VerifyBoardProps {
   boardName?: string;
   /** When omitted, this renders detect-only: chip readout only, no esp-atlas comparison (e.g. the standalone /debug page). */
   board?: BoardRecord;
+  /** Boards with cited download-mode data (GET /api/boards/boot). When provided, a connect failure shows the troubleshooter. */
+  bootBoards?: BootBoard[];
+  /** Board id to prefill the troubleshooter's picker with. */
+  defaultBoardId?: string;
 }
 
 function psramText(psram: DetectedChip["psram"]): string {
@@ -43,7 +49,7 @@ function useSerialSupported(): boolean {
   );
 }
 
-export default function VerifyBoard({ boardName, board }: VerifyBoardProps) {
+export default function VerifyBoard({ boardName, board, bootBoards, defaultBoardId }: VerifyBoardProps) {
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
   const supported = useSerialSupported();
 
@@ -100,7 +106,14 @@ export default function VerifyBoard({ boardName, board }: VerifyBoardProps) {
             {phase.kind === "connecting" ? "Connecting…" : heading}
           </button>
 
-          {phase.kind === "error" && <p className="verify-error">{phase.message}</p>}
+          {phase.kind === "error" && (
+            <>
+              <p className="verify-error">{phase.message}</p>
+              {bootBoards && bootBoards.length > 0 && (
+                <ConnectTroubleshooter bootBoards={bootBoards} defaultBoardId={defaultBoardId} onRetry={() => void verify()} />
+              )}
+            </>
+          )}
 
           {phase.kind === "result" && (
             <>
@@ -176,7 +189,7 @@ export default function VerifyBoard({ boardName, board }: VerifyBoardProps) {
           text="Streams whatever the firmware prints to UART, live, once the port is open — the plain 'watch it boot' debug loop."
         />
       </h3>
-      <SerialMonitor />
+      <SerialMonitor bootBoards={bootBoards} defaultBoardId={defaultBoardId} />
     </section>
   );
 }

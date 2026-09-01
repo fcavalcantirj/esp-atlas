@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import VerifyBoard from "@/components/verify/VerifyBoard";
+import { fetchBootBoards } from "@/lib/api-server";
 import { OG_IMAGE, SITE_NAME } from "@/lib/site";
+
+// Prefilled in the troubleshooter's board picker when the API lists it — the
+// First-Flash P0 reference board (SPEC-first-flash.md).
+const DEFAULT_BOOT_BOARD_ID = "esp32-c5-devkitc-1";
 
 // Standalone debug rail (SPEC-verify.md), reusing VerifyBoard's detect-only
 // mode: no board prop, so it reads the connected chip and shows the readout
@@ -20,7 +25,8 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: `${TITLE} · ${SITE_NAME}`, description: DESCRIPTION, images: [OG_IMAGE.url] },
 };
 
-export default function DebugPage() {
+export default async function DebugPage() {
+  const bootBoards = await fetchBootBoards();
   return (
     <main id="main" className="container container--narrow" tabIndex={-1}>
       <nav className="breadcrumb" aria-label="Breadcrumb">
@@ -32,7 +38,7 @@ export default function DebugPage() {
       <p className="lead">
         Connect any ESP32 over USB to read its chip and watch its serial output. Web Serial, no backend, nothing leaves your browser.
       </p>
-      <VerifyBoard />
+      <VerifyBoard bootBoards={bootBoards} defaultBoardId={DEFAULT_BOOT_BOARD_ID} />
     </main>
   );
 }

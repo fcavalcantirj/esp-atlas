@@ -17,6 +17,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
 from esp_atlas_core import db as dbmod
+from esp_atlas_core.boot import list_boot_modes as core_list_boot_modes
 from esp_atlas_core.build_guide import build_guide as core_build_guide
 from esp_atlas_core.clarify import clarify as core_clarify
 from esp_atlas_core.intent import parse_intent as core_parse_intent
@@ -43,6 +44,7 @@ from esp_atlas_core.validate import validate_markdown as core_validate_markdown
 from esp_atlas_core.wizard import wizard as core_wizard
 
 from esp_atlas_api.models import (
+    BootBoard,
     BrandPageResponse,
     BuildGuideRequest,
     BuildGuideResponse,
@@ -250,6 +252,18 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
         if record is None:
             raise HTTPException(status_code=404, detail=f"part not found: {part_id}")
         return record
+
+    @app.get("/boards/boot", response_model=list[BootBoard])
+    def boards_boot():
+        """Boards that cite a Firmware-Download-mode, for the /debug connect
+        troubleshooter (SPEC-first-flash.md P0). Reads frontmatter directly --
+        no DB, no network -- and never 500s: list_boot_modes() wraps every board
+        read and skips unreadable ones, so a malformed board.md degrades to a
+        shorter list rather than an error."""
+        try:
+            return core_list_boot_modes()
+        except Exception:
+            return []
 
     @app.get("/manifest/{recipe_id}.json")
     def manifest(recipe_id: str, request: Request, db_path=Depends(get_db_path)):

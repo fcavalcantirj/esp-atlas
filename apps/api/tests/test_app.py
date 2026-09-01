@@ -348,6 +348,24 @@ def test_parts_by_id_board_has_empty_faq(client):
     assert r.json()["faq"] == []
 
 
+def test_boards_boot_returns_c5_with_download_mode(client):
+    r = client.get("/boards/boot")
+    assert r.status_code == 200
+    body = r.json()
+    assert isinstance(body, list)
+    by_id = {b["id"]: b for b in body}
+    assert "esp32-c5-devkitc-1" in by_id, "C5-DevKitC-1 (First-Flash P0 reference) must be present"
+    c5 = by_id["esp32-c5-devkitc-1"]
+    assert c5["name"] == "ESP32-C5-DevKitC-1"
+    assert c5["download_mode"]["mode"] == "manual"
+    assert c5["download_mode"]["steps"]  # cited button sequence
+    assert c5["usb_serial"] == "native-usb-serial-jtag"
+    # Every returned board must carry a download_mode with a mode -- that is the
+    # whole point of the endpoint (boards without one are omitted).
+    for b in body:
+        assert b["download_mode"]["mode"] in {"auto", "manual"}
+
+
 def test_facets_endpoint_shape(client):
     r = client.get("/facets")
     assert r.status_code == 200
