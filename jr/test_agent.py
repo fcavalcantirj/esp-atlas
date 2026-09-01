@@ -5,6 +5,10 @@ network — building an Agno model object doesn't call out, it only reads env va
 import sys
 from pathlib import Path
 
+import pytest
+
+pytest.importorskip("agno")
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import agent
 
