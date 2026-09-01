@@ -11,8 +11,8 @@ extras:
 - rgb-led
 download_mode:
   mode: manual
-  steps: 'Hold down Boot, then press Reset, then release Boot to enter Firmware
-    Download mode'
+  steps: Hold down Boot, then press Reset, then release Boot to enter Firmware Download
+    mode
   note: 'Two USB-C ports: the USB-to-UART port for serial flashing, or the native
     ESP32-C5 USB port (USB-Serial-JTAG).'
 usb_serial: native-usb-serial-jtag
@@ -42,9 +42,9 @@ io:
   - 28
 notes:
 - 'Board version documented: v1.2'
-- 'Carries an ESP32-C5-WROOM-1(U) module (module record not yet in the atlas);
-  modeled via soc: esp32-c5 rather than module: per the current data model -- cpu/radio
-  specs come straight from the ESP32-C5 chip record, not restated here'
+- 'Carries an ESP32-C5-WROOM-1(U) module (module record not yet in the atlas); modeled
+  via soc: esp32-c5 rather than module: per the current data model -- cpu/radio specs
+  come straight from the ESP32-C5 chip record, not restated here'
 - 'Two USB Type-C ports: a UART-bridge port and the native ESP32-C5 USB 2.0 full-speed
   port; USB-UART bridge chip not named on the page (just "single-chip USB-to-UART
   bridge")'
@@ -58,6 +58,7 @@ notes:
   -- GPIO15 excluded as conditional). Subtracting esp32-c5''s soc.reserved_pins that
   are exposed -- strapping {2,3,7,25,26,27,28} (7) and usb_flash_tied {13,14} (2)
   -- gives 21 - 7 - 2 = 12. Math not vendor-stated; verify before treating as exact.'
+getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
@@ -72,6 +73,9 @@ sources:
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
   verified: '2026-09-01'
 - field: usb_serial
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
+  verified: '2026-09-01'
+- field: getting_started
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
   verified: '2026-09-01'
 ---
