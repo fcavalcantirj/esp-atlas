@@ -97,6 +97,47 @@ query ─▶ structured filter (radio/band/protocol/form) + FTS (name/prose/note
   Same first-class-entity rule as `firmware`. `chip_family` always equals the
   referenced board's `soc`; `board`/`firmware` refs are guaranteed to resolve
   (CI-enforced, see `esp_atlas_core.validate._check_inheritance`).
+- `GET  /status` (served at `/api/status` in production) → public, unauthenticated
+  live health snapshot, computed fresh on every request — **no datastore, no
+  external paid service, no network calls**. Shape:
+  ```json
+  {
+    "status": "operational | degraded | down",
+    "generated_at": "ISO-8601 UTC timestamp",
+    "components": [
+      {"name": "API", "status": "ok | warn | down", "detail": "..."},
+      {"name": "Data", "status": "ok | warn | down", "detail": "..."},
+      {"name": "Jr / catalog", "status": "ok | warn | down", "detail": "..."},
+      {"name": "Deploy", "status": "ok | warn | down", "detail": "..."}
+    ]
+  }
+  ```
+  Components (always exactly these four, in this order):
+  - **API** — `ok` if the process is serving and `esp-atlas.db`'s search index is
+    built (its `meta.count` row is readable); detail names the record count.
+    `down` if the index can't be read at all (e.g. `meta` table missing).
+  - **Data** — entity counts read live off `data/**/*.md` (socs, modules, boards,
+    brands, firmware, recipes) via `esp_atlas_core.frontmatter.iter_data_files`,
+    plus `schema_valid` (`true` once the db's `meta.build_id` row exists — i.e.
+    the cold-start index build already completed cleanly; this does **not**
+    re-run `scripts/validate_data.py`'s full guard per request, that check is
+    build-time/CI-time only). `warn` if `schema_valid` is false or every count is
+    zero.
+  - **Jr / catalog** — the newest firmware entry (by the latest `verified` date
+    across its own `sources[]`, ties broken by id) — a proxy for Jr's authoring
+    activity, since firmware/recipe records are Jr's primary output. `warn` if
+    there is no firmware data, or the newest entry has no verified date at all.
+  - **Deploy** — `commit <short-sha> · <VERCEL_GIT_COMMIT_REF> · <VERCEL_ENV>`
+    when `VERCEL_GIT_COMMIT_SHA` is set, else `local`. Vercel's system env vars
+    (per its own docs) carry no deployment-build timestamp, so this reports
+    commit + branch + environment rather than inventing a build time. Always `ok`.
+  - **Overall status**: `down` iff the API component is `down`; else `degraded`
+    if any component (including Data/Jr/Deploy) is `warn` or `down`; else
+    `operational`.
+  - Every component's computation is independently wrapped (see
+    `esp_atlas_core.status`) so one failing probe reports as `warn`/`down`
+    instead of crashing the response — this endpoint must **never 500**, and
+    makes no outbound network calls (stays fast).
 
 **Site** (Next.js, SSG)
 - `/` home: wizard + ask box
