@@ -588,3 +588,45 @@ def test_board_triple_validate_skips_chip_family_check_when_page_names_no_chip(m
 
     assert not any("chip-family mismatch" in p for p in
                   (result["gate3_integrity"] if isinstance(result["gate3_integrity"], list) else []))
+
+
+# ─────────────────────────── _catalogued_repos_and_tokens ───────────────────────────
+
+def _write_firmware(root, fw_id, name, url="https://github.com/someone/somerepo"):
+    d = root / fw_id
+    d.mkdir()
+    (d / "firmware.md").write_text(
+        f"---\nid: {fw_id}\ntype: firmware\nname: {name}\nurl: {url}\n---\n\n# {name}\n")
+    return d
+
+
+def test_catalogued_repos_and_tokens_splits_concatenated_id_via_name_field(monkeypatch, tmp_path):
+    """A firmware id with no delimiter (e.g. 'esp32marauder') can't be split into its CORE
+    token by hyphen/underscore alone — but its human-readable `name:` frontmatter field
+    ('ESP32 Marauder') can. This is what makes the M5stick-Marauder device-port dedup possible
+    (real bug: a candidate named 'M5stickC Plus 2 Marauder (BLE Fix)' was authored as new)."""
+    monkeypatch.setattr(tools, "FIRMWARE_DIR", tmp_path)
+    _write_firmware(tmp_path, "esp32marauder", "ESP32 Marauder",
+                    url="https://github.com/justcallmekoko/ESP32Marauder")
+
+    _repos, tokens = tools._catalogued_repos_and_tokens()
+
+    assert "marauder" in tokens
+
+
+def test_catalogued_repos_and_tokens_excludes_generic_vendor_tokens(monkeypatch, tmp_path):
+    """A bare 'esp32' token must never enter the dedup fingerprint on its own — it names the
+    chip family shared by half the catalog, not a specific firmware, and would false-skip
+    unrelated new firmware that merely targets the same chip. The real CORE tokens ('marauder',
+    'pirate') must still come through."""
+    monkeypatch.setattr(tools, "FIRMWARE_DIR", tmp_path)
+    _write_firmware(tmp_path, "esp32marauder", "ESP32 Marauder",
+                    url="https://github.com/justcallmekoko/ESP32Marauder")
+    _write_firmware(tmp_path, "esp32-bit-pirate", "ESP32 Bit Pirate",
+                    url="https://github.com/someone/esp32-bit-pirate")
+
+    _repos, tokens = tools._catalogued_repos_and_tokens()
+
+    assert "esp32" not in tokens
+    assert "marauder" in tokens
+    assert "pirate" in tokens
