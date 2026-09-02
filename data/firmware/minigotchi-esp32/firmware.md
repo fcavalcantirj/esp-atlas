@@ -3,7 +3,7 @@ id: minigotchi-esp32
 type: firmware
 name: Minigotchi-ESP32 StickC Plus 2
 url: https://github.com/dj1ch/minigotchi-ESP32
-category: multi
+category: pentest
 maintainer: dj1ch
 socs:
 - esp32
