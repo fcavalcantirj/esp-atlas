@@ -7,7 +7,6 @@ category: multi
 maintainer: thebricktop
 popularity:
   stars: 14
-  downloads: 2937
   as_of: '2026-09-01'
 socs:
 - esp32-s3

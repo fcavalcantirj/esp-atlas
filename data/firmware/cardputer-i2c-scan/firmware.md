@@ -7,7 +7,6 @@ category: multi
 maintainer: djflix
 popularity:
   stars: 2
-  downloads: 837
   forks: 0
   as_of: '2026-09-02'
 socs:

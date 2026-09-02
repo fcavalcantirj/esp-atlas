@@ -7,7 +7,6 @@ category: multi
 maintainer: jymmm
 popularity:
   stars: 7
-  downloads: 1497
   forks: 1
   as_of: '2026-09-02'
 socs:

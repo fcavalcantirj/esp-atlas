@@ -7,7 +7,6 @@ category: multi
 maintainer: kataigp
 popularity:
   stars: 3
-  downloads: 1015
   forks: 0
   as_of: '2026-09-02'
 socs:

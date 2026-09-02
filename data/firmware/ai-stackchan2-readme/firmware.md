@@ -1,7 +1,7 @@
 ---
 id: ai-stackchan2-readme
 type: firmware
-name: "AIｽﾀｯｸﾁｬﾝ2"
+name: "AI\uFF7D\uFF80\uFF6F\uFF78\uFF81\uFF6C\uFF9D2"
 url: https://github.com/robo8080/AI_StackChan2_README
 category: multi
 maintainer: robo8080
@@ -9,7 +9,6 @@ socs:
 - esp32
 popularity:
   stars: 42
-  downloads: 1372
   as_of: '2026-09-01'
 sources:
 - field: '*'

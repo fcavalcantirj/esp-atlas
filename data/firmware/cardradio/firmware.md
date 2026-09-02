@@ -7,7 +7,6 @@ category: multi
 maintainer: mithug3
 popularity:
   stars: 5
-  downloads: 4657
   forks: 1
   as_of: '2026-09-02'
 socs:

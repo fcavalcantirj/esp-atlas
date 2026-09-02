@@ -9,7 +9,6 @@ capabilities:
 - ble
 popularity:
   stars: 19
-  downloads: 1538
   as_of: '2026-09-01'
 socs:
 - esp32-s3

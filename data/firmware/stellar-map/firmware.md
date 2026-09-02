@@ -7,7 +7,6 @@ category: multi
 maintainer: wisnc
 popularity:
   stars: 68
-  downloads: 511
   forks: 3
   as_of: '2026-09-02'
 socs:

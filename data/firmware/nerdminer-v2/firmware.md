@@ -25,7 +25,6 @@ requires:
   board_signal: display
 popularity:
   stars: 2785
-  downloads: 54
   as_of: '2026-09-01'
 sources:
 - field: '*'

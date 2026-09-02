@@ -7,7 +7,6 @@ category: multi
 maintainer: jblanked
 popularity:
   stars: 318
-  downloads: 846
   as_of: '2026-09-01'
 socs:
 - esp32-s3

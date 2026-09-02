@@ -7,7 +7,6 @@ category: multi
 maintainer: sanchitminda
 popularity:
   stars: 3
-  downloads: 977
   forks: 2
   as_of: '2026-09-02'
 socs:

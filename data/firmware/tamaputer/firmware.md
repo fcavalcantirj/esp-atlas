@@ -7,7 +7,6 @@ category: multi
 maintainer: mindovermiles262
 popularity:
   stars: 25
-  downloads: 712
   forks: 1
   as_of: '2026-09-02'
 socs:

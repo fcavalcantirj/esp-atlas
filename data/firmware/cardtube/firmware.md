@@ -7,7 +7,6 @@ category: multi
 maintainer: filipo3221
 popularity:
   stars: 2
-  downloads: 697
   forks: 0
   as_of: '2026-09-02'
 socs:

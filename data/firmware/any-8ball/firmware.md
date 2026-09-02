@@ -7,7 +7,6 @@ category: multi
 maintainer: anyd3v
 popularity:
   stars: 0
-  downloads: 893
   forks: 0
   as_of: '2026-09-02'
 socs:

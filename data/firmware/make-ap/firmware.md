@@ -7,7 +7,6 @@ category: multi
 maintainer: big-bratan
 popularity:
   stars: 10
-  downloads: 1649
   forks: 0
   as_of: '2026-09-02'
 socs:

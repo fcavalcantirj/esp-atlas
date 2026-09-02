@@ -7,7 +7,6 @@ category: multi
 maintainer: olekalek112233
 popularity:
   stars: 6
-  downloads: 564
   forks: 0
   as_of: '2026-09-02'
 socs:

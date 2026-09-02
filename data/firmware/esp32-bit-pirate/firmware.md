@@ -22,7 +22,6 @@ requires:
   board_signal: radio-wifi
 popularity:
   stars: 5674
-  downloads: 164
   as_of: '2026-09-01'
 sources:
 - field: '*'

@@ -7,7 +7,6 @@ category: multi
 maintainer: kestrelrain
 popularity:
   stars: 8
-  downloads: 1957
   forks: 2
   as_of: '2026-09-02'
 socs:

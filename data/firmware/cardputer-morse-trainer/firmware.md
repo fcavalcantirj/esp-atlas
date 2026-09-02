@@ -7,7 +7,6 @@ category: multi
 maintainer: jfduhart
 popularity:
   stars: 10
-  downloads: 1985
   forks: 2
   as_of: '2026-09-02'
 socs:

@@ -7,7 +7,6 @@ category: multi
 maintainer: m5dev1000
 popularity:
   stars: 0
-  downloads: 2014
   forks: 0
   as_of: '2026-09-02'
 socs:

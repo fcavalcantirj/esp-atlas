@@ -25,7 +25,6 @@ not_required:
 - capability: storage
 popularity:
   stars: 4
-  downloads: 152
   as_of: '2026-09-01'
 sources:
 - field: '*'

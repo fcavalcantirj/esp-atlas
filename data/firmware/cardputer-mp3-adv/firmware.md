@@ -7,7 +7,6 @@ category: multi
 maintainer: vicliu624
 popularity:
   stars: 16
-  downloads: 983
   forks: 1
   as_of: '2026-09-02'
 socs:

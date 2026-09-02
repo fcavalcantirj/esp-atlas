@@ -7,7 +7,6 @@ category: multi
 maintainer: aspikray
 popularity:
   stars: 3
-  downloads: 4562
   forks: 0
   as_of: '2026-09-02'
 socs:

@@ -9,7 +9,6 @@ capabilities:
 - ir
 popularity:
   stars: 4
-  downloads: 1404
   forks: 2
   as_of: '2026-09-02'
 socs:

@@ -7,7 +7,6 @@ category: multi
 maintainer: destillegast
 popularity:
   stars: 7
-  downloads: 578
   forks: 1
   as_of: '2026-09-02'
 socs:

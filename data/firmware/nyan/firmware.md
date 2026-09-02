@@ -7,7 +7,6 @@ category: multi
 maintainer: erwantest123
 popularity:
   stars: 6
-  downloads: 6293
   forks: 0
   as_of: '2026-09-02'
 socs:

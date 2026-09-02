@@ -7,7 +7,6 @@ category: multi
 maintainer: soykhaler
 popularity:
   stars: 4
-  downloads: 549
   forks: 1
   as_of: '2026-09-02'
 socs:

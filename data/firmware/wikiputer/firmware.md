@@ -7,7 +7,6 @@ category: multi
 maintainer: weavefront
 popularity:
   stars: 9
-  downloads: 728
   forks: 1
   as_of: '2026-09-02'
 socs:

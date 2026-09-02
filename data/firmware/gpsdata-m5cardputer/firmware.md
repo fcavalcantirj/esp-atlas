@@ -9,7 +9,6 @@ capabilities:
 - gps
 popularity:
   stars: 5
-  downloads: 872
   forks: 1
   as_of: '2026-09-02'
 socs:

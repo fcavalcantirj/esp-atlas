@@ -7,7 +7,6 @@ category: multi
 maintainer: chrisdacrunk
 popularity:
   stars: 6
-  downloads: 3310
   forks: 1
   as_of: '2026-09-02'
 socs:

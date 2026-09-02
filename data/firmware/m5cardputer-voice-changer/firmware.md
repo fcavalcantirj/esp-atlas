@@ -7,7 +7,6 @@ category: multi
 maintainer: pierrebak
 popularity:
   stars: 5
-  downloads: 2159
   forks: 0
   as_of: '2026-09-02'
 socs:

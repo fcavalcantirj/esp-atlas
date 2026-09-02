@@ -7,7 +7,6 @@ category: multi
 maintainer: justinknight93
 popularity:
   stars: 46
-  downloads: 815
   forks: 2
   as_of: '2026-09-02'
 socs:
