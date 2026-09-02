@@ -45,16 +45,13 @@ Only candidates passing all four are authored.
 - **The manual-merge / firefight flow.**
 - **Kept:** `validate.py` (now also enforces the floor as a mechanical backstop), `jr-telemetry`.
 
-## Drain output model — DECISION NEEDED
+## Drain output model — DECIDED: direct-to-main
 
-With admission clean-by-construction, the drain no longer needs an LLM reviewer. Two options:
-
-- **(A) Direct-to-main:** drain commits admitted entries straight to `main` (auto-deploys). Simplest,
-  fewest parts.
-- **(B) PR + CI-green auto-merge:** drain opens a PR; `validate.py` CI runs; auto-merge on green.
-  **No LLM in the loop.** One safety checkpoint, still few parts.
-
-**Recommend (B)** — keeps a mechanical gate (CI) and an audit trail without the LLM review cron.
+The drain **commits admitted entries straight to `main`** (which auto-deploys via Vercel). No PR, no
+review cron — fewest parts. **Because there is no PR/CI gate in front of the deploy, the drain MUST
+self-validate before it pushes:** run `validate.py` (schema + floor backstop) locally and **commit
+only if green; abort + report on red**, never push a failing tree. That local gate is the safety net
+that a PR/CI flow would otherwise provide.
 
 ## One-time migration of the existing catalog
 
@@ -76,9 +73,9 @@ admission and deletes the review cron** — it does not rebuild them.
    false-FAILed clean runs — verify by running the suite directly.)
 2. **Run the one-time migration** → diff → review → merge.
 3. **Wire the 4 gates into drain admission**; **delete `jr-review-merge`**; set drain output to
-   option (B).
+   **direct-to-main** with **self-validate-before-push** (commit only on green `validate.py`).
 4. **Verify** with a dry-run drain: a fork / sub-floor / dup / banner-title candidate is rejected or
-   transformed at admission.
+   transformed at admission, and a red `validate.py` aborts the push.
 
 ## Acceptance
 
@@ -88,8 +85,8 @@ admission and deletes the review cron** — it does not rebuild them.
 - Catalog invariant: **0 forks** (all resolved to originals), **0 sub-floor**, **0 dups**, **0 banner
   titles** — and it stays that way without downstream cleanup.
 
-## Open question — is Jr worth keeping at all?
+## If it still needs babysitting → change / improve / recreate Jr
 
-If a clean-by-construction drain still isn't worth the upkeep for a ~70-entry catalog, the honest
-alternative is to **retire Jr and curate manually**. Decide after step 4: if admission is truly
-low-maintenance, keep it; if it still needs babysitting, kill it.
+After step 4, judge by upkeep. If gate-at-ingest is genuinely low-maintenance, keep it. If it still
+needs babysitting, **we iterate — change, improve, or recreate Jr** (not abandon it). Jr stays a
+living system; the bar is that it earns its keep without firefighting.
