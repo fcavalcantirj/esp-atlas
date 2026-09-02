@@ -360,6 +360,11 @@ def test_boards_boot_returns_c5_with_download_mode(client):
     assert c5["download_mode"]["mode"] == "manual"
     assert c5["download_mode"]["steps"]  # cited button sequence
     assert c5["usb_serial"] == "native-usb-serial-jtag"
+    # First-flash gotcha (2026-09-01): a unit shipped without the J5 current-measurement
+    # jumper -- bridge enumerates, LED lights, chip dead. The troubleshooter must be able to say so.
+    assert any("J5" in n for n in c5["first_flash_notes"]), c5["first_flash_notes"]
+    for b in body:
+        assert isinstance(b["first_flash_notes"], list)
     # Every returned board must carry a download_mode with a mode -- that is the
     # whole point of the endpoint (boards without one are omitted).
     for b in body:
@@ -545,10 +550,17 @@ def test_intent_firmware_query_surfaces_cited_board_reasons(client):
     reasons = body["board_reasons"]
     assert reasons and len(reasons) == len(body["boards"])
     for reason in reasons:
-        assert reason["status"] == "known-good"
+        # The status is the recipe's own trust tier, never model-generated -- and
+        # not always known-good: the C5-DevKitC-1 recipe is `broken` since the
+        # 2026-09-01 hardware test (v1.15.1 boot-loops on chip rev v1.2).
+        assert reason["status"] in {"known-good", "reported", "unverified", "broken"}
         assert reason["chip_family"]
         assert reason["sources"] and all(s["url"] for s in reason["sources"])
         assert reason["reason"]
+    by_board = {b: r for b, r in zip(body["boards"], reasons)}
+    if "esp32-c5-devkitc-1" in by_board:
+        assert by_board["esp32-c5-devkitc-1"]["status"] == "broken"
+    assert any(r["status"] == "known-good" for r in reasons), "Marauder still has known-good boards"
 
 
 # --- /run (grounded run-answer) ---------------------------------------------------------

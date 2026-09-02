@@ -136,6 +136,19 @@ export default function FlashAction({
   // BOOT line. The esp-web-install-button behavior is unaffected by this hint.
   const dmView = downloadModeView(downloadMode);
   const usbText = usbConnector ? ` (${usbConnector.toUpperCase()})` : "";
+  // The exact terminal equivalent of the in-browser rail, for the one failure
+  // it cannot get past: a chip whose CHIP magic the bundled esptool-js does not
+  // know (ESP32-C5 rev v1.2, 2026-09-01). Only for release-bin recipes — the
+  // offset and file are the recipe's own, so the command is a fact, not advice.
+  const terminalFallback =
+    method === "release-bin" && recipe.flash?.bin_url
+      ? {
+          chip: recipe.chip_family.replace("-", ""),
+          offset: recipe.flash.offset ?? "0x0",
+          file: recipe.flash.bin_url.split("/").pop() ?? "firmware.bin",
+          url: recipe.flash.bin_url,
+        }
+      : null;
 
   async function open() {
     const gen = ++generation.current;
@@ -294,6 +307,21 @@ export default function FlashAction({
                 : dmView.steps}
             </p>
             {!dmView.isGeneric && dmView.note && <p className="muted flash-hint">{dmView.note}</p>}
+            {terminalFallback && (
+              <p className="muted flash-hint flash-fallback">
+                If the flasher stops at <span className="mono">Unexpected CHIP magic value</span>, your silicon revision is newer than the
+                browser flasher’s chip table (see <em>Verify my board</em> above) — the board is fine. Flash the same image from a
+                terminal instead:{" "}
+                <span className="mono">
+                  esptool --chip {terminalFallback.chip} write-flash {terminalFallback.offset} {terminalFallback.file}
+                </span>{" "}
+                after downloading it from{" "}
+                <TrackedLink href={terminalFallback.url} linkType="flash_handoff" extra={{ recipe_id: recipe.id, kind: "bin" }}>
+                  {hostOf(terminalFallback.url)}
+                </TrackedLink>
+                .
+              </p>
+            )}
           </>
         )}
 

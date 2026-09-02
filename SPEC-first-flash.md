@@ -28,7 +28,11 @@ own user guide (never guessed — hardware steps must be verifiable):
   - `manual` — the exact sequence, e.g. *"hold **BOOT/IO0**, tap **RESET/EN**, release BOOT."*
 - `usb_serial`: e.g. `native-usb-serial-jtag | cp2102 | cp2102n | ch340 | ch343` — drives
   which **driver** the troubleshooter recommends.
-- `first_flash_notes` *(optional)* — board-specific gotchas, cited.
+- `first_flash_notes` *(optional)* — board-specific gotchas, cited. **Shipped 2026-09-01**:
+  the C5-DevKitC-1 and C6-DevKitC-1 cite their J5 current-measurement jumper (a unit
+  shipped without it — USB bridge enumerated, power LED lit, chip unpowered on both
+  ports; no cable/driver/download-mode step could find that). `GET /api/boards/boot`
+  returns it; the troubleshooter renders a "check the power jumper" step from it.
 Guard-gated (schema + sources-live). Jr backfills over time; **seed C5-DevKitC-1 + top
 boards first**, cited to Espressif's ESP32-C5-DevKitC-1 user guide.
 

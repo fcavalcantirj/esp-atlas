@@ -26,6 +26,10 @@ export default function PartDetailView({
   boardFirmwareRows?: RecipeRow[] | null;
 }) {
   const notes = asStringArray(part.frontmatter.notes);
+  // Cited first-flash gotchas (schema `first_flash_notes`): the one kind of note
+  // that must not read like the rest. A brand-new C5-DevKitC-1 shipped without
+  // its J5 jumper and cost a day; the fact was in the user guide all along.
+  const gotchas = asStringArray(part.frontmatter.first_flash_notes);
   // A SoC page is the hub for everything built on the chip: the list is promoted
   // to the main column (SocHub) and the aside only points at it.
   const isHub = part.type === "soc" && part.related.length > 0;
@@ -51,14 +55,26 @@ export default function PartDetailView({
         {part.type === "board" && boardFirmwareRows !== null && <BoardFirmware rows={boardFirmwareRows} />}
         {isHub && <SocHub part={part} />}
         {part.type === "soc" && <PartFaq items={part.faq} />}
-        {notes.length > 0 && (
+        {(notes.length > 0 || gotchas.length > 0) && (
           <section aria-label="Notes">
             <h2>Notes</h2>
-            <ul className="part-notes">
-              {notes.map((note) => (
-                <li key={note}>{note}</li>
-              ))}
-            </ul>
+            {gotchas.length > 0 && (
+              <div className="part-gotcha" role="note" aria-label="Before you flash">
+                <p className="part-gotcha-title">Before you flash</p>
+                <ul className="part-gotcha-list">
+                  {gotchas.map((note) => (
+                    <li key={note}>{note}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {notes.length > 0 && (
+              <ul className="part-notes">
+                {notes.map((note) => (
+                  <li key={note}>{note}</li>
+                ))}
+              </ul>
+            )}
           </section>
         )}
       </div>

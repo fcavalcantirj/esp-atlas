@@ -198,3 +198,21 @@
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+/* Cited first-flash notes under the troubleshooter's power-jumper step. */
+.verify-troubleshooter-notes {
+  margin: 0.35rem 0 0;
+  padding-left: 1rem;
+}
+
+/* Identification gap (chip connected, nothing identified it): message + the cited-family choice. */
+.verify-unknown-chip {
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* How the chip family was established, when that qualifies the verdict. */
+.verify-provenance {
+  margin: 0.5rem 0 0;
+  font-size: var(--t-xs);
+}

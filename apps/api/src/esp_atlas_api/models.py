@@ -33,6 +33,8 @@ class BootBoard(BaseModel):
     name: str
     download_mode: DownloadMode
     usb_serial: Optional[str] = None
+    # Cited first-flash gotchas (board.md `first_flash_notes`), e.g. a power jumper that must be fitted.
+    first_flash_notes: list[str] = []
 
 
 ComponentStatus = Literal["ok", "warn", "down"]

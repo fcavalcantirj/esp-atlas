@@ -40,6 +40,29 @@ family of tooling ESP Web Tools itself is built on, run directly against the
 ROM bootloader (`detectChip()` — no stub firmware upload, no flashing, no
 erase; strictly read-only):
 
+**Identification order** (`apps/web/lib/chip-identify.ts`, pure + unit-tested;
+`verify-serial.ts` drives it after `connect(…, detecting=false)`):
+
+1. **chip-id** — the `GET_SECURITY_INFO` ROM command's `IMAGE_CHIP_ID`,
+   revision-independent (how Python esptool ≥ 4.9 identifies every chip since
+   the C3; ESP8266/ESP32/S2 never answer it).
+2. **magic** — the `CHIP_DETECT_MAGIC` register against esptool-js's per-chip
+   table. A snapshot: newer silicon answers values it has never seen — an
+   ESP32-C5 rev v1.2 (ROM eco3-20250704) answers `0x30e1706f`, absent from
+   esptool-js 0.6.1, and `detectChip()` alone died with "Unexpected CHIP magic
+   value" (2026-09-01).
+3. **assumed** — nothing matched; on a board page the human may click to
+   proceed on the cited SoC. The reading is labelled *assumed*, the matcher
+   renders that row `unknown` (never `match`), and the unknown magic/chip-id
+   are shown so they can be reported upstream. `/debug` (no record) stops at 2
+   and points at the board page.
+
+A chip identified by chip-id whose magic is unknown gets a note: in-browser
+flashers built on the same table (ESP Web Tools, web.esphome.io) will refuse it
+— flash from a terminal. Upstream esptool-js merged chip-id detection on
+2026-09-01 (#197, unreleased); when a release ships it, step 1 may lean on
+`connect()` again — the order and its tests stay.
+
 | Reading | esptool-js source | Shape |
 |---|---|---|
 | Chip family | `loader.chip.CHIP_NAME` (e.g. `"ESP32-S3"`) | lowercased, matches esp-atlas SoC ids (`esp32-s3`) 1:1 |
