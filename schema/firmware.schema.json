@@ -20,6 +20,16 @@
     },
     "manifest_url": { "type": "string", "format": "uri" },
     "capabilities": { "type": "array", "items": { "type": "string" } },
+    "popularity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stars": { "type": "integer" },
+        "downloads": { "type": "integer" },
+        "as_of": { "type": "string", "format": "date" }
+      },
+      "description": "OPTIONAL dated popularity snapshot (SPEC-firmware-floor.md): GitHub `stars` and launcher/M5Burner `downloads` at author time, plus the `as_of` YYYY-MM-DD snapshot date. Stored so the CI floor gate (scripts/firmware_floor_audit.py --ci) can enforce the popularity floor offline, with no live fetch. Dated because popularity drifts and is refreshable."
+    },
     "benefits_from": {
       "type": "array",
       "items": { "enum": ["display", "storage", "battery", "usb-native", "gps"] },

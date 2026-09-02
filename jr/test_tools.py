@@ -591,6 +591,56 @@ def test_board_triple_validate_skips_chip_family_check_when_page_names_no_chip(m
                   (result["gate3_integrity"] if isinstance(result["gate3_integrity"], list) else []))
 
 
+# ─────────────────────────── author_firmware_and_recipes (popularity persist) ───────────────────────────
+
+FW_POP_FIXTURE_ID = "zzz-test-fixture-tools-firmware"
+
+
+@pytest.fixture
+def cleanup_firmware_fixture():
+    yield
+    shutil.rmtree(tools.FIRMWARE_DIR / FW_POP_FIXTURE_ID, ignore_errors=True)
+    for rdir in (REPO / "data/recipes").glob(f"*__{FW_POP_FIXTURE_ID}"):
+        shutil.rmtree(rdir, ignore_errors=True)
+    tools.remove_run_case(FW_POP_FIXTURE_ID)
+
+
+def test_author_firmware_and_recipes_persists_popularity_snapshot(cleanup_firmware_fixture):
+    """(a) author_firmware_and_recipes writes a dated popularity{stars,downloads,as_of} block
+    from the passed repo stars + launcher downloads, cites it, and stamps `today` (injected) on
+    the popularity snapshot AND the source verified dates. Deterministic — no network."""
+    result = tools.author_firmware_and_recipes(
+        firmware_id=FW_POP_FIXTURE_ID, name="Zzz Tools Fixture Firmware",
+        url="https://github.com/octocat/Hello-World", category="multi",
+        boards=["m5cardputer"], body="A tools fixture firmware for popularity tests.",
+        stars=42, downloads=6000, today="2026-09-01",
+    )
+
+    assert "error" not in result, result
+    fm = tools._frontmatter(tools.FIRMWARE_DIR / FW_POP_FIXTURE_ID / "firmware.md")
+    assert fm["popularity"] == {"stars": 42, "downloads": 6000, "as_of": "2026-09-01"}
+    pop_srcs = [s for s in fm["sources"] if s["field"] == "popularity"]
+    assert len(pop_srcs) == 1
+    assert pop_srcs[0]["verified"] == "2026-09-01"
+    # the '*' record source's verified is the same injected run date
+    star_src = next(s for s in fm["sources"] if s["field"] == "*")
+    assert star_src["verified"] == "2026-09-01"
+
+
+def test_author_firmware_and_recipes_omits_popularity_when_unknown(cleanup_firmware_fixture):
+    """Never invent: with no stars/downloads passed, no popularity block (or citation) is written."""
+    result = tools.author_firmware_and_recipes(
+        firmware_id=FW_POP_FIXTURE_ID, name="Zzz Tools Fixture Firmware",
+        url="https://github.com/octocat/Hello-World", category="multi",
+        boards=["m5cardputer"], body="No popularity known.", today="2026-09-01",
+    )
+
+    assert "error" not in result, result
+    fm = tools._frontmatter(tools.FIRMWARE_DIR / FW_POP_FIXTURE_ID / "firmware.md")
+    assert "popularity" not in fm
+    assert not any(s["field"] == "popularity" for s in fm["sources"])
+
+
 # ─────────────────────────── _catalogued_repos_and_tokens ───────────────────────────
 
 def _write_firmware(root, fw_id, name, url="https://github.com/someone/somerepo"):

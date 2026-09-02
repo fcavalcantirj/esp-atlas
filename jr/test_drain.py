@@ -425,6 +425,23 @@ def test_author_selected_writes_schema_valid_firmware_and_recipe(cleanup_fixture
     assert rc["board"] == "m5cardputer"
 
 
+def test_author_selected_stamps_popularity_block_with_citation(cleanup_fixture):
+    """(a) Authoring persists a dated popularity{stars,downloads,as_of} snapshot from the
+    candidate's repo stars + launcher downloads, plus a `popularity` source citation; `today`
+    (the run date) is injected for determinism."""
+    authored, dropped = drain.author_selected(_fixture_selected(), existing_ids=set(),
+                                              today="2026-09-01")
+
+    assert dropped == []
+    assert authored == [FIXTURE_ID]
+    fm = tools._frontmatter(tools.FIRMWARE_DIR / FIXTURE_ID / "firmware.md")
+    jsonschema.validate(fm, FIRMWARE_SCHEMA)
+    # _fixture_selected(): stars=10, download=100
+    assert fm["popularity"] == {"stars": 10, "downloads": 100, "as_of": "2026-09-01"}
+    assert any(s["field"] == "popularity" and s["verified"] == "2026-09-01"
+               for s in fm["sources"])
+
+
 def test_author_selected_dedups_against_existing_ids(cleanup_fixture):
     authored, dropped = drain.author_selected(_fixture_selected(), existing_ids={FIXTURE_ID})
 
