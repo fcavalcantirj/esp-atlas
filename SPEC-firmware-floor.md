@@ -39,6 +39,32 @@ One-off audit + prune (done *before* the drain change lands):
 3. Keep anything with a real reason (board-specific, cited, or curated) even if low-pop —
    note why.
 
+## Persisted, TIMESTAMPED popularity (so CI can enforce the floor with no LLM, no network)
+The drain knows stars + downloads at author time but discards them, so nothing downstream can
+verify the floor offline (this is why the audit went blind on Sun-Rider: 12 stars but 6,087
+downloads). Fix — store the numbers, dated like a citation (popularity drifts):
+- On author, write a `popularity` block into the firmware frontmatter:
+  ```
+  popularity:
+    stars: <github stargazers_count>
+    downloads: <launcher / M5Burner download count>
+    as_of: <YYYY-MM-DD>   # snapshot date — popularity changes, so it is dated and refreshable
+  ```
+  Cite it (GitHub API + launcher catalog) in `sources`. The `as_of` date makes it a
+  freshness-aware snapshot a future Jr "popularity refresh" job can re-measure (keep-true).
+- Schema: add the optional `popularity` object to `schema/firmware.schema.json`.
+- Backfill: a one-off pass stamps `popularity` onto existing firmware (fetch live once) so the
+  gate has data for today's catalog.
+
+## CI floor gate (deterministic, mechanical — no LLM, no manual curation)
+- `scripts/firmware_floor_audit.py` reads the **stored** `popularity` (not a live fetch) → fully
+  offline/deterministic.
+- Add a step to `.github/workflows/validate.yml`: run the audit and **exit non-zero (fail the
+  build)** if any firmware is below **both** floors (stars < STAR_FLOOR AND downloads <
+  DOWNLOAD_FLOOR) and not curated-exempt.
+- Effect: GitHub **blocks the merge** of any sub-floor firmware, mechanically. Felipe never
+  hand-curates for popularity again.
+
 ## Order of work (Felipe: "one after another, after spec")
 1. **This spec.** ✓
 2. **Audit + prune** existing sub-floor firmware (server-vampeta + the swept list).
