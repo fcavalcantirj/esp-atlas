@@ -410,7 +410,10 @@ def _fixture_selected(**overrides):
         "maintainer": "octocat",
     }
     record.update(overrides)
-    return [{"record": record, "download": 100, "stars": 10, "forks": 4,
+    # stars=30 clears the popularity floor (SPEC-firmware-floor.md, STAR_FLOOR=25) — the guard
+    # run_guard() triggers now mechanically enforces the floor via scripts/validate.py, so a
+    # below-floor fixture would guard-red here for a reason unrelated to what these tests cover.
+    return [{"record": record, "download": 100, "stars": 30, "forks": 4,
              "description": "A fixture firmware for drain tests."}]
 
 
@@ -440,8 +443,8 @@ def test_author_selected_stamps_popularity_block_with_citation(cleanup_fixture):
     assert authored == [FIXTURE_ID]
     fm = tools._frontmatter(tools.FIRMWARE_DIR / FIXTURE_ID / "firmware.md")
     jsonschema.validate(fm, FIRMWARE_SCHEMA)
-    # _fixture_selected(): stars=10, forks=4
-    assert fm["popularity"] == {"stars": 10, "forks": 4, "as_of": "2026-09-01"}
+    # _fixture_selected(): stars=30, forks=4
+    assert fm["popularity"] == {"stars": 30, "forks": 4, "as_of": "2026-09-01"}
     assert "downloads" not in fm["popularity"]
     assert any(s["field"] == "popularity" and s["verified"] == "2026-09-01"
                for s in fm["sources"])
