@@ -28,13 +28,6 @@ was to make the official source the authority. That rule is now structural.)*
 - **Roadmap / current delivery**: see `BIBLE-PLAN.md`.
 - **North star:** answer *"will THIS board do MY project, and exactly how do I wire it?"* — verifiably.
 
-## Web server fetches (`apps/web/lib/api-server.ts`)
-Next.js Data Cache is **persistent and survives deploys** — a `fetch` cached with
-`next: { revalidate }` can keep serving a deleted record (e.g. a removed firmware entry)
-long after the live API returns 404. Server-side fetches in `api-server.ts` therefore use
-`cache: "no-store"` so every server render reflects the current API response, never a
-stale on-disk cache entry.
-
 ## Golden path for any change
 SPEC before code · oracle/TDD first · cite-or-omit · verify the **real path** before
 declaring done · land on main. Deterministic where it matters — no LLM in an answer path
