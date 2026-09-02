@@ -27,8 +27,16 @@ clean by construction**, and the downstream cleanup layer is deleted.
 For each scraped candidate, run in order; reject or transform *before* authoring. All four already
 exist as verified logic (118 passing tests on the logic branch — see "Reuses" below):
 
-1. **Fork → source.** GitHub `.fork`/`.source`; walk to the network root. Author the **canonical
-   original**, never a downstream fork. *(jr/forks.py)*
+1. **Fork → source (GUARDED — do NOT blindly jump to the GitHub parent).** If a candidate is a
+   fork, consider its network root (`.source`). **Resolve ONLY when both hold: (a) source stars >
+   fork stars, AND (b) it's the same project/platform** (not a divergent hard-fork, not a
+   cross-platform parent). Otherwise **keep the fork** — it's either the more-popular entry or a
+   meaningful platform-specific port. Evidence the guard is required (2026-09-02 sweep, 7 forks):
+   ✅ resolve flipper→Sor3nt (425★), zx-spectrum→…-external (48★), sshclient→fernandofatech (67★);
+   ⛔ keep anarch-cardputer (14★ > its 12★ ESPboy parent) and cardputer-mp3-adv (16★ > 7★ parent);
+   ⛔ never resolve circuitpython→micropython (distinct project) or
+   claude-desktop-buddy-cardputer→anthropics/claude-desktop-buddy (non-Cardputer parent).
+   *(jr/forks.py — add this guard; the current resolver walks to root without it.)*
 2. **Popularity floor.** Keep iff the resolved source has **stars ≥ 25 OR forks ≥ 25**. Downloads are
    **not** a metric anywhere. *(jr/scorer.py)*
 3. **Dedup.** If the resolved source is already represented (by repo identity / id), skip.
