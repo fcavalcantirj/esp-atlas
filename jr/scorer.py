@@ -34,6 +34,14 @@ from device_map import device_from_category, device_from_text  # noqa: E402
 
 FIRMWARE_CATEGORY_ENUM = ("pentest", "mesh", "badusb", "display", "home", "multi")
 
+# Popularity floor (SPEC-firmware-floor.md). A drain candidate is authored only if it clears
+# EITHER signal (OR-gated — Cardputer firmware often has low GitHub stars but real M5Burner
+# download counts): GitHub stars >= STAR_FLOOR, OR launcher/M5Burner downloads >= DOWNLOAD_FLOOR.
+# Below BOTH → the drain skips it as filler. One place, tunable; consumed by drain.score_candidates
+# (the drain authoring path). Gates NEW drain authoring only, never already-catalogued entries.
+STAR_FLOOR = 25
+DOWNLOAD_FLOOR = 500
+
 # capability tokens that signal each firmware_category enum value, checked in this priority
 # order (a record with both "wifi" and "mesh" tokens is a mesh firmware first — mesh is the
 # more specific claim). "home"/"display"-only firmware fall through to those buckets; anything

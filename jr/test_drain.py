@@ -246,6 +246,93 @@ def test_score_candidates_authors_entry_not_in_ledger():
     assert scored[0]["record"]["id"] == "ghostesp"
 
 
+# ─────────────────────────── popularity floor (SPEC-firmware-floor.md) ───────────────────────────
+
+def _coding_entry(**overrides):
+    """A clean, scorer-mappable coding-domain candidate: a Cardputer on-device dev tool. Board
+    evidence comes from category='cardputer' (device_from_category -> m5cardputer)."""
+    entry = {"name": "Cardputer Git Client", "description": "An on-device git client for the Cardputer",
+             "category": "cardputer", "github": "https://github.com/devuser/cardputer-git",
+             "download": 0}
+    entry.update(overrides)
+    return entry
+
+
+def test_score_candidates_skips_candidate_below_both_floors():
+    """stars=3 AND downloads=10 → below both floors → skipped for popularity, not authored."""
+    entry = _coding_entry(download=10)
+    meta = _fake_meta(full_name="devuser/cardputer-git", stars=3,
+                      description="An on-device git client for the Cardputer")
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta)
+
+    assert scored == []
+    assert len(skipped) == 1
+    assert skipped[0]["reason"] == "below-popularity-floor"
+    assert skipped[0]["firmware_id"] == "cardputer-git"
+    assert skipped[0]["repo"] == "devuser/cardputer-git"
+
+
+def test_score_candidates_authors_when_downloads_clear_the_floor():
+    """stars=3 AND downloads=800 → downloads clear DOWNLOAD_FLOOR → authored despite low stars."""
+    entry = _coding_entry(download=800)
+    meta = _fake_meta(full_name="devuser/cardputer-git", stars=3,
+                      description="An on-device git client for the Cardputer")
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta)
+
+    assert skipped == []
+    assert len(scored) == 1
+    assert scored[0]["record"]["id"] == "cardputer-git"
+
+
+def test_score_candidates_authors_when_stars_clear_the_floor():
+    """stars=40 AND downloads=0 → stars clear STAR_FLOOR → authored despite zero downloads."""
+    entry = _coding_entry(download=0)
+    meta = _fake_meta(full_name="devuser/cardputer-git", stars=40,
+                      description="An on-device git client for the Cardputer")
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta)
+
+    assert skipped == []
+    assert len(scored) == 1
+    assert scored[0]["record"]["id"] == "cardputer-git"
+
+
+def test_prefilter_skips_a_repo_recorded_seen(tmp_path):
+    """A repo recorded 'seen' (below-floor) in the ledger is skipped by prefilter before any fetch,
+    so sub-floor filler isn't re-fetched every run — but stays non-blocking (merged/absent pass)."""
+    ledger.record_seen("cardputer-git", "devuser/cardputer-git", path=tmp_path / "l.json")
+    state = ledger.load_ledger(tmp_path / "l.json")
+    entry = _coding_entry(download=10)
+    assert drain.prefilter([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS, ledger_state=state) == []
+
+
+def test_run_drain_records_below_floor_candidate_as_seen_and_reports_it(tmp_path, monkeypatch):
+    """A sub-floor candidate is reported under skipped_popularity and recorded 'seen' in the
+    injected ledger so the NEXT run's prefilter skips it before any fetch (not re-fetched every
+    run). Isolated from live catalogued-set drift by injecting the dedup fingerprint."""
+    monkeypatch.setattr(tools, "_catalogued_repos_and_tokens", lambda: (CATALOGUED_REPOS, CATALOGUED_TOKENS))
+    entry = _coding_entry(download=10)
+    meta = {"full_name": "devuser/cardputer-git", "fork": False, "source_full_name": None, "stars": 3,
+            "description": "An on-device git client for the Cardputer", "license": None, "readme_title": None}
+    ledger_path = tmp_path / "proposed_ledger.json"
+
+    report = drain.run_drain(fetch_catalog=lambda: [entry], fetch_meta=lambda url: meta,
+                             ledger_path=ledger_path)
+
+    assert report["authored"] == []
+    assert len(report["skipped_popularity"]) == 1
+    assert report["skipped_popularity"][0]["firmware_id"] == "cardputer-git"
+    # recorded 'seen' (non-blocking) in the ledger
+    state = ledger.load_ledger(ledger_path)
+    assert state["by_id"]["cardputer-git"]["status"] == "seen"
+    assert ledger.is_seen(state, repo="devuser/cardputer-git") is True
+
+
 # ─────────────────────────── rank_juicy (popularity = downloads combined with stars) ───────────────────────────
 
 def _scored(name, download, stars, category="multi"):
@@ -432,7 +519,7 @@ def test_default_fetch_meta_short_circuits_on_repo_error(monkeypatch):
 
 def test_run_drain_full_pipeline_authors_a_clean_candidate(cleanup_fixture):
     entry = {
-        "name": "Cardputer Zzz Test Fixture Firmware", "description": "WiFi deauth tool for the Cardputer.",
+        "name": "Zzzuniq Sentinelprobe Gadget", "description": "WiFi deauther and packet sniffer gadget.",
         "category": "cardputer", "github": f"https://github.com/octocat/{FIXTURE_ID}", "download": 777,
     }
     meta = {"full_name": f"octocat/{FIXTURE_ID}", "fork": False, "source_full_name": None, "stars": 55,
@@ -470,7 +557,7 @@ def test_run_drain_skips_a_candidate_already_proposed_in_an_injected_ledger(tmp_
     """A second run within the same review window (same ledger, unmerged) must NOT re-author an
     id it already proposed — the end-to-end proof of deliverable 3."""
     entry = {
-        "name": "Cardputer Zzz Test Fixture Firmware", "description": "WiFi deauth tool for the Cardputer.",
+        "name": "Zzzuniq Sentinelprobe Gadget", "description": "WiFi deauther and packet sniffer gadget.",
         "category": "cardputer", "github": f"https://github.com/octocat/{FIXTURE_ID}", "download": 777,
     }
     meta = {"full_name": f"octocat/{FIXTURE_ID}", "fork": False, "source_full_name": None, "stars": 55,
