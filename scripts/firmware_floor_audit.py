@@ -38,10 +38,11 @@ if str(_CORE_SRC) not in sys.path:
 from esp_atlas_core.frontmatter import DATA_PATTERNS, parse_frontmatter  # noqa: E402
 from esp_atlas_core.paths import DATA_DIR  # noqa: E402
 
-# Mirrors jr/scorer.py's STAR_FLOOR / DOWNLOAD_FLOOR (kept in sync by hand: jr/ is a standalone
-# package with its own venv and is not importable from the repo-root scripts runtime).
+# Mirrors jr/scorer.py's STAR_FLOOR / DOWNLOAD_FLOOR / FORK_FLOOR (kept in sync by hand: jr/ is a
+# standalone package with its own venv and is not importable from the repo-root scripts runtime).
 STAR_FLOOR = 25
 DOWNLOAD_FLOOR = 500
+FORK_FLOOR = 25
 
 # Human-curated / known-good firmware — exempt from the floor regardless of popularity. Used
 # because the firmware schema carries no trust/tier field; this is the original curated set.
@@ -101,7 +102,7 @@ def audit(data_dir=None, exempt=CURATED_EXEMPT):
         pop = _popularity(fm)
         entry = {"id": fid, "url": fm.get("url"), "repo": repo,
                  "stars": (pop or {}).get("stars"), "downloads": (pop or {}).get("downloads"),
-                 "as_of": (pop or {}).get("as_of"),
+                 "forks": (pop or {}).get("forks"), "as_of": (pop or {}).get("as_of"),
                  "exempt": fid in exempt, "stamped": pop is not None, "below_floor": False}
         entries.append(entry)
         if entry["exempt"]:
@@ -112,7 +113,8 @@ def audit(data_dir=None, exempt=CURATED_EXEMPT):
             continue
         stars = pop.get("stars") or 0
         downloads = pop.get("downloads") or 0
-        entry["below_floor"] = stars < STAR_FLOOR and downloads < DOWNLOAD_FLOOR
+        forks = pop.get("forks") or 0   # absent on pre-forks snapshots → 0, OR-gate still clears on stars/downloads
+        entry["below_floor"] = stars < STAR_FLOOR and downloads < DOWNLOAD_FLOOR and forks < FORK_FLOOR
         if entry["below_floor"]:
             flagged.append(entry)
     flagged.sort(key=lambda e: ((e["stars"] or 0), (e["downloads"] or 0), e["id"]))
@@ -125,14 +127,14 @@ def print_report(report):
     flagged = report["flagged"]
     unstamped = report["unstamped"]
     print("FIRMWARE POPULARITY-FLOOR AUDIT (stored, offline)")
-    print(f"  floors: stars >= {STAR_FLOOR} OR downloads >= {DOWNLOAD_FLOOR}")
+    print(f"  floors: stars >= {STAR_FLOOR} OR downloads >= {DOWNLOAD_FLOOR} OR forks >= {FORK_FLOOR}")
     print(f"  scanned {len(entries)} firmware · {len(report['exempt'])} curated-exempt · "
-          f"{len(flagged)} below BOTH floors · {len(unstamped)} unstamped\n")
-    print("SUB-FLOOR (below BOTH floors — CI FAILS on these: id · stars · downloads):")
+          f"{len(flagged)} below ALL floors · {len(unstamped)} unstamped\n")
+    print("SUB-FLOOR (below ALL floors — CI FAILS on these: id · stars · downloads · forks):")
     if not flagged:
         print("    none — every stamped, non-curated firmware clears a floor")
     for e in flagged:
-        print(f"    {e['id']}: stars={e['stars']} downloads={e['downloads']} "
+        print(f"    {e['id']}: stars={e['stars']} downloads={e['downloads']} forks={e['forks']} "
               f"as_of={e['as_of']}  ({e['repo']})")
     print("\nUNSTAMPED (no popularity block yet — run popularity:backfill; NOT a CI failure):")
     if not unstamped:
@@ -160,8 +162,9 @@ def main(argv=None):
     else:
         print_report(report)
     if args.ci and report["flagged"]:
-        print(f"\nCI GATE FAILED: {len(report['flagged'])} firmware below both popularity floors "
-              f"(stars < {STAR_FLOOR} AND downloads < {DOWNLOAD_FLOOR}).", file=sys.stderr)
+        print(f"\nCI GATE FAILED: {len(report['flagged'])} firmware below all popularity floors "
+              f"(stars < {STAR_FLOOR} AND downloads < {DOWNLOAD_FLOOR} AND forks < {FORK_FLOOR}).",
+              file=sys.stderr)
         return 1
     return 0
 

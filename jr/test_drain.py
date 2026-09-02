@@ -258,10 +258,10 @@ def _coding_entry(**overrides):
     return entry
 
 
-def test_score_candidates_skips_candidate_below_both_floors():
-    """stars=3 AND downloads=10 → below both floors → skipped for popularity, not authored."""
+def test_score_candidates_skips_candidate_below_all_floors():
+    """stars=3 AND downloads=10 AND forks=1 → below all three floors → skipped, not authored."""
     entry = _coding_entry(download=10)
-    meta = _fake_meta(full_name="devuser/cardputer-git", stars=3,
+    meta = _fake_meta(full_name="devuser/cardputer-git", stars=3, forks=1,
                       description="An on-device git client for the Cardputer")
 
     scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
@@ -272,6 +272,22 @@ def test_score_candidates_skips_candidate_below_both_floors():
     assert skipped[0]["reason"] == "below-popularity-floor"
     assert skipped[0]["firmware_id"] == "cardputer-git"
     assert skipped[0]["repo"] == "devuser/cardputer-git"
+
+
+def test_score_candidates_authors_when_forks_clear_the_floor():
+    """stars=3 AND downloads=0 BUT forks=30 → forks clear FORK_FLOOR → authored (a heavily
+    built-on but under-starred utility is real, not filler)."""
+    entry = _coding_entry(download=0)
+    meta = _fake_meta(full_name="devuser/cardputer-git", stars=3, forks=30,
+                      description="An on-device git client for the Cardputer")
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta)
+
+    assert skipped == []
+    assert len(scored) == 1
+    assert scored[0]["record"]["id"] == "cardputer-git"
+    assert scored[0]["forks"] == 30
 
 
 def test_score_candidates_authors_when_downloads_clear_the_floor():
@@ -406,7 +422,7 @@ def _fixture_selected(**overrides):
         "maintainer": "octocat",
     }
     record.update(overrides)
-    return [{"record": record, "download": 100, "stars": 10,
+    return [{"record": record, "download": 100, "stars": 10, "forks": 4,
              "description": "A fixture firmware for drain tests."}]
 
 
@@ -426,8 +442,8 @@ def test_author_selected_writes_schema_valid_firmware_and_recipe(cleanup_fixture
 
 
 def test_author_selected_stamps_popularity_block_with_citation(cleanup_fixture):
-    """(a) Authoring persists a dated popularity{stars,downloads,as_of} snapshot from the
-    candidate's repo stars + launcher downloads, plus a `popularity` source citation; `today`
+    """(a) Authoring persists a dated popularity{stars,downloads,forks,as_of} snapshot from the
+    candidate's repo stars/forks + launcher downloads, plus a `popularity` source citation; `today`
     (the run date) is injected for determinism."""
     authored, dropped = drain.author_selected(_fixture_selected(), existing_ids=set(),
                                               today="2026-09-01")
@@ -436,8 +452,8 @@ def test_author_selected_stamps_popularity_block_with_citation(cleanup_fixture):
     assert authored == [FIXTURE_ID]
     fm = tools._frontmatter(tools.FIRMWARE_DIR / FIXTURE_ID / "firmware.md")
     jsonschema.validate(fm, FIRMWARE_SCHEMA)
-    # _fixture_selected(): stars=10, download=100
-    assert fm["popularity"] == {"stars": 10, "downloads": 100, "as_of": "2026-09-01"}
+    # _fixture_selected(): stars=10, download=100, forks=4
+    assert fm["popularity"] == {"stars": 10, "downloads": 100, "forks": 4, "as_of": "2026-09-01"}
     assert any(s["field"] == "popularity" and s["verified"] == "2026-09-01"
                for s in fm["sources"])
 

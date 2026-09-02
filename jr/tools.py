@@ -238,6 +238,7 @@ def fetch_github_repo(url: str) -> dict:
         "license": (d.get("license") or {}).get("spdx_id"), "topics": d.get("topics", []),
         "homepage": d.get("homepage"), "default_branch": d.get("default_branch"),
         "stars": d.get("stargazers_count"), "archived": d.get("archived"),
+        "forks": d.get("forks_count"),
     }
 
 
@@ -474,7 +475,7 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
                                 maintainer: str | None = None, license: str | None = None,
                                 distribution: list[str] | None = None,
                                 stars: int | None = None, downloads: int | None = None,
-                                today: str | None = None) -> dict:
+                                forks: int | None = None, today: str | None = None) -> dict:
     """DETERMINISTIC authoring — the model supplies ONLY judgment (category, which catalogued
     `boards` it runs on, capabilities from the README). `socs` and every recipe's `chip_family`
     are DERIVED from the board records — the model never touches a chip id (kills the
@@ -498,8 +499,9 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
     today = today or dt.date.today().isoformat()
     src = [{"field": "*", "url": url, "verified": today}]
     popularity, fw_sources = None, src
-    if stars is not None or downloads is not None:      # known → persist; never invent
-        popularity = {"stars": int(stars or 0), "downloads": int(downloads or 0), "as_of": today}
+    if stars is not None or downloads is not None or forks is not None:   # known → persist; never invent
+        popularity = {"stars": int(stars or 0), "downloads": int(downloads or 0),
+                      "forks": int(forks or 0), "as_of": today}
         fw_sources = src + [{"field": "popularity", "url": url, "verified": today}]
     author_firmware_record(firmware_id, name, url, category, socs, fw_sources, body,
                            maintainer=maintainer, license=license,

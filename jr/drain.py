@@ -38,7 +38,7 @@ if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
 import ledger  # noqa: E402
 import tools  # noqa: E402
-from scorer import DOWNLOAD_FLOOR, NOISE_TOKENS, STAR_FLOOR, score_entry  # noqa: E402
+from scorer import DOWNLOAD_FLOOR, FORK_FLOOR, NOISE_TOKENS, STAR_FLOOR, score_entry  # noqa: E402
 
 MAX_PER_CATEGORY = 4
 BATCH_SIZE = 20
@@ -149,21 +149,23 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
                 skipped.append({"name": e.get("name"), "github": gh,
                                 "reason": f"already_{ledger_record['status']}: '{rec['id']}' is in the proposed ledger"})
                 continue
-        # Popularity floor (SPEC-firmware-floor.md): author only if the candidate clears EITHER
-        # signal — GitHub stars >= STAR_FLOOR OR launcher downloads >= DOWNLOAD_FLOOR. Below BOTH is
-        # filler: skip it, tagged "below-popularity-floor", carrying id+repo so run_drain can record
-        # it "seen" in the ledger (so it isn't re-fetched every run). Gates NEW authoring only.
+        # Popularity floor (SPEC-firmware-floor.md): author only if the candidate clears ANY of
+        # three signals — stars >= STAR_FLOOR OR downloads >= DOWNLOAD_FLOOR OR forks >= FORK_FLOOR.
+        # Below ALL THREE is filler: skip it, tagged "below-popularity-floor", carrying id+repo so
+        # run_drain can record it "seen" in the ledger (so it isn't re-fetched every run). NEW-authoring only.
         stars = meta.get("stars") or 0
         downloads = e.get("download") or 0
-        if stars < STAR_FLOOR and downloads < DOWNLOAD_FLOOR:
+        forks = meta.get("forks") or 0
+        if stars < STAR_FLOOR and downloads < DOWNLOAD_FLOOR and forks < FORK_FLOOR:
             skipped.append({"name": e.get("name"), "github": gh, "reason": "below-popularity-floor",
                             "firmware_id": rec["id"], "repo": _owner_repo(gh),
-                            "stars": stars, "download": downloads})
+                            "stars": stars, "download": downloads, "forks": forks})
             continue
         scored.append({
             "record": rec,
             "download": e.get("download") or 0,
             "stars": meta.get("stars") or 0,
+            "forks": meta.get("forks") or 0,
             "description": (meta.get("description") or e.get("description") or "").strip(),
         })
     return scored, skipped
@@ -245,7 +247,7 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
             firmware_id=fid, name=rec["name"], url=rec["url"], category=rec["category"],
             boards=[rec["board"]], body=body, capabilities=rec.get("capabilities"),
             maintainer=rec.get("maintainer"),
-            stars=s.get("stars"), downloads=s.get("download"), today=today,
+            stars=s.get("stars"), downloads=s.get("download"), forks=s.get("forks"), today=today,
         )
         if "error" in result:
             dropped.append({"id": fid, "reason": f"author_error: {result['error']}"})
