@@ -272,8 +272,9 @@ def author_firmware_record(
     """Write a firmware record to data/firmware/<id>/firmware.md (YAML frontmatter + markdown
     body). CITE-OR-OMIT: every entry in `sources` is {field, url, verified} and only fields
     backed by a source may be set (SPEC §2.2). New firmware is authored `unverified`; trust is
-    human-only. `popularity` (optional, SPEC-firmware-floor.md) is a dated {stars,downloads,as_of}
-    snapshot written verbatim only when known. Returns {"path": ...}. Does NOT touch git."""
+    human-only. `popularity` (optional, SPEC-firmware-floor.md) is a dated {stars,forks,as_of}
+    snapshot written verbatim only when known — downloads are NOT a stored metric. Returns
+    {"path": ...}. Does NOT touch git."""
     import yaml
     fm: dict = {"id": firmware_id, "type": "firmware", "name": sanitize_firmware_name(name),
                 "url": url, "category": category}
@@ -475,16 +476,16 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
                                 boards: list[str], body: str, capabilities: list[str] | None = None,
                                 maintainer: str | None = None, license: str | None = None,
                                 distribution: list[str] | None = None,
-                                stars: int | None = None, downloads: int | None = None,
+                                stars: int | None = None,
                                 forks: int | None = None, today: str | None = None) -> dict:
     """DETERMINISTIC authoring — the model supplies ONLY judgment (category, which catalogued
     `boards` it runs on, capabilities from the README). `socs` and every recipe's `chip_family`
     are DERIVED from the board records — the model never touches a chip id (kills the
     soc-fabrication class, e.g. CatHack's esp32-s3). Writes the firmware + one recipe per board +
     the coverage run-case, all consistent by construction. Popularity (SPEC-firmware-floor.md):
-    `stars` (repo_meta) + `downloads` (launcher entry) persist as a dated `popularity` snapshot
-    with a `popularity` source citation, only when known (never invented); `today` (injectable
-    ISO run date, default today) is its `as_of` and the sources' `verified`."""
+    `stars` + `forks` (repo_meta) persist as a dated `popularity` snapshot with a `popularity`
+    source citation, only when known (never invented); downloads are NOT a stored metric. `today`
+    (injectable ISO run date, default today) is its `as_of` and the sources' `verified`."""
     import datetime as dt
     import re
     if not re.fullmatch(r"[a-z][a-z0-9-]{1,39}", firmware_id or "") or re.search(r"\d{4}-\d\d", firmware_id):
@@ -500,9 +501,8 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
     today = today or dt.date.today().isoformat()
     src = [{"field": "*", "url": url, "verified": today}]
     popularity, fw_sources = None, src
-    if stars is not None or downloads is not None or forks is not None:   # known → persist; never invent
-        popularity = {"stars": int(stars or 0), "downloads": int(downloads or 0),
-                      "forks": int(forks or 0), "as_of": today}
+    if stars is not None or forks is not None:   # known → persist; never invent
+        popularity = {"stars": int(stars or 0), "forks": int(forks or 0), "as_of": today}
         fw_sources = src + [{"field": "popularity", "url": url, "verified": today}]
     author_firmware_record(firmware_id, name, url, category, socs, fw_sources, body,
                            maintainer=maintainer, license=license,
