@@ -36,6 +36,7 @@ from pathlib import Path
 _JR_DIR = Path(__file__).resolve().parent
 if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
+import forks  # noqa: E402
 import ledger  # noqa: E402
 import tools  # noqa: E402
 from scorer import FORK_FLOOR, NOISE_TOKENS, STAR_FLOOR, clears_popularity_floor, score_entry  # noqa: E402
@@ -119,7 +120,8 @@ def default_fetch_meta(github_url: str) -> dict:
 
 
 def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued_tokens: set[str],
-                     fetch_meta=default_fetch_meta, ledger_state: dict | None = None) -> tuple[list[dict], list[dict]]:
+                     fetch_meta=default_fetch_meta, ledger_state: dict | None = None,
+                     resolve_source=None) -> tuple[list[dict], list[dict]]:
     """Fetch real GitHub metadata for each (already-prefiltered) entry and hand it to
     score_entry() — the ONE judgment call in this whole pipeline, and it's deterministic. Once
     score_entry() derives the candidate's firmware id (only knowable after a live fetch — the id
@@ -129,8 +131,18 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
     deliverable 3's id-level half of the dedup gate. `ledger_state` defaults to None (no ledger
     check). Returns (scored, skipped): `scored` entries carry the authored record plus the
     popularity signals (`download`, `stars`) and a citable `description` for the firmware body;
-    `skipped` entries carry {name, github, reason} for reporting."""
+    `skipped` entries carry {name, github, reason} for reporting.
+
+    `resolve_source` (default None — no fork resolution, the pre-existing behavior, so callers
+    that don't pass it are unaffected) is an injected `(owner, repo) -> {full_name, stars,
+    forks}` callable (e.g. `lambda owner, repo: forks.resolve_source(owner, repo, forks.
+    default_api)` for a live run) — jr/forks.py's fork -> canonical-source resolution. When
+    given, every scored candidate is authored under its resolved SOURCE repo's identity
+    (url/maintainer/stars/forks), never the fork's own thin stats, and a source already
+    represented (catalogued, or another candidate in THIS batch already resolved to it) is
+    skipped rather than authored twice under two different firmware ids."""
     scored, skipped = [], []
+    seen_sources: set[str] = set()
     for e in entries:
         gh = (e.get("github") or "").strip()
         meta = fetch_meta(gh)
@@ -143,8 +155,25 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
             skipped.append({"name": e.get("name"), "github": gh, "reason": result["reason"]})
             continue
         rec = result["record"]
+        owner_repo = _owner_repo(gh)
+        stars, forks_count = meta.get("stars") or 0, meta.get("forks") or 0
+
+        if resolve_source is not None:
+            owner, repo = owner_repo.split("/", 1)
+            source = resolve_source(owner, repo) or {}
+            source_full = (source.get("full_name") or owner_repo).lower()
+            if source_full in catalogued_repos or source_full in seen_sources:
+                skipped.append({"name": e.get("name"), "github": gh,
+                                "reason": f"fork_source_already_represented: {source_full}"})
+                continue
+            seen_sources.add(source_full)
+            if source_full != owner_repo:
+                rec["url"] = f"https://github.com/{source['full_name']}"
+                rec["maintainer"] = source["full_name"].split("/")[0]
+                stars, forks_count = source.get("stars", stars), source.get("forks", forks_count)
+
         if ledger_state:
-            ledger_record = ledger.lookup(ledger_state, firmware_id=rec["id"], repo=_owner_repo(gh))
+            ledger_record = ledger.lookup(ledger_state, firmware_id=rec["id"], repo=owner_repo)
             if ledger_record and ledger_record["status"] in ledger.BLOCKING_STATUSES:
                 skipped.append({"name": e.get("name"), "github": gh,
                                 "reason": f"already_{ledger_record['status']}: '{rec['id']}' is in the proposed ledger"})
@@ -153,18 +182,16 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
         # signal — stars >= STAR_FLOOR OR forks >= FORK_FLOOR (downloads are never consulted).
         # Below BOTH is filler: skip it, tagged "below-popularity-floor", carrying id+repo so
         # run_drain can record it "seen" in the ledger (so it isn't re-fetched every run). NEW-authoring only.
-        stars = meta.get("stars") or 0
-        forks = meta.get("forks") or 0
-        if not clears_popularity_floor(stars, forks):
+        if not clears_popularity_floor(stars, forks_count):
             skipped.append({"name": e.get("name"), "github": gh, "reason": "below-popularity-floor",
-                            "firmware_id": rec["id"], "repo": _owner_repo(gh),
-                            "stars": stars, "forks": forks})
+                            "firmware_id": rec["id"], "repo": owner_repo,
+                            "stars": stars, "forks": forks_count})
             continue
         scored.append({
             "record": rec,
             "download": e.get("download") or 0,
-            "stars": meta.get("stars") or 0,
-            "forks": meta.get("forks") or 0,
+            "stars": stars,
+            "forks": forks_count,
             "description": (meta.get("description") or e.get("description") or "").strip(),
         })
     return scored, skipped
@@ -266,20 +293,23 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
 def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
              max_per_category: int = MAX_PER_CATEGORY, fetch_catalog=tools.fetch_launcher_catalog,
              fetch_meta=default_fetch_meta, ledger_path=ledger.DEFAULT_LEDGER_PATH,
-             today: str | None = None) -> dict:
+             today: str | None = None, resolve_source=None) -> dict:
     """The full drain, end to end. Additive-only: writes new data/firmware/<id>/ +
     data/recipes/<board>__<id>/ dirs (plus their coverage run-case) and never touches jr-daily
     (agent.py/run.py) or scorer.py's public behavior. Loads jr/ledger.py's proposed-ledger
     (`ledger_path`, injectable for tests) once and threads it through prefilter/score_candidates
     so a candidate already proposed or rejected in an earlier run is skipped before it's ever
     re-authored (deliverable 3) — catalogued-in-main dedup (catalogued_repos/catalogued_tokens)
-    continues to cover merged the same way it always has."""
+    continues to cover merged the same way it always has. `resolve_source` (default None, see
+    score_candidates' docstring) threads jr/forks.py's fork -> canonical-source resolution
+    through — the real `if __name__` run below wires it to a live `gh api` client."""
     entries = fetch_catalog()
     catalogued_repos, catalogued_tokens = tools._catalogued_repos_and_tokens()
     ledger_state = ledger.load_ledger(ledger_path)
     prefiltered = prefilter(entries, catalogued_repos, catalogued_tokens, ledger_state=ledger_state)[:fetch_limit]
     scored, skipped = score_candidates(prefiltered, catalogued_repos, catalogued_tokens,
-                                       fetch_meta=fetch_meta, ledger_state=ledger_state)
+                                       fetch_meta=fetch_meta, ledger_state=ledger_state,
+                                       resolve_source=resolve_source)
     # Candidates skipped for being below BOTH popularity floors (SPEC-firmware-floor.md): record
     # each "seen" in the ledger so the next run's prefilter skips it before any fetch, and report them.
     skipped_popularity = [s for s in skipped if s.get("reason") == "below-popularity-floor"]
@@ -304,7 +334,7 @@ def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
 
 
 if __name__ == "__main__":
-    report = run_drain()
+    report = run_drain(resolve_source=lambda owner, repo: forks.resolve_source(owner, repo, forks.default_api))
     print(f"fetched={report['fetched']} prefiltered={report['prefiltered']} "
          f"scored_clean={report['scored_clean']} skipped_scoring={report['skipped_scoring']} "
          f"selected={report['selected']} dropped_cap={report['dropped_cap']}")
