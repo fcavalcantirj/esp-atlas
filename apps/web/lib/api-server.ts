@@ -13,7 +13,6 @@
 import type { BrandPage, Example, Facets, Firmware, PartDetail, PartRecord, Recipe } from "@/lib/api";
 import type { BootBoard } from "@/lib/troubleshooter";
 
-const REVALIDATE_SECONDS = 3600;
 // The API is a serverless Python function that boots an interpreter, imports
 // FastAPI/pydantic/jsonschema and builds the SQLite index before it can answer.
 // Warm, that is well under a second; cold, it is seconds -- and a fresh deploy
@@ -45,7 +44,7 @@ export type ServerFetchResult<T> =
 
 async function attempt<T>(path: string, timeoutMs: number): Promise<ServerFetchResult<T>> {
   const res = await fetch(`${serverApiBase()}${path}`, {
-    next: { revalidate: REVALIDATE_SECONDS },
+    cache: "no-store",
     signal: AbortSignal.timeout(timeoutMs),
   });
   if (res.status === 404) return { status: "not_found" };
