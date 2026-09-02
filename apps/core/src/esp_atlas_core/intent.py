@@ -151,7 +151,17 @@ def _write_cache(db_path, query, parsed):
 
 
 # Tokens too generic to identify a project: they appear in nearly every query.
-_FIRMWARE_STOPWORDS = frozenset({"esp32", "esp", "m5", "the", "for", "and", "run", "runs"})
+# The second row is the CAPABILITY VOCABULARY — radio/protocol words that
+# describe *what a board can do*, not *which firmware you named*. Letting them
+# identify a firmware hijacks capability queries ("a wifi 6 board" -> a firmware
+# whose name merely contains "wifi"). Barring them forces such queries down the
+# filter path, where radio/protocol belong. A firmware is still reachable by its
+# distinctive tokens (e.g. "marauder"), just never by a bare capability word.
+_FIRMWARE_STOPWORDS = frozenset({
+    "esp32", "esp", "m5", "the", "for", "and", "run", "runs",
+    "wifi", "wifi4", "wifi6", "bluetooth", "ble", "lora", "zigbee",
+    "thread", "matter", "ethernet", "radio", "wireless",
+})
 _MIN_FIRMWARE_TOKEN = 4
 
 
@@ -173,13 +183,21 @@ def firmware_named_in(query):
     haystack = query.lower()
     matched = []
     for fw in list_firmware():
+        # Register this firmware by its LONGEST matching key, not the first one
+        # that happens to hit. _firmware_keys is a set, so iteration order is
+        # hash-seed dependent -- breaking on the first match made a firmware
+        # register with an arbitrary short shared token ("cardputer") instead of
+        # its full name, so "most specific wins" was fed garbage and the winner
+        # flipped across processes. Longest match is deterministic and correct.
+        best = 0
         for key in _firmware_keys(fw):
             # Word boundaries, not substrings: "m5stick" is a substring of
             # "m5sticks3", so a naive match sends "run M5StickS3 RogueDuck" to
             # M5Stick NEMO. Longer, more specific names must win outright.
             if re.search(rf"(?<![a-z0-9]){re.escape(key)}(?![a-z0-9])", haystack):
-                matched.append((len(key), fw))
-                break
+                best = max(best, len(key))
+        if best:
+            matched.append((best, fw))
     # most specific name first, so an exact product name beats a shared prefix
     return [fw for _length, fw in sorted(matched, key=lambda m: -m[0])]
 

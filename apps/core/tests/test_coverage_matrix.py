@@ -7,9 +7,12 @@ over.
 This is a CHARACTERIZATION harness, not a feature test: every assertion below
 is the author's own verbatim expected ground truth, checked against CURRENT
 run_guide/parse_intent behavior. It exists so a future change that silently
-narrows or breaks a firmware/board/purpose combination fails loudly here,
-and so a newly-added firmware is caught by test_every_firmware_has_a_run_case
-before it can ship with zero coverage.
+narrows or breaks a firmware/board/purpose combination fails loudly here.
+RUN_MATRIX is a hand-picked *subset* of diverse kinds -- it does NOT (and must
+not) cover every firmware: Jr adds firmware autonomously and a per-firmware
+hand-case requirement is unscalable. Real-world "does it actually run" truth
+lives on the recipe (`status`/`notes`), guarded by
+test_no_broken_recipe_without_a_reason below -- see SPEC-coverage-verification.md.
 
 Only a DeadLLM is ever injected -- run_guide's/parse_intent's own deterministic
 retrieval and validation is what's under test, never Groq's mood. No test in
@@ -21,7 +24,12 @@ import json
 
 import pytest
 
-from esp_atlas_core.firmware import get_firmware, list_firmware, recipes_for_firmware
+from esp_atlas_core.firmware import (
+    get_firmware,
+    list_firmware,
+    list_recipes,
+    recipes_for_firmware,
+)
 from esp_atlas_core.intent import parse_intent
 from esp_atlas_core.run_guide import run_guide
 
@@ -323,22 +331,28 @@ def test_build_case(built_db_path, case):
         assert result["filters"].get(key) == value, f"{case['query']}: filters={result['filters']}"
 
 
-# --- 4. Coverage assertion: every seeded firmware has a RUN case ------------
+# --- 4. Real-world verification: a broken recipe must say WHY ---------------
 #
-# Keeps this harness honest as data grows -- a new data/firmware/<id>/ with no
-# matching RUN_MATRIX entry must fail here, not slip in silently uncovered.
+# We deliberately do NOT require a hand-authored RUN case per firmware (Jr adds
+# firmware autonomously; hand-curation doesn't scale -- SPEC-coverage-verification.md).
+# Instead, "does this firmware actually run on this board" is a fact about the
+# board x firmware pairing -- the recipe -- verified from real use (website flash
+# or a physical try), recorded in its `status`/`notes`. The one invariant we
+# enforce: a recipe marked `broken` must carry a `notes` reason. A broken combo
+# with no explanation is a silent gap; this keeps it loud (ROADMAP-style), while
+# never asking a human to pre-author coverage for every new firmware.
 
 
-def test_every_firmware_has_a_run_case():
-    matrix_ids = {c["fw"] for c in RUN_MATRIX}
-    seeded_ids = {fw["id"] for fw in list_firmware()}
-    missing = seeded_ids - matrix_ids
-    assert not missing, (
-        f"firmware seeded with no coverage-matrix RUN case: {sorted(missing)} -- "
-        "add a case to RUN_MATRIX in this file (and to docs/coverage-matrix.md)"
+def test_no_broken_recipe_without_a_reason():
+    offenders = [
+        r["id"]
+        for r in list_recipes()
+        if r.get("status") == "broken" and not (r.get("notes") or "").strip()
+    ]
+    assert not offenders, (
+        f"recipe(s) marked status: broken with no `notes` reason: {sorted(offenders)} -- "
+        "a broken board x firmware combo must say why it fails (cite the real try)"
     )
-    extra = matrix_ids - seeded_ids
-    assert not extra, f"RUN_MATRIX names firmware no longer seeded: {sorted(extra)}"
 
 
 def test_run_matrix_firmware_ids_are_real():
