@@ -117,3 +117,48 @@ test("overall is unknown, not match, when one field is unknown and none mismatch
   const result = matchBoard(detected, board);
   assert.equal(result.overall, "unknown");
 });
+
+// Identification provenance (chip-identify.ts): an "assumed" family is not a
+// reading. The 2026-09-01 case — ESP32-C5 rev v1.2 answered a magic value
+// esptool-js 0.6.1 had never seen; the human accepted the cited esp32-c5.
+test("an 'assumed' chip family renders as assumed and verdicts unknown, never match", () => {
+  const detected: DetectedChip = {
+    chipFamily: "esp32-c5",
+    identifiedBy: "assumed",
+    magic: 0x30e1706f,
+    chipId: null,
+    magicKnown: false,
+    flashMb: 8,
+    psram: { present: false, sizeMb: null },
+    mac: "10:bd:a3:df:18:14",
+  };
+  const board: BoardRecord = { soc: "esp32-c5", flashMb: 8, psramMb: 0 };
+  const result = matchBoard(detected, board);
+  const chip = result.fields.find((f) => f.name === "Chip family")!;
+  assert.equal(chip.verdict, "unknown");
+  assert.equal(chip.detected, "assumed esp32-c5 (not read)");
+  assert.equal(chip.cited, "esp32-c5");
+  assert.equal(result.overall, "unknown", "flash and PSRAM matched, but an assumed chip must not make the board 'match'");
+});
+
+test("an 'assumed' family that contradicts the record is still unknown, not mismatch (nothing was read)", () => {
+  const detected: DetectedChip = { chipFamily: "esp32-c5", identifiedBy: "assumed", flashMb: null, psram: null, mac: null };
+  const result = matchBoard(detected, { soc: "esp32-c6", flashMb: null, psramMb: null });
+  assert.equal(result.fields.find((f) => f.name === "Chip family")!.verdict, "unknown");
+});
+
+test("a chip identified by chip-id with an unknown magic is a real reading and matches", () => {
+  const detected: DetectedChip = {
+    chipFamily: "esp32-c5",
+    identifiedBy: "chip-id",
+    magic: 0x30e1706f,
+    chipId: 23,
+    magicKnown: false,
+    flashMb: 8,
+    psram: { present: false, sizeMb: null },
+    mac: null,
+  };
+  const result = matchBoard(detected, { soc: "esp32-c5", flashMb: 8, psramMb: 0 });
+  assert.equal(result.fields.find((f) => f.name === "Chip family")!.verdict, "match");
+  assert.equal(result.overall, "match");
+});

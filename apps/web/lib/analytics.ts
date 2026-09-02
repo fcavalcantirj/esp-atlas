@@ -44,6 +44,7 @@ export type EventName =
   | "verify_connect"
   | "verify_result"
   | "verify_error"
+  | "verify_unknown_chip"
   | "monitor_connect"
   | "monitor_disconnect";
 

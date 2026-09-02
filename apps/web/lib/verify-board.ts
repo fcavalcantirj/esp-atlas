@@ -11,10 +11,25 @@ export interface DetectedPsram {
   sizeMb: number | null;
 }
 
+import type { IdentifiedBy } from "./chip-identify";
+
 /** What esptool-js's ESPLoader read from the connected chip this session. */
 export interface DetectedChip {
   /** Lowercased chip family, e.g. "esp32-s3" — matches esp-atlas SoC ids 1:1. */
   chipFamily: string | null;
+  /**
+   * How `chipFamily` was established (chip-identify.ts). "assumed" means the
+   * silicon identified as nothing and the human accepted the cited family —
+   * the matcher then reports the chip-family verdict as unknown, never match.
+   * Absent on readings that predate this field (treated as a real read).
+   */
+  identifiedBy?: IdentifiedBy;
+  /** CHIP_DETECT_MAGIC register as read, for bug reports; null when not read. */
+  magic?: number | null;
+  /** GET_SECURITY_INFO chip id as read; null when the ROM does not answer it. */
+  chipId?: number | null;
+  /** False when `magic` is not in esptool-js's table — in-browser flashers on the same table will not detect this chip. */
+  magicKnown?: boolean;
   flashMb: number | null;
   /** null = the PSRAM feature read failed/never ran, distinct from "read and absent". */
   psram: DetectedPsram | null;
@@ -47,9 +62,14 @@ function mbText(value: number | null | undefined): string {
   return `${value} MB`;
 }
 
-function chipField(detected: string | null, cited: string | null): FieldResult {
-  const d = detected ? detected.toLowerCase() : null;
+function chipField(detected: DetectedChip, cited: string | null): FieldResult {
+  const d = detected.chipFamily ? detected.chipFamily.toLowerCase() : null;
   const c = cited ? cited.toLowerCase() : null;
+  if (detected.identifiedBy === "assumed") {
+    // Not a reading: the silicon identified as nothing and the human chose to
+    // proceed on what esp-atlas cites. Say so, and never let it count as a match.
+    return { name: "Chip family", detected: d ? `assumed ${d} (not read)` : "not read", cited: c ?? "not cited", verdict: "unknown" };
+  }
   return {
     name: "Chip family",
     detected: d ?? "not read",
@@ -92,7 +112,7 @@ function psramField(detected: DetectedPsram | null, citedMb: number | null | und
 }
 
 export function matchBoard(detected: DetectedChip, board: BoardRecord): VerifyResult {
-  const fields = [chipField(detected.chipFamily, board.soc), flashField(detected.flashMb, board.flashMb), psramField(detected.psram, board.psramMb)];
+  const fields = [chipField(detected, board.soc), flashField(detected.flashMb, board.flashMb), psramField(detected.psram, board.psramMb)];
   const overall: Verdict = fields.some((f) => f.verdict === "mismatch")
     ? "mismatch"
     : fields.every((f) => f.verdict === "match")
