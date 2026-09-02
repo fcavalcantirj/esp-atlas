@@ -5,16 +5,16 @@ Stamps a dated `popularity` snapshot onto every existing data/firmware/*/firmwar
 NOT already carry one, so the offline CI floor gate (scripts/firmware_floor_audit.py --ci) has
 data for today's catalog. For each unstamped firmware it:
 
-  1. fetches LIVE GitHub stars via `gh api repos/<owner>/<repo>` (graceful on 404/missing gh),
-  2. matches the launcher / M5Burner catalog (mirrors jr.tools.fetch_launcher_catalog) by repo or
-     name to recover a download count (0 if unmatched),
-  3. writes popularity{stars, downloads, as_of=today} + a per-field `popularity` source citation.
+  1. fetches LIVE GitHub stars + forks via `gh api repos/<owner>/<repo>` (graceful on 404/missing gh),
+  2. writes popularity{stars, forks, as_of=today} + a per-field `popularity` source citation.
+
+Downloads are NOT fetched or stamped — the popularity floor is stars-or-forks only.
 
 Never overwrites an existing popularity block (idempotent — re-running only touches the still
--unstamped remainder). Both live fetches sit behind injectable functions so tests run fully
+-unstamped remainder). The live fetch sits behind an injectable function so tests run fully
 offline; the real network is only hit on an actual run.
 
-    python3 scripts/popularity_backfill.py            # real run: live gh api + launcher catalog
+    python3 scripts/popularity_backfill.py            # real run: live gh api
     python3 scripts/popularity_backfill.py --data-dir /tmp/fixture
 
 Maps to `npm run popularity:backfill`.
@@ -26,7 +26,6 @@ import datetime as dt
 import json
 import subprocess
 import sys
-import urllib.request
 from pathlib import Path
 
 import yaml
@@ -38,10 +37,6 @@ if str(_CORE_SRC) not in sys.path:
     sys.path.insert(0, str(_CORE_SRC))
 from esp_atlas_core.frontmatter import DATA_PATTERNS, parse_frontmatter  # noqa: E402
 from esp_atlas_core.paths import DATA_DIR  # noqa: E402
-
-# Mirrors jr/tools.py's launcher endpoint (jr/ isn't importable from the scripts runtime — its
-# own venv — so the one API call is reissued here rather than importing jr.tools directly).
-LAUNCHERHUB = "https://api.launcherhub.net/giveMeTheList"
 
 
 def _owner_repo(url: str) -> str | None:
@@ -56,13 +51,13 @@ def _owner_repo(url: str) -> str | None:
     return f"{parts[0]}/{parts[1].removesuffix('.git')}".lower()
 
 
-def default_fetch_stars(owner_repo: str) -> int | None:
-    """stargazers_count for `owner_repo` via `gh api repos/<owner>/<repo>`. Returns None on any
-    failure (missing gh, 404, network, malformed output) — the caller treats None as 0. Only ever
-    called on the real run; tests inject a fake."""
+def default_fetch_repo_stats(owner_repo: str) -> dict | None:
+    """{"stars", "forks"} for `owner_repo` via `gh api repos/<owner>/<repo>`. Returns None on any
+    failure (missing gh, 404, network, malformed output) — the caller treats None as 0/0. Only
+    ever called on the real run; tests inject a fake."""
     try:
         out = subprocess.run(
-            ["gh", "api", f"repos/{owner_repo}", "--jq", ".stargazers_count"],
+            ["gh", "api", f"repos/{owner_repo}"],
             capture_output=True, text=True, timeout=30,
         )
     except (OSError, subprocess.SubprocessError):
@@ -70,39 +65,17 @@ def default_fetch_stars(owner_repo: str) -> int | None:
     if out.returncode != 0:
         return None
     try:
-        return int(out.stdout.strip())
-    except (TypeError, ValueError):
+        d = json.loads(out.stdout)
+        return {"stars": d.get("stargazers_count"), "forks": d.get("forks_count")}
+    except (TypeError, ValueError, json.JSONDecodeError):
         return None
 
 
-def default_fetch_catalog() -> list[dict]:
-    """The launcher/M5Burner community catalog (mirrors jr.tools.fetch_launcher_catalog — one
-    call). Only ever called on the real run; tests inject a fake."""
-    req = urllib.request.Request(LAUNCHERHUB, headers={"User-Agent": "esp-atlas-jr/0.1"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        data = json.load(r)
-    return data if isinstance(data, list) else data.get("data", [])
-
-
-def _catalog_downloads(catalog: list[dict], owner_repo: str | None, name: str | None) -> int:
-    """Match a firmware to the launcher catalog by github repo (owner/repo) first, then by exact
-    (case-insensitive) name, and return its `download` count. 0 when unmatched."""
-    name_l = (name or "").strip().lower()
-    for e in catalog or []:
-        gh = _owner_repo(e.get("github") or "")
-        if owner_repo and gh and gh == owner_repo:
-            return int(e.get("download") or 0)
-    for e in catalog or []:
-        if name_l and (e.get("name") or "").strip().lower() == name_l:
-            return int(e.get("download") or 0)
-    return 0
-
-
-def _stamp(path: Path, fm: dict, body: str, stars: int, downloads: int, today: str) -> None:
+def _stamp(path: Path, fm: dict, body: str, stars: int, forks: int, today: str) -> None:
     """Rewrite `path` with a popularity block (before sources) + a `popularity` source citation.
     Preserves every other field in author-order."""
     sources = fm.pop("sources", []) or []
-    fm["popularity"] = {"stars": int(stars), "downloads": int(downloads), "as_of": today}
+    fm["popularity"] = {"stars": int(stars), "forks": int(forks), "as_of": today}
     sources = list(sources)
     sources.append({"field": "popularity", "url": fm.get("url"), "verified": today})
     fm["sources"] = sources
@@ -110,16 +83,12 @@ def _stamp(path: Path, fm: dict, body: str, stars: int, downloads: int, today: s
     path.write_text(f"---\n{front}\n---\n\n{body.strip()}\n", encoding="utf-8")
 
 
-def backfill(data_dir=None, fetch_stars=default_fetch_stars, fetch_catalog=default_fetch_catalog,
-             today: str | None = None):
+def backfill(data_dir=None, fetch_repo_stats=default_fetch_repo_stats, today: str | None = None):
     """Stamp popularity onto every unstamped firmware under `data_dir`. Returns
     {"stamped": [...], "skipped": [...]} (each a list of firmware ids). Never overwrites an
-    existing popularity block. The launcher catalog is fetched at most once (lazily, only if
-    there's at least one unstamped firmware). `fetch_stars` / `fetch_catalog` are injectable so
-    tests run offline."""
+    existing popularity block. `fetch_repo_stats` is injectable so tests run offline."""
     root = Path(data_dir) if data_dir is not None else DATA_DIR
     today = today or dt.date.today().isoformat()
-    catalog = None
     stamped, skipped = [], []
     for path in sorted(root.glob(DATA_PATTERNS["firmware"])):
         try:
@@ -132,12 +101,11 @@ def backfill(data_dir=None, fetch_stars=default_fetch_stars, fetch_catalog=defau
         if isinstance(fm.get("popularity"), dict):
             skipped.append(fid)                     # already stamped — never overwrite
             continue
-        if catalog is None:
-            catalog = fetch_catalog() or []
         repo = _owner_repo(fm.get("url"))
-        stars = fetch_stars(repo) if repo else None
-        downloads = _catalog_downloads(catalog, repo, fm.get("name"))
-        _stamp(path, fm, body, stars or 0, downloads, today)
+        stats = fetch_repo_stats(repo) if repo else None
+        stars = (stats or {}).get("stars") or 0
+        forks = (stats or {}).get("forks") or 0
+        _stamp(path, fm, body, stars, forks, today)
         stamped.append(fid)
     return {"stamped": stamped, "skipped": skipped}
 

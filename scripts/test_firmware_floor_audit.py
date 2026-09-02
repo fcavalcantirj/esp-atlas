@@ -1,6 +1,7 @@
 """Tests for scripts/firmware_floor_audit.py — the OFFLINE firmware popularity-floor audit + CI gate.
 
 TDD, no network: the audit reads the STORED `popularity` block from frontmatter and never fetches.
+The floor is GitHub stars OR forks only — downloads are NOT a signal (SPEC-firmware-floor.md).
 Uses a small temp fixture data dir with coding-domain ESP32 example firmware (an on-device dev
 tool, a code editor), never lorem ipsum. Mirrors scripts/test_data_completion.py's tmp_path
 fixture-writing convention.
@@ -13,7 +14,7 @@ import firmware_floor_audit as audit
 
 # --- fixtures -------------------------------------------------------------
 
-# A non-curated coding firmware STAMPED sub-floor (3 stars, 10 downloads) -> flagged.
+# A non-curated coding firmware STAMPED sub-floor (3 stars, 1 fork) -> flagged.
 FW_SUBFLOOR_MD = """---
 id: cardputer-git
 type: firmware
@@ -22,7 +23,7 @@ url: https://github.com/devuser/cardputer-git
 category: multi
 popularity:
   stars: 3
-  downloads: 10
+  forks: 1
   as_of: '2026-09-01'
 socs:
 - esp32-s3
@@ -38,8 +39,8 @@ sources:
 # Cardputer Git Client
 """
 
-# A non-curated coding firmware STAMPED above the floor via downloads (12 stars but 6000
-# downloads — the Sun-Rider case) -> NOT flagged.
+# A non-curated coding firmware STAMPED above the floor via forks (12 stars but 30 forks — a
+# heavily built-on but under-starred utility) -> NOT flagged.
 FW_POPULAR_MD = """---
 id: cardputer-code-editor
 type: firmware
@@ -48,7 +49,7 @@ url: https://github.com/devuser/cardputer-code-editor
 category: multi
 popularity:
   stars: 12
-  downloads: 6000
+  forks: 30
   as_of: '2026-09-01'
 socs:
 - esp32-s3
@@ -130,8 +131,8 @@ def test_ci_flag_exits_nonzero_on_a_stored_subfloor_entry(tmp_path):
     assert audit.main(["--data-dir", str(tmp_path), "--ci"]) == 1
 
 
-def test_above_floor_via_downloads_is_not_flagged(tmp_path):
-    """(c) A stored entry with 12 stars but 6000 downloads clears the floor -> not flagged, --ci ok."""
+def test_above_floor_via_forks_is_not_flagged(tmp_path):
+    """(c) A stored entry with 12 stars but 30 forks clears the floor -> not flagged, --ci ok."""
     _write_firmware(tmp_path, "cardputer-code-editor", FW_POPULAR_MD)
 
     report = audit.audit(tmp_path)
@@ -187,3 +188,17 @@ def test_cli_main_runs_and_prints_worklist(tmp_path, capsys):
     assert "UNSTAMPED" in out
     assert "cardputer-repl" in out
     assert "SUMMARY" in out
+
+
+def test_stored_popularity_never_carries_downloads(tmp_path, capsys):
+    """Downloads are not a metric anymore: an audited entry's dict never reports a 'downloads'
+    key, and the printed report never mentions downloads."""
+    _write_firmware(tmp_path, "cardputer-git", FW_SUBFLOOR_MD)
+
+    report = audit.audit(tmp_path)
+    entry = next(e for e in report["entries"] if e["id"] == "cardputer-git")
+    assert "downloads" not in entry
+
+    audit.main(["--data-dir", str(tmp_path)])
+    out = capsys.readouterr().out
+    assert "download" not in out.lower()
