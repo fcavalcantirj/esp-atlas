@@ -167,7 +167,11 @@ that's a coverage hole to close, not a silent gap.
   (cite-or-omit) and can seed a board-population candidate. A firmware whose page lists only one
   board when the repo names several is a **coverage gap** Jr should close (e.g. Evil-M5Project →
   Cardputer + AtomS3 + Core2). Runs as part of authoring and as a periodic re-check of catalogued
-  firmware against newly-added boards.
+  firmware against newly-added boards. **HOW to read "what the repo supports" (ranked build
+  signals: release `.bin` names → `platformio.ini` → CI matrix → `boards.txt` → README), the
+  per-board provenance to store, and the two guard checks that make this a hard gate
+  (completeness + destructive-prune guard) live in `SPEC-firmware-boards.md` — that spec is the
+  method, this job is its executor.**
 - **Seed self-expansion:** when discovery surfaces a productive new firmware repo, vendor, or
   list not in `seeds.json`, Jr proposes adding it (one-file PR) — the seed set grows itself.
 

@@ -120,7 +120,39 @@ spec does **not** re-own that; it **strengthens** it with §3 provenance and §4
 curated top entry can never be silently deleted, and so "nice" is judged on real, cited
 popularity **and** maintenance/trajectory signals — not vibes.
 
-## 7. Non-goals
+## 7. Executor — this doctrine is Jr's mandate (unites with `SPEC-espatlas-jr.md`)
+
+This spec is the *method*; **EspAtlas Jr. is the *doer***. Jr already owns the write lane
+("keep 100% verified & verifiable — at scale, over time") and already declares this exact
+problem in its §3b **Firmware coverage** rule — *"a firmware is not done at one recipe …
+one board when the repo names several is a coverage gap Jr should close (Evil-M5Project →
+Cardputer + AtomS3 + Core2)."* What Jr's spec lacks is **how** to read "what the repo
+supports" and **enforcement** that the gap can't reship. This spec fills both. Mapping:
+
+| This spec | Runs inside Jr as |
+|---|---|
+| §1 derive board set (release assets, `platformio.ini`, CI matrix, `boards.txt`) | the **launcherhub backlog-drain** (authoring) + **recipe/compat-drift** job — which already reads *"release `.bin` names, README device lists"*; this spec makes that reading explicit and ranked |
+| §1 re-derive over time | the **pin&io / firmware re-check** off the staleness queue — closes the §3a *firmware · VERIFY* cell |
+| §2 resolve to canonical board IDs | Jr's **board-population** signals (`boards.txt`, Arduino index) as the ID authority |
+| §3 provenance per board (`source`/`url`/`verified`) | Jr's **cite-or-omit motto** (§2.1/2.2); validates in `validate.py` exactly like `popularity` already does |
+| §4 G1 completeness gate + G2 destructive-op guard | Jr's **deterministic guard** (§2.6, `validate.py` + `check_sources_live.py`, **zero-LLM**) — so both gates are enforced on every PR and in CI, model-agnostic |
+| restore/fix a mis-mapped or wrongly-purged entry | a **cited PR, human-merged** (Jr never writes `main`, §2.3) — never a silent edit |
+
+**Two consequences worth stating loudly:**
+- **G2 lives in Jr's PRUNE verb.** Jr's Liveness job is the only thing that deletes; G2
+  makes it **refuse to prune a floor-passing / human-curated / high-popularity firmware
+  without an explicit logged override**. The RuView-style silent purge becomes impossible
+  by construction, because the guard that blocks it is the same zero-LLM guard Jr already
+  cannot override.
+- **The motto already demands provenance; this spec just applies it to the board field.**
+  Nothing new philosophically — it closes the one field (`boards`) that was being written
+  without a citation while everything else (`popularity`, pins, specs) already is.
+
+Ownership: `SPEC-espatlas-jr.md` owns the crons, guard, memory, and PR pipeline;
+**this spec owns the firmware→board derivation method and the two gate definitions.** On
+any conflict, `SPEC-INDEX.md` wins.
+
+## 8. Non-goals
 
 - **Not** rebuilding the board universe (§2 is adopted, not authored).
 - **Not** inventing compatibility not evidenced in the source repo — absence of a signal
@@ -128,9 +160,10 @@ popularity **and** maintenance/trajectory signals — not vibes.
 - **Not** changing the `soc/module/board` entity model (`SPEC.md`) or the flash flow
   (`SPEC-wizard.md`) — this is purely how the firmware→board set is derived, cited, gated.
 
-## 8. References
+## 9. References
 
-Internal: `SPEC-INDEX.md` (arbiter) · `SPEC.md` (entity model) · `SPEC-firmware-floor.md`
+Internal: `SPEC-espatlas-jr.md` (the executor — crons, guard, PR pipeline) ·
+`SPEC-INDEX.md` (arbiter) · `SPEC.md` (entity model) · `SPEC-firmware-floor.md`
 (popularity floor + timestamped popularity) · `SPEC-discovery.md` (community sourcing) ·
 `SPEC-data-population.md` (official seeding) · `SPEC-wizard.md` (firmware entity/flash).
 
