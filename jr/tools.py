@@ -15,6 +15,7 @@ import urllib.request
 from pathlib import Path
 
 import models
+from normalize import sanitize_firmware_name
 from oracle import oracle_review  # noqa: F401 — re-exported so run.py keeps calling tools.oracle_review
 
 REPO = Path(__file__).resolve().parent.parent           # the esp-atlas repo root
@@ -274,8 +275,8 @@ def author_firmware_record(
     human-only. `popularity` (optional, SPEC-firmware-floor.md) is a dated {stars,downloads,as_of}
     snapshot written verbatim only when known. Returns {"path": ...}. Does NOT touch git."""
     import yaml
-    fm: dict = {"id": firmware_id, "type": "firmware", "name": name, "url": url,
-                "category": category}
+    fm: dict = {"id": firmware_id, "type": "firmware", "name": sanitize_firmware_name(name),
+                "url": url, "category": category}
     if maintainer: fm["maintainer"] = maintainer
     if license: fm["license"] = license
     if distribution: fm["distribution"] = distribution
