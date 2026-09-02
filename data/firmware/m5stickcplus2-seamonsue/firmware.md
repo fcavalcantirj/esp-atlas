@@ -7,10 +7,17 @@ category: multi
 maintainer: hsbsbz
 socs:
 - esp32
+popularity:
+  stars: 31
+  downloads: 4944
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/hsbsbz/M5StickCPlus2-Seamonsue
   verified: '2026-08-27'
+- field: popularity
+  url: https://github.com/hsbsbz/M5StickCPlus2-Seamonsue
+  verified: '2026-09-01'
 ---
 
 for only stickc plus2

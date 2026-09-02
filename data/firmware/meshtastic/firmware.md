@@ -26,7 +26,8 @@ benefits_from:
 - display
 requires:
 - capability: lora
-  why: off-grid mesh runs on a LoRa transceiver the ESP32 chip lacks; the board must carry an SX126x/SX127x
+  why: off-grid mesh runs on a LoRa transceiver the ESP32 chip lacks; the board must
+    carry an SX126x/SX127x
   board_signal: lora
 - capability: ble
   why: pairs to a phone over BLE
@@ -36,19 +37,26 @@ not_required:
   why: small text/telemetry payloads
 - capability: display
   why: headless nodes are fine; a screen is optional
+popularity:
+  stars: 8240
+  downloads: 651
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/meshtastic/firmware
   verified: '2026-08-24'
-- field: 'license'
+- field: license
   url: https://raw.githubusercontent.com/meshtastic/firmware/master/LICENSE
   verified: '2026-08-24'
-- field: 'distribution'
+- field: distribution
   url: https://flasher.meshtastic.org/
   verified: '2026-08-24'
-- field: 'socs'
+- field: socs
   url: https://github.com/meshtastic/firmware/tree/master/variants/esp32s3
   verified: '2026-08-24'
+- field: popularity
+  url: https://github.com/meshtastic/firmware
+  verified: '2026-09-01'
 ---
 
 # Meshtastic

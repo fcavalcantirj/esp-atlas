@@ -10,10 +10,17 @@ capabilities:
 - wifi
 socs:
 - esp32-s3
+popularity:
+  stars: 43
+  downloads: 13650
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/Zeloksa/Cardputer-ADV-WiFi-BLE-Radar
   verified: '2026-08-27'
+- field: popularity
+  url: https://github.com/Zeloksa/Cardputer-ADV-WiFi-BLE-Radar
+  verified: '2026-09-01'
 ---
 
 Advanced Wi-Fi & BLE Radar V3.1 for M5Stack Cardputer ADV. Features: Spectrum Analyzer, Smart Channel Advisor, Dual-band TDM, Anti-tracking bypass, and Retro CRT UI. (Pre-compiled .bin only)

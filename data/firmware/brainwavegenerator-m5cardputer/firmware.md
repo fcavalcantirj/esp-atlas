@@ -9,10 +9,17 @@ capabilities:
 - on-device-web-ui
 socs:
 - esp32-s3
+popularity:
+  stars: 10
+  downloads: 2842
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/aat440hz/BrainWaveGenerator-M5Cardputer
   verified: '2026-08-27'
+- field: popularity
+  url: https://github.com/aat440hz/BrainWaveGenerator-M5Cardputer
+  verified: '2026-09-01'
 ---
 
 A project utilizing the M5Cardputer and its built-in keyboard to generate brainwave frequencies. The system allows for the input of two distinct frequencies and a pulse rate to modulate the generated tones, which are then played through a web interface.

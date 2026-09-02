@@ -18,18 +18,26 @@ capabilities:
 - display
 requires:
 - capability: wifi
-  why: connects to the xiaozhi.me backend (or a self-hosted one) for the LLM/ASR/TTS pipeline
+  why: connects to the xiaozhi.me backend (or a self-hosted one) for the LLM/ASR/TTS
+    pipeline
   board_signal: radio-wifi
+popularity:
+  stars: 29534
+  downloads: 153
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/78/xiaozhi-esp32
   verified: '2026-08-26'
-- field: 'license'
+- field: license
   url: https://raw.githubusercontent.com/78/xiaozhi-esp32/main/LICENSE
   verified: '2026-08-26'
-- field: 'socs'
+- field: socs
   url: https://github.com/78/xiaozhi-esp32#readme
   verified: '2026-08-26'
+- field: popularity
+  url: https://github.com/78/xiaozhi-esp32
+  verified: '2026-09-01'
 ---
 
 # XiaoZhi ESP32

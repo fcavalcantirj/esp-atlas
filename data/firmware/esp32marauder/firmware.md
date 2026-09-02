@@ -31,10 +31,17 @@ not_required:
   why: capture buffers are small and fit the chip SRAM (Cardputer runs it with 0 PSRAM)
 - capability: lora
   why: no LoRa in its toolset
+popularity:
+  stars: 12192
+  downloads: 7935
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/justcallmekoko/ESP32Marauder
   verified: '2026-08-23'
+- field: popularity
+  url: https://github.com/justcallmekoko/ESP32Marauder
+  verified: '2026-09-01'
 ---
 
 # ESP32 Marauder

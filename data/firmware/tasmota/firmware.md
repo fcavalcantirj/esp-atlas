@@ -26,17 +26,25 @@ requires:
   board_signal: radio-wifi
 not_required:
 - capability: display
-  why: fully configurable headless over its web UI; a screen is optional (some device templates add one)
+  why: fully configurable headless over its web UI; a screen is optional (some device
+    templates add one)
+popularity:
+  stars: 24731
+  downloads: 168
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/arendst/Tasmota
   verified: '2026-08-26'
-- field: 'socs'
+- field: socs
   url: https://github.com/arendst/Tasmota/releases/tag/v15.6.0
   verified: '2026-08-26'
-- field: 'distribution'
+- field: distribution
   url: https://tasmota.github.io/install/
   verified: '2026-08-26'
+- field: popularity
+  url: https://github.com/arendst/Tasmota
+  verified: '2026-09-01'
 ---
 
 # Tasmota

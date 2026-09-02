@@ -16,18 +16,26 @@ capabilities:
 - ble
 requires:
 - capability: native-usb
-  why: USB HID keystroke injection, mass-storage emulation and network-adapter impersonation all need the SoC's native USB peripheral
+  why: USB HID keystroke injection, mass-storage emulation and network-adapter impersonation
+    all need the SoC's native USB peripheral
   board_signal: native-usb
+popularity:
+  stars: 2877
+  downloads: 146
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/i-am-shodan/USBArmyKnife
   verified: '2026-08-26'
-- field: 'license'
+- field: license
   url: https://github.com/i-am-shodan/USBArmyKnife/blob/master/LICENSE
   verified: '2026-08-26'
-- field: 'socs'
+- field: socs
   url: https://github.com/i-am-shodan/USBArmyKnife#supported-hardware
   verified: '2026-08-26'
+- field: popularity
+  url: https://github.com/i-am-shodan/USBArmyKnife
+  verified: '2026-09-01'
 ---
 
 # USB Army Knife

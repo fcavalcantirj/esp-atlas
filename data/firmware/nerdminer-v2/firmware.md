@@ -23,16 +23,23 @@ requires:
 - capability: display
   why: its whole purpose is showing mining/clock/global-stats screens
   board_signal: display
+popularity:
+  stars: 2785
+  downloads: 54
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/BitMaker-hub/NerdMiner_v2
   verified: '2026-08-26'
-- field: 'license'
+- field: license
   url: https://raw.githubusercontent.com/BitMaker-hub/NerdMiner_v2/main/LICENSE
   verified: '2026-08-26'
-- field: 'socs'
+- field: socs
   url: https://github.com/BitMaker-hub/NerdMiner_v2/releases/tag/nerdminer-release-V1.8.3
   verified: '2026-08-26'
+- field: popularity
+  url: https://github.com/BitMaker-hub/NerdMiner_v2
+  verified: '2026-09-01'
 ---
 
 # NerdMiner v2

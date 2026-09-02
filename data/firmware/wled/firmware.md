@@ -35,19 +35,26 @@ not_required:
   why: no screen needed
 - capability: ble
 - capability: storage
+popularity:
+  stars: 18620
+  downloads: 104
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/wled/WLED
   verified: '2026-08-24'
-- field: 'license'
+- field: license
   url: https://raw.githubusercontent.com/wled/WLED/main/LICENSE
   verified: '2026-08-24'
-- field: 'socs'
+- field: socs
   url: https://raw.githubusercontent.com/wled/WLED/main/platformio.ini
   verified: '2026-08-24'
-- field: 'distribution'
+- field: distribution
   url: https://install.wled.me/
   verified: '2026-08-24'
+- field: popularity
+  url: https://github.com/wled/WLED
+  verified: '2026-09-01'
 ---
 
 # WLED

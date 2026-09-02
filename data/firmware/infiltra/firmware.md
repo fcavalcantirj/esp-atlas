@@ -26,10 +26,17 @@ requires:
   board_signal: null
 not_required:
 - capability: psram
+popularity:
+  stars: 201
+  downloads: 228
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/D3CRYPT-1/Infiltra-Firmware
   verified: '2026-08-23'
+- field: popularity
+  url: https://github.com/D3CRYPT-1/Infiltra-Firmware
+  verified: '2026-09-01'
 ---
 
 # Infiltra

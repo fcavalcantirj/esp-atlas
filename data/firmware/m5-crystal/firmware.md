@@ -29,10 +29,17 @@ requires:
   board_signal: null
 not_required:
 - capability: psram
+popularity:
+  stars: 75
+  downloads: 1534
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/Dlazder/m5_crystal_firmware
   verified: '2026-08-23'
+- field: popularity
+  url: https://github.com/Dlazder/m5_crystal_firmware
+  verified: '2026-09-01'
 ---
 
 # M5 Crystal

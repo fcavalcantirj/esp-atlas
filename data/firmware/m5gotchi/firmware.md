@@ -9,10 +9,17 @@ capabilities:
 - wifi
 socs:
 - esp32-s3
+popularity:
+  stars: 176
+  downloads: 14080
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/Devsur11/M5Gotchi
   verified: '2026-08-27'
+- field: popularity
+  url: https://github.com/Devsur11/M5Gotchi
+  verified: '2026-09-01'
 ---
 
 Pwnagothi recreation for M5Stack devices

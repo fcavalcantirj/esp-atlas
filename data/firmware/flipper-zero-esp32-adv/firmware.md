@@ -12,10 +12,17 @@ capabilities:
 - wifi
 socs:
 - esp32-s3
+popularity:
+  stars: 23
+  downloads: 1527
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/0xhalloween/Flipper-Zero-ESP32-ADV
   verified: '2026-08-27'
+- field: popularity
+  url: https://github.com/0xhalloween/Flipper-Zero-ESP32-ADV
+  verified: '2026-09-01'
 ---
 
 Support for the M5Cardputers (v1/v1.1/Adv). Thanks to sor3nt and devs

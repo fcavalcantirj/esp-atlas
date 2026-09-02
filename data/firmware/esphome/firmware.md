@@ -34,20 +34,30 @@ requires:
   board_signal: radio-wifi
 not_required:
 - capability: psram
-  why: NOT needed for small/no-display configs — but IS needed when driving a large display framebuffer that exceeds the ~520KB ESP32 SRAM (e.g. the 9.7in Inkplate-10, which ships 8MB PSRAM). PSRAM need depends on the board framebuffer size, not the firmware
+  why: "NOT needed for small/no-display configs \u2014 but IS needed when driving\
+    \ a large display framebuffer that exceeds the ~520KB ESP32 SRAM (e.g. the 9.7in\
+    \ Inkplate-10, which ships 8MB PSRAM). PSRAM need depends on the board framebuffer\
+    \ size, not the firmware"
+popularity:
+  stars: 11626
+  downloads: 0
+  as_of: '2026-09-01'
 sources:
 - field: '*'
   url: https://github.com/esphome/esphome
   verified: '2026-08-24'
-- field: 'license'
+- field: license
   url: https://github.com/esphome/esphome/blob/dev/LICENSE
   verified: '2026-08-24'
-- field: 'socs'
+- field: socs
   url: https://esphome.io/components/esp32.html
   verified: '2026-08-24'
-- field: 'distribution'
+- field: distribution
   url: https://web.esphome.io/
   verified: '2026-08-24'
+- field: popularity
+  url: https://github.com/esphome/esphome
+  verified: '2026-09-01'
 ---
 
 # ESPHome
