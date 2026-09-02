@@ -9,6 +9,7 @@
     "validate:data": "python3 scripts/validate_data.py",
     "boot:coverage": "python3 scripts/boot_coverage.py",
     "data:completion": "python3 scripts/data_completion.py",
+    "firmware:floor-audit": "python3 scripts/firmware_floor_audit.py",
     "build-guide:oracle": "python3 scripts/build_guide_oracle.py",
     "clarify:oracle": "python3 scripts/clarify_oracle.py"
   }

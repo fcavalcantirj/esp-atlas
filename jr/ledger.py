@@ -29,11 +29,14 @@ from pathlib import Path
 
 DEFAULT_LEDGER_PATH = Path(__file__).resolve().parent / "proposed_ledger.json"
 
-STATUSES = ("proposed", "merged", "rejected")
+STATUSES = ("proposed", "merged", "rejected", "seen")
 # statuses that must stop the drain from re-authoring: an open PR (proposed) or a PR a human
 # already closed unmerged (rejected). "merged" is NOT here — a merged id is already in the real
 # atlas, where catalogued_repos/catalogued_tokens dedup covers it as it always has (drain.py's
 # prefilter/scorer gates), so the ledger never needs to duplicate that check.
+# "seen" is NON-blocking too (below): it's a soft note that a candidate was scored but skipped for
+# being below the popularity floor (SPEC-firmware-floor.md) so the drain's prefilter can skip
+# re-fetching it every run, without ever counting as a proposed/rejected PR outcome.
 BLOCKING_STATUSES = ("proposed", "rejected")
 
 
@@ -86,6 +89,33 @@ def is_blocked(ledger: dict, firmware_id: str | None = None, repo: str | None = 
     candidate must not be re-authored on the next run."""
     record = lookup(ledger, firmware_id=firmware_id, repo=repo)
     return record is not None and record["status"] in BLOCKING_STATUSES
+
+
+def is_seen(ledger: dict, firmware_id: str | None = None, repo: str | None = None) -> bool:
+    """True if `firmware_id` or `repo` is in the ledger with status "seen" — a candidate the drain
+    already scored and skipped for being below the popularity floor (SPEC-firmware-floor.md).
+    Used by drain.prefilter to avoid re-fetching a sub-floor repo on every run. Non-blocking: a
+    "seen" record is a soft note, not a proposed/rejected PR outcome."""
+    record = lookup(ledger, firmware_id=firmware_id, repo=repo)
+    return record is not None and record["status"] == "seen"
+
+
+def record_seen(firmware_id: str, repo: str, path: Path = DEFAULT_LEDGER_PATH,
+                now: str | None = None) -> dict:
+    """Record `firmware_id` (from repo owner/repo `repo`) as status=seen — a candidate the drain
+    scored but skipped for being below the popularity floor (SPEC-firmware-floor.md). Dual-indexed
+    like record_proposed so prefilter can skip it by repo before any GitHub fetch next run, so
+    sub-floor filler isn't re-fetched every run. Overwrites any prior record for the same id.
+    Returns the updated ledger."""
+    ledger = load_ledger(path)
+    repo_key = repo.lower()
+    ledger["by_id"][firmware_id] = {
+        "id": firmware_id, "repo": repo_key, "status": "seen",
+        "timestamp": now or _utcnow(), "pr_ref": None,
+    }
+    ledger["by_repo"][repo_key] = firmware_id
+    _save(ledger, path)
+    return ledger
 
 
 def record_proposed(firmware_id: str, repo: str, pr_ref: str | None = None,

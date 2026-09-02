@@ -38,7 +38,7 @@ if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
 import ledger  # noqa: E402
 import tools  # noqa: E402
-from scorer import NOISE_TOKENS, score_entry  # noqa: E402
+from scorer import DOWNLOAD_FLOOR, NOISE_TOKENS, STAR_FLOOR, score_entry  # noqa: E402
 
 MAX_PER_CATEGORY = 4
 BATCH_SIZE = 20
@@ -79,6 +79,10 @@ def prefilter(entries: list[dict], catalogued_repos: set[str], catalogued_tokens
         if owner_repo in catalogued_repos or fn.split("/")[0] in catalogued_repos:
             continue
         if ledger_state and ledger.is_blocked(ledger_state, repo=owner_repo):
+            continue
+        # A repo already scored-and-skipped for being below the popularity floor (recorded "seen",
+        # SPEC-firmware-floor.md) must not be re-fetched every run — the whole point of the ledger note.
+        if ledger_state and ledger.is_seen(ledger_state, repo=owner_repo):
             continue
         name = e.get("name") or ""
         name_tokens = {t for t in re.split(r"[-_\s]", name.lower()) if len(t) >= 4}
@@ -145,6 +149,17 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
                 skipped.append({"name": e.get("name"), "github": gh,
                                 "reason": f"already_{ledger_record['status']}: '{rec['id']}' is in the proposed ledger"})
                 continue
+        # Popularity floor (SPEC-firmware-floor.md): author only if the candidate clears EITHER
+        # signal — GitHub stars >= STAR_FLOOR OR launcher downloads >= DOWNLOAD_FLOOR. Below BOTH is
+        # filler: skip it, tagged "below-popularity-floor", carrying id+repo so run_drain can record
+        # it "seen" in the ledger (so it isn't re-fetched every run). Gates NEW authoring only.
+        stars = meta.get("stars") or 0
+        downloads = e.get("download") or 0
+        if stars < STAR_FLOOR and downloads < DOWNLOAD_FLOOR:
+            skipped.append({"name": e.get("name"), "github": gh, "reason": "below-popularity-floor",
+                            "firmware_id": rec["id"], "repo": _owner_repo(gh),
+                            "stars": stars, "download": downloads})
+            continue
         scored.append({
             "record": rec,
             "download": e.get("download") or 0,
@@ -257,6 +272,11 @@ def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
     prefiltered = prefilter(entries, catalogued_repos, catalogued_tokens, ledger_state=ledger_state)[:fetch_limit]
     scored, skipped = score_candidates(prefiltered, catalogued_repos, catalogued_tokens,
                                        fetch_meta=fetch_meta, ledger_state=ledger_state)
+    # Candidates skipped for being below BOTH popularity floors (SPEC-firmware-floor.md): record
+    # each "seen" in the ledger so the next run's prefilter skips it before any fetch, and report them.
+    skipped_popularity = [s for s in skipped if s.get("reason") == "below-popularity-floor"]
+    for s in skipped_popularity:
+        ledger.record_seen(s["firmware_id"], s["repo"], path=ledger_path)
     ranked = rank_juicy(scored)
     selected, dropped_cap = cap_categories(ranked, max_per_category=max_per_category, batch_size=batch_size)
     authored, dropped_guard = author_selected(selected)
@@ -266,6 +286,7 @@ def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
         "prefiltered": len(prefiltered),
         "scored_clean": len(scored),
         "skipped_scoring": len(skipped),
+        "skipped_popularity": skipped_popularity,
         "selected": len(selected),
         "dropped_cap": len(dropped_cap),
         "authored": authored,
@@ -282,4 +303,8 @@ if __name__ == "__main__":
     print(f"authored ({len(report['authored'])}): {report['authored']}")
     for d in report["dropped_guard"]:
         print(f"  dropped: {d['id']} — {d['reason']}")
+    pop = report.get("skipped_popularity", [])
+    print(f"skipped below-popularity-floor ({len(pop)}):")
+    for s in pop:
+        print(f"  {s['firmware_id']} — stars={s['stars']} downloads={s['download']}")
     print(f"guard ok={report['guard']['ok']}")
