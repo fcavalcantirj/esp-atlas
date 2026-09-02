@@ -58,6 +58,8 @@ notes:
   -- GPIO15 excluded as conditional). Subtracting esp32-c5''s soc.reserved_pins that
   are exposed -- strapping {2,3,7,25,26,27,28} (7) and usb_flash_tied {13,14} (2)
   -- gives 21 - 7 - 2 = 12. Math not vendor-stated; verify before treating as exact.'
+first_flash_notes:
+- 'J5 current-measurement header: its jumper must be fitted (factory default = jumper on). Without it, per the user guide, "power supply between the module and peripherals on the board is cut off" -- the USB-to-UART bridge still enumerates and the power LED still lights, but the ESP32-C5 itself is unpowered and answers on neither USB-C port. Observed 2026-09-01 on a unit that shipped with no jumper; fitting one fixed it.'
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
 sources:
 - field: '*'
@@ -76,6 +78,9 @@ sources:
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
   verified: '2026-09-01'
 - field: getting_started
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
+  verified: '2026-09-01'
+- field: first_flash_notes
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
   verified: '2026-09-01'
 ---

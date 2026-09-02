@@ -11,7 +11,7 @@ from esp_atlas_core.frontmatter import iter_data_files, parse_frontmatter
 
 
 def list_boot_modes(data_dir=None):
-    """Return `[{id, name, download_mode, usb_serial}]` for every board that
+    """Return `[{id, name, download_mode, usb_serial, first_flash_notes}]` for every board that
     cites a `download_mode`, skipping any board that can't be read or lacks the
     minimum fields. Fast (frontmatter only) and never raises."""
     results = []
@@ -37,6 +37,8 @@ def list_boot_modes(data_dir=None):
                 "name": name,
                 "download_mode": download_mode,
                 "usb_serial": fm.get("usb_serial"),
+                # Cited first-flash gotchas (schema `first_flash_notes`); [] when the record has none.
+                "first_flash_notes": [n for n in (fm.get("first_flash_notes") or []) if isinstance(n, str) and n.strip()],
             }
         )
     return results

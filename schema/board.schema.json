@@ -85,6 +85,10 @@
       ],
       "description": "USB-UART bridge chip actually used to flash -- drives which driver the troubleshooter recommends (SPEC-first-flash.md P0)."
     },
+    "first_flash_notes": {
+      "type": "array", "items": { "type": "string" },
+      "description": "Board-specific first-flash gotchas the connect troubleshooter shows (SPEC-first-flash.md P0), e.g. a current-measurement header whose jumper must be fitted or the module is unpowered. Cite-or-omit to the board's own user guide -- hardware facts must be verifiable, never guessed."
+    },
     "getting_started": {
       "type": "string",
       "format": "uri",

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { API_BASE } from "@/lib/api";
-import { resolveDownloadMode, type BootBoard } from "@/lib/troubleshooter";
+import { firstFlashNotes, resolveDownloadMode, type BootBoard } from "@/lib/troubleshooter";
 
 // Shown below a Web Serial connect error on /debug (VerifyBoard's "Read my
 // board" and the serial monitor both mount it): a short, numbered path back to
@@ -49,6 +49,7 @@ export default function ConnectTroubleshooter({ bootBoards = [], defaultBoardId,
 
   const selected = boards.find((b) => b.id === selectedId) ?? null;
   const view = resolveDownloadMode(selected);
+  const notes = firstFlashNotes(selected);
 
   return (
     <section className="verify-troubleshooter" aria-label="Connection troubleshooter">
@@ -73,6 +74,20 @@ export default function ConnectTroubleshooter({ bootBoards = [], defaultBoardId,
           </label>
           <p className="verify-troubleshooter-mode">{view.steps}</p>
           {view.note && <p className="muted verify-troubleshooter-note">{view.note}</p>}
+        </li>
+        <li>
+          Check the board’s <strong>power jumper</strong>. Many devkits carry a current-measurement header whose jumper must be fitted —
+          without it the USB bridge still shows up and the power LED still lights, but the chip itself is unpowered and answers on no
+          port. Pick your board above for its cited details.
+          {notes.length > 0 && (
+            <ul className="verify-troubleshooter-notes">
+              {notes.map((note) => (
+                <li key={note} className="muted verify-troubleshooter-note">
+                  {note}
+                </li>
+              ))}
+            </ul>
+          )}
         </li>
         <li>
           Try the <strong>other USB-C port</strong> — some boards have two, and often only one is wired for flashing.

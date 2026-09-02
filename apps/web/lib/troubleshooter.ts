@@ -17,6 +17,21 @@ export interface BootBoard {
   name: string;
   download_mode: DownloadMode;
   usb_serial?: string | null;
+  /** Cited first-flash gotchas (board.md `first_flash_notes`), e.g. a power jumper that must be fitted. */
+  first_flash_notes?: string[] | null;
+}
+
+/**
+ * The board's cited first-flash gotchas, or [] — blank entries dropped. The
+ * 2026-09-01 origin: an ESP32-C5-DevKitC-1 shipped without its J5
+ * current-measurement jumper, so the USB bridge enumerated, the power LED lit,
+ * and the chip itself was unpowered — nothing in the cable/driver/download-mode
+ * steps could have found it. Only the board's own record can say so.
+ */
+export function firstFlashNotes(board: BootBoard | null | undefined): string[] {
+  const notes = board?.first_flash_notes;
+  if (!Array.isArray(notes)) return [];
+  return notes.filter((n): n is string => typeof n === "string" && n.trim() !== "").map((n) => n.trim());
 }
 
 /** The generic ESP32 sequence shown when no specific board is picked. */
