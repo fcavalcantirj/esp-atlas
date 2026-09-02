@@ -1,32 +1,32 @@
 #!/usr/bin/env python3
-"""Firmware popularity-floor AUDIT (SPEC-firmware-floor.md, "Prune the existing sub-floor entries").
+"""Firmware popularity-floor AUDIT + CI GATE (SPEC-firmware-floor.md).
 
-The drain's popularity floor (jr/scorer.py STAR_FLOOR/DOWNLOAD_FLOOR, enforced in
-jr/drain.py:score_candidates) gates NEW authoring only — it does not touch entries already in the
-catalogue. This one-off audit is the other half: it scans every catalogued firmware
-(data/firmware/*/firmware.md), resolves its GitHub repo from the `url:` field, fetches
-stargazers_count, reads any launcher-download count stored in frontmatter (else unknown/0), and
-flags firmware below BOTH floors (stars < STAR_FLOOR AND downloads < DOWNLOAD_FLOOR) as the prune
-worklist.
+Reads the STORED, dated `popularity` block (stars/downloads/as_of) from every catalogued
+firmware's frontmatter — NO live fetch, fully offline and deterministic — and flags any firmware
+below BOTH floors (stars < STAR_FLOOR AND downloads < DOWNLOAD_FLOOR) that isn't curated-exempt.
+That stored data is written at author time by the drain (jr/tools.author_firmware_and_recipes)
+and backfilled onto pre-existing entries by scripts/popularity_backfill.py.
+
+An entry with NO popularity block yet is reported separately as "unstamped" — it just needs
+backfilling, it is NOT a floor failure (a fresh catalog must not hard-fail CI before the backfill
+runs).
 
 Human-curated / known-good entries are EXEMPT (a maintainer chose them deliberately; popularity
-doesn't override human curation). The firmware schema has no trust/tier field
-(schema/firmware.schema.json is additionalProperties:false with no such key), so exemption falls
-back to a hardcoded allowlist of the original curated set (CURATED_EXEMPT below).
+doesn't override human curation). The firmware schema carries no trust/tier field, so exemption
+falls back to a hardcoded allowlist of the original curated set (CURATED_EXEMPT below).
 
-    python3 scripts/firmware_floor_audit.py            # audit the real data/ dir (live: gh api)
+    python3 scripts/firmware_floor_audit.py            # audit the real data/ dir (offline)
     python3 scripts/firmware_floor_audit.py --data-dir /tmp/fixture
+    python3 scripts/firmware_floor_audit.py --ci       # exit non-zero if any below-both-floors
 
-Maps to `npm run firmware:floor-audit`. Mirrors scripts/data_completion.py's structure. This is a
-REPORT / worklist, never a gate — scripts/validate.py stays the deterministic CI gate; this never
-affects its exit code. Network (gh api) is only hit on the real run; tests inject a fake
-`fetch_stars`.
+Maps to `npm run firmware:floor-audit`. With `--ci` this is the deterministic CI gate wired into
+.github/workflows/validate.yml: it EXITS NON-ZERO when any firmware is below both floors (unstamped
+entries are ignored for the exit code). Without `--ci` it is a report only and always exits 0.
 """
 from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 import sys
 from pathlib import Path
 
@@ -65,53 +65,30 @@ def _owner_repo(url: str) -> str | None:
     return f"{parts[0]}/{repo}".lower()
 
 
-def default_fetch_stars(owner_repo: str) -> int | None:
-    """stargazers_count for `owner_repo` via `gh api repos/<owner>/<repo>`. Returns None on any
-    failure (missing gh, 404, network, malformed JSON) — the caller treats None as unknown/0. Only
-    ever called on the real run; tests inject a fake."""
-    try:
-        out = subprocess.run(
-            ["gh", "api", f"repos/{owner_repo}", "--jq", ".stargazers_count"],
-            capture_output=True, text=True, timeout=30,
-        )
-    except (OSError, subprocess.SubprocessError):
-        return None
-    if out.returncode != 0:
-        return None
-    try:
-        return int(out.stdout.strip())
-    except (TypeError, ValueError):
-        return None
+def _popularity(fm: dict) -> dict | None:
+    """The stored popularity snapshot ({stars, downloads, as_of}) if this firmware has one, else
+    None (unstamped). Never fetches — reads only what author/backfill persisted."""
+    pop = fm.get("popularity")
+    return pop if isinstance(pop, dict) else None
 
 
-def _firmware_downloads(fm: dict) -> int:
-    """Launcher/M5Burner download count if the frontmatter happens to store one (the firmware
-    schema doesn't model it today, so this is unknown/0 for the real dataset). Checks a few
-    plausible key names defensively."""
-    for key in ("download", "downloads", "m5burner_downloads"):
-        val = fm.get(key)
-        if isinstance(val, (int, float)):
-            return int(val)
-    return 0
-
-
-def audit(data_dir=None, fetch_stars=default_fetch_stars, exempt=CURATED_EXEMPT):
-    """Audit every catalogued firmware against the popularity floor. Returns:
+def audit(data_dir=None, exempt=CURATED_EXEMPT):
+    """Audit every catalogued firmware against the popularity floor, OFFLINE, from stored data.
+    Returns:
 
         {
-          "entries": [{"id", "url", "repo", "stars", "downloads", "exempt", "below_floor"}, ...],
-          "flagged": [ ...the sub-floor, non-exempt entries (the prune worklist)... ],
-          "exempt": [ ...ids skipped as human-curated... ],
+          "entries":   [{"id", "url", "repo", "stars", "downloads", "as_of",
+                         "exempt", "stamped", "below_floor"}, ...],
+          "flagged":   [ ...sub-floor, non-exempt, STAMPED entries (the CI-failing set)... ],
+          "unstamped": [ ...entries with no popularity block yet (need backfilling)... ],
+          "exempt":    [ ...ids skipped as human-curated... ],
         }
 
-    `fetch_stars(owner_repo) -> int | None` is injectable (tests pass a no-network fake); None is
-    treated as unknown → 0. An entry is flagged when it is NOT exempt AND stars < STAR_FLOOR AND
-    downloads < DOWNLOAD_FLOOR.
+    An entry is `flagged` when it is NOT exempt, IS stamped, AND stars < STAR_FLOOR AND
+    downloads < DOWNLOAD_FLOOR. Unstamped entries are reported separately and never flagged.
     """
     root = Path(data_dir) if data_dir is not None else DATA_DIR
-    entries = []
-    flagged = []
-    exempt_ids = []
+    entries, flagged, unstamped, exempt_ids = [], [], [], []
     for path in sorted(root.glob(DATA_PATTERNS["firmware"])):
         try:
             fm, _body = parse_frontmatter(path)
@@ -120,40 +97,50 @@ def audit(data_dir=None, fetch_stars=default_fetch_stars, exempt=CURATED_EXEMPT)
         if not isinstance(fm, dict):
             continue
         fid = fm.get("id") or path.parent.name
-        if fid in exempt:
-            exempt_ids.append(fid)
-            entries.append({"id": fid, "url": fm.get("url"), "repo": _owner_repo(fm.get("url")),
-                            "stars": None, "downloads": None, "exempt": True, "below_floor": False})
-            continue
         repo = _owner_repo(fm.get("url"))
-        stars = fetch_stars(repo) if repo else None
-        stars_val = stars or 0
-        downloads = _firmware_downloads(fm)
-        below = stars_val < STAR_FLOOR and downloads < DOWNLOAD_FLOOR
-        entry = {"id": fid, "url": fm.get("url"), "repo": repo, "stars": stars,
-                 "downloads": downloads, "exempt": False, "below_floor": below}
+        pop = _popularity(fm)
+        entry = {"id": fid, "url": fm.get("url"), "repo": repo,
+                 "stars": (pop or {}).get("stars"), "downloads": (pop or {}).get("downloads"),
+                 "as_of": (pop or {}).get("as_of"),
+                 "exempt": fid in exempt, "stamped": pop is not None, "below_floor": False}
         entries.append(entry)
-        if below:
+        if entry["exempt"]:
+            exempt_ids.append(fid)
+            continue
+        if pop is None:
+            unstamped.append(entry)
+            continue
+        stars = pop.get("stars") or 0
+        downloads = pop.get("downloads") or 0
+        entry["below_floor"] = stars < STAR_FLOOR and downloads < DOWNLOAD_FLOOR
+        if entry["below_floor"]:
             flagged.append(entry)
-    flagged.sort(key=lambda e: ((e["stars"] or 0), e["downloads"], e["id"]))
-    return {"entries": entries, "flagged": flagged, "exempt": exempt_ids}
+    flagged.sort(key=lambda e: ((e["stars"] or 0), (e["downloads"] or 0), e["id"]))
+    unstamped.sort(key=lambda e: e["id"])
+    return {"entries": entries, "flagged": flagged, "unstamped": unstamped, "exempt": exempt_ids}
 
 
 def print_report(report):
     entries = report["entries"]
     flagged = report["flagged"]
-    print("FIRMWARE POPULARITY-FLOOR AUDIT (prune worklist)")
+    unstamped = report["unstamped"]
+    print("FIRMWARE POPULARITY-FLOOR AUDIT (stored, offline)")
     print(f"  floors: stars >= {STAR_FLOOR} OR downloads >= {DOWNLOAD_FLOOR}")
     print(f"  scanned {len(entries)} firmware · {len(report['exempt'])} curated-exempt · "
-          f"{len(flagged)} below BOTH floors\n")
-    print("SUB-FLOOR (prune candidates: id · stars · downloads):")
+          f"{len(flagged)} below BOTH floors · {len(unstamped)} unstamped\n")
+    print("SUB-FLOOR (below BOTH floors — CI FAILS on these: id · stars · downloads):")
     if not flagged:
-        print("    none — every non-curated firmware clears a floor")
+        print("    none — every stamped, non-curated firmware clears a floor")
     for e in flagged:
-        stars = "unknown" if e["stars"] is None else e["stars"]
-        print(f"    {e['id']}: stars={stars} downloads={e['downloads']}  ({e['repo']})")
-    print(f"\nSUMMARY: {len(flagged)} of {len(entries)} catalogued firmware are below both floors "
-          f"and not curated-exempt.")
+        print(f"    {e['id']}: stars={e['stars']} downloads={e['downloads']} "
+              f"as_of={e['as_of']}  ({e['repo']})")
+    print("\nUNSTAMPED (no popularity block yet — run popularity:backfill; NOT a CI failure):")
+    if not unstamped:
+        print("    none — every non-curated firmware carries a popularity snapshot")
+    for e in unstamped:
+        print(f"    {e['id']}  ({e['repo']})")
+    print(f"\nSUMMARY: {len(flagged)} below-both-floors, {len(unstamped)} unstamped, of "
+          f"{len(entries)} catalogued firmware.")
 
 
 def main(argv=None):
@@ -162,6 +149,9 @@ def main(argv=None):
     parser.add_argument("--data-dir", default=None,
                         help="override the data/ root to scan (mainly for tests); defaults to <repo root>/data")
     parser.add_argument("--json", action="store_true", help="emit the raw audit dict as JSON")
+    parser.add_argument("--ci", action="store_true",
+                        help="CI gate: exit non-zero if any firmware is below BOTH floors "
+                             "(unstamped entries are ignored for the exit code)")
     args = parser.parse_args(argv)
 
     report = audit(args.data_dir)
@@ -169,6 +159,10 @@ def main(argv=None):
         print(json.dumps(report, indent=2))
     else:
         print_report(report)
+    if args.ci and report["flagged"]:
+        print(f"\nCI GATE FAILED: {len(report['flagged'])} firmware below both popularity floors "
+              f"(stars < {STAR_FLOOR} AND downloads < {DOWNLOAD_FLOOR}).", file=sys.stderr)
+        return 1
     return 0
 
 

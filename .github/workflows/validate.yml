@@ -16,6 +16,8 @@ jobs:
       - run: pip install jsonschema pyyaml
       - name: Validate frontmatter against schema
         run: python3 scripts/validate.py
+      - name: Firmware popularity floor gate (fails if any firmware is below both floors)
+        run: python3 scripts/firmware_floor_audit.py --ci
       - name: Build index (proves it compiles)
         run: python3 scripts/build_index.py
 

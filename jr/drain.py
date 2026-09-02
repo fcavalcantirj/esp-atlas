@@ -219,13 +219,17 @@ def _cleanup(firmware_id: str) -> None:
     tools.remove_run_case(firmware_id)
 
 
-def author_selected(selected: list[dict], existing_ids: set[str] | None = None) -> tuple[list[str], list[dict]]:
+def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
+                    today: str | None = None) -> tuple[list[str], list[dict]]:
     """Author each selected candidate as firmware + recipe via the SAME tools.
     author_firmware_and_recipes() the old LLM loop used, then immediately run_guard() it — a
     record that reds the guard is rolled back (never left half-written) and reported with why,
     and never poisons the rest of the batch. `existing_ids` seeds the in-batch id-dedup set
     (default: the real catalogued_firmware_ids()) so two candidates that would slug to the same
-    firmware_id, or a candidate matching something already in the atlas, can't collide.
+    firmware_id, or a candidate matching something already in the atlas, can't collide. Threads
+    each candidate's popularity (stars from repo_meta, downloads from the launcher entry) and
+    `today` (the run date; injectable for deterministic tests) into authoring so a dated
+    `popularity` snapshot is persisted on every authored firmware (SPEC-firmware-floor.md).
     Returns (authored_ids, dropped: [{id, reason}])."""
     existing_ids = set(tools.catalogued_firmware_ids()) if existing_ids is None else set(existing_ids)
     authored: list[str] = []
@@ -241,6 +245,7 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None) 
             firmware_id=fid, name=rec["name"], url=rec["url"], category=rec["category"],
             boards=[rec["board"]], body=body, capabilities=rec.get("capabilities"),
             maintainer=rec.get("maintainer"),
+            stars=s.get("stars"), downloads=s.get("download"), today=today,
         )
         if "error" in result:
             dropped.append({"id": fid, "reason": f"author_error: {result['error']}"})
@@ -258,7 +263,8 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None) 
 
 def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
              max_per_category: int = MAX_PER_CATEGORY, fetch_catalog=tools.fetch_launcher_catalog,
-             fetch_meta=default_fetch_meta, ledger_path=ledger.DEFAULT_LEDGER_PATH) -> dict:
+             fetch_meta=default_fetch_meta, ledger_path=ledger.DEFAULT_LEDGER_PATH,
+             today: str | None = None) -> dict:
     """The full drain, end to end. Additive-only: writes new data/firmware/<id>/ +
     data/recipes/<board>__<id>/ dirs (plus their coverage run-case) and never touches jr-daily
     (agent.py/run.py) or scorer.py's public behavior. Loads jr/ledger.py's proposed-ledger
@@ -279,7 +285,7 @@ def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
         ledger.record_seen(s["firmware_id"], s["repo"], path=ledger_path)
     ranked = rank_juicy(scored)
     selected, dropped_cap = cap_categories(ranked, max_per_category=max_per_category, batch_size=batch_size)
-    authored, dropped_guard = author_selected(selected)
+    authored, dropped_guard = author_selected(selected, today=today)
     guard = tools.run_guard()
     return {
         "fetched": len(entries),

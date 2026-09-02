@@ -265,11 +265,13 @@ def author_firmware_record(
     socs: list[str], sources: list[dict], body: str,
     maintainer: str | None = None, license: str | None = None,
     distribution: list[str] | None = None, capabilities: list[str] | None = None,
+    popularity: dict | None = None,
 ) -> dict:
     """Write a firmware record to data/firmware/<id>/firmware.md (YAML frontmatter + markdown
     body). CITE-OR-OMIT: every entry in `sources` is {field, url, verified} and only fields
     backed by a source may be set (SPEC §2.2). New firmware is authored `unverified`; trust is
-    human-only. Returns {"path": ...}. Does NOT touch git — call run_guard() then open_pr()."""
+    human-only. `popularity` (optional, SPEC-firmware-floor.md) is a dated {stars,downloads,as_of}
+    snapshot written verbatim only when known. Returns {"path": ...}. Does NOT touch git."""
     import yaml
     fm: dict = {"id": firmware_id, "type": "firmware", "name": name, "url": url,
                 "category": category}
@@ -277,6 +279,7 @@ def author_firmware_record(
     if license: fm["license"] = license
     if distribution: fm["distribution"] = distribution
     if capabilities: fm["capabilities"] = capabilities
+    if popularity: fm["popularity"] = popularity
     fm["socs"] = socs
     fm["sources"] = sources
     front = yaml.safe_dump(fm, sort_keys=False, default_flow_style=False).strip()
@@ -469,12 +472,18 @@ def capability_vocab() -> set[str]:
 def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category: str,
                                 boards: list[str], body: str, capabilities: list[str] | None = None,
                                 maintainer: str | None = None, license: str | None = None,
-                                distribution: list[str] | None = None) -> dict:
+                                distribution: list[str] | None = None,
+                                stars: int | None = None, downloads: int | None = None,
+                                today: str | None = None) -> dict:
     """DETERMINISTIC authoring — the model supplies ONLY judgment (category, which catalogued
     `boards` it runs on, capabilities from the README). `socs` and every recipe's `chip_family`
     are DERIVED from the board records — the model never touches a chip id (kills the
     soc-fabrication class, e.g. CatHack's esp32-s3). Writes the firmware + one recipe per board +
-    the coverage run-case, all consistent by construction."""
+    the coverage run-case, all consistent by construction. Popularity (SPEC-firmware-floor.md):
+    `stars` (repo_meta) + `downloads` (launcher entry) persist as a dated `popularity` snapshot
+    with a `popularity` source citation, only when known (never invented); `today` (injectable
+    ISO run date, default today) is its `as_of` and the sources' `verified`."""
+    import datetime as dt
     import re
     if not re.fullmatch(r"[a-z][a-z0-9-]{1,39}", firmware_id or "") or re.search(r"\d{4}-\d\d", firmware_id):
         return {"error": f"bad firmware id '{firmware_id}' — use ONE clean slug (the repo/tool name), "
@@ -486,10 +495,16 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
     if capabilities:                                    # keep ONLY controlled-vocab tokens — no freeform
         vocab = capability_vocab()
         capabilities = [c for c in capabilities if isinstance(c, str) and c in vocab] or None
-    src = [{"field": "*", "url": url, "verified": "2026-08-27"}]
-    author_firmware_record(firmware_id, name, url, category, socs, src, body,
+    today = today or dt.date.today().isoformat()
+    src = [{"field": "*", "url": url, "verified": today}]
+    popularity, fw_sources = None, src
+    if stars is not None or downloads is not None:      # known → persist; never invent
+        popularity = {"stars": int(stars or 0), "downloads": int(downloads or 0), "as_of": today}
+        fw_sources = src + [{"field": "popularity", "url": url, "verified": today}]
+    author_firmware_record(firmware_id, name, url, category, socs, fw_sources, body,
                            maintainer=maintainer, license=license,
-                           distribution=distribution, capabilities=capabilities)
+                           distribution=distribution, capabilities=capabilities,
+                           popularity=popularity)
     recipes = []
     for b in boards:
         rid = f"{b}__{firmware_id}"
