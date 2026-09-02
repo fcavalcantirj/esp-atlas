@@ -3,7 +3,7 @@ id: wifi-capture-page-m5cardputer
 type: firmware
 name: Wi-Fi Capture Page
 url: https://github.com/ZrutrA/WiFi-Capture-Page-M5Cardputer
-category: multi
+category: pentest
 maintainer: zrutra
 capabilities:
 - wifi
