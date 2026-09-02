@@ -1,0 +1,190 @@
+{
+  "by_id": {
+    "boot-linux-esp32s3-playground": {
+      "id": "boot-linux-esp32s3-playground",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/82",
+      "repo": "esp32de/boot-linux-esp32s3-playground",
+      "status": "proposed",
+      "timestamp": "2026-09-02T00:03:45.733645+00:00"
+    },
+    "brucemod-alpha": {
+      "id": "brucemod-alpha",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
+      "repo": "brucemoddev/brucemod-alpha",
+      "status": "proposed",
+      "timestamp": "2026-09-01T22:03:43.370272+00:00"
+    },
+    "cardputer-adv-wifi-ble-radar": {
+      "id": "cardputer-adv-wifi-ble-radar",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
+      "repo": "zeloksa/cardputer-adv-wifi-ble-radar",
+      "status": "proposed",
+      "timestamp": "2026-09-01T22:03:43.370272+00:00"
+    },
+    "cardputer-iss-tracker": {
+      "id": "cardputer-iss-tracker",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/81",
+      "repo": "adammelancon/cardputer-satellite-tracker",
+      "status": "proposed",
+      "timestamp": "2026-09-01T23:04:00.148167+00:00"
+    },
+    "cardputerlorachat": {
+      "id": "cardputerlorachat",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "repo": "nonik0/cardputerlorachat",
+      "status": "proposed",
+      "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "crowos": {
+      "id": "crowos",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/82",
+      "repo": "jonaslacerda/crowos",
+      "status": "proposed",
+      "timestamp": "2026-09-02T00:03:45.733645+00:00"
+    },
+    "esp-claw": {
+      "id": "esp-claw",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/82",
+      "repo": "espressif/esp-claw",
+      "status": "proposed",
+      "timestamp": "2026-09-02T00:03:45.733645+00:00"
+    },
+    "esp-game-server": {
+      "id": "esp-game-server",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
+      "repo": "incursiohack/esp-game-server",
+      "status": "proposed",
+      "timestamp": "2026-09-01T22:03:43.370272+00:00"
+    },
+    "interactivesetup-m5cardputer-sshclient": {
+      "id": "interactivesetup-m5cardputer-sshclient",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/81",
+      "repo": "sub0pt1mal/m5cardputer_interactive_ssh_client",
+      "status": "proposed",
+      "timestamp": "2026-09-01T23:04:00.148167+00:00"
+    },
+    "m5apps": {
+      "id": "m5apps",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "repo": "d4rkmen/m5apps",
+      "status": "proposed",
+      "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "m5cardputer-chat-with-gemini-api": {
+      "id": "m5cardputer-chat-with-gemini-api",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "repo": "vanshksingh/m5cardputer-chat-with-gemini-api",
+      "status": "proposed",
+      "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "m5core2-simpleclock": {
+      "id": "m5core2-simpleclock",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "repo": "lordlexat/m5core2_simpleclock",
+      "status": "proposed",
+      "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "m5hamradio": {
+      "id": "m5hamradio",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
+      "repo": "armel/m5hamradio",
+      "status": "proposed",
+      "timestamp": "2026-09-01T22:03:43.370272+00:00"
+    },
+    "m5mp3": {
+      "id": "m5mp3",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "repo": "volosr/m5mp3",
+      "status": "proposed",
+      "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "m5stack-avatar-mic": {
+      "id": "m5stack-avatar-mic",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/82",
+      "repo": "mongonta0716/m5stack-avatar-mic",
+      "status": "proposed",
+      "timestamp": "2026-09-02T00:03:45.733645+00:00"
+    },
+    "m5stickcplus2-seamonsue": {
+      "id": "m5stickcplus2-seamonsue",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/81",
+      "repo": "hsbsbz/m5stickcplus2-seamonsue",
+      "status": "proposed",
+      "timestamp": "2026-09-01T23:04:00.148167+00:00"
+    },
+    "meowusb-ble": {
+      "id": "meowusb-ble",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "repo": "01mayo01/meowusb-ble",
+      "status": "proposed",
+      "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "minigotchi-esp32": {
+      "id": "minigotchi-esp32",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/81",
+      "repo": "dj1ch/minigotchi-esp32",
+      "status": "proposed",
+      "timestamp": "2026-09-01T23:04:00.148167+00:00"
+    },
+    "plai": {
+      "id": "plai",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "repo": "d4rkmen/plai",
+      "status": "proposed",
+      "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "raising-hell-cardputer": {
+      "id": "raising-hell-cardputer",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
+      "repo": "acpayers-alt/raising-hell-cardputer",
+      "status": "proposed",
+      "timestamp": "2026-09-01T22:03:43.370272+00:00"
+    },
+    "ratcom": {
+      "id": "ratcom",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/81",
+      "repo": "ratspeak/rscardputer",
+      "status": "proposed",
+      "timestamp": "2026-09-01T23:04:00.148167+00:00"
+    },
+    "server-vampeta": {
+      "id": "server-vampeta",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
+      "repo": "elguesabal/server-vampeta",
+      "status": "proposed",
+      "timestamp": "2026-09-01T22:03:43.370272+00:00"
+    },
+    "wadamesh": {
+      "id": "wadamesh",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "repo": "allfather-bv/wadamesh",
+      "status": "proposed",
+      "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    }
+  },
+  "by_repo": {
+    "01mayo01/meowusb-ble": "meowusb-ble",
+    "acpayers-alt/raising-hell-cardputer": "raising-hell-cardputer",
+    "adammelancon/cardputer-satellite-tracker": "cardputer-iss-tracker",
+    "allfather-bv/wadamesh": "wadamesh",
+    "armel/m5hamradio": "m5hamradio",
+    "brucemoddev/brucemod-alpha": "brucemod-alpha",
+    "d4rkmen/m5apps": "m5apps",
+    "d4rkmen/plai": "plai",
+    "dj1ch/minigotchi-esp32": "minigotchi-esp32",
+    "elguesabal/server-vampeta": "server-vampeta",
+    "esp32de/boot-linux-esp32s3-playground": "boot-linux-esp32s3-playground",
+    "espressif/esp-claw": "esp-claw",
+    "hsbsbz/m5stickcplus2-seamonsue": "m5stickcplus2-seamonsue",
+    "incursiohack/esp-game-server": "esp-game-server",
+    "jonaslacerda/crowos": "crowos",
+    "lordlexat/m5core2_simpleclock": "m5core2-simpleclock",
+    "mongonta0716/m5stack-avatar-mic": "m5stack-avatar-mic",
+    "nonik0/cardputerlorachat": "cardputerlorachat",
+    "ratspeak/rscardputer": "ratcom",
+    "sub0pt1mal/m5cardputer_interactive_ssh_client": "interactivesetup-m5cardputer-sshclient",
+    "vanshksingh/m5cardputer-chat-with-gemini-api": "m5cardputer-chat-with-gemini-api",
+    "volosr/m5mp3": "m5mp3",
+    "zeloksa/cardputer-adv-wifi-ble-radar": "cardputer-adv-wifi-ble-radar"
+  }
+}
