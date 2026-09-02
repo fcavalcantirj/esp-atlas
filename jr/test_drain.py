@@ -259,8 +259,9 @@ def _coding_entry(**overrides):
 
 
 def test_score_candidates_skips_candidate_below_all_floors():
-    """stars=3 AND downloads=10 AND forks=1 → below all three floors → skipped, not authored."""
-    entry = _coding_entry(download=10)
+    """stars=3 AND forks=1 → below both floors → skipped, not authored (downloads are never
+    consulted — a high launcher download count no longer rescues a candidate)."""
+    entry = _coding_entry(download=999999)
     meta = _fake_meta(full_name="devuser/cardputer-git", stars=3, forks=1,
                       description="An on-device git client for the Cardputer")
 
@@ -272,12 +273,13 @@ def test_score_candidates_skips_candidate_below_all_floors():
     assert skipped[0]["reason"] == "below-popularity-floor"
     assert skipped[0]["firmware_id"] == "cardputer-git"
     assert skipped[0]["repo"] == "devuser/cardputer-git"
+    assert "download" not in skipped[0]
 
 
 def test_score_candidates_authors_when_forks_clear_the_floor():
-    """stars=3 AND downloads=0 BUT forks=30 → forks clear FORK_FLOOR → authored (a heavily
-    built-on but under-starred utility is real, not filler)."""
-    entry = _coding_entry(download=0)
+    """stars=3 BUT forks=30 → forks clear FORK_FLOOR → authored (a heavily built-on but
+    under-starred utility is real, not filler)."""
+    entry = _coding_entry()
     meta = _fake_meta(full_name="devuser/cardputer-git", stars=3, forks=30,
                       description="An on-device git client for the Cardputer")
 
@@ -290,23 +292,9 @@ def test_score_candidates_authors_when_forks_clear_the_floor():
     assert scored[0]["forks"] == 30
 
 
-def test_score_candidates_authors_when_downloads_clear_the_floor():
-    """stars=3 AND downloads=800 → downloads clear DOWNLOAD_FLOOR → authored despite low stars."""
-    entry = _coding_entry(download=800)
-    meta = _fake_meta(full_name="devuser/cardputer-git", stars=3,
-                      description="An on-device git client for the Cardputer")
-
-    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
-                                             fetch_meta=lambda url: meta)
-
-    assert skipped == []
-    assert len(scored) == 1
-    assert scored[0]["record"]["id"] == "cardputer-git"
-
-
 def test_score_candidates_authors_when_stars_clear_the_floor():
-    """stars=40 AND downloads=0 → stars clear STAR_FLOOR → authored despite zero downloads."""
-    entry = _coding_entry(download=0)
+    """stars=40 AND forks=0 → stars clear STAR_FLOOR → authored despite zero forks."""
+    entry = _coding_entry()
     meta = _fake_meta(full_name="devuser/cardputer-git", stars=40,
                       description="An on-device git client for the Cardputer")
 
@@ -323,7 +311,7 @@ def test_prefilter_skips_a_repo_recorded_seen(tmp_path):
     so sub-floor filler isn't re-fetched every run — but stays non-blocking (merged/absent pass)."""
     ledger.record_seen("cardputer-git", "devuser/cardputer-git", path=tmp_path / "l.json")
     state = ledger.load_ledger(tmp_path / "l.json")
-    entry = _coding_entry(download=10)
+    entry = _coding_entry()
     assert drain.prefilter([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS, ledger_state=state) == []
 
 
@@ -332,7 +320,7 @@ def test_run_drain_records_below_floor_candidate_as_seen_and_reports_it(tmp_path
     injected ledger so the NEXT run's prefilter skips it before any fetch (not re-fetched every
     run). Isolated from live catalogued-set drift by injecting the dedup fingerprint."""
     monkeypatch.setattr(tools, "_catalogued_repos_and_tokens", lambda: (CATALOGUED_REPOS, CATALOGUED_TOKENS))
-    entry = _coding_entry(download=10)
+    entry = _coding_entry()
     meta = {"full_name": "devuser/cardputer-git", "fork": False, "source_full_name": None, "stars": 3,
             "description": "An on-device git client for the Cardputer", "license": None, "readme_title": None}
     ledger_path = tmp_path / "proposed_ledger.json"
@@ -442,9 +430,9 @@ def test_author_selected_writes_schema_valid_firmware_and_recipe(cleanup_fixture
 
 
 def test_author_selected_stamps_popularity_block_with_citation(cleanup_fixture):
-    """(a) Authoring persists a dated popularity{stars,downloads,forks,as_of} snapshot from the
-    candidate's repo stars/forks + launcher downloads, plus a `popularity` source citation; `today`
-    (the run date) is injected for determinism."""
+    """(a) Authoring persists a dated popularity{stars,forks,as_of} snapshot from the candidate's
+    repo stars/forks (never downloads — downloads are not a stored metric), plus a `popularity`
+    source citation; `today` (the run date) is injected for determinism."""
     authored, dropped = drain.author_selected(_fixture_selected(), existing_ids=set(),
                                               today="2026-09-01")
 
@@ -452,8 +440,9 @@ def test_author_selected_stamps_popularity_block_with_citation(cleanup_fixture):
     assert authored == [FIXTURE_ID]
     fm = tools._frontmatter(tools.FIRMWARE_DIR / FIXTURE_ID / "firmware.md")
     jsonschema.validate(fm, FIRMWARE_SCHEMA)
-    # _fixture_selected(): stars=10, download=100, forks=4
-    assert fm["popularity"] == {"stars": 10, "downloads": 100, "forks": 4, "as_of": "2026-09-01"}
+    # _fixture_selected(): stars=10, forks=4
+    assert fm["popularity"] == {"stars": 10, "forks": 4, "as_of": "2026-09-01"}
+    assert "downloads" not in fm["popularity"]
     assert any(s["field"] == "popularity" and s["verified"] == "2026-09-01"
                for s in fm["sources"])
 

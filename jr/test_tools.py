@@ -606,19 +606,21 @@ def cleanup_firmware_fixture():
 
 
 def test_author_firmware_and_recipes_persists_popularity_snapshot(cleanup_firmware_fixture):
-    """(a) author_firmware_and_recipes writes a dated popularity{stars,downloads,forks,as_of}
-    block from the passed repo stars/forks + launcher downloads, cites it, and stamps `today`
-    (injected) on the popularity snapshot AND the source verified dates. Deterministic — no network."""
+    """(a) author_firmware_and_recipes writes a dated popularity{stars,forks,as_of} block from
+    the passed repo stars/forks (never downloads — not a stored metric), cites it, and stamps
+    `today` (injected) on the popularity snapshot AND the source verified dates. Deterministic —
+    no network."""
     result = tools.author_firmware_and_recipes(
         firmware_id=FW_POP_FIXTURE_ID, name="Zzz Tools Fixture Firmware",
         url="https://github.com/octocat/Hello-World", category="multi",
         boards=["m5cardputer"], body="A tools fixture firmware for popularity tests.",
-        stars=42, downloads=6000, forks=17, today="2026-09-01",
+        stars=42, forks=17, today="2026-09-01",
     )
 
     assert "error" not in result, result
     fm = tools._frontmatter(tools.FIRMWARE_DIR / FW_POP_FIXTURE_ID / "firmware.md")
-    assert fm["popularity"] == {"stars": 42, "downloads": 6000, "forks": 17, "as_of": "2026-09-01"}
+    assert fm["popularity"] == {"stars": 42, "forks": 17, "as_of": "2026-09-01"}
+    assert "downloads" not in fm["popularity"]
     pop_srcs = [s for s in fm["sources"] if s["field"] == "popularity"]
     assert len(pop_srcs) == 1
     assert pop_srcs[0]["verified"] == "2026-09-01"
@@ -628,7 +630,7 @@ def test_author_firmware_and_recipes_persists_popularity_snapshot(cleanup_firmwa
 
 
 def test_author_firmware_and_recipes_omits_popularity_when_unknown(cleanup_firmware_fixture):
-    """Never invent: with no stars/downloads passed, no popularity block (or citation) is written."""
+    """Never invent: with no stars/forks passed, no popularity block (or citation) is written."""
     result = tools.author_firmware_and_recipes(
         firmware_id=FW_POP_FIXTURE_ID, name="Zzz Tools Fixture Firmware",
         url="https://github.com/octocat/Hello-World", category="multi",

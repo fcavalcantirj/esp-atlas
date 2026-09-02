@@ -38,7 +38,7 @@ if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
 import ledger  # noqa: E402
 import tools  # noqa: E402
-from scorer import DOWNLOAD_FLOOR, FORK_FLOOR, NOISE_TOKENS, STAR_FLOOR, score_entry  # noqa: E402
+from scorer import FORK_FLOOR, NOISE_TOKENS, STAR_FLOOR, clears_popularity_floor, score_entry  # noqa: E402
 
 MAX_PER_CATEGORY = 4
 BATCH_SIZE = 20
@@ -149,17 +149,16 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
                 skipped.append({"name": e.get("name"), "github": gh,
                                 "reason": f"already_{ledger_record['status']}: '{rec['id']}' is in the proposed ledger"})
                 continue
-        # Popularity floor (SPEC-firmware-floor.md): author only if the candidate clears ANY of
-        # three signals — stars >= STAR_FLOOR OR downloads >= DOWNLOAD_FLOOR OR forks >= FORK_FLOOR.
-        # Below ALL THREE is filler: skip it, tagged "below-popularity-floor", carrying id+repo so
+        # Popularity floor (SPEC-firmware-floor.md): author only if the candidate clears EITHER
+        # signal — stars >= STAR_FLOOR OR forks >= FORK_FLOOR (downloads are never consulted).
+        # Below BOTH is filler: skip it, tagged "below-popularity-floor", carrying id+repo so
         # run_drain can record it "seen" in the ledger (so it isn't re-fetched every run). NEW-authoring only.
         stars = meta.get("stars") or 0
-        downloads = e.get("download") or 0
         forks = meta.get("forks") or 0
-        if stars < STAR_FLOOR and downloads < DOWNLOAD_FLOOR and forks < FORK_FLOOR:
+        if not clears_popularity_floor(stars, forks):
             skipped.append({"name": e.get("name"), "github": gh, "reason": "below-popularity-floor",
                             "firmware_id": rec["id"], "repo": _owner_repo(gh),
-                            "stars": stars, "download": downloads, "forks": forks})
+                            "stars": stars, "forks": forks})
             continue
         scored.append({
             "record": rec,
@@ -229,9 +228,10 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
     and never poisons the rest of the batch. `existing_ids` seeds the in-batch id-dedup set
     (default: the real catalogued_firmware_ids()) so two candidates that would slug to the same
     firmware_id, or a candidate matching something already in the atlas, can't collide. Threads
-    each candidate's popularity (stars from repo_meta, downloads from the launcher entry) and
-    `today` (the run date; injectable for deterministic tests) into authoring so a dated
-    `popularity` snapshot is persisted on every authored firmware (SPEC-firmware-floor.md).
+    each candidate's popularity (stars + forks from repo_meta — never downloads, which are not a
+    stored metric) and `today` (the run date; injectable for deterministic tests) into authoring
+    so a dated `popularity` snapshot is persisted on every authored firmware
+    (SPEC-firmware-floor.md).
     Returns (authored_ids, dropped: [{id, reason}])."""
     existing_ids = set(tools.catalogued_firmware_ids()) if existing_ids is None else set(existing_ids)
     authored: list[str] = []
@@ -247,7 +247,7 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
             firmware_id=fid, name=rec["name"], url=rec["url"], category=rec["category"],
             boards=[rec["board"]], body=body, capabilities=rec.get("capabilities"),
             maintainer=rec.get("maintainer"),
-            stars=s.get("stars"), downloads=s.get("download"), forks=s.get("forks"), today=today,
+            stars=s.get("stars"), forks=s.get("forks"), today=today,
         )
         if "error" in result:
             dropped.append({"id": fid, "reason": f"author_error: {result['error']}"})
@@ -314,5 +314,5 @@ if __name__ == "__main__":
     pop = report.get("skipped_popularity", [])
     print(f"skipped below-popularity-floor ({len(pop)}):")
     for s in pop:
-        print(f"  {s['firmware_id']} — stars={s['stars']} downloads={s['download']}")
+        print(f"  {s['firmware_id']} — stars={s['stars']} forks={s['forks']}")
     print(f"guard ok={report['guard']['ok']}")
