@@ -7,7 +7,6 @@ category: multi
 maintainer: benbaker76
 popularity:
   stars: 52
-  downloads: 1073
   as_of: '2026-09-01'
 socs:
 - esp32-s3

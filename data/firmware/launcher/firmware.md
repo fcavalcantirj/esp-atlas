@@ -31,7 +31,6 @@ not_required:
   why: radios are irrelevant to the loader itself
 popularity:
   stars: 2047
-  downloads: 295
   as_of: '2026-09-01'
 sources:
 - field: '*'

@@ -39,7 +39,6 @@ not_required:
   why: headless nodes are fine; a screen is optional
 popularity:
   stars: 8240
-  downloads: 651
   as_of: '2026-09-01'
 sources:
 - field: '*'

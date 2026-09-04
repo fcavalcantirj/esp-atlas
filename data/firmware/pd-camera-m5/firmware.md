@@ -7,7 +7,6 @@ category: multi
 maintainer: abenokobo
 popularity:
   stars: 31
-  downloads: 263
   forks: 3
   as_of: '2026-09-02'
 socs:

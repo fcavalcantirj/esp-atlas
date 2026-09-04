@@ -7,7 +7,6 @@ category: multi
 maintainer: kisaragi-mochi
 popularity:
   stars: 124
-  downloads: 335
   forks: 54
   as_of: '2026-09-02'
 socs:

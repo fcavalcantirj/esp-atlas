@@ -7,7 +7,6 @@ category: multi
 maintainer: torlando-tech
 popularity:
   stars: 52
-  downloads: 112
   forks: 6
   as_of: '2026-09-02'
 socs:

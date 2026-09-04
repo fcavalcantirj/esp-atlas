@@ -25,11 +25,10 @@
       "additionalProperties": false,
       "properties": {
         "stars": { "type": "integer" },
-        "downloads": { "type": "integer" },
         "forks": { "type": "integer" },
         "as_of": { "type": "string", "format": "date" }
       },
-      "description": "OPTIONAL dated popularity snapshot (SPEC-firmware-floor.md): GitHub `stars` + `forks` and launcher/M5Burner `downloads` at author time, plus the `as_of` YYYY-MM-DD snapshot date. Stored so the CI floor gate (scripts/firmware_floor_audit.py --ci) can enforce the popularity floor offline, with no live fetch (clears on stars OR downloads OR forks). Dated because popularity drifts and is refreshable."
+      "description": "OPTIONAL dated popularity snapshot (SPEC-firmware-floor.md): GitHub `stars` + `forks` at author time, plus the `as_of` YYYY-MM-DD snapshot date. Stored so the CI floor gate (scripts/firmware_floor_audit.py --ci) can enforce the popularity floor offline, with no live fetch (clears on stars OR forks). Dated because popularity drifts and is refreshable. `downloads` was REMOVED 2026-09-04: the launcher/M5Burner count is self-reported by a third-party catalog and counts installs of someone else re-upload, so it is not a citable popularity signal. additionalProperties is false here, so a record reintroducing it fails validation rather than drifting back."
     },
     "benefits_from": {
       "type": "array",

@@ -31,7 +31,6 @@ not_required:
 - capability: psram
 popularity:
   stars: 75
-  downloads: 1534
   as_of: '2026-09-01'
 sources:
 - field: '*'

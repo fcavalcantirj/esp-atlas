@@ -26,7 +26,6 @@ requires:
   board_signal: radio-ble
 popularity:
   stars: 4082
-  downloads: 385
   as_of: '2026-09-01'
 sources:
 - field: '*'

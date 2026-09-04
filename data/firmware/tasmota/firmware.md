@@ -30,7 +30,6 @@ not_required:
     templates add one)
 popularity:
   stars: 24731
-  downloads: 168
   as_of: '2026-09-01'
 sources:
 - field: '*'

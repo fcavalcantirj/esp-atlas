@@ -19,7 +19,11 @@ import argparse
 import sys
 from pathlib import Path
 
+import re
+
 import yaml
+
+_DOWNLOADS_LINE = re.compile(r"^\s+downloads:\s")
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -70,8 +74,25 @@ def strip_downloads(data_dir=None) -> dict:
         if not (changed_field or changed_source):
             skipped.append(fid)               # already clean — never rewritten
             continue
-        front = yaml.safe_dump(fm, sort_keys=False, default_flow_style=False).strip()
-        path.write_text(f"---\n{front}\n---\n\n{body.strip()}\n", encoding="utf-8")
+        if changed_source:
+            # A downloads-only citation has to go, and dropping one entry from a list is not
+            # something a line edit can do safely -- re-serialise. allow_unicode=True is
+            # REQUIRED here: without it safe_dump escapes every non-ASCII character, silently
+            # rewriting e.g. `name: "AIｽﾀｯｸﾁｬﾝ2"` into \uFF7D escapes. A migration must never
+            # corrupt the data it migrates.
+            front = yaml.safe_dump(fm, sort_keys=False, default_flow_style=False,
+                                   allow_unicode=True).strip()
+            path.write_text(f"---\n{front}\n---\n\n{body.strip()}\n", encoding="utf-8")
+        else:
+            # The common case: one line to delete. Do it TEXTUALLY rather than by round-tripping
+            # the document. A YAML round-trip is not diff-neutral -- it re-quotes strings, re-folds
+            # long block scalars and normalises whitespace, so a 72-record migration would rewrite
+            # hand-curated `why:` prose it was never asked to touch. These records are read by
+            # humans in review; the diff must show only what actually changed.
+            text = path.read_text(encoding="utf-8")
+            out = "".join(line for line in text.splitlines(keepends=True)
+                          if not _DOWNLOADS_LINE.match(line))
+            path.write_text(out, encoding="utf-8")
         stripped.append(fid)
     return {"stripped": stripped, "skipped": skipped}
 

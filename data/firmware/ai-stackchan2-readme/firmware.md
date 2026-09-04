@@ -9,7 +9,6 @@ socs:
 - esp32
 popularity:
   stars: 42
-  downloads: 1372
   as_of: '2026-09-01'
 sources:
 - field: '*'

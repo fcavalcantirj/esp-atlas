@@ -10,7 +10,6 @@ capabilities:
 - lora
 popularity:
   stars: 27
-  downloads: 440
   forks: 0
   as_of: '2026-09-02'
 socs:
