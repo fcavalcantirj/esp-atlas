@@ -9,7 +9,6 @@ capabilities:
 - mqtt
 popularity:
   stars: 1012
-  downloads: 106
   forks: 291
   as_of: '2026-09-02'
 socs:

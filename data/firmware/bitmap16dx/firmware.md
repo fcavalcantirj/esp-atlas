@@ -7,7 +7,6 @@ category: multi
 maintainer: bradmcnally
 popularity:
   stars: 36
-  downloads: 597
   forks: 0
   as_of: '2026-09-02'
 socs:

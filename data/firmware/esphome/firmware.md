@@ -40,7 +40,6 @@ not_required:
     \ size, not the firmware"
 popularity:
   stars: 11626
-  downloads: 0
   as_of: '2026-09-01'
 sources:
 - field: '*'

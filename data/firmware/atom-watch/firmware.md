@@ -9,7 +9,6 @@ capabilities:
 - ble
 popularity:
   stars: 27
-  downloads: 458
   forks: 4
   as_of: '2026-09-02'
 socs:

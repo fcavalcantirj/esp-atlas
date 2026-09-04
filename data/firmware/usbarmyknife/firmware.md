@@ -21,7 +21,6 @@ requires:
   board_signal: native-usb
 popularity:
   stars: 2877
-  downloads: 146
   as_of: '2026-09-01'
 sources:
 - field: '*'

@@ -46,7 +46,6 @@ not_required:
   why: tool buffers fit SRAM
 popularity:
   stars: 6639
-  downloads: 69
   as_of: '2026-09-04'
 sources:
 - field: '*'

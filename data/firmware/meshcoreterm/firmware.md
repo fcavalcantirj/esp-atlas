@@ -11,7 +11,6 @@ capabilities:
 - wifi
 popularity:
   stars: 132
-  downloads: 112
   forks: 7
   as_of: '2026-09-02'
 socs:

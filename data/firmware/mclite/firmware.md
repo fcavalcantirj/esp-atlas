@@ -9,7 +9,6 @@ capabilities:
 - mesh
 popularity:
   stars: 32
-  downloads: 108
   forks: 6
   as_of: '2026-09-02'
 socs:

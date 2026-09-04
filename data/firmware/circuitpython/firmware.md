@@ -7,7 +7,6 @@ category: multi
 maintainer: adafruit
 popularity:
   stars: 4546
-  downloads: 552
   forks: 1405
   as_of: '2026-09-02'
 socs:
