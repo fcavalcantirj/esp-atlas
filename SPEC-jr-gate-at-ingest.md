@@ -53,13 +53,25 @@ Only candidates passing all four are authored.
 - **The manual-merge / firefight flow.**
 - **Kept:** `validate.py` (now also enforces the floor as a mechanical backstop), `jr-telemetry`.
 
-## Drain output model — DECIDED: direct-to-main
+## Drain output model — DECIDED: pull request + auto-merge on green
 
-The drain **commits admitted entries straight to `main`** (which auto-deploys via Vercel). No PR, no
-review cron — fewest parts. **Because there is no PR/CI gate in front of the deploy, the drain MUST
-self-validate before it pushes:** run `validate.py` (schema + floor backstop) locally and **commit
-only if green; abort + report on red**, never push a failing tree. That local gate is the safety net
-that a PR/CI flow would otherwise provide.
+**Superseded 2026-09-03.** An earlier revision of this spec decided *direct-to-main*. Felipe
+rejected that: it puts the Vercel deploy in front of any CI, and it makes
+[`how-we-work`](apps/web/app/how-we-work/page.tsx)'s "it never writes to main" untrue.
+
+The tick **opens a pull request** and then calls `gh pr merge --auto --squash`. CI decides; a human
+may veto. *Bot proposes, CI disposes.* One squashed commit per tick, so a bad tick is a one-line
+revert.
+
+**Branch protection is not a nicety here — it IS the gate.** Verified on 2026-09-04: with no
+protection configured, `gh pr merge --auto` does not queue, it merges **immediately**, because
+auto-merge has no required checks to wait on. An unprotected repo therefore turns this model back
+into direct-to-main under another name. `main` must require `schema`, `tests` and `jr-tests` before
+the tick goes live, and the tick's preflight must fail red when protection is missing or its
+required-check list is empty — not merely when auto-merge is switched off.
+
+The publisher still self-validates before it pushes (`validate.py` once per tick, then the test
+suite only if something was written), but that is now defence in depth rather than the only gate.
 
 ## One-time migration of the existing catalog
 
@@ -80,8 +92,9 @@ admission and deletes the review cron** — it does not rebuild them.
    functions + `validate.py` floor-check. (Verify tests; the guard's "unparsable" glitch has
    false-FAILed clean runs — verify by running the suite directly.)
 2. **Run the one-time migration** → diff → review → merge.
-3. **Wire the 4 gates into drain admission**; **delete `jr-review-merge`**; set drain output to
-   **direct-to-main** with **self-validate-before-push** (commit only on green `validate.py`).
+3. **Wire the 4 gates into drain admission**; **delete `jr-review-merge`**; set the tick's output
+   to **pull request + `gh pr merge --auto --squash`** behind branch protection, keeping
+   self-validate-before-push (`validate.py` green before the branch is pushed) as defence in depth.
 4. **Verify** with a dry-run drain: a fork / sub-floor / dup / banner-title candidate is rejected or
    transformed at admission, and a red `validate.py` aborts the push.
 
