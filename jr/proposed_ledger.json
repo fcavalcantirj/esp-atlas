@@ -1,190 +1,1078 @@
 {
   "by_id": {
+    "advaita": {
+      "id": "advaita",
+      "pr_ref": null,
+      "repo": "gridgrad/advaita",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.163173+00:00"
+    },
+    "advutil": {
+      "id": "advutil",
+      "pr_ref": null,
+      "repo": "mariovirgili/advutil",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.073441+00:00"
+    },
+    "ai-stackchan2": {
+      "id": "ai-stackchan2",
+      "pr_ref": null,
+      "reason": "fork of robo8080/AI_StackChan2 (4 stars / 1 fork); the upstream owner is already catalogued as ai-stackchan2-readme",
+      "repo": "toshihiromakuuchi/ai_stackchan2",
+      "status": "rejected",
+      "timestamp": "2026-09-02T16:03:27.979825+00:00"
+    },
+    "ai-stackchan2-for-debug": {
+      "id": "ai-stackchan2-for-debug",
+      "pr_ref": null,
+      "repo": "u-tanick/ai_stackchan2_for_debug",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.116135+00:00"
+    },
+    "airmouses3": {
+      "id": "airmouses3",
+      "pr_ref": null,
+      "repo": "teapot174/airmouses3",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.967712+00:00"
+    },
+    "anarch-cardputer": {
+      "id": "anarch-cardputer",
+      "pr_ref": null,
+      "repo": "thebricktop/anarch-cardputer",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.951487+00:00"
+    },
+    "any-8ball": {
+      "id": "any-8ball",
+      "pr_ref": null,
+      "repo": "anyd3v/any-8ball",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.991902+00:00"
+    },
+    "aqualife": {
+      "id": "aqualife",
+      "pr_ref": null,
+      "repo": "imink/aqualife",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.133115+00:00"
+    },
+    "atoms3-lite-tvbgone": {
+      "id": "atoms3-lite-tvbgone",
+      "pr_ref": null,
+      "repo": "mk324234/atoms3-lite-tvbgone",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.042111+00:00"
+    },
+    "baitnswitch": {
+      "id": "baitnswitch",
+      "pr_ref": null,
+      "repo": "integerquant/baitnswitch",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.175016+00:00"
+    },
+    "battleship": {
+      "id": "battleship",
+      "pr_ref": null,
+      "repo": "sakkra-adv/battleship",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.152394+00:00"
+    },
+    "blipputer": {
+      "id": "blipputer",
+      "pr_ref": null,
+      "repo": "autoflowdanilo-it/blipputer",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.140794+00:00"
+    },
+    "bme280-sensor-m5unified": {
+      "id": "bme280-sensor-m5unified",
+      "pr_ref": null,
+      "repo": "arturockpk/bme280-sensor-m5unified",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.063566+00:00"
+    },
     "boot-linux-esp32s3-playground": {
       "id": "boot-linux-esp32s3-playground",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/82",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "esp32de/boot-linux-esp32s3-playground",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-02T00:03:45.733645+00:00"
+    },
+    "breach-os": {
+      "id": "breach-os",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/101",
+      "reason": "present in the catalog: its PR was merged",
+      "repo": "zedward856-spec/breach_os",
+      "status": "merged",
+      "timestamp": "2026-09-02T17:03:19.119284+00:00"
+    },
+    "brokensignal": {
+      "id": "brokensignal",
+      "pr_ref": null,
+      "repo": "marcorr/brokensignal",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.001649+00:00"
     },
     "brucemod-alpha": {
       "id": "brucemod-alpha",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
+      "reason": "purged 2026-09-02 as sub-floor; stays purged (SPEC-firmware-floor)",
       "repo": "brucemoddev/brucemod-alpha",
-      "status": "proposed",
+      "status": "rejected",
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
+    },
+    "c-p-s-cardputer-syhnth": {
+      "id": "c-p-s-cardputer-syhnth",
+      "pr_ref": null,
+      "repo": "oldtokage-collab/c.p.s.--cardputer-syhnth--",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.078831+00:00"
+    },
+    "c4-stick": {
+      "id": "c4-stick",
+      "pr_ref": null,
+      "repo": "shlappa1000/c4-stick",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.007124+00:00"
+    },
+    "cardcaliper": {
+      "id": "cardcaliper",
+      "pr_ref": null,
+      "repo": "captainchorche/cardcaliper",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.161755+00:00"
+    },
+    "cardelbrot": {
+      "id": "cardelbrot",
+      "pr_ref": null,
+      "repo": "robertklofgren/cardelbrot",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.014835+00:00"
+    },
+    "cardnet": {
+      "id": "cardnet",
+      "pr_ref": null,
+      "repo": "evilkbgy9/cardnet",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.031712+00:00"
+    },
+    "cardpda": {
+      "id": "cardpda",
+      "pr_ref": null,
+      "repo": "rocksneeze081/cardpda",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.131008+00:00"
     },
     "cardputer-adv-wifi-ble-radar": {
       "id": "cardputer-adv-wifi-ble-radar",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "zeloksa/cardputer-adv-wifi-ble-radar",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
+    },
+    "cardputer-dwight": {
+      "id": "cardputer-dwight",
+      "pr_ref": null,
+      "repo": "blamouche/cardputer-dwight",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.186474+00:00"
+    },
+    "cardputer-i2c-scan": {
+      "id": "cardputer-i2c-scan",
+      "pr_ref": null,
+      "repo": "djflix/cardputer_i2c_scan",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.004968+00:00"
     },
     "cardputer-iss-tracker": {
       "id": "cardputer-iss-tracker",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/81",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "adammelancon/cardputer-satellite-tracker",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T23:04:00.148167+00:00"
+    },
+    "cardputer-llm": {
+      "id": "cardputer-llm",
+      "pr_ref": null,
+      "repo": "layer812/cardputer_llm",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.061505+00:00"
+    },
+    "cardputer-morse-trainer": {
+      "id": "cardputer-morse-trainer",
+      "pr_ref": null,
+      "repo": "jfduhart/cardputer-morse-trainer",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.959694+00:00"
+    },
+    "cardputer-morsedecoder": {
+      "id": "cardputer-morsedecoder",
+      "pr_ref": null,
+      "repo": "nongxl/cardputer_morsedecoder",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.995186+00:00"
+    },
+    "cardputer-mp3-adv": {
+      "id": "cardputer-mp3-adv",
+      "pr_ref": null,
+      "repo": "vicliu624/cardputer_mp3_adv",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.983835+00:00"
+    },
+    "cardputer-squawkbox": {
+      "id": "cardputer-squawkbox",
+      "pr_ref": null,
+      "repo": "id8872/cardputer-squawkbox",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.146031+00:00"
+    },
+    "cardputeradv-cc1101-manufactured": {
+      "id": "cardputeradv-cc1101-manufactured",
+      "pr_ref": null,
+      "repo": "girs1982/cardputeradv-cc1101-manufactured",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.033508+00:00"
+    },
+    "cardputeradv-motionlab": {
+      "id": "cardputeradv-motionlab",
+      "pr_ref": null,
+      "repo": "mraanderson/cardputeradv-motionlab",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.053244+00:00"
     },
     "cardputerlorachat": {
       "id": "cardputerlorachat",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "nonik0/cardputerlorachat",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "cardputermictalk": {
+      "id": "cardputermictalk",
+      "pr_ref": null,
+      "repo": "ns96/cardputermictalk",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.037229+00:00"
+    },
+    "cardputermidimonitor": {
+      "id": "cardputermidimonitor",
+      "pr_ref": null,
+      "repo": "zaratton/cardputermidimonitor",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.099947+00:00"
+    },
+    "cardradio": {
+      "id": "cardradio",
+      "pr_ref": null,
+      "repo": "mithug3/cardradio",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.910888+00:00"
+    },
+    "cardskimmerdetector-m5atoms3lite": {
+      "id": "cardskimmerdetector-m5atoms3lite",
+      "pr_ref": null,
+      "repo": "aat440hz/cardskimmerdetector-m5atoms3lite",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.105603+00:00"
+    },
+    "cardtastic": {
+      "id": "cardtastic",
+      "pr_ref": null,
+      "repo": "reydeargentina/cardtastic",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.101221+00:00"
+    },
+    "cardtube": {
+      "id": "cardtube",
+      "pr_ref": null,
+      "repo": "filipo3221/cardtube",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.012808+00:00"
     },
     "crowos": {
       "id": "crowos",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/82",
+      "reason": "purged 2026-09-02 as sub-floor; stays purged (SPEC-firmware-floor)",
       "repo": "jonaslacerda/crowos",
-      "status": "proposed",
+      "status": "rejected",
       "timestamp": "2026-09-02T00:03:45.733645+00:00"
+    },
+    "crptvfplayer-carputer-videoplayer": {
+      "id": "crptvfplayer-carputer-videoplayer",
+      "pr_ref": null,
+      "repo": "leonferlo/crptvfplayer-carputer-videoplayer",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.067774+00:00"
+    },
+    "cscardputer": {
+      "id": "cscardputer",
+      "pr_ref": null,
+      "repo": "cryptspeak/cscardputer",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.155622+00:00"
+    },
+    "cyberdeck-tarot": {
+      "id": "cyberdeck-tarot",
+      "pr_ref": null,
+      "repo": "nongxl/cyberdeck-tarot",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.069961+00:00"
+    },
+    "diceroller-cardputeradv": {
+      "id": "diceroller-cardputeradv",
+      "pr_ref": null,
+      "repo": "williamruckman/diceroller-cardputeradv",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.065673+00:00"
+    },
+    "ember": {
+      "id": "ember",
+      "pr_ref": null,
+      "repo": "horseyofcoursey/ember",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.164467+00:00"
     },
     "esp-claw": {
       "id": "esp-claw",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/82",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "espressif/esp-claw",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-02T00:03:45.733645+00:00"
     },
     "esp-game-server": {
       "id": "esp-game-server",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "incursiohack/esp-game-server",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
+    },
+    "firmware": {
+      "id": "firmware",
+      "pr_ref": null,
+      "reason": "duplicate_of bruce: pr3y/Bruce renamed to BruceDevices/firmware, repo_id 795166961; the generic slug 'firmware' must never be authored",
+      "repo": "brucedevices/firmware",
+      "status": "rejected",
+      "timestamp": "2026-09-04T00:00:00+00:00"
+    },
+    "flipper-zero-esp32-adv": {
+      "id": "flipper-zero-esp32-adv",
+      "pr_ref": null,
+      "repo": "0xhalloween/flipper-zero-esp32-adv",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.969022+00:00"
+    },
+    "gallery-for-cardputeradv": {
+      "id": "gallery-for-cardputeradv",
+      "pr_ref": null,
+      "repo": "frontendency/gallery_for_cardputeradv",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.114569+00:00"
+    },
+    "glide-synth-cardputer-adv": {
+      "id": "glide-synth-cardputer-adv",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/100",
+      "reason": "PR #96 closed unmerged 2026-09-04; 82 stars clears the floor, so it re-enters via admission",
+      "repo": "charl3x/glide-synth-cardputer-adv",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:47.776765+00:00"
+    },
+    "gpsdata-m5cardputer": {
+      "id": "gpsdata-m5cardputer",
+      "pr_ref": null,
+      "repo": "rhuaneverton/gpsdata-m5cardputer",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.998361+00:00"
+    },
+    "gvm5bubblelevel": {
+      "id": "gvm5bubblelevel",
+      "pr_ref": null,
+      "repo": "gvrubio/gvm5bubblelevel",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.035702+00:00"
+    },
+    "gvm5wifichannelutil": {
+      "id": "gvm5wifichannelutil",
+      "pr_ref": null,
+      "repo": "gvrubio/gvm5wifichannelutil",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.103864+00:00"
+    },
+    "hamsterm": {
+      "id": "hamsterm",
+      "pr_ref": null,
+      "repo": "hagalaz27/hamsterm",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.177176+00:00"
+    },
+    "hazke": {
+      "id": "hazke",
+      "pr_ref": null,
+      "repo": "therezor/hazke",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.125971+00:00"
+    },
+    "hotspot-arcade-cardputer": {
+      "id": "hotspot-arcade-cardputer",
+      "pr_ref": null,
+      "repo": "genkigenki/hotspot-arcade-cardputer",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.129057+00:00"
     },
     "interactivesetup-m5cardputer-sshclient": {
       "id": "interactivesetup-m5cardputer-sshclient",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/81",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "sub0pt1mal/m5cardputer_interactive_ssh_client",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T23:04:00.148167+00:00"
+    },
+    "ir-replay": {
+      "id": "ir-replay",
+      "pr_ref": null,
+      "repo": "flashertwelve/ir_replay",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.976678+00:00"
+    },
+    "kprox": {
+      "id": "kprox",
+      "pr_ref": null,
+      "repo": "akoerner/kprox",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.190259+00:00"
+    },
+    "laser-for-stickc-plus2": {
+      "id": "laser-for-stickc-plus2",
+      "pr_ref": null,
+      "repo": "dma3002/laser-for-stickc-plus2",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.120299+00:00"
+    },
+    "little-devhelper": {
+      "id": "little-devhelper",
+      "pr_ref": null,
+      "repo": "chrisdacrunk/little-devhelper",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.949621+00:00"
+    },
+    "m5-clicker-hamster": {
+      "id": "m5-clicker-hamster",
+      "pr_ref": null,
+      "repo": "m5dev1000/m5-clicker-hamster",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.958360+00:00"
+    },
+    "m5-dial-rgb-light-strip-controller": {
+      "id": "m5-dial-rgb-light-strip-controller",
+      "pr_ref": null,
+      "repo": "asg02fever/m5-dial-rgb-light-strip-controller-",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.109173+00:00"
+    },
+    "m5-midi-rec": {
+      "id": "m5-midi-rec",
+      "pr_ref": null,
+      "repo": "rawseq/m5-midi-rec",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.160318+00:00"
+    },
+    "m5-mousejiggler": {
+      "id": "m5-mousejiggler",
+      "pr_ref": null,
+      "repo": "hsgarcia22/m5-mousejiggler",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.150150+00:00"
     },
     "m5apps": {
       "id": "m5apps",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "d4rkmen/m5apps",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
     },
     "m5cardputer-chat-with-gemini-api": {
       "id": "m5cardputer-chat-with-gemini-api",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "vanshksingh/m5cardputer-chat-with-gemini-api",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "m5cardputer-dht11-sensor": {
+      "id": "m5cardputer-dht11-sensor",
+      "pr_ref": null,
+      "repo": "kataigp/m5cardputer_dht11_sensor",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.978026+00:00"
+    },
+    "m5cardputer-display-off": {
+      "id": "m5cardputer-display-off",
+      "pr_ref": null,
+      "repo": "kestrelrain/m5cardputer_display_off",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.961760+00:00"
+    },
+    "m5cardputer-env-iv-app": {
+      "id": "m5cardputer-env-iv-app",
+      "pr_ref": null,
+      "repo": "jrydval/m5cardputer-env-iv-app",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.112681+00:00"
+    },
+    "m5cardputer-hcsr04-sensor": {
+      "id": "m5cardputer-hcsr04-sensor",
+      "pr_ref": null,
+      "repo": "kataigp/m5cardputer_hcsr04_sensor",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.981729+00:00"
+    },
+    "m5cardputer-hid-tools": {
+      "id": "m5cardputer-hid-tools",
+      "pr_ref": null,
+      "repo": "destillegast/m5cardputer-hid-tools",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.018838+00:00"
+    },
+    "m5cardputer-sun-rider": {
+      "id": "m5cardputer-sun-rider",
+      "pr_ref": null,
+      "repo": "treblewolf/m5cardputer-sun-rider",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.899331+00:00"
+    },
+    "m5cardputer-tts": {
+      "id": "m5cardputer-tts",
+      "pr_ref": null,
+      "repo": "matejsworkshop/m5cardputer-tts",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.123231+00:00"
+    },
+    "m5cardputer-voice-changer": {
+      "id": "m5cardputer-voice-changer",
+      "pr_ref": null,
+      "repo": "pierrebak/m5cardputer_voice-changer",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.957036+00:00"
+    },
+    "m5cardputer-windows": {
+      "id": "m5cardputer-windows",
+      "pr_ref": null,
+      "repo": "sanchitminda/m5cardputer_windows",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.986066+00:00"
+    },
+    "m5cardputer-xscreensaver": {
+      "id": "m5cardputer-xscreensaver",
+      "pr_ref": null,
+      "repo": "coreymillia/m5cardputer-xscreensaver",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.022123+00:00"
+    },
+    "m5core2-audio-analyzer": {
+      "id": "m5core2-audio-analyzer",
+      "pr_ref": null,
+      "repo": "cubic9com/m5core2_audio_analyzer",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.148153+00:00"
+    },
+    "m5core2-eyes": {
+      "id": "m5core2-eyes",
+      "pr_ref": null,
+      "repo": "cubic9com/m5core2_eyes",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.183154+00:00"
     },
     "m5core2-simpleclock": {
       "id": "m5core2-simpleclock",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "reason": "purged 2026-09-02 as sub-floor; stays purged (SPEC-firmware-floor)",
       "repo": "lordlexat/m5core2_simpleclock",
-      "status": "proposed",
+      "status": "rejected",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "m5groqbot-m5stickc-plus2": {
+      "id": "m5groqbot-m5stickc-plus2",
+      "pr_ref": null,
+      "repo": "coreymillia/m5groqbot-m5stickc-plus2",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.159001+00:00"
     },
     "m5hamradio": {
       "id": "m5hamradio",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "armel/m5hamradio",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
+    },
+    "m5monsterc5-cardputeradv": {
+      "id": "m5monsterc5-cardputeradv",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/100",
+      "reason": "214 stars, never merged; re-enters via admission rather than being re-proposed blind",
+      "repo": "c5lab/m5monsterc5-cardputeradv",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:47.776765+00:00"
     },
     "m5mp3": {
       "id": "m5mp3",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "volosr/m5mp3",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "m5rally": {
+      "id": "m5rally",
+      "pr_ref": null,
+      "repo": "marekor555/m5rally",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.056584+00:00"
     },
     "m5stack-avatar-mic": {
       "id": "m5stack-avatar-mic",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/82",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "mongonta0716/m5stack-avatar-mic",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-02T00:03:45.733645+00:00"
+    },
+    "m5stack-avatar-mic-nekomimi-led": {
+      "id": "m5stack-avatar-mic-nekomimi-led",
+      "pr_ref": null,
+      "repo": "washishi/m5stack-avatar-mic-nekomimi_led",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.043016+00:00"
+    },
+    "m5stack-image-viewer": {
+      "id": "m5stack-image-viewer",
+      "pr_ref": null,
+      "reason": "17 stars / 3 forks: below the 25-or-25 floor",
+      "repo": "3110/m5stack-image-viewer",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.016737+00:00"
     },
     "m5stickcplus2-seamonsue": {
       "id": "m5stickcplus2-seamonsue",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/81",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "hsbsbz/m5stickcplus2-seamonsue",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T23:04:00.148167+00:00"
+    },
+    "make-ap": {
+      "id": "make-ap",
+      "pr_ref": null,
+      "reason": "below floor: 10 stars / 0 forks (floor is 25 stars OR 25 forks)",
+      "repo": "big-bratan/make-ap",
+      "status": "rejected",
+      "timestamp": "2026-09-02T16:03:27.965190+00:00"
     },
     "meowusb-ble": {
       "id": "meowusb-ble",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "reason": "purged 2026-09-02 as sub-floor; stays purged (SPEC-firmware-floor)",
       "repo": "01mayo01/meowusb-ble",
-      "status": "proposed",
+      "status": "rejected",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
     },
     "minigotchi-esp32": {
       "id": "minigotchi-esp32",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/81",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "dj1ch/minigotchi-esp32",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T23:04:00.148167+00:00"
+    },
+    "navboxesp": {
+      "id": "navboxesp",
+      "pr_ref": null,
+      "repo": "t413/navboxesp",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.172852+00:00"
+    },
+    "nyan": {
+      "id": "nyan",
+      "pr_ref": null,
+      "repo": "erwantest123/nyan",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.881253+00:00"
+    },
+    "onemorefloor": {
+      "id": "onemorefloor",
+      "pr_ref": null,
+      "repo": "lostdataprotocol/onemorefloor",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.179924+00:00"
     },
     "plai": {
       "id": "plai",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "d4rkmen/plai",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "plume": {
+      "id": "plume",
+      "pr_ref": null,
+      "repo": "zmattmanz/plume",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.041025+00:00"
+    },
+    "pocket-gambler": {
+      "id": "pocket-gambler",
+      "pr_ref": null,
+      "repo": "nanucek/pocket-gambler",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.135130+00:00"
+    },
+    "psychedelic-atoms3": {
+      "id": "psychedelic-atoms3",
+      "pr_ref": null,
+      "repo": "coreymillia/psychedelic-atoms3",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.165999+00:00"
     },
     "raising-hell-cardputer": {
       "id": "raising-hell-cardputer",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "acpayers-alt/raising-hell-cardputer",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
     },
     "ratcom": {
       "id": "ratcom",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/81",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "ratspeak/rscardputer",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T23:04:00.148167+00:00"
+    },
+    "relaykvm": {
+      "id": "relaykvm",
+      "pr_ref": null,
+      "repo": "endarthur/relaykvm",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.144120+00:00"
+    },
+    "rhesus-life": {
+      "id": "rhesus-life",
+      "pr_ref": null,
+      "repo": "drrhesus/rhesus-life",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.168493+00:00"
+    },
+    "rhesus-radio": {
+      "id": "rhesus-radio",
+      "pr_ref": null,
+      "repo": "jymmm/rhesus-radio",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.972255+00:00"
+    },
+    "rhesus-radio-v3": {
+      "id": "rhesus-radio-v3",
+      "pr_ref": null,
+      "repo": "drrhesus/rhesus-radio-v3",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.950490+00:00"
+    },
+    "ruview": {
+      "id": "ruview",
+      "pr_ref": null,
+      "reason": "restored 2026-09-04 (PR #103); the 2026-09-02 deletion was the error",
+      "repo": "ruvnet/ruview",
+      "status": "merged",
+      "timestamp": "2026-09-04T00:00:00+00:00"
+    },
+    "s3-decibel-meter": {
+      "id": "s3-decibel-meter",
+      "pr_ref": null,
+      "repo": "petsven/s3_decibel_meter",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.059609+00:00"
     },
     "server-vampeta": {
       "id": "server-vampeta",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
+      "reason": "purged 2026-09-02 as sub-floor; stays purged (SPEC-firmware-floor)",
       "repo": "elguesabal/server-vampeta",
-      "status": "proposed",
+      "status": "rejected",
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
+    },
+    "sigurdos-tdeck": {
+      "id": "sigurdos-tdeck",
+      "pr_ref": null,
+      "repo": "hermes-gadget/sigurdos-tdeck",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.081318+00:00"
+    },
+    "skycompass-cardputeradv": {
+      "id": "skycompass-cardputeradv",
+      "pr_ref": null,
+      "repo": "nongxl/skycompass_cardputeradv",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.987957+00:00"
+    },
+    "skycompass-satellite": {
+      "id": "skycompass-satellite",
+      "pr_ref": null,
+      "repo": "nongxl/skycompass_satellite",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.038888+00:00"
+    },
+    "solotputer": {
+      "id": "solotputer",
+      "pr_ref": null,
+      "repo": "aspikray/solotputer",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.948587+00:00"
+    },
+    "spaceship": {
+      "id": "spaceship",
+      "pr_ref": null,
+      "repo": "sakkra-adv/spaceship",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.102478+00:00"
+    },
+    "spaceu-cardcomm": {
+      "id": "spaceu-cardcomm",
+      "pr_ref": null,
+      "repo": "urieldeveloper/spaceu-cardcomm",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.975379+00:00"
+    },
+    "stickcontroller": {
+      "id": "stickcontroller",
+      "pr_ref": null,
+      "repo": "comeraperuibe944/stickcontroller",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.170856+00:00"
+    },
+    "tinycardputer": {
+      "id": "tinycardputer",
+      "pr_ref": null,
+      "repo": "soykhaler/tinycardputer",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.118089+00:00"
+    },
+    "ucplayground": {
+      "id": "ucplayground",
+      "pr_ref": null,
+      "repo": "tabozen/ucplayground",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.075625+00:00"
+    },
+    "voice-mixer-3000": {
+      "id": "voice-mixer-3000",
+      "pr_ref": null,
+      "repo": "troglodyte420/voice-mixer-3000",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.024133+00:00"
     },
     "wadamesh": {
       "id": "wadamesh",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
+      "reason": "present in the catalog: its PR was merged",
       "repo": "allfather-bv/wadamesh",
-      "status": "proposed",
+      "status": "merged",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "web-browser-cardputer-adv": {
+      "id": "web-browser-cardputer-adv",
+      "pr_ref": null,
+      "repo": "olekalek112233/web-browser-cardputer-adv",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.023083+00:00"
+    },
+    "webampadv": {
+      "id": "webampadv",
+      "pr_ref": null,
+      "repo": "murmuri/webampadv",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.989979+00:00"
+    },
+    "whisplay-groq-chatbot": {
+      "id": "whisplay-groq-chatbot",
+      "pr_ref": null,
+      "repo": "coreymillia/whisplay-groq-chatbot",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.188711+00:00"
+    },
+    "wifi-capture-page-m5cardputer": {
+      "id": "wifi-capture-page-m5cardputer",
+      "pr_ref": null,
+      "repo": "zrutra/wifi-capture-page-m5cardputer",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:27.955204+00:00"
+    },
+    "wikiputer": {
+      "id": "wikiputer",
+      "pr_ref": null,
+      "repo": "weavefront/wikiputer",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.008928+00:00"
+    },
+    "wmbuster-adv": {
+      "id": "wmbuster-adv",
+      "pr_ref": null,
+      "repo": "i12bp8/wmbuster-adv",
+      "status": "seen",
+      "timestamp": "2026-09-02T17:03:09.137580+00:00"
+    },
+    "zx-spectrum-cardputer-external": {
+      "id": "zx-spectrum-cardputer-external",
+      "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/100",
+      "reason": "duplicate_of zx-spectrum-cardputer-internal, which already catalogues this exact repo",
+      "repo": "andyaicardputer/zx-spectrum-cardputer-external",
+      "status": "rejected",
+      "timestamp": "2026-09-02T16:03:47.776765+00:00"
+    },
+    "zx-spectrum-cardputer-internal": {
+      "id": "zx-spectrum-cardputer-internal",
+      "pr_ref": null,
+      "repo": "soykhaler/zx-spectrum-cardputer-internal",
+      "status": "seen",
+      "timestamp": "2026-09-02T16:03:28.027423+00:00"
     }
   },
   "by_repo": {
     "01mayo01/meowusb-ble": "meowusb-ble",
+    "0xhalloween/flipper-zero-esp32-adv": "flipper-zero-esp32-adv",
+    "3110/m5stack-image-viewer": "m5stack-image-viewer",
+    "aat440hz/cardskimmerdetector-m5atoms3lite": "cardskimmerdetector-m5atoms3lite",
     "acpayers-alt/raising-hell-cardputer": "raising-hell-cardputer",
     "adammelancon/cardputer-satellite-tracker": "cardputer-iss-tracker",
+    "akoerner/kprox": "kprox",
     "allfather-bv/wadamesh": "wadamesh",
+    "andyaicardputer/zx-spectrum-cardputer-external": "zx-spectrum-cardputer-external",
+    "anyd3v/any-8ball": "any-8ball",
     "armel/m5hamradio": "m5hamradio",
+    "arturockpk/bme280-sensor-m5unified": "bme280-sensor-m5unified",
+    "asg02fever/m5-dial-rgb-light-strip-controller-": "m5-dial-rgb-light-strip-controller",
+    "aspikray/solotputer": "solotputer",
+    "autoflowdanilo-it/blipputer": "blipputer",
+    "big-bratan/make-ap": "make-ap",
+    "blamouche/cardputer-dwight": "cardputer-dwight",
+    "brucedevices/firmware": "firmware",
     "brucemoddev/brucemod-alpha": "brucemod-alpha",
+    "c5lab/m5monsterc5-cardputeradv": "m5monsterc5-cardputeradv",
+    "captainchorche/cardcaliper": "cardcaliper",
+    "charl3x/glide-synth-cardputer-adv": "glide-synth-cardputer-adv",
+    "chrisdacrunk/little-devhelper": "little-devhelper",
+    "comeraperuibe944/stickcontroller": "stickcontroller",
+    "coreymillia/m5cardputer-xscreensaver": "m5cardputer-xscreensaver",
+    "coreymillia/m5groqbot-m5stickc-plus2": "m5groqbot-m5stickc-plus2",
+    "coreymillia/psychedelic-atoms3": "psychedelic-atoms3",
+    "coreymillia/whisplay-groq-chatbot": "whisplay-groq-chatbot",
+    "cryptspeak/cscardputer": "cscardputer",
+    "cubic9com/m5core2_audio_analyzer": "m5core2-audio-analyzer",
+    "cubic9com/m5core2_eyes": "m5core2-eyes",
     "d4rkmen/m5apps": "m5apps",
     "d4rkmen/plai": "plai",
+    "destillegast/m5cardputer-hid-tools": "m5cardputer-hid-tools",
     "dj1ch/minigotchi-esp32": "minigotchi-esp32",
+    "djflix/cardputer_i2c_scan": "cardputer-i2c-scan",
+    "dma3002/laser-for-stickc-plus2": "laser-for-stickc-plus2",
+    "drrhesus/rhesus-life": "rhesus-life",
+    "drrhesus/rhesus-radio-v3": "rhesus-radio-v3",
     "elguesabal/server-vampeta": "server-vampeta",
+    "endarthur/relaykvm": "relaykvm",
+    "erwantest123/nyan": "nyan",
     "esp32de/boot-linux-esp32s3-playground": "boot-linux-esp32s3-playground",
     "espressif/esp-claw": "esp-claw",
+    "evilkbgy9/cardnet": "cardnet",
+    "filipo3221/cardtube": "cardtube",
+    "flashertwelve/ir_replay": "ir-replay",
+    "frontendency/gallery_for_cardputeradv": "gallery-for-cardputeradv",
+    "genkigenki/hotspot-arcade-cardputer": "hotspot-arcade-cardputer",
+    "girs1982/cardputeradv-cc1101-manufactured": "cardputeradv-cc1101-manufactured",
+    "gridgrad/advaita": "advaita",
+    "gvrubio/gvm5bubblelevel": "gvm5bubblelevel",
+    "gvrubio/gvm5wifichannelutil": "gvm5wifichannelutil",
+    "hagalaz27/hamsterm": "hamsterm",
+    "hermes-gadget/sigurdos-tdeck": "sigurdos-tdeck",
+    "horseyofcoursey/ember": "ember",
     "hsbsbz/m5stickcplus2-seamonsue": "m5stickcplus2-seamonsue",
+    "hsgarcia22/m5-mousejiggler": "m5-mousejiggler",
+    "i12bp8/wmbuster-adv": "wmbuster-adv",
+    "id8872/cardputer-squawkbox": "cardputer-squawkbox",
+    "imink/aqualife": "aqualife",
     "incursiohack/esp-game-server": "esp-game-server",
+    "integerquant/baitnswitch": "baitnswitch",
+    "jfduhart/cardputer-morse-trainer": "cardputer-morse-trainer",
     "jonaslacerda/crowos": "crowos",
+    "jrydval/m5cardputer-env-iv-app": "m5cardputer-env-iv-app",
+    "jymmm/rhesus-radio": "rhesus-radio",
+    "kataigp/m5cardputer_dht11_sensor": "m5cardputer-dht11-sensor",
+    "kataigp/m5cardputer_hcsr04_sensor": "m5cardputer-hcsr04-sensor",
+    "kestrelrain/m5cardputer_display_off": "m5cardputer-display-off",
+    "layer812/cardputer_llm": "cardputer-llm",
+    "leonferlo/crptvfplayer-carputer-videoplayer": "crptvfplayer-carputer-videoplayer",
     "lordlexat/m5core2_simpleclock": "m5core2-simpleclock",
+    "lostdataprotocol/onemorefloor": "onemorefloor",
+    "m5dev1000/m5-clicker-hamster": "m5-clicker-hamster",
+    "marcorr/brokensignal": "brokensignal",
+    "marekor555/m5rally": "m5rally",
+    "mariovirgili/advutil": "advutil",
+    "matejsworkshop/m5cardputer-tts": "m5cardputer-tts",
+    "mithug3/cardradio": "cardradio",
+    "mk324234/atoms3-lite-tvbgone": "atoms3-lite-tvbgone",
     "mongonta0716/m5stack-avatar-mic": "m5stack-avatar-mic",
+    "mraanderson/cardputeradv-motionlab": "cardputeradv-motionlab",
+    "murmuri/webampadv": "webampadv",
+    "nanucek/pocket-gambler": "pocket-gambler",
+    "nongxl/cardputer_morsedecoder": "cardputer-morsedecoder",
+    "nongxl/cyberdeck-tarot": "cyberdeck-tarot",
+    "nongxl/skycompass_cardputeradv": "skycompass-cardputeradv",
+    "nongxl/skycompass_satellite": "skycompass-satellite",
     "nonik0/cardputerlorachat": "cardputerlorachat",
+    "ns96/cardputermictalk": "cardputermictalk",
+    "oldtokage-collab/c.p.s.--cardputer-syhnth--": "c-p-s-cardputer-syhnth",
+    "olekalek112233/web-browser-cardputer-adv": "web-browser-cardputer-adv",
+    "petsven/s3_decibel_meter": "s3-decibel-meter",
+    "pierrebak/m5cardputer_voice-changer": "m5cardputer-voice-changer",
     "ratspeak/rscardputer": "ratcom",
+    "rawseq/m5-midi-rec": "m5-midi-rec",
+    "reydeargentina/cardtastic": "cardtastic",
+    "rhuaneverton/gpsdata-m5cardputer": "gpsdata-m5cardputer",
+    "robertklofgren/cardelbrot": "cardelbrot",
+    "rocksneeze081/cardpda": "cardpda",
+    "ruvnet/ruview": "ruview",
+    "sakkra-adv/battleship": "battleship",
+    "sakkra-adv/spaceship": "spaceship",
+    "sanchitminda/m5cardputer_windows": "m5cardputer-windows",
+    "shlappa1000/c4-stick": "c4-stick",
+    "soykhaler/tinycardputer": "tinycardputer",
+    "soykhaler/zx-spectrum-cardputer-internal": "zx-spectrum-cardputer-internal",
     "sub0pt1mal/m5cardputer_interactive_ssh_client": "interactivesetup-m5cardputer-sshclient",
+    "t413/navboxesp": "navboxesp",
+    "tabozen/ucplayground": "ucplayground",
+    "teapot174/airmouses3": "airmouses3",
+    "thebricktop/anarch-cardputer": "anarch-cardputer",
+    "therezor/hazke": "hazke",
+    "toshihiromakuuchi/ai_stackchan2": "ai-stackchan2",
+    "treblewolf/m5cardputer-sun-rider": "m5cardputer-sun-rider",
+    "troglodyte420/voice-mixer-3000": "voice-mixer-3000",
+    "u-tanick/ai_stackchan2_for_debug": "ai-stackchan2-for-debug",
+    "urieldeveloper/spaceu-cardcomm": "spaceu-cardcomm",
     "vanshksingh/m5cardputer-chat-with-gemini-api": "m5cardputer-chat-with-gemini-api",
+    "vicliu624/cardputer_mp3_adv": "cardputer-mp3-adv",
     "volosr/m5mp3": "m5mp3",
-    "zeloksa/cardputer-adv-wifi-ble-radar": "cardputer-adv-wifi-ble-radar"
+    "washishi/m5stack-avatar-mic-nekomimi_led": "m5stack-avatar-mic-nekomimi-led",
+    "weavefront/wikiputer": "wikiputer",
+    "williamruckman/diceroller-cardputeradv": "diceroller-cardputeradv",
+    "zaratton/cardputermidimonitor": "cardputermidimonitor",
+    "zedward856-spec/breach_os": "breach-os",
+    "zeloksa/cardputer-adv-wifi-ble-radar": "cardputer-adv-wifi-ble-radar",
+    "zmattmanz/plume": "plume",
+    "zrutra/wifi-capture-page-m5cardputer": "wifi-capture-page-m5cardputer"
   }
 }
