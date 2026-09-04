@@ -33,6 +33,22 @@ jobs:
       - name: Run full pytest suite (includes wizard oracle invariants)
         run: python3 -m pytest apps/core/tests apps/api/tests apps/cli/tests
 
+  jr-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install what jr/ and scripts/ actually import
+        # Deliberately NOT agno: those tests importorskip, so the agent lane stays testable in
+        # CI without dragging the whole LLM stack into every run.
+        run: pip install pyyaml jsonschema requests pytest
+      - name: Install core (jr and scripts import esp_atlas_core)
+        run: pip install -e apps/core
+      - name: Run the agent + scripts suites
+        run: python3 -m pytest jr scripts -q
+
   sources-live:
     runs-on: ubuntu-latest
     continue-on-error: true

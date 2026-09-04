@@ -28,6 +28,20 @@ was to make the official source the authority. That rule is now structural.)*
 - **Roadmap / current delivery**: see `BIBLE-PLAN.md`.
 - **North star:** answer *"will THIS board do MY project, and exactly how do I wire it?"* — verifiably.
 
+## Git & GitHub
+- `git push` over SSH already authenticates as the repo owner — no account flip needed.
+- Any `gh` call that **writes** (`pr create` · `pr close` · `pr merge` · tags · repo-settings
+  API) must run as the personal account. Flip before, flip back after:
+  `gh auth switch --user fcavalcantirj` … `gh auth switch --user <your default account>`.
+  Leaving the wrong account active is the bug this rule exists to prevent — always restore it
+  in the same turn, even if the command failed.
+- Read-only calls need no flip: `GH_TOKEN=$(gh auth token --user fcavalcantirj) gh …`.
+- **This repo is public.** Operational notes that name maintainer hosts, shell users, ssh keys
+  or credential-file paths do not belong in it, even with no secret values in them. Keep them
+  local and hand-carry them.
+- Never run `git checkout <ref> -- .` to inspect another ref: it overwrites uncommitted work in
+  the tree. Read with `git show <ref>:<path>` instead.
+
 ## Golden path for any change
 SPEC before code · oracle/TDD first · cite-or-omit · verify the **real path** before
 declaring done · land on main. Deterministic where it matters — no LLM in an answer path
