@@ -16,7 +16,7 @@ sources:
   url: https://github.com/BruceDevices/firmware/releases/download/1.16.1/Bruce-esp32-c5.bin
   verified: '2026-09-01'
 - field: '*'
-  url: https://github.com/pr3y/Bruce
+  url: https://github.com/BruceDevices/firmware
   verified: '2026-08-30'
 ---
 

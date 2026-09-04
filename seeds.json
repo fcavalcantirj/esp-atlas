@@ -17,7 +17,7 @@
     { "id": "waveshare-docs", "url": "https://www.waveshare.com/wiki/Main_Page", "kind": "vendor-spec-docs", "note": "Waveshare ESP32 dev boards (ESP32-S3-Touch, ESP32-C6, …) — wiki spec pages" }
   ],
   "firmware_releases": [
-    { "id": "bruce", "url": "https://github.com/pr3y/Bruce/releases", "kind": "github-releases", "note": "Pentest multitool" },
+    { "id": "bruce", "url": "https://github.com/BruceDevices/firmware/releases", "kind": "github-releases", "note": "Pentest multitool" },
     { "id": "wled", "url": "https://github.com/wled/WLED/releases", "kind": "github-releases", "note": "Addressable-LED controller" },
     { "id": "meshtastic", "url": "https://github.com/meshtastic/firmware/releases", "kind": "github-releases", "note": "Off-grid LoRa mesh" },
     { "id": "esphome", "url": "https://github.com/esphome/esphome/releases", "kind": "github-releases", "note": "Home-automation firmware" },

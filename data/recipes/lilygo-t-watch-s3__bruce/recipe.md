@@ -10,7 +10,7 @@ flash:
 notes: "Listed as 'Lilygo T-Watch-S3' in the project's device table."
 sources:
 - field: '*'
-  url: https://github.com/pr3y/Bruce
+  url: https://github.com/BruceDevices/firmware
   verified: '2026-08-24'
 ---
 

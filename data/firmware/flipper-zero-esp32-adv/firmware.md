@@ -25,8 +25,8 @@ sources:
   url: https://github.com/Sor3nt/Flipper-Zero-ESP32-Port
   verified: '2026-09-02'
 - field: socs
-  url: https://github.com/0xhalloween/Flipper-Zero-ESP32-ADV#supported-boards
-  verified: '2026-09-02'
+  url: https://github.com/Sor3nt/Flipper-Zero-ESP32-Port#supported-boards
+  verified: '2026-09-04'
 ---
 
 Support for the M5Cardputers (v1/v1.1/Adv). Thanks to sor3nt and devs

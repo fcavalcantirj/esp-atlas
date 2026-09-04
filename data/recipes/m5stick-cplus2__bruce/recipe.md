@@ -10,7 +10,7 @@ flash:
 notes: "Listed as 'M5Stack M5StickC PLUS2' in the project's device table. Also installable from M5Burner."
 sources:
 - field: '*'
-  url: https://github.com/pr3y/Bruce
+  url: https://github.com/BruceDevices/firmware
   verified: '2026-08-24'
 ---
 

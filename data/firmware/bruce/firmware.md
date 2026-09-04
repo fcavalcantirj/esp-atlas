@@ -2,9 +2,9 @@
 id: bruce
 type: firmware
 name: Bruce
-url: https://github.com/pr3y/Bruce
+url: https://github.com/BruceDevices/firmware
 category: pentest
-maintainer: pr3y
+maintainer: brucedevices
 license: AGPL-3.0
 socs:
 - esp32
@@ -45,22 +45,22 @@ not_required:
 - capability: psram
   why: tool buffers fit SRAM
 popularity:
-  stars: 6619
+  stars: 6639
   downloads: 69
-  as_of: '2026-09-01'
+  as_of: '2026-09-04'
 sources:
 - field: '*'
-  url: https://github.com/pr3y/Bruce
+  url: https://github.com/BruceDevices/firmware
   verified: '2026-08-24'
 - field: license
-  url: https://raw.githubusercontent.com/pr3y/Bruce/main/LICENSE
+  url: https://raw.githubusercontent.com/BruceDevices/firmware/main/LICENSE
   verified: '2026-08-24'
 - field: distribution
   url: https://bruce.computer/flasher
   verified: '2026-08-24'
 - field: popularity
-  url: https://github.com/pr3y/Bruce
-  verified: '2026-09-01'
+  url: https://github.com/BruceDevices/firmware
+  verified: '2026-09-04'
 ---
 
 # Bruce
