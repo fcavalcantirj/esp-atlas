@@ -187,3 +187,27 @@ def test_cli_main_runs_and_prints_worklist(tmp_path, capsys):
     assert "UNSTAMPED" in out
     assert "cardputer-repl" in out
     assert "SUMMARY" in out
+
+
+# --- CURATED_EXEMPT integrity (Phase 0 PR 0.4) ----------------------------
+
+def test_curated_exempt_ids_exist():
+    """Every id in CURATED_EXEMPT must resolve to a real record in the REAL data dir.
+
+    This is the inverse of the rogueduck incident. On 2026-09-02 a floor purge deleted
+    data/firmware/rogueduck/ even though "rogueduck" is named here as curated-exempt, and main
+    stayed red for six runs. The audit itself could not notice: it iterates over records that
+    exist, so an exempt id naming a record that has been deleted is invisible to it.
+
+    A failure here means one of two things, and both want a human:
+      - a curated record was deleted and should be restored, or
+      - the record was retired on purpose and its id should leave CURATED_EXEMPT.
+    """
+    from pathlib import Path
+
+    data_dir = Path(__file__).resolve().parent.parent / "data" / "firmware"
+    missing = sorted(fid for fid in audit.CURATED_EXEMPT if not (data_dir / fid / "firmware.md").exists())
+    assert not missing, (
+        f"CURATED_EXEMPT names {len(missing)} firmware with no record: {missing}. "
+        "Either restore the record or drop the id from the exempt list."
+    )

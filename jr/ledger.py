@@ -12,8 +12,12 @@ enum, a timestamp, an optional PR reference, dual id/repo lookup) and is wired i
 deterministic drain path only (drain.py/drain_pr.py). Neither replaces the other.
 
 On-disk shape:
-    {"by_id": {"<firmware_id>": {"id", "repo", "status", "timestamp", "pr_ref"}, ...},
+    {"by_id": {"<firmware_id>": {"id", "repo", "status", "timestamp", "pr_ref"[, "reason"]}, ...},
      "by_repo": {"<owner/repo>": "<firmware_id>", ...}}
+`reason` is OPTIONAL and additive: a short human string saying WHY a record holds its status
+("duplicate_of bruce (repo_id 795166961)", "below floor: 10 stars / 0 forks"). Older records
+simply lack the key, and nothing reads it as a gate -- it exists so a human, or a later
+maintainer reading a rejection months on, can tell a deliberate decision from a stale artifact.
 Two indices over the same records so a caller can dedup-check by either key — mirrors the
 catalogued_repos/catalogued_tokens dual-check drain.py's prefilter already does against the real
 atlas. `status` is one of proposed/merged/rejected (STATUSES below).
@@ -136,10 +140,11 @@ def record_proposed(firmware_id: str, repo: str, pr_ref: str | None = None,
 
 
 def update_status(firmware_id: str, status: str, path: Path = DEFAULT_LEDGER_PATH,
-                  pr_ref: str | None = None, now: str | None = None) -> dict:
+                  pr_ref: str | None = None, now: str | None = None,
+                  reason: str | None = None) -> dict:
     """Transition an EXISTING ledger record to `status` (merged/rejected), refreshing its
-    timestamp and, if given, its pr_ref. A no-op (ledger returned unchanged, nothing written) if
-    `firmware_id` isn't in the ledger yet — there's nothing to transition."""
+    timestamp and, if given, its pr_ref and `reason`. A no-op (ledger returned unchanged, nothing
+    written) if `firmware_id` isn't in the ledger yet — there's nothing to transition."""
     if status not in STATUSES:
         raise ValueError(f"unknown ledger status: {status!r} (expected one of {STATUSES})")
     ledger = load_ledger(path)
@@ -150,14 +155,18 @@ def update_status(firmware_id: str, status: str, path: Path = DEFAULT_LEDGER_PAT
     record["timestamp"] = now or _utcnow()
     if pr_ref is not None:
         record["pr_ref"] = pr_ref
+    if reason is not None:
+        record["reason"] = reason
     _save(ledger, path)
     return ledger
 
 
-def mark_rejected(firmware_id: str, path: Path = DEFAULT_LEDGER_PATH, now: str | None = None) -> dict:
-    """Mark `firmware_id` rejected — for when a human closes its PR unmerged (deliverable 4).
-    A no-op if the id was never proposed (nothing to reject)."""
-    return update_status(firmware_id, "rejected", path=path, now=now)
+def mark_rejected(firmware_id: str, path: Path = DEFAULT_LEDGER_PATH, now: str | None = None,
+                  reason: str | None = None) -> dict:
+    """Mark `firmware_id` rejected — for when a human closes its PR unmerged (deliverable 4), or
+    when a deliberate seed rules it out. `reason` records WHY, so a later reader can tell a
+    decision from an accident. A no-op if the id was never proposed (nothing to reject)."""
+    return update_status(firmware_id, "rejected", path=path, now=now, reason=reason)
 
 
 def reconcile_merged(catalogued_ids: set[str], path: Path = DEFAULT_LEDGER_PATH,

@@ -198,3 +198,51 @@ def test_reconcile_merged_ignores_ids_not_in_ledger(path):
     transitioned = ledger.reconcile_merged({"some-id-never-proposed"}, path=path)
     assert transitioned == []
     assert not path.exists()
+
+
+# --- seeded decisions (Phase 0 PR 0.4) ------------------------------------
+
+def test_seeded_rejections_block(path):
+    """A rejected record blocks re-authoring by BOTH id and repo; a merged one does not.
+
+    This is the shape the Phase 0 seed relies on. `BLOCKING_STATUSES` is
+    ("proposed", "rejected"), so seeding a duplicate as "merged" would NOT stop the drain
+    re-authoring it — the exact trap that would let BruceDevices/firmware (the renamed
+    pr3y/Bruce) be authored a second time under the generic id "firmware".
+    """
+    ledger.record_proposed("firmware", "brucedevices/firmware", path=path)
+    ledger.mark_rejected("firmware", path=path, reason="duplicate_of bruce (repo_id 795166961)")
+
+    led = ledger.load_ledger(path)
+    assert led["by_id"]["firmware"]["status"] == "rejected"
+    assert ledger.is_blocked(led, firmware_id="firmware")
+    # blocked by repo too: the drain's prefilter only knows the repo before it derives an id
+    assert ledger.is_blocked(led, repo="brucedevices/firmware")
+    assert ledger.is_blocked(led, repo="BruceDevices/firmware")  # case-insensitive
+
+
+def test_merged_and_seen_do_not_block_readmission(path):
+    """"merged" and "seen" are deliberately NON-blocking, so a candidate that clears the floor
+    can come back through the admission gate instead of being frozen out by a stale note."""
+    ledger.record_proposed("glide-synth", "charl3x/glide-synth", path=path)
+    ledger.update_status("glide-synth", "seen", path=path, reason="82 stars: re-enters via the gate")
+    ledger.record_proposed("ruview", "ruvnet/ruview", path=path)
+    ledger.update_status("ruview", "merged", path=path)
+
+    led = ledger.load_ledger(path)
+    assert not ledger.is_blocked(led, firmware_id="glide-synth")
+    assert not ledger.is_blocked(led, repo="charl3x/glide-synth")
+    assert not ledger.is_blocked(led, firmware_id="ruview")
+
+
+def test_reason_is_optional_and_additive(path):
+    """`reason` is written only when given, and its absence is never an error — old records
+    predate the field."""
+    ledger.record_proposed("ghostesp", "jorgen/ghostesp", path=path)
+    assert "reason" not in ledger.load_ledger(path)["by_id"]["ghostesp"]
+
+    ledger.mark_rejected("ghostesp", path=path)
+    assert "reason" not in ledger.load_ledger(path)["by_id"]["ghostesp"]
+
+    ledger.mark_rejected("ghostesp", path=path, reason="closed unmerged by a human")
+    assert ledger.load_ledger(path)["by_id"]["ghostesp"]["reason"] == "closed unmerged by a human"
