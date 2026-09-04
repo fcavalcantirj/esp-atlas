@@ -23,15 +23,20 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-_JR_DIR = REPO_ROOT / "jr"
-if str(_JR_DIR) not in sys.path:
-    sys.path.insert(0, str(_JR_DIR))
-import scorer  # noqa: E402
-
+# apps/core/src MUST go on sys.path before `import scorer`: scorer imports tools, which imports
+# normalize, which imports esp_atlas_core. jr/normalize.py only ever inserts jr/ itself, so on a
+# clean checkout (no `pip install -e apps/core`) importing scorer first dies with
+# ModuleNotFoundError: esp_atlas_core. It worked locally only because the package happened to be
+# installed. Order is load-bearing; do not "tidy" these two blocks back together.
 _CORE_SRC = REPO_ROOT / "apps" / "core" / "src"
 if str(_CORE_SRC) not in sys.path:
     sys.path.insert(0, str(_CORE_SRC))
 from esp_atlas_core.frontmatter import parse_frontmatter  # noqa: E402
+
+_JR_DIR = REPO_ROOT / "jr"
+if str(_JR_DIR) not in sys.path:
+    sys.path.insert(0, str(_JR_DIR))
+import scorer  # noqa: E402
 
 FIRMWARE_GLOB = "firmware/*/firmware.md"
 
