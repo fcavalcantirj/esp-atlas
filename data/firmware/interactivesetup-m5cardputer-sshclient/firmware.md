@@ -2,9 +2,9 @@
 id: interactivesetup-m5cardputer-sshclient
 type: firmware
 name: Interactive SSH client and VPN
-url: https://github.com/fernandofatech/M5Cardputer-SSHClient
+url: https://github.com/fernando-moretes/tool-m5cardputer-sshclient
 category: multi
-maintainer: fernandofatech
+maintainer: fernando-moretes
 capabilities:
 - wifi
 socs:
@@ -15,11 +15,11 @@ popularity:
   as_of: '2026-09-02'
 sources:
 - field: '*'
-  url: https://github.com/fernandofatech/M5Cardputer-SSHClient
+  url: https://github.com/fernando-moretes/tool-m5cardputer-sshclient
   verified: '2026-09-02'
 - field: popularity
-  url: https://github.com/fernandofatech/M5Cardputer-SSHClient
-  verified: '2026-09-02'
+  url: https://github.com/fernando-moretes/tool-m5cardputer-sshclient
+  verified: '2026-09-04'
 ---
 
 SSH Terminal with M5Cardputer with interactive setup for WiFi and SSH client

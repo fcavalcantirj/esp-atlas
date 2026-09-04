@@ -10,7 +10,7 @@ flash:
 notes: "Listed as 'Lilygo T-Embed' in the project's device table; the T-Embed CC1101 variant is listed separately."
 sources:
 - field: '*'
-  url: https://github.com/pr3y/Bruce
+  url: https://github.com/BruceDevices/firmware
   verified: '2026-08-24'
 ---
 
