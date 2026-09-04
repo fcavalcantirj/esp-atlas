@@ -21,7 +21,9 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from scorer import score_entry, _repo_name_from_url, _slug  # noqa: E402
+from scorer import (  # noqa: E402
+    FORK_FLOOR, STAR_FLOOR, clears_popularity_floor, score_entry, _repo_name_from_url, _slug,
+)
 from device_map import device_from_text  # noqa: E402
 
 JR_DIR = Path(__file__).resolve().parent
@@ -52,6 +54,38 @@ def test_skip_reason_matches(case):
     result = score_entry(case["entry"], case["repo_meta"], CATALOGUED_REPOS, CATALOGUED_TOKENS)
     assert case["expected"]["reason_substring"] in result["reason"], (
         f"{case['id']}: reason {result['reason']!r} missing {case['expected']['reason_substring']!r}")
+
+
+# ─────────────────────────── popularity floor (SPEC-firmware-floor.md) ───────────────────────────
+# Downloads DROPPED entirely: the floor is GitHub stars OR forks only. Real hardware/firmware
+# examples (a Cardputer git client, a badusb tool) — never lorem ipsum.
+
+def test_clears_floor_on_stars_alone():
+    """A Cardputer git client with 30 stars and 0 forks clears via stars alone."""
+    assert clears_popularity_floor(stars=30, forks=0) is True
+
+
+def test_clears_floor_on_forks_alone():
+    """A heavily-forked-but-under-starred badusb tool (2 stars, 40 forks) still clears — a fork
+    is a stronger 'actually built on' signal than a star."""
+    assert clears_popularity_floor(stars=2, forks=40) is True
+
+
+def test_fails_floor_when_both_below():
+    """3 stars and 4 forks — below BOTH floors — never clears, no matter how many downloads the
+    launcher/M5Burner catalog reports (downloads are not a signal at all anymore)."""
+    assert clears_popularity_floor(stars=3, forks=4) is False
+
+
+def test_floor_boundary_is_inclusive():
+    assert clears_popularity_floor(stars=STAR_FLOOR, forks=0) is True
+    assert clears_popularity_floor(stars=0, forks=FORK_FLOOR) is True
+    assert clears_popularity_floor(stars=STAR_FLOOR - 1, forks=FORK_FLOOR - 1) is False
+
+
+def test_clears_floor_treats_missing_values_as_zero():
+    assert clears_popularity_floor(stars=None, forks=None) is False
+    assert clears_popularity_floor(stars=None, forks=FORK_FLOOR) is True
 
 
 @pytest.mark.parametrize("case", [c for c in CASES if c["expected"]["decision"] == "authored"],

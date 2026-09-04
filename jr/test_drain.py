@@ -246,6 +246,102 @@ def test_score_candidates_authors_entry_not_in_ledger():
     assert scored[0]["record"]["id"] == "ghostesp"
 
 
+# ─────────────────────────── score_candidates x fork resolution (jr/forks.py) ───────────────────────────
+
+def test_score_candidates_authors_the_source_repo_when_entry_is_a_fork():
+    """A candidate whose own repo is a (thin, low-star) fork is authored under its resolved
+    SOURCE repo's identity — url/maintainer/stars/forks — never the fork's own."""
+    entry = {"name": "Ghost ESP Mirror", "description": None, "category": "cardputer",
+              "github": "https://github.com/someoneelse/ghostesp-mirror", "download": 300}
+    meta = _fake_meta(full_name="someoneelse/ghostesp-mirror", stars=2, forks=0,
+                      description="WiFi tools for the Cardputer")
+    resolve_source = lambda owner, repo: {"full_name": "jorgen/ghostesp", "stars": 900, "forks": 120}
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta, resolve_source=resolve_source)
+
+    assert skipped == []
+    assert len(scored) == 1
+    rec = scored[0]["record"]
+    assert rec["url"] == "https://github.com/jorgen/ghostesp"
+    assert rec["maintainer"] == "jorgen"
+    assert scored[0]["stars"] == 900
+    assert scored[0]["forks"] == 120
+
+
+def test_score_candidates_skips_when_source_already_catalogued():
+    entry = {"name": "Ghost ESP Mirror", "description": None, "category": "cardputer",
+              "github": "https://github.com/someoneelse/ghostesp-mirror", "download": 300}
+    meta = _fake_meta(full_name="someoneelse/ghostesp-mirror", stars=2, forks=0)
+    resolve_source = lambda owner, repo: {"full_name": "pr3y/bruce", "stars": 5000, "forks": 400}
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta, resolve_source=resolve_source)
+
+    assert scored == []
+    assert "fork_source_already_represented" in skipped[0]["reason"]
+
+
+def test_score_candidates_skips_second_fork_resolving_to_a_source_already_seen_this_batch():
+    """Two DIFFERENT launcher entries that are both forks of the SAME upstream repo must not
+    both get authored — the second one to resolve to an already-seen source is skipped."""
+    entry_a = {"name": "Ghost ESP Fork A", "description": None, "category": "cardputer",
+                "github": "https://github.com/alice/ghostesp-fork-a", "download": 500}
+    entry_b = {"name": "Ghost ESP Fork B", "description": None, "category": "cardputer",
+                "github": "https://github.com/bob/ghostesp-fork-b", "download": 300}
+    meta_a = _fake_meta(full_name="alice/ghostesp-fork-a", stars=1, forks=0)
+    meta_b = _fake_meta(full_name="bob/ghostesp-fork-b", stars=1, forks=0)
+
+    def fetch_meta(url):
+        return meta_a if "fork-a" in url else meta_b
+
+    def resolve_source(owner, repo):
+        return {"full_name": "jorgen/ghostesp", "stars": 900, "forks": 120}
+
+    scored, skipped = drain.score_candidates([entry_a, entry_b], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=fetch_meta, resolve_source=resolve_source)
+
+    assert len(scored) == 1
+    assert scored[0]["record"]["url"] == "https://github.com/jorgen/ghostesp"
+    assert len(skipped) == 1
+    assert "fork_source_already_represented" in skipped[0]["reason"]
+
+
+def test_score_candidates_leaves_non_fork_untouched_when_resolve_source_injected():
+    """resolve_source is injected but this entry's own repo IS the canonical source (resolves to
+    itself) — url/maintainer/stars/forks stay exactly what the scorer already derived."""
+    entry = {"name": "Cardputer Ghost ESP", "description": "WiFi tools for the Cardputer",
+              "category": "cardputer", "github": "https://github.com/jorgen/ghostesp", "download": 500}
+    meta = _fake_meta(full_name="jorgen/ghostesp", stars=42, forks=7,
+                      description="WiFi tools for the Cardputer")
+    resolve_source = lambda owner, repo: {"full_name": "jorgen/ghostesp", "stars": 42, "forks": 7}
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta, resolve_source=resolve_source)
+
+    assert skipped == []
+    rec = scored[0]["record"]
+    assert rec["url"] == "https://github.com/jorgen/ghostesp"
+    assert rec["maintainer"] == "jorgen"
+    assert scored[0]["stars"] == 42 and scored[0]["forks"] == 7
+
+
+def test_score_candidates_no_fork_resolution_when_not_injected():
+    """The default (resolve_source=None, no test above passes it) preserves the pre-existing
+    behavior byte-for-byte: url/maintainer/stars/forks come straight from the scorer + meta,
+    never touched by jr/forks.py at all."""
+    entry = {"name": "Cardputer Ghost ESP", "description": "WiFi tools for the Cardputer",
+              "category": "cardputer", "github": "https://github.com/jorgen/ghostesp", "download": 500}
+    meta = _fake_meta(full_name="jorgen/ghostesp", stars=42, description="WiFi tools for the Cardputer")
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta)
+
+    assert skipped == []
+    assert scored[0]["record"]["url"] == "https://github.com/jorgen/ghostesp"
+    assert scored[0]["stars"] == 42
+
+
 # ─────────────────────────── popularity floor (SPEC-firmware-floor.md) ───────────────────────────
 
 def _coding_entry(**overrides):
@@ -259,8 +355,9 @@ def _coding_entry(**overrides):
 
 
 def test_score_candidates_skips_candidate_below_all_floors():
-    """stars=3 AND downloads=10 AND forks=1 → below all three floors → skipped, not authored."""
-    entry = _coding_entry(download=10)
+    """stars=3 AND forks=1 → below both floors → skipped, not authored (downloads are never
+    consulted — a high launcher download count no longer rescues a candidate)."""
+    entry = _coding_entry(download=999999)
     meta = _fake_meta(full_name="devuser/cardputer-git", stars=3, forks=1,
                       description="An on-device git client for the Cardputer")
 
@@ -272,12 +369,13 @@ def test_score_candidates_skips_candidate_below_all_floors():
     assert skipped[0]["reason"] == "below-popularity-floor"
     assert skipped[0]["firmware_id"] == "cardputer-git"
     assert skipped[0]["repo"] == "devuser/cardputer-git"
+    assert "download" not in skipped[0]
 
 
 def test_score_candidates_authors_when_forks_clear_the_floor():
-    """stars=3 AND downloads=0 BUT forks=30 → forks clear FORK_FLOOR → authored (a heavily
-    built-on but under-starred utility is real, not filler)."""
-    entry = _coding_entry(download=0)
+    """stars=3 BUT forks=30 → forks clear FORK_FLOOR → authored (a heavily built-on but
+    under-starred utility is real, not filler)."""
+    entry = _coding_entry()
     meta = _fake_meta(full_name="devuser/cardputer-git", stars=3, forks=30,
                       description="An on-device git client for the Cardputer")
 
@@ -290,23 +388,9 @@ def test_score_candidates_authors_when_forks_clear_the_floor():
     assert scored[0]["forks"] == 30
 
 
-def test_score_candidates_authors_when_downloads_clear_the_floor():
-    """stars=3 AND downloads=800 → downloads clear DOWNLOAD_FLOOR → authored despite low stars."""
-    entry = _coding_entry(download=800)
-    meta = _fake_meta(full_name="devuser/cardputer-git", stars=3,
-                      description="An on-device git client for the Cardputer")
-
-    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
-                                             fetch_meta=lambda url: meta)
-
-    assert skipped == []
-    assert len(scored) == 1
-    assert scored[0]["record"]["id"] == "cardputer-git"
-
-
 def test_score_candidates_authors_when_stars_clear_the_floor():
-    """stars=40 AND downloads=0 → stars clear STAR_FLOOR → authored despite zero downloads."""
-    entry = _coding_entry(download=0)
+    """stars=40 AND forks=0 → stars clear STAR_FLOOR → authored despite zero forks."""
+    entry = _coding_entry()
     meta = _fake_meta(full_name="devuser/cardputer-git", stars=40,
                       description="An on-device git client for the Cardputer")
 
@@ -323,7 +407,7 @@ def test_prefilter_skips_a_repo_recorded_seen(tmp_path):
     so sub-floor filler isn't re-fetched every run — but stays non-blocking (merged/absent pass)."""
     ledger.record_seen("cardputer-git", "devuser/cardputer-git", path=tmp_path / "l.json")
     state = ledger.load_ledger(tmp_path / "l.json")
-    entry = _coding_entry(download=10)
+    entry = _coding_entry()
     assert drain.prefilter([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS, ledger_state=state) == []
 
 
@@ -332,7 +416,7 @@ def test_run_drain_records_below_floor_candidate_as_seen_and_reports_it(tmp_path
     injected ledger so the NEXT run's prefilter skips it before any fetch (not re-fetched every
     run). Isolated from live catalogued-set drift by injecting the dedup fingerprint."""
     monkeypatch.setattr(tools, "_catalogued_repos_and_tokens", lambda: (CATALOGUED_REPOS, CATALOGUED_TOKENS))
-    entry = _coding_entry(download=10)
+    entry = _coding_entry()
     meta = {"full_name": "devuser/cardputer-git", "fork": False, "source_full_name": None, "stars": 3,
             "description": "An on-device git client for the Cardputer", "license": None, "readme_title": None}
     ledger_path = tmp_path / "proposed_ledger.json"
@@ -422,7 +506,10 @@ def _fixture_selected(**overrides):
         "maintainer": "octocat",
     }
     record.update(overrides)
-    return [{"record": record, "download": 100, "stars": 10, "forks": 4,
+    # stars=30 clears the popularity floor (SPEC-firmware-floor.md, STAR_FLOOR=25) — the guard
+    # run_guard() triggers now mechanically enforces the floor via scripts/validate.py, so a
+    # below-floor fixture would guard-red here for a reason unrelated to what these tests cover.
+    return [{"record": record, "download": 100, "stars": 30, "forks": 4,
              "description": "A fixture firmware for drain tests."}]
 
 
@@ -442,9 +529,9 @@ def test_author_selected_writes_schema_valid_firmware_and_recipe(cleanup_fixture
 
 
 def test_author_selected_stamps_popularity_block_with_citation(cleanup_fixture):
-    """(a) Authoring persists a dated popularity{stars,downloads,forks,as_of} snapshot from the
-    candidate's repo stars/forks + launcher downloads, plus a `popularity` source citation; `today`
-    (the run date) is injected for determinism."""
+    """(a) Authoring persists a dated popularity{stars,forks,as_of} snapshot from the candidate's
+    repo stars/forks (never downloads — downloads are not a stored metric), plus a `popularity`
+    source citation; `today` (the run date) is injected for determinism."""
     authored, dropped = drain.author_selected(_fixture_selected(), existing_ids=set(),
                                               today="2026-09-01")
 
@@ -452,8 +539,9 @@ def test_author_selected_stamps_popularity_block_with_citation(cleanup_fixture):
     assert authored == [FIXTURE_ID]
     fm = tools._frontmatter(tools.FIRMWARE_DIR / FIXTURE_ID / "firmware.md")
     jsonschema.validate(fm, FIRMWARE_SCHEMA)
-    # _fixture_selected(): stars=10, download=100, forks=4
-    assert fm["popularity"] == {"stars": 10, "downloads": 100, "forks": 4, "as_of": "2026-09-01"}
+    # _fixture_selected(): stars=30, forks=4
+    assert fm["popularity"] == {"stars": 30, "forks": 4, "as_of": "2026-09-01"}
+    assert "downloads" not in fm["popularity"]
     assert any(s["field"] == "popularity" and s["verified"] == "2026-09-01"
                for s in fm["sources"])
 

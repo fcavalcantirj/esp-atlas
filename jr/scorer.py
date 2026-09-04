@@ -35,15 +35,21 @@ from device_map import device_from_category, device_from_text  # noqa: E402
 FIRMWARE_CATEGORY_ENUM = ("pentest", "mesh", "badusb", "display", "home", "multi")
 
 # Popularity floor (SPEC-firmware-floor.md). A drain candidate is authored only if it clears
-# ANY of three signals (OR-gated — Cardputer firmware often has low GitHub stars but real
-# M5Burner download counts): GitHub stars >= STAR_FLOOR, OR launcher/M5Burner downloads >=
-# DOWNLOAD_FLOOR, OR GitHub forks >= FORK_FLOOR. Forks are a stronger "actually built-on"
-# signal than stars (a star is a bookmark; a fork is a derivative), so a heavily-forked but
-# under-starred utility still clears. Below ALL THREE → the drain skips it as filler. One place,
-# tunable; consumed by drain.score_candidates. Gates NEW drain authoring only, never catalogued.
+# EITHER of two GitHub signals (OR-gated): stars >= STAR_FLOOR, OR forks >= FORK_FLOOR. Forks are
+# a stronger "actually built-on" signal than stars (a star is a bookmark; a fork is a
+# derivative), so a heavily-forked but under-starred utility still clears. Below BOTH → the drain
+# skips it as filler. Downloads are NOT a signal — a launcher/M5Burner download count is not a
+# citable, stable metric and is never used to gate or store popularity. One place, tunable;
+# consumed by drain.score_candidates via clears_popularity_floor(). Gates NEW drain authoring
+# only, never catalogued.
 STAR_FLOOR = 25
-DOWNLOAD_FLOOR = 500
 FORK_FLOOR = 25
+
+
+def clears_popularity_floor(stars: int | None, forks: int | None) -> bool:
+    """SPEC-firmware-floor.md: an entry qualifies iff stars >= STAR_FLOOR OR forks >= FORK_FLOOR.
+    Downloads are never consulted — GitHub stars/forks are the only popularity signal."""
+    return (stars or 0) >= STAR_FLOOR or (forks or 0) >= FORK_FLOOR
 
 # capability tokens that signal each firmware_category enum value, checked in this priority
 # order (a record with both "wifi" and "mesh" tokens is a mesh firmware first — mesh is the
