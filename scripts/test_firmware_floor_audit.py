@@ -225,3 +225,48 @@ def test_stored_popularity_never_carries_downloads(tmp_path, capsys):
     audit.main(["--data-dir", str(tmp_path)])
     out = capsys.readouterr().out
     assert "download" not in out.lower()
+
+
+# --- one floor, one definition (Phase 1 PR 1.3) ---------------------------
+
+def test_audit_and_scorer_share_one_floor_definition():
+    """The CI gate and the drain must read the SAME constants, not two copies that agree today.
+
+    Three floors once coexisted here: the spec said stars-or-downloads, jr/scorer.py said
+    stars-or-downloads-or-forks, and this audit re-typed the scorer's values by hand under a
+    comment admitting they were "kept in sync by hand". Hand-sync is not sync — it lets the
+    thing that BLOCKS a merge and the thing that AUTHORS a record disagree about what qualifies.
+
+    Identity, not equality: `==` would still pass if someone re-typed 25 in both places, which
+    is precisely the failure mode being prevented.
+    """
+    import sys
+    from pathlib import Path
+
+    jr_dir = Path(__file__).resolve().parent.parent / "jr"
+    if str(jr_dir) not in sys.path:
+        sys.path.insert(0, str(jr_dir))
+    import scorer
+    from esp_atlas_core import floor
+
+    assert audit.STAR_FLOOR is floor.STAR_FLOOR
+    assert audit.FORK_FLOOR is floor.FORK_FLOOR
+    assert scorer.STAR_FLOOR is floor.STAR_FLOOR
+    assert scorer.FORK_FLOOR is floor.FORK_FLOOR
+    assert audit.clears_popularity_floor is floor.clears_popularity_floor
+    assert scorer.clears_popularity_floor is floor.clears_popularity_floor
+
+
+def test_downloads_are_not_a_floor_anywhere():
+    """No module involved in the gate may still define a downloads threshold."""
+    import sys
+    from pathlib import Path
+
+    jr_dir = Path(__file__).resolve().parent.parent / "jr"
+    if str(jr_dir) not in sys.path:
+        sys.path.insert(0, str(jr_dir))
+    import scorer
+    from esp_atlas_core import floor
+
+    for mod in (audit, scorer, floor):
+        assert not hasattr(mod, "DOWNLOAD_FLOOR"), f"{mod.__name__} still defines DOWNLOAD_FLOOR"

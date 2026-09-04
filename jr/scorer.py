@@ -42,14 +42,17 @@ FIRMWARE_CATEGORY_ENUM = ("pentest", "mesh", "badusb", "display", "home", "multi
 # citable, stable metric and is never used to gate or store popularity. One place, tunable;
 # consumed by drain.score_candidates via clears_popularity_floor(). Gates NEW drain authoring
 # only, never catalogued.
-STAR_FLOOR = 25
-FORK_FLOOR = 25
+# The floor lives in ONE place: esp_atlas_core.floor. These names are re-exported so existing
+# callers (scorer.STAR_FLOOR, scorer.clears_popularity_floor) keep working, but the values are
+# no longer defined here -- scripts/firmware_floor_audit.py used to re-type them by hand, and
+# hand-sync is how the CI gate and the drain came to disagree about what qualifies.
+from esp_atlas_core.floor import (  # noqa: E402
+    FORK_FLOOR,
+    STAR_FLOOR,
+    clears_popularity_floor,
+)
 
 
-def clears_popularity_floor(stars: int | None, forks: int | None) -> bool:
-    """SPEC-firmware-floor.md: an entry qualifies iff stars >= STAR_FLOOR OR forks >= FORK_FLOOR.
-    Downloads are never consulted — GitHub stars/forks are the only popularity signal."""
-    return (stars or 0) >= STAR_FLOOR or (forks or 0) >= FORK_FLOOR
 
 # capability tokens that signal each firmware_category enum value, checked in this priority
 # order (a record with both "wifi" and "mesh" tokens is a mesh firmware first — mesh is the
