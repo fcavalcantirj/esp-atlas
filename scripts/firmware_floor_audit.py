@@ -42,8 +42,9 @@ from esp_atlas_core.paths import DATA_DIR  # noqa: E402
 
 # Mirrors jr/scorer.py's STAR_FLOOR / FORK_FLOOR (kept in sync by hand: jr/ is a standalone
 # package with its own venv and is not importable from the repo-root scripts runtime).
-STAR_FLOOR = 25
-FORK_FLOOR = 25
+# Imported, never re-typed. Both this CI gate and jr/scorer.py read the SAME constants from
+# esp_atlas_core.floor, so they cannot drift apart the way they previously did.
+from esp_atlas_core.floor import FORK_FLOOR, STAR_FLOOR, clears_popularity_floor  # noqa: E402,F401
 
 # Human-curated / known-good firmware — exempt from the floor regardless of popularity. Used
 # because the firmware schema carries no trust/tier field; this is the original curated set.
