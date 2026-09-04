@@ -6,20 +6,26 @@
 > (Felipe, 2026-09-02.)
 
 ## The floor
-A candidate is authored only if it clears **either** signal (both criteria, OR-gated — because
-Cardputer firmware often has low GitHub stars but real M5Burner *downloads*):
+A candidate is authored only if it clears **either** signal (OR-gated — a star is a bookmark, a
+fork is a derivative, so a heavily-forked but under-starred utility still earns its place):
 
 - **GitHub stars ≥ `STAR_FLOOR`**, **OR**
-- **launcher/M5Burner downloads ≥ `DOWNLOAD_FLOOR`**
+- **GitHub forks ≥ `FORK_FLOOR`**
 
-Below **both** → the drain **skips** it (records it as `seen`/uncitable-popularity in the ledger,
-so it isn't re-fetched every run) and reports it. Never author sub-floor firmware.
+Below **both** → the drain **skips** it (records it `seen` in the ledger, so it isn't re-fetched
+every run) and reports it. Never author sub-floor firmware.
 
-**Starting constants (tunable in one place):**
+**Constants:**
 - `STAR_FLOOR = 25`
-- `DOWNLOAD_FLOOR = 500`
+- `FORK_FLOOR = 25`
 
-These live as module constants in `jr/scorer.py` (or `jr/drain.py`) so the bar is one edit.
+**Downloads are NOT a metric — anywhere.** *(Superseded 2026-09-03; an earlier revision of this
+spec gated on launcher/M5Burner `downloads ≥ 500`.)* The launcher's download count is not a
+citable popularity signal: it is self-reported by a third-party catalog, it counts installs of
+someone else's re-upload rather than of the project, and `seeds.json` already marks that catalog
+**discovery-only, never to be bulk-ingested**. It survives solely as a tie-breaker inside
+`rank_juicy` ordering, never as a gate, and the `downloads` key is removed from `firmware.md`
+records by `scripts/strip_downloads.py`.
 
 ## Interaction with existing signals
 - Complements `rank_juicy` (downloads × stars ordering) — ranking picks the *best*; the floor
@@ -60,8 +66,8 @@ downloads). Fix — store the numbers, dated like a citation (popularity drifts)
 - `scripts/firmware_floor_audit.py` reads the **stored** `popularity` (not a live fetch) → fully
   offline/deterministic.
 - Add a step to `.github/workflows/validate.yml`: run the audit and **exit non-zero (fail the
-  build)** if any firmware is below **both** floors (stars < STAR_FLOOR AND downloads <
-  DOWNLOAD_FLOOR) and not curated-exempt.
+  build)** if any firmware is below **both** floors (stars < `STAR_FLOOR` AND forks <
+  `FORK_FLOOR`) and not curated-exempt.
 - Effect: GitHub **blocks the merge** of any sub-floor firmware, mechanically. Felipe never
   hand-curates for popularity again.
 
