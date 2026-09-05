@@ -49,8 +49,8 @@ Add ONE genuinely-new firmware + its recipe this run:
    capabilities=[...] — ONLY simple tokens from schema_enums['capabilities'] (e.g. wifi, ble, ir,
    display, gps); map README features to those tokens ("WiFi deauth"→wifi, "BLE spam"→ble); OMIT
    anything with no matching token — NEVER freeform phrases. maintainer=<repo owner>). This ONE call writes
-   the firmware (socs derived from the boards), a recipe per board (chip derived), and the coverage
-   run-case — all consistent by construction. If it returns {"error": ...}, that candidate had no
+   the firmware (socs derived from the boards), a recipe per board (chip derived) — all
+   consistent by construction. If it returns {"error": ...}, that candidate had no
    usable catalogued board — move to the next candidate.
 6. triple_validate(firmware_id, recipe_id=the first recipe id it returned). If a gate fails, READ
    it, fix, retry (≤3). Report the verdict + firmware_id + recipe_id. Be terse."""

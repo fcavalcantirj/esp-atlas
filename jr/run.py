@@ -72,7 +72,7 @@ def drain_once() -> dict:
 def drain_batch(n: int = 20, label: str | None = None) -> dict:
     """Author up to n new firmware (fresh agent each, for clean context), triple-validate each,
     and bundle the valid ones into ONE reviewable daily batch PR. Rejected ones are fully cleaned
-    up (record + recipes + run-case). Funded (paid Groq) — the constraint is human review, so one
+    up (record + recipes). Funded (paid Groq) — the constraint is human review, so one
     batch PR/day, not a flood."""
     import datetime as dt
     from agent import make_jr
@@ -103,11 +103,10 @@ def drain_batch(n: int = 20, label: str | None = None) -> dict:
         if verdict.get("pass"):
             authored.append(fid)
             urls[fid] = tools._frontmatter(tools.FIRMWARE_DIR / fid / "firmware.md").get("url", "")
-        else:  # reject: remove record, recipes, and its run-case so the batch stays green
+        else:  # reject: remove the record and its recipes so the batch stays green
             _cleanup(fid, None)
             for r in new_rc:
                 shutil.rmtree(tools.REPO / "data/recipes" / r, ignore_errors=True)
-            tools.remove_run_case(fid)
     if not authored:
         notify.send_telegram("🤖 *Jr batch* — ran, nothing authorable this pass.")
         return {"action": "none"}

@@ -602,7 +602,7 @@ def cleanup_firmware_fixture():
     shutil.rmtree(tools.FIRMWARE_DIR / FW_POP_FIXTURE_ID, ignore_errors=True)
     for rdir in (REPO / "data/recipes").glob(f"*__{FW_POP_FIXTURE_ID}"):
         shutil.rmtree(rdir, ignore_errors=True)
-    tools.remove_run_case(FW_POP_FIXTURE_ID)
+    # No run-case to unwind: authoring no longer edits apps/core/tests/test_coverage_matrix.py.
 
 
 def test_author_firmware_and_recipes_persists_popularity_snapshot(cleanup_firmware_fixture):
@@ -683,3 +683,110 @@ def test_catalogued_repos_and_tokens_excludes_generic_vendor_tokens(monkeypatch,
     assert "esp32" not in tokens
     assert "marauder" in tokens
     assert "pirate" in tokens
+
+
+# --- fork identity + soc inheritance (Phase 1 PR 1.5) ----------------------
+
+def test_fetch_github_repo_returns_the_keys_the_fork_gate_reads(monkeypatch):
+    """scorer.score_entry gates on repo_meta["fork"] and ["source_full_name"]. Those keys were
+    absent from this dict for the drain's whole production life, so the gate saw fork=None and
+    never fired -- while its own tests passed, because the golden fixtures hand-write them.
+
+    Fails before the fix: the returned dict had no 'fork' or 'source_full_name' key at all.
+    """
+    import json as _json
+    import subprocess as _sp
+
+    payload = {
+        "id": 1237105564, "full_name": "0xhalloween/Flipper-Zero-ESP32-ADV",
+        "description": "a port", "license": {"spdx_id": "MIT"}, "topics": ["esp32"],
+        "homepage": None, "default_branch": "main", "stargazers_count": 23,
+        "archived": False, "forks_count": 2, "fork": True,
+        "pushed_at": "2026-09-01T00:00:00Z", "language": "C++",
+        "source": {"full_name": "Sor3nt/Flipper-Zero-ESP32-Port", "stargazers_count": 430},
+        "parent": {"full_name": "Sor3nt/Flipper-Zero-ESP32-Port"},
+    }
+    monkeypatch.setattr(_sp, "run", lambda *a, **k: type(
+        "R", (), {"returncode": 0, "stdout": _json.dumps(payload), "stderr": ""})())
+
+    meta = tools.fetch_github_repo("https://github.com/0xhalloween/Flipper-Zero-ESP32-ADV")
+
+    # the keys the gate actually reads
+    assert meta["fork"] is True
+    assert meta["source_full_name"] == "Sor3nt/Flipper-Zero-ESP32-Port"
+    assert meta["source_stars"] == 430
+    assert meta["parent_full_name"] == "Sor3nt/Flipper-Zero-ESP32-Port"
+    # additive: nothing the old contract promised may disappear
+    assert meta["full_name"] == "0xhalloween/Flipper-Zero-ESP32-ADV"
+    assert meta["stars"] == 23 and meta["forks"] == 2
+    assert meta["license"] == "MIT" and meta["topics"] == ["esp32"]
+    # dedup + refresh signals
+    assert meta["id"] == 1237105564
+    assert meta["pushed_at"] == "2026-09-01T00:00:00Z"
+    assert meta["language"] == "C++"
+
+
+def test_fetch_github_repo_leaves_fork_fields_none_for_a_non_fork(monkeypatch):
+    """GitHub omits `source`/`parent` entirely for a non-fork; the keys must still exist and be
+    None so the gate can read them without a KeyError."""
+    import json as _json
+    import subprocess as _sp
+
+    payload = {"id": 1200697573, "full_name": "Sor3nt/Flipper-Zero-ESP32-Port",
+               "stargazers_count": 430, "forks_count": 40, "fork": False, "topics": []}
+    monkeypatch.setattr(_sp, "run", lambda *a, **k: type(
+        "R", (), {"returncode": 0, "stdout": _json.dumps(payload), "stderr": ""})())
+
+    meta = tools.fetch_github_repo("https://github.com/Sor3nt/Flipper-Zero-ESP32-Port")
+
+    assert meta["fork"] is False
+    assert meta["source_full_name"] is None
+    assert meta["source_stars"] is None
+    assert meta["parent_full_name"] is None
+
+
+def test_board_soc_inherits_from_the_module_when_the_board_states_none():
+    """Espressif's reference devkits declare `module:` and no `soc:`. Reading only the direct
+    field returned None for five of them, and because author_firmware_and_recipes filters boards
+    on `if board_soc(b)`, Jr could never author a recipe for any flagship Espressif devkit.
+
+    Fails before the fix: every id below returned None.
+    """
+    inherited = {
+        "esp32-s3-devkitc-1": "esp32-s3",
+        "esp32-c6-devkitc-1": "esp32-c6",
+        "esp32-devkitc-v4": "esp32",
+        "esp32-ethernet-kit": "esp32",
+        "esp32-lyrat": "esp32",
+    }
+    for board_id, expected in inherited.items():
+        assert tools.board_soc(board_id) == expected, board_id
+
+
+def test_board_soc_agrees_with_core_on_every_catalogued_board():
+    """jr and esp_atlas_core must not disagree about what the catalog contains. Core has always
+    resolved `fm.get("soc") or module_soc[fm.get("module")]`; jr resolved only the direct field,
+    so core saw 82/82 boards and jr saw 77/82."""
+    from esp_atlas_core.validate import known_ids
+
+    core = known_ids()["board_soc"]
+    # Guard against a vacuous pass: core must be looking at the SAME tree jr reads (an editable
+    # install pointed elsewhere, or ESP_ATLAS_REPO_ROOT set, would make `core` empty or foreign,
+    # and every assertion below would pass over nothing).
+    jr_ids = {p.parent.name for p in tools.BOARDS_DIR.glob("*/*/board.md")}
+    assert jr_ids, "jr sees no boards at all — BOARDS_DIR is wrong"
+    assert set(core) == jr_ids, f"core and jr scan different trees: {set(core) ^ jr_ids}"
+    mismatched = {b: (tools.board_soc(b), core[b]) for b in core if tools.board_soc(b) != core[b]}
+    assert not mismatched, f"jr and core disagree on {mismatched}"
+    assert all(tools.board_soc(b) for b in core), "every catalogued board must resolve a soc"
+
+
+def test_authoring_no_longer_writes_a_coverage_run_case():
+    """The run-case machinery is gone. The gate it fed was removed by cdb9fd8, and the drain
+    edited apps/core/tests/test_coverage_matrix.py without ever staging it -- so a drain run
+    dirtied a test file nobody committed.
+
+    Fails before the fix: both attributes existed.
+    """
+    assert not hasattr(tools, "author_run_case")
+    assert not hasattr(tools, "remove_run_case")
