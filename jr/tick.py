@@ -46,6 +46,7 @@ from typing import Callable
 _JR_DIR = Path(__file__).resolve().parent
 if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
+import ledger   # noqa: E402
 import memory   # noqa: E402
 import publish  # noqa: E402
 import report   # noqa: E402
@@ -189,7 +190,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
 
         # 2. worktree (real runs only); dry-run reads the clone's tree and writes nothing
         if dry_run:
-            root, ledger_path = REPO, memory.DEFAULT_LEDGER_PATH
+            root, ledger_path = REPO, ledger.DEFAULT_LEDGER_PATH
         else:
             wt = publish.add_worktree(git=git)
             if not publish.is_clean(wt, git=git):
