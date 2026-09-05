@@ -65,7 +65,7 @@ def git_ok(wt_dir: Path, staged=True):
         ("rev-parse", "origin/main"): (0, "6190d21abc\n"),
         ("status", "--porcelain"): (0, ""),
         ("diff", "--cached", "--quiet"): (1 if staged else 0, ""),
-        ("diff", "--cached", "--name-status"): (0, "A\tdata/firmware/x/firmware.md\n"),
+        ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, "A\0data/firmware/x/firmware.md\0"),
         ("rev-parse", "HEAD"): (0, "feedbee\n"),
     })
 
@@ -161,8 +161,9 @@ def test_aborts_when_gh_is_unavailable(tmp_path):
 
 # --- real run: worktree + memory + no stages ----------------------------------------------------
 
-def test_real_quiet_run_uses_a_worktree_reconciles_memory_and_publishes_nothing(wt_dir):
-    # a proposed record whose PR was closed → permanent rejection, written INSIDE the worktree
+def test_real_run_with_a_memory_change_uses_a_worktree_and_ships_the_ledger_only(wt_dir):
+    # a proposed record whose PR was closed → permanent rejection, written INSIDE the worktree,
+    # and shipped as a ledger-only PR (no data paths, so no guard)
     lp = wt_dir / "jr" / "proposed_ledger.json"
     ledger.record_proposed("gone", "o/gone", pr_ref="https://github.com/o/r/pull/3", path=lp)
     git, gh = git_ok(wt_dir), gh_ok()
@@ -175,13 +176,25 @@ def test_real_quiet_run_uses_a_worktree_reconciles_memory_and_publishes_nothing(
     assert r.memory == {"expired": 0, "merged": 0, "rejected": 1, "removed": 0}
     assert memory.load(lp)["by_id"]["gone"]["status"] == "rejected"
     assert reval_calls == []                                   # nothing merged → no purge
-    assert r.publish is None and "nothing to do" in tick.report.render_line(r)
+    assert r.guard is None                                     # no data written → no guard
+    assert r.publish["published"] and r.publish["paths"] == ["jr/proposed_ledger.json"]
     calls = norm(git)
     i = calls.index(("fetch", "origin", "main"))
-    assert calls[i + 1] == ("worktree", "add", "--detach", str(wt_dir), "origin/main")
+    assert calls[i + 1] == ("worktree", "prune")
+    assert calls[i + 2] == ("worktree", "add", "--detach", str(wt_dir), "origin/main")
     assert all(c[0] != "worktree" for c in calls[:i])            # nothing before the fetch
     assert ("worktree", "remove", "--force", str(wt_dir)) in calls
+    assert ("add", "--", "jr/proposed_ledger.json") in calls
+
+
+def test_truly_quiet_run_publishes_nothing(wt_dir):
+    git, gh = git_ok(wt_dir), gh_ok()
+    r = run(git=git, gh=gh, pr_state=lambda ref: "open")
+    assert not r.aborted and r.memory == {"expired": 0, "merged": 0, "rejected": 0, "removed": 0}
+    assert r.publish is None and "nothing to do" in tick.report.render_line(r)
+    calls = norm(git)
     assert all(c[0] not in ("add", "commit", "push", "checkout") for c in calls)
+    assert ("worktree", "remove", "--force", str(wt_dir)) in calls
     assert all(c[:2] != ("pr", "create") for c in gh.calls)
 
 
@@ -214,10 +227,11 @@ def test_stage_output_is_guarded_then_published_with_auto_merge(wt_dir):
     assert r.publish["published"] and r.publish["auto_merge"] and r.publish["pr_url"] == "https://github.com/o/r/pull/1"
     calls = norm(git)
     assert ("add", "--", "data/firmware/x", "jr/proposed_ledger.json") in calls
-    assert any(c[:3] == ("checkout", "-q", "-b") and c[3] == "jr/tick-20260905-0407" for c in calls)
+    assert any(c[:3] == ("checkout", "-q", "-B") and c[3] == "jr/tick-20260905-0407" for c in calls)
     assert ("push", "-u", "origin", "jr/tick-20260905-0407") in calls
     assert gh.calls[-1] == ("pr", "merge", "https://github.com/o/r/pull/1", "--auto", "--squash")
-    assert calls[-2:] == [("worktree", "remove", "--force", str(wt_dir)), ("worktree", "prune")]
+    assert calls[-3:] == [("worktree", "remove", "--force", str(wt_dir)), ("worktree", "prune"),
+                          ("branch", "-D", "jr/tick-20260905-0407")]
     body = [c for c in gh.calls if c[:2] == ("pr", "create")][0]
     assert "- **fake** — wrote" in body[body.index("--body") + 1]
 
@@ -283,3 +297,87 @@ def test_main_exit_code_follows_aborted(monkeypatch):
 
 def test_stages_registry_is_empty_in_phase_two():
     assert tick.STAGES == []
+
+
+# --- review-driven guards (adversarial review of the tick branch) ------------------------------
+
+def test_a_ledger_only_change_is_published_without_running_the_guard(wt_dir):
+    """Memory reconciliation must ship even when no stage wrote, or it dies with the worktree
+    and every hourly tick redoes it. No data changed, so validate.py is skipped."""
+    lp = wt_dir / "jr" / "proposed_ledger.json"
+    ledger.record_proposed("done", "o/done", pr_ref="https://github.com/o/r/pull/4", path=lp)
+    git, gh, guard_calls = git_ok(wt_dir), gh_ok(), []
+    r = run(git=git, gh=gh, pr_state=lambda ref: "merged", revalidate=lambda s: {"ok": True},
+            guard=lambda root: guard_calls.append(root) or {"ok": True, "output": ""})
+    assert not r.aborted and guard_calls == [] and r.guard is None
+    assert r.publish["published"] and r.publish["auto_merge"]
+    calls = norm(git)
+    assert ("add", "--", "jr/proposed_ledger.json") in calls
+    subject = [c for c in calls if c[:1] == ("commit",)][0][-1]
+    assert subject.startswith("chore(jr): tick") and "memory reconciliation" in subject
+
+
+def test_a_pr_merged_after_the_fetch_is_not_rejected_as_removed(wt_dir):
+    """Race: the PR settled as merged by gh is catalogued on GitHub but not yet in the worktree."""
+    lp = wt_dir / "jr" / "proposed_ledger.json"
+    ledger.record_proposed("racy", "o/racy", pr_ref="https://github.com/o/r/pull/5", path=lp)
+    r = run(git=git_ok(wt_dir), gh=gh_ok(), pr_state=lambda ref: "merged", revalidate=lambda s: {"ok": True})
+    assert r.memory == {"expired": 0, "merged": 1, "rejected": 0, "removed": 0}
+    assert memory.load(lp)["by_id"]["racy"]["status"] == "merged"
+
+
+def test_stale_pr_query_failure_aborts_closed(tmp_path):
+    gh = recorder({("api", "rate_limit"): (0, "4999"), ("pr", "list"): (1, "")})
+    r = run(git=git_ok(tmp_path), gh=gh)
+    assert r.aborted == "gh pr list failed (cannot see open Jr PRs)"
+
+
+def test_a_failing_worktree_removal_is_a_warning_not_a_lost_report(wt_dir, capsys):
+    base = git_ok(wt_dir)
+
+    def git(*args):
+        if args[:2] == ("worktree", "remove"):
+            raise OSError("fork failed")
+        return base(*args)
+    git.calls = base.calls
+    r = run(git=git, gh=gh_ok())
+    assert not r.aborted and any("worktree cleanup failed" in w for w in r.warnings)
+    assert "jr-tick 2026-09-05 04:07 UTC" in capsys.readouterr().out
+
+
+def test_publish_gets_the_uncounted_gh_so_budget_cannot_cut_it_off_mid_publish(wt_dir):
+    gh = gh_ok()
+    r = run(git=git_ok(wt_dir), gh=gh, stages=[_stage(["data/firmware/x"])], budget=Budget(max_calls=4, clock=lambda: 0.0))
+    assert not r.aborted and r.publish["published"] and r.publish["auto_merge"]
+    assert r.budget.startswith("gh calls 4/4")
+
+
+def test_guard_env_points_core_at_the_worktree(tmp_path):
+    env = tick.guard_env(tmp_path, base={"PATH": "/usr/bin", "PYTHONPATH": "/x"})
+    assert env["ESP_ATLAS_REPO_ROOT"] == str(tmp_path)
+    assert env["PYTHONPATH"].split(tick.os.pathsep) == [str(tmp_path / "apps" / "core" / "src"), "/x"]
+    assert env["PATH"] == "/usr/bin"
+
+
+def test_default_guard_runs_validate_then_pytest_in_the_worktree_env(tmp_path, monkeypatch):
+    runs = []
+
+    def fake_run(argv, **kw):
+        runs.append((argv, kw))
+        return SimpleNamespace(returncode=0, stdout="ok", stderr="")
+    monkeypatch.setattr(tick.subprocess, "run", fake_run)
+    assert tick.default_guard(tmp_path) == {"ok": True, "output": "ok"}
+    assert runs[0][0][1:] == ["scripts/validate.py"] and runs[0][1]["cwd"] == tmp_path
+    assert runs[1][0][1:3] == ["-m", "pytest"] and runs[1][1]["cwd"] == tmp_path
+    for _, kw in runs:
+        assert kw["env"]["ESP_ATLAS_REPO_ROOT"] == str(tmp_path)
+
+
+def test_main_installs_a_sigterm_handler_that_aborts_instead_of_dying(monkeypatch):
+    import signal
+    monkeypatch.setattr(tick, "run_tick", lambda **kw: tick.report.TickReport(when=NOW))
+    tick.main(["--dry-run"])
+    handler = signal.getsignal(signal.SIGTERM)
+    assert handler is tick._on_sigterm
+    with pytest.raises(tick.TickAbort):
+        handler(signal.SIGTERM, None)

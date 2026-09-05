@@ -79,7 +79,8 @@ def test_add_worktree_fetches_then_detaches_at_origin_main(tmp_path):
     git = recorder({("rev-parse", "origin/main"): (0, "abc1234\n")})
     wt = publish.add_worktree(git=git, root=tmp_path / "wt")
     assert git.calls[0] == ("fetch", "origin", "main")
-    assert git.calls[1] == ("worktree", "add", "--detach", str(tmp_path / "wt"), "origin/main")
+    assert git.calls[1] == ("worktree", "prune")                    # stale entries from a killed tick
+    assert git.calls[2] == ("worktree", "add", "--detach", str(tmp_path / "wt"), "origin/main")
     assert wt.base_sha == "abc1234"
     assert wt.path == tmp_path / "wt"
 
@@ -142,11 +143,16 @@ def test_protection_reads_checks_array_form_too():
 # --- publish sequence --------------------------------------------------------------------------
 
 def _git_ok(deletions=""):
+    """`deletions` is git's `--name-status --no-renames -z` output: NUL-separated status/path pairs."""
     return recorder({
         ("diff", "--cached", "--quiet"): (1, ""),                 # something IS staged
-        ("diff", "--cached", "--name-status"): (0, deletions),
+        ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, deletions),
         ("rev-parse", "HEAD"): (0, "feedbee\n"),
     })
+
+
+def _z(*pairs):
+    return "".join(f"{st}\0{path}\0" for st, path in pairs)
 
 
 def test_publish_stages_only_the_pathspec_plus_ledger_then_commits_pushes_and_opens_pr():
@@ -155,7 +161,7 @@ def test_publish_stages_only_the_pathspec_plus_ledger_then_commits_pushes_and_op
                           git=git, gh=gh, now=NOW, protection=PROTECTED_OK)
     calls = norm_calls(git)
     assert calls[0] == ("add", "--", "data/firmware/x", "data/recipes/b__x", "jr/proposed_ledger.json")
-    assert ("checkout", "-q", "-b", "jr/tick-20260905-0407") in calls
+    assert ("checkout", "-q", "-B", "jr/tick-20260905-0407") in calls
     assert ("commit", "-q", "-m", "feat(jr): tick") in calls
     assert ("push", "-u", "origin", "jr/tick-20260905-0407") in calls
     assert gh.calls[0][:6] == ("pr", "create", "--base", "main", "--head", "jr/tick-20260905-0407")
@@ -180,7 +186,7 @@ def test_publish_with_nothing_staged_touches_no_branch_commit_push_or_pr():
 
 
 def test_publish_refuses_a_record_deletion_and_unstages_it():
-    git = _git_ok(deletions="D\tdata/firmware/rogueduck/firmware.md\nA\tdata/firmware/new/firmware.md\n")
+    git = _git_ok(deletions=_z(("D", "data/firmware/rogueduck/firmware.md"), ("A", "data/firmware/new/firmware.md")))
     gh = recorder()
     res = publish.publish(WT, ["data/firmware"], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK)
     assert not res.published
@@ -192,7 +198,7 @@ def test_publish_refuses_a_record_deletion_and_unstages_it():
 
 
 def test_publish_opens_pr_but_withholds_auto_merge_for_a_non_record_deletion():
-    git = _git_ok(deletions="D\tjr/state/etags.json\n")
+    git = _git_ok(deletions=_z(("D", "jr/state/etags.json")))
     gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/3\n")})
     res = publish.publish(WT, ["jr/state"], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK)
     assert res.published and not res.auto_merge and "withheld" in res.reason
@@ -308,3 +314,51 @@ def test_ledger_is_always_part_of_the_pathspec():
     git = recorder({("diff", "--cached", "--quiet"): (0, "")})
     publish.publish(WT, [], "s", "b", git=git, gh=recorder(), now=NOW, protection=PROTECTED_OK)
     assert norm_calls(git)[0] == ("add", "--", "jr/proposed_ledger.json")
+
+
+# --- review-driven guards (adversarial review of the tick branch) ------------------------------
+
+def test_g2_sees_a_deletion_hidden_behind_a_rename_and_a_non_ascii_path():
+    """git's default rename detection reports delete+add of similar files as `R100 old new`;
+    with --no-renames -z the deletion is a plain D and the path is not C-quoted."""
+    git = _git_ok(deletions=_z(("D", "data/firmware/a/firmware.md"), ("A", "data/firmware/c/firmware.md"),
+                               ("D", "data/recipes/caf\u00e9__x/im\u00e1gem.png")))
+    res = publish.publish(WT, ["data/firmware", "data/recipes"], "s", "b", git=git, gh=recorder(), now=NOW, protection=PROTECTED_OK)
+    assert not res.published and "data/firmware/a/firmware.md" in res.reason and "im\u00e1gem" in res.reason
+    assert ("diff", "--cached", "--name-status", "--no-renames", "-z") in norm_calls(git)
+
+
+def test_a_failed_git_add_is_reported_not_read_as_nothing_to_publish():
+    git = recorder({("add",): (128, ""), ("diff", "--cached", "--quiet"): (0, "")})
+    git_calls_with_err = git
+    res = publish.publish(WT, ["data/does-not-exist"], "s", "b", git=git_calls_with_err, gh=recorder(), now=NOW, protection=PROTECTED_OK)
+    assert not res.published and res.reason.startswith("git add failed")
+    assert all(c[0] not in ("checkout", "commit", "push") for c in norm_calls(git))
+
+
+def test_add_worktree_prunes_first_and_removes_the_temp_dir_when_add_fails(tmp_path):
+    d = tmp_path / "wt"
+    d.mkdir()
+    git = recorder({("worktree", "add"): (128, "fatal: nope")})
+    with pytest.raises(RuntimeError):
+        publish.add_worktree(git=git, root=d)
+    assert not d.exists()
+    assert git.calls[1] == ("worktree", "prune")
+
+
+def test_cleanup_branch_deletes_the_local_ref_only():
+    git = recorder()
+    publish.cleanup_branch("jr/tick-20260905-0407", git=git)
+    assert git.calls == [("branch", "-D", "jr/tick-20260905-0407")]
+
+
+def test_protection_distinguishes_a_403_from_an_unprotected_branch():
+    gh = recorder({("api", "repos/o/r/branches/main/protection"): (1, "")})
+    def gh403(*args):
+        p = gh(*args)
+        if args[:2] == ("api", "repos/o/r/branches/main/protection"):
+            p.stderr = "gh: Resource not accessible by personal access token (HTTP 403)"
+        return p
+    st = publish.protection_status("o/r", gh=gh403)
+    assert not st.ok and "403" in st.reason
+    assert not publish.protection_status("o/r", gh=gh).ok

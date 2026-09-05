@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 import subprocess
 import tempfile
 from dataclasses import dataclass, field
@@ -86,9 +87,11 @@ def add_worktree(git=default_git, root: Path | None = None) -> Worktree:
     p = git("fetch", "origin", "main")
     if not _ok(p):
         raise RuntimeError(f"git fetch origin main failed: {getattr(p, 'stderr', '')!s:.200}")
+    git("worktree", "prune")          # a tick killed mid-run (SIGKILL) may have left a stale entry
     directory = Path(root or tempfile.mkdtemp(prefix="jr-tick-"))
     p = git("worktree", "add", "--detach", str(directory), "origin/main")
     if not _ok(p):
+        shutil.rmtree(directory, ignore_errors=True)    # never leak the temp dir
         raise RuntimeError(f"git worktree add failed: {getattr(p, 'stderr', '')!s:.200}")
     sha = git("rev-parse", "origin/main")
     return Worktree(path=directory, base_sha=(getattr(sha, "stdout", "") or "").strip())
@@ -98,6 +101,13 @@ def remove_worktree(wt: Worktree, git=default_git) -> None:
     """Always called, even after a failure — the worktree is disposable by design."""
     git("worktree", "remove", "--force", str(wt.path))
     git("worktree", "prune")
+
+
+def cleanup_branch(branch: str, git=default_git) -> None:
+    """Delete the LOCAL tick branch once its worktree is gone. `checkout -B` inside the worktree
+    creates the branch in the clone's shared refs; the remote keeps the pushed copy (the PR), so
+    the local ref is clutter that would also collide with a same-minute retry."""
+    git("branch", "-D", branch)
 
 
 def is_clean(wt: Worktree, git=default_git) -> bool:
@@ -122,6 +132,9 @@ def protection_status(repo_slug: str, gh=default_gh,
     ("Branch not protected") is the exact hole this exists to catch."""
     p = gh("api", f"repos/{repo_slug}/branches/main/protection")
     if not _ok(p):
+        err = (getattr(p, "stderr", "") or "") + (getattr(p, "stdout", "") or "")
+        if "403" in err or "Resource not accessible" in err:
+            return ProtectionStatus(False, reason="cannot read main's protection (403: token lacks permission)")
         return ProtectionStatus(False, reason="main is not protected (auto-merge would merge instantly)")
     try:
         rule = json.loads(p.stdout)
@@ -157,13 +170,17 @@ class PublishResult:
 
 
 def _staged_deletions(wt: Worktree, git) -> list[str]:
-    p = git("-C", str(wt.path), "diff", "--cached", "--name-status")
-    out = getattr(p, "stdout", "") or ""
-    deleted = []
-    for line in out.splitlines():
-        parts = line.split("\t")
-        if parts and parts[0].startswith("D") and len(parts) > 1:
-            deleted.append(parts[1])
+    """Paths staged as deletions. `--no-renames`: git's default rename detection would report a
+    deleted record whose content moved to a new id as `R100 old new`, hiding the deletion from
+    the G2 check. `-z`: NUL-separated, so a non-ASCII path is never C-quoted into a mismatch."""
+    p = git("-C", str(wt.path), "diff", "--cached", "--name-status", "--no-renames", "-z")
+    fields = [f for f in (getattr(p, "stdout", "") or "").split("\0")]
+    deleted, i = [], 0
+    while i + 1 < len(fields):
+        status, path = fields[i], fields[i + 1]
+        if status.startswith("D") and path:
+            deleted.append(path)
+        i += 2
     return deleted
 
 
@@ -178,8 +195,13 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
     branch = branch_name(now)
     pathspec = list(dict.fromkeys([*paths, *memory.staged_paths()]))
 
-    # 1. stage exactly the pathspec; nothing else can reach the commit
-    git("-C", str(wt.path), "add", "--", *pathspec)
+    # 1. stage exactly the pathspec; nothing else can reach the commit. git aborts the WHOLE add
+    #    (rc 128, nothing staged) when one element matches nothing — that must not read as
+    #    "nothing to publish".
+    p = git("-C", str(wt.path), "add", "--", *pathspec)
+    if not _ok(p):
+        return PublishResult(False, branch=branch, paths=pathspec,
+                             reason=f"git add failed: {(getattr(p, 'stderr', '') or '').strip()[:160]}")
     if _ok(git("-C", str(wt.path), "diff", "--cached", "--quiet")):
         return PublishResult(False, branch=branch, paths=pathspec, reason="nothing to publish")
 
@@ -192,7 +214,7 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
                              reason=f"deletion refused (G2 guard not in CI): {', '.join(protected)}")
 
     # 3. branch, commit, push — on the worktree, never on the clone's checkout
-    p = git("-C", str(wt.path), "checkout", "-q", "-b", branch)
+    p = git("-C", str(wt.path), "checkout", "-q", "-B", branch)   # -B: a same-minute retry must not die
     if not _ok(p):
         return PublishResult(False, branch=branch, paths=pathspec, reason="could not create branch")
     p = git("-C", str(wt.path), "commit", "-q", "-m", subject)
