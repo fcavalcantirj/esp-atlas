@@ -33,7 +33,9 @@ from pathlib import Path
 
 DEFAULT_LEDGER_PATH = Path(__file__).resolve().parent / "proposed_ledger.json"
 
-STATUSES = ("proposed", "merged", "rejected", "seen")
+STATUSES = ("proposed", "merged", "rejected", "seen", "expired")
+# "expired" (memory.py, Phase 2): a TTL'd rejection or seen-note whose `expires` passed. History
+# is kept, but the record is neither blocking nor seen — every gate reads it as absent.
 # statuses that must stop the drain from re-authoring: an open PR (proposed) or a PR a human
 # already closed unmerged (rejected). "merged" is NOT here — a merged id is already in the real
 # atlas, where catalogued_repos/catalogued_tokens dedup covers it as it always has (drain.py's
