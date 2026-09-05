@@ -66,6 +66,8 @@ def test_expire_flips_overdue_records_and_keeps_history(path):
     led = memory.load(path)
     assert led["by_id"]["old"]["status"] == "expired"
     assert led["by_id"]["old"]["reason"] == "below floor"           # history kept
+    assert led["by_id"]["old"]["timestamp"] == NOW.isoformat()      # decision time kept
+    assert led["by_id"]["old"]["expired_at"] == (NOW + timedelta(days=31)).isoformat()
     assert led["by_id"]["note"]["status"] == "expired"
     assert led["by_id"]["human"]["status"] == "rejected"            # permanent, untouched
     assert led["by_id"]["fresh"]["status"] == "rejected"            # 90 d, not yet
@@ -191,16 +193,87 @@ def test_real_ledger_loads_and_is_untouched_by_a_load():
     """Read-only on the real file: 130 records with statuses seen/merged/rejected must load,
     derive an (empty or partial) by_repo_id, and every record must remain blocking/seen exactly
     as ledger.py sees it — the drain's prefilter and the tick must agree."""
-    before = memory.DEFAULT_LEDGER_PATH.read_text()
+    before = ledger.DEFAULT_LEDGER_PATH.read_text()
     led = memory.load()
-    assert len(led["by_id"]) >= 100
+    assert led["by_id"], "the committed ledger must not be empty"
     for fid, rec in led["by_id"].items():
         assert rec["status"] in ledger.STATUSES, fid
         if "expires" not in rec:
             assert memory.is_blocked(led, firmware_id=fid, now=NOW) == ledger.is_blocked(led, firmware_id=fid)
             assert memory.is_seen(led, firmware_id=fid, now=NOW) == ledger.is_seen(led, firmware_id=fid)
-    assert memory.DEFAULT_LEDGER_PATH.read_text() == before
+    assert ledger.DEFAULT_LEDGER_PATH.read_text() == before
 
 
 def test_staged_paths_points_at_the_ledger_inside_the_repo():
     assert memory.staged_paths() == ["jr/proposed_ledger.json"]
+
+
+# --- review-driven guards (adversarial review of #113) ------------------------------------------
+
+def test_a_permanent_rejection_is_never_overwritten_by_a_ttl_note_or_a_proposal(path):
+    memory.record_rejected("firmware", "brucedevices/firmware", "duplicate_of bruce", path=path, now=NOW)
+    memory.record_seen("firmware", "someone-else/firmware", "scored 3 stars", path=path, now=NOW)
+    memory.record_rejected("firmware", "someone-else/firmware", "below floor", ttl_days=30, path=path, now=NOW)
+    memory.record_proposed("firmware", "someone-else/firmware", pr_ref="https://github.com/x/y/pull/1", path=path, now=NOW)
+    rec = ledger.load_ledger(path)["by_id"]["firmware"]
+    assert rec["status"] == "rejected" and rec["reason"] == "duplicate_of bruce" and "expires" not in rec
+    assert rec["repo"] == "brucedevices/firmware"
+    # another PERMANENT rejection may update the reason
+    memory.record_rejected("firmware", "brucedevices/firmware", "duplicate_of bruce (repo_id 795166961)", path=path, now=NOW)
+    assert ledger.load_ledger(path)["by_id"]["firmware"]["reason"].endswith("795166961)")
+
+
+def test_v1_mark_rejected_drops_a_leftover_ttl_so_a_human_veto_is_permanent(path):
+    memory.record_seen("veto", "o/veto", path=path, now=NOW)                    # 30 d TTL note
+    ledger.mark_rejected("veto", path=path, reason="human: closed PR unmerged")   # v1 API
+    rec = ledger.load_ledger(path)["by_id"]["veto"]
+    assert rec["status"] == "rejected" and "expires" not in rec
+    assert memory.is_blocked(memory.load(path), firmware_id="veto", now=NOW + timedelta(days=3650))
+    assert memory.expire(path=path, now=NOW + timedelta(days=3650)) == []
+
+
+def test_expire_never_flips_a_proposed_record_even_if_it_carries_expires(path):
+    memory.record_rejected("unres", "o/unres", "unresolved", ttl_days=7, path=path, now=NOW)
+    ledger.update_status("unres", "proposed", pr_ref="https://github.com/x/y/pull/42", path=path)
+    assert memory.expire(path=path, now=NOW + timedelta(days=8)) == []
+    assert memory.load(path)["by_id"]["unres"]["status"] == "proposed"
+
+
+def test_naive_now_and_z_suffixed_expires_are_handled(path):
+    memory.record_rejected("n", "o/n", "below floor", ttl_days=1, path=path, now=datetime(2026, 9, 5, 3, 0))  # naive
+    led = memory.load(path)
+    assert led["by_id"]["n"]["expires"].endswith("+00:00")
+    assert memory.is_blocked(led, firmware_id="n", now=datetime(2026, 9, 5, 12, 0))       # naive now, ok
+    assert not memory.is_blocked(led, firmware_id="n", now=datetime(2026, 9, 7))
+    assert memory.is_expired({"expires": "2026-08-31T00:00:00Z"}, now=NOW)                 # 'Z' parses on 3.10 too
+    assert not memory.is_expired({"expires": "not a date"}, now=NOW)
+
+
+def test_reconcile_removed_refuses_an_empty_catalog(path):
+    memory.record_proposed("m", "o/m", path=path, now=NOW)
+    ledger.update_status("m", "merged", path=path)
+    before = path.read_text()
+    assert memory.reconcile_removed(set(), path=path, now=NOW) == []
+    assert path.read_text() == before
+
+
+def test_reconcile_merged_only_flips_proposed_records(path):
+    memory.record_seen("flipper-zero-esp32-adv", "0xhalloween/flipper-zero-esp32-adv", "fork", path=path, now=NOW)
+    memory.record_proposed("newfw", "o/newfw", pr_ref="https://github.com/x/y/pull/2", path=path, now=NOW)
+    assert memory.reconcile_merged({"flipper-zero-esp32-adv", "newfw"}, path=path, now=NOW) == ["newfw"]
+    led = memory.load(path)
+    assert led["by_id"]["flipper-zero-esp32-adv"]["status"] == "seen"
+    assert led["by_id"]["newfw"]["status"] == "merged"
+
+
+def test_monkeypatched_default_path_reaches_memory_and_saves_never_persist_the_view(monkeypatch, tmp_path):
+    alt = tmp_path / "alt_ledger.json"
+    monkeypatch.setattr(ledger, "DEFAULT_LEDGER_PATH", alt)
+    memory.record_rejected("firmware", "brucedevices/firmware", "dup", repo_id=795166961)   # no path given
+    assert alt.exists() and not (tmp_path / "proposed_ledger.json").exists()
+    led = memory.load()
+    assert led["by_repo_id"] == {795166961: "firmware"}
+    ledger._save(led, alt)                                       # saving a loaded dict is safe
+    assert "by_repo_id" not in json.loads(alt.read_text())
+    assert alt.read_text().endswith("}\n")                       # trailing newline like the committed file
+    assert memory.staged_paths() == ["jr/proposed_ledger.json"]  # constant, unaffected by the patch

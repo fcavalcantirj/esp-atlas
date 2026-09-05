@@ -71,7 +71,10 @@ def load_ledger(path: Path = DEFAULT_LEDGER_PATH) -> dict:
 
 
 def _save(ledger: dict, path: Path) -> None:
-    path.write_text(json.dumps(ledger, indent=2, sort_keys=True))
+    # `by_repo_id` is a DERIVED view memory.load() adds; it is never persisted. Trailing newline so
+    # the file stays byte-identical to the committed one (no spurious "no newline" hunk).
+    data = {k: v for k, v in ledger.items() if k != "by_repo_id"}
+    path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
 
 
 def lookup(ledger: dict, firmware_id: str | None = None, repo: str | None = None) -> dict | None:
@@ -155,6 +158,10 @@ def update_status(firmware_id: str, status: str, path: Path = DEFAULT_LEDGER_PAT
         return ledger
     record["status"] = status
     record["timestamp"] = now or _utcnow()
+    # A v1 transition is a decision without a TTL: a human veto (mark_rejected) or a merge must
+    # never inherit an `expires` left by an earlier memory.py TTL'd note, or memory.expire() would
+    # later flip the veto to "expired" and Jr could re-propose it.
+    record.pop("expires", None)
     if pr_ref is not None:
         record["pr_ref"] = pr_ref
     if reason is not None:
