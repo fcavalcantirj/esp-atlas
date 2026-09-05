@@ -225,7 +225,18 @@ def fetch_github_repo(url: str) -> dict:
     """Fetch a repo's real metadata via the GitHub API (authed through `gh`, higher rate limit) —
     the citable ground truth for a firmware record: description, license, topics, homepage,
     default_branch, and **real stargazers_count** (use THIS for star-ranking, never the launcher
-    like-count). Returns {} if the repo can't be resolved. Read the repo before authoring."""
+    like-count). Returns {} if the repo can't be resolved. Read the repo before authoring.
+
+    FORK IDENTITY IS PART OF THE CONTRACT. `scorer.score_entry` gates on `fork` and
+    `source_full_name` to stop Jr cataloguing a 23-star fork instead of its 425-star original.
+    Those keys were absent from this dict for the whole of the drain's production life, so
+    `repo_meta.get("fork")` was always None and that gate NEVER fired — while its unit tests
+    passed, because the golden fixtures hand-write the keys. Anything added here must stay in
+    sync with what scorer/forkguard read; adding a key is safe, removing one is not.
+
+    `source` is GitHub's transitive root of a fork chain and `parent` the immediate parent; for a
+    fork of a fork they differ, and the SOURCE is the canonical original Jr should resolve to.
+    Both are absent from the payload for a non-fork, so both come back None."""
     parts = url.rstrip("/").replace("https://github.com/", "").split("/")
     if len(parts) < 2:
         return {}
@@ -234,12 +245,21 @@ def fetch_github_repo(url: str) -> dict:
     if p.returncode != 0:
         return {"error": p.stderr.strip()[:200]}
     d = json.loads(p.stdout)
+    source, parent = d.get("source") or {}, d.get("parent") or {}
     return {
         "full_name": d.get("full_name"), "description": d.get("description"),
         "license": (d.get("license") or {}).get("spdx_id"), "topics": d.get("topics", []),
         "homepage": d.get("homepage"), "default_branch": d.get("default_branch"),
         "stars": d.get("stargazers_count"), "archived": d.get("archived"),
         "forks": d.get("forks_count"),
+        # --- fork identity: what the scorer's fork gate has always needed and never received ---
+        "id": d.get("id"),                                  # stable across renames; dedup key
+        "fork": d.get("fork"),
+        "source_full_name": source.get("full_name"),        # transitive root of the fork chain
+        "source_stars": source.get("stargazers_count"),
+        "parent_full_name": parent.get("full_name"),        # immediate parent, may differ
+        "pushed_at": d.get("pushed_at"),                    # staleness signal for refresh
+        "language": d.get("language"),
     }
 
 
@@ -294,13 +314,13 @@ def author_firmware_record(
 
 
 def open_batch_pr(firmware_ids: list[str], label: str, base: str = "main") -> dict:
-    """Open ONE PR bundling many authored firmware (+ their recipes + the coverage run-cases) —
+    """Open ONE PR bundling many authored firmware (+ their recipes) —
     a reviewable daily batch instead of a flood of PRs. Assumes each passed triple_validate.
     `label` makes the branch unique (e.g. a date). Returns {"ok","pr_url","count"}."""
     if not firmware_ids:
         return {"ok": False, "error": "empty batch"}
     branch = f"jr/batch-{label}"
-    paths = ["apps/core/tests/test_coverage_matrix.py"]
+    paths: list[str] = []   # data paths only — authoring no longer edits any test file
     for fid in firmware_ids:
         paths.append(f"data/firmware/{fid}")
         for rdir in (REPO / "data/recipes").glob(f"*__{fid}"):
@@ -314,8 +334,8 @@ def open_batch_pr(firmware_ids: list[str], label: str, base: str = "main") -> di
         r.name.split("__")[0] for r in (REPO / "data/recipes").glob(f"*__{f}")) for f in firmware_ids)
     body = (f"**TL;DR** — Jr's daily batch: **{len(firmware_ids)} new firmware** (all `unverified`, "
             f"triple-validated, socs derived from board records).\n\n### Firmware (firmware → boards)\n{rows}\n\n"
-            "Discovered via the Launcher/M5Burner catalog, with-code gated. Guard green, coverage run-cases "
-            "included. **Bot proposes, humans dispose** — skim, then merge (or drop any you don't want).\n\n"
+            "Discovered via the Launcher/M5Burner catalog, with-code gated. Guard green. "
+            "**Bot proposes, humans dispose** — skim, then merge (or drop any you don't want).\n\n"
             "— 🤖 **EspAtlas Jr** · autonomous data-keeper")
     pr = subprocess.run(["gh", "pr", "create", "--base", base, "--head", branch,
                          "--title", f"feat(firmware): batch add {len(firmware_ids)} firmware ({label})",
@@ -368,7 +388,7 @@ def open_pr(firmware_id: str, title: str, body: str | None = None, recipe_id: st
     the recipe so the branch is never orphaned. Assumes triple_validate() passed. Returns
     {"ok","pr_url"}."""
     branch = f"jr/firmware-{firmware_id}"
-    paths = [f"data/firmware/{firmware_id}", "apps/core/tests/test_coverage_matrix.py"]
+    paths = [f"data/firmware/{firmware_id}"]   # data paths only — no test file is ever staged
     if recipe_id:
         paths.append(f"data/recipes/{recipe_id}")
     def git(*a): return subprocess.run(["git", *a], cwd=REPO, capture_output=True, text=True)
@@ -397,48 +417,15 @@ def open_pr(firmware_id: str, title: str, body: str | None = None, recipe_id: st
 
 
 def run_ci_tests() -> dict:
-    """Run the coverage-matrix invariant CI test (the one #69 broke) so Jr never proposes a PR
-    that reds main. Uses system python3 (has esp_atlas_core + pytest). {"ok","output"}."""
+    """Run the coverage-matrix regression tests (RUN_MATRIX/BUILD_MATRIX; the per-firmware run-case
+    gate itself was removed in cdb9fd8) plus the two suites below, so Jr never proposes a PR that reds main. Uses system python3 (has esp_atlas_core + pytest). {"ok","output"}."""
     p = subprocess.run(["python3", "-m", "pytest",
-                        "apps/core/tests/test_coverage_matrix.py",   # run-case coverage
+                        "apps/core/tests/test_coverage_matrix.py",   # RUN/BUILD matrix regressions
                         "apps/core/tests/test_examples.py",          # capabilities / labels
                         "apps/core/tests/test_intent_oracle.py",     # routable-by-name
                         "-q"], cwd=REPO, capture_output=True, text=True, timeout=200)
     return {"ok": p.returncode == 0, "output": (p.stdout + p.stderr).strip()[-1500:]}
 
-
-def author_run_case(firmware_id: str) -> dict:
-    """Register a firmware's coverage RUN case in test_coverage_matrix.py's RUN_MATRIX, so the
-    `test_every_firmware_has_a_run_case` invariant stays green (the gap that broke main on #69).
-    Minimal case (id + fw) — grounds via the recipe; capability asserts can be tightened later."""
-    import re
-    p = REPO / "apps/core/tests/test_coverage_matrix.py"
-    txt = p.read_text()
-    if f'fw="{firmware_id}"' in txt:
-        return {"skipped": "run case already present"}
-    start = txt.index("RUN_MATRIX = [")
-    end = txt.index("\n]", start)                       # the newline right before RUN_MATRIX's ]
-    nums = [int(m) for m in re.findall(r'id="(\d+)_', txt[start:end])]
-    n = (max(nums) + 1) if nums else 1
-    entry = f'    dict(\n        id="{n}_{firmware_id}",\n        fw="{firmware_id}",\n    ),\n'
-    p.write_text(txt[: end + 1] + entry + txt[end + 1:])
-    return {"path": "apps/core/tests/test_coverage_matrix.py", "case": f"{n}_{firmware_id}"}
-
-
-def remove_run_case(firmware_id: str) -> None:
-    """Remove a firmware's RUN_MATRIX block (used when a batch firmware is rejected, so its
-    orphan run-case can't red the CI test for the rest of the batch)."""
-    p = REPO / "apps/core/tests/test_coverage_matrix.py"
-    lines = p.read_text().splitlines(keepends=True)
-    out, i = [], 0
-    while i < len(lines):
-        if lines[i].strip() == "dict(" and any(f'fw="{firmware_id}"' in l for l in lines[i:i + 5]):
-            while i < len(lines) and lines[i].strip() != "),":
-                i += 1
-            i += 1  # skip the closing "),"
-            continue
-        out.append(lines[i]); i += 1
-    p.write_text("".join(out))
 
 
 def _frontmatter(md_path: Path) -> dict:
@@ -451,9 +438,29 @@ def _frontmatter(md_path: Path) -> dict:
 
 def board_soc(board_id: str) -> str | None:
     """The chip_family (soc) of a catalogued board, read from its record — GROUND TRUTH so Jr
-    never guesses a chip. Returns None if the board or its soc is unknown."""
+    never guesses a chip. Returns None if the board or its soc is unknown.
+
+    A board may state its soc DIRECTLY, or inherit it from the module it carries. Espressif's
+    reference devkits do the latter: esp32-s3-devkitc-1 declares `module: esp32-s3-wroom-1` and no
+    `soc:` at all. This function used to read only the direct field, so it returned None for
+    exactly five boards -- esp32-s3-devkitc-1, esp32-c6-devkitc-1, esp32-devkitc-v4,
+    esp32-ethernet-kit, esp32-lyrat -- and because author_firmware_and_recipes filters candidate
+    boards on `if board_soc(b)` and then errors when none survive, Jr could never author a recipe
+    for any flagship Espressif devkit. Silently: the drain just reported "no catalogued board with
+    a known soc". esp_atlas_core.validate has always resolved the same inheritance
+    (`fm.get("soc") or module_soc.get(fm.get("module"))`), so core saw 82/82 boards while jr saw
+    77/82 -- the two disagreed about what the catalog contains."""
     for bmd in (REPO / "data/boards").glob(f"*/{board_id}/board.md"):
-        return _frontmatter(bmd).get("soc")
+        fm = _frontmatter(bmd)
+        soc = fm.get("soc")
+        if soc:
+            return soc
+        module_id = fm.get("module")
+        if not module_id:
+            return None
+        for mmd in (REPO / "data/modules").glob(f"{module_id}/module.md"):
+            return _frontmatter(mmd).get("soc")
+        return None
     return None
 
 
@@ -481,8 +488,8 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
     """DETERMINISTIC authoring — the model supplies ONLY judgment (category, which catalogued
     `boards` it runs on, capabilities from the README). `socs` and every recipe's `chip_family`
     are DERIVED from the board records — the model never touches a chip id (kills the
-    soc-fabrication class, e.g. CatHack's esp32-s3). Writes the firmware + one recipe per board +
-    the coverage run-case, all consistent by construction. Popularity (SPEC-firmware-floor.md):
+    soc-fabrication class, e.g. CatHack's esp32-s3). Writes the firmware + one recipe per board,
+    all consistent by construction; it edits no test file. Popularity (SPEC-firmware-floor.md):
     `stars` + `forks` (repo_meta) persist as a dated `popularity` snapshot with a `popularity`
     source citation, only when known (never invented); downloads are NOT a stored metric. `today`
     (injectable ISO run date, default today) is its `as_of` and the sources' `verified`."""
@@ -514,7 +521,7 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
         author_recipe(rid, b, firmware_id, board_soc(b), src,
                       f"{name} on the {b} ({board_soc(b)}). `unverified`; the repo lists {b} as a supported device.")
         recipes.append(rid)
-    return {"firmware": firmware_id, "socs": socs, "recipes": recipes, "run_case": author_run_case(firmware_id)}
+    return {"firmware": firmware_id, "socs": socs, "recipes": recipes}
 
 
 def triple_validate(firmware_id: str, recipe_id: str) -> dict:
@@ -526,11 +533,11 @@ def triple_validate(firmware_id: str, recipe_id: str) -> dict:
     rc_md = REPO / "data/recipes" / recipe_id / "recipe.md"
     problems = {"gate1": [], "gate2": [], "gate3": []}
 
-    # GATE 1 — the deterministic guard (schema + oracle + no-orphan) + the CI coverage invariant
+    # GATE 1 — the deterministic guard (schema + oracle + no-orphan) + the CI regression tests
     g = run_guard()
     if not g["ok"]:
         problems["gate1"].append(g["output"].splitlines()[-1] if g["output"] else "guard failed")
-    ci = run_ci_tests()   # the pytest invariant #69 broke — never propose a PR that reds main
+    ci = run_ci_tests()   # never propose a PR that reds main
     if not ci["ok"]:
         problems["gate1"].append("CI test red: " + (ci["output"].splitlines()[-1] if ci["output"] else "pytest failed"))
 

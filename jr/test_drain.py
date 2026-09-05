@@ -495,7 +495,7 @@ def cleanup_fixture():
     shutil.rmtree(tools.FIRMWARE_DIR / FIXTURE_ID, ignore_errors=True)
     for rdir in (REPO / "data/recipes").glob(f"*__{FIXTURE_ID}"):
         shutil.rmtree(rdir, ignore_errors=True)
-    tools.remove_run_case(FIXTURE_ID)
+    # No run-case to unwind: authoring no longer edits apps/core/tests/test_coverage_matrix.py.
 
 
 def _fixture_selected(**overrides):

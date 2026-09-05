@@ -238,13 +238,15 @@ def cap_categories(ranked: list[dict], max_per_category: int = MAX_PER_CATEGORY,
 
 
 def _cleanup(firmware_id: str) -> None:
-    """Remove a rolled-back candidate's firmware dir, recipe dir(s), and coverage run-case —
-    mirrors run.py's own _cleanup/remove_run_case pattern for a rejected batch member."""
+    """Remove a rolled-back candidate's firmware dir and recipe dir(s).
+
+    No longer touches apps/core/tests/test_coverage_matrix.py: authoring stopped writing a
+    coverage run-case, so there is nothing to unwind. The gate that needed one was removed by
+    cdb9fd8, and the drain never staged the test file it was editing anyway."""
     import shutil
     shutil.rmtree(tools.FIRMWARE_DIR / firmware_id, ignore_errors=True)
     for rdir in (tools.REPO / "data/recipes").glob(f"*__{firmware_id}"):
         shutil.rmtree(rdir, ignore_errors=True)
-    tools.remove_run_case(firmware_id)
 
 
 def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
@@ -295,7 +297,7 @@ def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
              fetch_meta=default_fetch_meta, ledger_path=ledger.DEFAULT_LEDGER_PATH,
              today: str | None = None, resolve_source=None) -> dict:
     """The full drain, end to end. Additive-only: writes new data/firmware/<id>/ +
-    data/recipes/<board>__<id>/ dirs (plus their coverage run-case) and never touches jr-daily
+    data/recipes/<board>__<id>/ dirs and never touches jr-daily
     (agent.py/run.py) or scorer.py's public behavior. Loads jr/ledger.py's proposed-ledger
     (`ledger_path`, injectable for tests) once and threads it through prefilter/score_candidates
     so a candidate already proposed or rejected in an earlier run is skipped before it's ever
