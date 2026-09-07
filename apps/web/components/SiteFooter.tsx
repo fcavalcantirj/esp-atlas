@@ -31,6 +31,9 @@ export default function SiteFooter() {
             <p className="footer-title">Contribute</p>
             <ul className="footer-links">
               <li>
+                <Link href="/submit">Submit a firmware</Link>
+              </li>
+              <li>
                 <TrackedLink href={contributingUrl()} linkType="contributing">
                   Add or fix a part
                 </TrackedLink>
