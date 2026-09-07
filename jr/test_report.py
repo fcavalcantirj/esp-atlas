@@ -68,3 +68,9 @@ def test_paths_are_deduplicated_across_stages_and_needs_human_aggregates():
     r = _r(stages=[{"name": "a", "paths": ["p1", "p2"], "needs_human": False},
                    {"name": "b", "paths": ["p2", "p3"], "needs_human": True}])
     assert r.paths == ["p1", "p2", "p3"] and r.needs_human
+
+
+def test_pr_body_truncates_a_runaway_stage_summary():
+    r = report.TickReport(when=NOW, stages=[{"name": "admit", "paths": [], "summary": "x" * 5000, "needs_human": False}])
+    body = report.render_pr_body(r)
+    assert "… (truncated" in body and len(body) < 2500

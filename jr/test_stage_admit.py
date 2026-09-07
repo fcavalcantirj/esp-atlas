@@ -312,6 +312,7 @@ def test_submission_below_the_floor_is_answered_with_the_rule_and_closed(root, m
     ctx = _ctx_sub(root, issues, metas)
     res = stage_admit.run(ctx, budget=1)
     assert res.admitted == 0 and res.rejects == {"below_floor": 1}
+    assert "tiny: skip below_floor (submission #9)" in res.summary          # a submission's skip is worth a line
     a = _answers(ctx)
     assert "**Not admitted** — `below_floor: 3 stars / 0 forks`" in a[0][2] and "25 stars or 25 forks" in a[0][2]
     assert a[1][0] == "PATCH"
@@ -369,8 +370,12 @@ def test_scorer_uses_the_board_hint_only_as_the_last_fallback():
     assert named["record"]["board"] == "m5cardputer"                 # a device named in the text still wins over the hint
 
 
-def test_a_launcher_entry_without_a_name_or_a_parseable_url_is_still_labelled_in_the_summary(root, monkeypatch):
-    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("", "https://github.com/n/nameless"), _entry("", "")])
-    res = stage_admit.run(_ctx(root, metas={}), budget=2)
-    assert "nameless: skip repo_unresolved" in res.summary
-    assert "(unnamed entry): skip" in res.summary and ": skip" not in res.summary.replace("nameless: skip", "").replace("(unnamed entry): skip", "")
+def test_launcher_skips_are_one_aggregate_line_never_one_per_entry(root, monkeypatch):
+    """PR #149's body listed 313 launcher skips one by one — unreadable. Counts, sorted by size."""
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [
+        _entry("", "https://github.com/n/nameless"), _entry("", ""), _entry("Tiny Cardputer", "https://github.com/t/tiny")])
+    metas = {"repos/t/tiny": _meta("t/tiny", stars=1, forks=0, rid=12)}
+    res = stage_admit.run(_ctx(root, metas=metas), budget=3)
+    assert res.summary == "skipped 3 launcher entries: repo_unresolved 2, below_floor 1"
+    assert res.rejects == {"repo_unresolved": 2, "below_floor": 1}
+    assert ": skip" not in res.summary

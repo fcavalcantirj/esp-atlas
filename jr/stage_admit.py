@@ -232,14 +232,25 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None):
     def reject(key):
         rejects[key] = rejects.get(key, 0) + 1
 
-    def skip_reject(fid, owner_repo, reason, repo_id):
+    launcher_skips: dict = {}      # launcher entries are skipped by the hundred: one aggregate line, never one per entry
+
+    def skip_reject(fid, owner_repo, reason, repo_id, issue=None):
+        """Record the rejection (memory, counts). Returns a report line for a submission (rare and
+        meaningful — the submitter reads it), or None for a launcher entry (aggregated below)."""
         key = reason.split(":")[0]
         reject(key)
         if not ctx.dry_run:
             memory.record_rejected(fid, owner_repo, reason,
                                    ttl_days=REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS),
                                    repo_id=repo_id, path=ctx.ledger_path, now=ctx.now)
-        return f"{fid}: skip {key}"
+        if issue:
+            return f"{fid}: skip {key} (submission #{issue})"
+        launcher_skips[key] = launcher_skips.get(key, 0) + 1
+        return None
+
+    def note(line):
+        if line:
+            lines.append(line)
 
     # Submissions first (one counted call to list them), then the launcher catalog.
     slug = (ctx.env or {}).get("JR_REPO_SLUG") or DEFAULT_REPO_SLUG
@@ -285,13 +296,13 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None):
         # Popularity floor (SPEC-firmware-floor.md, via esp_atlas_core.floor — never re-typed):
         # below stars AND forks is filler, rejected for FLOOR_REJECT_DAYS.
         if meta.get("error"):
-            lines.append(skip_reject(fid, owner_repo, f"repo_unresolved: {meta['error'][:80]}", None))
+            note(skip_reject(fid, owner_repo, f"repo_unresolved: {meta['error'][:80]}", None, issue=issue))
             if issue:
                 _answer(ctx, slug, issue, _verdict_text(f"repo_unresolved: {meta['error'][:80]}", False, False))
             continue
         if not clears_popularity_floor(meta.get("stars"), meta.get("forks")):
             reason = f"below_floor: {meta.get('stars')} stars / {meta.get('forks')} forks"
-            lines.append(skip_reject(fid, owner_repo, reason, repo_id))
+            note(skip_reject(fid, owner_repo, reason, repo_id, issue=issue))
             if issue:
                 _answer(ctx, slug, issue, _verdict_text(reason, False, False))
             continue
@@ -313,7 +324,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None):
                     break
         res = scorer.score_entry(entry, meta, cat_repos, cat_toks, cat_ids, board_hint=hint_board)
         if res["decision"] == "skip":
-            lines.append(skip_reject(fid, owner_repo, res["reason"], repo_id))
+            note(skip_reject(fid, owner_repo, res["reason"], repo_id, issue=issue))
             if issue:
                 _answer(ctx, slug, issue, _verdict_text(res["reason"], False, False))
             continue
@@ -323,9 +334,9 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None):
         # into a worktree. Refuse to write when the worktree disagrees (same bug class as the
         # Track B resolver reading the wrong tree).
         if tools.board_soc(rec["board"], repo=ctx.root) != rec["chip"]:
-            lines.append(skip_reject(out_id, owner_repo,
+            note(skip_reject(out_id, owner_repo,
                                      f"chip_family_mismatch: worktree disagrees on board '{rec['board']}'",
-                                     repo_id))
+                                     repo_id, issue=issue))
             continue
         fmd = ctx.root / "data" / "firmware" / out_id / "firmware.md"
         if fmd.exists():
@@ -372,6 +383,9 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None):
                      + (f" (submission #{issue})" if issue else ""))
         if issue:
             _answer(ctx, slug, issue, _verdict_text(None, True, bool(res.get("needs_human")), f"{rec['board']}__{out_id}"))
+    if launcher_skips:
+        total = sum(launcher_skips.values())
+        lines.append(f"skipped {total} launcher entries: " + ", ".join(f"{k} {v}" for k, v in sorted(launcher_skips.items(), key=lambda kv: (-kv[1], kv[0]))))
     summary = "; ".join(lines) if lines else "no candidates"
     if decided and lines:
         summary += f" ({decided} already decided, skipped)"
