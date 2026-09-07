@@ -38,5 +38,17 @@ if [ -r "$THERMAL" ]; then
   fi
 fi
 
+# Self-update: the tick's CODE is whatever this clone has checked out (its DATA comes from a
+# fresh worktree of origin/main), so a merged fix reached the Pi only when someone pulled.
+# Fast-forward to origin/main first, on a clean tree only — never rewrite local work. A
+# failed fetch (offline) runs the code we have; JR_NO_SELF_UPDATE=1 pins it for debugging.
+if [ -z "${JR_NO_SELF_UPDATE:-}" ] && [ -z "$(git status --porcelain --untracked-files=no)" ]; then
+  if git fetch -q origin main; then
+    git merge -q --ff-only origin/main || echo "jr-tick: not fast-forwardable to origin/main, running the checked-out code" >&2
+  else
+    echo "jr-tick: fetch failed, running the checked-out code" >&2
+  fi
+fi
+
 LOCK="${JR_LOCK:-/tmp/jr-tick.lock}"
 exec flock -n -E 75 "$LOCK" timeout -k 30 "${JR_TIMEOUT:-600}" "${JR_PYTHON:-python3}" jr/tick.py "$@"
