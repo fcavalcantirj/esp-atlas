@@ -1,0 +1,29 @@
+name: Submit a firmware
+description: Paste a GitHub repo. EspAtlas Jr scores it within the hour and replies here with the verdict.
+title: "Submission: "
+labels: ["submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **What happens next.** EspAtlas Jr (a deterministic bot, no AI) reads the repository, applies the
+        catalog's fixed rules — a real GitHub repo, **25 stars or 25 forks**, not a fork of something
+        already catalogued, and at least one **catalogued board** named in the repo or below — and
+        comments the verdict on this issue. If it passes, Jr opens a cited pull request; CI must be green
+        and a human can still veto. Nothing lands on the site from this issue directly.
+  - type: input
+    id: repo
+    attributes:
+      label: Repository URL
+      description: The GitHub repository of the firmware (https://github.com/owner/repo).
+      placeholder: https://github.com/owner/repo
+    validations:
+      required: true
+  - type: input
+    id: boards
+    attributes:
+      label: Boards
+      description: Which board(s) it runs on, comma-separated (e.g. M5Stack Cardputer, LilyGO T-Deck). Optional — Jr also reads the repo's release assets and platformio.ini.
+      placeholder: M5Stack Cardputer, LilyGO T-Deck
+    validations:
+      required: false

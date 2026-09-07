@@ -179,7 +179,8 @@ def _category_from_capabilities(capabilities: list[str]) -> str:
 
 
 def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
-                catalogued_tokens: set[str], catalogued_ids: dict | None = None) -> dict:
+                catalogued_tokens: set[str], catalogued_ids: dict | None = None,
+                board_hint: str | None = None) -> dict:
     """Score ONE launcher-catalog entry. Returns either
       {"decision": "authored", "record": {...}} (plus "needs_human": True when a human must
     merge it — high-star admission, never auto-merged)
@@ -251,6 +252,11 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
     board = device_from_text(name, repo_meta.get("description"), repo_meta.get("readme_title"))
     if not board:
         board = device_from_category(entry.get("category"))
+    if not board and board_hint:
+        # A submission's board evidence, resolved by the caller to a catalogued board id
+        # (jr/board_alias over the submitter's "Boards:" line or the repo's own build files —
+        # jr/stage_admit): the last fallback, never a free-text guess.
+        board = board_hint
     if not board:
         return {"decision": "skip", "reason": "no_board_evidence: no catalogued device named"}
 

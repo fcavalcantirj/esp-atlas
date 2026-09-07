@@ -47,6 +47,7 @@ import yaml
 import tools
 
 RANK_KIND = {0: "repository name/description", 1: "release", 2: "platformio.ini", 3: "CI matrix", 4: "build target"}
+KIND_WHAT = {"submission": "submission issue"}          # kinds whose evidence is not a rank: the page where the claim appears
 
 _ASSET_URL = re.compile(r"^(https://github\.com/[^/\s]+/[^/\s]+)/releases/download/([^/\s]+)/[^\s]+$")
 
@@ -91,7 +92,7 @@ def render_recipe(recipe_id: str, board: str, firmware: str, chip_family: str, f
         if u and u not in urls:
             urls.append(u)
     flash = _flash_from(best)
-    what = RANK_KIND.get(best["rank"], "signal")
+    what = KIND_WHAT.get(best.get("kind") or "", RANK_KIND.get(best["rank"], "signal"))
     note = f"{firmware} names this board as {best['token']!s} in its {what}"
     if best.get("extra", {}).get("env"):
         note += f" (env {best['extra']['env']})"
@@ -99,7 +100,8 @@ def render_recipe(recipe_id: str, board: str, firmware: str, chip_family: str, f
         note += f" (asset {best['extra']['asset']})"
     if best.get("extra", {}).get("release"):
         note += f" (release {best['extra']['release']})"
-    note += "; derived from the repo's own build files, not verified on hardware."
+    note += ("; named by the submitter, not verified on hardware." if best.get("kind") == "submission"
+             else "; derived from the repo's own build files, not verified on hardware.")
     lines = ["---", f"id: {recipe_id}", "type: recipe", f"board: {board}", f"firmware: {firmware}",
              "status: unverified", f"chip_family: {chip_family}"]
     if flash:
@@ -114,8 +116,9 @@ def render_recipe(recipe_id: str, board: str, firmware: str, chip_family: str, f
     for u in urls:
         lines += ["- field: board", f"  url: {u}", f"  verified: '{today}'"]
     lines.append("---")
+    verb = "was submitted for" if best.get("kind") == "submission" else "declares"
     body = [f"# {board} x {firmware}", "",
-            f"`{firmware}` declares `{best['token']}` in its {what}; that name resolves to the catalogued board "
+            f"`{firmware}` {verb} `{best['token']}` in its {what}; that name resolves to the catalogued board "
             f"`{board}` ({chip_family}). Status `unverified` until someone with the hardware confirms it.", ""]
     for s in ordered:
         body.append(f"- rank {s['rank']} {s['kind']}: `{s['token']}` — {s['url']}")

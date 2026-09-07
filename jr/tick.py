@@ -300,7 +300,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             if r.paths:
                 r.guard = guard(root)
                 if not r.guard.get("ok"):
-                    raise TickAbort("guard red — worktree discarded, nothing published")
+                    out = (r.guard.get("output") or "").strip()
+                    print("jr-tick guard output:\n" + out, file=sys.stderr)          # the wrapper's log keeps the whole thing
+                    first = next((l.strip() for l in out.splitlines() if "✗" in l or "rror" in l or "FAIL" in l), "")
+                    raise TickAbort("guard red — worktree discarded, nothing published"
+                                    + (f" · {first[:160]}" if first else ""))
                 subject = f"feat(jr): tick {now.strftime('%Y-%m-%d %H:%M')} UTC — {len(r.paths)} path(s)"
             else:
                 subject = f"chore(jr): tick {now.strftime('%Y-%m-%d %H:%M')} UTC — memory reconciliation"
