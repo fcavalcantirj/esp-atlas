@@ -103,7 +103,7 @@ def test_dry_run_prints_gauge_allocation_and_nothing_to_do_and_writes_nothing(ca
     out = capsys.readouterr().out
     assert not r.aborted
     assert "jr-tick (dry-run)" in out and "boards 42.5%" in out
-    assert "boards 42.5% -> A0/B0 (phase 2: no content stages)" in out and "nothing to do" in out
+    assert "boards 42.5% -> A0/B0 (no content stages registered)" in out and "nothing to do" in out
     # read-only: no worktree, no add/commit/push, no PR, only read calls to gh
     assert all(c[0] not in ("worktree", "add", "commit", "push", "checkout") for c in norm(git))
     assert all(c[:2] in (("api", "rate_limit"), ("pr", "list"), ("api", "repos/o/r/branches/main/protection"),
@@ -381,3 +381,24 @@ def test_main_installs_a_sigterm_handler_that_aborts_instead_of_dying(monkeypatc
     assert handler is tick._on_sigterm
     with pytest.raises(tick.TickAbort):
         handler(signal.SIGTERM, None)
+
+
+# --- manual tracks (Phase 4) -------------------------------------------------------------------------
+
+def test_stages_for_track_b_builds_one_boardmap_stage_and_rejects_unknown_tracks():
+    assert tick.stages_for(None, 3) is None
+    stages = tick.stages_for("b", 2)
+    assert len(stages) == 1 and callable(stages[0])
+    with pytest.raises(SystemExit):
+        tick.stages_for("Z", 1)
+
+
+def test_main_passes_track_and_budget_to_run_tick(monkeypatch):
+    seen = {}
+
+    def fake_run(**kw):
+        seen.update(kw)
+        return tick.report.TickReport(when=NOW)
+    monkeypatch.setattr(tick, "run_tick", fake_run)
+    assert tick.main(["--dry-run", "--track", "B", "--budget", "2", "--no-telegram"]) == 0
+    assert seen["dry_run"] is True and len(seen["stages"]) == 1 and seen["telegram"] is False

@@ -76,9 +76,10 @@ def render_line(r: TickReport) -> str:
     if r.revalidate:
         reval = " · revalidate " + ("ok" if r.revalidate.get("ok") else str(r.revalidate.get("status") or r.revalidate.get("skipped") or "failed"))
     warn = "".join(f" · ⚠ {w}" for w in r.warnings)
+    stage_txt = "".join(f" · {s.get('name', 'stage')}: {s.get('summary', '')[:300]}" for s in r.stages if s.get("summary"))
     return (f"🤖 {head} {stamp}: boards {_pct(r.boards_pct)} (overall {_pct(r.overall_pct)}) · "
             f"{r.allocation or 'allocation n/a'} · admitted {r.admitted} · rejects {rej} · "
-            f"{mem_txt}{guard_txt}{reval} · {pr_txt}{warn} · {r.budget}").rstrip(" ·")
+            f"{mem_txt}{guard_txt}{reval} · {pr_txt}{stage_txt}{warn} · {r.budget}").rstrip(" ·")
 
 
 def render_pr_body(r: TickReport) -> str:
