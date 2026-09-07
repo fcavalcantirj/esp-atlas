@@ -111,11 +111,35 @@ def test_dry_run_prints_gauge_allocation_and_nothing_to_do_and_writes_nothing(ca
     assert r.memory == {} and any("dry-run" in w for w in r.warnings)
 
 
-def test_hourly_path_reports_the_gauge_driven_split(capsys, tmp_path):
+def _fake_stage_modules(monkeypatch, calls):
+    import stage_admit
+    import stage_boardmap
+    monkeypatch.setattr(stage_boardmap, "run", lambda ctx, budget, only=None: calls.append(("boardmap", budget)) or tick.StageResult("boardmap", summary=f"mapped {budget}"))
+    monkeypatch.setattr(stage_admit, "run", lambda ctx, budget: calls.append(("admit", budget)) or tick.StageResult("admit", summary=f"scored {budget}"))
+
+
+def test_hourly_path_runs_the_content_stages_from_the_split_heavier_first(capsys, tmp_path, monkeypatch):
+    calls = []
+    _fake_stage_modules(monkeypatch, calls)
     r = run(git=git_ok(tmp_path), gh=gh_ok(), stages=None)   # None → hourly, not the manual override
     out = capsys.readouterr().out
     assert not r.aborted
     assert "boards 42.5% -> A2/B4 (hourly)" in out   # allocate(42.5, 6): B-heavy country
+    assert calls == [("boardmap", 4), ("admit", 2)]   # B-heavy → boardmap first, with its 4 units
+    assert [s["name"] for s in r.stages] == ["boardmap", "admit"] and "mapped 4" in out and "scored 2" in out
+
+
+def test_hourly_stages_follow_the_split_and_skip_empty_tracks(monkeypatch):
+    calls = []
+    _fake_stage_modules(monkeypatch, calls)
+    for fn in tick.hourly_stages({"A": 4, "B": 2}):
+        fn(None)
+    assert calls == [("admit", 4), ("boardmap", 2)]      # A-heavy → admit first
+    calls.clear()
+    for fn in tick.hourly_stages({"A": 0, "B": 3}):
+        fn(None)
+    assert calls == [("boardmap", 3)]
+    assert tick.hourly_stages({"A": 0, "B": 0}) == []
 
 
 def test_dry_run_with_real_gauge_reads_the_repo_tree(tmp_path):

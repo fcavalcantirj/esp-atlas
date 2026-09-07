@@ -94,7 +94,24 @@ class StageResult:
 
 
 Stage = Callable[[TickContext], StageResult]
-STAGES: list = []   # Phase 3+ appends here; Phase 2 ships none, so a tick can never write.
+STAGES: list = []   # extra stages appended by hand; the hourly content stages come from hourly_stages()
+
+
+def hourly_stages(split: dict) -> list:
+    """The content stages of the HOURLY path, from the allocator's split (Phase 6 cutover):
+    Track B (jr/stage_boardmap: map a firmware's boards as cited recipes) with `B` firmware,
+    Track A (jr/stage_admit: score launcher candidates, write admitted records) with `A`
+    candidates. The heavier track runs first so the call budget goes where the gauge says."""
+    out = []
+    a, b = int(split.get("A") or 0), int(split.get("B") or 0)
+    if b:
+        import stage_boardmap
+        out.append(("boardmap", b, lambda ctx, n=b: stage_boardmap.run(ctx, budget=n)))
+    if a:
+        import stage_admit
+        out.append(("admit", a, lambda ctx, n=a: stage_admit.run(ctx, budget=n)))
+    out.sort(key=lambda s: -s[1])
+    return [fn for _, _, fn in out]
 
 
 # --- defaults for the injectable effects -------------------------------------------------------
@@ -251,6 +268,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             split = allocator.allocate(r.boards_pct, allocator.HOURLY_TRACK_UNITS)
             r.allocation = (f"boards {r.boards_pct:.1f}% -> "
                             f"A{split['A']}/B{split['B']} (hourly)")
+            stages = list(stages) + hourly_stages(split)
         else:
             n = len(stages)
             r.allocation = (f"boards {r.boards_pct:.1f}% -> A0/B{n} (manual track)" if n
