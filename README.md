@@ -34,6 +34,10 @@ Every field cites its official source; the `soc → module → board` chain is e
 
 ## Contributing
 
+**Have a firmware?** Paste the repo at [esp-atlas.com/submit](https://esp-atlas.com/submit) or open a
+[submission issue](https://github.com/fcavalcantirj/esp-atlas/issues/new?template=submission.yml); EspAtlas Jr
+scores it (25 stars or 25 forks, a catalogued board named) and opens a cited PR.
+
 Fixes and additions are welcome — a wrong number is a bug, and a missing board is an opportunity. Read [CONTRIBUTING.md](CONTRIBUTING.md). The one hard rule: **cite an official source for every spec, or leave it out.**
 
 ## Licensing

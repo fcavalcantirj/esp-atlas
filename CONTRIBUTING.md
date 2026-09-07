@@ -13,6 +13,16 @@ can't verify a value against a datasheet or vendor product page, omit it (or not
 the uncertainty in `notes:`) rather than inventing it. This rule is what makes the
 data trustworthy.
 
+## Have a firmware? Submit the repo, no YAML needed
+
+Paste the repository at [esp-atlas.com/submit](https://esp-atlas.com/submit), or open a
+[submission issue](https://github.com/fcavalcantirj/esp-atlas/issues/new?template=submission.yml)
+here. EspAtlas Jr scores it with the catalog's fixed rules — a real public repo, **25 stars or
+25 forks**, not a fork of a firmware already listed, at least one catalogued board named (by you,
+or by the repo's own release assets / `platformio.ini`) — comments the verdict on the issue, and
+if it passes opens a cited pull request with the firmware record and its recipes. No account,
+no AI in the decision, nothing lands without CI green.
+
 ## What to contribute
 
 - **Fix a spec** — found a wrong value? Correct it and update/point to the source.
