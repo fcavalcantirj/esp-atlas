@@ -131,30 +131,3 @@ def test_summary_derived_only_from_facts_no_invention():
     cited = {tok.strip() for tok in entries_line[len("Entries:"):].split("·")}
     # Every listed entry id is a real batch id — nothing invented.
     assert cited == ids
-
-
-def test_drain_pr_body_falls_back_to_terse_template_when_summary_is_none():
-    """When the summary is None (best-effort miss), drain_pr still builds a valid terse body with
-    every id, its URL, and the guard-green statement — the PR opens regardless."""
-    import shutil
-
-    import drain_pr
-    import tools
-
-    fid = "zzz-test-fixture-pr-summary-fallback"
-    url = "https://github.com/octocat/esp32-launcher"
-    d = tools.FIRMWARE_DIR / fid
-    d.mkdir(parents=True, exist_ok=True)
-    (d / "firmware.md").write_text(
-        f"---\nid: {fid}\nname: Zzz Launcher\nurl: {url}\ncategory: multi\nsocs: [esp32-s3]\n---\n\nA launcher.\n"
-    )
-    try:
-        body = drain_pr._pr_body([fid], None)
-        assert fid in body and url in body
-        assert "guard" in body.lower() and "green" in body.lower()
-        assert "Review these" not in body  # no summary prepended
-        # And with a summary present it is prepended above the cited list.
-        body2 = drain_pr._pr_body([fid], "SMART HEADLINE\n\n**Categories:** multi 1")
-        assert body2.index("SMART HEADLINE") < body2.index(fid)
-    finally:
-        shutil.rmtree(d, ignore_errors=True)

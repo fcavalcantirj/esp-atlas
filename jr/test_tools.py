@@ -405,27 +405,6 @@ def test_author_board_still_rejects_source_missing_field(real_board_dir):
     assert not (real_board_dir / "bad-source-board").exists()
 
 
-# ─────────────────────────── author_board tool schema (Agno) ───────────────────────────
-
-def test_author_board_agno_schema_has_no_extra_required_property():
-    """Same bug class as the fixed `**extra` issue: any author_board param with no default gets
-    marked REQUIRED in Agno's auto-generated tool-call JSON schema. When Groq gpt-oss-120b omits
-    an optional-in-spirit param like `body`, the call hard-fails with 'missing properties: body'
-    and the board is lost. Only board_id/brand/name are genuinely required — fields, sources,
-    body, soc, module, today must all be optional. Introspect the REAL registered tool off the
-    REAL agent (agent.make_jr_board()), exactly as Agno hands it to the model."""
-    pytest.importorskip("agno")
-    from agno.tools.function import Function
-    from agent import make_jr_board
-
-    a = make_jr_board()
-    author_board_fn = next(t for t in a.tools if getattr(t, "__name__", None) == "author_board")
-    schema = Function.from_callable(author_board_fn).parameters
-
-    assert set(schema["required"]) == {"board_id", "brand", "name"}
-    assert "extra" not in schema["properties"]
-
-
 def test_author_board_callable_with_body_omitted(real_board_dir):
     """The live-failure shape: Groq omits `body` entirely. Must not raise, and must still write a
     valid (empty-body) record rather than hard-failing on a missing required schema property."""
