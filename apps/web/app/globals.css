@@ -2578,3 +2578,14 @@ input[type="checkbox"]:checked::after {
 .fit-badge--unconfirmed {
   color: var(--muted);
 }
+
+/* /submit — one field, one optional hint, Turnstile, a verdict line */
+.submit-form { display: grid; gap: 0.5rem; max-width: 40rem; margin: 1.5rem 0 2rem; }
+.submit-form label { font-weight: 600; margin-top: 0.5rem; }
+.submit-form input { font: inherit; padding: 0.6rem 0.75rem; border: 1px solid var(--border, #8884); border-radius: 6px; background: var(--bg-elev, transparent); color: inherit; }
+.submit-form button { font: inherit; font-weight: 600; padding: 0.6rem 1.1rem; margin-top: 0.75rem; border-radius: 6px; border: 1px solid var(--border, #8884); background: var(--accent, #2563eb); color: #fff; cursor: pointer; justify-self: start; }
+.submit-form button:disabled { opacity: 0.55; cursor: not-allowed; }
+.submit-form .muted { font-weight: 400; opacity: 0.7; }
+.turnstile-slot { min-height: 65px; margin-top: 0.75rem; }
+.submit-ok { padding: 0.75rem; border-left: 3px solid #16a34a; }
+.submit-error { padding: 0.75rem; border-left: 3px solid #dc2626; }
