@@ -100,7 +100,36 @@ def test_select_firmware_prefers_under_mapped_and_skips_fresh_and_non_github(roo
     assert "nogithub" not in sb.select_firmware(root, 9, NOW)
 
 
-def test_map_one_writes_cited_recipes_widens_socs_with_proof_and_persists_signals(root):
+def test_select_firmware_prefers_measured_under_map_over_fewest_recipes(root):
+    (root / "data" / "firmware" / "full").mkdir()
+    (root / "data" / "firmware" / "full" / "firmware.md").write_text(FW.replace("id: marauder", "id: full"))
+    declared = ["m5cardputer", "m5stick-cplus2", "m5nanoc6"]      # declared, none has a recipe → missing 3
+    for b in ["m5stamp-s3", "m5dial", "m5tough", "m5paper", "m5core2"]:
+        d = root / "data" / "recipes" / f"{b}__full"
+        d.mkdir(parents=True)
+        (d / "recipe.md").write_text("x\n")
+    (root / "data" / "firmware" / "full" / "signals.json").write_text(json.dumps({
+        "fetched": "2026-08-01", "errors": 0, "signals": [{"token": "t"}],
+        "resolved": {"boards": declared, "socs": [], "unresolved": []}}))
+    (root / "data" / "firmware" / "empty").mkdir()                # no signals, no recipes
+    (root / "data" / "firmware" / "empty" / "firmware.md").write_text(FW.replace("id: marauder", "id: empty"))
+    assert sb.select_firmware(root, 1, NOW) == ["full"]           # 5 recipes + 3 missing beats 0 recipes + unmeasured
+    assert sb.select_firmware(root, 3, NOW) == ["full", "empty", "marauder"]
+
+
+def test_select_firmware_treats_failed_signals_as_unmeasured(root):
+    (root / "data" / "firmware" / "full").mkdir()
+    (root / "data" / "firmware" / "full" / "firmware.md").write_text(FW.replace("id: marauder", "id: full"))
+    (root / "data" / "firmware" / "full" / "signals.json").write_text(json.dumps({
+        "fetched": "2026-08-01", "errors": 0, "signals": [{"token": "t"}],
+        "resolved": {"boards": ["m5cardputer", "m5stick-cplus2"], "socs": [], "unresolved": []}}))
+    (root / "data" / "firmware" / "broken").mkdir()
+    (root / "data" / "firmware" / "broken" / "firmware.md").write_text(FW.replace("id: marauder", "id: broken"))
+    (root / "data" / "firmware" / "broken" / "signals.json").write_text(json.dumps({
+        "fetched": "2026-09-06", "errors": 2, "signals": [],     # fresh but failed → unmeasured: not skipped
+        "resolved": {"boards": ["m5cardputer", "m5stick-cplus2", "m5nanoc6"], "socs": [], "unresolved": []}}))
+    assert sb.select_firmware(root, 1, NOW) == ["full"]           # 2 missing beats a failed file's 5 phantom boards
+    assert "broken" in sb.select_firmware(root, 9, NOW)           # failed file: selectable, not freshness-skipped
     r = sb.map_one("marauder", root=root, api=fake_api, raw=fake_raw, today="2026-09-07")
     assert {"m5cardputer__marauder", "m5stick-cplus2__marauder", "m5nanoc6__marauder"} <= set(r["written"])
     assert r["existing"] == [] and r["refused"] == [] and r["unresolved"] > 0 and r["signals"] == 26 and r["errors"] == 0
