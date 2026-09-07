@@ -118,6 +118,12 @@ def test_resolve_token_maps_build_signal_tokens_and_chips():
     assert ba.resolve_token("esp32", boards=BOARDS, entries=ENTRIES, aliases=ALIASES) == {"soc": "esp32"}   # chip wins over the alias
     assert ba.resolve_token("twin", boards=BOARDS, entries=ENTRIES) is None
     assert ba.resolve_token("", boards=BOARDS, entries=ENTRIES) is None
+    # a token no universe entry carries still resolves DIRECTLY against the catalog (release
+    # asset names use short forms), chip-checked, unambiguous only
+    assert ba.resolve_token("T-Deck", boards=BOARDS, entries=ENTRIES)["how"] == "direct"
+    assert ba.resolve_token("tdeck", soc="esp32-s3", boards=BOARDS, entries=ENTRIES)["atlas_id"] == "lilygo-t-deck"
+    assert ba.resolve_token("tdeck", soc="esp32", boards=BOARDS, entries=ENTRIES) is None
+    assert ba.resolve_token("Twin Board", boards=BOARDS, entries=ENTRIES) is None       # two boards share the name
 
 
 # --- the real tree ------------------------------------------------------------------------------

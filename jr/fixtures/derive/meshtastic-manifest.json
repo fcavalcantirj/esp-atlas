@@ -1,0 +1,69 @@
+{
+ "version": "2.7.26.54e0d8d",
+ "targets": [
+  {
+   "board": "t-deck-pro-v1_1",
+   "platform": "esp32s3"
+  },
+  {
+   "board": "station-g3",
+   "platform": "esp32s3"
+  },
+  {
+   "board": "thinknode_m2",
+   "platform": "esp32s3"
+  },
+  {
+   "board": "t-watch-s3",
+   "platform": "esp32s3"
+  },
+  {
+   "board": "CDEBYTE_EoRa-S3",
+   "platform": "esp32s3"
+  },
+  {
+   "board": "t5s3-epaper-v1",
+   "platform": "esp32s3"
+  },
+  {
+   "board": "t5s3-epaper-v2",
+   "platform": "esp32s3"
+  },
+  {
+   "board": "m5stack-cardputer-adv",
+   "platform": "esp32s3"
+  },
+  {
+   "board": "picomputer-s3",
+   "platform": "esp32s3"
+  },
+  {
+   "board": "picomputer-s3-tft",
+   "platform": "esp32s3"
+  },
+  {
+   "board": "heltec-v4",
+   "platform": "esp32s3"
+  },
+  {
+   "board": "heltec-v4-tft",
+   "platform": "esp32s3"
+  },
+  {
+   "board": "rak3172",
+   "platform": "stm32"
+  },
+  {
+   "board": "wio-e5",
+   "platform": "stm32"
+  },
+  {
+   "board": "pico2",
+   "platform": "rp2350"
+  },
+  {
+   "board": "pico2w",
+   "platform": "rp2350"
+  }
+ ]
+}

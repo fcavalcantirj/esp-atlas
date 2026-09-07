@@ -200,6 +200,7 @@ def resolve_token(token: str, soc: str | None = None, boards: dict[str, dict] | 
     if chip:
         return {"soc": chip}
     entries = universe() if entries is None else entries
+    boards = atlas_boards() if boards is None else boards
     matches = [e for e in entries if c in _entry_compact_keys(e) and (soc is None or e.get("soc") == soc)]
     resolved = {}
     for e in matches:
@@ -208,6 +209,14 @@ def resolve_token(token: str, soc: str | None = None, boards: dict[str, dict] | 
             resolved[r["atlas_id"]] = r
     if len(resolved) == 1:
         return next(iter(resolved.values()))
+    if resolved:
+        return None                      # two atlas boards claim it through the universe
+    # No universe entry carries this exact string (release assets and manifests use their own
+    # short names: `tbeam`, `m5cardputer`). Fall back to the catalog itself: compact equality
+    # against an atlas id / name / aka, chip family agreeing when the caller knows it.
+    direct = [b for b in boards.values() if c in _atlas_compact_keys(b) and (soc is None or b["soc"] == soc)]
+    if len(direct) == 1:
+        return {"atlas_id": direct[0]["id"], "how": "direct", "evidence": {"key": None, "url": None}}
     return None                          # unknown token, or two atlas boards claim it
 
 
