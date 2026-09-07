@@ -129,12 +129,20 @@ def protection_status(repo_slug: str, gh=default_gh,
                       required: tuple = REQUIRED_CHECKS) -> ProtectionStatus:
     """Read the LIVE branch-protection rule on main and the repo's auto-merge switch. ok only
     when every name in `required` is a required status check AND auto-merge is allowed. A 404
-    ("Branch not protected") is the exact hole this exists to catch."""
+    ("Branch not protected") is the exact hole this exists to catch — but GitHub also answers
+    404 to a write-only token on this admin-only endpoint, so a 404 is cross-checked against
+    the lighter `GET /branches/main` (readable with write): `protected: true` there means the
+    rule exists and THIS token cannot read its required checks (needs Administration: read).
+    Auto-merge is withheld either way; only the reason differs, and the reason must not lie."""
     p = gh("api", f"repos/{repo_slug}/branches/main/protection")
     if not _ok(p):
         err = (getattr(p, "stderr", "") or "") + (getattr(p, "stdout", "") or "")
         if "403" in err or "Resource not accessible" in err:
             return ProtectionStatus(False, reason="cannot read main's protection (403: token lacks permission)")
+        b = gh("api", f"repos/{repo_slug}/branches/main", "-q", ".protected")
+        if _ok(b) and (getattr(b, "stdout", "") or "").strip().lower() == "true":
+            return ProtectionStatus(False, reason="protection exists but this token cannot read its required checks "
+                                                  "(admin-only endpoint answers 404 to a write token; needs Administration: read)")
         return ProtectionStatus(False, reason="main is not protected (auto-merge would merge instantly)")
     try:
         rule = json.loads(p.stdout)

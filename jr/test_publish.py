@@ -123,6 +123,17 @@ def test_protection_not_ok_when_branch_unprotected():
     assert not st.ok and "not protected" in st.reason
 
 
+def test_protection_404_for_a_write_token_is_reported_as_unreadable_not_as_unprotected():
+    """GitHub masks the admin-only protection endpoint as 404 for a write collaborator (the
+    espatlas-jr bot). `GET /branches/main` still says protected: true — the reason must say
+    'cannot read', never 'not protected'; auto-merge stays withheld."""
+    gh = recorder({("api", "repos/o/r/branches/main/protection"): (1, ""),
+                   ("api", "repos/o/r/branches/main", "-q", ".protected"): (0, "true\n")})
+    st = publish.protection_status("o/r", gh=gh)
+    assert not st.ok and "cannot read its required checks" in st.reason and "not protected" not in st.reason
+    assert ("api", "repos/o/r/branches/main", "-q", ".protected") in gh.calls
+
+
 def test_protection_not_ok_when_a_check_is_missing():
     st = publish.protection_status("o/r", gh=_gh_with_protection(["schema", "tests"]))
     assert not st.ok and "jr-tests" in st.reason
