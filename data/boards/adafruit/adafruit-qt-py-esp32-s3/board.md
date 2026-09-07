@@ -16,6 +16,7 @@ dimensions_mm:
 usb:
   connector: usb-c
   bridge: native
+usb_serial: native-usb-serial-jtag
 power:
   battery_connector: true
   charging: false
@@ -42,6 +43,7 @@ notes:
   usb_flash_tied) are among them; the BOOT button (GPIO0) and the STEMMA QT
   connector''s dedicated I2C (SCL1/SDA1, GPIO40/41) and NeoPixel (GPIO38/39) sit
   off the eleven counted pads -- so 11 - 3 = 8'
+- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5426
@@ -60,6 +62,9 @@ sources:
   verified: '2026-09-07'
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/adafruit_qtpy_esp32s3_nopsram.json
+  verified: '2026-09-07'
+- field: usb_serial
+  url: https://www.adafruit.com/product/5426
   verified: '2026-09-07'
 ---
 

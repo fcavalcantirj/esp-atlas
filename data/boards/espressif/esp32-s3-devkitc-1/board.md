@@ -73,6 +73,7 @@ notes:
   J3 = GPIO 0-2,19-21,35-45,47,48). Subtracting esp32-s3''s soc.reserved_pins that
   are exposed -- strapping {0,3,45,46} (4) and usb_flash_tied {19,20,35,36,37} (5)
   -- gives 36 - 4 - 5 = 27. Math not vendor-stated; verify before treating as exact.'
+getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html
@@ -109,6 +110,9 @@ sources:
   verified: '2026-09-07'
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-s3-devkitc1-n8r8.json
+  verified: '2026-09-07'
+- field: getting_started
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html
   verified: '2026-09-07'
 ---
 

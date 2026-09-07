@@ -14,6 +14,7 @@ dimensions_mm:
 - 25.4
 usb:
   bridge: ch340
+usb_serial: ch340
 power:
   battery_connector: true
   charging: true
@@ -50,6 +51,7 @@ notes:
   share their header pads rather than exclusively consuming them, so neither is
   separately subtracted (same treatment as the adafruit-metro-esp32-s3 shared-bus
   precedent) -- 23 - 5 - 3 = 15'
+- 'usb_serial derived from usb.bridge (ch340)'
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/d32/d32_pro.html
@@ -68,6 +70,9 @@ sources:
   verified: '2026-09-07'
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/lolin_d32_pro.json
+  verified: '2026-09-07'
+- field: usb_serial
+  url: https://www.wemos.cc/en/latest/d32/d32_pro.html
   verified: '2026-09-07'
 ---
 

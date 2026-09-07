@@ -9,6 +9,7 @@ form_factor: t-display
 price_tier: medium
 usb:
   bridge: ch9102
+usb_serial: ch9102
 display: 1.14in 135x240 ST7789 SPI IPS
 notes:
 - 4 MB or 16 MB flash options (board-level default/most-common SKU not confirmed in vendor docs, so flash_mb is left unset)
@@ -22,6 +23,7 @@ notes:
   total exposed-pad count and no full side-header pin list, and no other
   official LilyGo page/schematic-checklist source was found with one, so
   gpio_exposed/gpio_free are left unset per cite-or-omit'
+- 'usb_serial derived from usb.bridge (ch9102)'
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-display
@@ -29,6 +31,9 @@ sources:
 - field: psram_mb
   url: https://github.com/Xinyuan-LilyGO/TTGO-T-Display/blob/master/README.MD
   verified: '2026-08-24'
+- field: usb_serial
+  url: https://www.lilygo.cc/products/t-display
+  verified: '2026-09-07'
 ---
 
 # T-Display

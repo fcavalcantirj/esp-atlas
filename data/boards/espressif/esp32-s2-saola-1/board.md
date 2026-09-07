@@ -64,6 +64,7 @@ notes:
   -- strapping {0,45,46} (GPIO46 also listed under input_only, so counted once)
   and usb_flash_tied {19,20} -- 5 unique reserved pins exposed -- gives 37 - 5 =
   32. Math not vendor-stated; verify before treating as exact.'
+getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html
@@ -74,6 +75,9 @@ sources:
 - field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html
   verified: '2026-08-26'
+- field: getting_started
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html
+  verified: '2026-09-07'
 ---
 
 # ESP32-S2-Saola-1

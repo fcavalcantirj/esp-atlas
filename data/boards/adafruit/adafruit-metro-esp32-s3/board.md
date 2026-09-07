@@ -13,6 +13,7 @@ price_tier: medium
 usb:
   connector: usb-c
   bridge: native
+usb_serial: native-usb-serial-jtag
 power:
   battery_connector: true
   charging: true
@@ -43,6 +44,7 @@ notes:
   MISO bus (not exclusive) but its SD_CS (GPIO45, itself strapping) is a
   dedicated internal signal with no header pad, and NeoPixel (GPIO46) is
   likewise off-header -- so 25 - 1 = 24'
+- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5500
@@ -61,6 +63,9 @@ sources:
   verified: '2026-09-07'
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/adafruit_metro_esp32s3.json
+  verified: '2026-09-07'
+- field: usb_serial
+  url: https://www.adafruit.com/product/5500
   verified: '2026-09-07'
 ---
 

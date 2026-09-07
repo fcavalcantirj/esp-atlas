@@ -15,6 +15,7 @@ dimensions_mm:
 usb:
   connector: usb-c
   bridge: native
+usb_serial: native-usb-serial-jtag
 power:
   battery_connector: true
   charging: true
@@ -43,6 +44,7 @@ notes:
   MOSI=42, SCK=41, RESET=39, backlight=21: 6 new pins) and GNSS (RX=33, TX=34,
   RESET=35, PPS=36; RESET/PPS are already removed via reserved_pins, so 2 new:
   33,34) -- gives 28 - 9 - 6 - 2 = 11'
+- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
 sources:
 - field: '*'
   url: https://heltec.org/project/wireless-tracker/
@@ -59,6 +61,9 @@ sources:
 - field: io.gpio_free
   url: https://github.com/meshtastic/firmware/blob/master/variants/esp32s3/heltec_wireless_tracker/variant.h
   verified: '2026-08-26'
+- field: usb_serial
+  url: https://heltec.org/project/wireless-tracker/
+  verified: '2026-09-07'
 ---
 
 # Wireless Tracker
