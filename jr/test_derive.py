@@ -107,7 +107,7 @@ def test_extra_configs_are_capped_and_the_cap_is_noted():
     calls = derive._Calls(f.api, f.raw, 200)
     notes = []
     sigs = derive.platformio_signals("o/r", "main", calls, notes, tree=paths)
-    assert len(sigs) == derive.MAX_EXTRA_CONFIG_FILES and any("capped" in n for n in notes)
+    assert len(sigs) == derive.MAX_EXTRA_CONFIG_FILES and any("more than 40" in n for n in notes)
 
 
 # --- rank 1: releases ----------------------------------------------------------------------------------
@@ -141,11 +141,18 @@ def test_manifest_signals_keep_only_esp32_platforms_with_their_chip():
     assert s.soc == "esp32-s3" and s.rank == 1 and s.kind == "manifest" and s.url == url
 
 
-def test_esp_web_tools_manifest_shape_is_read_too():
-    doc = {"name": "x", "builds": [{"chipFamily": "ESP32-S3", "parts": [{"path": "firmware-tbeam-s3-2.5.bin", "offset": 0}]},
-                                   {"chipFamily": "ESP32-C3", "parts": [{"path": "sub/dir/xiao-c3.bin", "offset": 0}]}]}
+def test_esp_web_tools_manifest_names_the_board_in_its_name_not_its_parts():
+    doc = {"name": "LilyGO T-Beam", "builds": [{"chipFamily": "ESP32-S3", "parts": [{"path": "bootloader.bin", "offset": 0}, {"path": "firmware.bin", "offset": 65536}]},
+                                               {"chipFamily": "ESP32-C3", "name": "XIAO ESP32C3", "parts": [{"path": "firmware.bin", "offset": 0}]}]}
     sigs = derive.manifest_signals(doc, "https://x/manifest.json", None)
-    assert [(s.token, s.soc) for s in sigs] == [("firmware-tbeam-s3-2.5", "esp32-s3"), ("xiao-c3", "esp32-c3")]
+    assert [(s.token, s.soc) for s in sigs] == [("LilyGO T-Beam", "esp32-s3"), ("XIAO ESP32C3", "esp32-c3")]
+
+
+def test_manifest_signals_never_raise_on_odd_shapes():
+    for doc in ([], "text", 42, {"targets": "nope"}, {"targets": ["str", 1, None]}, {"builds": [1, "x", None, {"parts": "p"}]}, {"builds": [{"chipFamily": "ESP32-S3"}]}):
+        sigs = derive.manifest_signals(doc, "u", None)
+        assert isinstance(sigs, list)
+    assert [(s.token, s.soc) for s in derive.manifest_signals({"builds": [{"chipFamily": "ESP32-S3"}]}, "u", None)] == [("ESP32-S3", "esp32-s3")]
 
 
 def test_release_signals_read_a_small_manifest_asset_but_skip_big_ones():
@@ -225,3 +232,135 @@ def test_resolve_puts_chip_only_signals_under_socs():
     res = derive.resolve({"signals": [{"rank": 4, "kind": "idf", "token": "esp32s3", "soc": "esp32-s3", "url": "u", "line": 1, "extra": {}},
                                       {"rank": 1, "kind": "asset", "token": "not-a-board-at-all-xyz", "soc": None, "url": "u", "line": None, "extra": {}}]})
     assert list(res["socs"]) == ["esp32-s3"] and res["boards"] == {} and [s["token"] for s in res["unresolved"]] == ["not-a-board-at-all-xyz"]
+
+
+# --- PlatformIO semantics (review-driven) ---------------------------------------------------------
+
+def test_extends_last_listed_parent_wins_like_platformio():
+    ini = "[b1]\nboard = one\n[b2]\nboard = two\n[env:a]\nextends = b1, b2\n[env:b]\nextends =\n  b2\n  b1\n"
+    p = derive.parse_platformio(ini)
+    assert p["envs"]["a"]["board"] == "two" and p["envs"]["b"]["board"] == "one"
+
+
+def test_interpolated_board_is_resolved_or_dropped_never_leaked():
+    ini = "[common]\nboard = esp32dev\nname = wled\n[env:a]\nboard = ${common.board}\n[env:b]\nboard = ${missing.board}\n[env:c]\nboard = ${common.name}-s3\n"
+    p = derive.parse_platformio(ini)
+    assert p["envs"]["a"]["board"] == "esp32dev" and p["envs"]["a"]["line"] == 5
+    assert p["envs"]["b"]["board"] is None
+    assert p["envs"]["c"]["board"] == "wled-s3"
+    assert not any("${" in (v["board"] or "") for v in p["envs"].values())
+
+
+def test_option_names_are_case_insensitive_and_inline_comments_on_continuations_are_stripped():
+    ini = "[env:a]\nBoard = esp32dev ; the board\n[platformio]\nextra_configs =\n  boards/*.ini ; per board\n  ; commented/*.ini\n"
+    p = derive.parse_platformio(ini)
+    assert p["envs"]["a"]["board"] == "esp32dev" and p["extra_configs"] == ["boards/*.ini"]
+
+
+def test_extra_config_files_are_merged_into_one_config_before_resolving():
+    root = "[platformio]\nextra_configs = boards/*.ini\n[env]\nboard = esp32dev\n[esp32s3_base]\nboard = esp32-s3-devkitc-1\n"
+    foo = "[env:foo]\nbuild_flags = -DFOO\n[env:bar]\nextends = esp32s3_base\n[env:baz]\nextends = env:foo\n"
+    f = Fake(raw={"https://raw.githubusercontent.com/o/r/main/platformio.ini": root,
+                  "https://raw.githubusercontent.com/o/r/main/boards/foo.ini": foo})
+    calls = derive._Calls(f.api, f.raw, 60)
+    sigs = derive.platformio_signals("o/r", "main", calls, [], tree=["platformio.ini", "boards/foo.ini"])
+    got = {s.extra["env"]: (s.token, s.url) for s in sigs}
+    assert got["foo"] == ("esp32dev", "https://github.com/o/r/blob/main/platformio.ini#L4")       # [env] default, cited where it lives
+    assert got["bar"] == ("esp32-s3-devkitc-1", "https://github.com/o/r/blob/main/platformio.ini#L6")
+    assert got["baz"] == ("esp32dev", "https://github.com/o/r/blob/main/platformio.ini#L4")       # extends env:foo → [env] default
+
+
+@pytest.mark.parametrize("pattern,path,match", [
+    ("boards/*.ini", "boards/x.ini", True), ("boards/*.ini", "boards/a/b.ini", False),
+    ("boards/*/*.ini", "boards/a/b.ini", True), ("boards/*/*.ini", "boards/a/b/c.ini", False),
+    ("boards/**/*.ini", "boards/x.ini", True), ("boards/**/*.ini", "boards/a/b/c.ini", True),
+    ("*.ini", "platformio.ini", True), ("*.ini", ".vscode/settings.ini", False),
+    ("**/platformio.ini", "platformio.ini", True), ("./boards/*.ini", "boards/x.ini", True),
+])
+def test_glob_semantics_match_python_glob_not_fnmatch(pattern, path, match):
+    assert bool(derive.glob_to_regex(pattern).match(path)) is match
+
+
+def test_a_glob_that_matches_the_root_file_does_not_refetch_it():
+    root = "[platformio]\nextra_configs = *.ini\n[env:a]\nboard = esp32dev\n"
+    f = Fake(raw={"https://raw.githubusercontent.com/o/r/main/platformio.ini": root})
+    calls = derive._Calls(f.api, f.raw, 60)
+    sigs = derive.platformio_signals("o/r", "main", calls, [], tree=["platformio.ini"])
+    assert [s.extra["env"] for s in sigs] == ["a"] and f.calls.count(("raw", "https://raw.githubusercontent.com/o/r/main/platformio.ini")) == 1
+
+
+def test_extra_config_cap_prefers_files_naming_an_esp32_family():
+    paths = [f"variants/nrf52/n{i}/platformio.ini" for i in range(45)] + [f"variants/esp32s3/s{i}/platformio.ini" for i in range(5)]
+    raw = {"https://raw.githubusercontent.com/o/r/main/platformio.ini": "[platformio]\nextra_configs = variants/*/*/platformio.ini\n"}
+    raw.update({f"https://raw.githubusercontent.com/o/r/main/{p}": f"[env:e{i}]\nboard = b{i}\n" for i, p in enumerate(paths)})
+    f = Fake(raw=raw)
+    notes = []
+    sigs = derive.platformio_signals("o/r", "main", derive._Calls(f.api, f.raw, 200), notes, tree=paths)
+    fetched = {u for k, u in f.calls if k == "raw"}
+    assert all(f"https://raw.githubusercontent.com/o/r/main/variants/esp32s3/s{i}/platformio.ini" in fetched for i in range(5))
+    assert len(sigs) == derive.MAX_EXTRA_CONFIG_FILES and any("ESP32 family first" in n for n in notes)
+
+
+# --- release / CI / IDF robustness (review-driven) --------------------------------------------------
+
+def test_common_prefix_only_strips_a_stamped_prefix_and_generic_bins_are_dropped():
+    assert derive.common_prefix(["xiao-esp32c3", "xiao-esp32c6"]) == ""                     # vendor stem stays
+    assert derive.common_prefix(["esp32-s3-devkitc-1", "esp32-s3-devkitm-1"]) == ""
+    rel = {"tag_name": "v2", "assets": [{"name": n, "size": 1, "browser_download_url": f"https://dl/{n}"} for n in
+           ("xiao-esp32c3.bin", "xiao-esp32c6.bin", "bootloader.bin", "partitions.bin", "firmware.bin", "boot_app0.bin")]}
+    f = Fake(api={"repos/o/r/releases/latest": rel})
+    sigs = derive.release_signals("o/r", derive._Calls(f.api, f.raw, 60), [])
+    assert [s.token for s in sigs] == ["xiao-esp32c3", "xiao-esp32c6"]
+
+
+def test_clean_token_removes_dotted_versions_and_date_stamps_but_keeps_board_revisions():
+    assert derive.clean_token("firmware-tbeam-2.5.3") == "firmware-tbeam"
+    assert derive.clean_token("mini_v3") == "mini_v3"
+    assert derive.clean_token("m5cardputer-20260824") == "m5cardputer"
+    assert derive.clean_token("esp32-s3-devkitc-1") == "esp32-s3-devkitc-1"
+
+
+def test_single_asset_release_still_yields_a_clean_token():
+    rel = {"tag_name": "v1.2.3", "assets": [{"name": "mydevice-v1.2.3.bin", "size": 1, "browser_download_url": "https://dl/x.bin"}]}
+    f = Fake(api={"repos/o/r/releases/latest": rel})
+    sigs = derive.release_signals("o/r", derive._Calls(f.api, f.raw, 60), [])
+    assert [s.token for s in sigs] == ["mydevice"]
+
+
+def test_ci_matrix_ignores_exclude_runners_versions_and_booleans():
+    wf = ("jobs:\n  build:\n    strategy:\n      matrix:\n        os: [ubuntu-latest, macos-13]\n        python-version: ['3.11', '3.12']\n"
+          "        board: [m5stack-cardputer]\n        flag: [true, false, 3]\n        exclude:\n          - board: lilygo-t-deck\n        include:\n          - board: xiao-esp32c3\n            os: windows-latest\n    steps: []\n")
+    f = Fake(raw={"https://raw.githubusercontent.com/o/r/main/.github/workflows/build.yml": wf})
+    sigs = derive.ci_signals("o/r", "main", derive._Calls(f.api, f.raw, 60), [], tree=[".github/workflows/build.yml"])
+    assert {s.token for s in sigs} == {"m5stack-cardputer", "xiao-esp32c3"}
+
+
+def test_workflow_cap_is_noted_and_prefers_build_named_files():
+    tree = [f".github/workflows/z{i}.yml" for i in range(12)] + [".github/workflows/build.yml"]
+    raw = {f"https://raw.githubusercontent.com/o/r/main/{p}": "jobs: {}\n" for p in tree}
+    f = Fake(raw=raw)
+    notes = []
+    derive.ci_signals("o/r", "main", derive._Calls(f.api, f.raw, 60), notes, tree=tree)
+    assert any("more than 10 workflows" in n for n in notes)
+    assert ("raw", "https://raw.githubusercontent.com/o/r/main/.github/workflows/build.yml") in f.calls
+
+
+def test_idf_targets_come_from_yaml_not_regex_and_per_target_sdkconfig_names_count():
+    f = Fake(raw={"https://raw.githubusercontent.com/o/r/main/idf_component.yml": "description: uses esp32-camera on esp32-s3-box\ntargets:\n  - esp32s3\n  - esp32c6\n"})
+    sigs = derive.idf_signals("o/r", "main", derive._Calls(f.api, f.raw, 60), [], tree=["idf_component.yml", "sdkconfig.defaults.esp32s3", "sdkconfig.defaults.esp32p4"])
+    assert sorted((s.token, s.soc) for s in sigs) == [("esp32c6", "esp32-c6"), ("esp32p4", "esp32-p4"), ("esp32s3", "esp32-s3"), ("esp32s3", "esp32-s3")]
+    assert not any("camera" in s.token or "box" in s.token for s in sigs)
+
+
+def test_budget_exceeded_from_the_tick_passes_through_and_other_errors_become_notes():
+    from budget import BudgetExceeded
+    def api(path):
+        raise BudgetExceeded("tick budget")
+    with pytest.raises(BudgetExceeded):
+        derive.derive("o/r", api=api, raw=lambda u: None, today="2026-09-07")
+    def api2(path):
+        if "releases" in path:
+            return {"assets": [{"name": "x.json", "size": 5, "browser_download_url": "https://dl/x.json"}]}
+        raise RuntimeError("404")
+    d = derive.derive("o/r", api=api2, raw=lambda u: "[1, 2, 3]", ref="main", today="2026-09-07")
+    assert d["signals"] == [] and d["calls"] >= 2 and all("failed" not in n for n in d["notes"])

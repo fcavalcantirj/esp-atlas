@@ -124,6 +124,8 @@ def test_resolve_token_maps_build_signal_tokens_and_chips():
     assert ba.resolve_token("tdeck", soc="esp32-s3", boards=BOARDS, entries=ENTRIES)["atlas_id"] == "lilygo-t-deck"
     assert ba.resolve_token("tdeck", soc="esp32", boards=BOARDS, entries=ENTRIES) is None
     assert ba.resolve_token("Twin Board", boards=BOARDS, entries=ENTRIES) is None       # two boards share the name
+    # a token the universe DOES carry but refuses (chip mismatch) must not sneak in via the fallback
+    assert ba.resolve_token("wrong_chip_cardputer", boards=BOARDS, entries=ENTRIES) is None
 
 
 # --- the real tree ------------------------------------------------------------------------------
