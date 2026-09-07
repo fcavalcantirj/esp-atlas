@@ -3,6 +3,8 @@ id: m5dial
 type: board
 brand: m5stack
 name: Dial
+aka:
+- "m5stack_dial"
 soc: esp32-s3
 flash_mb: 8
 psram_mb: 0
@@ -47,6 +49,9 @@ sources:
 - field: io.gpio_free
   url: https://docs.m5stack.com/en/core/M5Dial
   verified: '2026-08-26'
+- field: aka
+  url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
+  verified: '2026-09-07'
 ---
 
 # Dial

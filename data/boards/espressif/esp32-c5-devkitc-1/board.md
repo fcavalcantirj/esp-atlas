@@ -3,6 +3,10 @@ id: esp32-c5-devkitc-1
 type: board
 brand: espressif
 name: ESP32-C5-DevKitC-1
+aka:
+- "esp32-c5-devkitc1-n16r4"
+- "esp32-c5-devkitc1-n4"
+- "esp32-c5-devkitc1-n8r4"
 soc: esp32-c5
 form_factor: devkit
 usb:
@@ -83,6 +87,18 @@ sources:
 - field: first_flash_notes
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
   verified: '2026-09-01'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-c5-devkitc-1.json
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-c5-devkitc1-n16r4.json
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-c5-devkitc1-n4.json
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-c5-devkitc1-n8r4.json
+  verified: '2026-09-07'
 ---
 
 # ESP32-C5-DevKitC-1

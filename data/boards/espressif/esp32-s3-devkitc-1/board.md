@@ -3,6 +3,15 @@ id: esp32-s3-devkitc-1
 type: board
 brand: espressif
 name: ESP32-S3-DevKitC-1
+aka:
+- "esp32-s3-devkitc-1-n32r8v"
+- "esp32-s3-devkitc1-n16r16"
+- "esp32-s3-devkitc1-n16r2"
+- "esp32-s3-devkitc1-n16r8"
+- "esp32-s3-devkitc1-n4r2"
+- "esp32-s3-devkitc1-n4r8"
+- "esp32-s3-devkitc1-n8r2"
+- "esp32-s3-devkitc1-n8r8"
 module: esp32-s3-wroom-1
 flash_mb: 4
 psram_mb: 0
@@ -74,6 +83,33 @@ sources:
 - field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html
   verified: '2026-08-26'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-s3-devkitc-1.json
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-s3-devkitc-1-n32r8v.json
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-s3-devkitc1-n16r16.json
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-s3-devkitc1-n16r2.json
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-s3-devkitc1-n16r8.json
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-s3-devkitc1-n4r2.json
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-s3-devkitc1-n4r8.json
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-s3-devkitc1-n8r2.json
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-s3-devkitc1-n8r8.json
+  verified: '2026-09-07'
 ---
 
 # ESP32-S3-DevKitC-1

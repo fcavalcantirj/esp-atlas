@@ -3,6 +3,8 @@ id: adafruit-feather-esp32-s3-reverse-tft
 type: board
 brand: adafruit
 name: Adafruit ESP32-S3 Reverse TFT Feather (4MB Flash 2MB PSRAM)
+aka:
+- "ADAFRUIT_FEATHER_ESP32S3_REVTFT"
 soc: esp32-s3
 flash_mb: 4
 psram_mb: 2
@@ -58,6 +60,12 @@ sources:
 - field: io.gpio_free
   url: https://github.com/adafruit/circuitpython/blob/main/ports/espressif/boards/adafruit_feather_esp32s3_reverse_tft/pins.c
   verified: '2026-08-26'
+- field: aka
+  url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/adafruit_feather_esp32s3_reversetft.json
+  verified: '2026-09-07'
 ---
 
 # Adafruit ESP32-S3 Reverse TFT Feather

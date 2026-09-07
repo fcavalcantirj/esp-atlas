@@ -3,6 +3,8 @@ id: firebeetle-esp32
 type: board
 brand: dfrobot
 name: DFRobot FireBeetle ESP32
+aka:
+- "firebeetle32"
 soc: esp32
 flash_mb: 16
 psram_mb: 0
@@ -54,6 +56,12 @@ sources:
 - field: io.gpio_free
   url: https://dfimg.dfrobot.com/wiki/19339/DFR0478_firebeetle-esp32-board_schematics_V4.0.pdf
   verified: '2026-08-26'
+- field: aka
+  url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/firebeetle32.json
+  verified: '2026-09-07'
 ---
 
 # DFRobot FireBeetle ESP32

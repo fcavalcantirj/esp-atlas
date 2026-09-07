@@ -3,6 +3,8 @@ id: um-pros3
 type: board
 brand: unexpected-maker
 name: Unexpected Maker ProS3
+aka:
+- "PROS3"
 soc: esp32-s3
 flash_mb: 16
 psram_mb: 8
@@ -54,6 +56,12 @@ sources:
 - field: io.power_out
   url: https://esp32s3.com/pros3.html
   verified: '2026-08-26'
+- field: aka
+  url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/um_pros3.json
+  verified: '2026-09-07'
 ---
 
 # Unexpected Maker ProS3

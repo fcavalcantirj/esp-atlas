@@ -3,6 +3,8 @@ id: lolin-d32-pro
 type: board
 brand: lolin
 name: LOLIN D32 Pro
+aka:
+- "d32_pro"
 soc: esp32
 psram_mb: 4
 form_factor: devkit
@@ -61,6 +63,12 @@ sources:
 - field: io.gpio_free
   url: https://github.com/espressif/arduino-esp32/blob/master/variants/d32_pro/pins_arduino.h
   verified: '2026-08-26'
+- field: aka
+  url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/lolin_d32_pro.json
+  verified: '2026-09-07'
 ---
 
 # LOLIN D32 Pro

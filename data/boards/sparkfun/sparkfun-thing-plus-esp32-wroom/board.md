@@ -3,6 +3,9 @@ id: sparkfun-thing-plus-esp32-wroom
 type: board
 brand: sparkfun
 name: SparkFun Thing Plus - ESP32 WROOM (USB-C)
+aka:
+- "esp32thing_plus_c"
+- "sparkfun_esp32s2_thing_plus_c"
 soc: esp32
 flash_mb: 16
 psram_mb: 0
@@ -70,6 +73,12 @@ sources:
 - field: io.gpio_free
   url: https://cdn.sparkfun.com/assets/3/9/5/f/e/SparkFun_Thing_Plus_ESP32_WROOM_C_graphical_datasheet2.pdf
   verified: '2026-08-26'
+- field: aka
+  url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/sparkfun_esp32s2_thing_plus_c.json
+  verified: '2026-09-07'
 ---
 
 # SparkFun Thing Plus - ESP32 WROOM (USB-C)

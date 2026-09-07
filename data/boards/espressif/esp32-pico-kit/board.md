@@ -3,6 +3,8 @@ id: esp32-pico-kit
 type: board
 brand: espressif
 name: ESP32-PICO-KIT
+aka:
+- "pico32"
 soc: esp32
 flash_mb: 4
 psram_mb: 0
@@ -81,6 +83,12 @@ sources:
 - field: getting_started
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-pico-kit/user_guide.html
   verified: '2026-09-01'
+- field: aka
+  url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/pico32.json
+  verified: '2026-09-07'
 ---
 
 # ESP32-PICO-KIT
