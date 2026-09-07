@@ -134,13 +134,20 @@ def guard_env(root: Path, base: dict | None = None) -> dict:
 
 
 def default_guard(root: Path) -> dict:
-    """validate.py once, then the CI regression tests — both against the worktree's code AND
-    data (see guard_env), never the clone's."""
+    """validate.py against the worktree's code AND data (see guard_env), never the clone's.
+
+    The three CI regression files (coverage matrix, examples, intent oracle) run here only when
+    JR_GUARD_TESTS=1: measured at 167 s of CPU on a laptop (examples alone 97 s), which on the
+    Pi means minutes at full load every hour the tick writes, on a box that runs at its thermal
+    warn line — and CI runs the same files as required checks before anything can merge, so a
+    red PR simply does not merge. Belt-and-braces stays available, off by default."""
     env = guard_env(root)
     v = subprocess.run([sys.executable, "scripts/validate.py"], cwd=root, capture_output=True,
                        text=True, timeout=300, env=env)
     if v.returncode != 0:
         return {"ok": False, "output": (v.stdout + v.stderr).strip()[-2000:]}
+    if os.environ.get("JR_GUARD_TESTS", "0") != "1":
+        return {"ok": True, "output": (v.stdout + v.stderr).strip()[-2000:] + "\n(guard tests skipped: JR_GUARD_TESTS!=1; CI runs them)"}
     t = subprocess.run([sys.executable, "-m", "pytest", "apps/core/tests/test_coverage_matrix.py",
                         "apps/core/tests/test_examples.py", "apps/core/tests/test_intent_oracle.py", "-q"],
                        cwd=root, capture_output=True, text=True, timeout=600, env=env)
