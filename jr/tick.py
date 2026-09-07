@@ -109,7 +109,8 @@ def hourly_stages(split: dict) -> list:
     a, b = int(split.get("A") or 0), int(split.get("B") or 0)
     if a:
         import stage_admit
-        out.append(lambda ctx, n=a: stage_admit.run(ctx, budget=n))
+        share = a / (a + b) if (a + b) else 1.0          # admit may spend its share of the calls; boardmap gets the rest
+        out.append(lambda ctx, n=a, s=share: stage_admit.run(ctx, budget=n, call_share=s))
     if b:
         import stage_boardmap
         out.append(lambda ctx, n=b: stage_boardmap.run(ctx, budget=n))
@@ -311,6 +312,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                 subject = f"chore(jr): tick {now.strftime('%Y-%m-%d %H:%M')} UTC — memory reconciliation"
             # publish gets the UNCOUNTED gh: its two calls (pr create, pr merge) must never be cut
             # off by the budget after the push has already happened.
+            r.budget = budget.summary()          # the body must carry the real spend, not an empty field
             res = publish.publish(wt, r.paths, subject, report.render_pr_body(r), git=git, gh=gh,
                                   now=now, repo_slug=slug, needs_human=r.needs_human,
                                   protection=protection, auto_merge=auto_merge)
