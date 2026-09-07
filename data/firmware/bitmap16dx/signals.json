@@ -1,0 +1,31 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-07",
+ "notes": [],
+ "ref": "main",
+ "repo": "bradmcnally/bitmap16dx",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "esp32-s3-devkitc-1"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "m5stack-cardputer",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 5,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/bradmcnally/bitmap16dx/blob/main/platformio.ini#L5"
+  }
+ ]
+}

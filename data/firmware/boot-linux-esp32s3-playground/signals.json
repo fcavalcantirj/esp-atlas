@@ -1,0 +1,14 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-07",
+ "notes": [],
+ "ref": "main",
+ "repo": "ESP32DE/Boot-Linux-ESP32S3-Playground",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": []
+}
