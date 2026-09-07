@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-07",
+ "notes": [],
+ "ref": "main",
+ "repo": "fbiego/atom-watch",
+ "resolved": {
+  "boards": [
+   "m5atoms3"
+  ],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "m5stack-atoms3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-atoms3",
+   "url": "https://github.com/fbiego/atom-watch/blob/main/platformio.ini#L13"
+  }
+ ]
+}
