@@ -1,14 +1,18 @@
 """EspAtlas Jr — pytest for the deterministic scorer (jr/scorer.py).
 
-Runs score_entry() over golden_set.json — 29 REAL cases: the original 12-case spike proof
+Runs score_entry() over golden_set.json — 44 REAL cases: the original 12-case spike proof
 (DECISION-LOG.md's four documented failure modes: #74 fork-of-catalogued, #71 wrong-chip, #73
 freeform-capabilities, plus clean device-in-name cases) PLUS 17 hard cases hand-picked from an
 at-scale run of score_entry() over the entire real live launcher catalog (2671 entries) — noise/
 junk firmware, wrong-chip-via-device-name-lookalike, fused device-name spelling, multi-device-
 per-repo, described (non-fork) ports of catalogued repos, malformed github URLs, fork-of-
-uncatalogued, and new board coverage. Measures per-field + overall accuracy against hand-authored
-expected records. GOAL: prove the zero-LLM deterministic scorer beats the LLM agent's historical
-record (DECISION-LOG.md: 0/6 clean autonomous PRs — every one needed a human fix or was closed as
+uncatalogued, and new board coverage — PLUS 15 Phase-3 cases frozen from the live GitHub API
+2026-09-07 covering the 2026-09-02 failure modes: 7 forks of catalogued repos (incl. the
+0xhalloween incident fork), RuView admitted with needs_human, Bruce matched by repo_id plus 3
+launcher aliases, the stopword name "WiFi", archived GhostESP, and a digit-leading repo name.
+Measures per-field + overall accuracy against hand-authored expected records. GOAL: prove the
+zero-LLM deterministic scorer beats the LLM agent's historical record (DECISION-LOG.md: 0/6
+clean autonomous PRs — every one needed a human fix or was closed as
 junk) — not just on a curated set, but at scale.
 
 Run: cd jr && python3 -m pytest test_scorer.py -v -s
@@ -30,9 +34,15 @@ JR_DIR = Path(__file__).resolve().parent
 GOLDEN = json.loads((JR_DIR / "golden_set.json").read_text())
 CATALOGUED_REPOS = set(GOLDEN["catalogued_repos"])
 CATALOGUED_TOKENS = set(GOLDEN["catalogued_tokens"])
+CATALOGUED_IDS = GOLDEN.get("catalogued_ids", {})
 CASES = GOLDEN["cases"]
 
 RECORD_FIELDS = ("id", "url", "category", "board", "chip", "capabilities", "maintainer")
+
+
+def _score(case):
+    return score_entry(case["entry"], case["repo_meta"], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                       CATALOGUED_IDS)
 
 
 @pytest.mark.parametrize("case", CASES, ids=[c["id"] for c in CASES])
@@ -40,10 +50,14 @@ def test_case_decision(case):
     """Every case's top-level decision (authored vs skip) must match the hand-authored
     expected outcome — this is the gate that matters most: does the scorer correctly decide
     whether to propose or skip?"""
-    result = score_entry(case["entry"], case["repo_meta"], CATALOGUED_REPOS, CATALOGUED_TOKENS)
+    result = _score(case)
     assert result["decision"] == case["expected"]["decision"], (
         f"{case['id']}: expected decision={case['expected']['decision']!r}, "
         f"got {result['decision']!r} ({result.get('reason') or result.get('record')})")
+    if "needs_human" in case["expected"]:
+        assert result.get("needs_human", False) == case["expected"]["needs_human"], (
+            f"{case['id']}: expected needs_human={case['expected']['needs_human']!r}, "
+            f"got {result.get('needs_human', False)!r}")
 
 
 @pytest.mark.parametrize("case", [c for c in CASES if c["expected"]["decision"] == "skip"],
@@ -51,7 +65,7 @@ def test_case_decision(case):
 def test_skip_reason_matches(case):
     """A skip must cite the RIGHT reason, not just any reason (a fork wrongly reported as
     'no_board_evidence' would still be a skip, but for the wrong cause)."""
-    result = score_entry(case["entry"], case["repo_meta"], CATALOGUED_REPOS, CATALOGUED_TOKENS)
+    result = _score(case)
     assert case["expected"]["reason_substring"] in result["reason"], (
         f"{case['id']}: reason {result['reason']!r} missing {case['expected']['reason_substring']!r}")
 
@@ -94,7 +108,7 @@ def test_authored_record_matches(case):
     """Every field of an authored record must match the hand-authored expected value exactly —
     this is the field-by-field accuracy check (the #71/#73 classes of bug are exactly a single
     wrong field slipping through)."""
-    result = score_entry(case["entry"], case["repo_meta"], CATALOGUED_REPOS, CATALOGUED_TOKENS)
+    result = _score(case)
     assert result["decision"] == "authored", f"{case['id']}: expected authored, got {result}"
     got = result["record"]
     want = case["expected"]["record"]
@@ -137,7 +151,7 @@ def test_accuracy_report(capsys):
     skip_total = 0
 
     for case in CASES:
-        result = score_entry(case["entry"], case["repo_meta"], CATALOGUED_REPOS, CATALOGUED_TOKENS)
+        result = _score(case)
         exp = case["expected"]
         decision_ok = result["decision"] == exp["decision"]
         decision_correct += decision_ok

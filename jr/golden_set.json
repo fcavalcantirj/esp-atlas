@@ -1,5 +1,5 @@
 {
-  "_provenance": "Real entries pulled live from api.launcherhub.net/giveMeTheList (2671 entries, fetched 2026-08-31 via tools.fetch_launcher_catalog — the same code path Jr already uses) + real `gh api repos/<owner>/<repo>` responses fetched the same day. repo_meta is a frozen snapshot so tests run offline/deterministically. catalogued_repos/catalogued_tokens is a frozen snapshot of tools._catalogued_repos_and_tokens() from the same day. EXTENDED 2026-08-31 (at-scale promotion pass): +17 new hard cases (29 total) hand-picked from a full run of score_entry() over the REAL live catalog (2671 entries, same giveMeTheList fetch) with real `gh api` repo metadata for all 941 unique referenced repos — spanning non-firmware noise, wrong-chip-via-name-lookalike, fused device-name spelling, multi-device-per-repo, described (non-fork) ports of catalogued repos, malformed github URLs, fork-of-uncatalogued, and new board coverage (nanoc6/stampc3/t-deck). Every new entry/repo_meta pair is a REAL frozen snapshot, not synthesized.",
+  "_provenance": "Real entries pulled live from api.launcherhub.net/giveMeTheList (2671 entries, fetched 2026-08-31 via tools.fetch_launcher_catalog — the same code path Jr already uses) + real `gh api repos/<owner>/<repo>` responses fetched the same day. repo_meta is a frozen snapshot so tests run offline/deterministically. catalogued_repos/catalogued_tokens is a frozen snapshot of tools._catalogued_repos_and_tokens() from the same day. EXTENDED 2026-08-31 (at-scale promotion pass): +17 new hard cases (29 total) hand-picked from a full run of score_entry() over the REAL live catalog (2671 entries, same giveMeTheList fetch) with real `gh api` repo metadata for all 941 unique referenced repos — spanning non-firmware noise, wrong-chip-via-name-lookalike, fused device-name spelling, multi-device-per-repo, described (non-fork) ports of catalogued repos, malformed github URLs, fork-of-uncatalogued, and new board coverage (nanoc6/stampc3/t-deck). Every new entry/repo_meta pair is a REAL frozen snapshot, not synthesized. P3-1 (2026-09-07): +15 cases (7 forks incl. the 0xhalloween incident fork, ruview needs_human, Bruce repo_id + 3 launcher aliases, WiFi stopword, archived GhostESP, digit-leading 20questions); catalogued_repos gains sor3nt/Flipper-Zero-ESP32-Port (the catalogued record data/firmware/flipper-zero-esp32-adv points at it); catalogued_ids seeds {795166961: bruce}. repo_meta values frozen from live gh api 2026-09-07.",
   "catalogued_repos": [
     "1technophile",
     "1technophile/openmqttgateway",
@@ -33,6 +33,8 @@
     "n0xa/m5stick-nemo",
     "pr3y",
     "pr3y/bruce",
+    "sor3nt",
+    "sor3nt/flipper-zero-esp32-port",
     "stachugit",
     "stachugit/cathack",
     "wled",
@@ -67,6 +69,9 @@
     "xiaozhi",
     "xiaozhi-esp32"
   ],
+  "catalogued_ids": {
+    "795166961": "bruce"
+  },
   "cases": [
     {
       "id": "fork_of_catalogued_direct",
@@ -866,6 +871,385 @@
             "mesh"
           ],
           "maintainer": "868meshbot"
+        }
+      }
+    },
+    {
+      "id": "fork_flipper_0xhalloween",
+      "failure_mode": "2026-09-02 incident: fork catalogued instead of its original; digit-leading owner",
+      "entry": {
+        "name": "Flipper Zero Meets Cardputers",
+        "description": "WiFi - BLE - RF - NRF24 - NFC - IR - BAD USB\nGo support the main project https://github.com/Sor3nt/Flipper-Zero-ESP32-Port\nImportant: Download the sdcard.zip and put the entire folder on the root directory of the micro sd card.",
+        "category": "cardputer",
+        "github": "https://github.com/0xhalloween/Flipper-Zero-ESP32-ADV",
+        "download": 1640
+      },
+      "repo_meta": {
+        "full_name": "0xhalloween/Flipper-Zero-ESP32-ADV",
+        "fork": true,
+        "source_full_name": "Sor3nt/Flipper-Zero-ESP32-Port",
+        "stars": 23,
+        "description": "Support for the M5Cardputers (v1/v1.1/Adv). Thanks to sor3nt and devs",
+        "id": 1237105564,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "fork_of_catalogued"
+      }
+    },
+    {
+      "id": "fork_nemo_furyhawk",
+      "failure_mode": "plain fork of a catalogued repo (n0xa/m5stick-nemo)",
+      "entry": {
+        "name": "m5stick-nemo",
+        "description": null,
+        "category": null,
+        "github": "https://github.com/furyhawk/m5stick-nemo",
+        "download": null
+      },
+      "repo_meta": {
+        "full_name": "furyhawk/m5stick-nemo",
+        "fork": true,
+        "source_full_name": "n0xa/m5stick-nemo",
+        "stars": 0,
+        "description": "M5 Stick C firmware for high-tech pranks and digital self defense",
+        "id": 1210461868,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "fork_of_catalogued"
+      }
+    },
+    {
+      "id": "fork_nemo_ptbr_renamed",
+      "failure_mode": "renamed fork: entry/repo name differs from the forked name, source still matches",
+      "entry": {
+        "name": "Nemo-PT_BR",
+        "description": null,
+        "category": null,
+        "github": "https://github.com/GitHub523/Nemo-PT_BR",
+        "download": null
+      },
+      "repo_meta": {
+        "full_name": "GitHub523/Nemo-PT_BR",
+        "fork": true,
+        "source_full_name": "n0xa/m5stick-nemo",
+        "stars": 0,
+        "description": "M5 Stick C firmware for high-tech pranks and digital self defense",
+        "id": 1114007955,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "fork_of_catalogued"
+      }
+    },
+    {
+      "id": "fork_marauder_noveldig",
+      "failure_mode": "plain fork of justcallmekoko/ESP32Marauder",
+      "entry": {
+        "name": "ESP32Marauder",
+        "description": null,
+        "category": null,
+        "github": "https://github.com/noveldig/ESP32Marauder",
+        "download": null
+      },
+      "repo_meta": {
+        "full_name": "noveldig/ESP32Marauder",
+        "fork": true,
+        "source_full_name": "justcallmekoko/ESP32Marauder",
+        "stars": 0,
+        "description": "A suite of WiFi/Bluetooth offensive and defensive tools for the ESP32",
+        "id": 1360109243,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "fork_of_catalogued"
+      }
+    },
+    {
+      "id": "fork_marauder_unholy_renamed",
+      "failure_mode": "renamed fork of ESP32Marauder (UnholyESP32)",
+      "entry": {
+        "name": "UnholyESP32",
+        "description": null,
+        "category": null,
+        "github": "https://github.com/unh0lymos3s/UnholyESP32",
+        "download": null
+      },
+      "repo_meta": {
+        "full_name": "unh0lymos3s/UnholyESP32",
+        "fork": true,
+        "source_full_name": "justcallmekoko/ESP32Marauder",
+        "stars": 1,
+        "description": "A suite of WiFi/Bluetooth offensive and defensive tools for the ESP32 - im just gonna customize the interface probably",
+        "id": 1358186339,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "fork_of_catalogued"
+      }
+    },
+    {
+      "id": "fork_evil_cardputter_renamed",
+      "failure_mode": "renamed fork of 7h30th3r0n3/evil-m5project with a cardputer-named repo",
+      "entry": {
+        "name": "Evil-CardPutter-M5Project",
+        "description": null,
+        "category": null,
+        "github": "https://github.com/Fuzo12/Evil-CardPutter-M5Project",
+        "download": null
+      },
+      "repo_meta": {
+        "full_name": "Fuzo12/Evil-CardPutter-M5Project",
+        "fork": true,
+        "source_full_name": "7h30th3r0n3/Evil-M5Project",
+        "stars": 0,
+        "description": "Evil-M5Project is an innovative tool developed for ethical  hacking and exploration of WiFi networks. It's compatible with Cardputer, Atoms3, Fire, core2. You can scan, monitor, and interact with WiFi networks in a controlled environment. This project is designed for educational purposes, aiding in understanding network security and vulnerabilities",
+        "id": 1357163843,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "fork_of_catalogued"
+      }
+    },
+    {
+      "id": "fork_launcher_mingrzou",
+      "failure_mode": "fork of the launcher itself (bmorcelli/launcher)",
+      "entry": {
+        "name": "Launcher",
+        "description": null,
+        "category": null,
+        "github": "https://github.com/MingRZou/Launcher",
+        "download": null
+      },
+      "repo_meta": {
+        "full_name": "MingRZou/Launcher",
+        "fork": true,
+        "source_full_name": "bmorcelli/Launcher",
+        "stars": 1,
+        "description": "Firmware Launcher for ESP32 boards like: M5Stack, Lilygo, Marauder and CYD devices.",
+        "id": 1344638824,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "fork_of_catalogued"
+      }
+    },
+    {
+      "id": "duplicate_bruce_repo_id",
+      "failure_mode": "pr3y/Bruce renamed to BruceDevices/firmware: strings no longer match, the repo id 795166961 still does",
+      "entry": {
+        "name": "Bruce 1.12",
+        "description": "Older version of bruce",
+        "category": "stickc",
+        "github": "https://github.com/BruceDevices/firmware",
+        "download": 31
+      },
+      "repo_meta": {
+        "full_name": "BruceDevices/firmware",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 6668,
+        "description": "Predatory ESP32 Firmware",
+        "id": 795166961,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "duplicate_of"
+      }
+    },
+    {
+      "id": "alias_bruce_a",
+      "failure_mode": "launcher lists Bruce under an alias name; the github URL still resolves to repo id 795166961",
+      "entry": {
+        "name": "a",
+        "description": "aSDFSASDFFASDDF ASDF ASDF DFD D D D D  DD D",
+        "category": "core",
+        "github": "https://github.com/BruceDevices/firmware/releases/tag/1.14",
+        "download": 4
+      },
+      "repo_meta": {
+        "full_name": "BruceDevices/firmware",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 6668,
+        "description": "Predatory ESP32 Firmware",
+        "id": 795166961,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "duplicate_of"
+      }
+    },
+    {
+      "id": "alias_bruce_doghack",
+      "failure_mode": "launcher lists Bruce under an alias name; the github URL still resolves to repo id 795166961",
+      "entry": {
+        "name": "doghack",
+        "description": "Briefly speaking This analogue cathack",
+        "category": "stickc",
+        "github": "https://github.com/BruceDevices/firmware",
+        "download": 66
+      },
+      "repo_meta": {
+        "full_name": "BruceDevices/firmware",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 6668,
+        "description": "Predatory ESP32 Firmware",
+        "id": 795166961,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "duplicate_of"
+      }
+    },
+    {
+      "id": "alias_bruce_mine_burce_2",
+      "failure_mode": "launcher lists Bruce under an alias name; the github URL still resolves to repo id 795166961",
+      "entry": {
+        "name": "mine-burce-2",
+        "description": "i got this from github its burce firmware",
+        "category": "cardputer",
+        "github": "https://github.com/BruceDevices/firmware/releases/tag/1.14",
+        "download": 51
+      },
+      "repo_meta": {
+        "full_name": "BruceDevices/firmware",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 6668,
+        "description": "Predatory ESP32 Firmware",
+        "id": 795166961,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "duplicate_of"
+      }
+    },
+    {
+      "id": "admit_ruview_needs_human",
+      "failure_mode": "2026-09-02 G2 incident: real 92k-star firmware wrongly triaged as not-firmware; high-star admission derives the record but flags needs_human instead of auto-authoring",
+      "entry": {
+        "name": "RuView",
+        "description": "yuhyuhyuhyuhyuhyuhyuh",
+        "category": "cardputer",
+        "github": "https://github.com/ruvnet/RuView/releases/tag/v0.8.3-esp32",
+        "download": 126
+      },
+      "repo_meta": {
+        "full_name": "ruvnet/RuView",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 92702,
+        "description": "π RuView turns commodity WiFi signals into real-time spatial intelligence, vital sign monitoring, and presence detection — all without a single pixel of video.",
+        "id": 997737944,
+        "archived": false
+      },
+      "expected": {
+        "decision": "authored",
+        "needs_human": true,
+        "record": {
+          "id": "ruview",
+          "url": "https://github.com/ruvnet/RuView",
+          "category": "multi",
+          "board": "m5cardputer",
+          "chip": "esp32-s3",
+          "capabilities": [
+            "wifi"
+          ],
+          "maintainer": "ruvnet"
+        }
+      }
+    },
+    {
+      "id": "archived_ghostesp_spooks",
+      "failure_mode": "archived repos are dead: never (re-)admitted even with 1k stars and 10k launcher downloads",
+      "entry": {
+        "name": "Ghost ESP",
+        "description": "Welcome to Ghost ESP, a robust and feature-rich firmware designed for your ESP32 microcontroller, enabling advanced wireless network exploration and security testing. With Ghost ESP installed, you can leverage the power of your ESP32 device to conduct in-depth WiFi and Bluetooth Low Energy (BLE) analysis, launch strategic wireless attacks, and explore a wide range of wireless environments.",
+        "category": "cardputer",
+        "github": "https://github.com/Spooks4576/Ghost_ESP",
+        "download": 10326
+      },
+      "repo_meta": {
+        "full_name": "Spooks4576/Ghost_ESP",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 1178,
+        "description": "Ghost ESP is a ESP32 Firmware that Revolutionizes the way we use ESP32 devices in a Pen Testing aspect",
+        "id": 772586891,
+        "archived": true
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "archived"
+      }
+    },
+    {
+      "id": "stopword_wifi_name",
+      "failure_mode": "bare radio word as the entry name (name reduced to the stopword to isolate the mode; repo is the real Wi-PWN tool): names a radio, not a firmware",
+      "entry": {
+        "name": "WiFi",
+        "description": "Fast & responsive Material Design UI, with optional dark mode\n    Integrated Deauth Detector (with full customization)\n    WiFi client mode - Access Wi-PWN on a WiFi network\n    Info page with total packets sent, uptime, memory usage, check for updates...\n    Easy to use translation engine - want to translate it to your own language? Simply go over here and ask!",
+        "category": "stickc",
+        "github": "https://github.com/samdenty/Wi-PWN",
+        "download": 160
+      },
+      "repo_meta": {
+        "full_name": "samdenty/Wi-PWN",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 1742,
+        "description": "ESP8266 firmware for performing deauthentication attacks, with ease.",
+        "id": 91923053,
+        "archived": false
+      },
+      "expected": {
+        "decision": "skip",
+        "reason_substring": "stopword_name"
+      }
+    },
+    {
+      "id": "digit_leading_20questions",
+      "failure_mode": "digit-leading repo name slugs and scores like any other (Twenty Questions Game)",
+      "entry": {
+        "name": "Twenty Questions Game",
+        "description": "The 20 Questions game is a classic deductive reasoning parlor game where one player (the \"answerer\") thinks of a person, place, or thing, and others (the \"questioners\") have 20 attempts to guess it using only \"yes\" or \"no\" questions. If correctly guessed within 20 questions, the guesser wins; otherwise, the answerer wins.\n\nThe game doesn't exactly use only yes or no but you get the picture.",
+        "category": "cardputer",
+        "github": "https://github.com/bpivk/20questions",
+        "download": 196
+      },
+      "repo_meta": {
+        "full_name": "bpivk/20questions",
+        "fork": false,
+        "source_full_name": null,
+        "stars": 0,
+        "description": null,
+        "id": 1183689499,
+        "archived": false
+      },
+      "expected": {
+        "decision": "authored",
+        "record": {
+          "id": "20questions",
+          "url": "https://github.com/bpivk/20questions",
+          "category": "multi",
+          "board": "m5cardputer",
+          "chip": "esp32-s3",
+          "capabilities": [],
+          "maintainer": "bpivk"
         }
       }
     }

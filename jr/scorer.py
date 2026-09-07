@@ -102,6 +102,20 @@ NOISE_TOKENS = ("doom", "gameboy", "game boy", "emulator", "tetris", "pacman", "
                 "nes", "snes", "pokemon", "arduboy", "chip-8", "chip8", "uiflow", "micropython",
                 "tamagotchi", "flappy", "2048")
 
+# Radio/protocol words that are not device identity. A launcher entry whose name carries NO
+# other significant token (e.g. a bare "WiFi") names a radio, not a firmware — routing it to
+# board derivation would invent a board from a word that appears in every ESP32 README. Only
+# whole tokens count ("webradio" still carries identity; "wifi-pwn" still names its project).
+STOPWORD_TOKENS = frozenset({"wifi", "wi-fi", "ble", "bluetooth", "rfid", "nfc", "lora", "lorawan",
+                             "zigbee", "sub-ghz", "subghz", "gps", "mqtt", "usb", "radio", "wireless"})
+
+# Admission of a high-star repo is a human decision, never an automatic author: a >5,000-star
+# project with almost no launcher downloads (< 200) is either a mismatch, a rename, or
+# something with blast radius (RuView: 92k stars). The record is still derived (so the human
+# sees what would ship) but flagged needs_human, which withholds auto-merge downstream.
+NEEDS_HUMAN_STARS = 5000
+NEEDS_HUMAN_MAX_DOWNLOAD = 200
+
 _GITHUB_REPO_RE = re.compile(r"^https?://github\.com/[^/\s]+/[^/\s]+")
 _GITHUB_MENTION_RE = re.compile(r"github\.com/([\w.-]+/[\w.-]+)", re.IGNORECASE)
 
@@ -165,14 +179,19 @@ def _category_from_capabilities(capabilities: list[str]) -> str:
 
 
 def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
-                catalogued_tokens: set[str]) -> dict:
+                catalogued_tokens: set[str], catalogued_ids: dict | None = None) -> dict:
     """Score ONE launcher-catalog entry. Returns either
-      {"decision": "authored", "record": {...}}
+      {"decision": "authored", "record": {...}} (plus "needs_human": True when a human must
+    merge it — high-star admission, never auto-merged)
     or
       {"decision": "skip", "reason": "..."}
-    `repo_meta` is the frozen GitHub API shape: {full_name, fork, source_full_name, stars,
-    description, license, readme_title}. `catalogued_repos`/`catalogued_tokens` mirror
-    tools._catalogued_repos_and_tokens() (dedup fingerprint of what's already in the atlas)."""
+    `repo_meta` is the frozen GitHub API shape: {id, full_name, fork, source_full_name, stars,
+    description, license, readme_title, archived, ...}. `catalogued_repos`/`catalogued_tokens`
+    mirror tools._catalogued_repos_and_tokens() (dedup fingerprint of what's already in the
+    atlas). `catalogued_ids` is an optional {repo_id: firmware_id} map — GitHub repo ids are
+    stable across renames, so a repo the catalog knows under an old path (pr3y/Bruce, now
+    BruceDevices/firmware) is still caught as a duplicate instead of being authored under its
+    generic new slug ("firmware")."""
     github = (entry.get("github") or "").strip()
     if not _GITHUB_REPO_RE.match(github):
         return {"decision": "skip", "reason": "no_github: with-code gate failed "
@@ -182,6 +201,11 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
     if not repo_meta or repo_meta.get("error"):
         return {"decision": "skip", "reason": f"repo_unresolved: {github}"}
 
+    # Archived repos are dead: never (re-)admit, whatever else matches. A human restores by
+    # hand with a G2 override, not through admission.
+    if repo_meta.get("archived"):
+        return {"decision": "skip", "reason": f"archived: {owner_repo} is archived"}
+
     source = (repo_meta.get("source_full_name") or repo_meta.get("full_name") or "").lower()
     if repo_meta.get("fork") and source and source != owner_repo:
         if source in catalogued_repos or source.split("/")[0] in catalogued_repos:
@@ -190,6 +214,14 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
 
     if owner_repo in catalogued_repos or owner_repo.split("/")[0] in catalogued_repos:
         return {"decision": "skip", "reason": f"already_catalogued: {owner_repo} is already in the atlas"}
+
+    # Rename-proof identity: the repo id survives owner/repo renames, the strings above do
+    # not. Checked before the fuzzy name-token match so identity beats resemblance.
+    repo_id = repo_meta.get("id")
+    catalogued_name = (catalogued_ids or {}).get(str(repo_id)) if repo_id is not None else None
+    if catalogued_name:
+        return {"decision": "skip",
+                "reason": f"duplicate_of: {catalogued_name} (repo_id {repo_id})"}
 
     name = entry.get("name") or ""
     name_tokens = {t for t in re.split(r"[-_\s]", name.lower()) if len(t) >= 4}
@@ -210,6 +242,11 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
     name_low = f" {name.lower()} "
     if any(t in name_low for t in NOISE_TOKENS):
         return {"decision": "skip", "reason": "noise_non_firmware: name matches a game/emulator/platform token"}
+
+    significant = {t for t in re.split(r"[-_\s]", _clean_marketing(name).lower()) if len(t) >= 4}
+    if not (significant - STOPWORD_TOKENS):
+        return {"decision": "skip",
+                "reason": f"stopword_name: {name.strip()!r} names a radio, not a firmware"}
 
     board = device_from_text(name, repo_meta.get("description"), repo_meta.get("readme_title"))
     if not board:
@@ -254,4 +291,7 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
         "capabilities": capabilities,
         "maintainer": owner_repo.split("/")[0],
     }
-    return {"decision": "authored", "record": record}
+    result: dict = {"decision": "authored", "record": record}
+    if (repo_meta.get("stars") or 0) > NEEDS_HUMAN_STARS and (entry.get("download") or 0) < NEEDS_HUMAN_MAX_DOWNLOAD:
+        result["needs_human"] = True
+    return result
