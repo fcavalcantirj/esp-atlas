@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-07",
+ "notes": [],
+ "ref": "main",
+ "repo": "VoidNoi/BadCard",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "BadCard"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "BadCard.bin",
+    "release": "1.7.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "BadCard",
+   "url": "https://github.com/VoidNoi/BadCard/releases/download/1.7.2/BadCard.bin"
+  }
+ ]
+}

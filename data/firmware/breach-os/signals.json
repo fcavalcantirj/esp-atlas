@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-07",
+ "notes": [],
+ "ref": "master",
+ "repo": "zedward856-spec/Breach_OS",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "ino.merged"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "Breach_OS.ino.merged.bin",
+    "release": "v1.5"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ino.merged",
+   "url": "https://github.com/zedward856-spec/Breach_OS/releases/download/v1.5/Breach_OS.ino.merged.bin"
+  }
+ ]
+}
