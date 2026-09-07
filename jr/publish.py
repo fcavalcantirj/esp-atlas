@@ -123,17 +123,45 @@ class ProtectionStatus:
     required_checks: tuple = ()
     allow_auto_merge: bool = False
     reason: str = ""
+    source: str = ""          # "ruleset" | "protection" — which endpoint answered
+
+
+def _ruleset_checks(repo_slug: str, gh) -> list[str] | None:
+    """Required status checks from the repository RULESETS that apply to main
+    (`GET /repos/{o}/{r}/rules/branches/main`) — readable with plain read access, so a write-only
+    bot sees the same truth an admin does. None when no active ruleset requires checks (or the
+    endpoint is unavailable); then the classic protection endpoint is consulted."""
+    r = gh("api", f"repos/{repo_slug}/rules/branches/main")
+    if not _ok(r):
+        return None
+    try:
+        rules = json.loads(r.stdout)
+    except (json.JSONDecodeError, TypeError):
+        return None
+    contexts: list[str] = []
+    for rule in rules if isinstance(rules, list) else []:
+        if isinstance(rule, dict) and rule.get("type") == "required_status_checks":
+            for c in (rule.get("parameters") or {}).get("required_status_checks") or []:
+                if isinstance(c, dict) and c.get("context"):
+                    contexts.append(c["context"])
+    return contexts or None
 
 
 def protection_status(repo_slug: str, gh=default_gh,
                       required: tuple = REQUIRED_CHECKS) -> ProtectionStatus:
-    """Read the LIVE branch-protection rule on main and the repo's auto-merge switch. ok only
-    when every name in `required` is a required status check AND auto-merge is allowed. A 404
-    ("Branch not protected") is the exact hole this exists to catch — but GitHub also answers
-    404 to a write-only token on this admin-only endpoint, so a 404 is cross-checked against
-    the lighter `GET /branches/main` (readable with write): `protected: true` there means the
-    rule exists and THIS token cannot read its required checks (needs Administration: read).
-    Auto-merge is withheld either way; only the reason differs, and the reason must not lie."""
+    """Read the LIVE rule that guards main and the repo's auto-merge switch. ok only when every
+    name in `required` is a required status check AND auto-merge is allowed.
+
+    Rulesets first (`/rules/branches/main`, readable by any token — the bot is a write
+    collaborator and can never read the admin-only classic endpoint); classic branch protection
+    second. On the classic endpoint a 404 ("Branch not protected") is the exact hole this exists
+    to catch — but GitHub also answers 404 to a write-only token there, so a 404 is cross-checked
+    against the lighter `GET /branches/main`: `protected: true` means the rule exists and THIS
+    token cannot read its required checks. Auto-merge is withheld either way; only the reason
+    differs, and the reason must not lie."""
+    contexts = _ruleset_checks(repo_slug, gh)
+    if contexts is not None:
+        return _decide(repo_slug, gh, required, contexts, source="ruleset")
     p = gh("api", f"repos/{repo_slug}/branches/main/protection")
     if not _ok(p):
         err = (getattr(p, "stderr", "") or "") + (getattr(p, "stdout", "") or "")
@@ -150,15 +178,19 @@ def protection_status(repo_slug: str, gh=default_gh,
         return ProtectionStatus(False, reason="unreadable protection rule")
     rsc = rule.get("required_status_checks") or {}
     contexts = list(rsc.get("contexts") or []) + [c.get("context") for c in (rsc.get("checks") or []) if c.get("context")]
+    return _decide(repo_slug, gh, required, contexts, source="protection")
+
+
+def _decide(repo_slug: str, gh, required: tuple, contexts: list[str], source: str) -> ProtectionStatus:
     missing = [c for c in required if c not in contexts]
     q = gh("api", f"repos/{repo_slug}", "-q", ".allow_auto_merge")
     allow = _ok(q) and (getattr(q, "stdout", "") or "").strip().lower() == "true"
     if missing:
-        return ProtectionStatus(False, tuple(contexts), allow,
-                                reason=f"main does not require {', '.join(missing)}")
+        return ProtectionStatus(False, tuple(contexts), allow, source=source,
+                                reason=f"main does not require {', '.join(missing)} ({source})")
     if not allow:
-        return ProtectionStatus(False, tuple(contexts), allow, reason="repo has allow_auto_merge off")
-    return ProtectionStatus(True, tuple(contexts), allow, reason="")
+        return ProtectionStatus(False, tuple(contexts), allow, source=source, reason="repo has allow_auto_merge off")
+    return ProtectionStatus(True, tuple(contexts), allow, source=source, reason="")
 
 
 # --- publish ----------------------------------------------------------------------------------

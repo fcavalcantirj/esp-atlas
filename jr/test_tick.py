@@ -106,8 +106,8 @@ def test_dry_run_prints_gauge_allocation_and_nothing_to_do_and_writes_nothing(ca
     assert "boards 42.5% -> A0/B0 (no content stages registered)" in out and "nothing to do" in out
     # read-only: no worktree, no add/commit/push, no PR, only read calls to gh
     assert all(c[0] not in ("worktree", "add", "commit", "push", "checkout") for c in norm(git))
-    assert all(c[:2] in (("api", "rate_limit"), ("pr", "list"), ("api", "repos/o/r/branches/main/protection"),
-                         ("api", "repos/o/r")) for c in gh.calls)
+    assert all(c[:2] in (("api", "rate_limit"), ("pr", "list"), ("api", "repos/o/r/rules/branches/main"),
+                         ("api", "repos/o/r/branches/main/protection"), ("api", "repos/o/r")) for c in gh.calls)
     assert r.memory == {} and any("dry-run" in w for w in r.warnings)
 
 
@@ -347,9 +347,11 @@ def test_a_failing_worktree_removal_is_a_warning_not_a_lost_report(wt_dir, capsy
 
 def test_publish_gets_the_uncounted_gh_so_budget_cannot_cut_it_off_mid_publish(wt_dir):
     gh = gh_ok()
-    r = run(git=git_ok(wt_dir), gh=gh, stages=[_stage(["data/firmware/x"])], budget=Budget(max_calls=4, clock=lambda: 0.0))
+    # preflight = rate_limit + pr list + rules + protection + allow_auto_merge = 5 counted calls; the budget
+    # is exactly that, so publish's own pr create / pr merge would die if they were counted
+    r = run(git=git_ok(wt_dir), gh=gh, stages=[_stage(["data/firmware/x"])], budget=Budget(max_calls=5, clock=lambda: 0.0))
     assert not r.aborted and r.publish["published"] and r.publish["auto_merge"]
-    assert r.budget.startswith("gh calls 4/4")
+    assert r.budget.startswith("gh calls 5/5")
 
 
 def test_guard_env_points_core_at_the_worktree(tmp_path):
