@@ -192,7 +192,8 @@ def test_build_index_brands_table_is_populated_but_not_in_parts(tmp_path):
     assert row["url"] == "https://www.espressif.com"
 
     assert conn.execute("SELECT COUNT(*) FROM parts WHERE type = 'brand'").fetchone()[0] == 0
-    assert conn.execute("SELECT COUNT(*) FROM brands").fetchone()[0] == 11
+    n_brands = len([d for d in (DATA_DIR / "brands").iterdir() if (d / "brand.md").exists()])
+    assert conn.execute("SELECT COUNT(*) FROM brands").fetchone()[0] == n_brands
 
 
 def test_build_index_count_meta_excludes_brands(tmp_path):
