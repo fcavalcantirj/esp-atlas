@@ -281,7 +281,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None):
                                     or memory.is_seen(led, repo_id=repo_id, now=ctx.now)):
             decided += 1
             continue
-        fid = scorer._slug(scorer._repo_name_from_url(github))
+        fid = scorer._slug(scorer._repo_name_from_url(github)) or owner_repo or "(unnamed entry)"   # the report names every skip
         # Popularity floor (SPEC-firmware-floor.md, via esp_atlas_core.floor — never re-typed):
         # below stars AND forks is filler, rejected for FLOOR_REJECT_DAYS.
         if meta.get("error"):

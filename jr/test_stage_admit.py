@@ -135,7 +135,7 @@ def test_admitted_record_is_schema_valid_proposed_and_cited(root, monkeypatch):
     assert rec["board"] == "m5cardputer" and rec["firmware"] == "newtool" and rec["chip_family"] == "esp32-s3"
     assert rec["status"] == "unverified" and "flash" not in rec
     assert [s["field"] for s in rec["sources"]] == ["*", "board"] and rec["sources"][1]["url"] == "https://github.com/n/newtool"
-    assert "names this board as Cardputer" in rec["notes"] and "repository name/description" in rec["notes"]
+    assert "names this board as Cardputer in its repository name/description; named in the repository itself, not verified on hardware." in rec["notes"]
     from esp_atlas_core.validate import check_orphan_firmware, known_ids
     assert not [m for m in check_orphan_firmware(known_ids(root / "data")) if "newtool" in m]   # the seed fixture has no recipe by design
     fm = _read_fm(root / "data" / "firmware" / "newtool" / "firmware.md")
@@ -367,3 +367,10 @@ def test_scorer_uses_the_board_hint_only_as_the_last_fallback():
     assert res["decision"] == "authored" and res["record"]["board"] == "m5cardputer" and res["record"]["chip"] == "esp32-s3"
     named = scorer.score_entry(dict(entry, name="Scribbler for Cardputer"), meta, set(), set(), {}, board_hint="lolin-d32")
     assert named["record"]["board"] == "m5cardputer"                 # a device named in the text still wins over the hint
+
+
+def test_a_launcher_entry_without_a_name_or_a_parseable_url_is_still_labelled_in_the_summary(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("", "https://github.com/n/nameless"), _entry("", "")])
+    res = stage_admit.run(_ctx(root, metas={}), budget=2)
+    assert "nameless: skip repo_unresolved" in res.summary
+    assert "(unnamed entry): skip" in res.summary and ": skip" not in res.summary.replace("nameless: skip", "").replace("(unnamed entry): skip", "")

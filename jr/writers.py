@@ -100,7 +100,9 @@ def render_recipe(recipe_id: str, board: str, firmware: str, chip_family: str, f
         note += f" (asset {best['extra']['asset']})"
     if best.get("extra", {}).get("release"):
         note += f" (release {best['extra']['release']})"
-    note += ("; named by the submitter, not verified on hardware." if best.get("kind") == "submission"
+    kind = best.get("kind")
+    note += ("; named by the submitter, not verified on hardware." if kind == "submission"
+             else "; named in the repository itself, not verified on hardware." if kind == "repo"
              else "; derived from the repo's own build files, not verified on hardware.")
     lines = ["---", f"id: {recipe_id}", "type: recipe", f"board: {board}", f"firmware: {firmware}",
              "status: unverified", f"chip_family: {chip_family}"]
