@@ -7,9 +7,11 @@ citations (jr/writers), widen the firmware's `socs` to the cited union — one `
 source per page that proves an added chip — and persist the raw signals next to the record as
 `data/firmware/<id>/signals.json` so the G1 audit can run offline in CI.
 
-Selection is deterministic: firmware with the FEWEST recipes first, then oldest signals, then
-id; a firmware whose signals.json is younger than `fresh_days` is skipped (its repo was read
-recently). `budget` firmware per run.
+Selection is deterministic: a measured under-map first (persisted signals whose declared
+boards still lack recipes), then fewest recipes, then oldest signals, then id; a firmware whose
+signals.json is younger than `fresh_days` is skipped (its repo was read recently). A
+signals.json with errors > 0 and no signals (a failed or degraded read) counts as unmeasured.
+`budget` firmware per run.
 
 Budget: every GitHub API call goes through the tick's wrapped `gh` and every raw fetch through
 a wrapped `raw`, so each call is charged exactly once, as it happens. The stage stops BEFORE a
@@ -62,8 +64,16 @@ def _load_json(path: Path) -> dict | None:
     return doc if isinstance(doc, dict) else None
 
 
-def _age_days(signals_json: Path, now: datetime) -> float | None:
-    doc = _load_json(signals_json)
+def _measured_signals(path: Path) -> dict | None:
+    """Persisted signals, or None when absent or unreadable. A file with errors > 0 and no
+    signals (a failed or degraded read) counts as unmeasured."""
+    doc = _load_json(path)
+    if doc and int(doc.get("errors") or 0) > 0 and not doc.get("signals"):
+        return None
+    return doc
+
+
+def _doc_age(doc: dict | None, now: datetime) -> float | None:
     if not doc:
         return None
     try:
@@ -73,8 +83,13 @@ def _age_days(signals_json: Path, now: datetime) -> float | None:
     return (now - dt).total_seconds() / 86400
 
 
+def _age_days(signals_json: Path, now: datetime) -> float | None:
+    return _doc_age(_measured_signals(signals_json), now)
+
+
 def select_firmware(root: Path, budget: int, now: datetime, fresh_days: int = FRESH_DAYS) -> list[str]:
-    """Most under-mapped first: (recipe count, -signals age, id). Skips GitHub-less records and
+    """Most under-mapped first: (-missing, recipe count, -signals age, id), where missing is
+    the persisted resolved boards that still lack a recipe. Skips GitHub-less records and
     records whose signals were fetched < fresh_days ago."""
     cands = []
     for fmd in sorted((root / "data" / "firmware").glob("*/firmware.md")):
@@ -82,13 +97,17 @@ def select_firmware(root: Path, budget: int, now: datetime, fresh_days: int = FR
         fid = fm.get("id") or fmd.parent.name
         if not owner_repo_of(fm.get("url", "")):
             continue
-        age = _age_days(fmd.parent / "signals.json", now)
+        doc = _measured_signals(fmd.parent / "signals.json")
+        age = _doc_age(doc, now)
         if age is not None and age < fresh_days:
             continue
         n_recipes = len(list((root / "data" / "recipes").glob(f"*__{fid}")))
-        cands.append((n_recipes, -(age if age is not None else 10**6), fid))
+        boards = ((doc or {}).get("resolved") or {}).get("boards") or []
+        missing = sum(1 for b in boards
+                      if not (root / "data" / "recipes" / f"{b}__{fid}" / "recipe.md").exists())
+        cands.append((-missing, n_recipes, -(age if age is not None else 10**6), fid))
     cands.sort()
-    return [fid for _, _, fid in cands[:budget]]
+    return [fid for _, _, _, fid in cands[:budget]]
 
 
 def _soc_proof_urls(soc: str, res: dict, refused: set[str], board_soc) -> list[str]:
