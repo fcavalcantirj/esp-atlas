@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-07",
+ "notes": [],
+ "ref": "main",
+ "repo": "bomberman30/AdvanceOS-for-cardputer",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "AdvanceOSv1.5.4"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "AdvanceOSv1.5.4.bin",
+    "release": "AdvanceOSv1.5.4"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "AdvanceOSv1.5.4",
+   "url": "https://github.com/bomberman30/AdvanceOS-for-cardputer/releases/download/AdvanceOSv1.5.4/AdvanceOSv1.5.4.bin"
+  }
+ ]
+}
