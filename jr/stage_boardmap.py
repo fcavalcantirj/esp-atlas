@@ -134,9 +134,12 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
     board_soc = lambda b: tools.board_soc(b, repo=root)  # noqa: E731
     d = derive.derive(owner_repo, api=api, raw=raw, max_calls=max_calls, today=today)
     res = derive.resolve(d, boards=board_alias.atlas_boards(root))
+    kinds: dict = {}
+    for s in d["signals"]:
+        kinds[s.get("kind") or "?"] = kinds.get(s.get("kind") or "?", 0) + 1
     out = {"paths": [], "written": [], "existing": [], "refused": [], "socs_added": [],
            "signals": len(d["signals"]), "unresolved": len(res["unresolved"]), "calls": d["calls"],
-           "errors": int(d.get("errors") or 0), "notes": list(d["notes"])}
+           "errors": int(d.get("errors") or 0), "notes": list(d["notes"]), "kinds": kinds, "ref": d.get("ref")}
     if out["errors"] and not d["signals"]:
         out["failed"] = True
         out["notes"].append(f"read failed ({out['errors']} unavailable endpoint(s)), nothing persisted")
@@ -192,7 +195,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
     today = now.strftime("%Y-%m-%d")
     api = api or (lambda path: json.loads(ctx.gh("api", path).stdout))    # ctx.gh is budget-wrapped
     raw = ctx.budget.wrap(raw or derive.default_raw, "raw")
-    paths, lines, admitted, rejects, needs_human = [], [], 0, {}, False
+    paths, lines, admitted, rejects, needs_human, items = [], [], 0, {}, False, []
     if only:
         chosen = []
         for fid in only:
@@ -228,6 +231,10 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
             continue
         paths += r["paths"]
         admitted += len(r["written"])
+        if not ctx.dry_run and (r["written"] or r["socs_added"]):
+            items.append({"kind": "recipes", "firmware": fid, "written": list(r["written"]), "existing": len(r["existing"]),
+                          "socs_added": list(r["socs_added"]), "signals": r["signals"], "unresolved": r["unresolved"],
+                          "kinds": dict(r.get("kinds") or {}), "notes": [n for n in r["notes"] if "release" in n or "degraded" in n]})
         for _, why in r["refused"]:
             reject("chip_clash" if "disagrees" in why else "no_soc")
         extra = "".join(f"; {n}" for n in r["notes"] if n.startswith(("socs not widened", "degraded read")))
@@ -240,4 +247,4 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
                          + (f", socs +{','.join(r['socs_added'])}" if r["socs_added"] else "") + extra)
     summary = "; ".join(lines) if lines else "no firmware selected"
     return tick.StageResult("boardmap", paths=paths, summary=summary, admitted=admitted, rejects=rejects,
-                            needs_human=needs_human)
+                            needs_human=needs_human, items=items)
