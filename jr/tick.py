@@ -99,19 +99,20 @@ STAGES: list = []   # extra stages appended by hand; the hourly content stages c
 
 def hourly_stages(split: dict) -> list:
     """The content stages of the HOURLY path, from the allocator's split (Phase 6 cutover):
-    Track B (jr/stage_boardmap: map a firmware's boards as cited recipes) with `B` firmware,
-    Track A (jr/stage_admit: score launcher candidates, write admitted records) with `A`
-    candidates. The heavier track runs first so the call budget goes where the gauge says."""
+    Track A (jr/stage_admit: score candidates, write admitted records + their first recipe)
+    with `A` candidates, THEN Track B (jr/stage_boardmap: map a firmware's boards as cited
+    recipes) with `B` firmware. Admit always runs first: a freshly admitted firmware has one
+    recipe, so boardmap (fewest recipes first) picks it up and widens it in the same tick, and
+    the guard never sees an orphan. The split still decides how much each track may do."""
     out = []
     a, b = int(split.get("A") or 0), int(split.get("B") or 0)
-    if b:
-        import stage_boardmap
-        out.append(("boardmap", b, lambda ctx, n=b: stage_boardmap.run(ctx, budget=n)))
     if a:
         import stage_admit
-        out.append(("admit", a, lambda ctx, n=a: stage_admit.run(ctx, budget=n)))
-    out.sort(key=lambda s: -s[1])
-    return [fn for _, _, fn in out]
+        out.append(lambda ctx, n=a: stage_admit.run(ctx, budget=n))
+    if b:
+        import stage_boardmap
+        out.append(lambda ctx, n=b: stage_boardmap.run(ctx, budget=n))
+    return out
 
 
 # --- defaults for the injectable effects -------------------------------------------------------

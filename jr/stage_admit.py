@@ -8,16 +8,17 @@ NOT registered in tick.STAGES until the Phase 6 cutover: driven by hand
 (`python3 jr/tick.py --track A --budget N`), like Track B was. Dry-run scores and reports,
 writes nothing (memory untouched).
 
-A lone real --track A run admits bare firmware.md files, which scripts/validate.py rejects
-as orphans (no recipe references them) — the tick's guard then discards the worktree. That
-is the guard working as designed: admissions land composed with the boardmap stage at
-cutover, which writes the recipes in the same tick.
+An admission writes firmware.md AND its first recipe (`<board>__<id>`, the board the scorer
+found named in the repo itself, cited to the repo page): scripts/validate.py rejects a firmware
+no recipe references (orphan), and the tick's guard would otherwise discard the whole
+worktree. Track B widens the recipes from the build files, in the same tick (admit runs first).
 """
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
+import board_alias
 import memory
 import scorer
 import tools
@@ -187,6 +188,21 @@ def run(ctx, budget: int = DEFAULT_BUDGET):
         fmd.parent.mkdir(parents=True, exist_ok=True)
         fmd.write_text(text, encoding="utf-8")
         paths.append(str(fmd.relative_to(ctx.root)))
+        # The first recipe, in the same write: scripts/validate.py rejects a firmware no recipe
+        # references (orphan), and the tick's guard would then discard the WHOLE worktree —
+        # boardmap's recipes included. The scorer found this board named in the repo's own
+        # name/description/README title, so the repo page is the citation; Track B widens it
+        # from the build files later in the same tick (admit runs before boardmap).
+        rdir = ctx.root / "data" / "recipes" / f"{rec['board']}__{out_id}"
+        if not (rdir / "recipe.md").exists():
+            board_name = board_alias.atlas_boards(ctx.root).get(rec["board"], {}).get("name") or rec["board"]
+            signal = {"rank": 0, "kind": "repo", "token": board_name, "url": repo_url, "soc": None,
+                      "line": None, "extra": {}}
+            rdir.mkdir(parents=True, exist_ok=True)
+            (rdir / "recipe.md").write_text(
+                writers.render_recipe(f"{rec['board']}__{out_id}", rec["board"], out_id, rec["chip"],
+                                      repo_url, [signal], today), encoding="utf-8")
+            paths.append(str(rdir.relative_to(ctx.root)))
         memory.record_proposed(out_id, owner_repo, repo_id=repo_id, evidence_url=repo_url,
                                path=ctx.ledger_path, now=ctx.now)
         admitted += 1

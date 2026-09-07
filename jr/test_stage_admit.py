@@ -127,7 +127,17 @@ def test_admitted_record_is_schema_valid_proposed_and_cited(root, monkeypatch):
     metas = {"repos/n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=13)}
     res = stage_admit.run(_ctx(root, metas=metas), budget=3)
     assert res.admitted == 1 and not res.needs_human and res.rejects == {}
-    assert res.paths == ["data/firmware/newtool/firmware.md"]
+    assert res.paths == ["data/firmware/newtool/firmware.md", "data/recipes/m5cardputer__newtool"]
+    # the first recipe lands in the same write, so the record is never an orphan for the guard
+    rec = yaml.safe_load((root / "data/recipes/m5cardputer__newtool/recipe.md").read_text().split("\n---\n")[0].split("---\n", 1)[1])
+    import jsonschema
+    jsonschema.validate(rec, json.loads((REPO / "schema" / "recipe.schema.json").read_text()))
+    assert rec["board"] == "m5cardputer" and rec["firmware"] == "newtool" and rec["chip_family"] == "esp32-s3"
+    assert rec["status"] == "unverified" and "flash" not in rec
+    assert [s["field"] for s in rec["sources"]] == ["*", "board"] and rec["sources"][1]["url"] == "https://github.com/n/newtool"
+    assert "names this board as Cardputer" in rec["notes"] and "repository name/description" in rec["notes"]
+    from esp_atlas_core.validate import check_orphan_firmware, known_ids
+    assert not [m for m in check_orphan_firmware(known_ids(root / "data")) if "newtool" in m]   # the seed fixture has no recipe by design
     fm = _read_fm(root / "data" / "firmware" / "newtool" / "firmware.md")
     assert fm["id"] == "newtool" and fm["type"] == "firmware"
     assert fm["url"] == "https://github.com/n/newtool" and fm["category"] == "multi"
@@ -172,7 +182,7 @@ def test_budget_stop_line_and_order_are_deterministic(root, monkeypatch):
     metas = {"repos/n/atool": _meta("n/atool", stars=30, description="A Cardputer tool", rid=15),
              "repos/n/btool": _meta("n/btool", stars=30, description="B Cardputer tool", rid=16)}
     res = stage_admit.run(_ctx(root, metas=metas), budget=1)
-    assert res.admitted == 1 and res.paths == ["data/firmware/atool/firmware.md"]  # name, then github
+    assert res.admitted == 1 and res.paths[0] == "data/firmware/atool/firmware.md"  # name, then github
     assert "budget reached (1 admitted)" in res.summary
 
 
