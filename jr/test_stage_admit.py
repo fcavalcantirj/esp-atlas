@@ -218,3 +218,152 @@ def test_repo_id_memory_hit_skips_before_fetch(root, monkeypatch):
 def test_render_firmware_refuses_a_non_schema_id():
     with pytest.raises(ValueError):
         writers.render_firmware({"id": "Bad Id!", "chip": "esp32"}, [], "2026-09-07")
+
+
+# --- submissions: GitHub issues labelled `submission` -------------------------------------------
+
+ISSUES_PATH = "repos/fcavalcantirj/esp-atlas/issues?labels=submission&state=open&per_page=50"
+
+
+def _issue(n, body, title="Submission: x"):
+    return {"number": n, "title": title, "body": body, "html_url": f"https://github.com/fcavalcantirj/esp-atlas/issues/{n}"}
+
+
+def _ctx_sub(root, issues, metas=None, api_docs=None, dry_run=False, budget=None):
+    """A TickContext whose gh serves the submission issues, repo metas, derive's api paths and
+    records every POST/PATCH (comments, closes)."""
+    metas, api_docs = metas or {}, api_docs or {}
+    budget = budget or Budget(clock=lambda: 0.0)
+    calls = []
+
+    def gh(*a):
+        calls.append(a)
+        if a[:2] == ("api", ISSUES_PATH):
+            return SimpleNamespace(returncode=0, stdout=json.dumps(issues), stderr="")
+        if a[:2] == ("api", "-X"):
+            return SimpleNamespace(returncode=0, stdout="{}", stderr="")
+        doc = metas.get(a[1]) if len(a) > 1 else None
+        if doc is None:
+            doc = api_docs.get(a[1]) if len(a) > 1 else None
+        if doc is None:
+            return SimpleNamespace(returncode=1, stdout="", stderr="404 not found")
+        return SimpleNamespace(returncode=0, stdout=json.dumps(doc), stderr="")
+    ctx = tick.TickContext(root=root, ledger_path=root / "jr" / "proposed_ledger.json", now=NOW,
+                           gh=budget.wrap(gh), git=lambda *a: None, budget=budget, dry_run=dry_run, env={})
+    ctx.calls = calls   # type: ignore[attr-defined]
+    return ctx
+
+
+def _answers(ctx):
+    return [(a[2], a[3], a[5] if len(a) > 5 else None) for a in ctx.calls if a[:2] == ("api", "-X")]
+
+
+def test_parse_submission_reads_the_issue_form_and_plain_lines():
+    assert stage_admit.parse_submission("### Repository URL\n\nhttps://github.com/o/r\n\n### Boards\n\nCardputer, T-Deck\n") == \
+        {"github": "https://github.com/o/r", "hint": "Cardputer, T-Deck"}
+    assert stage_admit.parse_submission("Repo: https://github.com/o/r.git\nBoards: Cardputer") == {"github": "https://github.com/o/r", "hint": "Cardputer"}
+    assert stage_admit.parse_submission("### Boards\n\n_No response_\n\nhttps://github.com/o/r/") == {"github": "https://github.com/o/r", "hint": None}
+    assert stage_admit.parse_submission("nothing here") is None and stage_admit.parse_submission(None) is None
+
+
+def test_submission_with_a_board_hint_is_admitted_first_and_answered(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Zed Cardputer Tool", "https://github.com/z/zed")])
+    issues = [_issue(7, "### Repository URL\n\nhttps://github.com/s/subtool\n\n### Boards\n\nM5Stack Cardputer\n")]
+    metas = {"repos/s/subtool": _meta("s/subtool", stars=40, description="A writer tool", rid=71),
+             "repos/z/zed": _meta("z/zed", stars=30, description="A Cardputer tool", rid=72)}
+    ctx = _ctx_sub(root, issues, metas)
+    res = stage_admit.run(ctx, budget=3)
+    assert res.admitted == 2 and res.rejects == {}
+    assert res.paths[0] == "data/firmware/subtool/firmware.md"          # the submission came first
+    assert "subtool: +record (submission #7)" in res.summary
+    rec = yaml.safe_load((root / "data/recipes/m5cardputer__subtool/recipe.md").read_text().split("\n---\n")[0].split("---\n", 1)[1])
+    assert rec["board"] == "m5cardputer" and rec["chip_family"] == "esp32-s3"
+    # the board came from the submitter, so the citation is the submission issue, not the repo page
+    assert rec["sources"][1] == {"field": "board", "url": "https://github.com/fcavalcantirj/esp-atlas/issues/7", "verified": "2026-09-07"}
+    assert "names this board as M5Stack Cardputer in its submission issue; named by the submitter, not verified on hardware." in rec["notes"]
+    answers = _answers(ctx)
+    assert answers[0][0] == "POST" and answers[0][1] == "repos/fcavalcantirj/esp-atlas/issues/7/comments"
+    assert "**Admitted.**" in answers[0][2] and "m5cardputer__subtool" in answers[0][2]
+    assert answers[1][:2] == ("PATCH", "repos/fcavalcantirj/esp-atlas/issues/7")
+    assert ctx.calls[0][:2] == ("api", ISSUES_PATH)                       # listed before any meta fetch
+
+
+def test_submission_without_a_hint_uses_the_repo_build_files_as_evidence(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
+    issues = [_issue(8, "https://github.com/s/relwriter")]
+    metas = {"repos/s/relwriter": _meta("s/relwriter", stars=40, description="Firmware", rid=81)}
+    api_docs = {"repos/s/relwriter/releases/latest": {"tag_name": "v1", "assets": [
+                    {"name": "relwriter-v1.2.0-m5cardputer.bin", "size": 10, "browser_download_url": "https://github.com/s/relwriter/releases/download/v1/relwriter-v1.2.0-m5cardputer.bin"},
+                    {"name": "relwriter-v1.2.0-m5stick_cplus2.bin", "size": 10, "browser_download_url": "https://github.com/s/relwriter/releases/download/v1/relwriter-v1.2.0-m5stick_cplus2.bin"}]},
+                "repos/s/relwriter/git/trees/main?recursive=1": {"tree": [{"path": "README.md", "type": "blob"}], "truncated": False}}
+    ctx = _ctx_sub(root, issues, metas, api_docs)
+    res = stage_admit.run(ctx, budget=1, raw=lambda u: None)          # no network: raw files absent
+    assert res.admitted == 1 and "relwriter: +record (submission #8)" in res.summary
+    rec = yaml.safe_load((root / "data/recipes/m5cardputer__relwriter/recipe.md").read_text().split("\n---\n")[0].split("---\n", 1)[1])
+    assert rec["sources"][1]["url"] == "https://github.com/s/relwriter/releases/tag/v1"      # the release page that lists the asset
+    assert rec["flash"] == {"method": "release-bin"} and "in its release" in rec["notes"]
+    assert any(a[:2] == ("api", "repos/s/relwriter/releases/latest") for a in ctx.calls)   # derive ran, counted
+
+
+def test_submission_below_the_floor_is_answered_with_the_rule_and_closed(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
+    issues = [_issue(9, "https://github.com/s/tiny\nBoards: Cardputer")]
+    metas = {"repos/s/tiny": _meta("s/tiny", stars=3, forks=0, rid=91)}
+    ctx = _ctx_sub(root, issues, metas)
+    res = stage_admit.run(ctx, budget=1)
+    assert res.admitted == 0 and res.rejects == {"below_floor": 1}
+    a = _answers(ctx)
+    assert "**Not admitted** — `below_floor: 3 stars / 0 forks`" in a[0][2] and "25 stars or 25 forks" in a[0][2]
+    assert a[1][0] == "PATCH"
+    assert memory.is_blocked(memory.load(root / "jr" / "proposed_ledger.json"), repo="s/tiny", now=NOW)
+
+
+def test_submission_without_a_repo_url_is_invalid_and_closed(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
+    ctx = _ctx_sub(root, [_issue(10, "please add my thing")])
+    res = stage_admit.run(ctx, budget=1)
+    assert res.rejects == {"invalid": 1} and "submission #10: invalid" in res.summary
+    a = _answers(ctx)
+    assert "`invalid: no github.com/owner/repo URL" in a[0][2] and a[1][0] == "PATCH"
+
+
+def test_submission_already_decided_is_answered_from_memory_without_a_fetch(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
+    memory.record_rejected("tiny", "s/tiny", "below_floor: 3 stars / 0 forks", ttl_days=30, path=root / "jr" / "proposed_ledger.json", now=NOW)
+    ctx = _ctx_sub(root, [_issue(11, "https://github.com/s/tiny")])
+    res = stage_admit.run(ctx, budget=1)
+    assert "submission #11: already decided" in res.summary
+    a = _answers(ctx)
+    assert "already_decided: below_floor" in a[0][2] and a[1][0] == "PATCH"
+    assert not any(a[:2] == ("api", "repos/s/tiny") for a in ctx.calls)
+
+
+def test_submission_dry_run_scores_but_never_comments_or_closes(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
+    issues = [_issue(12, "https://github.com/s/subtool\nBoards: Cardputer")]
+    metas = {"repos/s/subtool": _meta("s/subtool", stars=40, rid=121)}
+    ctx = _ctx_sub(root, issues, metas, dry_run=True)
+    res = stage_admit.run(ctx, budget=1)
+    assert "subtool: would admit (submission #12)" in res.summary
+    assert _answers(ctx) == [] and not (root / "data/firmware/subtool").exists()
+
+
+def test_submission_defers_the_derive_when_the_budget_cannot_afford_it(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
+    issues = [_issue(13, "https://github.com/s/relwriter")]
+    metas = {"repos/s/relwriter": _meta("s/relwriter", stars=40, rid=131)}
+    ctx = _ctx_sub(root, issues, metas, budget=Budget(max_calls=20, clock=lambda: 0.0))
+    res = stage_admit.run(ctx, budget=1, raw=lambda u: None)
+    assert "submission #13: deferred, tick budget low for a derive" in res.summary
+    assert _answers(ctx) == [] and res.admitted == 0
+
+
+def test_scorer_uses_the_board_hint_only_as_the_last_fallback():
+    import scorer
+    meta = {"full_name": "s/x", "stars": 40, "forks": 1, "description": "A writer tool", "license": "MIT", "fork": False}
+    entry = {"name": "Scribbler", "github": "https://github.com/s/x", "category": None, "download": None}
+    assert scorer.score_entry(entry, meta, set(), set(), {})["reason"].startswith("no_board_evidence")
+    res = scorer.score_entry(entry, meta, set(), set(), {}, board_hint="m5cardputer")
+    assert res["decision"] == "authored" and res["record"]["board"] == "m5cardputer" and res["record"]["chip"] == "esp32-s3"
+    named = scorer.score_entry(dict(entry, name="Scribbler for Cardputer"), meta, set(), set(), {}, board_hint="lolin-d32")
+    assert named["record"]["board"] == "m5cardputer"                 # a device named in the text still wins over the hint

@@ -18,7 +18,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import re
+
 import board_alias
+import derive
 import memory
 import scorer
 import tools
@@ -28,6 +31,117 @@ from esp_atlas_core.floor import clears_popularity_floor
 
 DEFAULT_BUDGET = 3
 MIN_CALLS_TO_CONTINUE = 5   # a repo-meta fetch costs >= 1 call; stop before stranding one
+
+# --- submissions: GitHub issues labelled `submission` (the site's /submit box and the issue form
+# both create them). Scored FIRST, before the launcher catalog; the verdict is commented on the
+# issue and the issue is closed. The site never writes catalog data: a submission is a candidate.
+SUBMISSION_LABEL = "submission"
+DEFAULT_REPO_SLUG = "fcavalcantirj/esp-atlas"
+SUBMISSION_DERIVE_CALLS = 30      # derive() cap when the submitter named no catalogued board
+_GITHUB_URL = re.compile(r"https?://github\.com/([\w.-]+)/([\w.-]+?)(?:\.git)?(?=[\s/)>\]\"']|$)", re.I)
+_BOARDS_LINE = re.compile(r"(?:^|\n)\s*(?:###\s*Boards|Boards)\s*:?\s*\n?\s*([^\n]+)", re.I)
+
+REASON_HELP = {
+    "below_floor": "the catalog's floor is 25 stars or 25 forks (SPEC-firmware-floor.md)",
+    "fork_of_catalogued": "forks of a catalogued firmware are listed under the original",
+    "fork_of_uncatalogued": "submit the original repository instead",
+    "already_catalogued": "this repository is already in the catalog",
+    "no_board_evidence": "name a catalogued board in the Boards line (esp-atlas.com/boards), or ship release assets / a platformio.ini that name one",
+    "archived": "archived repositories are not catalogued",
+    "repo_unresolved": "the repository could not be read (private, renamed or missing)",
+    "invalid": "the issue must contain a github.com/owner/repo URL",
+}
+
+
+def parse_submission(body: str | None) -> dict | None:
+    """{github, hint} from an issue body — the first github.com/owner/repo URL and, when present,
+    the text after a `Boards` heading or `Boards:` line (the issue form renders `### Boards`)."""
+    m = _GITHUB_URL.search(body or "")
+    if not m:
+        return None
+    hint = None
+    b = _BOARDS_LINE.search(body or "")
+    if b:
+        text = b.group(1).strip()
+        if text and text.lower() not in ("_no response_", "none", "-"):
+            hint = text
+    return {"github": f"https://github.com/{m.group(1)}/{m.group(2)}", "hint": hint}
+
+
+def _submission_entries(ctx, slug: str) -> list[dict]:
+    """Open `submission` issues as launcher-shaped entries (one counted gh call). Malformed
+    bodies come back with github=None so the caller can answer `invalid`."""
+    try:
+        p = ctx.gh("api", f"repos/{slug}/issues?labels={SUBMISSION_LABEL}&state=open&per_page=50")
+    except BudgetExceeded:
+        raise
+    except Exception:  # noqa: BLE001 — an unreadable listing means "no submissions this tick", never a dead stage
+        return []
+    if getattr(p, "returncode", 1) != 0:
+        return []
+    try:
+        issues = json.loads(getattr(p, "stdout", "") or "[]")
+    except json.JSONDecodeError:
+        return []
+    out = []
+    for it in issues if isinstance(issues, list) else []:
+        if not isinstance(it, dict) or it.get("pull_request"):
+            continue
+        parsed = parse_submission(it.get("body")) or parse_submission(it.get("title"))
+        out.append({"name": (parsed or {}).get("github", "").rstrip("/").split("/")[-1] or (it.get("title") or ""),
+                    "github": (parsed or {}).get("github"), "hint": (parsed or {}).get("hint"),
+                    "description": None, "category": None, "download": None,
+                    "issue": it.get("number"), "issue_url": it.get("html_url"), "source": "submission"})
+    return sorted(out, key=lambda e: e["issue"] or 0)
+
+
+def _resolve_hint(hint: str | None, atlas: dict) -> tuple[str | None, str | None]:
+    """(board_id, the piece that named it): the first catalogued board a submitter's Boards line
+    names, via jr/board_alias (compact / containment / cited alias — deterministic, never fuzzy)."""
+    for piece in re.split(r"[,;/\n]+", hint or ""):
+        piece = piece.strip()
+        if not piece:
+            continue
+        r = board_alias.resolve_token(piece, boards=atlas)
+        if r and r.get("atlas_id"):
+            return r["atlas_id"], piece
+    return None, None
+
+
+def _derived_board(ctx, owner_repo: str, atlas: dict, raw=None) -> tuple[str | None, dict | None]:
+    """(board_id, the signal that named it) from the repo's own build files (release assets,
+    platformio.ini, CI, IDF targets) — the same reader Track B uses, capped at SUBMISSION_DERIVE_CALLS."""
+    api = lambda path: json.loads(ctx.gh("api", path).stdout)  # noqa: E731 — counted through ctx.gh
+    raw = ctx.budget.wrap(raw or derive.default_raw, "raw")
+    d = derive.derive(owner_repo, api=api, raw=raw, max_calls=SUBMISSION_DERIVE_CALLS,
+                      today=ctx.now.strftime("%Y-%m-%d"))
+    res = derive.resolve(d, boards=atlas)
+    best = sorted(res["boards"].items(), key=lambda kv: (kv[1][0]["rank"], kv[0]))
+    if not best:
+        return None, None
+    return best[0][0], dict(best[0][1][0])
+
+
+def _answer(ctx, slug: str, issue: int, text: str, close: bool = True) -> None:
+    """Comment the verdict on the submission issue and close it. Dry-run: nothing."""
+    if ctx.dry_run or not issue:
+        return
+    ctx.gh("api", "-X", "POST", f"repos/{slug}/issues/{issue}/comments", "-f", f"body={text}")
+    if close:
+        ctx.gh("api", "-X", "PATCH", f"repos/{slug}/issues/{issue}", "-f", "state=closed")
+
+
+def _verdict_text(reason: str | None, admitted: bool, needs_human: bool, page_id: str | None = None) -> str:
+    if admitted:
+        tail = (" A human reviews and merges it (flagged needs-human)." if needs_human
+                else " CI must be green before it merges; a human can still veto.")
+        return ("**Admitted.** EspAtlas Jr is opening a pull request with the firmware record and its "
+                f"first cited recipe{' (`' + page_id + '`)' if page_id else ''}." + tail +
+                " Track B then maps every board the repo's own build files name.")
+    key = (reason or "").split(":")[0]
+    help_ = REASON_HELP.get(key, "")
+    return (f"**Not admitted** — `{reason}`." + (f" {help_}." if help_ else "") +
+            " Rules are deterministic (no AI): esp-atlas.com/how-we-work. Fix the cause and open a new submission.")
 
 # Skip reason -> memory TTL (days). The floor/archived/unresolved gates have their own
 # constants in jr/memory.py; every other skip is a "scored but skipped" note re-checked
@@ -91,8 +205,9 @@ def _catalogued_ids(led: dict, now) -> dict:
     return out
 
 
-def run(ctx, budget: int = DEFAULT_BUDGET):
-    """The Track A stage for jr/tick.py: returns a tick.StageResult."""
+def run(ctx, budget: int = DEFAULT_BUDGET, raw=None):
+    """The Track A stage for jr/tick.py: returns a tick.StageResult. `raw` (tests) replaces
+    derive.default_raw for the build-file reads a submission without a board hint triggers."""
     import tick
     today = ctx.now.strftime("%Y-%m-%d")
     fetch_catalog = ctx.budget.wrap(tools.fetch_launcher_catalog, "https")
@@ -126,7 +241,19 @@ def run(ctx, budget: int = DEFAULT_BUDGET):
                                    repo_id=repo_id, path=ctx.ledger_path, now=ctx.now)
         return f"{fid}: skip {key}"
 
-    for entry in sorted(catalog, key=lambda e: ((e.get("name") or ""), (e.get("github") or ""))):
+    # Submissions first (one counted call to list them), then the launcher catalog.
+    slug = (ctx.env or {}).get("JR_REPO_SLUG") or DEFAULT_REPO_SLUG
+    submissions = _submission_entries(ctx, slug)
+    atlas = board_alias.atlas_boards(ctx.root) if submissions else {}
+    entries = [dict(e) for e in submissions] + sorted(catalog, key=lambda e: ((e.get("name") or ""), (e.get("github") or "")))
+
+    for entry in entries:
+        issue = entry.get("issue")
+        if issue and not entry.get("github"):
+            reject("invalid")
+            _answer(ctx, slug, issue, _verdict_text("invalid: no github.com/owner/repo URL in the issue", False, False))
+            lines.append(f"submission #{issue}: invalid")
+            continue
         if admitted + would_admit >= budget:
             lines.append(f"stopped: budget reached ({admitted + would_admit} admitted)")
             break
@@ -134,6 +261,11 @@ def run(ctx, budget: int = DEFAULT_BUDGET):
         owner_repo = scorer._owner_repo(github)
         if memory.is_blocked(led, repo=owner_repo, now=ctx.now) or memory.is_seen(led, repo=owner_repo, now=ctx.now):
             decided += 1
+            if issue:
+                prior = memory.lookup(led, repo=owner_repo) or {}
+                _answer(ctx, slug, issue, _verdict_text(f"already_decided: {prior.get('reason') or prior.get('status') or 'seen'}"
+                                                        + (f" (until {prior['expires']})" if prior.get("expires") else ""), False, False))
+                lines.append(f"submission #{issue}: already decided")
             continue
         if ctx.budget.remaining_calls() < MIN_CALLS_TO_CONTINUE:
             lines.append(f"stopped before {owner_repo}: tick budget low "
@@ -152,14 +284,38 @@ def run(ctx, budget: int = DEFAULT_BUDGET):
         fid = scorer._slug(scorer._repo_name_from_url(github))
         # Popularity floor (SPEC-firmware-floor.md, via esp_atlas_core.floor — never re-typed):
         # below stars AND forks is filler, rejected for FLOOR_REJECT_DAYS.
-        if not clears_popularity_floor(meta.get("stars"), meta.get("forks")):
-            lines.append(skip_reject(fid, owner_repo,
-                                     f"below_floor: {meta.get('stars')} stars / {meta.get('forks')} forks",
-                                     repo_id))
+        if meta.get("error"):
+            lines.append(skip_reject(fid, owner_repo, f"repo_unresolved: {meta['error'][:80]}", None))
+            if issue:
+                _answer(ctx, slug, issue, _verdict_text(f"repo_unresolved: {meta['error'][:80]}", False, False))
             continue
-        res = scorer.score_entry(entry, meta, cat_repos, cat_toks, cat_ids)
+        if not clears_popularity_floor(meta.get("stars"), meta.get("forks")):
+            reason = f"below_floor: {meta.get('stars')} stars / {meta.get('forks')} forks"
+            lines.append(skip_reject(fid, owner_repo, reason, repo_id))
+            if issue:
+                _answer(ctx, slug, issue, _verdict_text(reason, False, False))
+            continue
+        hint_board, evidence = None, None      # evidence: the signal that names the board, for the first recipe's citation
+        if issue:
+            hint_board, piece = _resolve_hint(entry.get("hint"), atlas)
+            if hint_board:
+                evidence = {"rank": 0, "kind": "submission", "token": piece,
+                            "url": entry.get("issue_url") or f"https://github.com/{slug}/issues/{issue}",
+                            "soc": None, "line": None, "extra": {"issue": issue}}
+            else:
+                if ctx.budget.remaining_calls() < SUBMISSION_DERIVE_CALLS + MIN_CALLS_TO_CONTINUE:
+                    lines.append(f"submission #{issue}: deferred, tick budget low for a derive")
+                    continue
+                try:
+                    hint_board, evidence = _derived_board(ctx, owner_repo, atlas, raw=raw)
+                except BudgetExceeded as e:
+                    lines.append(f"stopped during submission #{issue}: {e}")
+                    break
+        res = scorer.score_entry(entry, meta, cat_repos, cat_toks, cat_ids, board_hint=hint_board)
         if res["decision"] == "skip":
             lines.append(skip_reject(fid, owner_repo, res["reason"], repo_id))
+            if issue:
+                _answer(ctx, slug, issue, _verdict_text(res["reason"], False, False))
             continue
         rec = res["record"]
         out_id = rec["id"]
@@ -174,11 +330,14 @@ def run(ctx, budget: int = DEFAULT_BUDGET):
         fmd = ctx.root / "data" / "firmware" / out_id / "firmware.md"
         if fmd.exists():
             lines.append(f"{out_id}: record exists, nothing written")
+            if issue:
+                _answer(ctx, slug, issue, _verdict_text(f"already_catalogued: {out_id}", False, False))
             continue
         if res.get("needs_human"):
             needs_human = True
         if ctx.dry_run:
-            lines.append(f"{out_id}: would admit{' (needs_human)' if res.get('needs_human') else ''}")
+            lines.append(f"{out_id}: would admit{' (needs_human)' if res.get('needs_human') else ''}"
+                         + (f" (submission #{issue})" if issue else ""))
             would_admit += 1
             continue
         repo_url = rec["url"]
@@ -195,9 +354,12 @@ def run(ctx, budget: int = DEFAULT_BUDGET):
         # from the build files later in the same tick (admit runs before boardmap).
         rdir = ctx.root / "data" / "recipes" / f"{rec['board']}__{out_id}"
         if not (rdir / "recipe.md").exists():
-            board_name = board_alias.atlas_boards(ctx.root).get(rec["board"], {}).get("name") or rec["board"]
-            signal = {"rank": 0, "kind": "repo", "token": board_name, "url": repo_url, "soc": None,
-                      "line": None, "extra": {}}
+            if evidence is not None and rec["board"] == hint_board:
+                signal = evidence                 # the submission issue, or the build-file signal, that named the board
+            else:
+                board_name = board_alias.atlas_boards(ctx.root).get(rec["board"], {}).get("name") or rec["board"]
+                signal = {"rank": 0, "kind": "repo", "token": board_name, "url": repo_url, "soc": None,
+                          "line": None, "extra": {}}
             rdir.mkdir(parents=True, exist_ok=True)
             (rdir / "recipe.md").write_text(
                 writers.render_recipe(f"{rec['board']}__{out_id}", rec["board"], out_id, rec["chip"],
@@ -206,7 +368,10 @@ def run(ctx, budget: int = DEFAULT_BUDGET):
         memory.record_proposed(out_id, owner_repo, repo_id=repo_id, evidence_url=repo_url,
                                path=ctx.ledger_path, now=ctx.now)
         admitted += 1
-        lines.append(f"{out_id}: +record{' (needs_human)' if res.get('needs_human') else ''}")
+        lines.append(f"{out_id}: +record{' (needs_human)' if res.get('needs_human') else ''}"
+                     + (f" (submission #{issue})" if issue else ""))
+        if issue:
+            _answer(ctx, slug, issue, _verdict_text(None, True, bool(res.get("needs_human")), f"{rec['board']}__{out_id}"))
     summary = "; ".join(lines) if lines else "no candidates"
     if decided and lines:
         summary += f" ({decided} already decided, skipped)"

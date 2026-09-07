@@ -397,3 +397,25 @@ def test_resolve_treats_a_devkit_id_under_a_product_env_as_chip_evidence_only(re
     assert [s["token"] for s in r["boards"]["esp32-s3-devkitc-1"]] == ["esp32-s3-devkitc-1"]     # the n16r8-under-elecrow signal is NOT here
     assert [s["token"] for s in r["socs"]["esp32-s3"]] == ["esp32-s3-devkitc1-n16r8"]
     assert [(s["token"], s["how"]) for s in r["unresolved"]] == [("esp32-s3-devkitc1-n16r8", "generic_base")]
+
+
+def test_release_assets_named_repo_dash_board_and_multipart_images_yield_one_token_per_board():
+    """draftling ships `draftling-<board>.bin` + `-bootloader.bin` + `-partition-table.bin` per
+    device: the repo name is not a stamp (no digit), so the common-prefix rule keeps it; the
+    repo-name rule strips it, and the bootloader/partition parts never become tokens."""
+    names = []
+    for b in ("m5stack_papers3", "waveshare_rlcd42", "freenove_fnk0104a"):
+        names += [f"draftling-{b}.bin", f"draftling-{b}-bootloader.bin", f"draftling-{b}-partition-table.bin"]
+    rel = {"tag_name": "v1.0.1", "assets": [{"name": n, "size": 10, "browser_download_url": f"https://github.com/clackups/draftling/releases/download/v1.0.1/{n}"} for n in names]}
+    f = Fake(api={"repos/clackups/draftling/releases/latest": rel})
+    sigs = derive.release_signals("clackups/draftling", derive._Calls(f.api, f.raw, 30), [])
+    assert [s.token for s in sigs] == ["m5stack_papers3", "waveshare_rlcd42", "freenove_fnk0104a"]
+    assert all(s.extra["release"] == "v1.0.1" for s in sigs)
+
+
+def test_release_assets_with_a_dotted_version_after_the_repo_name_are_cleaned():
+    names = ["relwriter-v1.2.0-m5cardputer.bin", "relwriter-v1.2.0-m5stick_cplus2.bin"]
+    rel = {"tag_name": "v1.2.0", "assets": [{"name": n, "size": 10, "browser_download_url": "https://x/" + n} for n in names]}
+    f = Fake(api={"repos/s/relwriter/releases/latest": rel})
+    sigs = derive.release_signals("s/relwriter", derive._Calls(f.api, f.raw, 30), [])
+    assert [s.token for s in sigs] == ["m5cardputer", "m5stick_cplus2"]

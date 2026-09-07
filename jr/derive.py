@@ -45,6 +45,7 @@ GENERIC_BIN_STEMS = {"bootloader", "partitions", "partition-table", "boot_app0",
 _RUNNER = re.compile(r"^(ubuntu|windows|macos)-|^(latest|self-hosted)$", re.I)
 _VERSIONISH = re.compile(r"^v?\d+([._]\d+)*$|^\d{6,}$", re.I)           # CI matrix noise: '3.11', '20240101'
 _STAMP = re.compile(r"^v?\d+([._]\d+)+$|^\d{6,}$", re.I)                   # a dotted/underscored version or a date
+_MULTIPART_SUFFIX = re.compile(r"[-_](bootloader|partition[-_]?table|partitions|boot_app0)$", re.I)   # the other parts of a 3-part image
 
 
 @dataclass
@@ -182,8 +183,12 @@ def release_signals(owner_repo: str, calls: _Calls, notes: list[str]) -> list[Si
     bins = [a for a in assets if str(a["name"]).lower().endswith((".bin", ".bin.gz", ".uf2"))]
     stems = [_stem(a["name"]) for a in bins]
     prefix = common_prefix(stems)
+    repo_prefix = re.compile(r"^" + re.escape(owner_repo.split("/")[-1]) + r"[-_.]", re.I)   # `draftling-m5stack_papers3`
     for a, stem in zip(bins, stems):
         token = stem[len(prefix):] if prefix and stem.startswith(prefix) else stem
+        token = repo_prefix.sub("", token)
+        if _MULTIPART_SUFFIX.search(token):
+            continue                        # `<board>-bootloader` / `-partition-table`: the app image carries the board
         token = clean_token(token)
         if not token or token.lower() in GENERIC_BIN_STEMS:
             continue
