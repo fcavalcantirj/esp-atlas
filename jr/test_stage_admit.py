@@ -379,3 +379,19 @@ def test_launcher_skips_are_one_aggregate_line_never_one_per_entry(root, monkeyp
     assert res.summary == "skipped 3 launcher entries: repo_unresolved 2, below_floor 1"
     assert res.rejects == {"repo_unresolved": 2, "below_floor": 1}
     assert ": skip" not in res.summary
+
+
+def test_admit_stops_scanning_the_launcher_at_its_call_share_but_still_answers_submissions(root, monkeypatch):
+    """22:00 UTC tick: admit spent all 146 calls scanning the backlog and boardmap got none."""
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [
+        _entry(f"Tool {i}", f"https://github.com/l/tool{i}") for i in range(20)])
+    metas = {f"repos/l/tool{i}": _meta(f"l/tool{i}", stars=1, forks=0, rid=100 + i) for i in range(20)}
+    issues = [_issue(30, "https://github.com/s/subtool\nBoards: Cardputer")]
+    metas["repos/s/subtool"] = _meta("s/subtool", stars=40, rid=301)
+    b = Budget(max_calls=150, clock=lambda: 0.0)
+    ctx = _ctx_sub(root, issues, metas, budget=b)
+    res = stage_admit.run(ctx, budget=5, call_share=0.05)          # 5% of 150 = 7 calls for the launcher scan
+    assert "subtool: +record (submission #30)" in res.summary        # the submission was answered regardless
+    assert "admit's call share used (7 of the tick's calls); the rest is Track B's" in res.summary
+    assert b.calls <= 7 + 3 + 2                                       # issues list + submission meta + a few launcher metas
+    assert res.rejects.get("below_floor", 0) < 20                     # most of the backlog was left for the next tick

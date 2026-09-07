@@ -205,11 +205,17 @@ def _catalogued_ids(led: dict, now) -> dict:
     return out
 
 
-def run(ctx, budget: int = DEFAULT_BUDGET, raw=None):
+def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     """The Track A stage for jr/tick.py: returns a tick.StageResult. `raw` (tests) replaces
-    derive.default_raw for the build-file reads a submission without a board hint triggers."""
+    derive.default_raw for the build-file reads a submission without a board hint triggers.
+    `call_share` is the fraction of the tick's REMAINING gh calls this stage may spend scanning
+    the launcher backlog (the hourly path passes A/(A+B)): the 22:00 UTC tick spent all 146
+    calls on admit and boardmap got none. Submissions are exempt from the cap (they are rare
+    and a person is waiting); a launcher candidate is skipped for this tick when the cap is hit."""
     import tick
     today = ctx.now.strftime("%Y-%m-%d")
+    calls_at_start = ctx.budget.calls
+    call_cap = int(ctx.budget.remaining_calls() * max(0.0, min(1.0, call_share)))
     fetch_catalog = ctx.budget.wrap(tools.fetch_launcher_catalog, "https")
     try:
         catalog = fetch_catalog()
@@ -281,6 +287,9 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None):
         if ctx.budget.remaining_calls() < MIN_CALLS_TO_CONTINUE:
             lines.append(f"stopped before {owner_repo}: tick budget low "
                          f"({ctx.budget.remaining_calls()} calls left)")
+            break
+        if not issue and ctx.budget.calls - calls_at_start >= call_cap:
+            lines.append(f"stopped before {owner_repo}: admit's call share used ({call_cap} of the tick's calls); the rest is Track B's")
             break
         try:
             meta, _fetched = _fetch_meta(ctx.gh, owner_repo)
