@@ -569,19 +569,42 @@ def derive(owner_repo: str, *, api=default_api, raw=default_raw, ref: str | None
             "signals": [asdict(s) for s in signals], "notes": notes}
 
 
+_DEVKIT_ENV = re.compile(r"^esp32(?:[chsp]\d+)?dev")     # esp32dev, esp32c5dev, esp32s3dev_8MB_opi: the devkit-targeting env idiom
+
+
+def _generic_base(signal: dict, atlas_id: str, atlas: dict) -> bool:
+    """True when a rank-2 platformio `board =` value names an Espressif devkit but the env that
+    carries it is named after some other product. Accepted as a devkit target only when the env
+    name follows the devkit idiom (`esp32c5dev`), says `devkit`, or repeats the board id."""
+    if signal.get("kind") != "platformio" or (atlas.get(atlas_id) or {}).get("brand") != "espressif":
+        return False
+    env = board_alias.compact(str((signal.get("extra") or {}).get("env") or ""))
+    if not env:
+        return False
+    return not (_DEVKIT_ENV.match(env) or "devkit" in env or board_alias.compact(atlas_id) in env)
+
+
 def resolve(derived: dict, boards: dict[str, dict] | None = None) -> dict:
     """Map every signal to a catalogued board through jr/board_alias.resolve_token. Returns
     {"boards": {atlas_id: [signal, ...]}, "socs": {soc: [signal, ...]}, "unresolved": [signal, ...]}.
     A board keeps every signal that named it, highest rank first; a chip-only signal lands in
     `socs`. Nothing here decides what to write — the writer does, from the best rank per board.
     `boards` is the atlas to resolve against (default: this clone's; the tick passes its worktree's)."""
-    atlas = boards
+    atlas = boards if boards is not None else board_alias.atlas_boards()
     boards: dict[str, list] = {}
     socs: dict[str, list] = {}
     unresolved: list = []
     for s in derived.get("signals", []):
         r = board_alias.resolve_token(s["token"], soc=s.get("soc"), boards=atlas)
-        if r and r.get("atlas_id"):
+        if r and r.get("atlas_id") and _generic_base(s, r["atlas_id"], atlas):
+            # An Espressif devkit id used as the BASE of a product-specific PlatformIO env (Bruce's
+            # `board = esp32-s3-devkitc1-n16r8` under env `elecrow-advance-35-s3`) proves the chip,
+            # not that the firmware targets the bare devkit: chip evidence only, never a recipe.
+            chip = atlas[r["atlas_id"]].get("soc")
+            if chip:
+                socs.setdefault(chip, []).append(s)
+            unresolved.append({**s, "how": "generic_base"})
+        elif r and r.get("atlas_id"):
             boards.setdefault(r["atlas_id"], []).append({**s, "how": r["how"]})
         elif r and r.get("soc"):
             socs.setdefault(r["soc"], []).append(s)
