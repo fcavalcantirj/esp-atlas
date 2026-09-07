@@ -8,10 +8,11 @@ maintainer: wled
 license: EUPL-1.2
 socs:
 - esp32
+- esp32-c3
+- esp32-c5
+- esp32-c6
 - esp32-s2
 - esp32-s3
-- esp32-c3
-- esp32-c6
 distribution:
 - releases
 - web-flasher
@@ -54,6 +55,9 @@ sources:
 - field: popularity
   url: https://github.com/wled/WLED
   verified: '2026-09-01'
+- field: socs
+  url: https://github.com/wled/WLED/blob/main/platformio.ini#L552
+  verified: '2026-09-07'
 ---
 
 # WLED

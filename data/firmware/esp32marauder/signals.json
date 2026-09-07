@@ -1,0 +1,2540 @@
+{
+ "calls": 9,
+ "errors": 0,
+ "fetched": "2026-09-07",
+ "notes": [],
+ "ref": "master",
+ "repo": "justcallmekoko/ESP32Marauder",
+ "resolved": {
+  "boards": [
+   "esp32-c5-devkitc-1",
+   "lolin-d32",
+   "m5cardputer",
+   "m5nanoc6",
+   "m5stick-cplus2"
+  ],
+  "socs": [
+   "esp32-c5",
+   "esp32-c6",
+   "esp32-s2",
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "0x0",
+   "0x1000",
+   "0x2000",
+   "ESP32 LDDB",
+   "ESP32_LDDB",
+   "Flipper Zero Multi Board S3",
+   "Flipper Zero WiFi Dev Board",
+   "H4W9/TFT_eSPI",
+   "LilyGo T-Dongle C5",
+   "M5Cardputer ADV",
+   "M5StickCPlus",
+   "MARAUDER_C5",
+   "MARAUDER_CARDPUTER",
+   "MARAUDER_CARDPUTER_ADV",
+   "MARAUDER_CYD_2USB",
+   "MARAUDER_CYD_3_5_INCH",
+   "MARAUDER_CYD_GUITION",
+   "MARAUDER_CYD_MICRO",
+   "MARAUDER_DEV_BOARD_PRO",
+   "MARAUDER_FLIPPER",
+   "MARAUDER_KIT",
+   "MARAUDER_M5STICKC",
+   "MARAUDER_M5STICKCP2",
+   "MARAUDER_M5_NANO_C6",
+   "MARAUDER_MINI",
+   "MARAUDER_MULTIBOARD_S3",
+   "MARAUDER_PANCAKE",
+   "MARAUDER_REV_FEATHER",
+   "MARAUDER_T_DONGLE_C5",
+   "MARAUDER_V4",
+   "MARAUDER_V6",
+   "MARAUDER_V6_1",
+   "MARAUDER_V7",
+   "Marauder CYD 2432S024 GUITION",
+   "Marauder CYD 2432S028",
+   "Marauder CYD 2432S028 2 USB",
+   "Marauder CYD 3.5inch",
+   "Marauder Dev Board Pro",
+   "Marauder Kit",
+   "Marauder Mini",
+   "Marauder Pancake",
+   "Marauder v6",
+   "Marauder v6.1",
+   "Marauder v7",
+   "OG Marauder",
+   "Rev Feather",
+   "User_Setup_cyd_2usb.h",
+   "User_Setup_cyd_3_5_inch.h",
+   "User_Setup_cyd_guition.h",
+   "User_Setup_cyd_micro.h",
+   "User_Setup_dual_nrf24.h",
+   "User_Setup_marauder_m5cardputer.h",
+   "User_Setup_marauder_m5cardputer_adv.h",
+   "User_Setup_marauder_m5stickc.h",
+   "User_Setup_marauder_m5stickcp2.h",
+   "User_Setup_marauder_mini.h",
+   "User_Setup_marauder_pancake.h",
+   "User_Setup_marauder_rev_feather.h",
+   "User_Setup_marauder_t_dongle_c5.h",
+   "User_Setup_og_marauder.h",
+   "bigbrodude6119/ESPAsyncWebServer",
+   "cyd_2432S024_guition",
+   "cyd_2432S028",
+   "cyd_2432S028_2usb",
+   "cyd_3_5_inch",
+   "dual_mini_c5",
+   "esp32:esp32:d32:PartitionScheme=min_spiffs",
+   "esp32:esp32:esp32c6:CDCOnBoot=cdc,PartitionScheme=min_spiffs",
+   "esp32:esp32:esp32s3:PartitionScheme=min_spiffs,FlashSize=4M",
+   "esp32:esp32:m5stick-c:PartitionScheme=min_spiffs",
+   "esp32_lddb",
+   "flipper",
+   "kit",
+   "m5cardputer_adv",
+   "m5stick-c",
+   "m5stickc_plus",
+   "marauder_dev_board_pro",
+   "marauder_v7",
+   "master",
+   "mini",
+   "mini_v3",
+   "multiboardS3",
+   "old_hardware",
+   "pancake",
+   "rev_feather",
+   "t_dongle_c5",
+   "v6",
+   "v6_1",
+   "v8"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_cyd_2432S024_guition.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cyd_2432S024_guition",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_cyd_2432S024_guition.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_cyd_2432S028.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cyd_2432S028",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_cyd_2432S028.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_cyd_2432S028_2usb.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cyd_2432S028_2usb",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_cyd_2432S028_2usb.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_cyd_3_5_inch.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cyd_3_5_inch",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_cyd_3_5_inch.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_dual_mini_c5.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "dual_mini_c5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_dual_mini_c5.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_esp32c5devkitc1.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32c5devkitc1",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_esp32c5devkitc1.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_esp32_lddb.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32_lddb",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_esp32_lddb.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_flipper.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "flipper",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_flipper.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_kit.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "kit",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_kit.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_m5cardputer.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5cardputer",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_m5cardputer.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_m5cardputer_adv.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5cardputer_adv",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_m5cardputer_adv.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_m5nanoc6.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5nanoc6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_m5nanoc6.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_m5stickc_plus.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stickc_plus",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_m5stickc_plus.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_m5stickc_plus2.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stickc_plus2",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_m5stickc_plus2.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_marauder_dev_board_pro.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "marauder_dev_board_pro",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_marauder_dev_board_pro.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_marauder_v7.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "marauder_v7",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_marauder_v7.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_mini.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "mini",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_mini.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_mini_v3.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "mini_v3",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_mini_v3.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_multiboardS3.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "multiboardS3",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_multiboardS3.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_old_hardware.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "old_hardware",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_old_hardware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_pancake.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "pancake",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_pancake.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_rev_feather.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "rev_feather",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_rev_feather.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_t_dongle_c5.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "t_dongle_c5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_t_dongle_c5.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_v6.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "v6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_v6.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_v6_1.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "v6_1",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_v6_1.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_15_1_20260824_v8.bin",
+    "release": "v1.15.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "v8",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_v8.bin"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Flipper Zero WiFi Dev Board",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_FLIPPER",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "flipper",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s2",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "0x1000",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "bigbrodude6119/ESPAsyncWebServer",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "master",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Flipper Zero Multi Board S3",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_MULTIBOARD_S3",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32:esp32:esp32s3:PartitionScheme=min_spiffs,FlashSize=4M",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "multiboardS3",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "0x0",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "OG Marauder",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_V4",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32:esp32:d32:PartitionScheme=min_spiffs",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "old_hardware",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_og_marauder.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "d32",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder v6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_V6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder v6.1",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_V6_1",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder Kit",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_KIT",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "kit",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder Mini",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_MINI",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "mini",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_mini.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32 LDDB",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32_LDDB",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32_lddb",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder Dev Board Pro",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_DEV_BOARD_PRO",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "marauder_dev_board_pro",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5StickCPlus",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_M5STICKC",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32:esp32:m5stick-c:PartitionScheme=min_spiffs",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stickc_plus",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_m5stickc.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5StickCPlus 2",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_M5STICKCP2",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stickc_plus2",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_m5stickcp2.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Rev Feather",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_REV_FEATHER",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "rev_feather",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_rev_feather.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder v7",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_V7",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "marauder_v7",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_dual_nrf24.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder CYD 2432S028",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_CYD_MICRO",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_2432S028",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_cyd_micro.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder CYD 2432S024 GUITION",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_CYD_GUITION",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_2432S024_guition",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_cyd_guition.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder CYD 2432S028 2 USB",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_CYD_2USB",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_2432S028_2usb",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_cyd_2usb.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder CYD 3.5inch",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_CYD_3_5_INCH",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_3_5_inch",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_cyd_3_5_inch.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Cardputer",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_CARDPUTER",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5cardputer",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_m5cardputer.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Cardputer ADV",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_CARDPUTER_ADV",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5cardputer_adv",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_m5cardputer_adv.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32-C5-DevKitC-1",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_C5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c5devkitc1",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "0x2000",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LilyGo T-Dongle C5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_T_DONGLE_C5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "t_dongle_c5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_t_dongle_c5.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "H4W9/TFT_eSPI",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32-C5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5NanoC6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_M5_NANO_C6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32:esp32:esp32c6:CDCOnBoot=cdc,PartitionScheme=min_spiffs",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5nanoc6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder Pancake",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_PANCAKE",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "pancake",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_pancake.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Flipper Zero WiFi Dev Board",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_FLIPPER",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "flipper",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s2",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "0x1000",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "bigbrodude6119/ESPAsyncWebServer",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "master",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Flipper Zero Multi Board S3",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_MULTIBOARD_S3",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32:esp32:esp32s3:PartitionScheme=min_spiffs,FlashSize=4M",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "multiboardS3",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "0x0",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "OG Marauder",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_V4",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32:esp32:d32:PartitionScheme=min_spiffs",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "old_hardware",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_og_marauder.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "d32",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder v6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_V6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder v6.1",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_V6_1",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder Kit",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_KIT",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "kit",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder Mini",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_MINI",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "mini",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_mini.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32 LDDB",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32_LDDB",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32_lddb",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder Dev Board Pro",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_DEV_BOARD_PRO",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "marauder_dev_board_pro",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5StickCPlus",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_M5STICKC",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32:esp32:m5stick-c:PartitionScheme=min_spiffs",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stickc_plus",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_m5stickc.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5StickCPlus 2",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_M5STICKCP2",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stickc_plus2",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_m5stickcp2.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Rev Feather",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_REV_FEATHER",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "rev_feather",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_rev_feather.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder v7",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_V7",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "marauder_v7",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_dual_nrf24.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder CYD 2432S028",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_CYD_MICRO",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_2432S028",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_cyd_micro.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder CYD 2432S024 GUITION",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_CYD_GUITION",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_2432S024_guition",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_cyd_guition.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder CYD 2432S028 2 USB",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_CYD_2USB",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_2432S028_2usb",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_cyd_2usb.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder CYD 3.5inch",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_CYD_3_5_INCH",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_3_5_inch",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_cyd_3_5_inch.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Cardputer",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_CARDPUTER",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5cardputer",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_m5cardputer.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Cardputer ADV",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_CARDPUTER_ADV",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5cardputer_adv",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_m5cardputer_adv.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32-C5-DevKitC-1",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_C5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c5devkitc1",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "0x2000",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LilyGo T-Dongle C5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_T_DONGLE_C5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "t_dongle_c5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_marauder_t_dongle_c5.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "H4W9/TFT_eSPI",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32-C5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5NanoC6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_M5_NANO_C6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32:esp32:esp32c6:CDCOnBoot=cdc,PartitionScheme=min_spiffs",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5nanoc6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  }
+ ]
+}
