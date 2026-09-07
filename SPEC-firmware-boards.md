@@ -53,11 +53,22 @@ Rules:
 The set of ESP32 boards/chips that exist (board → SoC) is a **solved, external source of
 truth**. esp-atlas grounds on it; it does not invent its own board list.
 
-- **PlatformIO board registry** — `pio boards --json-output` → every board as JSON with
-  its `mcu`/SoC, id, vendor. (`registry.platformio.org`)
-- **`espressif/arduino-esp32/boards.txt`** — Espressif's official board↔chip definitions.
+- **`espressif/arduino-esp32/boards.txt`** — Espressif's official board↔chip definitions
+  (`<id>.name`, `build.mcu`, `build.variant`, `build.board`).
+- **`pioarduino/platform-espressif32/boards/*.json`** — the per-board JSON definitions the
+  platform ships (`boards/<id>.json`): id, name, vendor, `build.mcu`, `build.variant`. Adopted as the second registry
+  by the 2026-09-03 fix plan; `platformio/platform-espressif32` carries an equivalent
+  `boards/` directory and can be added as a third pinned source the same way.
 - **ESP Component Registry** (`components.espressif.com`) — official, per-target.
 - Cross-reference only: **espboards.dev** (270 boards / 73 vendors / 6 chip families).
+
+Materialised as **`data/board_universe.json`** by `scripts/build_board_universe.py`: every
+entry cites its source file pinned to a commit — the raw `boards.txt` URL plus the line of
+`<id>.name=` (GitHub cannot render the 3 MB blob, so the citation is file + line, verifiable
+with `sed -n <line>p`), or the pioarduino board JSON's blob URL. `mcu` is mapped to an atlas
+`soc` only when that soc record exists. Generated, never hand-edited, refreshed manually with
+a reviewed diff; not read by `validate.py`, the index or the site. The launcher catalog is
+**not** an input (`SPEC-flash-catalog.md` §3: popularity signal only, never a data source).
 
 Derived board IDs from §1 are **resolved to canonical IDs here**. `SPEC.md` still owns the
 `soc/module/board` entity model; this spec owns the *derivation + resolution* of a
