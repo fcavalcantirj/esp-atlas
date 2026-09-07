@@ -82,37 +82,90 @@ def render_line(r: TickReport) -> str:
             f"{mem_txt}{guard_txt}{reval} · {pr_txt}{stage_txt}{warn} · {r.budget}").rstrip(" ·")
 
 
+def _fmt_firmware_item(it: dict) -> list[str]:
+    stars, forks = it.get("stars"), it.get("forks")
+    pop = f"{stars if stars is not None else '?'} ★ / {forks if forks is not None else '?'} forks"
+    out = [f"- **{it.get('name') or it.get('id')}** (`{it.get('id')}`) — {it.get('url')}",
+           f"  - ✅ public GitHub repository, {'not a fork' if not it.get('fork') else 'a fork'}, "
+           f"{'not archived' if not it.get('archived') else 'ARCHIVED'} · {pop} (floor: 25 stars or 25 forks)"
+           + (f" · license {it['license']}" if it.get("license") else ""),
+           "  - ✅ not already catalogued (repository, name tokens, repository id)",
+           f"  - ✅ board `{it.get('board')}` ({it.get('chip')}): {it.get('evidence')} → recipe `{it.get('recipe')}`, status unverified",
+           "  - ✅ schema-valid, cite-or-omit (guard green)"]
+    if it.get("submission"):
+        out.append(f"  - via submission #{it['submission']} (answered there)")
+    if it.get("needs_human"):
+        out.append("  - ⚠️ flagged needs-human: a person reviews before merge")
+    return out
+
+
+def _fmt_recipes_item(it: dict) -> list[str]:
+    kinds = ", ".join(f"{k} {v}" for k, v in sorted((it.get("kinds") or {}).items(), key=lambda kv: (-kv[1], kv[0])))
+    head = f"- **{it.get('firmware')}** — +{len(it.get('written') or [])} recipe(s)"
+    if it.get("existing"):
+        head += f", {it['existing']} existing kept"
+    out = [head]
+    for rid in it.get("written") or []:
+        out.append(f"  - ✅ `{rid}` — board named in the repo's own build files, cited; status unverified")
+    if it.get("socs_added"):
+        out.append(f"  - ✅ socs widened: +{', '.join(it['socs_added'])} (cited)")
+    out.append(f"  - evidence: {it.get('signals', 0)} signal(s){' — ' + kinds if kinds else ''}; {it.get('unresolved', 0)} token(s) name no catalogued board")
+    for n in it.get("notes") or []:
+        out.append(f"  - note: {n}")
+    return out
+
+
 def render_pr_body(r: TickReport) -> str:
-    """Deterministic PR body: base commit, gauge, allocation, each stage's summary and paths,
-    memory deltas, guard verdict. Ends with the standing 'bot proposes, CI disposes' line."""
+    """The PR as a VERDICT a human can read top to bottom: what is proposed and which gates it
+    passed (one checklist per record), what was skipped (counts only — the launcher backlog is
+    hundreds of entries, remembered with TTLs, never listed), one summary line, and the raw
+    stage log folded away for debugging. Deterministic; no model wrote any of it."""
     lines = [f"EspAtlas Jr tick — {r.when.strftime('%Y-%m-%d %H:%M UTC')}", ""]
-    lines.append(f"Base: `{r.base_sha or 'origin/main'}` · boards {_pct(r.boards_pct)} · overall {_pct(r.overall_pct)}")
-    if r.allocation:
-        lines.append(f"Allocation: {r.allocation}")
+    lines.append(f"Base `{r.base_sha or 'origin/main'}` · boards {_pct(r.boards_pct)} · overall {_pct(r.overall_pct)}"
+                 + (f" · {r.allocation}" if r.allocation else ""))
     lines.append("")
-    if r.stages:
-        lines.append("### Changes")
-        for s in r.stages:
-            flag = " ⚠️ needs a human" if s.get("needs_human") else ""
-            summary = s.get("summary", "")
-            if len(summary) > 1500:
-                summary = summary[:1500].rstrip() + " … (truncated; the tick's stderr log has the rest)"
-            lines.append(f"- **{s.get('name', 'stage')}** — {summary}{flag}")
-            for p in s.get("paths", []):
-                lines.append(f"  - `{p}`")
-        lines.append("")
+    items = [(s.get("name"), it) for s in r.stages for it in (s.get("items") or [])]
+    lines.append("### Proposed in this PR")
+    if not items:
+        lines.append("Nothing new — memory reconciliation only (the ledger records merges, vetoes and expiries).")
+    n_records = n_recipes = 0
+    for _stage, it in items:
+        if it.get("kind") == "firmware":
+            n_records += 1
+            n_recipes += 1
+            lines += _fmt_firmware_item(it)
+        elif it.get("kind") == "recipes":
+            n_recipes += len(it.get("written") or [])
+            lines += _fmt_recipes_item(it)
+    lines.append("")
+    lines.append("### Skipped this tick (not in this PR; remembered with a TTL)")
     if r.rejects:
-        lines.append("### Rejected this tick")
-        for k, v in sorted(r.rejects.items()):
+        for k, v in sorted(r.rejects.items(), key=lambda kv: (-kv[1], kv[0])):
             lines.append(f"- {k}: {v}")
-        lines.append("")
+    else:
+        lines.append("- none")
+    lines.append("")
     mem = r.memory or {}
-    lines.append(f"Memory: expired {mem.get('expired', 0)}, merged {mem.get('merged', 0)}, "
-                 f"rejected {mem.get('rejected', 0)}, removed {mem.get('removed', 0)} (ledger committed with this PR).")
-    if r.guard is not None:
-        lines.append("Guard: " + ("green" if r.guard.get("ok") else "RED"))
-    lines.append(f"Budget: {r.budget}")
-    lines += ["", "**Bot proposes, CI disposes, a human may veto.** Every path above is additive; "
-                  "no record is deleted by a tick until the G2 guard is in CI.", "",
-              "— 🤖 EspAtlas Jr · hourly tick"]
+    guard = "n/a" if r.guard is None else ("green" if r.guard.get("ok") else "RED")
+    lines.append("### Summary")
+    lines.append(f"{n_records} record(s) · {n_recipes} recipe(s) · guard {guard} · memory expired {mem.get('expired', 0)} / "
+                 f"merged {mem.get('merged', 0)} / rejected {mem.get('rejected', 0)} / removed {mem.get('removed', 0)} · {r.budget}")
+    lines.append("")
+    lines.append("**Merge = accept. Close = veto** (Jr records the veto and does not propose it again for 30 days). "
+                 "Every path is additive; nothing is deleted by a tick.")
+    lines.append("")
+    lines.append("<details><summary>Stage log</summary>")
+    lines.append("")
+    for s in r.stages:
+        summary = s.get("summary", "")
+        if len(summary) > 1500:
+            summary = summary[:1500].rstrip() + " … (truncated; the tick's stderr log has the rest)"
+        flag = " ⚠️ needs a human" if s.get("needs_human") else ""
+        lines.append(f"- **{s.get('name', 'stage')}** — {summary}{flag}")
+        for p in s.get("paths", []):
+            lines.append(f"  - `{p}`")
+    lines.append("")
+    lines.append("</details>")
+    lines.append("")
+    lines.append("— 🤖 EspAtlas Jr · hourly tick")
     return "\n".join(lines)

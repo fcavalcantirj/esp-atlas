@@ -227,7 +227,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None):
     cat_repos, cat_toks = tools._catalogued_repos_and_tokens(ctx.root / "data" / "firmware")
     cat_ids = _catalogued_ids(led, ctx.now)
     paths, lines, admitted, rejects, needs_human = [], [], 0, {}, False
-    would_admit, decided = 0, 0
+    would_admit, decided, items = 0, 0, []
 
     def reject(key):
         rejects[key] = rejects.get(key, 0) + 1
@@ -378,6 +378,16 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None):
             paths.append(str(rdir.relative_to(ctx.root)))
         memory.record_proposed(out_id, owner_repo, repo_id=repo_id, evidence_url=repo_url,
                                path=ctx.ledger_path, now=ctx.now)
+        if evidence is not None and rec["board"] == hint_board:
+            ev = (f"named by the submitter in issue #{issue}" if evidence.get("kind") == "submission"
+                  else f"{evidence.get('kind')} signal `{evidence.get('token')}` ({evidence.get('url')})")
+        else:
+            ev = "named in the repository name/description"
+        items.append({"kind": "firmware", "id": out_id, "name": rec["name"], "url": repo_url,
+                      "stars": meta.get("stars"), "forks": meta.get("forks"), "fork": bool(meta.get("fork")),
+                      "archived": bool(meta.get("archived")), "license": meta.get("license"),
+                      "board": rec["board"], "chip": rec["chip"], "recipe": f"{rec['board']}__{out_id}",
+                      "evidence": ev, "needs_human": bool(res.get("needs_human")), "submission": issue})
         admitted += 1
         lines.append(f"{out_id}: +record{' (needs_human)' if res.get('needs_human') else ''}"
                      + (f" (submission #{issue})" if issue else ""))
@@ -392,4 +402,4 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None):
     elif decided:
         summary = f"{decided} already decided, skipped"
     return tick.StageResult("admit", paths=paths, summary=summary, admitted=admitted,
-                            rejects=rejects, needs_human=needs_human)
+                            rejects=rejects, needs_human=needs_human, items=items)

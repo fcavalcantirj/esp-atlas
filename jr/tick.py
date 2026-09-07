@@ -91,6 +91,7 @@ class StageResult:
     needs_human: bool = False
     admitted: int = 0
     rejects: dict = field(default_factory=dict)    # reason -> count
+    items: list = field(default_factory=list)      # structured facts per proposed record, for the PR body's verdict
 
 
 Stage = Callable[[TickContext], StageResult]
@@ -288,7 +289,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         for stage in stages:
             res = stage(ctx)
             r.stages.append({"name": res.name, "paths": list(res.paths), "summary": res.summary,
-                             "needs_human": res.needs_human})
+                             "needs_human": res.needs_human, "items": list(res.items)})
             r.admitted += res.admitted
             for k, v in res.rejects.items():
                 r.rejects[k] = r.rejects.get(k, 0) + v
