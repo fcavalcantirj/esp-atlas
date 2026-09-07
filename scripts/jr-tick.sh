@@ -11,7 +11,7 @@
 # needs an authenticated `gh` and a python with the repo's deps (JR_PYTHON, default python3).
 #
 # Exit codes: 0 tick ok · 1 tick aborted (the report line says why) · 75 another tick holds the
-# lock (EX_TEMPFAIL, nothing ran) · 124 killed by timeout (the tick turns SIGTERM into an abort
+# lock (EX_TEMPFAIL, nothing ran) · 76 skipped, SoC too hot (nothing ran) · 124 killed by timeout (the tick turns SIGTERM into an abort
 # and still prints its line; -k gives it 30 s to remove its worktree before SIGKILL).
 #
 # Usage: scripts/jr-tick.sh [--dry-run] [--no-telegram] [--max-calls N] [--max-seconds S]
@@ -24,6 +24,18 @@ if [ -n "${JR_KEYS_FILE:-}" ] && [ -f "$JR_KEYS_FILE" ]; then
   # shellcheck disable=SC1090
   . "$JR_KEYS_FILE"
   set +a
+fi
+
+# Thermal gate (the Pi runs at its warn line with the fan maxed): when the SoC is above
+# JR_MAX_TEMP_MC millidegrees (default 78000 = 78 °C), skip this hour instead of adding load.
+# Exit 76 so the scheduler can tell "too hot, nothing ran" from "lock busy" (75) and a real run.
+THERMAL="${JR_THERMAL_FILE:-/sys/class/thermal/thermal_zone0/temp}"
+if [ -r "$THERMAL" ]; then
+  TEMP_MC="$(cat "$THERMAL" 2>/dev/null || echo 0)"
+  if [ "${TEMP_MC:-0}" -gt "${JR_MAX_TEMP_MC:-78000}" ] 2>/dev/null; then
+    echo "jr-tick: skipped, SoC at $((TEMP_MC / 1000)) °C > $((${JR_MAX_TEMP_MC:-78000} / 1000)) °C" >&2
+    exit 76
+  fi
 fi
 
 LOCK="${JR_LOCK:-/tmp/jr-tick.lock}"

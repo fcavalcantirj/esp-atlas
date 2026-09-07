@@ -392,16 +392,30 @@ def test_guard_env_points_core_at_the_worktree(tmp_path):
     assert env["PATH"] == "/usr/bin"
 
 
-def test_default_guard_runs_validate_then_pytest_in_the_worktree_env(tmp_path, monkeypatch):
+def test_default_guard_runs_validate_in_the_worktree_env_and_skips_the_slow_tests_by_default(tmp_path, monkeypatch):
     runs = []
 
     def fake_run(argv, **kw):
         runs.append((argv, kw))
         return SimpleNamespace(returncode=0, stdout="ok", stderr="")
     monkeypatch.setattr(tick.subprocess, "run", fake_run)
+    monkeypatch.delenv("JR_GUARD_TESTS", raising=False)
+    res = tick.default_guard(tmp_path)
+    assert res["ok"] and "guard tests skipped" in res["output"]
+    assert len(runs) == 1 and runs[0][0][1:] == ["scripts/validate.py"] and runs[0][1]["cwd"] == tmp_path
+    assert runs[0][1]["env"]["ESP_ATLAS_REPO_ROOT"] == str(tmp_path)
+
+
+def test_default_guard_runs_the_ci_tests_only_when_asked(tmp_path, monkeypatch):
+    runs = []
+
+    def fake_run(argv, **kw):
+        runs.append((argv, kw))
+        return SimpleNamespace(returncode=0, stdout="ok", stderr="")
+    monkeypatch.setattr(tick.subprocess, "run", fake_run)
+    monkeypatch.setenv("JR_GUARD_TESTS", "1")
     assert tick.default_guard(tmp_path) == {"ok": True, "output": "ok"}
-    assert runs[0][0][1:] == ["scripts/validate.py"] and runs[0][1]["cwd"] == tmp_path
-    assert runs[1][0][1:3] == ["-m", "pytest"] and runs[1][1]["cwd"] == tmp_path
+    assert runs[0][0][1:] == ["scripts/validate.py"] and runs[1][0][1:3] == ["-m", "pytest"] and runs[1][1]["cwd"] == tmp_path
     for _, kw in runs:
         assert kw["env"]["ESP_ATLAS_REPO_ROOT"] == str(tmp_path)
 
