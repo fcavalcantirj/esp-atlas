@@ -7,9 +7,10 @@ category: pentest
 maintainer: justcallmekoko
 socs:
 - esp32
+- esp32-c5
+- esp32-c6
 - esp32-s2
 - esp32-s3
-- esp32-c5
 distribution:
 - releases
 - web-flasher
@@ -41,6 +42,12 @@ sources:
 - field: popularity
   url: https://github.com/justcallmekoko/ESP32Marauder
   verified: '2026-09-01'
+- field: socs
+  url: https://github.com/justcallmekoko/ESP32Marauder/releases/tag/v1.15.1
+  verified: '2026-09-07'
+- field: socs
+  url: https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml
+  verified: '2026-09-07'
 ---
 
 # ESP32 Marauder
