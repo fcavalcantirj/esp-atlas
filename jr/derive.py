@@ -58,9 +58,20 @@ class Signal:
     extra: dict = field(default_factory=dict)
 
 
+_MISSING = re.compile(r"\b404\b|not found", re.I)
+
+
+def _is_missing(exc: BaseException) -> bool:
+    """A 404 is a fact about the repo (no releases, no such file); anything else — 403 rate limit,
+    5xx, network — is an endpoint we could not read, and the derivation must say so."""
+    return bool(_MISSING.search(str(exc)))
+
+
 class _Calls:
     def __init__(self, api, raw, max_calls: int):
         self.api, self.raw, self.max_calls, self.n, self.exhausted = api, raw, max_calls, 0, False
+        self.errors = 0                  # endpoints that failed for a reason other than 404
+        self.failures: list[str] = []    # the first few, for the notes
 
     def _charge(self) -> bool:
         if self.n >= self.max_calls:
@@ -69,6 +80,13 @@ class _Calls:
         self.n += 1
         return True
 
+    def _fail(self, what: str, exc: BaseException) -> None:
+        if _is_missing(exc):
+            return
+        self.errors += 1
+        if len(self.failures) < 5:
+            self.failures.append(f"{what} unavailable: {type(exc).__name__}: {str(exc)[:100]}")
+
     def get_api(self, path: str):
         if not self._charge():
             return None
@@ -76,7 +94,8 @@ class _Calls:
             return self.api(path)
         except BudgetExceeded:
             raise                      # the tick's abort signal must never be swallowed here
-        except Exception:  # noqa: BLE001 — a missing endpoint is a fact, not a failure
+        except Exception as e:  # noqa: BLE001 — a missing endpoint is a fact; anything else is counted
+            self._fail(f"api {path}", e)
             return None
 
     def get_raw(self, url: str) -> str | None:
@@ -86,7 +105,8 @@ class _Calls:
             return self.raw(url)
         except BudgetExceeded:
             raise
-        except Exception:  # noqa: BLE001
+        except Exception as e:  # noqa: BLE001
+            self._fail(f"raw {url}", e)
             return None
 
 
@@ -523,6 +543,8 @@ def derive(owner_repo: str, *, api=default_api, raw=default_raw, ref: str | None
     if ref is None:
         meta = calls.get_api(f"repos/{owner_repo}")
         ref = (meta.get("default_branch") if isinstance(meta, dict) else None) or "main"
+        if not isinstance(meta, dict):
+            notes.append("repo metadata unavailable, assumed ref=main")
     tree_doc = calls.get_api(f"repos/{owner_repo}/git/trees/{ref}?recursive=1")
     tree = None
     if isinstance(tree_doc, dict) and isinstance(tree_doc.get("tree"), list):
@@ -542,20 +564,23 @@ def derive(owner_repo: str, *, api=default_api, raw=default_raw, ref: str | None
             notes.append(f"{name} extractor failed: {type(e).__name__}: {str(e)[:120]}")
     if calls.exhausted:
         notes.append(f"call budget exhausted at {max_calls}")
-    return {"repo": owner_repo, "ref": ref, "fetched": today, "calls": calls.n,
+    notes += calls.failures
+    return {"repo": owner_repo, "ref": ref, "fetched": today, "calls": calls.n, "errors": calls.errors,
             "signals": [asdict(s) for s in signals], "notes": notes}
 
 
-def resolve(derived: dict) -> dict:
+def resolve(derived: dict, boards: dict[str, dict] | None = None) -> dict:
     """Map every signal to a catalogued board through jr/board_alias.resolve_token. Returns
     {"boards": {atlas_id: [signal, ...]}, "socs": {soc: [signal, ...]}, "unresolved": [signal, ...]}.
     A board keeps every signal that named it, highest rank first; a chip-only signal lands in
-    `socs`. Nothing here decides what to write — the writer does, from the best rank per board."""
+    `socs`. Nothing here decides what to write — the writer does, from the best rank per board.
+    `boards` is the atlas to resolve against (default: this clone's; the tick passes its worktree's)."""
+    atlas = boards
     boards: dict[str, list] = {}
     socs: dict[str, list] = {}
     unresolved: list = []
     for s in derived.get("signals", []):
-        r = board_alias.resolve_token(s["token"], soc=s.get("soc"))
+        r = board_alias.resolve_token(s["token"], soc=s.get("soc"), boards=atlas)
         if r and r.get("atlas_id"):
             boards.setdefault(r["atlas_id"], []).append({**s, "how": r["how"]})
         elif r and r.get("soc"):

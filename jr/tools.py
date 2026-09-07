@@ -436,9 +436,10 @@ def _frontmatter(md_path: Path) -> dict:
     return {}
 
 
-def board_soc(board_id: str) -> str | None:
+def board_soc(board_id: str, repo: Path = REPO) -> str | None:
     """The chip_family (soc) of a catalogued board, read from its record — GROUND TRUTH so Jr
-    never guesses a chip. Returns None if the board or its soc is unknown.
+    never guesses a chip. Returns None if the board or its soc is unknown. `repo` is the tree to
+    read (default: this clone; the tick passes its worktree so writer and guard see one catalog).
 
     A board may state its soc DIRECTLY, or inherit it from the module it carries. Espressif's
     reference devkits do the latter: esp32-s3-devkitc-1 declares `module: esp32-s3-wroom-1` and no
@@ -450,7 +451,7 @@ def board_soc(board_id: str) -> str | None:
     a known soc". esp_atlas_core.validate has always resolved the same inheritance
     (`fm.get("soc") or module_soc.get(fm.get("module"))`), so core saw 82/82 boards while jr saw
     77/82 -- the two disagreed about what the catalog contains."""
-    for bmd in (REPO / "data/boards").glob(f"*/{board_id}/board.md"):
+    for bmd in (repo / "data/boards").glob(f"*/{board_id}/board.md"):
         fm = _frontmatter(bmd)
         soc = fm.get("soc")
         if soc:
@@ -458,7 +459,7 @@ def board_soc(board_id: str) -> str | None:
         module_id = fm.get("module")
         if not module_id:
             return None
-        for mmd in (REPO / "data/modules").glob(f"{module_id}/module.md"):
+        for mmd in (repo / "data/modules").glob(f"{module_id}/module.md"):
             return _frontmatter(mmd).get("soc")
         return None
     return None

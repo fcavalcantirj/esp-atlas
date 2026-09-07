@@ -241,8 +241,10 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         r.boards_pct = float(g.get("entities", {}).get("boards", {}).get("pct", 0.0))
         r.overall_pct = float(g.get("overall_pct", 0.0))
 
-        # 5. allocation (Phase 5 replaces)
-        r.allocation = f"boards {r.boards_pct:.1f}% -> A0/B0 (phase 2: no content stages)"
+        # 5. allocation (Phase 5 replaces this with the gauge-driven split)
+        n = len(stages)
+        r.allocation = (f"boards {r.boards_pct:.1f}% -> A0/B{n} (manual track)" if n
+                        else f"boards {r.boards_pct:.1f}% -> A0/B0 (no content stages registered)")
 
         # 6. stages
         ctx = TickContext(root=root, ledger_path=ledger_path, now=now, gh=gh_c, git=git,
@@ -305,16 +307,33 @@ def _on_sigterm(signum, frame):
     raise TickAbort("terminated by SIGTERM (timeout)")
 
 
+def stages_for(track: str | None, budget_units: int) -> list | None:
+    """The stage list for a CLI run. None → the registered STAGES (empty in Phase 2). Track B
+    (PLAN §4 Phase 4, driven by hand until the Phase 6 cutover: `--track B --budget 3`) maps the
+    most under-mapped firmware's boards as cited recipes. Track A arrives with Phase 5."""
+    if track is None:
+        return None
+    if track.upper() == "B":
+        import stage_boardmap
+        return [lambda ctx: stage_boardmap.run(ctx, budget=budget_units)]
+    if track.upper() == "A":
+        return []          # Phase 5 registers Track A stages; until then the tick runs, writes nothing, reports
+    raise SystemExit(f"unknown track {track!r} (Phase 4 knows A and B)")
+
+
 def main(argv=None) -> int:
     signal.signal(signal.SIGTERM, _on_sigterm)
-    ap = argparse.ArgumentParser(description="EspAtlas Jr hourly tick (Phase 2 skeleton)")
+    ap = argparse.ArgumentParser(description="EspAtlas Jr hourly tick")
     ap.add_argument("--dry-run", action="store_true", help="read-only: no worktree, no writes, no PR, no Telegram")
     ap.add_argument("--no-telegram", action="store_true")
     ap.add_argument("--max-calls", type=int, default=Budget().max_calls)
     ap.add_argument("--max-seconds", type=float, default=Budget().max_seconds)
+    ap.add_argument("--track", choices=["A", "B", "a", "b"], default=None, help="run ONE content track by hand (B = map boards as recipes)")
+    ap.add_argument("--budget", type=int, default=3, help="units for --track (B: firmware per run)")
     args = ap.parse_args(argv)
     r = run_tick(dry_run=args.dry_run, telegram=not args.no_telegram,
-                 budget=Budget(max_calls=args.max_calls, max_seconds=args.max_seconds))
+                 budget=Budget(max_calls=args.max_calls, max_seconds=args.max_seconds),
+                 stages=stages_for(args.track, args.budget))
     return 1 if r.aborted else 0
 
 

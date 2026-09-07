@@ -14,11 +14,11 @@ def _r(**kw):
 
 def test_line_for_a_quiet_tick_says_nothing_to_do_and_carries_every_field():
     line = report.render_line(_r(boards_pct=42.5, overall_pct=68.2,
-                                 allocation="boards 42.5% -> A0/B0 (phase 2: no content stages)",
+                                 allocation="boards 42.5% -> A0/B0 (no content stages registered)",
                                  memory={"expired": 1, "merged": 2, "rejected": 0, "removed": 0},
                                  budget="gh calls 4/150 · 3.2s/360s"))
     assert line == ("🤖 jr-tick 2026-09-05 04:07 UTC: boards 42.5% (overall 68.2%) · "
-                    "boards 42.5% -> A0/B0 (phase 2: no content stages) · admitted 0 · rejects none · "
+                    "boards 42.5% -> A0/B0 (no content stages registered) · admitted 0 · rejects none · "
                     "memory expired 1 / merged 2 / rejected 0 / removed 0 · nothing to do · gh calls 4/150 · 3.2s/360s")
 
 
@@ -42,7 +42,7 @@ def test_line_for_a_published_tick_links_the_pr_and_the_merge_mode():
            publish={"published": True, "pr_url": "https://github.com/o/r/pull/1", "auto_merge": True, "reason": ""},
            budget="b")
     line = report.render_line(r)
-    assert "admitted 2 · rejects below_floor 3, fork 1" in line
+    assert "admitted 2 · rejects below_floor 3, fork 1" in line and " · discover: s" in line
     assert "guard green · revalidate ok · PR https://github.com/o/r/pull/1 · auto-merge" in line
     r.publish["auto_merge"] = False; r.publish["reason"] = "needs_human: auto-merge withheld"
     assert "PR https://github.com/o/r/pull/1 · needs_human: auto-merge withheld" in report.render_line(r)
