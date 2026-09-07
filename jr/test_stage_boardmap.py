@@ -277,3 +277,10 @@ def test_stage_run_keeps_earlier_work_when_the_budget_runs_out_mid_derivation(ro
     res = sb.run(ctx(root), budget=2, raw=fake_raw)
     assert "stopped during second: time budget exhausted" in res.summary and "marauder: +" in res.summary
     assert "data/firmware/marauder/signals.json" in res.paths and res.admitted >= 3
+
+
+def test_stage_run_only_maps_the_named_firmware_in_order_ignoring_freshness(root):
+    (root / "data" / "firmware" / "marauder" / "signals.json").write_text(json.dumps({"fetched": "2026-09-07", "signals": [{"x": 1}], "errors": 0}))   # fresh today → selector would skip it
+    res = sb.run(ctx(root), budget=1, raw=fake_raw, only=["nosuch", "nogithub", "marauder"])
+    assert res.summary.startswith("nosuch: not a catalogued firmware with a GitHub url, skipped; nogithub: not a catalogued firmware")
+    assert "marauder: +" in res.summary and res.admitted >= 3

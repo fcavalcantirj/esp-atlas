@@ -3,6 +3,7 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
+from esp_atlas_core.firmware import get_firmware, recipes_for_firmware
 from esp_atlas_core.paths import REPO_ROOT
 
 import esp_atlas_api.main as main_module
@@ -10,6 +11,22 @@ from esp_atlas_api.main import create_app
 
 SOC_PATH = REPO_ROOT / "data" / "socs" / "esp32-c6" / "chip.md"
 BOARD_PATH = REPO_ROOT / "data" / "boards" / "espressif" / "esp32-c6-devkitc-1" / "board.md"
+
+# Marauder's recipe set grows as Jr adds cited recipes: expectations are computed, never pinned.
+def _marauder_recipe_boards():
+    return {r["board"] for r in recipes_for_firmware("esp32marauder")}
+
+
+def _marauder_boards_with_chip(chip):
+    return {r["board"] for r in recipes_for_firmware("esp32marauder") if r.get("chip_family") == chip}
+
+
+def _marauder_recipe_citations():
+    urls = {get_firmware("esp32marauder")["url"]}
+    for r in recipes_for_firmware("esp32marauder"):
+        urls |= {s["url"] for s in r.get("sources", []) if s.get("url")}
+    return urls
+
 
 
 @pytest.fixture
@@ -577,15 +594,11 @@ def test_run_marauder_returns_grounded_boards_and_reasons(built_db_path):
     assert "2.4GHz Wi-Fi" in body["requirements"]
     assert "Bluetooth LE" in body["requirements"]
     board_ids = {b["board_id"] for b in body["boards"]}
-    assert board_ids == {"m5cardputer", "m5stick-cplus2", "esp32-c5-devkitc-1"}
+    assert board_ids == _marauder_recipe_boards()
     for board in body["boards"]:
         assert board["reasons"]
         assert board["sources"] and all(s["url"] for s in board["sources"])
-    assert set(body["citations"]) == {
-        "https://github.com/justcallmekoko/ESP32Marauder",
-        "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_esp32c5devkitc1.bin",
-        "https://github.com/justcallmekoko/ESP32Marauder/wiki/ESP32%E2%80%90C5%E2%80%90DevKitC%E2%80%901",
-    }
+    assert set(body["citations"]) == _marauder_recipe_citations()
 
 
 def test_run_chip_constraint_restricts_boards(built_db_path):
@@ -594,9 +607,9 @@ def test_run_chip_constraint_restricts_boards(built_db_path):
         r = client.get("/run/esp32marauder", params={"constraints": "on a esp32"})
     assert r.status_code == 200
     body = r.json()
-    assert {b["board_id"] for b in body["boards"]} == {"m5stick-cplus2"}
+    assert {b["board_id"] for b in body["boards"]} == _marauder_boards_with_chip("esp32")
     assert body["constraint"] == {"chip": "esp32"}
-    assert {e["board"] for e in body["excluded_boards"]} == {"m5cardputer", "esp32-c5-devkitc-1"}
+    assert {e["board"] for e in body["excluded_boards"]} == _marauder_recipe_boards() - _marauder_boards_with_chip("esp32")
 
 
 def test_run_unknown_firmware_is_honest_not_found_not_a_404(built_db_path):
@@ -621,7 +634,7 @@ def test_run_strips_a_hallucinated_board_from_the_model(built_db_path):
         r = client.get("/run/esp32marauder")
     body = r.json()
     board_ids = {b["board_id"] for b in body["boards"]}
-    assert board_ids == {"m5cardputer", "m5stick-cplus2", "esp32-c5-devkitc-1"}
+    assert board_ids == _marauder_recipe_boards()
 
 
 # --- /build (grounded build-guide) ------------------------------------------

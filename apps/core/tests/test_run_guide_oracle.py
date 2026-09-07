@@ -26,6 +26,24 @@ from esp_atlas_core.run_guide import (
     validate_grounded_output,
 )
 
+# Marauder is the oracle's fixture firmware; its recipe set GROWS as Jr's Track B adds cited
+# recipes, so expectations are computed from the records, never pinned. The invariants stay
+# exact: the guide lists the recipe boards, no more, no less.
+def _marauder_recipe_boards():
+    return {r["board"] for r in recipes_for_firmware("esp32marauder")}
+
+
+def _marauder_boards_with_chip(chip):
+    return {r["board"] for r in recipes_for_firmware("esp32marauder") if r.get("chip_family") == chip}
+
+
+def _marauder_recipe_citations():
+    urls = {get_firmware("esp32marauder")["url"]}
+    for r in recipes_for_firmware("esp32marauder"):
+        urls |= {s["url"] for s in r.get("sources", []) if s.get("url")}
+    return urls
+
+
 
 class StubLLM:
     def __init__(self, payload):
@@ -60,7 +78,10 @@ def test_marauder_requirements_include_wifi_and_ble(built_db_path):
 def test_marauder_boards_are_exactly_the_recipe_set_no_more_no_less(built_db_path):
     result = run_guide("esp32marauder", llm_client=_QUIET, db_path=built_db_path)
     recipe_boards = {r["board"] for r in recipes_for_firmware("esp32marauder")}
-    assert recipe_boards == {"m5cardputer", "m5stick-cplus2", "esp32-c5-devkitc-1"}
+    # The hand-verified recipes must exist (superset, not equality: Jr's Track B adds cited
+    # recipes such as m5nanoc6 / lolin-d32); the oracle invariant is the line after — the guide
+    # lists exactly the recipe set, never a board it invented.
+    assert recipe_boards >= {"m5cardputer", "m5stick-cplus2", "esp32-c5-devkitc-1"}
     assert {b["board_id"] for b in result["boards"]} == recipe_boards
 
 
@@ -146,11 +167,7 @@ def test_marauder_requirements_stay_hard_reqs_only_benefits_never_invented_as_re
 def test_marauder_citations_are_non_empty_and_match_recipe_sources(built_db_path):
     result = run_guide("esp32marauder", llm_client=_QUIET, db_path=built_db_path)
     assert result["citations"]
-    assert set(result["citations"]) == {
-        "https://github.com/justcallmekoko/ESP32Marauder",
-        "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_esp32c5devkitc1.bin",
-        "https://github.com/justcallmekoko/ESP32Marauder/wiki/ESP32%E2%80%90C5%E2%80%90DevKitC%E2%80%901",
-    }
+    assert set(result["citations"]) == _marauder_recipe_citations()
 
 
 def test_marauder_summary_states_what_it_is(built_db_path):
@@ -284,7 +301,7 @@ def test_run_guide_strips_a_hallucinated_board_end_to_end(built_db_path):
     )
     result = run_guide("esp32marauder", llm_client=hostile, db_path=built_db_path)
     board_ids = {b["board_id"] for b in result["boards"]}
-    assert board_ids == {"m5cardputer", "m5stick-cplus2", "esp32-c5-devkitc-1"}
+    assert board_ids == _marauder_recipe_boards()
     by_id = {b["board_id"]: b for b in result["boards"]}
     assert "note" not in by_id["m5cardputer"]  # the ungrounded PSRAM claim never leaked through
 
@@ -310,9 +327,9 @@ def test_parse_chip_constraint(text, expected):
 
 def test_chip_constraint_restricts_to_matching_family_and_still_returns_boards(built_db_path):
     result = run_guide("esp32marauder", constraints="run marauder on a esp32", llm_client=_QUIET, db_path=built_db_path)
-    assert {b["board_id"] for b in result["boards"]} == {"m5stick-cplus2"}
+    assert {b["board_id"] for b in result["boards"]} == _marauder_boards_with_chip("esp32")
     assert result["constraint"] == {"chip": "esp32"}
-    assert {e["board"] for e in result["excluded_boards"]} == {"m5cardputer", "esp32-c5-devkitc-1"}
+    assert {e["board"] for e in result["excluded_boards"]} == _marauder_recipe_boards() - _marauder_boards_with_chip("esp32")
 
 
 def test_no_chip_constraint_carries_no_constraint_key(built_db_path):
@@ -344,14 +361,14 @@ def test_unknown_firmware_never_touches_the_model(built_db_path):
 def test_groq_config_error_falls_back_to_grounded_facts(built_db_path):
     result = run_guide("esp32marauder", llm_client=RaisingLLM(GroqConfigError("no key")), db_path=built_db_path)
     assert result["grounded"] is True
-    assert {b["board_id"] for b in result["boards"]} == {"m5cardputer", "m5stick-cplus2", "esp32-c5-devkitc-1"}
+    assert {b["board_id"] for b in result["boards"]} == _marauder_recipe_boards()
     assert result["summary"]
 
 
 def test_groq_rate_limit_falls_back_to_grounded_facts(built_db_path):
     result = run_guide("esp32marauder", llm_client=RaisingLLM(GroqRateLimitError("rate limited")), db_path=built_db_path)
     assert result["grounded"] is True
-    assert {b["board_id"] for b in result["boards"]} == {"m5cardputer", "m5stick-cplus2", "esp32-c5-devkitc-1"}
+    assert {b["board_id"] for b in result["boards"]} == _marauder_recipe_boards()
     assert result["summary"]
 
 

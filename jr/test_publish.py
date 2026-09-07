@@ -362,3 +362,12 @@ def test_protection_distinguishes_a_403_from_an_unprotected_branch():
     st = publish.protection_status("o/r", gh=gh403)
     assert not st.ok and "403" in st.reason
     assert not publish.protection_status("o/r", gh=gh).ok
+
+
+def test_publish_withholds_auto_merge_when_the_caller_disables_it():
+    git = _git_ok()
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/6\n")})
+    res = publish.publish(WT, ["data/firmware/x"], "s", "b", git=git, gh=gh, now=NOW,
+                          protection=PROTECTED_OK, auto_merge=False)
+    assert res.published and not res.auto_merge and "--no-auto-merge" in res.reason
+    assert all(c[:2] != ("pr", "merge") for c in gh.calls)

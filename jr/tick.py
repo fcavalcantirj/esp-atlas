@@ -179,7 +179,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              gauge=default_gauge, guard=default_guard, notifier=default_notifier,
              pr_state=None, revalidate=publish.revalidate_catalog, budget: Budget | None = None,
              repo_slug: str | None = None, min_rate_limit: int = MIN_RATE_LIMIT,
-             stale_pr_hours: float = STALE_PR_HOURS, telegram: bool = True) -> report.TickReport:
+             stale_pr_hours: float = STALE_PR_HOURS, telegram: bool = True,
+             auto_merge: bool = True) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
     env = os.environ if env is None else env
     budget = budget or Budget()
@@ -272,7 +273,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             # off by the budget after the push has already happened.
             res = publish.publish(wt, r.paths, subject, report.render_pr_body(r), git=git, gh=gh,
                                   now=now, repo_slug=slug, needs_human=r.needs_human,
-                                  protection=protection)
+                                  protection=protection, auto_merge=auto_merge)
             r.publish = res.as_dict()
     except BudgetExceeded as e:
         r.aborted = f"budget: {e}"
@@ -307,7 +308,7 @@ def _on_sigterm(signum, frame):
     raise TickAbort("terminated by SIGTERM (timeout)")
 
 
-def stages_for(track: str | None, budget_units: int) -> list | None:
+def stages_for(track: str | None, budget_units: int, only: list[str] | None = None) -> list | None:
     """The stage list for a CLI run. None → the registered STAGES (empty until the Phase 6
     cutover). Track B (PLAN §4 Phase 4, driven by hand until the cutover:
     `--track B --budget 3`) maps the most under-mapped firmware's boards as cited recipes.
@@ -317,7 +318,7 @@ def stages_for(track: str | None, budget_units: int) -> list | None:
         return None
     if track.upper() == "B":
         import stage_boardmap
-        return [lambda ctx: stage_boardmap.run(ctx, budget=budget_units)]
+        return [lambda ctx: stage_boardmap.run(ctx, budget=budget_units, only=only)]
     if track.upper() == "A":
         import stage_admit
         return [lambda ctx: stage_admit.run(ctx, budget=budget_units)]
@@ -333,10 +334,17 @@ def main(argv=None) -> int:
     ap.add_argument("--max-seconds", type=float, default=Budget().max_seconds)
     ap.add_argument("--track", choices=["A", "B", "a", "b"], default=None, help="run ONE content track by hand (B = map boards as recipes)")
     ap.add_argument("--budget", type=int, default=3, help="units for --track (B: firmware per run)")
+    ap.add_argument("--firmware", default=None,
+                    help="--track B only: comma-separated firmware ids to map, in this order, ignoring freshness (manual override of the selector)")
+    ap.add_argument("--no-auto-merge", action="store_true",
+                    help="open the PR but never request auto-merge (a human merges) — the manual-track default until the cutover")
     args = ap.parse_args(argv)
+    only = [f.strip() for f in args.firmware.split(",") if f.strip()] if args.firmware else None
+    if only and (args.track or "").upper() != "B":
+        ap.error("--firmware needs --track B")
     r = run_tick(dry_run=args.dry_run, telegram=not args.no_telegram,
                  budget=Budget(max_calls=args.max_calls, max_seconds=args.max_seconds),
-                 stages=stages_for(args.track, args.budget))
+                 stages=stages_for(args.track, args.budget, only), auto_merge=not args.no_auto_merge)
     return 1 if r.aborted else 0
 
 

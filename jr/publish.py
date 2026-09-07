@@ -187,7 +187,7 @@ def _staged_deletions(wt: Worktree, git) -> list[str]:
 def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
             git=default_git, gh=default_gh, now: datetime | None = None,
             repo_slug: str | None = None, needs_human: bool = False,
-            protection: ProtectionStatus | None = None) -> PublishResult:
+            protection: ProtectionStatus | None = None, auto_merge: bool = True) -> PublishResult:
     """Stage `paths` (+ the ledger) in the worktree, commit, push a fresh `jr/tick-…` branch, open
     the PR, and request auto-merge only when allowed (see the module docstring). Returns a
     PublishResult; never raises for a normal "nothing to publish" or a refused deletion."""
@@ -234,6 +234,8 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
     # 5. auto-merge only when the gate is real and nothing asks for a human
     if needs_human:
         return PublishResult(True, branch, sha, pr_url, False, pathspec, reason="needs_human: auto-merge withheld")
+    if not auto_merge:
+        return PublishResult(True, branch, sha, pr_url, False, pathspec, reason="auto-merge disabled by the caller (--no-auto-merge)")
     if deleted:
         return PublishResult(True, branch, sha, pr_url, False, pathspec,
                              reason=f"deletions outside data/: auto-merge withheld ({', '.join(deleted)})")
