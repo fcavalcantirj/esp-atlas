@@ -289,7 +289,7 @@ _FIRMWARE_ID_RE = re.compile(r"^[a-z0-9-]+$")   # schema/firmware.schema.json's 
 
 
 def render_firmware(record: dict, sources: list[dict], today: str,
-                    needs_human: bool = False) -> str:
+                    needs_human: bool = False, popularity: dict | None = None) -> str:
     """Render a scorer record as a complete firmware.md (frontmatter + prose). Pure: returns
     text, writes nothing. Exactly the scorer's record fields — id/name/url/category, `socs`
     from the record's chip, capabilities, maintainer — plus `sources[]` (each stamped
@@ -310,6 +310,10 @@ def render_firmware(record: dict, sources: list[dict], today: str,
         fm["maintainer"] = record["maintainer"]
     if record.get("capabilities"):
         fm["capabilities"] = list(record["capabilities"])
+    if popularity and isinstance(popularity.get("stars"), int) and isinstance(popularity.get("forks"), int):
+        # The dated snapshot SPEC-firmware-floor.md asks for, so scripts/firmware_floor_audit.py
+        # enforces the floor on Jr's own records in CI, offline — the gate, not a reader, checks.
+        fm["popularity"] = {"stars": int(popularity["stars"]), "forks": int(popularity["forks"]), "as_of": today}
     front = yaml.safe_dump(fm, sort_keys=False, default_flow_style=False).strip()
     detail = "needs_human" if needs_human else "authored"
     return f"---\n{front}\n---\n\nAdmitted by jr/scorer.py rule {detail}.\n"

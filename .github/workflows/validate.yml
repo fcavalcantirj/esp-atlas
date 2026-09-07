@@ -79,3 +79,32 @@ jobs:
         run: pip install -e apps/core
       - name: Refuse un-overridden deletions of high-signal firmware (G2)
         run: python3 scripts/g2_guard.py
+
+  ledger-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: A tick PR may add memory, never rewrite it (merged/proposed are never downgraded)
+        run: python3 scripts/ledger_guard.py
+
+  jr-pr-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Install core (the guard imports the floor definition)
+        run: pip install -e apps/core
+      - name: Re-check every ADDED firmware record live (public repo, not a fork, not archived, above the floor, snapshot present)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/jr_pr_guard.py

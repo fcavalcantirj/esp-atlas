@@ -22,6 +22,7 @@ import publish
 NOW = datetime(2026, 9, 5, 4, 7, 0, tzinfo=timezone.utc)
 WT = publish.Worktree(path=Path("/tmp/jr-tick-fake"), base_sha="6190d21")
 PROTECTED_OK = publish.ProtectionStatus(True, ("schema", "tests", "jr-tests"), True)
+TRUSTED = publish.TrustStatus(True, 10, 0)
 
 
 class Proc(SimpleNamespace):
@@ -207,7 +208,7 @@ def _z(*pairs):
 def test_publish_stages_only_the_pathspec_plus_ledger_then_commits_pushes_and_opens_pr():
     git, gh = _git_ok(), recorder({("pr", "create"): (0, "https://github.com/o/r/pull/9\n")})
     res = publish.publish(WT, ["data/firmware/x", "data/recipes/b__x"], "feat(jr): tick", "body",
-                          git=git, gh=gh, now=NOW, protection=PROTECTED_OK)
+                          git=git, gh=gh, now=NOW, protection=PROTECTED_OK, trust=TRUSTED)
     calls = norm_calls(git)
     assert calls[0] == ("add", "--", "data/firmware/x", "data/recipes/b__x", "jr/proposed_ledger.json")
     assert ("checkout", "-q", "-B", "jr/tick-20260905-0407") in calls
@@ -290,7 +291,7 @@ def test_publish_derives_repo_slug_from_the_origin_remote_when_not_given():
     gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/6\n"),
                    ("api", "repos/o/r/branches/main/protection"): (0, json.dumps({"required_status_checks": {"contexts": ["schema", "tests", "jr-tests"]}})),
                    ("api", "repos/o/r", "-q", ".allow_auto_merge"): (0, "true")})
-    res = publish.publish(WT, ["data/firmware/x"], "s", "b", git=git2, gh=gh, now=NOW)
+    res = publish.publish(WT, ["data/firmware/x"], "s", "b", git=git2, gh=gh, now=NOW, trust=TRUSTED)
     assert res.published and res.auto_merge
     assert ("api", "repos/o/r/branches/main/protection") in gh.calls
 
@@ -298,7 +299,7 @@ def test_publish_derives_repo_slug_from_the_origin_remote_when_not_given():
 def test_publish_auto_merge_is_requested_only_after_the_pr_exists():
     git = _git_ok()
     gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/7\n")})
-    publish.publish(WT, ["data/firmware/x"], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK)
+    publish.publish(WT, ["data/firmware/x"], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK, trust=TRUSTED)
     kinds = [c[:2] for c in gh.calls]
     assert kinds.index(("pr", "create")) < kinds.index(("pr", "merge"))
 
@@ -420,3 +421,33 @@ def test_publish_withholds_auto_merge_when_the_caller_disables_it():
                           protection=PROTECTED_OK, auto_merge=False)
     assert res.published and not res.auto_merge and "--no-auto-merge" in res.reason
     assert all(c[:2] != ("pr", "merge") for c in gh.calls)
+
+
+# --- earned trust ---------------------------------------------------------------------------------
+
+def _prs(merged, closed):
+    return json.dumps([{"number": i, "mergedAt": "2026-09-07T00:00:00Z"} for i in range(merged)]
+                      + [{"number": 100 + i, "mergedAt": None} for i in range(closed)])
+
+
+def test_trust_is_earned_after_n_consecutive_merges_and_reset_by_a_veto():
+    key = ("pr", "list", "--author", "espatlas-jr", "--state", "closed", "--limit", "10", "--json", "number,mergedAt")
+    assert publish.trust_status(gh=recorder({key: (0, _prs(10, 0))})).ok
+    st = publish.trust_status(gh=recorder({key: (0, _prs(9, 0))}))
+    assert not st.ok and "9/10 consecutive merges" in st.reason
+    st = publish.trust_status(gh=recorder({key: (0, _prs(9, 1))}))
+    assert not st.ok and "trust reset: 1 of Jr's last 10 closed PRs were vetoed" in st.reason
+    assert not publish.trust_status(gh=recorder({key: (1, "")})).ok
+
+
+def test_publish_withholds_auto_merge_until_trust_is_earned_and_arms_it_after():
+    git = _git_ok()
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/7\n")})
+    res = publish.publish(WT, ["data/firmware/x"], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK,
+                          trust=publish.TrustStatus(False, 4, 0, reason="trust not yet earned: 4/10 consecutive merges"))
+    assert res.published and not res.auto_merge and "4/10" in res.reason
+    assert all(c[:2] != ("pr", "merge") for c in gh.calls)
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/8\n")})
+    res = publish.publish(WT, ["data/firmware/x"], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK,
+                          trust=publish.TrustStatus(True, 10, 0))
+    assert res.published and res.auto_merge

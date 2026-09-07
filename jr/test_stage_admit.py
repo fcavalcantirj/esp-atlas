@@ -142,6 +142,7 @@ def test_admitted_record_is_schema_valid_proposed_and_cited(root, monkeypatch):
     assert fm["id"] == "newtool" and fm["type"] == "firmware"
     assert fm["url"] == "https://github.com/n/newtool" and fm["category"] == "multi"
     assert fm["socs"] == ["esp32-s3"] and fm["maintainer"] == "n"
+    assert fm["popularity"] == {"stars": 30, "forks": 0, "as_of": "2026-09-07"}      # the floor gate reads this in CI
     assert fm["sources"] == [
         {"field": "*", "url": "https://github.com/n/newtool", "verified": "2026-09-07"},
         {"field": "popularity", "url": "https://github.com/n/newtool", "verified": "2026-09-07"}]
