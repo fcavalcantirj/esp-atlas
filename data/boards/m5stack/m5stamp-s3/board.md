@@ -3,6 +3,8 @@ id: m5stamp-s3
 type: board
 brand: m5stack
 name: Stamp-S3
+aka:
+- "m5stack_stamp_s3"
 soc: esp32-s3
 flash_mb: 8
 psram_mb: 0
@@ -40,6 +42,12 @@ sources:
 - field: io.gpio_free
   url: https://docs.m5stack.com/en/core/stamps3
   verified: '2026-08-26'
+- field: aka
+  url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
+  verified: '2026-09-07'
+- field: aka
+  url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/m5stack-stamps3.json
+  verified: '2026-09-07'
 ---
 
 # Stamp-S3

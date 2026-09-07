@@ -1,0 +1,57 @@
+{
+  "_about": "Explicit universe-key → atlas-id aliases for jr/board_alias.py, used only where the compact/containment rules cannot decide. Each entry names WHY the two records are the same board, so a reader can open the universe entry (data/board_universe.json, cited to its source line) and the atlas record and check. An alias whose chip family disagrees with the atlas record is ignored by the resolver.",
+  "aliases": {
+    "arduino-esp32:adafruit_matrixportal_esp32s3": {
+      "atlas_id": "adafruit-matrixportal-s3",
+      "why": "boards.txt 'Adafruit MatrixPortal ESP32-S3' is the same product the atlas record cites (adafruit.com/product/5778); the atlas name drops 'ESP32'."
+    },
+    "pioarduino:adafruit_matrixportal_esp32s3": {
+      "atlas_id": "adafruit-matrixportal-s3",
+      "why": "pioarduino entry vendor_url is adafruit.com/product/5778, the atlas record's own source."
+    },
+    "arduino-esp32:adafruit_qtpy_esp32s3_nopsram": {
+      "atlas_id": "adafruit-qt-py-esp32-s3",
+      "why": "the atlas record is the 8 MB flash / no-PSRAM QT Py ESP32-S3 (product 5426, psram_mb 0); boards.txt's 'No PSRAM' definition is that variant. The n4r2 (PSRAM) definition is deliberately NOT aliased."
+    },
+    "arduino-esp32:featheresp32": {
+      "atlas_id": "adafruit-huzzah32-esp32-feather",
+      "why": "boards.txt 'Adafruit ESP32 Feather' (variant feather_esp32) is the HUZZAH32 ESP32 Feather; Adafruit sells it as products 3405 and 3591 (the atlas record cites 3591)."
+    },
+    "pioarduino:featheresp32": {
+      "atlas_id": "adafruit-huzzah32-esp32-feather",
+      "why": "pioarduino entry vendor_url is adafruit.com/product/3405, the HUZZAH32 ESP32 Feather."
+    },
+    "arduino-esp32:m5stack_atom": {
+      "atlas_id": "m5atom-lite",
+      "why": "boards.txt has one 'M5Atom' definition for the ESP32-PICO ATOM family (Lite/Matrix/Echo share the target); Atom-Lite is the catalogued member. A recipe from this alias stays 'unverified' until a human confirms the exact ATOM."
+    },
+    "arduino-esp32:sparkfun_esp32_iot_redboard": {
+      "atlas_id": "sparkfun-iot-redboard-esp32",
+      "why": "same board, word order differs: boards.txt 'SparkFun ESP32 IoT RedBoard' vs the atlas 'SparkFun IoT RedBoard - ESP32 Development Board'."
+    },
+    "pioarduino:sparkfun_esp32_iot_redboard": {
+      "atlas_id": "sparkfun-iot-redboard-esp32",
+      "why": "pioarduino entry vendor_url is sparkfun.com/products/19177, the IoT RedBoard ESP32."
+    },
+    "arduino-esp32:esp32micromod": {
+      "atlas_id": "sparkfun-micromod-esp32-processor",
+      "why": "boards.txt 'SparkFun ESP32 MicroMod' is the MicroMod ESP32 Processor board."
+    },
+    "pioarduino:sparkfun_esp32micromod": {
+      "atlas_id": "sparkfun-micromod-esp32-processor",
+      "why": "pioarduino entry vendor_url is sparkfun.com/products/16781, the MicroMod ESP32 Processor."
+    },
+    "arduino-esp32:sparkfun_esp32s2_thing_plus": {
+      "atlas_id": "sparkfun-thing-plus-esp32-s2-wroom",
+      "why": "boards.txt 'SparkFun ESP32-S2 Thing Plus' is the Thing Plus - ESP32-S2 WROOM; only one S2 Thing Plus exists."
+    },
+    "pioarduino:sparkfun_esp32s2_thing_plus": {
+      "atlas_id": "sparkfun-thing-plus-esp32-s2-wroom",
+      "why": "pioarduino entry vendor_url is sparkfun.com/products/17743, the ESP32-S2 Thing Plus."
+    },
+    "arduino-esp32:esp32thing_plus_c": {
+      "atlas_id": "sparkfun-thing-plus-esp32-wroom",
+      "why": "the atlas record is the USB-C revision ('Thing Plus - ESP32 WROOM (USB-C)', 16 MB flash, docs at SparkFun_Thing_Plus_ESP32_WROOM_C); boards.txt calls it 'SparkFun ESP32 Thing Plus C'. The micro-USB 'esp32thing_plus' is deliberately NOT aliased."
+    }
+  }
+}

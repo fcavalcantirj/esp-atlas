@@ -3,6 +3,8 @@ id: m5stamp-c3
 type: board
 brand: m5stack
 name: Stamp-C3
+aka:
+- "m5stack_stamp_c3"
 soc: esp32-c3
 flash_mb: 4
 psram_mb: 0
@@ -42,6 +44,9 @@ sources:
 - field: io.gpio_free
   url: https://docs.m5stack.com/en/core/Stamp_C3
   verified: '2026-08-26'
+- field: aka
+  url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
+  verified: '2026-09-07'
 ---
 
 # Stamp-C3
