@@ -153,12 +153,16 @@ def test_max_passes_must_be_positive_and_convergence_is_reported(tmp_path):
 
 def test_run_reaches_a_fixed_point_on_a_tmp_copy_and_a_second_run_changes_nothing(tmp_path):
     import shutil
-    import subprocess
-    # seed from the PRE-aka versions on main, so the multi-pass path is real, not a no-op
+    # seed PRE-aka versions (strip the aka block + its citations with the script's own helpers),
+    # so the multi-pass path is real, not a no-op — and CI's shallow checkout needs no `main` ref
+    def de_aka(text):
+        fm, body = aba._split(text)
+        lines = aba._drop_aka_sources(aba._drop_block(fm.split("\n"), "aka"))
+        return "---\n" + "\n".join(lines) + "\n---\n" + body
     for b in ("adafruit/adafruit-qt-py-esp32-s3", "espressif/esp32-pico-kit", "m5stack/m5cardputer", "lilygo/lilygo-t-deck"):
         (tmp_path / b).mkdir(parents=True)
-        text = subprocess.run(["git", "show", f"main:data/boards/{b}/board.md"], cwd=aba.REPO, capture_output=True, text=True).stdout
-        (tmp_path / b / "board.md").write_text(text or (aba.REPO / "data" / "boards" / b / "board.md").read_text())
+        (tmp_path / b / "board.md").write_text(de_aka((aba.REPO / "data" / "boards" / b / "board.md").read_text()))
+    assert "aka:" not in (tmp_path / "m5stack/m5cardputer/board.md").read_text()
     first = aba.run(boards_dir=tmp_path, out=lambda *a: None)
     assert first["converged"] and first["passes"] >= 2 and "adafruit-qt-py-esp32-s3" in first["written"]
     assert "m5cardputer" in first["written"]
