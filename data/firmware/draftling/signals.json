@@ -1,0 +1,136 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-07",
+ "notes": [
+  "latest release v1.0.2 has no binaries; read v1.0.1 instead"
+ ],
+ "ref": "main",
+ "repo": "clackups/draftling",
+ "resolved": {
+  "boards": [
+   "elecrow-crowpanel-esp32-s3-579-epaper",
+   "freenove-fnk0104a",
+   "freenove-fnk0104b",
+   "freenove-fnk0104s",
+   "lilygo-t5-epaper-s3-pro",
+   "m5stack-papers3",
+   "waveshare-esp32-s3-rlcd-42",
+   "waveshare-esp32-s3-touch-lcd-349"
+  ],
+  "socs": [],
+  "unresolved": [
+   "xteink_x4_pro"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "draftling-elecrow_crowpanel_579.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "elecrow_crowpanel_579",
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-elecrow_crowpanel_579.bin"
+  },
+  {
+   "extra": {
+    "asset": "draftling-freenove_fnk0104a.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "freenove_fnk0104a",
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-freenove_fnk0104a.bin"
+  },
+  {
+   "extra": {
+    "asset": "draftling-freenove_fnk0104b.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "freenove_fnk0104b",
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-freenove_fnk0104b.bin"
+  },
+  {
+   "extra": {
+    "asset": "draftling-freenove_fnk0104s.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "freenove_fnk0104s",
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-freenove_fnk0104s.bin"
+  },
+  {
+   "extra": {
+    "asset": "draftling-lilygo_t5_epd_s3_pro.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo_t5_epd_s3_pro",
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-lilygo_t5_epd_s3_pro.bin"
+  },
+  {
+   "extra": {
+    "asset": "draftling-m5stack_papers3.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stack_papers3",
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-m5stack_papers3.bin"
+  },
+  {
+   "extra": {
+    "asset": "draftling-waveshare_rlcd42.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "waveshare_rlcd42",
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-waveshare_rlcd42.bin"
+  },
+  {
+   "extra": {
+    "asset": "draftling-waveshare_touch_lcd_349.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "waveshare_touch_lcd_349",
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-waveshare_touch_lcd_349.bin"
+  },
+  {
+   "extra": {
+    "asset": "draftling-xteink_x4_pro.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "xteink_x4_pro",
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-xteink_x4_pro.bin"
+  }
+ ]
+}
