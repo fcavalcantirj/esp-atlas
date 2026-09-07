@@ -14,6 +14,7 @@ import writers
 REPO = Path(__file__).resolve().parent.parent
 TODAY = "2026-09-07"
 FW_URL = "https://github.com/justcallmekoko/ESP32Marauder"
+RELEASE_PAGE = "https://github.com/justcallmekoko/ESP32Marauder/releases/tag/v1.15.1"
 
 SIG_ASSET = {"rank": 1, "kind": "asset", "token": "m5cardputer", "soc": None, "line": None,
              "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.15.1/esp32_marauder_v1_15_1_20260824_m5cardputer.bin",
@@ -36,25 +37,47 @@ def _validate(recipe_md: Path, board_soc):
     return fm
 
 
-def test_render_recipe_is_cited_flashable_and_schema_valid(tmp_path):
+def test_evidence_url_is_the_release_page_for_an_asset_and_the_signal_url_otherwise():
+    assert writers.evidence_url(SIG_ASSET) == RELEASE_PAGE
+    assert writers.evidence_url(SIG_PIO) == SIG_PIO["url"]
+    assert writers.evidence_url({"kind": "manifest", "url": "https://github.com/o/r/releases/download/v1/manifest.json"}) \
+        == "https://github.com/o/r/releases/download/v1/manifest.json"       # a JSON a reader can open: cite it as is
+    assert writers.evidence_url({"kind": "asset", "url": "https://cdn.example/x.bin"}) == "https://cdn.example/x.bin"
+
+
+def test_render_recipe_cites_the_release_page_never_promises_a_bin_url_and_is_schema_valid(tmp_path):
     text = writers.render_recipe("m5cardputer__marauder", "m5cardputer", "marauder", "esp32-s3", FW_URL, [SIG_CI, SIG_ASSET], TODAY)
     (tmp_path / "recipe.md").write_text(text)
     fm = _validate(tmp_path / "recipe.md", SOC.get)
     assert fm["status"] == "unverified"
-    assert fm["flash"] == {"method": "release-bin", "bin_url": SIG_ASSET["url"]}      # best rank wins
+    assert fm["flash"] == {"method": "release-bin"}                                   # a binary exists; bin_url is a human promotion
+    assert "bin_url" not in text
     assert [s["field"] for s in fm["sources"]] == ["*", "board", "board"]
-    assert fm["sources"][0]["url"] == FW_URL and fm["sources"][1]["url"] == SIG_ASSET["url"]
+    assert fm["sources"][0]["url"] == FW_URL and fm["sources"][1]["url"] == RELEASE_PAGE   # the page that lists the asset
+    assert fm["sources"][2]["url"] == SIG_CI["url"]
+    assert not any(s["url"].endswith(".bin") for s in fm["sources"])
     assert all(s["verified"] == TODAY for s in fm["sources"])
-    assert "m5cardputer" in fm["notes"] and "release v1.15.1" in fm["notes"] and "not verified on hardware" in fm["notes"]
-    assert "- rank 1 asset: `m5cardputer`" in text and "- rank 3 ci: `m5stack-cardputer`" in text
+    assert "m5cardputer" in fm["notes"] and "asset esp32_marauder_v1_15_1_20260824_m5cardputer.bin" in fm["notes"]
+    assert "release v1.15.1" in fm["notes"] and "not verified on hardware" in fm["notes"]
+    assert "- rank 1 asset: `m5cardputer` — " + SIG_ASSET["url"] in text                 # the download URL stays in the prose for the human
+    assert "- rank 3 ci: `m5stack-cardputer`" in text
 
 
-def test_render_recipe_platformio_signal_yields_the_env_not_a_bin(tmp_path):
+def test_render_recipe_a_gz_asset_is_not_a_flashable_binary(tmp_path):
+    gz = dict(SIG_ASSET, url=SIG_ASSET["url"] + ".gz", extra={"asset": "x.bin.gz", "release": "v1.15.1"})
+    text = writers.render_recipe("m5cardputer__marauder", "m5cardputer", "marauder", "esp32-s3", FW_URL, [gz], TODAY)
+    (tmp_path / "recipe.md").write_text(text)
+    assert "flash" not in _validate(tmp_path / "recipe.md", SOC.get)
+
+
+def test_render_recipe_platformio_signal_yields_the_env_cited_under_flash_env(tmp_path):
     text = writers.render_recipe("esp32-s3-devkitc-1__wled", "esp32-s3-devkitc-1", "wled", "esp32-s3", "https://github.com/wled/WLED", [SIG_PIO], TODAY)
     (tmp_path / "recipe.md").write_text(text)
     fm = _validate(tmp_path / "recipe.md", SOC.get)
     assert fm["flash"] == {"env": "esp32s3dev_8MB_opi"}
     assert "(env esp32s3dev_8MB_opi)" in fm["notes"]
+    assert [s["field"] for s in fm["sources"]] == ["*", "flash.env", "board"]
+    assert fm["sources"][1]["url"] == SIG_PIO["url"] == fm["sources"][2]["url"]
 
 
 def test_render_recipe_without_a_flashable_signal_has_no_flash_block(tmp_path):
@@ -87,6 +110,16 @@ def test_write_recipes_is_additive_cites_and_refuses_chip_clashes(tmp_path):
     assert again["written"] == [] and again["existing"] == ["lolin-d32__marauder", "m5cardputer__marauder"]
 
 
+def test_write_recipes_reads_board_socs_from_root_by_default(tmp_path):
+    (tmp_path / "data" / "boards" / "acme" / "acme-one").mkdir(parents=True)
+    (tmp_path / "data" / "boards" / "acme" / "acme-one" / "board.md").write_text("---\nid: acme-one\nsoc: esp32-c3\n---\n")
+    res = writers.write_recipes("fw", "https://github.com/o/fw", {"boards": {"acme-one": [SIG_CI], "m5cardputer": [SIG_CI]}, "socs": {}},
+                                root=tmp_path, today=TODAY)
+    assert res["written"] == ["acme-one__fw"]                                        # m5cardputer exists in the real clone, not in root
+    assert res["refused"] == [("m5cardputer", "board has no catalogued soc")]
+    assert writers.socs_for("fw", tmp_path) == ["esp32-c3"]
+
+
 def test_socs_for_reads_existing_recipes(tmp_path):
     for b in ("m5cardputer", "lolin-d32"):
         (tmp_path / "data" / "recipes" / f"{b}__fw").mkdir(parents=True)
@@ -94,6 +127,8 @@ def test_socs_for_reads_existing_recipes(tmp_path):
     (tmp_path / "data" / "recipes" / "m5cardputer__other").mkdir(parents=True)
     assert writers.socs_for("fw", tmp_path, board_soc=SOC.get) == ["esp32", "esp32-s3"]
 
+
+# --- merge_socs -----------------------------------------------------------------------------------
 
 FW_MD = """\
 ---
@@ -113,26 +148,93 @@ Body with "quotes" and ç stays.
 """
 
 
-def test_merge_socs_widens_never_narrows_and_cites(tmp_path):
+def _fm(p: Path) -> dict:
+    return yaml.safe_load(p.read_text().split("\n---\n")[0].split("---\n", 1)[1])
+
+
+def test_merge_socs_widens_never_narrows_and_cites_every_proving_page(tmp_path):
     p = tmp_path / "firmware.md"
     p.write_text(FW_MD)
-    assert writers.merge_socs(p, ["esp32-s3", "esp32"], "https://github.com/justcallmekoko/ESP32Marauder/releases/tag/v1.15.1", TODAY)
-    fm = yaml.safe_load(p.read_text().split("---")[1])
-    assert fm["socs"] == ["esp32", "esp32-s3"]
-    assert fm["sources"][-1] == {"field": "socs", "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/tag/v1.15.1", "verified": TODAY}
+    urls = [RELEASE_PAGE, "https://github.com/justcallmekoko/ESP32Marauder/blob/master/sdkconfig.esp32c6"]
+    assert writers.merge_socs(p, ["esp32-s3", "esp32", "esp32-c6"], urls, TODAY)
+    fm = _fm(p)
+    assert fm["socs"] == ["esp32", "esp32-c6", "esp32-s3"]
+    assert fm["sources"][-2:] == [{"field": "socs", "url": urls[0], "verified": TODAY},
+                                  {"field": "socs", "url": urls[1], "verified": TODAY}]
+    assert fm["sources"][0]["field"] == "*" and fm["name"] == "ESP32 Marauder" and fm["category"] == "pentest"
     assert p.read_text().endswith('Body with "quotes" and ç stays.\n')
     assert not writers.merge_socs(p, ["esp32"], "https://x", TODAY)                 # narrower: no change, no citation
     assert not writers.merge_socs(p, ["esp32-s3"], "https://x", TODAY)              # already there
-    assert p.read_text().count("field: socs") == 1
+    assert p.read_text().count("field: socs") == 2
 
 
-def test_merge_socs_handles_an_inline_list_and_a_missing_block(tmp_path):
-    p = tmp_path / "firmware.md"
-    p.write_text(FW_MD.replace("socs:\n- esp32\n", "socs: [esp32, esp32-c3]\n"))
-    assert writers.merge_socs(p, ["esp32-s3"], "https://x", TODAY)
-    assert yaml.safe_load(p.read_text().split("---")[1])["socs"] == ["esp32", "esp32-c3", "esp32-s3"]
+def test_merge_socs_single_url_string_and_missing_block_and_missing_sources(tmp_path):
     q = tmp_path / "fw2.md"
     q.write_text(FW_MD.replace("socs:\n- esp32\n", ""))
-    assert writers.merge_socs(q, ["esp32-s3"], "https://x", TODAY)
-    fm = yaml.safe_load(q.read_text().split("---")[1])
-    assert fm["socs"] == ["esp32-s3"] and fm["name"] == "ESP32 Marauder"
+    assert writers.merge_socs(q, ["esp32-s3"], RELEASE_PAGE, TODAY)
+    fm = _fm(q)
+    assert fm["socs"] == ["esp32-s3"] and fm["name"] == "ESP32 Marauder" and fm["sources"][-1]["url"] == RELEASE_PAGE
+    r = tmp_path / "fw3.md"
+    r.write_text("---\nid: x\nname: X\n---\nbody\n")
+    assert writers.merge_socs(r, ["esp32"], RELEASE_PAGE, TODAY)
+    assert _fm(r) == {"id": "x", "name": "X", "socs": ["esp32"], "sources": [{"field": "socs", "url": RELEASE_PAGE, "verified": TODAY}]}
+    assert r.read_text().endswith("---\nbody\n")
+
+
+def test_merge_socs_keeps_indented_blocks_and_inline_lists_with_comments(tmp_path):
+    p = tmp_path / "indented.md"
+    p.write_text(FW_MD.replace("socs:\n- esp32\n", "socs:\n  - esp32\n  - esp32-c3\n")
+                      .replace("sources:\n- field: '*'\n  url: https://github.com/justcallmekoko/ESP32Marauder\n  verified: '2026-08-24'\n",
+                               "sources:\n  - field: '*'\n    url: https://github.com/justcallmekoko/ESP32Marauder\n    verified: '2026-08-24'\n"))
+    assert writers.merge_socs(p, ["esp32-s3"], RELEASE_PAGE, TODAY)
+    fm = _fm(p)
+    assert fm["socs"] == ["esp32", "esp32-c3", "esp32-s3"]
+    assert fm["sources"] == [{"field": "*", "url": FW_URL, "verified": "2026-08-24"}, {"field": "socs", "url": RELEASE_PAGE, "verified": TODAY}]
+    assert "  - esp32-s3\n" in p.read_text() and "  - field: socs\n    url: " in p.read_text()   # indentation preserved
+    q = tmp_path / "inline.md"
+    q.write_text(FW_MD.replace("socs:\n- esp32\n", "socs: [esp32, esp32-c3]  # from the readme\n"))
+    assert writers.merge_socs(q, ["esp32-s3"], RELEASE_PAGE, TODAY)
+    assert _fm(q)["socs"] == ["esp32", "esp32-c3", "esp32-s3"]
+
+
+@pytest.mark.parametrize("variant", [
+    "socs: [esp32,\n  esp32-c3]\n",            # multi-line flow list
+    "socs: esp32\n",                            # scalar
+    "socs:\n- esp32\n- 7\n",                    # not all strings
+])
+def test_merge_socs_refuses_forms_it_cannot_rewrite_safely_and_leaves_the_file_alone(tmp_path, variant):
+    p = tmp_path / "odd.md"
+    text = FW_MD.replace("socs:\n- esp32\n", variant)
+    p.write_text(text)
+    with pytest.raises(ValueError):
+        writers.merge_socs(p, ["esp32-s3"], RELEASE_PAGE, TODAY)
+    assert p.read_text() == text
+
+
+def test_merge_socs_refuses_crlf_and_no_fence_and_an_empty_source_list(tmp_path):
+    p = tmp_path / "crlf.md"
+    p.write_text(FW_MD.replace("\n", "\r\n"))
+    with pytest.raises(ValueError):
+        writers.merge_socs(p, ["esp32-s3"], RELEASE_PAGE, TODAY)
+    q = tmp_path / "nofence.md"
+    q.write_text("id: x\n")
+    with pytest.raises(ValueError):
+        writers.merge_socs(q, ["esp32-s3"], RELEASE_PAGE, TODAY)
+    r = tmp_path / "nourl.md"
+    r.write_text(FW_MD)
+    with pytest.raises(ValueError):
+        writers.merge_socs(r, ["esp32-s3"], [], TODAY)                                 # cite-or-omit
+    assert r.read_text() == FW_MD
+
+
+def test_merge_socs_verifies_its_rewrite_before_writing(tmp_path, monkeypatch):
+    """A rewrite whose re-parse disagrees with the intent is refused, and nothing is written."""
+    p = tmp_path / "fw.md"
+    p.write_text(FW_MD)
+    real = writers._block_span
+    monkeypatch.setattr(writers, "_block_span", lambda lines, i: (i + 1, ""))        # a broken scanner: leaves the old items dangling
+    with pytest.raises(ValueError, match="verification failed"):
+        writers.merge_socs(p, ["esp32-s3"], RELEASE_PAGE, TODAY)
+    assert p.read_text() == FW_MD
+    monkeypatch.setattr(writers, "_block_span", real)
+    assert writers.merge_socs(p, ["esp32-s3"], RELEASE_PAGE, TODAY)

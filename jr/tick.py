@@ -316,7 +316,9 @@ def stages_for(track: str | None, budget_units: int) -> list | None:
     if track.upper() == "B":
         import stage_boardmap
         return [lambda ctx: stage_boardmap.run(ctx, budget=budget_units)]
-    raise SystemExit(f"unknown track {track!r} (Phase 4 knows B; A arrives with Phase 5)")
+    if track.upper() == "A":
+        return []          # Phase 5 registers Track A stages; until then the tick runs, writes nothing, reports
+    raise SystemExit(f"unknown track {track!r} (Phase 4 knows A and B)")
 
 
 def main(argv=None) -> int:

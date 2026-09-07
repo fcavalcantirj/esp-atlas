@@ -389,8 +389,20 @@ def test_stages_for_track_b_builds_one_boardmap_stage_and_rejects_unknown_tracks
     assert tick.stages_for(None, 3) is None
     stages = tick.stages_for("b", 2)
     assert len(stages) == 1 and callable(stages[0])
+    assert tick.stages_for("A", 1) == [] and tick.stages_for("a", 1) == []     # Phase 5 fills it; until then a no-write run
     with pytest.raises(SystemExit):
         tick.stages_for("Z", 1)
+
+
+def test_main_track_a_runs_the_no_content_path_and_still_reports(monkeypatch):
+    seen = {}
+
+    def fake_run(**kw):
+        seen.update(kw)
+        return tick.report.TickReport(when=NOW)
+    monkeypatch.setattr(tick, "run_tick", fake_run)
+    assert tick.main(["--dry-run", "--track", "A", "--no-telegram"]) == 0
+    assert seen["stages"] == []
 
 
 def test_main_passes_track_and_budget_to_run_tick(monkeypatch):

@@ -74,15 +74,17 @@ def chip_only(token: str) -> str | None:
 
 # --- inputs ------------------------------------------------------------------------------------
 
-@lru_cache(maxsize=1)
-def atlas_boards() -> dict[str, dict]:
+@lru_cache(maxsize=4)
+def atlas_boards(root: Path | None = None) -> dict[str, dict]:
     """{atlas_id: {id, name, aka[], soc, brand}} read from the real records (tools.board_soc
-    resolves soc through the module, exactly like esp_atlas_core.validate)."""
+    resolves soc through the module, exactly like esp_atlas_core.validate). `root` is the tree to
+    read — the tick passes its worktree so resolver, writer and guard see one catalog."""
+    root = root or REPO
     out = {}
-    for bmd in sorted((REPO / "data" / "boards").glob("*/*/board.md")):
+    for bmd in sorted((root / "data" / "boards").glob("*/*/board.md")):
         fm = tools._frontmatter(bmd)
         out[fm["id"]] = {"id": fm["id"], "name": fm.get("name") or "", "aka": list(fm.get("aka") or []),
-                         "soc": tools.board_soc(fm["id"]), "brand": fm.get("brand") or bmd.parent.parent.name}
+                         "soc": tools.board_soc(fm["id"], repo=root), "brand": fm.get("brand") or bmd.parent.parent.name}
     return out
 
 

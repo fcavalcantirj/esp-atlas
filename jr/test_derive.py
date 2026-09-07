@@ -194,7 +194,7 @@ def test_idf_signals_read_component_targets_sdkconfig_and_in_repo_boards_txt():
 def test_derive_walks_every_rank_counts_calls_and_never_raises_on_missing_signals():
     f = Fake(api={"repos/o/r": {"default_branch": "dev"}, "repos/o/r/git/trees/dev?recursive=1": tree(["README.md"])})
     d = derive.derive("o/r", api=f.api, raw=f.raw, today="2026-09-07")
-    assert d == {"repo": "o/r", "ref": "dev", "fetched": "2026-09-07", "calls": 4, "signals": [], "notes": []}   # meta, tree, release, platformio.ini
+    assert d == {"repo": "o/r", "ref": "dev", "fetched": "2026-09-07", "calls": 4, "errors": 0, "signals": [], "notes": []}   # meta, tree, release, platformio.ini
     assert ("api", "repos/o/r/releases/latest") in f.calls and ("raw", "https://raw.githubusercontent.com/o/r/dev/platformio.ini") in f.calls
 
 
@@ -364,3 +364,20 @@ def test_budget_exceeded_from_the_tick_passes_through_and_other_errors_become_no
         raise RuntimeError("404")
     d = derive.derive("o/r", api=api2, raw=lambda u: "[1, 2, 3]", ref="main", today="2026-09-07")
     assert d["signals"] == [] and d["calls"] >= 2 and all("failed" not in n for n in d["notes"])
+
+
+def test_unreadable_endpoints_are_counted_and_noted_but_a_404_is_a_fact():
+    def api_403(path):
+        raise RuntimeError("gh: API rate limit exceeded (HTTP 403)")
+    d = derive.derive("o/r", api=api_403, raw=lambda u: None, today="2026-09-07")
+    assert d["signals"] == [] and d["errors"] >= 2
+    assert any("repo metadata unavailable, assumed ref=main" == n for n in d["notes"])
+    assert any(n.startswith("api repos/o/r unavailable: RuntimeError: gh: API rate limit") for n in d["notes"])
+    def api_404(path):
+        raise RuntimeError("gh: Not Found (HTTP 404)")
+    d = derive.derive("o/r", api=api_404, raw=lambda u: None, ref="main", today="2026-09-07")
+    assert d["errors"] == 0 and not any("unavailable" in n for n in d["notes"])
+    def raw_500(url):
+        raise RuntimeError("HTTP Error 500: Internal Server Error")
+    d = derive.derive("o/r", api=api_404, raw=raw_500, ref="main", today="2026-09-07")
+    assert d["errors"] >= 1 and any(n.startswith("raw https://raw.githubusercontent.com/o/r/main/") for n in d["notes"])
