@@ -11,10 +11,13 @@ Resolution order for a universe entry (data/board_universe.json) or a raw token:
   1. an explicit alias in jr/board_aliases.json — hand-curated, each with the universe key it
      maps and the atlas id, so a reader can open both records and see they are the same board;
   2. COMPACT equality — lower-case, every non-alphanumeric removed — between any of the atlas
-     board's {id, name, aka} and the universe entry's {id, name, variant};
+     board's {id, name, aka} and the universe entry's {id, name} (never its Arduino `variant`,
+     which siblings share);
   3. COMPACT containment — the atlas board's compact name (or an aka) appears inside the entry's
-     compact name/id/variant ("tdeck" in "lilygotdeck"), only when the match is ≥ MIN_CONTAIN
-     characters, is not a chip-only token, and exactly ONE atlas board matches.
+     compact id/name ("tdeck" in "lilygotdeck") with only the board's own vendor as prefix and
+     only a memory SKU as suffix, is ≥ MIN_CONTAIN characters, is not a chip-only token, and
+     exactly ONE atlas board matches. A foreign vendor prefix is a clone, a product suffix is a
+     sibling: both refused.
 
 Every rule additionally requires the SOC to agree: the universe entry's `soc` (mapped from
 `build.mcu`) must equal the atlas board's soc (tools.board_soc, which reads the record and its
@@ -46,6 +49,18 @@ _CHIP_TOKENS = {
 }
 # Compact strings too generic to ever identify a board on their own (containment rule).
 _GENERIC = {"esp32", "devmodule", "devkit", "board", "module", "wroom", "wrover", "mini", "pro", "lite", "plus"}
+
+# Containment is allowed only when the text AROUND the atlas name is one of two things:
+#  - a prefix that is empty or the board's own vendor (`lilygo` in "lilygotdeck", `espressif` in
+#    "espressifesp32c6devkitc1") — a foreign vendor prefix means a clone (`rymcu…devkitc1`,
+#    `azdelivery…devkitcv4`) and is refused;
+#  - a suffix that is empty or a memory SKU (`n16r8`, `n4`, `4mb`, `8mbnopsram`) — a product
+#    suffix means a sibling (`lolins3pro`, `m5stackatoms3u`, `heltec…trackerv2`) and is refused.
+_BRAND_PREFIXES = {
+    "lolin": {"wemos", "lolin"}, "lilygo": {"lilygo", "ttgo"}, "seeed": {"seeed", "seeedstudio"},
+    "unexpected-maker": {"unexpectedmaker", "um"}, "m5stack": {"m5stack", "m5"},
+}
+_SKU_SUFFIX = re.compile(r"^(n\d+(r\d+)?v?|\d+mb(nopsram|psram)?|)$")
 
 
 def compact(s: str | None) -> str:
@@ -98,7 +113,10 @@ def _atlas_compact_keys(board: dict) -> set[str]:
 
 
 def _entry_compact_keys(entry: dict) -> set[str]:
-    return {compact(entry.get("id")), compact(entry.get("name")), compact(entry.get("variant"))} - {""}
+    """id and display name only. The Arduino `variant` is deliberately NOT a key: siblings share
+    one variant (AtomS3 and AtomS3U both build with `m5stack_atoms3`), so matching on it maps a
+    sibling onto the catalogued board."""
+    return {compact(entry.get("id")), compact(entry.get("name"))} - {""}
 
 
 def resolve_entry(entry: dict, boards: dict[str, dict] | None = None,
@@ -130,13 +148,31 @@ def resolve_entry(entry: dict, boards: dict[str, dict] | None = None,
     for b in boards.values():
         if b["soc"] != soc:
             continue
+        allowed_prefixes = {""} | _BRAND_PREFIXES.get(b["brand"], set()) | {compact(b["brand"])}
         for k in {compact(b["name"]), *(compact(a) for a in b["aka"])} - {""}:
-            if len(k) >= MIN_CONTAIN and k not in _GENERIC and not chip_only(k) and any(k in e for e in ekeys):
+            if len(k) < MIN_CONTAIN or k in _GENERIC or chip_only(k):
+                continue
+            if any(_contains_as_same_board(e, k, allowed_prefixes) for e in ekeys):
                 contained.append(b)
                 break
     if len(contained) == 1:
         return {"atlas_id": contained[0]["id"], "how": "contain", "evidence": evidence}
     return None
+
+
+def _contains_as_same_board(entry_compact: str, atlas_compact: str, allowed_prefixes: set[str]) -> bool:
+    """`atlas_compact` inside `entry_compact` with only a vendor prefix and/or a memory-SKU
+    suffix around it — the shape of "the same board, named by its vendor or its memory
+    option", never "a clone" or "a sibling product"."""
+    start = 0
+    while True:
+        i = entry_compact.find(atlas_compact, start)
+        if i < 0:
+            return False
+        prefix, suffix = entry_compact[:i], entry_compact[i + len(atlas_compact):]
+        if prefix in allowed_prefixes and _SKU_SUFFIX.match(suffix):
+            return True
+        start = i + 1
 
 
 def build_table(boards: dict[str, dict] | None = None, entries: list[dict] | None = None,

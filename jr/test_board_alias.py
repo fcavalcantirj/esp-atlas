@@ -64,6 +64,22 @@ def test_containment_resolves_a_brand_prefixed_name_only_when_unique():
     assert r["atlas_id"] == "lilygo-t-deck" and r["how"] == "contain"
 
 
+@pytest.mark.parametrize("entry_name,expect", [
+    ("LilyGo T-Deck", "lilygo-t-deck"),            # vendor prefix
+    ("TTGO T-Deck", "lilygo-t-deck"),              # vendor alias prefix
+    ("T-Deck N16R8", "lilygo-t-deck"),             # memory SKU suffix
+    ("T-Deck 16MB", "lilygo-t-deck"),
+    ("RYMCU T-Deck", None),                        # foreign vendor = clone
+    ("T-Deck Pro", None),                          # product suffix = sibling
+    ("T-Deck V2", None),                           # revision = sibling
+    ("M5Stack T-Deck", None),                      # another catalogued vendor
+])
+def test_containment_accepts_only_vendor_prefixes_and_memory_suffixes(entry_name, expect):
+    e = E("arduino-esp32:x_" + ba.compact(entry_name), entry_name, "esp32-s3", "x", line=1)
+    r = ba.resolve_entry(e, BOARDS, {})
+    assert (r["atlas_id"] if r else None) == expect
+
+
 def test_a_name_match_with_a_different_chip_is_refused():
     assert ba.resolve_entry(ENTRIES[5], BOARDS, {}) is None
 
@@ -113,12 +129,14 @@ def real_report():
 
 
 def test_real_tree_coverage_never_regresses(real_report):
-    """Measured 2026-09-07: compact 93 + containment 25 + alias 13 entries → 67 of 82 boards.
-    The 15 unresolved are absent from both registries (Inkplate, LilyGO T-Deck/T-Embed/T-Dongle/
-    T-QT/T-Display-AMOLED, M5 StickS3 / AtomS3-Lite, Espressif LyraT/Ethernet-Kit/DevKitM/S2-DevKitC).
-    Lower the bound only with a written reason."""
+    """Measured 2026-09-07: compact 91 + containment 15 + alias 13 entries → 66 of 82 boards.
+    The 16 unresolved are absent from both registries or only present as clones/siblings that
+    the containment rule now refuses on purpose (Inkplate ×4, LilyGO T-Deck/T-Embed/T-Dongle/
+    T-QT/T-Display-AMOLED, M5 StickS3 / AtomS3-Lite, Espressif DevKitC-V4 (only an AZ-Delivery
+    clone exists upstream), LyraT, Ethernet-Kit, DevKitM-1, S2-DevKitC-1). Lower the bound only
+    with a written reason."""
     assert real_report["atlas_boards"] >= 82
-    assert real_report["resolved"] >= 67, real_report["unresolved"]
+    assert real_report["resolved"] >= 66, real_report["unresolved"]
     assert real_report["by_rule"].get("alias", 0) >= 13
 
 
