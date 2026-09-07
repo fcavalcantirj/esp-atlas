@@ -308,17 +308,20 @@ def _on_sigterm(signum, frame):
 
 
 def stages_for(track: str | None, budget_units: int) -> list | None:
-    """The stage list for a CLI run. None → the registered STAGES (empty in Phase 2). Track B
-    (PLAN §4 Phase 4, driven by hand until the Phase 6 cutover: `--track B --budget 3`) maps the
-    most under-mapped firmware's boards as cited recipes. Track A arrives with Phase 5."""
+    """The stage list for a CLI run. None → the registered STAGES (empty until the Phase 6
+    cutover). Track B (PLAN §4 Phase 4, driven by hand until the cutover:
+    `--track B --budget 3`) maps the most under-mapped firmware's boards as cited recipes.
+    Track A (Phase 3, driven by hand until the cutover: `--track A --budget N`) admits new
+    firmware from the launcher catalog as cited records."""
     if track is None:
         return None
     if track.upper() == "B":
         import stage_boardmap
         return [lambda ctx: stage_boardmap.run(ctx, budget=budget_units)]
     if track.upper() == "A":
-        return []          # Phase 5 registers Track A stages; until then the tick runs, writes nothing, reports
-    raise SystemExit(f"unknown track {track!r} (Phase 4 knows A and B)")
+        import stage_admit
+        return [lambda ctx: stage_admit.run(ctx, budget=budget_units)]
+    raise SystemExit(f"unknown track {track!r} (tracks A and B)")
 
 
 def main(argv=None) -> int:

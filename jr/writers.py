@@ -30,6 +30,12 @@ Rules, all deterministic:
 
 `root` is the tree to write in (the tick's worktree; tmp_path in tests). Returns what it did,
 with paths relative to `root`, so the publisher can stage exactly those.
+
+`render_firmware` (Track A admission) renders a scorer record as a firmware.md: exactly the
+scorer's record fields — id/name/url/category, `socs` from the record's chip, capabilities,
+maintainer — plus the given `sources[]`, and a one-line admission note as the prose. No free
+prose, no capabilities beyond what the scorer already filtered through
+tools.capability_vocab(). It returns text; the caller writes it.
 """
 from __future__ import annotations
 
@@ -272,3 +278,33 @@ def merge_socs(firmware_md: Path, socs: list[str], source_urls: list[str] | str,
         raise ValueError(f"{firmware_md}: rewrite verification failed; file left untouched")
     firmware_md.write_text("---\n" + new_head + "\n---\n" + rest, encoding="utf-8")
     return True
+
+
+_FIRMWARE_ID_RE = re.compile(r"^[a-z0-9-]+$")   # schema/firmware.schema.json's id pattern
+
+
+def render_firmware(record: dict, sources: list[dict], today: str,
+                    needs_human: bool = False) -> str:
+    """Render a scorer record as a complete firmware.md (frontmatter + prose). Pure: returns
+    text, writes nothing. Exactly the scorer's record fields — id/name/url/category, `socs`
+    from the record's chip, capabilities, maintainer — plus `sources[]` (each stamped
+    `verified: today`), and one admission note as the prose. Refuses a non-schema id."""
+    fid = record.get("id") or ""
+    if not _FIRMWARE_ID_RE.match(fid):
+        raise ValueError(f"render_firmware: id {fid!r} is not a schema firmware id")
+    fm: dict = {
+        "id": fid,
+        "type": "firmware",
+        "name": record.get("name") or fid,
+        "url": record.get("url"),
+        "category": record.get("category"),
+        "socs": [record.get("chip")],
+        "sources": [{"field": s["field"], "url": s["url"], "verified": today} for s in sources],
+    }
+    if record.get("maintainer"):
+        fm["maintainer"] = record["maintainer"]
+    if record.get("capabilities"):
+        fm["capabilities"] = list(record["capabilities"])
+    front = yaml.safe_dump(fm, sort_keys=False, default_flow_style=False).strip()
+    detail = "needs_human" if needs_human else "authored"
+    return f"---\n{front}\n---\n\nAdmitted by jr/scorer.py rule {detail}.\n"

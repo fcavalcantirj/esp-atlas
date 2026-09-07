@@ -383,18 +383,33 @@ def test_main_installs_a_sigterm_handler_that_aborts_instead_of_dying(monkeypatc
         handler(signal.SIGTERM, None)
 
 
-# --- manual tracks (Phase 4) -------------------------------------------------------------------------
+# --- manual tracks (Phases 3-4) ----------------------------------------------------------------------
 
-def test_stages_for_track_b_builds_one_boardmap_stage_and_rejects_unknown_tracks():
+def test_stages_for_tracks_build_admit_and_boardmap_stages_and_rejects_unknown_tracks():
+    import stage_admit
+    import stage_boardmap
     assert tick.stages_for(None, 3) is None
     stages = tick.stages_for("b", 2)
     assert len(stages) == 1 and callable(stages[0])
-    assert tick.stages_for("A", 1) == [] and tick.stages_for("a", 1) == []     # Phase 5 fills it; until then a no-write run
+    stages = tick.stages_for("A", 1)
+    assert len(stages) == 1 and callable(stages[0])   # Phase 3 fills it: the admit stage, hand-driven
+    stages = tick.stages_for("a", 1)
+    assert len(stages) == 1 and callable(stages[0])
     with pytest.raises(SystemExit):
         tick.stages_for("Z", 1)
 
 
-def test_main_track_a_runs_the_no_content_path_and_still_reports(monkeypatch):
+def test_stages_for_track_a_stage_calls_stage_admit_with_the_budget(monkeypatch):
+    import stage_admit
+    seen = {}
+    monkeypatch.setattr(stage_admit, "run",
+                        lambda ctx, budget=3: seen.update(ctx=ctx, budget=budget) or "STAGE-RESULT")
+    sentinel = object()
+    assert tick.stages_for("A", 2)[0](sentinel) == "STAGE-RESULT"
+    assert seen == {"ctx": sentinel, "budget": 2}
+
+
+def test_main_track_a_passes_the_admit_stage_and_still_reports(monkeypatch):
     seen = {}
 
     def fake_run(**kw):
@@ -402,7 +417,7 @@ def test_main_track_a_runs_the_no_content_path_and_still_reports(monkeypatch):
         return tick.report.TickReport(when=NOW)
     monkeypatch.setattr(tick, "run_tick", fake_run)
     assert tick.main(["--dry-run", "--track", "A", "--no-telegram"]) == 0
-    assert seen["stages"] == []
+    assert len(seen["stages"]) == 1
 
 
 def test_main_passes_track_and_budget_to_run_tick(monkeypatch):

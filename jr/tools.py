@@ -56,10 +56,11 @@ def fetch_launcher_catalog() -> list[dict]:
 GENERIC_NAME_TOKENS = {"esp32", "esp8266", "esp", "m5stack", "m5", "firmware", "board", "device"}  # too generic alone
 
 
-def _catalogued_repos_and_tokens() -> tuple[set[str], set[str]]:
-    """(repo full_names, name-tokens) of catalogued firmware — dedup fingerprint from both the firmware id AND its `name:` field ('esp32marauder' has no delimiter to split, but "ESP32 Marauder" does)."""
+def _catalogued_repos_and_tokens(firmware_dir: Path | None = None) -> tuple[set[str], set[str]]:
+    """(repo full_names, name-tokens) of catalogued firmware — dedup fingerprint from both the firmware id AND its `name:` field ('esp32marauder' has no delimiter to split, but "ESP32 Marauder" does). Reads `firmware_dir` (default: this clone's data/firmware); the tick passes its worktree so admission dedups against the tree it writes."""
+    root = Path(firmware_dir) if firmware_dir is not None else FIRMWARE_DIR
     repos, tokens = set(), set()
-    for d in (FIRMWARE_DIR.iterdir() if FIRMWARE_DIR.exists() else []):
+    for d in (root.iterdir() if root.exists() else []):
         if not d.is_dir():
             continue
         tokens.add(d.name.lower())
