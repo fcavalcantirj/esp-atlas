@@ -171,15 +171,25 @@ def staged_paths() -> list[str]:
 def _write(firmware_id: str, repo: str, status: str, reason: str | None, ttl_days: int | None,
            repo_id: int | None, evidence_url: str | None, pr_ref: str | None,
            path: Path | None, now: datetime | None) -> dict:
-    """Write one record. THE ONE RULE: a permanent rejection (a human veto, a deliberate seed)
+    """Write one record. TWO RULES. (1) A permanent rejection (a human veto, a deliberate seed)
     is never overwritten by anything but another permanent rejection — not by a TTL'd note, not
-    by a new proposal. Otherwise the latest decision is the truth."""
+    by a new proposal. (2) A `merged` or `proposed` record is never downgraded by a TTL'd
+    rejection or a `seen` note: the launcher scan meets catalogued firmware again every tick
+    and scores them `already_catalogued` (#153 turned four merged records and one open
+    proposal into 30-day rejections). Those records change only through reconciliation or a
+    permanent rejection (the human veto). A missing repo_id is backfilled either way.
+    Otherwise the latest decision is the truth."""
     now = _aware(now)
     path = _path(path)
     led = load_ledger(path)
     existing = led["by_id"].get(firmware_id)
     incoming_permanent = status == "rejected" and ttl_days is None
     if is_permanent_rejection(existing) and not incoming_permanent:
+        return led
+    if existing and existing.get("status") in ("merged", "proposed") and (status == "seen" or (status == "rejected" and not incoming_permanent)):
+        if repo_id is not None and existing.get("repo_id") is None:
+            existing["repo_id"] = int(repo_id)          # by_repo_id is derived at load time
+            _save(led, path)
         return led
     repo_key = repo.lower()
     rec = {

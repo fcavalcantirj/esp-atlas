@@ -277,3 +277,22 @@ def test_monkeypatched_default_path_reaches_memory_and_saves_never_persist_the_v
     assert "by_repo_id" not in json.loads(alt.read_text())
     assert alt.read_text().endswith("}\n")                       # trailing newline like the committed file
     assert memory.staged_paths() == ["jr/proposed_ledger.json"]  # constant, unaffected by the patch
+
+
+def test_a_ttl_rejection_never_downgrades_a_merged_or_proposed_record(tmp_path):
+    """#153: the launcher scan met four merged firmware and one open proposal again, scored them
+    already_catalogued, and the ledger lost their merged status and PR links."""
+    path = tmp_path / "ledger.json"
+    memory.record_proposed("esp-claw", "espressif/esp-claw", pr_ref="https://github.com/o/r/pull/82", path=path, now=NOW)
+    memory.reconcile_merged(["esp-claw"], path=path, now=NOW) if hasattr(memory, "reconcile_merged") else None
+    before = memory.load(path)["by_id"]["esp-claw"]
+    memory.record_rejected("esp-claw", "espressif/esp-claw", "already_catalogued: espressif/esp-claw is already in the atlas",
+                           ttl_days=30, repo_id=1213212865, path=path, now=NOW)
+    after = memory.load(path)["by_id"]["esp-claw"]
+    assert after["status"] == before["status"] and after.get("pr_ref") == before.get("pr_ref")
+    assert after["repo_id"] == 1213212865 and memory.load(path)["by_repo_id"][1213212865] == "esp-claw"   # backfilled only
+    memory.record_seen("esp-claw", "espressif/esp-claw", "seen again", path=path, now=NOW)
+    assert memory.load(path)["by_id"]["esp-claw"]["status"] == before["status"]
+    # the human veto (permanent) still wins
+    memory.record_rejected("esp-claw", "espressif/esp-claw", "closed by a human", ttl_days=None, path=path, now=NOW)
+    assert memory.load(path)["by_id"]["esp-claw"]["status"] == "rejected"
