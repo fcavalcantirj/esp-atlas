@@ -91,25 +91,78 @@ def test_aka_for_dedupes_by_compact_form_and_drops_the_boards_own_names():
     assert urls == [RAW, "https://github.com/p/blob/b/boards/m5stack-cardputer.json"]
 
 
+def _tree_digest():
+    import hashlib
+    h = hashlib.sha256()
+    for p in sorted((aba.REPO / "data" / "boards").glob("*/*/board.md")):
+        h.update(p.read_bytes())
+    return h.hexdigest()
+
+
 def test_dry_run_over_the_real_tree_writes_nothing_and_resolves_most_boards():
-    import subprocess
-    before = subprocess.run(["git", "status", "--porcelain", "--", "data/boards"], cwd=aba.REPO, capture_output=True, text=True).stdout
+    before = _tree_digest()
     lines = []
     res = aba.run(dry_run=True, out=lines.append)
-    after = subprocess.run(["git", "status", "--porcelain", "--", "data/boards"], cwd=aba.REPO, capture_output=True, text=True).stdout
-    assert before == after
+    assert _tree_digest() == before
     assert len(res["written"]) + len(res["unchanged"]) >= 30 and lines[0].startswith("aka:")
+    assert res["refused"] == []                                   # every real record's layout is understood
+
+
+def _indent_sources(text):
+    """The same record with its sources list indented two spaces (valid YAML, other layout)."""
+    out, in_sources = [], False
+    for line in text.split("\n"):
+        if line.startswith("sources:"):
+            in_sources = True
+            out.append(line)
+            continue
+        if in_sources and (line.startswith("- ") or line.startswith("  ")):
+            out.append("  " + line)
+            continue
+        in_sources = in_sources and line == ""
+        out.append(line)
+    return "\n".join(out)
+
+
+def test_verify_rewrite_refuses_layouts_the_rewriter_does_not_understand():
+    import yaml
+    indented = _indent_sources(RECORD)
+    assert yaml.safe_load(indented.split("---")[1])["sources"]                  # the input itself is valid
+    assert aba.verify_rewrite(aba.rewrite(indented, ["x"], [RAW], "2026-09-07"), ["x"], [RAW]) is not None
+    wrapped = RECORD.replace('name: "M5Cardputer"\n', 'name: "M5Cardputer"\naka: [old,\n  older]\n')
+    assert "aka read back" in (aba.verify_rewrite(aba.rewrite(wrapped, ["x"], [RAW], "2026-09-07"), ["x"], [RAW]) or "")
+    url_first = RECORD.replace("- field: aka\n  url: https://old.example/stale\n  verified: '2026-01-01'",
+                               "- url: https://old.example/stale\n  field: aka\n  verified: '2026-01-01'")
+    assert "citations" in (aba.verify_rewrite(aba.rewrite(url_first, ["x"], [RAW], "2026-09-07"), ["x"], [RAW]) or "")
+    assert aba.verify_rewrite(aba.rewrite(RECORD, ["x"], [RAW], "2026-09-07"), ["x"], [RAW]) is None
+
+
+def test_one_pass_refuses_instead_of_writing_a_record_it_cannot_verify(tmp_path):
+    (tmp_path / "m5stack" / "m5cardputer").mkdir(parents=True)
+    bad = _indent_sources(RECORD)
+    (tmp_path / "m5stack" / "m5cardputer" / "board.md").write_text(bad)
+    res = aba.run(boards_dir=tmp_path, out=lambda *a: None)
+    assert res["written"] == [] and res["refused"] and res["refused"][0][0] == "m5cardputer"
+    assert (tmp_path / "m5stack" / "m5cardputer" / "board.md").read_text() == bad
+
+
+def test_max_passes_must_be_positive_and_convergence_is_reported(tmp_path):
+    with pytest.raises(ValueError):
+        aba.run(boards_dir=tmp_path, max_passes=0, out=lambda *a: None)
 
 
 def test_run_reaches_a_fixed_point_on_a_tmp_copy_and_a_second_run_changes_nothing(tmp_path):
     import shutil
-    src = aba.REPO / "data" / "boards"
+    import subprocess
+    # seed from the PRE-aka versions on main, so the multi-pass path is real, not a no-op
     for b in ("adafruit/adafruit-qt-py-esp32-s3", "espressif/esp32-pico-kit", "m5stack/m5cardputer", "lilygo/lilygo-t-deck"):
         (tmp_path / b).mkdir(parents=True)
-        shutil.copy(src / b / "board.md", tmp_path / b / "board.md")
+        text = subprocess.run(["git", "show", f"main:data/boards/{b}/board.md"], cwd=aba.REPO, capture_output=True, text=True).stdout
+        (tmp_path / b / "board.md").write_text(text or (aba.REPO / "data" / "boards" / b / "board.md").read_text())
     first = aba.run(boards_dir=tmp_path, out=lambda *a: None)
-    assert first["passes"] >= 1 and "m5cardputer" in first["written"] or "m5cardputer" in first["unchanged"]
+    assert first["converged"] and first["passes"] >= 2 and "adafruit-qt-py-esp32-s3" in first["written"]
+    assert "m5cardputer" in first["written"]
     second = aba.run(boards_dir=tmp_path, out=lambda *a: None)
-    assert second["written"] == [] and second["passes"] == 1
+    assert second["written"] == [] and second["passes"] == 1 and second["converged"]
     assert "lilygo-t-deck" in second["skipped"]                      # absent from both registries → untouched
     assert "aka:" not in (tmp_path / "lilygo/lilygo-t-deck/board.md").read_text()

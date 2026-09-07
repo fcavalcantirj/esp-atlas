@@ -156,12 +156,36 @@ def _read_boards(boards_dir: Path) -> dict[str, dict]:
     return out
 
 
+def verify_rewrite(after: str, aka: list[str], urls: list[str]) -> str | None:
+    """Read the rewritten frontmatter back with PyYAML and check it says exactly what we meant:
+    one `aka` equal to `aka`, and the `field: aka` sources citing exactly `urls`. Returns None when
+    it does, else a reason. This is the guard against every layout the textual rewrite does not
+    understand (indented source lists, block-scalar names, wrapped flow lists, url-first entries):
+    such a record is SKIPPED with a note, never written."""
+    import yaml
+    fm_text, _ = _split(after)
+    try:
+        fm = yaml.safe_load(fm_text)
+    except yaml.YAMLError as e:
+        return f"rewritten frontmatter does not parse: {str(e).splitlines()[0][:80]}"
+    if not isinstance(fm, dict):
+        return "rewritten frontmatter is not a mapping"
+    if fm.get("aka") != aka:
+        return f"aka read back as {fm.get('aka')!r}, expected {aka!r}"
+    if fm_text.count("\naka:") + fm_text.startswith("aka:") != 1:
+        return "more than one aka key"
+    cited = [s.get("url") for s in (fm.get("sources") or []) if isinstance(s, dict) and s.get("field") == "aka"]
+    if cited != urls:
+        return f"aka citations read back as {cited!r}, expected {urls!r}"
+    return None
+
+
 def one_pass(boards_dir: Path, universe: dict, dry_run: bool) -> dict:
     entries = {e["key"]: e for e in universe["boards"]}
     verified = universe["generated"]
     boards = _read_boards(boards_dir)
     table = board_alias.build_table(boards, universe["boards"])
-    written, skipped, unchanged = [], [], []
+    written, skipped, unchanged, refused = [], [], [], []
     for fm_id, board in boards.items():
         aka, urls = aka_for(fm_id, board, entries, table)
         if not aka:
@@ -169,14 +193,22 @@ def one_pass(boards_dir: Path, universe: dict, dry_run: bool) -> dict:
             continue
         bmd = board["_path"]
         before = bmd.read_text(encoding="utf-8")
-        after = rewrite(before, aka, urls, verified)
+        try:
+            after = rewrite(before, aka, urls, verified)
+        except (ValueError, StopIteration) as e:
+            refused.append((fm_id, f"cannot rewrite: {type(e).__name__}"))
+            continue
         if after == before:
             unchanged.append(fm_id)
+            continue
+        problem = verify_rewrite(after, aka, urls)
+        if problem:
+            refused.append((fm_id, problem))
             continue
         written.append((fm_id, aka, urls))
         if not dry_run:
             bmd.write_text(after, encoding="utf-8")
-    return {"written": written, "unchanged": unchanged, "skipped": skipped}
+    return {"written": written, "unchanged": unchanged, "skipped": skipped, "refused": refused}
 
 
 def run(dry_run: bool = False, universe_path: Path = UNIVERSE_PATH, out=print,
@@ -187,19 +219,31 @@ def run(dry_run: bool = False, universe_path: Path = UNIVERSE_PATH, out=print,
     A dry run reports the first pass only (it cannot see what the next pass would see)."""
     universe = json.loads(universe_path.read_text(encoding="utf-8"))
     boards_dir = (REPO / "data" / "boards") if boards_dir is None else boards_dir
+    if max_passes < 1:
+        raise ValueError("max_passes must be >= 1")
     total_written: dict[str, tuple] = {}
-    passes = 0
+    passes, converged = 0, False
+    res = {"written": [], "unchanged": [], "skipped": [], "refused": []}
     for passes in range(1, max_passes + 1):
         res = one_pass(boards_dir, universe, dry_run)
         for fid, aka, urls in res["written"]:
             total_written[fid] = (aka, urls)
-        if dry_run or not res["written"]:
+        if not res["written"]:
+            converged = True
             break
+        if dry_run:
+            break                                   # a dry run cannot see what the next pass would see
     out(f"aka: {len(total_written)} board(s) {'would be ' if dry_run else ''}rewritten in {passes} pass(es), "
-        f"{len(res['unchanged'])} unchanged, {len(res['skipped'])} without a resolved universe entry (left alone)")
+        f"{len(res['unchanged'])} unchanged, {len(res['skipped'])} without a resolved universe entry (left alone)"
+        f"{', ' + str(len(res['refused'])) + ' REFUSED (layout not understood)' if res['refused'] else ''}")
     for fid, (aka, urls) in sorted(total_written.items()):
         out(f"  {fid}: {aka} ← {len(urls)} citation(s)")
-    return {"written": sorted(total_written), "unchanged": res["unchanged"], "skipped": res["skipped"], "passes": passes}
+    for fid, why in res["refused"]:
+        out(f"  REFUSED {fid}: {why}")
+    if not dry_run and not converged:
+        out(f"  WARNING: pass {max_passes} still rewrote records — fixed point NOT reached; run again")
+    return {"written": sorted(total_written), "unchanged": res["unchanged"], "skipped": res["skipped"],
+            "refused": res["refused"], "passes": passes, "converged": converged or dry_run}
 
 
 def main(argv=None) -> int:

@@ -129,15 +129,25 @@ def real_report():
 
 
 def test_real_tree_coverage_never_regresses(real_report):
-    """Measured 2026-09-07: compact 91 + containment 15 + alias 13 entries → 66 of 82 boards.
-    The 16 unresolved are absent from both registries or only present as clones/siblings that
-    the containment rule now refuses on purpose (Inkplate ×4, LilyGO T-Deck/T-Embed/T-Dongle/
-    T-QT/T-Display-AMOLED, M5 StickS3 / AtomS3-Lite, Espressif DevKitC-V4 (only an AZ-Delivery
-    clone exists upstream), LyraT, Ethernet-Kit, DevKitM-1, S2-DevKitC-1). Lower the bound only
-    with a written reason."""
+    """Measured 2026-09-07 before aka landed: compact 91 + containment 15 + alias 13 → 66 of 82.
+    Once `aka` is written the containment hits become compact hits (an aka IS a compact key),
+    so `by_rule` shifts toward compact; the board count is what must not regress. The 16
+    unresolved are absent from both registries or only present as clones/siblings that
+    containment refuses on purpose (Inkplate ×4, LilyGO T-Deck/T-Embed/T-Dongle/T-QT/
+    T-Display-AMOLED, M5 StickS3 / AtomS3-Lite, Espressif DevKitC-V4 (only an AZ-Delivery clone
+    upstream), LyraT, Ethernet-Kit, DevKitM-1, S2-DevKitC-1). Lower the bound with a written reason."""
     assert real_report["atlas_boards"] >= 82
     assert real_report["resolved"] >= 66, real_report["unresolved"]
     assert real_report["by_rule"].get("alias", 0) >= 13
+
+
+def test_every_explicit_alias_points_at_a_real_universe_entry_and_a_real_board_with_the_same_chip():
+    boards, uni = ba.atlas_boards(), {e["key"]: e for e in ba.universe()}
+    for key, alias in ba.explicit_aliases().items():
+        assert key in uni, f"alias key {key} is not in data/board_universe.json"
+        assert alias["atlas_id"] in boards, f"{key} → {alias['atlas_id']} is not a catalogued board"
+        assert uni[key]["soc"] == boards[alias["atlas_id"]]["soc"], f"{key}: chip family mismatch"
+        assert alias.get("why"), f"{key}: an alias needs a why"
 
 
 def test_real_tree_never_maps_across_chip_families(real_report):
