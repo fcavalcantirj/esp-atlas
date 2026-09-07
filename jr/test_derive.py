@@ -419,3 +419,19 @@ def test_release_assets_with_a_dotted_version_after_the_repo_name_are_cleaned():
     f = Fake(api={"repos/s/relwriter/releases/latest": rel})
     sigs = derive.release_signals("s/relwriter", derive._Calls(f.api, f.raw, 30), [])
     assert [s.token for s in sigs] == ["m5cardputer", "m5stick_cplus2"]
+
+
+def test_release_signals_fall_back_to_the_newest_release_that_carries_binaries():
+    """draftling: `releases/latest` is v1.0.2 with no assets; the per-device binaries are on v1.0.1."""
+    v101 = {"tag_name": "v1.0.1", "draft": False, "assets": [
+        {"name": "draftling-m5stack_papers3.bin", "size": 10, "browser_download_url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-m5stack_papers3.bin"}]}
+    f = Fake(api={"repos/clackups/draftling/releases/latest": {"tag_name": "v1.0.2", "assets": []},
+                  "repos/clackups/draftling/releases?per_page=10": [{"tag_name": "v1.0.2", "draft": False, "assets": []}, v101]})
+    notes = []
+    sigs = derive.release_signals("clackups/draftling", derive._Calls(f.api, f.raw, 30), notes)
+    assert [(s.token, s.extra["release"]) for s in sigs] == [("m5stack_papers3", "v1.0.1")]
+    assert notes == ["latest release v1.0.2 has no binaries; read v1.0.1 instead"]
+    assert ("api", "repos/clackups/draftling/releases?per_page=10") in f.calls
+    g = Fake(api={"repos/o/r/releases/latest": v101})
+    derive.release_signals("o/r", derive._Calls(g.api, g.raw, 30), [])
+    assert not any("releases?per_page" in c[1] for c in g.calls)   # a latest WITH binaries never pays the second call

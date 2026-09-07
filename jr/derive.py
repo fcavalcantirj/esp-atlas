@@ -174,8 +174,21 @@ def clean_token(stem: str) -> str:
     return "".join(s + seg for s, seg in keep).lstrip("-_.")
 
 
+def _has_bins(rel) -> bool:
+    return isinstance(rel, dict) and any(isinstance(a, dict) and str(a.get("name", "")).lower().endswith((".bin", ".bin.gz", ".uf2"))
+                                         for a in (rel.get("assets") or []))
+
+
 def release_signals(owner_repo: str, calls: _Calls, notes: list[str]) -> list[Signal]:
     rel = calls.get_api(f"repos/{owner_repo}/releases/latest")
+    if isinstance(rel, dict) and not _has_bins(rel):
+        # `latest` with no binaries (a tag-only release, or assets still uploading — draftling's
+        # v1.0.2 over its v1.0.1 binaries): the newest release that carries them is the evidence.
+        rels = calls.get_api(f"repos/{owner_repo}/releases?per_page=10")
+        newer = next((r for r in (rels if isinstance(rels, list) else []) if _has_bins(r) and not r.get("draft")), None)
+        if newer is not None:
+            notes.append(f"latest release {rel.get('tag_name')} has no binaries; read {newer.get('tag_name')} instead")
+            rel = newer
     if not isinstance(rel, dict) or not isinstance(rel.get("assets"), list):
         return []
     out: list[Signal] = []
