@@ -125,16 +125,20 @@ def test_hourly_path_runs_the_content_stages_from_the_split_heavier_first(capsys
     out = capsys.readouterr().out
     assert not r.aborted
     assert "boards 42.5% -> A2/B4 (hourly)" in out   # allocate(42.5, 6): B-heavy country
-    assert calls == [("boardmap", 4), ("admit", 2)]   # B-heavy → boardmap first, with its 4 units
-    assert [s["name"] for s in r.stages] == ["boardmap", "admit"] and "mapped 4" in out and "scored 2" in out
+    assert calls == [("admit", 2), ("boardmap", 4)]   # admit first (its first recipe must exist before boardmap and the guard)
+    assert [s["name"] for s in r.stages] == ["admit", "boardmap"] and "mapped 4" in out and "scored 2" in out
 
 
-def test_hourly_stages_follow_the_split_and_skip_empty_tracks(monkeypatch):
+def test_hourly_stages_follow_the_split_admit_first_and_skip_empty_tracks(monkeypatch):
     calls = []
     _fake_stage_modules(monkeypatch, calls)
     for fn in tick.hourly_stages({"A": 4, "B": 2}):
         fn(None)
-    assert calls == [("admit", 4), ("boardmap", 2)]      # A-heavy → admit first
+    assert calls == [("admit", 4), ("boardmap", 2)]
+    calls.clear()
+    for fn in tick.hourly_stages({"A": 2, "B": 4}):
+        fn(None)
+    assert calls == [("admit", 2), ("boardmap", 4)]      # B-heavy still admits first: no orphan reaches the guard
     calls.clear()
     for fn in tick.hourly_stages({"A": 0, "B": 3}):
         fn(None)

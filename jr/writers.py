@@ -46,7 +46,7 @@ import yaml
 
 import tools
 
-RANK_KIND = {1: "release", 2: "platformio.ini", 3: "CI matrix", 4: "build target"}
+RANK_KIND = {0: "repository name/description", 1: "release", 2: "platformio.ini", 3: "CI matrix", 4: "build target"}
 
 _ASSET_URL = re.compile(r"^(https://github\.com/[^/\s]+/[^/\s]+)/releases/download/([^/\s]+)/[^\s]+$")
 
