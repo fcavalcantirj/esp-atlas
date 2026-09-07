@@ -111,6 +111,13 @@ def test_dry_run_prints_gauge_allocation_and_nothing_to_do_and_writes_nothing(ca
     assert r.memory == {} and any("dry-run" in w for w in r.warnings)
 
 
+def test_hourly_path_reports_the_gauge_driven_split(capsys, tmp_path):
+    r = run(git=git_ok(tmp_path), gh=gh_ok(), stages=None)   # None → hourly, not the manual override
+    out = capsys.readouterr().out
+    assert not r.aborted
+    assert "boards 42.5% -> A2/B4 (hourly)" in out   # allocate(42.5, 6): B-heavy country
+
+
 def test_dry_run_with_real_gauge_reads_the_repo_tree(tmp_path):
     if not (tick.REPO / "data" / "boards").is_dir():
         pytest.skip("tick.py is not inside the repo (scratch run)")

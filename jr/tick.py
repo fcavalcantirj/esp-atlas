@@ -16,8 +16,10 @@ One tick, in order (PLAN §3.2):
     from the catalog becomes a permanent rejection. (jr/memory.py) If anything merged or was
     removed, purge the site's catalog cache (POST /api/revalidate, PR 0.5).
  4. Gauge — scripts/data_completion.compute_completion over the worktree's data/.
- 5. Allocation — Phase 2 has NO content stages, so it logs `A0/B0`. Phase 5's allocator
-    replaces this line with the gauge-driven split.
+  5. Allocation — the hourly path splits HOURLY_TRACK_UNITS gauge-driven units between
+     Track A (admit) and Track B (board-map) via jr/allocator.py (boards < 50%: B-heavy;
+     50–80%: even; above 80%: A-heavy — bands provisional, Felipe gates them); --track
+     keeps the manual text as the override.
  6. Stages — pluggable `Stage` callables (Phase 3: admission/discovery; Phase 4: board mapping;
     Phase 5: Track A). Each returns the paths it wrote under the worktree. STAGES is empty here.
  7. Guard once — only if something was written: `scripts/validate.py` in the worktree, then the
@@ -51,6 +53,7 @@ import ledger   # noqa: E402
 import memory   # noqa: E402
 import publish  # noqa: E402
 import report   # noqa: E402
+import allocator  # noqa: E402
 from budget import Budget, BudgetExceeded  # noqa: E402
 
 REPO = _JR_DIR.parent
@@ -186,7 +189,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
     budget = budget or Budget()
     gh_c = budget.wrap(gh)
     r = report.TickReport(when=now, dry_run=dry_run)
-    stages = STAGES if stages is None else stages
+    hourly = stages is None   # the hourly path: gauge-driven split; --track overrides it
+    stages = STAGES if hourly else stages
     wt = None
     try:
         # 1. preflight
@@ -242,10 +246,15 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         r.boards_pct = float(g.get("entities", {}).get("boards", {}).get("pct", 0.0))
         r.overall_pct = float(g.get("overall_pct", 0.0))
 
-        # 5. allocation (Phase 5 replaces this with the gauge-driven split)
-        n = len(stages)
-        r.allocation = (f"boards {r.boards_pct:.1f}% -> A0/B{n} (manual track)" if n
-                        else f"boards {r.boards_pct:.1f}% -> A0/B0 (no content stages registered)")
+        # 5. allocation — hourly: the gauge-driven A/B split; manual (--track): the override text
+        if hourly:
+            split = allocator.allocate(r.boards_pct, allocator.HOURLY_TRACK_UNITS)
+            r.allocation = (f"boards {r.boards_pct:.1f}% -> "
+                            f"A{split['A']}/B{split['B']} (hourly)")
+        else:
+            n = len(stages)
+            r.allocation = (f"boards {r.boards_pct:.1f}% -> A0/B{n} (manual track)" if n
+                            else f"boards {r.boards_pct:.1f}% -> A0/B0 (no content stages registered)")
 
         # 6. stages
         ctx = TickContext(root=root, ledger_path=ledger_path, now=now, gh=gh_c, git=git,
