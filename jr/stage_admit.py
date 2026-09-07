@@ -363,7 +363,8 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         repo_url = rec["url"]
         text = writers.render_firmware(rec, [{"field": "*", "url": repo_url},
                                              {"field": "popularity", "url": repo_url}],
-                                       today, needs_human=bool(res.get("needs_human")))
+                                       today, needs_human=bool(res.get("needs_human")),
+                                       popularity={"stars": meta.get("stars"), "forks": meta.get("forks")})
         fmd.parent.mkdir(parents=True, exist_ok=True)
         fmd.write_text(text, encoding="utf-8")
         paths.append(str(fmd.relative_to(ctx.root)))

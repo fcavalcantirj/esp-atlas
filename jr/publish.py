@@ -193,6 +193,40 @@ def _decide(repo_slug: str, gh, required: tuple, contexts: list[str], source: st
     return ProtectionStatus(True, tuple(contexts), allow, source=source, reason="")
 
 
+# --- earned trust: auto-merge only after N clean merges, reset by any veto -----------------------
+
+JR_LOGIN = "espatlas-jr"
+TRUST_N = 10
+
+
+@dataclass
+class TrustStatus:
+    ok: bool
+    merged: int = 0
+    closed: int = 0
+    reason: str = ""
+
+
+def trust_status(gh=default_gh, login: str = JR_LOGIN, n: int = TRUST_N) -> TrustStatus:
+    """Felipe's ladder, automated: Jr earns auto-merge by having its last `n` closed PRs all
+    MERGED by a human; one veto (a closed, unmerged PR) resets the count. Reads GitHub, never a
+    local flag, so the state is the same on every machine and survives restarts."""
+    p = gh("pr", "list", "--author", login, "--state", "closed", "--limit", str(n), "--json", "number,mergedAt")
+    if not _ok(p):
+        return TrustStatus(False, reason="trust unknown (gh pr list failed)")
+    try:
+        prs = json.loads(getattr(p, "stdout", "") or "[]")
+    except json.JSONDecodeError:
+        return TrustStatus(False, reason="trust unknown (unreadable pr list)")
+    merged = sum(1 for x in prs if x.get("mergedAt"))
+    closed = len(prs) - merged
+    if closed:
+        return TrustStatus(False, merged, closed, reason=f"trust reset: {closed} of Jr's last {len(prs)} closed PRs were vetoed")
+    if merged < n:
+        return TrustStatus(False, merged, closed, reason=f"trust not yet earned: {merged}/{n} consecutive merges")
+    return TrustStatus(True, merged, closed, reason="")
+
+
 # --- publish ----------------------------------------------------------------------------------
 
 @dataclass
@@ -227,7 +261,8 @@ def _staged_deletions(wt: Worktree, git) -> list[str]:
 def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
             git=default_git, gh=default_gh, now: datetime | None = None,
             repo_slug: str | None = None, needs_human: bool = False,
-            protection: ProtectionStatus | None = None, auto_merge: bool = True) -> PublishResult:
+            protection: ProtectionStatus | None = None, auto_merge: bool = True,
+            trust: TrustStatus | None = None) -> PublishResult:
     """Stage `paths` (+ the ledger) in the worktree, commit, push a fresh `jr/tick-…` branch, open
     the PR, and request auto-merge only when allowed (see the module docstring). Returns a
     PublishResult; never raises for a normal "nothing to publish" or a refused deletion."""
@@ -287,6 +322,9 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
     if not protection.ok:
         return PublishResult(True, branch, sha, pr_url, False, pathspec,
                              reason=f"auto-merge withheld: {protection.reason}")
+    trust = trust_status(gh=gh) if trust is None else trust
+    if not trust.ok:
+        return PublishResult(True, branch, sha, pr_url, False, pathspec, reason=f"auto-merge withheld: {trust.reason}")
     am = gh("pr", "merge", pr_url, "--auto", "--squash")
     if not _ok(am):
         return PublishResult(True, branch, sha, pr_url, False, pathspec, reason="gh pr merge --auto failed")

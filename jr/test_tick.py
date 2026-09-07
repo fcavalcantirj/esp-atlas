@@ -52,6 +52,7 @@ def norm(fn):
 def gh_ok(rate="4999", prs="[]", protection_rc=0, allow="true", pr_url="https://github.com/o/r/pull/1"):
     return recorder({
         ("api", "rate_limit"): (0, rate + "\n"),
+        ("pr", "list", "--author", "espatlas-jr"): (0, json.dumps([{"number": i, "mergedAt": "2026-09-05T00:00:00Z"} for i in range(10)])),   # trust earned
         ("pr", "list"): (0, prs),
         ("api", "repos/o/r/branches/main/protection"): (protection_rc, PROTECTION_RULE if protection_rc == 0 else ""),
         ("api", "repos/o/r", "-q", ".allow_auto_merge"): (0, allow),
