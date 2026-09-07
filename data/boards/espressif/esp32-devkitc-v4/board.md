@@ -60,6 +60,7 @@ notes:
   -- strapping {0,2,5,12,15} (5), input_only {34,35,36,39} (4), and usb_flash_tied
   {6,7,8,9,10,11} (6) -- gives 32 - 5 - 4 - 6 = 17. Math not vendor-stated; verify
   before treating as exact.'
+getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
@@ -70,6 +71,9 @@ sources:
 - field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
   verified: '2026-08-26'
+- field: getting_started
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
+  verified: '2026-09-07'
 ---
 
 # ESP32-DevKitC V4

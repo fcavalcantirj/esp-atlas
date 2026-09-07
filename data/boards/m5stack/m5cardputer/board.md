@@ -16,6 +16,7 @@ dimensions_mm:
 - 19.7
 usb:
   bridge: native
+usb_serial: native-usb-serial-jtag
 power:
   battery_connector: true
   charging: true
@@ -42,6 +43,7 @@ notes:
   {0,3,45,46}, usb_flash_tied {19,20,35,36,37}) -- neither G1 nor G2 falls in
   either set -- gives 2 - 0 = 2. No max Grove/rail output current stated on this
   page, so power_out is omitted.'
+- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/Cardputer
@@ -54,6 +56,9 @@ sources:
   verified: '2026-08-26'
 - field: aka
   url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
+  verified: '2026-09-07'
+- field: usb_serial
+  url: https://docs.m5stack.com/en/core/Cardputer
   verified: '2026-09-07'
 ---
 

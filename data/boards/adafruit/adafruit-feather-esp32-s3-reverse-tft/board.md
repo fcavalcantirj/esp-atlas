@@ -13,6 +13,7 @@ price_tier: medium
 usb:
   connector: usb-c
   bridge: native
+usb_serial: native-usb-serial-jtag
 power:
   battery_connector: true
   charging: true
@@ -47,6 +48,7 @@ notes:
   dedicated non-header pins GPIO40/41/42/45 (TFT_DC/RESET/CS/BACKLIGHT) and
   NeoPixel to GPIO7/21/33, none of which count against the header -- so
   23 - 5 = 18'
+- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5691
@@ -65,6 +67,9 @@ sources:
   verified: '2026-09-07'
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/adafruit_feather_esp32s3_reversetft.json
+  verified: '2026-09-07'
+- field: usb_serial
+  url: https://www.adafruit.com/product/5691
   verified: '2026-09-07'
 ---
 

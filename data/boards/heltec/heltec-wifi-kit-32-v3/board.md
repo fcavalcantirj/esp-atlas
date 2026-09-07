@@ -15,6 +15,7 @@ dimensions_mm:
 usb:
   connector: usb-c
   bridge: cp2102
+usb_serial: cp2102
 power:
   battery_connector: true
   charging: true
@@ -34,6 +35,7 @@ notes:
   exposed here (strapping {0,3,45,46}: all 4 present; usb_flash_tied {19,20,35,36,37}:
   all 5 present -- 9 total) and the OLED reset line shared with the header (GPIO21,
   labeled "OLED RST" in the same datasheet table) gives 28 - 9 - 1 = 18'
+- 'usb_serial derived from usb.bridge (cp2102)'
 sources:
 - field: '*'
   url: https://heltec.org/project/wifi-kit32-v3/
@@ -44,6 +46,9 @@ sources:
 - field: io.gpio_free
   url: https://resource.heltec.cn/download/WiFi_Kit_32/WiFi%20Kit32.pdf
   verified: '2026-08-26'
+- field: usb_serial
+  url: https://heltec.org/project/wifi-kit32-v3/
+  verified: '2026-09-07'
 ---
 
 # WiFi Kit 32 (V3)
