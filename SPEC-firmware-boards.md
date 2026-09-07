@@ -106,6 +106,17 @@ make this possible, same rationale as the floor spec's timestamped popularity):
   92k-star entry must **refuse and surface it**, not proceed. (Direct fix for the RuView
   incident.)
 
+**How G1 runs.** The evidence lives next to each firmware record as
+`data/firmware/<id>/signals.json`, written by `jr/stage_boardmap.py`: keys `repo`, `ref`,
+`fetched`, `calls`, `errors`, `signals[]`, `notes[]`, and
+`resolved{boards, socs, unresolved}`. `scripts/firmware_boards_audit.py` compares
+`resolved.boards` with the recipes that exist (`data/recipes/<board>__<id>/`): `missing`
+means declared by the repo but without a recipe, `extra` means a recipe with no build
+signal. `--ci` emits a `::warning` per under-mapped firmware and exits 0 (warn mode);
+`--ci --strict` exits 1 — the switch flipped once the known under-maps are closed. A
+firmware with no `signals.json`, or one with `errors > 0` and no signals, is
+`unmeasured`, never a failure.
+
 ## 5. Reliability doctrine (the rules every ingest/enrichment adapter obeys)
 
 Distilled from how reliable autonomous data pipelines are actually built:
