@@ -381,3 +381,19 @@ def test_unreadable_endpoints_are_counted_and_noted_but_a_404_is_a_fact():
         raise RuntimeError("HTTP Error 500: Internal Server Error")
     d = derive.derive("o/r", api=api_404, raw=raw_500, ref="main", today="2026-09-07")
     assert d["errors"] >= 1 and any(n.startswith("raw https://raw.githubusercontent.com/o/r/main/") for n in d["notes"])
+
+
+def test_resolve_treats_a_devkit_id_under_a_product_env_as_chip_evidence_only(real_catalog):
+    base = {"rank": 2, "kind": "platformio", "token": "esp32-s3-devkitc1-n16r8", "url": "u", "soc": None, "line": 13}
+    d = {"signals": [
+        dict(base, extra={"env": "elecrow-advance-35-s3", "file": "boards/elecrow_advance_s3/elecrow_advance_s3.ini"}),   # Bruce: Elecrow display board built on the devkit id
+        dict(base, token="esp32-c5-devkitc-1", extra={"env": "esp32c5dev", "file": "platformio.ini"}),                     # WLED: the devkit idiom
+        dict(base, token="esp32-s3-devkitc-1", extra={"env": "esp32s3dev_8MB_opi", "file": "platformio.ini"}),
+        dict(base, token="esp32-c6-devkitc-1", extra={"env": "my-c6-devkit-build", "file": "platformio.ini"}),
+        dict(base, token="m5stack-cardputer", extra={"env": "elecrow-advance-35-s3", "file": "platformio.ini"}),          # non-Espressif board ids are never generic bases
+    ]}
+    r = derive.resolve(d, boards=real_catalog)
+    assert set(r["boards"]) == {"esp32-c5-devkitc-1", "esp32-s3-devkitc-1", "esp32-c6-devkitc-1", "m5cardputer"}
+    assert [s["token"] for s in r["boards"]["esp32-s3-devkitc-1"]] == ["esp32-s3-devkitc-1"]     # the n16r8-under-elecrow signal is NOT here
+    assert [s["token"] for s in r["socs"]["esp32-s3"]] == ["esp32-s3-devkitc1-n16r8"]
+    assert [(s["token"], s["how"]) for s in r["unresolved"]] == [("esp32-s3-devkitc1-n16r8", "generic_base")]

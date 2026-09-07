@@ -182,15 +182,27 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
     return out
 
 
-def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int = FRESH_DAYS):
-    """The Track B stage for jr/tick.py: returns a tick.StageResult."""
+def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int = FRESH_DAYS,
+        only: list[str] | None = None):
+    """The Track B stage for jr/tick.py: returns a tick.StageResult. `only` (the CLI's
+    --firmware) names the firmware to map, in order, ignoring the selector and its freshness
+    skip — the manual lane's way to point at a known under-mapped repo."""
     import tick
     now = ctx.now
     today = now.strftime("%Y-%m-%d")
     api = api or (lambda path: json.loads(ctx.gh("api", path).stdout))    # ctx.gh is budget-wrapped
     raw = ctx.budget.wrap(raw or derive.default_raw, "raw")
-    chosen = select_firmware(ctx.root, budget, now, fresh_days)
     paths, lines, admitted, rejects, needs_human = [], [], 0, {}, False
+    if only:
+        chosen = []
+        for fid in only:
+            fmd = ctx.root / "data" / "firmware" / fid / "firmware.md"
+            if not fmd.exists() or not owner_repo_of(tools._frontmatter(fmd).get("url", "")):
+                lines.append(f"{fid}: not a catalogued firmware with a GitHub url, skipped")
+                continue
+            chosen.append(fid)
+    else:
+        chosen = select_firmware(ctx.root, budget, now, fresh_days)
 
     def reject(key):
         rejects[key] = rejects.get(key, 0) + 1
