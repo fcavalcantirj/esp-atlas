@@ -94,7 +94,10 @@ def render_pr_body(r: TickReport) -> str:
         lines.append("### Changes")
         for s in r.stages:
             flag = " ⚠️ needs a human" if s.get("needs_human") else ""
-            lines.append(f"- **{s.get('name', 'stage')}** — {s.get('summary', '')}{flag}")
+            summary = s.get("summary", "")
+            if len(summary) > 1500:
+                summary = summary[:1500].rstrip() + " … (truncated; the tick's stderr log has the rest)"
+            lines.append(f"- **{s.get('name', 'stage')}** — {summary}{flag}")
             for p in s.get("paths", []):
                 lines.append(f"  - `{p}`")
         lines.append("")
