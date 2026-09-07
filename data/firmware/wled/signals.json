@@ -1,0 +1,978 @@
+{
+ "calls": 12,
+ "errors": 0,
+ "fetched": "2026-09-07",
+ "notes": [],
+ "ref": "main",
+ "repo": "wled/WLED",
+ "resolved": {
+  "boards": [
+   "esp32-c3-devkitm-1",
+   "esp32-c5-devkitc-1",
+   "esp32-c6-devkitc-1",
+   "esp32-c6-devkitm-1",
+   "esp32-s3-devkitc-1",
+   "lolin-s2-mini",
+   "lolin-s3-mini"
+  ],
+  "socs": [
+   "esp32",
+   "esp32-c3",
+   "esp32-s2",
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "ESP01",
+   "ESP01_160",
+   "ESP01_compat",
+   "ESP02",
+   "ESP02_160",
+   "ESP02_compat",
+   "ESP02_min",
+   "ESP32-C3-QIO",
+   "ESP32-S3_16MB_opi",
+   "ESP32-S3_16MB_opi_HUB75",
+   "ESP32-S3_4M_qspi",
+   "ESP32-S3_8MB_none",
+   "ESP32-S3_8MB_opi",
+   "ESP32-S3_8MB_qspi",
+   "ESP32-S3_Adafruit_Matrixportal",
+   "ESP32-S3_HD-WF2",
+   "ESP32-S3_WROOM-2",
+   "ESP32-S3_Waveshare_HUB75",
+   "ESP32_DEBUG",
+   "ESP32_Ethernet",
+   "ESP32_HUB75",
+   "ESP32_HUB75_forum_pinout",
+   "ESP32_WROVER",
+   "ESP8266",
+   "ESP8266_160",
+   "ESP8266_compat",
+   "adafruit_matrixportal_esp32s3_wled",
+   "esp01_1m",
+   "esp32-p4-evboard",
+   "esp32-poe",
+   "esp32-s3-devkitc-1",
+   "esp32dev",
+   "esp32s3camlcd",
+   "esp_wroom_02",
+   "lilygo-t7-s3",
+   "nodemcuv2",
+   "ttgo-t7-v14-mini32"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP01.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP01",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP01.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP01_160.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP01_160",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP01_160.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP01_compat.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP01_compat",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP01_compat.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP02.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP02",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP02.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP02.bin.gz",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP02",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP02.bin.gz"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP02_160.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP02_160",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP02_160.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP02_160.bin.gz",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP02_160",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP02_160.bin.gz"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP02_compat.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP02_compat",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP02_compat.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP02_compat.bin.gz",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP02_compat",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP02_compat.bin.gz"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP02_min.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP02_min",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP02_min.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP02_min.bin.gz",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP02_min",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP02_min.bin.gz"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32-C3-QIO.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-C3-QIO",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32-C3-QIO.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32-C3.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-c3",
+   "token": "ESP32-C3",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32-C3.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32-S2.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s2",
+   "token": "ESP32-S2",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32-S2.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32-S3_16MB_opi.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3_16MB_opi",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32-S3_16MB_opi.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32-S3_16MB_opi_HUB75.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3_16MB_opi_HUB75",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32-S3_16MB_opi_HUB75.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32-S3_4M_qspi.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3_4M_qspi",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32-S3_4M_qspi.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32-S3_8MB_none.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3_8MB_none",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32-S3_8MB_none.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32-S3_8MB_opi.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3_8MB_opi",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32-S3_8MB_opi.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32-S3_8MB_qspi.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3_8MB_qspi",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32-S3_8MB_qspi.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32-S3_Adafruit_Matrixportal.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3_Adafruit_Matrixportal",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32-S3_Adafruit_Matrixportal.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32-S3_HD-WF2.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3_HD-WF2",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32-S3_HD-WF2.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32-S3_Waveshare_HUB75.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3_Waveshare_HUB75",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32-S3_Waveshare_HUB75.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32-S3_WROOM-2.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3_WROOM-2",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32-S3_WROOM-2.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "ESP32",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32_DEBUG.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32_DEBUG",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32_DEBUG.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32_Ethernet.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32_Ethernet",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32_Ethernet.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32_HUB75.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32_HUB75",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32_HUB75.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32_HUB75_forum_pinout.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32_HUB75_forum_pinout",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32_HUB75_forum_pinout.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP32_WROVER.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32_WROVER",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP32_WROVER.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP8266.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP8266",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP8266.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP8266_160.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP8266_160",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP8266_160.bin"
+  },
+  {
+   "extra": {
+    "asset": "WLED_16.0.1_ESP8266_compat.bin",
+    "release": "v16.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP8266_compat",
+   "url": "https://github.com/wled/WLED/releases/download/v16.0.1/WLED_16.0.1_ESP8266_compat.bin"
+  },
+  {
+   "extra": {
+    "env": "esp32c6dev_8MB",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 515,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c6-devkitc-1",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L515"
+  },
+  {
+   "extra": {
+    "env": "esp32c6dev_4MB",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 540,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c6-devkitm-1",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L540"
+  },
+  {
+   "extra": {
+    "env": "esp32c5dev",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 552,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c5-devkitc-1",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L552"
+  },
+  {
+   "extra": {
+    "env": "esp32c5dev_8MB_qspi",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 571,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c5-devkitc1-n8r4",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L571"
+  },
+  {
+   "extra": {
+    "env": "esp32p4_16MB",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 597,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-p4-evboard",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L597"
+  },
+  {
+   "extra": {
+    "env": "esp32p4_32MB",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 618,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-p4-evboard",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L618"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 638,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L638"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2_compat",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 638,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L638"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2_160",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 638,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L638"
+  },
+  {
+   "extra": {
+    "env": "esp8266_2m",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 663,
+   "rank": 2,
+   "soc": null,
+   "token": "esp_wroom_02",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L663"
+  },
+  {
+   "extra": {
+    "env": "esp8266_2m_compat",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 663,
+   "rank": 2,
+   "soc": null,
+   "token": "esp_wroom_02",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L663"
+  },
+  {
+   "extra": {
+    "env": "esp8266_2m_160",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 663,
+   "rank": 2,
+   "soc": null,
+   "token": "esp_wroom_02",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L663"
+  },
+  {
+   "extra": {
+    "env": "esp8266_2m_min",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 693,
+   "rank": 2,
+   "soc": null,
+   "token": "esp_wroom_02",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L693"
+  },
+  {
+   "extra": {
+    "env": "esp01_1m_full",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 720,
+   "rank": 2,
+   "soc": null,
+   "token": "esp01_1m",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L720"
+  },
+  {
+   "extra": {
+    "env": "esp01_1m_full_compat",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 720,
+   "rank": 2,
+   "soc": null,
+   "token": "esp01_1m",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L720"
+  },
+  {
+   "extra": {
+    "env": "esp01_1m_full_160",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 720,
+   "rank": 2,
+   "soc": null,
+   "token": "esp01_1m",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L720"
+  },
+  {
+   "extra": {
+    "env": "esp32dev_V4",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 750,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L750"
+  },
+  {
+   "extra": {
+    "env": "esp32dev",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 766,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L766"
+  },
+  {
+   "extra": {
+    "env": "esp32dev_debug",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 766,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L766"
+  },
+  {
+   "extra": {
+    "env": "esp32dev_8M",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 800,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L800"
+  },
+  {
+   "extra": {
+    "env": "esp32dev_16M",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 816,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L816"
+  },
+  {
+   "extra": {
+    "env": "esp32_eth_V4",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 834,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-poe",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L834"
+  },
+  {
+   "extra": {
+    "env": "esp32_eth",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 850,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-poe",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L850"
+  },
+  {
+   "extra": {
+    "env": "esp32_wrover",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 869,
+   "rank": 2,
+   "soc": null,
+   "token": "ttgo-t7-v14-mini32",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L869"
+  },
+  {
+   "extra": {
+    "env": "esp32c3dev",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 883,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c3-devkitm-1",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L883"
+  },
+  {
+   "extra": {
+    "env": "esp32c3dev_qio",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 883,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c3-devkitm-1",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L883"
+  },
+  {
+   "extra": {
+    "env": "esp32s3dev_16MB_opi",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 903,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L903"
+  },
+  {
+   "extra": {
+    "env": "esp32s3dev_8MB_opi",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 926,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L926"
+  },
+  {
+   "extra": {
+    "env": "esp32s3dev_8MB_qspi",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 926,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L926"
+  },
+  {
+   "extra": {
+    "env": "esp32s3dev_8MB_none",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 959,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L959"
+  },
+  {
+   "extra": {
+    "env": "esp32S3_wroom2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 973,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3camlcd",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L973"
+  },
+  {
+   "extra": {
+    "env": "esp32S3_wroom2_32MB",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 973,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3camlcd",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L973"
+  },
+  {
+   "extra": {
+    "env": "esp32s3_4M_qspi",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1013,
+   "rank": 2,
+   "soc": null,
+   "token": "lolin_s3_mini",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1013"
+  },
+  {
+   "extra": {
+    "env": "esp32s3_4M_none",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1031,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1031"
+  },
+  {
+   "extra": {
+    "env": "lolin_s2_mini",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1045,
+   "rank": 2,
+   "soc": null,
+   "token": "lolin_s2_mini",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1045"
+  },
+  {
+   "extra": {
+    "env": "usermods",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 750,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L750"
+  },
+  {
+   "extra": {
+    "env": "usermods_V5",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 618,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-p4-evboard",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L618"
+  },
+  {
+   "extra": {
+    "env": "esp32dev_hub75",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 750,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L750"
+  },
+  {
+   "extra": {
+    "env": "esp32dev_hub75_forum_pinout",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 750,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L750"
+  },
+  {
+   "extra": {
+    "env": "esp32s3dev_4MB_qspi_hub75",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 926,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L926"
+  },
+  {
+   "extra": {
+    "env": "adafruit_matrixportal_esp32s3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1143,
+   "rank": 2,
+   "soc": null,
+   "token": "adafruit_matrixportal_esp32s3_wled",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1143"
+  },
+  {
+   "extra": {
+    "env": "waveshare_esp32s3_32MB_hub75",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 973,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3camlcd",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L973"
+  },
+  {
+   "extra": {
+    "env": "esp32s3dev_16MB_opi_hub75",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1177,
+   "rank": 2,
+   "soc": null,
+   "token": "lilygo-t7-s3",
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1177"
+  }
+ ]
+}

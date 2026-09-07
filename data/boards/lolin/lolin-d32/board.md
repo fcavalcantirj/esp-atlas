@@ -15,6 +15,7 @@ dimensions_mm:
 - 25.4
 usb:
   bridge: ch340
+usb_serial: ch340
 power:
   battery_connector: true
   charging: true
@@ -43,6 +44,7 @@ notes:
   usb_flash_tied 6/7/8 are not on the header; GPIO35 (VBAT divider, confirmed by
   the same pins_arduino.h) is not exposed, so no separate onboard subtraction is
   needed -- 25 total pads - 5 strapping - 3 input-only = 17'
+- 'usb_serial derived from usb.bridge (ch340)'
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/d32/d32.html
@@ -64,6 +66,9 @@ sources:
   verified: '2026-09-07'
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/lolin_d32.json
+  verified: '2026-09-07'
+- field: usb_serial
+  url: https://www.wemos.cc/en/latest/d32/d32.html
   verified: '2026-09-07'
 ---
 

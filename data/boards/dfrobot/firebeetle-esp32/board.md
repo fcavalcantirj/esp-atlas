@@ -15,6 +15,7 @@ dimensions_mm:
 - 58
 usb:
   bridge: ch340
+usb_serial: ch340
 power:
   battery_connector: true
   charging: true
@@ -43,6 +44,7 @@ notes:
   {9,10}: both present (2 of the 6 flash-tied pins are broken out as D5/D6 on this
   board) -- gives 21 - 4 - 4 - 2 = 11. Math not vendor-stated; verify before treating
   as exact.'
+- 'usb_serial derived from usb.bridge (ch340)'
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr0478/
@@ -61,6 +63,9 @@ sources:
   verified: '2026-09-07'
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/firebeetle32.json
+  verified: '2026-09-07'
+- field: usb_serial
+  url: https://wiki.dfrobot.com/dfr0478/
   verified: '2026-09-07'
 ---
 

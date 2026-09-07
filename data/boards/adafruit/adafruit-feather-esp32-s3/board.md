@@ -14,6 +14,7 @@ dimensions_mm:
 usb:
   connector: usb-c
   bridge: native
+usb_serial: native-usb-serial-jtag
 power:
   battery_connector: true
   charging: true
@@ -41,6 +42,7 @@ notes:
   5-6, 8-18, or 35-39 -- of esp32-s3''s soc.reserved_pins, GPIO3 (SDA, strapping)
   and GPIO35/36/37 (MOSI/SCK/MISO, usb_flash_tied) are exposed pads; NeoPixel/
   I2C_POWER/NEOPIXEL_POWER sit on GPIO7/21/33, off-header -- so 20 - 4 = 16'
+- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5477
@@ -57,6 +59,9 @@ sources:
 - field: io.gpio_free
   url: https://github.com/adafruit/circuitpython/blob/main/ports/espressif/boards/adafruit_feather_esp32s3_4mbflash_2mbpsram/pins.c
   verified: '2026-08-26'
+- field: usb_serial
+  url: https://www.adafruit.com/product/5477
+  verified: '2026-09-07'
 ---
 
 # Adafruit ESP32-S3 Feather (4MB Flash 2MB PSRAM)

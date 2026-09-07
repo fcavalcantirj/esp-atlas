@@ -11,6 +11,7 @@ price_tier: medium
 usb:
   connector: usb-c
   bridge: native
+usb_serial: native-usb-serial-jtag
 power:
   battery_connector: true
   charging: true
@@ -34,6 +35,7 @@ notes:
   pins, and neither the product page nor README states a total exposed/usable
   IO count in text (only an un-OCR''d pin-diagram image), so left unset per
   cite-or-omit'
+- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-display-s3
@@ -44,6 +46,9 @@ sources:
 - field: io.power_out
   url: https://github.com/Xinyuan-LilyGO/T-Display-S3
   verified: '2026-08-26'
+- field: usb_serial
+  url: https://www.lilygo.cc/products/t-display-s3
+  verified: '2026-09-07'
 ---
 
 # T-Display-S3

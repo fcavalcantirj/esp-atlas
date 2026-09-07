@@ -15,6 +15,7 @@ dimensions_mm:
 usb:
   connector: usb-c
   bridge: cp2102
+usb_serial: cp2102
 power:
   battery_connector: true
   charging: true
@@ -40,6 +41,7 @@ notes:
   labeled "OLED RST" in the datasheet) gives 28 - 9 - 1 = 18; the LoRa radio''s
   own SPI/control pins (GPIO8-14) cost nothing further since they never reached
   the header count in the first place'
+- 'usb_serial derived from usb.bridge (cp2102)'
 sources:
 - field: '*'
   url: https://heltec.org/project/wifi-lora-32-v3/
@@ -53,6 +55,9 @@ sources:
 - field: io.gpio_free
   url: https://github.com/espressif/arduino-esp32/blob/master/variants/heltec_wifi_lora_32_V3/pins_arduino.h
   verified: '2026-08-26'
+- field: usb_serial
+  url: https://heltec.org/project/wifi-lora-32-v3/
+  verified: '2026-09-07'
 ---
 
 # WiFi LoRa 32 (V3)

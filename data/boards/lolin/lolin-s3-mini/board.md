@@ -13,6 +13,7 @@ dimensions_mm:
 - 25.4
 usb:
   bridge: native
+usb_serial: native-usb-serial-jtag
 extras:
 - rgb-led
 io:
@@ -35,6 +36,7 @@ notes:
   esp32-s3''s soc.reserved_pins, strapping GPIO3 is exposed (1 pin; 0/45/46 are
   not on the header); usb_flash_tied 35/36/37 are exposed (3 pins; 19/20 are not,
   consumed internally by native USB) -- so 27 - 1 - 3 = 23'
+- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/s3/s3_mini.html
@@ -45,6 +47,9 @@ sources:
 - field: io.gpio_free
   url: https://www.wemos.cc/en/latest/_images/s3_mini_v1.0.0_2_16x16.jpg
   verified: '2026-08-26'
+- field: usb_serial
+  url: https://www.wemos.cc/en/latest/s3/s3_mini.html
+  verified: '2026-09-07'
 ---
 
 # LOLIN S3 mini

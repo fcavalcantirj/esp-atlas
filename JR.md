@@ -40,13 +40,12 @@ Its character, in five traits:
 
 Everything else follows from that one line.
 
-### Why a cheap, fallible model is safe to give this soul
+### Why a weak proposer is safe to give this soul
 
 Jr's trustworthiness does **not** live in its brain — it lives in a **deterministic guard +
-human merge**. A weak model that hallucinates a spec is *blocked* (schema / sources-live /
-oracle fail) and a human merges regardless. So Jr can run on a free model and still only ever
-grow the atlas with verified, cited data. The pipeline is the guarantee; the model is just a
-proposer.
+human merge**. There is no model in the answer path at all: Track A admits cited firmware
+and Track B maps cited boards as recipes, both deterministic, and a failing guard or a
+human veto stops anything thin. The pipeline is the guarantee; the proposer is just code.
 
 ---
 
@@ -143,7 +142,8 @@ A source that resolves to real public code (repo or release `.bin`) can be **aut
 
 ## 6. Memory — what Jr keeps
 
-Box-local, never shipped. This is Jr's spine — the thing that makes it *improve*, not just
+The tick's ledger (`jr/proposed_ledger.json`) ships with every tick PR — it is the audit
+trail, not box-local state. This is Jr's spine — the thing that makes it *improve*, not just
 repeat:
 
 - **Rejections** — never re-propose a human-rejected record.
@@ -182,12 +182,11 @@ repeat:
 
 ## 9. Runtime (at a glance)
 
-**Body: Agno 3.x** (Python, model-agnostic) on a **free Groq model (`gpt-oss-120b`)** — proven
-the reliable free lane. Agno natively carries Jr's **persistent memory** (`SqliteDb`) and its
-**e2e/health/trigger server** (AgentOS FastAPI: `/health`, `POST /agents/{id}/runs`); we add
-the guard→PR tool, crons, and the Telegram notify path. Runs as its **own instance on its own
-box** (the Pi it was tested on), separate identity + GitHub bot token from the main
-DasBrowCoder. The guard→PR→human-merge pipeline is the guarantee; the model is just a proposer.
+**Body: the hourly tick** (`jr/tick.py`) — deterministic, no LLM in any answer path. Each
+tick: preflight → worktree → memory → gauge → allocation → stages (Track A admits cited
+firmware, Track B maps cited boards as recipes) → guard → PR, auto-merged on green unless
+a stage flags `needs_human` (a human may always veto) → one report line. Until the cutover
+the stages run by hand (`--track A/B`, human-merged PRs) and the hourly job stays paused.
 
 ---
 

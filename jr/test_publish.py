@@ -116,11 +116,60 @@ def _gh_with_protection(contexts, allow="true", rc=0):
 def test_protection_ok_when_all_three_checks_required_and_auto_merge_allowed():
     st = publish.protection_status("o/r", gh=_gh_with_protection(["schema", "tests", "jr-tests"]))
     assert st.ok and st.allow_auto_merge and st.required_checks == ("schema", "tests", "jr-tests")
+    assert st.source == "protection"
+
+
+def _rules(contexts):
+    return json.dumps([{"type": "deletion"}, {"type": "non_fast_forward"},
+                       {"type": "required_status_checks", "parameters": {
+                           "strict_required_status_checks_policy": False,
+                           "required_status_checks": [{"context": c, "integration_id": 15368} for c in contexts]}}])
+
+
+def test_protection_reads_the_ruleset_first_so_a_write_only_bot_sees_the_truth():
+    """The bot is a write collaborator: the classic endpoint answers 404 to it, the rules
+    endpoint answers to anyone with read. With a ruleset requiring the checks the classic
+    endpoint is never consulted."""
+    gh = recorder({("api", "repos/o/r/rules/branches/main"): (0, _rules(["schema", "tests", "jr-tests", "g2-guard"])),
+                   ("api", "repos/o/r/branches/main/protection"): (1, ""),
+                   ("api", "repos/o/r", "-q", ".allow_auto_merge"): (0, "true\n")})
+    st = publish.protection_status("o/r", gh=gh)
+    assert st.ok and st.source == "ruleset" and st.required_checks == ("schema", "tests", "jr-tests", "g2-guard")
+    assert all(c[:2] != ("api", "repos/o/r/branches/main/protection") for c in gh.calls)
+
+
+def test_protection_ruleset_missing_a_check_is_not_ok_and_names_it():
+    gh = recorder({("api", "repos/o/r/rules/branches/main"): (0, _rules(["schema", "tests"])),
+                   ("api", "repos/o/r", "-q", ".allow_auto_merge"): (0, "true\n")})
+    st = publish.protection_status("o/r", gh=gh)
+    assert not st.ok and "jr-tests" in st.reason and "(ruleset)" in st.reason
+
+
+def test_protection_falls_back_to_the_classic_endpoint_when_no_ruleset_requires_checks():
+    gh = recorder({("api", "repos/o/r/rules/branches/main"): (0, json.dumps([{"type": "deletion"}])),
+                   ("api", "repos/o/r/branches/main/protection"): (0, json.dumps({"required_status_checks": {"contexts": ["schema", "tests", "jr-tests"]}})),
+                   ("api", "repos/o/r", "-q", ".allow_auto_merge"): (0, "true\n")})
+    st = publish.protection_status("o/r", gh=gh)
+    assert st.ok and st.source == "protection"
+    gh = recorder({("api", "repos/o/r/rules/branches/main"): (1, ""),
+                   ("api", "repos/o/r/branches/main/protection"): (1, "")})
+    assert "not protected" in publish.protection_status("o/r", gh=gh).reason
 
 
 def test_protection_not_ok_when_branch_unprotected():
     st = publish.protection_status("o/r", gh=_gh_with_protection([], rc=1))
     assert not st.ok and "not protected" in st.reason
+
+
+def test_protection_404_for_a_write_token_is_reported_as_unreadable_not_as_unprotected():
+    """GitHub masks the admin-only protection endpoint as 404 for a write collaborator (the
+    espatlas-jr bot). `GET /branches/main` still says protected: true — the reason must say
+    'cannot read', never 'not protected'; auto-merge stays withheld."""
+    gh = recorder({("api", "repos/o/r/branches/main/protection"): (1, ""),
+                   ("api", "repos/o/r/branches/main", "-q", ".protected"): (0, "true\n")})
+    st = publish.protection_status("o/r", gh=gh)
+    assert not st.ok and "cannot read its required checks" in st.reason and "not protected" not in st.reason
+    assert ("api", "repos/o/r/branches/main", "-q", ".protected") in gh.calls
 
 
 def test_protection_not_ok_when_a_check_is_missing():
@@ -362,3 +411,12 @@ def test_protection_distinguishes_a_403_from_an_unprotected_branch():
     st = publish.protection_status("o/r", gh=gh403)
     assert not st.ok and "403" in st.reason
     assert not publish.protection_status("o/r", gh=gh).ok
+
+
+def test_publish_withholds_auto_merge_when_the_caller_disables_it():
+    git = _git_ok()
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/6\n")})
+    res = publish.publish(WT, ["data/firmware/x"], "s", "b", git=git, gh=gh, now=NOW,
+                          protection=PROTECTED_OK, auto_merge=False)
+    assert res.published and not res.auto_merge and "--no-auto-merge" in res.reason
+    assert all(c[:2] != ("pr", "merge") for c in gh.calls)

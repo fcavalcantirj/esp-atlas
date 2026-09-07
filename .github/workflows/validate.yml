@@ -64,3 +64,18 @@ jobs:
       - run: pip install httpx pyyaml
       - name: Check every cited source URL is still live
         run: python3 scripts/check_sources_live.py
+
+  g2-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Install core (the guard imports the floor definition)
+        run: pip install -e apps/core
+      - name: Refuse un-overridden deletions of high-signal firmware (G2)
+        run: python3 scripts/g2_guard.py

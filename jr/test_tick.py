@@ -106,8 +106,8 @@ def test_dry_run_prints_gauge_allocation_and_nothing_to_do_and_writes_nothing(ca
     assert "boards 42.5% -> A0/B0 (no content stages registered)" in out and "nothing to do" in out
     # read-only: no worktree, no add/commit/push, no PR, only read calls to gh
     assert all(c[0] not in ("worktree", "add", "commit", "push", "checkout") for c in norm(git))
-    assert all(c[:2] in (("api", "rate_limit"), ("pr", "list"), ("api", "repos/o/r/branches/main/protection"),
-                         ("api", "repos/o/r")) for c in gh.calls)
+    assert all(c[:2] in (("api", "rate_limit"), ("pr", "list"), ("api", "repos/o/r/rules/branches/main"),
+                         ("api", "repos/o/r/branches/main/protection"), ("api", "repos/o/r")) for c in gh.calls)
     assert r.memory == {} and any("dry-run" in w for w in r.warnings)
 
 
@@ -354,9 +354,11 @@ def test_a_failing_worktree_removal_is_a_warning_not_a_lost_report(wt_dir, capsy
 
 def test_publish_gets_the_uncounted_gh_so_budget_cannot_cut_it_off_mid_publish(wt_dir):
     gh = gh_ok()
-    r = run(git=git_ok(wt_dir), gh=gh, stages=[_stage(["data/firmware/x"])], budget=Budget(max_calls=4, clock=lambda: 0.0))
+    # preflight = rate_limit + pr list + rules + protection + allow_auto_merge = 5 counted calls; the budget
+    # is exactly that, so publish's own pr create / pr merge would die if they were counted
+    r = run(git=git_ok(wt_dir), gh=gh, stages=[_stage(["data/firmware/x"])], budget=Budget(max_calls=5, clock=lambda: 0.0))
     assert not r.aborted and r.publish["published"] and r.publish["auto_merge"]
-    assert r.budget.startswith("gh calls 4/4")
+    assert r.budget.startswith("gh calls 5/5")
 
 
 def test_guard_env_points_core_at_the_worktree(tmp_path):
@@ -436,3 +438,21 @@ def test_main_passes_track_and_budget_to_run_tick(monkeypatch):
     monkeypatch.setattr(tick, "run_tick", fake_run)
     assert tick.main(["--dry-run", "--track", "B", "--budget", "2", "--no-telegram"]) == 0
     assert seen["dry_run"] is True and len(seen["stages"]) == 1 and seen["telegram"] is False
+
+
+def test_main_firmware_and_no_auto_merge_flags_reach_the_stage_and_run_tick(monkeypatch):
+    seen = {}
+
+    def fake_run(**kw):
+        seen.update(kw)
+        return tick.report.TickReport(when=NOW)
+    monkeypatch.setattr(tick, "run_tick", fake_run)
+    called = {}
+    import stage_boardmap
+    monkeypatch.setattr(stage_boardmap, "run", lambda ctx, budget, only=None: called.update(budget=budget, only=only) or tick.StageResult("boardmap"))
+    assert tick.main(["--dry-run", "--track", "B", "--budget", "2", "--firmware", "wled, bruce", "--no-auto-merge", "--no-telegram"]) == 0
+    assert seen["auto_merge"] is False and len(seen["stages"]) == 1
+    seen["stages"][0](None)
+    assert called == {"budget": 2, "only": ["wled", "bruce"]}
+    with pytest.raises(SystemExit):
+        tick.main(["--dry-run", "--track", "A", "--firmware", "wled", "--no-telegram"])      # --firmware is Track B only

@@ -15,6 +15,7 @@ dimensions_mm:
 usb:
   connector: usb-c
   bridge: native
+usb_serial: native-usb-serial-jtag
 power:
   battery_connector: true
   charging: true
@@ -45,6 +46,7 @@ notes:
   removed via reserved_pins so the new subtraction is {2,4,5,6,7} (5 pins) --
   gives 28 - 9 - 5 = 14; the SX1262 LoRa radio''s own SPI/control pins (GPIO8-14)
   are wired off-header as on the sibling boards and cost nothing further'
+- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
 sources:
 - field: '*'
   url: https://heltec.org/project/wireless-paper/
@@ -61,6 +63,9 @@ sources:
 - field: io.gpio_free
   url: https://github.com/HelTecAutomation/Heltec_ESP32/blob/master/examples/Wireless_paper/Wireless_Paper_V1.0/Wireless_Paper_V1.0.ino
   verified: '2026-08-26'
+- field: usb_serial
+  url: https://heltec.org/project/wireless-paper/
+  verified: '2026-09-07'
 ---
 
 # Wireless Paper

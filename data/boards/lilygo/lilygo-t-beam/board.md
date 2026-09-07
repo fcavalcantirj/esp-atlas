@@ -13,6 +13,7 @@ price_tier: medium
 usb:
   connector: micro-usb
   bridge: ch9102
+usb_serial: ch9102
 power:
   battery_connector: true
   charging: true
@@ -37,6 +38,7 @@ notes:
   by the LoRa radio, GPIO38 by Button1, GPIO35 by the PMU IRQ line -- so no
   header pin is independently free; esp32''s soc.reserved_pins subtraction is
   moot since gpio_free is already 0 from the vendor table itself'
+- 'usb_serial derived from usb.bridge (ch9102)'
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-beam
@@ -52,6 +54,9 @@ sources:
   verified: '2026-09-07'
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/ttgo-t-beam.json
+  verified: '2026-09-07'
+- field: usb_serial
+  url: https://www.lilygo.cc/products/t-beam
   verified: '2026-09-07'
 ---
 

@@ -17,6 +17,7 @@ dimensions_mm:
 usb:
   connector: usb-c
   bridge: ch340
+usb_serial: ch340
 power:
   battery_connector: true
   charging: true
@@ -51,6 +52,7 @@ notes:
   2, and 5 are not, being absent/RGB/SD-dedicated as above); input_only
   34/35/36/39 are exposed (4 pins); usb_flash_tied 6/7/8 are not on the header.
   21 total - 2 strapping - 4 input-only = 15'
+- 'usb_serial derived from usb.bridge (ch340)'
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-thing-plus-esp32-wroom-usb-c.html
@@ -78,6 +80,9 @@ sources:
   verified: '2026-09-07'
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/sparkfun_esp32s2_thing_plus_c.json
+  verified: '2026-09-07'
+- field: usb_serial
+  url: https://docs.sparkfun.com/SparkFun_Thing_Plus_ESP32_WROOM_C/hardware_overview/
   verified: '2026-09-07'
 ---
 
