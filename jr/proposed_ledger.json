@@ -330,6 +330,15 @@
       "status": "seen",
       "timestamp": "2026-09-02T16:03:28.065673+00:00"
     },
+    "draftling": {
+      "evidence_url": "https://github.com/clackups/draftling",
+      "id": "draftling",
+      "pr_ref": null,
+      "repo": "clackups/draftling",
+      "repo_id": 1260665366,
+      "status": "proposed",
+      "timestamp": "2026-09-07T20:02:12.695451+00:00"
+    },
     "ember": {
       "id": "ember",
       "pr_ref": null,
@@ -967,6 +976,7 @@
     "captainchorche/cardcaliper": "cardcaliper",
     "charl3x/glide-synth-cardputer-adv": "glide-synth-cardputer-adv",
     "chrisdacrunk/little-devhelper": "little-devhelper",
+    "clackups/draftling": "draftling",
     "comeraperuibe944/stickcontroller": "stickcontroller",
     "coreymillia/m5cardputer-xscreensaver": "m5cardputer-xscreensaver",
     "coreymillia/m5groqbot-m5stickc-plus2": "m5groqbot-m5stickc-plus2",
