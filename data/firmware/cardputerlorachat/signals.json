@@ -1,0 +1,44 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "main",
+ "repo": "nonik0/CardputerLoRaChat",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "LoRaChat",
+   "esp32-s3-devkitc-1"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "LoRaChat.bin",
+    "release": "v0.2.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "LoRaChat",
+   "url": "https://github.com/nonik0/CardputerLoRaChat/releases/download/v0.2.1/LoRaChat.bin"
+  },
+  {
+   "extra": {
+    "env": "m5cardputer",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 6,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/nonik0/CardputerLoRaChat/blob/main/platformio.ini#L6"
+  }
+ ]
+}

@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "main",
+ "repo": "lunarc3/CardputerGPSMap",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "gpsmap"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "gpsmap_1.0.5.bin",
+    "release": "1.0.5"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "gpsmap",
+   "url": "https://github.com/lunarc3/CardputerGPSMap/releases/download/1.0.5/gpsmap_1.0.5.bin"
+  }
+ ]
+}
