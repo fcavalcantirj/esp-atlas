@@ -1,0 +1,14 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "main",
+ "repo": "johnhw/cardputer_drums",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": []
+}
