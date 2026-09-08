@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "main",
+ "repo": "justinknight93/Doolittle",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "doolittle"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "doolittle.bin",
+    "release": "release"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "doolittle",
+   "url": "https://github.com/justinknight93/Doolittle/releases/download/release/doolittle.bin"
+  }
+ ]
+}

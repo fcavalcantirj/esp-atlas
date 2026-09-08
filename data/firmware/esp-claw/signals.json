@@ -1,0 +1,14 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "master",
+ "repo": "espressif/esp-claw",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": []
+}
