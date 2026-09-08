@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-15T05:25:25.049296+00:00",
+      "expires": "2026-09-15T15:00:13.005821+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -1564,6 +1564,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T01:00:31.284910+00:00"
     },
+    "cinevocab": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "cinevocab",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "redredred777/cinevocab",
+      "repo_id": 1360355014,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
     "circuitpython": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
       "id": "circuitpython",
@@ -2057,9 +2067,10 @@
     "esp32-bit-pirate": {
       "id": "esp32-bit-pirate",
       "pr_ref": "#165",
+      "reason": "PR closed unmerged: #165",
       "repo": "esp32-bit-pirate",
-      "status": "proposed",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
     },
     "esp32-bus-pirate": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -2260,9 +2271,10 @@
     "flipper-zero-esp32-adv": {
       "id": "flipper-zero-esp32-adv",
       "pr_ref": "#165",
+      "reason": "PR closed unmerged: #165",
       "repo": "flipper-zero-esp32-adv",
-      "status": "proposed",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
     },
     "flipper-zero-esp32-port": {
       "expires": "2026-10-08T05:25:25.049296+00:00",
@@ -2297,9 +2309,10 @@
     "flock-you": {
       "id": "flock-you",
       "pr_ref": "#165",
+      "reason": "PR closed unmerged: #165",
       "repo": "flock-you",
-      "status": "proposed",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
     },
     "flockcameradetector-m5cardputeradv": {
       "expires": "2026-10-08T05:25:25.049296+00:00",
@@ -2441,9 +2454,10 @@
     "ghost-esp": {
       "id": "ghost-esp",
       "pr_ref": "#165",
+      "reason": "PR closed unmerged: #165",
       "repo": "ghost-esp",
-      "status": "proposed",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
     },
     "ghost-firmware": {
       "expires": "2026-10-08T05:25:25.049296+00:00",
@@ -2454,6 +2468,16 @@
       "repo_id": 827650319,
       "status": "rejected",
       "timestamp": "2026-09-08T05:25:25.049296+00:00"
+    },
+    "ghostble": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "ghostble",
+      "pr_ref": null,
+      "reason": "name_token_matches_catalogued: likely a port/variant",
+      "repo": "smonse/ghostble",
+      "repo_id": 973142264,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
     },
     "ghostesp": {
       "expires": "2026-10-08T05:25:25.049296+00:00",
@@ -2480,6 +2504,15 @@
       "status": "seen",
       "timestamp": "2026-09-02T16:03:27.998361+00:00"
     },
+    "grovenfc": {
+      "expires": "2026-09-15T15:00:13.005821+00:00",
+      "id": "grovenfc",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "whywilson/grovenfc.git",
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
     "gs": {
       "expires": "2026-10-08T05:25:25.049296+00:00",
       "id": "gs",
@@ -2504,6 +2537,56 @@
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.103864+00:00"
     },
+    "hal9000": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "hal9000",
+      "pr_ref": null,
+      "reason": "below_floor: 14 stars / 1 forks",
+      "repo": "armel/hal9000",
+      "repo_id": 426238939,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
+    "hal9000atoms3": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "hal9000atoms3",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "armel/hal9000atoms3",
+      "repo_id": 669612191,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
+    "halloween-tetris-m5stick-plus-2-with-tre": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "halloween-tetris-m5stick-plus-2-with-tre",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/halloween-tetris-m5stick-plus-2-with-treats-or-tricks",
+      "repo_id": 1077218260,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
+    "ham5dsp": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "ham5dsp",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "yo3hjv/ham5dsp",
+      "repo_id": 1246971230,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
+    "hamqso-firmware": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "hamqso-firmware",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "diegoguevara/hamqso-firmware",
+      "repo_id": 1284395520,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
     "hamsterm": {
       "id": "hamsterm",
       "pr_ref": null,
@@ -2517,6 +2600,85 @@
       "repo": "therezor/hazke",
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.125971+00:00"
+    },
+    "heart-calculator": {
+      "expires": "2026-09-15T15:00:13.005821+00:00",
+      "id": "heart-calculator",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "erwantesti23/heart_calculator.git",
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
+    "heavenlypointer": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "heavenlypointer",
+      "pr_ref": null,
+      "reason": "below_floor: 9 stars / 1 forks",
+      "repo": "r3dfish/heavenlypointer",
+      "repo_id": 1269048666,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
+    "hector-atoms3": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "hector-atoms3",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/hector-atoms3",
+      "repo_id": 1087463879,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
+    "hector-audio-m5core": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "hector-audio-m5core",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/hector-audio-m5core",
+      "repo_id": 1089898853,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
+    "hector-interactive-m5stickc-plus2": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "hector-interactive-m5stickc-plus2",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "coreymillia/hector-interactive-m5stickc-plus2",
+      "repo_id": 1087432527,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
+    "hikepod": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "hikepod",
+      "pr_ref": null,
+      "reason": "below_floor: 19 stars / 2 forks",
+      "repo": "nongxl/hikepod",
+      "repo_id": 1153373473,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
+    "hn-m5stack-core-basic": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "hn-m5stack-core-basic",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/hn-m5stack-core-basic",
+      "repo_id": 1169537406,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
+    "honeypot": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "honeypot",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 0 forks",
+      "repo": "wsalmi/honeypot",
+      "repo_id": 1260796595,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
     },
     "hotspot-arcade-cardputer": {
       "id": "hotspot-arcade-cardputer",
@@ -2542,6 +2704,15 @@
       "repo": "https:/",
       "status": "rejected",
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
+    },
+    "i-r-s": {
+      "expires": "2026-09-15T15:00:13.005821+00:00",
+      "id": "i-r-s",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "zorikos3/i.r.s.",
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
     },
     "imu-acoustic-analyzer": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -2650,6 +2821,26 @@
       "repo_id": 1326249282,
       "status": "rejected",
       "timestamp": "2026-09-08T05:25:25.049296+00:00"
+    },
+    "m5-guitartuner": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "m5-guitartuner",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "pkolbas/m5-guitartuner",
+      "repo_id": 1307148554,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
+    },
+    "m5-holy-os": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "m5-holy-os",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "m5rogueops/m5_holy_os",
+      "repo_id": 1304736108,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
     },
     "m5-midi-rec": {
       "id": "m5-midi-rec",
@@ -2944,6 +3135,16 @@
       "repo": "volosr/m5mp3",
       "status": "merged",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "m5porkchop": {
+      "expires": "2026-10-08T15:00:13.005821+00:00",
+      "id": "m5porkchop",
+      "pr_ref": null,
+      "reason": "already_catalogued: 0ct0sec/m5porkchop is already in the atlas",
+      "repo": "0ct0sec/m5porkchop",
+      "repo_id": 1110910539,
+      "status": "rejected",
+      "timestamp": "2026-09-08T15:00:13.005821+00:00"
     },
     "m5rally": {
       "id": "m5rally",
@@ -3577,6 +3778,7 @@
   "by_repo": {
     "": "(unnamed entry)",
     "01mayo01/meowusb-ble": "meowusb-ble",
+    "0ct0sec/m5porkchop": "m5porkchop",
     "0m3gx": "0m3gx",
     "0x1abin/crossmux": "crossmux",
     "0xhalloween/flipper-zero-esp32-adv": "flipper-zero-esp32-adv",
@@ -3615,6 +3817,8 @@
     "anyd3v/any-8ball": "any-8ball",
     "armel/breakoutatoms3": "breakoutatoms3",
     "armel/dradis": "dradis",
+    "armel/hal9000": "hal9000",
+    "armel/hal9000atoms3": "hal9000atoms3",
     "armel/m5hamradio": "m5hamradio",
     "arturockpk/bme280-sensor-m5unified": "bme280-sensor-m5unified",
     "asg02fever/m5-dial-rgb-light-strip-controller-": "m5-dial-rgb-light-strip-controller",
@@ -3664,6 +3868,11 @@
     "coreymillia/dodge-tetris-m5stickc-plus2": "dodge-tetris-m5stickc-plus2",
     "coreymillia/evil-portal-hater-watch-m5stickc-plus2": "evil-portal-hater-watch-m5stickc-plus2",
     "coreymillia/evil-portal-parasite-atoms3": "evil-portal-parasite-atoms3",
+    "coreymillia/halloween-tetris-m5stick-plus-2-with-treats-or-tricks": "halloween-tetris-m5stick-plus-2-with-tre",
+    "coreymillia/hector-atoms3": "hector-atoms3",
+    "coreymillia/hector-audio-m5core": "hector-audio-m5core",
+    "coreymillia/hector-interactive-m5stickc-plus2": "hector-interactive-m5stickc-plus2",
+    "coreymillia/hn-m5stack-core-basic": "hn-m5stack-core-basic",
     "coreymillia/m5cardputer-xscreensaver": "m5cardputer-xscreensaver",
     "coreymillia/m5core-341-xscreensaver-": "m5core-341-xscreensaver",
     "coreymillia/m5core2-esp32-tetris-touch": "m5core2-esp32-tetris-touch",
@@ -3688,6 +3897,7 @@
     "destillegast/m5cardputer-hid-tools": "m5cardputer-hid-tools",
     "devinwatson/cardputer-adv-gps-info": "cardputer-adv-gps-info",
     "dezusaz/isitdefcon": "isitdefcon",
+    "diegoguevara/hamqso-firmware": "hamqso-firmware",
     "dj1ch/minigotchi-esp32": "minigotchi-esp32",
     "djflix/cardputer_i2c_scan": "cardputer-i2c-scan",
     "dlazder/m5_crystal_firmware": "m5-crystal-firmware",
@@ -3709,6 +3919,7 @@
     "erwantest123/cardputer-message-terminal.git": "cardputer-message-terminal",
     "erwantest123/nyan": "nyan",
     "erwantesti23/downloader": "downloader",
+    "erwantesti23/heart_calculator.git": "heart-calculator",
     "erwantesti23/operating-system-cardputer": "operating-system-cardputer",
     "esp32-bit-pirate": "esp32-bit-pirate",
     "esp32de/boot-linux-esp32s3-playground": "boot-linux-esp32s3-playground",
@@ -3816,6 +4027,7 @@
     "lyzbn/adv-tarot-firmware": "adv-tarot-firmware",
     "m5dev1000/m5-clicker-hamster": "m5-clicker-hamster",
     "m5rogueops/echoglass-the-mindful-tracker": "echoglass-the-mindful-tracker",
+    "m5rogueops/m5_holy_os": "m5-holy-os",
     "m5stack/aiflow": "aiflow",
     "m5stack/cores3-box": "cores3-box",
     "m5stack/cores3-userdemo": "cores3-userdemo",
@@ -3858,6 +4070,7 @@
     "nongxl/cardputer_morsedecoder": "cardputer-morsedecoder",
     "nongxl/cyberdeck-tarot": "cyberdeck-tarot",
     "nongxl/floatingbottle_pc_monitor": "floatingbottle-pc-monitor",
+    "nongxl/hikepod": "hikepod",
     "nongxl/skycompass_cardputeradv": "skycompass-cardputeradv",
     "nongxl/skycompass_satellite": "skycompass-satellite",
     "nonik0/cardputerlegotraincontrol": "cardputerlegotraincontrol",
@@ -3875,17 +4088,20 @@
     "personwithbeans/cardlife": "cardlife",
     "petsven/s3_decibel_meter": "s3-decibel-meter",
     "pierrebak/m5cardputer_voice-changer": "m5cardputer-voice-changer",
+    "pkolbas/m5-guitartuner": "m5-guitartuner",
     "power-pill/ascii-aquarium": "ascii-aquarium",
     "pr3y/bruce": "bruce",
     "pr3y/bruce_old": "bruce-old",
     "prstoetzer/cardputer_adv_basic": "cardputer-adv-basic",
     "question-and-answer/cave-mine-cardputer-alpha1": "cave-mine-cardputer-alpha1",
     "qwertyuu/cardputer-adv-tracker": "cardputer-adv-tracker",
+    "r3dfish/heavenlypointer": "heavenlypointer",
     "r3dfish/m5cores3bluebox": "m5cores3bluebox",
     "raphntc/portal-evil-huebr": "portal-evil-huebr",
     "ratspeak/rscardputer": "ratcom",
     "rawseq/m5-midi-rec": "m5-midi-rec",
     "realclearwave/cardputer86": "cardputer86",
+    "redredred777/cinevocab": "cinevocab",
     "reydeargentina/cardtastic": "cardtastic",
     "rhuaneverton/gpsdata-m5cardputer": "gpsdata-m5cardputer",
     "risinek/esp32-wifi-penetration-too": "esp32-wifi-penetration-too",
@@ -3910,6 +4126,7 @@
     "skyper02/evil-m5project": "evil-m5project",
     "slowlane112/cardputer_8_bit_tape_loader": "cardputer-8-bit-tape-loader",
     "slsafenull-dev/galaga-cardputer": "galaga-cardputer",
+    "smonse/ghostble": "ghostble",
     "soe6/aethertone": "aethertone",
     "sor3nt/flipper-zero-esp32-port": "flipper-zero-esp32-port",
     "sosprz/esp_level": "esp-level",
@@ -3955,12 +4172,16 @@
     "washishi/m5stack-avatar-mic-nekomimi_led": "m5stack-avatar-mic-nekomimi-led",
     "weavefront/wikiputer": "wikiputer",
     "whitewhidow/bboink": "bboink",
+    "whywilson/grovenfc": "grovenfc",
+    "whywilson/grovenfc.git": "grovenfc",
     "williamruckman/diceroller-cardputeradv": "diceroller-cardputeradv",
     "wokao2333/bus-pirate-cardputer-adv-deepseek.git": "bus-pirate-cardputer-adv-deepseek",
+    "wsalmi/honeypot": "honeypot",
     "xinyuan-lilygo/t-display-c5": "t-display-c5",
     "xinyuan-lilygo/t-embed": "t-embed",
     "xxtrippxx88/airmouse-m5stick-c-plus": "airmouse-m5stick-c-plus",
     "y88huang/claude-desktop-buddy-cardputer": "claude-desktop-buddy-cardputer",
+    "yo3hjv/ham5dsp": "ham5dsp",
     "zaratton/cardputermidimonitor": "cardputermidimonitor",
     "zedward856-spec/breach_os": "breach-os",
     "zeloksa/ai-offline-chat-adv": "ai-offline-chat-adv",
@@ -3971,6 +4192,7 @@
     "zeloksa/piano-tiles-adv": "piano-tiles-adv",
     "zmattmanz/claude-usage": "claude-usage",
     "zmattmanz/plume": "plume",
+    "zorikos3/i.r.s.": "i-r-s",
     "zrutra/game-snake-m5cardputer": "game-snake-m5cardputer",
     "zrutra/wifi-capture-page-m5cardputer": "wifi-capture-page-m5cardputer",
     "zspuspoki/cardputeradvanceddoom": "cardputeradvanceddoom",
