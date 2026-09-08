@@ -37,6 +37,7 @@ from pathlib import Path
 
 import board_alias
 import derive
+import memory
 import tools
 import writers
 from budget import BudgetExceeded
@@ -195,6 +196,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
     today = now.strftime("%Y-%m-%d")
     api = api or (lambda path: json.loads(ctx.gh("api", path).stdout))    # ctx.gh is budget-wrapped
     raw = ctx.budget.wrap(raw or derive.default_raw, "raw")
+    led = memory.load(ctx.ledger_path)   # read-only: the open-PR skip reads the hydrated ledger (tick.hydrate_open_pr_ledger)
     paths, lines, admitted, rejects, needs_human, items = [], [], 0, {}, False, []
     if only:
         chosen = []
@@ -211,6 +213,17 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
         rejects[key] = rejects.get(key, 0) + 1
 
     for fid in chosen:
+        # An id already sitting in an OPEN Jr PR — marked `proposed` in the worktree ledger at tick
+        # start (tick.hydrate_open_pr_ledger extracts ids from both data/firmware/<id> and
+        # data/recipes/<board>__<id> paths). A tick's boardmap output lives on its un-merged branch,
+        # so origin/main still shows the firmware as under-mapped and the selector re-picks it; this
+        # gate stops the SAME signals.json + recipes being re-derived into a second PR (#165/#166).
+        # Mirrors stage_admit's already_proposed check; fires BEFORE the budget test — no wasted call.
+        rec = memory.lookup(led, firmware_id=fid)
+        if rec and rec.get("status") == "proposed" and not memory.is_expired(rec, now):
+            reject("already_proposed")
+            lines.append(f"{fid}: skip already_proposed ({rec.get('pr_ref') or 'an open PR covers this firmware'})")
+            continue
         if ctx.budget.remaining_calls() < CALLS_PER_FIRMWARE or ctx.budget.remaining_seconds() < SECONDS_PER_FIRMWARE:
             lines.append(f"stopped before {fid}: tick budget low ({ctx.budget.remaining_calls()} calls, "
                          f"{ctx.budget.remaining_seconds():.0f}s left)")
