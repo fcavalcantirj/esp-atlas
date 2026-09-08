@@ -27,6 +27,7 @@ class TickReport:
     admitted: int = 0
     rejects: dict = field(default_factory=dict)       # reason -> count
     memory: dict = field(default_factory=dict)        # {"expired", "merged", "rejected", "removed"}
+    hydrated: list = field(default_factory=list)       # firmware ids marked proposed from open Jr PRs at tick start
     revalidate: dict | None = None
     guard: dict | None = None                         # {"ok": bool, "output": str}
     publish: dict | None = None                       # PublishResult.as_dict()
