@@ -38,6 +38,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import signal
 import subprocess
 import sys
@@ -202,6 +203,69 @@ def _repo_slug(git) -> str:
     return publish.owner_repo((getattr(p, "stdout", "") or "").strip())
 
 
+# --- open-PR ledger hydration ------------------------------------------------------------------
+# A tick starts from a fresh worktree detached at origin/main (jr/publish.py), so it reads main's
+# committed jr/proposed_ledger.json — which does NOT carry the `proposed` entries an un-merged
+# tick PR recorded on its OWN branch. Without hydrating those, jr/stage_admit's dedup gate cannot
+# see firmware already sitting in an open PR and re-authors it, opening a DUPLICATE PR one hour
+# later (observed live: #158/#159 and #162/#163 were identical re-proposals). Firmware ids come
+# from the changed-file paths of every currently-open Jr tick PR.
+
+_FIRMWARE_PATH_RE = re.compile(r"^data/firmware/([^/]+)/")
+_RECIPE_PATH_RE = re.compile(r"^data/recipes/[^/]+__([^/]+)/")
+
+
+def _open_tick_prs(gh) -> list:
+    """Open PRs whose branch is a Jr tick branch. Best-effort: [] on any gh/parse failure (the
+    stale-PR preflight already fails CLOSED on a pr-list failure, so this only re-reads it)."""
+    p = gh("pr", "list", "--state", "open", "--json", "number,headRefName")
+    if getattr(p, "returncode", 1) != 0:
+        return []
+    try:
+        prs = json.loads(p.stdout or "[]")
+    except json.JSONDecodeError:
+        return []
+    return [pr for pr in prs if isinstance(pr, dict)
+            and str(pr.get("headRefName", "")).startswith(TICK_BRANCH_PREFIX)]
+
+
+def _pr_firmware_ids(gh, number) -> list[str]:
+    """The firmware ids a PR touches, from its changed-file paths: data/firmware/<id>/… and
+    data/recipes/<board>__<id>/… (a recipe alone still names the firmware it maps). Best-effort."""
+    p = gh("pr", "view", str(number), "--json", "files")
+    if getattr(p, "returncode", 1) != 0:
+        return []
+    try:
+        data = json.loads(p.stdout or "{}")
+    except json.JSONDecodeError:
+        return []
+    ids = set()
+    for f in (data.get("files") or []):
+        path = f.get("path") or "" if isinstance(f, dict) else ""
+        m = _FIRMWARE_PATH_RE.match(path) or _RECIPE_PATH_RE.match(path)
+        if m:
+            ids.add(m.group(1))
+    return sorted(ids)
+
+
+def hydrate_open_pr_ledger(gh, now, ledger_path) -> list[str]:
+    """Mark every firmware id in an OPEN Jr tick PR as `proposed` in the worktree ledger, so
+    stage_admit skips firmware already awaiting merge (the duplicate-PR fix; see the note above).
+
+    The firmware id is the dedup key; the repo owner/repo is not recoverable from a file path, so
+    the id itself stands in for the `repo` argument (only the by-id index gates admit). Uses the
+    existing memory.record_proposed API — no new persistence format — which REFUSES to downgrade a
+    `merged` or (permanently) `rejected` record, so a human veto or an already-merged id is never
+    turned back into a fresh proposal. Returns the ids hydrated."""
+    hydrated = []
+    for pr in _open_tick_prs(gh):
+        n = pr.get("number")
+        for fid in _pr_firmware_ids(gh, n):
+            memory.record_proposed(fid, fid, pr_ref=f"#{n}", path=ledger_path, now=now)
+            hydrated.append(fid)
+    return hydrated
+
+
 # --- the tick ----------------------------------------------------------------------------------
 
 def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.default_gh,
@@ -283,6 +347,16 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             n = len(stages)
             r.allocation = (f"boards {r.boards_pct:.1f}% -> A0/B{n} (manual track)" if n
                             else f"boards {r.boards_pct:.1f}% -> A0/B0 (no content stages registered)")
+
+        # 5b. hydrate the working ledger from open Jr PRs, so the content stages can see firmware
+        #     already sitting in an un-merged PR (this worktree started from origin/main, whose
+        #     ledger lacks those entries) and do not re-author it. Real runs only; best-effort — a
+        #     dedup optimization must never abort a tick, but a budget exhaustion still does.
+        if not dry_run:
+            try:
+                r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path)
+            except Exception as e:  # noqa: BLE001 — a dedup step (incl. a spent budget) must never
+                r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")  # abort a tick; the stages enforce the budget
 
         # 6. stages
         ctx = TickContext(root=root, ledger_path=ledger_path, now=now, gh=gh_c, git=git,

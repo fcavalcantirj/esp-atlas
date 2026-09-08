@@ -284,6 +284,24 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
                                                         + (f" (until {prior['expires']})" if prior.get("expires") else ""), False, False))
                 lines.append(f"submission #{issue}: already decided")
             continue
+        # An id already sitting in an OPEN Jr PR — hydrated into the worktree ledger at tick start
+        # (tick.hydrate_open_pr_ledger) because this worktree reads origin/main's ledger, which
+        # lacks the un-merged PR's own `proposed` entry. A hydrated record is keyed by the firmware
+        # id (its owner/repo is not recoverable from a file path), so the repo gate above cannot see
+        # it; this id gate catches it. The authored id is deterministic from the github url alone
+        # (scorer derives it the same way), so this fires BEFORE any meta fetch — no wasted call —
+        # and stops two consecutive ticks producing a duplicate PR (#158/#159, #162/#163).
+        cand_id = scorer._slug(scorer._repo_name_from_url(github))
+        cand_rec = memory.lookup(led, firmware_id=cand_id) if cand_id else None
+        if cand_rec and cand_rec.get("status") == "proposed" and not memory.is_expired(cand_rec, ctx.now):
+            reject("already_proposed")
+            if issue:
+                _answer(ctx, slug, issue, _verdict_text(
+                    f"already_proposed: {cand_rec.get('pr_ref') or 'an open PR covers this firmware'}", False, False))
+                lines.append(f"submission #{issue}: already proposed ({cand_id})")
+            else:
+                launcher_skips["already_proposed"] = launcher_skips.get("already_proposed", 0) + 1
+            continue
         if ctx.budget.remaining_calls() < MIN_CALLS_TO_CONTINUE:
             lines.append(f"stopped before {owner_repo}: tick budget low "
                          f"({ctx.budget.remaining_calls()} calls left)")
