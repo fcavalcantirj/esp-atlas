@@ -11,6 +11,7 @@ from types import SimpleNamespace
 
 import pytest
 
+import memory
 import stage_boardmap as sb
 import tick
 from budget import Budget, BudgetExceeded
@@ -277,6 +278,41 @@ def test_stage_run_keeps_earlier_work_when_the_budget_runs_out_mid_derivation(ro
     res = sb.run(ctx(root), budget=2, raw=fake_raw)
     assert "stopped during second: time budget exhausted" in res.summary and "marauder: +" in res.summary
     assert "data/firmware/marauder/signals.json" in res.paths and res.admitted >= 3
+
+
+def test_stage_run_skips_firmware_already_in_an_open_pr(root):
+    """The duplicate-PR fix (#165/#166): a firmware whose id is a live `proposed` record in the
+    hydrated worktree ledger (it already sits in an open Jr PR) is NOT re-derived — no signals.json,
+    no recipe, counted `already_proposed`. A firmware NOT in the ledger is mapped as before."""
+    (root / "data" / "firmware" / "second").mkdir()   # same repo url so fake_api resolves it → real recipes
+    (root / "data" / "firmware" / "second" / "firmware.md").write_text(FW.replace("id: marauder", "id: second"))
+    ledger_path = root / "jr" / "proposed_ledger.json"
+    ledger_path.parent.mkdir(parents=True, exist_ok=True)
+    memory.record_proposed("marauder", "marauder", pr_ref="#165", path=ledger_path, now=NOW)
+    res = sb.run(ctx(root), budget=5, raw=fake_raw)
+    # marauder: skipped, nothing written, counted once
+    assert res.rejects.get("already_proposed") == 1
+    assert "marauder: skip already_proposed (#165)" in res.summary
+    assert not (root / "data/firmware/marauder/signals.json").exists()
+    assert list((root / "data/recipes").glob("*__marauder")) == []
+    assert not any("__marauder" in p or "firmware/marauder" in p for p in res.paths)
+    # second: not in the ledger → mapped exactly as before
+    assert "second: +" in res.summary and res.admitted >= 3
+    assert (root / "data/firmware/second/signals.json").exists()
+
+
+def test_stage_run_maps_firmware_whose_proposed_record_has_expired(root):
+    """An `expired` (or otherwise non-proposed) record never gates boardmap: only a LIVE `proposed`
+    record does. Guards the mirror of stage_admit's live-record check."""
+    ledger_path = root / "jr" / "proposed_ledger.json"
+    ledger_path.parent.mkdir(parents=True, exist_ok=True)
+    # a rejected note (non-proposed) must not block re-mapping
+    memory.record_rejected("marauder", "marauder", "some old note", ttl_days=30,
+                           path=ledger_path, now=NOW)
+    res = sb.run(ctx(root), budget=1, raw=fake_raw)
+    assert res.rejects.get("already_proposed") is None
+    assert "marauder: +" in res.summary
+    assert (root / "data/firmware/marauder/signals.json").exists()
 
 
 def test_stage_run_only_maps_the_named_firmware_in_order_ignoring_freshness(root):
