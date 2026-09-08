@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "main",
+ "repo": "cyberwisk/M5Cardputer_WebRadio",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "M5Cardputer_WebRadio"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "M5Cardputer_WebRadio.bin",
+    "release": "PrimeiraVersao"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Cardputer_WebRadio",
+   "url": "https://github.com/cyberwisk/M5Cardputer_WebRadio/releases/download/PrimeiraVersao/M5Cardputer_WebRadio.bin"
+  }
+ ]
+}
