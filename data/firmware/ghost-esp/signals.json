@@ -1,0 +1,1318 @@
+{
+ "calls": 8,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "main",
+ "repo": "Spooks4576/Ghost_ESP",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32",
+   "esp32-c3",
+   "esp32-c6",
+   "esp32-s2",
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "Awok V5",
+   "AwokMini",
+   "AwokMini.zip",
+   "CYD2USB",
+   "CYD2USB.zip",
+   "CYD2USB2.4Inch.zip",
+   "CYD2USB2.4Inch_C.zip",
+   "CYD2USB2.4_Inch",
+   "CYD2USB2.4_Inch_C",
+   "CYDDualUSB",
+   "CYDDualUSB.zip",
+   "CYDMicroUSB",
+   "CYDMicroUSB.zip",
+   "Crowtech_LCD",
+   "Crowtech_LCD.zip",
+   "ESP32-S3-Cardputer",
+   "ESP32-S3-Cardputer.zip",
+   "MarauderV4_FlipperHub",
+   "MarauderV4_FlipperHub.zip",
+   "MarauderV6&AwokDual",
+   "MarauderV6_AwokDual.zip",
+   "Waveshare_LCD",
+   "Waveshare_LCD.zip",
+   "configs/sdkconfig.CYD2USB",
+   "configs/sdkconfig.CYD2USB2.4Inch",
+   "configs/sdkconfig.CYD2USB2.4Inch_C_Varient",
+   "configs/sdkconfig.CYDDualUSB",
+   "configs/sdkconfig.CYDMicroUSB",
+   "configs/sdkconfig.awokmini",
+   "configs/sdkconfig.cardputer",
+   "configs/sdkconfig.crowtech7inch",
+   "configs/sdkconfig.default.esp32",
+   "configs/sdkconfig.default.esp32c3",
+   "configs/sdkconfig.default.esp32c6",
+   "configs/sdkconfig.default.esp32s2",
+   "configs/sdkconfig.default.esp32s3",
+   "configs/sdkconfig.ghostboard",
+   "configs/sdkconfig.marauderv4",
+   "configs/sdkconfig.marauderv6",
+   "configs/sdkconfig.waveshare7inch",
+   "esp32-generic",
+   "esp32-generic.zip",
+   "esp32c3-generic",
+   "esp32c3-generic.zip",
+   "esp32c6-generic",
+   "esp32c6-generic.zip",
+   "esp32s2-generic",
+   "esp32s2-generic.zip",
+   "esp32s3-generic",
+   "esp32s3-generic.zip",
+   "esp32v5_awok.zip",
+   "ghostboard",
+   "ghostboard.zip"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-generic",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-generic.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s2-generic",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s2",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32s2",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s2-generic.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3-generic",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32s3",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3-generic.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c3-generic",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c3",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32c3",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c3-generic.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6-generic",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32c6",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6-generic.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Awok V5",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32v5_awok.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ghostboard",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.ghostboard",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ghostboard.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderV4_FlipperHub",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.marauderv4",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderV4_FlipperHub.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderV6&AwokDual",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.marauderv6",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderV6_AwokDual.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "AwokMini",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.awokmini",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "AwokMini.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32-S3-Cardputer",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.cardputer",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32-S3-Cardputer.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYD2USB",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYDMicroUSB",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYDMicroUSB",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYDMicroUSB.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYDDualUSB",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYDDualUSB",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYDDualUSB.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB2.4_Inch",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYD2USB2.4Inch",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB2.4Inch.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB2.4_Inch_C",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYD2USB2.4Inch_C_Varient",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB2.4Inch_C.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Waveshare_LCD",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.waveshare7inch",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Waveshare_LCD.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Crowtech_LCD",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowtech7inch",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Crowtech_LCD.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-generic",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-generic.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s2-generic",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s2",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32s2",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s2-generic.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3-generic",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32s3",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3-generic.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c3-generic",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c3",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32c3",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c3-generic.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6-generic",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32c6",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6-generic.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Awok V5",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32v5_awok.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ghostboard",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.ghostboard",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ghostboard.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderV4_FlipperHub",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.marauderv4",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderV4_FlipperHub.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderV6&AwokDual",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.marauderv6",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderV6_AwokDual.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "AwokMini",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.awokmini",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "AwokMini.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32-S3-Cardputer",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.cardputer",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32-S3-Cardputer.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYD2USB",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYDMicroUSB",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYDMicroUSB",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYDMicroUSB.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYDDualUSB",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYDDualUSB",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYDDualUSB.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB2.4_Inch",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYD2USB2.4Inch",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB2.4Inch.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Waveshare_LCD",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.waveshare7inch",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Waveshare_LCD.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Crowtech_LCD",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowtech7inch",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_prerelease.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Crowtech_LCD.zip",
+   "url": "https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_prerelease.yml"
+  }
+ ]
+}
