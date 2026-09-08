@@ -602,6 +602,26 @@ def _generic_base(signal: dict, atlas_id: str, atlas: dict) -> bool:
     return not (_DEVKIT_ENV.match(env) or "devkit" in env or board_alias.compact(atlas_id) in env)
 
 
+def _env_product(signal: dict, board_atlas_id: str, atlas: dict) -> str | None:
+    """The atlas board a rank-2 platformio env NAMES, when that differs from the board its `board =`
+    value resolves to. A product device is often built on a bare module and reuses the module's
+    board definition: the M5 Cardputer is a StampS3 on a carrier, so ESP32-Bit-Pirate declares
+    `[env:cardputer] board = m5stack-stamps3` — board= names the module, the env names the product.
+    Resolve the env name through the SAME curated resolver (soc of the board= match must agree); when
+    it lands on a catalogued board with a DIFFERENT id, the product wins. Arbitrary env names
+    (`release`, `debug`, `s3-devkit`) resolve to nothing, so this only ever redirects, never invents."""
+    if signal.get("kind") != "platformio":
+        return None
+    env = str((signal.get("extra") or {}).get("env") or "")
+    if not env:
+        return None
+    soc = (atlas.get(board_atlas_id) or {}).get("soc")
+    r = board_alias.resolve_token(env, soc=soc, boards=atlas)
+    if r and r.get("atlas_id") and r["atlas_id"] != board_atlas_id:
+        return r["atlas_id"]
+    return None
+
+
 def resolve(derived: dict, boards: dict[str, dict] | None = None) -> dict:
     """Map every signal to a catalogued board through jr/board_alias.resolve_token. Returns
     {"boards": {atlas_id: [signal, ...]}, "socs": {soc: [signal, ...]}, "unresolved": [signal, ...]}.
@@ -614,7 +634,13 @@ def resolve(derived: dict, boards: dict[str, dict] | None = None) -> dict:
     unresolved: list = []
     for s in derived.get("signals", []):
         r = board_alias.resolve_token(s["token"], soc=s.get("soc"), boards=atlas)
-        if r and r.get("atlas_id") and _generic_base(s, r["atlas_id"], atlas):
+        product = _env_product(s, r["atlas_id"], atlas) if r and r.get("atlas_id") else None
+        if product:
+            # [env:cardputer] board = m5stack-stamps3: the env names the product device, board= the
+            # bare module it is built on. The product wins (see _env_product) — never a duplicate
+            # module recipe (the CatHack-adjacent over-mapping class, DECISION-LOG).
+            boards.setdefault(product, []).append({**s, "how": "env"})
+        elif r and r.get("atlas_id") and _generic_base(s, r["atlas_id"], atlas):
             # An Espressif devkit id used as the BASE of a product-specific PlatformIO env (Bruce's
             # `board = esp32-s3-devkitc1-n16r8` under env `elecrow-advance-35-s3`) proves the chip,
             # not that the firmware targets the bare devkit: chip evidence only, never a recipe.

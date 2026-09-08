@@ -139,10 +139,15 @@ RUN_MATRIX = [
         boards_exact={"esp32-devkitc-v4"},
     ),
     dict(
+        # esp32-bit-pirate runs on "any ESP32-S3 board with >=8MB flash" and its platformio.ini
+        # names many S3 build targets, so its grounded board set legitimately GROWS as the tick
+        # reads more envs. boards_exact would break on every honest addition; assert the anchor
+        # board is present instead. Over-mapping is guarded upstream (derive._env_product + the
+        # resolver's soc gates), not by pinning an exact set here.
         id="13_esp32-bit-pirate",
         fw="esp32-bit-pirate",
         requires_exact={"wifi"},
-        boards_exact={"m5cardputer"},
+        recipe_includes={"m5cardputer"},
     ),
     dict(
         id="14_openmqttgateway",

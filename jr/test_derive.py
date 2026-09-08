@@ -399,6 +399,23 @@ def test_resolve_treats_a_devkit_id_under_a_product_env_as_chip_evidence_only(re
     assert [(s["token"], s["how"]) for s in r["unresolved"]] == [("esp32-s3-devkitc1-n16r8", "generic_base")]
 
 
+def test_resolve_env_names_the_product_when_board_is_the_module_it_is_built_on(real_catalog):
+    """M5 Cardputer is a StampS3 module on a carrier, so ESP32-Bit-Pirate's platformio.ini declares
+    `[env:cardputer] board = m5stack-stamps3`: board= names the module, the env names the product
+    device. The product (m5cardputer) wins. A bare-module env still resolves to the module, and an
+    arbitrary env name resolves to nothing and leaves board= untouched — no invented board."""
+    base = {"rank": 2, "kind": "platformio", "token": "m5stack-stamps3", "url": "u", "soc": None, "line": 240}
+    d = {"signals": [
+        dict(base, extra={"env": "cardputer", "file": "platformio.ini"}),   # env names the product
+        dict(base, extra={"env": "stamps3", "file": "platformio.ini"}),     # env names the bare module
+        dict(base, extra={"env": "release", "file": "platformio.ini"}),     # arbitrary env: no override
+    ]}
+    r = derive.resolve(d, boards=real_catalog)
+    assert set(r["boards"]) == {"m5cardputer", "m5stamp-s3"}
+    assert [(s["how"], s["extra"]["env"]) for s in r["boards"]["m5cardputer"]] == [("env", "cardputer")]
+    assert {s["extra"]["env"] for s in r["boards"]["m5stamp-s3"]} == {"stamps3", "release"}
+
+
 def test_release_assets_named_repo_dash_board_and_multipart_images_yield_one_token_per_board():
     """draftling ships `draftling-<board>.bin` + `-bootloader.bin` + `-partition-table.bin` per
     device: the repo name is not a stamp (no digit), so the common-prefix rule keeps it; the
