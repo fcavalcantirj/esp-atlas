@@ -1,0 +1,229 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "main",
+ "repo": "Sor3nt/Flipper-Zero-ESP32-Port",
+ "resolved": {
+  "boards": [
+   "lilygo-t-embed"
+  ],
+  "socs": [
+   "esp32-c6",
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "16MB",
+   "8MB",
+   "build_s3",
+   "build_t_embed",
+   "build_waveshare_c6",
+   "flipper-esp32s3-generic",
+   "flipper-lilygo-t-embed-cc1101",
+   "flipper-waveshare-c6-1.9",
+   "furi_esp32",
+   "generic_esp32s3",
+   "lilygo_t_embed_cc1101",
+   "waveshare_c6",
+   "waveshare_c6_1.9"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "furi_esp32.bin",
+    "release": "v2.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "furi_esp32",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/releases/download/v2.0.0/furi_esp32.bin"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "generic_esp32s3",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "build_s3",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "flipper-esp32s3-generic",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "16MB",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "lilygo_t_embed_cc1101",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "t_embed",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "build_t_embed",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "flipper-lilygo-t-embed-cc1101",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "waveshare_c6_1.9",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "waveshare_c6",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "build_waveshare_c6",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "flipper-waveshare-c6-1.9",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "8MB",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": 2,
+   "rank": 4,
+   "soc": "esp32-c6",
+   "token": "esp32c6",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/sdkconfig.defaults#L2"
+  },
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": null,
+   "rank": 4,
+   "soc": "esp32-s3",
+   "token": "esp32s3",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/sdkconfig.defaults.esp32s3"
+  }
+ ]
+}
