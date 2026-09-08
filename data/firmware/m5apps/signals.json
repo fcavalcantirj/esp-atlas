@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "main",
+ "repo": "d4rkmen/M5Apps",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "full"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "M5Apps_2.6_full.bin",
+    "release": "2.6"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "full",
+   "url": "https://github.com/d4rkmen/M5Apps/releases/download/2.6/M5Apps_2.6_full.bin"
+  }
+ ]
+}

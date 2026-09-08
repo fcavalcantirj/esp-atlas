@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "main",
+ "repo": "m5stack/M5Cardputer-UserDemo",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "K132-Adv-Cardputer-Adv-UserDemo_0x0"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "K132-Adv-Cardputer-Adv-UserDemo-V0.3_0x0.bin",
+    "release": "ADV-V0.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "K132-Adv-Cardputer-Adv-UserDemo_0x0",
+   "url": "https://github.com/m5stack/M5Cardputer-UserDemo/releases/download/ADV-V0.3/K132-Adv-Cardputer-Adv-UserDemo-V0.3_0x0.bin"
+  }
+ ]
+}
