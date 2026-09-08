@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "main",
+ "repo": "Zeloksa/Cardputer-ADV-WiFi-BLE-Radar",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "RadarV3.1.ino.merged"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "RadarV3.1.ino.merged.bin",
+    "release": "v3.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "RadarV3.1.ino.merged",
+   "url": "https://github.com/Zeloksa/Cardputer-ADV-WiFi-BLE-Radar/releases/download/v3.1/RadarV3.1.ino.merged.bin"
+  }
+ ]
+}

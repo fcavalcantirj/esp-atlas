@@ -1,0 +1,44 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "main",
+ "repo": "adammelancon/cardputer-satellite-tracker",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "Sat_Tracker",
+   "esp32-s3-devkitc-1"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "Sat_Tracker_v2.5.5.bin",
+    "release": "v2.5.5"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Sat_Tracker",
+   "url": "https://github.com/adammelancon/cardputer-satellite-tracker/releases/download/v2.5.5/Sat_Tracker_v2.5.5.bin"
+  },
+  {
+   "extra": {
+    "env": "m5stack-cardputer",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/adammelancon/cardputer-satellite-tracker/blob/main/platformio.ini#L13"
+  }
+ ]
+}
