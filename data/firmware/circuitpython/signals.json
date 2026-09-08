@@ -1,0 +1,66 @@
+{
+ "calls": 15,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [
+  "more than 10 workflows; kept the 10 named build/firmware/release/ci first"
+ ],
+ "ref": "main",
+ "repo": "adafruit/circuitpython",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "static",
+   "static-aarch64",
+   "static-mingw",
+   "static-raspbian"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-mpy-cross.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "static",
+   "url": "https://github.com/adafruit/circuitpython/blob/main/.github/workflows/build-mpy-cross.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-mpy-cross.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "static-aarch64",
+   "url": "https://github.com/adafruit/circuitpython/blob/main/.github/workflows/build-mpy-cross.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-mpy-cross.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "static-mingw",
+   "url": "https://github.com/adafruit/circuitpython/blob/main/.github/workflows/build-mpy-cross.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-mpy-cross.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "static-raspbian",
+   "url": "https://github.com/adafruit/circuitpython/blob/main/.github/workflows/build-mpy-cross.yml"
+  }
+ ]
+}
