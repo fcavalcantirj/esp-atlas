@@ -56,6 +56,9 @@ download_mode:
   steps: Holding down Boot and then pressing Reset initiates Firmware Download mode
     for downloading firmware through the serial port
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitm-1/user_guide.html
+images:
+  photo: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/_images/esp32-c6-devkitm-1-isometric.png
+  pinout: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/_images/esp32-c6-devkitm-1-pin-layout.png
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitm-1/user_guide.html
@@ -72,6 +75,9 @@ sources:
 - field: getting_started
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitm-1/user_guide.html
   verified: '2026-09-01'
+- field: images
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitm-1/user_guide.html
+  verified: '2026-09-09'
 ---
 
 # ESP32-C6-DevKitM-1

@@ -4,7 +4,7 @@ type: board
 brand: espressif
 name: ESP32-C61-DevKitC-1
 aka:
-- "esp32-c61-devkitc1-n8r2"
+- esp32-c61-devkitc1-n8r2
 soc: esp32-c61
 form_factor: devkit
 usb:
@@ -61,6 +61,9 @@ download_mode:
   steps: Holding down Boot and then pressing Reset initiates Firmware Download mode
     for downloading firmware through the serial port
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c61/esp32-c61-devkitc-1/user_guide.html
+images:
+  photo: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c61/_images/esp32-c61-devkitc-1-isometric.png
+  pinout: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c61/_images/esp32-c61-devkitc-1-pin-layout-v2.png
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c61/esp32-c61-devkitc-1/user_guide.html
@@ -83,6 +86,9 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-c61-devkitc1-n8r2.json
   verified: '2026-09-07'
+- field: images
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c61/esp32-c61-devkitc-1/user_guide.html
+  verified: '2026-09-09'
 ---
 
 # ESP32-C61-DevKitC-1
