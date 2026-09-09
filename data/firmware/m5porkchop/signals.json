@@ -1,0 +1,69 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-09-09",
+ "notes": [],
+ "ref": "main",
+ "repo": "0ct0sec/M5PORKCHOP",
+ "resolved": {
+  "boards": [
+   "m5cardputer",
+   "m5stamp-s3"
+  ],
+  "socs": [],
+  "unresolved": [
+   "firmware_v0.1.8b-PSTH-PRE-RELEASE",
+   "porkchop_v0.1.8b-PSTH-PRE-RELEASE_m5burner"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "firmware_v0.1.8b-PSTH-PRE-RELEASE.bin",
+    "release": "v0.1.8b-PSTH"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "firmware_v0.1.8b-PSTH-PRE-RELEASE",
+   "url": "https://github.com/0ct0sec/M5PORKCHOP/releases/download/v0.1.8b-PSTH/firmware_v0.1.8b-PSTH-PRE-RELEASE.bin"
+  },
+  {
+   "extra": {
+    "asset": "porkchop_v0.1.8b-PSTH-PRE-RELEASE_m5burner.bin",
+    "release": "v0.1.8b-PSTH"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "porkchop_v0.1.8b-PSTH-PRE-RELEASE_m5burner",
+   "url": "https://github.com/0ct0sec/M5PORKCHOP/releases/download/v0.1.8b-PSTH/porkchop_v0.1.8b-PSTH-PRE-RELEASE_m5burner.bin"
+  },
+  {
+   "extra": {
+    "env": "m5cardputer",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 5,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/0ct0sec/M5PORKCHOP/blob/main/platformio.ini#L5"
+  },
+  {
+   "extra": {
+    "env": "m5cardputer-debug",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 5,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/0ct0sec/M5PORKCHOP/blob/main/platformio.ini#L5"
+  }
+ ]
+}

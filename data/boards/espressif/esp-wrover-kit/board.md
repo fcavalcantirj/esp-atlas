@@ -52,6 +52,7 @@ notes:
   (5) and input_only {34,35,36,39} (4); usb_flash_tied {6-11} none exposed -- gives
   22 - 5 - 4 = 13. Math not vendor-stated; verify before treating as exact.
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp-wrover-kit/user_guide.html
+usb_serial: other
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp-wrover-kit/user_guide.html
@@ -65,6 +66,9 @@ sources:
 - field: getting_started
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp-wrover-kit/user_guide.html
   verified: '2026-09-01'
+- field: usb_serial
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp-wrover-kit/user_guide.html
+  verified: '2026-09-09'
 ---
 
 # ESP-WROVER-KIT
