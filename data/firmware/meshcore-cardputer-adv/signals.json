@@ -1,0 +1,42 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-09",
+ "notes": [],
+ "ref": "main",
+ "repo": "sosprz/meshcore-cardputer-adv",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "35d04b56",
+   "35d04b56-merged"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "M5Stack_Cardputer_ADV_companion_radio_ble-v1.15.81-35d04b56-merged.bin",
+    "release": "v1.15.81"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "35d04b56-merged",
+   "url": "https://github.com/sosprz/meshcore-cardputer-adv/releases/download/v1.15.81/M5Stack_Cardputer_ADV_companion_radio_ble-v1.15.81-35d04b56-merged.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Stack_Cardputer_ADV_companion_radio_ble-v1.15.81-35d04b56.bin",
+    "release": "v1.15.81"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "35d04b56",
+   "url": "https://github.com/sosprz/meshcore-cardputer-adv/releases/download/v1.15.81/M5Stack_Cardputer_ADV_companion_radio_ble-v1.15.81-35d04b56.bin"
+  }
+ ]
+}

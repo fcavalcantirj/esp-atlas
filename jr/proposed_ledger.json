@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-16T21:00:43.442359+00:00",
+      "expires": "2026-09-16T22:00:46.933939+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-09T21:00:43.442359+00:00"
+      "timestamp": "2026-09-09T22:00:46.933939+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -1188,11 +1188,13 @@
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
     },
     "cardputer-mp3-adv": {
+      "expires": "2026-09-16T22:00:46.933939+00:00",
       "id": "cardputer-mp3-adv",
       "pr_ref": null,
-      "repo": "vicliu624/cardputer_mp3_adv",
-      "status": "seen",
-      "timestamp": "2026-09-02T16:03:27.983835+00:00"
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "moo93egy/cardputer_mp3_adv.git",
+      "status": "rejected",
+      "timestamp": "2026-09-09T22:00:46.933939+00:00"
     },
     "cardputer-nc1020emu": {
       "expires": "2026-09-14T23:00:28.148172+00:00",
@@ -1702,6 +1704,16 @@
       "repo_id": 1092082906,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "commercial-firmesp32": {
+      "expires": "2026-10-09T22:00:46.933939+00:00",
+      "id": "commercial-firmesp32",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "xpy-us/commercial-firmesp32",
+      "repo_id": 1223089893,
+      "status": "rejected",
+      "timestamp": "2026-09-09T22:00:46.933939+00:00"
     },
     "core2-otr-stream": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -3733,6 +3745,16 @@
       "status": "rejected",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
+    "m5dial-volume-hid": {
+      "expires": "2026-10-09T22:00:46.933939+00:00",
+      "id": "m5dial-volume-hid",
+      "pr_ref": null,
+      "reason": "below_floor: 5 stars / 0 forks",
+      "repo": "javicar31/m5dial_volume_hid",
+      "repo_id": 906788141,
+      "status": "rejected",
+      "timestamp": "2026-09-09T22:00:46.933939+00:00"
+    },
     "m5dualkey-userdemo": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
       "id": "m5dualkey-userdemo",
@@ -4156,6 +4178,16 @@
       "repo_id": 1312883045,
       "status": "rejected",
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
+    },
+    "m5stick-nemo": {
+      "expires": "2026-10-09T22:00:46.933939+00:00",
+      "id": "m5stick-nemo",
+      "pr_ref": null,
+      "reason": "already_catalogued: n0xa/m5stick-nemo is already in the atlas",
+      "repo": "n0xa/m5stick-nemo",
+      "repo_id": 694486730,
+      "status": "rejected",
+      "timestamp": "2026-09-09T22:00:46.933939+00:00"
     },
     "m5stickc": {
       "expires": "2026-10-08T20:00:21.660790+00:00",
@@ -4803,6 +4835,16 @@
       "repo_id": 1223671489,
       "status": "rejected",
       "timestamp": "2026-09-09T21:00:43.442359+00:00"
+    },
+    "morsetrainer-cardputer": {
+      "expires": "2026-10-09T22:00:46.933939+00:00",
+      "id": "morsetrainer-cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "dayou-ht/morsetrainer-cardputer",
+      "repo_id": 1282871261,
+      "status": "rejected",
+      "timestamp": "2026-09-09T22:00:46.933939+00:00"
     },
     "mp3playerform5cardputer": {
       "expires": "2026-10-09T04:00:10.126216+00:00",
@@ -5472,6 +5514,7 @@
     "dalianblue/m5stack_insta360": "m5stack-insta360",
     "dalianblue/m5voicestick": "m5voicestick",
     "davervw/cardputer-game-station-emulators": "cardputer-game-station-emulators",
+    "dayou-ht/morsetrainer-cardputer": "morsetrainer-cardputer",
     "demonkingfukai/m5stickc-plus-mouse-jiggler": "m5stickc-plus-mouse-jiggler",
     "derunix/m5stack-stick-s3-animation": "m5stack-stick-s3-animation",
     "destillegast/m5cardputer-hid-tools": "m5cardputer-hid-tools",
@@ -5593,6 +5636,7 @@
     "inkone/sticky-lotus": "sticky-lotus",
     "integerquant/baitnswitch": "baitnswitch",
     "irisihrz": "irisihrz",
+    "javicar31/m5dial_volume_hid": "m5dial-volume-hid",
     "javicar31/m5stack_papers3": "m5stack-papers3",
     "jay-jayismyname1/cardputer-abs-b-radar": "cardputer-abs-b-radar",
     "jay-jayismyname1/cardputer-usb-adv-": "cardputer-usb-adv",
@@ -5702,6 +5746,7 @@
     "moge800/m5papers3_calculator": "m5papers3-calculator",
     "mongonta0716/m5stack-avatar-mic": "m5stack-avatar-mic",
     "moo93egy/cardping_multi.git": "cardping-multi",
+    "moo93egy/cardputer_mp3_adv.git": "cardputer-mp3-adv",
     "moskic/cardputer-adv-recorder": "cardputer-adv-recorder",
     "moskic/m5roulette": "m5roulette",
     "mr-paui/gameboy-enhanced-firmware-m5stack-cardputer-": "gameboy-enhanced-firmware-m5stack-cardpu",
@@ -5712,6 +5757,7 @@
     "murmuri/webampadv": "webampadv",
     "musicajack/m5stack_tab5_converter": "m5stack-tab5-converter",
     "n0xa/applejuice": "applejuice",
+    "n0xa/m5stick-nemo": "m5stick-nemo",
     "n0xa/m5stickstuph": "m5stickstuph",
     "n3tfox/flockwatch": "flockwatch",
     "naileclevrai/bruce-nemo-ble": "bruce-nemo-ble",
@@ -5882,6 +5928,7 @@
     "wusiyu/m5cardputer-userdemo-plus": "m5cardputer-userdemo-plus",
     "xinyuan-lilygo/t-display-c5": "t-display-c5",
     "xinyuan-lilygo/t-embed": "t-embed",
+    "xpy-us/commercial-firmesp32": "commercial-firmesp32",
     "xxtrippxx88/airmouse-m5stick-c-plus": "airmouse-m5stick-c-plus",
     "y88huang/claude-desktop-buddy-cardputer": "claude-desktop-buddy-cardputer",
     "yh1224/m5-midi-heartopia": "m5-midi-heartopia",

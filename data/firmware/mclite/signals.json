@@ -1,0 +1,77 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-09-09",
+ "notes": [],
+ "ref": "main",
+ "repo": "laserir/MCLite",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "mclite",
+   "mclite-watch",
+   "tdeck_plus",
+   "twatch_ultra",
+   "watch"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "mclite-watch-v0.4.3.bin",
+    "release": "v0.4.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "watch",
+   "url": "https://github.com/laserir/MCLite/releases/download/v0.4.3/mclite-watch-v0.4.3.bin"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-firmware.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tdeck_plus",
+   "url": "https://github.com/laserir/MCLite/blob/main/.github/workflows/build-firmware.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-firmware.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "mclite",
+   "url": "https://github.com/laserir/MCLite/blob/main/.github/workflows/build-firmware.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-firmware.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "twatch_ultra",
+   "url": "https://github.com/laserir/MCLite/blob/main/.github/workflows/build-firmware.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-firmware.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "mclite-watch",
+   "url": "https://github.com/laserir/MCLite/blob/main/.github/workflows/build-firmware.yml"
+  }
+ ]
+}
