@@ -425,19 +425,78 @@ def test_publish_withholds_auto_merge_when_the_caller_disables_it():
 
 # --- earned trust ---------------------------------------------------------------------------------
 
-def _prs(merged, closed):
-    return json.dumps([{"number": i, "mergedAt": "2026-09-07T00:00:00Z"} for i in range(merged)]
-                      + [{"number": 100 + i, "mergedAt": None} for i in range(closed)])
+# The trust query now fetches labels too, over a wider window (max(n*3, 30)) because benign closes
+# are filtered out before the last-n window is taken. Recency order is preserved (most recent first).
+TRUST_KEY = ("pr", "list", "--author", "espatlas-jr", "--state", "closed",
+             "--limit", "30", "--json", "number,mergedAt,labels")
 
 
-def test_trust_is_earned_after_n_consecutive_merges_and_reset_by_a_veto():
-    key = ("pr", "list", "--author", "espatlas-jr", "--state", "closed", "--limit", "10", "--json", "number,mergedAt")
-    assert publish.trust_status(gh=recorder({key: (0, _prs(10, 0))})).ok
-    st = publish.trust_status(gh=recorder({key: (0, _prs(9, 0))}))
-    assert not st.ok and "9/10 consecutive merges" in st.reason
-    st = publish.trust_status(gh=recorder({key: (0, _prs(9, 1))}))
-    assert not st.ok and "trust reset: 1 of Jr's last 10 closed PRs were vetoed" in st.reason
-    assert not publish.trust_status(gh=recorder({key: (1, "")})).ok
+def _merge(number):
+    return {"number": number, "mergedAt": "2026-09-07T00:00:00Z", "labels": []}
+
+
+def _veto(number):
+    return {"number": number, "mergedAt": None, "labels": [{"name": "veto"}]}
+
+
+def _benign(number, labels=None):
+    return {"number": number, "mergedAt": None, "labels": labels if labels is not None else []}
+
+
+def _list(*prs):
+    return recorder({TRUST_KEY: (0, json.dumps(list(prs)))})
+
+
+def test_trust_is_earned_when_last_n_are_all_merged_with_no_closes():
+    prs = [_merge(200 - i) for i in range(10)]
+    st = publish.trust_status(gh=_list(*prs))
+    assert st.ok and st.merged == 10 and st.closed == 0
+
+
+def test_a_closed_pr_with_a_veto_label_resets_trust():
+    prs = [_merge(200), _veto(199)] + [_merge(198 - i) for i in range(9)]
+    st = publish.trust_status(gh=_list(*prs))
+    assert not st.ok and st.closed == 1 and "veto" in st.reason
+
+
+def test_closed_prs_without_a_veto_label_are_benign_and_do_not_reset():
+    # Models Jr's real history: #189/#187/#183/#182 closed as duplicates/housekeeping, no veto label.
+    prs = [
+        _merge(190), _merge(185),
+        _benign(189, [{"name": "duplicate"}]), _benign(187), _benign(183), _benign(182),
+    ] + [_merge(180 - i) for i in range(8)]     # older merges to reach n non-benign
+    st = publish.trust_status(gh=_list(*prs))
+    assert st.ok and st.merged == 10 and st.closed == 0
+
+
+def test_benign_closes_are_skipped_so_the_window_looks_past_them():
+    # [merged×n, older benign] -> earned: the benign tail is dropped, window is the n merges.
+    earned = [_merge(200 - i) for i in range(10)] + [_benign(150), _benign(149)]
+    assert publish.trust_status(gh=_list(*earned)).ok
+    # [veto (most recent), merged×n] -> reset: the veto is inside the last-n non-benign window.
+    reset = [_veto(300)] + [_merge(299 - i) for i in range(10)]
+    st = publish.trust_status(gh=_list(*reset))
+    assert not st.ok and "veto" in st.reason
+
+
+def test_missing_or_null_labels_are_treated_as_benign_without_crashing():
+    prs = [
+        {"number": 210, "mergedAt": "2026-09-07T00:00:00Z"},           # no labels key
+        {"number": 209, "mergedAt": None, "labels": None},             # null labels -> benign
+        {"number": 208, "mergedAt": None},                            # closed, no labels key -> benign
+    ] + [_merge(207 - i) for i in range(10)]
+    st = publish.trust_status(gh=_list(*prs))
+    assert st.ok and st.merged == 10 and st.closed == 0
+
+
+def test_trust_unknown_when_gh_fails():
+    assert not publish.trust_status(gh=recorder({TRUST_KEY: (1, "")})).ok
+
+
+def test_trust_not_yet_earned_reports_merge_progress():
+    prs = [_merge(200 - i) for i in range(4)]
+    st = publish.trust_status(gh=_list(*prs))
+    assert not st.ok and "4/10 consecutive merges" in st.reason
 
 
 def test_publish_withholds_auto_merge_until_trust_is_earned_and_arms_it_after():
