@@ -48,7 +48,7 @@ USER_GUIDE_BASE = "https://docs.espressif.com/projects/esp-dev-kits/en/latest"
 FETCH_USER_AGENT = "esp-atlas-jr/0.1 (+https://esp-atlas.com; board-backfill bot)"
 
 # The fields this backfill can ground, in write order (also the frontmatter order).
-BACKFILL_FIELDS = ("download_mode", "usb_serial", "getting_started")
+BACKFILL_FIELDS = ("download_mode", "usb_serial", "getting_started", "images")
 
 
 # ─────────────────────────── URL construction ───────────────────────────
@@ -184,7 +184,26 @@ def _missing_fields(fm: dict) -> list[str]:
     return [f for f in BACKFILL_FIELDS if not _is_present(fm.get(f))]
 
 
-def _extract_for(text: str, url: str, missing: list[str]) -> dict:
+_IMG_SRC = re.compile(r'<img[^>]+src="([^"]+)"', re.I)
+
+
+def extract_images(raw: str, doc_url: str) -> dict | None:
+    """The official pinout diagram + a board photo from the doc's <img> tags, resolved to
+    absolute URLs. cite-or-omit: only what the page actually links. A pinout DIAGRAM is the
+    safe (no mis-map) way to convey wiring; an annotated/isometric photo lets a maker
+    visually IDENTIFY the board. Needs the RAW html (visible-text stripping drops <img>)."""
+    from urllib.parse import urljoin
+    found: dict = {}
+    for src in _IMG_SRC.findall(raw or ""):
+        low = src.lower()
+        if "pinout" not in found and re.search(r"pin[-_]?layout|pinout", low):
+            found["pinout"] = urljoin(doc_url, src)
+        if "photo" not in found and re.search(r"annotated-photo|isometric|-photo", low):
+            found["photo"] = urljoin(doc_url, src)
+    return found or None
+
+
+def _extract_for(text: str, url: str, missing: list[str], raw: str | None = None) -> dict:
     """The groundable subset of `missing`, each mapped to its extracted value. Only
     fields the doc explicitly states are included (cite-or-omit); getting_started is
     always groundable once the doc resolved 200 (the link is real)."""
@@ -199,6 +218,10 @@ def _extract_for(text: str, url: str, missing: list[str]) -> dict:
             out["usb_serial"] = us
     if "getting_started" in missing:
         out["getting_started"] = url
+    if "images" in missing:
+        imgs = extract_images(raw or "", url)
+        if imgs is not None:
+            out["images"] = imgs
     return out
 
 
@@ -243,8 +266,9 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
     if not res.get("ok"):
         return {**base, "status": "skipped", "reason": "doc-unreachable", "url": url}
 
-    text = _visible_text(res.get("text", ""))
-    extracted = _extract_for(text, url, missing)
+    raw = res.get("text", "")
+    text = _visible_text(raw)
+    extracted = _extract_for(text, url, missing, raw=raw)
     if not extracted:
         return {**base, "status": "skipped", "reason": "nothing-groundable", "url": url}
 

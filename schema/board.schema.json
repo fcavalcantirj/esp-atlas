@@ -94,6 +94,23 @@
       "format": "uri",
       "description": "Link to the board's OFFICIAL getting-started / user-guide page (SPEC-data-completion.md board field-to-add). Cite-or-omit to the vendor doc; the URL must resolve on the vendor's own domain."
     },
+    "images": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Official board imagery for visual identification (photo) and wiring (pinout diagram). Each is an absolute URL on the vendor's own domain; cite-or-omit.",
+      "properties": {
+        "photo": {
+          "type": "string",
+          "format": "uri",
+          "description": "an annotated/isometric board photo — lets a maker visually IDENTIFY the board they're holding"
+        },
+        "pinout": {
+          "type": "string",
+          "format": "uri",
+          "description": "the official pinout/pin-layout diagram — the safe, no-mis-map way to wire the board"
+        }
+      }
+    },
     "notes": { "type": "array", "items": { "type": "string" } },
     "sources": {
       "type": "array", "minItems": 1,
