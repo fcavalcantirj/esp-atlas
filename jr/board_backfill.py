@@ -142,13 +142,15 @@ def extract_download_mode(text: str) -> dict | None:
     return None
 
 
-# Most-specific token first so cp2102n is never miscounted as cp2102.
+# Most-specific token first so cp2102n is never miscounted as cp2102 (and ft2232h → ft2232).
 _BRIDGE_TOKENS = (
     ("cp2102n", "cp2102n"),
     ("cp2102", "cp2102"),
     ("ch9102", "ch9102"),
     ("ch343", "ch343"),
     ("ch340", "ch340"),
+    ("ft2232", "ft2232"),   # FTDI (e.g. ESP-WROVER-KIT's FT2232HL) — substring also catches ft2232h/hl
+    ("ft232", "ft232"),     # FTDI single-channel (FT232R/RL)
 )
 
 
@@ -161,7 +163,8 @@ def extract_usb_serial(text: str) -> str | None:
     for token, enum in _BRIDGE_TOKENS:
         if token in low:
             return enum
-    if "usb-serial-jtag" in low or "usb serial jtag" in low or "usb_serial_jtag" in low:
+    if any(t in low for t in ("usb-serial-jtag", "usb serial jtag", "usb_serial_jtag",
+                              "usb serial/jtag", "usb-serial/jtag")):
         return "native-usb-serial-jtag"
     return None
 

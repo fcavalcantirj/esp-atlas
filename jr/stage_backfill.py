@@ -31,8 +31,20 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
     data_root = ctx.root / "data"
     esp = data_root / "boards" / "espressif"
 
+    boards = sorted(esp.glob("*/board.md"))
+    # ROTATE the start each tick so the worklist ADVANCES instead of re-hitting the same
+    # first-N boards every hour (which left backfill stuck on a few un-groundable boards and
+    # never progressing). Deterministic + stateless — no skip-cache file, so no churny
+    # cache-only PRs. Consecutive hourly ticks cover disjoint windows: full coverage every
+    # ceil(N/budget) ticks; a genuinely un-groundable board is retried only once per cycle.
+    n = len(boards)
+    if n:
+        hour_index = ctx.now.toordinal() * 24 + ctx.now.hour
+        start = (hour_index * max(1, budget)) % n
+        boards = boards[start:] + boards[:start]
+
     paths, lines, filled, skipped, attempted = [], [], 0, 0, 0
-    for path in sorted(esp.glob("*/board.md")):
+    for path in boards:
         if attempted >= budget:
             break
         if ctx.budget.remaining_calls() < CALLS_PER_BOARD or ctx.budget.remaining_seconds() < SECONDS_PER_BOARD:

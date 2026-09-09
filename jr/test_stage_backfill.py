@@ -71,6 +71,20 @@ def test_skipped_boards_count_against_budget(tmp_path, monkeypatch):
     assert "backfilled 1, skipped 1" in res.summary
 
 
+def test_worklist_rotates_across_ticks_so_it_never_sticks(tmp_path, monkeypatch):
+    import re
+    _mk_boards(tmp_path, [f"b{i}" for i in range(8)])
+    _fake_backfill({f"b{i}": "skipped" for i in range(8)}, monkeypatch)  # all un-groundable
+    seen = set()
+    for hour in (0, 1, 2, 3):   # consecutive hourly ticks
+        ctx = Ctx(tmp_path)
+        ctx.now = dt.datetime(2026, 9, 8, hour, 0)
+        res = stage_backfill.run(ctx, budget=2)
+        seen.update(re.findall(r"b\d", res.summary))
+    # sorted+no-rotation would re-hit only b0/b1 every tick; rotation must cover the rest
+    assert len(seen) >= 6, seen
+
+
 def test_stops_when_call_budget_is_exhausted(tmp_path, monkeypatch):
     _mk_boards(tmp_path, ["b1", "b2"])
     _fake_backfill({"b1": "backfilled", "b2": "backfilled"}, monkeypatch)
