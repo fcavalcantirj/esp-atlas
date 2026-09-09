@@ -13,6 +13,7 @@ popularity:
   as_of: '2026-09-02'
 socs:
 - esp32
+- esp32-s3
 sources:
 - field: '*'
   url: https://github.com/tobozo/M5Stack-SD-Updater
@@ -20,6 +21,9 @@ sources:
 - field: popularity
   url: https://github.com/tobozo/M5Stack-SD-Updater
   verified: '2026-09-02'
+- field: socs
+  url: https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml
+  verified: '2026-09-09'
 ---
 
 💾 Customizable menu system for M5Stack, M5Unified and ESP32-Chimera-Core - loads apps from the Micro SD card. Easily add you own apps
