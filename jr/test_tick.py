@@ -85,11 +85,15 @@ def wt_dir(tmp_path, monkeypatch):
     return d
 
 
+NO_SNAPSHOT = lambda root, date: (None, None, [])   # noqa: E731 — default: write no trend paths
+
+
 def run(**kw):
     kw.setdefault("now", NOW)
     kw.setdefault("gauge", GAUGE)
     kw.setdefault("guard", GUARD_OK)
     kw.setdefault("notifier", None)
+    kw.setdefault("snapshot", NO_SNAPSHOT)
     kw.setdefault("env", {})
     kw.setdefault("stages", [])
     kw.setdefault("budget", Budget(clock=lambda: 0.0))
@@ -328,6 +332,48 @@ def test_a_failing_notifier_never_fails_the_tick(wt_dir):
         raise RuntimeError("telegram down")
     r = run(git=git_ok(wt_dir), gh=gh_ok(), notifier=boom)
     assert not r.aborted
+
+
+# --- data-quality trend snapshot (SPEC-data-trend.md) ------------------------------------------
+
+def test_non_dry_run_writes_the_trend_and_commits_it(wt_dir):
+    """A real tick writes docs/telemetry/data-trend.jsonl into the worktree, includes it (and the
+    dated md) in the commit pathspec, and stores the row+delta on the report."""
+    calls = []
+
+    def snap(root, date):
+        calls.append((root, date))
+        (root / "docs" / "telemetry").mkdir(parents=True, exist_ok=True)
+        (root / "docs" / "telemetry" / "data-trend.jsonl").write_text('{"date":"%s"}\n' % date)
+        (root / "docs" / "telemetry" / f"data-{date}.md").write_text("# snap\n")
+        return {"date": date, "finite_overall_pct": 41.2, "board_fields": {"usb_serial": {"count": 5}}}, None, \
+            ["docs/telemetry/data-trend.jsonl", f"docs/telemetry/data-{date}.md"]
+
+    git = git_ok(wt_dir)
+    r = run(git=git, gh=gh_ok(), snapshot=snap)
+    assert not r.aborted
+    assert calls == [(wt_dir, "2026-09-05")]
+    assert (wt_dir / "docs" / "telemetry" / "data-trend.jsonl").exists()
+    assert "docs/telemetry/data-trend.jsonl" in r.paths
+    assert ("add", "--", "docs/telemetry/data-trend.jsonl",
+            "docs/telemetry/data-2026-09-05.md", "jr/proposed_ledger.json") in norm(git)
+    assert r.data_row["finite_overall_pct"] == 41.2 and r.data_delta is None
+
+
+def test_dry_run_does_not_write_the_trend(tmp_path):
+    calls = []
+    r = run(dry_run=True, git=git_ok(tmp_path), gh=gh_ok(),
+            snapshot=lambda root, date: calls.append((root, date)) or (None, None, []))
+    assert not r.aborted and calls == []          # snapshot never called on a dry run
+    assert r.data_row is None and "docs/telemetry/data-trend.jsonl" not in r.paths
+
+
+def test_a_failing_snapshot_warns_but_never_aborts(wt_dir):
+    def boom(root, date):
+        raise RuntimeError("disk full")
+    r = run(git=git_ok(wt_dir), gh=gh_ok(), snapshot=boom)
+    assert not r.aborted and any("data snapshot failed" in w for w in r.warnings)
+    assert r.data_row is None
 
 
 # --- CLI ---------------------------------------------------------------------------------------

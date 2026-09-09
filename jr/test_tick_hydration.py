@@ -121,6 +121,7 @@ def _run(wt_dir, prs, **kw):
     kw.setdefault("gauge", GAUGE)
     kw.setdefault("guard", GUARD_OK)
     kw.setdefault("notifier", None)
+    kw.setdefault("snapshot", lambda root, date: (None, None, []))   # trend snapshot tested in test_tick.py
     kw.setdefault("env", {})
     kw.setdefault("budget", Budget(clock=lambda: 0.0))
     kw.setdefault("auto_merge", False)
