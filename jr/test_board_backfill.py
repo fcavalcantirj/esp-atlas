@@ -43,6 +43,7 @@ DOC_WITH_MANUAL = f"""<html><body>
 <h1>ESP32-S3-DevKit-Coder-1 User Guide</h1>
 <p>This board carries a CP2102N USB-to-UART bridge and a native USB-Serial-JTAG port.</p>
 <p>{MANUAL_SENTENCE}. After flashing, press Reset to run the application.</p>
+<img src="../_images/esp32-s3-devkit-coder-1-pinout.png">
 </body></html>"""
 
 DOC_NO_DOWNLOAD_PHRASE = """<html><body>

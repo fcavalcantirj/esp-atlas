@@ -17,9 +17,9 @@ One tick, in order (PLAN §3.2):
     removed, purge the site's catalog cache (POST /api/revalidate, PR 0.5).
  4. Gauge — scripts/data_completion.compute_completion over the worktree's data/.
   5. Allocation — the hourly path splits HOURLY_TRACK_UNITS gauge-driven units between
-     Track A (admit) and Track B (board-map) via jr/allocator.py (boards < 50%: B-heavy;
-     50–80%: even; above 80%: A-heavy — bands provisional, Felipe gates them); --track
-     keeps the manual text as the override.
+     Track A (finite backfill) and Track B (firmware drain = admit + board-map) via
+     jr/allocator.py (boards < 50%: backfill-heavy; 50–80%: even; above 80%: firmware-heavy
+     — bands provisional, Felipe gates them); --track keeps the manual text as the override.
  6. Stages — pluggable `Stage` callables (Phase 3: admission/discovery; Phase 4: board mapping;
     Phase 5: Track A). Each returns the paths it wrote under the worktree. STAGES is empty here.
  7. Guard once — only if something was written: `scripts/validate.py` in the worktree, then the
@@ -100,21 +100,32 @@ STAGES: list = []   # extra stages appended by hand; the hourly content stages c
 
 
 def hourly_stages(split: dict) -> list:
-    """The content stages of the HOURLY path, from the allocator's split (Phase 6 cutover):
-    Track A (jr/stage_admit: score candidates, write admitted records + their first recipe)
-    with `A` candidates, THEN Track B (jr/stage_boardmap: map a firmware's boards as cited
-    recipes) with `B` firmware. Admit always runs first: a freshly admitted firmware has one
-    recipe, so boardmap (fewest recipes first) picks it up and widens it in the same tick, and
-    the guard never sees an orphan. The split still decides how much each track may do."""
+    """The content stages of the HOURLY path, from the allocator's split (SPEC-data-completion.md):
+
+    Track A — finite backfill (jr/stage_backfill): fill missing cited board fields; the only
+    work that raises the boards-completion gauge. Runs FIRST.
+    Track B — infinite firmware drain: admit new firmware (jr/stage_admit) THEN map its boards
+    (jr/stage_boardmap). Admit runs before boardmap so a freshly admitted firmware's one recipe
+    is widened in the same tick and the guard never sees an orphan.
+
+    `split` is {"backfill": n, "firmware": m}. The firmware units are shared admit≈boardmap
+    (boardmap takes the odd one), and admit's call_share is its fraction of the firmware units."""
     out = []
-    a, b = int(split.get("A") or 0), int(split.get("B") or 0)
-    if a:
+    bf = int(split.get("backfill") or 0)
+    fw = int(split.get("firmware") or 0)
+    if bf:
+        import stage_backfill
+        out.append(lambda ctx, n=bf: stage_backfill.run(ctx, budget=n))
+    if fw:
         import stage_admit
-        share = a / (a + b) if (a + b) else 1.0          # admit may spend its share of the calls; boardmap gets the rest
-        out.append(lambda ctx, n=a, s=share: stage_admit.run(ctx, budget=n, call_share=s))
-    if b:
         import stage_boardmap
-        out.append(lambda ctx, n=b: stage_boardmap.run(ctx, budget=n))
+        adm = fw // 2
+        bmap = fw - adm                                   # boardmap takes the odd unit
+        if adm:
+            share = adm / fw                              # admit's slice of the firmware call budget
+            out.append(lambda ctx, n=adm, s=share: stage_admit.run(ctx, budget=n, call_share=s))
+        if bmap:
+            out.append(lambda ctx, n=bmap: stage_boardmap.run(ctx, budget=n))
     return out
 
 
@@ -341,7 +352,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         if hourly:
             split = allocator.allocate(r.boards_pct, allocator.HOURLY_TRACK_UNITS)
             r.allocation = (f"boards {r.boards_pct:.1f}% -> "
-                            f"A{split['A']}/B{split['B']} (hourly)")
+                            f"backfill {split['backfill']} / firmware {split['firmware']} (hourly)")
             stages = list(stages) + hourly_stages(split)
         else:
             n = len(stages)

@@ -48,7 +48,7 @@ USER_GUIDE_BASE = "https://docs.espressif.com/projects/esp-dev-kits/en/latest"
 FETCH_USER_AGENT = "esp-atlas-jr/0.1 (+https://esp-atlas.com; board-backfill bot)"
 
 # The fields this backfill can ground, in write order (also the frontmatter order).
-BACKFILL_FIELDS = ("download_mode", "usb_serial", "getting_started")
+BACKFILL_FIELDS = ("download_mode", "usb_serial", "getting_started", "images")
 
 
 # ─────────────────────────── URL construction ───────────────────────────
@@ -63,6 +63,18 @@ def board_user_guide_url(board_id: str, soc: str) -> str:
     """The board's OFFICIAL Espressif user-guide URL, constructed deterministically from
     its soc-derived chip segment and its board-dir name."""
     return f"{USER_GUIDE_BASE}/{chip_seg(soc)}/{board_id}/user_guide.html"
+
+
+def doc_url_candidates(board_id: str, soc: str) -> list[str]:
+    """User-guide URLs to try, in order. Espressif drops the revision suffix from some doc
+    slugs (esp32-devkitc-v4 → .../esp32-devkitc/) — so if the id ends in -v<N>, try the
+    stripped slug as a fallback. Only the `-v<N>` form is stripped (verified safe); a bare
+    trailing -<N> is NOT (it can be a real board variant → wrong doc)."""
+    slugs = [board_id]
+    stripped = re.sub(r"-v\d+$", "", board_id)
+    if stripped != board_id:
+        slugs.append(stripped)
+    return [board_user_guide_url(s, soc) for s in slugs]
 
 
 def resolve_soc(fm: dict, data_root: Path) -> str | None:
@@ -142,13 +154,15 @@ def extract_download_mode(text: str) -> dict | None:
     return None
 
 
-# Most-specific token first so cp2102n is never miscounted as cp2102.
+# Most-specific token first so cp2102n is never miscounted as cp2102 (and ft2232h → ft2232).
 _BRIDGE_TOKENS = (
     ("cp2102n", "cp2102n"),
     ("cp2102", "cp2102"),
     ("ch9102", "ch9102"),
     ("ch343", "ch343"),
     ("ch340", "ch340"),
+    ("ft2232", "ft2232"),   # FTDI (e.g. ESP-WROVER-KIT's FT2232HL) — substring also catches ft2232h/hl
+    ("ft232", "ft232"),     # FTDI single-channel (FT232R/RL)
 )
 
 
@@ -161,7 +175,8 @@ def extract_usb_serial(text: str) -> str | None:
     for token, enum in _BRIDGE_TOKENS:
         if token in low:
             return enum
-    if "usb-serial-jtag" in low or "usb serial jtag" in low or "usb_serial_jtag" in low:
+    if any(t in low for t in ("usb-serial-jtag", "usb serial jtag", "usb_serial_jtag",
+                              "usb serial/jtag", "usb-serial/jtag")):
         return "native-usb-serial-jtag"
     return None
 
@@ -181,7 +196,26 @@ def _missing_fields(fm: dict) -> list[str]:
     return [f for f in BACKFILL_FIELDS if not _is_present(fm.get(f))]
 
 
-def _extract_for(text: str, url: str, missing: list[str]) -> dict:
+_IMG_SRC = re.compile(r'<img[^>]+src="([^"]+)"', re.I)
+
+
+def extract_images(raw: str, doc_url: str) -> dict | None:
+    """The official pinout diagram + a board photo from the doc's <img> tags, resolved to
+    absolute URLs. cite-or-omit: only what the page actually links. A pinout DIAGRAM is the
+    safe (no mis-map) way to convey wiring; an annotated/isometric photo lets a maker
+    visually IDENTIFY the board. Needs the RAW html (visible-text stripping drops <img>)."""
+    from urllib.parse import urljoin
+    found: dict = {}
+    for src in _IMG_SRC.findall(raw or ""):
+        low = src.lower()
+        if "pinout" not in found and re.search(r"pin[-_]?layout|pinout", low):
+            found["pinout"] = urljoin(doc_url, src)
+        if "photo" not in found and re.search(r"annotated-photo|isometric|-photo", low):
+            found["photo"] = urljoin(doc_url, src)
+    return found or None
+
+
+def _extract_for(text: str, url: str, missing: list[str], raw: str | None = None) -> dict:
     """The groundable subset of `missing`, each mapped to its extracted value. Only
     fields the doc explicitly states are included (cite-or-omit); getting_started is
     always groundable once the doc resolved 200 (the link is real)."""
@@ -196,6 +230,10 @@ def _extract_for(text: str, url: str, missing: list[str]) -> dict:
             out["usb_serial"] = us
     if "getting_started" in missing:
         out["getting_started"] = url
+    if "images" in missing:
+        imgs = extract_images(raw or "", url)
+        if imgs is not None:
+            out["images"] = imgs
     return out
 
 
@@ -235,13 +273,19 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
     if not soc:
         return {**base, "status": "skipped", "reason": "no-soc", "url": None}
 
-    url = board_user_guide_url(board_id, soc)
-    res = fetch(url)
-    if not res.get("ok"):
+    candidates = doc_url_candidates(board_id, soc)
+    res, url = None, candidates[-1]
+    for u in candidates:
+        r = fetch(u)
+        if r.get("ok"):
+            res, url = r, u          # cite the slug that actually resolved
+            break
+    if res is None:
         return {**base, "status": "skipped", "reason": "doc-unreachable", "url": url}
 
-    text = _visible_text(res.get("text", ""))
-    extracted = _extract_for(text, url, missing)
+    raw = res.get("text", "")
+    text = _visible_text(raw)
+    extracted = _extract_for(text, url, missing, raw=raw)
     if not extracted:
         return {**base, "status": "skipped", "reason": "nothing-groundable", "url": url}
 

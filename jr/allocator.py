@@ -1,54 +1,66 @@
-"""EspAtlas Jr — gauge-driven Track A/B split (jr/allocator.py).
+"""EspAtlas Jr — gauge-driven track split (jr/allocator.py).
 
-Phase 5: the hourly tick cannot do everything, so each tick spends a fixed number of track
-units where the gauge says the catalog hurts most. Boards completion (scripts/data_completion
-boards pct) drives the split:
+SPEC-data-completion.md ("Jr's allocation law"): each hourly tick spends a fixed number
+of track units where the finite-ground gauge says the catalog hurts most.
 
-  - boards < 50% → B-heavy (map what the repos declare; the catalog is thin on boards);
-  - 50–80%      → even;
-  - boards > 80% → A-heavy (boards are covered; admit new firmware).
+  - **Track A — finite backfill** (has an end): fill missing, cited board fields
+    (download_mode/usb_serial First-Flash, getting-started, …). Raising these is the
+    ONLY thing that moves the boards-completion gauge.
+  - **Track B — infinite firmware drain** (runs forever): admit new firmware + map its
+    boards as cited recipes.
 
-Pure function, no I/O: allocate(boards_pct, budget_units, need_a=None, need_b=None) takes
-the gauge and the tick's track-unit budget and returns {"A": n, "B": m} with n + m ==
-budget_units. `need_a`/`need_b` are optional demand caps: units a track cannot use spill
-to the other (uncapped when None).
+The gauge (boards-completion pct) sets the split, FAVORING whichever is starved:
 
-THE BANDS AND THE HOURLY UNIT BUDGET ARE PROVISIONAL — Felipe's yes is required before
-merge (spec P5-2). They were proposed from the gauge at write time (boards 42.5%: B-heavy
-country) and live in exactly one place below.
+  - boards < 50%  → finite ground thin  → **backfill-heavy** (2/3 backfill);
+  - 50–80%        → even;
+  - boards > 80%  → finite covered      → **firmware-heavy** (1/3 backfill), but the
+    finite floor is never zero (a new board re-opens it and the split swings back).
+
+This inverts the pre-spec code, which was firmware-heavy while boards were thin — it
+poured into the infinite ground while the finite base sat at ~1% and nothing on the
+loop could raise the gauge it was optimizing.
+
+Pure function, no I/O: allocate(boards_pct, budget_units, need_backfill=None,
+need_firmware=None) → {"backfill": n, "firmware": m} with n + m == budget_units.
+`need_*` are optional demand caps; a track's unused units spill to the other.
+
+THE BANDS AND THE HOURLY UNIT BUDGET ARE PROVISIONAL — Felipe gates these (spec P5-2).
+They live in exactly one place below.
 """
 from __future__ import annotations
 
 # --- provisional constants (Felipe gates these) ------------------------------------------------
-BAND_B_HEAVY_BELOW = 50.0    # boards_pct below this → B-heavy
-BAND_A_HEAVY_ABOVE = 80.0    # boards_pct above this → A-heavy (between: even)
-SHARE_A_B_HEAVY = 1 / 3      # A-heavy mirrors it (2/3); even is 1/2
-HOURLY_TRACK_UNITS = 6       # track units per hourly tick (the old plan's C = 6 default)
+BAND_BACKFILL_HEAVY_BELOW = 50.0    # boards_pct below this → backfill-heavy
+BAND_FIRMWARE_HEAVY_ABOVE = 80.0    # boards_pct above this → firmware-heavy (between: even)
+FAVORED_SHARE = 2 / 3               # the starved track's share in its band (even is 1/2)
+HOURLY_TRACK_UNITS = 6              # track units per hourly tick
 
 
-def _band_share(boards_pct: float) -> float:
-    """A's share of the units: 1/3 below the low band, 1/2 between, 2/3 above."""
-    if boards_pct < BAND_B_HEAVY_BELOW:
-        return SHARE_A_B_HEAVY
-    if boards_pct > BAND_A_HEAVY_ABOVE:
-        return 1 - SHARE_A_B_HEAVY
+def _backfill_share(boards_pct: float) -> float:
+    """Backfill's share of the units: 2/3 below the low band (finite thin → favor backfill),
+    1/2 between, 1/3 above (finite covered → favor firmware). Monotonically NON-INCREASING
+    in boards_pct — the opposite of the pre-spec code."""
+    if boards_pct < BAND_BACKFILL_HEAVY_BELOW:
+        return FAVORED_SHARE
+    if boards_pct > BAND_FIRMWARE_HEAVY_ABOVE:
+        return 1 - FAVORED_SHARE
     return 0.5
 
 
-def allocate(boards_pct: float, budget_units: int, need_a: int | None = None,
-             need_b: int | None = None) -> dict:
-    """Split `budget_units` track units between admission (A) and board-mapping (B).
+def allocate(boards_pct: float, budget_units: int, need_backfill: int | None = None,
+             need_firmware: int | None = None) -> dict:
+    """Split `budget_units` between finite backfill and the infinite firmware drain.
 
-    The band sets the first split (A gets round(units * share), B the rest, so the two
-    always sum to budget_units); then each side is capped at its demand (when given) and
-    the remainder spills to the other side. A demand of 0 spills the whole share."""
+    The band sets the first split (backfill gets round(units * share), firmware the rest, so
+    the two always sum to budget_units); then each side is capped at its demand (when given)
+    and the remainder spills to the other side. A demand of 0 spills the whole share."""
     units = max(0, int(budget_units))
-    a = round(units * _band_share(boards_pct))
-    b = units - a
-    if need_a is not None and a > need_a:
-        b += a - need_a
-        a = need_a
-    if need_b is not None and b > need_b:
-        a += b - need_b
-        b = need_b
-    return {"A": a, "B": b}
+    backfill = round(units * _backfill_share(boards_pct))
+    firmware = units - backfill
+    if need_backfill is not None and backfill > need_backfill:
+        firmware += backfill - need_backfill
+        backfill = need_backfill
+    if need_firmware is not None and firmware > need_firmware:
+        backfill += firmware - need_firmware
+        firmware = need_firmware
+    return {"backfill": backfill, "firmware": firmware}
