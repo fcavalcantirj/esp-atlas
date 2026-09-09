@@ -266,6 +266,74 @@ def test_reconcile_merged_only_flips_proposed_records(path):
     assert led["by_id"]["newfw"]["status"] == "merged"
 
 
+def test_record_proposed_over_a_merged_record_is_a_noop(path):
+    """#181: hydrate_open_pr_ledger re-`proposed`s every firmware id in an OPEN backfill PR,
+    including ids already merged. A merged record must never be downgraded to `proposed` — the
+    write-time mirror of scripts/ledger_guard.py's "a merged record changes only to a permanent
+    rejection". Its original pr_ref/timestamp survive untouched."""
+    memory.record_proposed("m5stack-avatar-mic", "mongonta0716/m5stack-avatar-mic",
+                           pr_ref="https://github.com/o/r/pull/70", path=path, now=NOW)
+    ledger.update_status("m5stack-avatar-mic", "merged", path=path, now=NOW.isoformat())
+    before = ledger.load_ledger(path)["by_id"]["m5stack-avatar-mic"]
+    memory.record_proposed("m5stack-avatar-mic", "mongonta0716/m5stack-avatar-mic",
+                           pr_ref="#181", path=path, now=NOW + timedelta(days=1))
+    after = ledger.load_ledger(path)["by_id"]["m5stack-avatar-mic"]
+    assert after["status"] == "merged"                                   # NOT downgraded to proposed
+    assert after["pr_ref"] == before["pr_ref"] == "https://github.com/o/r/pull/70"
+    assert after["timestamp"] == before["timestamp"] == NOW.isoformat()  # merge history preserved
+
+
+def test_record_proposed_over_a_merged_record_still_backfills_missing_repo_id(path):
+    """The refused write keeps the repo_id backfill-on-refuse behaviour: a missing repo_id is
+    still filled in (the by_repo_id view is derived at load time), everything else untouched."""
+    memory.record_proposed("m5stack-avatar-mic", "mongonta0716/m5stack-avatar-mic",
+                           pr_ref="https://github.com/o/r/pull/70", path=path, now=NOW)
+    ledger.update_status("m5stack-avatar-mic", "merged", path=path, now=NOW.isoformat())
+    assert "repo_id" not in ledger.load_ledger(path)["by_id"]["m5stack-avatar-mic"]
+    memory.record_proposed("m5stack-avatar-mic", "mongonta0716/m5stack-avatar-mic",
+                           pr_ref="#181", repo_id=131321216, path=path, now=NOW + timedelta(days=1))
+    rec = ledger.load_ledger(path)["by_id"]["m5stack-avatar-mic"]
+    assert rec["status"] == "merged" and rec["pr_ref"] == "https://github.com/o/r/pull/70"  # still refused
+    assert rec["repo_id"] == 131321216                                   # but repo_id backfilled
+    assert memory.load(path)["by_repo_id"][131321216] == "m5stack-avatar-mic"
+
+
+def test_permanent_rejection_over_a_merged_record_is_applied(path):
+    """The one incoming status a merged record does yield to: a PERMANENT rejection (a human
+    removed the record on purpose). It becomes rejected with no `expires`."""
+    memory.record_proposed("m5stack-avatar-mic", "mongonta0716/m5stack-avatar-mic",
+                           pr_ref="https://github.com/o/r/pull/70", path=path, now=NOW)
+    ledger.update_status("m5stack-avatar-mic", "merged", path=path, now=NOW.isoformat())
+    memory.record_rejected("m5stack-avatar-mic", "mongonta0716/m5stack-avatar-mic",
+                           "removed by a human", ttl_days=None, path=path, now=NOW + timedelta(days=2))
+    rec = ledger.load_ledger(path)["by_id"]["m5stack-avatar-mic"]
+    assert rec["status"] == "rejected" and rec["reason"] == "removed by a human"
+    assert "expires" not in rec
+
+
+def test_proposed_refresh_and_reauthor_after_seen_or_expired_still_work(path):
+    """The legitimate write paths the merged guard must NOT break: (b) a proposed->proposed
+    refresh updates pr_ref; (c) a seen or expired record can be re-authored as proposed."""
+    # (b) proposed -> proposed refresh overwrites pr_ref
+    memory.record_proposed("cardputer-nes", "badgeek/cardputer-nes",
+                           pr_ref="https://github.com/o/r/pull/1", path=path, now=NOW)
+    memory.record_proposed("cardputer-nes", "badgeek/cardputer-nes",
+                           pr_ref="https://github.com/o/r/pull/2", path=path, now=NOW + timedelta(hours=1))
+    assert ledger.load_ledger(path)["by_id"]["cardputer-nes"]["pr_ref"] == "https://github.com/o/r/pull/2"
+    # (c) seen -> proposed re-author
+    memory.record_seen("m5stack-avatar", "mongonta0716/m5stack-avatar", "scored 12 stars", path=path, now=NOW)
+    memory.record_proposed("m5stack-avatar", "mongonta0716/m5stack-avatar",
+                           pr_ref="https://github.com/o/r/pull/3", path=path, now=NOW + timedelta(days=1))
+    assert ledger.load_ledger(path)["by_id"]["m5stack-avatar"]["status"] == "proposed"
+    # expired -> proposed re-author
+    memory.record_rejected("bruce-esp32", "pr3y/bruce-esp32", "unresolved", ttl_days=7, path=path, now=NOW)
+    memory.expire(path=path, now=NOW + timedelta(days=8))
+    assert ledger.load_ledger(path)["by_id"]["bruce-esp32"]["status"] == "expired"
+    memory.record_proposed("bruce-esp32", "pr3y/bruce-esp32",
+                           pr_ref="https://github.com/o/r/pull/4", path=path, now=NOW + timedelta(days=9))
+    assert ledger.load_ledger(path)["by_id"]["bruce-esp32"]["status"] == "proposed"
+
+
 def test_monkeypatched_default_path_reaches_memory_and_saves_never_persist_the_view(monkeypatch, tmp_path):
     alt = tmp_path / "alt_ledger.json"
     monkeypatch.setattr(ledger, "DEFAULT_LEDGER_PATH", alt)

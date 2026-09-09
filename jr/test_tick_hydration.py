@@ -22,6 +22,7 @@ from types import SimpleNamespace
 
 import pytest
 
+import ledger
 import memory
 import stage_admit
 import tick
@@ -154,6 +155,19 @@ def test_hydrate_open_pr_ledger_never_downgrades_a_human_veto(tmp_path):
     memory.record_rejected("newtool", "n/newtool", "PR closed unmerged", ttl_days=None, path=lp, now=NOW)
     tick.hydrate_open_pr_ledger(gh(prs=json.dumps(OPEN_PR)), NOW, lp)
     assert memory.load(lp)["by_id"]["newtool"]["status"] == "rejected"   # permanent veto survives
+
+
+def test_hydrate_open_pr_ledger_never_downgrades_a_merged_record(tmp_path):
+    """#181: a backfill PR re-touches an already-merged firmware id; hydration must leave that
+    record `merged`, never turn it back into a fresh `proposed` (the merged->proposed downgrade
+    scripts/ledger_guard.py blocks in CI)."""
+    lp = tmp_path / "proposed_ledger.json"
+    memory.record_proposed("newtool", "n/newtool", pr_ref="#100", path=lp, now=NOW)
+    ledger.update_status("newtool", "merged", path=lp, now=NOW.isoformat())
+    tick.hydrate_open_pr_ledger(gh(prs=json.dumps(OPEN_PR)), NOW, lp)
+    rec = memory.load(lp)["by_id"]["newtool"]
+    assert rec["status"] == "merged"     # NOT downgraded to proposed
+    assert rec["pr_ref"] == "#100"       # the merge PR link preserved
 
 
 # --- integration: run_tick does not re-author firmware already in an open PR --------------------
