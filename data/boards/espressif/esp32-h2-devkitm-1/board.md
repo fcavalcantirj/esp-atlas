@@ -52,6 +52,8 @@ download_mode:
   steps: Holding down Boot and then pressing Reset initiates Firmware Download mode
     for downloading firmware through the serial port
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
+images:
+  pinout: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/_images/esp32-h2-devkitm-1-v1.2_pinlayout.png
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
@@ -68,6 +70,9 @@ sources:
 - field: getting_started
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
   verified: '2026-09-01'
+- field: images
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
+  verified: '2026-09-09'
 ---
 
 # ESP32-H2-DevKitM-1
