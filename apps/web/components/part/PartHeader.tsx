@@ -42,6 +42,11 @@ export default function PartHeader({ part }: { part: PartDetail }) {
       </div>
       {aka.length > 0 && <p className="part-aka">Also known as: {aka.join(", ")}</p>}
       <div className="part-actions">
+        {part.type === "board" && (
+          <a href="#verify" className="btn btn--sm btn--primary">
+            Verify my board
+          </a>
+        )}
         <Link href={`/compare?ids=${encodeURIComponent(part.id)}`} className="btn btn--sm">
           Compare
         </Link>

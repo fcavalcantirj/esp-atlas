@@ -1,4 +1,5 @@
 import BoardFirmware from "@/components/part/BoardFirmware";
+import BoardImage from "@/components/part/BoardImage";
 import ChipChain from "@/components/part/ChipChain";
 import PartBody from "@/components/part/PartBody";
 import PartFaq from "@/components/part/PartFaq";
@@ -42,16 +43,12 @@ export default function PartDetailView({
     <div className="part-layout">
       <div className="part-main">
         <PartHeader part={part} />
-        {part.type === "board" && (
-          <VerifyBoard
-            boardName={part.name}
-            board={{ soc: part.soc_ref, flashMb: part.flash_mb, psramMb: part.psram_mb }}
-            defaultBoardId={part.id}
-          />
-        )}
+        {/* Specs + the picture first — what a maker wants to see the moment they land.
+            Verify (Web Serial) moved to the bottom; the header CTA jumps to it. */}
+        {part.type === "board" && <BoardImage part={part} />}
+        <SpecGroups part={part} />
         <ChipChain part={part} />
         <PartBody body={part.body} />
-        <SpecGroups part={part} />
         {part.type === "board" && boardFirmwareRows !== null && <BoardFirmware rows={boardFirmwareRows} />}
         {isHub && <SocHub part={part} />}
         {part.type === "soc" && <PartFaq items={part.faq} />}
@@ -76,6 +73,15 @@ export default function PartDetailView({
               </ul>
             )}
           </section>
+        )}
+        {part.type === "board" && (
+          <div id="verify" className="verify-anchor">
+            <VerifyBoard
+              boardName={part.name}
+              board={{ soc: part.soc_ref, flashMb: part.flash_mb, psramMb: part.psram_mb }}
+              defaultBoardId={part.id}
+            />
+          </div>
         )}
       </div>
       <aside className="part-aside" aria-label="Sources and related parts">
