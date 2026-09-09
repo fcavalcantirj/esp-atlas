@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-16T22:00:46.933939+00:00",
+      "expires": "2026-09-16T23:00:48.497677+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-09T22:00:46.933939+00:00"
+      "timestamp": "2026-09-09T23:00:48.497677+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -4079,6 +4079,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
     },
+    "m5stack-matter-examples": {
+      "expires": "2026-10-09T23:00:48.497677+00:00",
+      "id": "m5stack-matter-examples",
+      "pr_ref": null,
+      "reason": "below_floor: 10 stars / 2 forks",
+      "repo": "ciniml/m5stack_matter_examples",
+      "repo_id": 795800006,
+      "status": "rejected",
+      "timestamp": "2026-09-09T23:00:48.497677+00:00"
+    },
     "m5stack-papers3": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
       "id": "m5stack-papers3",
@@ -4866,12 +4876,32 @@
       "status": "rejected",
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
+    "namecardknot": {
+      "expires": "2026-10-09T23:00:48.497677+00:00",
+      "id": "namecardknot",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "hiroki-kawakami/namecardknot",
+      "repo_id": 1247342641,
+      "status": "rejected",
+      "timestamp": "2026-09-09T23:00:48.497677+00:00"
+    },
     "navboxesp": {
       "id": "navboxesp",
       "pr_ref": null,
       "repo": "t413/navboxesp",
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.172852+00:00"
+    },
+    "nes-tab5-usb-host": {
+      "expires": "2026-10-09T23:00:48.497677+00:00",
+      "id": "nes-tab5-usb-host",
+      "pr_ref": null,
+      "reason": "below_floor: 18 stars / 2 forks",
+      "repo": "andyaicardputer/nes-tab5-usb-host",
+      "repo_id": 1112423173,
+      "status": "rejected",
+      "timestamp": "2026-09-09T23:00:48.497677+00:00"
     },
     "nyan": {
       "id": "nyan",
@@ -5410,6 +5440,7 @@
     "andrewdjohnson/m5cardputerintervalometer": "m5cardputerintervalometer",
     "andrfuentz/dice-vessel-cardputer": "dice-vessel-cardputer",
     "andrfuentz/misedeck-cardputer": "misedeck-cardputer",
+    "andyaicardputer/nes-tab5-usb-host": "nes-tab5-usb-host",
     "andyaicardputer/zx-spectrum-cardputer-external": "zx-spectrum-cardputer-external",
     "aniketkatkar/m5cardputer-macro-keypad": "m5cardputer-macro-keypad",
     "anthropics/claude-desktop-buddy": "claude-desktop-buddy",
@@ -5457,6 +5488,7 @@
     "chongjiazhen/cardputer-puzzles": "cardputer-puzzles",
     "chrisdacrunk/little-devhelper": "little-devhelper",
     "chrisdiana/breezybox-cardputer": "breezybox-cardputer",
+    "ciniml/m5stack_matter_examples": "m5stack-matter-examples",
     "clackups/draftling": "draftling",
     "codigohardwareecia/m5cardputer_knowledge": "m5cardputer-knowledge",
     "comeraperuibe944/stickcontroller": "stickcontroller",
@@ -5618,6 +5650,7 @@
     "hardcore-gamer/cardputeradv-nas-mp3player": "cardputeradv-nas-mp3player",
     "hermes-gadget/sigurdos-tdeck": "sigurdos-tdeck",
     "hiroki-kawakami/kyoshin": "kyoshin",
+    "hiroki-kawakami/namecardknot": "namecardknot",
     "homertrix/meshtastic-tdisplay-p4": "meshtastic-tdisplay-p4",
     "horseyofcoursey/ember": "ember",
     "hsbsbz/m5stickcplus2-seamonsue": "m5stickcplus2-seamonsue",
