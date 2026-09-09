@@ -1,0 +1,437 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-09-09",
+ "notes": [],
+ "ref": "main",
+ "repo": "n0xa/m5stick-nemo",
+ "resolved": {
+  "boards": [
+   "m5cardputer",
+   "m5stick-cplus2",
+   "m5stick-s3"
+  ],
+  "socs": [],
+  "unresolved": [
+   "-DCARDPUTER",
+   "-DSTICKS3",
+   "-DSTICK_C_PLUS2",
+   "0x0000",
+   "0x1000",
+   "M5Cardputer.pt-br",
+   "M5StickCPlus2.pt-br",
+   "M5StickCPlus2@1.0.1 IRremote M5Stack-SD-Updater M5Unified@0.2.8",
+   "M5StickS3.pt-br",
+   "M5Unified@0.2.12 IRremote M5Stack-SD-Updater",
+   "en-us",
+   "m5stack:esp32:m5stack_cardputer",
+   "m5stack:esp32:m5stack_stickc_plus2",
+   "m5stack:esp32:m5stack_sticks3",
+   "pt-br"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "M5Nemo-v3.2.2-M5Cardputer.bin",
+    "release": "v3.2.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Cardputer",
+   "url": "https://github.com/n0xa/m5stick-nemo/releases/download/v3.2.2/M5Nemo-v3.2.2-M5Cardputer.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Nemo-v3.2.2-M5Cardputer.pt-br.bin",
+    "release": "v3.2.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Cardputer.pt-br",
+   "url": "https://github.com/n0xa/m5stick-nemo/releases/download/v3.2.2/M5Nemo-v3.2.2-M5Cardputer.pt-br.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Nemo-v3.2.2-M5StickCPlus2.bin",
+    "release": "v3.2.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5StickCPlus2",
+   "url": "https://github.com/n0xa/m5stick-nemo/releases/download/v3.2.2/M5Nemo-v3.2.2-M5StickCPlus2.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Nemo-v3.2.2-M5StickCPlus2.pt-br.bin",
+    "release": "v3.2.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5StickCPlus2.pt-br",
+   "url": "https://github.com/n0xa/m5stick-nemo/releases/download/v3.2.2/M5Nemo-v3.2.2-M5StickCPlus2.pt-br.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Nemo-v3.2.2-M5StickS3.bin",
+    "release": "v3.2.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5StickS3",
+   "url": "https://github.com/n0xa/m5stick-nemo/releases/download/v3.2.2/M5Nemo-v3.2.2-M5StickS3.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Nemo-v3.2.2-M5StickS3.pt-br.bin",
+    "release": "v3.2.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5StickS3.pt-br",
+   "url": "https://github.com/n0xa/m5stick-nemo/releases/download/v3.2.2/M5Nemo-v3.2.2-M5StickS3.pt-br.bin"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "en-us",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "pt-br",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Cardputer",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack:esp32:m5stack_cardputer",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "-DCARDPUTER",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "0x0000",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5StickS3",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack:esp32:m5stack_sticks3",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "-DSTICKS3",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Unified@0.2.12 IRremote M5Stack-SD-Updater",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5StickCPlus2",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack:esp32:m5stack_stickc_plus2",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "-DSTICK_C_PLUS2",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5StickCPlus2@1.0.1 IRremote M5Stack-SD-Updater M5Unified@0.2.8",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "0x1000",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "en-us",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "pt-br",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Cardputer",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack:esp32:m5stack_cardputer",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "-DCARDPUTER",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "0x0000",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5StickS3",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack:esp32:m5stack_sticks3",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "-DSTICKS3",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Unified@0.2.12 IRremote M5Stack-SD-Updater",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5StickCPlus2",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack:esp32:m5stack_stickc_plus2",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "-DSTICK_C_PLUS2",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5StickCPlus2@1.0.1 IRremote M5Stack-SD-Updater M5Unified@0.2.8",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/dev_compile.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "0x1000",
+   "url": "https://github.com/n0xa/m5stick-nemo/blob/main/.github/workflows/dev_compile.yml"
+  }
+ ]
+}
