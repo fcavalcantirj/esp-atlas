@@ -333,6 +333,18 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             expired = memory.expire(path=ledger_path, now=now)
             state_fn = pr_state or (lambda ref: memory.gh_pr_state(ref, gh=gh_c))
             settled = memory.reconcile_prs(state_fn, path=ledger_path, now=now)
+            # 3b. hydrate the working ledger from open Jr PRs BEFORE reconcile_merged, so the
+            #     content stages can see firmware already sitting in an un-merged PR (this worktree
+            #     started from origin/main, whose ledger lacks those entries) and do not re-author
+            #     it — and so an accidental merged->proposed mislabel self-heals within the same
+            #     tick (reconcile_merged flips any hydrated id that is already catalogued back to
+            #     merged). Best-effort: a dedup step (incl. a spent budget) must never abort a tick;
+            #     the stages enforce the budget. memory.record_proposed already refuses to downgrade
+            #     a merged or permanently-rejected record.
+            try:
+                r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path)
+            except Exception as e:  # noqa: BLE001
+                r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")
             merged = memory.reconcile_merged(catalogued, path=ledger_path, now=now)
             # A PR that merged between our fetch of origin/main and the `gh pr view` above is
             # catalogued on GitHub but not yet in this worktree: treat what reconcile_prs just
@@ -358,16 +370,6 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             n = len(stages)
             r.allocation = (f"boards {r.boards_pct:.1f}% -> A0/B{n} (manual track)" if n
                             else f"boards {r.boards_pct:.1f}% -> A0/B0 (no content stages registered)")
-
-        # 5b. hydrate the working ledger from open Jr PRs, so the content stages can see firmware
-        #     already sitting in an un-merged PR (this worktree started from origin/main, whose
-        #     ledger lacks those entries) and do not re-author it. Real runs only; best-effort — a
-        #     dedup optimization must never abort a tick, but a budget exhaustion still does.
-        if not dry_run:
-            try:
-                r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path)
-            except Exception as e:  # noqa: BLE001 — a dedup step (incl. a spent budget) must never
-                r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")  # abort a tick; the stages enforce the budget
 
         # 6. stages
         ctx = TickContext(root=root, ledger_path=ledger_path, now=now, gh=gh_c, git=git,
