@@ -161,9 +161,9 @@ _BRIDGE_TOKENS = (
     ("ch9102", "ch9102"),
     ("ch343", "ch343"),
     ("ch340", "ch340"),
-    ("ft2232", "ft2232"),   # FTDI (e.g. ESP-WROVER-KIT's FT2232HL) — substring also catches ft2232h/hl
-    ("ft232", "ft232"),     # FTDI single-channel (FT232R/RL)
-)
+    ("ft2232", "other"),    # FTDI (e.g. ESP-WROVER-KIT's FT2232HL) — no dedicated enum value yet,
+    ("ft232", "other"),     # so map to the schema-valid "other" (never emit a value outside the
+)                           # usb_serial enum, or the guard rejects the board and the tick aborts)
 
 
 def extract_usb_serial(text: str) -> str | None:
