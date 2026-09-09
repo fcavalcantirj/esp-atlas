@@ -65,6 +65,18 @@ def board_user_guide_url(board_id: str, soc: str) -> str:
     return f"{USER_GUIDE_BASE}/{chip_seg(soc)}/{board_id}/user_guide.html"
 
 
+def doc_url_candidates(board_id: str, soc: str) -> list[str]:
+    """User-guide URLs to try, in order. Espressif drops the revision suffix from some doc
+    slugs (esp32-devkitc-v4 → .../esp32-devkitc/) — so if the id ends in -v<N>, try the
+    stripped slug as a fallback. Only the `-v<N>` form is stripped (verified safe); a bare
+    trailing -<N> is NOT (it can be a real board variant → wrong doc)."""
+    slugs = [board_id]
+    stripped = re.sub(r"-v\d+$", "", board_id)
+    if stripped != board_id:
+        slugs.append(stripped)
+    return [board_user_guide_url(s, soc) for s in slugs]
+
+
 def resolve_soc(fm: dict, data_root: Path) -> str | None:
     """The board's effective soc id: its own `soc`, or its `module`'s `soc` (resolved
     through data/modules/<module>/module.md). None when neither resolves."""
@@ -261,9 +273,14 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
     if not soc:
         return {**base, "status": "skipped", "reason": "no-soc", "url": None}
 
-    url = board_user_guide_url(board_id, soc)
-    res = fetch(url)
-    if not res.get("ok"):
+    candidates = doc_url_candidates(board_id, soc)
+    res, url = None, candidates[-1]
+    for u in candidates:
+        r = fetch(u)
+        if r.get("ok"):
+            res, url = r, u          # cite the slug that actually resolved
+            break
+    if res is None:
         return {**base, "status": "skipped", "reason": "doc-unreachable", "url": url}
 
     raw = res.get("text", "")

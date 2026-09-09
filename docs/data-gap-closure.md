@@ -33,8 +33,10 @@ basics (flash/wire/start) are ~85% empty — the site says *what* a board is, no
    varies board-to-board and a wrong set misleads a build → naive parse is a cite-or-omit
    RISK. Deferred to a careful, conservative parser (only emit when the pin table is
    unambiguous). The pinout DIAGRAM (step 4) covers the human need meanwhile. [status: todo — careful]
-6. **doc-URL map**: per-board doc URL / alias for slugs the formula misses (devkitc-v4,
-   s3-devkitc-1 fetch-failed). [status: todo]
+6. **doc-URL fallback**: `doc_url_candidates` strips a `-vN` revision suffix and tries the
+   stripped slug (esp32-devkitc-v4 → .../esp32-devkitc/, verified 200), citing whichever
+   resolves. `-N` (real variant) is NOT stripped. s3-devkitc-1's doc lives outside
+   esp-dev-kits → still needs a per-board URL (research). [status: PARTIAL]
 7. **missing popular boards** (Track A "missing boards"): ESP32-CAM, ESP32 DevKit V1, XIAO
    ESP32-S3, Super Mini — the most-searched boards absent from the atlas. [status: todo]
 
