@@ -1,0 +1,206 @@
+{
+ "date": "2026-09-09",
+ "window": {
+  "start": "2026-08-12",
+  "end": "2026-09-09"
+ },
+ "weight_formula_version": "v1",
+ "d2_available": false,
+ "count": 7,
+ "items": [
+  {
+   "term": "esp32-c6",
+   "raw_terms": [
+    "esp32 c6",
+    "esp32-c6"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 134,
+   "clicks": 1,
+   "ctr": 0.0075,
+   "position": 31.7,
+   "events": null,
+   "zero_result": null,
+   "weight": 421.59,
+   "resolved": {
+    "board": null,
+    "chip": "esp32-c6",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-c6"
+   },
+   "gap": "RANKS_POORLY",
+   "landing_page": "https://esp-atlas.com/parts/esp32-c6",
+   "first_seen": "2026-09-09",
+   "last_seen": "2026-09-09"
+  },
+  {
+   "term": "esp32 h2",
+   "raw_terms": [
+    "esp32 h2",
+    "esp32-h2"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 50,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 33.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 165.5,
+   "resolved": {
+    "board": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-h2"
+   },
+   "gap": "RANKS_POORLY",
+   "landing_page": "https://esp-atlas.com/parts/esp32-h2",
+   "first_seen": "2026-09-09",
+   "last_seen": "2026-09-09"
+  },
+  {
+   "term": "launcher esp32",
+   "raw_terms": [
+    "esp32 launcher",
+    "launcher esp32",
+    "launcher firmware"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 115,
+   "clicks": 7,
+   "ctr": 0.0609,
+   "position": 7.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 76.68,
+   "resolved": {
+    "board": null,
+    "chip": "esp32",
+    "firmware_token": "launcher",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/launcher",
+   "first_seen": "2026-09-09",
+   "last_seen": "2026-09-09"
+  },
+  {
+   "term": "esp32 s3 board nrf54lm20 mcu datasheet",
+   "raw_terms": [
+    "esp32 s3 board nrf54lm20 mcu datasheet",
+    "esp32-s3 datasheet"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 20,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 26.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 52.2,
+   "resolved": {
+    "board": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-s3"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-s3",
+   "first_seen": "2026-09-09",
+   "last_seen": "2026-09-09"
+  },
+  {
+   "term": "m5stack stick s3",
+   "raw_terms": [
+    "m5stack stick s3"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 11,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 24.5,
+   "events": null,
+   "zero_result": null,
+   "weight": 26.95,
+   "resolved": {
+    "board": "m5stick-s3",
+    "chip": "esp32-s3",
+    "firmware_token": "m5stack-avatar-mic",
+    "capability": [],
+    "part": null
+   },
+   "gap": "UNCOVERED",
+   "landing_page": "https://esp-atlas.com/parts/m5stick-s3",
+   "first_seen": "2026-09-09",
+   "last_seen": "2026-09-09"
+  },
+  {
+   "term": "m5 stick s3",
+   "raw_terms": [
+    "m5 stick s3"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 11,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 12.5,
+   "events": null,
+   "zero_result": null,
+   "weight": 13.75,
+   "resolved": {
+    "board": "m5stick-s3",
+    "chip": "esp32-s3",
+    "firmware_token": null,
+    "capability": [],
+    "part": null
+   },
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/parts/m5stick-s3",
+   "first_seen": "2026-09-09",
+   "last_seen": "2026-09-09"
+  },
+  {
+   "term": "bruce esp32",
+   "raw_terms": [
+    "bruce esp32"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 16,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 7.7,
+   "events": null,
+   "zero_result": null,
+   "weight": 12.32,
+   "resolved": {
+    "board": null,
+    "chip": "esp32",
+    "firmware_token": "bruce",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/bruce",
+   "first_seen": "2026-09-09",
+   "last_seen": "2026-09-09"
+  }
+ ]
+}

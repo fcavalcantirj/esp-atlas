@@ -27,6 +27,9 @@ class TickReport:
     extra_paths: list = field(default_factory=list)    # tick-owned paths outside stages (data-trend snapshot)
     data_row: dict | None = None                       # SPEC-data-trend.md row for this tick
     data_delta: dict | None = None                     # its diff vs the prior day (None on first snapshot)
+    demand_signal: dict | None = None                  # SPEC-demand-steering.md steer_signal (fresh snapshot only)
+    alignment: dict | None = None                      # SPEC-demand-steering.md alignment (fresh snapshot only)
+    demand_meta: dict | None = None                    # {"stale","age_days","date"} when a snapshot loaded, else None
     admitted: int = 0
     rejects: dict = field(default_factory=dict)       # reason -> count
     memory: dict = field(default_factory=dict)        # {"expired", "merged", "rejected", "removed"}
@@ -94,10 +97,13 @@ def _paren(value: str, delta, fmt) -> str:
     return value if delta is None else f"{value} ({fmt(delta)})"
 
 
-def render_data_line(row: dict | None, delta: dict | None) -> str:
+def render_data_line(row: dict | None, delta: dict | None, demand: dict | None = None) -> str:
     """The ONE data-quality trend line for the PR body (SPEC-data-trend.md): finite %, the two
     lead board fields, firmware volume and compat density — each with its day-over-day delta when a
-    baseline exists. Deterministic; read straight off the stored row+delta."""
+    baseline exists. Deterministic; read straight off the stored row+delta.
+
+    `demand` (SPEC-demand-steering.md, fresh snapshot only) extends the line with the supply×demand
+    alignment: `· demand: aligned XX% · N uncovered`."""
     if not row:
         return ""
     bf = row.get("board_fields", {})
@@ -114,7 +120,55 @@ def render_data_line(row: dict | None, delta: dict | None) -> str:
         "· " + _paren(f"firmware {row.get('firmware_count', 0)}", (delta or {}).get("firmware_count") if delta else None, sgn),
         "· " + _paren(f"compat {row.get('compat_density', 0.0):g}/bd", (delta or {}).get("compat_density") if delta else None, lambda v: sgnf(v, 2)),
     ]
+    if demand:
+        parts.append(f"· demand: aligned {demand.get('aligned_pct', 0)}% · {demand.get('uncovered', 0)} uncovered")
     return " ".join(parts)
+
+
+def render_demand_section(r: "TickReport") -> list[str]:
+    """The '### Demand alignment' section for the PR body (SPEC-demand-steering.md).
+
+    A fresh snapshot renders the full section: the aligned-% headline, the UNCOVERED worklist
+    (Jr's authoring path), and a SEPARATE RANKS_POORLY list clearly labelled as an SEO/human
+    report that is NOT Jr's authoring path. A stale or missing snapshot renders ONE honest line
+    instead — never a section, because the steer stood down."""
+    meta = r.demand_meta
+    align = r.alignment
+    if align and meta and not meta.get("stale"):
+        counts = align.get("counts", {})
+        lines = ["### Demand alignment", ""]
+        lines.append(
+            f"Supply×demand: **aligned {align.get('aligned_pct', 0)}%** of demand weight · "
+            f"{counts.get('UNCOVERED', 0)} uncovered · {counts.get('RANKS_POORLY', 0)} ranks-poorly (SEO) · "
+            f"{counts.get('COVERED_OK', 0)} covered · snapshot {meta.get('date')} (age {meta.get('age_days')}d, "
+            f"bias {(r.demand_signal or {}).get('bias', 0.0):+g})")
+        lines.append("")
+        worklist = [it for it in align.get("demanded_but_missing", []) if it.get("gap") == "UNCOVERED"]
+        lines.append("**Demanded but missing — Jr worklist (UNCOVERED, the authoring path):**")
+        if worklist:
+            for it in worklist:
+                res = it.get("resolved") or {}
+                target = res.get("firmware_token") or res.get("part") or res.get("board") or res.get("chip") or "?"
+                track = "B/firmware" if res.get("firmware_token") else "A/backfill"
+                lines.append(f"- `{it.get('term')}` — w={it.get('weight')} · imp {it.get('impressions') or '?'} "
+                             f"· → `{target}` (Track {track})")
+        else:
+            lines.append("- none")
+        lines.append("")
+        seo = (r.demand_signal or {}).get("ranks_poorly") \
+            or [it for it in align.get("demanded_but_missing", []) if it.get("gap") == "RANKS_POORLY"]
+        lines.append("**RANKS_POORLY (SEO — human, NOT Jr's authoring path):**")
+        if seo:
+            for it in seo[:5]:
+                lines.append(f"- `{it.get('term')}` — imp {it.get('impressions') or '?'}, "
+                             f"ctr {it.get('ctr')}, pos {it.get('position')}")
+        else:
+            lines.append("- none")
+        lines.append("")
+        return lines
+    if meta and meta.get("stale"):
+        return [f"_demand snapshot stale (age {meta.get('age_days')}d) — not steering_", ""]
+    return ["_demand snapshot missing — not steering_", ""]
 
 
 def _fmt_firmware_item(it: dict) -> list[str]:
@@ -158,7 +212,8 @@ def render_pr_body(r: TickReport) -> str:
     lines = [f"EspAtlas Jr tick — {r.when.strftime('%Y-%m-%d %H:%M UTC')}", ""]
     lines.append(f"Base `{r.base_sha or 'origin/main'}` · boards {_pct(r.boards_pct)} · overall {_pct(r.overall_pct)}"
                  + (f" · {r.allocation}" if r.allocation else ""))
-    data_line = render_data_line(r.data_row, r.data_delta)
+    fresh_demand = r.alignment if (r.demand_meta and not r.demand_meta.get("stale")) else None
+    data_line = render_data_line(r.data_row, r.data_delta, demand=fresh_demand)
     if data_line:
         lines.append(data_line)
     lines.append("")
@@ -176,6 +231,7 @@ def render_pr_body(r: TickReport) -> str:
             n_recipes += len(it.get("written") or [])
             lines += _fmt_recipes_item(it)
     lines.append("")
+    lines += render_demand_section(r)
     lines.append("### Skipped this tick (not in this PR; remembered with a TTL)")
     if r.rejects:
         for k, v in sorted(r.rejects.items(), key=lambda kv: (-kv[1], kv[0])):
