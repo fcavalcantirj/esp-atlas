@@ -1,0 +1,926 @@
+{
+ "calls": 8,
+ "errors": 0,
+ "fetched": "2026-09-09",
+ "notes": [],
+ "ref": "master",
+ "repo": "tobozo/M5Stack-SD-Updater",
+ "resolved": {
+  "boards": [
+   "m5atom-lite",
+   "m5stack-core2",
+   "m5stack-cores3"
+  ],
+  "socs": [],
+  "unresolved": [
+   ":PartitionScheme=min_spiffs",
+   "ESP32-Chimera-Core,LovyanGFX",
+   "ESP32-Chimera-Core,LovyanGFX,ArduinoJson",
+   "ESP32-Chimera-Core,LovyanGFX,ArduinoJson,Button2",
+   "LGFX-SDLoader-Snippet.ino",
+   "LGFX-test",
+   "LovyanGFX",
+   "M5Atom-Launcher",
+   "M5Core2-AppStore",
+   "M5Core2-Launcher",
+   "M5Core2-SDLoader-Snippet.ino",
+   "M5Core2-test",
+   "M5CoreS3-FW-Launcher",
+   "M5CoreS3-Launcher",
+   "M5Fire",
+   "M5Fire-AppStore",
+   "M5Fire-Launcher",
+   "M5GFX,M5Unified",
+   "M5Stack",
+   "M5Stack-SD-Menu.ino",
+   "M5Stack-SD-Menu.ino,AppStore.ino",
+   "M5Stack-SD-Menu.ino,M5Stack-FW-Menu.ino",
+   "M5Stack-SDLoader-Snippet.ino",
+   "M5Stack-test",
+   "M5StickC",
+   "M5StickC-SPIFFS-Loader-Snippet.ino",
+   "M5StickC-test",
+   "M5Unified-test",
+   "M5Unified.ino",
+   "M5stack-AppStore",
+   "M5stack-Launcher",
+   "OdroidGo",
+   "OdroidGo-AppStore",
+   "OdroidGo-Launcher",
+   "S3Box-Test",
+   "SdFat,M5GFX,M5Unified",
+   "SdFat-test",
+   "SdFatUpdater.ino",
+   "esp32s3box",
+   "m5stack-core-esp32",
+   "m5stack-fire",
+   "m5stick-c",
+   "odroid_esp32"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "M5Atom-Launcher-2.0.13.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Atom-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5Atom-Launcher-2.0.13.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Core2-AppStore-2.0.11.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Core2-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5Core2-AppStore-2.0.11.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Core2-AppStore-2.0.12.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Core2-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5Core2-AppStore-2.0.12.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Core2-AppStore-2.0.13.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Core2-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5Core2-AppStore-2.0.13.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Core2-Launcher-2.0.11.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Core2-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5Core2-Launcher-2.0.11.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Core2-Launcher-2.0.12.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Core2-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5Core2-Launcher-2.0.12.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Core2-Launcher-2.0.13.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Core2-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5Core2-Launcher-2.0.13.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5CoreS3-FW-Launcher-2.0.13.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5CoreS3-FW-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5CoreS3-FW-Launcher-2.0.13.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5CoreS3-Launcher-2.0.13.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5CoreS3-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5CoreS3-Launcher-2.0.13.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Fire-AppStore-2.0.11.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Fire-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5Fire-AppStore-2.0.11.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Fire-AppStore-2.0.12.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Fire-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5Fire-AppStore-2.0.12.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Fire-AppStore-2.0.13.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Fire-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5Fire-AppStore-2.0.13.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Fire-Launcher-2.0.11.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Fire-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5Fire-Launcher-2.0.11.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Fire-Launcher-2.0.12.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Fire-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5Fire-Launcher-2.0.12.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Fire-Launcher-2.0.13.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Fire-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5Fire-Launcher-2.0.13.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5stack-AppStore-2.0.11.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5stack-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5stack-AppStore-2.0.11.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5stack-AppStore-2.0.12.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5stack-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5stack-AppStore-2.0.12.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5stack-AppStore-2.0.13.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5stack-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5stack-AppStore-2.0.13.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5stack-Launcher-2.0.11.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5stack-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5stack-Launcher-2.0.11.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5stack-Launcher-2.0.12.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5stack-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5stack-Launcher-2.0.12.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5stack-Launcher-2.0.13.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5stack-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/M5stack-Launcher-2.0.13.bin"
+  },
+  {
+   "extra": {
+    "asset": "OdroidGo-AppStore-2.0.11.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "OdroidGo-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/OdroidGo-AppStore-2.0.11.bin"
+  },
+  {
+   "extra": {
+    "asset": "OdroidGo-AppStore-2.0.12.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "OdroidGo-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/OdroidGo-AppStore-2.0.12.bin"
+  },
+  {
+   "extra": {
+    "asset": "OdroidGo-AppStore-2.0.13.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "OdroidGo-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/OdroidGo-AppStore-2.0.13.bin"
+  },
+  {
+   "extra": {
+    "asset": "OdroidGo-Launcher-2.0.11.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "OdroidGo-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/OdroidGo-Launcher-2.0.11.bin"
+  },
+  {
+   "extra": {
+    "asset": "OdroidGo-Launcher-2.0.12.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "OdroidGo-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/OdroidGo-Launcher-2.0.12.bin"
+  },
+  {
+   "extra": {
+    "asset": "OdroidGo-Launcher-2.0.13.bin",
+    "release": "v1.2.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "OdroidGo-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/releases/download/v1.2.8/OdroidGo-Launcher-2.0.13.bin"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Core2-test",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Stack-test",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5StickC-test",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LGFX-test",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Unified-test",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "S3Box-Test",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Stack",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Core2",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Fire",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "OdroidGo",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SdFat-test",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack-core2",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Core2-SDLoader-Snippet.ino",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack-core-esp32",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Stack-SDLoader-Snippet.ino",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32-Chimera-Core,LovyanGFX",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3box",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Unified.ino",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5GFX,M5Unified",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5StickC-SPIFFS-Loader-Snippet.ino",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5StickC",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LGFX-SDLoader-Snippet.ino",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LovyanGFX",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SdFatUpdater.ino",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SdFat,M5GFX,M5Unified",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Stack-SD-Menu.ino,AppStore.ino",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5stack-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5stack-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32-Chimera-Core,LovyanGFX,ArduinoJson",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Core2-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Core2-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack-fire",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Fire-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Fire-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "odroid_esp32",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "OdroidGo-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "OdroidGo-AppStore",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": ":PartitionScheme=min_spiffs",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32-Chimera-Core,LovyanGFX,ArduinoJson,Button2",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Atom",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack-atom",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Stack-SD-Menu.ino",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Atom-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5CoreS3",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack-cores3",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Stack-SD-Menu.ino,M5Stack-FW-Menu.ino",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5CoreS3-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ArduinoBuild.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5CoreS3-FW-Launcher",
+   "url": "https://github.com/tobozo/M5Stack-SD-Updater/blob/master/.github/workflows/ArduinoBuild.yml"
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-09-09",
+ "notes": [],
+ "ref": "main",
+ "repo": "KyleBing/m5stack-cardputer-sparks",
+ "resolved": {
+  "boards": [
+   "m5cardputer"
+  ],
+  "socs": [],
+  "unresolved": [
+   "sparks-merged"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "sparks-v1.14-merged.bin",
+    "release": "v1.14"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "sparks-merged",
+   "url": "https://github.com/KyleBing/m5stack-cardputer-sparks/releases/download/v1.14/sparks-v1.14-merged.bin"
+  },
+  {
+   "extra": {
+    "env": "m5stack-cardputer",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/KyleBing/m5stack-cardputer-sparks/blob/main/platformio.ini#L13"
+  }
+ ]
+}
