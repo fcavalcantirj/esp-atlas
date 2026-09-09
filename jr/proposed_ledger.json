@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-15T20:00:21.660790+00:00",
+      "expires": "2026-09-15T21:00:24.826619+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-08T20:00:21.660790+00:00"
+      "timestamp": "2026-09-08T21:00:24.826619+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -1022,6 +1022,16 @@
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.186474+00:00"
     },
+    "cardputer-examples": {
+      "expires": "2026-10-08T21:00:24.826619+00:00",
+      "id": "cardputer-examples",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "konsumer/cardputer-examples",
+      "repo_id": 1193971608,
+      "status": "rejected",
+      "timestamp": "2026-09-08T21:00:24.826619+00:00"
+    },
     "cardputer-f1-random-gp": {
       "expires": "2026-10-08T04:00:36.972928+00:00",
       "id": "cardputer-f1-random-gp",
@@ -1989,6 +1999,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T02:00:32.995095+00:00"
     },
+    "easyshortcutkey": {
+      "expires": "2026-10-08T21:00:24.826619+00:00",
+      "id": "easyshortcutkey",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "nw-lab/easyshortcutkey",
+      "repo_id": 1060118125,
+      "status": "rejected",
+      "timestamp": "2026-09-08T21:00:24.826619+00:00"
+    },
     "echo": {
       "expires": "2026-10-08T02:00:32.995095+00:00",
       "id": "echo",
@@ -2876,6 +2896,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T05:25:25.049296+00:00"
     },
+    "k85os": {
+      "expires": "2026-10-08T21:00:24.826619+00:00",
+      "id": "k85os",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "kion85/k85os",
+      "repo_id": 1319959950,
+      "status": "rejected",
+      "timestamp": "2026-09-08T21:00:24.826619+00:00"
+    },
     "k85os-m5sticks3": {
       "expires": "2026-10-08T20:00:21.660790+00:00",
       "id": "k85os-m5sticks3",
@@ -2886,6 +2916,26 @@
       "status": "rejected",
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
     },
+    "keyboard-stick": {
+      "expires": "2026-10-08T21:00:24.826619+00:00",
+      "id": "keyboard-stick",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "kion85/keyboard-stick",
+      "repo_id": 1305921631,
+      "status": "rejected",
+      "timestamp": "2026-09-08T21:00:24.826619+00:00"
+    },
+    "klipper-printercontroller-for-m5sticks3": {
+      "expires": "2026-10-08T21:00:24.826619+00:00",
+      "id": "klipper-printercontroller-for-m5sticks3",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "devsur11/klipper-printercontroller-for-m5sticks3",
+      "repo_id": 1202235468,
+      "status": "rejected",
+      "timestamp": "2026-09-08T21:00:24.826619+00:00"
+    },
     "kprox": {
       "id": "kprox",
       "pr_ref": null,
@@ -2893,12 +2943,42 @@
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.190259+00:00"
     },
+    "kyoshin": {
+      "expires": "2026-10-08T21:00:24.826619+00:00",
+      "id": "kyoshin",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "hiroki-kawakami/kyoshin",
+      "repo_id": 763036732,
+      "status": "rejected",
+      "timestamp": "2026-09-08T21:00:24.826619+00:00"
+    },
+    "lamp-from-m5cardputer": {
+      "expires": "2026-10-08T21:00:24.826619+00:00",
+      "id": "lamp-from-m5cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 1 forks",
+      "repo": "zrutra/lamp-from-m5cardputer",
+      "repo_id": 837340209,
+      "status": "rejected",
+      "timestamp": "2026-09-08T21:00:24.826619+00:00"
+    },
     "laser-for-stickc-plus2": {
       "id": "laser-for-stickc-plus2",
       "pr_ref": null,
       "repo": "dma3002/laser-for-stickc-plus2",
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.120299+00:00"
+    },
+    "launcher": {
+      "expires": "2026-10-08T21:00:24.826619+00:00",
+      "id": "launcher",
+      "pr_ref": null,
+      "reason": "already_catalogued: bmorcelli/launcher is already in the atlas",
+      "repo": "bmorcelli/launcher",
+      "repo_id": 755727720,
+      "status": "rejected",
+      "timestamp": "2026-09-08T21:00:24.826619+00:00"
     },
     "little-devhelper": {
       "id": "little-devhelper",
@@ -4039,6 +4119,7 @@
     "big-bratan/make-ap": "make-ap",
     "blamouche/cardputer-dwight": "cardputer-dwight",
     "bluemage/cardputeradv-basicav": "cardputeradv-basicav",
+    "bmorcelli/launcher": "launcher",
     "bomberman30/advanceos-for-cardputer": "advanceos-for-cardputer",
     "bomberman30/carduboy-arduboy-for-cardputer": "carduboy-arduboy-for-cardputer",
     "bradmcnally/beepbotdx": "beepbotdx",
@@ -4107,6 +4188,7 @@
     "derunix/m5stack-stick-s3-animation": "m5stack-stick-s3-animation",
     "destillegast/m5cardputer-hid-tools": "m5cardputer-hid-tools",
     "devinwatson/cardputer-adv-gps-info": "cardputer-adv-gps-info",
+    "devsur11/klipper-printercontroller-for-m5sticks3": "klipper-printercontroller-for-m5sticks3",
     "dezusaz/isitdefcon": "isitdefcon",
     "diegoguevara/hamqso-firmware": "hamqso-firmware",
     "dj1ch/minigotchi-esp32": "minigotchi-esp32",
@@ -4184,6 +4266,7 @@
     "hansgao0422/deskclock-cardputer": "deskclock-cardputer",
     "hardcore-gamer/cardputeradv-nas-mp3player": "cardputeradv-nas-mp3player",
     "hermes-gadget/sigurdos-tdeck": "sigurdos-tdeck",
+    "hiroki-kawakami/kyoshin": "kyoshin",
     "horseyofcoursey/ember": "ember",
     "hsbsbz/m5stickcplus2-seamonsue": "m5stickcplus2-seamonsue",
     "hsgarcia22/m5-mousejiggler": "m5-mousejiggler",
@@ -4227,7 +4310,10 @@
     "kestrelrain/m5cardputer_display_off": "m5cardputer-display-off",
     "kindle15/dino_game_port_for_cardputer": "dino-game-port-for-cardputer",
     "kindle15/jumpingblox4cardputer": "jumpingblox4cardputer",
+    "kion85/k85os": "k85os",
     "kion85/k85os_m5sticks3": "k85os-m5sticks3",
+    "kion85/keyboard-stick": "keyboard-stick",
+    "konsumer/cardputer-examples": "cardputer-examples",
     "kotobuki/io-framework-for-xr": "io-framework-for-xr",
     "kvn-la/byobyok": "byobyok",
     "kwindapp/start-kwind-jump.git": "start-kwind-jump",
@@ -4301,6 +4387,7 @@
     "nonik0/cardputerlegotraincontrol": "cardputerlegotraincontrol",
     "nonik0/cardputerlorachat": "cardputerlorachat",
     "ns96/cardputermictalk": "cardputermictalk",
+    "nw-lab/easyshortcutkey": "easyshortcutkey",
     "oldtokage-collab/c.p.s.--cardputer-syhnth--": "c-p-s-cardputer-syhnth",
     "oldtokage-collab/g-navigator": "g-navigator",
     "olekalek112233/web-browser-cardputer-adv": "web-browser-cardputer-adv",
@@ -4423,6 +4510,7 @@
     "zmattmanz/plume": "plume",
     "zorikos3/i.r.s.": "i-r-s",
     "zrutra/game-snake-m5cardputer": "game-snake-m5cardputer",
+    "zrutra/lamp-from-m5cardputer": "lamp-from-m5cardputer",
     "zrutra/wifi-capture-page-m5cardputer": "wifi-capture-page-m5cardputer",
     "zspuspoki/cardputeradvanceddoom": "cardputeradvanceddoom",
     "zuens2020/cardputer-typeless": "cardputer-typeless",

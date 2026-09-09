@@ -1,0 +1,29 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "Pro",
+ "repo": "fwz233-RE/M5Claw",
+ "resolved": {
+  "boards": [
+   "m5cardputer"
+  ],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "m5stack-cardputer",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 3,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/fwz233-RE/M5Claw/blob/Pro/platformio.ini#L3"
+  }
+ ]
+}

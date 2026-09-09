@@ -1,0 +1,81 @@
+{
+ "calls": 7,
+ "errors": 0,
+ "fetched": "2026-09-08",
+ "notes": [],
+ "ref": "main",
+ "repo": "Devsur11/M5Gotchi",
+ "resolved": {
+  "boards": [
+   "m5cardputer",
+   "m5stamp-s3",
+   "m5stick-s3"
+  ],
+  "socs": [],
+  "unresolved": [
+   "m5stick"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "cardputer.bin",
+    "release": "v0.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cardputer",
+   "url": "https://github.com/Devsur11/M5Gotchi/releases/download/v0.7/cardputer.bin"
+  },
+  {
+   "extra": {
+    "asset": "m5stick.bin",
+    "release": "v0.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stick",
+   "url": "https://github.com/Devsur11/M5Gotchi/releases/download/v0.7/m5stick.bin"
+  },
+  {
+   "extra": {
+    "env": "Cardputer-dev",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/Devsur11/M5Gotchi/blob/main/platformio.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "Cardputer-full",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 45,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/Devsur11/M5Gotchi/blob/main/platformio.ini#L45"
+  },
+  {
+   "extra": {
+    "env": "m5sticks3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 76,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/Devsur11/M5Gotchi/blob/main/platformio.ini#L76"
+  }
+ ]
+}
