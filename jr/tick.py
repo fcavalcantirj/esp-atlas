@@ -137,6 +137,14 @@ def default_gauge(data_dir: Path) -> dict:
     return data_completion.compute_completion(str(data_dir))
 
 
+def default_snapshot(root: Path, date_str: str):
+    """Write the daily data-quality trend (SPEC-data-trend.md) into the worktree and return
+    (row, delta, paths). A REPORT, never a gate; the tick calls it best-effort."""
+    import data_snapshot  # noqa: E402  (jr/ is already on sys.path)
+    row, delta = data_snapshot.write_snapshot(root, date_str)
+    return row, delta, data_snapshot.snapshot_paths(date_str)
+
+
 def guard_env(root: Path, base: dict | None = None) -> dict:
     """The environment that makes esp_atlas_core look at the WORKTREE. Without it the editable
     install resolves `esp_atlas_core` to the clone's checkout and `paths.py` to the clone's
@@ -282,6 +290,7 @@ def hydrate_open_pr_ledger(gh, now, ledger_path) -> list[str]:
 def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.default_gh,
              now: datetime | None = None, env: dict | None = None, stages: list | None = None,
              gauge=default_gauge, guard=default_guard, notifier=default_notifier,
+             snapshot=default_snapshot,
              pr_state=None, revalidate=publish.revalidate_catalog, budget: Budget | None = None,
              repo_slug: str | None = None, min_rate_limit: int = MIN_RATE_LIMIT,
              stale_pr_hours: float = STALE_PR_HOURS, telegram: bool = True,
@@ -359,6 +368,20 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         g = gauge(root / "data")
         r.boards_pct = float(g.get("entities", {}).get("boards", {}).get("pct", 0.0))
         r.overall_pct = float(g.get("overall_pct", 0.0))
+
+        # 4b. data-quality trend snapshot (SPEC-data-trend.md) — non-dry-run only, best-effort like
+        #     the hydrate step: a snapshot failure appends a warning and NEVER aborts the tick. The
+        #     two written docs/telemetry paths join the commit pathspec via r.extra_paths; the
+        #     row+delta ride on the report for the PR body's one data-delta line.
+        if not dry_run:
+            try:
+                today = now.strftime("%Y-%m-%d")
+                r.data_row, r.data_delta, snap_paths = snapshot(root, today)
+                for p in snap_paths:
+                    if p not in r.extra_paths:
+                        r.extra_paths.append(p)
+            except Exception as e:  # noqa: BLE001 — a report step must never abort the tick
+                r.warnings.append(f"data snapshot failed: {type(e).__name__}: {e}")
 
         # 5. allocation — hourly: the gauge-driven A/B split; manual (--track): the override text
         if hourly:

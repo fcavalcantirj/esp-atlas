@@ -24,6 +24,9 @@ class TickReport:
     overall_pct: float | None = None
     allocation: str = ""
     stages: list = field(default_factory=list)        # [{"name", "paths", "summary", "needs_human"}]
+    extra_paths: list = field(default_factory=list)    # tick-owned paths outside stages (data-trend snapshot)
+    data_row: dict | None = None                       # SPEC-data-trend.md row for this tick
+    data_delta: dict | None = None                     # its diff vs the prior day (None on first snapshot)
     admitted: int = 0
     rejects: dict = field(default_factory=dict)       # reason -> count
     memory: dict = field(default_factory=dict)        # {"expired", "merged", "rejected", "removed"}
@@ -42,6 +45,9 @@ class TickReport:
             for p in s.get("paths", []):
                 if p not in out:
                     out.append(p)
+        for p in self.extra_paths:
+            if p not in out:
+                out.append(p)
         return out
 
     @property
@@ -81,6 +87,34 @@ def render_line(r: TickReport) -> str:
     return (f"🤖 {head} {stamp}: boards {_pct(r.boards_pct)} (overall {_pct(r.overall_pct)}) · "
             f"{r.allocation or 'allocation n/a'} · admitted {r.admitted} · rejects {rej} · "
             f"{mem_txt}{guard_txt}{reval} · {pr_txt}{stage_txt}{warn} · {r.budget}").rstrip(" ·")
+
+
+def _paren(value: str, delta, fmt) -> str:
+    """`<value> (<±delta>)` when a baseline exists, else just `<value>`."""
+    return value if delta is None else f"{value} ({fmt(delta)})"
+
+
+def render_data_line(row: dict | None, delta: dict | None) -> str:
+    """The ONE data-quality trend line for the PR body (SPEC-data-trend.md): finite %, the two
+    lead board fields, firmware volume and compat density — each with its day-over-day delta when a
+    baseline exists. Deterministic; read straight off the stored row+delta."""
+    if not row:
+        return ""
+    bf = row.get("board_fields", {})
+    df = (delta or {}).get("board_fields", {})
+    usb = bf.get("usb_serial", {}).get("count", 0)
+    gs = bf.get("getting_started", {}).get("count", 0)
+    sgn = lambda n: (f"+{n}" if n >= 0 else str(n))          # noqa: E731
+    sgnf = lambda v, nd: (f"+{v:.{nd}f}" if v >= 0 else f"{v:.{nd}f}")  # noqa: E731
+    parts = [
+        "📊 data:",
+        _paren(f"finite {row.get('finite_overall_pct', 0.0):g}%", (delta or {}).get("finite_overall_pct") if delta else None, lambda v: sgnf(v, 1)),
+        "· " + _paren(f"usb_serial {usb}", df.get("usb_serial") if delta else None, sgn),
+        "· " + _paren(f"gs {gs}", df.get("getting_started") if delta else None, sgn),
+        "· " + _paren(f"firmware {row.get('firmware_count', 0)}", (delta or {}).get("firmware_count") if delta else None, sgn),
+        "· " + _paren(f"compat {row.get('compat_density', 0.0):g}/bd", (delta or {}).get("compat_density") if delta else None, lambda v: sgnf(v, 2)),
+    ]
+    return " ".join(parts)
 
 
 def _fmt_firmware_item(it: dict) -> list[str]:
@@ -124,6 +158,9 @@ def render_pr_body(r: TickReport) -> str:
     lines = [f"EspAtlas Jr tick — {r.when.strftime('%Y-%m-%d %H:%M UTC')}", ""]
     lines.append(f"Base `{r.base_sha or 'origin/main'}` · boards {_pct(r.boards_pct)} · overall {_pct(r.overall_pct)}"
                  + (f" · {r.allocation}" if r.allocation else ""))
+    data_line = render_data_line(r.data_row, r.data_delta)
+    if data_line:
+        lines.append(data_line)
     lines.append("")
     items = [(s.get("name"), it) for s in r.stages for it in (s.get("items") or [])]
     lines.append("### Proposed in this PR")
