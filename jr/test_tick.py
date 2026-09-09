@@ -86,6 +86,7 @@ def wt_dir(tmp_path, monkeypatch):
 
 
 NO_SNAPSHOT = lambda root, date: (None, None, [])   # noqa: E731 — default: write no trend paths
+NO_DEMAND = lambda root, date: None                 # noqa: E731 — default: no demand snapshot → no steer
 
 
 def run(**kw):
@@ -94,6 +95,7 @@ def run(**kw):
     kw.setdefault("guard", GUARD_OK)
     kw.setdefault("notifier", None)
     kw.setdefault("snapshot", NO_SNAPSHOT)
+    kw.setdefault("demand", NO_DEMAND)
     kw.setdefault("env", {})
     kw.setdefault("stages", [])
     kw.setdefault("budget", Budget(clock=lambda: 0.0))
@@ -374,6 +376,77 @@ def test_a_failing_snapshot_warns_but_never_aborts(wt_dir):
     r = run(git=git_ok(wt_dir), gh=gh_ok(), snapshot=boom)
     assert not r.aborted and any("data snapshot failed" in w for w in r.warnings)
     assert r.data_row is None
+
+
+# --- demand steering (SPEC-demand-steering.md) -------------------------------------------------
+
+def _demand_snap(stale=False, age_days=0, items=None, date="2026-09-05"):
+    """A load_latest-shaped return: a docs/demand snapshot + computed stale/age_days."""
+    items = items if items is not None else []
+    return {"date": date, "stale": stale, "age_days": age_days,
+            "window": {"start": "2026-08-08", "end": date}, "count": len(items), "items": items}
+
+
+# one UNCOVERED firmware gap (steers toward Track B) + a RANKS_POORLY SEO row (must NOT steer)
+DEMAND_ITEMS = [
+    {"term": "m5stack stick s3", "gap": "UNCOVERED", "weight": 27.0, "impressions": 11, "ctr": 0.0,
+     "position": 24.5, "resolved": {"board": "m5stick-s3", "chip": "esp32-s3",
+                                    "firmware_token": "m5stack-avatar-mic", "capability": [], "part": None}},
+    {"term": "esp32-c6", "gap": "RANKS_POORLY", "weight": 421.59, "impressions": 134, "ctr": 0.0075,
+     "position": 31.7, "resolved": {"board": None, "chip": "esp32-c6", "firmware_token": None,
+                                    "capability": [], "part": "esp32-c6"}},
+]
+
+
+def test_fresh_demand_snapshot_steers_the_split_and_populates_alignment(capsys, tmp_path, monkeypatch):
+    calls = []
+    _fake_stage_modules(monkeypatch, calls)
+    r = run(git=git_ok(tmp_path), gh=gh_ok(), stages=None,
+            demand=lambda root, today: _demand_snap(items=DEMAND_ITEMS))
+    out = capsys.readouterr().out
+    assert not r.aborted
+    assert r.demand_signal is not None and r.demand_signal["bias"] > 0.0      # firmware demand → toward Track B
+    # base at boards 42.5% is {4,2}; the +bias moves one unit to firmware → {3,3}
+    assert "backfill 3 / firmware 3 (hourly)" in out
+    assert r.alignment is not None and r.alignment["uncovered"] == 1
+    body = tick.report.render_pr_body(r)
+    assert "### Demand alignment" in body
+    assert "m5stack stick s3" in body                                          # UNCOVERED → Jr worklist
+    assert "RANKS_POORLY (SEO" in body and "esp32-c6" in body                  # SEO list, labelled NOT authoring
+
+
+def test_stale_demand_snapshot_does_not_steer_and_reports_honestly(capsys, tmp_path, monkeypatch):
+    calls = []
+    _fake_stage_modules(monkeypatch, calls)
+    r = run(git=git_ok(tmp_path), gh=gh_ok(), stages=None,
+            demand=lambda root, today: _demand_snap(stale=True, age_days=40, items=DEMAND_ITEMS))
+    out = capsys.readouterr().out
+    assert not r.aborted
+    assert r.demand_signal is None and r.alignment is None                     # stale → no steer
+    assert "backfill 4 / firmware 2 (hourly)" in out                          # unbiased base
+    body = tick.report.render_pr_body(r)
+    assert "stale" in body and "not steering" in body
+
+
+def test_missing_demand_snapshot_behaves_exactly_as_today(capsys, tmp_path, monkeypatch):
+    calls = []
+    _fake_stage_modules(monkeypatch, calls)
+    r = run(git=git_ok(tmp_path), gh=gh_ok(), stages=None, demand=lambda root, today: None)
+    out = capsys.readouterr().out
+    assert not r.aborted
+    assert r.demand_signal is None and r.alignment is None and r.demand_meta is None
+    assert "backfill 4 / firmware 2 (hourly)" in out
+
+
+def test_a_failing_demand_loader_warns_but_never_aborts(tmp_path, monkeypatch):
+    calls = []
+    _fake_stage_modules(monkeypatch, calls)
+
+    def boom(root, today):
+        raise RuntimeError("demand read blew up")
+    r = run(git=git_ok(tmp_path), gh=gh_ok(), stages=None, demand=boom)
+    assert not r.aborted and any("demand" in w for w in r.warnings)
+    assert r.demand_signal is None
 
 
 # --- CLI ---------------------------------------------------------------------------------------

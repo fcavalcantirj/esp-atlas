@@ -4,19 +4,18 @@
   {
    "term": "m5 stick s3",
    "raw_terms": [
-    "m5 stick s3",
-    "m5stack stick s3"
+    "m5 stick s3"
    ],
    "source": [
     "gsc_query"
    ],
-   "impressions": 22,
+   "impressions": 11,
    "clicks": null,
    "ctr": 0.0,
-   "position": 18.5,
+   "position": 12.5,
    "events": null,
    "zero_result": null,
-   "weight": 40.7,
+   "weight": 13.75,
    "resolved": {
     "board": "m5stick-s3",
     "chip": "esp32-s3",
@@ -26,8 +25,8 @@
    },
    "gap": "UNRESOLVED",
    "landing_page": "https://esp-atlas.com/parts/m5stick-s3",
-   "first_seen": "2026-08-31",
-   "last_seen": "2026-08-31"
+   "first_seen": "2026-09-09",
+   "last_seen": "2026-09-09"
   }
  ]
 }

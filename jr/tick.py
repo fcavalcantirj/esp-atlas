@@ -55,6 +55,7 @@ import memory   # noqa: E402
 import publish  # noqa: E402
 import report   # noqa: E402
 import allocator  # noqa: E402
+import demand_signal  # noqa: E402
 from budget import Budget, BudgetExceeded  # noqa: E402
 
 REPO = _JR_DIR.parent
@@ -182,6 +183,13 @@ def default_notifier(text: str) -> dict:
     return notify.send_telegram(text)
 
 
+def default_demand(root: Path, today_str: str) -> dict | None:
+    """Read the latest committed demand snapshot from the worktree's docs/demand/
+    (SPEC-demand-steering.md). READ-ONLY: the tick never runs demand.py (that needs the composio
+    venv the tick lacks) — it only reads what demand.py already committed. None when absent."""
+    return demand_signal.load_latest(root / "docs" / "demand", today_str)
+
+
 # --- preflight ---------------------------------------------------------------------------------
 
 def _rate_limit_remaining(gh) -> int | None:
@@ -290,7 +298,7 @@ def hydrate_open_pr_ledger(gh, now, ledger_path) -> list[str]:
 def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.default_gh,
              now: datetime | None = None, env: dict | None = None, stages: list | None = None,
              gauge=default_gauge, guard=default_guard, notifier=default_notifier,
-             snapshot=default_snapshot,
+             snapshot=default_snapshot, demand=default_demand,
              pr_state=None, revalidate=publish.revalidate_catalog, budget: Budget | None = None,
              repo_slug: str | None = None, min_rate_limit: int = MIN_RATE_LIMIT,
              stale_pr_hours: float = STALE_PR_HOURS, telegram: bool = True,
@@ -383,11 +391,33 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             except Exception as e:  # noqa: BLE001 — a report step must never abort the tick
                 r.warnings.append(f"data snapshot failed: {type(e).__name__}: {e}")
 
-        # 5. allocation — hourly: the gauge-driven A/B split; manual (--track): the override text
+        # 5. allocation — hourly: the gauge-driven A/B split, TILTED by demand; manual (--track):
+        #    the override text. The demand steer (SPEC-demand-steering.md) is best-effort like the
+        #    snapshot/hydrate steps: any failure warns and leaves bias=0 (allocator behaves exactly
+        #    as SPEC-data-completion.md defines), never aborts. A stale/missing snapshot → no steer.
         if hourly:
-            split = allocator.allocate(r.boards_pct, allocator.HOURLY_TRACK_UNITS)
+            bias = 0.0
+            try:
+                snap = demand(root, now.strftime("%Y-%m-%d"))
+            except Exception as e:  # noqa: BLE001 — a report/steer step must never abort the tick
+                snap = None
+                r.warnings.append(f"demand load failed: {type(e).__name__}: {e}")
+            if snap:
+                r.demand_meta = {"stale": bool(snap.get("stale")), "age_days": snap.get("age_days"),
+                                 "date": snap.get("date")}
+                if not snap.get("stale"):
+                    try:
+                        sig = demand_signal.steer_signal(snap)
+                        bias = float(sig.get("bias") or 0.0)
+                        r.demand_signal = sig
+                        r.alignment = demand_signal.alignment(snap, r.data_row)
+                    except Exception as e:  # noqa: BLE001
+                        bias = 0.0
+                        r.warnings.append(f"demand steer failed: {type(e).__name__}: {e}")
+            split = allocator.allocate(r.boards_pct, allocator.HOURLY_TRACK_UNITS, bias=bias)
+            steer = f" · demand bias {bias:+g}" if bias else ""
             r.allocation = (f"boards {r.boards_pct:.1f}% -> "
-                            f"backfill {split['backfill']} / firmware {split['firmware']} (hourly)")
+                            f"backfill {split['backfill']} / firmware {split['firmware']} (hourly){steer}")
             stages = list(stages) + hourly_stages(split)
         else:
             n = len(stages)
