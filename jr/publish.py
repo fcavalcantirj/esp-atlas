@@ -193,38 +193,70 @@ def _decide(repo_slug: str, gh, required: tuple, contexts: list[str], source: st
     return ProtectionStatus(True, tuple(contexts), allow, source=source, reason="")
 
 
-# --- earned trust: auto-merge only after N clean merges, reset by any veto -----------------------
+# --- earned trust: auto-merge only after N clean merges, reset by a LABELLED veto ----------------
+# A closed-unmerged PR resets trust ONLY when it carries a veto label. A close WITHOUT that label
+# is benign by design — a superseded / duplicate / housekeeping close — and is excluded from the
+# calculation entirely (neither a merge nor a veto). This is the fix for the "death spiral": one
+# incident used to breed a few closes -> trust reset -> auto-merge off -> PRs pile up -> the
+# pile-up breeds duplicates -> clearing them forces MORE closes -> trust never re-earned. CI is the
+# quality gate (a red-CI PR can't merge anyway); the trust gate is purely human judgement, so only
+# a deliberate, LABELLED veto should count. To reject Jr's work, close the PR with the `veto` label.
 
 JR_LOGIN = "espatlas-jr"
 TRUST_N = 10
+VETO_LABELS = frozenset({"veto"})
 
 
 @dataclass
 class TrustStatus:
     ok: bool
-    merged: int = 0
-    closed: int = 0
+    merged: int = 0     # merges in the last-n non-benign window
+    closed: int = 0     # labelled vetoes in that window
     reason: str = ""
 
 
+def _is_veto(pr: dict) -> bool:
+    """A closed-unmerged PR is a veto only if it carries a label whose name (case-insensitive)
+    is in VETO_LABELS. Robust to labels being missing / null / [] and to malformed entries."""
+    for lab in pr.get("labels") or []:
+        if isinstance(lab, dict) and (lab.get("name") or "").lower() in VETO_LABELS:
+            return True
+    return False
+
+
 def trust_status(gh=default_gh, login: str = JR_LOGIN, n: int = TRUST_N) -> TrustStatus:
-    """Felipe's ladder, automated: Jr earns auto-merge by having its last `n` closed PRs all
-    MERGED by a human; one veto (a closed, unmerged PR) resets the count. Reads GitHub, never a
-    local flag, so the state is the same on every machine and survives restarts."""
-    p = gh("pr", "list", "--author", login, "--state", "closed", "--limit", str(n), "--json", "number,mergedAt")
+    """Felipe's ladder, automated: Jr earns auto-merge when its last `n` terminal PRs (ignoring
+    benign closes) are all MERGED by a human; a single LABELLED veto in that window resets the
+    count. Reads GitHub, never a local flag, so the state is the same on every machine and survives
+    restarts. Benign closes (duplicate / superseded / housekeeping — no veto label) are dropped
+    entirely, so routine tick-PR cleanup can never reset earned trust."""
+    fetch_limit = max(n * 3, 30)    # benign closes are filtered out; over-fetch to still find n
+    p = gh("pr", "list", "--author", login, "--state", "closed",
+           "--limit", str(fetch_limit), "--json", "number,mergedAt,labels")
     if not _ok(p):
         return TrustStatus(False, reason="trust unknown (gh pr list failed)")
     try:
         prs = json.loads(getattr(p, "stdout", "") or "[]")
     except json.JSONDecodeError:
         return TrustStatus(False, reason="trust unknown (unreadable pr list)")
-    merged = sum(1 for x in prs if x.get("mergedAt"))
-    closed = len(prs) - merged
-    if closed:
-        return TrustStatus(False, merged, closed, reason=f"trust reset: {closed} of Jr's last {len(prs)} closed PRs were vetoed")
+    # Classify in recency order; drop benign closes; take the first n of what remains.
+    window: list[bool] = []     # True = merged, False = labelled veto
+    for pr in prs:
+        if pr.get("mergedAt"):
+            window.append(True)
+        elif _is_veto(pr):
+            window.append(False)
+        # else: benign close -> excluded entirely
+        if len(window) >= n:
+            break
+    merged = sum(1 for m in window if m)
+    vetoed = len(window) - merged
+    if vetoed:
+        return TrustStatus(False, merged, vetoed,
+                           reason=f"trust reset: {vetoed} of Jr's last {len(window)} terminal PRs were vetoed")
     if merged < n:
-        return TrustStatus(False, merged, closed, reason=f"trust not yet earned: {merged}/{n} consecutive merges")
-    return TrustStatus(True, merged, closed, reason="")
+        return TrustStatus(False, merged, vetoed, reason=f"trust not yet earned: {merged}/{n} consecutive merges")
+    return TrustStatus(True, merged, vetoed, reason="")
 
 
 # --- publish ----------------------------------------------------------------------------------
