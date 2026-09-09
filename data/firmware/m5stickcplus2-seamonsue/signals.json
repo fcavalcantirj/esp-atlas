@@ -1,0 +1,29 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-09",
+ "notes": [],
+ "ref": "master",
+ "repo": "hsbsbz/M5StickCPlus2-Seamonsue",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "m5stick-c"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "m5stick-c",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/hsbsbz/M5StickCPlus2-Seamonsue/blob/master/platformio.ini#L13"
+  }
+ ]
+}

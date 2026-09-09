@@ -61,6 +61,8 @@ notes:
   {6,7,8,9,10,11} (6) -- gives 32 - 5 - 4 - 6 = 17. Math not vendor-stated; verify
   before treating as exact.'
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
+images:
+  pinout: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/_images/esp32_devkitC_v4_pinlayout.png
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
@@ -74,6 +76,9 @@ sources:
 - field: getting_started
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
   verified: '2026-09-07'
+- field: images
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
+  verified: '2026-09-09'
 ---
 
 # ESP32-DevKitC V4

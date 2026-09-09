@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-16T15:00:32.435406+00:00",
+      "expires": "2026-09-16T21:00:43.442359+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-09T15:00:32.435406+00:00"
+      "timestamp": "2026-09-09T21:00:43.442359+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -4784,6 +4784,26 @@
       "status": "rejected",
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
+    "moonshot-m5glass": {
+      "expires": "2026-10-09T21:00:43.442359+00:00",
+      "id": "moonshot-m5glass",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "kingduane/moonshot-m5glass",
+      "repo_id": 1143018175,
+      "status": "rejected",
+      "timestamp": "2026-09-09T21:00:43.442359+00:00"
+    },
+    "morse-up": {
+      "expires": "2026-10-09T21:00:43.442359+00:00",
+      "id": "morse-up",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "shajanjp/morse-up",
+      "repo_id": 1223671489,
+      "status": "rejected",
+      "timestamp": "2026-09-09T21:00:43.442359+00:00"
+    },
     "mp3playerform5cardputer": {
       "expires": "2026-10-09T04:00:10.126216+00:00",
       "id": "mp3playerform5cardputer",
@@ -5001,6 +5021,16 @@
       "repo_id": 593083685,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "sensecap-indicator-esp32": {
+      "expires": "2026-10-09T21:00:43.442359+00:00",
+      "id": "sensecap-indicator-esp32",
+      "pr_ref": null,
+      "reason": "name_token_matches_catalogued: likely a port/variant",
+      "repo": "seeed-solution/sensecap_indicator_esp32",
+      "repo_id": 629399393,
+      "status": "rejected",
+      "timestamp": "2026-09-09T21:00:43.442359+00:00"
     },
     "server-vampeta": {
       "id": "server-vampeta",
@@ -5596,6 +5626,7 @@
     "kindle15/dino_game_port_for_cardputer": "dino-game-port-for-cardputer",
     "kindle15/jumpingblox4cardputer": "jumpingblox4cardputer",
     "kindle15/m5paper_clock_platformio_v2.11": "m5paper-clock-platformio-v2-11",
+    "kingduane/moonshot-m5glass": "moonshot-m5glass",
     "kion85/k85os": "k85os",
     "kion85/k85os_m5sticks3": "k85os-m5sticks3",
     "kion85/keyboard-stick": "keyboard-stick",
@@ -5769,8 +5800,10 @@
     "sau412/esp32_cyd_pda": "esp32-cyd-pda",
     "say4n/edf-energy-monitor": "edf-energy-monitor",
     "sebaspinto/misspoppyrabbit": "misspoppyrabbit",
+    "seeed-solution/sensecap_indicator_esp32": "sensecap-indicator-esp32",
     "serginator/cardputer-mouse-jiggler": "cardputer-mouse-jiggler",
     "serialgeist/esp32marauder": "esp32marauder",
+    "shajanjp/morse-up": "morse-up",
     "shapoco/lcdtap": "lcdtap",
     "sheepxux/taskhub-for-sticks3": "taskhub-for-sticks3",
     "shlappa1000/c4-stick": "c4-stick",
