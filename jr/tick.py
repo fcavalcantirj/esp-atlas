@@ -256,6 +256,38 @@ def _open_tick_prs(gh) -> list:
             and str(pr.get("headRefName", "")).startswith(TICK_BRANCH_PREFIX)]
 
 
+def _owner_repo_from_url(url: str) -> str:
+    """'owner/repo' from a firmware.md `url:`, lowercased EXACTLY as jr/drain.py keys it
+    (drain._owner_repo): strip the github.com prefix, take the first two path segments, lowercase.
+    So the ledger's by_repo key aligns with the drain's ledger.is_blocked(repo=...) lookup."""
+    fn = (url or "").strip().rstrip("/").replace("https://github.com/", "").lower()
+    return "/".join(fn.split("/")[:2])
+
+
+def _pr_firmware_repo(gh, repo_slug, head_ref, fid) -> str | None:
+    """The REAL owner/repo of firmware `fid` in an open PR, from data/firmware/<fid>/firmware.md's
+    `url:` frontmatter read at the PR's head ref. Without this the ledger would key the firmware by
+    id-as-repo and the drain's repo-based dedup (ledger.is_blocked(repo=owner/repo)) would miss it,
+    re-proposing the same repo every tick (the duplicate-PR bug). None when the file is absent (a
+    recipe-only id whose firmware is already catalogued — already deduped by catalogued_repos), when
+    it carries no `url`, or on any fetch/parse failure. Never raises."""
+    path = f"data/firmware/{fid}/firmware.md"
+    p = gh("api", f"repos/{repo_slug}/contents/{path}?ref={head_ref}", "-q", ".content")
+    if getattr(p, "returncode", 1) != 0 or not (getattr(p, "stdout", "") or "").strip():
+        return None
+    try:
+        import base64
+        from esp_atlas_core import frontmatter
+        text = base64.b64decode(p.stdout.strip()).decode("utf-8", "ignore")
+        fm, _ = frontmatter.parse_frontmatter_text(text)
+    except Exception:  # noqa: BLE001 — a bad/absent file must not abort hydration
+        return None
+    url = (fm or {}).get("url")
+    if not url:
+        return None
+    return _owner_repo_from_url(url) or None
+
+
 def _pr_firmware_ids(gh, number) -> list[str]:
     """The firmware ids a PR touches, from its changed-file paths: data/firmware/<id>/… and
     data/recipes/<board>__<id>/… (a recipe alone still names the firmware it maps). Best-effort."""
@@ -275,20 +307,35 @@ def _pr_firmware_ids(gh, number) -> list[str]:
     return sorted(ids)
 
 
-def hydrate_open_pr_ledger(gh, now, ledger_path) -> list[str]:
-    """Mark every firmware id in an OPEN Jr tick PR as `proposed` in the worktree ledger, so
-    stage_admit skips firmware already awaiting merge (the duplicate-PR fix; see the note above).
+def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None) -> list[str]:
+    """Mark every firmware id in an OPEN Jr tick PR as `proposed` in the worktree ledger, keyed by
+    the REAL owner/repo, so BOTH dedup gates see firmware already awaiting merge (the duplicate-PR
+    fix; see the note above). stage_admit dedups by firmware id, but the firmware DRAIN's prefilter
+    (jr/drain.py) dedups by owner/repo — ledger.is_blocked(repo=owner/repo). Recovering the repo
+    from each firmware.md's `url:` (read at the PR's head ref) and passing it to record_proposed
+    populates the by_repo index too, so the drain skips the open-PR repo instead of re-proposing it.
 
-    The firmware id is the dedup key; the repo owner/repo is not recoverable from a file path, so
-    the id itself stands in for the `repo` argument (only the by-id index gates admit). Uses the
-    existing memory.record_proposed API — no new persistence format — which REFUSES to downgrade a
-    `merged` or (permanently) `rejected` record, so a human veto or an already-merged id is never
-    turned back into a fresh proposal. Returns the ids hydrated."""
+    Uses the existing memory.record_proposed API — no new persistence format — which REFUSES to
+    downgrade a `merged` or (permanently) `rejected` record, so a human veto or an already-merged id
+    is never turned back into a fresh proposal.
+
+    FALLBACK: if the firmware.md can't be read or has no `url` (a recipe-only id whose firmware is
+    already merged/catalogued — already deduped by catalogued_repos), the id stands in for the repo,
+    the pre-fix behavior, so nothing regresses. Each PR/id is wrapped so one bad fetch can't abort
+    hydration. `repo_slug` is the esp-atlas repo the contents API reads (None → id-as-repo for all).
+    Returns the ids hydrated."""
     hydrated = []
     for pr in _open_tick_prs(gh):
         n = pr.get("number")
+        head_ref = pr.get("headRefName")
         for fid in _pr_firmware_ids(gh, n):
-            memory.record_proposed(fid, fid, pr_ref=f"#{n}", path=ledger_path, now=now)
+            repo = None
+            if repo_slug and head_ref:
+                try:
+                    repo = _pr_firmware_repo(gh, repo_slug, head_ref, fid)
+                except Exception:  # noqa: BLE001 — one bad fetch must not abort hydration
+                    repo = None
+            memory.record_proposed(fid, repo or fid, pr_ref=f"#{n}", path=ledger_path, now=now)
             hydrated.append(fid)
     return hydrated
 
@@ -359,7 +406,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             #     the stages enforce the budget. memory.record_proposed already refuses to downgrade
             #     a merged or permanently-rejected record.
             try:
-                r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path)
+                r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug)
             except Exception as e:  # noqa: BLE001
                 r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")
             merged = memory.reconcile_merged(catalogued, path=ledger_path, now=now)

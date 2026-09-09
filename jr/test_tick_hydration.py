@@ -14,6 +14,7 @@ Run: cd jr && python3 -m pytest test_tick_hydration.py -v
 """
 from __future__ import annotations
 
+import base64
 import json
 import shutil
 from datetime import datetime, timedelta, timezone
@@ -169,6 +170,93 @@ def test_hydrate_open_pr_ledger_never_downgrades_a_merged_record(tmp_path):
     rec = memory.load(lp)["by_id"]["newtool"]
     assert rec["status"] == "merged"     # NOT downgraded to proposed
     assert rec["pr_ref"] == "#100"       # the merge PR link preserved
+
+
+# --- the real-owner/repo recovery (the by-repo dedup the drain reads) ---------------------------
+# The prefilter that gates the firmware drain (jr/drain.py) dedups by owner/repo, NOT by firmware
+# id: it calls ledger.is_blocked(repo="tobozo/m5stack-sd-updater"). Hydrating an open PR's firmware
+# under the id-as-repo ("m5stack-sd-updater") therefore left the drain blind to it, so every tick
+# re-discovered and re-authored the same repo → duplicate PRs (#189/#190 were identical
+# m5stack-sd-updater). Hydration must recover the REAL owner/repo from the firmware.md `url:` and
+# key the ledger by it (lowercased exactly as the drain does).
+
+M5_PR_NUMBER = 189
+M5_HEAD = "jr/tick-20260909-1800"
+M5_PR = [{"number": M5_PR_NUMBER, "createdAt": RECENT, "headRefName": M5_HEAD}]
+M5_PR_FILES = json.dumps({"files": [
+    {"path": "data/firmware/m5stack-sd-updater/firmware.md"},
+    {"path": "data/recipes/m5stack-core__m5stack-sd-updater/recipe.md"},
+]})
+M5_FIRMWARE_MD = (
+    "---\n"
+    "id: m5stack-sd-updater\n"
+    "type: firmware\n"
+    "name: M5Stack SD Updater\n"
+    "url: https://github.com/tobozo/M5Stack-SD-Updater\n"   # mixed case + not the by-id slug
+    "category: multi\n"
+    "socs:\n"
+    "- esp32\n"
+    "---\n"
+    "SD-card firmware menu / bootloader for M5Stack devices.\n"
+)
+M5_CONTENT_B64 = base64.b64encode(M5_FIRMWARE_MD.encode()).decode()
+SLUG = "esp-atlas/esp-atlas"
+M5_CONTENTS_KEY = ("api", f"repos/{SLUG}/contents/data/firmware/m5stack-sd-updater/firmware.md?ref={M5_HEAD}")
+
+
+def _m5_gh(content=(0, M5_CONTENT_B64 + "\n")):
+    return recorder({
+        ("pr", "list"): (0, json.dumps(M5_PR)),
+        ("pr", "view", str(M5_PR_NUMBER), "--json", "files"): (0, M5_PR_FILES),
+        M5_CONTENTS_KEY: content,
+    })
+
+
+def test_hydrate_recovers_real_owner_repo_from_open_pr(tmp_path):
+    """The regression that proves the dup is fixed: after hydration the ledger carries the REAL
+    lowercased owner/repo (tobozo/m5stack-sd-updater), and the drain's repo-based gate would skip
+    it (is_blocked(repo=...) is True)."""
+    lp = tmp_path / "proposed_ledger.json"
+    hydrated = tick.hydrate_open_pr_ledger(_m5_gh(), NOW, lp, repo_slug=SLUG)
+    assert hydrated == ["m5stack-sd-updater"]
+    rec = memory.load(lp)["by_id"]["m5stack-sd-updater"]
+    assert rec["repo"] == "tobozo/m5stack-sd-updater"       # REAL repo, lowercased — not id-as-repo
+    assert rec["pr_ref"] == f"#{M5_PR_NUMBER}"
+    led = memory.load(lp)
+    assert memory.is_blocked(led, repo="tobozo/m5stack-sd-updater", now=NOW)   # the drain now skips it
+    assert memory.is_blocked(led, firmware_id="m5stack-sd-updater", now=NOW)   # by-id gate still holds
+
+
+def test_hydrate_falls_back_to_id_when_firmware_md_unreadable(tmp_path):
+    """FALLBACK: a firmware.md that cannot be fetched (or carries no url) never crashes a tick —
+    hydration keeps the old id-as-repo record so nothing regresses."""
+    lp = tmp_path / "proposed_ledger.json"
+    hydrated = tick.hydrate_open_pr_ledger(_m5_gh(content=(1, "")), NOW, lp, repo_slug=SLUG)
+    assert hydrated == ["m5stack-sd-updater"]
+    rec = memory.load(lp)["by_id"]["m5stack-sd-updater"]
+    assert rec["repo"] == "m5stack-sd-updater"              # id stands in for repo (unchanged behavior)
+    assert memory.is_blocked(memory.load(lp), firmware_id="m5stack-sd-updater", now=NOW)
+
+
+def test_hydrate_falls_back_to_id_when_url_missing(tmp_path):
+    """A recipe-only id whose firmware.md has no `url` frontmatter still hydrates by id."""
+    lp = tmp_path / "proposed_ledger.json"
+    urlless = "---\nid: m5stack-sd-updater\ntype: firmware\nname: X\nsocs:\n- esp32\n---\nbody\n"
+    content = (0, base64.b64encode(urlless.encode()).decode() + "\n")
+    hydrated = tick.hydrate_open_pr_ledger(_m5_gh(content=content), NOW, lp, repo_slug=SLUG)
+    assert hydrated == ["m5stack-sd-updater"]
+    assert memory.load(lp)["by_id"]["m5stack-sd-updater"]["repo"] == "m5stack-sd-updater"
+
+
+def test_hydrate_with_real_repo_never_downgrades_a_merged_record(tmp_path):
+    """Even with owner/repo recovery, an already-merged id in an open PR stays merged (invariant)."""
+    lp = tmp_path / "proposed_ledger.json"
+    memory.record_proposed("m5stack-sd-updater", "tobozo/m5stack-sd-updater", pr_ref="#100", path=lp, now=NOW)
+    ledger.update_status("m5stack-sd-updater", "merged", path=lp, now=NOW.isoformat())
+    tick.hydrate_open_pr_ledger(_m5_gh(), NOW, lp, repo_slug=SLUG)
+    rec = memory.load(lp)["by_id"]["m5stack-sd-updater"]
+    assert rec["status"] == "merged"
+    assert rec["pr_ref"] == "#100"
 
 
 # --- integration: run_tick does not re-author firmware already in an open PR --------------------
