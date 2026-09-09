@@ -1,0 +1,160 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-09",
+ "notes": [],
+ "ref": "main",
+ "repo": "mongonta0716/m5stack-avatar-mic",
+ "resolved": {
+  "boards": [
+   "m5atoms3",
+   "m5dial",
+   "m5stack-core2",
+   "m5stack-cores3"
+  ],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "esp32-s3-devkitc-1",
+   "m5stack-core-esp32",
+   "m5stack-fire",
+   "m5stack-grey",
+   "m5stick-c"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "m5stack-core2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 30,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-core2",
+   "url": "https://github.com/mongonta0716/m5stack-avatar-mic/blob/main/platformio.ini#L30"
+  },
+  {
+   "extra": {
+    "env": "m5stack-grey",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 34,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-grey",
+   "url": "https://github.com/mongonta0716/m5stack-avatar-mic/blob/main/platformio.ini#L34"
+  },
+  {
+   "extra": {
+    "env": "m5stack-fire",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 39,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-fire",
+   "url": "https://github.com/mongonta0716/m5stack-avatar-mic/blob/main/platformio.ini#L39"
+  },
+  {
+   "extra": {
+    "env": "m5stack-core-esp32",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 43,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-core-esp32",
+   "url": "https://github.com/mongonta0716/m5stack-avatar-mic/blob/main/platformio.ini#L43"
+  },
+  {
+   "extra": {
+    "env": "m5stick-c",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 48,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/mongonta0716/m5stack-avatar-mic/blob/main/platformio.ini#L48"
+  },
+  {
+   "extra": {
+    "env": "m5atoms3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 52,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/mongonta0716/m5stack-avatar-mic/blob/main/platformio.ini#L52"
+  },
+  {
+   "extra": {
+    "env": "m5atoms3-release",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 61,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/mongonta0716/m5stack-avatar-mic/blob/main/platformio.ini#L61"
+  },
+  {
+   "extra": {
+    "env": "m5stack-cores3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 65,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-cores3",
+   "url": "https://github.com/mongonta0716/m5stack-avatar-mic/blob/main/platformio.ini#L65"
+  },
+  {
+   "extra": {
+    "env": "m5stack-dial",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 73,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/mongonta0716/m5stack-avatar-mic/blob/main/platformio.ini#L73"
+  },
+  {
+   "extra": {
+    "env": "m5stickc-plus2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 80,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/mongonta0716/m5stack-avatar-mic/blob/main/platformio.ini#L80"
+  },
+  {
+   "extra": {
+    "env": "m5stack-atoms3r",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 93,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/mongonta0716/m5stack-avatar-mic/blob/main/platformio.ini#L93"
+  }
+ ]
+}

@@ -42,7 +42,10 @@ io:
   - 22
   - 23
 first_flash_notes:
-- 'J5 current-measurement header: its jumper must be fitted (factory default = jumper on). Without it, per the user guide, "power supply between the module and peripherals on the board is cut off" -- the USB-to-UART bridge still enumerates and the power LED still lights, but the ESP32-C6 itself is unpowered.'
+- 'J5 current-measurement header: its jumper must be fitted (factory default = jumper
+  on). Without it, per the user guide, "power supply between the module and peripherals
+  on the board is cut off" -- the USB-to-UART bridge still enumerates and the power
+  LED still lights, but the ESP32-C6 itself is unpowered.'
 notes:
 - 'Two USB Type-C: a UART-bridge port and the native ESP32-C6 USB 2.0 full-speed port'
 - Addressable RGB LED on GPIO8
@@ -58,6 +61,9 @@ download_mode:
   steps: Holding down Boot and then pressing Reset initiates Firmware Download mode
     for downloading firmware through the serial port
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html
+images:
+  photo: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/_images/esp32-c6-devkitc-1-isometric_v1.2.png
+  pinout: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/_images/esp32-c6-devkitc-1-pin-layout.png
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html
@@ -77,6 +83,9 @@ sources:
 - field: first_flash_notes
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html
   verified: '2026-09-01'
+- field: images
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html
+  verified: '2026-09-09'
 ---
 
 # ESP32-C6-DevKitC-1

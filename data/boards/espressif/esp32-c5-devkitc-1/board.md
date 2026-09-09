@@ -4,9 +4,9 @@ type: board
 brand: espressif
 name: ESP32-C5-DevKitC-1
 aka:
-- "esp32-c5-devkitc1-n16r4"
-- "esp32-c5-devkitc1-n4"
-- "esp32-c5-devkitc1-n8r4"
+- esp32-c5-devkitc1-n16r4
+- esp32-c5-devkitc1-n4
+- esp32-c5-devkitc1-n8r4
 soc: esp32-c5
 form_factor: devkit
 usb:
@@ -63,8 +63,16 @@ notes:
   are exposed -- strapping {2,3,7,25,26,27,28} (7) and usb_flash_tied {13,14} (2)
   -- gives 21 - 7 - 2 = 12. Math not vendor-stated; verify before treating as exact.'
 first_flash_notes:
-- 'J5 current-measurement header: its jumper must be fitted (factory default = jumper on). Without it, per the user guide, "power supply between the module and peripherals on the board is cut off" -- the USB-to-UART bridge still enumerates and the power LED still lights, but the ESP32-C5 itself is unpowered and answers on neither USB-C port. Observed 2026-09-01 on a unit that shipped with no jumper; fitting one fixed it.'
+- 'J5 current-measurement header: its jumper must be fitted (factory default = jumper
+  on). Without it, per the user guide, "power supply between the module and peripherals
+  on the board is cut off" -- the USB-to-UART bridge still enumerates and the power
+  LED still lights, but the ESP32-C5 itself is unpowered and answers on neither USB-C
+  port. Observed 2026-09-01 on a unit that shipped with no jumper; fitting one fixed
+  it.'
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
+images:
+  photo: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/_images/esp32-c5-devkitc-1-isometric_v1.1.png
+  pinout: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/_images/esp32-c5-devkitc-1-pin-layout_v1.2.png
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
@@ -99,6 +107,9 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-c5-devkitc1-n8r4.json
   verified: '2026-09-07'
+- field: images
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html
+  verified: '2026-09-09'
 ---
 
 # ESP32-C5-DevKitC-1
