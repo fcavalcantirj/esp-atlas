@@ -53,6 +53,12 @@ notes:
   22 - 5 - 4 = 13. Math not vendor-stated; verify before treating as exact.
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp-wrover-kit/user_guide.html
 usb_serial: other
+download_mode:
+  mode: manual
+  steps: Holding down Boot and then pressing EN initiates Firmware Download mode for
+    downloading firmware through the serial port
+images:
+  photo: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/_images/esp-wrover-kit-v4.1-layout-front.png
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp-wrover-kit/user_guide.html
@@ -69,6 +75,12 @@ sources:
 - field: usb_serial
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp-wrover-kit/user_guide.html
   verified: '2026-09-09'
+- field: download_mode
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp-wrover-kit/user_guide.html
+  verified: '2026-09-10'
+- field: images
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp-wrover-kit/user_guide.html
+  verified: '2026-09-10'
 ---
 
 # ESP-WROVER-KIT
