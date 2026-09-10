@@ -7,6 +7,7 @@ category: multi
 maintainer: oceantroop
 socs:
 - esp32
+- esp32-s3
 popularity:
   stars: 373
   as_of: '2026-09-01'
@@ -17,6 +18,9 @@ sources:
 - field: popularity
   url: https://github.com/OceanTroop/orca-one
   verified: '2026-09-01'
+- field: socs
+  url: https://github.com/OceanTroop/orca-one/blob/main/platformio.ini#L118
+  verified: '2026-09-10'
 ---
 
 A collection of alternatives for running Flipper Zero functions on more affordable devices such as M5Stack, Liligo and ESP32 in general.

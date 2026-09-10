@@ -1,0 +1,94 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "OceanTroop/orca-one",
+ "resolved": {
+  "boards": [
+   "m5cardputer"
+  ],
+  "socs": [],
+  "unresolved": [
+   "OrcaOne_m5stack-cardputer",
+   "OrcaOne_m5stack-cplus1_1",
+   "OrcaOne_m5stack-cplus2",
+   "m5stick-c"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "OrcaOne_m5stack-cardputer_v0.0.32.bin",
+    "release": "v0.0.32"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "OrcaOne_m5stack-cardputer",
+   "url": "https://github.com/OceanTroop/orca-one/releases/download/v0.0.32/OrcaOne_m5stack-cardputer_v0.0.32.bin"
+  },
+  {
+   "extra": {
+    "asset": "OrcaOne_m5stack-cplus1_1_v0.0.32.bin",
+    "release": "v0.0.32"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "OrcaOne_m5stack-cplus1_1",
+   "url": "https://github.com/OceanTroop/orca-one/releases/download/v0.0.32/OrcaOne_m5stack-cplus1_1_v0.0.32.bin"
+  },
+  {
+   "extra": {
+    "asset": "OrcaOne_m5stack-cplus2_v0.0.32.bin",
+    "release": "v0.0.32"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "OrcaOne_m5stack-cplus2",
+   "url": "https://github.com/OceanTroop/orca-one/releases/download/v0.0.32/OrcaOne_m5stack-cplus2_v0.0.32.bin"
+  },
+  {
+   "extra": {
+    "env": "m5stack-cplus1_1",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 31,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/OceanTroop/orca-one/blob/main/platformio.ini#L31"
+  },
+  {
+   "extra": {
+    "env": "m5stack-cplus2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 73,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/OceanTroop/orca-one/blob/main/platformio.ini#L73"
+  },
+  {
+   "extra": {
+    "env": "m5stack-cardputer",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 118,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/OceanTroop/orca-one/blob/main/platformio.ini#L118"
+  }
+ ]
+}

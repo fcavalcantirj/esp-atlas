@@ -27,6 +27,8 @@ download_mode:
   mode: auto
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-ethernet-kit/user_guide.html
 usb_serial: other
+images:
+  photo: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/_images/esp32-ethernet-kit-v1.2-overview.png
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-ethernet-kit/user_guide.html
@@ -40,6 +42,9 @@ sources:
 - field: usb_serial
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-ethernet-kit/user_guide.html
   verified: '2026-09-09'
+- field: images
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-ethernet-kit/user_guide.html
+  verified: '2026-09-10'
 ---
 
 # ESP32-Ethernet-Kit
