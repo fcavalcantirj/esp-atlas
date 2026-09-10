@@ -318,44 +318,71 @@ def test_io_heavy_supplements_from_the_deterministic_fallback_when_no_recipe_boa
     built_db_path,
 ):
     """The general SPEC-io-power.md §6 addendum mechanism, independent of the
-    esphome-specific recipe fix above: `openmqttgateway`'s own recipe graph is
-    a single board (esp32-c3-devkitm-1) with a cited GPIO count of 10, below
-    the goal's channel need of 11 -- confirmed inadequate, not merely neutral.
-    With no board in the recipe pool CONFIRMED adequate, a confirmed-adequate
-    high-`gpio_free` board from the same deterministic `wizard()` pool
-    `_boards_fallback` draws from must supplement the candidate set, so an
-    io_heavy goal is never stranded on a firmware whose own recipe graph
-    happens to be pin-poor. (Was `launcher` until BIBLE-PLAN.md A2 batch 1 gave
-    `m5stick-s3` a cited `gpio_free: 11` -- exactly the goal's channel need --
-    retiring `launcher` from this scenario; then `meshtastic` until BIBLE-PLAN.md
-    A2 batch 6 gave three Heltec LoRa+display boards (`heltec-wifi-lora-32-v3`
-    gpio_free=18, `heltec-wireless-paper`=14, `heltec-wireless-tracker`=11)
-    cited `gpio_free` counts meeting the goal's channel need, making them
-    genuine CONFIRMED-adequate members of `meshtastic`'s own recipe graph and
-    retiring `meshtastic` from this scenario; `openmqttgateway` still has no
-    confirmed-adequate recipe member.)"""
-    from esp_atlas_core.firmware import recipes_for_firmware
+    esphome-specific recipe fix above: when a firmware's own recipe graph has
+    NO board CONFIRMED to meet the goal's channel need (every recipe board is
+    hard-excluded or merely neutral -- none with a cited `gpio_free`/`gpio_exposed`
+    >= the need), a confirmed-adequate high-GPIO board from the same
+    deterministic `wizard()` pool `_boards_fallback` draws from must supplement
+    the candidate set, so an io_heavy goal is never stranded on a firmware
+    whose own recipe graph happens to be pin-poor.
+
+    Data-growth-proof by design (the fix for issue #198's brittleness class):
+    rather than freezing a specific real firmware as "pin-poor" -- a premise a
+    tick can silently invalidate the moment it enriches that firmware's compat
+    map (this test's precondition was assumed of `launcher`, then `meshtastic`,
+    then `openmqttgateway` in turn, each "retired" as its recipe graph grew a
+    board meeting the channel need) -- we DERIVE the precondition from the real
+    DB at test time: scan for any firmware whose recipe graph is genuinely
+    pin-poor for this goal and exercise the mechanism on it. Enriching real
+    firmware can no longer turn the assertion into a lie; if the compat map
+    ever becomes fully adequate (no pin-poor firmware left at all), we skip with
+    a clear message rather than assert on a false premise. The mechanism's teeth
+    are unchanged: a board MUST be supplemented from outside the recipe graph,
+    and every supplemented board MUST be confirmed-adequate (gpio >= the need)."""
+    from esp_atlas_core.build_guide import _channel_count
+    from esp_atlas_core.firmware import list_firmware, recipes_for_firmware
+
+    channel_need = _channel_count(_IO_HEAVY_QUERY)
+
+    def _known_gpio(board_id):
+        record = get_part(board_id, db_path=built_db_path)
+        if record is None:
+            return None
+        io = (record["frontmatter"] or {}).get("io") or {}
+        return io.get("gpio_free", io.get("gpio_exposed"))
+
+    def _is_pin_poor(firmware_id):
+        """A firmware whose recipe graph is non-empty yet has NO board CONFIRMED
+        to meet the channel need -- exactly the precondition the mechanism guards."""
+        board_ids = [
+            recipe["board"] for recipe in recipes_for_firmware(firmware_id) if get_part(recipe["board"], db_path=built_db_path)
+        ]
+        if not board_ids:
+            return False
+        return not any((known := _known_gpio(bid)) is not None and known >= channel_need for bid in board_ids)
+
+    target = next((fw["id"] for fw in sorted(list_firmware(), key=lambda f: f["id"]) if _is_pin_poor(fw["id"])), None)
+    if target is None:
+        pytest.skip("no firmware left with a pin-poor recipe graph for this goal -- compat map is fully adequate")
 
     llm = _stub(
         {
-            "firmware_id": "openmqttgateway",
-            "why": "MQTT gateway bridging BLE/433MHz/IR devices onto the network.",
+            "firmware_id": target,
+            "why": "picked to exercise the supplement-from-fallback path.",
             "traits": {"wifi": True, "battery": False, "cheap": True, "io_heavy": True},
             "add_ons": [],
         }
     )
     result = build_guide(_IO_HEAVY_QUERY, llm_client=llm, db_path=built_db_path)
 
-    recipe_boards = {r["board"] for r in recipes_for_firmware("openmqttgateway")}
+    recipe_boards = {r["board"] for r in recipes_for_firmware(target)}
     board_ids = {b["board_id"] for b in result["boards"]}
-    assert board_ids - recipe_boards, "expected a supplemented board outside openmqttgateway's own recipe graph"
+    assert board_ids - recipe_boards, f"expected a supplemented board outside {target}'s own recipe graph"
 
     for board in result["boards"]:
-        record = get_part(board["board_id"], db_path=built_db_path)
-        io = (record["frontmatter"] or {}).get("io") or {}
-        known = io.get("gpio_free", io.get("gpio_exposed"))
         if board["board_id"] not in recipe_boards:
-            assert known is not None and known >= 11, "a supplemented board must be a CONFIRMED-adequate board"
+            known = _known_gpio(board["board_id"])
+            assert known is not None and known >= channel_need, "a supplemented board must be a CONFIRMED-adequate board"
 
 
 def test_io_heavy_never_excludes_a_board_with_no_cited_io_data(built_db_path):
