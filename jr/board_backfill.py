@@ -109,6 +109,45 @@ def doc_url_candidates(board_id: str, soc: str) -> list[str]:
     return candidates
 
 
+# ─── m5stack doc-URL resolver (SPEC-board-backfill-vendors.md, Slice 2) ──────────
+# Every m5stack product doc lives at `docs.m5stack.com/en/core/<ProductName>` — CONFIRMED
+# by a live fetch on 2026-09-10 (m5stick-s3, m5cardputer, m5stack-core2 all returned 200,
+# and their HTML is saved as the Slice-2 fixtures). The <ProductName> path segment is
+# board-specific and NOT derivable from the board id (m5stack-core2 → core2,
+# m5atom-lite → ATOM%20Lite, m5stamp-c3 → Stamp_C3), so — exactly like DOC_URL_OVERRIDES —
+# a per-board map of human-verified paths is used, never a constructed guess. Each path here
+# was taken from the board's already-cited `docs.m5stack.com` source URL and reconfirmed
+# live. If m5stack renames a page and one 404s, that board stays SKIPPED (doc-unreachable),
+# never invented. All 13 boards live under the single `core/` family (there is no separate
+# stick/atom/stamp doc tree on docs.m5stack.com — the product name alone selects the page).
+M5STACK_DOC_PATHS: dict[str, str] = {
+    "m5cardputer": "core/Cardputer",
+    "m5stack-core2": "core/core2",
+    "m5stack-cores3": "core/CoreS3",
+    "m5stack-papers3": "core/papers3",
+    "m5stick-s3": "core/StickS3",
+    "m5stick-cplus2": "core/M5StickC%20PLUS2",
+    "m5dial": "core/M5Dial",
+    "m5atom-lite": "core/ATOM%20Lite",
+    "m5atoms3": "core/AtomS3",
+    "m5atoms3-lite": "core/AtomS3%20Lite",
+    "m5nanoc6": "core/M5NanoC6",
+    "m5stamp-c3": "core/Stamp_C3",
+    "m5stamp-s3": "core/StampS3",
+}
+
+M5STACK_DOC_BASE = "https://docs.m5stack.com/en"
+
+
+def m5stack_doc_candidates(board_id: str, soc: str) -> list[str]:
+    """Ordered candidate official doc URLs for an m5stack board on docs.m5stack.com. Returns
+    the single verified `core/<ProductName>` product page for a known board, or [] for an
+    unmapped id (→ the board is SKIPPED doc-unreachable, never guessed). `soc` is accepted for
+    a uniform resolver signature but unused: m5stack pages are keyed by product, not chip."""
+    path = M5STACK_DOC_PATHS.get(board_id)
+    return [f"{M5STACK_DOC_BASE}/{path}"] if path else []
+
+
 # ─── vendor doc-URL resolver registry (SPEC-board-backfill-vendors.md, Slice 1) ──
 # A resolver maps a board to the ORDERED candidate official doc URLs to try (best-first) on
 # that vendor's own domain. Espressif's existing `doc_url_candidates` logic IS the
@@ -120,6 +159,7 @@ from typing import Callable  # noqa: E402
 
 VENDOR_DOC_RESOLVERS: dict[str, Callable[[str, str], list[str]]] = {
     "espressif": doc_url_candidates,
+    "m5stack": m5stack_doc_candidates,
 }
 
 
@@ -188,8 +228,11 @@ def extract_download_mode(text: str) -> dict | None:
         "...pressing EN initiates Firmware Download mode". Audio (esp-adf) boards phrase the
         same act as "...initiates the firmware upload mode" — treated as equivalent.
         -> {"mode": "manual", "steps": <that exact sentence>}.
-      * AUTO — a sentence that explicitly states auto-reset / automatic download.
-        -> {"mode": "auto"}.
+      * AUTO — a sentence that explicitly BINDS an auto-word to a flashing verb: `auto-reset`,
+        or `automatic(ally)` sitting next to download/flash/bootloader (in either order). The
+        auto-word MUST be tied to the flashing act, not merely co-occur in the sentence — some
+        vendor pages say "automatic port recognition" (the OS auto-detecting the serial PORT),
+        which is NOT an auto-download claim and MUST NOT ground (m5stack PaperS3). -> {"mode": "auto"}.
       * Neither found -> None (OMIT). NEVER guessed — a wrong step can brick a board.
       `\\bEN\\b` is matched with word boundaries so it only catches the standalone EN button,
       never the fragment inside "then"/"when"/"enter"."""
@@ -200,11 +243,22 @@ def extract_download_mode(text: str) -> dict | None:
         if names_mode and "boot" in low and second_button:
             return {"mode": "manual", "steps": s.rstrip(".")}
     for s in _sentences(text):
-        low = s.lower()
-        if "download" in low and ("automatic" in low or "auto-reset" in low
-                                  or "auto reset" in low or "automatically" in low):
+        if _AUTO_DOWNLOAD_RE.search(s.lower()):
             return {"mode": "auto"}
     return None
+
+
+# Auto-download only grounds when an auto-word is BOUND to a flashing verb — not merely
+# present in a (table-flattened) sentence. `auto[- ]?reset` is unambiguous; otherwise
+# `automatic(ally)` must sit within two words of download/flash/bootloader (either order).
+# This deliberately EXCLUDES "automatic port recognition" (serial-port auto-detect, not
+# auto-flash) so a wrong download-mode claim is never written (cite-or-omit, flash-critical).
+_AUTO_DOWNLOAD_RE = re.compile(
+    r"auto[- ]?reset"
+    r"|automatic(?:ally)?\s+(?:\w+\s+){0,2}(?:download|flash(?:ing)?|bootloader)"
+    r"|(?:download|flash(?:ing)?|bootloader)(?:\s+\w+){0,3}\s+automatic(?:ally)?",
+    re.I,
+)
 
 
 # Most-specific token first so cp2102n is never miscounted as cp2102 (and ft2232h → ft2232).
@@ -356,6 +410,8 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
         return {**base, "status": "skipped", "reason": "no-soc", "url": None}
 
     candidates = resolver(board_id, soc)
+    if not candidates:  # resolver has no verified URL for this board — skip, never guess
+        return {**base, "status": "skipped", "reason": "doc-unreachable", "url": None}
     res, url = None, candidates[-1]
     for u in candidates:
         r = fetch(u)

@@ -475,11 +475,11 @@ def test_registry_has_espressif_resolver_matching_doc_url_candidates():
 
 
 def test_unregistered_brand_skipped_no_resolver_and_file_unchanged(tmp_path):
-    # (b) an m5stack board (no registered resolver in Slice 1) is skipped with
-    # reason "no-resolver" and left byte-for-byte unmodified — matching today's behaviour
-    # where non-Espressif brands are never touched.
-    bid, soc = "m5stack-atom-s3", "esp32-s3"
-    path = _write_board(tmp_path, bid, soc, brand="m5stack")
+    # (b) a brand with NO registered resolver (adafruit — still unregistered after Slice 2)
+    # is skipped with reason "no-resolver" and left byte-for-byte unmodified — the guarantee
+    # that a brand without a resolver is never touched.
+    bid, soc = "adafruit-feather-esp32-s3", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="adafruit")
     before = path.read_text()
 
     entry = bb.backfill_board(path, tmp_path, _fetcher({_url(bid, soc): DOC_WITH_MANUAL}), TODAY)
@@ -491,25 +491,28 @@ def test_unregistered_brand_skipped_no_resolver_and_file_unchanged(tmp_path):
 
 
 def test_run_is_registry_driven_processing_only_resolvable_brands(tmp_path):
-    # (c) run() processes exactly the brands with a registered resolver (espressif today),
-    # NOT other vendors — driven off VENDOR_DOC_RESOLVERS keys, not a hardcoded "espressif".
+    # (c) run() processes exactly the brands with a registered resolver (espressif + m5stack
+    # after Slice 2), NOT other vendors — driven off VENDOR_DOC_RESOLVERS keys, not a
+    # hardcoded brand. adafruit has no resolver → only LISTED, never processed or modified.
     p_esp = _write_board(tmp_path, "esp32-c5-devkitc-1", "esp32-c5")
     p_m5 = _write_board(tmp_path, "m5stack-core2", "esp32", brand="m5stack")
     p_ada = _write_board(tmp_path, "adafruit-feather-esp32-s3", "esp32-s3", brand="adafruit")
     before_m5, before_ada = p_m5.read_text(), p_ada.read_text()
     url = _url("esp32-c5-devkitc-1", "esp32-c5")
 
+    # fetcher serves only the espressif URL → m5stack-core2's docs.m5stack.com URL 404s, so it
+    # is PROCESSED (registered) but skipped doc-unreachable — proving run() reaches m5stack now.
     report = bb.run(data_root=tmp_path, fetch=_fetcher({url: DOC_WITH_MANUAL}), today=TODAY)
 
     processed = {e["board_id"] for e in report["backfilled"]} | {e["board_id"] for e in report["skipped"]}
     assert "esp32-c5-devkitc-1" in processed
-    assert "m5stack-core2" not in processed
+    assert "m5stack-core2" in processed              # m5stack is registered after Slice 2
     assert "adafruit-feather-esp32-s3" not in processed
-    # unregistered brands are only LISTED, never processed or modified
-    assert "m5stack/m5stack-core2" in report["needs_doc_url"]
+    # a registered brand is NOT on the needs_doc_url list; only the unregistered one is
+    assert "m5stack/m5stack-core2" not in report["needs_doc_url"]
     assert "adafruit/adafruit-feather-esp32-s3" in report["needs_doc_url"]
-    assert p_m5.read_text() == before_m5
-    assert p_ada.read_text() == before_ada
+    assert p_m5.read_text() == before_m5             # skipped (404) → unmodified
+    assert p_ada.read_text() == before_ada           # no resolver → unmodified
 
 
 def test_lyrat_end_to_end_recovers_from_esp_adf_fixture(tmp_path):
@@ -531,3 +534,179 @@ def test_lyrat_end_to_end_recovers_from_esp_adf_fixture(tmp_path):
     cited = {s["field"]: s for s in fm["sources"]}
     for field in ("download_mode", "usb_serial", "getting_started", "images"):
         assert cited[field]["url"] == url and cited[field]["verified"] == TODAY
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SLICE 2 — m5stack vendor doc resolver (SPEC-board-backfill-vendors.md §Slice 2).
+#
+# Registers the "m5stack" resolver on docs.m5stack.com so board_backfill reaches the 13
+# m5stack boards. The real doc-URL pattern was CONFIRMED by a live fetch during the build:
+# every m5stack product page lives at `docs.m5stack.com/en/core/<ProductName>`, where the
+# product-name path is board-specific (m5stack-core2 → core2, m5atom-lite → ATOM%20Lite),
+# so the resolver carries a per-board map — a human-verified URL per board, never guessed.
+#
+# EMPIRICAL grounding (measured on the REAL fetched pages saved under fixtures/):
+#   * getting_started — grounds for ALL 13 (the resolved 200 URL IS the field).
+#   * usb_serial      — grounds where the page NAMES a bridge/JTAG: core2 states "CH9102"
+#                       → ch9102; Cardputer states "USB Serial/JTAG" → native-usb-serial-jtag.
+#                       StickS3 names neither → OMITTED (cite-or-omit).
+#   * download_mode   — NOT groundable on m5stack yet: the pages use "long-press Reset to
+#                       enter download mode" (no Boot-button sequence), so the Espressif-tuned
+#                       manual heuristic (which requires a Boot button) correctly does NOT
+#                       fire. Left OMITTED — a later slice can generalize it. NEVER forced.
+#   * images          — NOT groundable yet: m5stack image filenames are opaque
+#                       (product_01.webp, img-<uuid>.webp), matching none of the pinout/photo
+#                       keyword patterns. Left OMITTED. NEVER faked.
+# ══════════════════════════════════════════════════════════════════════════════
+
+# The three URLs confirmed 200 by a live fetch on 2026-09-10 (their HTML is the fixtures).
+M5STACK_VERIFIED_URLS = {
+    "m5stick-s3": "https://docs.m5stack.com/en/core/StickS3",
+    "m5cardputer": "https://docs.m5stack.com/en/core/Cardputer",
+    "m5stack-core2": "https://docs.m5stack.com/en/core/core2",
+}
+
+# All 13 m5stack board ids the resolver must cover (the data/boards/m5stack/* dirs).
+M5STACK_ALL_BOARDS = [
+    "m5cardputer", "m5stack-core2", "m5stack-cores3", "m5stick-s3", "m5stick-cplus2",
+    "m5dial", "m5atom-lite", "m5atoms3", "m5atoms3-lite", "m5nanoc6", "m5stamp-c3",
+    "m5stamp-s3", "m5stack-papers3",
+]
+
+
+def test_m5stack_resolver_registered_returns_verified_docs_urls():
+    # (a) the registry gained an "m5stack" entry, and it returns the EXACT live-verified
+    # docs.m5stack.com product URL (best-first) for the three boards fetched during the build.
+    assert "m5stack" in bb.VENDOR_DOC_RESOLVERS
+    resolver = bb.VENDOR_DOC_RESOLVERS["m5stack"]
+    for bid, url in M5STACK_VERIFIED_URLS.items():
+        cands = resolver(bid, "esp32-s3")
+        assert cands[0] == url, f"{bid} → {cands[0]!r} != {url!r}"
+
+
+def test_m5stack_resolver_covers_all_13_boards_on_docs_domain():
+    # (b) every one of the 13 m5stack boards resolves to a docs.m5stack.com/en/core/ URL —
+    # no board falls through uncovered (the whole point of the slice: 0 → 13 boards).
+    resolver = bb.VENDOR_DOC_RESOLVERS["m5stack"]
+    for bid in M5STACK_ALL_BOARDS:
+        cands = resolver(bid, "esp32")
+        assert cands, f"{bid} yielded no candidate URL"
+        assert cands[0].startswith("https://docs.m5stack.com/en/core/"), cands[0]
+
+
+def _m5_fetcher_for(bid, fixture_name):
+    """Fake fetcher that serves the given fixture ONLY at the m5stack resolver's URL for
+    `bid` — any other URL 404s (proves resolution lands on the right page)."""
+    url = bb.VENDOR_DOC_RESOLVERS["m5stack"](bid, "esp32-s3")[0]
+    return url, _fetcher({url: _fixture(fixture_name)})
+
+
+def test_m5stack_core2_grounds_getting_started_and_usb_serial_omits_rest(tmp_path):
+    # (c) core2's REAL page names CH9102 → usb_serial grounds; getting_started = the URL;
+    # download_mode + images are OMITTED (not groundable on m5stack yet) → partial.
+    bid, soc = "m5stack-core2", "esp32"
+    path = _write_board(tmp_path, bid, soc, brand="m5stack")
+    url, fetch = _m5_fetcher_for(bid, "m5stack-core2")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url
+    assert set(entry["written"]) == {"usb_serial", "getting_started"}
+    assert set(entry["omitted"]) == {"download_mode", "images"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["usb_serial"] == "ch9102"          # the page explicitly names CH9102
+    assert fm["getting_started"] == url
+    assert "download_mode" not in fm             # OMITTED — never forced
+    assert "images" not in fm                    # OMITTED — never faked
+    cited = {s["field"]: s for s in fm["sources"]}
+    for field in ("usb_serial", "getting_started"):
+        assert cited[field]["url"] == url and cited[field]["verified"] == TODAY
+
+
+def test_m5stack_cardputer_grounds_native_jtag(tmp_path):
+    # (d) Cardputer's REAL page states "USB Serial/JTAG" → native-usb-serial-jtag grounds.
+    bid, soc = "m5cardputer", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="m5stack")
+    url, fetch = _m5_fetcher_for(bid, "m5cardputer")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["usb_serial"] == "native-usb-serial-jtag"
+    assert fm["getting_started"] == url
+
+
+def test_m5stack_stick_s3_only_getting_started_grounds(tmp_path):
+    # (e) StickS3's REAL page names NO bridge chip and no JTAG → usb_serial OMITTED; only
+    # getting_started grounds. This is the honest "1 field" floor — still a real 0→1 gain.
+    bid, soc = "m5stick-s3", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="m5stack")
+    url, fetch = _m5_fetcher_for(bid, "m5stick-s3")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert "usb_serial" not in fm
+    assert "download_mode" not in fm
+
+
+def test_m5stack_usb_serial_values_are_schema_enum_valid():
+    # every usb_serial the m5stack pages ground MUST be in the board schema's enum, or the
+    # guard rejects the board and the tick aborts.
+    import json
+    enum = set(json.load(open(bb.REPO / "schema" / "board.schema.json"))
+               ["properties"]["usb_serial"]["enum"])
+    for name in ("m5stack-core2", "m5cardputer"):
+        val = bb.extract_usb_serial(bb._visible_text(_fixture(name)))
+        assert val in enum
+
+
+def test_m5stack_download_mode_and_images_not_grounded_on_real_pages():
+    # CRITICAL cite-or-omit: on the REAL m5stack pages the Espressif-tuned download_mode and
+    # image heuristics correctly return None (no false positives), so those fields stay omitted.
+    for name in ("m5stack-core2", "m5cardputer", "m5stick-s3"):
+        raw = _fixture(name)
+        assert bb.extract_download_mode(bb._visible_text(raw)) is None
+        assert bb.extract_images(raw, "https://docs.m5stack.com/en/core/X") is None
+
+
+def test_m5stack_papers3_automatic_port_recognition_is_not_auto_download():
+    # CRITICAL cite-or-omit regression: the PaperS3 page says "automatic port recognition"
+    # (the OS auto-detecting the serial PORT) — that is NOT an auto-DOWNLOAD/auto-reset flash
+    # claim. The download_mode auto-branch must NOT be fooled by it → returns None (omit).
+    # usb_serial still grounds (the page names CH9102).
+    raw = _fixture("m5stack-papers3")
+    text = bb._visible_text(raw)
+    assert bb.extract_download_mode(text) is None    # "automatic port recognition" ≠ auto-download
+    assert bb.extract_usb_serial(text) == "ch9102"
+
+
+@pytest.mark.parametrize("sentence", [
+    "The board features an auto-reset circuit for hands-free flashing.",
+    "After connecting, the board automatically enters download mode.",
+    "The bootloader is triggered automatically on upload.",
+])
+def test_auto_download_still_grounds_on_genuine_phrasing(sentence):
+    # The tightening must not throw out the baby: a real auto-download/auto-reset statement
+    # still grounds to {"mode": "auto"} (no Espressif regression — its fixtures are all manual,
+    # but the auto path must keep working for genuinely auto-reset boards).
+    assert bb.extract_download_mode(sentence) == {"mode": "auto"}
+
+
+def test_m5stack_board_404_skipped_cleanly(tmp_path):
+    # (f) a board whose doc page 404s is SKIPPED doc-unreachable and left byte-for-byte
+    # unmodified — never a partial/invented write.
+    bid, soc = "m5stack-core2", "esp32"
+    path = _write_board(tmp_path, bid, soc, brand="m5stack")
+    before = path.read_text()
+    entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
+
+    assert entry["status"] == "skipped"
+    assert entry["reason"] == "doc-unreachable"
+    assert entry["modified"] is False
+    assert path.read_text() == before
