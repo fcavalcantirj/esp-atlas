@@ -1,0 +1,371 @@
+<div itemprop="articleBody">
+             
+  <section id="esp32-c3-devkitc-02">
+<h1>ESP32-C3-DevKitC-02<a class="headerlink" href="#esp32-c3-devkitc-02" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/latest/esp32c3/esp32-c3-devkitc-02/user_guide.html">[中文]</a></p>
+<p>This user guide will help you get started with ESP32-C3-DevKitC-02 and will also provide more in-depth information.</p>
+<p>ESP32-C3-DevKitC-02 is an entry-level development board based on <a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-c3-wroom-02_datasheet_en.pdf">ESP32-C3-WROOM-02 or ESP32-C3-WROOM-02U</a>, general-purpose modules with 4 MB SPI flash. This board integrates complete Wi-Fi and Bluetooth® Low Energy functions.</p>
+<p>Most of the I/O pins are broken out to the pin headers on both sides for easy interfacing. Developers can either connect peripherals with jumper wires or mount ESP32-C3-DevKitC-02 on a breadboard.</p>
+<figure class="align-center" id="id9">
+<img alt="ESP32-C3-DevKitC-02" src="../_images/esp32-c3-devkitc-02-v1-isometric.png" />
+<figcaption>
+<p><span class="caption-text">ESP32-C3-DevKitC-02</span><a class="headerlink" href="#id9" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The document consists of the following major sections:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#getting-started">Getting Started</a>: Overview of ESP32-C3-DevKitC-02 and hardware/software setup instructions to get started.</p></li>
+<li><p><a class="reference internal" href="#hardware-reference">Hardware Reference</a>: More detailed information about the ESP32-C3-DevKitC-02’s hardware.</p></li>
+<li><p><a class="reference internal" href="#hardware-revision-details">Hardware Revision Details</a>: Revision history, known issues, and links to user guides for previous versions (if any) of ESP32-C3-DevKitC-02.</p></li>
+<li><p><a class="reference internal" href="#related-documents">Related Documents</a>: Links to related documentation.</p></li>
+<li><p><a class="reference internal" href="#disclaimer-and-copyright-notice">Disclaimer and Copyright Notice</a>: Link to the disclaimer and copyright notice.</p></li>
+</ul>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h2>
+<p>This section provides a brief introduction of ESP32-C3-DevKitC-02, instructions on how to do the initial hardware setup and how to flash firmware onto it.</p>
+<section id="description-of-components">
+<h3>Description of Components<a class="headerlink" href="#description-of-components" title="Permalink to this heading"></a></h3>
+<figure class="align-center" id="id10">
+<span id="user-guide-c3-devkitc-02-v1-board-front"></span><img alt="ESP32-C3-DevKitC-02 (with the ESP32-C3-WROOM-02 module） - front" src="../_images/esp32-c3-devkitc-02-v1-annotated-photo.png" />
+<figcaption>
+<p><span class="caption-text">ESP32-C3-DevKitC-02 (with the ESP32-C3-WROOM-02 module) - front</span><a class="headerlink" href="#id10" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The key components of the board are described in a counter-clockwise direction.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key Component</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ESP32-C3-WROOM-02 or ESP32-C3-WROOM-02U</p></td>
+<td><p>ESP32-C3-WROOM-02 and ESP32-C3-WROOM-02U are powerful and general-purpose Espressif modules that offer Wi-Fi and Bluetooth Low Energy coexistence. ESP32-C3-WROOM-02 has a PCB antenna, while ESP32-C3-WROOM-02U has an external antenna connector. They both integrate a 4 MB SPI flash.</p></td>
+</tr>
+<tr class="row-odd"><td><p>5 V to 3.3 V LDO</p></td>
+<td><p>Power regulator that converts a 5 V supply into a 3.3 V output.</p></td>
+</tr>
+<tr class="row-even"><td><p>5 V Power On LED</p></td>
+<td><p>Turns on when the USB power is connected to the board.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pin Headers</p></td>
+<td><p>All available GPIO pins (except for the SPI bus for flash) are broken out to the pin headers on the board. For details, please see <a class="reference internal" href="#user-guide-c3-devkitc-02-v1-header-blocks"><span class="std std-ref">Header Block</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>Boot Button</p></td>
+<td><p>Download button. Holding down <strong>Boot</strong> and then pressing <strong>Reset</strong> initiates Firmware Download mode for downloading firmware through the serial port.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Micro-USB Port</p></td>
+<td><p>USB interface. Power supply for the board as well as the communication interface between a computer and the ESP32-C3 chip.</p></td>
+</tr>
+<tr class="row-even"><td><p>Reset Button</p></td>
+<td><p>Press this button to restart the system.</p></td>
+</tr>
+<tr class="row-odd"><td><p>USB-to-UART Bridge</p></td>
+<td><p>Single USB-to-UART bridge chip provides transfer rates up to 3 Mbps.</p></td>
+</tr>
+<tr class="row-even"><td><p>RGB LED</p></td>
+<td><p>Addressable RGB LED, driven by GPIO8.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="start-application-development">
+<h3>Start Application Development<a class="headerlink" href="#start-application-development" title="Permalink to this heading"></a></h3>
+<p>Before powering up your ESP32-C3-DevKitC-02, please make sure that it is in good condition with no obvious signs of damage.</p>
+<section id="required-hardware">
+<h4>Required Hardware<a class="headerlink" href="#required-hardware" title="Permalink to this heading"></a></h4>
+<ul class="simple">
+<li><p>ESP32-C3-DevKitC-02</p></li>
+<li><p>USB 2.0 cable (Standard-A to Micro-B)</p></li>
+<li><p>Computer running Windows, Linux, or macOS</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Be sure to use an appropriate USB cable. Some cables are for charging only and do not provide the needed data lines nor work for programming the boards.</p>
+</div>
+</section>
+<section id="software-setup">
+<h4>Software Setup<a class="headerlink" href="#software-setup" title="Permalink to this heading"></a></h4>
+<p>Please proceed to <a class="reference external" href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/index.html">ESP-IDF Get Started</a>, which will quickly help you set up the development environment then flash an application example onto your board.</p>
+</section>
+</section>
+<section id="contents-and-packaging">
+<h3>Contents and Packaging<a class="headerlink" href="#contents-and-packaging" title="Permalink to this heading"></a></h3>
+<section id="retail-orders">
+<h4>Retail Orders<a class="headerlink" href="#retail-orders" title="Permalink to this heading"></a></h4>
+<p>If you order a few samples, each ESP32-C3-DevKitC-02 comes in an individual package in either antistatic bag or any packaging depending on your retailer.</p>
+<p>For retail orders, please go to <a class="reference external" href="https://www.espressif.com/en/contact-us/get-samples">https://www.espressif.com/en/contact-us/get-samples</a>.</p>
+</section>
+<section id="wholesale-orders">
+<h4>Wholesale Orders<a class="headerlink" href="#wholesale-orders" title="Permalink to this heading"></a></h4>
+<p>If you order in bulk, the boards come in large cardboard boxes.</p>
+<p>For wholesale orders, please check <a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/espressif_products_ordering_information_en.pdf">Espressif Product Ordering Information</a> (PDF)</p>
+</section>
+</section>
+</section>
+<section id="hardware-reference">
+<h2>Hardware Reference<a class="headerlink" href="#hardware-reference" title="Permalink to this heading"></a></h2>
+<section id="block-diagram">
+<h3>Block Diagram<a class="headerlink" href="#block-diagram" title="Permalink to this heading"></a></h3>
+<p>The block diagram below shows the components of ESP32-C3-DevKitC-02 and their interconnections.</p>
+<figure class="align-center" id="id11">
+<a class="reference internal image-reference" href="../_images/esp32-c3-devkitc-02-v1-block-diags.png"><img alt="ESP32-C3-DevKitC-02 (click to enlarge)" src="../_images/esp32-c3-devkitc-02-v1-block-diags.png" style="width: 616.6999999999999px; height: 328.29999999999995px;" /></a>
+<figcaption>
+<p><span class="caption-text">ESP32-C3-DevKitC-02 (click to enlarge)</span><a class="headerlink" href="#id11" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<section id="power-supply-options">
+<h4>Power Supply Options<a class="headerlink" href="#power-supply-options" title="Permalink to this heading"></a></h4>
+<p>There are three mutually exclusive ways to provide power to the board:</p>
+<ul class="simple">
+<li><p>Micro-USB Port, default power supply</p></li>
+<li><p>5V and GND pin headers</p></li>
+<li><p>3V3 and GND pin headers</p></li>
+</ul>
+<p>It is recommended to use the first option: Micro-USB Port.</p>
+</section>
+</section>
+<section id="header-block">
+<span id="user-guide-c3-devkitc-02-v1-header-blocks"></span><h3>Header Block<a class="headerlink" href="#header-block" title="Permalink to this heading"></a></h3>
+<p>The two tables below provide the <strong>Name</strong> and <strong>Function</strong> of the pin headers on both sides of the board (J1 and J3). The pin header names are shown in <a class="reference internal" href="#user-guide-c3-devkitc-02-v1-board-front"><span class="std std-ref">ESP32-C3-DevKitC-02 (with the ESP32-C3-WROOM-02 module) - front</span></a>. The numbering is the same as in the <a class="reference external" href="https://dl.espressif.com/dl/schematics/SCH_ESP32-C3-DEVKITC-02_V1_1_20210126A.pdf">ESP32-C3-DevKitC-02 Schematic</a> (PDF).</p>
+<section id="j1">
+<h4>J1<a class="headerlink" href="#j1" title="Permalink to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Type <a class="footnote-reference brackets" href="#id6" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>G</p></td>
+<td><p>G</p></td>
+<td><p>Ground</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>3V3</p></td>
+<td><p>P</p></td>
+<td><p>3.3 V power supply</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>3V3</p></td>
+<td><p>P</p></td>
+<td><p>3.3 V power supply</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>RST</p></td>
+<td><p>I</p></td>
+<td><p>CHIP_PU</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>G</p></td>
+<td><p>G</p></td>
+<td><p>Ground</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>4</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO4, ADC1_CH4, FSPIHD, MTMS</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>5</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO5, ADC2_CH0, FSPIWP, MTDI</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>6</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO6, FSPICLK, MTCK</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>7</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO7, FSPID, MTDO</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>G</p></td>
+<td><p>G</p></td>
+<td><p>Ground</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>8</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO8 <a class="footnote-reference brackets" href="#id7" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, RGB LED</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>9</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO9 <a class="footnote-reference brackets" href="#id7" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>5V</p></td>
+<td><p>P</p></td>
+<td><p>5 V power supply</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p>5V</p></td>
+<td><p>P</p></td>
+<td><p>5 V power supply</p></td>
+</tr>
+<tr class="row-even"><td><p>15</p></td>
+<td><p>G</p></td>
+<td><p>G</p></td>
+<td><p>Ground</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="j3">
+<h4>J3<a class="headerlink" href="#j3" title="Permalink to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Type <a class="footnote-reference brackets" href="#id6" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>G</p></td>
+<td><p>G</p></td>
+<td><p>Ground</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>0</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO0, ADC1_CH0, XTAL_32K_P</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>1</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO1, ADC1_CH1, XTAL_32K_N</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>2</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO2 <a class="footnote-reference brackets" href="#id7" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, ADC1_CH2, FSPIQ</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>3</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO3, ADC1_CH3</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>G</p></td>
+<td><p>G</p></td>
+<td><p>Ground</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>10</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO10, FSPICS0</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>G</p></td>
+<td><p>G</p></td>
+<td><p>Ground</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>RX</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO20, U0RXD</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>TX</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO21, U0TXD</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>G</p></td>
+<td><p>G</p></td>
+<td><p>Ground</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>18</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO18, USB_D-</p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>19</p></td>
+<td><p>I/O/T</p></td>
+<td><p>GPIO19, USB_D+</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p>G</p></td>
+<td><p>G</p></td>
+<td><p>Ground</p></td>
+</tr>
+<tr class="row-even"><td><p>15</p></td>
+<td><p>G</p></td>
+<td><p>G</p></td>
+<td><p>Ground</p></td>
+</tr>
+</tbody>
+</table>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id6" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id4">2</a>)</span>
+<p>P: Power supply; I: Input; O: Output; T: High impedance.</p>
+</aside>
+<aside class="footnote brackets" id="id7" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id3">2</a>,<a role="doc-backlink" href="#id5">3</a>)</span>
+<p>GPIO2, GPIO8, and GPIO9 are strapping pins of the ESP32-C3 chip. These pins are used to control several chip functions depending on binary voltage values applied to the pins during chip power-up or system reset. For description and application of the strapping pins, please refer to Section Boot Configurations in <a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf">ESP32-C3 Datasheet</a>.</p>
+</aside>
+</aside>
+</section>
+<section id="pin-layout">
+<h4>Pin Layout<a class="headerlink" href="#pin-layout" title="Permalink to this heading"></a></h4>
+<figure class="align-center" id="id12">
+<a class="reference internal image-reference" href="../_images/esp32-c3-devkitc-02-v1-pinout.png"><img alt="ESP32-C3-DevKitC-02 (with the ESP32-C3-WROOM-02 module, click to enlarge)" src="../_images/esp32-c3-devkitc-02-v1-pinout.png" style="width: 90%;" /></a>
+<figcaption>
+<p><span class="caption-text">ESP32-C3-DevKitC-02 Pin Layout (with the ESP32-C3-WROOM-02 module, click to enlarge)</span><a class="headerlink" href="#id12" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+</section>
+<section id="hardware-revision-details">
+<h2>Hardware Revision Details<a class="headerlink" href="#hardware-revision-details" title="Permalink to this heading"></a></h2>
+<p>No previous versions available.</p>
+</section>
+<section id="related-documents">
+<h2>Related Documents<a class="headerlink" href="#related-documents" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf">ESP32-C3 Datasheet</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-c3-wroom-02_datasheet_en.pdf">ESP32-C3-WROOM-02 &amp; ESP32-C3-WROOM-02U Datasheet</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/SCH_ESP32-C3-DEVKITC-02_V1_1_20210126A.pdf">ESP32-C3-DevKitC-02 Schematic</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/PCB_ESP32-C3-DevKitC-02_V1_1_20210121AA.pdf">ESP32-C3-DevKitC-02 PCB Layout</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/DXF_ESP32-C3-DevKitC-02_V1_1_20210121AA.pdf">ESP32-C3-DevKitC-02 Dimensions</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/DXF_ESP32-C3-DevKitC-02_V1_1_20210121AA.dxf">ESP32-C3-DevKitC-02 Dimensions source file</a> (DXF) - You can view it with <a class="reference external" href="https://viewer.autodesk.com/">Autodesk Viewer</a> online</p></li>
+</ul>
+<p>For further design documentation for the board, please contact us at <a class="reference external" href="mailto:sales&#37;&#52;&#48;espressif&#46;com">sales<span>&#64;</span>espressif<span>&#46;</span>com</a>.</p>
+</section>
+<section id="disclaimer-and-copyright-notice">
+<h2>Disclaimer and Copyright Notice<a class="headerlink" href="#disclaimer-and-copyright-notice" title="Permalink to this heading"></a></h2>
+<p>See <a class="reference internal" href="../disclaimer-and-copyright.html"><span class="doc">Disclaimer and Copyright Notice</span></a>.</p>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+<p data-class="single"></p>
+
+             </div>
+          </div>
+          

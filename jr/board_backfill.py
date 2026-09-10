@@ -65,16 +65,48 @@ def board_user_guide_url(board_id: str, soc: str) -> str:
     return f"{USER_GUIDE_BASE}/{chip_seg(soc)}/{board_id}/user_guide.html"
 
 
+# ─── per-board doc-URL overrides (multi-doc-tree resolution) ──────────────────
+# The single USER_GUIDE_BASE template only covers boards whose esp-dev-kits slug is
+# `<chipseg>/<board_id>/user_guide.html`. A handful of boards live at a DIFFERENT path —
+# either in another Espressif doc TREE (audio boards → esp-adf, not esp-dev-kits) or with a
+# version-suffixed filename (`user_guide.html` 404s; the real file is `user_guide_v1.2.html`).
+# Each URL below was fetched and verified 200 on 2026-09-10; the extracted content is cited
+# to it. A per-board map is used (not a suffix-guesser) because the version suffix is
+# board-specific and MUST be an exact, human-verified URL — never a constructed guess.
+# If Espressif bumps a version and one of these 404s, that board falls back to the default
+# template (also likely 404) and stays SKIPPED as doc-unreachable — never invented.
+DOC_URL_OVERRIDES: dict[str, str] = {
+    # ESP32-LyraT is an AUDIO board: its user guide is in the esp-adf project's
+    # multimedia-boards tree, NOT esp-dev-kits. (The esp-dev-kits/design-guide paths are
+    # meta-refresh redirect stubs that urllib can't follow — this is the real content page.)
+    "esp32-lyrat": ("https://docs.espressif.com/projects/esp-adf/en/latest/"
+                    "multimedia-boards/dev-boards/get-started-esp32-lyrat.html"),
+    # esp-dev-kits guides whose filename carries a version suffix (user_guide.html 404s).
+    "esp32-s2-saola-1": (f"{USER_GUIDE_BASE}/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html"),
+    "esp32-s3-devkitc-1": (f"{USER_GUIDE_BASE}/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html"),
+}
+
+
 def doc_url_candidates(board_id: str, soc: str) -> list[str]:
-    """User-guide URLs to try, in order. Espressif drops the revision suffix from some doc
-    slugs (esp32-devkitc-v4 → .../esp32-devkitc/) — so if the id ends in -v<N>, try the
-    stripped slug as a fallback. Only the `-v<N>` form is stripped (verified safe); a bare
-    trailing -<N> is NOT (it can be a real board variant → wrong doc)."""
+    """User-guide URLs to try, in order. A verified per-board override (a different doc tree
+    or a version-suffixed filename) is tried FIRST when present. Then the default template;
+    then — because Espressif drops the revision suffix from some doc slugs
+    (esp32-devkitc-v4 → .../esp32-devkitc/) — the `-v<N>`-stripped slug as a fallback. Only
+    the `-v<N>` form is stripped (verified safe); a bare trailing -<N> is NOT (it can be a
+    real board variant → wrong doc)."""
+    candidates: list[str] = []
+    override = DOC_URL_OVERRIDES.get(board_id)
+    if override:
+        candidates.append(override)
     slugs = [board_id]
     stripped = re.sub(r"-v\d+$", "", board_id)
     if stripped != board_id:
         slugs.append(stripped)
-    return [board_user_guide_url(s, soc) for s in slugs]
+    for s in slugs:
+        u = board_user_guide_url(s, soc)
+        if u not in candidates:
+            candidates.append(u)
+    return candidates
 
 
 def resolve_soc(fm: dict, data_root: Path) -> str | None:
@@ -135,16 +167,23 @@ def _sentences(text: str) -> list[str]:
 def extract_download_mode(text: str) -> dict | None:
     """Grounded download-mode extraction (SPEC cite-or-omit):
 
-      * MANUAL — a single sentence that explicitly names the button sequence: it
-        contains "Download mode" AND "Boot" AND "Reset" (case-insensitive), e.g.
-        "Holding down Boot and then pressing Reset initiates Firmware Download mode".
+      * MANUAL — a single sentence that explicitly names the button sequence: it names the
+        Firmware Download / upload mode AND the Boot button AND the second button, which
+        Espressif docs write as either "Reset" or "EN" (EN is the ESP32 reset/enable pin),
+        e.g. "Holding down Boot and then pressing Reset initiates Firmware Download mode" or
+        "...pressing EN initiates Firmware Download mode". Audio (esp-adf) boards phrase the
+        same act as "...initiates the firmware upload mode" — treated as equivalent.
         -> {"mode": "manual", "steps": <that exact sentence>}.
       * AUTO — a sentence that explicitly states auto-reset / automatic download.
         -> {"mode": "auto"}.
-      * Neither found -> None (OMIT). NEVER guessed — a wrong step can brick a board."""
+      * Neither found -> None (OMIT). NEVER guessed — a wrong step can brick a board.
+      `\\bEN\\b` is matched with word boundaries so it only catches the standalone EN button,
+      never the fragment inside "then"/"when"/"enter"."""
     for s in _sentences(text):
         low = s.lower()
-        if "download mode" in low and "boot" in low and "reset" in low:
+        names_mode = "download mode" in low or "firmware upload mode" in low
+        second_button = "reset" in low or re.search(r"\ben\b", low) is not None
+        if names_mode and "boot" in low and second_button:
             return {"mode": "manual", "steps": s.rstrip(".")}
     for s in _sentences(text):
         low = s.lower()
@@ -166,11 +205,25 @@ _BRIDGE_TOKENS = (
 )                           # usb_serial enum, or the guard rejects the board and the tick aborts)
 
 
+# Espressif user guides that DON'T name the part number still state, verbatim in the
+# components table, that the board carries a dedicated bridge: "Single USB-to-UART bridge
+# chip provides transfer rates up to 3 Mbps" / "Integrated USB-UART Bridge Chip". That is an
+# explicit, citeable claim that a USB-UART bridge exists — which the schema has a dedicated
+# enum for: "usb-uart-bridge-unspecified". We require the words "bridge chip" (not a bare
+# "USB-to-UART bridge") so a passing mention of a UART interface is NOT mistaken for a chip.
+_UNSPEC_BRIDGE_RE = re.compile(r"usb[- ]?(?:to[- ]?)?uart bridge chip", re.I)
+
+
 def extract_usb_serial(text: str) -> str | None:
-    """Grounded usb_serial extraction: the bridge chip the page NAMES
-    (cp2102n/cp2102/ch343/ch340/ch9102), or native USB-Serial-JTAG if the page states
-    it. Bridge chip takes precedence (it's the default flashing path on Espressif
-    devkits). Nothing named -> None (OMIT)."""
+    """Grounded usb_serial extraction, most-specific first (every branch returns a value in
+    the schema's usb_serial enum, never outside it):
+
+      1. the bridge chip the page NAMES (cp2102n/cp2102/ch343/ch340/ch9102, or FTDI → other);
+      2. native USB-Serial-JTAG, if the page states it;
+      3. an explicitly-stated but UNNAMED "USB-to-UART bridge chip" -> usb-uart-bridge-unspecified.
+
+    A named chip takes precedence (it's the default flashing path on Espressif devkits).
+    Nothing stated -> None (OMIT). This is flash-critical: only ever emit what the doc says."""
     low = (text or "").lower()
     for token, enum in _BRIDGE_TOKENS:
         if token in low:
@@ -178,6 +231,8 @@ def extract_usb_serial(text: str) -> str | None:
     if any(t in low for t in ("usb-serial-jtag", "usb serial jtag", "usb_serial_jtag",
                               "usb serial/jtag", "usb-serial/jtag")):
         return "native-usb-serial-jtag"
+    if _UNSPEC_BRIDGE_RE.search(low):
+        return "usb-uart-bridge-unspecified"
     return None
 
 
@@ -208,9 +263,15 @@ def extract_images(raw: str, doc_url: str) -> dict | None:
     found: dict = {}
     for src in _IMG_SRC.findall(raw or ""):
         low = src.lower()
-        if "pinout" not in found and re.search(r"pin[-_]?layout|pinout", low):
+        is_pinout = re.search(r"pin[-_]?layout|pinout", low) is not None
+        if "pinout" not in found and is_pinout:
             found["pinout"] = urljoin(doc_url, src)
-        if "photo" not in found and re.search(r"annotated-photo|isometric|-photo", low):
+        # A board photo lets a maker IDENTIFY the board: newer devkits ship an
+        # "isometric"/"annotated-photo"; older boards (WROVER-KIT, Ethernet-Kit, LyraT) only
+        # link a labelled board "layout-front"/"-overview" shot. `not is_pinout` guards the
+        # pin-layout filename (a diagram, not a photo) out of the photo slot.
+        if ("photo" not in found and not is_pinout
+                and re.search(r"annotated-photo|isometric|-photo|layout-front|-overview", low)):
             found["photo"] = urljoin(doc_url, src)
     return found or None
 

@@ -1,0 +1,163 @@
+<div itemprop="articleBody">
+             
+  <section id="esp32-lyrat-v4-3-getting-started-guide">
+<h1>ESP32-LyraT V4.3 Getting Started Guide<a class="headerlink" href="#esp32-lyrat-v4-3-getting-started-guide" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/latest/multimedia-boards/dev-boards/get-started-esp32-lyrat.html">[中文]</a></p>
+<p>This guide provides users with functional descriptions, configuration options for ESP32-LyraT V4.3 audio development board, as well as how to get started with the ESP32-LyraT board. Check section <a class="reference internal" href="#other-versions-of-lyrat">Other Versions of LyraT</a>, if you have different version of this board.</p>
+<p>The ESP32-LyraT is a hardware platform designed for the dual-core ESP32 audio applications, e.g., Wi-Fi or Bluetooth audio speakers, speech-based remote controllers, connected smart-home appliances with one or more audio functionality, etc.</p>
+<p>The ESP32-LyraT is a stereo audio board. If you are looking for a mono audio board, intended for lower end applications, check <a class="reference internal" href="get-started-esp32-lyrat-mini.html"><span class="doc">ESP32-LyraT-Mini V1.2 Getting Started Guide</span></a>.</p>
+<section id="what-you-need">
+<h2>What You Need<a class="headerlink" href="#what-you-need" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>1 × <a class="reference internal" href="#get-started-esp32-lyrat-v4-3-board"><span class="std std-ref">ESP32 LyraT V4.3 board</span></a></p></li>
+<li><p>2 x Speaker or headphones with a 3.5 mm jack. If you use a speaker, it is recommended to choose one no more than 3 watts, and JST PH 2.0mm 2-Pin plugs are needed. In case you do not have this type of plug it is also fine to use Dupont female jumper wires during development.</p></li>
+<li><p>2 x Micro-USB 2.0 cables, Type A to Micro B</p></li>
+<li><p>1 × PC loaded with Windows, Linux or Mac OS</p></li>
+</ul>
+<p>If you like to start using this board right now, go directly to section <a class="reference internal" href="#develop-applications">Develop Applications</a>.</p>
+<section id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h3>
+<p>The ESP32-LyraT V4.3 is an audio development board produced by <a class="reference external" href="https://espressif.com">Espressif</a> built around ESP32. It is intended for audio applications, by providing hardware for audio processing and additional RAM on top of what is already onboard of the ESP32 chip. The specific hardware includes:</p>
+<ul class="simple">
+<li><p>ESP32-WROVER-E Module</p></li>
+<li><p>Audio Codec Chip</p></li>
+<li><p>Dual Microphones on board</p></li>
+<li><p>Headphone output</p></li>
+<li><p>2 x 3-watt Speaker output</p></li>
+<li><p>Dual Auxiliary Input</p></li>
+<li><p>MicroSD Card slot (1 line or 4 lines)</p></li>
+<li><p>Six buttons (2 physical buttons and 4 touch buttons)</p></li>
+<li><p>JTAG header</p></li>
+<li><p>Integrated USB-UART Bridge Chip</p></li>
+<li><p>Li-ion Battery-Charge Management</p></li>
+</ul>
+<p>The block diagram below presents main components of the ESP32-LyraT and interconnections between components.</p>
+<figure class="align-center align-default" id="id1">
+<img alt="ESP32 LyraT block diagram" src="../../_images/esp32-lyrat-v4.3-block-diagram.jpg" />
+<figcaption>
+<p><span class="caption-text">ESP32-LyraT Block Diagram</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="components">
+<h3>Components<a class="headerlink" href="#components" title="Permalink to this heading"></a></h3>
+<p>The following list and figure describe key components, interfaces and controls of the ESP32-LyraT used in this guide. This covers just what is needed now.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For detailed technical documentation of this board, please refer to <a class="reference internal" href="board-esp32-lyrat-v4.3.html"><span class="doc">ESP32-LyraT V4.3 Hardware Reference</span></a> and <a class="reference external" href="https://dl.espressif.com/dl/schematics/ESP32-LYRAT_V4.3-20220119.pdf">ESP32 LyraT V4.3 schematic</a> (PDF).</p>
+</div>
+<dl>
+<dt>ESP32-WROVER-E Module</dt><dd><p>The ESP32-WROVER-E module contains ESP32 chip to provide Wi-Fi / Bluetooth connectivity and data processing power as well as integrates 4 MB external SPI flash and an additional 8 MB PSRAM for flexible data storage.</p>
+</dd>
+<dt>Headphone Output</dt><dd><p>Output socket to connect headphones with a 3.5 mm stereo jack.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The socket may be used with mobile phone headsets and is compatible with OMPT standard headsets only. It does not work with CTIA headsets. Please refer to <a class="reference external" href="https://en.wikipedia.org/wiki/Phone_connector_(audio)#TRRS_standards">Phone connector (audio)</a> on Wikipedia.</p>
+</div>
+</dd>
+</dl>
+<figure class="align-center align-default" id="id2">
+<span id="get-started-esp32-lyrat-v4-3-board"></span><img alt="ESP32 LyraT V4.3 Board Layout Overview" src="../../_images/esp32-lyrat-v4.3-layout-overview-with-wrover-e-module.jpg" />
+<figcaption>
+<p><span class="caption-text">ESP32-LyraT V4.3 Board Layout Overview</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<dl class="simple">
+<dt>Left Speaker Output</dt><dd><p>Output socket to connect a speaker. The 4-ohm and 3-watt speaker is recommended. The pins have a 2.00 mm / 0.08” pitch.</p>
+</dd>
+<dt>Right Speaker Output</dt><dd><p>Output socket to connect a speaker. The 4-ohm and 3-watt speaker is recommended. The pins have a 2.00 mm / 0.08” pitch.</p>
+</dd>
+<dt>Boot/Reset Press Keys</dt><dd><p>Boot: holding down the <strong>Boot</strong> button and momentarily pressing the <strong>Reset</strong> button initiates the firmware upload mode. Then user can upload firmware through the serial port. Reset: pressing this button alone resets the system.</p>
+</dd>
+<dt>Audio Codec Chip</dt><dd><p>The Audio Codec Chip, <a class="reference external" href="http://www.everest-semi.com/pdf/ES8388%20DS.pdf">ES8388</a>, is a low power stereo audio codec with a headphone amplifier. It consists of 2-channel ADC, 2-channel DAC, microphone amplifier, headphone amplifier, digital sound effects, analog mixing and gain functions. It is interfaced with <strong>ESP32-WROVER-E Module</strong> over I2S and I2C buses to provide audio processing in hardware independently from the audio application.</p>
+</dd>
+<dt>USB-UART Port</dt><dd><p>Functions as the communication interface between a PC and the <strong>ESP32-WROVER-E Module</strong>.</p>
+</dd>
+<dt>USB Power Port</dt><dd><p>Provides the power supply for the board.</p>
+</dd>
+<dt>Standby / Charging LEDs</dt><dd><p>The <strong>Standby</strong> green LED indicates that power has been applied to the <strong>Micro USB Port</strong>. The <strong>Charging</strong> red LED indicates that a battery connected to the <strong>Battery Socket</strong> is being charged.</p>
+</dd>
+<dt>Power Switch</dt><dd><p>Power on/off knob: toggling it to the left powers the board on; toggling it to the right powers the board off.</p>
+</dd>
+<dt>Power On LED</dt><dd><p>Red LED indicating that <strong>Power On Switch</strong> is turned on.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="start-application-development">
+<h2>Start Application Development<a class="headerlink" href="#start-application-development" title="Permalink to this heading"></a></h2>
+<p>Before powering up the ESP32-LyraT, please make sure that the board has been received in good condition with no obvious signs of damage.</p>
+<section id="initial-setup">
+<h3>Initial Setup<a class="headerlink" href="#initial-setup" title="Permalink to this heading"></a></h3>
+<p>Prepare the board for loading of the first sample application:</p>
+<ol class="arabic simple">
+<li><p>Connect speakers to the <strong>Right</strong> and <strong>Left Speaker Output</strong>. Connecting headphones to the <strong>Headphone Output</strong> is an option.</p></li>
+<li><p>Plug in the Micro-USB cables to the PC and to <strong>both USB ports</strong> of the ESP32 LyraT.</p></li>
+<li><p>The <strong>Standby LED</strong> (green) should turn on. Assuming that a battery is not connected, the <strong>Charging LED</strong> (red) will blink every couple of seconds.</p></li>
+<li><p>Toggle left the <strong>Power On Switch</strong>.</p></li>
+<li><p>The red <strong>Power On LED</strong> should turn on.</p></li>
+</ol>
+<p>If this is what you see on the LEDs, the board should be ready for application upload. Now prepare the PC by loading and configuring development tools as discussed in the next section.</p>
+</section>
+<section id="develop-applications">
+<h3>Develop Applications<a class="headerlink" href="#develop-applications" title="Permalink to this heading"></a></h3>
+<p>Once the board is initially set up and checked, you can start preparing the development tools. The Section <a class="reference internal" href="../../get-started/index.html#get-started-step-by-step"><span class="std std-ref">Step 1. Install ESP-IDF</span></a> will walk you through the following steps:</p>
+<ul class="simple">
+<li><p><strong>Set up ESP-IDF</strong> to get a common development framework for the ESP32 (and ESP32-S2) chips in C language;</p></li>
+<li><p><strong>Get ESP-ADF</strong> to install the API specific to audio applications;</p></li>
+<li><p><strong>Setup Path to ESP-ADF</strong> to make the framework aware of the audio specific API;</p></li>
+<li><p><strong>Start a Project</strong> that will provide a sample audio application for the board;</p></li>
+<li><p><strong>Connect Your Device</strong> to prepare the application for loading;</p></li>
+<li><p><strong>Build the Project</strong> to finally run the application and play some music.</p></li>
+</ul>
+</section>
+</section>
+<section id="summary-of-key-changes-from-lyrat-v4-2">
+<h2>Summary of Key Changes from LyraT V4.2<a class="headerlink" href="#summary-of-key-changes-from-lyrat-v4-2" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Changed the integrated module to ESP32-WROVER-E from ESP32-WROVER.</p></li>
+<li><p>Removed Red LED indicator light.</p></li>
+<li><p>Introduced headphone jack insert detection.</p></li>
+<li><p>Replaced single Power Amplifier (PA) chip with two separate chips.</p></li>
+<li><p>Updated power management design of several circuits: Battery Charging, ESP32, MicroSD, Codec Chip and PA.</p></li>
+<li><p>Updated electrical implementation design of several circuits: UART, Codec Chip, Left and Right Microphones, AUX Input, Headphone Output, MicroSD, Push Buttons and Automatic Upload.</p></li>
+</ul>
+</section>
+<section id="other-versions-of-lyrat">
+<h2>Other Versions of LyraT<a class="headerlink" href="#other-versions-of-lyrat" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="get-started-esp32-lyrat-v4.2.html"><span class="doc">ESP32-LyraT V4.2 Getting Started Guide</span></a></p></li>
+<li><p><a class="reference internal" href="get-started-esp32-lyrat-v4.html"><span class="doc">ESP32-LyraT V4 Getting Started Guide</span></a></p></li>
+</ul>
+</section>
+<section id="other-boards-from-lyrat-family">
+<h2>Other Boards from LyraT Family<a class="headerlink" href="#other-boards-from-lyrat-family" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="get-started-esp32-lyrat-mini.html"><span class="doc">ESP32-LyraT-Mini V1.2 Getting Started Guide</span></a></p></li>
+<li><p><a class="reference internal" href="get-started-esp32-lyratd-msc.html"><span class="doc">ESP32-LyraTD-MSC V2.2 Getting Started Guide</span></a></p></li>
+</ul>
+</section>
+<section id="related-documents">
+<h2>Related Documents<a class="headerlink" href="#related-documents" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="board-esp32-lyrat-v4.3.html"><span class="doc">ESP32-LyraT V4.3 Hardware Reference</span></a></p></li>
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/ESP32-LYRAT_V4.3-20220119.pdf">ESP32 LyraT V4.3 schematic</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/ESP32-LyraT_v4.3_component_layout.pdf">ESP32-LyraT V4.3 Component Layout</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf">ESP32 Datasheet</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-wrover-e_esp32-wrover-ie_datasheet_en.pdf">ESP32-WROVER-E Datasheet</a> (PDF)</p></li>
+</ul>
+</section>
+<section id="disclaimer-and-copyright-notice">
+<h2>Disclaimer and Copyright Notice<a class="headerlink" href="#disclaimer-and-copyright-notice" title="Permalink to this heading"></a></h2>
+<p>See <a class="reference internal" href="../../disclaimer-and-copyright.html"><span class="doc">Disclaimer and Copyright Notice</span></a>.</p>
+</section>
+</section>
+
+
+           </div>
+             <div class="articleComments">
+<p style="text-align:center"><a href="https://www.espressif.com/en/company/documents/documentation_feedback?docId=5146&sections=ESP32-LyraT V4.3 Getting Started Guide (multimedia-boards/dev-boards/get-started-esp32-lyrat)&version=latest (master)">Provide feedback about this document</a></p>
+
+             </div>
+          </div>
+          

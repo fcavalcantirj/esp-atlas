@@ -1,0 +1,674 @@
+<div itemprop="articleBody">
+             
+  <section id="esp32-ethernet-kit-v1-2">
+<h1>ESP32-Ethernet-Kit v1.2<a class="headerlink" href="#esp32-ethernet-kit-v1-2" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/latest/esp32/esp32-ethernet-kit/user_guide.html">[中文]</a></p>
+<p>This guide shows how to get started with the ESP32-Ethernet-Kit development board and also provides information about its functionality and configuration options.</p>
+<p>The <a class="reference internal" href="#get-started-esp32-ethernet-kit-v1-2"><span class="std std-ref">ESP32-Ethernet-Kit</span></a> is an Ethernet-to-Wi-Fi development board that enables Ethernet devices to be interconnected over Wi-Fi. At the same time, to provide more flexible power supply options, the ESP32-Ethernet-Kit also supports power over Ethernet (PoE).</p>
+<figure class="align-center" id="id1">
+<span id="get-started-esp32-ethernet-kit-v1-2-overview"></span><a class="reference internal image-reference" href="../_images/esp32-ethernet-kit-v1.2-overview.png"><img alt="ESP32-Ethernet-Kit v1.2 Overview" src="../_images/esp32-ethernet-kit-v1.2-overview.png" style="width: 640.0px; height: 472.0px;" /></a>
+<figcaption>
+<p><span class="caption-text">ESP32-Ethernet-Kit v1.2 Overview (click to enlarge)</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<section id="what-you-need">
+<h2>What You Need<a class="headerlink" href="#what-you-need" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#get-started-esp32-ethernet-kit-v1-2"><span class="std std-ref">ESP32-Ethernet-Kit v1.2 board</span></a></p></li>
+<li><p>USB 2.0 cable (Standard-A to Micro-B)</p></li>
+<li><p>Computer running Windows, Linux, or macOS</p></li>
+</ul>
+<p>You can skip the introduction sections and go directly to Section <a class="reference internal" href="#start-application-development">Start Application Development</a>.</p>
+</section>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>ESP32-Ethernet-Kit is an ESP32-based development board produced by <a class="reference external" href="https://espressif.com">Espressif</a>.</p>
+<p>It consists of two development boards, the Ethernet board A and the PoE board B. The <a class="reference internal" href="#get-started-esp32-ethernet-kit-a-v1-2-layout"><span class="std std-ref">Ethernet board (A)</span></a> contains Bluetooth®/Wi-Fi dual-mode ESP32-WROVER-E module and IP101GRI, a Single Port 10/100 Fast Ethernet Transceiver (PHY). The <a class="reference internal" href="#poe-board-b">PoE board (B)</a> provides power over Ethernet functionality. The A board can work independently, without the board B installed.</p>
+<figure class="align-center" id="id2">
+<span id="get-started-esp32-ethernet-kit-v1-2"></span><a class="reference internal image-reference" href="../_images/esp32-ethernet-kit-v1.2.jpg"><img alt="ESP32-Ethernet-Kit v1.2" src="../_images/esp32-ethernet-kit-v1.2.jpg" style="width: 640.0px; height: 535.2px;" /></a>
+<figcaption>
+<p><span class="caption-text">ESP32-Ethernet-Kit v1.2 (click to enlarge)</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>For the application loading and monitoring, the Ethernet board (A) also features FTDI FT2232H chip - an advanced multi-interface USB bridge. This chip enables to use JTAG for direct debugging of ESP32 through the USB interface without a separate JTAG debugger.</p>
+</section>
+<section id="functionality-overview">
+<h2>Functionality Overview<a class="headerlink" href="#functionality-overview" title="Permalink to this heading"></a></h2>
+<p>The block diagram below shows the main components of ESP32-Ethernet-Kit and their interconnections.</p>
+<figure class="align-center" id="id3">
+<a class="reference internal image-reference" href="../_images/esp32-ethernet-kit-v1.1-block-diagram.png"><img alt="ESP32-Ethernet-Kit block diagram" src="../_images/esp32-ethernet-kit-v1.1-block-diagram.png" style="width: 586.1999999999999px; height: 330.0px;" /></a>
+<figcaption>
+<p><span class="caption-text">ESP32-Ethernet-Kit block diagram (click to enlarge)</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="functional-description">
+<h2>Functional Description<a class="headerlink" href="#functional-description" title="Permalink to this heading"></a></h2>
+<p>The following figures and tables describe the key components, interfaces, and controls of the ESP32-Ethernet-Kit.</p>
+<section id="ethernet-board-a">
+<span id="get-started-esp32-ethernet-kit-a-v1-2-layout"></span><h3>Ethernet Board (A)<a class="headerlink" href="#ethernet-board-a" title="Permalink to this heading"></a></h3>
+<figure class="align-center" id="id4">
+<a class="reference internal image-reference" href="../_images/esp32-ethernet-kit-a-v1.2-layout.jpg"><img alt="ESP32-Ethernet-Kit v1.2 - Ethernet board (A) layout" src="../_images/esp32-ethernet-kit-a-v1.2-layout.jpg" style="width: 640.0px; height: 392.8px;" /></a>
+<figcaption>
+<p><span class="caption-text">ESP32-Ethernet-Kit - Ethernet board (A) layout (click to enlarge)</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The table below provides description starting from the picture’s top right corner and going clockwise.</p>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">Table 1  Component Description</span><a class="headerlink" href="#id5" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 21.1%" />
+<col style="width: 78.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key Component</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ESP32-WROVER-E</p></td>
+<td><p>This ESP32 module features 64-Mbit PSRAM for flexible extended storage and data processing capabilities.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GPIO Header 2</p></td>
+<td><p>Five unpopulated through-hole solder pads to provide access to selected GPIOs of ESP32. For details, see <a class="reference internal" href="#gpio-header-2">GPIO Header 2</a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>Function Switch</p></td>
+<td><p>A 4-bit DIP switch used to configure the functionality of selected GPIOs of ESP32. For details see <a class="reference internal" href="#function-switch">Function Switch</a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tx/Rx LEDs</p></td>
+<td><p>Two LEDs to show the status of UART transmission.</p></td>
+</tr>
+<tr class="row-even"><td><p>FT2232H</p></td>
+<td><p>The FT2232H chip serves as a multi-protocol USB-to-serial bridge which can be programmed and controlled via USB to provide communication with ESP32. FT2232H also features USB-to-JTAG interface which is available on channel A of the chip, while USB-to-serial is on channel B. The FT2232H chip enhances user-friendliness in terms of application development and debugging. See <a class="reference external" href="https://dl.espressif.com/dl/schematics/SCH_ESP32-Ethernet-Kit_A_V1.2_20200528.pdf">ESP32-Ethernet-Kit v1.2 Ethernet board (A) schematic</a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>USB Port</p></td>
+<td><p>USB interface. Power supply for the board as well as the communication interface between a computer and the board.</p></td>
+</tr>
+<tr class="row-even"><td><p>Power Switch</p></td>
+<td><p>Power On/Off Switch. Toggling the switch to <strong>5V0</strong> position powers the board on, toggling to <strong>GND</strong> position powers the board off.</p></td>
+</tr>
+<tr class="row-odd"><td><p>5V Input</p></td>
+<td><p>The 5 V power supply interface can be more convenient when the board is operating autonomously (not connected to a computer).</p></td>
+</tr>
+<tr class="row-even"><td><p>5V Power On LED</p></td>
+<td><p>This red LED turns on when power is supplied to the board, either from USB or 5 V Input.</p></td>
+</tr>
+<tr class="row-odd"><td><p>DC/DC Converter</p></td>
+<td><p>Provided DC 5 V to 3.3 V conversion, output current up to 2 A.</p></td>
+</tr>
+<tr class="row-even"><td><p>Board B Connectors</p></td>
+<td><p>A pair male and female header pins for mounting the <a class="reference internal" href="#poe-board-b">PoE board (B)</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>IP101GRI (PHY)</p></td>
+<td><p>The physical layer (PHY) connection to the Ethernet cable is implemented using the <a class="reference external" href="http://www.bdtic.com/DataSheet/ICplus/IP101G_DS_R01_20121224.pdf">IP101GRI</a> chip. The connection between PHY and ESP32 is done through the reduced media-independent interface (RMII), a variant of the media-independent interface <a class="reference external" href="https://en.wikipedia.org/wiki/Media-independent_interface">(MII)</a> standard. The PHY supports the IEEE 802.3/802.3u standard of 10/100 Mbps.</p></td>
+</tr>
+<tr class="row-even"><td><p>RJ45 Port</p></td>
+<td><p>Ethernet network data transmission port.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Magnetics Module</p></td>
+<td><p>The Magnetics are part of the Ethernet specification to protect against faults and transients, including rejection of common mode signals between the transceiver IC and the cable. The magnetics also provide galvanic isolation between the transceiver and the Ethernet device.</p></td>
+</tr>
+<tr class="row-even"><td><p>Link/Activity LEDs</p></td>
+<td><p>Two LEDs (green and red) that respectively indicate the “Link” and “Activity” statuses of the PHY.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BOOT Button</p></td>
+<td><p>Download button. Holding down <strong>BOOT</strong> and then pressing <strong>EN</strong> initiates Firmware Download mode for downloading firmware through the serial port.</p></td>
+</tr>
+<tr class="row-even"><td><p>EN Button</p></td>
+<td><p>Reset button.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GPIO Header 1</p></td>
+<td><p>This header provides six unpopulated through-hole solder pads connected to spare GPIOs of ESP32. For details, see <a class="reference internal" href="#gpio-header-1">GPIO Header 1</a>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Automatic firmware download is supported. If following steps and using software described in Section <a class="reference internal" href="#start-application-development">Start Application Development</a>, users do not need to do any operation with BOOT button or EN button.</p>
+</div>
+</section>
+<section id="poe-board-b">
+<h3>PoE Board (B)<a class="headerlink" href="#poe-board-b" title="Permalink to this heading"></a></h3>
+<p>This board converts power delivered over the Ethernet cable (PoE) to provide a power supply for the Ethernet board (A). The main components of the PoE board (B) are shown on the block diagram under <a class="reference internal" href="#functionality-overview">Functionality Overview</a>.</p>
+<p>The PoE board (B) has the following features:</p>
+<ul class="simple">
+<li><p>Support for IEEE 802.3at</p></li>
+<li><p>Power output: 5 V, 1.4 A</p></li>
+</ul>
+<p>To take advantage of the PoE functionality the <strong>RJ45 Port</strong> of the Ethernet board (A) should be connected with an Ethernet cable to a switch that supports PoE. When the Ethernet board (A) detects 5 V power output from the PoE board (B), the USB power will be automatically cut off.</p>
+<figure class="align-center" id="id6">
+<a class="reference internal image-reference" href="../_images/esp32-ethernet-kit-b-v1.0-layout.png"><img alt="ESP32-Ethernet-Kit - PoE board (B) layout" src="../_images/esp32-ethernet-kit-b-v1.0-layout.png" style="width: 691.2px; height: 153.60000000000002px;" /></a>
+<figcaption>
+<p><span class="caption-text">ESP32-Ethernet-Kit - PoE board (B) layout (click to enlarge)</span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="id7">
+<caption><span class="caption-text">Table  PoE board (B)</span><a class="headerlink" href="#id7" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 21.1%" />
+<col style="width: 78.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key Component</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Board A Connector</p></td>
+<td><p>Four female (left) and four male (right) header pins for connecting the PoE board (B) to <a class="reference internal" href="#get-started-esp32-ethernet-kit-a-v1-2-layout"><span class="std std-ref">Ethernet board (A)</span></a>. The pins on the left accept power coming from a PoE switch. The pins on the right deliver 5 V power supply to the Ethernet board (A).</p></td>
+</tr>
+<tr class="row-odd"><td><p>External Power Terminals</p></td>
+<td><p>Optional power supply (26.6 ~ 54 V) to the PoE board (B).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="setup-options">
+<span id="get-started-esp32-ethernet-kit-v1-2-setup-options"></span><h2>Setup Options<a class="headerlink" href="#setup-options" title="Permalink to this heading"></a></h2>
+<p>This section describes options to configure the ESP32-Ethernet-Kit hardware.</p>
+<section id="function-switch">
+<h3>Function Switch<a class="headerlink" href="#function-switch" title="Permalink to this heading"></a></h3>
+<p>When in On position, this DIP switch is routing listed GPIOs to FT2232H to provide JTAG functionality. When in Off position, the GPIOs may be used for other purposes.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>DIP SW</p></th>
+<th class="head"><p>GPIO Pin</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>GPIO13</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>GPIO12</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>GPIO15</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>GPIO14</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="rmii-clock-selection">
+<h3>RMII Clock Selection<a class="headerlink" href="#rmii-clock-selection" title="Permalink to this heading"></a></h3>
+<p>The ethernet MAC and PHY under RMII working mode need a common 50 MHz reference clock (i.e., RMII clock) that can be provided either externally, or generated from internal ESP32 APLL (not recommended).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For additional information on the RMII clock selection, please refer to <a class="reference external" href="https://dl.espressif.com/dl/schematics/SCH_ESP32-Ethernet-Kit_A_V1.2_20200528.pdf">ESP32-Ethernet-Kit v1.2 Ethernet board (A) schematic</a>, sheet 2, location D2.</p>
+</div>
+<section id="rmii-clock-sourced-externally-by-phy">
+<h4>RMII Clock Sourced Externally by PHY<a class="headerlink" href="#rmii-clock-sourced-externally-by-phy" title="Permalink to this heading"></a></h4>
+<p>By default, the ESP32-Ethernet-Kit is configured to provide RMII clock for the IP101GRI PHY’s 50M_CLKO output. The clock signal is generated by the frequency multiplication of 25 MHz crystal connected to the PHY. For details, please see the figure below.</p>
+<figure class="align-center" id="id8">
+<a class="reference internal image-reference" href="../_images/esp32-ethernet-kit-rmii-clk-from-phy.png"><img alt="RMII Clock from IP101GRI PHY" src="../_images/esp32-ethernet-kit-rmii-clk-from-phy.png" style="width: 459.20000000000005px; height: 410.40000000000003px;" /></a>
+<figcaption>
+<p><span class="caption-text">RMII Clock from IP101GRI PHY (click to enlarge)</span><a class="headerlink" href="#id8" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Please note that the PHY is reset on power-up by pulling the RESET_N signal down with a resistor. ESP32 should assert RESET_N high with GPIO5 to enable PHY. Only this can ensure the power-up of the system. Otherwise, ESP32 may enter download mode.</p>
+</section>
+<section id="rmii-clock-sourced-internally-from-esp32-s-apll">
+<h4>RMII Clock Sourced Internally from ESP32’s APLL<a class="headerlink" href="#rmii-clock-sourced-internally-from-esp32-s-apll" title="Permalink to this heading"></a></h4>
+<p>Another option is to source the RMII Clock from internal ESP32 APLL, see figure below. The clock signal coming from GPIO0 is first inverted, to account for transmission line delay, and then supplied to the PHY.</p>
+<figure class="align-center" id="id9">
+<a class="reference internal image-reference" href="../_images/esp32-ethernet-kit-rmii-clk-to-phy.png"><img alt="RMII Clock from ESP Internal APLL" src="../_images/esp32-ethernet-kit-rmii-clk-to-phy.png" style="width: 459.20000000000005px; height: 410.40000000000003px;" /></a>
+<figcaption>
+<p><span class="caption-text">RMII Clock from ESP Internal APLL (click to enlarge)</span><a class="headerlink" href="#id9" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>To implement this option, users need to remove or add some RC components on the board. For details please refer to <a class="reference external" href="https://dl.espressif.com/dl/schematics/SCH_ESP32-Ethernet-Kit_A_V1.2_20200528.pdf">ESP32-Ethernet-Kit v1.2 Ethernet board (A) schematic</a>, sheet 2, location U2.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please note that you need to have <a class="reference internal" href="#rmii-clock-sourced-externally-by-phy">RMII Clock Sourced Externally by PHY</a> or by an external clock source in the following cases:</p>
+<ul class="simple">
+<li><p>If Wi-Fi and Ethernet are used simultaneously, the RMII clock cannot be generated by the internal APLL clock, as it would result in clock instability.</p></li>
+<li><p>APLL is already used for other purposes (e.g., I2S peripheral).</p></li>
+</ul>
+</div>
+</section>
+</section>
+</section>
+<section id="gpio-allocation">
+<h2>GPIO Allocation<a class="headerlink" href="#gpio-allocation" title="Permalink to this heading"></a></h2>
+<p>This section describes the allocation of ESP32 GPIOs to specific interfaces or functions of the ESP32-Ethernet-Kit.</p>
+<section id="ip101gri-phy-interface">
+<h3>IP101GRI (PHY) Interface<a class="headerlink" href="#ip101gri-phy-interface" title="Permalink to this heading"></a></h3>
+<p>The allocation of the ESP32 (MAC) pins to IP101GRI (PHY) is shown in the table below. Implementation of ESP32-Ethernet-Kit defaults to Reduced Media-Independent Interface (RMII).</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>ESP32 Pin (MAC)</p></th>
+<th class="head"><p>IP101GRI (PHY)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td colspan="3"><p><em>RMII Interface</em></p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>GPIO21</p></td>
+<td><p>TX_EN</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>GPIO19</p></td>
+<td><p>TXD[0]</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>GPIO22</p></td>
+<td><p>TXD[1]</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>GPIO25</p></td>
+<td><p>RXD[0]</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>GPIO26</p></td>
+<td><p>RXD[1]</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>GPIO27</p></td>
+<td><p>CRS_DV</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>GPIO0</p></td>
+<td><p>REF_CLK</p></td>
+</tr>
+<tr class="row-even"><td colspan="3"><p><em>Serial Management Interface</em></p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>GPIO23</p></td>
+<td><p>MDC</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>GPIO18</p></td>
+<td><p>MDIO</p></td>
+</tr>
+<tr class="row-odd"><td colspan="3"><p><em>PHY Reset</em></p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>GPIO5</p></td>
+<td><p>Reset_N</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ol class="arabic simple">
+<li><p>The allocation of all pins under the ESP32’s <em>RMII Interface</em> is fixed and cannot be changed either through IO MUX or GPIO Matrix.</p></li>
+<li><p>For REF_CLK, GPIO0 supports both input and output modes, while GPIO16 and GPIO17 support only output mode. However, GPIO16 and GPIO17 are not broken out to the ESP32-WROVER-E module and therefore not available for use. If you need to use these pins, please replace the module with one that does not include PSRAM memory and exposes GPIO16 and GPIO17.</p></li>
+</ol>
+</div>
+</section>
+<section id="gpio-header-1">
+<h3>GPIO Header 1<a class="headerlink" href="#gpio-header-1" title="Permalink to this heading"></a></h3>
+<p>This header exposes some GPIOs that are not used elsewhere on the ESP32-Ethernet-Kit.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>ESP32 Pin</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>GPIO32</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>GPIO33</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>GPIO34</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>GPIO35</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>GPIO36</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>GPIO39</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="gpio-header-2">
+<h3>GPIO Header 2<a class="headerlink" href="#gpio-header-2" title="Permalink to this heading"></a></h3>
+<p>This header contains GPIOs that may be used for other purposes depending on scenarios described in column <strong>Notes</strong>.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>ESP32 Pin</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>GPIO17</p></td>
+<td><p>See note 1</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>GPIO16</p></td>
+<td><p>See note 1</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>GPIO4</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>GPIO2</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>GPIO13</p></td>
+<td><p>See note 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>GPIO12</p></td>
+<td><p>See note 2</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>GPIO15</p></td>
+<td><p>See note 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>GPIO14</p></td>
+<td><p>See note 2</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>GND</p></td>
+<td><p>Ground</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>3V3</p></td>
+<td><p>3.3 V power supply</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ol class="arabic simple">
+<li><p>The ESP32 pins GPIO16 and GPIO17 are not broken out to the ESP32-WROVER-E module and therefore not available for use. If you need to use these pins, please replace the module with one that does not include PSRAM memory and exposes GPIO16 and GPIO17.</p></li>
+<li><p>Functionality depends on the settings of the <a class="reference internal" href="#function-switch">Function Switch</a>.</p></li>
+</ol>
+</div>
+</section>
+<section id="gpio-allocation-summary">
+<h3>GPIO Allocation Summary<a class="headerlink" href="#gpio-allocation-summary" title="Permalink to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>ESP32-WROVER-E</p></th>
+<th class="head"><p>IP101GRI</p></th>
+<th class="head"><p>UART</p></th>
+<th class="head"><p>JTAG</p></th>
+<th class="head"><p>GPIO</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>S_VP</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>IO36</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>S_VN</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>IO39</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>IO34</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>IO34</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>IO35</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>IO35</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>IO32</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>IO32</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>IO33</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>IO33</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>IO25</p></td>
+<td><p>RXD[0]</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>IO26</p></td>
+<td><p>RXD[1]</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>IO27</p></td>
+<td><p>CRS_DV</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>IO14</p></td>
+<td></td>
+<td></td>
+<td><p>TMS</p></td>
+<td><p>IO14</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>IO12</p></td>
+<td></td>
+<td></td>
+<td><p>TDI</p></td>
+<td><p>IO12</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>IO13</p></td>
+<td></td>
+<td></td>
+<td><p>TCK</p></td>
+<td><p>IO13</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>IO15</p></td>
+<td></td>
+<td></td>
+<td><p>TDO</p></td>
+<td><p>IO15</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>IO2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>IO2</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>IO0</p></td>
+<td><p>REF_CLK</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>See note 1</p></td>
+</tr>
+<tr class="row-odd"><td><p>IO4</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>IO4</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>IO16</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>IO16 (NC)</p></td>
+<td><p>See note 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>IO17</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>IO17 (NC)</p></td>
+<td><p>See note 2</p></td>
+</tr>
+<tr class="row-even"><td><p>IO5</p></td>
+<td><p>Reset_N</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>See note 1</p></td>
+</tr>
+<tr class="row-odd"><td><p>IO18</p></td>
+<td><p>MDIO</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>IO19</p></td>
+<td><p>TXD[0]</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>IO21</p></td>
+<td><p>TX_EN</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>RXD0</p></td>
+<td></td>
+<td><p>RXD</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>TXD0</p></td>
+<td></td>
+<td><p>TXD</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>IO22</p></td>
+<td><p>TXD[1]</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>IO23</p></td>
+<td><p>MDC</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ol class="arabic simple">
+<li><p>To prevent the power-on state of the GPIO0 from being affected by the clock output on the PHY side, the RESET_N signal to PHY defaults to low, turning the clock output off. After power-on you can control RESET_N with GPIO5 to turn the clock output on. See also <a class="reference internal" href="#rmii-clock-sourced-externally-by-phy">RMII Clock Sourced Externally by PHY</a>. For PHYs that cannot turn off the clock output through RESET_N, it is recommended to use a crystal module that can be disabled/enabled externally. Similarly like when using RESET_N, the oscillator module should be disabled by default and turned on by ESP32 after power-up. For a reference design please see <a class="reference external" href="https://dl.espressif.com/dl/schematics/SCH_ESP32-Ethernet-Kit_A_V1.2_20200528.pdf">ESP32-Ethernet-Kit v1.2 Ethernet board (A) schematic</a>.</p></li>
+<li><p>The ESP32 pins GPIO16 and GPIO17 are not broken out to the ESP32-WROVER-E module and therefore not available for use. If you need to use these pins, please replace the module with one that does not include PSRAM memory and exposes GPIO16 and GPIO17.</p></li>
+</ol>
+</div>
+</section>
+</section>
+<section id="start-application-development">
+<h2>Start Application Development<a class="headerlink" href="#start-application-development" title="Permalink to this heading"></a></h2>
+<p>Before powering up your ESP32-Ethernet-Kit, please make sure that the board is in good condition with no obvious signs of damage.</p>
+<section id="initial-setup">
+<h3>Initial Setup<a class="headerlink" href="#initial-setup" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Set the <strong>Function Switch</strong> on the <a class="reference internal" href="#get-started-esp32-ethernet-kit-a-v1-2-layout"><span class="std std-ref">Ethernet board (A)</span></a> to its default position by turning all the switches to <strong>ON</strong>.</p></li>
+<li><p>To simplify flashing and testing of the application, do not input extra signals to the board headers.</p></li>
+<li><p>The <a class="reference internal" href="#poe-board-b">PoE board (B)</a> can now be plugged in, but do not connect external power to it.</p></li>
+<li><p>Connect the <a class="reference internal" href="#get-started-esp32-ethernet-kit-a-v1-2-layout"><span class="std std-ref">Ethernet board (A)</span></a> to the PC with a USB cable.</p></li>
+<li><p>Turn the <strong>Power Switch</strong> from GND to 5V0 position, the <strong>5V Power On LED</strong> should light up.</p></li>
+</ol>
+</section>
+<section id="now-to-development">
+<h3>Now to Development<a class="headerlink" href="#now-to-development" title="Permalink to this heading"></a></h3>
+<p>Proceed to <a class="reference external" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html">Get Started</a>, where Section <a class="reference external" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html#installation">Installation</a> will quickly help you set up the development environment and then flash an example project onto your board.</p>
+<p>Move on to the next section only if you have successfully completed all the above steps.</p>
+</section>
+<section id="configure-and-load-the-ethernet-example">
+<h3>Configure and Load the Ethernet Example<a class="headerlink" href="#configure-and-load-the-ethernet-example" title="Permalink to this heading"></a></h3>
+<p>After setting up the development environment and testing the board, you can configure and flash the <a class="reference external" href="https://github.com/espressif/esp-idf/tree/af25eb44/examples/ethernet/basic">ethernet/basic</a> example. This example has been created for testing Ethernet functionality. It supports different PHY, including <strong>IP101GRI</strong> installed on <a class="reference internal" href="#get-started-esp32-ethernet-kit-v1-2"><span class="std std-ref">ESP32-Ethernet-Kit v1.2 board</span></a>.</p>
+</section>
+</section>
+<section id="summary-of-changes-from-esp32-ethernet-kit-v1-1">
+<h2>Summary of Changes from ESP32-Ethernet-Kit v1.1<a class="headerlink" href="#summary-of-changes-from-esp32-ethernet-kit-v1-1" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Correct the placement of GPIO pin number marking on the board’s silkscreen besides the DIP switch.</p></li>
+<li><p>Values of C1, C2, C42, and C43 are updated to 20 pF. For more information, please check <a class="reference external" href="https://dl.espressif.com/dl/schematics/SCH_ESP32-Ethernet-Kit_A_V1.2_20200528.pdf">ESP32-Ethernet-Kit v1.2 Ethernet board (A) schematic</a>.</p></li>
+<li><p>Replace ESP32-WROVER-B with ESP32-WROVER-E.</p></li>
+</ul>
+</section>
+<section id="other-versions-of-esp32-ethernet-kit">
+<h2>Other Versions of ESP32-Ethernet-Kit<a class="headerlink" href="#other-versions-of-esp32-ethernet-kit" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="user_guide_v1.0.html"><span class="doc">ESP32-Ethernet-Kit v1.0</span></a></p></li>
+<li><p><a class="reference internal" href="user_guide_v1.1.html"><span class="doc">ESP32-Ethernet-Kit v1.1</span></a></p></li>
+</ul>
+</section>
+<section id="related-documents">
+<h2>Related Documents<a class="headerlink" href="#related-documents" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/SCH_ESP32-Ethernet-Kit_A_V1.2_20200528.pdf">ESP32-Ethernet-Kit v1.2 Ethernet Board (A) Schematic</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/SCH_ESP32-ETHERNET-KIT_B_V1.0_20190517.pdf">ESP32-Ethernet-Kit PoE Board (B) Schematic</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/PCB_ESP32-Ethernet-Kit_A_V1_2_20190829.pdf">ESP32-Ethernet-Kit v1.2 Ethernet Board (A) PCB Layout</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/PCB_ESP32-Ethernet-Kit_B_V1_0_20190306.pdf">ESP32-Ethernet-Kit PoE Board (B) PCB Layout</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf">ESP32 Datasheet</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-wrover-e_esp32-wrover-ie_datasheet_en.pdf">ESP32-WROVER-E Datasheet</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/jtag-debugging/index.html">JTAG Debugging</a></p></li>
+</ul>
+<p>For other design documentation for the board, please contact us at <a class="reference external" href="mailto:sales&#37;&#52;&#48;espressif&#46;com">sales<span>&#64;</span>espressif<span>&#46;</span>com</a>.</p>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="disclaimer-and-copyright-notice">
+<h2>Disclaimer and Copyright Notice<a class="headerlink" href="#disclaimer-and-copyright-notice" title="Permalink to this heading"></a></h2>
+<p>See <a class="reference internal" href="../disclaimer-and-copyright.html"><span class="doc">Disclaimer and Copyright Notice</span></a>.</p>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+<p data-class="single"></p>
+
+             </div>
+          </div>
+          

@@ -23,6 +23,7 @@ Run: cd jr && python3 -m pytest test_board_backfill.py -q
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -319,3 +320,150 @@ def test_main_no_backfilled_touches_no_git(capsys):
 
 def test_branch_name_format():
     assert bb.branch_name(NOW) == "jr-board-backfill-20260901-0846"
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# RECOVERY of previously-SKIPPED boards, on REAL-HTML fixtures (SPEC Phase 2).
+#
+# Two failure modes are recovered here, all OFFLINE against verbatim slices of the boards'
+# real Espressif docs saved under jr/fixtures/board_backfill/ (fetched & verified 2026-09-10):
+#   A. doc-unreachable — 4 boards the single template mis-URL'd (audio → esp-adf tree;
+#      version-suffixed filenames). Multi-tree resolution now finds the working 200 doc.
+#   B. nothing-groundable — ~12 boards whose 200 doc yielded None: the extractors are hardened
+#      to the ACTUAL page phrasing ("...pressing EN...", "Integrated USB-UART Bridge Chip",
+#      "firmware upload mode") while staying cite-or-omit + schema-enum-valid.
+# Critically, a page that does NOT state a field still returns None (no false positive).
+# ══════════════════════════════════════════════════════════════════════════════
+
+FIX = Path(__file__).resolve().parent / "fixtures" / "board_backfill"
+
+
+def _fixture(name: str) -> str:
+    return (FIX / f"{name}.html").read_text()
+
+
+# The URL each fixture was fetched from — the doc resolution MUST land on exactly this URL.
+_B = bb.USER_GUIDE_BASE
+FIXTURE_URLS = {
+    "esp32-devkitc": f"{_B}/esp32/esp32-devkitc/user_guide.html",                     # -v4 stripped
+    "esp32-s2-saola-1": f"{_B}/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html",        # override
+    "esp32-s3-devkitc-1": f"{_B}/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html",    # override
+    "esp32-lyrat": ("https://docs.espressif.com/projects/esp-adf/en/latest/"
+                    "multimedia-boards/dev-boards/get-started-esp32-lyrat.html"),     # esp-adf tree
+    "esp32-c3-devkitc-02": f"{_B}/esp32c3/esp32-c3-devkitc-02/user_guide.html",       # default 200
+    "esp-wrover-kit": f"{_B}/esp32/esp-wrover-kit/user_guide.html",                   # default 200
+    "esp32-ethernet-kit": f"{_B}/esp32/esp32-ethernet-kit/user_guide.html",          # default 200
+}
+
+
+# ── A. doc-URL resolution for the 4 previously doc-unreachable boards ───────────
+
+def test_lyrat_resolves_to_esp_adf_tree_first():
+    # audio board — docs live under esp-adf, not esp-dev-kits; override is tried first.
+    assert bb.doc_url_candidates("esp32-lyrat", "esp32")[0] == FIXTURE_URLS["esp32-lyrat"]
+
+
+def test_saola_and_s3_devkitc_resolve_to_version_suffixed_guide():
+    assert bb.doc_url_candidates("esp32-s2-saola-1", "esp32-s2")[0] == FIXTURE_URLS["esp32-s2-saola-1"]
+    assert bb.doc_url_candidates("esp32-s3-devkitc-1", "esp32-s3")[0] == FIXTURE_URLS["esp32-s3-devkitc-1"]
+
+
+def test_devkitc_v4_resolves_via_stripped_slug():
+    # no override needed: -v4 strip lands on the working esp32-devkitc/user_guide.html.
+    assert FIXTURE_URLS["esp32-devkitc"] in bb.doc_url_candidates("esp32-devkitc-v4", "esp32")
+
+
+# ── extraction on the real-HTML fixtures ───────────────────────────────────────
+
+@pytest.mark.parametrize("name,expected", [
+    ("esp32-devkitc", "usb-uart-bridge-unspecified"),      # "Single USB-to-UART bridge chip..."
+    ("esp32-s2-saola-1", "usb-uart-bridge-unspecified"),
+    ("esp32-s3-devkitc-1", "usb-uart-bridge-unspecified"),
+    ("esp32-c3-devkitc-02", "usb-uart-bridge-unspecified"),
+    ("esp32-lyrat", "usb-uart-bridge-unspecified"),        # "Integrated USB-UART Bridge Chip"
+    ("esp-wrover-kit", "other"),                            # FTDI FT2232HL
+    ("esp32-ethernet-kit", "other"),                        # FTDI FT2232H
+])
+def test_usb_serial_extracts_correct_enum_from_real_pages(name, expected):
+    import json
+    enum = set(json.load(open(bb.REPO / "schema" / "board.schema.json"))
+               ["properties"]["usb_serial"]["enum"])
+    val = bb.extract_usb_serial(bb._visible_text(_fixture(name)))
+    assert val == expected
+    assert val in enum  # never emit a value outside the schema enum (would abort the tick)
+
+
+@pytest.mark.parametrize("name,contains", [
+    ("esp32-devkitc", "pressing EN initiates Firmware Download mode"),
+    ("esp-wrover-kit", "pressing EN initiates Firmware Download mode"),
+    ("esp32-ethernet-kit", "pressing EN initiates Firmware Download mode"),
+    ("esp32-s2-saola-1", "pressing Reset initiates Firmware Download mode"),
+    ("esp32-lyrat", "initiates the firmware upload mode"),   # esp-adf phrasing
+])
+def test_download_mode_manual_extracts_with_exact_cited_steps(name, contains):
+    dm = bb.extract_download_mode(bb._visible_text(_fixture(name)))
+    assert dm is not None and dm["mode"] == "manual"
+    assert contains in dm["steps"]  # the exact sentence quoted from the doc
+
+
+def test_images_extract_where_the_page_links_them():
+    # newer devkit: isometric photo + pinout diagram, absolute URLs on espressif.com
+    imgs = bb.extract_images(_fixture("esp32-s2-saola-1"), FIXTURE_URLS["esp32-s2-saola-1"])
+    assert imgs["pinout"].endswith("esp32-s2_saola1-pinout.jpg")
+    assert imgs["photo"].endswith("esp32-s2-saola-1-v1.2-isometric.png")
+    assert imgs["pinout"].startswith("https://docs.espressif.com/")
+    # older board with no pinout diagram: photo grounded (layout-front), pinout OMITTED
+    wrover = bb.extract_images(_fixture("esp-wrover-kit"), FIXTURE_URLS["esp-wrover-kit"])
+    assert wrover["photo"].endswith("esp-wrover-kit-v4.1-layout-front.png")
+    assert "pinout" not in wrover  # cite-or-omit: the page links no pinout diagram
+    # ethernet-kit: labelled board overview photo, no pinout diagram
+    eth = bb.extract_images(_fixture("esp32-ethernet-kit"), FIXTURE_URLS["esp32-ethernet-kit"])
+    assert eth["photo"].endswith("esp32-ethernet-kit-v1.2-overview.png")
+    assert "pinout" not in eth
+
+
+# ── CRITICAL cite-or-omit: a page that states NONE of the fields yields None ────
+
+_DOC_STATES_NOTHING = """<html><body>
+<h1>ACME-DevKit User Guide</h1>
+<p>A compact development board. Most of the I/O pins are broken out to pin headers on both
+sides for easy interfacing on a breadboard.</p>
+<p>Connect the board to your computer and start developing right away.</p>
+<img src="../_static/logo.svg">
+</body></html>"""
+
+
+def test_cite_or_omit_preserved_when_page_states_nothing():
+    text = bb._visible_text(_DOC_STATES_NOTHING)
+    assert bb.extract_usb_serial(text) is None       # no bridge chip / jtag stated
+    assert bb.extract_download_mode(text) is None     # no boot/reset sequence stated
+    assert bb.extract_images(_DOC_STATES_NOTHING, "https://x/y.html") is None
+
+
+def test_bare_usb_uart_bridge_without_chip_is_not_grounded():
+    # a passing "USB-to-UART bridge" mention (no "chip") must NOT be promoted to unspecified:
+    # only an explicit "...bridge chip" is a citeable hardware claim. (flash-critical strictness)
+    assert bb.extract_usb_serial("routed through a USB-to-UART bridge") is None
+
+
+# ── end-to-end: a recovered board resolves + backfills off the fixture ──────────
+
+def test_lyrat_end_to_end_recovers_from_esp_adf_fixture(tmp_path):
+    # Fetcher serves the fixture ONLY at the esp-adf override URL — if resolution picks any
+    # other candidate it 404s and the board stays skipped, so this proves the URL fix too.
+    bid, soc = "esp32-lyrat", "esp32"
+    path = _write_board(tmp_path, bid, soc)
+    url = FIXTURE_URLS["esp32-lyrat"]
+    entry = bb.backfill_board(path, tmp_path, _fetcher({url: _fixture("esp32-lyrat")}), TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["usb_serial"] == "usb-uart-bridge-unspecified"
+    assert fm["download_mode"]["mode"] == "manual"
+    assert "firmware upload mode" in fm["download_mode"]["steps"]
+    assert fm["getting_started"] == url
+    assert fm["images"]["photo"].endswith("esp32-lyrat-v4.3-layout-overview-with-wrover-e-module.jpg")
+    cited = {s["field"]: s for s in fm["sources"]}
+    for field in ("download_mode", "usb_serial", "getting_started", "images"):
+        assert cited[field]["url"] == url and cited[field]["verified"] == TODAY
