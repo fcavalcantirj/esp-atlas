@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-17T05:00:57.737650+00:00",
+      "expires": "2026-09-17T06:00:59.439106+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-10T05:00:57.737650+00:00"
+      "timestamp": "2026-09-10T06:00:59.439106+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -5028,6 +5028,16 @@
       "status": "rejected",
       "timestamp": "2026-09-10T05:00:57.737650+00:00"
     },
+    "oxotp-plus": {
+      "expires": "2026-10-10T06:00:59.439106+00:00",
+      "id": "oxotp-plus",
+      "pr_ref": null,
+      "reason": "fork_of_uncatalogued: source=imshox/oxotp",
+      "repo": "xick/oxotp-plus",
+      "repo_id": 761932973,
+      "status": "rejected",
+      "timestamp": "2026-09-10T06:00:59.439106+00:00"
+    },
     "pancake": {
       "expires": "2026-10-08T20:00:21.660790+00:00",
       "id": "pancake",
@@ -6071,6 +6081,7 @@
     "wsalmi/honeypot": "honeypot",
     "wsalmi/launcher_salmi_fork": "launcher-salmi-fork",
     "wusiyu/m5cardputer-userdemo-plus": "m5cardputer-userdemo-plus",
+    "xick/oxotp-plus": "oxotp-plus",
     "xinyuan-lilygo/t-display-c5": "t-display-c5",
     "xinyuan-lilygo/t-embed": "t-embed",
     "xpy-us/commercial-firmesp32": "commercial-firmesp32",
