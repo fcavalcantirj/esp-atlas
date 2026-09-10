@@ -1,0 +1,116 @@
+{
+ "calls": 9,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "torlando-tech/pyxis",
+ "resolved": {
+  "boards": [
+   "lilygo-t-deck"
+  ],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "esp32-s3-devkitc-1",
+   "tdeck-release"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "tdeck",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 23,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/torlando-tech/pyxis/blob/main/platformio.ini#L23"
+  },
+  {
+   "extra": {
+    "env": "tdeck-release",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 23,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/torlando-tech/pyxis/blob/main/platformio.ini#L23"
+  },
+  {
+   "extra": {
+    "env": "tdeck-test",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 23,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/torlando-tech/pyxis/blob/main/platformio.ini#L23"
+  },
+  {
+   "extra": {
+    "env": "tdeck-nomad-link-diagnostic",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 23,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/torlando-tech/pyxis/blob/main/platformio.ini#L23"
+  },
+  {
+   "extra": {
+    "env": "tdeck-tcp-liveness-diagnostic",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 23,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/torlando-tech/pyxis/blob/main/platformio.ini#L23"
+  },
+  {
+   "extra": {
+    "env": "tdeck-ota",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 23,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/torlando-tech/pyxis/blob/main/platformio.ini#L23"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-check.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tdeck",
+   "url": "https://github.com/torlando-tech/pyxis/blob/main/.github/workflows/build-check.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-check.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tdeck-release",
+   "url": "https://github.com/torlando-tech/pyxis/blob/main/.github/workflows/build-check.yml"
+  }
+ ]
+}

@@ -49,6 +49,7 @@ getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp3
 images:
   photo: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/_images/esp32-c3-devkitc-02-v1-isometric.png
   pinout: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/_images/esp32-c3-devkitc-02-v1-pinout.png
+usb_serial: usb-uart-bridge-unspecified
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitc-02/user_guide.html
@@ -68,6 +69,9 @@ sources:
 - field: images
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitc-02/user_guide.html
   verified: '2026-09-09'
+- field: usb_serial
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitc-02/user_guide.html
+  verified: '2026-09-10'
 ---
 
 # ESP32-C3-DevKitC-02
