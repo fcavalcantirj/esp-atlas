@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-17T00:00:50.127806+00:00",
+      "expires": "2026-09-17T03:00:54.680157+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-10T00:00:50.127806+00:00"
+      "timestamp": "2026-09-10T03:00:54.680157+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -4903,14 +4903,12 @@
       "timestamp": "2026-09-02T17:03:09.172852+00:00"
     },
     "nerdminer-v2": {
-      "expires": "2026-10-10T00:00:50.127806+00:00",
       "id": "nerdminer-v2",
-      "pr_ref": null,
-      "reason": "already_catalogued: bitmaker-hub/nerdminer_v2 is already in the atlas",
+      "pr_ref": "#197",
       "repo": "bitmaker-hub/nerdminer_v2",
       "repo_id": 616222670,
-      "status": "rejected",
-      "timestamp": "2026-09-10T00:00:50.127806+00:00"
+      "status": "merged",
+      "timestamp": "2026-09-10T03:00:54.680157+00:00"
     },
     "nes-tab5-usb-host": {
       "expires": "2026-10-09T23:00:48.497677+00:00",
@@ -4921,6 +4919,16 @@
       "repo_id": 1112423173,
       "status": "rejected",
       "timestamp": "2026-09-09T23:00:48.497677+00:00"
+    },
+    "nesso-base": {
+      "expires": "2026-10-10T03:00:54.680157+00:00",
+      "id": "nesso-base",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "ugursayar/nesso_base",
+      "repo_id": 1206306134,
+      "status": "rejected",
+      "timestamp": "2026-09-10T03:00:54.680157+00:00"
     },
     "nessocharger": {
       "expires": "2026-10-10T00:00:50.127806+00:00",
@@ -4945,6 +4953,20 @@
       "repo": "lostdataprotocol/onemorefloor",
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.179924+00:00"
+    },
+    "openhasp": {
+      "id": "openhasp",
+      "pr_ref": "#200",
+      "repo": "haswitchplate/openhasp",
+      "status": "merged",
+      "timestamp": "2026-09-10T03:00:54.680157+00:00"
+    },
+    "openmqttgateway": {
+      "id": "openmqttgateway",
+      "pr_ref": "#200",
+      "repo": "1technophile/openmqttgateway",
+      "status": "merged",
+      "timestamp": "2026-09-10T03:00:54.680157+00:00"
     },
     "operating-system-cardputer": {
       "expires": "2026-10-07T23:00:28.148172+00:00",
@@ -5429,6 +5451,7 @@
     "0m3gx": "0m3gx",
     "0x1abin/crossmux": "crossmux",
     "0xhalloween/flipper-zero-esp32-adv": "flipper-zero-esp32-adv",
+    "1technophile/openmqttgateway": "openmqttgateway",
     "3110/atom-babies-firmware": "atom-babies-firmware",
     "3110/m5stack-image-viewer": "m5stack-image-viewer",
     "3110/m5watchclicker": "m5watchclicker",
@@ -5679,6 +5702,7 @@
     "halbeshuhn/cardputer-webradio": "cardputer-webradio",
     "hansgao0422/deskclock-cardputer": "deskclock-cardputer",
     "hardcore-gamer/cardputeradv-nas-mp3player": "cardputeradv-nas-mp3player",
+    "haswitchplate/openhasp": "openhasp",
     "hermes-gadget/sigurdos-tdeck": "sigurdos-tdeck",
     "hiroki-kawakami/kyoshin": "kyoshin",
     "hiroki-kawakami/namecardknot": "namecardknot",
@@ -5965,6 +5989,7 @@
     "tutyr2-jpg/bruce-a-c-edition": "bruce-a-c-edition",
     "u-tanick/ai_stackchan2_for_debug": "ai-stackchan2-for-debug",
     "ubo07": "ubo07",
+    "ugursayar/nesso_base": "nesso-base",
     "unkyulee/micro-journal": "micro-journal",
     "urieldeveloper/spaceu-cardcomm": "spaceu-cardcomm",
     "urtubia/miniacid": "miniacid",

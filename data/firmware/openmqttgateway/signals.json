@@ -1,0 +1,2056 @@
+{
+ "calls": 16,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "development",
+ "repo": "1technophile/OpenMQTTGateway",
+ "resolved": {
+  "boards": [
+   "adafruit-huzzah32-esp32-feather",
+   "esp32-c3-devkitm-1",
+   "esp32-s3-devkitc-1",
+   "lilygo-t-beam",
+   "lolin-c3-mini",
+   "m5atoms3"
+  ],
+  "socs": [
+   "esp32",
+   "esp32-c3",
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "airm2m_core_esp32c3",
+   "airm2m_core_esp32c3-firmware",
+   "avatto-bakeey-ir-firmware",
+   "esp01_1m",
+   "esp32-c3-devkitm-1",
+   "esp32-gateway",
+   "esp32-lolin32lite-ble-firmware",
+   "esp32-m5atom-lite-firmware",
+   "esp32-m5atom-matrix-firmware",
+   "esp32-m5stack-ble-firmware",
+   "esp32-m5stick-ble-firmware",
+   "esp32-m5stick-c-ble-firmware",
+   "esp32-m5stick-cp-ble-firmware",
+   "esp32-m5tough-ble-firmware",
+   "esp32-olimex-gtw-ble-eth-firmware",
+   "esp32-olimex-gtw-ble-poe-firmware",
+   "esp32-olimex-gtw-ble-poe-iso-firmware",
+   "esp32-olimex-gtw-ble-wifi-firmware",
+   "esp32-poe",
+   "esp32-poe-iso",
+   "esp32-s3-devkitc-1",
+   "esp32-solo1",
+   "esp32-wt32-eth01-ble-eth-firmware",
+   "esp32c3-dev-c2-ble-firmware",
+   "esp32c3-dev-c2-ble-no-serial-firmware",
+   "esp32c3-dev-m1-ble-firmware",
+   "esp32c3-m5stamp-firmware",
+   "esp32c3_lolin_mini-firmware",
+   "esp32c3_lolin_mini_with_serial-firmware",
+   "esp32c3u-m5stamp-firmware",
+   "esp32dev",
+   "esp32dev-ble-aws-firmware",
+   "esp32dev-ble-broker-firmware",
+   "esp32dev-ble-datatest-firmware",
+   "esp32dev-ble-firmware",
+   "esp32dev-ble-idf-firmware",
+   "esp32dev-ble-idf-ota_data_initial",
+   "esp32dev-ble-mqtt-undecoded-firmware",
+   "esp32dev-gf-sun-inverter-firmware",
+   "esp32dev-ir-firmware",
+   "esp32dev-multi_receiver-firmware",
+   "esp32dev-multi_receiver-pilight-firmware",
+   "esp32dev-pilight-cc1101-firmware",
+   "esp32dev-pilight-firmware",
+   "esp32dev-pilight-somfy-cc1101-firmware",
+   "esp32dev-rf-firmware",
+   "esp32dev-rtl_433-firmware",
+   "esp32dev-somfy-cc1101-firmware",
+   "esp32dev-weatherstation-firmware",
+   "esp32doit-devkit-v1",
+   "esp32doitv1-aithinker-r01-sx1278-firmware",
+   "esp32feather-ble-firmware",
+   "esp32s3-atomS3U-firmware",
+   "esp32s3-dev-c1-ble-firmware",
+   "esp32s3-m5stack-stamps3-firmware",
+   "esp8285",
+   "heltec-ble-firmware",
+   "heltec-rtl_433-firmware",
+   "heltec-rtl_433-fsk-firmware",
+   "heltec-wifi-lora-32-firmware",
+   "heltec_wifi_lora_32",
+   "heltec_wifi_lora_32_V2",
+   "lilygo-ble-firmware",
+   "lilygo-rtl_433-firmware",
+   "lilygo-rtl_433-fsk-firmware",
+   "lilygo-t3-s3",
+   "lolin32",
+   "m5stack-core-esp32",
+   "nodemcuv2",
+   "nodemcuv2-2g-firmware",
+   "nodemcuv2-ir-firmware",
+   "nodemcuv2-pilight-firmware",
+   "nodemcuv2-rf-cc1101-firmware",
+   "nodemcuv2-rf-firmware",
+   "nodemcuv2-rf2-cc1101-firmware",
+   "nodemcuv2-rf2-firmware",
+   "nodemcuv2-serial-firmware",
+   "nodemcuv2-somfy-cc1101-firmware",
+   "nodemcuv2-weatherstation-firmware",
+   "pico32",
+   "rf-wifi-gateway-firmware",
+   "rfbridge-direct-firmware",
+   "rfbridge-firmware",
+   "shelly-plus1-firmware",
+   "sonoff-basic-firmware",
+   "sonoff-basic-rfr3-firmware",
+   "theengs-bridge-firmware",
+   "theengs-bridge-v11-firmware",
+   "theengs-plug-firmware",
+   "thingpulse-espgateway-firmware",
+   "tinypico",
+   "tinypico-ble-firmware",
+   "ttgo-lora32-v1",
+   "ttgo-lora32-v1-firmware",
+   "ttgo-lora32-v21",
+   "ttgo-lora32-v21-firmware",
+   "ttgo-t-beam-firmware"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "airm2m_core_esp32c3-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "airm2m_core_esp32c3-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/airm2m_core_esp32c3-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "avatto-bakeey-ir-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "avatto-bakeey-ir-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/avatto-bakeey-ir-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-lolin32lite-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-lolin32lite-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-lolin32lite-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-m5atom-lite-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-m5atom-lite-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5atom-lite-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-m5atom-matrix-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-m5atom-matrix-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5atom-matrix-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-m5stack-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-m5stack-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5stack-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-m5stick-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-m5stick-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5stick-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-m5stick-c-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-m5stick-c-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5stick-c-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-m5stick-cp-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-m5stick-cp-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5stick-cp-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-m5tough-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-m5tough-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5tough-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-olimex-gtw-ble-eth-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-olimex-gtw-ble-eth-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-olimex-gtw-ble-eth-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-olimex-gtw-ble-poe-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-olimex-gtw-ble-poe-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-olimex-gtw-ble-poe-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-olimex-gtw-ble-poe-iso-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-olimex-gtw-ble-poe-iso-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-olimex-gtw-ble-poe-iso-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-olimex-gtw-ble-wifi-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-olimex-gtw-ble-wifi-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-olimex-gtw-ble-wifi-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-wt32-eth01-ble-eth-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-wt32-eth01-ble-eth-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-wt32-eth01-ble-eth-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32c3-dev-c2-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32c3-dev-c2-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3-dev-c2-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32c3-dev-c2-ble-no-serial-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32c3-dev-c2-ble-no-serial-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3-dev-c2-ble-no-serial-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32c3-dev-m1-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32c3-dev-m1-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3-dev-m1-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32c3-m5stamp-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32c3-m5stamp-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3-m5stamp-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32c3u-m5stamp-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32c3u-m5stamp-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3u-m5stamp-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32c3_lolin_mini-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32c3_lolin_mini-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3_lolin_mini-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32c3_lolin_mini_with_serial-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32c3_lolin_mini_with_serial-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3_lolin_mini_with_serial-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-ble-aws-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-ble-aws-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-aws-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-ble-broker-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-ble-broker-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-broker-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-ble-datatest-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-ble-datatest-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-datatest-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-ble-idf-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-ble-idf-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-idf-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-ble-idf-ota_data_initial.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-ble-idf-ota_data_initial",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-idf-ota_data_initial.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-ble-mqtt-undecoded-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-ble-mqtt-undecoded-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-mqtt-undecoded-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-gf-sun-inverter-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-gf-sun-inverter-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-gf-sun-inverter-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-ir-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-ir-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ir-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-multi_receiver-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-multi_receiver-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-multi_receiver-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-multi_receiver-pilight-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-multi_receiver-pilight-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-multi_receiver-pilight-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-pilight-cc1101-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-pilight-cc1101-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-pilight-cc1101-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-pilight-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-pilight-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-pilight-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-pilight-somfy-cc1101-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-pilight-somfy-cc1101-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-pilight-somfy-cc1101-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-rf-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-rf-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-rf-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-rtl_433-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-rtl_433-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-rtl_433-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-somfy-cc1101-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-somfy-cc1101-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-somfy-cc1101-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-weatherstation-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-weatherstation-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-weatherstation-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32doitv1-aithinker-r01-sx1278-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32doitv1-aithinker-r01-sx1278-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32doitv1-aithinker-r01-sx1278-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32feather-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32feather-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32feather-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32s3-atomS3U-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32s3-atomS3U-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32s3-atomS3U-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32s3-dev-c1-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32s3-dev-c1-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32s3-dev-c1-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32s3-m5stack-stamps3-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32s3-m5stack-stamps3-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32s3-m5stack-stamps3-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "heltec-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "heltec-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/heltec-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "heltec-rtl_433-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "heltec-rtl_433-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/heltec-rtl_433-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "heltec-rtl_433-fsk-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "heltec-rtl_433-fsk-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/heltec-rtl_433-fsk-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "heltec-wifi-lora-32-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "heltec-wifi-lora-32-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/heltec-wifi-lora-32-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "lilygo-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/lilygo-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "lilygo-rtl_433-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo-rtl_433-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/lilygo-rtl_433-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "lilygo-rtl_433-fsk-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo-rtl_433-fsk-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/lilygo-rtl_433-fsk-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "nodemcuv2-2g-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "nodemcuv2-2g-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-2g-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "nodemcuv2-ir-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "nodemcuv2-ir-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-ir-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "nodemcuv2-pilight-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "nodemcuv2-pilight-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-pilight-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "nodemcuv2-rf-cc1101-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "nodemcuv2-rf-cc1101-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-rf-cc1101-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "nodemcuv2-rf-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "nodemcuv2-rf-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-rf-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "nodemcuv2-rf2-cc1101-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "nodemcuv2-rf2-cc1101-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-rf2-cc1101-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "nodemcuv2-rf2-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "nodemcuv2-rf2-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-rf2-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "nodemcuv2-serial-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "nodemcuv2-serial-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-serial-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "nodemcuv2-somfy-cc1101-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "nodemcuv2-somfy-cc1101-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-somfy-cc1101-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "nodemcuv2-weatherstation-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "nodemcuv2-weatherstation-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-weatherstation-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "rf-wifi-gateway-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "rf-wifi-gateway-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/rf-wifi-gateway-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "rfbridge-direct-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "rfbridge-direct-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/rfbridge-direct-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "rfbridge-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "rfbridge-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/rfbridge-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "shelly-plus1-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "shelly-plus1-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/shelly-plus1-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "sonoff-basic-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "sonoff-basic-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/sonoff-basic-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "sonoff-basic-rfr3-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "sonoff-basic-rfr3-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/sonoff-basic-rfr3-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "theengs-bridge-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "theengs-bridge-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/theengs-bridge-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "theengs-bridge-v11-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "theengs-bridge-v11-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/theengs-bridge-v11-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "theengs-plug-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "theengs-plug-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/theengs-plug-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "thingpulse-espgateway-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "thingpulse-espgateway-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/thingpulse-espgateway-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "tinypico-ble-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tinypico-ble-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/tinypico-ble-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ttgo-lora32-v1-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ttgo-lora32-v1-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/ttgo-lora32-v1-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ttgo-lora32-v21-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ttgo-lora32-v21-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/ttgo-lora32-v21-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ttgo-t-beam-firmware.bin",
+    "release": "v1.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ttgo-t-beam-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/ttgo-t-beam-firmware.bin"
+  },
+  {
+   "extra": {
+    "env": "rfbridge",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 10,
+   "rank": 2,
+   "soc": null,
+   "token": "esp8285",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L10"
+  },
+  {
+   "extra": {
+    "env": "rfbridge-direct",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 31,
+   "rank": 2,
+   "soc": null,
+   "token": "esp8285",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L31"
+  },
+  {
+   "extra": {
+    "env": "theengs-bridge",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 57,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L57"
+  },
+  {
+   "extra": {
+    "env": "theengs-bridge-v11",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 99,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L99"
+  },
+  {
+   "extra": {
+    "env": "theengs-plug",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 148,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L148"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-all-test",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 202,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L202"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-rf",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 286,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L286"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-pilight",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 305,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L305"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-pilight-cc1101",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 323,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L323"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-somfy-cc1101",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 340,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L340"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-pilight-somfy-cc1101",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 360,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L360"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-weatherstation",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 379,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L379"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-gf-sun-inverter",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 394,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L394"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-ir",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 410,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L410"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 425,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L425"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-ble-broker",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 443,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L443"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-ble-mqtt-undecoded",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 462,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L462"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-ble-aws",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 481,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L481"
+  },
+  {
+   "extra": {
+    "env": "esp32feather-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 508,
+   "rank": 2,
+   "soc": null,
+   "token": "featheresp32",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L508"
+  },
+  {
+   "extra": {
+    "env": "esp32-lolin32lite-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 527,
+   "rank": 2,
+   "soc": null,
+   "token": "lolin32",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L527"
+  },
+  {
+   "extra": {
+    "env": "esp32-olimex-gtw-ble-eth",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 558,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-gateway",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L558"
+  },
+  {
+   "extra": {
+    "env": "esp32-olimex-gtw-ble-poe",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 579,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-poe",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L579"
+  },
+  {
+   "extra": {
+    "env": "esp32-olimex-gtw-ble-poe-iso",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 597,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-poe-iso",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L597"
+  },
+  {
+   "extra": {
+    "env": "esp32-wt32-eth01-ble-eth",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 615,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-gateway",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L615"
+  },
+  {
+   "extra": {
+    "env": "esp32-olimex-gtw-ble-wifi",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 636,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-gateway",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L636"
+  },
+  {
+   "extra": {
+    "env": "esp32-m5stick-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 656,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-core-esp32",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L656"
+  },
+  {
+   "extra": {
+    "env": "esp32-m5stack-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 681,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-core-esp32",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L681"
+  },
+  {
+   "extra": {
+    "env": "esp32-m5tough-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 707,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-core-esp32",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L707"
+  },
+  {
+   "extra": {
+    "env": "esp32-m5stick-c-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 732,
+   "rank": 2,
+   "soc": null,
+   "token": "pico32",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L732"
+  },
+  {
+   "extra": {
+    "env": "esp32-m5stick-cp-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 767,
+   "rank": 2,
+   "soc": null,
+   "token": "pico32",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L767"
+  },
+  {
+   "extra": {
+    "env": "esp32-m5atom-matrix",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 799,
+   "rank": 2,
+   "soc": null,
+   "token": "pico32",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L799"
+  },
+  {
+   "extra": {
+    "env": "esp32-m5atom-lite",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 831,
+   "rank": 2,
+   "soc": null,
+   "token": "pico32",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L831"
+  },
+  {
+   "extra": {
+    "env": "esp32doitv1-aithinker-r01-sx1278",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 858,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L858"
+  },
+  {
+   "extra": {
+    "env": "esp32doitv1-aithinker-r01-sx1278-hcsr501-test",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 858,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L858"
+  },
+  {
+   "extra": {
+    "env": "esp32doitv1-aithinker-r01-sx1278-hcsr501-ota-test",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 858,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L858"
+  },
+  {
+   "extra": {
+    "env": "esp32doitv1-aithinker-r01-sx1278-ota-test",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 858,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L858"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-rtl_433",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 939,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L939"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-rtl_433-fsk",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 981,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L981"
+  },
+  {
+   "extra": {
+    "env": "heltec-rtl_433",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1027,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_lora_32_V2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1027"
+  },
+  {
+   "extra": {
+    "env": "heltec-rtl_433-fsk",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1058,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_lora_32_V2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1058"
+  },
+  {
+   "extra": {
+    "env": "heltec-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1093,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_lora_32_V2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1093"
+  },
+  {
+   "extra": {
+    "env": "lilygo-rtl_433",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1119,
+   "rank": 2,
+   "soc": null,
+   "token": "ttgo-lora32-v21",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1119"
+  },
+  {
+   "extra": {
+    "env": "lilygo-rtl_433-fsk",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1150,
+   "rank": 2,
+   "soc": null,
+   "token": "ttgo-lora32-v21",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1150"
+  },
+  {
+   "extra": {
+    "env": "lilygo-t3-s3-rtl_433",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1184,
+   "rank": 2,
+   "soc": null,
+   "token": "lilygo-t3-s3",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1184"
+  },
+  {
+   "extra": {
+    "env": "lilygo-t3-s3-rtl_433-fsk",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1231,
+   "rank": 2,
+   "soc": null,
+   "token": "lilygo-t3-s3",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1231"
+  },
+  {
+   "extra": {
+    "env": "lilygo-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1283,
+   "rank": 2,
+   "soc": null,
+   "token": "ttgo-lora32-v21",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1283"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-multi_receiver",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1309,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1309"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-multi_receiver-pilight",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1340,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1340"
+  },
+  {
+   "extra": {
+    "env": "tinypico-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1368,
+   "rank": 2,
+   "soc": null,
+   "token": "tinypico",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1368"
+  },
+  {
+   "extra": {
+    "env": "ttgo-lora32-v1",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1386,
+   "rank": 2,
+   "soc": null,
+   "token": "ttgo-lora32-v1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1386"
+  },
+  {
+   "extra": {
+    "env": "ttgo-lora32-v21",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1409,
+   "rank": 2,
+   "soc": null,
+   "token": "ttgo-lora32-v21",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1409"
+  },
+  {
+   "extra": {
+    "env": "ttgo-t-beam",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1439,
+   "rank": 2,
+   "soc": null,
+   "token": "ttgo-t-beam",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1439"
+  },
+  {
+   "extra": {
+    "env": "heltec-wifi-lora-32",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1470,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_lora_32",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1470"
+  },
+  {
+   "extra": {
+    "env": "shelly-plus1",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1500,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-solo1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1500"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2-all-test",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1534,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1534"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2-fastled-test",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1594,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1594"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2-2g",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1608,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1608"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2-ir",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1623,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1623"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2-serial",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1639,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1639"
+  },
+  {
+   "extra": {
+    "env": "avatto-bakeey-ir",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1654,
+   "rank": 2,
+   "soc": null,
+   "token": "esp01_1m",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1654"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2-rf",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1678,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1678"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2-rf-cc1101",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1695,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1695"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2-somfy-cc1101",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1714,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1714"
+  },
+  {
+   "extra": {
+    "env": "manual-wifi-test",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1732,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1732"
+  },
+  {
+   "extra": {
+    "env": "rf-wifi-gateway",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1747,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1747"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2-rf2",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1764,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1764"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2-rf2-cc1101",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1780,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1780"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2-pilight",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1798,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1798"
+  },
+  {
+   "extra": {
+    "env": "nodemcuv2-weatherstation",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1815,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1815"
+  },
+  {
+   "extra": {
+    "env": "sonoff-basic",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1831,
+   "rank": 2,
+   "soc": null,
+   "token": "esp8285",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1831"
+  },
+  {
+   "extra": {
+    "env": "sonoff-basic-rfr3",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1854,
+   "rank": 2,
+   "soc": null,
+   "token": "esp8285",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1854"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-ble-datatest",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1881,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1881"
+  },
+  {
+   "extra": {
+    "env": "esp32s3-dev-c1-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1903,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1903"
+  },
+  {
+   "extra": {
+    "env": "esp32s3-m5stack-stamps3",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1923,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1923"
+  },
+  {
+   "extra": {
+    "env": "esp32s3-atomS3U",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1943,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-atoms3",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1943"
+  },
+  {
+   "extra": {
+    "env": "esp32c3-dev-m1-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1969,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c3-devkitm-1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1969"
+  },
+  {
+   "extra": {
+    "env": "airm2m_core_esp32c3",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 1990,
+   "rank": 2,
+   "soc": null,
+   "token": "airm2m_core_esp32c3",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L1990"
+  },
+  {
+   "extra": {
+    "env": "esp32c3-dev-c2-ble",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 2011,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c3-devkitm-1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L2011"
+  },
+  {
+   "extra": {
+    "env": "esp32c3-dev-c2-ble-no-serial",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 2011,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c3-devkitm-1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L2011"
+  },
+  {
+   "extra": {
+    "env": "esp32c3_lolin_mini",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 2045,
+   "rank": 2,
+   "soc": null,
+   "token": "lolin_c3_mini",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L2045"
+  },
+  {
+   "extra": {
+    "env": "esp32c3_lolin_mini_with_serial",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 2045,
+   "rank": 2,
+   "soc": null,
+   "token": "lolin_c3_mini",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L2045"
+  },
+  {
+   "extra": {
+    "env": "esp32c3-m5stamp",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 2088,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c3-devkitm-1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L2088"
+  },
+  {
+   "extra": {
+    "env": "esp32c3u-m5stamp",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 2113,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c3-devkitm-1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L2113"
+  },
+  {
+   "extra": {
+    "env": "thingpulse-espgateway",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 2137,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L2137"
+  },
+  {
+   "extra": {
+    "env": "esp32dev-ble-idf",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 2173,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L2173"
+  }
+ ]
+}

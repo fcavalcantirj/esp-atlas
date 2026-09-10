@@ -1,0 +1,961 @@
+{
+ "calls": 13,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [
+  "latest release 0.7.0-rc13 has no binaries; read v0.6.3 instead"
+ ],
+ "ref": "master",
+ "repo": "HASwitchPlate/openHASP",
+ "resolved": {
+  "boards": [
+   "m5stack-core2"
+  ],
+  "socs": [],
+  "unresolved": [
+   "adafruit",
+   "az-touch",
+   "az-touch-mod-esp32_ili9341_4MB -e az-touch-mod-esp32_ili9341_8MB",
+   "az-touch-mod-esp32_ili9341_full_4MB_497f611",
+   "az-touch-mod-esp32_ili9341_full_8MB_497f611",
+   "az-touch-mod-esp32_ili9341_ota_497f611",
+   "btt",
+   "d1-mini-esp32",
+   "d1-mini-esp32_ili9341",
+   "d1-mini-esp32_ili9341_full_4MB_497f611",
+   "d1-mini-esp32_ili9341_ota_497f611",
+   "d1-r32-espduino32",
+   "d1-r32-unoshield_ili9341_adc_full_4MB_497f611",
+   "d1-r32-unoshield_ili9341_adc_ota_497f611",
+   "d1-r32-unoshield_ili9486_adc_full_4MB_497f611",
+   "d1-r32-unoshield_ili9486_adc_ota_497f611",
+   "d1-r32-waveshare_ili9486_full_4MB_497f611",
+   "d1-r32-waveshare_ili9486_ota_497f611",
+   "dustinwatts",
+   "elecrow",
+   "esp32-one_ili9486_full_4MB_497f611",
+   "esp32-one_ili9486_ota_497f611",
+   "esp32-one_st7796_full_4MB_497f611",
+   "esp32-one_st7796_ota_497f611",
+   "esp32-s3-pandatouch_8MB",
+   "esp32-touchdown_full_4MB_497f611",
+   "esp32-touchdown_ota_497f611",
+   "freetouchdeck_4MB -e freetouchdeck_8MB -e esp32-touchdown",
+   "freetouchdeck_full_4MB_497f611",
+   "freetouchdeck_full_8MB_497f611",
+   "freetouchdeck_ota_497f611",
+   "globalsecurity",
+   "gs-t3e_16MB",
+   "guition",
+   "huzzah32-featherwing-24_full_4MB_497f611",
+   "huzzah32-featherwing-24_ota_497f611",
+   "huzzah32-featherwing-35_full_4MB_497f611",
+   "huzzah32-featherwing-35_ota_497f611",
+   "lanbon",
+   "lanbon_l8 -e lanbon_l9_v1_0 -e lanbon_l9_v3_3",
+   "lanbon_l8_full_8MB_497f611",
+   "lanbon_l8_ota_497f611",
+   "lilygo-ttgo",
+   "linux_fbdev",
+   "linux_headless",
+   "linux_sdl",
+   "lolin",
+   "lolin-d32-pro_ili9341",
+   "lolin-d32-pro_ili9341_full_16MB_497f611",
+   "lolin-d32-pro_ili9341_ota_497f611",
+   "m5stack",
+   "m5stack-core2_full_16MB_497f611",
+   "m5stack-core2_ota_497f611",
+   "makerfabs",
+   "makerfabs-tft35-cap_full_16MB_497f611",
+   "makerfabs-tft35-cap_ota_497f611",
+   "panlee",
+   "seeed-studios",
+   "sensecap-indicator-d1_8MB",
+   "sunton",
+   "ttgo-t7_ili9341_full_16MB_497f611",
+   "ttgo-t7_ili9341_full_4MB_497f611",
+   "ttgo-t7_ili9341_ota_497f611",
+   "waveshare",
+   "wireless-tag",
+   "wt-86-32-3zw1_full_16MB_497f611",
+   "wt-86-32-3zw1_ota_497f611",
+   "wt32-sc01_full_16MB_497f611",
+   "wt32-sc01_full_4MB_497f611",
+   "wt32-sc01_ota_497f611",
+   "yeacreate",
+   "yeacreate-nscreen32",
+   "yeacreate-nscreen32_full_16MB_497f611",
+   "yeacreate-nscreen32_ota_497f611"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "az-touch-mod-esp32_ili9341_full_4MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "az-touch-mod-esp32_ili9341_full_4MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/az-touch-mod-esp32_ili9341_full_4MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "az-touch-mod-esp32_ili9341_full_8MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "az-touch-mod-esp32_ili9341_full_8MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/az-touch-mod-esp32_ili9341_full_8MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "az-touch-mod-esp32_ili9341_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "az-touch-mod-esp32_ili9341_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/az-touch-mod-esp32_ili9341_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "d1-mini-esp32_ili9341_full_4MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "d1-mini-esp32_ili9341_full_4MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/d1-mini-esp32_ili9341_full_4MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "d1-mini-esp32_ili9341_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "d1-mini-esp32_ili9341_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/d1-mini-esp32_ili9341_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "d1-r32-unoshield_ili9341_adc_full_4MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "d1-r32-unoshield_ili9341_adc_full_4MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/d1-r32-unoshield_ili9341_adc_full_4MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "d1-r32-unoshield_ili9341_adc_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "d1-r32-unoshield_ili9341_adc_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/d1-r32-unoshield_ili9341_adc_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "d1-r32-unoshield_ili9486_adc_full_4MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "d1-r32-unoshield_ili9486_adc_full_4MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/d1-r32-unoshield_ili9486_adc_full_4MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "d1-r32-unoshield_ili9486_adc_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "d1-r32-unoshield_ili9486_adc_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/d1-r32-unoshield_ili9486_adc_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "d1-r32-waveshare_ili9486_full_4MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "d1-r32-waveshare_ili9486_full_4MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/d1-r32-waveshare_ili9486_full_4MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "d1-r32-waveshare_ili9486_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "d1-r32-waveshare_ili9486_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/d1-r32-waveshare_ili9486_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-one_ili9486_full_4MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-one_ili9486_full_4MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/esp32-one_ili9486_full_4MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-one_ili9486_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-one_ili9486_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/esp32-one_ili9486_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-one_st7796_full_4MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-one_st7796_full_4MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/esp32-one_st7796_full_4MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-one_st7796_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-one_st7796_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/esp32-one_st7796_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-touchdown_full_4MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-touchdown_full_4MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/esp32-touchdown_full_4MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-touchdown_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-touchdown_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/esp32-touchdown_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "freetouchdeck_full_4MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "freetouchdeck_full_4MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/freetouchdeck_full_4MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "freetouchdeck_full_8MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "freetouchdeck_full_8MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/freetouchdeck_full_8MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "freetouchdeck_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "freetouchdeck_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/freetouchdeck_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "huzzah32-featherwing-24_full_4MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "huzzah32-featherwing-24_full_4MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/huzzah32-featherwing-24_full_4MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "huzzah32-featherwing-24_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "huzzah32-featherwing-24_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/huzzah32-featherwing-24_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "huzzah32-featherwing-35_full_4MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "huzzah32-featherwing-35_full_4MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/huzzah32-featherwing-35_full_4MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "huzzah32-featherwing-35_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "huzzah32-featherwing-35_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/huzzah32-featherwing-35_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "lanbon_l8_full_8MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lanbon_l8_full_8MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/lanbon_l8_full_8MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "lanbon_l8_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lanbon_l8_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/lanbon_l8_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "lolin-d32-pro_ili9341_full_16MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lolin-d32-pro_ili9341_full_16MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/lolin-d32-pro_ili9341_full_16MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "lolin-d32-pro_ili9341_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lolin-d32-pro_ili9341_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/lolin-d32-pro_ili9341_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "m5stack-core2_full_16MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stack-core2_full_16MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/m5stack-core2_full_16MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "m5stack-core2_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stack-core2_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/m5stack-core2_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "makerfabs-tft35-cap_full_16MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "makerfabs-tft35-cap_full_16MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/makerfabs-tft35-cap_full_16MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "makerfabs-tft35-cap_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "makerfabs-tft35-cap_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/makerfabs-tft35-cap_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "ttgo-t7-v1.5_ili9341_full_16MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ttgo-t7_ili9341_full_16MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/ttgo-t7-v1.5_ili9341_full_16MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "ttgo-t7-v1.5_ili9341_full_4MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ttgo-t7_ili9341_full_4MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/ttgo-t7-v1.5_ili9341_full_4MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "ttgo-t7-v1.5_ili9341_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ttgo-t7_ili9341_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/ttgo-t7-v1.5_ili9341_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "wt-86-32-3zw1_full_16MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "wt-86-32-3zw1_full_16MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/wt-86-32-3zw1_full_16MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "wt-86-32-3zw1_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "wt-86-32-3zw1_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/wt-86-32-3zw1_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "wt32-sc01_full_16MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "wt32-sc01_full_16MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/wt32-sc01_full_16MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "wt32-sc01_full_4MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "wt32-sc01_full_4MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/wt32-sc01_full_4MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "wt32-sc01_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "wt32-sc01_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/wt32-sc01_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "yeacreate-nscreen32_full_16MB_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "yeacreate-nscreen32_full_16MB_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/yeacreate-nscreen32_full_16MB_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "asset": "yeacreate-nscreen32_ota_v0.6.3_497f611.bin",
+    "release": "v0.6.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "yeacreate-nscreen32_ota_497f611",
+   "url": "https://github.com/HASwitchPlate/openHASP/releases/download/v0.6.3/yeacreate-nscreen32_ota_v0.6.3_497f611.bin"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "adafruit",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "az-touch",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "az-touch-mod-esp32_ili9341_4MB -e az-touch-mod-esp32_ili9341_8MB",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "btt",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-s3-pandatouch_8MB",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "d1-mini-esp32_ili9341",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "d1-mini-esp32",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "d1-r32-espduino32",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "dustinwatts",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "freetouchdeck_4MB -e freetouchdeck_8MB -e esp32-touchdown",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "elecrow",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "globalsecurity",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "gs-t3e_16MB",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "guition",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "lanbon",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "lanbon_l8 -e lanbon_l9_v1_0 -e lanbon_l9_v3_3",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "lilygo-ttgo",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "lolin",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "lolin-d32-pro_ili9341",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack-core2",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "makerfabs",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "panlee",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "seeed-studios",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "sensecap-indicator-d1_8MB",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "sunton",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "waveshare",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "wireless-tag",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "yeacreate",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "yeacreate-nscreen32",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_linux.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "linux_sdl",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build_linux.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_linux.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "linux_headless",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build_linux.yaml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_linux.yaml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "linux_fbdev",
+   "url": "https://github.com/HASwitchPlate/openHASP/blob/master/.github/workflows/build_linux.yaml"
+  }
+ ]
+}
