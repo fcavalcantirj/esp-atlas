@@ -8,6 +8,7 @@ maintainer: allfather-bv
 capabilities:
 - mesh
 socs:
+- esp32-p4
 - esp32-s3
 popularity:
   stars: 120
@@ -19,6 +20,9 @@ sources:
 - field: popularity
   url: https://github.com/ALLFATHER-BV/wadamesh
   verified: '2026-09-01'
+- field: socs
+  url: https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_65/manifest-tdisplay-p4.json
+  verified: '2026-09-10'
 ---
 
 Touch-UI MeshCore firmware for LilyGo T-Deck / Heltec V4 TFT (ESP32-S3). The wadamesh app; depends on a MeshCore fork. Split out of meshcomod.

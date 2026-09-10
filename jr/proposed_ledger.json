@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-17T12:00:39.752957+00:00",
+      "expires": "2026-09-17T13:00:47.960948+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-10T12:00:39.752957+00:00"
+      "timestamp": "2026-09-10T13:00:47.960948+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -5014,6 +5014,16 @@
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.179924+00:00"
     },
+    "open-wifi-scanner": {
+      "expires": "2026-10-10T13:00:47.960948+00:00",
+      "id": "open-wifi-scanner",
+      "pr_ref": null,
+      "reason": "already_catalogued: geo-tp/open-wifi-scanner is already in the atlas",
+      "repo": "geo-tp/open-wifi-scanner",
+      "repo_id": 846733568,
+      "status": "rejected",
+      "timestamp": "2026-09-10T13:00:47.960948+00:00"
+    },
     "openhasp": {
       "id": "openhasp",
       "pr_ref": "#200",
@@ -5780,6 +5790,7 @@
     "geo-tp/m5cardputer-audio-stream-server": "m5cardputer-audio-stream-server",
     "geo-tp/m5cardputer-gps-logger": "m5cardputer-gps-logger",
     "geo-tp/microcom": "microcom",
+    "geo-tp/open-wifi-scanner": "open-wifi-scanner",
     "ghost-esp": "ghost-esp",
     "ghostesp-revival/ghostesp": "ghostesp",
     "girs1982/cardputer-cc1101-manufactured-": "cardputer-cc1101-manufactured",
