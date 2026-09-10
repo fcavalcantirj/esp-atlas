@@ -63,6 +63,7 @@ getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp3
 images:
   photo: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/_images/esp32-DevKitM-1-isometric.png
   pinout: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/_images/ESP32_DevKitM-1_pinlayout.png
+usb_serial: usb-uart-bridge-unspecified
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitm-1/user_guide.html
@@ -82,6 +83,9 @@ sources:
 - field: images
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitm-1/user_guide.html
   verified: '2026-09-09'
+- field: usb_serial
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitm-1/user_guide.html
+  verified: '2026-09-10'
 ---
 
 # ESP32-DevKitM-1
