@@ -1,0 +1,43 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "AndyAiCardputer/zx-spectrum-cardputer-external",
+ "resolved": {
+  "boards": [
+   "m5stamp-s3"
+  ],
+  "socs": [],
+  "unresolved": [
+   "ZX_Spectrum_External"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "ZX_Spectrum_External_v3.138.bin",
+    "release": "v3.138"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ZX_Spectrum_External",
+   "url": "https://github.com/AndyAiCardputer/zx-spectrum-cardputer-external/releases/download/v3.138/ZX_Spectrum_External_v3.138.bin"
+  },
+  {
+   "extra": {
+    "env": "m5stack-cardputer-adv",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 7,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/AndyAiCardputer/zx-spectrum-cardputer-external/blob/main/platformio.ini#L7"
+  }
+ ]
+}

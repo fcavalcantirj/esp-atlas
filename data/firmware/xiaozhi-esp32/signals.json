@@ -1,0 +1,76 @@
+{
+ "calls": 7,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "78/xiaozhi-esp32",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32",
+   "esp32-c3",
+   "esp32-c5",
+   "esp32-c6",
+   "esp32-p4",
+   "esp32-s3"
+  ],
+  "unresolved": []
+ },
+ "signals": [
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": null,
+   "rank": 4,
+   "soc": "esp32",
+   "token": "esp32",
+   "url": "https://github.com/78/xiaozhi-esp32/blob/main/sdkconfig.defaults.esp32"
+  },
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": null,
+   "rank": 4,
+   "soc": "esp32-c3",
+   "token": "esp32c3",
+   "url": "https://github.com/78/xiaozhi-esp32/blob/main/sdkconfig.defaults.esp32c3"
+  },
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": null,
+   "rank": 4,
+   "soc": "esp32-c5",
+   "token": "esp32c5",
+   "url": "https://github.com/78/xiaozhi-esp32/blob/main/sdkconfig.defaults.esp32c5"
+  },
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": null,
+   "rank": 4,
+   "soc": "esp32-c6",
+   "token": "esp32c6",
+   "url": "https://github.com/78/xiaozhi-esp32/blob/main/sdkconfig.defaults.esp32c6"
+  },
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": null,
+   "rank": 4,
+   "soc": "esp32-p4",
+   "token": "esp32p4",
+   "url": "https://github.com/78/xiaozhi-esp32/blob/main/sdkconfig.defaults.esp32p4"
+  },
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": null,
+   "rank": 4,
+   "soc": "esp32-s3",
+   "token": "esp32s3",
+   "url": "https://github.com/78/xiaozhi-esp32/blob/main/sdkconfig.defaults.esp32s3"
+  }
+ ]
+}

@@ -9,7 +9,9 @@ license: MIT
 socs:
 - esp32
 - esp32-c3
+- esp32-c5
 - esp32-c6
+- esp32-p4
 - esp32-s3
 distribution:
 - releases
@@ -37,6 +39,12 @@ sources:
 - field: popularity
   url: https://github.com/78/xiaozhi-esp32
   verified: '2026-09-01'
+- field: socs
+  url: https://github.com/78/xiaozhi-esp32/blob/main/sdkconfig.defaults.esp32c5
+  verified: '2026-09-10'
+- field: socs
+  url: https://github.com/78/xiaozhi-esp32/blob/main/sdkconfig.defaults.esp32p4
+  verified: '2026-09-10'
 ---
 
 # XiaoZhi ESP32
