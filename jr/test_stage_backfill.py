@@ -31,12 +31,17 @@ class Ctx:
 
 
 def _mk_boards(root, names):
-    esp = root / "data" / "boards" / "espressif"
-    esp.mkdir(parents=True)
+    _mk_brand_boards(root, "espressif", names)
+
+
+def _mk_brand_boards(root, brand, names):
+    d = root / "data" / "boards" / brand
+    d.mkdir(parents=True, exist_ok=True)
     for n in names:
-        d = esp / n
-        d.mkdir()
-        (d / "board.md").write_text(f"---\nid: {n}\ntype: board\nsoc: esp32\n---\n\nbody\n")
+        bd = d / n
+        bd.mkdir()
+        (bd / "board.md").write_text(
+            f"---\nid: {n}\ntype: board\nbrand: {brand}\nsoc: esp32-s3\n---\n\nbody\n")
 
 
 def _fake_backfill(statuses, monkeypatch):
@@ -91,3 +96,40 @@ def test_stops_when_call_budget_is_exhausted(tmp_path, monkeypatch):
     res = stage_backfill.run(Ctx(tmp_path, FakeBudget(calls=0)), budget=5)
     assert res.paths == []
     assert "budget low" in res.summary
+
+
+def test_run_reaches_m5stack_boards_and_backfills_getting_started(tmp_path):
+    # REAL board_backfill (not faked) + an injected 200 fetch: proves the stage's worklist
+    # now includes a REGISTERED non-Espressif vendor (m5stack). m5cardputer is a real board
+    # id in board_backfill.M5STACK_DOC_PATHS, so its resolver yields a candidate URL and the
+    # 200 fetch grounds getting_started. RED against the old espressif-only glob (which never
+    # reaches m5stack -> res.paths == []).
+    _mk_brand_boards(tmp_path, "m5stack", ["m5cardputer"])
+
+    def fetch(url):
+        return {"ok": True, "status": 200,
+                "text": "<html><body><p>Getting started with M5Cardputer.</p></body></html>"}
+
+    res = stage_backfill.run(Ctx(tmp_path), budget=4, fetch=fetch)
+    assert res.paths == ["data/boards/m5stack/m5cardputer/board.md"]
+    assert "m5cardputer" in res.summary
+    # getting_started is always groundable once the doc resolves 200
+    body = (tmp_path / "data/boards/m5stack/m5cardputer/board.md").read_text()
+    assert "getting_started" in body
+
+
+def test_brand_without_a_registered_resolver_is_not_in_the_worklist(tmp_path, monkeypatch):
+    # adafruit has no resolver in VENDOR_DOC_RESOLVERS -> its boards must never be fed to the
+    # per-board backfill, while espressif (registered) still is.
+    _mk_brand_boards(tmp_path, "espressif", ["esp32-c3-devkitc-2"])
+    _mk_brand_boards(tmp_path, "adafruit", ["adafruit-qt-py-esp32-c3"])
+    seen = []
+
+    def fake_bb(path, data_root, fetch, today):
+        seen.append(str(path))
+        return {"board_id": path.parent.name, "status": "skipped", "reason": "x"}
+
+    monkeypatch.setattr(board_backfill, "backfill_board", fake_bb)
+    stage_backfill.run(Ctx(tmp_path), budget=10)
+    assert any(p.endswith("espressif/esp32-c3-devkitc-2/board.md") for p in seen)
+    assert not any("adafruit" in p for p in seen)

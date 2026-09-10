@@ -29,9 +29,19 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
     today = ctx.now.strftime("%Y-%m-%d")
     fetch = ctx.budget.wrap(fetch or board_backfill.default_fetch, "https")
     data_root = ctx.root / "data"
-    esp = data_root / "boards" / "espressif"
+    boards_dir = data_root / "boards"
 
-    boards = sorted(esp.glob("*/board.md"))
+    # Feed EVERY board whose brand has a REGISTERED vendor doc resolver — not just Espressif.
+    # The tick must cover all vendors board_backfill knows how to ground (Espressif, m5stack,
+    # …); the old espressif-only glob left every other vendor's coverage stuck at 0. A brand
+    # with no registered resolver is left out entirely (backfill_board would skip it anyway).
+    # Sort by the repo-relative path string so the order is stable across ticks and the
+    # hour-rotation below stays deterministic.
+    boards = sorted(
+        (p for brand in board_backfill.VENDOR_DOC_RESOLVERS
+         for p in (boards_dir / brand).glob("*/board.md")),
+        key=lambda p: str(p.relative_to(ctx.root)),
+    )
     # ROTATE the start each tick so the worklist ADVANCES instead of re-hitting the same
     # first-N boards every hour (which left backfill stuck on a few un-groundable boards and
     # never progressing). Deterministic + stateless — no skip-cache file, so no churny
