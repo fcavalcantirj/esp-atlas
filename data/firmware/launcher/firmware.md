@@ -8,11 +8,12 @@ maintainer: bmorcelli
 license: MIT
 socs:
 - esp32
-- esp32-s2
-- esp32-s3
 - esp32-c3
+- esp32-c5
 - esp32-c6
 - esp32-p4
+- esp32-s2
+- esp32-s3
 distribution:
 - web-flasher
 - releases
@@ -39,6 +40,9 @@ sources:
 - field: popularity
   url: https://github.com/bmorcelli/Launcher
   verified: '2026-09-01'
+- field: socs
+  url: https://github.com/bmorcelli/Launcher/blob/main/boards/waveshare-esp32-s3-lcd-147/platformio.ini#L53
+  verified: '2026-09-10'
 ---
 
 # Launcher

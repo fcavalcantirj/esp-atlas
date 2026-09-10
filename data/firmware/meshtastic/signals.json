@@ -1,0 +1,1299 @@
+{
+ "calls": 30,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [
+  "extra_configs matched more than 40 files; kept the 40 naming an ESP32 family first",
+  "call budget exhausted while expanding extra_configs",
+  "more than 10 workflows; kept the 10 named build/firmware/release/ci first",
+  "call budget exhausted at 30"
+ ],
+ "ref": "develop",
+ "repo": "meshtastic/firmware",
+ "resolved": {
+  "boards": [
+   "heltec-wireless-paper",
+   "heltec-wireless-tracker",
+   "lilygo-t-beam",
+   "lilygo-t-deck",
+   "lilygo-t-watch-s3",
+   "m5stack-cores3"
+  ],
+  "socs": [
+   "esp32",
+   "esp32-c3",
+   "esp32-c6",
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "CDEBYTE_EoRa-S3",
+   "chatter2",
+   "elecrow-adv-24-28-tft",
+   "elecrow-adv-35-tft",
+   "elecrow-adv1-43-50-70-tft",
+   "esp32dev",
+   "esp32doit-devkit-v1",
+   "hackaday-communicator",
+   "heltec-hru-3601",
+   "heltec-ht62-esp32c3-sx1262",
+   "heltec-v3",
+   "heltec-v4",
+   "heltec-v4-r8-oled",
+   "heltec-v4-r8-tft",
+   "heltec-v4-tft",
+   "heltec-vision-master-e213",
+   "heltec-vision-master-e213-inkhud",
+   "heltec-vision-master-e290",
+   "heltec-vision-master-e290-inkhud",
+   "heltec-vision-master-t190",
+   "heltec-wireless-paper-inkhud",
+   "heltec-wireless-tracker-v2",
+   "heltec-wsl-v3",
+   "heltec_capsule_sensor_v3",
+   "heltec_sensor_hub",
+   "heltec_wifi_lora_32",
+   "heltec_wifi_lora_32_V2",
+   "heltec_wireless_stick_lite",
+   "hydra",
+   "m5stack-cardputer-adv",
+   "m5stack-core",
+   "m5stack-core-esp32",
+   "m5stack-coreink",
+   "m5stack-unitc6l",
+   "meshtastic-diy-v1",
+   "mini-epaper-s3",
+   "mini-epaper-s3-inkhud",
+   "nano-g1",
+   "nano-g1-explorer",
+   "picomputer-s3",
+   "picomputer-s3-tft",
+   "radiomaster_900_bandit",
+   "radiomaster_900_bandit_micro",
+   "radiomaster_900_bandit_nano",
+   "rak11200",
+   "rak3312",
+   "rak_wismesh_tap_v2",
+   "rak_wismesh_tap_v2-tft",
+   "seeed-sensecap-indicator",
+   "seeed-sensecap-indicator-tft",
+   "seeed-xiao-s3",
+   "station-g1",
+   "station-g2",
+   "station-g3",
+   "t-beam-1w",
+   "t-deck-pro",
+   "t-deck-pro-v1_1",
+   "t-deck-tft",
+   "t-eth-elite",
+   "t5s3-epaper-v1",
+   "t5s3-epaper-v2",
+   "tbeam-s3-core",
+   "thinknode_g3",
+   "thinknode_m2",
+   "thinknode_m5",
+   "thinknode_m7",
+   "tlora-c6",
+   "tlora-pager",
+   "tlora-t3s3-epaper",
+   "tlora-t3s3-epaper-inkhud",
+   "tlora-t3s3-v1",
+   "tlora-v2-1-1_6",
+   "tlora-v3-3-0-tcxo",
+   "tracksenger",
+   "tracksenger-lcd",
+   "tracksenger-oled",
+   "unphone",
+   "wiscore_rak11200"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "t-deck-pro-v1_1",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "station-g3",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "thinknode_m2",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "t-watch-s3",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "CDEBYTE_EoRa-S3",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "t5s3-epaper-v1",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "t5s3-epaper-v2",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "m5stack-cardputer-adv",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "picomputer-s3",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "picomputer-s3-tft",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-v4",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-v4-tft",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-vision-master-e290",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-vision-master-e290-inkhud",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-wsl-v3",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "unphone",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "thinknode_m7",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-vision-master-t190",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-wireless-paper",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-wireless-paper-inkhud",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "tlora-pager",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "t-beam-1w",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "m5stack-cores3",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-vision-master-e213",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-vision-master-e213-inkhud",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-v3",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "seeed-xiao-s3",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec_sensor_hub",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "tlora-t3s3-epaper",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "tlora-t3s3-epaper-inkhud",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-wireless-tracker",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "seeed-sensecap-indicator",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "seeed-sensecap-indicator-tft",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "t-eth-elite",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "mini-epaper-s3",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "mini-epaper-s3-inkhud",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "t-deck-pro",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-v4-r8-oled",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-v4-r8-tft",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "tbeam-s3-core",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "tlora-t3s3-v1",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec_capsule_sensor_v3",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "heltec-wireless-tracker-v2",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "tracksenger",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "tracksenger-lcd",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "tracksenger-oled",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "station-g2",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "rak3312",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "rak_wismesh_tap_v2",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "rak_wismesh_tap_v2-tft",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "thinknode_m5",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "thinknode_g3",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "elecrow-adv-24-28-tft",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "elecrow-adv-35-tft",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "elecrow-adv1-43-50-70-tft",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "hackaday-communicator",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "t-deck",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32s3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "t-deck-tft",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32c3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-c3",
+   "token": "heltec-hru-3601",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32c3",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-c3",
+   "token": "heltec-ht62-esp32c3-sx1262",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32c6",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-c6",
+   "token": "m5stack-unitc6l",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32c6",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-c6",
+   "token": "tlora-c6",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "nano-g1",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "m5stack-core",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "radiomaster_900_bandit",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "station-g1",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "tlora-v3-3-0-tcxo",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "chatter2",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "tlora-v2-1-1_6",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "rak11200",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "tbeam",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "m5stack-coreink",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "nano-g1-explorer",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "radiomaster_900_bandit_nano",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "radiomaster_900_bandit_micro",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "meshtastic-diy-v1",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "platform": "esp32",
+    "release": "v2.7.26.54e0d8d"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "hydra",
+   "url": "https://github.com/meshtastic/firmware/releases/download/v2.7.26.54e0d8d/firmware-2.7.26.54e0d8d.json"
+  },
+  {
+   "extra": {
+    "env": "betafpv_2400_tx_micro",
+    "file": "variants/esp32/betafpv_2400_tx_micro/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 3,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/betafpv_2400_tx_micro/platformio.ini#L3"
+  },
+  {
+   "extra": {
+    "env": "betafpv_900_tx_nano",
+    "file": "variants/esp32/betafpv_900_tx_nano/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 3,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/betafpv_900_tx_nano/platformio.ini#L3"
+  },
+  {
+   "extra": {
+    "env": "chatter2",
+    "file": "variants/esp32/chatter2/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 5,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/chatter2/platformio.ini#L5"
+  },
+  {
+   "extra": {
+    "env": "9m2ibr_aprs_lora_tracker",
+    "file": "variants/esp32/diy/9m2ibr_aprs_lora_tracker/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 5,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/diy/9m2ibr_aprs_lora_tracker/platformio.ini#L5"
+  },
+  {
+   "extra": {
+    "env": "meshtastic-dr-dev",
+    "file": "variants/esp32/diy/dr-dev/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 11,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/diy/dr-dev/platformio.ini#L11"
+  },
+  {
+   "extra": {
+    "env": "hydra",
+    "file": "variants/esp32/diy/hydra/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/diy/hydra/platformio.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "meshtastic-diy-v1",
+    "file": "variants/esp32/diy/v1/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 14,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/diy/v1/platformio.ini#L14"
+  },
+  {
+   "extra": {
+    "env": "meshtastic-diy-v1_1",
+    "file": "variants/esp32/diy/v1_1/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 4,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/diy/v1_1/platformio.ini#L4"
+  },
+  {
+   "extra": {
+    "env": "hackerboxes-esp32-io",
+    "file": "variants/esp32/hackerboxes_esp32_io/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 3,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/hackerboxes_esp32_io/platformio.ini#L3"
+  },
+  {
+   "extra": {
+    "env": "heltec-v1",
+    "file": "variants/esp32/heltec_v1/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 12,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_lora_32",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/heltec_v1/platformio.ini#L12"
+  },
+  {
+   "extra": {
+    "env": "heltec-v2_1",
+    "file": "variants/esp32/heltec_v2.1/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 12,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_lora_32_V2",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/heltec_v2.1/platformio.ini#L12"
+  },
+  {
+   "extra": {
+    "env": "heltec-v2_0",
+    "file": "variants/esp32/heltec_v2/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 12,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_lora_32_V2",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/heltec_v2/platformio.ini#L12"
+  },
+  {
+   "extra": {
+    "env": "heltec-wireless-bridge",
+    "file": "variants/esp32/heltec_wireless_bridge/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 5,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_lora_32",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/heltec_wireless_bridge/platformio.ini#L5"
+  },
+  {
+   "extra": {
+    "env": "heltec-wsl-v2_1",
+    "file": "variants/esp32/heltec_wsl_v2.1/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 3,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wireless_stick_lite",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/heltec_wsl_v2.1/platformio.ini#L3"
+  },
+  {
+   "extra": {
+    "env": "m5stack-core",
+    "file": "variants/esp32/m5stack_core/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 12,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-core-esp32",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/m5stack_core/platformio.ini#L12"
+  },
+  {
+   "extra": {
+    "env": "m5stack-coreink",
+    "file": "variants/esp32/m5stack_coreink/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 4,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-coreink",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/m5stack_coreink/platformio.ini#L4"
+  },
+  {
+   "extra": {
+    "env": "nano-g1-explorer",
+    "file": "variants/esp32/nano-g1-explorer/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "ttgo-tbeam",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/nano-g1-explorer/platformio.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "nano-g1",
+    "file": "variants/esp32/nano-g1/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "ttgo-tbeam",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/nano-g1/platformio.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "radiomaster_900_bandit",
+    "file": "variants/esp32/radiomaster_900_bandit/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 4,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/radiomaster_900_bandit/platformio.ini#L4"
+  },
+  {
+   "extra": {
+    "env": "radiomaster_900_bandit_micro",
+    "file": "variants/esp32/radiomaster_900_bandit_micro/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 9,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/radiomaster_900_bandit_micro/platformio.ini#L9"
+  },
+  {
+   "extra": {
+    "env": "radiomaster_900_bandit_nano",
+    "file": "variants/esp32/radiomaster_900_bandit_nano/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 12,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32doit-devkit-v1",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/radiomaster_900_bandit_nano/platformio.ini#L12"
+  },
+  {
+   "extra": {
+    "env": "rak11200",
+    "file": "variants/esp32/rak11200/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "wiscore_rak11200",
+   "url": "https://github.com/meshtastic/firmware/blob/develop/variants/esp32/rak11200/platformio.ini#L13"
+  }
+ ]
+}
