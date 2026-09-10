@@ -1,0 +1,29 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "d4rkmen/plai",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "21_full"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "Plai_21_full.bin",
+    "release": "v2.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "21_full",
+   "url": "https://github.com/d4rkmen/plai/releases/download/v2.1/Plai_21_full.bin"
+  }
+ ]
+}
