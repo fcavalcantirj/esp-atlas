@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "joejee90/Tiny-Journal",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "Tiny_Journal.ino.merged"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "Tiny_Journal.ino.merged.bin",
+    "release": "v2026.06.06"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Tiny_Journal.ino.merged",
+   "url": "https://github.com/joejee90/Tiny-Journal/releases/download/v2026.06.06/Tiny_Journal.ino.merged.bin"
+  }
+ ]
+}

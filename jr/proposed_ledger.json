@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-17T11:00:31.853052+00:00",
+      "expires": "2026-09-17T12:00:39.752957+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-10T11:00:31.853052+00:00"
+      "timestamp": "2026-09-10T12:00:39.752957+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -5038,6 +5038,16 @@
       "status": "rejected",
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
     },
+    "oshw-reterminal-series-e-d": {
+      "expires": "2026-10-10T12:00:39.752957+00:00",
+      "id": "oshw-reterminal-series-e-d",
+      "pr_ref": null,
+      "reason": "below_floor: 11 stars / 4 forks",
+      "repo": "seeed-projects/oshw-reterminal-series-e-d",
+      "repo_id": 1249796155,
+      "status": "rejected",
+      "timestamp": "2026-09-10T12:00:39.752957+00:00"
+    },
     "otpauth-m5stickc": {
       "expires": "2026-10-10T05:00:57.737650+00:00",
       "id": "otpauth-m5stickc",
@@ -6031,6 +6041,7 @@
     "sau412/esp32_cyd_pda": "esp32-cyd-pda",
     "say4n/edf-energy-monitor": "edf-energy-monitor",
     "sebaspinto/misspoppyrabbit": "misspoppyrabbit",
+    "seeed-projects/oshw-reterminal-series-e-d": "oshw-reterminal-series-e-d",
     "seeed-solution/sensecap_indicator_esp32": "sensecap-indicator-esp32",
     "serginator/cardputer-mouse-jiggler": "cardputer-mouse-jiggler",
     "serialgeist/esp32marauder": "esp32marauder",
