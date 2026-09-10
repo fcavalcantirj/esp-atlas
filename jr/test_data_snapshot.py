@@ -209,6 +209,150 @@ def test_jsonl_lines_are_compact_json(tmp_path):
     assert ", " not in line and '": ' not in line   # compact separators, no whitespace
 
 
+# --- v2.a entity_fields: record every per-field metric --------------------
+
+def test_entity_fields_covers_every_gauge_field(tmp_path):
+    _build_fixture(tmp_path)
+    row = data_snapshot.build_row(tmp_path / "data", "2026-09-09")
+    ef = row["entity_fields"]
+    # every entity the gauge measures is present
+    assert set(ef) == {"boards", "socs", "modules", "brands"}
+    # boards carry all 8 fields, in FIELD_SPECS (report) order
+    assert list(ef["boards"]) == [
+        "download_mode", "usb_serial", "pinout", "dimensions_mm",
+        "form_factor", "usb_connector", "getting_started", "images",
+    ]
+    assert len(ef["socs"]) == 5 and len(ef["modules"]) == 5 and len(ef["brands"]) == 1
+    # each cell is a {count, pct} pulled straight from the gauge (not rescanned)
+    assert set(ef["boards"]["pinout"]) == {"count", "pct"}
+    assert ef["boards"]["usb_serial"]["count"] == 2
+    assert ef["boards"]["pinout"]["count"] == 1        # io.gpio_pins only on m5stack-cardputer
+    assert ef["boards"]["images"]["count"] == 0        # no board carries images yet -> floor
+
+
+def test_board_fields_is_unchanged_and_a_subset_of_entity_fields(tmp_path):
+    _build_fixture(tmp_path)
+    row = data_snapshot.build_row(tmp_path / "data", "2026-09-09")
+    ef_boards = row["entity_fields"]["boards"]
+    # board_fields (the 4 First-Flash keys) stay exactly as v1 — and are a subset of entity_fields
+    for f in data_snapshot.BOARD_TREND_FIELDS:
+        assert f in ef_boards
+        assert row["board_fields"][f] == ef_boards[f]
+
+
+def test_entity_fields_round_trips_through_the_jsonl_idempotently(tmp_path):
+    _build_fixture(tmp_path)
+    jsonl = tmp_path / "docs" / "telemetry" / "data-trend.jsonl"
+    data_snapshot.write_snapshot(tmp_path, "2026-09-09")
+    first = jsonl.read_text(encoding="utf-8")
+    data_snapshot.write_snapshot(tmp_path, "2026-09-09")
+    assert jsonl.read_text(encoding="utf-8") == first     # byte-identical: no churn from entity_fields
+    row = json.loads(first.strip())
+    assert row["entity_fields"]["boards"]["usb_serial"]["count"] == 2
+
+
+# --- v2.a/v2.b back-compat: a row/history without entity_fields never crashes ----
+
+def test_compute_delta_survives_a_legacy_prev_without_entity_fields(tmp_path):
+    _build_fixture(tmp_path)
+    row = data_snapshot.build_row(tmp_path / "data", "2026-09-02")
+    legacy_prev = {                                        # a v1 row: no entity_fields key
+        "date": "2026-09-01", "finite_overall_pct": 40.0,
+        "board_fields": {"usb_serial": {"count": 1, "pct": 5.0}},
+        "firmware_count": 1, "recipe_count": 1, "compat_density": 1.0,
+    }
+    d = data_snapshot.compute_delta(row, legacy_prev)      # must not raise
+    assert d is not None and "board_fields" in d
+    assert d["board_fields"]["usb_serial"] == 2 - 1
+
+
+# --- v2.b field_momentum: staleness verdict (pure, no clock) ---------------
+
+def _mrow(date, count, pct=10.0, entity="boards", field="pinout"):
+    """A synthetic trend row carrying one entity field's count (esp32 board field)."""
+    return {"date": date, "board_fields": {},
+            "entity_fields": {entity: {field: {"count": count, "pct": pct}}}}
+
+
+def test_default_window_is_seven():
+    assert data_snapshot.DEFAULT_WINDOW == 7
+
+
+def test_field_momentum_improving_and_declining():
+    up = [_mrow("2026-09-01", 15), _mrow("2026-09-02", 22), _mrow("2026-09-03", 35)]
+    m = data_snapshot.field_momentum(up, window=2)
+    assert m["boards.pinout"]["status"] == "improving"
+    assert m["boards.pinout"]["delta_window"] == 20        # 35 - 15
+    assert m["boards.pinout"]["since"] == "2026-09-01"
+    down = [_mrow("2026-09-01", 20), _mrow("2026-09-02", 18), _mrow("2026-09-03", 15)]
+    md = data_snapshot.field_momentum(down, window=2)
+    assert md["boards.pinout"]["status"] == "declining"
+    assert md["boards.pinout"]["delta_window"] == -5
+
+
+def test_field_momentum_flat_when_history_shorter_than_window():
+    # three equal snapshots but not yet a full window (window=3) -> too soon to judge -> flat
+    flat = [_mrow("2026-09-01", 15), _mrow("2026-09-02", 15), _mrow("2026-09-03", 15)]
+    v = data_snapshot.field_momentum(flat, window=3)["boards.pinout"]
+    assert v["status"] == "flat" and v["delta_window"] == 0
+
+
+def test_field_momentum_stale_across_a_full_window():
+    # a field stuck across a full window of consecutive snapshots -> stale, not a bare 0-delta
+    stale = [_mrow(f"2026-09-0{i}", 15) for i in (1, 2, 3, 4)]
+    v = data_snapshot.field_momentum(stale, window=3)["boards.pinout"]
+    assert v["status"] == "stale" and v["delta_window"] == 0
+    assert v["since"] == "2026-09-01"
+
+
+def test_field_momentum_uses_earliest_when_history_shorter_than_window():
+    rows = [_mrow("2026-09-01", 10), _mrow("2026-09-02", 14)]   # only 2 rows, window 7
+    m = data_snapshot.field_momentum(rows, window=7)
+    assert m["boards.pinout"]["since"] == "2026-09-01"          # earliest available
+    assert m["boards.pinout"]["status"] == "improving" and m["boards.pinout"]["delta_window"] == 4
+
+
+def test_field_momentum_backcompat_history_without_entity_fields():
+    legacy = {"date": "2026-09-01", "board_fields": {"pinout": {"count": 9, "pct": 10.0}}}  # no entity_fields
+    cur = _mrow("2026-09-02", 15)
+    m = data_snapshot.field_momentum([legacy, cur], window=7)   # must not crash
+    assert "boards.pinout" in m
+    assert m["boards.pinout"]["status"] in {"improving", "declining", "flat", "stale"}
+
+
+def test_field_momentum_empty_history_is_empty():
+    assert data_snapshot.field_momentum([]) == {}
+
+
+# --- v2.c markdown: Field coverage section ---------------------------------
+
+def test_write_snapshot_markdown_has_a_field_coverage_section(tmp_path):
+    _build_fixture(tmp_path)
+    data_snapshot.write_snapshot(tmp_path, "2026-09-09")
+    md = (tmp_path / "docs" / "telemetry" / "data-2026-09-09.md").read_text(encoding="utf-8")
+    assert "## Field coverage" in md
+    assert "boards.pinout:" in md                              # the floor fields are surfaced
+    assert md.index("## Δ") < md.index("## Field coverage")     # coverage comes AFTER the Δ block
+
+
+def test_render_markdown_orders_worst_pct_first_and_marks_stale(tmp_path):
+    _build_fixture(tmp_path)
+    import data_completion
+    gauge = data_completion.compute_completion(str(tmp_path / "data"))
+    row = data_snapshot.build_row(tmp_path / "data", "2026-09-10")
+    momentum = {}
+    for ent, fields in row["entity_fields"].items():
+        for fld in fields:
+            momentum[f"{ent}.{fld}"] = {"status": "flat", "delta_window": 0, "since": "2026-09-01"}
+    momentum["boards.pinout"]["status"] = "stale"
+    md = data_snapshot.render_markdown(gauge, row, None, momentum)
+    assert "## Field coverage" in md
+    assert "boards.pinout: 1 (33.3%) — stale" in md            # count/pct straight from the gauge
+    assert "(!)" in md                                          # stale is clearly marked
+    # worst-pct first: images (0%) sits above the higher-pct usb_serial line
+    assert md.index("boards.images:") < md.index("boards.usb_serial:")
+
+
 # --- CLI ------------------------------------------------------------------
 
 def test_cli_main_writes_both_files(tmp_path):
