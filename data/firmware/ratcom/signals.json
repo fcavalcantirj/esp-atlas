@@ -1,0 +1,57 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "ratspeak/rsCardputer",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "esp32-s3-devkitc-1",
+   "rnode-m5launcher",
+   "standalone-m5launcher"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "rscardputer-rnode-m5launcher.bin",
+    "release": "v2.0.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "rnode-m5launcher",
+   "url": "https://github.com/ratspeak/rsCardputer/releases/download/v2.0.3/rscardputer-rnode-m5launcher.bin"
+  },
+  {
+   "extra": {
+    "asset": "rscardputer-standalone-m5launcher.bin",
+    "release": "v2.0.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "standalone-m5launcher",
+   "url": "https://github.com/ratspeak/rsCardputer/releases/download/v2.0.3/rscardputer-standalone-m5launcher.bin"
+  },
+  {
+   "extra": {
+    "env": "standalone_915",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 3,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/ratspeak/rsCardputer/blob/main/platformio.ini#L3"
+  }
+ ]
+}

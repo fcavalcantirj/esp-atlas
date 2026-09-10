@@ -63,6 +63,11 @@ notes:
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
 images:
   pinout: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/_images/esp32_devkitC_v4_pinlayout.png
+download_mode:
+  mode: manual
+  steps: Holding down Boot and then pressing EN initiates Firmware Download mode for
+    downloading firmware through the serial port
+usb_serial: usb-uart-bridge-unspecified
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
@@ -79,6 +84,12 @@ sources:
 - field: images
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
   verified: '2026-09-09'
+- field: download_mode
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
+  verified: '2026-09-10'
+- field: usb_serial
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
+  verified: '2026-09-10'
 ---
 
 # ESP32-DevKitC V4
