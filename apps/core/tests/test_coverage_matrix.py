@@ -18,6 +18,22 @@ Only a DeadLLM is ever injected -- run_guide's/parse_intent's own deterministic
 retrieval and validation is what's under test, never Groq's mood. No test in
 this file may perform a real network call.
 
+NO FROZEN BOARD SETS. A firmware's exact board set is NEVER hardcoded here.
+Every board expectation is DERIVED live from the recipe records on disk +
+the SAME filter the resolver applies (a recipe's board is kept iff it resolves
+to a real part record -- see run_guide()'s `if board is None: continue`; status
+like broken/unverified is user-visible, never a board-set gate). A hardcoded
+`boards_exact={...}` would red the build on every honest compat-map growth --
+e.g. when a tick enriched nerdminer-v2 from 1 to 8 boards, the data got BETTER
+but a frozen `{"m5stick-cplus2"}` pin failed (see #131's Marauder note). The
+derived form tracks that growth automatically while still catching real
+regressions: a phantom board (in the result with no recipe on disk), a dropped
+valid board (a recipe whose board resolves to a part but is missing from the
+result), a broken dedup, or a capability-logic regression. Over-mapping is
+guarded upstream (derive._env_product + the resolver's soc gates), not by
+pinning an exact literal set here. test_run_matrix_pins_no_frozen_board_set
+guards this rule from creeping back.
+
     pytest apps/core/tests/test_coverage_matrix.py -v
 """
 import json
@@ -32,6 +48,7 @@ from esp_atlas_core.firmware import (
 )
 from esp_atlas_core.intent import parse_intent
 from esp_atlas_core.run_guide import run_guide
+from esp_atlas_core.search import get_part
 
 
 class DeadLLM:
@@ -53,14 +70,33 @@ def _capabilities(entries):
     return {e["capability"] for e in entries if e.get("capability")}
 
 
+def _recipe_board_ids(fw):
+    """Raw board ids the recipes on disk name for `fw` -- unfiltered, every status
+    (run_guide carries broken/unverified through; status is user-visible, not a
+    board-set gate)."""
+    return [r["board"] for r in recipes_for_firmware(fw)]
+
+
+def _derived_board_set(fw, db_path):
+    """The board set run_guide MUST resolve `fw` to, DERIVED live from the recipe
+    records + the SAME filter the resolver applies: a recipe's board is kept iff
+    it resolves to a real part record (run_guide()'s `if board is None: continue`).
+    NEVER a frozen literal -- this tracks the compat map as it grows, so an honest
+    board enrichment (e.g. nerdminer-v2 1->8) can never red the build, while a
+    phantom board or a dropped valid board still fails loudly."""
+    return {b for b in _recipe_board_ids(fw) if get_part(b, db_path=db_path) is not None}
+
+
 # --- RUN matrix: firmware x diverse ESP32 kinds/purposes --------------------
 #
 # Each case names a firmware and the grounded, verbatim-expected truth about
 # it: the hard capability ids `requires`/`not_required` must cover (superset,
-# unless `requires_exact`/`not_required_exact` pins it closed), which boards
-# the recipe graph must resolve to (`boards_exact`, when the set is small
-# enough to pin), which board ids a wider recipe set must at least include
-# (`recipe_includes`), and any per-board `fit` a maker would see.
+# unless `requires_exact`/`not_required_exact` pins it closed) and any per-board
+# `fit` a maker would see. The BOARD SET is never pinned in a case dict -- it is
+# DERIVED live from the recipe graph in test_run_case (see _derived_board_set and
+# the module docstring), so compat-map growth tracks automatically. `recipe_includes`
+# still names ANCHOR boards a case guarantees are present (extra teeth, a subset of
+# the derived-exact check) where the firmware carries a domain-meaningful anchor.
 
 RUN_MATRIX = [
     dict(
@@ -80,7 +116,8 @@ RUN_MATRIX = [
         id="3_rogueduck",
         fw="rogueduck",
         requires_exact={"native-usb"},
-        boards_exact={"m5stick-s3"},
+        # board set DERIVED in test_run_case (was boards_exact={"m5stick-s3"}).
+        recipe_includes={"m5stick-s3"},
         board_fits={"m5stick-s3": "ideal"},
     ),
     dict(
@@ -129,14 +166,16 @@ RUN_MATRIX = [
         id="11_xiaozhi-esp32",
         fw="xiaozhi-esp32",
         requires_exact={"wifi"},
-        boards_exact={"m5stack-cores3"},
+        # board set DERIVED in test_run_case (was boards_exact={"m5stack-cores3"}).
+        recipe_includes={"m5stack-cores3"},
     ),
     dict(
         id="12_tasmota",
         fw="tasmota",
         requires_exact={"wifi"},
         not_required_exact={"display"},
-        boards_exact={"esp32-devkitc-v4"},
+        # board set DERIVED in test_run_case (was boards_exact={"esp32-devkitc-v4"}).
+        recipe_includes={"esp32-devkitc-v4"},
     ),
     dict(
         # esp32-bit-pirate runs on "any ESP32-S3 board with >=8MB flash" and its platformio.ini
@@ -153,19 +192,27 @@ RUN_MATRIX = [
         id="14_openmqttgateway",
         fw="openmqttgateway",
         requires_exact={"wifi", "ble"},
-        boards_exact={"esp32-c3-devkitm-1"},
+        # board set DERIVED in test_run_case (was boards_exact={"esp32-c3-devkitm-1"}).
+        recipe_includes={"esp32-c3-devkitm-1"},
     ),
     dict(
         id="15_usbarmyknife",
         fw="usbarmyknife",
         requires_exact={"native-usb"},
-        boards_exact={"lilygo-t-dongle-s3"},
+        # board set DERIVED in test_run_case (was boards_exact={"lilygo-t-dongle-s3"}).
+        recipe_includes={"lilygo-t-dongle-s3"},
     ),
     dict(
+        # nerdminer-v2 runs on many ESP32/S2/S3/C3 build targets named in its
+        # platformio.ini; the tick honestly grew this from 1 board to 8. A frozen
+        # boards_exact={"m5stick-cplus2"} broke the build on that HONEST enrichment
+        # even though the data got BETTER -- exactly the failure this file fixes.
+        # The board set is now DERIVED live in test_run_case; m5stick-cplus2 (the
+        # release-bin, website-flashable anchor) must still be present.
         id="16_nerdminer-v2",
         fw="nerdminer-v2",
         requires_exact={"wifi", "display"},
-        boards_exact={"m5stick-cplus2"},
+        recipe_includes={"m5stick-cplus2"},
     ),
     dict(
         # thin record (no capabilities/requires yet) — grounds via its recipe; enrich later
@@ -197,10 +244,30 @@ def test_run_case(built_db_path, case):
     if "not_required_superset" in case:
         assert not_required >= case["not_required_superset"], case["fw"]
 
-    if "boards_exact" in case:
-        assert {b["board_id"] for b in result["boards"]} == case["boards_exact"], case["fw"]
+    # --- BOARD SET: derived-exact, never a frozen literal (see module docstring).
+    # Every case derives its expected boards live from the recipe records + the
+    # resolver's own part-resolution filter, so compat-map growth tracks
+    # automatically. This is NOT a tautology: it independently recomputes the set
+    # from the RAW recipes on disk and asserts the coverage-matrix CODE emitted
+    # exactly that, catching a phantom board, a dropped valid board, or a broken
+    # dedup. (No case needs the anchor-only fallback -- run_guide's sole board-set
+    # filter is part-resolution, which the derivation applies faithfully.)
+    returned = [b["board_id"] for b in result["boards"]]
+    returned_set = set(returned)
+    on_disk = set(_recipe_board_ids(case["fw"]))
+    expected = _derived_board_set(case["fw"], built_db_path)
+
+    assert returned_set == expected, case["fw"]
+    # Teeth, stated as the concrete regressions they catch:
+    # (a) no phantom board -- every returned board has a real recipe on disk.
+    assert returned_set <= on_disk, f"{case['fw']}: phantom board(s) {returned_set - on_disk}"
+    # (b) no dropped valid board -- every recipe board that resolves to a part is returned.
+    assert expected <= returned_set, f"{case['fw']}: dropped valid board(s) {expected - returned_set}"
+    # (c) dedup -- no board id appears twice in the resolved list.
+    assert len(returned) == len(returned_set), f"{case['fw']}: duplicate board_id in {returned}"
+
     if "recipe_includes" in case:
-        assert case["recipe_includes"] <= {b["board_id"] for b in result["boards"]}, case["fw"]
+        assert case["recipe_includes"] <= returned_set, case["fw"]
 
     for board_id, expected_fit in case.get("board_fits", {}).items():
         assert _board(result, board_id)["fit"] == expected_fit, f"{case['fw']} x {board_id}"
@@ -365,8 +432,17 @@ def test_run_matrix_firmware_ids_are_real():
         assert get_firmware(case["fw"]) is not None, case["fw"]
 
 
-def test_boards_exact_cases_match_the_real_recipe_graph():
+def test_run_matrix_pins_no_frozen_board_set():
+    """Guard the guard: no RUN case may re-introduce a hardcoded board set (the
+    old `boards_exact`, or any frozen board-id literal). Board expectations are
+    DERIVED live from the recipe records in test_run_case -- see the module
+    docstring -- so an honest compat-map growth (e.g. nerdminer-v2 1->8 boards)
+    can never red the build. This fails loudly if a frozen set creeps back in,
+    and confirms every matrix firmware still resolves to at least one recipe so a
+    case can never silently degrade to asserting nothing about an empty graph."""
     for case in RUN_MATRIX:
-        if "boards_exact" in case:
-            recipe_boards = {r["board"] for r in recipes_for_firmware(case["fw"])}
-            assert recipe_boards == case["boards_exact"], case["fw"]
+        assert "boards_exact" not in case, (
+            f"{case['id']}: frozen board set found -- derive from the live recipe "
+            "graph in test_run_case instead of pinning a literal"
+        )
+        assert recipes_for_firmware(case["fw"]), case["fw"]
