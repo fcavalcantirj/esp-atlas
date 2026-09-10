@@ -54,17 +54,25 @@ notes:
 - Single micro-USB port for power, flashing and UART communication
 - Bridge chip model not named in the official user guide (omitted)
 - EOL/legacy board; guide's worked example uses ESP32-S2-WROVER, 4 MB flash, 2 MB
-  PSRAM, but board also supports WROVER-I/WROOM/WROOM-I module variants (fixed
-  spec omitted since it varies by module fitted)
+  PSRAM, but board also supports WROVER-I/WROOM/WROOM-I module variants (fixed spec
+  omitted since it varies by module fitted)
 - Addressable RGB LED (WS2812) on GPIO18
 - Dimensions only in a separate Dimensions PDF (omitted)
 - 'io.gpio_free=32 DERIVED, not quoted (SPEC-io-power.md §5.3). Headers J2+J3 break
-  out 37 pads total (quoted from the user guide pin tables: J2 = GPIO 0-17; J3 =
-  GPIO 18-21,26,33-46). Subtracting esp32-s2''s soc.reserved_pins that are exposed
-  -- strapping {0,45,46} (GPIO46 also listed under input_only, so counted once)
-  and usb_flash_tied {19,20} -- 5 unique reserved pins exposed -- gives 37 - 5 =
-  32. Math not vendor-stated; verify before treating as exact.'
+  out 37 pads total (quoted from the user guide pin tables: J2 = GPIO 0-17; J3 = GPIO
+  18-21,26,33-46). Subtracting esp32-s2''s soc.reserved_pins that are exposed -- strapping
+  {0,45,46} (GPIO46 also listed under input_only, so counted once) and usb_flash_tied
+  {19,20} -- 5 unique reserved pins exposed -- gives 37 - 5 = 32. Math not vendor-stated;
+  verify before treating as exact.'
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html
+download_mode:
+  mode: manual
+  steps: Holding down Boot and then pressing Reset initiates Firmware Download mode
+    for downloading firmware through the serial port
+usb_serial: usb-uart-bridge-unspecified
+images:
+  photo: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/_images/esp32-s2-saola-1-v1.2-isometric.png
+  pinout: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/_images/esp32-s2_saola1-pinout.jpg
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html
@@ -78,6 +86,15 @@ sources:
 - field: getting_started
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html
   verified: '2026-09-07'
+- field: download_mode
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html
+  verified: '2026-09-10'
+- field: usb_serial
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html
+  verified: '2026-09-10'
+- field: images
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html
+  verified: '2026-09-10'
 ---
 
 # ESP32-S2-Saola-1
