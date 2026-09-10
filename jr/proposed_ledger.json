@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-16T23:00:48.497677+00:00",
+      "expires": "2026-09-17T00:00:50.127806+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-09T23:00:48.497677+00:00"
+      "timestamp": "2026-09-10T00:00:50.127806+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -2677,6 +2677,16 @@
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.103864+00:00"
     },
+    "ha-sugar-valley-neopool": {
+      "expires": "2026-10-10T00:00:50.127806+00:00",
+      "id": "ha-sugar-valley-neopool",
+      "pr_ref": null,
+      "reason": "below_floor: 6 stars / 2 forks",
+      "repo": "alexdelprete/ha-sugar-valley-neopool",
+      "repo_id": 1115714307,
+      "status": "rejected",
+      "timestamp": "2026-09-10T00:00:50.127806+00:00"
+    },
     "hal9000": {
       "expires": "2026-10-08T17:00:16.540728+00:00",
       "id": "hal9000",
@@ -4190,14 +4200,13 @@
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
     "m5stick-nemo": {
-      "expires": "2026-10-09T22:00:46.933939+00:00",
+      "expires": "2026-09-17T00:00:50.127806+00:00",
       "id": "m5stick-nemo",
       "pr_ref": null,
-      "reason": "already_catalogued: n0xa/m5stick-nemo is already in the atlas",
-      "repo": "n0xa/m5stick-nemo",
-      "repo_id": 694486730,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "n0xa/m5stick-nemo.git",
       "status": "rejected",
-      "timestamp": "2026-09-09T22:00:46.933939+00:00"
+      "timestamp": "2026-09-10T00:00:50.127806+00:00"
     },
     "m5stickc": {
       "expires": "2026-10-08T20:00:21.660790+00:00",
@@ -4893,6 +4902,16 @@
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.172852+00:00"
     },
+    "nerdminer-v2": {
+      "expires": "2026-10-10T00:00:50.127806+00:00",
+      "id": "nerdminer-v2",
+      "pr_ref": null,
+      "reason": "already_catalogued: bitmaker-hub/nerdminer_v2 is already in the atlas",
+      "repo": "bitmaker-hub/nerdminer_v2",
+      "repo_id": 616222670,
+      "status": "rejected",
+      "timestamp": "2026-09-10T00:00:50.127806+00:00"
+    },
     "nes-tab5-usb-host": {
       "expires": "2026-10-09T23:00:48.497677+00:00",
       "id": "nes-tab5-usb-host",
@@ -4902,6 +4921,16 @@
       "repo_id": 1112423173,
       "status": "rejected",
       "timestamp": "2026-09-09T23:00:48.497677+00:00"
+    },
+    "nessocharger": {
+      "expires": "2026-10-10T00:00:50.127806+00:00",
+      "id": "nessocharger",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "mateuszparol/nessocharger",
+      "repo_id": 1316977285,
+      "status": "rejected",
+      "timestamp": "2026-09-10T00:00:50.127806+00:00"
     },
     "nyan": {
       "id": "nyan",
@@ -5427,6 +5456,7 @@
     "akoerner/kprox": "kprox",
     "alcor55/cardputer-gps-info": "cardputer-gps-info",
     "aleksm2137/mini-mp3player_cardputer-adv": "mini-mp3player-cardputer-adv",
+    "alexdelprete/ha-sugar-valley-neopool": "ha-sugar-valley-neopool",
     "allfather-bv/wadamesh": "wadamesh",
     "alovagado/m5stickcplus2-fishing-game.git": "m5stickcplus2-fishing-game",
     "alovagado/m5stickcplus2.git": "m5stickcplus2",
@@ -5462,6 +5492,7 @@
     "beanpiechen/micropythonshell": "micropythonshell",
     "ben7147/bruceextled.git": "bruceextled",
     "big-bratan/make-ap": "make-ap",
+    "bitmaker-hub/nerdminer_v2": "nerdminer-v2",
     "blamouche/cardputer-dwight": "cardputer-dwight",
     "bluemage/cardputeradv-basicav": "cardputeradv-basicav",
     "bmorcelli/esp32marauder": "esp32marauder",
@@ -5767,6 +5798,7 @@
     "martin78b/corem5s3-tv": "corem5s3-tv",
     "matejsworkshop/m5cardputer-tts": "m5cardputer-tts",
     "mateusrodriguesf": "mateusrodriguesf",
+    "mateuszparol/nessocharger": "nessocharger",
     "matthew-5pl/gb_cardputer": "gb-cardputer",
     "matthew-5plpeanut-gb": "matthew-5plpeanut-gb",
     "mehflexx17": "mehflexx17",
@@ -5791,6 +5823,7 @@
     "musicajack/m5stack_tab5_converter": "m5stack-tab5-converter",
     "n0xa/applejuice": "applejuice",
     "n0xa/m5stick-nemo": "m5stick-nemo",
+    "n0xa/m5stick-nemo.git": "m5stick-nemo",
     "n0xa/m5stickstuph": "m5stickstuph",
     "n3tfox/flockwatch": "flockwatch",
     "naileclevrai/bruce-nemo-ble": "bruce-nemo-ble",

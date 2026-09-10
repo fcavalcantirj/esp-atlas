@@ -1,0 +1,14 @@
+{
+ "calls": 8,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "dj1ch/minigotchi-ESP32",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": []
+}
