@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-17T03:00:54.680157+00:00",
+      "expires": "2026-09-17T04:00:56.284588+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-10T03:00:54.680157+00:00"
+      "timestamp": "2026-09-10T04:00:56.284588+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -3335,6 +3335,16 @@
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.150150+00:00"
     },
+    "m5-nightscoutmon": {
+      "expires": "2026-10-10T04:00:56.284588+00:00",
+      "id": "m5-nightscoutmon",
+      "pr_ref": null,
+      "reason": "below_floor: 7 stars / 3 forks",
+      "repo": "psonnera/m5_nightscoutmon",
+      "repo_id": 338906143,
+      "status": "rejected",
+      "timestamp": "2026-09-10T04:00:56.284588+00:00"
+    },
     "m5airmouse": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
       "id": "m5airmouse",
@@ -4940,6 +4950,16 @@
       "status": "rejected",
       "timestamp": "2026-09-10T00:00:50.127806+00:00"
     },
+    "nikos": {
+      "expires": "2026-10-10T04:00:56.284588+00:00",
+      "id": "nikos",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "thenikosteam/nikos",
+      "repo_id": 946308408,
+      "status": "rejected",
+      "timestamp": "2026-09-10T04:00:56.284588+00:00"
+    },
     "nyan": {
       "id": "nyan",
       "pr_ref": null,
@@ -5890,6 +5910,7 @@
     "pr3y/bruce_old": "bruce-old",
     "pragamichele/m5atoms3_ble_motor_control": "m5atoms3-ble-motor-control",
     "prstoetzer/cardputer_adv_basic": "cardputer-adv-basic",
+    "psonnera/m5_nightscoutmon": "m5-nightscoutmon",
     "qqshi13/m5timer": "m5timer",
     "question-and-answer/cave-mine-cardputer-alpha1": "cave-mine-cardputer-alpha1",
     "qwertyuu/cardputer-adv-tracker": "cardputer-adv-tracker",
@@ -5974,6 +5995,7 @@
     "themusicnerd/m5-atommatrix-companion-v4-satellite": "m5-atommatrix-companion-v4-satellite",
     "themusicnerd/m5-atoms3-companion-v4-satellite": "m5-atoms3-companion-v4-satellite",
     "themusicnerd/m5stickc-companion-v4-satellite": "m5stickc-companion-v4-satellite",
+    "thenikosteam/nikos": "nikos",
     "therezor/card-craft": "card-craft",
     "therezor/cardputer-ai": "cardputer-ai",
     "therezor/esp32-cleaner": "esp32-cleaner",
