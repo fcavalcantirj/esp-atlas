@@ -38,6 +38,10 @@ import data_completion  # noqa: E402  (adds apps/core/src to sys.path on import)
 # per_field label (scripts/data_completion.FIELD_SPECS["boards"]); pulled straight from the gauge.
 BOARD_TREND_FIELDS = ("usb_serial", "getting_started", "download_mode", "pinout")
 
+# v2.b: how many consecutive snapshots a field must sit unchanged to read `stale` rather than a
+# bare repeated 0-delta. Pure/deterministic — field_momentum operates on the passed rows, no clock.
+DEFAULT_WINDOW = 7
+
 TELEMETRY_DIR = "docs/telemetry"
 TREND_JSONL = f"{TELEMETRY_DIR}/data-trend.jsonl"
 
@@ -74,6 +78,17 @@ def _row_from_gauge(gauge: dict, data_dir: Path, date_str: str) -> dict:
         f: {"count": per_field.get(f, {}).get("count", 0), "pct": per_field.get(f, {}).get("pct", 0.0)}
         for f in BOARD_TREND_FIELDS
     }
+    # v2.a: record every per-field {count, pct} the gauge already computed for every entity, in
+    # FIELD_SPECS (report) order. No new scan — this stops discarding what compute_completion emits.
+    # entity_fields["boards"] is a superset of board_fields; that redundancy is intentional (keeps
+    # the v1 Δ block and any existing consumer working untouched).
+    entity_fields = {
+        entity: {
+            label: {"count": stats.get("count", 0), "pct": stats.get("pct", 0.0)}
+            for label, stats in edata.get("per_field", {}).items()
+        }
+        for entity, edata in entities.items()
+    }
     firmware_count = _count_files(data_dir, "firmware/*/firmware.md")
     recipe_count = _count_files(data_dir, "recipes/*/recipe.md")
     boards_total = boards.get("records", 0)
@@ -86,6 +101,7 @@ def _row_from_gauge(gauge: dict, data_dir: Path, date_str: str) -> dict:
         "modules_pct": float(entities.get("modules", {}).get("pct", 0.0)),
         "brands_pct": float(entities.get("brands", {}).get("pct", 0.0)),
         "board_fields": board_fields,
+        "entity_fields": entity_fields,
         "firmware_count": firmware_count,
         "recipe_count": recipe_count,
         "compat_density": round(recipe_count / firmware_count, 2) if firmware_count else 0.0,
@@ -122,6 +138,64 @@ def compute_delta(row: dict, prev: dict | None) -> dict | None:
         "recipe_count": row["recipe_count"] - prev.get("recipe_count", 0),
         "compat_density": round(row["compat_density"] - prev.get("compat_density", 0.0), 2),
     }
+
+
+# --- staleness verdict (v2.b) ---------------------------------------------
+
+def _field_count(row: dict, entity: str, field: str) -> int:
+    """The recorded count for `<entity>.<field>` in a row, or 0 if the row predates entity_fields
+    (v1 rows have no entity_fields key — treated as absent, never a crash)."""
+    return row.get("entity_fields", {}).get(entity, {}).get(field, {}).get("count", 0)
+
+
+def field_momentum(rows: list[dict], window: int = DEFAULT_WINDOW) -> dict:
+    """Derive a per-field staleness verdict from recorded history — pure, no clock, no new scan.
+
+    For each finite field present in the LATEST row's entity_fields, compare its count to the same
+    field `window` snapshots back (or the earliest available if history is shorter). Returns
+    ``{ "<entity>.<field>": {"status", "delta_window", "since"} }`` where status is:
+
+      * ``improving`` — count rose over the window (delta_window > 0)
+      * ``declining`` — count fell (delta_window < 0) — surfaces silent data loss
+      * ``stale``     — unchanged across a FULL window of consecutive snapshots (stuck)
+      * ``flat``      — unchanged, but fewer than `window` snapshots of history exist (too soon)
+
+    Verdicts are always recomputable from the jsonl alone; rows stay raw facts.
+    """
+    history = sorted(
+        (r for r in rows if isinstance(r, dict) and r.get("date")),
+        key=lambda r: r["date"],
+    )
+    if not history:
+        return {}
+    latest = history[-1]
+    n = len(history)
+    baseline_idx = max(0, n - 1 - window)
+    baseline = history[baseline_idx]
+    # A full window is only available once we could step a whole `window` back through history.
+    full_window = (n - 1 - baseline_idx) >= window
+
+    out = {}
+    for entity, fields in latest.get("entity_fields", {}).items():
+        for field in fields:
+            cur = _field_count(latest, entity, field)
+            delta = cur - _field_count(baseline, entity, field)
+            if delta > 0:
+                status = "improving"
+            elif delta < 0:
+                status = "declining"
+            elif full_window and all(
+                _field_count(r, entity, field) == cur for r in history[baseline_idx:]
+            ):
+                status = "stale"
+            else:
+                status = "flat"
+            out[f"{entity}.{field}"] = {
+                "status": status,
+                "delta_window": delta,
+                "since": baseline["date"],
+            }
+    return out
 
 
 # --- jsonl history --------------------------------------------------------
@@ -188,10 +262,37 @@ def _delta_block(row: dict, delta: dict | None) -> str:
     return "\n".join(lines)
 
 
-def render_markdown(gauge: dict, row: dict, delta: dict | None) -> str:
-    return (f"# esp-atlas data-quality snapshot — {row['date']}\n\n"
-            f"```\n{_gauge_text(gauge)}\n```\n\n"
-            f"{_delta_block(row, delta)}\n")
+def _field_coverage_block(row: dict, momentum: dict | None) -> str:
+    """v2.c: one line per entity field, worst-pct first, each tagged with its staleness verdict so
+    a metric that isn't moving is obvious at a glance. Empty for a v1 row without entity_fields."""
+    momentum = momentum or {}
+    items = []
+    for entity, fields in row.get("entity_fields", {}).items():
+        for field, stats in fields.items():
+            key = f"{entity}.{field}"
+            items.append((
+                stats.get("pct", 0.0), key,
+                stats.get("count", 0),
+                momentum.get(key, {}).get("status", "flat"),
+            ))
+    if not items:
+        return ""
+    items.sort(key=lambda t: (t[0], t[1]))   # worst pct first; stable tiebreak by name
+    lines = ["## Field coverage", ""]
+    for pct, key, count, status in items:
+        mark = " (!)" if status in ("stale", "declining") else ""
+        lines.append(f"- {key}: {count} ({pct:g}%) — {status}{mark}")
+    return "\n".join(lines)
+
+
+def render_markdown(gauge: dict, row: dict, delta: dict | None, momentum: dict | None = None) -> str:
+    md = (f"# esp-atlas data-quality snapshot — {row['date']}\n\n"
+          f"```\n{_gauge_text(gauge)}\n```\n\n"
+          f"{_delta_block(row, delta)}\n")
+    coverage = _field_coverage_block(row, momentum)
+    if coverage:
+        md += "\n" + coverage + "\n"
+    return md
 
 
 # --- write ----------------------------------------------------------------
@@ -223,8 +324,11 @@ def write_snapshot(repo_root, date_str: str):
     body = "".join(json.dumps(r, separators=(",", ":"), sort_keys=True) + "\n" for r in merged)
     jsonl_path.write_text(body, encoding="utf-8")
 
+    # Staleness verdicts are derived from the full recorded history (which now includes this row) —
+    # recomputable from the jsonl alone, so they live in the markdown, never the raw trend row.
+    momentum = field_momentum(merged)
     md_path = repo_root / f"{TELEMETRY_DIR}/data-{date_str}.md"
-    md_path.write_text(render_markdown(gauge, row, delta), encoding="utf-8")
+    md_path.write_text(render_markdown(gauge, row, delta, momentum), encoding="utf-8")
     return row, delta
 
 
