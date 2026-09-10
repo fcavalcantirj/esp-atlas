@@ -1,0 +1,1022 @@
+{
+ "calls": 16,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [
+  "more than 10 workflows; kept the 10 named build/firmware/release/ci first"
+ ],
+ "ref": "dev",
+ "repo": "esphome/esphome",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-c3",
+   "esp32-c6",
+   "esp32-p4",
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "--environment esp32-arduino-tidy --grep USE_ARDUINO",
+   "--environment esp32-idf-tidy --split-num 3 --split-at 1",
+   "--environment esp32-idf-tidy --split-num 3 --split-at 2",
+   "--environment esp32-idf-tidy --split-num 3 --split-at 3",
+   "--environment esp8266-arduino-tidy --grep USE_ESP8266",
+   "--environment nrf52-tidy --grep USE_ZEPHYR --grep USE_NRF52",
+   "--environment rp2-tidy --grep USE_RP2",
+   "Run script/clang-tidy for ESP32 Arduino",
+   "Run script/clang-tidy for ESP32 C6",
+   "Run script/clang-tidy for ESP32 IDF 1/3",
+   "Run script/clang-tidy for ESP32 IDF 2/3",
+   "Run script/clang-tidy for ESP32 IDF 3/3",
+   "Run script/clang-tidy for ESP32 P4",
+   "Run script/clang-tidy for ESP32 S3",
+   "Run script/clang-tidy for ESP8266",
+   "Run script/clang-tidy for LibreTiny",
+   "Run script/clang-tidy for RP2",
+   "Run script/clang-tidy for ZEPHYR",
+   "adafruit_feather_nrf52840",
+   "amd64",
+   "arm64",
+   "bk72xx-arduino",
+   "bk72xx-tidy ln882h-tidy rtl87xxb-tidy rtl87xxc-tidy",
+   "clang-tidy",
+   "docker",
+   "dockerhub",
+   "esp32-arduino-esp-idf",
+   "esp32-arduino-platformio",
+   "esp32-c3-devkitm-1",
+   "esp32-c6-devkitc-1",
+   "esp32-idf-esp-idf",
+   "esp32-idf-platformio",
+   "esp32-p4-evboard",
+   "esp32-s2-kaluga-1",
+   "esp32-s3-devkitc-1",
+   "esp32c6-idf-tidy",
+   "esp32dev",
+   "esp32p4-idf-tidy",
+   "esp32s3-idf-tidy",
+   "esp8266-arduino",
+   "generic-bk7231n-qfn32-tuya",
+   "generic-ln882h",
+   "generic-rtl8710bn-2mb-788k",
+   "generic-rtl8720cf-2mb-992k",
+   "ghcr",
+   "ha-addon",
+   "hassio",
+   "host",
+   "ln882x-arduino",
+   "nodemcuv2",
+   "nrf52",
+   "rp2040-arduino",
+   "rpipico",
+   "rpipicow",
+   "rtl87xx-arduino",
+   "tidyesp8266",
+   "tidylibretiny",
+   "tidyrp2"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "esp8266-arduino",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 282,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L282"
+  },
+  {
+   "extra": {
+    "env": "esp8266-arduino-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 291,
+   "rank": 2,
+   "soc": null,
+   "token": "nodemcuv2",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L291"
+  },
+  {
+   "extra": {
+    "env": "esp32-arduino",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 302,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L302"
+  },
+  {
+   "extra": {
+    "env": "esp32-arduino-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 312,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L312"
+  },
+  {
+   "extra": {
+    "env": "esp32-idf",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 323,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L323"
+  },
+  {
+   "extra": {
+    "env": "esp32-idf-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 334,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L334"
+  },
+  {
+   "extra": {
+    "env": "esp32c3-arduino",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 347,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c3-devkitm-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L347"
+  },
+  {
+   "extra": {
+    "env": "esp32c3-arduino-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 357,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c3-devkitm-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L357"
+  },
+  {
+   "extra": {
+    "env": "esp32c3-idf",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 367,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c3-devkitm-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L367"
+  },
+  {
+   "extra": {
+    "env": "esp32c3-idf-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 378,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c3-devkitm-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L378"
+  },
+  {
+   "extra": {
+    "env": "esp32c6-idf",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 391,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c6-devkitc-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L391"
+  },
+  {
+   "extra": {
+    "env": "esp32c6-idf-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 402,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c6-devkitc-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L402"
+  },
+  {
+   "extra": {
+    "env": "esp32p4-idf",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 415,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-p4-evboard",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L415"
+  },
+  {
+   "extra": {
+    "env": "esp32p4-idf-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 425,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-p4-evboard",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L425"
+  },
+  {
+   "extra": {
+    "env": "esp32s2-arduino",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 438,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s2-kaluga-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L438"
+  },
+  {
+   "extra": {
+    "env": "esp32s2-arduino-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 448,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s2-kaluga-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L448"
+  },
+  {
+   "extra": {
+    "env": "esp32s2-idf",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 458,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s2-kaluga-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L458"
+  },
+  {
+   "extra": {
+    "env": "esp32s2-idf-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 469,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s2-kaluga-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L469"
+  },
+  {
+   "extra": {
+    "env": "esp32s3-arduino",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 482,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L482"
+  },
+  {
+   "extra": {
+    "env": "esp32s3-arduino-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 492,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L492"
+  },
+  {
+   "extra": {
+    "env": "esp32s3-idf",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 502,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L502"
+  },
+  {
+   "extra": {
+    "env": "esp32s3-idf-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 513,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L513"
+  },
+  {
+   "extra": {
+    "env": "rp2040-pico-arduino",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 526,
+   "rank": 2,
+   "soc": null,
+   "token": "rpipico",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L526"
+  },
+  {
+   "extra": {
+    "env": "rp2-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 536,
+   "rank": 2,
+   "soc": null,
+   "token": "rpipicow",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L536"
+  },
+  {
+   "extra": {
+    "env": "bk72xx-arduino",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 548,
+   "rank": 2,
+   "soc": null,
+   "token": "generic-bk7231n-qfn32-tuya",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L548"
+  },
+  {
+   "extra": {
+    "env": "ln882h-arduino",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 559,
+   "rank": 2,
+   "soc": null,
+   "token": "generic-ln882h",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L559"
+  },
+  {
+   "extra": {
+    "env": "rtl87xxb-arduino",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 570,
+   "rank": 2,
+   "soc": null,
+   "token": "generic-rtl8710bn-2mb-788k",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L570"
+  },
+  {
+   "extra": {
+    "env": "rtl87xxc-arduino",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 581,
+   "rank": 2,
+   "soc": null,
+   "token": "generic-rtl8720cf-2mb-992k",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L581"
+  },
+  {
+   "extra": {
+    "env": "bk72xx-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 592,
+   "rank": 2,
+   "soc": null,
+   "token": "generic-bk7231n-qfn32-tuya",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L592"
+  },
+  {
+   "extra": {
+    "env": "ln882h-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 603,
+   "rank": 2,
+   "soc": null,
+   "token": "generic-ln882h",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L603"
+  },
+  {
+   "extra": {
+    "env": "rtl87xxb-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 616,
+   "rank": 2,
+   "soc": null,
+   "token": "generic-rtl8710bn-2mb-788k",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L616"
+  },
+  {
+   "extra": {
+    "env": "rtl87xxc-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 629,
+   "rank": 2,
+   "soc": null,
+   "token": "generic-rtl8720cf-2mb-992k",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L629"
+  },
+  {
+   "extra": {
+    "env": "nrf52",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 657,
+   "rank": 2,
+   "soc": null,
+   "token": "adafruit_feather_nrf52840",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L657"
+  },
+  {
+   "extra": {
+    "env": "nrf52-tidy",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 666,
+   "rank": 2,
+   "soc": null,
+   "token": "adafruit_feather_nrf52840",
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L666"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ha-addon",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "docker",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp8266-arduino",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-arduino-platformio",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-arduino-esp-idf",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-idf-platformio",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-idf-esp-idf",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "rp2040-arduino",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "bk72xx-arduino",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "rtl87xx-arduino",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ln882x-arduino",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "nrf52",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "host",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "clang-tidy",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Run script/clang-tidy for ESP8266",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "--environment esp8266-arduino-tidy --grep USE_ESP8266",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tidyesp8266",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Run script/clang-tidy for ESP32 Arduino",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "--environment esp32-arduino-tidy --grep USE_ARDUINO",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Run script/clang-tidy for ZEPHYR",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "--environment nrf52-tidy --grep USE_ZEPHYR --grep USE_NRF52",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Run script/clang-tidy for RP2",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "--environment rp2-tidy --grep USE_RP2",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tidyrp2",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Run script/clang-tidy for LibreTiny",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "bk72xx-tidy ln882h-tidy rtl87xxb-tidy rtl87xxc-tidy",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tidylibretiny",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Run script/clang-tidy for ESP32 IDF 1/3",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "--environment esp32-idf-tidy --split-num 3 --split-at 1",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Run script/clang-tidy for ESP32 IDF 2/3",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "--environment esp32-idf-tidy --split-num 3 --split-at 2",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Run script/clang-tidy for ESP32 IDF 3/3",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "--environment esp32-idf-tidy --split-num 3 --split-at 3",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Run script/clang-tidy for ESP32 S3",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3-idf-tidy",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Run script/clang-tidy for ESP32 P4",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32p4-idf-tidy",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Run script/clang-tidy for ESP32 C6",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6-idf-tidy",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "amd64",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "arm64",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "docker",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ha-addon",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "hassio",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ghcr",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "dockerhub",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/release.yml"
+  },
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": null,
+   "rank": 4,
+   "soc": "esp32-c6",
+   "token": "esp32c6",
+   "url": "https://github.com/esphome/esphome/blob/dev/sdkconfig.defaults.esp32c6"
+  },
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": null,
+   "rank": 4,
+   "soc": "esp32-p4",
+   "token": "esp32p4",
+   "url": "https://github.com/esphome/esphome/blob/dev/sdkconfig.defaults.esp32p4"
+  },
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": null,
+   "rank": 4,
+   "soc": "esp32-s3",
+   "token": "esp32s3",
+   "url": "https://github.com/esphome/esphome/blob/dev/sdkconfig.defaults.esp32s3"
+  }
+ ]
+}
