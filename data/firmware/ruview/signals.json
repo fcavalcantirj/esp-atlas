@@ -1,0 +1,355 @@
+{
+ "calls": 15,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [
+  "more than 10 workflows; kept the 10 named build/firmware/release/ci first"
+ ],
+ "ref": "main",
+ "repo": "ruvnet/RuView",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-c6",
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "4mb",
+   "8mb",
+   "AMD64",
+   "aarch64",
+   "aarch64-apple-darwin",
+   "arm64",
+   "boundary-max",
+   "boundary-min",
+   "c6-4mb",
+   "default",
+   "edge-tier0",
+   "edge-tier1",
+   "esp32-csi-node-4mb.bin",
+   "esp32-csi-node-c6.bin",
+   "esp32-csi-node.bin",
+   "full-adr060",
+   "partition-table-4mb.bin",
+   "partition-table-c6.bin",
+   "partition-table.bin",
+   "partitions_4mb.csv",
+   "partitions_display.csv",
+   "sdkconfig.defaults",
+   "sdkconfig.defaults.4mb",
+   "tdm-3node",
+   "x86_64",
+   "x86_64-apple-darwin"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "workflow": ".github/workflows/desktop-release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "aarch64-apple-darwin",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/desktop-release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/desktop-release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "x86_64-apple-darwin",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/desktop-release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "8mb",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "sdkconfig.defaults",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "partitions_display.csv",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-csi-node.bin",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "partition-table.bin",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "4mb",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "sdkconfig.defaults.4mb",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "partitions_4mb.csv",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-csi-node-4mb.bin",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "partition-table-4mb.bin",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "c6-4mb",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-csi-node-c6.bin",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "partition-table-c6.bin",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-qemu.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "default",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-qemu.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-qemu.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "full-adr060",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-qemu.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-qemu.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "edge-tier0",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-qemu.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-qemu.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "edge-tier1",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-qemu.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-qemu.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tdm-3node",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-qemu.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-qemu.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "boundary-max",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-qemu.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-qemu.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "boundary-min",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-qemu.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/pip-release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "x86_64",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/pip-release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/pip-release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "aarch64",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/pip-release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/pip-release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "arm64",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/pip-release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/pip-release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "AMD64",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/pip-release.yml"
+  }
+ ]
+}
