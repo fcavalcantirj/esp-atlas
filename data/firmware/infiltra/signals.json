@@ -1,0 +1,107 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "D3CRYPT-1/Infiltra-Firmware",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "Infiltra_cardputer",
+   "Infiltra_cardputer-adv",
+   "Infiltra_lilygo-cc1101",
+   "Infiltra_lilygo-t-embed",
+   "Infiltra_m5stack-sticks3",
+   "Infiltra_m5stick-c-plus-1-1",
+   "Infiltra_m5stick-c-plus-2"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "Infiltra_cardputer-adv.bin",
+    "release": "0.9.5"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Infiltra_cardputer-adv",
+   "url": "https://github.com/D3CRYPT-1/Infiltra-Firmware/releases/download/0.9.5/Infiltra_cardputer-adv.bin"
+  },
+  {
+   "extra": {
+    "asset": "Infiltra_cardputer.bin",
+    "release": "0.9.5"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Infiltra_cardputer",
+   "url": "https://github.com/D3CRYPT-1/Infiltra-Firmware/releases/download/0.9.5/Infiltra_cardputer.bin"
+  },
+  {
+   "extra": {
+    "asset": "Infiltra_lilygo-cc1101.bin",
+    "release": "0.9.5"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Infiltra_lilygo-cc1101",
+   "url": "https://github.com/D3CRYPT-1/Infiltra-Firmware/releases/download/0.9.5/Infiltra_lilygo-cc1101.bin"
+  },
+  {
+   "extra": {
+    "asset": "Infiltra_lilygo-t-embed.bin",
+    "release": "0.9.5"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Infiltra_lilygo-t-embed",
+   "url": "https://github.com/D3CRYPT-1/Infiltra-Firmware/releases/download/0.9.5/Infiltra_lilygo-t-embed.bin"
+  },
+  {
+   "extra": {
+    "asset": "Infiltra_m5stack-sticks3.bin",
+    "release": "0.9.5"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Infiltra_m5stack-sticks3",
+   "url": "https://github.com/D3CRYPT-1/Infiltra-Firmware/releases/download/0.9.5/Infiltra_m5stack-sticks3.bin"
+  },
+  {
+   "extra": {
+    "asset": "Infiltra_m5stick-c-plus-1-1.bin",
+    "release": "0.9.5"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Infiltra_m5stick-c-plus-1-1",
+   "url": "https://github.com/D3CRYPT-1/Infiltra-Firmware/releases/download/0.9.5/Infiltra_m5stick-c-plus-1-1.bin"
+  },
+  {
+   "extra": {
+    "asset": "Infiltra_m5stick-c-plus-2.bin",
+    "release": "0.9.5"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Infiltra_m5stick-c-plus-2",
+   "url": "https://github.com/D3CRYPT-1/Infiltra-Firmware/releases/download/0.9.5/Infiltra_m5stick-c-plus-2.bin"
+  }
+ ]
+}
