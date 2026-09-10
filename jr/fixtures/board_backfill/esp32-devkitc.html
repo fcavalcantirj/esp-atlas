@@ -1,0 +1,421 @@
+<div itemprop="articleBody">
+             
+  <section id="esp32-devkitc-v4">
+<h1>ESP32-DevKitC V4<a class="headerlink" href="#esp32-devkitc-v4" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="../../../../zh_CN/latest/esp32/esp32-devkitc/user_guide.html">[中文]</a></p>
+<p>The older version: <a class="reference internal" href="user_guide_v2.html"><span class="doc">ESP32-DevKitC V2</span></a></p>
+<p>This guide shows how to start using the ESP32-DevKitC V4 development board.</p>
+<section id="what-you-need">
+<h2>What You Need<a class="headerlink" href="#what-you-need" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#get-started-esp32-devkitc-board-front"><span class="std std-ref">ESP32-DevKitC V4 board</span></a></p></li>
+<li><p>USB 2.0 cable (Standard-A to Micro-B)</p></li>
+<li><p>Computer running Windows, Linux, or macOS</p></li>
+</ul>
+<p>You can skip the introduction sections and go directly to Section <a class="reference internal" href="#start-application-development">Start Application Development</a>.</p>
+</section>
+<section id="overview">
+<span id="devkitc-overview"></span><h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>ESP32-DevKitC V4 is a small-sized ESP32-based development board produced by <a class="reference external" href="https://espressif.com">Espressif</a>. Most of the I/O pins are broken out to the pin headers on both sides for easy interfacing. Developers can either connect peripherals with jumper wires or mount ESP32-DevKitC V4 on a breadboard.</p>
+<p>To cover a wide range of user requirements, the following versions of ESP32-DevKitC V4 are available:</p>
+<ul>
+<li><p>different ESP32 modules</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf">ESP32-WROOM-32E</a></p></li>
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf">ESP32-WROOM-32UE</a></p></li>
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-wrover-e_esp32-wrover-ie_datasheet_en.pdf">ESP32-WROVER-E</a></p></li>
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-wrover-e_esp32-wrover-ie_datasheet_en.pdf">ESP32-WROVER-IE</a></p></li>
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32d_esp32-wroom-32u_datasheet_en.pdf">ESP32-WROOM-32D</a></p></li>
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32d_esp32-wroom-32u_datasheet_en.pdf">ESP32-WROOM-32U</a></p></li>
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-wroom-da_datasheet_en.pdf">ESP32-WROOM-DA</a> (End of Life)</p></li>
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-solo-1_datasheet_en.pdf">ESP32-SOLO-1</a></p></li>
+<li><p><a class="reference external" href="https://espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf">ESP32-WROOM-32</a></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>male or female pin headers</p></li>
+</ul>
+<p>For details please refer to <a class="reference external" href="https://products.espressif.com/#/product-selector?names=">ESP Product Selector</a>.</p>
+</section>
+<section id="functional-description">
+<h2>Functional Description<a class="headerlink" href="#functional-description" title="Permalink to this heading"></a></h2>
+<p>The following figure and the table below describe the key components, interfaces and controls of the ESP32-DevKitC V4 board.</p>
+<figure class="align-center" id="id15">
+<span id="get-started-esp32-devkitc-board-front"></span><img alt="ESP32-DevKitC V4 with ESP-WROOM-32E module soldered" src="../_images/esp32-devkitc-v4-functional-overview.png" />
+<figcaption>
+<p><span class="caption-text">ESP32-DevKitC V4 with ESP32-WROOM-32E module soldered</span><a class="headerlink" href="#id15" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The key components of the board are described, starting from the 5V Power On LED, in a clockwise direction.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>Key Component</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>5V Power On LED</p></td>
+<td><p>Turns on when the USB or an external 5V power supply is connected to the board. For details see the schematics in <a class="reference internal" href="#related-documents">Related Documents</a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>I/O Connector</p></td>
+<td><p>Most of the pins on the ESP module are broken out to the pin headers on the board. You can program ESP32 to enable multiple functions such as PWM, ADC, DAC, I2C, I2S, SPI, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>ESP32-WROOM-32E</p></td>
+<td><p>A module with ESP32 at its core. For more information, see <a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf">ESP32-WROOM-32E Datasheet</a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>USB-to-UART Bridge</p></td>
+<td><p>Single USB-to-UART bridge chip, providing transfer rates up to 3 Mbps.</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>Boot Button</p></td>
+<td><p>Download button. Holding down <strong>Boot</strong> and then pressing <strong>EN</strong> initiates Firmware Download mode for downloading firmware through the serial port.</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>USB-to-UART Port</p></td>
+<td><p>A Micro-USB port used for power supply to the board, as well as for communication between a computer and the ESP32-WROOM-32E module.</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>EN Button</p></td>
+<td><p>Reset button.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="power-supply-options">
+<h2>Power Supply Options<a class="headerlink" href="#power-supply-options" title="Permalink to this heading"></a></h2>
+<p>There are three mutually exclusive ways to provide power to the board:</p>
+<ul class="simple">
+<li><p>Micro USB port, default power supply</p></li>
+<li><p>5V and GND header pins</p></li>
+<li><p>3V3 and GND header pins</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The power supply must be provided using <strong>one and only one of the options above</strong>, otherwise the board and/or the power supply source can be damaged.</p>
+</div>
+</section>
+<section id="header-block">
+<h2>Header Block<a class="headerlink" href="#header-block" title="Permalink to this heading"></a></h2>
+<p>The two tables below provide the <strong>Name</strong> and <strong>Function</strong> of I/O header pins on both sides of the board, as shown in <a class="reference internal" href="#get-started-esp32-devkitc-board-front"><span class="std std-ref">ESP32-DevKitC V4 with ESP32-WROOM-32E module soldered</span></a>.</p>
+<section id="j2">
+<h3>J2<a class="headerlink" href="#j2" title="Permalink to this heading"></a></h3>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Type <a class="footnote-reference brackets" href="#id11" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>3V3</p></td>
+<td><p>P</p></td>
+<td><p>3.3 V power supply</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>EN</p></td>
+<td><p>I</p></td>
+<td><p>CHIP_PU, Reset</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>VP</p></td>
+<td><p>I</p></td>
+<td><p>GPIO36, ADC1_CH0, S_VP</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>VN</p></td>
+<td><p>I</p></td>
+<td><p>GPIO39, ADC1_CH3, S_VN</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>IO34</p></td>
+<td><p>I</p></td>
+<td><p>GPIO34, ADC1_CH6, VDET_1</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>IO35</p></td>
+<td><p>I</p></td>
+<td><p>GPIO35, ADC1_CH7, VDET_2</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>IO32</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO32, ADC1_CH4, TOUCH_CH9, XTAL_32K_P</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>IO33</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO33, ADC1_CH5, TOUCH_CH8, XTAL_32K_N</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>IO25</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO25, ADC2_CH8, DAC_1</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>IO26</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO26, ADC2_CH9, DAC_2</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>IO27</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO27, ADC2_CH7, TOUCH_CH7</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>IO14</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO14, ADC2_CH6, TOUCH_CH6, MTMS</p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>IO12</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO12, ADC2_CH5, TOUCH_CH5, MTDI</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p>GND</p></td>
+<td><p>G</p></td>
+<td><p>Ground</p></td>
+</tr>
+<tr class="row-even"><td><p>15</p></td>
+<td><p>IO13</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO13, ADC2_CH4, TOUCH_CH4, MTCK</p></td>
+</tr>
+<tr class="row-odd"><td><p>16</p></td>
+<td><p>D2</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO9, D2 <a class="footnote-reference brackets" href="#id12" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>17</p></td>
+<td><p>D3</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO10, D3 <a class="footnote-reference brackets" href="#id12" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>18</p></td>
+<td><p>CMD</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO11, CMD <a class="footnote-reference brackets" href="#id12" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>19</p></td>
+<td><p>5V</p></td>
+<td><p>P</p></td>
+<td><p>5 V power supply</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="j3">
+<h3>J3<a class="headerlink" href="#j3" title="Permalink to this heading"></a></h3>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>No.</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Type <a class="footnote-reference brackets" href="#id11" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>GND</p></td>
+<td><p>G</p></td>
+<td><p>Ground</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>IO23</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO23</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>IO22</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO22</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>TX</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO1, U0TXD</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>RX</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO3, U0RXD</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>IO21</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO21</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>GND</p></td>
+<td><p>G</p></td>
+<td><p>Ground</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>IO19</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO19</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>IO18</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO18</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>IO5</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO5</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>IO17</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO17 <a class="footnote-reference brackets" href="#id13" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>IO16</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO16 <a class="footnote-reference brackets" href="#id13" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>IO4</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO4, ADC2_CH0, TOUCH_CH0</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p>IO0</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO0, ADC2_CH1, TOUCH_CH1, Boot</p></td>
+</tr>
+<tr class="row-even"><td><p>15</p></td>
+<td><p>IO2</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO2, ADC2_CH2, TOUCH_CH2</p></td>
+</tr>
+<tr class="row-odd"><td><p>16</p></td>
+<td><p>IO15</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO15, ADC2_CH3, TOUCH_CH3, MTDO</p></td>
+</tr>
+<tr class="row-even"><td><p>17</p></td>
+<td><p>D1</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO8, D1 <a class="footnote-reference brackets" href="#id12" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>18</p></td>
+<td><p>D0</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO7, D0 <a class="footnote-reference brackets" href="#id12" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>19</p></td>
+<td><p>CLK</p></td>
+<td><p>I/O</p></td>
+<td><p>GPIO6, CLK <a class="footnote-reference brackets" href="#id12" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
+</tr>
+</tbody>
+</table>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id11" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
+<p>P: Power supply; I: Input; O: Output.</p>
+</aside>
+<aside class="footnote brackets" id="id12" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id3">2</a>,<a role="doc-backlink" href="#id4">3</a>,<a role="doc-backlink" href="#id8">4</a>,<a role="doc-backlink" href="#id9">5</a>,<a role="doc-backlink" href="#id10">6</a>)</span>
+<p>The pins D0, D1, D2, D3, CMD and CLK are used internally for communication between ESP32 and SPI flash memory. They are grouped on both sides near the USB connector. Avoid using these pins, as it may disrupt access to the SPI flash memory/SPI RAM.</p>
+</aside>
+<aside class="footnote brackets" id="id13" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id6">1</a>,<a role="doc-backlink" href="#id7">2</a>)</span>
+<p>The pins GPIO16 and GPIO17 are available for use only on the boards with the modules ESP32-WROOM and ESP32-SOLO-1. The boards with ESP32-WROVER modules have the pins reserved for internal use.</p>
+</aside>
+</aside>
+</section>
+<section id="pin-layout">
+<h3>Pin Layout<a class="headerlink" href="#pin-layout" title="Permalink to this heading"></a></h3>
+<figure class="align-center" id="id16">
+<a class="reference internal image-reference" href="../_images/esp32_devkitC_v4_pinlayout.png"><img alt="ESP32-DevKitC (click to enlarge)" src="../_images/esp32_devkitC_v4_pinlayout.png" style="width: 720.0px; height: 490.95px;" /></a>
+<figcaption>
+<p><span class="caption-text">ESP32-DevKitC Pin Layout (click to enlarge)</span><a class="headerlink" href="#id16" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="note-on-c15">
+<h2>Note on C15<a class="headerlink" href="#note-on-c15" title="Permalink to this heading"></a></h2>
+<p>The component C15 may cause the following issues on earlier ESP32-DevKitC V4 boards:</p>
+<ul class="simple">
+<li><p>The board may boot into Download mode</p></li>
+<li><p>If you output clock on GPIO0, C15 may impact the signal</p></li>
+</ul>
+<p>In case these issues occur, please remove the component. The figure below shows the location of C15 highlighted in yellow.</p>
+<figure class="align-center" id="id17">
+<a class="reference internal image-reference" href="../_images/esp32-devkitc-v4-c15-location.png"><img alt="Location of C15 (colored yellow) on ESP32-DevKitC V4 board" src="../_images/esp32-devkitc-v4-c15-location.png" style="width: 30%;" /></a>
+<figcaption>
+<p><span class="caption-text">Location of C15 (yellow) on ESP32-DevKitC V4 board</span><a class="headerlink" href="#id17" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="start-application-development">
+<h2>Start Application Development<a class="headerlink" href="#start-application-development" title="Permalink to this heading"></a></h2>
+<p>Before powering up your ESP32-DevKitC V4, please make sure that the board is in good condition with no obvious signs of damage.</p>
+<p>After that, proceed to <a class="reference external" href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html">ESP-IDF Get Started</a>, which will quickly help you set up the development environment then flash an application example onto your board.</p>
+</section>
+<section id="related-documents">
+<h2>Related Documents<a class="headerlink" href="#related-documents" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf">ESP32 Datasheet</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/esp32_devkitc_v4_sch.pdf">ESP32-DevKitC V4 Schematics</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/esp32_devkitc_v4_pcb_layout.pdf">ESP32-DevKitC V4 PCB Layout</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/esp32_devkitc_v4_dimensions.pdf">ESP32-DevKitC V4 Dimensions</a> (PDF)</p></li>
+<li><p><a class="reference external" href="https://dl.espressif.com/dl/schematics/esp32_devkitc_v4_dimensions.dxf">ESP32-DevKitC V4 Dimensions source file</a> (DXF) - You can view it with <a class="reference external" href="https://viewer.autodesk.com/">Autodesk Viewer</a> online</p></li>
+<li><p><a class="reference external" href="https://products.espressif.com/#/product-selector?names=">ESP Product Selector</a></p></li>
+</ul>
+<p>For further design documentation for the board, please contact us at <a class="reference external" href="mailto:sales&#37;&#52;&#48;espressif&#46;com">sales<span>&#64;</span>espressif<span>&#46;</span>com</a>.</p>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="disclaimer-and-copyright-notice">
+<h2>Disclaimer and Copyright Notice<a class="headerlink" href="#disclaimer-and-copyright-notice" title="Permalink to this heading"></a></h2>
+<p>See <a class="reference internal" href="../disclaimer-and-copyright.html"><span class="doc">Disclaimer and Copyright Notice</span></a>.</p>
+</section>
+</section>
+
+    <script type="text/javascript">
+        function init() {
+            WaveDrom.ProcessAll();
+        }
+        window.onload = init;
+    </script>
+
+           </div>
+             <div class="articleComments">
+<p data-class="single"></p>
+
+             </div>
+          </div>
+          
