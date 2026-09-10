@@ -1,0 +1,156 @@
+{
+ "calls": 7,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "master",
+ "repo": "i-am-shodan/USBArmyKnife",
+ "resolved": {
+  "boards": [
+   "lilygo-t-dongle-s3",
+   "lilygo-t-watch-s3"
+  ],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "esp32-s2-kaluga-1",
+   "esp32-s3-devkitc-1",
+   "pico"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "LILYGO-T-Dongle-S3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 139,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/i-am-shodan/USBArmyKnife/blob/master/platformio.ini#L139"
+  },
+  {
+   "extra": {
+    "env": "Waveshare-ESP32-S3-LCD-1_47",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 184,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/i-am-shodan/USBArmyKnife/blob/master/platformio.ini#L184"
+  },
+  {
+   "extra": {
+    "env": "Generic-ESP32-S2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 227,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s2-kaluga-1",
+   "url": "https://github.com/i-am-shodan/USBArmyKnife/blob/master/platformio.ini#L227"
+  },
+  {
+   "extra": {
+    "env": "Generic-ESP32-S3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 248,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/i-am-shodan/USBArmyKnife/blob/master/platformio.ini#L248"
+  },
+  {
+   "extra": {
+    "env": "M5-Atom-S3U",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 268,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/i-am-shodan/USBArmyKnife/blob/master/platformio.ini#L268"
+  },
+  {
+   "extra": {
+    "env": "Waveshare-RP2040-GEEK",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 125,
+   "rank": 2,
+   "soc": null,
+   "token": "pico",
+   "url": "https://github.com/i-am-shodan/USBArmyKnife/blob/master/platformio.ini#L125"
+  },
+  {
+   "extra": {
+    "env": "Waveshare-ESP32-S3-ETH",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 334,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/i-am-shodan/USBArmyKnife/blob/master/platformio.ini#L334"
+  },
+  {
+   "extra": {
+    "env": "Waveshare-ESP32-S3-GEEK",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 370,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/i-am-shodan/USBArmyKnife/blob/master/platformio.ini#L370"
+  },
+  {
+   "extra": {
+    "env": "LILYGO-T-Watch-S3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 408,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/i-am-shodan/USBArmyKnife/blob/master/platformio.ini#L408"
+  },
+  {
+   "extra": {
+    "env": "Evil-Crow-Cable-Wind",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 450,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/i-am-shodan/USBArmyKnife/blob/master/platformio.ini#L450"
+  },
+  {
+   "extra": {
+    "env": "Pocket-Dongle-S3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 471,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/i-am-shodan/USBArmyKnife/blob/master/platformio.ini#L471"
+  }
+ ]
+}
