@@ -35,6 +35,8 @@ download_mode:
   mode: auto
 usb_serial: native-usb-serial-jtag
 getting_started: https://docs.espressif.com/esp32-c5-devkitc-1
+images:
+  photo: https://docs.espressif.com/esp32-c5-devkitc-1-isometric.png
 sources:
 - field: '*'
   url: https://docs.espressif.com/esp32-c5-devkitc-1
@@ -135,6 +137,44 @@ sources:
 """
 
 
+# A board with a non-empty top-level `images:` mapping (photo present) -> counts
+# complete for the `images` gauge field. Real-shaped coding-domain id.
+BOARD_WITH_IMAGES_MD = """---
+id: esp32-c6-devkitc-1
+type: board
+brand: espressif
+name: ESP32-C6-DevKitC-1
+soc: esp32-c6
+form_factor: devkitc
+images:
+  photo: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/_images/esp32-c6-devkitc-1-isometric.png
+sources:
+- field: '*'
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html
+  verified: '2026-09-01'
+---
+
+# ESP32-C6-DevKitC-1
+"""
+
+# A board with NO `images:` mapping -> counts incomplete for the `images` field.
+BOARD_NO_IMAGES_MD = """---
+id: m5stack-cardputer
+type: board
+brand: m5stack
+name: M5Stack Cardputer
+soc: esp32-s3
+form_factor: cardputer
+sources:
+- field: '*'
+  url: https://docs.m5stack.com/en/core/Cardputer
+  verified: '2026-09-01'
+---
+
+# M5Stack Cardputer
+"""
+
+
 def _write(data_root, rel, text):
     p = data_root / rel
     p.parent.mkdir(parents=True, exist_ok=True)
@@ -173,6 +213,23 @@ def test_gappy_board_scores_lower_and_lists_gaps(tmp_path):
     gap_fields = {(g["entity"], g["field"]) for g in report["gaps"]}
     assert ("boards", "download_mode") in gap_fields
     assert ("boards", "pinout") in gap_fields
+
+
+def test_images_field_measured_over_boards(tmp_path):
+    # The gauge now measures a top-level `images:` mapping. One board has a
+    # non-empty images mapping (photo url) -> complete; one has none -> incomplete.
+    _write_board(tmp_path, "espressif", "esp32-c6-devkitc-1", BOARD_WITH_IMAGES_MD)
+    _write_board(tmp_path, "m5stack", "m5stack-cardputer", BOARD_NO_IMAGES_MD)
+    report = data_completion.compute_completion(tmp_path)
+    boards = report["entities"]["boards"]
+    assert boards["records"] == 2
+    assert "images" in boards["per_field"]
+    # only the board with images: {photo: ...} counts complete -> 1 of 2 = 50%.
+    assert boards["per_field"]["images"]["count"] == 1
+    assert boards["per_field"]["images"]["pct"] == 50.0
+    # an absent images mapping is a measured gap on the worklist.
+    gap_fields = {(g["entity"], g["field"]) for g in report["gaps"]}
+    assert ("boards", "images") in gap_fields
 
 
 def test_overall_is_board_weighted(tmp_path):

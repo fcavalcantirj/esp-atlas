@@ -54,7 +54,10 @@ WEIGHTS = {
 # Derivation (SPEC-data-completion.md "What counts as complete"):
 #   * boards: the First-Flash + physical-identity fields. `getting_started`
 #     does NOT exist in the schema yet (field-to-add) -> counts as missing
-#     everywhere until it lands, which is the intended signal.
+#     everywhere until it lands, which is the intended signal. `images` (a
+#     top-level mapping with photo/pinout sub-keys) is GROUNDED by jr's
+#     board_backfill and measured here too, per SPEC-board-grounding.md's
+#     no-measure/ground-mismatch invariant (Phase 0).
 #   * socs: the datasheet key specs from schema/soc.schema.json `required`
 #     (cpu, memory, radios) plus the "if present" hardware keys the schema
 #     models (gpio pad count, native-usb).
@@ -71,6 +74,7 @@ FIELD_SPECS = {
         ("form_factor", "form_factor"),
         ("usb_connector", "usb.connector"),
         ("getting_started", "getting_started"),
+        ("images", "images"),
     ],
     "socs": [
         ("cpu_cores", "cpu.cores"),
