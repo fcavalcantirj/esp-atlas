@@ -109,6 +109,20 @@ def doc_url_candidates(board_id: str, soc: str) -> list[str]:
     return candidates
 
 
+# ─── vendor doc-URL resolver registry (SPEC-board-backfill-vendors.md, Slice 1) ──
+# A resolver maps a board to the ORDERED candidate official doc URLs to try (best-first) on
+# that vendor's own domain. Espressif's existing `doc_url_candidates` logic IS the
+# "espressif" resolver — a behaviour-preserving refactor (identical URLs, identical output).
+# `run()` and `backfill_board()` are driven off this registry's keys, so no brand is
+# hardcoded: a brand with no registered resolver is never touched (skipped "no-resolver").
+# New vendors are added by registering a resolver here (a future slice) — nothing else moves.
+from typing import Callable  # noqa: E402
+
+VENDOR_DOC_RESOLVERS: dict[str, Callable[[str, str], list[str]]] = {
+    "espressif": doc_url_candidates,
+}
+
+
 def resolve_soc(fm: dict, data_root: Path) -> str | None:
     """The board's effective soc id: its own `soc`, or its `module`'s `soc` (resolved
     through data/modules/<module>/module.md). None when neither resolves."""
@@ -326,6 +340,13 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
     brand = fm.get("brand") or path.parent.parent.name
     base = {"board_id": board_id, "brand": brand, "path": path, "modified": False}
 
+    # Vendor-doc resolver selected by the board's brand. A brand with no registered
+    # resolver is left COMPLETELY unmodified (matches today's behaviour where non-Espressif
+    # brands are never touched) — reported skipped/no-resolver, not backfilled.
+    resolver = VENDOR_DOC_RESOLVERS.get(brand)
+    if resolver is None:
+        return {**base, "status": "skipped", "reason": "no-resolver", "url": None}
+
     missing = _missing_fields(fm)
     if not missing:
         return {**base, "status": "complete"}
@@ -334,7 +355,7 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
     if not soc:
         return {**base, "status": "skipped", "reason": "no-soc", "url": None}
 
-    candidates = doc_url_candidates(board_id, soc)
+    candidates = resolver(board_id, soc)
     res, url = None, candidates[-1]
     for u in candidates:
         r = fetch(u)
@@ -360,29 +381,29 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
 # ─────────────────────────── run (worklist over espressif) ───────────────────────────
 
 def run(data_root: Path | None = None, fetch=default_fetch, today: str | None = None) -> dict:
-    """Backfill every Espressif board missing any backfill field. Non-Espressif boards
-    are LISTED (needs_doc_url) and never touched. Returns {backfilled, skipped,
-    needs_doc_url, today}."""
+    """Backfill every board whose brand has a REGISTERED vendor doc resolver
+    (VENDOR_DOC_RESOLVERS) and is missing any backfill field. Brands with no resolver yet
+    are LISTED (needs_doc_url) and never touched. Today only "espressif" is registered, so
+    the processed set is identical to the v1 espressif-only worklist. Returns {backfilled,
+    skipped, needs_doc_url, today}."""
     root = Path(data_root) if data_root is not None else DATA_DIR
     today = today or datetime.now(timezone.utc).date().isoformat()
     boards_dir = root / "boards"
 
     report: dict = {"backfilled": [], "skipped": [], "needs_doc_url": [], "today": today}
 
-    esp_dir = boards_dir / "espressif"
-    for path in sorted(esp_dir.glob("*/board.md")):
-        entry = backfill_board(path, root, fetch, today)
-        if entry["status"] == "backfilled":
-            report["backfilled"].append(entry)
-        elif entry["status"] == "skipped":
-            report["skipped"].append(entry)
-        # "complete" boards are intentionally silent (not on the worklist)
-
     for brand_dir in sorted(p for p in boards_dir.glob("*") if p.is_dir()):
-        if brand_dir.name == "espressif":
-            continue
-        for path in sorted(brand_dir.glob("*/board.md")):
-            report["needs_doc_url"].append(f"{brand_dir.name}/{path.parent.name}")
+        if brand_dir.name in VENDOR_DOC_RESOLVERS:
+            for path in sorted(brand_dir.glob("*/board.md")):
+                entry = backfill_board(path, root, fetch, today)
+                if entry["status"] == "backfilled":
+                    report["backfilled"].append(entry)
+                elif entry["status"] == "skipped":
+                    report["skipped"].append(entry)
+                # "complete" boards are intentionally silent (not on the worklist)
+        else:
+            for path in sorted(brand_dir.glob("*/board.md")):
+                report["needs_doc_url"].append(f"{brand_dir.name}/{path.parent.name}")
 
     return report
 

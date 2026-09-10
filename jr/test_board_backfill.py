@@ -448,6 +448,70 @@ def test_bare_usb_uart_bridge_without_chip_is_not_grounded():
 
 # ── end-to-end: a recovered board resolves + backfills off the fixture ──────────
 
+# ══════════════════════════════════════════════════════════════════════════════
+# SLICE 1 — vendor-doc RESOLVER REGISTRY (SPEC-board-backfill-vendors.md).
+#
+# Pure structural refactor: Espressif's doc-URL logic becomes the "espressif" entry in
+# VENDOR_DOC_RESOLVERS; backfill_board() selects the resolver by the board's `brand`;
+# run() iterates every brand dir that HAS a registered resolver (today only espressif).
+# These tests pin the guarantee that Espressif behaviour is byte-identical and that an
+# unregistered vendor (m5stack) is skipped "no-resolver" and never modified.
+# ══════════════════════════════════════════════════════════════════════════════
+
+def test_registry_has_espressif_resolver_matching_doc_url_candidates():
+    # (a) the registry exists, is keyed by brand, and its espressif resolver returns the
+    # SAME ordered candidate URLs the standalone doc_url_candidates() did — for real esp32
+    # board ids across the resolver's three code paths (default template, -v<N> strip,
+    # per-board override).
+    assert "espressif" in bb.VENDOR_DOC_RESOLVERS
+    resolver = bb.VENDOR_DOC_RESOLVERS["espressif"]
+    for board_id, soc in [
+        ("esp32-c5-devkitc-1", "esp32-c5"),      # default template
+        ("esp32-devkitc-v4", "esp32"),           # -v4 stripped fallback slug
+        ("esp32-lyrat", "esp32"),                # per-board override (esp-adf tree)
+        ("esp32-s2-saola-1", "esp32-s2"),        # version-suffixed override
+    ]:
+        assert resolver(board_id, soc) == bb.doc_url_candidates(board_id, soc)
+
+
+def test_unregistered_brand_skipped_no_resolver_and_file_unchanged(tmp_path):
+    # (b) an m5stack board (no registered resolver in Slice 1) is skipped with
+    # reason "no-resolver" and left byte-for-byte unmodified — matching today's behaviour
+    # where non-Espressif brands are never touched.
+    bid, soc = "m5stack-atom-s3", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="m5stack")
+    before = path.read_text()
+
+    entry = bb.backfill_board(path, tmp_path, _fetcher({_url(bid, soc): DOC_WITH_MANUAL}), TODAY)
+
+    assert entry["status"] == "skipped"
+    assert entry["reason"] == "no-resolver"
+    assert entry["modified"] is False
+    assert path.read_text() == before  # byte-for-byte untouched
+
+
+def test_run_is_registry_driven_processing_only_resolvable_brands(tmp_path):
+    # (c) run() processes exactly the brands with a registered resolver (espressif today),
+    # NOT other vendors — driven off VENDOR_DOC_RESOLVERS keys, not a hardcoded "espressif".
+    p_esp = _write_board(tmp_path, "esp32-c5-devkitc-1", "esp32-c5")
+    p_m5 = _write_board(tmp_path, "m5stack-core2", "esp32", brand="m5stack")
+    p_ada = _write_board(tmp_path, "adafruit-feather-esp32-s3", "esp32-s3", brand="adafruit")
+    before_m5, before_ada = p_m5.read_text(), p_ada.read_text()
+    url = _url("esp32-c5-devkitc-1", "esp32-c5")
+
+    report = bb.run(data_root=tmp_path, fetch=_fetcher({url: DOC_WITH_MANUAL}), today=TODAY)
+
+    processed = {e["board_id"] for e in report["backfilled"]} | {e["board_id"] for e in report["skipped"]}
+    assert "esp32-c5-devkitc-1" in processed
+    assert "m5stack-core2" not in processed
+    assert "adafruit-feather-esp32-s3" not in processed
+    # unregistered brands are only LISTED, never processed or modified
+    assert "m5stack/m5stack-core2" in report["needs_doc_url"]
+    assert "adafruit/adafruit-feather-esp32-s3" in report["needs_doc_url"]
+    assert p_m5.read_text() == before_m5
+    assert p_ada.read_text() == before_ada
+
+
 def test_lyrat_end_to_end_recovers_from_esp_adf_fixture(tmp_path):
     # Fetcher serves the fixture ONLY at the esp-adf override URL — if resolution picks any
     # other candidate it 404s and the board stays skipped, so this proves the URL fix too.
