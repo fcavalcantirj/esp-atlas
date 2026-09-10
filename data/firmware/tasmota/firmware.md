@@ -8,10 +8,13 @@ maintainer: arendst
 license: GPL-3.0
 socs:
 - esp32
+- esp32-c2
+- esp32-c3
+- esp32-c5
+- esp32-c6
+- esp32-p4
 - esp32-s2
 - esp32-s3
-- esp32-c3
-- esp32-c6
 distribution:
 - releases
 - web-flasher
@@ -44,6 +47,15 @@ sources:
 - field: popularity
   url: https://github.com/arendst/Tasmota
   verified: '2026-09-01'
+- field: socs
+  url: https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L82
+  verified: '2026-09-10'
+- field: socs
+  url: https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L151
+  verified: '2026-09-10'
+- field: socs
+  url: https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L261
+  verified: '2026-09-10'
 ---
 
 # Tasmota
