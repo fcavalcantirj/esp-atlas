@@ -1,0 +1,55 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "acpayers-alt/raising-hell-cardputer",
+ "resolved": {
+  "boards": [
+   "m5stamp-s3"
+  ],
+  "socs": [],
+  "unresolved": [
+   "raising_hell_cpADV"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "raising_hell_cpADV_v3.0.0.bin",
+    "release": "v3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "raising_hell_cpADV",
+   "url": "https://github.com/acpayers-alt/raising-hell-cardputer/releases/download/v3.0.0/raising_hell_cpADV_v3.0.0.bin"
+  },
+  {
+   "extra": {
+    "env": "cardputer_adv_dev",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 3,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/acpayers-alt/raising-hell-cardputer/blob/main/platformio.ini#L3"
+  },
+  {
+   "extra": {
+    "env": "cardputer_adv_public",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 40,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/acpayers-alt/raising-hell-cardputer/blob/main/platformio.ini#L40"
+  }
+ ]
+}
