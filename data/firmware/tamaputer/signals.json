@@ -1,0 +1,29 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "mindovermiles262/tamaputer",
+ "resolved": {
+  "boards": [
+   "m5stamp-s3"
+  ],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "m5stack-stamps3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/mindovermiles262/tamaputer/blob/main/platformio.ini#L13"
+  }
+ ]
+}

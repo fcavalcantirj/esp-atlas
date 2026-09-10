@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-17T10:00:23.976090+00:00",
+      "expires": "2026-09-17T11:00:31.853052+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-10T10:00:23.976090+00:00"
+      "timestamp": "2026-09-10T11:00:31.853052+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -4119,6 +4119,16 @@
       "status": "rejected",
       "timestamp": "2026-09-09T23:00:48.497677+00:00"
     },
+    "m5stack-ollama-meter": {
+      "expires": "2026-10-10T11:00:31.853052+00:00",
+      "id": "m5stack-ollama-meter",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "styles01/m5stack-ollama-meter",
+      "repo_id": 1355143480,
+      "status": "rejected",
+      "timestamp": "2026-09-10T11:00:31.853052+00:00"
+    },
     "m5stack-papers3": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
       "id": "m5stack-papers3",
@@ -6046,6 +6056,7 @@
     "stachugit/meshcore-cardputer-adv": "meshcore-cardputer-adv",
     "steveatinfincia/circuitpython": "circuitpython",
     "stewmoss/cardputer-wardriver": "cardputer-wardriver",
+    "styles01/m5stack-ollama-meter": "m5stack-ollama-meter",
     "sub0pt1mal/m5cardputer_interactive_ssh_client": "interactivesetup-m5cardputer-sshclient",
     "sushiware-online/cpv-tools": "cpv-tools",
     "svenvu666/flappy-for-m5stickc-plus2": "flappy-for-m5stickc-plus2",

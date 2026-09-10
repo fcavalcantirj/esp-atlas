@@ -1,0 +1,29 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "sheepxux/Taskhub-for-StickS3",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "task_monitor.ino.merged"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "task_monitor.ino.merged.bin",
+    "release": "v2.2.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "task_monitor.ino.merged",
+   "url": "https://github.com/sheepxux/Taskhub-for-StickS3/releases/download/v2.2.0/task_monitor.ino.merged.bin"
+  }
+ ]
+}
