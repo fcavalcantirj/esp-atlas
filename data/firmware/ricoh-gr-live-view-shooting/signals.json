@@ -1,0 +1,43 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "sky18Dragon/RICOH-GR-Live-View-Shooting",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "esp32-s3-devkitc-1",
+   "m5stack-sticks3"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "m5stack-sticks3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 9,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/sky18Dragon/RICOH-GR-Live-View-Shooting/blob/main/platformio.ini#L9"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/platformio.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack-sticks3",
+   "url": "https://github.com/sky18Dragon/RICOH-GR-Live-View-Shooting/blob/main/.github/workflows/platformio.yml"
+  }
+ ]
+}

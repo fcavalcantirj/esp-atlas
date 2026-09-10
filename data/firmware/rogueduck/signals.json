@@ -1,0 +1,107 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "M5RogueOps/M5StickS3-RogueDuck",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "RogueDuck.ino",
+   "RogueDuck.ino.bootloader",
+   "RogueDuck.ino.bootloader_flashed",
+   "RogueDuck.ino.merged",
+   "RogueDuck.ino.partitions",
+   "RogueDuck.ino.partitions_flashed",
+   "RogueDuck.ino_flashed"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "RogueDuck.ino.bin",
+    "release": "V2.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "RogueDuck.ino",
+   "url": "https://github.com/M5RogueOps/M5StickS3-RogueDuck/releases/download/V2.1/RogueDuck.ino.bin"
+  },
+  {
+   "extra": {
+    "asset": "RogueDuck.ino.bootloader.bin",
+    "release": "V2.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "RogueDuck.ino.bootloader",
+   "url": "https://github.com/M5RogueOps/M5StickS3-RogueDuck/releases/download/V2.1/RogueDuck.ino.bootloader.bin"
+  },
+  {
+   "extra": {
+    "asset": "RogueDuck.ino.bootloader_flashed.bin",
+    "release": "V2.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "RogueDuck.ino.bootloader_flashed",
+   "url": "https://github.com/M5RogueOps/M5StickS3-RogueDuck/releases/download/V2.1/RogueDuck.ino.bootloader_flashed.bin"
+  },
+  {
+   "extra": {
+    "asset": "RogueDuck.ino.merged.bin",
+    "release": "V2.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "RogueDuck.ino.merged",
+   "url": "https://github.com/M5RogueOps/M5StickS3-RogueDuck/releases/download/V2.1/RogueDuck.ino.merged.bin"
+  },
+  {
+   "extra": {
+    "asset": "RogueDuck.ino.partitions.bin",
+    "release": "V2.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "RogueDuck.ino.partitions",
+   "url": "https://github.com/M5RogueOps/M5StickS3-RogueDuck/releases/download/V2.1/RogueDuck.ino.partitions.bin"
+  },
+  {
+   "extra": {
+    "asset": "RogueDuck.ino.partitions_flashed.bin",
+    "release": "V2.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "RogueDuck.ino.partitions_flashed",
+   "url": "https://github.com/M5RogueOps/M5StickS3-RogueDuck/releases/download/V2.1/RogueDuck.ino.partitions_flashed.bin"
+  },
+  {
+   "extra": {
+    "asset": "RogueDuck.ino_flashed.bin",
+    "release": "V2.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "RogueDuck.ino_flashed",
+   "url": "https://github.com/M5RogueOps/M5StickS3-RogueDuck/releases/download/V2.1/RogueDuck.ino_flashed.bin"
+  }
+ ]
+}
