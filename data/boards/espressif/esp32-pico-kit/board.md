@@ -69,6 +69,10 @@ usb_serial: cp2102n
 getting_started: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-pico-kit/user_guide.html
 images:
   pinout: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/_images/esp32-pico-kit-v4-pinout.png
+download_mode:
+  mode: manual
+  steps: Holding down Boot and then pressing EN initiates Firmware Download mode for
+    downloading firmware through the serial port
 sources:
 - field: '*'
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-pico-kit/user_guide.html
@@ -94,6 +98,9 @@ sources:
 - field: images
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-pico-kit/user_guide.html
   verified: '2026-09-09'
+- field: download_mode
+  url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-pico-kit/user_guide.html
+  verified: '2026-09-10'
 ---
 
 # ESP32-PICO-KIT

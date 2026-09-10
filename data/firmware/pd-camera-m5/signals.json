@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "abenokobo/pd-camera-m5",
+ "resolved": {
+  "boards": [
+   "m5stack-cores3"
+  ],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "M5CoreS3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 22,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-cores3",
+   "url": "https://github.com/abenokobo/pd-camera-m5/blob/main/platformio.ini#L22"
+  }
+ ]
+}

@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-17T04:00:56.284588+00:00",
+      "expires": "2026-09-17T05:00:57.737650+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-10T04:00:56.284588+00:00"
+      "timestamp": "2026-09-10T05:00:57.737650+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -4960,6 +4960,16 @@
       "status": "rejected",
       "timestamp": "2026-09-10T04:00:56.284588+00:00"
     },
+    "nostalgic-fruit-machine": {
+      "expires": "2026-10-10T05:00:57.737650+00:00",
+      "id": "nostalgic-fruit-machine",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "oliverxing2025/nostalgic-fruit-machine",
+      "repo_id": 1317356897,
+      "status": "rejected",
+      "timestamp": "2026-09-10T05:00:57.737650+00:00"
+    },
     "nyan": {
       "id": "nyan",
       "pr_ref": null,
@@ -4997,6 +5007,26 @@
       "repo_id": 893132542,
       "status": "rejected",
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
+    },
+    "otpauth-m5stickc": {
+      "expires": "2026-10-10T05:00:57.737650+00:00",
+      "id": "otpauth-m5stickc",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 0 forks",
+      "repo": "yannguillon/otpauth-m5stickc",
+      "repo_id": 776016957,
+      "status": "rejected",
+      "timestamp": "2026-09-10T05:00:57.737650+00:00"
+    },
+    "oxotp": {
+      "expires": "2026-10-10T05:00:57.737650+00:00",
+      "id": "oxotp",
+      "pr_ref": null,
+      "reason": "below_floor: 24 stars / 7 forks",
+      "repo": "imshox/oxotp",
+      "repo_id": 318637398,
+      "status": "rejected",
+      "timestamp": "2026-09-10T05:00:57.737650+00:00"
     },
     "pancake": {
       "expires": "2026-10-08T20:00:21.660790+00:00",
@@ -5739,6 +5769,7 @@
     "iele/m5cardputer-c64-emulator": "m5cardputer-c64-emulator",
     "ilanovikov088-source/dinorune-sticks3": "dinorune-sticks3",
     "imink/aqualife": "aqualife",
+    "imshox/oxotp": "oxotp",
     "imxnoobx/fstick": "fstick",
     "incursiohack/esp-game-server": "esp-game-server",
     "inkone/sticky-lotus": "sticky-lotus",
@@ -5893,6 +5924,7 @@
     "oldtokage-collab/g-navigator": "g-navigator",
     "olekalek112233/web-browser-cardputer-adv": "web-browser-cardputer-adv",
     "oliverxing2025/candy-bricks": "candy-bricks",
+    "oliverxing2025/nostalgic-fruit-machine": "nostalgic-fruit-machine",
     "oliverxing2025/stopwatch-chronotrace": "stopwatch-chronotrace",
     "ooxxu/xiaozhi-esp32": "xiaozhi-esp32",
     "oumike/camillia-mt": "camillia-mt",
@@ -6044,6 +6076,7 @@
     "xpy-us/commercial-firmesp32": "commercial-firmesp32",
     "xxtrippxx88/airmouse-m5stick-c-plus": "airmouse-m5stick-c-plus",
     "y88huang/claude-desktop-buddy-cardputer": "claude-desktop-buddy-cardputer",
+    "yannguillon/otpauth-m5stickc": "otpauth-m5stickc",
     "yh1224/m5-midi-heartopia": "m5-midi-heartopia",
     "yo3hjv/ham5dsp": "ham5dsp",
     "yuleshow/m5tab-macintosh": "m5tab-macintosh",
