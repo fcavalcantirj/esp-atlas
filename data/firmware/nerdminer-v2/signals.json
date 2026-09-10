@@ -1,0 +1,1295 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-09-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "BitMaker-hub/NerdMiner_v2",
+ "resolved": {
+  "boards": [
+   "esp32-c3-devkitm-1",
+   "esp32-s3-devkitc-1",
+   "lilygo-t-embed",
+   "lolin-s2-mini",
+   "lolin-s3-mini",
+   "m5stamp-s3",
+   "m5stick-cplus2",
+   "xiao-esp32c3"
+  ],
+  "socs": [
+   "esp32",
+   "esp32-c3",
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "ESP32-2432S024_factory",
+   "ESP32-2432S024_firmware",
+   "ESP32-2432S028R_factory",
+   "ESP32-2432S028R_firmware",
+   "ESP32-C3-042-OLED_factory",
+   "ESP32-C3-042-OLED_firmware",
+   "ESP32-C3-devKitmv1_factory",
+   "ESP32-C3-devKitmv1_firmware",
+   "ESP32-C3-super-mini_factory",
+   "ESP32-C3-super-mini_firmware",
+   "ESP32-D0WD-V3-weact_factory",
+   "ESP32-D0WD-V3-weact_firmware",
+   "ESP32-S2-mini-wemos_factory",
+   "ESP32-S2-mini-wemos_firmware",
+   "ESP32-S3-042-OLED_factory",
+   "ESP32-S3-042-OLED_firmware",
+   "ESP32-S3-devKitv1_factory",
+   "ESP32-S3-devKitv1_firmware",
+   "ESP32-S3-mini-weact_factory",
+   "ESP32-S3-mini-weact_firmware",
+   "ESP32-S3-mini-wemos_factory",
+   "ESP32-S3-mini-wemos_firmware",
+   "ESP32-devKitv1_factory",
+   "ESP32-devKitv1_firmware",
+   "ESP32_2432S028_2USB_factory",
+   "ESP32_2432S028_2USB_firmware",
+   "Lilygo-T-Embed_factory",
+   "Lilygo-T-Embed_firmware",
+   "M5-StampS3_factory",
+   "M5-StampS3_firmware",
+   "M5Stick-C-Plus2_factory",
+   "M5Stick-C-Plus2_firmware",
+   "M5Stick-CPlus_factory",
+   "M5Stick-CPlus_firmware",
+   "M5Stick-C_factory",
+   "M5Stick-C_firmware",
+   "NerdminerV2-S3-AMOLED-TOUCH_factory",
+   "NerdminerV2-S3-AMOLED-TOUCH_firmware",
+   "NerdminerV2-S3-AMOLED_factory",
+   "NerdminerV2-S3-AMOLED_firmware",
+   "NerdminerV2-S3-DONGLE_factory",
+   "NerdminerV2-S3-DONGLE_firmware",
+   "NerdminerV2-S3-GEEK_factory",
+   "NerdminerV2-S3-GEEK_firmware",
+   "NerdminerV2-T-Display_V1_factory",
+   "NerdminerV2-T-Display_V1_firmware",
+   "NerdminerV2-T-HMI_factory",
+   "NerdminerV2-T-HMI_firmware",
+   "NerdminerV2-T-QT_factory",
+   "NerdminerV2-T-QT_firmware",
+   "NerdminerV2_factory",
+   "NerdminerV2_firmware",
+   "TTGO-T-Display_factory",
+   "TTGO-T-Display_firmware",
+   "esp-wrover-kit",
+   "esp32-c3-devkitm-1",
+   "esp32-s3-0.42oled",
+   "esp32-s3-devkitc-1",
+   "esp32-s3-devkitc1-n32r8",
+   "esp32-s3-devkitc1-n32r8_factory",
+   "esp32-s3-devkitc1-n32r8_firmware",
+   "esp32-s3-t-qt-pro",
+   "esp32cam",
+   "esp32cam_factory",
+   "esp32cam_firmware",
+   "esp32dev",
+   "han_m5stack_factory",
+   "han_m5stack_firmware",
+   "lilygo-t-amoled",
+   "lilygo-t-hmi",
+   "m5stack-core-esp32",
+   "m5stick-c",
+   "ttgo-lora32-v1",
+   "ttgo-lora32-v21",
+   "wt32-sc01-plus_factory",
+   "wt32-sc01-plus_firmware",
+   "wt32-sc01_factory",
+   "wt32-sc01_firmware"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "ESP32-2432S024_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-2432S024_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-2432S024_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-2432S024_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-2432S024_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-2432S024_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-2432S028R_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-2432S028R_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-2432S028R_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-2432S028R_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-2432S028R_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-2432S028R_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-C3-042-OLED_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-C3-042-OLED_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-C3-042-OLED_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-C3-042-OLED_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-C3-042-OLED_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-C3-042-OLED_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-C3-devKitmv1_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-C3-devKitmv1_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-C3-devKitmv1_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-C3-devKitmv1_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-C3-devKitmv1_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-C3-devKitmv1_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-C3-super-mini_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-C3-super-mini_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-C3-super-mini_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-C3-super-mini_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-C3-super-mini_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-C3-super-mini_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-D0WD-V3-weact_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-D0WD-V3-weact_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-D0WD-V3-weact_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-D0WD-V3-weact_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-D0WD-V3-weact_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-D0WD-V3-weact_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-devKitv1_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-devKitv1_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-devKitv1_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-devKitv1_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-devKitv1_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-devKitv1_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-S2-mini-wemos_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S2-mini-wemos_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-S2-mini-wemos_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-S2-mini-wemos_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S2-mini-wemos_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-S2-mini-wemos_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-S3-042-OLED_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3-042-OLED_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-S3-042-OLED_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-S3-042-OLED_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3-042-OLED_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-S3-042-OLED_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-s3-devkitc1-n32r8_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-s3-devkitc1-n32r8_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/esp32-s3-devkitc1-n32r8_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32-s3-devkitc1-n32r8_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-s3-devkitc1-n32r8_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/esp32-s3-devkitc1-n32r8_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-S3-devKitv1_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3-devKitv1_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-S3-devKitv1_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-S3-devKitv1_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3-devKitv1_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-S3-devKitv1_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-S3-mini-weact_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3-mini-weact_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-S3-mini-weact_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-S3-mini-weact_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3-mini-weact_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-S3-mini-weact_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-S3-mini-wemos_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3-mini-wemos_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-S3-mini-wemos_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32-S3-mini-wemos_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32-S3-mini-wemos_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32-S3-mini-wemos_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32cam_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32cam_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/esp32cam_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32cam_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32cam_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/esp32cam_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32_2432S028_2USB_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32_2432S028_2USB_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32_2432S028_2USB_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "ESP32_2432S028_2USB_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ESP32_2432S028_2USB_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/ESP32_2432S028_2USB_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "han_m5stack_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "han_m5stack_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/han_m5stack_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "han_m5stack_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "han_m5stack_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/han_m5stack_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "Lilygo-T-Embed_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Lilygo-T-Embed_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/Lilygo-T-Embed_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "Lilygo-T-Embed_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Lilygo-T-Embed_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/Lilygo-T-Embed_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5-StampS3_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5-StampS3_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/M5-StampS3_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5-StampS3_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5-StampS3_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/M5-StampS3_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Stick-C-Plus2_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Stick-C-Plus2_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/M5Stick-C-Plus2_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Stick-C-Plus2_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Stick-C-Plus2_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/M5Stick-C-Plus2_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Stick-CPlus_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Stick-CPlus_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/M5Stick-CPlus_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Stick-CPlus_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Stick-CPlus_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/M5Stick-CPlus_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Stick-C_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Stick-C_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/M5Stick-C_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5Stick-C_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Stick-C_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/M5Stick-C_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-S3-AMOLED-TOUCH_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-S3-AMOLED-TOUCH_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-S3-AMOLED-TOUCH_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-S3-AMOLED-TOUCH_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-S3-AMOLED-TOUCH_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-S3-AMOLED-TOUCH_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-S3-AMOLED_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-S3-AMOLED_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-S3-AMOLED_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-S3-AMOLED_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-S3-AMOLED_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-S3-AMOLED_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-S3-DONGLE_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-S3-DONGLE_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-S3-DONGLE_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-S3-DONGLE_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-S3-DONGLE_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-S3-DONGLE_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-S3-GEEK_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-S3-GEEK_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-S3-GEEK_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-S3-GEEK_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-S3-GEEK_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-S3-GEEK_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-T-Display_V1_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-T-Display_V1_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-T-Display_V1_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-T-Display_V1_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-T-Display_V1_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-T-Display_V1_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-T-HMI_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-T-HMI_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-T-HMI_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-T-HMI_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-T-HMI_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-T-HMI_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-T-QT_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-T-QT_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-T-QT_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2-T-QT_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2-T-QT_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2-T-QT_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "NerdminerV2_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "NerdminerV2_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/NerdminerV2_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "TTGO-T-Display_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "TTGO-T-Display_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/TTGO-T-Display_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "TTGO-T-Display_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "TTGO-T-Display_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/TTGO-T-Display_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "wt32-sc01-plus_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "wt32-sc01-plus_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/wt32-sc01-plus_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "wt32-sc01-plus_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "wt32-sc01-plus_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/wt32-sc01-plus_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "wt32-sc01_factory.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "wt32-sc01_factory",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/wt32-sc01_factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "wt32-sc01_firmware.bin",
+    "release": "nerdminer-release-V1.8.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "wt32-sc01_firmware",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/download/nerdminer-release-V1.8.3/wt32-sc01_firmware.bin"
+  },
+  {
+   "extra": {
+    "env": "M5Stick-C-Plus2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 28,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c-plus2",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L28"
+  },
+  {
+   "extra": {
+    "env": "M5Stick-C",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 62,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L62"
+  },
+  {
+   "extra": {
+    "env": "M5Stick-CPlus",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 96,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L96"
+  },
+  {
+   "extra": {
+    "env": "wt32-sc01",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 131,
+   "rank": 2,
+   "soc": null,
+   "token": "esp-wrover-kit",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L131"
+  },
+  {
+   "extra": {
+    "env": "wt32-sc01-plus",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 166,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L166"
+  },
+  {
+   "extra": {
+    "env": "ESP32-S3-mini-wemos",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 204,
+   "rank": 2,
+   "soc": null,
+   "token": "lolin_s3_mini",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L204"
+  },
+  {
+   "extra": {
+    "env": "han_m5stack",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 239,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-core-esp32",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L239"
+  },
+  {
+   "extra": {
+    "env": "ESP32-S2-mini-wemos",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 272,
+   "rank": 2,
+   "soc": null,
+   "token": "lolin_s2_mini",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L272"
+  },
+  {
+   "extra": {
+    "env": "ESP32-S3-mini-weact",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 304,
+   "rank": 2,
+   "soc": null,
+   "token": "lolin_s3_mini",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L304"
+  },
+  {
+   "extra": {
+    "env": "ESP32-D0WD-V3-weact",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 339,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L339"
+  },
+  {
+   "extra": {
+    "env": "ESP32-C3-super-mini",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 371,
+   "rank": 2,
+   "soc": null,
+   "token": "seeed_xiao_esp32c3",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L371"
+  },
+  {
+   "extra": {
+    "env": "ESP32-C3-devKitmv1",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 404,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c3-devkitm-1",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L404"
+  },
+  {
+   "extra": {
+    "env": "ESP32-C3-042-OLED",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 438,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-c3-devkitm-1",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L438"
+  },
+  {
+   "extra": {
+    "env": "ESP32-S3-042-OLED",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 470,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-0.42oled",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L470"
+  },
+  {
+   "extra": {
+    "env": "ESP32-C3-spotpear",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 502,
+   "rank": 2,
+   "soc": null,
+   "token": "seeed_xiao_esp32c3",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L502"
+  },
+  {
+   "extra": {
+    "env": "ESP32-S3-devKitv1",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 532,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L532"
+  },
+  {
+   "extra": {
+    "env": "esp32-s3-devkitc1-n32r8",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 566,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc1-n32r8",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L566"
+  },
+  {
+   "extra": {
+    "env": "NerdminerV2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 601,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L601"
+  },
+  {
+   "extra": {
+    "env": "Lilygo-T-Embed",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 642,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L642"
+  },
+  {
+   "extra": {
+    "env": "ESP32-devKitv1",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 679,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L679"
+  },
+  {
+   "extra": {
+    "env": "TTGO-T-Display",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 709,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L709"
+  },
+  {
+   "extra": {
+    "env": "NerdminerV2-S3-AMOLED",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 742,
+   "rank": 2,
+   "soc": null,
+   "token": "lilygo-t-amoled",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L742"
+  },
+  {
+   "extra": {
+    "env": "NerdminerV2-S3-AMOLED-TOUCH",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 767,
+   "rank": 2,
+   "soc": null,
+   "token": "lilygo-t-amoled",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L767"
+  },
+  {
+   "extra": {
+    "env": "NerdminerV2-S3-DONGLE",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 792,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L792"
+  },
+  {
+   "extra": {
+    "env": "NerdminerV2-S3-GEEK",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 818,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L818"
+  },
+  {
+   "extra": {
+    "env": "esp32cam",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 847,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32cam",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L847"
+  },
+  {
+   "extra": {
+    "env": "NerdminerV2-T-QT",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 879,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-t-qt-pro",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L879"
+  },
+  {
+   "extra": {
+    "env": "ESP32_2432S028_2USB",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 911,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L911"
+  },
+  {
+   "extra": {
+    "env": "ESP32-2432S028R",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 962,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L962"
+  },
+  {
+   "extra": {
+    "env": "ESP32-2432S024",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1018,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L1018"
+  },
+  {
+   "extra": {
+    "env": "NerdminerV2-T-HMI",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1074,
+   "rank": 2,
+   "soc": null,
+   "token": "lilygo-t-hmi",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L1074"
+  },
+  {
+   "extra": {
+    "env": "LilygoT3V1",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1114,
+   "rank": 2,
+   "soc": null,
+   "token": "ttgo-lora32-v21",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L1114"
+  },
+  {
+   "extra": {
+    "env": "NerdminerV2-T-Display_V1",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1140,
+   "rank": 2,
+   "soc": null,
+   "token": "ttgo-lora32-v1",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L1140"
+  },
+  {
+   "extra": {
+    "env": "M5-StampS3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1164,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L1164"
+  },
+  {
+   "extra": {
+    "env": "M5-Cardputer-Adv",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1198,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/BitMaker-hub/NerdMiner_v2/blob/main/platformio.ini#L1198"
+  }
+ ]
+}
