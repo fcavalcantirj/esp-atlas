@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-17T09:00:16.033731+00:00",
+      "expires": "2026-09-17T10:00:23.976090+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-10T09:00:16.033731+00:00"
+      "timestamp": "2026-09-10T10:00:23.976090+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -4987,6 +4987,16 @@
       "status": "seen",
       "timestamp": "2026-09-02T16:03:27.881253+00:00"
     },
+    "ollama-cardputer": {
+      "expires": "2026-10-10T10:00:23.976090+00:00",
+      "id": "ollama-cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "pepa1555/ollama-cardputer",
+      "repo_id": 1268571443,
+      "status": "rejected",
+      "timestamp": "2026-09-10T10:00:23.976090+00:00"
+    },
     "onemorefloor": {
       "id": "onemorefloor",
       "pr_ref": null,
@@ -5952,6 +5962,7 @@
     "pavelprosto94/christmas_tree_clock": "christmas-tree-clock",
     "pawneemilitia/infiltra-firmware": "infiltra-firmware",
     "pelgraine/meck-p4": "meck-p4",
+    "pepa1555/ollama-cardputer": "ollama-cardputer",
     "pepeangell5/bwifikill-cardputer-adv": "bwifikill-cardputer-adv",
     "personwithbeans/cardlife": "cardlife",
     "petsven/s3_decibel_meter": "s3-decibel-meter",
