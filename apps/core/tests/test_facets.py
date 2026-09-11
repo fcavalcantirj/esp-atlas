@@ -26,7 +26,9 @@ def test_facets_form_factor_includes_known_values_with_counts(built_db_path):
     result = facets(db_path=built_db_path)
     by_value = {e["value"]: e["count"] for e in result["form_factor"]}
     assert by_value["devkit"] >= 1
-    assert by_value["xiao"] == 3
+    # >= (not a frozen count): the catalog grows as the universe is filled; assert the
+    # xiao form factor is present with a real count, consistent with the devkit line above.
+    assert by_value["xiao"] >= 3
 
 
 def test_facets_form_factor_counts_sum_to_boards_with_a_form_factor(built_db_path):
