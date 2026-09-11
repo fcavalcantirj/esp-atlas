@@ -4,7 +4,7 @@ type: board
 brand: dfrobot
 name: DFRobot FireBeetle ESP32
 aka:
-- "firebeetle32"
+- firebeetle32
 soc: esp32
 flash_mb: 16
 psram_mb: 0
@@ -29,12 +29,13 @@ notes:
 - CH340 USB-to-serial bridge (driver install required)
 - Onboard microSD slot
 - Dual-Core ESP-WROOM-32 module
-- ESP32-WROOM-32/32D/32U modules only ever shipped in non-PSRAM ordering codes (no R-suffix variant exists in Espressif's datasheets)
+- ESP32-WROOM-32/32D/32U modules only ever shipped in non-PSRAM ordering codes (no
+  R-suffix variant exists in Espressif's datasheets)
 - 'io.gpio_exposed=21 DERIVED (SPEC-io-power.md §5.3), not vendor-quoted: the vendor
   page states only "Digital I/O: 10 (default setting of arduino)", which undercounts
   by omitting D10/GPIO0 (a strapping pin) and the A0-A5/SDA/SCL pins from that one
-  spec line. The full exposed set is taken from the official Espressif Arduino
-  core variant for this exact board (arduino-esp32 variants/firebeetle32/pins_arduino.h:
+  spec line. The full exposed set is taken from the official Espressif Arduino core
+  variant for this exact board (arduino-esp32 variants/firebeetle32/pins_arduino.h:
   D0-D10, SDA, SCL, MOSI/MISO/SCK, A0-A5), cross-checked against the DFR0478 schematic''s
   P1/P2 header labels (D2-D9, SDA/SCL/SCK all present): {0,1,2,3,5,9,10,13,15,18,19,21,22,23,25,26,27,34,35,36,39}
   -- 21 unique GPIOs.'
@@ -44,7 +45,8 @@ notes:
   {9,10}: both present (2 of the 6 flash-tied pins are broken out as D5/D6 on this
   board) -- gives 21 - 4 - 4 - 2 = 11. Math not vendor-stated; verify before treating
   as exact.'
-- 'usb_serial derived from usb.bridge (ch340)'
+- usb_serial derived from usb.bridge (ch340)
+getting_started: https://wiki.dfrobot.com/dfr0478
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr0478/
@@ -67,6 +69,9 @@ sources:
 - field: usb_serial
   url: https://wiki.dfrobot.com/dfr0478/
   verified: '2026-09-07'
+- field: getting_started
+  url: https://wiki.dfrobot.com/dfr0478
+  verified: '2026-09-11'
 ---
 
 # DFRobot FireBeetle ESP32
