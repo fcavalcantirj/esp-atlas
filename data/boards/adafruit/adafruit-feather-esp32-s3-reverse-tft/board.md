@@ -49,6 +49,8 @@ notes:
   = 18'
 - usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag
 getting_started: https://learn.adafruit.com/esp32-s3-reverse-tft-feather
+images:
+  photo: https://cdn-learn.adafruit.com/guides/images/000/003/759/medium800/5691-01.jpg
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5691
@@ -72,6 +74,9 @@ sources:
   url: https://www.adafruit.com/product/5691
   verified: '2026-09-07'
 - field: getting_started
+  url: https://learn.adafruit.com/esp32-s3-reverse-tft-feather
+  verified: '2026-09-11'
+- field: images
   url: https://learn.adafruit.com/esp32-s3-reverse-tft-feather
   verified: '2026-09-11'
 ---
