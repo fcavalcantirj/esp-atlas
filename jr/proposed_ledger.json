@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-18T14:00:50.412232+00:00",
+      "expires": "2026-09-18T15:00:52.423877+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-11T14:00:50.412232+00:00"
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -95,6 +95,16 @@
       "repo_id": 1227330866,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "acidtrip-psychedelic-m5core-60-visuals": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "acidtrip-psychedelic-m5core-60-visuals",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/acidtrip-psychedelic-m5core-60-visuals",
+      "repo_id": 1099363617,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "actpaddle": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -3588,6 +3598,15 @@
       "status": "rejected",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
+    "m5cardputer-mp3-manager": {
+      "expires": "2026-09-18T15:00:52.423877+00:00",
+      "id": "m5cardputer-mp3-manager",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "codigohardwareecia/m5cardputer_mp3_manager",
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
     "m5cardputer-simple-calculator": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5cardputer-simple-calculator",
@@ -4039,14 +4058,14 @@
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5porkchop": {
-      "expires": "2026-10-08T17:00:16.540728+00:00",
+      "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "m5porkchop",
       "pr_ref": null,
-      "reason": "already_catalogued: 0ct0sec/m5porkchop is already in the atlas",
-      "repo": "0ct0sec/m5porkchop",
-      "repo_id": 1110910539,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "h4w9/m5porkchop",
+      "repo_id": 1210746591,
       "status": "rejected",
-      "timestamp": "2026-09-08T17:00:16.540728+00:00"
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "m5rally": {
       "id": "m5rally",
@@ -4347,6 +4366,16 @@
       "repo_id": 577925990,
       "status": "rejected",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
+    },
+    "m5stickc-plus-2-ping-pong": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "m5stickc-plus-2-ping-pong",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "freedomxxjustice/m5stickc-plus-2-ping-pong",
+      "repo_id": 948654327,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "m5stickc-plus-joke-scroller": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -5516,6 +5545,26 @@
       "status": "rejected",
       "timestamp": "2026-09-08T05:25:25.049296+00:00"
     },
+    "picoware": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "picoware",
+      "pr_ref": null,
+      "reason": "already_catalogued: jblanked/picoware is already in the atlas",
+      "repo": "jblanked/picoware",
+      "repo_id": 989766763,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
+    "pigtail": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "pigtail",
+      "pr_ref": null,
+      "reason": "already_catalogued: benbaker76/pigtail is already in the atlas",
+      "repo": "benbaker76/pigtail",
+      "repo_id": 1125984917,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
     "pio-palnagotchi": {
       "expires": "2026-10-11T13:00:49.050627+00:00",
       "id": "pio-palnagotchi",
@@ -5526,13 +5575,34 @@
       "status": "rejected",
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
+    "pip-boy-weather-clock": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "pip-boy-weather-clock",
+      "pr_ref": null,
+      "reason": "already_catalogued: nishad2m8/pip-boy-weather-clock is already in the atlas",
+      "repo": "nishad2m8/pip-boy-weather-clock",
+      "repo_id": 872118368,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
     "plai": {
       "id": "plai",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
       "reason": "present in the catalog: its PR was merged",
       "repo": "d4rkmen/plai",
+      "repo_id": 1169090650,
       "status": "merged",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "plai-meshcore": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "plai-meshcore",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 1 forks",
+      "repo": "sjoyce1/plai-meshcore",
+      "repo_id": 1307082432,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "plume": {
       "id": "plume",
@@ -5541,12 +5611,72 @@
       "status": "seen",
       "timestamp": "2026-09-02T16:03:28.041025+00:00"
     },
+    "plumeria-mc": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "plumeria-mc",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "oumike/plumeria-mc",
+      "repo_id": 1262928422,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
     "pocket-gambler": {
       "id": "pocket-gambler",
       "pr_ref": null,
       "repo": "nanucek/pocket-gambler",
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.135130+00:00"
+    },
+    "pocketmo-m5": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "pocketmo-m5",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "kubiklego/pocketmo_m5",
+      "repo_id": 1141897020,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
+    "pocketssh": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "pocketssh",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "0015/pocketssh",
+      "repo_id": 1132515428,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
+    "pomodoro-card": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "pomodoro-card",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "mohith-das/pomodoro-card",
+      "repo_id": 1354088654,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
+    "pomodoro-papers3": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "pomodoro-papers3",
+      "pr_ref": null,
+      "reason": "below_floor: 10 stars / 2 forks",
+      "repo": "micokonsep/pomodoro-papers3",
+      "repo_id": 1041801092,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
+    "poodle": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "poodle",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 1 forks",
+      "repo": "k-natori/poodle",
+      "repo_id": 600770829,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "portal-evil-huebr": {
       "expires": "2026-10-08T04:00:36.972928+00:00",
@@ -5568,6 +5698,15 @@
       "status": "rejected",
       "timestamp": "2026-09-08T04:00:36.972928+00:00"
     },
+    "porttest": {
+      "expires": "2026-09-18T15:00:52.423877+00:00",
+      "id": "porttest",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "theminer203/porttest",
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
     "poseidon": {
       "expires": "2026-10-11T13:00:49.050627+00:00",
       "id": "poseidon",
@@ -5578,12 +5717,61 @@
       "status": "rejected",
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
+    "ppltmini-atoms3": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "ppltmini-atoms3",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 1 forks",
+      "repo": "sc-makers/ppltmini-atoms3",
+      "repo_id": 697170634,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
     "psychedelic-atoms3": {
       "id": "psychedelic-atoms3",
       "pr_ref": null,
       "repo": "coreymillia/psychedelic-atoms3",
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.165999+00:00"
+    },
+    "psychedelic-m5stickc-plus2": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "psychedelic-m5stickc-plus2",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "coreymillia/psychedelic-m5stickc-plus2",
+      "repo_id": 1077842629,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
+    "psychedelic-theramin-m5stickc-plus2": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "psychedelic-theramin-m5stickc-plus2",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "coreymillia/psychedelic-theramin-m5stickc-plus2",
+      "repo_id": 1097826190,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
+    "pulseos": {
+      "expires": "2026-09-18T15:00:52.423877+00:00",
+      "id": "pulseos",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "enemyofglados/pulseos.git",
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
+    "pumpbug": {
+      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "id": "pumpbug",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 0 forks",
+      "repo": "ludable/pumpbug",
+      "repo_id": 1322995631,
+      "status": "rejected",
+      "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "raising-hell-cardputer": {
       "id": "raising-hell-cardputer",
@@ -6004,6 +6192,7 @@
   },
   "by_repo": {
     "": "(unnamed entry)",
+    "0015/pocketssh": "pocketssh",
     "01mayo01/meowusb-ble": "meowusb-ble",
     "0ct0sec/m5pancetta": "m5pancetta",
     "0ct0sec/m5porkchop": "m5porkchop",
@@ -6076,6 +6265,7 @@
     "beakes/teenygpstestbed_c2": "teenygpstestbed-c2",
     "beanpiechen/micropythonshell": "micropythonshell",
     "ben7147/bruceextled.git": "bruceextled",
+    "benbaker76/pigtail": "pigtail",
     "big-bratan/make-ap": "make-ap",
     "bitmaker-hub/nerdminer_v2": "nerdminer-v2",
     "blamouche/cardputer-dwight": "cardputer-dwight",
@@ -6109,10 +6299,12 @@
     "ciniml/m5stack_matter_examples": "m5stack-matter-examples",
     "clackups/draftling": "draftling",
     "codigohardwareecia/m5cardputer_knowledge": "m5cardputer-knowledge",
+    "codigohardwareecia/m5cardputer_mp3_manager": "m5cardputer-mp3-manager",
     "comeraperuibe944/stickcontroller": "stickcontroller",
     "coreymillia/1942-tetrimino-m5stickc-plus2": "1942-tetrimino-m5stickc-plus2",
     "coreymillia/341-xscreensaver-m5stickc-plus1-plus2": "341-xscreensaver-m5stickc-plus1-plus2",
     "coreymillia/7-games-for-m5stickc-plus2": "7-games-for-m5stickc-plus2",
+    "coreymillia/acidtrip-psychedelic-m5core-60-visuals": "acidtrip-psychedelic-m5core-60-visuals",
     "coreymillia/arduinogotchi-m5stick-esp32-tamagotchi": "arduinogotchi-m5stick-esp32-tamagotchi",
     "coreymillia/biorhythm-calculator---m5stickc-plus2": "biorhythm-calculator-m5stickc-plus2",
     "coreymillia/bruce-shark-bait-m5stackc-plus2-wifi-defense": "bruce-shark-bait-m5stackc-plus2-wifi-def",
@@ -6146,6 +6338,8 @@
     "coreymillia/magichatebot-m5stickc-plus2": "magichatebot-m5stickc-plus2",
     "coreymillia/portalhater-m5-core-seafood-roast-joke-bot": "portalhater-m5-core-seafood-roast-joke-b",
     "coreymillia/psychedelic-atoms3": "psychedelic-atoms3",
+    "coreymillia/psychedelic-m5stickc-plus2": "psychedelic-m5stickc-plus2",
+    "coreymillia/psychedelic-theramin-m5stickc-plus2": "psychedelic-theramin-m5stickc-plus2",
     "coreymillia/shark-bait-add-on-bruce-firmware-m5stackc-plus-": "shark-bait-add-on-bruce-firmware-m5stack",
     "coreymillia/vectrex-m5stickc-plus2": "vectrex-m5stickc-plus2",
     "coreymillia/whisplay-groq-chatbot": "whisplay-groq-chatbot",
@@ -6199,6 +6393,7 @@
     "endarthur/relaykvm": "relaykvm",
     "enemyofglados/cores3-env3-monitor": "cores3-env3-monitor",
     "enemyofglados/cores3_rom_launcher": "cores3-rom-launcher",
+    "enemyofglados/pulseos.git": "pulseos",
     "engneer-hamachan/area512": "area512",
     "erwantest123/cardputer-message-terminal.git": "cardputer-message-terminal",
     "erwantest123/nyan": "nyan",
@@ -6233,6 +6428,7 @@
     "fra-222/opensailingrc-display": "opensailingrc-display",
     "fra-222/opensailingrc-joystick-v2": "opensailingrc-joystick-v2",
     "freecodertea/bdhack": "bdhack",
+    "freedomxxjustice/m5stickc-plus-2-ping-pong": "m5stickc-plus-2-ping-pong",
     "frogbotherer/a2z_machine": "a2z-machine",
     "frontendency/gallery_for_cardputeradv": "gallery-for-cardputeradv",
     "fwz233-re/m5claw": "m5claw",
@@ -6276,6 +6472,7 @@
     "h4w9/esp32_flipworld": "esp32-flipworld",
     "h4w9/esp32_library": "esp32-library",
     "h4w9/esp32_mastermine": "esp32-mastermine",
+    "h4w9/m5porkchop": "m5porkchop",
     "h4w9/pancake": "pancake",
     "hagalaz27/hamsterm": "hamsterm",
     "halbeshuhn/cardputer-radiopod": "cardputer-radiopod",
@@ -6312,6 +6509,7 @@
     "jay-jayismyname1/cardputer-usb-adv-": "cardputer-usb-adv",
     "jayden-sudo/ble-page-turner": "ble-page-turner",
     "jayden-sudo/cardputer-keyboard-mouse": "cardputer-keyboard-mouse",
+    "jblanked/picoware": "picoware",
     "jcldf/m5stackprojects": "m5stackprojects",
     "jfduhart/cardputer-morse-trainer": "cardputer-morse-trainer",
     "jimgat/cym-nm28c5": "cym-nm28c5",
@@ -6331,6 +6529,7 @@
     "justinknight93/doolittle": "doolittle",
     "jymmm/rhesus-radio": "rhesus-radio",
     "k-7iro/mk75-watch": "mk75-watch",
+    "k-natori/poodle": "poodle",
     "kaini-industries/cardputer-chess": "cardputer-chess",
     "kaini-industries/cardputer-rng": "cardputer-rng",
     "kataigp/m5cardputer_dht11_sensor": "m5cardputer-dht11-sensor",
@@ -6350,6 +6549,7 @@
     "kotobuki/io-framework-for-xr": "io-framework-for-xr",
     "kotobuki/meganemouse": "meganemouse",
     "kreaxv/pc-monitor-wol-stickc-plus2": "pc-monitor-wol-stickc-plus2",
+    "kubiklego/pocketmo_m5": "pocketmo-m5",
     "kvn-la/byobyok": "byobyok",
     "kwindapp/start-kwind-jump.git": "start-kwind-jump",
     "kwonbowon/cardputerhomekit": "cardputerhomekit",
@@ -6372,6 +6572,7 @@
     "locosp/bruce-firmware-wdgwars": "bruce-firmware-wdgwars",
     "lordlexat/m5core2_simpleclock": "m5core2-simpleclock",
     "lostdataprotocol/onemorefloor": "onemorefloor",
+    "ludable/pumpbug": "pumpbug",
     "lukastrhan-hub/dino-and-bomb-game": "dino-and-bomb-game",
     "lunarc3/ballisticcalc": "ballisticcalc",
     "lunarc3/cardputergpsmap": "cardputergpsmap",
@@ -6421,12 +6622,14 @@
     "mehflexx17": "mehflexx17",
     "meister5/m5stack-cardputer-adv-gps-tracker": "m5stack-cardputer-adv-gps-tracker",
     "micokonsep/flipcard-papers3": "flipcard-papers3",
+    "micokonsep/pomodoro-papers3": "pomodoro-papers3",
     "microdev-steve/circuitpython_m5stickplus2": "circuitpython-m5stickplus2",
     "mingrzou/papermono-launcher": "papermono-launcher",
     "mithug3/cardradio": "cardradio",
     "mk324234/atoms3-lite-tvbgone": "atoms3-lite-tvbgone",
     "mk324234/m5stickcp2-tvbgone": "m5stickcp2-tvbgone",
     "moge800/m5papers3_calculator": "m5papers3-calculator",
+    "mohith-das/pomodoro-card": "pomodoro-card",
     "mongonta0716/m5stack-avatar-mic": "m5stack-avatar-mic",
     "moo93egy/cardping_multi.git": "cardping-multi",
     "moo93egy/cardputer_mp3_adv.git": "cardputer-mp3-adv",
@@ -6451,6 +6654,7 @@
     "nishad2m8/cardputer-games": "cardputer-games",
     "nishad2m8/geminiputer": "geminiputer",
     "nishad2m8/pdaputer": "pdaputer",
+    "nishad2m8/pip-boy-weather-clock": "pip-boy-weather-clock",
     "noest-d/esp32-emulatorjs": "esp32-emulatorjs",
     "nongxl/agar-cardputer": "agar-cardputer",
     "nongxl/cardputer_lightmeter_cpp": "cardputer-lightmeter-cpp",
@@ -6474,6 +6678,7 @@
     "ooxxu/xiaozhi-esp32": "xiaozhi-esp32",
     "osamusg/m5papercolor-calendar": "m5papercolor-calendar",
     "oumike/camillia-mt": "camillia-mt",
+    "oumike/plumeria-mc": "plumeria-mc",
     "pavelprosto94/christmas_tree_clock": "christmas-tree-clock",
     "pawneemilitia/infiltra-firmware": "infiltra-firmware",
     "pelgraine/meck-p4": "meck-p4",
@@ -6539,6 +6744,7 @@
     "sanchitminda/mp3playerform5cardputer": "mp3playerform5cardputer",
     "sau412/esp32_cyd_pda": "esp32-cyd-pda",
     "say4n/edf-energy-monitor": "edf-energy-monitor",
+    "sc-makers/ppltmini-atoms3": "ppltmini-atoms3",
     "sduenasg/pio_palnagotchi": "pio-palnagotchi",
     "sebaspinto/misspoppyrabbit": "misspoppyrabbit",
     "seeed-projects/oshw-reterminal-series-e-d": "oshw-reterminal-series-e-d",
@@ -6551,6 +6757,7 @@
     "sheepxux/taskhub-for-sticks3": "taskhub-for-sticks3",
     "shlappa1000/c4-stick": "c4-stick",
     "sijan246/cyd-gb-emulator": "cyd-gb-emulator",
+    "sjoyce1/plai-meshcore": "plai-meshcore",
     "skyper02/evil-m5project": "evil-m5project",
     "slowlane112/cardputer_8_bit_tape_loader": "cardputer-8-bit-tape-loader",
     "slsafenull-dev/galaga-cardputer": "galaga-cardputer",
@@ -6581,6 +6788,7 @@
     "thebolined/ai-cardputer-adv-a-portable-ai-assistant": "ai-cardputer-adv-a-portable-ai-assistant",
     "thebricktop/anarch-cardputer": "anarch-cardputer",
     "thedeadlypixel/audiowiz": "audiowiz",
+    "theminer203/porttest": "porttest",
     "themusicnerd/m5-atommatrix-companion-v4-satellite": "m5-atommatrix-companion-v4-satellite",
     "themusicnerd/m5-atoms3-companion-v4-satellite": "m5-atoms3-companion-v4-satellite",
     "themusicnerd/m5stickc-companion-v4-satellite": "m5stickc-companion-v4-satellite",
