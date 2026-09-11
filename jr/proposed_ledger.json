@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-18T17:00:55.936325+00:00",
+      "expires": "2026-09-18T18:00:57.443532+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-11T17:00:55.936325+00:00"
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -1124,6 +1124,7 @@
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/81",
       "reason": "present in the catalog: its PR was merged",
       "repo": "adammelancon/cardputer-satellite-tracker",
+      "repo_id": 1096825391,
       "status": "merged",
       "timestamp": "2026-09-01T23:04:00.148167+00:00"
     },
@@ -2323,15 +2324,35 @@
       "status": "rejected",
       "timestamp": "2026-09-09T04:00:10.126216+00:00"
     },
+    "esp32-scrabble": {
+      "expires": "2026-10-11T18:00:57.443532+00:00",
+      "id": "esp32-scrabble",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "h4w9/esp32_scrabble",
+      "repo_id": 1328277886,
+      "status": "rejected",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
+    },
+    "esp32-usb-stick": {
+      "expires": "2026-10-11T18:00:57.443532+00:00",
+      "id": "esp32-usb-stick",
+      "pr_ref": null,
+      "reason": "already_catalogued: geo-tp/esp32-usb-stick is already in the atlas",
+      "repo": "geo-tp/esp32-usb-stick",
+      "repo_id": 928059262,
+      "status": "rejected",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
+    },
     "esp32-wifi-hash-monster": {
-      "expires": "2026-10-08T02:00:32.995095+00:00",
+      "expires": "2026-10-11T18:00:57.443532+00:00",
       "id": "esp32-wifi-hash-monster",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
-      "repo": "g4lile0/esp32-wifi-hash-monster",
-      "repo_id": 222137237,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "overcyber/esp32-wifi-hash-monster",
+      "repo_id": 935022678,
       "status": "rejected",
-      "timestamp": "2026-09-08T02:00:32.995095+00:00"
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "esp32-wifi-penetration-too": {
       "expires": "2026-09-15T02:00:32.995095+00:00",
@@ -2766,6 +2787,16 @@
       "repo_id": 669612191,
       "status": "rejected",
       "timestamp": "2026-09-08T17:00:16.540728+00:00"
+    },
+    "hall-sensor-speedometer-m5-stick-c-plus-": {
+      "expires": "2026-10-11T18:00:57.443532+00:00",
+      "id": "hall-sensor-speedometer-m5-stick-c-plus-",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "electbassoon/hall-sensor-speedometer-m5-stick-c-plus-2",
+      "repo_id": 1084140764,
+      "status": "rejected",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "halloween-tetris-m5stick-plus-2-with-tre": {
       "expires": "2026-10-08T17:00:16.540728+00:00",
@@ -3287,6 +3318,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
     },
+    "m5-cardputer-sd-security-firmware": {
+      "expires": "2026-10-11T18:00:57.443532+00:00",
+      "id": "m5-cardputer-sd-security-firmware",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "moy-lightening-firmware/m5-cardputer-sd-security-firmware",
+      "repo_id": 1257549790,
+      "status": "rejected",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
+    },
     "m5-chameleon-ultra": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5-chameleon-ultra",
@@ -3454,6 +3495,16 @@
       "repo_id": 1288800665,
       "status": "rejected",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
+    },
+    "m5-ssh-wireguard": {
+      "expires": "2026-10-11T18:00:57.443532+00:00",
+      "id": "m5-ssh-wireguard",
+      "pr_ref": null,
+      "reason": "below_floor: 16 stars / 8 forks",
+      "repo": "bpivk/m5-ssh-wireguard",
+      "repo_id": 1176783329,
+      "status": "rejected",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "m5airmouse": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -6220,6 +6271,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
+    "saitama": {
+      "expires": "2026-10-11T18:00:57.443532+00:00",
+      "id": "saitama",
+      "pr_ref": null,
+      "reason": "below_floor: 18 stars / 1 forks",
+      "repo": "868meshbot/saitama",
+      "repo_id": 1238564817,
+      "status": "rejected",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
+    },
     "saldotransporte": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
       "id": "saldotransporte",
@@ -6230,6 +6291,36 @@
       "status": "rejected",
       "timestamp": "2026-09-08T01:00:31.284910+00:00"
     },
+    "saturn": {
+      "expires": "2026-10-11T18:00:57.443532+00:00",
+      "id": "saturn",
+      "pr_ref": null,
+      "reason": "described_port_of_catalogued: description links n0xa/m5stick-nemo",
+      "repo": "henriquesebastiao/saturn",
+      "repo_id": 809302289,
+      "status": "rejected",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
+    },
+    "schimihack": {
+      "expires": "2026-10-11T18:00:57.443532+00:00",
+      "id": "schimihack",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "simont73/schimihack",
+      "repo_id": 965695821,
+      "status": "rejected",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
+    },
+    "scorched-earth-m5stickc-plus2": {
+      "expires": "2026-10-11T18:00:57.443532+00:00",
+      "id": "scorched-earth-m5stickc-plus2",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/scorched-earth-m5stickc-plus2",
+      "repo_id": 1092701773,
+      "status": "rejected",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
+    },
     "seed-phrase-checker": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
       "id": "seed-phrase-checker",
@@ -6239,6 +6330,16 @@
       "repo_id": 593083685,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "semi-evil-m5dial": {
+      "expires": "2026-10-11T18:00:57.443532+00:00",
+      "id": "semi-evil-m5dial",
+      "pr_ref": null,
+      "reason": "name_token_matches_catalogued: likely a port/variant",
+      "repo": "dagnazty/semi-evil-m5dial",
+      "repo_id": 904506947,
+      "status": "rejected",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "sensecap-indicator-esp32": {
       "expires": "2026-10-09T21:00:43.442359+00:00",
@@ -6289,12 +6390,31 @@
       "status": "seen",
       "timestamp": "2026-09-02T16:03:28.038888+00:00"
     },
+    "smfpc": {
+      "expires": "2026-10-11T18:00:57.443532+00:00",
+      "id": "smfpc",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "layer812/smfpc",
+      "repo_id": 933143001,
+      "status": "rejected",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
+    },
     "solotputer": {
       "id": "solotputer",
       "pr_ref": null,
       "repo": "aspikray/solotputer",
       "status": "seen",
       "timestamp": "2026-09-02T16:03:27.948587+00:00"
+    },
+    "sound-terrarium": {
+      "evidence_url": "https://github.com/kariagepompadour/SOUND-TERRARIUM",
+      "id": "sound-terrarium",
+      "pr_ref": null,
+      "repo": "kariagepompadour/sound-terrarium",
+      "repo_id": 1352091379,
+      "status": "proposed",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "spaceship": {
       "id": "spaceship",
@@ -6375,6 +6495,16 @@
       "repo_id": 1345138475,
       "status": "rejected",
       "timestamp": "2026-09-08T01:00:31.284910+00:00"
+    },
+    "sumi": {
+      "expires": "2026-10-11T18:00:57.443532+00:00",
+      "id": "sumi",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "psychoplath9450/sumi",
+      "repo_id": 1135393729,
+      "status": "rejected",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "t-display-c5": {
       "expires": "2026-10-08T04:00:36.972928+00:00",
@@ -6471,6 +6601,15 @@
       "repo": "allfather-bv/wadamesh",
       "status": "merged",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "wdgwatch": {
+      "expires": "2026-09-18T18:00:57.443532+00:00",
+      "id": "wdgwatch",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "sacriphanius/wdgwatch",
+      "status": "rejected",
+      "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "web-browser-cardputer-adv": {
       "id": "web-browser-cardputer-adv",
@@ -6570,6 +6709,7 @@
     "7h30th3r0n3/evil-m5core2": "evil-m5core2",
     "7h30th3r0n3/evil-m5project": "evil-m5project",
     "7h30th3r0n3/raspyjack": "raspyjack",
+    "868meshbot/saitama": "saitama",
     "aat440hz/8encoderunit-brainwavegenerator-m5stickcplus2": "8encoderunit-brainwavegenerator-m5stickc",
     "aat440hz/bluetoothmidicontrollermusicconductor-m5stickcplus2": "bluetoothmidicontrollermusicconductor-m5",
     "aat440hz/brainwavegenerator-m5cardputer": "brainwavegenerator-m5cardputer",
@@ -6642,6 +6782,7 @@
     "bmorcelli/launcher": "launcher",
     "bomberman30/advanceos-for-cardputer": "advanceos-for-cardputer",
     "bomberman30/carduboy-arduboy-for-cardputer": "carduboy-arduboy-for-cardputer",
+    "bpivk/m5-ssh-wireguard": "m5-ssh-wireguard",
     "bradmcnally/beepbotdx": "beepbotdx",
     "bradmcnally/bitmap16dx": "bitmap16dx",
     "brian-sheldon/emu-sys": "emu-sys",
@@ -6709,6 +6850,7 @@
     "coreymillia/psychedelic-m5stickc-plus2": "psychedelic-m5stickc-plus2",
     "coreymillia/psychedelic-theramin-m5stickc-plus2": "psychedelic-theramin-m5stickc-plus2",
     "coreymillia/quindectris-m5stickc-plus2": "quindectris-m5stickc-plus2",
+    "coreymillia/scorched-earth-m5stickc-plus2": "scorched-earth-m5stickc-plus2",
     "coreymillia/shark-bait-add-on-bruce-firmware-m5stackc-plus-": "shark-bait-add-on-bruce-firmware-m5stack",
     "coreymillia/vectrex-m5stickc-plus2": "vectrex-m5stickc-plus2",
     "coreymillia/whisplay-groq-chatbot": "whisplay-groq-chatbot",
@@ -6725,6 +6867,7 @@
     "d4rkmen/m5gemini": "m5gemini",
     "d4rkmen/m5tuna": "m5tuna",
     "d4rkmen/plai": "plai",
+    "dagnazty/semi-evil-m5dial": "semi-evil-m5dial",
     "dalianblue/m5stack_insta360": "m5stack-insta360",
     "dalianblue/m5sticks3-tide-clock": "m5sticks3-tide-clock",
     "dalianblue/m5voicestick": "m5voicestick",
@@ -6755,6 +6898,7 @@
     "dxvexx/m5stick-minigame-launcher-firmware": "m5stick-minigame-launcher-firmware",
     "echo-lalia/cardputer-microhydra": "cardputer-microhydra",
     "eiswolf-bg/eiswolfs-flightradar-cyd": "eiswolfs-flightradar-cyd",
+    "electbassoon/hall-sensor-speedometer-m5-stick-c-plus-2": "hall-sensor-speedometer-m5-stick-c-plus-",
     "elguesabal/server-vampeta": "server-vampeta",
     "elicoftz/flipper-zero-meets-m5stack-cardputer": "flipper-zero-meets-m5stack-cardputer",
     "emanuelelaface/cardputer-aprs": "cardputer-aprs",
@@ -6817,6 +6961,7 @@
     "geo-tp/bitcoin-card-wallet": "bitcoin-card-wallet",
     "geo-tp/cardputer-game-station-emulators": "cardputer-game-station-emulators",
     "geo-tp/esp32-bus-pirate": "esp32-bus-pirate",
+    "geo-tp/esp32-usb-stick": "esp32-usb-stick",
     "geo-tp/m5-card-computer-i2c-scanner": "m5-card-computer-i2c-scanner",
     "geo-tp/m5cardputer-alarm-pir-sensor": "m5cardputer-alarm-pir-sensor",
     "geo-tp/m5cardputer-audio-stream-server": "m5cardputer-audio-stream-server",
@@ -6842,6 +6987,7 @@
     "h4w9/esp32_flipworld": "esp32-flipworld",
     "h4w9/esp32_library": "esp32-library",
     "h4w9/esp32_mastermine": "esp32-mastermine",
+    "h4w9/esp32_scrabble": "esp32-scrabble",
     "h4w9/m5porkchop": "m5porkchop",
     "h4w9/pancake": "pancake",
     "hagalaz27/hamsterm": "hamsterm",
@@ -6852,6 +6998,7 @@
     "hardcoreerik/orcsdr": "orcsdr",
     "haswitchplate/openhasp": "openhasp",
     "helloruru/ruru-reader-papers3": "ruru-reader-papers3",
+    "henriquesebastiao/saturn": "saturn",
     "hermes-gadget/sigurdos-tdeck": "sigurdos-tdeck",
     "hiroki-kawakami/kyoshin": "kyoshin",
     "hiroki-kawakami/namecardknot": "namecardknot",
@@ -6905,6 +7052,7 @@
     "k-natori/poodle": "poodle",
     "kaini-industries/cardputer-chess": "cardputer-chess",
     "kaini-industries/cardputer-rng": "cardputer-rng",
+    "kariagepompadour/sound-terrarium": "sound-terrarium",
     "kataigp/m5cardputer_dht11_sensor": "m5cardputer-dht11-sensor",
     "kataigp/m5cardputer_hcsr04_sensor": "m5cardputer-hcsr04-sensor",
     "kestrelrain/m5cardputer_display_off": "m5cardputer-display-off",
@@ -6937,6 +7085,7 @@
     "layer812/r8cores3": "r8cores3",
     "layer812/r8cp": "r8cp",
     "layer812/r8t5": "r8t5",
+    "layer812/smfpc": "smfpc",
     "leandrosummo/m5cybernews-world": "m5cybernews-world",
     "lemin2/imgui-lovyangfx": "imgui-lovyangfx",
     "leonferlo/crptvfplayer-carputer-videoplayer": "crptvfplayer-carputer-videoplayer",
@@ -7018,6 +7167,7 @@
     "moo93egy/cardputer_mp3_adv.git": "cardputer-mp3-adv",
     "moskic/cardputer-adv-recorder": "cardputer-adv-recorder",
     "moskic/m5roulette": "m5roulette",
+    "moy-lightening-firmware/m5-cardputer-sd-security-firmware": "m5-cardputer-sd-security-firmware",
     "mr-paui/gameboy-enhanced-firmware-m5stack-cardputer-": "gameboy-enhanced-firmware-m5stack-cardpu",
     "mraanderson/cardputeradv-motionlab": "cardputeradv-motionlab",
     "mrchaosbude/esp32-cyd-aquarium": "esp32-cyd-aquarium",
@@ -7063,6 +7213,7 @@
     "osamusg/m5papercolor-calendar": "m5papercolor-calendar",
     "oumike/camillia-mt": "camillia-mt",
     "oumike/plumeria-mc": "plumeria-mc",
+    "overcyber/esp32-wifi-hash-monster": "esp32-wifi-hash-monster",
     "pavelprosto94/christmas_tree_clock": "christmas-tree-clock",
     "pawneemilitia/infiltra-firmware": "infiltra-firmware",
     "pdrix": "pdrix",
@@ -7083,6 +7234,7 @@
     "prstoetzer/papersat": "papersat",
     "prstoetzer/papersatcolor": "papersatcolor",
     "psonnera/m5_nightscoutmon": "m5-nightscoutmon",
+    "psychoplath9450/sumi": "sumi",
     "purplxhazee/purplx-": "purplx",
     "qqshi13/m5timer": "m5timer",
     "question-and-answer/cave-mine-cardputer-alpha1": "cave-mine-cardputer-alpha1",
@@ -7125,6 +7277,7 @@
     "rymicka": "rymicka",
     "rythlan/brokensignal-next": "brokensignal-next",
     "rythlan/cardmeteo": "cardmeteo",
+    "sacriphanius/wdgwatch": "wdgwatch",
     "sakkra-adv/battleship": "battleship",
     "sakkra-adv/magic8ball": "magic8ball",
     "sakkra-adv/spaceship": "spaceship",
@@ -7146,6 +7299,7 @@
     "shinemoon/m5readpaper": "m5readpaper",
     "shlappa1000/c4-stick": "c4-stick",
     "sijan246/cyd-gb-emulator": "cyd-gb-emulator",
+    "simont73/schimihack": "schimihack",
     "sjoyce1/plai-meshcore": "plai-meshcore",
     "sky18dragon/ricoh-gr-live-view-shooting": "ricoh-gr-live-view-shooting",
     "skyper02/evil-m5project": "evil-m5project",
