@@ -294,6 +294,35 @@ def seeed_doc_candidates(board_id: str, soc: str) -> list[str]:
     return [url] if url else []
 
 
+# ─── lolin (wemos) doc-URL resolver (SPEC-board-backfill-vendors.md, Slice 7) ────
+# Every LOLIN (wemos) ESP32 board has an official doc page on `www.wemos.cc`. LIKE heltec's
+# clean deterministic rule — CONFIRMED by a live fetch on 2026-09-11 (all 6 boards returned 200
+# and each page described the correct chip; their HTML is the Slice-7 fixtures): strip the
+# `lolin-` prefix, replace `-` with `_` → `<name>`; the family folder is `<name>` up to the
+# first `_` (`c3_mini`→`c3`, `d32_pro`→`d32`, `s2_mini`→`s2`, `s3`→`s3`); then
+# `https://www.wemos.cc/en/latest/<family>/<name>.html`. All 6 board ids fit the rule exactly,
+# so none is hardcoded (if one ever failed to fit it would go in a small verified override map
+# rather than forcing the rule). The resolver only claims `lolin-`-prefixed ids; anything else
+# yields [] (→ skipped doc-unreachable, never a guessed URL). Grounding on these Sphinx-style
+# doc pages: getting_started grounds for all 6 (the resolved 200 page IS the link); usb_serial
+# grounds only where the page NAMES the bridge (d32 / d32_pro → ch340; the other four name none
+# → omitted); download_mode and images are not stated (extractors return None → omitted). `soc`
+# is accepted for a uniform resolver signature but unused: lolin's slug derives from the board
+# id alone.
+LOLIN_DOC_BASE = "https://www.wemos.cc/en/latest"
+
+
+def lolin_doc_candidates(board_id: str, soc: str) -> list[str]:
+    """Ordered candidate official doc URLs for a lolin (wemos) board on www.wemos.cc. Returns
+    the single deterministic-rule `<family>/<name>.html` doc page for a `lolin-`-prefixed id, or
+    [] for any other id (→ the board is SKIPPED doc-unreachable, never guessed)."""
+    if not board_id.startswith("lolin-"):
+        return []
+    name = board_id[len("lolin-"):].replace("-", "_")
+    family = name.split("_")[0]
+    return [f"{LOLIN_DOC_BASE}/{family}/{name}.html"]
+
+
 # ─── vendor doc-URL resolver registry (SPEC-board-backfill-vendors.md, Slice 1) ──
 # A resolver maps a board to the ORDERED candidate official doc URLs to try (best-first) on
 # that vendor's own domain. Espressif's existing `doc_url_candidates` logic IS the
@@ -310,6 +339,7 @@ VENDOR_DOC_RESOLVERS: dict[str, Callable[[str, str], list[str]]] = {
     "lilygo": lilygo_doc_candidates,
     "heltec": heltec_doc_candidates,
     "seeed": seeed_doc_candidates,
+    "lolin": lolin_doc_candidates,
 }
 
 

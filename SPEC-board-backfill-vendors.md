@@ -85,6 +85,25 @@ function per vendor, while the extraction/citation core stays single-sourced and
    "Firmware Download mode" sentence), `images` on all 3 (no groundable og:image/filename, and no
    dedicated seeed image extractor this slice). Honest per-board delta on a real run: 0→1
    (`getting_started`), with `usb_serial` + `download_mode` + `images` explicitly omitted.
+7. **lolin / wemos (6 boards)** — `lolin_doc_candidates` on `www.wemos.cc`, covering the 6 LOLIN
+   (wemos) boards (`lolin-c3-mini`, `lolin-d32`, `lolin-d32-pro`, `lolin-s2-mini`, `lolin-s3`,
+   `lolin-s3-mini`). LIKE heltec, lolin's doc URL is a clean **deterministic rule** (verified live
+   2026-09-11 to yield all 6 real doc pages, 200, each describing the correct chip): strip the
+   `lolin-` prefix, replace `-`→`_` → `<name>`; the family folder is `<name>` up to the first `_`
+   (`c3_mini`→`c3`, `d32_pro`→`d32`, `s2_mini`→`s2`, `s3`→`s3`); then
+   `https://www.wemos.cc/en/latest/<family>/<name>.html`. All 6 ids fit the rule exactly, so none
+   is hardcoded (a future non-fitting board would go in a small verified override map, never forced
+   onto the rule); the resolver only claims `lolin-`-prefixed ids (else `[]` → skipped
+   doc-unreachable, never a guessed URL); the HTML is saved as the Slice-7 fixtures. **Grounds:**
+   `getting_started` for all 6 (the resolved 200 doc page IS the link); `usb_serial` only where the
+   page NAMES the bridge — d32 and d32-pro both state "CH340" → `ch340` (in the real data these two
+   are already filled `ch340`, and s3-mini `native-usb-serial-jtag`, so a real run never rewrites
+   them and adds only `getting_started`). **Omitted:** `usb_serial` on c3-mini / s2-mini / s3 /
+   s3-mini (their doc pages name no bridge — must NOT false-positive the extractor);
+   `download_mode` on all 6 (no Boot+Reset "Firmware Download mode" sentence); `images` on all 6
+   (no groundable og:image/filename, and no dedicated lolin image extractor this slice). Honest
+   per-board delta on a real run: 0→1 (`getting_started`), with `download_mode` + `images` (and
+   `usb_serial` where the page names no bridge) explicitly omitted.
 
 ## Pinout (`io.gpio_pins`) — deferred, separate track
 The trend's `pinout` is the `io.gpio_pins` **array** (raw exposed GPIO numbers), the hardest field:
