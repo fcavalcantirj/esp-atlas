@@ -1692,3 +1692,184 @@ def test_seeed_board_404_skipped_cleanly(tmp_path):
     assert entry["reason"] == "doc-unreachable"
     assert entry["modified"] is False
     assert path.read_text() == before
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# SLICE 7 — lolin (wemos) vendor doc resolver (SPEC-board-backfill-vendors.md §Slice 7).
+# ──────────────────────────────────────────────────────────────────────────────
+# Registers the "lolin" resolver on www.wemos.cc so board_backfill reaches the 6 LOLIN (wemos)
+# boards. LIKE heltec, lolin's doc URL is a clean DETERMINISTIC rule (verified live to yield all
+# 6 real doc pages, 200): strip the `lolin-` prefix, replace `-` with `_` → `<name>`; the family
+# folder is `<name>.split("_")[0]`; then `https://www.wemos.cc/en/latest/<family>/<name>.html`.
+# All 6 board ids fit the rule exactly, so no board is hardcoded (if one ever didn't fit, it
+# would go in a small override map rather than forcing the rule). Each URL below was fetched &
+# verified 200 on 2026-09-11, and the page confirmed to describe the correct chip; the HTML is
+# saved as the Slice-7 fixtures.
+#
+# EMPIRICAL grounding (measured on the REAL fetched doc pages under fixtures/):
+#   * getting_started — grounds for ALL 6 (the resolved 200 doc page IS the link).
+#   * usb_serial      — grounds ONLY where the page NAMES the bridge: d32 and d32-pro both state
+#                       "CH340" → ch340. c3-mini / s2-mini / s3 / s3-mini do NOT name a bridge on
+#                       their doc page, so usb_serial stays OMITTED there (cite-or-omit). NOTE: in
+#                       the real data/boards/lolin/* files d32 / d32-pro already carry
+#                       usb_serial: ch340 (and s3-mini native-usb-serial-jtag) from other
+#                       sources, so a real run never rewrites them — but the extractor grounding
+#                       is proven here on the page text directly.
+#   * download_mode   — NOT groundable on any lolin page: none carries a Boot+Reset "Firmware
+#                       Download mode" sentence. Omitted (cite-or-omit).
+#   * images          — NOT groundable: the doc pages carry no groundable og:image and the
+#                       espressif filename heuristic (the registry default for lolin — no
+#                       dedicated lolin image extractor this slice) finds nothing. Omitted.
+
+# The 6 URLs confirmed 200 by a live fetch on 2026-09-11 (their HTML is the fixtures).
+LOLIN_VERIFIED_URLS = {
+    "lolin-c3-mini": "https://www.wemos.cc/en/latest/c3/c3_mini.html",
+    "lolin-d32": "https://www.wemos.cc/en/latest/d32/d32.html",
+    "lolin-d32-pro": "https://www.wemos.cc/en/latest/d32/d32_pro.html",
+    "lolin-s2-mini": "https://www.wemos.cc/en/latest/s2/s2_mini.html",
+    "lolin-s3": "https://www.wemos.cc/en/latest/s3/s3.html",
+    "lolin-s3-mini": "https://www.wemos.cc/en/latest/s3/s3_mini.html",
+}
+
+# All 6 lolin board ids the resolver must cover (the data/boards/lolin/* dirs).
+LOLIN_ALL_BOARDS = list(LOLIN_VERIFIED_URLS)
+LOLIN_SOC = {
+    "lolin-c3-mini": "esp32-c3", "lolin-d32": "esp32", "lolin-d32-pro": "esp32",
+    "lolin-s2-mini": "esp32-s2", "lolin-s3": "esp32-s3", "lolin-s3-mini": "esp32-s3",
+}
+
+
+def test_lolin_resolver_registered_returns_verified_docs_urls():
+    # (a) the registry gained a "lolin" entry, and its deterministic rule returns the EXACT
+    # live-verified www.wemos.cc URL (best-first) for every one of the 6 boards.
+    assert "lolin" in bb.VENDOR_DOC_RESOLVERS
+    resolver = bb.VENDOR_DOC_RESOLVERS["lolin"]
+    for bid, url in LOLIN_VERIFIED_URLS.items():
+        cands = resolver(bid, LOLIN_SOC[bid])
+        assert cands[0] == url, f"{bid} → {cands[0]!r} != {url!r}"
+
+
+def test_lolin_resolver_covers_all_6_boards_on_wemos_domain():
+    # (b) every one of the 6 lolin boards resolves to a www.wemos.cc URL — no board falls
+    # through uncovered (0 → 6 boards this slice).
+    resolver = bb.VENDOR_DOC_RESOLVERS["lolin"]
+    for bid in LOLIN_ALL_BOARDS:
+        cands = resolver(bid, LOLIN_SOC[bid])
+        assert cands, f"{bid} yielded no candidate URL"
+        assert cands[0].startswith("https://www.wemos.cc/en/latest/"), cands[0]
+        assert cands[0].endswith(".html"), cands[0]
+
+
+def test_lolin_resolver_non_lolin_id_returns_empty():
+    # (c) the resolver only claims lolin-prefixed ids; an id it doesn't own yields [] (→ that
+    # board would be skipped doc-unreachable, never sent to a guessed wemos URL).
+    resolver = bb.VENDOR_DOC_RESOLVERS["lolin"]
+    assert resolver("esp32-devkitc", "esp32") == []
+    assert resolver("heltec-wifi-kit-32-v3", "esp32-s3") == []
+    assert resolver("xiao-esp32c3", "esp32-c3") == []
+
+
+def _lolin_fetcher_for(bid, fixture_name):
+    """Fake fetcher that serves the given fixture ONLY at the lolin resolver's URL for `bid` —
+    any other URL 404s (proves resolution lands on the right page)."""
+    url = bb.VENDOR_DOC_RESOLVERS["lolin"](bid, LOLIN_SOC[bid])[0]
+    return url, _fetcher({url: _fixture(fixture_name)})
+
+
+@pytest.mark.parametrize("name", ["lolin-d32", "lolin-d32-pro"])
+def test_lolin_usb_serial_grounds_ch340_where_page_names_it(name):
+    # (d) the two boards whose doc page states "CH340" ground usb_serial=ch340 (a schema-valid
+    # enum value). This is grounded off the page text.
+    val = bb.extract_usb_serial(bb._visible_text(_fixture(name)))
+    assert val == "ch340", f"{name} → {val!r}"
+
+
+@pytest.mark.parametrize("name", ["lolin-c3-mini", "lolin-s2-mini", "lolin-s3", "lolin-s3-mini"])
+def test_lolin_usb_serial_omitted_when_page_names_no_bridge(name):
+    # (e) CRITICAL cite-or-omit: these doc pages do NOT name a bridge chip, so usb_serial must
+    # stay None — never a guessed flash-critical write.
+    assert bb.extract_usb_serial(bb._visible_text(_fixture(name))) is None
+
+
+@pytest.mark.parametrize("name", list(LOLIN_VERIFIED_URLS))
+def test_lolin_download_mode_and_images_omitted_on_real_pages(name):
+    # (f) CRITICAL cite-or-omit: on ALL 6 REAL lolin pages the download_mode and image
+    # heuristics correctly return None (no Boot+Reset firmware-download sentence; no groundable
+    # og:image / filename), so those fields stay omitted.
+    raw = _fixture(name)
+    assert bb.extract_download_mode(bb._visible_text(raw)) is None
+    assert bb.extract_images(raw, "https://www.wemos.cc/x") is None
+
+
+def test_lolin_d32_grounds_getting_started_and_usb_serial(tmp_path):
+    # (g) end-to-end on a BARE board: d32's page grounds getting_started = the URL AND
+    # usb_serial=ch340 (the page names it); download_mode + images are OMITTED.
+    bid, soc = "lolin-d32", "esp32"
+    path = _write_board(tmp_path, bid, soc, brand="lolin")
+    url, fetch = _lolin_fetcher_for(bid, "lolin-d32")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url
+    assert entry["written"] == ["usb_serial", "getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "images"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert fm["usb_serial"] == "ch340"
+    assert "download_mode" not in fm
+    assert "images" not in fm
+    cited = {s["field"]: s for s in fm["sources"]}
+    assert cited["getting_started"]["url"] == url and cited["getting_started"]["verified"] == TODAY
+    assert cited["usb_serial"]["url"] == url and cited["usb_serial"]["verified"] == TODAY
+
+
+def test_lolin_s3_grounds_getting_started_only(tmp_path):
+    # (h) end-to-end on a BARE board: s3's page names no bridge → usb_serial is OMITTED alongside
+    # download_mode + images; only getting_started grounds (honest 0→1).
+    bid, soc = "lolin-s3", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="lolin")
+    url, fetch = _lolin_fetcher_for(bid, "lolin-s3")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert "usb_serial" not in fm
+
+
+def test_lolin_grounds_getting_started_when_usb_serial_already_filled(tmp_path):
+    # (i) mirrors the REAL data (d32 usb_serial already present from other sources): backfill
+    # writes ONLY getting_started, never touching the pre-filled usb_serial. This is the true
+    # per-board coverage delta on a real run (0→1: getting_started; download_mode + images
+    # omitted).
+    bid, soc = "lolin-d32", "esp32"
+    path = _write_board(tmp_path, bid, soc, brand="lolin", extra_fields="usb_serial: ch340\n")
+    url, fetch = _lolin_fetcher_for(bid, "lolin-d32")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "images"}
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert fm["usb_serial"] == "ch340"            # pre-filled, untouched
+    usb_sources = [s for s in fm["sources"] if s["field"] == "usb_serial"]
+    assert usb_sources == []                       # no new citation appended for a filled field
+
+
+def test_lolin_board_404_skipped_cleanly(tmp_path):
+    # (j) a board whose doc page 404s is SKIPPED doc-unreachable and left byte-for-byte
+    # unmodified — never a partial/invented write.
+    bid, soc = "lolin-c3-mini", "esp32-c3"
+    path = _write_board(tmp_path, bid, soc, brand="lolin")
+    before = path.read_text()
+    entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
+
+    assert entry["status"] == "skipped"
+    assert entry["reason"] == "doc-unreachable"
+    assert entry["modified"] is False
+    assert path.read_text() == before
