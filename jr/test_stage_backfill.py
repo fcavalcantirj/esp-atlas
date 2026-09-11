@@ -119,11 +119,12 @@ def test_run_reaches_m5stack_boards_and_backfills_getting_started(tmp_path):
 
 
 def test_brand_without_a_registered_resolver_is_not_in_the_worklist(tmp_path, monkeypatch):
-    # waveshare has no resolver in VENDOR_DOC_RESOLVERS -> its boards must never be fed to the
-    # per-board backfill, while espressif (registered) still is. (lilygo is registered as of
-    # Slice 4, so a still-unregistered brand is used to pin the "no-resolver → never fed" rule.)
+    # A brand with NO resolver in VENDOR_DOC_RESOLVERS -> its boards must never be fed to the
+    # per-board backfill, while espressif (registered) still is. (All 13 real brands now have
+    # resolvers as of Slice 13, so a fictional unregistered brand pins the "no-resolver → never
+    # fed" rule.)
     _mk_brand_boards(tmp_path, "espressif", ["esp32-c3-devkitc-2"])
-    _mk_brand_boards(tmp_path, "waveshare", ["waveshare-esp32-s3-touch"])
+    _mk_brand_boards(tmp_path, "noresolver-vendor", ["noresolver-vendor-esp32-s3-touch"])
     seen = []
 
     def fake_bb(path, data_root, fetch, today):
@@ -133,4 +134,4 @@ def test_brand_without_a_registered_resolver_is_not_in_the_worklist(tmp_path, mo
     monkeypatch.setattr(board_backfill, "backfill_board", fake_bb)
     stage_backfill.run(Ctx(tmp_path), budget=10)
     assert any(p.endswith("espressif/esp32-c3-devkitc-2/board.md") for p in seen)
-    assert not any("waveshare" in p for p in seen)
+    assert not any("noresolver-vendor" in p for p in seen)

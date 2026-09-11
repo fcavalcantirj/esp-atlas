@@ -62,6 +62,7 @@ from board_doc_resolvers import (  # noqa: E402,F401
     ADAFRUIT_DOC_BASE,
     ADAFRUIT_DOC_PATHS,
     DFROBOT_DOC_URLS,
+    ELECROW_DOC_URLS,
     FREENOVE_DOC_URLS,
     DOC_URL_OVERRIDES,
     HELTEC_DOC_BASE,
@@ -76,11 +77,13 @@ from board_doc_resolvers import (  # noqa: E402,F401
     USER_GUIDE_BASE,
     VENDOR_DOC_RESOLVERS,
     VENDOR_UNGROUNDABLE_FIELDS,
+    WAVESHARE_DOC_URLS,
     adafruit_doc_candidates,
     board_user_guide_url,
     chip_seg,
     dfrobot_doc_candidates,
     doc_url_candidates,
+    elecrow_doc_candidates,
     freenove_doc_candidates,
     heltec_doc_candidates,
     lilygo_doc_candidates,
@@ -89,6 +92,7 @@ from board_doc_resolvers import (  # noqa: E402,F401
     seeed_doc_candidates,
     sparkfun_doc_candidates,
     unexpected_maker_doc_candidates,
+    waveshare_doc_candidates,
 )
 
 
