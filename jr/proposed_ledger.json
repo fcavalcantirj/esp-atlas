@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-18T15:00:52.423877+00:00",
+      "expires": "2026-09-18T16:00:54.676058+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -1447,6 +1447,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T01:00:31.284910+00:00"
     },
+    "cardputerradiacode": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "cardputerradiacode",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "liptoon/cardputerradiacode",
+      "repo_id": 1285388680,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
     "cardputerremote": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
       "id": "cardputerremote",
@@ -1824,6 +1834,16 @@
       "repo_id": 1268503947,
       "status": "rejected",
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
+    },
+    "crcmd-qrcode2": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "crcmd-qrcode2",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "sohtamei/crcmd.qrcode2",
+      "repo_id": 985185962,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
     },
     "crossink": {
       "expires": "2026-10-08T02:00:32.995095+00:00",
@@ -5505,6 +5525,15 @@
       "status": "rejected",
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
+    "pdrix": {
+      "expires": "2026-09-18T16:00:54.676058+00:00",
+      "id": "pdrix",
+      "pr_ref": null,
+      "reason": "repo_unresolved: unparseable repo 'pdrix'",
+      "repo": "pdrix",
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
     "pense-bem-cardputer-adv": {
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "pense-bem-cardputer-adv",
@@ -5773,11 +5802,101 @@
       "status": "rejected",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
+    "purple": {
+      "expires": "2026-09-18T16:00:54.676058+00:00",
+      "id": "purple",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "rlee203/purple.git",
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "purplx": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "purplx",
+      "pr_ref": null,
+      "reason": "below_floor: 18 stars / 1 forks",
+      "repo": "purplxhazee/purplx-",
+      "repo_id": 1285389932,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "pyxis": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "pyxis",
+      "pr_ref": null,
+      "reason": "already_catalogued: torlando-tech/pyxis is already in the atlas",
+      "repo": "torlando-tech/pyxis",
+      "repo_id": 1151831633,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "quindectris-m5stickc-plus2": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "quindectris-m5stickc-plus2",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/quindectris-m5stickc-plus2",
+      "repo_id": 1109514517,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "r8atoms3r": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "r8atoms3r",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "layer812/r8atoms3r",
+      "repo_id": 1283865700,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "r8cores3": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "r8cores3",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "layer812/r8cores3",
+      "repo_id": 1282682789,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "r8cp": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "r8cp",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 1 forks",
+      "repo": "layer812/r8cp",
+      "repo_id": 1275189761,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "r8t5": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "r8t5",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "layer812/r8t5",
+      "repo_id": 1334249022,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "raincity-m5stack-cores3": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "raincity-m5stack-cores3",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "nullbeing/raincity-m5stack-cores3",
+      "repo_id": 1323955984,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
     "raising-hell-cardputer": {
       "id": "raising-hell-cardputer",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
       "reason": "present in the catalog: its PR was merged",
       "repo": "acpayers-alt/raising-hell-cardputer",
+      "repo_id": 1150124550,
       "status": "merged",
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
     },
@@ -5816,6 +5935,76 @@
       "status": "rejected",
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
     },
+    "rf433-signaltest-m5stickcplus": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "rf433-signaltest-m5stickcplus",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "aat440hz/rf433-signaltest-m5stickcplus",
+      "repo_id": 794608203,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "rf433-signaltest-m5stickcplus2": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "rf433-signaltest-m5stickcplus2",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "aat440hz/rf433-signaltest-m5stickcplus2",
+      "repo_id": 794640432,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "rf433any-m5atoms3lite": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "rf433any-m5atoms3lite",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "aat440hz/rf433any-m5atoms3lite",
+      "repo_id": 795458141,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "rf433any-m5cardputer": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "rf433any-m5cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 9 stars / 0 forks",
+      "repo": "aat440hz/rf433any-m5cardputer",
+      "repo_id": 795273249,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "rf433any-m5stickcplus": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "rf433any-m5stickcplus",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "aat440hz/rf433any-m5stickcplus",
+      "repo_id": 795290208,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "rf433any-m5stickcplus2": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "rf433any-m5stickcplus2",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "aat440hz/rf433any-m5stickcplus2",
+      "repo_id": 795285545,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "rfid-pn532-i2c-cardputer": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "rfid-pn532-i2c-cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 9 stars / 0 forks",
+      "repo": "jojorel/rfid-pn532-i2c-cardputer",
+      "repo_id": 800686044,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
     "rhesus-life": {
       "id": "rhesus-life",
       "pr_ref": null,
@@ -5836,6 +6025,16 @@
       "repo": "drrhesus/rhesus-radio-v3",
       "status": "seen",
       "timestamp": "2026-09-02T16:03:27.950490+00:00"
+    },
+    "rrfremote": {
+      "expires": "2026-10-11T16:00:54.676058+00:00",
+      "id": "rrfremote",
+      "pr_ref": null,
+      "reason": "below_floor: 10 stars / 5 forks",
+      "repo": "armel/rrfremote",
+      "repo_id": 335833604,
+      "status": "rejected",
+      "timestamp": "2026-09-11T16:00:54.676058+00:00"
     },
     "ruview": {
       "id": "ruview",
@@ -6219,6 +6418,12 @@
     "aat440hz/cardskimmerdetector-m5stickcplus2": "cardskimmerdetector-m5stickcplus2",
     "aat440hz/flockcameradetector-m5cardputeradv": "flockcameradetector-m5cardputeradv",
     "aat440hz/flockcameradetector-m5stickcplus2": "flockcameradetector-m5stickcplus2",
+    "aat440hz/rf433-signaltest-m5stickcplus": "rf433-signaltest-m5stickcplus",
+    "aat440hz/rf433-signaltest-m5stickcplus2": "rf433-signaltest-m5stickcplus2",
+    "aat440hz/rf433any-m5atoms3lite": "rf433any-m5atoms3lite",
+    "aat440hz/rf433any-m5cardputer": "rf433any-m5cardputer",
+    "aat440hz/rf433any-m5stickcplus": "rf433any-m5stickcplus",
+    "aat440hz/rf433any-m5stickcplus2": "rf433any-m5stickcplus2",
     "abenokobo/pd-camera-m5": "pd-camera-m5",
     "acpayers-alt/raising-hell-cardputer": "raising-hell-cardputer",
     "adafruit/circuitpython": "circuitpython",
@@ -6254,6 +6459,7 @@
     "armel/hal9000atoms3": "hal9000atoms3",
     "armel/m5airquality": "m5airquality",
     "armel/m5hamradio": "m5hamradio",
+    "armel/rrfremote": "rrfremote",
     "artem76228/paperos": "paperos",
     "artem76228/paperweb": "paperweb",
     "arturockpk/bme280-sensor-m5unified": "bme280-sensor-m5unified",
@@ -6340,6 +6546,7 @@
     "coreymillia/psychedelic-atoms3": "psychedelic-atoms3",
     "coreymillia/psychedelic-m5stickc-plus2": "psychedelic-m5stickc-plus2",
     "coreymillia/psychedelic-theramin-m5stickc-plus2": "psychedelic-theramin-m5stickc-plus2",
+    "coreymillia/quindectris-m5stickc-plus2": "quindectris-m5stickc-plus2",
     "coreymillia/shark-bait-add-on-bruce-firmware-m5stackc-plus-": "shark-bait-add-on-bruce-firmware-m5stack",
     "coreymillia/vectrex-m5stickc-plus2": "vectrex-m5stickc-plus2",
     "coreymillia/whisplay-groq-chatbot": "whisplay-groq-chatbot",
@@ -6517,6 +6724,7 @@
     "jjugs/cardputer-laptop-monitor": "cardputer-laptop-monitor",
     "joejee90/cardputer-camera-companion": "cardputer-camera-companion",
     "johnhw/cardputer_drums": "cardputer-drums",
+    "jojorel/rfid-pn532-i2c-cardputer": "rfid-pn532-i2c-cardputer",
     "jonaslacerda/crowos": "crowos",
     "jpmarquesss/m5stickcp2oscilloscope": "m5stickcp2oscilloscope",
     "jrydval/m5cardputer-env-iv-app": "m5cardputer-env-iv-app",
@@ -6560,6 +6768,10 @@
     "layer812/gs": "gs",
     "layer812/mdxpc": "mdxpc",
     "layer812/panicplayertab5": "panicplayertab5",
+    "layer812/r8atoms3r": "r8atoms3r",
+    "layer812/r8cores3": "r8cores3",
+    "layer812/r8cp": "r8cp",
+    "layer812/r8t5": "r8t5",
     "leandrosummo/m5cybernews-world": "m5cybernews-world",
     "lemin2/imgui-lovyangfx": "imgui-lovyangfx",
     "leonferlo/crptvfplayer-carputer-videoplayer": "crptvfplayer-carputer-videoplayer",
@@ -6569,6 +6781,7 @@
     "limengdu/reterminal_sticky_inksalah": "reterminal-sticky-inksalah",
     "linclip/m5_gesticatormidi": "m5-gesticatormidi",
     "linclip/m5stickc_tvremote": "m5stickc-tvremote",
+    "liptoon/cardputerradiacode": "cardputerradiacode",
     "locosp/bruce-firmware-wdgwars": "bruce-firmware-wdgwars",
     "lordlexat/m5core2_simpleclock": "m5core2-simpleclock",
     "lostdataprotocol/onemorefloor": "onemorefloor",
@@ -6667,6 +6880,7 @@
     "nonik0/cardputerlegotraincontrol": "cardputerlegotraincontrol",
     "nonik0/cardputerlorachat": "cardputerlorachat",
     "ns96/cardputermictalk": "cardputermictalk",
+    "nullbeing/raincity-m5stack-cores3": "raincity-m5stack-cores3",
     "nw-lab/easyshortcutkey": "easyshortcutkey",
     "oceantroop/orca-one": "orca-one",
     "oldtokage-collab/c.p.s.--cardputer-syhnth--": "c-p-s-cardputer-syhnth",
@@ -6681,6 +6895,7 @@
     "oumike/plumeria-mc": "plumeria-mc",
     "pavelprosto94/christmas_tree_clock": "christmas-tree-clock",
     "pawneemilitia/infiltra-firmware": "infiltra-firmware",
+    "pdrix": "pdrix",
     "pelgraine/meck-p4": "meck-p4",
     "pepa1555/ollama-cardputer": "ollama-cardputer",
     "pepeangell5/bwifikill-cardputer-adv": "bwifikill-cardputer-adv",
@@ -6698,6 +6913,7 @@
     "prstoetzer/papersat": "papersat",
     "prstoetzer/papersatcolor": "papersatcolor",
     "psonnera/m5_nightscoutmon": "m5-nightscoutmon",
+    "purplxhazee/purplx-": "purplx",
     "qqshi13/m5timer": "m5timer",
     "question-and-answer/cave-mine-cardputer-alpha1": "cave-mine-cardputer-alpha1",
     "qwertyuu/cardputer-adv-tracker": "cardputer-adv-tracker",
@@ -6723,6 +6939,7 @@
     "riviarammer/m5term": "m5term",
     "riviarammer/m5wsjtx": "m5wsjtx",
     "rlee203/cardputeros.git": "cardputeros",
+    "rlee203/purple.git": "purple",
     "robertklofgren/cardelbrot": "cardelbrot",
     "robo8080/m5stickc_webradio_radiko_avatar": "m5stickc-webradio-radiko-avatar",
     "rocksneeze081/cardpda": "cardpda",
@@ -6763,6 +6980,7 @@
     "slsafenull-dev/galaga-cardputer": "galaga-cardputer",
     "smonse/ghostble": "ghostble",
     "soe6/aethertone": "aethertone",
+    "sohtamei/crcmd.qrcode2": "crcmd-qrcode2",
     "sor3nt/flipper-zero-esp32-port": "flipper-zero-esp32-port",
     "sosprz/esp_level": "esp-level",
     "sosprz/meshcore-cardputer-adv": "meshcore-cardputer-adv",
@@ -6802,6 +7020,7 @@
     "tobozo/m5stack-sd-updater": "m5stack-sd-updater",
     "tomcasa/m5cardputer-webradio-fr": "m5cardputer-webradio-fr",
     "tomorrow56/m5atom-socket-examples": "m5atom-socket-examples",
+    "torlando-tech/pyxis": "pyxis",
     "toshihiromakuuchi/ai_stackchan2": "ai-stackchan2",
     "treblewolf/m5cardputer-sun-rider": "m5cardputer-sun-rider",
     "troglodyte420/voice-mixer-3000": "voice-mixer-3000",
