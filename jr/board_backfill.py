@@ -323,6 +323,35 @@ def lolin_doc_candidates(board_id: str, soc: str) -> list[str]:
     return [f"{LOLIN_DOC_BASE}/{family}/{name}.html"]
 
 
+# ─── unexpected-maker doc-URL resolver (SPEC-board-backfill-vendors.md, Slice 8) ─
+# Every Unexpected Maker ESP32-S3 board has an official doc page on `esp32s3.com`. LIKE heltec /
+# lolin's clean DETERMINISTIC rule — CONFIRMED by a live fetch on 2026-09-11 (all 4 boards
+# returned 200 and each page described the correct ESP32-S3 board with a USB-C connector; their
+# HTML is the Slice-8 fixtures): strip the `um-` prefix → `<name>`, then
+# `https://esp32s3.com/<name>.html` (um-tinys3→tinys3, um-pros3→pros3, um-nanos3→nanos3,
+# um-feathers3→feathers3). All 4 board ids fit the rule exactly, so none is hardcoded (if one ever
+# failed to fit it would go in a small verified override map rather than forcing the rule). The
+# resolver only claims `um-`-prefixed ids; anything else yields [] (→ skipped doc-unreachable,
+# never a guessed URL). The frontmatter `brand` for these boards is exactly `unexpected-maker`, so
+# it registers under that key. Grounding on these pages: getting_started grounds for all 4 (the
+# resolved 200 page IS the link); usb_serial grounds for all 4 (each page states "Native USB +
+# USB Serial JTAG" → native-usb-serial-jtag); download_mode is not stated (no Boot+Reset sentence
+# → omitted); images is GATED OFF for the vendor (see VENDOR_UNGROUNDABLE_FIELDS — the espressif
+# filename heuristic mis-grounds a cross-board pinout on nanos3). `soc` is accepted for a uniform
+# resolver signature but unused: the slug derives from the board id alone.
+UM_DOC_BASE = "https://esp32s3.com"
+
+
+def unexpected_maker_doc_candidates(board_id: str, soc: str) -> list[str]:
+    """Ordered candidate official doc URLs for an Unexpected Maker board on esp32s3.com. Returns
+    the single deterministic-rule `<name>.html` doc page for a `um-`-prefixed id, or [] for any
+    other id (→ the board is SKIPPED doc-unreachable, never guessed)."""
+    if not board_id.startswith("um-"):
+        return []
+    name = board_id[len("um-"):]
+    return [f"{UM_DOC_BASE}/{name}.html"]
+
+
 # ─── vendor doc-URL resolver registry (SPEC-board-backfill-vendors.md, Slice 1) ──
 # A resolver maps a board to the ORDERED candidate official doc URLs to try (best-first) on
 # that vendor's own domain. Espressif's existing `doc_url_candidates` logic IS the
@@ -340,6 +369,7 @@ VENDOR_DOC_RESOLVERS: dict[str, Callable[[str, str], list[str]]] = {
     "heltec": heltec_doc_candidates,
     "seeed": seeed_doc_candidates,
     "lolin": lolin_doc_candidates,
+    "unexpected-maker": unexpected_maker_doc_candidates,
 }
 
 
@@ -352,10 +382,18 @@ VENDOR_DOC_RESOLVERS: dict[str, Callable[[str, str], list[str]]] = {
 # (many lilygo boards are not CH9102). That is the adafruit-feather-s2/FT232H trap at SITE scale
 # — writing it would set a WRONG flash-critical field, so usb_serial is gated OFF for lilygo.
 # (getting_started still grounds — it's just the resolved 200 URL.) A future slice that strips
-# site chrome before extraction could lift this gate. Empty by default → no effect on any other
-# vendor's extraction.
+# site chrome before extraction could lift this gate.
+# unexpected-maker: on esp32s3.com the per-board pinout diagrams are `images/pins_<board>.jpg`
+# (which the espressif filename heuristic's pinout regex does NOT match), while a cross-linked
+# generic `images/tiny_pinout_matrix.jpg` DOES match — and the nanos3 page carries BOTH its own
+# nanos3_pinout_matrix.jpg AND tiny_pinout_matrix.jpg, so the heuristic grounds the WRONG (tinys3)
+# pinout first in DOM order. A wrong wiring diagram can fry a board (the lilygo trap at cross-board
+# scale), so images is gated OFF for the vendor and reported OMITTED. A future dedicated
+# unexpected-maker image extractor (keying on the per-board pins_<name>.jpg) could lift this gate.
+# Empty by default → no effect on any other vendor's extraction.
 VENDOR_UNGROUNDABLE_FIELDS: dict[str, frozenset[str]] = {
     "lilygo": frozenset({"usb_serial"}),
+    "unexpected-maker": frozenset({"images"}),
 }
 
 
