@@ -148,6 +148,52 @@ def m5stack_doc_candidates(board_id: str, soc: str) -> list[str]:
     return [f"{M5STACK_DOC_BASE}/{path}"] if path else []
 
 
+# ─── adafruit doc-URL resolver (SPEC-board-backfill-vendors.md, Slice 3) ─────────
+# Every adafruit board has a Learn guide at `learn.adafruit.com/<guide-slug>` — CONFIRMED by
+# a live fetch on 2026-09-10 (all 11 boards' guides returned 200 with no redirect; the
+# feather-v2, qt-py-esp32-c3 and matrixportal-s3 pages are saved as the Slice-3 fixtures).
+# The <guide-slug> is board-specific and NOT derivable from the board id
+# (adafruit-feather-esp32-v2 → adafruit-esp32-feather-v2, adafruit-qt-py-esp32-c3 →
+# adafruit-qt-py-esp32-c3-wifi-dev-board), so — exactly like M5STACK_DOC_PATHS — a per-board
+# map of human-verified slugs is used, never a constructed guess. Each slug here was taken
+# from the board's already-cited `learn.adafruit.com` source URL and reconfirmed live. If
+# adafruit renames a guide and one 404s, that board stays SKIPPED (doc-unreachable), never
+# invented. The resolved 200 overview page IS the getting_started link; usb_serial and
+# download_mode ground where the overview text states them (CP2102N/USB-Serial-JTAG,
+# auto-reset), else are OMITTED (cite-or-omit).
+#
+# 10 of the 11 adafruit boards are mapped. adafruit-feather-esp32-s2 is DELIBERATELY OMITTED:
+# its Learn overview page cross-links an unrelated "CircuitPython Libraries on any Computer
+# with FT232H" guide, on which the shared usb_serial extractor false-positives to "other" —
+# but the S2 Feather is a native-USB board (no FTDI bridge). Mapping it would write a WRONG
+# flash-critical field, so it is left unmapped (→ skipped doc-unreachable, honest) pending a
+# usb_serial extractor that ignores cross-links. Follow-up, not forced.
+ADAFRUIT_DOC_PATHS: dict[str, str] = {
+    "adafruit-feather-esp32-s3": "adafruit-esp32-s3-feather",
+    "adafruit-feather-esp32-s3-reverse-tft": "esp32-s3-reverse-tft-feather",
+    "adafruit-feather-esp32-v2": "adafruit-esp32-feather-v2",
+    "adafruit-huzzah32-esp32-feather": "adafruit-huzzah32-esp32-feather",
+    "adafruit-itsybitsy-esp32": "adafruit-itsybitsy-esp32",
+    "adafruit-matrixportal-s3": "adafruit-matrixportal-s3",
+    "adafruit-metro-esp32-s3": "adafruit-metro-esp32-s3",
+    "adafruit-qt-py-esp32-c3": "adafruit-qt-py-esp32-c3-wifi-dev-board",
+    "adafruit-qt-py-esp32-s2": "adafruit-qt-py-esp32-s2",
+    "adafruit-qt-py-esp32-s3": "adafruit-qt-py-esp32-s3",
+}
+
+ADAFRUIT_DOC_BASE = "https://learn.adafruit.com"
+
+
+def adafruit_doc_candidates(board_id: str, soc: str) -> list[str]:
+    """Ordered candidate official doc URLs for an adafruit board on learn.adafruit.com.
+    Returns the single verified `<guide-slug>` Learn overview page for a mapped board, or []
+    for an unmapped id (→ the board is SKIPPED doc-unreachable, never guessed). `soc` is
+    accepted for a uniform resolver signature but unused: adafruit guides are keyed by
+    product, not chip."""
+    slug = ADAFRUIT_DOC_PATHS.get(board_id)
+    return [f"{ADAFRUIT_DOC_BASE}/{slug}"] if slug else []
+
+
 # ─── vendor doc-URL resolver registry (SPEC-board-backfill-vendors.md, Slice 1) ──
 # A resolver maps a board to the ORDERED candidate official doc URLs to try (best-first) on
 # that vendor's own domain. Espressif's existing `doc_url_candidates` logic IS the
@@ -160,6 +206,7 @@ from typing import Callable  # noqa: E402
 VENDOR_DOC_RESOLVERS: dict[str, Callable[[str, str], list[str]]] = {
     "espressif": doc_url_candidates,
     "m5stack": m5stack_doc_candidates,
+    "adafruit": adafruit_doc_candidates,
 }
 
 

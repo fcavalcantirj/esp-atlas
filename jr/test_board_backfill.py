@@ -475,11 +475,11 @@ def test_registry_has_espressif_resolver_matching_doc_url_candidates():
 
 
 def test_unregistered_brand_skipped_no_resolver_and_file_unchanged(tmp_path):
-    # (b) a brand with NO registered resolver (adafruit — still unregistered after Slice 2)
+    # (b) a brand with NO registered resolver (lilygo — still unregistered after Slice 3)
     # is skipped with reason "no-resolver" and left byte-for-byte unmodified — the guarantee
     # that a brand without a resolver is never touched.
-    bid, soc = "adafruit-feather-esp32-s3", "esp32-s3"
-    path = _write_board(tmp_path, bid, soc, brand="adafruit")
+    bid, soc = "lilygo-t-display-s3", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="lilygo")
     before = path.read_text()
 
     entry = bb.backfill_board(path, tmp_path, _fetcher({_url(bid, soc): DOC_WITH_MANUAL}), TODAY)
@@ -492,12 +492,12 @@ def test_unregistered_brand_skipped_no_resolver_and_file_unchanged(tmp_path):
 
 def test_run_is_registry_driven_processing_only_resolvable_brands(tmp_path):
     # (c) run() processes exactly the brands with a registered resolver (espressif + m5stack
-    # after Slice 2), NOT other vendors — driven off VENDOR_DOC_RESOLVERS keys, not a
-    # hardcoded brand. adafruit has no resolver → only LISTED, never processed or modified.
+    # + adafruit after Slice 3), NOT other vendors — driven off VENDOR_DOC_RESOLVERS keys, not
+    # a hardcoded brand. lilygo has no resolver → only LISTED, never processed or modified.
     p_esp = _write_board(tmp_path, "esp32-c5-devkitc-1", "esp32-c5")
     p_m5 = _write_board(tmp_path, "m5stack-core2", "esp32", brand="m5stack")
-    p_ada = _write_board(tmp_path, "adafruit-feather-esp32-s3", "esp32-s3", brand="adafruit")
-    before_m5, before_ada = p_m5.read_text(), p_ada.read_text()
+    p_lily = _write_board(tmp_path, "lilygo-t-display-s3", "esp32-s3", brand="lilygo")
+    before_m5, before_lily = p_m5.read_text(), p_lily.read_text()
     url = _url("esp32-c5-devkitc-1", "esp32-c5")
 
     # fetcher serves only the espressif URL → m5stack-core2's docs.m5stack.com URL 404s, so it
@@ -507,12 +507,12 @@ def test_run_is_registry_driven_processing_only_resolvable_brands(tmp_path):
     processed = {e["board_id"] for e in report["backfilled"]} | {e["board_id"] for e in report["skipped"]}
     assert "esp32-c5-devkitc-1" in processed
     assert "m5stack-core2" in processed              # m5stack is registered after Slice 2
-    assert "adafruit-feather-esp32-s3" not in processed
+    assert "lilygo-t-display-s3" not in processed
     # a registered brand is NOT on the needs_doc_url list; only the unregistered one is
     assert "m5stack/m5stack-core2" not in report["needs_doc_url"]
-    assert "adafruit/adafruit-feather-esp32-s3" in report["needs_doc_url"]
+    assert "lilygo/lilygo-t-display-s3" in report["needs_doc_url"]
     assert p_m5.read_text() == before_m5             # skipped (404) → unmodified
-    assert p_ada.read_text() == before_ada           # no resolver → unmodified
+    assert p_lily.read_text() == before_lily         # no resolver → unmodified
 
 
 def test_lyrat_end_to_end_recovers_from_esp_adf_fixture(tmp_path):
@@ -703,6 +703,181 @@ def test_m5stack_board_404_skipped_cleanly(tmp_path):
     # unmodified — never a partial/invented write.
     bid, soc = "m5stack-core2", "esp32"
     path = _write_board(tmp_path, bid, soc, brand="m5stack")
+    before = path.read_text()
+    entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
+
+    assert entry["status"] == "skipped"
+    assert entry["reason"] == "doc-unreachable"
+    assert entry["modified"] is False
+    assert path.read_text() == before
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SLICE 3 — adafruit vendor doc resolver (SPEC-board-backfill-vendors.md §Slice 3).
+#
+# Registers the "adafruit" resolver on learn.adafruit.com so board_backfill reaches the
+# adafruit boards. The real doc-URL pattern was CONFIRMED by a live fetch during the build:
+# every adafruit board has a Learn guide at `learn.adafruit.com/<guide-slug>` (200, no
+# redirect), where the guide slug is board-specific (adafruit-feather-esp32-v2 →
+# adafruit-esp32-feather-v2, adafruit-qt-py-esp32-c3 → adafruit-qt-py-esp32-c3-wifi-dev-board)
+# and NOT derivable from the board id — so the resolver carries a per-board map of the slug
+# already cited in each board's `sources`, reconfirmed live. If adafruit renames a guide and
+# one 404s, that board stays SKIPPED (doc-unreachable), never invented.
+#
+# EMPIRICAL grounding (measured on the REAL fetched Learn overview pages under fixtures/):
+#   * getting_started — grounds for ALL mapped boards (the resolved 200 URL IS the field).
+#   * usb_serial      — grounds where the overview page NAMES the bridge: Feather V2 states
+#                       "CP2102N chipset" → cp2102n; QT Py ESP32-C3 lists the chip's
+#                       "USB Serial/JTAG controller" → native-usb-serial-jtag. MatrixPortal S3
+#                       names neither → OMITTED (cite-or-omit).
+#   * download_mode   — grounds AUTO where the page states an auto-reset flashing circuit:
+#                       Feather V2 "High speed upload with auto-reset", ItsyBitsy "auto-reset
+#                       circuit works perfectly with any ESP32 uploading tool", HUZZAH32
+#                       "automatic bootloader reset". (This is a real adafruit win m5stack
+#                       lacked.) Boards without that phrasing → OMITTED. NEVER forced.
+#   * images          — NOT groundable on the overview page: adafruit's pinout diagrams live
+#                       on the separate /pinouts page and use opaque cdn-learn image filenames
+#                       matching none of the pinout/photo keyword patterns. Left OMITTED.
+#
+# NOT mapped: adafruit-feather-esp32-s2 (10 of 11). Its Learn overview page cross-links an
+# unrelated "CircuitPython Libraries on any Computer with FT232H" guide, on which the shared
+# usb_serial extractor FALSE-POSITIVES to "other" — but the S2 Feather is a native-USB board
+# (no FTDI bridge). Mapping it would write a WRONG flash-critical field, so it is left
+# unmapped (skipped doc-unreachable, honest) pending extractor tuning — a documented follow-up.
+# ══════════════════════════════════════════════════════════════════════════════
+
+# The three URLs confirmed 200 by a live fetch on 2026-09-10 (their HTML is the fixtures).
+ADAFRUIT_VERIFIED_URLS = {
+    "adafruit-feather-esp32-v2": "https://learn.adafruit.com/adafruit-esp32-feather-v2",
+    "adafruit-qt-py-esp32-c3": "https://learn.adafruit.com/adafruit-qt-py-esp32-c3-wifi-dev-board",
+    "adafruit-matrixportal-s3": "https://learn.adafruit.com/adafruit-matrixportal-s3",
+}
+
+# The 10 adafruit board ids the resolver maps (all 11 data/boards/adafruit/* dirs EXCEPT
+# adafruit-feather-esp32-s2 — see the FT232H false-positive note above).
+ADAFRUIT_MAPPED_BOARDS = [
+    "adafruit-feather-esp32-s3", "adafruit-feather-esp32-s3-reverse-tft",
+    "adafruit-feather-esp32-v2", "adafruit-huzzah32-esp32-feather",
+    "adafruit-itsybitsy-esp32", "adafruit-matrixportal-s3", "adafruit-metro-esp32-s3",
+    "adafruit-qt-py-esp32-c3", "adafruit-qt-py-esp32-s2", "adafruit-qt-py-esp32-s3",
+]
+
+
+def test_adafruit_resolver_registered_returns_verified_docs_urls():
+    # (a) the registry gained an "adafruit" entry, and it returns the EXACT live-verified
+    # learn.adafruit.com guide URL (best-first) for the three boards fetched during the build.
+    assert "adafruit" in bb.VENDOR_DOC_RESOLVERS
+    resolver = bb.VENDOR_DOC_RESOLVERS["adafruit"]
+    for bid, url in ADAFRUIT_VERIFIED_URLS.items():
+        cands = resolver(bid, "esp32-s3")
+        assert cands[0] == url, f"{bid} → {cands[0]!r} != {url!r}"
+
+
+def test_adafruit_resolver_covers_10_boards_on_learn_domain():
+    # (b) every mapped adafruit board resolves to a learn.adafruit.com URL — no mapped board
+    # falls through uncovered (0 → 10 boards this slice).
+    resolver = bb.VENDOR_DOC_RESOLVERS["adafruit"]
+    for bid in ADAFRUIT_MAPPED_BOARDS:
+        cands = resolver(bid, "esp32")
+        assert cands, f"{bid} yielded no candidate URL"
+        assert cands[0].startswith("https://learn.adafruit.com/"), cands[0]
+
+
+def test_adafruit_feather_s2_is_not_mapped_ft232h_false_positive():
+    # (c) the S2 Feather is deliberately UNMAPPED (its overview page trips the shared
+    # usb_serial extractor on an unrelated FT232H cross-link → "other", but the board is
+    # native-USB). The resolver returns [] for it, so backfill_board SKIPS it doc-unreachable
+    # and never writes the wrong value. Guards the cite-or-omit decision to leave it out.
+    assert bb.VENDOR_DOC_RESOLVERS["adafruit"]("adafruit-feather-esp32-s2", "esp32-s2") == []
+
+
+def _ada_fetcher_for(bid, fixture_name):
+    """Fake fetcher that serves the given fixture ONLY at the adafruit resolver's URL for
+    `bid` — any other URL 404s (proves resolution lands on the right page)."""
+    url = bb.VENDOR_DOC_RESOLVERS["adafruit"](bid, "esp32-s3")[0]
+    return url, _fetcher({url: _fixture(fixture_name)})
+
+
+def test_adafruit_feather_v2_grounds_usb_serial_and_download_mode(tmp_path):
+    # (d) Feather V2's REAL page names "CP2102N chipset" → usb_serial=cp2102n, AND states an
+    # "auto-reset" upload circuit → download_mode=auto; getting_started = the URL. images is
+    # OMITTED (pinout lives on a separate page) → partial. The richest adafruit grounding.
+    bid, soc = "adafruit-feather-esp32-v2", "esp32"
+    path = _write_board(tmp_path, bid, soc, brand="adafruit")
+    url, fetch = _ada_fetcher_for(bid, "adafruit-feather-esp32-v2")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url
+    assert set(entry["written"]) == {"download_mode", "usb_serial", "getting_started"}
+    assert entry["omitted"] == ["images"]
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["usb_serial"] == "cp2102n"
+    assert fm["download_mode"]["mode"] == "auto"
+    assert fm["getting_started"] == url
+    assert "images" not in fm
+    cited = {s["field"]: s for s in fm["sources"]}
+    for field in ("download_mode", "usb_serial", "getting_started"):
+        assert cited[field]["url"] == url and cited[field]["verified"] == TODAY
+
+
+def test_adafruit_qt_py_c3_grounds_native_jtag(tmp_path):
+    # (e) QT Py ESP32-C3's REAL page states "USB Serial/JTAG controller" → native-usb-serial-jtag.
+    bid, soc = "adafruit-qt-py-esp32-c3", "esp32-c3"
+    path = _write_board(tmp_path, bid, soc, brand="adafruit")
+    url, fetch = _ada_fetcher_for(bid, "adafruit-qt-py-esp32-c3")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["usb_serial"] == "native-usb-serial-jtag"
+    assert fm["getting_started"] == url
+
+
+def test_adafruit_matrixportal_only_getting_started_grounds(tmp_path):
+    # (f) MatrixPortal S3's REAL page names no bridge, no JTAG, no auto-reset phrasing → only
+    # getting_started grounds. The honest floor — still a real 0→1 gain, cite-or-omit intact.
+    bid, soc = "adafruit-matrixportal-s3", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="adafruit")
+    url, fetch = _ada_fetcher_for(bid, "adafruit-matrixportal-s3")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert "usb_serial" not in fm
+    assert "download_mode" not in fm
+
+
+def test_adafruit_usb_serial_values_are_schema_enum_valid():
+    # every usb_serial the adafruit pages ground MUST be in the board schema's enum, or the
+    # guard rejects the board and the tick aborts.
+    import json
+    enum = set(json.load(open(bb.REPO / "schema" / "board.schema.json"))
+               ["properties"]["usb_serial"]["enum"])
+    for name in ("adafruit-feather-esp32-v2", "adafruit-qt-py-esp32-c3"):
+        val = bb.extract_usb_serial(bb._visible_text(_fixture(name)))
+        assert val in enum
+
+
+def test_adafruit_images_not_grounded_on_real_pages():
+    # CRITICAL cite-or-omit: on the REAL adafruit overview pages the image heuristic correctly
+    # returns None (the pinout diagrams are on a separate page with opaque filenames), so the
+    # images field stays omitted rather than linking an arbitrary photo.
+    for name in ("adafruit-feather-esp32-v2", "adafruit-qt-py-esp32-c3", "adafruit-matrixportal-s3"):
+        raw = _fixture(name)
+        assert bb.extract_images(raw, "https://learn.adafruit.com/x") is None
+
+
+def test_adafruit_board_404_skipped_cleanly(tmp_path):
+    # (g) a board whose Learn guide 404s is SKIPPED doc-unreachable and left byte-for-byte
+    # unmodified — never a partial/invented write.
+    bid, soc = "adafruit-qt-py-esp32-c3", "esp32-c3"
+    path = _write_board(tmp_path, bid, soc, brand="adafruit")
     before = path.read_text()
     entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
 
