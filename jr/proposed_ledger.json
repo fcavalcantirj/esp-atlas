@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-18T20:01:00.775055+00:00",
+      "expires": "2026-09-18T21:00:02.504737+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-11T20:01:00.775055+00:00"
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -351,6 +351,16 @@
       "repo_id": 519437794,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "atom-joystick": {
+      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "id": "atom-joystick",
+      "pr_ref": null,
+      "reason": "already_catalogued: m5stack/atom-joystick is already in the atlas",
+      "repo": "m5stack/atom-joystick",
+      "repo_id": 659501008,
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
     },
     "atom-plane-tracker": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -1945,6 +1955,16 @@
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
+    "cyd-stream-deck": {
+      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "id": "cyd-stream-deck",
+      "pr_ref": null,
+      "reason": "below_floor: 23 stars / 8 forks",
+      "repo": "gahingwoo/cyd-stream-deck",
+      "repo_id": 1002838173,
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
+    },
     "cym-nm28c5": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
       "id": "cym-nm28c5",
@@ -2343,6 +2363,16 @@
       "repo_id": 1328277886,
       "status": "rejected",
       "timestamp": "2026-09-11T18:00:57.443532+00:00"
+    },
+    "esp32-sudoku": {
+      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "id": "esp32-sudoku",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "h4w9/esp32_sudoku",
+      "repo_id": 1330168410,
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-10-11T18:00:57.443532+00:00",
@@ -4449,6 +4479,16 @@
       "status": "rejected",
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
+    "m5stampfly": {
+      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "id": "m5stampfly",
+      "pr_ref": null,
+      "reason": "already_catalogued: m5stack/m5stampfly is already in the atlas",
+      "repo": "m5stack/m5stampfly",
+      "repo_id": 817089068,
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
+    },
     "m5stick-crystal-firmware": {
       "expires": "2026-10-08T02:00:32.995095+00:00",
       "id": "m5stick-crystal-firmware",
@@ -4715,6 +4755,15 @@
       "status": "rejected",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
+    "m5stickradio": {
+      "expires": "2026-09-18T21:00:02.504737+00:00",
+      "id": "m5stickradio",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "arturockpk/m5stickradio.git",
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
+    },
     "m5sticks3-rogueduck": {
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "m5sticks3-rogueduck",
@@ -4753,6 +4802,16 @@
       "repo": "n0xa/m5stickstuph",
       "status": "rejected",
       "timestamp": "2026-09-08T04:00:36.972928+00:00"
+    },
+    "m5stopwatch-userdemo-arduino": {
+      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "id": "m5stopwatch-userdemo-arduino",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 0 forks",
+      "repo": "moskic/m5stopwatch-userdemo-arduino",
+      "repo_id": 1328282710,
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
     },
     "m5tab-macintosh": {
       "expires": "2026-10-09T04:00:10.126216+00:00",
@@ -6117,6 +6176,16 @@
       "status": "rejected",
       "timestamp": "2026-09-10T19:00:47.109119+00:00"
     },
+    "reterminal-sticky-bunny": {
+      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "id": "reterminal-sticky-bunny",
+      "pr_ref": null,
+      "reason": "below_floor: 14 stars / 2 forks",
+      "repo": "limengdu/reterminal_sticky_bunny",
+      "repo_id": 1346794055,
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
+    },
     "reterminal-sticky-inksalah": {
       "expires": "2026-10-08T20:00:21.660790+00:00",
       "id": "reterminal-sticky-inksalah",
@@ -6401,6 +6470,16 @@
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
+    "seeed-reterminal-e100x": {
+      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "id": "seeed-reterminal-e100x",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "danpodeanu/seeed-reterminal-e100x",
+      "repo_id": 1309468305,
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
+    },
     "semi-evil-m5dial": {
       "expires": "2026-10-11T18:00:57.443532+00:00",
       "id": "semi-evil-m5dial",
@@ -6640,6 +6719,16 @@
       "status": "rejected",
       "timestamp": "2026-09-10T19:00:47.109119+00:00"
     },
+    "stackchan-mic": {
+      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "id": "stackchan-mic",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "mongonta0716/stackchan_mic",
+      "repo_id": 828092355,
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
+    },
     "stackchan-mp3-player-for-m5-cardputer": {
       "expires": "2026-10-11T20:01:00.775055+00:00",
       "id": "stackchan-mp3-player-for-m5-cardputer",
@@ -6679,6 +6768,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
     },
+    "stickbananaboxing": {
+      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "id": "stickbananaboxing",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "arturockpk/stickbananaboxing",
+      "repo_id": 1250437007,
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
+    },
     "stickc-resistor-calculator": {
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "stickc-resistor-calculator",
@@ -6705,6 +6804,46 @@
       "repo_id": 1360359119,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "sticks3-pomodoro-hourglass": {
+      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "id": "sticks3-pomodoro-hourglass",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "fujizx/sticks3-pomodoro-hourglass",
+      "repo_id": 1277590000,
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
+    },
+    "sticks3-rom-controller": {
+      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "id": "sticks3-rom-controller",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "enemyofglados/sticks3_rom_controller",
+      "repo_id": 1238237936,
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
+    },
+    "sticks3-stock-monitor": {
+      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "id": "sticks3-stock-monitor",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 1 forks",
+      "repo": "oliverxing2025/sticks3-stock-monitor",
+      "repo_id": 1329403279,
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
+    },
+    "sticksat": {
+      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "id": "sticksat",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "prstoetzer/sticksat",
+      "repo_id": 1259900489,
+      "status": "rejected",
+      "timestamp": "2026-09-11T21:00:02.504737+00:00"
     },
     "sticky-lotus": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -7005,6 +7144,8 @@
     "artem76228/paperos": "paperos",
     "artem76228/paperweb": "paperweb",
     "arturockpk/bme280-sensor-m5unified": "bme280-sensor-m5unified",
+    "arturockpk/m5stickradio.git": "m5stickradio",
+    "arturockpk/stickbananaboxing": "stickbananaboxing",
     "asg02fever/m5-dial-rgb-light-strip-controller-": "m5-dial-rgb-light-strip-controller",
     "aspikray/solotputer": "solotputer",
     "atomdreams/cardputersmagps": "cardputersmagps",
@@ -7116,6 +7257,7 @@
     "dalianblue/m5stack_insta360": "m5stack-insta360",
     "dalianblue/m5sticks3-tide-clock": "m5sticks3-tide-clock",
     "dalianblue/m5voicestick": "m5voicestick",
+    "danpodeanu/seeed-reterminal-e100x": "seeed-reterminal-e100x",
     "davervw/cardputer-game-station-emulators": "cardputer-game-station-emulators",
     "dayou-ht/morsetrainer-cardputer": "morsetrainer-cardputer",
     "demonkingfukai/m5stickc-plus-mouse-jiggler": "m5stickc-plus-mouse-jiggler",
@@ -7155,6 +7297,7 @@
     "enemyofglados/cores3_rom_launcher": "cores3-rom-launcher",
     "enemyofglados/pulseos.git": "pulseos",
     "enemyofglados/s3_visualizer.git": "s3-visualizer",
+    "enemyofglados/sticks3_rom_controller": "sticks3-rom-controller",
     "engneer-hamachan/area512": "area512",
     "erwantest123/cardputer-message-terminal.git": "cardputer-message-terminal",
     "erwantest123/nyan": "nyan",
@@ -7193,9 +7336,11 @@
     "freedomxxjustice/m5stickc-plus-2-ping-pong": "m5stickc-plus-2-ping-pong",
     "frogbotherer/a2z_machine": "a2z-machine",
     "frontendency/gallery_for_cardputeradv": "gallery-for-cardputeradv",
+    "fujizx/sticks3-pomodoro-hourglass": "sticks3-pomodoro-hourglass",
     "fwz233-re/m5claw": "m5claw",
     "g-hostproxy/cardputerremote": "cardputerremote",
     "g4lile0/esp32-wifi-hash-monster": "esp32-wifi-hash-monster",
+    "gahingwoo/cyd-stream-deck": "cyd-stream-deck",
     "gato001k1/esp32marauder-for-m5stickc-non-plus_and_plus2": "esp32marauder-for-m5stickc-non-plus-and-",
     "gato001k1/io433": "io433",
     "gato001k1/lorachat_m5_stickc-_-2": "lorachat-m5-stickc-2",
@@ -7236,6 +7381,7 @@
     "h4w9/esp32_library": "esp32-library",
     "h4w9/esp32_mastermine": "esp32-mastermine",
     "h4w9/esp32_scrabble": "esp32-scrabble",
+    "h4w9/esp32_sudoku": "esp32-sudoku",
     "h4w9/m5porkchop": "m5porkchop",
     "h4w9/pancake": "pancake",
     "hackerseraph/seraphs-subghz-tool": "seraphs-subghz-tool",
@@ -7345,6 +7491,7 @@
     "lexilexiko/0n3pork-w3b": "0n3pork-w3b",
     "liankui/microcom": "microcom",
     "lilbricky101/ghost-firmware": "ghost-firmware",
+    "limengdu/reterminal_sticky_bunny": "reterminal-sticky-bunny",
     "limengdu/reterminal_sticky_inksalah": "reterminal-sticky-inksalah",
     "linclip/m5_gesticatormidi": "m5-gesticatormidi",
     "linclip/m5stickc_tvremote": "m5stickc-tvremote",
@@ -7371,6 +7518,7 @@
     "m5rogueops/m5sticks3-rogueduck": "m5sticks3-rogueduck",
     "m5rogueops/periscope-os": "periscope-os",
     "m5stack/aiflow": "aiflow",
+    "m5stack/atom-joystick": "atom-joystick",
     "m5stack/cores3-box": "cores3-box",
     "m5stack/cores3-userdemo": "cores3-userdemo",
     "m5stack/m5cardputer": "m5cardputer",
@@ -7382,6 +7530,7 @@
     "m5stack/m5module-dmx512": "m5module-dmx512",
     "m5stack/m5papercolor-userdemo": "m5papercolor-userdemo",
     "m5stack/m5papermono-userdemo": "m5papermono-userdemo",
+    "m5stack/m5stampfly": "m5stampfly",
     "m5stack/m5stickc": "m5stickc",
     "m5stack/m5stickc-plus-tlite-fw": "m5stickc-plus-tlite-fw",
     "m5stack/m5stickcplus2-userdemo": "m5stickcplus2-userdemo",
@@ -7420,10 +7569,12 @@
     "mongonta0716/m5stack-avatar-mic": "m5stack-avatar-mic",
     "mongonta0716/stack-chan-tester": "stack-chan-tester",
     "mongonta0716/stackchan-bluetooth-simple": "stackchan-bluetooth-simple",
+    "mongonta0716/stackchan_mic": "stackchan-mic",
     "moo93egy/cardping_multi.git": "cardping-multi",
     "moo93egy/cardputer_mp3_adv.git": "cardputer-mp3-adv",
     "moskic/cardputer-adv-recorder": "cardputer-adv-recorder",
     "moskic/m5roulette": "m5roulette",
+    "moskic/m5stopwatch-userdemo-arduino": "m5stopwatch-userdemo-arduino",
     "moy-lightening-firmware/m5-cardputer-sd-security-firmware": "m5-cardputer-sd-security-firmware",
     "mr-paui/gameboy-enhanced-firmware-m5stack-cardputer-": "gameboy-enhanced-firmware-m5stack-cardpu",
     "mraanderson/cardputeradv-motionlab": "cardputeradv-motionlab",
@@ -7465,6 +7616,7 @@
     "olekalek112233/web-browser-cardputer-adv": "web-browser-cardputer-adv",
     "oliverxing2025/candy-bricks": "candy-bricks",
     "oliverxing2025/nostalgic-fruit-machine": "nostalgic-fruit-machine",
+    "oliverxing2025/sticks3-stock-monitor": "sticks3-stock-monitor",
     "oliverxing2025/stopwatch-chronotrace": "stopwatch-chronotrace",
     "ooxxu/xiaozhi-esp32": "xiaozhi-esp32",
     "osamusg/m5papercolor-calendar": "m5papercolor-calendar",
@@ -7492,6 +7644,7 @@
     "prstoetzer/cardputer_adv_basic": "cardputer-adv-basic",
     "prstoetzer/papersat": "papersat",
     "prstoetzer/papersatcolor": "papersatcolor",
+    "prstoetzer/sticksat": "sticksat",
     "psonnera/m5_nightscoutmon": "m5-nightscoutmon",
     "psychoplath9450/sumi": "sumi",
     "purplxhazee/purplx-": "purplx",
