@@ -24,13 +24,14 @@ notes:
 - Onboard mini keyboard (shipped in a randomly-selected color/layout)
 - Wi-Fi 2.4GHz + Bluetooth 5 (LE)
 - 'io.gpio_exposed=4 QUOTED: the vendor firmware repo''s own board pin-definition
-  header (utilities.h) defines exactly 4 undocumented GPIOs -- BOARD_TBOX_G01=3,
-  G02=2, G03=15, G04=1 -- claimed by no other onboard peripheral in that file;
-  the official README confirms base T-Deck (non-Plus) ships a user-facing Grove
-  HY2.0-4P interface that is free/unassigned (Plus variant reassigns it to GPS),
-  matching this G01-G04 naming. io.gpio_free=3 DERIVED: subtracting esp32-s3''s
-  soc.reserved_pins -- GPIO3 (G01) is a strapping pin, GPIO2/15/1 are not
-  strapping or usb_flash_tied -- gives 4 - 1 = 3'
+  header (utilities.h) defines exactly 4 undocumented GPIOs -- BOARD_TBOX_G01=3, G02=2,
+  G03=15, G04=1 -- claimed by no other onboard peripheral in that file; the official
+  README confirms base T-Deck (non-Plus) ships a user-facing Grove HY2.0-4P interface
+  that is free/unassigned (Plus variant reassigns it to GPS), matching this G01-G04
+  naming. io.gpio_free=3 DERIVED: subtracting esp32-s3''s soc.reserved_pins -- GPIO3
+  (G01) is a strapping pin, GPIO2/15/1 are not strapping or usb_flash_tied -- gives
+  4 - 1 = 3'
+getting_started: https://lilygo.cc/products/t-deck
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-deck
@@ -41,6 +42,9 @@ sources:
 - field: io.gpio_free
   url: https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/examples/UnitTest/utilities.h
   verified: '2026-08-26'
+- field: getting_started
+  url: https://lilygo.cc/products/t-deck
+  verified: '2026-09-11'
 ---
 
 # T-Deck
