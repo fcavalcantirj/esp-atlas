@@ -24,12 +24,13 @@ notes:
 - WS2812C-2020 programmable RGB LED, IR transmitter LED, programmable button, HY2.0-4P
   interface, no onboard battery
 - 'io.gpio_exposed=6 QUOTED: vendor page states "IO Interface x6", pins G5/G6/G7/G8/G38/G39.
-  The page separately lists an HY2.0-4P Grove port (G1/G2) not covered by that
-  "IO Interface" tally -- kept out of gpio_exposed since the vendor''s own count
-  doesn''t include it. io.gpio_free=6 DERIVED: subtracting esp32-s3''s soc.reserved_pins
-  (strapping {0,3,45,46}, usb_flash_tied {19,20,35,36,37}) -- none of G5/G6/G7/G8/G38/G39
-  fall in either set -- gives 6 - 0 = 6. No max Grove/rail output current stated
-  on this page, so power_out is omitted.'
+  The page separately lists an HY2.0-4P Grove port (G1/G2) not covered by that "IO
+  Interface" tally -- kept out of gpio_exposed since the vendor''s own count doesn''t
+  include it. io.gpio_free=6 DERIVED: subtracting esp32-s3''s soc.reserved_pins (strapping
+  {0,3,45,46}, usb_flash_tied {19,20,35,36,37}) -- none of G5/G6/G7/G8/G38/G39 fall
+  in either set -- gives 6 - 0 = 6. No max Grove/rail output current stated on this
+  page, so power_out is omitted.'
+getting_started: https://docs.m5stack.com/en/core/AtomS3%20Lite
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/AtomS3%20Lite
@@ -40,6 +41,9 @@ sources:
 - field: io.gpio_free
   url: https://docs.m5stack.com/en/core/AtomS3%20Lite
   verified: '2026-08-26'
+- field: getting_started
+  url: https://docs.m5stack.com/en/core/AtomS3%20Lite
+  verified: '2026-09-11'
 ---
 
 # AtomS3-Lite
