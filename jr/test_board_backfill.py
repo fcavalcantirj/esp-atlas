@@ -455,6 +455,62 @@ def test_m5stick_s3_download_mode_is_instruction_not_led_confirmation():
     assert "green LED" not in dm["steps"] and "successfully entered" not in dm["steps"]
 
 
+# ── Seeed XIAO family: the wiki calls the identical ESP32 ROM-download state "bootloader
+#    mode" (entered via the BOOT button). It is semantically the SAME as download mode, so a
+#    sentence naming it AND carrying an imperative BOOT-button action grounds as manual —
+#    cite-or-omit, the exact complete instruction sentence only. ──
+_XIAO_DOWNLOAD_MODE_STEPS = {
+    "xiao-esp32c3": ("If that does not work, hold the BOOT BUTTON , connect the board to your "
+                     "PC while holding the BOOT button, and then release it to enter "
+                     "bootloader mode"),
+    "xiao-esp32c6": ("When you press and hold the BOOT key while powering up and then press the "
+                     "Reset key once, you can also enter BootLoader mode"),
+    "xiao-esp32s3": ("When you press and hold the BOOT key while powering up and then press the "
+                     "Reset key once, you can also enter BootLoader mode"),
+}
+
+
+@pytest.mark.parametrize("name", ["xiao-esp32c3", "xiao-esp32c6", "xiao-esp32s3"])
+def test_xiao_bootloader_mode_grounds_exact_actionable_sentence(name):
+    # Each XIAO page states a COMPLETE, self-contained, actionable BOOT-button instruction in
+    # one sentence naming "bootloader mode" → grounded verbatim as manual (cite-or-omit).
+    dm = bb.extract_download_mode(bb._visible_text(_fixture(name)))
+    assert dm == {"mode": "manual", "steps": _XIAO_DOWNLOAD_MODE_STEPS[name]}
+
+
+@pytest.mark.parametrize("sentence", [
+    # FLASH-SAFETY: descriptive / non-actionable "bootloader mode" sentences MUST NOT ground —
+    # grounding a fragment on a flash-critical field can leave a user unable to flash.
+    "There is also a small reset button and a bootloader mode button on the board.",
+    ("you can try to put XIAO into BootLoader mode, which can solve most of the problems of "
+     "unrecognized devices and failed uploads."),
+    # UF2 flow is a SEPARATE mechanism (USB drive), not the esptool ROM-download entry:
+    "Step 3 : Enter UF2 BootLoader Mode Connect the XIAO to your computer and run the boot_uf2.bat script.",
+    ("Step 5 : Re-enter UF2 BootLoader Mode If you need to re-enter UF2 BootLoader mode to "
+     "upload another UF2 file, quickly press the Reset button followed by the Boot button."),
+    "The XIAO will appear on your computer as a USB drive, indicating it has successfully entered UF2 BootLoader mode.",
+])
+def test_descriptive_or_uf2_bootloader_sentence_never_grounds(sentence):
+    assert bb.extract_download_mode(sentence) is None
+
+
+def test_download_mode_no_regression_on_established_boards():
+    # CRITICAL: adding the XIAO "bootloader mode" branch must not perturb any established
+    # board's grounded value. These are the byte-exact expectations before the change.
+    espressif = bb.extract_download_mode(bb._visible_text(_fixture("esp32-devkitc")))
+    assert espressif == {"mode": "manual", "steps": (
+        "Holding down Boot and then pressing EN initiates Firmware Download mode for "
+        "downloading firmware through the serial port")}
+    assert bb.extract_download_mode(
+        bb._visible_text(_fixture("adafruit-feather-esp32-v2"))) == {"mode": "auto"}
+    assert bb.extract_download_mode(bb._visible_text(_fixture("m5stack-papers3"))) == {
+        "mode": "manual", "steps": _M5_DOWNLOAD_MODE_STEPS["m5stack-papers3"]}
+    assert bb.extract_download_mode(bb._visible_text(_fixture("m5stick-s3"))) == {
+        "mode": "manual", "steps": _M5_DOWNLOAD_MODE_STEPS["m5stick-s3"]}
+    assert bb.extract_download_mode(bb._visible_text(_fixture("m5cardputer"))) is None
+    assert bb.extract_download_mode(bb._visible_text(_fixture("m5stack-core2"))) is None
+
+
 def test_images_extract_where_the_page_links_them():
     # newer devkit: isometric photo + pinout diagram, absolute URLs on espressif.com
     imgs = bb.extract_images(_fixture("esp32-s2-saola-1"), FIXTURE_URLS["esp32-s2-saola-1"])
@@ -1647,39 +1703,44 @@ def _seeed_fetcher_for(bid, fixture_name):
 
 
 @pytest.mark.parametrize("name", list(SEEED_VERIFIED_URLS))
-def test_seeed_download_mode_usb_serial_and_images_omitted_on_real_pages(name):
-    # (d) CRITICAL cite-or-omit: on ALL 3 REAL seeed wiki pages the download_mode, usb_serial
-    # and image heuristics correctly return None (nothing groundable), so those fields stay
-    # OMITTED — never a guessed/false-positive flash-critical write.
+def test_seeed_download_mode_grounds_usb_serial_and_images_omitted_on_real_pages(name):
+    # (d) CRITICAL cite-or-omit: on ALL 3 REAL seeed wiki pages download_mode NOW grounds as
+    # manual from the XIAO "bootloader mode" BOOT-button instruction (semantically identical to
+    # download mode), while usb_serial and image heuristics correctly return None — those two
+    # fields stay OMITTED, never a guessed/false-positive flash-critical write.
     raw = _fixture(name)
     text = bb._visible_text(raw)
-    assert bb.extract_download_mode(text) is None
+    assert bb.extract_download_mode(text) == {
+        "mode": "manual", "steps": _XIAO_DOWNLOAD_MODE_STEPS[name]}
     assert bb.extract_usb_serial(text) is None
     assert bb.extract_images(raw, "https://wiki.seeedstudio.com/x") is None
 
 
 @pytest.mark.parametrize("name", list(SEEED_VERIFIED_URLS))
-def test_seeed_grounds_getting_started_only(name, tmp_path):
+def test_seeed_grounds_getting_started_and_download_mode(name, tmp_path):
     # (e) end-to-end on a bare board: each XIAO page grounds getting_started = the resolved URL
-    # and NOTHING else (download_mode + usb_serial + images OMITTED). Honest 0→1 per board.
+    # AND download_mode (manual, from the "bootloader mode" BOOT-button instruction); usb_serial
+    # and images stay OMITTED. Honest 0→2 per board.
     path = _write_board(tmp_path, name, SEEED_SOC[name], brand="seeed")
     url, fetch = _seeed_fetcher_for(name, name)
     entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
 
     assert entry["status"] == "backfilled"
     assert entry["url"] == url == SEEED_VERIFIED_URLS[name]
-    assert entry["written"] == ["getting_started"]
-    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    assert entry["written"] == ["download_mode", "getting_started"]
+    assert set(entry["omitted"]) == {"usb_serial", "images"}
     assert entry["partial"] is True
 
     fm, _ = bb.parse_frontmatter(path)
     assert fm["getting_started"] == url
-    assert "download_mode" not in fm
+    assert fm["download_mode"] == {"mode": "manual", "steps": _XIAO_DOWNLOAD_MODE_STEPS[name]}
     assert "usb_serial" not in fm
     assert "images" not in fm
     cited = {s["field"]: s for s in fm["sources"]}
     assert cited["getting_started"]["url"] == url
     assert cited["getting_started"]["verified"] == TODAY
+    assert cited["download_mode"]["url"] == url
+    assert cited["download_mode"]["verified"] == TODAY
 
 
 def test_seeed_board_404_skipped_cleanly(tmp_path):
