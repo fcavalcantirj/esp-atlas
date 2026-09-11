@@ -2057,3 +2057,201 @@ def test_um_board_404_skipped_cleanly(tmp_path):
     assert entry["reason"] == "doc-unreachable"
     assert entry["modified"] is False
     assert path.read_text() == before
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# SLICE 9 — dfrobot vendor doc resolver (SPEC-board-backfill-vendors.md §Slice 9).
+# ──────────────────────────────────────────────────────────────────────────────
+# Registers the "dfrobot" resolver on wiki.dfrobot.com so board_backfill reaches the 6 DFRobot
+# ESP32 boards. Each board's official wiki page is wiki.dfrobot.com/dfrXXXX, where dfrXXXX is
+# the product SKU. UNLIKE heltec/lolin's deterministic rule, the SKU is NOT derivable from the
+# board id (beetle-esp32-c3 → dfr0868, beetle-esp32-c6 → dfr1117 — adjacent boards, non-adjacent
+# SKUs), so — exactly like the seeed SEEED_DOC_URLS map — this resolver is a small EXPLICIT
+# per-board map. Only URLs CONFIRMED live=200 on 2026-09-11 (each page's <title> content-matches
+# OUR board record — dfr0975 is the S3 N16R8 16MB/8MB-PSRAM variant, NOT dfr1145 the N4 4MB
+# variant; dfr0478 is the original FireBeetle ESP32, not a "FireBeetle 2") are ever emitted —
+# never an invented/guessed SKU. The resolver claims only the 6 mapped ids; any other id yields
+# [] (→ skipped doc-unreachable, never a guessed URL). The frontmatter `brand` for these boards
+# is exactly `dfrobot`. The HTML is saved as the Slice-9 fixtures.
+#
+# EMPIRICAL grounding (measured on the REAL fetched wiki pages under fixtures/):
+#   * getting_started — grounds for ALL 6 (the resolved 200 doc page IS the link).
+#   * usb_serial      — grounds ch340 only where the page NAMES the bridge in product prose
+#                       (firebeetle-2-esp32-e "uses the CH340 serial chip"; firebeetle-esp32
+#                       "installing the CH340 driver ... for FireBeetle ESP32"). The other four
+#                       (beetle C3/C6, firebeetle-2 C6/S3) name NO bridge in a groundable form —
+#                       their pinout tables label a JTAG *debug pin*, not the USB-Serial-JTAG
+#                       flashing peripheral — so usb_serial is OMITTED (cite-or-omit). NOTE the
+#                       real data/boards/dfrobot/firebeetle-esp32 file already carries
+#                       usb_serial: ch340, so on a real run only getting_started is written for it.
+#   * download_mode   — OMITTED on all 6: no Boot+Reset "Firmware Download mode" sentence.
+#   * images          — OMITTED on all 6: the espressif filename heuristic (the registry default
+#                       for dfrobot — no dedicated dfrobot image extractor this slice) finds
+#                       nothing, so no gate is needed (unlike lilygo/unexpected-maker).
+# So this slice grounds getting_started for all 6 (+ usb_serial=ch340 for the 2 that name it) —
+# an honest 0→1 (or 0→2) per board.
+
+# The 6 URLs confirmed 200 (no redirect) by a live fetch on 2026-09-11 (their HTML is fixtures).
+# The SKU per board id is NOT derivable — an explicit human-verified map, like seeed.
+DFROBOT_VERIFIED_URLS = {
+    "beetle-esp32-c3": "https://wiki.dfrobot.com/dfr0868",
+    "beetle-esp32-c6": "https://wiki.dfrobot.com/dfr1117",
+    "firebeetle-2-esp32-c6": "https://wiki.dfrobot.com/dfr1075",
+    "firebeetle-2-esp32-e": "https://wiki.dfrobot.com/dfr0654",
+    "firebeetle-2-esp32-s3": "https://wiki.dfrobot.com/dfr0975",
+    "firebeetle-esp32": "https://wiki.dfrobot.com/dfr0478",
+}
+
+# All 6 dfrobot board ids the resolver must cover (the data/boards/dfrobot/* dirs).
+DFROBOT_ALL_BOARDS = list(DFROBOT_VERIFIED_URLS)
+DFROBOT_SOC = {
+    "beetle-esp32-c3": "esp32-c3", "beetle-esp32-c6": "esp32-c6",
+    "firebeetle-2-esp32-c6": "esp32-c6", "firebeetle-2-esp32-e": "esp32",
+    "firebeetle-2-esp32-s3": "esp32-s3", "firebeetle-esp32": "esp32",
+}
+# Boards whose wiki page NAMES the ch340 bridge in product prose (usb_serial grounds).
+DFROBOT_CH340_BOARDS = ["firebeetle-2-esp32-e", "firebeetle-esp32"]
+# Boards whose page names no groundable bridge (usb_serial OMITTED).
+DFROBOT_NO_BRIDGE_BOARDS = ["beetle-esp32-c3", "beetle-esp32-c6",
+                            "firebeetle-2-esp32-c6", "firebeetle-2-esp32-s3"]
+
+
+def test_dfrobot_resolver_registered_returns_verified_docs_urls():
+    # (a) the registry gained a "dfrobot" entry, and it returns the EXACT live-verified
+    # wiki.dfrobot.com/dfrXXXX URL (best-first) for every one of the 6 boards — from the
+    # explicit SKU map (the SKU is not derivable from the board id, never a guessed variant).
+    assert "dfrobot" in bb.VENDOR_DOC_RESOLVERS
+    resolver = bb.VENDOR_DOC_RESOLVERS["dfrobot"]
+    for bid, url in DFROBOT_VERIFIED_URLS.items():
+        cands = resolver(bid, DFROBOT_SOC[bid])
+        assert cands[0] == url, f"{bid} → {cands[0]!r} != {url!r}"
+
+
+def test_dfrobot_resolver_covers_all_6_boards_on_wiki_domain():
+    # (b) every one of the 6 dfrobot boards resolves to a wiki.dfrobot.com URL — no board
+    # falls through uncovered (0 → 6 boards this slice).
+    resolver = bb.VENDOR_DOC_RESOLVERS["dfrobot"]
+    for bid in DFROBOT_ALL_BOARDS:
+        cands = resolver(bid, DFROBOT_SOC[bid])
+        assert cands, f"{bid} yielded no candidate URL"
+        assert cands[0].startswith("https://wiki.dfrobot.com/"), cands[0]
+
+
+def test_dfrobot_resolver_unmapped_id_returns_empty():
+    # (c) the resolver only claims the 6 mapped ids; an id it doesn't own — including a
+    # plausible-but-unmapped dfrobot id — yields [] (→ skipped doc-unreachable, never a
+    # guessed SKU URL). SKU numbers are NOT derivable, so nothing is ever constructed.
+    resolver = bb.VENDOR_DOC_RESOLVERS["dfrobot"]
+    assert resolver("esp32-devkitc", "esp32") == []
+    assert resolver("heltec-wifi-kit-32-v3", "esp32-s3") == []
+    assert resolver("beetle-esp32-c2", "esp32-c2") == []  # a plausible-but-unmapped dfrobot id
+
+
+def _dfrobot_fetcher_for(bid, fixture_name):
+    """Fake fetcher that serves the given fixture ONLY at the dfrobot resolver's URL for `bid` —
+    any other URL 404s (proves resolution lands on the right page)."""
+    url = bb.VENDOR_DOC_RESOLVERS["dfrobot"](bid, DFROBOT_SOC[bid])[0]
+    return url, _fetcher({url: _fixture(fixture_name)})
+
+
+@pytest.mark.parametrize("name", DFROBOT_CH340_BOARDS)
+def test_dfrobot_usb_serial_grounds_ch340_where_page_names_it(name):
+    # (d) usb_serial grounds ch340 on the 2 pages that name it in product prose.
+    val = bb.extract_usb_serial(bb._visible_text(_fixture(name)))
+    assert val == "ch340", name
+
+
+@pytest.mark.parametrize("name", DFROBOT_NO_BRIDGE_BOARDS)
+def test_dfrobot_usb_serial_omitted_when_page_names_no_bridge(name):
+    # (e) CRITICAL cite-or-omit: the four pages that name no bridge (only a JTAG debug pin)
+    # yield None — usb_serial stays OMITTED, never a false-positive flash-critical write.
+    assert bb.extract_usb_serial(bb._visible_text(_fixture(name))) is None
+
+
+@pytest.mark.parametrize("name", list(DFROBOT_VERIFIED_URLS))
+def test_dfrobot_download_mode_and_images_omitted_on_real_pages(name):
+    # (f) CRITICAL cite-or-omit: on ALL 6 REAL dfrobot pages the download_mode and image
+    # heuristics return None (nothing groundable) — those fields stay OMITTED. (No image
+    # gate is needed: the default heuristic false-positives on none of the 6 pages.)
+    raw = _fixture(name)
+    assert bb.extract_download_mode(bb._visible_text(raw)) is None
+    assert bb.extract_images(raw, "https://wiki.dfrobot.com/x") is None
+
+
+def test_dfrobot_firebeetle_2_e_grounds_getting_started_and_usb_serial(tmp_path):
+    # (g) end-to-end: firebeetle-2-esp32-e grounds getting_started = the resolved URL AND
+    # usb_serial = ch340 (the page names it), each cited; download_mode + images OMITTED.
+    bid, soc = "firebeetle-2-esp32-e", "esp32"
+    path = _write_board(tmp_path, bid, soc, brand="dfrobot")
+    url, fetch = _dfrobot_fetcher_for(bid, bid)
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url == DFROBOT_VERIFIED_URLS[bid]
+    assert set(entry["written"]) == {"getting_started", "usb_serial"}
+    assert set(entry["omitted"]) == {"download_mode", "images"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert fm["usb_serial"] == "ch340"
+    assert "download_mode" not in fm
+    assert "images" not in fm
+    cited = {s["field"]: s for s in fm["sources"]}
+    assert cited["getting_started"]["url"] == url
+    assert cited["usb_serial"]["url"] == url
+    assert cited["usb_serial"]["verified"] == TODAY
+
+
+@pytest.mark.parametrize("name", DFROBOT_NO_BRIDGE_BOARDS)
+def test_dfrobot_grounds_getting_started_only(name, tmp_path):
+    # (h) end-to-end on a bare board: each no-bridge page grounds getting_started = the
+    # resolved URL and NOTHING else (usb_serial + download_mode + images OMITTED). Honest 0→1.
+    path = _write_board(tmp_path, name, DFROBOT_SOC[name], brand="dfrobot")
+    url, fetch = _dfrobot_fetcher_for(name, name)
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url == DFROBOT_VERIFIED_URLS[name]
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert "usb_serial" not in fm
+    assert "download_mode" not in fm
+    assert "images" not in fm
+
+
+def test_dfrobot_grounds_getting_started_when_usb_serial_already_filled(tmp_path):
+    # (i) mirrors the real firebeetle-esp32 record (usb_serial: ch340 already present): backfill
+    # writes ONLY getting_started, never touching the pre-filled usb_serial; download_mode +
+    # images omitted. (The page DOES name ch340, but the field is already filled → not rewritten.)
+    bid, soc = "firebeetle-esp32", "esp32"
+    path = _write_board(tmp_path, bid, soc, brand="dfrobot", extra_fields="usb_serial: ch340\n")
+    url, fetch = _dfrobot_fetcher_for(bid, bid)
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "images"}
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert fm["usb_serial"] == "ch340"                      # pre-filled, untouched
+    usb_sources = [s for s in fm["sources"] if s["field"] == "usb_serial"]
+    assert usb_sources == []                                # no new citation for a filled field
+
+
+def test_dfrobot_board_404_skipped_cleanly(tmp_path):
+    # (j) a board whose doc page 404s is SKIPPED doc-unreachable and left byte-for-byte
+    # unmodified — never a partial/invented write.
+    bid, soc = "beetle-esp32-c3", "esp32-c3"
+    path = _write_board(tmp_path, bid, soc, brand="dfrobot")
+    before = path.read_text()
+    entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
+
+    assert entry["status"] == "skipped"
+    assert entry["reason"] == "doc-unreachable"
+    assert entry["modified"] is False
+    assert path.read_text() == before

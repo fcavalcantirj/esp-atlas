@@ -1,0 +1,1031 @@
+<!doctype html>
+<html dir="ltr" lang="en">
+  <head >
+    <meta  charset="utf-8"><meta  name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"><meta  name="apple-mobile-web-app-capable" content="yes"><meta  data-hid="robots" name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"><meta  data-hid="keywords" name="keywords" content="FireBeetle 2, ESP32-E, IoT microcontroller, Wi-Fi, Bluetooth, Arduino compatible, low power, smart home, wearable devices, IoT projects"><meta  data-hid="description" name="description" content="Explore FireBeetle 2 ESP32-E&#x27;s versatile connectivity with Wi-Fi &amp; Bluetooth, low power consumption for IoT devices. Discover tutorials, projects &amp; specs."><meta  data-hid="og:locale" property="og:locale" content="en_US"><meta  data-hid="og:type" property="og:type" content="website"><meta  data-hid="og:title" property="og:title" content="FireBeetle 2 ESP32-E: Unleash IoT Creativity with Wi-Fi &amp; Bluetooth!"><meta  data-hid="og:description" property="og:description" content="Dive into IoT innovation with FireBeetle 2 ESP32-E! Discover seamless Wi-Fi &amp; Bluetooth connectivity, Arduino compatibility, and low-power prowess for your projects."><meta  data-hid="og:url" property="og:url" content="https://wiki.dfrobot.com/dfr0654"><meta  data-hid="og:site_name" property="og:site_name" content="DFRobot Wiki"><meta  data-hid="og:image" property="og:image" content="https://dfimg.dfrobot.com/enshop/DFR0654/DFR0654_Main_01_1200x630.jpg.webp"><meta  data-hid="og:image:alt" property="og:image:alt" content="Front of FireBeetle 2 ESP32-E development board showing USB and microSD card slot.-DFRobot product sku:DFR0654 image."><meta  data-hid="twitter:card" property="twitter:card" content="summary_large_image"><meta  data-hid="twitter:site" property="twitter:site" content="@wiki"><meta  data-hid="twitter:creator" property="twitter:creator" content="@wiki"><meta  data-hid="twitter:title" property="twitter:title" content="FireBeetle 2 ESP32-E: Unleash IoT Creativity with Wi-Fi &amp; Bluetooth!"><meta  data-hid="twitter:description" property="twitter:description" content="Dive into IoT innovation with FireBeetle 2 ESP32-E! Discover seamless Wi-Fi &amp; Bluetooth connectivity, Arduino compatibility, and low-power prowess for your projects."><meta  data-hid="twitter:image" property="twitter:image" content="https://dfimg.dfrobot.com/enshop/DFR0654/DFR0654_Main_01_1200x630.jpg.webp"><meta  data-hid="twitter:image:alt" property="twitter:image:alt" content="Front of FireBeetle 2 ESP32-E development board showing USB and microSD card slot.-DFRobot product sku:DFR0654 image."><title>FireBeetle 2 ESP32-E IoT Microcontroller: Wi-Fi &amp; Bluetooth | DFRobot Wiki</title><base href="/"><link  rel="canonical" href="https://wiki.dfrobot.com/dfr0654/"><link  rel="stylesheet" href="/css/pc.css"><link  rel="stylesheet" href="/libs/swiper/swiper-bundle.min.css"><style data-n-head="vuetify" type="text/css" id="vuetify-theme-stylesheet" nonce="undefined">.v-application a { color: #1976d2; }
+.v-application .primary {
+  background-color: #1976d2 !important;
+  border-color: #1976d2 !important;
+}
+.v-application .primary--text {
+  color: #1976d2 !important;
+  caret-color: #1976d2 !important;
+}
+.v-application .primary.lighten-5 {
+  background-color: #c7fdff !important;
+  border-color: #c7fdff !important;
+}
+.v-application .primary--text.text--lighten-5 {
+  color: #c7fdff !important;
+  caret-color: #c7fdff !important;
+}
+.v-application .primary.lighten-4 {
+  background-color: #a8e0ff !important;
+  border-color: #a8e0ff !important;
+}
+.v-application .primary--text.text--lighten-4 {
+  color: #a8e0ff !important;
+  caret-color: #a8e0ff !important;
+}
+.v-application .primary.lighten-3 {
+  background-color: #8ac5ff !important;
+  border-color: #8ac5ff !important;
+}
+.v-application .primary--text.text--lighten-3 {
+  color: #8ac5ff !important;
+  caret-color: #8ac5ff !important;
+}
+.v-application .primary.lighten-2 {
+  background-color: #6aaaff !important;
+  border-color: #6aaaff !important;
+}
+.v-application .primary--text.text--lighten-2 {
+  color: #6aaaff !important;
+  caret-color: #6aaaff !important;
+}
+.v-application .primary.lighten-1 {
+  background-color: #488fef !important;
+  border-color: #488fef !important;
+}
+.v-application .primary--text.text--lighten-1 {
+  color: #488fef !important;
+  caret-color: #488fef !important;
+}
+.v-application .primary.darken-1 {
+  background-color: #005eb6 !important;
+  border-color: #005eb6 !important;
+}
+.v-application .primary--text.text--darken-1 {
+  color: #005eb6 !important;
+  caret-color: #005eb6 !important;
+}
+.v-application .primary.darken-2 {
+  background-color: #00479b !important;
+  border-color: #00479b !important;
+}
+.v-application .primary--text.text--darken-2 {
+  color: #00479b !important;
+  caret-color: #00479b !important;
+}
+.v-application .primary.darken-3 {
+  background-color: #003180 !important;
+  border-color: #003180 !important;
+}
+.v-application .primary--text.text--darken-3 {
+  color: #003180 !important;
+  caret-color: #003180 !important;
+}
+.v-application .primary.darken-4 {
+  background-color: #001e67 !important;
+  border-color: #001e67 !important;
+}
+.v-application .primary--text.text--darken-4 {
+  color: #001e67 !important;
+  caret-color: #001e67 !important;
+}
+.v-application .secondary {
+  background-color: #424242 !important;
+  border-color: #424242 !important;
+}
+.v-application .secondary--text {
+  color: #424242 !important;
+  caret-color: #424242 !important;
+}
+.v-application .secondary.lighten-5 {
+  background-color: #c1c1c1 !important;
+  border-color: #c1c1c1 !important;
+}
+.v-application .secondary--text.text--lighten-5 {
+  color: #c1c1c1 !important;
+  caret-color: #c1c1c1 !important;
+}
+.v-application .secondary.lighten-4 {
+  background-color: #a6a6a6 !important;
+  border-color: #a6a6a6 !important;
+}
+.v-application .secondary--text.text--lighten-4 {
+  color: #a6a6a6 !important;
+  caret-color: #a6a6a6 !important;
+}
+.v-application .secondary.lighten-3 {
+  background-color: #8b8b8b !important;
+  border-color: #8b8b8b !important;
+}
+.v-application .secondary--text.text--lighten-3 {
+  color: #8b8b8b !important;
+  caret-color: #8b8b8b !important;
+}
+.v-application .secondary.lighten-2 {
+  background-color: #727272 !important;
+  border-color: #727272 !important;
+}
+.v-application .secondary--text.text--lighten-2 {
+  color: #727272 !important;
+  caret-color: #727272 !important;
+}
+.v-application .secondary.lighten-1 {
+  background-color: #595959 !important;
+  border-color: #595959 !important;
+}
+.v-application .secondary--text.text--lighten-1 {
+  color: #595959 !important;
+  caret-color: #595959 !important;
+}
+.v-application .secondary.darken-1 {
+  background-color: #2c2c2c !important;
+  border-color: #2c2c2c !important;
+}
+.v-application .secondary--text.text--darken-1 {
+  color: #2c2c2c !important;
+  caret-color: #2c2c2c !important;
+}
+.v-application .secondary.darken-2 {
+  background-color: #171717 !important;
+  border-color: #171717 !important;
+}
+.v-application .secondary--text.text--darken-2 {
+  color: #171717 !important;
+  caret-color: #171717 !important;
+}
+.v-application .secondary.darken-3 {
+  background-color: #000000 !important;
+  border-color: #000000 !important;
+}
+.v-application .secondary--text.text--darken-3 {
+  color: #000000 !important;
+  caret-color: #000000 !important;
+}
+.v-application .secondary.darken-4 {
+  background-color: #000000 !important;
+  border-color: #000000 !important;
+}
+.v-application .secondary--text.text--darken-4 {
+  color: #000000 !important;
+  caret-color: #000000 !important;
+}
+.v-application .accent {
+  background-color: #82b1ff !important;
+  border-color: #82b1ff !important;
+}
+.v-application .accent--text {
+  color: #82b1ff !important;
+  caret-color: #82b1ff !important;
+}
+.v-application .accent.lighten-5 {
+  background-color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+.v-application .accent--text.text--lighten-5 {
+  color: #ffffff !important;
+  caret-color: #ffffff !important;
+}
+.v-application .accent.lighten-4 {
+  background-color: #f8ffff !important;
+  border-color: #f8ffff !important;
+}
+.v-application .accent--text.text--lighten-4 {
+  color: #f8ffff !important;
+  caret-color: #f8ffff !important;
+}
+.v-application .accent.lighten-3 {
+  background-color: #daffff !important;
+  border-color: #daffff !important;
+}
+.v-application .accent--text.text--lighten-3 {
+  color: #daffff !important;
+  caret-color: #daffff !important;
+}
+.v-application .accent.lighten-2 {
+  background-color: #bce8ff !important;
+  border-color: #bce8ff !important;
+}
+.v-application .accent--text.text--lighten-2 {
+  color: #bce8ff !important;
+  caret-color: #bce8ff !important;
+}
+.v-application .accent.lighten-1 {
+  background-color: #9fccff !important;
+  border-color: #9fccff !important;
+}
+.v-application .accent--text.text--lighten-1 {
+  color: #9fccff !important;
+  caret-color: #9fccff !important;
+}
+.v-application .accent.darken-1 {
+  background-color: #6596e2 !important;
+  border-color: #6596e2 !important;
+}
+.v-application .accent--text.text--darken-1 {
+  color: #6596e2 !important;
+  caret-color: #6596e2 !important;
+}
+.v-application .accent.darken-2 {
+  background-color: #467dc6 !important;
+  border-color: #467dc6 !important;
+}
+.v-application .accent--text.text--darken-2 {
+  color: #467dc6 !important;
+  caret-color: #467dc6 !important;
+}
+.v-application .accent.darken-3 {
+  background-color: #2364aa !important;
+  border-color: #2364aa !important;
+}
+.v-application .accent--text.text--darken-3 {
+  color: #2364aa !important;
+  caret-color: #2364aa !important;
+}
+.v-application .accent.darken-4 {
+  background-color: #004c90 !important;
+  border-color: #004c90 !important;
+}
+.v-application .accent--text.text--darken-4 {
+  color: #004c90 !important;
+  caret-color: #004c90 !important;
+}
+.v-application .error {
+  background-color: #ff5252 !important;
+  border-color: #ff5252 !important;
+}
+.v-application .error--text {
+  color: #ff5252 !important;
+  caret-color: #ff5252 !important;
+}
+.v-application .error.lighten-5 {
+  background-color: #ffe4d5 !important;
+  border-color: #ffe4d5 !important;
+}
+.v-application .error--text.text--lighten-5 {
+  color: #ffe4d5 !important;
+  caret-color: #ffe4d5 !important;
+}
+.v-application .error.lighten-4 {
+  background-color: #ffc6b9 !important;
+  border-color: #ffc6b9 !important;
+}
+.v-application .error--text.text--lighten-4 {
+  color: #ffc6b9 !important;
+  caret-color: #ffc6b9 !important;
+}
+.v-application .error.lighten-3 {
+  background-color: #ffa99e !important;
+  border-color: #ffa99e !important;
+}
+.v-application .error--text.text--lighten-3 {
+  color: #ffa99e !important;
+  caret-color: #ffa99e !important;
+}
+.v-application .error.lighten-2 {
+  background-color: #ff8c84 !important;
+  border-color: #ff8c84 !important;
+}
+.v-application .error--text.text--lighten-2 {
+  color: #ff8c84 !important;
+  caret-color: #ff8c84 !important;
+}
+.v-application .error.lighten-1 {
+  background-color: #ff6f6a !important;
+  border-color: #ff6f6a !important;
+}
+.v-application .error--text.text--lighten-1 {
+  color: #ff6f6a !important;
+  caret-color: #ff6f6a !important;
+}
+.v-application .error.darken-1 {
+  background-color: #df323b !important;
+  border-color: #df323b !important;
+}
+.v-application .error--text.text--darken-1 {
+  color: #df323b !important;
+  caret-color: #df323b !important;
+}
+.v-application .error.darken-2 {
+  background-color: #bf0025 !important;
+  border-color: #bf0025 !important;
+}
+.v-application .error--text.text--darken-2 {
+  color: #bf0025 !important;
+  caret-color: #bf0025 !important;
+}
+.v-application .error.darken-3 {
+  background-color: #9f0010 !important;
+  border-color: #9f0010 !important;
+}
+.v-application .error--text.text--darken-3 {
+  color: #9f0010 !important;
+  caret-color: #9f0010 !important;
+}
+.v-application .error.darken-4 {
+  background-color: #800000 !important;
+  border-color: #800000 !important;
+}
+.v-application .error--text.text--darken-4 {
+  color: #800000 !important;
+  caret-color: #800000 !important;
+}
+.v-application .info {
+  background-color: #2196f3 !important;
+  border-color: #2196f3 !important;
+}
+.v-application .info--text {
+  color: #2196f3 !important;
+  caret-color: #2196f3 !important;
+}
+.v-application .info.lighten-5 {
+  background-color: #d4ffff !important;
+  border-color: #d4ffff !important;
+}
+.v-application .info--text.text--lighten-5 {
+  color: #d4ffff !important;
+  caret-color: #d4ffff !important;
+}
+.v-application .info.lighten-4 {
+  background-color: #b5ffff !important;
+  border-color: #b5ffff !important;
+}
+.v-application .info--text.text--lighten-4 {
+  color: #b5ffff !important;
+  caret-color: #b5ffff !important;
+}
+.v-application .info.lighten-3 {
+  background-color: #95e8ff !important;
+  border-color: #95e8ff !important;
+}
+.v-application .info--text.text--lighten-3 {
+  color: #95e8ff !important;
+  caret-color: #95e8ff !important;
+}
+.v-application .info.lighten-2 {
+  background-color: #75ccff !important;
+  border-color: #75ccff !important;
+}
+.v-application .info--text.text--lighten-2 {
+  color: #75ccff !important;
+  caret-color: #75ccff !important;
+}
+.v-application .info.lighten-1 {
+  background-color: #51b0ff !important;
+  border-color: #51b0ff !important;
+}
+.v-application .info--text.text--lighten-1 {
+  color: #51b0ff !important;
+  caret-color: #51b0ff !important;
+}
+.v-application .info.darken-1 {
+  background-color: #007cd6 !important;
+  border-color: #007cd6 !important;
+}
+.v-application .info--text.text--darken-1 {
+  color: #007cd6 !important;
+  caret-color: #007cd6 !important;
+}
+.v-application .info.darken-2 {
+  background-color: #0064ba !important;
+  border-color: #0064ba !important;
+}
+.v-application .info--text.text--darken-2 {
+  color: #0064ba !important;
+  caret-color: #0064ba !important;
+}
+.v-application .info.darken-3 {
+  background-color: #004d9f !important;
+  border-color: #004d9f !important;
+}
+.v-application .info--text.text--darken-3 {
+  color: #004d9f !important;
+  caret-color: #004d9f !important;
+}
+.v-application .info.darken-4 {
+  background-color: #003784 !important;
+  border-color: #003784 !important;
+}
+.v-application .info--text.text--darken-4 {
+  color: #003784 !important;
+  caret-color: #003784 !important;
+}
+.v-application .success {
+  background-color: #4caf50 !important;
+  border-color: #4caf50 !important;
+}
+.v-application .success--text {
+  color: #4caf50 !important;
+  caret-color: #4caf50 !important;
+}
+.v-application .success.lighten-5 {
+  background-color: #dcffd6 !important;
+  border-color: #dcffd6 !important;
+}
+.v-application .success--text.text--lighten-5 {
+  color: #dcffd6 !important;
+  caret-color: #dcffd6 !important;
+}
+.v-application .success.lighten-4 {
+  background-color: #beffba !important;
+  border-color: #beffba !important;
+}
+.v-application .success--text.text--lighten-4 {
+  color: #beffba !important;
+  caret-color: #beffba !important;
+}
+.v-application .success.lighten-3 {
+  background-color: #a2ff9e !important;
+  border-color: #a2ff9e !important;
+}
+.v-application .success--text.text--lighten-3 {
+  color: #a2ff9e !important;
+  caret-color: #a2ff9e !important;
+}
+.v-application .success.lighten-2 {
+  background-color: #85e783 !important;
+  border-color: #85e783 !important;
+}
+.v-application .success--text.text--lighten-2 {
+  color: #85e783 !important;
+  caret-color: #85e783 !important;
+}
+.v-application .success.lighten-1 {
+  background-color: #69cb69 !important;
+  border-color: #69cb69 !important;
+}
+.v-application .success--text.text--lighten-1 {
+  color: #69cb69 !important;
+  caret-color: #69cb69 !important;
+}
+.v-application .success.darken-1 {
+  background-color: #2d9437 !important;
+  border-color: #2d9437 !important;
+}
+.v-application .success--text.text--darken-1 {
+  color: #2d9437 !important;
+  caret-color: #2d9437 !important;
+}
+.v-application .success.darken-2 {
+  background-color: #00791e !important;
+  border-color: #00791e !important;
+}
+.v-application .success--text.text--darken-2 {
+  color: #00791e !important;
+  caret-color: #00791e !important;
+}
+.v-application .success.darken-3 {
+  background-color: #006000 !important;
+  border-color: #006000 !important;
+}
+.v-application .success--text.text--darken-3 {
+  color: #006000 !important;
+  caret-color: #006000 !important;
+}
+.v-application .success.darken-4 {
+  background-color: #004700 !important;
+  border-color: #004700 !important;
+}
+.v-application .success--text.text--darken-4 {
+  color: #004700 !important;
+  caret-color: #004700 !important;
+}
+.v-application .warning {
+  background-color: #fb8c00 !important;
+  border-color: #fb8c00 !important;
+}
+.v-application .warning--text {
+  color: #fb8c00 !important;
+  caret-color: #fb8c00 !important;
+}
+.v-application .warning.lighten-5 {
+  background-color: #ffff9e !important;
+  border-color: #ffff9e !important;
+}
+.v-application .warning--text.text--lighten-5 {
+  color: #ffff9e !important;
+  caret-color: #ffff9e !important;
+}
+.v-application .warning.lighten-4 {
+  background-color: #fffb82 !important;
+  border-color: #fffb82 !important;
+}
+.v-application .warning--text.text--lighten-4 {
+  color: #fffb82 !important;
+  caret-color: #fffb82 !important;
+}
+.v-application .warning.lighten-3 {
+  background-color: #ffdf67 !important;
+  border-color: #ffdf67 !important;
+}
+.v-application .warning--text.text--lighten-3 {
+  color: #ffdf67 !important;
+  caret-color: #ffdf67 !important;
+}
+.v-application .warning.lighten-2 {
+  background-color: #ffc24b !important;
+  border-color: #ffc24b !important;
+}
+.v-application .warning--text.text--lighten-2 {
+  color: #ffc24b !important;
+  caret-color: #ffc24b !important;
+}
+.v-application .warning.lighten-1 {
+  background-color: #ffa72d !important;
+  border-color: #ffa72d !important;
+}
+.v-application .warning--text.text--lighten-1 {
+  color: #ffa72d !important;
+  caret-color: #ffa72d !important;
+}
+.v-application .warning.darken-1 {
+  background-color: #db7200 !important;
+  border-color: #db7200 !important;
+}
+.v-application .warning--text.text--darken-1 {
+  color: #db7200 !important;
+  caret-color: #db7200 !important;
+}
+.v-application .warning.darken-2 {
+  background-color: #bb5900 !important;
+  border-color: #bb5900 !important;
+}
+.v-application .warning--text.text--darken-2 {
+  color: #bb5900 !important;
+  caret-color: #bb5900 !important;
+}
+.v-application .warning.darken-3 {
+  background-color: #9d4000 !important;
+  border-color: #9d4000 !important;
+}
+.v-application .warning--text.text--darken-3 {
+  color: #9d4000 !important;
+  caret-color: #9d4000 !important;
+}
+.v-application .warning.darken-4 {
+  background-color: #802700 !important;
+  border-color: #802700 !important;
+}
+.v-application .warning--text.text--darken-4 {
+  color: #802700 !important;
+  caret-color: #802700 !important;
+}</style><script  src="/common/md5.min.js" ssr="true"></script><script  src="/common/jquery-2.1.1.min.js" ssr="true"></script><script  src="https://www.googletagmanager.com/gtag/js?id=G-KEFMZ0P9J0" ssr="false" async></script><script  src="/libs/gtag.js" ssr="false" async></script><script  type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","@id":"https://wiki.dfrobot.com/DFR0654/#article","headline":"FireBeetle 2 ESP32-E IoT Microcontroller: Wi-Fi &amp; Bluetooth | DFRobot Wiki","description":"Explore FireBeetle 2 ESP32-E, a versatile IoT microcontroller with Wi-Fi &amp; Bluetooth support, ideal for Arduino projects and low-power devices.","keywords":["FireBeetle 2"," ESP32-E"," IoT microcontroller"," Wi-Fi"," Bluetooth"," Arduino compatible"," low power"," smart home"," wearable devices"," IoT projects"],"image":{"@id":"https://wiki.dfrobot.com/DFR0654/#mainimage"},"dateModified":"2026-01-31","author":{"@id":"https://wiki.dfrobot.com/#organization"},"publisher":{"@id":"https://wiki.dfrobot.com/#organization"},"speakable":{"@type":"SpeakableSpecification","cssSelector":[".wiki-introduction .desc"]},"subjectOf":[{"@type":"DigitalDocument","name":"Dimension","url":"https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_dimension_v1.0.png","fileFormat":"image/png"},{"@type":"DigitalDocument","name":"Schematics","url":"https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_schematics_v1.0.pdf","fileFormat":"application/pdf"},{"@type":"DigitalDocument","name":"STP Files","url":"https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_stpfile_v1.0.zip","fileFormat":"application/zip"},{"@type":"DigitalDocument","name":"Datasheet","url":"https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_datasheet_v1.0.pdf","fileFormat":"application/pdf"},{"@type":"DigitalDocument","name":"Driver","url":"https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_driver_v1.0.zip","fileFormat":"application/zip"},{"@type":"DigitalDocument","name":"1. Getting Started","description":""},{"@type":"SoftwareSourceCode","name":"2. Example Code for Arduino-Blink a LED","description":""},{"@type":"SoftwareSourceCode","name":"3. Example Code for Arduino-GPIO","description":""},{"@type":"SoftwareSourceCode","name":"4. Example Code for Arduino-RGB LED","description":""},{"@type":"SoftwareSourceCode","name":"5. Example Code for Arduino-Serial Port","description":""},{"@type":"SoftwareSourceCode","name":"6. Example Code for Arduino-I2C Communication","description":""},{"@type":"SoftwareSourceCode","name":"7. Example Code for Arduino-SPI Communication","description":""},{"@type":"SoftwareSourceCode","name":"8. Example Code for Arduino-Capacitive Touch","description":""},{"@type":"SoftwareSourceCode","name":"9. Example Code for Arduino-Interrupt","description":""},{"@type":"SoftwareSourceCode","name":"10. Example Code for Arduino-GDI Display interface","description":""},{"@type":"SoftwareSourceCode","name":"11. Example Code for Arduino-SD Card","description":""},{"@type":"SoftwareSourceCode","name":"12. Example Code for Arduino-Deep-sleep Mode","description":""},{"@type":"SoftwareSourceCode","name":"13. Example Code for Arduino-WiFi","description":""},{"@type":"SoftwareSourceCode","name":"14. Example Code for Arduino-Bluetooth","description":""},{"@type":"SoftwareSourceCode","name":"15. Example Code for Arduino-IFTTT","description":""},{"@type":"DigitalDocument","name":"Reference","description":""},{"@type":"CreativeWork","name":"Camera Bot using FireBeetle ESP32-S3","author":{"@type":"Person","name":"Pradeep"},"url":"https://www.hackster.io/pradeeplogu0/camera-bot-using-firebeetle-esp32-s3-5147e7"},{"@type":"CreativeWork","name":"mmWave Radar Alarm with Telegram Notifications","author":{"@type":"Person","name":"RoniBandini"},"url":"https://community.dfrobot.com/makelog-313113.html"},{"@type":"CreativeWork","name":"Smart Waiter - Intelligent Voice Assistant in Restaurant","author":{"@type":"Person","name":"Hackster.io"},"url":"https://www.hackster.io/maheshyadav216/smart-waiter-intelligent-voice-assistant-in-restaurant-1ad872"},{"@type":"CreativeWork","name":"Robot Arms for Accessibility","author":{"@type":"Person","name":"donutsorelse"},"url":"https://community.dfrobot.com/makelog-313749.html"},{"@type":"CreativeWork","name":"Retro-Logger","author":{"@type":"Person","name":"Mukesh Sankhla"},"url":"https://community.dfrobot.com/makelog-317575.html"},{"@type":"CreativeWork","name":"Building a TinyML powered Electronic Nose (E-nose) with MEMS Gas Detection Sensor and Edge Impulse","author":{"@type":"Person","name":"RiverTrue"},"url":"https://community.dfrobot.com/makelog-313440.html"},{"@type":"CreativeWork","name":"PiP-WATCH Project","author":{"@type":"Person","name":"auroraAA"},"url":"https://community.dfrobot.com/makelog-314310.html"},{"@type":"CreativeWork","name":"Pet Indoor Positioning with Fermion BLE Sensor Pack","author":{"@type":"Person","name":"RoniBandini"},"url":"https://community.dfrobot.com/makelog-314064.html"},{"@type":"CreativeWork","name":"DIY Smart 3D Printer Enclosure","author":{"@type":"Person","name":"Mukesh Sankhla"},"url":"https://community.dfrobot.com/makelog-313954.html"},{"@type":"CreativeWork","name":"Pixo | Dazzling Desk Display","author":{"@type":"Person","name":"Mukesh Sankhla"},"url":"https://community.dfrobot.com/makelog-313915.html"},{"@type":"CreativeWork","name":"Robot Arms for Accessibility","author":{"@type":"Person","name":"donutsorelse"},"url":"https://community.dfrobot.com/makelog-313749.html"},{"@type":"CreativeWork","name":"DIY Arduino (FireBeetle) E-Scooter","author":{"@type":"Person","name":"KGray"},"url":"https://community.dfrobot.com/makelog-313432.html"},{"@type":"CreativeWork","name":"DIY A Simple Three-axis Accelerometer Data Logger","author":{"@type":"Person","name":"Frances"},"url":"https://community.dfrobot.com/makelog-313124.html"},{"@type":"CreativeWork","name":"Automated Driveway Gates Version 2","author":{"@type":"Person","name":"KGray"},"url":"https://community.dfrobot.com/makelog-312893.html"},{"@type":"CreativeWork","name":"Make a Weather Station Using Environmental Sensor","author":{"@type":"Person","name":"Frances"},"url":"https://community.dfrobot.com/makelog-312737.html"},{"@type":"CreativeWork","name":"Vespa animated Diorama with ESP32 Firebeetle","author":{"@type":"Person","name":"RoniBandini"},"url":"https://community.dfrobot.com/makelog-312450.html"},{"@type":"CreativeWork","name":"Mr.&#x27;s Answering Machine","author":{"@type":"Person","name":"Frances"},"url":"https://community.dfrobot.com/makelog-312082.html"},{"@type":"CreativeWork","name":"Smart Compost Bin Monitoring System -Based on 4G IoT and SHT20","author":{"@type":"Person","name":"Frances"},"url":"https://community.dfrobot.com/makelog-312083.html"}],"mainEntity":{"@type":"ItemList","name":"Wiki Sections","itemListElement":[{"@type":"ListItem","position":1,"url":"https://wiki.dfrobot.com/DFR0654/#docs","name":"Docs"},{"@type":"ListItem","position":2,"url":"https://wiki.dfrobot.com/DFR0654/#tech_specs","name":"Tech Specs"},{"@type":"ListItem","position":3,"url":"https://wiki.dfrobot.com/DFR0654/#projects","name":"Projects"},{"@type":"ListItem","position":4,"url":"https://wiki.dfrobot.com/DFR0654/#blogs","name":"Blog"},{"@type":"ListItem","position":5,"url":"https://wiki.dfrobot.com/DFR0654/#certifications","name":"Certifications"}]},"about":{"@type":"Thing","name":"FireBeetle 2 ESP32-E IoT Microcontroller (32M / 512KB, Supports Wi-Fi &amp;amp; Bluetooth)","sku":"DFR0654","@id":"https://www.dfrobot.com/product-2195.html#product","image":{"@id":"https://wiki.dfrobot.com/DFR0654/#mainimage"},"offers":{"@type":"Offer","price":8.9,"priceCurrency":"USD"},"isPartOf":{"@type":"CreativeWorkSeries","@id":"https://wiki.dfrobot.com/DFR0654/#series","name":"FireBeetle 2 ESP32-E IoT Microcontroller","aggregateRating":{"@type":"AggregateRating","ratingValue":5,"ratingCount":1,"name":"Documentation Helpfulness"}},"hasCertification":[{"@type":"Certification","certificationName":"CE","url":"https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_ce_v1.0.pdf"},{"@type":"Certification","certificationName":"RoHS","url":"https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_rohs_v1.0.pdf"},{"@type":"Certification","certificationName":"DoC","url":"https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_doc_V1.0.pdf"}]}},{"@type":"CollectionPage","@id":"https://wiki.dfrobot.com/DFR0654/#webpage","url":"https://wiki.dfrobot.com/DFR0654/","name":"","mainEntity":{"@id":"https://wiki.dfrobot.com/DFR0654#article"},"breadcrumb":{"@id":"https://wiki.dfrobot.com/DFR0654/#breadcrumb"}},{"@type":"BreadcrumbList","@id":"https://wiki.dfrobot.com/DFR0654/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"wiki","item":"https://wiki.dfrobot.com/"},{"@type":"ListItem","position":2,"name":"Development Boards","item":"https://wiki.dfrobot.com/category-184/"},{"@type":"ListItem","position":3,"name":"MCU","item":"https://wiki.dfrobot.com/category-312/"},{"@type":"ListItem","position":4,"name":"DFR0654","item":"https://wiki.dfrobot.com/dfr0654/"}]},{"@type":"ImageObject","@id":"https://wiki.dfrobot.com/DFR0654/#mainimage","contentUrl":"https://dfimg.dfrobot.com/enshop/DFR0654/DFR0654_Main_01_360x240.jpg.webp","creditText":"DFRobot","creator":{"@type":"Organization","name":"DFRobot"},"publisher":{"@type":"Organization","@id":"https://wiki.dfrobot.com/#organization"}},{"@type":"FAQPage","@id":"https://wiki.dfrobot.com/DFR0654/#faq","mainEntity":[{"@type":"Question","name":"When using the SD library, the serial monitor does not show any print output or displays a connection failure after uploading the program.","acceptedAnswer":{"@type":"Answer","text":"Press RST button to reset and try again."},"dateModified":"2024-07-11T12:51:22+08:00"},{"@type":"Question","name":"The driver is not installed automatically after plugging into the device?","acceptedAnswer":{"@type":"Answer","text":"&lt;p&gt;FireBeetle 2 ESP32-E uses the CH340 serial chip, which can be used without installing a driver in most devices. If you find that the driver is not automatically installed when you plug in the device, you can manually install it yourself:&lt;/p&gt;&lt;p&gt;&lt;a target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; href=&quot;https://dfimg.dfrobot.com/nobody/wiki/0e0d6b3864f7163833ec5d7ad4af7632.EXE&quot;&gt;&lt;i&gt;CH340 Driver for Windows&lt;/i&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; href=&quot;https://dfimg.dfrobot.com/nobody/wiki/c195a13df2a1989d5dc04e76e6bcb701.ZIP&quot;&gt;&lt;i&gt;CH340 Driver for MAC&lt;/i&gt;&lt;/a&gt;&lt;/p&gt;"},"dateModified":"2025-07-24T15:26:13+08:00"},{"@type":"Question","name":"Cannot add board link to Arduino IDE?","acceptedAnswer":{"@type":"Answer","text":"&lt;p&gt;First off all, make sure the Network connection is in good condition. Hope &lt;a target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; href=&quot;https://forum.arduino.cc/t/arduino-ide-cant-download-libraries-and-boards/650155/5&quot;&gt;&lt;i&gt;this post&lt;/i&gt;&lt;/a&gt; from Arduino helps. If that doesn&#x27;t work, try replacing the board link from&lt;/p&gt;&lt;p&gt;&lt;a target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; href=&quot;https://downloadcd.dfrobot.com.cn/FireBeetle/package_DFRobot_index.json&quot;&gt;&lt;i&gt;https://downloadcd.dfrobot.com.cn/FireBeetle/package_DFRobot_index.json&lt;/i&gt;&lt;/a&gt; to &lt;a target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; href=&quot;https://downloadcd.dfrobot.com.cn/FireBeetle/package_DFRobot_index.json&quot;&gt;&lt;i&gt;https://downloadcd.dfrobot.com.cn/FireBeetle/package_DFRobot_index.json&lt;/i&gt;&lt;/a&gt; and reload it.&lt;/p&gt;"},"dateModified":"2025-07-24T15:25:51+08:00"}]}]}</script><script  src="/dfrobotshop/lib/dfpclib.js" ssr="true"></script><noscript  data-hid="facebook-no-script"><img height="1" width="1" style="display: none;" src="https://www.facebook.com/tr?id=517401871764527&ev=PageView&noscript=1" /></noscript><link rel="preload" href="/_nuxt/444223c.js" as="script"><link rel="preload" href="/_nuxt/bc9ed79.js" as="script"><link rel="preload" href="/_nuxt/css/f8e0a27.css" as="style"><link rel="preload" href="/_nuxt/bb93122.js" as="script"><link rel="preload" href="/_nuxt/css/628cafc.css" as="style"><link rel="preload" href="/_nuxt/c9a8dec.js" as="script"><link rel="preload" href="/_nuxt/css/b0fcb67.css" as="style"><link rel="preload" href="/_nuxt/092c677.js" as="script"><link rel="stylesheet" href="/_nuxt/css/f8e0a27.css"><link rel="stylesheet" href="/_nuxt/css/628cafc.css"><link rel="stylesheet" href="/_nuxt/css/b0fcb67.css">
+  </head>
+  <body >
+    <div data-server-rendered="true" id="__nuxt"><!----><div id="__layout"><div><div data-viewtype="pc" class="wiki-second-page sku-page"><div data-theme="pc" data-fetch-key="data-v-d71158b6:0" class="headFrame" data-v-d71158b6><div data-fetch-key="data-v-0d8b5951:0" data-v-0d8b5951 data-v-d71158b6><!----> <!----> <!----></div> <!----> <div class="head" data-v-d71158b6><div class="df-container" data-v-d71158b6><div class="logo" data-v-d71158b6><a href="https://www.dfrobot.com/" data-v-d71158b6><img src="/dfrobotshop/images/pc/logo.png" alt="logo" data-v-d71158b6></a></div> <div class="navigate" data-v-d71158b6><a href="javascript:;" data-v-d71158b6><button data-v-d71158b6>Store<i class="icon iconfont icon-downarrow2" data-v-d71158b6></i></button></a> <a href="https://community.dfrobot.com/" data-v-d71158b6>Community</a><a href="https://www.dfrobot.com/forum/" data-v-d71158b6>Forum</a><a href="https://wiki.dfrobot.com/" data-v-d71158b6>Wiki</a><a href="https://www.dfrobot.com/blog" data-v-d71158b6>Blog</a><a href="https://learn.dfrobot.com/" data-v-d71158b6>Learn</a></div> <div class="options" data-v-d71158b6><div class="search" data-v-d71158b6><button data-v-d71158b6><i class="icon iconfont icon-search" data-v-d71158b6></i></button></div> <div data-theme="pc" class="warehouse" data-v-d71158b6><!----> <!----> <!----></div> <div class="currency" data-v-d71158b6><button data-v-d71158b6>$USD</button> <ul class="dropdownMenu" style="display:none;" data-v-d71158b6><li data-v-d71158b6><a href="javascript:;" data-v-d71158b6>$USD</a></li><li data-v-d71158b6><a href="javascript:;" data-v-d71158b6>EUR€</a></li><li data-v-d71158b6><a href="javascript:;" data-v-d71158b6>£GBP</a></li></ul></div> <div class="wishlist" data-v-d71158b6><button data-v-d71158b6><i class="icon iconfont icon-hart" data-v-d71158b6></i></button></div> <div data-theme="pc" class="miniCart" data-v-adbdabb8 data-v-d71158b6><button data-v-adbdabb8><span data-v-adbdabb8></span> <i class="icon iconfont icon-gouwuche1" data-v-adbdabb8></i></button> <!----></div> <div class="user" data-v-d71158b6><button class="headImg" data-v-d71158b6><img src="/dfrobotshop/images/pc/nologinhead.png" alt="userhead" data-v-d71158b6></button> <ul class="dropdownMenu" style="display:none;" data-v-d71158b6><li class="name" data-v-d71158b6><b data-v-d71158b6>.</b> <span data-v-d71158b6><i class="icon iconfont icon-VIPicon" data-v-d71158b6></i>VIP</span></li> <li data-v-d71158b6><a href="https://www.dfrobot.com/account/" data-v-d71158b6>My Account</a></li> <li data-v-d71158b6><a href="https://www.dfrobot.com/account/order" data-v-d71158b6>Order History</a></li> <li data-v-d71158b6><a href="https://www.dfrobot.com/account/vip" data-v-d71158b6>VIP Benefits</a></li> <li data-v-d71158b6><a href="javascript:;" data-v-d71158b6>Logout</a></li></ul></div></div></div> <!----> <!----></div> <!----></div> <div class="fullwidth-2-columns"><div data-theme="pc" class="menu"><div class="menu-sticky-block"><div class="search-input-box"><i class="iconfont search icon-search1"></i> <input type="text" placeholder="Search" value=""></div> <a href="/category-312/" class="nav-back"><i class="iconfont icon-arrow-left"></i>
+      Development Boards
+    </a> <div class="menu-title">MCU</div> <div class="menu-list type_2"><!----> <ul><a href="/dfr1075/"><b>FireBeetle 2 ESP32-C6 IoT Development Board</b><span>(SKU: DFR1075)</span></a><a href="/dfr0654/" class="active"><b>FireBeetle 2 ESP32-E IoT Microcontroller</b><span>(SKU: DFR0654)</span></a><a href="/dfr1117/"><b>Beetle ESP32-C6 IoT Development Board</b><span>(SKU: DFR1117)</span></a><a href="/dfr0992-en/"><b>UNIHIKER K10</b><span>(SKU: DFR0992-EN)</span></a><a href="/dfr1236/"><b>FireBeetle 2 ESP32-C5 Development Kit</b><span>(SKU: DFR1236)</span></a><a href="/dfr0654-f/"><b>FireBeetle 2 ESP32-E IoT Microcontroller with Header</b><span>(SKU: DFR0654-F)</span></a><a href="/dfr1222/"><b>FireBeetle 2 ESP32-C5 IoT Development Board</b><span>(SKU: DFR1222)</span></a><a href="/dfr0216/"><b>DFRduino UNO R3</b><span>(SKU: DFR0216)</span></a><a href="/dfr0478/"><b>FireBeetle ESP32 IoT Microcontroller</b><span>(SKU: DFR0478)</span></a><a href="/dfr1172/"><b>FireBeetle 2 ESP32-P4 AI Vision Board</b><span>(SKU: DFR1172)</span></a><a href="/dfr1221/"><b>ESP32-S3R8 1.85-inch Round Display Board</b><span>(SKU: DFR1221)</span></a><a href="/dfr1139/"><b>FireBeetle ESP32-E IoT Development Board(N16R8)</b><span>(SKU: DFR1139)</span></a><a href="/dfr0868/"><b>Beetle ESP32-C3 IoT Development Board</b><span>(SKU: DFR0868)</span></a><a href="/dfr0975/"><b>FireBeetle 2 ESP32-S3 AI Acceleration Board</b><span>(SKU: DFR0975)</span></a><a href="/dfr1140/"><b>FireBeetle 2 ESP32-UE (N16R2) IoT Board</b><span>(SKU: DFR1140)</span></a><a href="/dfr1195/"><b>LoRaWAN ESP32-S3 Dev Board</b><span>(SKU: DFR1195)</span></a><a href="/dfr1063/"><b>Romeo ESP32-C3-MINI-1 Motor & Servo Control Board</b><span>(SKU: DFR1063)</span></a><a href="/dfr1145/"><b>FireBeetle 2 ESP32-S3 AIoT Development Board</b><span>(SKU: DFR1145)</span></a><a href="/dfr0191/"><b>DFRduino Mega2560</b><span>(SKU: DFR0191)</span></a><a href="/dfr0010/"><b>DFRduino Nano Microcontroller Board</b><span>(SKU: DFR0010)</span></a><a href="/dfr0282/"><b>Beetle ATmega32u4 Arduino-Compatible Board</b><span>(SKU: DFR0282)</span></a><a href="/dfr0351/"><b>Romeo ATmega328P BLE Motor Control Board</b><span>(SKU: DFR0351)</span></a><a href="/dfr1188/"><b>Beetle RP2350 Development Board</b><span>(SKU: DFR1188)</span></a><a href="/dfr0305/"><b>Romeo BLE Robot Control Board</b><span>(SKU: DFR0305)</span></a><a href="/dfr0339/"><b>Beetle BLE Board</b><span>(SKU: DFR0339)</span></a><a href="/dfr0225/"><b>Romeo V2 ATmega32u4 All-in-One Robotics Microcontroller Board</b><span>(SKU: DFR0225)</span></a><a href="/dfr0575/"><b>Beetle ESP32 WiFi Bluetooth Board</b><span>(SKU: DFR0575)</span></a><a href="/dfr0004/"><b>Romeo Robot Control Board</b><span>(SKU: DFR0004)</span></a><a href="/dfr0267/"><b>Bluno - An Arduino UNO Compatible Bluetooth 4.0 (BLE) Controller</b><span>(SKU: DFR0267)</span></a><a href="/dfr0816/"><b>Beetle ATmega32U4 Charge Management Board</b><span>(SKU: DFR0816)</span></a><a href="/dfr0959/"><b>Beetle RP2040 Mini Development Board</b><span>(SKU: DFR0959)</span></a><a href="/dfr0489/"><b>FireBeetle ESP8266 IoT Development Board</b><span>(SKU: DFR0489)</span></a><a href="/dfr1120-915/"><b>LoRaWAN Control Terminal (915Mhz)</b><span>(SKU: DFR1120-915)</span></a><a href="/dfr0221/"><b>DFRduino ATmega32u4 Xbee Socket Board</b><span>(SKU: DFR0221)</span></a><a href="/dfr0296/"><b>Bluno Nano</b><span>(SKU: DFR0296)</span></a><a href="/dfr0003/"><b>DFRduino Mega1280 microcontroller board</b><span>(SKU: DFR0003)</span></a><a href="/dfr0492/"><b>FireBeetle ATMEGA328P BLE 4.1 Control Board</b><span>(SKU: DFR0492)</span></a><a href="/dfr1284/"><b>FireBeetle 2 ESP32-C5-U(N4) IO Development Kit</b><span>(SKU: DFR1284)</span></a><a href="/dfr1287/"><b>FireBeetle 2 ESP32-C5-U(N4) IoT Development Board</b><span>(SKU: DFR1287)</span></a><a href="/dfr0652/"><b>Firebeetle 2 M0 Development Board</b><span>(SKU: DFR0652)</span></a><a href="/dfr0994/"><b>Romeo ESP32-S3 Robot Development Board</b><span>(SKU: DFR0994)</span></a><a href="/dfr0975-u/"><b>FireBeetle 2 ESP32-S3-U AI Acceleration Board</b><span>(SKU: DFR0975-U)</span></a><a href="/dfr1120-868/"><b>LoRaWAN Control Terminal (868Mhz)</b><span>(SKU: DFR1120-868)</span></a><a href="/dfr0213/"><b>Dreamer Nano V4.1 (Arduino Leonardo Compatible)</b><span>(SKU: DFR0213)</span></a><a href="/dfr0162/"><b>XBoard V2</b><span>(SKU: DFR0162)</span></a><a href="/dfr0323/"><b>Bluno Mega2560</b><span>(SKU: DFR0323)</span></a><a href="/dfr0222/"><b>Xboard Relay</b><span>(SKU: DFR0222)</span></a><a href="/dfr0392/"><b>DFRduino M0 Mainboard</b><span>(SKU: DFR0392)</span></a><a href="/tel0110/"><b>CurieCore intel® Curie Neuron Module</b><span>(SKU: TEL0110)</span></a><a href="/dfr0321/"><b>WIFI IoT Node Development Board</b><span>(SKU: DFR0321)</span></a></ul> <!----></div></div></div> <div class="full"><div class="full-container"><ul data-theme="pc" class="breadcrumb"><li><i class="iconfont icon-home2"></i> <a href="/">wiki</a></li><li><!----> <a href="/category-184/">Development Boards</a></li><li><!----> <a href="/category-312/">MCU</a></li><li><!----> <span>DFR0654</span></li></ul> <div class="wiki-introduction"><div class="text"><h1>FireBeetle 2 ESP32-E IoT Microcontroller</h1> <p>SKU: DFR0654</p> <div class="desc"><p>
+                  The FireBeetle 2 ESP32-E is a compact, low-power IoT microcontroller with dual-core chips, supporting WiFi, Bluetooth, and Arduino programming, suitable for a range of applications from smart homes to industrial IoT, with easy integration and extensive online resources.
+                </p></div></div> <div class="view"><img src="https://dfimg.dfrobot.com/enshop/DFR0654/DFR0654_Main_01_360x240.jpg.webp" alt="Front of FireBeetle 2 ESP32-E development board showing USB and microSD card slot.-DFRobot product sku:DFR0654 image."> <button><i class="iconfont icon-cart1"></i>Buy now</button></div></div> <div class="download-resources"><p>Downloadable Resources</p> <ul><a href="https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_dimension_v1.0.png" target="_blank" download="DFR0654_Dimension"><i class="iconfont icon-Dimension_nor"></i> Dimension
+                </a> <!----><a href="https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_schematics_v1.0.pdf" target="_blank" download="DFR0654_Schematics"><i class="iconfont icon-Schematics_nor"></i> Schematics
+                </a> <!----><a href="https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_stpfile_v1.0.zip" target="_blank" download="DFR0654_STP Files"><i class="iconfont icon-a-STPFiles_nor"></i> STP Files
+                </a> <!----><a href="https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_datasheet_v1.0.pdf" target="_blank" download="DFR0654_Datasheet"><i class="iconfont icon-Datasheet_nor"></i> Datasheet
+                </a> <!----><a href="https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_driver_v1.0.zip" target="_blank" download="DFR0654_Driver"><i class="iconfont icon-Driver_nor"></i> Driver
+                </a> <!----></ul></div> <div class="category-select-tab"><li class="selected">Docs</li><li>Tech Specs</li><li>Projects</li><li>Blog</li><li>Certifications</li></div> <div class="wiki-content docs"><div data-theme="pc" class="docs-navi depth-1"><div class="folder"><a href="/dfr0654/docs/23250" target="_blank" class="wiki-title doc"><b>1. Getting Started</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23251" target="_blank" class="wiki-title doc"><b>2. Example Code for Arduino-Blink a LED</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23252" target="_blank" class="wiki-title doc"><b>3. Example Code for Arduino-GPIO</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23253" target="_blank" class="wiki-title doc"><b>4. Example Code for Arduino-RGB LED</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23254" target="_blank" class="wiki-title doc"><b>5. Example Code for Arduino-Serial Port</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23257" target="_blank" class="wiki-title doc"><b>6. Example Code for Arduino-I2C Communication</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23258" target="_blank" class="wiki-title doc"><b>7. Example Code for Arduino-SPI Communication</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23255" target="_blank" class="wiki-title doc"><b>8. Example Code for Arduino-Capacitive Touch</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23256" target="_blank" class="wiki-title doc"><b>9. Example Code for Arduino-Interrupt</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23259" target="_blank" class="wiki-title doc"><b>10. Example Code for Arduino-GDI Display interface</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23261" target="_blank" class="wiki-title doc"><b>11. Example Code for Arduino-SD Card</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23260" target="_blank" class="wiki-title doc"><b>12. Example Code for Arduino-Deep-sleep Mode</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23262" target="_blank" class="wiki-title doc"><b>13. Example Code for Arduino-WiFi</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23263" target="_blank" class="wiki-title doc"><b>14. Example Code for Arduino-Bluetooth</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23264" target="_blank" class="wiki-title doc"><b>15. Example Code for Arduino-IFTTT</b><i class="iconfont icon-subscribe"></i> <!----></a> </div><div class="folder"><a href="/dfr0654/docs/23265" target="_blank" class="wiki-title reference"><b>Reference</b><i class="iconfont icon-subscribe"></i> <!----></a> </div></div> <div style="display:none;"><div>
+<p><strong>Power Parameters</strong></p>
+<div class="table-box"><table>
+<thead>
+<tr>
+<th >Parameter</th>
+<th >Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td >Input Voltage</td>
+<td >USB-C Port: 5V DC<br>PH2.0 Connector: 3.7~4.2V Li-ion<br>VCC Pin: 5V DC</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>MCU Parameters</strong></p>
+<div class="table-box"><table>
+<thead>
+<tr>
+<th >Parameter</th>
+<th >Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td >Processor</td>
+<td >Xtensa Dual-Core 32-bit LX6 Microprocessor</td>
+</tr>
+<tr>
+<td >Clock Speed</td>
+<td >240 MHz</td>
+</tr>
+<tr>
+<td >SRAM</td>
+<td >520 KB</td>
+</tr>
+<tr>
+<td >ROM</td>
+<td >448 KB</td>
+</tr>
+<tr>
+<td >Flash Memory</td>
+<td >4 MB</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Wireless Parameters</strong></p>
+<div class="table-box"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wi-Fi Standard</td>
+<td>FCC/CE/TELEC/KCC</td>
+</tr>
+<tr>
+<td>Wi-Fi Protocol</td>
+<td>802.11 b/g/n/d/e/i/k/r (802.11n, up to 150 Mbps), A-MPDU and A-MSDU aggregation, supports 0.4us protection interval</td>
+</tr>
+<tr>
+<td>Wi-Fi Frequency Range</td>
+<td>2.4~2.5 GHz</td>
+</tr>
+<tr>
+<td>Bluetooth Protocol</td>
+<td>Compliant with Bluetooth V4.2 BR/EDR and BLE standards</td>
+</tr>
+<tr>
+<td>Bluetooth Audio</td>
+<td>CVSD and SBC audio</td>
+</tr>
+<tr>
+<td>Bluetooth Frequency Range</td>
+<td>2.4~2.5GHz</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Peripheral Parameters</strong></p>
+<div class="table-box"><table>
+<thead>
+<tr>
+<th >Parameter</th>
+<th >Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td >Digital Pins</td>
+<td >× 18 (IO0, IO1, IO2, IO3, IO4, IO12, IO13, IO14, IO15, IO16, IO17, IO18, IO19, IO21, IO22, IO23, IO25, IO26)</td>
+</tr>
+<tr>
+<td >Analog Pins</td>
+<td >× 11 (IO0, IO2, IO4, IO12, IO13, IO14, IO15, IO25, IO26, I34, I35)</td>
+</tr>
+<tr>
+<td >UART Interfaces</td>
+<td >× 2</td>
+</tr>
+<tr>
+<td >SPI Interface</td>
+<td >× 1</td>
+</tr>
+<tr>
+<td >I2C Interface</td>
+<td >× 1</td>
+</tr>
+<tr>
+<td >I2S Interface</td>
+<td >× 1</td>
+</tr>
+<tr>
+<td >DAC Interfaces</td>
+<td >× 2</td>
+</tr>
+<tr>
+<td >Touch Interfaces</td>
+<td >× 7</td>
+</tr>
+<tr>
+<td >LED PWM Channels</td>
+<td >× 16</td>
+</tr>
+<tr>
+<td >RGB LED</td>
+<td >WS2812</td>
+</tr>
+<tr>
+<td >Display Interface</td>
+<td >GDI</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Physical Parameters</strong></p>
+<div class="table-box"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Module Size</td>
+<td>25.4mm × 60mm</td>
+</tr>
+<tr>
+<td>Mounting hole size</td>
+<td>hole diameter 2.0mm</td>
+</tr>
+<tr>
+<td>Weight</td>
+<td>23.4g</td>
+</tr>
+</tbody>
+</table></div>
+<h2>Board Overview</h2>
+<p><img src="https://dfimg.dfrobot.com/nobody/wiki/dc5010503489e18cee41000e77b64363_0x0.png.webp" alt="DFR0564-Board Overview" title="DFR0564-Board Overview"></p>
+<div class="table-box"><table>
+<thead>
+<tr>
+<th >No.</th>
+<th >Function</th>
+<th >Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td >①</td>
+<td >USB Interface</td>
+<td >Program download and power supply, 4.75V-5.5V compatible</td>
+</tr>
+<tr>
+<td >②</td>
+<td >Charging Indicator</td>
+<td >Red LED for indicating charging status: 1. Off when fully charged or not charged; 2. On when charging; 3. Quick flash when powered by USB, and no battery connected.</td>
+</tr>
+<tr>
+<td >③</td>
+<td >User Button</td>
+<td >Controlled by pin IO27/D4</td>
+</tr>
+<tr>
+<td >④</td>
+<td >Li-ion Battery Port</td>
+<td >Support 3.7V-4.2V</td>
+</tr>
+<tr>
+<td >⑤</td>
+<td >Onboard RGB Light</td>
+<td >WS2812 RGB LED, controlled by pin IO5/D8</td>
+</tr>
+<tr>
+<td >⑥</td>
+<td >Onboard LED</td>
+<td >LED controlled by pin IO2/D9</td>
+</tr>
+<tr>
+<td >⑦</td>
+<td >Reset Button</td>
+<td >Press to reset program</td>
+</tr>
+<tr>
+<td >⑧</td>
+<td >Low-power Solder Jumper Pad</td>
+<td >Designed for low power mode and default to be connected. Slightly cut off the thin wire with a knife to disconnect it. When disconnected, static power consumption can be reduced by 500 μA. The power consumption can be reduced to 2mA after controlling the maincontroller to enter the sleep mode through the program. <br><strong>Note: when the pad is disconnected, you can only drive RGB LED light via the USB Power supply.</strong></td>
+</tr>
+<tr>
+<td >⑨</td>
+<td >GDI</td>
+<td >DFRobot dedicated Display interface. Refer to the GDI part of this page.</td>
+</tr>
+<tr>
+<td >⑩</td>
+<td >ESP32-E Chip</td>
+<td >ESP32-WROOM-32E</td>
+</tr>
+</tbody>
+</table></div>
+<h2>Pinout</h2>
+<p><img src="https://dfimg.dfrobot.com/62b2fb5caa613609f271523c/wiki/e25b0ab211e60424824371baad2c0c81_0x0.png.webp" alt="DFR0654-Pinout" title="DFR0654-Pinout"></p>
+<div class="table-box"><table>
+<thead>
+<tr>
+<th >Categroy</th>
+<th >Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td >Control</td>
+<td >FireBeetle enable/reset pins</td>
+</tr>
+<tr>
+<td >Touch</td>
+<td >Pin with capacitive touch function</td>
+</tr>
+<tr>
+<td >Analog</td>
+<td >Analog pin</td>
+</tr>
+<tr>
+<td >Port PIN</td>
+<td >Default physical pin number of the chip, which can be used to directly control the corresponding pin</td>
+</tr>
+<tr>
+<td >Arduino IDE</td>
+<td >In Arduino IDE, the pin numbers have been remapped by FireBeetle, and you can directly use this symbol to control the corresponding pin</td>
+</tr>
+<tr>
+<td >RTC PIN</td>
+<td >FireBeetle 2 ESP32-E supports low power function, and in Deep-sleep mode, only RTC pin keeps working and can be used as a wave-up source. When RTC pin is used as an output pin, it keeps outputting level value when the chip is in Deep-sleep mode, while as an input pin, it can wake up the chip from Deep-sleep.</td>
+</tr>
+<tr>
+<td >GND</td>
+<td >Common ground for all power supplies and logics</td>
+</tr>
+<tr>
+<td >Power</td>
+<td >When powered by 5V-USB, VCC outputs about 4.7V and 3V3 outputs 3.3V; When powered by 4V li-ion battery, VCC outputs about 4V and 3V3 outputs 3.3V(Actual measurement)</td>
+</tr>
+</tbody>
+</table></div>
+<p>FireBeetle 2 ESP32-E has up to 24 physical GPIOs, which are mainly for connecting peripherals like sensors, actuators, etc. Meanwhile, these IO pins can be multiplexed for other functions such as UART, SPI, I2C and so on. The table below provides users with a detailed description of FireBeetle 2 ESP32-E GPIO.</p>
+<div class="table-box"><table>
+<thead>
+<tr>
+<th>Pin Number</th>
+<th>Name</th>
+<th>Function</th>
+<th>ADC</th>
+<th>Communication</th>
+<th>Remark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPIO 0</td>
+<td>0/D5</td>
+<td>Used as input or output</td>
+<td>ADC2_CH1</td>
+<td></td>
+<td>Occupied when using USB transmission</td>
+</tr>
+<tr>
+<td>GPIO 1</td>
+<td>1/TXD</td>
+<td>Used as input or output</td>
+<td></td>
+<td>UART0_TX</td>
+<td>Occupied when using USB power supply and serial printing</td>
+</tr>
+<tr>
+<td>GPIO 2</td>
+<td>2/D9</td>
+<td>Used as input or output</td>
+<td>ADC2_CH2</td>
+<td></td>
+<td>For controlling onboard LED by outputting digital signal</td>
+</tr>
+<tr>
+<td>GPIO 3</td>
+<td>3/RXD</td>
+<td>Used as input or output</td>
+<td></td>
+<td>UART0_RX</td>
+<td>Occupied when using USB power supply and serial printing</td>
+</tr>
+<tr>
+<td>GPIO 4</td>
+<td>4/D12</td>
+<td>Used as input or output</td>
+<td>ADC2_CH0</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO 12</td>
+<td>12/D13</td>
+<td>Used as input or output</td>
+<td>ADC2_CH5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO 13</td>
+<td>13/D7</td>
+<td>Used as input or output</td>
+<td>ADC2_CH4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO 14</td>
+<td>14/D6</td>
+<td>Used as input or output</td>
+<td>ADC2_CH6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO 15</td>
+<td>15/A4</td>
+<td>Used as input or output</td>
+<td>ADC2_CH3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO 18</td>
+<td>18/SCK</td>
+<td>Used as input or output</td>
+<td></td>
+<td>SPI_SCK</td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO 19</td>
+<td>19/MISO</td>
+<td>Used as input or output</td>
+<td></td>
+<td>SPI_MISO</td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO 21</td>
+<td>21/SDA</td>
+<td>Used as input or output</td>
+<td></td>
+<td>I2C_SDA</td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO 22</td>
+<td>22/SCL</td>
+<td>Used as input or output</td>
+<td></td>
+<td>I2C_SCL</td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO 23</td>
+<td>23/MOSI</td>
+<td>Used as input or output</td>
+<td></td>
+<td>SPI_MOSI</td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO 25</td>
+<td>25/D2</td>
+<td>Used as input or output</td>
+<td>ADC2_CH8</td>
+<td></td>
+<td>DAC_1（Range: 0-255; Output Voltage: 0-3.3V）</td>
+</tr>
+<tr>
+<td>GPIO 26</td>
+<td>26/D3</td>
+<td>Used as input or output</td>
+<td>ADC2_CH9</td>
+<td></td>
+<td>DAC_2（Range: 0-255; Output Voltage: 0-3.3V）</td>
+</tr>
+<tr>
+<td>GPIO 34</td>
+<td>34/A2</td>
+<td>Used as input only</td>
+<td>ADC1_CH6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO 35</td>
+<td>35/A3</td>
+<td>Used as input only</td>
+<td>ADC1_CH7</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO 36</td>
+<td>36/A0</td>
+<td>Used as input only</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>GPIO 39</td>
+<td>39/A1</td>
+<td>Used as input only</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Note:</strong></p>
+<ul>
+<li>It is recommended not to multiplex the pin IO0/D5, IO1/TXD and IO3/RX since they will be occupied when using USB-related function. The USB-related circuit design is shown below:</li>
+</ul>
+<p><img src="https://dfimg.dfrobot.com/nobody/wiki/e085d5db5f0963f3af375017a3174618_0x0.png.webp" alt="DFR0654-USB Schematic" title="DFR0654-USB Schematic"></p>
+<ul>
+<li>IO34-39 are for input only.</li>
+<li>FireBeetle 2 ESP32-E has two 8-bit DAC channel that converts 2-way digital signal to 2 analog voltage outputs. Two channels can work independently. DAC circuit is composed of built-in resistors in series and a buffer. The two DACs can be used as reference voltage.</li>
+</ul>
+</div></div> <div data-theme="pc" class="docs-navi depth-0" style="display:none;"></div> <div style="display:none;"> <span class="loadmore" style="display:none;">More <i class="iconfont icon-downarrow2"></i></span></div> <div style="display:none;"><a data-theme="pc" href="https://www.hackster.io/pradeeplogu0/camera-bot-using-firebeetle-esp32-s3-5147e7" target="_blank" class="project-card"><img src="https://dfimg.dfrobot.com/652ce179aa9508d63a4326b8/dfapi/377a073e780a7da2622cf3df2052648e_325x230.jpg.webp" alt="thumb"> <div class="project-info"><b>Camera Bot using FireBeetle ESP32-S3</b> <p></p> <div class="author"><div class="img-box"><img src="https://dfimg.dfrobot.com/652ce179aa9508d63a4326b8/dfapi/6003c030930a83e3c0beb74a2f3dc746_34x34.jpg.webp" alt="author"></div> <span>Pradeep</span> <span>Jun 02, 2023</span></div></div></a><a data-theme="pc" href="https://community.dfrobot.com/makelog-313113.html" target="_blank" class="project-card"><img src="https://dfimg.dfrobot.com/652ce179aa9508d63a4326b8/dfapi/0a68b990345cbebe6daf82d0d651e03c_325x230.jpg.webp" alt="thumb"> <div class="project-info"><b>mmWave Radar Alarm with Telegram Notifications</b> <p></p> <div class="author"><div class="img-box"><img src="https://dfimg.dfrobot.com/652ce179aa9508d63a4326b8/dfapi/af9323198f503d556b9ada74bb70caeb_34x34.jpg.webp" alt="author"></div> <span>RoniBandini</span> <span>May 24, 2023</span></div></div></a><a data-theme="pc" href="https://www.hackster.io/maheshyadav216/smart-waiter-intelligent-voice-assistant-in-restaurant-1ad872" target="_blank" class="project-card"><img src="https://dfimg.dfrobot.com/652ce179aa9508d63a4326b8/dfapi/5f568f79e0fc07f7099a448038ba52e3_325x230.jpg.webp" alt="thumb"> <div class="project-info"><b>Smart Waiter - Intelligent Voice Assistant in Restaurant</b> <p></p> <div class="author"><div class="img-box"><img src="https://dfimg.dfrobot.com/652ce179aa9508d63a4326b8/dfapi/0cdca4db4b67557e23d7733ebc8021d8_34x34.jpg.webp" alt="author"></div> <span>Hackster.io</span> <span>Sep 16, 2023</span></div></div></a><a data-theme="pc" href="https://community.dfrobot.com/makelog-313749.html" target="_blank" class="project-card"><img src="https://dfimg.dfrobot.com/652ce179aa9508d63a4326b8/dfapi/5b023b545f69074a4b7538feb44003e9_325x230.jpg.webp" alt="thumb"> <div class="project-info"><b>Robot Arms for Accessibility</b> <p></p> <div class="author"><div class="img-box"><img src="https://dfimg.dfrobot.com/652ce179aa9508d63a4326b8/dfapi/e32690fc8be18b7b09f2e995b1ed560c_34x34.jpg.webp" alt="author"></div> <span>donutsorelse</span> <span>Dec 02, 2023</span></div></div></a><a data-theme="pc" href="https://community.dfrobot.com/makelog-317575.html" target="_blank" class="project-card"><img src="https://dfimg.dfrobot.com/5eef6b86c913a99430e3e61d/community/8c257ad17a385dbbce50d34039ae5198_325x230.png.webp" alt="thumb"> <div class="project-info"><b>Retro-Logger</b> <p></p> <div class="author"><div class="img-box"><img src="https://dfimg.dfrobot.com/nobody/makelog/af98302f61efdbe8ff4c4150c8c4ea6d_34x34.png.webp" alt="author"></div> <span>Mukesh Sankhla</span> <span>May 16, 2025</span></div></div></a> <span class="loadmore" style="display:;">More <i class="iconfont icon-downarrow2"></i></span></div> <div style="display:none;"><a data-theme="pc" href="https://www.dfrobot.com/blog-18196.html" target="_blank" class="project-card"><img src="https://dfimg.dfrobot.com/5f7df1a4c913a99430e408bf/dfapi/8e5a1e71dba71d950b6e00952f7d6cf1_325x230.jpg.webp" alt="thumb"> <div class="project-info"><b>FireBeetle V1 vs V2 (ESP32/ESP8266/Arduino) Development Board Selection Guide</b> <p>The Selection guide comparing the FireBeetle (V1) and the FireBeetle 2 (V2) boards, particularly ESP32/ ESP8266 / Arduino versions.</p> <div class="author"><div class="img-box"><img src="/dfrobotshop/images/pc/nologinhead.png" alt="author"></div> <span>DFRobot</span> <span>Jun 08, 2025</span></div></div></a><a data-theme="pc" href="https://www.dfrobot.com/blog-1573.html" target="_blank" class="project-card"><img src="https://dfimg.dfrobot.com/enshop/bolg/825a9c5e014338ed06043717d5c3b5ed_325x230" alt="thumb"> <div class="project-info"><b>ESP32 cpplinq Tutorials Menu</b> <p>We’ve listed all the DFRobot ESP32 cpplinq tutorials in this article.</p> <div class="author"><div class="img-box"><img src="/dfrobotshop/images/pc/nologinhead.png" alt="author"></div> <span>DFRobot</span> <span>Apr 25, 2021</span></div></div></a><a data-theme="pc" href="https://www.dfrobot.com/blog-1574.html" target="_blank" class="project-card"><img src="https://dfimg.dfrobot.com/enshop/bolg/ff54b0410baebc303ddb0ad032a76a89_325x230" alt="thumb"> <div class="project-info"><b>ESP32 HTTP server Tutorials Menu</b> <p>We’ve listed all the DFRobot ESP32 HTTP server tutorials in this article. </p> <div class="author"><div class="img-box"><img src="/dfrobotshop/images/pc/nologinhead.png" alt="author"></div> <span>DFRobot</span> <span>Apr 25, 2021</span></div></div></a><a data-theme="pc" href="https://www.dfrobot.com/blog-1575.html" target="_blank" class="project-card"><img src="https://dfimg.dfrobot.com/enshop/bolg/8930274870f241f3d0dce69729b68304_325x230" alt="thumb"> <div class="project-info"><b>ESP32 Soft AP Tutorials Menu</b> <p>We’ve listed all the DFRobot ESP32 Soft AP tutorials in this article. </p> <div class="author"><div class="img-box"><img src="/dfrobotshop/images/pc/nologinhead.png" alt="author"></div> <span>DFRobot</span> <span>Apr 25, 2021</span></div></div></a><a data-theme="pc" href="https://www.dfrobot.com/blog-1569.html" target="_blank" class="project-card"><img src="https://dfimg.dfrobot.com/enshop/bolg/3de5b8dc103f9f801c8c4c8327e08a79_325x230" alt="thumb"> <div class="project-info"><b>ESP32 MicroPython Tutorials Menu</b> <p>Here are some micropython tutorials that we listed for you to experience its advanced features.</p> <div class="author"><div class="img-box"><img src="/dfrobotshop/images/pc/nologinhead.png" alt="author"></div> <span>DFRobot</span> <span>Apr 01, 2021</span></div></div></a> <span class="loadmore" style="display:;">More <i class="iconfont icon-downarrow2"></i></span></div> <div style="display:none;"><li><span class="cert">CE <a href="https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_ce_v1.0.pdf" download="DFR0654_CE" target="_blank" class="pressable-btn">CE <i class="iconfont icon-download"></i></a></span></li><li><span class="cert">RoHS <a href="https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_rohs_v1.0.pdf" download="DFR0654_RoHS" target="_blank" class="pressable-btn">RoHS <i class="iconfont icon-download"></i></a></span></li><li><span class="cert">DoC <a href="https://dfimg.dfrobot.com/wiki/23249/DFR0654_firebeetle-2-esp32-e_doc_V1.0.pdf" download="DFR0654_DoC" target="_blank" class="pressable-btn">DoC <i class="iconfont icon-download"></i></a></span></li></div></div> <div class="faq"><p>FAQ</p> <ul class="faq-content"><li><div class="question"><span class="faq-question">When using the SD library, the serial monitor does not show any print output or displays a connection failure after uploading the program.</span> <i class="iconfont icon-downarrow2"></i></div> <div class="answer"><span class="faq-answer">Press RST button to reset and try again.</span></div></li><li><div class="question"><span class="faq-question">The driver is not installed automatically after plugging into the device?</span> <i class="iconfont icon-downarrow2"></i></div> <div class="answer"><span class="faq-answer"><p>FireBeetle 2 ESP32-E uses the CH340 serial chip, which can be used without installing a driver in most devices. If you find that the driver is not automatically installed when you plug in the device, you can manually install it yourself:</p><p><a target="_blank" rel="noopener noreferrer" href="https://dfimg.dfrobot.com/nobody/wiki/0e0d6b3864f7163833ec5d7ad4af7632.EXE"><i>CH340 Driver for Windows</i></a></p><p><a target="_blank" rel="noopener noreferrer" href="https://dfimg.dfrobot.com/nobody/wiki/c195a13df2a1989d5dc04e76e6bcb701.ZIP"><i>CH340 Driver for MAC</i></a></p></span></div></li><li><div class="question"><span class="faq-question">Cannot add board link to Arduino IDE?</span> <i class="iconfont icon-downarrow2"></i></div> <div class="answer"><span class="faq-answer"><p>First off all, make sure the Network connection is in good condition. Hope <a target="_blank" rel="noopener noreferrer" href="https://forum.arduino.cc/t/arduino-ide-cant-download-libraries-and-boards/650155/5"><i>this post</i></a> from Arduino helps. If that doesn't work, try replacing the board link from</p><p><a target="_blank" rel="noopener noreferrer" href="https://downloadcd.dfrobot.com.cn/FireBeetle/package_DFRobot_index.json"><i>https://downloadcd.dfrobot.com.cn/FireBeetle/package_DFRobot_index.json</i></a> to <a target="_blank" rel="noopener noreferrer" href="https://downloadcd.dfrobot.com.cn/FireBeetle/package_DFRobot_index.json"><i>https://downloadcd.dfrobot.com.cn/FireBeetle/package_DFRobot_index.json</i></a> and reload it.</p></span></div></li></ul> <p><a href="https://www.dfrobot.com/forum/?c=785&amp;t=632" target="_blank">Explore More Related Questions &gt; </a></p></div> <div data-theme="pc" class="helpful-survey"><div class="begining-survey"><p>Was this article helpful?</p> <div class="buttons"><button><i class="iconfont icon-thumbs-up"></i></button> <button><i class="iconfont icon-thumbs-down"></i></button></div></div> <div class="further-survey"></div> <!----></div></div></div></div> <div data-theme="pc" class="scroll-top" style="opacity:0;"><i class="iconfont icon-uparrow"></i>
+  TOP
+</div> <footer data-theme="pc"><div class="df-container con xs"><div class="nav"><div class="left"><span><b>Information</b> <a href="https://www.dfrobot.com/about-us">About Us</a><a href="https://www.dfrobot.com/warranty">Warranty</a><a href="https://www.dfrobot.com/privacy-policy">Terms &amp; Conditions</a><a href="https://www.dfrobot.com/shipping">Shipping</a><a href="https://www.dfrobot.com/payment">Payment</a><a href="https://www.dfrobot.com/faq">FAQ</a></span><span><b>Customer Service</b> <a href="https://www.dfrobot.com/distributor">DFRobot Distributors</a><a href="https://www.dfrobot.com/contact-us">Contact Us</a><a href="https://www.dfrobot.com/site-map">Site Map</a></span><span><b>My Account</b> <a href="https://www.dfrobot.com/affiliates">Affiliates</a><a href="https://www.dfrobot.com/special.html">Specials</a></span></div> <div class="right"><a href="https://www.dfrobot.com/"><img src="/dfrobotshop/images/pc/logo.png" alt="logo"></a> <div class="subscribe"><b>Sign up for exclusive offers!</b> <form id="mc-embedded-subscribe-form" action="//DFRobot.us16.list-manage.com/subscribe/post?u=e384b3074873a648e7d3237cc&id=316955a8ff" method="post" name="mc-embedded-subscribe-form" target="_blank" novalidate="novalidate" class="validate"><div id="mc_embed_signup_scroll" class="footer_scroll"><input id="subscribeEmail" type="email" value name="EMAIL" placeholder="Your email address" required="required" class="email"> <div aria-hidden="true" style="position: absolute; left: -5000px;"><input type="text" name="b_e384b3074873a648e7d3237cc_316955a8ff" tabindex="-1" value></div> <button id="subscribeBtn" aria-label="subscribe" type="submit" name="subscribe"><i class="icon iconfont icon-fangxiangyi"></i></button></div></form></div> <div class="like"><b>Like us on</b> <span><a href="https://www.facebook.com/DFrobot" title="dfrobot facebook" target="_blank"><i class="icon iconfont icon-facebook1"></i></a> <a href="https://twitter.com/dfrobotcn" title="dfrobot twitter" target="_blank"><i class="icon iconfont icon-twitter"></i></a> <a href="https://discord.com/invite/wr4szfVUZ7" title="dfrobot discord" target="_blank"><i class="icon iconfont icon-discord"></i></a> <a href="https://www.linkedin.com/company/dfrobot" title="dfrobot linkedin" target="_blank"><i class="icon iconfont icon-linkedin"></i></a> <a href="https://www.youtube.com/user/DFROBOTCN" title="dfrobot youtube" target="_blank"><i class="icon iconfont icon-YouTube"></i></a> <a href="https://www.tiktok.com/@dfrobot_official" title="dfrobot tiktok" target="_blank"><i class="icon iconfont icon-douyin-icon"></i></a></span></div></div></div> <div class="copyright">Copyright © 2025 DFRobot. All rights reserved.</div></div></footer> <!----></div></div></div></div><script>window.__NUXT__=(function(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,_,$,aa,ab,ac,ad,ae,af,ag,ah,ai,aj,ak,al,am,an,ao,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aI,aJ,aK,aL,aM,aN,aO,aP,aQ,aR,aS,aT,aU,aV,aW,aX,aY,aZ,a_,a$,ba,bb,bc,bd,be,bf,bg,bh,bi,bj,bk,bl,bm,bn,bo,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bI,bJ,bK,bL,bM,bN,bO,bP,bQ,bR,bS,bT,bU,bV,bW,bX,bY,bZ,b_,b$,ca,cb,cc,cd,ce,cf,cg,ch,ci,cj,ck,cl,cm,cn,co,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cI,cJ,cK,cL,cM,cN,cO,cP,cQ,cR,cS,cT,cU,cV,cW,cX,cY,cZ,c_,c$,da,db,dc,dd,de,df,dg,dh,di,dj,dk,dl,dm,dn,do0,dp,dq,dr,ds,dt,du,dv,dw,dx,dy,dz,dA,dB,dC,dD,dE,dF,dG,dH,dI,dJ,dK,dL,dM,dN,dO,dP,dQ,dR,dS,dT,dU,dV,dW,dX,dY,dZ,d_,d$,ea,eb,ec,ed,ee,ef,eg,eh,ei,ej,ek,el,em,en,eo,ep,eq,er,es,et,eu,ev,ew,ex,ey,ez,eA,eB,eC,eD,eE,eF,eG,eH,eI,eJ,eK,eL,eM,eN,eO,eP,eQ,eR,eS,eT,eU,eV,eW,eX,eY,eZ){cJ.id="20583";cJ.thumb="https:\u002F\u002Fdfimg.dfrobot.com\u002F652ce179aa9508d63a4326b8\u002Fdfapi\u002F377a073e780a7da2622cf3df2052648e.jpg";cJ.source=p;cJ.title=cK;cJ.desc=k;cJ.authorName=cL;cJ.authorImg="https:\u002F\u002Fdfimg.dfrobot.com\u002F652ce179aa9508d63a4326b8\u002Fdfapi\u002F6003c030930a83e3c0beb74a2f3dc746.jpg";cJ.authorUrl="https:\u002F\u002Fwww.hackster.io\u002Fpradeeplogu0";cJ.showTime="Jun 02, 2023";cJ.url=cM;cN.id=bV;cN.thumb="https:\u002F\u002Fdfimg.dfrobot.com\u002F652ce179aa9508d63a4326b8\u002Fdfapi\u002F0a68b990345cbebe6daf82d0d651e03c.jpg";cN.source=p;cN.title=cO;cN.desc=k;cN.authorName=K;cN.authorImg="https:\u002F\u002Fdfimg.dfrobot.com\u002F652ce179aa9508d63a4326b8\u002Fdfapi\u002Faf9323198f503d556b9ada74bb70caeb.jpg";cN.authorUrl=aD;cN.showTime="May 24, 2023";cN.url=cP;cQ.id="20567";cQ.thumb="https:\u002F\u002Fdfimg.dfrobot.com\u002F652ce179aa9508d63a4326b8\u002Fdfapi\u002F5f568f79e0fc07f7099a448038ba52e3.jpg";cQ.source=p;cQ.title=cR;cQ.desc=k;cQ.authorName=cS;cQ.authorImg="https:\u002F\u002Fdfimg.dfrobot.com\u002F652ce179aa9508d63a4326b8\u002Fdfapi\u002F0cdca4db4b67557e23d7733ebc8021d8.jpg";cQ.authorUrl=aE;cQ.showTime="Sep 16, 2023";cQ.url=aE;cT.id="20555";cT.thumb="https:\u002F\u002Fdfimg.dfrobot.com\u002F652ce179aa9508d63a4326b8\u002Fdfapi\u002F5b023b545f69074a4b7538feb44003e9.jpg";cT.source=p;cT.title=_;cT.desc=k;cT.authorName=$;cT.authorImg="https:\u002F\u002Fdfimg.dfrobot.com\u002F652ce179aa9508d63a4326b8\u002Fdfapi\u002Fe32690fc8be18b7b09f2e995b1ed560c.jpg";cT.authorUrl=cU;cT.showTime="Dec 02, 2023";cT.url=aa;cV.id="17871";cV.thumb="https:\u002F\u002Fdfimg.dfrobot.com\u002F5eef6b86c913a99430e3e61d\u002Fcommunity\u002F8c257ad17a385dbbce50d34039ae5198.png";cV.source=p;cV.title=cW;cV.desc=k;cV.authorName=L;cV.authorImg=aF;cV.authorUrl=aG;cV.showTime="May 16, 2025";cV.url=cX;dz.id="18199";dz.thumb="https:\u002F\u002Fdfimg.dfrobot.com\u002F5f7df1a4c913a99430e408bf\u002Fdfapi\u002F8e5a1e71dba71d950b6e00952f7d6cf1.jpg";dz.source=z;dz.title="FireBeetle V1 vs V2 (ESP32\u002FESP8266\u002FArduino) Development Board Selection Guide";dz.desc="The Selection guide comparing the FireBeetle (V1) and the FireBeetle 2 (V2) boards, particularly ESP32\u002F ESP8266 \u002F Arduino versions.";dz.authorName=x;dz.authorImg=a;dz.authorUrl=k;dz.showTime="Jun 08, 2025";dz.url="https:\u002F\u002Fwww.dfrobot.com\u002Fblog-18196.html";dA.id="17993";dA.thumb="https:\u002F\u002Fdfimg.dfrobot.com\u002Fenshop\u002Fbolg\u002F825a9c5e014338ed06043717d5c3b5ed";dA.source=z;dA.title="ESP32 cpplinq Tutorials Menu";dA.desc="We’ve listed all the DFRobot ESP32 cpplinq tutorials in this article.";dA.authorName=x;dA.authorImg=a;dA.authorUrl=k;dA.showTime=O;dA.url="https:\u002F\u002Fwww.dfrobot.com\u002Fblog-1573.html";dB.id="17994";dB.thumb="https:\u002F\u002Fdfimg.dfrobot.com\u002Fenshop\u002Fbolg\u002Fff54b0410baebc303ddb0ad032a76a89";dB.source=z;dB.title="ESP32 HTTP server Tutorials Menu";dB.desc="We’ve listed all the DFRobot ESP32 HTTP server tutorials in this article. ";dB.authorName=x;dB.authorImg=a;dB.authorUrl=k;dB.showTime=O;dB.url="https:\u002F\u002Fwww.dfrobot.com\u002Fblog-1574.html";dC.id="17995";dC.thumb="https:\u002F\u002Fdfimg.dfrobot.com\u002Fenshop\u002Fbolg\u002F8930274870f241f3d0dce69729b68304";dC.source=z;dC.title="ESP32 Soft AP Tutorials Menu";dC.desc="We’ve listed all the DFRobot ESP32 Soft AP tutorials in this article. ";dC.authorName=x;dC.authorImg=a;dC.authorUrl=k;dC.showTime=O;dC.url="https:\u002F\u002Fwww.dfrobot.com\u002Fblog-1575.html";dD.id="17991";dD.thumb="https:\u002F\u002Fdfimg.dfrobot.com\u002Fenshop\u002Fbolg\u002F3de5b8dc103f9f801c8c4c8327e08a79";dD.source=z;dD.title="ESP32 MicroPython Tutorials Menu";dD.desc="Here are some micropython tutorials that we listed for you to experience its advanced features.";dD.authorName=x;dD.authorImg=a;dD.authorUrl=k;dD.showTime="Apr 01, 2021";dD.url="https:\u002F\u002Fwww.dfrobot.com\u002Fblog-1569.html";eJ[0]={description:a,link:"\u002Fnew-products.html",submenu:[],title:"New Products"};eJ[1]={description:a,link:a,submenu:[{description:"A micro x86 compute module for ON-DEVICE AI",link:"\u002Fproduct-3149.html",title:"LattePanda Mu Ultra"},{description:"Control your visionOS app with a physical device you can anchor digital content to.",link:"\u002Fproduct-3136.html",title:"seeMote Cube"},{description:"6 TOPS LLM MCP AI Vision Sensor (20+ Models, Deploy Custom Models)",link:"\u002Fproduct-2995.html",title:"Huskylens 2"},{description:"AI learning device designed for education",link:"\u002Ftopic-314.html",title:"UNIHIKER"},{description:"A Palm-Sized X86 Single Board Computer Powered by the Intel N150",link:"\u002Fproduct-2989.html",title:"LattePanda IOTA"},{description:eK,link:eL,title:"ESP32"},{description:eM,link:eN,title:eO},{description:eP,link:eQ,title:eR},{description:"Compatible with 1V\u002F2V\u002F3V\u002F5V\u002F9V\u002F12V\u002F18V solar panels ",link:"\u002Fproduct-1712.html",title:"Solar Power Manager"},{description:"mmwave sensor, ultrasonic sensor, lightning distance sensor, infrared proximity sensor",link:eS,title:eT}],title:"Featured"};eJ[2]={description:a,link:a,submenu:[{description:a,link:"\u002Ftopic-284.html",title:E},{description:"NVIDIA Jetson Orin, ESP32-CAM, other boards based on ARM and RISC-V AI processor",link:"\u002Ftopic-284-184.html",title:"AI Development Boards"},{description:"Language learning voice recognition sensor, AI vision sensor, AI vision camera",link:"\u002Ftopic-284-36.html",title:"AI Sensors"},{description:"NVIDIA Jetson Orin \u002F Nano \u002F Xavier carrier boards, OpenMV Cam shields",link:"\u002Ftopic-284-156.html",title:"AI Modules"},{description:"Jetson Nano accessories and other smart tools",link:"\u002Ftopic-284-66.html",title:"AI Prototyping & Accessories"},{description:a,link:"\u002Ftopic-284-140.html",title:"AI Kits"}],title:"AI Hardware"};eJ[3]={description:a,link:a,submenu:[{description:a,link:"\u002Ftopic-277.html",title:E},{description:"Arduino UNO R4 \u002F R3, Arduino Mega 2560, Arduino Leonardo, Arduino Nano and other boards compatible with Arduino",link:"\u002Ftopic-277-184.html",title:"Arduino Development Boards"},{description:"mmwave sensor, voice recognition sensor, ultrasonic sensor, gas sensor and other sensors compatible with Arduino",link:"\u002Ftopic-277-36.html",title:"Arduino Sensors"},{description:"MP3 player, IO Expansion Shield, DAC module, LCD display module, NB-IoT \u002F LTE \u002F GNSS \u002F GPRS \u002F GPS Expansion Shield",link:"\u002Ftopic-277-156.html",title:"Arduino Modules"},{description:"Arduino beginner kit with detailed tutorials, arduino sensor kit, arduino robot kit, arduino coding kit",link:"\u002Ftopic-277-140.html",title:"Arduino Kits"},{description:"Prototyping shields, cables, connectors, USB power supply, battery holder",link:"\u002Ftopic-277-66.html",title:"Arduino Prototyping & Accessories"}],title:"Arduino"};eJ[4]={description:a,link:a,submenu:[{description:a,link:"\u002Fcategory-184.html",title:E},{description:"Raspberry Pi, LattePanda, NVIDIA, ARM",link:"\u002Fcategory-311.html",title:"Single Board Computer"},{description:eU,link:"\u002Fcategory-188.html",title:eV},{description:"x86 Windows \u002F Linux single board computer, server, compute module",link:"\u002Fcategory-186.html",title:"LattePanda Dev Board"},{description:"NVIDIA Jetson Orin Nano, NVIDIA Jetson AGX Orin",link:"\u002Fcategory-268.html",title:"NVIDIA"},{description:"UNIHIKER, Raspberry Pi CM 5, ROCK Pi",link:"\u002Fcategory-294.html",title:"ARM"},{description:"Arduino, ESP32 & ESP8266, micro:bit",link:"\u002Fcategory-312.html",title:T},{description:"Development boards compatible with Arduino: DFRduino , Beetle, Romeo, Bluno, Xboard",link:"\u002Fcategory-185.html",title:"Arduino Board"},{description:eW,link:"\u002Fcategory-271.html",title:"ESP32 & ESP8266"},{description:"A pocket-sized computer designed to inspire creative thinking in children",link:"\u002Fcategory-257.html",title:eX},{description:"PYNQ-Z2, Calliope, Particle, Maixduino, CurieCore",link:"\u002Fcategory-52.html",title:bf}],title:G};eJ[5]={description:a,link:a,submenu:[{description:eK,link:eL,title:E},{description:"Low power consumption microcontroller intentionally designed for IoT projects",link:"\u002Ftopic-302.html",title:"FireBeetle"},{description:"IoT hardwares and IoT home automation devices",link:"\u002Ftopic-276.html",title:"Internet of Things - IoT"},{description:eW,link:"\u002Ftopic-302-184.html",title:G},{description:"Sensors compatible with ESP32",link:"\u002Ftopic-302-36.html",title:Q},{description:"IO Shield, OLED Display, LoRa Radio, LED Matrix, Terminal Block Board for FireBeetle ESP32",link:"\u002Ftopic-302-156.html",title:M},{description:"Hackster & DFRobot AI \u002F IoT \u002F Environmental Sensor Starter EEDU Kit",link:"\u002Ftopic-302-140.html",title:bg},{description:"Prototyping board, Enclosure for FireBeetle, Patch Test Hook",link:"\u002Ftopic-302-66.html",title:R}],title:"ESP32 \u002F ESP8266"};eJ[6]={description:a,link:a,submenu:[{description:a,link:"\u002Ftopic-278.html",title:E},{description:"LattePanda Mu, LattePanda Sigma, LattePanda 3 Delta, LattePanda 2 Alpha \u002F Delta, LattePanda V1",link:"\u002Ftopic-278-184.html",title:"LattePanda Boards"},{description:"Carrier Board for LattePanda Mu, touch display, UPS hat, network card for LattePanda",link:"\u002Ftopic-278-156.html",title:M},{description:"Cases, streaming cable, cooler, heat sink, power cable, power supply for LattePanda",link:"\u002Ftopic-278-66.html",title:"LattePanda Accessories"},{description:"Camera, GPS receiver for LattePanda",link:"\u002Ftopic-278-36.html",title:Q},{description:"LattePanda Mu evaluation kit, LattePanda board with case & streaming cable & touch display kit",link:"\u002Ftopic-278-140.html",title:"LattePanda Kits"}],title:"LattePanda"};eJ[7]={description:a,link:a,submenu:[{description:a,link:"\u002Fcategory-156.html",title:E},{description:"DC \u002F Stepper \u002F Brushless \u002F Geared \u002F TT motor and motor driver, servo, relay module, peristaltic pump",link:"\u002Fcategory-51.html",title:"Motors & Actuators & Drivers"},{description:"3G\u002F4G\u002F5G, Lora, WiFi, Bluetooth, NB-IoT, Ethernet, GSM\u002FGPRS\u002FGPS, Serial, CANBUS & OBD, RFID, Infra Red, Radio (RF), Xbee \u002F Zigbee",link:"\u002Fcategory-45.html",title:"Communications"},{description:"DFPlayer, mini MP3 player, speaker module, audio analyzer module, digital buzzer, audio amplifier",link:"\u002Fcategory-259.html",title:"Audio"},{description:"IO Expansion Shield, UPS HAT, Carrier Board for Arduino \u002F Raspberry Pi \u002F micro:bit \u002F LattePanda",link:"\u002Fcategory-269.html",title:"IO Expansion Shields & HATs"},{description:"eDP touch display, IPS display, DSI touchscreen, capacitive touch panel, LED matrix, OLED display, LEDs",link:"\u002Fcategory-53.html",title:"LCDs\u002FLEDs\u002FE-ink\u002FDisplays"},{description:"ADC Module, DAC Module",link:"\u002Fcategory-261.html",title:"AD\u002FDA Converter"},{description:"Real-time clock module",link:"\u002Fcategory-232.html",title:"RTC Modules"},{description:"MicroSD card module, 16GB 32GB 64GB 128GB MicroSD memory card",link:"\u002Fcategory-213.html",title:"Storage Modules"},{description:"Solar power manager, battery holder, DC-DC buck converter, wireless charging module",link:"\u002Fcategory-70.html",title:"Power Modules"},{description:"GamePad, joystick, sensor adapter",link:"\u002Fcategory-215.html",title:bf}],title:M};eJ[8]={description:a,link:a,submenu:[{description:a,link:"\u002Fcategory-66.html",title:E},{description:"Heatsink, cooling fan, DIN rail mount bracket, VESA mounting kit",link:"\u002Fcategory-96.html",title:"Accessories"},{description:"Buttons, headers, LEDs, resistors, capacitors, diodes & transistors, crystals",link:"\u002Fcategory-219.html",title:"Electronics"},{description:"Case for Raspberry Pi, LattePanda, micro:bit, Arduino UNO, Jetson Nano",link:"\u002Fcategory-303.html",title:"Enclosure&Case"},{description:"Power supply, solar panel, AA batteries holder",link:"\u002Fcategory-92.html",title:"Power"},{description:"Jumper wires, power cables, USB data cables, gravity module cables, audio & video cables, Ethernet cable",link:"\u002Fcategory-86.html",title:"Cables and Wires"},{description:"micro:Maqueen mechanic, robot gripper, rubber wheels, mecanum wheels, screw",link:"\u002Fcategory-46.html",title:"Mechanics"},{description:"Electric solenoid lock, hot plate preheater, straight\u002Fcross screwdriver",link:"\u002Fcategory-43.html",title:"Tools"},{description:"Bread board self adhesive, prototyping shield for arduino, flexible single sided protoBoard",link:"\u002Fcategory-67.html",title:"Breadboards & Protoboards"},{description:"Soldering station, soldering starter tools, soldering iron welding tool kit",link:"\u002Fcategory-115.html",title:"Soldering"},{description:"Wireless keyboard for Raspberry Pi and LattePanda",link:"\u002Fcategory-270.html",title:"Keyboards"},{description:"Electroluminecent wire",link:"\u002Fcategory-132.html",title:"EL Wires"}],title:R};eJ[9]={description:a,link:a,submenu:[{description:a,link:"\u002Ftopic-272.html",title:E},{description:eU,link:"\u002Ftopic-272-184.html",title:"Raspberry Pi Boards"},{description:"Heatsink, cooling case, power supply and cables for Raspberry Pi",link:"\u002Ftopic-272-66.html",title:R},{description:"Touch display, relay module, UPS HAT, expansion board for Raspberry Pi",link:"\u002Ftopic-272-156.html",title:M},{description:"Raspberry Pi 5 and 4B Starter Kit",link:"\u002Ftopic-272-140.html",title:"Raspberry Pi Kits"},{description:"Sensors compatible with Raspberry Pi, such as camera, ultrasonic sensor, etc.",link:"\u002Ftopic-272-36.html",title:Q}],title:eV};eJ[10]={description:a,link:a,submenu:[{description:a,link:"\u002Ftopic-279.html",title:E},{description:"Robot control board with motor driver",link:"\u002Ftopic-279-184.html",title:G},{description:"LiDAR, ToF laser range scanner, ultrasonic distance sensor, camera, DOF sensor",link:"\u002Ftopic-279-36.html",title:Q},{description:"Motor, motor driver, digital servo, clutch servo, DC-DC converter",link:"\u002Ftopic-279-156.html",title:M},{description:"micro:bit programming robot platform, mobile robot platform, robotic arm",link:"\u002Ftopic-279-140.html",title:bg},{description:"micro:Maqueen Mechanic, rubber wheel, mecanum wheel, battery holder",link:"\u002Ftopic-279-66.html",title:R}],title:"Robotics"};eJ[11]={description:a,link:a,submenu:[{description:a,link:"\u002Fcategory-36.html",title:"All Sensors"},{description:"Sensors with standard interface, plug-and-play, no soldering required, with color coded pin headers & cables",link:"\u002Ftopic-282.html",title:"Gravity Sensors"},{description:"High-quality and open-source breakout boards with small size and flexible wiring method",link:"\u002Ftopic-292.html",title:"Fermion Breakout"},{description:eM,link:eN,title:eO},{description:eP,link:eQ,title:eR},{description:"Solid state liDAR, laser range scanner, ToF LiDAR, single-point ranging LiDAR",link:"\u002Fcategory-313.html",title:"LiDAR"},{description:"Ultrasonic sensor, lightning distance sensor, infrared proximity sensor",link:eS,title:eT},{description:"Soil moisture sensor, DHT\u002FSHT\u002FAHT temperature & humidity sensor, BME688 environmental sensor",link:"\u002Fcategory-64.html",title:"Temperature & Humidity Sensor"},{description:"AI vision sensor, gesture sensor, fingerprint sensor, touch sensor",link:"\u002Fcategory-76.html",title:"Interactive Sensors"},{description:"Voice recognition sensor, text to speech, voice synthesizer module, voice recorder module",link:"\u002Fcategory-63.html",title:"Sound Sensors"},{description:"mmWave, human presence detection sensor, PIR sensor, vibration sensor, tilt sensor",link:"\u002Fcategory-204.html",title:"Motion Sensors"},{description:"IR positioning camera, ambient light sensor, 3D ToF sensor, camera module, RGB color sensor, QR code scanner",link:"\u002Fcategory-58.html",title:"Light & Imaging Sensors"},{description:"AC current sensor, digital wattmeter, LED current meter",link:"\u002Fcategory-201.html",title:"Current Sensors"},{description:"DOF sensor, triple axis accelerometer, 6-axis accelerometer, 9-axis sensor",link:"\u002Fcategory-65.html",title:"IMU Sensors"},{description:"Push button, LED button, magnetic switch, LED switch",link:"\u002Fcategory-205.html",title:"Switches & Buttons"},{description:"Heart rate monitor sensor, EMG\u002FECG\u002FPPG sensor",link:"\u002Fcategory-199.html",title:"e-Health Sensors"},{description:"Digital weight sensor",link:"\u002Fcategory-200.html",title:"Weight Sensors"},{description:"Triple axis magnetometer sensor, hall sensor",link:"\u002Fcategory-60.html",title:"Magnetic Sensors"},{description:"Barometric pressure sensor, differential pressure sensor, air pressure sensor",link:"\u002Fcategory-229.html",title:"Pressure Sensors"},{description:"Thin film pressure sensor, flexiforce pressure sensor",link:"\u002Fcategory-202.html",title:"Flex Sensors"},{description:"Rotary encoder, TT Motor encoder, 360 degree hall angle sensor",link:"\u002Fcategory-301.html",title:"Encoders"},{description:"USB GPS receiver compatible with Raspberry Pi \u002F LattePanda \u002F Jetson Nano",link:"\u002Fcategory-57.html",title:"GPS"},{description:"Analog slide position sensor, analog rotation potentiometer sensor",link:"\u002Fcategory-203.html",title:"Potentiometer"},{description:"9 PCS \u002F 27 PCS \u002F 37 PCS sensor set for Arduino and Raspberry Pi",link:"\u002Fcategory-227.html",title:"Sensor Set"},{description:"Geiger counter module, analog signal isolator, soil NPK measure sensor",link:"\u002Fcategory-230.html",title:bf}],title:"Sensor"};eJ[12]={description:a,link:a,submenu:[{description:"Arduino and micro:bit kits with detailed tutorials",link:"\u002Ftopic-280.html",title:eY},{description:"Educational robot platform for micro:bit and micro:bit accessories",link:"\u002Ftopic-281.html",title:eX},{description:"micro:bit robots for hands-on STEM",link:"\u002Ftopic-319.html",title:"Maqueen"},{description:"Modularized electronic building blocks designed for young inventors and STEM educators",link:"\u002Ftopic-283.html",title:"Boson"},{description:"micro:bit, UNIHIKER",link:"\u002Ftopic-280-184.html",title:G},{description:"Huskylens, Lark weather station, sensor set for Arduino",link:"\u002Ftopic-280-36.html",title:Q},{description:"micro:bit accessories, science data acquisition module",link:"\u002Ftopic-280-156.html",title:M},{description:"Arduino beginner kit, micro:bit educational programming robot kit",link:"\u002Ftopic-280-140.html",title:bg},{description:"micro:Maqueen mechanic, UNIHIKER silicone case",link:"\u002Ftopic-280-66.html",title:R}],title:eY};eZ.USD={symbol:"$",code:bb,name:"$USD",rate:d};eZ.EUR={symbol:"€",code:"EUR",name:"EUR€",rate:.85254949};eZ.GBP={symbol:"£",code:"GBP",name:"£GBP",rate:.74400586};return {layout:f,data:[{viewType:S,sku:C,breadcrumbs:[{href:bi,text:f},{href:"\u002Fcategory-184\u002F",text:G},{href:bj,text:T},{href:"\u002Fdfr0654\u002F",text:C}],menu:{type:bk,now:{text:T,href:a},back:{text:G,href:bj},content:[{id:"20576",material_id:g,title:bl,subject:"dfr1075\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765026694,sku:"DFR1075",user_id:l,product:a,default_sort:30,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2771,product_name:"FireBeetle 2 ESP32-C6 IoT Development Board for Smart Home Control System",category_names:u,product_type:h,category_category_ids:v,tag:"DFR1075, ESP32 C6, ESP32 C6 development board, WiFi 6, Bluetooth 5, Zigbee, Thread, smart home matter devices, matter smart home, OFDMA wifi,  twt wifi 6, Power Management",pm_tag:a,text:bl,href:"\u002FDFR1075\u002F",active:c},{id:"23249",material_id:g,title:U,subject:"dfr0654\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1769851599,sku:C,user_id:l,product:a,default_sort:bm,sort_order_plus:b,_score:e,stock_name_status:j,product_id:af,product_name:V,category_names:u,product_type:h,category_category_ids:v,tag:bn,pm_tag:bo,text:U,href:"\u002FDFR0654\u002F",active:m},{id:"19405",material_id:g,title:bp,subject:"dfr1117\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764754947,sku:"DFR1117",user_id:l,product:a,default_sort:57,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2778,product_name:"Beetle ESP32 C6 Mini Development Board for Wireless Smart Wearable Device (Supports BLE \u002F Matter)",category_names:ag,product_type:h,category_category_ids:ah,tag:"DFR1117, ESP32 C6, ESP32, development board, microcontroller, ESP32 MCU, RISC-V, Wi-Fi 6, Bluetooth 5, Zigbee 3.0, Thread 1.3, lithium battery charging",pm_tag:"ESP32 & ESP8266.PF,MP.SL,Pin.Interface,SPI.ToS,I2S.ToS,Zigbee.ST,Art.Scenario,Project.Scenario,Arduino IDE.IDE,Prototyping.Scenario,PWM.ToS,WiFi.ST,DF Others.Brand,Beetle.FF,Digital.ToS,IoT.TT,5V.WV,USB Type-C.Interface,UART.ToS,Bluetooth 5.0.ST,Hobby.Scenario,I2C.ToS,Analog.ToS,MicroPython.PL,C++.PL",text:bp,href:"\u002FDFR1117\u002F",active:c},{id:"24709",material_id:g,title:bq,subject:"dfr0992-en\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1781081689,sku:"DFR0992-EN",user_id:7136,product:a,default_sort:58,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2904,product_name:"UNIHIKER K10 AI Agent Coding Board for STEM &amp; Maker (Edge LLM, Vision AI, Voice Chatbot, ESP-CLAW Support)",category_names:"All Products,Artificial Intelligence Hardware,Development Boards,ESP32 &amp; ESP8266,Internet of Things - IoT,MCU,STEM Education,UNIHIKER",product_type:h,category_category_ids:"184 271 276 280 284 312 314",tag:"DFR0992, UNIHIKER, AI learning, AI Model, IoT Learning , AI Education, vision model, face detection, QR code recognition, speech recognition",pm_tag:a,text:bq,href:"\u002FDFR0992-EN\u002F",active:c},{id:"20184",material_id:g,title:br,subject:"dfr1236\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764845073,sku:"DFR1236",user_id:l,product:a,default_sort:79,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2977,product_name:"FireBeetle 2 ESP32-C5 Development Kit for Smart Home (2.4\u002F5GHz Wi-Fi 6, Home Assistant, BLE 5, Zigbee, Thread)",category_names:u,product_type:h,category_category_ids:v,tag:"FireBeetle 2 ESP32-C5 IO Expansion Kit, DFR1236, ESP32-C5, Dual-Band Wi-Fi 6, 5 GHz Wi-Fi, Matter, Thread, Zigbee, ESP32 IoT Board, Solar Powered IoT, Low Power ESP32, IO Expansion Board, IoT Development Board, Smart Home, Arduino ESP32-C5",pm_tag:a,text:br,href:"\u002FDFR1236\u002F",active:c},{id:"24246",material_id:g,title:bs,subject:"dfr0654-f\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1779085620,sku:"DFR0654-F",user_id:l,product:a,default_sort:81,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2231,product_name:"FireBeetle 2 ESP32-E IoT Microcontroller with Header (Supports Wi-Fi &amp; Bluetooth)",category_names:u,product_type:h,category_category_ids:v,tag:"DFR0654-F, DFR0654, IIC, I2C, SPI, Communication, ESP32, FireBeetle, FPC, GDI, WiFi, Bluetooth, Wireless, Internet of Things, IoT, FireBeetle, ESP32, ESP32-E, IoT Microcontroller, IoT development board, ESP-WROOM-32E, low power consumption,wireless",pm_tag:"Mind+.IDE,Digital.ToS,Prototyping.Scenario,MP.SL,IoT.TT,ESP32 & ESP8266.PF,PH2.0.Interface,Pin.Interface,UART.ToS,Firebeetle.FF,Firebeetle.Brand,WiFi.ST,Analog.ToS,Type C.Interface,Bluetooth 4.0.ST,I2C.ToS,Arduino IDE.IDE,3.3V.WV,C++.PL",text:bs,href:"\u002FDFR0654-F\u002F",active:c},{id:"20190",material_id:g,title:bt,subject:"dfr1222\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764845077,sku:"DFR1222",user_id:l,product:a,default_sort:88,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2976,product_name:"FireBeetle 2 ESP32-C5 IoT Development Board (2.4 \u002F 5GHz Wi-Fi 6, Solar Charging, Home Assistant)",category_names:u,product_type:h,category_category_ids:v,tag:"FireBeetle 2 ESP32-C5, DFR1222, ESP32-C5 development board, dual-band Wi-Fi 6, 5GHz Wi-Fi 6 MCU, ESP32 IoT board, ESP32-C5 Arduino, ESP32 solar charging, multi-protocol IoT, Zigbee gateway, Thread border router, Matter-ready ESP32, low-latency robotics, FPV drone controller, RISC-V development board",pm_tag:a,text:bt,href:"\u002FDFR1222\u002F",active:c},{id:"24125",material_id:g,title:bu,subject:"dfr0216\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1774336629,sku:"DFR0216",user_id:l,product:a,default_sort:103,sort_order_plus:b,_score:e,stock_name_status:j,product_id:838,product_name:"DFRduino UNO R3 - Compatible with Arduino Uno",category_names:A,product_type:h,category_category_ids:B,tag:"ATmega328,Arduino,DFRduino,Microcontroller,Uno,ATmega16u2,DFR0216,HUSKYLENS Partners",pm_tag:"5V.WV,Analog.ToS,DF Others.Brand,Mind+.IDE,Pin.Interface,Arduino IDE.IDE,Arduino.PF,Digital.ToS,Prototyping.Scenario,PWM.ToS,USB.Interface,C++.PL,M+.SL,I2C.ToS,UART.ToS,Arduino Uno.FF",text:bu,href:"\u002FDFR0216\u002F",active:c},{id:"19339",material_id:g,title:bv,subject:"dfr0478\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764754905,sku:"DFR0478",user_id:l,product:a,default_sort:g,sort_order_plus:b,_score:e,stock_name_status:j,product_id:1590,product_name:"FireBeetle ESP32 IoT Microcontroller with 250+ ESP32 Tutorials (Supports Wi-Fi &amp; Bluetooth)",category_names:u,product_type:h,category_category_ids:v,tag:"IoT, low power consumption, Bluetooth 4.2, ESP-WROOM-32, FireBeetle, ESP32, bluetooth, wifi, esp wroom 32, esp32 dfrobot",pm_tag:"Firebeetle.FF,Bluetooth 4.0.ST,Mind+.IDE,I2C.ToS,IoT.TT,ESP32 & ESP8266.PF,3.3V.WV,Arduino IDE.IDE,Firebeetle.Brand,Prototyping.Scenario,Analog.ToS,PH2.0.Interface,UART.ToS,Digital.ToS,Pin.Interface,WiFi.ST,Micro USB.Interface,C++.PL,MP.SL",text:bv,href:"\u002FDFR0478\u002F",active:c},{id:"21103",material_id:g,title:bw,subject:"dfr1172\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765246463,sku:"DFR1172",user_id:ai,product:a,default_sort:146,sort_order_plus:b,_score:e,stock_name_status:"Pre-Order",product_id:2915,product_name:"FireBeetle 2 ESP32-P4 AI Vision Board (360MHz RISC-V, MIPI CSI\u002FDSI, Wi-Fi 6)",category_names:u,product_type:h,category_category_ids:v,tag:"DFR1172, FireBeetle 2 ESP32-P4, ESP32 development board, IoT development board, HMI development board, MIPI-CSI interface, MIPI-DSI, Wi-Fi 6 module, Bluetooth 5.0 module, ESP32 microcontroller, Smart display controller, AI camera module",pm_tag:a,text:bw,href:"\u002FDFR1172\u002F",active:c},{id:"20185",material_id:g,title:bx,subject:"dfr1221\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764845074,sku:"DFR1221",user_id:7148,product:a,default_sort:152,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2964,product_name:"ESP32-S3 Round Touch Display Development Board (1.85&quot;, AI Voice &amp; Wireless Charging)",category_names:"All Products,Artificial Intelligence Hardware,Development Boards,ESP32 &amp; ESP8266,ESP32\u002FESP8266,Internet of Things - IoT,MCU",product_type:h,category_category_ids:"184 271 276 284 312 316",tag:"DFR1221, ESP32-S3 1.85inch Round Display, ESP32-S3 Touchscreen, Round LVGL Dev Board, AI Voice Interaction, Smart Home Panel, Wearable UI, Arduino Round Display, MicroPython HMI, ESP32-S3R8, Circular Display",pm_tag:a,text:bx,href:"\u002FDFR1221\u002F",active:c},{id:"20495",material_id:g,title:by,subject:"dfr1139\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765026637,sku:"DFR1139",user_id:l,product:a,default_sort:216,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2837,product_name:"FireBeetle 2 ESP32-E (N16R2) IoT Board (Dual-Core 240MHz, WiFi\u002FBluetooth, LVGL Support)",category_names:u,product_type:h,category_category_ids:v,tag:"ESP32 microcontroller, ESP32 development board, ESP32 dev board, ESP32 Bluetooth, ESP32 WiFi, ESP Modules, ESP32-WROVER-E-N16R2, Multiprotocol Modules, ESP32-WROVER-E, Wireless RF Modules, ESP32-WROVER-E-N16R2, 2.4GHz ESP Module, WiFi 802.11b\u002Fg\u002Fn, Bluetooth v5.0",pm_tag:"GDI.Interface,PH2.0.Interface,Digital.ToS,USB Type-C.Interface,Project.Scenario,I2C.ToS,C++.PL,UART.ToS,Firebeetle.Brand,Arduino IDE.IDE,SPI.ToS,PWM.ToS,MicroPython.PL,I2S.ToS,5V.WV,M+.SL,IoT.TT,ESP32 & ESP8266.PF,Analog.ToS,Hobby.Scenario,Firebeetle.FF,WiFi.ST,Prototyping.Scenario",text:by,href:"\u002FDFR1139\u002F",active:c},{id:"22768",material_id:g,title:bz,subject:"dfr0868\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1768897959,sku:"DFR0868",user_id:l,product:a,default_sort:232,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2566,product_name:"Beetle ESP32 - C3 (Mini RISC-V Core IoT Development Board)",category_names:ag,product_type:h,category_category_ids:ah,tag:"dfr0868, esp32-c3 board, esp32-c3 arduino, esp32-c3, esp32-c3 pinout, esp32 c3 development board",pm_tag:"DF Others.Brand,Beetle.FF,Analog.ToS,Pin.Interface,I2C.ToS,Prototyping.Scenario,Digital.ToS,Test and Measurement.Scenario,5V.WV,UART.ToS,MicroPython.PL,C++.PL,ESP32 & ESP8266.PF,GDI.Interface,IoT.TT,Hobby.Scenario,MP.SL",text:bz,href:"\u002FDFR0868\u002F",active:c},{id:"20529",material_id:g,title:bA,subject:"dfr0975\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765026658,sku:"DFR0975",user_id:l,product:a,default_sort:239,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2676,product_name:"FireBeetle 2 ESP32-S3 AI Board with OV2640 Camera (Image Recognition, BLE 5)",category_names:u,product_type:h,category_category_ids:v,tag:"ESP32 S3, S3, esp32 boards, esp32 buy, esp32 chips, esp32 module, esp32 modules, espressif esp32, small esp32, smallest esp32, Image recognition, Wifi, Bluetooth",pm_tag:a,text:bA,href:"\u002FDFR0975\u002F",active:c},{id:"20500",material_id:g,title:bB,subject:"dfr1140\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765026640,sku:"DFR1140",user_id:l,product:a,default_sort:267,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2841,product_name:"FireBeetle 2 ESP32-UE (N16R2) IoT Board (16MB \u002F 2MB PS, Supports Ext Antenna)",category_names:u,product_type:h,category_category_ids:v,tag:"DFR1140, ESP32 microcontroller, ESP32 development board, ESP32 dev board, ESP32 Bluetooth, ESP32 WiFi, IPEX Antenna, 16M Flash ESP32, Remote Control board, Wi-Fi BLE MCU Module, BLE, ESP-32UE",pm_tag:"PWM.ToS,MicroPython.PL,I2S.ToS,5V.WV,M+.SL,IoT.TT,ESP32 & ESP8266.PF,Analog.ToS,Hobby.Scenario,Firebeetle.FF,WiFi.ST,Prototyping.Scenario,GDI.Interface,PH2.0.Interface,Digital.ToS,USB Type-C.Interface,Project.Scenario,I2C.ToS,C++.PL,UART.ToS,Firebeetle.Brand,Arduino IDE.IDE,SPI.ToS",text:bB,href:"\u002FDFR1140\u002F",active:c},{id:"22836",material_id:g,title:bC,subject:"dfr1195\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1768979062,sku:"DFR1195",user_id:ai,product:a,default_sort:283,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2933,product_name:"LoRaWAN ESP32-S3 Development Board with Display (SX1262, 850-930MHz)",category_names:"All Products,Development Boards,ESP32\u002FESP8266,Internet of Things - IoT,MCU,Others",product_type:h,category_category_ids:"52 184 276 312 316",tag:"LoRaWAN development board, ESP32-S3 LoRa board, IoT prototyping board, LoRa ESP32 module, LoRaWAN Arduino compatible, ESP32-S3 with display, solderless IoT board, LoRaWAN sensor project board,smart home, home assistant",pm_tag:a,text:bC,href:"\u002FDFR1195\u002F",active:c},{id:"19429",material_id:g,title:bD,subject:"dfr1063\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764754962,sku:"DFR1063",user_id:s,product:a,default_sort:319,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2792,product_name:"Romeo Mini ESP32-C3 Robot Control Board (Integrated Motor &amp; Servo Driver)",category_names:bE,product_type:h,category_category_ids:bF,tag:"DFR1063, ESP32-C3 Controller, ESP32-C3 Board, ESP32-C3 motor control, ESP32-C3 servo control, motor driver development board, ESP32-C3 Main control, Robot motors controller, servos controller, ESP32-C3 Mini Board",pm_tag:"UART.ToS,DF Others.Brand,Pin.Interface,SPI.ToS,FPC.Interface,5V.WV,USB Type-C.Interface,I2C.ToS,Bluetooth 5.0.ST,Arduino IDE.IDE,Workshop.Scenario,C++.PL,Analog.ToS,PWM.ToS,ESP32 & ESP8266.PF,12V.WV,Digital.ToS,GDI.Interface,Project.Scenario,M+.SL,Mobile Robot.Scenario,WiFi.ST",text:bD,href:"\u002FDFR1063\u002F",active:c},{id:"20518",material_id:g,title:bG,subject:"dfr1145\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765026651,sku:"DFR1145",user_id:l,product:a,default_sort:366,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2836,product_name:"FireBeetle 2 ESP32-S3 (N4) Dual-core IoT Microcontroller (No Cam, 4MB Fl., 512KB SR., Supports AI Acceleration)",category_names:u,product_type:h,category_category_ids:v,tag:"DFR1145, ESP32-S3-WROOM-1-N4, SMD Module, ESP32-S3, 4 MB SPI Flash, PCB Antenna, Bluetooth, WiFi 802.11b\u002Fg\u002Fn, Bluetooth v5.0 RF, ESP32 microcontroller, ESP32 development board, ESP32 dev board, ESP32 Bluetooth, ESP32 WiFi",pm_tag:"Hobby.Scenario,Firebeetle.FF,Bluetooth 5.0.ST,GDI.Interface,PH2.0.Interface,Prototyping.Scenario,Digital.ToS,I2C.ToS,C++.PL,USB Type-C.Interface,UART.ToS,Project.Scenario,Firebeetle.Brand,Arduino IDE.IDE,SPI.ToS,PWM.ToS,MicroPython.PL,I2S.ToS,5V.WV,M+.SL,IoT.TT,ESP32 & ESP8266.PF,Analog.ToS",text:bG,href:"\u002FDFR1145\u002F",active:c},{id:"24124",material_id:g,title:bH,subject:"dfr0191\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1774336103,sku:"DFR0191",user_id:l,product:a,default_sort:547,sort_order_plus:b,_score:e,stock_name_status:j,product_id:655,product_name:"DFRduino Mega2560 (Arduino Mega 2560 R3 Compatible)",category_names:A,product_type:h,category_category_ids:B,tag:"DFR0191, MEGA, 2560, Communication, controller, 3D printer, 1280, Arduino.",pm_tag:"Mind+.IDE,Digital.ToS,USB.Interface,UART.ToS,PWM.ToS,Pin.Interface,Arduino Mega.FF,5V.WV,Arduino IDE.IDE,I2C.ToS,C++.PL,DF Others.Brand,Prototyping.Scenario,Analog.ToS,Arduino.PF,MP.SL",text:bH,href:"\u002FDFR0191\u002F",active:c},{id:"19304",material_id:g,title:bI,subject:"dfr0010\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764754881,sku:"DFR0010",user_id:l,product:a,default_sort:585,sort_order_plus:b,_score:e,stock_name_status:j,product_id:67,product_name:"DFRduino Nano  (Arduino Nano Compatible)",category_names:A,product_type:h,category_category_ids:B,tag:"Arduino,Nano,controller,atmega328,DFR0010,Arduino Nano",pm_tag:"Analog.ToS,Digital.ToS,DF Others.Brand,5V.WV,Micro USB.Interface,PWM.ToS,I2C.ToS,MP.SL,Arduino.PF,Arduino Nano.FF,UART.ToS,Mind+.IDE,Arduino IDE.IDE,Pin.Interface,C++.PL,Prototyping.Scenario",text:bI,href:"\u002FDFR0010\u002F",active:c},{id:"18586",material_id:g,title:bJ,subject:"dfr0282\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764671326,sku:"DFR0282",user_id:l,product:a,default_sort:667,sort_order_plus:b,_score:e,stock_name_status:j,product_id:1075,product_name:"DFRobot Beetle Board - Compatible with Arduino Leonardo - ATmega32U4",category_names:aj,product_type:h,category_category_ids:ak,tag:"beetle,Beetle BLE,E-Textiles,FPC,avr,smallest microcontroller,atmega32,samllest arduino, arduino bluetooth 4.0",pm_tag:"Analog.ToS,Pin.Interface,MP.SL,Arduino IDE.IDE,Digital.ToS,Prototyping.Scenario,C++.PL,Micro USB.Interface,UART.ToS,5V.WV,DF Others.Brand,Arduino.PF,Beetle.FF,PWM.ToS,I2C.ToS",text:bJ,href:"\u002FDFR0282\u002F",active:c},{id:"19296",material_id:g,title:bK,subject:"dfr0351\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764754875,sku:"DFR0351",user_id:s,product:a,default_sort:734,sort_order_plus:b,_score:e,stock_name_status:j,product_id:1367,product_name:"Romeo BLE mini - Small Control Board for Robot - Arduino Compatible - Bluetooth 4.0",category_names:W,product_type:h,category_category_ids:X,tag:"DFR0351, romeo BLE, motor driver,Bluno Romeo, BLE, robot driver, robot control board, TB6612, TB6612FNG, Mainboard, Gravity",pm_tag:"DF Others.Brand,PWM.ToS,5V.WV,Analog.ToS,MobileRobot.Scenario,Arduino IDE.IDE,Arduino.PF,I2C.ToS,Prototyping.Scenario,MP.SL,C++.PL,Micro USB.Interface,Bluetooth 4.0.ST,Pin.Interface,Terminal.Interface,Digital.ToS",text:bK,href:"\u002FDFR0351\u002F",active:c},{id:"21113",material_id:g,title:bL,subject:"dfr1188\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765246467,sku:"DFR1188",user_id:ai,product:a,default_sort:767,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2913,product_name:"Beetle RP2350 Mini Dual-Core Development Board (ARM Cortex-M33 \u002F RISC-V)",category_names:bM,product_type:h,category_category_ids:bN,tag:"DFR1188, Beetle RP2350, RP2350, Mini Development Board,  Raspberry Pi, RP2040, Mini Dev Board, Dual-Core MCU, Compact Microcontroller, Embedded Systems, Power Management, High-Performance MCU, Battery Management, Seamless Integration, Small Dev Board, Embedded Controller",pm_tag:a,text:bL,href:"\u002FDFR1188\u002F",active:c},{id:"20562",material_id:g,title:bO,subject:"dfr0305\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765026683,sku:"DFR0305",user_id:s,product:a,default_sort:778,sort_order_plus:b,_score:e,stock_name_status:j,product_id:1176,product_name:"Romeo BLE - A Control Board for Robot - Arduino Compatible - Bluetooth 4.0",category_names:W,product_type:h,category_category_ids:X,tag:"L298N,Atmega328,Romeo,Arduino Motor Controller,Microcontroller,BLE, Mainboard, Gravity",pm_tag:"Arduino.PF,MobileRobot.Scenario,Bluetooth 4.0.ST,PWM.ToS,Pin.Interface,Arduino IDE.IDE,I2C.ToS,5V.WV,Terminal.Interface,UART.ToS,MP.SL,Prototyping.Scenario,C++.PL,Micro USB.Interface,DF Others.Brand,Analog.ToS,Digital.ToS",text:bO,href:"\u002FDFR0305\u002F",active:c},{id:"17652",material_id:g,title:bP,subject:"dfr0339\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764586532,sku:"DFR0339",user_id:s,product:a,default_sort:787,sort_order_plus:b,_score:e,stock_name_status:j,product_id:1259,product_name:"DFRobot Beetle BLE - The Smallest Board Based on Arduino Uno with Bluetooth 4.0",category_names:aj,product_type:h,category_category_ids:ak,tag:"DFR0339,Bluno Beetle, beetle, ble, arduino bluetooth,Bluno, arduino bluetooth 4.0, arduino ble, Arduino shield,bluetooth arduino, wearable, arduino wearable, arduino with bluetooth, smallest arduino",pm_tag:"Pin.Interface,Micro USB.Interface,Beetle Ble.FF,Bluetooth 4.0.ST,Digital.ToS,Arduino IDE.IDE,C++.PL,Analog.ToS,UART.ToS,Arduino.PF,MP.SL,DF Others.Brand,PWM.ToS,5V.WV,I2C.ToS,Prototyping.Scenario",text:bP,href:"\u002FDFR0339\u002F",active:c},{id:"19382",material_id:g,title:bQ,subject:"dfr0225\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764754932,sku:"DFR0225",user_id:l,product:a,default_sort:951,sort_order_plus:b,_score:e,stock_name_status:j,product_id:844,product_name:"Romeo V2 - a Robot Control Board with Motor Driver (Compatible with Arduino)",category_names:W,product_type:h,category_category_ids:X,tag:"L298N,Motor,Leonardo,Atmega32U4,Romeo,Microcontroller,DFR0225, Mainboard, Gravity, HUSKYLENS Partners",pm_tag:"I2C.ToS,Terminal.Interface,Arduino IDE.IDE,5V.WV,Analog.ToS,Prototyping.Scenario,Micro USB.Interface,DF Others.Brand,MobileRobot.Scenario,C++.PL,UART.ToS,MP.SL,Pin.Interface,Arduino.PF,Digital.ToS,PWM.ToS",text:bQ,href:"\u002FDFR0225\u002F",active:c},{id:"18603",material_id:g,title:bR,subject:"dfr0575\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764671335,sku:"DFR0575",user_id:l,product:a,default_sort:1018,sort_order_plus:b,_score:e,stock_name_status:j,product_id:1798,product_name:"Beetle ESP32 Mini Wearable WiFi\u002FBT Controller",category_names:ag,product_type:h,category_category_ids:ah,tag:"Beetle, Bluetooth Module, BLE, FireBeetle, esp32, Microcontroller, arduino Bluetooth Module, small Bluetooth Module",pm_tag:"Arduino IDE.IDE,I2C.ToS,DF Others.Brand,UART.ToS,Prototyping.Scenario,Bluetooth 4.0.ST,Beetle.FF,Digital.ToS,IoT.TT,Analog.ToS,3.3V.WV,Pin.Interface,Micro USB.Interface,C++.PL,ESP32 & ESP8266.PF,MP.SL,WiFi.ST",text:bR,href:"\u002FDFR0575\u002F",active:c},{id:"20182",material_id:g,title:bS,subject:"dfr0004\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764845072,sku:"DFR0004",user_id:l,product:a,default_sort:1083,sort_order_plus:b,_score:e,stock_name_status:j,product_id:656,product_name:"Romeo - a Robot Control Board with Motor Driver (Compatible with Arduino)",category_names:W,product_type:h,category_category_ids:X,tag:"DFR0004, Atmega8U2,L298N,Motor,uno, Atmega328,Romeo, Robot Controller, Mainboard, Gravity, HUSKYLENS Partners",pm_tag:"Digital.ToS,Pin.Interface,MobileRobot.Scenario,DF Others.Brand,5V.WV,Arduino IDE.IDE,C++.PL,I2C.ToS,MP.SL,Prototyping.Scenario,UART.ToS,Terminal.Interface,USB.Interface,PWM.ToS,Arduino.PF,Analog.ToS",text:bS,href:"\u002FDFR0004\u002F",active:c},{id:"21787",material_id:g,title:al,subject:"dfr0267\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765273310,sku:"DFR0267",user_id:s,product:a,default_sort:1093,sort_order_plus:b,_score:e,stock_name_status:j,product_id:1044,product_name:al,category_names:A,product_type:h,category_category_ids:B,tag:"DFR0267,BLE,Android,bluetooth,IOS,bluetooth 4.0",pm_tag:"DF Others.Brand,5V.WV,UART.ToS,Arduino.PF,Pin.Interface,PWM.ToS,Arduino Uno.FF,MP.SL,C++.PL,Micro USB.Interface,Digital.ToS,Arduino IDE.IDE,I2C.ToS,Analog.ToS,Bluetooth 4.0.ST,Prototyping.Scenario",text:al,href:"\u002FDFR0267\u002F",active:c},{id:"17586",material_id:g,title:bT,subject:"dfr0816\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764586496,sku:"DFR0816",user_id:l,product:a,default_sort:1332,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2475,product_name:"Beetle CM-32U4 - Compatible with Arduino Leonardo - ATmega32U4",category_names:aj,product_type:h,category_category_ids:ak,tag:"DFR0816, Beetle board, Beetle, small board, 3D Printing, Wearable",pm_tag:"Project.Scenario,UART.ToS,I2C.ToS,SPI.ToS,5V.WV,Breakout.FF,DF Others.Brand,Digital.ToS,C++.PL,Arduino.PF,Analog.ToS,Hobby.Scenario,MP.SL,Pin.Interface,Prototyping.Scenario,USB Type-C.Interface",text:bT,href:"\u002FDFR0816\u002F",active:c},{id:"21123",material_id:g,title:am,subject:"dfr0959\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765246472,sku:"DFR0959",user_id:l,product:a,default_sort:1373,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2615,product_name:am,category_names:bM,product_type:h,category_category_ids:bN,tag:"dfr0959, Mini microcontroller, mini Development Board, mini board , rp2040, pico, raspberry pi, GPIO ports",pm_tag:"Raspberry Pi.Brand,MP.SL,SPI.ToS,MicroPython.PL,Analog.ToS,I2C.ToS,Pin.Interface,Prototyping.Scenario,Digital.ToS,Project.Scenario,3.3V.WV,Beetle.FF,5V.WV,PWM.ToS,C++.PL,Production.Scenario,Raspberry Pi.PF,USB Type-C.Interface,UART.ToS",text:am,href:"\u002FDFR0959\u002F",active:c},{id:"18643",material_id:g,title:bU,subject:"dfr0489\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764671357,sku:"DFR0489",user_id:l,product:a,default_sort:1376,sort_order_plus:b,_score:e,stock_name_status:j,product_id:1634,product_name:"FireBeetle ESP8266 IoT Microcontroller (Supports Wi-Fi)",category_names:u,product_type:h,category_category_ids:v,tag:"DFR0489, IoT, interest of thing, wifi, esp8266, 8266, Tensilica L106, Firebeetle, firebeetle esp8266, esp8266 board,dfrobot esp8266, esp8266 IoT mcu, firebeetle esp8266 mcu, firebeetle esp8266 microcontroller, firebeetle esp8266 iot microcontroller, firebeetle esp8266 iot board",pm_tag:"WiFi.ST,3.3V.WV,Prototyping.Scenario,Analog.ToS,Firebeetle.Brand,UART.ToS,Pin.Interface,PWM.ToS,Arduino IDE.IDE,Micro USB.Interface,Firebeetle.FF,MP.SL,PH2.0.Interface,I2C.ToS,IoT.TT,ESP32 & ESP8266.PF,C++.PL,Digital.ToS",text:bU,href:"\u002FDFR0489\u002F",active:c},{id:bV,material_id:g,title:bW,subject:"dfr1120-915\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765026696,sku:"DFR1120-915",user_id:l,product:a,default_sort:1429,sort_order_plus:b,_score:e,stock_name_status:j,product_id:3023,product_name:"LoRaWAN Control Terminal (US 915MHz, 4km Range, RS485)",category_names:an,product_type:h,category_category_ids:ao,tag:"LoRaWAN Control Terminal, DFR1120-915, 915MHz LoRaWAN Node, IoT RTU, Wireless Data Acquisition, RS485 to LoRaWAN, Modbus RTU, Long Range IoT, Smart Agriculture Controller, Industrial Automation, TTN Compatible, DFRobot, IoT Relay Controller, Sensor Node, Data Transmission Unit.",pm_tag:a,text:bW,href:"\u002FDFR1120-915\u002F",active:c},{id:"17508",material_id:g,title:bX,subject:"dfr0221\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764586452,sku:"DFR0221",user_id:7134,product:a,default_sort:1772,sort_order_plus:b,_score:e,stock_name_status:j,product_id:832,product_name:"DFRduino Leonardo with Xbee Socket (Arduino Leonardo Compatible)",category_names:A,product_type:h,category_category_ids:B,tag:"DFR0221,Arduino,leonardo,Atmega32u4,microcontroller, Xbee socket, Mainboard, HUSKYLENS Partners",pm_tag:"Pin.Interface,I2C.ToS,UART.ToS,Arduino IDE.IDE,5V.WV,Analog.ToS,Prototyping.Scenario,Micro USB.Interface,C++.PL,MP.SL,Arduino.PF,Digital.ToS,Mind+.IDE,PWM.ToS,DF Others.Brand",text:bX,href:"\u002FDFR0221\u002F",active:c},{id:"17581",material_id:g,title:bY,subject:"dfr0296\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764586493,sku:"DFR0296",user_id:s,product:a,default_sort:1911,sort_order_plus:b,_score:e,stock_name_status:j,product_id:1122,product_name:"Bluno Nano Bluetooth 4.0 Development Board compatible with Arduino Nano",category_names:A,product_type:h,category_category_ids:B,tag:"Bluno,bluetooth,DFR0296,bluetooth 4.0,BLE,Arduino BLE",pm_tag:"5V.WV,I2C.ToS,Prototyping.Scenario,Micro USB.Interface,Arduino Nano.FF,C++.PL,Arduino.PF,Bluetooth 4.0.ST,PWM.ToS,MP.SL,Analog.ToS,DF Others.Brand,UART.ToS,Digital.ToS,Arduino IDE.IDE,Pin.Interface",text:bY,href:"\u002FDFR0296\u002F",active:c},{id:"17422",material_id:g,title:bZ,subject:"dfr0003\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764586409,sku:"DFR0003",user_id:s,product:a,default_sort:2071,sort_order_plus:b,_score:e,stock_name_status:j,product_id:50,product_name:"DFRduino Mega1280 (Arduino Mega Compatible)",category_names:A,product_type:h,category_category_ids:B,tag:"Sensor, Arduino, microcontrollers, boards, DIY Arduino",pm_tag:"USB.Interface,PWM.ToS,Arduino Mega.FF,Arduino.PF,Analog.ToS,Digital.ToS,Pin.Interface,DF Others.Brand,5V.WV,Arduino IDE.IDE,C++.PL,I2C.ToS,MP.SL,Prototyping.Scenario,UART.ToS",text:bZ,href:"\u002FDFR0003\u002F",active:c},{id:"21098",material_id:g,title:b_,subject:"dfr0492\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765246461,sku:"DFR0492",user_id:s,product:a,default_sort:2541,sort_order_plus:b,_score:e,stock_name_status:j,product_id:1646,product_name:"FireBeetle 328P Low-Power Arduino Board (BLE 4.1)",category_names:"All Products,Arduino,Arduino Board,Development Boards,FireBeetle (ESP32 \u002F ESP8266),Internet of Things - IoT,MCU",product_type:h,category_category_ids:"184 185 276 277 302 312",tag:"DFR0492, BLE 4.1, BLE4.1, 4.1, Bluetooth 4.1, Bluetooth, firebeetle, pro mini, atmega328p, bluno2, bluno 2, bluetooth 4.1 multiple devices",pm_tag:"PH2.0.Interface,Analog.ToS,Pin.Interface,I2C.ToS,ESP32 & ESP8266.PF,C++.PL,3.3V.WV,Prototyping.Scenario,Bluetooth 4.0.ST,Firebeetle.Brand,UART.ToS,PWM.ToS,MP.SL,Arduino IDE.IDE,Micro USB.Interface,Digital.ToS,Firebeetle.FF",text:b_,href:"\u002FDFR0492\u002F",active:c},{id:"24753",material_id:g,title:b$,subject:"dfr1284\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1783750217,sku:"DFR1284",user_id:7130,product:a,default_sort:2685,sort_order_plus:b,_score:e,stock_name_status:j,product_id:3145,product_name:"FireBeetle 2 FireBeetle 2 ESP32-C5-U (N4) Development Kit (Dual-Band Wi-Fi 6, External Antenna)",category_names:u,product_type:h,category_category_ids:v,tag:"ESP32-C5, ESP32-C5-U, FireBeetle 2 ESP32-C5, ESP32-C5 IO expansion kit, ESP32-C5 development kit, dual-band Wi-Fi 6 development board, 5 GHz Wi-Fi ESP32, Thread 1.3 development board, Zigbee 3.0 development board, Matter development kit, U.FL ESP32 board, IPEX antenna ESP32, solder-free ESP32 prototyping, IO expansion board, solar charging development board, low power IoT board, 21 μA deep sleep, smart home development kit, Home Assistant ESP32, industrial IoT development board",pm_tag:a,text:b$,href:"\u002FDFR1284\u002F",active:c},{id:"24752",material_id:g,title:ca,subject:"dfr1287\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1783749823,sku:"DFR1287",user_id:l,product:a,default_sort:3041,sort_order_plus:b,_score:e,stock_name_status:j,product_id:3144,product_name:"FireBeetle 2 ESP32-C5-U (N4) IoT Development Board (Dual-Band Wi-Fi 6, External Antenna)",category_names:"All Products,Development Boards,ESP32 &amp; ESP8266,ESP32\u002FESP8266,FireBeetle (ESP32 \u002F ESP8266),MCU",product_type:h,category_category_ids:"184 271 302 312 316",tag:"ESP32-C5, ESP32-C5-U, FireBeetle 2 ESP32-C5, ESP32-C5 development board, dual-band Wi-Fi 6 development board, 5 GHz Wi-Fi ESP32, 2.4 GHz Wi-Fi 6, Thread 1.3 development board, Zigbee 3.0 development board, Matter development board, U.FL ESP32 board, IPEX antenna ESP32, solar charging development board, low power IoT board, 21 μA deep sleep, smart home development board, Home Assistant ESP32, industrial IoT development board, RISC-V ESP32 board, MicroPython ESP32-C5",pm_tag:a,text:ca,href:"\u002FDFR1287\u002F",active:c},{id:"20200",material_id:g,title:cb,subject:"dfr0652\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764845081,sku:"DFR0652",user_id:s,product:a,default_sort:3369,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2095,product_name:"FireBeetle 2 M0 Development Board (ATSAMD21G18, USB-C)",category_names:"All Products,Development Boards,FireBeetle (ESP32 \u002F ESP8266),MCU,Others",product_type:h,category_category_ids:"52 184 302 312",tag:"DFR0652, I2C, SPI, Communication, FireBeetle, FPC, GDI，M0",pm_tag:"Prototyping.Scenario,MP.SL,PH2.0.Interface,Pin.Interface,UART.ToS,Firebeetle.FF,Firebeetle.Brand,Analog.ToS,Type C.Interface,I2C.ToS,Arduino IDE.IDE,3.3V.WV,C++.PL,ARM.PF,Digital.ToS,Arm.ST",text:cb,href:"\u002FDFR0652\u002F",active:c},{id:"22811",material_id:g,title:cc,subject:"dfr0994\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1768965067,sku:"DFR0994",user_id:s,product:a,default_sort:199,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2743,product_name:"Romeo ESP32-S3 Robot Development Board (WiFi, Bluetooth &amp; AI)",category_names:bE,product_type:h,category_category_ids:bF,tag:"DFR0994, ESP32-S3, custom robotics, esp32-s3 camera, robot development, intelligent car, obstacle avoiding robot, fpv rc car",pm_tag:a,text:cc,href:"\u002FDFR0994\u002F",active:c},{id:"24276",material_id:g,title:cd,subject:"dfr0975-u\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1779085632,sku:"DFR0975-U",user_id:l,product:a,default_sort:328,sort_order_plus:b,_score:e,stock_name_status:j,product_id:2677,product_name:"FireBeetle 2 Board ESP32-S3-U (N16R8) AIoT Microcontroller with Camera (16MB Fl., 8MB PS., Wi-Fi &amp; BT via Cable)",category_names:u,product_type:h,category_category_ids:v,tag:"FireBeetle, esp32s3, FireBeetle esp32, FireBeetle 2 esp32-s3, FireBeetle 2, esp32-s3-wroom-1-n16r8, esp32-s2",pm_tag:a,text:cd,href:"\u002FDFR0975-U\u002F",active:c},{id:"20578",material_id:g,title:ce,subject:"dfr1120-868\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765026695,sku:"DFR1120-868",user_id:l,product:a,default_sort:1391,sort_order_plus:b,_score:e,stock_name_status:j,product_id:3024,product_name:"LoRaWAN Control Terminal (EU 868MHz, 4km Range, RS485)",category_names:an,product_type:h,category_category_ids:ao,tag:"LoRaWAN Control Terminal 868MHz, DFR1120-868, EU868 LoRaWAN Node, IoT RTU, Wireless Data Acquisition, RS485 to LoRaWAN, Modbus RTU, Long Range IoT, Smart Agriculture Controller, Industrial Automation, TTN Compatible, DFRobot, IoT Relay Controller, Sensor Node, 868MHz Data Transmission.",pm_tag:a,text:ce,href:"\u002FDFR1120-868\u002F",active:c},{id:"17561",material_id:g,title:cf,subject:"dfr0213\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764586483,sku:"DFR0213",user_id:s,product:a,default_sort:1931,sort_order_plus:b,_score:e,stock_name_status:j,product_id:786,product_name:"Dreamer Nano V4.1 Development Board based on ATmega32U4",category_names:A,product_type:h,category_category_ids:B,tag:"atmega32u4,DFR0213,Dreamer,Nano,Leonardo,microcontroller",pm_tag:"Prototyping.Scenario,PWM.ToS,C++.PL,Micro USB.Interface,MP.SL,I2C.ToS,UART.ToS,5V.WV,Analog.ToS,DF Others.Brand,Arduino Nano.FF,Pin.Interface,Arduino IDE.IDE,Arduino.PF,Digital.ToS",text:cf,href:"\u002FDFR0213\u002F",active:c},{id:"19347",material_id:g,title:cg,subject:"dfr0162\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764754909,sku:"DFR0162",user_id:s,product:a,default_sort:2198,sort_order_plus:b,_score:e,stock_name_status:j,product_id:564,product_name:"XBoard V2 IoT Development Board with Ethernet & XBee Support (ATmega328P)",category_names:"All Products,Arduino,Arduino Board,Development Boards,Internet of Things - IoT,MCU",product_type:h,category_category_ids:"184 185 276 277 312",tag:"xboard,X-board,Arduino,Ethernet,WIZ5100, DFR0162,IoT",pm_tag:"Analog.ToS,Ethernet.Interface,Arduino IDE.IDE,Digital.ToS,DF Others.Brand,C++.PL,Mini USB.Interface,Prototyping.Scenario,PWM.ToS,IoT.TT,Arduino.PF,Pin.Interface,PH2.0.Interface,MP.SL,I2C.ToS,5V.WV",text:cg,href:"\u002FDFR0162\u002F",active:c},{id:"17638",material_id:g,title:ch,subject:"dfr0323\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764586524,sku:"DFR0323",user_id:s,product:a,default_sort:2378,sort_order_plus:b,_score:e,stock_name_status:j,product_id:1175,product_name:"Bluno Mega 2560 -  Arduino Mega 2560 Compatible - Bluetooth 4.0",category_names:A,product_type:h,category_category_ids:B,tag:"Bluno,microcontroller,arduino mega2560,DFRduino Mega,Mega,Bluno,Bluetooth 4.0,BLE,DFR0323,MCU",pm_tag:"UART.ToS,5V.WV,Arduino.PF,Digital.ToS,MP.SL,PWM.ToS,I2C.ToS,Prototyping.Scenario,Pin.Interface,Micro USB.Interface,Bluetooth 4.0.ST,DF Others.Brand,Arduino Mega.FF,Arduino IDE.IDE,C++.PL,Analog.ToS",text:ch,href:"\u002FDFR0323\u002F",active:c},{id:"19315",material_id:g,title:ci,subject:"dfr0222\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764754888,sku:"DFR0222",user_id:s,product:a,default_sort:2486,sort_order_plus:b,_score:e,stock_name_status:j,product_id:837,product_name:"Xboard Relay - An Ethernet Controllered Relay",category_names:"All Products,Arduino Board,Development Boards,Internet of Things - IoT,MCU",product_type:h,category_category_ids:"184 185 276 312",tag:"X-board,relay,Arduino Leonardo,internet of thing,ethernet,wiz5100,DFR0222, Gravity, Mainboard",pm_tag:"MP.SL,Arduino.PF,IoT.TT,Digital.ToS,PWM.ToS,DF Others.Brand,Pin.Interface,I2C.ToS,Terminal.Interface,Arduino IDE.IDE,5V.WV,Analog.ToS,Ethernet.Interface,Prototyping.Scenario,Micro USB.Interface,C++.PL",text:ci,href:"\u002FDFR0222\u002F",active:c},{id:"19326",material_id:g,title:cj,subject:"dfr0392\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764754896,sku:"DFR0392",user_id:s,product:a,default_sort:2672,sort_order_plus:b,_score:e,stock_name_status:j,product_id:1654,product_name:"DFRduino M0 Mainboard (Compatible with Arduino)",category_names:A,product_type:h,category_category_ids:B,tag:"DFR0392, M0, DFRduino M0 Mainboard, M0, Mo, cortex, cortex m0, Nuvoton, NUC123ZD4AN0",pm_tag:a,text:cj,href:"\u002FDFR0392\u002F",active:c},{id:"17424",material_id:g,title:ck,subject:"tel0110\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1764586410,sku:"TEL0110",user_id:s,product:a,default_sort:3017,sort_order_plus:b,_score:e,stock_name_status:j,product_id:1645,product_name:"CurieCore Intel Curie Neuron Module",category_names:"All Products,Artificial Intelligence Hardware,Development Boards,MCU,Others",product_type:h,category_category_ids:"52 184 284 312",tag:"TEL0110, Intel, CurieCore, Curie Core, Intel Curie, Bluetooth, bluetooth 4.0, IMU, Quark, 6-axis, neure, AI",pm_tag:"MP.SL,SPI.ToS,DF Others.Brand,C++.PL,UART.ToS,Hobby.Scenario,I2C.ToS,PWM.ToS,AI.TT,3.3V.WV,Pin.Interface,Other Modules.PF,Digital.ToS",text:ck,href:"\u002FTEL0110\u002F",active:c},{id:"20506",material_id:g,title:cl,subject:"dfr0321\u002F",type:f,platform:i,status:d,show:d,orderBy:b,addtime:1765026644,sku:"DFR0321",user_id:s,product:a,default_sort:1470,sort_order_plus:999,_score:e,stock_name_status:"Discontinued",product_id:1159,product_name:"WiDo - An Arduino Compatible IoT (internet of thing) Board (Discontinued)",category_names:an,product_type:h,category_category_ids:ao,tag:"Cloud,IoT,Internet,WiFi,Node,arduino Leonardo,DFR0321",pm_tag:"DF Others.Brand,IoT.TT,Arduino IDE.IDE,C++.PL,WiFi.ST,Analog.ToS,UART.ToS,5V.WV,Arduino.PF,Digital.ToS,MP.SL,PWM.ToS,I2C.ToS,Prototyping.Scenario,Pin.Interface,Micro USB.Interface",text:cl,href:"\u002FDFR0321\u002F",active:c}]},categorySelects:[{text:cm,value:"docs",selected:m,show:m,hasMore:e},{text:cn,value:"tech_specs",selected:c,show:m},{text:co,value:"projects",selected:c,show:m},{text:ap,value:"blogs",selected:c,show:m},{text:cp,value:"certifications",selected:c,show:m}],wikiData:{aiseo:a,cad:{draftName:"DFR0654_firebeetle-2-esp32-e_cad_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{var:a}},ce:{draftName:"DFR0654_firebeetle-2-esp32-e_ce_v1.0",fileName:"DFR0654_firebeetle-2-esp32-e_ce_v1.0.pdf",fileSize:"878KB",fileUrl:aq,pass:m,select:n,time:1780043520809,urlData:{var:H}},content:"# 4. Specification\n\n**Power Parameters**\n\n| Parameter                | Details                         |\n| :------------------- | :----------------------------------------------------------- |\n| Input Voltage        | USB-C Port: 5V DC\u003Cbr\u003EPH2.0 Connector: 3.7~4.2V Li-ion\u003Cbr\u003EVCC Pin: 5V DC |\n\n\n**MCU Parameters**\n\n| Parameter                | Details                         |\n| :----------- | :----------------------------------------- |\n| Processor    | Xtensa Dual-Core 32-bit LX6 Microprocessor |\n| Clock Speed  | 240 MHz                                    |\n| SRAM         | 520 KB                                     |\n| ROM          | 448 KB                                     |\n| Flash Memory | 4 MB                                       |\n\n **Wireless Parameters**\n \n| Parameter                | Details                         |\n|--------------------------|-------------------------------------|\n| Wi-Fi Standard           | FCC\u002FCE\u002FTELEC\u002FKCC      |\n| Wi-Fi Protocol           | 802.11 b\u002Fg\u002Fn\u002Fd\u002Fe\u002Fi\u002Fk\u002Fr (802.11n, up to 150 Mbps), A-MPDU and A-MSDU aggregation, supports 0.4us protection interval |\n| Wi-Fi Frequency Range    | 2.4~2.5 GHz    |\n| Bluetooth Protocol       | Compliant with Bluetooth V4.2 BR\u002FEDR and BLE standards         |\n| Bluetooth Audio          | CVSD and SBC audio  |\n| Bluetooth Frequency Range | 2.4~2.5GHz       |\n\n**Peripheral Parameters**\n\n| Parameter               | Details                                                      |\n| :---------------------- | :----------------------------------------------------------- |\n| Digital Pins    | × 18 (IO0, IO1, IO2, IO3, IO4, IO12, IO13, IO14, IO15, IO16, IO17, IO18, IO19, IO21, IO22, IO23, IO25, IO26) |\n| Analog Pins  | × 11 (IO0, IO2, IO4, IO12, IO13, IO14, IO15, IO25, IO26, I34, I35) |\n| UART Interfaces         | × 2                                                          |\n| SPI Interface           | × 1                                                          |\n| I2C Interface           | × 1                                                          |\n| I2S Interface           | × 1                                                          |\n| DAC Interfaces          | × 2                                                          |\n| Touch Interfaces        | × 7                                                          |\n| LED PWM Channels        | × 16                                                         |\n| RGB LED                 | WS2812                                                       |\n| Display Interface       | GDI                                                          |\n\n**Physical Parameters** \n\n| Parameter               | Details                 |\n| ----------------------- | ------------------------------- |\n| Module Size             | 25.4mm × 60mm                   |\n| Mounting hole size | hole diameter 2.0mm|\n| Weight                  | 23.4g                           |\n\n## Board Overview\n\n![DFR0564-Board Overview](https:\u002F\u002Fdfimg.dfrobot.com\u002Fnobody\u002Fwiki\u002Fdc5010503489e18cee41000e77b64363.png \"DFR0564-Board Overview\")\n\n| No.  |  Function | Description  |\n| :------------: | :------------: | :------------: |\n| ①  | USB Interface  | Program download and power supply, 4.75V-5.5V compatible  |\n| ②  | Charging Indicator  | Red LED for indicating charging status: 1. Off when fully charged or not charged; 2. On when charging; 3. Quick flash when powered by USB, and no battery connected.   |\n| ③  | User Button  | Controlled by pin IO27\u002FD4  |\n| ④  | Li-ion Battery Port | Support 3.7V-4.2V   |\n| ⑤  | Onboard RGB Light  | WS2812 RGB LED, controlled by pin IO5\u002FD8  |\n| ⑥  | Onboard LED  | LED controlled by pin IO2\u002FD9  |\n| ⑦  | Reset Button  | Press to reset program   |\n| ⑧  | Low-power Solder Jumper Pad  | Designed for low power mode and default to be connected. Slightly cut off the thin wire with a knife to disconnect it. When disconnected, static power consumption can be reduced by 500 μA. The power consumption can be reduced to 2mA after controlling the maincontroller to enter the sleep mode through the program. \u003Cbr\u003E**Note: when the pad is disconnected, you can only drive RGB LED light via the USB Power supply.**    |\n| ⑨  | GDI   | DFRobot dedicated Display interface. Refer to the GDI part of this page.  |\n| ⑩  | ESP32-E Chip  | ESP32-WROOM-32E  |\n\n\n## Pinout\n\n![DFR0654-Pinout](https:\u002F\u002Fdfimg.dfrobot.com\u002F62b2fb5caa613609f271523c\u002Fwiki\u002Fe25b0ab211e60424824371baad2c0c81.png \"DFR0654-Pinout\")\n\n| Categroy  | Description  |\n| :------------: | :------------: |\n| Control  | FireBeetle enable\u002Freset pins    |\n| Touch  | Pin with capacitive touch function  |\n| Analog  | Analog pin  |\n| Port PIN  | Default physical pin number of the chip, which can be used to directly control the corresponding pin  |\n| Arduino IDE   | In Arduino IDE, the pin numbers have been remapped by FireBeetle, and you can directly use this symbol to control the corresponding pin  |\n| RTC PIN  | FireBeetle 2 ESP32-E supports low power function, and in Deep-sleep mode, only RTC pin keeps working and can be used as a wave-up source. When RTC pin is used as an output pin, it keeps outputting level value when the chip is in Deep-sleep mode, while as an input pin, it can wake up the chip from Deep-sleep.   |\n| GND  | Common ground for all power supplies and logics  |\n| Power  | When powered by 5V-USB, VCC outputs about 4.7V and 3V3 outputs 3.3V; When powered by 4V li-ion battery, VCC outputs about 4V and 3V3 outputs 3.3V(Actual measurement)   |\n\nFireBeetle 2 ESP32-E has up to 24 physical GPIOs, which are mainly for connecting peripherals like sensors, actuators, etc. Meanwhile, these IO pins can be multiplexed for other functions such as UART, SPI, I2C and so on. The table below provides users with a detailed description of FireBeetle 2 ESP32-E GPIO. \n\n| Pin Number | Name | Function | ADC | Communication | Remark |\n| --- | --- | --- | --- | --- | --- |\n| GPIO 0 | 0\u002FD5 | Used as input or output | ADC2_CH1 |  | Occupied when using USB transmission |\n| GPIO 1 | 1\u002FTXD | Used as input or output |  | UART0_TX | Occupied when using USB power supply and serial printing |\n| GPIO 2 | 2\u002FD9 | Used as input or output | ADC2_CH2 |  | For controlling onboard LED by outputting digital signal |\n| GPIO 3 | 3\u002FRXD | Used as input or output |  | UART0_RX | Occupied when using USB power supply and serial printing |\n| GPIO 4 | 4\u002FD12 | Used as input or output | ADC2_CH0 |  |  |\n| GPIO 12 | 12\u002FD13 | Used as input or output | ADC2_CH5 |  |  |\n| GPIO 13 | 13\u002FD7 | Used as input or output | ADC2_CH4 |  |  |\n| GPIO 14 | 14\u002FD6 | Used as input or output | ADC2_CH6 |  |  |\n| GPIO 15 | 15\u002FA4 | Used as input or output | ADC2_CH3 |  |  |\n| GPIO 18 | 18\u002FSCK | Used as input or output |  | SPI_SCK |  |\n| GPIO 19 | 19\u002FMISO | Used as input or output |  | SPI_MISO |  |\n| GPIO 21 | 21\u002FSDA | Used as input or output |  | I2C_SDA |  |\n| GPIO 22 | 22\u002FSCL | Used as input or output |  | I2C_SCL |  |\n| GPIO 23 | 23\u002FMOSI | Used as input or output |  | SPI_MOSI |  |\n| GPIO 25 | 25\u002FD2 | Used as input or output | ADC2_CH8 |  | DAC_1（Range: 0-255; Output Voltage: 0-3.3V） |\n| GPIO 26 | 26\u002FD3 | Used as input or output | ADC2_CH9 |  | DAC_2（Range: 0-255; Output Voltage: 0-3.3V） |\n| GPIO 34 | 34\u002FA2 | Used as input only | ADC1_CH6 |  |  |\n| GPIO 35 | 35\u002FA3 | Used as input only | ADC1_CH7 |  |  |\n| GPIO 36 | 36\u002FA0 | Used as input only |  |  |  |\n| GPIO 39 | 39\u002FA1 | Used as input only |  |  |  |\n\n**Note:**\n\n- It is recommended not to multiplex the pin IO0\u002FD5, IO1\u002FTXD and IO3\u002FRX since they will be occupied when using USB-related function. The USB-related circuit design is shown below:\n\n![DFR0654-USB Schematic](https:\u002F\u002Fdfimg.dfrobot.com\u002Fnobody\u002Fwiki\u002Fe085d5db5f0963f3af375017a3174618.png \"DFR0654-USB Schematic\")\n\n- IO34-39 are for input only.\n- FireBeetle 2 ESP32-E has two 8-bit DAC channel that converts 2-way digital signal to 2 analog voltage outputs. Two channels can work independently. DAC circuit is composed of built-in resistors in series and a buffer. The two DACs can be used as reference voltage.\n",datasheet:{draftName:"DFR0654_firebeetle-2-esp32-e_datasheet_v1.0",fileName:"DFR0654_firebeetle-2-esp32-e_datasheet_v1.0.pdf",fileSize:"1019KB",fileUrl:ar,pass:m,select:n,time:1769852003683,urlData:{var:H}},desc:"The FireBeetle 2 ESP32-E is a compact, low-power IoT microcontroller with dual-core chips, supporting WiFi, Bluetooth, and Arduino programming, suitable for a range of applications from smart homes to industrial IoT, with easy integration and extensive online resources.",dimension:{draftName:"DFR0654_firebeetle-2-esp32-e_dimension_v1.0",fileName:"DFR0654_firebeetle-2-esp32-e_dimension_v1.0.png",fileSize:"87KB",fileUrl:as,pass:m,select:n,time:1769851818826,urlData:{var:H}},doc:{draftName:"DFR0654_firebeetle-2-esp32-e_doc_V1.0",fileName:"firebeetle+beetle-EU Declaration of Conformity.pdf",fileSize:"99KB",fileUrl:at,pass:m,select:n,time:1781330218953,urlData:{var:"V1.0"}},driver:{draftName:"DFR0654_firebeetle-2-esp32-e_driver_v1.0",fileName:"DFR0654_firebeetle-2-esp32-e_driver_v1.0.zip",fileSize:"2.55MB",fileUrl:au,pass:m,select:n,time:1769852047930,urlData:{var:H}},en71:{draftName:"DFR0654_firebeetle-2-esp32-e_en71_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{}},fcc:{draftName:"DFR0654_firebeetle-2-esp32-e_fcc_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{}},gitHub:a,ic:{draftName:"DFR0654_firebeetle-2-esp32-e_ic_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{}},kc:{draftName:"DFR0654_firebeetle-2-esp32-e_kc_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{}},layout:{draftName:"DFR0654_firebeetle-2-esp32-e_layout_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{}},library:{draftName:"DFR0654_firebeetle-2-esp32-e_library_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{}},ogDesc:av,ogTitle:aw,pName:"firebeetle-2-esp32-e",pfas:{draftName:"DFR0654_firebeetle-2-esp32-e_pfas_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{}},rcm:{draftName:"DFR0654_firebeetle-2-esp32-e_rcm_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{}},reach:{draftName:"DFR0654_firebeetle-2-esp32-e_reach_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{}},rohs:{draftName:"DFR0654_firebeetle-2-esp32-e_rohs_v1.0",fileName:"DFR0654_firebeetle-2-esp32-e_rohs_v1.0.pdf",fileSize:"526KB",fileUrl:ax,pass:m,select:n,time:1780043533494,urlData:{var:H}},schematics:{draftName:"DFR0654_firebeetle-2-esp32-e_schematics_v1.0",fileName:"DFR0654_firebeetle-2-esp32-e_schematics_v1.0.pdf",fileSize:"205KB",fileUrl:ay,pass:m,select:n,time:1769851840912,urlData:{var:H}},seoDesc:cq,seoKey:cr,seoTitle:az,show:d,sku:C,stpFiles:{draftName:"DFR0654_firebeetle-2-esp32-e_stpfile_v1.0",fileName:"DFR0654_firebeetle-2-esp32-e_stpfile_v1.0.zip",fileSize:"3.24MB",fileUrl:aA,pass:m,select:n,time:1769851952912,urlData:{var:H}},structuredDesc:cs,subjectUrl:a,svg:{draftName:"DFR0654_firebeetle-2-esp32-e_svg_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{}},telec:{draftName:"DFR0654_firebeetle-2-esp32-e_telec_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{}},title:U,type:f,ukca:{draftName:"DFR0654_firebeetle-2-esp32-e_ukca_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{}},weee:{draftName:"DFR0654_firebeetle-2-esp32-e_weee_",fileName:a,fileSize:a,fileUrl:a,pass:c,select:n,time:a,urlData:{}},id:23249,updatetime:"2026-01-31 17:26:40"},techSpecs:"\n\u003Cp\u003E\u003Cstrong\u003EPower Parameters\u003C\u002Fstrong\u003E\u003C\u002Fp\u003E\n\u003Cdiv class=\"table-box\"\u003E\u003Ctable\u003E\n\u003Cthead\u003E\n\u003Ctr\u003E\n\u003Cth \u003EParameter\u003C\u002Fth\u003E\n\u003Cth \u003EDetails\u003C\u002Fth\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Fthead\u003E\n\u003Ctbody\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EInput Voltage\u003C\u002Ftd\u003E\n\u003Ctd \u003EUSB-C Port: 5V DC\u003Cbr\u003EPH2.0 Connector: 3.7~4.2V Li-ion\u003Cbr\u003EVCC Pin: 5V DC\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Ftbody\u003E\n\u003C\u002Ftable\u003E\u003C\u002Fdiv\u003E\n\u003Cp\u003E\u003Cstrong\u003EMCU Parameters\u003C\u002Fstrong\u003E\u003C\u002Fp\u003E\n\u003Cdiv class=\"table-box\"\u003E\u003Ctable\u003E\n\u003Cthead\u003E\n\u003Ctr\u003E\n\u003Cth \u003EParameter\u003C\u002Fth\u003E\n\u003Cth \u003EDetails\u003C\u002Fth\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Fthead\u003E\n\u003Ctbody\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EProcessor\u003C\u002Ftd\u003E\n\u003Ctd \u003EXtensa Dual-Core 32-bit LX6 Microprocessor\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EClock Speed\u003C\u002Ftd\u003E\n\u003Ctd \u003E240 MHz\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003ESRAM\u003C\u002Ftd\u003E\n\u003Ctd \u003E520 KB\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EROM\u003C\u002Ftd\u003E\n\u003Ctd \u003E448 KB\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EFlash Memory\u003C\u002Ftd\u003E\n\u003Ctd \u003E4 MB\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Ftbody\u003E\n\u003C\u002Ftable\u003E\u003C\u002Fdiv\u003E\n\u003Cp\u003E\u003Cstrong\u003EWireless Parameters\u003C\u002Fstrong\u003E\u003C\u002Fp\u003E\n\u003Cdiv class=\"table-box\"\u003E\u003Ctable\u003E\n\u003Cthead\u003E\n\u003Ctr\u003E\n\u003Cth\u003EParameter\u003C\u002Fth\u003E\n\u003Cth\u003EDetails\u003C\u002Fth\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Fthead\u003E\n\u003Ctbody\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EWi-Fi Standard\u003C\u002Ftd\u003E\n\u003Ctd\u003EFCC\u002FCE\u002FTELEC\u002FKCC\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EWi-Fi Protocol\u003C\u002Ftd\u003E\n\u003Ctd\u003E802.11 b\u002Fg\u002Fn\u002Fd\u002Fe\u002Fi\u002Fk\u002Fr (802.11n, up to 150 Mbps), A-MPDU and A-MSDU aggregation, supports 0.4us protection interval\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EWi-Fi Frequency Range\u003C\u002Ftd\u003E\n\u003Ctd\u003E2.4~2.5 GHz\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EBluetooth Protocol\u003C\u002Ftd\u003E\n\u003Ctd\u003ECompliant with Bluetooth V4.2 BR\u002FEDR and BLE standards\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EBluetooth Audio\u003C\u002Ftd\u003E\n\u003Ctd\u003ECVSD and SBC audio\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EBluetooth Frequency Range\u003C\u002Ftd\u003E\n\u003Ctd\u003E2.4~2.5GHz\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Ftbody\u003E\n\u003C\u002Ftable\u003E\u003C\u002Fdiv\u003E\n\u003Cp\u003E\u003Cstrong\u003EPeripheral Parameters\u003C\u002Fstrong\u003E\u003C\u002Fp\u003E\n\u003Cdiv class=\"table-box\"\u003E\u003Ctable\u003E\n\u003Cthead\u003E\n\u003Ctr\u003E\n\u003Cth \u003EParameter\u003C\u002Fth\u003E\n\u003Cth \u003EDetails\u003C\u002Fth\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Fthead\u003E\n\u003Ctbody\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EDigital Pins\u003C\u002Ftd\u003E\n\u003Ctd \u003E× 18 (IO0, IO1, IO2, IO3, IO4, IO12, IO13, IO14, IO15, IO16, IO17, IO18, IO19, IO21, IO22, IO23, IO25, IO26)\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EAnalog Pins\u003C\u002Ftd\u003E\n\u003Ctd \u003E× 11 (IO0, IO2, IO4, IO12, IO13, IO14, IO15, IO25, IO26, I34, I35)\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EUART Interfaces\u003C\u002Ftd\u003E\n\u003Ctd \u003E× 2\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003ESPI Interface\u003C\u002Ftd\u003E\n\u003Ctd \u003E× 1\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EI2C Interface\u003C\u002Ftd\u003E\n\u003Ctd \u003E× 1\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EI2S Interface\u003C\u002Ftd\u003E\n\u003Ctd \u003E× 1\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EDAC Interfaces\u003C\u002Ftd\u003E\n\u003Ctd \u003E× 2\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003ETouch Interfaces\u003C\u002Ftd\u003E\n\u003Ctd \u003E× 7\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003ELED PWM Channels\u003C\u002Ftd\u003E\n\u003Ctd \u003E× 16\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003ERGB LED\u003C\u002Ftd\u003E\n\u003Ctd \u003EWS2812\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EDisplay Interface\u003C\u002Ftd\u003E\n\u003Ctd \u003EGDI\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Ftbody\u003E\n\u003C\u002Ftable\u003E\u003C\u002Fdiv\u003E\n\u003Cp\u003E\u003Cstrong\u003EPhysical Parameters\u003C\u002Fstrong\u003E\u003C\u002Fp\u003E\n\u003Cdiv class=\"table-box\"\u003E\u003Ctable\u003E\n\u003Cthead\u003E\n\u003Ctr\u003E\n\u003Cth\u003EParameter\u003C\u002Fth\u003E\n\u003Cth\u003EDetails\u003C\u002Fth\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Fthead\u003E\n\u003Ctbody\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EModule Size\u003C\u002Ftd\u003E\n\u003Ctd\u003E25.4mm × 60mm\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EMounting hole size\u003C\u002Ftd\u003E\n\u003Ctd\u003Ehole diameter 2.0mm\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EWeight\u003C\u002Ftd\u003E\n\u003Ctd\u003E23.4g\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Ftbody\u003E\n\u003C\u002Ftable\u003E\u003C\u002Fdiv\u003E\n\u003Ch2\u003EBoard Overview\u003C\u002Fh2\u003E\n\u003Cp\u003E\u003Cimg src=\"https:\u002F\u002Fdfimg.dfrobot.com\u002Fnobody\u002Fwiki\u002Fdc5010503489e18cee41000e77b64363_0x0.png.webp\" alt=\"DFR0564-Board Overview\" title=\"DFR0564-Board Overview\"\u003E\u003C\u002Fp\u003E\n\u003Cdiv class=\"table-box\"\u003E\u003Ctable\u003E\n\u003Cthead\u003E\n\u003Ctr\u003E\n\u003Cth \u003ENo.\u003C\u002Fth\u003E\n\u003Cth \u003EFunction\u003C\u002Fth\u003E\n\u003Cth \u003EDescription\u003C\u002Fth\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Fthead\u003E\n\u003Ctbody\u003E\n\u003Ctr\u003E\n\u003Ctd \u003E①\u003C\u002Ftd\u003E\n\u003Ctd \u003EUSB Interface\u003C\u002Ftd\u003E\n\u003Ctd \u003EProgram download and power supply, 4.75V-5.5V compatible\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003E②\u003C\u002Ftd\u003E\n\u003Ctd \u003ECharging Indicator\u003C\u002Ftd\u003E\n\u003Ctd \u003ERed LED for indicating charging status: 1. Off when fully charged or not charged; 2. On when charging; 3. Quick flash when powered by USB, and no battery connected.\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003E③\u003C\u002Ftd\u003E\n\u003Ctd \u003EUser Button\u003C\u002Ftd\u003E\n\u003Ctd \u003EControlled by pin IO27\u002FD4\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003E④\u003C\u002Ftd\u003E\n\u003Ctd \u003ELi-ion Battery Port\u003C\u002Ftd\u003E\n\u003Ctd \u003ESupport 3.7V-4.2V\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003E⑤\u003C\u002Ftd\u003E\n\u003Ctd \u003EOnboard RGB Light\u003C\u002Ftd\u003E\n\u003Ctd \u003EWS2812 RGB LED, controlled by pin IO5\u002FD8\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003E⑥\u003C\u002Ftd\u003E\n\u003Ctd \u003EOnboard LED\u003C\u002Ftd\u003E\n\u003Ctd \u003ELED controlled by pin IO2\u002FD9\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003E⑦\u003C\u002Ftd\u003E\n\u003Ctd \u003EReset Button\u003C\u002Ftd\u003E\n\u003Ctd \u003EPress to reset program\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003E⑧\u003C\u002Ftd\u003E\n\u003Ctd \u003ELow-power Solder Jumper Pad\u003C\u002Ftd\u003E\n\u003Ctd \u003EDesigned for low power mode and default to be connected. Slightly cut off the thin wire with a knife to disconnect it. When disconnected, static power consumption can be reduced by 500 μA. The power consumption can be reduced to 2mA after controlling the maincontroller to enter the sleep mode through the program. \u003Cbr\u003E\u003Cstrong\u003ENote: when the pad is disconnected, you can only drive RGB LED light via the USB Power supply.\u003C\u002Fstrong\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003E⑨\u003C\u002Ftd\u003E\n\u003Ctd \u003EGDI\u003C\u002Ftd\u003E\n\u003Ctd \u003EDFRobot dedicated Display interface. Refer to the GDI part of this page.\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003E⑩\u003C\u002Ftd\u003E\n\u003Ctd \u003EESP32-E Chip\u003C\u002Ftd\u003E\n\u003Ctd \u003EESP32-WROOM-32E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Ftbody\u003E\n\u003C\u002Ftable\u003E\u003C\u002Fdiv\u003E\n\u003Ch2\u003EPinout\u003C\u002Fh2\u003E\n\u003Cp\u003E\u003Cimg src=\"https:\u002F\u002Fdfimg.dfrobot.com\u002F62b2fb5caa613609f271523c\u002Fwiki\u002Fe25b0ab211e60424824371baad2c0c81_0x0.png.webp\" alt=\"DFR0654-Pinout\" title=\"DFR0654-Pinout\"\u003E\u003C\u002Fp\u003E\n\u003Cdiv class=\"table-box\"\u003E\u003Ctable\u003E\n\u003Cthead\u003E\n\u003Ctr\u003E\n\u003Cth \u003ECategroy\u003C\u002Fth\u003E\n\u003Cth \u003EDescription\u003C\u002Fth\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Fthead\u003E\n\u003Ctbody\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EControl\u003C\u002Ftd\u003E\n\u003Ctd \u003EFireBeetle enable\u002Freset pins\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003ETouch\u003C\u002Ftd\u003E\n\u003Ctd \u003EPin with capacitive touch function\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EAnalog\u003C\u002Ftd\u003E\n\u003Ctd \u003EAnalog pin\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EPort PIN\u003C\u002Ftd\u003E\n\u003Ctd \u003EDefault physical pin number of the chip, which can be used to directly control the corresponding pin\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EArduino IDE\u003C\u002Ftd\u003E\n\u003Ctd \u003EIn Arduino IDE, the pin numbers have been remapped by FireBeetle, and you can directly use this symbol to control the corresponding pin\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003ERTC PIN\u003C\u002Ftd\u003E\n\u003Ctd \u003EFireBeetle 2 ESP32-E supports low power function, and in Deep-sleep mode, only RTC pin keeps working and can be used as a wave-up source. When RTC pin is used as an output pin, it keeps outputting level value when the chip is in Deep-sleep mode, while as an input pin, it can wake up the chip from Deep-sleep.\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EGND\u003C\u002Ftd\u003E\n\u003Ctd \u003ECommon ground for all power supplies and logics\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd \u003EPower\u003C\u002Ftd\u003E\n\u003Ctd \u003EWhen powered by 5V-USB, VCC outputs about 4.7V and 3V3 outputs 3.3V; When powered by 4V li-ion battery, VCC outputs about 4V and 3V3 outputs 3.3V(Actual measurement)\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Ftbody\u003E\n\u003C\u002Ftable\u003E\u003C\u002Fdiv\u003E\n\u003Cp\u003EFireBeetle 2 ESP32-E has up to 24 physical GPIOs, which are mainly for connecting peripherals like sensors, actuators, etc. Meanwhile, these IO pins can be multiplexed for other functions such as UART, SPI, I2C and so on. The table below provides users with a detailed description of FireBeetle 2 ESP32-E GPIO.\u003C\u002Fp\u003E\n\u003Cdiv class=\"table-box\"\u003E\u003Ctable\u003E\n\u003Cthead\u003E\n\u003Ctr\u003E\n\u003Cth\u003EPin Number\u003C\u002Fth\u003E\n\u003Cth\u003EName\u003C\u002Fth\u003E\n\u003Cth\u003EFunction\u003C\u002Fth\u003E\n\u003Cth\u003EADC\u003C\u002Fth\u003E\n\u003Cth\u003ECommunication\u003C\u002Fth\u003E\n\u003Cth\u003ERemark\u003C\u002Fth\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Fthead\u003E\n\u003Ctbody\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 0\u003C\u002Ftd\u003E\n\u003Ctd\u003E0\u002FD5\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003EADC2_CH1\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003EOccupied when using USB transmission\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 1\u003C\u002Ftd\u003E\n\u003Ctd\u003E1\u002FTXD\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003EUART0_TX\u003C\u002Ftd\u003E\n\u003Ctd\u003EOccupied when using USB power supply and serial printing\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 2\u003C\u002Ftd\u003E\n\u003Ctd\u003E2\u002FD9\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003EADC2_CH2\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003EFor controlling onboard LED by outputting digital signal\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 3\u003C\u002Ftd\u003E\n\u003Ctd\u003E3\u002FRXD\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003EUART0_RX\u003C\u002Ftd\u003E\n\u003Ctd\u003EOccupied when using USB power supply and serial printing\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 4\u003C\u002Ftd\u003E\n\u003Ctd\u003E4\u002FD12\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003EADC2_CH0\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 12\u003C\u002Ftd\u003E\n\u003Ctd\u003E12\u002FD13\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003EADC2_CH5\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 13\u003C\u002Ftd\u003E\n\u003Ctd\u003E13\u002FD7\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003EADC2_CH4\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 14\u003C\u002Ftd\u003E\n\u003Ctd\u003E14\u002FD6\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003EADC2_CH6\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 15\u003C\u002Ftd\u003E\n\u003Ctd\u003E15\u002FA4\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003EADC2_CH3\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 18\u003C\u002Ftd\u003E\n\u003Ctd\u003E18\u002FSCK\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003ESPI_SCK\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 19\u003C\u002Ftd\u003E\n\u003Ctd\u003E19\u002FMISO\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003ESPI_MISO\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 21\u003C\u002Ftd\u003E\n\u003Ctd\u003E21\u002FSDA\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003EI2C_SDA\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 22\u003C\u002Ftd\u003E\n\u003Ctd\u003E22\u002FSCL\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003EI2C_SCL\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 23\u003C\u002Ftd\u003E\n\u003Ctd\u003E23\u002FMOSI\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003ESPI_MOSI\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 25\u003C\u002Ftd\u003E\n\u003Ctd\u003E25\u002FD2\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003EADC2_CH8\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003EDAC_1（Range: 0-255; Output Voltage: 0-3.3V）\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 26\u003C\u002Ftd\u003E\n\u003Ctd\u003E26\u002FD3\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input or output\u003C\u002Ftd\u003E\n\u003Ctd\u003EADC2_CH9\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003EDAC_2（Range: 0-255; Output Voltage: 0-3.3V）\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 34\u003C\u002Ftd\u003E\n\u003Ctd\u003E34\u002FA2\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input only\u003C\u002Ftd\u003E\n\u003Ctd\u003EADC1_CH6\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 35\u003C\u002Ftd\u003E\n\u003Ctd\u003E35\u002FA3\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input only\u003C\u002Ftd\u003E\n\u003Ctd\u003EADC1_CH7\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 36\u003C\u002Ftd\u003E\n\u003Ctd\u003E36\u002FA0\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input only\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003Ctr\u003E\n\u003Ctd\u003EGPIO 39\u003C\u002Ftd\u003E\n\u003Ctd\u003E39\u002FA1\u003C\u002Ftd\u003E\n\u003Ctd\u003EUsed as input only\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003Ctd\u003E\u003C\u002Ftd\u003E\n\u003C\u002Ftr\u003E\n\u003C\u002Ftbody\u003E\n\u003C\u002Ftable\u003E\u003C\u002Fdiv\u003E\n\u003Cp\u003E\u003Cstrong\u003ENote:\u003C\u002Fstrong\u003E\u003C\u002Fp\u003E\n\u003Cul\u003E\n\u003Cli\u003EIt is recommended not to multiplex the pin IO0\u002FD5, IO1\u002FTXD and IO3\u002FRX since they will be occupied when using USB-related function. The USB-related circuit design is shown below:\u003C\u002Fli\u003E\n\u003C\u002Ful\u003E\n\u003Cp\u003E\u003Cimg src=\"https:\u002F\u002Fdfimg.dfrobot.com\u002Fnobody\u002Fwiki\u002Fe085d5db5f0963f3af375017a3174618_0x0.png.webp\" alt=\"DFR0654-USB Schematic\" title=\"DFR0654-USB Schematic\"\u003E\u003C\u002Fp\u003E\n\u003Cul\u003E\n\u003Cli\u003EIO34-39 are for input only.\u003C\u002Fli\u003E\n\u003Cli\u003EFireBeetle 2 ESP32-E has two 8-bit DAC channel that converts 2-way digital signal to 2 analog voltage outputs. Two channels can work independently. DAC circuit is composed of built-in resistors in series and a buffer. The two DACs can be used as reference voltage.\u003C\u002Fli\u003E\n\u003C\u002Ful\u003E\n",downloadResources:[{text:ct,link:as,icon:"icon-Dimension_nor",download:m},{text:cu,link:ay,icon:"icon-Schematics_nor",download:m},{text:cv,link:aA,icon:"icon-a-STPFiles_nor",download:m},{text:cw,link:ar,icon:"icon-Datasheet_nor",download:m},{text:cx,link:au,icon:"icon-Driver_nor",download:m}],certifications:[{text:cy,link:aq},{text:cz,link:ax},{text:cA,link:at}],product:{product:{attribute:{black_friday_event_tags:"[{\"name\":\"Black Friday 2025\",\"sort_order\":15},{\"name\":\"enjoy discounts on the GLOBAL website\",\"sort_order\":17},{\"name\":\"ESP32 GLOBAL\",\"sort_order\":17},{\"name\":\"enjoy discounts on the USA-1 website\",\"sort_order\":15},{\"name\":\"ESP32 USA-1\",\"sort_order\":15}]",description:"The ESP32-E controller board supports WiFi, Bluetooth, Arduino, and will soon support Scratch and MicroPython. It's ideal for IoT applications.",meta_description:"Discover FireBeetle 2 ESP32-E, a versatile IoT controller with dual-core chips, WiFi\u002FBluetooth support, and low power consumption for smart applications.",meta_keywords:"FireBeetle 2, ESP32, IoT, WiFi, Bluetooth, Arduino, MicroPython, smart home, low power, wearable devices, communication",og_description:"Harness the power of FireBeetle 2 ESP32-E for IoT solutions! Dual-core, WiFi\u002FBluetooth, and Arduino support make it perfect for your smart projects. ",og_title:"FireBeetle 2 ESP32-E: Unleash IoT Potential with Dual-Core Power!",package_coupon_text:a,package_coupon_url:a,package_option:"[{\"option_name\":\"\",\"required\":\"0\",\"sort_order\":\"0\"}]",package_original_price_range:a,package_price_range:a,package_sub_fixed_amount:N,package_sub_percentage:N,package_type:N,structured_description:"FireBeetle 2 ESP32-E is a dual-core IoT controller with WiFi and Bluetooth, ideal for smart home and industrial IoT applications.",summary:"FireBeetle 2 ESP32-E is a dual-core IoT board offering WiFi\u002FBluetooth support and low power for smart home and industrial applications.",title:"FireBeetle 2 ESP32-E: IoT Marvel with Dual-Core Power"},available_for_sale:"Yes",black_friday_event_tags:[{name:"Black Friday 2025",sort_order:Y},{name:"enjoy discounts on the GLOBAL website",sort_order:cB},{name:"ESP32 GLOBAL",sort_order:cB},{name:"enjoy discounts on the USA-1 website",sort_order:Y},{name:"ESP32 USA-1",sort_order:Y}],category:a,category_category_ids:v,category_names:u,cdy_type:a,create_time:1612108800,customer_group_id:cC,date_added:cD,date_available:cD,date_modified:"2026-01-26T10:46:54Z",date_updated:"2026-09-11T09:55:02Z",default_sort:bm,discontinued_product:a,discount:b,discount9:7.9,display_price:cE,ean:"6959420918362",for_search_category_names:"all boards &amp; esp8266 \u002F esp8266) internet esp32 firebeetle of things - products development esp32\u002Fesp8266 (esp32 iot mcu",for_search_meta_keyword:"firebeetle 2 esp32-e dfr0654",for_search_model:"dfr0654",for_search_pm_tag:"digital.tos mp.sl esp8266.pf 4.0.st bluetooth i2c.tos c++.pl mind+.ide firebeetle.brand analog.tos type c.interface prototyping.scenario iot.tt ph2.0.interface pin.interface wifi.st ide.ide 3.3v.wv esp32 & uart.tos firebeetle.ff arduino",for_search_product_name:"512kb &amp; firebeetle iot microcontroller \u002F wi-fi bluetooth) 2 esp32-e (32m supports",for_search_tag:"fpc bluetooth spi communication internet things 2 i2c firebeetle wireless of iot dfr0654 esp32 gdi wifi",height:aB,href:"https:\u002F\u002Fwww.dfrobot.com\u002Fproduct-2195.html",image:"https:\u002F\u002Fdfimg.dfrobot.com\u002Fenshop\u002FDFR0654\u002FDFR0654_Main_01.jpg",image_alt:aC,isbn:a,jan:a,landing_tag:a,length:aB,length_class_id:d,local_warehouse_quantity:99,location:"Shanghai",main_category_category_id:"184",manufacturer:x,manufacturer_id:cF,maxquantity:b,meta_keyword:"FireBeetle 2 ESP32-E, dfr0654",minimum:d,model:C,mpn:a,name:V,original_price:cE,pm_tag:bo,points:N,price:J,product_90_quantity:cG,product_90_times:56,product_90_times_rank:26,product_90_uv:390769,product_90_uv_rank:18,product_attributes:"{\"black_friday_event_tags\":\"[{\\\"name\\\":\\\"Black Friday 2025\\\",\\\"sort_order\\\":15},{\\\"name\\\":\\\"enjoy discounts on the GLOBAL website\\\",\\\"sort_order\\\":17},{\\\"name\\\":\\\"ESP32 GLOBAL\\\",\\\"sort_order\\\":17},{\\\"name\\\":\\\"enjoy discounts on the USA-1 website\\\",\\\"sort_order\\\":15},{\\\"name\\\":\\\"ESP32 USA-1\\\",\\\"sort_order\\\":15}]\",\"description\":\"The ESP32-E controller board supports WiFi, Bluetooth, Arduino, and will soon support Scratch and MicroPython. It's ideal for IoT applications.\",\"meta_description\":\"Discover FireBeetle 2 ESP32-E, a versatile IoT controller with dual-core chips, WiFi\u002FBluetooth support, and low power consumption for smart applications.\",\"meta_keywords\":\"FireBeetle 2, ESP32, IoT, WiFi, Bluetooth, Arduino, MicroPython, smart home, low power, wearable devices, communication\",\"og_description\":\"Harness the power of FireBeetle 2 ESP32-E for IoT solutions! Dual-core, WiFi\u002FBluetooth, and Arduino support make it perfect for your smart projects. \",\"og_title\":\"FireBeetle 2 ESP32-E: Unleash IoT Potential with Dual-Core Power!\",\"package_coupon_text\":\"\",\"package_coupon_url\":\"\",\"package_option\":\"[{\\\"option_name\\\":\\\"\\\",\\\"required\\\":\\\"0\\\",\\\"sort_order\\\":\\\"0\\\"}]\",\"package_original_price_range\":\"\",\"package_price_range\":\"\",\"package_sub_fixed_amount\":\"0\",\"package_sub_percentage\":\"0\",\"package_type\":\"0\",\"structured_description\":\"FireBeetle 2 ESP32-E is a dual-core IoT controller with WiFi and Bluetooth, ideal for smart home and industrial IoT applications.\",\"summary\":\"FireBeetle 2 ESP32-E is a dual-core IoT board offering WiFi\u002FBluetooth support and low power for smart home and industrial applications.\",\"title\":\"FireBeetle 2 ESP32-E: IoT Marvel with Dual-Core Power\"}",product_id:af,product_name:V,product_type:h,quantity:b,quantity_USA_1:b,quantity_status:cH,quantity_status_USA_1:cH,sale_sort:cG,sales:b,score:b,shipping:cI,sku:C,sort_order:b,sort_order_plus:b,source:cI,special:J,special9:b,special_end:a,special_end_time:b,special_priority:b,special_start_time:b,status:d,stock_name_status:j,stock_status:j,stock_status_id:Z,stock_us:d,subtract:d,tag:bn,tax_class_id:b,terminal_maximum:b,terminal_minimum:d,terminal_reward:N,time_left_special:-1789140662,upc:a,upload_file:a,us_warehouse_quantity:69,video_link:a,video_thumb:a,viewed:228534,vimeo_link:a,weight:e,weight_class_id:bk,width:aB},price_info:{product_id:af,origin_price:J,anniversary_discounted_sub_average_price:b,special_sub_average_price:b,tiered_sub_average_price:b,vip_sub_average_price:b,coupon_sub_average_price:b,special_price:b,tiered_price:b,origin_quantity:d,anniversary_discounted_quantity:b,special_quantity:b,tiered_quantity:b,vip_quantity:d,coupon_quantity:b,package_sub_average_price:b,item_total_price:J,item_subtotal_price:J,distributor_discount_sub_average_price:b,distributor_discount_quantity:b,product_weight:.026000000000000002,product_sku:C,add_on_deal_sub_average_price:b,add_on_deal_quantity:b}},inSkuWhiteList:c,projects:[cJ,cN,cQ,cT,cV,{id:"16538",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F60d184c4aa9508d63a4149e4\u002Fcommunity\u002Fdfc36748713caac9c29b6309e6fc0262.PNG",source:p,title:cY,desc:k,authorName:cZ,authorImg:"https:\u002F\u002Fdfimg.dfrobot.com\u002F60d184c4aa9508d63a4149e4\u002Fcommunity\u002F17fe4a0bc0375c5e92ecefc0270ba1b8.jpg",authorUrl:"https:\u002F\u002Fcommunity.dfrobot.com\u002Fuser-7304.html",showTime:"Jan 23, 2025",url:c_},{id:"16593",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F652ce179aa9508d63a4326b8\u002Fcommunity\u002F4bb7636a6954614f8ef3a08fd3eae1ba.jpg",source:p,title:c$,desc:k,authorName:da,authorImg:"https:\u002F\u002Fdfimg.dfrobot.com\u002F652ce179aa9508d63a4326b8\u002Fcommunity\u002F9550eb40aafd24960d2d6dd41dc42739.jpg",authorUrl:"https:\u002F\u002Fcommunity.dfrobot.com\u002Fuser-12606.html",showTime:"Jun 06, 2024",url:db},{id:"16581",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F61409c2aaa9508d63a416e93\u002Fcommunity\u002Fd22ec798c3246616da6670e5ea8e195d.jpg",source:p,title:dc,desc:k,authorName:K,authorImg:dd,authorUrl:aD,showTime:"Feb 22, 2024",url:de},{id:"16572",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F5eef6b86c913a99430e3e61d\u002Fcommunity\u002F82f4fb9d46a55e3966ca31951a46bbbe.JPG",source:p,title:df,desc:k,authorName:L,authorImg:aF,authorUrl:aG,showTime:"Jan 17, 2024",url:dg},{id:"16567",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F5eef6b86c913a99430e3e61d\u002Fcommunity\u002F4a36303e61b7263612fbcf9459b666fc.jpg",source:p,title:dh,desc:k,authorName:L,authorImg:aF,authorUrl:aG,showTime:"Dec 30, 2023",url:di},{id:"16563",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F637e2368aa9508d63a428447\u002Fcommunity\u002F71ae5c723105a7d4e9a392ebf1db24eb.png",source:p,title:_,desc:k,authorName:$,authorImg:"https:\u002F\u002Fdfimg.dfrobot.com\u002F637e2368aa9508d63a428447\u002Fmakelog\u002F4704aad1ba7b3a1a3f5ddd51d8447b79.png",authorUrl:cU,showTime:"Dec 05, 2023",url:aa},{id:"16537",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F61238b99aa9508d63a416722\u002Fcommunity\u002Fccc61e38f1136312daa42d5d9e133530.png",source:p,title:dj,desc:k,authorName:ab,authorImg:dk,authorUrl:dl,showTime:"Jul 26, 2023",url:dm},{id:"16503",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F5d3c06d50ad96a3f659ed74c\u002Fcommunity\u002F6dc2a47b835fdb3cd549dee2dd2ff119.png",source:p,title:dn,desc:k,authorName:F,authorImg:ac,authorUrl:ad,showTime:"Mar 02, 2023",url:do0},{id:"16485",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F61238b99aa9508d63a416722\u002Fmakelog\u002Ffec594bb62641041cd39ce519b0222cc.png",source:p,title:dp,desc:k,authorName:ab,authorImg:dk,authorUrl:dl,showTime:"Nov 01, 2022",url:dq},{id:"16480",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F5d3c06d50ad96a3f659ed74c\u002Fmakelog\u002F89cac60d82972b0d67efa84b61fb2983.png",source:p,title:dr,desc:k,authorName:F,authorImg:ac,authorUrl:ad,showTime:"Oct 28, 2022",url:ds},{id:"16471",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F61409c2aaa9508d63a416e93\u002Fmakelog\u002Fdeea8da9141d974d6e3ac9b9517b71b2.jpg",source:p,title:dt,desc:k,authorName:K,authorImg:dd,authorUrl:aD,showTime:"May 12, 2022",url:du},{id:"16456",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F5d3c06d50ad96a3f659ed74c\u002Fmakelog\u002F14afaf64465ccab70ef72867558bcbc4.png",source:p,title:dv,desc:k,authorName:F,authorImg:ac,authorUrl:ad,showTime:"Nov 01, 2021",url:dw},{id:"16457",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F5d3c06d50ad96a3f659ed74c\u002Fmakelog\u002F7794d606aa6a6528c4902c3a02358254.jpg",source:p,title:dx,desc:k,authorName:F,authorImg:ac,authorUrl:ad,showTime:"Oct 25, 2021",url:dy}],tutorials:[],courses:[],blogs:[dz,dA,dB,dC,dD,{id:"17992",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002Fenshop\u002Fbolg\u002F504f1ea37cfae19394d4a0fc36068bc4",source:z,title:"ESP32 Arduino Tutorials Menu",desc:"We’ve listed all the DFRobot ESP32 Arduino tutorials in this article.",authorName:x,authorImg:a,authorUrl:k,showTime:"Apr 20, 2021",url:"https:\u002F\u002Fwww.dfrobot.com\u002Fblog-1571.html"},{id:"17984",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002Fenshop\u002Fbolg\u002F5a1923fd18155857389c3735383c4854",source:z,title:"ESP32 PS3 and PS4 Tutorials Menu",desc:"We’ve listed all the DFRobot ESP32 PS3 &amp;amp;amp; PS4 tutorials in this article.",authorName:x,authorImg:a,authorUrl:k,showTime:O,url:"https:\u002F\u002Fwww.dfrobot.com\u002Fblog-1576.html"},{id:"17985",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002Fenshop\u002Fbolg\u002F6de4271910a568858f3f6f7a42438cef",source:z,title:"ESP32 Espruino Tutorials Menu",desc:"We’ve listed all the DFRobot ESP32 Espruino tutorials in this article. ",authorName:x,authorImg:a,authorUrl:k,showTime:O,url:"https:\u002F\u002Fwww.dfrobot.com\u002Fblog-1577.html"},{id:"17986",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002Fenshop\u002Fbolg\u002Fbcc664a5f2a8e511f8dae9d34f2b16eb",source:z,title:"250+ Must-read Tutorials for Learning ESP32 and Arduino",desc:"Start your journey into the world of ESP32 development with DFRobot's comprehensive tutorials covering all the essentials. ",authorName:x,authorImg:a,authorUrl:k,showTime:"Apr 29, 2021",url:"https:\u002F\u002Fwww.dfrobot.com\u002Fblog-1578.html"},{id:"17954",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F5f7df1a4c913a99430e408bf\u002Fcmsen\u002F09605d95c6a95fd2bbcaa096e5991a43.jpg",source:z,title:"TinyML Voice Recognition: ESP32, Arduino, STM32 Hardware Compared",desc:"Explore the best TinyML hardware for voice recognition with a thorough guide comparing ESP32, Arduino, and STM32F746G-DISCO.",authorName:x,authorImg:a,authorUrl:k,showTime:"Sep 23, 2024",url:"https:\u002F\u002Fwww.dfrobot.com\u002Fblog-14005.html"},{id:"17911",thumb:"https:\u002F\u002Fdfimg.dfrobot.com\u002F5f7df1a4c913a99430e408bf\u002Fcmsen\u002F9da937cb85fc69e56c45bd8be59015ff.jpg",source:z,title:"Comparisons between FireBeetle ESP32, ESP8266, ESP32 C6, and ESP32 S3",desc:"Discover the differences and similarities between FireBeetle ESP32, ESP8266 and ESP32 S3 microcontrollers in this comprehensive comparison guide.  Make an informed choice for project requirements.",authorName:x,authorImg:a,authorUrl:k,showTime:"Sep 25, 2023",url:"https:\u002F\u002Fwww.dfrobot.com\u002Fblog-13438.html"}],displayedProjects:[cJ,cN,cQ,cT,cV],displayedCourses:[],displayedBlogs:[dz,dA,dB,dC,dD],docs:[{desc:a,develop:a,id:dE,modify:c,modifyTime:t,name:aH,reference:b,shortTitle:aH,subject:"dfr0654\u002Fdocs\u002F23250",tasks:[],title:aH,wikiid:dE,text:dF,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23250",target:o,docIndex:d,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:dG,modify:c,modifyTime:t,name:aI,reference:b,shortTitle:aI,subject:"dfr0654\u002Fdocs\u002F23251",tasks:[],title:aI,wikiid:dG,text:dH,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23251",target:o,docIndex:aJ,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:dI,modify:c,modifyTime:t,name:aK,reference:b,shortTitle:aK,subject:"dfr0654\u002Fdocs\u002F23252",tasks:[],title:aK,wikiid:dI,text:dJ,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23252",target:o,docIndex:aL,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:dK,modify:c,modifyTime:t,name:aM,reference:b,shortTitle:aM,subject:"dfr0654\u002Fdocs\u002F23253",tasks:[],title:aM,wikiid:dK,text:dL,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23253",target:o,docIndex:aN,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:dM,modify:c,modifyTime:t,name:aO,reference:b,shortTitle:aO,subject:"dfr0654\u002Fdocs\u002F23254",tasks:[],title:aO,wikiid:dM,text:dN,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23254",target:o,docIndex:Z,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:dO,modify:c,modifyTime:t,name:aP,reference:b,shortTitle:aP,subject:"dfr0654\u002Fdocs\u002F23257",tasks:[],title:aP,wikiid:dO,text:dP,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23257",target:o,docIndex:6,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:dQ,modify:c,modifyTime:t,name:aQ,reference:b,shortTitle:aQ,subject:"dfr0654\u002Fdocs\u002F23258",tasks:[],title:aQ,wikiid:dQ,text:dR,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23258",target:o,docIndex:7,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:dS,modify:c,modifyTime:t,name:aR,reference:b,shortTitle:aR,subject:"dfr0654\u002Fdocs\u002F23255",tasks:[],title:aR,wikiid:dS,text:dT,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23255",target:o,docIndex:cC,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:dU,modify:c,modifyTime:t,name:aS,reference:b,shortTitle:aS,subject:"dfr0654\u002Fdocs\u002F23256",tasks:[],title:aS,wikiid:dU,text:dV,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23256",target:o,docIndex:9,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:dW,modify:c,modifyTime:t,name:aT,reference:b,shortTitle:aT,subject:"dfr0654\u002Fdocs\u002F23259",tasks:[],title:aT,wikiid:dW,text:dX,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23259",target:o,docIndex:10,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:dY,modify:c,modifyTime:t,name:aU,reference:b,shortTitle:aU,subject:"dfr0654\u002Fdocs\u002F23261",tasks:[],title:aU,wikiid:dY,text:dZ,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23261",target:o,docIndex:cF,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:d_,modify:c,modifyTime:t,name:aV,reference:b,shortTitle:aV,subject:"dfr0654\u002Fdocs\u002F23260",tasks:[],title:aV,wikiid:d_,text:d$,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23260",target:o,docIndex:12,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:ea,modify:c,modifyTime:t,name:aW,reference:b,shortTitle:aW,subject:"dfr0654\u002Fdocs\u002F23262",tasks:[],title:aW,wikiid:ea,text:eb,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23262",target:o,docIndex:13,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:ec,modify:c,modifyTime:t,name:aX,reference:b,shortTitle:aX,subject:"dfr0654\u002Fdocs\u002F23263",tasks:[],title:aX,wikiid:ec,text:ed,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23263",target:o,docIndex:14,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:ee,modify:c,modifyTime:t,name:aY,reference:b,shortTitle:aY,subject:"dfr0654\u002Fdocs\u002F23264",tasks:[],title:aY,wikiid:ee,text:ef,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23264",target:o,docIndex:Y,children:[],expand:c,active:c,class:w},{desc:a,develop:a,id:eg,modify:c,modifyTime:t,name:P,reference:d,shortTitle:P,subject:"dfr0654\u002Fdocs\u002F23265",tasks:[],title:P,wikiid:eg,text:P,isDir:c,href:"\u002Fdfr0654\u002Fdocs\u002F23265",target:o,docIndex:b,children:[],expand:c,active:c,class:"reference"}],faqs:[{question:eh,answer:ei,create_time:"2024-07-11 12:51:22",from_user_id:aZ,to_user_id:a_,project_id:"374086",expand:c,isAfterSalesFaq:m},{question:ej,answer:ek,create_time:"2025-07-24 15:26:13",from_user_id:aZ,to_user_id:a_,project_id:"374087",expand:c,isAfterSalesFaq:m},{question:el,answer:em,create_time:"2025-07-24 15:25:51",from_user_id:aZ,to_user_id:a_,project_id:"374085",expand:c,isAfterSalesFaq:m}],faqLink:"https:\u002F\u002Fwww.dfrobot.com\u002Fforum\u002F?c=785&t=632",seo_tdk:{title:az,description:cq,keywords:cr},seo_schema:{type:"application\u002Fld+json",json:{"@context":"https:\u002F\u002Fschema.org","@graph":[{"@type":"TechArticle","@id":"https:\u002F\u002Fwiki.dfrobot.com\u002FDFR0654\u002F#article",headline:az,description:cs,keywords:["FireBeetle 2"," ESP32-E"," IoT microcontroller"," Wi-Fi"," Bluetooth"," Arduino compatible"," low power"," smart home"," wearable devices"," IoT projects"],image:{"@id":a$},dateModified:"2026-01-31",author:{"@id":ba},publisher:{"@id":ba},speakable:{"@type":"SpeakableSpecification",cssSelector:[".wiki-introduction .desc"]},subjectOf:[{"@type":I,name:ct,url:as,fileFormat:"image\u002Fpng"},{"@type":I,name:cu,url:ay,fileFormat:en},{"@type":I,name:cv,url:aA,fileFormat:eo},{"@type":I,name:cw,url:ar,fileFormat:en},{"@type":I,name:cx,url:au,fileFormat:eo},{"@type":I,name:dF,url:k,description:a},{"@type":y,name:dH,url:k,description:a},{"@type":y,name:dJ,url:k,description:a},{"@type":y,name:dL,url:k,description:a},{"@type":y,name:dN,url:k,description:a},{"@type":y,name:dP,url:k,description:a},{"@type":y,name:dR,url:k,description:a},{"@type":y,name:dT,url:k,description:a},{"@type":y,name:dV,url:k,description:a},{"@type":y,name:dX,url:k,description:a},{"@type":y,name:dZ,url:k,description:a},{"@type":y,name:d$,url:k,description:a},{"@type":y,name:eb,url:k,description:a},{"@type":y,name:ed,url:k,description:a},{"@type":y,name:ef,url:k,description:a},{"@type":I,name:P,url:k,description:a},{"@type":q,name:cK,author:{"@type":r,name:cL},url:cM},{"@type":q,name:cO,author:{"@type":r,name:K},url:cP},{"@type":q,name:cR,author:{"@type":r,name:cS},url:aE},{"@type":q,name:_,author:{"@type":r,name:$},url:aa},{"@type":q,name:cW,author:{"@type":r,name:L},url:cX},{"@type":q,name:cY,author:{"@type":r,name:cZ},url:c_},{"@type":q,name:c$,author:{"@type":r,name:da},url:db},{"@type":q,name:dc,author:{"@type":r,name:K},url:de},{"@type":q,name:df,author:{"@type":r,name:L},url:dg},{"@type":q,name:dh,author:{"@type":r,name:L},url:di},{"@type":q,name:_,author:{"@type":r,name:$},url:aa},{"@type":q,name:dj,author:{"@type":r,name:ab},url:dm},{"@type":q,name:dn,author:{"@type":r,name:F},url:do0},{"@type":q,name:dp,author:{"@type":r,name:ab},url:dq},{"@type":q,name:dr,author:{"@type":r,name:F},url:ds},{"@type":q,name:dt,author:{"@type":r,name:K},url:du},{"@type":q,name:dv,author:{"@type":r,name:F},url:dw},{"@type":q,name:dx,author:{"@type":r,name:F},url:dy}],mainEntity:{"@type":"ItemList",name:"Wiki Sections",itemListElement:[{"@type":D,position:d,url:"https:\u002F\u002Fwiki.dfrobot.com\u002FDFR0654\u002F#docs",name:cm},{"@type":D,position:aJ,url:"https:\u002F\u002Fwiki.dfrobot.com\u002FDFR0654\u002F#tech_specs",name:cn},{"@type":D,position:aL,url:"https:\u002F\u002Fwiki.dfrobot.com\u002FDFR0654\u002F#projects",name:co},{"@type":D,position:aN,url:"https:\u002F\u002Fwiki.dfrobot.com\u002FDFR0654\u002F#blogs",name:ap},{"@type":D,position:Z,url:"https:\u002F\u002Fwiki.dfrobot.com\u002FDFR0654\u002F#certifications",name:cp}]},about:{"@type":"Thing",name:V,sku:C,"@id":"https:\u002F\u002Fwww.dfrobot.com\u002Fproduct-2195.html#product",image:{"@id":a$},offers:{"@type":"Offer",price:J,priceCurrency:bb},isPartOf:{"@type":"CreativeWorkSeries","@id":"https:\u002F\u002Fwiki.dfrobot.com\u002FDFR0654\u002F#series",name:U,aggregateRating:{"@type":"AggregateRating",ratingValue:Z,ratingCount:d,name:"Documentation Helpfulness"}},hasCertification:[{"@type":bc,certificationName:cy,url:aq},{"@type":bc,certificationName:cz,url:ax},{"@type":bc,certificationName:cA,url:at}]}},{"@type":"CollectionPage","@id":"https:\u002F\u002Fwiki.dfrobot.com\u002FDFR0654\u002F#webpage",url:"https:\u002F\u002Fwiki.dfrobot.com\u002FDFR0654\u002F",name:a,mainEntity:{"@id":"https:\u002F\u002Fwiki.dfrobot.com\u002FDFR0654#article"},breadcrumb:{"@id":ep}},{"@type":"BreadcrumbList","@id":ep,itemListElement:[{"@type":D,position:d,name:f,item:eq},{"@type":D,position:aJ,name:G,item:"https:\u002F\u002Fwiki.dfrobot.com\u002Fcategory-184\u002F"},{"@type":D,position:aL,name:T,item:"https:\u002F\u002Fwiki.dfrobot.com\u002Fcategory-312\u002F"},{"@type":D,position:aN,name:C,item:"https:\u002F\u002Fwiki.dfrobot.com\u002Fdfr0654\u002F"}]},{"@type":"ImageObject","@id":a$,contentUrl:"https:\u002F\u002Fdfimg.dfrobot.com\u002Fenshop\u002FDFR0654\u002FDFR0654_Main_01_360x240.jpg.webp",creditText:x,creator:{"@type":er,name:x},publisher:{"@type":er,"@id":ba}},{"@type":"FAQPage","@id":"https:\u002F\u002Fwiki.dfrobot.com\u002FDFR0654\u002F#faq",mainEntity:[{"@type":bd,name:eh,acceptedAnswer:{"@type":be,text:ei},dateModified:"2024-07-11T12:51:22+08:00"},{"@type":bd,name:ej,acceptedAnswer:{"@type":be,text:ek},dateModified:"2025-07-24T15:26:13+08:00"},{"@type":bd,name:el,acceptedAnswer:{"@type":be,text:em},dateModified:"2025-07-24T15:25:51+08:00"}]}]}},seo_meta_medias:[{hid:es,property:es,content:"en_US"},{hid:et,property:et,content:"website"},{hid:eu,property:eu,content:aw},{hid:ev,property:ev,content:av},{hid:ew,property:ew,content:"https:\u002F\u002Fwiki.dfrobot.com\u002Fdfr0654"},{hid:ex,property:ex,content:"DFRobot Wiki"},{hid:ey,property:ey,content:ez},{hid:eA,property:eA,content:aC},{hid:eB,property:eB,content:"summary_large_image"},{hid:eC,property:eC,content:eD},{hid:eE,property:eE,content:eD},{hid:eF,property:eF,content:aw},{hid:eG,property:eG,content:av},{hid:eH,property:eH,content:ez},{hid:eI,property:eI,content:aC}]}],fetch:{"0":{},"data-v-d71158b6:0":{jq:a,md5:{},tools:{},backName:"menu-back",pageType:a,viewType:S,deviceCss:[{rel:"stylesheet",href:"\u002Flibs\u002Fswiper\u002Fswiper-bundle.min.css"}],deviceJs:[{src:"\u002Fdfrobotshop\u002Flib\u002Fdfpclib.js",ssr:m}],showPL:c,userMenu:c,user:{identity:"unset"},storeMenu:eJ,storeActive:d,login:c,userType:"guest",cartNum:b,searchkey:a,currency:bb,currencyList:eZ,showFastCategory:c,categories:[],timer_fastSearch:e,fastSearch:{loadingProduct:c,products:[],loadingBlog:c,blogs:[],loadingWiki:c,wikis:[]},navList:[{name:"Community",url:"https:\u002F\u002Fcommunity.dfrobot.com\u002F",target:o},{name:"Forum",url:"https:\u002F\u002Fwww.dfrobot.com\u002Fforum\u002F",target:o},{name:"Wiki",url:eq,target:o},{name:ap,url:"https:\u002F\u002Fwww.dfrobot.com\u002Fblog",target:o},{name:"Learn",url:"https:\u002F\u002Flearn.dfrobot.com\u002F",target:o}],items:[{title:bh},{title:bh},{title:bh},{title:"Click Me 2"}],menuStatus:a,mColor:"#000000",mtColor:"#ffffff",mNavShow:c,enableWarehouse:m},"data-v-0d8b5951:0":{jq:{},md5:{},tools:{},backName:"popbox-back",data:{name:a,size:a,url:a},tipsMsg:a,errorMsg:a,errorMsgBackFun:e,pop:{show:c,icon:a,title:a,subtitle:a,desc:a,yesText:a,noText:a,yesFun:e,noFun:e,autoClose:b},viewType:S}},error:e,state:{authUser:e,setting:{learn:[{link:"https:\u002F\u002Flearn.dfrobot.com\u002Fcourse-691.html",thumb:["https:\u002F\u002Fdfimg.dfrobot.com\u002F5caaf47fe9f1335a9d6ad8d6\u002Fdfapi\u002F6c9280468a6858d1d874c304f1f7ecc6.jpg"],title:"Get Started with Arduino: A Step-by-Step Tutorial"},{link:"https:\u002F\u002Flearn.dfrobot.com\u002Fcourse-668.html",thumb:["https:\u002F\u002Fdfimg.dfrobot.com\u002F5caaf47fe9f1335a9d6ad8d6\u002Fdfapi\u002F57e329cb6a8573e51a855f392fe747c2.jpg"],title:"Python Programming on Hardware for Beginners"}],seoDesc:"DFRobot provides open-source hardware, kits and robotics dedicated to bringing innovative electronics.",seoKeyword:"Arduino,LattePanda,Raspberry Pi,micro:bit,Gravity,Robotics,Internet of Things - IoT,FireBeetle,Artificial Intelligence,Fermion,STEM Education,Boson,esp8266 &amp; esp32,jeston nano",seoTitle:"DFRobot Open-Source Hardware Electronics and Kits",siteDesc:a,topBanner:{"USA-1":{bannerBg:[],bannerImg:[],bannerLink:a,bannerMobile:[],bannerTitle:a,begin:"2025-07-02 00:00:00",begin2:ae,end:"2025-07-15 00:00:00",end2:ae,message:"\u003Cp\u003EAnniversary Sale! 30% Off First Item + Free Shipping ($50+) \u003Ca target=\"_blank\" rel=\"noopener noreferrer\" href=\"https:\u002F\u002Fwww.dfrobot.com\u002F15th_anniversary\"\u003E➡️ Shop Now\u003C\u002Fa\u003E\u003C\u002Fp\u003E",onlyTest:c,warehouse:"USA-1"},GLOBAL:{bannerBg:[],bannerImg:[],bannerLink:a,bannerMobile:[],bannerTitle:a,begin:"2025-09-07 00:00:00",begin2:ae,end:"2025-11-19 00:00:00",end2:ae,message:"\u003Cp\u003EMAJOR LAUNCH: HUSKYLENS 2 6 TOPS LLM MCP AI Vision Sensor is now available. \u003Ca target=\"_blank\" rel=\"noopener noreferrer\" href=\"https:\u002F\u002Fwww.dfrobot.com\u002Fproduct-2995.html?marketing=690360ffb0f6d\"\u003E\u003Cstrong\u003EBuy Now →\u003C\u002Fstrong\u003E\u003C\u002Fa\u003E\u003C\u002Fp\u003E",onlyTest:c,warehouse:"GLOBAL"}},store:eJ},currencys:eZ,viewtype:S},serverRendered:m,routePath:"\u002Fdfr0654",config:{_app:{basePath:bi,assetsPath:"\u002F_nuxt\u002F",cdnURL:e}}}}("",0,false,1,null,"wiki",121,"product","wiki_en","Out Of Stock",void 0,7132,true,"fileUrl","_blank","project","CreativeWork","Person",7102,"2026-01-31 00:00:00","All Products,Development Boards,ESP32 &amp; ESP8266,ESP32\u002FESP8266,FireBeetle (ESP32 \u002F ESP8266),Internet of Things - IoT,MCU","184 271 276 302 312 316","doc","DFRobot","SoftwareSourceCode","blog","All Products,Arduino,Arduino Board,Development Boards,MCU","184 185 277 312","DFR0654","ListItem","All","Frances","Development Boards","v1.0","DigitalDocument",8.9,"RoniBandini","Mukesh Sankhla","Modules","0","Apr 25, 2021","Reference","Sensors","Prototyping & Accessories","pc","MCU","FireBeetle 2 ESP32-E IoT Microcontroller","FireBeetle 2 ESP32-E IoT Microcontroller (32M \u002F 512KB, Supports Wi-Fi &amp; Bluetooth)","All Products,Arduino,Arduino Board,Development Boards,MCU,Robotics,Romeo","184 185 277 279 312 318",15,5,"Robot Arms for Accessibility","donutsorelse","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-313749.html","KGray","https:\u002F\u002Fdfimg.dfrobot.com\u002F5d3c06d50ad96a3f659ed74c\u002Fmakelog\u002F21415e2a5b0853f03ed86fe41742bf67.jpeg","https:\u002F\u002Fcommunity.dfrobot.com\u002Fuser-4853.html","NaN-NaN-NaN NaN:NaN:NaN",2195,"All Products,Beetle,Development Boards,ESP32 &amp; ESP8266,ESP32\u002FESP8266,Internet of Things - IoT,MCU","184 271 276 312 316 317",7123,"All Products,Arduino,Arduino Board,Beetle,Development Boards,MCU","184 185 277 312 317","Bluno - An Arduino UNO Compatible Bluetooth 4.0 (BLE) Controller","Beetle RP2040 Mini Development Board","All Products,Development Boards,Internet of Things - IoT,MCU,Others","52 184 276 312","Blog","https:\u002F\u002Fdfimg.dfrobot.com\u002Fwiki\u002F23249\u002FDFR0654_firebeetle-2-esp32-e_ce_v1.0.pdf","https:\u002F\u002Fdfimg.dfrobot.com\u002Fwiki\u002F23249\u002FDFR0654_firebeetle-2-esp32-e_datasheet_v1.0.pdf","https:\u002F\u002Fdfimg.dfrobot.com\u002Fwiki\u002F23249\u002FDFR0654_firebeetle-2-esp32-e_dimension_v1.0.png","https:\u002F\u002Fdfimg.dfrobot.com\u002Fwiki\u002F23249\u002FDFR0654_firebeetle-2-esp32-e_doc_V1.0.pdf","https:\u002F\u002Fdfimg.dfrobot.com\u002Fwiki\u002F23249\u002FDFR0654_firebeetle-2-esp32-e_driver_v1.0.zip","Dive into IoT innovation with FireBeetle 2 ESP32-E! Discover seamless Wi-Fi & Bluetooth connectivity, Arduino compatibility, and low-power prowess for your projects.","FireBeetle 2 ESP32-E: Unleash IoT Creativity with Wi-Fi & Bluetooth!","https:\u002F\u002Fdfimg.dfrobot.com\u002Fwiki\u002F23249\u002FDFR0654_firebeetle-2-esp32-e_rohs_v1.0.pdf","https:\u002F\u002Fdfimg.dfrobot.com\u002Fwiki\u002F23249\u002FDFR0654_firebeetle-2-esp32-e_schematics_v1.0.pdf","FireBeetle 2 ESP32-E IoT Microcontroller: Wi-Fi & Bluetooth | DFRobot Wiki","https:\u002F\u002Fdfimg.dfrobot.com\u002Fwiki\u002F23249\u002FDFR0654_firebeetle-2-esp32-e_stpfile_v1.0.zip","0.00000000","Front of FireBeetle 2 ESP32-E development board showing USB and microSD card slot.-DFRobot product sku:DFR0654 image.","https:\u002F\u002Fcommunity.dfrobot.com\u002Fuser-8003.html","https:\u002F\u002Fwww.hackster.io\u002Fmaheshyadav216\u002Fsmart-waiter-intelligent-voice-assistant-in-restaurant-1ad872","https:\u002F\u002Fdfimg.dfrobot.com\u002Fnobody\u002Fmakelog\u002Faf98302f61efdbe8ff4c4150c8c4ea6d.png","https:\u002F\u002Fcommunity.dfrobot.com\u002Fuser-5318.html","Getting Started","Example Code for Arduino-Blink a LED",2,"Example Code for Arduino-GPIO",3,"Example Code for Arduino-RGB LED",4,"Example Code for Arduino-Serial Port","Example Code for Arduino-I2C Communication","Example Code for Arduino-SPI Communication","Example Code for Arduino-Capacitive Touch","Example Code for Arduino-Interrupt","Example Code for Arduino-GDI Display interface","Example Code for Arduino-SD Card","Example Code for Arduino-Deep-sleep Mode","Example Code for Arduino-WiFi","Example Code for Arduino-Bluetooth","Example Code for Arduino-IFTTT","604283","469744","https:\u002F\u002Fwiki.dfrobot.com\u002FDFR0654\u002F#mainimage","https:\u002F\u002Fwiki.dfrobot.com\u002F#organization","USD","Certification","Question","Answer","Others","Kits","Click Me","\u002F","\u002Fcategory-312\u002F","2","FireBeetle 2 ESP32-C6 IoT Development Board",44,"DFR0654, I2C, SPI, Communication, ESP32, FireBeetle, FPC, GDI, WiFi, Bluetooth, Wireless, Internet of Things, IoT, FireBeetle 2","Firebeetle.Brand,WiFi.ST,Analog.ToS,Type C.Interface,Bluetooth 4.0.ST,I2C.ToS,Arduino IDE.IDE,3.3V.WV,C++.PL,Mind+.IDE,Digital.ToS,Prototyping.Scenario,MP.SL,IoT.TT,ESP32 & ESP8266.PF,PH2.0.Interface,Pin.Interface,UART.ToS,Firebeetle.FF","Beetle ESP32-C6 IoT Development Board","UNIHIKER K10","FireBeetle 2 ESP32-C5 Development Kit","FireBeetle 2 ESP32-E IoT Microcontroller with Header","FireBeetle 2 ESP32-C5 IoT Development Board","DFRduino UNO R3","FireBeetle ESP32 IoT Microcontroller","FireBeetle 2 ESP32-P4 AI Vision Board","ESP32-S3R8 1.85-inch Round Display Board","FireBeetle ESP32-E IoT Development Board(N16R8)","Beetle ESP32-C3 IoT Development Board","FireBeetle 2 ESP32-S3 AI Acceleration Board","FireBeetle 2 ESP32-UE (N16R2) IoT Board","LoRaWAN ESP32-S3 Dev Board","Romeo ESP32-C3-MINI-1 Motor & Servo Control Board","All Products,Development Boards,ESP32 &amp; ESP8266,ESP32\u002FESP8266,MCU,Robotics,Romeo","184 271 279 312 316 318","FireBeetle 2 ESP32-S3 AIoT Development Board","DFRduino Mega2560","DFRduino Nano Microcontroller Board","Beetle ATmega32u4 Arduino-Compatible Board","Romeo ATmega328P BLE Motor Control Board","Beetle RP2350 Development Board","All Products,Beetle,Development Boards,MCU,Others,Raspberry Pi","52 184 272 312 317","Romeo BLE Robot Control Board","Beetle BLE Board","Romeo V2 ATmega32u4 All-in-One Robotics Microcontroller Board","Beetle ESP32 WiFi Bluetooth Board","Romeo Robot Control Board","Beetle ATmega32U4 Charge Management Board","FireBeetle ESP8266 IoT Development Board","20579","LoRaWAN Control Terminal (915Mhz)","DFRduino ATmega32u4 Xbee Socket Board","Bluno Nano","DFRduino Mega1280 microcontroller board","FireBeetle ATMEGA328P BLE 4.1 Control Board","FireBeetle 2 ESP32-C5-U(N4) IO Development Kit","FireBeetle 2 ESP32-C5-U(N4) IoT Development Board","Firebeetle 2 M0 Development Board","Romeo ESP32-S3 Robot Development Board","FireBeetle 2 ESP32-S3-U AI Acceleration Board","LoRaWAN Control Terminal (868Mhz)","Dreamer Nano V4.1 (Arduino Leonardo Compatible)","XBoard V2","Bluno Mega2560","Xboard Relay","DFRduino M0 Mainboard","CurieCore intel® Curie Neuron Module","WIFI IoT Node Development Board","Docs","Tech Specs","Projects","Certifications","Explore FireBeetle 2 ESP32-E's versatile connectivity with Wi-Fi & Bluetooth, low power consumption for IoT devices. Discover tutorials, projects & specs.","FireBeetle 2, ESP32-E, IoT microcontroller, Wi-Fi, Bluetooth, Arduino compatible, low power, smart home, wearable devices, IoT projects","Explore FireBeetle 2 ESP32-E, a versatile IoT microcontroller with Wi-Fi & Bluetooth support, ideal for Arduino projects and low-power devices.","Dimension","Schematics","STP Files","Datasheet","Driver","CE","RoHS","DoC",17,8,"2021-02-01T00:00:00Z","8.9",11,106,"InStock","1",{},"Camera Bot using FireBeetle ESP32-S3","Pradeep","https:\u002F\u002Fwww.hackster.io\u002Fpradeeplogu0\u002Fcamera-bot-using-firebeetle-esp32-s3-5147e7",{},"mmWave Radar Alarm with Telegram Notifications","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-313113.html",{},"Smart Waiter - Intelligent Voice Assistant in Restaurant","Hackster.io",{},"https:\u002F\u002Fcommunity.dfrobot.com\u002Fuser-10550.html",{},"Retro-Logger","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-317575.html","Building a TinyML powered Electronic Nose (E-nose) with MEMS Gas Detection Sensor and Edge Impulse","RiverTrue","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-313440.html","PiP-WATCH Project","auroraAA","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-314310.html","Pet Indoor Positioning with Fermion BLE Sensor Pack","https:\u002F\u002Fdfimg.dfrobot.com\u002F61409c2aaa9508d63a416e93\u002Fmakelog\u002F3c4c311367d58ccad1a56fb2e4e629a4.jpg","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-314064.html","DIY Smart 3D Printer Enclosure","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-313954.html","Pixo | Dazzling Desk Display","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-313915.html","DIY Arduino (FireBeetle) E-Scooter","https:\u002F\u002Fdfimg.dfrobot.com\u002F61238b99aa9508d63a416722\u002Fmakelog\u002F5774a739be23fe9a4b1dbda560c1a8e7.jpeg","https:\u002F\u002Fcommunity.dfrobot.com\u002Fuser-7896.html","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-313432.html","DIY A Simple Three-axis Accelerometer Data Logger","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-313124.html","Automated Driveway Gates Version 2","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-312893.html","Make a Weather Station Using Environmental Sensor","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-312737.html","Vespa animated Diorama with ESP32 Firebeetle","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-312450.html","Mr.'s Answering Machine","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-312082.html","Smart Compost Bin Monitoring System -Based on 4G IoT and SHT20","https:\u002F\u002Fcommunity.dfrobot.com\u002Fmakelog-312083.html",{},{},{},{},{},"23250","1. Getting Started","23251","2. Example Code for Arduino-Blink a LED","23252","3. Example Code for Arduino-GPIO","23253","4. Example Code for Arduino-RGB LED","23254","5. Example Code for Arduino-Serial Port","23257","6. Example Code for Arduino-I2C Communication","23258","7. Example Code for Arduino-SPI Communication","23255","8. Example Code for Arduino-Capacitive Touch","23256","9. Example Code for Arduino-Interrupt","23259","10. Example Code for Arduino-GDI Display interface","23261","11. Example Code for Arduino-SD Card","23260","12. Example Code for Arduino-Deep-sleep Mode","23262","13. Example Code for Arduino-WiFi","23263","14. Example Code for Arduino-Bluetooth","23264","15. Example Code for Arduino-IFTTT","23265","When using the SD library, the serial monitor does not show any print output or displays a connection failure after uploading the program.","Press RST button to reset and try again.","The driver is not installed automatically after plugging into the device?","\u003Cp\u003EFireBeetle 2 ESP32-E uses the CH340 serial chip, which can be used without installing a driver in most devices. If you find that the driver is not automatically installed when you plug in the device, you can manually install it yourself:\u003C\u002Fp\u003E\u003Cp\u003E\u003Ca target=\"_blank\" rel=\"noopener noreferrer\" href=\"https:\u002F\u002Fdfimg.dfrobot.com\u002Fnobody\u002Fwiki\u002F0e0d6b3864f7163833ec5d7ad4af7632.EXE\"\u003E\u003Ci\u003ECH340 Driver for Windows\u003C\u002Fi\u003E\u003C\u002Fa\u003E\u003C\u002Fp\u003E\u003Cp\u003E\u003Ca target=\"_blank\" rel=\"noopener noreferrer\" href=\"https:\u002F\u002Fdfimg.dfrobot.com\u002Fnobody\u002Fwiki\u002Fc195a13df2a1989d5dc04e76e6bcb701.ZIP\"\u003E\u003Ci\u003ECH340 Driver for MAC\u003C\u002Fi\u003E\u003C\u002Fa\u003E\u003C\u002Fp\u003E","Cannot add board link to Arduino IDE?","\u003Cp\u003EFirst off all, make sure the Network connection is in good condition. Hope \u003Ca target=\"_blank\" rel=\"noopener noreferrer\" href=\"https:\u002F\u002Fforum.arduino.cc\u002Ft\u002Farduino-ide-cant-download-libraries-and-boards\u002F650155\u002F5\"\u003E\u003Ci\u003Ethis post\u003C\u002Fi\u003E\u003C\u002Fa\u003E from Arduino helps. If that doesn't work, try replacing the board link from\u003C\u002Fp\u003E\u003Cp\u003E\u003Ca target=\"_blank\" rel=\"noopener noreferrer\" href=\"https:\u002F\u002Fdownloadcd.dfrobot.com.cn\u002FFireBeetle\u002Fpackage_DFRobot_index.json\"\u003E\u003Ci\u003Ehttps:\u002F\u002Fdownloadcd.dfrobot.com.cn\u002FFireBeetle\u002Fpackage_DFRobot_index.json\u003C\u002Fi\u003E\u003C\u002Fa\u003E to \u003Ca target=\"_blank\" rel=\"noopener noreferrer\" href=\"https:\u002F\u002Fdownloadcd.dfrobot.com.cn\u002FFireBeetle\u002Fpackage_DFRobot_index.json\"\u003E\u003Ci\u003Ehttps:\u002F\u002Fdownloadcd.dfrobot.com.cn\u002FFireBeetle\u002Fpackage_DFRobot_index.json\u003C\u002Fi\u003E\u003C\u002Fa\u003E and reload it.\u003C\u002Fp\u003E","application\u002Fpdf","application\u002Fzip","https:\u002F\u002Fwiki.dfrobot.com\u002FDFR0654\u002F#breadcrumb","https:\u002F\u002Fwiki.dfrobot.com\u002F","Organization","og:locale","og:type","og:title","og:description","og:url","og:site_name","og:image","https:\u002F\u002Fdfimg.dfrobot.com\u002Fenshop\u002FDFR0654\u002FDFR0654_Main_01_1200x630.jpg.webp","og:image:alt","twitter:card","twitter:site","@wiki","twitter:creator","twitter:title","twitter:description","twitter:image","twitter:image:alt",Array(13),"ESP32-P4, ESP32-C5, ESP32-C6, ESP32-S3, ESP8266 IoT microcontrollers","\u002Ftopic-316.html","pH Sensor, EC sensor, TDS sensor, DO sensor, turbidity sensor, ORP sensor, liquid level sensor","\u002Fcategory-68.html","Liquid Sensors","O2 sensor, CO sensor, CO2 sensor, air quality sensor, weather station, wind speed sensor","\u002Fcategory-85.html","Air Sensors","\u002Fcategory-55.html","Range & Distance Sensors","Raspberry Pi 5, Raspberry Pi 4B, Raspberry Pi Pico 2 W, Raspberry Pi CM4, Beetle RP2040","Raspberry Pi","ESP32-C6, ESP32-S3, ESP8266 IoT microcontrollers","micro:bit","STEM Education",{}));</script><script src="/_nuxt/444223c.js" defer></script><script src="/_nuxt/092c677.js" defer></script><script src="/_nuxt/bc9ed79.js" defer></script><script src="/_nuxt/bb93122.js" defer></script><script src="/_nuxt/c9a8dec.js" defer></script>
+  </body>
+</html>
