@@ -28,16 +28,23 @@ io:
     rail_ma_max: 500
 notes:
 - 8 MB flash, 2 MB PSRAM
-- 'CH9102F USB-UART bridge (upgraded from CP2102N as of May 2022)'
-- STEMMA QT connector with switchable 3.3V power; mini NeoPixel; user button on pin 38
+- CH9102F USB-UART bridge (upgraded from CP2102N as of May 2022)
+- STEMMA QT connector with switchable 3.3V power; mini NeoPixel; user button on pin
+  38
 - 'io.gpio_free=13 DERIVED, not quoted (SPEC-io-power.md §5.3). Pinouts page gives
   explicit GPIO numbers for all 21 header pins (bottom row: GPIO26/25/34/39/36/4/5/19/21/7/8/37;
   top row: GPIO13/12/27/33/15/32/14/20/22). Subtracting esp32''s soc.reserved_pins
   that are exposed among those 21 -- strapping {5,12,15} (3), input_only {34,36,39}
   (3), usb_flash_tied {7,8} (2) -- gives 21 - 8 = 13. Math not vendor-stated; verify
   before treating as exact.'
-- 'io.power_out QUOTED: vendor page states "The regulator can supply 500mA peak
-  but half of that is drawn by the ESP32"'
+- 'io.power_out QUOTED: vendor page states "The regulator can supply 500mA peak but
+  half of that is drawn by the ESP32"'
+download_mode:
+  mode: auto
+usb_serial: cp2102n
+getting_started: https://learn.adafruit.com/adafruit-esp32-feather-v2
+images:
+  photo: https://cdn-learn.adafruit.com/guides/images/000/003/544/medium800/FV2_top_angle.jpg
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5400
@@ -48,6 +55,18 @@ sources:
 - field: io.power_out
   url: https://learn.adafruit.com/adafruit-esp32-feather-v2/pinouts
   verified: '2026-08-26'
+- field: download_mode
+  url: https://learn.adafruit.com/adafruit-esp32-feather-v2
+  verified: '2026-09-11'
+- field: usb_serial
+  url: https://learn.adafruit.com/adafruit-esp32-feather-v2
+  verified: '2026-09-11'
+- field: getting_started
+  url: https://learn.adafruit.com/adafruit-esp32-feather-v2
+  verified: '2026-09-11'
+- field: images
+  url: https://learn.adafruit.com/adafruit-esp32-feather-v2
+  verified: '2026-09-11'
 ---
 
 # Adafruit ESP32 Feather V2
