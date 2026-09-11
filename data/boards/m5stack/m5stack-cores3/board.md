@@ -34,14 +34,17 @@ notes:
   BM8563 RTC, AXP2101 PMIC, 500mAh battery
 - 'io.gpio_free=6 DERIVED, not quoted (SPEC-io-power.md §5.3). Vendor pinmap page
   states the three HY2.0-4P ports: "PORT.A | G2 | G1", "PORT.B | G9 | G8", "PORT.C
-  | G17 | G18" -- 6 pads total (1, 2, 8, 9, 17, 18), none shared with the
-  camera/LCD/SD/touch/mic/RTC/IMU pins the same page lists elsewhere. Subtracting
-  esp32-s3''s soc.reserved_pins that are exposed on those 6 -- none of strapping
-  {0,3,45,46} or usb_flash_tied {19,20,35,36,37} match -- leaves all 6 free: 6 -
-  0 = 6. The 40-pin M-Bus header is excluded from this count: it re-exposes the
-  same SoC pins already wired to onboard camera/LCD/SD/touch/mic, so those pads
-  are not free for independent use. Math not vendor-stated; verify before
+  | G17 | G18" -- 6 pads total (1, 2, 8, 9, 17, 18), none shared with the camera/LCD/SD/touch/mic/RTC/IMU
+  pins the same page lists elsewhere. Subtracting esp32-s3''s soc.reserved_pins that
+  are exposed on those 6 -- none of strapping {0,3,45,46} or usb_flash_tied {19,20,35,36,37}
+  match -- leaves all 6 free: 6 - 0 = 6. The 40-pin M-Bus header is excluded from
+  this count: it re-exposes the same SoC pins already wired to onboard camera/LCD/SD/touch/mic,
+  so those pads are not free for independent use. Math not vendor-stated; verify before
   treating as exact.'
+getting_started: https://docs.m5stack.com/en/core/CoreS3
+images:
+  photo: https://static-cdn.m5stack.com/resource/docs/products/core/CoreS3/img-96063e2a-637a-4d11-ac47-1ce4f1cdfd3e.webp
+  pinout: https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/products/core/M5CORES3%20SE/c9024cfa50b8d7c31ca7505668770ee.png
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/CoreS3
@@ -49,6 +52,12 @@ sources:
 - field: io.gpio_free
   url: https://docs.m5stack.com/en/core/CoreS3
   verified: '2026-08-26'
+- field: getting_started
+  url: https://docs.m5stack.com/en/core/CoreS3
+  verified: '2026-09-11'
+- field: images
+  url: https://docs.m5stack.com/en/core/CoreS3
+  verified: '2026-09-11'
 ---
 
 # CoreS3

@@ -4,7 +4,7 @@ type: board
 brand: m5stack
 name: Stamp-C3
 aka:
-- "m5stack_stamp_c3"
+- m5stack_stamp_c3
 soc: esp32-c3
 flash_mb: 4
 psram_mb: 0
@@ -24,13 +24,19 @@ io:
 notes:
 - ESP32-C3; 4 MB flash
 - SK6812 programmable RGB LED, 13 GPIO exposed, no onboard battery
-- ESP32-C3 has no PSRAM interface at all (chip datasheet lists no PSRAM/external-RAM support)
-- 'io.gpio_exposed=13 QUOTED: vendor page states "IO Interfaces x13", pins G21,
-  G20, G9, G18, G19, G1, G0, G10, G8, G7, G6, G5, G4'
+- ESP32-C3 has no PSRAM interface at all (chip datasheet lists no PSRAM/external-RAM
+  support)
+- 'io.gpio_exposed=13 QUOTED: vendor page states "IO Interfaces x13", pins G21, G20,
+  G9, G18, G19, G1, G0, G10, G8, G7, G6, G5, G4'
 - 'io.gpio_free=9 DERIVED, not quoted (SPEC-io-power.md §5.3). Exposed pads {G0,G1,G4,G5,G6,G7,G8,G9,G10,G18,G19,G20,G21}
   (13, quoted from vendor IO Interfaces list). Subtracting esp32-c3''s soc.reserved_pins
   that are exposed -- strapping {2,8,9}: {8,9} exposed (2), usb_flash_tied {18,19}:
   {18,19} exposed (2) -- gives 13 - 2 - 2 = 9.'
+usb_serial: ch9102
+getting_started: https://docs.m5stack.com/en/core/Stamp_C3
+images:
+  photo: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/524/C056-B_01.jpg
+  pinout: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/524/C056-B_PinMap_01.jpg
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/Stamp_C3
@@ -47,6 +53,15 @@ sources:
 - field: aka
   url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
   verified: '2026-09-07'
+- field: usb_serial
+  url: https://docs.m5stack.com/en/core/Stamp_C3
+  verified: '2026-09-11'
+- field: getting_started
+  url: https://docs.m5stack.com/en/core/Stamp_C3
+  verified: '2026-09-11'
+- field: images
+  url: https://docs.m5stack.com/en/core/Stamp_C3
+  verified: '2026-09-11'
 ---
 
 # Stamp-C3
