@@ -185,9 +185,16 @@ def test_real_seeed_manifest_loads_five_verified_entries():
         assert e["status"] in universe.VALID_STATUS
 
 
-def test_real_seeed_coverage_is_3_of_5_missing_c5_and_sense():
+def test_real_seeed_coverage_is_consistent_with_the_filesystem():
+    # Mechanism test (NOT a frozen count snapshot): coverage must always agree with the
+    # real manifest size and which board dirs actually exist, so it stays correct as Phase B
+    # authors the missing boards. universe_count == manifest entries; cataloged/missing are
+    # derived from data/boards/seeed/<id>/board.md existence.
+    manifest_ids = [e["board_id"] for e in universe.load_universe(REAL_UNIVERSE_DIR)["seeed"]]
+    on_disk = {bid for bid in manifest_ids if (REAL_BOARDS_ROOT / "seeed" / bid / "board.md").exists()}
     cov = universe.coverage(universe.load_universe(REAL_UNIVERSE_DIR), REAL_BOARDS_ROOT)
     b = cov["brands"]["seeed"]
-    assert b["universe_count"] == 5
-    assert b["cataloged_count"] == 3
-    assert b["missing"] == ["xiao-esp32c5", "xiao-esp32s3-sense"]
+    assert b["universe_count"] == len(manifest_ids)
+    assert b["cataloged_count"] == len(on_disk)
+    assert set(b["missing"]) == set(manifest_ids) - on_disk
+    assert b["cataloged_count"] + len(b["missing"]) == b["universe_count"]
