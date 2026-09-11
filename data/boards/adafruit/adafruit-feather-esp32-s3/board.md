@@ -31,18 +31,21 @@ io:
 notes:
 - 'Main variant: 4 MB flash, 2 MB PSRAM; alternate: 8 MB flash, no PSRAM'
 - MAX17048 battery monitor, JST LiPoly, NeoPixel, STEMMA QT
-- 'io.power_out QUOTED: vendor page states "These pins are the output from the
-  3.3V regulator, they can supply 500mA peak."'
+- 'io.power_out QUOTED: vendor page states "These pins are the output from the 3.3V
+  regulator, they can supply 500mA peak."'
 - 'io.gpio_exposed=20 QUOTED: vendor pinouts page lists broken-out header pads D5,
   D6, D9, D10, D11, D12, D13 (7 digital), A0-A5 (6 analog, dual-named D8/D14-D18),
   SCK/MOSI/MISO (SPI), RX/TX (UART), SCL/SDA (I2C) = 20 GPIO-capable pads (RST/EN
   are control pins, not counted); same Feather pin-naming as adafruit-feather-esp32-s2.
-  io.gpio_free=16 DERIVED: cross-referencing the vendor firmware repo''s own
-  CircuitPython board pin-definition (pins.c) maps every header pad to GPIO3-4,
-  5-6, 8-18, or 35-39 -- of esp32-s3''s soc.reserved_pins, GPIO3 (SDA, strapping)
-  and GPIO35/36/37 (MOSI/SCK/MISO, usb_flash_tied) are exposed pads; NeoPixel/
-  I2C_POWER/NEOPIXEL_POWER sit on GPIO7/21/33, off-header -- so 20 - 4 = 16'
-- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
+  io.gpio_free=16 DERIVED: cross-referencing the vendor firmware repo''s own CircuitPython
+  board pin-definition (pins.c) maps every header pad to GPIO3-4, 5-6, 8-18, or 35-39
+  -- of esp32-s3''s soc.reserved_pins, GPIO3 (SDA, strapping) and GPIO35/36/37 (MOSI/SCK/MISO,
+  usb_flash_tied) are exposed pads; NeoPixel/ I2C_POWER/NEOPIXEL_POWER sit on GPIO7/21/33,
+  off-header -- so 20 - 4 = 16'
+- usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag
+getting_started: https://learn.adafruit.com/adafruit-esp32-s3-feather
+images:
+  photo: https://cdn-learn.adafruit.com/guides/images/000/003/568/medium800/FESPS3_top_angle.jpg
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5477
@@ -62,6 +65,12 @@ sources:
 - field: usb_serial
   url: https://www.adafruit.com/product/5477
   verified: '2026-09-07'
+- field: getting_started
+  url: https://learn.adafruit.com/adafruit-esp32-s3-feather
+  verified: '2026-09-11'
+- field: images
+  url: https://learn.adafruit.com/adafruit-esp32-s3-feather
+  verified: '2026-09-11'
 ---
 
 # Adafruit ESP32-S3 Feather (4MB Flash 2MB PSRAM)
