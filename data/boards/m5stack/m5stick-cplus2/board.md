@@ -4,7 +4,7 @@ type: board
 brand: m5stack
 name: StickC-Plus2
 aka:
-- "m5stack_stickc_plus2"
+- m5stack_stickc_plus2
 soc: esp32
 flash_mb: 8
 psram_mb: 2
@@ -31,14 +31,18 @@ notes:
 - ESP32-PICO-V3-02; 8 MB flash, 2 MB Quad PSRAM
 - MPU6886 3-axis accel + 3-axis gyro, SPM1423 mic, BM8563 RTC, passive buzzer, IR
   emitter, 200mAh@3.7V internal battery
-- 'io.gpio_exposed=6 COUNTED: page states "External Pins: G0, G25/G26, G36, G32,
-  G33" = {0,25,26,32,33,36}; the HY2.0-4P Grove port reuses the same G32/G33 pads
-  ("Yellow: G32, White: G33"), no new pins added. Buttons (G35/G37/G39), display
-  (G5/G12/G13/G14/G15/G27), mic DATA (G34), IR (G19), buzzer (G2), and power-hold
-  (G4) are all internal, not in the External Pins list. io.gpio_free=4 DERIVED:
-  subtracting esp32''s soc.reserved_pins that land in the exposed set -- G0 is
-  strapping, G36 is input_only -- gives 6 - 2 = 4 (G25/G26/G32/G33 remain). No
-  max Grove/rail output current stated on this page, so power_out is omitted.'
+- 'io.gpio_exposed=6 COUNTED: page states "External Pins: G0, G25/G26, G36, G32, G33"
+  = {0,25,26,32,33,36}; the HY2.0-4P Grove port reuses the same G32/G33 pads ("Yellow:
+  G32, White: G33"), no new pins added. Buttons (G35/G37/G39), display (G5/G12/G13/G14/G15/G27),
+  mic DATA (G34), IR (G19), buzzer (G2), and power-hold (G4) are all internal, not
+  in the External Pins list. io.gpio_free=4 DERIVED: subtracting esp32''s soc.reserved_pins
+  that land in the exposed set -- G0 is strapping, G36 is input_only -- gives 6 -
+  2 = 4 (G25/G26/G32/G33 remain). No max Grove/rail output current stated on this
+  page, so power_out is omitted.'
+usb_serial: ch9102
+getting_started: https://docs.m5stack.com/en/core/M5StickC%20PLUS2
+images:
+  photo: https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/products/core/M5StickC%20PLUS2/4.webp
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/M5StickC%20PLUS2
@@ -52,6 +56,15 @@ sources:
 - field: aka
   url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
   verified: '2026-09-07'
+- field: usb_serial
+  url: https://docs.m5stack.com/en/core/M5StickC%20PLUS2
+  verified: '2026-09-11'
+- field: getting_started
+  url: https://docs.m5stack.com/en/core/M5StickC%20PLUS2
+  verified: '2026-09-11'
+- field: images
+  url: https://docs.m5stack.com/en/core/M5StickC%20PLUS2
+  verified: '2026-09-11'
 ---
 
 # StickC-Plus2
