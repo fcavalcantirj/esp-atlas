@@ -897,10 +897,11 @@ def _ada_fetcher_for(bid, fixture_name):
     return url, _fetcher({url: _fixture(fixture_name)})
 
 
-def test_adafruit_feather_v2_grounds_usb_serial_and_download_mode(tmp_path):
+def test_adafruit_feather_v2_grounds_usb_serial_download_mode_and_photo(tmp_path):
     # (d) Feather V2's REAL page names "CP2102N chipset" → usb_serial=cp2102n, AND states an
-    # "auto-reset" upload circuit → download_mode=auto; getting_started = the URL. images is
-    # OMITTED (pinout lives on a separate page) → partial. The richest adafruit grounding.
+    # "auto-reset" upload circuit → download_mode=auto; getting_started = the URL. Since Slice 2
+    # of the image-grounding spec, images.photo ALSO grounds from the Learn og:image hero (pinout
+    # still OMITTED — it lives on /pinouts). All four missing fields fill → NOT partial.
     bid, soc = "adafruit-feather-esp32-v2", "esp32"
     path = _write_board(tmp_path, bid, soc, brand="adafruit")
     url, fetch = _ada_fetcher_for(bid, "adafruit-feather-esp32-v2")
@@ -908,17 +909,19 @@ def test_adafruit_feather_v2_grounds_usb_serial_and_download_mode(tmp_path):
 
     assert entry["status"] == "backfilled"
     assert entry["url"] == url
-    assert set(entry["written"]) == {"download_mode", "usb_serial", "getting_started"}
-    assert entry["omitted"] == ["images"]
-    assert entry["partial"] is True
+    assert set(entry["written"]) == {"download_mode", "usb_serial", "getting_started", "images"}
+    assert entry["omitted"] == []
+    assert entry["partial"] is False
 
     fm, _ = bb.parse_frontmatter(path)
     assert fm["usb_serial"] == "cp2102n"
     assert fm["download_mode"]["mode"] == "auto"
     assert fm["getting_started"] == url
-    assert "images" not in fm
+    assert fm["images"] == {
+        "photo": "https://cdn-learn.adafruit.com/guides/images/000/003/544/medium800/FV2_top_angle.jpg"}
+    assert "pinout" not in fm["images"]  # deferred to the /pinouts sub-page
     cited = {s["field"]: s for s in fm["sources"]}
-    for field in ("download_mode", "usb_serial", "getting_started"):
+    for field in ("download_mode", "usb_serial", "getting_started", "images"):
         assert cited[field]["url"] == url and cited[field]["verified"] == TODAY
 
 
@@ -935,19 +938,23 @@ def test_adafruit_qt_py_c3_grounds_native_jtag(tmp_path):
     assert fm["getting_started"] == url
 
 
-def test_adafruit_matrixportal_only_getting_started_grounds(tmp_path):
-    # (f) MatrixPortal S3's REAL page names no bridge, no JTAG, no auto-reset phrasing → only
-    # getting_started grounds. The honest floor — still a real 0→1 gain, cite-or-omit intact.
+def test_adafruit_matrixportal_grounds_getting_started_and_photo(tmp_path):
+    # (f) MatrixPortal S3's REAL page names no bridge, no JTAG, no auto-reset phrasing → neither
+    # usb_serial nor download_mode grounds. getting_started grounds, and (Slice 2) images.photo
+    # grounds from the og:image hero. pinout stays OMITTED (on /pinouts). Still cite-or-omit.
     bid, soc = "adafruit-matrixportal-s3", "esp32-s3"
     path = _write_board(tmp_path, bid, soc, brand="adafruit")
     url, fetch = _ada_fetcher_for(bid, "adafruit-matrixportal-s3")
     entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
 
     assert entry["status"] == "backfilled"
-    assert entry["written"] == ["getting_started"]
-    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    assert entry["written"] == ["getting_started", "images"]  # BACKFILL_FIELDS order
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial"}
     fm, _ = bb.parse_frontmatter(path)
     assert fm["getting_started"] == url
+    assert fm["images"] == {
+        "photo": "https://cdn-learn.adafruit.com/guides/images/000/003/849/medium800thumb/5778-06.gif"}
+    assert "pinout" not in fm["images"]
     assert "usb_serial" not in fm
     assert "download_mode" not in fm
 
@@ -963,13 +970,87 @@ def test_adafruit_usb_serial_values_are_schema_enum_valid():
         assert val in enum
 
 
-def test_adafruit_images_not_grounded_on_real_pages():
-    # CRITICAL cite-or-omit: on the REAL adafruit overview pages the image heuristic correctly
-    # returns None (the pinout diagrams are on a separate page with opaque filenames), so the
-    # images field stays omitted rather than linking an arbitrary photo.
+def test_adafruit_filename_fallback_finds_nothing_motivates_context_extractor():
+    # WHY adafruit needs a dedicated context extractor: on the REAL adafruit overview pages the
+    # Espressif FILENAME heuristic (bb.extract_images) returns None — cdn-learn image names match
+    # none of the pinout/photo keyword patterns. So without a context rule the images field would
+    # stay omitted. The dedicated adafruit extractor (below) grounds photo from the Learn hero.
     for name in ("adafruit-feather-esp32-v2", "adafruit-qt-py-esp32-c3", "adafruit-matrixportal-s3"):
         raw = _fixture(name)
         assert bb.extract_images(raw, "https://learn.adafruit.com/x") is None
+
+
+# ─── SLICE 2 (SPEC-vendor-image-grounding.md) — adafruit image grounding ──────────
+# adafruit Learn overview pages (the committed fixtures) carry per-board hero shots ONLY via the
+# Open Graph tag `<meta property="og:image" content="…cdn-learn.adafruit.com/guides/images/…">`.
+# The page body's <img> tags are a RELATED-GUIDES carousel (they name OTHER boards) — never the
+# subject board — so og:image is the sole reliable, per-board identifying photo. Pinout DIAGRAMS
+# live on a SEPARATE `/pinouts` sub-page: each overview only carries a `<a href="…/pinouts">`
+# TOC LINK (not an image), so pinout is OMITTED here — reaching /pinouts is a documented follow-up.
+ADAFRUIT_IMAGE_FIXTURES = {
+    "adafruit-feather-esp32-v2": (
+        "https://learn.adafruit.com/adafruit-esp32-feather-v2/overview",
+        "https://cdn-learn.adafruit.com/guides/images/000/003/544/medium800/FV2_top_angle.jpg",
+    ),
+    "adafruit-qt-py-esp32-c3": (
+        "https://learn.adafruit.com/adafruit-qt-py-esp32-c3-wifi-dev-board/overview",
+        "https://cdn-learn.adafruit.com/guides/images/000/003/547/medium800/Screenshot_1.png",
+    ),
+    "adafruit-matrixportal-s3": (
+        "https://learn.adafruit.com/adafruit-matrixportal-s3/overview",
+        "https://cdn-learn.adafruit.com/guides/images/000/003/849/medium800thumb/5778-06.gif",
+    ),
+}
+
+
+def test_image_extractor_registry_wires_adafruit():
+    # the registry gained an "adafruit" entry = its own context extractor; espressif + m5stack
+    # entries are untouched (same function objects).
+    assert bb.IMAGE_EXTRACTORS["adafruit"] is bb.extract_images_adafruit
+    assert bb.IMAGE_EXTRACTORS["espressif"] is bb.extract_images
+    assert bb.IMAGE_EXTRACTORS["m5stack"] is bb.extract_images_m5stack
+
+
+def test_adafruit_photo_grounds_from_learn_hero_og_image():
+    # photo = the guide's Open Graph hero image (the identifying board shot), an absolute
+    # cdn-learn.adafruit.com URL, per-board distinct. Grounds on ALL three real fixtures.
+    for name, (url, expected_photo) in ADAFRUIT_IMAGE_FIXTURES.items():
+        imgs = bb.extract_images_adafruit(_fixture(name), url)
+        assert imgs is not None and "photo" in imgs, name
+        assert imgs["photo"] == expected_photo, (name, imgs["photo"])
+        assert imgs["photo"].startswith("https://cdn-learn.adafruit.com/"), name
+
+
+def test_adafruit_pinout_omitted_on_overview_pages_pinouts_is_followup():
+    # SAFETY (high-confidence-or-omit): the overview fixtures embed NO pinout diagram — the
+    # pinout guide lives on a separate `/pinouts` sub-page (only a TOC LINK to it appears here).
+    # The extractor must NEVER promote the hero photo or a related-guides carousel image to
+    # pinout, and must NOT mistake the `/pinouts` <a href> LINK for an image. Reaching the
+    # /pinouts sub-page is a documented follow-up (out of scope for this offline slice).
+    for name, (url, _photo) in ADAFRUIT_IMAGE_FIXTURES.items():
+        imgs = bb.extract_images_adafruit(_fixture(name), url)
+        assert imgs is not None, name
+        assert "pinout" not in imgs, (name, imgs.get("pinout"))
+        # sanity: the /pinouts link genuinely exists in the fixture (so the omission is real,
+        # not because the page lacks any pinout reference at all).
+        assert "/pinouts" in _fixture(name), name
+
+
+def test_adafruit_image_extractor_omits_photo_when_no_og_image():
+    # cite-or-omit: a page with no og:image grounds no photo → None (never invents one). Also
+    # guards that a bare `/pinouts` link with no og:image does not fabricate any image.
+    assert bb.extract_images_adafruit(
+        '<html><body><a href="/x/pinouts">Pinouts</a><p>no hero</p></body></html>',
+        "https://learn.adafruit.com/x/overview") is None
+    assert bb.extract_images_adafruit("", "https://learn.adafruit.com/x/overview") is None
+
+
+def test_adafruit_extractor_ignores_non_adafruit_og_image():
+    # SAFETY: only an og:image on adafruit's own CDN is grounded — a foreign og:image (e.g. an
+    # embedded third-party widget) is NOT taken as the board photo.
+    raw = ('<meta property="og:image" '
+           'content="https://evil.example.com/not-a-board.jpg" />')
+    assert bb.extract_images_adafruit(raw, "https://learn.adafruit.com/x/overview") is None
 
 
 def test_adafruit_board_404_skipped_cleanly(tmp_path):
