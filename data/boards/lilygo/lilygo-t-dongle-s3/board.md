@@ -16,14 +16,17 @@ notes:
 - Wi-Fi 802.11 b/g/n, Bluetooth 5
 - Available in LCD/no-LCD and internal/external-antenna variants
 - LilyGO's official spec table for T-Dongle-S3 explicitly lists "No PSRAM"
-- 'io.gpio_free=2 DERIVED, not quoted (SPEC-io-power.md §5.3). The vendor Pin Diagram
+- io.gpio_free=2 DERIVED, not quoted (SPEC-io-power.md §5.3). The vendor Pin Diagram
   table lists RGB DIN=GPIO40, RGB CLK=GPIO39, SDMMC D0-D3/CLK/CMD=GPIO14/17/21/18/12/16,
   Button=GPIO0, QWIIC TX=GPIO43, QWIIC RX=GPIO44 -- of these, only the QWIIC connector
   (TX/RX) is externally accessible; the RGB LED, SD slot, and button rows are internal-only.
-  So the board''s exposed-pad set is {43,44} (2 pads). Subtracting esp32-s3''s soc.reserved_pins
+  So the board's exposed-pad set is {43,44} (2 pads). Subtracting esp32-s3's soc.reserved_pins
   that are exposed -- neither 43 nor 44 is in strapping {0,3,45,46} or usb_flash_tied
   {19,20,35,36,37} -- gives 2 - 0 = 2. Math not vendor-stated; verify before treating
-  as exact.'
+  as exact.
+getting_started: https://lilygo.cc/products/t-dongle-s3
+images:
+  photo: https://lilygo.cc/cdn/shop/files/T-Dongle-LILYGO_2.jpg
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-dongle-s3
@@ -34,6 +37,12 @@ sources:
 - field: io.gpio_free
   url: https://wiki.lilygo.cc/products/t-dongle-series/t-dongle-s3/
   verified: '2026-08-26'
+- field: getting_started
+  url: https://lilygo.cc/products/t-dongle-s3
+  verified: '2026-09-11'
+- field: images
+  url: https://lilygo.cc/products/t-dongle-s3
+  verified: '2026-09-11'
 ---
 
 # T-Dongle-S3
