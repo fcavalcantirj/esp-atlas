@@ -32,14 +32,19 @@ notes:
 - ESP32-D0WDQ6-V3; MPU6886 6-axis IMU, SPM1423 PDM mic, NS4168 speaker amp, BM8563
   RTC, AXP192 PMIC, 500mAh@3.7V battery, vibration motor, microSD slot
 - 'io.gpio_free=5 DERIVED, not quoted (SPEC-io-power.md §5.3). Vendor page''s port
-  description table states the three HY2.0-4P Grove ports: "PORT-A (Red) G32/33
-  I2C", "PORT-B (Black) G26/36 DAC/ADC", "PORT-C (Blue) G13/14 UART" -- 6 pads
-  total (32, 33, 26, 36, 13, 14), none shared with the LCD/SD/touch/mic/USB-serial
-  pins the same page lists elsewhere. Subtracting esp32''s soc.reserved_pins that
-  are exposed on those 6 -- G36 is input_only -- leaves 6 - 1 = 5. The 40-pin M-Bus
-  header is excluded from this count: it re-exposes the same SoC pins already
-  wired to onboard LCD/SD/touch/mic, so those pads are not free for independent
-  use. Math not vendor-stated; verify before treating as exact.'
+  description table states the three HY2.0-4P Grove ports: "PORT-A (Red) G32/33 I2C",
+  "PORT-B (Black) G26/36 DAC/ADC", "PORT-C (Blue) G13/14 UART" -- 6 pads total (32,
+  33, 26, 36, 13, 14), none shared with the LCD/SD/touch/mic/USB-serial pins the same
+  page lists elsewhere. Subtracting esp32''s soc.reserved_pins that are exposed on
+  those 6 -- G36 is input_only -- leaves 6 - 1 = 5. The 40-pin M-Bus header is excluded
+  from this count: it re-exposes the same SoC pins already wired to onboard LCD/SD/touch/mic,
+  so those pads are not free for independent use. Math not vendor-stated; verify before
+  treating as exact.'
+usb_serial: ch9102
+getting_started: https://docs.m5stack.com/en/core/core2
+images:
+  photo: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/644/core2_01.jpg
+  pinout: https://www.gwendesign.com/kb/m5stack/img/M5StackM5Core2GPIO.png
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/core2
@@ -47,6 +52,15 @@ sources:
 - field: io.gpio_free
   url: https://docs.m5stack.com/en/core/core2
   verified: '2026-08-26'
+- field: usb_serial
+  url: https://docs.m5stack.com/en/core/core2
+  verified: '2026-09-11'
+- field: getting_started
+  url: https://docs.m5stack.com/en/core/core2
+  verified: '2026-09-11'
+- field: images
+  url: https://docs.m5stack.com/en/core/core2
+  verified: '2026-09-11'
 ---
 
 # Core2
