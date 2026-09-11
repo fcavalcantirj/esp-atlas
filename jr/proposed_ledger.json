@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-18T21:00:02.504737+00:00",
+      "expires": "2026-09-18T22:00:03.963388+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-11T21:00:02.504737+00:00"
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -1635,6 +1635,15 @@
       "repo_id": 1185415679,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "cc": {
+      "expires": "2026-09-18T22:00:03.963388+00:00",
+      "id": "cc",
+      "pr_ref": null,
+      "reason": "repo_unresolved: unparseable repo 'cc'",
+      "repo": "cc",
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
     "christmas-tree-clock": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
@@ -3556,6 +3565,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
+    "m5-stick-help": {
+      "expires": "2026-10-11T22:00:03.963388+00:00",
+      "id": "m5-stick-help",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "m5sxftyxx/m5-stick-help",
+      "repo_id": 921891878,
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
     "m5airmouse": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
       "id": "m5airmouse",
@@ -4311,6 +4330,16 @@
       "status": "seen",
       "timestamp": "2026-09-02T16:03:28.043016+00:00"
     },
+    "m5stack-capsule-tv-b-gone": {
+      "expires": "2026-10-11T22:00:03.963388+00:00",
+      "id": "m5stack-capsule-tv-b-gone",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "pedrominatel/m5stack-capsule-tv-b-gone",
+      "repo_id": 1226290715,
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
     "m5stack-cardputer-adv-gps-tracker": {
       "expires": "2026-10-08T05:25:25.049296+00:00",
       "id": "m5stack-cardputer-adv-gps-tracker",
@@ -4822,6 +4851,26 @@
       "repo_id": 1146417023,
       "status": "rejected",
       "timestamp": "2026-09-09T04:00:10.126216+00:00"
+    },
+    "m5tab5-demos": {
+      "expires": "2026-10-11T22:00:03.963388+00:00",
+      "id": "m5tab5-demos",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 3 forks",
+      "repo": "piaoxuebingfeng/m5tab5-demos",
+      "repo_id": 1048781666,
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
+    "m5tab5-userdemo-docker": {
+      "expires": "2026-10-11T22:00:03.963388+00:00",
+      "id": "m5tab5-userdemo-docker",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "billybag2/m5tab5-userdemo-docker",
+      "repo_id": 1041562728,
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
     "m5term": {
       "expires": "2026-10-09T04:00:10.126216+00:00",
@@ -6196,6 +6245,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
     },
+    "reticulum-tdeck": {
+      "expires": "2026-10-11T22:00:03.963388+00:00",
+      "id": "reticulum-tdeck",
+      "pr_ref": null,
+      "reason": "below_floor: 20 stars / 4 forks",
+      "repo": "varna9000/reticulum-tdeck",
+      "repo_id": 1173612960,
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
     "retro-go": {
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "retro-go",
@@ -6874,6 +6933,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
+    "sudoku-m5papers3": {
+      "expires": "2026-10-11T22:00:03.963388+00:00",
+      "id": "sudoku-m5papers3",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "palaniraja/sudoku-m5papers3",
+      "repo_id": 1013961834,
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
     "sumi": {
       "expires": "2026-10-11T18:00:57.443532+00:00",
       "id": "sumi",
@@ -6883,6 +6952,15 @@
       "repo_id": 1135393729,
       "status": "rejected",
       "timestamp": "2026-09-11T18:00:57.443532+00:00"
+    },
+    "sysx": {
+      "expires": "2026-09-18T22:00:03.963388+00:00",
+      "id": "sysx",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "dracosdev/sysx",
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
     "t-display-c5": {
       "expires": "2026-10-08T04:00:36.972928+00:00",
@@ -6904,6 +6982,16 @@
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
+    "tab5-weather-clock-tmp711v4": {
+      "expires": "2026-10-11T22:00:03.963388+00:00",
+      "id": "tab5-weather-clock-tmp711v4",
+      "pr_ref": null,
+      "reason": "below_floor: 5 stars / 1 forks",
+      "repo": "fermintm/tab5-weather-clock-tmp711v4",
+      "repo_id": 1090495499,
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
     "taskhub-for-sticks3": {
       "evidence_url": "https://github.com/sheepxux/Taskhub-for-StickS3",
       "id": "taskhub-for-sticks3",
@@ -6922,12 +7010,72 @@
       "status": "rejected",
       "timestamp": "2026-09-08T05:25:25.049296+00:00"
     },
+    "tetris-2p-battle-m5stickc-plus2": {
+      "expires": "2026-10-11T22:00:03.963388+00:00",
+      "id": "tetris-2p-battle-m5stickc-plus2",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/tetris-2p-battle-m5stickc-plus2",
+      "repo_id": 1082894189,
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
+    "tetris-atoms3": {
+      "expires": "2026-10-11T22:00:03.963388+00:00",
+      "id": "tetris-atoms3",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/tetris-atoms3",
+      "repo_id": 1087362980,
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
+    "tetris-for-m5stickcplus2-fastghost": {
+      "expires": "2026-10-11T22:00:03.963388+00:00",
+      "id": "tetris-for-m5stickcplus2-fastghost",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/tetris-for-m5stickcplus2-fastghost",
+      "repo_id": 1075790690,
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
+    "tetroids-m5stickc-plus2": {
+      "expires": "2026-10-11T22:00:03.963388+00:00",
+      "id": "tetroids-m5stickc-plus2",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/tetroids-m5stickc-plus2",
+      "repo_id": 1092246589,
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
     "tinycardputer": {
       "id": "tinycardputer",
       "pr_ref": null,
       "repo": "soykhaler/tinycardputer",
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.118089+00:00"
+    },
+    "totp-auth-for-cardputer-adv": {
+      "expires": "2026-10-11T22:00:03.963388+00:00",
+      "id": "totp-auth-for-cardputer-adv",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 1 forks",
+      "repo": "chillyc0de/totp-auth-for-cardputer-adv",
+      "repo_id": 1174687919,
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
+    "trmnl-firmware": {
+      "expires": "2026-10-11T22:00:03.963388+00:00",
+      "id": "trmnl-firmware",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "usetrmnl/trmnl-firmware",
+      "repo_id": 742912310,
+      "status": "rejected",
+      "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
     "ubo07": {
       "expires": "2026-09-16T02:09:24.261396+00:00",
@@ -7157,6 +7305,7 @@
     "ben7147/bruceextled.git": "bruceextled",
     "benbaker76/pigtail": "pigtail",
     "big-bratan/make-ap": "make-ap",
+    "billybag2/m5tab5-userdemo-docker": "m5tab5-userdemo-docker",
     "bitmaker-hub/nerdminer_v2": "nerdminer-v2",
     "blamouche/cardputer-dwight": "cardputer-dwight",
     "bluemage/cardputeradv-basicav": "cardputeradv-basicav",
@@ -7178,6 +7327,7 @@
     "c5lab/pancake": "pancake",
     "captainchorche/cardcaliper": "cardcaliper",
     "cattivole/darkroomtimer": "darkroomtimer",
+    "cc": "cc",
     "chadvavra/papercolor.git": "papercolor",
     "charl3x/glide-synth-cardputer-adv": "glide-synth-cardputer-adv",
     "charlexh/codebuddy": "codebuddy",
@@ -7185,6 +7335,7 @@
     "chatelp/geek-casino-cardputeradv": "geek-casino-cardputeradv",
     "chatelp/silicon-bubbles-cardputeradv": "silicon-bubbles-cardputeradv",
     "chillyc0de/minimaze-for-cardputer-adv": "minimaze-for-cardputer-adv",
+    "chillyc0de/totp-auth-for-cardputer-adv": "totp-auth-for-cardputer-adv",
     "chlp/meme-board": "meme-board",
     "chongjiazhen/cardputer-puzzles": "cardputer-puzzles",
     "chrisdacrunk/little-devhelper": "little-devhelper",
@@ -7238,6 +7389,10 @@
     "coreymillia/scorched-earth-m5stickc-plus2": "scorched-earth-m5stickc-plus2",
     "coreymillia/shark-bait-add-on-bruce-firmware-m5stackc-plus-": "shark-bait-add-on-bruce-firmware-m5stack",
     "coreymillia/sonicthehedgehog-m5stickc-plus2": "sonicthehedgehog-m5stickc-plus2",
+    "coreymillia/tetris-2p-battle-m5stickc-plus2": "tetris-2p-battle-m5stickc-plus2",
+    "coreymillia/tetris-atoms3": "tetris-atoms3",
+    "coreymillia/tetris-for-m5stickcplus2-fastghost": "tetris-for-m5stickcplus2-fastghost",
+    "coreymillia/tetroids-m5stickc-plus2": "tetroids-m5stickc-plus2",
     "coreymillia/vectrex-m5stickc-plus2": "vectrex-m5stickc-plus2",
     "coreymillia/whisplay-groq-chatbot": "whisplay-groq-chatbot",
     "coreymillia/wiki-jokes-quotes-m5stack-core-basic-": "wiki-jokes-quotes-m5stack-core-basic",
@@ -7279,6 +7434,7 @@
     "dominicklee/3d-print-bed-leveler": "3d-print-bed-leveler",
     "douglasrubims/cardputer-barcode-wedge": "cardputer-barcode-wedge",
     "dr3d/somafm-for-cardputer": "somafm-for-cardputer",
+    "dracosdev/sysx": "sysx",
     "drdavidda/papercolor-desk-terminal": "papercolor-desk-terminal",
     "drrhesus/rhesus-life": "rhesus-life",
     "drrhesus/rhesus-radio-v3": "rhesus-radio-v3",
@@ -7318,6 +7474,7 @@
     "fbiego/esp32-c3-mini": "esp32-c3-mini",
     "fcavalcantirj/pense-bem-cardputer-adv": "pense-bem-cardputer-adv",
     "fcavalcantirj/sticks3-ai-usage": "sticks3-ai-usage",
+    "fermintm/tab5-weather-clock-tmp711v4": "tab5-weather-clock-tmp711v4",
     "filipo3221/cardtube": "cardtube",
     "flashertwelve/ir_replay": "ir-replay",
     "flipper-zero-esp32-adv": "flipper-zero-esp32-adv",
@@ -7536,6 +7693,7 @@
     "m5stack/m5stickcplus2-userdemo": "m5stickcplus2-userdemo",
     "m5stack/m5unified": "m5unified",
     "m5stack/v_img_reciver": "v-img-reciver",
+    "m5sxftyxx/m5-stick-help": "m5-stick-help",
     "madboy134/saldotransporte": "saldotransporte",
     "manba036/m5core2_sg90_stackchan_voicetext_ataru": "m5core2-sg90-stackchan-voicetext-ataru",
     "mangox0567/m5stack-cardputer-ssh": "m5stack-cardputer-ssh",
@@ -7624,10 +7782,12 @@
     "oumike/plumeria-mc": "plumeria-mc",
     "overcyber/esp32-wifi-hash-monster": "esp32-wifi-hash-monster",
     "oxoooox/stackchan-remote-sticks3-joystick2": "stackchan-remote-sticks3-joystick2",
+    "palaniraja/sudoku-m5papers3": "sudoku-m5papers3",
     "pavelprosto94/christmas_tree_clock": "christmas-tree-clock",
     "pavelprosto94/space_clock": "space-clock",
     "pawneemilitia/infiltra-firmware": "infiltra-firmware",
     "pdrix": "pdrix",
+    "pedrominatel/m5stack-capsule-tv-b-gone": "m5stack-capsule-tv-b-gone",
     "pelgraine/meck-p4": "meck-p4",
     "pepa1555/ollama-cardputer": "ollama-cardputer",
     "pepeangell5/bwifikill-cardputer-adv": "bwifikill-cardputer-adv",
@@ -7635,6 +7795,7 @@
     "petsven/s3_decibel_meter": "s3-decibel-meter",
     "pfefferle/m5-atoms3-palnagotchi": "m5-atoms3-palnagotchi",
     "philmo6/meshpunk": "meshpunk",
+    "piaoxuebingfeng/m5tab5-demos": "m5tab5-demos",
     "pierrebak/m5cardputer_voice-changer": "m5cardputer-voice-changer",
     "pkolbas/m5-guitartuner": "m5-guitartuner",
     "power-pill/ascii-aquarium": "ascii-aquarium",
@@ -7775,9 +7936,11 @@
     "urieldeveloper/spaceu-cardcomm": "spaceu-cardcomm",
     "urtubia/miniacid": "miniacid",
     "user154lt/doomsdaygame": "doomsdaygame",
+    "usetrmnl/trmnl-firmware": "trmnl-firmware",
     "uxjulia/crossink": "crossink",
     "v11859752/m5airmouse": "m5airmouse",
     "vanshksingh/m5cardputer-chat-with-gemini-api": "m5cardputer-chat-with-gemini-api",
+    "varna9000/reticulum-tdeck": "reticulum-tdeck",
     "vicliu624/cardputer_mp3_adv": "cardputer-mp3-adv",
     "viniciusbo/m5-palnagotchi": "m5-palnagotchi",
     "voidnoi/badcard": "badcard",
