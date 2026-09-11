@@ -2498,3 +2498,134 @@ def test_sparkfun_board_404_skipped_cleanly(tmp_path):
     assert entry["reason"] == "doc-unreachable"
     assert entry["modified"] is False
     assert path.read_text() == before
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# SLICE 11 — freenove vendor doc resolver (SPEC-board-backfill-vendors.md §Slice 11).
+# ──────────────────────────────────────────────────────────────────────────────
+# Registers the "freenove" resolver on docs.freenove.com so board_backfill reaches the 3
+# Freenove ESP32-S3 Display boards. ALL THREE FNK0104 variants (a/b/s) share ONE official
+# family doc — https://docs.freenove.com/projects/fnk0104/en/latest/ — CONFIRMED live=200 on
+# 2026-09-11. The per-variant slugs (fnk0104a/b/s) return 404: only the base fnk0104 doc
+# exists (it is the ESP32-S3 Display family doc that covers all three variants). So — exactly
+# like the seeed/dfrobot/sparkfun maps — this resolver is a small EXPLICIT per-board map, all
+# three ids pointing at the ONE verified family-doc URL; never a guessed per-variant slug. The
+# resolver claims only the 3 mapped ids; any other id yields [] (→ skipped doc-unreachable,
+# never a guessed URL). The frontmatter `brand` for these boards is exactly `freenove`. The
+# HTML (identical for all 3, since they cite the same source) is saved as the Slice-11 fixtures.
+#
+# EMPIRICAL grounding (measured on the REAL fetched family-doc page under fixtures/):
+#   * getting_started — grounds for ALL 3 (the resolved 200 doc page IS the link).
+#   * usb_serial      — OMITTED on all 3: the fnk0104 landing page is a Sphinx toctree index
+#                       whose visible text names NO bridge chip in a groundable form (a "USB_Serial"
+#                       project title is not a chip enum), so extract_usb_serial returns None
+#                       (cite-or-omit — never a false-positive flash-critical write).
+#   * download_mode   — OMITTED on all 3: the index page states no Boot/Reset download sequence.
+#   * images          — OMITTED on all 3: the espressif filename heuristic (the registry default
+#                       for freenove — no dedicated freenove image extractor) finds nothing, so no
+#                       gate is needed (unlike lilygo/unexpected-maker).
+# So this slice grounds getting_started for all 3 — an honest 0→1 per board.
+
+# The ONE family-doc URL confirmed 200 (all 3 variant slugs 404 → only the base doc exists).
+FREENOVE_FAMILY_DOC = "https://docs.freenove.com/projects/fnk0104/en/latest/"
+# All 3 freenove board ids the resolver must cover (the data/boards/freenove/* dirs). Every one
+# maps to the SAME family doc (an explicit map, mirroring dfrobot/sparkfun — never a guess).
+FREENOVE_VERIFIED_URLS = {
+    "freenove-fnk0104a": FREENOVE_FAMILY_DOC,
+    "freenove-fnk0104b": FREENOVE_FAMILY_DOC,
+    "freenove-fnk0104s": FREENOVE_FAMILY_DOC,
+}
+FREENOVE_ALL_BOARDS = list(FREENOVE_VERIFIED_URLS)
+FREENOVE_SOC = {bid: "esp32-s3" for bid in FREENOVE_ALL_BOARDS}
+
+
+def test_freenove_resolver_registered_returns_verified_docs_urls():
+    # (a) the registry gained a "freenove" entry, and it returns the EXACT live-verified
+    # docs.freenove.com family-doc URL (best-first) for every one of the 3 variant ids — from
+    # the explicit map (the per-variant slugs 404, so only the base doc is ever emitted).
+    assert "freenove" in bb.VENDOR_DOC_RESOLVERS
+    resolver = bb.VENDOR_DOC_RESOLVERS["freenove"]
+    for bid, url in FREENOVE_VERIFIED_URLS.items():
+        cands = resolver(bid, FREENOVE_SOC[bid])
+        assert cands[0] == url, f"{bid} → {cands[0]!r} != {url!r}"
+
+
+def test_freenove_resolver_all_variants_share_one_family_doc():
+    # (b) all 3 FNK0104 variants resolve to the SAME single family doc on docs.freenove.com —
+    # no board falls through uncovered, and none gets a (404) per-variant slug (0 → 3 boards).
+    resolver = bb.VENDOR_DOC_RESOLVERS["freenove"]
+    resolved = set()
+    for bid in FREENOVE_ALL_BOARDS:
+        cands = resolver(bid, FREENOVE_SOC[bid])
+        assert cands, f"{bid} yielded no candidate URL"
+        assert cands[0] == FREENOVE_FAMILY_DOC, cands[0]
+        resolved.add(cands[0])
+    assert resolved == {FREENOVE_FAMILY_DOC}  # one shared doc, not three per-variant URLs
+
+
+def test_freenove_resolver_unmapped_id_returns_empty():
+    # (c) the resolver only claims the 3 mapped ids; an id it doesn't own — including a
+    # plausible-but-unmapped freenove id — yields [] (→ skipped doc-unreachable, never a
+    # guessed URL).
+    resolver = bb.VENDOR_DOC_RESOLVERS["freenove"]
+    assert resolver("esp32-devkitc", "esp32") == []
+    assert resolver("heltec-wifi-kit-32-v3", "esp32-s3") == []
+    assert resolver("freenove-fnk0104x", "esp32-s3") == []       # plausible-but-unmapped variant
+    assert resolver("freenove-fnk0099", "esp32-s3") == []        # plausible-but-unmapped product
+
+
+def _freenove_fetcher_for(bid, fixture_name):
+    """Fake fetcher that serves the given fixture ONLY at the freenove resolver's URL for `bid` —
+    any other URL 404s (proves resolution lands on the right page)."""
+    url = bb.VENDOR_DOC_RESOLVERS["freenove"](bid, FREENOVE_SOC[bid])[0]
+    return url, _fetcher({url: _fixture(fixture_name)})
+
+
+@pytest.mark.parametrize("name", FREENOVE_ALL_BOARDS)
+def test_freenove_usb_serial_download_mode_images_omitted_on_real_page(name):
+    # (d) CRITICAL cite-or-omit: on the REAL fnk0104 family-doc page (a Sphinx toctree index)
+    # usb_serial / download_mode / images are ALL ungroundable — the page names no bridge chip,
+    # no download sequence, and no groundable image — so each extractor returns None (OMITTED,
+    # never a false-positive write).
+    raw = _fixture(name)
+    assert bb.extract_usb_serial(bb._visible_text(raw)) is None
+    assert bb.extract_download_mode(bb._visible_text(raw)) is None
+    assert bb.extract_images(raw, FREENOVE_FAMILY_DOC) is None
+
+
+@pytest.mark.parametrize("name", FREENOVE_ALL_BOARDS)
+def test_freenove_grounds_getting_started_only(name, tmp_path):
+    # (e) end-to-end: each variant grounds getting_started = the resolved family-doc URL and
+    # NOTHING else (all other fields OMITTED). Honest 0→1 per board.
+    path = _write_board(tmp_path, name, FREENOVE_SOC[name], brand="freenove")
+    url, fetch = _freenove_fetcher_for(name, name)
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url == FREENOVE_VERIFIED_URLS[name]
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert "usb_serial" not in fm
+    assert "download_mode" not in fm
+    assert "images" not in fm
+    cited = {s["field"]: s for s in fm["sources"]}
+    assert cited["getting_started"]["url"] == url
+    assert cited["getting_started"]["verified"] == TODAY
+
+
+def test_freenove_board_404_skipped_cleanly(tmp_path):
+    # (f) a board whose doc page 404s is SKIPPED doc-unreachable and left byte-for-byte
+    # unmodified — never a partial/invented write.
+    bid = "freenove-fnk0104a"
+    path = _write_board(tmp_path, bid, FREENOVE_SOC[bid], brand="freenove")
+    before = path.read_text()
+    entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
+
+    assert entry["status"] == "skipped"
+    assert entry["reason"] == "doc-unreachable"
+    assert entry["modified"] is False
+    assert path.read_text() == before
