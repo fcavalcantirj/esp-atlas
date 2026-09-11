@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-18T22:00:03.963388+00:00",
+      "expires": "2026-09-18T23:00:11.214000+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-11T22:00:03.963388+00:00"
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -1885,6 +1885,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T16:00:54.676058+00:00"
     },
+    "crcmd-tab5": {
+      "expires": "2026-10-11T23:00:11.214000+00:00",
+      "id": "crcmd-tab5",
+      "pr_ref": null,
+      "reason": "below_floor: 5 stars / 0 forks",
+      "repo": "sohtamei/crcmd.tab5",
+      "repo_id": 1038524167,
+      "status": "rejected",
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
+    },
     "crossink": {
       "expires": "2026-10-08T02:00:32.995095+00:00",
       "id": "crossink",
@@ -2234,6 +2244,16 @@
       "repo_id": 793197340,
       "status": "merged",
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
+    },
+    "esp-hosted-mcu": {
+      "expires": "2026-10-11T23:00:11.214000+00:00",
+      "id": "esp-hosted-mcu",
+      "pr_ref": null,
+      "reason": "already_catalogued: espressif/esp-hosted-mcu is already in the atlas",
+      "repo": "espressif/esp-hosted-mcu",
+      "repo_id": 882997253,
+      "status": "rejected",
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "esp-level": {
       "expires": "2026-10-07T23:00:28.148172+00:00",
@@ -4477,6 +4497,16 @@
       "repo_id": 1225262199,
       "status": "rejected",
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
+    },
+    "m5stack-tab5-aio-box": {
+      "expires": "2026-10-11T23:00:11.214000+00:00",
+      "id": "m5stack-tab5-aio-box",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "zhaoker/m5stack_tab5_aio_box",
+      "repo_id": 1263731718,
+      "status": "rejected",
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "m5stack-tab5-converter": {
       "expires": "2026-10-08T20:00:21.660790+00:00",
@@ -6982,6 +7012,76 @@
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
+    "tab5-adb": {
+      "expires": "2026-10-11T23:00:11.214000+00:00",
+      "id": "tab5-adb",
+      "pr_ref": null,
+      "reason": "below_floor: 12 stars / 2 forks",
+      "repo": "hiroki-kawakami/tab5-adb",
+      "repo_id": 1237671799,
+      "status": "rejected",
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
+    },
+    "tab5-hid-device": {
+      "expires": "2026-10-11T23:00:11.214000+00:00",
+      "id": "tab5-hid-device",
+      "pr_ref": null,
+      "reason": "below_floor: 6 stars / 2 forks",
+      "repo": "hiroki-kawakami/tab5-hid-device",
+      "repo_id": 1135626452,
+      "status": "rejected",
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
+    },
+    "tab5-launcher": {
+      "expires": "2026-10-11T23:00:11.214000+00:00",
+      "id": "tab5-launcher",
+      "pr_ref": null,
+      "reason": "below_floor: 21 stars / 2 forks",
+      "repo": "imlunchtime/tab5_launcher",
+      "repo_id": 1028687952,
+      "status": "rejected",
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
+    },
+    "tab5-media-player": {
+      "expires": "2026-10-11T23:00:11.214000+00:00",
+      "id": "tab5-media-player",
+      "pr_ref": null,
+      "reason": "below_floor: 11 stars / 3 forks",
+      "repo": "hiroki-kawakami/tab5-media-player",
+      "repo_id": 990775037,
+      "status": "rejected",
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
+    },
+    "tab5-screen-streamer": {
+      "expires": "2026-10-11T23:00:11.214000+00:00",
+      "id": "tab5-screen-streamer",
+      "pr_ref": null,
+      "reason": "below_floor: 13 stars / 0 forks",
+      "repo": "hiroki-kawakami/tab5-screen-streamer",
+      "repo_id": 1072209546,
+      "status": "rejected",
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
+    },
+    "tab5-ssh-client": {
+      "expires": "2026-10-11T23:00:11.214000+00:00",
+      "id": "tab5-ssh-client",
+      "pr_ref": null,
+      "reason": "below_floor: 13 stars / 2 forks",
+      "repo": "airpocket-soundman/tab5_ssh_client",
+      "repo_id": 1280167511,
+      "status": "rejected",
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
+    },
+    "tab5-uvc-display": {
+      "expires": "2026-10-11T23:00:11.214000+00:00",
+      "id": "tab5-uvc-display",
+      "pr_ref": null,
+      "reason": "below_floor: 8 stars / 1 forks",
+      "repo": "hiroki-kawakami/tab5-uvc-display",
+      "repo_id": 987020744,
+      "status": "rejected",
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
+    },
     "tab5-weather-clock-tmp711v4": {
       "expires": "2026-10-11T22:00:03.963388+00:00",
       "id": "tab5-weather-clock-tmp711v4",
@@ -6991,6 +7091,35 @@
       "repo_id": 1090495499,
       "status": "rejected",
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
+    "tactility": {
+      "expires": "2026-10-11T23:00:11.214000+00:00",
+      "id": "tactility",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "tactilityproject/tactility",
+      "repo_id": 735565340,
+      "status": "rejected",
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
+    },
+    "tagtinker-adv": {
+      "evidence_url": "https://github.com/i12bp8/tagtinker-adv",
+      "id": "tagtinker-adv",
+      "pr_ref": null,
+      "repo": "i12bp8/tagtinker-adv",
+      "repo_id": 1361884510,
+      "status": "proposed",
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
+    },
+    "tama-search-uni": {
+      "expires": "2026-10-11T23:00:11.214000+00:00",
+      "id": "tama-search-uni",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "calcaware/tama-search-uni",
+      "repo_id": 1354961558,
+      "status": "rejected",
+      "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "taskhub-for-sticks3": {
       "evidence_url": "https://github.com/sheepxux/Taskhub-for-StickS3",
@@ -7259,6 +7388,7 @@
     "advascript/calcputer": "calcputer",
     "ah2005na": "ah2005na",
     "ah2005na/m5stick-shark": "m5stick-shark",
+    "airpocket-soundman/tab5_ssh_client": "tab5-ssh-client",
     "akoerner/kprox": "kprox",
     "alcor55/cardputer-gps-info": "cardputer-gps-info",
     "aleksm2137/mini-mp3player_cardputer-adv": "mini-mp3player-cardputer-adv",
@@ -7325,6 +7455,7 @@
     "c5lab/m5monsterc5-cardputeradv": "m5monsterc5-cardputeradv",
     "c5lab/m5monsterc5-tab5": "m5monsterc5-tab5",
     "c5lab/pancake": "pancake",
+    "calcaware/tama-search-uni": "tama-search-uni",
     "captainchorche/cardcaliper": "cardcaliper",
     "cattivole/darkroomtimer": "darkroomtimer",
     "cc": "cc",
@@ -7464,6 +7595,7 @@
     "esp32-bit-pirate": "esp32-bit-pirate",
     "esp32de/boot-linux-esp32s3-playground": "boot-linux-esp32s3-playground",
     "espressif/esp-claw": "esp-claw",
+    "espressif/esp-hosted-mcu": "esp-hosted-mcu",
     "evilkbgy9/cardnet": "cardnet",
     "facelesstech/dht11_and_dht22_m5stick": "dht11-and-dht22-m5stick",
     "failpowers/dualmesh-cardputer": "dualmesh-cardputer",
@@ -7554,6 +7686,11 @@
     "hermes-gadget/sigurdos-tdeck": "sigurdos-tdeck",
     "hiroki-kawakami/kyoshin": "kyoshin",
     "hiroki-kawakami/namecardknot": "namecardknot",
+    "hiroki-kawakami/tab5-adb": "tab5-adb",
+    "hiroki-kawakami/tab5-hid-device": "tab5-hid-device",
+    "hiroki-kawakami/tab5-media-player": "tab5-media-player",
+    "hiroki-kawakami/tab5-screen-streamer": "tab5-screen-streamer",
+    "hiroki-kawakami/tab5-uvc-display": "tab5-uvc-display",
     "homertrix/meshtastic-tdisplay-p4": "meshtastic-tdisplay-p4",
     "horseyofcoursey/ember": "ember",
     "hsbsbz/m5stickcplus2-seamonsue": "m5stickcplus2-seamonsue",
@@ -7561,6 +7698,7 @@
     "http:/": "http:/",
     "https:/": "https:/",
     "i12bp8/echo": "echo",
+    "i12bp8/tagtinker-adv": "tagtinker-adv",
     "i12bp8/wmbuster-adv": "wmbuster-adv",
     "icingtomato/stickc-resistor-calculator": "stickc-resistor-calculator",
     "id8872/cardputer-squawkbox": "cardputer-squawkbox",
@@ -7568,6 +7706,7 @@
     "ilanovikov088-source/dinorune-sticks3": "dinorune-sticks3",
     "imink/aqualife": "aqualife",
     "imliubo/retro-go": "retro-go",
+    "imlunchtime/tab5_launcher": "tab5-launcher",
     "imshox/oxotp": "oxotp",
     "imxnoobx/fstick": "fstick",
     "incursiohack/esp-game-server": "esp-game-server",
@@ -7883,6 +8022,7 @@
     "smonse/ghostble": "ghostble",
     "soe6/aethertone": "aethertone",
     "sohtamei/crcmd.qrcode2": "crcmd-qrcode2",
+    "sohtamei/crcmd.tab5": "crcmd-tab5",
     "sor3nt/flipper-zero-esp32-port": "flipper-zero-esp32-port",
     "sosprz/esp_level": "esp-level",
     "sosprz/meshcore-cardputer-adv": "meshcore-cardputer-adv",
@@ -7904,6 +8044,7 @@
     "svenvu666/flappy-for-m5stickc-plus2": "flappy-for-m5stickc-plus2",
     "t413/navboxesp": "navboxesp",
     "tabozen/ucplayground": "ucplayground",
+    "tactilityproject/tactility": "tactility",
     "taraskad3o/m5stack-atoms3-ble-remote-for-canon": "m5stack-atoms3-ble-remote-for-canon",
     "teapot174/airmouses3": "airmouses3",
     "thebolined/ai-cardputer-adv-a-portable-ai-assistant": "ai-cardputer-adv-a-portable-ai-assistant",
@@ -7985,6 +8126,7 @@
     "zeloksa/cardputer-flashlight-adv": "cardputer-flashlight-adv",
     "zeloksa/imu-acoustic-analyzer": "imu-acoustic-analyzer",
     "zeloksa/piano-tiles-adv": "piano-tiles-adv",
+    "zhaoker/m5stack_tab5_aio_box": "m5stack-tab5-aio-box",
     "zhuzhe1983/inkos": "inkos",
     "zmactep/m5stickc_morse": "m5stickc-morse",
     "zmattmanz/claude-usage": "claude-usage",

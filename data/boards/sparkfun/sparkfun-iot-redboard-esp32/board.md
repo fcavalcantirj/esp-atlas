@@ -4,8 +4,8 @@ type: board
 brand: sparkfun
 name: SparkFun IoT RedBoard - ESP32 Development Board
 aka:
-- "ESP32_IOT_REDBOARD"
-- "sparkfun_esp32_iot_redboard"
+- ESP32_IOT_REDBOARD
+- sparkfun_esp32_iot_redboard
 soc: esp32
 psram_mb: 0
 form_factor: devkit
@@ -27,24 +27,29 @@ io:
   gpio_exposed: 24
   gpio_free: 17
 notes:
-- ESP32-D0WD-V3; module flash configurable at 4/8/16 MB per product page (default shipped capacity not stated)
-- Battery charging via onboard MCP73831 (500mA default), JST connector for single-cell LiPo; onboard MAX17048 fuel gauge
-- Arduino Uno-compatible form factor ("RedBoard" line) with Qwiic connector and microSD slot
+- ESP32-D0WD-V3; module flash configurable at 4/8/16 MB per product page (default
+  shipped capacity not stated)
+- Battery charging via onboard MCP73831 (500mA default), JST connector for single-cell
+  LiPo; onboard MAX17048 fuel gauge
+- Arduino Uno-compatible form factor ("RedBoard" line) with Qwiic connector and microSD
+  slot
 - ESP32-D0WD-V3 chip variant has no PSRAM per Espressif's ESP32 series ordering table
-- 'io.gpio_exposed=24 DERIVED: the vendor''s own Fritzing part file (linked from
-  the GitHub hardware repo) enumerates the header nets by GPIO: 1(RXD0/TXD0 pair
-  gives 1,3), 3, 4, 5(!CS!), 12(TDI), 13(TCK, also re-broken-out as a second header
-  pad), 14(TMS, also re-broken-out), 15(TDO), 16, 17, 18(SCK), 19(POCI/MISO),
-  21(SDA), 22(SCL), 23(PICO/MOSI), 25, 26, 27, and ADC1 channels 0/3/4/5/6/7 (=32/33/34/35/36/39)
-  -- 24 distinct GPIOs; no vendor-stated total pin count exists on the product
-  page or hookup guide to cross-check against. GPIO2 drives the onboard WS2812
-  RGB LED per the espressif/arduino-esp32 board variant (RGB_LED_PIN 2) and is
-  not a header net in the Fritzing part, so it is excluded from the 24 already;
-  GPIO0 is likewise absent from the Fritzing header nets'
-- 'io.gpio_free=17 DERIVED: of esp32''s soc.reserved_pins, strapping 5/12/15 are
-  exposed (3 pins; 0 and 2 are not header nets per the Fritzing part above);
-  input_only 34/35/36/39 are exposed (4 pins); usb_flash_tied 6/7/8 are not on
-  the header. 24 total - 3 strapping - 4 input-only = 17'
+- 'io.gpio_exposed=24 DERIVED: the vendor''s own Fritzing part file (linked from the
+  GitHub hardware repo) enumerates the header nets by GPIO: 1(RXD0/TXD0 pair gives
+  1,3), 3, 4, 5(!CS!), 12(TDI), 13(TCK, also re-broken-out as a second header pad),
+  14(TMS, also re-broken-out), 15(TDO), 16, 17, 18(SCK), 19(POCI/MISO), 21(SDA), 22(SCL),
+  23(PICO/MOSI), 25, 26, 27, and ADC1 channels 0/3/4/5/6/7 (=32/33/34/35/36/39) --
+  24 distinct GPIOs; no vendor-stated total pin count exists on the product page or
+  hookup guide to cross-check against. GPIO2 drives the onboard WS2812 RGB LED per
+  the espressif/arduino-esp32 board variant (RGB_LED_PIN 2) and is not a header net
+  in the Fritzing part, so it is excluded from the 24 already; GPIO0 is likewise absent
+  from the Fritzing header nets'
+- 'io.gpio_free=17 DERIVED: of esp32''s soc.reserved_pins, strapping 5/12/15 are exposed
+  (3 pins; 0 and 2 are not header nets per the Fritzing part above); input_only 34/35/36/39
+  are exposed (4 pins); usb_flash_tied 6/7/8 are not on the header. 24 total - 3 strapping
+  - 4 input-only = 17'
+usb_serial: ch340
+getting_started: https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-iot-redboard-esp32-development-board.html
@@ -70,6 +75,12 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/sparkfun_esp32_iot_redboard.json
   verified: '2026-09-07'
+- field: usb_serial
+  url: https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide
+  verified: '2026-09-11'
+- field: getting_started
+  url: https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide
+  verified: '2026-09-11'
 ---
 
 # SparkFun IoT RedBoard - ESP32 Development Board
