@@ -4,7 +4,7 @@ type: board
 brand: unexpected-maker
 name: Unexpected Maker ProS3
 aka:
-- "PROS3"
+- PROS3
 soc: esp32-s3
 flash_mb: 16
 psram_mb: 8
@@ -30,12 +30,11 @@ notes:
 - LiPo battery via header + Microblade connector on top
 - One STEMMA QT / Qwiic port
 - USB connector type not stated on the cited spec matrix (omitted)
-- 'io.gpio_exposed=27 QUOTED: vendor page states "27x GPIO including castellated
-  headers"'
-- 'io.power_out QUOTED: vendor page states "2x 700mA 3.3V LDO Regulators"; LDO2
-  is described as "for you to use to connect external 3V3 modules, sensors and
-  peripherals" (EN tied to IO17, auto-shuts down in deep sleep) -- rail_v/rail_ma_max
-  reflect this external-use LDO2, not the shared LDO1'
+- 'io.gpio_exposed=27 QUOTED: vendor page states "27x GPIO including castellated headers"'
+- 'io.power_out QUOTED: vendor page states "2x 700mA 3.3V LDO Regulators"; LDO2 is
+  described as "for you to use to connect external 3V3 modules, sensors and peripherals"
+  (EN tied to IO17, auto-shuts down in deep sleep) -- rail_v/rail_ma_max reflect this
+  external-use LDO2, not the shared LDO1'
 - 'io.gpio_free=22 DERIVED: CircuitPython''s board pin table (unexpectedmaker_pros3/pins.c)
   lists 28 IO-numbered pins {0-9,12-16,17,21,34-42,43,44}; excluding GPIO17 (LDO2/NeoPixel-power
   enable -- onboard-dedicated despite carrying an IO17 alias; NeoPixel data GPIO18
@@ -43,6 +42,8 @@ notes:
   matching vendor''s "27" exactly. Subtracting esp32-s3''s soc.reserved_pins present
   in that 27-pin set (strapping {0,3}: 2; usb_flash_tied {35,36,37}: 3 -- 5 total)
   gives 27 - 5 = 22'
+usb_serial: native-usb-serial-jtag
+getting_started: https://esp32s3.com/pros3.html
 sources:
 - field: '*'
   url: https://unexpectedmaker.com/shop/pros3
@@ -62,6 +63,12 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/um_pros3.json
   verified: '2026-09-07'
+- field: usb_serial
+  url: https://esp32s3.com/pros3.html
+  verified: '2026-09-11'
+- field: getting_started
+  url: https://esp32s3.com/pros3.html
+  verified: '2026-09-11'
 ---
 
 # Unexpected Maker ProS3

@@ -4,7 +4,7 @@ type: board
 brand: unexpected-maker
 name: Unexpected Maker TinyS3
 aka:
-- "TINYS3"
+- TINYS3
 soc: esp32-s3
 flash_mb: 8
 psram_mb: 8
@@ -24,14 +24,16 @@ notes:
 - LiPo battery via header + JST pads on bottom
 - USB connector type not stated on the cited spec matrix (omitted)
 - 'io.gpio_exposed=17 QUOTED: vendor page states "17 GPIO". io.power_out omitted:
-  vendor states only "700mA 3.3V LDO Regulator" with no external-load framing
-  (unlike FeatherS3/ProS3''s dedicated LDO2)'
+  vendor states only "700mA 3.3V LDO Regulator" with no external-load framing (unlike
+  FeatherS3/ProS3''s dedicated LDO2)'
 - 'io.gpio_free=12 DERIVED: CircuitPython''s board pin table (unexpectedmaker_tinys3/pins.c)
   lists exactly 17 IO-numbered pins, GPIO {0-9, 21, 34,35,36,37, 43,44} -- matches
   vendor''s "17" exactly (NeoPixel/NeoPixel-power on GPIO18/17 and VBAT/VBUS sense
-  on GPIO10/33 all carry no IO-alias and are excluded). Subtracting esp32-s3''s
-  soc.reserved_pins present in that 17-pin set (strapping {0,3}: 2; usb_flash_tied
-  {35,36,37}: 3 -- 5 total) gives 17 - 5 = 12'
+  on GPIO10/33 all carry no IO-alias and are excluded). Subtracting esp32-s3''s soc.reserved_pins
+  present in that 17-pin set (strapping {0,3}: 2; usb_flash_tied {35,36,37}: 3 --
+  5 total) gives 17 - 5 = 12'
+usb_serial: native-usb-serial-jtag
+getting_started: https://esp32s3.com/tinys3.html
 sources:
 - field: '*'
   url: https://unexpectedmaker.com/shop/tinys3
@@ -48,6 +50,12 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/um_tinys3.json
   verified: '2026-09-07'
+- field: usb_serial
+  url: https://esp32s3.com/tinys3.html
+  verified: '2026-09-11'
+- field: getting_started
+  url: https://esp32s3.com/tinys3.html
+  verified: '2026-09-11'
 ---
 
 # Unexpected Maker TinyS3
