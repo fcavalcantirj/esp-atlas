@@ -4,7 +4,7 @@ type: board
 brand: m5stack
 name: AtomS3
 aka:
-- "m5stack_atoms3"
+- m5stack_atoms3
 soc: esp32-s3
 flash_mb: 8
 psram_mb: 0
@@ -26,16 +26,17 @@ notes:
 - ESP32-S3FN8; 8 MB flash, no PSRAM
 - MPU6886 6-axis IMU (I2C 0x68), programmable button below screen, IR transmitter,
   HY2.0-4P expansion port, no onboard battery
-- 'io.gpio_exposed=8 COUNTED (page has no single "IO x N" summary line): bottom
-  header states "The bottom reserves 6 GPIO and power pins" listing G5/G6/G7/G8/G38/G39,
+- 'io.gpio_exposed=8 COUNTED (page has no single "IO x N" summary line): bottom header
+  states "The bottom reserves 6 GPIO and power pins" listing G5/G6/G7/G8/G38/G39,
   plus the separate HY2.0-4P expansion port pinout "Yellow: G2, White: G1" -- pad
-  set {1,2,5,6,7,8,38,39} = 8. io.gpio_free=8 DERIVED: subtracting esp32-s3''s
-  soc.reserved_pins (strapping {0,3,45,46}, usb_flash_tied {19,20,35,36,37}) --
-  none of the 8 exposed pads fall in either set -- gives 8 - 0 = 8. G38/G39 also
-  carry the onboard MPU6886 I2C bus (shared, multi-drop) but are not subtracted
-  since I2C sharing doesn''t consume the pad exclusively; no display/PSRAM pins
-  overlap the exposed set (display uses G21/G17/G15/G33/G34/G16, psram_mb=0).
-  No max Grove/rail output current stated on this page, so power_out is omitted.'
+  set {1,2,5,6,7,8,38,39} = 8. io.gpio_free=8 DERIVED: subtracting esp32-s3''s soc.reserved_pins
+  (strapping {0,3,45,46}, usb_flash_tied {19,20,35,36,37}) -- none of the 8 exposed
+  pads fall in either set -- gives 8 - 0 = 8. G38/G39 also carry the onboard MPU6886
+  I2C bus (shared, multi-drop) but are not subtracted since I2C sharing doesn''t consume
+  the pad exclusively; no display/PSRAM pins overlap the exposed set (display uses
+  G21/G17/G15/G33/G34/G16, psram_mb=0). No max Grove/rail output current stated on
+  this page, so power_out is omitted.'
+getting_started: https://docs.m5stack.com/en/core/AtomS3
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/AtomS3
@@ -52,6 +53,9 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/m5stack-atoms3.json
   verified: '2026-09-07'
+- field: getting_started
+  url: https://docs.m5stack.com/en/core/AtomS3
+  verified: '2026-09-11'
 ---
 
 # AtomS3
