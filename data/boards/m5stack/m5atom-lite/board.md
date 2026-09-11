@@ -35,6 +35,9 @@ notes:
   (0 exposed), usb_flash_tied {6,7,8,9,10,11} (0 exposed) -- gives 6 - 0 - 0 - 0 =
   6.
 getting_started: https://docs.m5stack.com/en/core/ATOM%20Lite
+images:
+  photo: https://static-cdn.m5stack.com/resource/docs/products/core/ATOM Lite/img-b87e8051-87c6-41d7-a710-eb27f62eb785.webp
+  pinout: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/673/C008_PinMap_01.jpg
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/ATOM%20Lite
@@ -55,6 +58,9 @@ sources:
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/m5stack-atom.json
   verified: '2026-09-07'
 - field: getting_started
+  url: https://docs.m5stack.com/en/core/ATOM%20Lite
+  verified: '2026-09-11'
+- field: images
   url: https://docs.m5stack.com/en/core/ATOM%20Lite
   verified: '2026-09-11'
 ---
