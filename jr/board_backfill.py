@@ -507,6 +507,51 @@ def extract_images_m5stack(raw: str, doc_url: str) -> dict | None:
     return found or None
 
 
+# ─── adafruit image extractor (SPEC-vendor-image-grounding.md, Slice 2) ───────────
+# adafruit Learn OVERVIEW pages (the committed fixtures adafruit-feather-esp32-v2 / -qt-py-esp32-c3
+# / -matrixportal-s3) serve every image from the cdn-learn.adafruit.com CDN with opaque names
+# (FV2_top_angle.jpg, 5778-06.gif, …), so the Espressif filename heuristic grounds nothing. We key
+# off HTML CONTEXT instead:
+#
+#   PHOTO — the per-board identifying hero shot is the guide's Open Graph image, marked
+#     `<meta property="og:image" content="https://cdn-learn.adafruit.com/guides/images/…">`. It is
+#     distinct per guide and points at the board's product shot (Feather V2 → FV2_top_angle.jpg,
+#     etc.). The page BODY's <img> tags are a RELATED-GUIDES carousel (class="image-preview", alt
+#     text naming OTHER boards) — never the subject board — so og:image is the sole reliable photo.
+#     We ground ONLY when og:image is on adafruit's own CDN (foreign og:image is ignored — safety).
+#
+#   PINOUT — high-confidence-or-omit (a wrong wiring diagram can fry a board). adafruit's pinout
+#     DIAGRAMS live on a SEPARATE `/pinouts` sub-page of each Learn guide, NOT the overview page
+#     these fixtures capture. The overview carries only a `<a href="…/pinouts">Pinouts</a>` TOC
+#     LINK (not an image). So pinout is OMITTED for adafruit in this slice — we NEVER promote the
+#     hero photo or a carousel image to pinout, and never mistake the /pinouts link for a diagram.
+#     Reaching adafruit's /pinouts sub-page (following that link, then grounding the diagram there)
+#     is a documented FOLLOW-UP, out of scope for this offline-testable slice.
+_ADA_OG_IMAGE = re.compile(
+    r'<meta[^>]*\bproperty=["\']og:image["\'][^>]*\bcontent=["\']([^"\']+)["\']', re.I)
+_ADA_CDN = "cdn-learn.adafruit.com"
+
+
+def extract_images_adafruit(raw: str, doc_url: str) -> dict | None:
+    """Ground adafruit `{photo?}` by learn.adafruit.com HTML CONTEXT, absolute URLs.
+
+    photo  = the guide's `<meta property="og:image">` hero (the identifying board shot), grounded
+             ONLY when it is on adafruit's own cdn-learn CDN (a foreign og:image is ignored).
+    pinout = ALWAYS omitted here: adafruit pinout diagrams live on a separate `/pinouts` sub-page,
+             not the overview page. Never promote a photo/carousel image to pinout (safety:
+             high-confidence-or-omit). Returns None when no adafruit-CDN og:image is present."""
+    from urllib.parse import urljoin, urlparse
+    found: dict = {}
+
+    m = _ADA_OG_IMAGE.search(raw or "")
+    if m:
+        photo = urljoin(doc_url, m.group(1))
+        if urlparse(photo).netloc.endswith(_ADA_CDN):
+            found["photo"] = photo
+
+    return found or None
+
+
 # ─── per-vendor image-extractor registry (SPEC-vendor-image-grounding.md) ─────────
 # Mirrors VENDOR_DOC_RESOLVERS: keyed by brand, each entry grounds the `images` field
 # ({photo?, pinout?} absolute URLs, or None) from that vendor's page structure. The
@@ -516,6 +561,7 @@ def extract_images_m5stack(raw: str, doc_url: str) -> dict | None:
 IMAGE_EXTRACTORS: dict[str, Callable[[str, str], dict | None]] = {
     "espressif": extract_images,
     "m5stack": extract_images_m5stack,
+    "adafruit": extract_images_adafruit,
 }
 
 
