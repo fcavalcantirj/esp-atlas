@@ -426,143 +426,21 @@ def _missing_fields(fm: dict) -> list[str]:
     return [f for f in BACKFILL_FIELDS if not _is_present(fm.get(f))]
 
 
-_IMG_SRC = re.compile(r'<img[^>]+src="([^"]+)"', re.I)
-
-
-def extract_images(raw: str, doc_url: str) -> dict | None:
-    """The official pinout diagram + a board photo from the doc's <img> tags, resolved to
-    absolute URLs. cite-or-omit: only what the page actually links. A pinout DIAGRAM is the
-    safe (no mis-map) way to convey wiring; an annotated/isometric photo lets a maker
-    visually IDENTIFY the board. Needs the RAW html (visible-text stripping drops <img>)."""
-    from urllib.parse import urljoin
-    found: dict = {}
-    for src in _IMG_SRC.findall(raw or ""):
-        low = src.lower()
-        is_pinout = re.search(r"pin[-_]?layout|pinout", low) is not None
-        if "pinout" not in found and is_pinout:
-            found["pinout"] = urljoin(doc_url, src)
-        # A board photo lets a maker IDENTIFY the board: newer devkits ship an
-        # "isometric"/"annotated-photo"; older boards (WROVER-KIT, Ethernet-Kit, LyraT) only
-        # link a labelled board "layout-front"/"-overview" shot. `not is_pinout` guards the
-        # pin-layout filename (a diagram, not a photo) out of the photo slot.
-        if ("photo" not in found and not is_pinout
-                and re.search(r"annotated-photo|isometric|-photo|layout-front|-overview", low)):
-            found["photo"] = urljoin(doc_url, src)
-    return found or None
-
-
-# ─── m5stack image extractor (SPEC-vendor-image-grounding.md, Slice 1) ────────────
-# m5stack serves every product/doc image from an Aliyun OSS CDN with OPAQUE filenames
-# (K150-stickS3_main-products_01.webp, core2_01.jpg, …), so the Espressif FILENAME heuristic
-# grounds nothing here. Instead we key off the HTML CONTEXT of docs.m5stack.com pages, which
-# is uniform across the real fixtures (m5stick-s3 / m5stack-core2 / m5cardputer / papers3):
-#
-#   PHOTO — the identifying hero shot is the FIRST carousel image, marked
-#     `<div class="carousel-container"> … <img src="…" alt="Preview">`. It is per-board
-#     distinct (the product's own gallery) and appears on every fixture → a reliable photo.
-#
-#   PINOUT — high-confidence-or-omit (a wrong wiring diagram can fry a board). Every page has
-#     one explicit section heading `<h2 id="pinmap" data-id="PinMap">PinMap</h2>`. We ground
-#     `pinout` ONLY to an <img> the author embedded INSIDE that PinMap section (from the
-#     heading to the next <h2>). The section context IS the vendor signal that the image is
-#     the pin map — we never promote a gallery/hero image to pinout. On the real fixtures this
-#     grounds ONLY m5stack-core2 (whose PinMap section embeds a GPIO diagram); m5stick-s3,
-#     m5cardputer and m5stack-papers3 render their pin maps as HTML TABLES with no image, so
-#     pinout is correctly OMITTED for them. m5stack pages carry NO og:image and an identical
-#     generic <meta name="description"> across boards, so neither is usable for grounding.
-_M5_PINMAP_H2 = re.compile(r'<h2[^>]*\bid="pinmap"[^>]*>', re.I)
-_M5_NEXT_H2 = re.compile(r"<h2[ >]", re.I)
-_M5_CAROUSEL_PREVIEW = re.compile(
-    r'<div[^>]*class="[^"]*carousel-container[^"]*".*?<img[^>]+src="([^"]+)"[^>]*\balt="Preview"',
-    re.I | re.S,
+# ─── per-vendor image extractors (moved to jr/board_image_extractors.py) ──────
+# The image extractors and the IMAGE_EXTRACTORS registry were split into
+# board_image_extractors.py once this file neared the ~900-line ceiling. They are re-imported
+# here UNCHANGED so board_backfill.extract_images / _m5stack / _adafruit / _lilygo and
+# IMAGE_EXTRACTORS resolve exactly as before (behaviour-preserving; the espressif entry is the
+# same filename heuristic, same function object). The registry drives images grounding in
+# _extract_for below, keyed by brand, falling back to the espressif heuristic for any brand
+# with no dedicated extractor.
+from board_image_extractors import (  # noqa: E402,F401
+    IMAGE_EXTRACTORS,
+    extract_images,
+    extract_images_adafruit,
+    extract_images_lilygo,
+    extract_images_m5stack,
 )
-
-
-def extract_images_m5stack(raw: str, doc_url: str) -> dict | None:
-    """Ground m5stack `{photo?, pinout?}` by docs.m5stack.com HTML CONTEXT, absolute URLs.
-
-    photo  = the first carousel `<img alt="Preview">` (the product hero shot).
-    pinout = an `<img>` embedded inside the explicit `<h2 id="pinmap">PinMap</h2>` section
-             ONLY — the section heading is the vendor signal it is the pin map. A merely
-             plausible product image is NEVER promoted to pinout (safety: cite-or-omit,
-             high-confidence-or-omit). Returns None when neither is found."""
-    from urllib.parse import urljoin
-    raw = raw or ""
-    found: dict = {}
-
-    hero = _M5_CAROUSEL_PREVIEW.search(raw)
-    if hero:
-        found["photo"] = urljoin(doc_url, hero.group(1))
-
-    h = _M5_PINMAP_H2.search(raw)
-    if h:
-        section = raw[h.end():]
-        nxt = _M5_NEXT_H2.search(section)
-        if nxt:
-            section = section[: nxt.start()]
-        img = _IMG_SRC.search(section)
-        if img:
-            found["pinout"] = urljoin(doc_url, img.group(1))
-
-    return found or None
-
-
-# ─── adafruit image extractor (SPEC-vendor-image-grounding.md, Slice 2) ───────────
-# adafruit Learn OVERVIEW pages (the committed fixtures adafruit-feather-esp32-v2 / -qt-py-esp32-c3
-# / -matrixportal-s3) serve every image from the cdn-learn.adafruit.com CDN with opaque names
-# (FV2_top_angle.jpg, 5778-06.gif, …), so the Espressif filename heuristic grounds nothing. We key
-# off HTML CONTEXT instead:
-#
-#   PHOTO — the per-board identifying hero shot is the guide's Open Graph image, marked
-#     `<meta property="og:image" content="https://cdn-learn.adafruit.com/guides/images/…">`. It is
-#     distinct per guide and points at the board's product shot (Feather V2 → FV2_top_angle.jpg,
-#     etc.). The page BODY's <img> tags are a RELATED-GUIDES carousel (class="image-preview", alt
-#     text naming OTHER boards) — never the subject board — so og:image is the sole reliable photo.
-#     We ground ONLY when og:image is on adafruit's own CDN (foreign og:image is ignored — safety).
-#
-#   PINOUT — high-confidence-or-omit (a wrong wiring diagram can fry a board). adafruit's pinout
-#     DIAGRAMS live on a SEPARATE `/pinouts` sub-page of each Learn guide, NOT the overview page
-#     these fixtures capture. The overview carries only a `<a href="…/pinouts">Pinouts</a>` TOC
-#     LINK (not an image). So pinout is OMITTED for adafruit in this slice — we NEVER promote the
-#     hero photo or a carousel image to pinout, and never mistake the /pinouts link for a diagram.
-#     Reaching adafruit's /pinouts sub-page (following that link, then grounding the diagram there)
-#     is a documented FOLLOW-UP, out of scope for this offline-testable slice.
-_ADA_OG_IMAGE = re.compile(
-    r'<meta[^>]*\bproperty=["\']og:image["\'][^>]*\bcontent=["\']([^"\']+)["\']', re.I)
-_ADA_CDN = "cdn-learn.adafruit.com"
-
-
-def extract_images_adafruit(raw: str, doc_url: str) -> dict | None:
-    """Ground adafruit `{photo?}` by learn.adafruit.com HTML CONTEXT, absolute URLs.
-
-    photo  = the guide's `<meta property="og:image">` hero (the identifying board shot), grounded
-             ONLY when it is on adafruit's own cdn-learn CDN (a foreign og:image is ignored).
-    pinout = ALWAYS omitted here: adafruit pinout diagrams live on a separate `/pinouts` sub-page,
-             not the overview page. Never promote a photo/carousel image to pinout (safety:
-             high-confidence-or-omit). Returns None when no adafruit-CDN og:image is present."""
-    from urllib.parse import urljoin, urlparse
-    found: dict = {}
-
-    m = _ADA_OG_IMAGE.search(raw or "")
-    if m:
-        photo = urljoin(doc_url, m.group(1))
-        if urlparse(photo).netloc.endswith(_ADA_CDN):
-            found["photo"] = photo
-
-    return found or None
-
-
-# ─── per-vendor image-extractor registry (SPEC-vendor-image-grounding.md) ─────────
-# Mirrors VENDOR_DOC_RESOLVERS: keyed by brand, each entry grounds the `images` field
-# ({photo?, pinout?} absolute URLs, or None) from that vendor's page structure. The
-# "espressif" entry IS the existing filename heuristic, UNCHANGED (behaviour-preserving).
-# A brand with no entry falls back to the Espressif heuristic, which finds nothing on a
-# non-Espressif CDN → images omitted, no regression, no bad data.
-IMAGE_EXTRACTORS: dict[str, Callable[[str, str], dict | None]] = {
-    "espressif": extract_images,
-    "m5stack": extract_images_m5stack,
-    "adafruit": extract_images_adafruit,
-}
 
 
 def _extract_for(text: str, url: str, missing: list[str], raw: str | None = None,

@@ -1092,8 +1092,12 @@ def test_adafruit_board_404_skipped_cleanly(tmp_path):
 #                       (cite-or-omit) and pinned below. A future slice can strip site chrome.
 #   * download_mode   — NOT groundable: the Shopify product pages carry no Boot/Reset flashing
 #                       sequence and no auto-reset phrasing, so the extractor returns None.
-#   * images          — NOT groundable: the product-gallery <img> filenames match none of the
-#                       pinout/photo keyword patterns → None. Left OMITTED, never faked.
+#   * images          — the Espressif FILENAME heuristic finds nothing (opaque Shopify CDN
+#                       names), but the dedicated lilygo image extractor (SPEC-vendor-image-
+#                       grounding.md, Slice 3) grounds images.PHOTO by HTML CONTEXT — the first
+#                       `product__media-item is-active` gallery slide's <img> on lilygo's own
+#                       CDN. PINOUT stays OMITTED (no marked diagram; safety high-conf-or-omit).
+#                       See the SPEC-vendor-image-grounding Slice-3 tests at the end of this file.
 # ══════════════════════════════════════════════════════════════════════════════
 
 # The URLs confirmed 200 (no redirect) by a live fetch on 2026-09-10 (their HTML is fixtures).
@@ -1138,9 +1142,10 @@ def _lily_fetcher_for(bid, fixture_name):
     return url, _fetcher({url: _fixture(fixture_name)})
 
 
-def test_lilygo_grounds_getting_started_only(tmp_path):
-    # (c) T-QT-Pro's REAL page grounds getting_started = the URL; usb_serial is GATED (chrome
-    # false-positive, below), download_mode + images are not groundable → all three OMITTED.
+def test_lilygo_grounds_getting_started_and_photo(tmp_path):
+    # (c) T-QT-Pro's REAL page grounds getting_started = the URL AND images.photo (the active
+    # gallery slide's hero on lilygo's own CDN — SPEC-vendor-image-grounding Slice 3). usb_serial
+    # is GATED (chrome false-positive, below); download_mode + images.pinout are not groundable.
     bid, soc = "lilygo-t-qt-pro", "esp32-s3"
     path = _write_board(tmp_path, bid, soc, brand="lilygo")
     url, fetch = _lily_fetcher_for(bid, "lilygo-t-qt-pro")
@@ -1148,17 +1153,19 @@ def test_lilygo_grounds_getting_started_only(tmp_path):
 
     assert entry["status"] == "backfilled"
     assert entry["url"] == url
-    assert entry["written"] == ["getting_started"]
-    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    assert entry["written"] == ["getting_started", "images"]
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial"}
     assert entry["partial"] is True
 
     fm, _ = bb.parse_frontmatter(path)
     assert fm["getting_started"] == url
+    assert fm["images"] == {"photo": "https://lilygo.cc/cdn/shop/products/H579-T-QT-Pro_2.jpg"}
+    assert "pinout" not in fm["images"]           # high-confidence-or-omit: no marked diagram
     assert "usb_serial" not in fm                 # GATED — never written
     assert "download_mode" not in fm
-    assert "images" not in fm
     cited = {s["field"]: s for s in fm["sources"]}
     assert cited["getting_started"]["url"] == url and cited["getting_started"]["verified"] == TODAY
+    assert cited["images"]["url"] == url and cited["images"]["verified"] == TODAY
 
 
 def test_lilygo_usb_serial_chrome_false_positive_is_gated_not_written(tmp_path):
@@ -1216,3 +1223,102 @@ def test_lilygo_board_404_skipped_cleanly(tmp_path):
     assert entry["reason"] == "doc-unreachable"
     assert entry["modified"] is False
     assert path.read_text() == before
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SLICE 3 (SPEC-vendor-image-grounding.md) — lilygo image extractor + module split.
+#
+# The per-vendor image extractors now live in jr/board_image_extractors.py; board_backfill
+# re-exports them (bb.extract_images / _m5stack / _adafruit / _lilygo) and IMAGE_EXTRACTORS,
+# so every existing image test above is behaviour-preserving through the same bb.* names.
+#
+# lilygo product pages are Shopify (Dawn theme). They carry NO og:image and NO JSON-LD; the
+# board hero is the FIRST product-gallery slide, marked
+#   `<li class="product__media-item … is-active …">…<img src="//lilygo.cc/cdn/shop/…">`.
+# We ground images.PHOTO from that active slide's <img>, ONLY when it resolves to lilygo's own
+# domain (…lilygo.cc). PINOUT is OMITTED for lilygo: the only pinout-ish signal is a loose
+# `<p><strong>1. Pin Diagram</strong></p>` bold label inside the marketing description blob of
+# T-QT-Pro (no semantic section/anchor, empty-alt image, a product-shot filename), and the T5
+# fixture has no pinout marker at all — below the high-confidence-or-omit safety bar, so we
+# NEVER promote any image to pinout (a wrong wiring diagram can fry a board).
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Each lilygo fixture and the lilygo.cc product URL it was fetched at, plus its expected hero.
+LILYGO_IMAGE_FIXTURES = {
+    "lilygo-t-qt-pro": (
+        "https://lilygo.cc/products/t-qt-pro",
+        "https://lilygo.cc/cdn/shop/products/H579-T-QT-Pro_2.jpg",
+    ),
+    "lilygo-t5-epaper-s3-pro": (
+        "https://lilygo.cc/products/t5-e-paper-s3-pro",
+        "https://lilygo.cc/cdn/shop/files/T5-4_7.jpg",
+    ),
+}
+
+
+def test_image_extractor_registry_wires_lilygo():
+    # the registry gained a "lilygo" entry = its own context extractor; espressif + m5stack +
+    # adafruit entries are untouched (same function objects — the split preserves identity).
+    assert bb.IMAGE_EXTRACTORS["lilygo"] is bb.extract_images_lilygo
+    assert bb.IMAGE_EXTRACTORS["espressif"] is bb.extract_images
+    assert bb.IMAGE_EXTRACTORS["m5stack"] is bb.extract_images_m5stack
+    assert bb.IMAGE_EXTRACTORS["adafruit"] is bb.extract_images_adafruit
+
+
+def test_lilygo_photo_grounds_from_active_media_slide_own_cdn():
+    # photo = the first `product__media-item is-active` gallery slide's <img>, resolved to an
+    # absolute lilygo.cc CDN URL (query params stripped to the canonical image). Grounds on BOTH
+    # real fixtures, per-board distinct.
+    for name, (url, expected_photo) in LILYGO_IMAGE_FIXTURES.items():
+        imgs = bb.extract_images_lilygo(_fixture(name), url)
+        assert imgs is not None and "photo" in imgs, name
+        assert imgs["photo"] == expected_photo, (name, imgs["photo"])
+        assert imgs["photo"].startswith("https://lilygo.cc/cdn/shop/"), name
+
+
+def test_lilygo_pinout_always_omitted_no_marked_diagram():
+    # SAFETY (high-confidence-or-omit): even though T-QT-Pro's marketing blob contains a bold
+    # "1. Pin Diagram" label AND many product images, there is no semantically-marked pinout
+    # diagram → pinout is NEVER grounded. A random/plausible image is never promoted to pinout
+    # (a wrong wiring diagram can fry a board). photo still grounds; only pinout is withheld.
+    assert "1. Pin Diagram" in _fixture("lilygo-t-qt-pro")   # the loose label really is present
+    for name, (url, _photo) in LILYGO_IMAGE_FIXTURES.items():
+        imgs = bb.extract_images_lilygo(_fixture(name), url)
+        assert imgs is not None, name
+        assert "pinout" not in imgs, (name, imgs.get("pinout"))
+
+
+def test_lilygo_image_extractor_grounds_photo_only_from_lilygo_domain():
+    # SAFETY: a hero <img> in the active slide that points at a FOREIGN domain is NOT grounded
+    # (mirrors adafruit's own-CDN gate) — only lilygo.cc's own images become the board photo.
+    foreign = ('<li class="product__media-item grid__item slider__slide is-active">'
+               '<div class="product__media media">'
+               '<img src="https://cdn.evil.example.com/not-a-board.jpg" alt=""></div></li>')
+    assert bb.extract_images_lilygo(foreign, "https://lilygo.cc/products/x") is None
+    # a genuine lilygo.cc active-slide image IS grounded (control).
+    own = ('<li class="product__media-item grid__item slider__slide is-active">'
+           '<div class="product__media media">'
+           '<img src="//lilygo.cc/cdn/shop/products/Board_1.jpg?v=1&amp;width=1946" alt=""></div></li>')
+    imgs = bb.extract_images_lilygo(own, "https://lilygo.cc/products/x")
+    assert imgs == {"photo": "https://lilygo.cc/cdn/shop/products/Board_1.jpg"}
+
+
+def test_lilygo_image_extractor_returns_none_on_pageless_html():
+    # no active gallery slide → nothing grounded → None (cite-or-omit).
+    assert bb.extract_images_lilygo("<html><body><p>nothing here</p></body></html>",
+                                    "https://lilygo.cc/products/x") is None
+    assert bb.extract_images_lilygo("", "https://lilygo.cc/products/x") is None
+
+
+def test_lilygo_t5_epaper_grounds_photo_end_to_end(tmp_path):
+    # end-to-end: the T5 e-paper board grounds getting_started AND images.photo (its own-CDN
+    # hero), with pinout omitted — through backfill_board / IMAGE_EXTRACTORS registry.
+    bid, soc = "lilygo-t5-epaper-s3-pro", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="lilygo")
+    url, fetch = _lily_fetcher_for(bid, "lilygo-t5-epaper-s3-pro")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert "images" in entry["written"]
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["images"] == {"photo": "https://lilygo.cc/cdn/shop/files/T5-4_7.jpg"}
