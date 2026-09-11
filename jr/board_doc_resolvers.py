@@ -397,6 +397,39 @@ def sparkfun_doc_candidates(board_id: str, soc: str) -> list[str]:
     return [url] if url else []
 
 
+# ─── freenove doc-URL resolver (SPEC-board-backfill-vendors.md, Slice 11) ────────
+# The 3 Freenove ESP32-S3 Display boards (FNK0104 A/B/S variants) all share ONE official family
+# doc on docs.freenove.com — https://docs.freenove.com/projects/fnk0104/en/latest/ — CONFIRMED
+# live=200 on 2026-09-11. UNLIKE a per-board slug map, there is deliberately just one URL here:
+# the per-variant slugs (fnk0104a/b/s) each return 404 — only the base fnk0104 doc exists, and it
+# IS the ESP32-S3 Display family doc covering all three hardware variants (2.8" ILI9341 NonTouch,
+# 2.8" ILI9341 Touch, 4.0" ST7789 Touch). So — exactly like the seeed/dfrobot/sparkfun maps —
+# this resolver is a small EXPLICIT per-board map, all three ids pointing at the ONE verified
+# family-doc URL; only that live-200 URL is ever emitted, never a guessed per-variant slug. The
+# resolver claims only the 3 mapped ids; any other id yields [] (→ SKIPPED doc-unreachable, never
+# a guessed URL). The frontmatter `brand` for these boards is exactly `freenove`, so it registers
+# under that key. Grounding on this Sphinx-style family-doc page: getting_started grounds for all
+# 3 (the resolved 200 page IS the link); usb_serial / download_mode / images are NOT groundable on
+# the page (it is a toctree index — no bridge chip named, no download sequence, no groundable
+# image → extractors return None → OMITTED, cite-or-omit; no image gate needed). `soc` is accepted
+# for a uniform resolver signature but unused: the map is keyed by board id.
+FREENOVE_DOC_URLS = {
+    "freenove-fnk0104a": "https://docs.freenove.com/projects/fnk0104/en/latest/",
+    "freenove-fnk0104b": "https://docs.freenove.com/projects/fnk0104/en/latest/",
+    "freenove-fnk0104s": "https://docs.freenove.com/projects/fnk0104/en/latest/",
+}
+
+
+def freenove_doc_candidates(board_id: str, soc: str) -> list[str]:
+    """Ordered candidate official doc URLs for a Freenove board on docs.freenove.com. All 3
+    FNK0104 variants share the ONE live-verified fnk0104 family-doc URL; returns it for a mapped
+    board id, or [] for any other id (→ the board is SKIPPED doc-unreachable, never guessed). The
+    per-variant slugs 404, so only the base family doc is ever emitted. `soc` is accepted for a
+    uniform resolver signature but unused: the map is keyed by board id."""
+    url = FREENOVE_DOC_URLS.get(board_id)
+    return [url] if url else []
+
+
 # ─── vendor doc-URL resolver registry (SPEC-board-backfill-vendors.md, Slice 1) ──
 # A resolver maps a board to the ORDERED candidate official doc URLs to try (best-first) on
 # that vendor's own domain. Espressif's existing `doc_url_candidates` logic IS the
@@ -415,6 +448,7 @@ VENDOR_DOC_RESOLVERS: dict[str, Callable[[str, str], list[str]]] = {
     "unexpected-maker": unexpected_maker_doc_candidates,
     "dfrobot": dfrobot_doc_candidates,
     "sparkfun": sparkfun_doc_candidates,
+    "freenove": freenove_doc_candidates,
 }
 
 

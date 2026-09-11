@@ -171,6 +171,27 @@ function per vendor, while the extraction/citation core stays single-sourced and
    (`getting_started` + `usb_serial` for iot-redboard, or `getting_started` + `download_mode` for
    thing-plus-esp32-wroom).
 
+11. **freenove (3 boards)** — `freenove_doc_candidates` on `docs.freenove.com`, covering the 3
+   Freenove ESP32-S3 Display boards (`freenove-fnk0104a`, `freenove-fnk0104b`, `freenove-fnk0104s` —
+   the 2.8" ILI9341 NonTouch, 2.8" ILI9341 Touch and 4.0" ST7789 Touch variants of the FNK0104
+   line). UNLIKE every prior slice, **all 3 variants share ONE official family doc** —
+   `https://docs.freenove.com/projects/fnk0104/en/latest/` — CONFIRMED live=200 on 2026-09-11; the
+   **per-variant slugs (`fnk0104a`/`b`/`s`) each return 404**, so only the base `fnk0104` doc exists
+   and it is the ESP32-S3 Display family doc that covers all three hardware variants. So — like the
+   seeed/dfrobot/sparkfun maps — this is a small **explicit per-board map** (`FREENOVE_DOC_URLS`),
+   all three ids pointing at the ONE verified family-doc URL (its HTML, identical for all 3 since
+   they cite the same source, is saved as the Slice-11 fixtures). Only the confirmed 200 URL is ever
+   emitted — never a guessed per-variant slug; the resolver claims only the 3 mapped ids (else `[]` →
+   skipped doc-unreachable, never a guessed URL); the frontmatter `brand` is exactly `freenove`, so
+   it registers under that key. **Grounds:** `getting_started` for all 3 (the resolved 200 family-doc
+   page IS the link). **Omitted:** `usb_serial` on all 3 (the fnk0104 landing page is a Sphinx
+   toctree index naming no bridge chip in a groundable form — a "USB_Serial" project title is not a
+   chip enum — must NOT false-positive the flash-critical extractor); `download_mode` on all 3 (no
+   Boot+Reset "Firmware Download mode" sentence); `images` on all 3 (the default filename heuristic
+   finds nothing — **no image gate needed**, unlike lilygo/unexpected-maker). Honest per-board delta
+   on a real run: 0→1 (`getting_started`), with `usb_serial` + `download_mode` + `images` explicitly
+   omitted.
+
 ## Pinout (`io.gpio_pins`) — deferred, separate track
 The trend's `pinout` is the `io.gpio_pins` **array** (raw exposed GPIO numbers), the hardest field:
 it needs a machine-readable pin table, not prose or a URL. It is out of scope for the vendor
