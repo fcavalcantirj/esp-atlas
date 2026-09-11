@@ -475,11 +475,11 @@ def test_registry_has_espressif_resolver_matching_doc_url_candidates():
 
 
 def test_unregistered_brand_skipped_no_resolver_and_file_unchanged(tmp_path):
-    # (b) a brand with NO registered resolver (lilygo — still unregistered after Slice 3)
+    # (b) a brand with NO registered resolver (waveshare — still unregistered after Slice 4)
     # is skipped with reason "no-resolver" and left byte-for-byte unmodified — the guarantee
     # that a brand without a resolver is never touched.
-    bid, soc = "lilygo-t-display-s3", "esp32-s3"
-    path = _write_board(tmp_path, bid, soc, brand="lilygo")
+    bid, soc = "waveshare-esp32-s3-touch", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="waveshare")
     before = path.read_text()
 
     entry = bb.backfill_board(path, tmp_path, _fetcher({_url(bid, soc): DOC_WITH_MANUAL}), TODAY)
@@ -492,12 +492,12 @@ def test_unregistered_brand_skipped_no_resolver_and_file_unchanged(tmp_path):
 
 def test_run_is_registry_driven_processing_only_resolvable_brands(tmp_path):
     # (c) run() processes exactly the brands with a registered resolver (espressif + m5stack
-    # + adafruit after Slice 3), NOT other vendors — driven off VENDOR_DOC_RESOLVERS keys, not
-    # a hardcoded brand. lilygo has no resolver → only LISTED, never processed or modified.
+    # + adafruit + lilygo after Slice 4), NOT other vendors — driven off VENDOR_DOC_RESOLVERS
+    # keys, not a hardcoded brand. waveshare has no resolver → only LISTED, never processed.
     p_esp = _write_board(tmp_path, "esp32-c5-devkitc-1", "esp32-c5")
     p_m5 = _write_board(tmp_path, "m5stack-core2", "esp32", brand="m5stack")
-    p_lily = _write_board(tmp_path, "lilygo-t-display-s3", "esp32-s3", brand="lilygo")
-    before_m5, before_lily = p_m5.read_text(), p_lily.read_text()
+    p_ws = _write_board(tmp_path, "waveshare-esp32-s3-touch", "esp32-s3", brand="waveshare")
+    before_m5, before_ws = p_m5.read_text(), p_ws.read_text()
     url = _url("esp32-c5-devkitc-1", "esp32-c5")
 
     # fetcher serves only the espressif URL → m5stack-core2's docs.m5stack.com URL 404s, so it
@@ -507,12 +507,12 @@ def test_run_is_registry_driven_processing_only_resolvable_brands(tmp_path):
     processed = {e["board_id"] for e in report["backfilled"]} | {e["board_id"] for e in report["skipped"]}
     assert "esp32-c5-devkitc-1" in processed
     assert "m5stack-core2" in processed              # m5stack is registered after Slice 2
-    assert "lilygo-t-display-s3" not in processed
+    assert "waveshare-esp32-s3-touch" not in processed
     # a registered brand is NOT on the needs_doc_url list; only the unregistered one is
     assert "m5stack/m5stack-core2" not in report["needs_doc_url"]
-    assert "lilygo/lilygo-t-display-s3" in report["needs_doc_url"]
+    assert "waveshare/waveshare-esp32-s3-touch" in report["needs_doc_url"]
     assert p_m5.read_text() == before_m5             # skipped (404) → unmodified
-    assert p_lily.read_text() == before_lily         # no resolver → unmodified
+    assert p_ws.read_text() == before_ws             # no resolver → unmodified
 
 
 def test_lyrat_end_to_end_recovers_from_esp_adf_fixture(tmp_path):
@@ -878,6 +878,157 @@ def test_adafruit_board_404_skipped_cleanly(tmp_path):
     # unmodified — never a partial/invented write.
     bid, soc = "adafruit-qt-py-esp32-c3", "esp32-c3"
     path = _write_board(tmp_path, bid, soc, brand="adafruit")
+    before = path.read_text()
+    entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
+
+    assert entry["status"] == "skipped"
+    assert entry["reason"] == "doc-unreachable"
+    assert entry["modified"] is False
+    assert path.read_text() == before
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SLICE 4 — lilygo vendor doc resolver (SPEC-board-backfill-vendors.md §Slice 4).
+#
+# Registers the "lilygo" resolver on lilygo.cc so board_backfill reaches the 10 lilygo boards.
+# The real doc-URL pattern was CONFIRMED by a live fetch during the build: every lilygo board
+# has a product page at `lilygo.cc/products/<slug>` (200, no redirect with the bot UA; note
+# www.lilygo.cc 301-redirects to the bare lilygo.cc host, so the resolver uses the canonical
+# no-www host). The <slug> is board-specific and NOT derivable from the board id
+# (lilygo-t5-epaper-s3-pro → t5-e-paper-s3-pro), so the resolver carries a per-board map of the
+# slug already cited in each board's `sources` (reconfirmed live). All 10 slugs were also
+# og:title-confirmed to name the right product. If lilygo renames a page and one 404s, that
+# board stays SKIPPED (doc-unreachable), never invented.
+#
+# EMPIRICAL grounding (measured on the REAL fetched product pages under fixtures/):
+#   * getting_started — grounds for ALL 10 (the resolved 200 URL IS the field). The win.
+#   * usb_serial      — GATED OFF for lilygo (VENDOR_UNGROUNDABLE_FIELDS). Every lilygo.cc
+#                       product page carries an IDENTICAL site-wide "Driver of CH9102" nav link
+#                       (in the header, on T-QT-Pro, T-Display, T-Beam, ... all pages), so the
+#                       shared usb_serial extractor FALSE-POSITIVES to "ch9102" off site chrome
+#                       — NOT the product's actual bridge (many lilygo boards are not CH9102).
+#                       This is the adafruit-feather-s2/FT232H trap at SITE scale: writing it
+#                       would set a WRONG flash-critical field, so usb_serial is left out
+#                       (cite-or-omit) and pinned below. A future slice can strip site chrome.
+#   * download_mode   — NOT groundable: the Shopify product pages carry no Boot/Reset flashing
+#                       sequence and no auto-reset phrasing, so the extractor returns None.
+#   * images          — NOT groundable: the product-gallery <img> filenames match none of the
+#                       pinout/photo keyword patterns → None. Left OMITTED, never faked.
+# ══════════════════════════════════════════════════════════════════════════════
+
+# The URLs confirmed 200 (no redirect) by a live fetch on 2026-09-10 (their HTML is fixtures).
+LILYGO_VERIFIED_URLS = {
+    "lilygo-t-display-s3": "https://lilygo.cc/products/t-display-s3",
+    "lilygo-t-beam": "https://lilygo.cc/products/t-beam",
+    "lilygo-t-qt-pro": "https://lilygo.cc/products/t-qt-pro",
+}
+
+# All 10 lilygo board ids the resolver must cover (the data/boards/lilygo/* dirs).
+LILYGO_ALL_BOARDS = [
+    "lilygo-t-beam", "lilygo-t-deck", "lilygo-t-display", "lilygo-t-display-s3",
+    "lilygo-t-display-s3-amoled", "lilygo-t-dongle-s3", "lilygo-t-embed",
+    "lilygo-t-qt-pro", "lilygo-t-watch-s3", "lilygo-t5-epaper-s3-pro",
+]
+
+
+def test_lilygo_resolver_registered_returns_verified_docs_urls():
+    # (a) the registry gained a "lilygo" entry, and it returns the EXACT live-verified
+    # lilygo.cc product URL (best-first) for boards fetched during the build.
+    assert "lilygo" in bb.VENDOR_DOC_RESOLVERS
+    resolver = bb.VENDOR_DOC_RESOLVERS["lilygo"]
+    for bid, url in LILYGO_VERIFIED_URLS.items():
+        cands = resolver(bid, "esp32-s3")
+        assert cands[0] == url, f"{bid} → {cands[0]!r} != {url!r}"
+
+
+def test_lilygo_resolver_covers_all_10_boards_on_lilygo_domain():
+    # (b) every one of the 10 lilygo boards resolves to a lilygo.cc/products/ URL — no board
+    # falls through uncovered (0 → 10 boards this slice).
+    resolver = bb.VENDOR_DOC_RESOLVERS["lilygo"]
+    for bid in LILYGO_ALL_BOARDS:
+        cands = resolver(bid, "esp32")
+        assert cands, f"{bid} yielded no candidate URL"
+        assert cands[0].startswith("https://lilygo.cc/products/"), cands[0]
+
+
+def _lily_fetcher_for(bid, fixture_name):
+    """Fake fetcher that serves the given fixture ONLY at the lilygo resolver's URL for `bid` —
+    any other URL 404s (proves resolution lands on the right page)."""
+    url = bb.VENDOR_DOC_RESOLVERS["lilygo"](bid, "esp32-s3")[0]
+    return url, _fetcher({url: _fixture(fixture_name)})
+
+
+def test_lilygo_grounds_getting_started_only(tmp_path):
+    # (c) T-QT-Pro's REAL page grounds getting_started = the URL; usb_serial is GATED (chrome
+    # false-positive, below), download_mode + images are not groundable → all three OMITTED.
+    bid, soc = "lilygo-t-qt-pro", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="lilygo")
+    url, fetch = _lily_fetcher_for(bid, "lilygo-t-qt-pro")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert "usb_serial" not in fm                 # GATED — never written
+    assert "download_mode" not in fm
+    assert "images" not in fm
+    cited = {s["field"]: s for s in fm["sources"]}
+    assert cited["getting_started"]["url"] == url and cited["getting_started"]["verified"] == TODAY
+
+
+def test_lilygo_usb_serial_chrome_false_positive_is_gated_not_written(tmp_path):
+    # (d) CRITICAL cite-or-omit: the raw usb_serial extractor DOES false-positive to "ch9102"
+    # on the real page (the site-wide "Driver of CH9102" nav chrome present on every lilygo.cc
+    # product page), so usb_serial is declared UNGROUNDABLE for lilygo and gated off — proven
+    # here: the extractor reads ch9102 off the fixture, but backfill must NOT write it.
+    assert bb.extract_usb_serial(bb._visible_text(_fixture("lilygo-t-qt-pro"))) == "ch9102"
+    assert "usb_serial" in bb.VENDOR_UNGROUNDABLE_FIELDS["lilygo"]
+
+    bid, soc = "lilygo-t-qt-pro", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="lilygo")
+    url, fetch = _lily_fetcher_for(bid, "lilygo-t-qt-pro")
+    bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert "usb_serial" not in fm                 # gated → chrome false-positive never written
+    usb_sources = [s for s in fm.get("sources", []) if s["field"] == "usb_serial"]
+    assert usb_sources == []                       # and no bogus usb_serial citation appended
+
+
+def test_lilygo_download_mode_and_images_not_grounded_on_real_pages():
+    # CRITICAL cite-or-omit: on the REAL lilygo product pages the download_mode and image
+    # heuristics correctly return None (no false positives), so those fields stay omitted.
+    for name in ("lilygo-t-qt-pro", "lilygo-t5-epaper-s3-pro"):
+        raw = _fixture(name)
+        assert bb.extract_download_mode(bb._visible_text(raw)) is None
+        assert bb.extract_images(raw, "https://lilygo.cc/products/x") is None
+
+
+def test_lilygo_t5_epaper_grounds_getting_started(tmp_path):
+    # (e) the T5 e-paper board's lilygo.cc slug (t5-e-paper-s3-pro) is NOT cited in its sources
+    # (which cite only GitHub) but was live-verified 200 and og:title-confirmed "T5 E-Paper S3
+    # Pro" — so it is a verified URL, not an invented one; getting_started grounds.
+    bid, soc = "lilygo-t5-epaper-s3-pro", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="lilygo")
+    url, fetch = _lily_fetcher_for(bid, "lilygo-t5-epaper-s3-pro")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == "https://lilygo.cc/products/t5-e-paper-s3-pro"
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+
+
+def test_lilygo_board_404_skipped_cleanly(tmp_path):
+    # (f) a board whose product page 404s is SKIPPED doc-unreachable and left byte-for-byte
+    # unmodified — never a partial/invented write.
+    bid, soc = "lilygo-t-qt-pro", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="lilygo")
     before = path.read_text()
     entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
 
