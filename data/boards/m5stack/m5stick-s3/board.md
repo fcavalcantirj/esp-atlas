@@ -39,6 +39,8 @@ notes:
   overlaps, and no display/PSRAM pin overlaps (PSRAM is on the SIP module, doesn''t
   consume header pads).'
 getting_started: https://docs.m5stack.com/en/core/StickS3
+images:
+  photo: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1207/K150-stickS3_main-products_01.webp
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/StickS3
@@ -53,6 +55,9 @@ sources:
   url: https://docs.m5stack.com/en/core/StickS3
   verified: '2026-08-26'
 - field: getting_started
+  url: https://docs.m5stack.com/en/core/StickS3
+  verified: '2026-09-11'
+- field: images
   url: https://docs.m5stack.com/en/core/StickS3
   verified: '2026-09-11'
 ---
