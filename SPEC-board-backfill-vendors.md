@@ -70,6 +70,21 @@ function per vendor, while the extraction/citation core stays single-sourced and
    `download_mode` on all 5 (no Boot+Reset "Firmware Download mode" sentence); `images` on all 5
    (no og:image, and no dedicated heltec image extractor this slice). Honest per-board delta on a
    real run: 0→1 (`getting_started`), with `download_mode` + `images` explicitly omitted.
+6. **seeed (3 boards)** — `seeed_doc_candidates` on `wiki.seeedstudio.com`, covering the 3 Seeed
+   XIAO ESP32 boards (`xiao-esp32c3`, `xiao-esp32c6`, `xiao-esp32s3`). UNLIKE heltec's clean
+   deterministic rule, the Seeed wiki slugs are **not case-uniform**: the C3 page is CamelCase
+   (`XIAO_ESP32C3_Getting_Started`) while the C6/S3 pages are lowercase
+   (`xiao_esp32c6_getting_started`) — a single naive rule can't yield all three. So, like the
+   m5stack/adafruit/lilygo maps, this is a small **explicit per-board map** of the 3 URLs each
+   fetched & verified 200 on 2026-09-11 (each page's main content describes the matching chip; the
+   HTML is saved as the Slice-6 fixtures). Only confirmed URLs are ever emitted — never a guessed
+   case variant; the resolver claims only the 3 mapped XIAO ids (else `[]` → skipped
+   doc-unreachable, never a guessed URL). **Grounds:** `getting_started` for all 3 (the resolved
+   200 wiki page IS the link). **Omitted:** `usb_serial` on all 3 (the getting-started pages name
+   no USB-UART bridge in a form the extractor grounds), `download_mode` on all 3 (no Boot+Reset
+   "Firmware Download mode" sentence), `images` on all 3 (no groundable og:image/filename, and no
+   dedicated seeed image extractor this slice). Honest per-board delta on a real run: 0→1
+   (`getting_started`), with `usb_serial` + `download_mode` + `images` explicitly omitted.
 
 ## Pinout (`io.gpio_pins`) — deferred, separate track
 The trend's `pinout` is the `io.gpio_pins` **array** (raw exposed GPIO numbers), the hardest field:
