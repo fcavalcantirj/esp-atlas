@@ -354,6 +354,49 @@ def dfrobot_doc_candidates(board_id: str, soc: str) -> list[str]:
     return [url] if url else []
 
 
+# ─── sparkfun doc-URL resolver (SPEC-board-backfill-vendors.md, Slice 10) ────────
+# The 5 SparkFun ESP32 boards each have an official hookup guide at
+# learn.sparkfun.com/tutorials/<slug>. UNLIKE heltec/lolin's clean deterministic rule, the
+# hookup-guide slug is NOT derivable from the board id (sparkfun-esp32-thing →
+# esp32-thing-hookup-guide, but sparkfun-thing-plus-esp32-s2-wroom →
+# esp32-s2-thing-plus-hookup-guide — the words reorder and the -wroom suffix drops), so —
+# exactly like the seeed/dfrobot maps — this resolver is a small EXPLICIT per-board map: only
+# URLs CONFIRMED live=200 (each page's content matches OUR board record; their HTML is the
+# Slice-10 fixtures) are ever emitted — never a guessed slug. The resolver claims only the 5
+# mapped ids; any other id yields [] (→ SKIPPED doc-unreachable, never a guessed URL). The
+# frontmatter `brand` for these boards is exactly `sparkfun`, so it registers under that key.
+# Grounding on these hookup-guide pages: getting_started grounds for all 5 (the resolved 200
+# page IS the link); usb_serial grounds ch340 only where the page NAMES the bridge in product
+# prose (iot-redboard-esp32 → ch340; the other four name none — thing-plus-esp32-wroom names
+# only the USB-C connector, not a bridge chip → omitted); download_mode grounds auto only on
+# thing-plus-esp32-wroom (its page states an "auto-reset circuit" bound to serial upload → auto;
+# the other four name no sequence → omitted); images finds nothing on all 5 (the default
+# filename heuristic false-positives on none — no image gate needed, unlike lilygo/
+# unexpected-maker). `soc` is accepted for a uniform resolver signature but unused: the map is
+# keyed by board id (the hookup-guide slug is not derivable).
+SPARKFUN_DOC_URLS = {
+    "sparkfun-esp32-thing": "https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide",
+    "sparkfun-thing-plus-esp32-wroom":
+        "https://learn.sparkfun.com/tutorials/esp32-thing-plus-hookup-guide",
+    "sparkfun-micromod-esp32-processor":
+        "https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide",
+    "sparkfun-thing-plus-esp32-s2-wroom":
+        "https://learn.sparkfun.com/tutorials/esp32-s2-thing-plus-hookup-guide",
+    "sparkfun-iot-redboard-esp32":
+        "https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide",
+}
+
+
+def sparkfun_doc_candidates(board_id: str, soc: str) -> list[str]:
+    """Ordered candidate official doc URLs for a SparkFun board on learn.sparkfun.com. Returns
+    the single live-verified `tutorials/<slug>` hookup guide for a mapped board id, or [] for any
+    other id (→ the board is SKIPPED doc-unreachable, never guessed). `soc` is accepted for a
+    uniform resolver signature but unused: the map is keyed by board id (the slug is not
+    derivable)."""
+    url = SPARKFUN_DOC_URLS.get(board_id)
+    return [url] if url else []
+
+
 # ─── vendor doc-URL resolver registry (SPEC-board-backfill-vendors.md, Slice 1) ──
 # A resolver maps a board to the ORDERED candidate official doc URLs to try (best-first) on
 # that vendor's own domain. Espressif's existing `doc_url_candidates` logic IS the
@@ -371,6 +414,7 @@ VENDOR_DOC_RESOLVERS: dict[str, Callable[[str, str], list[str]]] = {
     "lolin": lolin_doc_candidates,
     "unexpected-maker": unexpected_maker_doc_candidates,
     "dfrobot": dfrobot_doc_candidates,
+    "sparkfun": sparkfun_doc_candidates,
 }
 
 

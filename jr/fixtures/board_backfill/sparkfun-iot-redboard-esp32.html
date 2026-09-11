@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WLMFVVN');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- mobile mode if small screen device -->
+    
+    <title>IoT RedBoard ESP32 Development Board Hookup Guide - SparkFun Learn</title>
+
+          <link rel="canonical" href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/all">
+                  <link rel="next" href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/hardware-overview">
+    
+    <link href="/css/bootstrap.min.css?rev=1788987488" rel="stylesheet">
+    <link rel="stylesheet" href="/css/theme.github.css?rev=1788987488" type="text/css" media="screen" />    <link rel="alternate" type="application/atom+xml" title="Education Blog" href="https://learn.sparkfun.com/feeds/blog" />
+    <link rel="alternate" type="application/atom+xml" title="Tutorials" href="https://learn.sparkfun.com/feeds/tutorials" />
+    <link rel="alternate" type="application/atom+xml" title="Education Blog Comments" href="https://learn.sparkfun.com/feeds/blog_comments" />
+    <link rel="alternate" type="application/atom+xml" title="Tutorial Comments" href="https://learn.sparkfun.com/feeds/tutorial_comments" />
+  </head>
+
+  <body id=learn class="layout-default no-type tutorials-view" ontouchstart="">
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WLMFVVN"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    <script>;</script>
+    <div class="wrapper" itemscope itemtype="http://schema.org/WebSite">
+      <meta itemprop="url" content="https://learn.sparkfun.com/">
+      <div class=wrapper-inner>
+
+    <header>
+  <div class="support-nav-container container-fluid hidden-xs">
+    <div class="container">
+      <div class="support-nav">
+        <div aria-hidden="true">&nbsp;</div>
+
+        <div>
+          <ul class="professional-links">
+            <li><a href="https://www.sparkfun.com/professional">Professional</a></li>
+            <li><a href="https://www.sparkfun.com/education">EDU</a>            <li><a href="https://www.sparkfun.com/become-a-distributor">Distributor</a>          </ul>
+        </div>
+
+        <div class="cs">
+          <a href="https://www.sparkfun.com/support">Customer Support</a>        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-nav-buttons container-fluid hidden-xs">
+    <div class="container">
+      <div class="tab-bar">
+        <ul class="tab-navigation" aria-label="sparkfun.com navigation">
+  <li><a href="https://www.sparkfun.com/">Shop</a></li>
+  <li class="active"><a href="https://learn.sparkfun.com/">Documentation</a></li>
+  <li class=""><a href="https://news.sparkfun.com/">News</a></li>
+</ul>
+
+<ul class="sale-links" aria-label="Deals and special interests">
+  <li><a href="https://www.sparkfun.com/todays-deals"><span class="icon-header icon-header-sale" aria-hidden="true"></span>Today's Deals</a></li>
+  <li><a href="https://community.sparkfun.com/" target="_blank"><span class=" icon-header icon-header-community" aria-hidden="true"></span>Community</a></li>
+  <li><a class="sparkx" href="https://www.sparkpnt.com"><span class="logo-spark-pnt-primary"><span class="sr-only">SparkPNT (Position, Navigation & Timing)</span></span></a></li>
+</ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header-content">
+      <div class="logo-container">
+        <button id="mobile-nav-menu-trigger" class="mobile-menu-button btn-unstyled hidden-sm hidden-md hidden-lg" type="button" aria-label="Open navigation menu">
+          <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+        </button>
+
+        <a class="logo" href="https://www.sparkfun.com/">
+          <span class="logo-sfe-primary"><span class="visuallyhidden">SparkFun Electronics - sparkfun.com</span></span>
+        </a>
+      </div>
+
+      <div class="search-block">
+                  <form id="search_form" class="search-block-form" action="https://learn.sparkfun.com/search/results" method="get">
+            <label for="global-search" class="sr-only">search documentation</label>
+            <input name="term" id="global-search" class="form-control" type="text" value="" placeholder="search documentation" autocomplete="off">
+            <button type="submit" class="glyphicon glyphicon-search global-search-icon" aria-label="Search"></button>
+          </form>
+        
+        <a href="https://www.sparkfun.com/" class="hidden-xs">Back to Webstore<span class="icon-header icon-header-undo" aria-hidden="true"></span></a>
+      </div>
+
+        <a class="account-link" href="https://www.sparkfun.com/customer/account">
+          <span class="img-account-silhouette visible-xs-inline-block"><span class="sr-only">My Account</span></span>
+          <span class="hidden-xs">My Account</span>
+        </a>
+
+    </div>
+  </div>
+
+  <div class="header-nav container-fluid hidden-xs">
+    <div class="container">
+      <ul class="nav-product-categories" aria-label="Featured product categories">
+  <li><a href="https://www.sparkfun.com/featured">Featured <span class="sr-only">Products</span></a></li>
+  <li><a href="https://www.sparkfun.com/gnss">GPS/GNSS</a></li>
+  <li><a href="https://www.sparkfun.com/sensors">Sensors</a></li>
+  <li><a href="https://www.sparkfun.com/development-boards">Development Boards</a></li>
+  <li class="header-nav-iot"><a href="https://www.sparkfun.com/iot-wireless">IoT & Wireless</a></li>
+  <li class="header-nav-components"><a href="https://www.sparkfun.com/components">Components</a></li>
+  <li class="header-nav-kits"><a href="https://www.sparkfun.com/kits">Kits</a></li>
+  <li class="all-cat"><a href="https://www.sparkfun.com/all-categories"><span class="visible-xs-inline">Shop </span>All <span class="sr-only">Product</span> Categories</a></li>
+</ul>
+    </div>
+  </div>
+  <div id="nav-mobile-menu" class="nav-mobile-menu" aria-labelledby="nav-mobile-menu-heading" aria-role="dialog" aria-modal="true">
+    <h2 id="nav-mobile-menu-heading" class="sr-only">Navigation menu</h2>
+    <ul class="mobile-menu-tabs">
+      <li class="active"><a>Menu</a></li>
+      <li><a href="https://www.sparkfun.com/customer/account">Account</a></li>
+    </ul>
+    <ul class="nav-product-categories" aria-label="Featured product categories">
+  <li><a href="https://www.sparkfun.com/featured">Featured <span class="sr-only">Products</span></a></li>
+  <li><a href="https://www.sparkfun.com/gnss">GPS/GNSS</a></li>
+  <li><a href="https://www.sparkfun.com/sensors">Sensors</a></li>
+  <li><a href="https://www.sparkfun.com/development-boards">Development Boards</a></li>
+  <li class="header-nav-iot"><a href="https://www.sparkfun.com/iot-wireless">IoT & Wireless</a></li>
+  <li class="header-nav-components"><a href="https://www.sparkfun.com/components">Components</a></li>
+  <li class="header-nav-kits"><a href="https://www.sparkfun.com/kits">Kits</a></li>
+  <li class="all-cat"><a href="https://www.sparkfun.com/all-categories"><span class="visible-xs-inline">Shop </span>All <span class="sr-only">Product</span> Categories</a></li>
+</ul>
+    <ul class="tab-navigation" aria-label="sparkfun.com navigation">
+  <li><a href="https://www.sparkfun.com/">Shop</a></li>
+  <li class="active"><a href="https://learn.sparkfun.com/">Documentation</a></li>
+  <li class=""><a href="https://news.sparkfun.com/">News</a></li>
+</ul>
+
+<ul class="sale-links" aria-label="Deals and special interests">
+  <li><a href="https://www.sparkfun.com/todays-deals"><span class="icon-header icon-header-sale" aria-hidden="true"></span>Today's Deals</a></li>
+  <li><a href="https://community.sparkfun.com/" target="_blank"><span class=" icon-header icon-header-community" aria-hidden="true"></span>Community</a></li>
+  <li><a class="sparkx" href="https://www.sparkpnt.com"><span class="logo-spark-pnt-primary"><span class="sr-only">SparkPNT (Position, Navigation & Timing)</span></span></a></li>
+</ul>
+  </div>
+</header>
+
+    
+    <div class=content>
+      <div class=container id=airlock>
+
+        
+        
+<div class=main-title>
+  <ul class="breadcrumb">
+    <li><a href="https://learn.sparkfun.com/">Home</a></li>
+    <li><a href="https://learn.sparkfun.com/tutorials">Tutorials</a></li>
+    <li>IoT RedBoard ESP32 Development Board Hookup Guide</li>
+      </ul>
+
+  <h1>
+    IoT RedBoard ESP32 Development Board Hookup Guide  </h1>
+
+</div>
+
+
+<a id=nav_toggle_pages class="nav_toggle nav-toggle-trigger" href="#"><span>&#8801;</span> Pages</a>
+
+<div id="tutorial" class="row">
+
+  <div id="sections" class="col-sm-8 tutorial-page">
+
+    <div class="contributors">
+                      Contributors:
+                <span class="contributor-alias"> Ell C</span>, <span class="contributor-alias"><img src="https://cdn.sparkfun.com/avatar/935d3ed2b6c2516f85bce325946e6356?d=retro&s=20&r=pg" /> SparkFro</span>          </div>
+
+    <div class="share-link-inline">
+
+  <a class="share-link-toggle" href="#">
+    <span class="share-title">
+      <span class="sfe-icon-share"></span>
+      Share    </span>
+  </a>
+
+  <div class="share-link-inner dialog">
+    Use this URL to share:<br>
+    <input class="form-control input-sm" type="text" value="http://sfe.io/t2257" onclick="$(this).trigger('select');">
+
+    <div class="share-social">
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','tumblr');" href="https://www.tumblr.com/share/link?url=http%3A%2F%2Fsfe.io%2Ft2257&name=IoT+RedBoard+ESP32+Development+Board+Hookup+Guide" title="Share on Tumblr"><span class="sfe-icon-tumblr hidetext"><span>Share on Tumblr</span></span></a>
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','reddit');" href="https://www.reddit.com/submit?url=http%3A%2F%2Fsfe.io%2Ft2257" title="Submit to reddit"><span class="sfe-icon-reddit hidetext"><span>Submit to reddi</span></span></a>
+
+    </div>
+
+    </div>
+  
+  <div class="share-social">
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','twitter');" href="https://twitter.com/intent/tweet?text=IoT+RedBoard+ESP32+Development+Board+Hookup+Guide&url=http%3A%2F%2Fsfe.io%2Ft2257&via=sparkfun" title="Share on Twitter"><span class="sfe-icon-twitter hidetext"><span>Share on Twitter</span></span></a>
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','facebook');" href="http://www.facebook.com/sharer.php?u=http%3A%2F%2Fsfe.io%2Ft2257&t=IoT+RedBoard+ESP32+Development+Board+Hookup+Guide" title="Share on Facebook"><span class="sfe-icon-facebook-nobox hidetext"><span>Share on Facebook</span></span></a>
+
+          <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','pinterest');" href="https://www.pinterest.com/pin/create/button/?url=http%3A%2F%2Fsfe.io%2Ft2257&media=https%3A%2F%2Fcdn.sparkfun.com%2F%2Fr%2F500-1000%2Fassets%2Flearn_tutorials%2F2%2F2%2F5%2F7%2F285808434_548438690244031_7008413248633042033_n.jpg&description=IoT+RedBoard+ESP32+Development+Board+Hookup+Guide" title="Pin It"><span class="sfe-icon-pinterest hidetext"><span>Pin It</span></span></a>
+    
+  </div>
+
+  
+</div>
+
+    <h2>Introduction</h2>
+    <p>The <a href="http://www.sparkfun.com/products/19177">SparkFun IoT RedBoard</a> is an ESP32 Development Board that includes everything but the kitchen sink! Espressif's ESP32 WROOM is a powerful WiFi and Bluetooth® MCU module that targets a wide variety of applications. At the core of this module is the ESP32-D0WDQ6 chip which is designed to be both scalable and adaptive. The IoT RedBoard can target a wide variety of applications, ranging from low-power sensor networks to the most demanding tasks, such as voice encoding, music streaming, and MP3 decoding. The IoT RedBoard also utilizes our handy Qwiic Connect System which means no soldering or shields are required to connect it to the rest of your system!</p>
+
+<p>The USB-to-serial is achieved with a USB-C connector with through hole anchoring and the ubiquitous CH340G requiring fewer driver installs. We've included 3.3V voltage translation and a <a href="https://www.sparkfun.com/qwiic">Qwiic connector</a> to the edge of the board to allow for quick and seamless connection to our ever-growing line of I<sup>2</sup>C based <a href="https://www.sparkfun.com/qwiic#products">Qwiic products</a>. The board even includes a microSD socket if your application requires you to log and save data to a memory card. For remote power, we have included a 2-pin JST connector to attach a single cell, LiPo battery. There's also a built-in LiPo charge IC (MCP73831) and fuel gauge (MAX17048).</p>
+
+<p>The operating system is freeRTOS with LwIP; TLS 1.2 with hardware acceleration is built in as well. Secure (encrypted) over the air (OTA) upgrade is also supported, so that users can upgrade their products even after their release, at minimum cost and effort.</p>
+
+<p>Let's dive in and see what this baby can do!</p>
+
+
+
+<div >
+<div class="tile product-tile big grid " data-id="product-19177">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/sparkfun-iot-redboard-esp32-development-board.html">
+        <img src="https://cdn.sparkfun.com/r/600-600/assets/parts/1/8/8/0/0/ESP32_03.jpg" alt="SparkFun IoT RedBoard - ESP32 Development Board" height="600">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/sparkfun-iot-redboard-esp32-development-board.html">
+          <span>SparkFun IoT RedBoard - ESP32 Development Board</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      WRL-19177    </span>
+
+          <p class="description" style="display:none">
+        The IoT RedBoard is an ESP32 WROOM-equipped development board that has everything you need in an Arduino Uno with extra perks&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$41.87</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+</div>
+
+
+
+
+<div class="flex-video-wrap clearfix">
+  <div class="flex-video widescreen img">
+    <iframe src="https://www.youtube.com/embed/rI1Dr4__Gng/?autohide=1&amp;border=0&amp;wmode=opaque&amp;enablejsapi=1" frameborder=0 allowfullscreen width="560" height="315"></iframe>
+  </div>
+</div>
+
+
+<h3>Required Materials</h3>
+
+<p>To follow along with this tutorial, you will need the following materials. You may not need everything though depending on what you have. Add it to your cart, read through the guide, and adjust the cart as necessary.</p>
+
+<script src="/wish_lists/168852.js"></script>
+
+<h3>Suggested Reading</h3>
+
+<p>If you aren’t familiar with the following concepts, we recommend checking out these tutorials before continuing.</p>
+
+
+<div class="tile-wrap">
+  <div class="tile tutorial-tile  grid " data-id="tutorial-5">
+  <a href="https://learn.sparkfun.com/tutorials/how-to-solder-through-hole-soldering">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/5/Soldering_Action-01.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">How to Solder: Through-Hole Soldering</h3>
+      </a>
+
+      <div class="description">
+      This tutorial covers everything you need to know about through-hole soldering.    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-8">
+  <a href="https://learn.sparkfun.com/tutorials/serial-communication">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/7/d/f/9/9/50d24be7ce395f1f6c000000.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">Serial Communication</h3>
+      </a>
+
+      <div class="description">
+      Asynchronous serial communication concepts: packets, signal levels, baud rates, UARTs and more!    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-16">
+  <a href="https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/1/6/spiThumb_Updated2.png)"></div>
+      </div>
+    
+    
+    <h3 class="title">Serial Peripheral Interface (SPI)</h3>
+      </a>
+
+      <div class="description">
+      SPI is commonly used to connect microcontrollers to peripherals such as sensors, shift registers, and SD cards.    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-51">
+  <a href="https://learn.sparkfun.com/tutorials/pulse-width-modulation">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/f/9/c/8/a/512e869bce395fbc64000002.JPG)"></div>
+      </div>
+    
+    
+    <h3 class="title">Pulse Width Modulation</h3>
+      </a>
+
+      <div class="description">
+      An introduction to the concept of Pulse Width Modulation.    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-62">
+  <a href="https://learn.sparkfun.com/tutorials/logic-levels">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/6/2/Input_Output_Logic_Level_Tolerances_tutorial_tile.png)"></div>
+      </div>
+    
+    
+    <h3 class="title">Logic Levels</h3>
+      </a>
+
+      <div class="description">
+      Learn the difference between 3.3V and 5V devices and logic levels.     </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-82">
+  <a href="https://learn.sparkfun.com/tutorials/i2c">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/8/2/I2C-Block-Diagram.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">I2C</h3>
+      </a>
+
+      <div class="description">
+      An introduction to I2C, one of the main embedded communications protocols in use today.    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-89">
+  <a href="https://learn.sparkfun.com/tutorials/analog-vs-digital">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/3/7/6/6/0/51c48875ce395f745a000000.png)"></div>
+      </div>
+    
+    
+    <h3 class="title">Analog vs. Digital</h3>
+      </a>
+
+      <div class="description">
+      This tutorial covers the concept of analog and digital signals, as they relate to electronics.     </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-664">
+  <a href="https://learn.sparkfun.com/tutorials/how-to-work-with-jumper-pads-and-pcb-traces">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/6/6/4/PCB_TraceCutLumenati.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">How to Work with Jumper Pads and PCB Traces</h3>
+      </a>
+
+      <div class="description">
+      Handling PCB jumper pads and traces is an essential skill. Learn how to cut a PCB trace, add a solder jumper between pads to reroute connections, and repair a trace with the green wire method if a trace is damaged.
+    </div>
+  
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+
+<div class="tile-wrap">
+  <div class="tile tutorial-tile  grid " data-id="tutorial-61">
+  <a href="https://learn.sparkfun.com/tutorials/installing-arduino-ide">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/6/1/arduinoThumb.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">Installing Arduino IDE</h3>
+      </a>
+
+      <div class="description">
+      A step-by-step guide to installing and testing the Arduino software on Windows, Mac, and Linux.     </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-852">
+  <a href="https://learn.sparkfun.com/tutorials/esp32-thing-plus-hookup-guide">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/8/5/2/SparkFun_Transparent_Graphical_OLED_Breakout__Qwiic__Hookup_Guide-01.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">ESP32 Thing Plus Hookup Guide</h3>
+      </a>
+
+      <div class="description">
+      Hookup guide for the ESP32 Thing Plus (Micro-B) using the ESP32 WROOM&#039;s WiFi/Bluetooth system-on-chip in Arduino.    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-1265">
+  <a href="https://learn.sparkfun.com/tutorials/installing-board-definitions-in-the-arduino-ide">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/1/2/6/5/sparkfun_boards.PNG)"></div>
+      </div>
+    
+    
+    <h3 class="title">Installing Board Definitions in the Arduino IDE</h3>
+      </a>
+
+      <div class="description">
+      How do I install a custom Arduino board/core? It&#039;s easy! This tutorial will go over how to install an Arduino board definition using the Arduino Board Manager. We will also go over manually installing third-party cores, such as the board definitions required for many of the SparkFun development boards.    </div>
+  
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+<p><center></p>
+
+<div>
+    <div style="top:5px;left:5px;background-color:Gray;position:relative">
+        <div style="top:-5px;left:-5px;background-color:#ffffff;position:relative;border:1px solid black;">
+            <a href="https://www.sparkfun.com/qwiic"><img src="https://cdn.sparkfun.com/assets/custom_pages/2/7/2/qwiic-logo.png" alt="Qwiic Connect System" title="Qwiic Connect System"></a>
+        </div>
+    </div>
+</div>
+
+<p></center></p>
+        <div class="share-link-inline">
+
+  <a class="share-link-toggle" href="#">
+    <span class="share-title">
+      <span class="sfe-icon-share"></span>
+      Share    </span>
+  </a>
+
+  <div class="share-link-inner dialog">
+    Use this URL to share:<br>
+    <input class="form-control input-sm" type="text" value="http://sfe.io/t2257" onclick="$(this).trigger('select');">
+
+    <div class="share-social">
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','tumblr');" href="https://www.tumblr.com/share/link?url=http%3A%2F%2Fsfe.io%2Ft2257&name=IoT+RedBoard+ESP32+Development+Board+Hookup+Guide" title="Share on Tumblr"><span class="sfe-icon-tumblr hidetext"><span>Share on Tumblr</span></span></a>
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','reddit');" href="https://www.reddit.com/submit?url=http%3A%2F%2Fsfe.io%2Ft2257" title="Submit to reddit"><span class="sfe-icon-reddit hidetext"><span>Submit to reddi</span></span></a>
+
+    </div>
+
+    </div>
+  
+  <div class="share-social">
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','twitter');" href="https://twitter.com/intent/tweet?text=IoT+RedBoard+ESP32+Development+Board+Hookup+Guide&url=http%3A%2F%2Fsfe.io%2Ft2257&via=sparkfun" title="Share on Twitter"><span class="sfe-icon-twitter hidetext"><span>Share on Twitter</span></span></a>
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','facebook');" href="http://www.facebook.com/sharer.php?u=http%3A%2F%2Fsfe.io%2Ft2257&t=IoT+RedBoard+ESP32+Development+Board+Hookup+Guide" title="Share on Facebook"><span class="sfe-icon-facebook-nobox hidetext"><span>Share on Facebook</span></span></a>
+
+          <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','pinterest');" href="https://www.pinterest.com/pin/create/button/?url=http%3A%2F%2Fsfe.io%2Ft2257&media=https%3A%2F%2Fcdn.sparkfun.com%2F%2Fr%2F500-1000%2Fassets%2Flearn_tutorials%2F2%2F2%2F5%2F7%2F285808434_548438690244031_7008413248633042033_n.jpg&description=IoT+RedBoard+ESP32+Development+Board+Hookup+Guide" title="Pin It"><span class="sfe-icon-pinterest hidetext"><span>Pin It</span></span></a>
+    
+  </div>
+
+  
+</div>
+
+    <hr>
+
+    <div class="page-nav clearfix">
+
+      <div class="pull-right">
+        <a href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/all" class="btn">
+          View as a single page
+        </a>
+
+                  <a href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/hardware-overview" class="btn btn-primary">
+            Next Page &rarr;<br>
+            <small>Hardware Overview</small>
+          </a>
+              </div>
+
+              <button class="btn btn-disabled" disabled>
+          &larr; Previous Page
+        </button>
+      
+    </div>
+  </div>
+
+  <div class="col-sm-4 nav-menu" id="nav-pages">
+    <div id="sidebar_affix">
+      <div id="tutorial-pages" class="list-group">
+        <a class="list-group-item"><b>Pages</b></a>
+                  <a data-pageid="10324" class="list-group-item active" href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/introduction">
+            Introduction          </a>
+                  <a data-pageid="10325" class="list-group-item " href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/hardware-overview">
+            Hardware Overview          </a>
+                  <a data-pageid="10326" class="list-group-item " href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/hardware-hookup">
+            Hardware Hookup          </a>
+                  <a data-pageid="10327" class="list-group-item " href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/software-setup-and-programming">
+            Software Setup and Programming          </a>
+                  <a data-pageid="10989" class="list-group-item " href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/example-1-blink">
+            Example 1: Blink          </a>
+                  <a data-pageid="10990" class="list-group-item " href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/example-2-wifi">
+            Example 2: WiFi          </a>
+                  <a data-pageid="10991" class="list-group-item " href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/example-3-sd-card">
+            Example 3: SD Card          </a>
+                  <a data-pageid="10992" class="list-group-item " href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/example-4-i2c">
+            Example 4: I2C          </a>
+                  <a data-pageid="12375" class="list-group-item " href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/example-5-lipo-fuel-gauge---max17048">
+            Example 5: LiPo Fuel Gauge - MAX17048          </a>
+                  <a data-pageid="10328" class="list-group-item " href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/troubleshooting">
+            Troubleshooting          </a>
+                  <a data-pageid="10329" class="list-group-item " href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/resources--going-further">
+            Resources and Going Further          </a>
+              </div>
+
+      <div class="list-group">
+        <a class="list-group-item" href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/discuss">
+          Comments
+          <span class="badge">0</span>
+        </a>
+        <a class="list-group-item" href="https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide/all">
+          Single Page
+        </a>
+        <a class="list-group-item" hhref="#" onclick="window.print(); return false;">
+          Print
+        </a>
+      </div>
+
+  <!--
+      -->
+
+      <ul class="list-group">
+        <li class="list-group-item"><b>Tags</b></li>
+        <li class="list-group-item"><ul class="tags-list">
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/arduino">Arduino</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/ble">BLE</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/bluetooth">Bluetooth</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/bluetooth-low-energy">Bluetooth Low Energy</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/esp32">ESP32</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/hookup">Hookup</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/internet-of-things">Internet of Things</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/power">Power</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/qwiic">Qwiic</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/wifi">WiFi</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/wireless">Wireless</a>  </li>
+</ul>
+</li>
+      </ul>
+
+      <ul class="list-group">
+        <li class="list-group-item"><b>License</b></li>
+        <li class="list-group-item">
+          <span class="sfe-icon-cc">
+            <span class="visuallyhidden">Creative Commons</span>
+          </span>
+          <small>tutorials are <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="new">CC BY-SA 4.0</a></small>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+      </div> <!-- /container -->
+    </div> <!-- /content -->
+
+    <footer>
+  <div class="container">
+
+  <div class="row">
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>About SparkFun</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/about-sparkfun">Read Our Story</a></li>
+            <li><a href="https://www.sparkfun.com/press-and-media">Press &amp; Media</a></li>
+            <li><a href="http://www.sparkfuneducation.com" target="_blank">SparkFun Education <span class="glyphicon glyphicon-new-window"></span></a></li>
+            <li><a href="https://www.sparkfun.com/jobs">Job Openings</a></li>
+          </ul>
+
+          <h3>Partner With Us</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/partner">See Our Partners</a></li>
+            <li><a href="https://www.sparkfun.com/services">View Our Services</a></li>
+            <li><a href="https://www.sparkfun.com/become-a-distributor">Become a Distributor/Reseller</a></li>
+            <li><a href="https://www.sparkfun.com/volume-sales">Receive Volume Discounts</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>Support</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/support">Customer Support</a></li>
+            <li><a href="https://www.sparkfun.com/payments">Purchase Order &amp; Payment Terms</a></li>
+            <li><a href="https://www.sparkfun.com/technical-assistance">Technical Assistance</a></li>
+            <li><a href="https://www.sparkfun.com/faq">FAQs</a></li>
+          </ul>
+          <h3>Site Information</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/terms">Terms Of Service</a></li>
+            <li><a href="https://www.sparkfun.com/privacy">Privacy Policy</a></li>
+            <li><a href="https://www.sparkfun.com/compliance">Compliance</a></li>
+            <li><a href="https://www.sparkfun.com/sitemap">Site Map</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>Subscribe</h3>
+          <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+          <script>
+            hbspt.forms.create({
+              region: "na1",
+              portalId: "2224003",
+              formId: "257ad1af-ab9e-4275-8788-cbad81cc229e"
+            });
+          </script>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>View Our Social Channels</h3>
+          <ul class="spew">
+            <li><a href="https://www.youtube.com/sparkfun" target="_blank" class="icon-social-youtube"><span class="sr-only">YouTube</span></a></li>
+            <li><a href="https://www.instagram.com/sparkfun/" target="_blank" class="icon-social-instagram"><span class="sr-only">Instagram</span></a></li>
+            <li><a href="https://www.github.com/sparkfun" target="_blank" class="icon-social-github"><span class="sr-only">GitHub</span></a></li>
+            <li><a href="https://www.facebook.com/SparkFun" target="_blank" class="icon-social-facebook"><span class="sr-only">Facebook</span></a></li>
+            <li><a href="https://twitter.com/sparkfun" target="_blank" class="icon-social-twitter"><span class="sr-only">Twitter</span></a></li>
+            <li><a href="https://www.sparkfun.com/feeds" class="icon-social-rss"><span class="sr-only">RSS</span></a></li>
+            <li><a href="https://www.tiktok.com/@sparkfun.electronics?lang=en" target="_blank" class="icon-social-tiktok"><span class="sr-only">TikTok</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div><!-- end .row -->
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <p class="copyleft">
+          <strong>SparkFun Electronics&nbsp;&reg;</strong>
+          <span class="hidden-xs hidden-sm">/</span>
+          <br class="visible-xs-inline visible-sm-inline"/>
+          6333 Dry Creek Parkway,
+          <br class="visible-xs-inline"/>
+          Niwot, CO 80503
+        </p>
+      </div>
+    </div><!-- end .row -->
+  </div><!-- end .container -->
+</footer>
+
+      </div><!-- end .wrapper-inner -->
+    </div><!-- end .wrapper -->
+
+    <script type="text/javascript">
+      var SFECONFIG = {
+        dnt: false,
+        http_server: 'http://learn.sparkfun.com',
+        https_server: 'https://learn.sparkfun.com',
+        http_static: 'https://cdn.sparkfun.com',
+        learn_server: 'https://learn.sparkfun.com',
+        news_server: 'https://news.sparkfun.com',
+        base_url: '/',
+        url: '/',
+        controller: 'tutorials',
+        action: 'view',
+        entity_id: '',
+        auth: false,
+        sparkrev: '1788987488',
+        search_key: 'search-sngw3quge7ojic1tgr4eft5c',
+        search_url: 'https://sparkfun-electronics.ent.us-central1.gcp.cloud.es.io/api/as/v1/engines/sparkfun-01/search'
+      };
+    </script>
+          <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+      <script src="/js/learn-built.min.js?sparkrev=1788987488"></script>
+    
+    <script>
+      $.sfe();
+      $.shared();
+      $('#learn').learn();
+      $('#learn').sfeutil();
+    </script>
+                            <script src="/js/tutorials-built.min.js?sparkrev=1788987488"></script>
+                                    <script>
+    var fbq = null;
+  </script>
+      
+          <script type="text/javascript">
+      (function(d,s,i,r) {
+        if (d.getElementById(i)){return;}
+        var n=d.createElement(s),e=d.getElementsByTagName(s)[0];
+        n.id=i;n.src='//js.hs-analytics.net/analytics/'+(Math.ceil(new Date()/r)*r)+'/2224003.js';
+        e.parentNode.insertBefore(n, e);
+      })(document,"script","hs-analytics",300000);
+    </script>
+        <script type="text/javascript">
+    setTimeout(function(){var a=document.createElement("script");
+    var b=document.getElementsByTagName("script")[0];
+    a.src=document.location.protocol+"//script.crazyegg.com/pages/scripts/0046/4761.js?"+Math.floor(new Date().getTime()/3600000);
+    a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
+  </script>
+      </body>
+</html>

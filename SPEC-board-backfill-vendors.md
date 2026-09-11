@@ -146,6 +146,31 @@ function per vendor, while the extraction/citation core stays single-sourced and
    unlike lilygo/unexpected-maker). Honest per-board delta on a real run: 0→1 (`getting_started`),
    or 0→2 (`getting_started` + `usb_serial`) for firebeetle-2-esp32-e.
 
+10. **sparkfun (5 boards)** — `sparkfun_doc_candidates` on `learn.sparkfun.com`, covering the 5
+   SparkFun ESP32 boards (`sparkfun-esp32-thing`, `sparkfun-thing-plus-esp32-wroom`,
+   `sparkfun-micromod-esp32-processor`, `sparkfun-thing-plus-esp32-s2-wroom`,
+   `sparkfun-iot-redboard-esp32`). Each board's official page is a `learn.sparkfun.com/tutorials/<slug>`
+   hookup guide. UNLIKE heltec/lolin's deterministic rule, the **slug is NOT derivable** from the
+   board id (sparkfun-esp32-thing → esp32-thing-hookup-guide, but sparkfun-thing-plus-esp32-s2-wroom →
+   esp32-s2-thing-plus-hookup-guide — the words reorder and the `-wroom` suffix drops), so — like the
+   seeed/dfrobot maps — this is a small **explicit per-board map** (`SPARKFUN_DOC_URLS`) of the 5 URLs
+   each fetched & verified 200 (content-matched to OUR board record; their HTML is the Slice-10
+   fixtures). Only confirmed URLs are ever emitted — never a guessed slug; the resolver claims only
+   the 5 mapped ids (else `[]` → skipped doc-unreachable, never a guessed URL); the frontmatter
+   `brand` is exactly `sparkfun`, so it registers under that key. **Grounds:** `getting_started` for
+   all 5 (the resolved 200 hookup-guide page IS the link); `usb_serial` = `ch340` only where the page
+   NAMES the bridge in product prose — iot-redboard-esp32 (in the real data thing-plus-esp32-wroom is
+   already filled `ch340`, so a real run never rewrites it); `download_mode` = `auto` only on
+   thing-plus-esp32-wroom, whose page states in prose that the board carries an "auto-reset circuit"
+   bound to serial upload — a citeable auto claim. **Omitted:** `usb_serial` on esp32-thing / micromod
+   / s2-wroom (native, name no bridge) and on thing-plus-esp32-wroom (its page names only the USB-C
+   *connector*, not a bridge chip enum — must NOT false-positive the flash-critical extractor);
+   `download_mode` on the other four (no Boot+Reset sequence and no auto-reset claim); `images` on all
+   5 (the default filename heuristic finds nothing — **no image gate needed**, unlike
+   lilygo/unexpected-maker). Honest per-board delta on a real run: 0→1 (`getting_started`), or 0→2
+   (`getting_started` + `usb_serial` for iot-redboard, or `getting_started` + `download_mode` for
+   thing-plus-esp32-wroom).
+
 ## Pinout (`io.gpio_pins`) — deferred, separate track
 The trend's `pinout` is the `io.gpio_pins` **array** (raw exposed GPIO numbers), the hardest field:
 it needs a machine-readable pin table, not prose or a URL. It is out of scope for the vendor
