@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WiFi Kit 32 &mdash; esp32 latest documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=b8ae3fad" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script defer="defer" src="../_static/js/custom.js?v=104dd8f9"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Example Manual" href="example.html" />
+    <link rel="prev" title="Example Manual" href="../esp32_c3/example.html" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="heltec-automation-docs" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/en/node/esp32/wifi_kit_32/index.html" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+        <a href="/" class="icon icon-home">
+     Heltec Product Documention
+        <img src="/_static/log.png" class="logo" alt="Logo">
+      </a>
+
+        <div class="selectors">
+          <select id="type-select" style="width: 150px;" hidden>
+            <option value="none" disabled selected>Choose Type...</option>
+          </select>
+        </div>
+        <div class="selectors">
+          <select id="product-select" style="width: 150px;" hidden>
+            <option value="none">Choose Product...</option>
+          </select>
+        </div>
+
+        
+        <div style="margin-top: 10px;">
+          <h2 style="color: red; font-size: 1.2em;">
+            This document is no longer updated. See the 
+            <a href="https://wiki.heltec.org/" target="_blank" style="color: black;">wiki.heltec.org</a>
+          </h2>
+        </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../capsule_sensor_v3/index.html"> CapSule Sensor V3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ht_vme213/index.html"> Vision Master E213</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ht_vme290/index.html"> Vision Master E290</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ht_vmt190/index.html"> Vision Master T190</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wifi_lora_32/index.html"> WiFi LoRa 32</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wireless_tracker/index.html"> Wireless Tracker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wireless_paper/index.html"> Wireless Paper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wireless_stick/index.html"> Wireless Stick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wireless_stick_lite/index.html"> Wireless Stick Lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ht_de01/index.html"> HT-DE01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../esp32_c3/index.html"> ESP32-C3</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> Wifi kit 32</a><ul>
+<li class="toctree-l2"><a class="reference external" href="https://docs.heltec.org/en/node/esp32/esp32_general_docs/quick_start.html"> Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html"> Example Manual</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://docs.heltec.org/en/node/esp32/esp32_general_docs/frequently_asked_questions.html"> Frequently Asked Questions</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://docs.heltec.org/general/index.html"> --&gt;[General Docs]&lt;--</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../wifi_kit_8/index.html"> Wifi kit 8</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ht_ct62/index.html"> HT-CT62(Wireless Mini shell)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wireless_shell/index.html"> Wireless Shell</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wireless_bridge/index.html"> Wireless Bridge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wireless_boot/index.html"> Heltec WirelessBoot System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../esp32_general_docs/index.html"> Esp32 Series General Docs</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.heltec.org/general/index.html"> --&gt;[Heltec General Docs]&lt;--</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">esp32</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">WiFi Kit 32</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/HelTecAutomation/HeltecDocs/blob/master/doc/node/esp32/source/wifi_kit_32/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="wifi-kit-32">
+<h1>WiFi Kit 32<a class="headerlink" href="#wifi-kit-32" title="Link to this heading"></a></h1>
+<p><a class="reference external" href="/zh_CN/node/esp32/wifi_kit_32/index.html">[简体中文]</a></p>
+<p>The characteristics of WiFi Kit 32 are as follows:</p>
+<ul class="simple">
+<li><p>Microprocessor: ESP32-S3FN8 (Xtensa ® 32-bit LX7 dual-core processor, five-stage pipeline rack Structure, main frequency up to 240 MHz);</p></li>
+<li><p>Type-C USB interface with a complete voltage regulator, ESD protection, short circuit protection, RF shielding, and other protection measures;</p></li>
+<li><p>Onboard SH1.25-2 battery interface, integrated lithium battery management system (charge and discharge management, overcharge protection, battery powerdetection, USB / battery power automatic switching)</p></li>
+<li><p>Onboard Wi-Fi, Bluetooth 2.4GHz PCB antenna;</p></li>
+<li><p>Onboard 0.96-inch 128*64 dot matrix OLED display, which can be used to display debugging information, battery power, and other information;</p></li>
+<li><p>Onboard 0.96-inch 128*64 dot matrix OLED display, which can be used to display debugging information, battery power, and other information;</p></li>
+<li><p>Integrated CP2102 USB to serial port chip, convenient for program downloading, debugging information printing;</p></li>
+<li><p>Support the  Arduino development environment;</p></li>
+</ul>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://docs.heltec.org/en/node/esp32/esp32_general_docs/quick_start.html"> Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html"> Example Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="example.html#precondition">Precondition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.heltec.org/en/node/esp32/esp32_general_docs/frequently_asked_questions.html"> Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.heltec.org/general/index.html"> --&gt;[General Docs]&lt;--</a></li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../esp32_c3/example.html" class="btn btn-neutral float-left" title="Example Manual" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="example.html" class="btn btn-neutral float-right" title="Example Manual" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, shug.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
