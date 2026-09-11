@@ -1,0 +1,180 @@
+# Adafruit — ESP32-family board universe (SPEC-universe.md).
+# Built OFFLINE and committed. Never fetched at runtime / in CI / in tick.
+# Backbone = the 26 Adafruit ESP32-family boards in arduino-esp32 boards.txt (authoritative).
+# Every source_url below was verified live (HTTP 200) on 2026-09-11.
+# `in_catalog` is NOT stored here — coverage is DERIVED from
+# data/boards/adafruit/<board_id>/board.md at load time (jr/universe.py).
+brand: adafruit
+boards:
+  - board_id: adafruit-huzzah32-esp32-feather
+    name: "Adafruit ESP32 Feather (HUZZAH32)"
+    mcu: esp32
+    source_url: "https://learn.adafruit.com/adafruit-huzzah32-esp32-feather"
+    status: active
+
+  - board_id: adafruit-feather-esp32-v2
+    name: "Adafruit ESP32 Feather V2"
+    mcu: esp32
+    source_url: "https://learn.adafruit.com/adafruit-esp32-feather-v2"
+    status: active
+
+  - board_id: adafruit-feather-esp32-c6
+    name: "Adafruit ESP32-C6 Feather"
+    mcu: esp32-c6
+    source_url: "https://learn.adafruit.com/adafruit-esp32-c6-feather"
+    status: active
+    note: "Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-feather-esp32-s2
+    name: "Adafruit ESP32-S2 Feather"
+    mcu: esp32-s2
+    source_url: "https://learn.adafruit.com/adafruit-esp32-s2-feather"
+    status: active
+
+  - board_id: adafruit-feather-esp32-s2-reverse-tft
+    name: "Adafruit ESP32-S2 Reverse TFT Feather"
+    mcu: esp32-s2
+    source_url: "https://learn.adafruit.com/esp32-s2-reverse-tft-feather"
+    status: active
+    note: "S2 Feather with a 240x135 color TFT on the reverse (button) side. Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-feather-esp32-s2-tft
+    name: "Adafruit ESP32-S2 TFT Feather"
+    mcu: esp32-s2
+    source_url: "https://learn.adafruit.com/adafruit-esp32-s2-tft-feather"
+    status: active
+    note: "S2 Feather with a 240x135 color TFT on the front. Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-feather-esp32-s3
+    name: "Adafruit ESP32-S3 Feather (2MB PSRAM)"
+    mcu: esp32-s3
+    source_url: "https://learn.adafruit.com/adafruit-esp32-s3-feather"
+    status: active
+    note: "4MB flash + 2MB PSRAM variant; shares the S3 Feather guide with the No PSRAM variant."
+
+  - board_id: adafruit-feather-esp32-s3-no-psram
+    name: "Adafruit ESP32-S3 Feather (No PSRAM)"
+    mcu: esp32-s3
+    source_url: "https://www.adafruit.com/product/5323"
+    status: active
+    note: "8MB flash, no PSRAM variant of the ESP32-S3 Feather. Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-feather-esp32-s3-reverse-tft
+    name: "Adafruit ESP32-S3 Reverse TFT Feather"
+    mcu: esp32-s3
+    source_url: "https://learn.adafruit.com/esp32-s3-reverse-tft-feather"
+    status: active
+
+  - board_id: adafruit-feather-esp32-s3-tft
+    name: "Adafruit ESP32-S3 TFT Feather"
+    mcu: esp32-s3
+    source_url: "https://learn.adafruit.com/adafruit-esp32-s3-tft-feather"
+    status: active
+    note: "S3 Feather with a 240x135 color TFT on the front. Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-funhouse
+    name: "Adafruit FunHouse"
+    mcu: esp32-s2
+    source_url: "https://learn.adafruit.com/adafruit-funhouse"
+    status: active
+    note: "ESP32-S2 home-automation dev board with 240x240 TFT. Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-itsybitsy-esp32
+    name: "Adafruit ItsyBitsy ESP32"
+    mcu: esp32
+    source_url: "https://learn.adafruit.com/adafruit-itsybitsy-esp32"
+    status: active
+
+  - board_id: adafruit-magtag
+    name: "Adafruit MagTag 2.9\" E-Ink WiFi Display"
+    mcu: esp32-s2
+    source_url: "https://learn.adafruit.com/adafruit-magtag"
+    status: active
+    note: "ESP32-S2 board with a 2.9\" grayscale E-Ink display. Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-matrixportal-s3
+    name: "Adafruit MatrixPortal ESP32-S3"
+    mcu: esp32-s3
+    source_url: "https://learn.adafruit.com/adafruit-matrixportal-s3"
+    status: active
+
+  - board_id: adafruit-metro-esp32-s2
+    name: "Adafruit Metro ESP32-S2"
+    mcu: esp32-s2
+    source_url: "https://learn.adafruit.com/adafruit-metro-esp32-s2"
+    status: active
+    note: "Arduino-Uno-form-factor ESP32-S2 board. Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-metro-esp32-s3
+    name: "Adafruit Metro ESP32-S3"
+    mcu: esp32-s3
+    source_url: "https://learn.adafruit.com/adafruit-metro-esp32-s3"
+    status: active
+
+  - board_id: adafruit-pycamera-s3
+    name: "Adafruit pyCamera S3 (MEMENTO)"
+    mcu: esp32-s3
+    source_url: "https://learn.adafruit.com/adafruit-memento-camera-board"
+    status: active
+    note: "ESP32-S3 camera board; retailed as the Adafruit MEMENTO. Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-qt-py-esp32
+    name: "Adafruit QT Py ESP32 Pico"
+    mcu: esp32
+    source_url: "https://learn.adafruit.com/adafruit-qt-py-esp32-pico"
+    status: active
+    note: "QT Py form factor using the ESP32 PICO-D4 module. Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-qt-py-esp32-c3
+    name: "Adafruit QT Py ESP32-C3"
+    mcu: esp32-c3
+    source_url: "https://learn.adafruit.com/adafruit-qt-py-esp32-c3-wifi-dev-board"
+    status: active
+
+  - board_id: adafruit-qt-py-esp32-s2
+    name: "Adafruit QT Py ESP32-S2"
+    mcu: esp32-s2
+    source_url: "https://learn.adafruit.com/adafruit-qt-py-esp32-s2"
+    status: active
+
+  - board_id: adafruit-qt-py-esp32-s3
+    name: "Adafruit QT Py ESP32-S3 (4MB Flash / 2MB PSRAM)"
+    mcu: esp32-s3
+    source_url: "https://learn.adafruit.com/adafruit-qt-py-esp32-s3"
+    status: active
+    note: "4MB flash + 2MB PSRAM variant; shares the QT Py S3 guide with the No PSRAM variant."
+
+  - board_id: adafruit-qt-py-esp32-s3-no-psram
+    name: "Adafruit QT Py ESP32-S3 (No PSRAM)"
+    mcu: esp32-s3
+    source_url: "https://www.adafruit.com/product/5700"
+    status: active
+    note: "8MB flash, no PSRAM variant of the QT Py ESP32-S3. Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-qualia-esp32-s3
+    name: "Adafruit Qualia ESP32-S3 for RGB-666 Displays"
+    mcu: esp32-s3
+    source_url: "https://learn.adafruit.com/adafruit-qualia-esp32-s3-for-rgb666-displays"
+    status: active
+    note: "ESP32-S3 driver board for RGB-666 TTL displays. Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-sparkle-motion
+    name: "Adafruit Sparkle Motion"
+    mcu: esp32
+    source_url: "https://learn.adafruit.com/adafruit-sparkle-motion"
+    status: active
+    note: "ESP32 LED-strip controller board. Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-sparkle-motion-mini
+    name: "Adafruit Sparkle Motion Mini"
+    mcu: esp32
+    source_url: "https://learn.adafruit.com/adafruit-sparkle-motion-mini"
+    status: active
+    note: "Compact ESP32 LED-strip controller. Not yet in the esp-atlas catalog."
+
+  - board_id: adafruit-sparkle-motion-stick
+    name: "Adafruit Sparkle Motion Stick"
+    mcu: esp32
+    source_url: "https://learn.adafruit.com/adafruit-sparkle-motion-stick"
+    status: active
+    note: "Stick-form ESP32 LED controller. Not yet in the esp-atlas catalog."

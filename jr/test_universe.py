@@ -185,6 +185,63 @@ def test_real_seeed_manifest_loads_five_verified_entries():
         assert e["status"] in universe.VALID_STATUS
 
 
+# ─────────────────────── REAL committed adafruit manifest (characterization) ───────────────────────
+
+# The 11 board_ids esp-atlas already catalogs under data/boards/adafruit/ — these MUST derive
+# in_catalog=true from the real filesystem (board.md existence), so cataloged_count includes them.
+_ADAFRUIT_KNOWN_CATALOGED = [
+    "adafruit-feather-esp32-s2",
+    "adafruit-feather-esp32-s3-reverse-tft",
+    "adafruit-feather-esp32-s3",
+    "adafruit-feather-esp32-v2",
+    "adafruit-huzzah32-esp32-feather",
+    "adafruit-itsybitsy-esp32",
+    "adafruit-matrixportal-s3",
+    "adafruit-metro-esp32-s3",
+    "adafruit-qt-py-esp32-c3",
+    "adafruit-qt-py-esp32-s2",
+    "adafruit-qt-py-esp32-s3",
+]
+
+
+def test_real_adafruit_manifest_loads_and_is_well_formed():
+    uni = universe.load_universe(REAL_UNIVERSE_DIR)
+    assert "adafruit" in uni
+    ids = [e["board_id"] for e in uni["adafruit"]]
+    assert len(ids) == len(set(ids))            # unique board_ids
+    assert len(ids) >= 26                        # the arduino-esp32 boards.txt backbone
+    for e in uni["adafruit"]:
+        assert e["source_url"].startswith("https://")
+        assert "adafruit.com" in e["source_url"]  # first-party Adafruit source
+        assert e["mcu"].startswith("esp32")
+        assert e["status"] in universe.VALID_STATUS
+
+
+def test_real_adafruit_known_ids_derive_in_catalog():
+    # The 11 already-cataloged ids must be present in the manifest AND derive in_catalog=true
+    # from the real data/boards/adafruit/<id>/board.md filesystem.
+    uni = universe.load_universe(REAL_UNIVERSE_DIR)
+    manifest_ids = {e["board_id"] for e in uni["adafruit"]}
+    for bid in _ADAFRUIT_KNOWN_CATALOGED:
+        assert bid in manifest_ids, f"{bid} missing from adafruit manifest"
+        assert universe.is_cataloged("adafruit", bid, REAL_BOARDS_ROOT) is True
+
+
+def test_real_adafruit_coverage_derives_and_includes_the_11():
+    uni = universe.load_universe(REAL_UNIVERSE_DIR)
+    manifest_ids = [e["board_id"] for e in uni["adafruit"]]
+    on_disk = {bid for bid in manifest_ids
+               if (REAL_BOARDS_ROOT / "adafruit" / bid / "board.md").exists()}
+    cov = universe.coverage(uni, REAL_BOARDS_ROOT)
+    b = cov["brands"]["adafruit"]
+    assert b["universe_count"] == len(manifest_ids)
+    assert b["cataloged_count"] == len(on_disk)
+    assert set(b["missing"]) == set(manifest_ids) - on_disk
+    # every one of the 11 known ids contributes to cataloged_count (none in missing)
+    assert set(_ADAFRUIT_KNOWN_CATALOGED).isdisjoint(set(b["missing"]))
+    assert b["cataloged_count"] >= len(_ADAFRUIT_KNOWN_CATALOGED)
+
+
 def test_real_seeed_coverage_is_consistent_with_the_filesystem():
     # Mechanism test (NOT a frozen count snapshot): coverage must always agree with the
     # real manifest size and which board dirs actually exist, so it stays correct as Phase B

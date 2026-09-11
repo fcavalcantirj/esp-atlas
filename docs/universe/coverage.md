@@ -5,8 +5,10 @@
 > derived catalog check (`data/boards/<brand>/<board_id>/board.md` existence).
 > This is a report only — it does NOT feed the live tick gauge or allocator.
 
-**Overall: 3/5 boards cataloged (60.0%) — 2 missing.**
+**Overall: 16/31 boards cataloged (51.6%) — 15 missing.**
 
 | Brand | Cataloged | Universe | % | Missing board_ids |
 | --- | --- | --- | --- | --- |
-| seeed | 3 | 5 | 60.0% | `xiao-esp32c5`, `xiao-esp32s3-sense` |
+| adafruit | 11 | 26 | 42.3% | `adafruit-feather-esp32-c6`, `adafruit-feather-esp32-s2-reverse-tft`, `adafruit-feather-esp32-s2-tft`, `adafruit-feather-esp32-s3-no-psram`, `adafruit-feather-esp32-s3-tft`, `adafruit-funhouse`, `adafruit-magtag`, `adafruit-metro-esp32-s2`, `adafruit-pycamera-s3`, `adafruit-qt-py-esp32`, `adafruit-qt-py-esp32-s3-no-psram`, `adafruit-qualia-esp32-s3`, `adafruit-sparkle-motion`, `adafruit-sparkle-motion-mini`, `adafruit-sparkle-motion-stick` |
+| seeed | 5 | 5 | 100.0% | — |
+
