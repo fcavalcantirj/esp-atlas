@@ -70,6 +70,7 @@ from board_doc_resolvers import (  # noqa: E402,F401
     M5STACK_DOC_BASE,
     M5STACK_DOC_PATHS,
     SEEED_DOC_URLS,
+    SPARKFUN_DOC_URLS,
     UM_DOC_BASE,
     USER_GUIDE_BASE,
     VENDOR_DOC_RESOLVERS,
@@ -84,6 +85,7 @@ from board_doc_resolvers import (  # noqa: E402,F401
     lolin_doc_candidates,
     m5stack_doc_candidates,
     seeed_doc_candidates,
+    sparkfun_doc_candidates,
     unexpected_maker_doc_candidates,
 )
 

@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WLMFVVN');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- mobile mode if small screen device -->
+    
+    <title>ESP32 Thing Hookup Guide - SparkFun Learn</title>
+
+          <link rel="canonical" href="https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide/all">
+            
+    <link href="/css/bootstrap.min.css?rev=1788987368" rel="stylesheet">
+    <link rel="stylesheet" href="/css/theme.github.css?rev=1788987368" type="text/css" media="screen" />    <link rel="alternate" type="application/atom+xml" title="Education Blog" href="https://learn.sparkfun.com/feeds/blog" />
+    <link rel="alternate" type="application/atom+xml" title="Tutorials" href="https://learn.sparkfun.com/feeds/tutorials" />
+    <link rel="alternate" type="application/atom+xml" title="Education Blog Comments" href="https://learn.sparkfun.com/feeds/blog_comments" />
+    <link rel="alternate" type="application/atom+xml" title="Tutorial Comments" href="https://learn.sparkfun.com/feeds/tutorial_comments" />
+  </head>
+
+  <body id=learn class="layout-default no-type tutorials-view" ontouchstart="">
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WLMFVVN"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    <script>;</script>
+    <div class="wrapper" itemscope itemtype="http://schema.org/WebSite">
+      <meta itemprop="url" content="https://learn.sparkfun.com/">
+      <div class=wrapper-inner>
+
+    <header>
+  <div class="support-nav-container container-fluid hidden-xs">
+    <div class="container">
+      <div class="support-nav">
+        <div aria-hidden="true">&nbsp;</div>
+
+        <div>
+          <ul class="professional-links">
+            <li><a href="https://www.sparkfun.com/professional">Professional</a></li>
+            <li><a href="https://www.sparkfun.com/education">EDU</a>            <li><a href="https://www.sparkfun.com/become-a-distributor">Distributor</a>          </ul>
+        </div>
+
+        <div class="cs">
+          <a href="https://www.sparkfun.com/support">Customer Support</a>        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-nav-buttons container-fluid hidden-xs">
+    <div class="container">
+      <div class="tab-bar">
+        <ul class="tab-navigation" aria-label="sparkfun.com navigation">
+  <li><a href="https://www.sparkfun.com/">Shop</a></li>
+  <li class="active"><a href="https://learn.sparkfun.com/">Documentation</a></li>
+  <li class=""><a href="https://news.sparkfun.com/">News</a></li>
+</ul>
+
+<ul class="sale-links" aria-label="Deals and special interests">
+  <li><a href="https://www.sparkfun.com/todays-deals"><span class="icon-header icon-header-sale" aria-hidden="true"></span>Today's Deals</a></li>
+  <li><a href="https://community.sparkfun.com/" target="_blank"><span class=" icon-header icon-header-community" aria-hidden="true"></span>Community</a></li>
+  <li><a class="sparkx" href="https://www.sparkpnt.com"><span class="logo-spark-pnt-primary"><span class="sr-only">SparkPNT (Position, Navigation & Timing)</span></span></a></li>
+</ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header-content">
+      <div class="logo-container">
+        <button id="mobile-nav-menu-trigger" class="mobile-menu-button btn-unstyled hidden-sm hidden-md hidden-lg" type="button" aria-label="Open navigation menu">
+          <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+        </button>
+
+        <a class="logo" href="https://www.sparkfun.com/">
+          <span class="logo-sfe-primary"><span class="visuallyhidden">SparkFun Electronics - sparkfun.com</span></span>
+        </a>
+      </div>
+
+      <div class="search-block">
+                  <form id="search_form" class="search-block-form" action="https://learn.sparkfun.com/search/results" method="get">
+            <label for="global-search" class="sr-only">search documentation</label>
+            <input name="term" id="global-search" class="form-control" type="text" value="" placeholder="search documentation" autocomplete="off">
+            <button type="submit" class="glyphicon glyphicon-search global-search-icon" aria-label="Search"></button>
+          </form>
+        
+        <a href="https://www.sparkfun.com/" class="hidden-xs">Back to Webstore<span class="icon-header icon-header-undo" aria-hidden="true"></span></a>
+      </div>
+
+        <a class="account-link" href="https://www.sparkfun.com/customer/account">
+          <span class="img-account-silhouette visible-xs-inline-block"><span class="sr-only">My Account</span></span>
+          <span class="hidden-xs">My Account</span>
+        </a>
+
+    </div>
+  </div>
+
+  <div class="header-nav container-fluid hidden-xs">
+    <div class="container">
+      <ul class="nav-product-categories" aria-label="Featured product categories">
+  <li><a href="https://www.sparkfun.com/featured">Featured <span class="sr-only">Products</span></a></li>
+  <li><a href="https://www.sparkfun.com/gnss">GPS/GNSS</a></li>
+  <li><a href="https://www.sparkfun.com/sensors">Sensors</a></li>
+  <li><a href="https://www.sparkfun.com/development-boards">Development Boards</a></li>
+  <li class="header-nav-iot"><a href="https://www.sparkfun.com/iot-wireless">IoT & Wireless</a></li>
+  <li class="header-nav-components"><a href="https://www.sparkfun.com/components">Components</a></li>
+  <li class="header-nav-kits"><a href="https://www.sparkfun.com/kits">Kits</a></li>
+  <li class="all-cat"><a href="https://www.sparkfun.com/all-categories"><span class="visible-xs-inline">Shop </span>All <span class="sr-only">Product</span> Categories</a></li>
+</ul>
+    </div>
+  </div>
+  <div id="nav-mobile-menu" class="nav-mobile-menu" aria-labelledby="nav-mobile-menu-heading" aria-role="dialog" aria-modal="true">
+    <h2 id="nav-mobile-menu-heading" class="sr-only">Navigation menu</h2>
+    <ul class="mobile-menu-tabs">
+      <li class="active"><a>Menu</a></li>
+      <li><a href="https://www.sparkfun.com/customer/account">Account</a></li>
+    </ul>
+    <ul class="nav-product-categories" aria-label="Featured product categories">
+  <li><a href="https://www.sparkfun.com/featured">Featured <span class="sr-only">Products</span></a></li>
+  <li><a href="https://www.sparkfun.com/gnss">GPS/GNSS</a></li>
+  <li><a href="https://www.sparkfun.com/sensors">Sensors</a></li>
+  <li><a href="https://www.sparkfun.com/development-boards">Development Boards</a></li>
+  <li class="header-nav-iot"><a href="https://www.sparkfun.com/iot-wireless">IoT & Wireless</a></li>
+  <li class="header-nav-components"><a href="https://www.sparkfun.com/components">Components</a></li>
+  <li class="header-nav-kits"><a href="https://www.sparkfun.com/kits">Kits</a></li>
+  <li class="all-cat"><a href="https://www.sparkfun.com/all-categories"><span class="visible-xs-inline">Shop </span>All <span class="sr-only">Product</span> Categories</a></li>
+</ul>
+    <ul class="tab-navigation" aria-label="sparkfun.com navigation">
+  <li><a href="https://www.sparkfun.com/">Shop</a></li>
+  <li class="active"><a href="https://learn.sparkfun.com/">Documentation</a></li>
+  <li class=""><a href="https://news.sparkfun.com/">News</a></li>
+</ul>
+
+<ul class="sale-links" aria-label="Deals and special interests">
+  <li><a href="https://www.sparkfun.com/todays-deals"><span class="icon-header icon-header-sale" aria-hidden="true"></span>Today's Deals</a></li>
+  <li><a href="https://community.sparkfun.com/" target="_blank"><span class=" icon-header icon-header-community" aria-hidden="true"></span>Community</a></li>
+  <li><a class="sparkx" href="https://www.sparkpnt.com"><span class="logo-spark-pnt-primary"><span class="sr-only">SparkPNT (Position, Navigation & Timing)</span></span></a></li>
+</ul>
+  </div>
+</header>
+
+    
+    <div class=content>
+      <div class=container id=airlock>
+
+        
+        <div class=main-title>
+  <ul class="breadcrumb">
+    <li><a href="https://learn.sparkfun.com/">Home</a></li>
+    <li><a href="https://learn.sparkfun.com/tutorials">Tutorials</a></li>
+    <li>ESP32 Thing Hookup Guide</li>
+      </ul>
+
+  <h1>
+    ESP32 Thing Hookup Guide  </h1>
+
+</div>
+
+
+<a id=nav_toggle_pages class="nav_toggle nav-toggle-trigger" href="#"><span>&#8801;</span> Pages</a>
+
+<div id=tutorial class="row">
+
+  <div class="col-sm-8" id="sections">
+
+    <div class="contributors">
+                      Contributors:
+                <span class="contributor-alias"><img src="https://cdn.sparkfun.com/avatar/3d3509851c3a5223dbe27da5fddd33df?d=retro&s=20&r=pg" /> jimblom</span>          </div>
+
+    <div class="share-link-inline">
+
+  <a class="share-link-toggle" href="#">
+    <span class="share-title">
+      <span class="sfe-icon-share"></span>
+      Share    </span>
+  </a>
+
+  <div class="share-link-inner dialog">
+    Use this URL to share:<br>
+    <input class="form-control input-sm" type="text" value="http://sfe.io/t507" onclick="$(this).trigger('select');">
+
+    <div class="share-social">
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','tumblr');" href="https://www.tumblr.com/share/link?url=http%3A%2F%2Fsfe.io%2Ft507&name=ESP32+Thing+Hookup+Guide" title="Share on Tumblr"><span class="sfe-icon-tumblr hidetext"><span>Share on Tumblr</span></span></a>
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','reddit');" href="https://www.reddit.com/submit?url=http%3A%2F%2Fsfe.io%2Ft507" title="Submit to reddit"><span class="sfe-icon-reddit hidetext"><span>Submit to reddi</span></span></a>
+
+    </div>
+
+    </div>
+  
+  <div class="share-social">
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','twitter');" href="https://twitter.com/intent/tweet?text=ESP32+Thing+Hookup+Guide&url=http%3A%2F%2Fsfe.io%2Ft507&via=sparkfun" title="Share on Twitter"><span class="sfe-icon-twitter hidetext"><span>Share on Twitter</span></span></a>
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','facebook');" href="http://www.facebook.com/sharer.php?u=http%3A%2F%2Fsfe.io%2Ft507&t=ESP32+Thing+Hookup+Guide" title="Share on Facebook"><span class="sfe-icon-facebook-nobox hidetext"><span>Share on Facebook</span></span></a>
+
+          <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','pinterest');" href="https://www.pinterest.com/pin/create/button/?url=http%3A%2F%2Fsfe.io%2Ft507&media=https%3A%2F%2Fcdn.sparkfun.com%2F%2Fr%2F500-1000%2Fassets%2Flearn_tutorials%2F5%2F0%2F7%2Fesp32-thing-iso.jpg&description=ESP32+Thing+Hookup+Guide" title="Pin It"><span class="sfe-icon-pinterest hidetext"><span>Pin It</span></span></a>
+    
+  </div>
+
+  
+</div>
+
+          <div class="section tutorial-page">
+        <h2 id="introduction">Introduction</h2>
+        <p>The <a href="https://www.sparkfun.com/products/13907">SparkFun ESP32 Thing</a> is a comprehensive development platform for <a href="https://espressif.com/en/products/hardware/esp32/overview">Espressif's ESP32</a>, their super-charged version of the popular <a href="https://www.sparkfun.com/products/13711">ESP8266</a>. Like the 8266, the ESP32 is a WiFi-compatible microcontroller but adds nearly 30 I/O pins. The ESP32’s power and versatility will make it the foundation of IoT and connected projects for many years to come.</p>
+
+
+
+<div >
+<div class="tile product-tile big grid " data-id="product-13907">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/sparkfun-esp32-thing.html">
+        <img src="https://cdn.sparkfun.com/r/600-600/assets/parts/1/1/5/6/4/13907-01.jpg" alt="SparkFun ESP32 Thing" height="600">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/sparkfun-esp32-thing.html">
+          <span>SparkFun ESP32 Thing</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      DEV-13907    </span>
+
+          <p class="description" style="display:none">
+        The SparkFun ESP32 Thing is a comprehensive development platform for Espressif’s ESP32, their super-charged version of the &hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$30.85</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+</div>
+
+
+
+
+<p>The SparkFun ESP32 Thing equips the ESP32 with everything necessary to program, run, and develop on the wonderchip. In addition to the WiFi SoC, the Thing includes an <a href="https://www.sparkfun.com/products/13263">FTDI FT231x</a>, which converts USB to serial, and allows your computer to program and communicate with the microcontroller. It also features a <strong>lithium-polymer (LiPo) battery charger</strong>, so your ESP32 project can be truly wireless. Additionally, the board includes a handful of LEDs and buttons to aid in your development.</p>
+
+<h3>Covered In This Tutorial</h3>
+
+<p>This hookup guide serves as a primer on all things ESP32 Thing. It documents hardware features of the board, including a handful of assembly tips. Then it will delve into firmware development -- including demonstrating how to add ESP32 support to the popular <strong>Arduino</strong> IDE.</p>
+
+<p>The tutorial is broken up into a handful of sections, which you can navigate through using the menu on the right. Those sections include:</p>
+
+<ul>
+<li><a href="https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide#hardware-overview">Hardware Overview</a> -- An examination of the ESP32 Thing's hardware layout and features, including an introduction to the ESP32's I/O capabilities.</li>
+<li><a href="https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide#assembly-tips">Assembly Tips</a> -- Quick soldering tips and tricks.</li>
+<li><a href="https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide#installing-via-arduino-ide-boards-manager">Installing via Arduino IDE Boards Manager</a> -- How to add ESP32 support using the Arduino Boards Manager.</li>
+<li><a href="https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide#installing-the-esp32-arduino-core">Installing the ESP32 Arduino Core</a> -- How to add ESP32 support to your computer's Arduino development environment.</li>
+<li><a href="https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide#arduino-example-blink">Arduino Example: Blink</a> -- Verify that your ESP32 Thing and Arduino board definitions work with the classic blink sketch.</li>
+<li><a href="https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide#arduino-example-wifi">Arduino Example: WiFi</a> -- Connect your ESP32 to a local WiFi network, and start IoT'ing.</li>
+<li><a href="https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide#using-the-arduino-addon">Using the Arduino Add-on</a> -- Tips to help you get started creating Arduino sketches of your own.</li>
+</ul>
+
+<div class="alert alert-warning"><b>Not Yet Implemented</b>
+ <br />
+The Arduino board definitions for the ESP32 are still a work in progress. There are a handful of peripherals and features that have yet to be implemented, including:
+
+<br /><br />
+* Analog Input (<code>analogRead([pin])</code>)<br />
+* Analog Ouptut (<code>analogWrite([pin], [value])</code>)<br />
+* WiFi Server and WiFI UDP<br />
+* Real-Time Clock<br />
+* Touch-controller interface<br />
+<br />
+
+
+These peripherals are available (if, also, still in their infancy) in the <a href="https://github.com/espressif/esp-idf">IoT Development Framework</a> for the ESP32. If your application requires analog input, RTC, or any of the features above, consider giving the <a href="https://github.com/espressif/esp-idf">ESP-IDF</a> a try!</div>
+
+<h3>Bill of Materials</h3>
+
+<p>The ESP32 Thing includes <em>almost</em> everything you'll need to begin using and programming the WiFi/BT SoC. In fact, the only required extra is a <a href="https://www.sparkfun.com/products/10215">Micro-B USB Cable</a>. The ESP32 Thing's USB interface can be used to both power and program the chip. Once you're done programming the chip, a <a href="https://www.sparkfun.com/products/15311">5V Micro-B USB Wall Adapter</a> can be used to power the board.</p>
+
+
+
+<div class="tile-wrap">
+<div class="tile product-tile  grid " data-id="product-10215">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/usb-micro-b-cable-6-foot.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/4/5/5/8/10215-01.jpg" alt="USB Micro-B Cable - 6 Foot" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/usb-micro-b-cable-6-foot.html">
+          <span>USB Micro-B Cable - 6 Foot</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      CAB-10215    </span>
+
+          <p class="description" style="display:none">
+        USB 2.0 type A to Micro-B 5-pin. This is a new, smaller connector for USB devices. Micro-B connectors are about half the heig&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$6.50</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-13244">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/usb-micro-b-cable-6.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/0/4/3/0/13244-01.jpg" alt="USB Micro-B Cable - 6&quot;" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/usb-micro-b-cable-6.html">
+          <span>USB Micro-B Cable - 6&quot;</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      CAB-13244    </span>
+
+          <p class="description" style="display:none">
+        This is a USB 2.0 type A to Micro-B 5-pin black cable. You know, the mini-B connector that usually comes with cell phones, Ca&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$2.50</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-15311">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/wall-adapter-power-supply-5vdc-2a-usb-micro-b.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/3/8/1/4/TOL-15311-1.jpg" alt="Wall Adapter Power Supply - 5VDC, 2A (USB Micro-B)" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/wall-adapter-power-supply-5vdc-2a-usb-micro-b.html">
+          <span>Wall Adapter Power Supply - 5VDC, 2A (USB Micro-B)</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-15311    </span>
+
+          <p class="description" style="display:none">
+        This is a high quality switching 'wall wart' AC to DC 5V 2000mA USB Micro-B wall power supply manufactured specifically for S&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$9.50</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid retired" data-id="product-12016">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/products/12016">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/8/5/3/9/12016-01.jpg" alt="SparkFun Cerberus USB Cable - 6ft" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/products/12016">
+          <span>SparkFun Cerberus USB Cable - 6ft</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      CAB-12016    </span>
+
+          <p class="description" style="display:none">
+        You've got the wrong USB cable. It doesn't matter which one you have, it's the wrong one. But what if you could have the righ&hellip;      </p>
+      </div>
+
+  
+      <strong class="retired">Retired</strong>
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+
+<p>As an alternative power source, the ESP32 Thing includes support for <a href="https://www.sparkfun.com/search/results?term=lithium%20polymer&amp;tab=products">single-cell lithium-polymer (LiPo)</a> batteries, which plug into the board's white 2-pin JST connector. LiPo's are perfect for projects on-the-go, or those that just need a little extra umph. The board includes a <strong>LiPo charger</strong> -- the rechargeable batteries can be juiced back up by plugging the Thing into a 5V USB source.</p>
+
+
+
+<div class="tile-wrap">
+<div class="tile product-tile  grid " data-id="product-13851">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/lithium-ion-battery-400mah.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/1/4/5/8/13857-01.jpg" alt="Lithium Ion Battery - 400mAh" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/lithium-ion-battery-400mah.html">
+          <span>Lithium Ion Battery - 400mAh</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      PRT-13851    </span>
+
+          <p class="description" style="display:none">
+        This is a very small, extremely lightweight battery based on Lithium Ion chemistry, with the highest energy density currently&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$7.98</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-13854">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/lithium-ion-battery-850mah.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/1/4/6/1/13854-01.jpg" alt="Lithium Ion Battery - 850mAh" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/lithium-ion-battery-850mah.html">
+          <span>Lithium Ion Battery - 850mAh</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      PRT-13854    </span>
+
+          <p class="description" style="display:none">
+        These are very slim, extremely light weight batteries based on Lithium Ion chemistry. Each cell outputs a nominal 3.7V at 850&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$13.61</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-13855">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/lithium-ion-battery-2ah.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/1/4/6/2/13855-01.jpg" alt="Lithium Ion Battery - 2Ah" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/lithium-ion-battery-2ah.html">
+          <span>Lithium Ion Battery - 2Ah</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      PRT-13855    </span>
+
+          <p class="description" style="display:none">
+        These are very slim, extremely light weight batteries based on Lithium Ion chemistry. Each cell outputs a nominal 3.7V at 200&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$19.41</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid retired" data-id="product-13813">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/products/13813">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/1/4/0/1/13813-01.jpg" alt="Lithium Ion Battery - 1Ah" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/products/13813">
+          <span>Lithium Ion Battery - 1Ah</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      PRT-13813    </span>
+
+          <p class="description" style="display:none">
+        Slim, extremely light weight batteries based on Lithium Ion chemistry. Each cell outputs a nominal 3.7V at 1000 mAh!      </p>
+      </div>
+
+  
+      <strong class="retired">Retired</strong>
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+
+<p>Finally, to connect the ESP32's 28 I/O pins to external components, you'll need to do some soldering. <a href="https://www.sparkfun.com/categories/49">Soldering tools</a>, including an <a href="https://www.sparkfun.com/products/9507">iron</a> and <a href="https://www.sparkfun.com/products/9325">solder</a>, are a must for any electronics workbench. And either <a href="https://www.sparkfun.com/products/116">headers</a> or <a href="https://www.sparkfun.com/products/11375">wire</a> are our recommended mate for soldering into the Thing's pins.</p>
+
+
+
+<div class="tile-wrap">
+<div class="tile product-tile  grid " data-id="product-116">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/break-away-headers-straight.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/0/6/00116-02-L.jpg" alt="Straight Header - Male (PTH, 0.1in., 40-Pin)" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/break-away-headers-straight.html">
+          <span>Straight Header - Male (PTH, 0.1in., 40-Pin)</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      PRT-00116    </span>
+
+          <p class="description" style="display:none">
+        A row of headers - break to fit. 40 pins that can be cut to any size. Used with custom PCBs or general custom headers.      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$1.95</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-9325">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/solder-lead-free-100-gram-spool.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/2/8/7/3/09325_9161-Solder_Lead_Free_-_100-gram_Spool-01.jpg" alt="Solder Lead Free - 100-gram Spool" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/solder-lead-free-100-gram-spool.html">
+          <span>Solder Lead Free - 100-gram Spool</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-09325    </span>
+
+          <p class="description" style="display:none">
+        This is your basic spool of lead free solder with a water soluble resin core. 0.031" gauge and 100 grams. This is a good spoo&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$24.95</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-11375">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/hook-up-wire-assortment-stranded-22-awg.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/7/1/2/0/11375-Hook-Up_Wire_-_Assortment__Solid_Core__22_AWG_-01.jpg" alt="Hook-Up Wire - Assortment (Stranded, 22 AWG)" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/hook-up-wire-assortment-stranded-22-awg.html">
+          <span>Hook-Up Wire - Assortment (Stranded, 22 AWG)</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      PRT-11375    </span>
+
+          <p class="description" style="display:none">
+        There is nothing quite as essential as a neatly organized assortment of colored wire on your workbench. This pack of Hook-Up &hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$25.95</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-9507">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/soldering-iron-30w-us-110v.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/3/2/4/3/09507-01.jpg" alt="Soldering Iron - 30W (US, 110V)" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/soldering-iron-30w-us-110v.html">
+          <span>Soldering Iron - 30W (US, 110V)</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-09507    </span>
+
+          <p class="description" style="display:none">
+        This is a very simple fixed temp, quick heating, 30W 110/120 VAC soldering iron. We really enjoy using the more expensive iro&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$11.50</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+
+<h3>Suggested Reading</h3>
+
+<p>It may look intimidating, but the ESP32 Thing -- especially when you take advantage of its Arduino compatibility -- is a perfect IoT foundation for electronics users of all experience levels. There are, however, a few concepts you should be familiar with before venturing further into this tutorial. If any of the concepts below sound foreign to you, consider reading through that tutorial first:</p>
+
+
+<div class="tile-wrap">
+  <div class="tile tutorial-tile  grid " data-id="tutorial-5">
+  <a href="https://learn.sparkfun.com/tutorials/how-to-solder-through-hole-soldering">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/5/Soldering_Action-01.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">How to Solder: Through-Hole Soldering</h3>
+      </a>
+
+      <div class="description">
+      This tutorial covers everything you need to know about through-hole soldering.    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-8">
+  <a href="https://learn.sparkfun.com/tutorials/serial-communication">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/7/d/f/9/9/50d24be7ce395f1f6c000000.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">Serial Communication</h3>
+      </a>
+
+      <div class="description">
+      Asynchronous serial communication concepts: packets, signal levels, baud rates, UARTs and more!    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-36">
+  <a href="https://learn.sparkfun.com/tutorials/how-to-power-a-project">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/3/6/Bench_Power_Supply.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">How to Power a Project</h3>
+      </a>
+
+      <div class="description">
+      A tutorial to help figure out the power requirements of your project.    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-50">
+  <a href="https://learn.sparkfun.com/tutorials/what-is-an-arduino">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/3/b/6/e/b/512e66bece395f492b000000.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">What is an Arduino?</h3>
+      </a>
+
+      <div class="description">
+      What is this &#039;Arduino&#039; thing anyway? This tutorials dives into what an Arduino is and along with Arduino projects and widgets.
+    </div>
+  
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+<h2>Looking to get hands-on with ESP32?</h2>
+
+<div class="row">
+<p class="lead" style="margin-left:15px;">We've got you covered!</p>
+    <div class="col-md-12">
+    
+
+<div class="tile-wrap">
+<div class="tile product-tile  grid " data-id="product-13907">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/sparkfun-esp32-thing.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/1/5/6/4/13907-01.jpg" alt="SparkFun ESP32 Thing" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/sparkfun-esp32-thing.html">
+          <span>SparkFun ESP32 Thing</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      DEV-13907    </span>
+
+          <p class="description" style="display:none">
+        The SparkFun ESP32 Thing is a comprehensive development platform for Espressif’s ESP32, their super-charged version of the &hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$30.85</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-14311">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/esp32-thing-stackable-header-set.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/2/2/7/9/14311-01.jpg" alt="Thing Stackable Header Set" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/esp32-thing-stackable-header-set.html">
+          <span>Thing Stackable Header Set</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      PRT-14311    </span>
+
+          <p class="description" style="display:none">
+        These headers are made to work with the SparkFun ESP32 Thing to connect to ESP32 Shield boards.      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$2.50</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid retired" data-id="product-14155">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/sparkfun-esp32-thing-power-control-shield.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/2/0/6/6/14155-01.jpg" alt="SparkFun ESP32 Thing Power Control Shield" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/sparkfun-esp32-thing-power-control-shield.html">
+          <span>SparkFun ESP32 Thing Power Control Shield</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      DEV-14155    </span>
+
+          <p class="description" style="display:none">
+        The SparkFun ESP32 Thing Power Control Shield enables the ESP32 Thing to switch up to 5A of a DC load, providing a wide varie&hellip;      </p>
+      </div>
+
+  
+      <strong class="retired">Retired</strong>
+  </div>
+<div class="tile product-tile  grid retired" data-id="product-14430">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/sparkfun-esp32-thing-motion-shield.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/2/4/5/8/14430-01.jpg" alt="SparkFun ESP32 Thing Motion Shield" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/sparkfun-esp32-thing-motion-shield.html">
+          <span>SparkFun ESP32 Thing Motion Shield</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      DEV-14430    </span>
+
+          <p class="description" style="display:none">
+        The SparkFun ESP32 Thing Motion Shield is a versatile, motion-sensing addition to our ESP32 Thing.      </p>
+      </div>
+
+  
+      <strong class="retired">Retired</strong>
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+    <div align="center"><a href="https://www.sparkfun.com/categories/279" class="btn btn-default">See all Espressif products</a></div>
+    </div>
+</div>      </div>
+          <div class="section tutorial-page">
+        <h2 id="hardware-overview">Hardware Overview</h2>
+        <p>Espressif's ESP32 is one of the most unique microcontrollers on the market. Its laundry list of features include:</p>
+
+<ul>
+<li>Dual-core Tensilica LX6 microprocessor</li>
+<li>Up to 240MHz clock frequency</li>
+<li>520kB internal SRAM</li>
+<li>Integrated 802.11 BGN WiFi transceiver</li>
+<li>2.2 to 3.6V operating range</li>
+<li>2.5 &micro;A sleep current under hibernation</li>
+<li>32 GPIO</li>
+<li>10-electrode capacitive touch support</li>
+<li>Hardware accelerated encryption (AES, SHA2, ECC, RSA-4096)</li>
+</ul>
+
+<p>The ESP32 Thing is designed to surround the ESP32 with everything necessary to run and program the microcontroller, plus a few extra goodies to take advantage of the chip's unique features.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/top-annotated.jpg"><img src="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/top-annotated.jpg" alt="Annotated top diagram" /></a> </div></p>
+
+<h3>Peripherals and I/O</h3>
+
+<p>The ESP32 features your standard fare of hardware peripherals, including:</p>
+
+<ul>
+<li>18 <a href="https://learn.sparkfun.com/tutorials/analog-to-digital-conversion">analog-to-digital converter</a> (ADC) channels</li>
+<li>3 <a href="https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi">SPI</a> interfaces</li>
+<li>3 <a href="https://learn.sparkfun.com/tutorials/serial-communication">UART</a> interfaces</li>
+<li>Two <a href="https://learn.sparkfun.com/tutorials/i2c">I<sup>2</sup>C</a> interfaces</li>
+<li>16 <a href="https://learn.sparkfun.com/tutorials/pulse-width-modulation">PWM</a> outputs</li>
+<li>2 digital-to-analog converters (DAC)</li>
+<li>Two I2S interfaces</li>
+</ul>
+
+<p>And, thanks to the chip's <strong>pin multiplexing</strong> feature, those peripherals can be connected to just about any of the 28 broken out I/O pins. That means <em>you</em> decide which pins are RX, TX, MISO, MOSI, SCLK, SDA, SCL, etc.</p>
+
+<p>There are, however, a few hardware features -- namely the ADC and DAC -- which are assigned static pins. The graphical reference below helps demonstrate where you can find those peripherals (click to embiggen!).</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/ESP32ThingV1a.pdf"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/5/0/7/ESP32ThingV1a.png" alt="Graphical Datasheet" /></a> </div></p>
+
+<p><div class="center-block text-center"><em>Click the image for a closer look.</em></div></p>
+
+<p>One I<sup>2</sup>C, two of the UART interfaces, and one of the SPI interfaces can be assigned to any pin your project requires.</p>
+
+<div class="alert alert-warning"><h4>Input Only Pins: 34-39</h4>
+<p>Pins 34, 35, 36, 37, 38 and 39 <em>cannot</em> be configured as outputs, but they can be used as either digital inputs, analog inputs, or for other unique purposes. Also note that they <b>do not have internal pull-up or pull-down resistors</b>, like the other I/O pins.</p>
+<p>GPIO pins 36-39 are an integral part of the ultra low noise pre-amplifier for the ADC &ndash; they are wired up to 270pF capacitors, which help to configure the sampling time and noise of the pre-amp.</p>
+<p style="text-align:center;"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/schematic-crop-34-39.png"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/5/0/7/schematic-crop-34-39.png" alt="Schematic close up of pins 34-39"></a></p>
+<p style="text-align:center;"> <em>From the <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32-thing-schematic.pdf">ESP32 Thing Schematic</a>: GPIO 36-39 are tied together with caps. Those and pins 34 and 35 are input only!</em></p>
+</div>
+
+<h3>Powering the ESP32 Thing</h3>
+
+<p>The two main power inputs to the ESP32 Thing are <strong>USB</strong> and a <strong>single-cell lithium-polymer (LiPo)</strong> battery. If both USB and the LiPo are plugged into the board, the onboard charge controller will charge the LiPo battery at a rate of up to 500mA.</p>
+
+<div class="alert alert-danger"><p>The ESP32's operating voltage range is 2.2 to 3.6V. Under normal operation the ESP32 Thing will power the chip at 3.3V. The I/O pins are <strong>not 5V-tolerant</strong>! If you interface the board with 5V (or higher) components, you'll need to do some <a href="https://learn.sparkfun.com/tutorials/bi-directional-logic-level-converter-hookup-guide">level shifting.</a></p></div>
+
+<p>The <strong>3.3V regulator</strong> on the ESP32 Thing can <strong>reliably supply up to 600mA</strong>, which should be more than enough overhead for most projects. The ESP32 can pull as much as 250mA during RF transmissions, but we've generally measured it to consume around 150mA -- even while actively transmitting over WiFi. The output of the regulator is also broken out to the sides of the board -- the pins labeled "3V3." These pins can be used to supply external components.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32-power-signals.jpg"><img src="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32-power-signals.jpg" alt="ESP32 power inputs/outputs" /></a> </div></p>
+
+<p>In addition to USB and battery connectors, the <strong>VBAT</strong>, and <strong>VUSB</strong> pins are all broken out to both sides of the board. These pins can be used as an alternative supply input to the Thing. The maximum, allowable voltage input to VUSB is 6V, and VBAT should not be connected to anything other than a LiPo battery. Alternatively, if you have a regulated voltage source between 2.2V and 3.6V, the "3V3" lines can be used to directly supply the ESP32 and its peripherals.</p>
+
+<h3>Board Dimensions</h3>
+
+<p>The board is 2.32"x1.00".</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/f/f/7/2/d/SparkFun_ESP32_Thing_-_Board_Dimensions.png"><img src="https://cdn.sparkfun.com/r/600-600/assets/f/f/7/2/d/SparkFun_ESP32_Thing_-_Board_Dimensions.png" alt="Board Dimensions" /></a> </div></p>      </div>
+          <div class="section tutorial-page">
+        <h2 id="assembly-tips">Assembly Tips</h2>
+        <p>The ESP32 Thing ships without anything soldered into the header pins -- ensuring that you can mold the board to best fit your project. To use the chip's pins you'll need to solder <em>something</em> to the I/O and power rail vias broken out to either side of the board.</p>
+
+<div class="alert alert-success">New to soldering? Check out our <a href="https://learn.sparkfun.com/tutorials/how-to-solder---through-hole-soldering">Through-Hole Soldering Tutorial</a> for a quick introduction!</div>
+
+<p><em>What</em> you solder to the ESP32 Thing's I/O pins is completely up to you. The header rows are breadboard-compatible, so you may want to solder <a href="https://www.sparkfun.com/products/116">male headers</a> in. (Mildly satisfying: the ESP32 Thing's pair of 20-pin headers means you can get the most out of our 40-pin header strips.)</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32-thing_2.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/5/0/7/esp32-thing_2.jpg" alt="ESP32 Thing with male headers soldered" /></a> </div></p>
+
+<p>Then plug it into the breadboard, hanging the USB and LiPo connectors off the end, and start wiring!</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32-thing-project.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/5/0/7/esp32-thing-project.jpg" alt="ESP32 Thing breadboard action shot" /></a> </div></p>
+
+<p><div class="center-block text-center"> <em>All those wires and components, and there are still plenty of GPIO left to use!</em> </div></p>
+
+<p>Alternatively, <a href="https://www.sparkfun.com/products/115">female headers</a> (you may need two separate strips to solder all 40 pins), <a href="https://www.sparkfun.com/products/553">right-angle headers</a>, or <a href="https://www.sparkfun.com/products/11375">stranded wire</a> are all good options, depending on your project's needs.</p>      </div>
+          <div class="section tutorial-page">
+        <h2 id="installing-via-arduino-ide-boards-manager">Installing via Arduino IDE Boards Manager</h2>
+        <p>Good news! Espressif has added support for the Arduino Boards Manager and by installing this way, you get the benefit of a slew of great built-in examples. Instructions for installing via the board manager can be found at <a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html">espressif's Arduino-ESP32 Read the Docs</a>.</p>
+
+<p><div class="center-block text-center"> <a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html" class="btn btn-default">Read the Docs: Installation Instructions using Arduino IDE Boards Manager</a> </div></p>
+
+<p>For more information on installing boards via the Arduino Board Manager, check out the <a href="https://learn.sparkfun.com/tutorials/installing-board-definitions-in-the-arduino-ide">Installing Board Definitions in the Arduino IDE</a> tutorial.</p>
+
+
+<div class="tile-wrap">
+  <div class="tile tutorial-tile big grid " data-id="tutorial-1265">
+  <a href="https://learn.sparkfun.com/tutorials/installing-board-definitions-in-the-arduino-ide">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/500-282/assets/learn_tutorials/1/2/6/5/sparkfun_boards.PNG)"></div>
+      </div>
+    
+    
+    <h3 class="title">Installing Board Definitions in the Arduino IDE</h3>
+    <div class="metaline">September 9, 2020</div>  </a>
+
+      <div class="description">
+      How do I install a custom Arduino board/core? It&#039;s easy! This tutorial will go over how to install an Arduino board definition using the Arduino Board Manager. We will also go over manually installing third-party cores, such as the board definitions required for many of the SparkFun development boards.    </div>
+  
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+<p>If you are familiar with installing boards via the Arduino IDE Boards Manager, the url to add is:</p>
+
+<pre><code>language:bash
+https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+</code></pre>
+
+<div class="alert alert-info" role="alert">
+  <b>Note:</b> The old json file was linked to <code>https://dl.espressif.com/dl/package_esp32_index.json</code>. Make sure to update the link in your Board Manager to the latest json file from GitHub as linked above. 
+</div>
+
+<div class="alert alert-warning"> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><b> Warning: </b>If you have previously installed the ESP32 Arduino Core via the instructions in Install Option 2, we strongly recommend removing the associated folders before installing via the boards manager. 
+<br /> 
+<br />To remove previous arduino core installs for the esp32, start by finding your <b><i>...&#47;Arduino&#47;hardware</i></b> folder. This can be located by looking at your Sketchbook location under <b>File</b> > <b>Preferences</b>.<br /> 
+<br /> 
+<center><td><a href="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/5/0/7/Preferences-hardwareFolderLocation.png"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/5/0/7/Preferences-hardwareFolderLocation.png" title="Sketchbook location in Preferences"></a></td></center>
+<br /> 
+<br /> 
+Go to this location in your finder and delete the <b>esp32</b> folder. 
+<br /> 
+<br /> 
+<center><td><a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32_folder.png"><img src="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32_folder.png" title="esp32 folder to be deleted"></a></td></center>
+<br /> 
+Once you have deleted the <b>esp32</b> folder, you can then install using the <b>Arduino Boards Manager</b>. 
+</div>
+
+<p>If you have successfully installed the ESP32 core to your Arduino IDE, you should see the following under <strong>Tools</strong> with the <strong>ESP32 Dev Module</strong> selected:</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/ESP32BoardsManagerInstall.png"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/5/0/7/ESP32BoardsManagerInstall.png" alt="Tools menu with Board: ESP32 Dev Module option selected" /></a> </div></p>      </div>
+          <div class="section tutorial-page">
+        <h2 id="installing-the-esp32-arduino-core">Installing the ESP32 Arduino Core</h2>
+        <p>For the more advanced or adventurous route, you can skip the Arduino IDE Boards Manager and install the ESP32 Arduino Core. The pair of Tensilica cores in the ESP32 are Xtensa-based – not your standard ARM or AVR. Fortunately, there is still a GNU compiler available for the ESP32, which opens up a world of possible development environment (IDE) set ups! The rest of this section covers setting up the Arduino IDE with ESP32 support.</p>
+
+<div class="alert alert-info"><p>In abstracting away a lot of the complicated overhead, the Arduino IDE for the ESP32 also eliminates access to some of the SoC's more advanced features. If you'd like to try your hand at setting up a more <b>advanced toolchain</b> for the ESP32, we recommend checking out <a href="https://github.com/espressif/esp-idf">Espressif's esp-idf GitHub repository</a>. The esp-idf &ndash; short for IoT Development Framework &ndash; is Espressif's software development kit (SDK) for the ESP32.</div>
+
+<h3>Installing the ESP32 Core</h3>
+
+<p>Espressif's official ESP32 Arduino core is hosted <a href="https://github.com/espressif/arduino-esp32">here on GitHub</a>. They have a fairly <a href="https://github.com/espressif/arduino-esp32/blob/master/README.md#installation-instructions">simple set of installation directions</a> to help.</p>
+
+<!-- Python no longer required for Windows -- comes default on Mac and Linux
+<div class="alert alert-success"><h4>Python Required</h4>
+<p><a href="https://github.com/espressif/arduino-esp32/blob/master/tools/esptool.py">esptool</a> &ndash; Espressif's bootloader utility program, used to upload code to the ESP32 &ndash; is a Python script. That's great because it's generally OS-agnostic, but it does require you to have Python installed on your computer. Python 2.7 to be more exact.</p>
+<p>If you don't have Python installed (Mac and Linux machines should come stock with Python), visit <a href="https://www.python.org/downloads/">python.org</a> to download it &ndash; make sure you get 2.7.x, not 3.x! Then follow along with the installer's instructions to install it on your system.</p>
+<p>One more note: you'll need to <strong>add Python's base directory to your PATH environment variable</strong>. For help with that, <a href="https://docs.python.org/2.7/using/windows.html#excursus-setting-environment-variables">check out this link</a>.</p></div>
+-->
+
+<h4>Clone or Download the Core</h4>
+
+<p>To install the ESP32 board definitions, you'll need download the contents of the esp32-arduino repository, and place them in a "hardware/espressif/esp32" directory in your <a href="https://www.arduino.cc/en/Guide/Environment#toc7">Arduino sketchbook directory</a>. You can either download those files using the <a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">git command line tool</a>, or by downloading them from GitHub.</p>
+
+<div class="alert alert-warning">Alternatively, these files can be installed in your Arduino’s base directory. On Windows, that may be <code>C:/Program Files (x86)/Arduino/hardware</code> and on Mac that may be <code>/Applications/Arduino.app/Contents/Java/hardware</code>.</div>
+
+<p><strong>If you have git</strong>, open a terminal, navigate to your Arduino sketchbook, and type:</p>
+
+<pre><code>mkdir hardware
+cd hardware
+mkdir espressif
+cd espressif
+git clone https://github.com/espressif/arduino-esp32.git esp32
+</code></pre>
+
+<p>Those commands will make a "hardware" and "espressif" directories, then download the arduino-esp32 GitHub repository into an "esp32" folder.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32-arduino-command-line.png"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/5/0/7/esp32-arduino-command-line.png" alt="Example terminal commands" /></a> </div></p>
+
+<p>If you <strong>don't have git</strong>, <a href="https://github.com/espressif/arduino-esp32/archive/master.zip">click here to download the core</a> (or click "Download" > "Download ZIP" on the GitHub page), and unzip it to an espressif/esp32 directory in your Arduino sketchbook.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32-folder-windows.png"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/5/0/7/esp32-folder-windows.png" alt="Windows folder installation" /></a> </div></p>
+
+<p>"boards.txt", "platform.txt", and the cores, doc, tools, etc. folders should all live in the esp32 directory.</p>
+
+<h4>Install the Xtensa and ESP32 Tools</h4>
+
+<p>To compile code for the ESP32, you need the Xtensa GNU compiler collection (GCC) installed on your machine. <strong>Windows users</strong> can run <strong>get.exe</strong>, found in the "esp32/tools" folder.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32-get-folder-windows.png"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/5/0/7/esp32-get-folder-windows.png" alt="Location of get.exe" /></a> </div></p>
+
+<p><div class="center-block text-center"> <em>Windows users can run "get.exe" to download the ESP32 software tools.</em> </div></p>
+
+<p>Mac and Linux users should run the <a href="https://github.com/espressif/arduino-esp32/blob/master/tools/get.py">tools/get.py</a> python script to download the tools. Using a terminal, navigate to the <strong>esp32/tools</strong> folder. Then type:</p>
+
+<pre><code>python get.py
+</code></pre>
+
+<p>The "get.py" python script will download the Xtensa GNU tools and the ESP32 software development kit (SDK), and unzip them to the proper location. You should see a few new folders in the "tools" directory, including "sdk" and "xtensa-esp32-elf" once it's done.</p>      </div>
+          <div class="section tutorial-page">
+        <h2 id="arduino-example-blink">Arduino Example: Blink</h2>
+        <p>With the ESP32 Arduino core installed, you're ready to begin programming. If you haven't already, <strong>plug the ESP32 Thing into your computer</strong> using a micro-B USB cable.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32-thing-breadboard.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/5/0/7/esp32-thing-breadboard.jpg" alt="ESP32 Thing plugged into breadboard" /></a> </div></p>
+
+<div class="alert alert-info"><h4>FTDI Drivers</h4>
+<p>If you've never connected an FTDI device to your computer before, you may need to install drivers for the USB-to-serial converter. Check out our <a href="https://learn.sparkfun.com/tutorials/how-to-install-ftdi-drivers">How to Install FTDI Drivers tutorial</a> for help with the installation.</p>
+</div>
+
+<p>Once the board is plugged in (and drivers installed), it should be assigned a unique port identifier. On Windows machines, this will be something like "COM#", and on Macs or Linux computers it will come in the form of "/dev/tty.usbserial-XXXXXX."</p>
+
+<h3>Select the Board and Port</h3>
+
+<p>Once the ESP32 Arduino core is installed, you should see an "ESP32 Dev Module" option under your "Tools" > "Board" menu. Select that.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/arduino-board-select.png"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/5/0/7/arduino-board-select.png" alt="Arduino board select" /></a> </div></p>
+
+<p>Then select your ESP32 Thing's serial port under the "Tools" > "Port" menu.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/arduino-port-select.png"><img src="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/arduino-port-select.png" alt="Arduino port select" /></a> </div></p>
+
+<p>You can also select the "Upload Speed". 921600 baud -- the fastest selectable rate -- will get the code loaded onto your ESP32 the fastest, but may fail to upload once-in-a-while. (It's still way worth it for the speed increase!)</p>
+
+<h3>Loading Blink</h3>
+
+<p>To make sure your toolchain and board are properly set up, we'll upload the simplest of sketches -- Blink! The LED attached to GPIO 5 is perfect for this test. Plus, with the ESP32 attached to your computer, it's a good time to test out serial. Copy and paste the example sketch below, into a fresh Arduino sketch:</p>
+
+<pre><code>language:c
+int ledPin = 5;
+
+void setup()
+{
+    pinMode(ledPin, OUTPUT);
+    Serial.begin(115200);
+}
+
+void loop()
+{
+    Serial.println("Hello, world!");
+    digitalWrite(ledPin, HIGH);
+    delay(500);
+    digitalWrite(ledPin, LOW);
+    delay(500);
+}
+</code></pre>
+
+<p>With everything setup correctly, upload the code! Once the code finishes transferring, <strong>open the <a href="https://learn.sparkfun.com/tutorials/terminal-basics">serial monitor</a></strong> and set the baud rate to <strong>115200</strong>. You should see "Hello, world"'s begin to fly by.</p>
+
+<div class="alert alert-info">If the blue LED remains dimly lit, it's probably still sitting in the bootloader. After uploading a sketch, you may need to <b>tap the RST button</b> to get your ESP32 Thing to begin running the sketch.</div>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/serial-port-example.png"><img src="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/serial-port-example.png" alt="Example serial port output" /></a> </div></p>
+
+<p>You may also notice that when the ESP32 boots up it prints out a long sequence of debug messages. These are emitted every time the chip resets -- always at 115200 baud.</p>      </div>
+          <div class="section tutorial-page">
+        <h2 id="arduino-example-wifi">Arduino Example: WiFi</h2>
+        <p>The ESP32 Arduino core includes a handful of WiFi examples, which demonstrate everything from <a href="https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/examples/WiFiScan/WiFiScan.ino">scanning for nearby networks</a> to sending data to a client server. <!-- data.sparkfun.com](https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/examples/WiFiClient/WiFiClient.ino). --> You can find the examples under the <strong>File</strong> > <strong>Examples</strong> > <strong>WiFi</strong> menu.</p>
+
+<p>Here's another example using the WiFi library, which demonstrates how to connect to a nearby WiFi network and poll a remote domain (http://example.com/) as a client:</p>
+
+<pre><code>language:c
+#include &lt;WiFi.h&gt;
+
+// WiFi network name and password:
+const char * networkName = "YOUR_NETWORK_HERE";
+const char * networkPswd = "YOUR_PASSWORD_HERE";
+
+// Internet domain to request from:
+const char * hostDomain = "example.com";
+const int hostPort = 80;
+
+const int BUTTON_PIN = 0;
+const int LED_PIN = 5;
+
+void setup()
+{
+  // Initilize hardware:
+  Serial.begin(115200);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  pinMode(LED_PIN, OUTPUT);
+
+  // Connect to the WiFi network (see function below loop)
+  connectToWiFi(networkName, networkPswd);
+
+  digitalWrite(LED_PIN, LOW); // LED off
+  Serial.print("Press button 0 to connect to ");
+  Serial.println(hostDomain);
+}
+
+void loop()
+{
+  if (digitalRead(BUTTON_PIN) == LOW)
+  { // Check if button has been pressed
+    while (digitalRead(BUTTON_PIN) == LOW)
+      ; // Wait for button to be released
+
+    digitalWrite(LED_PIN, HIGH); // Turn on LED
+    requestURL(hostDomain, hostPort); // Connect to server
+    digitalWrite(LED_PIN, LOW); // Turn off LED
+  }
+}
+
+void connectToWiFi(const char * ssid, const char * pwd)
+{
+  int ledState = 0;
+
+  printLine();
+  Serial.println("Connecting to WiFi network: " + String(ssid));
+
+  WiFi.begin(ssid, pwd);
+
+  while (WiFi.status() != WL_CONNECTED) 
+  {
+    // Blink LED while we're connecting:
+    digitalWrite(LED_PIN, ledState);
+    ledState = (ledState + 1) % 2; // Flip ledState
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println();
+  Serial.println("WiFi connected!");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void requestURL(const char * host, uint8_t port)
+{
+  printLine();
+  Serial.println("Connecting to domain: " + String(host));
+
+  // Use WiFiClient class to create TCP connections
+  WiFiClient client;
+  if (!client.connect(host, port))
+  {
+    Serial.println("connection failed");
+    return;
+  }
+  Serial.println("Connected!");
+  printLine();
+
+  // This will send the request to the server
+  client.print((String)"GET / HTTP/1.1\r\n" +
+               "Host: " + String(host) + "\r\n" +
+               "Connection: close\r\n\r\n");
+  unsigned long timeout = millis();
+  while (client.available() == 0) 
+  {
+    if (millis() - timeout &gt; 5000) 
+    {
+      Serial.println("&gt;&gt;&gt; Client Timeout !");
+      client.stop();
+      return;
+    }
+  }
+
+  // Read all the lines of the reply from server and print them to Serial
+  while (client.available()) 
+  {
+    String line = client.readStringUntil('\r');
+    Serial.print(line);
+  }
+
+  Serial.println();
+  Serial.println("closing connection");
+  client.stop();
+}
+
+void printLine()
+{
+  Serial.println();
+  for (int i=0; i&lt;30; i++)
+    Serial.print("-");
+  Serial.println();
+}
+</code></pre>
+
+<p>Make sure you fill in the <code>networkName</code> and <code>networkPswd</code> variables with the name (SSID) and password of your WiFi network! Once you've done that and uploaded the code, open your <strong>serial monitor</strong>.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/wifi-example-serial.png"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/5/0/7/wifi-example-serial.png" alt="WiFi example serial terminal output" /></a> </div></p>
+
+<p>After your ESP32 connects to the WiFi network, it will wait for you to press the "0" button. Tapping that will cause the ESP32 to make an HTTP request to <a href="http://example.com">example.com</a>. You should see a string of HTTP headers and HTML similar to the screenshot above.</p>
+
+<!--
+
+
+REMOVE! 
+
+"Arduino Example: ESP32 BLE"
+
+Both the board manager install and the ESP32 arduino core install come with Bluetooth examples that range from serial to serial to acting as a simple BLE device to functioning as either a Bluetooth server or client. Here we will briefly go over the `BLE_write` example that can be found in **Files** > **Examples** > **ESP32 BLE Arduino**. This example allows you to write messages on your phone that can then be read in a serial monitor on your computer.
+
+This example works with a **BLE scanner** on your phone. A good, basic app is the BLE Scanner for [iPhone](https://itunes.apple.com/us/app/ble-scanner-4-0/id1221763603?mt=8) or [Android](https://play.google.com/store/apps/details?id=com.macdom.ble.blescanner&hl=en_US). Make sure to install the app to follow along with this example.
+
+Compile and upload the following code, or if you wish, open the **BLE_write** example from the **Files** > **Examples** > **ESP32 BLE Arduino** menu. Make sure you have _**ESP32 Dev Module**_ as your board and the correct port has been selected.  
+
+    language:c
+    /*
+        Based on Neil Kolban example for IDF: https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLE%20Tests/SampleWrite.cpp
+        Ported to Arduino ESP32 by Evandro Copercini
+    */
+    
+    #include <BLEDevice.h>
+    #include <BLEUtils.h>
+    #include <BLEServer.h>
+    
+    // See the following for generating UUIDs:
+    // https://www.uuidgenerator.net/
+    
+    #define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+    #define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+    
+    
+    class MyCallbacks: public BLECharacteristicCallbacks {
+        void onWrite(BLECharacteristic *pCharacteristic) {
+          std::string value = pCharacteristic->getValue();
+    
+          if (value.length() > 0) {
+            Serial.println("*********");
+            Serial.print("New value: ");
+            for (int i = 0; i < value.length(); i++)
+              Serial.print(value[i]);
+    
+            Serial.println();
+            Serial.println("*********");
+          }
+        }
+    };
+    
+    void setup() {
+      Serial.begin(115200);
+    
+      Serial.println("1- Download and install an BLE scanner app in your phone");
+      Serial.println("2- Scan for BLE devices in the app");
+      Serial.println("3- Connect to MyESP32");
+      Serial.println("4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something");
+      Serial.println("5- See the magic =)");
+    
+      BLEDevice::init("MyESP32");
+      BLEServer *pServer = BLEDevice::createServer();
+    
+      BLEService *pService = pServer->createService(SERVICE_UUID);
+    
+      BLECharacteristic *pCharacteristic = pService->createCharacteristic(
+                                             CHARACTERISTIC_UUID,
+                                             BLECharacteristic::PROPERTY_READ |
+                                             BLECharacteristic::PROPERTY_WRITE
+                                           );
+    
+      pCharacteristic->setCallbacks(new MyCallbacks());
+    
+      pCharacteristic->setValue("Hello World");
+      pService->start();
+    
+      BLEAdvertising *pAdvertising = pServer->getAdvertising();
+      pAdvertising->start();
+    }
+    
+    void loop() {
+      // put your main code here, to run repeatedly:
+      delay(2000);
+    }
+
+
+Once you have uploaded your code, open a [Serial Monitor](https://learn.sparkfun.com/tutorials/terminal-basics/arduino-serial-monitor-windows-mac-linux) set at **115200 baud** so you can see the message that we will write. 
+
+<div class="center-block text-center"> [![Arduino Serial Monitor ESP32](https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/ESP32_Bluetooth_Initialize_Serial_Monitor.jpg)](https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/ESP32_Bluetooth_Initialize_Serial_Monitor.jpg) </div>
+
+Then open your **BLE Scanner** app on your phone. You will see multiple options; scroll through these and connect to **MyESP32**. 
+
+<div class="center-block text-center"> [![Connect to MyESP32](https://cdn.sparkfun.com/r/300-300/assets/learn_tutorials/5/0/7/1_connectToMyESP32.PNG)](https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/1_connectToMyESP32.PNG) </div>
+
+Now we need to drill down to the communication capability we want. Once you are connected to **MyESP32**, you will be taken to the following page. Select **CUSTOM SERVICE**. 
+
+<div class="center-block text-center"> [![Choose Custom Service](https://cdn.sparkfun.com/r/500-500/assets/learn_tutorials/5/0/7/2_CustomService.PNG)](https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/2_CustomService.PNG) </div>
+
+The next page will show you communications and options for doing so. Select **Write,Read**. 
+
+<div class="center-block text-center"> [![Choose Write,Read](https://cdn.sparkfun.com/r/500-500/assets/learn_tutorials/5/0/7/3_Write_Read.PNG)](https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/3_Write_Read.PNG) </div>
+
+Finally, we can choose the option that allows us to write a message. Select **Write Value**.  
+
+<div class="center-block text-center"> [![Choose Write](https://cdn.sparkfun.com/r/500-500/assets/learn_tutorials/5/0/7/4_Write.PNG)](https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/4_Write.PNG) </div>
+
+Now we can write our message. Make sure you choose **Text**, write yourself a message, and click the **Write** button. 
+
+<div class="center-block text-center"> [![Write your message!](https://cdn.sparkfun.com/r/500-500/assets/learn_tutorials/5/0/7/5_Message.PNG)](https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/5_Message.PNG) </div>
+
+So now what? Go have a look at your serial monitor. You should see "**New value:**" with your message.
+
+<div class="center-block text-center"> [![Received message on the Serial Monitor](https://cdn.sparkfun.com/r/500-500/assets/learn_tutorials/5/0/7/6_ReceivedMessage.jpg)](https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/6_ReceivedMessage.jpg) </div>
+
+This is just a quick walk through of one of the provided examples. We recommend looking through the rest of the provided samples and playing with the code to see what may work for your application. For more information on Bluetooth technology and how it works, check out our [Bluetooth Basics Tutorial](https://learn.sparkfun.com/tutorials/bluetooth-basics).
+
+
+
+
+-->      </div>
+          <div class="section tutorial-page">
+        <h2 id="using-the-arduino-addon">Using the Arduino Addon</h2>
+        <p>Before we leave you, here are a few tips, tricks, and gotcha's to look out for while you're using the ESP32 Arduino core.</p>
+
+<h3>Pin Mapping</h3>
+
+<p>The pin number you use for <code>digitalWrite([pin], [value])</code> or <code>digitalRead([pin])</code> should match those printed onto the board. You can also reference the <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/ESP32ThingV1a.pdf">graphical datasheet</a>, if the tiny numbers are a strain on the eyes.</p>
+
+<p>Both I<sup>2</sup>C interfaces are supported by the <strong>Wire library</strong>. The SDA and SCL pins are assigned, by default, to pins 21 and 22.</p>
+
+<p><center></p>
+
+<table style="width:33%" class="table table-striped table-bordered">
+<tr><th style="text-align:center">I<sup>2</sup>C Signal</th><th style="text-align:center">ESP32 Pin</th></tr>
+<tr style="text-align:center"><td>SDA</td><td>21</td></tr>
+<tr style="text-align:center"><td>SCL</td><td>22</td></tr>
+</table>
+
+<p></center></p>
+
+<p>And the <strong>SPI library</strong> should support all three possible SPI interfaces. By default, here are the pin mappings for those interfaces:</p>
+
+<p><center></p>
+
+<table style="width:33%" class="table table-striped table-bordered">
+<tr><th style="text-align:center">SPI Signal</th><th style="text-align:center">ESP32 Pin</th></tr>
+<tr style="text-align:center"><td>MOSI</td><td>23</td></tr>
+<tr style="text-align:center"><td>MISO</td><td>19</td></tr>
+<tr style="text-align:center"><td>SCLK</td><td>18</td></tr>
+<tr style="text-align:center"><td>SS</td><td>5</td></tr>
+</table>
+
+<p></center></p>
+
+<p>In addition to SPI and I<sup>2</sup>C, the Arduino core also supports interrupts on any pin with the <code>attachInterrupt()</code> function.</p>
+
+<h3>Not Yet Implemented</h3>
+
+<p>The Arduino board definitions for the ESP32 are still a work in progress. There are a handful of peripherals and features that have yet to be implemented, including:</p>
+
+<ul>
+<li>Analog Input (<code>analogRead([pin])</code>)</li>
+<li>Analog Ouptut (<code>analogWrite([pin], [value])</code>)</li>
+<li>WiFi Server and WiFI UDP</li>
+<li>Real-Time Clock</li>
+<li>Touch-controller interface</li>
+</ul>
+
+<p>These peripherals are available (if, also, still in their infancy) in the <a href="https://github.com/espressif/esp-idf">IoT Development Framework</a> for the ESP32. If your application requires analog input, RTC, or any of the features above, consider giving the ESP-IDF a try!</p>      </div>
+          <div class="section tutorial-page">
+        <h2 id="resources--going-further">Resources and Going Further</h2>
+        <p>The ESP32 Thing's design is <strong>open-source</strong>! You can download, view, and modify the <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32-thing-v10.zip">Eagle files</a> (PCB design), checkout the <a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32-thing-schematic.pdf">schematic</a>, or suggest revisions on the <a href="https://github.com/sparkfun/ESP32_Thing">ESP32 Thing GitHub repository</a>.</p>
+
+<ul>
+<li><a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32-thing-schematic.pdf">Schematic (PDF)</a></li>
+<li><a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/esp32-thing-v10.zip">Eagle Files (ZIP)</a></li>
+<li><a href="https://cdn.sparkfun.com/assets/f/f/7/2/d/SparkFun_ESP32_Thing_-_Board_Dimensions.png">Board Dimensions (PNG)</a></li>
+<li><a href="https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/ESP32ThingV1a.pdf">Graphical Datasheet (PDF)</a></li>
+<li><a href="https://cdn.sparkfun.com/assets/e/d/7/9/d/esp32_datasheet_en_v4-2.pdf">Datasheet (PDF)</a> (ESP32-D0WDQ6-V3)</li>
+<li><a href="https://github.com/sparkfun/ESP32_Thing">GitHub Hardware Repo</a></li>
+</ul>
+
+<p>The ESP32 is still in its infancy, but resources are popping up all over the place for the chip. Check out some of these links for more information, documentation, and examples.</p>
+
+<ul>
+<li><a href="http://esp32.com/">ESP32.com</a> -- Great forums, where you can discuss ESP32 news, get help, or show off your project.</li>
+<li><a href="http://espressif.com/en/products/hardware/esp32/resources">Espressif ESP32 Resource Page</a> -- A great source for the latest datasheets, reference manuals, and software tools.</li>
+<li><a href="https://github.com/espressif">Espressif GitHub Repositories</a> -- Espressif is efforting to be as open-source as possible. Among other things, you'll find repositories for <a href="https://github.com/espressif/arduino-esp32">Arduino ESP32 support</a>, <a href="https://github.com/espressif/esp-idf">SDK's</a>, and even a <a href="https://github.com/espressif/esp32-nesemu">proof-of-concept NES emulator</a> hosted on their GitHub page.</li>
+</ul>
+
+<p><!-- ### Going Further -->
+You can also check out these links to go further.</p>
+
+<ul>
+<li><a href="https://github.com/espressif/esp-idf">ESP-IDF -- IoT Development Framework</a> -- If you want to take your development environment up a step from Arduino, this should be your first step into ESP32 software development. Some notes on the IDF:
+
+<ul>
+<li>The IDF is well-documented. Check out the <a href="https://github.com/espressif/esp-idf#setting-up-esp-idf">set up guides</a> (for Windows, Mac or Linux) for help getting your environment set up. For help with the API's and data structures, check out <a href="http://esp-idf.readthedocs.io/en/latest/">esp32.info</a>.</li>
+<li>There are a handful of <a href="https://github.com/espressif/esp-idf/tree/master/examples">example applications</a>.</li>
+<li>Use the <a href="https://github.com/espressif/esp-idf-template">ESP-IDF project template</a>, once you're ready to start creating applications of your own.</li>
+</ul></li>
+<li><a href="http://www.blynk.cc/">Blynk</a> -- Blynk allows you to control IoT development boards with an easily configurable iOS/Android app. And it already supports the ESP32!
+
+<ul>
+<li>Download the <a href="https://github.com/blynkkk/blynk-library">Blynk Arduino Library</a> and load the <a href="https://github.com/blynkkk/blynk-library/blob/master/examples/Boards_WiFi/ESP32/ESP32.ino">ESP32 example</a> onto your ESP32 Thing. Then download the app and start blinking!</li>
+</ul></li>
+</ul>
+
+<p>Looking for additional functionality with the ESP32? Check out the <a href="https://learn.sparkfun.com/tutorials/esp32-thing-plus-hookup-guide">ESP32 Thing Plus</a> with the ESP32 WROOOM module.</p>
+
+
+<div class="tile-wrap">
+  <div class="tile tutorial-tile big grid " data-id="tutorial-852">
+  <a href="https://learn.sparkfun.com/tutorials/esp32-thing-plus-hookup-guide">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/500-282/assets/learn_tutorials/8/5/2/SparkFun_Transparent_Graphical_OLED_Breakout__Qwiic__Hookup_Guide-01.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">ESP32 Thing Plus Hookup Guide</h3>
+    <div class="metaline">March 7, 2019</div>  </a>
+
+      <div class="description">
+      Hookup guide for the ESP32 Thing Plus (Micro-B) using the ESP32 WROOM&#039;s WiFi/Bluetooth system-on-chip in Arduino.    </div>
+  
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+<p>For more related tutorials, check out the following tutorials tagged with ESP32.</p>
+
+
+<div class="tile-wrap">
+  <div class="tile tutorial-tile  grid " data-id="tutorial-659">
+  <a href="https://learn.sparkfun.com/tutorials/micropython-programming-tutorial-getting-started-with-the-esp32-thing">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/6/5/9/MicroPython_Tutorial-02.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">MicroPython Programming Tutorial: Getting Started with the ESP32 Thing</h3>
+      </a>
+
+      <div class="description">
+      MicroPython is an implementation and subset of the Python 3 programming language that can be used on microcontrollers. This guide will walk you through writing MicroPython programs for the ESP32 Thing development board.    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-755">
+  <a href="https://learn.sparkfun.com/tutorials/wifi-controlled-robot">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/7/5/5/Webcam_Robot-01.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">WiFi Controlled Robot</h3>
+      </a>
+
+      <div class="description">
+      This tutorial will show you how to make a robot that streams a webcam to a custom website that can be remotely controlled.    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-826">
+  <a href="https://learn.sparkfun.com/tutorials/sparkfun-lora-gateway-1-channel-hookup-guide">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/8/2/6/15006-SparkFun_LoRa_Gateway_-_1-Channel__ESP32_-01.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">SparkFun LoRa Gateway 1-Channel Hookup Guide</h3>
+      </a>
+
+      <div class="description">
+      How to setup and use the LoRa Gateway 1-Channel in Arduino.    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-3243">
+  <a href="https://learn.sparkfun.com/tutorials/sparkfun-arduino-uno-r4-wifi-qwiic-kit-hookup-guide">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com//assets/learn_tutorials/3/2/4/3/22641_QwiicButtonExample.gif)"></div>
+      </div>
+    
+    
+    <h3 class="title">SparkFun Arduino UNO R4 WiFi Qwiic Kit Hookup Guide</h3>
+      </a>
+
+      <div class="description">
+      The SparkFun Arduino UNO R4 WiFi Qwiic Kit is a great way to get started with Arduino and the Qwiic-connect system - use this guide to get started!    </div>
+  
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+<p>If you need some project inspiration, check out some of these IoT-focused projects and get making!</p>
+
+
+<div class="tile-wrap">
+  <div class="tile tutorial-tile  grid " data-id="tutorial-382">
+  <a href="https://learn.sparkfun.com/tutorials/getting-started-with-load-cells">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/3/8/2/13329-01.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">Getting Started with Load Cells</h3>
+      </a>
+
+      <div class="description">
+      A tutorial defining what a load cell is and how to use one.     </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-478">
+  <a href="https://learn.sparkfun.com/tutorials/led-cloud-connected-cloud">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/4/7/8/Cloud_Screenshot.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">LED Cloud-Connected Cloud</h3>
+      </a>
+
+      <div class="description">
+      Make an RGB colored cloud light! You can also control it from your phone, or hook up to the weather!
+    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-493">
+  <a href="https://learn.sparkfun.com/tutorials/esp8266-powered-propane-poofer">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/4/9/3/9dd458e3-417b-44e9-bc56-9c44fd8e7a7e.png)"></div>
+      </div>
+    
+    
+    <h3 class="title">ESP8266 Powered Propane Poofer</h3>
+      </a>
+
+      <div class="description">
+      Learn how Nick Poole built a WiFi controlled fire-cannon using the ESP8266 Thing Dev Board!    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-528">
+  <a href="https://learn.sparkfun.com/tutorials/iot-industrial-scale">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/5/2/8/FinalScale-JumpTestLanding2.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">IoT Industrial Scale</h3>
+      </a>
+
+      <div class="description">
+      What does a baby elephant weigh? How much impact force does a jump have? Answer these questions and more by building your very own IoT industrial scale using the  SparkFun OpenScale.    </div>
+  
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+<p>Or check out these related blog posts.</p>
+
+
+<div class="tile-wrap">
+  <div class="tile blog-tile " data-id="news-2297">
+  <a href="https://news.sparkfun.com/2297" title="February 9, 2017: Setting up a sensor to text you if your basement is in danger of flooding">
+              <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/338-190/assets/home_page_posts/2/2/9/7/ESP32_Water_Sensor-01.jpg)"></div>
+        <h3 class="title">Enginursday: Creating a Smart Water Sensor with the ESP32 Thing</h3>
+          <div class="metaline">
+        <span class="meta">February 9, 2017</span>
+      </div>
+        <p class="readmore">Read Post</p>
+      </a>
+  </div>
+<div class="tile blog-tile " data-id="news-2484">
+  <a href="https://news.sparkfun.com/2484" title="September 21, 2017: This week Alex designs an OLED clock using the ESP32 Thing.">
+              <div class="thumb" style="background-image:url(https://cdn.sparkfun.com//assets/home_page_posts/2/4/8/4/OLED-Clock.gif)"></div>
+        <h3 class="title">Enginursday: OLED Clock</h3>
+          <div class="metaline">
+        <span class="meta">September 21, 2017</span>
+      </div>
+        <p class="readmore">Read Post</p>
+      </a>
+  </div>
+<div class="tile blog-tile " data-id="news-2642">
+  <a href="https://news.sparkfun.com/2642" title="March 22, 2018: Using a ESP32 Thing and a WiFi camera to create a robot that you control from your browser.">
+              <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/338-190/assets/home_page_posts/2/6/4/2/Alexginursday-01.jpg)"></div>
+        <h3 class="title">Enginursday: Create a Web-Controlled Robot Using the ESP32 Thing</h3>
+          <div class="metaline">
+        <span class="meta">March 22, 2018</span>
+      </div>
+        <p class="readmore">Read Post</p>
+      </a>
+  </div>
+<div class="tile blog-tile " data-id="news-2687">
+  <a href="https://news.sparkfun.com/2687" title="May 10, 2018: This week I&#039;m getting back to my OLED clock, and discussing the changes I&#039;ve made.">
+              <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/338-190/assets/home_page_posts/2/6/8/7/Alex_s_Enginursday.jpg)"></div>
+        <h3 class="title">Enginursday: OLED Clock Part II</h3>
+          <div class="metaline">
+        <span class="meta">May 10, 2018</span>
+      </div>
+        <p class="readmore">Read Post</p>
+      </a>
+  </div>
+<div class="tile blog-tile " data-id="news-2872">
+  <a href="https://news.sparkfun.com/2872" title="February 14, 2019: In this week&#039;s Enginursday, we&#039;ll explore how to use both cores of the ESP32, and why you might want to.">
+              <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/338-190/images/framework/no_image_188.jpg)"></div>
+        <h3 class="title">Enginursday: Using Both ESP32 Cores</h3>
+          <div class="metaline">
+        <span class="meta">February 14, 2019</span>
+      </div>
+        <p class="readmore">Read Post</p>
+      </a>
+  </div>
+</div>
+
+  <div class="clearfix"></div>      </div>
+    
+        <div class="share-link-inline">
+
+  <a class="share-link-toggle" href="#">
+    <span class="share-title">
+      <span class="sfe-icon-share"></span>
+      Share    </span>
+  </a>
+
+  <div class="share-link-inner dialog">
+    Use this URL to share:<br>
+    <input class="form-control input-sm" type="text" value="http://sfe.io/t507" onclick="$(this).trigger('select');">
+
+    <div class="share-social">
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','tumblr');" href="https://www.tumblr.com/share/link?url=http%3A%2F%2Fsfe.io%2Ft507&name=ESP32+Thing+Hookup+Guide" title="Share on Tumblr"><span class="sfe-icon-tumblr hidetext"><span>Share on Tumblr</span></span></a>
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','reddit');" href="https://www.reddit.com/submit?url=http%3A%2F%2Fsfe.io%2Ft507" title="Submit to reddit"><span class="sfe-icon-reddit hidetext"><span>Submit to reddi</span></span></a>
+
+    </div>
+
+    </div>
+  
+  <div class="share-social">
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','twitter');" href="https://twitter.com/intent/tweet?text=ESP32+Thing+Hookup+Guide&url=http%3A%2F%2Fsfe.io%2Ft507&via=sparkfun" title="Share on Twitter"><span class="sfe-icon-twitter hidetext"><span>Share on Twitter</span></span></a>
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','facebook');" href="http://www.facebook.com/sharer.php?u=http%3A%2F%2Fsfe.io%2Ft507&t=ESP32+Thing+Hookup+Guide" title="Share on Facebook"><span class="sfe-icon-facebook-nobox hidetext"><span>Share on Facebook</span></span></a>
+
+          <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','pinterest');" href="https://www.pinterest.com/pin/create/button/?url=http%3A%2F%2Fsfe.io%2Ft507&media=https%3A%2F%2Fcdn.sparkfun.com%2F%2Fr%2F500-1000%2Fassets%2Flearn_tutorials%2F5%2F0%2F7%2Fesp32-thing-iso.jpg&description=ESP32+Thing+Hookup+Guide" title="Pin It"><span class="sfe-icon-pinterest hidetext"><span>Pin It</span></span></a>
+    
+  </div>
+
+  
+</div>
+
+  </div>
+
+  <div class="col-sm-4 nav-menu" id="nav-pages">
+    <div id="sidebar_affix">
+      <div id="tutorial-pages" class="list-group">
+        <a class="list-group-item"><b>Sections</b></a>
+                          <a data-pagename="introduction" class="list-group-item" href="#introduction">
+            Introduction          </a>
+                  <a data-pagename="hardware-overview" class="list-group-item" href="#hardware-overview">
+            Hardware Overview          </a>
+                  <a data-pagename="assembly-tips" class="list-group-item" href="#assembly-tips">
+            Assembly Tips          </a>
+                  <a data-pagename="installing-via-arduino-ide-boards-manager" class="list-group-item" href="#installing-via-arduino-ide-boards-manager">
+            Installing via Arduino IDE Boards Manager          </a>
+                  <a data-pagename="installing-the-esp32-arduino-core" class="list-group-item" href="#installing-the-esp32-arduino-core">
+            Installing the ESP32 Arduino Core          </a>
+                  <a data-pagename="arduino-example-blink" class="list-group-item" href="#arduino-example-blink">
+            Arduino Example: Blink          </a>
+                  <a data-pagename="arduino-example-wifi" class="list-group-item" href="#arduino-example-wifi">
+            Arduino Example: WiFi          </a>
+                  <a data-pagename="using-the-arduino-addon" class="list-group-item" href="#using-the-arduino-addon">
+            Using the Arduino Addon          </a>
+                  <a data-pagename="resources--going-further" class="list-group-item" href="#resources--going-further">
+            Resources and Going Further          </a>
+              </div>
+
+      <div class="list-group">
+        <a class="list-group-item" href="https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide/discuss">
+          Comments
+          <span class="badge">51</span>
+        </a>
+                  <a class="list-group-item" href="https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide/introduction">
+            View Paginated
+          </a>
+                <a class="list-group-item" href="#" onclick="window.print(); return false;">
+          Print
+        </a>
+      </div>
+
+      <ul class="list-group">
+        <li class="list-group-item"><b>Tags</b></li>
+        <li class="list-group-item"><ul class="tags-list">
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/arduino">Arduino</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/esp32">ESP32</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/hookup">Hookup</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/internet-of-things">Internet of Things</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/wifi">WiFi</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/wireless">Wireless</a>  </li>
+</ul>
+</li>
+      </ul>
+
+      <ul class="list-group">
+        <li class="list-group-item"><b>License</b></li>
+        <li class="list-group-item">
+          <span class="sfe-icon-cc">
+            <span class="visuallyhidden">Creative Commons</span>
+          </span>
+          <small>tutorials are <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="new">CC BY-SA 4.0</a></small>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+</div>
+
+      </div> <!-- /container -->
+    </div> <!-- /content -->
+
+    <footer>
+  <div class="container">
+
+  <div class="row">
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>About SparkFun</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/about-sparkfun">Read Our Story</a></li>
+            <li><a href="https://www.sparkfun.com/press-and-media">Press &amp; Media</a></li>
+            <li><a href="http://www.sparkfuneducation.com" target="_blank">SparkFun Education <span class="glyphicon glyphicon-new-window"></span></a></li>
+            <li><a href="https://www.sparkfun.com/jobs">Job Openings</a></li>
+          </ul>
+
+          <h3>Partner With Us</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/partner">See Our Partners</a></li>
+            <li><a href="https://www.sparkfun.com/services">View Our Services</a></li>
+            <li><a href="https://www.sparkfun.com/become-a-distributor">Become a Distributor/Reseller</a></li>
+            <li><a href="https://www.sparkfun.com/volume-sales">Receive Volume Discounts</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>Support</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/support">Customer Support</a></li>
+            <li><a href="https://www.sparkfun.com/payments">Purchase Order &amp; Payment Terms</a></li>
+            <li><a href="https://www.sparkfun.com/technical-assistance">Technical Assistance</a></li>
+            <li><a href="https://www.sparkfun.com/faq">FAQs</a></li>
+          </ul>
+          <h3>Site Information</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/terms">Terms Of Service</a></li>
+            <li><a href="https://www.sparkfun.com/privacy">Privacy Policy</a></li>
+            <li><a href="https://www.sparkfun.com/compliance">Compliance</a></li>
+            <li><a href="https://www.sparkfun.com/sitemap">Site Map</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>Subscribe</h3>
+          <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+          <script>
+            hbspt.forms.create({
+              region: "na1",
+              portalId: "2224003",
+              formId: "257ad1af-ab9e-4275-8788-cbad81cc229e"
+            });
+          </script>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>View Our Social Channels</h3>
+          <ul class="spew">
+            <li><a href="https://www.youtube.com/sparkfun" target="_blank" class="icon-social-youtube"><span class="sr-only">YouTube</span></a></li>
+            <li><a href="https://www.instagram.com/sparkfun/" target="_blank" class="icon-social-instagram"><span class="sr-only">Instagram</span></a></li>
+            <li><a href="https://www.github.com/sparkfun" target="_blank" class="icon-social-github"><span class="sr-only">GitHub</span></a></li>
+            <li><a href="https://www.facebook.com/SparkFun" target="_blank" class="icon-social-facebook"><span class="sr-only">Facebook</span></a></li>
+            <li><a href="https://twitter.com/sparkfun" target="_blank" class="icon-social-twitter"><span class="sr-only">Twitter</span></a></li>
+            <li><a href="https://www.sparkfun.com/feeds" class="icon-social-rss"><span class="sr-only">RSS</span></a></li>
+            <li><a href="https://www.tiktok.com/@sparkfun.electronics?lang=en" target="_blank" class="icon-social-tiktok"><span class="sr-only">TikTok</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div><!-- end .row -->
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <p class="copyleft">
+          <strong>SparkFun Electronics&nbsp;&reg;</strong>
+          <span class="hidden-xs hidden-sm">/</span>
+          <br class="visible-xs-inline visible-sm-inline"/>
+          6333 Dry Creek Parkway,
+          <br class="visible-xs-inline"/>
+          Niwot, CO 80503
+        </p>
+      </div>
+    </div><!-- end .row -->
+  </div><!-- end .container -->
+</footer>
+
+      </div><!-- end .wrapper-inner -->
+    </div><!-- end .wrapper -->
+
+    <script type="text/javascript">
+      var SFECONFIG = {
+        dnt: false,
+        http_server: 'http://learn.sparkfun.com',
+        https_server: 'https://learn.sparkfun.com',
+        http_static: 'https://cdn.sparkfun.com',
+        learn_server: 'https://learn.sparkfun.com',
+        news_server: 'https://news.sparkfun.com',
+        base_url: '/',
+        url: '/',
+        controller: 'tutorials',
+        action: 'view',
+        entity_id: '',
+        auth: false,
+        sparkrev: '1788987368',
+        search_key: 'search-sngw3quge7ojic1tgr4eft5c',
+        search_url: 'https://sparkfun-electronics.ent.us-central1.gcp.cloud.es.io/api/as/v1/engines/sparkfun-01/search'
+      };
+    </script>
+          <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+      <script src="/js/learn-built.min.js?sparkrev=1788987368"></script>
+    
+    <script>
+      $.sfe();
+      $.shared();
+      $('#learn').learn();
+      $('#learn').sfeutil();
+    </script>
+                            <script src="/js/tutorials-built.min.js?sparkrev=1788987368"></script>
+                                    <script>
+    var fbq = null;
+  </script>
+      
+          <script type="text/javascript">
+      (function(d,s,i,r) {
+        if (d.getElementById(i)){return;}
+        var n=d.createElement(s),e=d.getElementsByTagName(s)[0];
+        n.id=i;n.src='//js.hs-analytics.net/analytics/'+(Math.ceil(new Date()/r)*r)+'/2224003.js';
+        e.parentNode.insertBefore(n, e);
+      })(document,"script","hs-analytics",300000);
+    </script>
+        <script type="text/javascript">
+    setTimeout(function(){var a=document.createElement("script");
+    var b=document.getElementsByTagName("script")[0];
+    a.src=document.location.protocol+"//script.crazyegg.com/pages/scripts/0046/4761.js?"+Math.floor(new Date().getTime()/3600000);
+    a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
+  </script>
+      </body>
+</html>

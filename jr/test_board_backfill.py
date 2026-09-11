@@ -2255,3 +2255,246 @@ def test_dfrobot_board_404_skipped_cleanly(tmp_path):
     assert entry["reason"] == "doc-unreachable"
     assert entry["modified"] is False
     assert path.read_text() == before
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# SLICE 10 — sparkfun vendor doc resolver (SPEC-board-backfill-vendors.md §Slice 10).
+# ──────────────────────────────────────────────────────────────────────────────
+# Registers the "sparkfun" resolver on learn.sparkfun.com so board_backfill reaches the 5
+# SparkFun ESP32 boards. Each board's official page is a learn.sparkfun.com hookup guide whose
+# slug is NOT derivable from the board id (sparkfun-esp32-thing → esp32-thing-hookup-guide, but
+# sparkfun-thing-plus-esp32-s2-wroom → esp32-s2-thing-plus-hookup-guide — the words reorder and
+# the -wroom suffix drops), so — exactly like the seeed/dfrobot maps — this resolver is a small
+# EXPLICIT per-board map. Only URLs CONFIRMED live=200 (content-matched to OUR board record) are
+# ever emitted — never a guessed slug. The resolver claims only the 5 mapped ids; any other id
+# yields [] (→ skipped doc-unreachable, never a guessed URL). The frontmatter `brand` for these
+# boards is exactly `sparkfun`. The HTML is saved as the Slice-10 fixtures.
+#
+# EMPIRICAL grounding (measured on the REAL fetched hookup-guide pages under fixtures/):
+#   * getting_started — grounds for ALL 5 (the resolved 200 doc page IS the link).
+#   * usb_serial      — grounds ch340 only where the page NAMES the bridge in product prose
+#                       (iot-redboard-esp32 names the CH340). The other four name no bridge in a
+#                       groundable form — esp32-thing / micromod / s2-wroom name none, and
+#                       thing-plus-esp32-wroom names only the USB-C *connector* (not a bridge
+#                       chip enum) — so usb_serial is OMITTED there (cite-or-omit). NOTE the real
+#                       data/boards/sparkfun/sparkfun-thing-plus-esp32-wroom file already carries
+#                       usb_serial: ch340, so on a real run it is never rewritten.
+#   * download_mode   — grounds AUTO only on thing-plus-esp32-wroom, whose page states in prose
+#                       that the board carries an "auto-reset circuit" (bound to serial upload) —
+#                       a citeable auto claim. The other four name no download-mode sequence →
+#                       OMITTED (cite-or-omit; a wrong step can brick a board).
+#   * images          — OMITTED on all 5: the espressif filename heuristic (the registry default
+#                       for sparkfun — no dedicated sparkfun image extractor this slice) finds
+#                       nothing, so no gate is needed (unlike lilygo/unexpected-maker).
+# So this slice grounds getting_started for all 5 (+ usb_serial=ch340 for iot-redboard,
+# + download_mode=auto for thing-plus-esp32-wroom) — an honest 0→1 (or 0→2) per board.
+
+# The 5 URLs confirmed 200 (content-matched) by a live fetch (their HTML is the fixtures).
+# The hookup-guide slug per board id is NOT derivable — an explicit human-verified map.
+SPARKFUN_VERIFIED_URLS = {
+    "sparkfun-esp32-thing": "https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide",
+    "sparkfun-thing-plus-esp32-wroom":
+        "https://learn.sparkfun.com/tutorials/esp32-thing-plus-hookup-guide",
+    "sparkfun-micromod-esp32-processor":
+        "https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide",
+    "sparkfun-thing-plus-esp32-s2-wroom":
+        "https://learn.sparkfun.com/tutorials/esp32-s2-thing-plus-hookup-guide",
+    "sparkfun-iot-redboard-esp32":
+        "https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide",
+}
+
+# All 5 sparkfun board ids the resolver must cover (the data/boards/sparkfun/* dirs).
+SPARKFUN_ALL_BOARDS = list(SPARKFUN_VERIFIED_URLS)
+SPARKFUN_SOC = {
+    "sparkfun-esp32-thing": "esp32",
+    "sparkfun-thing-plus-esp32-wroom": "esp32",
+    "sparkfun-micromod-esp32-processor": "esp32",
+    "sparkfun-thing-plus-esp32-s2-wroom": "esp32-s2",
+    "sparkfun-iot-redboard-esp32": "esp32",
+}
+# The only board whose page NAMES the ch340 bridge in product prose (usb_serial grounds).
+SPARKFUN_CH340_BOARDS = ["sparkfun-iot-redboard-esp32"]
+# Boards whose page names no groundable bridge (usb_serial OMITTED — s2-wroom is native, and
+# thing-plus-esp32-wroom names only the USB-C connector, not a bridge chip enum).
+SPARKFUN_NO_BRIDGE_BOARDS = ["sparkfun-esp32-thing", "sparkfun-thing-plus-esp32-wroom",
+                             "sparkfun-micromod-esp32-processor",
+                             "sparkfun-thing-plus-esp32-s2-wroom"]
+# The only board whose page states an auto-reset circuit (download_mode grounds auto).
+SPARKFUN_AUTO_DOWNLOAD_BOARDS = ["sparkfun-thing-plus-esp32-wroom"]
+
+
+def test_sparkfun_resolver_registered_returns_verified_docs_urls():
+    # (a) the registry gained a "sparkfun" entry, and it returns the EXACT live-verified
+    # learn.sparkfun.com hookup-guide URL (best-first) for every one of the 5 boards — from the
+    # explicit slug map (the slug is not derivable from the board id, never a guessed variant).
+    assert "sparkfun" in bb.VENDOR_DOC_RESOLVERS
+    resolver = bb.VENDOR_DOC_RESOLVERS["sparkfun"]
+    for bid, url in SPARKFUN_VERIFIED_URLS.items():
+        cands = resolver(bid, SPARKFUN_SOC[bid])
+        assert cands[0] == url, f"{bid} → {cands[0]!r} != {url!r}"
+
+
+def test_sparkfun_resolver_covers_all_5_boards_on_learn_domain():
+    # (b) every one of the 5 sparkfun boards resolves to a learn.sparkfun.com URL — no board
+    # falls through uncovered (0 → 5 boards this slice).
+    resolver = bb.VENDOR_DOC_RESOLVERS["sparkfun"]
+    for bid in SPARKFUN_ALL_BOARDS:
+        cands = resolver(bid, SPARKFUN_SOC[bid])
+        assert cands, f"{bid} yielded no candidate URL"
+        assert cands[0].startswith("https://learn.sparkfun.com/tutorials/"), cands[0]
+
+
+def test_sparkfun_resolver_unmapped_id_returns_empty():
+    # (c) the resolver only claims the 5 mapped ids; an id it doesn't own — including a
+    # plausible-but-unmapped sparkfun id — yields [] (→ skipped doc-unreachable, never a
+    # guessed slug URL). Hookup-guide slugs are NOT derivable, so nothing is ever constructed.
+    resolver = bb.VENDOR_DOC_RESOLVERS["sparkfun"]
+    assert resolver("esp32-devkitc", "esp32") == []
+    assert resolver("heltec-wifi-kit-32-v3", "esp32-s3") == []
+    assert resolver("sparkfun-thing-plus-esp32-c6", "esp32-c6") == []  # plausible-but-unmapped
+
+
+def _sparkfun_fetcher_for(bid, fixture_name):
+    """Fake fetcher that serves the given fixture ONLY at the sparkfun resolver's URL for `bid` —
+    any other URL 404s (proves resolution lands on the right page)."""
+    url = bb.VENDOR_DOC_RESOLVERS["sparkfun"](bid, SPARKFUN_SOC[bid])[0]
+    return url, _fetcher({url: _fixture(fixture_name)})
+
+
+@pytest.mark.parametrize("name", SPARKFUN_CH340_BOARDS)
+def test_sparkfun_usb_serial_grounds_ch340_where_page_names_it(name):
+    # (d) usb_serial grounds ch340 on the one page (iot-redboard) that names it in product prose.
+    val = bb.extract_usb_serial(bb._visible_text(_fixture(name)))
+    assert val == "ch340", name
+
+
+@pytest.mark.parametrize("name", SPARKFUN_NO_BRIDGE_BOARDS)
+def test_sparkfun_usb_serial_omitted_when_page_names_no_bridge(name):
+    # (e) CRITICAL cite-or-omit: the four pages that name no bridge chip (thing-plus-esp32-wroom
+    # names only the USB-C connector, s2-wroom is native, esp32-thing/micromod name none) yield
+    # None — usb_serial stays OMITTED, never a false-positive flash-critical write.
+    assert bb.extract_usb_serial(bb._visible_text(_fixture(name))) is None
+
+
+@pytest.mark.parametrize("name", SPARKFUN_AUTO_DOWNLOAD_BOARDS)
+def test_sparkfun_download_mode_grounds_auto_where_page_states_auto_reset(name):
+    # (f) download_mode grounds AUTO on thing-plus-esp32-wroom: its page states the board has an
+    # "auto-reset circuit" bound to serial upload — a citeable auto claim (not a guessed step).
+    dm = bb.extract_download_mode(bb._visible_text(_fixture(name)))
+    assert dm == {"mode": "auto"}, name
+
+
+@pytest.mark.parametrize("name", list(SPARKFUN_VERIFIED_URLS))
+def test_sparkfun_images_and_bare_download_mode_omitted_on_real_pages(name):
+    # (g) CRITICAL cite-or-omit: on ALL 5 REAL sparkfun pages the image heuristic returns None
+    # (nothing groundable → images OMITTED; no gate needed). download_mode is OMITTED on the four
+    # NON-auto-reset boards (only thing-plus-esp32-wroom grounds auto, asserted separately).
+    raw = _fixture(name)
+    assert bb.extract_images(raw, "https://learn.sparkfun.com/x") is None
+    if name not in SPARKFUN_AUTO_DOWNLOAD_BOARDS:
+        assert bb.extract_download_mode(bb._visible_text(raw)) is None
+
+
+def test_sparkfun_iot_redboard_grounds_getting_started_and_usb_serial(tmp_path):
+    # (h) end-to-end: iot-redboard-esp32 grounds getting_started = the resolved URL AND
+    # usb_serial = ch340 (the page names it), each cited; download_mode + images OMITTED.
+    bid, soc = "sparkfun-iot-redboard-esp32", "esp32"
+    path = _write_board(tmp_path, bid, soc, brand="sparkfun")
+    url, fetch = _sparkfun_fetcher_for(bid, bid)
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url == SPARKFUN_VERIFIED_URLS[bid]
+    assert set(entry["written"]) == {"getting_started", "usb_serial"}
+    assert set(entry["omitted"]) == {"download_mode", "images"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert fm["usb_serial"] == "ch340"
+    assert "download_mode" not in fm
+    assert "images" not in fm
+    cited = {s["field"]: s for s in fm["sources"]}
+    assert cited["getting_started"]["url"] == url
+    assert cited["usb_serial"]["url"] == url
+    assert cited["usb_serial"]["verified"] == TODAY
+
+
+def test_sparkfun_thing_plus_wroom_grounds_getting_started_and_auto_download(tmp_path):
+    # (i) end-to-end: thing-plus-esp32-wroom grounds getting_started = the resolved URL AND
+    # download_mode = auto (the page states an auto-reset circuit), each cited; usb_serial is
+    # OMITTED (the page names only the USB-C connector, not a bridge chip); images OMITTED.
+    bid, soc = "sparkfun-thing-plus-esp32-wroom", "esp32"
+    path = _write_board(tmp_path, bid, soc, brand="sparkfun")
+    url, fetch = _sparkfun_fetcher_for(bid, bid)
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url == SPARKFUN_VERIFIED_URLS[bid]
+    assert set(entry["written"]) == {"getting_started", "download_mode"}
+    assert set(entry["omitted"]) == {"usb_serial", "images"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert fm["download_mode"] == {"mode": "auto"}
+    assert "usb_serial" not in fm
+    assert "images" not in fm
+    cited = {s["field"]: s for s in fm["sources"]}
+    assert cited["download_mode"]["url"] == url
+
+
+@pytest.mark.parametrize("name", ["sparkfun-esp32-thing", "sparkfun-micromod-esp32-processor",
+                                  "sparkfun-thing-plus-esp32-s2-wroom"])
+def test_sparkfun_grounds_getting_started_only(name, tmp_path):
+    # (j) end-to-end on a bare board: each page that grounds nothing but the URL writes
+    # getting_started = the resolved URL and NOTHING else (all other fields OMITTED). Honest 0→1.
+    path = _write_board(tmp_path, name, SPARKFUN_SOC[name], brand="sparkfun")
+    url, fetch = _sparkfun_fetcher_for(name, name)
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url == SPARKFUN_VERIFIED_URLS[name]
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert "usb_serial" not in fm
+    assert "download_mode" not in fm
+    assert "images" not in fm
+
+
+def test_sparkfun_grounds_getting_started_when_usb_serial_already_filled(tmp_path):
+    # (k) mirrors the real thing-plus-esp32-wroom record (usb_serial: ch340 already present):
+    # backfill writes getting_started + download_mode (auto), never touching the pre-filled
+    # usb_serial; images omitted. (The page names only USB-C anyway → usb_serial not re-derived.)
+    bid, soc = "sparkfun-thing-plus-esp32-wroom", "esp32"
+    path = _write_board(tmp_path, bid, soc, brand="sparkfun", extra_fields="usb_serial: ch340\n")
+    url, fetch = _sparkfun_fetcher_for(bid, bid)
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert set(entry["written"]) == {"getting_started", "download_mode"}
+    assert set(entry["omitted"]) == {"images"}
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert fm["download_mode"] == {"mode": "auto"}
+    assert fm["usb_serial"] == "ch340"                      # pre-filled, untouched
+    usb_sources = [s for s in fm["sources"] if s["field"] == "usb_serial"]
+    assert usb_sources == []                                # no new citation for a filled field
+
+
+def test_sparkfun_board_404_skipped_cleanly(tmp_path):
+    # (l) a board whose doc page 404s is SKIPPED doc-unreachable and left byte-for-byte
+    # unmodified — never a partial/invented write.
+    bid, soc = "sparkfun-esp32-thing", "esp32"
+    path = _write_board(tmp_path, bid, soc, brand="sparkfun")
+    before = path.read_text()
+    entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
+
+    assert entry["status"] == "skipped"
+    assert entry["reason"] == "doc-unreachable"
+    assert entry["modified"] is False
+    assert path.read_text() == before

@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WLMFVVN');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- mobile mode if small screen device -->
+    
+    <title>MicroMod ESP32 Processor Board Hookup Guide - SparkFun Learn</title>
+
+          <link rel="canonical" href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/all">
+                  <link rel="next" href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/hardware-overview">
+    
+    <link href="/css/bootstrap.min.css?rev=1788987488" rel="stylesheet">
+    <link rel="stylesheet" href="/css/theme.github.css?rev=1788987488" type="text/css" media="screen" />    <link rel="alternate" type="application/atom+xml" title="Education Blog" href="https://learn.sparkfun.com/feeds/blog" />
+    <link rel="alternate" type="application/atom+xml" title="Tutorials" href="https://learn.sparkfun.com/feeds/tutorials" />
+    <link rel="alternate" type="application/atom+xml" title="Education Blog Comments" href="https://learn.sparkfun.com/feeds/blog_comments" />
+    <link rel="alternate" type="application/atom+xml" title="Tutorial Comments" href="https://learn.sparkfun.com/feeds/tutorial_comments" />
+  </head>
+
+  <body id=learn class="layout-default no-type tutorials-view" ontouchstart="">
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WLMFVVN"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    <script>;</script>
+    <div class="wrapper" itemscope itemtype="http://schema.org/WebSite">
+      <meta itemprop="url" content="https://learn.sparkfun.com/">
+      <div class=wrapper-inner>
+
+    <header>
+  <div class="support-nav-container container-fluid hidden-xs">
+    <div class="container">
+      <div class="support-nav">
+        <div aria-hidden="true">&nbsp;</div>
+
+        <div>
+          <ul class="professional-links">
+            <li><a href="https://www.sparkfun.com/professional">Professional</a></li>
+            <li><a href="https://www.sparkfun.com/education">EDU</a>            <li><a href="https://www.sparkfun.com/become-a-distributor">Distributor</a>          </ul>
+        </div>
+
+        <div class="cs">
+          <a href="https://www.sparkfun.com/support">Customer Support</a>        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-nav-buttons container-fluid hidden-xs">
+    <div class="container">
+      <div class="tab-bar">
+        <ul class="tab-navigation" aria-label="sparkfun.com navigation">
+  <li><a href="https://www.sparkfun.com/">Shop</a></li>
+  <li class="active"><a href="https://learn.sparkfun.com/">Documentation</a></li>
+  <li class=""><a href="https://news.sparkfun.com/">News</a></li>
+</ul>
+
+<ul class="sale-links" aria-label="Deals and special interests">
+  <li><a href="https://www.sparkfun.com/todays-deals"><span class="icon-header icon-header-sale" aria-hidden="true"></span>Today's Deals</a></li>
+  <li><a href="https://community.sparkfun.com/" target="_blank"><span class=" icon-header icon-header-community" aria-hidden="true"></span>Community</a></li>
+  <li><a class="sparkx" href="https://www.sparkpnt.com"><span class="logo-spark-pnt-primary"><span class="sr-only">SparkPNT (Position, Navigation & Timing)</span></span></a></li>
+</ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header-content">
+      <div class="logo-container">
+        <button id="mobile-nav-menu-trigger" class="mobile-menu-button btn-unstyled hidden-sm hidden-md hidden-lg" type="button" aria-label="Open navigation menu">
+          <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+        </button>
+
+        <a class="logo" href="https://www.sparkfun.com/">
+          <span class="logo-sfe-primary"><span class="visuallyhidden">SparkFun Electronics - sparkfun.com</span></span>
+        </a>
+      </div>
+
+      <div class="search-block">
+                  <form id="search_form" class="search-block-form" action="https://learn.sparkfun.com/search/results" method="get">
+            <label for="global-search" class="sr-only">search documentation</label>
+            <input name="term" id="global-search" class="form-control" type="text" value="" placeholder="search documentation" autocomplete="off">
+            <button type="submit" class="glyphicon glyphicon-search global-search-icon" aria-label="Search"></button>
+          </form>
+        
+        <a href="https://www.sparkfun.com/" class="hidden-xs">Back to Webstore<span class="icon-header icon-header-undo" aria-hidden="true"></span></a>
+      </div>
+
+        <a class="account-link" href="https://www.sparkfun.com/customer/account">
+          <span class="img-account-silhouette visible-xs-inline-block"><span class="sr-only">My Account</span></span>
+          <span class="hidden-xs">My Account</span>
+        </a>
+
+    </div>
+  </div>
+
+  <div class="header-nav container-fluid hidden-xs">
+    <div class="container">
+      <ul class="nav-product-categories" aria-label="Featured product categories">
+  <li><a href="https://www.sparkfun.com/featured">Featured <span class="sr-only">Products</span></a></li>
+  <li><a href="https://www.sparkfun.com/gnss">GPS/GNSS</a></li>
+  <li><a href="https://www.sparkfun.com/sensors">Sensors</a></li>
+  <li><a href="https://www.sparkfun.com/development-boards">Development Boards</a></li>
+  <li class="header-nav-iot"><a href="https://www.sparkfun.com/iot-wireless">IoT & Wireless</a></li>
+  <li class="header-nav-components"><a href="https://www.sparkfun.com/components">Components</a></li>
+  <li class="header-nav-kits"><a href="https://www.sparkfun.com/kits">Kits</a></li>
+  <li class="all-cat"><a href="https://www.sparkfun.com/all-categories"><span class="visible-xs-inline">Shop </span>All <span class="sr-only">Product</span> Categories</a></li>
+</ul>
+    </div>
+  </div>
+  <div id="nav-mobile-menu" class="nav-mobile-menu" aria-labelledby="nav-mobile-menu-heading" aria-role="dialog" aria-modal="true">
+    <h2 id="nav-mobile-menu-heading" class="sr-only">Navigation menu</h2>
+    <ul class="mobile-menu-tabs">
+      <li class="active"><a>Menu</a></li>
+      <li><a href="https://www.sparkfun.com/customer/account">Account</a></li>
+    </ul>
+    <ul class="nav-product-categories" aria-label="Featured product categories">
+  <li><a href="https://www.sparkfun.com/featured">Featured <span class="sr-only">Products</span></a></li>
+  <li><a href="https://www.sparkfun.com/gnss">GPS/GNSS</a></li>
+  <li><a href="https://www.sparkfun.com/sensors">Sensors</a></li>
+  <li><a href="https://www.sparkfun.com/development-boards">Development Boards</a></li>
+  <li class="header-nav-iot"><a href="https://www.sparkfun.com/iot-wireless">IoT & Wireless</a></li>
+  <li class="header-nav-components"><a href="https://www.sparkfun.com/components">Components</a></li>
+  <li class="header-nav-kits"><a href="https://www.sparkfun.com/kits">Kits</a></li>
+  <li class="all-cat"><a href="https://www.sparkfun.com/all-categories"><span class="visible-xs-inline">Shop </span>All <span class="sr-only">Product</span> Categories</a></li>
+</ul>
+    <ul class="tab-navigation" aria-label="sparkfun.com navigation">
+  <li><a href="https://www.sparkfun.com/">Shop</a></li>
+  <li class="active"><a href="https://learn.sparkfun.com/">Documentation</a></li>
+  <li class=""><a href="https://news.sparkfun.com/">News</a></li>
+</ul>
+
+<ul class="sale-links" aria-label="Deals and special interests">
+  <li><a href="https://www.sparkfun.com/todays-deals"><span class="icon-header icon-header-sale" aria-hidden="true"></span>Today's Deals</a></li>
+  <li><a href="https://community.sparkfun.com/" target="_blank"><span class=" icon-header icon-header-community" aria-hidden="true"></span>Community</a></li>
+  <li><a class="sparkx" href="https://www.sparkpnt.com"><span class="logo-spark-pnt-primary"><span class="sr-only">SparkPNT (Position, Navigation & Timing)</span></span></a></li>
+</ul>
+  </div>
+</header>
+
+    
+    <div class=content>
+      <div class=container id=airlock>
+
+        
+        
+<div class=main-title>
+  <ul class="breadcrumb">
+    <li><a href="https://learn.sparkfun.com/">Home</a></li>
+    <li><a href="https://learn.sparkfun.com/tutorials">Tutorials</a></li>
+    <li>MicroMod ESP32 Processor Board Hookup Guide</li>
+      </ul>
+
+  <h1>
+    MicroMod ESP32 Processor Board Hookup Guide  </h1>
+
+</div>
+
+
+<a id=nav_toggle_pages class="nav_toggle nav-toggle-trigger" href="#"><span>&#8801;</span> Pages</a>
+
+<div id="tutorial" class="row">
+
+  <div id="sections" class="col-sm-8 tutorial-page">
+
+    <div class="contributors">
+                      Contributors:
+                <span class="contributor-alias"><img src="https://cdn.sparkfun.com/avatar/088c8f0e731f2ba1712ed20b6b921c35?d=retro&s=20&r=pg" /> Alex the Giant</span>, <span class="contributor-alias"> Ell C</span>          </div>
+
+    <div class="share-link-inline">
+
+  <a class="share-link-toggle" href="#">
+    <span class="share-title">
+      <span class="sfe-icon-share"></span>
+      Share    </span>
+  </a>
+
+  <div class="share-link-inner dialog">
+    Use this URL to share:<br>
+    <input class="form-control input-sm" type="text" value="http://sfe.io/t1208" onclick="$(this).trigger('select');">
+
+    <div class="share-social">
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','tumblr');" href="https://www.tumblr.com/share/link?url=http%3A%2F%2Fsfe.io%2Ft1208&name=MicroMod+ESP32+Processor+Board+Hookup+Guide" title="Share on Tumblr"><span class="sfe-icon-tumblr hidetext"><span>Share on Tumblr</span></span></a>
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','reddit');" href="https://www.reddit.com/submit?url=http%3A%2F%2Fsfe.io%2Ft1208" title="Submit to reddit"><span class="sfe-icon-reddit hidetext"><span>Submit to reddi</span></span></a>
+
+    </div>
+
+    </div>
+  
+  <div class="share-social">
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','twitter');" href="https://twitter.com/intent/tweet?text=MicroMod+ESP32+Processor+Board+Hookup+Guide&url=http%3A%2F%2Fsfe.io%2Ft1208&via=sparkfun" title="Share on Twitter"><span class="sfe-icon-twitter hidetext"><span>Share on Twitter</span></span></a>
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','facebook');" href="http://www.facebook.com/sharer.php?u=http%3A%2F%2Fsfe.io%2Ft1208&t=MicroMod+ESP32+Processor+Board+Hookup+Guide" title="Share on Facebook"><span class="sfe-icon-facebook-nobox hidetext"><span>Share on Facebook</span></span></a>
+
+          <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','pinterest');" href="https://www.pinterest.com/pin/create/button/?url=http%3A%2F%2Fsfe.io%2Ft1208&media=https%3A%2F%2Fcdn.sparkfun.com%2F%2Fr%2F500-1000%2Fassets%2Flearn_tutorials%2F1%2F2%2F0%2F8%2F16781-SparkFun_MicroMod_ESP32_Processor-01.jpg&description=MicroMod+ESP32+Processor+Board+Hookup+Guide" title="Pin It"><span class="sfe-icon-pinterest hidetext"><span>Pin It</span></span></a>
+    
+  </div>
+
+  
+</div>
+
+    <h2>Introduction</h2>
+    <p>Introducing the <a href="https://www.sparkfun.com/products/16781">SparkFun MicroMod ESP32 Processor Board</a>! This bad boy pops an M.2 connector onto the ESP32 so you can take advantage of all that lovely ESP32 power with any of our MicroMod carrier boards. Grab yourself an ESP32 MicroMod Processor Board and let's dive in!</p>
+
+
+
+<div >
+<div class="tile product-tile big grid " data-id="product-16781">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/sparkfun-micromod-esp32-processor.html">
+        <img src="https://cdn.sparkfun.com/r/600-600/assets/parts/1/5/6/8/0/16781-SparkFun_MicroMod_ESP32_Processor-01.jpg" alt="SparkFun MicroMod ESP32 Processor" height="600">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/sparkfun-micromod-esp32-processor.html">
+          <span>SparkFun MicroMod ESP32 Processor</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      WRL-16781    </span>
+
+          <p class="description" style="display:none">
+        This board combines Espressif's ESP32 with our M.2 connector interface to bring a power-packed processor board into our Micro&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$19.95</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+</div>
+
+
+
+
+<div class="flex-video-wrap clearfix">
+  <div class="flex-video widescreen img">
+    <iframe src="https://www.youtube.com/embed/4QUJWeSrzD0/?autohide=1&amp;border=0&amp;wmode=opaque&amp;enablejsapi=1" frameborder=0 allowfullscreen width="560" height="315"></iframe>
+  </div>
+</div>
+
+
+<h3>Required Materials</h3>
+
+<p>In addition to your ESP32 Processor Board, you'll need a carrier board to get started. Here we use the Input and Display Carrier Board, but there are a number of others you can choose from.</p>
+
+
+
+<div class="tile-wrap">
+<div class="tile product-tile  grid " data-id="product-16885">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/sparkfun-micromod-atp-carrier-board.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/5/8/1/2/16885-SparkFun_MicroMod_ATP_Carrier_Board-01a.jpg" alt="SparkFun MicroMod ATP Carrier Board" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/sparkfun-micromod-atp-carrier-board.html">
+          <span>SparkFun MicroMod ATP Carrier Board</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      DEV-16885    </span>
+
+          <p class="description" style="display:none">
+        If you need a "lot" of GPIO with a simple to program, ready to go to market module, the ATP is the fix you need.      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$20.50</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-16400">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/sparkfun-micromod-machine-learning-carrier-board.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/5/1/2/6/16400-SparkFun_MicroMod_Machine_Learning_Carrier_Board-01A.jpg" alt="SparkFun MicroMod Machine Learning Carrier Board" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/sparkfun-micromod-machine-learning-carrier-board.html">
+          <span>SparkFun MicroMod Machine Learning Carrier Board</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      DEV-16400    </span>
+
+          <p class="description" style="display:none">
+        The MicroMod Machine Learning Carrier combines the freedom to explore any processor in the MicroMod lineup without the need f&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$22.95</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-16985">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/sparkfun-micromod-input-and-display-carrier-board.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/5/9/2/2/16985-SparkFun_MicroMod_Input_and_Display_Carrier_Board-01a.jpg" alt="SparkFun MicroMod Input and Display Carrier Board" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/sparkfun-micromod-input-and-display-carrier-board.html">
+          <span>SparkFun MicroMod Input and Display Carrier Board</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      DEV-16985    </span>
+
+          <p class="description" style="display:none">
+        Add data, input, & visibility to your project with a 2.4" TFT display, 6 addressable LEDs, onboard voltage regulator, 6 pin I&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$61.50</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+
+<p>You'll also need a USB-C cable to connect the Carrier to your computer and if you want to add some Qwiic breakouts to your MicroMod project you'll want at least one Qwiic cable to connect it all together. Below are some options for both of those cables:</p>
+
+
+
+<div class="tile-wrap">
+<div class="tile product-tile  grid " data-id="product-15081">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/sparkfun-qwiic-cable-kit.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/3/4/3/1/15081-_01.jpg" alt="SparkFun Qwiic Cable Kit" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/sparkfun-qwiic-cable-kit.html">
+          <span>SparkFun Qwiic Cable Kit</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      KIT-15081    </span>
+
+          <p class="description" style="display:none">
+        To make it even easier to get started, we've assembled this Qwiic Cable Kit with a variety of Qwiic cables from 50mm to 500mm&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$12.95</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-15424">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/reversible-usb-a-to-c-cable-2m.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/3/9/8/3/15424-Reversible_USB_A_to_C_Cable_-_2m-01.jpg" alt="Reversible USB A to C Cable - 2m" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/reversible-usb-a-to-c-cable-2m.html">
+          <span>Reversible USB A to C Cable - 2m</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      CAB-15424    </span>
+
+          <p class="description" style="display:none">
+        These 2m cables have minor modifications that allow them to be be plugged into their ports regardless of orientation on the U&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$10.50</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-14743">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/usb-3-1-cable-a-to-c-3-foot.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/2/9/7/2/14743-USB_3.1_Cable_A_to_C_-_3_Foot-01.jpg" alt="USB 3.1 Cable A to C - 3 Foot" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/usb-3-1-cable-a-to-c-3-foot.html">
+          <span>USB 3.1 Cable A to C - 3 Foot</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      CAB-14743    </span>
+
+          <p class="description" style="display:none">
+        USB C is fantastic. But until we have converted all our hubs, chargers, and ports over to USB C this is the cable you're goin&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$7.95</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid retired" data-id="product-14427">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/qwiic-cable-100mm.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/2/4/5/3/14427-Qwiic_Cable_-_100mm-01.jpg" alt="Qwiic Cable - 100mm" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/qwiic-cable-100mm.html">
+          <span>Qwiic Cable - 100mm</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      PRT-14427    </span>
+
+          <p class="description" style="display:none">
+        This is a 100mm long 4-conductor cable with 1mm JST termination. It’s designed to connect Qwiic enabled components together&hellip;      </p>
+      </div>
+
+  
+      <strong class="retired">Retired</strong>
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+
+<p>Depending on which Carrier Board you choose, you may need a few extra peripherals to take full advantage of them. Refer to the Carrier Boards' respective Hookup Guides for specific peripheral recommendations.</p>
+
+<h3>Suggested Reading</h3>
+
+<p>The SparkFun MicroMod ecosystem is a unique way to allow users to customize their project to their needs. Do you want to send your weather data via a wireless signal? There's a MicroMod processor for that. Looking to instead maximize efficiency and processing power? You guessed it, there's a MicroMod processor for that. If you are not familiar with the MicroMod system, take a look here:</p>
+
+<table class="table table-bordered table-hover">
+  <tr align="center">
+   <td><center><a href="https://www.sparkfun.com/micromod"><img src="https://cdn.sparkfun.com/assets/learn_tutorials/1/1/8/9/micromod-logo.jpg" alt="MicroMod Logo" title="Click to learn more about the MicroMod ecosystem!"></a></center></td>
+  </tr>
+  <tr align="center">
+    <td><i><a href="https://www.sparkfun.com/micromod">MicroMod Ecosystem</a></i></td>
+  </tr>
+</table>
+
+<p>We recommend taking a look through the following tutorials if you are not familiar with the concepts covered in them:</p>
+
+
+<div class="tile-wrap">
+  <div class="tile tutorial-tile  grid " data-id="tutorial-1189">
+  <a href="https://learn.sparkfun.com/tutorials/getting-started-with-micromod">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com//assets/learn_tutorials/1/1/8/9/MicroMod_Hardware_Hookup.gif)"></div>
+      </div>
+    
+    
+    <h3 class="title">Getting Started with MicroMod</h3>
+      </a>
+
+      <div class="description">
+      Dive into the world of MicroMod - a compact interface to connect a microcontroller to various peripherals via the M.2 Connector!    </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-1206">
+  <a href="https://learn.sparkfun.com/tutorials/designing-with-micromod">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/1/2/0/6/MicroMod-Eagle-Board_Routing_1.png)"></div>
+      </div>
+    
+    
+    <h3 class="title">Designing with MicroMod</h3>
+      </a>
+
+      <div class="description">
+      This tutorial will walk you through the specs of the MicroMod processor and carrier board as well as the basics of incorporating the MicroMod form factor into your own PCB designs!     </div>
+  
+  </div>
+<div class="tile tutorial-tile  grid " data-id="tutorial-1230">
+  <a href="https://learn.sparkfun.com/tutorials/sparkfun-micromod-input-and-display-carrier-board-hookup-guide">
+          <div class="thumb-wrap">
+        <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/264-148/assets/learn_tutorials/1/2/3/0/16985-SparkFun_MicroMod_Input_and_Display_Carrier_Board-01a.jpg)"></div>
+      </div>
+    
+    
+    <h3 class="title">SparkFun MicroMod Input and Display Carrier Board Hookup Guide</h3>
+      </a>
+
+      <div class="description">
+      A short Hookup Guide to get started with the SparkFun MicroMod Input and Display Carrier Board    </div>
+  
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+        <div class="share-link-inline">
+
+  <a class="share-link-toggle" href="#">
+    <span class="share-title">
+      <span class="sfe-icon-share"></span>
+      Share    </span>
+  </a>
+
+  <div class="share-link-inner dialog">
+    Use this URL to share:<br>
+    <input class="form-control input-sm" type="text" value="http://sfe.io/t1208" onclick="$(this).trigger('select');">
+
+    <div class="share-social">
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','tumblr');" href="https://www.tumblr.com/share/link?url=http%3A%2F%2Fsfe.io%2Ft1208&name=MicroMod+ESP32+Processor+Board+Hookup+Guide" title="Share on Tumblr"><span class="sfe-icon-tumblr hidetext"><span>Share on Tumblr</span></span></a>
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','reddit');" href="https://www.reddit.com/submit?url=http%3A%2F%2Fsfe.io%2Ft1208" title="Submit to reddit"><span class="sfe-icon-reddit hidetext"><span>Submit to reddi</span></span></a>
+
+    </div>
+
+    </div>
+  
+  <div class="share-social">
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','twitter');" href="https://twitter.com/intent/tweet?text=MicroMod+ESP32+Processor+Board+Hookup+Guide&url=http%3A%2F%2Fsfe.io%2Ft1208&via=sparkfun" title="Share on Twitter"><span class="sfe-icon-twitter hidetext"><span>Share on Twitter</span></span></a>
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','facebook');" href="http://www.facebook.com/sharer.php?u=http%3A%2F%2Fsfe.io%2Ft1208&t=MicroMod+ESP32+Processor+Board+Hookup+Guide" title="Share on Facebook"><span class="sfe-icon-facebook-nobox hidetext"><span>Share on Facebook</span></span></a>
+
+          <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','pinterest');" href="https://www.pinterest.com/pin/create/button/?url=http%3A%2F%2Fsfe.io%2Ft1208&media=https%3A%2F%2Fcdn.sparkfun.com%2F%2Fr%2F500-1000%2Fassets%2Flearn_tutorials%2F1%2F2%2F0%2F8%2F16781-SparkFun_MicroMod_ESP32_Processor-01.jpg&description=MicroMod+ESP32+Processor+Board+Hookup+Guide" title="Pin It"><span class="sfe-icon-pinterest hidetext"><span>Pin It</span></span></a>
+    
+  </div>
+
+  
+</div>
+
+    <hr>
+
+    <div class="page-nav clearfix">
+
+      <div class="pull-right">
+        <a href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/all" class="btn">
+          View as a single page
+        </a>
+
+                  <a href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/hardware-overview" class="btn btn-primary">
+            Next Page &rarr;<br>
+            <small>Hardware Overview</small>
+          </a>
+              </div>
+
+              <button class="btn btn-disabled" disabled>
+          &larr; Previous Page
+        </button>
+      
+    </div>
+  </div>
+
+  <div class="col-sm-4 nav-menu" id="nav-pages">
+    <div id="sidebar_affix">
+      <div id="tutorial-pages" class="list-group">
+        <a class="list-group-item"><b>Pages</b></a>
+                  <a data-pageid="8897" class="list-group-item active" href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/introduction">
+            Introduction          </a>
+                  <a data-pageid="8898" class="list-group-item " href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/hardware-overview">
+            Hardware Overview          </a>
+                  <a data-pageid="8899" class="list-group-item " href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/hardware-hookup">
+            Hardware Hookup          </a>
+                  <a data-pageid="9125" class="list-group-item " href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/software-setup-and-programming">
+            Software Setup and Programming          </a>
+                  <a data-pageid="9151" class="list-group-item " href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/arduino-example-blink">
+            Arduino Example: Blink          </a>
+                  <a data-pageid="9152" class="list-group-item " href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/arduino-example-wifi">
+            Arduino Example: WiFi          </a>
+                  <a data-pageid="9162" class="list-group-item " href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/further-examples">
+            Further Examples          </a>
+                  <a data-pageid="8958" class="list-group-item " href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/troubleshooting">
+            Troubleshooting          </a>
+                  <a data-pageid="8901" class="list-group-item " href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/resources-and-going-further">
+            Resources and Going Further          </a>
+              </div>
+
+      <div class="list-group">
+        <a class="list-group-item" href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/discuss">
+          Comments
+          <span class="badge">5</span>
+        </a>
+        <a class="list-group-item" href="https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide/all">
+          Single Page
+        </a>
+        <a class="list-group-item" hhref="#" onclick="window.print(); return false;">
+          Print
+        </a>
+      </div>
+
+  <!--
+      -->
+
+      <ul class="list-group">
+        <li class="list-group-item"><b>Tags</b></li>
+        <li class="list-group-item"><ul class="tags-list">
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/communication">Communication</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/esp32">ESP32</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/hookup">Hookup</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/micromod">MicroMod</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/qwiic">Qwiic</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/wifi">WiFi</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/wireless">Wireless</a>  </li>
+</ul>
+</li>
+      </ul>
+
+      <ul class="list-group">
+        <li class="list-group-item"><b>License</b></li>
+        <li class="list-group-item">
+          <span class="sfe-icon-cc">
+            <span class="visuallyhidden">Creative Commons</span>
+          </span>
+          <small>tutorials are <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="new">CC BY-SA 4.0</a></small>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+      </div> <!-- /container -->
+    </div> <!-- /content -->
+
+    <footer>
+  <div class="container">
+
+  <div class="row">
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>About SparkFun</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/about-sparkfun">Read Our Story</a></li>
+            <li><a href="https://www.sparkfun.com/press-and-media">Press &amp; Media</a></li>
+            <li><a href="http://www.sparkfuneducation.com" target="_blank">SparkFun Education <span class="glyphicon glyphicon-new-window"></span></a></li>
+            <li><a href="https://www.sparkfun.com/jobs">Job Openings</a></li>
+          </ul>
+
+          <h3>Partner With Us</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/partner">See Our Partners</a></li>
+            <li><a href="https://www.sparkfun.com/services">View Our Services</a></li>
+            <li><a href="https://www.sparkfun.com/become-a-distributor">Become a Distributor/Reseller</a></li>
+            <li><a href="https://www.sparkfun.com/volume-sales">Receive Volume Discounts</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>Support</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/support">Customer Support</a></li>
+            <li><a href="https://www.sparkfun.com/payments">Purchase Order &amp; Payment Terms</a></li>
+            <li><a href="https://www.sparkfun.com/technical-assistance">Technical Assistance</a></li>
+            <li><a href="https://www.sparkfun.com/faq">FAQs</a></li>
+          </ul>
+          <h3>Site Information</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/terms">Terms Of Service</a></li>
+            <li><a href="https://www.sparkfun.com/privacy">Privacy Policy</a></li>
+            <li><a href="https://www.sparkfun.com/compliance">Compliance</a></li>
+            <li><a href="https://www.sparkfun.com/sitemap">Site Map</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>Subscribe</h3>
+          <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+          <script>
+            hbspt.forms.create({
+              region: "na1",
+              portalId: "2224003",
+              formId: "257ad1af-ab9e-4275-8788-cbad81cc229e"
+            });
+          </script>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>View Our Social Channels</h3>
+          <ul class="spew">
+            <li><a href="https://www.youtube.com/sparkfun" target="_blank" class="icon-social-youtube"><span class="sr-only">YouTube</span></a></li>
+            <li><a href="https://www.instagram.com/sparkfun/" target="_blank" class="icon-social-instagram"><span class="sr-only">Instagram</span></a></li>
+            <li><a href="https://www.github.com/sparkfun" target="_blank" class="icon-social-github"><span class="sr-only">GitHub</span></a></li>
+            <li><a href="https://www.facebook.com/SparkFun" target="_blank" class="icon-social-facebook"><span class="sr-only">Facebook</span></a></li>
+            <li><a href="https://twitter.com/sparkfun" target="_blank" class="icon-social-twitter"><span class="sr-only">Twitter</span></a></li>
+            <li><a href="https://www.sparkfun.com/feeds" class="icon-social-rss"><span class="sr-only">RSS</span></a></li>
+            <li><a href="https://www.tiktok.com/@sparkfun.electronics?lang=en" target="_blank" class="icon-social-tiktok"><span class="sr-only">TikTok</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div><!-- end .row -->
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <p class="copyleft">
+          <strong>SparkFun Electronics&nbsp;&reg;</strong>
+          <span class="hidden-xs hidden-sm">/</span>
+          <br class="visible-xs-inline visible-sm-inline"/>
+          6333 Dry Creek Parkway,
+          <br class="visible-xs-inline"/>
+          Niwot, CO 80503
+        </p>
+      </div>
+    </div><!-- end .row -->
+  </div><!-- end .container -->
+</footer>
+
+      </div><!-- end .wrapper-inner -->
+    </div><!-- end .wrapper -->
+
+    <script type="text/javascript">
+      var SFECONFIG = {
+        dnt: false,
+        http_server: 'http://learn.sparkfun.com',
+        https_server: 'https://learn.sparkfun.com',
+        http_static: 'https://cdn.sparkfun.com',
+        learn_server: 'https://learn.sparkfun.com',
+        news_server: 'https://news.sparkfun.com',
+        base_url: '/',
+        url: '/',
+        controller: 'tutorials',
+        action: 'view',
+        entity_id: '',
+        auth: false,
+        sparkrev: '1788987488',
+        search_key: 'search-sngw3quge7ojic1tgr4eft5c',
+        search_url: 'https://sparkfun-electronics.ent.us-central1.gcp.cloud.es.io/api/as/v1/engines/sparkfun-01/search'
+      };
+    </script>
+          <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+      <script src="/js/learn-built.min.js?sparkrev=1788987488"></script>
+    
+    <script>
+      $.sfe();
+      $.shared();
+      $('#learn').learn();
+      $('#learn').sfeutil();
+    </script>
+                            <script src="/js/tutorials-built.min.js?sparkrev=1788987488"></script>
+                                    <script>
+    var fbq = null;
+  </script>
+      
+          <script type="text/javascript">
+      (function(d,s,i,r) {
+        if (d.getElementById(i)){return;}
+        var n=d.createElement(s),e=d.getElementsByTagName(s)[0];
+        n.id=i;n.src='//js.hs-analytics.net/analytics/'+(Math.ceil(new Date()/r)*r)+'/2224003.js';
+        e.parentNode.insertBefore(n, e);
+      })(document,"script","hs-analytics",300000);
+    </script>
+        <script type="text/javascript">
+    setTimeout(function(){var a=document.createElement("script");
+    var b=document.getElementsByTagName("script")[0];
+    a.src=document.location.protocol+"//script.crazyegg.com/pages/scripts/0046/4761.js?"+Math.floor(new Date().getTime()/3600000);
+    a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
+  </script>
+      </body>
+</html>
