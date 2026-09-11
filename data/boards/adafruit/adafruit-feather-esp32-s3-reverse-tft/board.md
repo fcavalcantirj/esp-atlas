@@ -4,7 +4,7 @@ type: board
 brand: adafruit
 name: Adafruit ESP32-S3 Reverse TFT Feather (4MB Flash 2MB PSRAM)
 aka:
-- "ADAFRUIT_FEATHER_ESP32S3_REVTFT"
+- ADAFRUIT_FEATHER_ESP32S3_REVTFT
 soc: esp32-s3
 flash_mb: 4
 psram_mb: 2
@@ -38,17 +38,17 @@ notes:
   the 3.3V regulator, they can supply 500mA peak."'
 - 'io.gpio_exposed=23 QUOTED: vendor pinouts page lists broken-out header pads D5,
   D6, D9, D10, D11, D12, D13 (7 digital), A0-A5 (6 analog, dual-named D8/D14-D18),
-  SCK/MOSI/MISO (SPI), RX/TX (UART), SCL/SDA (I2C) = 20, plus the three user
-  button pins D0/D1/D2 which the vendor page confirms are also header-broken-out
-  = 23 GPIO-capable pads. io.gpio_free=18 DERIVED: cross-referencing the vendor
-  firmware repo''s own CircuitPython board pin-definition (pins.c) maps every
-  header pad to a GPIO -- of esp32-s3''s soc.reserved_pins, GPIO0 (D0/BOOT,
-  strapping), GPIO3 (SDA, strapping), and GPIO35/36/37 (MOSI/SCK/MISO,
-  usb_flash_tied) are exposed pads (5 total); the onboard TFT is wired to
-  dedicated non-header pins GPIO40/41/42/45 (TFT_DC/RESET/CS/BACKLIGHT) and
-  NeoPixel to GPIO7/21/33, none of which count against the header -- so
-  23 - 5 = 18'
-- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
+  SCK/MOSI/MISO (SPI), RX/TX (UART), SCL/SDA (I2C) = 20, plus the three user button
+  pins D0/D1/D2 which the vendor page confirms are also header-broken-out = 23 GPIO-capable
+  pads. io.gpio_free=18 DERIVED: cross-referencing the vendor firmware repo''s own
+  CircuitPython board pin-definition (pins.c) maps every header pad to a GPIO -- of
+  esp32-s3''s soc.reserved_pins, GPIO0 (D0/BOOT, strapping), GPIO3 (SDA, strapping),
+  and GPIO35/36/37 (MOSI/SCK/MISO, usb_flash_tied) are exposed pads (5 total); the
+  onboard TFT is wired to dedicated non-header pins GPIO40/41/42/45 (TFT_DC/RESET/CS/BACKLIGHT)
+  and NeoPixel to GPIO7/21/33, none of which count against the header -- so 23 - 5
+  = 18'
+- usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag
+getting_started: https://learn.adafruit.com/esp32-s3-reverse-tft-feather
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5691
@@ -71,6 +71,9 @@ sources:
 - field: usb_serial
   url: https://www.adafruit.com/product/5691
   verified: '2026-09-07'
+- field: getting_started
+  url: https://learn.adafruit.com/esp32-s3-reverse-tft-feather
+  verified: '2026-09-11'
 ---
 
 # Adafruit ESP32-S3 Reverse TFT Feather
