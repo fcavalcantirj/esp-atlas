@@ -1,0 +1,38 @@
+# Seeed Studio — ESP32-family board universe (SPEC-universe.md).
+# Built OFFLINE and committed. Never fetched at runtime / in CI / in tick.
+# Every source_url below was verified live (HTTP 200) on 2026-09-11.
+# `in_catalog` is NOT stored here — coverage is DERIVED from
+# data/boards/seeed/<board_id>/board.md at load time (jr/universe.py).
+brand: seeed
+boards:
+  - board_id: xiao-esp32c3
+    name: "Seeed Studio XIAO ESP32-C3"
+    mcu: esp32-c3
+    source_url: "https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/"
+    status: active
+
+  - board_id: xiao-esp32c6
+    name: "Seeed Studio XIAO ESP32-C6"
+    mcu: esp32-c6
+    source_url: "https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/"
+    status: active
+
+  - board_id: xiao-esp32s3
+    name: "Seeed Studio XIAO ESP32-S3"
+    mcu: esp32-s3
+    source_url: "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/"
+    status: active
+
+  - board_id: xiao-esp32c5
+    name: "Seeed Studio XIAO ESP32-C5"
+    mcu: esp32-c5
+    source_url: "https://wiki.seeedstudio.com/xiao_esp32c5_getting_started/"
+    status: active
+    note: "Not yet in the esp-atlas catalog."
+
+  - board_id: xiao-esp32s3-sense
+    name: "Seeed Studio XIAO ESP32-S3 Sense"
+    mcu: esp32-s3
+    source_url: "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/"
+    status: active
+    note: "S3 variant with sensor/camera expansion; shares the S3 doc page. Not yet in the esp-atlas catalog."
