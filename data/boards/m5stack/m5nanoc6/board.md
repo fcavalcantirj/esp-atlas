@@ -4,7 +4,7 @@ type: board
 brand: m5stack
 name: NanoC6
 aka:
-- "m5stack_nanoc6"
+- m5stack_nanoc6
 soc: esp32-c6
 flash_mb: 4
 psram_mb: 0
@@ -26,18 +26,22 @@ io:
     rail_ma_max: 600
 notes:
 - ESP32-C6FH4; 4 MB flash
-- WS2812 programmable RGB LED, IR transmitter, button on GPIO9, Grove interface,
-  ceramic antenna, no onboard battery
-- ESP32-C6 has no PSRAM interface at all (chip datasheet lists no PSRAM/external-RAM support)
+- WS2812 programmable RGB LED, IR transmitter, button on GPIO9, Grove interface, ceramic
+  antenna, no onboard battery
+- ESP32-C6 has no PSRAM interface at all (chip datasheet lists no PSRAM/external-RAM
+  support)
 - 'io.power_out QUOTED: vendor page states "Grove Maximum Output Current: DC 5V@600mA
   (depends on USB supply)"'
-- 'io.gpio_free=2 DERIVED, not quoted (SPEC-io-power.md §5.3). The vendor pinmap
-  page states only one user-facing expansion connector, the HY2.0-4P Grove port
-  (G2, G1) -- the other named pins (G3/G20 IR, G19 RGB+EN, G9 button, G7 LED) are
-  hard-consumed by onboard peripherals, not free header pins. Subtracting esp32-c6''s
-  soc.reserved_pins that are exposed on the Grove pair -- strapping {8,9,10,11,15}
-  and usb_flash_tied {12,13}, neither of which is G1 or G2 -- leaves both pads free:
-  2 - 0 = 2. Math not vendor-stated; verify before treating as exact.'
+- 'io.gpio_free=2 DERIVED, not quoted (SPEC-io-power.md §5.3). The vendor pinmap page
+  states only one user-facing expansion connector, the HY2.0-4P Grove port (G2, G1)
+  -- the other named pins (G3/G20 IR, G19 RGB+EN, G9 button, G7 LED) are hard-consumed
+  by onboard peripherals, not free header pins. Subtracting esp32-c6''s soc.reserved_pins
+  that are exposed on the Grove pair -- strapping {8,9,10,11,15} and usb_flash_tied
+  {12,13}, neither of which is G1 or G2 -- leaves both pads free: 2 - 0 = 2. Math
+  not vendor-stated; verify before treating as exact.'
+getting_started: https://docs.m5stack.com/en/core/M5NanoC6
+images:
+  photo: https://static-cdn.m5stack.com/resource/docs/products/core/M5NanoC6/img-9809b895-c90a-43d4-8f51-e0de80b60503.webp
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/M5NanoC6
@@ -54,6 +58,12 @@ sources:
 - field: aka
   url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
   verified: '2026-09-07'
+- field: getting_started
+  url: https://docs.m5stack.com/en/core/M5NanoC6
+  verified: '2026-09-11'
+- field: images
+  url: https://docs.m5stack.com/en/core/M5NanoC6
+  verified: '2026-09-11'
 ---
 
 # NanoC6

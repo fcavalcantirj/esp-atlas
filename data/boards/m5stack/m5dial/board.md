@@ -4,7 +4,7 @@ type: board
 brand: m5stack
 name: Dial
 aka:
-- "m5stack_dial"
+- m5stack_dial
 soc: esp32-s3
 flash_mb: 8
 psram_mb: 0
@@ -28,17 +28,22 @@ extras:
 io:
   gpio_free: 4
 notes:
-- ESP32-S3FN8; 8 MB flash. ESP32-S3FN8 ordering code has no PSRAM, per Espressif's ESP32-S3 series datasheet
+- ESP32-S3FN8; 8 MB flash. ESP32-S3FN8 ordering code has no PSRAM, per Espressif's
+  ESP32-S3 series datasheet
 - BM8563 RTC, WS1850S 13.56MHz RFID, rotary encoder (16 detents/64 pulses per rev),
   80dB buzzer, 1.25mm-2P battery connector with onboard charging circuit (battery
   sold separately), PORT.A/PORT.B GPIO expansion
 - 'io.gpio_free=4 DERIVED, not quoted (SPEC-io-power.md §5.3). Vendor pinmap page
   states the two HY2.0-4P ports: "PORT.A | G13 | G15", "PORT.B | G2 | G1" -- 4 pads
   total (13, 15, 1, 2), none shared with the I2C/RTC/buzzer/encoder/display/touch
-  pins the same page lists elsewhere. Subtracting esp32-s3''s soc.reserved_pins
-  that are exposed on those 4 -- none of strapping {0,3,45,46} or usb_flash_tied
-  {19,20,35,36,37} match -- leaves all 4 free: 4 - 0 = 4. Math not vendor-stated;
-  verify before treating as exact.'
+  pins the same page lists elsewhere. Subtracting esp32-s3''s soc.reserved_pins that
+  are exposed on those 4 -- none of strapping {0,3,45,46} or usb_flash_tied {19,20,35,36,37}
+  match -- leaves all 4 free: 4 - 0 = 4. Math not vendor-stated; verify before treating
+  as exact.'
+usb_serial: native-usb-serial-jtag
+getting_started: https://docs.m5stack.com/en/core/M5Dial
+images:
+  photo: https://static-cdn.m5stack.com/resource/docs/products/core/M5Dial/img-2afd549e-8af8-47b4-823a-e90e063a0139.webp
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/M5Dial
@@ -52,6 +57,15 @@ sources:
 - field: aka
   url: https://raw.githubusercontent.com/espressif/arduino-esp32/6048a624f084ea7f645384fd91c57f43e633875d/boards.txt
   verified: '2026-09-07'
+- field: usb_serial
+  url: https://docs.m5stack.com/en/core/M5Dial
+  verified: '2026-09-11'
+- field: getting_started
+  url: https://docs.m5stack.com/en/core/M5Dial
+  verified: '2026-09-11'
+- field: images
+  url: https://docs.m5stack.com/en/core/M5Dial
+  verified: '2026-09-11'
 ---
 
 # Dial
