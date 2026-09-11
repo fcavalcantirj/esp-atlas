@@ -194,6 +194,49 @@ def adafruit_doc_candidates(board_id: str, soc: str) -> list[str]:
     return [f"{ADAFRUIT_DOC_BASE}/{slug}"] if slug else []
 
 
+# ─── lilygo doc-URL resolver (SPEC-board-backfill-vendors.md, Slice 4) ───────────
+# Every lilygo board has a product page at `lilygo.cc/products/<slug>` — CONFIRMED by a live
+# fetch on 2026-09-10 (all 10 boards' pages returned 200 with NO redirect under the bot UA, and
+# each page's og:title named the right product). NOTE the canonical host is the bare `lilygo.cc`:
+# `www.lilygo.cc` 301-redirects to it, so the resolver uses lilygo.cc (a clean 200, no redirect).
+# The <slug> is board-specific and NOT derivable from the board id (lilygo-t5-epaper-s3-pro →
+# t5-e-paper-s3-pro), so — exactly like the m5stack/adafruit maps — a per-board map of
+# human-verified slugs is used, never a constructed guess. Nine slugs were taken from the
+# board's already-cited `lilygo.cc` source URL; the tenth (t5-e-paper-s3-pro, cited only via
+# GitHub) was live-verified 200 and og:title-confirmed. If lilygo renames a page and one 404s,
+# that board stays SKIPPED (doc-unreachable), never invented.
+#
+# GROUNDING on these Shopify product pages is LIMITED: the resolved 200 page IS the
+# getting_started link (grounds for all 10), but usb_serial is GATED OFF (see
+# VENDOR_UNGROUNDABLE_FIELDS) — every page carries an identical site-wide "Driver of CH9102"
+# nav link, so the shared usb_serial extractor false-positives to ch9102 off site chrome, not
+# the product's real bridge. download_mode and images are not stated on the product pages
+# (extractors return None). So lilygo grounds getting_started only — an honest 0→1 per board.
+LILYGO_DOC_PATHS: dict[str, str] = {
+    "lilygo-t-beam": "t-beam",
+    "lilygo-t-deck": "t-deck",
+    "lilygo-t-display": "t-display",
+    "lilygo-t-display-s3": "t-display-s3",
+    "lilygo-t-display-s3-amoled": "t-display-s3-amoled",
+    "lilygo-t-dongle-s3": "t-dongle-s3",
+    "lilygo-t-embed": "t-embed",
+    "lilygo-t-qt-pro": "t-qt-pro",
+    "lilygo-t-watch-s3": "t-watch-s3",
+    "lilygo-t5-epaper-s3-pro": "t5-e-paper-s3-pro",
+}
+
+LILYGO_DOC_BASE = "https://lilygo.cc/products"
+
+
+def lilygo_doc_candidates(board_id: str, soc: str) -> list[str]:
+    """Ordered candidate official doc URLs for a lilygo board on lilygo.cc. Returns the single
+    verified `products/<slug>` page for a mapped board, or [] for an unmapped id (→ the board
+    is SKIPPED doc-unreachable, never guessed). `soc` is accepted for a uniform resolver
+    signature but unused: lilygo product pages are keyed by product, not chip."""
+    slug = LILYGO_DOC_PATHS.get(board_id)
+    return [f"{LILYGO_DOC_BASE}/{slug}"] if slug else []
+
+
 # ─── vendor doc-URL resolver registry (SPEC-board-backfill-vendors.md, Slice 1) ──
 # A resolver maps a board to the ORDERED candidate official doc URLs to try (best-first) on
 # that vendor's own domain. Espressif's existing `doc_url_candidates` logic IS the
@@ -207,6 +250,23 @@ VENDOR_DOC_RESOLVERS: dict[str, Callable[[str, str], list[str]]] = {
     "espressif": doc_url_candidates,
     "m5stack": m5stack_doc_candidates,
     "adafruit": adafruit_doc_candidates,
+    "lilygo": lilygo_doc_candidates,
+}
+
+
+# ─── per-vendor UNGROUNDABLE fields (cite-or-omit field gate) ─────────────────────
+# A field a vendor's doc source structurally CANNOT ground because a shared/global element on
+# every one of that vendor's pages false-positives the (flash-critical) extractor. Such a field
+# is excluded from extraction for that vendor and honestly reported as OMITTED — never written.
+# lilygo: every lilygo.cc product page carries an identical site-wide "Driver of CH9102" nav
+# link, so extract_usb_serial reads "ch9102" off site chrome, not the product's actual bridge
+# (many lilygo boards are not CH9102). That is the adafruit-feather-s2/FT232H trap at SITE scale
+# — writing it would set a WRONG flash-critical field, so usb_serial is gated OFF for lilygo.
+# (getting_started still grounds — it's just the resolved 200 URL.) A future slice that strips
+# site chrome before extraction could lift this gate. Empty by default → no effect on any other
+# vendor's extraction.
+VENDOR_UNGROUNDABLE_FIELDS: dict[str, frozenset[str]] = {
+    "lilygo": frozenset({"usb_serial"}),
 }
 
 
@@ -470,7 +530,11 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
 
     raw = res.get("text", "")
     text = _visible_text(raw)
-    extracted = _extract_for(text, url, missing, raw=raw)
+    # Fields this vendor's doc source cannot reliably ground (a shared page element false-
+    # positives the extractor) are excluded from extraction — never written — but kept in
+    # `missing` so they surface honestly as OMITTED below (cite-or-omit).
+    gated = VENDOR_UNGROUNDABLE_FIELDS.get(brand, frozenset())
+    extracted = _extract_for(text, url, [f for f in missing if f not in gated], raw=raw)
     if not extracted:
         return {**base, "status": "skipped", "reason": "nothing-groundable", "url": url}
 
