@@ -451,7 +451,76 @@ def extract_images(raw: str, doc_url: str) -> dict | None:
     return found or None
 
 
-def _extract_for(text: str, url: str, missing: list[str], raw: str | None = None) -> dict:
+# ─── m5stack image extractor (SPEC-vendor-image-grounding.md, Slice 1) ────────────
+# m5stack serves every product/doc image from an Aliyun OSS CDN with OPAQUE filenames
+# (K150-stickS3_main-products_01.webp, core2_01.jpg, …), so the Espressif FILENAME heuristic
+# grounds nothing here. Instead we key off the HTML CONTEXT of docs.m5stack.com pages, which
+# is uniform across the real fixtures (m5stick-s3 / m5stack-core2 / m5cardputer / papers3):
+#
+#   PHOTO — the identifying hero shot is the FIRST carousel image, marked
+#     `<div class="carousel-container"> … <img src="…" alt="Preview">`. It is per-board
+#     distinct (the product's own gallery) and appears on every fixture → a reliable photo.
+#
+#   PINOUT — high-confidence-or-omit (a wrong wiring diagram can fry a board). Every page has
+#     one explicit section heading `<h2 id="pinmap" data-id="PinMap">PinMap</h2>`. We ground
+#     `pinout` ONLY to an <img> the author embedded INSIDE that PinMap section (from the
+#     heading to the next <h2>). The section context IS the vendor signal that the image is
+#     the pin map — we never promote a gallery/hero image to pinout. On the real fixtures this
+#     grounds ONLY m5stack-core2 (whose PinMap section embeds a GPIO diagram); m5stick-s3,
+#     m5cardputer and m5stack-papers3 render their pin maps as HTML TABLES with no image, so
+#     pinout is correctly OMITTED for them. m5stack pages carry NO og:image and an identical
+#     generic <meta name="description"> across boards, so neither is usable for grounding.
+_M5_PINMAP_H2 = re.compile(r'<h2[^>]*\bid="pinmap"[^>]*>', re.I)
+_M5_NEXT_H2 = re.compile(r"<h2[ >]", re.I)
+_M5_CAROUSEL_PREVIEW = re.compile(
+    r'<div[^>]*class="[^"]*carousel-container[^"]*".*?<img[^>]+src="([^"]+)"[^>]*\balt="Preview"',
+    re.I | re.S,
+)
+
+
+def extract_images_m5stack(raw: str, doc_url: str) -> dict | None:
+    """Ground m5stack `{photo?, pinout?}` by docs.m5stack.com HTML CONTEXT, absolute URLs.
+
+    photo  = the first carousel `<img alt="Preview">` (the product hero shot).
+    pinout = an `<img>` embedded inside the explicit `<h2 id="pinmap">PinMap</h2>` section
+             ONLY — the section heading is the vendor signal it is the pin map. A merely
+             plausible product image is NEVER promoted to pinout (safety: cite-or-omit,
+             high-confidence-or-omit). Returns None when neither is found."""
+    from urllib.parse import urljoin
+    raw = raw or ""
+    found: dict = {}
+
+    hero = _M5_CAROUSEL_PREVIEW.search(raw)
+    if hero:
+        found["photo"] = urljoin(doc_url, hero.group(1))
+
+    h = _M5_PINMAP_H2.search(raw)
+    if h:
+        section = raw[h.end():]
+        nxt = _M5_NEXT_H2.search(section)
+        if nxt:
+            section = section[: nxt.start()]
+        img = _IMG_SRC.search(section)
+        if img:
+            found["pinout"] = urljoin(doc_url, img.group(1))
+
+    return found or None
+
+
+# ─── per-vendor image-extractor registry (SPEC-vendor-image-grounding.md) ─────────
+# Mirrors VENDOR_DOC_RESOLVERS: keyed by brand, each entry grounds the `images` field
+# ({photo?, pinout?} absolute URLs, or None) from that vendor's page structure. The
+# "espressif" entry IS the existing filename heuristic, UNCHANGED (behaviour-preserving).
+# A brand with no entry falls back to the Espressif heuristic, which finds nothing on a
+# non-Espressif CDN → images omitted, no regression, no bad data.
+IMAGE_EXTRACTORS: dict[str, Callable[[str, str], dict | None]] = {
+    "espressif": extract_images,
+    "m5stack": extract_images_m5stack,
+}
+
+
+def _extract_for(text: str, url: str, missing: list[str], raw: str | None = None,
+                 brand: str = "espressif") -> dict:
     """The groundable subset of `missing`, each mapped to its extracted value. Only
     fields the doc explicitly states are included (cite-or-omit); getting_started is
     always groundable once the doc resolved 200 (the link is real)."""
@@ -467,7 +536,8 @@ def _extract_for(text: str, url: str, missing: list[str], raw: str | None = None
     if "getting_started" in missing:
         out["getting_started"] = url
     if "images" in missing:
-        imgs = extract_images(raw or "", url)
+        extractor = IMAGE_EXTRACTORS.get(brand, extract_images)
+        imgs = extractor(raw or "", url)
         if imgs is not None:
             out["images"] = imgs
     return out
@@ -534,7 +604,8 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
     # positives the extractor) are excluded from extraction — never written — but kept in
     # `missing` so they surface honestly as OMITTED below (cite-or-omit).
     gated = VENDOR_UNGROUNDABLE_FIELDS.get(brand, frozenset())
-    extracted = _extract_for(text, url, [f for f in missing if f not in gated], raw=raw)
+    extracted = _extract_for(text, url, [f for f in missing if f not in gated], raw=raw,
+                             brand=brand)
     if not extracted:
         return {**base, "status": "skipped", "reason": "nothing-groundable", "url": url}
 

@@ -554,9 +554,13 @@ def test_lyrat_end_to_end_recovers_from_esp_adf_fixture(tmp_path):
 #                       enter download mode" (no Boot-button sequence), so the Espressif-tuned
 #                       manual heuristic (which requires a Boot button) correctly does NOT
 #                       fire. Left OMITTED — a later slice can generalize it. NEVER forced.
-#   * images          — NOT groundable yet: m5stack image filenames are opaque
-#                       (product_01.webp, img-<uuid>.webp), matching none of the pinout/photo
-#                       keyword patterns. Left OMITTED. NEVER faked.
+#   * images          — grounded by HTML CONTEXT (Slice 1, SPEC-vendor-image-grounding.md),
+#                       NOT by filename (m5stack CDN names are opaque). photo = the first
+#                       carousel `<img alt="Preview">` hero (grounds on ALL fixtures). pinout =
+#                       an <img> embedded under the explicit `<h2 id="pinmap">PinMap</h2>`
+#                       section ONLY — grounds core2 (its PinMap embeds a GPIO diagram); the
+#                       stick-s3 / cardputer / papers3 PinMaps are TABLES with no image →
+#                       pinout OMITTED (high-confidence-or-omit; never guess a wiring diagram).
 # ══════════════════════════════════════════════════════════════════════════════
 
 # The three URLs confirmed 200 by a live fetch on 2026-09-10 (their HTML is the fixtures).
@@ -601,9 +605,11 @@ def _m5_fetcher_for(bid, fixture_name):
     return url, _fetcher({url: _fixture(fixture_name)})
 
 
-def test_m5stack_core2_grounds_getting_started_and_usb_serial_omits_rest(tmp_path):
+def test_m5stack_core2_grounds_getting_started_usb_serial_and_images(tmp_path):
     # (c) core2's REAL page names CH9102 → usb_serial grounds; getting_started = the URL;
-    # download_mode + images are OMITTED (not groundable on m5stack yet) → partial.
+    # its carousel hero grounds images.photo AND its PinMap section embeds a GPIO diagram →
+    # images.pinout grounds too (Slice 1 image grounding). download_mode is still OMITTED
+    # (no Boot-button sequence on the page) → still partial.
     bid, soc = "m5stack-core2", "esp32"
     path = _write_board(tmp_path, bid, soc, brand="m5stack")
     url, fetch = _m5_fetcher_for(bid, "m5stack-core2")
@@ -611,17 +617,19 @@ def test_m5stack_core2_grounds_getting_started_and_usb_serial_omits_rest(tmp_pat
 
     assert entry["status"] == "backfilled"
     assert entry["url"] == url
-    assert set(entry["written"]) == {"usb_serial", "getting_started"}
-    assert set(entry["omitted"]) == {"download_mode", "images"}
+    assert set(entry["written"]) == {"usb_serial", "getting_started", "images"}
+    assert set(entry["omitted"]) == {"download_mode"}
     assert entry["partial"] is True
 
     fm, _ = bb.parse_frontmatter(path)
     assert fm["usb_serial"] == "ch9102"          # the page explicitly names CH9102
     assert fm["getting_started"] == url
     assert "download_mode" not in fm             # OMITTED — never forced
-    assert "images" not in fm                    # OMITTED — never faked
+    # images grounded by HTML context: hero photo + the PinMap-section GPIO diagram.
+    assert fm["images"]["photo"].endswith("core2_01.jpg")
+    assert fm["images"]["pinout"].endswith("M5StackM5Core2GPIO.png")
     cited = {s["field"]: s for s in fm["sources"]}
-    for field in ("usb_serial", "getting_started"):
+    for field in ("usb_serial", "getting_started", "images"):
         assert cited[field]["url"] == url and cited[field]["verified"] == TODAY
 
 
@@ -638,21 +646,26 @@ def test_m5stack_cardputer_grounds_native_jtag(tmp_path):
     assert fm["getting_started"] == url
 
 
-def test_m5stack_stick_s3_only_getting_started_grounds(tmp_path):
-    # (e) StickS3's REAL page names NO bridge chip and no JTAG → usb_serial OMITTED; only
-    # getting_started grounds. This is the honest "1 field" floor — still a real 0→1 gain.
+def test_m5stack_stick_s3_grounds_getting_started_and_photo_only(tmp_path):
+    # (e) StickS3's REAL page names NO bridge chip and no JTAG → usb_serial OMITTED. Its
+    # carousel hero grounds images.photo, but its PinMap section is TABLES-ONLY (no diagram
+    # image) → images.pinout correctly OMITTED (high-confidence-or-omit). getting_started
+    # grounds off the resolved URL.
     bid, soc = "m5stick-s3", "esp32-s3"
     path = _write_board(tmp_path, bid, soc, brand="m5stack")
     url, fetch = _m5_fetcher_for(bid, "m5stick-s3")
     entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
 
     assert entry["status"] == "backfilled"
-    assert entry["written"] == ["getting_started"]
-    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    assert entry["written"] == ["getting_started", "images"]
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial"}
     fm, _ = bb.parse_frontmatter(path)
     assert fm["getting_started"] == url
     assert "usb_serial" not in fm
     assert "download_mode" not in fm
+    # photo grounded; pinout OMITTED (no diagram image under PinMap — pins are tabular).
+    assert fm["images"]["photo"].endswith("K150-stickS3_main-products_01.webp")
+    assert "pinout" not in fm["images"]
 
 
 def test_m5stack_usb_serial_values_are_schema_enum_valid():
@@ -666,13 +679,99 @@ def test_m5stack_usb_serial_values_are_schema_enum_valid():
         assert val in enum
 
 
-def test_m5stack_download_mode_and_images_not_grounded_on_real_pages():
-    # CRITICAL cite-or-omit: on the REAL m5stack pages the Espressif-tuned download_mode and
-    # image heuristics correctly return None (no false positives), so those fields stay omitted.
-    for name in ("m5stack-core2", "m5cardputer", "m5stick-s3"):
+def test_m5stack_download_mode_not_grounded_and_espressif_img_heuristic_finds_nothing():
+    # CRITICAL cite-or-omit: on the REAL m5stack pages the Espressif-tuned download_mode
+    # heuristic correctly returns None (no Boot-button sequence → no false positive), so
+    # download_mode stays omitted. And the ESPRESSIF filename image heuristic (the registry
+    # default) still finds NOTHING on m5stack's opaque CDN — m5stack images only ground via
+    # the dedicated context extractor (extract_images_m5stack), never the filename fallback.
+    for name in ("m5stack-core2", "m5cardputer", "m5stick-s3", "m5stack-papers3"):
         raw = _fixture(name)
         assert bb.extract_download_mode(bb._visible_text(raw)) is None
         assert bb.extract_images(raw, "https://docs.m5stack.com/en/core/X") is None
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SLICE 1 (SPEC-vendor-image-grounding.md) — per-vendor image extractor registry.
+#
+# IMAGE_EXTRACTORS is keyed by brand: the "espressif" entry IS the unchanged filename
+# heuristic (extract_images); the "m5stack" entry grounds photo + pinout by HTML CONTEXT
+# on docs.m5stack.com. backfill_board selects the extractor by brand, falling back to the
+# Espressif heuristic for brands with no entry (finds nothing on their CDN → omit).
+# ══════════════════════════════════════════════════════════════════════════════
+
+# The m5stack fixtures and the docs URL each was fetched at (their HTML is the fixture).
+M5STACK_IMAGE_FIXTURES = {
+    "m5stick-s3": "https://docs.m5stack.com/en/core/StickS3",
+    "m5stack-core2": "https://docs.m5stack.com/en/core/core2",
+    "m5cardputer": "https://docs.m5stack.com/en/core/Cardputer",
+    "m5stack-papers3": "https://docs.m5stack.com/en/core/papers3",
+}
+
+
+def test_image_extractor_registry_wires_espressif_default_and_m5stack():
+    # the registry exists, its espressif entry is the UNCHANGED filename heuristic (same
+    # function object), and m5stack has its own context extractor.
+    assert bb.IMAGE_EXTRACTORS["espressif"] is bb.extract_images
+    assert bb.IMAGE_EXTRACTORS["m5stack"] is bb.extract_images_m5stack
+    assert callable(bb.IMAGE_EXTRACTORS.get("m5stack"))
+
+
+def test_espressif_image_extractor_unchanged_regression():
+    # the default (espressif) extractor still grounds Espressif docs by filename — pins the
+    # "no Espressif regression" guarantee (mirrors test_images_extract_where_the_page_links_them
+    # but asserted through the registry default path).
+    default = bb.IMAGE_EXTRACTORS.get("espressif", bb.extract_images)
+    imgs = default(_fixture("esp32-s2-saola-1"), FIXTURE_URLS["esp32-s2-saola-1"])
+    assert imgs["pinout"].endswith("esp32-s2_saola1-pinout.jpg")
+    assert imgs["photo"].endswith("esp32-s2-saola-1-v1.2-isometric.png")
+    # a brand with no registry entry falls back to the espressif heuristic (finds nothing
+    # on a non-espressif CDN → None, no regression, no bad data).
+    fallback = bb.IMAGE_EXTRACTORS.get("waveshare", bb.extract_images)
+    assert fallback is bb.extract_images
+    assert fallback(_fixture("m5stick-s3"), M5STACK_IMAGE_FIXTURES["m5stick-s3"]) is None
+
+
+def test_m5stack_photo_grounds_from_carousel_hero_on_every_fixture():
+    # photo = the first carousel `<img alt="Preview">` hero shot, an absolute CDN URL,
+    # per-board distinct. Grounds on ALL four real fixtures.
+    expected = {
+        "m5stick-s3": "K150-stickS3_main-products_01.webp",
+        "m5stack-core2": "core2_01.jpg",
+        "m5cardputer": "K132-main-pictures_01.jpg",
+        "m5stack-papers3": "PaperS3/4.webp",
+    }
+    for name, url in M5STACK_IMAGE_FIXTURES.items():
+        imgs = bb.extract_images_m5stack(_fixture(name), url)
+        assert imgs is not None and "photo" in imgs, name
+        assert imgs["photo"].startswith("https://"), name
+        assert imgs["photo"].endswith(expected[name]), (name, imgs["photo"])
+
+
+def test_m5stack_pinout_grounds_only_when_pinmap_section_embeds_a_diagram():
+    # core2's PinMap section embeds a GPIO diagram → pinout grounded to that exact absolute
+    # URL. High-confidence-or-omit: the image sits under the explicit `<h2 id="pinmap">`.
+    imgs = bb.extract_images_m5stack(_fixture("m5stack-core2"),
+                                     M5STACK_IMAGE_FIXTURES["m5stack-core2"])
+    assert imgs["pinout"] == "https://www.gwendesign.com/kb/m5stack/img/M5StackM5Core2GPIO.png"
+
+
+def test_m5stack_pinout_omitted_when_pinmap_is_tabular_no_diagram():
+    # SAFETY: stick-s3 / cardputer / papers3 have a PinMap section AND many product/gallery
+    # images, but render the pin map as HTML TABLES (no diagram image). A random product
+    # image is NEVER promoted to pinout → pinout OMITTED (a wrong wiring diagram can fry a
+    # board). photo still grounds; only pinout is withheld.
+    for name in ("m5stick-s3", "m5cardputer", "m5stack-papers3"):
+        imgs = bb.extract_images_m5stack(_fixture(name), M5STACK_IMAGE_FIXTURES[name])
+        assert imgs is not None and "photo" in imgs, name
+        assert "pinout" not in imgs, (name, imgs.get("pinout"))
+
+
+def test_m5stack_image_extractor_returns_none_on_pageless_html():
+    # no carousel + no PinMap section → nothing grounded → None (cite-or-omit).
+    assert bb.extract_images_m5stack("<html><body><p>nothing here</p></body></html>",
+                                     "https://docs.m5stack.com/en/core/X") is None
+    assert bb.extract_images_m5stack("", "https://docs.m5stack.com/en/core/X") is None
 
 
 def test_m5stack_papers3_automatic_port_recognition_is_not_auto_download():
