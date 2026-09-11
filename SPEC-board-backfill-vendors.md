@@ -54,6 +54,22 @@ function per vendor, while the extraction/citation core stays single-sourced and
    ordered by board count × doc-structure regularity. Re-evaluate after each: a vendor whose docs
    are not machine-extractable is flagged and **skipped explicitly** (logged, never silently), not
    forced.
+5. **heltec (5 boards)** — `heltec_doc_candidates` on `docs.heltec.org`. UNLIKE the
+   m5stack/adafruit/lilygo per-board maps, heltec's doc URL is a clean **deterministic rule**
+   (verified live 2026-09-11 to yield all 5 real doc pages, 200, each describing the correct
+   V3/ESP32-S3 board): strip the `heltec-` prefix, strip a trailing `-v3`, replace `-`→`_`, then
+   `https://docs.heltec.org/en/node/esp32/<that>/index.html`. All 5 ids fit the rule exactly, so
+   none is hardcoded (a future non-fitting board would go in a small verified override map, never
+   forced onto the rule); the resolver only claims `heltec-`-prefixed ids (else `[]` → skipped
+   doc-unreachable, never a guessed URL). **Grounds:** `getting_started` for all 5 (the resolved
+   200 doc page IS the link); `usb_serial` only where the page NAMES the bridge — wifi-kit-32-v3
+   and wifi-lora-32-v3 state "Integrated CP2102 … serial port chip" → `cp2102` (in the real data
+   these are already filled, so a real run adds only `getting_started`). **Omitted:** `usb_serial`
+   on wireless-stick-v3 / wireless-tracker / wireless-paper (their doc pages name no bridge — the
+   only "Bridge"/"Boot" tokens are site-nav chrome, which must NOT false-positive the extractor);
+   `download_mode` on all 5 (no Boot+Reset "Firmware Download mode" sentence); `images` on all 5
+   (no og:image, and no dedicated heltec image extractor this slice). Honest per-board delta on a
+   real run: 0→1 (`getting_started`), with `download_mode` + `images` explicitly omitted.
 
 ## Pinout (`io.gpio_pins`) — deferred, separate track
 The trend's `pinout` is the `io.gpio_pins` **array** (raw exposed GPIO numbers), the hardest field:

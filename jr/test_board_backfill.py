@@ -1387,3 +1387,185 @@ def test_lilygo_t5_epaper_grounds_photo_end_to_end(tmp_path):
     assert "images" in entry["written"]
     fm, _ = bb.parse_frontmatter(path)
     assert fm["images"] == {"photo": "https://lilygo.cc/cdn/shop/files/T5-4_7.jpg"}
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SLICE 5 — heltec vendor doc resolver (SPEC-board-backfill-vendors.md §Slice 5).
+# ──────────────────────────────────────────────────────────────────────────────
+# Registers the "heltec" resolver on docs.heltec.org so board_backfill reaches the 5 heltec
+# boards. UNLIKE the m5stack/adafruit/lilygo per-board maps, heltec's doc URL is a clean,
+# DETERMINISTIC rule (verified live to yield all 5 real doc pages, 200): strip the `heltec-`
+# prefix, strip a trailing `-v3`, replace `-` with `_`, then
+# `https://docs.heltec.org/en/node/esp32/<that>/index.html`. All 5 board ids fit the rule
+# exactly, so no board is hardcoded (if one ever didn't fit, it would go in a small override
+# map rather than forcing the rule). Each URL below was fetched & verified 200 on 2026-09-11,
+# and the page confirmed to describe the correct V3/ESP32-S3 board; the HTML is saved as the
+# Slice-5 fixtures.
+#
+# EMPIRICAL grounding (measured on the REAL fetched doc pages under fixtures/):
+#   * getting_started — grounds for ALL 5 (the resolved 200 doc page IS the link).
+#   * usb_serial      — grounds ONLY where the page NAMES the bridge: wifi-kit-32-v3 and
+#                       wifi-lora-32-v3 both state "Integrated CP2102 USB to serial port chip"
+#                       → cp2102. wireless-stick-v3 / wireless-tracker / wireless-paper do NOT
+#                       name a bridge on their doc page (the only "Bridge"/"Boot" tokens are
+#                       site-nav chrome — "Wireless Bridge", "Heltec WirelessBoot"), so
+#                       usb_serial stays OMITTED there (cite-or-omit). NOTE: in the real
+#                       data/boards/heltec/* files usb_serial is already filled (from other
+#                       sources), so a real run never rewrites it — but the extractor grounding
+#                       is proven here on the page text directly.
+#   * download_mode   — NOT groundable on any heltec page: none carries a Boot+Reset "Firmware
+#                       Download mode" sentence, and the nav-chrome "Boot" token does NOT
+#                       false-positive the extractor. Omitted (cite-or-omit).
+#   * images          — NOT groundable: the doc pages carry NO og:image and the espressif
+#                       filename heuristic (the registry default for heltec — no dedicated
+#                       heltec image extractor this slice) finds nothing. Omitted.
+# So on the real (usb_serial-already-filled) boards this slice grounds getting_started only —
+# an honest 0→1 per board, with download_mode + images explicitly omitted.
+
+# The 5 URLs confirmed 200 by a live fetch on 2026-09-11 (their HTML is the fixtures).
+HELTEC_VERIFIED_URLS = {
+    "heltec-wifi-kit-32-v3": "https://docs.heltec.org/en/node/esp32/wifi_kit_32/index.html",
+    "heltec-wifi-lora-32-v3": "https://docs.heltec.org/en/node/esp32/wifi_lora_32/index.html",
+    "heltec-wireless-stick-v3": "https://docs.heltec.org/en/node/esp32/wireless_stick/index.html",
+    "heltec-wireless-tracker": "https://docs.heltec.org/en/node/esp32/wireless_tracker/index.html",
+    "heltec-wireless-paper": "https://docs.heltec.org/en/node/esp32/wireless_paper/index.html",
+}
+
+# All 5 heltec board ids the resolver must cover (the data/boards/heltec/* dirs).
+HELTEC_ALL_BOARDS = list(HELTEC_VERIFIED_URLS)
+
+
+def test_heltec_resolver_registered_returns_verified_docs_urls():
+    # (a) the registry gained a "heltec" entry, and its deterministic rule returns the EXACT
+    # live-verified docs.heltec.org URL (best-first) for every one of the 5 boards.
+    assert "heltec" in bb.VENDOR_DOC_RESOLVERS
+    resolver = bb.VENDOR_DOC_RESOLVERS["heltec"]
+    for bid, url in HELTEC_VERIFIED_URLS.items():
+        cands = resolver(bid, "esp32-s3")
+        assert cands[0] == url, f"{bid} → {cands[0]!r} != {url!r}"
+
+
+def test_heltec_resolver_covers_all_5_boards_on_docs_domain():
+    # (b) every one of the 5 heltec boards resolves to a docs.heltec.org URL — no board falls
+    # through uncovered (0 → 5 boards this slice).
+    resolver = bb.VENDOR_DOC_RESOLVERS["heltec"]
+    for bid in HELTEC_ALL_BOARDS:
+        cands = resolver(bid, "esp32-s3")
+        assert cands, f"{bid} yielded no candidate URL"
+        assert cands[0].startswith("https://docs.heltec.org/en/node/esp32/"), cands[0]
+        assert cands[0].endswith("/index.html"), cands[0]
+
+
+def test_heltec_resolver_non_heltec_id_returns_empty():
+    # (c) the resolver only claims heltec-prefixed ids; an id it doesn't own yields [] (→ that
+    # board would be skipped doc-unreachable, never sent to a guessed heltec URL).
+    resolver = bb.VENDOR_DOC_RESOLVERS["heltec"]
+    assert resolver("esp32-devkitc", "esp32") == []
+    assert resolver("m5stack-core2", "esp32") == []
+
+
+def _heltec_fetcher_for(bid, fixture_name):
+    """Fake fetcher that serves the given fixture ONLY at the heltec resolver's URL for `bid` —
+    any other URL 404s (proves resolution lands on the right page)."""
+    url = bb.VENDOR_DOC_RESOLVERS["heltec"](bid, "esp32-s3")[0]
+    return url, _fetcher({url: _fixture(fixture_name)})
+
+
+@pytest.mark.parametrize("name", ["heltec-wifi-kit-32-v3", "heltec-wifi-lora-32-v3"])
+def test_heltec_usb_serial_grounds_cp2102_where_page_names_it(name):
+    # (d) the two boards whose doc page states "Integrated CP2102 ... serial port chip" ground
+    # usb_serial=cp2102 (a schema-valid enum value). This is grounded off the page text.
+    val = bb.extract_usb_serial(bb._visible_text(_fixture(name)))
+    assert val == "cp2102", f"{name} → {val!r}"
+
+
+@pytest.mark.parametrize("name", ["heltec-wireless-stick-v3", "heltec-wireless-tracker",
+                                  "heltec-wireless-paper"])
+def test_heltec_usb_serial_omitted_when_page_names_no_bridge(name):
+    # (e) CRITICAL cite-or-omit: the stick/tracker/paper doc pages do NOT name a bridge chip —
+    # the only "Bridge"/"Boot" tokens are site-nav chrome ("Wireless Bridge", "Heltec
+    # WirelessBoot"), which must NOT false-positive the extractor. usb_serial stays None.
+    assert bb.extract_usb_serial(bb._visible_text(_fixture(name))) is None
+
+
+@pytest.mark.parametrize("name", list(HELTEC_VERIFIED_URLS))
+def test_heltec_download_mode_and_images_omitted_on_real_pages(name):
+    # (f) CRITICAL cite-or-omit: on ALL 5 REAL heltec pages the download_mode and image
+    # heuristics correctly return None (nav-chrome "Boot" does not ground a flash-critical
+    # download-mode step; no og:image / no groundable filename), so those fields stay omitted.
+    raw = _fixture(name)
+    assert bb.extract_download_mode(bb._visible_text(raw)) is None
+    assert bb.extract_images(raw, "https://docs.heltec.org/x") is None
+
+
+def test_heltec_wifi_kit_grounds_getting_started_and_usb_serial(tmp_path):
+    # (g) end-to-end on a bare board: wifi-kit-32-v3's page grounds getting_started = the URL
+    # AND usb_serial=cp2102 (the page names it); download_mode + images are OMITTED.
+    bid, soc = "heltec-wifi-kit-32-v3", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="heltec")
+    url, fetch = _heltec_fetcher_for(bid, "heltec-wifi-kit-32-v3")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url
+    assert entry["written"] == ["usb_serial", "getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "images"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert fm["usb_serial"] == "cp2102"
+    assert "download_mode" not in fm
+    assert "images" not in fm
+    cited = {s["field"]: s for s in fm["sources"]}
+    assert cited["getting_started"]["url"] == url and cited["getting_started"]["verified"] == TODAY
+    assert cited["usb_serial"]["url"] == url and cited["usb_serial"]["verified"] == TODAY
+
+
+def test_heltec_wireless_tracker_grounds_getting_started_only(tmp_path):
+    # (h) end-to-end on a bare board: wireless-tracker's page names no bridge → usb_serial is
+    # OMITTED alongside download_mode + images; only getting_started grounds (honest 0→1).
+    bid, soc = "heltec-wireless-tracker", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="heltec")
+    url, fetch = _heltec_fetcher_for(bid, "heltec-wireless-tracker")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert "usb_serial" not in fm
+
+
+def test_heltec_grounds_getting_started_when_usb_serial_already_filled(tmp_path):
+    # (i) mirrors the REAL data (usb_serial already present from other sources): backfill writes
+    # ONLY getting_started, never touching the pre-filled usb_serial. This is the true per-board
+    # coverage delta on a real run (0→1: getting_started; download_mode + images omitted).
+    bid, soc = "heltec-wifi-lora-32-v3", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="heltec", extra_fields="usb_serial: cp2102\n")
+    url, fetch = _heltec_fetcher_for(bid, "heltec-wifi-lora-32-v3")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "images"}
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert fm["usb_serial"] == "cp2102"           # pre-filled, untouched
+    usb_sources = [s for s in fm["sources"] if s["field"] == "usb_serial"]
+    assert usb_sources == []                       # no new citation appended for a filled field
+
+
+def test_heltec_board_404_skipped_cleanly(tmp_path):
+    # (j) a board whose doc page 404s is SKIPPED doc-unreachable and left byte-for-byte
+    # unmodified — never a partial/invented write.
+    bid, soc = "heltec-wifi-kit-32-v3", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="heltec")
+    before = path.read_text()
+    entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
+
+    assert entry["status"] == "skipped"
+    assert entry["reason"] == "doc-unreachable"
+    assert entry["modified"] is False
+    assert path.read_text() == before
