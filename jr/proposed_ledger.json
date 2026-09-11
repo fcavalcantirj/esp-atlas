@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-18T16:00:54.676058+00:00",
+      "expires": "2026-09-18T17:00:55.936325+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-11T16:00:54.676058+00:00"
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -847,6 +847,16 @@
       "repo": "moo93egy/cardping_multi.git",
       "status": "rejected",
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
+    },
+    "cardputer": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "cardputer",
+      "pr_ref": null,
+      "reason": "already_catalogued: volosr/cardputer is already in the atlas",
+      "repo": "volosr/cardputer",
+      "repo_id": 726064343,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "cardputer-8-bit-tape-loader": {
       "expires": "2026-10-07T23:00:28.148172+00:00",
@@ -3415,6 +3425,36 @@
       "status": "rejected",
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
+    "m5-roguemail": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "m5-roguemail",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 1 forks",
+      "repo": "m5rogueops/m5-roguemail",
+      "repo_id": 1289747584,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
+    },
+    "m5-rogueos": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "m5-rogueos",
+      "pr_ref": null,
+      "reason": "below_floor: 7 stars / 0 forks",
+      "repo": "m5rogueops/m5_rogueos",
+      "repo_id": 1287927248,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
+    },
+    "m5-rogueshell": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "m5-rogueshell",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 1 forks",
+      "repo": "m5rogueops/m5-rogueshell",
+      "repo_id": 1288800665,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
+    },
     "m5airmouse": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
       "id": "m5airmouse",
@@ -4094,6 +4134,16 @@
       "status": "seen",
       "timestamp": "2026-09-02T16:03:28.056584+00:00"
     },
+    "m5readpaper": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "m5readpaper",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "shinemoon/m5readpaper",
+      "repo_id": 1122022204,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
+    },
     "m5roulette": {
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5roulette",
@@ -4553,6 +4603,16 @@
       "repo_id": 730930468,
       "status": "rejected",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
+    },
+    "m5sticks3-rogueduck": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "m5sticks3-rogueduck",
+      "pr_ref": null,
+      "reason": "below_floor: 5 stars / 1 forks",
+      "repo": "m5rogueops/m5sticks3-rogueduck",
+      "repo_id": 1276009813,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "m5sticks3-tide-clock": {
       "expires": "2026-10-11T13:00:49.050627+00:00",
@@ -5900,13 +5960,34 @@
       "status": "merged",
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
     },
+    "raspyjack": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "raspyjack",
+      "pr_ref": null,
+      "reason": "already_catalogued: 7h30th3r0n3/raspyjack is already in the atlas",
+      "repo": "7h30th3r0n3/raspyjack",
+      "repo_id": 1006173393,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
+    },
     "ratcom": {
       "id": "ratcom",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/81",
       "reason": "present in the catalog: its PR was merged",
       "repo": "ratspeak/rscardputer",
+      "repo_id": 1172559501,
       "status": "merged",
       "timestamp": "2026-09-01T23:04:00.148167+00:00"
+    },
+    "ratdeck": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "ratdeck",
+      "pr_ref": null,
+      "reason": "already_catalogued: ratspeak/ratdeck is already in the atlas",
+      "repo": "ratspeak/ratdeck",
+      "repo_id": 1174742092,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "relaykvm": {
       "id": "relaykvm",
@@ -5934,6 +6015,16 @@
       "repo_id": 1354377340,
       "status": "rejected",
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
+    },
+    "retro-go": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "retro-go",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "imliubo/retro-go",
+      "repo_id": 1169368725,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "rf433-signaltest-m5stickcplus": {
       "expires": "2026-10-11T16:00:54.676058+00:00",
@@ -6026,6 +6117,35 @@
       "status": "seen",
       "timestamp": "2026-09-02T16:03:27.950490+00:00"
     },
+    "ricoh-gr-live-view-shooting": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "ricoh-gr-live-view-shooting",
+      "pr_ref": null,
+      "reason": "already_catalogued: sky18dragon/ricoh-gr-live-view-shooting is already in the atlas",
+      "repo": "sky18dragon/ricoh-gr-live-view-shooting",
+      "repo_id": 1289709148,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
+    },
+    "rizumutimer": {
+      "expires": "2026-09-18T17:00:55.936325+00:00",
+      "id": "rizumutimer",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "littlesound/rizumutimer",
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
+    },
+    "rogue-radar": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "rogue-radar",
+      "pr_ref": null,
+      "reason": "name_token_matches_catalogued: likely a port/variant",
+      "repo": "atomnft/rogue-radar",
+      "repo_id": 1207292315,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
+    },
     "rrfremote": {
       "expires": "2026-10-11T16:00:54.676058+00:00",
       "id": "rrfremote",
@@ -6036,11 +6156,32 @@
       "status": "rejected",
       "timestamp": "2026-09-11T16:00:54.676058+00:00"
     },
+    "runman1": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "runman1",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "yo3hjv/runman1",
+      "repo_id": 1165149721,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
+    },
+    "ruru-reader-papers3": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "ruru-reader-papers3",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "helloruru/ruru-reader-papers3",
+      "repo_id": 1251354387,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
+    },
     "ruview": {
       "id": "ruview",
       "pr_ref": null,
       "reason": "restored 2026-09-04 (PR #103); the 2026-09-02 deletion was the error",
       "repo": "ruvnet/ruview",
+      "repo_id": 997737944,
       "status": "merged",
       "timestamp": "2026-09-04T00:00:00+00:00"
     },
@@ -6059,6 +6200,25 @@
       "repo": "petsven/s3_decibel_meter",
       "status": "seen",
       "timestamp": "2026-09-02T16:03:28.059609+00:00"
+    },
+    "s3-visualizer": {
+      "expires": "2026-09-18T17:00:55.936325+00:00",
+      "id": "s3-visualizer",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "enemyofglados/s3_visualizer.git",
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
+    },
+    "s7comm-auditor-tool": {
+      "expires": "2026-10-11T17:00:55.936325+00:00",
+      "id": "s7comm-auditor-tool",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 1 forks",
+      "repo": "z4y-d3n/s7comm-auditor-tool",
+      "repo_id": 1188287229,
+      "status": "rejected",
+      "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "saldotransporte": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
@@ -6409,6 +6569,7 @@
     "7h30th3r0n3/esp32-honeypot": "esp32-honeypot",
     "7h30th3r0n3/evil-m5core2": "evil-m5core2",
     "7h30th3r0n3/evil-m5project": "evil-m5project",
+    "7h30th3r0n3/raspyjack": "raspyjack",
     "aat440hz/8encoderunit-brainwavegenerator-m5stickcplus2": "8encoderunit-brainwavegenerator-m5stickc",
     "aat440hz/bluetoothmidicontrollermusicconductor-m5stickcplus2": "bluetoothmidicontrollermusicconductor-m5",
     "aat440hz/brainwavegenerator-m5cardputer": "brainwavegenerator-m5cardputer",
@@ -6467,6 +6628,7 @@
     "aspikray/solotputer": "solotputer",
     "atomdreams/cardputersmagps": "cardputersmagps",
     "atomnft/m5stick-marauder": "m5stick-marauder",
+    "atomnft/rogue-radar": "rogue-radar",
     "autoflowdanilo-it/blipputer": "blipputer",
     "beakes/teenygpstestbed_c2": "teenygpstestbed-c2",
     "beanpiechen/micropythonshell": "micropythonshell",
@@ -6601,6 +6763,7 @@
     "enemyofglados/cores3-env3-monitor": "cores3-env3-monitor",
     "enemyofglados/cores3_rom_launcher": "cores3-rom-launcher",
     "enemyofglados/pulseos.git": "pulseos",
+    "enemyofglados/s3_visualizer.git": "s3-visualizer",
     "engneer-hamachan/area512": "area512",
     "erwantest123/cardputer-message-terminal.git": "cardputer-message-terminal",
     "erwantest123/nyan": "nyan",
@@ -6688,6 +6851,7 @@
     "hardcore-gamer/cardputeradv-nas-mp3player": "cardputeradv-nas-mp3player",
     "hardcoreerik/orcsdr": "orcsdr",
     "haswitchplate/openhasp": "openhasp",
+    "helloruru/ruru-reader-papers3": "ruru-reader-papers3",
     "hermes-gadget/sigurdos-tdeck": "sigurdos-tdeck",
     "hiroki-kawakami/kyoshin": "kyoshin",
     "hiroki-kawakami/namecardknot": "namecardknot",
@@ -6704,6 +6868,7 @@
     "iele/m5cardputer-c64-emulator": "m5cardputer-c64-emulator",
     "ilanovikov088-source/dinorune-sticks3": "dinorune-sticks3",
     "imink/aqualife": "aqualife",
+    "imliubo/retro-go": "retro-go",
     "imshox/oxotp": "oxotp",
     "imxnoobx/fstick": "fstick",
     "incursiohack/esp-game-server": "esp-game-server",
@@ -6782,6 +6947,7 @@
     "linclip/m5_gesticatormidi": "m5-gesticatormidi",
     "linclip/m5stickc_tvremote": "m5stickc-tvremote",
     "liptoon/cardputerradiacode": "cardputerradiacode",
+    "littlesound/rizumutimer": "rizumutimer",
     "locosp/bruce-firmware-wdgwars": "bruce-firmware-wdgwars",
     "lordlexat/m5core2_simpleclock": "m5core2-simpleclock",
     "lostdataprotocol/onemorefloor": "onemorefloor",
@@ -6795,7 +6961,11 @@
     "m5dev1000/m5-clicker-hamster": "m5-clicker-hamster",
     "m5dev1000/m5-clicker_game": "m5-clicker-game",
     "m5rogueops/echoglass-the-mindful-tracker": "echoglass-the-mindful-tracker",
+    "m5rogueops/m5-roguemail": "m5-roguemail",
+    "m5rogueops/m5-rogueshell": "m5-rogueshell",
     "m5rogueops/m5_holy_os": "m5-holy-os",
+    "m5rogueops/m5_rogueos": "m5-rogueos",
+    "m5rogueops/m5sticks3-rogueduck": "m5sticks3-rogueduck",
     "m5rogueops/periscope-os": "periscope-os",
     "m5stack/aiflow": "aiflow",
     "m5stack/cores3-box": "cores3-box",
@@ -6924,6 +7094,7 @@
     "ramborogers/m5stickcplus2-amg8833-thermal-camera": "m5stickcplus2-amg8833-thermal-camera",
     "randomsnail/m5stickc-plus2-chaos": "m5stickc-plus2-chaos",
     "raphntc/portal-evil-huebr": "portal-evil-huebr",
+    "ratspeak/ratdeck": "ratdeck",
     "ratspeak/rscardputer": "ratcom",
     "rawseq/m5-midi-rec": "m5-midi-rec",
     "rawseq/m5-midi-rec-lite": "m5-midi-rec-lite",
@@ -6972,9 +7143,11 @@
     "shajanjp/morse-up": "morse-up",
     "shapoco/lcdtap": "lcdtap",
     "sheepxux/taskhub-for-sticks3": "taskhub-for-sticks3",
+    "shinemoon/m5readpaper": "m5readpaper",
     "shlappa1000/c4-stick": "c4-stick",
     "sijan246/cyd-gb-emulator": "cyd-gb-emulator",
     "sjoyce1/plai-meshcore": "plai-meshcore",
+    "sky18dragon/ricoh-gr-live-view-shooting": "ricoh-gr-live-view-shooting",
     "skyper02/evil-m5project": "evil-m5project",
     "slowlane112/cardputer_8_bit_tape_loader": "cardputer-8-bit-tape-loader",
     "slsafenull-dev/galaga-cardputer": "galaga-cardputer",
@@ -7039,6 +7212,7 @@
     "vicliu624/cardputer_mp3_adv": "cardputer-mp3-adv",
     "viniciusbo/m5-palnagotchi": "m5-palnagotchi",
     "voidnoi/badcard": "badcard",
+    "volosr/cardputer": "cardputer",
     "volosr/cardsaber": "cardsaber",
     "volosr/m5mp3": "m5mp3",
     "volosr/m5sticks3saber": "m5sticks3saber",
@@ -7066,8 +7240,10 @@
     "yannguillon/otpauth-m5stickc": "otpauth-m5stickc",
     "yh1224/m5-midi-heartopia": "m5-midi-heartopia",
     "yo3hjv/ham5dsp": "ham5dsp",
+    "yo3hjv/runman1": "runman1",
     "yuleshow/m5tab-macintosh": "m5tab-macintosh",
     "z4y-d3n/modbus-tcp-auditor-tool": "modbus-tcp-auditor-tool",
+    "z4y-d3n/s7comm-auditor-tool": "s7comm-auditor-tool",
     "zaratton/cardputermidimonitor": "cardputermidimonitor",
     "zedward856-spec/breach_os": "breach-os",
     "zeloksa/ai-offline-chat-adv": "ai-offline-chat-adv",

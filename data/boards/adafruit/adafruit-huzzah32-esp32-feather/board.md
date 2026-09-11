@@ -46,6 +46,7 @@ download_mode:
 getting_started: https://learn.adafruit.com/adafruit-huzzah32-esp32-feather
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/001/641/medium800/thumb.jpg
+usb_serial: other
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/3591
@@ -69,6 +70,9 @@ sources:
   url: https://learn.adafruit.com/adafruit-huzzah32-esp32-feather
   verified: '2026-09-11'
 - field: images
+  url: https://learn.adafruit.com/adafruit-huzzah32-esp32-feather
+  verified: '2026-09-11'
+- field: usb_serial
   url: https://learn.adafruit.com/adafruit-huzzah32-esp32-feather
   verified: '2026-09-11'
 ---
