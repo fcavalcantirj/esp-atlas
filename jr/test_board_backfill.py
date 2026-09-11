@@ -1569,3 +1569,126 @@ def test_heltec_board_404_skipped_cleanly(tmp_path):
     assert entry["reason"] == "doc-unreachable"
     assert entry["modified"] is False
     assert path.read_text() == before
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# SLICE 6 — seeed vendor doc resolver (SPEC-board-backfill-vendors.md §Slice 6).
+# ──────────────────────────────────────────────────────────────────────────────
+# Registers the "seeed" resolver on wiki.seeedstudio.com so board_backfill reaches the 3 Seeed
+# XIAO ESP32 boards. UNLIKE heltec's clean deterministic rule, the Seeed wiki slugs are NOT
+# case-uniform: the C3 page is CamelCase (`XIAO_ESP32C3_Getting_Started`) while the C6 and S3
+# pages are lowercase (`xiao_esp32c6_getting_started`). A single naive rule can't yield all
+# three, so — like the m5stack/adafruit/lilygo maps — this resolver is a small EXPLICIT per-board
+# map of the three URLs each fetched & verified 200 on 2026-09-11 (each page's main content
+# describes the matching chip; the HTML is saved as the Slice-6 fixtures). Only confirmed URLs
+# are ever emitted (never a guessed case variant). The resolver only claims the three XIAO ids;
+# any other id yields [] (→ skipped doc-unreachable, never a guessed URL).
+#
+# EMPIRICAL grounding (measured on the REAL fetched wiki pages under fixtures/):
+#   * getting_started — grounds for ALL 3 (the resolved 200 doc page IS the link).
+#   * usb_serial      — OMITTED on all 3: the getting-started wiki pages do NOT name a
+#                       USB-UART bridge in a form the extractor grounds (cite-or-omit).
+#   * download_mode   — OMITTED on all 3: no Boot+Reset "Firmware Download mode" sentence.
+#   * images          — OMITTED on all 3: no groundable og:image / filename (no dedicated seeed
+#                       image extractor this slice → espressif filename heuristic finds nothing).
+# So this slice grounds getting_started only — an honest 0→1 per board, with download_mode +
+# usb_serial + images explicitly omitted.
+
+# The 3 URLs confirmed 200 by a live fetch on 2026-09-11 (their HTML is the fixtures). NOTE the
+# deliberate casing split: C3 CamelCase, C6/S3 lowercase — copied verbatim from the live pages.
+SEEED_VERIFIED_URLS = {
+    "xiao-esp32c3": "https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/",
+    "xiao-esp32c6": "https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/",
+    "xiao-esp32s3": "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/",
+}
+
+# All 3 seeed board ids the resolver must cover (the data/boards/seeed/* dirs).
+SEEED_ALL_BOARDS = list(SEEED_VERIFIED_URLS)
+SEEED_SOC = {"xiao-esp32c3": "esp32-c3", "xiao-esp32c6": "esp32-c6", "xiao-esp32s3": "esp32-s3"}
+
+
+def test_seeed_resolver_registered_returns_verified_docs_urls():
+    # (a) the registry gained a "seeed" entry, and it returns the EXACT live-verified
+    # wiki.seeedstudio.com URL (best-first) for every one of the 3 boards — including the
+    # deliberate C3-CamelCase / C6-S3-lowercase split (never a guessed case variant).
+    assert "seeed" in bb.VENDOR_DOC_RESOLVERS
+    resolver = bb.VENDOR_DOC_RESOLVERS["seeed"]
+    for bid, url in SEEED_VERIFIED_URLS.items():
+        cands = resolver(bid, SEEED_SOC[bid])
+        assert cands[0] == url, f"{bid} → {cands[0]!r} != {url!r}"
+
+
+def test_seeed_resolver_covers_all_3_boards_on_wiki_domain():
+    # (b) every one of the 3 seeed boards resolves to a wiki.seeedstudio.com URL — no board
+    # falls through uncovered (0 → 3 boards this slice).
+    resolver = bb.VENDOR_DOC_RESOLVERS["seeed"]
+    for bid in SEEED_ALL_BOARDS:
+        cands = resolver(bid, SEEED_SOC[bid])
+        assert cands, f"{bid} yielded no candidate URL"
+        assert cands[0].startswith("https://wiki.seeedstudio.com/"), cands[0]
+
+
+def test_seeed_resolver_non_seeed_id_returns_empty():
+    # (c) the resolver only claims the 3 XIAO ids; an id it doesn't own yields [] (→ that board
+    # would be skipped doc-unreachable, never sent to a guessed seeed URL).
+    resolver = bb.VENDOR_DOC_RESOLVERS["seeed"]
+    assert resolver("esp32-devkitc", "esp32") == []
+    assert resolver("heltec-wifi-kit-32-v3", "esp32-s3") == []
+    assert resolver("xiao-esp32c2", "esp32-c2") == []  # a plausible-but-unmapped XIAO id
+
+
+def _seeed_fetcher_for(bid, fixture_name):
+    """Fake fetcher that serves the given fixture ONLY at the seeed resolver's URL for `bid` —
+    any other URL 404s (proves resolution lands on the right page)."""
+    url = bb.VENDOR_DOC_RESOLVERS["seeed"](bid, SEEED_SOC[bid])[0]
+    return url, _fetcher({url: _fixture(fixture_name)})
+
+
+@pytest.mark.parametrize("name", list(SEEED_VERIFIED_URLS))
+def test_seeed_download_mode_usb_serial_and_images_omitted_on_real_pages(name):
+    # (d) CRITICAL cite-or-omit: on ALL 3 REAL seeed wiki pages the download_mode, usb_serial
+    # and image heuristics correctly return None (nothing groundable), so those fields stay
+    # OMITTED — never a guessed/false-positive flash-critical write.
+    raw = _fixture(name)
+    text = bb._visible_text(raw)
+    assert bb.extract_download_mode(text) is None
+    assert bb.extract_usb_serial(text) is None
+    assert bb.extract_images(raw, "https://wiki.seeedstudio.com/x") is None
+
+
+@pytest.mark.parametrize("name", list(SEEED_VERIFIED_URLS))
+def test_seeed_grounds_getting_started_only(name, tmp_path):
+    # (e) end-to-end on a bare board: each XIAO page grounds getting_started = the resolved URL
+    # and NOTHING else (download_mode + usb_serial + images OMITTED). Honest 0→1 per board.
+    path = _write_board(tmp_path, name, SEEED_SOC[name], brand="seeed")
+    url, fetch = _seeed_fetcher_for(name, name)
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url == SEEED_VERIFIED_URLS[name]
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert "download_mode" not in fm
+    assert "usb_serial" not in fm
+    assert "images" not in fm
+    cited = {s["field"]: s for s in fm["sources"]}
+    assert cited["getting_started"]["url"] == url
+    assert cited["getting_started"]["verified"] == TODAY
+
+
+def test_seeed_board_404_skipped_cleanly(tmp_path):
+    # (f) a board whose doc page 404s is SKIPPED doc-unreachable and left byte-for-byte
+    # unmodified — never a partial/invented write.
+    bid, soc = "xiao-esp32c3", "esp32-c3"
+    path = _write_board(tmp_path, bid, soc, brand="seeed")
+    before = path.read_text()
+    entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
+
+    assert entry["status"] == "skipped"
+    assert entry["reason"] == "doc-unreachable"
+    assert entry["modified"] is False
+    assert path.read_text() == before

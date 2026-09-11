@@ -264,6 +264,36 @@ def heltec_doc_candidates(board_id: str, soc: str) -> list[str]:
     return [f"{HELTEC_DOC_BASE}/{name}/index.html"]
 
 
+# ─── seeed doc-URL resolver (SPEC-board-backfill-vendors.md, Slice 6) ────────────
+# The 3 Seeed XIAO ESP32 boards each have an official getting-started page on
+# wiki.seeedstudio.com. UNLIKE heltec's clean deterministic rule, the Seeed wiki slugs are NOT
+# case-uniform: the C3 page is CamelCase (`XIAO_ESP32C3_Getting_Started`) while the C6/S3 pages
+# are lowercase (`xiao_esp32c6_getting_started`). A single naive rule can't yield all three, so —
+# like the m5stack/adafruit/lilygo maps — this resolver is a small EXPLICIT per-board map: only
+# URLs CONFIRMED live=200 on 2026-09-11 (each page's main content describes the matching chip;
+# their HTML is the Slice-6 fixtures) are ever emitted — never a guessed case variant. The
+# resolver claims only the 3 mapped XIAO ids; any other id yields [] (→ SKIPPED doc-unreachable,
+# never a guessed URL). Grounding on these wiki pages: getting_started grounds for all 3 (the
+# resolved 200 page IS the link); usb_serial / download_mode / images are not groundable on the
+# page text (extractors return None → omitted, cite-or-omit). `soc` is accepted for a uniform
+# resolver signature but unused: the map is keyed by board id.
+SEEED_DOC_URLS = {
+    "xiao-esp32c3": "https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/",
+    "xiao-esp32c6": "https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/",
+    "xiao-esp32s3": "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/",
+}
+
+
+def seeed_doc_candidates(board_id: str, soc: str) -> list[str]:
+    """Ordered candidate official doc URLs for a Seeed XIAO board on wiki.seeedstudio.com.
+    Returns the single live-verified getting-started page for a mapped board id, or [] for any
+    other id (→ the board is SKIPPED doc-unreachable, never guessed). `soc` is accepted for a
+    uniform resolver signature but unused: the map is keyed by board id (the wiki slugs are not
+    case-uniform, so no rule derives them)."""
+    url = SEEED_DOC_URLS.get(board_id)
+    return [url] if url else []
+
+
 # ─── vendor doc-URL resolver registry (SPEC-board-backfill-vendors.md, Slice 1) ──
 # A resolver maps a board to the ORDERED candidate official doc URLs to try (best-first) on
 # that vendor's own domain. Espressif's existing `doc_url_candidates` logic IS the
@@ -279,6 +309,7 @@ VENDOR_DOC_RESOLVERS: dict[str, Callable[[str, str], list[str]]] = {
     "adafruit": adafruit_doc_candidates,
     "lilygo": lilygo_doc_candidates,
     "heltec": heltec_doc_candidates,
+    "seeed": seeed_doc_candidates,
 }
 
 
