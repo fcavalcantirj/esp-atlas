@@ -173,6 +173,14 @@ def extract_download_mode(text: str) -> dict | None:
         which also contains the words "download mode") is skipped. -> {"mode": "manual",
         "steps": <that exact instruction sentence>}. Runs only after the Espressif branch, so
         Espressif boards are byte-identical.
+      * MANUAL (Seeed XIAO family) — the XIAO wiki calls the identical ESP32 ROM-download state
+        "bootloader mode" (entered via the BOOT button), which is semantically the same as
+        download mode. Grounds a sentence that BOTH names "bootloader mode" AND carries an
+        imperative BOOT-button ENGAGE action (hold/press BOOT), so descriptive hardware lines
+        ("...a bootloader mode button on the board.") and the non-actionable "you can try to
+        put XIAO into BootLoader mode..." hint do NOT ground. UF2 lines are skipped: the UF2
+        flow (board appears as a USB drive) is a DIFFERENT mechanism, not the esptool ROM-
+        download entry. -> {"mode": "manual", "steps": <that exact instruction sentence>}.
       * AUTO — a sentence that explicitly BINDS an auto-word to a flashing verb: `auto-reset`,
         or `automatic(ally)` sitting next to download/flash/bootloader (in either order). The
         auto-word MUST be tied to the flashing act, not merely co-occur in the sentence — some
@@ -193,6 +201,18 @@ def extract_download_mode(text: str) -> dict | None:
             continue
         if _M5_MANUAL_ACTION_RE.search(low):
             return {"mode": "manual", "steps": s.rstrip(".")}
+    for s in _sentences(text):  # Seeed XIAO family: "bootloader mode" == ROM download mode
+        low = s.lower()
+        if "bootloader mode" not in low or len(s) > _M5_STEPS_MAX:
+            continue
+        if "uf2" in low:  # UF2 flow (USB-drive), NOT the esptool ROM-download entry — skip
+            continue
+        # Ground ONLY when the sentence BOTH names bootloader mode AND carries an imperative
+        # physical BOOT-button action (hold/press BOOT). This excludes descriptive hardware
+        # lines ("...a bootloader mode button on the board.") and the non-actionable
+        # "you can try to put XIAO into BootLoader mode..." hint (cite-or-omit, flash-critical).
+        if "boot" in low and _M5_MANUAL_ACTION_RE.search(low):
+            return {"mode": "manual", "steps": s.rstrip(". ")}
     for s in _sentences(text):
         if _AUTO_DOWNLOAD_RE.search(s.lower()):
             return {"mode": "auto"}
