@@ -335,6 +335,18 @@ def extract_download_mode(text: str) -> dict | None:
         "...pressing EN initiates Firmware Download mode". Audio (esp-adf) boards phrase the
         same act as "...initiates the firmware upload mode" — treated as equivalent.
         -> {"mode": "manual", "steps": <that exact sentence>}.
+      * MANUAL (m5stack family) — those docs state download mode in a different grammar with
+        NO "Boot" sequence: under a "Download Mode" label / binding a physical button action
+        to entering it (PaperS3/StickS3 "...press and hold the reset button..."). Grounds the
+        CONCISE instruction sentence only — it must name "download mode" AND carry an
+        imperative AFFIRMATIVE ENGAGE action (press/hold/long-press/connect/plug) in the SAME
+        sentence, so a result-only confirmation ("When the internal green LED flashes, the
+        device has successfully entered download mode") is NOT captured, a bare-"release" half-
+        instruction (m5cardputer's tail, whose hold-G0 precondition is stranded in a spec
+        table) is NOT captured, and a flattened spec-table blob (over _M5_STEPS_MAX chars,
+        which also contains the words "download mode") is skipped. -> {"mode": "manual",
+        "steps": <that exact instruction sentence>}. Runs only after the Espressif branch, so
+        Espressif boards are byte-identical.
       * AUTO — a sentence that explicitly BINDS an auto-word to a flashing verb: `auto-reset`,
         or `automatic(ally)` sitting next to download/flash/bootloader (in either order). The
         auto-word MUST be tied to the flashing act, not merely co-occur in the sentence — some
@@ -349,10 +361,33 @@ def extract_download_mode(text: str) -> dict | None:
         second_button = "reset" in low or re.search(r"\ben\b", low) is not None
         if names_mode and "boot" in low and second_button:
             return {"mode": "manual", "steps": s.rstrip(".")}
+    for s in _sentences(text):  # m5stack-family manual phrasing (no Boot sequence)
+        low = s.lower()
+        if "download mode" not in low or len(s) > _M5_STEPS_MAX:
+            continue
+        if _M5_MANUAL_ACTION_RE.search(low):
+            return {"mode": "manual", "steps": s.rstrip(".")}
     for s in _sentences(text):
         if _AUTO_DOWNLOAD_RE.search(s.lower()):
             return {"mode": "auto"}
     return None
+
+
+# m5stack manual download-mode: an imperative AFFIRMATIVE ENGAGE action bound (same
+# sentence) to entering download mode. Matches press / press-and-hold / long press / hold /
+# connect / plug. Deliberately NOT bare "flash(es)"/"enter(ed)" (a result-only confirmation
+# line must not ground), and deliberately NOT "release": a release presupposes a prior HOLD,
+# so a sentence whose only action is "release" is a HALF-instruction (it tells the user to
+# let go of a button they were never told to hold) — worse than an omission on a flash-
+# critical field. m5cardputer's tail sentence ("...release the button, and the device will
+# enter download mode") is exactly that fragment; its hold-G0 precondition survives only
+# inside a flattened >_M5_STEPS_MAX spec table, so cardputer correctly OMITS (cite-or-omit).
+_M5_MANUAL_ACTION_RE = re.compile(
+    r"\b(?:press(?:ing)?|hold(?:ing)?|connect|plug)\b", re.I)
+# Concise-instruction guard: genuine m5stack instruction sentences are short; a flattened
+# spec/feature table (which also contains the words "download mode") runs to hundreds of
+# chars — never quote one as `steps`.
+_M5_STEPS_MAX = 300
 
 
 # Auto-download only grounds when an auto-word is BOUND to a flashing verb — not merely
