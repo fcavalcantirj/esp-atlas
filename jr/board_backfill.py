@@ -352,6 +352,42 @@ def unexpected_maker_doc_candidates(board_id: str, soc: str) -> list[str]:
     return [f"{UM_DOC_BASE}/{name}.html"]
 
 
+# ─── dfrobot doc-URL resolver (SPEC-board-backfill-vendors.md, Slice 9) ──────────
+# The 6 DFRobot ESP32 boards each have an official wiki page at wiki.dfrobot.com/dfrXXXX, where
+# dfrXXXX is the product's SKU. UNLIKE heltec/lolin's clean deterministic rule, the SKU is NOT
+# derivable from the board id (beetle-esp32-c3 → dfr0868, beetle-esp32-c6 → dfr1117 — adjacent
+# boards, non-adjacent SKUs), so — exactly like the seeed SEEED_DOC_URLS map — this resolver is
+# a small EXPLICIT per-board map: only URLs CONFIRMED live=200 on 2026-09-11 (each page's <title>
+# content-matches OUR board record — dfr0975 is the S3 N16R8 16MB/8MB-PSRAM variant, NOT dfr1145
+# the N4 4MB variant; dfr0478 is the original FireBeetle ESP32, not a "FireBeetle 2"; their HTML
+# is the Slice-9 fixtures) are ever emitted — never an invented/guessed SKU. The resolver claims
+# only the 6 mapped ids; any other id yields [] (→ SKIPPED doc-unreachable, never a guessed URL).
+# The frontmatter `brand` for these boards is exactly `dfrobot`, so it registers under that key.
+# Grounding on these wiki pages: getting_started grounds for all 6 (the resolved 200 page IS the
+# link); usb_serial grounds ch340 only where the page NAMES the bridge in product prose
+# (firebeetle-2-esp32-e / firebeetle-esp32 → ch340; the other four label only a JTAG debug PIN,
+# not the USB-Serial-JTAG flashing peripheral → omitted); download_mode is not stated and the
+# default image heuristic finds nothing (both → omitted, cite-or-omit; no image gate needed).
+# `soc` is accepted for a uniform resolver signature but unused: the map is keyed by board id.
+DFROBOT_DOC_URLS = {
+    "beetle-esp32-c3": "https://wiki.dfrobot.com/dfr0868",
+    "beetle-esp32-c6": "https://wiki.dfrobot.com/dfr1117",
+    "firebeetle-2-esp32-c6": "https://wiki.dfrobot.com/dfr1075",
+    "firebeetle-2-esp32-e": "https://wiki.dfrobot.com/dfr0654",
+    "firebeetle-2-esp32-s3": "https://wiki.dfrobot.com/dfr0975",
+    "firebeetle-esp32": "https://wiki.dfrobot.com/dfr0478",
+}
+
+
+def dfrobot_doc_candidates(board_id: str, soc: str) -> list[str]:
+    """Ordered candidate official doc URLs for a DFRobot board on wiki.dfrobot.com. Returns the
+    single live-verified `dfrXXXX` wiki page for a mapped board id, or [] for any other id (→ the
+    board is SKIPPED doc-unreachable, never guessed). `soc` is accepted for a uniform resolver
+    signature but unused: the map is keyed by board id (the SKU number is not derivable)."""
+    url = DFROBOT_DOC_URLS.get(board_id)
+    return [url] if url else []
+
+
 # ─── vendor doc-URL resolver registry (SPEC-board-backfill-vendors.md, Slice 1) ──
 # A resolver maps a board to the ORDERED candidate official doc URLs to try (best-first) on
 # that vendor's own domain. Espressif's existing `doc_url_candidates` logic IS the
@@ -370,6 +406,7 @@ VENDOR_DOC_RESOLVERS: dict[str, Callable[[str, str], list[str]]] = {
     "seeed": seeed_doc_candidates,
     "lolin": lolin_doc_candidates,
     "unexpected-maker": unexpected_maker_doc_candidates,
+    "dfrobot": dfrobot_doc_candidates,
 }
 
 

@@ -121,6 +121,31 @@ function per vendor, while the extraction/citation core stays single-sourced and
    until a dedicated UM image extractor exists (cite-or-omit, never a wrong image). Honest
    per-board delta on a real run: 0→2 (`getting_started` + `usb_serial`).
 
+9. **dfrobot (6 boards)** — `dfrobot_doc_candidates` on `wiki.dfrobot.com`, covering the 6 DFRobot
+   ESP32 boards (`beetle-esp32-c3`, `beetle-esp32-c6`, `firebeetle-2-esp32-c6`,
+   `firebeetle-2-esp32-e`, `firebeetle-2-esp32-s3`, `firebeetle-esp32`). Each board's official wiki
+   page is `wiki.dfrobot.com/dfrXXXX`, where `dfrXXXX` is the product SKU. UNLIKE heltec/lolin's
+   deterministic rule, the **SKU is NOT derivable** from the board id (beetle-esp32-c3 → dfr0868,
+   beetle-esp32-c6 → dfr1117 — adjacent boards, non-adjacent SKUs), so — like the seeed
+   `SEEED_DOC_URLS` map — this is a small **explicit per-board map** (`DFROBOT_DOC_URLS`) of the 6
+   URLs each fetched & verified 200 (no redirect) on 2026-09-11, with each page's `<title>`
+   content-matched to OUR board record (dfr0975 is the S3 **N16R8** 16MB/8MB-PSRAM variant, NOT
+   dfr1145 the N4 4MB variant; dfr0478 is the **original** FireBeetle ESP32, not a "FireBeetle 2").
+   Only confirmed URLs are ever emitted — never an invented/guessed SKU; the resolver claims only
+   the 6 mapped ids (else `[]` → skipped doc-unreachable, never a guessed URL); the frontmatter
+   `brand` is exactly `dfrobot`, so it registers under that key; the HTML is saved as the Slice-9
+   fixtures. **Grounds:** `getting_started` for all 6 (the resolved 200 wiki page IS the link);
+   `usb_serial` = `ch340` only where the page NAMES the bridge in product prose — firebeetle-2-esp32-e
+   ("uses the CH340 serial chip") and firebeetle-esp32 ("installing the CH340 driver … for
+   FireBeetle ESP32"); the latter is already filled `ch340` in the real data, so a real run adds only
+   `getting_started` for it. **Omitted:** `usb_serial` on beetle-c3 / beetle-c6 / firebeetle-2-c6 /
+   firebeetle-2-s3 — their pages name no bridge in a groundable form (the pinout table labels a JTAG
+   *debug pin*, not the USB-Serial-JTAG flashing peripheral, which must NOT false-positive the
+   extractor); `download_mode` on all 6 (no Boot+Reset "Firmware Download mode" sentence); `images`
+   on all 6 (the default filename heuristic finds nothing on any of the 6 — **no image gate needed**,
+   unlike lilygo/unexpected-maker). Honest per-board delta on a real run: 0→1 (`getting_started`),
+   or 0→2 (`getting_started` + `usb_serial`) for firebeetle-2-esp32-e.
+
 ## Pinout (`io.gpio_pins`) — deferred, separate track
 The trend's `pinout` is the `io.gpio_pins` **array** (raw exposed GPIO numbers), the hardest field:
 it needs a machine-readable pin table, not prose or a URL. It is out of scope for the vendor
