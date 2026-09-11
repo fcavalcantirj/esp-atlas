@@ -25,17 +25,17 @@ notes:
 - 16 MB flash, 8 MB PSRAM (ESP32-S3R8)
 - JST-GH battery connector; STEMMA QT/Qwiic; Touch and non-Touch variants
 - 'io.power_out QUOTED: vendor README Electrical Parameters section states "3V pin
-  header load does not exceed 100mA" (recorded as the board''s 3.3V logic rail);
-  the 5V pin header is USB-C passthrough with no fixed rating ("load capacity depends
+  header load does not exceed 100mA" (recorded as the board''s 3.3V logic rail); the
+  5V pin header is USB-C passthrough with no fixed rating ("load capacity depends
   on the USB-C adapter"), so only the 3V/100mA figure is recorded'
-- 'io.gpio_exposed/gpio_free OMITTED: the official GitHub repo''s pin-definition
-  header (examples/factory/pin_config.h) only names the ~25 GPIOs consumed by
-  the onboard 8080-parallel LCD bus, buttons, battery ADC, touch controller,
-  and optional SD shield; it does not enumerate the remaining header-broken-out
-  pins, and neither the product page nor README states a total exposed/usable
-  IO count in text (only an un-OCR''d pin-diagram image), so left unset per
-  cite-or-omit'
-- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
+- 'io.gpio_exposed/gpio_free OMITTED: the official GitHub repo''s pin-definition header
+  (examples/factory/pin_config.h) only names the ~25 GPIOs consumed by the onboard
+  8080-parallel LCD bus, buttons, battery ADC, touch controller, and optional SD shield;
+  it does not enumerate the remaining header-broken-out pins, and neither the product
+  page nor README states a total exposed/usable IO count in text (only an un-OCR''d
+  pin-diagram image), so left unset per cite-or-omit'
+- usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag
+getting_started: https://lilygo.cc/products/t-display-s3
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-display-s3
@@ -49,6 +49,9 @@ sources:
 - field: usb_serial
   url: https://www.lilygo.cc/products/t-display-s3
   verified: '2026-09-07'
+- field: getting_started
+  url: https://lilygo.cc/products/t-display-s3
+  verified: '2026-09-11'
 ---
 
 # T-Display-S3
