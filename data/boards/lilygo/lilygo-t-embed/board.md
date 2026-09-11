@@ -22,19 +22,25 @@ extras:
 io:
   gpio_exposed: 8
 notes:
-- 1.25mm battery interface with charge/discharge protection circuit (not JST); battery not included
+- 1.25mm battery interface with charge/discharge protection circuit (not JST); battery
+  not included
 - Rotary encoder with integrated confirm button, 24 detents, 12 pulses/360°
 - Dual microphones; 8ohm 1W speaker; 7x ring RGB LEDs
 - TF (microSD) card holder; 2.54mm 8-pin GPIO header
 - Wi-Fi 802.11 b/g/n, Bluetooth 5 + Bluetooth mesh
-- Official schematic labels the chip ESP32-S3R8 (8 MB Octal-SPI in-package PSRAM per Espressif's ESP32-S3 series datasheet); the R8 chip variant has no in-package flash, and the external flash chip's exact capacity is not identified in available LilyGO documentation, so flash_mb is left unset
-- 'io.gpio_exposed=8 QUOTED: product page technical-specs list states "2.54 x
-  8pin GPIO interface" as a distinct connector, separate from the display/
-  encoder/mic/speaker/LED/SD/radio pins already fully enumerated (and none
-  free) in the vendor pin-definition header (examples/factory/pin_config.h);
-  io.gpio_free OMITTED because neither the product page nor the schematic PDF
-  gives the individual GPIO numbers on that header, so subtracting
-  esp32-s3''s soc.reserved_pins cannot be done defensibly'
+- Official schematic labels the chip ESP32-S3R8 (8 MB Octal-SPI in-package PSRAM per
+  Espressif's ESP32-S3 series datasheet); the R8 chip variant has no in-package flash,
+  and the external flash chip's exact capacity is not identified in available LilyGO
+  documentation, so flash_mb is left unset
+- 'io.gpio_exposed=8 QUOTED: product page technical-specs list states "2.54 x 8pin
+  GPIO interface" as a distinct connector, separate from the display/ encoder/mic/speaker/LED/SD/radio
+  pins already fully enumerated (and none free) in the vendor pin-definition header
+  (examples/factory/pin_config.h); io.gpio_free OMITTED because neither the product
+  page nor the schematic PDF gives the individual GPIO numbers on that header, so
+  subtracting esp32-s3''s soc.reserved_pins cannot be done defensibly'
+getting_started: https://lilygo.cc/products/t-embed
+images:
+  photo: https://lilygo.cc/cdn/shop/products/T-Embed-K167-LILYGO_11.jpg
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-embed
@@ -45,6 +51,12 @@ sources:
 - field: io.gpio_exposed
   url: https://www.lilygo.cc/products/t-embed
   verified: '2026-08-26'
+- field: getting_started
+  url: https://lilygo.cc/products/t-embed
+  verified: '2026-09-11'
+- field: images
+  url: https://lilygo.cc/products/t-embed
+  verified: '2026-09-11'
 ---
 
 # T-Embed
