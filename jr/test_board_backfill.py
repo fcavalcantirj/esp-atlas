@@ -398,12 +398,61 @@ def test_usb_serial_extracts_correct_enum_from_real_pages(name, expected):
     ("esp-wrover-kit", "pressing EN initiates Firmware Download mode"),
     ("esp32-ethernet-kit", "pressing EN initiates Firmware Download mode"),
     ("esp32-s2-saola-1", "pressing Reset initiates Firmware Download mode"),
+    ("esp32-s3-devkitc-1", "pressing Reset initiates Firmware Download mode"),
     ("esp32-lyrat", "initiates the firmware upload mode"),   # esp-adf phrasing
 ])
 def test_download_mode_manual_extracts_with_exact_cited_steps(name, contains):
     dm = bb.extract_download_mode(bb._visible_text(_fixture(name)))
     assert dm is not None and dm["mode"] == "manual"
     assert contains in dm["steps"]  # the exact sentence quoted from the doc
+
+
+# ── m5stack-family manual download-mode (no "Boot" sequence) grounds the exact,
+#    actionable instruction sentence — cite-or-omit, NEVER the LED-confirmation line ──
+_M5_DOWNLOAD_MODE_STEPS = {
+    "m5stack-papers3": ("Download Mode Connect the device to a computer via USB cable, long "
+                        "press the power button on the M5PaperS3, when the back status light "
+                        "flashes red, it indicates the device has entered download mode"),
+    "m5stick-s3": ("Download Mode Connect the device with a USB cable and press and hold the "
+                   "reset button on the side of the device"),
+}
+
+
+@pytest.mark.parametrize("name", ["m5stack-papers3", "m5stick-s3"])
+def test_m5stack_download_mode_grounds_exact_actionable_sentence(name):
+    # PaperS3 and StickS3 state a COMPLETE, self-contained, actionable instruction in one
+    # sentence → grounded verbatim (cite-or-omit satisfied).
+    dm = bb.extract_download_mode(bb._visible_text(_fixture(name)))
+    assert dm == {"mode": "manual", "steps": _M5_DOWNLOAD_MODE_STEPS[name]}
+
+
+def test_m5cardputer_download_mode_omitted_misleading_fragment():
+    # FLASH-SAFETY cite-or-omit: m5cardputer's real procedure is two clauses — "...press and
+    # hold the G0 button before powering on. After supplying power to the device, release the
+    # button, and the device will enter download mode." The critical hold-G0 precondition
+    # survives ONLY inside a flattened >_M5_STEPS_MAX spec-table blob (correctly skipped). The
+    # only in-sentence-groundable tail is "...release the button, and the device will enter
+    # download mode" — a HALF-instruction telling the user to release a button they were never
+    # told to hold. A user following ONLY that quote cannot enter download mode, so grounding
+    # it would be worse than omitting. It must OMIT (bare "release" is not an engage action).
+    assert bb.extract_download_mode(bb._visible_text(_fixture("m5cardputer"))) is None
+
+
+def test_release_only_sentence_never_grounds_download_mode():
+    # Regression guard against re-introducing the cardputer fragment bug: a sentence whose
+    # ONLY action verb is "release" is not a complete entry instruction (release presupposes a
+    # prior hold) → must NOT ground.
+    assert bb.extract_download_mode(
+        "After powering on, release the button and the device will enter download mode.") is None
+
+
+def test_m5stick_s3_download_mode_is_instruction_not_led_confirmation():
+    # StickS3's page has TWO "download mode" sentences: the actionable instruction and a
+    # SEPARATE "When the internal green LED flashes, the device has successfully entered
+    # download mode." confirmation. We MUST cite the instruction, never the confirmation.
+    dm = bb.extract_download_mode(bb._visible_text(_fixture("m5stick-s3")))
+    assert "press and hold the reset button" in dm["steps"]
+    assert "green LED" not in dm["steps"] and "successfully entered" not in dm["steps"]
 
 
 def test_images_extract_where_the_page_links_them():
@@ -635,34 +684,44 @@ def test_m5stack_core2_grounds_getting_started_usb_serial_and_images(tmp_path):
 
 def test_m5stack_cardputer_grounds_native_jtag(tmp_path):
     # (d) Cardputer's REAL page states "USB Serial/JTAG" → native-usb-serial-jtag grounds.
+    # download_mode is OMITTED (flash-safety): its only in-sentence-groundable text is a
+    # misleading "release the button" tail fragment missing the hold-G0 precondition, which
+    # survives only inside a flattened spec table — cite-or-omit → never written.
     bid, soc = "m5cardputer", "esp32-s3"
     path = _write_board(tmp_path, bid, soc, brand="m5stack")
     url, fetch = _m5_fetcher_for(bid, "m5cardputer")
     entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
 
     assert entry["status"] == "backfilled"
+    assert "download_mode" in entry["omitted"]
     fm, _ = bb.parse_frontmatter(path)
     assert fm["usb_serial"] == "native-usb-serial-jtag"
     assert fm["getting_started"] == url
+    assert "download_mode" not in fm  # OMITTED — never grounded from a half-instruction
 
 
-def test_m5stack_stick_s3_grounds_getting_started_and_photo_only(tmp_path):
+def test_m5stack_stick_s3_grounds_getting_started_photo_and_manual_download_mode(tmp_path):
     # (e) StickS3's REAL page names NO bridge chip and no JTAG → usb_serial OMITTED. Its
     # carousel hero grounds images.photo, but its PinMap section is TABLES-ONLY (no diagram
     # image) → images.pinout correctly OMITTED (high-confidence-or-omit). getting_started
-    # grounds off the resolved URL.
+    # grounds off the resolved URL. download_mode now grounds via the m5stack manual branch
+    # (the actionable "...press and hold the reset button..." sentence, cited to the URL).
     bid, soc = "m5stick-s3", "esp32-s3"
     path = _write_board(tmp_path, bid, soc, brand="m5stack")
     url, fetch = _m5_fetcher_for(bid, "m5stick-s3")
     entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
 
     assert entry["status"] == "backfilled"
-    assert entry["written"] == ["getting_started", "images"]
-    assert set(entry["omitted"]) == {"download_mode", "usb_serial"}
+    assert entry["written"] == ["download_mode", "getting_started", "images"]
+    assert set(entry["omitted"]) == {"usb_serial"}
     fm, _ = bb.parse_frontmatter(path)
     assert fm["getting_started"] == url
     assert "usb_serial" not in fm
-    assert "download_mode" not in fm
+    assert fm["download_mode"]["mode"] == "manual"
+    assert "press and hold the reset button" in fm["download_mode"]["steps"]
+    # every written field carries its own citation to the resolved URL.
+    cited = {s["field"]: s for s in fm["sources"]}
+    assert cited["download_mode"]["url"] == url and cited["download_mode"]["verified"] == TODAY
     # photo grounded; pinout OMITTED (no diagram image under PinMap — pins are tabular).
     assert fm["images"]["photo"].endswith("K150-stickS3_main-products_01.webp")
     assert "pinout" not in fm["images"]
@@ -679,15 +738,15 @@ def test_m5stack_usb_serial_values_are_schema_enum_valid():
         assert val in enum
 
 
-def test_m5stack_download_mode_not_grounded_and_espressif_img_heuristic_finds_nothing():
-    # CRITICAL cite-or-omit: on the REAL m5stack pages the Espressif-tuned download_mode
-    # heuristic correctly returns None (no Boot-button sequence → no false positive), so
-    # download_mode stays omitted. And the ESPRESSIF filename image heuristic (the registry
-    # default) still finds NOTHING on m5stack's opaque CDN — m5stack images only ground via
-    # the dedicated context extractor (extract_images_m5stack), never the filename fallback.
+def test_m5stack_download_mode_core2_omitted_and_espressif_img_heuristic_finds_nothing():
+    # CRITICAL cite-or-omit: core2's page states NO download mode at all, so download_mode
+    # MUST stay None (the new m5stack manual branch does not over-match). And on ALL four
+    # m5stack pages the ESPRESSIF filename image heuristic (the registry default) still finds
+    # NOTHING on m5stack's opaque CDN — m5stack images only ground via the dedicated context
+    # extractor (extract_images_m5stack), never the filename fallback.
+    assert bb.extract_download_mode(bb._visible_text(_fixture("m5stack-core2"))) is None
     for name in ("m5stack-core2", "m5cardputer", "m5stick-s3", "m5stack-papers3"):
         raw = _fixture(name)
-        assert bb.extract_download_mode(bb._visible_text(raw)) is None
         assert bb.extract_images(raw, "https://docs.m5stack.com/en/core/X") is None
 
 
@@ -777,11 +836,17 @@ def test_m5stack_image_extractor_returns_none_on_pageless_html():
 def test_m5stack_papers3_automatic_port_recognition_is_not_auto_download():
     # CRITICAL cite-or-omit regression: the PaperS3 page says "automatic port recognition"
     # (the OS auto-detecting the serial PORT) — that is NOT an auto-DOWNLOAD/auto-reset flash
-    # claim. The download_mode auto-branch must NOT be fooled by it → returns None (omit).
-    # usb_serial still grounds (the page names CH9102).
+    # claim. The auto-download exclusion MUST stay intact: the auto regex must not match, and
+    # download_mode must NOT ground as "auto". (PaperS3 DOES ground as manual, but from its
+    # real "Download Mode ... long press the power button ..." instruction — the auto branch
+    # is never reached and never fooled.) usb_serial still grounds (the page names CH9102).
     raw = _fixture("m5stack-papers3")
     text = bb._visible_text(raw)
-    assert bb.extract_download_mode(text) is None    # "automatic port recognition" ≠ auto-download
+    assert bb._AUTO_DOWNLOAD_RE.search(text.lower()) is None  # "automatic port recognition" ≠ auto
+    assert bb._AUTO_DOWNLOAD_RE.search("automatic port recognition") is None
+    dm = bb.extract_download_mode(text)
+    assert dm["mode"] == "manual"                    # grounded from the real instruction, NOT auto
+    assert "long press the power button" in dm["steps"]
     assert bb.extract_usb_serial(text) == "ch9102"
 
 
