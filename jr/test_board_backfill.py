@@ -524,11 +524,12 @@ def test_registry_has_espressif_resolver_matching_doc_url_candidates():
 
 
 def test_unregistered_brand_skipped_no_resolver_and_file_unchanged(tmp_path):
-    # (b) a brand with NO registered resolver (waveshare — still unregistered after Slice 4)
-    # is skipped with reason "no-resolver" and left byte-for-byte unmodified — the guarantee
+    # (b) a brand with NO registered resolver (a fictional placeholder brand — every real vendor
+    # now has a resolver after Slice 13, so an invented one is used to exercise the no-resolver
+    # path) is skipped with reason "no-resolver" and left byte-for-byte unmodified — the guarantee
     # that a brand without a resolver is never touched.
-    bid, soc = "waveshare-esp32-s3-touch", "esp32-s3"
-    path = _write_board(tmp_path, bid, soc, brand="waveshare")
+    bid, soc = "noresolver-vendor-esp32-s3-touch", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="noresolver-vendor")
     before = path.read_text()
 
     entry = bb.backfill_board(path, tmp_path, _fetcher({_url(bid, soc): DOC_WITH_MANUAL}), TODAY)
@@ -540,12 +541,13 @@ def test_unregistered_brand_skipped_no_resolver_and_file_unchanged(tmp_path):
 
 
 def test_run_is_registry_driven_processing_only_resolvable_brands(tmp_path):
-    # (c) run() processes exactly the brands with a registered resolver (espressif + m5stack
-    # + adafruit + lilygo after Slice 4), NOT other vendors — driven off VENDOR_DOC_RESOLVERS
-    # keys, not a hardcoded brand. waveshare has no resolver → only LISTED, never processed.
+    # (c) run() processes exactly the brands with a registered resolver, NOT other vendors —
+    # driven off VENDOR_DOC_RESOLVERS keys, not a hardcoded brand. A fictional placeholder brand
+    # (every real vendor now has a resolver after Slice 13) has no resolver → only LISTED, never
+    # processed.
     p_esp = _write_board(tmp_path, "esp32-c5-devkitc-1", "esp32-c5")
     p_m5 = _write_board(tmp_path, "m5stack-core2", "esp32", brand="m5stack")
-    p_ws = _write_board(tmp_path, "waveshare-esp32-s3-touch", "esp32-s3", brand="waveshare")
+    p_ws = _write_board(tmp_path, "noresolver-vendor-board", "esp32-s3", brand="noresolver-vendor")
     before_m5, before_ws = p_m5.read_text(), p_ws.read_text()
     url = _url("esp32-c5-devkitc-1", "esp32-c5")
 
@@ -556,10 +558,10 @@ def test_run_is_registry_driven_processing_only_resolvable_brands(tmp_path):
     processed = {e["board_id"] for e in report["backfilled"]} | {e["board_id"] for e in report["skipped"]}
     assert "esp32-c5-devkitc-1" in processed
     assert "m5stack-core2" in processed              # m5stack is registered after Slice 2
-    assert "waveshare-esp32-s3-touch" not in processed
+    assert "noresolver-vendor-board" not in processed
     # a registered brand is NOT on the needs_doc_url list; only the unregistered one is
     assert "m5stack/m5stack-core2" not in report["needs_doc_url"]
-    assert "waveshare/waveshare-esp32-s3-touch" in report["needs_doc_url"]
+    assert "noresolver-vendor/noresolver-vendor-board" in report["needs_doc_url"]
     assert p_m5.read_text() == before_m5             # skipped (404) → unmodified
     assert p_ws.read_text() == before_ws             # no resolver → unmodified
 
@@ -2622,6 +2624,276 @@ def test_freenove_board_404_skipped_cleanly(tmp_path):
     # unmodified — never a partial/invented write.
     bid = "freenove-fnk0104a"
     path = _write_board(tmp_path, bid, FREENOVE_SOC[bid], brand="freenove")
+    before = path.read_text()
+    entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
+
+    assert entry["status"] == "skipped"
+    assert entry["reason"] == "doc-unreachable"
+    assert entry["modified"] is False
+    assert path.read_text() == before
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# SLICE 12 — elecrow vendor doc resolver (SPEC-board-backfill-vendors.md §Slice 12).
+# ──────────────────────────────────────────────────────────────────────────────
+# Registers the "elecrow" resolver on www.elecrow.com/wiki so board_backfill reaches the 1
+# Elecrow CrowPanel board. Its official page is an elecrow wiki article whose slug is NOT
+# derivable from the board id (elecrow-crowpanel-esp32-s3-579-epaper ->
+# CrowPanel_ESP32_E-paper_5.79-inch_HMI_Display), so - exactly like the seeed/dfrobot/
+# sparkfun/freenove maps - this resolver is a small EXPLICIT per-board map. Only the URL
+# CONFIRMED live=200 (content-matched to OUR board record) is ever emitted - never a guessed
+# slug. The resolver claims only the mapped id; any other id yields [] (-> skipped doc-
+# unreachable, never a guessed URL). The frontmatter `brand` for this board is exactly
+# `elecrow`. The HTML is saved as the Slice-12 fixture.
+#
+# EMPIRICAL grounding (measured on the REAL fetched wiki page under fixtures/):
+#   * getting_started - grounds (the resolved 200 doc page IS the link).
+#   * images          - grounds a PINOUT: the page embeds exactly one <img> whose filename and
+#                       alt text say "pinout" (ESP32-EPAPER-5.79inch-pinout.webp), and it lives
+#                       in THIS board's own asset folder (.../CrowPanel_ESP32_E-paper_5.79-inch_
+#                       HMI_Display/...) - the espressif filename heuristic (the registry default
+#                       for elecrow) grounds it, high-confidence-or-omit (it is this board's own
+#                       diagram, not a cross-board one - a wrong wiring diagram can fry a board).
+#   * usb_serial      - OMITTED: the page names no bridge chip in a groundable form (it states
+#                       only a "Type-C Interface ... for program flashing", not a chip enum), so
+#                       extract_usb_serial returns None (cite-or-omit).
+#   * download_mode   - OMITTED: the page states no Boot+Reset download-mode sentence that the
+#                       extractor grounds -> None (cite-or-omit; a wrong step can brick a board).
+# So this slice grounds getting_started + images(pinout) - an honest 0->2.
+
+ELECROW_VERIFIED_URLS = {
+    "elecrow-crowpanel-esp32-s3-579-epaper":
+        "https://www.elecrow.com/wiki/CrowPanel_ESP32_E-paper_5.79-inch_HMI_Display.html",
+}
+ELECROW_ALL_BOARDS = list(ELECROW_VERIFIED_URLS)
+ELECROW_SOC = {"elecrow-crowpanel-esp32-s3-579-epaper": "esp32-s3"}
+# The one board's own pinout diagram, absolute-resolved against its doc URL.
+ELECROW_PINOUT = ("https://www.elecrow.com/wiki/assets/images/"
+                  "CrowPanel_ESP32_E-paper_5.79-inch_HMI_Display/ESP32-EPAPER-5.79inch-pinout.webp")
+
+
+def test_elecrow_resolver_registered_returns_verified_docs_url():
+    # (a) the registry gained an "elecrow" entry, and it returns the EXACT live-verified
+    # www.elecrow.com/wiki article URL (best-first) for the board - from the explicit map (the
+    # slug is not derivable from the board id, never a guessed variant).
+    assert "elecrow" in bb.VENDOR_DOC_RESOLVERS
+    resolver = bb.VENDOR_DOC_RESOLVERS["elecrow"]
+    for bid, url in ELECROW_VERIFIED_URLS.items():
+        cands = resolver(bid, ELECROW_SOC[bid])
+        assert cands[0] == url, f"{bid} -> {cands[0]!r} != {url!r}"
+
+
+def test_elecrow_resolver_covers_the_board_on_wiki_domain():
+    # (b) the board resolves to a www.elecrow.com/wiki URL - it does not fall through uncovered.
+    resolver = bb.VENDOR_DOC_RESOLVERS["elecrow"]
+    for bid in ELECROW_ALL_BOARDS:
+        cands = resolver(bid, ELECROW_SOC[bid])
+        assert cands, f"{bid} yielded no candidate URL"
+        assert cands[0].startswith("https://www.elecrow.com/wiki/"), cands[0]
+
+
+def test_elecrow_resolver_unmapped_id_returns_empty():
+    # (c) the resolver only claims the mapped id; an id it doesn't own - including a plausible-
+    # but-unmapped elecrow id - yields [] (-> skipped doc-unreachable, never a guessed slug URL).
+    resolver = bb.VENDOR_DOC_RESOLVERS["elecrow"]
+    assert resolver("esp32-devkitc", "esp32") == []
+    assert resolver("heltec-wifi-kit-32-v3", "esp32-s3") == []
+    assert resolver("elecrow-crowpanel-esp32-s3-499-epaper", "esp32-s3") == []  # plausible-unmapped
+
+
+def _elecrow_fetcher_for(bid, fixture_name):
+    """Fake fetcher that serves the given fixture ONLY at the elecrow resolver's URL for `bid` -
+    any other URL 404s (proves resolution lands on the right page)."""
+    url = bb.VENDOR_DOC_RESOLVERS["elecrow"](bid, ELECROW_SOC[bid])[0]
+    return url, _fetcher({url: _fixture(fixture_name)})
+
+
+@pytest.mark.parametrize("name", ELECROW_ALL_BOARDS)
+def test_elecrow_usb_serial_download_mode_omitted_on_real_page(name):
+    # (d) CRITICAL cite-or-omit: on the REAL CrowPanel wiki page usb_serial and download_mode are
+    # ungroundable - the page names no bridge chip and states no Boot+Reset download sequence the
+    # extractor grounds - so each returns None (OMITTED, never a false-positive flash-critical write).
+    raw = _fixture(name)
+    assert bb.extract_usb_serial(bb._visible_text(raw)) is None
+    assert bb.extract_download_mode(bb._visible_text(raw)) is None
+
+
+@pytest.mark.parametrize("name", ELECROW_ALL_BOARDS)
+def test_elecrow_pinout_image_grounds_this_boards_own_diagram(name):
+    # (e) images grounds THIS board's own pinout diagram (filename+alt say "pinout", in the
+    # board's own asset folder) - high-confidence-or-omit, never a cross-board diagram.
+    raw = _fixture(name)
+    imgs = bb.extract_images(raw, ELECROW_VERIFIED_URLS[name])
+    assert imgs == {"pinout": ELECROW_PINOUT}, imgs
+
+
+def test_elecrow_grounds_getting_started_and_pinout(tmp_path):
+    # (f) end-to-end: the CrowPanel board grounds getting_started = the resolved URL AND
+    # images.pinout = its own diagram, each cited; usb_serial + download_mode OMITTED.
+    bid = "elecrow-crowpanel-esp32-s3-579-epaper"
+    path = _write_board(tmp_path, bid, ELECROW_SOC[bid], brand="elecrow")
+    url, fetch = _elecrow_fetcher_for(bid, bid)
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url == ELECROW_VERIFIED_URLS[bid]
+    assert set(entry["written"]) == {"getting_started", "images"}
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert fm["images"] == {"pinout": ELECROW_PINOUT}
+    assert "usb_serial" not in fm
+    assert "download_mode" not in fm
+    cited = {s["field"]: s for s in fm["sources"]}
+    assert cited["getting_started"]["url"] == url
+    assert cited["images"]["url"] == url
+    assert cited["images"]["verified"] == TODAY
+
+
+def test_elecrow_board_404_skipped_cleanly(tmp_path):
+    # (g) a board whose doc page 404s is SKIPPED doc-unreachable and left byte-for-byte
+    # unmodified - never a partial/invented write.
+    bid = "elecrow-crowpanel-esp32-s3-579-epaper"
+    path = _write_board(tmp_path, bid, ELECROW_SOC[bid], brand="elecrow")
+    before = path.read_text()
+    entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
+
+    assert entry["status"] == "skipped"
+    assert entry["reason"] == "doc-unreachable"
+    assert entry["modified"] is False
+    assert path.read_text() == before
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# SLICE 13 — waveshare vendor doc resolver (SPEC-board-backfill-vendors.md §Slice 13).
+# ──────────────────────────────────────────────────────────────────────────────
+# Registers the "waveshare" resolver on docs.waveshare.com so board_backfill reaches the 2
+# Waveshare ESP32-S3 boards. Each board's official page is a docs.waveshare.com wiki article
+# whose slug is NOT derivable from the board id (waveshare-esp32-s3-rlcd-42 -> ESP32-S3-RLCD-4.2,
+# waveshare-esp32-s3-touch-lcd-349 -> ESP32-S3-Touch-LCD-3.49 - the decimal dots come back), so -
+# exactly like the seeed/dfrobot/sparkfun/freenove maps - this resolver is a small EXPLICIT
+# per-board map. Only URLs CONFIRMED live=200 (content-matched to OUR board record) are ever
+# emitted - never a guessed slug. The resolver claims only the 2 mapped ids; any other id yields
+# [] (-> skipped doc-unreachable, never a guessed URL). The frontmatter `brand` for these boards
+# is exactly `waveshare`. The HTML is saved as the Slice-13 fixtures.
+#
+# EMPIRICAL grounding (measured on the REAL fetched wiki pages under fixtures/):
+#   * getting_started - grounds for BOTH (the resolved 200 doc page IS the link).
+#   * download_mode   - GATED OFF for the vendor (VENDOR_UNGROUNDABLE_FIELDS) -> OMITTED for both.
+#                       The docs.waveshare.com wiki renders its hardware description as a big
+#                       PERIODLESS table/list; _visible_text flattens the whole page into ONE
+#                       "sentence" (no ./!/? boundary), which contains the words "boot", "reset"/
+#                       "EN" and "download mode" - so extract_download_mode's Espressif manual
+#                       branch grabs the WHOLE-PAGE blob as `steps` (a >1000-char fragment), a
+#                       structural false-positive on a flash-critical field. That is the lilygo/
+#                       unexpected-maker trap at page-structure scale, so download_mode is gated
+#                       OFF and honestly reported OMITTED - never a blob write. (RLCD-4.2's real
+#                       instruction is even Boot-ONLY - "hold BOOT to power on again to enter
+#                       download mode", no Reset - so it isn't the standard Boot+Reset manual
+#                       sequence anyway; and neither page yields a clean citeable sentence.)
+#   * usb_serial      - OMITTED on both: the pages name no bridge chip in a groundable form (only
+#                       a "Type-C Interface ... for program flashing"), so extract_usb_serial -> None.
+#   * images          - OMITTED on both: the espressif filename heuristic (the registry default
+#                       for waveshare) finds no pinout/photo filename -> None (no gate needed).
+# So this slice grounds getting_started for both - an honest 0->1 per board.
+
+WAVESHARE_VERIFIED_URLS = {
+    "waveshare-esp32-s3-rlcd-42": "https://docs.waveshare.com/ESP32-S3-RLCD-4.2",
+    "waveshare-esp32-s3-touch-lcd-349": "https://docs.waveshare.com/ESP32-S3-Touch-LCD-3.49",
+}
+WAVESHARE_ALL_BOARDS = list(WAVESHARE_VERIFIED_URLS)
+WAVESHARE_SOC = {bid: "esp32-s3" for bid in WAVESHARE_ALL_BOARDS}
+
+
+def test_waveshare_resolver_registered_returns_verified_docs_urls():
+    # (a) the registry gained a "waveshare" entry, and it returns the EXACT live-verified
+    # docs.waveshare.com article URL (best-first) for both boards - from the explicit map (the
+    # slug is not derivable from the board id, never a guessed variant).
+    assert "waveshare" in bb.VENDOR_DOC_RESOLVERS
+    resolver = bb.VENDOR_DOC_RESOLVERS["waveshare"]
+    for bid, url in WAVESHARE_VERIFIED_URLS.items():
+        cands = resolver(bid, WAVESHARE_SOC[bid])
+        assert cands[0] == url, f"{bid} -> {cands[0]!r} != {url!r}"
+
+
+def test_waveshare_resolver_covers_both_boards_on_docs_domain():
+    # (b) both waveshare boards resolve to a docs.waveshare.com URL - no board falls through
+    # uncovered (0 -> 2 boards this slice).
+    resolver = bb.VENDOR_DOC_RESOLVERS["waveshare"]
+    for bid in WAVESHARE_ALL_BOARDS:
+        cands = resolver(bid, WAVESHARE_SOC[bid])
+        assert cands, f"{bid} yielded no candidate URL"
+        assert cands[0].startswith("https://docs.waveshare.com/"), cands[0]
+
+
+def test_waveshare_resolver_unmapped_id_returns_empty():
+    # (c) the resolver only claims the 2 mapped ids; an id it doesn't own - including a plausible-
+    # but-unmapped waveshare id - yields [] (-> skipped doc-unreachable, never a guessed slug URL).
+    resolver = bb.VENDOR_DOC_RESOLVERS["waveshare"]
+    assert resolver("esp32-devkitc", "esp32") == []
+    assert resolver("heltec-wifi-kit-32-v3", "esp32-s3") == []
+    assert resolver("waveshare-esp32-s3-touch-lcd-185", "esp32-s3") == []  # plausible-but-unmapped
+
+
+def _waveshare_fetcher_for(bid, fixture_name):
+    """Fake fetcher that serves the given fixture ONLY at the waveshare resolver's URL for `bid` -
+    any other URL 404s (proves resolution lands on the right page)."""
+    url = bb.VENDOR_DOC_RESOLVERS["waveshare"](bid, WAVESHARE_SOC[bid])[0]
+    return url, _fetcher({url: _fixture(fixture_name)})
+
+
+@pytest.mark.parametrize("name", WAVESHARE_ALL_BOARDS)
+def test_waveshare_download_mode_gated_off_because_page_flattens_to_blob(name):
+    # (d) CRITICAL flash-safety: download_mode is GATED OFF for waveshare. Prove WHY: on the REAL
+    # periodless wiki page the ungated extractor DOES fire - but only by swallowing the WHOLE PAGE
+    # as one "sentence" (a >1000-char blob), a fragment that must never be written as `steps`. The
+    # gate excludes the field so it is honestly OMITTED, never that blob.
+    dm_blob = bb.extract_download_mode(bb._visible_text(_fixture(name)))
+    assert dm_blob is not None and dm_blob["mode"] == "manual"      # the false-positive fires...
+    assert len(dm_blob["steps"]) > 1000                            # ...but only as a whole-page blob
+    assert "download_mode" in bb.VENDOR_UNGROUNDABLE_FIELDS["waveshare"]  # -> GATED OFF -> OMITTED
+
+
+@pytest.mark.parametrize("name", WAVESHARE_ALL_BOARDS)
+def test_waveshare_usb_serial_and_images_omitted_on_real_page(name):
+    # (e) CRITICAL cite-or-omit: on both REAL pages usb_serial names no groundable bridge chip and
+    # the image heuristic finds no pinout/photo filename -> each returns None (OMITTED, no gate needed).
+    raw = _fixture(name)
+    assert bb.extract_usb_serial(bb._visible_text(raw)) is None
+    assert bb.extract_images(raw, WAVESHARE_VERIFIED_URLS[name]) is None
+
+
+@pytest.mark.parametrize("name", WAVESHARE_ALL_BOARDS)
+def test_waveshare_grounds_getting_started_only(name, tmp_path):
+    # (f) end-to-end: each board grounds getting_started = the resolved URL and NOTHING else
+    # (download_mode gated off; usb_serial + images ungroundable -> all OMITTED). Honest 0->1.
+    path = _write_board(tmp_path, name, WAVESHARE_SOC[name], brand="waveshare")
+    url, fetch = _waveshare_fetcher_for(name, name)
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url == WAVESHARE_VERIFIED_URLS[name]
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "usb_serial", "images"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert "download_mode" not in fm       # gated off - never the whole-page blob
+    assert "usb_serial" not in fm
+    assert "images" not in fm
+    cited = {s["field"]: s for s in fm["sources"]}
+    assert cited["getting_started"]["url"] == url
+    assert cited["getting_started"]["verified"] == TODAY
+
+
+def test_waveshare_board_404_skipped_cleanly(tmp_path):
+    # (g) a board whose doc page 404s is SKIPPED doc-unreachable and left byte-for-byte
+    # unmodified - never a partial/invented write.
+    bid = "waveshare-esp32-s3-rlcd-42"
+    path = _write_board(tmp_path, bid, WAVESHARE_SOC[bid], brand="waveshare")
     before = path.read_text()
     entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
 

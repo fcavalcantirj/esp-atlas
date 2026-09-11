@@ -192,6 +192,46 @@ function per vendor, while the extraction/citation core stays single-sourced and
    on a real run: 0→1 (`getting_started`), with `usb_serial` + `download_mode` + `images` explicitly
    omitted.
 
+12. **elecrow (1 board)** — `elecrow_doc_candidates` on `www.elecrow.com/wiki`, covering the 1
+   Elecrow CrowPanel board (`elecrow-crowpanel-esp32-s3-579-epaper`). The wiki article slug is NOT
+   derivable from the board id (→ `CrowPanel_ESP32_E-paper_5.79-inch_HMI_Display` — the "579" becomes
+   "5.79-inch", "epaper" becomes "E-paper", and "HMI Display" is added), so — like the
+   seeed/dfrobot/sparkfun/freenove maps — this is a small **explicit per-board map**
+   (`ELECROW_DOC_URLS`), the single URL CONFIRMED live=200 on 2026-09-11 (content-matched to OUR
+   board record; its HTML is the Slice-12 fixture). Only the confirmed 200 URL is ever emitted —
+   never a guessed slug; the resolver claims only the mapped id (else `[]` → skipped doc-unreachable);
+   the frontmatter `brand` is exactly `elecrow`, so it registers under that key. **Grounds:**
+   `getting_started` (the resolved 200 page IS the link); `images` = a PINOUT — the page embeds one
+   `…-pinout.webp` under **this board's own** asset folder, so the default espressif filename
+   heuristic grounds it high-confidence-or-omit (this board's own diagram, never a cross-board one).
+   **Omitted:** `usb_serial` (the page names only a "Type-C Interface … for program flashing", not a
+   bridge chip enum — must NOT false-positive the flash-critical extractor); `download_mode` (no
+   groundable Boot+Reset download-mode sentence). Honest per-board delta on a real run: 0→2
+   (`getting_started` + `images`).
+
+13. **waveshare (2 boards)** — `waveshare_doc_candidates` on `docs.waveshare.com`, covering the 2
+   Waveshare ESP32-S3 boards (`waveshare-esp32-s3-rlcd-42`, `waveshare-esp32-s3-touch-lcd-349`). The
+   wiki article slug is NOT derivable from the board id (→ `ESP32-S3-RLCD-4.2` /
+   `ESP32-S3-Touch-LCD-3.49` — the "42"/"349" decimal dots come back and the casing/hyphenation is
+   fixed), so — like the seeed/dfrobot/sparkfun/freenove maps — this is a small **explicit per-board
+   map** (`WAVESHARE_DOC_URLS`), only URLs CONFIRMED live=200 on 2026-09-11 (content-matched to OUR
+   board records; their HTML is the Slice-13 fixtures). Only confirmed 200 URLs are ever emitted —
+   never a guessed slug; the resolver claims only the 2 mapped ids (else `[]` → skipped
+   doc-unreachable); the frontmatter `brand` is exactly `waveshare`, so it registers under that key.
+   **Grounds:** `getting_started` for both (the resolved 200 page IS the link). **Omitted:**
+   `usb_serial` on both (the pages name only a "Type-C Interface … for program flashing", not a
+   bridge chip enum); `images` on both (the default filename heuristic finds nothing — **no image
+   gate needed**); `download_mode` on both — **GATED OFF via `VENDOR_UNGROUNDABLE_FIELDS`**: the
+   docs.waveshare.com wiki flattens its hardware description into a big PERIODLESS table/list, so
+   `_visible_text` yields the WHOLE PAGE as one "sentence" containing boot/reset/"download mode" and
+   `extract_download_mode`'s manual branch swallows the **whole-page blob** as `steps` (a >1000-char
+   fragment) — a structural false-positive on a flash-critical field (the lilygo/unexpected-maker
+   trap at page-structure scale). Notably RLCD-4.2's real instruction is even Boot-ONLY ("hold BOOT
+   to power on again to enter download mode", no Reset), so it isn't the standard Boot+Reset manual
+   sequence anyway. Writing that blob would be worse than omitting → gated OFF, honestly OMITTED.
+   Honest per-board delta on a real run: 0→1 (`getting_started`). **This slice closes the
+   source-discovery campaign — 13 vendors registered.**
+
 ## Pinout (`io.gpio_pins`) — deferred, separate track
 The trend's `pinout` is the `io.gpio_pins` **array** (raw exposed GPIO numbers), the hardest field:
 it needs a machine-readable pin table, not prose or a URL. It is out of scope for the vendor

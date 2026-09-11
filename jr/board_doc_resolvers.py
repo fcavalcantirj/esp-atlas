@@ -430,6 +430,74 @@ def freenove_doc_candidates(board_id: str, soc: str) -> list[str]:
     return [url] if url else []
 
 
+# ─── elecrow doc-URL resolver (SPEC-board-backfill-vendors.md, Slice 12) ─────────
+# The 1 Elecrow CrowPanel ESP32-S3 board has an official wiki article at
+# www.elecrow.com/wiki/<Article>.html. UNLIKE heltec/lolin's clean deterministic rule, the
+# article slug is NOT derivable from the board id (elecrow-crowpanel-esp32-s3-579-epaper →
+# CrowPanel_ESP32_E-paper_5.79-inch_HMI_Display — the "579" becomes "5.79-inch", "epaper" becomes
+# "E-paper", and "HMI Display" is added), so — exactly like the seeed/dfrobot/sparkfun/freenove
+# maps — this resolver is a small EXPLICIT per-board map: only the URL CONFIRMED live=200 on
+# 2026-09-11 (the page content-matches OUR board record; its HTML is the Slice-12 fixture) is ever
+# emitted — never a guessed slug. The resolver claims only the mapped id; any other id yields []
+# (→ SKIPPED doc-unreachable, never a guessed URL). The frontmatter `brand` for this board is
+# exactly `elecrow`, so it registers under that key. Grounding on this wiki page: getting_started
+# grounds (the resolved 200 page IS the link); images grounds this board's OWN pinout diagram (the
+# page embeds one `…-pinout.webp` under the board's own asset folder — the espressif filename
+# heuristic, the registry default for elecrow, grounds it high-confidence-or-omit); usb_serial and
+# download_mode are not stated in a groundable form (both → None → OMITTED, cite-or-omit; no image
+# gate needed). `soc` is accepted for a uniform resolver signature but unused: the map is keyed by
+# board id (the article slug is not derivable).
+ELECROW_DOC_URLS = {
+    "elecrow-crowpanel-esp32-s3-579-epaper":
+        "https://www.elecrow.com/wiki/CrowPanel_ESP32_E-paper_5.79-inch_HMI_Display.html",
+}
+
+
+def elecrow_doc_candidates(board_id: str, soc: str) -> list[str]:
+    """Ordered candidate official doc URLs for an Elecrow board on www.elecrow.com/wiki. Returns
+    the single live-verified `<Article>.html` wiki page for a mapped board id, or [] for any other
+    id (→ the board is SKIPPED doc-unreachable, never guessed). `soc` is accepted for a uniform
+    resolver signature but unused: the map is keyed by board id (the article slug is not
+    derivable)."""
+    url = ELECROW_DOC_URLS.get(board_id)
+    return [url] if url else []
+
+
+# ─── waveshare doc-URL resolver (SPEC-board-backfill-vendors.md, Slice 13) ───────
+# The 2 Waveshare ESP32-S3 boards each have an official wiki article at
+# docs.waveshare.com/<Article>. UNLIKE heltec/lolin's clean deterministic rule, the article slug
+# is NOT derivable from the board id (waveshare-esp32-s3-rlcd-42 → ESP32-S3-RLCD-4.2,
+# waveshare-esp32-s3-touch-lcd-349 → ESP32-S3-Touch-LCD-3.49 — the "42"/"349" decimal dots come
+# back and the casing/hyphenation is fixed), so — exactly like the seeed/dfrobot/sparkfun/freenove
+# maps — this resolver is a small EXPLICIT per-board map: only URLs CONFIRMED live=200 on
+# 2026-09-11 (each page content-matches OUR board record; their HTML is the Slice-13 fixtures) are
+# ever emitted — never a guessed slug. The resolver claims only the 2 mapped ids; any other id
+# yields [] (→ SKIPPED doc-unreachable, never a guessed URL). The frontmatter `brand` for these
+# boards is exactly `waveshare`, so it registers under that key. Grounding on these wiki pages:
+# getting_started grounds for both (the resolved 200 page IS the link); usb_serial and images are
+# not groundable (no bridge chip named, no pinout/photo filename → None → OMITTED, cite-or-omit).
+# download_mode is GATED OFF for the vendor (see VENDOR_UNGROUNDABLE_FIELDS): the docs.waveshare.com
+# wiki flattens its hardware description into a big PERIODLESS table/list, so _visible_text yields
+# the WHOLE PAGE as one "sentence" containing boot/reset/"download mode" — extract_download_mode's
+# manual branch then swallows the whole-page blob as `steps`, a structural false-positive on a
+# flash-critical field. `soc` is accepted for a uniform resolver signature but unused: the map is
+# keyed by board id.
+WAVESHARE_DOC_URLS = {
+    "waveshare-esp32-s3-rlcd-42": "https://docs.waveshare.com/ESP32-S3-RLCD-4.2",
+    "waveshare-esp32-s3-touch-lcd-349": "https://docs.waveshare.com/ESP32-S3-Touch-LCD-3.49",
+}
+
+
+def waveshare_doc_candidates(board_id: str, soc: str) -> list[str]:
+    """Ordered candidate official doc URLs for a Waveshare board on docs.waveshare.com. Returns
+    the single live-verified `<Article>` wiki page for a mapped board id, or [] for any other id
+    (→ the board is SKIPPED doc-unreachable, never guessed). `soc` is accepted for a uniform
+    resolver signature but unused: the map is keyed by board id (the article slug is not
+    derivable)."""
+    url = WAVESHARE_DOC_URLS.get(board_id)
+    return [url] if url else []
+
+
 # ─── vendor doc-URL resolver registry (SPEC-board-backfill-vendors.md, Slice 1) ──
 # A resolver maps a board to the ORDERED candidate official doc URLs to try (best-first) on
 # that vendor's own domain. Espressif's existing `doc_url_candidates` logic IS the
@@ -449,6 +517,8 @@ VENDOR_DOC_RESOLVERS: dict[str, Callable[[str, str], list[str]]] = {
     "dfrobot": dfrobot_doc_candidates,
     "sparkfun": sparkfun_doc_candidates,
     "freenove": freenove_doc_candidates,
+    "elecrow": elecrow_doc_candidates,
+    "waveshare": waveshare_doc_candidates,
 }
 
 
@@ -473,4 +543,15 @@ VENDOR_DOC_RESOLVERS: dict[str, Callable[[str, str], list[str]]] = {
 VENDOR_UNGROUNDABLE_FIELDS: dict[str, frozenset[str]] = {
     "lilygo": frozenset({"usb_serial"}),
     "unexpected-maker": frozenset({"images"}),
+    # waveshare: docs.waveshare.com wiki pages render the hardware description as one big
+    # PERIODLESS table/list, so _visible_text flattens the ENTIRE page into a single "sentence"
+    # (no ./!/? boundary) that contains the words "boot", "reset"/"EN" and "download mode".
+    # extract_download_mode's Espressif manual branch then grabs that whole-page blob as `steps` —
+    # a >1000-char fragment, a structural false-positive on a FLASH-CRITICAL field (the lilygo/
+    # unexpected-maker trap at page-structure scale). Writing that blob (a fragment, never a clean
+    # button-sequence sentence) would be worse than omitting, so download_mode is gated OFF and
+    # honestly reported OMITTED. (RLCD-4.2's real instruction is even Boot-ONLY — "hold BOOT to
+    # power on again to enter download mode", no Reset — so it isn't the standard Boot+Reset manual
+    # sequence anyway.) A future slice that sentence-splits the flattened wiki text could lift this.
+    "waveshare": frozenset({"download_mode"}),
 }
