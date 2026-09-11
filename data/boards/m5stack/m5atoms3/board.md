@@ -37,6 +37,9 @@ notes:
   G21/G17/G15/G33/G34/G16, psram_mb=0). No max Grove/rail output current stated on
   this page, so power_out is omitted.'
 getting_started: https://docs.m5stack.com/en/core/AtomS3
+images:
+  photo: https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/products/core/AtomS3/4.webp
+  pinout: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/472/C123_PinMap_01.jpg
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/AtomS3
@@ -54,6 +57,9 @@ sources:
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/m5stack-atoms3.json
   verified: '2026-09-07'
 - field: getting_started
+  url: https://docs.m5stack.com/en/core/AtomS3
+  verified: '2026-09-11'
+- field: images
   url: https://docs.m5stack.com/en/core/AtomS3
   verified: '2026-09-11'
 ---

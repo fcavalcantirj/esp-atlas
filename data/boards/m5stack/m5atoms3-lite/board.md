@@ -31,6 +31,9 @@ notes:
   in either set -- gives 6 - 0 = 6. No max Grove/rail output current stated on this
   page, so power_out is omitted.'
 getting_started: https://docs.m5stack.com/en/core/AtomS3%20Lite
+images:
+  photo: https://static-cdn.m5stack.com/resource/docs/products/core/AtomS3 Lite/img-dc6432b6-fd9b-4066-9a4d-49786503d1a3.webp
+  pinout: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/471/C124_PinMap_01.jpg
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/AtomS3%20Lite
@@ -42,6 +45,9 @@ sources:
   url: https://docs.m5stack.com/en/core/AtomS3%20Lite
   verified: '2026-08-26'
 - field: getting_started
+  url: https://docs.m5stack.com/en/core/AtomS3%20Lite
+  verified: '2026-09-11'
+- field: images
   url: https://docs.m5stack.com/en/core/AtomS3%20Lite
   verified: '2026-09-11'
 ---
