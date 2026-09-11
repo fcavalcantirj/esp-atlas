@@ -1873,3 +1873,187 @@ def test_lolin_board_404_skipped_cleanly(tmp_path):
     assert entry["reason"] == "doc-unreachable"
     assert entry["modified"] is False
     assert path.read_text() == before
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# SLICE 8 — unexpected-maker vendor doc resolver (SPEC-board-backfill-vendors.md §Slice 8).
+# ──────────────────────────────────────────────────────────────────────────────
+# Registers the "unexpected-maker" resolver on esp32s3.com so board_backfill reaches the 4
+# Unexpected Maker ESP32-S3 boards (um-tinys3, um-pros3, um-nanos3, um-feathers3). LIKE heltec /
+# lolin, the doc URL is a clean DETERMINISTIC rule (verified live 2026-09-11 to yield all 4 real
+# doc pages, 200, each describing the correct ESP32-S3 board with a USB-C connector): strip the
+# `um-` prefix → `<name>`, then `https://esp32s3.com/<name>.html`. All 4 ids fit the rule exactly,
+# so no board is hardcoded (a future non-fitting board would go in a small verified override map,
+# never forced onto the rule). The resolver only claims `um-`-prefixed ids; any other id yields []
+# (→ skipped doc-unreachable, never a guessed URL). The HTML is saved as the Slice-8 fixtures.
+#
+# NOTE the frontmatter `brand` for these boards is exactly `unexpected-maker` (confirmed on the
+# real data/boards/unexpected-maker/* files), so the registry key is `unexpected-maker`.
+#
+# EMPIRICAL grounding (measured on the REAL fetched doc pages under fixtures/):
+#   * getting_started — grounds for ALL 4 (the resolved 200 doc page IS the link).
+#   * usb_serial      — grounds for ALL 4: every page states "Native USB + USB Serial JTAG" →
+#                       native-usb-serial-jtag (a schema-valid enum value, grounded off the page
+#                       text). NOTE the pages also mention USB-C, but usb_connector is not a
+#                       BACKFILL_FIELDS field, so it is never written here.
+#   * download_mode   — OMITTED on all 4: no Boot+Reset "Firmware Download mode" sentence.
+#   * images          — GATED OFF for the whole vendor (VENDOR_UNGROUNDABLE_FIELDS). The default
+#                       espressif filename heuristic is UNRELIABLE on esp32s3.com: the per-board
+#                       pinout diagrams are `images/pins_<board>.jpg` (which the heuristic's
+#                       pinout regex does NOT match), while a cross-linked generic
+#                       `images/tiny_pinout_matrix.jpg` DOES match — and the nanos3 page carries
+#                       BOTH its own nanos3_pinout_matrix.jpg AND tiny_pinout_matrix.jpg, so the
+#                       heuristic grounds the WRONG (tinys3) pinout first in DOM order. A wrong
+#                       wiring diagram can fry a board, so images is excluded from extraction for
+#                       unexpected-maker and honestly reported OMITTED (never written).
+# Honest per-board delta on a real run: usb_serial + getting_started grounded, download_mode +
+# images explicitly omitted.
+
+# The 4 URLs confirmed 200 by a live fetch on 2026-09-11 (their HTML is the Slice-8 fixtures).
+UM_VERIFIED_URLS = {
+    "um-tinys3": "https://esp32s3.com/tinys3.html",
+    "um-pros3": "https://esp32s3.com/pros3.html",
+    "um-nanos3": "https://esp32s3.com/nanos3.html",
+    "um-feathers3": "https://esp32s3.com/feathers3.html",
+}
+
+# All 4 unexpected-maker board ids the resolver must cover (data/boards/unexpected-maker/* dirs).
+UM_ALL_BOARDS = list(UM_VERIFIED_URLS)
+UM_SOC = {bid: "esp32-s3" for bid in UM_VERIFIED_URLS}   # all four are ESP32-S3
+
+
+def test_um_resolver_registered_returns_verified_docs_urls():
+    # (a) the registry gained an "unexpected-maker" entry (the exact frontmatter brand), and its
+    # deterministic rule returns the EXACT live-verified esp32s3.com URL (best-first) for all 4.
+    assert "unexpected-maker" in bb.VENDOR_DOC_RESOLVERS
+    resolver = bb.VENDOR_DOC_RESOLVERS["unexpected-maker"]
+    for bid, url in UM_VERIFIED_URLS.items():
+        cands = resolver(bid, UM_SOC[bid])
+        assert cands[0] == url, f"{bid} → {cands[0]!r} != {url!r}"
+
+
+def test_um_resolver_covers_all_4_boards_on_esp32s3_domain():
+    # (b) every one of the 4 unexpected-maker boards resolves to an esp32s3.com URL — no board
+    # falls through uncovered (0 → 4 boards this slice).
+    resolver = bb.VENDOR_DOC_RESOLVERS["unexpected-maker"]
+    for bid in UM_ALL_BOARDS:
+        cands = resolver(bid, UM_SOC[bid])
+        assert cands, f"{bid} yielded no candidate URL"
+        assert cands[0].startswith("https://esp32s3.com/"), cands[0]
+        assert cands[0].endswith(".html"), cands[0]
+
+
+def test_um_resolver_non_um_id_returns_empty():
+    # (c) the resolver only claims um-prefixed ids; an id it doesn't own yields [] (→ that board
+    # would be skipped doc-unreachable, never sent to a guessed esp32s3.com URL).
+    resolver = bb.VENDOR_DOC_RESOLVERS["unexpected-maker"]
+    assert resolver("esp32-devkitc", "esp32") == []
+    assert resolver("heltec-wifi-kit-32-v3", "esp32-s3") == []
+    assert resolver("lolin-s3", "esp32-s3") == []
+
+
+def _um_fetcher_for(bid, fixture_name):
+    """Fake fetcher that serves the given fixture ONLY at the unexpected-maker resolver's URL for
+    `bid` — any other URL 404s (proves resolution lands on the right page)."""
+    url = bb.VENDOR_DOC_RESOLVERS["unexpected-maker"](bid, UM_SOC[bid])[0]
+    return url, _fetcher({url: _fixture(fixture_name)})
+
+
+@pytest.mark.parametrize("name", list(UM_VERIFIED_URLS))
+def test_um_usb_serial_grounds_native_jtag_on_every_page(name):
+    # (d) every real esp32s3.com page states "Native USB + USB Serial JTAG", so usb_serial
+    # grounds to native-usb-serial-jtag (a schema-valid enum value), grounded off the page text.
+    val = bb.extract_usb_serial(bb._visible_text(_fixture(name)))
+    assert val == "native-usb-serial-jtag", f"{name} → {val!r}"
+
+
+@pytest.mark.parametrize("name", list(UM_VERIFIED_URLS))
+def test_um_download_mode_omitted_on_real_pages(name):
+    # (e) CRITICAL cite-or-omit: on ALL 4 REAL pages the download_mode heuristic returns None
+    # (no Boot+Reset "Firmware Download mode" sentence), so download_mode stays omitted.
+    assert bb.extract_download_mode(bb._visible_text(_fixture(name))) is None
+
+
+def test_um_images_gated_off_because_espressif_heuristic_misgrounds():
+    # (f) CRITICAL wiring-safety: the default espressif filename heuristic is UNRELIABLE on
+    # esp32s3.com. The nanos3 page carries BOTH its own nanos3_pinout_matrix.jpg AND a
+    # cross-linked tiny_pinout_matrix.jpg; the heuristic grounds the WRONG (tinys3) pinout first
+    # in DOM order. A wrong wiring diagram can fry a board, so images is gated OFF for the whole
+    # vendor. Proven here: the raw heuristic mis-grounds AND the gate is registered.
+    wrong = bb.extract_images(_fixture("um-nanos3"), "https://esp32s3.com/nanos3.html")
+    assert wrong is not None and "tiny_pinout_matrix" in wrong.get("pinout", "")   # the trap
+    assert "images" in bb.VENDOR_UNGROUNDABLE_FIELDS["unexpected-maker"]
+
+
+def test_um_tinys3_grounds_usb_serial_and_getting_started(tmp_path):
+    # (g) end-to-end on a BARE board: tinys3's page grounds usb_serial=native-usb-serial-jtag AND
+    # getting_started = the URL; download_mode + images are OMITTED (images gated off).
+    bid, soc = "um-tinys3", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="unexpected-maker")
+    url, fetch = _um_fetcher_for(bid, "um-tinys3")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == url
+    assert entry["written"] == ["usb_serial", "getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "images"}
+    assert entry["partial"] is True
+
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert fm["usb_serial"] == "native-usb-serial-jtag"
+    assert "download_mode" not in fm
+    assert "images" not in fm
+    cited = {s["field"]: s for s in fm["sources"]}
+    assert cited["getting_started"]["url"] == url and cited["getting_started"]["verified"] == TODAY
+    assert cited["usb_serial"]["url"] == url and cited["usb_serial"]["verified"] == TODAY
+
+
+def test_um_nanos3_never_writes_the_wrong_pinout(tmp_path):
+    # (h) end-to-end on the trap board: nanos3 must NEVER get the mis-grounded tinys3 pinout.
+    # The vendor gate excludes images from extraction, so it is OMITTED (not written), while
+    # usb_serial + getting_started still ground honestly.
+    bid, soc = "um-nanos3", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="unexpected-maker")
+    url, fetch = _um_fetcher_for(bid, "um-nanos3")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["written"] == ["usb_serial", "getting_started"]
+    assert "images" in entry["omitted"]
+    fm, _ = bb.parse_frontmatter(path)
+    assert "images" not in fm
+    assert fm["usb_serial"] == "native-usb-serial-jtag"
+
+
+def test_um_grounds_getting_started_when_usb_serial_already_filled(tmp_path):
+    # (i) mirrors a real run where usb_serial is already present: backfill writes ONLY
+    # getting_started, never touching the pre-filled usb_serial; download_mode + images omitted.
+    bid, soc = "um-feathers3", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="unexpected-maker",
+                        extra_fields="usb_serial: native-usb-serial-jtag\n")
+    url, fetch = _um_fetcher_for(bid, "um-feathers3")
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+
+    assert entry["status"] == "backfilled"
+    assert entry["written"] == ["getting_started"]
+    assert set(entry["omitted"]) == {"download_mode", "images"}
+    fm, _ = bb.parse_frontmatter(path)
+    assert fm["getting_started"] == url
+    assert fm["usb_serial"] == "native-usb-serial-jtag"    # pre-filled, untouched
+    usb_sources = [s for s in fm["sources"] if s["field"] == "usb_serial"]
+    assert usb_sources == []                                # no new citation for a filled field
+
+
+def test_um_board_404_skipped_cleanly(tmp_path):
+    # (j) a board whose doc page 404s is SKIPPED doc-unreachable and left byte-for-byte
+    # unmodified — never a partial/invented write.
+    bid, soc = "um-pros3", "esp32-s3"
+    path = _write_board(tmp_path, bid, soc, brand="unexpected-maker")
+    before = path.read_text()
+    entry = bb.backfill_board(path, tmp_path, _fetcher({}), TODAY)  # every URL 404s
+
+    assert entry["status"] == "skipped"
+    assert entry["reason"] == "doc-unreachable"
+    assert entry["modified"] is False
+    assert path.read_text() == before

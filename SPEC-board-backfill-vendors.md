@@ -105,6 +105,22 @@ function per vendor, while the extraction/citation core stays single-sourced and
    per-board delta on a real run: 0→1 (`getting_started`), with `download_mode` + `images` (and
    `usb_serial` where the page names no bridge) explicitly omitted.
 
+8. **unexpected-maker (4 boards)** — `unexpected_maker_doc_candidates` on `esp32s3.com`, covering
+   the 4 Unexpected Maker boards (`um-tinys3`, `um-pros3`, `um-nanos3`, `um-feathers3`). LIKE
+   heltec / lolin, a clean **deterministic rule** (verified live 2026-09-11, all 4 return 200 and
+   each describes the correct ESP32-S3 board with a USB-C connector): strip the `um-` prefix →
+   `<name>`, then `https://esp32s3.com/<name>.html`. All 4 ids fit the rule exactly, so none is
+   hardcoded; the resolver only claims `um-`-prefixed ids (else `[]` → skipped doc-unreachable,
+   never a guessed URL); the frontmatter `brand` is exactly `unexpected-maker`, so it registers
+   under that key; the HTML is saved as the Slice-8 fixtures. **Grounds:** `getting_started` for
+   all 4 (the resolved 200 doc page IS the link); `usb_serial` for all 4 (each page states
+   "Native USB + USB Serial JTAG" → `native-usb-serial-jtag`). **Omitted:** `download_mode` on all
+   4 (no Boot+Reset "Firmware Download mode" sentence). **`images` is GATED OFF for the vendor**
+   (added to `VENDOR_UNGROUNDABLE_FIELDS`): the espressif filename image heuristic mis-grounds a
+   cross-board pinout graphic on `um-nanos3`, so images must never auto-ground for these pages
+   until a dedicated UM image extractor exists (cite-or-omit, never a wrong image). Honest
+   per-board delta on a real run: 0→2 (`getting_started` + `usb_serial`).
+
 ## Pinout (`io.gpio_pins`) — deferred, separate track
 The trend's `pinout` is the `io.gpio_pins` **array** (raw exposed GPIO numbers), the hardest field:
 it needs a machine-readable pin table, not prose or a URL. It is out of scope for the vendor

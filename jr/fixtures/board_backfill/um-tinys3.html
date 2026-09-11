@@ -1,0 +1,671 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+	<meta charset="utf-8">
+	
+	<!--====== Title ======-->
+	<title>Introducing the TinyS3 by Unexpected Maker</title>
+	
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!--====== Favicon Icon ======-->
+	<link rel="shortcut icon" href="assets/images/favicon.png" type="image/png">
+		
+	<!--====== Magnific Popup CSS ======-->
+	<link rel="stylesheet" href="assets/css/magnific-popup.css">
+		
+	<!--====== Slick CSS ======-->
+	<link rel="stylesheet" href="assets/css/slick.css">
+		
+	<!--====== Line Icons CSS ======-->
+	<link rel="stylesheet" href="assets/css/LineIcons.css">
+		
+	<!--====== Bootstrap CSS ======-->
+	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	
+	<!--====== Default CSS ======-->
+	<link rel="stylesheet" href="assets/css/default.css">
+	
+	<!--====== Style CSS ======-->
+	<link rel="stylesheet" href="assets/css/style.css">
+	
+</head>
+
+<body>
+	<!--[if IE]>
+	<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+  <![endif]-->
+   
+	<!--====== PRELOADER PART START ======-->
+
+	<div class="preloader">
+		<div class="loader">
+			<div class="ytp-spinner">
+				<div class="ytp-spinner-container">
+					<div class="ytp-spinner-rotator">
+						<div class="ytp-spinner-left">
+							<div class="ytp-spinner-circle"></div>
+						</div>
+						<div class="ytp-spinner-right">
+							<div class="ytp-spinner-circle"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--====== PRELOADER PART ENDS ======-->
+	<div id="esp32s3_info"></div>
+	
+	<section class="navbar-area" >
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<nav class="navbar navbar-expand-lg">
+					   
+						<a class="navbar-brand" href="/">
+							<img src="images/logo_esp32s3_white.svg" alt="Logo" style="height:50px;">
+						</a>
+						
+						<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTwo" aria-controls="navbarTwo" aria-expanded="false" aria-label="Toggle navigation">
+							<span class="toggler-icon"></span>
+							<span class="toggler-icon"></span>
+							<span class="toggler-icon"></span>
+						</button>
+
+						<div class="collapse navbar-collapse sub-menu-bar" id="navbarTwo">
+							<ul class="navbar-nav m-auto">
+								<li class="nav-item"><a class="page-scroll" href="/index.html#esp32s3_info">ESP32-S3</a></li>
+								<li class="nav-item active"><a class="page-scroll" href="#home">TinyS3</a></li>
+								<li class="nav-item"><a class="page-scroll" href="/index.html#boards">Boards</a></li>
+								<li class="nav-item"><a class="page-scroll" href="/index.html#faq">FAQ</a></li>
+								<li class="nav-item"><a class="page-scroll" href="/getting-started.html">Getting Started</a></li>
+								<li class="nav-item"><a href="https://help.unexpectedmaker.com" target="_blank">HELP</a></li>
+<!-- 								<li class="nav-item"><a class="page-scroll" href="/coding-examples.html">Coding Examples</a></li> -->
+								<li class="nav-item"><a class="page-scroll" href="#contact">Contact</a></li>
+							</ul>
+						</div>
+						
+						<div class="navbar-btn">
+							<ul>
+								<li><a class="solid page-scroll" href="/index.html#buy">BUY</a></li>
+							</ul>
+						</div>
+						
+					</nav> <!-- navbar -->
+				</div>
+			</div> <!-- row -->
+		</div> <!-- container -->
+	</section>
+
+		
+	<section id="home" class="slider_area">
+		<div id="carouselThree" class="carousel slide" data-ride="carousel">
+			<div class="carousel-inner">
+				<div class="carousel-item active">
+					<div class="container">
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="slider-content">
+									<span class="title">Introducing the new TinyS3 from Unexpected Maker</span>
+								</div>
+							</div>
+						</div> 
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	
+
+	<section class="about-area">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-12">
+					<div class="section-title text-center">
+						<img src="images/logo_tinys3.svg" height="100" alt="Hero" class="mt-4">
+						<h3 class="sub-title mt-4">TinyS3 is the latest in our super popular range of "Tiny" development boards.</h3>
+						<p class="text mb-2">It's packed with amazing features and peripherals, wireless connectivity and stacks of Flash and PSRAM, all in the same tiny package size as the original TinyPICO!</p>
+						
+					</div>
+				</div>
+			</div>
+			
+			<div class="row justify-content-top" style="text-align:top;">
+				<div class="d-none d-lg-block col-lg-2">
+					<div style="position: fixed;">
+						<a href='#home' class="page-scroll" style="color:#009C53;"><button class="btn btn-sm btn-outline-success m-1" style="width:140px;">FEATURES</button></a>
+						<br>
+						<a href='#compare' class="page-scroll" style="color:#009C53;"><button class="btn btn-sm btn-outline-success m-1" style="width:140px;">COMPARE</button></a>
+						<br>
+						<a href='#code' class="page-scroll" style="color:#009C53;"><button class="btn btn-sm btn-outline-success m-1" style="width:140px;">PLATFORMS</button></a>
+						<br>
+						<a href='#downloads' class="page-scroll" style="color:#009C53;"><button class="btn btn-sm btn-outline-success m-1" style="width:140px;">DOWNLOADS</button></a>
+						<br>
+						<a href='https://help.unexpectedmaker.com' style="color:#00639c;"><button class="btn btn-sm btn-outline-success m-1" style="width:140px;">KNOWLEDGE BASE</button></a>
+						<br>
+						<a href='https://unexpectedmaker.com/tinys3' style="color:#00639c;"><button class="btn btn-sm btn-outline-success m-1" style="width:140px;">BUY TINYS3</button></a>
+						<br>
+					</div>
+				</div>
+				<div class="col-12 col-lg-10">
+					
+					<section>
+						<div class="container">
+							<div class="row justify-content-center">
+								<a href="#img0" class="text-center">
+									<img src="images/main_features_tinys3.jpg" alt="Hero" class="mt-4" style="width:80%;">
+								</a>
+								<!-- lightbox container hidden with CSS -->
+								<a href="#home" class="lightbox" id="img0">
+								  <span style="background-image: url('images/main_features_tinys3.jpg')"></span>
+								</a>
+								<div class="col-lg-6 col-12">
+									<div class="section-title text-center mt-4" id="pins">
+										<h3 class="title mt-2">Features</h3>
+									</div> <!-- row -->
+								</div>
+							</div> <!-- row -->
+							
+							<div class="row justify-content-center mb-3">
+								<div class="col-12 col-lg-6 p-3 text-left features-list">
+									<ul>
+										<li>Dual 32bit Xtensa LX7 cores @ up to 240Mhz</li>
+										<li>RISC-V Ultra Low Power Co-processor</li>
+										<li>2.4GHz Wifi - 802.11b/g/n</li>
+										<li>Bluetooth 5, BLE + Mesh</li>
+										<li>8MB QSPI Flash</li>
+										<li>8MB of extra QSPI PSRAM</li>
+										<li>700mA 3.3V LDO Regulator</li>
+										<li>Low power RGB LED</li>
+										<li><strong>ULTRA LOW Deep Sleep Current</strong></li>
+										
+									</ul>
+								</div>
+								<div class="col-12 col-lg-6 p-3 text-left features-list">
+									<ul>
+										<li>USB-C Connector with back-feed protection</li>
+										<li>Native USB + USB Serial JTAG</li>
+										<li>LiPo Battery Charging</li>
+										<li>JST pads on the back supports PH connector</li>
+										<li>VBAT and 5V Sense Pins</li>
+										<li>3D High Gain Antenna or u.FL connector<</li>
+										<li>17 GPIO</li>
+										<li>Only 35 x 18mm in size</li>
+										<li>Compatible with TinyPICO & TinyS2</li>
+									</ul>
+								</div>
+
+								<div class="col-12 p-3 text-center">
+									<a href="#img1">
+										<img class="shape mt-2" src="images/pins_tinys3.jpg" alt="Shape" style="width:80%;">
+									</a>
+									<!-- lightbox container hidden with CSS -->
+									<a href="#pins" class="lightbox" id="img1">
+									  <span style="background-image: url('images/pins_tinys3.jpg')"></span>
+									</a>
+								</div>
+								<div class="col-6 text-right">
+									<span style="font-weight:600;">Board Dimensions</span>
+								</div>
+								<div class="col-6 text-left">
+									35mm x 17.8mm
+								</div>
+								<div class="col-6 text-right">
+									<span style="font-weight:600;">Max Thickness</span>
+								</div>
+								<div class="col-6 text-left">
+									4.3mm at the USB-C end
+								</div>
+							</div>
+						</div>
+					</section>
+					
+					<br id="compare" />
+					
+					<section>
+						<div class="container mt-4 mb-4 mr-4">
+							<div class="row justify-content-center">
+								<div class="col-12">
+									<div class="section-title text-center mt-4" id="pins">
+										<h4 class="title mt-2">Board Comparison Matrix</h4>
+									</div> <!-- row -->
+								</div>
+							</div> <!-- row -->
+							
+							<div class="row justify-content-center" style="border-bottom:1px solid #fff;">
+								<div class="col-2">
+									&nbsp;
+								</div>
+								<div class="col-4 th">
+									<span>TinyS3</span>
+								</div>
+								<div class="col-3 th" style="background-color:#ff8500;">
+									<span>TinyS2</span>
+								</div>
+								<div class="col-3 th" style="background-color:#0078ff;">
+									<span>TinyPICO</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_alt">
+								<div class="col-2">
+									<span>MCU</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53;">
+									<span>ESP32-S3FN8</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>ESP32-S2FN4R2</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>ESP32-PICO-D4</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_norm">
+								<div class="col-2">
+									<span>Cores</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53; background-color: #dfede7;">
+									<span>2x Xtensa LX7</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>1x Xtensa LX7</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>2x Xtensa LX6</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_alt">
+								<div class="col-2">
+									<span>Speed</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53;">
+									<span>Up to 240Mhz</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>Up to 240Mhz</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>Up to 240Mhz</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_norm">
+								<div class="col-2">
+									<span>ULP CoProc</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53; background-color: #dfede7;">
+									<span>1x RISC-V, 1x FSM</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>1x RISC-V, 1x FSM</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>1x FSM</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_alt">
+								<div class="col-2">
+									<span>SRAM</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53;">
+									<span>512K</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>320K</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>520K</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_norm">
+								<div class="col-2">
+									<span>FLASH</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53; background-color: #dfede7;">
+									<span>8MB</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>4MB</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>4MB</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_alt">
+								<div class="col-2">
+									<span>PSRAM</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53;">
+									<span>8MB</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>2MB</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>4MB</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_norm">
+								<div class="col-2">
+									<span>GPIO</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53; background-color: #dfede7;">
+									<span>17</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>17</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>14</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_alt">
+								<div class="col-2">
+									<span>Native USB</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53;">
+									<span>CDC, OTG & USB Serial JTag</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>CDC & OTG</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>-</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_norm">
+								<div class="col-2">
+									<span>USB Conn</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53; background-color: #dfede7;">
+									<span>USB-C</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>USB-C</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>USB-C & Micro-B</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_alt">
+								<div class="col-2">
+									<span>WiFi</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53;">
+									<span>2.4Ghz  b/g/n</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>2.4Ghz  b/g/n</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>2.4Ghz  b/g/n</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_norm">
+								<div class="col-2">
+									<span>Bluetooth</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53; background-color: #dfede7;">
+									<span>BLE 5 & Mesh</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>-</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>BT Classic & BLE 4.2</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_alt">
+								<div class="col-2">
+									<span>DAC</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53;">
+									<span>-</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>2x 8bit</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>2x 8bit</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_norm">
+								<div class="col-2">
+									<span>ADC</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53; background-color: #dfede7;">
+									<span>2x 12-bit SAR /20 chan</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>2x 12-bit SAR /20 chan</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>1x 12-bit SAR /18 chan</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_alt">
+								<div class="col-2">
+									<span>UARTs</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53;">
+									<span>3</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>2</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>3</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_norm">
+								<div class="col-2">
+									<span>ETH MAC</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53; background-color: #dfede7;">
+									<span>-</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>Yes</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>Yes</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_alt">
+								<div class="col-2">
+									<span>DMA Cont</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53;">
+									<span>5x TX chan, 5x RX chan </span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>-</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>-</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_norm">
+								<div class="col-2">
+									<span>SDIO</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53; background-color: #dfede7;">
+									<span>Yes</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>-</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>Yes</span>
+								</div>
+							</div>
+							<div class="row justify-content-center row_alt mb-2"  style="border-bottom:1px solid #ccc;">
+								<div class="col-2">
+									<span>Release Date</span>
+								</div>
+								<div class="col-4" style="border-left:2px solid #009C53;">
+									<span>Feb 2022</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #ff8500;">
+									<span>July 2021</span>
+								</div>
+								<div class="col-3" style="border-left:2px solid #0078ff;">
+									<span>May 2019</span>
+								</div>
+							</div>
+							
+						</div>
+
+						<div class="row justify-content-center">
+							<div class="col-12">
+								<div class="section-title text-center mt-4">
+									<h4 class="title mt-2">Pinout Comparison Matrix</h4>
+								</div> <!-- row -->
+							</div>
+						</div> <!-- row -->
+						<div class="row justify-content-center mb-4">
+							<div class="col-2">&nbsp;</div>
+							<div class="col-8 center">
+								<a href="#img6">
+									<img class="shape mt-2" src="images/tiny_pinout_matrix.jpg" alt="Shape">
+								</a>
+								<!-- lightbox container hidden with CSS -->
+								<a href="#pin_matrix" class="lightbox" id="img6">
+								  <span style="background-image: url('images/tiny_pinout_matrix.jpg')"></span>
+								</a>
+							</div>
+							<div class="col-2">&nbsp;</div>
+						</div>
+						<p>&nbsp;</p>
+						
+					</section>	
+						
+						
+					<section id="code" class="features-area">
+						<div class="container mt-4">
+							<div class="row justify-content-center">
+								<div class="col-12">
+									<div class="section-title text-center">
+										<h3 class="title">Development Platforms</h3>
+										<div class="col-12  text-center m-2">
+											<img class="shape m-1" src="images/logo_blinka.svg" alt="Shape" style="height:60px;">
+											<img class="shape m-1" src="images/logo_micropython.svg" alt="Shape" style="height:60px;">
+											<img class="shape m-1" src="images/logo_esp-idf.svg" alt="Shape" style="height:60px;">
+											<img class="shape m-1" src="images/logo_arduino.svg" alt="Shape" style="height:60px;">
+											<img class="shape m-1" src="images/logo_platformio.svg" alt="Shape" style="height:60px;">
+											<img class="shape m-1" src="images/logo_nanoframework.svg" alt="Shape" style="height:60px;">
+										</div>
+
+										<p class="text m-3">Please check out the new PLATFORMS area of the <a href="/getting-started.html">Getting Started</a> guide to find out all about developing for your new board in a range of different languages! </p>
+									</div> <!-- row -->
+									
+								</div>
+							</div> <!-- row -->
+						</div> <!-- container -->
+					</section>
+					
+					<section id="downloads">
+						<div class="container mb-4 mt-4">
+							<div class="row justify-content-center">
+								<div class="col-lg-6 col-12">
+									<div class="section-title text-center pb-10">
+										<h3 class="title mt-2">Downloads</h3>
+									</div> <!-- row -->
+								</div>
+							</div> <!-- row -->
+							<div class="row justify-content-center">
+								<div class="col-12 mt-1 mb-4" style="text-align:center;">
+									This is where you can find download links for TinyS3 specific things like the Schematic, 3D model, KiCAD footprint and more!
+									
+									<h4 class='mt-4'>TinyS3 Schematic</h4>
+										
+									<a href='https://github.com/UnexpectedMaker/esp32s3/blob/main/schematics/schematic-tinys3.pdf' target="_blank"><img class="shap mt-2" src="images/schematic-tinys3-thumb.jpg" alt="Shape" ></a>
+								</div>
+								<h3 class='mt-4'>github</h3>
+								<div class="col-12 mt-1 mb-4" style="text-align:center;">
+									<p class="text mt-2">The <a href="https://github.com/unexpectedmaker/esp32s3" target="_blank">Unexpected Maker ESP32-S3 github Repo</a> includes the following items:</p>
+								</div>
+								<div class="col-10 mb-7 text-left features-list">
+									<ul class="mb-4">
+										<li>3D STEP file for the TinyS3</li>
+										<li>KiCAD 6 symbol file for the TinyS3 that you can use when integrating one of them into one of your PCB designs</li>
+										<li>KiCAD 6 footprint file for the TinyS3</li>
+										<li>PDF Schematic for the TinyS3</li>
+										<li>Hi-res pinout reference card for the TinyS3</li>
+										<li>Helper libraries for Arduino, CircuitPython and MicroPython</li>
+									</ul>
+								</div>
+							`<h3 class='mt-4'>ESP32-S3 Datasheet</h3>
+								<div class="col-12 mt-1 mb-4" style="text-align:center;">
+									<p class="text mt-2">If you need more detailed information about the ESP32-S3, including full IO capabilities and other functionality, please refer to the <a href="https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf" target="_blank">ESP32-S3 Datasheet</a> from Espressif.</p>
+								</div>
+							</div>
+						</div>
+					</section>
+						
+				</div>
+			</div>		
+		</div>
+	</section>
+	
+	<div id="contact_insert"></div>
+
+	<!--====== FOOTER PART ENDS ======-->
+	
+	<!--====== BACK TOP TOP PART START ======-->
+
+	<a href="#" class="back-to-top"><i class="lni lni-chevron-up"></i></a>
+
+	<!--====== BACK TOP TOP PART ENDS ======-->    
+
+	<!--====== PART START ======-->
+
+<!--
+	<section class="">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-">
+					
+				</div>
+			</div>
+		</div>
+	</section>
+-->
+
+	<!--====== PART ENDS ======-->
+
+<!-- 	<script>$("#contact").load("./partial_contact.html");</script>  -->
+
+
+	<!--====== Jquery js ======-->
+	<script src="assets/js/vendor/jquery-1.12.4.min.js"></script>
+	<script src="assets/js/vendor/modernizr-3.7.1.min.js"></script>
+	
+	<!--====== Bootstrap js ======-->
+	<script src="assets/js/popper.min.js"></script>
+	<script src="assets/js/bootstrap.min.js"></script>
+	
+	<!--====== Slick js ======-->
+	<script src="assets/js/slick.min.js"></script>
+	
+	<!--====== Magnific Popup js ======-->
+	<script src="assets/js/jquery.magnific-popup.min.js"></script>
+
+	<!--====== Isotope js ======-->
+	<script src="assets/js/imagesloaded.pkgd.min.js"></script>
+	<script src="assets/js/isotope.pkgd.min.js"></script>
+	
+	<!--====== Scrolling Nav js ======-->
+	<script src="assets/js/jquery.easing.min.js"></script>
+	<script src="assets/js/scrolling-nav.js"></script>
+	
+	<!--====== Main js ======-->
+	<script src="assets/js/main.js"></script>
+	
+
+</body>
+
+</html>
