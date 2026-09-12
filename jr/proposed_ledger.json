@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T06:00:36.297632+00:00",
+      "expires": "2026-09-19T07:00:39.726979+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T06:00:36.297632+00:00"
+      "timestamp": "2026-09-12T07:00:39.726979+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -4134,6 +4134,16 @@
       "status": "rejected",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
+    "m5corehamcat": {
+      "expires": "2026-10-12T07:00:39.726979+00:00",
+      "id": "m5corehamcat",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "ji1ore/m5corehamcat",
+      "repo_id": 1155397074,
+      "status": "rejected",
+      "timestamp": "2026-09-12T07:00:39.726979+00:00"
+    },
     "m5cores3bluebox": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
       "id": "m5cores3bluebox",
@@ -6464,6 +6474,16 @@
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.144120+00:00"
     },
+    "remotekeyer-wifi": {
+      "expires": "2026-10-12T07:00:39.726979+00:00",
+      "id": "remotekeyer-wifi",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "ji1ore/remotekeyer_wifi",
+      "repo_id": 1102767923,
+      "status": "rejected",
+      "timestamp": "2026-09-12T07:00:39.726979+00:00"
+    },
     "reterminal-d1001": {
       "expires": "2026-10-10T19:00:47.109119+00:00",
       "id": "reterminal-d1001",
@@ -7842,6 +7862,16 @@
       "status": "rejected",
       "timestamp": "2026-09-12T06:00:36.297632+00:00"
     },
+    "wifi-rig-ctrl": {
+      "expires": "2026-10-12T07:00:39.726979+00:00",
+      "id": "wifi-rig-ctrl",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "ji1ore/wifi_rig_ctrl",
+      "repo_id": 1155397074,
+      "status": "rejected",
+      "timestamp": "2026-09-12T07:00:39.726979+00:00"
+    },
     "wifichanviz": {
       "expires": "2026-10-12T06:00:36.297632+00:00",
       "id": "wifichanviz",
@@ -8331,6 +8361,9 @@
     "jblanked/picoware": "picoware",
     "jcldf/m5stackprojects": "m5stackprojects",
     "jfduhart/cardputer-morse-trainer": "cardputer-morse-trainer",
+    "ji1ore/m5corehamcat": "m5corehamcat",
+    "ji1ore/remotekeyer_wifi": "remotekeyer-wifi",
+    "ji1ore/wifi_rig_ctrl": "wifi-rig-ctrl",
     "jimgat/cym-nm28c5": "cym-nm28c5",
     "jjugs": "jjugs",
     "jjugs/cardputer-laptop-monitor": "cardputer-laptop-monitor",
