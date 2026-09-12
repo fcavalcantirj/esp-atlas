@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T13:00:50.482075+00:00",
+      "expires": "2026-09-19T14:00:51.673188+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T13:00:50.482075+00:00"
+      "timestamp": "2026-09-12T14:00:51.673188+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -5730,6 +5730,16 @@
       "status": "rejected",
       "timestamp": "2026-09-10T13:00:47.960948+00:00"
     },
+    "openai-realtime-embedded-sdk": {
+      "expires": "2026-10-12T14:00:51.673188+00:00",
+      "id": "openai-realtime-embedded-sdk",
+      "pr_ref": null,
+      "reason": "below_floor: 23 stars / 7 forks",
+      "repo": "ciniml/openai-realtime-embedded-sdk",
+      "repo_id": 906493076,
+      "status": "rejected",
+      "timestamp": "2026-09-12T14:00:51.673188+00:00"
+    },
     "openhasp": {
       "id": "openhasp",
       "pr_ref": "#200",
@@ -8133,6 +8143,24 @@
       "status": "rejected",
       "timestamp": "2026-09-12T03:00:29.761890+00:00"
     },
+    "zhilly": {
+      "expires": "2026-09-19T14:00:51.673188+00:00",
+      "id": "zhilly",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "sacriphanius/zhilly",
+      "status": "rejected",
+      "timestamp": "2026-09-12T14:00:51.673188+00:00"
+    },
+    "zizi-for-m5-stick-c-plus-2": {
+      "expires": "2026-09-19T14:00:51.673188+00:00",
+      "id": "zizi-for-m5-stick-c-plus-2",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "laccom/zizi-for-m5-stick-c-plus-2",
+      "status": "rejected",
+      "timestamp": "2026-09-12T14:00:51.673188+00:00"
+    },
     "zx-spectrum-cardputer-external": {
       "id": "zx-spectrum-cardputer-external",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/100",
@@ -8302,6 +8330,7 @@
     "chrisdacrunk/little-devhelper": "little-devhelper",
     "chrisdiana/breezybox-cardputer": "breezybox-cardputer",
     "ciniml/m5stack_matter_examples": "m5stack-matter-examples",
+    "ciniml/openai-realtime-embedded-sdk": "openai-realtime-embedded-sdk",
     "ciniml/serial_wifi_logger": "serial-wifi-logger",
     "clackups/draftling": "draftling",
     "codigohardwareecia/m5cardputer_knowledge": "m5cardputer-knowledge",
@@ -8628,6 +8657,7 @@
     "kylebing/m5stack-cardputer-sparks": "m5stack-cardputer-sparks",
     "kysutrung/yolo_watchdog": "yolo-watchdog",
     "kyya/paperdarkroom": "paperdarkroom",
+    "laccom/zizi-for-m5-stick-c-plus-2": "zizi-for-m5-stick-c-plus-2",
     "laserir/mclite": "mclite",
     "layer812/cardputer_llm": "cardputer-llm",
     "layer812/gs": "gs",
@@ -8868,6 +8898,7 @@
     "rythlan/brokensignal-next": "brokensignal-next",
     "rythlan/cardmeteo": "cardmeteo",
     "sacriphanius/wdgwatch": "wdgwatch",
+    "sacriphanius/zhilly": "zhilly",
     "sakkra-adv/battleship": "battleship",
     "sakkra-adv/magic8ball": "magic8ball",
     "sakkra-adv/spaceship": "spaceship",
