@@ -27,16 +27,17 @@ notes:
   (omitted)
 - 'Weight: 3 g'
 - 'io.gpio_exposed=27 QUOTED: vendor page states "27x IO" (Features) and "Digital
-  I/O Pins | 27" (Technical specs table); no enumerated GPIO pin-list/table is
-  published in the spec table, so power_out is omitted'
+  I/O Pins | 27" (Technical specs table); no enumerated GPIO pin-list/table is published
+  in the spec table, so power_out is omitted'
 - 'io.gpio_free=23 DERIVED: the vendor''s own labeled pinout diagram (s3_mini_v1.0.0
-  silkscreen photo) enumerates exactly 27 header GPIO pads (1-18, 21, 33-38, 43,
-  44) -- matching the "27x IO" spec exactly; GPIO47 (the onboard RGB LED) is not
-  among them, confirming it is off-header and needs no separate subtraction. Of
-  esp32-s3''s soc.reserved_pins, strapping GPIO3 is exposed (1 pin; 0/45/46 are
-  not on the header); usb_flash_tied 35/36/37 are exposed (3 pins; 19/20 are not,
-  consumed internally by native USB) -- so 27 - 1 - 3 = 23'
-- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
+  silkscreen photo) enumerates exactly 27 header GPIO pads (1-18, 21, 33-38, 43, 44)
+  -- matching the "27x IO" spec exactly; GPIO47 (the onboard RGB LED) is not among
+  them, confirming it is off-header and needs no separate subtraction. Of esp32-s3''s
+  soc.reserved_pins, strapping GPIO3 is exposed (1 pin; 0/45/46 are not on the header);
+  usb_flash_tied 35/36/37 are exposed (3 pins; 19/20 are not, consumed internally
+  by native USB) -- so 27 - 1 - 3 = 23'
+- usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag
+getting_started: https://www.wemos.cc/en/latest/s3/s3_mini.html
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/s3/s3_mini.html
@@ -50,6 +51,9 @@ sources:
 - field: usb_serial
   url: https://www.wemos.cc/en/latest/s3/s3_mini.html
   verified: '2026-09-07'
+- field: getting_started
+  url: https://www.wemos.cc/en/latest/s3/s3_mini.html
+  verified: '2026-09-12'
 ---
 
 # LOLIN S3 mini
