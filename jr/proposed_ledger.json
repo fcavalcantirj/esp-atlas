@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T04:00:31.028335+00:00",
+      "expires": "2026-09-19T05:00:34.806916+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T04:00:31.028335+00:00"
+      "timestamp": "2026-09-12T05:00:34.806916+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -958,6 +958,16 @@
       "status": "rejected",
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
     },
+    "cardputer-adv-csi-radar": {
+      "expires": "2026-10-12T05:00:34.806916+00:00",
+      "id": "cardputer-adv-csi-radar",
+      "pr_ref": null,
+      "reason": "already_catalogued: zeloksa/cardputer-adv-csi-radar is already in the atlas",
+      "repo": "zeloksa/cardputer-adv-csi-radar",
+      "repo_id": 1183848427,
+      "status": "rejected",
+      "timestamp": "2026-09-12T05:00:34.806916+00:00"
+    },
     "cardputer-adv-gps-info": {
       "expires": "2026-10-07T23:00:28.148172+00:00",
       "id": "cardputer-adv-gps-info",
@@ -993,6 +1003,7 @@
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/79",
       "reason": "present in the catalog: its PR was merged",
       "repo": "zeloksa/cardputer-adv-wifi-ble-radar",
+      "repo_id": 1185965185,
       "status": "merged",
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
     },
@@ -1276,6 +1287,16 @@
       "repo": "moo93egy/cardputer_mp3_adv.git",
       "status": "rejected",
       "timestamp": "2026-09-09T22:00:46.933939+00:00"
+    },
+    "cardputer-mqtt": {
+      "expires": "2026-10-12T05:00:34.806916+00:00",
+      "id": "cardputer-mqtt",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "w35m17h/cardputer-mqtt",
+      "repo_id": 1250523493,
+      "status": "rejected",
+      "timestamp": "2026-09-12T05:00:34.806916+00:00"
     },
     "cardputer-nc1020emu": {
       "expires": "2026-09-14T23:00:28.148172+00:00",
@@ -4528,6 +4549,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
+    "m5stack-core2-wifi-scanner": {
+      "expires": "2026-10-12T05:00:34.806916+00:00",
+      "id": "m5stack-core2-wifi-scanner",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "coreymillia/m5stack-core2-wifi-scanner",
+      "repo_id": 1173220799,
+      "status": "rejected",
+      "timestamp": "2026-09-12T05:00:34.806916+00:00"
+    },
     "m5stack-image-viewer": {
       "id": "m5stack-image-viewer",
       "pr_ref": null,
@@ -4714,6 +4745,16 @@
       "repo_id": 777986469,
       "status": "rejected",
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
+    },
+    "m5stick-stuph": {
+      "expires": "2026-10-12T05:00:34.806916+00:00",
+      "id": "m5stick-stuph",
+      "pr_ref": null,
+      "reason": "below_floor: 16 stars / 6 forks",
+      "repo": "n0xa/m5stick-stuph",
+      "repo_id": 700661256,
+      "status": "rejected",
+      "timestamp": "2026-09-12T05:00:34.806916+00:00"
     },
     "m5stickc": {
       "expires": "2026-10-08T20:00:21.660790+00:00",
@@ -7737,6 +7778,16 @@
       "status": "rejected",
       "timestamp": "2026-09-12T04:00:31.028335+00:00"
     },
+    "whatsapp-cardputer-m5stack": {
+      "expires": "2026-10-12T05:00:34.806916+00:00",
+      "id": "whatsapp-cardputer-m5stack",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 1 forks",
+      "repo": "elguesabal/whatsapp-cardputer-m5stack",
+      "repo_id": 1236081009,
+      "status": "rejected",
+      "timestamp": "2026-09-12T05:00:34.806916+00:00"
+    },
     "whisplay-groq-chatbot": {
       "id": "whisplay-groq-chatbot",
       "pr_ref": null,
@@ -8001,6 +8052,7 @@
     "coreymillia/m5groqbot-m5stickc-plus2": "m5groqbot-m5stickc-plus2",
     "coreymillia/m5stack-core1-noaa-live-weather-satellite": "m5stack-core1-noaa-live-weather-satellit",
     "coreymillia/m5stack-core2-113-matrix-rain-effects": "m5stack-core2-113-matrix-rain-effects",
+    "coreymillia/m5stack-core2-wifi-scanner": "m5stack-core2-wifi-scanner",
     "coreymillia/m5stickc-plus-joke-scroller": "m5stickc-plus-joke-scroller",
     "coreymillia/m5stickc-plus-matrix-engine-101-code-rain": "m5stickc-plus-matrix-engine-101-code-rai",
     "coreymillia/m5stickc-social-parasite-evil-spammer-plus1-plus2": "m5stickc-social-parasite-evil-spammer-pl",
@@ -8072,6 +8124,7 @@
     "eiswolf-bg/eiswolfs-flightradar-cyd": "eiswolfs-flightradar-cyd",
     "electbassoon/hall-sensor-speedometer-m5-stick-c-plus-2": "hall-sensor-speedometer-m5-stick-c-plus-",
     "elguesabal/server-vampeta": "server-vampeta",
+    "elguesabal/whatsapp-cardputer-m5stack": "whatsapp-cardputer-m5stack",
     "elicoftz/flipper-zero-meets-m5stack-cardputer": "flipper-zero-meets-m5stack-cardputer",
     "emanuelelaface/cardputer-aprs": "cardputer-aprs",
     "emilnier/m5cardputer-ir-tool": "m5cardputer-ir-tool",
@@ -8401,6 +8454,7 @@
     "n0xa/applejuice": "applejuice",
     "n0xa/m5stick-nemo": "m5stick-nemo",
     "n0xa/m5stick-nemo.git": "m5stick-nemo",
+    "n0xa/m5stick-stuph": "m5stick-stuph",
     "n0xa/m5stickstuph": "m5stickstuph",
     "n3tfox/flockwatch": "flockwatch",
     "naileclevrai/bruce-nemo-ble": "bruce-nemo-ble",
@@ -8623,6 +8677,7 @@
     "volosr/minicar": "minicar",
     "w-ockham/actpaddle": "actpaddle",
     "w-ockham/m5spotchan": "m5spotchan",
+    "w35m17h/cardputer-mqtt": "cardputer-mqtt",
     "warko-san/cardputer-remote-cloner": "cardputer-remote-cloner",
     "washishi/m5stack-avatar-mic-nekomimi_led": "m5stack-avatar-mic-nekomimi-led",
     "washishi/simplespectrumanalyzer-atommatrix": "simplespectrumanalyzer-atommatrix",
@@ -8655,6 +8710,7 @@
     "zaratton/cardputermidimonitor": "cardputermidimonitor",
     "zedward856-spec/breach_os": "breach-os",
     "zeloksa/ai-offline-chat-adv": "ai-offline-chat-adv",
+    "zeloksa/cardputer-adv-csi-radar": "cardputer-adv-csi-radar",
     "zeloksa/cardputer-adv-wifi-ble-radar": "cardputer-adv-wifi-ble-radar",
     "zeloksa/cardputer-alchemy-adv-game": "cardputer-alchemy-adv-game",
     "zeloksa/cardputer-flashlight-adv": "cardputer-flashlight-adv",
