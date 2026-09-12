@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T14:00:51.673188+00:00",
+      "expires": "2026-09-19T15:00:55.897357+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T14:00:51.673188+00:00"
+      "timestamp": "2026-09-12T15:00:55.897357+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -361,6 +361,16 @@
       "repo_id": 1244733782,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "ask-master": {
+      "expires": "2026-10-12T15:00:55.897357+00:00",
+      "id": "ask-master",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 1 forks",
+      "repo": "mhrsntrk/ask-master",
+      "repo_id": 1229788742,
+      "status": "rejected",
+      "timestamp": "2026-09-12T15:00:55.897357+00:00"
     },
     "atom-artificial-horizon": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -895,6 +905,16 @@
       "status": "rejected",
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
     },
+    "cardmotion": {
+      "expires": "2026-10-12T15:00:55.897357+00:00",
+      "id": "cardmotion",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "aroum/cardmotion",
+      "repo_id": 1319899797,
+      "status": "rejected",
+      "timestamp": "2026-09-12T15:00:55.897357+00:00"
+    },
     "cardnet": {
       "id": "cardnet",
       "pr_ref": null,
@@ -1326,6 +1346,16 @@
       "repo_id": 1054316381,
       "status": "rejected",
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
+    },
+    "cardputer-pdp11": {
+      "expires": "2026-10-12T15:00:55.897357+00:00",
+      "id": "cardputer-pdp11",
+      "pr_ref": null,
+      "reason": "below_floor: 17 stars / 1 forks",
+      "repo": "alvaroramosf/cardputer-pdp11",
+      "repo_id": 1235640497,
+      "status": "rejected",
+      "timestamp": "2026-09-12T15:00:55.897357+00:00"
     },
     "cardputer-puzzles": {
       "expires": "2026-10-07T23:00:28.148172+00:00",
@@ -5259,6 +5289,16 @@
       "status": "rejected",
       "timestamp": "2026-09-02T16:03:27.965190+00:00"
     },
+    "malware-collection-part-2": {
+      "expires": "2026-10-12T15:00:55.897357+00:00",
+      "id": "malware-collection-part-2",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "zusyaku/malware-collection-part-2",
+      "repo_id": 412775311,
+      "status": "rejected",
+      "timestamp": "2026-09-12T15:00:55.897357+00:00"
+    },
     "mantishid-msc": {
       "expires": "2026-10-09T04:00:10.126216+00:00",
       "id": "mantishid-msc",
@@ -8248,6 +8288,7 @@
     "allfather-bv/wadamesh": "wadamesh",
     "alovagado/m5stickcplus2-fishing-game.git": "m5stickcplus2-fishing-game",
     "alovagado/m5stickcplus2.git": "m5stickcplus2",
+    "alvaroramosf/cardputer-pdp11": "cardputer-pdp11",
     "alvsconcelos/joypad-os-cardputer": "joypad-os-cardputer",
     "alxv2016/folloup-sticky": "folloup-sticky",
     "amcchord/m5tab-macintosh": "m5tab-macintosh",
@@ -8274,6 +8315,7 @@
     "armel/m5airquality": "m5airquality",
     "armel/m5hamradio": "m5hamradio",
     "armel/rrfremote": "rrfremote",
+    "aroum/cardmotion": "cardmotion",
     "artem76228/paperos": "paperos",
     "artem76228/paperweb": "paperweb",
     "arturockpk/bme280-sensor-m5unified": "bme280-sensor-m5unified",
@@ -8754,6 +8796,7 @@
     "matthew-5plpeanut-gb": "matthew-5plpeanut-gb",
     "mehflexx17": "mehflexx17",
     "meister5/m5stack-cardputer-adv-gps-tracker": "m5stack-cardputer-adv-gps-tracker",
+    "mhrsntrk/ask-master": "ask-master",
     "micokonsep/flipcard-papers3": "flipcard-papers3",
     "micokonsep/pomodoro-papers3": "pomodoro-papers3",
     "microdev-steve/circuitpython_m5stickplus2": "circuitpython-m5stickplus2",
@@ -9070,6 +9113,7 @@
     "zspuspoki/cardputeradvanceddoom": "cardputeradvanceddoom",
     "zsyai/m5paper-ebook": "m5paper-ebook",
     "zuens2020/cardputer-typeless": "cardputer-typeless",
+    "zusyaku/malware-collection-part-2": "malware-collection-part-2",
     "zxcurch/bad-apple-on-m5stickc-plus2": "bad-apple-on-m5stickc-plus2"
   }
 }
