@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T11:00:47.292793+00:00",
+      "expires": "2026-09-19T12:00:48.975386+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T11:00:47.292793+00:00"
+      "timestamp": "2026-09-12T12:00:48.975386+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -411,6 +411,16 @@
       "repo_id": 977168025,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "atoms3-341-xscreensaver": {
+      "expires": "2026-10-12T12:00:48.975386+00:00",
+      "id": "atoms3-341-xscreensaver",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/atoms3-341-xscreensaver",
+      "repo_id": 1118039281,
+      "status": "rejected",
+      "timestamp": "2026-09-12T12:00:48.975386+00:00"
     },
     "atoms3-lite-tvbgone": {
       "id": "atoms3-lite-tvbgone",
@@ -4071,6 +4081,16 @@
       "repo_id": 1117860409,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "m5core2-341-effects-xscreensaver": {
+      "expires": "2026-10-12T12:00:48.975386+00:00",
+      "id": "m5core2-341-effects-xscreensaver",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "coreymillia/m5core2-341-effects-xscreensaver",
+      "repo_id": 1123442811,
+      "status": "rejected",
+      "timestamp": "2026-09-12T12:00:48.975386+00:00"
     },
     "m5core2-audio-analyzer": {
       "id": "m5core2-audio-analyzer",
@@ -8015,6 +8035,16 @@
       "status": "rejected",
       "timestamp": "2026-09-12T10:00:45.628096+00:00"
     },
+    "xiaozhi-cardputer": {
+      "expires": "2026-10-12T12:00:48.975386+00:00",
+      "id": "xiaozhi-cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 8 stars / 1 forks",
+      "repo": "grvmind/xiaozhi-cardputer",
+      "repo_id": 1079929550,
+      "status": "rejected",
+      "timestamp": "2026-09-12T12:00:48.975386+00:00"
+    },
     "xiaozhi-esp32": {
       "expires": "2026-09-19T11:00:47.292793+00:00",
       "id": "xiaozhi-esp32",
@@ -8023,6 +8053,16 @@
       "repo": "78/xiaozhi-esp32.git",
       "status": "rejected",
       "timestamp": "2026-09-12T11:00:47.292793+00:00"
+    },
+    "xiaozhipro": {
+      "expires": "2026-10-12T12:00:48.975386+00:00",
+      "id": "xiaozhipro",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "hougeai/xiaozhipro",
+      "repo_id": 1090793395,
+      "status": "rejected",
+      "timestamp": "2026-09-12T12:00:48.975386+00:00"
     },
     "xjackcore-m5stack-jesus-hooligan-pc-cras": {
       "expires": "2026-10-12T10:00:45.628096+00:00",
@@ -8231,6 +8271,7 @@
     "coreymillia/7-games-for-m5stickc-plus2": "7-games-for-m5stickc-plus2",
     "coreymillia/acidtrip-psychedelic-m5core-60-visuals": "acidtrip-psychedelic-m5core-60-visuals",
     "coreymillia/arduinogotchi-m5stick-esp32-tamagotchi": "arduinogotchi-m5stick-esp32-tamagotchi",
+    "coreymillia/atoms3-341-xscreensaver": "atoms3-341-xscreensaver",
     "coreymillia/biorhythm-calculator---m5stickc-plus2": "biorhythm-calculator-m5stickc-plus2",
     "coreymillia/bruce-shark-bait-m5stackc-plus2-wifi-defense": "bruce-shark-bait-m5stackc-plus2-wifi-def",
     "coreymillia/cascade-tetris-m5stickc-plus2": "cascade-tetris-m5stickc-plus2",
@@ -8253,6 +8294,7 @@
     "coreymillia/lucid-dream-training-watch-m5stickc-plus2": "lucid-dream-training-watch-m5stickc-plus",
     "coreymillia/m5cardputer-xscreensaver": "m5cardputer-xscreensaver",
     "coreymillia/m5core-341-xscreensaver-": "m5core-341-xscreensaver",
+    "coreymillia/m5core2-341-effects-xscreensaver": "m5core2-341-effects-xscreensaver",
     "coreymillia/m5core2-esp32-tetris-touch": "m5core2-esp32-tetris-touch",
     "coreymillia/m5groqbot-m5stickc-plus2": "m5groqbot-m5stickc-plus2",
     "coreymillia/m5stack-core1-noaa-live-weather-satellite": "m5stack-core1-noaa-live-weather-satellit",
@@ -8420,6 +8462,7 @@
     "gremlin1987/cardputer-ballistic-calculator": "cardputer-ballistic-calculator",
     "gridgrad/advaita": "advaita",
     "griffithsb/m5stack-webcam": "m5stack-webcam",
+    "grvmind/xiaozhi-cardputer": "xiaozhi-cardputer",
     "gvrubio/gvm5bubblelevel": "gvm5bubblelevel",
     "gvrubio/gvm5wifichannelutil": "gvm5wifichannelutil",
     "gywan94/cardputer-nc1020emu.git": "cardputer-nc1020emu",
@@ -8454,6 +8497,7 @@
     "hiroki-kawakami/tab5-uvc-display": "tab5-uvc-display",
     "homertrix/meshtastic-tdisplay-p4": "meshtastic-tdisplay-p4",
     "horseyofcoursey/ember": "ember",
+    "hougeai/xiaozhipro": "xiaozhipro",
     "hsbsbz/m5stickcplus2-seamonsue": "m5stickcplus2-seamonsue",
     "hsgarcia22/m5-mousejiggler": "m5-mousejiggler",
     "http:/": "http:/",
