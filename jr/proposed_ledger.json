@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T10:00:45.628096+00:00",
+      "expires": "2026-09-19T11:00:47.292793+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T10:00:45.628096+00:00"
+      "timestamp": "2026-09-12T11:00:47.292793+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -7242,6 +7242,15 @@
       "status": "rejected",
       "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
+    "sunwoods": {
+      "expires": "2026-09-19T11:00:47.292793+00:00",
+      "id": "sunwoods",
+      "pr_ref": null,
+      "reason": "repo_unresolved: unparseable repo 'sunwoods'",
+      "repo": "sunwoods",
+      "status": "rejected",
+      "timestamp": "2026-09-12T11:00:47.292793+00:00"
+    },
     "sysx": {
       "expires": "2026-09-18T22:00:03.963388+00:00",
       "id": "sysx",
@@ -8007,13 +8016,13 @@
       "timestamp": "2026-09-12T10:00:45.628096+00:00"
     },
     "xiaozhi-esp32": {
-      "expires": "2026-09-14T21:12:07.418911+00:00",
+      "expires": "2026-09-19T11:00:47.292793+00:00",
       "id": "xiaozhi-esp32",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
-      "repo": "ooxxu/xiaozhi-esp32",
+      "repo": "78/xiaozhi-esp32.git",
       "status": "rejected",
-      "timestamp": "2026-09-07T21:12:07.418911+00:00"
+      "timestamp": "2026-09-12T11:00:47.292793+00:00"
     },
     "xjackcore-m5stack-jesus-hooligan-pc-cras": {
       "expires": "2026-10-12T10:00:45.628096+00:00",
@@ -8088,6 +8097,8 @@
     "610t/m5bit-less": "m5bit-less",
     "610t/m5scratch": "m5scratch",
     "74th/m5atoms3u-wifi-usb-keyboard": "m5atoms3u-wifi-usb-keyboard",
+    "78/xiaozhi-esp32": "xiaozhi-esp32",
+    "78/xiaozhi-esp32.git": "xiaozhi-esp32",
     "7h30th3r0n3/esp32-honeypot": "esp32-honeypot",
     "7h30th3r0n3/evil-m5core2": "evil-m5core2",
     "7h30th3r0n3/evil-m5project": "evil-m5project",
@@ -8823,6 +8834,7 @@
     "styles01/m5stack-ollama-meter": "m5stack-ollama-meter",
     "styles01/stackchan-openclaw-hermes": "stackchan-openclaw-hermes",
     "sub0pt1mal/m5cardputer_interactive_ssh_client": "interactivesetup-m5cardputer-sshclient",
+    "sunwoods": "sunwoods",
     "sushiware-online/cpv-tools": "cpv-tools",
     "sushiware-online/pdp-8-m5cardputer": "pdp-8-m5cardputer",
     "svenvu666/flappy-for-m5stickc-plus2": "flappy-for-m5stickc-plus2",
