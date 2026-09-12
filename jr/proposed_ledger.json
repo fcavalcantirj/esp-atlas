@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T08:00:41.133831+00:00",
+      "expires": "2026-09-19T09:00:42.532247+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T08:00:41.133831+00:00"
+      "timestamp": "2026-09-12T09:00:42.532247+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -7956,6 +7956,46 @@
       "status": "rejected",
       "timestamp": "2026-09-12T08:00:41.133831+00:00"
     },
+    "worldcup-2026": {
+      "expires": "2026-10-12T09:00:42.532247+00:00",
+      "id": "worldcup-2026",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 0 forks",
+      "repo": "fbiego/worldcup-2026",
+      "repo_id": 1274229066,
+      "status": "rejected",
+      "timestamp": "2026-09-12T09:00:42.532247+00:00"
+    },
+    "worldcuplive-esp": {
+      "expires": "2026-10-12T09:00:42.532247+00:00",
+      "id": "worldcuplive-esp",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "scsagentclub/worldcuplive_esp",
+      "repo_id": 1293728793,
+      "status": "rejected",
+      "timestamp": "2026-09-12T09:00:42.532247+00:00"
+    },
+    "worldcuptracker-cardputeradv": {
+      "expires": "2026-10-12T09:00:42.532247+00:00",
+      "id": "worldcuptracker-cardputeradv",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "chasergzy/worldcuptracker_cardputeradv",
+      "repo_id": 1281958379,
+      "status": "rejected",
+      "timestamp": "2026-09-12T09:00:42.532247+00:00"
+    },
+    "x-mas-tree-animated-gif": {
+      "expires": "2026-10-12T09:00:42.532247+00:00",
+      "id": "x-mas-tree-animated-gif",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "nishad2m8/x-mas-tree-animated-gif",
+      "repo_id": 906974606,
+      "status": "rejected",
+      "timestamp": "2026-09-12T09:00:42.532247+00:00"
+    },
     "xiaozhi-esp32": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
       "id": "xiaozhi-esp32",
@@ -8118,6 +8158,7 @@
     "chadvavra/papercolor.git": "papercolor",
     "charl3x/glide-synth-cardputer-adv": "glide-synth-cardputer-adv",
     "charlexh/codebuddy": "codebuddy",
+    "chasergzy/worldcuptracker_cardputeradv": "worldcuptracker-cardputeradv",
     "chatelp/daoa-mini-cardputeradv": "daoa-mini-cardputeradv",
     "chatelp/geek-casino-cardputeradv": "geek-casino-cardputeradv",
     "chatelp/silicon-bubbles-cardputeradv": "silicon-bubbles-cardputeradv",
@@ -8266,6 +8307,7 @@
     "fbiego/atom-watch": "atom-watch",
     "fbiego/chronos-navio": "chronos-navio",
     "fbiego/esp32-c3-mini": "esp32-c3-mini",
+    "fbiego/worldcup-2026": "worldcup-2026",
     "fcavalcantirj/pense-bem-cardputer-adv": "pense-bem-cardputer-adv",
     "fcavalcantirj/sticks3-ai-usage": "sticks3-ai-usage",
     "fermintm/tab5-weather-clock-tmp711v4": "tab5-weather-clock-tmp711v4",
@@ -8583,6 +8625,7 @@
     "nishad2m8/pdaputer": "pdaputer",
     "nishad2m8/pip-boy-weather-clock": "pip-boy-weather-clock",
     "nishad2m8/wled-cardputer": "wled-cardputer",
+    "nishad2m8/x-mas-tree-animated-gif": "x-mas-tree-animated-gif",
     "noest-d/esp32-emulatorjs": "esp32-emulatorjs",
     "nongxl/agar-cardputer": "agar-cardputer",
     "nongxl/cardputer_lightmeter_cpp": "cardputer-lightmeter-cpp",
@@ -8691,6 +8734,7 @@
     "sau412/esp32_cyd_pda": "esp32-cyd-pda",
     "say4n/edf-energy-monitor": "edf-energy-monitor",
     "sc-makers/ppltmini-atoms3": "ppltmini-atoms3",
+    "scsagentclub/worldcuplive_esp": "worldcuplive-esp",
     "sduenasg/pio_palnagotchi": "pio-palnagotchi",
     "sebaspinto/misspoppyrabbit": "misspoppyrabbit",
     "seeed-projects/oshw-reterminal-series-e-d": "oshw-reterminal-series-e-d",
