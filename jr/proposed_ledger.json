@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T20:00:31.062202+00:00",
+      "expires": "2026-09-19T21:00:32.629123+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T20:00:31.062202+00:00"
+      "timestamp": "2026-09-12T21:00:32.629123+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -307,6 +307,16 @@
       "repo": "thebricktop/anarch-cardputer",
       "status": "seen",
       "timestamp": "2026-09-02T16:03:27.951487+00:00"
+    },
+    "animated-train": {
+      "expires": "2026-10-12T21:00:32.629123+00:00",
+      "id": "animated-train",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "guvtg/animated-train",
+      "repo_id": 1096003203,
+      "status": "rejected",
+      "timestamp": "2026-09-12T21:00:32.629123+00:00"
     },
     "any-8ball": {
       "id": "any-8ball",
@@ -3572,6 +3582,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T21:00:24.826619+00:00"
     },
+    "koebiyori": {
+      "expires": "2026-10-12T21:00:32.629123+00:00",
+      "id": "koebiyori",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "zabaglione/koebiyori",
+      "repo_id": 1365442851,
+      "status": "rejected",
+      "timestamp": "2026-09-12T21:00:32.629123+00:00"
+    },
     "kprox": {
       "id": "kprox",
       "pr_ref": null,
@@ -4039,6 +4059,16 @@
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
+    "m5cardputer-audiospectrum": {
+      "expires": "2026-10-12T21:00:32.629123+00:00",
+      "id": "m5cardputer-audiospectrum",
+      "pr_ref": null,
+      "reason": "already_catalogued: cyberwisk/m5cardputer_audiospectrum is already in the atlas",
+      "repo": "cyberwisk/m5cardputer_audiospectrum",
+      "repo_id": 759441345,
+      "status": "rejected",
+      "timestamp": "2026-09-12T21:00:32.629123+00:00"
+    },
     "m5cardputer-c16-emulator": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5cardputer-c16-emulator",
@@ -4388,6 +4418,16 @@
       "repo_id": 1155397074,
       "status": "rejected",
       "timestamp": "2026-09-12T07:00:39.726979+00:00"
+    },
+    "m5cores3-automatic-irrigation": {
+      "expires": "2026-10-12T21:00:32.629123+00:00",
+      "id": "m5cores3-automatic-irrigation",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "samucarre/m5cores3-automatic-irrigation",
+      "repo_id": 963117426,
+      "status": "rejected",
+      "timestamp": "2026-09-12T21:00:32.629123+00:00"
     },
     "m5cores3bluebox": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
@@ -8654,6 +8694,7 @@
     "cryptspeak/cscardputer": "cscardputer",
     "cubic9com/m5core2_audio_analyzer": "m5core2-audio-analyzer",
     "cubic9com/m5core2_eyes": "m5core2-eyes",
+    "cyberwisk/m5cardputer_audiospectrum": "m5cardputer-audiospectrum",
     "cyberwisk/m5cardputer_webradio": "m5cardputer-webradio",
     "d3crypt-1/infiltra-firmware": "infiltra-firmware",
     "d4rkmen/m5apps": "m5apps",
@@ -8790,6 +8831,7 @@
     "gridgrad/advaita": "advaita",
     "griffithsb/m5stack-webcam": "m5stack-webcam",
     "grvmind/xiaozhi-cardputer": "xiaozhi-cardputer",
+    "guvtg/animated-train": "animated-train",
     "gvrubio/gvm5bubblelevel": "gvm5bubblelevel",
     "gvrubio/gvm5wifichannelutil": "gvm5wifichannelutil",
     "gywan94/cardputer-nc1020emu.git": "cardputer-nc1020emu",
@@ -9167,6 +9209,7 @@
     "sakkra-adv/battleship": "battleship",
     "sakkra-adv/magic8ball": "magic8ball",
     "sakkra-adv/spaceship": "spaceship",
+    "samucarre/m5cores3-automatic-irrigation": "m5cores3-automatic-irrigation",
     "sanchitminda/m5cardputer_windows": "m5cardputer-windows",
     "sanchitminda/mp3playerform5cardputer": "mp3playerform5cardputer",
     "sarah-c/m5stickc_plus_slot_machine": "m5stickc-plus-slot-machine",
@@ -9314,6 +9357,7 @@
     "z4b333/sticky-toybox": "sticky-toybox",
     "z4y-d3n/modbus-tcp-auditor-tool": "modbus-tcp-auditor-tool",
     "z4y-d3n/s7comm-auditor-tool": "s7comm-auditor-tool",
+    "zabaglione/koebiyori": "koebiyori",
     "zaratton/cardputermidimonitor": "cardputermidimonitor",
     "zedward856-spec/breach_os": "breach-os",
     "zeloksa/ai-offline-chat-adv": "ai-offline-chat-adv",
