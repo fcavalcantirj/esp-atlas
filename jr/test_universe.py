@@ -255,3 +255,55 @@ def test_real_seeed_coverage_is_consistent_with_the_filesystem():
     assert b["cataloged_count"] == len(on_disk)
     assert set(b["missing"]) == set(manifest_ids) - on_disk
     assert b["cataloged_count"] + len(b["missing"]) == b["universe_count"]
+
+
+# ─────────────────────── REAL committed heltec manifest (characterization) ───────────────────────
+
+# The 5 board_ids esp-atlas already catalogs under data/boards/heltec/ — these MUST derive
+# in_catalog=true from the real filesystem (board.md existence), so cataloged_count includes them.
+_HELTEC_KNOWN_CATALOGED = [
+    "heltec-wifi-kit-32-v3",
+    "heltec-wifi-lora-32-v3",
+    "heltec-wireless-paper",
+    "heltec-wireless-stick-v3",
+    "heltec-wireless-tracker",
+]
+
+
+def test_real_heltec_manifest_loads_and_is_well_formed():
+    uni = universe.load_universe(REAL_UNIVERSE_DIR)
+    assert "heltec" in uni
+    ids = [e["board_id"] for e in uni["heltec"]]
+    assert len(ids) == len(set(ids))            # unique board_ids
+    for e in uni["heltec"]:
+        assert e["board_id"].startswith("heltec-")
+        assert e["source_url"].startswith("https://")
+        # first-party Heltec sources only (docs.heltec.org or heltec.org)
+        assert "heltec.org" in e["source_url"]
+        assert e["mcu"].startswith("esp32")
+        assert e["status"] in universe.VALID_STATUS
+
+
+def test_real_heltec_known_ids_derive_in_catalog():
+    # The 5 already-cataloged ids must be present in the manifest AND derive in_catalog=true
+    # from the real data/boards/heltec/<id>/board.md filesystem.
+    uni = universe.load_universe(REAL_UNIVERSE_DIR)
+    manifest_ids = {e["board_id"] for e in uni["heltec"]}
+    for bid in _HELTEC_KNOWN_CATALOGED:
+        assert bid in manifest_ids, f"{bid} missing from heltec manifest"
+        assert universe.is_cataloged("heltec", bid, REAL_BOARDS_ROOT) is True
+
+
+def test_real_heltec_coverage_derives_and_includes_the_five():
+    uni = universe.load_universe(REAL_UNIVERSE_DIR)
+    manifest_ids = [e["board_id"] for e in uni["heltec"]]
+    on_disk = {bid for bid in manifest_ids
+               if (REAL_BOARDS_ROOT / "heltec" / bid / "board.md").exists()}
+    cov = universe.coverage(uni, REAL_BOARDS_ROOT)
+    b = cov["brands"]["heltec"]
+    assert b["universe_count"] == len(manifest_ids)
+    assert b["cataloged_count"] == len(on_disk)
+    assert set(b["missing"]) == set(manifest_ids) - on_disk
+    # every one of the 5 known ids contributes to cataloged_count (none in missing)
+    assert set(_HELTEC_KNOWN_CATALOGED).isdisjoint(set(b["missing"]))
+    assert b["cataloged_count"] >= len(_HELTEC_KNOWN_CATALOGED)

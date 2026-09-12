@@ -1,0 +1,143 @@
+# Heltec — ESP32-family board universe (SPEC-universe.md).
+# Built OFFLINE and committed. Never fetched at runtime / in CI / in tick.
+# Backbone cross-checked against the Heltec entries in arduino-esp32 boards.txt and the
+# docs.heltec.org ESP32 left-nav catalog.
+# Every source_url below was verified live (HTTP 200) on 2026-09-12, and each page was
+# read to confirm it describes THAT board/version (cite-or-omit).
+# `in_catalog` is NOT stored here — coverage is DERIVED from
+# data/boards/heltec/<board_id>/board.md at load time (jr/universe.py).
+#
+# Version variants (V2/V3/V4): treated as distinct entries ONLY when each version has its
+# own live source describing it. WiFi Kit 32 V2, the classic Wireless Stick, and Wireless
+# Stick Lite V2 have NO live page (their heltec.org slugs 404 or redirect to the V3 page),
+# so they are OMITTED, not guessed. Where a version shares the family docs page, the
+# dedicated heltec.org product page is cited for that specific version.
+brand: heltec
+boards:
+  # ── Already cataloged under data/boards/heltec/ (ids reused so coverage derives) ──
+  - board_id: heltec-wifi-kit-32-v3
+    name: "Heltec WiFi Kit 32 (V3)"
+    mcu: esp32-s3
+    source_url: "https://docs.heltec.org/en/node/esp32/wifi_kit_32/index.html"
+    status: active
+    note: "ESP32-S3FN8 + 0.96\" OLED. The docs WiFi Kit 32 page documents the current V3 (ESP32-S3) generation. The older V2 (ESP32) has no live doc/product page and is omitted."
+
+  - board_id: heltec-wifi-lora-32-v3
+    name: "Heltec WiFi LoRa 32 (V3)"
+    mcu: esp32-s3
+    source_url: "https://docs.heltec.org/en/node/esp32/wifi_lora_32/index.html"
+    status: active
+    note: "ESP32-S3N8 + SX1262 + 0.96\" OLED. Docs page carries a V3-vs-V4 comparison table."
+
+  - board_id: heltec-wireless-paper
+    name: "Heltec Wireless Paper"
+    mcu: esp32-s3
+    source_url: "https://docs.heltec.org/en/node/esp32/wireless_paper/index.html"
+    status: active
+    note: "ESP32-S3FN8 + SX1262 + 2.13\" B/W E-Ink."
+
+  - board_id: heltec-wireless-stick-v3
+    name: "Heltec Wireless Stick (V3)"
+    mcu: esp32-s3
+    source_url: "https://docs.heltec.org/en/node/esp32/wireless_stick/index.html"
+    status: active
+    note: "ESP32-S3 + SX1262 + 0.49\" OLED; functionally a compact WiFi LoRa 32 V3. Docs page documents the V3 generation; the classic ESP32 Wireless Stick has no live page and is omitted."
+
+  - board_id: heltec-wireless-tracker
+    name: "Heltec Wireless Tracker"
+    mcu: esp32-s3
+    source_url: "https://docs.heltec.org/en/node/esp32/wireless_tracker/index.html"
+    status: active
+    note: "ESP32-S3FN8 + SX1262 (LoRa) + UC6580 GNSS + 0.96\" TFT."
+
+  # ── New entries (not yet in the esp-atlas catalog) ──
+  - board_id: heltec-wifi-lora-32-v2
+    name: "Heltec WiFi LoRa 32 (V2)"
+    mcu: esp32
+    source_url: "https://heltec.org/project/wifi-lora-32v2/"
+    status: discontinued
+    note: "Original ESP32 + SX127x + 0.96\" OLED. Marked \"Phaseout\" on Heltec's store. Shares the WiFi LoRa 32 docs page with V3/V4; the dedicated V2 product page is cited for this version. Not yet in the esp-atlas catalog."
+
+  - board_id: heltec-wifi-lora-32-v4
+    name: "Heltec WiFi LoRa 32 (V4)"
+    mcu: esp32-s3
+    source_url: "https://heltec.org/project/wifi-lora-32-v4/"
+    status: active
+    note: "Newest revision: ESP32-S3R2 (external 16MB flash) + SX1262, solar charging, FPC/IPEX antenna. Shares the WiFi LoRa 32 docs page (V3/V4 comparison); the dedicated V4 product page is cited. Not yet in the esp-atlas catalog."
+
+  - board_id: heltec-wireless-stick-lite-v3
+    name: "Heltec Wireless Stick Lite (V3)"
+    mcu: esp32-s3
+    source_url: "https://docs.heltec.org/en/node/esp32/wireless_stick_lite/index.html"
+    status: active
+    note: "ESP32-S3FN8 + SX1262, no OLED (Wireless Stick without the display). The V2 (ESP32) has no distinct live page and is omitted. Not yet in the esp-atlas catalog."
+
+  - board_id: heltec-wireless-shell-v3
+    name: "Heltec Wireless Shell (V3)"
+    mcu: esp32-s3
+    source_url: "https://docs.heltec.org/en/node/esp32/wireless_shell/index.html"
+    status: active
+    note: "ESP32-S3FN8 + SX1262 shielded solderable LoRa/Wi-Fi/BLE module (needs a carrier PCB). Not yet in the esp-atlas catalog."
+
+  - board_id: heltec-wireless-bridge
+    name: "Heltec Wireless Bridge"
+    mcu: esp32
+    source_url: "https://docs.heltec.org/en/node/esp32/wireless_bridge/index.html"
+    status: active
+    note: "ESP32 + SX1276, 8MB PSRAM + 8MB flash; Wi-Fi/BLE-to-LoRa signal bridge. Not yet in the esp-atlas catalog."
+
+  - board_id: heltec-wireless-tracker-v2
+    name: "Heltec Wireless Tracker V2"
+    mcu: esp32-s3
+    source_url: "https://heltec.org/project/wireless-tracker-v2/"
+    status: active
+    note: "ESP32-S3 + GNSS + SX1262 (LoRa) tracker; second-generation Wireless Tracker. No distinct docs.heltec.org page (the wireless_tracker docs page covers V1); dedicated product page cited. Not yet in the esp-atlas catalog."
+
+  - board_id: heltec-ht-ct62
+    name: "Heltec HT-CT62"
+    mcu: esp32-c3
+    source_url: "https://docs.heltec.org/en/node/esp32/ht_ct62/index.html"
+    status: active
+    note: "ESP32-C3FN4 + SX1262 solderable LoRa+Wi-Fi stamp module (castellated edge, needs a carrier PCB). Not yet in the esp-atlas catalog."
+
+  - board_id: heltec-esp32-c3
+    name: "Heltec ESP32-C3"
+    mcu: esp32-c3
+    source_url: "https://docs.heltec.org/en/node/esp32/esp32_c3/index.html"
+    status: active
+    note: "ESP32-C3FN4 (RISC-V, 4MB flash) Wi-Fi + BLE dev board. Not yet in the esp-atlas catalog."
+
+  - board_id: heltec-capsule-sensor-v3
+    name: "Heltec CapSule Sensor V3"
+    mcu: esp32-s3
+    source_url: "https://docs.heltec.org/en/node/esp32/capsule_sensor_v3/index.html"
+    status: active
+    note: "ESP32-S3 + SX1262 tiny LoRa/Wi-Fi/BLE sensor capsule with swappable BTB sensor modules. Not yet in the esp-atlas catalog."
+
+  - board_id: heltec-e-ink-driver
+    name: "Heltec E-Ink Driver (HT-DE01)"
+    mcu: esp32-s3
+    source_url: "https://docs.heltec.org/en/node/esp32/ht_de01/index.html"
+    status: active
+    note: "ESP32-S3FN8 universal FFC/FPC E-Ink driver board; arduino-esp32 name \"Heltec E-Ink Driver\". Not yet in the esp-atlas catalog."
+
+  - board_id: heltec-vision-master-e213
+    name: "Heltec Vision Master E213"
+    mcu: esp32-s3
+    source_url: "https://docs.heltec.org/en/node/esp32/ht_vme213/index.html"
+    status: active
+    note: "ESP32-S3R8 + SX1262 + 2.13\" E-Ink dev kit. Not yet in the esp-atlas catalog."
+
+  - board_id: heltec-vision-master-e290
+    name: "Heltec Vision Master E290"
+    mcu: esp32-s3
+    source_url: "https://docs.heltec.org/en/node/esp32/ht_vme290/index.html"
+    status: active
+    note: "ESP32-S3R8 + SX1262 + 2.90\" E-Ink dev kit. Not yet in the esp-atlas catalog."
+
+  - board_id: heltec-vision-master-t190
+    name: "Heltec Vision Master T190"
+    mcu: esp32-s3
+    source_url: "https://docs.heltec.org/en/node/esp32/ht_vmt190/index.html"
+    status: active
+    note: "ESP32-S3 + 1.9\" 170x320 TFT-LCD + optional LoRa. Not yet in the esp-atlas catalog."
