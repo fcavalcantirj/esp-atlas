@@ -32,6 +32,8 @@ notes:
   (G01) is a strapping pin, GPIO2/15/1 are not strapping or usb_flash_tied -- gives
   4 - 1 = 3'
 getting_started: https://lilygo.cc/products/t-deck
+images:
+  photo: https://lilygo.cc/cdn/shop/files/LILYGO-T-DECK_2_7fbd52e8-0aea-466e-8407-dee4aca5b381.jpg
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-deck
@@ -45,6 +47,9 @@ sources:
 - field: getting_started
   url: https://lilygo.cc/products/t-deck
   verified: '2026-09-11'
+- field: images
+  url: https://lilygo.cc/products/t-deck
+  verified: '2026-09-12'
 ---
 
 # T-Deck

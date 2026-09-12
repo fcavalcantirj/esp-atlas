@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T15:00:55.897357+00:00",
+      "expires": "2026-09-19T16:00:03.112838+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T15:00:55.897357+00:00"
+      "timestamp": "2026-09-12T16:00:03.112838+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -1087,6 +1087,16 @@
       "status": "rejected",
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
     },
+    "cardputer-camera": {
+      "expires": "2026-10-12T16:00:03.112838+00:00",
+      "id": "cardputer-camera",
+      "pr_ref": null,
+      "reason": "below_floor: 6 stars / 0 forks",
+      "repo": "nongxl/cardputer_camera",
+      "repo_id": 1128156681,
+      "status": "rejected",
+      "timestamp": "2026-09-12T16:00:03.112838+00:00"
+    },
     "cardputer-camera-companion": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
       "id": "cardputer-camera-companion",
@@ -1619,6 +1629,15 @@
       "status": "rejected",
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
     },
+    "cardputersshclient": {
+      "expires": "2026-09-19T16:00:03.112838+00:00",
+      "id": "cardputersshclient",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "minkleee/cardputersshclient",
+      "status": "rejected",
+      "timestamp": "2026-09-12T16:00:03.112838+00:00"
+    },
     "cardputertiltjump": {
       "expires": "2026-10-12T00:00:11.345845+00:00",
       "id": "cardputertiltjump",
@@ -1716,6 +1735,16 @@
       "repo_id": 1296706232,
       "status": "rejected",
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
+    },
+    "cardulator": {
+      "expires": "2026-10-12T16:00:03.112838+00:00",
+      "id": "cardulator",
+      "pr_ref": null,
+      "reason": "below_floor: 15 stars / 0 forks",
+      "repo": "aroum/cardulator",
+      "repo_id": 1309217067,
+      "status": "rejected",
+      "timestamp": "2026-09-12T16:00:03.112838+00:00"
     },
     "cascade-tetris-m5stickc-plus2": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
@@ -1895,6 +1924,16 @@
       "repo_id": 1223089893,
       "status": "rejected",
       "timestamp": "2026-09-09T22:00:46.933939+00:00"
+    },
+    "controller-s3": {
+      "expires": "2026-10-12T16:00:03.112838+00:00",
+      "id": "controller-s3",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "ilanovikov088-source/controller-s3",
+      "repo_id": 1268316412,
+      "status": "rejected",
+      "timestamp": "2026-09-12T16:00:03.112838+00:00"
     },
     "core-oldtimeradio-stream": {
       "expires": "2026-10-10T09:00:16.033731+00:00",
@@ -8316,6 +8355,7 @@
     "armel/m5hamradio": "m5hamradio",
     "armel/rrfremote": "rrfremote",
     "aroum/cardmotion": "cardmotion",
+    "aroum/cardulator": "cardulator",
     "artem76228/paperos": "paperos",
     "artem76228/paperweb": "paperweb",
     "arturockpk/bme280-sensor-m5unified": "bme280-sensor-m5unified",
@@ -8624,6 +8664,7 @@
     "id8872/cardputer-squawkbox": "cardputer-squawkbox",
     "iele/m5cardputer-c64-emulator": "m5cardputer-c64-emulator",
     "iele/m5papers3-nc1020-emu": "m5papers3-nc1020-emu",
+    "ilanovikov088-source/controller-s3": "controller-s3",
     "ilanovikov088-source/dinorune-sticks3": "dinorune-sticks3",
     "imink/aqualife": "aqualife",
     "imliubo/retro-go": "retro-go",
@@ -8802,6 +8843,7 @@
     "microdev-steve/circuitpython_m5stickplus2": "circuitpython-m5stickplus2",
     "mindovermiles262/tamaputer": "tamaputer",
     "mingrzou/papermono-launcher": "papermono-launcher",
+    "minkleee/cardputersshclient": "cardputersshclient",
     "minoruinachi/tulipcc": "tulipcc",
     "mithug3/cardradio": "cardradio",
     "mk324234/atoms3-lite-tvbgone": "atoms3-lite-tvbgone",
@@ -8844,6 +8886,7 @@
     "nishad2m8/x-mas-tree-animated-gif": "x-mas-tree-animated-gif",
     "noest-d/esp32-emulatorjs": "esp32-emulatorjs",
     "nongxl/agar-cardputer": "agar-cardputer",
+    "nongxl/cardputer_camera": "cardputer-camera",
     "nongxl/cardputer_lightmeter_cpp": "cardputer-lightmeter-cpp",
     "nongxl/cardputer_morsedecoder": "cardputer-morsedecoder",
     "nongxl/cyberdeck-tarot": "cyberdeck-tarot",

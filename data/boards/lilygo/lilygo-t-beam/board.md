@@ -42,6 +42,8 @@ notes:
   the vendor table itself'
 - usb_serial derived from usb.bridge (ch9102)
 getting_started: https://lilygo.cc/products/t-beam
+images:
+  photo: https://lilygo.cc/cdn/shop/files/Q408-LILYGO-T-Beam_6.jpg
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-beam
@@ -64,6 +66,9 @@ sources:
 - field: getting_started
   url: https://lilygo.cc/products/t-beam
   verified: '2026-09-11'
+- field: images
+  url: https://lilygo.cc/products/t-beam
+  verified: '2026-09-12'
 ---
 
 # T-Beam
