@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T05:00:34.806916+00:00",
+      "expires": "2026-09-19T06:00:36.297632+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T05:00:34.806916+00:00"
+      "timestamp": "2026-09-12T06:00:36.297632+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -1423,6 +1423,16 @@
       "status": "rejected",
       "timestamp": "2026-09-09T04:00:10.126216+00:00"
     },
+    "cardputer-wifi-repeater": {
+      "expires": "2026-10-12T06:00:36.297632+00:00",
+      "id": "cardputer-wifi-repeater",
+      "pr_ref": null,
+      "reason": "below_floor: 15 stars / 0 forks",
+      "repo": "ankushkun/cardputer-wifi-repeater",
+      "repo_id": 1082769246,
+      "status": "rejected",
+      "timestamp": "2026-09-12T06:00:36.297632+00:00"
+    },
     "cardputer86": {
       "expires": "2026-10-07T23:00:28.148172+00:00",
       "id": "cardputer86",
@@ -2054,6 +2064,16 @@
       "repo_id": 1002838173,
       "status": "rejected",
       "timestamp": "2026-09-11T21:00:02.504737+00:00"
+    },
+    "cyd-wifi-hash-monster-port-flasher": {
+      "expires": "2026-10-12T06:00:36.297632+00:00",
+      "id": "cyd-wifi-hash-monster-port-flasher",
+      "pr_ref": null,
+      "reason": "below_floor: 10 stars / 1 forks",
+      "repo": "atomnft/cyd-wifi-hash-monster-port-flasher",
+      "repo_id": 1179276628,
+      "status": "rejected",
+      "timestamp": "2026-09-12T06:00:36.297632+00:00"
     },
     "cym-nm28c5": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
@@ -3743,6 +3763,16 @@
       "repo_id": 844094787,
       "status": "rejected",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
+    },
+    "m5atoms3u-wifi-usb-keyboard": {
+      "expires": "2026-10-12T06:00:36.297632+00:00",
+      "id": "m5atoms3u-wifi-usb-keyboard",
+      "pr_ref": null,
+      "reason": "below_floor: 8 stars / 1 forks",
+      "repo": "74th/m5atoms3u-wifi-usb-keyboard",
+      "repo_id": 1038946275,
+      "status": "rejected",
+      "timestamp": "2026-09-12T06:00:36.297632+00:00"
     },
     "m5bit-less": {
       "expires": "2026-10-09T04:00:10.126216+00:00",
@@ -7802,6 +7832,26 @@
       "status": "seen",
       "timestamp": "2026-09-02T16:03:27.955204+00:00"
     },
+    "wifi-remote-display-adv": {
+      "expires": "2026-10-12T06:00:36.297632+00:00",
+      "id": "wifi-remote-display-adv",
+      "pr_ref": null,
+      "reason": "already_catalogued: zeloksa/wifi-remote-display-adv is already in the atlas",
+      "repo": "zeloksa/wifi-remote-display-adv",
+      "repo_id": 1216570989,
+      "status": "rejected",
+      "timestamp": "2026-09-12T06:00:36.297632+00:00"
+    },
+    "wifichanviz": {
+      "expires": "2026-10-12T06:00:36.297632+00:00",
+      "id": "wifichanviz",
+      "pr_ref": null,
+      "reason": "already_catalogued: tobozo/wifichanviz is already in the atlas",
+      "repo": "tobozo/wifichanviz",
+      "repo_id": 436685593,
+      "status": "rejected",
+      "timestamp": "2026-09-12T06:00:36.297632+00:00"
+    },
     "wiki-jokes-quotes-m5stack-core-basic": {
       "expires": "2026-10-08T04:00:36.972928+00:00",
       "id": "wiki-jokes-quotes-m5stack-core-basic",
@@ -7897,6 +7947,7 @@
     "5tufil1k3/m5stick-handheld-tally-clicker": "m5stick-handheld-tally-clicker",
     "610t/m5bit-less": "m5bit-less",
     "610t/m5scratch": "m5scratch",
+    "74th/m5atoms3u-wifi-usb-keyboard": "m5atoms3u-wifi-usb-keyboard",
     "7h30th3r0n3/esp32-honeypot": "esp32-honeypot",
     "7h30th3r0n3/evil-m5core2": "evil-m5core2",
     "7h30th3r0n3/evil-m5project": "evil-m5project",
@@ -7950,6 +8001,7 @@
     "andyaicardputer/nes-tab5-usb-host": "nes-tab5-usb-host",
     "andyaicardputer/zx-spectrum-cardputer-external": "zx-spectrum-cardputer-external",
     "aniketkatkar/m5cardputer-macro-keypad": "m5cardputer-macro-keypad",
+    "ankushkun/cardputer-wifi-repeater": "cardputer-wifi-repeater",
     "anthropics/claude-desktop-buddy": "claude-desktop-buddy",
     "anton-vinogradov/meshtastic-adv": "meshtastic-adv",
     "anyd3v/any-8ball": "any-8ball",
@@ -7969,6 +8021,7 @@
     "asg02fever/m5-dial-rgb-light-strip-controller-": "m5-dial-rgb-light-strip-controller",
     "aspikray/solotputer": "solotputer",
     "atomdreams/cardputersmagps": "cardputersmagps",
+    "atomnft/cyd-wifi-hash-monster-port-flasher": "cyd-wifi-hash-monster-port-flasher",
     "atomnft/m5stick-marauder": "m5stick-marauder",
     "atomnft/rogue-radar": "rogue-radar",
     "autoflowdanilo-it/blipputer": "blipputer",
@@ -8642,6 +8695,7 @@
     "tkaminski21-beep/-phantom-os-": "phantom-os",
     "tobozo/m5core2-soundbouncer": "m5core2-soundbouncer",
     "tobozo/m5stack-sd-updater": "m5stack-sd-updater",
+    "tobozo/wifichanviz": "wifichanviz",
     "tomcasa/m5cardputer-webradio-fr": "m5cardputer-webradio-fr",
     "tomorrow56/m5atom-socket-examples": "m5atom-socket-examples",
     "torlando-tech/pyxis": "pyxis",
@@ -8716,6 +8770,7 @@
     "zeloksa/cardputer-flashlight-adv": "cardputer-flashlight-adv",
     "zeloksa/imu-acoustic-analyzer": "imu-acoustic-analyzer",
     "zeloksa/piano-tiles-adv": "piano-tiles-adv",
+    "zeloksa/wifi-remote-display-adv": "wifi-remote-display-adv",
     "zhaoker/m5stack_tab5_aio_box": "m5stack-tab5-aio-box",
     "zhuzhe1983/inkos": "inkos",
     "zmactep/m5stickc_morse": "m5stickc-morse",
