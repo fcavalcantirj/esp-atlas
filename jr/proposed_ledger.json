@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T09:00:42.532247+00:00",
+      "expires": "2026-09-19T10:00:45.628096+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T09:00:42.532247+00:00"
+      "timestamp": "2026-09-12T10:00:45.628096+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -7996,6 +7996,16 @@
       "status": "rejected",
       "timestamp": "2026-09-12T09:00:42.532247+00:00"
     },
+    "x68ktab5": {
+      "expires": "2026-10-12T10:00:45.628096+00:00",
+      "id": "x68ktab5",
+      "pr_ref": null,
+      "reason": "below_floor: 6 stars / 0 forks",
+      "repo": "layer812/x68ktab5",
+      "repo_id": 1338094363,
+      "status": "rejected",
+      "timestamp": "2026-09-12T10:00:45.628096+00:00"
+    },
     "xiaozhi-esp32": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
       "id": "xiaozhi-esp32",
@@ -8004,6 +8014,36 @@
       "repo": "ooxxu/xiaozhi-esp32",
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "xjackcore-m5stack-jesus-hooligan-pc-cras": {
+      "expires": "2026-10-12T10:00:45.628096+00:00",
+      "id": "xjackcore-m5stack-jesus-hooligan-pc-cras",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/xjackcore-m5stack-jesus-hooligan-pc-crash-simulation",
+      "repo_id": 1169590191,
+      "status": "rejected",
+      "timestamp": "2026-09-12T10:00:45.628096+00:00"
+    },
+    "xjackmod-hooligan-terminal-crash-m5stick": {
+      "expires": "2026-10-12T10:00:45.628096+00:00",
+      "id": "xjackmod-hooligan-terminal-crash-m5stick",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/xjackmod-hooligan-terminal-crash-m5stick",
+      "repo_id": 1122129643,
+      "status": "rejected",
+      "timestamp": "2026-09-12T10:00:45.628096+00:00"
+    },
+    "xnode": {
+      "expires": "2026-10-12T10:00:45.628096+00:00",
+      "id": "xnode",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 2 forks",
+      "repo": "mkme/xnode",
+      "repo_id": 1211943323,
+      "status": "rejected",
+      "timestamp": "2026-09-12T10:00:45.628096+00:00"
     },
     "youranonelf": {
       "expires": "2026-09-19T03:00:29.761890+00:00",
@@ -8229,6 +8269,8 @@
     "coreymillia/vectrex-m5stickc-plus2": "vectrex-m5stickc-plus2",
     "coreymillia/whisplay-groq-chatbot": "whisplay-groq-chatbot",
     "coreymillia/wiki-jokes-quotes-m5stack-core-basic-": "wiki-jokes-quotes-m5stack-core-basic",
+    "coreymillia/xjackcore-m5stack-jesus-hooligan-pc-crash-simulation": "xjackcore-m5stack-jesus-hooligan-pc-cras",
+    "coreymillia/xjackmod-hooligan-terminal-crash-m5stick": "xjackmod-hooligan-terminal-crash-m5stick",
     "coreymillis/evil-portal-parasite-bot-atoms3": "evil-portal-parasite-bot-atoms3",
     "crackulator/meow-sound-player-for-cardputer-adv": "meow-sound-player-for-cardputer-adv",
     "crosspoint-reader/crosspoint-reader": "crosspoint-reader",
@@ -8499,6 +8541,7 @@
     "layer812/sas": "sas",
     "layer812/smfpc": "smfpc",
     "layer812/vgmpc": "vgmpc",
+    "layer812/x68ktab5": "x68ktab5",
     "leandrosummo/m5cybernews-world": "m5cybernews-world",
     "lemin2/esp-iot-solution": "esp-iot-solution",
     "lemin2/imgui-lovyangfx": "imgui-lovyangfx",
@@ -8591,6 +8634,7 @@
     "mithug3/cardradio": "cardradio",
     "mk324234/atoms3-lite-tvbgone": "atoms3-lite-tvbgone",
     "mk324234/m5stickcp2-tvbgone": "m5stickcp2-tvbgone",
+    "mkme/xnode": "xnode",
     "moge800/m5papers3_calculator": "m5papers3-calculator",
     "mohith-das/pomodoro-card": "pomodoro-card",
     "mongonta0716/m5stack-avatar-mic": "m5stack-avatar-mic",
