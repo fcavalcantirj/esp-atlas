@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T00:00:11.345845+00:00",
+      "expires": "2026-09-19T01:00:16.789643+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T00:00:11.345845+00:00"
+      "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -46,6 +46,16 @@
       "repo_id": 1093707719,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "20questions": {
+      "expires": "2026-10-12T01:00:16.789643+00:00",
+      "id": "20questions",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "bpivk/20questions",
+      "repo_id": 1183689499,
+      "status": "rejected",
+      "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "341-xscreensaver-m5stickc-plus1-plus2": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -4419,6 +4429,15 @@
       "status": "rejected",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
+    "m5stack-core-uart-buddy": {
+      "expires": "2026-09-19T01:00:16.789643+00:00",
+      "id": "m5stack-core-uart-buddy",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "kwindapp/m5stack_core-uart-buddy.git",
+      "status": "rejected",
+      "timestamp": "2026-09-12T01:00:16.789643+00:00"
+    },
     "m5stack-core1-noaa-live-weather-satellit": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5stack-core1-noaa-live-weather-satellit",
@@ -6993,6 +7012,16 @@
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
+    "sticky-toybox": {
+      "expires": "2026-10-12T01:00:16.789643+00:00",
+      "id": "sticky-toybox",
+      "pr_ref": null,
+      "reason": "below_floor: 5 stars / 0 forks",
+      "repo": "z4b333/sticky-toybox",
+      "repo_id": 1326291692,
+      "status": "rejected",
+      "timestamp": "2026-09-12T01:00:16.789643+00:00"
+    },
     "stopwatch-chronotrace": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
       "id": "stopwatch-chronotrace",
@@ -7318,12 +7347,32 @@
       "status": "rejected",
       "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
+    "tiny-journal": {
+      "expires": "2026-10-12T01:00:16.789643+00:00",
+      "id": "tiny-journal",
+      "pr_ref": null,
+      "reason": "already_catalogued: joejee90/tiny-journal is already in the atlas",
+      "repo": "joejee90/tiny-journal",
+      "repo_id": 1106575137,
+      "status": "rejected",
+      "timestamp": "2026-09-12T01:00:16.789643+00:00"
+    },
     "tinycardputer": {
       "id": "tinycardputer",
       "pr_ref": null,
       "repo": "soykhaler/tinycardputer",
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.118089+00:00"
+    },
+    "tomatoclock-m5cardputer": {
+      "expires": "2026-10-12T01:00:16.789643+00:00",
+      "id": "tomatoclock-m5cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 0 forks",
+      "repo": "ffrafat/tomatoclock_m5cardputer",
+      "repo_id": 977695063,
+      "status": "rejected",
+      "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "totp-auth-for-cardputer-adv": {
       "expires": "2026-10-11T22:00:03.963388+00:00",
@@ -7335,6 +7384,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
+    "trail-mate": {
+      "expires": "2026-10-12T01:00:16.789643+00:00",
+      "id": "trail-mate",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "vicliu624/trail-mate",
+      "repo_id": 1136847791,
+      "status": "rejected",
+      "timestamp": "2026-09-12T01:00:16.789643+00:00"
+    },
     "trmnl-firmware": {
       "expires": "2026-10-11T22:00:03.963388+00:00",
       "id": "trmnl-firmware",
@@ -7345,6 +7404,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
+    "tulipcc": {
+      "expires": "2026-10-12T01:00:16.789643+00:00",
+      "id": "tulipcc",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 0 forks",
+      "repo": "minoruinachi/tulipcc",
+      "repo_id": 1304605102,
+      "status": "rejected",
+      "timestamp": "2026-09-12T01:00:16.789643+00:00"
+    },
     "two-button-tetris-for-scplus2": {
       "expires": "2026-10-12T00:00:11.345845+00:00",
       "id": "two-button-tetris-for-scplus2",
@@ -7354,6 +7423,16 @@
       "repo_id": 812358825,
       "status": "rejected",
       "timestamp": "2026-09-12T00:00:11.345845+00:00"
+    },
+    "uarterm": {
+      "expires": "2026-10-12T01:00:16.789643+00:00",
+      "id": "uarterm",
+      "pr_ref": null,
+      "reason": "below_floor: 5 stars / 0 forks",
+      "repo": "zolibot/uarterm",
+      "repo_id": 1246265621,
+      "status": "rejected",
+      "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "ubo07": {
       "expires": "2026-09-16T02:09:24.261396+00:00",
@@ -7370,6 +7449,16 @@
       "repo": "tabozen/ucplayground",
       "status": "seen",
       "timestamp": "2026-09-02T16:03:28.075625+00:00"
+    },
+    "uiflow-micropython": {
+      "expires": "2026-10-12T01:00:16.789643+00:00",
+      "id": "uiflow-micropython",
+      "pr_ref": null,
+      "reason": "already_catalogued: m5stack/uiflow-micropython is already in the atlas",
+      "repo": "m5stack/uiflow-micropython",
+      "repo_id": 446381832,
+      "status": "rejected",
+      "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "v-img-reciver": {
       "expires": "2026-10-08T20:00:21.660790+00:00",
@@ -7595,6 +7684,7 @@
     "bmorcelli/launcher": "launcher",
     "bomberman30/advanceos-for-cardputer": "advanceos-for-cardputer",
     "bomberman30/carduboy-arduboy-for-cardputer": "carduboy-arduboy-for-cardputer",
+    "bpivk/20questions": "20questions",
     "bpivk/m5-ssh-wireguard": "m5-ssh-wireguard",
     "bradmcnally/beepbotdx": "beepbotdx",
     "bradmcnally/bitmap16dx": "bitmap16dx",
@@ -7762,6 +7852,7 @@
     "fcavalcantirj/pense-bem-cardputer-adv": "pense-bem-cardputer-adv",
     "fcavalcantirj/sticks3-ai-usage": "sticks3-ai-usage",
     "fermintm/tab5-weather-clock-tmp711v4": "tab5-weather-clock-tmp711v4",
+    "ffrafat/tomatoclock_m5cardputer": "tomatoclock-m5cardputer",
     "filipo3221/cardtube": "cardtube",
     "flashertwelve/ir_replay": "ir-replay",
     "flipper-zero-esp32-adv": "flipper-zero-esp32-adv",
@@ -7883,6 +7974,7 @@
     "jjugs": "jjugs",
     "jjugs/cardputer-laptop-monitor": "cardputer-laptop-monitor",
     "joejee90/cardputer-camera-companion": "cardputer-camera-companion",
+    "joejee90/tiny-journal": "tiny-journal",
     "johnhw/cardputer_drums": "cardputer-drums",
     "jojorel/rfid-pn532-i2c-cardputer": "rfid-pn532-i2c-cardputer",
     "jonaslacerda/crowos": "crowos",
@@ -7921,6 +8013,7 @@
     "kreaxv/pc-monitor-wol-stickc-plus2": "pc-monitor-wol-stickc-plus2",
     "kubiklego/pocketmo_m5": "pocketmo-m5",
     "kvn-la/byobyok": "byobyok",
+    "kwindapp/m5stack_core-uart-buddy.git": "m5stack-core-uart-buddy",
     "kwindapp/start-kwind-jump.git": "start-kwind-jump",
     "kwonbowon/cardputerhomekit": "cardputerhomekit",
     "kwonbowon/lorachat-for-as923": "lorachat-for-as923",
@@ -7991,6 +8084,7 @@
     "m5stack/m5stickcplus2-userdemo": "m5stickcplus2-userdemo",
     "m5stack/m5unified": "m5unified",
     "m5stack/m5unit-thermal2-internal-fw": "m5unit-thermal2-internal-fw",
+    "m5stack/uiflow-micropython": "uiflow-micropython",
     "m5stack/v_img_reciver": "v-img-reciver",
     "m5sxftyxx/m5-stick-help": "m5-stick-help",
     "madboy134/saldotransporte": "saldotransporte",
@@ -8019,6 +8113,7 @@
     "microdev-steve/circuitpython_m5stickplus2": "circuitpython-m5stickplus2",
     "mindovermiles262/tamaputer": "tamaputer",
     "mingrzou/papermono-launcher": "papermono-launcher",
+    "minoruinachi/tulipcc": "tulipcc",
     "mithug3/cardradio": "cardradio",
     "mk324234/atoms3-lite-tvbgone": "atoms3-lite-tvbgone",
     "mk324234/m5stickcp2-tvbgone": "m5stickcp2-tvbgone",
@@ -8246,6 +8341,7 @@
     "vanshksingh/m5cardputer-chat-with-gemini-api": "m5cardputer-chat-with-gemini-api",
     "varna9000/reticulum-tdeck": "reticulum-tdeck",
     "vicliu624/cardputer_mp3_adv": "cardputer-mp3-adv",
+    "vicliu624/trail-mate": "trail-mate",
     "viniciusbo/m5-palnagotchi": "m5-palnagotchi",
     "voidnoi/badcard": "badcard",
     "volosr/cardputer": "cardputer",
@@ -8279,6 +8375,7 @@
     "yo3hjv/ham5dsp": "ham5dsp",
     "yo3hjv/runman1": "runman1",
     "yuleshow/m5tab-macintosh": "m5tab-macintosh",
+    "z4b333/sticky-toybox": "sticky-toybox",
     "z4y-d3n/modbus-tcp-auditor-tool": "modbus-tcp-auditor-tool",
     "z4y-d3n/s7comm-auditor-tool": "s7comm-auditor-tool",
     "zaratton/cardputermidimonitor": "cardputermidimonitor",
@@ -8294,6 +8391,7 @@
     "zmactep/m5stickc_morse": "m5stickc-morse",
     "zmattmanz/claude-usage": "claude-usage",
     "zmattmanz/plume": "plume",
+    "zolibot/uarterm": "uarterm",
     "zorikos3/i.r.s.": "i-r-s",
     "zrutra/game-snake-m5cardputer": "game-snake-m5cardputer",
     "zrutra/lamp-from-m5cardputer": "lamp-from-m5cardputer",
