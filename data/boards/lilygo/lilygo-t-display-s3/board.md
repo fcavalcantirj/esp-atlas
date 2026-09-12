@@ -36,6 +36,8 @@ notes:
   pin-diagram image), so left unset per cite-or-omit'
 - usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag
 getting_started: https://lilygo.cc/products/t-display-s3
+images:
+  photo: https://lilygo.cc/cdn/shop/files/H569_03.jpg
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-display-s3
@@ -52,6 +54,9 @@ sources:
 - field: getting_started
   url: https://lilygo.cc/products/t-display-s3
   verified: '2026-09-11'
+- field: images
+  url: https://lilygo.cc/products/t-display-s3
+  verified: '2026-09-12'
 ---
 
 # T-Display-S3

@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T16:00:03.112838+00:00",
+      "expires": "2026-09-19T17:00:10.294624+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T16:00:03.112838+00:00"
+      "timestamp": "2026-09-12T17:00:10.294624+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -1935,6 +1935,16 @@
       "status": "rejected",
       "timestamp": "2026-09-12T16:00:03.112838+00:00"
     },
+    "copyrfid": {
+      "expires": "2026-10-12T17:00:10.294624+00:00",
+      "id": "copyrfid",
+      "pr_ref": null,
+      "reason": "below_floor: 9 stars / 0 forks",
+      "repo": "carlosdanieldev/copyrfid",
+      "repo_id": 769648750,
+      "status": "rejected",
+      "timestamp": "2026-09-12T17:00:10.294624+00:00"
+    },
     "core-oldtimeradio-stream": {
       "expires": "2026-10-10T09:00:16.033731+00:00",
       "id": "core-oldtimeradio-stream",
@@ -2631,6 +2641,15 @@
       "repo_id": 727054728,
       "status": "rejected",
       "timestamp": "2026-09-09T04:00:10.126216+00:00"
+    },
+    "espeon": {
+      "expires": "2026-09-19T17:00:10.294624+00:00",
+      "id": "espeon",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "ryuzaki-mrl/espeon.git",
+      "status": "rejected",
+      "timestamp": "2026-09-12T17:00:10.294624+00:00"
     },
     "evil-m5core2": {
       "expires": "2026-10-08T04:00:36.972928+00:00",
@@ -4262,6 +4281,26 @@
       "repo_id": 1247841477,
       "status": "rejected",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
+    },
+    "m5deck": {
+      "expires": "2026-10-12T17:00:10.294624+00:00",
+      "id": "m5deck",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "dragon34344/m5deck",
+      "repo_id": 1367430018,
+      "status": "rejected",
+      "timestamp": "2026-09-12T17:00:10.294624+00:00"
+    },
+    "m5dial-crazy-eyes": {
+      "expires": "2026-10-12T17:00:10.294624+00:00",
+      "id": "m5dial-crazy-eyes",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 0 forks",
+      "repo": "3110/m5dial-crazy-eyes",
+      "repo_id": 786096738,
+      "status": "rejected",
+      "timestamp": "2026-09-12T17:00:10.294624+00:00"
     },
     "m5dial-userdemo": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
@@ -8277,6 +8316,7 @@
     "0xhalloween/flipper-zero-esp32-adv": "flipper-zero-esp32-adv",
     "1technophile/openmqttgateway": "openmqttgateway",
     "3110/atom-babies-firmware": "atom-babies-firmware",
+    "3110/m5dial-crazy-eyes": "m5dial-crazy-eyes",
     "3110/m5stack-image-viewer": "m5stack-image-viewer",
     "3110/m5watchclicker": "m5watchclicker",
     "5tufil1k3/airmouse-m5stick-c-plus": "airmouse-m5stick-c-plus",
@@ -8396,6 +8436,7 @@
     "c5lab/pancake": "pancake",
     "calcaware/tama-search-uni": "tama-search-uni",
     "captainchorche/cardcaliper": "cardcaliper",
+    "carlosdanieldev/copyrfid": "copyrfid",
     "cattivole/darkroomtimer": "darkroomtimer",
     "cc": "cc",
     "chadvavra/papercolor.git": "papercolor",
@@ -8517,6 +8558,7 @@
     "douglasrubims/cardputer-barcode-wedge": "cardputer-barcode-wedge",
     "dr3d/somafm-for-cardputer": "somafm-for-cardputer",
     "dracosdev/sysx": "sysx",
+    "dragon34344/m5deck": "m5deck",
     "drdavidda/papercolor-desk-terminal": "papercolor-desk-terminal",
     "drrhesus/rhesus-life": "rhesus-life",
     "drrhesus/rhesus-radio-v3": "rhesus-radio-v3",
@@ -8983,6 +9025,7 @@
     "rymicka": "rymicka",
     "rythlan/brokensignal-next": "brokensignal-next",
     "rythlan/cardmeteo": "cardmeteo",
+    "ryuzaki-mrl/espeon.git": "espeon",
     "sacriphanius/wdgwatch": "wdgwatch",
     "sacriphanius/zhilly": "zhilly",
     "sakkra-adv/battleship": "battleship",
