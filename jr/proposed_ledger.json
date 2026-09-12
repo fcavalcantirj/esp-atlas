@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-18T23:00:11.214000+00:00",
+      "expires": "2026-09-19T00:00:11.345845+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-11T23:00:11.214000+00:00"
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -142,6 +142,16 @@
       "repo_id": 1099556447,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "adversary": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "adversary",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "isonimus/adversary",
+      "repo_id": 1155455178,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "advutil": {
       "id": "advutil",
@@ -1507,6 +1517,16 @@
       "repo_id": 966343198,
       "status": "rejected",
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
+    },
+    "cardputertiltjump": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "cardputertiltjump",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "lunarc3/cardputertiltjump",
+      "repo_id": 1255309927,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "cardradio": {
       "id": "cardradio",
@@ -3033,6 +3053,15 @@
       "repo": "zorikos3/i.r.s.",
       "status": "rejected",
       "timestamp": "2026-09-08T17:00:16.540728+00:00"
+    },
+    "iching-xiaozhi-card": {
+      "expires": "2026-09-19T00:00:11.345845+00:00",
+      "id": "iching-xiaozhi-card",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "gywan94/iching-xiaozhi-card.git",
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "imgui-lovyangfx": {
       "expires": "2026-10-08T20:00:21.660790+00:00",
@@ -4952,6 +4981,16 @@
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
+    "m5unit-thermal2-internal-fw": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "m5unit-thermal2-internal-fw",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 0 forks",
+      "repo": "m5stack/m5unit-thermal2-internal-fw",
+      "repo_id": 539288236,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
+    },
     "m5voicestick": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5voicestick",
@@ -5985,6 +6024,16 @@
       "repo_id": 1132515428,
       "status": "rejected",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
+    "pomodora-m5stick": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "pomodora-m5stick",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 0 forks",
+      "repo": "lucasineth/pomodora-m5stick-",
+      "repo_id": 917414184,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "pomodoro-card": {
       "expires": "2026-10-11T15:00:52.423877+00:00",
@@ -7108,8 +7157,8 @@
       "pr_ref": null,
       "repo": "i12bp8/tagtinker-adv",
       "repo_id": 1361884510,
-      "status": "proposed",
-      "timestamp": "2026-09-11T23:00:11.214000+00:00"
+      "status": "merged",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "tama-search-uni": {
       "expires": "2026-10-11T23:00:11.214000+00:00",
@@ -7121,6 +7170,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
+    "tamaputer": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "tamaputer",
+      "pr_ref": null,
+      "reason": "already_catalogued: mindovermiles262/tamaputer is already in the atlas",
+      "repo": "mindovermiles262/tamaputer",
+      "repo_id": 1104768732,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
+    },
     "taskhub-for-sticks3": {
       "evidence_url": "https://github.com/sheepxux/Taskhub-for-StickS3",
       "id": "taskhub-for-sticks3",
@@ -7130,6 +7189,26 @@
       "status": "merged",
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
     },
+    "tasmota": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "tasmota",
+      "pr_ref": null,
+      "reason": "already_catalogued: arendst/tasmota is already in the atlas",
+      "repo": "arendst/tasmota",
+      "repo_id": 80286288,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
+    },
+    "tavden-field-suite": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "tavden-field-suite",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 1 forks",
+      "repo": "tavden/tavden-field-suite",
+      "repo_id": 1333701183,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
+    },
     "teenygpstestbed-c2": {
       "expires": "2026-09-15T05:25:25.049296+00:00",
       "id": "teenygpstestbed-c2",
@@ -7138,6 +7217,26 @@
       "repo": "beakes/teenygpstestbed_c2",
       "status": "rejected",
       "timestamp": "2026-09-08T05:25:25.049296+00:00"
+    },
+    "termputer": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "termputer",
+      "pr_ref": null,
+      "reason": "below_floor: 5 stars / 0 forks",
+      "repo": "sosprz/termputer",
+      "repo_id": 1126420174,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
+    },
+    "tetrimino-space-invaders-m5stickc-plus2": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "tetrimino-space-invaders-m5stickc-plus2",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/tetrimino-space-invaders-m5stickc-plus2",
+      "repo_id": 1092526285,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "tetris-2p-battle-m5stickc-plus2": {
       "expires": "2026-10-11T22:00:03.963388+00:00",
@@ -7159,6 +7258,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
+    "tetris-for-m5stickcplus2": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "tetris-for-m5stickcplus2",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 1 forks",
+      "repo": "aleksalcdel/tetris-for-m5stickcplus2",
+      "repo_id": 808338891,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
+    },
     "tetris-for-m5stickcplus2-fastghost": {
       "expires": "2026-10-11T22:00:03.963388+00:00",
       "id": "tetris-for-m5stickcplus2-fastghost",
@@ -7169,6 +7278,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
+    "tetrisnake-m5stick-plus2": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "tetrisnake-m5stick-plus2",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/tetrisnake-m5stick-plus2",
+      "repo_id": 1092552386,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
+    },
     "tetroids-m5stickc-plus2": {
       "expires": "2026-10-11T22:00:03.963388+00:00",
       "id": "tetroids-m5stickc-plus2",
@@ -7178,6 +7297,26 @@
       "repo_id": 1092246589,
       "status": "rejected",
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
+    "threetris-m5stickc-plus2": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "threetris-m5stickc-plus2",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "coreymillia/threetris-m5stickc-plus2",
+      "repo_id": 1093101462,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
+    },
+    "tic-tac-toe-m5cardputer": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "tic-tac-toe-m5cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 1 forks",
+      "repo": "zrutra/tic-tac-toe-m5cardputer",
+      "repo_id": 832678362,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "tinycardputer": {
       "id": "tinycardputer",
@@ -7205,6 +7344,16 @@
       "repo_id": 742912310,
       "status": "rejected",
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
+    "two-button-tetris-for-scplus2": {
+      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "id": "two-button-tetris-for-scplus2",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "aleksalcdel/two-button_tetris_for_scplus2.",
+      "repo_id": 812358825,
+      "status": "rejected",
+      "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "ubo07": {
       "expires": "2026-09-16T02:09:24.261396+00:00",
@@ -7391,6 +7540,8 @@
     "airpocket-soundman/tab5_ssh_client": "tab5-ssh-client",
     "akoerner/kprox": "kprox",
     "alcor55/cardputer-gps-info": "cardputer-gps-info",
+    "aleksalcdel/tetris-for-m5stickcplus2": "tetris-for-m5stickcplus2",
+    "aleksalcdel/two-button_tetris_for_scplus2.": "two-button-tetris-for-scplus2",
     "aleksm2137/mini-mp3player_cardputer-adv": "mini-mp3player-cardputer-adv",
     "alexdelprete/ha-sugar-valley-neopool": "ha-sugar-valley-neopool",
     "allfather-bv/wadamesh": "wadamesh",
@@ -7412,6 +7563,7 @@
     "anthropics/claude-desktop-buddy": "claude-desktop-buddy",
     "anton-vinogradov/meshtastic-adv": "meshtastic-adv",
     "anyd3v/any-8ball": "any-8ball",
+    "arendst/tasmota": "tasmota",
     "armel/breakoutatoms3": "breakoutatoms3",
     "armel/dradis": "dradis",
     "armel/hal9000": "hal9000",
@@ -7520,10 +7672,13 @@
     "coreymillia/scorched-earth-m5stickc-plus2": "scorched-earth-m5stickc-plus2",
     "coreymillia/shark-bait-add-on-bruce-firmware-m5stackc-plus-": "shark-bait-add-on-bruce-firmware-m5stack",
     "coreymillia/sonicthehedgehog-m5stickc-plus2": "sonicthehedgehog-m5stickc-plus2",
+    "coreymillia/tetrimino-space-invaders-m5stickc-plus2": "tetrimino-space-invaders-m5stickc-plus2",
     "coreymillia/tetris-2p-battle-m5stickc-plus2": "tetris-2p-battle-m5stickc-plus2",
     "coreymillia/tetris-atoms3": "tetris-atoms3",
     "coreymillia/tetris-for-m5stickcplus2-fastghost": "tetris-for-m5stickcplus2-fastghost",
+    "coreymillia/tetrisnake-m5stick-plus2": "tetrisnake-m5stick-plus2",
     "coreymillia/tetroids-m5stickc-plus2": "tetroids-m5stickc-plus2",
+    "coreymillia/threetris-m5stickc-plus2": "threetris-m5stickc-plus2",
     "coreymillia/vectrex-m5stickc-plus2": "vectrex-m5stickc-plus2",
     "coreymillia/whisplay-groq-chatbot": "whisplay-groq-chatbot",
     "coreymillia/wiki-jokes-quotes-m5stack-core-basic-": "wiki-jokes-quotes-m5stack-core-basic",
@@ -7664,6 +7819,7 @@
     "gvrubio/gvm5wifichannelutil": "gvm5wifichannelutil",
     "gywan94/cardputer-nc1020emu.git": "cardputer-nc1020emu",
     "gywan94/cardputer-wechat.git": "cardputer-wechat",
+    "gywan94/iching-xiaozhi-card.git": "iching-xiaozhi-card",
     "h4w9/ascii-aquarium": "ascii-aquarium",
     "h4w9/esp32_flipsocial": "esp32-flipsocial",
     "h4w9/esp32_flipworld": "esp32-flipworld",
@@ -7713,6 +7869,7 @@
     "inkone/sticky-lotus": "sticky-lotus",
     "integerquant/baitnswitch": "baitnswitch",
     "irisihrz": "irisihrz",
+    "isonimus/adversary": "adversary",
     "javicar31/m5dial_volume_hid": "m5dial-volume-hid",
     "javicar31/m5stack_papers3": "m5stack-papers3",
     "jay-jayismyname1/cardputer-abs-b-radar": "cardputer-abs-b-radar",
@@ -7797,10 +7954,12 @@
     "locosp/bruce-firmware-wdgwars": "bruce-firmware-wdgwars",
     "lordlexat/m5core2_simpleclock": "m5core2-simpleclock",
     "lostdataprotocol/onemorefloor": "onemorefloor",
+    "lucasineth/pomodora-m5stick-": "pomodora-m5stick",
     "ludable/pumpbug": "pumpbug",
     "lukastrhan-hub/dino-and-bomb-game": "dino-and-bomb-game",
     "lunarc3/ballisticcalc": "ballisticcalc",
     "lunarc3/cardputergpsmap": "cardputergpsmap",
+    "lunarc3/cardputertiltjump": "cardputertiltjump",
     "lunarc3/mmbasic_cardputer": "mmbasic-cardputer",
     "lyzbn/adv-tarot-firmware": "adv-tarot-firmware",
     "m5dev1000/m5-ble-controller": "m5-ble-controller",
@@ -7831,6 +7990,7 @@
     "m5stack/m5stickc-plus-tlite-fw": "m5stickc-plus-tlite-fw",
     "m5stack/m5stickcplus2-userdemo": "m5stickcplus2-userdemo",
     "m5stack/m5unified": "m5unified",
+    "m5stack/m5unit-thermal2-internal-fw": "m5unit-thermal2-internal-fw",
     "m5stack/v_img_reciver": "v-img-reciver",
     "m5sxftyxx/m5-stick-help": "m5-stick-help",
     "madboy134/saldotransporte": "saldotransporte",
@@ -7857,6 +8017,7 @@
     "micokonsep/flipcard-papers3": "flipcard-papers3",
     "micokonsep/pomodoro-papers3": "pomodoro-papers3",
     "microdev-steve/circuitpython_m5stickplus2": "circuitpython-m5stickplus2",
+    "mindovermiles262/tamaputer": "tamaputer",
     "mingrzou/papermono-launcher": "papermono-launcher",
     "mithug3/cardradio": "cardradio",
     "mk324234/atoms3-lite-tvbgone": "atoms3-lite-tvbgone",
@@ -8026,6 +8187,7 @@
     "sor3nt/flipper-zero-esp32-port": "flipper-zero-esp32-port",
     "sosprz/esp_level": "esp-level",
     "sosprz/meshcore-cardputer-adv": "meshcore-cardputer-adv",
+    "sosprz/termputer": "termputer",
     "sourcels/mini-mp3player_cardputer-adv": "mini-mp3player-cardputer-adv",
     "soykhaler/tinycardputer": "tinycardputer",
     "soykhaler/zx-spectrum-cardputer-internal": "zx-spectrum-cardputer-internal",
@@ -8046,6 +8208,7 @@
     "tabozen/ucplayground": "ucplayground",
     "tactilityproject/tactility": "tactility",
     "taraskad3o/m5stack-atoms3-ble-remote-for-canon": "m5stack-atoms3-ble-remote-for-canon",
+    "tavden/tavden-field-suite": "tavden-field-suite",
     "teapot174/airmouses3": "airmouses3",
     "thebolined/ai-cardputer-adv-a-portable-ai-assistant": "ai-cardputer-adv-a-portable-ai-assistant",
     "thebricktop/anarch-cardputer": "anarch-cardputer",
@@ -8134,6 +8297,7 @@
     "zorikos3/i.r.s.": "i-r-s",
     "zrutra/game-snake-m5cardputer": "game-snake-m5cardputer",
     "zrutra/lamp-from-m5cardputer": "lamp-from-m5cardputer",
+    "zrutra/tic-tac-toe-m5cardputer": "tic-tac-toe-m5cardputer",
     "zrutra/wifi-capture-page-m5cardputer": "wifi-capture-page-m5cardputer",
     "zspuspoki/cardputeradvanceddoom": "cardputeradvanceddoom",
     "zsyai/m5paper-ebook": "m5paper-ebook",

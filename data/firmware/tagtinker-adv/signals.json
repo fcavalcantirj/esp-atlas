@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-12",
+ "notes": [],
+ "ref": "main",
+ "repo": "i12bp8/tagtinker-adv",
+ "resolved": {
+  "boards": [
+   "m5cardputer"
+  ],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "m5stack-cardputer",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 6,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/i12bp8/tagtinker-adv/blob/main/platformio.ini#L6"
+  }
+ ]
+}
