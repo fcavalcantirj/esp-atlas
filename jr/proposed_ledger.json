@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T21:00:32.629123+00:00",
+      "expires": "2026-09-19T22:00:34.162368+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T21:00:32.629123+00:00"
+      "timestamp": "2026-09-12T22:00:34.162368+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -26,6 +26,16 @@
       "repo": "0m3gx",
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "0n3p0rk": {
+      "expires": "2026-10-12T22:00:34.162368+00:00",
+      "id": "0n3p0rk",
+      "pr_ref": null,
+      "reason": "below_floor: 8 stars / 2 forks",
+      "repo": "lexilexiko/0n3p0rk",
+      "repo_id": 1334447126,
+      "status": "rejected",
+      "timestamp": "2026-09-12T22:00:34.162368+00:00"
     },
     "0n3pork-w3b": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -3883,6 +3893,16 @@
       "status": "rejected",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
+    "m5-minijoystickc-gamepad": {
+      "expires": "2026-10-12T22:00:34.162368+00:00",
+      "id": "m5-minijoystickc-gamepad",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "davervw/m5_minijoystickc_gamepad",
+      "repo_id": 1241197694,
+      "status": "rejected",
+      "timestamp": "2026-09-12T22:00:34.162368+00:00"
+    },
     "m5-mousejiggler": {
       "id": "m5-mousejiggler",
       "pr_ref": null,
@@ -4353,6 +4373,26 @@
       "repo": "cubic9com/m5core2_audio_analyzer",
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.148153+00:00"
+    },
+    "m5core2-defrag": {
+      "expires": "2026-10-12T22:00:34.162368+00:00",
+      "id": "m5core2-defrag",
+      "pr_ref": null,
+      "reason": "below_floor: 5 stars / 0 forks",
+      "repo": "cubic9com/m5core2_defrag",
+      "repo_id": 986072212,
+      "status": "rejected",
+      "timestamp": "2026-09-12T22:00:34.162368+00:00"
+    },
+    "m5core2-delaunay": {
+      "expires": "2026-10-12T22:00:34.162368+00:00",
+      "id": "m5core2-delaunay",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 0 forks",
+      "repo": "cubic9com/m5core2_delaunay",
+      "repo_id": 945084953,
+      "status": "rejected",
+      "timestamp": "2026-09-12T22:00:34.162368+00:00"
     },
     "m5core2-esp32-tetris-touch": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
@@ -8693,6 +8733,8 @@
     "crosspoint-reader/crosspoint-reader": "crosspoint-reader",
     "cryptspeak/cscardputer": "cscardputer",
     "cubic9com/m5core2_audio_analyzer": "m5core2-audio-analyzer",
+    "cubic9com/m5core2_defrag": "m5core2-defrag",
+    "cubic9com/m5core2_delaunay": "m5core2-delaunay",
     "cubic9com/m5core2_eyes": "m5core2-eyes",
     "cyberwisk/m5cardputer_audiospectrum": "m5cardputer-audiospectrum",
     "cyberwisk/m5cardputer_webradio": "m5cardputer-webradio",
@@ -8707,6 +8749,7 @@
     "dalianblue/m5voicestick": "m5voicestick",
     "danpodeanu/seeed-reterminal-e100x": "seeed-reterminal-e100x",
     "davervw/cardputer-game-station-emulators": "cardputer-game-station-emulators",
+    "davervw/m5_minijoystickc_gamepad": "m5-minijoystickc-gamepad",
     "dayou-ht/morsetrainer-cardputer": "morsetrainer-cardputer",
     "ddd": "ddd",
     "demonkingfukai/m5stickc-plus-mouse-jiggler": "m5stickc-plus-mouse-jiggler",
@@ -8975,6 +9018,7 @@
     "lemin2/imgui-lovyangfx": "imgui-lovyangfx",
     "leonferlo/crptvfplayer-carputer-videoplayer": "crptvfplayer-carputer-videoplayer",
     "lexcibien/snake_game_cardputer": "snake-game-cardputer",
+    "lexilexiko/0n3p0rk": "0n3p0rk",
     "lexilexiko/0n3pork-w3b": "0n3pork-w3b",
     "liankui/microcom": "microcom",
     "lilbricky101/ghost-firmware": "ghost-firmware",
