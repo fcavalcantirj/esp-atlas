@@ -5,10 +5,11 @@
 > derived catalog check (`data/boards/<brand>/<board_id>/board.md` existence).
 > This is a report only — it does NOT feed the live tick gauge or allocator.
 
-**Overall: 16/31 boards cataloged (51.6%) — 15 missing.**
+**Overall: 36/49 boards cataloged (73.5%) — 13 missing.**
 
 | Brand | Cataloged | Universe | % | Missing board_ids |
 | --- | --- | --- | --- | --- |
-| adafruit | 11 | 26 | 42.3% | `adafruit-feather-esp32-c6`, `adafruit-feather-esp32-s2-reverse-tft`, `adafruit-feather-esp32-s2-tft`, `adafruit-feather-esp32-s3-no-psram`, `adafruit-feather-esp32-s3-tft`, `adafruit-funhouse`, `adafruit-magtag`, `adafruit-metro-esp32-s2`, `adafruit-pycamera-s3`, `adafruit-qt-py-esp32`, `adafruit-qt-py-esp32-s3-no-psram`, `adafruit-qualia-esp32-s3`, `adafruit-sparkle-motion`, `adafruit-sparkle-motion-mini`, `adafruit-sparkle-motion-stick` |
+| adafruit | 26 | 26 | 100.0% | — |
+| heltec | 5 | 18 | 27.8% | `heltec-wifi-lora-32-v2`, `heltec-wifi-lora-32-v4`, `heltec-wireless-stick-lite-v3`, `heltec-wireless-shell-v3`, `heltec-wireless-bridge`, `heltec-wireless-tracker-v2`, `heltec-ht-ct62`, `heltec-esp32-c3`, `heltec-capsule-sensor-v3`, `heltec-e-ink-driver`, `heltec-vision-master-e213`, `heltec-vision-master-e290`, `heltec-vision-master-t190` |
 | seeed | 5 | 5 | 100.0% | — |
 
