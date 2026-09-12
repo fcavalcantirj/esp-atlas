@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T01:00:16.789643+00:00",
+      "expires": "2026-09-19T02:00:23.345419+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T01:00:16.789643+00:00"
+      "timestamp": "2026-09-12T02:00:23.345419+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -36,6 +36,16 @@
       "repo_id": 1333517118,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "113-matrix-rain-effects-m5stack-core1-ba": {
+      "expires": "2026-10-12T02:00:23.345419+00:00",
+      "id": "113-matrix-rain-effects-m5stack-core1-ba",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "coreymillia/113-matrix-rain-effects-m5stack-core1-basic",
+      "repo_id": 1137740975,
+      "status": "rejected",
+      "timestamp": "2026-09-12T02:00:23.345419+00:00"
     },
     "1942-tetrimino-m5stickc-plus2": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -548,6 +558,16 @@
       "repo": "autoflowdanilo-it/blipputer",
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.140794+00:00"
+    },
+    "bluetooth-keyboard-mouse-emulator": {
+      "expires": "2026-10-12T02:00:23.345419+00:00",
+      "id": "bluetooth-keyboard-mouse-emulator",
+      "pr_ref": null,
+      "reason": "already_catalogued: geo-tp/bluetooth-keyboard-mouse-emulator is already in the atlas",
+      "repo": "geo-tp/bluetooth-keyboard-mouse-emulator",
+      "repo_id": 807988574,
+      "status": "rejected",
+      "timestamp": "2026-09-12T02:00:23.345419+00:00"
     },
     "bluetoothmidicontrollermusicconductor-m5": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -2284,6 +2304,16 @@
       "repo_id": 882997253,
       "status": "rejected",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
+    },
+    "esp-iot-solution": {
+      "expires": "2026-10-12T02:00:23.345419+00:00",
+      "id": "esp-iot-solution",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "lemin2/esp-iot-solution",
+      "repo_id": 1008302029,
+      "status": "rejected",
+      "timestamp": "2026-09-12T02:00:23.345419+00:00"
     },
     "esp-level": {
       "expires": "2026-10-07T23:00:28.148172+00:00",
@@ -5000,6 +5030,16 @@
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
+    "m5unit-kmeter-internal-fw": {
+      "expires": "2026-10-12T02:00:23.345419+00:00",
+      "id": "m5unit-kmeter-internal-fw",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 1 forks",
+      "repo": "m5stack/m5unit-kmeter-internal-fw",
+      "repo_id": 456780360,
+      "status": "rejected",
+      "timestamp": "2026-09-12T02:00:23.345419+00:00"
+    },
     "m5unit-thermal2-internal-fw": {
       "expires": "2026-10-12T00:00:11.345845+00:00",
       "id": "m5unit-thermal2-internal-fw",
@@ -5200,6 +5240,16 @@
       "repo": "01mayo01/meowusb-ble",
       "status": "rejected",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
+    },
+    "meshcore": {
+      "expires": "2026-10-12T02:00:23.345419+00:00",
+      "id": "meshcore",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "therealhaoliu/meshcore",
+      "repo_id": 1140003286,
+      "status": "rejected",
+      "timestamp": "2026-09-12T02:00:23.345419+00:00"
     },
     "meshcore-cardputer-adv": {
       "expires": "2026-10-09T15:00:32.435406+00:00",
@@ -7460,6 +7510,45 @@
       "status": "rejected",
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
+    "ultimate-remote": {
+      "expires": "2026-10-12T02:00:23.345419+00:00",
+      "id": "ultimate-remote",
+      "pr_ref": null,
+      "reason": "already_catalogued: geo-tp/ultimate-remote is already in the atlas",
+      "repo": "geo-tp/ultimate-remote",
+      "repo_id": 811695242,
+      "status": "rejected",
+      "timestamp": "2026-09-12T02:00:23.345419+00:00"
+    },
+    "unigeek": {
+      "expires": "2026-10-12T02:00:23.345419+00:00",
+      "id": "unigeek",
+      "pr_ref": null,
+      "reason": "name_token_matches_catalogued: likely a port/variant",
+      "repo": "lshaf/unigeek",
+      "repo_id": 1160809961,
+      "status": "rejected",
+      "timestamp": "2026-09-12T02:00:23.345419+00:00"
+    },
+    "usbarmyknife": {
+      "expires": "2026-09-19T02:00:23.345419+00:00",
+      "id": "usbarmyknife",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "i-am-shodan/usbarmyknife.git",
+      "status": "rejected",
+      "timestamp": "2026-09-12T02:00:23.345419+00:00"
+    },
+    "usbhost-m5cardputer": {
+      "expires": "2026-10-12T02:00:23.345419+00:00",
+      "id": "usbhost-m5cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 1 forks",
+      "repo": "aat440hz/usbhost-m5cardputer",
+      "repo_id": 1349008358,
+      "status": "rejected",
+      "timestamp": "2026-09-12T02:00:23.345419+00:00"
+    },
     "v-img-reciver": {
       "expires": "2026-10-08T20:00:21.660790+00:00",
       "id": "v-img-reciver",
@@ -7619,6 +7708,7 @@
     "aat440hz/rf433any-m5cardputer": "rf433any-m5cardputer",
     "aat440hz/rf433any-m5stickcplus": "rf433any-m5stickcplus",
     "aat440hz/rf433any-m5stickcplus2": "rf433any-m5stickcplus2",
+    "aat440hz/usbhost-m5cardputer": "usbhost-m5cardputer",
     "abenokobo/pd-camera-m5": "pd-camera-m5",
     "acpayers-alt/raising-hell-cardputer": "raising-hell-cardputer",
     "adafruit/circuitpython": "circuitpython",
@@ -7719,6 +7809,7 @@
     "codigohardwareecia/m5cardputer_knowledge": "m5cardputer-knowledge",
     "codigohardwareecia/m5cardputer_mp3_manager": "m5cardputer-mp3-manager",
     "comeraperuibe944/stickcontroller": "stickcontroller",
+    "coreymillia/113-matrix-rain-effects-m5stack-core1-basic": "113-matrix-rain-effects-m5stack-core1-ba",
     "coreymillia/1942-tetrimino-m5stickc-plus2": "1942-tetrimino-m5stickc-plus2",
     "coreymillia/341-xscreensaver-m5stickc-plus1-plus2": "341-xscreensaver-m5stickc-plus1-plus2",
     "coreymillia/7-games-for-m5stickc-plus2": "7-games-for-m5stickc-plus2",
@@ -7887,6 +7978,7 @@
     "genkigenki/hotspot-arcade-cardputer": "hotspot-arcade-cardputer",
     "geo-tp": "geo-tp",
     "geo-tp/bitcoin-card-wallet": "bitcoin-card-wallet",
+    "geo-tp/bluetooth-keyboard-mouse-emulator": "bluetooth-keyboard-mouse-emulator",
     "geo-tp/cardputer-game-station-emulators": "cardputer-game-station-emulators",
     "geo-tp/esp32-bus-pirate": "esp32-bus-pirate",
     "geo-tp/esp32-usb-stick": "esp32-usb-stick",
@@ -7897,6 +7989,7 @@
     "geo-tp/microcom": "microcom",
     "geo-tp/open-wifi-scanner": "open-wifi-scanner",
     "geo-tp/password-manager": "password-manager",
+    "geo-tp/ultimate-remote": "ultimate-remote",
     "ghost-esp": "ghost-esp",
     "ghostesp-revival/ghostesp": "ghostesp",
     "girs1982/cardputer-cc1101-manufactured-": "cardputer-cc1101-manufactured",
@@ -7944,6 +8037,7 @@
     "hsgarcia22/m5-mousejiggler": "m5-mousejiggler",
     "http:/": "http:/",
     "https:/": "https:/",
+    "i-am-shodan/usbarmyknife.git": "usbarmyknife",
     "i12bp8/echo": "echo",
     "i12bp8/tagtinker-adv": "tagtinker-adv",
     "i12bp8/wmbuster-adv": "wmbuster-adv",
@@ -8031,6 +8125,7 @@
     "layer812/sas": "sas",
     "layer812/smfpc": "smfpc",
     "leandrosummo/m5cybernews-world": "m5cybernews-world",
+    "lemin2/esp-iot-solution": "esp-iot-solution",
     "lemin2/imgui-lovyangfx": "imgui-lovyangfx",
     "leonferlo/crptvfplayer-carputer-videoplayer": "crptvfplayer-carputer-videoplayer",
     "lexcibien/snake_game_cardputer": "snake-game-cardputer",
@@ -8047,6 +8142,7 @@
     "locosp/bruce-firmware-wdgwars": "bruce-firmware-wdgwars",
     "lordlexat/m5core2_simpleclock": "m5core2-simpleclock",
     "lostdataprotocol/onemorefloor": "onemorefloor",
+    "lshaf/unigeek": "unigeek",
     "lucasineth/pomodora-m5stick-": "pomodora-m5stick",
     "ludable/pumpbug": "pumpbug",
     "lukastrhan-hub/dino-and-bomb-game": "dino-and-bomb-game",
@@ -8083,6 +8179,7 @@
     "m5stack/m5stickc-plus-tlite-fw": "m5stickc-plus-tlite-fw",
     "m5stack/m5stickcplus2-userdemo": "m5stickcplus2-userdemo",
     "m5stack/m5unified": "m5unified",
+    "m5stack/m5unit-kmeter-internal-fw": "m5unit-kmeter-internal-fw",
     "m5stack/m5unit-thermal2-internal-fw": "m5unit-thermal2-internal-fw",
     "m5stack/uiflow-micropython": "uiflow-micropython",
     "m5stack/v_img_reciver": "v-img-reciver",
@@ -8313,6 +8410,7 @@
     "themusicnerd/m5-atoms3-companion-v4-satellite": "m5-atoms3-companion-v4-satellite",
     "themusicnerd/m5stickc-companion-v4-satellite": "m5stickc-companion-v4-satellite",
     "thenikosteam/nikos": "nikos",
+    "therealhaoliu/meshcore": "meshcore",
     "therezor/card-craft": "card-craft",
     "therezor/cardputer-ai": "cardputer-ai",
     "therezor/esp32-cleaner": "esp32-cleaner",
