@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T07:00:39.726979+00:00",
+      "expires": "2026-09-19T08:00:41.133831+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T07:00:39.726979+00:00"
+      "timestamp": "2026-09-12T08:00:41.133831+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -7882,6 +7882,16 @@
       "status": "rejected",
       "timestamp": "2026-09-12T06:00:36.297632+00:00"
     },
+    "wifikey2": {
+      "expires": "2026-10-12T08:00:41.133831+00:00",
+      "id": "wifikey2",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "jl1nie/wifikey2",
+      "repo_id": 780487160,
+      "status": "rejected",
+      "timestamp": "2026-09-12T08:00:41.133831+00:00"
+    },
     "wiki-jokes-quotes-m5stack-core-basic": {
       "expires": "2026-10-08T04:00:36.972928+00:00",
       "id": "wiki-jokes-quotes-m5stack-core-basic",
@@ -7891,6 +7901,16 @@
       "repo_id": 1169515449,
       "status": "rejected",
       "timestamp": "2026-09-08T04:00:36.972928+00:00"
+    },
+    "wikipedia-offline-adv": {
+      "expires": "2026-10-12T08:00:41.133831+00:00",
+      "id": "wikipedia-offline-adv",
+      "pr_ref": null,
+      "reason": "already_catalogued: zeloksa/wikipedia-offline-adv is already in the atlas",
+      "repo": "zeloksa/wikipedia-offline-adv",
+      "repo_id": 1249136784,
+      "status": "rejected",
+      "timestamp": "2026-09-12T08:00:41.133831+00:00"
     },
     "wikiputer": {
       "id": "wikiputer",
@@ -7925,6 +7945,16 @@
       "repo": "i12bp8/wmbuster-adv",
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.137580+00:00"
+    },
+    "wordle-cardputer": {
+      "expires": "2026-10-12T08:00:41.133831+00:00",
+      "id": "wordle-cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 12 stars / 2 forks",
+      "repo": "sourcels/wordle_cardputer",
+      "repo_id": 1091925722,
+      "status": "rejected",
+      "timestamp": "2026-09-12T08:00:41.133831+00:00"
     },
     "xiaozhi-esp32": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -8367,6 +8397,7 @@
     "jimgat/cym-nm28c5": "cym-nm28c5",
     "jjugs": "jjugs",
     "jjugs/cardputer-laptop-monitor": "cardputer-laptop-monitor",
+    "jl1nie/wifikey2": "wifikey2",
     "joejee90/cardputer-camera-companion": "cardputer-camera-companion",
     "joejee90/tiny-journal": "tiny-journal",
     "johnhw/cardputer_drums": "cardputer-drums",
@@ -8691,6 +8722,7 @@
     "sosprz/meshcore-cardputer-adv": "meshcore-cardputer-adv",
     "sosprz/termputer": "termputer",
     "sourcels/mini-mp3player_cardputer-adv": "mini-mp3player-cardputer-adv",
+    "sourcels/wordle_cardputer": "wordle-cardputer",
     "soykhaler/tinycardputer": "tinycardputer",
     "soykhaler/zx-spectrum-cardputer-internal": "zx-spectrum-cardputer-internal",
     "spreedated/cardcharge": "cardcharge",
@@ -8804,6 +8836,7 @@
     "zeloksa/imu-acoustic-analyzer": "imu-acoustic-analyzer",
     "zeloksa/piano-tiles-adv": "piano-tiles-adv",
     "zeloksa/wifi-remote-display-adv": "wifi-remote-display-adv",
+    "zeloksa/wikipedia-offline-adv": "wikipedia-offline-adv",
     "zhaoker/m5stack_tab5_aio_box": "m5stack-tab5-aio-box",
     "zhuzhe1983/inkos": "inkos",
     "zmactep/m5stickc_morse": "m5stickc-morse",
