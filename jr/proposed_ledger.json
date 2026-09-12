@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T18:00:17.136349+00:00",
+      "expires": "2026-09-19T19:00:24.500904+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T18:00:17.136349+00:00"
+      "timestamp": "2026-09-12T19:00:24.500904+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -361,6 +361,15 @@
       "repo_id": 1244733782,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "asdasd": {
+      "expires": "2026-09-19T19:00:24.500904+00:00",
+      "id": "asdasd",
+      "pr_ref": null,
+      "reason": "repo_unresolved: unparseable repo '\" asdasd'",
+      "repo": "\" asdasd",
+      "status": "rejected",
+      "timestamp": "2026-09-12T19:00:24.500904+00:00"
     },
     "ask-master": {
       "expires": "2026-10-12T15:00:55.897357+00:00",
@@ -1895,6 +1904,15 @@
       "status": "rejected",
       "timestamp": "2026-09-08T01:00:31.284910+00:00"
     },
+    "cmd": {
+      "expires": "2026-09-19T19:00:24.500904+00:00",
+      "id": "cmd",
+      "pr_ref": null,
+      "reason": "repo_unresolved: unparseable repo 'cmd'",
+      "repo": "cmd",
+      "status": "rejected",
+      "timestamp": "2026-09-12T19:00:24.500904+00:00"
+    },
     "codebuddy": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
       "id": "codebuddy",
@@ -2203,6 +2221,15 @@
       "repo_id": 1054803841,
       "status": "rejected",
       "timestamp": "2026-09-08T02:00:32.995095+00:00"
+    },
+    "ddd": {
+      "expires": "2026-09-19T19:00:24.500904+00:00",
+      "id": "ddd",
+      "pr_ref": null,
+      "reason": "repo_unresolved: unparseable repo 'ddd'",
+      "repo": "ddd",
+      "status": "rejected",
+      "timestamp": "2026-09-12T19:00:24.500904+00:00"
     },
     "deskclock-cardputer": {
       "expires": "2026-10-08T04:00:36.972928+00:00",
@@ -3026,6 +3053,16 @@
       "status": "seen",
       "timestamp": "2026-09-02T16:03:47.776765+00:00"
     },
+    "google-dino-for-m5stickcplus2": {
+      "expires": "2026-10-12T19:00:24.500904+00:00",
+      "id": "google-dino-for-m5stickcplus2",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "lukastrhan-hub/google-dino-for-m5stickcplus2",
+      "repo_id": 1120102177,
+      "status": "rejected",
+      "timestamp": "2026-09-12T19:00:24.500904+00:00"
+    },
     "gps-cardputer": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "gps-cardputer",
@@ -3042,6 +3079,16 @@
       "repo": "rhuaneverton/gpsdata-m5cardputer",
       "status": "seen",
       "timestamp": "2026-09-02T16:03:27.998361+00:00"
+    },
+    "grajek": {
+      "expires": "2026-10-12T19:00:24.500904+00:00",
+      "id": "grajek",
+      "pr_ref": null,
+      "reason": "below_floor: 11 stars / 0 forks",
+      "repo": "jasisz/grajek",
+      "repo_id": 1315916863,
+      "status": "rejected",
+      "timestamp": "2026-09-12T19:00:24.500904+00:00"
     },
     "grovenfc": {
       "expires": "2026-09-15T17:00:16.540728+00:00",
@@ -3085,6 +3132,16 @@
       "repo_id": 1115714307,
       "status": "rejected",
       "timestamp": "2026-09-10T00:00:50.127806+00:00"
+    },
+    "hakrwatch": {
+      "expires": "2026-10-12T19:00:24.500904+00:00",
+      "id": "hakrwatch",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "mrarm/hakrwatch",
+      "repo_id": 242574388,
+      "status": "rejected",
+      "timestamp": "2026-09-12T19:00:24.500904+00:00"
     },
     "hal9000": {
       "expires": "2026-10-08T17:00:16.540728+00:00",
@@ -3208,6 +3265,16 @@
       "repo_id": 1087432527,
       "status": "rejected",
       "timestamp": "2026-09-08T17:00:16.540728+00:00"
+    },
+    "hi5stack-m5stack-papsers3-m5papers3": {
+      "expires": "2026-10-12T19:00:24.500904+00:00",
+      "id": "hi5stack-m5stack-papsers3-m5papers3",
+      "pr_ref": null,
+      "reason": "below_floor: 13 stars / 5 forks",
+      "repo": "michaelrizn/hi5stack-m5stack-papsers3-m5papers3",
+      "repo_id": 965113277,
+      "status": "rejected",
+      "timestamp": "2026-09-12T19:00:24.500904+00:00"
     },
     "hikepod": {
       "expires": "2026-10-08T17:00:16.540728+00:00",
@@ -8337,6 +8404,7 @@
   },
   "by_repo": {
     "": "(unnamed entry)",
+    "\" asdasd": "asdasd",
     "0015/pocketssh": "pocketssh",
     "01mayo01/meowusb-ble": "meowusb-ble",
     "0ct0sec/m5pancetta": "m5pancetta",
@@ -8486,6 +8554,7 @@
     "ciniml/openai-realtime-embedded-sdk": "openai-realtime-embedded-sdk",
     "ciniml/serial_wifi_logger": "serial-wifi-logger",
     "clackups/draftling": "draftling",
+    "cmd": "cmd",
     "codigohardwareecia/m5cardputer_knowledge": "m5cardputer-knowledge",
     "codigohardwareecia/m5cardputer_mp3_manager": "m5cardputer-mp3-manager",
     "comeraperuibe944/stickcontroller": "stickcontroller",
@@ -8568,6 +8637,7 @@
     "danpodeanu/seeed-reterminal-e100x": "seeed-reterminal-e100x",
     "davervw/cardputer-game-station-emulators": "cardputer-game-station-emulators",
     "dayou-ht/morsetrainer-cardputer": "morsetrainer-cardputer",
+    "ddd": "ddd",
     "demonkingfukai/m5stickc-plus-mouse-jiggler": "m5stickc-plus-mouse-jiggler",
     "derunix/m5stack-stick-s3-animation": "m5stack-stick-s3-animation",
     "destillegast/m5cardputer-hid-tools": "m5cardputer-hid-tools",
@@ -8749,6 +8819,7 @@
     "integerquant/baitnswitch": "baitnswitch",
     "irisihrz": "irisihrz",
     "isonimus/adversary": "adversary",
+    "jasisz/grajek": "grajek",
     "javicar31/m5dial_volume_hid": "m5dial-volume-hid",
     "javicar31/m5stack_papers3": "m5stack-papers3",
     "jay-jayismyname1/cardputer-abs-b-radar": "cardputer-abs-b-radar",
@@ -8849,6 +8920,7 @@
     "lucasineth/pomodora-m5stick-": "pomodora-m5stick",
     "ludable/pumpbug": "pumpbug",
     "lukastrhan-hub/dino-and-bomb-game": "dino-and-bomb-game",
+    "lukastrhan-hub/google-dino-for-m5stickcplus2": "google-dino-for-m5stickcplus2",
     "lunarc3/ballisticcalc": "ballisticcalc",
     "lunarc3/cardputergpsmap": "cardputergpsmap",
     "lunarc3/cardputertiltjump": "cardputertiltjump",
@@ -8911,6 +8983,7 @@
     "mehflexx17": "mehflexx17",
     "meister5/m5stack-cardputer-adv-gps-tracker": "m5stack-cardputer-adv-gps-tracker",
     "mhrsntrk/ask-master": "ask-master",
+    "michaelrizn/hi5stack-m5stack-papsers3-m5papers3": "hi5stack-m5stack-papsers3-m5papers3",
     "micokonsep/flipcard-papers3": "flipcard-papers3",
     "micokonsep/pomodoro-papers3": "pomodoro-papers3",
     "microdev-steve/circuitpython_m5stickplus2": "circuitpython-m5stickplus2",
@@ -8936,6 +9009,7 @@
     "moy-lightening-firmware/m5-cardputer-sd-security-firmware": "m5-cardputer-sd-security-firmware",
     "mr-paui/gameboy-enhanced-firmware-m5stack-cardputer-": "gameboy-enhanced-firmware-m5stack-cardpu",
     "mraanderson/cardputeradv-motionlab": "cardputeradv-motionlab",
+    "mrarm/hakrwatch": "hakrwatch",
     "mrchaosbude/esp32-cyd-aquarium": "esp32-cyd-aquarium",
     "mtoolstec/mt-firmware": "mt-firmware",
     "multimote/meshcore-cardputer-adv": "meshcore-cardputer-adv",
