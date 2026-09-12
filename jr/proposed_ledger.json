@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T03:00:29.761890+00:00",
+      "expires": "2026-09-19T04:00:31.028335+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T03:00:29.761890+00:00"
+      "timestamp": "2026-09-12T04:00:31.028335+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -4336,6 +4336,16 @@
       "status": "rejected",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
+    "m5papers3-nc1020-emu": {
+      "expires": "2026-10-12T04:00:31.028335+00:00",
+      "id": "m5papers3-nc1020-emu",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 1 forks",
+      "repo": "iele/m5papers3-nc1020-emu",
+      "repo_id": 758077209,
+      "status": "rejected",
+      "timestamp": "2026-09-12T04:00:31.028335+00:00"
+    },
     "m5peasytag": {
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5peasytag",
@@ -7693,6 +7703,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
+    "weathergrrl": {
+      "expires": "2026-10-12T04:00:31.028335+00:00",
+      "id": "weathergrrl",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 0 forks",
+      "repo": "konsumer/weathergrrl",
+      "repo_id": 1211554190,
+      "status": "rejected",
+      "timestamp": "2026-09-12T04:00:31.028335+00:00"
+    },
     "web-browser-cardputer-adv": {
       "id": "web-browser-cardputer-adv",
       "pr_ref": null,
@@ -7706,6 +7726,16 @@
       "repo": "murmuri/webampadv",
       "status": "seen",
       "timestamp": "2026-09-02T16:03:27.989979+00:00"
+    },
+    "webradio-wusiu-cardputer-adv": {
+      "expires": "2026-10-12T04:00:31.028335+00:00",
+      "id": "webradio-wusiu-cardputer-adv",
+      "pr_ref": null,
+      "reason": "below_floor: 21 stars / 4 forks",
+      "repo": "wusiu/webradio_wusiu_cardputer_adv",
+      "repo_id": 1147322139,
+      "status": "rejected",
+      "timestamp": "2026-09-12T04:00:31.028335+00:00"
     },
     "whisplay-groq-chatbot": {
       "id": "whisplay-groq-chatbot",
@@ -7737,6 +7767,26 @@
       "repo": "weavefront/wikiputer",
       "status": "seen",
       "timestamp": "2026-09-02T16:03:28.008928+00:00"
+    },
+    "wled": {
+      "expires": "2026-10-12T04:00:31.028335+00:00",
+      "id": "wled",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "toshihiromakuuchi/wled",
+      "repo_id": 846066903,
+      "status": "rejected",
+      "timestamp": "2026-09-12T04:00:31.028335+00:00"
+    },
+    "wled-cardputer": {
+      "expires": "2026-10-12T04:00:31.028335+00:00",
+      "id": "wled-cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 12 stars / 3 forks",
+      "repo": "nishad2m8/wled-cardputer",
+      "repo_id": 1175193578,
+      "status": "rejected",
+      "timestamp": "2026-09-12T04:00:31.028335+00:00"
     },
     "wmbuster-adv": {
       "id": "wmbuster-adv",
@@ -7825,6 +7875,7 @@
     "advascript/calcputer": "calcputer",
     "ah2005na": "ah2005na",
     "ah2005na/m5stick-shark": "m5stick-shark",
+    "aircoookie/wled": "wled",
     "airpocket-soundman/tab5_ssh_client": "tab5-ssh-client",
     "akoerner/kprox": "kprox",
     "alcor55/cardputer-gps-info": "cardputer-gps-info",
@@ -8153,6 +8204,7 @@
     "icingtomato/stickc-resistor-calculator": "stickc-resistor-calculator",
     "id8872/cardputer-squawkbox": "cardputer-squawkbox",
     "iele/m5cardputer-c64-emulator": "m5cardputer-c64-emulator",
+    "iele/m5papers3-nc1020-emu": "m5papers3-nc1020-emu",
     "ilanovikov088-source/dinorune-sticks3": "dinorune-sticks3",
     "imink/aqualife": "aqualife",
     "imliubo/retro-go": "retro-go",
@@ -8211,6 +8263,7 @@
     "kirosapm8120/spacewar-m5stickc-plus2": "spacewar-m5stickc-plus2",
     "kisaragi-mochi/stackchan-mcp": "stackchan-mcp",
     "konsumer/cardputer-examples": "cardputer-examples",
+    "konsumer/weathergrrl": "weathergrrl",
     "kotobuki/io-framework-for-xr": "io-framework-for-xr",
     "kotobuki/meganemouse": "meganemouse",
     "kreaxv/pc-monitor-wol-stickc-plus2": "pc-monitor-wol-stickc-plus2",
@@ -8358,6 +8411,7 @@
     "nishad2m8/geminiputer": "geminiputer",
     "nishad2m8/pdaputer": "pdaputer",
     "nishad2m8/pip-boy-weather-clock": "pip-boy-weather-clock",
+    "nishad2m8/wled-cardputer": "wled-cardputer",
     "noest-d/esp32-emulatorjs": "esp32-emulatorjs",
     "nongxl/agar-cardputer": "agar-cardputer",
     "nongxl/cardputer_lightmeter_cpp": "cardputer-lightmeter-cpp",
@@ -8538,6 +8592,7 @@
     "tomorrow56/m5atom-socket-examples": "m5atom-socket-examples",
     "torlando-tech/pyxis": "pyxis",
     "toshihiromakuuchi/ai_stackchan2": "ai-stackchan2",
+    "toshihiromakuuchi/wled": "wled",
     "treblewolf/m5cardputer-sun-rider": "m5cardputer-sun-rider",
     "troglodyte420/voice-mixer-3000": "voice-mixer-3000",
     "turbohsu/badapple_cardputer_adv": "badapple-cardputer-adv",
@@ -8580,6 +8635,7 @@
     "wokao2333/bus-pirate-cardputer-adv-deepseek.git": "bus-pirate-cardputer-adv-deepseek",
     "wsalmi/honeypot": "honeypot",
     "wsalmi/launcher_salmi_fork": "launcher-salmi-fork",
+    "wusiu/webradio_wusiu_cardputer_adv": "webradio-wusiu-cardputer-adv",
     "wusiyu/m5cardputer-userdemo-plus": "m5cardputer-userdemo-plus",
     "xick/oxotp-plus": "oxotp-plus",
     "xinyuan-lilygo/t-display-c5": "t-display-c5",
