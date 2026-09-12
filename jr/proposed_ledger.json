@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T22:00:34.162368+00:00",
+      "expires": "2026-09-19T23:00:36.053237+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T22:00:34.162368+00:00"
+      "timestamp": "2026-09-12T23:00:36.053237+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -4411,6 +4411,16 @@
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.183154+00:00"
     },
+    "m5core2-gravsim": {
+      "expires": "2026-10-12T23:00:36.053237+00:00",
+      "id": "m5core2-gravsim",
+      "pr_ref": null,
+      "reason": "below_floor: 9 stars / 2 forks",
+      "repo": "cubic9com/m5core2_gravsim",
+      "repo_id": 948591363,
+      "status": "rejected",
+      "timestamp": "2026-09-12T23:00:36.053237+00:00"
+    },
     "m5core2-sg90-stackchan-voicetext-ataru": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5core2-sg90-stackchan-voicetext-ataru",
@@ -4448,6 +4458,16 @@
       "repo_id": 561151768,
       "status": "rejected",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
+    },
+    "m5core2-voronoi": {
+      "expires": "2026-10-12T23:00:36.053237+00:00",
+      "id": "m5core2-voronoi",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "cubic9com/m5core2_voronoi",
+      "repo_id": 942063600,
+      "status": "rejected",
+      "timestamp": "2026-09-12T23:00:36.053237+00:00"
     },
     "m5corehamcat": {
       "expires": "2026-10-12T07:00:39.726979+00:00",
@@ -4732,6 +4752,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
+    "m5papers3-animal-quiz": {
+      "expires": "2026-10-12T23:00:36.053237+00:00",
+      "id": "m5papers3-animal-quiz",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 1 forks",
+      "repo": "samucarre/m5papers3-animal-quiz",
+      "repo_id": 956644284,
+      "status": "rejected",
+      "timestamp": "2026-09-12T23:00:36.053237+00:00"
+    },
     "m5papers3-calculator": {
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5papers3-calculator",
@@ -4943,6 +4973,15 @@
       "repo_id": 1173220799,
       "status": "rejected",
       "timestamp": "2026-09-12T05:00:34.806916+00:00"
+    },
+    "m5stack-gw-catm-v3": {
+      "expires": "2026-09-19T23:00:36.053237+00:00",
+      "id": "m5stack-gw-catm-v3",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "sekdisorkf944sskixozad/m5stack_gw_catm_v3.git",
+      "status": "rejected",
+      "timestamp": "2026-09-12T23:00:36.053237+00:00"
     },
     "m5stack-image-viewer": {
       "id": "m5stack-image-viewer",
@@ -8736,6 +8775,8 @@
     "cubic9com/m5core2_defrag": "m5core2-defrag",
     "cubic9com/m5core2_delaunay": "m5core2-delaunay",
     "cubic9com/m5core2_eyes": "m5core2-eyes",
+    "cubic9com/m5core2_gravsim": "m5core2-gravsim",
+    "cubic9com/m5core2_voronoi": "m5core2-voronoi",
     "cyberwisk/m5cardputer_audiospectrum": "m5cardputer-audiospectrum",
     "cyberwisk/m5cardputer_webradio": "m5cardputer-webradio",
     "d3crypt-1/infiltra-firmware": "infiltra-firmware",
@@ -9254,6 +9295,7 @@
     "sakkra-adv/magic8ball": "magic8ball",
     "sakkra-adv/spaceship": "spaceship",
     "samucarre/m5cores3-automatic-irrigation": "m5cores3-automatic-irrigation",
+    "samucarre/m5papers3-animal-quiz": "m5papers3-animal-quiz",
     "sanchitminda/m5cardputer_windows": "m5cardputer-windows",
     "sanchitminda/mp3playerform5cardputer": "mp3playerform5cardputer",
     "sarah-c/m5stickc_plus_slot_machine": "m5stickc-plus-slot-machine",
@@ -9266,6 +9308,7 @@
     "seeed-projects/oshw-reterminal-series-e-d": "oshw-reterminal-series-e-d",
     "seeed-solution/sensecap_indicator_esp32": "sensecap-indicator-esp32",
     "seeed-studio/reterminal-d1001": "reterminal-d1001",
+    "sekdisorkf944sskixozad/m5stack_gw_catm_v3.git": "m5stack-gw-catm-v3",
     "serginator/cardputer-mouse-jiggler": "cardputer-mouse-jiggler",
     "serialgeist/esp32marauder": "esp32marauder",
     "servantos/vrsticks3": "vrsticks3",
