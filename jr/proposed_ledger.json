@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T12:00:48.975386+00:00",
+      "expires": "2026-09-19T13:00:50.482075+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T12:00:48.975386+00:00"
+      "timestamp": "2026-09-12T13:00:50.482075+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -3937,6 +3937,16 @@
       "repo_id": 1120442382,
       "status": "rejected",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
+    },
+    "m5cardputer-mp3-audio-visual-portal-hate": {
+      "expires": "2026-10-12T13:00:50.482075+00:00",
+      "id": "m5cardputer-mp3-audio-visual-portal-hate",
+      "pr_ref": null,
+      "reason": "below_floor: 8 stars / 0 forks",
+      "repo": "coreymillia/m5cardputer-mp3-audio-visual-portal-hater",
+      "repo_id": 1120942965,
+      "status": "rejected",
+      "timestamp": "2026-09-12T13:00:50.482075+00:00"
     },
     "m5cardputer-mp3-manager": {
       "expires": "2026-09-18T15:00:52.423877+00:00",
@@ -8094,6 +8104,26 @@
       "status": "rejected",
       "timestamp": "2026-09-12T10:00:45.628096+00:00"
     },
+    "yamb-game-cardputer": {
+      "expires": "2026-10-12T13:00:50.482075+00:00",
+      "id": "yamb-game-cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "8432r983/yamb_game_cardputer",
+      "repo_id": 1074884216,
+      "status": "rejected",
+      "timestamp": "2026-09-12T13:00:50.482075+00:00"
+    },
+    "yolo-watchdog": {
+      "expires": "2026-10-12T13:00:50.482075+00:00",
+      "id": "yolo-watchdog",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 1 forks",
+      "repo": "kysutrung/yolo_watchdog",
+      "repo_id": 843337373,
+      "status": "rejected",
+      "timestamp": "2026-09-12T13:00:50.482075+00:00"
+    },
     "youranonelf": {
       "expires": "2026-09-19T03:00:29.761890+00:00",
       "id": "youranonelf",
@@ -8110,6 +8140,16 @@
       "repo": "andyaicardputer/zx-spectrum-cardputer-external",
       "status": "rejected",
       "timestamp": "2026-09-02T16:03:47.776765+00:00"
+    },
+    "zx-spectrum-cardputer-ili9341": {
+      "expires": "2026-10-12T13:00:50.482075+00:00",
+      "id": "zx-spectrum-cardputer-ili9341",
+      "pr_ref": null,
+      "reason": "already_catalogued: andyaicardputer/zx-spectrum-cardputer-ili9341 is already in the atlas",
+      "repo": "andyaicardputer/zx-spectrum-cardputer-ili9341",
+      "repo_id": 1233987937,
+      "status": "rejected",
+      "timestamp": "2026-09-12T13:00:50.482075+00:00"
     },
     "zx-spectrum-cardputer-internal": {
       "id": "zx-spectrum-cardputer-internal",
@@ -8143,6 +8183,7 @@
     "7h30th3r0n3/evil-m5core2": "evil-m5core2",
     "7h30th3r0n3/evil-m5project": "evil-m5project",
     "7h30th3r0n3/raspyjack": "raspyjack",
+    "8432r983/yamb_game_cardputer": "yamb-game-cardputer",
     "868meshbot/saitama": "saitama",
     "a-uta/ai_stackchan_minimal": "ai-stackchan-minimal",
     "aat440hz/8encoderunit-brainwavegenerator-m5stickcplus2": "8encoderunit-brainwavegenerator-m5stickc",
@@ -8191,6 +8232,7 @@
     "andrfuentz/misedeck-cardputer": "misedeck-cardputer",
     "andyaicardputer/nes-tab5-usb-host": "nes-tab5-usb-host",
     "andyaicardputer/zx-spectrum-cardputer-external": "zx-spectrum-cardputer-external",
+    "andyaicardputer/zx-spectrum-cardputer-ili9341": "zx-spectrum-cardputer-ili9341",
     "aniketkatkar/m5cardputer-macro-keypad": "m5cardputer-macro-keypad",
     "ankushkun/cardputer-wifi-repeater": "cardputer-wifi-repeater",
     "anthropics/claude-desktop-buddy": "claude-desktop-buddy",
@@ -8292,6 +8334,7 @@
     "coreymillia/hn-m5stack-core-basic": "hn-m5stack-core-basic",
     "coreymillia/joustris-m5stickc-plus2": "joustris-m5stickc-plus2",
     "coreymillia/lucid-dream-training-watch-m5stickc-plus2": "lucid-dream-training-watch-m5stickc-plus",
+    "coreymillia/m5cardputer-mp3-audio-visual-portal-hater": "m5cardputer-mp3-audio-visual-portal-hate",
     "coreymillia/m5cardputer-xscreensaver": "m5cardputer-xscreensaver",
     "coreymillia/m5core-341-xscreensaver-": "m5core-341-xscreensaver",
     "coreymillia/m5core2-341-effects-xscreensaver": "m5core2-341-effects-xscreensaver",
@@ -8583,6 +8626,7 @@
     "kwonbowon/cardputerhomekit": "cardputerhomekit",
     "kwonbowon/lorachat-for-as923": "lorachat-for-as923",
     "kylebing/m5stack-cardputer-sparks": "m5stack-cardputer-sparks",
+    "kysutrung/yolo_watchdog": "yolo-watchdog",
     "kyya/paperdarkroom": "paperdarkroom",
     "laserir/mclite": "mclite",
     "layer812/cardputer_llm": "cardputer-llm",
