@@ -26,6 +26,8 @@ notes:
   with one, so gpio_exposed/gpio_free are left unset per cite-or-omit'
 - usb_serial derived from usb.bridge (ch9102)
 getting_started: https://lilygo.cc/products/t-display
+images:
+  photo: https://lilygo.cc/cdn/shop/files/LILYGO-T-DISPLAY_5_cd0e2152-00a0-4403-a557-f96f6ba0d1e4.jpg
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-display
@@ -39,6 +41,9 @@ sources:
 - field: getting_started
   url: https://lilygo.cc/products/t-display
   verified: '2026-09-11'
+- field: images
+  url: https://lilygo.cc/products/t-display
+  verified: '2026-09-12'
 ---
 
 # T-Display
