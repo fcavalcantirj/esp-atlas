@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T19:00:24.500904+00:00",
+      "expires": "2026-09-19T20:00:31.062202+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T19:00:24.500904+00:00"
+      "timestamp": "2026-09-12T20:00:31.062202+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -3340,6 +3340,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T17:00:16.540728+00:00"
     },
+    "ibutton-firmware-for-m5-stickc-plus2": {
+      "expires": "2026-10-12T20:00:31.062202+00:00",
+      "id": "ibutton-firmware-for-m5-stickc-plus2",
+      "pr_ref": null,
+      "reason": "below_floor: 9 stars / 0 forks",
+      "repo": "mor1k/ibutton-firmware-for-m5-stickc-plus2",
+      "repo_id": 902529790,
+      "status": "rejected",
+      "timestamp": "2026-09-12T20:00:31.062202+00:00"
+    },
     "iching-xiaozhi-card": {
       "expires": "2026-09-19T00:00:11.345845+00:00",
       "id": "iching-xiaozhi-card",
@@ -3348,6 +3358,26 @@
       "repo": "gywan94/iching-xiaozhi-card.git",
       "status": "rejected",
       "timestamp": "2026-09-12T00:00:11.345845+00:00"
+    },
+    "idk-firmware": {
+      "expires": "2026-10-12T20:00:31.062202+00:00",
+      "id": "idk-firmware",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "truonglangquan/idk-firmware",
+      "repo_id": 1150769835,
+      "status": "rejected",
+      "timestamp": "2026-09-12T20:00:31.062202+00:00"
+    },
+    "idk-test": {
+      "expires": "2026-10-12T20:00:31.062202+00:00",
+      "id": "idk-test",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "truonglangquan/idk-test",
+      "repo_id": 1155983396,
+      "status": "rejected",
+      "timestamp": "2026-09-12T20:00:31.062202+00:00"
     },
     "imgui-lovyangfx": {
       "expires": "2026-10-08T20:00:21.660790+00:00",
@@ -9003,6 +9033,7 @@
     "mongonta0716/stackchan_mic": "stackchan-mic",
     "moo93egy/cardping_multi.git": "cardping-multi",
     "moo93egy/cardputer_mp3_adv.git": "cardputer-mp3-adv",
+    "mor1k/ibutton-firmware-for-m5-stickc-plus2": "ibutton-firmware-for-m5-stickc-plus2",
     "moskic/cardputer-adv-recorder": "cardputer-adv-recorder",
     "moskic/m5roulette": "m5roulette",
     "moskic/m5stopwatch-userdemo-arduino": "m5stopwatch-userdemo-arduino",
@@ -9222,6 +9253,8 @@
     "toshihiromakuuchi/wled": "wled",
     "treblewolf/m5cardputer-sun-rider": "m5cardputer-sun-rider",
     "troglodyte420/voice-mixer-3000": "voice-mixer-3000",
+    "truonglangquan/idk-firmware": "idk-firmware",
+    "truonglangquan/idk-test": "idk-test",
     "turbohsu/badapple_cardputer_adv": "badapple-cardputer-adv",
     "tutyr2-jpg/bruce-a-c-edition": "bruce-a-c-edition",
     "u-tanick/ai_stackchan2_for_debug": "ai-stackchan2-for-debug",
