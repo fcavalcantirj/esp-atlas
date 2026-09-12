@@ -4,7 +4,7 @@ type: board
 brand: adafruit
 name: Adafruit Metro ESP32-S3 (16MB Flash 8MB PSRAM)
 aka:
-- "METRO_ESP32S3"
+- METRO_ESP32S3
 soc: esp32-s3
 flash_mb: 16
 psram_mb: 8
@@ -30,21 +30,24 @@ io:
 notes:
 - 16 MB flash, 8 MB Octal PSRAM, 512 KB SRAM
 - LiPoly battery connector with built-in charging; MAX17048 I2C battery monitor
-- STEMMA QT connector with switchable power; JTAG 2x5 debug header; Revision B (Nov 2023) fixed NeoPixel/SPI/SD-card pin conflicts with PSRAM
+- STEMMA QT connector with switchable power; JTAG 2x5 debug header; Revision B (Nov
+  2023) fixed NeoPixel/SPI/SD-card pin conflicts with PSRAM
 - Dimensions not specified on the product page (omitted)
-- 'io.power_out QUOTED: vendor page states "This is the output pin from the 3.3V
-  regulator, you can grab up to 400mA from this regulator for accessories, it''s
-  also used by the ESP32-S3 which can have spiky current draw."'
+- 'io.power_out QUOTED: vendor page states "This is the output pin from the 3.3V regulator,
+  you can grab up to 400mA from this regulator for accessories, it''s also used by
+  the ESP32-S3 which can have spiky current draw."'
 - 'io.gpio_exposed=25 QUOTED: vendor pinouts page lists RX/TX (D0/D1), D2-D13 (12
   digital pins), A0-A5 (6 analog), SCL/SDA (I2C), and SCK/MOSI/MISO (ICSP header)
-  = 25 GPIO-capable pads. io.gpio_free=24 DERIVED: cross-referencing the vendor
-  firmware repo''s own CircuitPython board pin-definition (pins.c) maps every
-  header pad to a GPIO -- of esp32-s3''s soc.reserved_pins, only GPIO3 (D3,
-  strapping) is exposed; the onboard MicroSD slot shares the same ICSP SCK/MOSI/
-  MISO bus (not exclusive) but its SD_CS (GPIO45, itself strapping) is a
-  dedicated internal signal with no header pad, and NeoPixel (GPIO46) is
-  likewise off-header -- so 25 - 1 = 24'
-- 'usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag'
+  = 25 GPIO-capable pads. io.gpio_free=24 DERIVED: cross-referencing the vendor firmware
+  repo''s own CircuitPython board pin-definition (pins.c) maps every header pad to
+  a GPIO -- of esp32-s3''s soc.reserved_pins, only GPIO3 (D3, strapping) is exposed;
+  the onboard MicroSD slot shares the same ICSP SCK/MOSI/ MISO bus (not exclusive)
+  but its SD_CS (GPIO45, itself strapping) is a dedicated internal signal with no
+  header pad, and NeoPixel (GPIO46) is likewise off-header -- so 25 - 1 = 24'
+- usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag
+getting_started: https://learn.adafruit.com/adafruit-metro-esp32-s3
+images:
+  photo: https://cdn-learn.adafruit.com/guides/images/000/003/865/medium800/MS3F_top_angle.jpg
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5500
@@ -67,6 +70,12 @@ sources:
 - field: usb_serial
   url: https://www.adafruit.com/product/5500
   verified: '2026-09-07'
+- field: getting_started
+  url: https://learn.adafruit.com/adafruit-metro-esp32-s3
+  verified: '2026-09-12'
+- field: images
+  url: https://learn.adafruit.com/adafruit-metro-esp32-s3
+  verified: '2026-09-12'
 ---
 
 # Adafruit Metro ESP32-S3

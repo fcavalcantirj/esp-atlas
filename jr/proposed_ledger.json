@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T02:00:23.345419+00:00",
+      "expires": "2026-09-19T03:00:29.761890+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T02:00:23.345419+00:00"
+      "timestamp": "2026-09-12T03:00:29.761890+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -2571,6 +2571,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T04:00:36.972928+00:00"
     },
+    "evilclock": {
+      "expires": "2026-10-12T03:00:29.761890+00:00",
+      "id": "evilclock",
+      "pr_ref": null,
+      "reason": "already_catalogued: volosr/evilclock is already in the atlas",
+      "repo": "volosr/evilclock",
+      "repo_id": 761043880,
+      "status": "rejected",
+      "timestamp": "2026-09-12T03:00:29.761890+00:00"
+    },
     "firmware": {
       "id": "firmware",
       "pr_ref": null,
@@ -3980,6 +3990,16 @@
       "repo_id": 858975691,
       "status": "rejected",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
+    },
+    "m5cardremote": {
+      "expires": "2026-10-12T03:00:29.761890+00:00",
+      "id": "m5cardremote",
+      "pr_ref": null,
+      "reason": "already_catalogued: volosr/m5cardremote is already in the atlas",
+      "repo": "volosr/m5cardremote",
+      "repo_id": 732089751,
+      "status": "rejected",
+      "timestamp": "2026-09-12T03:00:29.761890+00:00"
     },
     "m5claw": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
@@ -6393,6 +6413,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
     },
+    "reterminal-sticky-voice-companion": {
+      "expires": "2026-10-12T03:00:29.761890+00:00",
+      "id": "reterminal-sticky-voice-companion",
+      "pr_ref": null,
+      "reason": "below_floor: 7 stars / 1 forks",
+      "repo": "sira-fiinikkusu/reterminal-sticky-voice-companion",
+      "repo_id": 1336451565,
+      "status": "rejected",
+      "timestamp": "2026-09-12T03:00:29.761890+00:00"
+    },
     "reticulum-tdeck": {
       "expires": "2026-10-11T22:00:03.963388+00:00",
       "id": "reticulum-tdeck",
@@ -7530,6 +7560,16 @@
       "status": "rejected",
       "timestamp": "2026-09-12T02:00:23.345419+00:00"
     },
+    "unitcams3-userdemo": {
+      "expires": "2026-10-12T03:00:29.761890+00:00",
+      "id": "unitcams3-userdemo",
+      "pr_ref": null,
+      "reason": "below_floor: 16 stars / 14 forks",
+      "repo": "m5stack/unitcams3-userdemo",
+      "repo_id": 724981610,
+      "status": "rejected",
+      "timestamp": "2026-09-12T03:00:29.761890+00:00"
+    },
     "usbarmyknife": {
       "expires": "2026-09-19T02:00:23.345419+00:00",
       "id": "usbarmyknife",
@@ -7559,6 +7599,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
     },
+    "vameter-firmware": {
+      "expires": "2026-10-12T03:00:29.761890+00:00",
+      "id": "vameter-firmware",
+      "pr_ref": null,
+      "reason": "below_floor: 17 stars / 9 forks",
+      "repo": "m5stack/vameter-firmware",
+      "repo_id": 805165962,
+      "status": "rejected",
+      "timestamp": "2026-09-12T03:00:29.761890+00:00"
+    },
     "vectrex-m5stickc-plus2": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
       "id": "vectrex-m5stickc-plus2",
@@ -7569,6 +7619,36 @@
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
+    "vgmpc": {
+      "expires": "2026-10-12T03:00:29.761890+00:00",
+      "id": "vgmpc",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 0 forks",
+      "repo": "layer812/vgmpc",
+      "repo_id": 859291181,
+      "status": "rejected",
+      "timestamp": "2026-09-12T03:00:29.761890+00:00"
+    },
+    "vibestick-codex": {
+      "expires": "2026-10-12T03:00:29.761890+00:00",
+      "id": "vibestick-codex",
+      "pr_ref": null,
+      "reason": "below_floor: 6 stars / 0 forks",
+      "repo": "oliverxing2025/vibestick-codex",
+      "repo_id": 1315644238,
+      "status": "rejected",
+      "timestamp": "2026-09-12T03:00:29.761890+00:00"
+    },
+    "vibestick-hourglass-liquid": {
+      "expires": "2026-10-12T03:00:29.761890+00:00",
+      "id": "vibestick-hourglass-liquid",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "oliverxing2025/vibestick-hourglass-liquid",
+      "repo_id": 1315672156,
+      "status": "rejected",
+      "timestamp": "2026-09-12T03:00:29.761890+00:00"
+    },
     "voice-mixer-3000": {
       "id": "voice-mixer-3000",
       "pr_ref": null,
@@ -7576,11 +7656,31 @@
       "status": "seen",
       "timestamp": "2026-09-02T16:03:28.024133+00:00"
     },
+    "volos-tv-remote": {
+      "expires": "2026-09-19T03:00:29.761890+00:00",
+      "id": "volos-tv-remote",
+      "pr_ref": null,
+      "reason": "repo_unresolved: unparseable repo 'volos-tv-remote'",
+      "repo": "volos-tv-remote",
+      "status": "rejected",
+      "timestamp": "2026-09-12T03:00:29.761890+00:00"
+    },
+    "vrsticks3": {
+      "expires": "2026-10-12T03:00:29.761890+00:00",
+      "id": "vrsticks3",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "servantos/vrsticks3",
+      "repo_id": 1282833916,
+      "status": "rejected",
+      "timestamp": "2026-09-12T03:00:29.761890+00:00"
+    },
     "wadamesh": {
       "id": "wadamesh",
       "pr_ref": "https://github.com/fcavalcantirj/esp-atlas/pull/78",
       "reason": "present in the catalog: its PR was merged",
       "repo": "allfather-bv/wadamesh",
+      "repo_id": 1267772932,
       "status": "merged",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
     },
@@ -7653,6 +7753,15 @@
       "repo": "ooxxu/xiaozhi-esp32",
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "youranonelf": {
+      "expires": "2026-09-19T03:00:29.761890+00:00",
+      "id": "youranonelf",
+      "pr_ref": null,
+      "reason": "repo_unresolved: unparseable repo 'youranonelf'",
+      "repo": "youranonelf",
+      "status": "rejected",
+      "timestamp": "2026-09-12T03:00:29.761890+00:00"
     },
     "zx-spectrum-cardputer-external": {
       "id": "zx-spectrum-cardputer-external",
@@ -8124,6 +8233,7 @@
     "layer812/r8t5": "r8t5",
     "layer812/sas": "sas",
     "layer812/smfpc": "smfpc",
+    "layer812/vgmpc": "vgmpc",
     "leandrosummo/m5cybernews-world": "m5cybernews-world",
     "lemin2/esp-iot-solution": "esp-iot-solution",
     "lemin2/imgui-lovyangfx": "imgui-lovyangfx",
@@ -8182,7 +8292,9 @@
     "m5stack/m5unit-kmeter-internal-fw": "m5unit-kmeter-internal-fw",
     "m5stack/m5unit-thermal2-internal-fw": "m5unit-thermal2-internal-fw",
     "m5stack/uiflow-micropython": "uiflow-micropython",
+    "m5stack/unitcams3-userdemo": "unitcams3-userdemo",
     "m5stack/v_img_reciver": "v-img-reciver",
+    "m5stack/vameter-firmware": "vameter-firmware",
     "m5sxftyxx/m5-stick-help": "m5-stick-help",
     "madboy134/saldotransporte": "saldotransporte",
     "manba036/m5core2_sg90_stackchan_voicetext_ataru": "m5core2-sg90-stackchan-voicetext-ataru",
@@ -8268,6 +8380,8 @@
     "oliverxing2025/nostalgic-fruit-machine": "nostalgic-fruit-machine",
     "oliverxing2025/sticks3-stock-monitor": "sticks3-stock-monitor",
     "oliverxing2025/stopwatch-chronotrace": "stopwatch-chronotrace",
+    "oliverxing2025/vibestick-codex": "vibestick-codex",
+    "oliverxing2025/vibestick-hourglass-liquid": "vibestick-hourglass-liquid",
     "ooxxu/xiaozhi-esp32": "xiaozhi-esp32",
     "osamusg/m5papercolor-calendar": "m5papercolor-calendar",
     "oumike/camillia-mt": "camillia-mt",
@@ -8359,6 +8473,7 @@
     "seeed-studio/reterminal-d1001": "reterminal-d1001",
     "serginator/cardputer-mouse-jiggler": "cardputer-mouse-jiggler",
     "serialgeist/esp32marauder": "esp32marauder",
+    "servantos/vrsticks3": "vrsticks3",
     "shajanjp/morse-up": "morse-up",
     "shapoco/lcdtap": "lcdtap",
     "sheepxux/taskhub-for-sticks3": "taskhub-for-sticks3",
@@ -8366,6 +8481,7 @@
     "shlappa1000/c4-stick": "c4-stick",
     "sijan246/cyd-gb-emulator": "cyd-gb-emulator",
     "simont73/schimihack": "schimihack",
+    "sira-fiinikkusu/reterminal-sticky-voice-companion": "reterminal-sticky-voice-companion",
     "sjoyce1/plai-meshcore": "plai-meshcore",
     "sky18dragon/ricoh-gr-live-view-shooting": "ricoh-gr-live-view-shooting",
     "skyper02/evil-m5project": "evil-m5project",
@@ -8442,8 +8558,11 @@
     "vicliu624/trail-mate": "trail-mate",
     "viniciusbo/m5-palnagotchi": "m5-palnagotchi",
     "voidnoi/badcard": "badcard",
+    "volos-tv-remote": "volos-tv-remote",
     "volosr/cardputer": "cardputer",
     "volosr/cardsaber": "cardsaber",
+    "volosr/evilclock": "evilclock",
+    "volosr/m5cardremote": "m5cardremote",
     "volosr/m5mp3": "m5mp3",
     "volosr/m5sticks3saber": "m5sticks3saber",
     "volosr/minicar": "minicar",
@@ -8472,6 +8591,7 @@
     "yh1224/m5-midi-heartopia": "m5-midi-heartopia",
     "yo3hjv/ham5dsp": "ham5dsp",
     "yo3hjv/runman1": "runman1",
+    "youranonelf": "youranonelf",
     "yuleshow/m5tab-macintosh": "m5tab-macintosh",
     "z4b333/sticky-toybox": "sticky-toybox",
     "z4y-d3n/modbus-tcp-auditor-tool": "modbus-tcp-auditor-tool",
