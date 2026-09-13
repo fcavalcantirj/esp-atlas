@@ -4,7 +4,7 @@ type: board
 brand: unexpected-maker
 name: Unexpected Maker FeatherS3
 aka:
-- "FEATHERS3"
+- FEATHERS3
 soc: esp32-s3
 flash_mb: 16
 psram_mb: 8
@@ -31,12 +31,11 @@ notes:
 - LiPo battery via header + JST PH connector on top
 - Two STEMMA QT / Qwiic ports (one on each LDO)
 - USB connector type not stated on the cited spec matrix (omitted)
-- 'io.gpio_exposed=21 QUOTED: vendor page states "21x GPIO including castellated
-  headers"'
-- 'io.power_out QUOTED: vendor page states "2x 700mA 3.3V LDO Regulators"; LDO2
-  is described as "for you to use to connect external 3V3 modules, sensors and
-  peripherals" (EN tied to IO39, auto-shuts down in deep sleep) -- rail_v/rail_ma_max
-  reflect this external-use LDO2, not the shared LDO1'
+- 'io.gpio_exposed=21 QUOTED: vendor page states "21x GPIO including castellated headers"'
+- 'io.power_out QUOTED: vendor page states "2x 700mA 3.3V LDO Regulators"; LDO2 is
+  described as "for you to use to connect external 3V3 modules, sensors and peripherals"
+  (EN tied to IO39, auto-shuts down in deep sleep) -- rail_v/rail_ma_max reflect this
+  external-use LDO2, not the shared LDO1'
 - 'io.gpio_free=16 DERIVED: CircuitPython''s board pin table (unexpectedmaker_feathers3/pins.c)
   maps the 21 header-labeled D-pins (D0,D1,D4,D5,D6,D9-D19,D21-D25) to GPIO {44,43,0,33,38,1,3,7,10,11,17,18,14,12,6,5,8,9,37,35,36}
   -- the count matches vendor''s "21" exactly and excludes onboard-dedicated pins
@@ -45,6 +44,8 @@ notes:
   QT I2C) that carry no D-number. Subtracting esp32-s3''s soc.reserved_pins present
   in that 21-pin set (strapping {0,3}: 2: usb_flash_tied {35,36,37}: 3 -- 5 total)
   gives 21 - 5 = 16'
+usb_serial: native-usb-serial-jtag
+getting_started: https://esp32s3.com/feathers3.html
 sources:
 - field: '*'
   url: https://unexpectedmaker.com/shop/feathers3
@@ -64,6 +65,12 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/um_feathers3.json
   verified: '2026-09-07'
+- field: usb_serial
+  url: https://esp32s3.com/feathers3.html
+  verified: '2026-09-13'
+- field: getting_started
+  url: https://esp32s3.com/feathers3.html
+  verified: '2026-09-13'
 ---
 
 # Unexpected Maker FeatherS3
