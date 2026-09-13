@@ -34,6 +34,12 @@ getting_started: https://docs.m5stack.com/en/core/StampS3
 images:
   photo: https://static-cdn.m5stack.com/resource/docs/products/core/StampS3/img-964c4df6-26ff-49e0-9950-87ee1a0f3b18.webp
   pinout: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/684/S007_PinMap_01.jpg
+download_mode:
+  mode: manual
+  steps: 0 ~ 40 °C Product Size 24.0 x 18.0 x 4.7 mm Product Weight 3.0g Package Size
+    138.0 x 93.0 x 10.5 mm Gross Weight 7.5 g Operation Enter Download Mode To enter
+    download mode, press and hold the G0 button on the Stamp-S3 before powering on,
+    then release it after power is applied
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/stamps3
@@ -59,6 +65,9 @@ sources:
 - field: images
   url: https://docs.m5stack.com/en/core/StampS3
   verified: '2026-09-11'
+- field: download_mode
+  url: https://docs.m5stack.com/en/core/StampS3
+  verified: '2026-09-13'
 ---
 
 # Stamp-S3
