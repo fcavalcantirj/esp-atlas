@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-20T00:00:37.681486+00:00",
+      "expires": "2026-09-20T01:00:38.965157+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-13T00:00:37.681486+00:00"
+      "timestamp": "2026-09-13T01:00:38.965157+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -6032,6 +6032,34 @@
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.172852+00:00"
     },
+    "nearplane": {
+      "expires": "2026-10-13T01:00:38.965157+00:00",
+      "id": "nearplane",
+      "pr_ref": null,
+      "reason": "below_floor: 23 stars / 2 forks",
+      "repo": "stevenselcuk/nearplane",
+      "repo_id": 1053358572,
+      "status": "rejected",
+      "timestamp": "2026-09-13T01:00:38.965157+00:00"
+    },
+    "negawatt": {
+      "expires": "2026-09-20T01:00:38.965157+00:00",
+      "id": "negawatt",
+      "pr_ref": null,
+      "reason": "repo_unresolved: unparseable repo 'negawatt'",
+      "repo": "negawatt",
+      "status": "rejected",
+      "timestamp": "2026-09-13T01:00:38.965157+00:00"
+    },
+    "nemomodified": {
+      "expires": "2026-09-20T01:00:38.965157+00:00",
+      "id": "nemomodified",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "jong-9999/nemomodified.git",
+      "status": "rejected",
+      "timestamp": "2026-09-13T01:00:38.965157+00:00"
+    },
     "nerdminer-v2": {
       "id": "nerdminer-v2",
       "pr_ref": "#197",
@@ -6070,6 +6098,16 @@
       "status": "rejected",
       "timestamp": "2026-09-10T00:00:50.127806+00:00"
     },
+    "nettemp-esp32": {
+      "expires": "2026-10-13T01:00:38.965157+00:00",
+      "id": "nettemp-esp32",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "sosprz/nettemp_esp32",
+      "repo_id": 1120078727,
+      "status": "rejected",
+      "timestamp": "2026-09-13T01:00:38.965157+00:00"
+    },
     "nikos": {
       "expires": "2026-10-10T04:00:56.284588+00:00",
       "id": "nikos",
@@ -6089,6 +6127,16 @@
       "repo_id": 1317356897,
       "status": "rejected",
       "timestamp": "2026-09-10T05:00:57.737650+00:00"
+    },
+    "np2-tab5": {
+      "expires": "2026-10-13T01:00:38.965157+00:00",
+      "id": "np2-tab5",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "mochimochi-man/np2_tab5",
+      "repo_id": 1355007883,
+      "status": "rejected",
+      "timestamp": "2026-09-13T01:00:38.965157+00:00"
     },
     "nyan": {
       "id": "nyan",
@@ -9029,6 +9077,7 @@
     "johnhw/cardputer_drums": "cardputer-drums",
     "jojorel/rfid-pn532-i2c-cardputer": "rfid-pn532-i2c-cardputer",
     "jonaslacerda/crowos": "crowos",
+    "jong-9999/nemomodified.git": "nemomodified",
     "jpmarquesss/m5stickcp2oscilloscope": "m5stickcp2oscilloscope",
     "jrydval/m5cardputer-env-iv-app": "m5cardputer-env-iv-app",
     "jtcozart/atom-artificial-horizon": "atom-artificial-horizon",
@@ -9184,6 +9233,7 @@
     "mk324234/atoms3-lite-tvbgone": "atoms3-lite-tvbgone",
     "mk324234/m5stickcp2-tvbgone": "m5stickcp2-tvbgone",
     "mkme/xnode": "xnode",
+    "mochimochi-man/np2_tab5": "np2-tab5",
     "moge800/m5papers3_calculator": "m5papers3-calculator",
     "mohith-das/pomodoro-card": "pomodoro-card",
     "mongonta0716/m5stack-avatar-mic": "m5stack-avatar-mic",
@@ -9215,6 +9265,7 @@
     "nananauno/m5guruguru-starter": "m5guruguru-starter",
     "nananauno/m5peasytag": "m5peasytag",
     "nanucek/pocket-gambler": "pocket-gambler",
+    "negawatt": "negawatt",
     "nishad2m8/cardputer-games": "cardputer-games",
     "nishad2m8/geminiputer": "geminiputer",
     "nishad2m8/pdaputer": "pdaputer",
@@ -9366,6 +9417,7 @@
     "sor3nt/flipper-zero-esp32-port": "flipper-zero-esp32-port",
     "sosprz/esp_level": "esp-level",
     "sosprz/meshcore-cardputer-adv": "meshcore-cardputer-adv",
+    "sosprz/nettemp_esp32": "nettemp-esp32",
     "sosprz/termputer": "termputer",
     "sourcels/mini-mp3player_cardputer-adv": "mini-mp3player-cardputer-adv",
     "sourcels/wordle_cardputer": "wordle-cardputer",
@@ -9377,6 +9429,7 @@
     "stachugit/m5spoticontroller": "m5spoticontroller",
     "stachugit/meshcore-cardputer-adv": "meshcore-cardputer-adv",
     "steveatinfincia/circuitpython": "circuitpython",
+    "stevenselcuk/nearplane": "nearplane",
     "stewmoss/cardputer-wardriver": "cardputer-wardriver",
     "styles01/m5stack-ollama-meter": "m5stack-ollama-meter",
     "styles01/stackchan-openclaw-hermes": "stackchan-openclaw-hermes",
