@@ -4,7 +4,7 @@ type: board
 brand: seeed
 name: Seeed Studio XIAO ESP32C6
 aka:
-- "seeed_xiao_esp32c6"
+- seeed_xiao_esp32c6
 soc: esp32-c6
 flash_mb: 4
 psram_mb: 0
@@ -37,6 +37,11 @@ notes:
   as exact.'
 - 'io.power_out OMITTED: vendor page has no "Power Pins" section and no stated 5V/3V3
   output-current rating (only input voltage and sleep-mode consumption figures)'
+download_mode:
+  mode: manual
+  steps: When you press and hold the BOOT key while powering up and then press the
+    Reset key once, you can also enter BootLoader mode
+getting_started: https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/
 sources:
 - field: '*'
   url: https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/
@@ -53,6 +58,12 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/seeed_xiao_esp32c6.json
   verified: '2026-09-07'
+- field: download_mode
+  url: https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/
+  verified: '2026-09-13'
+- field: getting_started
+  url: https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/
+  verified: '2026-09-13'
 ---
 
 # Seeed Studio XIAO ESP32C6

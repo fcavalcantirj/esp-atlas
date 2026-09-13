@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-20T06:00:47.661752+00:00",
+      "expires": "2026-09-20T07:00:51.338571+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-13T06:00:47.661752+00:00"
+      "timestamp": "2026-09-13T07:00:51.338571+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -3129,6 +3129,15 @@
       "status": "rejected",
       "timestamp": "2026-09-08T05:25:25.049296+00:00"
     },
+    "guvtg": {
+      "expires": "2026-09-20T07:00:51.338571+00:00",
+      "id": "guvtg",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "users/guvtg",
+      "status": "rejected",
+      "timestamp": "2026-09-13T07:00:51.338571+00:00"
+    },
     "gvm5bubblelevel": {
       "id": "gvm5bubblelevel",
       "pr_ref": null,
@@ -5129,6 +5138,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
     },
+    "m5stack-tab5-nc1020": {
+      "expires": "2026-10-13T07:00:51.338571+00:00",
+      "id": "m5stack-tab5-nc1020",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 0 forks",
+      "repo": "gywan94/m5stack-tab5-nc1020",
+      "repo_id": 1267348459,
+      "status": "rejected",
+      "timestamp": "2026-09-13T07:00:51.338571+00:00"
+    },
     "m5stack-webcam": {
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5stack-webcam",
@@ -6212,6 +6231,16 @@
       "repo_id": 1268571443,
       "status": "rejected",
       "timestamp": "2026-09-10T10:00:23.976090+00:00"
+    },
+    "onebutton": {
+      "expires": "2026-10-13T07:00:51.338571+00:00",
+      "id": "onebutton",
+      "pr_ref": null,
+      "reason": "below_floor: 16 stars / 7 forks",
+      "repo": "volosr/onebutton",
+      "repo_id": 328442805,
+      "status": "rejected",
+      "timestamp": "2026-09-13T07:00:51.338571+00:00"
     },
     "onemorefloor": {
       "id": "onemorefloor",
@@ -7734,6 +7763,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
     },
+    "stellar-map": {
+      "expires": "2026-10-13T07:00:51.338571+00:00",
+      "id": "stellar-map",
+      "pr_ref": null,
+      "reason": "already_catalogued: wisnc/stellar-map is already in the atlas",
+      "repo": "wisnc/stellar-map",
+      "repo_id": 1254985000,
+      "status": "rejected",
+      "timestamp": "2026-09-13T07:00:51.338571+00:00"
+    },
     "stickbananaboxing": {
       "expires": "2026-10-11T21:00:02.504737+00:00",
       "id": "stickbananaboxing",
@@ -9160,6 +9199,7 @@
     "gywan94/cardputer-nc1020emu.git": "cardputer-nc1020emu",
     "gywan94/cardputer-wechat.git": "cardputer-wechat",
     "gywan94/iching-xiaozhi-card.git": "iching-xiaozhi-card",
+    "gywan94/m5stack-tab5-nc1020": "m5stack-tab5-nc1020",
     "h4w9/ascii-aquarium": "ascii-aquarium",
     "h4w9/esp32_flipsocial": "esp32-flipsocial",
     "h4w9/esp32_flipworld": "esp32-flipworld",
@@ -9651,6 +9691,7 @@
     "urieldeveloper/spaceu-cardcomm": "spaceu-cardcomm",
     "urtubia/miniacid": "miniacid",
     "user154lt/doomsdaygame": "doomsdaygame",
+    "users/guvtg": "guvtg",
     "usetrmnl/trmnl-firmware": "trmnl-firmware",
     "uxjulia/crossink": "crossink",
     "v11859752/m5airmouse": "m5airmouse",
@@ -9668,6 +9709,7 @@
     "volosr/m5mp3": "m5mp3",
     "volosr/m5sticks3saber": "m5sticks3saber",
     "volosr/minicar": "minicar",
+    "volosr/onebutton": "onebutton",
     "w-ockham/actpaddle": "actpaddle",
     "w-ockham/m5spotchan": "m5spotchan",
     "w35m17h/cardputer-mqtt": "cardputer-mqtt",
@@ -9682,6 +9724,7 @@
     "williamruckman/diceroller-cardputeradv": "diceroller-cardputeradv",
     "wisnc/crub": "crub",
     "wisnc/rsvp": "rsvp",
+    "wisnc/stellar-map": "stellar-map",
     "wokao2333/bus-pirate-cardputer-adv-deepseek.git": "bus-pirate-cardputer-adv-deepseek",
     "wsalmi/honeypot": "honeypot",
     "wsalmi/launcher_salmi_fork": "launcher-salmi-fork",
