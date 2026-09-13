@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-20T12:00:26.473492+00:00",
+      "expires": "2026-09-20T13:00:33.517833+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-13T12:00:26.473492+00:00"
+      "timestamp": "2026-09-13T13:00:33.517833+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -6951,6 +6951,15 @@
       "status": "rejected",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
+    "project": {
+      "expires": "2026-09-20T13:00:33.517833+00:00",
+      "id": "project",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "jaxson79541/project",
+      "status": "rejected",
+      "timestamp": "2026-09-13T13:00:33.517833+00:00"
+    },
     "psychedelic-atoms3": {
       "id": "psychedelic-atoms3",
       "pr_ref": null,
@@ -8820,6 +8829,26 @@
       "status": "rejected",
       "timestamp": "2026-09-12T10:00:45.628096+00:00"
     },
+    "xcalc-cardputer": {
+      "expires": "2026-10-13T13:00:33.517833+00:00",
+      "id": "xcalc-cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 7 stars / 1 forks",
+      "repo": "sourcels/xcalc_cardputer",
+      "repo_id": 1181233316,
+      "status": "rejected",
+      "timestamp": "2026-09-13T13:00:33.517833+00:00"
+    },
+    "xiaozhi-adv-car": {
+      "expires": "2026-10-13T13:00:33.517833+00:00",
+      "id": "xiaozhi-adv-car",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "hengmyj/xiaozhi-adv-car",
+      "repo_id": 1330011455,
+      "status": "rejected",
+      "timestamp": "2026-09-13T13:00:33.517833+00:00"
+    },
     "xiaozhi-cardputer": {
       "expires": "2026-10-12T12:00:48.975386+00:00",
       "id": "xiaozhi-cardputer",
@@ -9367,6 +9396,7 @@
     "hardcoreerik/orcsdr": "orcsdr",
     "haswitchplate/openhasp": "openhasp",
     "helloruru/ruru-reader-papers3": "ruru-reader-papers3",
+    "hengmyj/xiaozhi-adv-car": "xiaozhi-adv-car",
     "henriquesebastiao/saturn": "saturn",
     "hermes-gadget/sigurdos-tdeck": "sigurdos-tdeck",
     "hiroki-kawakami/kyoshin": "kyoshin",
@@ -9410,6 +9440,7 @@
     "jasisz/grajek": "grajek",
     "javicar31/m5dial_volume_hid": "m5dial-volume-hid",
     "javicar31/m5stack_papers3": "m5stack-papers3",
+    "jaxson79541/project": "project",
     "jay-jayismyname1/cardputer-abs-b-radar": "cardputer-abs-b-radar",
     "jay-jayismyname1/cardputer-usb-adv-": "cardputer-usb-adv",
     "jayden-sudo/ble-page-turner": "ble-page-turner",
@@ -9789,6 +9820,7 @@
     "sosprz/termputer": "termputer",
     "sourcels/mini-mp3player_cardputer-adv": "mini-mp3player-cardputer-adv",
     "sourcels/wordle_cardputer": "wordle-cardputer",
+    "sourcels/xcalc_cardputer": "xcalc-cardputer",
     "soykhaler/tinycardputer": "tinycardputer",
     "soykhaler/zx-spectrum-cardputer-internal": "zx-spectrum-cardputer-internal",
     "spreedated/cardcharge": "cardcharge",
