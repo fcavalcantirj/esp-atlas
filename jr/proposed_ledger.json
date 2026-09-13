@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-20T01:00:38.965157+00:00",
+      "expires": "2026-09-20T02:00:40.455758+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-13T01:00:38.965157+00:00"
+      "timestamp": "2026-09-13T02:00:40.455758+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -3619,6 +3619,15 @@
       "status": "rejected",
       "timestamp": "2026-09-08T21:00:24.826619+00:00"
     },
+    "lab-mini-os": {
+      "expires": "2026-09-20T02:00:40.455758+00:00",
+      "id": "lab-mini-os",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "io-nji/lab_mini_os",
+      "status": "rejected",
+      "timestamp": "2026-09-13T02:00:40.455758+00:00"
+    },
     "lamp-from-m5cardputer": {
       "expires": "2026-10-08T21:00:24.826619+00:00",
       "id": "lamp-from-m5cardputer",
@@ -5011,6 +5020,16 @@
       "status": "rejected",
       "timestamp": "2026-09-09T23:00:48.497677+00:00"
     },
+    "m5stack-nyancat": {
+      "expires": "2026-10-13T02:00:40.455758+00:00",
+      "id": "m5stack-nyancat",
+      "pr_ref": null,
+      "reason": "below_floor: 12 stars / 2 forks",
+      "repo": "tobozo/m5stack-nyancat",
+      "repo_id": 126582474,
+      "status": "rejected",
+      "timestamp": "2026-09-13T02:00:40.455758+00:00"
+    },
     "m5stack-ollama-meter": {
       "expires": "2026-10-10T11:00:31.853052+00:00",
       "id": "m5stack-ollama-meter",
@@ -6186,6 +6205,7 @@
       "id": "openhasp",
       "pr_ref": "#200",
       "repo": "haswitchplate/openhasp",
+      "repo_id": 234790574,
       "status": "merged",
       "timestamp": "2026-09-10T03:00:54.680157+00:00"
     },
@@ -8585,6 +8605,16 @@
       "status": "rejected",
       "timestamp": "2026-09-12T03:00:29.761890+00:00"
     },
+    "zhanggua": {
+      "expires": "2026-10-13T02:00:40.455758+00:00",
+      "id": "zhanggua",
+      "pr_ref": null,
+      "reason": "below_floor: 8 stars / 0 forks",
+      "repo": "exphinx/zhanggua",
+      "repo_id": 1256780358,
+      "status": "rejected",
+      "timestamp": "2026-09-13T02:00:40.455758+00:00"
+    },
     "zhilly": {
       "expires": "2026-09-19T14:00:51.673188+00:00",
       "id": "zhilly",
@@ -8926,6 +8956,7 @@
     "espressif/esp-claw": "esp-claw",
     "espressif/esp-hosted-mcu": "esp-hosted-mcu",
     "evilkbgy9/cardnet": "cardnet",
+    "exphinx/zhanggua": "zhanggua",
     "facelesstech/dht11_and_dht22_m5stick": "dht11-and-dht22-m5stick",
     "failpowers/dualmesh-cardputer": "dualmesh-cardputer",
     "fancyoung/cardputer-abc": "cardputer-abc",
@@ -9053,6 +9084,7 @@
     "incursiohack/esp-game-server": "esp-game-server",
     "inkone/sticky-lotus": "sticky-lotus",
     "integerquant/baitnswitch": "baitnswitch",
+    "io-nji/lab_mini_os": "lab-mini-os",
     "irisihrz": "irisihrz",
     "isonimus/adversary": "adversary",
     "jasisz/grajek": "grajek",
@@ -9460,6 +9492,7 @@
     "therezor/hazke": "hazke",
     "tkaminski21-beep/-phantom-os-": "phantom-os",
     "tobozo/m5core2-soundbouncer": "m5core2-soundbouncer",
+    "tobozo/m5stack-nyancat": "m5stack-nyancat",
     "tobozo/m5stack-sd-updater": "m5stack-sd-updater",
     "tobozo/wifichanviz": "wifichanviz",
     "tomcasa/m5cardputer-webradio-fr": "m5cardputer-webradio-fr",

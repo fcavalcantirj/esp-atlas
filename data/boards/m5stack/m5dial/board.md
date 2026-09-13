@@ -44,6 +44,10 @@ usb_serial: native-usb-serial-jtag
 getting_started: https://docs.m5stack.com/en/core/M5Dial
 images:
   photo: https://static-cdn.m5stack.com/resource/docs/products/core/M5Dial/img-2afd549e-8af8-47b4-823a-e90e063a0139.webp
+download_mode:
+  mode: manual
+  steps: Download Mode Download Mode To enter download mode, hold the G0 button on
+    the StampS3 before powering on, and release it after powering on
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/M5Dial
@@ -66,6 +70,9 @@ sources:
 - field: images
   url: https://docs.m5stack.com/en/core/M5Dial
   verified: '2026-09-11'
+- field: download_mode
+  url: https://docs.m5stack.com/en/core/M5Dial
+  verified: '2026-09-13'
 ---
 
 # Dial
