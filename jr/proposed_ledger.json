@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-20T05:00:46.054868+00:00",
+      "expires": "2026-09-20T06:00:47.661752+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-13T05:00:46.054868+00:00"
+      "timestamp": "2026-09-13T06:00:47.661752+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -3468,6 +3468,16 @@
       "status": "rejected",
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
     },
+    "iot-central-firmware": {
+      "expires": "2026-12-12T06:00:47.661752+00:00",
+      "id": "iot-central-firmware",
+      "pr_ref": null,
+      "reason": "archived: azure/iot-central-firmware is archived",
+      "repo": "azure/iot-central-firmware",
+      "repo_id": 105329206,
+      "status": "rejected",
+      "timestamp": "2026-09-13T06:00:47.661752+00:00"
+    },
     "ir-replay": {
       "id": "ir-replay",
       "pr_ref": null,
@@ -4868,6 +4878,15 @@
       "status": "rejected",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
+    "m5stack": {
+      "expires": "2026-09-20T06:00:47.661752+00:00",
+      "id": "m5stack",
+      "pr_ref": null,
+      "reason": "repo_unresolved: unparseable repo 'm5stack'",
+      "repo": "m5stack",
+      "status": "rejected",
+      "timestamp": "2026-09-13T06:00:47.661752+00:00"
+    },
     "m5stack-atoms3-ble-remote-for-canon": {
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5stack-atoms3-ble-remote-for-canon",
@@ -5131,14 +5150,14 @@
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
     "m5stampfly": {
-      "expires": "2026-10-11T21:00:02.504737+00:00",
+      "expires": "2026-10-13T06:00:47.661752+00:00",
       "id": "m5stampfly",
       "pr_ref": null,
-      "reason": "already_catalogued: m5stack/m5stampfly is already in the atlas",
-      "repo": "m5stack/m5stampfly",
-      "repo_id": 817089068,
+      "reason": "below_floor: 19 stars / 9 forks",
+      "repo": "m5fly-kanazawa/m5stampfly",
+      "repo_id": 840447440,
       "status": "rejected",
-      "timestamp": "2026-09-11T21:00:02.504737+00:00"
+      "timestamp": "2026-09-13T06:00:47.661752+00:00"
     },
     "m5stick-crystal-firmware": {
       "expires": "2026-10-08T02:00:32.995095+00:00",
@@ -7349,6 +7368,15 @@
       "status": "rejected",
       "timestamp": "2026-09-08T01:00:31.284910+00:00"
     },
+    "sandtimer-for-sticks3": {
+      "expires": "2026-09-20T06:00:47.661752+00:00",
+      "id": "sandtimer-for-sticks3",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "nongxl/sandtimer_for_sticks3",
+      "status": "rejected",
+      "timestamp": "2026-09-13T06:00:47.661752+00:00"
+    },
     "sas": {
       "expires": "2026-10-11T20:01:00.775055+00:00",
       "id": "sas",
@@ -7388,6 +7416,15 @@
       "repo_id": 1092701773,
       "status": "rejected",
       "timestamp": "2026-09-11T18:00:57.443532+00:00"
+    },
+    "search": {
+      "expires": "2026-09-20T06:00:47.661752+00:00",
+      "id": "search",
+      "pr_ref": null,
+      "reason": "repo_unresolved: unparseable repo 'search'",
+      "repo": "search",
+      "status": "rejected",
+      "timestamp": "2026-09-13T06:00:47.661752+00:00"
     },
     "seed-phrase-checker": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -8852,6 +8889,7 @@
     "atomnft/m5stick-marauder": "m5stick-marauder",
     "atomnft/rogue-radar": "rogue-radar",
     "autoflowdanilo-it/blipputer": "blipputer",
+    "azure/iot-central-firmware": "iot-central-firmware",
     "beakes/teenygpstestbed_c2": "teenygpstestbed-c2",
     "beanpiechen/micropythonshell": "micropythonshell",
     "ben7147/bruceextled.git": "bruceextled",
@@ -9293,6 +9331,7 @@
     "m5dev1000/m5-ble-controller": "m5-ble-controller",
     "m5dev1000/m5-clicker-hamster": "m5-clicker-hamster",
     "m5dev1000/m5-clicker_game": "m5-clicker-game",
+    "m5fly-kanazawa/m5stampfly": "m5stampfly",
     "m5rogueops/echoglass-the-mindful-tracker": "echoglass-the-mindful-tracker",
     "m5rogueops/m5-roguemail": "m5-roguemail",
     "m5rogueops/m5-rogueshell": "m5-rogueshell",
@@ -9300,6 +9339,7 @@
     "m5rogueops/m5_rogueos": "m5-rogueos",
     "m5rogueops/m5sticks3-rogueduck": "m5sticks3-rogueduck",
     "m5rogueops/periscope-os": "periscope-os",
+    "m5stack": "m5stack",
     "m5stack/aiflow": "aiflow",
     "m5stack/atom-joystick": "atom-joystick",
     "m5stack/cores3-box": "cores3-box",
@@ -9407,6 +9447,7 @@
     "nongxl/cyberdeck-tarot": "cyberdeck-tarot",
     "nongxl/floatingbottle_pc_monitor": "floatingbottle-pc-monitor",
     "nongxl/hikepod": "hikepod",
+    "nongxl/sandtimer_for_sticks3": "sandtimer-for-sticks3",
     "nongxl/skycompass_cardputeradv": "skycompass-cardputeradv",
     "nongxl/skycompass_satellite": "skycompass-satellite",
     "nonik0/cardputerlegotraincontrol": "cardputerlegotraincontrol",
@@ -9515,6 +9556,7 @@
     "sc-makers/ppltmini-atoms3": "ppltmini-atoms3",
     "scsagentclub/worldcuplive_esp": "worldcuplive-esp",
     "sduenasg/pio_palnagotchi": "pio-palnagotchi",
+    "search": "search",
     "sebaspinto/misspoppyrabbit": "misspoppyrabbit",
     "seeed-projects/oshw-reterminal-series-e-d": "oshw-reterminal-series-e-d",
     "seeed-projects/oshw-reterminal-sticky": "oshw-reterminal-sticky",
