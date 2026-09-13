@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-20T07:00:51.338571+00:00",
+      "expires": "2026-09-20T08:00:57.847621+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-13T07:00:51.338571+00:00"
+      "timestamp": "2026-09-13T08:00:57.847621+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -3684,6 +3684,15 @@
       "status": "rejected",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
+    "layer812": {
+      "expires": "2026-09-20T08:00:57.847621+00:00",
+      "id": "layer812",
+      "pr_ref": null,
+      "reason": "repo_unresolved: unparseable repo 'layer812'",
+      "repo": "layer812",
+      "status": "rejected",
+      "timestamp": "2026-09-13T08:00:57.847621+00:00"
+    },
     "lcdtap": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "lcdtap",
@@ -6092,6 +6101,15 @@
       "status": "rejected",
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
+    "name-dll": {
+      "expires": "2026-09-20T08:00:57.847621+00:00",
+      "id": "name-dll",
+      "pr_ref": null,
+      "reason": "repo_unresolved: unparseable repo 'name_dll'",
+      "repo": "name_dll",
+      "status": "rejected",
+      "timestamp": "2026-09-13T08:00:57.847621+00:00"
+    },
     "namecardknot": {
       "expires": "2026-10-09T23:00:48.497677+00:00",
       "id": "namecardknot",
@@ -8271,6 +8289,16 @@
       "status": "rejected",
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
+    "twesp32sensor": {
+      "expires": "2026-10-13T08:00:57.847621+00:00",
+      "id": "twesp32sensor",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "twsnmp/twesp32sensor",
+      "repo_id": 761938922,
+      "status": "rejected",
+      "timestamp": "2026-09-13T08:00:57.847621+00:00"
+    },
     "two-button-tetris-for-scplus2": {
       "expires": "2026-10-12T00:00:11.345845+00:00",
       "id": "two-button-tetris-for-scplus2",
@@ -8280,6 +8308,16 @@
       "repo_id": 812358825,
       "status": "rejected",
       "timestamp": "2026-09-12T00:00:11.345845+00:00"
+    },
+    "uart-buddy": {
+      "expires": "2026-10-13T08:00:57.847621+00:00",
+      "id": "uart-buddy",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "jcldf/uart-buddy",
+      "repo_id": 884900120,
+      "status": "rejected",
+      "timestamp": "2026-09-13T08:00:57.847621+00:00"
     },
     "uarterm": {
       "expires": "2026-10-12T01:00:16.789643+00:00",
@@ -8316,6 +8354,16 @@
       "repo_id": 446381832,
       "status": "rejected",
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
+    },
+    "ulisp-cardputer": {
+      "expires": "2026-10-13T08:00:57.847621+00:00",
+      "id": "ulisp-cardputer",
+      "pr_ref": null,
+      "reason": "name_token_matches_catalogued: likely a port/variant",
+      "repo": "technoblogy/ulisp-cardputer",
+      "repo_id": 889469427,
+      "status": "rejected",
+      "timestamp": "2026-09-13T08:00:57.847621+00:00"
     },
     "ultimate-remote": {
       "expires": "2026-10-12T02:00:23.345419+00:00",
@@ -8395,6 +8443,16 @@
       "repo_id": 1091367004,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "vgmm5": {
+      "expires": "2026-10-13T08:00:57.847621+00:00",
+      "id": "vgmm5",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "layer812/vgmm5",
+      "repo_id": 1265735954,
+      "status": "rejected",
+      "timestamp": "2026-09-13T08:00:57.847621+00:00"
     },
     "vgmpc": {
       "expires": "2026-10-12T03:00:29.761890+00:00",
@@ -9267,6 +9325,7 @@
     "jayden-sudo/cardputer-keyboard-mouse": "cardputer-keyboard-mouse",
     "jblanked/picoware": "picoware",
     "jcldf/m5stackprojects": "m5stackprojects",
+    "jcldf/uart-buddy": "uart-buddy",
     "jfduhart/cardputer-morse-trainer": "cardputer-morse-trainer",
     "ji1ore/m5corehamcat": "m5corehamcat",
     "ji1ore/remotekeyer_wifi": "remotekeyer-wifi",
@@ -9327,6 +9386,7 @@
     "kyya/paperdarkroom": "paperdarkroom",
     "laccom/zizi-for-m5-stick-c-plus-2": "zizi-for-m5-stick-c-plus-2",
     "laserir/mclite": "mclite",
+    "layer812": "layer812",
     "layer812/cardputer_llm": "cardputer-llm",
     "layer812/gs": "gs",
     "layer812/mdxpc": "mdxpc",
@@ -9337,6 +9397,7 @@
     "layer812/r8t5": "r8t5",
     "layer812/sas": "sas",
     "layer812/smfpc": "smfpc",
+    "layer812/vgmm5": "vgmm5",
     "layer812/vgmpc": "vgmpc",
     "layer812/x68ktab5": "x68ktab5",
     "leandrosummo/m5cybernews-world": "m5cybernews-world",
@@ -9468,6 +9529,7 @@
     "n0xa/m5stickstuph": "m5stickstuph",
     "n3tfox/flockwatch": "flockwatch",
     "naileclevrai/bruce-nemo-ble": "bruce-nemo-ble",
+    "name_dll": "name-dll",
     "nananauno/m5guruguru-starter": "m5guruguru-starter",
     "nananauno/m5peasytag": "m5peasytag",
     "nanucek/pocket-gambler": "pocket-gambler",
@@ -9655,6 +9717,7 @@
     "tavden/tavden-field-suite": "tavden-field-suite",
     "teapot174/airmouses3": "airmouses3",
     "teapot174/esp-graber": "esp-graber",
+    "technoblogy/ulisp-cardputer": "ulisp-cardputer",
     "thebolined/ai-cardputer-adv-a-portable-ai-assistant": "ai-cardputer-adv-a-portable-ai-assistant",
     "thebricktop/anarch-cardputer": "anarch-cardputer",
     "thedeadlypixel/audiowiz": "audiowiz",
@@ -9684,6 +9747,7 @@
     "truonglangquan/idk-test": "idk-test",
     "turbohsu/badapple_cardputer_adv": "badapple-cardputer-adv",
     "tutyr2-jpg/bruce-a-c-edition": "bruce-a-c-edition",
+    "twsnmp/twesp32sensor": "twesp32sensor",
     "u-tanick/ai_stackchan2_for_debug": "ai-stackchan2-for-debug",
     "ubo07": "ubo07",
     "ugursayar/nesso_base": "nesso-base",
