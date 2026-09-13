@@ -4,7 +4,7 @@ type: board
 brand: seeed
 name: Seeed Studio XIAO ESP32S3
 aka:
-- "seeed_xiao_esp32s3"
+- seeed_xiao_esp32s3
 soc: esp32-s3
 flash_mb: 8
 psram_mb: 8
@@ -44,6 +44,11 @@ notes:
   as exact.'
 - 'io.power_out QUOTED: vendor "Power Pins" section states "3V3 - This is the regulated
   output from the onboard regulator. You can draw 700mA"'
+download_mode:
+  mode: manual
+  steps: When you press and hold the BOOT key while powering up and then press the
+    Reset key once, you can also enter BootLoader mode
+getting_started: https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
 sources:
 - field: '*'
   url: https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
@@ -63,6 +68,12 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/seeed_xiao_esp32s3.json
   verified: '2026-09-07'
+- field: download_mode
+  url: https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
+  verified: '2026-09-13'
+- field: getting_started
+  url: https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
+  verified: '2026-09-13'
 ---
 
 # Seeed Studio XIAO ESP32S3
