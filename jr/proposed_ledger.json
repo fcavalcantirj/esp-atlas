@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-20T11:00:18.933731+00:00",
+      "expires": "2026-09-20T12:00:26.473492+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-13T11:00:18.933731+00:00"
+      "timestamp": "2026-09-13T12:00:26.473492+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -5187,6 +5187,16 @@
       "status": "rejected",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
+    "m5stack-xdripmon": {
+      "expires": "2026-10-13T12:00:26.473492+00:00",
+      "id": "m5stack-xdripmon",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 1 forks",
+      "repo": "psonnera/m5stack_xdripmon",
+      "repo_id": 724225059,
+      "status": "rejected",
+      "timestamp": "2026-09-13T12:00:26.473492+00:00"
+    },
     "m5stackprojects": {
       "expires": "2026-10-09T15:00:32.435406+00:00",
       "id": "m5stackprojects",
@@ -8750,6 +8760,16 @@
       "status": "rejected",
       "timestamp": "2026-09-12T08:00:41.133831+00:00"
     },
+    "world-market-clock": {
+      "expires": "2026-10-13T12:00:26.473492+00:00",
+      "id": "world-market-clock",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 0 forks",
+      "repo": "k-yama2010/world-market-clock",
+      "repo_id": 677280696,
+      "status": "rejected",
+      "timestamp": "2026-09-13T12:00:26.473492+00:00"
+    },
     "worldcup-2026": {
       "expires": "2026-10-12T09:00:42.532247+00:00",
       "id": "worldcup-2026",
@@ -8848,6 +8868,16 @@
       "repo_id": 1122129643,
       "status": "rejected",
       "timestamp": "2026-09-12T10:00:45.628096+00:00"
+    },
+    "xmod-lib": {
+      "expires": "2026-10-13T12:00:26.473492+00:00",
+      "id": "xmod-lib",
+      "pr_ref": null,
+      "reason": "below_floor: 4 stars / 1 forks",
+      "repo": "xdiversity/xmod-lib",
+      "repo_id": 832473211,
+      "status": "rejected",
+      "timestamp": "2026-09-13T12:00:26.473492+00:00"
     },
     "xnode": {
       "expires": "2026-10-12T10:00:45.628096+00:00",
@@ -9413,6 +9443,7 @@
     "jymmm/rhesus-radio": "rhesus-radio",
     "k-7iro/mk75-watch": "mk75-watch",
     "k-natori/poodle": "poodle",
+    "k-yama2010/world-market-clock": "world-market-clock",
     "kaini-industries/cardputer-chess": "cardputer-chess",
     "kaini-industries/cardputer-rng": "cardputer-rng",
     "kariagepompadour/sound-terrarium": "sound-terrarium",
@@ -9661,6 +9692,7 @@
     "prstoetzer/papersatcolor": "papersatcolor",
     "prstoetzer/sticksat": "sticksat",
     "psonnera/m5_nightscoutmon": "m5-nightscoutmon",
+    "psonnera/m5stack_xdripmon": "m5stack-xdripmon",
     "psychoplath9450/sumi": "sumi",
     "purplxhazee/purplx-": "purplx",
     "qqshi13/m5timer": "m5timer",
@@ -9859,6 +9891,7 @@
     "wsalmi/launcher_salmi_fork": "launcher-salmi-fork",
     "wusiu/webradio_wusiu_cardputer_adv": "webradio-wusiu-cardputer-adv",
     "wusiyu/m5cardputer-userdemo-plus": "m5cardputer-userdemo-plus",
+    "xdiversity/xmod-lib": "xmod-lib",
     "xick/oxotp-plus": "oxotp-plus",
     "xinyuan-lilygo/t-display-c5": "t-display-c5",
     "xinyuan-lilygo/t-embed": "t-embed",

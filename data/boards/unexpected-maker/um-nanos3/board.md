@@ -4,7 +4,7 @@ type: board
 brand: unexpected-maker
 name: Unexpected Maker NanoS3
 aka:
-- "NANOS3"
+- NANOS3
 soc: esp32-s3
 flash_mb: 8
 psram_mb: 8
@@ -21,15 +21,16 @@ notes:
 - Very small 28 x 11 mm outline
 - USB connector type not stated on the cited spec matrix (omitted)
 - 'io.gpio_exposed=27 QUOTED: vendor page states "27 GPIO". io.power_out omitted:
-  vendor states only "700mA 3.3V LDO Regulator" with no external-load framing
-  (unlike FeatherS3/ProS3''s dedicated LDO2)'
+  vendor states only "700mA 3.3V LDO Regulator" with no external-load framing (unlike
+  FeatherS3/ProS3''s dedicated LDO2)'
 - 'io.gpio_free=22 DERIVED: CircuitPython''s board pin table (unexpectedmaker_nanos3/pins.c)
-  lists exactly 27 IO-numbered pins, GPIO {0-18, 21, 33,34,35,36,37, 43,44} --
-  matches vendor''s "27" exactly (no battery/RGB-power pins are broken out on
-  this non-battery board; NEOPIXEL/NEOPIXEL_POWER on GPIO41/42 carry no IO-alias
-  and are excluded). Subtracting esp32-s3''s soc.reserved_pins present in that
-  27-pin set (strapping {0,3}: 2; usb_flash_tied {35,36,37}: 3 -- 5 total) gives
-  27 - 5 = 22'
+  lists exactly 27 IO-numbered pins, GPIO {0-18, 21, 33,34,35,36,37, 43,44} -- matches
+  vendor''s "27" exactly (no battery/RGB-power pins are broken out on this non-battery
+  board; NEOPIXEL/NEOPIXEL_POWER on GPIO41/42 carry no IO-alias and are excluded).
+  Subtracting esp32-s3''s soc.reserved_pins present in that 27-pin set (strapping
+  {0,3}: 2; usb_flash_tied {35,36,37}: 3 -- 5 total) gives 27 - 5 = 22'
+usb_serial: native-usb-serial-jtag
+getting_started: https://esp32s3.com/nanos3.html
 sources:
 - field: '*'
   url: https://unexpectedmaker.com/shop/nanos3
@@ -46,6 +47,12 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/um_nanos3.json
   verified: '2026-09-07'
+- field: usb_serial
+  url: https://esp32s3.com/nanos3.html
+  verified: '2026-09-13'
+- field: getting_started
+  url: https://esp32s3.com/nanos3.html
+  verified: '2026-09-13'
 ---
 
 # Unexpected Maker NanoS3
