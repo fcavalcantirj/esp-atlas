@@ -45,6 +45,10 @@ getting_started: https://docs.m5stack.com/en/core/CoreS3
 images:
   photo: https://static-cdn.m5stack.com/resource/docs/products/core/CoreS3/img-96063e2a-637a-4d11-ac47-1ce4f1cdfd3e.webp
   pinout: https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/products/core/M5CORES3%20SE/c9024cfa50b8d7c31ca7505668770ee.png
+download_mode:
+  mode: manual
+  steps: Independent POWER and RESET (RST) buttons are located on the side; long-pressing
+    the RESET button enters download mode via a self-built delay circuit
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/CoreS3
@@ -58,6 +62,9 @@ sources:
 - field: images
   url: https://docs.m5stack.com/en/core/CoreS3
   verified: '2026-09-11'
+- field: download_mode
+  url: https://docs.m5stack.com/en/core/CoreS3
+  verified: '2026-09-13'
 ---
 
 # CoreS3
