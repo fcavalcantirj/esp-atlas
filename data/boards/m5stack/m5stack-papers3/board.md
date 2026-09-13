@@ -34,6 +34,11 @@ usb_serial: ch9102
 getting_started: https://docs.m5stack.com/en/core/papers3
 images:
   photo: https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/products/core/PaperS3/4.webp
+download_mode:
+  mode: manual
+  steps: Download Mode Connect the device to a computer via USB cable, long press
+    the power button on the M5PaperS3, when the back status light flashes red, it
+    indicates the device has entered download mode
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/papers3
@@ -50,6 +55,9 @@ sources:
 - field: images
   url: https://docs.m5stack.com/en/core/papers3
   verified: '2026-09-11'
+- field: download_mode
+  url: https://docs.m5stack.com/en/core/papers3
+  verified: '2026-09-13'
 ---
 
 # M5Stack PaperS3
