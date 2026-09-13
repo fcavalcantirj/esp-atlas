@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-20T03:00:41.977136+00:00",
+      "expires": "2026-09-20T04:00:43.509217+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-13T03:00:41.977136+00:00"
+      "timestamp": "2026-09-13T04:00:43.509217+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -5040,6 +5040,16 @@
       "status": "rejected",
       "timestamp": "2026-09-10T11:00:31.853052+00:00"
     },
+    "m5stack-paper-s3-chinese-books": {
+      "expires": "2026-10-13T04:00:43.509217+00:00",
+      "id": "m5stack-paper-s3-chinese-books",
+      "pr_ref": null,
+      "reason": "below_floor: 17 stars / 3 forks",
+      "repo": "yuleshow/m5stack-paper-s3-chinese-books",
+      "repo_id": 1166324079,
+      "status": "rejected",
+      "timestamp": "2026-09-13T04:00:43.509217+00:00"
+    },
     "m5stack-papers3": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
       "id": "m5stack-papers3",
@@ -5707,6 +5717,16 @@
       "repo": "matthew-5plpeanut-gb",
       "status": "rejected",
       "timestamp": "2026-09-08T05:25:25.049296+00:00"
+    },
+    "mbti-book": {
+      "expires": "2026-10-13T04:00:43.509217+00:00",
+      "id": "mbti-book",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "dalianblue/mbti_book",
+      "repo_id": 1289823998,
+      "status": "rejected",
+      "timestamp": "2026-09-13T04:00:43.509217+00:00"
     },
     "mclite": {
       "expires": "2026-10-09T04:00:10.126216+00:00",
@@ -6950,6 +6970,16 @@
       "repo_id": 1334249022,
       "status": "rejected",
       "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "race-2d-sticks3": {
+      "expires": "2026-10-13T04:00:43.509217+00:00",
+      "id": "race-2d-sticks3",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "ilanovikov088-source/race-2d-sticks3",
+      "repo_id": 1269958498,
+      "status": "rejected",
+      "timestamp": "2026-09-13T04:00:43.509217+00:00"
     },
     "raincity-m5stack-cores3": {
       "expires": "2026-10-11T16:00:54.676058+00:00",
@@ -8927,6 +8957,7 @@
     "dalianblue/m5stack_insta360": "m5stack-insta360",
     "dalianblue/m5sticks3-tide-clock": "m5sticks3-tide-clock",
     "dalianblue/m5voicestick": "m5voicestick",
+    "dalianblue/mbti_book": "mbti-book",
     "danpodeanu/seeed-reterminal-e100x": "seeed-reterminal-e100x",
     "davervw/cardputer-game-station-emulators": "cardputer-game-station-emulators",
     "davervw/m5_minijoystickc_gamepad": "m5-minijoystickc-gamepad",
@@ -9107,6 +9138,7 @@
     "ilanovikov088-source/controller-s3": "controller-s3",
     "ilanovikov088-source/dinorune-sticks3": "dinorune-sticks3",
     "ilanovikov088-source/pingpongs3": "pingpongs3",
+    "ilanovikov088-source/race-2d-sticks3": "race-2d-sticks3",
     "imink/aqualife": "aqualife",
     "imliubo/retro-go": "retro-go",
     "imlunchtime/tab5_launcher": "tab5-launcher",
@@ -9592,6 +9624,7 @@
     "yo3hjv/ham5dsp": "ham5dsp",
     "yo3hjv/runman1": "runman1",
     "youranonelf": "youranonelf",
+    "yuleshow/m5stack-paper-s3-chinese-books": "m5stack-paper-s3-chinese-books",
     "yuleshow/m5tab-macintosh": "m5tab-macintosh",
     "z4b333/sticky-toybox": "sticky-toybox",
     "z4y-d3n/modbus-tcp-auditor-tool": "modbus-tcp-auditor-tool",
