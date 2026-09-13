@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-20T08:00:57.847621+00:00",
+      "expires": "2026-09-20T10:00:11.502302+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-13T08:00:57.847621+00:00"
+      "timestamp": "2026-09-13T10:00:11.502302+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -4394,6 +4394,16 @@
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
+    "m5core-v1-1-vu-meter": {
+      "expires": "2026-10-13T10:00:11.502302+00:00",
+      "id": "m5core-v1-1-vu-meter",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "yareyaredaze1234/m5core-v1.1-vu-meter",
+      "repo_id": 1159251727,
+      "status": "rejected",
+      "timestamp": "2026-09-13T10:00:11.502302+00:00"
+    },
     "m5core2-341-effects-xscreensaver": {
       "expires": "2026-10-12T12:00:48.975386+00:00",
       "id": "m5core2-341-effects-xscreensaver",
@@ -8464,6 +8474,16 @@
       "status": "rejected",
       "timestamp": "2026-09-12T03:00:29.761890+00:00"
     },
+    "vibe-cardputer": {
+      "expires": "2026-10-13T10:00:11.502302+00:00",
+      "id": "vibe-cardputer",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "vc1235-ui/vibe-cardputer",
+      "repo_id": 1282017852,
+      "status": "rejected",
+      "timestamp": "2026-09-13T10:00:11.502302+00:00"
+    },
     "vibestick-codex": {
       "expires": "2026-10-12T03:00:29.761890+00:00",
       "id": "vibestick-codex",
@@ -8578,6 +8598,16 @@
       "repo": "coreymillia/whisplay-groq-chatbot",
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.188711+00:00"
+    },
+    "wi-pwn": {
+      "expires": "2026-10-13T10:00:11.502302+00:00",
+      "id": "wi-pwn",
+      "pr_ref": null,
+      "reason": "name_token_matches_catalogued: likely a port/variant",
+      "repo": "samdenty/wi-pwn",
+      "repo_id": 91923053,
+      "status": "rejected",
+      "timestamp": "2026-09-13T10:00:11.502302+00:00"
     },
     "wifi-capture-page-m5cardputer": {
       "id": "wifi-capture-page-m5cardputer",
@@ -9647,6 +9677,7 @@
     "sakkra-adv/battleship": "battleship",
     "sakkra-adv/magic8ball": "magic8ball",
     "sakkra-adv/spaceship": "spaceship",
+    "samdenty/wi-pwn": "wi-pwn",
     "samucarre/m5cores3-automatic-irrigation": "m5cores3-automatic-irrigation",
     "samucarre/m5papers3-animal-quiz": "m5papers3-animal-quiz",
     "samucarre/m5tab5-animal-quiz": "m5tab5-animal-quiz",
@@ -9761,6 +9792,7 @@
     "v11859752/m5airmouse": "m5airmouse",
     "vanshksingh/m5cardputer-chat-with-gemini-api": "m5cardputer-chat-with-gemini-api",
     "varna9000/reticulum-tdeck": "reticulum-tdeck",
+    "vc1235-ui/vibe-cardputer": "vibe-cardputer",
     "vicliu624/cardputer_mp3_adv": "cardputer-mp3-adv",
     "vicliu624/trail-mate": "trail-mate",
     "viniciusbo/m5-palnagotchi": "m5-palnagotchi",
@@ -9801,6 +9833,7 @@
     "xxtrippxx88/airmouse-m5stick-c-plus": "airmouse-m5stick-c-plus",
     "y88huang/claude-desktop-buddy-cardputer": "claude-desktop-buddy-cardputer",
     "yannguillon/otpauth-m5stickc": "otpauth-m5stickc",
+    "yareyaredaze1234/m5core-v1.1-vu-meter": "m5core-v1-1-vu-meter",
     "yh1224/m5-midi-heartopia": "m5-midi-heartopia",
     "yo3hjv/ham5dsp": "ham5dsp",
     "yo3hjv/runman1": "runman1",

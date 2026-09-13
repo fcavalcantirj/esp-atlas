@@ -4,8 +4,8 @@ type: board
 brand: sparkfun
 name: SparkFun MicroMod ESP32 Processor
 aka:
-- "esp32micromod"
-- "sparkfun_esp32micromod"
+- esp32micromod
+- sparkfun_esp32micromod
 soc: esp32
 flash_mb: 16
 psram_mb: 0
@@ -20,18 +20,22 @@ io:
   gpio_exposed: 13
 notes:
 - ESP32-D0WDQ6-V3; 16 MB flash
-- ESP32-D0WDQ6-V3 chip variant has no PSRAM per Espressif's ESP32 series ordering table
-- M.2-style MicroMod edge connector; requires a MicroMod carrier board (not sold with one). USB is routed through MicroMod connector pads to the carrier board rather than exposed on the processor board itself
+- ESP32-D0WDQ6-V3 chip variant has no PSRAM per Espressif's ESP32 series ordering
+  table
+- M.2-style MicroMod edge connector; requires a MicroMod carrier board (not sold with
+  one). USB is routed through MicroMod connector pads to the carrier board rather
+  than exposed on the processor board itself
 - Onboard status LED and 2.4GHz WiFi/BLE antenna
-- 'io.gpio_exposed=13 QUOTED: vendor hookup guide states "The MicroMod connector
-  supports a total of 12 general purpose IO pins, 7 of which are used on the ESP32
-  Processor, on top of the 6 dedicated pins" -- 7 general-purpose + 6 dedicated
-  = 13, summing the two vendor-stated integers directly (no estimation)'
-- 'io.gpio_free intentionally OMITTED: this is a MicroMod M.2-style edge-card
-  processor board with no standalone header -- its pins land on a card-edge
-  connector meant to mate with a separate MicroMod carrier board, not a
-  breadboard-style GPIO header a user can wire into directly. gpio_free
-  presumes a usable header; it does not apply here'
+- 'io.gpio_exposed=13 QUOTED: vendor hookup guide states "The MicroMod connector supports
+  a total of 12 general purpose IO pins, 7 of which are used on the ESP32 Processor,
+  on top of the 6 dedicated pins" -- 7 general-purpose + 6 dedicated = 13, summing
+  the two vendor-stated integers directly (no estimation)'
+- 'io.gpio_free intentionally OMITTED: this is a MicroMod M.2-style edge-card processor
+  board with no standalone header -- its pins land on a card-edge connector meant
+  to mate with a separate MicroMod carrier board, not a breadboard-style GPIO header
+  a user can wire into directly. gpio_free presumes a usable header; it does not apply
+  here'
+getting_started: https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-micromod-esp32-processor.html
@@ -51,6 +55,9 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/sparkfun_esp32micromod.json
   verified: '2026-09-07'
+- field: getting_started
+  url: https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide
+  verified: '2026-09-13'
 ---
 
 # SparkFun MicroMod ESP32 Processor

@@ -4,8 +4,8 @@ type: board
 brand: sparkfun
 name: SparkFun Thing Plus - ESP32-S2 WROOM
 aka:
-- "ESP32S2_THING_PLUS"
-- "sparkfun_esp32s2_thing_plus"
+- ESP32S2_THING_PLUS
+- sparkfun_esp32s2_thing_plus
 soc: esp32-s2
 flash_mb: 4
 psram_mb: 0
@@ -29,18 +29,19 @@ notes:
 - Battery charging via onboard MCP73831 charger, JST connector for single-cell LiPo
 - ESP32-S2 omits Bluetooth and 5GHz WiFi; WiFi 802.11b/g/n only
 - Thing Plus form factor is pin-compatible with the Adafruit Feather footprint
-- ESP32-S2-WROOM (as opposed to -WROVER) has no PSRAM, per Espressif's ESP32-S2-WROOM datasheet
+- ESP32-S2-WROOM (as opposed to -WROVER) has no PSRAM, per Espressif's ESP32-S2-WROOM
+  datasheet
 - 'io.gpio_exposed=21 QUOTED: vendor hookup guide hardware overview states "There
-  are 21 I/O pins broken out on this board, with 8 I/O pads on the back of the
-  board" -- the 21 front-header count is used; the 8 back pads are not header
-  pins and are not added in'
-- 'io.gpio_free=21 DERIVED: the vendor''s own graphical datasheet enumerates the
-  21 front-header GPIOs by number (1,2,4,6,8,10,11,12,13 on the left header;
-  3,34,33,37,35,36,5,7,9,14,18,17 on the right), matching the "21" front-header
-  count exactly. Of esp32-s2''s soc.reserved_pins, strapping 0/45/46 are not on
-  this header; input_only 46 is not on this header; usb_flash_tied 19/20 are
-  not on this header (both consumed internally by the native USB-C port) --
-  none of the reserved pins are exposed, so no subtraction applies: 21 - 0 = 21'
+  are 21 I/O pins broken out on this board, with 8 I/O pads on the back of the board"
+  -- the 21 front-header count is used; the 8 back pads are not header pins and are
+  not added in'
+- 'io.gpio_free=21 DERIVED: the vendor''s own graphical datasheet enumerates the 21
+  front-header GPIOs by number (1,2,4,6,8,10,11,12,13 on the left header; 3,34,33,37,35,36,5,7,9,14,18,17
+  on the right), matching the "21" front-header count exactly. Of esp32-s2''s soc.reserved_pins,
+  strapping 0/45/46 are not on this header; input_only 46 is not on this header; usb_flash_tied
+  19/20 are not on this header (both consumed internally by the native USB-C port)
+  -- none of the reserved pins are exposed, so no subtraction applies: 21 - 0 = 21'
+getting_started: https://learn.sparkfun.com/tutorials/esp32-s2-thing-plus-hookup-guide
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-thing-plus-esp32-s2-wroom.html
@@ -63,6 +64,9 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/sparkfun_esp32s2_thing_plus.json
   verified: '2026-09-07'
+- field: getting_started
+  url: https://learn.sparkfun.com/tutorials/esp32-s2-thing-plus-hookup-guide
+  verified: '2026-09-13'
 ---
 
 # SparkFun Thing Plus - ESP32-S2 WROOM
