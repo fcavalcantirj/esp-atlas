@@ -47,6 +47,7 @@ download_mode:
 getting_started: https://learn.adafruit.com/adafruit-itsybitsy-esp32
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/953/medium800/5889-00.jpg
+usb_serial: other
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5889
@@ -69,6 +70,9 @@ sources:
 - field: images
   url: https://learn.adafruit.com/adafruit-itsybitsy-esp32
   verified: '2026-09-11'
+- field: usb_serial
+  url: https://learn.adafruit.com/adafruit-itsybitsy-esp32
+  verified: '2026-09-13'
 ---
 
 # Adafruit ItsyBitsy ESP32
