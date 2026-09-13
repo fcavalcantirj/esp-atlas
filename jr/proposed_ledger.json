@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-20T14:00:40.612705+00:00",
+      "expires": "2026-09-20T15:00:47.787699+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-13T14:00:40.612705+00:00"
+      "timestamp": "2026-09-13T15:00:47.787699+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -5531,6 +5531,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
+    "m5sticks3-the-silence-protocol": {
+      "expires": "2026-10-13T15:00:47.787699+00:00",
+      "id": "m5sticks3-the-silence-protocol",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 1 forks",
+      "repo": "m5rogueops/m5sticks3-the-silence-protocol",
+      "repo_id": 1270646496,
+      "status": "rejected",
+      "timestamp": "2026-09-13T15:00:47.787699+00:00"
+    },
     "m5sticks3-tide-clock": {
       "expires": "2026-10-11T13:00:49.050627+00:00",
       "id": "m5sticks3-tide-clock",
@@ -5659,6 +5669,26 @@
       "repo_id": 415172079,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "m5unified-stackchan": {
+      "expires": "2026-10-13T15:00:47.787699+00:00",
+      "id": "m5unified-stackchan",
+      "pr_ref": null,
+      "reason": "below_floor: 6 stars / 4 forks",
+      "repo": "robo8080/m5unified_stackchan",
+      "repo_id": 580670157,
+      "status": "rejected",
+      "timestamp": "2026-09-13T15:00:47.787699+00:00"
+    },
+    "m5unified-stackchan-radiko": {
+      "expires": "2026-10-13T15:00:47.787699+00:00",
+      "id": "m5unified-stackchan-radiko",
+      "pr_ref": null,
+      "reason": "below_floor: 9 stars / 0 forks",
+      "repo": "robo8080/m5unified_stackchan_radiko",
+      "repo_id": 531406792,
+      "status": "rejected",
+      "timestamp": "2026-09-13T15:00:47.787699+00:00"
     },
     "m5unit-kmeter-internal-fw": {
       "expires": "2026-10-12T02:00:23.345419+00:00",
@@ -7781,14 +7811,14 @@
       "timestamp": "2026-09-11T20:01:00.775055+00:00"
     },
     "stackchan-bluetooth-simple": {
-      "expires": "2026-10-11T20:01:00.775055+00:00",
+      "expires": "2026-10-13T15:00:47.787699+00:00",
       "id": "stackchan-bluetooth-simple",
       "pr_ref": null,
-      "reason": "below_floor: 23 stars / 10 forks",
-      "repo": "mongonta0716/stackchan-bluetooth-simple",
-      "repo_id": 529865944,
+      "reason": "below_floor: 4 stars / 0 forks",
+      "repo": "toshihiromakuuchi/stackchan-bluetooth-simple",
+      "repo_id": 631261156,
       "status": "rejected",
-      "timestamp": "2026-09-11T20:01:00.775055+00:00"
+      "timestamp": "2026-09-13T15:00:47.787699+00:00"
     },
     "stackchan-mcp": {
       "expires": "2026-10-10T19:00:47.109119+00:00",
@@ -9591,6 +9621,7 @@
     "m5rogueops/m5_holy_os": "m5-holy-os",
     "m5rogueops/m5_rogueos": "m5-rogueos",
     "m5rogueops/m5sticks3-rogueduck": "m5sticks3-rogueduck",
+    "m5rogueops/m5sticks3-the-silence-protocol": "m5sticks3-the-silence-protocol",
     "m5rogueops/periscope-os": "periscope-os",
     "m5stack": "m5stack",
     "m5stack/aiflow": "aiflow",
@@ -9786,6 +9817,8 @@
     "robertklofgren/cardelbrot": "cardelbrot",
     "robo8080/ai_stackchan2_readme": "ai-stackchan2-readme",
     "robo8080/m5stickc_webradio_radiko_avatar": "m5stickc-webradio-radiko-avatar",
+    "robo8080/m5unified_stackchan": "m5unified-stackchan",
+    "robo8080/m5unified_stackchan_radiko": "m5unified-stackchan-radiko",
     "rocksneeze081/cardpda": "cardpda",
     "rodrigopdcouto/m5-joystick-receiver-test-esp32-espnow": "m5-joystick-receiver-test-esp32-espnow",
     "rolandbreedveld/m5cardputer_webradio_dutch": "m5cardputer-webradio-dutch",
@@ -9899,6 +9932,7 @@
     "tomorrow56/m5atom-socket-examples": "m5atom-socket-examples",
     "torlando-tech/pyxis": "pyxis",
     "toshihiromakuuchi/ai_stackchan2": "ai-stackchan2",
+    "toshihiromakuuchi/stackchan-bluetooth-simple": "stackchan-bluetooth-simple",
     "toshihiromakuuchi/wled": "wled",
     "treblewolf/m5cardputer-sun-rider": "m5cardputer-sun-rider",
     "troglodyte420/voice-mixer-3000": "voice-mixer-3000",
