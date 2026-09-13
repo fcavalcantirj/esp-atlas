@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-19T23:00:36.053237+00:00",
+      "expires": "2026-09-20T00:00:37.681486+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-12T23:00:36.053237+00:00"
+      "timestamp": "2026-09-13T00:00:37.681486+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -5455,6 +5455,16 @@
       "status": "rejected",
       "timestamp": "2026-09-09T04:00:10.126216+00:00"
     },
+    "m5tab5-animal-quiz": {
+      "expires": "2026-10-13T00:00:37.681486+00:00",
+      "id": "m5tab5-animal-quiz",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 0 forks",
+      "repo": "samucarre/m5tab5-animal-quiz",
+      "repo_id": 1016360892,
+      "status": "rejected",
+      "timestamp": "2026-09-13T00:00:37.681486+00:00"
+    },
     "m5tab5-demos": {
       "expires": "2026-10-11T22:00:03.963388+00:00",
       "id": "m5tab5-demos",
@@ -5642,6 +5652,16 @@
       "status": "rejected",
       "timestamp": "2026-09-09T04:00:10.126216+00:00"
     },
+    "marauder-csi-stickc-plus2": {
+      "expires": "2026-10-13T00:00:37.681486+00:00",
+      "id": "marauder-csi-stickc-plus2",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "devedale/marauder_csi_stickc_plus2",
+      "repo_id": 1291522147,
+      "status": "rejected",
+      "timestamp": "2026-09-13T00:00:37.681486+00:00"
+    },
     "marstechhan": {
       "expires": "2026-09-18T14:00:50.412232+00:00",
       "id": "marstechhan",
@@ -5765,6 +5785,16 @@
       "repo_id": 1132722777,
       "status": "rejected",
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
+    },
+    "meshcoreterm": {
+      "expires": "2026-10-13T00:00:37.681486+00:00",
+      "id": "meshcoreterm",
+      "pr_ref": null,
+      "reason": "already_catalogued: dabeani/meshcoreterm is already in the atlas",
+      "repo": "dabeani/meshcoreterm",
+      "repo_id": 1135169816,
+      "status": "rejected",
+      "timestamp": "2026-09-13T00:00:37.681486+00:00"
     },
     "meshpunk": {
       "expires": "2026-10-09T15:00:32.435406+00:00",
@@ -8784,6 +8814,7 @@
     "d4rkmen/m5gemini": "m5gemini",
     "d4rkmen/m5tuna": "m5tuna",
     "d4rkmen/plai": "plai",
+    "dabeani/meshcoreterm": "meshcoreterm",
     "dagnazty/semi-evil-m5dial": "semi-evil-m5dial",
     "dalianblue/m5stack_insta360": "m5stack-insta360",
     "dalianblue/m5sticks3-tide-clock": "m5sticks3-tide-clock",
@@ -8796,6 +8827,7 @@
     "demonkingfukai/m5stickc-plus-mouse-jiggler": "m5stickc-plus-mouse-jiggler",
     "derunix/m5stack-stick-s3-animation": "m5stack-stick-s3-animation",
     "destillegast/m5cardputer-hid-tools": "m5cardputer-hid-tools",
+    "devedale/marauder_csi_stickc_plus2": "marauder-csi-stickc-plus2",
     "devinwatson/cardputer-adv-gps-info": "cardputer-adv-gps-info",
     "devsur11/klipper-printercontroller-for-m5sticks3": "klipper-printercontroller-for-m5sticks3",
     "devsur11/m5gotchi": "m5gotchi",
@@ -9296,6 +9328,7 @@
     "sakkra-adv/spaceship": "spaceship",
     "samucarre/m5cores3-automatic-irrigation": "m5cores3-automatic-irrigation",
     "samucarre/m5papers3-animal-quiz": "m5papers3-animal-quiz",
+    "samucarre/m5tab5-animal-quiz": "m5tab5-animal-quiz",
     "sanchitminda/m5cardputer_windows": "m5cardputer-windows",
     "sanchitminda/mp3playerform5cardputer": "mp3playerform5cardputer",
     "sarah-c/m5stickc_plus_slot_machine": "m5stickc-plus-slot-machine",
