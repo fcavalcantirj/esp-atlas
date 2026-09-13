@@ -41,6 +41,10 @@ notes:
 getting_started: https://docs.m5stack.com/en/core/StickS3
 images:
   photo: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1207/K150-stickS3_main-products_01.webp
+download_mode:
+  mode: manual
+  steps: Download Mode Connect the device with a USB cable and press and hold the
+    reset button on the side of the device
 sources:
 - field: '*'
   url: https://docs.m5stack.com/en/core/StickS3
@@ -60,6 +64,9 @@ sources:
 - field: images
   url: https://docs.m5stack.com/en/core/StickS3
   verified: '2026-09-11'
+- field: download_mode
+  url: https://docs.m5stack.com/en/core/StickS3
+  verified: '2026-09-13'
 ---
 
 # M5StickS3

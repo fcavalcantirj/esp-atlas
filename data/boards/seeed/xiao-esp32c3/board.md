@@ -4,7 +4,7 @@ type: board
 brand: seeed
 name: Seeed Studio XIAO ESP32C3
 aka:
-- "seeed_xiao_esp32c3"
+- seeed_xiao_esp32c3
 soc: esp32-c3
 flash_mb: 4
 psram_mb: 0
@@ -43,6 +43,11 @@ notes:
   3A). Note: the page''s separate "Power Pins" narrative section states a conflicting
   "You can draw 700mA" for the 3V3 pin (likely reused boilerplate across the XIAO
   line); the formal spec-table figure is used here as the board-specific value.'
+download_mode:
+  mode: manual
+  steps: If that does not work, hold the BOOT BUTTON , connect the board to your PC
+    while holding the BOOT button, and then release it to enter bootloader mode
+getting_started: https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/
 sources:
 - field: '*'
   url: https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/
@@ -62,6 +67,12 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/seeed_xiao_esp32c3.json
   verified: '2026-09-07'
+- field: download_mode
+  url: https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/
+  verified: '2026-09-13'
+- field: getting_started
+  url: https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/
+  verified: '2026-09-13'
 ---
 
 # Seeed Studio XIAO ESP32C3
