@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-21T13:00:51.525101+00:00",
+      "expires": "2026-09-21T14:00:58.885395+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-14T13:00:51.525101+00:00"
+      "timestamp": "2026-09-14T14:00:58.885395+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -2467,11 +2467,14 @@
       "timestamp": "2026-09-08T04:00:36.972928+00:00"
     },
     "ember": {
+      "expires": "2026-10-14T14:00:58.885395+00:00",
       "id": "ember",
       "pr_ref": null,
-      "repo": "horseyofcoursey/ember",
-      "status": "seen",
-      "timestamp": "2026-09-02T17:03:09.164467+00:00"
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "wisnc/ember",
+      "repo_id": 1367628165,
+      "status": "rejected",
+      "timestamp": "2026-09-14T14:00:58.885395+00:00"
     },
     "emu-sys": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -10004,6 +10007,7 @@
     "wildtimo/m5stickc-plus-tlite-cfw": "m5stickc-plus-tlite-cfw",
     "williamruckman/diceroller-cardputeradv": "diceroller-cardputeradv",
     "wisnc/crub": "crub",
+    "wisnc/ember": "ember",
     "wisnc/rsvp": "rsvp",
     "wisnc/stellar-map": "stellar-map",
     "wokao2333/bus-pirate-cardputer-adv-deepseek.git": "bus-pirate-cardputer-adv-deepseek",
