@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-21T00:00:52.471194+00:00",
+      "expires": "2026-09-21T01:00:59.787944+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-14T00:00:52.471194+00:00"
+      "timestamp": "2026-09-14T01:00:59.787944+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -7493,6 +7493,16 @@
       "status": "rejected",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
+    "sai-poc": {
+      "expires": "2026-10-14T01:00:59.787944+00:00",
+      "id": "sai-poc",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "coolguy76o/sai-poc",
+      "repo_id": 1323674280,
+      "status": "rejected",
+      "timestamp": "2026-09-14T01:00:59.787944+00:00"
+    },
     "saitama": {
       "expires": "2026-10-11T18:00:57.443532+00:00",
       "id": "saitama",
@@ -9227,6 +9237,7 @@
     "codigohardwareecia/m5cardputer_knowledge": "m5cardputer-knowledge",
     "codigohardwareecia/m5cardputer_mp3_manager": "m5cardputer-mp3-manager",
     "comeraperuibe944/stickcontroller": "stickcontroller",
+    "coolguy76o/sai-poc": "sai-poc",
     "coreymillia/113-matrix-rain-effects-m5stack-core1-basic": "113-matrix-rain-effects-m5stack-core1-ba",
     "coreymillia/1942-tetrimino-m5stickc-plus2": "1942-tetrimino-m5stickc-plus2",
     "coreymillia/341-xscreensaver-m5stickc-plus1-plus2": "341-xscreensaver-m5stickc-plus1-plus2",
