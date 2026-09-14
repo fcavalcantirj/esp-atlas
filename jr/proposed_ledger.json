@@ -10,13 +10,13 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "(unnamed entry)": {
-      "expires": "2026-09-21T16:00:06.200638+00:00",
+      "expires": "2026-09-21T17:00:08.287239+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-14T16:00:06.200638+00:00"
+      "timestamp": "2026-09-14T17:00:08.287239+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-14T21:12:07.418911+00:00",
@@ -6044,6 +6044,16 @@
       "status": "rejected",
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
+    "midmod": {
+      "expires": "2026-10-14T17:00:08.287239+00:00",
+      "id": "midmod",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "layer812/midmod",
+      "repo_id": 1370114032,
+      "status": "rejected",
+      "timestamp": "2026-09-14T17:00:08.287239+00:00"
+    },
     "mini-mp3player-cardputer-adv": {
       "expires": "2026-10-09T15:00:32.435406+00:00",
       "id": "mini-mp3player-cardputer-adv",
@@ -9597,6 +9607,7 @@
     "layer812/cardputer_llm": "cardputer-llm",
     "layer812/gs": "gs",
     "layer812/mdxpc": "mdxpc",
+    "layer812/midmod": "midmod",
     "layer812/panicplayertab5": "panicplayertab5",
     "layer812/r8atoms3r": "r8atoms3r",
     "layer812/r8cores3": "r8cores3",
