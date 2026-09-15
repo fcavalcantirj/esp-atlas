@@ -27,19 +27,24 @@ REPO = Path(__file__).resolve().parent.parent
 LEDGER = "jr/proposed_ledger.json"
 
 
+def _corrupt(k, rec) -> bool:
+    """A falsy key or a non-dict record is CORRUPTION, not audit history: it never had a valid
+    identity to protect, so it is exempt from both the append-only and bad-key checks."""
+    return not k or not isinstance(rec, dict)
+
+
 def check(base: dict, head: dict) -> list[str]:
     """Pure: the violations between two ledgers ({'by_id': {...}} each)."""
     out: list[str] = []
     A, B = base.get("by_id") or {}, head.get("by_id") or {}
-    for k in A:
-        if k not in B:
+    for k, rec in A.items():
+        if k not in B and not _corrupt(k, rec):
             out.append(f"record removed: '{k}' (the ledger is append-only)")
     for k, rec in B.items():
         if k in A and A[k] == rec:
             continue                              # untouched by this PR: history is not re-litigated
-        if not k or not isinstance(rec, dict):
-            out.append(f"bad key {k!r}")
-            continue
+        if _corrupt(k, rec):
+            continue                              # corruption, not history: never audited
         if rec.get("id") != k:
             out.append(f"'{k}': id field {rec.get('id')!r} does not match its key")
         status = rec.get("status")

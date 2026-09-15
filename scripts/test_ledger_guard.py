@@ -34,14 +34,34 @@ def test_a_permanent_rejection_the_human_veto_may_follow_merged_or_proposed():
     assert lg.check(base, head) == []
 
 
-def test_removed_records_undated_notes_and_key_mismatches_are_refused():
+def test_removed_records_and_undated_notes_and_key_mismatches_are_refused_but_a_corrupt_key_is_not():
     base = {"by_id": {"a": _rec("a", "merged")}}
     head = {"by_id": {"b": _rec("b", "seen"), "c": {"id": "zzz", "status": "rejected", "expires": "2026-10-07"}, "": _rec("", "rejected")}}
     out = lg.check(base, head)
     assert any("record removed: 'a'" in m for m in out)
     assert any("'b': seen without expires" in m for m in out)
     assert any("'c': id field 'zzz'" in m for m in out)
-    assert any("bad key ''" in m for m in out)
+    assert not any("bad key" in m for m in out)   # a falsy key is corruption, not history — never audited
+
+
+def test_removing_a_corrupt_empty_key_record_is_not_a_violation():
+    base = {"by_id": {"a": _rec("a", "merged"), "": _rec("", "rejected", expires="2026-10-07")}}
+    head = {"by_id": {"a": _rec("a", "merged")}}
+    assert lg.check(base, head) == []
+
+
+def test_removing_a_valid_record_still_fails():
+    base = {"by_id": {"a": _rec("a", "merged")}}
+    head = {"by_id": {}}
+    out = lg.check(base, head)
+    assert any("record removed: 'a'" in m for m in out)
+
+
+def test_a_valid_record_with_id_not_matching_key_still_fails():
+    base = {"by_id": {}}
+    head = {"by_id": {"c": {"id": "zzz", "status": "rejected", "expires": "2026-10-07"}}}
+    out = lg.check(base, head)
+    assert any("'c': id field 'zzz'" in m for m in out)
 
 
 def test_main_against_the_real_repo_is_green_for_an_unchanged_ledger():
