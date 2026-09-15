@@ -4,7 +4,7 @@ TDD, no network: check_popularity_floor() reuses firmware_floor_audit.audit() (S
 offline) against a temp fixture data dir. Real catalog-style hardware/firmware examples (a
 Cardputer git client), never lorem ipsum.
 
-Run: python3 -m pytest scripts/test_validate.py -q
+Run: python3 -m pytest scripts/test_validate_popularity_floor.py -q
 """
 from __future__ import annotations
 
