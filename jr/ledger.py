@@ -116,6 +116,8 @@ def record_seen(firmware_id: str, repo: str, path: Path = DEFAULT_LEDGER_PATH,
     like record_proposed so prefilter can skip it by repo before any GitHub fetch next run, so
     sub-floor filler isn't re-fetched every run. Overwrites any prior record for the same id.
     Returns the updated ledger."""
+    if not firmware_id and not repo:
+        return load_ledger(path)   # neither key to write under — corruption, not a record
     ledger = load_ledger(path)
     repo_key = repo.lower()
     ledger["by_id"][firmware_id] = {
@@ -133,6 +135,8 @@ def record_proposed(firmware_id: str, repo: str, pr_ref: str | None = None,
     PR URL) if given — called by drain_pr.py at the moment it opens the PR (deliverable 2).
     Overwrites any prior record for the same id: a fresh authoring is always the latest truth.
     Returns the updated ledger."""
+    if not firmware_id and not repo:
+        return load_ledger(path)   # neither key to write under — corruption, not a record
     ledger = load_ledger(path)
     repo_key = repo.lower()
     ledger["by_id"][firmware_id] = {

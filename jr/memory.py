@@ -183,6 +183,12 @@ def _write(firmware_id: str, repo: str, status: str, reason: str | None, ttl_day
     not downgraded by a TTL'd rejection or a `seen` note either; only a new proposal (a refresh) or
     a permanent rejection replaces it. A missing repo_id is backfilled on any refusal. Otherwise
     the latest decision is the truth."""
+    if not firmware_id and not repo:
+        # An unparseable/empty repo has neither an id nor a repo to key the ledger by — persisting
+        # it anyway leaves a record under a falsy key, which is corruption, not audit history (a
+        # tick once shipped exactly this and scripts/ledger_guard.py refused every PR after with
+        # "bad key"). Nothing to transition either, so this is a pure no-op: load and return.
+        return load_ledger(_path(path))
     now = _aware(now)
     path = _path(path)
     led = load_ledger(path)

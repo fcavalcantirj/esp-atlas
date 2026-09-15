@@ -364,3 +364,18 @@ def test_a_ttl_rejection_never_downgrades_a_merged_or_proposed_record(tmp_path):
     # the human veto (permanent) still wins
     memory.record_rejected("esp-claw", "espressif/esp-claw", "closed by a human", ttl_days=None, path=path, now=NOW)
     assert memory.load(path)["by_id"]["esp-claw"]["status"] == "rejected"
+
+
+# --- unparseable/empty repo never persists an empty-id record --------------------------------
+
+def test_an_empty_id_and_empty_repo_is_corruption_and_is_never_persisted(path):
+    """A firmware from an unparseable/empty repo has neither an id nor a repo to key the ledger
+    by. jr/proposed_ledger.json shipped exactly this shape once (key ''), and scripts/ledger_guard.py
+    then refused every tick PR with "bad key" — the write must never happen in the first place."""
+    memory.record_rejected("", "", "repo_unresolved: unparseable repo ''",
+                           ttl_days=memory.UNRESOLVED_REJECT_DAYS, path=path, now=NOW)
+    assert not path.exists()
+    memory.record_seen("", "", path=path, now=NOW)
+    assert not path.exists()
+    memory.record_proposed("", "", path=path, now=NOW)
+    assert not path.exists()

@@ -79,6 +79,16 @@ def test_record_proposed_uses_real_utc_now_when_not_given(path):
     assert record["timestamp"].endswith("+00:00")
 
 
+def test_record_proposed_and_record_seen_with_empty_id_and_repo_are_never_persisted(path):
+    """An unparseable/empty repo has neither an id nor a repo to key the ledger by; writing it
+    anyway leaves a record under a falsy key — corruption, not history (jr/proposed_ledger.json
+    shipped exactly this once and scripts/ledger_guard.py then refused every tick PR)."""
+    ledger.record_proposed("", "", path=path)
+    assert not path.exists()
+    ledger.record_seen("", "", path=path)
+    assert not path.exists()
+
+
 # ─────────────────────────── update_status / mark_rejected ───────────────────────────
 
 def test_update_status_transitions_an_existing_record(path):

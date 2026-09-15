@@ -382,6 +382,17 @@ def test_launcher_skips_are_one_aggregate_line_never_one_per_entry(root, monkeyp
     assert ": skip" not in res.summary
 
 
+def test_launcher_entries_with_an_unresolvable_empty_repo_never_leave_a_falsy_key_in_the_ledger(root, monkeypatch):
+    """jr/proposed_ledger.json shipped a record keyed by '' once (id empty, repo empty), and
+    scripts/ledger_guard.py then refused every tick PR with "bad key". The admission stage must
+    never write a ledger record under a falsy id, whatever the launcher entry looks like."""
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("", "")])
+    res = stage_admit.run(_ctx(root), budget=1)
+    assert res.rejects == {"repo_unresolved": 1}
+    led = memory.load(root / "jr" / "proposed_ledger.json")
+    assert "" not in led["by_id"]
+
+
 def test_admit_stops_scanning_the_launcher_at_its_call_share_but_still_answers_submissions(root, monkeypatch):
     """22:00 UTC tick: admit spent all 146 calls scanning the backlog and boardmap got none."""
     monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [
