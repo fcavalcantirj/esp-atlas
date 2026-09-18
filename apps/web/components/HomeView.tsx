@@ -3,6 +3,8 @@
 // The intent-first home (SPEC-home-explorer §2, locked 2026-08-24): the prompt
 // and the generated examples lead; the spec wizard is a drawer below them, and
 // also lives in full at /wizard. Results only appear once something is asked.
+// EXPERIMENT: results-first-only relaxed 2026-09-18 — examples surfaced above
+// the fold as a cold-start fix; revert if engagement does not improve.
 import Link from "next/link";
 import BuildGuideAnswer from "@/components/BuildGuideAnswer";
 import ExamplesGrid from "@/components/ExamplesGrid";
@@ -166,6 +168,8 @@ export default function HomeView({ examples }: { examples: Example[] }) {
     <div className="home">
       <IntentPrompt onSubmit={(text) => void onIntent(text)} loading={state.loading || parsing} />
 
+      {!asked && <ExamplesGrid examples={examples} />}
+
       {parse &&
         (parse.understood.length > 0 || parse.unmapped.length > 0 || parse.kind === "unreadable") && (
           <div className="intent-parse" aria-live="polite">
@@ -252,8 +256,6 @@ export default function HomeView({ examples }: { examples: Example[] }) {
       {asked && parse?.kind !== "unmapped" && (
         <ResultsPanel ref={resultsRef} state={state} onExample={onExample} onRelax={onRelax} onClear={onClear} />
       )}
-
-      <ExamplesGrid examples={examples} />
 
       <details
         className="panel spec-wizard"
