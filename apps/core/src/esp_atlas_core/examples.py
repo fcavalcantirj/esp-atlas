@@ -31,9 +31,16 @@ is decided here rather than re-derived in the client.
 Output is deterministic for a given dataset — no analytics, no randomness
 (cold-start-neutral order per SPEC-home-explorer §3b; click-ordering is L3).
 """
+import json
+
+from esp_atlas_core import db as dbmod
 from esp_atlas_core.facets import facets
-from esp_atlas_core.firmware import list_firmware, recipes_for_firmware
+from esp_atlas_core.firmware import list_firmware, list_recipes
 from esp_atlas_core.wizard import wizard
+
+# meta table key (see esp_atlas_core.db) holding generate_examples()'s output,
+# precomputed once by index_build.build_index() -- see read_examples() below.
+_EXAMPLES_META_KEY = "examples_json"
 
 RUN_FIRMWARE = "run-firmware"
 BUILD_PROJECT = "build-project"
@@ -86,9 +93,16 @@ def describe_firmware(fw):
 
 
 def _firmware_examples():
+    # Group once instead of calling recipes_for_firmware() per firmware -- that
+    # helper rescans and reparses every recipe file on disk on each call, which
+    # turns this loop into an N+1 storm (dozens of firmware x hundreds of files).
+    recipes_by_firmware = {}
+    for recipe in list_recipes():
+        recipes_by_firmware.setdefault(recipe["firmware"], []).append(recipe)
+
     examples = []
     for fw in list_firmware():
-        recipes = recipes_for_firmware(fw["id"])
+        recipes = recipes_by_firmware.get(fw["id"], [])
         if not recipes:
             continue
         example = {
@@ -141,3 +155,18 @@ def _needs_examples(db_path):
 def generate_examples(db_path=None):
     """Every currently-generatable example; each resolves to >=1 result."""
     return _firmware_examples() + _needs_examples(db_path)
+
+
+def read_examples(db_path=None):
+    """generate_examples()'s output, read from the precomputed row index_build.
+    build_index() stores at build time (see there) instead of recomputing it on
+    every call. Falls back to generate_examples() itself when the index
+    predates the cache (e.g. a build that hasn't run since this landed)."""
+    conn = dbmod.connect(db_path)
+    try:
+        cached = dbmod.get_meta(conn, _EXAMPLES_META_KEY)
+    finally:
+        conn.close()
+    if cached is None:
+        return generate_examples(db_path=db_path)
+    return json.loads(cached)
