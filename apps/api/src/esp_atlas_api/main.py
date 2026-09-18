@@ -26,7 +26,7 @@ from esp_atlas_core.flash import MAX_REDIRECT_HOPS
 from esp_atlas_core.flash import bin_url_for as core_bin_url_for
 from esp_atlas_core.flash import next_hop as core_next_hop
 from esp_atlas_core.flash import build_manifest as core_build_manifest
-from esp_atlas_core.examples import generate_examples as core_generate_examples
+from esp_atlas_core.examples import read_examples as core_read_examples
 from esp_atlas_core.facets import facets as core_facets
 from esp_atlas_core.firmware import get_firmware as core_get_firmware
 from esp_atlas_core.firmware import list_firmware as core_list_firmware
@@ -387,7 +387,7 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
 
     @app.get("/examples", response_model=ExamplesResponse, response_model_exclude_none=True)
     def examples(db_path=Depends(get_db_path)):
-        return ExamplesResponse(results=core_generate_examples(db_path=db_path))
+        return ExamplesResponse(results=core_read_examples(db_path=db_path))
 
     @app.get("/brands/{slug}", response_model=BrandPageResponse)
     def brand_page(slug: str, db_path=Depends(get_db_path)):

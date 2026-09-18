@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 
 from esp_atlas_core import db as dbmod
 from esp_atlas_core import faq as faqmod
+from esp_atlas_core.examples import generate_examples
 from esp_atlas_core.frontmatter import iter_data_files, parse_frontmatter
 from esp_atlas_core.paths import REPO_ROOT
 
@@ -203,6 +204,17 @@ def build_index(db_path=None, data_dir=None):
         dbmod.set_meta(conn, "built_at", datetime.now(timezone.utc).isoformat())
         dbmod.set_meta(conn, "count", str(len(part_records)))
         conn.commit()
+
+        # examples.generate_examples() is a pure function of the catalog just
+        # written above, so it is computed once here rather than on every
+        # /examples request (see esp_atlas_core.examples.read_examples). Skipped
+        # for ":memory:" -- each connection to it is its own anonymous db, so a
+        # second connection here (opened by generate_examples/facets/wizard)
+        # would never see the rows this connection just committed.
+        if db_path != ":memory:":
+            dbmod.set_meta(conn, "examples_json", _json_dumps(generate_examples(db_path=db_path)))
+            conn.commit()
+
         return build_id
     finally:
         conn.close()
