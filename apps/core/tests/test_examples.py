@@ -5,7 +5,7 @@ this file pins the generator's shape: one firmware example per recipe-backed
 firmware, needs drawn only from KNOWN_NEEDS, counts that match the wizard, and
 deterministic output.
 """
-from esp_atlas_core.examples import GROUPS, RUN_FIRMWARE, generate_examples
+from esp_atlas_core.examples import GROUPS, RUN_FIRMWARE, generate_examples, read_examples
 from esp_atlas_core.firmware import list_firmware, recipes_for_firmware
 from esp_atlas_core.wizard import KNOWN_NEEDS, wizard
 
@@ -90,3 +90,22 @@ def test_needs_examples_have_no_description(built_db_path):
     """Their query already says what they select for; a second tier would repeat it."""
     for e in _by_kind(generate_examples(db_path=built_db_path), "needs"):
         assert "description" not in e
+
+
+def test_read_examples_matches_freshly_generated_examples(built_db_path):
+    """index_build.build_index() precomputes generate_examples()'s own output
+    (see esp_atlas_core.index_build); the fast read must be byte-identical to
+    calling the generator itself, since both come from one source of truth."""
+    assert read_examples(db_path=built_db_path) == generate_examples(db_path=built_db_path)
+
+
+def test_read_examples_does_not_call_wizard_again(built_db_path, monkeypatch):
+    """The whole point of precomputing at build time is that /examples never
+    re-runs the per-candidate wizard() queries on the request path."""
+    baseline = read_examples(db_path=built_db_path)
+
+    def _boom(*args, **kwargs):
+        raise AssertionError("read_examples() must read the precomputed cache, not call wizard() again")
+
+    monkeypatch.setattr("esp_atlas_core.examples.wizard", _boom)
+    assert read_examples(db_path=built_db_path) == baseline
