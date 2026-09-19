@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-09-26T20:00:03.492698+00:00",
+      "expires": "2026-09-26T21:00:06.721536+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-19T20:00:03.492698+00:00"
+      "timestamp": "2026-09-19T21:00:06.721536+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -5993,8 +5993,8 @@
       "pr_ref": null,
       "repo": "anton-vinogradov/meshtastic-adv",
       "repo_id": 1288636423,
-      "status": "proposed",
-      "timestamp": "2026-09-19T20:00:03.492698+00:00"
+      "status": "merged",
+      "timestamp": "2026-09-19T21:00:06.721536+00:00"
     },
     "meshtastic-tdisplay-p4": {
       "expires": "2026-10-09T15:00:32.435406+00:00",
@@ -6012,8 +6012,8 @@
       "pr_ref": null,
       "repo": "unkyulee/micro-journal",
       "repo_id": 766912219,
-      "status": "proposed",
-      "timestamp": "2026-09-19T20:00:03.492698+00:00"
+      "status": "merged",
+      "timestamp": "2026-09-19T21:00:06.721536+00:00"
     },
     "microcast": {
       "expires": "2026-10-09T15:00:32.435406+00:00",
@@ -6066,15 +6066,13 @@
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
     "miniacid": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "evidence_url": "https://github.com/urtubia/miniacid",
       "id": "miniacid",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
       "repo": "urtubia/miniacid",
       "repo_id": 1106865891,
-      "status": "expired",
-      "timestamp": "2026-09-09T15:00:32.435406+00:00"
+      "status": "proposed",
+      "timestamp": "2026-09-19T21:00:06.721536+00:00"
     },
     "minicar": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -7424,15 +7422,14 @@
       "timestamp": "2026-09-19T15:00:30.165949+00:00"
     },
     "rogue-radar": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "expires": "2026-10-19T21:00:06.721536+00:00",
       "id": "rogue-radar",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
+      "reason": "no_board_evidence: no catalogued device named",
       "repo": "atomnft/rogue-radar",
       "repo_id": 1207292315,
-      "status": "expired",
-      "timestamp": "2026-09-11T17:00:55.936325+00:00"
+      "status": "rejected",
+      "timestamp": "2026-09-19T21:00:06.721536+00:00"
     },
     "rrfremote": {
       "expires": "2026-10-11T16:00:54.676058+00:00",
