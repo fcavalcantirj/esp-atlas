@@ -34,11 +34,13 @@ from device_map import device_from_category, device_from_text  # noqa: E402
 
 FIRMWARE_CATEGORY_ENUM = ("pentest", "mesh", "badusb", "display", "home", "multi")
 
-# Popularity floor (SPEC-firmware-floor.md). A drain candidate is authored only if it clears
-# EITHER of two GitHub signals (OR-gated): stars >= STAR_FLOOR, OR forks >= FORK_FLOOR. Forks are
-# a stronger "actually built-on" signal than stars (a star is a bookmark; a fork is a
-# derivative), so a heavily-forked but under-starred utility still clears. Below BOTH → the drain
-# skips it as filler. Downloads are NOT a signal — a launcher/M5Burner download count is not a
+# Popularity floor (SPEC-firmware-floor.md). A drain candidate is authored only if it clears ANY
+# ONE of three GitHub signals (OR-gated): stars >= STAR_FLOOR, forks >= FORK_FLOOR, or an
+# independent editorial home (a real project site/blog, not the repo itself or a github.io
+# mirror — the RogueDuck class: real firmware with a genuine write-up but few stars). Forks are a
+# stronger "actually built-on" signal than stars (a star is a bookmark; a fork is a derivative),
+# so a heavily-forked but under-starred utility still clears. Below ALL THREE → the drain skips
+# it as filler. Downloads are NOT a signal — a launcher/M5Burner download count is not a
 # citable, stable metric and is never used to gate or store popularity. One place, tunable;
 # consumed by drain.score_candidates via clears_popularity_floor(). Gates NEW drain authoring
 # only, never catalogued.

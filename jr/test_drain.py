@@ -388,6 +388,37 @@ def test_score_candidates_authors_when_forks_clear_the_floor():
     assert scored[0]["forks"] == 30
 
 
+def test_score_candidates_authors_rogueduck_class_via_editorial_home():
+    """RogueDuck class: stars=6, forks=3 -- below BOTH floors -- but a real independent
+    editorial homepage (ethicalhackersden.org) clears it via the third signal."""
+    entry = _coding_entry()
+    meta = _fake_meta(full_name="devuser/cardputer-git", stars=6, forks=3,
+                      homepage="https://ethicalhackersden.org",
+                      description="An on-device git client for the Cardputer")
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta)
+
+    assert skipped == []
+    assert len(scored) == 1
+    assert scored[0]["record"]["id"] == "cardputer-git"
+
+
+def test_score_candidates_still_skips_filler_with_a_github_homepage():
+    """A homepage that just points back at github.com/github.io is not an independent home --
+    stars=3, forks=0, homepage=github.com stays below-popularity-floor."""
+    entry = _coding_entry()
+    meta = _fake_meta(full_name="devuser/cardputer-git", stars=3, forks=0,
+                      homepage="https://github.com/devuser/cardputer-git",
+                      description="An on-device git client for the Cardputer")
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta)
+
+    assert scored == []
+    assert skipped[0]["reason"] == "below-popularity-floor"
+
+
 def test_score_candidates_authors_when_stars_clear_the_floor():
     """stars=40 AND forks=0 → stars clear STAR_FLOOR → authored despite zero forks."""
     entry = _coding_entry()

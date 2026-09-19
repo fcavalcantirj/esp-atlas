@@ -178,11 +178,12 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
                 skipped.append({"name": e.get("name"), "github": gh,
                                 "reason": f"already_{ledger_record['status']}: '{rec['id']}' is in the proposed ledger"})
                 continue
-        # Popularity floor (SPEC-firmware-floor.md): author only if the candidate clears EITHER
-        # signal — stars >= STAR_FLOOR OR forks >= FORK_FLOOR (downloads are never consulted).
-        # Below BOTH is filler: skip it, tagged "below-popularity-floor", carrying id+repo so
-        # run_drain can record it "seen" in the ledger (so it isn't re-fetched every run). NEW-authoring only.
-        if not clears_popularity_floor(stars, forks_count):
+        # Popularity floor (SPEC-firmware-floor.md): author only if the candidate clears ANY of
+        # three signals — stars >= STAR_FLOOR, forks >= FORK_FLOOR, or an independent editorial
+        # home (downloads are never consulted). Below all three is filler: skip it, tagged
+        # "below-popularity-floor", carrying id+repo so run_drain can record it "seen" in the
+        # ledger (so it isn't re-fetched every run). NEW-authoring only.
+        if not clears_popularity_floor(stars, forks_count, meta.get("homepage")):
             skipped.append({"name": e.get("name"), "github": gh, "reason": "below-popularity-floor",
                             "firmware_id": rec["id"], "repo": owner_repo,
                             "stars": stars, "forks": forks_count})
@@ -312,8 +313,8 @@ def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
     scored, skipped = score_candidates(prefiltered, catalogued_repos, catalogued_tokens,
                                        fetch_meta=fetch_meta, ledger_state=ledger_state,
                                        resolve_source=resolve_source)
-    # Candidates skipped for being below BOTH popularity floors (SPEC-firmware-floor.md): record
-    # each "seen" in the ledger so the next run's prefilter skips it before any fetch, and report them.
+    # Candidates skipped for clearing NONE of the three popularity signals (SPEC-firmware-floor.md):
+    # record each "seen" in the ledger so the next run's prefilter skips it before any fetch, and report them.
     skipped_popularity = [s for s in skipped if s.get("reason") == "below-popularity-floor"]
     for s in skipped_popularity:
         ledger.record_seen(s["firmware_id"], s["repo"], path=ledger_path)
