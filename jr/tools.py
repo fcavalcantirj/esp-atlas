@@ -52,6 +52,28 @@ def fetch_launcher_catalog() -> list[dict]:
 
 
 GENERIC_NAME_TOKENS = {"esp32", "esp8266", "esp", "m5stack", "m5", "firmware", "board", "device"}  # too generic alone
+# Shared with jr/forks.py's resolve_canonical (_core_tokens) — that mechanism needs a word like
+# "cardputer" to STAY significant, since it's the term its `gh search` query searches on. Keep
+# this set narrow; the wider name-token-DEDUP stoplist below is deliberately a separate constant.
+
+# The wider stoplist for the catalogued-firmware name-token DEDUP fingerprint only (this module's
+# _catalogued_token_sets()/uncatalogued_with_code(), and scorer.py's name_token_matches_catalogued
+# via tokens_indicate_port()). Every M5Stack/device-family and generic hardware/category word that
+# would otherwise fingerprint half the catalog on its own — real false-rejects: geo-tp/cardputer-
+# game-station-emulators (245 stars) killed for sharing only "cardputer"+"game" with unrelated
+# catalogued firmware. NOT merged into GENERIC_NAME_TOKENS (see note above).
+NAME_TOKEN_DEDUP_STOPWORDS = GENERIC_NAME_TOKENS | {
+    "cardputer", "stickc", "stamp", "atom", "atoms3", "core", "core2", "cores3", "tab5",
+    "esp32s3", "esp32c3", "esp32c6", "game", "games", "clock", "weather", "wifi", "ble",
+    "badusb", "tool", "tools", "app", "apps", "demo", "launcher", "player", "monitor",
+    "mini", "micro",
+}
+
+# A name-token collision alone is weak evidence — the catalog grows, tokens accumulate, and
+# ANY shared word eventually collides with something (the plateau bug). tokens_indicate_port()
+# below only counts it as a real port when the candidate's tokens are a SUBSET of one catalogued
+# firmware's tokens, or overlap it by at least this Jaccard ratio.
+PORT_JACCARD_THRESHOLD = 0.6
 
 
 def _catalogued_repos_and_tokens(firmware_dir: Path | None = None) -> tuple[set[str], set[str]]:
@@ -72,6 +94,50 @@ def _catalogued_repos_and_tokens(firmware_dir: Path | None = None) -> tuple[set[
             elif line.startswith("name:"):
                 tokens |= {t for t in re.split(r"[-_\s]", line[5:].strip().lower()) if len(t) >= 4 and t not in GENERIC_NAME_TOKENS}
     return repos, tokens
+
+
+def _catalogued_token_sets(firmware_dir: Path | None = None) -> list[frozenset[str]]:
+    """One significant-token SET per catalogued firmware (its id tokens union its `name:` field
+    tokens, NAME_TOKEN_DEDUP_STOPWORDS-stripped) — the per-firmware fingerprint
+    tokens_indicate_port() needs. _catalogued_repos_and_tokens() merges every firmware's tokens
+    into one flat pool, which loses exactly the information subset/Jaccard needs: which tokens
+    co-occurred on the SAME firmware. A firmware whose name is made ENTIRELY of stopwords (e.g.
+    "Cardputer Game") contributes no set at all — it can never fingerprint anything."""
+    root = Path(firmware_dir) if firmware_dir is not None else FIRMWARE_DIR
+    out = []
+    for d in (root.iterdir() if root.exists() else []):
+        if not d.is_dir():
+            continue
+        toks = {t for t in re.split(r"[-_\s]", d.name.lower())
+               if len(t) >= 4 and t not in NAME_TOKEN_DEDUP_STOPWORDS}
+        md = (d / "firmware.md").read_text() if (d / "firmware.md").exists() else ""
+        for line in md.splitlines():
+            if line.startswith("name:"):
+                toks |= {t for t in re.split(r"[-_\s]", line[5:].strip().lower())
+                        if len(t) >= 4 and t not in NAME_TOKEN_DEDUP_STOPWORDS}
+        if toks:
+            out.append(frozenset(toks))
+    return out
+
+
+def tokens_indicate_port(candidate_tokens: set[str], catalogued_token_sets: list[frozenset[str]]) -> bool:
+    """True only when `candidate_tokens` is a SUBSET of a SINGLE catalogued firmware's token set,
+    or their Jaccard overlap clears PORT_JACCARD_THRESHOLD — never on a lone shared token (the
+    bug that plateaued the catalog at 82: every new catalogued firmware adds tokens, so more
+    genuinely-new candidates collide as the catalog grows). A real port/variant (its whole name
+    IS the catalogued firmware's name, give or take a suffix) still clears the subset bar; two
+    firmware that merely mention the same device or share one incidental word do not."""
+    if not candidate_tokens:
+        return False
+    for fw_tokens in catalogued_token_sets:
+        if not (candidate_tokens & fw_tokens):
+            continue
+        if candidate_tokens <= fw_tokens:
+            return True
+        jaccard = len(candidate_tokens & fw_tokens) / len(candidate_tokens | fw_tokens)
+        if jaccard >= PORT_JACCARD_THRESHOLD:
+            return True
+    return False
 
 
 _LEDGER = Path(__file__).resolve().parent / "proposed.json"
@@ -101,9 +167,13 @@ def mark_proposed(url: str) -> None:
 def uncatalogued_with_code(limit: int = 5) -> list[dict]:
     """Launcher-catalog entries that are GENUINELY NEW firmware (not ports/forks of catalogued
     ones) and pass the with-code gate (resolve to a real GitHub repo). Dedup skips any entry
-    sharing a repo owner/name or a firmware-name token with the catalogue (SPEC §3b: skip
-    forks/mirrors). Ranked by `download` popularity proxy. Returns compact dicts."""
-    repos, tokens = _catalogued_repos_and_tokens()
+    sharing a repo owner/name with the catalogue, or whose significant name-tokens are a
+    subset/near-duplicate of ONE catalogued firmware's (tokens_indicate_port() — SPEC §3b: skip
+    forks/mirrors, without false-rejecting genuinely new firmware that merely shares one word or
+    a device name with something already catalogued). Ranked by `download` popularity proxy.
+    Returns compact dicts."""
+    repos, _tokens = _catalogued_repos_and_tokens()
+    token_sets = _catalogued_token_sets()
     repos |= _proposed_repos()                          # also skip firmware already in an open/closed PR
     out = []
     for e in fetch_launcher_catalog():
@@ -115,8 +185,9 @@ def uncatalogued_with_code(limit: int = 5) -> list[dict]:
         if owner_repo in repos or fn.split("/")[0] in repos:
             continue                                    # same repo/owner as a catalogued firmware
         name_l = (e.get("name") or "").lower()
-        if any(t in name_l for t in tokens):
-            continue                                    # name shares a catalogued firmware token → port
+        name_tokens = {t for t in re.split(r"[-_\s]", name_l) if len(t) >= 4}
+        if tokens_indicate_port(name_tokens, token_sets):
+            continue                                    # tokens are a subset/near-dup of ONE catalogued firmware → port
         NOISE = ("doom", "gameboy", "game boy", "emulator", "tetris", "pacman", "pac-man", "snake",
                  "nes", "snes", "pokemon", "arduboy", "chip-8", "chip8", "uiflow", "micropython",
                  "tamagotchi", "flappy", "2048", " game", "demo", "hello world", "test")

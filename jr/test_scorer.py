@@ -343,6 +343,133 @@ def test_score_entry_skips_marauder_style_device_port_as_variant():
     assert "name_token_matches_catalogued" in result["reason"]
 
 
+# ────── Bug 4: name-token dedup false-rejects genuine firmware sharing ONE word with a port ──────
+# Real bug that plateaued the catalog at 82: name_token_matches_catalogued rejected a launcher
+# candidate for sharing ANY single >=4-char name token with ANY catalogued firmware. Real notable
+# uncatalogued firmware was being killed — unkyulee/micro-journal (955 stars) rejected for sharing
+# only "journal" with a catalogued "tiny-journal"; geo-tp/cardputer-game-station-emulators (245
+# stars) rejected for sharing only the DEVICE token "cardputer". Each new catalogued firmware adds
+# tokens, so more candidates collide as the catalog grows — self-strangling. Fixed: a name-token
+# collision may reject ONLY when the candidate's significant-token set is a SUBSET of a SINGLE
+# catalogued firmware's token set, or their Jaccard overlap is >= 0.6 (tools.tokens_indicate_port,
+# fed by tools._catalogued_token_sets() — per-firmware sets, not a flat merged pool) — never on a
+# lone shared token. GENERIC_NAME_TOKENS-adjacent device/category words (cardputer, game, core,
+# stickc, ...) are also widened (tools.NAME_TOKEN_DEDUP_STOPWORDS) so they never fingerprint at
+# all — see test_tools.py for the token-set-level unit tests.
+
+def _port_entry(name, github, description=None):
+    return {"name": name, "description": description, "category": None,
+           "github": github, "download": 500}
+
+
+def _port_repo_meta(full_name, description=None):
+    return {"id": 424242, "full_name": full_name, "fork": False, "source_full_name": None,
+           "stars": 200, "description": description, "archived": False}
+
+
+def test_score_entry_lone_shared_token_no_longer_rejects_micro_journal():
+    """The exact real false-reject: micro-journal {micro,journal} vs catalogued tiny-journal
+    {tiny,journal} overlap only on 'journal' (Jaccard 1/3, not a subset) -- must NOT be rejected
+    on tokens (it may still be skipped later for an unrelated reason, e.g. no board evidence —
+    only the token-based rejection is under test here)."""
+    entry = _port_entry("Micro Journal", "https://github.com/unkyulee/micro-journal",
+                        "A tiny e-ink journal app.")
+    repo_meta = _port_repo_meta("unkyulee/micro-journal", "A tiny e-ink journal app.")
+    catalogued_token_sets = [frozenset({"tiny", "journal"})]
+
+    result = score_entry(entry, repo_meta, set(), set(),
+                         catalogued_token_sets=catalogued_token_sets)
+
+    assert not (result["decision"] == "skip"
+               and result["reason"].startswith("name_token_matches_catalogued"))
+
+
+def test_score_entry_lone_shared_device_token_no_longer_rejects_cardputer_candidate():
+    """The other real false-reject: sharing only the DEVICE token 'cardputer' (now stoplisted,
+    tools.NAME_TOKEN_DEDUP_STOPWORDS) with a catalogued firmware must NOT reject on tokens."""
+    entry = _port_entry("Cardputer Game Station Emulators",
+                        "https://github.com/geo-tp/cardputer-game-station-emulators")
+    repo_meta = _port_repo_meta("geo-tp/cardputer-game-station-emulators")
+    # Mirrors what tools._catalogued_token_sets() would yield for a catalogued firmware named
+    # e.g. "Cardputer Flasher" -- "cardputer" is stripped before it ever reaches this set.
+    catalogued_token_sets = [frozenset({"flasher"})]
+
+    result = score_entry(entry, repo_meta, set(), set(),
+                         catalogued_token_sets=catalogued_token_sets)
+
+    assert not (result["decision"] == "skip"
+               and result["reason"].startswith("name_token_matches_catalogued"))
+
+
+def test_score_entry_still_rejects_a_genuine_subset_port():
+    """Do NOT weaken the real dedup: a candidate whose entire significant-token set is a SUBSET
+    of one catalogued firmware's tokens is still a port."""
+    entry = _port_entry("ESP32Marauder", "https://github.com/someoneelse/esp32marauder-mirror")
+    repo_meta = _port_repo_meta("someoneelse/esp32marauder-mirror")
+    catalogued_token_sets = [frozenset({"esp32marauder", "marauder"})]
+
+    result = score_entry(entry, repo_meta, set(), set(),
+                         catalogued_token_sets=catalogued_token_sets)
+
+    assert result["decision"] == "skip"
+    assert result["reason"] == "name_token_matches_catalogued: likely a port/variant"
+
+
+def test_score_entry_still_rejects_a_high_jaccard_overlap_port():
+    """A near-identical name (high Jaccard, not a literal subset) is still a port."""
+    entry = _port_entry("Nerd Miner Proto Edge", "https://github.com/someoneelse/nerd-miner-proto-edge")
+    repo_meta = _port_repo_meta("someoneelse/nerd-miner-proto-edge")
+    catalogued_token_sets = [frozenset({"nerd", "miner", "proto", "cloud"})]
+
+    result = score_entry(entry, repo_meta, set(), set(),
+                         catalogued_token_sets=catalogued_token_sets)
+
+    assert result["decision"] == "skip"
+    assert result["reason"] == "name_token_matches_catalogued: likely a port/variant"
+
+
+def test_score_entry_no_catalogued_token_sets_falls_back_to_legacy_lone_token_check():
+    """Callers that don't yet pass catalogued_token_sets (e.g. jr/drain.py's dormant
+    launcher-drain path) keep the old, stricter lone-token behavior -- untouched by this fix."""
+    entry = _port_entry("Bruce Companion", "https://github.com/someone/bruce-companion")
+    repo_meta = _port_repo_meta("someone/bruce-companion")
+
+    result = score_entry(entry, repo_meta, set(), {"bruce"})
+
+    assert result["decision"] == "skip"
+    assert result["reason"] == "name_token_matches_catalogued: likely a port/variant"
+
+
+def test_score_entry_real_git_fork_still_rejected_regardless_of_token_sets():
+    """Do NOT weaken the real dedup: a genuine git fork is caught by the fork gate, before the
+    name-token check even runs -- passing catalogued_token_sets changes nothing here."""
+    entry = _port_entry("Totally Different Name", "https://github.com/someoneelse/renamed-fork")
+    repo_meta = {"id": 1, "full_name": "someoneelse/renamed-fork", "fork": True,
+                "source_full_name": "justcallmekoko/ESP32Marauder", "stars": 3,
+                "description": None, "archived": False}
+
+    result = score_entry(entry, repo_meta, {"justcallmekoko/esp32marauder"}, set(),
+                         catalogued_token_sets=[frozenset({"esp32marauder", "marauder"})])
+
+    assert result["decision"] == "skip"
+    assert result["reason"].startswith("fork_of_catalogued")
+
+
+def test_score_entry_described_port_link_still_rejected_regardless_of_token_sets():
+    """Do NOT weaken the real dedup: an explicit 'this is a port of <catalogued repo>' link in
+    the description is still caught, before the name-token check runs."""
+    entry = _port_entry("Totally Different Name",
+                        "https://github.com/someoneelse/renamed-port",
+                        description="Updated version of https://github.com/justcallmekoko/ESP32Marauder.")
+    repo_meta = _port_repo_meta("someoneelse/renamed-port")
+
+    result = score_entry(entry, repo_meta, {"justcallmekoko/esp32marauder"}, set(),
+                         catalogued_token_sets=[frozenset({"esp32marauder", "marauder"})])
+
+    assert result["decision"] == "skip"
+    assert result["reason"].startswith("described_port_of_catalogued")
+
+
 # ─────────────── Bug 3: firmware_category mislabeled purely from bare wifi/ble ───────────────
 # Real bug: _category_from_capabilities() derived firmware_category from capability tokens alone,
 # and wifi/ble were in the pentest signal set — so ANY firmware that merely uses wifi (an

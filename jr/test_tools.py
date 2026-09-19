@@ -664,6 +664,134 @@ def test_catalogued_repos_and_tokens_excludes_generic_vendor_tokens(monkeypatch,
     assert "pirate" in tokens
 
 
+# ─────────────────────── _catalogued_token_sets (per-firmware, for subset/Jaccard) ───────────
+
+def test_catalogued_token_sets_groups_tokens_per_firmware_not_flat(monkeypatch, tmp_path):
+    """One token SET per catalogued firmware (its id tokens union its name: field tokens), not a
+    flat merged pool -- this per-firmware grouping is what lets the port check tell 'shares one
+    word with SOME catalogued repo' (not evidence) from 'its tokens are a subset/near-duplicate
+    of ONE catalogued repo's' (evidence)."""
+    monkeypatch.setattr(tools, "FIRMWARE_DIR", tmp_path)
+    _write_firmware(tmp_path, "esp32marauder", "ESP32 Marauder",
+                    url="https://github.com/justcallmekoko/ESP32Marauder")
+    _write_firmware(tmp_path, "tiny-journal", "Tiny Journal",
+                    url="https://github.com/someone/tiny-journal")
+
+    token_sets = tools._catalogued_token_sets()
+
+    assert frozenset({"esp32marauder", "marauder"}) in token_sets
+    assert frozenset({"tiny", "journal"}) in token_sets
+    assert len(token_sets) == 2
+
+
+def test_catalogued_token_sets_strips_the_wider_dedup_stopwords(monkeypatch, tmp_path):
+    """A DEVICE token (cardputer) must never fingerprint on its own -- the real false-reject
+    that killed geo-tp/cardputer-game-station-emulators (245 stars) against unrelated catalogued
+    firmware that merely also targets the Cardputer. The distinctive word ('flasher') survives."""
+    monkeypatch.setattr(tools, "FIRMWARE_DIR", tmp_path)
+    _write_firmware(tmp_path, "cardputer-flasher", "Cardputer Flasher",
+                    url="https://github.com/someone/cardputer-flasher")
+
+    assert tools._catalogued_token_sets() == [frozenset({"flasher"})]
+
+
+def test_catalogued_token_sets_excludes_firmware_made_only_of_stopwords(monkeypatch, tmp_path):
+    """A firmware whose name is ENTIRELY device/category words (cardputer, game) contributes NO
+    token set at all -- it can never collide with anything on tokens."""
+    monkeypatch.setattr(tools, "FIRMWARE_DIR", tmp_path)
+    _write_firmware(tmp_path, "cardputer-game", "Cardputer Game",
+                    url="https://github.com/someone/cardputer-game")
+
+    assert tools._catalogued_token_sets() == []
+
+
+# ─────────────────────── tokens_indicate_port: subset/Jaccard, never a lone token ────────────
+
+def test_tokens_indicate_port_lone_shared_token_is_not_enough():
+    """The actual bug behind the 82-firmware plateau: micro-journal {micro,journal} only
+    overlaps catalogued tiny-journal {tiny,journal} on 'journal' -- Jaccard 1/3, not a subset --
+    a single shared token is NOT sufficient evidence of a port."""
+    assert tools.tokens_indicate_port({"micro", "journal"}, [frozenset({"tiny", "journal"})]) is False
+
+
+def test_tokens_indicate_port_subset_of_a_single_catalogued_firmware_is_a_port():
+    """A genuine variant whose ENTIRE significant-token set is a SUBSET of one catalogued
+    firmware's tokens is still correctly caught -- the fix must not weaken real dedup."""
+    assert tools.tokens_indicate_port(
+        {"esp32marauder"}, [frozenset({"esp32marauder", "marauder"})]) is True
+
+
+def test_tokens_indicate_port_high_jaccard_overlap_is_a_port():
+    """Even without a literal subset, Jaccard >= 0.6 is strong enough evidence on its own."""
+    candidate = {"nerd", "miner", "proto", "edge"}
+    catalogued = [frozenset({"nerd", "miner", "proto", "cloud"})]
+    # intersection={nerd,miner,proto}=3, union=5 -> 0.6 -- meets the bar though not a subset.
+    assert not candidate <= catalogued[0]
+    assert tools.tokens_indicate_port(candidate, catalogued) is True
+
+
+def test_tokens_indicate_port_low_jaccard_overlap_is_not_a_port():
+    candidate = {"nerd", "solo", "gizmo"}
+    catalogued = [frozenset({"nerd", "miner", "proto", "cloud"})]
+    assert tools.tokens_indicate_port(candidate, catalogued) is False
+
+
+def test_tokens_indicate_port_no_catalogued_sets_at_all():
+    assert tools.tokens_indicate_port({"anything"}, []) is False
+
+
+# ─────────────────────── uncatalogued_with_code: the same fix, end-to-end ────────────────────
+
+def test_uncatalogued_with_code_no_longer_false_rejects_a_lone_shared_token(monkeypatch, tmp_path):
+    """unkyulee/micro-journal (real, 955-star firmware) must survive dedup against a catalogued
+    tiny-journal it merely shares the word 'journal' with."""
+    monkeypatch.setattr(tools, "FIRMWARE_DIR", tmp_path)
+    monkeypatch.setattr(tools, "_LEDGER", tmp_path / "proposed.json")
+    _write_firmware(tmp_path, "tiny-journal", "Tiny Journal",
+                    url="https://github.com/someone/tiny-journal")
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [
+        {"name": "Micro Journal", "github": "https://github.com/unkyulee/micro-journal",
+         "category": "multi", "author": "unkyulee", "download": 500,
+         "description": "A tiny e-ink journal."},
+    ])
+
+    out = tools.uncatalogued_with_code(5)
+
+    assert [c["name"] for c in out] == ["Micro Journal"]
+
+
+def test_uncatalogued_with_code_no_longer_false_rejects_a_shared_device_token(monkeypatch, tmp_path):
+    """geo-tp/cardputer-... (real, 245-star firmware) must survive dedup against a catalogued
+    repo that merely also targets the Cardputer device."""
+    monkeypatch.setattr(tools, "FIRMWARE_DIR", tmp_path)
+    monkeypatch.setattr(tools, "_LEDGER", tmp_path / "proposed.json")
+    _write_firmware(tmp_path, "cardputer-flasher", "Cardputer Flasher",
+                    url="https://github.com/someone/cardputer-flasher")
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [
+        {"name": "Cardputer Retro Toolkit", "github": "https://github.com/geo-tp/cardputer-retro-toolkit",
+         "category": "multi", "author": "geo-tp", "download": 245, "description": ""},
+    ])
+
+    out = tools.uncatalogued_with_code(5)
+
+    assert [c["name"] for c in out] == ["Cardputer Retro Toolkit"]
+
+
+def test_uncatalogued_with_code_still_drops_a_genuine_subset_port(monkeypatch, tmp_path):
+    """Do NOT weaken the real dedup: a candidate whose tokens are a subset of one catalogued
+    firmware's is still a port and stays dropped."""
+    monkeypatch.setattr(tools, "FIRMWARE_DIR", tmp_path)
+    monkeypatch.setattr(tools, "_LEDGER", tmp_path / "proposed.json")
+    _write_firmware(tmp_path, "esp32marauder", "ESP32 Marauder",
+                    url="https://github.com/justcallmekoko/ESP32Marauder")
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [
+        {"name": "ESP32Marauder", "github": "https://github.com/someoneelse/esp32marauder-mirror",
+         "category": "pentest", "author": "someoneelse", "download": 500, "description": ""},
+    ])
+
+    assert tools.uncatalogued_with_code(5) == []
+
+
 # --- fork identity + soc inheritance (Phase 1 PR 1.5) ----------------------
 
 def test_fetch_github_repo_returns_the_keys_the_fork_gate_reads(monkeypatch):

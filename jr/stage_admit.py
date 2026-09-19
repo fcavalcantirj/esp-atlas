@@ -232,6 +232,10 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
 
     led = memory.load(ctx.ledger_path)   # read-only here; writes below honor dry-run
     cat_repos, cat_toks = tools._catalogued_repos_and_tokens(ctx.root / "data" / "firmware")
+    # Per-firmware token sets (not the flat cat_toks pool above) so scorer.score_entry's
+    # name-token dedup rejects only a real subset/near-duplicate match, never a lone shared word
+    # (the bug that plateaued the catalog at 82 — see scorer.score_entry's docstring).
+    cat_token_sets = tools._catalogued_token_sets(ctx.root / "data" / "firmware")
     cat_ids = _catalogued_ids(led, ctx.now)
     paths, lines, admitted, rejects, needs_human = [], [], 0, {}, False
     would_admit, decided, items = 0, 0, []
@@ -351,7 +355,8 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
                 except BudgetExceeded as e:
                     lines.append(f"stopped during submission #{issue}: {e}")
                     break
-        res = scorer.score_entry(entry, meta, cat_repos, cat_toks, cat_ids, board_hint=hint_board)
+        res = scorer.score_entry(entry, meta, cat_repos, cat_toks, cat_ids,
+                                 catalogued_token_sets=cat_token_sets, board_hint=hint_board)
         if res["decision"] == "skip":
             note(skip_reject(fid, owner_repo, res["reason"], repo_id, issue=issue))
             if issue:

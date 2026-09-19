@@ -182,6 +182,7 @@ def _category_from_capabilities(capabilities: list[str]) -> str:
 
 def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
                 catalogued_tokens: set[str], catalogued_ids: dict | None = None,
+                catalogued_token_sets: list[frozenset[str]] | None = None,
                 board_hint: str | None = None) -> dict:
     """Score ONE launcher-catalog entry. Returns either
       {"decision": "authored", "record": {...}} (plus "needs_human": True when a human must
@@ -194,7 +195,15 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
     atlas). `catalogued_ids` is an optional {repo_id: firmware_id} map — GitHub repo ids are
     stable across renames, so a repo the catalog knows under an old path (pr3y/Bruce, now
     BruceDevices/firmware) is still caught as a duplicate instead of being authored under its
-    generic new slug ("firmware")."""
+    generic new slug ("firmware"). `catalogued_token_sets` (tools._catalogued_token_sets() — one
+    significant-token set PER catalogued firmware, not a flat pool) is the fix for the plateau
+    bug: a name-token collision only means "likely a port" when the candidate's tokens are a
+    SUBSET of a single catalogued firmware's tokens or overlap it by Jaccard >=
+    tools.PORT_JACCARD_THRESHOLD (tools.tokens_indicate_port) — a lone shared word (e.g. both
+    just happen to say "journal", or both target the same device) is not evidence on its own.
+    When omitted (None — legacy callers not yet migrated, e.g. jr/drain.py's currently-dormant
+    launcher-drain path), falls back to the older, stricter "any shared token" check against the
+    flat `catalogued_tokens` set."""
     github = (entry.get("github") or "").strip()
     if not _GITHUB_REPO_RE.match(github):
         return {"decision": "skip", "reason": "no_github: with-code gate failed "
@@ -228,7 +237,11 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
 
     name = entry.get("name") or ""
     name_tokens = {t for t in re.split(r"[-_\s]", name.lower()) if len(t) >= 4}
-    if name_tokens & catalogued_tokens:
+    if catalogued_token_sets is not None:
+        is_port = tools.tokens_indicate_port(name_tokens, catalogued_token_sets)
+    else:
+        is_port = bool(name_tokens & catalogued_tokens)
+    if is_port:
         return {"decision": "skip", "reason": "name_token_matches_catalogued: likely a port/variant"}
 
     # A repo that isn't a git fork of a catalogued one can still openly describe itself as a
