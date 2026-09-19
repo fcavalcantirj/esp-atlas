@@ -336,8 +336,20 @@ def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
     }
 
 
+def _live_resolve_canonical(owner: str, repo: str) -> dict:
+    """The real, network-touching lineage resolver wired into a live `run_drain()`:
+    jr/forks.resolve_canonical over a fresh `gh api` fetch, covering both a real git fork
+    (resolve_source's own behavior, unchanged) and a non-fork CONCEPTUAL port of an
+    uncatalogued, more-canonical upstream (the RogueDuck-audit gap forks.py's module docstring
+    describes) via `gh search repositories`. `score_candidates`'s `resolve_source` parameter
+    contract ((owner, repo) -> {full_name, stars, forks}) is untouched — this is just what the
+    live run injects into it now."""
+    data = forks.default_api(owner, repo)
+    return forks.resolve_canonical(owner, repo, data, forks.default_search, forks.default_api)
+
+
 if __name__ == "__main__":
-    report = run_drain(resolve_source=lambda owner, repo: forks.resolve_source(owner, repo, forks.default_api))
+    report = run_drain(resolve_source=_live_resolve_canonical)
     print(f"fetched={report['fetched']} prefiltered={report['prefiltered']} "
          f"scored_clean={report['scored_clean']} skipped_scoring={report['skipped_scoring']} "
          f"selected={report['selected']} dropped_cap={report['dropped_cap']}")
