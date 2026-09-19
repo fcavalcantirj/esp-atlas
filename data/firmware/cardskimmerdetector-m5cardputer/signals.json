@@ -1,0 +1,14 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-19",
+ "notes": [],
+ "ref": "main",
+ "repo": "aat440hz/CardSkimmerDetector-M5Cardputer",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": []
+}

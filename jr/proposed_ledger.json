@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-09-26T16:00:38.109621+00:00",
+      "expires": "2026-09-26T17:00:45.426940+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-19T16:00:38.109621+00:00"
+      "timestamp": "2026-09-19T17:00:45.426940+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -1080,8 +1080,8 @@
       "pr_ref": null,
       "repo": "therezor/cardputer-ai",
       "repo_id": 1267077321,
-      "status": "proposed",
-      "timestamp": "2026-09-19T16:00:38.109621+00:00"
+      "status": "merged",
+      "timestamp": "2026-09-19T17:00:45.426940+00:00"
     },
     "cardputer-alchemy-adv-game": {
       "expires": "2026-10-08T05:25:25.049296+00:00",
@@ -1715,8 +1715,8 @@
       "pr_ref": null,
       "repo": "aat440hz/cardskimmerdetector-m5cardputer",
       "repo_id": 777925318,
-      "status": "proposed",
-      "timestamp": "2026-09-19T16:00:38.109621+00:00"
+      "status": "merged",
+      "timestamp": "2026-09-19T17:00:45.426940+00:00"
     },
     "cardskimmerdetector-m5stickcplus": {
       "expires": "2026-10-07T23:00:28.148172+00:00",
@@ -1903,15 +1903,14 @@
       "timestamp": "2026-09-08T04:00:36.972928+00:00"
     },
     "claude-desktop-buddy": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "expires": "2026-10-19T17:00:45.426940+00:00",
       "id": "claude-desktop-buddy",
       "pr_ref": null,
       "reason": "name_token_matches_catalogued: likely a port/variant",
       "repo": "anthropics/claude-desktop-buddy",
       "repo_id": 1206243078,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-09-19T17:00:45.426940+00:00"
     },
     "claude-desktop-buddy-cardputer": {
       "expires": "2026-10-08T01:00:31.284910+00:00",
@@ -1943,15 +1942,13 @@
       "timestamp": "2026-09-12T19:00:24.500904+00:00"
     },
     "codebuddy": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "evidence_url": "https://github.com/CharlexH/CodeBuddy",
       "id": "codebuddy",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
       "repo": "charlexh/codebuddy",
       "repo_id": 1216668171,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "proposed",
+      "timestamp": "2026-09-19T17:00:45.426940+00:00"
     },
     "columns-m5stick-plus-2": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -2743,12 +2740,13 @@
       "timestamp": "2026-09-09T04:00:10.126216+00:00"
     },
     "espeon": {
+      "expired_at": "2026-09-19T17:00:45.426940+00:00",
       "expires": "2026-09-19T17:00:10.294624+00:00",
       "id": "espeon",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "ryuzaki-mrl/espeon.git",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T17:00:10.294624+00:00"
     },
     "evil-m5core2": {
@@ -2782,15 +2780,13 @@
       "timestamp": "2026-09-08T04:00:36.972928+00:00"
     },
     "evil-portal-m5stack": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "evidence_url": "https://github.com/marivaaldo/evil-portal-m5stack",
       "id": "evil-portal-m5stack",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
       "repo": "marivaaldo/evil-portal-m5stack",
       "repo_id": 731870880,
-      "status": "expired",
-      "timestamp": "2026-09-08T04:00:36.972928+00:00"
+      "status": "proposed",
+      "timestamp": "2026-09-19T17:00:45.426940+00:00"
     },
     "evil-portal-parasite-atoms3": {
       "expires": "2026-10-08T04:00:36.972928+00:00",
@@ -4199,15 +4195,14 @@
       "timestamp": "2026-09-02T16:03:27.961760+00:00"
     },
     "m5cardputer-doom": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "expires": "2026-10-19T17:00:45.426940+00:00",
       "id": "m5cardputer-doom",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
+      "reason": "noise_non_firmware: name matches a game/emulator/platform token",
       "repo": "romalik/m5cardputer_doom",
       "repo_id": 801245269,
-      "status": "expired",
-      "timestamp": "2026-09-08T02:00:32.995095+00:00"
+      "status": "rejected",
+      "timestamp": "2026-09-19T17:00:45.426940+00:00"
     },
     "m5cardputer-env-iv-app": {
       "id": "m5cardputer-env-iv-app",
@@ -7002,15 +6997,14 @@
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "portal-evil-huebr": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "expires": "2026-10-19T17:00:45.426940+00:00",
       "id": "portal-evil-huebr",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
+      "reason": "no_board_evidence: no catalogued device named",
       "repo": "raphntc/portal-evil-huebr",
       "repo_id": 731880671,
-      "status": "expired",
-      "timestamp": "2026-09-08T04:00:36.972928+00:00"
+      "status": "rejected",
+      "timestamp": "2026-09-19T17:00:45.426940+00:00"
     },
     "portalhater-m5-core-seafood-roast-joke-b": {
       "expires": "2026-10-08T04:00:36.972928+00:00",
