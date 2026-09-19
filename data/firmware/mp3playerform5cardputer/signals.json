@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-19",
+ "notes": [],
+ "ref": "main",
+ "repo": "sanchitminda/MP3PlayerForM5Cardputer",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "V.5.0"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "V.5.0.bin",
+    "release": "V5.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "V.5.0",
+   "url": "https://github.com/sanchitminda/MP3PlayerForM5Cardputer/releases/download/V5.0/V.5.0.bin"
+  }
+ ]
+}
