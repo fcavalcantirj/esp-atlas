@@ -102,6 +102,33 @@ def test_clears_floor_treats_missing_values_as_zero():
     assert clears_popularity_floor(stars=None, forks=FORK_FLOOR) is True
 
 
+# --- editorial-home signal (RogueDuck class): a real independent write-up is a THIRD OR-signal,
+# for niche firmware a stars/forks-only bar wrongly cuts. Zero LLM: a homepage URL's host is
+# checked deterministically, never interpreted. ---------------------------------------------
+
+def test_rogueduck_class_clears_via_independent_editorial_home():
+    """RogueDuck: 6 stars, 3 forks, under BOTH floors — but ethicalhackersden.org is a real,
+    independent write-up, not GitHub itself. Clears via the third signal."""
+    assert clears_popularity_floor(stars=6, forks=3, homepage="https://ethicalhackersden.org") is True
+
+
+def test_filler_with_no_homepage_still_below_floor():
+    """server-vampeta class: 3 stars, 0 forks, no homepage -- never clears, homepage or not."""
+    assert clears_popularity_floor(stars=3, forks=0, homepage=None) is False
+    assert clears_popularity_floor(stars=3, forks=0, homepage="") is False
+
+
+def test_github_homepage_is_not_an_editorial_home():
+    """A homepage that just points back at the repo's own github.com page is not independent
+    evidence — still cut."""
+    assert clears_popularity_floor(stars=3, forks=0, homepage="https://github.com/foo/bar") is False
+
+
+def test_github_io_homepage_is_not_an_editorial_home():
+    """A *.github.io page is a GitHub Pages mirror of the repo, not an independent home."""
+    assert clears_popularity_floor(stars=3, forks=0, homepage="https://foo.github.io") is False
+
+
 @pytest.mark.parametrize("case", [c for c in CASES if c["expected"]["decision"] == "authored"],
                          ids=[c["id"] for c in CASES if c["expected"]["decision"] == "authored"])
 def test_authored_record_matches(case):

@@ -22,6 +22,19 @@ def test_forks_archived_missing_and_sub_floor_repos_are_refused():
     assert any("below the floor live (3 stars / 1 forks)" in m for m in g.check_record("p", FM, fetch=lambda r: {"status": 200, "json": {**OK, "stargazers_count": 3, "forks_count": 1}}))
 
 
+def test_editorial_home_class_passes_the_live_floor_re_check():
+    """RogueDuck class: 6 stars/3 forks, below both floors live -- but a real independent
+    homepage clears it, and the live PR re-check must agree with the admission path or it
+    would block a PR that stage_admit already accepted."""
+    assert g.check_record("p", FM, fetch=lambda r: {"status": 200, "json": {
+        **OK, "stargazers_count": 6, "forks_count": 3, "homepage": "https://ethicalhackersden.org"}}) == []
+
+
+def test_github_io_homepage_does_not_rescue_a_below_floor_repo_live():
+    assert any("below the floor live" in m for m in g.check_record("p", FM, fetch=lambda r: {"status": 200, "json": {
+        **OK, "stargazers_count": 3, "forks_count": 1, "homepage": "https://x.github.io"}}))
+
+
 def test_a_record_without_a_snapshot_or_socs_or_a_github_url_is_refused():
     assert any("no dated popularity snapshot" in m for m in g.check_record("p", {**FM, "popularity": None}, fetch=lambda r: {"status": 200, "json": OK}))
     assert any("socs is empty" in m for m in g.check_record("p", {**FM, "socs": []}, fetch=lambda r: {"status": 200, "json": OK}))

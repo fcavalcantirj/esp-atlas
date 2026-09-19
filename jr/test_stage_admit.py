@@ -42,9 +42,9 @@ Seed.
 
 
 def _meta(full_name, stars=30, forks=0, fork=False, source=None, archived=False, description=None,
-          license="MIT", rid=1):
+          license="MIT", rid=1, homepage=None):
     return {"full_name": full_name, "description": description, "license": {"spdx_id": license},
-            "topics": [], "homepage": None, "default_branch": "main",
+            "topics": [], "homepage": homepage, "default_branch": "main",
             "stargazers_count": stars, "archived": archived, "forks_count": forks,
             "id": rid, "fork": fork,
             "source": {"full_name": source} if source else None,
@@ -119,6 +119,32 @@ def test_floor_failing_repo_is_rejected_with_ttl_and_blocked(root, monkeypatch):
     assert memory.is_blocked(led, repo_id=12, now=NOW)
     rec = led["by_id"]["tiny"]
     assert rec["reason"].startswith("below_floor:") and rec["repo_id"] == 12
+
+
+def test_editorial_home_class_is_admitted_despite_low_stars_and_forks(root, monkeypatch):
+    """RogueDuck class: 6 stars, 3 forks -- below BOTH floors -- but a real independent
+    editorial homepage clears it via the third signal, and the live admission path (this
+    stage) actually consults it."""
+    monkeypatch.setattr(tools, "fetch_launcher_catalog",
+                        lambda: [_entry("My Cardputer Tool", "https://github.com/n/newtool")])
+    metas = {"repos/n/newtool": _meta("n/newtool", stars=6, forks=3,
+                                      homepage="https://ethicalhackersden.org",
+                                      description="A Cardputer tool", rid=13)}
+    res = stage_admit.run(_ctx(root, metas=metas), budget=3)
+    assert res.admitted == 1 and res.rejects == {}
+    fm = _read_fm(root / "data" / "firmware" / "newtool" / "firmware.md")
+    assert fm["popularity"] == {"stars": 6, "forks": 3, "as_of": "2026-09-07"}
+
+
+def test_github_homepage_does_not_rescue_a_below_floor_repo(root, monkeypatch):
+    """A homepage pointing back at github.com/github.io is not an independent editorial home --
+    still rejected below_floor."""
+    monkeypatch.setattr(tools, "fetch_launcher_catalog",
+                        lambda: [_entry("Tiny Tool", "https://github.com/t/tiny")])
+    metas = {"repos/t/tiny": _meta("t/tiny", stars=3, forks=4,
+                                   homepage="https://t.github.io", rid=12)}
+    res = stage_admit.run(_ctx(root, metas=metas), budget=3)
+    assert res.admitted == 0 and res.rejects == {"below_floor": 1}
 
 
 def test_admitted_record_is_schema_valid_proposed_and_cited(root, monkeypatch):

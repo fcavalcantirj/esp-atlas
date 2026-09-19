@@ -42,7 +42,8 @@ _GITHUB_URL = re.compile(r"https?://github\.com/([\w.-]+)/([\w.-]+?)(?:\.git)?(?
 _BOARDS_LINE = re.compile(r"(?:^|\n)\s*(?:###\s*Boards|Boards)\s*:?\s*\n?\s*([^\n]+)", re.I)
 
 REASON_HELP = {
-    "below_floor": "the catalog's floor is 25 stars or 25 forks (SPEC-firmware-floor.md)",
+    "below_floor": "the catalog's floor is 25 stars or 25 forks, or an independent editorial "
+                   "homepage (SPEC-firmware-floor.md)",
     "fork_of_catalogued": "forks of a catalogued firmware are listed under the original",
     "fork_of_uncatalogued": "submit the original repository instead",
     "already_catalogued": "this repository is already in the catalog",
@@ -321,13 +322,14 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             continue
         fid = scorer._slug(scorer._repo_name_from_url(github)) or owner_repo or "(unnamed entry)"   # the report names every skip
         # Popularity floor (SPEC-firmware-floor.md, via esp_atlas_core.floor — never re-typed):
-        # below stars AND forks is filler, rejected for FLOOR_REJECT_DAYS.
+        # below stars AND forks AND no independent editorial home is filler, rejected for
+        # FLOOR_REJECT_DAYS.
         if meta.get("error"):
             note(skip_reject(fid, owner_repo, f"repo_unresolved: {meta['error'][:80]}", None, issue=issue))
             if issue:
                 _answer(ctx, slug, issue, _verdict_text(f"repo_unresolved: {meta['error'][:80]}", False, False))
             continue
-        if not clears_popularity_floor(meta.get("stars"), meta.get("forks")):
+        if not clears_popularity_floor(meta.get("stars"), meta.get("forks"), meta.get("homepage")):
             reason = f"below_floor: {meta.get('stars')} stars / {meta.get('forks')} forks"
             note(skip_reject(fid, owner_repo, reason, repo_id, issue=issue))
             if issue:

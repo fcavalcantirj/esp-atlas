@@ -8,6 +8,12 @@ signal: a launcher/M5Burner download count is never fetched, stored, or consulte
 stored data is written at author time by the drain (jr/tools.author_firmware_and_recipes) and
 backfilled onto pre-existing entries by scripts/popularity_backfill.py.
 
+The THIRD floor signal — an independent editorial home (esp_atlas_core.floor) — is not stored
+in `popularity` and so is NOT consulted here; it is checked live, at admission time
+(jr/stage_admit.py, jr/drain.py) and re-checked live by scripts/jr_pr_guard.py. This audit stays
+a pure stars/forks check on whatever already made it into the catalog, routed through the shared
+`clears_popularity_floor()` so its notion of "below floor" can never hand-drift from admission's.
+
 An entry with NO popularity block yet is reported separately as "unstamped" — it just needs
 backfilling, it is NOT a floor failure (a fresh catalog must not hard-fail CI before the backfill
 runs).
@@ -44,7 +50,7 @@ from esp_atlas_core.paths import DATA_DIR  # noqa: E402
 # package with its own venv and is not importable from the repo-root scripts runtime).
 # Imported, never re-typed. Both this CI gate and jr/scorer.py read the SAME constants from
 # esp_atlas_core.floor, so they cannot drift apart the way they previously did.
-from esp_atlas_core.floor import FORK_FLOOR, STAR_FLOOR, clears_popularity_floor  # noqa: E402,F401
+from esp_atlas_core.floor import FORK_FLOOR, STAR_FLOOR, clears_popularity_floor  # noqa: E402
 
 # Human-curated / known-good firmware — exempt from the floor regardless of popularity. Used
 # because the firmware schema carries no trust/tier field; this is the original curated set.
@@ -116,7 +122,13 @@ def audit(data_dir=None, exempt=CURATED_EXEMPT):
             continue
         stars = pop.get("stars") or 0
         forks = pop.get("forks") or 0
-        entry["below_floor"] = stars < STAR_FLOOR and forks < FORK_FLOOR
+        # Homepage is not part of the stored `popularity` snapshot (schema/firmware.schema.json),
+        # so this offline audit only ever sees the stars/forks signals — the third, editorial-home
+        # signal is consulted live, at admission time (jr/stage_admit.py, jr/drain.py) and by the
+        # live PR re-check (scripts/jr_pr_guard.py). Still routed through the ONE shared
+        # definition (esp_atlas_core.floor) rather than a hand-typed comparison, so this can never
+        # silently drift from what admission/PR-guard consider a clear.
+        entry["below_floor"] = not clears_popularity_floor(stars, forks)
         if entry["below_floor"]:
             flagged.append(entry)
     flagged.sort(key=lambda e: ((e["stars"] or 0), (e["forks"] or 0), e["id"]))
