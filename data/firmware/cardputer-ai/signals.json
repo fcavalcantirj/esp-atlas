@@ -1,0 +1,67 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-19",
+ "notes": [],
+ "ref": "main",
+ "repo": "therezor/cardputer-ai",
+ "resolved": {
+  "boards": [
+   "m5cardputer"
+  ],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "cardputer_ai",
+   "cardputer_ai_full"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "cardputer_ai_2.1.bin",
+    "release": "2.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cardputer_ai",
+   "url": "https://github.com/therezor/cardputer-ai/releases/download/2.1/cardputer_ai_2.1.bin"
+  },
+  {
+   "extra": {
+    "asset": "cardputer_ai_2.1_full.bin",
+    "release": "2.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cardputer_ai_full",
+   "url": "https://github.com/therezor/cardputer-ai/releases/download/2.1/cardputer_ai_2.1_full.bin"
+  },
+  {
+   "extra": {
+    "env": "cardputer",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 23,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/therezor/cardputer-ai/blob/main/platformio.ini#L23"
+  },
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": 7,
+   "rank": 4,
+   "soc": "esp32-s3",
+   "token": "esp32s3",
+   "url": "https://github.com/therezor/cardputer-ai/blob/main/sdkconfig.defaults#L7"
+  }
+ ]
+}
