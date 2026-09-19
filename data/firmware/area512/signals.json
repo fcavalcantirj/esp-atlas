@@ -1,0 +1,53 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-19",
+ "notes": [],
+ "ref": "main",
+ "repo": "engneer-hamachan/area512",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "Area512Adv",
+   "Area512V11"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "Area512Adv.bin",
+    "release": "v2.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Area512Adv",
+   "url": "https://github.com/engneer-hamachan/area512/releases/download/v2.3/Area512Adv.bin"
+  },
+  {
+   "extra": {
+    "asset": "Area512V11.bin",
+    "release": "v2.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Area512V11",
+   "url": "https://github.com/engneer-hamachan/area512/releases/download/v2.3/Area512V11.bin"
+  },
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": 5,
+   "rank": 4,
+   "soc": "esp32-s3",
+   "token": "esp32s3",
+   "url": "https://github.com/engneer-hamachan/area512/blob/main/sdkconfig.defaults#L5"
+  }
+ ]
+}
