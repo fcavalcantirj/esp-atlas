@@ -1,0 +1,43 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-19",
+ "notes": [],
+ "ref": "main",
+ "repo": "MangoX0567/M5Stack-Cardputer-SSH",
+ "resolved": {
+  "boards": [
+   "m5stamp-s3"
+  ],
+  "socs": [],
+  "unresolved": [
+   "full"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "M5Stack-Cardputer-SSH-full.bin",
+    "release": "v1.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "full",
+   "url": "https://github.com/MangoX0567/M5Stack-Cardputer-SSH/releases/download/v1.0.0/M5Stack-Cardputer-SSH-full.bin"
+  },
+  {
+   "extra": {
+    "env": "m5cardputer-adv",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 6,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/MangoX0567/M5Stack-Cardputer-SSH/blob/main/platformio.ini#L6"
+  }
+ ]
+}
