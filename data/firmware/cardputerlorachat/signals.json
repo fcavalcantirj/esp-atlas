@@ -1,18 +1,17 @@
 {
  "calls": 5,
  "errors": 0,
- "fetched": "2026-09-08",
+ "fetched": "2026-09-19",
  "notes": [],
  "ref": "main",
  "repo": "nonik0/CardputerLoRaChat",
  "resolved": {
-  "boards": [],
-  "socs": [
-   "esp32-s3"
+  "boards": [
+   "m5cardputer"
   ],
+  "socs": [],
   "unresolved": [
-   "LoRaChat",
-   "esp32-s3-devkitc-1"
+   "LoRaChat"
   ]
  },
  "signals": [
