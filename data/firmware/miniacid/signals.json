@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-19",
+ "notes": [],
+ "ref": "main",
+ "repo": "urtubia/miniacid",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "esp32fw-0_0_8"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "esp32fw-0_0_8.bin",
+    "release": "v0.0.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32fw-0_0_8",
+   "url": "https://github.com/urtubia/miniacid/releases/download/v0.0.8/esp32fw-0_0_8.bin"
+  }
+ ]
+}
