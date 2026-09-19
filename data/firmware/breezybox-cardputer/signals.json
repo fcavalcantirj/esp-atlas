@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-19",
+ "notes": [],
+ "ref": "main",
+ "repo": "chrisdiana/breezybox-cardputer",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "breezybox_cardputer"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "breezybox_cardputer.bin",
+    "release": "v1.3.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "breezybox_cardputer",
+   "url": "https://github.com/chrisdiana/breezybox-cardputer/releases/download/v1.3.0/breezybox_cardputer.bin"
+  }
+ ]
+}

@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-09-26T15:39:16.007271+00:00",
+      "expires": "2026-09-26T16:00:38.109621+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-19T15:39:16.007271+00:00"
+      "timestamp": "2026-09-19T16:00:38.109621+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -369,8 +369,8 @@
       "pr_ref": null,
       "repo": "engneer-hamachan/area512",
       "repo_id": 1288290564,
-      "status": "proposed",
-      "timestamp": "2026-09-19T15:39:16.007271+00:00"
+      "status": "merged",
+      "timestamp": "2026-09-19T16:00:38.109621+00:00"
     },
     "ascii-aquarium": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -690,8 +690,8 @@
       "pr_ref": null,
       "repo": "chrisdiana/breezybox-cardputer",
       "repo_id": 1240332176,
-      "status": "proposed",
-      "timestamp": "2026-09-19T15:39:16.007271+00:00"
+      "status": "merged",
+      "timestamp": "2026-09-19T16:00:38.109621+00:00"
     },
     "brokensignal": {
       "id": "brokensignal",
@@ -1075,15 +1075,13 @@
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
     },
     "cardputer-ai": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "evidence_url": "https://github.com/therezor/cardputer-ai",
       "id": "cardputer-ai",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
       "repo": "therezor/cardputer-ai",
       "repo_id": 1267077321,
-      "status": "expired",
-      "timestamp": "2026-09-07T23:00:28.148172+00:00"
+      "status": "proposed",
+      "timestamp": "2026-09-19T16:00:38.109621+00:00"
     },
     "cardputer-alchemy-adv-game": {
       "expires": "2026-10-08T05:25:25.049296+00:00",
@@ -1668,12 +1666,13 @@
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
     },
     "cardputersshclient": {
+      "expired_at": "2026-09-19T16:00:38.109621+00:00",
       "expires": "2026-09-19T16:00:03.112838+00:00",
       "id": "cardputersshclient",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "minkleee/cardputersshclient",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T16:00:03.112838+00:00"
     },
     "cardputertiltjump": {
@@ -1711,15 +1710,13 @@
       "timestamp": "2026-09-02T17:03:09.105603+00:00"
     },
     "cardskimmerdetector-m5cardputer": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "evidence_url": "https://github.com/aat440hz/CardSkimmerDetector-M5Cardputer",
       "id": "cardskimmerdetector-m5cardputer",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
       "repo": "aat440hz/cardskimmerdetector-m5cardputer",
       "repo_id": 777925318,
-      "status": "expired",
-      "timestamp": "2026-09-07T23:00:28.148172+00:00"
+      "status": "proposed",
+      "timestamp": "2026-09-19T16:00:38.109621+00:00"
     },
     "cardskimmerdetector-m5stickcplus": {
       "expires": "2026-10-07T23:00:28.148172+00:00",
@@ -4169,15 +4166,14 @@
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5cardputer-c64-emulator": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "expires": "2026-10-19T16:00:38.109621+00:00",
       "id": "m5cardputer-c64-emulator",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
+      "reason": "noise_non_firmware: name matches a game/emulator/platform token",
       "repo": "iele/m5cardputer-c64-emulator",
       "repo_id": 824837911,
-      "status": "expired",
-      "timestamp": "2026-09-07T21:12:07.418911+00:00"
+      "status": "rejected",
+      "timestamp": "2026-09-19T16:00:38.109621+00:00"
     },
     "m5cardputer-chat-with-gemini-api": {
       "id": "m5cardputer-chat-with-gemini-api",
