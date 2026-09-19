@@ -1,18 +1,17 @@
 {
  "calls": 4,
  "errors": 0,
- "fetched": "2026-09-08",
+ "fetched": "2026-09-19",
  "notes": [],
  "ref": "main",
  "repo": "adammelancon/cardputer-satellite-tracker",
  "resolved": {
-  "boards": [],
-  "socs": [
-   "esp32-s3"
+  "boards": [
+   "m5cardputer"
   ],
+  "socs": [],
   "unresolved": [
-   "Sat_Tracker",
-   "esp32-s3-devkitc-1"
+   "Sat_Tracker"
   ]
  },
  "signals": [
