@@ -1,0 +1,120 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-19",
+ "notes": [],
+ "ref": "main",
+ "repo": "unkyulee/micro-journal",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "firmware_rev_4",
+   "firmware_rev_7",
+   "webflash_rev.8_type_1",
+   "webflash_rev.8_type_2",
+   "webflash_rev_5_ili9341",
+   "webflash_rev_5_st7789",
+   "webflash_rev_6_ili9341",
+   "webflash_rev_6_st7789"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "firmware_rev_4.uf2",
+    "release": "2.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "firmware_rev_4",
+   "url": "https://github.com/unkyulee/micro-journal/releases/download/2.0.0/firmware_rev_4.uf2"
+  },
+  {
+   "extra": {
+    "asset": "firmware_rev_7.bin",
+    "release": "2.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "firmware_rev_7",
+   "url": "https://github.com/unkyulee/micro-journal/releases/download/2.0.0/firmware_rev_7.bin"
+  },
+  {
+   "extra": {
+    "asset": "webflash_rev.8_type_1.bin",
+    "release": "2.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "webflash_rev.8_type_1",
+   "url": "https://github.com/unkyulee/micro-journal/releases/download/2.0.0/webflash_rev.8_type_1.bin"
+  },
+  {
+   "extra": {
+    "asset": "webflash_rev.8_type_2.bin",
+    "release": "2.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "webflash_rev.8_type_2",
+   "url": "https://github.com/unkyulee/micro-journal/releases/download/2.0.0/webflash_rev.8_type_2.bin"
+  },
+  {
+   "extra": {
+    "asset": "webflash_rev_5_ili9341.bin",
+    "release": "2.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "webflash_rev_5_ili9341",
+   "url": "https://github.com/unkyulee/micro-journal/releases/download/2.0.0/webflash_rev_5_ili9341.bin"
+  },
+  {
+   "extra": {
+    "asset": "webflash_rev_5_st7789.bin",
+    "release": "2.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "webflash_rev_5_st7789",
+   "url": "https://github.com/unkyulee/micro-journal/releases/download/2.0.0/webflash_rev_5_st7789.bin"
+  },
+  {
+   "extra": {
+    "asset": "webflash_rev_6_ili9341.bin",
+    "release": "2.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "webflash_rev_6_ili9341",
+   "url": "https://github.com/unkyulee/micro-journal/releases/download/2.0.0/webflash_rev_6_ili9341.bin"
+  },
+  {
+   "extra": {
+    "asset": "webflash_rev_6_st7789.bin",
+    "release": "2.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "webflash_rev_6_st7789",
+   "url": "https://github.com/unkyulee/micro-journal/releases/download/2.0.0/webflash_rev_6_st7789.bin"
+  }
+ ]
+}
