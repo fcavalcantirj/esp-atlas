@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-09-26T17:00:45.426940+00:00",
+      "expires": "2026-09-26T18:00:53.079431+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-19T17:00:45.426940+00:00"
+      "timestamp": "2026-09-19T18:00:53.079431+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -1947,8 +1947,8 @@
       "pr_ref": null,
       "repo": "charlexh/codebuddy",
       "repo_id": 1216668171,
-      "status": "proposed",
-      "timestamp": "2026-09-19T17:00:45.426940+00:00"
+      "status": "merged",
+      "timestamp": "2026-09-19T18:00:53.079431+00:00"
     },
     "columns-m5stick-plus-2": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -2785,8 +2785,8 @@
       "pr_ref": null,
       "repo": "marivaaldo/evil-portal-m5stack",
       "repo_id": 731870880,
-      "status": "proposed",
-      "timestamp": "2026-09-19T17:00:45.426940+00:00"
+      "status": "merged",
+      "timestamp": "2026-09-19T18:00:53.079431+00:00"
     },
     "evil-portal-parasite-atoms3": {
       "expires": "2026-10-08T04:00:36.972928+00:00",
@@ -2864,15 +2864,13 @@
       "timestamp": "2026-09-08T05:25:25.049296+00:00"
     },
     "flipper-zero-meets-m5stack-cardputer": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "evidence_url": "https://github.com/ElicoftZ/Flipper-Zero-meets-M5Stack-Cardputer",
       "id": "flipper-zero-meets-m5stack-cardputer",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
       "repo": "elicoftz/flipper-zero-meets-m5stack-cardputer",
       "repo_id": 1288804579,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "proposed",
+      "timestamp": "2026-09-19T18:00:53.079431+00:00"
     },
     "floatingbottle-pc-monitor": {
       "expires": "2026-10-08T05:25:25.049296+00:00",
@@ -3067,26 +3065,23 @@
       "timestamp": "2026-09-08T05:25:25.049296+00:00"
     },
     "ghostble": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "evidence_url": "https://github.com/SmonSE/GhostBLE",
       "id": "ghostble",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
       "repo": "smonse/ghostble",
       "repo_id": 973142264,
-      "status": "expired",
-      "timestamp": "2026-09-08T17:00:16.540728+00:00"
+      "status": "proposed",
+      "timestamp": "2026-09-19T18:00:53.079431+00:00"
     },
     "ghostesp": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "expires": "2026-10-19T18:00:53.079431+00:00",
       "id": "ghostesp",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
+      "reason": "no_board_evidence: no catalogued device named",
       "repo": "ghostesp-revival/ghostesp",
       "repo_id": 891566125,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-09-19T18:00:53.079431+00:00"
     },
     "glide-synth-cardputer-adv": {
       "id": "glide-synth-cardputer-adv",
@@ -7649,15 +7644,14 @@
       "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "sensecap-indicator-esp32": {
-      "expired_at": "2026-09-19T15:39:16.007271+00:00",
-      "expires": "2026-09-01T00:00:00+00:00",
+      "expires": "2026-10-19T18:00:53.079431+00:00",
       "id": "sensecap-indicator-esp32",
       "pr_ref": null,
-      "reason": "name_token_matches_catalogued: likely a port/variant",
+      "reason": "no_board_evidence: no catalogued device named",
       "repo": "seeed-solution/sensecap_indicator_esp32",
       "repo_id": 629399393,
-      "status": "expired",
-      "timestamp": "2026-09-09T21:00:43.442359+00:00"
+      "status": "rejected",
+      "timestamp": "2026-09-19T18:00:53.079431+00:00"
     },
     "seraphs-subghz-tool": {
       "expires": "2026-10-11T19:00:59.205076+00:00",

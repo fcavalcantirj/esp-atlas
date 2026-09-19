@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-19",
+ "notes": [],
+ "ref": "main",
+ "repo": "CharlexH/CodeBuddy",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "full"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "code-buddy-sticks3-v0.1.45-full.bin",
+    "release": "v0.1.45"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "full",
+   "url": "https://github.com/CharlexH/CodeBuddy/releases/download/v0.1.45/code-buddy-sticks3-v0.1.45-full.bin"
+  }
+ ]
+}
