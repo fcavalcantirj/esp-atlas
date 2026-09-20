@@ -68,6 +68,18 @@
       "type": "array", "minItems": 1, "items": { "type": "string" },
       "description": "SoC families the project builds for"
     },
+    "summary": {
+      "type": "string",
+      "description": "OPTIONAL grounded one-to-two sentence English synopsis of the README, derived ONLY from the README text by jr/groq_enrich.py's enrich_readme(). Cited via a `field: summary` sources[] entry."
+    },
+    "readme_lang": {
+      "type": "string", "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]+)?$",
+      "description": "OPTIONAL ISO 639-1 (or 639-2) language code of the fetched README -- 'en' when it is already English. Accompanies `summary`."
+    },
+    "readme_sha": {
+      "type": "string", "pattern": "^[0-9a-f]{64}$",
+      "description": "OPTIONAL sha256 hex digest of the README text last enriched -- lets jr/backfill_summary.py skip a re-run's Groq call when the README is unchanged. When `readme_lang` isn't 'en', data/firmware/<id>/readme.en.md carries the cached English translation."
+    },
     "sources": {
       "type": "array", "minItems": 1,
       "items": {

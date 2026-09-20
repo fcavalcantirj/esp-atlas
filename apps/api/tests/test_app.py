@@ -532,6 +532,47 @@ def test_get_firmware_returns_cited_popularity(client):
     assert body["popularity"]["stars"] == 42
 
 
+def test_get_firmware_with_a_summary_reads_the_cached_english_translation_from_disk(client, monkeypatch, tmp_path):
+    fake_record = {
+        "id": "fake-fw", "type": "firmware", "name": "Fake Firmware",
+        "url": "https://github.com/example/fake-fw", "category": "multi",
+        "socs": ["esp32-s3"],
+        "sources": [{"field": "*", "url": "https://github.com/example/fake-fw", "verified": "2026-09-20"}],
+        "summary": "Fake Firmware does fake things on an ESP32-S3.",
+        "readme_lang": "ja",
+    }
+    monkeypatch.setattr(main_module, "core_get_firmware", lambda fid: fake_record if fid == "fake-fw" else None)
+    monkeypatch.setattr(main_module, "FIRMWARE_DATA_DIR", tmp_path)
+    (tmp_path / "fake-fw").mkdir()
+    (tmp_path / "fake-fw" / "readme.en.md").write_text("# Fake Firmware\n\nTranslated body.\n", encoding="utf-8")
+
+    r = client.get("/firmware/fake-fw")
+
+    assert r.status_code == 200
+    body = r.json()
+    assert body["summary"] == "Fake Firmware does fake things on an ESP32-S3."
+    assert body["readme_lang"] == "ja"
+    assert body["readme_en"] == "# Fake Firmware\n\nTranslated body.\n"
+
+
+def test_get_firmware_without_a_readme_en_file_leaves_it_null(client, monkeypatch, tmp_path):
+    fake_record = {
+        "id": "fake-fw", "type": "firmware", "name": "Fake Firmware",
+        "url": "https://github.com/example/fake-fw", "category": "multi",
+        "socs": ["esp32-s3"],
+        "sources": [{"field": "*", "url": "https://github.com/example/fake-fw", "verified": "2026-09-20"}],
+    }
+    monkeypatch.setattr(main_module, "core_get_firmware", lambda fid: fake_record if fid == "fake-fw" else None)
+    monkeypatch.setattr(main_module, "FIRMWARE_DATA_DIR", tmp_path)
+
+    r = client.get("/firmware/fake-fw")
+
+    assert r.status_code == 200
+    body = r.json()
+    assert body["summary"] is None
+    assert body["readme_en"] is None
+
+
 def test_list_recipes_no_params_returns_all(client):
     r = client.get("/recipes")
     assert r.status_code == 200

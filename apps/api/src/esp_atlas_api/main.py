@@ -34,6 +34,7 @@ from esp_atlas_core.firmware import list_recipes as core_list_recipes
 from esp_atlas_core.firmware import recipes_for_board as core_recipes_for_board
 from esp_atlas_core.firmware import recipes_for_firmware as core_recipes_for_firmware
 from esp_atlas_core.index_build import build_index
+from esp_atlas_core.paths import DATA_DIR
 from esp_atlas_core.run_guide import run_guide as core_run_guide
 from esp_atlas_core.search import brand_page as core_brand_page
 from esp_atlas_core.search import get_part as core_get_part
@@ -73,6 +74,18 @@ from esp_atlas_api.settings import resolve_db_path
 
 _ALL_PARTS_LIMIT = 10_000
 _REDIRECT_CODES = frozenset({301, 302, 303, 307, 308})
+FIRMWARE_DATA_DIR = DATA_DIR / "firmware"
+
+
+def _with_readme_en(record: dict) -> dict:
+    """Attach `readme_en` by reading data/firmware/<id>/readme.en.md straight off disk when it
+    exists -- the cached English translation is never stored in frontmatter (see
+    jr/summary_writer.write_readme_en), so it isn't part of what core_get_firmware/
+    core_list_firmware already return."""
+    path = FIRMWARE_DATA_DIR / record["id"] / "readme.en.md"
+    if not path.exists():
+        return record
+    return {**record, "readme_en": path.read_text(encoding="utf-8")}
 
 
 async def _fetch_following_allowlisted_redirects(client, url, headers):
@@ -395,14 +408,14 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
 
     @app.get("/firmware", response_model=FirmwareListResponse)
     def list_firmware():
-        return FirmwareListResponse(results=core_list_firmware())
+        return FirmwareListResponse(results=[_with_readme_en(r) for r in core_list_firmware()])
 
     @app.get("/firmware/{firmware_id}", response_model=FirmwareRecord)
     def get_firmware(firmware_id: str):
         record = core_get_firmware(firmware_id)
         if record is None:
             raise HTTPException(status_code=404, detail=f"firmware not found: {firmware_id}")
-        return record
+        return _with_readme_en(record)
 
     @app.get("/recipes", response_model=RecipeListResponse)
     def list_recipes(board: Optional[str] = None, firmware: Optional[str] = None):

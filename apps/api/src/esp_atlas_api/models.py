@@ -426,6 +426,14 @@ class FirmwareRecord(BaseModel):
     socs: list[str]
     sources: list[SourceEntry]
     popularity: Optional[Popularity] = None
+    #: Grounded English synopsis + source language (jr/groq_enrich.py enrich_readme()), cited via
+    #: a `field: summary` sources[] entry -- see data/firmware/<id>/firmware.md `summary`/`readme_lang`.
+    summary: Optional[str] = None
+    readme_lang: Optional[str] = None
+    #: The cached English translation from data/firmware/<id>/readme.en.md, read straight off
+    #: disk by the API when that file exists -- never stored in frontmatter (see
+    #: esp_atlas_api.main._with_readme_en). None when readme_lang is already "en" or absent.
+    readme_en: Optional[str] = None
 
 
 class FirmwareListResponse(BaseModel):
