@@ -4,6 +4,7 @@ import FirmwareDetailClient from "@/components/firmware/FirmwareDetailClient";
 import FirmwareDetailView from "@/components/firmware/FirmwareDetailView";
 import { fetchAllParts, fetchFirmware, fetchRecipesForFirmware } from "@/lib/api-server";
 import { firmwareCategoryLabel } from "@/lib/format";
+import { fetchReadme } from "@/lib/readme";
 import { OG_IMAGE, SITE_NAME } from "@/lib/site";
 
 // Firmware hub: the project's own identity (GET /firmware/<id>) plus the
@@ -41,7 +42,11 @@ export default async function FirmwarePage({ params }: PageProps<"/firmware/[id]
   if (result.status !== "ok") return <FirmwareDetailClient id={id} />;
 
   const firmware = result.data;
-  const [recipesResult, parts] = await Promise.all([fetchRecipesForFirmware(id), fetchAllParts()]);
+  const [recipesResult, parts, readme] = await Promise.all([
+    fetchRecipesForFirmware(id),
+    fetchAllParts(),
+    fetchReadme(firmware.url),
+  ]);
   const recipes = recipesResult.status === "ok" ? recipesResult.data.results : [];
-  return <FirmwareDetailView firmware={firmware} recipes={recipes} parts={parts} />;
+  return <FirmwareDetailView firmware={firmware} recipes={recipes} parts={parts} readme={readme} />;
 }

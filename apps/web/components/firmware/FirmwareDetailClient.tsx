@@ -5,10 +5,11 @@ import Link from "next/link";
 import FirmwareDetailView from "@/components/firmware/FirmwareDetailView";
 import { ApiError, getFirmware, getRecipesForFirmware, listParts, type Firmware, type PartRecord, type Recipe } from "@/lib/api";
 import { track } from "@/lib/analytics";
+import { fetchReadme, type RepoReadme } from "@/lib/readme";
 
 type State =
   | { status: "loading" }
-  | { status: "ok"; firmware: Firmware; recipes: Recipe[]; parts: PartRecord[] }
+  | { status: "ok"; firmware: Firmware; recipes: Recipe[]; parts: PartRecord[]; readme: RepoReadme | null }
   | { status: "not_found" }
   | { status: "error"; message: string };
 
@@ -22,11 +23,12 @@ export default function FirmwareDetailClient({ id }: { id: string }) {
     let cancelled = false;
     getFirmware(id)
       .then(async (firmware) => {
-        const [recipes, parts] = await Promise.all([
+        const [recipes, parts, readme] = await Promise.all([
           getRecipesForFirmware(id).then((r) => r.results, () => []),
           listParts().then((r) => r.results, () => []),
+          fetchReadme(firmware.url),
         ]);
-        if (!cancelled) setState({ status: "ok", firmware, recipes, parts });
+        if (!cancelled) setState({ status: "ok", firmware, recipes, parts, readme });
       })
       .catch((err) => {
         if (cancelled) return;
@@ -87,5 +89,5 @@ export default function FirmwareDetailClient({ id }: { id: string }) {
     );
   }
 
-  return <FirmwareDetailView firmware={state.firmware} recipes={state.recipes} parts={state.parts} />;
+  return <FirmwareDetailView firmware={state.firmware} recipes={state.recipes} parts={state.parts} readme={state.readme} />;
 }
