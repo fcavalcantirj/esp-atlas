@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-09-27T06:00:25.457978+00:00",
+      "expires": "2026-09-27T07:00:29.928578+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-20T06:00:25.457978+00:00"
+      "timestamp": "2026-09-20T07:00:29.928578+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -2290,6 +2290,16 @@
       "repo_id": 1290741791,
       "status": "rejected",
       "timestamp": "2026-09-08T04:00:36.972928+00:00"
+    },
+    "devour-sphere": {
+      "expires": "2026-10-20T07:00:29.928578+00:00",
+      "id": "devour-sphere",
+      "pr_ref": null,
+      "reason": "below_floor: 7 stars / 1 forks",
+      "repo": "shapoco/devour-sphere",
+      "repo_id": 1369088965,
+      "status": "rejected",
+      "timestamp": "2026-09-20T07:00:29.928578+00:00"
     },
     "dht11-and-dht22-m5stick": {
       "expires": "2026-10-08T02:00:32.995095+00:00",
@@ -4961,12 +4971,13 @@
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stack": {
+      "expired_at": "2026-09-20T07:00:29.928578+00:00",
       "expires": "2026-09-20T06:00:47.661752+00:00",
       "id": "m5stack",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'm5stack'",
       "repo": "m5stack",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T06:00:47.661752+00:00"
     },
     "m5stack-atoms3-ble-remote-for-canon": {
@@ -7560,12 +7571,13 @@
       "timestamp": "2026-09-08T01:00:31.284910+00:00"
     },
     "sandtimer-for-sticks3": {
+      "expired_at": "2026-09-20T07:00:29.928578+00:00",
       "expires": "2026-09-20T06:00:47.661752+00:00",
       "id": "sandtimer-for-sticks3",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "nongxl/sandtimer_for_sticks3",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T06:00:47.661752+00:00"
     },
     "sas": {
@@ -7609,12 +7621,13 @@
       "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "search": {
+      "expired_at": "2026-09-20T07:00:29.928578+00:00",
       "expires": "2026-09-20T06:00:47.661752+00:00",
       "id": "search",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'search'",
       "repo": "search",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T06:00:47.661752+00:00"
     },
     "seed-phrase-checker": {
@@ -9932,6 +9945,7 @@
     "serialgeist/esp32marauder": "esp32marauder",
     "servantos/vrsticks3": "vrsticks3",
     "shajanjp/morse-up": "morse-up",
+    "shapoco/devour-sphere": "devour-sphere",
     "shapoco/lcdtap": "lcdtap",
     "sheepxux/taskhub-for-sticks3": "taskhub-for-sticks3",
     "shinemoon/m5readpaper": "m5readpaper",
