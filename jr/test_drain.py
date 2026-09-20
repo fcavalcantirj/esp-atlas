@@ -648,7 +648,7 @@ def test_default_fetch_meta_combines_repo_and_readme(monkeypatch):
     monkeypatch.setattr(tools, "fetch_github_repo",
                         lambda url: {"full_name": "someone/tool", "fork": False, "stars": 12,
                                     "description": "A tool.", "license": "MIT"})
-    monkeypatch.setattr(tools, "fetch_github_readme", lambda url: "# The Tool README\nmore text")
+    monkeypatch.setattr(tools, "fetch_github_readme", lambda url, max_chars=None: "# The Tool README\nmore text")
 
     meta = drain.default_fetch_meta("https://github.com/someone/tool")
 
@@ -662,7 +662,7 @@ def test_default_fetch_meta_caps_readme_body_length(monkeypatch):
     monkeypatch.setattr(tools, "fetch_github_repo",
                         lambda url: {"full_name": "someone/tool", "fork": False, "stars": 12,
                                     "description": "A tool.", "license": "MIT"})
-    monkeypatch.setattr(tools, "fetch_github_readme", lambda url: "x" * 30000)
+    monkeypatch.setattr(tools, "fetch_github_readme", lambda url, max_chars=None: "x" * 30000)
 
     meta = drain.default_fetch_meta("https://github.com/someone/tool")
 
@@ -673,7 +673,7 @@ def test_default_fetch_meta_readme_body_empty_when_no_readme(monkeypatch):
     monkeypatch.setattr(tools, "fetch_github_repo",
                         lambda url: {"full_name": "someone/tool", "fork": False, "stars": 12,
                                     "description": "A tool.", "license": "MIT"})
-    monkeypatch.setattr(tools, "fetch_github_readme", lambda url: None)
+    monkeypatch.setattr(tools, "fetch_github_readme", lambda url, max_chars=None: None)
 
     meta = drain.default_fetch_meta("https://github.com/someone/tool")
 
@@ -683,7 +683,7 @@ def test_default_fetch_meta_readme_body_empty_when_no_readme(monkeypatch):
 def test_default_fetch_meta_short_circuits_on_repo_error(monkeypatch):
     monkeypatch.setattr(tools, "fetch_github_repo", lambda url: {"error": "404"})
     monkeypatch.setattr(tools, "fetch_github_readme",
-                        lambda url: pytest.fail("fetch_github_readme must not be called after a repo error"))
+                        lambda url, max_chars=None: pytest.fail("fetch_github_readme must not be called after a repo error"))
 
     meta = drain.default_fetch_meta("https://github.com/ghost/dead")
 
@@ -719,7 +719,7 @@ def test_run_drain_full_pipeline_authors_a_clean_candidate(cleanup_fixture):
 def test_run_drain_reports_skips_and_authors_nothing_when_catalog_is_all_noise():
     entry = {"name": "ESP32 Doom Port", "github": "https://github.com/someone/esp32-doom", "download": 999999}
 
-    report = drain.run_drain(fetch_catalog=lambda: [entry], fetch_meta=lambda url: pytest.fail("no network"))
+    report = drain.run_drain(fetch_catalog=lambda: [entry], fetch_meta=lambda url, max_chars=None: pytest.fail("no network"))
 
     assert report["fetched"] == 1
     assert report["prefiltered"] == 0

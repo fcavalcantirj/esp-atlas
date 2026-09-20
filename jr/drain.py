@@ -123,7 +123,7 @@ def default_fetch_meta(github_url: str) -> dict:
     # (GhostESP names its boards past char 11k), and fetch_github_readme defaults to only 3500.
     readme = tools.fetch_github_readme(github_url, max_chars=_README_BODY_CAP)
     meta["readme_title"] = _readme_title(readme)
-    meta["readme_body"] = readme or ""
+    meta["readme_body"] = (readme or "")[:_README_BODY_CAP]
     return meta
 
 
