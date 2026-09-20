@@ -42,7 +42,6 @@ const README_HTML_SCHEMA: SanitizeSchema = {
     "h4",
     "h5",
     "h6",
-    "img",
     "table",
     "thead",
     "tbody",
@@ -52,7 +51,6 @@ const README_HTML_SCHEMA: SanitizeSchema = {
   ],
   attributes: {
     a: ["href", "title"],
-    img: ["src", "alt"],
   },
   protocols: {
     href: ["http", "https", "mailto"],
