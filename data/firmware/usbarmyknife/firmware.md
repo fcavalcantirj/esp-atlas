@@ -36,6 +36,15 @@ sources:
 - field: popularity
   url: https://github.com/i-am-shodan/USBArmyKnife
   verified: '2026-09-01'
+- field: summary
+  url: https://github.com/i-am-shodan/USBArmyKnife
+  verified: '2026-09-20'
+summary: "USB Army Knife is a compact ESP32\u2011based USB dongle that can emulate\
+  \ HID keyboards, mass\u2011storage devices, and network adapters while performing\
+  \ Wi\u2011Fi/Bluetooth attacks, all controllable via a web UI and a DuckyScript\u2011\
+  compatible scripting engine for red\u2011team operations."
+readme_lang: en
+readme_sha: fe645441d79ac6d70668d22801ddda5be226aa70d074a1cee7a2645ae7e800f1
 ---
 
 # USB Army Knife

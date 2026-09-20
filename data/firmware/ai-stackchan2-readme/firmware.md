@@ -18,6 +18,15 @@ sources:
 - field: popularity
   url: https://github.com/robo8080/AI_StackChan2_README
   verified: '2026-09-01'
+- field: summary
+  url: https://github.com/robo8080/AI_StackChan2_README
+  verified: '2026-09-20'
+summary: "AI StackChan 2 is firmware for M5Stack devices that provides voice interaction\
+  \ using Web\u2011based VOICEVOX for speech synthesis and either Google Cloud STT\
+  \ or OpenAI Whisper for speech recognition, configurable via Wi\u2011Fi and API\
+  \ keys stored on an SD card or a web interface."
+readme_lang: ja
+readme_sha: 65476b4b2b6a48f4963269712bdbfd2e743dfbcf0f9bcd2d0447340a990e6730
 ---
 
 AI_StackChan2_README

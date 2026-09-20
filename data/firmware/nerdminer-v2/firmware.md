@@ -40,6 +40,15 @@ sources:
 - field: popularity
   url: https://github.com/BitMaker-hub/NerdMiner_v2
   verified: '2026-09-01'
+- field: summary
+  url: https://github.com/BitMaker-hub/NerdMiner_v2
+  verified: '2026-09-20'
+summary: "NerdMiner v2 is an open\u2011source firmware for ESP32\u2011based boards\
+  \ that implements the Stratum protocol to mine Bitcoin solo on low\u2011difficulty\
+  \ pools, displaying mining statistics on the device screen and allowing configuration\
+  \ via Wi\u2011Fi, an access point, or an optional SD card."
+readme_lang: en
+readme_sha: 6e15142a617cd70e6857143f6a5283cd613604c2ffd72240cad4049f2c02c8fd
 ---
 
 # NerdMiner v2

@@ -37,6 +37,16 @@ sources:
 - field: popularity
   url: https://github.com/geo-tp/ESP32-Bit-Pirate
   verified: '2026-09-01'
+- field: summary
+  url: https://github.com/geo-tp/ESP32-Bit-Pirate
+  verified: '2026-09-20'
+summary: "ESP32 Bus Pirate is an open\u2011source firmware for ESP32\u2011S3 devices\
+  \ that turns the hardware into a multi\u2011protocol hacking tool, offering an interactive\
+  \ CLI over USB serial or Wi\u2011Fi to sniff, send, script and control numerous\
+  \ digital (I2C, SPI, UART, 1\u2011Wire, etc.) and radio (Bluetooth, Wi\u2011Fi,\
+  \ Sub\u2011GHz, RFID) protocols."
+readme_lang: en
+readme_sha: 136a23af18ea925eea22f10e2e556cc07ff2d7ef7a26b8284679e136445f404a
 ---
 
 # ESP32 Bit Pirate

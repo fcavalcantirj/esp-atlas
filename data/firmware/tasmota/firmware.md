@@ -57,6 +57,14 @@ sources:
 - field: socs
   url: https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L261
   verified: '2026-09-10'
+- field: summary
+  url: https://github.com/arendst/Tasmota
+  verified: '2026-09-20'
+summary: "Tasmota is an alternative open\u2011source firmware for ESP8266 and ESP32\
+  \ based devices that offers easy web\u2011UI configuration, OTA updates, automation\
+  \ via timers or rules, and fully local control through MQTT, HTTP, Serial or KNX."
+readme_lang: en
+readme_sha: 93a3ae09cfe20927e3ffed9b92db9f9b9e625e63bf031145e36e8b3a67c27578
 ---
 
 # Tasmota

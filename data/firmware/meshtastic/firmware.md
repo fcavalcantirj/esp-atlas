@@ -57,6 +57,15 @@ sources:
 - field: popularity
   url: https://github.com/meshtastic/firmware
   verified: '2026-09-01'
+- field: summary
+  url: https://github.com/meshtastic/firmware
+  verified: '2026-09-20'
+summary: "Meshtastic Firmware is the official open\u2011source firmware for devices\
+  \ that form a LoRa\u2011based mesh network, providing low\u2011power, long\u2011\
+  range text messaging, location sharing, and telemetry without relying on internet\
+  \ or cellular infrastructure."
+readme_lang: en
+readme_sha: 97763f5c27cd96f55f09a7d19fc7d00825b0ed2388ae9c7f7d751aa2813c4ab5
 ---
 
 # Meshtastic

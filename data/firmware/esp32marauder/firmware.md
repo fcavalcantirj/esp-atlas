@@ -49,6 +49,14 @@ sources:
 - field: socs
   url: https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml
   verified: '2026-09-07'
+- field: summary
+  url: https://github.com/justcallmekoko/ESP32Marauder
+  verified: '2026-09-20'
+summary: "ESP32 Marauder is a firmware suite that provides a collection of offensive\
+  \ and defensive Wi\u2011Fi and Bluetooth tools for ESP32 devices. It can be downloaded\
+  \ as a release or purchased as a pre\u2011built unit."
+readme_lang: en
+readme_sha: 53b446c948feb01def43134748a591df2e958fbd12e54e4b63751bff9762aa8f
 ---
 
 # ESP32 Marauder

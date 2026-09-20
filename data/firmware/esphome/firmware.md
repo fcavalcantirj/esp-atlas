@@ -58,6 +58,12 @@ sources:
 - field: popularity
   url: https://github.com/esphome/esphome
   verified: '2026-09-01'
+- field: summary
+  url: https://github.com/esphome/esphome
+  verified: '2026-09-20'
+summary: ESPHome is a firmware project designed for ESP-based hardware.
+readme_lang: en
+readme_sha: 1c54cf43c54cc139720bd37f349fd4372c38fee2d36bd4664f863bb91cdf2b31
 ---
 
 # ESPHome

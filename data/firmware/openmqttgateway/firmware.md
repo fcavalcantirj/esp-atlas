@@ -41,6 +41,14 @@ sources:
 - field: popularity
   url: https://github.com/1technophile/OpenMQTTGateway
   verified: '2026-09-01'
+- field: summary
+  url: https://github.com/1technophile/OpenMQTTGateway
+  verified: '2026-09-20'
+summary: OpenMQTTGateway is firmware that turns compatible boards and components (e.g.,
+  sensors, RF/IR/BLE modules) into MQTT gateways, enabling integration of a wide range
+  of devices with MQTT brokers.
+readme_lang: en
+readme_sha: 50a82810524803588bf9b5bdca221fb2c3b791ad781489961cb37a657145ea28
 ---
 
 # OpenMQTTGateway

@@ -22,6 +22,15 @@ sources:
 - field: socs
   url: https://github.com/OceanTroop/orca-one/blob/main/platformio.ini#L118
   verified: '2026-09-10'
+- field: summary
+  url: https://github.com/OceanTroop/orca-one
+  verified: '2026-09-20'
+summary: "Orca One is firmware that brings Flipper Zero functionality\u2014such as\
+  \ Sub\u2011GHz, NFC, infrared, BLE spam, and other hacking tools\u2014to inexpensive\
+  \ ESP32\u2011based devices like the M5StickC Plus2, offering a low\u2011cost alternative\
+  \ to the Flipper Zero hardware."
+readme_lang: en
+readme_sha: 5c2b4e07df6f0f7cdf30bd5f4ef56fc576b9d42f41a32efb19f6a4c27f753946
 ---
 
 A collection of alternatives for running Flipper Zero functions on more affordable devices such as M5Stack, Liligo and ESP32 in general.

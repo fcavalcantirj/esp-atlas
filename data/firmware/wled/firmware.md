@@ -59,6 +59,15 @@ sources:
 - field: socs
   url: https://github.com/wled/WLED/blob/main/platformio.ini#L552
   verified: '2026-09-07'
+- field: summary
+  url: https://github.com/wled/WLED
+  verified: '2026-09-20'
+summary: "WLED is a fast, feature\u2011rich firmware for ESP32 microcontrollers that\
+  \ enables control of addressable LED strips, 2D matrices, and HUB75 panels, offering\
+  \ hundreds of built\u2011in effects, segment management, OTA updates, and extensive\
+  \ integration options."
+readme_lang: en
+readme_sha: c34e3c966bb25ca2a3ae407a3bbeae677a3bb8abd1b313613616da63aea9a334
 ---
 
 # WLED

@@ -37,6 +37,16 @@ sources:
 - field: popularity
   url: https://github.com/D3CRYPT-1/Infiltra-Firmware
   verified: '2026-09-01'
+- field: summary
+  url: https://github.com/D3CRYPT-1/Infiltra-Firmware
+  verified: '2026-09-20'
+summary: "Infiltra Firmware is an open\u2011source custom firmware for ESP\u2011based\
+  \ devices (e.g., M5Stick, Cardputer, Flipper Zero, etc.) that equips hackers and\
+  \ security enthusiasts with a comprehensive toolkit for wireless testing, including\
+  \ Sub\u2011GHz, Wi\u2011Fi, BLE, RFID/NFC, IR, and NRF24L01+ signal capture, emulation,\
+  \ jamming, and attack capabilities."
+readme_lang: en
+readme_sha: 854059063be82c40869ce9eff692608e48efcadccb1535408e166f86bacc3da4
 ---
 
 # Infiltra

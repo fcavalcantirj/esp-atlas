@@ -61,6 +61,16 @@ sources:
 - field: popularity
   url: https://github.com/BruceDevices/firmware
   verified: '2026-09-04'
+- field: summary
+  url: https://github.com/BruceDevices/firmware
+  verified: '2026-09-20'
+summary: "Bruce is an ESP32\u2011based firmware that delivers a comprehensive suite\
+  \ of offensive security tools\u2014including Wi\u2011Fi, Bluetooth, RF, RFID, IR,\
+  \ FM, and scripting capabilities\u2014for fast, portable Red Team operations, and\
+  \ it runs on many ESP32 devices such as M5Stack, Lilygo, and the custom RF REAPER\
+  \ board."
+readme_lang: en
+readme_sha: 1628dc0783d9b3ab5608bd1de478d5bcd04ff73d70f082ac17282c928d1af7f4
 ---
 
 # Bruce

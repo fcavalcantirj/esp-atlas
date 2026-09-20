@@ -21,6 +21,14 @@ sources:
 - field: popularity
   url: https://github.com/VoidNoi/BadCard
   verified: '2026-09-01'
+- field: summary
+  url: https://github.com/VoidNoi/BadCard
+  verified: '2026-09-20'
+summary: "BadCard is a BadUSB firmware for the Cardputer that processes and executes\
+  \ Ducky Script payloads. It adds Bluetooth connectivity, on\u2011device file editing,\
+  \ folder navigation, and support for many keyboard layouts."
+readme_lang: en
+readme_sha: 4420f5a60136f11981cdc593d96972d63e07898a57d1741dbb0411aa8a185d41
 ---
 
 BadUSB for the Cardputer with ducky script support and extra functionality

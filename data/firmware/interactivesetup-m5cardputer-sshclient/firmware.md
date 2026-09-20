@@ -20,6 +20,13 @@ sources:
 - field: popularity
   url: https://github.com/fernando-moretes/tool-m5cardputer-sshclient
   verified: '2026-09-04'
+- field: summary
+  url: https://github.com/fernando-moretes/tool-m5cardputer-sshclient
+  verified: '2026-09-20'
+summary: The firmware is an experimental SSH client for the M5Cardputer, targeting
+  embedded, IoT, and developer tooling use cases.
+readme_lang: pt
+readme_sha: 31bd824a48b86ff9128c14cc8d485e70eeebba2ec6f4c3dabe532e84e4b38b6d
 ---
 
 SSH Terminal with M5Cardputer with interactive setup for WiFi and SSH client

@@ -46,6 +46,15 @@ sources:
 - field: socs
   url: https://github.com/78/xiaozhi-esp32/blob/main/sdkconfig.defaults.esp32p4
   verified: '2026-09-10'
+- field: summary
+  url: https://github.com/78/xiaozhi-esp32
+  verified: '2026-09-20'
+summary: "XiaoZhi AI chatbot firmware for ESP32 devices enables voice\u2011interactive\
+  \ AI chat using large language models (e.g., Qwen, DeepSeek) via the MCP protocol,\
+  \ offering Wi\u2011Fi/4G networking, audio streaming, speaker recognition, display/emoji\
+  \ support, and multi\u2011board compatibility."
+readme_lang: en
+readme_sha: 5a9acd964cbd9db5c59c70cff989b1e211629cba251a7e526d8e63e3feefdc3a
 ---
 
 # XiaoZhi ESP32

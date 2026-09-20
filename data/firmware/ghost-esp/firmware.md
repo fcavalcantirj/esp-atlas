@@ -29,6 +29,14 @@ sources:
 - field: socs
   url: https://github.com/Spooks4576/Ghost_ESP/blob/main/.github/workflows/compile_all.yml
   verified: '2026-09-08'
+- field: summary
+  url: https://github.com/Spooks4576/Ghost_ESP
+  verified: '2026-09-20'
+summary: Ghost ESP is a firmware project that has been discontinued and archived,
+  with the author no longer maintaining it and inviting others to fork and continue
+  development.
+readme_lang: en
+readme_sha: 6eddf0f7db38558e2d510be34fae6ca2c7a70a96ec16bea2cce2bb95a44e3509
 ---
 
 Ghost ESP is a ESP32 Firmware that Revolutionizes the way we use ESP32 devices in a Pen Testing aspect

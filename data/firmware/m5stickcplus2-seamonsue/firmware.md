@@ -18,6 +18,14 @@ sources:
 - field: popularity
   url: https://github.com/hsbsbz/M5StickCPlus2-Seamonsue
   verified: '2026-09-01'
+- field: summary
+  url: https://github.com/hsbsbz/M5StickCPlus2-Seamonsue
+  verified: '2026-09-20'
+summary: A digital pet game for the M5StickC Plus2 where players raise arthropod-like
+  creatures by feeding, playing games, and cleaning, with various interactive screens
+  and button controls.
+readme_lang: en
+readme_sha: 505a40e1a0f06e66fdf1f2b87f5d03052a3fdc18ceafc0efaca1dabfa578b0f0
 ---
 
 for only stickc plus2

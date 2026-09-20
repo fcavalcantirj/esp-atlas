@@ -40,6 +40,15 @@ sources:
 - field: popularity
   url: https://github.com/Dlazder/m5_crystal_firmware
   verified: '2026-09-01'
+- field: summary
+  url: https://github.com/Dlazder/m5_crystal_firmware
+  verified: '2026-09-20'
+summary: "M5 Crystal is a multifunctional firmware for M5Stack devices that combines\
+  \ pentesting capabilities\u2014such as Wi\u2011Fi attacks, Bluetooth scanning, NFC\
+  \ read/write, IR control, and BadUSB\u2014with everyday utilities like file management,\
+  \ web server, and customizable settings, all presented in a multilingual interface."
+readme_lang: en
+readme_sha: 27c67119945fec7f74da27d8aa8b488106f314f096b3d9c3b4c47b00821482e3
 ---
 
 # M5 Crystal

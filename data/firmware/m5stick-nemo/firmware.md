@@ -36,6 +36,16 @@ sources:
 - field: popularity
   url: https://github.com/n0xa/m5stick-nemo
   verified: '2026-09-01'
+- field: summary
+  url: https://github.com/n0xa/m5stick-nemo
+  verified: '2026-09-20'
+summary: "M5Stick\u2011NEMO is firmware for M5Stack ESP32 devices (M5Stick\u2011C,\
+  \ Stick\u2011C\u2011Plus, Cardputer) that provides a menu\u2011driven suite of prank\
+  \ and security\u2011testing tools\u2014including BadUSB detection, BLE/Wi\u2011\
+  Fi attack hunters, TV\u2011B\u2011Gone IR control, Wi\u2011Fi spam, AppleJuice Bluetooth\
+  \ spam, and a captive portal that logs captured credentials."
+readme_lang: en
+readme_sha: 5bc0b136d8cb00edab16bfb13f598058fb63e384b4f9392ba30ea22481353925
 ---
 
 # M5Stick NEMO

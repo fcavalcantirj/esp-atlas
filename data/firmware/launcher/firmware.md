@@ -44,6 +44,15 @@ sources:
 - field: socs
   url: https://github.com/bmorcelli/Launcher/blob/main/boards/waveshare-esp32-s3-lcd-147/platformio.ini#L53
   verified: '2026-09-10'
+- field: summary
+  url: https://github.com/bmorcelli/Launcher
+  verified: '2026-09-20'
+summary: "Launcher is a firmware application launcher for ESP32\u2011based devices\
+  \ (such as M5Stack, Lilygo, SeeedStudio, Waveshare, CYD, Marauder, etc.) that enables\
+  \ users to install and manage binaries via OTA, SD card, or a Web UI, and provides\
+  \ file, partition, and configuration management tools."
+readme_lang: en
+readme_sha: c790b5ac2fd473978e275b3a66cfd5e53c86e0815cc60c28ce46b8c4da7098c7
 ---
 
 # Launcher
