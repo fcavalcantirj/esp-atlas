@@ -112,7 +112,11 @@ def backfill(firmware_dir=None, *, fetch_readme=default_fetch_readme, client=def
             unchanged.append(fid)
             continue
 
-        result = enrich_readme(readme, fm.get("name") or fid, client=client)
+        try:
+            result = enrich_readme(readme, fm.get("name") or fid, client=client)
+        except Exception as e:  # noqa: BLE001 — a rate-limit/transient must skip one, not abort the run (re-run is idempotent)
+            skipped.append((fid, f"enrichment error: {type(e).__name__}: {str(e)[:80]}"))
+            continue
         if not result.get("summary"):
             skipped.append((fid, "enrichment returned no usable summary"))
             continue
