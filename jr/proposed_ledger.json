@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-09-27T16:00:22.361927+00:00",
+      "expires": "2026-09-27T17:00:24.409925+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-20T16:00:22.361927+00:00"
+      "timestamp": "2026-09-20T17:00:24.409925+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -2497,6 +2497,16 @@
       "repo_id": 1238425634,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "enso": {
+      "expires": "2026-10-20T17:00:24.409925+00:00",
+      "id": "enso",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "oldtokage-collab/enso",
+      "repo_id": 1378312757,
+      "status": "rejected",
+      "timestamp": "2026-09-20T17:00:24.409925+00:00"
     },
     "epub-m5stack-paper-s3": {
       "expires": "2026-10-11T14:00:50.412232+00:00",
@@ -9833,6 +9843,7 @@
     "nw-lab/easyshortcutkey": "easyshortcutkey",
     "oceantroop/orca-one": "orca-one",
     "oldtokage-collab/c.p.s.--cardputer-syhnth--": "c-p-s-cardputer-syhnth",
+    "oldtokage-collab/enso": "enso",
     "oldtokage-collab/g-navigator": "g-navigator",
     "olekalek112233/web-browser-cardputer-adv": "web-browser-cardputer-adv",
     "oliverxing2025/candy-bricks": "candy-bricks",
