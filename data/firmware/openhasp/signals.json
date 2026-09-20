@@ -1,7 +1,7 @@
 {
  "calls": 13,
  "errors": 0,
- "fetched": "2026-09-10",
+ "fetched": "2026-09-20",
  "notes": [
   "latest release 0.7.0-rc13 has no binaries; read v0.6.3 instead"
  ],
