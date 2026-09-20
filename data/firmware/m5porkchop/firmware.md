@@ -12,8 +12,9 @@ capabilities:
 socs:
 - esp32-s3
 popularity:
-  stars: 846
-  as_of: '2026-09-01'
+  stars: 875
+  forks: 61
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/0ct0sec/M5PORKCHOP

@@ -14,9 +14,9 @@ socs:
 - esp32-s3
 - esp32-c6
 popularity:
-  stars: 425
-  forks: 93
-  as_of: '2026-09-02'
+  stars: 465
+  forks: 107
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/Sor3nt/Flipper-Zero-ESP32-Port

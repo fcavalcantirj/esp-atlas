@@ -24,8 +24,9 @@ requires:
     pipeline
   board_signal: radio-wifi
 popularity:
-  stars: 29534
-  as_of: '2026-09-01'
+  stars: 30089
+  forks: 7003
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/78/xiaozhi-esp32

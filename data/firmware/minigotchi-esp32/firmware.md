@@ -8,8 +8,9 @@ maintainer: dj1ch
 socs:
 - esp32
 popularity:
-  stars: 283
-  as_of: '2026-09-01'
+  stars: 292
+  forks: 25
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/dj1ch/minigotchi-ESP32

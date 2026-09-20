@@ -10,7 +10,7 @@ capabilities:
 popularity:
   stars: 348
   forks: 45
-  as_of: '2026-09-02'
+  as_of: '2026-09-20'
 socs:
 - esp32
 - esp32-s3

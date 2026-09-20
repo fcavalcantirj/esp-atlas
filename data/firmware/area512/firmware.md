@@ -17,7 +17,7 @@ maintainer: engneer-hamachan
 popularity:
   stars: 59
   forks: 6
-  as_of: '2026-09-19'
+  as_of: '2026-09-20'
 ---
 
 Admitted by jr/scorer.py rule authored.

@@ -9,7 +9,8 @@ socs:
 - esp32
 popularity:
   stars: 31
-  as_of: '2026-09-01'
+  forks: 3
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/hsbsbz/M5StickCPlus2-Seamonsue

@@ -32,8 +32,9 @@ not_required:
   why: fully configurable headless over its web UI; a screen is optional (some device
     templates add one)
 popularity:
-  stars: 24731
-  as_of: '2026-09-01'
+  stars: 24769
+  forks: 5183
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/arendst/Tasmota

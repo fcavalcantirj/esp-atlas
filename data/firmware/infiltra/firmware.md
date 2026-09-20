@@ -27,8 +27,9 @@ requires:
 not_required:
 - capability: psram
 popularity:
-  stars: 201
-  as_of: '2026-09-01'
+  stars: 204
+  forks: 15
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/D3CRYPT-1/Infiltra-Firmware

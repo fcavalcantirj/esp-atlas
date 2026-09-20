@@ -30,8 +30,9 @@ requires:
 not_required:
 - capability: psram
 popularity:
-  stars: 75
-  as_of: '2026-09-01'
+  stars: 84
+  forks: 3
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/Dlazder/m5_crystal_firmware

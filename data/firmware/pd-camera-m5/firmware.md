@@ -8,7 +8,7 @@ maintainer: abenokobo
 popularity:
   stars: 31
   forks: 3
-  as_of: '2026-09-02'
+  as_of: '2026-09-20'
 socs:
 - esp32-s3
 sources:

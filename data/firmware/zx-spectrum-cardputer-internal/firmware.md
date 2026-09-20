@@ -6,9 +6,9 @@ url: https://github.com/AndyAiCardputer/zx-spectrum-cardputer-external
 category: multi
 maintainer: andyaicardputer
 popularity:
-  stars: 48
+  stars: 49
   forks: 11
-  as_of: '2026-09-02'
+  as_of: '2026-09-20'
 socs:
 - esp32-s3
 sources:

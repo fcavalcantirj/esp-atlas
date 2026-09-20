@@ -24,8 +24,9 @@ requires:
   why: its whole purpose is showing mining/clock/global-stats screens
   board_signal: display
 popularity:
-  stars: 2785
-  as_of: '2026-09-01'
+  stars: 2795
+  forks: 637
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/BitMaker-hub/NerdMiner_v2

@@ -8,9 +8,9 @@ maintainer: laserir
 capabilities:
 - mesh
 popularity:
-  stars: 32
-  forks: 6
-  as_of: '2026-09-02'
+  stars: 37
+  forks: 7
+  as_of: '2026-09-20'
 socs:
 - esp32-s3
 sources:

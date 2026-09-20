@@ -8,9 +8,9 @@ maintainer: sky18dragon
 capabilities:
 - ble
 popularity:
-  stars: 31
-  forks: 8
-  as_of: '2026-09-02'
+  stars: 32
+  forks: 9
+  as_of: '2026-09-20'
 socs:
 - esp32-s3
 sources:

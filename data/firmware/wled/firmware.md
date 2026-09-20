@@ -37,8 +37,9 @@ not_required:
 - capability: ble
 - capability: storage
 popularity:
-  stars: 18620
-  as_of: '2026-09-01'
+  stars: 18691
+  forks: 4357
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/wled/WLED

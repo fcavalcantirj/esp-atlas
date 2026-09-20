@@ -9,7 +9,8 @@ socs:
 - esp32-s3
 popularity:
   stars: 81
-  as_of: '2026-09-01'
+  forks: 8
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/viniciusbo/m5-palnagotchi

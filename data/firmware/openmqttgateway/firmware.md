@@ -25,8 +25,9 @@ requires:
   why: the BLE-to-MQTT gateway build decodes ~100 BLE sensor types
   board_signal: radio-ble
 popularity:
-  stars: 4082
-  as_of: '2026-09-01'
+  stars: 4095
+  forks: 906
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/1technophile/OpenMQTTGateway

@@ -11,8 +11,9 @@ socs:
 - esp32-p4
 - esp32-s3
 popularity:
-  stars: 120
-  as_of: '2026-09-01'
+  stars: 146
+  forks: 37
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/ALLFATHER-BV/wadamesh

@@ -8,9 +8,9 @@ maintainer: haswitchplate
 capabilities:
 - mqtt
 popularity:
-  stars: 1012
-  forks: 291
-  as_of: '2026-09-02'
+  stars: 1020
+  forks: 293
+  as_of: '2026-09-20'
 socs:
 - esp32
 sources:

@@ -26,8 +26,9 @@ requires:
 not_required:
 - capability: psram
 popularity:
-  stars: 1300
-  as_of: '2026-09-01'
+  stars: 1306
+  forks: 206
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/n0xa/m5stick-nemo

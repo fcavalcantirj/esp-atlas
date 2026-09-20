@@ -21,9 +21,9 @@ capabilities:
 - mqtt
 - wifi
 popularity:
-  stars: 28
+  stars: 29
   forks: 3
-  as_of: '2026-09-19'
+  as_of: '2026-09-20'
 ---
 
 Admitted by jr/scorer.py rule authored.

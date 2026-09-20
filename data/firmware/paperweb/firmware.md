@@ -8,9 +8,9 @@ maintainer: artem76228
 capabilities:
 - wifi
 popularity:
-  stars: 27
+  stars: 28
   forks: 2
-  as_of: '2026-09-02'
+  as_of: '2026-09-20'
 socs:
 - esp32-s3
 sources:

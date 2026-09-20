@@ -19,7 +19,7 @@ capabilities:
 popularity:
   stars: 85
   forks: 10
-  as_of: '2026-09-19'
+  as_of: '2026-09-20'
 ---
 
 Admitted by jr/scorer.py rule authored.

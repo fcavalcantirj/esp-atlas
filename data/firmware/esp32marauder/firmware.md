@@ -33,8 +33,9 @@ not_required:
 - capability: lora
   why: no LoRa in its toolset
 popularity:
-  stars: 12192
-  as_of: '2026-09-01'
+  stars: 12411
+  forks: 1486
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/justcallmekoko/ESP32Marauder

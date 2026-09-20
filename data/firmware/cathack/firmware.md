@@ -15,8 +15,9 @@ capabilities:
 socs:
 - esp32
 popularity:
-  stars: 766
-  as_of: '2026-09-01'
+  stars: 768
+  forks: 37
+  as_of: '2026-09-20'
 sources:
 - field: category
   url: https://github.com/Stachugit/CatHack

@@ -24,8 +24,9 @@ not_required:
 - capability: psram
 - capability: storage
 popularity:
-  stars: 4
-  as_of: '2026-09-01'
+  stars: 6
+  forks: 1
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/M5RogueOps/M5StickS3-RogueDuck

@@ -17,7 +17,7 @@ maintainer: unkyulee
 popularity:
   stars: 955
   forks: 42
-  as_of: '2026-09-19'
+  as_of: '2026-09-20'
 ---
 
 Admitted by jr/scorer.py rule authored.

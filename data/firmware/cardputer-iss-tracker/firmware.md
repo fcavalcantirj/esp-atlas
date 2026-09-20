@@ -11,8 +11,9 @@ capabilities:
 socs:
 - esp32-s3
 popularity:
-  stars: 58
-  as_of: '2026-09-01'
+  stars: 60
+  forks: 3
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/adammelancon/cardputer-satellite-tracker

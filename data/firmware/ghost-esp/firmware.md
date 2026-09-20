@@ -17,7 +17,8 @@ socs:
 - esp32-s3
 popularity:
   stars: 1179
-  as_of: '2026-09-01'
+  forks: 231
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/Spooks4576/Ghost_ESP

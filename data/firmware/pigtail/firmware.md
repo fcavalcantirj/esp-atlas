@@ -6,8 +6,9 @@ url: https://github.com/benbaker76/Pigtail
 category: multi
 maintainer: benbaker76
 popularity:
-  stars: 52
-  as_of: '2026-09-01'
+  stars: 56
+  forks: 3
+  as_of: '2026-09-20'
 socs:
 - esp32-s3
 sources:

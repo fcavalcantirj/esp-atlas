@@ -9,8 +9,9 @@ socs:
 - esp32
 - esp32-s3
 popularity:
-  stars: 51
-  as_of: '2026-09-01'
+  stars: 52
+  forks: 15
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/mongonta0716/m5stack-avatar-mic

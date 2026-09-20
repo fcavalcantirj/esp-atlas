@@ -6,9 +6,9 @@ url: https://github.com/kisaragi-mochi/stackchan-mcp
 category: multi
 maintainer: kisaragi-mochi
 popularity:
-  stars: 124
-  forks: 54
-  as_of: '2026-09-02'
+  stars: 139
+  forks: 60
+  as_of: '2026-09-20'
 socs:
 - esp32-s3
 sources:

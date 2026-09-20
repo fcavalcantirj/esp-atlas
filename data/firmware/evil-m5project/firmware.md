@@ -8,8 +8,9 @@ socs:
 - esp32
 - esp32-s3
 popularity:
-  stars: 2564
-  as_of: '2026-09-01'
+  stars: 2647
+  forks: 250
+  as_of: '2026-09-20'
 sources:
 - field: github
   url: https://github.com/7h30th3r0n3/Evil-M5Project

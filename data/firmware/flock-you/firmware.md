@@ -17,9 +17,9 @@ maintainer: colonelpanichacks
 capabilities:
 - gps
 popularity:
-  stars: 1363
-  forks: 196
-  as_of: '2026-09-08'
+  stars: 1426
+  forks: 206
+  as_of: '2026-09-20'
 ---
 
 Admitted by jr/scorer.py rule authored.

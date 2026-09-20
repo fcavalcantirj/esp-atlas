@@ -31,8 +31,9 @@ not_required:
 - capability: wifi
   why: radios are irrelevant to the loader itself
 popularity:
-  stars: 2047
-  as_of: '2026-09-01'
+  stars: 2139
+  forks: 257
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/bmorcelli/Launcher

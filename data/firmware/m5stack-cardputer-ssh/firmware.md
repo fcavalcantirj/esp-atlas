@@ -17,7 +17,7 @@ maintainer: mangox0567
 popularity:
   stars: 59
   forks: 5
-  as_of: '2026-09-19'
+  as_of: '2026-09-20'
 ---
 
 Admitted by jr/scorer.py rule authored.

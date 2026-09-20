@@ -17,7 +17,7 @@ maintainer: urtubia
 popularity:
   stars: 108
   forks: 7
-  as_of: '2026-09-19'
+  as_of: '2026-09-20'
 ---
 
 Admitted by jr/scorer.py rule authored.

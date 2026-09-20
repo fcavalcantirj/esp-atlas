@@ -10,8 +10,9 @@ capabilities:
 socs:
 - esp32-s3
 popularity:
-  stars: 68
-  as_of: '2026-09-01'
+  stars: 71
+  forks: 1
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/sosprz/meshcore-cardputer-adv

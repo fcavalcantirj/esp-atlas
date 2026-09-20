@@ -8,8 +8,9 @@ maintainer: espressif
 socs:
 - esp32-s3
 popularity:
-  stars: 2069
-  as_of: '2026-09-01'
+  stars: 2163
+  forks: 462
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/espressif/esp-claw

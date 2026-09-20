@@ -20,8 +20,9 @@ requires:
     all need the SoC's native USB peripheral
   board_signal: native-usb
 popularity:
-  stars: 2877
-  as_of: '2026-09-01'
+  stars: 2916
+  forks: 282
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/i-am-shodan/USBArmyKnife

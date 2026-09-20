@@ -45,8 +45,9 @@ not_required:
 - capability: psram
   why: tool buffers fit SRAM
 popularity:
-  stars: 6639
-  as_of: '2026-09-04'
+  stars: 6789
+  forks: 2266
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/BruceDevices/firmware

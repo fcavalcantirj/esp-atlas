@@ -17,7 +17,7 @@ maintainer: marivaaldo
 popularity:
   stars: 55
   forks: 10
-  as_of: '2026-09-19'
+  as_of: '2026-09-20'
 ---
 
 Admitted by jr/scorer.py rule authored.

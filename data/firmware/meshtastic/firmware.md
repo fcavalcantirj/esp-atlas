@@ -38,8 +38,9 @@ not_required:
 - capability: display
   why: headless nodes are fine; a screen is optional
 popularity:
-  stars: 8240
-  as_of: '2026-09-01'
+  stars: 8318
+  forks: 2757
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/meshtastic/firmware

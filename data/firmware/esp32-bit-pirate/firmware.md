@@ -21,8 +21,9 @@ requires:
     radio
   board_signal: radio-wifi
 popularity:
-  stars: 5674
-  as_of: '2026-09-01'
+  stars: 5876
+  forks: 487
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/geo-tp/ESP32-Bit-Pirate

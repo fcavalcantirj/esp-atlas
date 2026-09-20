@@ -8,8 +8,9 @@ maintainer: volosr
 socs:
 - esp32-s3
 popularity:
-  stars: 76
-  as_of: '2026-09-01'
+  stars: 78
+  forks: 15
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/VolosR/M5Mp3

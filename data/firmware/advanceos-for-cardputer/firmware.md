@@ -11,8 +11,9 @@ capabilities:
 socs:
 - esp32-s3
 popularity:
-  stars: 89
-  as_of: '2026-09-01'
+  stars: 95
+  forks: 10
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/bomberman30/AdvanceOS-for-cardputer

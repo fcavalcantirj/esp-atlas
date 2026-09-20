@@ -6,9 +6,9 @@ url: https://github.com/wisnc/stellar-map
 category: multi
 maintainer: wisnc
 popularity:
-  stars: 68
+  stars: 69
   forks: 3
-  as_of: '2026-09-02'
+  as_of: '2026-09-20'
 socs:
 - esp32-s3
 sources:

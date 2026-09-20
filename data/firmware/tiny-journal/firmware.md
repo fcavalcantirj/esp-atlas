@@ -8,9 +8,9 @@ maintainer: joejee90
 capabilities:
 - ble
 popularity:
-  stars: 44
+  stars: 43
   forks: 4
-  as_of: '2026-09-02'
+  as_of: '2026-09-20'
 socs:
 - esp32-s3
 sources:

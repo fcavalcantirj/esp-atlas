@@ -9,9 +9,9 @@ license: MIT
 capabilities:
 - wifi
 popularity:
-  stars: 92445
-  forks: 12264
-  as_of: '2026-09-04'
+  stars: 94567
+  forks: 12520
+  as_of: '2026-09-20'
 socs:
 - esp32-s3
 - esp32-c6

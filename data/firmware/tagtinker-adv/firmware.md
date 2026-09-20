@@ -15,9 +15,9 @@ sources:
   verified: '2026-09-11'
 maintainer: i12bp8
 popularity:
-  stars: 29
+  stars: 44
   forks: 2
-  as_of: '2026-09-11'
+  as_of: '2026-09-20'
 ---
 
 Admitted by jr/scorer.py rule authored.

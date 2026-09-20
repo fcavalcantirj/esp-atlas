@@ -17,9 +17,9 @@ maintainer: kariagepompadour
 capabilities:
 - wifi
 popularity:
-  stars: 28
+  stars: 32
   forks: 3
-  as_of: '2026-09-11'
+  as_of: '2026-09-20'
 ---
 
 Admitted by jr/scorer.py rule authored.

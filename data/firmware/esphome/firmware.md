@@ -39,8 +39,9 @@ not_required:
     \ Inkplate-10, which ships 8MB PSRAM). PSRAM need depends on the board framebuffer\
     \ size, not the firmware"
 popularity:
-  stars: 11626
-  as_of: '2026-09-01'
+  stars: 11712
+  forks: 5641
+  as_of: '2026-09-20'
 sources:
 - field: '*'
   url: https://github.com/esphome/esphome
