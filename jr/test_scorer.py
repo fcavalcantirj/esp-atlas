@@ -565,3 +565,73 @@ def test_score_entry_generic_shared_word_alone_does_not_false_skip():
     result = score_entry(entry, repo_meta, set(), MARAUDER_CATALOGUED_TOKENS)
     assert result["decision"] == "authored"
     assert result["record"]["board"] == "m5cardputer"
+
+
+# ─────────── README body as lowest-priority board evidence (no_board_evidence gate fix) ───────────
+# Real case: GhostESP-Revival/GhostESP (994 stars) — name/description/README title carry no
+# catalogued device token, but the README BODY names cardputer/m5stack/cores3/cyd many times, so
+# score_entry() wrongly skipped it as no_board_evidence. device_from_text now also reads the
+# README body, but only as the LAST text tried (see device_map.device_from_text's docstring on
+# why per-text ordering is load-bearing: an earlier, more specific signal must never be
+# overridden by a later, more generic one).
+
+def _ghostesp_style_entry(name="GhostEsp", description="Wardriving and BLE/WiFi tool for ESP32.",
+                          github="https://github.com/GhostESP-Revival/GhostESP"):
+    return {"name": name, "description": description, "category": None, "github": github, "download": 500}
+
+
+def _ghostesp_style_repo_meta(full_name="GhostESP-Revival/GhostESP", description="Wardriving and BLE/WiFi tool for ESP32.",
+                              readme_title=None, readme_body=None):
+    return {"full_name": full_name, "fork": False, "source_full_name": None, "stars": 994,
+            "description": description, "readme_title": readme_title, "readme_body": readme_body}
+
+
+def test_score_entry_resolves_board_from_readme_body_when_nothing_earlier_names_one():
+    """GhostESP class: name/description/title carry no catalogued device token, only the README
+    BODY does (repeated mentions of cardputer/m5stack/cores3/cyd) — this must now resolve a
+    board and author, instead of skipping no_board_evidence."""
+    entry = _ghostesp_style_entry()
+    repo_meta = _ghostesp_style_repo_meta(
+        readme_body="## Supported Devices\n- Cardputer\n- CYD\n\nGhostEsp runs great on the Cardputer, "
+                    "with community support for CYD boards too.",
+    )
+    result = score_entry(entry, repo_meta, set(), set())
+    assert result["decision"] == "authored", f"expected authored via README body, got {result}"
+    assert result["record"]["board"] == "m5cardputer"
+
+
+def test_score_entry_still_no_board_evidence_when_body_also_names_nothing_catalogued():
+    """A generic ESP32 project whose name, description, README title AND body never name a
+    catalogued device must still be rejected — the body is one more place to look, not a
+    loosening of what counts as evidence."""
+    entry = _ghostesp_style_entry(name="Zzzuniq Wardrive Tool",
+                                  description="A generic ESP32 wardriving and packet-sniffing tool.",
+                                  github="https://github.com/someone/zzzuniq-wardrive")
+    repo_meta = _ghostesp_style_repo_meta(
+        full_name="someone/zzzuniq-wardrive",
+        description="A generic ESP32 wardriving and packet-sniffing tool.",
+        readme_body="## Overview\nRuns on any ESP32 dev board with 4MB flash. No specific hardware "
+                    "target required; wire up your own antenna and battery.",
+    )
+    result = score_entry(entry, repo_meta, set(), set())
+    assert result["decision"] == "skip"
+    assert "no_board_evidence" in result["reason"]
+
+
+def test_score_entry_name_board_still_wins_over_conflicting_readme_body():
+    """Name-authoritative ordering (device_map.device_from_text's core invariant) must survive
+    the new body source: this entry's OWN name says Core2, and the README body — describing the
+    whole repo's board support matrix — mentions CoreS3 many times. The entry's name must still
+    win; the body must never override an earlier, more specific signal."""
+    entry = _ghostesp_style_entry(name="MK75-Watch for Core2",
+                                  description="Open-source smartwatch software.",
+                                  github="https://github.com/someone/mk75-watch")
+    repo_meta = _ghostesp_style_repo_meta(
+        full_name="someone/mk75-watch",
+        description="Open-source smartwatch software.",
+        readme_body="## Supported Boards\nM5Stack CoreS3, M5Stack CoreS3, M5Stack CoreS3 are the "
+                    "primary target; Core2 support is legacy and may be dropped.",
+    )
+    result = score_entry(entry, repo_meta, set(), set())
+    assert result["decision"] == "authored"
+    assert result["record"]["board"] == "m5stack-core2"

@@ -107,15 +107,23 @@ def _readme_title(text: str | None) -> str | None:
     return None
 
 
+_README_BODY_CAP = 20000
+
+
 def default_fetch_meta(github_url: str) -> dict:
     """The real fetch_meta: repo API fields (tools.fetch_github_repo — full_name, fork, source,
-    stars, description, license) plus a readme_title extracted from tools.fetch_github_readme.
-    Two live network calls; only ever invoked on the bounded, prefiltered candidate set."""
+    stars, description, license) plus a readme_title extracted from tools.fetch_github_readme,
+    and the README body itself (capped to _README_BODY_CAP chars, to bound regex cost in
+    scorer.device_from_text) as the LOWEST-priority board-evidence text — see score_entry."""
     meta = tools.fetch_github_repo(github_url)
     if not meta or meta.get("error"):
         return meta
     meta = dict(meta)
-    meta["readme_title"] = _readme_title(tools.fetch_github_readme(github_url))
+    # Fetch enough of the README for board detection: support tables sit deep in long READMEs
+    # (GhostESP names its boards past char 11k), and fetch_github_readme defaults to only 3500.
+    readme = tools.fetch_github_readme(github_url, max_chars=_README_BODY_CAP)
+    meta["readme_title"] = _readme_title(readme)
+    meta["readme_body"] = readme or ""
     return meta
 
 

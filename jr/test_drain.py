@@ -655,6 +655,29 @@ def test_default_fetch_meta_combines_repo_and_readme(monkeypatch):
     assert meta["full_name"] == "someone/tool"
     assert meta["stars"] == 12
     assert meta["readme_title"] == "The Tool README"
+    assert meta["readme_body"] == "# The Tool README\nmore text"
+
+
+def test_default_fetch_meta_caps_readme_body_length(monkeypatch):
+    monkeypatch.setattr(tools, "fetch_github_repo",
+                        lambda url: {"full_name": "someone/tool", "fork": False, "stars": 12,
+                                    "description": "A tool.", "license": "MIT"})
+    monkeypatch.setattr(tools, "fetch_github_readme", lambda url: "x" * 30000)
+
+    meta = drain.default_fetch_meta("https://github.com/someone/tool")
+
+    assert len(meta["readme_body"]) == drain._README_BODY_CAP
+
+
+def test_default_fetch_meta_readme_body_empty_when_no_readme(monkeypatch):
+    monkeypatch.setattr(tools, "fetch_github_repo",
+                        lambda url: {"full_name": "someone/tool", "fork": False, "stars": 12,
+                                    "description": "A tool.", "license": "MIT"})
+    monkeypatch.setattr(tools, "fetch_github_readme", lambda url: None)
+
+    meta = drain.default_fetch_meta("https://github.com/someone/tool")
+
+    assert meta["readme_body"] == ""
 
 
 def test_default_fetch_meta_short_circuits_on_repo_error(monkeypatch):

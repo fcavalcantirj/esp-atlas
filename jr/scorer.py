@@ -190,7 +190,11 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
     or
       {"decision": "skip", "reason": "..."}
     `repo_meta` is the frozen GitHub API shape: {id, full_name, fork, source_full_name, stars,
-    description, license, readme_title, archived, ...}. `catalogued_repos`/`catalogued_tokens`
+    description, license, readme_title, readme_body, archived, ...}. `readme_body` (the fetched
+    README text, capped — see jr/drain.py's default_fetch_meta) is consulted for board evidence
+    ONLY, as the lowest-priority text after name/description/readme_title (device_from_text's own
+    docstring explains why the order is load-bearing) — it never feeds category/capability
+    classification. `catalogued_repos`/`catalogued_tokens`
     mirror tools._catalogued_repos_and_tokens() (dedup fingerprint of what's already in the
     atlas). `catalogued_ids` is an optional {repo_id: firmware_id} map — GitHub repo ids are
     stable across renames, so a repo the catalog knows under an old path (pr3y/Bruce, now
@@ -264,7 +268,8 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
         return {"decision": "skip",
                 "reason": f"stopword_name: {name.strip()!r} names a radio, not a firmware"}
 
-    board = device_from_text(name, repo_meta.get("description"), repo_meta.get("readme_title"))
+    board = device_from_text(name, repo_meta.get("description"), repo_meta.get("readme_title"),
+                             repo_meta.get("readme_body"))
     if not board:
         board = device_from_category(entry.get("category"))
     if not board and board_hint:
