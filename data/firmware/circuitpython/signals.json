@@ -1,7 +1,7 @@
 {
  "calls": 15,
  "errors": 0,
- "fetched": "2026-09-08",
+ "fetched": "2026-09-20",
  "notes": [
   "more than 10 workflows; kept the 10 named build/firmware/release/ci first"
  ],
