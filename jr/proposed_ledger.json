@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-09-26T23:00:11.351135+00:00",
+      "expires": "2026-09-27T00:00:12.870490+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-19T23:00:11.351135+00:00"
+      "timestamp": "2026-09-20T00:00:12.870490+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -5084,12 +5084,13 @@
       "timestamp": "2026-09-12T05:00:34.806916+00:00"
     },
     "m5stack-gw-catm-v3": {
+      "expired_at": "2026-09-20T00:00:12.870490+00:00",
       "expires": "2026-09-19T23:00:36.053237+00:00",
       "id": "m5stack-gw-catm-v3",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "sekdisorkf944sskixozad/m5stack_gw_catm_v3.git",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T23:00:36.053237+00:00"
     },
     "m5stack-image-viewer": {
@@ -7639,8 +7640,8 @@
       "pr_ref": null,
       "repo": "dagnazty/semi-evil-m5dial",
       "repo_id": 904506947,
-      "status": "proposed",
-      "timestamp": "2026-09-19T23:00:11.351135+00:00"
+      "status": "merged",
+      "timestamp": "2026-09-20T00:00:12.870490+00:00"
     },
     "sensecap-indicator-esp32": {
       "expires": "2026-10-19T18:00:53.079431+00:00",
