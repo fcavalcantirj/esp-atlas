@@ -310,10 +310,18 @@ def render_firmware(record: dict, sources: list[dict], today: str,
         fm["maintainer"] = record["maintainer"]
     if record.get("capabilities"):
         fm["capabilities"] = list(record["capabilities"])
-    if popularity and isinstance(popularity.get("stars"), int) and isinstance(popularity.get("forks"), int):
+    if popularity:
         # The dated snapshot SPEC-firmware-floor.md asks for, so scripts/firmware_floor_audit.py
         # enforces the floor on Jr's own records in CI, offline — the gate, not a reader, checks.
-        fm["popularity"] = {"stars": int(popularity["stars"]), "forks": int(popularity["forks"]), "as_of": today}
+        # Persist whatever signal is known; a missing forks count must not cost us the stars too.
+        pop_fm = {}
+        if isinstance(popularity.get("stars"), int):
+            pop_fm["stars"] = int(popularity["stars"])
+        if isinstance(popularity.get("forks"), int):
+            pop_fm["forks"] = int(popularity["forks"])
+        if pop_fm:
+            pop_fm["as_of"] = today
+            fm["popularity"] = pop_fm
     front = yaml.safe_dump(fm, sort_keys=False, default_flow_style=False).strip()
     detail = "needs_human" if needs_human else "authored"
     return f"---\n{front}\n---\n\nAdmitted by jr/scorer.py rule {detail}.\n"

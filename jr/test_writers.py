@@ -238,3 +238,36 @@ def test_merge_socs_verifies_its_rewrite_before_writing(tmp_path, monkeypatch):
     assert p.read_text() == FW_MD
     monkeypatch.setattr(writers, "_block_span", real)
     assert writers.merge_socs(p, ["esp32-s3"], RELEASE_PAGE, TODAY)
+
+
+FW_RECORD = {"id": "esp32marauder", "name": "ESP32Marauder", "url": FW_URL,
+             "category": "wifi", "chip": "esp32-s3"}
+FW_SOURCES = [{"field": "*", "url": FW_URL}]
+
+
+def _rendered_fm(text: str) -> dict:
+    return yaml.safe_load(text.split("---")[1])
+
+
+def test_render_firmware_stars_present_forks_none_writes_stars_and_as_of_no_forks():
+    """A missing forks_count must not cost the stars — the bug this fixes silently dropped the
+    whole popularity block whenever only one of the two signals was a known int."""
+    fm = _rendered_fm(writers.render_firmware(FW_RECORD, FW_SOURCES, TODAY,
+                                              popularity={"stars": 4200, "forks": None}))
+    assert fm["popularity"] == {"stars": 4200, "as_of": TODAY}
+    assert "forks" not in fm["popularity"]
+
+
+def test_render_firmware_both_present_writes_both():
+    fm = _rendered_fm(writers.render_firmware(FW_RECORD, FW_SOURCES, TODAY,
+                                              popularity={"stars": 4200, "forks": 512}))
+    assert fm["popularity"] == {"stars": 4200, "forks": 512, "as_of": TODAY}
+    assert list(fm["popularity"]) == ["stars", "forks", "as_of"]
+
+
+def test_render_firmware_neither_present_writes_no_popularity_block():
+    fm = _rendered_fm(writers.render_firmware(FW_RECORD, FW_SOURCES, TODAY,
+                                              popularity={"stars": None, "forks": None}))
+    assert "popularity" not in fm
+    fm2 = _rendered_fm(writers.render_firmware(FW_RECORD, FW_SOURCES, TODAY, popularity=None))
+    assert "popularity" not in fm2
