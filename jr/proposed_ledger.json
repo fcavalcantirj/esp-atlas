@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-09-27T14:00:18.752821+00:00",
+      "expires": "2026-09-27T15:00:20.676650+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-20T14:00:18.752821+00:00"
+      "timestamp": "2026-09-20T15:00:20.676650+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -1058,12 +1058,13 @@
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
     },
     "cardputer-adv-sport-companion": {
+      "expired_at": "2026-09-20T15:00:20.676650+00:00",
       "expires": "2026-09-20T14:00:40.612705+00:00",
       "id": "cardputer-adv-sport-companion",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "panpanweijie/cardputer-adv-sport-companion.git",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T14:00:40.612705+00:00"
     },
     "cardputer-adv-tracker": {
