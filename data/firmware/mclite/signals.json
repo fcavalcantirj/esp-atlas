@@ -1,7 +1,7 @@
 {
  "calls": 6,
  "errors": 0,
- "fetched": "2026-09-09",
+ "fetched": "2026-09-20",
  "notes": [],
  "ref": "main",
  "repo": "laserir/MCLite",
@@ -19,15 +19,15 @@
  "signals": [
   {
    "extra": {
-    "asset": "mclite-watch-v0.4.3.bin",
-    "release": "v0.4.3"
+    "asset": "mclite-watch-v0.4.4.bin",
+    "release": "v0.4.4"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "watch",
-   "url": "https://github.com/laserir/MCLite/releases/download/v0.4.3/mclite-watch-v0.4.3.bin"
+   "url": "https://github.com/laserir/MCLite/releases/download/v0.4.4/mclite-watch-v0.4.4.bin"
   },
   {
    "extra": {
