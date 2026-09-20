@@ -132,6 +132,12 @@ export interface Firmware {
   socs: string[];
   sources: SourceEntry[];
   popularity?: FirmwarePopularity | null;
+  /** Groq-generated grounded one-liner, cached on the record. */
+  summary?: string;
+  /** README source language code (e.g. "en", "ja"), as detected during enrichment. */
+  readme_lang?: string;
+  /** Cached English translation of the README -- present only when readme_lang isn't English. */
+  readme_en?: string;
 }
 
 export type RecipeStatus = "known-good" | "reported" | "unverified" | "broken";

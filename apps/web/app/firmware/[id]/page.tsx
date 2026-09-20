@@ -45,7 +45,7 @@ export default async function FirmwarePage({ params }: PageProps<"/firmware/[id]
   const [recipesResult, parts, readme] = await Promise.all([
     fetchRecipesForFirmware(id),
     fetchAllParts(),
-    fetchReadme(firmware.url),
+    firmware.readme_en ? Promise.resolve(null) : fetchReadme(firmware.url),
   ]);
   const recipes = recipesResult.status === "ok" ? recipesResult.data.results : [];
   return <FirmwareDetailView firmware={firmware} recipes={recipes} parts={parts} readme={readme} />;

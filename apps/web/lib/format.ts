@@ -180,6 +180,18 @@ export function runGuideBenefits(boards: RunGuideBoard[]): string[] {
   return [...labels];
 }
 
+// data/firmware/*/firmware.md `readme_lang` -- the language a README was
+// machine-translated from, named for the "machine-translated from X" marker.
+const README_LANGUAGE_NAME: Record<string, string> = {
+  ja: "Japanese",
+  zh: "Chinese",
+  ko: "Korean",
+};
+
+export function readmeLanguageName(code: string): string {
+  return README_LANGUAGE_NAME[code] ?? code;
+}
+
 export function firstSentence(text: string): string {
   const stripped = text.replace(/^#\s[^\n]*\n+/, "").replace(/\*\*/g, "").trim();
   const match = /^(.+?[.!?])(\s|$)/.exec(stripped.replace(/\s+/g, " "));
