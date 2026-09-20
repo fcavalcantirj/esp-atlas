@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-09-27T13:00:14.264065+00:00",
+      "expires": "2026-09-27T14:00:18.752821+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-20T13:00:14.264065+00:00"
+      "timestamp": "2026-09-20T14:00:18.752821+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -7061,12 +7061,13 @@
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "project": {
+      "expired_at": "2026-09-20T14:00:18.752821+00:00",
       "expires": "2026-09-20T13:00:33.517833+00:00",
       "id": "project",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "jaxson79541/project",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T13:00:33.517833+00:00"
     },
     "psychedelic-atoms3": {
