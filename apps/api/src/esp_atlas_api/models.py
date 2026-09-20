@@ -396,6 +396,15 @@ class ValidateResponse(BaseModel):
     kind: Optional[str] = None
 
 
+class Popularity(BaseModel):
+    """A firmware's cited popularity (data/firmware/<id>/firmware.md `popularity`),
+    sourced via a `sources` entry whose field is "popularity"."""
+
+    stars: Optional[int] = None
+    forks: Optional[int] = None
+    as_of: Optional[str] = None
+
+
 class FirmwareRecord(BaseModel):
     """A firmware record straight from data/firmware/<id>/firmware.md — see
     esp_atlas_core.firmware. First-class like a brand: never in /search, /wizard,
@@ -416,6 +425,7 @@ class FirmwareRecord(BaseModel):
     not_required: list[FirmwareNotRequired] = []
     socs: list[str]
     sources: list[SourceEntry]
+    popularity: Optional[Popularity] = None
 
 
 class FirmwareListResponse(BaseModel):

@@ -110,6 +110,14 @@ export interface BrandPage {
 
 /** GET /firmware, GET /firmware/{id}: a flashable project. First-class like a
  * brand — never in /search, /wizard, or the parts index. */
+/** A firmware's cited popularity (data/firmware/<id>/firmware.md `popularity`),
+ * sourced via a `sources` entry whose field is "popularity". */
+export interface FirmwarePopularity {
+  stars?: number | null;
+  forks?: number | null;
+  as_of?: string | null;
+}
+
 export interface Firmware {
   id: string;
   type: string;
@@ -123,6 +131,7 @@ export interface Firmware {
   capabilities: string[];
   socs: string[];
   sources: SourceEntry[];
+  popularity?: FirmwarePopularity | null;
 }
 
 export type RecipeStatus = "known-good" | "reported" | "unverified" | "broken";

@@ -525,6 +525,13 @@ def test_get_firmware_unknown_id_returns_404(client):
     assert r.status_code == 404
 
 
+def test_get_firmware_returns_cited_popularity(client):
+    r = client.get("/firmware/ai-stackchan2-readme")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["popularity"]["stars"] == 42
+
+
 def test_list_recipes_no_params_returns_all(client):
     r = client.get("/recipes")
     assert r.status_code == 200

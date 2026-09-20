@@ -1625,6 +1625,27 @@ input[type="checkbox"]:checked::after {
   margin-bottom: 1rem;
 }
 
+/* A cited fact (frontmatter `popularity`), not a generated summary -- tabular
+   monospace figures + the site's small-caps label treatment, deliberately
+   upright (never italic like .firmware-dek) so it reads as verified. */
+.firmware-popularity {
+  font-family: var(--font-data);
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  font-variant-caps: small-caps;
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: 1rem;
+}
+
+.firmware-popularity-figure {
+  font-variant-caps: normal;
+  text-transform: none;
+}
+
 .firmware-readme {
   margin-top: 2rem;
   padding-left: 1rem;

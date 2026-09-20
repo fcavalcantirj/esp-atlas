@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import Markdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize, { type Options as SanitizeSchema } from "rehype-sanitize";
 import JsonLd from "@/components/JsonLd";
 import RecipeGroupList from "@/components/RecipeGroupList";
 import TrackedLink from "@/components/TrackedLink";
@@ -22,6 +24,51 @@ import { firmwareGraph } from "@/lib/structured-data";
 const SPIKE_DEKS: Record<string, string> = {
   "ai-stackchan2-readme":
     "A ChatGPT-powered talking desktop companion for the M5Stack Core2 - hold a spoken conversation while a servo-driven face reacts, all configured from a built-in Wi-Fi web UI.",
+};
+
+// Conservative allowlist for the inline README's raw HTML (e.g. literal `<br>`
+// tags): formatting only, no script/style/iframe/event handlers/arbitrary
+// attributes. Paired with rehype-raw below -- see rehype-sanitize's docs on
+// why raw HTML always needs a sanitize pass behind it.
+const README_HTML_SCHEMA: SanitizeSchema = {
+  tagNames: [
+    "br",
+    "p",
+    "a",
+    "b",
+    "strong",
+    "i",
+    "em",
+    "code",
+    "pre",
+    "ul",
+    "ol",
+    "li",
+    "blockquote",
+    "hr",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "img",
+    "table",
+    "thead",
+    "tbody",
+    "tr",
+    "th",
+    "td",
+  ],
+  attributes: {
+    a: ["href", "title"],
+    img: ["src", "alt"],
+  },
+  protocols: {
+    href: ["http", "https", "mailto"],
+    src: ["http", "https"],
+  },
+  strip: ["script", "style", "iframe"],
 };
 
 function Chips({ values, on }: { values: string[]; on?: boolean }) {
@@ -86,6 +133,17 @@ export default function FirmwareDetailView({
           <p className="firmware-dek-marker muted">auto-summary</p>
         </>
       )}
+      {firmware.popularity?.stars != null && (
+        <p className="firmware-popularity">
+          <span className="firmware-popularity-figure">{firmware.popularity.stars}</span> stars
+          {firmware.popularity.forks != null && (
+            <>
+              {" · "}
+              <span className="firmware-popularity-figure">{firmware.popularity.forks}</span> forks
+            </>
+          )}
+        </p>
+      )}
       {details.length > 0 && (
         <section aria-label="Details">
           <dl className="spec-dl">
@@ -109,7 +167,7 @@ export default function FirmwareDetailView({
           </p>
           <div className="firmware-readme-collapse">
             <div className="firmware-readme-body">
-              <Markdown>{readme.markdown}</Markdown>
+              <Markdown rehypePlugins={[rehypeRaw, [rehypeSanitize, README_HTML_SCHEMA]]}>{readme.markdown}</Markdown>
             </div>
           </div>
           <p>
