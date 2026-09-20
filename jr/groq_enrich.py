@@ -20,7 +20,9 @@ import re
 import urllib.request
 
 GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODEL = "llama-3.3-70b-versatile"
+# Overridable via GROQ_MODEL; default is the strongest model enabled on Jr's key
+# (llama-3.3-70b-versatile is NOT provisioned — verified against /v1/models, 2026-09-20).
+MODEL = os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b")
 
 SYSTEM_PROMPT = (
     "You are EspAtlas Jr's README enrichment engine. You are given one firmware project's "
@@ -56,7 +58,8 @@ def default_client(system_prompt: str, user_prompt: str) -> str:  # pragma: no c
     }).encode("utf-8")
     req = urllib.request.Request(
         GROQ_CHAT_URL, data=payload, method="POST",
-        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json",
+                 "User-Agent": "esp-atlas-jr/0.1"},  # Cloudflare 403s the default Python-urllib UA
     )
     with urllib.request.urlopen(req, timeout=60) as r:
         data = json.loads(r.read().decode("utf-8"))
