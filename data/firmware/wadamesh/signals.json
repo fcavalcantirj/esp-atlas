@@ -1,7 +1,7 @@
 {
  "calls": 15,
  "errors": 0,
- "fetched": "2026-09-10",
+ "fetched": "2026-09-20",
  "notes": [],
  "ref": "main",
  "repo": "ALLFATHER-BV/wadamesh",
@@ -27,6 +27,7 @@
    "rak-tap-v2",
    "rak-tap-v2-merged",
    "rak_tap_v2",
+   "t-deck-pro",
    "tdeck-merged",
    "tdisplay-p4",
    "tdisplay-p4-lcd",
@@ -406,11 +407,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 15,
+   "line": 16,
    "rank": 2,
    "soc": null,
    "token": "heltec_v4",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L15"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L16"
   },
   {
    "extra": {
@@ -418,11 +419,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 236,
+   "line": 242,
    "rank": 2,
    "soc": null,
    "token": "heltec_v4_r8",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L236"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L242"
   },
   {
    "extra": {
@@ -430,11 +431,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 330,
+   "line": 336,
    "rank": 2,
    "soc": null,
    "token": "attaky_mesh_series",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L330"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L336"
   },
   {
    "extra": {
@@ -442,11 +443,23 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 516,
+   "line": 522,
    "rank": 2,
    "soc": null,
    "token": "t-deck",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L516"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L522"
+  },
+  {
+   "extra": {
+    "env": "LilyGo_TDeck_Pro_companion_radio_touch",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 705,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck-pro",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L705"
   },
   {
    "extra": {
@@ -454,11 +467,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 696,
+   "line": 886,
    "rank": 2,
    "soc": null,
    "token": "wio_tracker_l2",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L696"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L886"
   },
   {
    "extra": {
@@ -466,11 +479,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 856,
+   "line": 1046,
    "rank": 2,
    "soc": null,
    "token": "lilygo-t-lora-pager",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L856"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1046"
   },
   {
    "extra": {
@@ -478,11 +491,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1091,
+   "line": 1281,
    "rank": 2,
    "soc": null,
    "token": "lilygo-t-lora-pager",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1091"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1281"
   },
   {
    "extra": {
@@ -490,11 +503,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1311,
+   "line": 1501,
    "rank": 2,
    "soc": null,
    "token": "thinknode_m9",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1311"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1501"
   },
   {
    "extra": {
@@ -502,11 +515,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1578,
+   "line": 1768,
    "rank": 2,
    "soc": null,
    "token": "rak_tap_v2",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1578"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1768"
   }
  ]
 }
