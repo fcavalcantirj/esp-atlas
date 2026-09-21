@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import FirmwareCard from "@/components/FirmwareCard";
+import FirmwareBrowseList from "@/components/FirmwareBrowseList";
 import JsonLd from "@/components/JsonLd";
 import { fetchFirmwareList } from "@/lib/api-server";
-import { firmwareCategoryLabel } from "@/lib/format";
 import { OG_IMAGE, SITE_NAME } from "@/lib/site";
 import { firmwareIndexGraph } from "@/lib/structured-data";
 
@@ -16,15 +15,6 @@ export const revalidate = 300;
 const TITLE = "ESP32 firmware — what runs on what";
 const DESCRIPTION =
   "Every flashable ESP32 firmware project in the esp-atlas dataset — Marauder, NEMO, Launcher and more — cited to its own repo, with the boards it's verified to run on.";
-
-// SPEC-wizard.md's fixed category list, in that order; any other category the
-// data carries is appended after, alphabetically.
-const CATEGORY_ORDER = ["pentest", "mesh", "badusb", "display", "home", "multi"];
-
-function categoryRank(category: string): number {
-  const i = CATEGORY_ORDER.indexOf(category);
-  return i === -1 ? CATEGORY_ORDER.length : i;
-}
 
 export async function generateMetadata(): Promise<Metadata> {
   const result = await fetchFirmwareList();
@@ -41,11 +31,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function FirmwareIndexPage() {
   const result = await fetchFirmwareList();
+  // Already popularity-ranked by the API (D1) -- see SPEC-firmware-popularity.md §1.
   const firmware = result.status === "ok" ? result.data.results : [];
-  const categories = [...new Set(firmware.map((fw) => fw.category))].sort(
-    (a, b) => categoryRank(a) - categoryRank(b) || a.localeCompare(b),
-  );
-  const groups = categories.map((category) => ({ category, items: firmware.filter((fw) => fw.category === category) }));
 
   return (
     <main id="main" className="container container--wide" tabIndex={-1}>
@@ -58,21 +45,10 @@ export default async function FirmwareIndexPage() {
       <h1>Firmware</h1>
       <p className="lead">
         {firmware.length > 0
-          ? `${firmware.length} flashable firmware projects — open one to see the boards it's verified to run on.`
+          ? `${firmware.length} flashable firmware projects, ranked by GitHub popularity — open one to see the boards it's verified to run on.`
           : "The firmware list could not be loaded right now — try again in a moment."}
       </p>
-      {groups.map((group) => (
-        <section key={group.category} className="brand-group" aria-labelledby={`firmware-${group.category}`}>
-          <h2 id={`firmware-${group.category}`}>
-            {firmwareCategoryLabel(group.category)} ({group.items.length})
-          </h2>
-          <ul className="results-list">
-            {group.items.map((fw) => (
-              <FirmwareCard key={fw.id} firmware={fw} />
-            ))}
-          </ul>
-        </section>
-      ))}
+      {firmware.length > 0 && <FirmwareBrowseList firmware={firmware} />}
     </main>
   );
 }
