@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-09-27T21:00:33.575413+00:00",
+      "expires": "2026-09-28T01:00:40.535626+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-20T21:00:33.575413+00:00"
+      "timestamp": "2026-09-21T01:00:40.535626+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -165,14 +165,12 @@
       "timestamp": "2026-09-02T17:03:09.163173+00:00"
     },
     "advanceos-for-cardputer": {
-      "expires": "2026-10-07T21:12:07.418911+00:00",
       "id": "advanceos-for-cardputer",
-      "pr_ref": null,
-      "reason": "already_catalogued: bomberman30/advanceos-for-cardputer is already in the atlas",
+      "pr_ref": "#383",
       "repo": "bomberman30/advanceos-for-cardputer",
       "repo_id": 1099556447,
-      "status": "rejected",
-      "timestamp": "2026-09-07T21:12:07.418911+00:00"
+      "status": "merged",
+      "timestamp": "2026-09-21T01:00:40.535626+00:00"
     },
     "adversary": {
       "expires": "2026-10-12T00:00:11.345845+00:00",
@@ -286,14 +284,11 @@
       "timestamp": "2026-09-02T17:03:09.116135+00:00"
     },
     "ai-stackchan2-readme": {
-      "expires": "2026-10-13T14:00:40.612705+00:00",
       "id": "ai-stackchan2-readme",
-      "pr_ref": null,
-      "reason": "already_catalogued: robo8080/ai_stackchan2_readme is already in the atlas",
+      "pr_ref": "#383",
       "repo": "robo8080/ai_stackchan2_readme",
-      "repo_id": 645739110,
-      "status": "rejected",
-      "timestamp": "2026-09-13T14:00:40.612705+00:00"
+      "status": "merged",
+      "timestamp": "2026-09-21T01:00:40.535626+00:00"
     },
     "aiflow": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
