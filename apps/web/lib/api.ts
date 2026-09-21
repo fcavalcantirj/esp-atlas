@@ -218,6 +218,9 @@ export interface FirmwareExample {
   description?: string;
   firmware: string;
   count: number;
+  /** Carried through from the firmware's own `popularity` (SPEC-firmware-popularity.md §3.B). */
+  stars?: number | null;
+  forks?: number | null;
 }
 
 export interface NeedsExample {

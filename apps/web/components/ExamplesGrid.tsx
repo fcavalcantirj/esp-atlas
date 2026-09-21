@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import PopularityGlance from "@/components/PopularityGlance";
 import { track } from "@/lib/analytics";
 import type { Example, ExampleGroup } from "@/lib/api";
 import { countLabel, explainNeeds } from "@/lib/need-labels";
+import { revealCountLabel } from "@/lib/reveal";
 import { exampleHref, SHELF_SEE_ALL } from "@/lib/routes";
+import { useReveal } from "@/lib/use-reveal";
 
 // The three soft shelves of SPEC-home-explorer §2, in the order the home shows
 // them. Which shelf an example belongs to is decided by the API (its `group`),
@@ -25,18 +28,20 @@ const GROUPS: { id: ExampleGroup; title: string; hint: string }[] = [
   { id: "just-show-me", title: "Just show me", hint: "Browse by the specs people actually ask for." },
 ];
 
-function ExampleCard({ example }: { example: Example }) {
+function ExampleCard({ example, hidden = false }: { example: Example; hidden?: boolean }) {
   const href = exampleHref(example);
   const onClick = () => track("example_click", { example: example.id, kind: example.kind });
+  const className = hidden ? "example-card is-hidden" : "example-card";
 
   if (example.kind === "firmware") {
     return (
-      <Link href={href} className="example-card" onClick={onClick}>
+      <Link href={href} className={className} onClick={onClick}>
         <span className="example-card-label">{example.label}</span>
         {example.description && <span className="example-card-desc">{example.description}</span>}
         <span className="example-card-reason">
           Runs on {example.count} {example.count === 1 ? "board" : "boards"}
         </span>
+        <PopularityGlance popularity={{ stars: example.stars, forks: example.forks }} />
       </Link>
     );
   }
@@ -56,7 +61,17 @@ function ExampleCard({ example }: { example: Example }) {
   );
 }
 
+// The API's run-firmware examples already cover the whole catalog, popularity
+// ranked (esp_atlas_core.examples._firmware_examples — every firmware has
+// >=1 recipe). SPEC-firmware-popularity.md §1/D4 makes this shelf the same
+// full ranked/paginated browse as /firmware, not a curated teaser; the other
+// two shelves are small fixed candidate lists and stay fully rendered.
+const RUN_FIRMWARE: ExampleGroup = "run-firmware";
+
 export default function ExamplesGrid({ examples }: { examples: Example[] }) {
+  const firmwareCount = examples.filter((e) => e.group === RUN_FIRMWARE).length;
+  const { revealed, hasMore, showMore } = useReveal(firmwareCount);
+
   if (examples.length === 0) return null;
 
   return (
@@ -65,6 +80,7 @@ export default function ExamplesGrid({ examples }: { examples: Example[] }) {
         const inGroup = examples.filter((e) => e.group === group.id);
         if (inGroup.length === 0) return null;
         const seeAll = SHELF_SEE_ALL[group.id];
+        const isFirmwareShelf = group.id === RUN_FIRMWARE;
         return (
           <section className="example-group" key={group.id} aria-labelledby={`examples-${group.id}`}>
             <div className="example-group-head">
@@ -81,10 +97,20 @@ export default function ExamplesGrid({ examples }: { examples: Example[] }) {
             </div>
             <p className="example-group-hint">{group.hint}</p>
             <div className="example-grid">
-              {inGroup.map((example) => (
-                <ExampleCard key={example.id} example={example} />
+              {inGroup.map((example, i) => (
+                <ExampleCard key={example.id} example={example} hidden={isFirmwareShelf && i >= revealed} />
               ))}
             </div>
+            {isFirmwareShelf && (
+              <div className="reveal-footer">
+                <p className="reveal-count">{revealCountLabel(revealed, inGroup.length)}</p>
+                {hasMore && (
+                  <button type="button" className="btn" onClick={showMore}>
+                    Show more
+                  </button>
+                )}
+              </div>
+            )}
           </section>
         );
       })}
