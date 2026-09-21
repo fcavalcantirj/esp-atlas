@@ -58,7 +58,7 @@ export default async function Home() {
     <main id="main" className="container container--wide" tabIndex={-1}>
       <JsonLd data={homeGraph()} />
       <div className="home-intro">
-        <h1>What do you want to build?</h1>
+        <h1>What do you want to build with ESP32?</h1>
         <p>
           Every ESP32 SoC, module and dev board in one place, every spec cited to an official datasheet. Say what you
           want to build or run and get the parts that fit — nothing guessed, nothing invented.

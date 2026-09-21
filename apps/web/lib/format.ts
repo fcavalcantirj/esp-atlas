@@ -1,5 +1,5 @@
 // Display-only formatting of record fields. No decisions, no ranking — just labels.
-import type { PartRecord, RunGuideBoard } from "@/lib/api";
+import type { Firmware, PartRecord, RunGuideBoard } from "@/lib/api";
 
 export function typeLabel(type: string): string {
   switch (type) {
@@ -96,6 +96,20 @@ const FIRMWARE_CATEGORY_LABEL: Record<string, string> = {
 
 export function firmwareCategoryLabel(category: string): string {
   return FIRMWARE_CATEGORY_LABEL[category] ?? category;
+}
+
+/**
+ * Meta/JSON-LD description for a firmware: its Groq-grounded one-liner
+ * (`summary`) when the enrichment pipeline has produced one, else the
+ * category/maintainer/socs template. Shared by the firmware page's
+ * generateMetadata and structured-data.ts's SoftwareApplication node so the
+ * two never drift.
+ */
+export function firmwareMetaDescription(firmware: Pick<Firmware, "name" | "category" | "maintainer" | "socs" | "summary">): string {
+  if (firmware.summary) return firmware.summary;
+  return `${firmware.name}: ${firmwareCategoryLabel(firmware.category)} firmware${
+    firmware.maintainer ? ` maintained by ${firmware.maintainer}` : ""
+  } for ${firmware.socs.join(", ") || "ESP32"} — see the boards it's verified to run on.`;
 }
 
 export function priceTierShort(tier: string | null | undefined): string | null {
