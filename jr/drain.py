@@ -110,11 +110,18 @@ def _readme_title(text: str | None) -> str | None:
 _README_BODY_CAP = 20000
 
 
+_LIBRARY_MANIFEST_FILES = ("library.properties", "library.json")
+
+
 def default_fetch_meta(github_url: str) -> dict:
     """The real fetch_meta: repo API fields (tools.fetch_github_repo — full_name, fork, source,
     stars, description, license) plus a readme_title extracted from tools.fetch_github_readme,
-    and the README body itself (capped to _README_BODY_CAP chars, to bound regex cost in
-    scorer.device_from_text) as the LOWEST-priority board-evidence text — see score_entry."""
+    the README body itself (capped to _README_BODY_CAP chars, to bound regex cost in
+    scorer.device_from_text) as the LOWEST-priority board-evidence text — see score_entry — and
+    has_library_manifest: whether the repo root ships an Arduino/PlatformIO library.properties or
+    library.json (scorer's strongest library-vs-firmware signal, since a library's own
+    description doesn't always self-identify — e.g. m5ez/m5ez). At most those two cheap
+    `gh api .../contents/<file>` existence checks; the second is skipped once the first hits."""
     meta = tools.fetch_github_repo(github_url)
     if not meta or meta.get("error"):
         return meta
@@ -124,6 +131,8 @@ def default_fetch_meta(github_url: str) -> dict:
     readme = tools.fetch_github_readme(github_url, max_chars=_README_BODY_CAP)
     meta["readme_title"] = _readme_title(readme)
     meta["readme_body"] = (readme or "")[:_README_BODY_CAP]
+    meta["has_library_manifest"] = any(tools.github_file_exists(github_url, f)
+                                       for f in _LIBRARY_MANIFEST_FILES)
     return meta
 
 

@@ -852,6 +852,29 @@ def test_fetch_github_repo_leaves_fork_fields_none_for_a_non_fork(monkeypatch):
     assert meta["parent_full_name"] is None
 
 
+def test_github_file_exists_true_when_gh_api_returns_zero(monkeypatch):
+    """gh api repos/OWNER/REPO/contents/FILE exits 0 (HTTP 200) when the file is present."""
+    import subprocess as _sp
+
+    monkeypatch.setattr(_sp, "run", lambda *a, **k: type(
+        "R", (), {"returncode": 0, "stdout": "{}", "stderr": ""})())
+
+    assert tools.github_file_exists("https://github.com/m5ez/m5ez", "library.properties") is True
+
+
+def test_github_file_exists_false_on_404(monkeypatch):
+    import subprocess as _sp
+
+    monkeypatch.setattr(_sp, "run", lambda *a, **k: type(
+        "R", (), {"returncode": 1, "stdout": "", "stderr": "gh: Not Found (HTTP 404)"})())
+
+    assert tools.github_file_exists("https://github.com/someone/tool", "library.properties") is False
+
+
+def test_github_file_exists_false_for_malformed_url():
+    assert tools.github_file_exists("not-a-url", "library.properties") is False
+
+
 def test_board_soc_inherits_from_the_module_when_the_board_states_none():
     """Espressif's reference devkits declare `module:` and no `soc:`. Reading only the direct
     field returned None for five of them, and because author_firmware_and_recipes filters boards

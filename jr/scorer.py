@@ -111,6 +111,57 @@ NOISE_TOKENS = ("doom", "gameboy", "game boy", "emulator", "tetris", "pacman", "
 STOPWORD_TOKENS = frozenset({"wifi", "wi-fi", "ble", "bluetooth", "rfid", "nfc", "lora", "lorawan",
                              "zigbee", "sub-ghz", "subghz", "gps", "mqtt", "usb", "radio", "wireless"})
 
+# Only flashable device firmware is admitted — not software libraries, drivers, frameworks,
+# board-support packages, or demos/examples (SPEC: library/demo filter). The recent README-body
+# board detection (device_from_text now also reads readme_body) started letting board-naming
+# LIBRARIES pass no_board_evidence — real repos: lovyan03/LovyanGFX, m5ez/m5ez,
+# russhughes/ili9342c_mpy, nopnop2002/esp-idf-mpu6050-dmp. Three signals, checked in order:
+#   1. LIBRARY_MANIFEST — an Arduino/PlatformIO library.properties or library.json at the repo
+#      root (jr/drain.py's default_fetch_meta -> meta["has_library_manifest"]). Strongest signal:
+#      catches a library whose description doesn't self-identify (m5ez's is "Complete interface
+#      builder for the M5Stack", no giveaway word — but it ships both manifest files).
+#   2. LIBRARY_TOPICS — a GitHub topic that IS a library/framework/driver/BSP claim.
+#   3. LIBRARY_DEMO_KEYWORD_RE — a whole-word match in description/readme_title. Word-boundary
+#      matched so firmware named "M5Tool" or described as an anti-tracking "tool" is NEVER
+#      caught — "tool" is deliberately absent from this set.
+LIBRARY_TOPICS = frozenset({"library", "arduino-library", "platformio-library",
+                            "micropython-library", "framework", "driver",
+                            "esp-idf-component", "bsp"})
+_LIBRARY_DEMO_KEYWORDS = ("library", "driver", "framework", "wrapper", "binding", "sdk", "codec",
+                          "shim", "demo", "example", "examples", "sample")
+_LIBRARY_DEMO_PHRASES = ("board support package",)
+LIBRARY_DEMO_KEYWORD_RE = re.compile(
+    r"\b(?:" + "|".join(re.escape(k) for k in _LIBRARY_DEMO_KEYWORDS) + r")\b", re.IGNORECASE)
+
+
+def _library_or_demo_reason(repo_meta: dict, entry_description: str | None) -> str | None:
+    """Returns a `library_or_demo_not_firmware: ...` skip reason, or None when nothing about
+    this repo signals a library/framework/driver/BSP/demo rather than flashable firmware."""
+    if repo_meta.get("has_library_manifest"):
+        return ("library_or_demo_not_firmware: repo root has an Arduino/PlatformIO "
+                "library.properties or library.json manifest")
+    topics = {str(t).lower() for t in (repo_meta.get("topics") or [])}
+    hit_topics = topics & LIBRARY_TOPICS
+    if hit_topics:
+        return f"library_or_demo_not_firmware: GitHub topics match {sorted(hit_topics)}"
+    # The catalog SUBMITTER's own description + the repo's own README heading — deliberately NOT
+    # repo_meta["description"] (the raw GitHub API description): M5Stack's own official
+    # "M5Dial-UserDemo" factory firmware and "m5stack_matter_examples" both carry a GitHub
+    # description containing "demo"/"examples" while being genuine flashable firmware (the same
+    # false-skip class NOISE_TOKENS above was narrowed to avoid) — the submitter's description
+    # and the README title are the more reliable, author-controlled text for this signal.
+    pool = " ".join(t for t in (entry_description, repo_meta.get("readme_title")) if t)
+    if pool:
+        match = LIBRARY_DEMO_KEYWORD_RE.search(pool)
+        if match:
+            return f"library_or_demo_not_firmware: matched keyword {match.group(0)!r}"
+        pool_low = pool.lower()
+        for phrase in _LIBRARY_DEMO_PHRASES:
+            if phrase in pool_low:
+                return f"library_or_demo_not_firmware: matched phrase {phrase!r}"
+    return None
+
+
 # Admission of a high-star repo is a human decision, never an automatic author: a >5,000-star
 # project with almost no launcher downloads (< 200) is either a mismatch, a rename, or
 # something with blast radius (RuView: 92k stars). The record is still derived (so the human
@@ -267,6 +318,10 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
     if not (significant - STOPWORD_TOKENS):
         return {"decision": "skip",
                 "reason": f"stopword_name: {name.strip()!r} names a radio, not a firmware"}
+
+    library_reason = _library_or_demo_reason(repo_meta, entry.get("description"))
+    if library_reason:
+        return {"decision": "skip", "reason": library_reason}
 
     board = device_from_text(name, repo_meta.get("description"), repo_meta.get("readme_title"),
                              repo_meta.get("readme_body"))

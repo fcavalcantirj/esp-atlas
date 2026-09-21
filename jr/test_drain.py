@@ -649,6 +649,7 @@ def test_default_fetch_meta_combines_repo_and_readme(monkeypatch):
                         lambda url: {"full_name": "someone/tool", "fork": False, "stars": 12,
                                     "description": "A tool.", "license": "MIT"})
     monkeypatch.setattr(tools, "fetch_github_readme", lambda url, max_chars=None: "# The Tool README\nmore text")
+    monkeypatch.setattr(tools, "github_file_exists", lambda url, path: False)
 
     meta = drain.default_fetch_meta("https://github.com/someone/tool")
 
@@ -656,6 +657,7 @@ def test_default_fetch_meta_combines_repo_and_readme(monkeypatch):
     assert meta["stars"] == 12
     assert meta["readme_title"] == "The Tool README"
     assert meta["readme_body"] == "# The Tool README\nmore text"
+    assert meta["has_library_manifest"] is False
 
 
 def test_default_fetch_meta_caps_readme_body_length(monkeypatch):
@@ -663,6 +665,7 @@ def test_default_fetch_meta_caps_readme_body_length(monkeypatch):
                         lambda url: {"full_name": "someone/tool", "fork": False, "stars": 12,
                                     "description": "A tool.", "license": "MIT"})
     monkeypatch.setattr(tools, "fetch_github_readme", lambda url, max_chars=None: "x" * 30000)
+    monkeypatch.setattr(tools, "github_file_exists", lambda url, path: False)
 
     meta = drain.default_fetch_meta("https://github.com/someone/tool")
 
@@ -674,6 +677,7 @@ def test_default_fetch_meta_readme_body_empty_when_no_readme(monkeypatch):
                         lambda url: {"full_name": "someone/tool", "fork": False, "stars": 12,
                                     "description": "A tool.", "license": "MIT"})
     monkeypatch.setattr(tools, "fetch_github_readme", lambda url, max_chars=None: None)
+    monkeypatch.setattr(tools, "github_file_exists", lambda url, path: False)
 
     meta = drain.default_fetch_meta("https://github.com/someone/tool")
 
@@ -684,10 +688,44 @@ def test_default_fetch_meta_short_circuits_on_repo_error(monkeypatch):
     monkeypatch.setattr(tools, "fetch_github_repo", lambda url: {"error": "404"})
     monkeypatch.setattr(tools, "fetch_github_readme",
                         lambda url, max_chars=None: pytest.fail("fetch_github_readme must not be called after a repo error"))
+    monkeypatch.setattr(tools, "github_file_exists",
+                        lambda url, path: pytest.fail("github_file_exists must not be called after a repo error"))
 
     meta = drain.default_fetch_meta("https://github.com/ghost/dead")
 
     assert meta == {"error": "404"}
+
+
+def test_default_fetch_meta_sets_has_library_manifest_true_when_present(monkeypatch):
+    """m5ez/m5ez class: description alone doesn't self-identify as a library, but the repo root
+    ships library.properties + library.json — the manifest probe is the strongest signal."""
+    monkeypatch.setattr(tools, "fetch_github_repo",
+                        lambda url: {"full_name": "m5ez/m5ez", "fork": False, "stars": 200,
+                                    "description": "Complete interface builder for the M5Stack"})
+    monkeypatch.setattr(tools, "fetch_github_readme", lambda url, max_chars=None: "# m5ez")
+    monkeypatch.setattr(tools, "github_file_exists", lambda url, path: path == "library.properties")
+
+    meta = drain.default_fetch_meta("https://github.com/m5ez/m5ez")
+
+    assert meta["has_library_manifest"] is True
+
+
+def test_default_fetch_meta_checks_at_most_the_two_manifest_files(monkeypatch):
+    monkeypatch.setattr(tools, "fetch_github_repo",
+                        lambda url: {"full_name": "someone/tool", "fork": False, "stars": 12,
+                                    "description": "A tool."})
+    monkeypatch.setattr(tools, "fetch_github_readme", lambda url, max_chars=None: "# Tool")
+    checked = []
+
+    def fake_exists(url, path):
+        checked.append(path)
+        return False
+    monkeypatch.setattr(tools, "github_file_exists", fake_exists)
+
+    drain.default_fetch_meta("https://github.com/someone/tool")
+
+    assert set(checked) <= {"library.properties", "library.json"}
+    assert len(checked) <= 2
 
 
 # ─────────────────────────── run_drain (full pipeline, mocked I/O) ───────────────────────────

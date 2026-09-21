@@ -300,6 +300,20 @@ def fetch_github_readme(url: str, max_chars: int = 3500) -> str:
         return ""
 
 
+def github_file_exists(url: str, path: str) -> bool:
+    """True iff `path` exists at the repo root — a cheap `gh api repos/OWNER/REPO/contents/PATH`
+    existence probe (no content is read/decoded). Used by scorer's library-manifest check
+    (library.properties/library.json) to catch a library whose description doesn't self-identify.
+    False on 404, a malformed url, or any other gh error — absence is the safe default."""
+    parts = url.rstrip("/").replace("https://github.com/", "").split("/")
+    if len(parts) < 2:
+        return False
+    owner, repo = parts[0], parts[1]
+    p = subprocess.run(["gh", "api", f"repos/{owner}/{repo}/contents/{path}"],
+                       capture_output=True, text=True, timeout=30)
+    return p.returncode == 0
+
+
 def author_firmware_record(
     firmware_id: str, name: str, url: str, category: str,
     socs: list[str], sources: list[dict], body: str,

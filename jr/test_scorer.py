@@ -635,3 +635,110 @@ def test_score_entry_name_board_still_wins_over_conflicting_readme_body():
     result = score_entry(entry, repo_meta, set(), set())
     assert result["decision"] == "authored"
     assert result["record"]["board"] == "m5stack-core2"
+
+
+# ─── library/demo filter: only flashable device firmware is admitted, not libraries/demos ───
+# Real repos that pass no_board_evidence via README-body board detection (device_from_text now
+# reads the body) but are libraries, not firmware: lovyan03/LovyanGFX, m5ez/m5ez,
+# russhughes/ili9342c_mpy, nopnop2002/esp-idf-mpu6050-dmp. Checked BEFORE board detection so these
+# are rejected as library_or_demo_not_firmware, not routed through to a board match.
+
+def _lib_style_entry(name="LovyanGFX", description="Graphics library for embedded devices.",
+                     github="https://github.com/lovyan03/LovyanGFX"):
+    return {"name": name, "description": description, "category": None, "github": github, "download": 500}
+
+
+def _lib_style_repo_meta(full_name="lovyan03/LovyanGFX", description="Graphics library for embedded devices.",
+                         readme_title=None, readme_body=None, topics=None, has_library_manifest=False):
+    return {"full_name": full_name, "fork": False, "source_full_name": None, "stars": 994,
+            "description": description, "readme_title": readme_title, "readme_body": readme_body,
+            "topics": topics or [], "has_library_manifest": has_library_manifest}
+
+
+def test_score_entry_rejects_repo_with_library_properties_manifest():
+    """m5ez/m5ez class: description is 'Complete interface builder for the M5Stack' (no
+    self-identifying keyword) but the repo root ships library.properties + library.json — the
+    manifest is the strongest signal, checked regardless of description wording."""
+    entry = _lib_style_entry(name="m5ez", description="Complete interface builder for the M5Stack",
+                             github="https://github.com/m5ez/m5ez")
+    repo_meta = _lib_style_repo_meta(full_name="m5ez/m5ez",
+                                     description="Complete interface builder for the M5Stack",
+                                     readme_body="## Supported\nCardputer, M5Stack Core2, CoreS3",
+                                     has_library_manifest=True)
+    result = score_entry(entry, repo_meta, set(), set())
+    assert result["decision"] == "skip"
+    assert "library_or_demo_not_firmware" in result["reason"]
+
+
+def test_score_entry_rejects_repo_carrying_a_library_topic():
+    """russhughes/ili9342c_mpy class: no manifest file check needed — a `micropython-library`
+    GitHub topic is itself sufficient evidence."""
+    entry = _lib_style_entry(name="ili9342c_mpy", description="MicroPython driver for ili9342c displays",
+                             github="https://github.com/russhughes/ili9342c_mpy")
+    repo_meta = _lib_style_repo_meta(full_name="russhughes/ili9342c_mpy",
+                                     description="MicroPython driver for ili9342c displays",
+                                     readme_body="## Supported boards\nCYD, M5Stack CoreS3",
+                                     topics=["micropython-library", "esp32"])
+    result = score_entry(entry, repo_meta, set(), set())
+    assert result["decision"] == "skip"
+    assert "library_or_demo_not_firmware" in result["reason"]
+
+
+def test_score_entry_rejects_description_matching_demo_keyword():
+    """nopnop2002/esp-idf-mpu6050-dmp class: description self-identifies as a demo."""
+    entry = _lib_style_entry(name="esp-idf-mpu6050-dmp", description="A demo showing the pose of MPU6050",
+                             github="https://github.com/nopnop2002/esp-idf-mpu6050-dmp")
+    repo_meta = _lib_style_repo_meta(full_name="nopnop2002/esp-idf-mpu6050-dmp",
+                                     description="A demo showing the pose of MPU6050",
+                                     readme_body="## Supported boards\nM5Stack Core2")
+    result = score_entry(entry, repo_meta, set(), set())
+    assert result["decision"] == "skip"
+    assert "library_or_demo_not_firmware" in result["reason"]
+
+
+def test_score_entry_rejects_readme_title_matching_library_keyword():
+    entry = _lib_style_entry(name="SomeTool", description=None,
+                             github="https://github.com/someone/some-driver-tool")
+    repo_meta = _lib_style_repo_meta(full_name="someone/some-driver-tool", description=None,
+                                     readme_title="A wrapper library for the SSD1306 driver",
+                                     readme_body="## Supported boards\nCardputer")
+    result = score_entry(entry, repo_meta, set(), set())
+    assert result["decision"] == "skip"
+    assert "library_or_demo_not_firmware" in result["reason"]
+
+
+def test_score_entry_rejects_board_support_package_phrase():
+    entry = _lib_style_entry(name="M5StackBSP", description="Board support package for M5Stack devices",
+                             github="https://github.com/someone/m5stack-bsp")
+    repo_meta = _lib_style_repo_meta(full_name="someone/m5stack-bsp",
+                                     description="Board support package for M5Stack devices",
+                                     readme_body="## Supported boards\nCore2, CoreS3")
+    result = score_entry(entry, repo_meta, set(), set())
+    assert result["decision"] == "skip"
+    assert "library_or_demo_not_firmware" in result["reason"]
+
+
+def test_score_entry_tool_keyword_is_never_caught_as_a_library():
+    """'tool' must NOT be in the reject keyword set — firmware named M5Tool or described as an
+    anti-tracking tool is real firmware, not a library/demo."""
+    entry = _lib_style_entry(name="M5Tool", description="Anti-tracking tool for M5Stack Cardputer",
+                             github="https://github.com/someone/m5tool")
+    repo_meta = _lib_style_repo_meta(full_name="someone/m5tool",
+                                     description="Anti-tracking tool for M5Stack Cardputer")
+    result = score_entry(entry, repo_meta, set(), set())
+    assert result["decision"] == "authored"
+
+
+@pytest.mark.parametrize("description", [
+    "pixel desktop companion for M5Stack Cardputer",
+    "Firmware for M5StickC Plus 2",
+    "Multi-App launcher for CardPuter",
+])
+def test_score_entry_genuine_firmware_still_authored_with_no_library_signal(description):
+    """No manifest, no library topic, no library/demo keyword — genuine firmware must still pass
+    the new gate through to board detection and be authored, exactly as before this filter."""
+    entry = _lib_style_entry(name="RealFirmware", description=description,
+                             github="https://github.com/someone/real-firmware")
+    repo_meta = _lib_style_repo_meta(full_name="someone/real-firmware", description=description)
+    result = score_entry(entry, repo_meta, set(), set())
+    assert result["decision"] == "authored", f"expected authored, got {result}"
