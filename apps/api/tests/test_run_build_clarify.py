@@ -194,3 +194,23 @@ def test_examples_needs_round_trip_through_wizard(client):
         r = client.post("/wizard", json={"needs": ex["needs"]})
         assert r.status_code == 200, (ex["id"], r.text)
         assert r.json()["results"], f"{ex['id']}: needs round-trip returned 0 results"
+
+
+def test_examples_firmware_entries_carry_popularity_and_are_ranked_by_it(client):
+    """SPEC-firmware-popularity.md §3.B: /examples plumbs stars/forks through
+    from each firmware's own popularity, ranked by the same comparator
+    /firmware?sort=popularity uses -- the two surfaces can never diverge."""
+    firmware_examples = [ex for ex in client.get("/examples").json()["results"] if ex["kind"] == "firmware"]
+    assert firmware_examples
+
+    firmware_by_id = {fw["id"]: fw for fw in client.get("/firmware").json()["results"]}
+    for ex in firmware_examples:
+        popularity = firmware_by_id[ex["firmware"]].get("popularity") or {}
+        assert ex.get("stars") == popularity.get("stars"), ex["id"]
+        assert ex.get("forks") == popularity.get("forks"), ex["id"]
+
+    # /firmware defaults to popularity order already, so filtering it down to the
+    # recipe-backed subset gives exactly the expected examples order.
+    example_firmware_ids = {ex["firmware"] for ex in firmware_examples}
+    expected_order = [fw["id"] for fw in client.get("/firmware").json()["results"] if fw["id"] in example_firmware_ids]
+    assert [ex["firmware"] for ex in firmware_examples] == expected_order

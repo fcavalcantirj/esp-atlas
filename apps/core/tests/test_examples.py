@@ -6,7 +6,7 @@ firmware, needs drawn only from KNOWN_NEEDS, counts that match the wizard, and
 deterministic output.
 """
 from esp_atlas_core.examples import GROUPS, RUN_FIRMWARE, generate_examples, read_examples
-from esp_atlas_core.firmware import list_firmware, recipes_for_firmware
+from esp_atlas_core.firmware import get_firmware, list_firmware, recipes_for_firmware, sort_by_popularity
 from esp_atlas_core.wizard import KNOWN_NEEDS, wizard
 
 
@@ -27,11 +27,39 @@ def test_firmware_examples_one_per_recipe_backed_firmware(built_db_path):
         assert "needs" not in e
 
 
-def test_firmware_examples_ordered_by_count_desc_then_label(built_db_path):
+def test_firmware_examples_ordered_by_the_shared_popularity_comparator(built_db_path):
+    """SPEC-firmware-popularity.md §3.B/§3.C: the home shelf must rank exactly
+    like `/firmware?sort=popularity` -- both reuse esp_atlas_core.firmware.
+    sort_by_popularity, so they can never diverge."""
     examples = _by_kind(generate_examples(db_path=built_db_path), "firmware")
-    assert [(-e["count"], e["label"]) for e in examples] == sorted(
-        (-e["count"], e["label"]) for e in examples
-    )
+    recipe_backed = {fw["id"] for fw in list_firmware() if recipes_for_firmware(fw["id"])}
+    expected_order = [
+        fw["id"] for fw in sort_by_popularity(list_firmware()) if fw["id"] in recipe_backed
+    ]
+    assert [e["firmware"] for e in examples] == expected_order
+
+
+def test_firmware_examples_carry_stars_and_forks_from_their_firmware(built_db_path):
+    for e in _by_kind(generate_examples(db_path=built_db_path), "firmware"):
+        fw = get_firmware(e["firmware"])
+        popularity = fw.get("popularity") or {}
+        assert e.get("stars") == popularity.get("stars"), e["id"]
+        assert e.get("forks") == popularity.get("forks"), e["id"]
+
+
+def test_firmware_examples_omit_stars_and_forks_when_firmware_has_no_popularity(built_db_path, monkeypatch):
+    fake_firmware = {
+        "id": "fake-fw", "name": "Fake Firmware", "category": "multi", "capabilities": [],
+    }
+    fake_recipe = {"id": "fake-board__fake-fw", "board": "fake-board", "firmware": "fake-fw"}
+    monkeypatch.setattr("esp_atlas_core.examples.list_firmware", lambda: [fake_firmware])
+    monkeypatch.setattr("esp_atlas_core.examples.list_recipes", lambda: [fake_recipe])
+
+    examples = _by_kind(generate_examples(db_path=built_db_path), "firmware")
+
+    assert len(examples) == 1
+    assert "stars" not in examples[0]
+    assert "forks" not in examples[0]
 
 
 def test_needs_examples_use_only_known_needs(built_db_path):

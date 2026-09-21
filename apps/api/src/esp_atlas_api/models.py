@@ -221,6 +221,11 @@ class ExampleRecord(BaseModel):
     firmware: Optional[str] = None
     needs: Optional[WizardNeeds] = None
     count: int
+    #: A firmware-kind example's popularity, carried through from its
+    #: firmware's own `popularity` (esp_atlas_core.firmware) so the home grid
+    #: can show stars/forks without a second request. Absent on needs-examples.
+    stars: Optional[int] = None
+    forks: Optional[int] = None
 
 
 class ExamplesResponse(BaseModel):
@@ -438,6 +443,7 @@ class FirmwareRecord(BaseModel):
 
 class FirmwareListResponse(BaseModel):
     results: list[FirmwareRecord]
+    total: int
 
 
 class RecipeFlash(BaseModel):
