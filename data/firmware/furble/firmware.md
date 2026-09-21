@@ -20,6 +20,15 @@ sources:
 - field: popularity
   url: https://github.com/gkoh/furble
   verified: '2026-09-20'
+- field: summary
+  url: https://github.com/gkoh/furble
+  verified: '2026-09-20'
+summary: "furble is an ESP32\u2011based firmware for M5Stack controllers that provides\
+  \ a Bluetooth Low Energy remote for triggering shutters, focus, GPS tagging, and\
+  \ intervalometer functions on supported Fujifilm, Canon, Ricoh, Nikon, and Sony\
+  \ cameras using their native BLE interfaces."
+readme_lang: en
+readme_sha: bb13f7a8f1bcc9694c0d8a9b218779d95e52246eb86ba5b071a21c6a8430eb83
 ---
 
 A bluetooth wireless remote shutter release for Fujifilm X/GFX, Canon EOS, Ricoh, Nikon and Sony cameras.
