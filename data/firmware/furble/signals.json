@@ -1,0 +1,512 @@
+{
+ "calls": 11,
+ "errors": 0,
+ "fetched": "2026-09-21",
+ "notes": [],
+ "ref": "master",
+ "repo": "gkoh/furble",
+ "resolved": {
+  "boards": [
+   "m5stack-core2",
+   "m5stick-s3"
+  ],
+  "socs": [
+   "esp32",
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "bootloader-m5stack-core-v3.9.1+1",
+   "bootloader-m5stack-core2-v3.9.1+1",
+   "bootloader-m5stick-c-plus-v3.9.1+1",
+   "bootloader-m5stick-c-v3.9.1+1",
+   "bootloader-m5stick-s3-v3.9.1+1",
+   "furble",
+   "m5stack-core",
+   "m5stack-core-esp32",
+   "m5stack-core-v3.9.1+1",
+   "m5stack-core2-v3.9.1+1",
+   "m5stick-c",
+   "m5stick-c-plus",
+   "m5stick-c-plus-v3.9.1+1",
+   "m5stick-c-v3.9.1+1",
+   "m5stick-s3-v3.9.1+1",
+   "partitions-m5stack-core-v3.9.1+1",
+   "partitions-m5stack-core2-v3.9.1+1",
+   "partitions-m5stick-c-plus-v3.9.1+1",
+   "partitions-m5stick-c-v3.9.1+1",
+   "partitions-m5stick-s3-v3.9.1+1"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "furble-bootloader-m5stack-core-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "bootloader-m5stack-core-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-bootloader-m5stack-core-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-bootloader-m5stack-core2-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "bootloader-m5stack-core2-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-bootloader-m5stack-core2-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-bootloader-m5stick-c-plus-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "bootloader-m5stick-c-plus-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-bootloader-m5stick-c-plus-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-bootloader-m5stick-c-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "bootloader-m5stick-c-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-bootloader-m5stick-c-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-bootloader-m5stick-s3-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "bootloader-m5stick-s3-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-bootloader-m5stick-s3-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-m5stack-core-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stack-core-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-m5stack-core-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-m5stack-core2-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stack-core2-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-m5stack-core2-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-m5stick-c-plus-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stick-c-plus-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-m5stick-c-plus-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-m5stick-c-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stick-c-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-m5stick-c-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-m5stick-s3-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stick-s3-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-m5stick-s3-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-partitions-m5stack-core-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "partitions-m5stack-core-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-partitions-m5stack-core-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-partitions-m5stack-core2-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "partitions-m5stack-core2-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-partitions-m5stack-core2-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-partitions-m5stick-c-plus-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "partitions-m5stick-c-plus-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-partitions-m5stick-c-plus-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-partitions-m5stick-c-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "partitions-m5stick-c-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-partitions-m5stick-c-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "asset": "furble-partitions-m5stick-s3-v3.9.1+1.bin",
+    "release": "v3.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "partitions-m5stick-s3-v3.9.1+1",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/furble-partitions-m5stick-s3-v3.9.1%2B1.bin"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32",
+    "release": "v3.9.1"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "furble",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/manifest_m5stack-core.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-S3",
+    "release": "v3.9.1"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "furble",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/manifest_m5stack-core.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32",
+    "release": "v3.9.1"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "furble",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/manifest_m5stack-core2.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-S3",
+    "release": "v3.9.1"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "furble",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/manifest_m5stack-core2.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32",
+    "release": "v3.9.1"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "furble",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/manifest_m5stick-c-plus.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-S3",
+    "release": "v3.9.1"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "furble",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/manifest_m5stick-c-plus.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32",
+    "release": "v3.9.1"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "furble",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/manifest_m5stick-c.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-S3",
+    "release": "v3.9.1"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "furble",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/manifest_m5stick-c.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32",
+    "release": "v3.9.1"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32",
+   "token": "furble",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/manifest_m5stick-s3.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-S3",
+    "release": "v3.9.1"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "furble",
+   "url": "https://github.com/gkoh/furble/releases/download/v3.9.1/manifest_m5stick-s3.json"
+  },
+  {
+   "extra": {
+    "env": "m5stick-c",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 24,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/gkoh/furble/blob/master/platformio.ini#L24"
+  },
+  {
+   "extra": {
+    "env": "m5stick-c-plus",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 28,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/gkoh/furble/blob/master/platformio.ini#L28"
+  },
+  {
+   "extra": {
+    "env": "m5stack-core",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 32,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-core-esp32",
+   "url": "https://github.com/gkoh/furble/blob/master/platformio.ini#L32"
+  },
+  {
+   "extra": {
+    "env": "m5stack-core2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 36,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-core2",
+   "url": "https://github.com/gkoh/furble/blob/master/platformio.ini#L36"
+  },
+  {
+   "extra": {
+    "env": "m5stick-s3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 40,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/gkoh/furble/blob/master/platformio.ini#L40"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/main.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack-core",
+   "url": "https://github.com/gkoh/furble/blob/master/.github/workflows/main.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/main.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack-core2",
+   "url": "https://github.com/gkoh/furble/blob/master/.github/workflows/main.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/main.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/gkoh/furble/blob/master/.github/workflows/main.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/main.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stick-c-plus",
+   "url": "https://github.com/gkoh/furble/blob/master/.github/workflows/main.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/main.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stick-s3",
+   "url": "https://github.com/gkoh/furble/blob/master/.github/workflows/main.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack-core",
+   "url": "https://github.com/gkoh/furble/blob/master/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack-core2",
+   "url": "https://github.com/gkoh/furble/blob/master/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/gkoh/furble/blob/master/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stick-c-plus",
+   "url": "https://github.com/gkoh/furble/blob/master/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stick-s3",
+   "url": "https://github.com/gkoh/furble/blob/master/.github/workflows/release.yml"
+  }
+ ]
+}
