@@ -1,4 +1,6 @@
 import esp_atlas_api.main as main_module
+from esp_atlas_core.firmware import list_firmware as core_list_firmware
+from esp_atlas_core.firmware import sort_by_popularity
 
 
 def test_list_firmware_returns_every_seeded_firmware(client):
@@ -7,6 +9,75 @@ def test_list_firmware_returns_every_seeded_firmware(client):
     ids = {rec["id"] for rec in r.json()["results"]}
     assert "esp32marauder" in ids
     assert "launcher" in ids
+
+
+def test_list_firmware_defaults_to_popularity_order_and_reports_total(client):
+    r = client.get("/firmware")
+    assert r.status_code == 200
+    body = r.json()
+    expected_order = [fw["id"] for fw in sort_by_popularity(core_list_firmware())]
+    assert [rec["id"] for rec in body["results"]] == expected_order
+    assert body["total"] == len(expected_order)
+    assert len(body["results"]) == len(expected_order)
+
+
+def test_list_firmware_every_record_still_carries_popularity(client):
+    r = client.get("/firmware")
+    assert r.status_code == 200
+    for rec in r.json()["results"]:
+        assert "popularity" in rec
+
+
+def test_list_firmware_sort_name_orders_alphabetically(client):
+    r = client.get("/firmware", params={"sort": "name"})
+    assert r.status_code == 200
+    ids = [rec["name"] for rec in r.json()["results"]]
+    assert ids == sorted(ids)
+
+
+def test_list_firmware_limit_and_offset_slice_the_popularity_order(client):
+    all_ids = [fw["id"] for fw in sort_by_popularity(core_list_firmware())]
+
+    r = client.get("/firmware", params={"limit": 5})
+    assert r.status_code == 200
+    body = r.json()
+    assert [rec["id"] for rec in body["results"]] == all_ids[:5]
+    assert body["total"] == len(all_ids)
+
+    r = client.get("/firmware", params={"limit": 5, "offset": 5})
+    assert r.status_code == 200
+    body = r.json()
+    assert [rec["id"] for rec in body["results"]] == all_ids[5:10]
+    assert body["total"] == len(all_ids)
+
+
+def test_list_firmware_offset_past_the_end_returns_empty_results_with_full_total(client):
+    all_ids = [fw["id"] for fw in sort_by_popularity(core_list_firmware())]
+    r = client.get("/firmware", params={"offset": len(all_ids) + 10})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["results"] == []
+    assert body["total"] == len(all_ids)
+
+
+def test_list_firmware_invalid_sort_is_422(client):
+    r = client.get("/firmware", params={"sort": "bogus"})
+    assert r.status_code == 422
+
+
+def test_list_firmware_limit_over_cap_is_422(client):
+    r = client.get("/firmware", params={"limit": 101})
+    assert r.status_code == 422
+
+
+def test_list_firmware_limit_below_one_is_422(client):
+    r = client.get("/firmware", params={"limit": 0})
+    assert r.status_code == 422
+
+
+def test_list_firmware_negative_offset_is_422(client):
+    r = client.get("/firmware", params={"offset": -1})
+    assert r.status_code == 422
 
 
 def test_get_firmware_known_id_returns_record(client):
