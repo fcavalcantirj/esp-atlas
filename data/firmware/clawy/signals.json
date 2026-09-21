@@ -1,0 +1,70 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-21",
+ "notes": [
+  "latest release None has no binaries; read v0.1.0-beta instead"
+ ],
+ "ref": "main",
+ "repo": "marcvermeeren/clawy",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "ino",
+   "ino.bootloader",
+   "ino.merged",
+   "ino.partitions"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "clawy.ino.bin",
+    "release": "v0.1.0-beta"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ino",
+   "url": "https://github.com/marcvermeeren/clawy/releases/download/v0.1.0-beta/clawy.ino.bin"
+  },
+  {
+   "extra": {
+    "asset": "clawy.ino.bootloader.bin",
+    "release": "v0.1.0-beta"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ino.bootloader",
+   "url": "https://github.com/marcvermeeren/clawy/releases/download/v0.1.0-beta/clawy.ino.bootloader.bin"
+  },
+  {
+   "extra": {
+    "asset": "clawy.ino.merged.bin",
+    "release": "v0.1.0-beta"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ino.merged",
+   "url": "https://github.com/marcvermeeren/clawy/releases/download/v0.1.0-beta/clawy.ino.merged.bin"
+  },
+  {
+   "extra": {
+    "asset": "clawy.ino.partitions.bin",
+    "release": "v0.1.0-beta"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ino.partitions",
+   "url": "https://github.com/marcvermeeren/clawy/releases/download/v0.1.0-beta/clawy.ino.partitions.bin"
+  }
+ ]
+}
