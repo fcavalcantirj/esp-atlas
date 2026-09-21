@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-09-28T03:00:43.907513+00:00",
+      "expires": "2026-09-28T04:00:45.392890+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-21T03:00:43.907513+00:00"
+      "timestamp": "2026-09-21T04:00:45.392890+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -2906,6 +2906,13 @@
       "status": "merged",
       "timestamp": "2026-09-19T19:01:00.809202+00:00"
     },
+    "flipperzeroirplayer": {
+      "id": "flipperzeroirplayer",
+      "pr_ref": null,
+      "repo": "james-p-d/flipperzeroirplayer",
+      "status": "seen",
+      "timestamp": "2026-09-21T04:02:43.282042+00:00"
+    },
     "floatingbottle-pc-monitor": {
       "expires": "2026-10-08T05:25:25.049296+00:00",
       "id": "floatingbottle-pc-monitor",
@@ -3806,6 +3813,13 @@
       "status": "rejected",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
+    "lx-shell": {
+      "id": "lx-shell",
+      "pr_ref": null,
+      "repo": "ppyne/lx_shell",
+      "status": "seen",
+      "timestamp": "2026-09-21T04:02:43.357239+00:00"
+    },
     "m5-amiibolink": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5-amiibolink",
@@ -4073,6 +4087,13 @@
       "repo_id": 921891878,
       "status": "rejected",
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
+    "m5-vids": {
+      "id": "m5-vids",
+      "pr_ref": null,
+      "repo": "williamd1k0/m5-vids",
+      "status": "seen",
+      "timestamp": "2026-09-21T04:02:43.327616+00:00"
     },
     "m5airmouse": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -6257,6 +6278,13 @@
       "status": "rejected",
       "timestamp": "2026-09-09T23:00:48.497677+00:00"
     },
+    "namezero": {
+      "id": "namezero",
+      "pr_ref": null,
+      "repo": "xelbor/namezero",
+      "status": "seen",
+      "timestamp": "2026-09-21T04:02:43.297378+00:00"
+    },
     "navboxesp": {
       "id": "navboxesp",
       "pr_ref": null,
@@ -7722,6 +7750,13 @@
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
+    "signalrf": {
+      "id": "signalrf",
+      "pr_ref": null,
+      "repo": "bytehub-1337/signalrf",
+      "status": "seen",
+      "timestamp": "2026-09-21T04:02:43.342505+00:00"
+    },
     "sigurdos-tdeck": {
       "id": "sigurdos-tdeck",
       "pr_ref": null,
@@ -8431,6 +8466,13 @@
       "repo_id": 977695063,
       "status": "rejected",
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
+    },
+    "tonegenerator": {
+      "id": "tonegenerator",
+      "pr_ref": null,
+      "repo": "james-p-d/tonegenerator",
+      "status": "seen",
+      "timestamp": "2026-09-21T04:02:43.312556+00:00"
     },
     "totp-auth-for-cardputer-adv": {
       "expires": "2026-10-11T22:00:03.963388+00:00",
@@ -9282,6 +9324,7 @@
     "brucemoddev/brucemod-alpha": "brucemod-alpha",
     "bubbergamesites/cardputer-f1-random-gp": "cardputer-f1-random-gp",
     "bubbergamesites/cardui": "cardui",
+    "bytehub-1337/signalrf": "signalrf",
     "c5lab/m5monsterc5-cardputeradv": "m5monsterc5-cardputeradv",
     "c5lab/m5monsterc5-tab5": "m5monsterc5-tab5",
     "c5lab/pancake": "pancake",
@@ -9592,6 +9635,8 @@
     "io-nji/lab_mini_os": "lab-mini-os",
     "irisihrz": "irisihrz",
     "isonimus/adversary": "adversary",
+    "james-p-d/flipperzeroirplayer": "flipperzeroirplayer",
+    "james-p-d/tonegenerator": "tonegenerator",
     "jasisz/grajek": "grajek",
     "javicar31/m5dial_volume_hid": "m5dial-volume-hid",
     "javicar31/m5stack_papers3": "m5stack-papers3",
@@ -9876,6 +9921,7 @@
     "pierrebak/m5cardputer_voice-changer": "m5cardputer-voice-changer",
     "pkolbas/m5-guitartuner": "m5-guitartuner",
     "power-pill/ascii-aquarium": "ascii-aquarium",
+    "ppyne/lx_shell": "lx-shell",
     "pr3y/bruce": "bruce",
     "pr3y/bruce_old": "bruce-old",
     "pragamichele/m5atoms3_ble_motor_control": "m5atoms3-ble-motor-control",
@@ -10082,6 +10128,7 @@
     "whywilson/grovenfc": "grovenfc",
     "whywilson/grovenfc.git": "grovenfc",
     "wildtimo/m5stickc-plus-tlite-cfw": "m5stickc-plus-tlite-cfw",
+    "williamd1k0/m5-vids": "m5-vids",
     "williamruckman/diceroller-cardputeradv": "diceroller-cardputeradv",
     "wisnc/crub": "crub",
     "wisnc/ember": "ember",
@@ -10093,6 +10140,7 @@
     "wusiu/webradio_wusiu_cardputer_adv": "webradio-wusiu-cardputer-adv",
     "wusiyu/m5cardputer-userdemo-plus": "m5cardputer-userdemo-plus",
     "xdiversity/xmod-lib": "xmod-lib",
+    "xelbor/namezero": "namezero",
     "xick/oxotp-plus": "oxotp-plus",
     "xinyuan-lilygo/t-display-c5": "t-display-c5",
     "xinyuan-lilygo/t-embed": "t-embed",
