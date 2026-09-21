@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-21",
+ "notes": [],
+ "ref": "main",
+ "repo": "NeoDoggy/BetterMochi",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "BetterMochi"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "BetterMochi.bin",
+    "release": "v0.3.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "BetterMochi",
+   "url": "https://github.com/NeoDoggy/BetterMochi/releases/download/v0.3.3/BetterMochi.bin"
+  }
+ ]
+}
