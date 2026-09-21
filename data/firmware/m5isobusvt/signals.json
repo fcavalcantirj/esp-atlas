@@ -1,0 +1,29 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-21",
+ "notes": [],
+ "ref": "main",
+ "repo": "raibisch/M5IsobusVT",
+ "resolved": {
+  "boards": [
+   "m5stack-core2"
+  ],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "m5stack-core-esp32",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 14,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-core2",
+   "url": "https://github.com/raibisch/M5IsobusVT/blob/main/platformio.ini#L14"
+  }
+ ]
+}
