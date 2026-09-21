@@ -8,6 +8,7 @@ maintainer: devsur11
 capabilities:
 - wifi
 socs:
+- esp32
 - esp32-s3
 popularity:
   stars: 176
@@ -23,6 +24,9 @@ sources:
 - field: summary
   url: https://github.com/Devsur11/M5Gotchi
   verified: '2026-09-20'
+- field: socs
+  url: https://github.com/Devsur11/M5Gotchi#readme
+  verified: '2026-09-21'
 summary: "M5Gotchi is a firmware that brings Pwnagotchi\u2011style Wi\u2011Fi handshake\
   \ capture and control to M5Stack devices (primarily the M5Cardputer), offering both\
   \ automatic and manual operation via an integrated keyboard or button UI. It includes\

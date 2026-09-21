@@ -7,6 +7,7 @@ category: pentest
 maintainer: geo-tp
 license: MIT
 socs:
+- esp32
 - esp32-s3
 distribution:
 - releases
@@ -40,6 +41,9 @@ sources:
 - field: summary
   url: https://github.com/geo-tp/ESP32-Bit-Pirate
   verified: '2026-09-20'
+- field: socs
+  url: https://github.com/geo-tp/ESP32-Bit-Pirate#readme
+  verified: '2026-09-21'
 summary: "ESP32 Bus Pirate is an open\u2011source firmware for ESP32\u2011S3 devices\
   \ that turns the hardware into a multi\u2011protocol hacking tool, offering an interactive\
   \ CLI over USB serial or Wi\u2011Fi to sniff, send, script and control numerous\
