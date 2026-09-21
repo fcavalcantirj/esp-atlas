@@ -195,3 +195,35 @@ def test_budget_exceeded_during_topic_search_stops_cleanly(root, monkeypatch):
                         lambda topics, search=None: (_ for _ in ()).throw(BudgetExceeded("call budget exhausted: 0+1 > 0 (gh)")))
     res = stage_admit_topics.run(_ctx(root, budget=exhausted), budget=2)
     assert res.admitted == 0 and res.paths == [] and "stopped" in res.summary
+
+
+def test_below_floor_skips_are_recorded_seen_with_expires_and_pass_ledger_guard(root, monkeypatch):
+    """The hourly-tick stall bug: run_drain's only ledger write for a below-floor skip is
+    ledger.record_seen (jr/ledger.py), a v1 write with no `expires` — scripts/ledger_guard.py
+    rejects any "seen" record a PR adds or changes that lacks one. This stage must re-record every
+    skip via memory.record_seen (the v2, TTL'd writer) so the ledger it ships always carries
+    `expires` on "seen" entries and the guard stays green."""
+    entries = [
+        _topic_entry("My Cardputer Tool", "https://github.com/n/newtool", "A Cardputer tool"),
+        _topic_entry("Filler Cardputer Tool", "https://github.com/n/filler", "A filler Cardputer tool"),
+    ]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    metas = {
+        "n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=101),
+        "n/filler": _meta("n/filler", stars=3, forks=0, description="A filler Cardputer tool", rid=102),
+    }
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(metas))
+
+    res = stage_admit_topics.run(_ctx(root), budget=2)
+
+    assert res.admitted == 1
+    assert res.rejects.get("below_floor") == 1
+
+    led = json.loads((root / "jr" / "proposed_ledger.json").read_text())
+    seen = [rec for rec in led["by_id"].values() if rec["status"] == "seen"]
+    assert seen and all(rec.get("expires") for rec in seen)
+
+    import sys
+    sys.path.insert(0, str(REPO / "scripts"))
+    import ledger_guard  # noqa: E402
+    assert ledger_guard.check({"by_id": {}}, led) == []

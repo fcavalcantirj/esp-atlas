@@ -8,7 +8,7 @@ firmware at a time, every hour, so the catalog keeps growing from topics after t
 (jr/stage_admit.py) drained (DECISION-LOG.md). Bounded by tick.TOPICS_PER_TICK, independent of the
 allocator's A/B split — appended to jr/tick.py's hourly_stages() after admit+boardmap.
 
-run_drain() is a standalone one-shot design (`python3 author_topics.py`) with two gaps a tick
+run_drain() is a standalone one-shot design (`python3 author_topics.py`) with three gaps a tick
 stage can't inherit unfixed, closed here without touching drain.py, tools.py or any gate:
 
   - run_drain (and the tools.py authoring functions under it) write against tools.REPO — the
@@ -25,6 +25,14 @@ stage can't inherit unfixed, closed here without touching drain.py, tools.py or 
     unmerged tick PR would be re-discovered and re-authored into a DUPLICATE PR next hour (the
     historical #158/#159 bug). So every id run_drain reports authored is recorded via
     memory.record_proposed — the same call stage_admit.py makes — right after.
+  - That same run_drain ledger write — ledger.record_seen for below-floor skips — is a v1, TTL-less
+    write: it drops `expires`, which scripts/ledger_guard.py rejects on any "seen" record a PR adds
+    or changes. Left alone, every tick that skips a below-floor candidate ships a guard-red PR, auto-
+    merge never fires, PRs pile up, and jr/tick.py's >3h-open guard then aborts every later tick (the
+    hourly-tick stall this stage exists to prevent). So every skip in run_drain's report
+    (`skipped_popularity`) is re-recorded via memory.record_seen — the v2 writer that applies
+    SEEN_TTL_DAYS — right after the authored loop; memory._write's transition rules make the
+    re-record a safe no-op if the id was already proposed/merged/permanently rejected since.
 
 Dry-run: run_drain has no dry-run mode (it always authors+guards+writes), so dry-run here runs
 the SCORING half of the same pipeline directly (drain.prefilter -> score_candidates -> rank_juicy
@@ -188,6 +196,15 @@ def run(ctx, budget: int):
         if owner_repo:
             memory.record_proposed(fid, owner_repo, path=ctx.ledger_path, now=ctx.now)
         items.append({"kind": "firmware", "id": fid})
+
+    # run_drain's only ledger write for below-floor skips is ledger.record_seen (jr/ledger.py) —
+    # a v1, TTL-less write that scripts/ledger_guard.py rejects (a "seen" record with no
+    # `expires`). Re-record each through memory.record_seen, the v2 writer that applies
+    # SEEN_TTL_DAYS, so the ledger this stage ships always carries an `expires` on every "seen"
+    # entry. memory._write's transition rules make this safe: it never downgrades a
+    # merged/proposed/permanent-rejection record that ledger.record_seen already wrote.
+    for s in report["skipped_popularity"]:
+        memory.record_seen(s["firmware_id"], s["repo"], path=ctx.ledger_path, now=ctx.now)
 
     rejects = {}
     if report["skipped_popularity"]:
