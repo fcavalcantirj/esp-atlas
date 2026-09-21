@@ -1,4 +1,4 @@
-from conftest import BOARD_PATH, SOC_PATH
+from _shared import BOARD_PATH, SOC_PATH
 
 
 def test_parts_lists_all(client):

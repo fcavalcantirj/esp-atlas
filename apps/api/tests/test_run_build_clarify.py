@@ -1,4 +1,4 @@
-from conftest import client_with_llm, marauder_boards_with_chip, marauder_recipe_boards, marauder_recipe_citations
+from _shared import client_with_llm, marauder_boards_with_chip, marauder_recipe_boards, marauder_recipe_citations
 
 
 # --- /run (grounded run-answer) ---------------------------------------------------------
