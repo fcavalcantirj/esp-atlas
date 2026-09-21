@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { firmwareMetaDescription, readmeLanguageName } from "./format.ts";
+import { compactCount, firmwareMetaDescription, popularityGlance, readmeLanguageName } from "./format.ts";
 
 test("maps known README source language codes to an English name", () => {
   assert.equal(readmeLanguageName("ja"), "Japanese");
@@ -51,4 +51,55 @@ test("template omits the maintainer clause when there is none", () => {
     summary: undefined,
   });
   assert.equal(description, "Bruce: Pentest firmware for ESP32 — see the boards it's verified to run on.");
+});
+
+// compactCount — SPEC-firmware-popularity.md §2/§6.5, boundaries 999/1000/999500/1000000.
+
+test("compactCount renders exactly below 1000", () => {
+  assert.equal(compactCount(0), "0");
+  assert.equal(compactCount(999), "999");
+});
+
+test("compactCount switches to a trimmed k-suffix at 1000", () => {
+  assert.equal(compactCount(1000), "1k");
+});
+
+test("compactCount rounds to one decimal, matching the spec's own examples", () => {
+  assert.equal(compactCount(1234), "1.2k");
+  assert.equal(compactCount(94567), "94.6k");
+  assert.equal(compactCount(999500), "999.5k");
+});
+
+test("compactCount keeps the k-suffix past a million", () => {
+  assert.equal(compactCount(1000000), "1000k");
+});
+
+// popularityGlance — SPEC-firmware-popularity.md §2.
+
+test("popularityGlance formats both metrics, full numbers in the aria-label", () => {
+  const glance = popularityGlance({ stars: 94567, forks: 12411 });
+  assert.deepEqual(glance, {
+    stars: "94.6k",
+    forks: "12.4k",
+    ariaLabel: "94,567 GitHub stars, 12,411 forks",
+  });
+});
+
+test("popularityGlance puts as_of in a title tooltip, never inline", () => {
+  const glance = popularityGlance({ stars: 94567, forks: 12411, as_of: "2026-09-14" });
+  assert.equal(glance?.title, "stars as of 2026-09-14");
+});
+
+test("popularityGlance omits a null/absent metric silently, no zero", () => {
+  const starsOnly = popularityGlance({ stars: 42, forks: null });
+  assert.deepEqual(starsOnly, { stars: "42", ariaLabel: "42 GitHub stars" });
+
+  const forksOnly = popularityGlance({ stars: undefined, forks: 7 });
+  assert.deepEqual(forksOnly, { forks: "7", ariaLabel: "7 forks" });
+});
+
+test("popularityGlance is null when there is nothing to show", () => {
+  assert.equal(popularityGlance(null), null);
+  assert.equal(popularityGlance(undefined), null);
+  assert.equal(popularityGlance({ stars: null, forks: null }), null);
 });

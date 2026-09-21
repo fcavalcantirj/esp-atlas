@@ -206,6 +206,50 @@ export function readmeLanguageName(code: string): string {
   return README_LANGUAGE_NAME[code] ?? code;
 }
 
+/** 94567 -> "94.6k", 1234 -> "1.2k", 999 -> "999" (exact below 1000).
+ * SPEC-firmware-popularity.md §2. Trailing ".0" is trimmed (1000 -> "1k", not "1.0k"). */
+export function compactCount(n: number): string {
+  if (n < 1000) return String(n);
+  const scaled = (n / 1000).toFixed(1);
+  const trimmed = scaled.endsWith(".0") ? scaled.slice(0, -2) : scaled;
+  return `${trimmed}k`;
+}
+
+export interface PopularityInput {
+  stars?: number | null;
+  forks?: number | null;
+  as_of?: string | null;
+}
+
+export interface PopularityGlance {
+  stars?: string;
+  forks?: string;
+  ariaLabel: string;
+  title?: string;
+}
+
+/** SPEC-firmware-popularity.md §2: the compact "★ 94.6k · ⑂ 12.4k" card glance.
+ * `ariaLabel` carries the full, unabbreviated counts; `title` carries the
+ * `as_of` tooltip when cited. Null when neither metric is present -- the
+ * caller must render nothing, never a "0" or an empty glyph. */
+export function popularityGlance(popularity: PopularityInput | null | undefined): PopularityGlance | null {
+  if (!popularity) return null;
+  const labelParts: string[] = [];
+  const glance: PopularityGlance = { ariaLabel: "" };
+  if (popularity.stars != null) {
+    glance.stars = compactCount(popularity.stars);
+    labelParts.push(`${popularity.stars.toLocaleString("en-US")} GitHub stars`);
+  }
+  if (popularity.forks != null) {
+    glance.forks = compactCount(popularity.forks);
+    labelParts.push(`${popularity.forks.toLocaleString("en-US")} forks`);
+  }
+  if (labelParts.length === 0) return null;
+  glance.ariaLabel = labelParts.join(", ");
+  if (popularity.as_of) glance.title = `stars as of ${popularity.as_of}`;
+  return glance;
+}
+
 export function firstSentence(text: string): string {
   const stripped = text.replace(/^#\s[^\n]*\n+/, "").replace(/\*\*/g, "").trim();
   const match = /^(.+?[.!?])(\s|$)/.exec(stripped.replace(/\s+/g, " "));
