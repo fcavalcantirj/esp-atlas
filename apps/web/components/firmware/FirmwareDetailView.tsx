@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize, { type Options as SanitizeSchema } from "rehype-sanitize";
+import FirmwareViewTracker from "@/components/firmware/FirmwareViewTracker";
 import JsonLd from "@/components/JsonLd";
 import RecipeGroupList from "@/components/RecipeGroupList";
 import TrackedLink from "@/components/TrackedLink";
@@ -102,6 +103,7 @@ export default function FirmwareDetailView({
   return (
     <main id="main" className="container container--wide" tabIndex={-1}>
       <JsonLd data={firmwareGraph(firmware, boards)} />
+      <FirmwareViewTracker firmware={firmware} />
       <nav className="breadcrumb" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
         <span aria-hidden="true">›</span>
