@@ -127,8 +127,11 @@ STOPWORD_TOKENS = frozenset({"wifi", "wi-fi", "ble", "bluetooth", "rfid", "nfc",
 LIBRARY_TOPICS = frozenset({"library", "arduino-library", "platformio-library",
                             "micropython-library", "framework", "driver",
                             "esp-idf-component", "bsp"})
-_LIBRARY_DEMO_KEYWORDS = ("library", "driver", "framework", "wrapper", "binding", "sdk", "codec",
-                          "shim", "demo", "example", "examples", "sample")
+# Only whole-word terms that name a repo's PRIMARY nature. Weak/incidental words (sdk, codec,
+# shim, example(s), sample) are deliberately excluded — real firmware uses them in passing
+# (e.g. droidputter: "...against a display/keyboard shim") and the manifest/topic signals already
+# catch the true libraries. The demos we must reject (esp_effects, esp-idf-mpu6050-dmp) still hit "demo".
+_LIBRARY_DEMO_KEYWORDS = ("library", "driver", "framework", "wrapper", "binding", "demo")
 _LIBRARY_DEMO_PHRASES = ("board support package",)
 LIBRARY_DEMO_KEYWORD_RE = re.compile(
     r"\b(?:" + "|".join(re.escape(k) for k in _LIBRARY_DEMO_KEYWORDS) + r")\b", re.IGNORECASE)
