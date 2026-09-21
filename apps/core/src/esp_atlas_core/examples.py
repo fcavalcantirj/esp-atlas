@@ -14,9 +14,13 @@ recomputed from the records already in the repo, so the list can never go stale:
 - kind="firmware" (Shelf A) — one "Run <name>" per firmware that has >=1 recipe,
   read off disk via esp_atlas_core.firmware (like brands, firmware/recipes are
   never in esp-atlas.db). `count` is its recipe count (= boards it runs on);
-  the shelf is ordered by (-count, label). The no-orphan-firmware CI rule already
-  guarantees >=1 recipe per firmware, but the check here is defensive so the
-  generator stays correct on a tree that never ran CI.
+  `stars`/`forks` carry the firmware's own `popularity` when cited. The shelf
+  is ordered by esp_atlas_core.firmware.sort_by_popularity -- the SAME
+  comparator `/firmware?sort=popularity` uses, so the two surfaces can never
+  rank a firmware differently (SPEC-firmware-popularity.md §3.C). The
+  no-orphan-firmware CI rule already guarantees >=1 recipe per firmware, but
+  the check here is defensive so the generator stays correct on a tree that
+  never ran CI.
 - kind="needs" (Shelf B/C) — fixed candidate queries over real `parts` columns
   plus the top form factors from facets(), resolved through wizard() against
   esp-atlas.db. A candidate is emitted only when it returns >=1 result, so a
@@ -35,7 +39,7 @@ import json
 
 from esp_atlas_core import db as dbmod
 from esp_atlas_core.facets import facets
-from esp_atlas_core.firmware import list_firmware, list_recipes
+from esp_atlas_core.firmware import list_firmware, list_recipes, sort_by_popularity
 from esp_atlas_core.wizard import wizard
 
 # meta table key (see esp_atlas_core.db) holding generate_examples()'s output,
@@ -101,7 +105,7 @@ def _firmware_examples():
         recipes_by_firmware.setdefault(recipe["firmware"], []).append(recipe)
 
     examples = []
-    for fw in list_firmware():
+    for fw in sort_by_popularity(list_firmware()):
         recipes = recipes_by_firmware.get(fw["id"], [])
         if not recipes:
             continue
@@ -116,8 +120,12 @@ def _firmware_examples():
         description = describe_firmware(fw)
         if description:
             example["description"] = description
+        popularity = fw.get("popularity") or {}
+        if popularity.get("stars") is not None:
+            example["stars"] = popularity["stars"]
+        if popularity.get("forks") is not None:
+            example["forks"] = popularity["forks"]
         examples.append(example)
-    examples.sort(key=lambda e: (-e["count"], e["label"]))
     return examples
 
 
