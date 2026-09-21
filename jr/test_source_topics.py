@@ -34,6 +34,7 @@ def test_maps_search_items_into_candidate_shape():
         "name": "cardputer-tool",
         "github": "https://github.com/geo-tp/cardputer-tool",
         "source": "topic:cardputer",
+        "description": None,
     }]
 
 
@@ -94,6 +95,7 @@ def test_skips_malformed_items_without_raising():
         "name": "repo",
         "github": "https://github.com/ok/repo",
         "source": "topic:cardputer",
+        "description": None,
     }]
 
 

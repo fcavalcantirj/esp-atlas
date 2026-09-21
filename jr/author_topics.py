@@ -60,7 +60,12 @@ def main(limit: int | None = None, search_topic=None, fetch_meta=None, resolve_s
     cap is invented here. Returns run_drain's report unchanged."""
     search_topic = source_topics.default_search_topic if search_topic is None else search_topic
     fetch_meta = drain.default_fetch_meta if fetch_meta is None else fetch_meta
-    resolve_source = drain._live_resolve_canonical if resolve_source is None else resolve_source
+    # Topic-search repos ARE already the canonical source (unlike launcher entries, which are often
+    # forks of a better-known repo). Running drain's fork->canonical resolver here mis-fires on
+    # generic name tokens — ppyne/lx_shell (10*, a real Cardputer shell) got "resolved" to
+    # alebcay/awesome-shell, taking its wrong URL AND its thousands of stars to clear the floor.
+    # So default to NO canonical redirect for topics; only redirect if a caller injects one.
+    resolve_source = (lambda owner, repo: {}) if resolve_source is None else resolve_source
 
     report = drain.run_drain(
         fetch_catalog=lambda: source_topics.fetch_topic_repos(source_topics.DEFAULT_TOPICS, search=search_topic),

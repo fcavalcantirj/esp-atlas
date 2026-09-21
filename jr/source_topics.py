@@ -74,5 +74,9 @@ def fetch_topic_repos(topics, search=default_search_topic, per_topic: int = 100)
                 "name": repo,
                 "github": f"https://github.com/{full_name}",
                 "source": f"topic:{topic}",
+                # Carry the repo's own description so scorer's library/demo keyword filter has text
+                # to read (a topic candidate has no submitter description); without it, keyword-only
+                # libraries/demos like meloncookie/RemotePy and esp-idf-mpu6050-dmp slip the gate.
+                "description": item.get("description"),
             })
     return candidates

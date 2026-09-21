@@ -99,10 +99,13 @@ def test_main_fetch_catalog_kwarg_drives_the_injected_topic_search(monkeypatch):
     fetch_catalog = calls[0]["fetch_catalog"]
     candidates = fetch_catalog()
     assert {"name": "topic-tool", "github": "https://github.com/someone/topic-tool",
-            "source": "topic:cardputer"} in candidates
+            "source": "topic:cardputer", "description": None} in candidates
 
 
-def test_main_defaults_resolve_source_to_drains_live_resolver(monkeypatch):
+def test_main_defaults_resolve_source_to_no_canonical_redirect(monkeypatch):
+    """Topic-search repos are ALREADY the canonical source, so the default resolver must NOT
+    redirect — drain's fork->canonical resolver mis-fires on generic name tokens (ppyne/lx_shell
+    was wrongly resolved to alebcay/awesome-shell, borrowing its stars). Default = a no-op {}."""
     calls = []
     monkeypatch.setattr(drain, "run_drain", lambda **kwargs: calls.append(kwargs) or {
         "fetched": 0, "prefiltered": 0, "scored_clean": 0, "skipped_scoring": 0,
@@ -112,7 +115,9 @@ def test_main_defaults_resolve_source_to_drains_live_resolver(monkeypatch):
 
     author_topics.main(search_topic=lambda topic, per_page: [])
 
-    assert calls[0]["resolve_source"] is drain._live_resolve_canonical
+    resolve_source = calls[0]["resolve_source"]
+    assert resolve_source is not drain._live_resolve_canonical
+    assert resolve_source("someowner", "somerepo") == {}
 
 
 def test_limit_lowers_batch_size_passed_to_run_drain(monkeypatch):
