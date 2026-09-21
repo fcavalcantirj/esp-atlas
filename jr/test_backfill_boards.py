@@ -23,7 +23,10 @@ ESP_CLAW_RESOLVED_BOARDS = {
     "m5stack-cores3", "esp32-s3-devkitc-1", "firebeetle-2-esp32-s3", "xiao-esp32s3-sense",
     "m5stick-s3", "lilygo-t-display-s3", "waveshare-esp32-s3-rlcd-42",
 }
-EVIL_M5PROJECT_RESOLVED_BOARDS = {"m5cardputer", "m5stack-core2", "m5stack-cores3", "m5atoms3"}
+EVIL_M5PROJECT_RESOLVED_BOARDS = {
+    "m5cardputer", "m5stack-core2", "m5stack-cores3", "m5atoms3",
+    "m5stack-fire", "m5stack-core-aws", "m5stack-cores3-se", "m5stick-c", "m5stick-cplus",
+}
 
 
 class FakeApi:
