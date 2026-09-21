@@ -14,7 +14,7 @@
     "type": { "const": "recipe" },
     "board": { "type": "string", "description": "id of the board (must exist in data/boards/**)" },
     "firmware": { "type": "string", "description": "id of the firmware (must exist in data/firmware/)" },
-    "status": { "enum": ["known-good", "reported", "unverified", "broken"] },
+    "status": { "enum": ["known-good", "reported", "unverified", "declared", "broken"] },
     "chip_family": { "type": "string", "description": "must equal the referenced board's soc" },
     "firmware_version": { "type": "string" },
     "flash": {

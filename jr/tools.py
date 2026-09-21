@@ -212,7 +212,7 @@ def schema_enums() -> dict:
     return {
         "firmware_category": fw["category"].get("enum"),
         "firmware_distribution": fw["distribution"].get("enum"),
-        "recipe_status": ["known-good", "reported", "unverified", "broken"],
+        "recipe_status": ["known-good", "reported", "unverified", "declared", "broken"],
         "soc_ids": socs,
         "board_ids": boards,
         "capabilities": sorted(capability_vocab()),   # ONLY these tokens — never freeform phrases
