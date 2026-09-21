@@ -1,0 +1,997 @@
+{
+ "tree": [
+  {
+   "path": "application/edge_agent/boards/Nologo.Tech/xingzhi_395/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/Nologo.Tech/xingzhi_395/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/Nologo.Tech/xingzhi_395/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/Nologo.Tech/xingzhi_395/components/esp_lcd_fl7707n/CMakeLists.txt",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/Nologo.Tech/xingzhi_395/components/esp_lcd_fl7707n/esp_lcd_fl7707n.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/Nologo.Tech/xingzhi_395/components/esp_lcd_fl7707n/idf_component .yml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/Nologo.Tech/xingzhi_395/components/esp_lcd_fl7707n/include/esp_lcd_fl7707n.h",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/Nologo.Tech/xingzhi_395/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/Nologo.Tech/xingzhi_395/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/cloudzao/metalio_claw_4/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/cloudzao/metalio_claw_4/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/cloudzao/metalio_claw_4/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/cloudzao/metalio_claw_4/components/esp_lcd_nv3051f/CMakeLists.txt",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/cloudzao/metalio_claw_4/components/esp_lcd_nv3051f/esp_lcd_nv3051f.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/cloudzao/metalio_claw_4/components/esp_lcd_nv3051f/idf_component.yml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/cloudzao/metalio_claw_4/components/esp_lcd_nv3051f/include/esp_lcd_nv3051f.h",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/cloudzao/metalio_claw_4/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/cloudzao/metalio_claw_4/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/community/anyboard/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/community/anyboard/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/community/anyboard/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/community/anyboard/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/community/anyboard/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_ai_camera/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_ai_camera/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_ai_camera/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_ai_camera/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_C5_for_display/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_C5_for_display/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_C5_for_display/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_C5_for_display/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_C5_for_display/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_P4_for_camera/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_P4_for_camera/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_P4_for_camera/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_P4_for_camera/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_S3/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_S3/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_S3/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_S3/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_firebeetle_2_ESP32_S3/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_k10/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_k10/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_k10/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_k10/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_k10/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_romeo_ESP32_S3/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_romeo_ESP32_S3/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_romeo_ESP32_S3/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_romeo_ESP32_S3/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/dfrobot/dfrobot_romeo_ESP32_S3/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_N32R16V_breadboard/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_N32R16V_breadboard/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_N32R16V_breadboard/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_N32R16V_breadboard/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_N32R16V_breadboard/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_N32R16V_breadboard/uac_codec.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_N32R16V_breadboard/uac_codec.h",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_breadboard/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_breadboard/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_breadboard/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_breadboard/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_breadboard/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_breadboard/uac_codec.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_S3_DevKitC_1_breadboard/uac_codec.h",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_p4_eye/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_p4_eye/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_p4_eye/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_p4_eye/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_p4_eye/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_p4_function_ev/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_p4_function_ev/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_p4_function_ev/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_p4_function_ev/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_p4_function_ev/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_s31_korvo1/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_s31_korvo1/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_s31_korvo1/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_s31_korvo1/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp32_s31_korvo1/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_Ditto/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_Ditto/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_Ditto/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_Ditto/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_Ditto/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_SensairShuttle/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_SensairShuttle/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_SensairShuttle/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_SensairShuttle/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_SensairShuttle/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_box_3/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_box_3/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_box_3/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_box_3/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_box_3/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_sparkbot/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_sparkbot/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_sparkbot/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_sparkbot/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_sparkbot/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_sparkbot/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_vocat_board_v1_2/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_vocat_board_v1_2/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_vocat_board_v1_2/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_vocat_board_v1_2/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/espressif/esp_vocat_board_v1_2/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_ai_gamebox/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_ai_gamebox/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_ai_gamebox/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_ai_gamebox/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_ai_gamebox/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_ai_gamebox/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_robot_pro/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_robot_pro/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_robot_pro/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_robot_pro/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_robot_pro/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_super_bear/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_super_bear/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_super_bear/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_super_bear/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_super_bear/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_tv_pro/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_tv_pro/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_tv_pro/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_tv_pro/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_tv_pro/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lceda-course-examples/eda_tv_pro/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/README_CN.md",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/esp_lcd_hi8561.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/esp_lcd_hi8561.h",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/esp_lcd_rm69a10.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/esp_lcd_rm69a10.h",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/esp_lcd_touch_gt9895.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/esp_lcd_touch_gt9895.h",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/esp_lcd_touch_hi8561.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/esp_lcd_touch_hi8561.h",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_p4_v1/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_s3/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_s3/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_s3/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_s3/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/lilygo/lilygo_t_display_s3/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_cores3/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_cores3/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_cores3/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_cores3/components/esp_io_expander_aw9523b/CMakeLists.txt",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_cores3/components/esp_io_expander_aw9523b/esp_io_expander_aw9523b.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_cores3/components/esp_io_expander_aw9523b/idf_component.yml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_cores3/components/esp_io_expander_aw9523b/include/esp_io_expander_aw9523b.h",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_cores3/power_manager.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_cores3/power_manager.h",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_cores3/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_cores3/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_sticks3/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_sticks3/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_sticks3/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_sticks3/power_manager.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_sticks3/power_manager.h",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_sticks3/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_sticks3/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_tab5/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_tab5/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_tab5/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_tab5/disp_init_data.h",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_tab5/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/m5stack/m5stack_tab5/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_cuican_esp32s3/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_cuican_esp32s3/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_cuican_esp32s3/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_cuican_esp32s3/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_cuican_esp32s3/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_cuican_esp32s3/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_moji2_esp32c5/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_moji2_esp32c5/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_moji2_esp32c5/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_moji2_esp32c5/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_moji2_esp32c5/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_moji2_esp32c5/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_moji_esp32s3/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_moji_esp32s3/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_moji_esp32s3/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_moji_esp32s3/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_moji_esp32s3/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/movecall/movecall_moji_esp32s3/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/rockbase-iot/nm_cyd_c5/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/rockbase-iot/nm_cyd_c5/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/rockbase-iot/nm_cyd_c5/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/rockbase-iot/nm_cyd_c5/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/rockbase-iot/nm_cyd_c5/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/rockbase-iot/nm_cyd_c5/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/seeedstudio/xiao_esp32s3_sense/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/seeedstudio/xiao_esp32s3_sense/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/seeedstudio/xiao_esp32s3_sense/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/seeedstudio/xiao_esp32s3_sense/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/seeedstudio/xiao_esp32s3_sense/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_ESP32_S3_RLCD_4_2/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_ESP32_S3_RLCD_4_2/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_ESP32_S3_RLCD_4_2/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_ESP32_S3_RLCD_4_2/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_ESP32_S3_RLCD_4_2/board_photo.jpg",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_ESP32_S3_RLCD_4_2/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_ESP32_S3_RLCD_4_2/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_ESP32_S3_Touch_AMOLED_2_16/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_ESP32_S3_Touch_AMOLED_2_16/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_ESP32_S3_Touch_AMOLED_2_16/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_ESP32_S3_Touch_AMOLED_2_16/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_ESP32_S3_Touch_AMOLED_2_16/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_p4_nano/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_p4_nano/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_p4_nano/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_p4_nano/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_p4_nano/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_s3_geek/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_s3_geek/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_s3_geek/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_s3_geek/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_s3_geek/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_s3_zero_n8r8/board_devices.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_s3_zero_n8r8/board_info.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_s3_zero_n8r8/board_peripherals.yaml",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_s3_zero_n8r8/sdkconfig.defaults.board",
+   "type": "blob"
+  },
+  {
+   "path": "application/edge_agent/boards/waveshare/waveshare_esp32_s3_zero_n8r8/setup_device.c",
+   "type": "blob"
+  },
+  {
+   "path": "components/claw_modules/claw_core/src/llm/backends/claw_llm_backend_custom.h",
+   "type": "blob"
+  },
+  {
+   "path": "components/claw_modules/claw_core/src/llm/claw_llm_runtime.h",
+   "type": "blob"
+  },
+  {
+   "path": "components/claw_modules/claw_utils/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "components/common/app_claw/app_capabilities.c",
+   "type": "blob"
+  },
+  {
+   "path": "components/common/mcp_mdns/src/mcp_local.c",
+   "type": "blob"
+  },
+  {
+   "path": "components/lua_modules/lua_driver_touch/test/touch_read.lua",
+   "type": "blob"
+  },
+  {
+   "path": "components/lua_modules/lua_module_board_manager/CMakeLists.txt",
+   "type": "blob"
+  },
+  {
+   "path": "components/lua_modules/lua_module_display/src/display_hal.c",
+   "type": "blob"
+  },
+  {
+   "path": "components/lua_modules/lua_module_image/src/lua_image_convert.h",
+   "type": "blob"
+  },
+  {
+   "path": "components/lua_modules/lua_module_lvgl/src/lua_lvgl_complex_widgets.c",
+   "type": "blob"
+  },
+  {
+   "path": "components/lua_modules/lua_module_magnetometer/src/bmm150/bmm150_defs.h",
+   "type": "blob"
+  },
+  {
+   "path": "components/lua_modules/lua_module_thread/README.md",
+   "type": "blob"
+  },
+  {
+   "path": "docs/src/assets/router_rules.schema.json",
+   "type": "blob"
+  },
+  {
+   "path": "docs/src/styles/homepage.css",
+   "type": "blob"
+  },
+  {
+   "path": "docs/tools/generate-firmware-json.ts",
+   "type": "blob"
+  }
+ ],
+ "truncated": false
+}
