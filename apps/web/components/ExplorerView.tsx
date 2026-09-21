@@ -35,17 +35,29 @@ export default function ExplorerView({ examples }: { examples: Example[] }) {
   // A home card is a real link to /wizard?example=<id>: on arrival, run that
   // query so the link lands on its results. Read client-side so the page stays
   // static; an unknown id (a stale link) just shows the empty wizard.
+  // `?q=<text>` is the same idea for free-text search — it's also the target
+  // of the WebSite SearchAction JSON-LD (lib/site.ts), so Google's sitelinks
+  // searchbox lands on real results, not an empty page.
   const ranFromUrl = useRef(false);
   useEffect(() => {
     if (ranFromUrl.current) return;
-    const id = new URLSearchParams(window.location.search).get("example");
-    if (!id) return;
-    const example = examples.find((e): e is NeedsExample => e.kind === "needs" && e.id === id);
-    if (!example) return;
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("example");
+    if (id) {
+      const example = examples.find((e): e is NeedsExample => e.kind === "needs" && e.id === id);
+      if (example) {
+        ranFromUrl.current = true;
+        track("example_click", { example: example.id, kind: "needs", via: "url" });
+        setNeeds(example.needs);
+        void executeWizard(example.needs);
+        return;
+      }
+    }
+    const q = params.get("q");
+    if (!q) return;
     ranFromUrl.current = true;
-    track("example_click", { example: example.id, kind: "needs", via: "url" });
-    setNeeds(example.needs);
-    void executeWizard(example.needs);
+    setFilters({ q });
+    void executeSearch({ q });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [examples]);
 

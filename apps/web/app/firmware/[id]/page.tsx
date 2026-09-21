@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 import FirmwareDetailClient from "@/components/firmware/FirmwareDetailClient";
 import FirmwareDetailView from "@/components/firmware/FirmwareDetailView";
 import { fetchAllParts, fetchFirmware, fetchRecipesForFirmware } from "@/lib/api-server";
-import { firmwareCategoryLabel } from "@/lib/format";
+import { firmwareMetaDescription } from "@/lib/format";
 import { fetchReadme } from "@/lib/readme";
-import { OG_IMAGE, SITE_NAME } from "@/lib/site";
+import { SITE_NAME } from "@/lib/site";
 
 // Firmware hub: the project's own identity (GET /firmware/<id>) plus the
 // reverse view — every board a recipe targets it for, grouped by trust tier,
@@ -21,16 +21,17 @@ export async function generateMetadata({ params }: PageProps<"/firmware/[id]">):
   }
   const firmware = result.data;
   const title = `${firmware.name} — ESP32 firmware`;
-  const description = `${firmware.name}: ${firmwareCategoryLabel(firmware.category)} firmware${
-    firmware.maintainer ? ` maintained by ${firmware.maintainer}` : ""
-  } for ${firmware.socs.join(", ") || "ESP32"} — see the boards it's verified to run on.`;
+  const description = firmwareMetaDescription(firmware);
   const path = `/firmware/${encodeURIComponent(id)}`;
+  // Nested metadata objects replace the root ones wholesale, so siteName and
+  // url must be restated here. The preview image is the segment's own
+  // opengraph-image.tsx (per-firmware card), which Next adds to both og and twitter.
   return {
     title,
     description,
     alternates: { canonical: path },
-    openGraph: { type: "website", siteName: SITE_NAME, title, description, url: path, images: [OG_IMAGE] },
-    twitter: { card: "summary_large_image", title, description, images: [OG_IMAGE.url] },
+    openGraph: { type: "article", siteName: SITE_NAME, title, description, url: path },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 

@@ -1,13 +1,16 @@
 // schema.org graphs for the pages that are server-rendered from data the API
-// already returns. No offers, prices, ratings or reviews anywhere: the site is
-// not a shop and `price_tier` is editorial (see SPEC.md anti-goals).
+// already returns. No offers, prices, ratings or reviews on parts: the site is
+// not a shop and `price_tier` is editorial (see SPEC.md anti-goals). Firmware
+// is the one exception — it carries a truthful $0 Offer (it's free/open-source)
+// so its SoftwareApplication node has something for Google to render; never a
+// fabricated rating or review.
 import type { BrandFacet, Firmware, PartDetail, PartRecord } from "@/lib/api";
 import { brandLabel } from "@/lib/brand";
 import { faqPage } from "@/lib/faq";
-import { firstSentence, typeLabel, typePlural } from "@/lib/format";
+import { firmwareMetaDescription, firstSentence, typeLabel, typePlural } from "@/lib/format";
 import { typeIndexPath } from "@/lib/routes";
 import { dataFolderUrl, repoUrl } from "@/lib/github";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, websiteSearchAction } from "@/lib/site";
 
 const CONTEXT = "https://schema.org";
 const ORG_ID = `${SITE_URL}/#organization`;
@@ -35,6 +38,7 @@ function website() {
     description: SITE_DESCRIPTION,
     inLanguage: "en",
     publisher: { "@id": ORG_ID },
+    potentialAction: websiteSearchAction(),
   };
 }
 
@@ -83,6 +87,26 @@ export function howWeWorkGraph(description: string) {
 
 export function homeGraph() {
   return { "@context": CONTEXT, "@graph": [organization(), website(), dataset()] };
+}
+
+/** /wizard: the spec wizard/search tool itself, as a WebPage. */
+export function wizardGraph(description: string) {
+  const url = `${SITE_URL}/wizard`;
+  return {
+    "@context": CONTEXT,
+    "@graph": [
+      organization(),
+      website(),
+      { "@type": "WebPage", "@id": url, name: "Spec wizard", url, description, isPartOf: { "@id": SITE_ID }, about: { "@id": ORG_ID } },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+          { "@type": "ListItem", position: 2, name: "Wizard" },
+        ],
+      },
+    ],
+  };
 }
 
 /** /brands: the list of every vendor/brand in the dataset, as a CollectionPage + ItemList. */
@@ -209,7 +233,11 @@ export function firmwareGraph(firmware: Firmware, boards: PartRecord[]) {
         name: firmware.name,
         url,
         sameAs: firmware.url,
+        description: firmwareMetaDescription(firmware),
+        image: `${url}/opengraph-image`,
         applicationCategory: firmware.category,
+        operatingSystem: "ESP32",
+        offers: { "@type": "Offer", price: 0, priceCurrency: "USD" },
         ...(firmware.license ? { license: firmware.license } : {}),
         ...(firmware.maintainer ? { author: { "@type": "Person", name: firmware.maintainer } } : {}),
         isPartOf: { "@id": SITE_ID },
