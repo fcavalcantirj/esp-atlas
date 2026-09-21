@@ -120,11 +120,13 @@ def test_dry_run_prints_gauge_allocation_and_nothing_to_do_and_writes_nothing(ca
 
 def _fake_stage_modules(monkeypatch, calls):
     import stage_admit
+    import stage_admit_topics
     import stage_boardmap
     import stage_backfill
     monkeypatch.setattr(stage_backfill, "run", lambda ctx, budget, fetch=None: calls.append(("backfill", budget)) or tick.StageResult("backfill", summary=f"backfilled {budget}"))
     monkeypatch.setattr(stage_boardmap, "run", lambda ctx, budget, only=None: calls.append(("boardmap", budget)) or tick.StageResult("boardmap", summary=f"mapped {budget}"))
     monkeypatch.setattr(stage_admit, "run", lambda ctx, budget, call_share=1.0: calls.append(("admit", budget, round(call_share, 2))) or tick.StageResult("admit", summary=f"scored {budget}"))
+    monkeypatch.setattr(stage_admit_topics, "run", lambda ctx, budget: calls.append(("admit_topics", budget)) or tick.StageResult("admit_topics", summary=f"scored {budget}"))
 
 
 def test_hourly_path_runs_the_content_stages_from_the_split_heavier_first(capsys, tmp_path, monkeypatch):
@@ -134,9 +136,9 @@ def test_hourly_path_runs_the_content_stages_from_the_split_heavier_first(capsys
     out = capsys.readouterr().out
     assert not r.aborted
     assert "boards 42.5% -> backfill 4 / firmware 2 (hourly)" in out   # allocate(42.5, 6): backfill-heavy (finite thin)
-    # backfill runs first; firmware (2 units) → admit 1 + boardmap 1
-    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1)]
-    assert [s["name"] for s in r.stages] == ["backfill", "admit", "boardmap"]
+    # backfill runs first; firmware (2 units) → admit 1 + boardmap 1; topics always runs last, fixed budget
+    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK)]
+    assert [s["name"] for s in r.stages] == ["backfill", "admit", "boardmap", "admit_topics"]
     assert "backfilled 4" in out and "mapped 1" in out and "scored 1" in out
 
 
@@ -145,20 +147,32 @@ def test_hourly_stages_backfill_first_then_firmware_and_skip_empty_tracks(monkey
     _fake_stage_modules(monkeypatch, calls)
     for fn in tick.hourly_stages({"backfill": 4, "firmware": 2}):   # finite thin
         fn(None)
-    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1)]
+    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
     for fn in tick.hourly_stages({"backfill": 2, "firmware": 4}):   # finite covered
         fn(None)
-    assert calls == [("backfill", 2), ("admit", 2, 0.5), ("boardmap", 2)]
+    assert calls == [("backfill", 2), ("admit", 2, 0.5), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
     for fn in tick.hourly_stages({"backfill": 3, "firmware": 0}):   # firmware track empty
         fn(None)
-    assert calls == [("backfill", 3)]
+    assert calls == [("backfill", 3), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
     for fn in tick.hourly_stages({"backfill": 0, "firmware": 3}):   # backfill track empty; boardmap takes odd unit
         fn(None)
-    assert calls == [("admit", 1, 0.33), ("boardmap", 2)]
-    assert tick.hourly_stages({"backfill": 0, "firmware": 0}) == []
+    assert calls == [("admit", 1, 0.33), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK)]
+    calls.clear()
+
+
+def test_hourly_stages_topics_stage_runs_even_with_both_tracks_empty(monkeypatch):
+    """Additive: the topics stage is NOT gated by the allocator's split at all (unlike backfill/
+    admit/boardmap, which vanish when their track gets 0 units) — it always runs, fixed at
+    TOPICS_PER_TICK, independent of boards-completion gauge or demand steer."""
+    calls = []
+    _fake_stage_modules(monkeypatch, calls)
+    fns = tick.hourly_stages({"backfill": 0, "firmware": 0})
+    assert len(fns) == 1
+    fns[0](None)
+    assert calls == [("admit_topics", tick.TOPICS_PER_TICK)]
 
 
 def test_dry_run_with_real_gauge_reads_the_repo_tree(tmp_path):

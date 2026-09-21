@@ -62,6 +62,10 @@ REPO = _JR_DIR.parent
 MIN_RATE_LIMIT = 500
 STALE_PR_HOURS = 3.0
 TICK_BRANCH_PREFIX = "jr/tick-"
+TOPICS_PER_TICK = 2   # jr/stage_admit_topics.py: fixed, tiny budget — independent of the allocator
+                      # split, so the GitHub-topics source keeps the catalog growing after the
+                      # launcher pool (stage_admit) drained, without competing for the hourly
+                      # firmware/backfill split (SPEC-data-completion.md).
 
 
 class TickAbort(RuntimeError):
@@ -108,6 +112,12 @@ def hourly_stages(split: dict) -> list:
     Track B — infinite firmware drain: admit new firmware (jr/stage_admit) THEN map its boards
     (jr/stage_boardmap). Admit runs before boardmap so a freshly admitted firmware's one recipe
     is widened in the same tick and the guard never sees an orphan.
+    Topics — a THIRD, additive firmware source (jr/stage_admit_topics, GitHub topic search):
+    keeps the catalog growing after the launcher pool (Track B's admit) drained (DECISION-LOG.md).
+    Fixed at TOPICS_PER_TICK, outside the allocator's split — it never competes with Track A/B for
+    units, and always runs last so an admitted topics firmware's boardmap widening waits for its
+    own next tick (mirrors admit/boardmap ordering being the ONE thing that matters within a track,
+    not across tracks).
 
     `split` is {"backfill": n, "firmware": m}. The firmware units are shared admit≈boardmap
     (boardmap takes the odd one), and admit's call_share is its fraction of the firmware units."""
@@ -127,6 +137,8 @@ def hourly_stages(split: dict) -> list:
             out.append(lambda ctx, n=adm, s=share: stage_admit.run(ctx, budget=n, call_share=s))
         if bmap:
             out.append(lambda ctx, n=bmap: stage_boardmap.run(ctx, budget=n))
+    import stage_admit_topics
+    out.append(lambda ctx: stage_admit_topics.run(ctx, budget=TOPICS_PER_TICK))
     return out
 
 
