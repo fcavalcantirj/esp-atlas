@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-09-21",
+ "notes": [],
+ "ref": "main",
+ "repo": "matoslav/MicroGroove",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "Microgroove"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "Microgroove.bin",
+    "release": "v1.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Microgroove",
+   "url": "https://github.com/matoslav/MicroGroove/releases/download/v1.0.0/Microgroove.bin"
+  }
+ ]
+}
