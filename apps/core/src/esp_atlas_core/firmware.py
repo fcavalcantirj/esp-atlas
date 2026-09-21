@@ -26,6 +26,28 @@ def _reason_text(body):
     return rest.strip() if heading.strip().startswith("#") else body.strip()
 
 
+def popularity_key(record):
+    """Sort key for popularity ranking: stars desc, forks desc, name asc.
+
+    Records with null/absent `popularity.stars` sort LAST, ordered by name
+    among themselves (forks are meaningless without stars to rank against).
+    The single source of truth for ordering -- reused by the `/firmware` list
+    endpoint and the `/examples` projection so the two surfaces can never
+    diverge (SPEC-firmware-popularity.md).
+    """
+    popularity = record.get("popularity") or {}
+    stars = popularity.get("stars")
+    name = record.get("name") or ""
+    if stars is None:
+        return (1, 0, 0, name)
+    return (0, -stars, -(popularity.get("forks") or 0), name)
+
+
+def sort_by_popularity(records):
+    """`records` ordered by `popularity_key` -- see there for the exact rule."""
+    return sorted(records, key=popularity_key)
+
+
 def list_firmware():
     """Every seeded firmware record's frontmatter."""
     return _records("firmware")

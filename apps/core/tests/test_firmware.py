@@ -2,8 +2,10 @@ from esp_atlas_core.firmware import (
     get_firmware,
     list_firmware,
     list_recipes,
+    popularity_key,
     recipes_for_board,
     recipes_for_firmware,
+    sort_by_popularity,
 )
 from esp_atlas_core.paths import DATA_DIR
 
@@ -109,3 +111,34 @@ def test_every_recipe_has_non_empty_reason_text():
     """The reason is the recipe body itself -- every seeded recipe has one."""
     empty = [r["id"] for r in list_recipes() if not r.get("reason")]
     assert not empty, f"recipe(s) with no reason text: {empty}"
+
+
+def test_sort_by_popularity_orders_stars_desc_forks_desc_name_asc_nulls_last():
+    """The oracle: stars desc, forks desc (tie-break), name asc (tie-break),
+    null/absent stars sort LAST ordered by name (SPEC-firmware-popularity.md
+    §2/§6). Both the `/firmware` list endpoint and the `/examples` projection
+    reuse this exact comparator, so it is pinned here once and trusted
+    everywhere else."""
+    fixture = [
+        {"name": "Alpha", "popularity": {"stars": 100, "forks": 5}},
+        {"name": "Beta", "popularity": {"stars": 100, "forks": 10}},
+        {"name": "Gamma", "popularity": {"stars": 50, "forks": 999}},
+        {"name": "Zeta", "popularity": {"stars": 50, "forks": 999}},
+        {"name": "Delta", "popularity": None},
+        {"name": "Epsilon", "popularity": {"stars": None, "forks": 20}},
+    ]
+
+    ordered = sort_by_popularity(fixture)
+
+    assert [r["name"] for r in ordered] == [
+        "Beta",     # 100 stars, 10 forks
+        "Alpha",    # 100 stars, 5 forks
+        "Gamma",    # 50 stars, 999 forks -- tie with Zeta, name asc
+        "Zeta",     # 50 stars, 999 forks
+        "Delta",    # null popularity -- last, name asc
+        "Epsilon",  # null stars (forks present but irrelevant) -- last, name asc
+    ]
+
+
+def test_popularity_key_treats_absent_popularity_field_the_same_as_null():
+    assert popularity_key({"name": "NoPopKey"}) == popularity_key({"name": "NoPopKey", "popularity": None})
