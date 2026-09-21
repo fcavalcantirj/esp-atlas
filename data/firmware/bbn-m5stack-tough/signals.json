@@ -1,0 +1,14 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-09-21",
+ "notes": [],
+ "ref": "main",
+ "repo": "bareboat-necessities/bbn-m5stack-tough",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": []
+}
