@@ -14,16 +14,19 @@ here touches the network. Two firmware, both P2 reference cases from the phase b
 
 Every resolved/unresolved assertion below was checked against the REAL catalog
 (`data/boards/*/*/board.md`) and the REAL fetched sources, not assumed — same discipline as
-test_board_resolver.py's own oracle. One correction to the phase brief's own gloss, made by
-running the extractor against the real README: the brief's reference-case description lists
-"M5Stick v1.1/v2" as part of the "🧱 M5Stack Devices" table's yield, but the real README puts
-those two rows in a SEPARATE, non-matching "🧪 In Beta" table sitting right after it (nested
-inside the same outer "## Compatible Hardware" markdown section). readme_table_refs() treats
-that inner heading as its own section boundary (SPEC §3.3: "the device cells, not surrounding
-prose" — a non-matching heading must not inherit its non-matching neighbour's table just because
-it is a markdown descendant), so M5Stick v1.1/v2 are correctly ABSENT from this extractor's
-output. Asserting the brief's literal example here would be exactly the wrong-edge failure mode
-SPEC §8 exists to catch.
+test_board_resolver.py's own oracle.
+
+Board-mapping-gap closing pass (2026-09-21): the real README's "🧪 In Beta" table (M5Stick v1.1,
+M5Stick v2, CYD2USB, CYD1USB) sits right after the matching "🧱 M5Stack Devices" one but under its
+OWN, non-matching heading. readme_table_refs() still treats a non-matching heading as its own
+section boundary — a table under it does not inherit the matching neighbour's scope just because
+it is a markdown descendant — but a row whose device name carries a trailing version suffix
+("M5Stick v1.1", "M5Stick v2") is now captured regardless: firmware READMEs park still-supported
+hardware under headings like "In Beta" that will never match the Supported/Compatible/Devices/
+Hardware keyword list, and the version suffix is itself a strong device-row signal (SPEC §3.3).
+CYD2USB/CYD1USB carry no such signal and stay excluded, same as before. Separately, "GPS Module"
+and "LLM Module" — accessories, not boards, both under the matching "🧱 M5Stack Devices" heading —
+are now filtered out everywhere a device name is collected, never emitted as a ref at all.
 
 Run: cd jr && python3 -m pytest test_board_declared.py -v
 """
@@ -135,31 +138,50 @@ def test_esp_claw_manifest_resolves_the_catalogued_boards_and_leaves_p4_c5_unres
 
 EVIL_M5PROJECT_REFS = [
     "M5Cardputer", "M5Stack Core2", "M5Stack Fire", "M5Stack Core1", "M5Stack AWS",
-    "M5Stack CoreS3", "M5Stack CoreS3 SE", "M5AtomS3", "GPS Module", "LLM Module",
+    "M5Stack CoreS3", "M5Stack CoreS3 SE", "M5AtomS3", "M5Stick v1.1", "M5Stick v2",
     "Evil with v1.3.0", "ESP32 devices", "External antenna",
 ]
 
 
 def test_readme_table_refs_recovers_evil_m5project_device_names_cleaned():
     """The cell text carries decoration the resolver must never see: 'Better one : M5Cardputer'
-    -> 'M5Cardputer', '↳ GPS Module' -> 'GPS Module', 'M5AtomS3 (GPS needed)' -> 'M5AtomS3'."""
+    -> 'M5Cardputer', 'M5AtomS3 (GPS needed)' -> 'M5AtomS3'. 'GPS Module' and 'LLM Module' are
+    dropped entirely — accessories, not boards (SPEC hardening, board-mapping-gap pass)."""
     refs = bdec.readme_table_refs(EVIL_M5PROJECT_README)
     assert refs == EVIL_M5PROJECT_REFS
 
 
-def test_readme_table_refs_never_pulls_in_a_non_matching_nested_heading():
-    """'🧪 In Beta' (CYD2USB, CYD1USB, M5Stick v1.1, M5Stick v2) sits right after the matching
-    '🧱 M5Stack Devices' table but under its OWN, non-matching heading — never captured."""
+def test_readme_table_refs_captures_version_suffixed_rows_under_a_non_matching_heading():
+    """'🧪 In Beta' sits right after the matching '🧱 M5Stack Devices' table but under its OWN,
+    non-matching heading. Its version-suffixed rows (M5Stick v1.1, M5Stick v2) are still captured
+    — the trailing 'vN[.N...]' is device-row signal on its own — while its non-versioned rows
+    (CYD2USB, CYD1USB) are correctly left out."""
     refs = bdec.readme_table_refs(EVIL_M5PROJECT_README)
-    for noise in ("CYD2USB", "CYD1USB", "M5Stick v1.1", "M5Stick v2"):
+    assert "M5Stick v1.1" in refs and "M5Stick v2" in refs
+    for noise in ("CYD2USB", "CYD1USB"):
         assert noise not in refs
 
 
+def test_readme_table_refs_drops_module_and_accessory_rows():
+    """'↳ GPS Module' and 'LLM Module' sit right in the matching '🧱 M5Stack Devices' table but
+    name accessories, not boards — dropped everywhere, matching heading or not."""
+    refs = bdec.readme_table_refs(EVIL_M5PROJECT_README)
+    for noise in ("GPS Module", "LLM Module"):
+        assert noise not in refs
+
+
+def test_readme_table_refs_accessory_filter_matches_whole_words_only():
+    """The accessory filter (Module/Unit/Base/Hat/Kit/Sensor) matches whole words, not
+    substrings — a device name that merely contains one of those letters as part of a larger
+    word (e.g. a hypothetical 'Cardputer' does NOT contain 'hat' as a word) must survive."""
+    text = "## Supported Devices\n| Board |\n|---|\n| Cardputer |\n| GPS Sensor Module |\n"
+    assert bdec.readme_table_refs(text) == ["Cardputer"]
+
+
 def test_readme_table_refs_never_pulls_in_the_feature_matrix_or_prose():
-    """The 'Features may vary...' matrix and 'Required Extras'/'Hardware Requirements' prose
-    paragraphs sit outside any Supported/Compatible/Devices/Hardware-matching table/list scope
-    (or, for the one genuine bullet list SPEC §3.3 says to read, resolve to nothing — see the
-    module docstring's correction note)."""
+    """The 'Features may vary...' matrix and 'Required Extras' prose sit outside any
+    Supported/Compatible/Devices/Hardware-matching table/list scope, and none of their cells
+    carry a version suffix either, so the new version-suffix carve-out never pulls them in."""
     refs = bdec.readme_table_refs(EVIL_M5PROJECT_README)
     for noise in ("Evil-Cardputer v1.5.4", "WiFi Network Scanning", "SD Card", "Feature"):
         assert noise not in refs
@@ -188,19 +210,30 @@ def test_extract_readme_table_cites_the_repo_readme_and_the_source_type():
 EVIL_M5PROJECT_RESOLVED = {
     "M5Cardputer": "m5cardputer",
     "M5Stack Core2": "m5stack-core2",
+    "M5Stack Fire": "m5stack-fire",
+    "M5Stack AWS": "m5stack-core-aws",
     "M5Stack CoreS3": "m5stack-cores3",
+    "M5Stack CoreS3 SE": "m5stack-cores3-se",
     "M5AtomS3": "m5atoms3",
+    "M5Stick v1.1": "m5stick-c",
+    "M5Stick v2": "m5stick-cplus",
 }
 
 
 def test_evil_m5project_readme_resolves_the_catalogued_devices():
+    """Board-mapping-gap backfill: Fire/AWS/CoreS3 SE/M5Stick v1.1/v2 now resolve too (data/boards/
+    m5stack/{m5stack-fire,m5stack-core-aws,m5stack-cores3-se,m5stick-c,m5stick-cplus}). 'M5Stack
+    Core1' stays unresolved — a bare numeric suffix is not a valid containment SKU suffix against
+    the new m5stack-core board (SPEC §8 'prefer missing to wrong'; see test_board_resolver.py).
+    'GPS Module'/'LLM Module' never reach here at all — readme_table_refs() drops them before
+    resolution, so len(resolved)+len(unresolved) == len(EVIL_M5PROJECT_REFS), not the raw table's
+    original row count."""
     import board_resolver as br
     refs = bdec.readme_table_refs(EVIL_M5PROJECT_README)
     result = br.resolve_boards(refs)
     assert result["resolved"] == EVIL_M5PROJECT_RESOLVED
     assert len(result["resolved"]) + len(result["unresolved"]) == len(EVIL_M5PROJECT_REFS)
-    for raw in ("M5Stack Fire", "M5Stack Core1", "M5Stack AWS", "M5Stack CoreS3 SE", "GPS Module", "LLM Module"):
-        assert raw in result["unresolved"]
+    assert result["unresolved"] == ["M5Stack Core1", "Evil with v1.3.0", "ESP32 devices", "External antenna"]
 
 
 # ─────────────────────────── extract_declared_boards (the driver) ───────────────────────────
@@ -227,7 +260,7 @@ def test_extract_declared_boards_evil_m5project_readme_only():
     for board_id in EVIL_M5PROJECT_RESOLVED.values():
         assert out["resolved"][board_id]["source_type"] == "readme_table"
         assert out["resolved"][board_id]["source_url"] == "https://github.com/7h30th3r0n3/Evil-M5Project#readme"
-    assert out["socs"] == ["esp32", "esp32-s3"]           # m5stack-core2 is classic esp32; the rest are S3
+    assert out["socs"] == ["esp32", "esp32-s3"]           # m5stack-core2/-fire/-core-aws/m5stick-c/-cplus are classic esp32; m5cardputer/-cores3/-cores3-se/m5atoms3 are S3
 
 
 def test_extract_declared_boards_defaults_ref_to_the_default_branch():

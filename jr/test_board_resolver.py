@@ -95,12 +95,15 @@ EVIL_M5PROJECT_RESOLVED = {
     "M5Stack Core2": "m5stack-core2",
     "M5AtomS3": "m5atoms3",
     "CoreS3": "m5stack-cores3",       # verified against data/boards/m5stack/m5stack-cores3 (name: CoreS3)
+    "Fire": "m5stack-fire",           # backfilled (data/boards/m5stack/m5stack-fire, name: Fire)
 }
 
 # Verified against the real catalog (data/boards/), not assumed: none of these README
-# device names have a catalogued board. "Fire", "Core1" and the pre-Plus2 "StickC"
-# revisions and the AWS variant are not in data/boards/ under any id/name/aka.
-EVIL_M5PROJECT_UNRESOLVED = ["Fire", "Core1", "StickC v1.1", "StickC v2", "AWS"]
+# device names have a catalogued board. "Core1" is deliberately never aliased onto
+# m5stack-core (a bare numeric suffix is not a valid containment SKU suffix — SPEC §8
+# "prefer missing to wrong"), and the pre-Plus2 "StickC" short forms and bare "AWS"
+# don't carry the "M5Stick "/"M5Stack " prefix the new aka entries require.
+EVIL_M5PROJECT_UNRESOLVED = ["Core1", "StickC v1.1", "StickC v2", "AWS"]
 
 
 @pytest.mark.parametrize("raw,expect", list(EVIL_M5PROJECT_RESOLVED.items()))
@@ -110,6 +113,39 @@ def test_evil_m5project_catalogued_devices_resolve(raw, expect):
 
 @pytest.mark.parametrize("raw", EVIL_M5PROJECT_UNRESOLVED)
 def test_evil_m5project_uncatalogued_devices_are_unresolved(raw):
+    assert br.resolve(raw) is None
+
+
+# --- ORACLE fixture 3: the M5Stack board-mapping-gap backfill (data/boards/m5stack/{m5stack-fire,
+# m5stack-core,m5stack-core-aws,m5stack-cores3-se,m5stick-c,m5stick-cplus}) resolving from the
+# exact evil-m5project README device names named in the closing-the-gap phase brief ------------
+
+GAP_BACKFILL_RESOLVED = {
+    "M5Stack Fire": "m5stack-fire",
+    "M5Stack Core": "m5stack-core",
+    "M5Stack Core Basic": "m5stack-core",
+    "M5Stack Gray": "m5stack-core",
+    "M5Stack AWS": "m5stack-core-aws",
+    "M5Stack Core AWS": "m5stack-core-aws",
+    "M5Stack CoreS3 SE": "m5stack-cores3-se",
+    "M5Stick v1.1": "m5stick-c",
+    "M5StickC": "m5stick-c",
+    "M5Stick v2": "m5stick-cplus",
+    "M5StickC Plus": "m5stick-cplus",
+}
+
+
+@pytest.mark.parametrize("raw,expect", list(GAP_BACKFILL_RESOLVED.items()))
+def test_gap_backfill_device_names_resolve_to_the_new_boards(raw, expect):
+    assert br.resolve(raw) == expect
+
+
+@pytest.mark.parametrize("raw", [
+    "esp32", "esp32-s3", "ESP32-S3", "esp32_s3", "esp32-p4", "esp32-c5", "esp32-c6",
+])
+def test_gap_backfill_soc_rejection_rule_still_holds(raw):
+    """The new m5stack-core/-fire/-core-aws/-cores3-se/m5stick-c/m5stick-cplus boards and their
+    aka entries must never loosen the hard rule: a bare chip-family name never resolves to a board."""
     assert br.resolve(raw) is None
 
 

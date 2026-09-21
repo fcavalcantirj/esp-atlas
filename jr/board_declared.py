@@ -78,6 +78,8 @@ _ROW_RE = re.compile(r"<tr\b[^>]*>(.*?)</tr>", re.I | re.S)
 _TD_RE = re.compile(r"<td\b[^>]*>(.*?)</td>", re.I | re.S)
 _TH_RE = re.compile(r"<th\b", re.I)
 _BULLET_RE = re.compile(r"^\s*[-*]\s+(.*)$")
+_ACCESSORY_RE = re.compile(r"\b(module|unit|base|hat|kit|sensor)\b", re.I)
+_VERSION_SUFFIX_RE = re.compile(r"\bv\d+(\.\d+)*$", re.I)
 
 
 def _clean_cell(raw: str) -> str:
@@ -142,7 +144,18 @@ def readme_table_refs(text: str) -> list[str]:
     either kind closes the PRECEDING section, so a table under a non-matching heading (e.g. a
     "🧪 In Beta" table sitting right after a matching "🧱 M5Stack Devices" one) is never pulled in
     just because it is a markdown descendant. Prose paragraphs are never scanned — only fenced
-    HTML tables, markdown tables, and markdown bullet lists. First-seen order, deduped."""
+    HTML tables, markdown tables, and markdown bullet lists. First-seen order, deduped.
+
+    Two hardening rules apply to every row/cell, regardless of which heading it sits under:
+      - an accessory/module name (contains Module/Unit/Base/Hat/Kit/Sensor as a whole word, e.g.
+        "GPS Module", "LLM Module") is never emitted as a device ref — it names a peripheral you
+        attach to a board, not a board;
+      - a version-suffixed device row (e.g. "M5Stick v1.1", "M5Stick v2") IS captured even under a
+        heading that doesn't match the Supported/Compatible/Devices/Hardware keywords — firmware
+        READMEs often park still-supported hardware under a non-matching heading like "In Beta",
+        and a trailing "vN[.N...]" is a strong enough device-row signal on its own to pull it in
+        without inheriting that heading's noise (a name with no version suffix under a non-matching
+        heading, e.g. "CYD2USB", is still left alone)."""
     lines = text.splitlines()
     headings: list[tuple[int, str]] = []
     for i, line in enumerate(lines):
@@ -156,14 +169,17 @@ def readme_table_refs(text: str) -> list[str]:
 
     refs: list[str] = []
     for idx, (line_no, heading_text) in enumerate(headings):
-        if not _SECTION_KEYWORD_RE.search(heading_text):
-            continue
+        matches_heading = bool(_SECTION_KEYWORD_RE.search(heading_text))
         start = line_no + 1
         end = headings[idx + 1][0] if idx + 1 < len(headings) else len(lines)
         section_lines = lines[start:end]
         section_text = "\n".join(section_lines)
         for name in (_html_table_refs(section_text) + _markdown_table_refs(section_lines)
                     + _bullet_list_refs(section_lines)):
+            if _ACCESSORY_RE.search(name):
+                continue                                 # accessory/module, never a board ref
+            if not matches_heading and not _VERSION_SUFFIX_RE.search(name):
+                continue                                 # non-matching heading, no version signal
             if name not in refs:
                 refs.append(name)
     return refs
