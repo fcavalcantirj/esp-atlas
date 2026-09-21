@@ -186,7 +186,7 @@ def test_intent_firmware_query_surfaces_cited_board_reasons(client):
         # The status is the recipe's own trust tier, never model-generated -- and
         # not always known-good: the C5-DevKitC-1 recipe is `broken` since the
         # 2026-09-01 hardware test (v1.15.1 boot-loops on chip rev v1.2).
-        assert reason["status"] in {"known-good", "reported", "unverified", "broken"}
+        assert reason["status"] in {"known-good", "reported", "declared", "unverified", "broken"}
         assert reason["chip_family"]
         assert reason["sources"] and all(s["url"] for s in reason["sources"])
         assert reason["reason"]

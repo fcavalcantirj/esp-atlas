@@ -9,11 +9,14 @@ from esp_atlas_core.firmware import (
 )
 from esp_atlas_core.paths import DATA_DIR
 
-# The four trust tiers a recipe may carry (SPEC-wizard.md). `known-good` means
-# the maintainer/an official list names the board, or esp-atlas verified it on
-# real hardware; `reported` is cited but community-sourced; `unverified` is a
-# plausible build target with no verification; `broken` is a known regression.
-TRUST_TIERS = {"known-good", "reported", "unverified", "broken"}
+# The trust tiers a recipe may carry (must mirror schema/recipe.schema.json's
+# status enum). `known-good` means the maintainer/an official list names the
+# board, or esp-atlas verified it on real hardware; `reported` is cited but
+# community-sourced; `declared` is extracted from the repo's own board manifest
+# or README device table (provenance-cited, unverified on hardware,
+# SPEC-firmware-board-mapping.md); `unverified` is a plausible build target with
+# no verification; `broken` is a known regression.
+TRUST_TIERS = {"known-good", "reported", "declared", "unverified", "broken"}
 
 
 def _folder_ids(kind):
