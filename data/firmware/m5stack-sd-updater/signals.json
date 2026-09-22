@@ -1,7 +1,7 @@
 {
  "calls": 8,
  "errors": 0,
- "fetched": "2026-09-09",
+ "fetched": "2026-09-22",
  "notes": [],
  "ref": "master",
  "repo": "tobozo/M5Stack-SD-Updater",
@@ -9,7 +9,9 @@
   "boards": [
    "m5atom-lite",
    "m5stack-core2",
-   "m5stack-cores3"
+   "m5stack-cores3",
+   "m5stack-fire",
+   "m5stick-c"
   ],
   "socs": [],
   "unresolved": [
@@ -27,7 +29,6 @@
    "M5Core2-test",
    "M5CoreS3-FW-Launcher",
    "M5CoreS3-Launcher",
-   "M5Fire",
    "M5Fire-AppStore",
    "M5Fire-Launcher",
    "M5GFX,M5Unified",
@@ -37,7 +38,6 @@
    "M5Stack-SD-Menu.ino,M5Stack-FW-Menu.ino",
    "M5Stack-SDLoader-Snippet.ino",
    "M5Stack-test",
-   "M5StickC",
    "M5StickC-SPIFFS-Loader-Snippet.ino",
    "M5StickC-test",
    "M5Unified-test",
@@ -53,8 +53,6 @@
    "SdFatUpdater.ino",
    "esp32s3box",
    "m5stack-core-esp32",
-   "m5stack-fire",
-   "m5stick-c",
    "odroid_esp32"
   ]
  },
