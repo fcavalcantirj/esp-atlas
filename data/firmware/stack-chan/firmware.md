@@ -10,6 +10,7 @@ popularity:
   forks: 224
   as_of: '2026-09-20'
 socs:
+- esp32
 - esp32-s3
 sources:
 - field: '*'
@@ -21,6 +22,9 @@ sources:
 - field: summary
   url: https://github.com/stack-chan/stack-chan
   verified: '2026-09-20'
+- field: socs
+  url: https://github.com/stack-chan/stack-chan/blob/develop/.github/workflows/bundle.yml
+  verified: '2026-09-22'
 summary: "Stack\u2011chan firmware is an open\u2011source, JavaScript\u2011driven\
   \ robot platform for M5Stack devices (primarily the M5StackChan CoreS3), delivering\
   \ the core firmware, user MOD applications, and web\u2011based tools for flashing,\

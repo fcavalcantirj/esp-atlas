@@ -1,0 +1,161 @@
+{
+ "calls": 10,
+ "errors": 0,
+ "fetched": "2026-09-22",
+ "notes": [],
+ "ref": "develop",
+ "repo": "stack-chan/stack-chan",
+ "resolved": {
+  "boards": [
+   "m5stack-core2",
+   "m5stack-cores3"
+  ],
+  "socs": [],
+  "unresolved": [
+   "m5stack",
+   "m5stackchan_cores3",
+   "npm run build:release:m5stack",
+   "npm run build:release:m5stack_core2",
+   "npm run build:release:m5stack_cores3",
+   "npm run build:release:m5stackchan_cores3",
+   "npm run build:release:stackchan_rt",
+   "npm run build:release:takao_core2_sg90",
+   "stackchan_rt",
+   "takao_core2_sg90"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "workflow": ".github/workflows/bundle.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack",
+   "url": "https://github.com/stack-chan/stack-chan/blob/develop/.github/workflows/bundle.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/bundle.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "npm run build:release:m5stack",
+   "url": "https://github.com/stack-chan/stack-chan/blob/develop/.github/workflows/bundle.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/bundle.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack_core2",
+   "url": "https://github.com/stack-chan/stack-chan/blob/develop/.github/workflows/bundle.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/bundle.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "npm run build:release:m5stack_core2",
+   "url": "https://github.com/stack-chan/stack-chan/blob/develop/.github/workflows/bundle.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/bundle.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack_cores3",
+   "url": "https://github.com/stack-chan/stack-chan/blob/develop/.github/workflows/bundle.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/bundle.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "npm run build:release:m5stack_cores3",
+   "url": "https://github.com/stack-chan/stack-chan/blob/develop/.github/workflows/bundle.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/bundle.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stackchan_cores3",
+   "url": "https://github.com/stack-chan/stack-chan/blob/develop/.github/workflows/bundle.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/bundle.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "npm run build:release:m5stackchan_cores3",
+   "url": "https://github.com/stack-chan/stack-chan/blob/develop/.github/workflows/bundle.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/bundle.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "stackchan_rt",
+   "url": "https://github.com/stack-chan/stack-chan/blob/develop/.github/workflows/bundle.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/bundle.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "npm run build:release:stackchan_rt",
+   "url": "https://github.com/stack-chan/stack-chan/blob/develop/.github/workflows/bundle.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/bundle.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "takao_core2_sg90",
+   "url": "https://github.com/stack-chan/stack-chan/blob/develop/.github/workflows/bundle.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/bundle.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "npm run build:release:takao_core2_sg90",
+   "url": "https://github.com/stack-chan/stack-chan/blob/develop/.github/workflows/bundle.yml"
+  }
+ ]
+}
