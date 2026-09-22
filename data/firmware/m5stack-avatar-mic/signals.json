@@ -1,7 +1,7 @@
 {
  "calls": 5,
  "errors": 0,
- "fetched": "2026-09-09",
+ "fetched": "2026-09-22",
  "notes": [],
  "ref": "main",
  "repo": "mongonta0716/m5stack-avatar-mic",
@@ -10,7 +10,10 @@
    "m5atoms3",
    "m5dial",
    "m5stack-core2",
-   "m5stack-cores3"
+   "m5stack-cores3",
+   "m5stack-fire",
+   "m5stick-c",
+   "m5stick-cplus2"
   ],
   "socs": [
    "esp32-s3"
@@ -18,9 +21,7 @@
   "unresolved": [
    "esp32-s3-devkitc-1",
    "m5stack-core-esp32",
-   "m5stack-fire",
-   "m5stack-grey",
-   "m5stick-c"
+   "m5stack-grey"
   ]
  },
  "signals": [
