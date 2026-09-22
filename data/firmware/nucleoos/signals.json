@@ -1,0 +1,57 @@
+{
+ "calls": 9,
+ "errors": 0,
+ "fetched": "2026-09-22",
+ "notes": [],
+ "ref": "main",
+ "repo": "indecenti/NucleoOs",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "NucleoOS",
+   "latest",
+   "latest-ota"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "nucleoos-latest-ota.bin",
+    "release": "v0.3.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "latest-ota",
+   "url": "https://github.com/indecenti/NucleoOs/releases/download/v0.3.0/nucleoos-latest-ota.bin"
+  },
+  {
+   "extra": {
+    "asset": "nucleoos-latest.bin",
+    "release": "v0.3.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "latest",
+   "url": "https://github.com/indecenti/NucleoOs/releases/download/v0.3.0/nucleoos-latest.bin"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-S3",
+    "release": "v0.3.0"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "NucleoOS",
+   "url": "https://github.com/indecenti/NucleoOs/releases/download/v0.3.0/manifest.json"
+  }
+ ]
+}
