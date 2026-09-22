@@ -431,6 +431,9 @@ class FirmwareRecord(BaseModel):
     socs: list[str]
     sources: list[SourceEntry]
     popularity: Optional[Popularity] = None
+    #: Recipe count for this firmware (SPEC-firmware-ordering.md §4.A) -- projected by
+    #: esp_atlas_core.firmware.list_firmware(), never authored in frontmatter.
+    boards: int = 0
     #: Grounded English synopsis + source language (jr/groq_enrich.py enrich_readme()), cited via
     #: a `field: summary` sources[] entry -- see data/firmware/<id>/firmware.md `summary`/`readme_lang`.
     summary: Optional[str] = None

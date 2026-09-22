@@ -1,6 +1,84 @@
+import pytest
+
 import esp_atlas_api.main as main_module
 from esp_atlas_core.firmware import list_firmware as core_list_firmware
+from esp_atlas_core.firmware import sort_by_mode
 from esp_atlas_core.firmware import sort_by_popularity
+
+# --- P2 sort delegation (SPEC-firmware-ordering.md §5.2) --------------------
+#
+# Coding-tool-named fixture (never lorem/animals/food, matching the P1 oracle
+# convention in apps/core/tests/test_firmware.py) with every FirmwareRecord
+# field FastAPI's response_model requires -- the core oracle already pins the
+# exact per-mode id order; this fixture only has to prove `/firmware?sort=`
+# delegates to `sort_by_mode` end-to-end (not re-derive the oracle).
+_SORT_FIXTURE = [
+    {
+        "id": "cargo", "type": "firmware", "name": "Cargo",
+        "url": "https://github.com/example/cargo", "category": "multi",
+        "socs": ["esp32"], "sources": [],
+        "popularity": {"stars": 200, "forks": 80}, "boards": 3,
+    },
+    {
+        "id": "rustc", "type": "firmware", "name": "Rustc",
+        "url": "https://github.com/example/rustc", "category": "multi",
+        "socs": ["esp32"], "sources": [],
+        "popularity": {"stars": 150, "forks": 90}, "boards": 1,
+    },
+    {
+        "id": "eslint", "type": "firmware", "name": "ESLint",
+        "url": "https://github.com/example/eslint", "category": "multi",
+        "socs": ["esp32"], "sources": [],
+        "popularity": {"stars": 50, "forks": 10}, "boards": 5,
+    },
+    {
+        "id": "prettier", "type": "firmware", "name": "Prettier",
+        "url": "https://github.com/example/prettier", "category": "multi",
+        "socs": ["esp32"], "sources": [],
+        "popularity": {"stars": 300, "forks": 5}, "boards": 2,
+    },
+    {
+        "id": "vite", "type": "firmware", "name": "vite",
+        "url": "https://github.com/example/vite", "category": "multi",
+        "socs": ["esp32"], "sources": [],
+        "popularity": {"stars": 10, "forks": 1}, "boards": 1,
+    },
+]
+
+
+@pytest.mark.parametrize("mode", ["popularity", "name", "name-desc", "forks", "boards"])
+def test_list_firmware_sort_modes_delegate_to_core_sort_by_mode(client, monkeypatch, mode):
+    monkeypatch.setattr(main_module, "core_list_firmware", lambda: _SORT_FIXTURE)
+    r = client.get("/firmware", params={"sort": mode})
+    assert r.status_code == 200
+    expected_order = [rec["id"] for rec in sort_by_mode(_SORT_FIXTURE, mode)]
+    assert [rec["id"] for rec in r.json()["results"]] == expected_order
+
+
+def test_list_firmware_unknown_sort_clamps_to_popularity(client, monkeypatch):
+    monkeypatch.setattr(main_module, "core_list_firmware", lambda: _SORT_FIXTURE)
+    r = client.get("/firmware", params={"sort": "not-a-real-mode"})
+    assert r.status_code == 200
+    expected_order = [rec["id"] for rec in sort_by_mode(_SORT_FIXTURE, "popularity")]
+    assert [rec["id"] for rec in r.json()["results"]] == expected_order
+
+
+def test_list_firmware_limit_and_offset_slice_after_name_sort(client, monkeypatch):
+    monkeypatch.setattr(main_module, "core_list_firmware", lambda: _SORT_FIXTURE)
+    all_ids = [rec["id"] for rec in sort_by_mode(_SORT_FIXTURE, "name")]
+    r = client.get("/firmware", params={"sort": "name", "limit": 2, "offset": 1})
+    assert r.status_code == 200
+    body = r.json()
+    assert [rec["id"] for rec in body["results"]] == all_ids[1:3]
+    assert body["total"] == len(all_ids)
+
+
+def test_list_firmware_boards_present_on_every_record(client, monkeypatch):
+    monkeypatch.setattr(main_module, "core_list_firmware", lambda: _SORT_FIXTURE)
+    r = client.get("/firmware")
+    assert r.status_code == 200
+    boards_by_id = {rec["id"]: rec["boards"] for rec in r.json()["results"]}
+    assert boards_by_id == {"cargo": 3, "rustc": 1, "eslint": 5, "prettier": 2, "vite": 1}
 
 
 def test_list_firmware_returns_every_seeded_firmware(client):
@@ -28,11 +106,11 @@ def test_list_firmware_every_record_still_carries_popularity(client):
         assert "popularity" in rec
 
 
-def test_list_firmware_sort_name_orders_alphabetically(client):
+def test_list_firmware_sort_name_matches_core_name_key_order(client):
     r = client.get("/firmware", params={"sort": "name"})
     assert r.status_code == 200
-    ids = [rec["name"] for rec in r.json()["results"]]
-    assert ids == sorted(ids)
+    expected_order = [fw["id"] for fw in sort_by_mode(core_list_firmware(), "name")]
+    assert [rec["id"] for rec in r.json()["results"]] == expected_order
 
 
 def test_list_firmware_limit_and_offset_slice_the_popularity_order(client):
@@ -58,11 +136,6 @@ def test_list_firmware_offset_past_the_end_returns_empty_results_with_full_total
     body = r.json()
     assert body["results"] == []
     assert body["total"] == len(all_ids)
-
-
-def test_list_firmware_invalid_sort_is_422(client):
-    r = client.get("/firmware", params={"sort": "bogus"})
-    assert r.status_code == 422
 
 
 def test_list_firmware_limit_over_cap_is_422(client):

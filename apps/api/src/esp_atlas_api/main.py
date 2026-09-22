@@ -6,7 +6,7 @@ module only maps HTTP in/out to that library's public functions.
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Optional
 
 import httpx
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
@@ -33,7 +33,7 @@ from esp_atlas_core.firmware import list_firmware as core_list_firmware
 from esp_atlas_core.firmware import list_recipes as core_list_recipes
 from esp_atlas_core.firmware import recipes_for_board as core_recipes_for_board
 from esp_atlas_core.firmware import recipes_for_firmware as core_recipes_for_firmware
-from esp_atlas_core.firmware import sort_by_popularity as core_sort_by_popularity
+from esp_atlas_core.firmware import sort_by_mode as core_sort_by_mode
 from esp_atlas_core.index_build import build_index
 from esp_atlas_core.paths import DATA_DIR
 from esp_atlas_core.run_guide import run_guide as core_run_guide
@@ -409,16 +409,18 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
 
     @app.get("/firmware", response_model=FirmwareListResponse)
     def list_firmware(
-        sort: Literal["popularity", "name"] = "popularity",
+        sort: str = "popularity",
         limit: Optional[int] = Query(None, ge=1, le=100),
         offset: int = Query(0, ge=0),
     ):
-        """SPEC-firmware-popularity.md §4. Default order is popularity (D1),
-        ranked via the single shared comparator so this can never diverge from
-        `/examples`. `limit` unset preserves the old behavior of returning
-        everything, just in the new default order."""
+        """SPEC-firmware-ordering.md §2/§3. Default order is popularity (D1),
+        every mode ranked via the single shared `sort_by_mode` comparator so
+        `/firmware` can never diverge from `/examples`. An unrecognized `sort`
+        clamps to popularity rather than 422ing (sort_by_mode's own rule).
+        `limit` unset preserves the old behavior of returning everything, just
+        in the new default order; slicing always happens after sort."""
         records = [_with_readme_en(r) for r in core_list_firmware()]
-        records = core_sort_by_popularity(records) if sort == "popularity" else sorted(records, key=lambda r: r["name"])
+        records = core_sort_by_mode(records, sort)
         total = len(records)
         sliced = records[offset : offset + limit] if limit is not None else records[offset:]
         return FirmwareListResponse(results=sliced, total=total)
