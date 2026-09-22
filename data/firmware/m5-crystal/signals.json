@@ -1,7 +1,7 @@
 {
  "calls": 6,
  "errors": 0,
- "fetched": "2026-09-10",
+ "fetched": "2026-09-22",
  "notes": [],
  "ref": "main",
  "repo": "Dlazder/m5_crystal_firmware",
@@ -24,39 +24,39 @@
  "signals": [
   {
    "extra": {
-    "asset": "crystal_firmware_cardputer-adv_v1.1.0.bin",
-    "release": "v1.1.0"
+    "asset": "crystal_firmware_cardputer-adv_v1.1.1.bin",
+    "release": "v1.1.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "crystal_firmware_cardputer-adv",
-   "url": "https://github.com/Dlazder/m5_crystal_firmware/releases/download/v1.1.0/crystal_firmware_cardputer-adv_v1.1.0.bin"
+   "url": "https://github.com/Dlazder/m5_crystal_firmware/releases/download/v1.1.1/crystal_firmware_cardputer-adv_v1.1.1.bin"
   },
   {
    "extra": {
-    "asset": "crystal_firmware_m5stick-c-plus2_v1.1.0.bin",
-    "release": "v1.1.0"
+    "asset": "crystal_firmware_m5stick-c-plus2_v1.1.1.bin",
+    "release": "v1.1.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "crystal_firmware_m5stick-c-plus2",
-   "url": "https://github.com/Dlazder/m5_crystal_firmware/releases/download/v1.1.0/crystal_firmware_m5stick-c-plus2_v1.1.0.bin"
+   "url": "https://github.com/Dlazder/m5_crystal_firmware/releases/download/v1.1.1/crystal_firmware_m5stick-c-plus2_v1.1.1.bin"
   },
   {
    "extra": {
-    "asset": "crystal_firmware_m5sticks3_v1.1.0.bin",
-    "release": "v1.1.0"
+    "asset": "crystal_firmware_m5sticks3_v1.1.1.bin",
+    "release": "v1.1.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "crystal_firmware_m5sticks3",
-   "url": "https://github.com/Dlazder/m5_crystal_firmware/releases/download/v1.1.0/crystal_firmware_m5sticks3_v1.1.0.bin"
+   "url": "https://github.com/Dlazder/m5_crystal_firmware/releases/download/v1.1.1/crystal_firmware_m5sticks3_v1.1.1.bin"
   },
   {
    "extra": {
