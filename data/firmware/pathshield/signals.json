@@ -1,0 +1,16 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-22",
+ "notes": [
+  "latest release v2.1 has no binaries; read v1.2.1 instead"
+ ],
+ "ref": "main",
+ "repo": "lukeswitz/PathShield",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": []
+}
