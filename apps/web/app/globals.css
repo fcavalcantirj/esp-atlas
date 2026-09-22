@@ -1291,6 +1291,63 @@ input[type="checkbox"]:checked::after {
   white-space: nowrap;
 }
 
+/* SPEC-firmware-ordering.md §5: "Runs on N boards" card glance, same quiet
+   mono register as .popularity-glance -- another datum, not a call to action. */
+.part-card-boards {
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* SPEC-firmware-ordering.md §3: the /firmware sort control -- plain GET
+   links, quiet mono register like .breadcrumb, one underline for the active
+   mode rather than a boxed pill. */
+.firmware-sort {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.6rem;
+  margin: 0 0 1.25rem;
+  font-family: var(--font-data);
+  font-size: var(--t-xs);
+}
+
+.firmware-sort-label {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+}
+
+.firmware-sort-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.9rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.firmware-sort-option {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+a.firmware-sort-option:hover,
+a.firmware-sort-option:focus-visible {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.firmware-sort-option.is-active {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
 /* SPEC-firmware-popularity.md §5: the "Showing N of M" + Show more affordance
    under a ranked, capped list. */
 .reveal-footer {

@@ -98,6 +98,13 @@ export function firmwareCategoryLabel(category: string): string {
   return FIRMWARE_CATEGORY_LABEL[category] ?? category;
 }
 
+/** "Runs on N boards" card glance (SPEC-firmware-ordering.md §4.A/§5) -- null
+ * below 1 so an un-recipe'd firmware renders nothing rather than "0 boards". */
+export function boardsLabel(boards: number | null | undefined): string | null {
+  if (!boards || boards < 1) return null;
+  return `Runs on ${boards} board${boards === 1 ? "" : "s"}`;
+}
+
 /**
  * Meta/JSON-LD description for a firmware: its Groq-grounded one-liner
  * (`summary`) when the enrichment pipeline has produced one, else the

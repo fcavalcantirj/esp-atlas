@@ -132,6 +132,9 @@ export interface Firmware {
   socs: string[];
   sources: SourceEntry[];
   popularity?: FirmwarePopularity | null;
+  /** Recipe count for this firmware (SPEC-firmware-ordering.md §4.A) -- how
+   * many boards it's verified to run on, projected server-side. */
+  boards?: number;
   /** Groq-generated grounded one-liner, cached on the record. */
   summary?: string;
   /** README source language code (e.g. "en", "ja"), as detected during enrichment. */

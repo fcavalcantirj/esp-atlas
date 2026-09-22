@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import FirmwareBrowseList from "@/components/FirmwareBrowseList";
+import FirmwareSortControl from "@/components/FirmwareSortControl";
 import JsonLd from "@/components/JsonLd";
 import { fetchFirmwareList } from "@/lib/api-server";
+import { firmwareLeadCopy, firmwareRobots, resolveSort } from "@/lib/firmware-sort";
 import { OG_IMAGE, SITE_NAME } from "@/lib/site";
 import { firmwareIndexGraph } from "@/lib/structured-data";
 
@@ -16,22 +18,28 @@ const TITLE = "ESP32 firmware — what runs on what";
 const DESCRIPTION =
   "Every flashable ESP32 firmware project in the esp-atlas dataset — Marauder, NEMO, Launcher and more — cited to its own repo, with the boards it's verified to run on.";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const result = await fetchFirmwareList();
+export async function generateMetadata({ searchParams }: PageProps<"/firmware">): Promise<Metadata> {
+  const { sort: rawSort } = await searchParams;
+  const sort = resolveSort(rawSort);
+  const result = await fetchFirmwareList(sort);
   return {
     title: TITLE,
     description: DESCRIPTION,
+    // SPEC-firmware-ordering.md §3: every sort order canonicalizes to the
+    // bare index so the 5 orders never become indexable near-duplicates.
     alternates: { canonical: "/firmware" },
-    // A cold API must not get an empty index cached by a crawler.
-    robots: result.status === "ok" ? undefined : { index: false, follow: true },
+    robots: firmwareRobots(sort, result.status === "ok"),
     openGraph: { type: "website", siteName: SITE_NAME, title: `${TITLE} · ${SITE_NAME}`, description: DESCRIPTION, url: "/firmware", images: [OG_IMAGE] },
     twitter: { card: "summary_large_image", title: `${TITLE} · ${SITE_NAME}`, description: DESCRIPTION, images: [OG_IMAGE.url] },
   };
 }
 
-export default async function FirmwareIndexPage() {
-  const result = await fetchFirmwareList();
-  // Already popularity-ranked by the API (D1) -- see SPEC-firmware-popularity.md §1.
+export default async function FirmwareIndexPage({ searchParams }: PageProps<"/firmware">) {
+  const { sort: rawSort } = await searchParams;
+  const sort = resolveSort(rawSort);
+  const result = await fetchFirmwareList(sort);
+  // Already ordered server-side by the API -- see SPEC-firmware-ordering.md §1
+  // (Golden Rule 3: the API sorts, this page only renders what it returns).
   const firmware = result.status === "ok" ? result.data.results : [];
 
   return (
@@ -43,12 +51,13 @@ export default async function FirmwareIndexPage() {
         <span aria-current="page">Firmware</span>
       </nav>
       <h1>Firmware</h1>
-      <p className="lead">
-        {firmware.length > 0
-          ? `${firmware.length} flashable firmware projects, ranked by GitHub popularity — open one to see the boards it's verified to run on.`
-          : "The firmware list could not be loaded right now — try again in a moment."}
-      </p>
-      {firmware.length > 0 && <FirmwareBrowseList firmware={firmware} />}
+      <p className="lead">{firmwareLeadCopy(sort, firmware.length)}</p>
+      {firmware.length > 0 && (
+        <>
+          <FirmwareSortControl sort={sort} />
+          <FirmwareBrowseList firmware={firmware} />
+        </>
+      )}
     </main>
   );
 }

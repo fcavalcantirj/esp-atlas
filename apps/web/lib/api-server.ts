@@ -11,6 +11,7 @@
 // branch on, so a cold/unreachable Python function degrades to the client-side
 // fallback instead of a 500.
 import type { BrandPage, Example, Facets, Firmware, PartDetail, PartRecord, Recipe } from "@/lib/api";
+import { DEFAULT_SORT } from "./firmware-sort.ts";
 import type { BootBoard } from "@/lib/troubleshooter";
 
 const REVALIDATE_SECONDS = 3600;
@@ -98,8 +99,12 @@ export function fetchBrandPage(slug: string): Promise<ServerFetchResult<BrandPag
   return serverFetch<BrandPage>(`/brands/${encodeURIComponent(slug)}`);
 }
 
-export async function fetchFirmwareList(): Promise<ServerFetchResult<{ results: Firmware[] }>> {
-  return serverFetch<{ results: Firmware[] }>(`/firmware`);
+/** SPEC-firmware-ordering.md §3: `sort` is only sent when it differs from the
+ * API's own default, so the default request stays byte-identical to before
+ * this mode existed. */
+export async function fetchFirmwareList(sort?: string): Promise<ServerFetchResult<{ results: Firmware[] }>> {
+  const query = sort && sort !== DEFAULT_SORT ? `?sort=${encodeURIComponent(sort)}` : "";
+  return serverFetch<{ results: Firmware[] }>(`/firmware${query}`);
 }
 
 export function fetchFirmware(id: string): Promise<ServerFetchResult<Firmware>> {

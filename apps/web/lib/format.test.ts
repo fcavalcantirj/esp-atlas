@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { compactCount, firmwareMetaDescription, popularityGlance, readmeLanguageName } from "./format.ts";
+import { boardsLabel, compactCount, firmwareMetaDescription, popularityGlance, readmeLanguageName } from "./format.ts";
 
 test("maps known README source language codes to an English name", () => {
   assert.equal(readmeLanguageName("ja"), "Japanese");
@@ -10,6 +10,21 @@ test("maps known README source language codes to an English name", () => {
 
 test("falls back to the raw code for an unmapped language", () => {
   assert.equal(readmeLanguageName("fr"), "fr");
+});
+
+test("boardsLabel is null for zero/missing boards, never '0 boards'", () => {
+  assert.equal(boardsLabel(0), null);
+  assert.equal(boardsLabel(null), null);
+  assert.equal(boardsLabel(undefined), null);
+});
+
+test("boardsLabel singularizes exactly 1 board", () => {
+  assert.equal(boardsLabel(1), "Runs on 1 board");
+});
+
+test("boardsLabel pluralizes 2+ boards", () => {
+  assert.equal(boardsLabel(2), "Runs on 2 boards");
+  assert.equal(boardsLabel(12), "Runs on 12 boards");
 });
 
 // firmwareMetaDescription() is shared by the firmware page's generateMetadata
