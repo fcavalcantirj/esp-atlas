@@ -1,7 +1,7 @@
 {
  "calls": 30,
  "errors": 0,
- "fetched": "2026-09-10",
+ "fetched": "2026-09-22",
  "notes": [
   "extra_configs matched more than 40 files; kept the 40 naming an ESP32 family first",
   "call budget exhausted while expanding extra_configs",
@@ -16,6 +16,7 @@
    "lilygo-t-watch-s3",
    "lilygo-t5-epaper-s3-pro",
    "m5cardputer",
+   "m5stack-core",
    "m5stack-core2",
    "m5stack-cores3",
    "m5stack-papers3"
@@ -80,7 +81,6 @@
    "lilygo-t-hmi",
    "lilygo-t-lora-pager",
    "lilygo-t-watch-ultra",
-   "m5stack-core",
    "m5stack-core-4Mb",
    "m5stack-cplus2",
    "m5stack-dinmeter",
@@ -1162,6 +1162,18 @@
   },
   {
    "extra": {
+    "env": "waveshare-esp32-s3-touch-amoled-206",
+    "file": "boards/waveshare-esp32-s3-touch-amoled-206/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/bmorcelli/Launcher/blob/main/boards/waveshare-esp32-s3-touch-amoled-206/platformio.ini#L2"
+  },
+  {
+   "extra": {
     "env": "CYD-2432S022C",
     "file": "boards/CYD-2432S028/platformio.ini"
    },
@@ -1426,6 +1438,42 @@
   },
   {
    "extra": {
+    "env": "headless-xiao-esp32s3-8mb",
+    "file": "boards/ESP-General/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 45,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/bmorcelli/Launcher/blob/main/boards/ESP-General/platformio.ini#L45"
+  },
+  {
+   "extra": {
+    "env": "headless-xiao-esp32s3-16mb",
+    "file": "boards/ESP-General/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 45,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/bmorcelli/Launcher/blob/main/boards/ESP-General/platformio.ini#L45"
+  },
+  {
+   "extra": {
+    "env": "headless-xiao-esp32c5-8mb",
+    "file": "boards/ESP-General/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 131,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32c5",
+   "url": "https://github.com/bmorcelli/Launcher/blob/main/boards/ESP-General/platformio.ini#L131"
+  },
+  {
+   "extra": {
     "env": "NM-CYD-C5",
     "file": "boards/NM-CYD-C5/platformio.ini"
    },
@@ -1519,30 +1567,6 @@
    "soc": null,
    "token": "esp32s3",
    "url": "https://github.com/bmorcelli/Launcher/blob/main/boards/lilygo-t-deck-pro/platformio.ini#L13"
-  },
-  {
-   "extra": {
-    "env": "lilygo-t-deck",
-    "file": "boards/lilygo-t-deck/platformio.ini"
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "esp32s3",
-   "url": "https://github.com/bmorcelli/Launcher/blob/main/boards/lilygo-t-deck/platformio.ini#L12"
-  },
-  {
-   "extra": {
-    "env": "lilygo-t-deck-plus",
-    "file": "boards/lilygo-t-deck/platformio.ini"
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "esp32s3",
-   "url": "https://github.com/bmorcelli/Launcher/blob/main/boards/lilygo-t-deck/platformio.ini#L12"
   }
  ]
 }

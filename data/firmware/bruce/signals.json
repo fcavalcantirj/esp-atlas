@@ -1,7 +1,7 @@
 {
  "calls": 30,
  "errors": 0,
- "fetched": "2026-09-14",
+ "fetched": "2026-09-22",
  "notes": [
   "call budget exhausted while expanding extra_configs",
   "call budget exhausted at 30"
@@ -15,6 +15,7 @@
    "lilygo-t-embed",
    "lilygo-t-watch-s3",
    "m5cardputer",
+   "m5stack-core",
    "m5stack-core2",
    "m5stack-cores3"
   ],
@@ -97,7 +98,6 @@
    "lilygo-t-embed-cc1101",
    "lilygo-t-hmi",
    "lilygo-t-lora-pager",
-   "m5stack-core",
    "m5stack-cplus1_1",
    "m5stack-cplus2",
    "m5stack-dinmeter",
