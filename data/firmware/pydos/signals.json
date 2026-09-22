@@ -1,0 +1,44 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-09-22",
+ "notes": [
+  "latest release v1.51 has no binaries; read v1.20 instead"
+ ],
+ "ref": "main",
+ "repo": "RetiredWizard/PyDOS",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "cp-8.1.0b1-PICOdv",
+   "cp-PICOdv-w"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "cp-8.1.0b1-PICOdv-.uf2",
+    "release": "v1.20"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cp-8.1.0b1-PICOdv",
+   "url": "https://github.com/RetiredWizard/PyDOS/releases/download/v1.20/cp-8.1.0b1-PICOdv-.uf2"
+  },
+  {
+   "extra": {
+    "asset": "cp-8.2-PICOdv-w.uf2",
+    "release": "v1.20"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cp-PICOdv-w",
+   "url": "https://github.com/RetiredWizard/PyDOS/releases/download/v1.20/cp-8.2-PICOdv-w.uf2"
+  }
+ ]
+}
