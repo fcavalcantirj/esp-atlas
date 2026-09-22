@@ -6,11 +6,13 @@ esp-atlas.db (see esp_atlas_core.index_build.build_index). The dataset is small
 (low tens of records), so these read straight off disk on every call, the same
 way esp_atlas_core.validate.known_ids() scans data/ rather than a build artifact.
 
-    list_firmware()                          # -> [{"id": "esp32marauder", ...}, ...]
+    list_firmware()                          # -> [{"id": "esp32marauder", "boards": 3, ...}, ...]
     get_firmware("esp32marauder")             # -> {"id": "esp32marauder", ...} or None
     recipes_for_board("m5cardputer")          # -> [{"id": "m5cardputer__esp32marauder", ...}, ...]
     recipes_for_firmware("esp32marauder")     # -> [{"id": "m5cardputer__esp32marauder", ...}, ...]
 """
+from collections import Counter
+
 from esp_atlas_core.frontmatter import iter_data_files, parse_frontmatter
 
 
@@ -48,9 +50,88 @@ def sort_by_popularity(records):
     return sorted(records, key=popularity_key)
 
 
+def name_key(record):
+    """Sort key for alphabetical ranking: name casefolded ascending, `id` tie-break.
+
+    Records with a null/absent `name` sort LAST (trailing bucket), ordered by
+    `id` among themselves. `id` is the final deterministic tie-break for equal
+    (casefolded) names -- see SPEC-firmware-ordering.md §3. Replaces the old
+    case-sensitive, tie-break-less inline `sorted(records, key=lambda r: r["name"])`
+    that used to live in the `/firmware` endpoint.
+    """
+    name = record.get("name")
+    rid = record.get("id") or ""
+    if name is None:
+        return (1, "", rid)
+    return (0, name.casefold(), rid)
+
+
+def _sort_by_name(records, *, descending):
+    """Shared engine for `name`/`name-desc`: null names always trail, `id` is
+    always the ascending tie-break regardless of direction. Two stable passes
+    (sort by id, then stable-sort by name with `reverse=descending`) get this
+    without needing to numerically negate a string."""
+    present = [r for r in records if r.get("name") is not None]
+    missing = sorted((r for r in records if r.get("name") is None), key=lambda r: r.get("id") or "")
+    present = sorted(present, key=lambda r: r.get("id") or "")
+    present = sorted(present, key=lambda r: r["name"].casefold(), reverse=descending)
+    return present + missing
+
+
+def forks_key(record):
+    """Sort key for fork-count ranking: forks desc, stars desc (tie-break),
+    name asc (tie-break), `id` (final tie-break).
+
+    Records with a null/absent `popularity.forks` sort LAST (trailing bucket),
+    ordered by name then `id` among themselves -- stars are meaningless without
+    forks to rank against, mirroring `popularity_key`'s null-stars rule.
+    """
+    popularity = record.get("popularity") or {}
+    forks = popularity.get("forks")
+    name = record.get("name") or ""
+    rid = record.get("id") or ""
+    if forks is None:
+        return (1, 0, 0, name, rid)
+    stars = popularity.get("stars") or 0
+    return (0, -forks, -stars, name, rid)
+
+
+def boards_key(record):
+    """Sort key for board-count ranking: `boards` (recipe count) desc, then
+    `popularity_key` as the tie-break, then `id` (final tie-break).
+
+    Records with a null/absent `boards` count sort LAST (trailing bucket),
+    ordered by `popularity_key` then `id` among themselves.
+    """
+    boards = record.get("boards")
+    rid = record.get("id") or ""
+    bucket = 1 if boards is None else 0
+    return (bucket, -(boards or 0)) + popularity_key(record) + (rid,)
+
+
+def sort_by_mode(records, mode):
+    """`records` ordered per the `?sort=` mode string (SPEC-firmware-ordering.md
+    §2): `popularity` (default), `name`, `name-desc`, `forks`, `boards`. Every
+    mode is backed by exactly one core comparator so `/firmware` and any future
+    caller can never diverge. Unrecognized modes clamp to `popularity`."""
+    if mode == "name":
+        return _sort_by_name(records, descending=False)
+    if mode == "name-desc":
+        return _sort_by_name(records, descending=True)
+    if mode == "forks":
+        return sorted(records, key=forks_key)
+    if mode == "boards":
+        return sorted(records, key=boards_key)
+    return sort_by_popularity(records)
+
+
 def list_firmware():
-    """Every seeded firmware record's frontmatter."""
-    return _records("firmware")
+    """Every seeded firmware record's frontmatter, plus `boards`: the number of
+    recipes targeting it. Computed in one pass over `list_recipes()` via a
+    `Counter` keyed by recipe firmware id -- not an O(n^2) `recipes_for_firmware`
+    call per record."""
+    board_counts = Counter(r["firmware"] for r in list_recipes() if r.get("firmware"))
+    return [{**fm, "boards": board_counts.get(fm["id"], 0)} for fm in _records("firmware")]
 
 
 def get_firmware(firmware_id):

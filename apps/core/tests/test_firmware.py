@@ -1,10 +1,14 @@
 from esp_atlas_core.firmware import (
+    boards_key,
+    forks_key,
     get_firmware,
     list_firmware,
     list_recipes,
+    name_key,
     popularity_key,
     recipes_for_board,
     recipes_for_firmware,
+    sort_by_mode,
     sort_by_popularity,
 )
 from esp_atlas_core.paths import DATA_DIR
@@ -145,3 +149,118 @@ def test_sort_by_popularity_orders_stars_desc_forks_desc_name_asc_nulls_last():
 
 def test_popularity_key_treats_absent_popularity_field_the_same_as_null():
     assert popularity_key({"name": "NoPopKey"}) == popularity_key({"name": "NoPopKey", "popularity": None})
+
+
+def test_list_firmware_carries_boards_count_matching_recipes_for_firmware():
+    """`boards` (SPEC-firmware-ordering.md §4.A) must equal
+    `len(recipes_for_firmware(id))` for every record -- computed in one Counter
+    pass over `list_recipes()`, so this is really a cross-check that the fast
+    path agrees with the (slow, O(n^2)-if-called-per-record) reference."""
+    for fm in list_firmware():
+        assert fm["boards"] == len(recipes_for_firmware(fm["id"])), fm["id"]
+
+
+# --- P1 ordering oracle (SPEC-firmware-ordering.md §5.1) --------------------
+#
+# One hand-built fixture, exercised under every `sort_by_mode` mode, each
+# mode's exact id order pinned below. Coding-tool names throughout (never
+# lorem/animals/food). What each row is doing here:
+#
+#   cargo/rustc/clippy  -- same stars (200): forks breaks cargo+clippy (80)
+#                           ahead of rustc (50); cargo/clippy then break on
+#                           name (raw, case-sensitive -- popularity_key's
+#                           existing, unchanged tie-break).
+#   vitea/viteb         -- literally the same name ("Vite"): name_key can
+#                           only break the tie on `id` (vitea < viteb).
+#   zephyrrtos/advanceos -- tied stars+forks; the casefold case from the spec
+#                           itself: naive case-sensitive sort puts capital-Z
+#                           "ZephyrRTOS" before lowercase "advanceos" (that's
+#                           the bug this oracle exists to catch), but
+#                           name_key's casefold puts "advanceos" first.
+#   eslint/prettier      -- tied `boards` (5): boards_key falls back to
+#                           popularity_key, and eslint's higher stars wins.
+#   ghostbuild            -- no name, no popularity, no boards: the
+#                           "null/missing everywhere" row. It lands last under
+#                           every single mode (popularity: null stars; name
+#                           and name-desc: null name, direction-invariant
+#                           trailing bucket; forks: null forks; boards: null
+#                           boards) and is the one no-crash-on-None/undefined
+#                           proof point (§8).
+_ORACLE_FIXTURE = [
+    {"id": "cargo", "name": "Cargo", "popularity": {"stars": 200, "forks": 80}, "boards": 3},
+    {"id": "rustc", "name": "Rustc", "popularity": {"stars": 200, "forks": 50}, "boards": 3},
+    {"id": "clippy", "name": "Clippy", "popularity": {"stars": 200, "forks": 80}, "boards": 1},
+    {"id": "vitea", "name": "Vite", "popularity": {"stars": 999, "forks": 5}, "boards": 1},
+    {"id": "viteb", "name": "Vite", "popularity": {"stars": 10, "forks": 1}, "boards": 1},
+    {"id": "zephyrrtos", "name": "ZephyrRTOS", "popularity": {"stars": 40, "forks": 3}, "boards": 1},
+    {"id": "advanceos", "name": "advanceos", "popularity": {"stars": 40, "forks": 3}, "boards": 1},
+    {"id": "eslint", "name": "ESLint", "popularity": {"stars": 300, "forks": 40}, "boards": 5},
+    {"id": "prettier", "name": "Prettier", "popularity": {"stars": 250, "forks": 60}, "boards": 5},
+    {"id": "ghostbuild", "popularity": {"stars": None, "forks": None}},
+]
+
+
+def _oracle_ids(mode):
+    return [r["id"] for r in sort_by_mode(_ORACLE_FIXTURE, mode)]
+
+
+def test_oracle_popularity_mode_matches_pinned_id_order():
+    assert _oracle_ids("popularity") == [
+        "vitea", "eslint", "prettier", "cargo", "clippy", "rustc",
+        "zephyrrtos", "advanceos", "viteb", "ghostbuild",
+    ]
+
+
+def test_oracle_name_mode_matches_pinned_id_order():
+    assert _oracle_ids("name") == [
+        "advanceos", "cargo", "clippy", "eslint", "prettier", "rustc",
+        "vitea", "viteb", "zephyrrtos", "ghostbuild",
+    ]
+
+
+def test_oracle_name_desc_mode_matches_pinned_id_order():
+    assert _oracle_ids("name-desc") == [
+        "zephyrrtos", "vitea", "viteb", "rustc", "prettier", "eslint",
+        "clippy", "cargo", "advanceos", "ghostbuild",
+    ]
+
+
+def test_oracle_forks_mode_matches_pinned_id_order():
+    assert _oracle_ids("forks") == [
+        "cargo", "clippy", "prettier", "rustc", "eslint", "vitea",
+        "zephyrrtos", "advanceos", "viteb", "ghostbuild",
+    ]
+
+
+def test_oracle_boards_mode_matches_pinned_id_order():
+    assert _oracle_ids("boards") == [
+        "eslint", "prettier", "cargo", "rustc", "vitea", "clippy",
+        "zephyrrtos", "advanceos", "viteb", "ghostbuild",
+    ]
+
+
+def test_oracle_unknown_mode_clamps_to_popularity():
+    assert _oracle_ids("not-a-real-mode") == _oracle_ids("popularity")
+
+
+def test_oracle_ghostbuild_lands_last_in_every_mode():
+    for mode in ("popularity", "name", "name-desc", "forks", "boards"):
+        assert _oracle_ids(mode)[-1] == "ghostbuild", mode
+
+
+def test_name_key_breaks_identical_names_by_id():
+    assert name_key(_ORACLE_FIXTURE[3])[-1] == "vitea"  # vitea
+    assert name_key(_ORACLE_FIXTURE[4])[-1] == "viteb"  # viteb
+    assert sorted(
+        [_ORACLE_FIXTURE[4], _ORACLE_FIXTURE[3]], key=name_key
+    ) == [_ORACLE_FIXTURE[3], _ORACLE_FIXTURE[4]]
+
+
+def test_forks_key_null_forks_sorts_to_trailing_bucket():
+    assert forks_key({"id": "z", "name": "Z", "popularity": {"stars": 1, "forks": None}})[0] == 1
+    assert forks_key({"id": "a", "name": "A", "popularity": {"stars": 1, "forks": 1}})[0] == 0
+
+
+def test_boards_key_null_boards_sorts_to_trailing_bucket():
+    assert boards_key({"id": "z", "name": "Z"})[0] == 1
+    assert boards_key({"id": "a", "name": "A", "boards": 0})[0] == 0
