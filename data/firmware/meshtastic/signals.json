@@ -1,7 +1,7 @@
 {
  "calls": 30,
  "errors": 0,
- "fetched": "2026-09-10",
+ "fetched": "2026-09-22",
  "notes": [
   "extra_configs matched more than 40 files; kept the 40 naming an ESP32 family first",
   "call budget exhausted while expanding extra_configs",
@@ -17,6 +17,7 @@
    "lilygo-t-beam",
    "lilygo-t-deck",
    "lilygo-t-watch-s3",
+   "m5stack-core",
    "m5stack-cores3"
   ],
   "socs": [
@@ -56,7 +57,6 @@
    "heltec_wireless_stick_lite",
    "hydra",
    "m5stack-cardputer-adv",
-   "m5stack-core",
    "m5stack-core-esp32",
    "m5stack-coreink",
    "m5stack-unitc6l",
