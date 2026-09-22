@@ -1,20 +1,20 @@
 {
  "calls": 5,
  "errors": 0,
- "fetched": "2026-09-10",
+ "fetched": "2026-09-22",
  "notes": [],
  "ref": "main",
  "repo": "OceanTroop/orca-one",
  "resolved": {
   "boards": [
-   "m5cardputer"
+   "m5cardputer",
+   "m5stick-c"
   ],
   "socs": [],
   "unresolved": [
    "OrcaOne_m5stack-cardputer",
    "OrcaOne_m5stack-cplus1_1",
-   "OrcaOne_m5stack-cplus2",
-   "m5stick-c"
+   "OrcaOne_m5stack-cplus2"
   ]
  },
  "signals": [
