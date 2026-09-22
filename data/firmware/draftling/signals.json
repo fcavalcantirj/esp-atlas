@@ -1,10 +1,8 @@
 {
- "calls": 5,
+ "calls": 4,
  "errors": 0,
- "fetched": "2026-09-14",
- "notes": [
-  "latest release v1.0.4 has no binaries; read v1.0.1 instead"
- ],
+ "fetched": "2026-09-22",
+ "notes": [],
  "ref": "main",
  "repo": "clackups/draftling",
  "resolved": {
@@ -20,117 +18,169 @@
   ],
   "socs": [],
   "unresolved": [
-   "xteink_x4_pro"
+   "waveshare_epaper_397",
+   "xteink_x4_classic",
+   "xteink_x4_classic-otadata",
+   "xteink_x4_pro",
+   "xteink_x4_pro-otadata"
   ]
  },
  "signals": [
   {
    "extra": {
     "asset": "draftling-elecrow_crowpanel_579.bin",
-    "release": "v1.0.1"
+    "release": "v1.0.6"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "elecrow_crowpanel_579",
-   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-elecrow_crowpanel_579.bin"
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.6/draftling-elecrow_crowpanel_579.bin"
   },
   {
    "extra": {
     "asset": "draftling-freenove_fnk0104a.bin",
-    "release": "v1.0.1"
+    "release": "v1.0.6"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "freenove_fnk0104a",
-   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-freenove_fnk0104a.bin"
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.6/draftling-freenove_fnk0104a.bin"
   },
   {
    "extra": {
     "asset": "draftling-freenove_fnk0104b.bin",
-    "release": "v1.0.1"
+    "release": "v1.0.6"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "freenove_fnk0104b",
-   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-freenove_fnk0104b.bin"
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.6/draftling-freenove_fnk0104b.bin"
   },
   {
    "extra": {
     "asset": "draftling-freenove_fnk0104s.bin",
-    "release": "v1.0.1"
+    "release": "v1.0.6"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "freenove_fnk0104s",
-   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-freenove_fnk0104s.bin"
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.6/draftling-freenove_fnk0104s.bin"
   },
   {
    "extra": {
     "asset": "draftling-lilygo_t5_epd_s3_pro.bin",
-    "release": "v1.0.1"
+    "release": "v1.0.6"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo_t5_epd_s3_pro",
-   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-lilygo_t5_epd_s3_pro.bin"
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.6/draftling-lilygo_t5_epd_s3_pro.bin"
   },
   {
    "extra": {
     "asset": "draftling-m5stack_papers3.bin",
-    "release": "v1.0.1"
+    "release": "v1.0.6"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack_papers3",
-   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-m5stack_papers3.bin"
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.6/draftling-m5stack_papers3.bin"
+  },
+  {
+   "extra": {
+    "asset": "draftling-waveshare_epaper_397.bin",
+    "release": "v1.0.6"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "waveshare_epaper_397",
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.6/draftling-waveshare_epaper_397.bin"
   },
   {
    "extra": {
     "asset": "draftling-waveshare_rlcd42.bin",
-    "release": "v1.0.1"
+    "release": "v1.0.6"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_rlcd42",
-   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-waveshare_rlcd42.bin"
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.6/draftling-waveshare_rlcd42.bin"
   },
   {
    "extra": {
     "asset": "draftling-waveshare_touch_lcd_349.bin",
-    "release": "v1.0.1"
+    "release": "v1.0.6"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_touch_lcd_349",
-   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-waveshare_touch_lcd_349.bin"
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.6/draftling-waveshare_touch_lcd_349.bin"
+  },
+  {
+   "extra": {
+    "asset": "draftling-xteink_x4_classic-otadata.bin",
+    "release": "v1.0.6"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "xteink_x4_classic-otadata",
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.6/draftling-xteink_x4_classic-otadata.bin"
+  },
+  {
+   "extra": {
+    "asset": "draftling-xteink_x4_classic.bin",
+    "release": "v1.0.6"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "xteink_x4_classic",
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.6/draftling-xteink_x4_classic.bin"
+  },
+  {
+   "extra": {
+    "asset": "draftling-xteink_x4_pro-otadata.bin",
+    "release": "v1.0.6"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "xteink_x4_pro-otadata",
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.6/draftling-xteink_x4_pro-otadata.bin"
   },
   {
    "extra": {
     "asset": "draftling-xteink_x4_pro.bin",
-    "release": "v1.0.1"
+    "release": "v1.0.6"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "xteink_x4_pro",
-   "url": "https://github.com/clackups/draftling/releases/download/v1.0.1/draftling-xteink_x4_pro.bin"
+   "url": "https://github.com/clackups/draftling/releases/download/v1.0.6/draftling-xteink_x4_pro.bin"
   }
  ]
 }
