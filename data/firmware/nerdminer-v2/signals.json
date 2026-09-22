@@ -1,7 +1,7 @@
 {
  "calls": 6,
  "errors": 0,
- "fetched": "2026-09-10",
+ "fetched": "2026-09-22",
  "notes": [],
  "ref": "main",
  "repo": "BitMaker-hub/NerdMiner_v2",
@@ -13,6 +13,8 @@
    "lolin-s2-mini",
    "lolin-s3-mini",
    "m5stamp-s3",
+   "m5stick-c",
+   "m5stick-cplus",
    "m5stick-cplus2",
    "xiao-esp32c3"
   ],
@@ -93,7 +95,6 @@
    "lilygo-t-amoled",
    "lilygo-t-hmi",
    "m5stack-core-esp32",
-   "m5stick-c",
    "ttgo-lora32-v1",
    "ttgo-lora32-v21",
    "wt32-sc01-plus_factory",
