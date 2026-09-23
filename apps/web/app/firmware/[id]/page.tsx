@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import FirmwareDetailClient from "@/components/firmware/FirmwareDetailClient";
 import FirmwareDetailView from "@/components/firmware/FirmwareDetailView";
 import { fetchAllParts, fetchFirmware, fetchRecipesForFirmware } from "@/lib/api-server";
+import { detailRobots } from "@/lib/detail-robots";
 import { firmwareMetaDescription } from "@/lib/format";
 import { fetchReadme } from "@/lib/readme";
 import { SITE_NAME } from "@/lib/site";
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: PageProps<"/firmware/[id]">):
   const { id } = await params;
   const result = await fetchFirmware(id);
   if (result.status !== "ok") {
-    return { title: id, robots: result.status === "not_found" ? { index: false } : undefined };
+    return { title: id, robots: detailRobots(result.status) };
   }
   const firmware = result.data;
   const title = `${firmware.name} — ESP32 firmware`;

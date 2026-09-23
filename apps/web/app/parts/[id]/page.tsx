@@ -7,6 +7,7 @@ import PartViewTracker from "@/components/part/PartViewTracker";
 import type { RecipeRow } from "@/components/RecipeGroupList";
 import { fetchFirmwareList, fetchPartDetail, fetchRecipesForBoard } from "@/lib/api-server";
 import { brandLabel } from "@/lib/brand";
+import { detailRobots } from "@/lib/detail-robots";
 import { firstSentence, typeLabel } from "@/lib/format";
 import { asString, fmObject } from "@/lib/frontmatter";
 import { boardFirmwareRows } from "@/lib/recipe-rows";
@@ -47,7 +48,7 @@ export async function generateMetadata({ params }: PageProps<"/parts/[id]">): Pr
   const { id } = await params;
   const result = await fetchPartDetail(id);
   if (result.status !== "ok") {
-    return { title: id, robots: result.status === "not_found" ? { index: false } : undefined };
+    return { title: id, robots: detailRobots(result.status) };
   }
   const part = result.data;
   const title = `${part.name} (${brandLabel(part)}) — ${typeLabel(part.type)} specs`;
