@@ -34,6 +34,9 @@ export type EventName =
   | "api_error"
   | "not_found"
   | "shelf_see_all"
+  // /firmware browse surface (SPEC-firmware-ordering.md / SPEC-firmware-popularity.md).
+  | "firmware_sort"
+  | "reveal_more"
   // Flash Wizard (SPEC-wizard P2b): panel opened, rail decided, consent, connect click.
   | "flash_open"
   | "flash_ready"

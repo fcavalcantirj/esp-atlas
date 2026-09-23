@@ -2,6 +2,8 @@
 
 import FirmwareCard from "@/components/FirmwareCard";
 import type { Firmware } from "@/lib/api";
+import { track } from "@/lib/analytics";
+import { firmwareRevealParams } from "@/lib/firmware-tracking";
 import { revealCountLabel } from "@/lib/reveal";
 import { useReveal } from "@/lib/use-reveal";
 
@@ -10,6 +12,11 @@ import { useReveal } from "@/lib/use-reveal";
 // the (fully server-rendered) cards are visible.
 export default function FirmwareBrowseList({ firmware }: { firmware: Firmware[] }) {
   const { revealed, hasMore, showMore } = useReveal(firmware.length);
+
+  function handleShowMore() {
+    track("reveal_more", firmwareRevealParams(revealed, firmware.length));
+    showMore();
+  }
 
   return (
     <>
@@ -21,7 +28,7 @@ export default function FirmwareBrowseList({ firmware }: { firmware: Firmware[] 
       <div className="reveal-footer">
         <p className="reveal-count">{revealCountLabel(revealed, firmware.length)}</p>
         {hasMore && (
-          <button type="button" className="btn" onClick={showMore}>
+          <button type="button" className="btn" onClick={handleShowMore}>
             Show more
           </button>
         )}

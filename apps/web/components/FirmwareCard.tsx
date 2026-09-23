@@ -1,12 +1,18 @@
+"use client";
+
 import Link from "next/link";
 import PopularityGlance from "@/components/PopularityGlance";
 import type { Firmware } from "@/lib/api";
+import { track } from "@/lib/analytics";
 import { boardsLabel, firmwareCategoryLabel } from "@/lib/format";
+import { firmwareBrowseClickParams } from "@/lib/firmware-tracking";
 
 // Same card idiom as PartResultCard (badge + brand-style meta line + spec
 // chips), applied to a firmware record instead of a part. `hidden` is the
 // SPEC-firmware-popularity.md §5 reveal cap: the card still renders into the
 // server HTML (crawlable), just visually capped until "Show more" lifts it.
+// "use client" only for the result_click tracking below (same idiom as
+// BrowseSection) -- the card holds no state and still SSRs into real HTML.
 export default function FirmwareCard({ firmware, hidden = false }: { firmware: Firmware; hidden?: boolean }) {
   const chips = [...firmware.capabilities, ...firmware.socs];
   const boards = boardsLabel(firmware.boards);
@@ -14,7 +20,12 @@ export default function FirmwareCard({ firmware, hidden = false }: { firmware: F
     <li className={hidden ? "part-card is-hidden" : "part-card"}>
       <div className="part-card-head">
         <h3 className="part-card-title">
-          <Link href={`/firmware/${encodeURIComponent(firmware.id)}`}>{firmware.name}</Link>
+          <Link
+            href={`/firmware/${encodeURIComponent(firmware.id)}`}
+            onClick={() => track("result_click", firmwareBrowseClickParams(firmware.id))}
+          >
+            {firmware.name}
+          </Link>
         </h3>
         <p className="part-card-meta">
           <span className="badge">{firmwareCategoryLabel(firmware.category)}</span>
