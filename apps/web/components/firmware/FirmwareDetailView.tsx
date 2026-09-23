@@ -9,8 +9,8 @@ import RecipeGroupList from "@/components/RecipeGroupList";
 import TrackedLink from "@/components/TrackedLink";
 import type { Firmware, PartRecord, Recipe } from "@/lib/api";
 import { firmwareCategoryLabel, readmeLanguageName } from "@/lib/format";
-import { demoteMarkdownHeadings } from "@/lib/markdown-heading-shift";
 import type { RepoReadme } from "@/lib/readme";
+import rehypeDemoteHeadings from "@/lib/rehype-demote-headings";
 import { firmwareBoardRows } from "@/lib/recipe-rows";
 import { firmwareGraph } from "@/lib/structured-data";
 
@@ -162,8 +162,8 @@ export default function FirmwareDetailView({
           )}
           <div className="firmware-readme-collapse">
             <div className="firmware-readme-body">
-              <Markdown rehypePlugins={[rehypeRaw, [rehypeSanitize, README_HTML_SCHEMA]]}>
-                {demoteMarkdownHeadings(translatedReadme ?? readme!.markdown)}
+              <Markdown rehypePlugins={[rehypeRaw, rehypeDemoteHeadings, [rehypeSanitize, README_HTML_SCHEMA]]}>
+                {translatedReadme ?? readme!.markdown}
               </Markdown>
             </div>
           </div>
