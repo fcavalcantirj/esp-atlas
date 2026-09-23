@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-09-30T10:00:05.196110+00:00",
+      "expires": "2026-09-30T11:00:11.135332+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-23T10:00:05.196110+00:00"
+      "timestamp": "2026-09-23T11:00:11.135332+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -4714,6 +4714,15 @@
       "repo_id": 1089190154,
       "status": "rejected",
       "timestamp": "2026-09-08T01:00:31.284910+00:00"
+    },
+    "m5faces-rpn-calculator": {
+      "expires": "2026-09-30T11:00:11.135332+00:00",
+      "id": "m5faces-rpn-calculator",
+      "pr_ref": null,
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
+      "repo": "tommycng/m5faces-rpn-calculator.git",
+      "status": "rejected",
+      "timestamp": "2026-09-23T11:00:11.135332+00:00"
     },
     "m5gemini": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
@@ -10112,6 +10121,7 @@
     "tobozo/m5stack-sd-updater": "m5stack-sd-updater",
     "tobozo/wifichanviz": "wifichanviz",
     "tomcasa/m5cardputer-webradio-fr": "m5cardputer-webradio-fr",
+    "tommycng/m5faces-rpn-calculator.git": "m5faces-rpn-calculator",
     "tomorrow56/m5atom-socket-examples": "m5atom-socket-examples",
     "torlando-tech/pyxis": "pyxis",
     "toshihiromakuuchi/ai_stackchan2": "ai-stackchan2",
