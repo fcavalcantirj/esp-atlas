@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-09-30T19:00:27.515597+00:00",
+      "expires": "2026-09-30T20:00:27.585176+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-23T19:00:27.515597+00:00"
+      "timestamp": "2026-09-23T20:00:27.585176+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -3831,6 +3831,16 @@
       "repo_id": 1094836196,
       "status": "rejected",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
+    },
+    "luma": {
+      "expires": "2026-10-23T20:00:27.585176+00:00",
+      "id": "luma",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "zhoux77899/luma",
+      "repo_id": 1334953408,
+      "status": "rejected",
+      "timestamp": "2026-09-23T20:00:27.585176+00:00"
     },
     "lx-shell": {
       "expires": "2026-10-21T12:00:07.785602+00:00",
@@ -10227,6 +10237,7 @@
     "zeloksa/wifi-remote-display-adv": "wifi-remote-display-adv",
     "zeloksa/wikipedia-offline-adv": "wikipedia-offline-adv",
     "zhaoker/m5stack_tab5_aio_box": "m5stack-tab5-aio-box",
+    "zhoux77899/luma": "luma",
     "zhuzhe1983/inkos": "inkos",
     "zmactep/m5stickc_morse": "m5stickc-morse",
     "zmattmanz/claude-usage": "claude-usage",
