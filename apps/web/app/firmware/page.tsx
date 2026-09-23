@@ -50,7 +50,7 @@ export default async function FirmwareIndexPage({ searchParams }: PageProps<"/fi
         <span aria-hidden="true">›</span>
         <span aria-current="page">Firmware</span>
       </nav>
-      <h1>Firmware</h1>
+      <h1>ESP32 firmware</h1>
       <p className="lead">{firmwareLeadCopy(sort, firmware.length)}</p>
       {firmware.length > 0 && (
         <>
