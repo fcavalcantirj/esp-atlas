@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { fetchAllParts, fetchFirmwareList } from "@/lib/api-server";
 import type { SourceEntry } from "@/lib/api";
 import { SITE_URL } from "@/lib/site";
+import { staticContentRoutes } from "@/lib/sitemap-routes";
 
 // Rendered on request (never at build time — the Python API is not running
 // during `next build`); the /parts and /firmware fetches underneath are each
@@ -58,9 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // /compare is noindex (a client-rendered tool), so it is no longer listed here.
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: `${SITE_URL}/`, lastModified: newest, changeFrequency: "daily", priority: 1 },
-    { url: `${SITE_URL}/wizard`, lastModified: newest, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${SITE_URL}/how-we-work`, changeFrequency: "monthly", priority: 0.5 },
+    ...staticContentRoutes(SITE_URL, newest),
     ...(brandRoutes.length ? [{ url: `${SITE_URL}/brands`, lastModified: newest, changeFrequency: "weekly" as const, priority: 0.6 }] : []),
     // The typed indexes behind every part page's middle breadcrumb.
     ...(["/boards", "/modules", "/socs"] as const)
