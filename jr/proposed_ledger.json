@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-01T15:00:48.651506+00:00",
+      "expires": "2026-10-01T16:00:56.308279+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-24T15:00:48.651506+00:00"
+      "timestamp": "2026-09-24T16:00:56.308279+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -3806,6 +3806,16 @@
       "status": "rejected",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
+    "letterfromthedeep-tab5": {
+      "expires": "2026-10-24T16:00:56.308279+00:00",
+      "id": "letterfromthedeep-tab5",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "mochimochi-man/letterfromthedeep_tab5",
+      "repo_id": 1385546050,
+      "status": "rejected",
+      "timestamp": "2026-09-24T16:00:56.308279+00:00"
+    },
     "liner": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "liner",
@@ -5662,6 +5672,16 @@
       "repo": "arturockpk/m5stickradio.git",
       "status": "rejected",
       "timestamp": "2026-09-19T15:00:30.165949+00:00"
+    },
+    "m5sticks3-gps-gnss-monitor": {
+      "expires": "2026-10-24T16:00:56.308279+00:00",
+      "id": "m5sticks3-gps-gnss-monitor",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 1 forks",
+      "repo": "viniciushnf/m5sticks3-gps-gnss-monitor",
+      "repo_id": 1341026760,
+      "status": "rejected",
+      "timestamp": "2026-09-24T16:00:56.308279+00:00"
     },
     "m5sticks3-rogueduck": {
       "expires": "2026-10-11T17:00:55.936325+00:00",
@@ -9914,6 +9934,7 @@
     "mk324234/atoms3-lite-tvbgone": "atoms3-lite-tvbgone",
     "mk324234/m5stickcp2-tvbgone": "m5stickcp2-tvbgone",
     "mkme/xnode": "xnode",
+    "mochimochi-man/letterfromthedeep_tab5": "letterfromthedeep-tab5",
     "mochimochi-man/np2_tab5": "np2-tab5",
     "moge800/m5papers3_calculator": "m5papers3-calculator",
     "mohith-das/pomodoro-card": "pomodoro-card",
@@ -10195,6 +10216,7 @@
     "vicliu624/cardputer_mp3_adv": "cardputer-mp3-adv",
     "vicliu624/trail-mate": "trail-mate",
     "viniciusbo/m5-palnagotchi": "m5-palnagotchi",
+    "viniciushnf/m5sticks3-gps-gnss-monitor": "m5sticks3-gps-gnss-monitor",
     "voidnoi/badcard": "badcard",
     "volos-tv-remote": "volos-tv-remote",
     "volosr/cardputer": "cardputer",
