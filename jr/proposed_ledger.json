@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-01T22:00:42.498446+00:00",
+      "expires": "2026-10-01T23:00:50.191225+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-24T22:00:42.498446+00:00"
+      "timestamp": "2026-09-24T23:00:50.191225+00:00"
     },
     "0m3gx": {
       "expires": "2026-09-26T14:00:22.488207+00:00",
@@ -1540,6 +1540,16 @@
       "repo_id": 1082769246,
       "status": "rejected",
       "timestamp": "2026-09-12T06:00:36.297632+00:00"
+    },
+    "cardputer-xl": {
+      "expires": "2026-10-24T23:00:50.191225+00:00",
+      "id": "cardputer-xl",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "szuszjan/cardputer-xl",
+      "repo_id": 1358420827,
+      "status": "rejected",
+      "timestamp": "2026-09-24T23:00:50.191225+00:00"
     },
     "cardputer86": {
       "expires": "2026-10-07T23:00:28.148172+00:00",
@@ -10159,6 +10169,7 @@
     "sushiware-online/cpv-tools": "cpv-tools",
     "sushiware-online/pdp-8-m5cardputer": "pdp-8-m5cardputer",
     "svenvu666/flappy-for-m5stickc-plus2": "flappy-for-m5stickc-plus2",
+    "szuszjan/cardputer-xl": "cardputer-xl",
     "t413/navboxesp": "navboxesp",
     "tabozen/ucplayground": "ucplayground",
     "tactilityproject/tactility": "tactility",
