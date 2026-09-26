@@ -1,7 +1,7 @@
 {
  "calls": 7,
  "errors": 0,
- "fetched": "2026-09-19",
+ "fetched": "2026-09-26",
  "notes": [],
  "ref": "main",
  "repo": "anton-vinogradov/meshtastic-adv",
@@ -11,45 +11,45 @@
   "unresolved": [
    "cardputer-adv-merged",
    "unifont",
-   "v1.1.0.factory"
+   "v1.1.1.factory"
   ]
  },
  "signals": [
   {
    "extra": {
     "asset": "meshtastic-adv-cardputer-adv-merged.bin",
-    "release": "v1.1.0"
+    "release": "v1.1.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cardputer-adv-merged",
-   "url": "https://github.com/anton-vinogradov/meshtastic-adv/releases/download/v1.1.0/meshtastic-adv-cardputer-adv-merged.bin"
+   "url": "https://github.com/anton-vinogradov/meshtastic-adv/releases/download/v1.1.1/meshtastic-adv-cardputer-adv-merged.bin"
   },
   {
    "extra": {
-    "asset": "meshtastic-adv-v1.1.0.factory.bin",
-    "release": "v1.1.0"
+    "asset": "meshtastic-adv-v1.1.1.factory.bin",
+    "release": "v1.1.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "v1.1.0.factory",
-   "url": "https://github.com/anton-vinogradov/meshtastic-adv/releases/download/v1.1.0/meshtastic-adv-v1.1.0.factory.bin"
+   "token": "v1.1.1.factory",
+   "url": "https://github.com/anton-vinogradov/meshtastic-adv/releases/download/v1.1.1/meshtastic-adv-v1.1.1.factory.bin"
   },
   {
    "extra": {
     "asset": "unifont.bin",
-    "release": "v1.1.0"
+    "release": "v1.1.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "unifont",
-   "url": "https://github.com/anton-vinogradov/meshtastic-adv/releases/download/v1.1.0/unifont.bin"
+   "url": "https://github.com/anton-vinogradov/meshtastic-adv/releases/download/v1.1.1/unifont.bin"
   }
  ]
 }
