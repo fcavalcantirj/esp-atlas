@@ -1,7 +1,7 @@
 {
  "calls": 5,
  "errors": 0,
- "fetched": "2026-09-19",
+ "fetched": "2026-09-26",
  "notes": [],
  "ref": "main",
  "repo": "therezor/cardputer-ai",
@@ -20,27 +20,27 @@
  "signals": [
   {
    "extra": {
-    "asset": "cardputer_ai_2.1.bin",
-    "release": "2.1"
+    "asset": "cardputer_ai_2.2.bin",
+    "release": "2.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cardputer_ai",
-   "url": "https://github.com/therezor/cardputer-ai/releases/download/2.1/cardputer_ai_2.1.bin"
+   "url": "https://github.com/therezor/cardputer-ai/releases/download/2.2/cardputer_ai_2.2.bin"
   },
   {
    "extra": {
-    "asset": "cardputer_ai_2.1_full.bin",
-    "release": "2.1"
+    "asset": "cardputer_ai_2.2_full.bin",
+    "release": "2.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cardputer_ai_full",
-   "url": "https://github.com/therezor/cardputer-ai/releases/download/2.1/cardputer_ai_2.1_full.bin"
+   "url": "https://github.com/therezor/cardputer-ai/releases/download/2.2/cardputer_ai_2.2_full.bin"
   },
   {
    "extra": {
