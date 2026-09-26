@@ -335,12 +335,34 @@ def test_budget_exhaustion_aborts_cleanly(wt_dir):
     assert all(c[0] != "worktree" for c in norm(git))
 
 
-def test_dry_run_never_calls_the_notifier_and_real_run_does(wt_dir, tmp_path):
+def test_dry_run_never_calls_the_notifier(tmp_path):
     sent = []
     run(dry_run=True, git=git_ok(tmp_path), gh=gh_ok(), notifier=lambda t: sent.append(t))
     assert sent == []
-    run(git=git_ok(wt_dir), gh=gh_ok(), notifier=lambda t: sent.append(t))
-    assert len(sent) == 1 and sent[0].startswith("🤖 jr-tick 2026-09-05 04:07 UTC")
+
+
+def test_a_clean_success_prints_but_does_not_notify(wt_dir, capsys):
+    sent = []
+    r = run(git=git_ok(wt_dir), gh=gh_ok(), notifier=lambda t: sent.append(t))
+    assert not r.aborted and not r.needs_human
+    out = capsys.readouterr().out
+    assert out.strip() == tick.report.render_line(r)
+    assert sent == []
+
+
+def test_an_aborted_tick_notifies(tmp_path):
+    sent = []
+    r = run(git=git_ok(tmp_path), gh=gh_ok(rate="120"), notifier=lambda t: sent.append(t))
+    assert r.aborted
+    assert len(sent) == 1 and sent[0] == tick.report.render_line(r)
+
+
+def test_a_needs_human_tick_notifies(wt_dir):
+    sent = []
+    r = run(git=git_ok(wt_dir), gh=gh_ok(), stages=[_stage(["data/firmware/x"], needs_human=True)],
+            notifier=lambda t: sent.append(t))
+    assert not r.aborted and r.needs_human
+    assert len(sent) == 1 and sent[0] == tick.report.render_line(r)
 
 
 def test_a_failing_notifier_never_fails_the_tick(wt_dir):

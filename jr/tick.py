@@ -534,7 +534,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
 
     line = report.render_line(r)
     print(line)
-    if telegram and not dry_run and notifier is not None:
+    if telegram and not dry_run and notifier is not None and (r.aborted or r.needs_human):
         try:
             notifier(line)
         except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
