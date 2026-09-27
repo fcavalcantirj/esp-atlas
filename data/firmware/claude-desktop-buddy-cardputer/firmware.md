@@ -12,6 +12,7 @@ popularity:
   forks: 5
   as_of: '2026-09-20'
 socs:
+- esp32
 - esp32-s3
 sources:
 - field: '*'
@@ -23,6 +24,9 @@ sources:
 - field: summary
   url: https://github.com/y88huang/claude-desktop-buddy-cardputer
   verified: '2026-09-20'
+- field: socs
+  url: https://github.com/y88huang/claude-desktop-buddy-cardputer/blob/main/platformio.ini#L3
+  verified: '2026-09-27'
 summary: "Claude desktop buddy port for the M5Stack Cardputer ADV turns the device\
   \ into a physical desk pet that connects via BLE to Claude desktop apps, displaying\
   \ a pet, live transcript, and handling permission approvals with keyboard input\
