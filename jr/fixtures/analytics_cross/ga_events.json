@@ -1,0 +1,18 @@
+{
+  "dimensionHeaders": [{"name": "pagePath"}, {"name": "eventName"}],
+  "metricHeaders": [{"name": "eventCount", "type": "TYPE_INTEGER"}],
+  "rows": [
+    {"dimensionValues": [{"value": "/parts/m5cardputer"}, {"value": "part_view"}], "metricValues": [{"value": "900"}]},
+    {"dimensionValues": [{"value": "/parts/m5cardputer"}, {"value": "flash_open"}], "metricValues": [{"value": "300"}]},
+    {"dimensionValues": [{"value": "/parts/m5cardputer"}, {"value": "page_view"}], "metricValues": [{"value": "2000"}]},
+    {"dimensionValues": [{"value": "/firmware/minigotchi-esp32"}, {"value": "part_view"}], "metricValues": [{"value": "40"}]},
+    {"dimensionValues": [{"value": "/firmware/minigotchi-esp32"}, {"value": "flash_open"}], "metricValues": [{"value": "5"}]},
+    {"dimensionValues": [{"value": "/firmware/minigotchi-esp32"}, {"value": "page_view"}], "metricValues": [{"value": "850"}]},
+    {"dimensionValues": [{"value": "/firmware/area512"}, {"value": "part_view"}], "metricValues": [{"value": "120"}]},
+    {"dimensionValues": [{"value": "/firmware/area512"}, {"value": "flash_open"}], "metricValues": [{"value": "60"}]},
+    {"dimensionValues": [{"value": "/firmware/area512"}, {"value": "page_view"}], "metricValues": [{"value": "500"}]},
+    {"dimensionValues": [{"value": "/parts/m5cardputer-v2"}, {"value": "part_view"}], "metricValues": [{"value": "15"}]},
+    {"dimensionValues": [{"value": "/parts/m5cardputer-v2"}, {"value": "page_view"}], "metricValues": [{"value": "100"}]}
+  ],
+  "rowCount": 11
+}

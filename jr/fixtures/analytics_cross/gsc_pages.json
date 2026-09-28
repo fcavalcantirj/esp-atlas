@@ -1,0 +1,10 @@
+{
+  "rows": [
+    {"keys": ["https://esp-atlas.com/parts/m5cardputer"], "clicks": 600, "impressions": 3000, "ctr": 0.2, "position": 4.5},
+    {"keys": ["https://esp-atlas.com/firmware/minigotchi-esp32/"], "clicks": 180, "impressions": 1200, "ctr": 0.15, "position": 9.2},
+    {"keys": ["https://esp-atlas.com/parts/m5stick-cplus2/"], "clicks": 60, "impressions": 400, "ctr": 0.15, "position": 12.1},
+    {"keys": ["https://esp-atlas.com/parts/m5cardputer%2Dv2"], "clicks": 9, "impressions": 90, "ctr": 0.1, "position": 18.5},
+    {"keys": ["https://esp-atlas.com/firmware/area512?ref=hn"], "clicks": 10, "impressions": 50, "ctr": 0.2, "position": 25.4}
+  ],
+  "responseAggregationType": "byPage"
+}
