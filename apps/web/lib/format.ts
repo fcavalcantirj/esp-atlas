@@ -1,5 +1,9 @@
 // Display-only formatting of record fields. No decisions, no ranking — just labels.
 import type { Firmware, PartRecord, RunGuideBoard } from "@/lib/api";
+// Relative (not "@/") because this file must stay importable by plain
+// `node --test` (see format.test.ts's header comment) -- the "@/" alias only
+// resolves under Next's bundler.
+import { SITE_NAME } from "./site.ts";
 
 export function typeLabel(type: string): string {
   switch (type) {
@@ -105,18 +109,85 @@ export function boardsLabel(boards: number | null | undefined): string | null {
   return `Runs on ${boards} board${boards === 1 ? "" : "s"}`;
 }
 
+// Google truncates SERP titles/descriptions mid-word around these lengths
+// (SPEC-serp-ctr.md); every meta builder below enforces them itself so a
+// long record name or summary can never blow the snippet budget.
+const TITLE_MAX = 60;
+const DESCRIPTION_MAX = 155;
+
+/** Shortens `text` to fit `maxLen`, cutting at the last word boundary and
+ * appending "…" -- never mid-word. No-op when it already fits. */
+function truncateAtWord(text: string, maxLen: number): string {
+  if (text.length <= maxLen) return text;
+  const sliced = text.slice(0, maxLen - 1);
+  const lastSpace = sliced.lastIndexOf(" ");
+  return `${(lastSpace > 0 ? sliced.slice(0, lastSpace) : sliced).trimEnd()}…`;
+}
+
+/** "esp32-s3" -> "ESP32-S3": the SoC id's own casing, not a fabricated label. */
+function socDisplay(soc: string): string {
+  return soc.toUpperCase();
+}
+
+/**
+ * Combines an entity name with a benefit clause into a title under
+ * `TITLE_MAX` chars, leading with the name (the exact string people search)
+ * as SPEC-serp-ctr.md requires. When the pair overflows, the name is
+ * shortened at a word boundary rather than the benefit -- the benefit is
+ * what carries the click-through lever (device/spec + intent).
+ */
+function buildMetaTitle(name: string, benefit: string): string {
+  const full = `${name} — ${benefit}`;
+  if (full.length <= TITLE_MAX) return full;
+  const suffix = ` — ${benefit}`;
+  return `${truncateAtWord(name, TITLE_MAX - suffix.length)}${suffix}`;
+}
+
+/**
+ * SERP title for a firmware: leads with its exact name, then the strongest
+ * flash/install benefit its own record can prove -- the boards it's
+ * verified to run on when that count exists, else the SoCs it targets,
+ * else a bare flash-guide fallback. Cite-or-omit: never states a board
+ * count or SoC the record doesn't carry.
+ */
+export function firmwareMetaTitle(firmware: Pick<Firmware, "name" | "socs" | "boards">): string {
+  const socsLabel = firmware.socs.length > 0 ? firmware.socs.map(socDisplay).join("/") : null;
+  const boards = firmware.boards ?? 0;
+
+  const benefits = [
+    boards > 0 && socsLabel ? `flash guide for ${socsLabel}, ${boards} board${boards === 1 ? "" : "s"}` : null,
+    boards > 0 ? `flash guide, ${boards} board${boards === 1 ? "" : "s"}` : null,
+    socsLabel ? `flash guide for ${socsLabel}` : null,
+    "flash guide",
+  ].filter((benefit): benefit is string => benefit !== null);
+
+  for (const benefit of benefits) {
+    const full = `${firmware.name} — ${benefit}`;
+    if (full.length <= TITLE_MAX) return full;
+  }
+  // Every benefit still overflows even alongside the full name: keep the
+  // shortest (last) one and shorten the name instead.
+  return buildMetaTitle(firmware.name, benefits[benefits.length - 1]);
+}
+
 /**
  * Meta/JSON-LD description for a firmware: its Groq-grounded one-liner
- * (`summary`) when the enrichment pipeline has produced one, else the
- * category/maintainer/socs template. Shared by the firmware page's
- * generateMetadata and structured-data.ts's SoftwareApplication node so the
- * two never drift.
+ * (`summary`) when the enrichment pipeline has produced one, else a
+ * category/socs/boards template that leads with the flash intent users
+ * actually search for. Shared by the firmware page's generateMetadata and
+ * structured-data.ts's SoftwareApplication node so the two never drift.
+ * Cite-or-omit: the boards clause only appears when `boards` is a real,
+ * positive count off the record.
  */
-export function firmwareMetaDescription(firmware: Pick<Firmware, "name" | "category" | "maintainer" | "socs" | "summary">): string {
-  if (firmware.summary) return firmware.summary;
-  return `${firmware.name}: ${firmwareCategoryLabel(firmware.category)} firmware${
-    firmware.maintainer ? ` maintained by ${firmware.maintainer}` : ""
-  } for ${firmware.socs.join(", ") || "ESP32"} — see the boards it's verified to run on.`;
+export function firmwareMetaDescription(
+  firmware: Pick<Firmware, "name" | "category" | "socs" | "boards" | "summary">,
+): string {
+  if (firmware.summary) return truncateAtWord(firmware.summary, DESCRIPTION_MAX);
+  const socsLabel = firmware.socs.length > 0 ? firmware.socs.map(socDisplay).join(", ") : "ESP32";
+  const boards = firmware.boards ?? 0;
+  const boardsClause = boards > 0 ? ` Verified to flash on ${boards} board${boards === 1 ? "" : "s"}.` : "";
+  const base = `${firmware.name}: ${firmwareCategoryLabel(firmware.category)} firmware for ${socsLabel}.${boardsClause}`;
+  return truncateAtWord(base, DESCRIPTION_MAX);
 }
 
 export function priceTierShort(tier: string | null | undefined): string | null {
@@ -145,6 +216,54 @@ export function specChips(part: PartRecord): { label: string; on?: boolean }[] {
   if (part.usb_native) chips.push({ label: "Native USB", on: true });
   if (part.form_factor) chips.push({ label: part.form_factor });
   return chips;
+}
+
+/** The concrete datasheet spec(s) worth leading a SERP snippet with, in the
+ * order a shopper would care about them. Wi-Fi/BLE pair when both are cited
+ * (most SoCs/modules); otherwise the first other real capability the part
+ * has, so a part with none of these renders no spec clause rather than a
+ * fabricated one. */
+function partKeySpecs(part: Pick<PartRecord, "wifi_standard" | "ble_version" | "ieee802154" | "ieee802154_protocols" | "usb_native" | "form_factor">): string[] {
+  const specs: string[] = [];
+  const wifi = wifiLabel(part.wifi_standard);
+  if (wifi) specs.push(wifi);
+  if (part.ble_version) specs.push(`BLE ${part.ble_version}`);
+  if (specs.length === 0 && part.ieee802154) specs.push(protocolsLabel(part.ieee802154_protocols) ?? "802.15.4");
+  if (specs.length === 0 && part.usb_native) specs.push("native USB");
+  if (specs.length === 0 && part.form_factor) specs.push(part.form_factor);
+  return specs;
+}
+
+/**
+ * SERP title for a part: leads with its exact name, then the type plus the
+ * concrete spec(s) that make it worth clicking (e.g. "Wi-Fi 6 + BLE 5.3 SoC
+ * specs") instead of the generic "{type} specs". Falls back to the bare type
+ * when the record carries none of the headline radio/USB/form-factor fields.
+ */
+export function partMetaTitle(
+  part: Pick<PartRecord, "name" | "type" | "wifi_standard" | "ble_version" | "ieee802154" | "ieee802154_protocols" | "usb_native" | "form_factor">,
+): string {
+  const specs = partKeySpecs(part);
+  const benefit = specs.length > 0 ? `${specs.join(" + ")} ${typeLabel(part.type)} specs` : `${typeLabel(part.type)} specs`;
+  return buildMetaTitle(part.name, benefit);
+}
+
+/**
+ * Meta description for a part: its own first body sentence when the record
+ * has prose, else a type/spec template -- same cite-or-omit + length rules
+ * as firmwareMetaDescription. `body` is optional because PartRecord itself
+ * carries no prose (only PartDetail does); a part with no body sentence
+ * falls straight to the template.
+ */
+export function partMetaDescription(
+  part: Pick<PartRecord, "name" | "type" | "wifi_standard" | "ble_version" | "ieee802154" | "ieee802154_protocols" | "usb_native" | "form_factor">,
+  body?: string,
+): string {
+  const sentence = body ? firstSentence(body) : "";
+  if (sentence) return truncateAtWord(sentence, DESCRIPTION_MAX);
+  const specs = partKeySpecs(part);
+  const specClause = specs.length > 0 ? ` — ${specs.join(" + ")}` : "";
+  return truncateAtWord(`${part.name}: datasheet-verified ${typeLabel(part.type)} specs${specClause} on ${SITE_NAME}.`, DESCRIPTION_MAX);
 }
 
 // data/firmware/*/firmware.md `requires`/`not_required` capability vocab -> the

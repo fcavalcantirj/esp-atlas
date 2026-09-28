@@ -6,9 +6,8 @@ import PartDetailView from "@/components/part/PartDetailView";
 import PartViewTracker from "@/components/part/PartViewTracker";
 import type { RecipeRow } from "@/components/RecipeGroupList";
 import { fetchFirmwareList, fetchPartDetail, fetchRecipesForBoard } from "@/lib/api-server";
-import { brandLabel } from "@/lib/brand";
 import { detailRobots } from "@/lib/detail-robots";
-import { firstSentence, typeLabel } from "@/lib/format";
+import { partMetaDescription, partMetaTitle } from "@/lib/format";
 import { asString, fmObject } from "@/lib/frontmatter";
 import { boardFirmwareRows } from "@/lib/recipe-rows";
 import { SITE_NAME } from "@/lib/site";
@@ -51,9 +50,8 @@ export async function generateMetadata({ params }: PageProps<"/parts/[id]">): Pr
     return { title: id, robots: detailRobots(result.status) };
   }
   const part = result.data;
-  const title = `${part.name} (${brandLabel(part)}) — ${typeLabel(part.type)} specs`;
-  const description =
-    firstSentence(part.body) || `${part.name}: datasheet-verified ESP32 ${part.type} specs on ${SITE_NAME}.`;
+  const title = partMetaTitle(part);
+  const description = partMetaDescription(part, part.body);
   const path = `/parts/${encodeURIComponent(part.id)}`;
   // Nested metadata objects replace the root ones wholesale, so siteName and
   // url must be restated here. The preview image is the segment's own

@@ -4,7 +4,7 @@ import FirmwareDetailClient from "@/components/firmware/FirmwareDetailClient";
 import FirmwareDetailView from "@/components/firmware/FirmwareDetailView";
 import { fetchAllParts, fetchFirmware, fetchRecipesForFirmware } from "@/lib/api-server";
 import { detailRobots } from "@/lib/detail-robots";
-import { firmwareMetaDescription } from "@/lib/format";
+import { firmwareMetaDescription, firmwareMetaTitle } from "@/lib/format";
 import { fetchReadme } from "@/lib/readme";
 import { SITE_NAME } from "@/lib/site";
 
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps<"/firmware/[id]">):
     return { title: id, robots: detailRobots(result.status) };
   }
   const firmware = result.data;
-  const title = `${firmware.name} — ESP32 firmware`;
+  const title = firmwareMetaTitle(firmware);
   const description = firmwareMetaDescription(firmware);
   const path = `/firmware/${encodeURIComponent(id)}`;
   // Nested metadata objects replace the root ones wholesale, so siteName and

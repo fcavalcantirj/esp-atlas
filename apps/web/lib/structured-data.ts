@@ -7,7 +7,7 @@
 import type { BrandFacet, Firmware, PartDetail, PartRecord } from "@/lib/api";
 import { brandLabel } from "@/lib/brand";
 import { faqPage } from "@/lib/faq";
-import { firmwareMetaDescription, firstSentence, typeLabel, typePlural } from "@/lib/format";
+import { firmwareMetaDescription, partMetaDescription, typeLabel, typePlural } from "@/lib/format";
 import { typeIndexPath } from "@/lib/routes";
 import { dataFolderUrl, repoUrl } from "@/lib/github";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, websiteSearchAction } from "@/lib/site";
@@ -315,7 +315,7 @@ export function partGraph(part: PartDetail) {
   const url = `${SITE_URL}/parts/${encodeURIComponent(part.id)}`;
   const verified = part.sources.map((s) => s.verified).filter(Boolean).sort();
   const citation = Array.from(new Set(part.sources.map((s) => s.url).filter(Boolean)));
-  const description = firstSentence(part.body) || `${part.name}: datasheet-verified ESP32 ${part.type} specs on ${SITE_NAME}.`;
+  const description = partMetaDescription(part, part.body);
 
   const article = {
     "@type": "TechArticle",
