@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-05T02:00:22.964836+00:00",
+      "expires": "2026-10-05T04:00:26.959160+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-28T02:00:22.964836+00:00"
+      "timestamp": "2026-09-28T04:00:26.959160+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-03T14:00:50.063964+00:00",
@@ -2342,6 +2342,13 @@
       "status": "rejected",
       "timestamp": "2026-09-08T04:00:36.972928+00:00"
     },
+    "deskpet-firmware": {
+      "id": "deskpet-firmware",
+      "pr_ref": "#548",
+      "repo": "bryant24hao/deskpet-firmware",
+      "status": "merged",
+      "timestamp": "2026-09-28T04:00:26.959160+00:00"
+    },
     "devour-sphere": {
       "expires": "2026-10-20T07:00:29.928578+00:00",
       "id": "devour-sphere",
@@ -2467,6 +2474,13 @@
       "repo_id": 1260665366,
       "status": "merged",
       "timestamp": "2026-09-07T20:21:10.197768+00:00"
+    },
+    "droidputter": {
+      "id": "droidputter",
+      "pr_ref": "#548",
+      "repo": "fcavalcantirj/droidputter",
+      "status": "merged",
+      "timestamp": "2026-09-28T04:00:26.959160+00:00"
     },
     "dualmesh-cardputer": {
       "expires": "2026-10-08T02:00:32.995095+00:00",
@@ -9463,6 +9477,7 @@
     "brucedevices": "brucedevices",
     "brucedevices/firmware": "firmware",
     "brucemoddev/brucemod-alpha": "brucemod-alpha",
+    "bryant24hao/deskpet-firmware": "deskpet-firmware",
     "bubbergamesites/cardputer-f1-random-gp": "cardputer-f1-random-gp",
     "bubbergamesites/cardui": "cardui",
     "bytehub-1337/signalrf": "signalrf",
@@ -9648,6 +9663,7 @@
     "fbiego/chronos-navio": "chronos-navio",
     "fbiego/esp32-c3-mini": "esp32-c3-mini",
     "fbiego/worldcup-2026": "worldcup-2026",
+    "fcavalcantirj/droidputter": "droidputter",
     "fcavalcantirj/pense-bem-cardputer-adv": "pense-bem-cardputer-adv",
     "fcavalcantirj/sticks3-ai-usage": "sticks3-ai-usage",
     "fermintm/tab5-weather-clock-tmp711v4": "tab5-weather-clock-tmp711v4",
