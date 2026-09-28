@@ -1,0 +1,13 @@
+{
+  "rows": [
+    {"keys": ["m5stack cardputer", "https://esp-atlas.com/parts/m5cardputer"], "clicks": 450, "impressions": 2000, "ctr": 0.225, "position": 3.2},
+    {"keys": ["cardputer specs", "https://esp-atlas.com/parts/m5cardputer"], "clicks": 140, "impressions": 800, "ctr": 0.175, "position": 6.8},
+    {"keys": ["cardputer firmware list", "https://esp-atlas.com/parts/m5cardputer"], "clicks": 10, "impressions": 200, "ctr": 0.05, "position": 11.4},
+    {"keys": ["minigotchi esp32", "https://esp-atlas.com/firmware/minigotchi-esp32/"], "clicks": 150, "impressions": 900, "ctr": 0.166, "position": 6.5},
+    {"keys": ["esp32 pwnagotchi alternative", "https://esp-atlas.com/firmware/minigotchi-esp32/"], "clicks": 30, "impressions": 300, "ctr": 0.1, "position": 14.3},
+    {"keys": ["m5stickc plus2 review", "https://esp-atlas.com/parts/m5stick-cplus2/"], "clicks": 55, "impressions": 380, "ctr": 0.144, "position": 11.8},
+    {"keys": ["m5cardputer v2 firmware", "https://esp-atlas.com/parts/m5cardputer%2Dv2"], "clicks": 9, "impressions": 90, "ctr": 0.1, "position": 18.5},
+    {"keys": ["area512 cardputer firmware", "https://esp-atlas.com/firmware/area512?ref=hn"], "clicks": 9, "impressions": 45, "ctr": 0.2, "position": 24.1}
+  ],
+  "responseAggregationType": "byPage"
+}

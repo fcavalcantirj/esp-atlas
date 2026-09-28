@@ -1,0 +1,16 @@
+{
+  "dimensionHeaders": [{"name": "pagePath"}],
+  "metricHeaders": [
+    {"name": "screenPageViews", "type": "TYPE_INTEGER"},
+    {"name": "activeUsers", "type": "TYPE_INTEGER"},
+    {"name": "sessions", "type": "TYPE_INTEGER"}
+  ],
+  "rows": [
+    {"dimensionValues": [{"value": "/parts/m5cardputer"}], "metricValues": [{"value": "2000"}, {"value": "1500"}, {"value": "1700"}]},
+    {"dimensionValues": [{"value": "/firmware/minigotchi-esp32"}], "metricValues": [{"value": "850"}, {"value": "620"}, {"value": "700"}]},
+    {"dimensionValues": [{"value": "/firmware/area512"}], "metricValues": [{"value": "500"}, {"value": "400"}, {"value": "430"}]},
+    {"dimensionValues": [{"value": "/firmware/ghost-firmware"}], "metricValues": [{"value": "30"}, {"value": "25"}, {"value": "28"}]},
+    {"dimensionValues": [{"value": "/parts/m5cardputer-v2"}], "metricValues": [{"value": "100"}, {"value": "80"}, {"value": "90"}]}
+  ],
+  "rowCount": 5
+}
