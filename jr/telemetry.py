@@ -13,18 +13,30 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import notify  # stdlib-only
-from composio import Composio
 
-KEY = (Path.home() / ".composio.key").read_text().strip()
 ENTITY = "7UQIn73xcXnpKIQiaTJzjrCRZk0VznPv"
 GA4_PROPERTY = "properties/551132215"
 GSC_SITE = "sc-domain:esp-atlas.com"
 TARGET_DATE = dt.date(2026, 11, 27)   # 1MM-user north-star (§3d)
-_c = Composio(api_key=KEY)
+_client = None
+
+
+def _composio():
+    """Lazily import composio, read the OAuth key, and build+cache the client.
+
+    Deferred so `import telemetry` has no side effects -- jr-tests CI (and any
+    non-Composio caller) can import this module without composio installed or
+    a ~/.composio.key present; only the first real _ex() call needs it."""
+    global _client
+    if _client is None:
+        from composio import Composio
+        key = (Path.home() / ".composio.key").read_text().strip()
+        _client = Composio(api_key=key)
+    return _client
 
 
 def _ex(slug: str, args: dict):
-    r = _c.tools.execute(slug=slug, user_id=ENTITY, arguments=args, dangerously_skip_version_check=True)
+    r = _composio().tools.execute(slug=slug, user_id=ENTITY, arguments=args, dangerously_skip_version_check=True)
     return r.get("data") if r.get("successful") else None
 
 
