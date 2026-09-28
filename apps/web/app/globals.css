@@ -1680,6 +1680,13 @@ a.firmware-sort-option:focus-visible {
   margin-top: 1.5rem;
 }
 
+/* Above-the-fold jump to #board-firmware (BoardFlashCta) -- sits right under
+   PartHeader, so it needs its own bottom margin rather than .board-firmware's
+   top one. */
+.board-flash-cta {
+  margin: 0 0 1.25rem;
+}
+
 /* ==========================================================================
    Firmware dek + README card (spike: frontend-only synopsis for the firmware
    detail page, so learning what a firmware does doesn't require leaving for
