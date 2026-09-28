@@ -1,13 +1,16 @@
 {
  "calls": 11,
  "errors": 0,
- "fetched": "2026-09-21",
+ "fetched": "2026-09-28",
  "notes": [],
  "ref": "master",
  "repo": "gkoh/furble",
  "resolved": {
   "boards": [
+   "m5stack-core",
    "m5stack-core2",
+   "m5stick-c",
+   "m5stick-cplus",
    "m5stick-s3"
   ],
   "socs": [
@@ -21,12 +24,9 @@
    "bootloader-m5stick-c-v3.9.1+1",
    "bootloader-m5stick-s3-v3.9.1+1",
    "furble",
-   "m5stack-core",
    "m5stack-core-esp32",
    "m5stack-core-v3.9.1+1",
    "m5stack-core2-v3.9.1+1",
-   "m5stick-c",
-   "m5stick-c-plus",
    "m5stick-c-plus-v3.9.1+1",
    "m5stick-c-v3.9.1+1",
    "m5stick-s3-v3.9.1+1",
