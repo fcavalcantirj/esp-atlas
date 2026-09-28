@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-05T17:00:50.035254+00:00",
+      "expires": "2026-10-05T18:00:51.767320+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-28T17:00:50.035254+00:00"
+      "timestamp": "2026-09-28T18:00:51.767320+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-03T14:00:50.063964+00:00",
@@ -2234,6 +2234,16 @@
       "repo": "cryptspeak/cscardputer",
       "status": "seen",
       "timestamp": "2026-09-02T17:03:09.155622+00:00"
+    },
+    "custom-m5core2-factorytest": {
+      "expires": "2026-10-28T18:00:51.767320+00:00",
+      "id": "custom-m5core2-factorytest",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "amin45mh/custom-m5core2-factorytest",
+      "repo_id": 1251402758,
+      "status": "rejected",
+      "timestamp": "2026-09-28T18:00:51.767320+00:00"
     },
     "cyber-clock": {
       "expires": "2026-10-24T11:00:17.726840+00:00",
@@ -9404,6 +9414,7 @@
     "alxv2016/folloup-sticky": "folloup-sticky",
     "amcchord/m5tab-macintosh": "m5tab-macintosh",
     "amiika/bytebed": "bytebed",
+    "amin45mh/custom-m5core2-factorytest": "custom-m5core2-factorytest",
     "andgohq/seed-phrase-checker": "seed-phrase-checker",
     "andjiang0083/cyber-clock": "cyber-clock",
     "andrea-dandrea/coreink-meteo": "coreink-meteo",
