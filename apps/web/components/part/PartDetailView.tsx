@@ -1,4 +1,5 @@
 import BoardFirmware from "@/components/part/BoardFirmware";
+import BoardFlashCta from "@/components/part/BoardFlashCta";
 import BoardImage from "@/components/part/BoardImage";
 import ChipChain from "@/components/part/ChipChain";
 import PartBody from "@/components/part/PartBody";
@@ -43,6 +44,10 @@ export default function PartDetailView({
     <div className="part-layout">
       <div className="part-main">
         <PartHeader part={part} />
+        {/* Above the fold, one click to #board-firmware — it otherwise sits dead
+            last on the page and page_view -> flash_open conversion was ~0.
+            (Renders nothing itself for non-board parts or empty/null rows.) */}
+        <BoardFlashCta partType={part.type} partId={part.id} rows={boardFirmwareRows} />
         {/* Specs + the picture first — what a maker wants to see the moment they land.
             Verify (Web Serial) moved to the bottom; the header CTA jumps to it. */}
         {part.type === "board" && <BoardImage part={part} />}

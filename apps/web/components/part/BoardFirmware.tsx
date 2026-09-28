@@ -7,7 +7,12 @@ import { contributingUrl } from "@/lib/github";
 export default function BoardFirmware({ rows }: { rows: RecipeRow[] }) {
   return (
     <section className="board-firmware" aria-labelledby="board-firmware">
-      <h2 id="board-firmware">Firmware for this board</h2>
+      {/* tabIndex so the above-the-fold CTA (BoardFlashCta) can move keyboard
+          focus here on click, not just scroll -- heading stays out of the
+          normal tab order otherwise. */}
+      <h2 id="board-firmware" tabIndex={-1}>
+        Firmware for this board
+      </h2>
       {rows.length === 0 ? (
         <p className="muted">
           No firmware recipes yet —{" "}

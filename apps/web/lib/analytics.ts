@@ -43,6 +43,9 @@ export type EventName =
   | "flash_handoff"
   | "flash_consent"
   | "flash_connect"
+  // Above-the-fold board-page CTA that jumps to #board-firmware (see BoardFlashCta) --
+  // distinct from flash_open (fired per-recipe by FlashAction further down the page).
+  | "board_flash_cta_click"
   // Verify rail (SPEC-verify.md): connect, result, and serial monitor use.
   | "verify_connect"
   | "verify_result"
