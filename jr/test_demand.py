@@ -58,6 +58,55 @@ def test_firstparty_weight_zero_result_weighted_higher_than_normal_hit():
     assert demand.firstparty_weight(0, zero_result=True) == 0.0
 
 
+# ═══════════════ apply_trends_boost — v2 pure formula, long-tail-safe (SPEC §3.6 ext) ═══════════════
+
+def test_trends_boost_max_constant_is_half():
+    assert demand.TRENDS_BOOST_MAX == 0.5
+
+
+def test_weight_formula_version_bumped_for_trends_boost():
+    """v1 -> v2: the versioned pure weight function's formula changed, so its identifier must
+    change too (snapshots record which formula produced them)."""
+    assert demand.WEIGHT_FORMULA_VERSION == "v2"
+
+
+def test_apply_trends_boost_missing_or_zero_interest_leaves_weight_byte_identical():
+    """CRITICAL INVARIANT: no Trends data (None) or a genuine zero score must never reduce or
+    zero a long-tail term's weight — most of esp-atlas's demand is long-tail Trends has no data
+    for (e.g. 'esp32 marauder deauth cardputer'), and it must never be suppressed."""
+    weight = 123.45
+    assert demand.apply_trends_boost(weight, None) == weight
+    assert demand.apply_trends_boost(weight, 0) == weight
+
+
+def test_apply_trends_boost_positive_interest_raises_weight_by_exact_fraction():
+    weight = 200.0
+    interest = 40
+    boosted = demand.apply_trends_boost(weight, interest)
+    expected = weight * (1 + demand.TRENDS_BOOST_MAX * interest / 100)
+    assert boosted == expected
+    assert boosted - weight == weight * demand.TRENDS_BOOST_MAX * interest / 100
+
+
+def test_apply_trends_boost_max_interest_caps_at_configured_trends_boost_max():
+    weight = 100.0
+    assert demand.apply_trends_boost(weight, 100) == weight * (1 + demand.TRENDS_BOOST_MAX)
+
+
+def test_apply_trends_boost_higher_interest_yields_proportionally_higher_weight():
+    weight = 150.0
+    low = demand.apply_trends_boost(weight, 10)
+    high = demand.apply_trends_boost(weight, 90)
+    assert high > low
+    assert (high - weight) / (low - weight) == 9   # 90/10 interest -> 9x the boost delta
+
+
+def test_apply_trends_boost_never_lowers_weight():
+    weight = 80.0
+    for interest in (0, 1, 25, 50, 100):
+        assert demand.apply_trends_boost(weight, interest) >= weight
+
+
 # ═══════════════════════════ entity resolution ═══════════════════════════
 
 def test_resolve_entity_board_and_firmware_token():
@@ -349,6 +398,36 @@ def test_esp32_tutorial_pdf_is_genuinely_unresolved_end_to_end():
     assert tut["gap"] == demand.GAP_UNRESOLVED
 
 
+# ═══════════════ trends threading through build_demand_items (v2, SPEC §3.6 ext) ═══════════════
+
+def test_build_demand_items_absent_or_empty_trends_leaves_every_weight_byte_identical():
+    """The long-tail-safe invariant end-to-end: no trends map, an empty one, or one whose terms
+    don't match anything mined here must leave every item's weight exactly what it was pre-v2."""
+    baseline = _build()
+    weights_by_terms = {tuple(it["raw_terms"]): it["weight"] for it in baseline}
+    for variant in (
+        _build(trends=None),
+        _build(trends={}),
+        _build(trends={"platformio build config": 90}),   # coding-domain term, not in any fixture row
+    ):
+        for it in variant:
+            assert it["weight"] == weights_by_terms[tuple(it["raw_terms"])]
+
+
+def test_build_demand_items_positive_trends_score_boosts_only_the_matching_item():
+    baseline = _build()
+    c6_base = next(it for it in baseline if "esp32-c6" in it["raw_terms"])
+    s3_base = next(it for it in baseline if "esp32-s3" in it["raw_terms"])
+
+    boosted = _build(trends={"esp32-c6": 80})
+    c6_boosted = next(it for it in boosted if "esp32-c6" in it["raw_terms"])
+    s3_boosted = next(it for it in boosted if "esp32-s3" in it["raw_terms"])
+
+    assert c6_boosted["weight"] == round(demand.apply_trends_boost(c6_base["weight"], 80), 2)
+    assert c6_boosted["weight"] > c6_base["weight"]
+    assert s3_boosted["weight"] == s3_base["weight"]   # unrelated item, byte-identical
+
+
 def test_landing_page_attached_from_d4():
     items = _build()
     launcher = next(it for it in items if "launcher esp32" in it["raw_terms"])
@@ -529,6 +608,98 @@ def test_latest_prior_snapshot_empty_when_no_dir(tmp_path):
 def test_latest_prior_snapshot_tolerates_corrupt_json(tmp_path):
     (tmp_path / "2026-08-24.json").write_text("{not valid json")
     assert demand._latest_prior_snapshot(tmp_path) == []
+
+
+# ═══════════════ trends fetch wiring — _pull_trends / _pull_live (reuses analytics_cross) ═══════════════
+
+def test_pull_trends_calls_analytics_cross_fetch_trends_with_mined_normalized_terms(monkeypatch):
+    captured = {}
+
+    def fake_fetch_trends(terms):
+        captured["terms"] = terms
+        return {"marauder cardputer": 80}
+
+    monkeypatch.setattr(demand.analytics_cross, "fetch_trends", fake_fetch_trends)
+    result = demand._pull_trends(D1_ROWS)
+    assert result == {"marauder cardputer": 80}
+    assert "marauder cardputer" in captured["terms"]
+    assert "esp32-c6" in captured["terms"]
+
+
+def test_pull_trends_degrades_to_empty_dict_when_fetch_trends_raises(monkeypatch):
+    def boom(terms):
+        raise RuntimeError("trends blocked")
+
+    monkeypatch.setattr(demand.analytics_cross, "fetch_trends", boom)
+    assert demand._pull_trends(D1_ROWS) == {}
+
+
+def test_pull_trends_empty_gsc_rows_calls_fetch_trends_with_no_terms(monkeypatch):
+    captured = {}
+    monkeypatch.setattr(demand.analytics_cross, "fetch_trends",
+                        lambda terms: captured.setdefault("terms", terms) or {})
+    assert demand._pull_trends([]) == {}
+    assert captured["terms"] == []
+
+
+def test_pull_live_threads_trends_map_into_returned_dict(monkeypatch):
+    import telemetry
+
+    def fake_ex(slug, args):
+        if slug == "GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY" and args["dimensions"] == ["query"]:
+            return {"rows": D1_ROWS}
+        return {"rows": []}
+
+    monkeypatch.setattr(telemetry, "_ex", fake_ex)
+    monkeypatch.setattr(demand.analytics_cross, "fetch_trends", lambda terms: {"marauder cardputer": 80})
+    live = demand._pull_live(days=7)
+    assert live["trends"] == {"marauder cardputer": 80}
+
+
+def test_pull_live_trends_failure_does_not_break_live_pull(monkeypatch):
+    """A Trends outage must never take down the GSC/GA4 pull it's threaded alongside."""
+    import telemetry
+
+    def fake_ex(slug, args):
+        if slug == "GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY" and args["dimensions"] == ["query"]:
+            return {"rows": D1_ROWS}
+        return {"rows": []}
+
+    monkeypatch.setattr(telemetry, "_ex", fake_ex)
+
+    def boom(terms):
+        raise RuntimeError("trends blocked")
+
+    monkeypatch.setattr(demand.analytics_cross, "fetch_trends", boom)
+    live = demand._pull_live(days=7)
+    assert live["trends"] == {}
+    assert live["gsc_query_rows"] == D1_ROWS
+
+
+def test_mine_trends_failure_still_writes_snapshot_exactly_as_before(tmp_path, monkeypatch):
+    """Graceful degrade end-to-end: whether `_pull_live` returns an empty trends map (a Trends
+    failure) or omits the key entirely, `mine()` must produce byte-identical weights either way
+    and must still write the snapshot."""
+    monkeypatch.setattr(demand.notify, "send_telegram", lambda text: {"ok": True})
+
+    monkeypatch.setattr(demand, "_pull_live", lambda days=demand.WINDOW_DAYS: {
+        "window": {"start": "2026-08-03", "end": "2026-08-31"},
+        "gsc_query_rows": D1_ROWS, "gsc_query_page_rows": D4_ROWS, "ga4_searchterm_raw_rows": [],
+        "trends": {},
+    })
+    result_empty_trends = demand.mine(send_telegram=True, demand_dir=tmp_path)
+
+    monkeypatch.setattr(demand, "_pull_live", lambda days=demand.WINDOW_DAYS: {
+        "window": {"start": "2026-08-03", "end": "2026-08-31"},
+        "gsc_query_rows": D1_ROWS, "gsc_query_page_rows": D4_ROWS, "ga4_searchterm_raw_rows": [],
+        # no "trends" key at all -- simulates _pull_trends degrading silently upstream
+    })
+    result_no_trends_key = demand.mine(send_telegram=True, demand_dir=tmp_path)
+
+    weights_a = {tuple(it["raw_terms"]): it["weight"] for it in result_empty_trends["items"]}
+    weights_b = {tuple(it["raw_terms"]): it["weight"] for it in result_no_trends_key["items"]}
+    assert weights_a == weights_b
+    assert any(tmp_path.glob("*.json"))
 
 
 # ═══════════════════════════ mine() orchestration — READ-ONLY guarantee ═══════════════════════════
