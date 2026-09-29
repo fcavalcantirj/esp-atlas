@@ -438,6 +438,11 @@ class FirmwareRecord(BaseModel):
     #: a `field: summary` sources[] entry -- see data/firmware/<id>/firmware.md `summary`/`readme_lang`.
     summary: Optional[str] = None
     readme_lang: Optional[str] = None
+    #: OPTIONAL per-record SERP title override, authored (not grounded/cited) --
+    #: see data/firmware/<id>/firmware.md `seo_title` and apps/web/lib/format.ts
+    #: firmwareMetaTitle(). Absent for every firmware except the rare high-demand
+    #: page where the generic flash-guide formula buries the identity.
+    seo_title: Optional[str] = None
     #: The cached English translation from data/firmware/<id>/readme.en.md, read straight off
     #: disk by the API when that file exists -- never stored in frontmatter (see
     #: esp_atlas_api.main._with_readme_en). None when readme_lang is already "en" or absent.

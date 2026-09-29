@@ -2,6 +2,7 @@
 id: bruce
 type: firmware
 name: Bruce
+seo_title: "Bruce — ESP32 / ESP32-S3 pentest firmware, flash guide and boards"
 url: https://github.com/BruceDevices/firmware
 category: pentest
 maintainer: brucedevices

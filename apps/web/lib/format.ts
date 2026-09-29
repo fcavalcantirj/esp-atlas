@@ -149,8 +149,18 @@ function buildMetaTitle(name: string, benefit: string): string {
  * verified to run on when that count exists, else the SoCs it targets,
  * else a bare flash-guide fallback. Cite-or-omit: never states a board
  * count or SoC the record doesn't carry.
+ *
+ * A non-empty `seo_title` (data/firmware/<id>/firmware.md, opt-in per record)
+ * overrides the formula outright -- already shaped "name — benefit" by the
+ * author, so an overflow is shortened with the same word-boundary truncation
+ * buildMetaTitle falls back to for its own name clause, applied here to the
+ * whole override string instead. Absent/empty seo_title falls straight
+ * through to the formula below, byte-identical to before it existed.
  */
-export function firmwareMetaTitle(firmware: Pick<Firmware, "name" | "socs" | "boards">): string {
+export function firmwareMetaTitle(firmware: Pick<Firmware, "name" | "socs" | "boards" | "seo_title">): string {
+  if (firmware.seo_title) {
+    return truncateAtWord(firmware.seo_title, TITLE_MAX);
+  }
   const socsLabel = firmware.socs.length > 0 ? firmware.socs.map(socDisplay).join("/") : null;
   const boards = firmware.boards ?? 0;
 

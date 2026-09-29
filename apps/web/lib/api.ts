@@ -137,6 +137,10 @@ export interface Firmware {
   boards?: number;
   /** Groq-generated grounded one-liner, cached on the record. */
   summary?: string;
+  /** Optional per-record SERP title override (data/firmware/<id>/firmware.md
+   * `seo_title`) for a high-demand page where the generic flash-guide formula
+   * buries the identity -- see firmwareMetaTitle in lib/format.ts. */
+  seo_title?: string;
   /** README source language code (e.g. "en", "ja"), as detected during enrichment. */
   readme_lang?: string;
   /** Cached English translation of the README -- present only when readme_lang isn't English. */

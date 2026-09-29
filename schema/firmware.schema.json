@@ -72,6 +72,10 @@
       "type": "string",
       "description": "OPTIONAL grounded one-to-two sentence English synopsis of the README, derived ONLY from the README text by jr/groq_enrich.py's enrich_readme(). Cited via a `field: summary` sources[] entry."
     },
+    "seo_title": {
+      "type": "string",
+      "description": "OPTIONAL per-record override of the SERP <title> (apps/web/lib/format.ts firmwareMetaTitle()), for the rare high-demand page where the generic 'flash guide' formula buries the identity people actually search for. Authored editorial copy, not grounded from a source -- no sources[] entry required. Render-time clamps to TITLE_MAX (60 chars) at a word boundary if the author's string overflows."
+    },
     "readme_lang": {
       "type": "string", "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]+)?$",
       "description": "OPTIONAL ISO 639-1 (or 639-2) language code of the fetched README -- 'en' when it is already English. Accompanies `summary`."
