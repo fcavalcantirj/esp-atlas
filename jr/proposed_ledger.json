@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-06T15:00:24.283466+00:00",
+      "expires": "2026-10-06T16:00:28.597305+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-09-29T15:00:24.283466+00:00"
+      "timestamp": "2026-09-29T16:00:28.597305+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-03T14:00:50.063964+00:00",
@@ -1984,6 +1984,14 @@
       "repo_id": 1216668171,
       "status": "merged",
       "timestamp": "2026-09-19T18:00:53.079431+00:00"
+    },
+    "codex-microputer-adv": {
+      "expires": "2026-10-29T16:00:28.597305+00:00",
+      "id": "codex-microputer-adv",
+      "pr_ref": null,
+      "repo": "pfrankov/codex-microputer-adv",
+      "status": "seen",
+      "timestamp": "2026-09-29T16:00:28.597305+00:00"
     },
     "columns-m5stick-plus-2": {
       "expires": "2026-10-07T21:12:07.418911+00:00",
@@ -10074,6 +10082,7 @@
     "personwithbeans/cardlife": "cardlife",
     "petsven/s3_decibel_meter": "s3-decibel-meter",
     "pfefferle/m5-atoms3-palnagotchi": "m5-atoms3-palnagotchi",
+    "pfrankov/codex-microputer-adv": "codex-microputer-adv",
     "philmo6/meshpunk": "meshpunk",
     "piaoxuebingfeng/m5tab5-demos": "m5tab5-demos",
     "pierrebak/m5cardputer_voice-changer": "m5cardputer-voice-changer",
