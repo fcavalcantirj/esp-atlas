@@ -40,17 +40,63 @@ def _ex(slug: str, args: dict):
     return r.get("data") if r.get("successful") else None
 
 
+GA4_BREAKDOWN_DIMS = ["country", "sessionDefaultChannelGroup"]
+GA4_BREAKDOWN_METRICS = ["activeUsers", "sessions", "averageSessionDuration", "engagedSessions"]
+
+
+def _is_junk_segment(channel: str, avg_duration_s: float, engagement_rate: float, *,
+                      junk_channel: str = "Direct",
+                      max_avg_duration_s: float = 5.0,
+                      max_engagement_rate: float = 0.10) -> bool:
+    """A behavioral bot/junk rule, matching deep-analytics' bot_filter.py: a segment is junk
+    only when its channel is `junk_channel` AND its average session duration is at most
+    `max_avg_duration_s` AND its engagement rate is at most `max_engagement_rate`. Country is
+    never part of the rule -- humans anywhere can be Direct and fast."""
+    return (channel == junk_channel
+            and avg_duration_s <= max_avg_duration_s
+            and engagement_rate <= max_engagement_rate)
+
+
+def _ga4_breakdown_totals(rows: list) -> dict:
+    """Reduce a country x sessionDefaultChannelGroup GA4 breakdown (GA4_BREAKDOWN_METRICS order)
+    into raw totals (every segment) and human-adjusted totals (junk segments excluded per
+    _is_junk_segment). Never drops data: callers must always report both."""
+    raw = {"activeUsers": 0.0, "sessions": 0.0}
+    adjusted = {"activeUsers": 0.0, "sessions": 0.0}
+    for row in rows:
+        dims = [v.get("value", "") for v in row.get("dimensionValues", [])]
+        channel = dims[1] if len(dims) > 1 else ""
+        mvals = row.get("metricValues", [])
+        m = {name: float(mvals[i]["value"]) if i < len(mvals) else 0.0
+             for i, name in enumerate(GA4_BREAKDOWN_METRICS)}
+        sessions = m["sessions"]
+        engagement_rate = (m["engagedSessions"] / sessions) if sessions else 0.0
+
+        raw["activeUsers"] += m["activeUsers"]
+        raw["sessions"] += sessions
+        if not _is_junk_segment(channel, m["averageSessionDuration"], engagement_rate):
+            adjusted["activeUsers"] += m["activeUsers"]
+            adjusted["sessions"] += sessions
+    return {"raw": raw, "adjusted": adjusted}
+
+
 def weekly_digest(days: int = 7) -> str:
     end = dt.date.today(); start = end - dt.timedelta(days=days)
     S, E = start.isoformat(), end.isoformat()
 
     ga = _ex("GOOGLE_ANALYTICS_RUN_REPORT", {"property": GA4_PROPERTY,
              "dateRanges": [{"startDate": S, "endDate": E}],
-             "metrics": [{"name": "activeUsers"}, {"name": "newUsers"}, {"name": "sessions"}]})
+             "dimensions": [{"name": d} for d in GA4_BREAKDOWN_DIMS],
+             "metrics": [{"name": m} for m in GA4_BREAKDOWN_METRICS],
+             "limit": 200})
     try:
-        users, new, sess = (m["value"] for m in ga["rows"][0]["metricValues"])
+        totals = _ga4_breakdown_totals(ga["rows"])
+        raw, adj = totals["raw"], totals["adjusted"]
+        ga_line = (f"👥 GA4: *{int(round(adj['activeUsers']))}* users / "
+                   f"{int(round(adj['sessions']))} sessions human-adjusted — "
+                   f"{int(round(raw['activeUsers']))} / {int(round(raw['sessions']))} raw")
     except Exception:
-        users = new = sess = "?"
+        ga_line = "👥 GA4: ?"
 
     tot = _ex("GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY",
               {"siteUrl": GSC_SITE, "startDate": S, "endDate": E, "dimensions": [], "rowLimit": 1})
@@ -64,7 +110,7 @@ def weekly_digest(days: int = 7) -> str:
 
     days_left = (TARGET_DATE - end).days
     lines = [f"🤖 *Jr — weekly telemetry* · esp-atlas.com · {S}→{E}",
-             f"👥 GA4: *{users}* users ({new} new) · {sess} sessions",
+             ga_line,
              f"🔎 GSC: {clicks} clicks · {imps} impressions · {ctr}% CTR · avg pos {pos}",
              f"🎯 1,000,000 by {TARGET_DATE} — **{days_left} days left**",
              "",
