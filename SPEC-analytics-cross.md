@@ -79,7 +79,9 @@ FunnelRow = {
                                         # 0.0 is a valid, real value (page_views > 0, part_view == 0).
     "conv_part_to_flash": float | None,# flash_open / part_view, same None-vs-0.0 rule
     "top_queries": list[{"query": str, "impressions": int, "clicks": int, "position": float}],
-    "demand": None,                    # RESERVED for a future Google Trends axis (§7) — always None today
+    "demand": int | None,               # Google Trends relative interest (0-100) for the row's top
+                                        # query (§7). None if the query has no Trends score (or the
+                                        # trends map passed to build_funnel() is empty/absent).
     "striking_distance": bool,         # True if ANY attributed query has 8 <= avg_position <= 20 and impressions > 0
     "leak_flag": bool,                 # True if demand+rank are healthy but conversion is weak (§5)
 }
@@ -198,13 +200,21 @@ network-free function with zero I/O — fully oracle-testable without mocking HT
 
 ---
 
-## 7. Reserved: future Google Trends axis
+## 7. Google Trends demand axis
 
-`FunnelRow["demand"]` is reserved for a future Google Trends interest-over-time score for
-the page's top query (0–100 relative interest). **Not wired in this run** — Trends has no
-Composio action today and pulling it needs a decision on keyword-vs-page granularity that's
-out of scope here. The field exists now, always `None`, so the row shape doesn't change
-(and downstream consumers don't need a migration) the day Trends is added.
+`FunnelRow["demand"]` is a Google Trends interest-over-time score (0–100 relative interest)
+for the page's top query. Trends has no Composio action, so it's fetched separately via
+`jr/analytics_cross.py`'s `fetch_trends(queries) -> dict[str, int]` (the `pytrends`
+unofficial client) and passed into `build_funnel()` as an already-fetched `{query: score}`
+map — `build_funnel()` stays pure/network-free and just joins it, same as the other axes.
+Granularity is per-query, not per-page: `demand` is the score for `top_queries[0]["query"]`
+specifically, joined by exact string match.
+
+Graceful degradation: `fetch_trends()` never raises — any failure (pytrends not installed,
+network error, Trends blocking the request, an empty response frame) degrades to `{}`, and
+`build_funnel()` treats a missing/empty trends map exactly like an unavailable axis: every
+row's `demand` is `None`. A page with no top query (empty `top_queries`) also gets `demand:
+None` — there's nothing to look up.
 
 ---
 
@@ -212,6 +222,5 @@ out of scope here. The field exists now, always `None`, so the row shape doesn't
 
 - No Telegram digest / snapshot-writer wiring — `jr/telemetry.py`'s existing weekly digest
   is untouched. A future spec can fold `build_funnel()`'s output into it.
-- No Google Trends call (§7).
 - No persistence — `build_funnel()` returns a `FunnelTable` in memory; callers decide what
   to do with it.

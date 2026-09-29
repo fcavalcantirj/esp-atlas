@@ -4,12 +4,15 @@
 Exposes the acquisition -> activation funnel today's telemetry cannot see: which query
 lands on which page, and what that page's visitors do next (page_view -> part_view ->
 flash_open). Reuses jr/telemetry.py's Composio calling convention EXACTLY -- same _ex(),
-same GA4_PROPERTY/GSC_SITE, no new auth path, no new pip deps.
+same GA4_PROPERTY/GSC_SITE, no new auth path. The Google Trends demand axis (SPEC §7) is
+the one exception: it's unofficial and outside Composio, fetched via the `pytrends` pip
+dep through its own fetch_trends() wrapper.
 
 build_funnel() is the pure, network-free core: it takes already-fetched raw API rows and
 never raises, degrading gracefully when a source axis is missing (SPEC §6). The fetch_*
-functions are thin one-call wrappers around telemetry._ex() and are not oracle-tested
-(mocked instead) -- all join/scoring logic lives in build_funnel(), which is.
+functions are thin one-call wrappers around telemetry._ex() (or, for fetch_trends(),
+pytrends) and are not oracle-tested (mocked instead) -- all join/scoring logic lives in
+build_funnel(), which is.
 """
 from __future__ import annotations
 
@@ -20,6 +23,14 @@ from urllib.parse import unquote, urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import telemetry  # noqa: E402 -- reuses _ex(), GA4_PROPERTY, GSC_SITE
+
+try:
+    from pytrends.request import TrendReq  # noqa: E402 -- unofficial Trends client (SPEC §7)
+except ImportError:
+    TrendReq = None
+
+TRENDS_KW_LIST_CAP = 5  # pytrends hard-caps kw_list at 5 terms per payload
+TRENDS_TIMEFRAME = "today 1-m"
 
 FUNNEL_EVENT_NAMES = ("part_view", "flash_open")
 STRIKING_DISTANCE_MIN = 8
@@ -77,6 +88,30 @@ def fetch_gsc_queries(start: str, end: str):
         "dimensions": ["query", "page"], "rowLimit": 1000,
     })
     return None if data is None else data.get("rows", [])
+
+
+def fetch_trends(queries: list) -> dict:
+    """Latest non-partial Google Trends relative-interest score (0-100) per query, over the
+    trailing month. Trends is an unofficial, blockable source outside telemetry.py's Composio
+    convention (SPEC §7) -- ANY failure (import, network, empty frame) degrades to {} so a
+    Trends outage never breaks the tick, matching the other fetch_* functions."""
+    if not queries or TrendReq is None:
+        return {}
+    try:
+        terms = queries[:TRENDS_KW_LIST_CAP]
+        client = TrendReq(hl="en-US", tz=0)
+        client.build_payload(terms, timeframe=TRENDS_TIMEFRAME)
+        df = client.interest_over_time()
+        if df is None or df.empty:
+            return {}
+        if "isPartial" in df.columns:
+            df = df[~df["isPartial"].astype(bool)]
+        if df.empty:
+            return {}
+        latest = df.iloc[-1]
+        return {term: int(latest[term]) for term in terms if term in latest}
+    except Exception:
+        return {}
 
 
 # --- parsing: raw API rows -> {normalized_page: stats} -------------------------------------
@@ -145,7 +180,7 @@ def _rate(numerator, denominator):
     return numerator / denominator
 
 
-def _build_row(page: str, ga_page_stats, ga_event_stats, gsc_page_stats, gsc_query_stats) -> dict:
+def _build_row(page: str, ga_page_stats, ga_event_stats, gsc_page_stats, gsc_query_stats, trends: dict) -> dict:
     if ga_page_stats is None:
         page_views = active_users = sessions = None
     else:
@@ -173,6 +208,7 @@ def _build_row(page: str, ga_page_stats, ga_event_stats, gsc_page_stats, gsc_que
 
     queries = [] if gsc_query_stats is None else gsc_query_stats.get(page, [])
     top_queries = sorted(queries, key=lambda q: q["impressions"], reverse=True)[:TOP_QUERIES_CAP]
+    demand = trends.get(top_queries[0]["query"]) if top_queries else None
 
     conv_view_to_part = _rate(part_view, page_views)
     conv_part_to_flash = _rate(flash_open, part_view)
@@ -203,21 +239,26 @@ def _build_row(page: str, ga_page_stats, ga_event_stats, gsc_page_stats, gsc_que
         "conv_view_to_part": conv_view_to_part,
         "conv_part_to_flash": conv_part_to_flash,
         "top_queries": top_queries,
-        "demand": None,  # RESERVED for a future Google Trends axis (SPEC §7) -- not wired
+        "demand": demand,  # Google Trends relative-interest score (0-100) for the top query (SPEC §7)
         "striking_distance": striking_distance,
         "leak_flag": leak_flag,
     }
 
 
-def build_funnel(ga_pages, ga_events, gsc_pages, gsc_queries) -> dict:
+def build_funnel(ga_pages, ga_events, gsc_pages, gsc_queries, trends: dict = None) -> dict:
     """Pure, network-free join of the four already-fetched source axes into a FunnelTable.
 
     Each axis is `None` (source call failed -- marked unavailable, fields go None) or a
     `list[dict]` of raw rows in the shape the matching fetch_* function returns (possibly
     empty -- a real "loaded, zero rows" result, distinct from unavailable). Never raises.
+
+    `trends` is an already-fetched `{query: 0..100}` map (fetch_trends' return shape, SPEC
+    §7); a row's `demand` is the score for its top query when present, else None. Absent or
+    empty, every row's demand stays None -- the same graceful degradation as the other axes.
     """
     raw = {"ga_pages": ga_pages, "ga_events": ga_events, "gsc_pages": gsc_pages, "gsc_queries": gsc_queries}
     unavailable = [name for name in AXES if raw[name] is None]
+    trends = trends or {}
 
     ga_page_stats = None if ga_pages is None else _parse_ga_pages(ga_pages)
     ga_event_stats = None if ga_events is None else _parse_ga_events(ga_events)
@@ -225,7 +266,7 @@ def build_funnel(ga_pages, ga_events, gsc_pages, gsc_queries) -> dict:
     gsc_query_stats = None if gsc_queries is None else _parse_gsc_queries(gsc_queries)
 
     pages = set(ga_page_stats or {}) | set(gsc_page_stats or {})
-    rows = [_build_row(page, ga_page_stats, ga_event_stats, gsc_page_stats, gsc_query_stats) for page in pages]
+    rows = [_build_row(page, ga_page_stats, ga_event_stats, gsc_page_stats, gsc_query_stats, trends) for page in pages]
     rows.sort(key=lambda r: (
         -(r["impressions"] if r["impressions"] is not None else -1),
         -(r["page_views"] if r["page_views"] is not None else -1),
@@ -238,17 +279,35 @@ def build_funnel(ga_pages, ga_events, gsc_pages, gsc_queries) -> dict:
     }
 
 
+def _top_query_per_page(gsc_queries) -> list:
+    """The query each page would surface as top_queries[0] in build_funnel -- the set fed to
+    fetch_trends, so the Trends call only ever asks about queries that can actually join."""
+    if not gsc_queries:
+        return []
+    query_stats = _parse_gsc_queries(gsc_queries)
+    top = []
+    for page_queries in query_stats.values():
+        ranked = sorted(page_queries, key=lambda q: q["impressions"], reverse=True)
+        if ranked:
+            top.append(ranked[0]["query"])
+    return top
+
+
 def weekly_funnel(days: int = 7) -> dict:
-    """Convenience orchestrator: fetches all four axes over the trailing `days` and joins
-    them. No Telegram/snapshot wiring here (SPEC §8 non-goals) -- callers decide what to do
-    with the returned FunnelTable."""
+    """Convenience orchestrator: fetches all four axes over the trailing `days`, fetches
+    Google Trends for each page's top query, and joins them. No Telegram/snapshot wiring here
+    (SPEC §8 non-goals) -- callers decide what to do with the returned FunnelTable."""
     end = dt.date.today()
     start = end - dt.timedelta(days=days)
+    start_s, end_s = start.isoformat(), end.isoformat()
+    gsc_queries = fetch_gsc_queries(start_s, end_s)
+    trends = fetch_trends(_top_query_per_page(gsc_queries))
     return build_funnel(
-        fetch_ga_pages(start.isoformat(), end.isoformat()),
-        fetch_ga_events(start.isoformat(), end.isoformat()),
-        fetch_gsc_pages(start.isoformat(), end.isoformat()),
-        fetch_gsc_queries(start.isoformat(), end.isoformat()),
+        fetch_ga_pages(start_s, end_s),
+        fetch_ga_events(start_s, end_s),
+        fetch_gsc_pages(start_s, end_s),
+        gsc_queries,
+        trends,
     )
 
 

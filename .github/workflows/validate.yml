@@ -46,8 +46,10 @@ jobs:
           python-version: "3.12"
       - name: Install what jr/ and scripts/ actually import
         # Deliberately NOT agno: those tests importorskip, so the agent lane stays testable in
-        # CI without dragging the whole LLM stack into every run.
-        run: pip install pyyaml jsonschema requests pytest
+        # CI without dragging the whole LLM stack into every run. pytrends IS installed: it's
+        # imported at module scope (guarded by its own try/except) and its tests mock it, not
+        # importorskip it, since fetch_trends() must degrade gracefully with or without it.
+        run: pip install pyyaml jsonschema requests pytest pytrends
       - name: Install core (jr and scripts import esp_atlas_core)
         run: pip install -e apps/core
       - name: Run the agent + scripts suites
