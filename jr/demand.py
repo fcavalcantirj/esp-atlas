@@ -30,6 +30,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import notify  # stdlib-only
 import tools
+import analytics_cross  # reuses fetch_trends() verbatim (SPEC-analytics-cross.md §7) — not forked here
 from capability_map import capabilities_from_text
 from device_map import device_from_text
 
@@ -38,12 +39,13 @@ REPO = JR_DIR.parent
 DEMAND_DIR = REPO / "docs" / "demand"
 
 # ─────────────────────────── versioned constants (SPEC §3) ───────────────────────────
-WEIGHT_FORMULA_VERSION = "v1"
+WEIGHT_FORMULA_VERSION = "v2"           # v2: + Google Trends additive boost (see apply_trends_boost)
 WINDOW_DAYS = 28                        # §3.1 / ⟨Q6⟩ — wider than the digest's 7d, beats k-anonymity
 MIN_IMPRESSIONS = 10                    # D1/D4 floor — rows below this are statistically thin (§3.3)
 MIN_EVENTS = 5                          # D2/D3 floor
 FIRST_PARTY_WEIGHT_MULTIPLIER = 2.0     # D2/D3 = purest intent, weighted above D1/D4 (§3.6)
 ZERO_RESULT_MULTIPLIER = 1.5            # a first-party search that returned NOTHING is the strongest signal
+TRENDS_BOOST_MAX = 0.5                  # v2: Trends interest=100 -> +50% weight; interest=0/absent -> +0% (long-tail safe)
 
 # RANKS_POORLY thresholds (§4) — "high-impression + low-CTR + weak-position" made concrete
 RANKS_POORLY_MIN_IMPRESSIONS = 50
@@ -273,6 +275,19 @@ def firstparty_weight(events: int, zero_result: bool) -> float:
     return events * FIRST_PARTY_WEIGHT_MULTIPLIER * (ZERO_RESULT_MULTIPLIER if zero_result else 1.0)
 
 
+def apply_trends_boost(weight: float, interest: int | float | None) -> float:
+    """v2 (§3.6 extension): fold Google Trends relative interest (0-100) into `weight` as an
+    ADDITIVE, long-tail-safe boost — new_weight = weight * (1 + TRENDS_BOOST_MAX * interest/100).
+
+    CRITICAL INVARIANT: a missing/zero/falsy `interest` (no Trends data, a failed lookup, or a
+    genuine 0 score) returns `weight` UNCHANGED — most of the site's demand is long-tail terms
+    Trends has never heard of, and this must never suppress or zero them out. Only a strictly
+    positive interest score raises the weight; it can never lower it."""
+    if not interest:
+        return weight
+    return weight * (1 + TRENDS_BOOST_MAX * interest / 100)
+
+
 # ═══════════════════════════ row parsing (raw Composio shapes -> plain rows) ═══════════════════════════
 
 def _parse_gsc_rows(rows: list[dict], has_page: bool) -> list[dict]:
@@ -359,16 +374,21 @@ def build_demand_items(
     today: str | None = None,
     prior_first_seen: dict[str, str] | None = None,
     part_ids: set[str] | None = None,
+    trends: dict[str, int] | None = None,
 ) -> list[dict]:
     """The pure miner (§3): normalize -> floor-filter -> resolve -> dedup/merge -> weight ->
     classify -> emit a ranked `List[DemandItem]` (schema §9), NO network. `gsc_query_rows` /
     `gsc_query_page_rows` / `ga4_searchterm_raw_rows` are the raw Composio row shapes (see
     `_pull_live`) — pass realistic fixtures here for offline testing. `part_ids` is the
     catalogued chip/part id universe (`_catalogued_part_ids()` in the live pipeline) that
-    `classify_gap` checks part demand against (§4's part/chip fix)."""
+    `classify_gap` checks part demand against (§4's part/chip fix). `trends` is an already-fetched
+    `{normalized_query: 0..100}` Google Trends map (`analytics_cross.fetch_trends`'s return shape,
+    reused verbatim, SPEC-analytics-cross.md §7) applied via `apply_trends_boost` — absent/None/{}
+    degrades every item's weight to exactly its pre-Trends value (§3.6 extension)."""
     firmware_ids = firmware_ids if firmware_ids is not None else set()
     recipe_pairs = recipe_pairs if recipe_pairs is not None else set()
     part_ids = part_ids if part_ids is not None else set()
+    trends = trends or {}
     today = today or dt.date.today().isoformat()
     prior_first_seen = prior_first_seen or {}
 
@@ -411,11 +431,12 @@ def build_demand_items(
         ctr = round(clicks / impressions, 4) if impressions else None
         position = round(g["_pos_weighted"] / impressions, 1) if impressions else None
         events = g["events"]
-        weight = round(
+        term = g["display_term"]
+        base_weight = round(
             gsc_weight(impressions, clicks, ctr, position) + firstparty_weight(events, g["zero_result"]), 2)
+        weight = round(apply_trends_boost(base_weight, trends.get(term)), 2)
         gap = classify_gap(g["resolved"], firmware_ids, recipe_pairs,
                            {"impressions": impressions, "ctr": ctr, "position": position}, part_ids)
-        term = g["display_term"]
         resolved_out = g["resolved"] if any(g["resolved"].values()) else None
         items.append({
             "term": term,
@@ -434,15 +455,30 @@ def build_demand_items(
     return items
 
 
-# ═══════════════════════════ the ONE network-touching function ═══════════════════════════
+# ═══════════════════════════ the network-touching functions ═══════════════════════════
+
+def _pull_trends(gsc_query_rows: list[dict]) -> dict[str, int]:
+    """Fetches Google Trends interest for the mined, normalized query terms — REUSES
+    `analytics_cross.fetch_trends` verbatim (SPEC-analytics-cross.md §7), not forked here. Terms
+    are the same `normalize_term()` every other row in this module goes through, so trend map
+    keys line up exactly with `build_demand_items`'s `display_term`. `fetch_trends` itself never
+    raises (degrades to `{}` on any pytrends/import/network failure); this wrapper adds one more
+    layer of defense so a Trends outage can never take down `_pull_live()` / snapshot writing."""
+    terms = sorted({normalize_term(r["keys"][0]) for r in gsc_query_rows or [] if r.get("keys")})
+    try:
+        return analytics_cross.fetch_trends(terms)
+    except Exception:
+        return {}
+
 
 def _pull_live(days: int = WINDOW_DAYS) -> dict:
     """Pulls D1/D4 (GSC) and attempts D2 (GA4 searchTerm) via **Composio**, reusing
     `telemetry.py`'s auth VERBATIM (same `KEY`/`ENTITY`/`GA4_PROPERTY`/`GSC_SITE`, same `_ex()`
-    executor — not forked). This is the ONLY function in this module that touches the network;
-    everything else (`build_demand_items` and everything it calls) is pure. Imported lazily so
-    importing `demand.py` never requires a composio key/package to be present (keeps
-    `test_demand.py` fully offline, per SPEC Phase 1)."""
+    executor — not forked), then fetches Google Trends once for the mined terms (`_pull_trends`,
+    reusing `analytics_cross.fetch_trends`). These are the ONLY network-touching functions in
+    this module; everything else (`build_demand_items` and everything it calls) is pure.
+    `telemetry` is imported lazily so importing `demand.py` never requires a composio key/package
+    to be present (keeps `test_demand.py` fully offline, per SPEC Phase 1)."""
     import telemetry
 
     end = dt.date.today()
@@ -459,11 +495,14 @@ def _pull_live(days: int = WINDOW_DAYS) -> dict:
         {"property": telemetry.GA4_PROPERTY, "dateRanges": [{"startDate": S, "endDate": E}],
          "dimensions": [{"name": "searchTerm"}], "metrics": [{"name": "eventCount"}]})
 
+    gsc_query_rows = (gsc_query or {}).get("rows") or []
+
     return {
         "window": {"start": S, "end": E},
-        "gsc_query_rows": (gsc_query or {}).get("rows") or [],
+        "gsc_query_rows": gsc_query_rows,
         "gsc_query_page_rows": (gsc_query_page or {}).get("rows") or [],
         "ga4_searchterm_raw_rows": (ga4_searchterm or {}).get("rows") or [],
+        "trends": _pull_trends(gsc_query_rows),
     }
 
 
@@ -574,6 +613,7 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
         live["gsc_query_rows"], live["gsc_query_page_rows"], ga4_raw,
         firmware_ids=firmware_ids, recipe_pairs=recipe_pairs,
         today=today, prior_first_seen=prior_first_seen, part_ids=part_ids,
+        trends=live.get("trends"),
     )
     write_snapshot(items, d2_available, live["window"], today, demand_dir)
     write_unresolved(items, demand_dir)
