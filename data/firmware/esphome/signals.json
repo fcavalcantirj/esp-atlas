@@ -1,7 +1,7 @@
 {
  "calls": 16,
  "errors": 0,
- "fetched": "2026-09-22",
+ "fetched": "2026-09-29",
  "notes": [
   "more than 10 workflows; kept the 10 named build/firmware/release/ci first"
  ],
@@ -56,6 +56,7 @@
    "esp32p4-idf-tidy",
    "esp32s3-idf-tidy",
    "esp8266-arduino",
+   "esp8266-arduino-native",
    "generic-bk7231n-qfn32-tuya",
    "generic-ln882h",
    "generic-rtl8710bn-2mb-788k",
@@ -83,11 +84,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 282,
+   "line": 283,
    "rank": 2,
    "soc": null,
    "token": "nodemcuv2",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L282"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L283"
   },
   {
    "extra": {
@@ -95,11 +96,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 291,
+   "line": 292,
    "rank": 2,
    "soc": null,
    "token": "nodemcuv2",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L291"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L292"
   },
   {
    "extra": {
@@ -107,11 +108,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 302,
+   "line": 303,
    "rank": 2,
    "soc": null,
    "token": "esp32dev",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L302"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L303"
   },
   {
    "extra": {
@@ -119,11 +120,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 312,
+   "line": 313,
    "rank": 2,
    "soc": null,
    "token": "esp32dev",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L312"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L313"
   },
   {
    "extra": {
@@ -131,11 +132,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 323,
+   "line": 324,
    "rank": 2,
    "soc": null,
    "token": "esp32dev",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L323"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L324"
   },
   {
    "extra": {
@@ -143,11 +144,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 334,
+   "line": 335,
    "rank": 2,
    "soc": null,
    "token": "esp32dev",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L334"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L335"
   },
   {
    "extra": {
@@ -155,11 +156,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 347,
+   "line": 348,
    "rank": 2,
    "soc": null,
    "token": "esp32-c3-devkitm-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L347"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L348"
   },
   {
    "extra": {
@@ -167,11 +168,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 357,
+   "line": 358,
    "rank": 2,
    "soc": null,
    "token": "esp32-c3-devkitm-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L357"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L358"
   },
   {
    "extra": {
@@ -179,11 +180,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 367,
+   "line": 368,
    "rank": 2,
    "soc": null,
    "token": "esp32-c3-devkitm-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L367"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L368"
   },
   {
    "extra": {
@@ -191,11 +192,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 378,
+   "line": 379,
    "rank": 2,
    "soc": null,
    "token": "esp32-c3-devkitm-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L378"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L379"
   },
   {
    "extra": {
@@ -203,11 +204,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 391,
+   "line": 392,
    "rank": 2,
    "soc": null,
    "token": "esp32-c6-devkitc-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L391"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L392"
   },
   {
    "extra": {
@@ -215,11 +216,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 402,
+   "line": 403,
    "rank": 2,
    "soc": null,
    "token": "esp32-c6-devkitc-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L402"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L403"
   },
   {
    "extra": {
@@ -227,11 +228,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 415,
+   "line": 416,
    "rank": 2,
    "soc": null,
    "token": "esp32-p4-evboard",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L415"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L416"
   },
   {
    "extra": {
@@ -239,11 +240,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 425,
+   "line": 426,
    "rank": 2,
    "soc": null,
    "token": "esp32-p4-evboard",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L425"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L426"
   },
   {
    "extra": {
@@ -251,11 +252,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 438,
+   "line": 439,
    "rank": 2,
    "soc": null,
    "token": "esp32-s2-kaluga-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L438"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L439"
   },
   {
    "extra": {
@@ -263,11 +264,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 448,
+   "line": 449,
    "rank": 2,
    "soc": null,
    "token": "esp32-s2-kaluga-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L448"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L449"
   },
   {
    "extra": {
@@ -275,11 +276,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 458,
+   "line": 459,
    "rank": 2,
    "soc": null,
    "token": "esp32-s2-kaluga-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L458"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L459"
   },
   {
    "extra": {
@@ -287,11 +288,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 469,
+   "line": 470,
    "rank": 2,
    "soc": null,
    "token": "esp32-s2-kaluga-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L469"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L470"
   },
   {
    "extra": {
@@ -299,11 +300,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 482,
+   "line": 483,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L482"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L483"
   },
   {
    "extra": {
@@ -311,11 +312,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 492,
+   "line": 493,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L492"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L493"
   },
   {
    "extra": {
@@ -323,11 +324,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 502,
+   "line": 503,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L502"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L503"
   },
   {
    "extra": {
@@ -335,11 +336,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 513,
+   "line": 514,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L513"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L514"
   },
   {
    "extra": {
@@ -347,11 +348,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 526,
+   "line": 527,
    "rank": 2,
    "soc": null,
    "token": "rpipico",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L526"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L527"
   },
   {
    "extra": {
@@ -359,11 +360,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 536,
+   "line": 537,
    "rank": 2,
    "soc": null,
    "token": "rpipicow",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L536"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L537"
   },
   {
    "extra": {
@@ -371,11 +372,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 548,
+   "line": 549,
    "rank": 2,
    "soc": null,
    "token": "generic-bk7231n-qfn32-tuya",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L548"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L549"
   },
   {
    "extra": {
@@ -383,11 +384,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 559,
+   "line": 560,
    "rank": 2,
    "soc": null,
    "token": "generic-ln882h",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L559"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L560"
   },
   {
    "extra": {
@@ -395,11 +396,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 570,
+   "line": 571,
    "rank": 2,
    "soc": null,
    "token": "generic-rtl8710bn-2mb-788k",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L570"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L571"
   },
   {
    "extra": {
@@ -407,11 +408,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 581,
+   "line": 582,
    "rank": 2,
    "soc": null,
    "token": "generic-rtl8720cf-2mb-992k",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L581"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L582"
   },
   {
    "extra": {
@@ -419,11 +420,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 592,
+   "line": 593,
    "rank": 2,
    "soc": null,
    "token": "generic-bk7231n-qfn32-tuya",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L592"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L593"
   },
   {
    "extra": {
@@ -431,11 +432,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 603,
+   "line": 604,
    "rank": 2,
    "soc": null,
    "token": "generic-ln882h",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L603"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L604"
   },
   {
    "extra": {
@@ -443,11 +444,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 616,
+   "line": 617,
    "rank": 2,
    "soc": null,
    "token": "generic-rtl8710bn-2mb-788k",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L616"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L617"
   },
   {
    "extra": {
@@ -455,11 +456,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 629,
+   "line": 630,
    "rank": 2,
    "soc": null,
    "token": "generic-rtl8720cf-2mb-992k",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L629"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L630"
   },
   {
    "extra": {
@@ -467,11 +468,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 657,
+   "line": 658,
    "rank": 2,
    "soc": null,
    "token": "adafruit_feather_nrf52840",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L657"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L658"
   },
   {
    "extra": {
@@ -479,11 +480,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 666,
+   "line": 667,
    "rank": 2,
    "soc": null,
    "token": "adafruit_feather_nrf52840",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L666"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L667"
   },
   {
    "extra": {
@@ -516,6 +517,17 @@
    "rank": 3,
    "soc": null,
    "token": "esp8266-arduino",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci-docker.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp8266-arduino-native",
    "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci-docker.yml"
   },
   {
