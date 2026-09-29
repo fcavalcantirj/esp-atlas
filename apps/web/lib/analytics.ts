@@ -79,6 +79,7 @@ export type ResultOrigin =
   | "chain"
   | "browse"
   | "brand"
+  | "popular_firmware"
   | "intent"
   | "build_guide";
 

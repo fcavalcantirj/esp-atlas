@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import BrowseSection, { type BrowseItem } from "@/components/BrowseSection";
 import HomeView from "@/components/HomeView";
 import JsonLd from "@/components/JsonLd";
-import { fetchAllParts, fetchExamples, fetchFacets } from "@/lib/api-server";
+import { fetchAllParts, fetchExamples, fetchFacets, fetchFirmwareList } from "@/lib/api-server";
+import { boardsLabel, compactCount } from "@/lib/format";
+import { selectPopularFirmware } from "@/lib/popular-firmware";
 
 import { homeGraph } from "@/lib/structured-data";
 
@@ -23,7 +25,12 @@ function pluralParts(n: number, where: string): string {
 }
 
 export default async function Home() {
-  const [facets, parts, examples] = await Promise.all([fetchFacets(), fetchAllParts(), fetchExamples()]);
+  const [facets, parts, examples, firmwareResult] = await Promise.all([
+    fetchFacets(),
+    fetchAllParts(),
+    fetchExamples(),
+    fetchFirmwareList(),
+  ]);
 
   // /facets.soc_ref is the core's count per chip (the chip's own record and its
   // modules included — hence "parts", never "boards"), already sorted by count;
@@ -54,6 +61,27 @@ export default async function Home() {
         }))
       : [];
 
+  // Above-the-fold passive discovery for the home visitor who never types
+  // into HomeView's search box: the API's own firmware list, ranked by cited
+  // popularity (never fabricated -- selectPopularFirmware excludes anything
+  // with no stars and no boards signal). A cold/empty fetch degrades to no
+  // shelf, same idiom as the chip/brand sections below.
+  const popularFirmware: BrowseItem[] =
+    firmwareResult.status === "ok"
+      ? selectPopularFirmware(firmwareResult.data.results).map((fw) => {
+          const stars = fw.popularity?.stars;
+          const boards = boardsLabel(fw.boards);
+          const starsNote = stars != null && stars > 0 ? `★ ${compactCount(stars)}` : null;
+          return {
+            href: `/firmware/${encodeURIComponent(fw.id)}`,
+            name: fw.name,
+            note: [starsNote, boards].filter(Boolean).join(" · "),
+            partId: fw.id,
+            partType: "firmware",
+          };
+        })
+      : [];
+
   return (
     <main id="main" className="container container--wide" tabIndex={-1}>
       <JsonLd data={homeGraph()} />
@@ -65,6 +93,13 @@ export default async function Home() {
         </p>
       </div>
       <HomeView examples={examples.status === "ok" ? examples.data.results : []} />
+      <BrowseSection
+        id="browse-firmware"
+        title="Popular firmware"
+        hint="The most-starred flashable projects in the atlas, with the boards they're verified to run on."
+        items={popularFirmware}
+        origin="popular_firmware"
+      />
       <BrowseSection
         id="browse-chip"
         title="Browse by chip"
