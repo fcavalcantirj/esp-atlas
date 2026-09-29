@@ -109,14 +109,26 @@ test("firmware title clamps an over-long seo_title to TITLE_MAX at a word bounda
   assert.ok(title.endsWith("…"));
 });
 
-test("Bruce's own click-optimized seo_title overflows TITLE_MAX and is clamped at a word boundary", () => {
-  // The exact editorial string set in data/firmware/bruce/firmware.md -- 65 chars,
-  // 5 over TITLE_MAX, so the render-time clamp trims it rather than the author
-  // having to hand-fit search copy to Google's SERP budget.
+test("an over-long seo_title (65 chars, the kind that used to ship for Bruce) still clamps at a word boundary", () => {
+  // Historical fixture, not the live data/firmware/bruce/firmware.md value anymore --
+  // 65 chars, 5 over TITLE_MAX, kept as a clamp-boundary regression guard so the
+  // truncation path stays exercised even now that Bruce's own seo_title fits.
   const seoTitle = "Bruce — ESP32 / ESP32-S3 pentest firmware, flash guide and boards";
   assert.ok(seoTitle.length > TITLE_MAX);
   const title = firmwareMetaTitle({ name: "Bruce", socs: ["esp32", "esp32-s3", "esp32-c5"], boards: 11, seo_title: seoTitle });
   assert.equal(title, "Bruce — ESP32 / ESP32-S3 pentest firmware, flash guide and…");
+  assert.ok(title.length <= TITLE_MAX);
+});
+
+test("Bruce's live seo_title (data/firmware/bruce/firmware.md) fits TITLE_MAX and renders verbatim, unclamped", () => {
+  // Regression guard for the SERP-title truncation bug: this string must stay
+  // <=TITLE_MAX so firmwareMetaTitle never has to clamp it (which would cut the
+  // live title mid-phrase with an ellipsis). If a future edit to that file's
+  // seo_title grows past TITLE_MAX again, this test catches it before it ships.
+  const seoTitle = "Bruce — ESP32/ESP32-S3 pentest firmware & flash guide";
+  assert.ok(seoTitle.length <= TITLE_MAX, `expected <=${TITLE_MAX} chars, got ${seoTitle.length}`);
+  const title = firmwareMetaTitle({ name: "Bruce", socs: ["esp32", "esp32-s3", "esp32-c5"], boards: 11, seo_title: seoTitle });
+  assert.equal(title, seoTitle);
   assert.ok(title.length <= TITLE_MAX);
 });
 
