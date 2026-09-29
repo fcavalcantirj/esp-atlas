@@ -16,8 +16,9 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
+import pandas as pd
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -335,6 +336,52 @@ def test_leak_flag_false_when_conversion_is_healthy():
     assert row["leak_flag"] is False
 
 
+# --- demand: Google Trends axis joined on the row's top query (SPEC §7) --------------------
+
+
+def test_build_funnel_trends_map_populates_demand_for_matching_queries(ga_pages, ga_events, gsc_pages, gsc_queries):
+    trends = {"minigotchi esp32": 73, "m5stack cardputer": 55}
+    table = analytics_cross.build_funnel(ga_pages, ga_events, gsc_pages, gsc_queries, trends)
+    assert _row(table, "/firmware/minigotchi-esp32")["demand"] == 73
+    assert _row(table, "/parts/m5cardputer")["demand"] == 55
+
+
+def test_build_funnel_trends_missing_query_leaves_demand_none(ga_pages, ga_events, gsc_pages, gsc_queries):
+    trends = {"minigotchi esp32": 73}  # no entry for m5cardputer's top query ("m5stack cardputer")
+    table = analytics_cross.build_funnel(ga_pages, ga_events, gsc_pages, gsc_queries, trends)
+    assert _row(table, "/firmware/minigotchi-esp32")["demand"] == 73
+    assert _row(table, "/parts/m5cardputer")["demand"] is None
+
+
+def test_build_funnel_empty_trends_map_leaves_every_demand_none(ga_pages, ga_events, gsc_pages, gsc_queries):
+    table = analytics_cross.build_funnel(ga_pages, ga_events, gsc_pages, gsc_queries, {})
+    for row in table["rows"]:
+        assert row["demand"] is None
+
+
+def test_build_funnel_no_trends_arg_defaults_demand_to_none(ga_pages, ga_events, gsc_pages, gsc_queries):
+    """Backward compatible: callers that don't pass trends (none exist yet outside this module) still get demand=None."""
+    table = analytics_cross.build_funnel(ga_pages, ga_events, gsc_pages, gsc_queries)
+    for row in table["rows"]:
+        assert row["demand"] is None
+
+
+def test_build_funnel_demand_is_exact_score_joined_on_top_query(ga_pages, ga_events, gsc_pages, gsc_queries):
+    trends = {"m5stack cardputer": 0, "minigotchi esp32": 100, "m5stickc plus2 review": 42}
+    table = analytics_cross.build_funnel(ga_pages, ga_events, gsc_pages, gsc_queries, trends)
+    assert _row(table, "/parts/m5cardputer")["demand"] == 0
+    assert _row(table, "/firmware/minigotchi-esp32")["demand"] == 100
+    assert _row(table, "/parts/m5stick-cplus2")["demand"] == 42
+
+
+def test_build_funnel_demand_ignores_non_top_query_trend_scores(ga_pages, ga_events, gsc_pages, gsc_queries):
+    """m5cardputer's top query is "m5stack cardputer" (2000 impressions) -- a score for its
+    second-ranked query "cardputer specs" must NOT leak into demand."""
+    trends = {"cardputer specs": 90}
+    table = analytics_cross.build_funnel(ga_pages, ga_events, gsc_pages, gsc_queries, trends)
+    assert _row(table, "/parts/m5cardputer")["demand"] is None
+
+
 # --- fetch layer: thin, reuses telemetry.py's Composio convention EXACTLY (SPEC §1) --------
 
 
@@ -391,11 +438,60 @@ def test_fetchers_return_empty_list_when_source_has_no_rows(fetcher):
         assert getattr(analytics_cross, fetcher)("2026-09-01", "2026-09-27") == []
 
 
+# --- fetch_trends: pytrends wrapper, degrades to {} on ANY failure (SPEC §7) ----------------
+
+
+def test_fetch_trends_empty_queries_returns_empty_dict():
+    assert analytics_cross.fetch_trends([]) == {}
+
+
+def test_fetch_trends_returns_empty_dict_when_pytrends_unavailable():
+    with patch.object(analytics_cross, "TrendReq", None):
+        assert analytics_cross.fetch_trends(["m5stack cardputer"]) == {}
+
+
+def test_fetch_trends_degrades_to_empty_dict_on_any_exception():
+    with patch.object(analytics_cross, "TrendReq", side_effect=RuntimeError("blocked by Trends")):
+        assert analytics_cross.fetch_trends(["m5stack cardputer"]) == {}
+
+
+def test_fetch_trends_degrades_to_empty_dict_on_empty_frame():
+    mock_client = Mock()
+    mock_client.interest_over_time.return_value = pd.DataFrame()
+    with patch.object(analytics_cross, "TrendReq", return_value=mock_client):
+        assert analytics_cross.fetch_trends(["m5stack cardputer"]) == {}
+
+
+def test_fetch_trends_returns_latest_non_partial_score_per_query():
+    df = pd.DataFrame({
+        "m5stack cardputer": [40, 55],
+        "cardputer specs": [20, 30],
+        "isPartial": [False, True],
+    })
+    mock_client = Mock()
+    mock_client.interest_over_time.return_value = df
+    with patch.object(analytics_cross, "TrendReq", return_value=mock_client):
+        result = analytics_cross.fetch_trends(["m5stack cardputer", "cardputer specs"])
+    assert result == {"m5stack cardputer": 40, "cardputer specs": 20}
+
+
 def test_weekly_funnel_orchestrates_all_four_fetchers_and_builds(ga_pages, ga_events, gsc_pages, gsc_queries):
     with patch.object(analytics_cross, "fetch_ga_pages", return_value=ga_pages), \
          patch.object(analytics_cross, "fetch_ga_events", return_value=ga_events), \
          patch.object(analytics_cross, "fetch_gsc_pages", return_value=gsc_pages), \
-         patch.object(analytics_cross, "fetch_gsc_queries", return_value=gsc_queries):
+         patch.object(analytics_cross, "fetch_gsc_queries", return_value=gsc_queries), \
+         patch.object(analytics_cross, "fetch_trends", return_value={}) as mock_trends:
         table = analytics_cross.weekly_funnel(days=7)
         assert table["unavailable"] == []
         assert len(table["rows"]) == 6
+        mock_trends.assert_called_once()
+
+
+def test_weekly_funnel_threads_fetched_trends_into_demand(ga_pages, ga_events, gsc_pages, gsc_queries):
+    with patch.object(analytics_cross, "fetch_ga_pages", return_value=ga_pages), \
+         patch.object(analytics_cross, "fetch_ga_events", return_value=ga_events), \
+         patch.object(analytics_cross, "fetch_gsc_pages", return_value=gsc_pages), \
+         patch.object(analytics_cross, "fetch_gsc_queries", return_value=gsc_queries), \
+         patch.object(analytics_cross, "fetch_trends", return_value={"minigotchi esp32": 66}):
+        table = analytics_cross.weekly_funnel(days=7)
+    assert _row(table, "/firmware/minigotchi-esp32")["demand"] == 66
