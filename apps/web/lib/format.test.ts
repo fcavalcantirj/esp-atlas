@@ -80,6 +80,58 @@ test("firmware title shortens a long name at a word boundary instead of dropping
   assert.ok(!truncatedName.slice(0, -1).endsWith(" "), "must not leave a trailing space before the ellipsis");
 });
 
+// seo_title: an optional per-firmware override (data/firmware/<id>/firmware.md
+// `seo_title`) for the rare high-demand page where the generic "flash guide"
+// formula buries the identity people actually search for. Absent/empty must
+// stay byte-identical to the formula above -- this is an opt-in override for
+// one record at a time, never a formula change (SPEC-serp-ctr.md).
+
+test("firmware title returns a non-empty seo_title verbatim instead of the generic formula", () => {
+  const title = firmwareMetaTitle({
+    name: "PlatformIO",
+    socs: ["esp32"],
+    boards: 40,
+    seo_title: "PlatformIO — ESP32 build system and debugger",
+  });
+  assert.equal(title, "PlatformIO — ESP32 build system and debugger");
+  assert.ok(title.length <= TITLE_MAX);
+});
+
+test("firmware title clamps an over-long seo_title to TITLE_MAX at a word boundary", () => {
+  const title = firmwareMetaTitle({
+    name: "Cyber Controller",
+    socs: ["esp32"],
+    boards: 1,
+    seo_title: "Cyber Controller — the definitive multi-firmware ESP32 flashing and provisioning dashboard for hobbyists",
+  });
+  assert.ok(title.length <= TITLE_MAX, `expected <=${TITLE_MAX} chars, got ${title.length}: ${title}`);
+  assert.ok(title.startsWith("Cyber Controller"));
+  assert.ok(title.endsWith("…"));
+});
+
+test("Bruce's own click-optimized seo_title overflows TITLE_MAX and is clamped at a word boundary", () => {
+  // The exact editorial string set in data/firmware/bruce/firmware.md -- 65 chars,
+  // 5 over TITLE_MAX, so the render-time clamp trims it rather than the author
+  // having to hand-fit search copy to Google's SERP budget.
+  const seoTitle = "Bruce — ESP32 / ESP32-S3 pentest firmware, flash guide and boards";
+  assert.ok(seoTitle.length > TITLE_MAX);
+  const title = firmwareMetaTitle({ name: "Bruce", socs: ["esp32", "esp32-s3", "esp32-c5"], boards: 11, seo_title: seoTitle });
+  assert.equal(title, "Bruce — ESP32 / ESP32-S3 pentest firmware, flash guide and…");
+  assert.ok(title.length <= TITLE_MAX);
+});
+
+test("firmware title ignores an empty seo_title and falls back to the generic formula", () => {
+  const title = firmwareMetaTitle({ name: "Bruce", socs: ["esp32"], boards: 1, seo_title: "" });
+  assert.equal(title, firmwareMetaTitle({ name: "Bruce", socs: ["esp32"], boards: 1 }));
+});
+
+test("firmware title with a missing seo_title is byte-identical to the generic formula", () => {
+  const withUndefined = firmwareMetaTitle({ name: "ESPHome", socs: ["esp32", "esp32-s3"], boards: 12, seo_title: undefined });
+  const withoutField = firmwareMetaTitle({ name: "ESPHome", socs: ["esp32", "esp32-s3"], boards: 12 });
+  assert.equal(withUndefined, "ESPHome — flash guide for ESP32/ESP32-S3, 12 boards");
+  assert.equal(withUndefined, withoutField);
+});
+
 test("uses the grounded summary as the description when it already fits", () => {
   const description = firmwareMetaDescription({
     name: "ESPHome",
