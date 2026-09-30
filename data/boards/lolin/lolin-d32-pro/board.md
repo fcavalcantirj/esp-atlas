@@ -52,6 +52,8 @@ notes:
   shared-bus precedent) -- 23 - 5 - 3 = 15'
 - usb_serial derived from usb.bridge (ch340)
 getting_started: https://www.wemos.cc/en/latest/d32/d32_pro.html
+images:
+  pinout: https://www.wemos.cc/en/latest/_images/d32_pro_v2.0.0_1_16x16.jpg
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/d32/d32_pro.html
@@ -77,6 +79,9 @@ sources:
 - field: getting_started
   url: https://www.wemos.cc/en/latest/d32/d32_pro.html
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://www.wemos.cc/en/latest/_images/d32_pro_v2.0.0_1_16x16.jpg
+  verified: '2026-09-30'
 ---
 
 # LOLIN D32 Pro

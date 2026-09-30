@@ -37,6 +37,8 @@ notes:
   GPIO7 doubles as the onboard WS2812 RGB LED but remains header-exposed so it is
   not subtracted -- so 12 - 2 = 10'
 getting_started: https://www.wemos.cc/en/latest/c3/c3_mini.html
+images:
+  pinout: https://www.wemos.cc/en/latest/_images/c3_mini_v2.1.0_2_16x16.jpg
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/c3/c3_mini.html
@@ -53,6 +55,9 @@ sources:
 - field: getting_started
   url: https://www.wemos.cc/en/latest/c3/c3_mini.html
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://www.wemos.cc/en/latest/_images/c3_mini_v2.1.0_2_16x16.jpg
+  verified: '2026-09-30'
 ---
 
 # LOLIN C3 mini

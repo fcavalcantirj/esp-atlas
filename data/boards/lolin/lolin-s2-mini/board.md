@@ -32,6 +32,8 @@ notes:
   absent from the header -- so no reserved or onboard-consumed pin lands on an exposed
   pad: 27 - 0 = 27'
 getting_started: https://www.wemos.cc/en/latest/s2/s2_mini.html
+images:
+  pinout: https://www.wemos.cc/en/latest/_images/s2_mini_v1.0.0_2_16x16.jpg
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/s2/s2_mini.html
@@ -45,6 +47,9 @@ sources:
 - field: getting_started
   url: https://www.wemos.cc/en/latest/s2/s2_mini.html
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://www.wemos.cc/en/latest/_images/s2_mini_v1.0.0_2_16x16.jpg
+  verified: '2026-09-30'
 ---
 
 # LOLIN S2 mini

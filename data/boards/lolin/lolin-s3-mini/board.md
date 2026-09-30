@@ -38,6 +38,8 @@ notes:
   by native USB) -- so 27 - 1 - 3 = 23'
 - usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag
 getting_started: https://www.wemos.cc/en/latest/s3/s3_mini.html
+images:
+  pinout: https://www.wemos.cc/en/latest/_images/s3_mini_v1.0.0_2_16x16.jpg
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/s3/s3_mini.html
@@ -54,6 +56,9 @@ sources:
 - field: getting_started
   url: https://www.wemos.cc/en/latest/s3/s3_mini.html
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://www.wemos.cc/en/latest/_images/s3_mini_v1.0.0_2_16x16.jpg
+  verified: '2026-09-30'
 ---
 
 # LOLIN S3 mini

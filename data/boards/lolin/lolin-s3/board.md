@@ -32,6 +32,8 @@ notes:
   (19/20 feed the native USB-OTG port directly, 35-37 the octal PSRAM/flash SPI0 bus)
   -- so 31 - 4 = 27'
 getting_started: https://www.wemos.cc/en/latest/s3/s3.html
+images:
+  pinout: https://www.wemos.cc/en/latest/_images/s3_v1.0.0_2_16x16.jpg
 sources:
 - field: '*'
   url: https://www.wemos.cc/en/latest/s3/s3.html
@@ -45,6 +47,9 @@ sources:
 - field: getting_started
   url: https://www.wemos.cc/en/latest/s3/s3.html
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://www.wemos.cc/en/latest/_images/s3_v1.0.0_2_16x16.jpg
+  verified: '2026-09-30'
 ---
 
 # LOLIN S3
