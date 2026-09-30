@@ -249,13 +249,22 @@ function partKeySpecs(part: Pick<PartRecord, "wifi_standard" | "ble_version" | "
  * concrete spec(s) that make it worth clicking (e.g. "Wi-Fi 6 + BLE 5.3 SoC
  * specs") instead of the generic "{type} specs". Falls back to the bare type
  * when the record carries none of the headline radio/USB/form-factor fields.
+ *
+ * `hasPinout` appends the exact word "pinout" searchers scan for (e.g. "lolin
+ * s2 mini pinout") right after the name -- SPEC-serp-ctr.md's 0%-CTR gap for
+ * rank 8-20 pinout queries. Cite-or-omit: only pass `true` when the record's
+ * own frontmatter.images.pinout is non-empty (BoardImage.tsx's "Pinout"
+ * figure); `false`/omitted keeps the title byte-identical to before this
+ * param existed.
  */
 export function partMetaTitle(
   part: Pick<PartRecord, "name" | "type" | "wifi_standard" | "ble_version" | "ieee802154" | "ieee802154_protocols" | "usb_native" | "form_factor">,
+  hasPinout = false,
 ): string {
   const specs = partKeySpecs(part);
   const benefit = specs.length > 0 ? `${specs.join(" + ")} ${typeLabel(part.type)} specs` : `${typeLabel(part.type)} specs`;
-  return buildMetaTitle(part.name, benefit);
+  const name = hasPinout ? `${part.name} pinout` : part.name;
+  return buildMetaTitle(name, benefit);
 }
 
 /**

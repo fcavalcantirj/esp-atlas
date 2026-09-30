@@ -50,7 +50,8 @@ export async function generateMetadata({ params }: PageProps<"/parts/[id]">): Pr
     return { title: id, robots: detailRobots(result.status) };
   }
   const part = result.data;
-  const title = partMetaTitle(part);
+  const hasPinout = Boolean(asString(fmObject(part.frontmatter, "images")?.pinout));
+  const title = partMetaTitle(part, hasPinout);
   const description = partMetaDescription(part, part.body);
   const path = `/parts/${encodeURIComponent(part.id)}`;
   // Nested metadata objects replace the root ones wholesale, so siteName and
