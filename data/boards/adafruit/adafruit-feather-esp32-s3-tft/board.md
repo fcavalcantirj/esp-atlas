@@ -41,6 +41,8 @@ notes:
 - 'io.gpio_exposed/gpio_free OMITTED: vendor pinouts page does not print an explicit
   broken-out GPIO count, so no count is derived'
 getting_started: https://learn.adafruit.com/adafruit-esp32-s3-tft-feather
+images:
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/114/042/medium800/adafruit_products_FS3TFT_pinouts.jpg?1660074679
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5483
@@ -60,6 +62,9 @@ sources:
 - field: getting_started
   url: https://learn.adafruit.com/adafruit-esp32-s3-tft-feather
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/114/042/medium800/adafruit_products_FS3TFT_pinouts.jpg?1660074679
+  verified: '2026-09-30'
 ---
 
 # Adafruit ESP32-S3 TFT Feather

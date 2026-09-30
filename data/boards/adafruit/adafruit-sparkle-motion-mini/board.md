@@ -45,6 +45,8 @@ notes:
 download_mode:
   mode: auto
 getting_started: https://learn.adafruit.com/adafruit-sparkle-motion-mini
+images:
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/134/646/medium800/adafruit_products_Artboard_1.png?1737677175
 usb_serial: usb-uart-bridge-unspecified
 sources:
 - field: '*'
@@ -53,6 +55,9 @@ sources:
 - field: aka
   url: https://raw.githubusercontent.com/espressif/arduino-esp32/56a7eb7269a8dd524c72c6752adaaad7814a0766/boards.txt
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/134/646/medium800/adafruit_products_Artboard_1.png?1737677175
+  verified: '2026-09-30'
 ---
 
 # Adafruit Sparkle Motion Mini

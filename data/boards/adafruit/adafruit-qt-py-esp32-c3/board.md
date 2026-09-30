@@ -48,6 +48,7 @@ usb_serial: native-usb-serial-jtag
 getting_started: https://learn.adafruit.com/adafruit-qt-py-esp32-c3-wifi-dev-board
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/547/medium800/Screenshot_1.png
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/129/455/medium800/adafruit_products_stemma-circuit.png?1713883230
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5405
@@ -73,6 +74,9 @@ sources:
 - field: images
   url: https://learn.adafruit.com/adafruit-qt-py-esp32-c3-wifi-dev-board
   verified: '2026-09-13'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/129/455/medium800/adafruit_products_stemma-circuit.png?1713883230
+  verified: '2026-09-30'
 ---
 
 # Adafruit QT Py ESP32-C3

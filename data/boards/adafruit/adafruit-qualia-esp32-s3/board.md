@@ -32,6 +32,8 @@ notes:
 - 'power omitted: no battery connector/charging stated. dimensions_mm omitted: not
   stated in mm. io omitted: no explicit broken-out GPIO count.'
 getting_started: https://learn.adafruit.com/adafruit-qualia-esp32-s3-for-rgb666-displays
+images:
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/124/795/original/circuitpython_Pinouts.jpg?1696267315
 sources:
 - field: '*'
   url: https://learn.adafruit.com/adafruit-qualia-esp32-s3-for-rgb666-displays
@@ -42,6 +44,9 @@ sources:
 - field: getting_started
   url: https://learn.adafruit.com/adafruit-qualia-esp32-s3-for-rgb666-displays
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/124/795/original/circuitpython_Pinouts.jpg?1696267315
+  verified: '2026-09-30'
 ---
 
 # Adafruit Qualia ESP32-S3 for RGB-666 Displays

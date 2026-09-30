@@ -47,6 +47,7 @@ download_mode:
 getting_started: https://learn.adafruit.com/adafruit-itsybitsy-esp32
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/953/medium800/5889-00.jpg
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/127/901/medium800/adafruit_products_Adafruit_ItsyBitsy_ESP32_PrettyPinsPDF-100.jpg?1708550028
 usb_serial: other
 sources:
 - field: '*'
@@ -73,6 +74,9 @@ sources:
 - field: usb_serial
   url: https://learn.adafruit.com/adafruit-itsybitsy-esp32
   verified: '2026-09-13'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/127/901/medium800/adafruit_products_Adafruit_ItsyBitsy_ESP32_PrettyPinsPDF-100.jpg?1708550028
+  verified: '2026-09-30'
 ---
 
 # Adafruit ItsyBitsy ESP32

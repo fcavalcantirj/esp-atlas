@@ -48,6 +48,7 @@ notes:
 getting_started: https://learn.adafruit.com/adafruit-metro-esp32-s3
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/865/medium800/MS3F_top_angle.jpg
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/123/894/medium800/adafruit_products_MS3_pinouts.jpg?1692825286
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5500
@@ -76,6 +77,9 @@ sources:
 - field: images
   url: https://learn.adafruit.com/adafruit-metro-esp32-s3
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/123/894/medium800/adafruit_products_MS3_pinouts.jpg?1692825286
+  verified: '2026-09-30'
 ---
 
 # Adafruit Metro ESP32-S3

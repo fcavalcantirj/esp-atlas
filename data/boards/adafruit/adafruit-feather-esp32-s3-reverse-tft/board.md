@@ -51,6 +51,7 @@ notes:
 getting_started: https://learn.adafruit.com/esp32-s3-reverse-tft-feather
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/759/medium800/5691-01.jpg
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/139/943/medium800/adafruit_products_Adafruit_ESP32-S3_Reverse_TFT_Feather_Pinout.png?1758743002
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5691
@@ -79,6 +80,9 @@ sources:
 - field: images
   url: https://learn.adafruit.com/esp32-s3-reverse-tft-feather
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/139/943/medium800/adafruit_products_Adafruit_ESP32-S3_Reverse_TFT_Feather_Pinout.png?1758743002
+  verified: '2026-09-30'
 ---
 
 # Adafruit ESP32-S3 Reverse TFT Feather

@@ -27,6 +27,8 @@ io:
     rail_v:
     - 3.3
     rail_ma_max: 500
+images:
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/110/677/medium800/adafruit_products_Adafruit_Feather_ESP32-S2_Pinout.png?1649709383
 notes:
 - 4 MB flash, 2 MB PSRAM
 - JST-PH LiPoly connector with built-in USB-C charging; battery monitor chip (originally LC709203, updated to MAX17048 as of June 2023)
@@ -55,6 +57,9 @@ sources:
 - field: io.gpio_free
   url: https://github.com/adafruit/circuitpython/blob/main/ports/espressif/boards/adafruit_feather_esp32s2/pins.c
   verified: '2026-08-26'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/110/677/medium800/adafruit_products_Adafruit_Feather_ESP32-S2_Pinout.png?1649709383
+  verified: '2026-09-30'
 ---
 
 # Adafruit ESP32-S2 Feather

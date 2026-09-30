@@ -41,6 +41,8 @@ notes:
 - 'io.gpio_exposed/gpio_free OMITTED: vendor pinouts page does not print an explicit
   broken-out GPIO count, so no count is derived'
 getting_started: https://learn.adafruit.com/esp32-s2-reverse-tft-feather
+images:
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/139/947/medium800/adafruit_products_Adafruit_Reverse_TFT_Feather_ESP32-S2_Pinout.png?1758743307
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5345
@@ -57,6 +59,9 @@ sources:
 - field: getting_started
   url: https://learn.adafruit.com/esp32-s2-reverse-tft-feather
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/139/947/medium800/adafruit_products_Adafruit_Reverse_TFT_Feather_ESP32-S2_Pinout.png?1758743307
+  verified: '2026-09-30'
 ---
 
 # Adafruit ESP32-S2 Reverse TFT Feather

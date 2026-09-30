@@ -41,6 +41,8 @@ notes:
 - 'io.gpio_exposed/gpio_free OMITTED: vendor pinouts page does not print an explicit
   broken-out GPIO count, so no count is derived'
 getting_started: https://learn.adafruit.com/adafruit-esp32-c6-feather
+images:
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/139/939/medium800/adafruit_products_Adafruit_Feather_ESP32-C6_PrettyPins_2.png?1758739123
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5933
@@ -60,6 +62,9 @@ sources:
 - field: getting_started
   url: https://learn.adafruit.com/adafruit-esp32-c6-feather
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/139/939/medium800/adafruit_products_Adafruit_Feather_ESP32-C6_PrettyPins_2.png?1758739123
+  verified: '2026-09-30'
 ---
 
 # Adafruit ESP32-C6 Feather

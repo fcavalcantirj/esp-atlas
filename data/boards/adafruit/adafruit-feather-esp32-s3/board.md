@@ -46,6 +46,7 @@ notes:
 getting_started: https://learn.adafruit.com/adafruit-esp32-s3-feather
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/568/medium800/FESPS3_top_angle.jpg
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/139/614/medium800/adafruit_products_Artboard_1_4x.png?1757533230
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5477
@@ -71,6 +72,9 @@ sources:
 - field: images
   url: https://learn.adafruit.com/adafruit-esp32-s3-feather
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/139/614/medium800/adafruit_products_Artboard_1_4x.png?1757533230
+  verified: '2026-09-30'
 ---
 
 # Adafruit ESP32-S3 Feather (4MB Flash 2MB PSRAM)

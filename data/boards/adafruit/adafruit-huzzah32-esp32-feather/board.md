@@ -46,6 +46,7 @@ download_mode:
 getting_started: https://learn.adafruit.com/adafruit-huzzah32-esp32-feather
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/001/641/medium800/thumb.jpg
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/133/601/medium800/wireless_Adafruit_HUZZAH32_ESP32_Feather_Pinout.png?1731518773
 usb_serial: other
 sources:
 - field: '*'
@@ -75,6 +76,9 @@ sources:
 - field: usb_serial
   url: https://learn.adafruit.com/adafruit-huzzah32-esp32-feather
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/133/601/medium800/wireless_Adafruit_HUZZAH32_ESP32_Feather_Pinout.png?1731518773
+  verified: '2026-09-30'
 ---
 
 # Adafruit HUZZAH32 – ESP32 Feather Board

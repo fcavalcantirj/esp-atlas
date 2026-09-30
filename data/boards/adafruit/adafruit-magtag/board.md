@@ -41,6 +41,8 @@ notes:
 - 'dimensions_mm omitted: not stated in mm. io omitted: no explicit broken-out GPIO
   count.'
 getting_started: https://learn.adafruit.com/adafruit-magtag
+images:
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/102/127/medium800/adafruit_products_Adafruit_MagTag_ESP32-S2_pinout.png?1620920094
 sources:
 - field: '*'
   url: https://learn.adafruit.com/adafruit-magtag
@@ -51,6 +53,9 @@ sources:
 - field: getting_started
   url: https://learn.adafruit.com/adafruit-magtag
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/102/127/medium800/adafruit_products_Adafruit_MagTag_ESP32-S2_pinout.png?1620920094
+  verified: '2026-09-30'
 ---
 
 # Adafruit MagTag

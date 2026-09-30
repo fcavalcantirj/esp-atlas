@@ -48,6 +48,7 @@ notes:
 getting_started: https://learn.adafruit.com/adafruit-matrixportal-s3
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/849/medium800thumb/5778-06.gif
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/140/086/medium800/led_matrices_Adafruit_Matrix_Portal_S3_PrettyPins.jpg?1759351254
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5778
@@ -73,6 +74,9 @@ sources:
 - field: images
   url: https://learn.adafruit.com/adafruit-matrixportal-s3
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/140/086/medium800/led_matrices_Adafruit_Matrix_Portal_S3_PrettyPins.jpg?1759351254
+  verified: '2026-09-30'
 ---
 
 # Adafruit MatrixPortal S3

@@ -40,6 +40,8 @@ notes:
 - 'extras QUOTED: "Built-in RGB NeoPixel LED with power control" and "STEMMA QT
   plug-n-play connector".'
 getting_started: https://learn.adafruit.com/adafruit-qt-py-esp32-pico
+images:
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/112/309/medium800/adafruit_products_Adafruit_QT_Py_ESP32-Pico_Pinout.png?1654628457
 sources:
 - field: '*'
   url: https://learn.adafruit.com/adafruit-qt-py-esp32-pico
@@ -56,6 +58,9 @@ sources:
 - field: getting_started
   url: https://learn.adafruit.com/adafruit-qt-py-esp32-pico
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/112/309/medium800/adafruit_products_Adafruit_QT_Py_ESP32-Pico_Pinout.png?1654628457
+  verified: '2026-09-30'
 ---
 
 # Adafruit QT Py ESP32 Pico

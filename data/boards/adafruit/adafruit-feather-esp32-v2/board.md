@@ -45,6 +45,7 @@ usb_serial: cp2102n
 getting_started: https://learn.adafruit.com/adafruit-esp32-feather-v2
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/544/medium800/FV2_top_angle.jpg
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/123/406/medium800/adafruit_products_Adafruit_ESP32_Feather_V2_Pinout.png?1691707257
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5400
@@ -67,6 +68,9 @@ sources:
 - field: images
   url: https://learn.adafruit.com/adafruit-esp32-feather-v2
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/123/406/medium800/adafruit_products_Adafruit_ESP32_Feather_V2_Pinout.png?1691707257
+  verified: '2026-09-30'
 ---
 
 # Adafruit ESP32 Feather V2

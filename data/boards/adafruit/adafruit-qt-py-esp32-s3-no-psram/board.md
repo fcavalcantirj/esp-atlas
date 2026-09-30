@@ -49,6 +49,8 @@ notes:
   carried by the existing adafruit-qt-py-esp32-s3 record for the same product, so
   it is not duplicated here.'
 getting_started: https://learn.adafruit.com/adafruit-qt-py-esp32-s3
+images:
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/117/412/medium800/adafruit_products_Adafruit_QT_Py_ESP32-S3_Pinout_updated.png?1673269364
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5426
@@ -56,6 +58,9 @@ sources:
 - field: getting_started
   url: https://learn.adafruit.com/adafruit-qt-py-esp32-s3
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/117/412/medium800/adafruit_products_Adafruit_QT_Py_ESP32-S3_Pinout_updated.png?1673269364
+  verified: '2026-09-30'
 ---
 
 # Adafruit QT Py ESP32-S3 (No PSRAM)

@@ -34,6 +34,8 @@ notes:
 - 'extras QUOTED: "status NeoPixel" and "STEMMA QT connector for I2C devices".'
 - 'io omitted: the product page prints no explicit broken-out GPIO count.'
 getting_started: https://learn.adafruit.com/adafruit-metro-esp32-s2
+images:
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/102/126/medium800/adafruit_products_Adafruit_Metro_ESP32-S2_pinout.png?1620920038
 sources:
 - field: '*'
   url: https://learn.adafruit.com/adafruit-metro-esp32-s2
@@ -44,6 +46,9 @@ sources:
 - field: getting_started
   url: https://learn.adafruit.com/adafruit-metro-esp32-s2
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/102/126/medium800/adafruit_products_Adafruit_Metro_ESP32-S2_pinout.png?1620920038
+  verified: '2026-09-30'
 ---
 
 # Adafruit Metro ESP32-S2

@@ -41,6 +41,8 @@ notes:
 - 'power omitted: no battery connector/charging stated (USB-powered). dimensions_mm
   omitted: not stated in mm. io omitted: no explicit broken-out GPIO count.'
 getting_started: https://learn.adafruit.com/adafruit-funhouse
+images:
+  pinout: https://cdn-learn.adafruit.com/assets/assets/000/102/128/medium800/sensors_Adafruit_FunHouse_ESP32-S2_pinout.png?1620920128
 sources:
 - field: '*'
   url: https://learn.adafruit.com/adafruit-funhouse
@@ -51,6 +53,9 @@ sources:
 - field: getting_started
   url: https://learn.adafruit.com/adafruit-funhouse
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn-learn.adafruit.com/assets/assets/000/102/128/medium800/sensors_Adafruit_FunHouse_ESP32-S2_pinout.png?1620920128
+  verified: '2026-09-30'
 ---
 
 # Adafruit FunHouse
