@@ -30,6 +30,9 @@ sources:
 - field: getting_started
   url: https://docs.freenove.com/projects/fnk0104/en/latest/
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://raw.githubusercontent.com/Freenove/Freenove_ESP32_S3_Display/main/Picture/FNK0104S_Bottom.png
+  verified: '2026-09-30'
 ---
 
 # Freenove ESP32-S3 Display FNK0104S
