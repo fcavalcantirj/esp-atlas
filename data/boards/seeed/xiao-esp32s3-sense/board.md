@@ -28,6 +28,8 @@ io:
     rail_v:
     - 3.3
     rail_ma_max: 700
+images:
+  pinout: https://files.seeedstudio.com/wiki/SeeedStudio-XIAO-ESP32S3/img/XIAO_ESP32-S3_Sense_front_pinout.png
 notes:
 - '8 MB flash + 8 MB on-chip PSRAM: Specifications table (Sense column) Memory row states
   "On-chip 8MB PSRAM & 8MB Flash"'
@@ -75,6 +77,9 @@ sources:
 - field: io.power_out
   url: https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://files.seeedstudio.com/wiki/SeeedStudio-XIAO-ESP32S3/img/XIAO_ESP32-S3_Sense_front_pinout.png
+  verified: '2026-09-30'
 ---
 
 # Seeed Studio XIAO ESP32S3 Sense

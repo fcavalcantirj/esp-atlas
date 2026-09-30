@@ -34,6 +34,8 @@ notes:
   5 total) gives 17 - 5 = 12'
 usb_serial: native-usb-serial-jtag
 getting_started: https://esp32s3.com/tinys3.html
+images:
+  pinout: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/TinyS3_Pin_Reference.png
 sources:
 - field: '*'
   url: https://unexpectedmaker.com/shop/tinys3
@@ -56,6 +58,9 @@ sources:
 - field: getting_started
   url: https://esp32s3.com/tinys3.html
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/TinyS3_Pin_Reference.png
+  verified: '2026-09-30'
 ---
 
 # Unexpected Maker TinyS3

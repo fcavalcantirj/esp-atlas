@@ -39,6 +39,8 @@ notes:
   - 4 - 0 = 12. Math not vendor-stated; verify before treating as exact.'
 usb_serial: ch340
 getting_started: https://wiki.dfrobot.com/dfr0654
+images:
+  pinout: https://dfimg.dfrobot.com/62b2fb5caa613609f271523c/wiki/e25b0ab211e60424824371baad2c0c81_0x0.png.webp
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr0654/
@@ -55,6 +57,9 @@ sources:
 - field: getting_started
   url: https://wiki.dfrobot.com/dfr0654
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://dfimg.dfrobot.com/62b2fb5caa613609f271523c/wiki/e25b0ab211e60424824371baad2c0c81_0x0.png.webp
+  verified: '2026-09-30'
 ---
 
 # DFRobot FireBeetle 2 ESP32-E

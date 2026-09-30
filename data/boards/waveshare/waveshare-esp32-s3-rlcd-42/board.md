@@ -29,6 +29,8 @@ notes:
   page for this board was still a placeholder on the verified date
 - aka "waveshare_rlcd42" is the device token draftling uses for its release binaries
 getting_started: https://docs.waveshare.com/ESP32-S3-RLCD-4.2
+images:
+  pinout: https://docs.waveshare.com/assets/images/ESP32-S3-RLCD-4.2-IntfIntro-e8c3e55b4a4e70e8df616f3c7682ae6a.webp
 sources:
 - field: '*'
   url: https://www.waveshare.com/esp32-s3-rlcd-4.2.htm
@@ -39,6 +41,9 @@ sources:
 - field: getting_started
   url: https://docs.waveshare.com/ESP32-S3-RLCD-4.2
   verified: '2026-09-13'
+- field: images.pinout
+  url: https://docs.waveshare.com/assets/images/ESP32-S3-RLCD-4.2-IntfIntro-e8c3e55b4a4e70e8df616f3c7682ae6a.webp
+  verified: '2026-09-30'
 ---
 
 # Waveshare ESP32-S3-RLCD-4.2

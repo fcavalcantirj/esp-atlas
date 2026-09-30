@@ -49,6 +49,8 @@ download_mode:
   steps: When you press and hold the BOOT key while powering up and then press the
     Reset key once, you can also enter BootLoader mode
 getting_started: https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
+images:
+  pinout: https://files.seeedstudio.com/wiki/SeeedStudio-XIAO-ESP32S3/img/XIAO_ESP32-S3_front_pinout.png
 sources:
 - field: '*'
   url: https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
@@ -74,6 +76,9 @@ sources:
 - field: getting_started
   url: https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
   verified: '2026-09-13'
+- field: images.pinout
+  url: https://files.seeedstudio.com/wiki/SeeedStudio-XIAO-ESP32S3/img/XIAO_ESP32-S3_front_pinout.png
+  verified: '2026-09-30'
 ---
 
 # Seeed Studio XIAO ESP32S3

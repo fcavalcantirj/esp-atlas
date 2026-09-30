@@ -37,6 +37,8 @@ notes:
   out on this board) -- gives 13 - 3 = 10. Math not vendor-stated; verify before treating
   as exact.'
 getting_started: https://wiki.dfrobot.com/dfr0868
+images:
+  pinout: https://dfimg.dfrobot.com/62d52567aa9508d63a4247a1/wikien/5bc77d2bc2abd67d368e19556c57159b_0x0.png.webp
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr0868/
@@ -53,6 +55,9 @@ sources:
 - field: getting_started
   url: https://wiki.dfrobot.com/dfr0868
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://dfimg.dfrobot.com/62d52567aa9508d63a4247a1/wikien/5bc77d2bc2abd67d368e19556c57159b_0x0.png.webp
+  verified: '2026-09-30'
 ---
 
 # DFRobot Beetle ESP32-C3

@@ -36,6 +36,8 @@ notes:
   a user can wire into directly. gpio_free presumes a usable header; it does not apply
   here'
 getting_started: https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide
+images:
+  pinout: https://cdn.sparkfun.com/assets/learn_tutorials/1/2/0/8/MicroModESP32ProcessorBoard_a.png
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-micromod-esp32-processor.html
@@ -58,6 +60,9 @@ sources:
 - field: getting_started
   url: https://learn.sparkfun.com/tutorials/micromod-esp32-processor-board-hookup-guide
   verified: '2026-09-13'
+- field: images.pinout
+  url: https://cdn.sparkfun.com/assets/learn_tutorials/1/2/0/8/MicroModESP32ProcessorBoard_a.png
+  verified: '2026-09-30'
 ---
 
 # SparkFun MicroMod ESP32 Processor

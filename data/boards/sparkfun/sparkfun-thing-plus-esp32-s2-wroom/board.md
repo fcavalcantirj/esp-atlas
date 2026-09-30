@@ -42,6 +42,8 @@ notes:
   19/20 are not on this header (both consumed internally by the native USB-C port)
   -- none of the reserved pins are exposed, so no subtraction applies: 21 - 0 = 21'
 getting_started: https://learn.sparkfun.com/tutorials/esp32-s2-thing-plus-hookup-guide
+images:
+  pinout: https://cdn.sparkfun.com/assets/learn_tutorials/1/6/6/0/ESP32-S2_thing_plus_graphical_datasheet.png
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-thing-plus-esp32-s2-wroom.html
@@ -67,6 +69,9 @@ sources:
 - field: getting_started
   url: https://learn.sparkfun.com/tutorials/esp32-s2-thing-plus-hookup-guide
   verified: '2026-09-13'
+- field: images.pinout
+  url: https://cdn.sparkfun.com/assets/learn_tutorials/1/6/6/0/ESP32-S2_thing_plus_graphical_datasheet.png
+  verified: '2026-09-30'
 ---
 
 # SparkFun Thing Plus - ESP32-S2 WROOM

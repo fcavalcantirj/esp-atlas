@@ -48,6 +48,8 @@ download_mode:
   steps: If that does not work, hold the BOOT BUTTON , connect the board to your PC
     while holding the BOOT button, and then release it to enter bootloader mode
 getting_started: https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/
+images:
+  pinout: https://files.seeedstudio.com/wiki/XIAO_WiFi/XIAO_ESP32-C3_front_pinout.png
 sources:
 - field: '*'
   url: https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/
@@ -73,6 +75,9 @@ sources:
 - field: getting_started
   url: https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/
   verified: '2026-09-13'
+- field: images.pinout
+  url: https://files.seeedstudio.com/wiki/XIAO_WiFi/XIAO_ESP32-C3_front_pinout.png
+  verified: '2026-09-30'
 ---
 
 # Seeed Studio XIAO ESP32C3

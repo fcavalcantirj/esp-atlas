@@ -46,6 +46,8 @@ notes:
   gives 21 - 5 = 16'
 usb_serial: native-usb-serial-jtag
 getting_started: https://esp32s3.com/feathers3.html
+images:
+  pinout: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/FeatherS3_Pin_Reference.png
 sources:
 - field: '*'
   url: https://unexpectedmaker.com/shop/feathers3
@@ -71,6 +73,9 @@ sources:
 - field: getting_started
   url: https://esp32s3.com/feathers3.html
   verified: '2026-09-13'
+- field: images.pinout
+  url: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/FeatherS3_Pin_Reference.png
+  verified: '2026-09-30'
 ---
 
 # Unexpected Maker FeatherS3

@@ -44,6 +44,8 @@ notes:
   gives 27 - 5 = 22'
 usb_serial: native-usb-serial-jtag
 getting_started: https://esp32s3.com/pros3.html
+images:
+  pinout: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/ProS3_Pin_Reference.png
 sources:
 - field: '*'
   url: https://unexpectedmaker.com/shop/pros3
@@ -69,6 +71,9 @@ sources:
 - field: getting_started
   url: https://esp32s3.com/pros3.html
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/ProS3_Pin_Reference.png
+  verified: '2026-09-30'
 ---
 
 # Unexpected Maker ProS3

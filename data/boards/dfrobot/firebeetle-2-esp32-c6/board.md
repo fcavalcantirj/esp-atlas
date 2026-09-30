@@ -36,6 +36,8 @@ notes:
   an optional plug-in connector, not a permanently populated display. Math not vendor-stated;
   verify before treating as exact.'
 getting_started: https://wiki.dfrobot.com/dfr1075
+images:
+  pinout: https://dfimg.dfrobot.com/5d57611a3416442fa39bffca/wiki/1fa8b29bf6d340347ccdc39f4648b949_0x0.png.webp
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr1075/
@@ -52,6 +54,9 @@ sources:
 - field: getting_started
   url: https://wiki.dfrobot.com/dfr1075
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://dfimg.dfrobot.com/5d57611a3416442fa39bffca/wiki/1fa8b29bf6d340347ccdc39f4648b949_0x0.png.webp
+  verified: '2026-09-30'
 ---
 
 # DFRobot FireBeetle 2 ESP32-C6

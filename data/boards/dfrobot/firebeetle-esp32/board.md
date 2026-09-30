@@ -47,6 +47,8 @@ notes:
   as exact.'
 - usb_serial derived from usb.bridge (ch340)
 getting_started: https://wiki.dfrobot.com/dfr0478
+images:
+  pinout: https://dfimg.dfrobot.com/62fba4cb025a892c98c6da64/wikien/555ad7fa66fecc61fe288e251ac267ce_0x0.png.webp
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr0478/
@@ -72,6 +74,9 @@ sources:
 - field: getting_started
   url: https://wiki.dfrobot.com/dfr0478
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://dfimg.dfrobot.com/62fba4cb025a892c98c6da64/wikien/555ad7fa66fecc61fe288e251ac267ce_0x0.png.webp
+  verified: '2026-09-30'
 ---
 
 # DFRobot FireBeetle ESP32

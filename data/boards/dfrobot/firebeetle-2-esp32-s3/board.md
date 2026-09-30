@@ -38,6 +38,8 @@ notes:
   even though those same pins are also broken out on the header, removing another
   4. 26 - 4 - 4 = 18. Math not vendor-stated; verify before treating as exact.'
 getting_started: https://wiki.dfrobot.com/dfr0975
+images:
+  pinout: https://dfimg.dfrobot.com/nobody/wiki/0aa4e609926355484ad0cab49548d2f3_0x0.jpg.webp
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr0975
@@ -51,6 +53,9 @@ sources:
 - field: getting_started
   url: https://wiki.dfrobot.com/dfr0975
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://dfimg.dfrobot.com/nobody/wiki/0aa4e609926355484ad0cab49548d2f3_0x0.jpg.webp
+  verified: '2026-09-30'
 ---
 
 # DFRobot FireBeetle 2 ESP32-S3

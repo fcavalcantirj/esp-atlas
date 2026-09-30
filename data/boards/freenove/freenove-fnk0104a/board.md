@@ -15,6 +15,8 @@ notes:
   page (omitted)
 - aka "freenove_fnk0104a" is the device token draftling uses for its release binaries
 getting_started: https://docs.freenove.com/projects/fnk0104/en/latest/
+images:
+  pinout: https://raw.githubusercontent.com/Freenove/Freenove_ESP32_S3_Display/main/Picture/FNK0104A_Bottom.png
 sources:
 - field: '*'
   url: https://github.com/Freenove/Freenove_ESP32_S3_Display
@@ -28,6 +30,9 @@ sources:
 - field: getting_started
   url: https://docs.freenove.com/projects/fnk0104/en/latest/
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://raw.githubusercontent.com/Freenove/Freenove_ESP32_S3_Display/main/Picture/FNK0104A_Bottom.png
+  verified: '2026-09-30'
 ---
 
 # Freenove ESP32-S3 Display FNK0104A

@@ -31,6 +31,8 @@ notes:
   {0,3}: 2; usb_flash_tied {35,36,37}: 3 -- 5 total) gives 27 - 5 = 22'
 usb_serial: native-usb-serial-jtag
 getting_started: https://esp32s3.com/nanos3.html
+images:
+  pinout: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/NanoS3_Pin_Reference.png
 sources:
 - field: '*'
   url: https://unexpectedmaker.com/shop/nanos3
@@ -53,6 +55,9 @@ sources:
 - field: getting_started
   url: https://esp32s3.com/nanos3.html
   verified: '2026-09-13'
+- field: images.pinout
+  url: https://raw.githubusercontent.com/UnexpectedMaker/esp32s3/main/Pinout%20Cards/NanoS3_Pin_Reference.png
+  verified: '2026-09-30'
 ---
 
 # Unexpected Maker NanoS3

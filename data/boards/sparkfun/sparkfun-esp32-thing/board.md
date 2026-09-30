@@ -47,6 +47,8 @@ notes:
   6/7/8 are not on the header. 28 total pads - 5 strapping - 4 input-only - 2 vendor-confirmed
   extra input-only (37, 38) = 17'
 getting_started: https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide
+images:
+  pinout: https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/top-annotated.jpg
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-esp32-thing.html
@@ -78,6 +80,9 @@ sources:
 - field: getting_started
   url: https://learn.sparkfun.com/tutorials/esp32-thing-hookup-guide
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn.sparkfun.com/assets/learn_tutorials/5/0/7/top-annotated.jpg
+  verified: '2026-09-30'
 ---
 
 # SparkFun ESP32 Thing

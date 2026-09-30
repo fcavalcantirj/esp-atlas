@@ -23,6 +23,8 @@ extras:
 io:
   gpio_exposed: 11
   gpio_free: 9
+images:
+  pinout: https://files.seeedstudio.com/wiki/XIAO_ESP32C5/Getting_started/XIAO_ESP32-C5_front_pinout.png
 notes:
 - 8 MB flash + 8 MB PSRAM
 - 'dual-band Wi-Fi 6 (2.4 + 5 GHz): Specifications table states "2.4 GHz & 5 GHz dual-band
@@ -64,6 +66,9 @@ sources:
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/seeed_xiao_esp32c5.json
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://files.seeedstudio.com/wiki/XIAO_ESP32C5/Getting_started/XIAO_ESP32-C5_front_pinout.png
+  verified: '2026-09-30'
 ---
 
 # Seeed Studio XIAO ESP32C5

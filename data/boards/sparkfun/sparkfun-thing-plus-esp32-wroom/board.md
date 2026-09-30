@@ -58,6 +58,8 @@ notes:
 download_mode:
   mode: auto
 getting_started: https://learn.sparkfun.com/tutorials/esp32-thing-plus-hookup-guide
+images:
+  pinout: https://docs.sparkfun.com/SparkFun_Thing_Plus_ESP32_WROOM_C/img/hookup_guide/graphical_datasheet.jpg
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-thing-plus-esp32-wroom-usb-c.html
@@ -95,6 +97,9 @@ sources:
 - field: getting_started
   url: https://learn.sparkfun.com/tutorials/esp32-thing-plus-hookup-guide
   verified: '2026-09-13'
+- field: images.pinout
+  url: https://docs.sparkfun.com/SparkFun_Thing_Plus_ESP32_WROOM_C/img/hookup_guide/graphical_datasheet.jpg
+  verified: '2026-09-30'
 ---
 
 # SparkFun Thing Plus - ESP32 WROOM (USB-C)

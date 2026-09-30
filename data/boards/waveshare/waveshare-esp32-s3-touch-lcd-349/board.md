@@ -31,6 +31,8 @@ notes:
 - aka "waveshare_touch_lcd_349" is the device token draftling uses for its release
   binaries
 getting_started: https://docs.waveshare.com/ESP32-S3-Touch-LCD-3.49
+images:
+  pinout: https://docs.waveshare.com/assets/images/ESP32-S3-Touch-LCD-3.49-IntfIntro-c98715985a15287c0b786f08eea5bae0.webp
 sources:
 - field: '*'
   url: https://www.waveshare.com/wiki/ESP32-S3-Touch-LCD-3.49
@@ -41,6 +43,9 @@ sources:
 - field: getting_started
   url: https://docs.waveshare.com/ESP32-S3-Touch-LCD-3.49
   verified: '2026-09-13'
+- field: images.pinout
+  url: https://docs.waveshare.com/assets/images/ESP32-S3-Touch-LCD-3.49-IntfIntro-c98715985a15287c0b786f08eea5bae0.webp
+  verified: '2026-09-30'
 ---
 
 # Waveshare ESP32-S3-Touch-LCD-3.49

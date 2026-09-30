@@ -37,6 +37,8 @@ notes:
   -- strapping {9,15}: both present; usb_flash_tied {12,13}: 0 present -- gives 13
   - 2 = 11. Math not vendor-stated; verify before treating as exact.'
 getting_started: https://wiki.dfrobot.com/dfr1117
+images:
+  pinout: https://dfimg.dfrobot.com/62d52567aa9508d63a4247a1/wikien/abe16ff8f8bb94957ae995d4d576a36a_0x0.png.webp
 sources:
 - field: '*'
   url: https://wiki.dfrobot.com/dfr1117/
@@ -53,6 +55,9 @@ sources:
 - field: getting_started
   url: https://wiki.dfrobot.com/dfr1117
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://dfimg.dfrobot.com/62d52567aa9508d63a4247a1/wikien/abe16ff8f8bb94957ae995d4d576a36a_0x0.png.webp
+  verified: '2026-09-30'
 ---
 
 # DFRobot Beetle ESP32-C6
