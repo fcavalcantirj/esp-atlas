@@ -263,8 +263,17 @@ export function partMetaTitle(
 ): string {
   const specs = partKeySpecs(part);
   const benefit = specs.length > 0 ? `${specs.join(" + ")} ${typeLabel(part.type)} specs` : `${typeLabel(part.type)} specs`;
-  const name = hasPinout ? `${part.name} pinout` : part.name;
-  return buildMetaTitle(name, benefit);
+  if (!hasPinout) return buildMetaTitle(part.name, benefit);
+
+  // "pinout" must survive truncation, so it can't ride inside the name
+  // clause buildMetaTitle shortens -- reserve its own room and append it
+  // after the (possibly-shortened) name instead.
+  const pinoutSuffix = " pinout";
+  const benefitSuffix = ` — ${benefit}`;
+  const full = `${part.name}${pinoutSuffix}${benefitSuffix}`;
+  if (full.length <= TITLE_MAX) return full;
+  const name = truncateAtWord(part.name, TITLE_MAX - pinoutSuffix.length - benefitSuffix.length);
+  return `${name}${pinoutSuffix}${benefitSuffix}`;
 }
 
 /**

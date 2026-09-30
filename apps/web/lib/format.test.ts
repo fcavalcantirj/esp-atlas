@@ -315,6 +315,7 @@ test("a long name plus pinout still fits TITLE_MAX (data/boards/m5stack/m5stack-
     true,
   );
   assert.ok(title.length <= TITLE_MAX, `expected <=${TITLE_MAX} chars, got ${title.length}: ${title}`);
+  assert.ok(title.includes("pinout"), `expected title to include "pinout": ${title}`);
 });
 
 const NO_SPEC_PART = {
