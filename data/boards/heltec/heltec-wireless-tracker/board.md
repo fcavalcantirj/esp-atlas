@@ -46,6 +46,8 @@ notes:
   already removed via reserved_pins, so 2 new: 33,34) -- gives 28 - 9 - 6 - 2 = 11'
 - usb_serial derived from usb.bridge (native) + soc usb.type otg-full-speed + serial-jtag
 getting_started: https://docs.heltec.org/en/node/esp32/wireless_tracker/index.html
+images:
+  pinout: https://resource.heltec.cn/download/Wireless_Tracker/Wireless%20Tracker%20Pin%20Map.png
 sources:
 - field: '*'
   url: https://heltec.org/project/wireless-tracker/
@@ -68,6 +70,9 @@ sources:
 - field: getting_started
   url: https://docs.heltec.org/en/node/esp32/wireless_tracker/index.html
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://resource.heltec.cn/download/Wireless_Tracker/Wireless%20Tracker%20Pin%20Map.png
+  verified: '2026-09-30'
 ---
 
 # Wireless Tracker

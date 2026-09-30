@@ -50,6 +50,8 @@ notes:
   - 4 input-only = 17'
 usb_serial: ch340
 getting_started: https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide
+images:
+  pinout: https://cdn.sparkfun.com/assets/learn_tutorials/2/2/5/7/BoardOutline.png
 sources:
 - field: '*'
   url: https://www.sparkfun.com/sparkfun-iot-redboard-esp32-development-board.html
@@ -81,6 +83,9 @@ sources:
 - field: getting_started
   url: https://learn.sparkfun.com/tutorials/iot-redboard-esp32-development-board-hookup-guide
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://cdn.sparkfun.com/assets/learn_tutorials/2/2/5/7/BoardOutline.png
+  verified: '2026-09-30'
 ---
 
 # SparkFun IoT RedBoard - ESP32 Development Board

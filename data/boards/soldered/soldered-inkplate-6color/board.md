@@ -35,6 +35,8 @@ notes:
   Subtracting esp32''s reserved_pins among the native free set -- strapping {2,5}
   (2; IO4/25/26 aren''t strapping) -- gives 5 - 2 = 3 (remaining: IO4,25,26). Math
   not vendor-stated; verify before treating as exact.'
+images:
+  pinout: https://docs.soldered.com/assets/images/free-gpio-476f506d3502a30ae3cc3be64df315b8.webp
 sources:
 - field: '*'
   url: https://soldered.com/products/inkplate-6color-e-paper-display
@@ -48,6 +50,9 @@ sources:
 - field: io.gpio_free
   url: https://docs.soldered.com/inkplate/6color/hardware/free-gpio/
   verified: '2026-08-26'
+- field: images.pinout
+  url: https://docs.soldered.com/assets/images/free-gpio-476f506d3502a30ae3cc3be64df315b8.webp
+  verified: '2026-09-30'
 ---
 
 # Inkplate 6COLOR

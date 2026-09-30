@@ -43,6 +43,8 @@ notes:
   the first place'
 - usb_serial derived from usb.bridge (cp2102)
 getting_started: https://docs.heltec.org/en/node/esp32/wifi_lora_32/index.html
+images:
+  pinout: https://resource.heltec.cn/download/WiFi_LoRa_32_V3/Wi-Fi_LoRa32_V3.2_Pinmap.png
 sources:
 - field: '*'
   url: https://heltec.org/project/wifi-lora-32-v3/
@@ -62,6 +64,9 @@ sources:
 - field: getting_started
   url: https://docs.heltec.org/en/node/esp32/wifi_lora_32/index.html
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://resource.heltec.cn/download/WiFi_LoRa_32_V3/Wi-Fi_LoRa32_V3.2_Pinmap.png
+  verified: '2026-09-30'
 ---
 
 # WiFi LoRa 32 (V3)

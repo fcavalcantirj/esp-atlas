@@ -35,6 +35,8 @@ notes:
   expander 2 (21 pins on a separate I2C GPIO-expander chip) are free, excluded
   here as non-native SoC pads. No esp32 reserved_pins subtraction applies since
   the native free set is already empty.'
+images:
+  pinout: https://docs.soldered.com/assets/images/free_pins-d7c4619b91a65dc92b930ed6c91a8fff.webp
 sources:
 - field: '*'
   url: https://soldered.com/products/inkplate-6-6-e-paper-board
@@ -48,6 +50,9 @@ sources:
 - field: io.gpio_free
   url: https://docs.soldered.com/inkplate/6/hardware/free-gpio/
   verified: '2026-08-26'
+- field: images.pinout
+  url: https://docs.soldered.com/assets/images/free_pins-d7c4619b91a65dc92b930ed6c91a8fff.webp
+  verified: '2026-09-30'
 ---
 
 # Inkplate 6

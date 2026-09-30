@@ -37,6 +37,8 @@ notes:
   "OLED RST" in the same datasheet table) gives 28 - 9 - 1 = 18'
 - usb_serial derived from usb.bridge (cp2102)
 getting_started: https://docs.heltec.org/en/node/esp32/wifi_kit_32/index.html
+images:
+  pinout: https://resource.heltec.cn/download/WiFi_Kit_32_V3/HTIT-WB32_V3.png
 sources:
 - field: '*'
   url: https://heltec.org/project/wifi-kit32-v3/
@@ -53,6 +55,9 @@ sources:
 - field: getting_started
   url: https://docs.heltec.org/en/node/esp32/wifi_kit_32/index.html
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://resource.heltec.cn/download/WiFi_Kit_32_V3/HTIT-WB32_V3.png
+  verified: '2026-09-30'
 ---
 
 # WiFi Kit 32 (V3)

@@ -34,6 +34,8 @@ notes:
   Subtracting esp32''s reserved_pins that are among those free pads -- strapping
   {2,5,12,15} (4) and input_only {34,35,36,39} (4) -- gives 13 - 4 - 4 = 5 (remaining:
   IO4,13,14,25,26). Math not vendor-stated; verify before treating as exact.'
+images:
+  pinout: https://docs.soldered.com/assets/images/free_pins-0fdeed4d56e80cd4a1f4c365d5e2b832.webp
 sources:
 - field: '*'
   url: https://soldered.com/products/inkplate-2
@@ -47,6 +49,9 @@ sources:
 - field: io.gpio_free
   url: https://docs.soldered.com/inkplate/2/hardware/free-gpio/
   verified: '2026-08-26'
+- field: images.pinout
+  url: https://docs.soldered.com/assets/images/free_pins-0fdeed4d56e80cd4a1f4c365d5e2b832.webp
+  verified: '2026-09-30'
 ---
 
 # Inkplate 2

@@ -35,6 +35,8 @@ notes:
   GPIO pads). Of the native set {IO26}, none fall in esp32''s reserved_pins (strapping
   {0,2,5,12,15}, input_only {34,35,36,39}, usb_flash_tied {6,7,8,9,10,11}), so 1
   - 0 = 1. Math not vendor-stated; verify before treating as exact.'
+images:
+  pinout: https://docs.soldered.com/assets/images/free_gpio-48271decf3833f79bd770945f33c6ce8.webp
 sources:
 - field: '*'
   url: https://soldered.com/products/inkplate-10
@@ -48,6 +50,9 @@ sources:
 - field: io.gpio_free
   url: https://docs.soldered.com/inkplate/10/hardware/free-gpio/
   verified: '2026-08-26'
+- field: images.pinout
+  url: https://docs.soldered.com/assets/images/free_gpio-48271decf3833f79bd770945f33c6ce8.webp
+  verified: '2026-09-30'
 ---
 
 # Inkplate 10

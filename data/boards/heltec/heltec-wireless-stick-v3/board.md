@@ -41,6 +41,8 @@ notes:
   "OLED RST" in the datasheet) gives 28 - 9 - 1 = 18'
 - usb_serial derived from usb.bridge (cp2102)
 getting_started: https://docs.heltec.org/en/node/esp32/wireless_stick/index.html
+images:
+  pinout: https://resource.heltec.cn/download/Wireless_Stick_V3/HTIT-WS_V3.png
 sources:
 - field: '*'
   url: https://heltec.org/project/wireless-stick-v3/
@@ -57,6 +59,9 @@ sources:
 - field: getting_started
   url: https://docs.heltec.org/en/node/esp32/wireless_stick/index.html
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://resource.heltec.cn/download/Wireless_Stick_V3/HTIT-WS_V3.png
+  verified: '2026-09-30'
 ---
 
 # Wireless Stick (V3)
