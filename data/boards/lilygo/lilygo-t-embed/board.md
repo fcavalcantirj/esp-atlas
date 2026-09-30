@@ -41,6 +41,7 @@ notes:
 getting_started: https://lilygo.cc/products/t-embed
 images:
   photo: https://lilygo.cc/cdn/shop/products/T-Embed-K167-LILYGO_11.jpg
+  pinout: https://raw.githubusercontent.com/Xinyuan-LilyGO/T-Embed/main/image/T-Embed1.png
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-embed
@@ -57,6 +58,9 @@ sources:
 - field: images
   url: https://lilygo.cc/products/t-embed
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://raw.githubusercontent.com/Xinyuan-LilyGO/T-Embed/main/image/T-Embed1.png
+  verified: '2026-09-30'
 ---
 
 # T-Embed

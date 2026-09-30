@@ -26,6 +26,7 @@ notes:
 getting_started: https://lilygo.cc/products/t5-e-paper-s3-pro
 images:
   photo: https://lilygo.cc/cdn/shop/files/T5-4_7.jpg
+  pinout: https://lilygo.cc/cdn/shop/files/T5-4.7-S3-PRO_2.jpg?v=1744861731
 sources:
 - field: '*'
   url: https://github.com/Xinyuan-LilyGO/T5S3-4.7-e-paper-PRO
@@ -39,6 +40,9 @@ sources:
 - field: images
   url: https://lilygo.cc/products/t5-e-paper-s3-pro
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://lilygo.cc/cdn/shop/files/T5-4.7-S3-PRO_2.jpg?v=1744861731
+  verified: '2026-09-30'
 ---
 
 # LILYGO T5 E-Paper S3 Pro

@@ -26,6 +26,7 @@ notes:
 getting_started: https://lilygo.cc/products/t-qt-pro
 images:
   photo: https://lilygo.cc/cdn/shop/products/H579-T-QT-Pro_2.jpg
+  pinout: https://raw.githubusercontent.com/Xinyuan-LilyGO/T-QT/main/image/pinmap_en.jpg
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-qt-pro
@@ -36,6 +37,9 @@ sources:
 - field: images
   url: https://lilygo.cc/products/t-qt-pro
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://raw.githubusercontent.com/Xinyuan-LilyGO/T-QT/main/image/pinmap_en.jpg
+  verified: '2026-09-30'
 ---
 
 # T-QT Pro

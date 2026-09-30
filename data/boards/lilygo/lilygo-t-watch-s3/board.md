@@ -35,6 +35,7 @@ notes:
 getting_started: https://lilygo.cc/products/t-watch-s3
 images:
   photo: https://lilygo.cc/cdn/shop/files/LILYGO-T-Watch-S3_1.jpg
+  pinout: https://lilygo.cc/cdn/shop/files/watch2020V3_S3_a0c58be7-8f5f-4f20-a1bc-775c1942a7f3_600x600.jpg?v=1685504665
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-watch-s3
@@ -51,6 +52,9 @@ sources:
 - field: images
   url: https://lilygo.cc/products/t-watch-s3
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://lilygo.cc/cdn/shop/files/watch2020V3_S3_a0c58be7-8f5f-4f20-a1bc-775c1942a7f3_600x600.jpg?v=1685504665
+  verified: '2026-09-30'
 ---
 
 # T-Watch S3

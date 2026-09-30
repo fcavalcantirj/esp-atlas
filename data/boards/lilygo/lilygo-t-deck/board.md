@@ -34,6 +34,7 @@ notes:
 getting_started: https://lilygo.cc/products/t-deck
 images:
   photo: https://lilygo.cc/cdn/shop/files/LILYGO-T-DECK_2_7fbd52e8-0aea-466e-8407-dee4aca5b381.jpg
+  pinout: https://lilygo.cc/cdn/shop/files/LILYGO-T-DECK_6_600x600.jpg
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-deck
@@ -50,6 +51,9 @@ sources:
 - field: images
   url: https://lilygo.cc/products/t-deck
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://lilygo.cc/cdn/shop/files/LILYGO-T-DECK_6_600x600.jpg
+  verified: '2026-09-30'
 ---
 
 # T-Deck

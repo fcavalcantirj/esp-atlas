@@ -38,6 +38,7 @@ notes:
 getting_started: https://lilygo.cc/products/t-display-s3
 images:
   photo: https://lilygo.cc/cdn/shop/files/H569_03.jpg
+  pinout: https://raw.githubusercontent.com/Xinyuan-LilyGO/T-Display-S3/main/image/T-DISPLAY-S3.jpg
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-display-s3
@@ -57,6 +58,9 @@ sources:
 - field: images
   url: https://lilygo.cc/products/t-display-s3
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://raw.githubusercontent.com/Xinyuan-LilyGO/T-Display-S3/main/image/T-DISPLAY-S3.jpg
+  verified: '2026-09-30'
 ---
 
 # T-Display-S3

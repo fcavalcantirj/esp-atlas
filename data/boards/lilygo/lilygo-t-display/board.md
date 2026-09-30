@@ -28,6 +28,7 @@ notes:
 getting_started: https://lilygo.cc/products/t-display
 images:
   photo: https://lilygo.cc/cdn/shop/files/LILYGO-T-DISPLAY_5_cd0e2152-00a0-4403-a557-f96f6ba0d1e4.jpg
+  pinout: https://raw.githubusercontent.com/Xinyuan-LilyGO/TTGO-T-Display/master/image/pinmap.jpg
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-display
@@ -44,6 +45,9 @@ sources:
 - field: images
   url: https://lilygo.cc/products/t-display
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://raw.githubusercontent.com/Xinyuan-LilyGO/TTGO-T-Display/master/image/pinmap.jpg
+  verified: '2026-09-30'
 ---
 
 # T-Display

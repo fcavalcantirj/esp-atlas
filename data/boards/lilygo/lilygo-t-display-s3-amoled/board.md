@@ -25,6 +25,7 @@ notes:
 getting_started: https://lilygo.cc/products/t-display-s3-amoled
 images:
   photo: https://lilygo.cc/cdn/shop/files/LILYGO-T-Display_9_ad51c897-c165-4ee2-9bf4-3ee5fb78ead6.jpg
+  pinout: https://raw.githubusercontent.com/Xinyuan-LilyGO/T-Display-S3-AMOLED/master/image/T-Display-S3-AMOLED.jpg
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-display-s3-amoled
@@ -35,6 +36,9 @@ sources:
 - field: images
   url: https://lilygo.cc/products/t-display-s3-amoled
   verified: '2026-09-12'
+- field: images.pinout
+  url: https://raw.githubusercontent.com/Xinyuan-LilyGO/T-Display-S3-AMOLED/master/image/T-Display-S3-AMOLED.jpg
+  verified: '2026-09-30'
 ---
 
 # T-Display S3 AMOLED

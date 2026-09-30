@@ -27,6 +27,7 @@ notes:
 getting_started: https://lilygo.cc/products/t-dongle-s3
 images:
   photo: https://lilygo.cc/cdn/shop/files/T-Dongle-LILYGO_2.jpg
+  pinout: https://wiki.lilygo.cc/products/t-dongle-series/t-dongle-s3/index/image/t-dongle-s3-pinout.jpg
 sources:
 - field: '*'
   url: https://www.lilygo.cc/products/t-dongle-s3
@@ -43,6 +44,9 @@ sources:
 - field: images
   url: https://lilygo.cc/products/t-dongle-s3
   verified: '2026-09-11'
+- field: images.pinout
+  url: https://wiki.lilygo.cc/products/t-dongle-series/t-dongle-s3/index/image/t-dongle-s3-pinout.jpg
+  verified: '2026-09-30'
 ---
 
 # T-Dongle-S3
