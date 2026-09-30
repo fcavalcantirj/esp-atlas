@@ -260,6 +260,63 @@ test("part title shortens a long name at a word boundary instead of dropping the
   assert.ok(title.endsWith("… — Wi-Fi 4 + BLE 4.2 Board specs"));
 });
 
+// pinout in the title: search-intent word ("lolin s2 mini pinout") that Google
+// Search Console shows earning impressions at 0% CTR on generic titles
+// (SPEC-serp-ctr.md). Cite-or-omit: only parts whose frontmatter carries a real
+// images.pinout diagram (rendered by BoardImage.tsx) may claim the word.
+
+test("part title includes 'pinout' when the part has a pinout diagram (data/boards/espressif/esp32-s3-devkitm-1/board.md images.pinout)", () => {
+  const title = partMetaTitle(
+    {
+      name: "ESP32-S3-DevKitM-1",
+      type: "board",
+      wifi_standard: "wifi-4",
+      ble_version: "5",
+      ieee802154: false,
+      ieee802154_protocols: null,
+      usb_native: false,
+      form_factor: "devkit",
+    },
+    true,
+  );
+  assert.ok(title.includes("pinout"), `expected title to include "pinout": ${title}`);
+  assert.ok(title.length <= TITLE_MAX);
+});
+
+test("part title is unchanged and omits 'pinout' when the part has no pinout diagram (data/socs/esp32-c3/chip.md carries no images)", () => {
+  const soc = {
+    name: "ESP32-C3",
+    type: "soc",
+    wifi_standard: "wifi-4",
+    ble_version: "5",
+    ieee802154: false,
+    ieee802154_protocols: null,
+    usb_native: true,
+    form_factor: null,
+  };
+  const title = partMetaTitle(soc, false);
+  assert.equal(title, "ESP32-C3 — Wi-Fi 4 + BLE 5 SoC specs");
+  assert.ok(!title.includes("pinout"));
+  assert.equal(title, partMetaTitle(soc));
+});
+
+test("a long name plus pinout still fits TITLE_MAX (data/boards/m5stack/m5stack-core2/board.md images.pinout)", () => {
+  const title = partMetaTitle(
+    {
+      name: "Core2 v1.1 with AWS IoT EduKit Bundle and Extra Long Product Name",
+      type: "board",
+      wifi_standard: "wifi-4",
+      ble_version: "4.2",
+      ieee802154: false,
+      ieee802154_protocols: null,
+      usb_native: false,
+      form_factor: "m5-core",
+    },
+    true,
+  );
+  assert.ok(title.length <= TITLE_MAX, `expected <=${TITLE_MAX} chars, got ${title.length}: ${title}`);
+});
+
 const NO_SPEC_PART = {
   name: "Generic Module",
   type: "module",
