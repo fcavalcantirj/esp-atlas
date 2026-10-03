@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-10T16:00:44.146946+00:00",
+      "expires": "2026-10-10T17:00:45.792987+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-03T16:00:44.146946+00:00"
+      "timestamp": "2026-10-03T17:00:45.792987+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -156,6 +156,16 @@
       "repo_id": 1311691233,
       "status": "rejected",
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
+    },
+    "adv-wardriver": {
+      "expires": "2026-11-02T17:00:45.792987+00:00",
+      "id": "adv-wardriver",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "runaque/adv_wardriver",
+      "repo_id": 1403311769,
+      "status": "rejected",
+      "timestamp": "2026-10-03T17:00:45.792987+00:00"
     },
     "advaita": {
       "id": "advaita",
@@ -10172,6 +10182,7 @@
     "ronron-gh/ai_stackchan2_devcam": "ai-stackchan2-devcam",
     "ronron-gh/ai_stackchan_ex": "ai-stackchan-ex",
     "rubio473/mantishid-msc": "mantishid-msc",
+    "runaque/adv_wardriver": "adv-wardriver",
     "ruvnet/ruview": "ruview",
     "ry-ops/liner": "liner",
     "rymicka": "rymicka",
