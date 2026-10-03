@@ -46,6 +46,7 @@ getting_started: https://learn.adafruit.com/adafruit-qt-py-esp32-s2
 images:
   photo: https://cdn-learn.adafruit.com/guides/images/000/003/494/medium800/QTESP_top_angle.jpg
   pinout: https://cdn-learn.adafruit.com/assets/assets/000/107/478/medium800/adafruit_products_QTESP_pinouts_guide.jpg?1640105584
+usb_serial: other
 sources:
 - field: '*'
   url: https://www.adafruit.com/product/5325
@@ -68,6 +69,9 @@ sources:
 - field: images.pinout
   url: https://cdn-learn.adafruit.com/assets/assets/000/107/478/medium800/adafruit_products_QTESP_pinouts_guide.jpg?1640105584
   verified: '2026-09-30'
+- field: usb_serial
+  url: https://learn.adafruit.com/adafruit-qt-py-esp32-s2
+  verified: '2026-10-03'
 ---
 
 # Adafruit QT Py ESP32-S2
