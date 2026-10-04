@@ -1,7 +1,7 @@
 {
- "calls": 17,
+ "calls": 18,
  "errors": 0,
- "fetched": "2026-09-27",
+ "fetched": "2026-10-04",
  "notes": [],
  "ref": "main",
  "repo": "ALLFATHER-BV/wadamesh",
@@ -17,6 +17,7 @@
    "attaky",
    "attaky-merged",
    "attaky_mesh_series",
+   "crowpanel_35",
    "heltec-v4-r8-tft",
    "heltec-v4-r8-tft-merged",
    "heltec-v4-tft",
@@ -29,6 +30,8 @@
    "rak_tap_v2",
    "t-deck-max",
    "t-deck-pro",
+   "tdeck-max",
+   "tdeck-max-merged",
    "tdeck-merged",
    "tdeck-pro",
    "tdeck-pro-merged",
@@ -43,17 +46,18 @@
    "tlora-pager-lr1121-merged",
    "tlora-pager-sx1262",
    "tlora-pager-sx1262-merged",
-   "wadamesh — Attaky Core (experimental)",
-   "wadamesh — Heltec V4 TFT",
-   "wadamesh — Heltec V4-R8 (experimental)",
-   "wadamesh — LilyGo T-Deck",
-   "wadamesh — LilyGo T-Deck Pro (experimental)",
-   "wadamesh — LilyGo T-Display P4",
-   "wadamesh — LilyGo T-LoRa Pager (LR1121)",
-   "wadamesh — LilyGo T-LoRa Pager (SX1262)",
-   "wadamesh — RAK WisMesh Tap V2",
-   "wadamesh — Seeed Wio Tracker L2 (experimental)",
-   "wadamesh — ThinkNode M9",
+   "wadamesh - Attaky Core (experimental) (beta)",
+   "wadamesh - Heltec V4 TFT",
+   "wadamesh - Heltec V4-R8 (experimental) (beta)",
+   "wadamesh - LilyGo T-Deck",
+   "wadamesh - LilyGo T-Deck Max (experimental) (beta)",
+   "wadamesh - LilyGo T-Deck Pro (experimental) (beta)",
+   "wadamesh - LilyGo T-Display P4 (beta)",
+   "wadamesh - LilyGo T-LoRa Pager (LR1121) (beta)",
+   "wadamesh - LilyGo T-LoRa Pager (SX1262) (beta)",
+   "wadamesh - RAK WisMesh Tap V2 (beta)",
+   "wadamesh - Seeed Wio Tracker L2 (experimental) (beta)",
+   "wadamesh - ThinkNode M9 (beta)",
    "wio-tracker-l2",
    "wio-tracker-l2-merged",
    "wio_tracker_l2"
@@ -63,422 +67,458 @@
   {
    "extra": {
     "asset": "wadamesh-attaky-merged.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "attaky-merged",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-attaky-merged.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-attaky-merged.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-attaky.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "attaky",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-attaky.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-attaky.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-heltec-v4-r8-tft-merged.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "heltec-v4-r8-tft-merged",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-heltec-v4-r8-tft-merged.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-heltec-v4-r8-tft-merged.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-heltec-v4-r8-tft.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "heltec-v4-r8-tft",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-heltec-v4-r8-tft.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-heltec-v4-r8-tft.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-heltec-v4-tft-merged.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "heltec-v4-tft-merged",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-heltec-v4-tft-merged.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-heltec-v4-tft-merged.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-heltec-v4-tft.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "heltec-v4-tft",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-heltec-v4-tft.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-heltec-v4-tft.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-rak-tap-v2-merged.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "rak-tap-v2-merged",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-rak-tap-v2-merged.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-rak-tap-v2-merged.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-rak-tap-v2.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "rak-tap-v2",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-rak-tap-v2.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-rak-tap-v2.bin"
+  },
+  {
+   "extra": {
+    "asset": "wadamesh-tdeck-max-merged.bin",
+    "release": "beta_85"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tdeck-max-merged",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tdeck-max-merged.bin"
+  },
+  {
+   "extra": {
+    "asset": "wadamesh-tdeck-max.bin",
+    "release": "beta_85"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tdeck-max",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tdeck-max.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-tdeck-merged.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tdeck-merged",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-tdeck-merged.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tdeck-merged.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-tdeck-pro-merged.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tdeck-pro-merged",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-tdeck-pro-merged.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tdeck-pro-merged.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-tdeck-pro.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tdeck-pro",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-tdeck-pro.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tdeck-pro.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-tdeck.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tdeck",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-tdeck.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tdeck.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-tdisplay-p4-lcd-merged.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tdisplay-p4-lcd-merged",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-tdisplay-p4-lcd-merged.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tdisplay-p4-lcd-merged.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-tdisplay-p4-lcd.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tdisplay-p4-lcd",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-tdisplay-p4-lcd.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tdisplay-p4-lcd.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-tdisplay-p4-merged.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tdisplay-p4-merged",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-tdisplay-p4-merged.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tdisplay-p4-merged.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-tdisplay-p4.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tdisplay-p4",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-tdisplay-p4.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tdisplay-p4.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-thinknode-m9-merged.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "thinknode-m9-merged",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-thinknode-m9-merged.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-thinknode-m9-merged.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-thinknode-m9.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "thinknode-m9",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-thinknode-m9.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-thinknode-m9.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-tlora-pager-lr1121-merged.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tlora-pager-lr1121-merged",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-tlora-pager-lr1121-merged.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tlora-pager-lr1121-merged.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-tlora-pager-lr1121.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tlora-pager-lr1121",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-tlora-pager-lr1121.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tlora-pager-lr1121.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-tlora-pager-sx1262-merged.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tlora-pager-sx1262-merged",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-tlora-pager-sx1262-merged.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tlora-pager-sx1262-merged.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-tlora-pager-sx1262.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tlora-pager-sx1262",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-tlora-pager-sx1262.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-tlora-pager-sx1262.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-wio-tracker-l2-merged.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "wio-tracker-l2-merged",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-wio-tracker-l2-merged.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-wio-tracker-l2-merged.bin"
   },
   {
    "extra": {
     "asset": "wadamesh-wio-tracker-l2.bin",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "wio-tracker-l2",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/wadamesh-wio-tracker-l2.bin"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/wadamesh-wio-tracker-l2.bin"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
-   "token": "wadamesh — Attaky Core (experimental)",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/manifest-attaky.json"
+   "token": "wadamesh - Attaky Core (experimental) (beta)",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/manifest-attaky.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
-   "token": "wadamesh — Heltec V4-R8 (experimental)",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/manifest-heltec-v4-r8-tft.json"
+   "token": "wadamesh - Heltec V4-R8 (experimental) (beta)",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/manifest-heltec-v4-r8-tft.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
-   "token": "wadamesh — Heltec V4 TFT",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/manifest-heltec-v4-tft.json"
+   "token": "wadamesh - Heltec V4 TFT",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/manifest-heltec-v4-tft.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
-   "token": "wadamesh — RAK WisMesh Tap V2",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/manifest-rak-tap-v2.json"
+   "token": "wadamesh - RAK WisMesh Tap V2 (beta)",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/manifest-rak-tap-v2.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
-   "token": "wadamesh — LilyGo T-Deck Pro (experimental)",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/manifest-tdeck-pro.json"
+   "token": "wadamesh - LilyGo T-Deck Max (experimental) (beta)",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/manifest-tdeck-max.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
-   "token": "wadamesh — LilyGo T-Deck",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/manifest-tdeck.json"
+   "token": "wadamesh - LilyGo T-Deck Pro (experimental) (beta)",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/manifest-tdeck-pro.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-S3",
+    "release": "beta_85"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "wadamesh - LilyGo T-Deck",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/manifest-tdeck.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-P4",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-p4",
-   "token": "wadamesh — LilyGo T-Display P4",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/manifest-tdisplay-p4.json"
+   "token": "wadamesh - LilyGo T-Display P4 (beta)",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/manifest-tdisplay-p4.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
-   "token": "wadamesh — ThinkNode M9",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/manifest-thinknode-m9.json"
+   "token": "wadamesh - ThinkNode M9 (beta)",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/manifest-thinknode-m9.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
-   "token": "wadamesh — LilyGo T-LoRa Pager (LR1121)",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/manifest-tlora-pager-lr1121.json"
+   "token": "wadamesh - LilyGo T-LoRa Pager (LR1121) (beta)",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/manifest-tlora-pager-lr1121.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
-   "token": "wadamesh — LilyGo T-LoRa Pager (SX1262)",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/manifest-tlora-pager-sx1262.json"
+   "token": "wadamesh - LilyGo T-LoRa Pager (SX1262) (beta)",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/manifest-tlora-pager-sx1262.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "beta_83"
+    "release": "beta_85"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
-   "token": "wadamesh — Seeed Wio Tracker L2 (experimental)",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_83/manifest-wio-tracker-l2.json"
+   "token": "wadamesh - Seeed Wio Tracker L2 (experimental) (beta)",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/releases/download/beta_85/manifest-wio-tracker-l2.json"
   },
   {
    "extra": {
@@ -486,11 +526,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 16,
+   "line": 17,
    "rank": 2,
    "soc": null,
    "token": "heltec_v4",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L16"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L17"
   },
   {
    "extra": {
@@ -498,11 +538,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 246,
+   "line": 247,
    "rank": 2,
    "soc": null,
    "token": "heltec_v4_r8",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L246"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L247"
   },
   {
    "extra": {
@@ -510,11 +550,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 347,
+   "line": 348,
    "rank": 2,
    "soc": null,
    "token": "attaky_mesh_series",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L347"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L348"
   },
   {
    "extra": {
@@ -522,11 +562,23 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 533,
+   "line": 534,
    "rank": 2,
    "soc": null,
    "token": "t-deck",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L533"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L534"
+  },
+  {
+   "extra": {
+    "env": "LilyGo_TDeck_Pro_v1_1_companion_radio_touch",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 716,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck-pro",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L716"
   },
   {
    "extra": {
@@ -542,15 +594,27 @@
   },
   {
    "extra": {
+    "env": "LilyGo_TDeck_Pro_v1_0_companion_radio_touch",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 716,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck-pro",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L716"
+  },
+  {
+   "extra": {
     "env": "LilyGo_TDeck_Max_companion_radio_touch",
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 901,
+   "line": 952,
    "rank": 2,
    "soc": null,
    "token": "t-deck-max",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L901"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L952"
   },
   {
    "extra": {
@@ -558,11 +622,23 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1094,
+   "line": 1145,
    "rank": 2,
    "soc": null,
    "token": "wio_tracker_l2",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1094"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1145"
+  },
+  {
+   "extra": {
+    "env": "crowpanel_35_companion_radio_touch",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1307,
+   "rank": 2,
+   "soc": null,
+   "token": "crowpanel_35",
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1307"
   },
   {
    "extra": {
@@ -570,11 +646,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1254,
+   "line": 1456,
    "rank": 2,
    "soc": null,
    "token": "lilygo-t-lora-pager",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1254"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1456"
   },
   {
    "extra": {
@@ -582,11 +658,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1489,
+   "line": 1691,
    "rank": 2,
    "soc": null,
    "token": "lilygo-t-lora-pager",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1489"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1691"
   },
   {
    "extra": {
@@ -594,11 +670,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1709,
+   "line": 1911,
    "rank": 2,
    "soc": null,
    "token": "thinknode_m9",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1709"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1911"
   },
   {
    "extra": {
@@ -606,11 +682,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1983,
+   "line": 2185,
    "rank": 2,
    "soc": null,
    "token": "rak_tap_v2",
-   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L1983"
+   "url": "https://github.com/ALLFATHER-BV/wadamesh/blob/main/platformio.ini#L2185"
   }
  ]
 }
