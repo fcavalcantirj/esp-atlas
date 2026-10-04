@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-11T08:00:05.630910+00:00",
+      "expires": "2026-10-11T09:00:13.342210+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-04T08:00:05.630910+00:00"
+      "timestamp": "2026-10-04T09:00:13.342210+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -2692,6 +2692,14 @@
       "repo_id": 1269518201,
       "status": "rejected",
       "timestamp": "2026-09-12T18:00:17.136349+00:00"
+    },
+    "esp1312": {
+      "expires": "2026-11-03T09:00:13.342210+00:00",
+      "id": "esp1312",
+      "pr_ref": null,
+      "repo": "bumpynux/esp1312",
+      "status": "seen",
+      "timestamp": "2026-10-04T09:00:13.342210+00:00"
     },
     "esp32-bit-pirate": {
       "id": "esp32-bit-pirate",
@@ -9534,6 +9542,7 @@
     "brucemoddev/brucemod-alpha": "brucemod-alpha",
     "bubbergamesites/cardputer-f1-random-gp": "cardputer-f1-random-gp",
     "bubbergamesites/cardui": "cardui",
+    "bumpynux/esp1312": "esp1312",
     "bytehub-1337/signalrf": "signalrf",
     "c5lab/m5monsterc5-cardputeradv": "m5monsterc5-cardputeradv",
     "c5lab/m5monsterc5-tab5": "m5monsterc5-tab5",
