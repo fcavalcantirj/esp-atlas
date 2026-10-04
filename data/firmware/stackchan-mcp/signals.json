@@ -1,10 +1,8 @@
 {
- "calls": 10,
+ "calls": 9,
  "errors": 0,
- "fetched": "2026-09-27",
- "notes": [
-  "latest release v0.17.0 has no binaries; read firmware-v1.16.0 instead"
- ],
+ "fetched": "2026-10-04",
+ "notes": [],
  "ref": "main",
  "repo": "kisaragi-mochi/stackchan-mcp",
  "resolved": {
@@ -19,26 +17,26 @@
   {
    "extra": {
     "asset": "merged-binary.bin",
-    "release": "firmware-v1.16.0"
+    "release": "firmware-v1.17.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "merged-binary",
-   "url": "https://github.com/kisaragi-mochi/stackchan-mcp/releases/download/firmware-v1.16.0/merged-binary.bin"
+   "url": "https://github.com/kisaragi-mochi/stackchan-mcp/releases/download/firmware-v1.17.0/merged-binary.bin"
   },
   {
    "extra": {
     "asset": "xiaozhi.bin",
-    "release": "firmware-v1.16.0"
+    "release": "firmware-v1.17.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "xiaozhi",
-   "url": "https://github.com/kisaragi-mochi/stackchan-mcp/releases/download/firmware-v1.16.0/xiaozhi.bin"
+   "url": "https://github.com/kisaragi-mochi/stackchan-mcp/releases/download/firmware-v1.17.0/xiaozhi.bin"
   }
  ]
 }
