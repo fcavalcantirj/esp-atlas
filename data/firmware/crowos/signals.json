@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-10-06",
+ "notes": [],
+ "ref": "main",
+ "repo": "JonasLacerda/crowos",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "Crow0-002"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "Crow0-002.bin",
+    "release": "m5cardputer"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Crow0-002",
+   "url": "https://github.com/JonasLacerda/crowos/releases/download/m5cardputer/Crow0-002.bin"
+  }
+ ]
+}

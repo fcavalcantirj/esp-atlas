@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-13T19:00:58.979878+00:00",
+      "expires": "2026-10-13T20:01:00.563893+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-06T19:00:58.979878+00:00"
+      "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -2238,13 +2238,13 @@
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "cric-ric": {
-      "expires": "2026-10-06T20:00:57.256011+00:00",
+      "expires": "2026-10-13T20:01:00.563893+00:00",
       "id": "cric-ric",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'cric-ric'",
       "repo": "cric-ric",
       "status": "rejected",
-      "timestamp": "2026-09-29T20:00:57.256011+00:00"
+      "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "crossink": {
       "expires": "2026-10-08T02:00:32.995095+00:00",
@@ -3178,14 +3178,14 @@
       "timestamp": "2026-09-02T17:03:09.114569+00:00"
     },
     "game-snake-m5cardputer": {
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "game-snake-m5cardputer",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 2 forks",
       "repo": "zrutra/game-snake-m5cardputer",
       "repo_id": 830932613,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "gameboy-enhanced-firmware-m5stack-cardpu": {
       "expires": "2026-10-08T05:25:25.049296+00:00",
@@ -3238,14 +3238,14 @@
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
     "geminiputer": {
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "geminiputer",
       "pr_ref": null,
-      "reason": "below_floor: 24 stars / 9 forks",
+      "reason": "below_floor: 23 stars / 9 forks",
       "repo": "nishad2m8/geminiputer",
       "repo_id": 883370098,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "geo-tp": {
       "expires": "2026-10-10T16:00:44.146946+00:00",
@@ -3985,11 +3985,14 @@
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "little-devhelper": {
+      "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "little-devhelper",
       "pr_ref": null,
+      "reason": "below_floor: 6 stars / 1 forks",
       "repo": "chrisdacrunk/little-devhelper",
-      "status": "expired",
-      "timestamp": "2026-09-02T16:03:27.949621+00:00"
+      "repo_id": 1109157152,
+      "status": "rejected",
+      "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "lorachat-for-as923": {
       "expires": "2026-10-10T16:00:44.146946+00:00",
@@ -4089,14 +4092,14 @@
       "timestamp": "2026-09-09T04:00:10.126216+00:00"
     },
     "m5-card-computer-i2c-scanner": {
-      "expires": "2026-10-08T20:00:21.660790+00:00",
+      "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "m5-card-computer-i2c-scanner",
       "pr_ref": null,
-      "reason": "below_floor: 23 stars / 4 forks",
+      "reason": "below_floor: 24 stars / 4 forks",
       "repo": "geo-tp/m5-card-computer-i2c-scanner",
       "repo_id": 802222350,
-      "status": "expired",
-      "timestamp": "2026-09-08T20:00:21.660790+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5-cardputer-sd-security-firmware": {
       "expires": "2026-10-11T18:00:57.443532+00:00",
@@ -4109,14 +4112,14 @@
       "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "m5-chameleon-ultra": {
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "m5-chameleon-ultra",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 1 forks",
       "repo": "rennancockles/m5-chameleon-ultra",
       "repo_id": 885472450,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5-clicker-game": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
@@ -4643,14 +4646,14 @@
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5cardputer-webradio-dutch": {
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "m5cardputer-webradio-dutch",
       "pr_ref": null,
       "reason": "below_floor: 8 stars / 4 forks",
       "repo": "rolandbreedveld/m5cardputer_webradio_dutch",
       "repo_id": 805815914,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5cardputer-webradio-fr": {
       "expires": "2026-10-09T02:09:24.261396+00:00",
@@ -4833,14 +4836,14 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "m5core2-touchpanel-recovery": {
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "m5core2-touchpanel-recovery",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 2 forks",
       "repo": "m5stack/m5core2-touchpanel-recovery",
       "repo_id": 561151768,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5core2-voronoi": {
       "expires": "2026-10-12T23:00:36.053237+00:00",
@@ -5312,14 +5315,14 @@
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
     "m5stack-cardputer-adv-gps-tracker": {
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "m5stack-cardputer-adv-gps-tracker",
       "pr_ref": null,
-      "reason": "below_floor: 2 stars / 0 forks",
+      "reason": "below_floor: 6 stars / 0 forks",
       "repo": "meister5/m5stack-cardputer-adv-gps-tracker",
       "repo_id": 1115446925,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5stack-cardputer-sparks": {
       "expires": "2026-10-11T20:01:00.775055+00:00",
@@ -7202,14 +7205,14 @@
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
     "piano-tiles-adv": {
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "piano-tiles-adv",
       "pr_ref": null,
-      "reason": "below_floor: 11 stars / 1 forks",
+      "reason": "already_catalogued: zeloksa/piano-tiles-adv is already in the atlas",
       "repo": "zeloksa/piano-tiles-adv",
       "repo_id": 1189533961,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "picoware": {
       "expires": "2026-10-11T15:00:52.423877+00:00",
