@@ -6,21 +6,24 @@
 > (Felipe, 2026-09-02.)
 
 ## The floor
-A candidate is authored only if it clears **any one** of three signals (OR-gated — a star is a
+A candidate is authored only if it clears **any one** of four signals (OR-gated — a star is a
 bookmark, a fork is a derivative, so a heavily-forked but under-starred utility still earns its
 place; and GitHub stars are not the only evidence a project is real and used):
 
 - **GitHub stars ≥ `STAR_FLOOR`**, **OR**
 - **GitHub forks ≥ `FORK_FLOOR`**, **OR**
 - **An independent editorial home** — the repo's `homepage` is a real project site/blog, not the
-  repo itself and not a GitHub Pages mirror of it (see "Editorial home" below).
+  repo itself and not a GitHub Pages mirror of it (see "Editorial home" below), **OR**
+- **Launcher/M5Burner downloads ≥ `DOWNLOAD_FLOOR`** — see "The fourth signal: launcher
+  downloads" below.
 
-Below **all three** → the drain **skips** it (records it `seen` in the ledger, so it isn't
+Below **all four** → the drain **skips** it (records it `seen` in the ledger, so it isn't
 re-fetched every run) and reports it. Never author sub-floor filler.
 
 **Constants:**
 - `STAR_FLOOR = 25`
 - `FORK_FLOOR = 25`
+- `DOWNLOAD_FLOOR = 2000`
 
 ### Editorial home (the third signal)
 GitHub stars are not the same as notability. Real, niche firmware can have a genuine independent
@@ -30,7 +33,7 @@ real, independently-run homepage at `ethicalhackersden.org`. A stars/forks-only 
 it; a genuine external write-up is evidence a project is actually in use that a star count alone
 misses.
 
-`clears_popularity_floor(stars, forks, homepage=None)` (`apps/core/src/esp_atlas_core/floor.py`)
+`clears_popularity_floor(stars, forks, homepage=None, downloads=None)` (`apps/core/src/esp_atlas_core/floor.py`)
 treats `homepage` as editorial evidence only when it is a non-empty `http(s)` URL whose host is
 **neither** `github.com` **nor** any `*.github.io` domain — those name the repo itself or a
 GitHub Pages mirror of it, not an independent home. This is deterministic string/host matching on
@@ -46,13 +49,49 @@ at admission time (`jr/stage_admit.py`, `jr/drain.py`) and re-checked live by th
 (`scripts/jr_pr_guard.py`) — never by the offline audit (`scripts/firmware_floor_audit.py`), which
 only ever sees whatever stars/forks were stamped at author time.
 
-**Downloads are NOT a metric — anywhere.** *(Superseded 2026-09-03; an earlier revision of this
-spec gated on launcher/M5Burner `downloads ≥ 500`.)* The launcher's download count is not a
-citable popularity signal: it is self-reported by a third-party catalog, it counts installs of
-someone else's re-upload rather than of the project, and `seeds.json` already marks that catalog
-**discovery-only, never to be bulk-ingested**. It survives solely as a tie-breaker inside
-`rank_juicy` ordering, never as a gate, and the `downloads` key is removed from `firmware.md`
-records by `scripts/strip_downloads.py`.
+### The fourth signal: launcher downloads
+*(Removed 2026-09-04 on the grounds that a launcher/M5Burner download count is self-reported by
+a third-party catalog and not a citable signal; RESTORED 2026-10-06, Felipe: the stars/forks/
+editorial-home bar was rejecting the catalog's most-installed community firmware.)*
+
+A stars/forks/editorial-home-only floor rejects exactly the firmware real users install most:
+
+| Firmware | Launcher downloads | GitHub stars | Would clear stars/forks/editorial-home alone? |
+|---|---|---|---|
+| M5Launcher | 120,000 | 1 | No |
+| Evil-Cardputer | 92,000 | 1 | No |
+| Doom-for-Cardputer | 37,000 | 1 | No |
+
+Each sits under 25 stars because installing it from a launcher catalog never requires visiting
+its GitHub page — a star count measures GitHub engagement, not installs. A download count this
+high is not noise; it is the single strongest "real people are actually running this" signal the
+catalog has — stronger than a star, which a repo's own author can rack up in an afternoon.
+`DOWNLOAD_FLOOR = 2000` sits far enough above a trivially gamed number (a handful of friends
+clicking install) that clearing it is proof of real, widespread use, not a rescue for every
+low-star repo — only the ones genuinely in people's hands.
+
+**Persistence is mandatory, not optional.** Downloads are a launcher-catalog signal, not a
+GitHub one: there is no live endpoint that reports them, so a guard checking a record LIVE
+(`scripts/jr_pr_guard.py`) or OFFLINE (`scripts/g2_guard.py`, `scripts/firmware_floor_audit.py`)
+can only ever see a download count that was stamped onto the record at author time. A record
+that clears the floor *only* on downloads and does NOT persist `popularity.downloads` would
+look sub-floor to every guard that re-checks it later — exactly the failure this fixes. So:
+
+- `jr/writers.py`'s `render_firmware` and `jr/tools.py`'s `author_firmware_and_recipes` both
+  write `popularity.downloads` (alongside `stars`/`forks`/`as_of`) whenever a download count is
+  known at author time — never invented, same cite-or-omit discipline as the other two numbers.
+- `jr/drain.py` (the only admission path with a launcher download count — topic-admit via
+  `jr/stage_admit.py` has none, and passes `downloads=None` explicitly, no behavior change) reads
+  it straight from the launcher-catalog entry (`entry["download"]`) and threads it through both
+  the floor check and authoring.
+- Every guard that re-verifies the floor — `scripts/jr_pr_guard.py` (live GitHub re-check, which
+  has no download field to re-fetch so it reads the record's STORED `popularity.downloads`),
+  `scripts/g2_guard.py`, and `scripts/firmware_floor_audit.py` (both fully offline) — reads the
+  same persisted number through the same `clears_popularity_floor()`, so none of them can
+  disagree with admission about what qualifies.
+
+It still contributes to `rank_juicy` ordering as before (downloads × stars combined); it is now
+ALSO a gate, not only a tie-breaker.
 
 ## Interaction with existing signals
 - Complements `rank_juicy` (downloads × stars ordering) — ranking picks the *best*; the floor
@@ -93,8 +132,8 @@ downloads). Fix — store the numbers, dated like a citation (popularity drifts)
 - `scripts/firmware_floor_audit.py` reads the **stored** `popularity` (not a live fetch) → fully
   offline/deterministic.
 - Add a step to `.github/workflows/validate.yml`: run the audit and **exit non-zero (fail the
-  build)** if any firmware is below **both** floors (stars < `STAR_FLOOR` AND forks <
-  `FORK_FLOOR`) and not curated-exempt.
+  build)** if any firmware is below **every** floor (stars < `STAR_FLOOR` AND forks <
+  `FORK_FLOOR` AND downloads < `DOWNLOAD_FLOOR`) and not curated-exempt.
 - Effect: GitHub **blocks the merge** of any sub-floor firmware, mechanically. Felipe never
   hand-curates for popularity again.
 

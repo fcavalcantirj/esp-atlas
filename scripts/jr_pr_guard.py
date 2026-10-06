@@ -3,9 +3,12 @@
 (scripts/jr_pr_guard.py). For every `data/firmware/<id>/firmware.md` ADDED by the PR:
 
   - `url` is a github.com/owner/repo; the repository answers (200), is not a fork, not archived;
-  - the live stars/forks/homepage clear the floor (esp_atlas_core.floor — one definition, three
-    signals: stars, forks, or an independent editorial home), and the record's dated
-    `popularity` snapshot is present (the offline floor gate reads it);
+  - the floor clears (esp_atlas_core.floor — one definition, four signals: live stars, live
+    forks, live homepage (independent editorial home), or the record's PERSISTED
+    `popularity.downloads` — downloads are a launcher-catalog signal, not a GitHub one, so
+    there is no live fetch for them; this is the one signal this live re-check can only read
+    from what was stamped at author time), and the record's dated `popularity` snapshot is
+    present (the offline floor gate reads it);
   - `socs` is non-empty.
 
 Whoever authored the record — EspAtlas Jr, a human, a submission — the gate is the same, so
@@ -74,7 +77,7 @@ def check_record(path: str, fm: dict, fetch=default_fetch) -> list[str]:
     if doc.get("archived"):
         out.append(f"{path}: {owner_repo} is archived")
     stars, forks = doc.get("stargazers_count"), doc.get("forks_count")
-    if not clears_popularity_floor(stars, forks, doc.get("homepage")):
+    if not clears_popularity_floor(stars, forks, doc.get("homepage"), (pop or {}).get("downloads")):
         out.append(f"{path}: {owner_repo} is below the floor live ({stars} stars / {forks} forks)")
     return out
 

@@ -35,15 +35,16 @@ from device_map import device_from_category, device_from_text  # noqa: E402
 FIRMWARE_CATEGORY_ENUM = ("pentest", "mesh", "badusb", "display", "home", "multi")
 
 # Popularity floor (SPEC-firmware-floor.md). A drain candidate is authored only if it clears ANY
-# ONE of three GitHub signals (OR-gated): stars >= STAR_FLOOR, forks >= FORK_FLOOR, or an
-# independent editorial home (a real project site/blog, not the repo itself or a github.io
-# mirror — the RogueDuck class: real firmware with a genuine write-up but few stars). Forks are a
-# stronger "actually built-on" signal than stars (a star is a bookmark; a fork is a derivative),
-# so a heavily-forked but under-starred utility still clears. Below ALL THREE → the drain skips
-# it as filler. Downloads are NOT a signal — a launcher/M5Burner download count is not a
-# citable, stable metric and is never used to gate or store popularity. One place, tunable;
-# consumed by drain.score_candidates via clears_popularity_floor(). Gates NEW drain authoring
-# only, never catalogued.
+# ONE of four signals (OR-gated): stars >= STAR_FLOOR, forks >= FORK_FLOOR, an independent
+# editorial home (a real project site/blog, not the repo itself or a github.io mirror — the
+# RogueDuck class: real firmware with a genuine write-up but few stars), or launcher/M5Burner
+# downloads >= DOWNLOAD_FLOOR (the M5Launcher/Evil-Cardputer/Doom-for-Cardputer class: tens of
+# thousands of installs, 1 GitHub star — a repo nobody stars because installing it never
+# requires visiting GitHub). Forks are a stronger "actually built-on" signal than stars (a star
+# is a bookmark; a fork is a derivative), so a heavily-forked but under-starred utility still
+# clears. Below ALL FOUR → the drain skips it as filler. One place, tunable; consumed by
+# drain.score_candidates via clears_popularity_floor(). Gates NEW drain authoring only, never
+# catalogued.
 # The floor lives in ONE place: esp_atlas_core.floor. These names are re-exported so existing
 # callers (scorer.STAR_FLOOR, scorer.clears_popularity_floor) keep working, but the values are
 # no longer defined here -- scripts/firmware_floor_audit.py used to re-type them by hand, and

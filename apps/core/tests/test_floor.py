@@ -8,7 +8,7 @@ keep cutting.
 """
 from __future__ import annotations
 
-from esp_atlas_core.floor import FORK_FLOOR, STAR_FLOOR, clears_popularity_floor
+from esp_atlas_core.floor import DOWNLOAD_FLOOR, FORK_FLOOR, STAR_FLOOR, clears_popularity_floor
 
 
 # --- pre-existing two-signal behaviour (regression) --------------------------------------------
@@ -80,3 +80,32 @@ def test_malformed_homepage_is_not_editorial():
 
 def test_homepage_with_no_host_is_not_editorial():
     assert clears_popularity_floor(3, 0, "https:///no-host") is False
+
+
+# --- launcher-download signal (the M5Launcher/Evil-Cardputer/Doom-for-Cardputer class) ---------
+
+def test_high_download_count_clears_the_floor_even_at_one_star():
+    """M5Launcher class: 1 star, 0 forks, no homepage — but 120k launcher downloads clears it."""
+    assert clears_popularity_floor(1, 0, None, 120_000) is True
+
+
+def test_download_count_just_under_the_floor_does_not_clear():
+    assert clears_popularity_floor(0, 0, None, DOWNLOAD_FLOOR - 1) is False
+
+
+def test_download_floor_boundary_is_inclusive():
+    assert clears_popularity_floor(0, 0, None, DOWNLOAD_FLOOR) is True
+
+
+def test_missing_downloads_is_safe_and_counts_as_zero():
+    assert clears_popularity_floor(0, 0, None, None) is False
+    assert clears_popularity_floor(30, 0, None, None) is True   # existing stars signal unaffected
+
+
+def test_downloads_keyword_does_not_disturb_existing_star_fork_homepage_behaviour():
+    """Passing downloads=None (the default every pre-existing caller still uses) must not change
+    any previously-covered stars/forks/homepage outcome."""
+    assert clears_popularity_floor(30, 0, None, None) is True
+    assert clears_popularity_floor(2, 40, None, None) is True
+    assert clears_popularity_floor(3, 4, None, None) is False
+    assert clears_popularity_floor(6, 3, "https://ethicalhackersden.org", None) is True

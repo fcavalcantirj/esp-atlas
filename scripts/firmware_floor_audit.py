@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 """Firmware popularity-floor AUDIT + CI GATE (SPEC-firmware-floor.md).
 
-Reads the STORED, dated `popularity` block (stars/forks/as_of) from every catalogued firmware's
-frontmatter — NO live fetch, fully offline and deterministic — and flags any firmware below BOTH
-floors (stars < STAR_FLOOR AND forks < FORK_FLOOR) that isn't curated-exempt. Downloads are NOT a
-signal: a launcher/M5Burner download count is never fetched, stored, or consulted here. That
-stored data is written at author time by the drain (jr/tools.author_firmware_and_recipes) and
-backfilled onto pre-existing entries by scripts/popularity_backfill.py.
+Reads the STORED, dated `popularity` block (stars/forks/downloads/as_of) from every catalogued
+firmware's frontmatter — NO live fetch, fully offline and deterministic — and flags any firmware
+below ALL FOUR signals (stars < STAR_FLOOR AND forks < FORK_FLOOR AND downloads < DOWNLOAD_FLOOR)
+that isn't curated-exempt. Downloads (the launcher's own install count — the fourth signal, the
+one the M5Launcher/Evil-Cardputer/Doom-for-Cardputer class clears but stars/forks never will)
+are never fetched live here — the launcher catalog, not GitHub, is the only source for them — so
+this audit reads them from whatever was PERSISTED at author time (jr/tools.
+author_firmware_and_recipes) or backfilled onto pre-existing entries by
+scripts/popularity_backfill.py. A record that clears the floor only via downloads must carry the
+number here or this offline gate cannot see the signal that justified authoring it.
 
 The THIRD floor signal — an independent editorial home (esp_atlas_core.floor) — is not stored
 in `popularity` and so is NOT consulted here; it is checked live, at admission time
 (jr/stage_admit.py, jr/drain.py) and re-checked live by scripts/jr_pr_guard.py. This audit stays
-a pure stars/forks check on whatever already made it into the catalog, routed through the shared
-`clears_popularity_floor()` so its notion of "below floor" can never hand-drift from admission's.
+a pure stars/forks/downloads check on whatever already made it into the catalog, routed through
+the shared `clears_popularity_floor()` so its notion of "below floor" can never hand-drift from
+admission's.
 
 An entry with NO popularity block yet is reported separately as "unstamped" — it just needs
 backfilling, it is NOT a floor failure (a fresh catalog must not hard-fail CI before the backfill
@@ -50,7 +55,7 @@ from esp_atlas_core.paths import DATA_DIR  # noqa: E402
 # package with its own venv and is not importable from the repo-root scripts runtime).
 # Imported, never re-typed. Both this CI gate and jr/scorer.py read the SAME constants from
 # esp_atlas_core.floor, so they cannot drift apart the way they previously did.
-from esp_atlas_core.floor import FORK_FLOOR, STAR_FLOOR, clears_popularity_floor  # noqa: E402
+from esp_atlas_core.floor import DOWNLOAD_FLOOR, FORK_FLOOR, STAR_FLOOR, clears_popularity_floor  # noqa: E402
 
 # Human-curated / known-good firmware — exempt from the floor regardless of popularity. Used
 # because the firmware schema carries no trust/tier field; this is the original curated set.
@@ -75,8 +80,8 @@ def _owner_repo(url: str) -> str | None:
 
 
 def _popularity(fm: dict) -> dict | None:
-    """The stored popularity snapshot ({stars, forks, as_of}) if this firmware has one, else
-    None (unstamped). Never fetches — reads only what author/backfill persisted."""
+    """The stored popularity snapshot ({stars, forks, downloads, as_of}) if this firmware has
+    one, else None (unstamped). Never fetches — reads only what author/backfill persisted."""
     pop = fm.get("popularity")
     return pop if isinstance(pop, dict) else None
 
@@ -94,8 +99,8 @@ def audit(data_dir=None, exempt=CURATED_EXEMPT):
         }
 
     An entry is `flagged` when it is NOT exempt, IS stamped, AND stars < STAR_FLOOR AND
-    forks < FORK_FLOOR. Unstamped entries are reported separately and never flagged. Downloads
-    are never read or reported — they are not a popularity signal.
+    forks < FORK_FLOOR AND downloads < DOWNLOAD_FLOOR. Unstamped entries are reported
+    separately and never flagged.
     """
     root = Path(data_dir) if data_dir is not None else DATA_DIR
     entries, flagged, unstamped, exempt_ids = [], [], [], []
@@ -111,6 +116,7 @@ def audit(data_dir=None, exempt=CURATED_EXEMPT):
         pop = _popularity(fm)
         entry = {"id": fid, "url": fm.get("url"), "repo": repo,
                  "stars": (pop or {}).get("stars"), "forks": (pop or {}).get("forks"),
+                 "downloads": (pop or {}).get("downloads"),
                  "as_of": (pop or {}).get("as_of"),
                  "exempt": fid in exempt, "stamped": pop is not None, "below_floor": False}
         entries.append(entry)
@@ -122,13 +128,14 @@ def audit(data_dir=None, exempt=CURATED_EXEMPT):
             continue
         stars = pop.get("stars") or 0
         forks = pop.get("forks") or 0
+        downloads = pop.get("downloads") or 0
         # Homepage is not part of the stored `popularity` snapshot (schema/firmware.schema.json),
-        # so this offline audit only ever sees the stars/forks signals — the third, editorial-home
-        # signal is consulted live, at admission time (jr/stage_admit.py, jr/drain.py) and by the
-        # live PR re-check (scripts/jr_pr_guard.py). Still routed through the ONE shared
-        # definition (esp_atlas_core.floor) rather than a hand-typed comparison, so this can never
-        # silently drift from what admission/PR-guard consider a clear.
-        entry["below_floor"] = not clears_popularity_floor(stars, forks)
+        # so this offline audit only ever sees the stars/forks/downloads signals — the third,
+        # editorial-home signal is consulted live, at admission time (jr/stage_admit.py,
+        # jr/drain.py) and by the live PR re-check (scripts/jr_pr_guard.py). Still routed through
+        # the ONE shared definition (esp_atlas_core.floor) rather than a hand-typed comparison, so
+        # this can never silently drift from what admission/PR-guard consider a clear.
+        entry["below_floor"] = not clears_popularity_floor(stars, forks, downloads=downloads)
         if entry["below_floor"]:
             flagged.append(entry)
     flagged.sort(key=lambda e: ((e["stars"] or 0), (e["forks"] or 0), e["id"]))
@@ -141,14 +148,14 @@ def print_report(report):
     flagged = report["flagged"]
     unstamped = report["unstamped"]
     print("FIRMWARE POPULARITY-FLOOR AUDIT (stored, offline)")
-    print(f"  floors: stars >= {STAR_FLOOR} OR forks >= {FORK_FLOOR}")
+    print(f"  floors: stars >= {STAR_FLOOR} OR forks >= {FORK_FLOOR} OR downloads >= {DOWNLOAD_FLOOR}")
     print(f"  scanned {len(entries)} firmware · {len(report['exempt'])} curated-exempt · "
           f"{len(flagged)} below both floors · {len(unstamped)} unstamped\n")
     print("SUB-FLOOR (below both floors — CI FAILS on these: id · stars · forks):")
     if not flagged:
         print("    none — every stamped, non-curated firmware clears a floor")
     for e in flagged:
-        print(f"    {e['id']}: stars={e['stars']} forks={e['forks']} "
+        print(f"    {e['id']}: stars={e['stars']} forks={e['forks']} downloads={e['downloads']} "
               f"as_of={e['as_of']}  ({e['repo']})")
     print("\nUNSTAMPED (no popularity block yet — run popularity:backfill; NOT a CI failure):")
     if not unstamped:
@@ -176,8 +183,8 @@ def main(argv=None):
     else:
         print_report(report)
     if args.ci and report["flagged"]:
-        print(f"\nCI GATE FAILED: {len(report['flagged'])} firmware below both popularity floors "
-              f"(stars < {STAR_FLOOR} AND forks < {FORK_FLOOR}).",
+        print(f"\nCI GATE FAILED: {len(report['flagged'])} firmware below every popularity floor "
+              f"(stars < {STAR_FLOOR} AND forks < {FORK_FLOOR} AND downloads < {DOWNLOAD_FLOOR}).",
               file=sys.stderr)
         return 1
     return 0

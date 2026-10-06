@@ -196,11 +196,13 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
                                 "reason": f"already_{ledger_record['status']}: '{rec['id']}' is in the proposed ledger"})
                 continue
         # Popularity floor (SPEC-firmware-floor.md): author only if the candidate clears ANY of
-        # three signals — stars >= STAR_FLOOR, forks >= FORK_FLOOR, or an independent editorial
-        # home (downloads are never consulted). Below all three is filler: skip it, tagged
+        # four signals — stars >= STAR_FLOOR, forks >= FORK_FLOOR, an independent editorial
+        # home, or the launcher's own download count >= DOWNLOAD_FLOOR (the M5Launcher/
+        # Evil-Cardputer/Doom-for-Cardputer class: a repo nobody stars because installing it
+        # never requires visiting GitHub). Below all four is filler: skip it, tagged
         # "below-popularity-floor", carrying id+repo so run_drain can record it "seen" in the
         # ledger (so it isn't re-fetched every run). NEW-authoring only.
-        if not clears_popularity_floor(stars, forks_count, meta.get("homepage")):
+        if not clears_popularity_floor(stars, forks_count, meta.get("homepage"), e.get("download")):
             skipped.append({"name": e.get("name"), "github": gh, "reason": "below-popularity-floor",
                             "firmware_id": rec["id"], "repo": owner_repo,
                             "stars": stars, "forks": forks_count})
@@ -275,10 +277,13 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
     and never poisons the rest of the batch. `existing_ids` seeds the in-batch id-dedup set
     (default: the real catalogued_firmware_ids()) so two candidates that would slug to the same
     firmware_id, or a candidate matching something already in the atlas, can't collide. Threads
-    each candidate's popularity (stars + forks from repo_meta — never downloads, which are not a
-    stored metric) and `today` (the run date; injectable for deterministic tests) into authoring
-    so a dated `popularity` snapshot is persisted on every authored firmware
-    (SPEC-firmware-floor.md).
+    each candidate's popularity (stars + forks from repo_meta, PLUS the launcher's own download
+    count — the fourth floor signal, SPEC-firmware-floor.md) and `today` (the run date;
+    injectable for deterministic tests) into authoring so a dated `popularity` snapshot is
+    persisted on every authored firmware. Persisting downloads matters even when stars/forks
+    alone already clear the floor: a record that clears ONLY on downloads must still carry the
+    number so every offline guard (jr_pr_guard, g2_guard, firmware_floor_audit) can re-verify it
+    later without a live fetch — the launcher catalog, not GitHub, is the only source for it.
     Returns (authored_ids, dropped: [{id, reason}])."""
     existing_ids = set(tools.catalogued_firmware_ids()) if existing_ids is None else set(existing_ids)
     authored: list[str] = []
@@ -294,7 +299,7 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
             firmware_id=fid, name=rec["name"], url=rec["url"], category=rec["category"],
             boards=[rec["board"]], body=body, capabilities=rec.get("capabilities"),
             maintainer=rec.get("maintainer"),
-            stars=s.get("stars"), forks=s.get("forks"), today=today,
+            stars=s.get("stars"), forks=s.get("forks"), downloads=s.get("download"), today=today,
         )
         if "error" in result:
             dropped.append({"id": fid, "reason": f"author_error: {result['error']}"})

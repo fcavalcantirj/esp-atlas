@@ -265,6 +265,21 @@ def test_render_firmware_both_present_writes_both():
     assert list(fm["popularity"]) == ["stars", "forks", "as_of"]
 
 
+def test_render_firmware_downloads_present_persists_alongside_stars_and_forks():
+    """The fourth floor signal (SPEC-firmware-floor.md): a launcher download count is persisted
+    into the popularity block alongside stars/forks/as_of, so an offline guard can re-verify a
+    record that clears the floor only via downloads without a live fetch."""
+    fm = _rendered_fm(writers.render_firmware(FW_RECORD, FW_SOURCES, TODAY,
+                                              popularity={"stars": 1, "forks": 0, "downloads": 120_000}))
+    assert fm["popularity"] == {"stars": 1, "forks": 0, "downloads": 120_000, "as_of": TODAY}
+
+
+def test_render_firmware_downloads_absent_omits_the_key():
+    fm = _rendered_fm(writers.render_firmware(FW_RECORD, FW_SOURCES, TODAY,
+                                              popularity={"stars": 4200, "forks": None}))
+    assert "downloads" not in fm["popularity"]
+
+
 def test_render_firmware_neither_present_writes_no_popularity_block():
     fm = _rendered_fm(writers.render_firmware(FW_RECORD, FW_SOURCES, TODAY,
                                               popularity={"stars": None, "forks": None}))

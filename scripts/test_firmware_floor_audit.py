@@ -1,10 +1,12 @@
 """Tests for scripts/firmware_floor_audit.py — the OFFLINE firmware popularity-floor audit + CI gate.
 
 TDD, no network: the audit reads the STORED `popularity` block from frontmatter and never fetches.
-The floor is GitHub stars OR forks only — downloads are NOT a signal (SPEC-firmware-floor.md).
-Uses a small temp fixture data dir with coding-domain ESP32 example firmware (an on-device dev
-tool, a code editor), never lorem ipsum. Mirrors scripts/test_data_completion.py's tmp_path
-fixture-writing convention.
+The floor is GitHub stars OR forks OR an independent editorial home OR a PERSISTED launcher
+download count >= DOWNLOAD_FLOOR (SPEC-firmware-floor.md — the fourth signal, restored so the
+M5Launcher/Evil-Cardputer/Doom-for-Cardputer class of 1-star-but-tens-of-thousands-of-installs
+firmware isn't wrongly floored). Uses a small temp fixture data dir with coding-domain ESP32
+example firmware (an on-device dev tool, a code editor), never lorem ipsum. Mirrors
+scripts/test_data_completion.py's tmp_path fixture-writing convention.
 
 Run: python3 -m pytest scripts/test_firmware_floor_audit.py -q
 """
@@ -82,6 +84,60 @@ sources:
 ---
 
 # Cardputer REPL
+"""
+
+# A non-curated coding firmware STAMPED below both GitHub floors (1 star, 0 forks) but with a
+# PERSISTED launcher download count clearing DOWNLOAD_FLOOR (the M5Launcher class) -> NOT flagged.
+FW_HIGH_DOWNLOAD_MD = """---
+id: cardputer-launcher-clone
+type: firmware
+name: Cardputer Launcher Clone
+url: https://github.com/devuser/cardputer-launcher-clone
+category: multi
+popularity:
+  stars: 1
+  forks: 0
+  downloads: 2000
+  as_of: '2026-09-01'
+socs:
+- esp32-s3
+sources:
+- field: '*'
+  url: https://github.com/devuser/cardputer-launcher-clone
+  verified: '2026-09-01'
+- field: popularity
+  url: https://github.com/devuser/cardputer-launcher-clone
+  verified: '2026-09-01'
+---
+
+# Cardputer Launcher Clone
+"""
+
+# Same shape, but the persisted download count sits ONE below DOWNLOAD_FLOOR with zero stars and
+# zero forks -> still flagged (the threshold resists trivial gaming).
+FW_LOW_DOWNLOAD_MD = """---
+id: cardputer-filler-clone
+type: firmware
+name: Cardputer Filler Clone
+url: https://github.com/devuser/cardputer-filler-clone
+category: multi
+popularity:
+  stars: 0
+  forks: 0
+  downloads: 1999
+  as_of: '2026-09-01'
+socs:
+- esp32-s3
+sources:
+- field: '*'
+  url: https://github.com/devuser/cardputer-filler-clone
+  verified: '2026-09-01'
+- field: popularity
+  url: https://github.com/devuser/cardputer-filler-clone
+  verified: '2026-09-01'
+---
+
+# Cardputer Filler Clone
 """
 
 # A curated / known-good firmware (bruce is on CURATED_EXEMPT) -> exempt even sub-floor / unstamped.
@@ -213,18 +269,27 @@ def test_curated_exempt_ids_exist():
         "Either restore the record or drop the id from the exempt list."
     )
 
-def test_stored_popularity_never_carries_downloads(tmp_path, capsys):
-    """Downloads are not a metric anymore: an audited entry's dict never reports a 'downloads'
-    key, and the printed report never mentions downloads."""
-    _write_firmware(tmp_path, "cardputer-git", FW_SUBFLOOR_MD)
+def test_stored_download_count_clears_the_floor_even_at_one_star(tmp_path):
+    """M5Launcher class: 1 star, 0 forks — below both GitHub floors — but a PERSISTED launcher
+    download count >= DOWNLOAD_FLOOR (the fourth signal) clears it, offline, from stored data
+    alone. The audited entry's dict carries the persisted count."""
+    _write_firmware(tmp_path, "cardputer-launcher-clone", FW_HIGH_DOWNLOAD_MD)
 
     report = audit.audit(tmp_path)
-    entry = next(e for e in report["entries"] if e["id"] == "cardputer-git")
-    assert "downloads" not in entry
+    entry = next(e for e in report["entries"] if e["id"] == "cardputer-launcher-clone")
+    assert entry["downloads"] == 2000
+    assert entry["below_floor"] is False
+    assert report["flagged"] == []
 
-    audit.main(["--data-dir", str(tmp_path)])
-    out = capsys.readouterr().out
-    assert "download" not in out.lower()
+
+def test_stored_download_count_one_under_the_floor_with_zero_stars_still_flags(tmp_path):
+    """The threshold resists trivial gaming: 1999 downloads and zero stars/forks stays filler."""
+    _write_firmware(tmp_path, "cardputer-filler-clone", FW_LOW_DOWNLOAD_MD)
+
+    report = audit.audit(tmp_path)
+    flagged_ids = {e["id"] for e in report["flagged"]}
+    assert flagged_ids == {"cardputer-filler-clone"}
+    assert audit.main(["--data-dir", str(tmp_path), "--ci"]) == 1
 
 
 # --- one floor, one definition (Phase 1 PR 1.3) ---------------------------
@@ -251,22 +316,17 @@ def test_audit_and_scorer_share_one_floor_definition():
 
     assert audit.STAR_FLOOR is floor.STAR_FLOOR
     assert audit.FORK_FLOOR is floor.FORK_FLOOR
+    assert audit.DOWNLOAD_FLOOR is floor.DOWNLOAD_FLOOR
     assert scorer.STAR_FLOOR is floor.STAR_FLOOR
     assert scorer.FORK_FLOOR is floor.FORK_FLOOR
     assert audit.clears_popularity_floor is floor.clears_popularity_floor
     assert scorer.clears_popularity_floor is floor.clears_popularity_floor
 
 
-def test_downloads_are_not_a_floor_anywhere():
-    """No module involved in the gate may still define a downloads threshold."""
-    import sys
-    from pathlib import Path
-
-    jr_dir = Path(__file__).resolve().parent.parent / "jr"
-    if str(jr_dir) not in sys.path:
-        sys.path.insert(0, str(jr_dir))
-    import scorer
+def test_download_floor_is_defined_once_in_esp_atlas_core():
+    """DOWNLOAD_FLOOR (the restored fourth signal) lives in esp_atlas_core.floor ONLY — the same
+    module whose STAR_FLOOR/FORK_FLOOR this audit and jr/scorer.py already share, so the fourth
+    signal can't drift the way the first three once did."""
     from esp_atlas_core import floor
 
-    for mod in (audit, scorer, floor):
-        assert not hasattr(mod, "DOWNLOAD_FLOOR"), f"{mod.__name__} still defines DOWNLOAD_FLOOR"
+    assert floor.DOWNLOAD_FLOOR == 2000
