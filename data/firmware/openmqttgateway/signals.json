@@ -1,7 +1,7 @@
 {
  "calls": 16,
  "errors": 0,
- "fetched": "2026-09-29",
+ "fetched": "2026-10-06",
  "notes": [],
  "ref": "development",
  "repo": "1technophile/OpenMQTTGateway",
@@ -2051,6 +2051,18 @@
    "soc": null,
    "token": "esp32dev",
    "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L2173"
+  },
+  {
+   "extra": {
+    "env": "isno-super",
+    "file": "environments.ini"
+   },
+   "kind": "platformio",
+   "line": 2199,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/blob/development/environments.ini#L2199"
   }
  ]
 }
