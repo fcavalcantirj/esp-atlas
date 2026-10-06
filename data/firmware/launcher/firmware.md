@@ -46,13 +46,13 @@ sources:
   verified: '2026-09-10'
 - field: summary
   url: https://github.com/bmorcelli/Launcher
-  verified: '2026-09-20'
-summary: "Launcher is a firmware application launcher for ESP32\u2011based devices\
-  \ (such as M5Stack, Lilygo, SeeedStudio, Waveshare, CYD, Marauder, etc.) that enables\
-  \ users to install and manage binaries via OTA, SD card, or a Web UI, and provides\
-  \ file, partition, and configuration management tools."
+  verified: '2026-10-06'
+summary: "Launcher is a firmware application for ESP32\u2011based devices (such as\
+  \ M5Stack, Lilygo, SeeedStudio, Waveshare, CYD, Marauder, etc.) that offers a menu\u2011\
+  driven interface to install and manage other binaries via OTA, SD card, or a Web\
+  \ UI, plus file management, configuration, and partition\u2011management tools."
 readme_lang: en
-readme_sha: c790b5ac2fd473978e275b3a66cfd5e53c86e0815cc60c28ce46b8c4da7098c7
+readme_sha: c86ec30a06862b3811f97fe0eb1f629abbcb1b715d8b7d13113fb4b66463ab3e
 ---
 
 # Launcher

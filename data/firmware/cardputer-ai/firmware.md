@@ -15,7 +15,7 @@ sources:
   verified: '2026-09-19'
 - field: summary
   url: https://github.com/therezor/cardputer-ai
-  verified: '2026-09-20'
+  verified: '2026-10-06'
 maintainer: therezor
 capabilities:
 - wifi
@@ -23,13 +23,12 @@ popularity:
   stars: 85
   forks: 10
   as_of: '2026-09-20'
-summary: "Cardputer AI is a fully offline chatbot firmware for the M5Stack Cardputer\
-  \ (including the ADV variant) that embeds a quantized TinyStories\u2011Instruct\
-  \ language model (3\u202FM or 8\u202FM parameters) and runs locally on the ESP32\u2011\
-  S3, providing chat, story\u2011generation and raw completion modes with limited\
-  \ context and kindergarten\u2011level knowledge."
+summary: "Cardputer AI is an open\u2011source chatbot firmware that runs entirely\
+  \ offline on an ESP32\u2011S3\u2011based Cardputer device with 512\u202FKB RAM,\
+  \ using an 8\u2011million\u2011parameter TinyTalk\u20112 model to hold simple English\
+  \ conversations at about 5 tokens per second."
 readme_lang: en
-readme_sha: 9d7ac1acc017ac4156a24550794c60cd1ff027edcf8c8f400c7ef0704420e770
+readme_sha: 4cd180ab4877c5ccdc6959e8d861f558485a7fecef27bdb1bf43b269215c1317
 ---
 
 Admitted by jr/scorer.py rule authored.

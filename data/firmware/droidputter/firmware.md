@@ -22,13 +22,15 @@ sources:
   verified: '2026-09-20'
 - field: summary
   url: https://github.com/fcavalcantirj/droidputter
-  verified: '2026-09-20'
-summary: "Droidputter is an Android app that lets an ESP32\u2011S3 run unmodified\
-  \ Cardputer applications by using the phone (via USB\u2011OTG) as the display, keyboard,\
-  \ GPS source and flasher, with a patched M5GFX/M5Cardputer shim that mirrors the\
-  \ ESP32\u2019s framebuffer over the native USB\u2011Serial link."
+  verified: '2026-10-06'
+summary: "Droidputter lets an ESP32\u2011S3 run unmodified Cardputer applications\
+  \ while an Android phone provides the display, keyboard, GPS and flashing, by patching\
+  \ M5GFX/M5Cardputer to tee pixel writes over the chip's native USB\u2011CDC and\
+  \ merge phone input frames. The app builds sources on demand via GitHub Actions,\
+  \ flashes the firmware from the phone, and mirrors the ESP32\u2011S3 screen onto\
+  \ the phone."
 readme_lang: en
-readme_sha: 510e5f41888677189a07949a58c1a9926054de15fd98b4659c055dde79585df7
+readme_sha: d031b88c60323274481f5dd0e3eacb14389d5c9ebcbdd972aef2a97a09bef624
 ---
 
 Run open-source Cardputer apps on Android: plug an ESP32-S3 over USB-OTG and the phone is the screen, keyboard, GPS and flasher. Apps are rebuilt on demand from GitHub against a display/keyboard shim.

@@ -22,13 +22,15 @@ sources:
   verified: '2026-09-02'
 - field: summary
   url: https://github.com/laserir/MCLite
-  verified: '2026-09-20'
-summary: "MCLite is a lightweight off\u2011grid messaging firmware for LilyGo T\u2011\
-  Deck Plus and T\u2011Watch Ultra devices that uses the MeshCore mesh network to\
-  \ provide encrypted direct and group chats, optional GPS/telemetry sharing, and\
-  \ SOS alerts, all configured via a single JSON file without internet or pairing."
+  verified: '2026-10-06'
+summary: "MCLite is a lightweight off\u2011grid messaging firmware for the LilyGo\
+  \ T\u2011Deck\u202FPlus and T\u2011Watch\u202FUltra that uses the MeshCore LoRa\
+  \ mesh to enable encrypted direct and group chats, GPS sharing, and basic safety\
+  \ alerts without any internet or pairing. All settings are stored in a single JSON\
+  \ file on an SD card, allowing groups to configure the devices once and then copy\
+  \ the card to each unit."
 readme_lang: en
-readme_sha: 63d4188212c1a88e9c0655d53cdfcf6608480c06d6c4c3905c5d9c5cb457b5ef
+readme_sha: 3380ddb3d479155400b039135b93227e03b6f56409d7ebf3be579db3f7f19a2d
 ---
 
 MCLite — MeshCore companion firmware for LilyGo T-Deck Plus

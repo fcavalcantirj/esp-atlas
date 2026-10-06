@@ -19,6 +19,12 @@ sources:
 - field: popularity
   url: https://github.com/AspikRay/Solotputer
   verified: '2026-10-06'
+- field: summary
+  url: https://github.com/AspikRay/Solotputer
+  verified: '2026-10-06'
+summary: The firmware, called Slotputer, was developed using the Arduino IDE.
+readme_lang: ru
+readme_sha: bf7de35fcc48e2e95cfc4a5f58f9ea531b5813dc9772026c4d597dcde494e7ac
 ---
 
 imported from m5stick, upside down screen fixed.
