@@ -1,7 +1,7 @@
 {
  "calls": 8,
  "errors": 0,
- "fetched": "2026-09-29",
+ "fetched": "2026-10-06",
  "notes": [],
  "ref": "pioarduino",
  "repo": "geo-tp/ESP32-Bit-Pirate",
@@ -36,7 +36,8 @@
    "bit_pirate_17_xiao-esp32s3",
    "esp32-s3-devkitc-1",
    "esp32-s3-devkitc1-n16r2",
-   "esp32-s3-devkitc1-n16r8"
+   "esp32-s3-devkitc1-n16r8",
+   "esp32-s3-fh4r2"
   ]
  },
  "signals": [
@@ -238,11 +239,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 242,
+   "line": 202,
    "rank": 2,
    "soc": null,
    "token": "m5stack-stamps3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L242"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L202"
   },
   {
    "extra": {
@@ -250,11 +251,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 354,
+   "line": 282,
    "rank": 2,
    "soc": null,
    "token": "m5stack-stamps3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L354"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L282"
   },
   {
    "extra": {
@@ -262,11 +263,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 467,
+   "line": 363,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L467"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L363"
   },
   {
    "extra": {
@@ -274,11 +275,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 583,
+   "line": 445,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L583"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L445"
   },
   {
    "extra": {
@@ -286,11 +287,23 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 688,
+   "line": 521,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc1-n16r8",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L688"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L521"
+  },
+  {
+   "extra": {
+    "env": "s3-supermini",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 599,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-fh4r2",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L599"
   },
   {
    "extra": {
@@ -298,11 +311,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 795,
+   "line": 678,
    "rank": 2,
    "soc": null,
    "token": "m5stack-stamps3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L795"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L678"
   },
   {
    "extra": {
@@ -310,11 +323,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 906,
+   "line": 755,
    "rank": 2,
    "soc": null,
    "token": "m5stack-stamps3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L906"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L755"
   },
   {
    "extra": {
@@ -322,11 +335,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1017,
+   "line": 832,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc1-n16r8",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1017"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L832"
   },
   {
    "extra": {
@@ -334,11 +347,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1130,
+   "line": 913,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc1-n16r2",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1130"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L913"
   },
   {
    "extra": {
@@ -346,11 +359,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1243,
+   "line": 994,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1243"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L994"
   },
   {
    "extra": {
@@ -358,11 +371,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1360,
+   "line": 1079,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1360"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1079"
   },
   {
    "extra": {
@@ -370,11 +383,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1360,
+   "line": 1079,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1360"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1079"
   },
   {
    "extra": {
@@ -382,11 +395,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1513,
+   "line": 1194,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1513"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1194"
   },
   {
    "extra": {
@@ -394,11 +407,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1623,
+   "line": 1270,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc1-n16r8",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1623"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1270"
   },
   {
    "extra": {
@@ -406,11 +419,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1732,
+   "line": 1350,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc1-n16r2",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1732"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1350"
   },
   {
    "extra": {
@@ -418,11 +431,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1852,
+   "line": 1438,
    "rank": 2,
    "soc": null,
    "token": "heltec_wifi_lora_32_V3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1852"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1438"
   },
   {
    "extra": {
@@ -430,11 +443,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1957,
+   "line": 1514,
    "rank": 2,
    "soc": null,
    "token": "um_pros3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1957"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1514"
   }
  ]
 }
