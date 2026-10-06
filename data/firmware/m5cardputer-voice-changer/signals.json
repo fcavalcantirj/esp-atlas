@@ -1,0 +1,14 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-10-06",
+ "notes": [],
+ "ref": "main",
+ "repo": "pierrebak/M5Cardputer_Voice-Changer",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": []
+}
