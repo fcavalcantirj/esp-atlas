@@ -1,9 +1,13 @@
 # esp-atlas
 
 > A community-maintained, datasheet-verified knowledge base for the entire ESP32
-> family (SoCs, modules, dev boards) stored as plain markdown with YAML frontmatter.
-> Every hard spec cites an official source — if it isn't verified, it isn't stated.
-> Data is queryable via a search/wizard/ask layer built on the same repo.
+> family — SoCs, modules, dev boards, AND the firmware that runs on them (Cardputer,
+> M5Stack, Flipper-devboard, and pentest/RF tools like Marauder, Bruce, Ghost ESP,
+> Meshcore). Stored as plain markdown with YAML frontmatter; every hard spec cites an
+> official source — if it isn't verified, it isn't stated. Each firmware page is a
+> flash guide: which board it runs on, what it does, and how to flash it. Queryable
+> via search/wizard and a JSON API, and every page also serves a clean markdown view
+> for LLMs and agents (append `?format=md`).
 
 esp-atlas exists because most ESP32 guides are one person's blog, frozen at publish
 date, with unverified specs and no way to query them. This repo is the opposite:
@@ -15,6 +19,9 @@ self-validate, then PR.
 
 - [esp-atlas.com](https://esp-atlas.com): the live site — wizard and search on `/`,
   one page per part at `/parts/<id>` (SoCs, modules, boards), side-by-side `/compare`.
+- Firmware catalog: one page per firmware at `/firmware/<id>` — a flash guide with the
+  boards it runs on, its capabilities, and cited popularity. Browse all at `/firmware`.
+  Append `?format=md` to any page for a token-efficient markdown view built for agents.
 - [API](https://esp-atlas.com/api/docs): `GET /api/parts`, `GET /api/parts/{id}`,
   `GET /api/search?q=&soc=&brand=&type=`, `GET /api/facets`, `POST /api/wizard` — the same
   records as JSON, every spec with its source.
@@ -37,7 +44,8 @@ self-validate, then PR.
 - [schema/](schema/): JSON Schema contracts (`soc.schema.json`, `module.schema.json`,
   `board.schema.json`) — the authoritative field list for every record.
 - [data/](data/): the dataset itself — `socs/`, `modules/`, `boards/`, `brands/`,
-  `companions/`, one markdown file per part, YAML frontmatter + prose.
+  `companions/`, `firmware/`, `recipes/` — one markdown file per record, YAML
+  frontmatter + prose, every spec source-cited.
 - [templates/](templates/): blank soc/module/board templates to copy when adding a
   new record — every field commented with what it is and its source requirement.
 
