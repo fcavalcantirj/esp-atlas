@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-10-06",
+ "notes": [],
+ "ref": "main",
+ "repo": "shlappa1000/M5-Clicker-Hamster",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "target"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "target.bin",
+    "release": "SIDEBUTTONM5STICKCPLUS2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "target",
+   "url": "https://github.com/shlappa1000/M5-Clicker-Hamster/releases/download/SIDEBUTTONM5STICKCPLUS2/target.bin"
+  }
+ ]
+}
