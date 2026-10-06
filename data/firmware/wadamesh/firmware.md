@@ -26,13 +26,13 @@ sources:
   verified: '2026-09-10'
 - field: summary
   url: https://github.com/ALLFATHER-BV/wadamesh
-  verified: '2026-09-20'
+  verified: '2026-10-06'
 summary: "WADAMESH BETA is an open\u2011source companion\u2011radio firmware that\
   \ adds a full LVGL touchscreen user interface\u2014including map, chat, contacts,\
   \ channels and settings\u2014to MeshCore\u2011based mesh radios on ESP32\u2011S3\
-  \ boards such as LilyGo T\u2011Deck, Heltec V4, and others."
+  \ boards such as LilyGo T\u2011Deck, Heltec V4 and other supported devices."
 readme_lang: en
-readme_sha: ab3cf184e3bf4879854dc347079cbca225db8612dc38238aa7c936d537b26f25
+readme_sha: 0a3516606d26d7b18c9fede2e9ae784aee350ad1c9b88626ba5c2ee4b984c617
 ---
 
 Touch-UI MeshCore firmware for LilyGo T-Deck / Heltec V4 TFT (ESP32-S3). The wadamesh app; depends on a MeshCore fork. Split out of meshcomod.

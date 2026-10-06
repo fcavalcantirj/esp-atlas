@@ -15,18 +15,18 @@ sources:
   verified: '2026-09-07'
 - field: summary
   url: https://github.com/clackups/draftling
-  verified: '2026-09-20'
+  verified: '2026-10-06'
 maintainer: clackups
 popularity:
   stars: 85
   forks: 7
   as_of: '2026-09-20'
-summary: "Draftling is firmware for various ESP32\u2011based e\u2011paper and LCD\
-  \ devices that provides a distraction\u2011free, WYSIWYG Markdown editor with BLE\
-  \ (or USB) keyboard input, file browsing, split\u2011screen editing, and built\u2011\
-  in Git synchronization."
+summary: "Draftling is firmware for e\u2011paper or LCD writer devices that provides\
+  \ a distraction\u2011free WYSIWYG editor for Markdown and Fountain screenplay files,\
+  \ supporting BLE keyboards, split\u2011screen editing, Git synchronization, and\
+  \ a wide range of ESP32\u2011based hardware."
 readme_lang: en
-readme_sha: badb3af11a51b001b87a3dfe027e1ea81e65dd653abb2eb1fcf01f899b0fb8a2
+readme_sha: bd7d036917e94e51ab43af36397e8b28247da906fd14ee98804dabfeac25743c
 ---
 
 Admitted by jr/scorer.py rule authored.

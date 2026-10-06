@@ -20,14 +20,13 @@ sources:
   verified: '2026-09-02'
 - field: summary
   url: https://github.com/adafruit/circuitpython
-  verified: '2026-09-20'
+  verified: '2026-10-06'
 summary: "CircuitPython is an open\u2011source, beginner\u2011friendly version of\
-  \ Python designed for microcontrollers, allowing users to edit code via drag\u2011\
-  and\u2011drop on a CIRCUITPY drive (or over BLE) with automatic reload and no additional\
-  \ software. It provides unified hardware APIs, a large collection of device libraries,\
-  \ and safe\u2011mode features for reliable development."
+  \ Python designed for microcontrollers, allowing code to be edited via drag\u2011\
+  and\u2011drop on a CIRCUITPY drive (or over BLE) with automatic reload and providing\
+  \ unified hardware APIs and a large library ecosystem."
 readme_lang: en
-readme_sha: 41f8b5d3a2a9f055412055548649e56e24094966ec842fd200e429f049fb7fbb
+readme_sha: 9db1bc54c93ed9850e5d3d997197418922862c0c4765996061298a538337da76
 ---
 
 CircuitPython - a Python implementation for teaching coding with microcontrollers

@@ -24,15 +24,15 @@ sources:
   verified: '2026-09-01'
 - field: summary
   url: https://github.com/0ct0sec/M5PORKCHOP
-  verified: '2026-09-20'
-summary: "PORKCHOP is firmware for the M5Cardputer (ESP32\u2011S3) that transforms\
-  \ the pocket keyboard into a Wi\u2011Fi security research tool, offering active\
-  \ handshake capture, passive recon, GPS wardriving, spectrum analysis, BLE spam,\
-  \ beacon injection, and a web file manager, all wrapped in a mood\u2011driven XP\
-  \ system. It is intended for educational and authorized penetration\u2011testing\
-  \ use."
+  verified: '2026-10-06'
+summary: "PORKCHOP is firmware for the M5Cardputer (ESP32\u2011S3) that turns the\
+  \ device into a dual\u2011band Wi\u2011Fi pentesting companion, providing packet\
+  \ capture, handshake/PMKID extraction, GPS\u2011enabled wardriving, spectrum analysis,\
+  \ BLE spam, beacon injection and ESP\u2011NOW device sync, all wrapped in a mood\u2011\
+  driven UI. It is intended as an educational tool for authorized Wi\u2011Fi security\
+  \ research."
 readme_lang: en
-readme_sha: aa492f179c0ca5e1a0003052c4cbc38166f1357a37a5c725ffed6f765ea86dc2
+readme_sha: d02f97ed4dcd862444476a55aae7890bdff5fb2cdd55429119e583ac78b8fa08
 ---
 
 ON NO! Someone put an RPG in a packet sniffer

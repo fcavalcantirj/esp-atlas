@@ -19,6 +19,14 @@ sources:
 - field: popularity
   url: https://github.com/pierrebak/M5Cardputer_Voice-Changer
   verified: '2026-10-06'
+- field: summary
+  url: https://github.com/pierrebak/M5Cardputer_Voice-Changer
+  verified: '2026-10-06'
+summary: "A firmware sketch for the M5Cardputer that continuously records audio and,\
+  \ when the 'Go' button is pressed, applies a high\u2011pitch effect and plays it\
+  \ back, featuring an updated UI with icons, colors, and a dynamic recording indicator."
+readme_lang: en
+readme_sha: cbad5813f92e49db8fe9188eccb63a9c47ed82972e356ff5aba0cdb2c7ba4aaf
 ---
 
 Turn your #M5Cardputer by @M5stack

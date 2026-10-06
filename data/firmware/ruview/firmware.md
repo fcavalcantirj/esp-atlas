@@ -30,15 +30,15 @@ sources:
   verified: '2026-09-04'
 - field: summary
   url: https://github.com/ruvnet/RuView
-  verified: '2026-09-20'
-summary: "RuView is a Wi\u2011Fi sensing platform that leverages Channel State Information\
-  \ from low\u2011cost ESP32 sensors to detect presence, breathing, heart rate, activity\
-  \ and camera\u2011free 17\u2011keypoint pose through walls, and exposes the data\
-  \ as Home Assistant, Apple Home, Google Home and Alexa entities via MQTT/Matter.\
-  \ It runs entirely on edge hardware (ESP32 mesh with optional Cognitum Seed) with\
-  \ no cameras, wearables or cloud required."
+  verified: '2026-10-06'
+summary: "RuView is a WiFi\u2011based sensing platform that captures Channel State\
+  \ Information from low\u2011cost ESP32 nodes to detect presence, occupancy, breathing,\
+  \ heart rate, activity, and camera\u2011free 17\u2011keypoint pose through walls,\
+  \ and exposes this data to major smart\u2011home ecosystems via MQTT and Matter.\
+  \ It runs entirely on edge hardware (ESP32 mesh with optional Cognitum Seed) and\
+  \ includes a suite of modular AI\u2011driven analytics and automation tools."
 readme_lang: en
-readme_sha: bf998c8e4bd4184c1f412e21fecdcb6c2d96df33363c517d7a98e8e48aa33bd6
+readme_sha: 27add259c55ead3a56a0ba4492f3d33c3d93597f596fb3561dbcdaa8dd377983
 ---
 
 RuView turns commodity WiFi signals into spatial sensing — presence detection,
