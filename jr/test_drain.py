@@ -355,9 +355,9 @@ def _coding_entry(**overrides):
 
 
 def test_score_candidates_skips_candidate_below_all_floors():
-    """stars=3 AND forks=1 → below both floors → skipped, not authored (downloads are never
-    consulted — a high launcher download count no longer rescues a candidate)."""
-    entry = _coding_entry(download=999999)
+    """stars=3 AND forks=1 AND download=500 (below DOWNLOAD_FLOOR) → below every floor →
+    skipped, not authored."""
+    entry = _coding_entry(download=500)
     meta = _fake_meta(full_name="devuser/cardputer-git", stars=3, forks=1,
                       description="An on-device git client for the Cardputer")
 
@@ -370,6 +370,23 @@ def test_score_candidates_skips_candidate_below_all_floors():
     assert skipped[0]["firmware_id"] == "cardputer-git"
     assert skipped[0]["repo"] == "devuser/cardputer-git"
     assert "download" not in skipped[0]
+
+
+def test_score_candidates_authors_via_high_download_count_despite_low_stars():
+    """M5Launcher class (SPEC-firmware-floor.md): stars=1, forks=0 — below both GitHub floors —
+    but a launcher download count >= DOWNLOAD_FLOOR clears the floor and the candidate is
+    authored, not skipped."""
+    entry = _coding_entry(download=120_000)
+    meta = _fake_meta(full_name="devuser/cardputer-git", stars=1, forks=0,
+                      description="An on-device git client for the Cardputer")
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta)
+
+    assert skipped == []
+    assert len(scored) == 1
+    assert scored[0]["record"]["id"] == "cardputer-git"
+    assert scored[0]["download"] == 120_000
 
 
 def test_score_candidates_authors_when_forks_clear_the_floor():
@@ -560,9 +577,11 @@ def test_author_selected_writes_schema_valid_firmware_and_recipe(cleanup_fixture
 
 
 def test_author_selected_stamps_popularity_block_with_citation(cleanup_fixture):
-    """(a) Authoring persists a dated popularity{stars,forks,as_of} snapshot from the candidate's
-    repo stars/forks (never downloads — downloads are not a stored metric), plus a `popularity`
-    source citation; `today` (the run date) is injected for determinism."""
+    """(a) Authoring persists a dated popularity{stars,forks,downloads,as_of} snapshot from the
+    candidate's repo stars/forks PLUS the launcher's own download count — the fourth floor
+    signal (SPEC-firmware-floor.md), threaded through so a record that clears the floor only on
+    downloads still carries the number for every offline guard — plus a `popularity` source
+    citation; `today` (the run date) is injected for determinism."""
     authored, dropped = drain.author_selected(_fixture_selected(), existing_ids=set(),
                                               today="2026-09-01")
 
@@ -570,9 +589,8 @@ def test_author_selected_stamps_popularity_block_with_citation(cleanup_fixture):
     assert authored == [FIXTURE_ID]
     fm = tools._frontmatter(tools.FIRMWARE_DIR / FIXTURE_ID / "firmware.md")
     jsonschema.validate(fm, FIRMWARE_SCHEMA)
-    # _fixture_selected(): stars=30, forks=4
-    assert fm["popularity"] == {"stars": 30, "forks": 4, "as_of": "2026-09-01"}
-    assert "downloads" not in fm["popularity"]
+    # _fixture_selected(): stars=30, forks=4, download=100
+    assert fm["popularity"] == {"stars": 30, "forks": 4, "downloads": 100, "as_of": "2026-09-01"}
     assert any(s["field"] == "popularity" and s["verified"] == "2026-09-01"
                for s in fm["sources"])
 

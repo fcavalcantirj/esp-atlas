@@ -608,6 +608,23 @@ def test_author_firmware_and_recipes_persists_popularity_snapshot(cleanup_firmwa
     assert star_src["verified"] == "2026-09-01"
 
 
+def test_author_firmware_and_recipes_persists_downloads_when_known(cleanup_firmware_fixture):
+    """(b) The fourth floor signal (SPEC-firmware-floor.md): a launcher download count, when
+    passed, is persisted into the SAME dated popularity snapshot as stars/forks — so a record
+    that clears the floor only via downloads still carries the number for every offline guard
+    to re-verify later, without a live fetch."""
+    result = tools.author_firmware_and_recipes(
+        firmware_id=FW_POP_FIXTURE_ID, name="Zzz Tools Fixture Firmware",
+        url="https://github.com/octocat/Hello-World", category="multi",
+        boards=["m5cardputer"], body="A tools fixture firmware for popularity tests.",
+        stars=1, forks=0, downloads=120_000, today="2026-09-01",
+    )
+
+    assert "error" not in result, result
+    fm = tools._frontmatter(tools.FIRMWARE_DIR / FW_POP_FIXTURE_ID / "firmware.md")
+    assert fm["popularity"] == {"stars": 1, "forks": 0, "downloads": 120_000, "as_of": "2026-09-01"}
+
+
 def test_author_firmware_and_recipes_omits_popularity_when_unknown(cleanup_firmware_fixture):
     """Never invent: with no stars/forks passed, no popularity block (or citation) is written."""
     result = tools.author_firmware_and_recipes(

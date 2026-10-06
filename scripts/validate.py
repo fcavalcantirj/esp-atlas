@@ -11,7 +11,8 @@ inheritance refs) lives in esp_atlas_core.validate so this script, the
 `esp-atlas validate` CLI command, and the API's POST /validate stay in sync.
 
 Also mechanically enforces the firmware popularity floor (SPEC-firmware-floor.md: GitHub
-stars >= 25 OR forks >= 25, downloads are not a signal) via check_popularity_floor() below,
+stars >= 25 OR forks >= 25 OR an independent editorial home OR a persisted launcher download
+count >= 2000) via check_popularity_floor() below,
 which reuses firmware_floor_audit.audit() (same directory) so the floor definition lives in
 exactly one place. This makes the floor a validation-time gate, not just a drain-time one.
 """

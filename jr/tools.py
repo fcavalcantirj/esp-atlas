@@ -517,15 +517,18 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
                                 maintainer: str | None = None, license: str | None = None,
                                 distribution: list[str] | None = None,
                                 stars: int | None = None,
-                                forks: int | None = None, today: str | None = None) -> dict:
+                                forks: int | None = None, downloads: int | None = None,
+                                today: str | None = None) -> dict:
     """DETERMINISTIC authoring — the model supplies ONLY judgment (category, which catalogued
     `boards` it runs on, capabilities from the README). `socs` and every recipe's `chip_family`
     are DERIVED from the board records — the model never touches a chip id (kills the
     soc-fabrication class, e.g. CatHack's esp32-s3). Writes the firmware + one recipe per board,
     all consistent by construction; it edits no test file. Popularity (SPEC-firmware-floor.md):
-    `stars` + `forks` (repo_meta) persist as a dated `popularity` snapshot with a `popularity`
-    source citation, only when known (never invented); downloads are NOT a stored metric. `today`
-    (injectable ISO run date, default today) is its `as_of` and the sources' `verified`."""
+    `stars` + `forks` (repo_meta) and `downloads` (the launcher's own install count — the fourth
+    floor signal) persist as a dated `popularity` snapshot with a `popularity` source citation,
+    only when known (never invented) — a record that clears the floor ONLY on downloads must
+    still carry the number so every offline guard can re-verify it later without a live fetch.
+    `today` (injectable ISO run date, default today) is its `as_of` and the sources' `verified`."""
     import datetime as dt
     import re
     if not re.fullmatch(r"[a-z][a-z0-9-]{1,39}", firmware_id or "") or re.search(r"\d{4}-\d\d", firmware_id):
@@ -541,8 +544,11 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
     today = today or dt.date.today().isoformat()
     src = [{"field": "*", "url": url, "verified": today}]
     popularity, fw_sources = None, src
-    if stars is not None or forks is not None:   # known → persist; never invent
-        popularity = {"stars": int(stars or 0), "forks": int(forks or 0), "as_of": today}
+    if stars is not None or forks is not None or downloads is not None:   # known → persist; never invent
+        popularity = {"stars": int(stars or 0), "forks": int(forks or 0)}
+        if downloads is not None:
+            popularity["downloads"] = int(downloads)
+        popularity["as_of"] = today
         fw_sources = src + [{"field": "popularity", "url": url, "verified": today}]
     author_firmware_record(firmware_id, name, url, category, socs, fw_sources, body,
                            maintainer=maintainer, license=license,

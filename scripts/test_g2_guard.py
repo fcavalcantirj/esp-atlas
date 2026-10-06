@@ -29,6 +29,7 @@ Body.
 """
 
 POP = "popularity:\n  stars: {stars}\n  forks: {forks}\n  as_of: '2026-09-01'\n"
+POP_DL = "popularity:\n  stars: {stars}\n  forks: {forks}\n  downloads: {downloads}\n  as_of: '2026-09-01'\n"
 
 
 def _git(repo: Path, *args: str) -> None:
@@ -111,6 +112,34 @@ def test_below_floor_deletion_passes(repo):
     _git(repo, "commit", "-qam", "delete victim and its recipe")
     rc, out = _run(repo, base2)
     assert rc == 0, out   # below-floor firmware is deletable — but only with its recipe gone too
+
+
+def test_high_persisted_download_count_protects_from_deletion_without_override(repo):
+    """M5Launcher class: 1 star, 0 forks — below both GitHub floors — but a persisted
+    popularity.downloads>=2000 (the fourth floor signal) makes the record floor-passing, so
+    deletion without an override is refused."""
+    base = _base(repo)
+    (repo / "data" / "firmware" / "victim" / "firmware.md").write_text(
+        FW.format(fid="victim", name="Victim", popularity=POP_DL.format(stars=1, forks=0, downloads=2000)))
+    _git(repo, "commit", "-qam", "stamp victim with a qualifying download count")
+    base2 = _base(repo)
+    (repo / "data" / "firmware" / "victim" / "firmware.md").unlink()
+    _git(repo, "commit", "-qam", "delete victim")
+    rc, out = _run(repo, base2)
+    assert rc == 1 and "floor-passing" in out
+
+
+def test_persisted_download_count_just_under_the_floor_with_zero_stars_stays_deletable(repo):
+    base = _base(repo)
+    (repo / "data" / "firmware" / "victim" / "firmware.md").write_text(
+        FW.format(fid="victim", name="Victim", popularity=POP_DL.format(stars=0, forks=0, downloads=1999)))
+    _git(repo, "commit", "-qam", "sink victim below every floor")
+    base2 = _base(repo)
+    (repo / "data" / "firmware" / "victim" / "firmware.md").unlink()
+    (repo / "data" / "recipes" / "m5cardputer__victim" / "recipe.md").unlink()
+    _git(repo, "commit", "-qam", "delete victim and its recipe")
+    rc, out = _run(repo, base2)
+    assert rc == 0, out
 
 
 def test_recipe_deletion_with_firmware_intact_fails(repo):

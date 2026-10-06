@@ -78,16 +78,18 @@ def deleted_paths(diff_text: str) -> list[str]:
 
 def protection_reasons(fid: str, fm: dict) -> list[str]:
     """Why deleting this firmware record is refused (empty when deletable). Judged from the
-    record as it was BEFORE deletion: curated-exempt, floor-passing stored popularity, or
-    ≥1000 stored stars. Unstamped records (no popularity block) clear nothing and pass."""
+    record as it was BEFORE deletion: curated-exempt, floor-passing stored popularity (stars,
+    forks, or the fourth signal — a persisted launcher download count, SPEC-firmware-floor.md;
+    there is no live homepage check here, same as before), or ≥1000 stored stars. Unstamped
+    records (no popularity block) clear nothing and pass."""
     reasons = []
     if fid in CURATED_EXEMPT:
         reasons.append("curated-exempt")
     pop = fm.get("popularity") if isinstance(fm, dict) else None
     pop = pop if isinstance(pop, dict) else {}
-    stars, forks = pop.get("stars") or 0, pop.get("forks") or 0
-    if clears_popularity_floor(pop.get("stars"), pop.get("forks")):
-        reasons.append(f"floor-passing (stars={stars} forks={forks})")
+    stars, forks, downloads = pop.get("stars") or 0, pop.get("forks") or 0, pop.get("downloads") or 0
+    if clears_popularity_floor(pop.get("stars"), pop.get("forks"), downloads=pop.get("downloads")):
+        reasons.append(f"floor-passing (stars={stars} forks={forks} downloads={downloads})")
     if (pop.get("stars") or 0) >= G2_STAR_GUARD:
         reasons.append(f"stars>={G2_STAR_GUARD}")
     return reasons

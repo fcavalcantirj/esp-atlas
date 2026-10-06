@@ -86,8 +86,8 @@ def test_clears_floor_on_forks_alone():
 
 
 def test_fails_floor_when_both_below():
-    """3 stars and 4 forks — below BOTH floors — never clears, no matter how many downloads the
-    launcher/M5Burner catalog reports (downloads are not a signal at all anymore)."""
+    """3 stars and 4 forks, no homepage, no downloads passed — below every signal — never
+    clears."""
     assert clears_popularity_floor(stars=3, forks=4) is False
 
 

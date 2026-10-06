@@ -26,9 +26,10 @@
       "properties": {
         "stars": { "type": "integer" },
         "forks": { "type": "integer" },
+        "downloads": { "type": "integer" },
         "as_of": { "type": "string", "format": "date" }
       },
-      "description": "OPTIONAL dated popularity snapshot (SPEC-firmware-floor.md): GitHub `stars` + `forks` at author time, plus the `as_of` YYYY-MM-DD snapshot date. Stored so the CI floor gate (scripts/firmware_floor_audit.py --ci) can enforce the popularity floor offline, with no live fetch (clears on stars OR forks). Dated because popularity drifts and is refreshable. `downloads` was REMOVED 2026-09-04: the launcher/M5Burner count is self-reported by a third-party catalog and counts installs of someone else re-upload, so it is not a citable popularity signal. additionalProperties is false here, so a record reintroducing it fails validation rather than drifting back."
+      "description": "OPTIONAL dated popularity snapshot (SPEC-firmware-floor.md): GitHub `stars` + `forks`, plus `downloads` (a launcher/M5Burner install count) at author time, plus the `as_of` YYYY-MM-DD snapshot date. Stored so the CI floor gate (scripts/firmware_floor_audit.py --ci) and the live PR/G2 guards can enforce the popularity floor without a live fetch (clears on stars OR forks OR an independent editorial home OR downloads >= DOWNLOAD_FLOOR). Dated because popularity drifts and is refreshable. `downloads` was REMOVED 2026-09-04 (self-reported by a third-party catalog, not citable) and RESTORED 2026-10-06 as a qualifying fourth signal: a high launcher/M5Burner download count is proof of real community use that a stars-only bar misses (the M5Launcher/Evil-Cardputer/Doom-for-Cardputer class — tens of thousands of installs, 1 GitHub star), and the 2000-download threshold resists trivial gaming. additionalProperties is false here, so any OTHER field reintroduced fails validation rather than drifting back."
     },
     "benefits_from": {
       "type": "array",

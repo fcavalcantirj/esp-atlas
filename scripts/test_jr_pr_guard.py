@@ -35,6 +35,21 @@ def test_github_io_homepage_does_not_rescue_a_below_floor_repo_live():
         **OK, "stargazers_count": 3, "forks_count": 1, "homepage": "https://x.github.io"}}))
 
 
+def test_high_persisted_download_count_clears_the_floor_even_at_one_star_live():
+    """M5Launcher class: live GitHub shows 1 star/0 forks (no live download count exists — the
+    launcher catalog, not GitHub, is the source), but the record's PERSISTED
+    popularity.downloads>=2000 clears the floor on re-check."""
+    fm = {**FM, "popularity": {"stars": 1, "forks": 0, "downloads": 2000, "as_of": "2026-09-07"}}
+    assert g.check_record("p", fm, fetch=lambda r: {"status": 200, "json": {
+        **OK, "stargazers_count": 1, "forks_count": 0}}) == []
+
+
+def test_persisted_download_count_just_under_the_floor_does_not_rescue_zero_stars_live():
+    fm = {**FM, "popularity": {"stars": 0, "forks": 0, "downloads": 1999, "as_of": "2026-09-07"}}
+    assert any("below the floor live" in m for m in g.check_record("p", fm, fetch=lambda r: {"status": 200, "json": {
+        **OK, "stargazers_count": 0, "forks_count": 0}}))
+
+
 def test_a_record_without_a_snapshot_or_socs_or_a_github_url_is_refused():
     assert any("no dated popularity snapshot" in m for m in g.check_record("p", {**FM, "popularity": None}, fetch=lambda r: {"status": 200, "json": OK}))
     assert any("socs is empty" in m for m in g.check_record("p", {**FM, "socs": []}, fetch=lambda r: {"status": 200, "json": OK}))

@@ -1,10 +1,9 @@
 """The firmware popularity floor — ONE definition, imported by everything that gates on it.
 
 SPEC-firmware-floor.md: a firmware qualifies iff **stars >= STAR_FLOOR OR forks >= FORK_FLOOR
-OR it has an independent editorial home** (a real project site/blog, not the repo itself).
-Downloads are not a metric anywhere. A star is a bookmark; a fork is a derivative, a stronger
-"someone actually built on this" signal — so a heavily-forked but under-starred utility still
-clears.
+OR it has an independent editorial home OR launcher/M5Burner downloads >= DOWNLOAD_FLOOR**. A
+star is a bookmark; a fork is a derivative, a stronger "someone actually built on this" signal
+— so a heavily-forked but under-starred utility still clears.
 
 THE THIRD SIGNAL (editorial home). GitHub stars are not the same as notability: real, niche
 firmware with a genuine independent write-up (e.g. RogueDuck: 6 stars, under 25 forks, but a
@@ -13,6 +12,21 @@ counts as editorial evidence only when it is a non-empty URL whose host is neith
 nor a `*.github.io` domain — those name the repo itself or a GitHub Pages mirror of it, not an
 independent home. Filler with no homepage (e.g. `server-vampeta`: 3 stars, 0 forks) is unaffected
 and still cut — the third signal only ever widens what clears, never narrows it.
+
+THE FOURTH SIGNAL (launcher downloads). A prior revision of this module declared downloads dead
+("not a citable, stable metric") and gated on GitHub stars/forks/editorial-home only. That bar
+rejected exactly the firmware real users install most: M5Launcher (120k launcher downloads, 1
+GitHub star), Evil-Cardputer (92k downloads, 1 star), Doom-for-Cardputer (37k downloads, 1 star)
+— each sitting under a repo nobody stars because installing it never requires visiting GitHub.
+A launcher/M5Burner download count this high is not noise; it is the single strongest "real
+people are actually running this" signal the catalog has, stronger than a star a repo's own
+author can rack up in an afternoon. `DOWNLOAD_FLOOR = 2000` sits far enough above a trivially
+gamed number (a handful of friends clicking install) that clearing it is proof of real,
+widespread use — not a rescue for every low-star repo, just the ones genuinely in people's
+hands. Downloads are never fetched live (the launcher catalog, not GitHub, is the only source
+for them), so every caller that re-verifies this signal — offline guards and live PR checks
+alike — must read it from the record's PERSISTED `popularity.downloads` snapshot, never refetch
+it.
 
 WHY THIS MODULE EXISTS. Three different floors coexisted in this repo at once:
 
@@ -36,6 +50,7 @@ from urllib.parse import urlparse
 
 STAR_FLOOR = 25
 FORK_FLOOR = 25
+DOWNLOAD_FLOOR = 2000
 
 
 def _is_editorial_home(homepage: str | None) -> bool:
@@ -57,9 +72,13 @@ def _is_editorial_home(homepage: str | None) -> bool:
     return True
 
 
-def clears_popularity_floor(stars: int | None, forks: int | None, homepage: str | None = None) -> bool:
+def clears_popularity_floor(stars: int | None, forks: int | None, homepage: str | None = None,
+                            downloads: int | None = None) -> bool:
     """True iff `stars` or `forks` clears its floor, OR `homepage` names an independent editorial
-    home (see `_is_editorial_home`) — a real write-up/blog is a THIRD signal a stars/forks-only
-    bar misses. None counts as zero — an unstamped record has not been shown to clear anything,
-    and the floor is a claim about evidence, not a guess."""
-    return (stars or 0) >= STAR_FLOOR or (forks or 0) >= FORK_FLOOR or _is_editorial_home(homepage)
+    home (see `_is_editorial_home`), OR `downloads` (a launcher/M5Burner install count) clears
+    `DOWNLOAD_FLOOR` — a high download count is a FOURTH signal a stars/forks-only bar misses
+    (the M5Launcher/Evil-Cardputer/Doom-for-Cardputer class: tens of thousands of installs, 1
+    GitHub star). None counts as zero — an unstamped record has not been shown to clear
+    anything, and the floor is a claim about evidence, not a guess."""
+    return ((stars or 0) >= STAR_FLOOR or (forks or 0) >= FORK_FLOOR or _is_editorial_home(homepage)
+            or (downloads or 0) >= DOWNLOAD_FLOOR)

@@ -326,14 +326,16 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             continue
         fid = scorer._slug(scorer._repo_name_from_url(github)) or owner_repo or "(unnamed entry)"   # the report names every skip
         # Popularity floor (SPEC-firmware-floor.md, via esp_atlas_core.floor — never re-typed):
-        # below stars AND forks AND no independent editorial home is filler, rejected for
-        # FLOOR_REJECT_DAYS.
+        # below stars AND forks AND no independent editorial home AND no qualifying download
+        # count is filler, rejected for FLOOR_REJECT_DAYS. `downloads=None` explicit: this is
+        # the topic-admit/submission path, which has no launcher download count to pass (only
+        # jr/drain.py's launcher-catalog path has one) — no behavior change here.
         if meta.get("error"):
             note(skip_reject(fid, owner_repo, f"repo_unresolved: {meta['error'][:80]}", None, issue=issue))
             if issue:
                 _answer(ctx, slug, issue, _verdict_text(f"repo_unresolved: {meta['error'][:80]}", False, False))
             continue
-        if not clears_popularity_floor(meta.get("stars"), meta.get("forks"), meta.get("homepage")):
+        if not clears_popularity_floor(meta.get("stars"), meta.get("forks"), meta.get("homepage"), downloads=None):
             reason = f"below_floor: {meta.get('stars')} stars / {meta.get('forks')} forks"
             note(skip_reject(fid, owner_repo, reason, repo_id, issue=issue))
             if issue:
