@@ -1,7 +1,7 @@
 {
  "calls": 30,
  "errors": 0,
- "fetched": "2026-09-29",
+ "fetched": "2026-10-06",
  "notes": [
   "extra_configs matched more than 40 files; kept the 40 naming an ESP32 family first",
   "call budget exhausted while expanding extra_configs",
