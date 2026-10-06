@@ -46,16 +46,17 @@ function dataset() {
   return {
     "@type": "Dataset",
     "@id": DATASET_ID,
-    name: "esp-atlas — ESP32 SoCs, modules and dev boards",
+    name: "esp-atlas — ESP32 SoCs, modules, dev boards & firmware",
     description:
-      "Datasheet-cited records for the Espressif ESP32 family: SoCs, modules and development boards, " +
-      "each with radios, USB, form factor, dimensions, power and per-field source citations. " +
+      "Datasheet-cited records for the Espressif ESP32 family: SoCs, modules, development boards, " +
+      "and the firmware that runs on them (Cardputer, M5Stack, and pentest/RF tools like Marauder, Bruce, Ghost ESP). " +
+      "Boards carry radios, USB, form factor, dimensions and power; firmware carries capabilities, board compatibility and flash recipes — all with per-field source citations. " +
       "Stored as markdown with YAML frontmatter, validated against JSON Schema, queryable through a public API.",
     url: SITE_URL,
     license: CC_BY_SA,
     isAccessibleForFree: true,
     inLanguage: "en",
-    keywords: ["ESP32", "ESP32-S3", "ESP32-C3", "ESP32-C6", "Espressif", "development boards", "modules", "SoC", "datasheet", "Wi-Fi", "Bluetooth LE", "Zigbee", "Thread", "Matter"],
+    keywords: ["ESP32", "ESP32-S3", "ESP32-C3", "ESP32-C6", "Espressif", "development boards", "modules", "SoC", "datasheet", "ESP32 firmware", "Cardputer", "M5Stack", "Flipper Zero", "ESP32 Marauder", "Bruce firmware", "Ghost ESP", "flash firmware", "pentest", "Wi-Fi", "Bluetooth LE", "Zigbee", "Thread", "Matter"],
     creator: { "@id": ORG_ID },
     distribution: [
       { "@type": "DataDownload", encodingFormat: "text/markdown", contentUrl: dataFolderUrl() },
