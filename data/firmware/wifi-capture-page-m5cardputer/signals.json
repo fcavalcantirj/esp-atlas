@@ -1,0 +1,14 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-10-07",
+ "notes": [],
+ "ref": "main",
+ "repo": "ZrutrA/WiFi-Capture-Page-M5Cardputer",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": []
+}
