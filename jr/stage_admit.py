@@ -27,7 +27,7 @@ import scorer
 import tools
 import writers
 from budget import BudgetExceeded
-from esp_atlas_core.floor import clears_popularity_floor
+from esp_atlas_core.floor import clears_popularity_floor, is_editorial_home
 
 DEFAULT_BUDGET = 3
 MIN_CALLS_TO_CONTINUE = 5   # a repo-meta fetch costs >= 1 call; stop before stranding one
@@ -389,14 +389,23 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             continue
         repo_url = rec["url"]
         # Coerce whatever GitHub actually returned; a missing forks_count stays None so the
-        # writer omits only that field instead of dropping the whole popularity block.
+        # writer omits only that field instead of dropping the whole popularity block. `homepage`
+        # is stamped as `editorial_home` only when it actually clears is_editorial_home (the same
+        # rule clears_popularity_floor used two gates up to admit this candidate) — otherwise a
+        # candidate admitted ONLY via its editorial home would pass here but fail every later
+        # OFFLINE re-check (scripts/firmware_floor_audit.py), which cannot see a live homepage,
+        # and be discarded and re-discovered forever (the drift this stamp closes).
         pop_stars = meta.get("stars")
         pop_forks = meta.get("forks")
+        editorial_home = meta.get("homepage") if is_editorial_home(meta.get("homepage")) else None
+        popularity = {"stars": int(pop_stars) if isinstance(pop_stars, int) else None,
+                     "forks": int(pop_forks) if isinstance(pop_forks, int) else None}
+        if editorial_home is not None:
+            popularity["editorial_home"] = editorial_home
         text = writers.render_firmware(rec, [{"field": "*", "url": repo_url},
                                              {"field": "popularity", "url": repo_url}],
                                        today, needs_human=bool(res.get("needs_human")),
-                                       popularity={"stars": int(pop_stars) if isinstance(pop_stars, int) else None,
-                                                   "forks": int(pop_forks) if isinstance(pop_forks, int) else None})
+                                       popularity=popularity)
         fmd.parent.mkdir(parents=True, exist_ok=True)
         fmd.write_text(text, encoding="utf-8")
         paths.append(str(fmd.relative_to(ctx.root)))

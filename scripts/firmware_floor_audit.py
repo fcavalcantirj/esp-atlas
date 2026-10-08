@@ -12,11 +12,17 @@ author_firmware_and_recipes) or backfilled onto pre-existing entries by
 scripts/popularity_backfill.py. A record that clears the floor only via downloads must carry the
 number here or this offline gate cannot see the signal that justified authoring it.
 
-The THIRD floor signal — an independent editorial home (esp_atlas_core.floor) — is not stored
-in `popularity` and so is NOT consulted here; it is checked live, at admission time
-(jr/stage_admit.py, jr/drain.py) and re-checked live by scripts/jr_pr_guard.py. This audit stays
-a pure stars/forks/downloads check on whatever already made it into the catalog, routed through
-the shared `clears_popularity_floor()` so its notion of "below floor" can never hand-drift from
+The THIRD floor signal — an independent editorial home (esp_atlas_core.floor) — is ALSO checked
+live, at admission time (jr/stage_admit.py, jr/drain.py) and re-checked live by
+scripts/jr_pr_guard.py. Admission stamps whatever homepage URL actually cleared
+esp_atlas_core.floor.is_editorial_home() into `popularity.editorial_home` (jr/tools.py,
+jr/stage_admit.py) — the SAME durable-stamp pattern `downloads` already used — specifically so
+this offline audit can also see it: reading ONLY stars/forks/downloads let an editorial-home-
+only admission (few stars, few forks, no qualifying downloads, a real independent homepage —
+the RogueDuck class) pass the admit gate and then fail THIS gate on every subsequent tick,
+getting discarded and re-discovered forever (fixed 2026-10-08). This audit stays a pure,
+offline check on whatever was PERSISTED into the catalog, routed through the shared
+`clears_popularity_floor()` so its notion of "below floor" can never hand-drift from
 admission's.
 
 An entry with NO popularity block yet is reported separately as "unstamped" — it just needs
@@ -117,6 +123,7 @@ def audit(data_dir=None, exempt=CURATED_EXEMPT):
         entry = {"id": fid, "url": fm.get("url"), "repo": repo,
                  "stars": (pop or {}).get("stars"), "forks": (pop or {}).get("forks"),
                  "downloads": (pop or {}).get("downloads"),
+                 "editorial_home": (pop or {}).get("editorial_home"),
                  "as_of": (pop or {}).get("as_of"),
                  "exempt": fid in exempt, "stamped": pop is not None, "below_floor": False}
         entries.append(entry)
@@ -129,13 +136,13 @@ def audit(data_dir=None, exempt=CURATED_EXEMPT):
         stars = pop.get("stars") or 0
         forks = pop.get("forks") or 0
         downloads = pop.get("downloads") or 0
-        # Homepage is not part of the stored `popularity` snapshot (schema/firmware.schema.json),
-        # so this offline audit only ever sees the stars/forks/downloads signals — the third,
-        # editorial-home signal is consulted live, at admission time (jr/stage_admit.py,
-        # jr/drain.py) and by the live PR re-check (scripts/jr_pr_guard.py). Still routed through
-        # the ONE shared definition (esp_atlas_core.floor) rather than a hand-typed comparison, so
-        # this can never silently drift from what admission/PR-guard consider a clear.
-        entry["below_floor"] = not clears_popularity_floor(stars, forks, downloads=downloads)
+        # `editorial_home` is the admission-time homepage URL stamped ONLY when it cleared
+        # is_editorial_home() (jr/tools.py, jr/stage_admit.py) — re-run through
+        # clears_popularity_floor()'s OWN is_editorial_home() check here too, rather than
+        # trusted blindly, so a stamp can never silently drift from what this function
+        # considers editorial even if the stamping code's judgment ever changes.
+        entry["below_floor"] = not clears_popularity_floor(
+            stars, forks, pop.get("editorial_home"), downloads=downloads)
         if entry["below_floor"]:
             flagged.append(entry)
     flagged.sort(key=lambda e: ((e["stars"] or 0), (e["forks"] or 0), e["id"]))
