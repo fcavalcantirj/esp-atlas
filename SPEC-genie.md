@@ -1,6 +1,12 @@
 # SPEC — esp-atlas Genie (intent-driven flash agent · vision + contract)
 
 > Status: **VISION / DRAFT — NOT BUILT (2026-09-14, Felipe + agent co-design).**
+> **`generate_firmware` (generate-on-the-fly / "v0 for firmwares") is REJECTED
+> (2026-10-07, Felipe) — do not build it.** Generating novel firmware is a
+> compile/safety/liability swamp and not what the scene needs; the firmware already
+> exists and is loved. The bet is **curation + presentation**, not generation. The
+> freemium model in §9 rested on it and is therefore also shelved until a different
+> paid line is chosen.
 > Living document, to be revised before any code. Defers to `SPEC-INDEX.md` on every
 > ownership/vocabulary conflict. This is the north-star product doc: what the Genie is,
 > why it wins, how the experience feels, the tool/endpoint contract, and the explicit
@@ -111,8 +117,9 @@ The compat engine knows *firmware × board*. The Genie needs
 
 - **Now** `[flash-existing]`: intent → *pick an existing firmware* that does it → flash.
   Free tier. Near-zero marginal cost (retrieval + browser flash).
-- **Future** `[generate-on-the-fly]`: intent → *generate firmware* → compile → flash.
-  Paid tier. Real cost (LLM inference + compile toolchain per request).
+- ~~**Future** `[generate-on-the-fly]`: intent → *generate firmware* → compile → flash.
+  Paid tier. Real cost (LLM inference + compile toolchain per request).~~
+  **REJECTED (2026-10-07, Felipe) — do not build.** See status note at top.
 
 Architect the loop so "where the `.bin` comes from" is a swappable source — the future
 slots in without a rewrite.
@@ -147,10 +154,11 @@ uncertainty honestly.
 The free/paid split falls exactly on the **compute cost** line:
 
 - **Free:** retrieve an existing firmware + flash it. Near-zero marginal cost. Give it away.
-- **Paid (credits):** generate custom firmware on the fly — the expensive unit
-  (metered LLM + compile per request). **X credits/day, buy more.** Credits *must* cover
-  COGS: the product's generation calls burn esp-atlas's **own metered key** (never a
-  personal / Hermes-infra key, per estate rules).
+- ~~**Paid (credits):** generate custom firmware on the fly — the expensive unit
+  (metered LLM + compile per request). **X credits/day, buy more.**~~ **REJECTED
+  (2026-10-07, Felipe)** — this paid line was `generate_firmware`; shelved with it.
+  A future paid line, if any, must be chosen fresh. (If ever revived, generation calls
+  must burn esp-atlas's **own metered key**, never a personal / Hermes-infra key.)
 
 ## 10. Contract surface (API-first — the tools an agent/the face calls)
 
@@ -166,7 +174,7 @@ data/logic exists today; `[NEW]` = to build; `[FUTURE]` = paid/later.
 | `fit_check(board, firmware)` | Will it fit / physically work | board+fw → fits? (flash size, chip, **required radios/modules**) + reason | `[BUILT]` extended with capability gating |
 | `flash_recipe(board, firmware)` | The flashable recipe / one-click | board+fw → recipe + esp-web-tools handoff | `[BUILT]` (SPEC-wizard) |
 | `record_outcome(...)` | Log did-it-work for the compounding loop | board+fw+intent+result → cited outcome | `[NEW]` (§8) |
-| `generate_firmware(intent, board)` | Custom firmware on the fly | intent+board → compiled `.bin` | `[FUTURE]` (paid, §6) |
+| ~~`generate_firmware(intent, board)`~~ | ~~Custom firmware on the fly~~ | ~~intent+board → compiled `.bin`~~ | **`[REJECTED]` (2026-10-07, Felipe — do not build)** |
 
 The same contract is exposed three ways off one source of truth: **MCP tools**
 (agent-native, the differentiator vs pamfinds), **REST**, and **llms.txt**.
@@ -179,7 +187,8 @@ The same contract is exposed three ways off one source of truth: **MCP tools**
 - **New:** `identify_board` (camera/vision), the intent→capability→hardware brain
   (`resolve_intent` + capability metadata + physical gating), `record_outcome`, the
   agent-face experience + the living matrix UI, credits/freemium.
-- **Future:** `generate_firmware` (generate-on-the-fly, paid).
+- ~~**Future:** `generate_firmware` (generate-on-the-fly, paid).~~ **REJECTED
+  (2026-10-07, Felipe) — do not build.** See status note at top.
 
 ## 12. Non-goals / honest boundaries
 
