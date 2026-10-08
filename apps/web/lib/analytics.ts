@@ -52,16 +52,7 @@ export type EventName =
   | "verify_error"
   | "verify_unknown_chip"
   | "monitor_connect"
-  | "monitor_disconnect"
-  // Home rebuild (plug-to-flash): the hero's detect flow, the intent box, and
-  // the wall's capability filter rail.
-  | "home_detect_click"
-  | "home_detect_result"
-  | "home_detect_unknown_chip"
-  | "home_detect_error"
-  | "home_intent_query"
-  | "home_wall_filter"
-  | "home_board_search";
+  | "monitor_disconnect";
 
 export type OutboundLinkType =
   | "source"
@@ -90,10 +81,7 @@ export type ResultOrigin =
   | "brand"
   | "popular_firmware"
   | "intent"
-  | "build_guide"
-  | "detect"
-  | "wall"
-  | "board_browse";
+  | "build_guide";
 
 type ParamValue = string | number | boolean | undefined | null;
 export type EventParams = Record<string, ParamValue>;
