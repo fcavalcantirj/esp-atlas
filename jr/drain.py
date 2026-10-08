@@ -212,6 +212,7 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
             "download": e.get("download") or 0,
             "stars": stars,
             "forks": forks_count,
+            "homepage": meta.get("homepage"),
             "description": (meta.get("description") or e.get("description") or "").strip(),
         })
     return scored, skipped
@@ -278,12 +279,15 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
     (default: the real catalogued_firmware_ids()) so two candidates that would slug to the same
     firmware_id, or a candidate matching something already in the atlas, can't collide. Threads
     each candidate's popularity (stars + forks from repo_meta, PLUS the launcher's own download
-    count — the fourth floor signal, SPEC-firmware-floor.md) and `today` (the run date;
-    injectable for deterministic tests) into authoring so a dated `popularity` snapshot is
-    persisted on every authored firmware. Persisting downloads matters even when stars/forks
-    alone already clear the floor: a record that clears ONLY on downloads must still carry the
-    number so every offline guard (jr_pr_guard, g2_guard, firmware_floor_audit) can re-verify it
-    later without a live fetch — the launcher catalog, not GitHub, is the only source for it.
+    count — the fourth floor signal — PLUS `homepage`, the third floor signal, SPEC-firmware-
+    floor.md) and `today` (the run date; injectable for deterministic tests) into authoring so a
+    dated `popularity` snapshot is persisted on every authored firmware. Persisting downloads or
+    an editorial homepage matters even when stars/forks alone already clear the floor: a record
+    that clears ONLY on downloads, or ONLY on an independent editorial homepage, must still
+    carry the evidence so every offline guard (jr_pr_guard, g2_guard, firmware_floor_audit) can
+    re-verify it later without a live fetch — this is exactly the signal that used to be checked
+    ONLY live at admission and so was invisible to the offline per-tick guard, making an
+    editorial-home-only candidate re-discovered and re-rejected every tick forever.
     Returns (authored_ids, dropped: [{id, reason}])."""
     existing_ids = set(tools.catalogued_firmware_ids()) if existing_ids is None else set(existing_ids)
     authored: list[str] = []
@@ -299,7 +303,8 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
             firmware_id=fid, name=rec["name"], url=rec["url"], category=rec["category"],
             boards=[rec["board"]], body=body, capabilities=rec.get("capabilities"),
             maintainer=rec.get("maintainer"),
-            stars=s.get("stars"), forks=s.get("forks"), downloads=s.get("download"), today=today,
+            stars=s.get("stars"), forks=s.get("forks"), downloads=s.get("download"),
+            homepage=s.get("homepage"), today=today,
         )
         if "error" in result:
             dropped.append({"id": fid, "reason": f"author_error: {result['error']}"})

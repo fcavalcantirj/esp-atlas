@@ -53,10 +53,15 @@ FORK_FLOOR = 25
 DOWNLOAD_FLOOR = 2000
 
 
-def _is_editorial_home(homepage: str | None) -> bool:
+def is_editorial_home(homepage: str | None) -> bool:
     """True iff `homepage` is a real, independent project home — not the repo's own github.com
     page and not a `*.github.io` GitHub Pages mirror of it. A maintainer-run blog/site is
-    evidence a firmware is genuinely in use that a star count can miss (the RogueDuck class)."""
+    evidence a firmware is genuinely in use that a star count can miss (the RogueDuck class).
+
+    Public (not `_`-prefixed): callers that persist the editorial-home signal so it can be
+    re-verified OFFLINE (jr/tools.py, jr/stage_admit.py, scripts/firmware_floor_audit.py) need
+    to decide what counts as "editorial" using the exact same rule `clears_popularity_floor`
+    uses below — never a second, hand-typed copy of this check."""
     if not homepage:
         return False
     parsed = urlparse(homepage)
@@ -75,10 +80,10 @@ def _is_editorial_home(homepage: str | None) -> bool:
 def clears_popularity_floor(stars: int | None, forks: int | None, homepage: str | None = None,
                             downloads: int | None = None) -> bool:
     """True iff `stars` or `forks` clears its floor, OR `homepage` names an independent editorial
-    home (see `_is_editorial_home`), OR `downloads` (a launcher/M5Burner install count) clears
+    home (see `is_editorial_home`), OR `downloads` (a launcher/M5Burner install count) clears
     `DOWNLOAD_FLOOR` — a high download count is a FOURTH signal a stars/forks-only bar misses
     (the M5Launcher/Evil-Cardputer/Doom-for-Cardputer class: tens of thousands of installs, 1
     GitHub star). None counts as zero — an unstamped record has not been shown to clear
     anything, and the floor is a claim about evidence, not a guess."""
-    return ((stars or 0) >= STAR_FLOOR or (forks or 0) >= FORK_FLOOR or _is_editorial_home(homepage)
+    return ((stars or 0) >= STAR_FLOOR or (forks or 0) >= FORK_FLOOR or is_editorial_home(homepage)
             or (downloads or 0) >= DOWNLOAD_FLOOR)

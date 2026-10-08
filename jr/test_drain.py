@@ -24,6 +24,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import drain  # noqa: E402
 import ledger  # noqa: E402
 import tools  # noqa: E402
+from esp_atlas_core.floor import clears_popularity_floor  # noqa: E402
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+import firmware_floor_audit  # noqa: E402
 
 REPO = tools.REPO
 FIRMWARE_SCHEMA = json.loads((REPO / "schema/firmware.schema.json").read_text())
@@ -593,6 +597,46 @@ def test_author_selected_stamps_popularity_block_with_citation(cleanup_fixture):
     assert fm["popularity"] == {"stars": 30, "forks": 4, "downloads": 100, "as_of": "2026-09-01"}
     assert any(s["field"] == "popularity" and s["verified"] == "2026-09-01"
                for s in fm["sources"])
+
+
+def test_author_selected_stamps_editorial_home_and_clears_the_offline_audit(cleanup_fixture):
+    """REGRESSION (floor-enforcement drift, fixed 2026-10-08): a RogueDuck-class candidate --
+    few stars, 0 forks, no qualifying downloads, but a real independent editorial homepage --
+    clears clears_popularity_floor() at admit (score_candidates) because meta['homepage'] is
+    passed. Before the fix, author_selected() never threaded that homepage into
+    author_firmware_and_recipes(), so the authored firmware.md carried NO signal the OFFLINE
+    audit (scripts/firmware_floor_audit.py, which cannot fetch a live homepage) could see --
+    the record failed firmware_floor_audit on every subsequent tick, the per-tick guard
+    discarded the whole worktree, and the candidate was re-discovered and re-rejected forever.
+    Asserts the fix closes the drift: the SAME candidate clears BOTH the admit-time check AND
+    the offline audit, with no network fetch."""
+    entry = _coding_entry()
+    meta = _fake_meta(full_name="devuser/cardputer-git", stars=6, forks=3,
+                      homepage="https://ethicalhackersden.org",
+                      description="An on-device git client for the Cardputer")
+    assert clears_popularity_floor(6, 3, meta.get("homepage"), entry.get("download")) is True
+
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta)
+    assert skipped == []
+    selected = [{"record": scored[0]["record"], "download": scored[0]["download"],
+                "stars": scored[0]["stars"], "forks": scored[0]["forks"],
+                "homepage": scored[0]["homepage"], "description": scored[0]["description"]}]
+    selected[0]["record"] = dict(selected[0]["record"], id=FIXTURE_ID)
+
+    authored, dropped = drain.author_selected(selected, existing_ids=set(), today="2026-09-01")
+
+    assert dropped == []
+    assert authored == [FIXTURE_ID]
+    fm = tools._frontmatter(tools.FIRMWARE_DIR / FIXTURE_ID / "firmware.md")
+    jsonschema.validate(fm, FIRMWARE_SCHEMA)
+    assert fm["popularity"] == {"stars": 6, "forks": 3, "downloads": 0,
+                                "editorial_home": "https://ethicalhackersden.org",
+                                "as_of": "2026-09-01"}
+
+    report = firmware_floor_audit.audit()
+    assert FIXTURE_ID not in {e["id"] for e in report["flagged"]}
+    assert FIXTURE_ID not in {e["id"] for e in report["unstamped"]}
 
 
 def test_author_selected_dedups_against_existing_ids(cleanup_fixture):

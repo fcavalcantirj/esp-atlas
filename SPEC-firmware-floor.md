@@ -44,10 +44,20 @@ The third signal only ever **widens** what clears; it never narrows it. Filler w
 `server-vampeta`: 3 stars, 0 forks, `homepage: None` — is completely unaffected and still cut,
 same as before this signal existed.
 
-`homepage` is not part of the STORED `popularity` snapshot (see below), so it is consulted **live**
-at admission time (`jr/stage_admit.py`, `jr/drain.py`) and re-checked live by the PR guard
-(`scripts/jr_pr_guard.py`) — never by the offline audit (`scripts/firmware_floor_audit.py`), which
-only ever sees whatever stars/forks were stamped at author time.
+`homepage` is consulted **live** at admission time (`jr/stage_admit.py`, `jr/drain.py`) and
+re-checked live by the PR guard (`scripts/jr_pr_guard.py`). **Persistence is mandatory here too,
+same as downloads below**: a candidate admitted *only* because its live homepage cleared
+`is_editorial_home()` must have that fact STAMPED into the record — `popularity.editorial_home`,
+the homepage URL itself — or the offline audit (`scripts/firmware_floor_audit.py`, which never
+fetches live) would see only stars/forks/downloads, flag the record below-floor on the very next
+tick, and the per-tick guard would discard the whole worktree before it ever merges — silently
+re-discovering and re-rejecting the same candidate forever. (This was exactly the bug, fixed
+2026-10-08: the stamp closes it the same way `popularity.downloads` closes the download signal's
+own live/offline gap.) `jr/tools.py`'s `author_firmware_and_recipes` and `jr/stage_admit.py`'s
+admit write both stamp `editorial_home` — only when `is_editorial_home()` actually clears, never
+a plain github.com/github.io homepage — and `scripts/firmware_floor_audit.py` reads it back as
+the `homepage` argument to the SAME `clears_popularity_floor()`, so admission and the offline
+gate can never hand-drift apart on this signal either.
 
 ### The fourth signal: launcher downloads
 *(Removed 2026-09-04 on the grounds that a launcher/M5Burner download count is self-reported by
@@ -120,6 +130,7 @@ downloads). Fix — store the numbers, dated like a citation (popularity drifts)
   popularity:
     stars: <github stargazers_count>
     downloads: <launcher / M5Burner download count>
+    editorial_home: <the live homepage URL, only when it cleared is_editorial_home() at admission>
     as_of: <YYYY-MM-DD>   # snapshot date — popularity changes, so it is dated and refreshable
   ```
   Cite it (GitHub API + launcher catalog) in `sources`. The `as_of` date makes it a

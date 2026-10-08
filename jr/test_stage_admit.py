@@ -124,7 +124,12 @@ def test_floor_failing_repo_is_rejected_with_ttl_and_blocked(root, monkeypatch):
 def test_editorial_home_class_is_admitted_despite_low_stars_and_forks(root, monkeypatch):
     """RogueDuck class: 6 stars, 3 forks -- below BOTH floors -- but a real independent
     editorial homepage clears it via the third signal, and the live admission path (this
-    stage) actually consults it."""
+    stage) actually consults it. REGRESSION (floor-enforcement drift, fixed 2026-10-08): the
+    homepage that admitted this record must also be STAMPED into the persisted popularity
+    snapshot as `editorial_home`, or the OFFLINE audit (scripts/firmware_floor_audit.py, which
+    cannot fetch a live homepage) would flag this exact record as below-floor on every
+    subsequent tick, discard the worktree, and re-discover/re-reject the candidate forever --
+    this is the admit-vs-offline-guard disagreement the stamp closes."""
     monkeypatch.setattr(tools, "fetch_launcher_catalog",
                         lambda: [_entry("My Cardputer Tool", "https://github.com/n/newtool")])
     metas = {"repos/n/newtool": _meta("n/newtool", stars=6, forks=3,
@@ -133,7 +138,16 @@ def test_editorial_home_class_is_admitted_despite_low_stars_and_forks(root, monk
     res = stage_admit.run(_ctx(root, metas=metas), budget=3)
     assert res.admitted == 1 and res.rejects == {}
     fm = _read_fm(root / "data" / "firmware" / "newtool" / "firmware.md")
-    assert fm["popularity"] == {"stars": 6, "forks": 3, "as_of": "2026-09-07"}
+    assert fm["popularity"] == {"stars": 6, "forks": 3,
+                                "editorial_home": "https://ethicalhackersden.org",
+                                "as_of": "2026-09-07"}
+
+    import sys
+    sys.path.insert(0, str(REPO / "scripts"))
+    import firmware_floor_audit
+    report = firmware_floor_audit.audit(data_dir=root / "data")
+    assert "newtool" not in {e["id"] for e in report["flagged"]}
+    assert "newtool" not in {e["id"] for e in report["unstamped"]}
 
 
 def test_github_homepage_does_not_rescue_a_below_floor_repo(root, monkeypatch):

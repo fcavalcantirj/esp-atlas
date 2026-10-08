@@ -14,6 +14,7 @@ import subprocess
 import urllib.request
 from pathlib import Path
 
+from esp_atlas_core.floor import is_editorial_home
 from normalize import sanitize_firmware_name
 
 REPO = Path(__file__).resolve().parent.parent           # the esp-atlas repo root
@@ -518,16 +519,22 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
                                 distribution: list[str] | None = None,
                                 stars: int | None = None,
                                 forks: int | None = None, downloads: int | None = None,
+                                homepage: str | None = None,
                                 today: str | None = None) -> dict:
     """DETERMINISTIC authoring — the model supplies ONLY judgment (category, which catalogued
     `boards` it runs on, capabilities from the README). `socs` and every recipe's `chip_family`
     are DERIVED from the board records — the model never touches a chip id (kills the
     soc-fabrication class, e.g. CatHack's esp32-s3). Writes the firmware + one recipe per board,
     all consistent by construction; it edits no test file. Popularity (SPEC-firmware-floor.md):
-    `stars` + `forks` (repo_meta) and `downloads` (the launcher's own install count — the fourth
-    floor signal) persist as a dated `popularity` snapshot with a `popularity` source citation,
-    only when known (never invented) — a record that clears the floor ONLY on downloads must
-    still carry the number so every offline guard can re-verify it later without a live fetch.
+    `stars` + `forks` (repo_meta), `downloads` (the launcher's own install count — the fourth
+    floor signal), and `homepage` (the third floor signal, an independent editorial home —
+    checked via esp_atlas_core.floor.is_editorial_home, the SAME rule clears_popularity_floor
+    uses) persist as a dated `popularity` snapshot with a `popularity` source citation, only when
+    known (never invented) — a record that clears the floor ONLY on downloads or ONLY on an
+    editorial home must still carry the evidence so every offline guard (firmware_floor_audit)
+    can re-verify it later without a live fetch. `homepage` is stamped as `editorial_home` only
+    when it actually qualifies (a non-github.com/*.github.io URL); a plain github.com/github.io
+    homepage is never persisted as evidence, because it is none.
     `today` (injectable ISO run date, default today) is its `as_of` and the sources' `verified`."""
     import datetime as dt
     import re
@@ -543,11 +550,14 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
         capabilities = [c for c in capabilities if isinstance(c, str) and c in vocab] or None
     today = today or dt.date.today().isoformat()
     src = [{"field": "*", "url": url, "verified": today}]
+    editorial_home = homepage if is_editorial_home(homepage) else None
     popularity, fw_sources = None, src
-    if stars is not None or forks is not None or downloads is not None:   # known → persist; never invent
-        popularity = {"stars": int(stars or 0), "forks": int(forks or 0)}
+    if stars is not None or forks is not None or downloads is not None or editorial_home is not None:
+        popularity = {"stars": int(stars or 0), "forks": int(forks or 0)}   # known → persist; never invent
         if downloads is not None:
             popularity["downloads"] = int(downloads)
+        if editorial_home is not None:
+            popularity["editorial_home"] = editorial_home
         popularity["as_of"] = today
         fw_sources = src + [{"field": "popularity", "url": url, "verified": today}]
     author_firmware_record(firmware_id, name, url, category, socs, fw_sources, body,

@@ -321,6 +321,8 @@ def render_firmware(record: dict, sources: list[dict], today: str,
             pop_fm["forks"] = int(popularity["forks"])
         if isinstance(popularity.get("downloads"), int):
             pop_fm["downloads"] = int(popularity["downloads"])
+        if isinstance(popularity.get("editorial_home"), str) and popularity["editorial_home"]:
+            pop_fm["editorial_home"] = popularity["editorial_home"]
         if pop_fm:
             pop_fm["as_of"] = today
             fm["popularity"] = pop_fm
