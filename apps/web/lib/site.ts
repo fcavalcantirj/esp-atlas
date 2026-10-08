@@ -3,10 +3,11 @@
 
 export const SITE_NAME = "esp-atlas";
 export const SITE_EMOJI = "🧭";
-export const SITE_TAGLINE = "Which ESP32 for what you're building?";
+export const SITE_TAGLINE = "Which ESP32 board & firmware for what you're building?";
 export const SITE_DESCRIPTION =
-  "A community-maintained, datasheet-verified knowledge base of ESP32 SoCs, modules and dev boards. " +
-  "Every spec cites an official source. Ask the wizard which ESP32 fits your project.";
+  "Datasheet-verified catalog of ESP32 SoCs, modules, dev boards, and the firmware that runs on them — " +
+  "Cardputer, M5Stack, and pentest/RF tools like Marauder, Bruce and Ghost ESP. " +
+  "Every spec cites an official source; each firmware page is a flash guide.";
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://esp-atlas.com").replace(/\/+$/, "");
 
