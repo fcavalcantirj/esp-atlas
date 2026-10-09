@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-16T02:00:12.078416+00:00",
+      "expires": "2026-10-16T03:00:12.533071+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-09T02:00:12.078416+00:00"
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -280,15 +280,14 @@
       "timestamp": "2026-09-02T16:03:27.979825+00:00"
     },
     "ai-stackchan2-devcam": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "ai-stackchan2-devcam",
       "pr_ref": null,
       "reason": "below_floor: 21 stars / 3 forks",
       "repo": "ronron-gh/ai_stackchan2_devcam",
       "repo_id": 658224244,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "ai-stackchan2-for-debug": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -681,13 +680,14 @@
       "timestamp": "2026-09-02T16:03:28.063566+00:00"
     },
     "bme680environmental-monitorm5cardputer": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "bme680environmental-monitorm5cardputer",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "andrewdjohnson/bme680environmental-monitorm5cardputer",
       "repo_id": 1111195151,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "boot-linux-esp32s3-playground": {
@@ -1365,13 +1365,14 @@
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-lightmeter-cpp": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "cardputer-lightmeter-cpp",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 0 forks",
       "repo": "nongxl/cardputer_lightmeter_cpp",
       "repo_id": 1075185742,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "cardputer-llm": {
@@ -1979,26 +1980,24 @@
       "timestamp": "2026-09-08T17:00:16.540728+00:00"
     },
     "circuitpython": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "circuitpython",
       "pr_ref": null,
       "reason": "fork_of_uncatalogued: source=micropython/micropython",
       "repo": "adafruit/circuitpython",
       "repo_id": 66166069,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "circuitpython-m5stickplus2": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "circuitpython-m5stickplus2",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "microdev-steve/circuitpython_m5stickplus2",
       "repo_id": 872776533,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "cjmcu-4713-m5stickc-plus2-fm-rds-audio-t": {
       "expired_at": "2026-10-08T23:52:12.575946+00:00",
@@ -2022,26 +2021,24 @@
       "timestamp": "2026-09-19T17:00:45.426940+00:00"
     },
     "claude-desktop-buddy-cardputer": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "claude-desktop-buddy-cardputer",
       "pr_ref": null,
       "reason": "fork_of_uncatalogued: source=anthropics/claude-desktop-buddy",
       "repo": "y88huang/claude-desktop-buddy-cardputer",
       "repo_id": 1215683262,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "claude-usage": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "claude-usage",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 0 forks",
       "repo": "zmattmanz/claude-usage",
       "repo_id": 1252797543,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "cmd": {
       "expired_at": "2026-09-19T19:01:00.809202+00:00",
@@ -2139,81 +2136,74 @@
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "coreink-meteo": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "coreink-meteo",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "andrea-dandrea/coreink-meteo",
       "repo_id": 1241407886,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "corem5s3-tv": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "corem5s3-tv",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "martin78b/corem5s3-tv",
       "repo_id": 1265056677,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "cores3-box": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "cores3-box",
       "pr_ref": null,
       "reason": "below_floor: 20 stars / 2 forks",
       "repo": "m5stack/cores3-box",
       "repo_id": 653417027,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "cores3-env3-monitor": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "cores3-env3-monitor",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "enemyofglados/cores3-env3-monitor",
       "repo_id": 1242926693,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "cores3-rom-launcher": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "cores3-rom-launcher",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "enemyofglados/cores3_rom_launcher",
       "repo_id": 1237628691,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "cores3-userdemo": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "cores3-userdemo",
       "pr_ref": null,
       "reason": "already_catalogued: m5stack/cores3-userdemo is already in the atlas",
       "repo": "m5stack/cores3-userdemo",
       "repo_id": 678666387,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "cosmic-core-captive-art-sd-file-portal": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T02:00:32.995095+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "cosmic-core-captive-art-sd-file-portal",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "coreymillia/cosmic-core-captive-art-sd-file-portal",
       "repo_id": 1170199105,
-      "status": "expired",
-      "timestamp": "2026-09-08T02:00:32.995095+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "cpv-tools": {
       "expires": "2026-11-08T01:00:12.099811+00:00",
@@ -2265,48 +2255,44 @@
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "crossink": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T02:00:32.995095+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "crossink",
       "pr_ref": null,
       "reason": "fork_of_uncatalogued: source=crosspoint-reader/crosspoint-reader",
       "repo": "uxjulia/crossink",
       "repo_id": 1180993589,
-      "status": "expired",
-      "timestamp": "2026-09-08T02:00:32.995095+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "crossmux": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T02:00:32.995095+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "crossmux",
       "pr_ref": null,
       "reason": "fork_of_uncatalogued: source=crosspoint-reader/crosspoint-reader",
       "repo": "0x1abin/crossmux",
       "repo_id": 1233962879,
-      "status": "expired",
-      "timestamp": "2026-09-08T02:00:32.995095+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "crosspoint-reader": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T02:00:32.995095+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "crosspoint-reader",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "crosspoint-reader/crosspoint-reader",
       "repo_id": 1109112755,
-      "status": "expired",
-      "timestamp": "2026-09-08T02:00:32.995095+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "crosspoint-reader-papers3": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T02:00:32.995095+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "crosspoint-reader-papers3",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "juicecultus/crosspoint-reader-papers3",
       "repo_id": 1186429176,
-      "status": "expired",
-      "timestamp": "2026-09-08T02:00:32.995095+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "crowos": {
       "expires": "2026-11-05T19:00:58.979878+00:00",
@@ -2812,13 +2798,14 @@
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "esp32-c3-mini": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "esp32-c3-mini",
       "pr_ref": null,
       "reason": "already_catalogued: fbiego/esp32-c3-mini is already in the atlas",
       "repo": "fbiego/esp32-c3-mini",
       "repo_id": 665041562,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "esp32-cleaner": {
@@ -2896,13 +2883,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "esp32-library": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "esp32-library",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "h4w9/esp32_library",
       "repo_id": 1248577155,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "esp32-mastermine": {
@@ -3384,13 +3372,14 @@
       "timestamp": "2026-09-12T19:00:24.500904+00:00"
     },
     "gps-cardputer": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "gps-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 6 stars / 0 forks",
       "repo": "r66282309-hub/gps_cardputer",
       "repo_id": 1032172515,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "gpsdata-m5cardputer": {
@@ -3832,13 +3821,14 @@
       "timestamp": "2026-09-02T16:03:27.976678+00:00"
     },
     "ircloner-cardputer-adv": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "ircloner-cardputer-adv",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 1 forks",
       "repo": "fr4nx40/ircloner-cardputer-adv",
       "repo_id": 1350724076,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "irisihrz": {
@@ -4035,13 +4025,14 @@
       "timestamp": "2026-09-08T21:00:24.826619+00:00"
     },
     "launcher-salmi-fork": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "launcher-salmi-fork",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "wsalmi/launcher_salmi_fork",
       "repo_id": 1122743010,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "layer812": {
@@ -4055,13 +4046,14 @@
       "timestamp": "2026-09-13T08:00:57.847621+00:00"
     },
     "lcdtap": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "lcdtap",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "shapoco/lcdtap",
       "repo_id": 1233613806,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "letterfromthedeep-tab5": {
@@ -4075,13 +4067,14 @@
       "timestamp": "2026-09-24T16:00:56.308279+00:00"
     },
     "liner": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "liner",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "ry-ops/liner",
       "repo_id": 1350386566,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "little-devhelper": {
@@ -4104,23 +4097,25 @@
       "timestamp": "2026-10-03T16:00:44.146946+00:00"
     },
     "lorachat-m5-stickc-2": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "lorachat-m5-stickc-2",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "gato001k1/lorachat_m5_stickc-_-2",
       "repo_id": 796942695,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "lucid-dream-training-watch-m5stickc-plus": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "lucid-dream-training-watch-m5stickc-plus",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "coreymillia/lucid-dream-training-watch-m5stickc-plus2",
       "repo_id": 1094836196,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "luma": {
@@ -4142,33 +4137,36 @@
       "timestamp": "2026-09-21T12:00:07.785602+00:00"
     },
     "m5-amiibolink": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5-amiibolink",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 0 forks",
       "repo": "rennancockles/m5-amiibolink",
       "repo_id": 885646701,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5-atommatrix-companion-v4-satellite": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5-atommatrix-companion-v4-satellite",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 1 forks",
       "repo": "themusicnerd/m5-atommatrix-companion-v4-satellite",
       "repo_id": 942531010,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5-atoms3-companion-v4-satellite": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5-atoms3-companion-v4-satellite",
       "pr_ref": null,
       "reason": "below_floor: 10 stars / 2 forks",
       "repo": "themusicnerd/m5-atoms3-companion-v4-satellite",
       "repo_id": 1096965821,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5-atoms3-palnagotchi": {
@@ -4222,13 +4220,14 @@
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5-clicker-game": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5-clicker-game",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "m5dev1000/m5-clicker_game",
       "repo_id": 850417640,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5-clicker-hamster": {
@@ -4242,15 +4241,14 @@
       "timestamp": "2026-10-06T19:00:58.979878+00:00"
     },
     "m5-crystal-firmware": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T02:00:32.995095+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "m5-crystal-firmware",
       "pr_ref": null,
       "reason": "already_catalogued: dlazder/m5_crystal_firmware is already in the atlas",
       "repo": "dlazder/m5_crystal_firmware",
       "repo_id": 831710789,
-      "status": "expired",
-      "timestamp": "2026-09-08T02:00:32.995095+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "m5-dial-rgb-light-strip-controller": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -4294,23 +4292,25 @@
       "timestamp": "2026-09-08T17:00:16.540728+00:00"
     },
     "m5-joystick-receiver-test-esp32-espnow": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5-joystick-receiver-test-esp32-espnow",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "rodrigopdcouto/m5-joystick-receiver-test-esp32-espnow",
       "repo_id": 974253453,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5-midi-heartopia": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5-midi-heartopia",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "yh1224/m5-midi-heartopia",
       "repo_id": 1139854044,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5-midi-rec": {
@@ -4322,13 +4322,14 @@
       "timestamp": "2026-09-02T17:03:09.160318+00:00"
     },
     "m5-midi-rec-lite": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5-midi-rec-lite",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 1 forks",
       "repo": "rawseq/m5-midi-rec-lite",
       "repo_id": 585067973,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5-minijoystickc-gamepad": {
@@ -4448,13 +4449,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "m5airquality": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5airquality",
       "pr_ref": null,
       "reason": "below_floor: 16 stars / 4 forks",
       "repo": "armel/m5airquality",
       "repo_id": 702776435,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5apps": {
@@ -4477,13 +4479,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "m5atoms3-ble-motor-control": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5atoms3-ble-motor-control",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "pragamichele/m5atoms3_ble_motor_control",
       "repo_id": 844094787,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5atoms3u-wifi-usb-keyboard": {
@@ -4517,13 +4520,14 @@
       "timestamp": "2026-10-09T02:00:12.078416+00:00"
     },
     "m5cardputer-alarm-pir-sensor": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5cardputer-alarm-pir-sensor",
       "pr_ref": null,
       "reason": "below_floor: 12 stars / 1 forks",
       "repo": "geo-tp/m5cardputer-alarm-pir-sensor",
       "repo_id": 805560395,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5cardputer-audio-stream-server": {
@@ -4547,13 +4551,14 @@
       "timestamp": "2026-09-12T21:00:32.629123+00:00"
     },
     "m5cardputer-c16-emulator": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5cardputer-c16-emulator",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "rafags/m5cardputer-c16-emulator",
       "repo_id": 1185186594,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5cardputer-c64-emulator": {
@@ -4639,33 +4644,36 @@
       "timestamp": "2026-09-02T16:03:28.018838+00:00"
     },
     "m5cardputer-ir-tool": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5cardputer-ir-tool",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "emilnier/m5cardputer-ir-tool",
       "repo_id": 1298912469,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5cardputer-knowledge": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5cardputer-knowledge",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "codigohardwareecia/m5cardputer_knowledge",
       "repo_id": 1328290319,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5cardputer-macro-keypad": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5cardputer-macro-keypad",
       "pr_ref": null,
       "reason": "below_floor: 8 stars / 0 forks",
       "repo": "aniketkatkar/m5cardputer-macro-keypad",
       "repo_id": 1120442382,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5cardputer-mp3-audio-visual-portal-hate": {
@@ -4689,13 +4697,14 @@
       "timestamp": "2026-09-19T15:00:30.165949+00:00"
     },
     "m5cardputer-simple-calculator": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5cardputer-simple-calculator",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "dwlf256/m5cardputer-simple-calculator",
       "repo_id": 920907521,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5cardputer-sun-rider": {
@@ -4724,13 +4733,14 @@
       "timestamp": "2026-10-09T02:00:12.078416+00:00"
     },
     "m5cardputer-userdemo-plus": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5cardputer-userdemo-plus",
       "pr_ref": null,
       "reason": "fork_of_catalogued: source=m5stack/m5cardputer-userdemo",
       "repo": "wusiyu/m5cardputer-userdemo-plus",
       "repo_id": 745821786,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5cardputer-voice-changer": {
@@ -4741,13 +4751,14 @@
       "timestamp": "2026-09-02T16:03:27.957036+00:00"
     },
     "m5cardputer-webradio": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5cardputer-webradio",
       "pr_ref": null,
       "reason": "already_catalogued: cyberwisk/m5cardputer_webradio is already in the atlas",
       "repo": "cyberwisk/m5cardputer_webradio",
       "repo_id": 731736959,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5cardputer-webradio-dutch": {
@@ -4761,13 +4772,14 @@
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5cardputer-webradio-fr": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5cardputer-webradio-fr",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 1 forks",
       "repo": "tomcasa/m5cardputer-webradio-fr",
       "repo_id": 972689888,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5cardputer-windows": {
@@ -4787,13 +4799,14 @@
       "timestamp": "2026-09-02T16:03:28.022123+00:00"
     },
     "m5cardputerintervalometer": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5cardputerintervalometer",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "andrewdjohnson/m5cardputerintervalometer",
       "repo_id": 858975691,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5cardremote": {
@@ -4817,13 +4830,14 @@
       "timestamp": "2026-09-13T18:00:09.302459+00:00"
     },
     "m5claw": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5claw",
       "pr_ref": null,
       "reason": "already_catalogued: fwz233-re/m5claw is already in the atlas",
       "repo": "fwz233-re/m5claw",
       "repo_id": 1180676135,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5core-341-xscreensaver": {
@@ -4885,15 +4899,14 @@
       "timestamp": "2026-09-12T22:00:34.162368+00:00"
     },
     "m5core2-esp32-tetris-touch": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "m5core2-esp32-tetris-touch",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "coreymillia/m5core2-esp32-tetris-touch",
       "repo_id": 1123416531,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "m5core2-eyes": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -4914,13 +4927,14 @@
       "timestamp": "2026-09-12T23:00:36.053237+00:00"
     },
     "m5core2-sg90-stackchan-voicetext-ataru": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5core2-sg90-stackchan-voicetext-ataru",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 1 forks",
       "repo": "manba036/m5core2_sg90_stackchan_voicetext_ataru",
       "repo_id": 603300639,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5core2-simpleclock": {
@@ -4982,24 +4996,24 @@
       "timestamp": "2026-09-12T21:00:32.629123+00:00"
     },
     "m5cores3bluebox": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "m5cores3bluebox",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 1 forks",
       "repo": "r3dfish/m5cores3bluebox",
       "repo_id": 760526439,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "m5cybernews-world": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5cybernews-world",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 0 forks",
       "repo": "leandrosummo/m5cybernews-world",
       "repo_id": 1247841477,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5deck": {
@@ -5023,13 +5037,14 @@
       "timestamp": "2026-09-12T17:00:10.294624+00:00"
     },
     "m5dial-userdemo": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5dial-userdemo",
       "pr_ref": null,
       "reason": "already_catalogued: m5stack/m5dial-userdemo is already in the atlas",
       "repo": "m5stack/m5dial-userdemo",
       "repo_id": 703374617,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5dial-volume-hid": {
@@ -5062,13 +5077,14 @@
       "timestamp": "2026-10-07T11:00:41.994432+00:00"
     },
     "m5gemini": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5gemini",
       "pr_ref": null,
       "reason": "already_catalogued: d4rkmen/m5gemini is already in the atlas",
       "repo": "d4rkmen/m5gemini",
       "repo_id": 970539892,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5gfx": {
@@ -5082,13 +5098,14 @@
       "timestamp": "2026-09-09T04:00:10.126216+00:00"
     },
     "m5gotchi": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5gotchi",
       "pr_ref": null,
       "reason": "already_catalogued: devsur11/m5gotchi is already in the atlas",
       "repo": "devsur11/m5gotchi",
       "repo_id": 837642781,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5groqbot-m5stickc-plus2": {
@@ -5100,13 +5117,14 @@
       "timestamp": "2026-09-02T17:03:09.159001+00:00"
     },
     "m5guruguru-starter": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5guruguru-starter",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "nananauno/m5guruguru-starter",
       "repo_id": 1282983055,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5hamradio": {
@@ -5119,13 +5137,14 @@
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
     },
     "m5kiten": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5kiten",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "ki10-bot/m5kiten",
       "repo_id": 1306940511,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5module-dmx512": {
@@ -5149,23 +5168,25 @@
       "timestamp": "2026-09-02T16:03:47.776765+00:00"
     },
     "m5monsterc5-tab5": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5monsterc5-tab5",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "c5lab/m5monsterc5-tab5",
       "repo_id": 1121236970,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5mousewheel-bluetoothmouse": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5mousewheel-bluetoothmouse",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "rawseq/m5mousewheel-bluetoothmouse",
       "repo_id": 375879810,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5mp3": {
@@ -5178,23 +5199,25 @@
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
     },
     "m5musictab5": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5musictab5",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 0 forks",
       "repo": "fangbrbr/m5musictab5",
       "repo_id": 1330408847,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5os": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5os",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 0 forks",
       "repo": "kin1009/m5os",
       "repo_id": 1267944320,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5pancetta": {
@@ -5208,23 +5231,25 @@
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
     "m5paper-clock-platformio-v2-11": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5paper-clock-platformio-v2-11",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "kindle15/m5paper_clock_platformio_v2.11",
       "repo_id": 1176744181,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5paper-ebook": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5paper-ebook",
       "pr_ref": null,
       "reason": "below_floor: 6 stars / 2 forks",
       "repo": "zsyai/m5paper-ebook",
       "repo_id": 1251046813,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5papercolor-calendar": {
@@ -5268,13 +5293,14 @@
       "timestamp": "2026-09-12T23:00:36.053237+00:00"
     },
     "m5papers3-calculator": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5papers3-calculator",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 1 forks",
       "repo": "moge800/m5papers3_calculator",
       "repo_id": 1006865369,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5papers3-nc1020-emu": {
@@ -5298,13 +5324,14 @@
       "timestamp": "2026-09-19T14:00:22.488207+00:00"
     },
     "m5peasytag": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5peasytag",
       "pr_ref": null,
       "reason": "below_floor: 20 stars / 3 forks",
       "repo": "nananauno/m5peasytag",
       "repo_id": 909194920,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5porkchop": {
@@ -5336,43 +5363,47 @@
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "m5roulette": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5roulette",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "moskic/m5roulette",
       "repo_id": 1328600245,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5scratch": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5scratch",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "610t/m5scratch",
       "repo_id": 192171386,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5spotchan": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5spotchan",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "w-ockham/m5spotchan",
       "repo_id": 674596049,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5spoticontroller": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5spoticontroller",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 0 forks",
       "repo": "stachugit/m5spoticontroller",
       "repo_id": 817409734,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stack": {
@@ -5386,13 +5417,14 @@
       "timestamp": "2026-09-13T06:00:47.661752+00:00"
     },
     "m5stack-atoms3-ble-remote-for-canon": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5stack-atoms3-ble-remote-for-canon",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "taraskad3o/m5stack-atoms3-ble-remote-for-canon",
       "repo_id": 1284917550,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stack-avatar-mic": {
@@ -5462,23 +5494,25 @@
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "m5stack-core1-noaa-live-weather-satellit": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5stack-core1-noaa-live-weather-satellit",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "coreymillia/m5stack-core1-noaa-live-weather-satellite",
       "repo_id": 1163819623,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5stack-core2-113-matrix-rain-effects": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5stack-core2-113-matrix-rain-effects",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "coreymillia/m5stack-core2-113-matrix-rain-effects",
       "repo_id": 1137766431,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stack-core2-digital-photo-album": {
@@ -5606,15 +5640,14 @@
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "m5stack-sd-updater": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "m5stack-sd-updater",
       "pr_ref": null,
       "reason": "already_catalogued: tobozo/m5stack-sd-updater is already in the atlas",
       "repo": "tobozo/m5stack-sd-updater",
       "repo_id": 124610272,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "m5stack-stick-s3-animation": {
       "expires": "2026-11-06T23:00:07.958729+00:00",
@@ -5668,13 +5701,14 @@
       "timestamp": "2026-09-13T07:00:51.338571+00:00"
     },
     "m5stack-webcam": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5stack-webcam",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "griffithsb/m5stack-webcam",
       "repo_id": 1167812586,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stack-xdripmon": {
@@ -5719,15 +5753,14 @@
       "timestamp": "2026-09-08T02:00:32.995095+00:00"
     },
     "m5stick-handheld-tally-clicker": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T02:00:32.995095+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "m5stick-handheld-tally-clicker",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "5tufil1k3/m5stick-handheld-tally-clicker",
       "repo_id": 953204521,
-      "status": "expired",
-      "timestamp": "2026-09-08T02:00:32.995095+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "m5stick-marauder": {
       "expires": "2026-12-06T21:12:07.418911+00:00",
@@ -5791,23 +5824,25 @@
       "timestamp": "2026-09-08T20:00:21.660790+00:00"
     },
     "m5stickc-companion-v4-satellite": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5stickc-companion-v4-satellite",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 1 forks",
       "repo": "themusicnerd/m5stickc-companion-v4-satellite",
       "repo_id": 1105015042,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stickc-morse": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5stickc-morse",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 0 forks",
       "repo": "zmactep/m5stickc_morse",
       "repo_id": 577925990,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stickc-plus-2-ping-pong": {
@@ -5841,13 +5876,14 @@
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
     "m5stickc-plus-mouse-jiggler": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5stickc-plus-mouse-jiggler",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "demonkingfukai/m5stickc-plus-mouse-jiggler",
       "repo_id": 1048712774,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stickc-plus-slot-machine": {
@@ -5861,33 +5897,36 @@
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
     "m5stickc-plus-tlite-cfw": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5stickc-plus-tlite-cfw",
       "pr_ref": null,
       "reason": "below_floor: 8 stars / 1 forks",
       "repo": "wildtimo/m5stickc-plus-tlite-cfw",
       "repo_id": 762510922,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stickc-plus-tlite-fw": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5stickc-plus-tlite-fw",
       "pr_ref": null,
       "reason": "already_catalogued: m5stack/m5stickc-plus-tlite-fw is already in the atlas",
       "repo": "m5stack/m5stickc-plus-tlite-fw",
       "repo_id": 581441311,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stickc-plus2-chaos": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5stickc-plus2-chaos",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "randomsnail/m5stickc-plus2-chaos",
       "repo_id": 1147454660,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5stickc-social-parasite-evil-spammer-pl": {
@@ -5930,13 +5969,14 @@
       "timestamp": "2026-10-06T17:13:28.505130+00:00"
     },
     "m5stickcp2oscilloscope": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5stickcp2oscilloscope",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "jpmarquesss/m5stickcp2oscilloscope",
       "repo_id": 812130593,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stickcplus2": {
@@ -5979,13 +6019,14 @@
       "timestamp": "2026-09-01T23:04:00.148167+00:00"
     },
     "m5stickcplus2-userdemo": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T03:00:08.239811+00:00",
       "id": "m5stickcplus2-userdemo",
       "pr_ref": null,
       "reason": "already_catalogued: m5stack/m5stickcplus2-userdemo is already in the atlas",
       "repo": "m5stack/m5stickcplus2-userdemo",
       "repo_id": 730930468,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stickradio": {
@@ -6039,13 +6080,14 @@
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
     "m5sticks3saber": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5sticks3saber",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 0 forks",
       "repo": "volosr/m5sticks3saber",
       "repo_id": 1169056205,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5stickstuph": {
@@ -6198,13 +6240,14 @@
       "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "m5voicestick": {
+      "expired_at": "2026-10-09T03:00:12.533071+00:00",
       "expires": "2026-10-09T02:09:24.261396+00:00",
       "id": "m5voicestick",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 0 forks",
       "repo": "dalianblue/m5voicestick",
       "repo_id": 1298414607,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5watchclicker": {
@@ -8050,15 +8093,14 @@
       "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "saldotransporte": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T01:00:31.284910+00:00",
+      "expires": "2026-11-08T03:00:12.533071+00:00",
       "id": "saldotransporte",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "madboy134/saldotransporte",
       "repo_id": 883563440,
-      "status": "expired",
-      "timestamp": "2026-09-08T01:00:31.284910+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "sandtimer-for-sticks3": {
       "expired_at": "2026-09-20T07:00:29.928578+00:00",
