@@ -5,10 +5,18 @@
 
 One tick, in order (PLAN §3.2):
 
- 1. Preflight — GitHub rate limit ≥ 500 remaining; no Jr tick PR open longer than 3 h; branch
-    protection on `main` requires schema + tests + jr-tests and auto-merge is allowed. Any of
-    these red → the tick ABORTS before touching anything. Protection missing is the one that
-    matters most: without it "PR + auto-merge" is direct-to-main under another name.
+ 1. Preflight — a real run first takes an exclusive non-blocking flock (DEFAULT_TICK_LOCK, outside
+    the repo; JR_TICK_LOCK overrides): held → "another tick is running", nothing else happens.
+    Then: GitHub rate limit ≥ 500 remaining. Then the open Jr tick PRs: one that is CONFLICTING or
+    open longer than 3 h and changes ONLY bookkeeping (jr/proposed_ledger.json, docs/telemetry/**)
+    was superseded by later ticks — it is closed with a comment and its branch deleted (every tick
+    regenerates those files, so nothing is lost; dry-run only reports it). A stale one touching
+    anything else (data/**) is NEVER closed — jr/memory.py reads a closed PR as a permanent
+    rejection of its firmware — so the tick aborts naming it, whether it conflicts, and that it
+    needs a human. Last: branch protection on `main` requires schema + tests + jr-tests and
+    auto-merge is allowed. Any of these red → the tick ABORTS before touching anything; every
+    query failure here fails CLOSED. Protection missing is the one that matters most: without it
+    "PR + auto-merge" is direct-to-main under another name.
  2. Worktree — a fresh `git worktree` detached at `origin/main`, outside the repo tree. Every
     read and write below happens there. The clone's checkout is never touched. (jr/publish.py)
  3. Memory — expire TTL'd decisions; settle proposed PRs (closed → permanent rejection,
@@ -36,12 +44,14 @@ network or the real data/ tree.
 from __future__ import annotations
 
 import argparse
+import fcntl
 import json
 import os
 import re
 import signal
 import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -62,6 +72,9 @@ REPO = _JR_DIR.parent
 MIN_RATE_LIMIT = 500
 STALE_PR_HOURS = 3.0
 TICK_BRANCH_PREFIX = "jr/tick-"
+TICK_LOCK_NAME = "jr-tick-run.lock"   # NOT scripts/jr-tick.sh's jr-tick.lock: its `flock` holds that
+                                      # file for the tick's whole life, so re-locking it would always fail
+DEFAULT_TICK_LOCK = Path(tempfile.gettempdir()) / TICK_LOCK_NAME   # outside the repo tree
 TOPICS_PER_TICK = 2   # jr/stage_admit_topics.py: fixed, tiny budget — independent of the allocator
                       # split, so the GitHub-topics source keeps the catalog growing after the
                       # launcher pool (stage_admit) drained, without competing for the hourly
@@ -214,27 +227,112 @@ def _rate_limit_remaining(gh) -> int | None:
         return None
 
 
-def _stale_tick_pr(gh, now: datetime, hours: float) -> str | None:
-    """A Jr tick PR open longer than `hours`, or the sentinel "unknown" when the query itself
-    fails — fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not
-    open another."""
-    p = gh("pr", "list", "--state", "open", "--json", "number,createdAt,headRefName")
+BOOKKEEPING_FILES = ("jr/proposed_ledger.json",)
+BOOKKEEPING_DIRS = ("docs/telemetry/",)
+SUPERSEDED_COMMENT = ("Superseded by later Jr ticks. This PR only touched tick bookkeeping "
+                      "(jr/proposed_ledger.json, docs/telemetry/**), which every tick regenerates from "
+                      "main, so closing it loses nothing. Closed automatically by the jr/tick.py preflight.")
+
+
+def _list_tick_prs(gh) -> list | None:
+    """Every open Jr tick PR with its age and mergeability, or None when the query itself fails —
+    fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not open another."""
+    p = gh("pr", "list", "--state", "open", "--json", "number,createdAt,headRefName,mergeable")
     if getattr(p, "returncode", 1) != 0:
-        return "unknown"
+        return None
     try:
         prs = json.loads(p.stdout or "[]")
     except json.JSONDecodeError:
-        return "unknown"
+        return None
+    return [pr for pr in prs if isinstance(pr, dict)
+            and str(pr.get("headRefName", "")).startswith(TICK_BRANCH_PREFIX)]
+
+
+def _pr_age_hours(pr: dict, now: datetime) -> float | None:
+    try:
+        created = datetime.fromisoformat(str(pr.get("createdAt", "")).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return (now - created).total_seconds() / 3600
+
+
+def _is_bookkeeping(path: str) -> bool:
+    return path in BOOKKEEPING_FILES or path.startswith(BOOKKEEPING_DIRS)
+
+
+def _pr_changed_paths(gh, number) -> list[str]:
+    """The paths a PR changes. Raises TickAbort on any gh/parse failure: deciding whether a PR may
+    be closed on a guess is exactly what must never happen."""
+    p = gh("pr", "view", str(number), "--json", "files")
+    try:
+        if getattr(p, "returncode", 1) != 0:
+            raise ValueError("gh failed")
+        files = json.loads(p.stdout or "{}").get("files") or []
+        return [str(f["path"]) for f in files]
+    except (ValueError, AttributeError, KeyError, TypeError):
+        raise TickAbort(f"gh pr view #{number} files failed (cannot tell whether it is superseded)") from None
+
+
+def _triage_tick_prs(gh, prs: list, now: datetime, hours: float) -> tuple[list, list]:
+    """Split the open tick PRs that need attention into (superseded, stuck).
+
+    Only a CONFLICTING or stale (> `hours`) PR is looked at. One whose changed files are ALL
+    bookkeeping is superseded: a later tick already rewrote those files, so it can be closed.
+    A stale one that touches anything else (data/**, …) is stuck and needs a human — it is NEVER
+    closed here, because jr/memory.py reads a closed proposed PR as a PERMANENT rejection of its
+    firmware. A young conflicting content PR is left alone until it goes stale."""
+    superseded, stuck = [], []
     for pr in prs:
-        if not str(pr.get("headRefName", "")).startswith(TICK_BRANCH_PREFIX):
+        age = _pr_age_hours(pr, now)
+        is_stale = age is not None and age > hours
+        conflicting = pr.get("mergeable") == "CONFLICTING"
+        if not (is_stale or conflicting):
             continue
-        try:
-            created = datetime.fromisoformat(str(pr.get("createdAt", "")).replace("Z", "+00:00"))
-        except ValueError:
-            continue
-        if (now - created).total_seconds() > hours * 3600:
-            return f"#{pr.get('number')} ({pr.get('headRefName')})"
-    return None
+        paths = _pr_changed_paths(gh, pr.get("number"))
+        if paths and all(_is_bookkeeping(p) for p in paths):
+            superseded.append(pr)
+        elif is_stale:
+            stuck.append({**pr, "content": [p for p in paths if not _is_bookkeeping(p)]})
+    return superseded, stuck
+
+
+def _close_superseded(gh, pr: dict) -> None:
+    n = pr.get("number")
+    p = gh("pr", "close", str(n), "--comment", SUPERSEDED_COMMENT, "--delete-branch")
+    if getattr(p, "returncode", 1) != 0:
+        raise TickAbort(f"gh pr close #{n} failed (superseded bookkeeping PR still open)")
+
+
+def _stuck_message(pr: dict, hours: float) -> str:
+    state = "conflicting" if pr.get("mergeable") == "CONFLICTING" else "not conflicting"
+    content = pr.get("content") or []
+    touches = (f"touches {', '.join(content[:3])}" + (" …" if len(content) > 3 else "")) if content \
+        else "lists no changed files"
+    return (f"a Jr tick PR has been open > {hours:g} h: #{pr.get('number')} ({pr.get('headRefName')})"
+            f" · {state} · {touches} — needs a human (closing it rejects its firmware permanently)")
+
+
+def _acquire_tick_lock(path: Path):
+    """An exclusive, non-blocking flock so two real ticks can never overlap (incident 2026-10-09:
+    the 23:52 and 00:00 ticks both rewrote the bookkeeping and #785 deadlocked). Returns the open
+    handle; closing it releases the lock. Held → TickAbort; unopenable → TickAbort (fail closed)."""
+    try:
+        fh = open(path, "a+")
+    except OSError as e:
+        raise TickAbort(f"cannot open tick lock {path}: {e}") from None
+    try:
+        fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        fh.close()
+        raise TickAbort(f"another tick is running (lock held: {path})") from None
+    return fh
+
+
+def _release_tick_lock(fh) -> None:
+    try:
+        fcntl.flock(fh, fcntl.LOCK_UN)
+    finally:
+        fh.close()
 
 
 def _repo_slug(git) -> str:
@@ -361,7 +459,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              pr_state=None, revalidate=publish.revalidate_catalog, budget: Budget | None = None,
              repo_slug: str | None = None, min_rate_limit: int = MIN_RATE_LIMIT,
              stale_pr_hours: float = STALE_PR_HOURS, telegram: bool = True,
-             auto_merge: bool = True) -> report.TickReport:
+             auto_merge: bool = True, lock_path: Path | None = None) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
     env = os.environ if env is None else env
     budget = budget or Budget()
@@ -369,19 +467,28 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
     r = report.TickReport(when=now, dry_run=dry_run)
     hourly = stages is None   # the hourly path: gauge-driven split; --track overrides it
     stages = STAGES if hourly else stages
-    wt = None
+    wt = lock = None
     try:
         # 1. preflight
+        if not dry_run:
+            lock = _acquire_tick_lock(lock_path or DEFAULT_TICK_LOCK)
         remaining = _rate_limit_remaining(gh_c)
         if remaining is None:
             raise TickAbort("gh unavailable (rate_limit query failed)")
         if remaining < min_rate_limit:
             raise TickAbort(f"GitHub rate limit low: {remaining} < {min_rate_limit}")
-        stale = _stale_tick_pr(gh_c, now, stale_pr_hours)
-        if stale == "unknown":
+        tick_prs = _list_tick_prs(gh_c)
+        if tick_prs is None:
             raise TickAbort("gh pr list failed (cannot see open Jr PRs)")
-        if stale:
-            raise TickAbort(f"a Jr tick PR has been open > {stale_pr_hours:g} h: {stale}")
+        superseded, stuck = _triage_tick_prs(gh_c, tick_prs, now, stale_pr_hours)
+        for pr in superseded:
+            if dry_run:
+                r.warnings.append(f"would close superseded bookkeeping-only tick PR #{pr.get('number')}")
+            else:
+                _close_superseded(gh_c, pr)
+                r.warnings.append(f"closed superseded bookkeeping-only tick PR #{pr.get('number')}")
+        if stuck:
+            raise TickAbort(_stuck_message(stuck[0], stale_pr_hours))
         slug = repo_slug or _repo_slug(git)
         protection = publish.protection_status(slug, gh=gh_c)
         if not protection.ok:
@@ -530,6 +637,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                     publish.cleanup_branch(r.publish["branch"], git=git)
             except Exception as e:  # noqa: BLE001 — cleanup must never eat the report
                 r.warnings.append(f"worktree cleanup failed: {type(e).__name__}: {e}")
+        if lock is not None:
+            _release_tick_lock(lock)
         r.budget = budget.summary()
 
     line = report.render_line(r)
@@ -585,7 +694,8 @@ def main(argv=None) -> int:
         ap.error("--firmware needs --track B")
     r = run_tick(dry_run=args.dry_run, telegram=not args.no_telegram,
                  budget=Budget(max_calls=args.max_calls, max_seconds=args.max_seconds),
-                 stages=stages_for(args.track, args.budget, only), auto_merge=not args.no_auto_merge)
+                 stages=stages_for(args.track, args.budget, only), auto_merge=not args.no_auto_merge,
+                 lock_path=Path(os.environ["JR_TICK_LOCK"]) if os.environ.get("JR_TICK_LOCK") else None)
     return 1 if r.aborted else 0
 
 
