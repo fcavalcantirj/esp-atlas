@@ -662,3 +662,181 @@ def test_main_firmware_and_no_auto_merge_flags_reach_the_stage_and_run_tick(monk
     assert called == {"budget": 2, "only": ["wled", "bruce"]}
     with pytest.raises(SystemExit):
         tick.main(["--dry-run", "--track", "A", "--firmware", "wled", "--no-telegram"])      # --firmware is Track B only
+
+
+# --- preflight: superseded tick PRs + the overlap lock (incident 2026-10-09, #785) --------------
+
+STALE = (NOW - timedelta(hours=4)).isoformat().replace("+00:00", "Z")
+FRESH = (NOW - timedelta(minutes=30)).isoformat().replace("+00:00", "Z")
+BOOKKEEPING = ["jr/proposed_ledger.json", "docs/telemetry/data-trend.jsonl", "docs/telemetry/data-2026-09-05.md"]
+
+
+def _tick_pr(number, created, mergeable="MERGEABLE"):
+    return {"number": number, "createdAt": created, "headRefName": f"jr/tick-20260905-{number:04d}",
+            "mergeable": mergeable}
+
+
+def gh_with_prs(prs, files=None, view_rc=0, close_rc=0, **kw):
+    """gh_ok plus scripted `pr view N --json files` and `pr close N` answers per PR number."""
+    base = gh_ok(prs=json.dumps(prs), **kw)
+    files = files or {}
+
+    def fn(*args):
+        if args[:2] == ("pr", "view") and args[3:] == ("--json", "files"):
+            base.calls.append(args)
+            paths = files.get(int(args[2]), [])
+            return Proc(returncode=view_rc, stdout=json.dumps({"files": [{"path": p} for p in paths]}) if view_rc == 0 else "")
+        if args[:2] == ("pr", "close"):
+            base.calls.append(args)
+            return Proc(returncode=close_rc)
+        return base(*args)
+    fn.calls = base.calls
+    return fn
+
+
+def _closes(gh):
+    return [c for c in gh.calls if c[:2] == ("pr", "close")]
+
+
+def test_a_conflicting_bookkeeping_only_tick_pr_is_closed_and_the_tick_proceeds(wt_dir):
+    gh = gh_with_prs([_tick_pr(785, FRESH, mergeable="CONFLICTING")], files={785: BOOKKEEPING})
+    r = run(git=git_ok(wt_dir), gh=gh)
+    assert not r.aborted
+    (close,) = _closes(gh)
+    assert close[2] == "785" and "--delete-branch" in close
+    comment = close[close.index("--comment") + 1]
+    assert "superseded" in comment.lower() and "later" in comment.lower()
+    assert any("#785" in w and "superseded" in w for w in r.warnings)
+
+
+def test_a_stale_bookkeeping_only_tick_pr_is_closed_even_when_mergeable(wt_dir):
+    gh = gh_with_prs([_tick_pr(780, STALE)], files={780: BOOKKEEPING})
+    r = run(git=git_ok(wt_dir), gh=gh)
+    assert not r.aborted and [c[2] for c in _closes(gh)] == ["780"]
+
+
+def test_a_fresh_mergeable_tick_pr_is_left_alone_and_its_files_never_fetched(tmp_path):
+    # dry-run: the memory step's open-PR hydration (which reads files too) does not run there
+    gh = gh_with_prs([_tick_pr(790, FRESH)], files={790: BOOKKEEPING})
+    r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
+    assert not r.aborted and _closes(gh) == [] and not any("superseded" in w for w in r.warnings)
+    assert all(c[:2] != ("pr", "view") or c[3:] != ("--json", "files") for c in gh.calls)
+
+
+def test_a_stale_conflicting_content_pr_is_never_closed_and_aborts_naming_it(wt_dir):
+    gh = gh_with_prs([_tick_pr(781, STALE, mergeable="CONFLICTING")],
+                     files={781: BOOKKEEPING + ["data/firmware/x/firmware.md"]})
+    r = run(git=git_ok(wt_dir), gh=gh)
+    assert _closes(gh) == []        # closing a content PR would permanently reject its firmware
+    assert r.aborted.startswith("a Jr tick PR has been open > 3 h: #781 (jr/tick-20260905-0781)")
+    assert "conflicting" in r.aborted and "needs a human" in r.aborted
+
+
+def test_a_stale_mergeable_content_pr_says_it_is_not_conflicting(wt_dir):
+    gh = gh_with_prs([_tick_pr(782, STALE)], files={782: ["data/recipes/b__x/recipe.md"]})
+    r = run(git=git_ok(wt_dir), gh=gh)
+    assert _closes(gh) == [] and "not conflicting" in r.aborted and "needs a human" in r.aborted
+
+
+def test_a_young_conflicting_content_pr_does_not_abort_yet(wt_dir):
+    gh = gh_with_prs([_tick_pr(783, FRESH, mergeable="CONFLICTING")], files={783: ["data/firmware/x/firmware.md"]})
+    r = run(git=git_ok(wt_dir), gh=gh)
+    assert not r.aborted and _closes(gh) == []
+
+
+def test_a_pr_with_no_listed_files_is_never_treated_as_bookkeeping(wt_dir):
+    gh = gh_with_prs([_tick_pr(784, STALE, mergeable="CONFLICTING")], files={784: []})
+    r = run(git=git_ok(wt_dir), gh=gh)
+    assert _closes(gh) == [] and "needs a human" in r.aborted
+
+
+def test_a_failing_files_query_aborts_closed(wt_dir):
+    git = git_ok(wt_dir)
+    gh = gh_with_prs([_tick_pr(785, FRESH, mergeable="CONFLICTING")], view_rc=1)
+    r = run(git=git, gh=gh)
+    assert r.aborted == "gh pr view #785 files failed (cannot tell whether it is superseded)"
+    assert _closes(gh) == [] and all(c[0] != "worktree" for c in norm(git))
+
+
+def test_a_failing_pr_list_aborts_closed_before_any_close(wt_dir):
+    gh = recorder({("api", "rate_limit"): (0, "4999"), ("pr", "list"): (1, "")})
+    r = run(git=git_ok(wt_dir), gh=gh)
+    assert r.aborted == "gh pr list failed (cannot see open Jr PRs)" and _closes(gh) == []
+
+
+def test_a_failing_close_aborts_closed(wt_dir):
+    gh = gh_with_prs([_tick_pr(785, FRESH, mergeable="CONFLICTING")], files={785: BOOKKEEPING}, close_rc=1)
+    r = run(git=git_ok(wt_dir), gh=gh)
+    assert r.aborted == "gh pr close #785 failed (superseded bookkeeping PR still open)"
+
+
+def test_dry_run_only_reports_the_superseded_pr_it_would_close(tmp_path):
+    gh = gh_with_prs([_tick_pr(785, STALE, mergeable="CONFLICTING")], files={785: BOOKKEEPING})
+    r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
+    assert not r.aborted and _closes(gh) == []
+    assert any("would close" in w and "#785" in w for w in r.warnings)
+
+
+def test_a_held_lock_aborts_cleanly_before_any_github_call(tmp_path):
+    import fcntl
+    lock = tmp_path / "held.lock"
+    gh = gh_ok()
+    with open(lock, "a+") as fh:
+        fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        r = run(git=git_ok(tmp_path), gh=gh, lock_path=lock)
+    assert r.aborted == f"another tick is running (lock held: {lock})"
+    assert gh.calls == []
+
+
+def test_the_lock_is_released_after_a_tick_and_after_an_abort(wt_dir, tmp_path):
+    import fcntl
+    lock = tmp_path / "run.lock"
+    for gh in (gh_ok(), gh_ok(rate="1")):          # a clean tick, then an aborted one
+        run(git=git_ok(wt_dir), gh=gh, lock_path=lock)
+        with open(lock, "a+") as fh:
+            fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)    # raises BlockingIOError if still held
+
+
+def test_the_default_lock_lives_outside_the_repo_and_apart_from_the_wrapper_lock():
+    # scripts/jr-tick.sh's `flock` holds /tmp/jr-tick.lock for its child's whole life; the tick
+    # re-locking that same file would see it held by its own parent and abort every hour.
+    # (conftest pins tick.DEFAULT_TICK_LOCK into tmp_path, so check what it is built from.)
+    default = Path(tick.tempfile.gettempdir()) / tick.TICK_LOCK_NAME
+    assert tick.REPO not in default.parents
+    assert tick.TICK_LOCK_NAME != "jr-tick.lock"
+
+
+def test_main_honors_jr_tick_lock_from_the_environment(monkeypatch):
+    seen = {}
+    monkeypatch.setattr(tick, "run_tick", lambda **kw: seen.update(kw) or tick.report.TickReport(when=NOW))
+    monkeypatch.setenv("JR_TICK_LOCK", "/run/jr/tick.lock")
+    tick.main(["--no-telegram"])
+    assert seen["lock_path"] == Path("/run/jr/tick.lock")
+    monkeypatch.delenv("JR_TICK_LOCK")
+    tick.main(["--no-telegram"])
+    assert seen["lock_path"] is None
+
+
+def test_dry_run_takes_no_lock(tmp_path):
+    lock = tmp_path / "never.lock"
+    run(dry_run=True, git=git_ok(tmp_path), gh=gh_ok(), lock_path=lock)
+    assert not lock.exists()
+
+
+def test_an_unparseable_pr_list_aborts_closed(tmp_path):
+    r = run(git=git_ok(tmp_path), gh=gh_ok(prs="not json"))
+    assert r.aborted == "gh pr list failed (cannot see open Jr PRs)"
+
+
+def test_a_pr_with_an_unreadable_age_is_judged_by_mergeability_alone(tmp_path):
+    gh = gh_with_prs([_tick_pr(786, "garbage"), _tick_pr(787, "garbage", mergeable="CONFLICTING")],
+                     files={786: BOOKKEEPING, 787: BOOKKEEPING})
+    r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
+    assert not r.aborted
+    assert [w for w in r.warnings if "would close" in w] == ["would close superseded bookkeeping-only tick PR #787"]
+
+
+def test_an_unopenable_lock_aborts_closed(tmp_path):
+    gh = gh_ok()
+    r = run(git=git_ok(tmp_path), gh=gh, lock_path=tmp_path / "no-such-dir" / "x.lock")
+    assert r.aborted.startswith("cannot open tick lock") and gh.calls == []
