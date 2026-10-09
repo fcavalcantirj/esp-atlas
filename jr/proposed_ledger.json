@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-16T20:00:11.443443+00:00",
+      "expires": "2026-10-16T21:00:11.572797+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-09T20:00:11.443443+00:00"
+      "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -1360,15 +1360,14 @@
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-lightmeter-cpp": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T21:00:11.572797+00:00",
       "id": "cardputer-lightmeter-cpp",
       "pr_ref": null,
-      "reason": "below_floor: 3 stars / 0 forks",
+      "reason": "below_floor: 4 stars / 0 forks",
       "repo": "nongxl/cardputer_lightmeter_cpp",
       "repo_id": 1075185742,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
     "cardputer-llm": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -2855,15 +2854,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "esp32-library": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T21:00:11.572797+00:00",
       "id": "esp32-library",
       "pr_ref": null,
-      "reason": "below_floor: 2 stars / 0 forks",
+      "reason": "below_floor: 4 stars / 0 forks",
       "repo": "h4w9/esp32_library",
       "repo_id": 1248577155,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
     "esp32-mastermine": {
       "expired_at": "2026-10-09T12:00:11.265432+00:00",
@@ -3951,15 +3949,14 @@
       "timestamp": "2026-10-09T20:00:11.443443+00:00"
     },
     "launcher-salmi-fork": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T21:00:11.572797+00:00",
       "id": "launcher-salmi-fork",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "wsalmi/launcher_salmi_fork",
       "repo_id": 1122743010,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
     "layer812": {
       "expired_at": "2026-09-20T09:00:44.607932+00:00",
@@ -3972,15 +3969,14 @@
       "timestamp": "2026-09-13T08:00:57.847621+00:00"
     },
     "lcdtap": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T21:00:11.572797+00:00",
       "id": "lcdtap",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "shapoco/lcdtap",
       "repo_id": 1233613806,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
     "letterfromthedeep-tab5": {
       "expires": "2026-10-24T16:00:56.308279+00:00",
@@ -3993,15 +3989,14 @@
       "timestamp": "2026-09-24T16:00:56.308279+00:00"
     },
     "liner": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T21:00:11.572797+00:00",
       "id": "liner",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "ry-ops/liner",
       "repo_id": 1350386566,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
     "little-devhelper": {
       "expires": "2026-11-05T20:01:00.563893+00:00",
@@ -4034,15 +4029,14 @@
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "lucid-dream-training-watch-m5stickc-plus": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T21:00:11.572797+00:00",
       "id": "lucid-dream-training-watch-m5stickc-plus",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "coreymillia/lucid-dream-training-watch-m5stickc-plus2",
       "repo_id": 1094836196,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
     "luma": {
       "expires": "2026-10-23T20:00:27.585176+00:00",
@@ -4063,15 +4057,14 @@
       "timestamp": "2026-09-21T12:00:07.785602+00:00"
     },
     "m5-amiibolink": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T21:00:11.572797+00:00",
       "id": "m5-amiibolink",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 0 forks",
       "repo": "rennancockles/m5-amiibolink",
       "repo_id": 885646701,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
     "m5-atommatrix-companion-v4-satellite": {
       "expired_at": "2026-10-09T03:00:12.533071+00:00",
@@ -5418,15 +5411,14 @@
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "m5stack-core1-noaa-live-weather-satellit": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T21:00:11.572797+00:00",
       "id": "m5stack-core1-noaa-live-weather-satellit",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "coreymillia/m5stack-core1-noaa-live-weather-satellite",
       "repo_id": 1163819623,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
     "m5stack-core2-113-matrix-rain-effects": {
       "expired_at": "2026-10-09T03:00:12.533071+00:00",
@@ -6003,15 +5995,14 @@
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
     "m5sticks3saber": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T21:00:11.572797+00:00",
       "id": "m5sticks3saber",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 0 forks",
       "repo": "volosr/m5sticks3saber",
       "repo_id": 1169056205,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
     "m5stickstuph": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
