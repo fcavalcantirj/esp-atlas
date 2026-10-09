@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-16T22:00:11.580160+00:00",
+      "expires": "2026-10-16T23:00:13.238223+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-09T22:00:11.580160+00:00"
+      "timestamp": "2026-10-09T23:00:13.238223+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -4359,15 +4359,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "m5airquality": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T23:00:13.238223+00:00",
       "id": "m5airquality",
       "pr_ref": null,
       "reason": "below_floor: 16 stars / 4 forks",
       "repo": "armel/m5airquality",
       "repo_id": 702776435,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T23:00:13.238223+00:00"
     },
     "m5apps": {
       "id": "m5apps",
@@ -4389,15 +4388,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "m5atoms3-ble-motor-control": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T23:00:13.238223+00:00",
       "id": "m5atoms3-ble-motor-control",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "pragamichele/m5atoms3_ble_motor_control",
       "repo_id": 844094787,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T23:00:13.238223+00:00"
     },
     "m5atoms3u-wifi-usb-keyboard": {
       "expires": "2026-10-12T06:00:36.297632+00:00",
@@ -4431,15 +4429,14 @@
       "timestamp": "2026-10-09T02:00:12.078416+00:00"
     },
     "m5cardputer-alarm-pir-sensor": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T23:00:13.238223+00:00",
       "id": "m5cardputer-alarm-pir-sensor",
       "pr_ref": null,
       "reason": "below_floor: 12 stars / 1 forks",
       "repo": "geo-tp/m5cardputer-alarm-pir-sensor",
       "repo_id": 805560395,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T23:00:13.238223+00:00"
     },
     "m5cardputer-audio-stream-server": {
       "expires": "2026-11-06T23:00:07.958729+00:00",
@@ -4462,15 +4459,14 @@
       "timestamp": "2026-09-12T21:00:32.629123+00:00"
     },
     "m5cardputer-c16-emulator": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T23:00:13.238223+00:00",
       "id": "m5cardputer-c16-emulator",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "rafags/m5cardputer-c16-emulator",
       "repo_id": 1185186594,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T23:00:13.238223+00:00"
     },
     "m5cardputer-c64-emulator": {
       "expires": "2026-10-19T16:00:38.109621+00:00",
@@ -4565,15 +4561,13 @@
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5cardputer-knowledge": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-10-16T23:00:13.238223+00:00",
       "id": "m5cardputer-knowledge",
       "pr_ref": null,
-      "reason": "below_floor: 0 stars / 0 forks",
+      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "codigohardwareecia/m5cardputer_knowledge",
-      "repo_id": 1328290319,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T23:00:13.238223+00:00"
     },
     "m5cardputer-macro-keypad": {
       "expired_at": "2026-10-09T03:00:12.533071+00:00",
@@ -4956,13 +4950,14 @@
       "timestamp": "2026-09-09T02:09:24.261396+00:00"
     },
     "m5dial-volume-hid": {
+      "expired_at": "2026-10-09T23:00:13.238223+00:00",
       "expires": "2026-10-09T22:00:46.933939+00:00",
       "id": "m5dial-volume-hid",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "javicar31/m5dial_volume_hid",
       "repo_id": 906788141,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T22:00:46.933939+00:00"
     },
     "m5dualkey-userdemo": {
@@ -5823,15 +5818,14 @@
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stickc-plus2-chaos": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T23:00:13.238223+00:00",
       "id": "m5stickc-plus2-chaos",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "randomsnail/m5stickc-plus2-chaos",
       "repo_id": 1147454660,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T23:00:13.238223+00:00"
     },
     "m5stickc-social-parasite-evil-spammer-pl": {
       "expires": "2026-11-08T13:00:11.675780+00:00",
@@ -6148,15 +6142,14 @@
       "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "m5voicestick": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T23:00:13.238223+00:00",
       "id": "m5voicestick",
       "pr_ref": null,
-      "reason": "below_floor: 4 stars / 0 forks",
+      "reason": "below_floor: 5 stars / 0 forks",
       "repo": "dalianblue/m5voicestick",
       "repo_id": 1298414607,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T23:00:13.238223+00:00"
     },
     "m5watchclicker": {
       "expired_at": "2026-10-09T12:00:11.265432+00:00",
@@ -6621,13 +6614,14 @@
       "timestamp": "2026-09-09T21:00:43.442359+00:00"
     },
     "morsetrainer-cardputer": {
+      "expired_at": "2026-10-09T23:00:13.238223+00:00",
       "expires": "2026-10-09T22:00:46.933939+00:00",
       "id": "morsetrainer-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "dayou-ht/morsetrainer-cardputer",
       "repo_id": 1282871261,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T22:00:46.933939+00:00"
     },
     "mp3playerform5cardputer": {
