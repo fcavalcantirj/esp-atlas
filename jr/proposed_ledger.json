@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-16T13:00:11.675780+00:00",
+      "expires": "2026-10-16T14:00:12.109822+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-09T13:00:11.675780+00:00"
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -1265,26 +1265,24 @@
       "timestamp": "2026-09-08T21:00:24.826619+00:00"
     },
     "cardputer-f1-random-gp": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T04:00:36.972928+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "cardputer-f1-random-gp",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "bubbergamesites/cardputer-f1-random-gp",
       "repo_id": 1297551210,
-      "status": "expired",
-      "timestamp": "2026-09-08T04:00:36.972928+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "cardputer-flashlight-adv": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "cardputer-flashlight-adv",
       "pr_ref": null,
-      "reason": "below_floor: 4 stars / 0 forks",
+      "reason": "already_catalogued: zeloksa/cardputer-flashlight-adv is already in the atlas",
       "repo": "zeloksa/cardputer-flashlight-adv",
       "repo_id": 1196883931,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "cardputer-game-station-emulators": {
       "expired_at": "2026-10-08T23:52:12.575946+00:00",
@@ -2000,15 +1998,14 @@
       "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "cjmcu-4713-m5stickc-plus2-fm-rds-audio-t": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T04:00:36.972928+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "cjmcu-4713-m5stickc-plus2-fm-rds-audio-t",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "coreymillia/cjmcu-4713-m5stickc-plus2-fm-rds-audio-transmitter",
       "repo_id": 1124397163,
-      "status": "expired",
-      "timestamp": "2026-09-08T04:00:36.972928+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "claude-desktop-buddy": {
       "expires": "2026-10-19T17:00:45.426940+00:00",
@@ -2449,15 +2446,14 @@
       "timestamp": "2026-09-13T11:00:18.933731+00:00"
     },
     "deskclock-cardputer": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T04:00:36.972928+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "deskclock-cardputer",
       "pr_ref": null,
-      "reason": "below_floor: 4 stars / 0 forks",
+      "reason": "below_floor: 5 stars / 0 forks",
       "repo": "hansgao0422/deskclock-cardputer",
       "repo_id": 1290741791,
-      "status": "expired",
-      "timestamp": "2026-09-08T04:00:36.972928+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "devour-sphere": {
       "expires": "2026-10-20T07:00:29.928578+00:00",
@@ -2833,26 +2829,24 @@
       "timestamp": "2026-10-09T13:00:11.675780+00:00"
     },
     "esp32-flipsocial": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "esp32-flipsocial",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "h4w9/esp32_flipsocial",
       "repo_id": 1301717141,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "esp32-flipworld": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "esp32-flipworld",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "h4w9/esp32_flipworld",
       "repo_id": 1342263586,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "esp32-honeypot": {
       "expires": "2026-11-06T23:00:07.958729+00:00",
@@ -3043,26 +3037,24 @@
       "timestamp": "2026-09-04T00:00:00+00:00"
     },
     "flappy-for-m5stickc-plus2": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "flappy-for-m5stickc-plus2",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "svenvu666/flappy-for-m5stickc-plus2",
       "repo_id": 937108144,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "flipcard-papers3": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "flipcard-papers3",
       "pr_ref": null,
       "reason": "below_floor: 9 stars / 1 forks",
       "repo": "micokonsep/flipcard-papers3",
       "repo_id": 1041608301,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "flipper-zero-esp32-adv": {
       "id": "flipper-zero-esp32-adv",
@@ -3073,15 +3065,14 @@
       "timestamp": "2026-09-08T17:00:16.540728+00:00"
     },
     "flipper-zero-esp32-port": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "flipper-zero-esp32-port",
       "pr_ref": null,
       "reason": "already_catalogued: sor3nt/flipper-zero-esp32-port is already in the atlas",
       "repo": "sor3nt/flipper-zero-esp32-port",
       "repo_id": 1200697573,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "flipper-zero-meets-m5stack-cardputer": {
       "evidence_url": "https://github.com/ElicoftZ/Flipper-Zero-meets-M5Stack-Cardputer",
@@ -3101,15 +3092,14 @@
       "timestamp": "2026-09-21T12:00:07.785602+00:00"
     },
     "floatingbottle-pc-monitor": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "floatingbottle-pc-monitor",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 0 forks",
       "repo": "nongxl/floatingbottle_pc_monitor",
       "repo_id": 1233471273,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "flock-you": {
       "id": "flock-you",
@@ -3120,70 +3110,63 @@
       "timestamp": "2026-09-08T17:00:16.540728+00:00"
     },
     "flockcameradetector-m5cardputeradv": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "flockcameradetector-m5cardputeradv",
       "pr_ref": null,
-      "reason": "below_floor: 6 stars / 1 forks",
+      "reason": "below_floor: 10 stars / 1 forks",
       "repo": "aat440hz/flockcameradetector-m5cardputeradv",
       "repo_id": 1340350328,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "flockcameradetector-m5stickcplus2": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "flockcameradetector-m5stickcplus2",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "aat440hz/flockcameradetector-m5stickcplus2",
       "repo_id": 1305329757,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "flockwatch": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "flockwatch",
       "pr_ref": null,
-      "reason": "below_floor: 0 stars / 0 forks",
+      "reason": "below_floor: 1 stars / 0 forks",
       "repo": "n3tfox/flockwatch",
       "repo_id": 1296583242,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "folloup-sticky": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "folloup-sticky",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "alxv2016/folloup-sticky",
       "repo_id": 1272377734,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "fraudtagger-cardputer": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "evidence_url": "https://github.com/forshaws/FraudTagger-Cardputer",
       "id": "fraudtagger-cardputer",
       "pr_ref": null,
-      "reason": "below_floor: 8 stars / 0 forks",
       "repo": "forshaws/fraudtagger-cardputer",
       "repo_id": 1032109319,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "proposed",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "fstick": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T04:00:36.972928+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "fstick",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "imxnoobx/fstick",
       "repo_id": 714051292,
-      "status": "expired",
-      "timestamp": "2026-09-08T04:00:36.972928+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "g-navigator": {
       "expired_at": "2026-10-08T23:52:12.575946+00:00",
@@ -8671,15 +8654,14 @@
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
     "t-display-c5": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T04:00:36.972928+00:00",
+      "expires": "2026-11-08T14:00:12.109822+00:00",
       "id": "t-display-c5",
       "pr_ref": null,
-      "reason": "below_floor: 2 stars / 2 forks",
+      "reason": "below_floor: 6 stars / 4 forks",
       "repo": "xinyuan-lilygo/t-display-c5",
       "repo_id": 1256984753,
-      "status": "expired",
-      "timestamp": "2026-09-08T04:00:36.972928+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "t-embed": {
       "expires": "2026-11-07T23:52:12.575946+00:00",
