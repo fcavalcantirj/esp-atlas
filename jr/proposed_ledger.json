@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-16T14:00:12.109822+00:00",
+      "expires": "2026-10-16T15:00:11.478381+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-09T14:00:12.109822+00:00"
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -1136,15 +1136,14 @@
       "timestamp": "2026-09-19T17:00:45.426940+00:00"
     },
     "cardputer-alchemy-adv-game": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T15:00:11.478381+00:00",
       "id": "cardputer-alchemy-adv-game",
       "pr_ref": null,
-      "reason": "below_floor: 10 stars / 1 forks",
+      "reason": "already_catalogued: zeloksa/cardputer-alchemy-adv-game is already in the atlas",
       "repo": "zeloksa/cardputer-alchemy-adv-game",
       "repo_id": 1199189715,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "cardputer-aprs": {
       "expires": "2026-11-08T02:00:12.078416+00:00",
@@ -1285,15 +1284,14 @@
       "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "cardputer-game-station-emulators": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T15:00:11.478381+00:00",
       "id": "cardputer-game-station-emulators",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "davervw/cardputer-game-station-emulators",
       "repo_id": 1224196060,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "cardputer-games": {
       "expires": "2026-11-08T02:00:12.078416+00:00",
@@ -1659,15 +1657,14 @@
       "timestamp": "2026-10-06T19:00:58.979878+00:00"
     },
     "cardputergpsmap": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T15:00:11.478381+00:00",
       "id": "cardputergpsmap",
       "pr_ref": null,
       "reason": "already_catalogued: lunarc3/cardputergpsmap is already in the atlas",
       "repo": "lunarc3/cardputergpsmap",
       "repo_id": 1256789038,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "cardputerhomekit": {
       "expires": "2026-11-08T01:00:12.099811+00:00",
@@ -3155,8 +3152,8 @@
       "pr_ref": null,
       "repo": "forshaws/fraudtagger-cardputer",
       "repo_id": 1032109319,
-      "status": "proposed",
-      "timestamp": "2026-10-09T14:00:12.109822+00:00"
+      "status": "merged",
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "fstick": {
       "expires": "2026-11-08T14:00:12.109822+00:00",
@@ -3169,26 +3166,24 @@
       "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "g-navigator": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T15:00:11.478381+00:00",
       "id": "g-navigator",
       "pr_ref": null,
-      "reason": "below_floor: 3 stars / 1 forks",
+      "reason": "below_floor: 2 stars / 1 forks",
       "repo": "oldtokage-collab/g-navigator",
       "repo_id": 1310995186,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "galaga-cardputer": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T15:00:11.478381+00:00",
       "id": "galaga-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "slsafenull-dev/galaga-cardputer",
       "repo_id": 1260341342,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "gallery-for-cardputeradv": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -3209,15 +3204,14 @@
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "gameboy-enhanced-firmware-m5stack-cardpu": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T15:00:11.478381+00:00",
       "id": "gameboy-enhanced-firmware-m5stack-cardpu",
       "pr_ref": null,
       "reason": "fork_of_uncatalogued: source=matteofo/gb_cardputer",
       "repo": "mr-paui/gameboy-enhanced-firmware-m5stack-cardputer-",
       "repo_id": 798035821,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "ganstawificyberpunker": {
       "expires": "2026-11-05T19:00:58.979878+00:00",
@@ -3373,15 +3367,14 @@
       "timestamp": "2026-10-03T16:00:44.146946+00:00"
     },
     "gs": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T15:00:11.478381+00:00",
       "id": "gs",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "layer812/gs",
       "repo_id": 1241336264,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "guitar-audio-tools": {
       "expires": "2026-10-27T22:00:57.655069+00:00",
@@ -3440,26 +3433,24 @@
       "timestamp": "2026-09-12T19:00:24.500904+00:00"
     },
     "hal9000": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T17:00:16.540728+00:00",
+      "expires": "2026-11-08T15:00:11.478381+00:00",
       "id": "hal9000",
       "pr_ref": null,
       "reason": "below_floor: 14 stars / 1 forks",
       "repo": "armel/hal9000",
       "repo_id": 426238939,
-      "status": "expired",
-      "timestamp": "2026-09-08T17:00:16.540728+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "hal9000atoms3": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T17:00:16.540728+00:00",
+      "expires": "2026-11-08T15:00:11.478381+00:00",
       "id": "hal9000atoms3",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "armel/hal9000atoms3",
       "repo_id": 669612191,
-      "status": "expired",
-      "timestamp": "2026-09-08T17:00:16.540728+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "hall-sensor-speedometer-m5-stick-c-plus-": {
       "expires": "2026-10-11T18:00:57.443532+00:00",
@@ -4222,26 +4213,24 @@
       "timestamp": "2026-09-02T17:03:09.109173+00:00"
     },
     "m5-gesticatormidi": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T15:00:11.478381+00:00",
       "id": "m5-gesticatormidi",
       "pr_ref": null,
-      "reason": "below_floor: 0 stars / 0 forks",
+      "reason": "below_floor: 0 stars / 1 forks",
       "repo": "linclip/m5_gesticatormidi",
       "repo_id": 1326249282,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "m5-guitartuner": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T17:00:16.540728+00:00",
+      "expires": "2026-11-08T15:00:11.478381+00:00",
       "id": "m5-guitartuner",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "pkolbas/m5-guitartuner",
       "repo_id": 1307148554,
-      "status": "expired",
-      "timestamp": "2026-09-08T17:00:16.540728+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "m5-holy-os": {
       "expired_at": "2026-10-08T23:52:12.575946+00:00",
@@ -4581,15 +4570,14 @@
       "timestamp": "2026-09-02T17:03:09.112681+00:00"
     },
     "m5cardputer-gps-logger": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T05:25:25.049296+00:00",
+      "expires": "2026-11-08T15:00:11.478381+00:00",
       "id": "m5cardputer-gps-logger",
       "pr_ref": null,
       "reason": "already_catalogued: geo-tp/m5cardputer-gps-logger is already in the atlas",
       "repo": "geo-tp/m5cardputer-gps-logger",
       "repo_id": 804051433,
-      "status": "expired",
-      "timestamp": "2026-09-08T05:25:25.049296+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "m5cardputer-hcsr04-sensor": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
