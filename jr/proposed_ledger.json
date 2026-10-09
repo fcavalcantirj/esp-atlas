@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-16T16:00:11.685578+00:00",
+      "expires": "2026-10-16T17:00:11.481511+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-09T16:00:11.685578+00:00"
+      "timestamp": "2026-10-09T17:00:11.481511+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -3589,15 +3589,14 @@
       "timestamp": "2026-10-09T16:00:11.685578+00:00"
     },
     "honeypot": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T17:00:16.540728+00:00",
+      "expires": "2026-11-08T17:00:11.481511+00:00",
       "id": "honeypot",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 0 forks",
       "repo": "wsalmi/honeypot",
       "repo_id": 1260796595,
-      "status": "expired",
-      "timestamp": "2026-09-08T17:00:16.540728+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T17:00:11.481511+00:00"
     },
     "hotspot-arcade-cardputer": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -3675,15 +3674,14 @@
       "timestamp": "2026-09-12T20:00:31.062202+00:00"
     },
     "imgui-lovyangfx": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T20:00:21.660790+00:00",
+      "expires": "2026-11-08T17:00:11.481511+00:00",
       "id": "imgui-lovyangfx",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 0 forks",
       "repo": "lemin2/imgui-lovyangfx",
       "repo_id": 1127148671,
-      "status": "expired",
-      "timestamp": "2026-09-08T20:00:21.660790+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T17:00:11.481511+00:00"
     },
     "imu-acoustic-analyzer": {
       "expires": "2026-11-06T22:00:05.760145+00:00",
@@ -3696,26 +3694,24 @@
       "timestamp": "2026-10-07T22:00:05.760145+00:00"
     },
     "infiltra-firmware": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T20:00:21.660790+00:00",
+      "expires": "2026-11-08T17:00:11.481511+00:00",
       "id": "infiltra-firmware",
       "pr_ref": null,
       "reason": "already_catalogued: d3crypt-1/infiltra-firmware is already in the atlas",
       "repo": "d3crypt-1/infiltra-firmware",
       "repo_id": 917929512,
-      "status": "expired",
-      "timestamp": "2026-09-08T20:00:21.660790+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T17:00:11.481511+00:00"
     },
     "inkos": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T20:00:21.660790+00:00",
+      "expires": "2026-11-08T17:00:11.481511+00:00",
       "id": "inkos",
       "pr_ref": null,
       "reason": "below_floor: 9 stars / 2 forks",
       "repo": "zhuzhe1983/inkos",
       "repo_id": 1310617728,
-      "status": "expired",
-      "timestamp": "2026-09-08T20:00:21.660790+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T17:00:11.481511+00:00"
     },
     "interactivesetup-m5cardputer-sshclient": {
       "id": "interactivesetup-m5cardputer-sshclient",
@@ -3727,26 +3723,24 @@
       "timestamp": "2026-09-01T23:04:00.148167+00:00"
     },
     "io-framework-for-xr": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T20:00:21.660790+00:00",
+      "expires": "2026-11-08T17:00:11.481511+00:00",
       "id": "io-framework-for-xr",
       "pr_ref": null,
       "reason": "below_floor: 13 stars / 1 forks",
       "repo": "kotobuki/io-framework-for-xr",
       "repo_id": 524033209,
-      "status": "expired",
-      "timestamp": "2026-09-08T20:00:21.660790+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T17:00:11.481511+00:00"
     },
     "io433": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T20:00:21.660790+00:00",
+      "expires": "2026-11-08T17:00:11.481511+00:00",
       "id": "io433",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 0 forks",
       "repo": "gato001k1/io433",
       "repo_id": 786326151,
-      "status": "expired",
-      "timestamp": "2026-09-08T20:00:21.660790+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T17:00:11.481511+00:00"
     },
     "iot-central-firmware": {
       "expires": "2026-12-12T06:00:47.661752+00:00",
@@ -3767,15 +3761,14 @@
       "timestamp": "2026-09-02T16:03:27.976678+00:00"
     },
     "ircloner-cardputer-adv": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-08T17:00:11.481511+00:00",
       "id": "ircloner-cardputer-adv",
       "pr_ref": null,
-      "reason": "below_floor: 1 stars / 1 forks",
+      "reason": "below_floor: 8 stars / 1 forks",
       "repo": "fr4nx40/ircloner-cardputer-adv",
       "repo_id": 1350724076,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T17:00:11.481511+00:00"
     },
     "irisihrz": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -5498,15 +5491,14 @@
       "timestamp": "2026-09-02T16:03:28.016737+00:00"
     },
     "m5stack-insta360": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T20:00:21.660790+00:00",
+      "expires": "2026-11-08T17:00:11.481511+00:00",
       "id": "m5stack-insta360",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "dalianblue/m5stack_insta360",
       "repo_id": 1298022261,
-      "status": "expired",
-      "timestamp": "2026-09-08T20:00:21.660790+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T17:00:11.481511+00:00"
     },
     "m5stack-matter-examples": {
       "expires": "2026-10-09T23:00:48.497677+00:00",
@@ -5756,15 +5748,14 @@
       "timestamp": "2026-09-12T05:00:34.806916+00:00"
     },
     "m5stickc": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T20:00:21.660790+00:00",
+      "expires": "2026-11-08T17:00:11.481511+00:00",
       "id": "m5stickc",
       "pr_ref": null,
       "reason": "already_catalogued: m5stack/m5stickc is already in the atlas",
       "repo": "m5stack/m5stickc",
       "repo_id": 175354774,
-      "status": "expired",
-      "timestamp": "2026-09-08T20:00:21.660790+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T17:00:11.481511+00:00"
     },
     "m5stickc-companion-v4-satellite": {
       "expired_at": "2026-10-09T03:00:12.533071+00:00",
@@ -7792,15 +7783,14 @@
       "timestamp": "2026-09-11T21:00:02.504737+00:00"
     },
     "reterminal-sticky-inksalah": {
-      "expired_at": "2026-10-08T23:52:12.575946+00:00",
-      "expires": "2026-10-08T20:00:21.660790+00:00",
+      "expires": "2026-11-08T17:00:11.481511+00:00",
       "id": "reterminal-sticky-inksalah",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "limengdu/reterminal_sticky_inksalah",
       "repo_id": 1354377340,
-      "status": "expired",
-      "timestamp": "2026-09-08T20:00:21.660790+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-09T17:00:11.481511+00:00"
     },
     "reterminal-sticky-voice-companion": {
       "expires": "2026-10-12T03:00:29.761890+00:00",
