@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-17T09:00:11.487749+00:00",
+      "expires": "2026-10-17T10:00:11.415912+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-10T09:00:11.487749+00:00"
+      "timestamp": "2026-10-10T10:00:11.415912+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -2108,13 +2108,14 @@
       "timestamp": "2026-09-12T17:00:10.294624+00:00"
     },
     "core-oldtimeradio-stream": {
+      "expired_at": "2026-10-10T10:00:11.415912+00:00",
       "expires": "2026-10-10T09:00:16.033731+00:00",
       "id": "core-oldtimeradio-stream",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "coreymillia/core-oldtimeradio-stream",
       "repo_id": 1195792297,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-10T09:00:16.033731+00:00"
     },
     "core2-otr-stream": {
