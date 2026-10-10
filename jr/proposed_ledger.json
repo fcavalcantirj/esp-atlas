@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-17T12:00:11.529206+00:00",
+      "expires": "2026-10-17T13:00:11.869707+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-10T12:00:11.529206+00:00"
+      "timestamp": "2026-10-10T13:00:11.869707+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -6968,14 +6968,14 @@
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
     "oshw-reterminal-series-e-d": {
-      "expires": "2026-10-10T12:00:39.752957+00:00",
+      "expires": "2026-11-09T13:00:11.869707+00:00",
       "id": "oshw-reterminal-series-e-d",
       "pr_ref": null,
-      "reason": "below_floor: 11 stars / 4 forks",
+      "reason": "below_floor: 17 stars / 4 forks",
       "repo": "seeed-projects/oshw-reterminal-series-e-d",
       "repo_id": 1249796155,
       "status": "rejected",
-      "timestamp": "2026-09-10T12:00:39.752957+00:00"
+      "timestamp": "2026-10-10T13:00:11.869707+00:00"
     },
     "oshw-reterminal-sticky": {
       "expired_at": "2026-09-20T06:00:25.457978+00:00",
