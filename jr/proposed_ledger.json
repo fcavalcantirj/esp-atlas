@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-17T10:00:11.415912+00:00",
+      "expires": "2026-10-17T11:00:11.581929+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-10T10:00:11.415912+00:00"
+      "timestamp": "2026-10-10T11:00:11.581929+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -6802,13 +6802,14 @@
       "timestamp": "2026-09-02T16:03:27.881253+00:00"
     },
     "ollama-cardputer": {
+      "expired_at": "2026-10-10T11:00:11.581929+00:00",
       "expires": "2026-10-10T10:00:23.976090+00:00",
       "id": "ollama-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "pepa1555/ollama-cardputer",
       "repo_id": 1268571443,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-10T10:00:23.976090+00:00"
     },
     "onebutton": {
