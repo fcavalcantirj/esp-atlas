@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-17T04:00:11.472597+00:00",
+      "expires": "2026-10-17T05:00:11.491118+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-10T04:00:11.472597+00:00"
+      "timestamp": "2026-10-10T05:00:11.491118+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -4261,13 +4261,14 @@
       "timestamp": "2026-09-02T17:03:09.150150+00:00"
     },
     "m5-nightscoutmon": {
+      "expired_at": "2026-10-10T05:00:11.491118+00:00",
       "expires": "2026-10-10T04:00:56.284588+00:00",
       "id": "m5-nightscoutmon",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 3 forks",
       "repo": "psonnera/m5_nightscoutmon",
       "repo_id": 338906143,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-10T04:00:56.284588+00:00"
     },
     "m5-palnagotchi": {
@@ -6751,13 +6752,14 @@
       "timestamp": "2026-09-13T01:00:38.965157+00:00"
     },
     "nikos": {
+      "expired_at": "2026-10-10T05:00:11.491118+00:00",
       "expires": "2026-10-10T04:00:56.284588+00:00",
       "id": "nikos",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "thenikosteam/nikos",
       "repo_id": 946308408,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-10T04:00:56.284588+00:00"
     },
     "nostalgic-fruit-machine": {
