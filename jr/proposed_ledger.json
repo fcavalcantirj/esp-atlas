@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-17T13:00:11.869707+00:00",
+      "expires": "2026-10-17T14:00:11.506316+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-10T13:00:11.869707+00:00"
+      "timestamp": "2026-10-10T14:00:11.506316+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -6832,13 +6832,14 @@
       "timestamp": "2026-09-02T17:03:09.179924+00:00"
     },
     "open-wifi-scanner": {
+      "expired_at": "2026-10-10T14:00:11.506316+00:00",
       "expires": "2026-10-10T13:00:47.960948+00:00",
       "id": "open-wifi-scanner",
       "pr_ref": null,
       "reason": "already_catalogued: geo-tp/open-wifi-scanner is already in the atlas",
       "repo": "geo-tp/open-wifi-scanner",
       "repo_id": 846733568,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-10T13:00:47.960948+00:00"
     },
     "openai-realtime-embedded-sdk": {
