@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-17T19:00:11.643990+00:00",
+      "expires": "2026-10-17T20:00:11.555252+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-10T19:00:11.643990+00:00"
+      "timestamp": "2026-10-10T20:00:11.555252+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -7729,14 +7729,14 @@
       "timestamp": "2026-09-12T07:00:39.726979+00:00"
     },
     "reterminal-d1001": {
-      "expires": "2026-10-10T19:00:47.109119+00:00",
+      "expires": "2026-11-09T20:00:11.555252+00:00",
       "id": "reterminal-d1001",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 5 forks",
       "repo": "seeed-studio/reterminal-d1001",
       "repo_id": 1105690810,
       "status": "rejected",
-      "timestamp": "2026-09-10T19:00:47.109119+00:00"
+      "timestamp": "2026-10-10T20:00:11.555252+00:00"
     },
     "reterminal-sticky-bunny": {
       "expires": "2026-10-11T21:00:02.504737+00:00",
@@ -8359,13 +8359,14 @@
       "timestamp": "2026-09-13T15:00:47.787699+00:00"
     },
     "stackchan-mcp": {
+      "expired_at": "2026-10-10T20:00:11.555252+00:00",
       "expires": "2026-10-10T19:00:47.109119+00:00",
       "id": "stackchan-mcp",
       "pr_ref": null,
       "reason": "already_catalogued: kisaragi-mochi/stackchan-mcp is already in the atlas",
       "repo": "kisaragi-mochi/stackchan-mcp",
       "repo_id": 1226065142,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-10T19:00:47.109119+00:00"
     },
     "stackchan-mic": {
