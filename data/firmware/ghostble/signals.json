@@ -1,7 +1,7 @@
 {
  "calls": 5,
  "errors": 0,
- "fetched": "2026-10-03",
+ "fetched": "2026-10-10",
  "notes": [],
  "ref": "main",
  "repo": "SmonSE/GhostBLE",
@@ -18,27 +18,27 @@
  "signals": [
   {
    "extra": {
-    "asset": "GhostBLE-Cardputer-v1.4.8.bin",
-    "release": "v1.4.8"
+    "asset": "GhostBLE-Cardputer-v1.4.9.bin",
+    "release": "v1.4.9"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Cardputer",
-   "url": "https://github.com/SmonSE/GhostBLE/releases/download/v1.4.8/GhostBLE-Cardputer-v1.4.8.bin"
+   "url": "https://github.com/SmonSE/GhostBLE/releases/download/v1.4.9/GhostBLE-Cardputer-v1.4.9.bin"
   },
   {
    "extra": {
-    "asset": "GhostBLE-StickS3-v1.4.8.bin",
-    "release": "v1.4.8"
+    "asset": "GhostBLE-StickS3-v1.4.9.bin",
+    "release": "v1.4.9"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "StickS3",
-   "url": "https://github.com/SmonSE/GhostBLE/releases/download/v1.4.8/GhostBLE-StickS3-v1.4.8.bin"
+   "url": "https://github.com/SmonSE/GhostBLE/releases/download/v1.4.9/GhostBLE-StickS3-v1.4.9.bin"
   },
   {
    "extra": {
@@ -58,11 +58,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 26,
+   "line": 27,
    "rank": 2,
    "soc": null,
    "token": "m5stack-stamps3",
-   "url": "https://github.com/SmonSE/GhostBLE/blob/main/platformio.ini#L26"
+   "url": "https://github.com/SmonSE/GhostBLE/blob/main/platformio.ini#L27"
   }
  ]
 }
