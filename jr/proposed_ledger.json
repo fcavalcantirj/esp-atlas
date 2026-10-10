@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-16T23:00:13.238223+00:00",
+      "expires": "2026-10-17T00:00:13.827729+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-09T23:00:13.238223+00:00"
+      "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -3324,15 +3324,14 @@
       "timestamp": "2026-09-12T19:00:24.500904+00:00"
     },
     "gps-cardputer": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-09T00:00:13.827729+00:00",
       "id": "gps-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 6 stars / 0 forks",
       "repo": "r66282309-hub/gps_cardputer",
       "repo_id": 1032172515,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "gpsdata-m5cardputer": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -4550,15 +4549,14 @@
       "timestamp": "2026-09-02T16:03:28.018838+00:00"
     },
     "m5cardputer-ir-tool": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-09T00:00:13.827729+00:00",
       "id": "m5cardputer-ir-tool",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "emilnier/m5cardputer-ir-tool",
       "repo_id": 1298912469,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "m5cardputer-knowledge": {
       "expires": "2026-10-16T23:00:13.238223+00:00",
@@ -4570,15 +4568,14 @@
       "timestamp": "2026-10-09T23:00:13.238223+00:00"
     },
     "m5cardputer-macro-keypad": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-09T00:00:13.827729+00:00",
       "id": "m5cardputer-macro-keypad",
       "pr_ref": null,
       "reason": "below_floor: 8 stars / 0 forks",
       "repo": "aniketkatkar/m5cardputer-macro-keypad",
       "repo_id": 1120442382,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "m5cardputer-mp3-audio-visual-portal-hate": {
       "expires": "2026-10-12T13:00:50.482075+00:00",
@@ -4601,15 +4598,14 @@
       "timestamp": "2026-09-19T15:00:30.165949+00:00"
     },
     "m5cardputer-simple-calculator": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-09T00:00:13.827729+00:00",
       "id": "m5cardputer-simple-calculator",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "dwlf256/m5cardputer-simple-calculator",
       "repo_id": 920907521,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "m5cardputer-sun-rider": {
       "id": "m5cardputer-sun-rider",
@@ -4654,15 +4650,14 @@
       "timestamp": "2026-09-02T16:03:27.957036+00:00"
     },
     "m5cardputer-webradio": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-09T00:00:13.827729+00:00",
       "id": "m5cardputer-webradio",
       "pr_ref": null,
       "reason": "already_catalogued: cyberwisk/m5cardputer_webradio is already in the atlas",
       "repo": "cyberwisk/m5cardputer_webradio",
       "repo_id": 731736959,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "m5cardputer-webradio-dutch": {
       "expires": "2026-11-05T20:01:00.563893+00:00",
@@ -4675,15 +4670,14 @@
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5cardputer-webradio-fr": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-09T00:00:13.827729+00:00",
       "id": "m5cardputer-webradio-fr",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 1 forks",
       "repo": "tomcasa/m5cardputer-webradio-fr",
       "repo_id": 972689888,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "m5cardputer-windows": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -4732,15 +4726,14 @@
       "timestamp": "2026-09-13T18:00:09.302459+00:00"
     },
     "m5claw": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-09T00:00:13.827729+00:00",
       "id": "m5claw",
       "pr_ref": null,
       "reason": "already_catalogued: fwz233-re/m5claw is already in the atlas",
       "repo": "fwz233-re/m5claw",
       "repo_id": 1180676135,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "m5core-341-xscreensaver": {
       "expires": "2026-11-06T22:00:05.760145+00:00",
@@ -4829,15 +4822,14 @@
       "timestamp": "2026-09-12T23:00:36.053237+00:00"
     },
     "m5core2-sg90-stackchan-voicetext-ataru": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-09T00:00:13.827729+00:00",
       "id": "m5core2-sg90-stackchan-voicetext-ataru",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 1 forks",
       "repo": "manba036/m5core2_sg90_stackchan_voicetext_ataru",
       "repo_id": 603300639,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "m5core2-simpleclock": {
       "id": "m5core2-simpleclock",
@@ -4908,15 +4900,14 @@
       "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "m5cybernews-world": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-09T00:00:13.827729+00:00",
       "id": "m5cybernews-world",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 0 forks",
       "repo": "leandrosummo/m5cybernews-world",
       "repo_id": 1247841477,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "m5deck": {
       "expires": "2026-10-12T17:00:10.294624+00:00",
@@ -4939,15 +4930,14 @@
       "timestamp": "2026-09-12T17:00:10.294624+00:00"
     },
     "m5dial-userdemo": {
-      "expired_at": "2026-10-09T03:00:12.533071+00:00",
-      "expires": "2026-10-09T02:09:24.261396+00:00",
+      "expires": "2026-11-09T00:00:13.827729+00:00",
       "id": "m5dial-userdemo",
       "pr_ref": null,
       "reason": "already_catalogued: m5stack/m5dial-userdemo is already in the atlas",
       "repo": "m5stack/m5dial-userdemo",
       "repo_id": 703374617,
-      "status": "expired",
-      "timestamp": "2026-09-09T02:09:24.261396+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "m5dial-volume-hid": {
       "expired_at": "2026-10-09T23:00:13.238223+00:00",
@@ -5466,13 +5456,14 @@
       "timestamp": "2026-10-09T17:00:11.481511+00:00"
     },
     "m5stack-matter-examples": {
+      "expired_at": "2026-10-10T00:00:13.827729+00:00",
       "expires": "2026-10-09T23:00:48.497677+00:00",
       "id": "m5stack-matter-examples",
       "pr_ref": null,
       "reason": "below_floor: 10 stars / 2 forks",
       "repo": "ciniml/m5stack_matter_examples",
       "repo_id": 795800006,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T23:00:48.497677+00:00"
     },
     "m5stack-nano-c6-philipshue-extender": {
@@ -6655,13 +6646,14 @@
       "timestamp": "2026-09-13T08:00:57.847621+00:00"
     },
     "namecardknot": {
+      "expired_at": "2026-10-10T00:00:13.827729+00:00",
       "expires": "2026-10-09T23:00:48.497677+00:00",
       "id": "namecardknot",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "hiroki-kawakami/namecardknot",
       "repo_id": 1247342641,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T23:00:48.497677+00:00"
     },
     "namezero": {
@@ -6719,13 +6711,14 @@
       "timestamp": "2026-09-10T03:00:54.680157+00:00"
     },
     "nes-tab5-usb-host": {
+      "expired_at": "2026-10-10T00:00:13.827729+00:00",
       "expires": "2026-10-09T23:00:48.497677+00:00",
       "id": "nes-tab5-usb-host",
       "pr_ref": null,
       "reason": "below_floor: 18 stars / 2 forks",
       "repo": "andyaicardputer/nes-tab5-usb-host",
       "repo_id": 1112423173,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-09T23:00:48.497677+00:00"
     },
     "nesso-base": {
