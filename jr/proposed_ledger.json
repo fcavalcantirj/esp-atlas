@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-17T06:00:12.207938+00:00",
+      "expires": "2026-10-17T07:00:11.445588+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-10T06:00:12.207938+00:00"
+      "timestamp": "2026-10-10T07:00:11.445588+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -7007,13 +7007,14 @@
       "timestamp": "2026-09-10T05:00:57.737650+00:00"
     },
     "oxotp-plus": {
+      "expired_at": "2026-10-10T07:00:11.445588+00:00",
       "expires": "2026-10-10T06:00:59.439106+00:00",
       "id": "oxotp-plus",
       "pr_ref": null,
       "reason": "fork_of_uncatalogued: source=imshox/oxotp",
       "repo": "xick/oxotp-plus",
       "repo_id": 761932973,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-10T06:00:59.439106+00:00"
     },
     "pancake": {
