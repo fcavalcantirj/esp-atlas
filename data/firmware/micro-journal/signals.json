@@ -1,7 +1,7 @@
 {
  "calls": 4,
  "errors": 0,
- "fetched": "2026-10-03",
+ "fetched": "2026-10-10",
  "notes": [],
  "ref": "main",
  "repo": "unkyulee/micro-journal",
@@ -10,6 +10,7 @@
   "socs": [],
   "unresolved": [
    "firmware_rev_4",
+   "firmware_rev_6_ili9341",
    "firmware_rev_7",
    "webflash_rev.8_type_1",
    "webflash_rev.8_type_2",
@@ -31,6 +32,18 @@
    "soc": null,
    "token": "firmware_rev_4",
    "url": "https://github.com/unkyulee/micro-journal/releases/download/2.0.0/firmware_rev_4.uf2"
+  },
+  {
+   "extra": {
+    "asset": "firmware_rev_6_ili9341.bin",
+    "release": "2.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "firmware_rev_6_ili9341",
+   "url": "https://github.com/unkyulee/micro-journal/releases/download/2.0.0/firmware_rev_6_ili9341.bin"
   },
   {
    "extra": {

@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-17T05:00:11.491118+00:00",
+      "expires": "2026-10-17T06:00:12.207938+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-10T05:00:11.491118+00:00"
+      "timestamp": "2026-10-10T06:00:12.207938+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-10T15:00:42.546655+00:00",
@@ -6763,13 +6763,14 @@
       "timestamp": "2026-09-10T04:00:56.284588+00:00"
     },
     "nostalgic-fruit-machine": {
+      "expired_at": "2026-10-10T06:00:12.207938+00:00",
       "expires": "2026-10-10T05:00:57.737650+00:00",
       "id": "nostalgic-fruit-machine",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "oliverxing2025/nostalgic-fruit-machine",
       "repo_id": 1317356897,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-10T05:00:57.737650+00:00"
     },
     "np2-tab5": {
@@ -6984,23 +6985,25 @@
       "timestamp": "2026-09-13T05:00:46.054868+00:00"
     },
     "otpauth-m5stickc": {
+      "expired_at": "2026-10-10T06:00:12.207938+00:00",
       "expires": "2026-10-10T05:00:57.737650+00:00",
       "id": "otpauth-m5stickc",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 0 forks",
       "repo": "yannguillon/otpauth-m5stickc",
       "repo_id": 776016957,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-10T05:00:57.737650+00:00"
     },
     "oxotp": {
+      "expired_at": "2026-10-10T06:00:12.207938+00:00",
       "expires": "2026-10-10T05:00:57.737650+00:00",
       "id": "oxotp",
       "pr_ref": null,
       "reason": "below_floor: 24 stars / 7 forks",
       "repo": "imshox/oxotp",
       "repo_id": 318637398,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-10T05:00:57.737650+00:00"
     },
     "oxotp-plus": {
