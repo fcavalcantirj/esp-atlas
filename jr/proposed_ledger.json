@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-18T17:00:12.065810+00:00",
+      "expires": "2026-10-18T18:00:11.638224+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-11T17:00:12.065810+00:00"
+      "timestamp": "2026-10-11T18:00:11.638224+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -1018,13 +1018,14 @@
       "timestamp": "2026-10-10T16:00:11.575581+00:00"
     },
     "cardputer": {
+      "expired_at": "2026-10-11T18:00:11.638224+00:00",
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "cardputer",
       "pr_ref": null,
       "reason": "already_catalogued: volosr/cardputer is already in the atlas",
       "repo": "volosr/cardputer",
       "repo_id": 726064343,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "cardputer-8-bit-tape-loader": {
@@ -4289,33 +4290,36 @@
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
     "m5-roguemail": {
+      "expired_at": "2026-10-11T18:00:11.638224+00:00",
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "m5-roguemail",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 1 forks",
       "repo": "m5rogueops/m5-roguemail",
       "repo_id": 1289747584,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "m5-rogueos": {
+      "expired_at": "2026-10-11T18:00:11.638224+00:00",
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "m5-rogueos",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 0 forks",
       "repo": "m5rogueops/m5_rogueos",
       "repo_id": 1287927248,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "m5-rogueshell": {
+      "expired_at": "2026-10-11T18:00:11.638224+00:00",
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "m5-rogueshell",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 1 forks",
       "repo": "m5rogueops/m5-rogueshell",
       "repo_id": 1288800665,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "m5-ssh-wireguard": {
@@ -5254,13 +5258,14 @@
       "timestamp": "2026-09-02T16:03:28.056584+00:00"
     },
     "m5readpaper": {
+      "expired_at": "2026-10-11T18:00:11.638224+00:00",
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "m5readpaper",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "shinemoon/m5readpaper",
       "repo_id": 1122022204,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "m5roulette": {
@@ -5952,13 +5957,14 @@
       "timestamp": "2026-09-24T16:00:56.308279+00:00"
     },
     "m5sticks3-rogueduck": {
+      "expired_at": "2026-10-11T18:00:11.638224+00:00",
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "m5sticks3-rogueduck",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 1 forks",
       "repo": "m5rogueops/m5sticks3-rogueduck",
       "repo_id": 1276009813,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "m5sticks3-the-silence-protocol": {
@@ -7753,13 +7759,14 @@
       "timestamp": "2026-09-13T05:00:46.054868+00:00"
     },
     "raspyjack": {
+      "expired_at": "2026-10-11T18:00:11.638224+00:00",
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "raspyjack",
       "pr_ref": null,
       "reason": "already_catalogued: 7h30th3r0n3/raspyjack is already in the atlas",
       "repo": "7h30th3r0n3/raspyjack",
       "repo_id": 1006173393,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "ratcom": {
@@ -7772,13 +7779,14 @@
       "timestamp": "2026-09-01T23:04:00.148167+00:00"
     },
     "ratdeck": {
+      "expired_at": "2026-10-11T18:00:11.638224+00:00",
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "ratdeck",
       "pr_ref": null,
       "reason": "already_catalogued: ratspeak/ratdeck is already in the atlas",
       "repo": "ratspeak/ratdeck",
       "repo_id": 1174742092,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "relaykvm": {
@@ -7850,13 +7858,14 @@
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
     "retro-go": {
+      "expired_at": "2026-10-11T18:00:11.638224+00:00",
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "retro-go",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "imliubo/retro-go",
       "repo_id": 1169368725,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "rf433-signaltest-m5stickcplus": {
@@ -7958,13 +7967,14 @@
       "timestamp": "2026-09-02T16:03:27.950490+00:00"
     },
     "ricoh-gr-live-view-shooting": {
+      "expired_at": "2026-10-11T18:00:11.638224+00:00",
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "ricoh-gr-live-view-shooting",
       "pr_ref": null,
       "reason": "already_catalogued: sky18dragon/ricoh-gr-live-view-shooting is already in the atlas",
       "repo": "sky18dragon/ricoh-gr-live-view-shooting",
       "repo_id": 1289709148,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "rizumutimer": {
@@ -8009,23 +8019,25 @@
       "timestamp": "2026-09-13T05:00:46.054868+00:00"
     },
     "runman1": {
+      "expired_at": "2026-10-11T18:00:11.638224+00:00",
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "runman1",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "yo3hjv/runman1",
       "repo_id": 1165149721,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "ruru-reader-papers3": {
+      "expired_at": "2026-10-11T18:00:11.638224+00:00",
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "ruru-reader-papers3",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "helloruru/ruru-reader-papers3",
       "repo_id": 1251354387,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "ruview": {
@@ -8065,13 +8077,14 @@
       "timestamp": "2026-09-19T15:00:30.165949+00:00"
     },
     "s7comm-auditor-tool": {
+      "expired_at": "2026-10-11T18:00:11.638224+00:00",
       "expires": "2026-10-11T17:00:55.936325+00:00",
       "id": "s7comm-auditor-tool",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 1 forks",
       "repo": "z4y-d3n/s7comm-auditor-tool",
       "repo_id": 1188287229,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "sai-poc": {
