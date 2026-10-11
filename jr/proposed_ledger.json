@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-18T14:00:11.430842+00:00",
+      "expires": "2026-10-18T15:00:11.554058+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-11T14:00:11.430842+00:00"
+      "timestamp": "2026-10-11T15:00:11.554058+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -2669,13 +2669,14 @@
       "timestamp": "2026-09-20T17:00:24.409925+00:00"
     },
     "epub-m5stack-paper-s3": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "epub-m5stack-paper-s3",
       "pr_ref": null,
       "reason": "fork_of_uncatalogued: source=turgu1/epub-inkplate",
       "repo": "juicecultus/epub-m5stack-paper-s3",
       "repo_id": 1116386539,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "esp-claw": {
@@ -5147,33 +5148,36 @@
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5papercolor-calendar": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "m5papercolor-calendar",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "osamusg/m5papercolor-calendar",
       "repo_id": 1335571382,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "m5papercolor-userdemo": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "m5papercolor-userdemo",
       "pr_ref": null,
       "reason": "below_floor: 15 stars / 9 forks",
       "repo": "m5stack/m5papercolor-userdemo",
       "repo_id": 1231559469,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "m5papermono-userdemo": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "m5papermono-userdemo",
       "pr_ref": null,
       "reason": "below_floor: 11 stars / 1 forks",
       "repo": "m5stack/m5papermono-userdemo",
       "repo_id": 1231578458,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "m5papers3-animal-quiz": {
@@ -5409,13 +5413,14 @@
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stack-core2-digital-photo-album": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "m5stack-core2-digital-photo-album",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "mattb00ker/m5stack-core2-digital-photo-album",
       "repo_id": 966767353,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "m5stack-core2-wifi-scanner": {
@@ -7043,13 +7048,14 @@
       "timestamp": "2026-10-11T14:00:11.430842+00:00"
     },
     "panicplayertab5": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "panicplayertab5",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "layer812/panicplayertab5",
       "repo_id": 1327943518,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "papercolor": {
@@ -7073,43 +7079,47 @@
       "timestamp": "2026-09-19T15:00:30.165949+00:00"
     },
     "papercolor-desk-terminal": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "papercolor-desk-terminal",
       "pr_ref": null,
       "reason": "below_floor: 6 stars / 0 forks",
       "repo": "drdavidda/papercolor-desk-terminal",
       "repo_id": 1330736873,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "papercolor-frame": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "papercolor-frame",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 1 forks",
       "repo": "marstechhan/papercolor-frame",
       "repo_id": 1243469400,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "paperdarkroom": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "paperdarkroom",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 1 forks",
       "repo": "kyya/paperdarkroom",
       "repo_id": 1307553717,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "papermono-launcher": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "papermono-launcher",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "mingrzou/papermono-launcher",
       "repo_id": 1351215715,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "paperos": {
@@ -7133,73 +7143,80 @@
       "timestamp": "2026-09-13T03:00:41.977136+00:00"
     },
     "papers3weather": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "papers3weather",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "squirmen/papers3weather",
       "repo_id": 1075713126,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "papers3weather-calendar": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "papers3weather-calendar",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 1 forks",
       "repo": "gemmayclee-droid/papers3weather-calendar",
       "repo_id": 1273144283,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "papersat": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "papersat",
       "pr_ref": null,
       "reason": "below_floor: 19 stars / 2 forks",
       "repo": "prstoetzer/papersat",
       "repo_id": 1233218429,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "papersatcolor": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "papersatcolor",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "prstoetzer/papersatcolor",
       "repo_id": 1257729922,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "paperspecimens3": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "paperspecimens3",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "marcelloemme/paperspecimens3",
       "repo_id": 1187211845,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "paperweb": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "paperweb",
       "pr_ref": null,
       "reason": "already_catalogued: artem76228/paperweb is already in the atlas",
       "repo": "artem76228/paperweb",
       "repo_id": 1189881877,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "password-manager": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "password-manager",
       "pr_ref": null,
       "reason": "already_catalogued: geo-tp/password-manager is already in the atlas",
       "repo": "geo-tp/password-manager",
       "repo_id": 924319654,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "pattern256": {
@@ -7275,23 +7292,25 @@
       "timestamp": "2026-09-19T15:00:30.165949+00:00"
     },
     "pense-bem-cardputer-adv": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "pense-bem-cardputer-adv",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "fcavalcantirj/pense-bem-cardputer-adv",
       "repo_id": 1347984452,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "periscope-os": {
+      "expired_at": "2026-10-11T15:00:11.554058+00:00",
       "expires": "2026-10-11T14:00:50.412232+00:00",
       "id": "periscope-os",
       "pr_ref": null,
       "reason": "below_floor: 18 stars / 1 forks",
       "repo": "m5rogueops/periscope-os",
       "repo_id": 1269001668,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "phantom-os": {
