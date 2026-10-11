@@ -1,7 +1,7 @@
 {
  "calls": 4,
  "errors": 0,
- "fetched": "2026-10-04",
+ "fetched": "2026-10-11",
  "notes": [],
  "ref": "main",
  "repo": "dabeani/meshcoreterm",
@@ -19,141 +19,167 @@
    "firmware_indicatorpro-merged",
    "firmware_tdeckplus",
    "firmware_tdeckplus-merged",
+   "firmware_tdisplayp4",
+   "firmware_tdisplayp4-merged",
    "rp2040_indicator"
   ]
  },
  "signals": [
   {
    "extra": {
-    "asset": "firmware_elecrow35_v0.9.13-merged.bin",
-    "release": "v0.9.13"
+    "asset": "firmware_elecrow35_v0.9.14-merged.bin",
+    "release": "v0.9.14"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware_elecrow35-merged",
-   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.13/firmware_elecrow35_v0.9.13-merged.bin"
+   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.14/firmware_elecrow35_v0.9.14-merged.bin"
   },
   {
    "extra": {
-    "asset": "firmware_elecrow35_v0.9.13.bin",
-    "release": "v0.9.13"
+    "asset": "firmware_elecrow35_v0.9.14.bin",
+    "release": "v0.9.14"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware_elecrow35",
-   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.13/firmware_elecrow35_v0.9.13.bin"
+   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.14/firmware_elecrow35_v0.9.14.bin"
   },
   {
    "extra": {
-    "asset": "firmware_elecrow7_v0.9.13-merged.bin",
-    "release": "v0.9.13"
+    "asset": "firmware_elecrow7_v0.9.14-merged.bin",
+    "release": "v0.9.14"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware_elecrow7-merged",
-   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.13/firmware_elecrow7_v0.9.13-merged.bin"
+   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.14/firmware_elecrow7_v0.9.14-merged.bin"
   },
   {
    "extra": {
-    "asset": "firmware_elecrow7_v0.9.13.bin",
-    "release": "v0.9.13"
+    "asset": "firmware_elecrow7_v0.9.14.bin",
+    "release": "v0.9.14"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware_elecrow7",
-   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.13/firmware_elecrow7_v0.9.13.bin"
+   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.14/firmware_elecrow7_v0.9.14.bin"
   },
   {
    "extra": {
-    "asset": "firmware_heltecv4_v0.9.13-merged.bin",
-    "release": "v0.9.13"
+    "asset": "firmware_heltecv4_v0.9.14-merged.bin",
+    "release": "v0.9.14"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware_heltecv4-merged",
-   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.13/firmware_heltecv4_v0.9.13-merged.bin"
+   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.14/firmware_heltecv4_v0.9.14-merged.bin"
   },
   {
    "extra": {
-    "asset": "firmware_heltecv4_v0.9.13.bin",
-    "release": "v0.9.13"
+    "asset": "firmware_heltecv4_v0.9.14.bin",
+    "release": "v0.9.14"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware_heltecv4",
-   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.13/firmware_heltecv4_v0.9.13.bin"
+   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.14/firmware_heltecv4_v0.9.14.bin"
   },
   {
    "extra": {
-    "asset": "firmware_indicatorpro_v0.9.13-merged.bin",
-    "release": "v0.9.13"
+    "asset": "firmware_indicatorpro_v0.9.14-merged.bin",
+    "release": "v0.9.14"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware_indicatorpro-merged",
-   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.13/firmware_indicatorpro_v0.9.13-merged.bin"
+   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.14/firmware_indicatorpro_v0.9.14-merged.bin"
   },
   {
    "extra": {
-    "asset": "firmware_indicatorpro_v0.9.13.bin",
-    "release": "v0.9.13"
+    "asset": "firmware_indicatorpro_v0.9.14.bin",
+    "release": "v0.9.14"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware_indicatorpro",
-   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.13/firmware_indicatorpro_v0.9.13.bin"
+   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.14/firmware_indicatorpro_v0.9.14.bin"
   },
   {
    "extra": {
-    "asset": "firmware_tdeckplus_v0.9.13-merged.bin",
-    "release": "v0.9.13"
+    "asset": "firmware_tdeckplus_v0.9.14-merged.bin",
+    "release": "v0.9.14"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware_tdeckplus-merged",
-   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.13/firmware_tdeckplus_v0.9.13-merged.bin"
+   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.14/firmware_tdeckplus_v0.9.14-merged.bin"
   },
   {
    "extra": {
-    "asset": "firmware_tdeckplus_v0.9.13.bin",
-    "release": "v0.9.13"
+    "asset": "firmware_tdeckplus_v0.9.14.bin",
+    "release": "v0.9.14"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware_tdeckplus",
-   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.13/firmware_tdeckplus_v0.9.13.bin"
+   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.14/firmware_tdeckplus_v0.9.14.bin"
   },
   {
    "extra": {
-    "asset": "rp2040_indicator_v0.9.13.uf2",
-    "release": "v0.9.13"
+    "asset": "firmware_tdisplayp4_v0.9.14-merged.bin",
+    "release": "v0.9.14"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "firmware_tdisplayp4-merged",
+   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.14/firmware_tdisplayp4_v0.9.14-merged.bin"
+  },
+  {
+   "extra": {
+    "asset": "firmware_tdisplayp4_v0.9.14.bin",
+    "release": "v0.9.14"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "firmware_tdisplayp4",
+   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.14/firmware_tdisplayp4_v0.9.14.bin"
+  },
+  {
+   "extra": {
+    "asset": "rp2040_indicator_v0.9.14.uf2",
+    "release": "v0.9.14"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "rp2040_indicator",
-   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.13/rp2040_indicator_v0.9.13.uf2"
+   "url": "https://github.com/dabeani/meshcoreterm/releases/download/v0.9.14/rp2040_indicator_v0.9.14.uf2"
   }
  ]
 }
