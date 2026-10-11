@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-18T22:00:11.491359+00:00",
+      "expires": "2026-10-18T23:00:11.520972+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-11T22:00:11.491359+00:00"
+      "timestamp": "2026-10-11T23:00:11.520972+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -2235,13 +2235,14 @@
       "timestamp": "2026-09-11T16:00:54.676058+00:00"
     },
     "crcmd-tab5": {
+      "expired_at": "2026-10-11T23:00:11.520972+00:00",
       "expires": "2026-10-11T23:00:11.214000+00:00",
       "id": "crcmd-tab5",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "sohtamei/crcmd.tab5",
       "repo_id": 1038524167,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "cric-ric": {
@@ -2714,13 +2715,14 @@
       "timestamp": "2026-09-12T18:00:17.136349+00:00"
     },
     "esp-hosted-mcu": {
+      "expired_at": "2026-10-11T23:00:11.520972+00:00",
       "expires": "2026-10-11T23:00:11.214000+00:00",
       "id": "esp-hosted-mcu",
       "pr_ref": null,
       "reason": "already_catalogued: espressif/esp-hosted-mcu is already in the atlas",
       "repo": "espressif/esp-hosted-mcu",
       "repo_id": 882997253,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "esp-iot-solution": {
@@ -5590,13 +5592,14 @@
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
     "m5stack-tab5-aio-box": {
+      "expired_at": "2026-10-11T23:00:11.520972+00:00",
       "expires": "2026-10-11T23:00:11.214000+00:00",
       "id": "m5stack-tab5-aio-box",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "zhaoker/m5stack_tab5_aio_box",
       "repo_id": 1263731718,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "m5stack-tab5-converter": {
@@ -8759,73 +8762,80 @@
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "tab5-adb": {
+      "expired_at": "2026-10-11T23:00:11.520972+00:00",
       "expires": "2026-10-11T23:00:11.214000+00:00",
       "id": "tab5-adb",
       "pr_ref": null,
       "reason": "below_floor: 12 stars / 2 forks",
       "repo": "hiroki-kawakami/tab5-adb",
       "repo_id": 1237671799,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "tab5-hid-device": {
+      "expired_at": "2026-10-11T23:00:11.520972+00:00",
       "expires": "2026-10-11T23:00:11.214000+00:00",
       "id": "tab5-hid-device",
       "pr_ref": null,
       "reason": "below_floor: 6 stars / 2 forks",
       "repo": "hiroki-kawakami/tab5-hid-device",
       "repo_id": 1135626452,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "tab5-launcher": {
+      "expired_at": "2026-10-11T23:00:11.520972+00:00",
       "expires": "2026-10-11T23:00:11.214000+00:00",
       "id": "tab5-launcher",
       "pr_ref": null,
       "reason": "below_floor: 21 stars / 2 forks",
       "repo": "imlunchtime/tab5_launcher",
       "repo_id": 1028687952,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "tab5-media-player": {
+      "expired_at": "2026-10-11T23:00:11.520972+00:00",
       "expires": "2026-10-11T23:00:11.214000+00:00",
       "id": "tab5-media-player",
       "pr_ref": null,
       "reason": "below_floor: 11 stars / 3 forks",
       "repo": "hiroki-kawakami/tab5-media-player",
       "repo_id": 990775037,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "tab5-screen-streamer": {
+      "expired_at": "2026-10-11T23:00:11.520972+00:00",
       "expires": "2026-10-11T23:00:11.214000+00:00",
       "id": "tab5-screen-streamer",
       "pr_ref": null,
       "reason": "below_floor: 13 stars / 0 forks",
       "repo": "hiroki-kawakami/tab5-screen-streamer",
       "repo_id": 1072209546,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "tab5-ssh-client": {
+      "expired_at": "2026-10-11T23:00:11.520972+00:00",
       "expires": "2026-10-11T23:00:11.214000+00:00",
       "id": "tab5-ssh-client",
       "pr_ref": null,
       "reason": "below_floor: 13 stars / 2 forks",
       "repo": "airpocket-soundman/tab5_ssh_client",
       "repo_id": 1280167511,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "tab5-uvc-display": {
+      "expired_at": "2026-10-11T23:00:11.520972+00:00",
       "expires": "2026-10-11T23:00:11.214000+00:00",
       "id": "tab5-uvc-display",
       "pr_ref": null,
       "reason": "below_floor: 8 stars / 1 forks",
       "repo": "hiroki-kawakami/tab5-uvc-display",
       "repo_id": 987020744,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "tab5-weather-clock-tmp711v4": {
@@ -8840,13 +8850,14 @@
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
     "tactility": {
+      "expired_at": "2026-10-11T23:00:11.520972+00:00",
       "expires": "2026-10-11T23:00:11.214000+00:00",
       "id": "tactility",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "tactilityproject/tactility",
       "repo_id": 735565340,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "tagtinker-adv": {
@@ -8859,13 +8870,14 @@
       "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "tama-search-uni": {
+      "expired_at": "2026-10-11T23:00:11.520972+00:00",
       "expires": "2026-10-11T23:00:11.214000+00:00",
       "id": "tama-search-uni",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "calcaware/tama-search-uni",
       "repo_id": 1354961558,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "tamaputer": {
