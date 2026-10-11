@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-18T15:00:11.554058+00:00",
+      "expires": "2026-10-18T16:00:12.884585+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-11T15:00:11.554058+00:00"
+      "timestamp": "2026-10-11T16:00:12.884585+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -128,13 +128,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "acidtrip-psychedelic-m5core-60-visuals": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "acidtrip-psychedelic-m5core-60-visuals",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "coreymillia/acidtrip-psychedelic-m5core-60-visuals",
       "repo_id": 1099363617,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "actpaddle": {
@@ -5233,14 +5234,14 @@
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5porkchop": {
-      "expires": "2026-10-11T15:00:52.423877+00:00",
+      "expires": "2026-11-10T16:00:12.884585+00:00",
       "id": "m5porkchop",
       "pr_ref": null,
-      "reason": "below_floor: 2 stars / 0 forks",
-      "repo": "h4w9/m5porkchop",
-      "repo_id": 1210746591,
+      "reason": "already_catalogued: 0ct0sec/m5porkchop is already in the atlas",
+      "repo": "0ct0sec/m5porkchop",
+      "repo_id": 1110910539,
       "status": "rejected",
-      "timestamp": "2026-09-11T15:00:52.423877+00:00"
+      "timestamp": "2026-10-11T16:00:12.884585+00:00"
     },
     "m5rally": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -5743,13 +5744,14 @@
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stickc-plus-2-ping-pong": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "m5stickc-plus-2-ping-pong",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "freedomxxjustice/m5stickc-plus-2-ping-pong",
       "repo_id": 948654327,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "m5stickc-plus-joke-scroller": {
@@ -7335,23 +7337,25 @@
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "picoware": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "picoware",
       "pr_ref": null,
       "reason": "already_catalogued: jblanked/picoware is already in the atlas",
       "repo": "jblanked/picoware",
       "repo_id": 989766763,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "pigtail": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "pigtail",
       "pr_ref": null,
       "reason": "already_catalogued: benbaker76/pigtail is already in the atlas",
       "repo": "benbaker76/pigtail",
       "repo_id": 1125984917,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "pingpongs3": {
@@ -7376,13 +7380,14 @@
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
     "pip-boy-weather-clock": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "pip-boy-weather-clock",
       "pr_ref": null,
       "reason": "already_catalogued: nishad2m8/pip-boy-weather-clock is already in the atlas",
       "repo": "nishad2m8/pip-boy-weather-clock",
       "repo_id": 872118368,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "plai": {
@@ -7395,13 +7400,14 @@
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
     },
     "plai-meshcore": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "plai-meshcore",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 1 forks",
       "repo": "sjoyce1/plai-meshcore",
       "repo_id": 1307082432,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "plume": {
@@ -7413,13 +7419,14 @@
       "timestamp": "2026-09-02T16:03:28.041025+00:00"
     },
     "plumeria-mc": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "plumeria-mc",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "oumike/plumeria-mc",
       "repo_id": 1262928422,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "pocket-gambler": {
@@ -7439,23 +7446,25 @@
       "timestamp": "2026-10-11T13:00:19.731429+00:00"
     },
     "pocketmo-m5": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "pocketmo-m5",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "kubiklego/pocketmo_m5",
       "repo_id": 1141897020,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "pocketssh": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "pocketssh",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "0015/pocketssh",
       "repo_id": 1132515428,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "pomodora-m5stick": {
@@ -7469,33 +7478,36 @@
       "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "pomodoro-card": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "pomodoro-card",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "mohith-das/pomodoro-card",
       "repo_id": 1354088654,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "pomodoro-papers3": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "pomodoro-papers3",
       "pr_ref": null,
       "reason": "below_floor: 10 stars / 2 forks",
       "repo": "micokonsep/pomodoro-papers3",
       "repo_id": 1041801092,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "poodle": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "poodle",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 1 forks",
       "repo": "k-natori/poodle",
       "repo_id": 600770829,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "portal-evil-huebr": {
@@ -7540,13 +7552,14 @@
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
     "ppltmini-atoms3": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "ppltmini-atoms3",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 1 forks",
       "repo": "sc-makers/ppltmini-atoms3",
       "repo_id": 697170634,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "project": {
@@ -7568,23 +7581,25 @@
       "timestamp": "2026-09-02T17:03:09.165999+00:00"
     },
     "psychedelic-m5stickc-plus2": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "psychedelic-m5stickc-plus2",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "coreymillia/psychedelic-m5stickc-plus2",
       "repo_id": 1077842629,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "psychedelic-theramin-m5stickc-plus2": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "psychedelic-theramin-m5stickc-plus2",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "coreymillia/psychedelic-theramin-m5stickc-plus2",
       "repo_id": 1097826190,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "pulseos": {
@@ -7598,13 +7613,14 @@
       "timestamp": "2026-09-19T15:00:30.165949+00:00"
     },
     "pumpbug": {
+      "expired_at": "2026-10-11T16:00:12.884585+00:00",
       "expires": "2026-10-11T15:00:52.423877+00:00",
       "id": "pumpbug",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 0 forks",
       "repo": "ludable/pumpbug",
       "repo_id": 1322995631,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "purple": {
