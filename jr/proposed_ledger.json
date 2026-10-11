@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-18T19:00:11.582762+00:00",
+      "expires": "2026-10-18T20:00:11.593510+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-11T19:00:11.582762+00:00"
+      "timestamp": "2026-10-11T20:00:11.593510+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -3247,13 +3247,14 @@
       "timestamp": "2026-09-30T09:00:28.669440+00:00"
     },
     "geek-casino-cardputeradv": {
+      "expired_at": "2026-10-11T20:00:11.593510+00:00",
       "expires": "2026-10-11T19:00:59.205076+00:00",
       "id": "geek-casino-cardputeradv",
       "pr_ref": null,
       "reason": "below_floor: 11 stars / 1 forks",
       "repo": "chatelp/geek-casino-cardputeradv",
       "repo_id": 1330934064,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
     "geminiputer": {
@@ -5572,13 +5573,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "m5stack-sticks3-lucky-slots": {
+      "expired_at": "2026-10-11T20:00:11.593510+00:00",
       "expires": "2026-10-11T19:00:59.205076+00:00",
       "id": "m5stack-sticks3-lucky-slots",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "liyongjian5179/m5stack_sticks3_lucky_slots",
       "repo_id": 1225262199,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
     "m5stack-tab5-aio-box": {
@@ -8226,23 +8228,25 @@
       "timestamp": "2026-09-19T18:00:53.079431+00:00"
     },
     "seraphs-subghz-tool": {
+      "expired_at": "2026-10-11T20:00:11.593510+00:00",
       "expires": "2026-10-11T19:00:59.205076+00:00",
       "id": "seraphs-subghz-tool",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "hackerseraph/seraphs-subghz-tool",
       "repo_id": 1115980239,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
     "serial-wifi-logger": {
+      "expired_at": "2026-10-11T20:00:11.593510+00:00",
       "expires": "2026-10-11T19:00:59.205076+00:00",
       "id": "serial-wifi-logger",
       "pr_ref": null,
       "reason": "below_floor: 10 stars / 0 forks",
       "repo": "ciniml/serial_wifi_logger",
       "repo_id": 1134366062,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
     "server-vampeta": {
@@ -8280,23 +8284,25 @@
       "timestamp": "2026-09-02T16:03:28.081318+00:00"
     },
     "silicon-bubbles-cardputeradv": {
+      "expired_at": "2026-10-11T20:00:11.593510+00:00",
       "expires": "2026-10-11T19:00:59.205076+00:00",
       "id": "silicon-bubbles-cardputeradv",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 1 forks",
       "repo": "chatelp/silicon-bubbles-cardputeradv",
       "repo_id": 1335818137,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
     "simple-magic-8-ball": {
+      "expired_at": "2026-10-11T20:00:11.593510+00:00",
       "expires": "2026-10-11T19:00:59.205076+00:00",
       "id": "simple-magic-8-ball",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "djark13/simple-magic-8-ball",
       "repo_id": 1086384422,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
     "simple-pomodoro-timer": {
@@ -8310,13 +8316,14 @@
       "timestamp": "2026-09-13T11:00:18.933731+00:00"
     },
     "simplespectrumanalyzer-atommatrix": {
+      "expired_at": "2026-10-11T20:00:11.593510+00:00",
       "expires": "2026-10-11T19:00:59.205076+00:00",
       "id": "simplespectrumanalyzer-atommatrix",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "washishi/simplespectrumanalyzer-atommatrix",
       "repo_id": 915160945,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
     "skycompass-cardputeradv": {
@@ -8347,13 +8354,14 @@
       "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "snake-game-cardputer": {
+      "expired_at": "2026-10-11T20:00:11.593510+00:00",
       "expires": "2026-10-11T19:00:59.205076+00:00",
       "id": "snake-game-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "lexcibien/snake_game_cardputer",
       "repo_id": 1146977153,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
     "solotputer": {
