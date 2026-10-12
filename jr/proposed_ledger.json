@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-19T20:00:11.871872+00:00",
+      "expires": "2026-10-19T21:00:11.731529+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-12T20:00:11.871872+00:00"
+      "timestamp": "2026-10-12T21:00:11.731529+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -3661,13 +3661,14 @@
       "timestamp": "2026-10-10T17:00:11.617477+00:00"
     },
     "ibutton-firmware-for-m5-stickc-plus2": {
+      "expired_at": "2026-10-12T21:00:11.731529+00:00",
       "expires": "2026-10-12T20:00:31.062202+00:00",
       "id": "ibutton-firmware-for-m5-stickc-plus2",
       "pr_ref": null,
       "reason": "below_floor: 9 stars / 0 forks",
       "repo": "mor1k/ibutton-firmware-for-m5-stickc-plus2",
       "repo_id": 902529790,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T20:00:31.062202+00:00"
     },
     "iching-xiaozhi-card": {
@@ -3681,23 +3682,25 @@
       "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "idk-firmware": {
+      "expired_at": "2026-10-12T21:00:11.731529+00:00",
       "expires": "2026-10-12T20:00:31.062202+00:00",
       "id": "idk-firmware",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "truonglangquan/idk-firmware",
       "repo_id": 1150769835,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T20:00:31.062202+00:00"
     },
     "idk-test": {
+      "expired_at": "2026-10-12T21:00:11.731529+00:00",
       "expires": "2026-10-12T20:00:31.062202+00:00",
       "id": "idk-test",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "truonglangquan/idk-test",
       "repo_id": 1155983396,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T20:00:31.062202+00:00"
     },
     "imgui-lovyangfx": {
