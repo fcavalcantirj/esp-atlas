@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-19T04:00:11.878766+00:00",
+      "expires": "2026-10-19T05:00:11.471594+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-12T04:00:11.878766+00:00"
+      "timestamp": "2026-10-12T05:00:11.471594+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -5226,13 +5226,14 @@
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5papers3-nc1020-emu": {
+      "expired_at": "2026-10-12T05:00:11.471594+00:00",
       "expires": "2026-10-12T04:00:31.028335+00:00",
       "id": "m5papers3-nc1020-emu",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 1 forks",
       "repo": "iele/m5papers3-nc1020-emu",
       "repo_id": 758077209,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T04:00:31.028335+00:00"
     },
     "m5paperweather-calendar": {
@@ -9548,23 +9549,25 @@
       "timestamp": "2026-09-13T11:00:18.933731+00:00"
     },
     "wled": {
+      "expired_at": "2026-10-12T05:00:11.471594+00:00",
       "expires": "2026-10-12T04:00:31.028335+00:00",
       "id": "wled",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "toshihiromakuuchi/wled",
       "repo_id": 846066903,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T04:00:31.028335+00:00"
     },
     "wled-cardputer": {
+      "expired_at": "2026-10-12T05:00:11.471594+00:00",
       "expires": "2026-10-12T04:00:31.028335+00:00",
       "id": "wled-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 12 stars / 3 forks",
       "repo": "nishad2m8/wled-cardputer",
       "repo_id": 1175193578,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T04:00:31.028335+00:00"
     },
     "wmbuster-adv": {
