@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-19T01:00:11.460990+00:00",
+      "expires": "2026-10-19T02:00:15.375451+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-12T01:00:11.460990+00:00"
+      "timestamp": "2026-10-12T02:00:15.375451+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -59,13 +59,14 @@
       "timestamp": "2026-10-07T22:00:05.760145+00:00"
     },
     "20questions": {
+      "expired_at": "2026-10-12T02:00:15.375451+00:00",
       "expires": "2026-10-12T01:00:16.789643+00:00",
       "id": "20questions",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "bpivk/20questions",
       "repo_id": 1183689499,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "341-xscreensaver-m5stickc-plus1-plus2": {
@@ -8663,13 +8664,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "sticky-toybox": {
+      "expired_at": "2026-10-12T02:00:15.375451+00:00",
       "expires": "2026-10-12T01:00:16.789643+00:00",
       "id": "sticky-toybox",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "z4b333/sticky-toybox",
       "repo_id": 1326291692,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "stopwatch-chronotrace": {
@@ -9041,13 +9043,14 @@
       "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "tiny-journal": {
+      "expired_at": "2026-10-12T02:00:15.375451+00:00",
       "expires": "2026-10-12T01:00:16.789643+00:00",
       "id": "tiny-journal",
       "pr_ref": null,
       "reason": "already_catalogued: joejee90/tiny-journal is already in the atlas",
       "repo": "joejee90/tiny-journal",
       "repo_id": 1106575137,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "tinycardputer": {
@@ -9059,13 +9062,14 @@
       "timestamp": "2026-09-02T17:03:09.118089+00:00"
     },
     "tomatoclock-m5cardputer": {
+      "expired_at": "2026-10-12T02:00:15.375451+00:00",
       "expires": "2026-10-12T01:00:16.789643+00:00",
       "id": "tomatoclock-m5cardputer",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 0 forks",
       "repo": "ffrafat/tomatoclock_m5cardputer",
       "repo_id": 977695063,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "tonegenerator": {
@@ -9088,13 +9092,14 @@
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
     "trail-mate": {
+      "expired_at": "2026-10-12T02:00:15.375451+00:00",
       "expires": "2026-10-12T01:00:16.789643+00:00",
       "id": "trail-mate",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "vicliu624/trail-mate",
       "repo_id": 1136847791,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "trmnl-firmware": {
@@ -9109,14 +9114,14 @@
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
     "tulipcc": {
-      "expires": "2026-10-12T01:00:16.789643+00:00",
+      "expires": "2026-11-11T02:00:15.375451+00:00",
       "id": "tulipcc",
       "pr_ref": null,
-      "reason": "below_floor: 4 stars / 0 forks",
+      "reason": "fork_of_uncatalogued: source=shorepine/tulipcc",
       "repo": "minoruinachi/tulipcc",
       "repo_id": 1304605102,
       "status": "rejected",
-      "timestamp": "2026-09-12T01:00:16.789643+00:00"
+      "timestamp": "2026-10-12T02:00:15.375451+00:00"
     },
     "twesp32sensor": {
       "expires": "2026-10-13T08:00:57.847621+00:00",
@@ -9149,13 +9154,14 @@
       "timestamp": "2026-09-13T08:00:57.847621+00:00"
     },
     "uarterm": {
+      "expired_at": "2026-10-12T02:00:15.375451+00:00",
       "expires": "2026-10-12T01:00:16.789643+00:00",
       "id": "uarterm",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "zolibot/uarterm",
       "repo_id": 1246265621,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "ubo07": {
@@ -9176,13 +9182,14 @@
       "timestamp": "2026-09-02T16:03:28.075625+00:00"
     },
     "uiflow-micropython": {
+      "expired_at": "2026-10-12T02:00:15.375451+00:00",
       "expires": "2026-10-12T01:00:16.789643+00:00",
       "id": "uiflow-micropython",
       "pr_ref": null,
       "reason": "already_catalogued: m5stack/uiflow-micropython is already in the atlas",
       "repo": "m5stack/uiflow-micropython",
       "repo_id": 446381832,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "ulisp-cardputer": {
