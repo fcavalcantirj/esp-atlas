@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-19T11:00:12.994246+00:00",
+      "expires": "2026-10-19T14:00:11.382801+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-12T11:00:12.994246+00:00"
+      "timestamp": "2026-10-12T14:00:11.382801+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -484,13 +484,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "atoms3-341-xscreensaver": {
+      "expired_at": "2026-10-12T14:00:11.382801+00:00",
       "expires": "2026-10-12T12:00:48.975386+00:00",
       "id": "atoms3-341-xscreensaver",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "coreymillia/atoms3-341-xscreensaver",
       "repo_id": 1118039281,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T12:00:48.975386+00:00"
     },
     "atoms3-lite-tvbgone": {
@@ -4611,13 +4612,14 @@
       "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "m5cardputer-mp3-audio-visual-portal-hate": {
+      "expired_at": "2026-10-12T14:00:11.382801+00:00",
       "expires": "2026-10-12T13:00:50.482075+00:00",
       "id": "m5cardputer-mp3-audio-visual-portal-hate",
       "pr_ref": null,
       "reason": "below_floor: 8 stars / 0 forks",
       "repo": "coreymillia/m5cardputer-mp3-audio-visual-portal-hater",
       "repo_id": 1120942965,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T13:00:50.482075+00:00"
     },
     "m5cardputer-mp3-manager": {
@@ -4790,13 +4792,14 @@
       "timestamp": "2026-09-13T10:00:11.502302+00:00"
     },
     "m5core2-341-effects-xscreensaver": {
+      "expired_at": "2026-10-12T14:00:11.382801+00:00",
       "expires": "2026-10-12T12:00:48.975386+00:00",
       "id": "m5core2-341-effects-xscreensaver",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "coreymillia/m5core2-341-effects-xscreensaver",
       "repo_id": 1123442811,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T12:00:48.975386+00:00"
     },
     "m5core2-audio-analyzer": {
@@ -9689,13 +9692,14 @@
       "timestamp": "2026-09-13T13:00:33.517833+00:00"
     },
     "xiaozhi-cardputer": {
+      "expired_at": "2026-10-12T14:00:11.382801+00:00",
       "expires": "2026-10-12T12:00:48.975386+00:00",
       "id": "xiaozhi-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 8 stars / 1 forks",
       "repo": "grvmind/xiaozhi-cardputer",
       "repo_id": 1079929550,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T12:00:48.975386+00:00"
     },
     "xiaozhi-esp32": {
@@ -9708,13 +9712,14 @@
       "timestamp": "2026-10-10T16:00:11.575581+00:00"
     },
     "xiaozhipro": {
+      "expired_at": "2026-10-12T14:00:11.382801+00:00",
       "expires": "2026-10-12T12:00:48.975386+00:00",
       "id": "xiaozhipro",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "hougeai/xiaozhipro",
       "repo_id": 1090793395,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T12:00:48.975386+00:00"
     },
     "xjackcore-m5stack-jesus-hooligan-pc-cras": {
@@ -9761,23 +9766,25 @@
       "timestamp": "2026-09-12T10:00:45.628096+00:00"
     },
     "yamb-game-cardputer": {
+      "expired_at": "2026-10-12T14:00:11.382801+00:00",
       "expires": "2026-10-12T13:00:50.482075+00:00",
       "id": "yamb-game-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "8432r983/yamb_game_cardputer",
       "repo_id": 1074884216,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T13:00:50.482075+00:00"
     },
     "yolo-watchdog": {
+      "expired_at": "2026-10-12T14:00:11.382801+00:00",
       "expires": "2026-10-12T13:00:50.482075+00:00",
       "id": "yolo-watchdog",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 1 forks",
       "repo": "kysutrung/yolo_watchdog",
       "repo_id": 843337373,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T13:00:50.482075+00:00"
     },
     "youranonelf": {
@@ -9839,13 +9846,14 @@
       "timestamp": "2026-09-02T16:03:47.776765+00:00"
     },
     "zx-spectrum-cardputer-ili9341": {
+      "expired_at": "2026-10-12T14:00:11.382801+00:00",
       "expires": "2026-10-12T13:00:50.482075+00:00",
       "id": "zx-spectrum-cardputer-ili9341",
       "pr_ref": null,
       "reason": "already_catalogued: andyaicardputer/zx-spectrum-cardputer-ili9341 is already in the atlas",
       "repo": "andyaicardputer/zx-spectrum-cardputer-ili9341",
       "repo_id": 1233987937,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T13:00:50.482075+00:00"
     },
     "zx-spectrum-cardputer-internal": {
