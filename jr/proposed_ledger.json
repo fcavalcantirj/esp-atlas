@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-19T19:00:13.240021+00:00",
+      "expires": "2026-10-19T20:00:11.871872+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-12T19:00:13.240021+00:00"
+      "timestamp": "2026-10-12T20:00:11.871872+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -3345,13 +3345,14 @@
       "timestamp": "2026-09-02T16:03:47.776765+00:00"
     },
     "google-dino-for-m5stickcplus2": {
+      "expired_at": "2026-10-12T20:00:11.871872+00:00",
       "expires": "2026-10-12T19:00:24.500904+00:00",
       "id": "google-dino-for-m5stickcplus2",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "lukastrhan-hub/google-dino-for-m5stickcplus2",
       "repo_id": 1120102177,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T19:00:24.500904+00:00"
     },
     "gps-cardputer": {
@@ -3373,14 +3374,12 @@
       "timestamp": "2026-09-02T16:03:27.998361+00:00"
     },
     "grajek": {
-      "expires": "2026-10-12T19:00:24.500904+00:00",
+      "expires": "2026-11-11T20:00:11.871872+00:00",
       "id": "grajek",
       "pr_ref": null,
-      "reason": "below_floor: 11 stars / 0 forks",
       "repo": "jasisz/grajek",
-      "repo_id": 1315916863,
-      "status": "rejected",
-      "timestamp": "2026-09-12T19:00:24.500904+00:00"
+      "status": "seen",
+      "timestamp": "2026-10-12T20:00:11.871872+00:00"
     },
     "grovenfc": {
       "expires": "2026-10-17T17:00:11.617477+00:00",
@@ -3449,13 +3448,14 @@
       "timestamp": "2026-09-10T00:00:50.127806+00:00"
     },
     "hakrwatch": {
+      "expired_at": "2026-10-12T20:00:11.871872+00:00",
       "expires": "2026-10-12T19:00:24.500904+00:00",
       "id": "hakrwatch",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "mrarm/hakrwatch",
       "repo_id": 242574388,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T19:00:24.500904+00:00"
     },
     "hal9000": {
@@ -3585,13 +3585,14 @@
       "timestamp": "2026-10-09T16:00:11.685578+00:00"
     },
     "hi5stack-m5stack-papsers3-m5papers3": {
+      "expired_at": "2026-10-12T20:00:11.871872+00:00",
       "expires": "2026-10-12T19:00:24.500904+00:00",
       "id": "hi5stack-m5stack-papsers3-m5papers3",
       "pr_ref": null,
       "reason": "below_floor: 13 stars / 5 forks",
       "repo": "michaelrizn/hi5stack-m5stack-papsers3-m5papers3",
       "repo_id": 965113277,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T19:00:24.500904+00:00"
     },
     "hikepod": {
