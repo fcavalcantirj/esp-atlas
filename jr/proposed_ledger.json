@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-19T10:00:13.282823+00:00",
+      "expires": "2026-10-19T11:00:12.994246+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-12T10:00:13.282823+00:00"
+      "timestamp": "2026-10-12T11:00:12.994246+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -9658,13 +9658,14 @@
       "timestamp": "2026-09-12T09:00:42.532247+00:00"
     },
     "x68ktab5": {
+      "expired_at": "2026-10-12T11:00:12.994246+00:00",
       "expires": "2026-10-12T10:00:45.628096+00:00",
       "id": "x68ktab5",
       "pr_ref": null,
       "reason": "below_floor: 6 stars / 0 forks",
       "repo": "layer812/x68ktab5",
       "repo_id": 1338094363,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T10:00:45.628096+00:00"
     },
     "xcalc-cardputer": {
@@ -9717,23 +9718,25 @@
       "timestamp": "2026-09-12T12:00:48.975386+00:00"
     },
     "xjackcore-m5stack-jesus-hooligan-pc-cras": {
+      "expired_at": "2026-10-12T11:00:12.994246+00:00",
       "expires": "2026-10-12T10:00:45.628096+00:00",
       "id": "xjackcore-m5stack-jesus-hooligan-pc-cras",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "coreymillia/xjackcore-m5stack-jesus-hooligan-pc-crash-simulation",
       "repo_id": 1169590191,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T10:00:45.628096+00:00"
     },
     "xjackmod-hooligan-terminal-crash-m5stick": {
+      "expired_at": "2026-10-12T11:00:12.994246+00:00",
       "expires": "2026-10-12T10:00:45.628096+00:00",
       "id": "xjackmod-hooligan-terminal-crash-m5stick",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "coreymillia/xjackmod-hooligan-terminal-crash-m5stick",
       "repo_id": 1122129643,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T10:00:45.628096+00:00"
     },
     "xmod-lib": {
@@ -9747,13 +9750,14 @@
       "timestamp": "2026-09-13T12:00:26.473492+00:00"
     },
     "xnode": {
+      "expired_at": "2026-10-12T11:00:12.994246+00:00",
       "expires": "2026-10-12T10:00:45.628096+00:00",
       "id": "xnode",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 2 forks",
       "repo": "mkme/xnode",
       "repo_id": 1211943323,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T10:00:45.628096+00:00"
     },
     "yamb-game-cardputer": {
