@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-19T18:00:11.411496+00:00",
+      "expires": "2026-10-19T19:00:13.240021+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-12T18:00:11.411496+00:00"
+      "timestamp": "2026-10-12T19:00:13.240021+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -2326,13 +2326,14 @@
       "timestamp": "2026-09-02T16:03:28.067774+00:00"
     },
     "crub": {
+      "expired_at": "2026-10-12T19:00:13.240021+00:00",
       "expires": "2026-10-12T18:00:17.136349+00:00",
       "id": "crub",
       "pr_ref": null,
       "reason": "already_catalogued: wisnc/crub is already in the atlas",
       "repo": "wisnc/crub",
       "repo_id": 1238502480,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T18:00:17.136349+00:00"
     },
     "cscardputer": {
@@ -2760,13 +2761,14 @@
       "timestamp": "2026-10-09T02:00:12.078416+00:00"
     },
     "esp-now-chat-firmware": {
+      "expired_at": "2026-10-12T19:00:13.240021+00:00",
       "expires": "2026-10-12T18:00:17.136349+00:00",
       "id": "esp-now-chat-firmware",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "graysonreid2011/esp-now-chat-firmware",
       "repo_id": 1269518201,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T18:00:17.136349+00:00"
     },
     "esp1312": {
