@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-19T08:00:11.555854+00:00",
+      "expires": "2026-10-19T09:00:11.772959+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-12T08:00:11.555854+00:00"
+      "timestamp": "2026-10-12T09:00:11.772959+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -9513,13 +9513,14 @@
       "timestamp": "2026-09-12T06:00:36.297632+00:00"
     },
     "wifikey2": {
+      "expired_at": "2026-10-12T09:00:11.772959+00:00",
       "expires": "2026-10-12T08:00:41.133831+00:00",
       "id": "wifikey2",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "jl1nie/wifikey2",
       "repo_id": 780487160,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T08:00:41.133831+00:00"
     },
     "wiki-jokes-quotes-m5stack-core-basic": {
@@ -9533,13 +9534,14 @@
       "timestamp": "2026-10-09T13:00:11.675780+00:00"
     },
     "wikipedia-offline-adv": {
+      "expired_at": "2026-10-12T09:00:11.772959+00:00",
       "expires": "2026-10-12T08:00:41.133831+00:00",
       "id": "wikipedia-offline-adv",
       "pr_ref": null,
       "reason": "already_catalogued: zeloksa/wikipedia-offline-adv is already in the atlas",
       "repo": "zeloksa/wikipedia-offline-adv",
       "repo_id": 1249136784,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T08:00:41.133831+00:00"
     },
     "wikiputer": {
@@ -9591,13 +9593,14 @@
       "timestamp": "2026-09-02T17:03:09.137580+00:00"
     },
     "wordle-cardputer": {
+      "expired_at": "2026-10-12T09:00:11.772959+00:00",
       "expires": "2026-10-12T08:00:41.133831+00:00",
       "id": "wordle-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 12 stars / 2 forks",
       "repo": "sourcels/wordle_cardputer",
       "repo_id": 1091925722,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T08:00:41.133831+00:00"
     },
     "world-market-clock": {
