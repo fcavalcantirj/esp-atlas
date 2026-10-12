@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-19T22:00:11.743095+00:00",
+      "expires": "2026-10-19T23:00:11.666296+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-12T22:00:11.743095+00:00"
+      "timestamp": "2026-10-12T23:00:11.666296+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -19,13 +19,14 @@
       "timestamp": "2026-10-10T16:00:11.575581+00:00"
     },
     "0n3p0rk": {
+      "expired_at": "2026-10-12T23:00:11.666296+00:00",
       "expires": "2026-10-12T22:00:34.162368+00:00",
       "id": "0n3p0rk",
       "pr_ref": null,
       "reason": "below_floor: 8 stars / 2 forks",
       "repo": "lexilexiko/0n3p0rk",
       "repo_id": 1334447126,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T22:00:34.162368+00:00"
     },
     "0n3pork-w3b": {
@@ -4283,13 +4284,14 @@
       "timestamp": "2026-10-09T22:00:11.580160+00:00"
     },
     "m5-minijoystickc-gamepad": {
+      "expired_at": "2026-10-12T23:00:11.666296+00:00",
       "expires": "2026-10-12T22:00:34.162368+00:00",
       "id": "m5-minijoystickc-gamepad",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "davervw/m5_minijoystickc_gamepad",
       "repo_id": 1241197694,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T22:00:34.162368+00:00"
     },
     "m5-mousejiggler": {
@@ -4827,23 +4829,25 @@
       "timestamp": "2026-09-02T17:03:09.148153+00:00"
     },
     "m5core2-defrag": {
+      "expired_at": "2026-10-12T23:00:11.666296+00:00",
       "expires": "2026-10-12T22:00:34.162368+00:00",
       "id": "m5core2-defrag",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "cubic9com/m5core2_defrag",
       "repo_id": 986072212,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T22:00:34.162368+00:00"
     },
     "m5core2-delaunay": {
+      "expired_at": "2026-10-12T23:00:11.666296+00:00",
       "expires": "2026-10-12T22:00:34.162368+00:00",
       "id": "m5core2-delaunay",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 0 forks",
       "repo": "cubic9com/m5core2_delaunay",
       "repo_id": 945084953,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T22:00:34.162368+00:00"
     },
     "m5core2-esp32-tetris-touch": {
