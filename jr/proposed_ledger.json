@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-19T06:00:12.168824+00:00",
+      "expires": "2026-10-19T07:00:11.606332+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-12T06:00:12.168824+00:00"
+      "timestamp": "2026-10-12T07:00:11.606332+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -1586,13 +1586,14 @@
       "timestamp": "2026-09-19T14:00:22.488207+00:00"
     },
     "cardputer-wifi-repeater": {
+      "expired_at": "2026-10-12T07:00:11.606332+00:00",
       "expires": "2026-10-12T06:00:36.297632+00:00",
       "id": "cardputer-wifi-repeater",
       "pr_ref": null,
       "reason": "below_floor: 15 stars / 0 forks",
       "repo": "ankushkun/cardputer-wifi-repeater",
       "repo_id": 1082769246,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T06:00:36.297632+00:00"
     },
     "cardputer-xl": {
@@ -4428,13 +4429,14 @@
       "timestamp": "2026-10-09T23:00:13.238223+00:00"
     },
     "m5atoms3u-wifi-usb-keyboard": {
+      "expired_at": "2026-10-12T07:00:11.606332+00:00",
       "expires": "2026-10-12T06:00:36.297632+00:00",
       "id": "m5atoms3u-wifi-usb-keyboard",
       "pr_ref": null,
       "reason": "below_floor: 8 stars / 1 forks",
       "repo": "74th/m5atoms3u-wifi-usb-keyboard",
       "repo_id": 1038946275,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T06:00:36.297632+00:00"
     },
     "m5bit-less": {
@@ -9476,13 +9478,14 @@
       "timestamp": "2026-09-02T16:03:27.955204+00:00"
     },
     "wifi-remote-display-adv": {
+      "expired_at": "2026-10-12T07:00:11.606332+00:00",
       "expires": "2026-10-12T06:00:36.297632+00:00",
       "id": "wifi-remote-display-adv",
       "pr_ref": null,
       "reason": "already_catalogued: zeloksa/wifi-remote-display-adv is already in the atlas",
       "repo": "zeloksa/wifi-remote-display-adv",
       "repo_id": 1216570989,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T06:00:36.297632+00:00"
     },
     "wifi-rig-ctrl": {
@@ -9496,13 +9499,14 @@
       "timestamp": "2026-09-12T07:00:39.726979+00:00"
     },
     "wifichanviz": {
+      "expired_at": "2026-10-12T07:00:11.606332+00:00",
       "expires": "2026-10-12T06:00:36.297632+00:00",
       "id": "wifichanviz",
       "pr_ref": null,
       "reason": "already_catalogued: tobozo/wifichanviz is already in the atlas",
       "repo": "tobozo/wifichanviz",
       "repo_id": 436685593,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T06:00:36.297632+00:00"
     },
     "wifikey2": {
