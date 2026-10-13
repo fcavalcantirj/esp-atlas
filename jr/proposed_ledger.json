@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-20T00:00:11.775063+00:00",
+      "expires": "2026-10-20T01:00:11.508432+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-13T00:00:11.775063+00:00"
+      "timestamp": "2026-10-13T01:00:11.508432+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -6086,13 +6086,14 @@
       "timestamp": "2026-10-09T12:00:11.265432+00:00"
     },
     "m5tab5-animal-quiz": {
+      "expired_at": "2026-10-13T01:00:11.508432+00:00",
       "expires": "2026-10-13T00:00:37.681486+00:00",
       "id": "m5tab5-animal-quiz",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "samucarre/m5tab5-animal-quiz",
       "repo_id": 1016360892,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T00:00:37.681486+00:00"
     },
     "m5tab5-demos": {
@@ -6319,13 +6320,14 @@
       "timestamp": "2026-09-19T14:00:22.488207+00:00"
     },
     "marauder-csi-stickc-plus2": {
+      "expired_at": "2026-10-13T01:00:11.508432+00:00",
       "expires": "2026-10-13T00:00:37.681486+00:00",
       "id": "marauder-csi-stickc-plus2",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "devedale/marauder_csi_stickc_plus2",
       "repo_id": 1291522147,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T00:00:37.681486+00:00"
     },
     "marstechhan": {
@@ -6473,13 +6475,14 @@
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
     "meshcoreterm": {
+      "expired_at": "2026-10-13T01:00:11.508432+00:00",
       "expires": "2026-10-13T00:00:37.681486+00:00",
       "id": "meshcoreterm",
       "pr_ref": null,
       "reason": "already_catalogued: dabeani/meshcoreterm is already in the atlas",
       "repo": "dabeani/meshcoreterm",
       "repo_id": 1135169816,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T00:00:37.681486+00:00"
     },
     "meshpunk": {
