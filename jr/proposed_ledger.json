@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-20T03:00:59.508844+00:00",
+      "expires": "2026-10-20T04:00:59.686112+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-13T03:00:59.508844+00:00"
+      "timestamp": "2026-10-13T04:00:59.686112+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -5582,13 +5582,14 @@
       "timestamp": "2026-09-10T11:00:31.853052+00:00"
     },
     "m5stack-paper-s3-chinese-books": {
+      "expired_at": "2026-10-13T04:00:59.686112+00:00",
       "expires": "2026-10-13T04:00:43.509217+00:00",
       "id": "m5stack-paper-s3-chinese-books",
       "pr_ref": null,
       "reason": "below_floor: 17 stars / 3 forks",
       "repo": "yuleshow/m5stack-paper-s3-chinese-books",
       "repo_id": 1166324079,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T04:00:43.509217+00:00"
     },
     "m5stack-papers3": {
@@ -6361,13 +6362,14 @@
       "timestamp": "2026-10-10T16:00:11.575581+00:00"
     },
     "mbti-book": {
+      "expired_at": "2026-10-13T04:00:59.686112+00:00",
       "expires": "2026-10-13T04:00:43.509217+00:00",
       "id": "mbti-book",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "dalianblue/mbti_book",
       "repo_id": 1289823998,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T04:00:43.509217+00:00"
     },
     "mclite": {
@@ -7795,13 +7797,14 @@
       "timestamp": "2026-09-11T16:00:54.676058+00:00"
     },
     "race-2d-sticks3": {
+      "expired_at": "2026-10-13T04:00:59.686112+00:00",
       "expires": "2026-10-13T04:00:43.509217+00:00",
       "id": "race-2d-sticks3",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "ilanovikov088-source/race-2d-sticks3",
       "repo_id": 1269958498,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T04:00:43.509217+00:00"
     },
     "raincity-m5stack-cores3": {
