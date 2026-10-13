@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-20T13:00:59.634297+00:00",
+      "expires": "2026-10-20T14:00:59.649573+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-13T13:00:59.634297+00:00"
+      "timestamp": "2026-10-13T14:00:59.649573+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -301,13 +301,14 @@
       "timestamp": "2026-09-02T17:03:09.116135+00:00"
     },
     "ai-stackchan2-readme": {
+      "expired_at": "2026-10-13T14:00:59.649573+00:00",
       "expires": "2026-10-13T14:00:40.612705+00:00",
       "id": "ai-stackchan2-readme",
       "pr_ref": null,
       "reason": "already_catalogued: robo8080/ai_stackchan2_readme is already in the atlas",
       "repo": "robo8080/ai_stackchan2_readme",
       "repo_id": 645739110,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T14:00:40.612705+00:00"
     },
     "aiflow": {
@@ -9856,13 +9857,14 @@
       "timestamp": "2026-09-12T03:00:29.761890+00:00"
     },
     "z80-4-m5cardputer": {
+      "expired_at": "2026-10-13T14:00:59.649573+00:00",
       "expires": "2026-10-13T14:00:40.612705+00:00",
       "id": "z80-4-m5cardputer",
       "pr_ref": null,
       "reason": "fork_of_uncatalogued: source=djbottrill/esp32-z80-emulator",
       "repo": "vanzt/z80-4-m5cardputer",
       "repo_id": 839157207,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T14:00:40.612705+00:00"
     },
     "zhanggua": {
