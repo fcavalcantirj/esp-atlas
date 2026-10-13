@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-20T01:00:11.508432+00:00",
+      "expires": "2026-10-20T02:00:59.731755+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-13T01:00:11.508432+00:00"
+      "timestamp": "2026-10-13T02:00:59.731755+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -5560,13 +5560,14 @@
       "timestamp": "2026-10-06T17:13:28.533889+00:00"
     },
     "m5stack-nyancat": {
+      "expired_at": "2026-10-13T02:00:59.731755+00:00",
       "expires": "2026-10-13T02:00:40.455758+00:00",
       "id": "m5stack-nyancat",
       "pr_ref": null,
       "reason": "below_floor: 12 stars / 2 forks",
       "repo": "tobozo/m5stack-nyancat",
       "repo_id": 126582474,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T02:00:40.455758+00:00"
     },
     "m5stack-ollama-meter": {
@@ -6759,13 +6760,14 @@
       "timestamp": "2026-09-02T17:03:09.172852+00:00"
     },
     "nearplane": {
+      "expired_at": "2026-10-13T02:00:59.731755+00:00",
       "expires": "2026-10-13T01:00:38.965157+00:00",
       "id": "nearplane",
       "pr_ref": null,
       "reason": "below_floor: 23 stars / 2 forks",
       "repo": "stevenselcuk/nearplane",
       "repo_id": 1053358572,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T01:00:38.965157+00:00"
     },
     "negawatt": {
@@ -6830,13 +6832,14 @@
       "timestamp": "2026-09-10T00:00:50.127806+00:00"
     },
     "nettemp-esp32": {
+      "expired_at": "2026-10-13T02:00:59.731755+00:00",
       "expires": "2026-10-13T01:00:38.965157+00:00",
       "id": "nettemp-esp32",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "sosprz/nettemp_esp32",
       "repo_id": 1120078727,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T01:00:38.965157+00:00"
     },
     "nikos": {
@@ -6862,13 +6865,14 @@
       "timestamp": "2026-09-10T05:00:57.737650+00:00"
     },
     "np2-tab5": {
+      "expired_at": "2026-10-13T02:00:59.731755+00:00",
       "expires": "2026-10-13T01:00:38.965157+00:00",
       "id": "np2-tab5",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "mochimochi-man/np2_tab5",
       "repo_id": 1355007883,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T01:00:38.965157+00:00"
     },
     "nvs-manager": {
@@ -9838,13 +9842,14 @@
       "timestamp": "2026-09-13T14:00:40.612705+00:00"
     },
     "zhanggua": {
+      "expired_at": "2026-10-13T02:00:59.731755+00:00",
       "expires": "2026-10-13T02:00:40.455758+00:00",
       "id": "zhanggua",
       "pr_ref": null,
       "reason": "below_floor: 8 stars / 0 forks",
       "repo": "exphinx/zhanggua",
       "repo_id": 1256780358,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T02:00:40.455758+00:00"
     },
     "zhilly": {
