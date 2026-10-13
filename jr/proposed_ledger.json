@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-20T05:00:59.838918+00:00",
+      "expires": "2026-10-20T06:00:59.967904+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-13T05:00:59.838918+00:00"
+      "timestamp": "2026-10-13T06:00:59.967904+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -5696,13 +5696,14 @@
       "timestamp": "2026-09-19T20:00:03.492698+00:00"
     },
     "m5stampfly": {
+      "expired_at": "2026-10-13T06:00:59.967904+00:00",
       "expires": "2026-10-13T06:00:47.661752+00:00",
       "id": "m5stampfly",
       "pr_ref": null,
       "reason": "below_floor: 19 stars / 9 forks",
       "repo": "m5fly-kanazawa/m5stampfly",
       "repo_id": 840447440,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T06:00:47.661752+00:00"
     },
     "m5stick-crystal-firmware": {
