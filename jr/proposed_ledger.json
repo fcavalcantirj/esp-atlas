@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-20T09:00:59.608167+00:00",
+      "expires": "2026-10-20T10:00:59.638771+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-13T09:00:59.608167+00:00"
+      "timestamp": "2026-10-13T10:00:59.638771+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -4800,13 +4800,14 @@
       "timestamp": "2026-10-07T22:00:05.760145+00:00"
     },
     "m5core-v1-1-vu-meter": {
+      "expired_at": "2026-10-13T10:00:59.638771+00:00",
       "expires": "2026-10-13T10:00:11.502302+00:00",
       "id": "m5core-v1-1-vu-meter",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "yareyaredaze1234/m5core-v1.1-vu-meter",
       "repo_id": 1159251727,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T10:00:11.502302+00:00"
     },
     "m5core2-341-effects-xscreensaver": {
@@ -9379,13 +9380,14 @@
       "timestamp": "2026-09-12T03:00:29.761890+00:00"
     },
     "vibe-cardputer": {
+      "expired_at": "2026-10-13T10:00:59.638771+00:00",
       "expires": "2026-10-13T10:00:11.502302+00:00",
       "id": "vibe-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "vc1235-ui/vibe-cardputer",
       "repo_id": 1282017852,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T10:00:11.502302+00:00"
     },
     "vibestick-codex": {
