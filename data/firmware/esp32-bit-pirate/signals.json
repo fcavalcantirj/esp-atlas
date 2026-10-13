@@ -1,7 +1,7 @@
 {
  "calls": 8,
  "errors": 0,
- "fetched": "2026-10-06",
+ "fetched": "2026-10-13",
  "notes": [],
  "ref": "pioarduino",
  "repo": "geo-tp/ESP32-Bit-Pirate",
@@ -19,21 +19,23 @@
    "esp32-s3"
   ],
   "unresolved": [
-   "bit_pirate_17_atom-lite-s3",
-   "bit_pirate_17_cardputer",
-   "bit_pirate_17_cardputer-adv",
-   "bit_pirate_17_heltec_wifi_lora_32_V4",
-   "bit_pirate_17_m5stack-stamps3",
-   "bit_pirate_17_m5stack-sticks3",
-   "bit_pirate_17_s3-devkit",
-   "bit_pirate_17_s3-devkit-n16-r8",
-   "bit_pirate_17_t-display-s3",
-   "bit_pirate_17_t-embed-s3",
-   "bit_pirate_17_t-embed-s3-cc1101",
-   "bit_pirate_17_t-embed-s3-cc1101plus",
-   "bit_pirate_17_vision-master-t190",
-   "bit_pirate_17_waveshare-s3-geek",
-   "bit_pirate_17_xiao-esp32s3",
+   "bit_pirate_18_atom-lite-s3",
+   "bit_pirate_18_cardputer",
+   "bit_pirate_18_cardputer-adv",
+   "bit_pirate_18_heltec_wifi_lora_32_V4",
+   "bit_pirate_18_m5stack-stamps3",
+   "bit_pirate_18_m5stack-sticks3",
+   "bit_pirate_18_s3-devkit",
+   "bit_pirate_18_s3-devkit-n16-r8",
+   "bit_pirate_18_s3-supermini",
+   "bit_pirate_18_t-display-s3",
+   "bit_pirate_18_t-embed-s3",
+   "bit_pirate_18_t-embed-s3-cc1101",
+   "bit_pirate_18_t-embed-s3-cc1101plus",
+   "bit_pirate_18_um_pros3",
+   "bit_pirate_18_vision-master-t190",
+   "bit_pirate_18_waveshare-s3-geek",
+   "bit_pirate_18_xiao-esp32s3",
    "esp32-s3-devkitc-1",
    "esp32-s3-devkitc1-n16r2",
    "esp32-s3-devkitc1-n16r8",
@@ -43,183 +45,207 @@
  "signals": [
   {
    "extra": {
-    "asset": "bit_pirate_17_atom-lite-s3.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_atom-lite-s3.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_atom-lite-s3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_atom-lite-s3.bin"
+   "token": "bit_pirate_18_atom-lite-s3",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_atom-lite-s3.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_cardputer-adv.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_cardputer-adv.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_cardputer-adv",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_cardputer-adv.bin"
+   "token": "bit_pirate_18_cardputer-adv",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_cardputer-adv.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_cardputer.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_cardputer.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_cardputer",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_cardputer.bin"
+   "token": "bit_pirate_18_cardputer",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_cardputer.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_heltec_wifi_lora_32_V4.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_heltec_wifi_lora_32_V4.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_heltec_wifi_lora_32_V4",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_heltec_wifi_lora_32_V4.bin"
+   "token": "bit_pirate_18_heltec_wifi_lora_32_V4",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_heltec_wifi_lora_32_V4.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_m5stack-stamps3.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_m5stack-stamps3.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_m5stack-stamps3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_m5stack-stamps3.bin"
+   "token": "bit_pirate_18_m5stack-stamps3",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_m5stack-stamps3.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_m5stack-sticks3.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_m5stack-sticks3.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_m5stack-sticks3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_m5stack-sticks3.bin"
+   "token": "bit_pirate_18_m5stack-sticks3",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_m5stack-sticks3.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_s3-devkit-n16-r8.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_s3-devkit-n16-r8.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_s3-devkit-n16-r8",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_s3-devkit-n16-r8.bin"
+   "token": "bit_pirate_18_s3-devkit-n16-r8",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_s3-devkit-n16-r8.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_s3-devkit.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_s3-devkit.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_s3-devkit",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_s3-devkit.bin"
+   "token": "bit_pirate_18_s3-devkit",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_s3-devkit.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_t-display-s3.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_s3-supermini.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_t-display-s3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_t-display-s3.bin"
+   "token": "bit_pirate_18_s3-supermini",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_s3-supermini.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_t-embed-s3-cc1101.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_t-display-s3.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_t-embed-s3-cc1101",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_t-embed-s3-cc1101.bin"
+   "token": "bit_pirate_18_t-display-s3",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_t-display-s3.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_t-embed-s3-cc1101plus.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_t-embed-s3-cc1101.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_t-embed-s3-cc1101plus",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_t-embed-s3-cc1101plus.bin"
+   "token": "bit_pirate_18_t-embed-s3-cc1101",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_t-embed-s3-cc1101.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_t-embed-s3.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_t-embed-s3-cc1101plus.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_t-embed-s3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_t-embed-s3.bin"
+   "token": "bit_pirate_18_t-embed-s3-cc1101plus",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_t-embed-s3-cc1101plus.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_vision-master-t190.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_t-embed-s3.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_vision-master-t190",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_vision-master-t190.bin"
+   "token": "bit_pirate_18_t-embed-s3",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_t-embed-s3.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_waveshare-s3-geek.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_um_pros3.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_waveshare-s3-geek",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_waveshare-s3-geek.bin"
+   "token": "bit_pirate_18_um_pros3",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_um_pros3.bin"
   },
   {
    "extra": {
-    "asset": "bit_pirate_17_xiao-esp32s3.bin",
-    "release": "v1.7"
+    "asset": "bit_pirate_18_vision-master-t190.bin",
+    "release": "v1.8"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "bit_pirate_17_xiao-esp32s3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.7/bit_pirate_17_xiao-esp32s3.bin"
+   "token": "bit_pirate_18_vision-master-t190",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_vision-master-t190.bin"
+  },
+  {
+   "extra": {
+    "asset": "bit_pirate_18_waveshare-s3-geek.bin",
+    "release": "v1.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "bit_pirate_18_waveshare-s3-geek",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_waveshare-s3-geek.bin"
+  },
+  {
+   "extra": {
+    "asset": "bit_pirate_18_xiao-esp32s3.bin",
+    "release": "v1.8"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "bit_pirate_18_xiao-esp32s3",
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/releases/download/v1.8/bit_pirate_18_xiao-esp32s3.bin"
   },
   {
    "extra": {
@@ -275,11 +301,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 445,
+   "line": 446,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L445"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L446"
   },
   {
    "extra": {
@@ -287,11 +313,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 521,
+   "line": 522,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc1-n16r8",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L521"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L522"
   },
   {
    "extra": {
@@ -299,11 +325,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 599,
+   "line": 600,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-fh4r2",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L599"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L600"
   },
   {
    "extra": {
@@ -311,11 +337,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 678,
+   "line": 679,
    "rank": 2,
    "soc": null,
    "token": "m5stack-stamps3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L678"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L679"
   },
   {
    "extra": {
@@ -323,11 +349,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 755,
+   "line": 756,
    "rank": 2,
    "soc": null,
    "token": "m5stack-stamps3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L755"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L756"
   },
   {
    "extra": {
@@ -335,11 +361,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 832,
+   "line": 833,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc1-n16r8",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L832"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L833"
   },
   {
    "extra": {
@@ -347,11 +373,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 913,
+   "line": 914,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc1-n16r2",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L913"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L914"
   },
   {
    "extra": {
@@ -359,11 +385,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 994,
+   "line": 995,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L994"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L995"
   },
   {
    "extra": {
@@ -371,11 +397,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1079,
+   "line": 1080,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1079"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1080"
   },
   {
    "extra": {
@@ -383,11 +409,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1079,
+   "line": 1080,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1079"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1080"
   },
   {
    "extra": {
@@ -395,11 +421,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1194,
+   "line": 1195,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1194"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1195"
   },
   {
    "extra": {
@@ -407,11 +433,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1270,
+   "line": 1271,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc1-n16r8",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1270"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1271"
   },
   {
    "extra": {
@@ -419,11 +445,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1350,
+   "line": 1351,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc1-n16r2",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1350"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1351"
   },
   {
    "extra": {
@@ -431,11 +457,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1438,
+   "line": 1439,
    "rank": 2,
    "soc": null,
    "token": "heltec_wifi_lora_32_V3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1438"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1439"
   },
   {
    "extra": {
@@ -443,11 +469,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1514,
+   "line": 1515,
    "rank": 2,
    "soc": null,
    "token": "um_pros3",
-   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1514"
+   "url": "https://github.com/geo-tp/ESP32-Bit-Pirate/blob/pioarduino/platformio.ini#L1515"
   }
  ]
 }
