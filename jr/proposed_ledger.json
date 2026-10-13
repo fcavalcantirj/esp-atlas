@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-20T11:00:59.617685+00:00",
+      "expires": "2026-10-20T12:00:59.662463+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-13T11:00:59.617685+00:00"
+      "timestamp": "2026-10-13T12:00:59.662463+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -5678,13 +5678,14 @@
       "timestamp": "2026-09-09T03:00:08.239811+00:00"
     },
     "m5stack-xdripmon": {
+      "expired_at": "2026-10-13T12:00:59.662463+00:00",
       "expires": "2026-10-13T12:00:26.473492+00:00",
       "id": "m5stack-xdripmon",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 1 forks",
       "repo": "psonnera/m5stack_xdripmon",
       "repo_id": 724225059,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T12:00:26.473492+00:00"
     },
     "m5stackprojects": {
@@ -9660,13 +9661,14 @@
       "timestamp": "2026-09-12T08:00:41.133831+00:00"
     },
     "world-market-clock": {
+      "expired_at": "2026-10-13T12:00:59.662463+00:00",
       "expires": "2026-10-13T12:00:26.473492+00:00",
       "id": "world-market-clock",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 0 forks",
       "repo": "k-yama2010/world-market-clock",
       "repo_id": 677280696,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T12:00:26.473492+00:00"
     },
     "worldcup-2026": {
@@ -9798,13 +9800,14 @@
       "timestamp": "2026-09-12T10:00:45.628096+00:00"
     },
     "xmod-lib": {
+      "expired_at": "2026-10-13T12:00:59.662463+00:00",
       "expires": "2026-10-13T12:00:26.473492+00:00",
       "id": "xmod-lib",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 1 forks",
       "repo": "xdiversity/xmod-lib",
       "repo_id": 832473211,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T12:00:26.473492+00:00"
     },
     "xnode": {
