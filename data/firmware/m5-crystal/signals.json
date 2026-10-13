@@ -1,7 +1,7 @@
 {
  "calls": 6,
  "errors": 0,
- "fetched": "2026-10-06",
+ "fetched": "2026-10-13",
  "notes": [],
  "ref": "main",
  "repo": "Dlazder/m5_crystal_firmware",
@@ -24,39 +24,39 @@
  "signals": [
   {
    "extra": {
-    "asset": "crystal_firmware_cardputer-adv_v1.1.1.bin",
-    "release": "v1.1.1"
+    "asset": "crystal_firmware_cardputer-adv_v1.2.0.bin",
+    "release": "v1.2.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "crystal_firmware_cardputer-adv",
-   "url": "https://github.com/Dlazder/m5_crystal_firmware/releases/download/v1.1.1/crystal_firmware_cardputer-adv_v1.1.1.bin"
+   "url": "https://github.com/Dlazder/m5_crystal_firmware/releases/download/v1.2.0/crystal_firmware_cardputer-adv_v1.2.0.bin"
   },
   {
    "extra": {
-    "asset": "crystal_firmware_m5stick-c-plus2_v1.1.1.bin",
-    "release": "v1.1.1"
+    "asset": "crystal_firmware_m5stick-c-plus2_v1.2.0.bin",
+    "release": "v1.2.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "crystal_firmware_m5stick-c-plus2",
-   "url": "https://github.com/Dlazder/m5_crystal_firmware/releases/download/v1.1.1/crystal_firmware_m5stick-c-plus2_v1.1.1.bin"
+   "url": "https://github.com/Dlazder/m5_crystal_firmware/releases/download/v1.2.0/crystal_firmware_m5stick-c-plus2_v1.2.0.bin"
   },
   {
    "extra": {
-    "asset": "crystal_firmware_m5sticks3_v1.1.1.bin",
-    "release": "v1.1.1"
+    "asset": "crystal_firmware_m5sticks3_v1.2.0.bin",
+    "release": "v1.2.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "crystal_firmware_m5sticks3",
-   "url": "https://github.com/Dlazder/m5_crystal_firmware/releases/download/v1.1.1/crystal_firmware_m5sticks3_v1.1.1.bin"
+   "url": "https://github.com/Dlazder/m5_crystal_firmware/releases/download/v1.2.0/crystal_firmware_m5sticks3_v1.2.0.bin"
   },
   {
    "extra": {
@@ -76,11 +76,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 34,
+   "line": 35,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/Dlazder/m5_crystal_firmware/blob/main/platformio.ini#L34"
+   "url": "https://github.com/Dlazder/m5_crystal_firmware/blob/main/platformio.ini#L35"
   },
   {
    "extra": {
@@ -88,11 +88,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 69,
+   "line": 72,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/Dlazder/m5_crystal_firmware/blob/main/platformio.ini#L69"
+   "url": "https://github.com/Dlazder/m5_crystal_firmware/blob/main/platformio.ini#L72"
   },
   {
    "extra": {
