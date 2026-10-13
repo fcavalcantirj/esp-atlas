@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-20T12:00:59.662463+00:00",
+      "expires": "2026-10-20T13:00:59.634297+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-13T12:00:59.662463+00:00"
+      "timestamp": "2026-10-13T13:00:59.634297+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -9727,23 +9727,25 @@
       "timestamp": "2026-09-12T10:00:45.628096+00:00"
     },
     "xcalc-cardputer": {
+      "expired_at": "2026-10-13T13:00:59.634297+00:00",
       "expires": "2026-10-13T13:00:33.517833+00:00",
       "id": "xcalc-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 1 forks",
       "repo": "sourcels/xcalc_cardputer",
       "repo_id": 1181233316,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T13:00:33.517833+00:00"
     },
     "xiaozhi-adv-car": {
+      "expired_at": "2026-10-13T13:00:59.634297+00:00",
       "expires": "2026-10-13T13:00:33.517833+00:00",
       "id": "xiaozhi-adv-car",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "hengmyj/xiaozhi-adv-car",
       "repo_id": 1330011455,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T13:00:33.517833+00:00"
     },
     "xiaozhi-cardputer": {
