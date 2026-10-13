@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-19T23:00:11.666296+00:00",
+      "expires": "2026-10-20T00:00:11.775063+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-12T23:00:11.666296+00:00"
+      "timestamp": "2026-10-13T00:00:11.775063+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -4869,13 +4869,14 @@
       "timestamp": "2026-09-02T17:03:09.183154+00:00"
     },
     "m5core2-gravsim": {
+      "expired_at": "2026-10-13T00:00:11.775063+00:00",
       "expires": "2026-10-12T23:00:36.053237+00:00",
       "id": "m5core2-gravsim",
       "pr_ref": null,
       "reason": "below_floor: 9 stars / 2 forks",
       "repo": "cubic9com/m5core2_gravsim",
       "repo_id": 948591363,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T23:00:36.053237+00:00"
     },
     "m5core2-sg90-stackchan-voicetext-ataru": {
@@ -4917,13 +4918,14 @@
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5core2-voronoi": {
+      "expired_at": "2026-10-13T00:00:11.775063+00:00",
       "expires": "2026-10-12T23:00:36.053237+00:00",
       "id": "m5core2-voronoi",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "cubic9com/m5core2_voronoi",
       "repo_id": 942063600,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T23:00:36.053237+00:00"
     },
     "m5corehamcat": {
@@ -5235,13 +5237,14 @@
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "m5papers3-animal-quiz": {
+      "expired_at": "2026-10-13T00:00:11.775063+00:00",
       "expires": "2026-10-12T23:00:36.053237+00:00",
       "id": "m5papers3-animal-quiz",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 1 forks",
       "repo": "samucarre/m5papers3-animal-quiz",
       "repo_id": 956644284,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-12T23:00:36.053237+00:00"
     },
     "m5papers3-calculator": {
