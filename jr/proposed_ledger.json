@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-20T06:00:59.967904+00:00",
+      "expires": "2026-10-20T07:00:59.719321+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-13T06:00:59.967904+00:00"
+      "timestamp": "2026-10-13T07:00:59.719321+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -5655,13 +5655,14 @@
       "timestamp": "2026-10-09T18:00:11.507841+00:00"
     },
     "m5stack-tab5-nc1020": {
+      "expired_at": "2026-10-13T07:00:59.719321+00:00",
       "expires": "2026-10-13T07:00:51.338571+00:00",
       "id": "m5stack-tab5-nc1020",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 0 forks",
       "repo": "gywan94/m5stack-tab5-nc1020",
       "repo_id": 1267348459,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T07:00:51.338571+00:00"
     },
     "m5stack-webcam": {
@@ -6907,13 +6908,14 @@
       "timestamp": "2026-09-10T10:00:23.976090+00:00"
     },
     "onebutton": {
+      "expired_at": "2026-10-13T07:00:59.719321+00:00",
       "expires": "2026-10-13T07:00:51.338571+00:00",
       "id": "onebutton",
       "pr_ref": null,
       "reason": "below_floor: 16 stars / 7 forks",
       "repo": "volosr/onebutton",
       "repo_id": 328442805,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T07:00:51.338571+00:00"
     },
     "onemorefloor": {
@@ -8616,13 +8618,14 @@
       "timestamp": "2026-10-10T17:00:11.617477+00:00"
     },
     "stellar-map": {
+      "expired_at": "2026-10-13T07:00:59.719321+00:00",
       "expires": "2026-10-13T07:00:51.338571+00:00",
       "id": "stellar-map",
       "pr_ref": null,
       "reason": "already_catalogued: wisnc/stellar-map is already in the atlas",
       "repo": "wisnc/stellar-map",
       "repo_id": 1254985000,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-13T07:00:51.338571+00:00"
     },
     "stickbananaboxing": {
