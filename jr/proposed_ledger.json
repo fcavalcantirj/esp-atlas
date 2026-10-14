@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-21T05:00:59.603886+00:00",
+      "expires": "2026-10-21T06:00:59.832632+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-14T05:00:59.603886+00:00"
+      "timestamp": "2026-10-14T06:00:59.832632+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-17T16:00:11.575581+00:00",
@@ -1842,6 +1842,16 @@
       "repo_id": 784427172,
       "status": "rejected",
       "timestamp": "2026-10-06T19:00:58.979878+00:00"
+    },
+    "cardstick-ai": {
+      "expires": "2026-11-13T06:00:59.832632+00:00",
+      "id": "cardstick-ai",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "andrythebeast/cardstick-ai",
+      "repo_id": 1418192994,
+      "status": "rejected",
+      "timestamp": "2026-10-14T06:00:59.832632+00:00"
     },
     "cardtastic": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -10010,6 +10020,7 @@
     "andrewdjohnson/m5cardputerintervalometer": "m5cardputerintervalometer",
     "andrfuentz/dice-vessel-cardputer": "dice-vessel-cardputer",
     "andrfuentz/misedeck-cardputer": "misedeck-cardputer",
+    "andrythebeast/cardstick-ai": "cardstick-ai",
     "andyaicardputer/nes-tab5-usb-host": "nes-tab5-usb-host",
     "andyaicardputer/zx-spectrum-cardputer-external": "zx-spectrum-cardputer-external",
     "andyaicardputer/zx-spectrum-cardputer-ili9341": "zx-spectrum-cardputer-ili9341",
