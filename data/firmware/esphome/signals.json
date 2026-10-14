@@ -1,7 +1,7 @@
 {
  "calls": 16,
  "errors": 0,
- "fetched": "2026-10-07",
+ "fetched": "2026-10-14",
  "notes": [
   "more than 10 workflows; kept the 10 named build/firmware/release/ci first"
  ],
@@ -17,17 +17,21 @@
   ],
   "unresolved": [
    "--environment esp32-arduino-tidy --grep USE_ARDUINO",
-   "--environment esp32-idf-tidy --split-num 3 --split-at 1",
-   "--environment esp32-idf-tidy --split-num 3 --split-at 2",
-   "--environment esp32-idf-tidy --split-num 3 --split-at 3",
+   "--environment esp32-idf-tidy --split-num 5 --split-at 1",
+   "--environment esp32-idf-tidy --split-num 5 --split-at 2",
+   "--environment esp32-idf-tidy --split-num 5 --split-at 3",
+   "--environment esp32-idf-tidy --split-num 5 --split-at 4",
+   "--environment esp32-idf-tidy --split-num 5 --split-at 5",
    "--environment esp8266-arduino-tidy --grep USE_ESP8266",
    "--environment nrf52-tidy --grep USE_ZEPHYR --grep USE_NRF52",
    "--environment rp2-tidy --grep USE_RP2",
    "Run script/clang-tidy for ESP32 Arduino",
    "Run script/clang-tidy for ESP32 C6",
-   "Run script/clang-tidy for ESP32 IDF 1/3",
-   "Run script/clang-tidy for ESP32 IDF 2/3",
-   "Run script/clang-tidy for ESP32 IDF 3/3",
+   "Run script/clang-tidy for ESP32 IDF 1/5",
+   "Run script/clang-tidy for ESP32 IDF 2/5",
+   "Run script/clang-tidy for ESP32 IDF 3/5",
+   "Run script/clang-tidy for ESP32 IDF 4/5",
+   "Run script/clang-tidy for ESP32 IDF 5/5",
    "Run script/clang-tidy for ESP32 P4",
    "Run script/clang-tidy for ESP32 S3",
    "Run script/clang-tidy for ESP8266",
@@ -802,7 +806,7 @@
    "line": null,
    "rank": 3,
    "soc": null,
-   "token": "Run script/clang-tidy for ESP32 IDF 1/3",
+   "token": "Run script/clang-tidy for ESP32 IDF 1/5",
    "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
   },
   {
@@ -813,7 +817,7 @@
    "line": null,
    "rank": 3,
    "soc": null,
-   "token": "--environment esp32-idf-tidy --split-num 3 --split-at 1",
+   "token": "--environment esp32-idf-tidy --split-num 5 --split-at 1",
    "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
   },
   {
@@ -824,7 +828,7 @@
    "line": null,
    "rank": 3,
    "soc": null,
-   "token": "Run script/clang-tidy for ESP32 IDF 2/3",
+   "token": "Run script/clang-tidy for ESP32 IDF 2/5",
    "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
   },
   {
@@ -835,7 +839,7 @@
    "line": null,
    "rank": 3,
    "soc": null,
-   "token": "--environment esp32-idf-tidy --split-num 3 --split-at 2",
+   "token": "--environment esp32-idf-tidy --split-num 5 --split-at 2",
    "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
   },
   {
@@ -846,7 +850,7 @@
    "line": null,
    "rank": 3,
    "soc": null,
-   "token": "Run script/clang-tidy for ESP32 IDF 3/3",
+   "token": "Run script/clang-tidy for ESP32 IDF 3/5",
    "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
   },
   {
@@ -857,7 +861,51 @@
    "line": null,
    "rank": 3,
    "soc": null,
-   "token": "--environment esp32-idf-tidy --split-num 3 --split-at 3",
+   "token": "--environment esp32-idf-tidy --split-num 5 --split-at 3",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Run script/clang-tidy for ESP32 IDF 4/5",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "--environment esp32-idf-tidy --split-num 5 --split-at 4",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Run script/clang-tidy for ESP32 IDF 5/5",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "--environment esp32-idf-tidy --split-num 5 --split-at 5",
    "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
   },
   {
