@@ -1,22 +1,22 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-24T15:00:59.596402+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-17T15:00:59.596402+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "0m3gx": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "0m3gx",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo '0m3gx'",
       "repo": "0m3gx",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "0n3p0rk": {
       "expired_at": "2026-10-12T23:00:11.666296+00:00",
@@ -72,13 +72,13 @@
       "timestamp": "2026-09-12T01:00:16.789643+00:00"
     },
     "341-xscreensaver-m5stickc-plus1-plus2": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "341-xscreensaver-m5stickc-plus1-plus2",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "coreymillia/341-xscreensaver-m5stickc-plus1-plus2",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "3d-print-bed-leveler": {
       "expires": "2026-11-06T22:00:05.760145+00:00",
@@ -226,13 +226,13 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "ah2005na": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "ah2005na",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'ah2005na'",
       "repo": "ah2005na",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "ai-cardputer-adv-a-portable-ai-assistant": {
       "evidence_url": "https://github.com/thebolined/AI-Cardputer-adv-A-Portable-AI-Assistant",
@@ -593,13 +593,13 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "bdhack": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "bdhack",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "freecodertea/bdhack",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "beepbotdx": {
       "expires": "2026-11-06T23:00:07.958729+00:00",
@@ -825,22 +825,22 @@
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "brucedevices": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "brucedevices",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'brucedevices'",
       "repo": "brucedevices",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "bruceextled": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "bruceextled",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "ben7147/bruceextled.git",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "brucemod-alpha": {
       "id": "brucemod-alpha",
@@ -851,13 +851,13 @@
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
     },
     "bus-pirate-cardputer-adv-deepseek": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "bus-pirate-cardputer-adv-deepseek",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "wokao2333/bus-pirate-cardputer-adv-deepseek.git",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "bwifikill-cardputer-adv": {
       "expires": "2026-11-06T23:00:07.958729+00:00",
@@ -1018,13 +1018,13 @@
       "timestamp": "2026-09-02T17:03:09.131008+00:00"
     },
     "cardping-multi": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "cardping-multi",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "moo93egy/cardping_multi.git",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "cardputer": {
       "expired_at": "2026-10-11T18:00:11.638224+00:00",
@@ -1238,13 +1238,13 @@
       "timestamp": "2026-10-06T19:00:58.979878+00:00"
     },
     "cardputer-drum-machine": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "cardputer-drum-machine",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "dukeko369/cardputer-drum-machine.git",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "cardputer-drums": {
       "expires": "2026-11-07T23:52:12.575946+00:00",
@@ -1390,13 +1390,13 @@
       "timestamp": "2026-09-02T16:03:28.061505+00:00"
     },
     "cardputer-message-terminal": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "cardputer-message-terminal",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "erwantest123/cardputer-message-terminal.git",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "cardputer-microhydra": {
       "expired_at": "2026-10-09T16:00:11.685578+00:00",
@@ -1456,13 +1456,13 @@
       "timestamp": "2026-09-12T05:00:34.806916+00:00"
     },
     "cardputer-nc1020emu": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "cardputer-nc1020emu",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "gywan94/cardputer-nc1020emu.git",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "cardputer-ntfy": {
       "expires": "2026-11-08T02:00:12.078416+00:00",
@@ -1726,13 +1726,13 @@
       "timestamp": "2026-09-02T17:03:09.099947+00:00"
     },
     "cardputeros": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "cardputeros",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "rlee203/cardputeros.git",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "cardputerradiacode": {
       "expired_at": "2026-10-11T17:00:12.065810+00:00",
@@ -2955,13 +2955,13 @@
       "timestamp": "2026-10-11T19:00:11.582762+00:00"
     },
     "esp32-wifi-penetration-too": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "esp32-wifi-penetration-too",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "risinek/esp32-wifi-penetration-too",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "esp32marauder": {
       "expires": "2026-11-08T13:00:11.675780+00:00",
@@ -3044,13 +3044,13 @@
       "timestamp": "2026-10-09T13:00:11.675780+00:00"
     },
     "evil-portal-parasite-bot-atoms3": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "evil-portal-parasite-bot-atoms3",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "coreymillis/evil-portal-parasite-bot-atoms3",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "evilclock": {
       "expired_at": "2026-10-12T04:00:11.878766+00:00",
@@ -3647,22 +3647,22 @@
       "timestamp": "2026-09-02T17:03:09.129057+00:00"
     },
     "http:/": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "http:/",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'http:/'",
       "repo": "http:/",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "https:/": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "https:/",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'https:/'",
       "repo": "https:/",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "i-r-s": {
       "expires": "2026-10-17T17:00:11.617477+00:00",
@@ -3814,13 +3814,13 @@
       "timestamp": "2026-10-09T17:00:11.481511+00:00"
     },
     "irisihrz": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "irisihrz",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'irisihrz'",
       "repo": "irisihrz",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "isitdefcon": {
       "expires": "2026-11-08T13:00:11.675780+00:00",
@@ -6074,13 +6074,13 @@
       "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
     "m5stickstuph": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "m5stickstuph",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "n0xa/m5stickstuph",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "m5stopwatch-userdemo-arduino": {
       "expired_at": "2026-10-11T21:00:11.605277+00:00",
@@ -6371,13 +6371,13 @@
       "timestamp": "2026-09-19T14:00:22.488207+00:00"
     },
     "matthew-5plpeanut-gb": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "matthew-5plpeanut-gb",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'matthew-5plpeanut-gb'",
       "repo": "matthew-5plpeanut-gb",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "mbti-book": {
       "expired_at": "2026-10-13T04:00:59.686112+00:00",
@@ -6435,13 +6435,13 @@
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
     "mehflexx17": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "mehflexx17",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'mehflexx17'",
       "repo": "mehflexx17",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "meme-board": {
       "expired_at": "2026-10-09T16:00:11.685578+00:00",
@@ -9012,13 +9012,13 @@
       "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "teenygpstestbed-c2": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "teenygpstestbed-c2",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "beakes/teenygpstestbed_c2",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "termputer": {
       "expired_at": "2026-10-12T00:00:11.483938+00:00",
@@ -9777,13 +9777,13 @@
       "timestamp": "2026-09-12T12:00:48.975386+00:00"
     },
     "xiaozhi-esp32": {
-      "expires": "2026-10-17T16:00:11.575581+00:00",
+      "expires": "2026-10-24T16:00:59.721937+00:00",
       "id": "xiaozhi-esp32",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "ooxxu/xiaozhi-esp32",
       "status": "rejected",
-      "timestamp": "2026-10-10T16:00:11.575581+00:00"
+      "timestamp": "2026-10-17T16:00:59.721937+00:00"
     },
     "xiaozhipro": {
       "expired_at": "2026-10-12T14:00:11.382801+00:00",
