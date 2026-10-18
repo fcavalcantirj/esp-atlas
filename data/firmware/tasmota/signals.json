@@ -1,7 +1,7 @@
 {
  "calls": 13,
  "errors": 0,
- "fetched": "2026-10-11",
+ "fetched": "2026-10-18",
  "notes": [],
  "ref": "development",
  "repo": "arendst/Tasmota",
@@ -13,6 +13,7 @@
    "esp32-c3",
    "esp32-c5",
    "esp32-c6",
+   "esp32-c61",
    "esp32-p4",
    "esp32-s2"
   ],
@@ -54,6 +55,7 @@
    "esp32-solo1",
    "esp32c3ser",
    "esp32c5ser",
+   "esp32c61ser",
    "esp32c6ser",
    "esp32p4r3",
    "esp32p4r3ser",
@@ -166,6 +168,10 @@
    "tasmota32c6",
    "tasmota32c6-safeboot",
    "tasmota32c6.factory",
+   "tasmota32c61",
+   "tasmota32c61-safeboot",
+   "tasmota32c61.factory",
+   "tasmota32c61ser-safeboot",
    "tasmota32c6ser-safeboot",
    "tasmota32p4",
    "tasmota32p4-safeboot",
@@ -196,2174 +202,2222 @@
   {
    "extra": {
     "asset": "tasmota-4M.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "4M",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-4M.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-4M.bin"
   },
   {
    "extra": {
     "asset": "tasmota-4M.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "4M",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-4M.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-4M.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-AD.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "AD",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-AD.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-AD.bin"
   },
   {
    "extra": {
     "asset": "tasmota-AD.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "AD",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-AD.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-AD.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-AF.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "AF",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-AF.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-AF.bin"
   },
   {
    "extra": {
     "asset": "tasmota-AF.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "AF",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-AF.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-AF.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-BG.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "BG",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-BG.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-BG.bin"
   },
   {
    "extra": {
     "asset": "tasmota-BG.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "BG",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-BG.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-BG.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-BR.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "BR",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-BR.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-BR.bin"
   },
   {
    "extra": {
     "asset": "tasmota-BR.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "BR",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-BR.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-BR.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-CN.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CN",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-CN.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-CN.bin"
   },
   {
    "extra": {
     "asset": "tasmota-CN.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CN",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-CN.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-CN.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-CZ.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CZ",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-CZ.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-CZ.bin"
   },
   {
    "extra": {
     "asset": "tasmota-CZ.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CZ",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-CZ.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-CZ.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-DE.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "DE",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-DE.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-DE.bin"
   },
   {
    "extra": {
     "asset": "tasmota-DE.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "DE",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-DE.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-DE.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-display.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "display",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-display.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-display.bin"
   },
   {
    "extra": {
     "asset": "tasmota-display.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "display",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-display.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-display.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-ES.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "ES",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-ES.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-ES.bin"
   },
   {
    "extra": {
     "asset": "tasmota-ES.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "ES",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-ES.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-ES.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-FR.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "FR",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-FR.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-FR.bin"
   },
   {
    "extra": {
     "asset": "tasmota-FR.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "FR",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-FR.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-FR.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-FY.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "FY",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-FY.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-FY.bin"
   },
   {
    "extra": {
     "asset": "tasmota-FY.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "FY",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-FY.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-FY.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-GR.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "GR",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-GR.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-GR.bin"
   },
   {
    "extra": {
     "asset": "tasmota-GR.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "GR",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-GR.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-GR.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-HE.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "HE",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-HE.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-HE.bin"
   },
   {
    "extra": {
     "asset": "tasmota-HE.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "HE",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-HE.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-HE.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-HU.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "HU",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-HU.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-HU.bin"
   },
   {
    "extra": {
     "asset": "tasmota-HU.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "HU",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-HU.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-HU.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-ir.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "ir",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-ir.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-ir.bin"
   },
   {
    "extra": {
     "asset": "tasmota-ir.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "ir",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-ir.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-ir.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-IT.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "IT",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-IT.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-IT.bin"
   },
   {
    "extra": {
     "asset": "tasmota-IT.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "IT",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-IT.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-IT.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-knx.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "knx",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-knx.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-knx.bin"
   },
   {
    "extra": {
     "asset": "tasmota-knx.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "knx",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-knx.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-knx.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-KO.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "KO",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-KO.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-KO.bin"
   },
   {
    "extra": {
     "asset": "tasmota-KO.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "KO",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-KO.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-KO.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-lite.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lite",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-lite.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-lite.bin"
   },
   {
    "extra": {
     "asset": "tasmota-lite.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lite",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-lite.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-lite.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-LT.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "LT",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-LT.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-LT.bin"
   },
   {
    "extra": {
     "asset": "tasmota-LT.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "LT",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-LT.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-LT.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-minimal.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "minimal",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-minimal.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-minimal.bin"
   },
   {
    "extra": {
     "asset": "tasmota-minimal.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "minimal",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-minimal.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-minimal.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-NL.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "NL",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-NL.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-NL.bin"
   },
   {
    "extra": {
     "asset": "tasmota-NL.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "NL",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-NL.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-NL.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-PL.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "PL",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-PL.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-PL.bin"
   },
   {
    "extra": {
     "asset": "tasmota-PL.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "PL",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-PL.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-PL.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-PT.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "PT",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-PT.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-PT.bin"
   },
   {
    "extra": {
     "asset": "tasmota-PT.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "PT",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-PT.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-PT.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-RO.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "RO",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-RO.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-RO.bin"
   },
   {
    "extra": {
     "asset": "tasmota-RO.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "RO",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-RO.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-RO.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-RU.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "RU",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-RU.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-RU.bin"
   },
   {
    "extra": {
     "asset": "tasmota-RU.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "RU",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-RU.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-RU.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-SE.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "SE",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-SE.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-SE.bin"
   },
   {
    "extra": {
     "asset": "tasmota-SE.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "SE",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-SE.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-SE.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-sensors.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "sensors",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-sensors.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-sensors.bin"
   },
   {
    "extra": {
     "asset": "tasmota-sensors.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "sensors",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-sensors.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-sensors.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-SK.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "SK",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-SK.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-SK.bin"
   },
   {
    "extra": {
     "asset": "tasmota-SK.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "SK",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-SK.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-SK.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-TR.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "TR",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-TR.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-TR.bin"
   },
   {
    "extra": {
     "asset": "tasmota-TR.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "TR",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-TR.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-TR.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-TW.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "TW",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-TW.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-TW.bin"
   },
   {
    "extra": {
     "asset": "tasmota-TW.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "TW",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-TW.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-TW.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-UK.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "UK",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-UK.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-UK.bin"
   },
   {
    "extra": {
     "asset": "tasmota-UK.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "UK",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-UK.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-UK.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-VN.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "VN",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-VN.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-VN.bin"
   },
   {
    "extra": {
     "asset": "tasmota-VN.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "VN",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-VN.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-VN.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-zbbridge.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "zbbridge",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-zbbridge.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-zbbridge.bin"
   },
   {
    "extra": {
     "asset": "tasmota-zbbridge.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "zbbridge",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-zbbridge.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-zbbridge.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota-zigbee.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "zigbee",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-zigbee.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-zigbee.bin"
   },
   {
    "extra": {
     "asset": "tasmota-zigbee.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "zigbee",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota-zigbee.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota-zigbee.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota.bin"
   },
   {
    "extra": {
     "asset": "tasmota.bin.gz",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota.bin.gz"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota.bin.gz"
   },
   {
    "extra": {
     "asset": "tasmota32-AD.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-AD",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-AD.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-AD.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-AD.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-AD.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-AD.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-AD.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-AF.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-AF",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-AF.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-AF.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-AF.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-AF.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-AF.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-AF.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-BG.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-BG",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-BG.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-BG.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-BG.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-BG.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-BG.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-BG.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-bluetooth.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-bluetooth",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-bluetooth.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-bluetooth.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-bluetooth.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-bluetooth.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-bluetooth.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-bluetooth.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-BR.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-BR",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-BR.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-BR.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-BR.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-BR.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-BR.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-BR.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-CN.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-CN",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-CN.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-CN.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-CN.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-CN.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-CN.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-CN.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-CZ.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-CZ",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-CZ.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-CZ.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-CZ.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-CZ.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-CZ.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-CZ.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-DE.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-DE",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-DE.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-DE.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-DE.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-DE.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-DE.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-DE.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-display.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-display",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-display.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-display.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-display.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-display.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-display.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-display.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-ES.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-ES",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-ES.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-ES.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-ES.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-ES.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-ES.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-ES.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-FR.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-FR",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-FR.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-FR.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-FR.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-FR.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-FR.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-FR.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-FY.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-FY",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-FY.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-FY.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-FY.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-FY.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-FY.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-FY.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-GR.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-GR",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-GR.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-GR.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-GR.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-GR.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-GR.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-GR.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-HE.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-HE",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-HE.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-HE.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-HE.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-HE.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-HE.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-HE.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-HU.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-HU",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-HU.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-HU.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-HU.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-HU.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-HU.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-HU.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-ir.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-ir",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-ir.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-ir.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-ir.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-ir.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-ir.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-ir.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-IT.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-IT",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-IT.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-IT.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-IT.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-IT.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-IT.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-IT.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-KO.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-KO",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-KO.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-KO.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-KO.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-KO.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-KO.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-KO.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-LT.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-LT",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-LT.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-LT.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-LT.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-LT.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-LT.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-LT.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-lvgl.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-lvgl",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-lvgl.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-lvgl.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-lvgl.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-lvgl.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-lvgl.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-lvgl.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-NL.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-NL",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-NL.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-NL.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-NL.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-NL.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-NL.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-NL.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-nspanel.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-nspanel",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-nspanel.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-nspanel.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-nspanel.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-nspanel.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-nspanel.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-nspanel.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-PL.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-PL",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-PL.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-PL.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-PL.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-PL.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-PL.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-PL.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-PT.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-PT",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-PT.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-PT.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-PT.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-PT.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-PT.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-PT.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-RO.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-RO",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-RO.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-RO.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-RO.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-RO.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-RO.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-RO.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-RU.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-RU",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-RU.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-RU.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-RU.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-RU.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-RU.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-RU.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-SE.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-SE",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-SE.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-SE.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-SE.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-SE.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-SE.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-SE.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-SK.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-SK",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-SK.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-SK.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-SK.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-SK.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-SK.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-SK.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-TR.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-TR",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-TR.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-TR.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-TR.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-TR.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-TR.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-TR.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-TW.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-TW",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-TW.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-TW.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-TW.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-TW.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-TW.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-TW.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-UK.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-UK",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-UK.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-UK.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-UK.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-UK.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-UK.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-UK.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-VN.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-VN",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-VN.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-VN.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-VN.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-VN.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-VN.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-VN.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-webcam.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-webcam",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-webcam.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-webcam.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-webcam.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-webcam.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-webcam.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-webcam.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-zbbrdgpro.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-zbbrdgpro",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-zbbrdgpro.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-zbbrdgpro.bin"
   },
   {
    "extra": {
     "asset": "tasmota32-zbbrdgpro.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32-zbbrdgpro.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32-zbbrdgpro.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32-zbbrdgpro.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32.bin"
   },
   {
    "extra": {
     "asset": "tasmota32.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c2-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c2-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c2-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c2-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c2.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c2",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c2.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c2.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c2.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c2.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c2.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c2.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c3-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c3-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c3-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c3-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c3.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c3",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c3.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c3.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c3.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c3.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c3.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c3.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c3ser-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c3ser-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c3ser-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c3ser-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c5-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c5-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c5-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c5-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c5.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c5",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c5.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c5.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c5.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c5.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c5.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c5.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c5ser-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c5ser-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c5ser-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c5ser-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c6-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c6-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c6-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c6-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c6.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c6",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c6.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c6.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c6.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c6.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c6.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c6.factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "tasmota32c61-safeboot.bin",
+    "release": "v16.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tasmota32c61-safeboot",
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c61-safeboot.bin"
+  },
+  {
+   "extra": {
+    "asset": "tasmota32c61.bin",
+    "release": "v16.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tasmota32c61",
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c61.bin"
+  },
+  {
+   "extra": {
+    "asset": "tasmota32c61.factory.bin",
+    "release": "v16.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tasmota32c61.factory",
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c61.factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "tasmota32c61ser-safeboot.bin",
+    "release": "v16.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tasmota32c61ser-safeboot",
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c61ser-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32c6ser-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32c6ser-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32c6ser-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32c6ser-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32p4-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32p4-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32p4-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32p4-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32p4.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32p4",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32p4.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32p4.bin"
   },
   {
    "extra": {
     "asset": "tasmota32p4.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32p4.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32p4.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32p4.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32p4r3-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32p4r3-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32p4r3-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32p4r3-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32p4r3.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32p4r3",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32p4r3.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32p4r3.bin"
   },
   {
    "extra": {
     "asset": "tasmota32p4r3.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32p4r3.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32p4r3.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32p4r3.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32p4r3ser-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32p4r3ser-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32p4r3ser-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32p4r3ser-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32p4ser-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32p4ser-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32p4ser-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32p4ser-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32s2-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32s2-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32s2-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32s2-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32s2.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32s2",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32s2.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32s2.bin"
   },
   {
    "extra": {
     "asset": "tasmota32s2.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32s2.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32s2.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32s2.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32s2cdc-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32s2cdc-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32s2cdc-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32s2cdc-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32s2cdc.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32s2cdc",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32s2cdc.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32s2cdc.bin"
   },
   {
    "extra": {
     "asset": "tasmota32s2cdc.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32s2cdc.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32s2cdc.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32s2cdc.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32s3-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32s3-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32s3-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32s3-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32s3.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32s3",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32s3.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32s3.bin"
   },
   {
    "extra": {
     "asset": "tasmota32s3.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32s3.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32s3.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32s3.factory.bin"
   },
   {
    "extra": {
     "asset": "tasmota32s3ser-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32s3ser-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32s3ser-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32s3ser-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32solo1-safeboot.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32solo1-safeboot",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32solo1-safeboot.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32solo1-safeboot.bin"
   },
   {
    "extra": {
     "asset": "tasmota32solo1.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32solo1",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32solo1.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32solo1.bin"
   },
   {
    "extra": {
     "asset": "tasmota32solo1.factory.bin",
-    "release": "v15.6.0"
+    "release": "v16.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tasmota32solo1.factory",
-   "url": "https://github.com/arendst/Tasmota/releases/download/v15.6.0/tasmota32solo1.factory.bin"
+   "url": "https://github.com/arendst/Tasmota/releases/download/v16.0.0/tasmota32solo1.factory.bin"
   },
   {
    "extra": {
@@ -2991,15 +3045,39 @@
   },
   {
    "extra": {
-    "env": "tasmota32s3ser-safeboot",
+    "env": "tasmota32c61-safeboot",
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
    "line": 273,
    "rank": 2,
    "soc": null,
-   "token": "esp32s3ser-qio_qspi",
+   "token": "esp32c61",
    "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L273"
+  },
+  {
+   "extra": {
+    "env": "tasmota32c61ser-safeboot",
+    "file": "platformio_tasmota_env32.ini"
+   },
+   "kind": "platformio",
+   "line": 298,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32c61ser",
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L298"
+  },
+  {
+   "extra": {
+    "env": "tasmota32s3ser-safeboot",
+    "file": "platformio_tasmota_env32.ini"
+   },
+   "kind": "platformio",
+   "line": 323,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3ser-qio_qspi",
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L323"
   },
   {
    "extra": {
@@ -3007,11 +3085,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 283,
+   "line": 333,
    "rank": 2,
    "soc": null,
    "token": "esp32p4",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L283"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L333"
   },
   {
    "extra": {
@@ -3019,11 +3097,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 293,
+   "line": 343,
    "rank": 2,
    "soc": null,
    "token": "esp32p4r3",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L293"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L343"
   },
   {
    "extra": {
@@ -3031,11 +3109,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 303,
+   "line": 353,
    "rank": 2,
    "soc": null,
    "token": "esp32p4ser",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L303"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L353"
   },
   {
    "extra": {
@@ -3043,11 +3121,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 313,
+   "line": 363,
    "rank": 2,
    "soc": null,
    "token": "esp32p4r3ser",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L313"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L363"
   },
   {
    "extra": {
@@ -3067,11 +3145,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 329,
+   "line": 379,
    "rank": 2,
    "soc": null,
    "token": "esp32-solo1",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L329"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L379"
   },
   {
    "extra": {
@@ -3079,11 +3157,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 340,
+   "line": 390,
    "rank": 2,
    "soc": null,
    "token": "esp32s2",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L340"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L390"
   },
   {
    "extra": {
@@ -3091,11 +3169,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 351,
+   "line": 401,
    "rank": 2,
    "soc": null,
    "token": "esp32s2cdc",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L351"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L401"
   },
   {
    "extra": {
@@ -3103,11 +3181,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 363,
+   "line": 413,
    "rank": 2,
    "soc": null,
    "token": "esp32c2",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L363"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L413"
   },
   {
    "extra": {
@@ -3115,11 +3193,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 373,
+   "line": 423,
    "rank": 2,
    "soc": null,
    "token": "esp32c3",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L373"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L423"
   },
   {
    "extra": {
@@ -3127,11 +3205,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 381,
+   "line": 431,
    "rank": 2,
    "soc": null,
    "token": "esp32c5",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L381"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L431"
   },
   {
    "extra": {
@@ -3139,11 +3217,23 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 389,
+   "line": 439,
    "rank": 2,
    "soc": null,
    "token": "esp32c6",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L389"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L439"
+  },
+  {
+   "extra": {
+    "env": "tasmota32c61",
+    "file": "platformio_tasmota_env32.ini"
+   },
+   "kind": "platformio",
+   "line": 448,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32c61",
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L448"
   },
   {
    "extra": {
@@ -3151,11 +3241,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 398,
+   "line": 459,
    "rank": 2,
    "soc": null,
    "token": "esp32p4",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L398"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L459"
   },
   {
    "extra": {
@@ -3163,11 +3253,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 407,
+   "line": 468,
    "rank": 2,
    "soc": null,
    "token": "esp32p4r3",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L407"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L468"
   },
   {
    "extra": {
@@ -3175,11 +3265,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 416,
+   "line": 477,
    "rank": 2,
    "soc": null,
    "token": "esp32s3-qio_qspi",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L416"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L477"
   },
   {
    "extra": {
@@ -3187,11 +3277,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 427,
+   "line": 488,
    "rank": 2,
    "soc": null,
    "token": "esp32s31-qio_opi",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L427"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L488"
   },
   {
    "extra": {
@@ -3199,11 +3289,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 437,
+   "line": 498,
    "rank": 2,
    "soc": null,
    "token": "esp32-fix",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L437"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L498"
   },
   {
    "extra": {
@@ -3752,6 +3842,28 @@
    "line": null,
    "rank": 3,
    "soc": null,
+   "token": "tasmota32c61-safeboot",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_devel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/Tasmota_build_devel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tasmota32c61ser-safeboot",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_devel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/Tasmota_build_devel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
    "token": "tasmota32p4-safeboot",
    "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_devel.yml"
   },
@@ -4028,6 +4140,17 @@
    "rank": 3,
    "soc": null,
    "token": "tasmota32c6",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_devel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/Tasmota_build_devel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tasmota32c61",
    "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_devel.yml"
   },
   {
@@ -4544,6 +4667,28 @@
    "line": null,
    "rank": 3,
    "soc": null,
+   "token": "tasmota32c61-safeboot",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_master.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/Tasmota_build_master.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tasmota32c61ser-safeboot",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_master.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/Tasmota_build_master.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
    "token": "tasmota32p4-safeboot",
    "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_master.yml"
   },
@@ -4820,6 +4965,17 @@
    "rank": 3,
    "soc": null,
    "token": "tasmota32c6",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_master.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/Tasmota_build_master.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tasmota32c61",
    "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/Tasmota_build_master.yml"
   },
   {
@@ -5380,6 +5536,17 @@
    "line": null,
    "rank": 3,
    "soc": null,
+   "token": "tasmota32c61",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/build_all_the_things.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_all_the_things.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
    "token": "tasmota32p4",
    "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/build_all_the_things.yml"
   },
@@ -5579,6 +5746,17 @@
    "rank": 3,
    "soc": null,
    "token": "tasmota32c6-safeboot",
+   "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/build_all_the_things.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_all_the_things.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tasmota32c61-safeboot",
    "url": "https://github.com/arendst/Tasmota/blob/development/.github/workflows/build_all_the_things.yml"
   },
   {

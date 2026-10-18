@@ -12,6 +12,7 @@ socs:
 - esp32-c3
 - esp32-c5
 - esp32-c6
+- esp32-c61
 - esp32-p4
 - esp32-s2
 - esp32-s3
@@ -60,6 +61,9 @@ sources:
 - field: summary
   url: https://github.com/arendst/Tasmota
   verified: '2026-09-20'
+- field: socs
+  url: https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L273
+  verified: '2026-10-18'
 summary: "Tasmota is an alternative open\u2011source firmware for ESP8266 and ESP32\
   \ based devices that offers easy web\u2011UI configuration, OTA updates, automation\
   \ via timers or rules, and fully local control through MQTT, HTTP, Serial or KNX."
