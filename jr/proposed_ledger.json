@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-26T18:00:59.663657+00:00",
+      "expires": "2026-10-26T19:00:59.830311+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-19T18:00:59.663657+00:00"
+      "timestamp": "2026-10-19T19:00:59.830311+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-24T16:00:59.721937+00:00",
@@ -3344,8 +3344,8 @@
       "pr_ref": null,
       "repo": "ghostesp-revival/ghostesp",
       "repo_id": 891566125,
-      "status": "proposed",
-      "timestamp": "2026-10-19T18:00:59.663657+00:00"
+      "status": "merged",
+      "timestamp": "2026-10-19T19:00:59.830311+00:00"
     },
     "glide-synth-cardputer-adv": {
       "expires": "2026-11-05T17:47:57.745208+00:00",

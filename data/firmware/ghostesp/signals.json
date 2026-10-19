@@ -1,0 +1,2645 @@
+{
+ "calls": 7,
+ "errors": 0,
+ "fetched": "2026-10-19",
+ "notes": [],
+ "ref": "Development-deki",
+ "repo": "GhostESP-Revival/GhostESP",
+ "resolved": {
+  "boards": [
+   "lilygo-t-deck",
+   "lilygo-t-dongle-s3",
+   "m5cardputer",
+   "m5stack-cores3-se",
+   "xiao-esp32s3",
+   "xiao-esp32s3-sense"
+  ],
+  "socs": [
+   "esp32",
+   "esp32-c3",
+   "esp32-c5",
+   "esp32-c6",
+   "esp32-p4",
+   "esp32-s2",
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "ACE C5",
+   "ACE S3",
+   "ACE_C5.zip",
+   "ACE_S3.zip",
+   "Awok V5",
+   "AwokMini",
+   "AwokMini.zip",
+   "Banshee C5",
+   "Banshee S3",
+   "Banshee_C5.zip",
+   "Banshee_S3.zip",
+   "CYD2432S028R",
+   "CYD2432S028R.zip",
+   "CYD2USB",
+   "CYD2USB.zip",
+   "CYD2USB2.4Inch.zip",
+   "CYD2USB2.4Inch_C.zip",
+   "CYD2USB2.4_Inch",
+   "CYD2USB2.4_Inch_C",
+   "CYDDualUSB",
+   "CYDDualUSB.zip",
+   "CYDMicroUSB",
+   "CYDMicroUSB.zip",
+   "Cardputer ADV",
+   "CardputerADV.zip",
+   "CrowPanel 4.2-inch E-paper",
+   "CrowPanel 5.79-inch E-paper",
+   "CrowPanel Advance 2.4-inch",
+   "CrowPanel Advance 2.8-inch",
+   "CrowPanel Advance 3.5-inch",
+   "CrowPanel Advance 4.3-inch",
+   "CrowPanel Advance 5-inch",
+   "CrowPanel Advance 7-inch",
+   "CrowPanel Advanced P4 5-inch",
+   "CrowPanel Advanced P4 7/9/10.1-inch",
+   "CrowPanel Advanced P4 7/9/10.1-inch v1.1",
+   "CrowPanel_1.28inch_Rotary.zip",
+   "CrowPanel_4.2_Epaper.zip",
+   "CrowPanel_5.79_Epaper.zip",
+   "CrowPanel_Advance_24.zip",
+   "CrowPanel_Advance_28.zip",
+   "CrowPanel_Advance_35.zip",
+   "CrowPanel_Advance_43.zip",
+   "CrowPanel_Advance_5.zip",
+   "CrowPanel_Advance_7inch.zip",
+   "CrowPanel_Advanced_P4_5inch.zip",
+   "CrowPanel_Advanced_P4_7_9_10.1inch.zip",
+   "CrowPanel_Advanced_P4_7_9_10.1inch_v1.1.zip",
+   "Crowtech_LCD",
+   "Crowtech_LCD.zip",
+   "ESP32-S3-Cardputer",
+   "ESP32-S3-Cardputer.zip",
+   "Elecrow CrowPanel 1.28-inch Rotary",
+   "FeberisPro",
+   "FeberisPro.zip",
+   "Flipper_JCMK_GPS",
+   "Flipper_JCMK_GPS.zip",
+   "GhostLink P1 Core",
+   "GhostLink P1 Peer",
+   "GhostLink_P1_Core.zip",
+   "GhostLink_P1_Peer.zip",
+   "Heltec V3",
+   "HeltecV3.zip",
+   "JC3248W535EN",
+   "JC3248W535EN_LCD",
+   "JC3248W535EN_LCD.zip",
+   "JCMK_DevBoardPro",
+   "JCMK_DevBoardPro.zip",
+   "LilyGo T-Dongle-C5",
+   "LilyGo TEmbedC1101",
+   "LilyGo-S3TWatch-2020.zip",
+   "LilyGo-T-Deck.zip",
+   "LilyGo-TDisplayS3-Touch.zip",
+   "LilyGo-TDongleC5.zip",
+   "LilyGo-TDongleS3.zip",
+   "LilyGo-TEmbedC1101.zip",
+   "Lolin_S3_Pro",
+   "Lolin_S3_Pro.zip",
+   "M5Stack AtomS3R",
+   "M5Stack_AtomS3R.zip",
+   "M5Stack_CoreS3-SE.zip",
+   "Marauder Pancake",
+   "Marauder V8",
+   "MarauderPancake.zip",
+   "MarauderV4_FlipperHub",
+   "MarauderV4_FlipperHub.zip",
+   "MarauderV6&AwokDual",
+   "MarauderV6_AwokDual.zip",
+   "MarauderV8.zip",
+   "NM-CYD-C5",
+   "NM-CYD-C5.zip",
+   "Poltergeist.zip",
+   "Rabbit-Labs Poltergeist",
+   "RabbitLabs_Minion",
+   "RabbitLabs_Minion.zip",
+   "S3TWatch",
+   "Sunton_LCD",
+   "Sunton_LCD.zip",
+   "TDisplayS3-Touch",
+   "TDongleC5",
+   "TEmbedC1101",
+   "Waveshare_LCD",
+   "Waveshare_LCD.zip",
+   "XIAO ESP32S3 Wio-SX1262",
+   "XIAO_C5",
+   "XIAO_C5.zip",
+   "XIAO_S3",
+   "XIAO_S3.zip",
+   "XIAO_S3_Sense",
+   "XIAO_S3_Sense.zip",
+   "XIAO_S3_WIO_SX1262.zip",
+   "configs/sdkconfig.ACE_C5",
+   "configs/sdkconfig.ACE_S3",
+   "configs/sdkconfig.CYD2432S028R",
+   "configs/sdkconfig.CYD2USB",
+   "configs/sdkconfig.CYD2USB2.4Inch",
+   "configs/sdkconfig.CYD2USB2.4Inch_C_Varient",
+   "configs/sdkconfig.CYDDualUSB",
+   "configs/sdkconfig.CYDMicroUSB",
+   "configs/sdkconfig.JC3248W535EN",
+   "configs/sdkconfig.JCMK_DevBoardPro",
+   "configs/sdkconfig.MarauderV8",
+   "configs/sdkconfig.NM-CYD-C5",
+   "configs/sdkconfig.Pancake",
+   "configs/sdkconfig.S3TWatch",
+   "configs/sdkconfig.TDisplayS3-Touch",
+   "configs/sdkconfig.TDongleC5",
+   "configs/sdkconfig.TDongleS3",
+   "configs/sdkconfig.TEmbedC1101",
+   "configs/sdkconfig.atoms3r",
+   "configs/sdkconfig.awokmini",
+   "configs/sdkconfig.cardputer",
+   "configs/sdkconfig.cardputeradv",
+   "configs/sdkconfig.crowpanel_1p28_rotary",
+   "configs/sdkconfig.crowpanel_42_epaper",
+   "configs/sdkconfig.crowpanel_579_epaper",
+   "configs/sdkconfig.crowpanel_advance24",
+   "configs/sdkconfig.crowpanel_advance28",
+   "configs/sdkconfig.crowpanel_advance35",
+   "configs/sdkconfig.crowpanel_advance43",
+   "configs/sdkconfig.crowpanel_advance5",
+   "configs/sdkconfig.crowpanel_advance7",
+   "configs/sdkconfig.crowpanel_advanced_p4_mipi_1024x600",
+   "configs/sdkconfig.crowpanel_advanced_p4_mipi_1024x600_v11",
+   "configs/sdkconfig.crowpanel_advanced_p4_rgb_800x480",
+   "configs/sdkconfig.crowtech7inch",
+   "configs/sdkconfig.default.esp32",
+   "configs/sdkconfig.default.esp32c3",
+   "configs/sdkconfig.default.esp32c5",
+   "configs/sdkconfig.default.esp32c6",
+   "configs/sdkconfig.default.esp32s2",
+   "configs/sdkconfig.default.esp32s3",
+   "configs/sdkconfig.feberispro",
+   "configs/sdkconfig.flipper.jcmk_gps",
+   "configs/sdkconfig.ghostboard",
+   "configs/sdkconfig.ghostlink_p1_core",
+   "configs/sdkconfig.ghostlink_p1_peer",
+   "configs/sdkconfig.heltecv3",
+   "configs/sdkconfig.lolins3pro",
+   "configs/sdkconfig.m5cores3se",
+   "configs/sdkconfig.marauderv4",
+   "configs/sdkconfig.marauderv6",
+   "configs/sdkconfig.minion",
+   "configs/sdkconfig.poltergeist",
+   "configs/sdkconfig.somethingsomething",
+   "configs/sdkconfig.somethingsomething2",
+   "configs/sdkconfig.sunton7inch",
+   "configs/sdkconfig.tdeck",
+   "configs/sdkconfig.waveshare7inch",
+   "configs/sdkconfig.xiao_esp32c5",
+   "configs/sdkconfig.xiao_esp32s3",
+   "configs/sdkconfig.xiao_esp32s3_sense",
+   "configs/sdkconfig.xiao_esp32s3_wio_sx1262",
+   "crowpanel_advance24",
+   "crowpanel_advance28",
+   "crowpanel_advance35",
+   "crowpanel_advance43",
+   "crowpanel_advance5",
+   "crowpanel_advance7",
+   "esp32-generic",
+   "esp32-generic.zip",
+   "esp32c3-generic",
+   "esp32c3-generic.zip",
+   "esp32c5-generic",
+   "esp32c5-generic-v01.zip",
+   "esp32c6-generic",
+   "esp32c6-generic.zip",
+   "esp32s2-generic",
+   "esp32s2-generic.zip",
+   "esp32s3-generic",
+   "esp32s3-generic.zip",
+   "esp32v5_awok.zip",
+   "ghostboard",
+   "ghostboard.zip",
+   "luac-linux-aarch64",
+   "luac-linux-x86_64",
+   "luac-macos-arm64",
+   "luac-macos-x86_64",
+   "luac-windows-amd64.exe",
+   "marauderv4",
+   "somethingsomething",
+   "somethingsomething2",
+   "sunton7inch",
+   "waveshare7inch",
+   "xiao_esp32s3_wio_sx1262"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-generic",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-generic.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s2-generic",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s2",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32s2",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s2-generic.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3-generic",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32s3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32s3-generic.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c3-generic",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32c3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c3-generic.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c5-generic",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32c5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c5-generic-v01.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6-generic",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.default.esp32c6",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c6-generic.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel Advanced P4 7/9/10.1-inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32p4",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowpanel_advanced_p4_mipi_1024x600",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel_Advanced_P4_7_9_10.1inch.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel Advanced P4 7/9/10.1-inch v1.1",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowpanel_advanced_p4_mipi_1024x600_v11",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel_Advanced_P4_7_9_10.1inch_v1.1.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel Advanced P4 5-inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowpanel_advanced_p4_rgb_800x480",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel_Advanced_P4_5inch.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Awok V5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32v5_awok.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ghostboard",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.ghostboard",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ghostboard.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderV4_FlipperHub",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.marauderv4",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderV4_FlipperHub.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "marauderv4",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderV6&AwokDual",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.marauderv6",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderV6_AwokDual.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "AwokMini",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.awokmini",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "AwokMini.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32-S3-Cardputer",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.cardputer",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ESP32-S3-Cardputer.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cardputer",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Heltec V3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.heltecv3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "HeltecV3.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYD2USB",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYDMicroUSB",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYDMicroUSB",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYDMicroUSB.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYDDualUSB",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYDDualUSB",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYDDualUSB.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB2.4_Inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYD2USB2.4Inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB2.4Inch.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB2.4_Inch_C",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYD2USB2.4Inch_C_Varient",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2USB2.4Inch_C.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2432S028R",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.CYD2432S028R",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CYD2432S028R.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Waveshare_LCD",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.waveshare7inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Waveshare_LCD.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "waveshare7inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Crowtech_LCD",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowtech7inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Crowtech_LCD.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel 4.2-inch E-paper",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowpanel_42_epaper",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel_4.2_Epaper.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel 5.79-inch E-paper",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowpanel_579_epaper",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel_5.79_Epaper.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel Advance 7-inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowpanel_advance7",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel_Advance_7inch.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "crowpanel_advance7",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel Advance 5-inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowpanel_advance5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel_Advance_5.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "crowpanel_advance5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel Advance 4.3-inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowpanel_advance43",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel_Advance_43.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "crowpanel_advance43",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel Advance 3.5-inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowpanel_advance35",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel_Advance_35.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "crowpanel_advance35",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel Advance 2.8-inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowpanel_advance28",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel_Advance_28.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "crowpanel_advance28",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel Advance 2.4-inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowpanel_advance24",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel_Advance_24.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "crowpanel_advance24",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Sunton_LCD",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.sunton7inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Sunton_LCD.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "sunton7inch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "JC3248W535EN_LCD",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.JC3248W535EN",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "JC3248W535EN_LCD.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "JC3248W535EN",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Flipper_JCMK_GPS",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.flipper.jcmk_gps",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Flipper_JCMK_GPS.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "T-Deck",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.tdeck",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LilyGo-T-Deck.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "TEmbedC1101",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.TEmbedC1101",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LilyGo-TEmbedC1101.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LilyGo TEmbedC1101",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Elecrow CrowPanel 1.28-inch Rotary",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.crowpanel_1p28_rotary",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CrowPanel_1.28inch_Rotary.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "GhostLink P1 Core",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.ghostlink_p1_core",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "GhostLink_P1_Core.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "GhostLink P1 Peer",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.ghostlink_p1_peer",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "GhostLink_P1_Peer.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "TDongleS3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.TDongleS3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LilyGo-TDongleS3.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LilyGo T-Dongle-S3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "TDongleC5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.TDongleC5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LilyGo-TDongleC5.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LilyGo T-Dongle-C5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "S3TWatch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.S3TWatch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LilyGo-S3TWatch-2020.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "TDisplayS3-Touch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.TDisplayS3-Touch",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "LilyGo-TDisplayS3-Touch.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "JCMK_DevBoardPro",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.JCMK_DevBoardPro",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "JCMK_DevBoardPro.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "RabbitLabs_Minion",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.minion",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "RabbitLabs_Minion.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Lolin_S3_Pro",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.lolins3pro",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Lolin_S3_Pro.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Cardputer ADV",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.cardputeradv",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "CardputerADV.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Rabbit-Labs Poltergeist",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.poltergeist",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Poltergeist.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Banshee C5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.somethingsomething",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Banshee_C5.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "somethingsomething",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Banshee S3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.somethingsomething2",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Banshee_S3.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "somethingsomething2",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "FeberisPro",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.feberispro",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "FeberisPro.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ACE C5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.ACE_C5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ACE_C5.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "NM-CYD-C5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.NM-CYD-C5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "NM-CYD-C5.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ACE S3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.ACE_S3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ACE_S3.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "XIAO_S3_Sense",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.xiao_esp32s3_sense",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "XIAO_S3_Sense.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "xiao_esp32s3_sense",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "XIAO_S3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.xiao_esp32s3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "XIAO_S3.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "xiao_esp32s3",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Stack CoreS3-SE",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.m5cores3se",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Stack_CoreS3-SE.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Stack AtomS3R",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.atoms3r",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Stack_AtomS3R.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "XIAO_C5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.xiao_esp32c5",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "XIAO_C5.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder V8",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.MarauderV8",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderV8.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Marauder Pancake",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.Pancake",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MarauderPancake.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "XIAO ESP32S3 Wio-SX1262",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "configs/sdkconfig.xiao_esp32s3_wio_sx1262",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "XIAO_S3_WIO_SX1262.zip",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/compile_all.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "xiao_esp32s3_wio_sx1262",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/publish-ghostbt.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "luac-windows-amd64.exe",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/publish-ghostbt.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/publish-ghostbt.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "luac-macos-x86_64",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/publish-ghostbt.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/publish-ghostbt.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "luac-macos-arm64",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/publish-ghostbt.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/publish-ghostbt.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "luac-linux-x86_64",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/publish-ghostbt.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/publish-ghostbt.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "luac-linux-aarch64",
+   "url": "https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/publish-ghostbt.yml"
+  }
+ ]
+}
