@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-26T20:00:59.732759+00:00",
+      "expires": "2026-10-26T21:00:59.750673+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-19T20:00:59.732759+00:00"
+      "timestamp": "2026-10-19T21:00:59.750673+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-24T16:00:59.721937+00:00",
@@ -8106,13 +8106,14 @@
       "timestamp": "2026-09-19T15:00:30.165949+00:00"
     },
     "rogue-radar": {
+      "expired_at": "2026-10-19T21:00:59.750673+00:00",
       "expires": "2026-10-19T21:00:06.721536+00:00",
       "id": "rogue-radar",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "atomnft/rogue-radar",
       "repo_id": 1207292315,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-19T21:00:06.721536+00:00"
     },
     "rrfremote": {
