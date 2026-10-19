@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-26T15:00:59.658125+00:00",
+      "expires": "2026-10-26T16:01:00.079676+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-19T15:00:59.658125+00:00"
+      "timestamp": "2026-10-19T16:01:00.079676+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-24T16:00:59.721937+00:00",
@@ -254,14 +254,14 @@
       "timestamp": "2026-10-06T19:00:58.979878+00:00"
     },
     "ai-stackchan-ex": {
-      "expires": "2026-10-19T15:39:16.007271+00:00",
+      "expires": "2026-11-18T16:01:00.079676+00:00",
       "id": "ai-stackchan-ex",
       "pr_ref": null,
       "reason": "name_token_matches_catalogued: likely a port/variant",
       "repo": "ronron-gh/ai_stackchan_ex",
       "repo_id": 906883136,
       "status": "rejected",
-      "timestamp": "2026-09-19T15:39:16.007271+00:00"
+      "timestamp": "2026-10-19T16:01:00.079676+00:00"
     },
     "ai-stackchan-minimal": {
       "expired_at": "2026-10-11T21:00:11.605277+00:00",
@@ -765,14 +765,14 @@
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "bruce": {
-      "expires": "2026-10-19T15:39:16.007271+00:00",
+      "expires": "2026-11-18T16:01:00.079676+00:00",
       "id": "bruce",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "pr3y/bruce",
       "repo_id": 795166961,
       "status": "rejected",
-      "timestamp": "2026-09-19T15:39:16.007271+00:00"
+      "timestamp": "2026-10-19T16:01:00.079676+00:00"
     },
     "bruce-a-c-edition": {
       "expires": "2026-11-07T23:52:12.575946+00:00",
@@ -4531,14 +4531,14 @@
       "timestamp": "2026-10-09T23:00:13.238223+00:00"
     },
     "m5cardputer-c64-emulator": {
-      "expires": "2026-10-19T16:00:38.109621+00:00",
+      "expires": "2026-11-18T16:01:00.079676+00:00",
       "id": "m5cardputer-c64-emulator",
       "pr_ref": null,
       "reason": "noise_non_firmware: name matches a game/emulator/platform token",
       "repo": "iele/m5cardputer-c64-emulator",
       "repo_id": 824837911,
       "status": "rejected",
-      "timestamp": "2026-09-19T16:00:38.109621+00:00"
+      "timestamp": "2026-10-19T16:01:00.079676+00:00"
     },
     "m5cardputer-chat-with-gemini-api": {
       "id": "m5cardputer-chat-with-gemini-api",
