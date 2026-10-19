@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-26T13:00:59.790581+00:00",
+      "expires": "2026-10-26T14:00:59.699952+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-19T13:00:59.790581+00:00"
+      "timestamp": "2026-10-19T14:00:59.699952+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-24T16:00:59.721937+00:00",
@@ -5282,13 +5282,14 @@
       "timestamp": "2026-09-12T04:00:31.028335+00:00"
     },
     "m5paperweather-calendar": {
+      "expired_at": "2026-10-19T14:00:59.699952+00:00",
       "expires": "2026-10-19T14:00:22.488207+00:00",
       "id": "m5paperweather-calendar",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "kvx17/m5paperweather-calendar",
       "repo_id": 1328925855,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-19T14:00:22.488207+00:00"
     },
     "m5peasytag": {
@@ -5762,13 +5763,14 @@
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
     "m5stick-nemo": {
+      "expired_at": "2026-10-19T14:00:59.699952+00:00",
       "expires": "2026-10-19T14:00:22.488207+00:00",
       "id": "m5stick-nemo",
       "pr_ref": null,
       "reason": "already_catalogued: n0xa/m5stick-nemo is already in the atlas",
       "repo": "n0xa/m5stick-nemo",
       "repo_id": 694486730,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-19T14:00:22.488207+00:00"
     },
     "m5stick-shark": {
