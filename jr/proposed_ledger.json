@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-26T14:00:59.699952+00:00",
+      "expires": "2026-10-26T15:00:59.658125+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-19T14:00:59.699952+00:00"
+      "timestamp": "2026-10-19T15:00:59.658125+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-24T16:00:59.721937+00:00",
@@ -6899,13 +6899,14 @@
       "timestamp": "2026-09-13T01:00:38.965157+00:00"
     },
     "nvs-manager": {
+      "expired_at": "2026-10-19T15:00:59.658125+00:00",
       "expires": "2026-10-19T15:00:30.165949+00:00",
       "id": "nvs-manager",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "foxkyong/nvs-manager",
       "repo_id": 1370584689,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-19T15:00:30.165949+00:00"
     },
     "nyan": {
@@ -7229,13 +7230,14 @@
       "timestamp": "2026-09-11T14:00:50.412232+00:00"
     },
     "paperos": {
+      "expired_at": "2026-10-19T15:00:59.658125+00:00",
       "expires": "2026-10-19T15:00:30.165949+00:00",
       "id": "paperos",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "saurav2107/paperos",
       "repo_id": 1363196346,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-19T15:00:30.165949+00:00"
     },
     "papers3-weread": {
