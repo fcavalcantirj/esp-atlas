@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-26T16:01:00.079676+00:00",
+      "expires": "2026-10-26T17:00:59.636695+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-19T16:01:00.079676+00:00"
+      "timestamp": "2026-10-19T17:00:59.636695+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-24T16:00:59.721937+00:00",
@@ -2032,14 +2032,14 @@
       "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "claude-desktop-buddy": {
-      "expires": "2026-10-19T17:00:45.426940+00:00",
+      "expires": "2026-11-18T17:00:59.636695+00:00",
       "id": "claude-desktop-buddy",
       "pr_ref": null,
       "reason": "name_token_matches_catalogued: likely a port/variant",
       "repo": "anthropics/claude-desktop-buddy",
       "repo_id": 1206243078,
       "status": "rejected",
-      "timestamp": "2026-09-19T17:00:45.426940+00:00"
+      "timestamp": "2026-10-19T17:00:59.636695+00:00"
     },
     "claude-desktop-buddy-cardputer": {
       "expires": "2026-11-08T03:00:12.533071+00:00",
@@ -4568,14 +4568,14 @@
       "timestamp": "2026-10-06T19:00:58.979878+00:00"
     },
     "m5cardputer-doom": {
-      "expires": "2026-10-19T17:00:45.426940+00:00",
+      "expires": "2026-11-18T17:00:59.636695+00:00",
       "id": "m5cardputer-doom",
       "pr_ref": null,
       "reason": "noise_non_firmware: name matches a game/emulator/platform token",
       "repo": "romalik/m5cardputer_doom",
       "repo_id": 801245269,
       "status": "rejected",
-      "timestamp": "2026-09-19T17:00:45.426940+00:00"
+      "timestamp": "2026-10-19T17:00:59.636695+00:00"
     },
     "m5cardputer-env-iv-app": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -7621,14 +7621,14 @@
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
     },
     "portal-evil-huebr": {
-      "expires": "2026-10-19T17:00:45.426940+00:00",
+      "expires": "2026-11-18T17:00:59.636695+00:00",
       "id": "portal-evil-huebr",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "raphntc/portal-evil-huebr",
       "repo_id": 731880671,
       "status": "rejected",
-      "timestamp": "2026-09-19T17:00:45.426940+00:00"
+      "timestamp": "2026-10-19T17:00:59.636695+00:00"
     },
     "portalhater-m5-core-seafood-roast-joke-b": {
       "expires": "2026-11-08T13:00:11.675780+00:00",
