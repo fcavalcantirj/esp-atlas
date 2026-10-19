@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-26T19:00:59.830311+00:00",
+      "expires": "2026-10-26T20:00:59.732759+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-19T19:00:59.830311+00:00"
+      "timestamp": "2026-10-19T20:00:59.732759+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-24T16:00:59.721937+00:00",
@@ -903,6 +903,16 @@
       "repo": "shlappa1000/c4-stick",
       "status": "seen",
       "timestamp": "2026-09-02T16:03:28.007124+00:00"
+    },
+    "cairn": {
+      "expires": "2026-11-18T20:00:59.732759+00:00",
+      "id": "cairn",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "cvhviz/cairn",
+      "repo_id": 1398295458,
+      "status": "rejected",
+      "timestamp": "2026-10-19T20:00:59.732759+00:00"
     },
     "calcputer": {
       "expires": "2026-11-08T01:00:12.099811+00:00",
@@ -5700,13 +5710,14 @@
       "timestamp": "2026-09-13T12:00:26.473492+00:00"
     },
     "m5stackprojects": {
+      "expired_at": "2026-10-19T20:00:59.732759+00:00",
       "expires": "2026-10-19T20:00:03.492698+00:00",
       "id": "m5stackprojects",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "jcldf/m5stackprojects",
       "repo_id": 725753246,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-19T20:00:03.492698+00:00"
     },
     "m5stampfly": {
@@ -10182,6 +10193,7 @@
     "cubic9com/m5core2_eyes": "m5core2-eyes",
     "cubic9com/m5core2_gravsim": "m5core2-gravsim",
     "cubic9com/m5core2_voronoi": "m5core2-voronoi",
+    "cvhviz/cairn": "cairn",
     "cyberwisk/m5cardputer_audiospectrum": "m5cardputer-audiospectrum",
     "cyberwisk/m5cardputer_webradio": "m5cardputer-webradio",
     "d3crypt-1/infiltra-firmware": "infiltra-firmware",
