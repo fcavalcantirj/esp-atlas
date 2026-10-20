@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-27T06:01:01.556232+00:00",
+      "expires": "2026-10-27T07:00:59.645797+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-20T06:01:01.556232+00:00"
+      "timestamp": "2026-10-20T07:00:59.645797+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-24T16:00:59.721937+00:00",
@@ -2496,14 +2496,14 @@
       "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "devour-sphere": {
-      "expires": "2026-10-20T07:00:29.928578+00:00",
+      "expires": "2026-11-19T07:00:59.645797+00:00",
       "id": "devour-sphere",
       "pr_ref": null,
-      "reason": "below_floor: 7 stars / 1 forks",
+      "reason": "below_floor: 9 stars / 2 forks",
       "repo": "shapoco/devour-sphere",
       "repo_id": 1369088965,
       "status": "rejected",
-      "timestamp": "2026-09-20T07:00:29.928578+00:00"
+      "timestamp": "2026-10-20T07:00:59.645797+00:00"
     },
     "dht11-and-dht22-m5stick": {
       "expires": "2026-11-08T12:00:11.265432+00:00",
