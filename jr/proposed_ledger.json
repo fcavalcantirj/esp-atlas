@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-27T16:00:59.618229+00:00",
+      "expires": "2026-10-27T17:01:00.035235+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-20T16:00:59.618229+00:00"
+      "timestamp": "2026-10-20T17:01:00.035235+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-24T16:00:59.721937+00:00",
@@ -2703,14 +2703,14 @@
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "enso": {
-      "expires": "2026-10-20T17:00:24.409925+00:00",
+      "expires": "2026-11-19T17:01:00.035235+00:00",
       "id": "enso",
       "pr_ref": null,
-      "reason": "below_floor: 0 stars / 0 forks",
+      "reason": "below_floor: 15 stars / 1 forks",
       "repo": "oldtokage-collab/enso",
       "repo_id": 1378312757,
       "status": "rejected",
-      "timestamp": "2026-09-20T17:00:24.409925+00:00"
+      "timestamp": "2026-10-20T17:01:00.035235+00:00"
     },
     "epub-m5stack-paper-s3": {
       "expired_at": "2026-10-11T15:00:11.554058+00:00",
