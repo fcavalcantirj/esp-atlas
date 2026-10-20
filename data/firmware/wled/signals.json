@@ -1,7 +1,7 @@
 {
  "calls": 12,
  "errors": 0,
- "fetched": "2026-10-13",
+ "fetched": "2026-10-20",
  "notes": [],
  "ref": "main",
  "repo": "wled/WLED",
@@ -944,11 +944,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1147,
+   "line": 1150,
    "rank": 2,
    "soc": null,
    "token": "adafruit_matrixportal_esp32s3_wled",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1147"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1150"
   },
   {
    "extra": {
@@ -968,11 +968,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1181,
+   "line": 1184,
    "rank": 2,
    "soc": null,
    "token": "lilygo-t7-s3",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1181"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1184"
   }
  ]
 }
