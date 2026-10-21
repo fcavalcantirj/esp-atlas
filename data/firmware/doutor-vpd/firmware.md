@@ -9,12 +9,20 @@ socs:
 - esp32-s3
 distribution:
 - releases
+popularity:
+  stars: 0
+  forks: 0
+  editorial_home: https://www.doutorvpd.com.br/
+  as_of: '2026-10-21'
 sources:
 - field: '*'
   url: https://github.com/fcavalcantirj/doutor-vpd-firmware
   verified: '2026-10-21'
 - field: socs
   url: https://www.doutorvpd.com.br/
+  verified: '2026-10-21'
+- field: popularity
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware
   verified: '2026-10-21'
 ---
 
