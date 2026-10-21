@@ -1,7 +1,7 @@
 {
  "calls": 16,
  "errors": 0,
- "fetched": "2026-10-14",
+ "fetched": "2026-10-21",
  "notes": [
   "more than 10 workflows; kept the 10 named build/firmware/release/ci first"
  ],
@@ -22,9 +22,8 @@
    "--environment esp32-idf-tidy --split-num 5 --split-at 3",
    "--environment esp32-idf-tidy --split-num 5 --split-at 4",
    "--environment esp32-idf-tidy --split-num 5 --split-at 5",
-   "--environment esp8266-arduino-tidy --grep USE_ESP8266",
+   "--environment host-tidy --grep USE_HOST",
    "--environment nrf52-tidy --grep USE_ZEPHYR --grep USE_NRF52",
-   "--environment rp2-tidy --grep USE_RP2",
    "Run script/clang-tidy for ESP32 Arduino",
    "Run script/clang-tidy for ESP32 C6",
    "Run script/clang-tidy for ESP32 IDF 1/5",
@@ -38,6 +37,7 @@
    "Run script/clang-tidy for LibreTiny",
    "Run script/clang-tidy for RP2",
    "Run script/clang-tidy for ZEPHYR",
+   "Run script/clang-tidy for host",
    "adafruit_feather_nrf52840",
    "amd64",
    "arm64",
@@ -77,6 +77,7 @@
    "rpipicow",
    "rtl87xx-arduino",
    "tidyesp8266",
+   "tidyhost",
    "tidylibretiny",
    "tidyrp2"
   ]
@@ -436,11 +437,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 607,
+   "line": 609,
    "rank": 2,
    "soc": null,
    "token": "generic-ln882h",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L607"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L609"
   },
   {
    "extra": {
@@ -448,11 +449,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 620,
+   "line": 622,
    "rank": 2,
    "soc": null,
    "token": "generic-rtl8710bn-2mb-788k",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L620"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L622"
   },
   {
    "extra": {
@@ -460,11 +461,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 633,
+   "line": 635,
    "rank": 2,
    "soc": null,
    "token": "generic-rtl8720cf-2mb-992k",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L633"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L635"
   },
   {
    "extra": {
@@ -472,11 +473,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 661,
+   "line": 680,
    "rank": 2,
    "soc": null,
    "token": "adafruit_feather_nrf52840",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L661"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L680"
   },
   {
    "extra": {
@@ -484,11 +485,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 670,
+   "line": 689,
    "rank": 2,
    "soc": null,
    "token": "adafruit_feather_nrf52840",
-   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L670"
+   "url": "https://github.com/esphome/esphome/blob/dev/platformio.ini#L689"
   },
   {
    "extra": {
@@ -674,17 +675,6 @@
    "line": null,
    "rank": 3,
    "soc": null,
-   "token": "--environment esp8266-arduino-tidy --grep USE_ESP8266",
-   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
-  },
-  {
-   "extra": {
-    "workflow": ".github/workflows/ci.yml"
-   },
-   "kind": "ci",
-   "line": null,
-   "rank": 3,
-   "soc": null,
    "token": "tidyesp8266",
    "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
   },
@@ -751,7 +741,7 @@
    "line": null,
    "rank": 3,
    "soc": null,
-   "token": "--environment rp2-tidy --grep USE_RP2",
+   "token": "tidyrp2",
    "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
   },
   {
@@ -762,7 +752,29 @@
    "line": null,
    "rank": 3,
    "soc": null,
-   "token": "tidyrp2",
+   "token": "Run script/clang-tidy for host",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "--environment host-tidy --grep USE_HOST",
+   "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tidyhost",
    "url": "https://github.com/esphome/esphome/blob/dev/.github/workflows/ci.yml"
   },
   {
