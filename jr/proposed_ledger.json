@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-28T13:00:59.612446+00:00",
+      "expires": "2026-10-28T14:00:59.683189+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-21T13:00:59.612446+00:00"
+      "timestamp": "2026-10-21T14:00:59.683189+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-24T16:00:59.721937+00:00",
@@ -4411,13 +4411,14 @@
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
     "m5-stopwatch-dashboard": {
+      "expired_at": "2026-10-21T14:00:59.683189+00:00",
       "expires": "2026-10-21T14:00:10.738854+00:00",
       "id": "m5-stopwatch-dashboard",
       "pr_ref": null,
       "reason": "below_floor: 10 stars / 0 forks",
       "repo": "isalicema/m5-stopwatch-dashboard",
       "repo_id": 1342658093,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-21T14:00:10.738854+00:00"
     },
     "m5-vids": {
