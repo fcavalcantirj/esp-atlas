@@ -126,6 +126,35 @@ def _check_inheritance(fm, kind, ids):
     return errors
 
 
+def _check_recipe_part_sources(fm):
+    """Cite-or-omit, per part, for a multi-part `flash.parts` image (SPEC-flash-catalog §6:
+    the binary gets its own field-scoped source; no invented offsets). Part i needs a
+    `flash.parts[i].url` source whose url IS that part's url -- the same convention as
+    `flash.bin_url`, so check_sources_live.py proves the binary itself is live -- and a
+    `flash.parts[i].offset` source (where the offset is stated, e.g. the release's own
+    install manifest). Shape is the schema's job; a part that is not a mapping is skipped."""
+    flash = fm.get("flash")
+    parts = flash.get("parts") if isinstance(flash, dict) else None
+    if not isinstance(parts, list):
+        return []
+    cited = {}
+    for source in fm.get("sources") or []:
+        if isinstance(source, dict) and isinstance(source.get("field"), str):
+            cited.setdefault(source["field"], set()).add(source.get("url"))
+    errors = []
+    for index, part in enumerate(parts):
+        if not isinstance(part, dict):
+            continue
+        url_field, offset_field = f"flash.parts[{index}].url", f"flash.parts[{index}].offset"
+        if part.get("url") not in cited.get(url_field, set()):
+            errors.append(f"{url_field} has no source citing that url (add a sources[] entry "
+                          f"with field '{url_field}' and url {part.get('url')!r})")
+        if not cited.get(offset_field):
+            errors.append(f"{offset_field} has no source (add a sources[] entry with field "
+                          f"'{offset_field}' pointing at where the offset is stated)")
+    return errors
+
+
 def validate_frontmatter(fm, kind, ids=None):
     """Validate one record's frontmatter dict against schema/<kind>.schema.json and
     inheritance references. There is no folder here, so id/brand-vs-folder is not checked
@@ -145,6 +174,8 @@ def validate_frontmatter(fm, kind, ids=None):
         errors.append(e.message)
 
     errors.extend(_check_inheritance(fm, kind, known_ids() if ids is None else ids))
+    if kind == "recipe":
+        errors.extend(_check_recipe_part_sources(fm))
     return {"ok": not errors, "errors": errors}
 
 

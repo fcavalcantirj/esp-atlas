@@ -19,11 +19,23 @@
     "firmware_version": { "type": "string" },
     "flash": {
       "type": "object", "additionalProperties": false,
+      "not": { "required": ["bin_url", "parts"] },
       "properties": {
         "method": { "enum": ["esp-web-tools", "release-bin", "m5burner", "web-flasher"] },
         "manifest_url": { "type": "string", "format": "uri" },
         "bin_url": { "type": "string", "format": "uri" },
         "offset": { "type": "string" },
+        "parts": {
+          "type": "array", "minItems": 1,
+          "description": "A multi-part image (e.g. bootloader, partition table, boot_app0, app), each written at its OWN offset and never merged: a merged image fills the gaps between parts (where NVS usually lives) with 0xFF. Emitted in order as the generated manifest's parts[], each via the same-origin proxy as `&part=<index>` (esp_atlas_core.flash). Mutually exclusive with `bin_url`. Cite-or-omit per part, checked by esp_atlas_core.validate: a sources[] entry with field `flash.parts[<i>].url` whose url IS that part's url (the binary itself, same convention as `flash.bin_url`), and one with field `flash.parts[<i>].offset` pointing where the offset is stated.",
+          "items": {
+            "type": "object", "required": ["url", "offset"], "additionalProperties": false,
+            "properties": {
+              "url": { "type": "string", "format": "uri" },
+              "offset": { "type": "string", "pattern": "^0x[0-9a-fA-F]+$", "description": "hex string, e.g. '0x10000' (never a bare decimal, which reads ambiguously)" }
+            }
+          }
+        },
         "env": { "type": "string" },
         "partition": { "type": "string" }
       }

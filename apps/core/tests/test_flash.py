@@ -172,3 +172,140 @@ def test_redirect_that_stays_on_the_allowlist_is_followed(location, expected):
     from esp_atlas_core.flash import next_hop
 
     assert next_hop(GITHUB_ASSET, location) == expected
+
+
+# ---------------------------------------------------------------------------
+# Multi-part images (`flash.parts`, SPEC-wizard P3 "multi-part"): bootloader,
+# partition table, boot_app0 and app are written at their OWN offsets, never as
+# one merged image -- a merged image fills the gaps between them (e.g. NVS at
+# 0x9000-0xDFFF) with 0xFF and wipes whatever the device keeps there.
+# ---------------------------------------------------------------------------
+
+_RELEASE = "https://github.com/o/r/releases/download/v1/"
+_FOUR_PARTS = [
+    {"url": _RELEASE + "bootloader.bin", "offset": "0x0"},
+    {"url": _RELEASE + "partitions.bin", "offset": "0x8000"},
+    {"url": _RELEASE + "boot_app0.bin", "offset": "0xe000"},
+    {"url": _RELEASE + "firmware.bin", "offset": "0x10000"},
+]
+
+
+def _fake_parts_recipe(monkeypatch, parts):
+    recipe = {
+        "id": "x__y",
+        "board": "m5stick-s3",
+        "firmware": "launcher",
+        "chip_family": "esp32-s3",
+        "flash": {"method": "release-bin", "parts": parts},
+    }
+    monkeypatch.setattr("esp_atlas_core.flash.get_recipe", lambda _id: recipe)
+    return recipe
+
+
+def test_multi_part_recipe_emits_each_part_at_its_own_offset(monkeypatch, built_db_path):
+    _fake_parts_recipe(monkeypatch, _FOUR_PARTS)
+    manifest = build_manifest("x__y", db_path=built_db_path)
+    assert manifest is not None
+    assert manifest["new_install_prompt_erase"] is True  # erase stays the human's choice
+    (build,) = manifest["builds"]
+    assert build["chipFamily"] == "ESP32-S3"
+    assert "serialType" not in build
+    # Every part goes through the same-origin proxy, addressed by its index.
+    assert build["parts"] == [
+        {"path": "/api/flash-bin?recipe=x__y&part=0", "offset": 0x0},
+        {"path": "/api/flash-bin?recipe=x__y&part=1", "offset": 0x8000},
+        {"path": "/api/flash-bin?recipe=x__y&part=2", "offset": 0xE000},
+        {"path": "/api/flash-bin?recipe=x__y&part=3", "offset": 0x10000},
+    ]
+
+
+def test_part_resolves_by_index_and_never_falls_back(monkeypatch):
+    _fake_parts_recipe(monkeypatch, _FOUR_PARTS)
+    for index, part in enumerate(_FOUR_PARTS):
+        assert bin_url_for("x__y", part=index) == part["url"]
+    # Out of range is a refusal, and a parts recipe has no single merged image
+    # for a part-less request to fall back to.
+    assert bin_url_for("x__y", part=4) is None
+    assert bin_url_for("x__y", part=-1) is None
+    assert bin_url_for("x__y") is None
+
+
+@pytest.mark.parametrize("index", [0, 1, 2, 3])
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://github.com/o/r/releases/download/v1/x.bin",  # plaintext
+        "https://evil.example.com/x.bin",  # off-allowlist host
+        "https://github.com.evil.example/x.bin",  # suffix-confusion host
+        "https://169.254.169.254/latest/meta-data/",  # cloud metadata
+    ],
+)
+def test_each_part_url_off_the_allowlist_is_refused(monkeypatch, index, url):
+    parts = [dict(p) for p in _FOUR_PARTS]
+    parts[index]["url"] = url
+    _fake_parts_recipe(monkeypatch, parts)
+    assert bin_url_for("x__y", part=index) is None
+    # The bad part does not poison the others: they still resolve.
+    for other in set(range(4)) - {index}:
+        assert bin_url_for("x__y", part=other) == parts[other]["url"]
+
+
+def test_every_recorded_part_url_is_https_and_allowlisted():
+    """The SSRF surface for multi-part records, same rule as bin_url."""
+    from urllib.parse import urlparse
+
+    offenders = []
+    for recipe in _release_bin_recipes():
+        for index, part in enumerate((recipe.get("flash") or {}).get("parts") or []):
+            parsed = urlparse(part.get("url") or "")
+            if parsed.scheme != "https" or parsed.hostname not in ALLOWED_BIN_HOSTS:
+                offenders.append((recipe["id"], index, part.get("url")))
+    assert not offenders, f"part url off the allowlist: {offenders}"
+
+
+def test_every_multi_part_recipe_yields_a_manifest_with_every_part(built_db_path):
+    """No half-configured multi-part recipe: every recorded part must be flashed."""
+    short = []
+    for recipe in _release_bin_recipes():
+        parts = (recipe.get("flash") or {}).get("parts")
+        if not parts:
+            continue
+        manifest = build_manifest(recipe["id"], db_path=built_db_path)
+        if manifest is None or len(manifest["builds"][0]["parts"]) != len(parts):
+            short.append(recipe["id"])
+    assert not short, f"multi-part recipe(s) that do not flash every part: {short}"
+
+
+DOUTOR_VPD = "m5stick-s3__doutor-vpd"
+DOUTOR_VPD_IMAGES = [  # (file, offset) -- the release's own manifest.json `install` list
+    ("bootloader.bin", 0x0),
+    ("partitions.bin", 0x8000),
+    ("boot_app0.bin", 0xE000),
+    ("firmware.bin", 0x10000),
+]
+
+
+def test_doutor_vpd_writes_four_images_at_their_own_offsets(built_db_path):
+    recipe = get_recipe(DOUTOR_VPD)
+    assert recipe is not None
+    assert "bin_url" not in recipe["flash"], "never one merged image: NVS sits in the gaps"
+    manifest = build_manifest(DOUTOR_VPD, db_path=built_db_path)
+    assert manifest is not None
+    assert manifest["new_install_prompt_erase"] is True
+    (build,) = manifest["builds"]
+    assert build["chipFamily"] == "ESP32-S3"
+    assert [p["offset"] for p in build["parts"]] == [offset for _f, offset in DOUTOR_VPD_IMAGES]
+    assert [p["path"] for p in build["parts"]] == [
+        f"/api/flash-bin?recipe={DOUTOR_VPD}&part={i}" for i in range(len(DOUTOR_VPD_IMAGES))
+    ]
+    urls = [bin_url_for(DOUTOR_VPD, part=i) for i in range(len(DOUTOR_VPD_IMAGES))]
+    for url, (name, _offset) in zip(urls, DOUTOR_VPD_IMAGES):
+        assert url is not None and url.startswith(
+            "https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/"
+        )
+        assert url.endswith("/" + name)
+    # One pinned release for all four, never `releases/latest/...`: the proxy marks
+    # every part `immutable` at the edge, cached per part, so a moving URL could
+    # hand a browser images from two different releases.
+    assert len({url.rsplit("/", 1)[0] for url in urls}) == 1
+    assert not any("/releases/latest/" in url for url in urls)

@@ -495,3 +495,111 @@ def test_check_orphan_firmware_reports_every_orphan_sorted():
 def test_check_orphan_firmware_seeded_dataset_passes():
     ids = known_ids()
     assert check_orphan_firmware(ids) == []
+
+
+# ---------------------------------------------------------------------------
+# recipe.flash.parts -- a multi-part image (bootloader / partition table /
+# boot_app0 / app), each written at its own offset (SPEC-wizard P3). Cite-or-
+# omit per part: every part's url and offset carries its own field-scoped
+# source, the url citing the binary itself (same convention as flash.bin_url).
+# ---------------------------------------------------------------------------
+
+_PARTS_RELEASE = "https://github.com/o/r/releases/download/v1/"
+_PARTS_FILES = [
+    ("bootloader.bin", "0x0"),
+    ("partitions.bin", "0x8000"),
+    ("boot_app0.bin", "0xe000"),
+    ("firmware.bin", "0x10000"),
+]
+DOUTOR_VPD_RECIPE_PATH = REPO_ROOT / "data" / "recipes" / "m5stick-s3__doutor-vpd" / "recipe.md"
+
+
+@pytest.fixture
+def parts_recipe_fm():
+    parts = [{"url": _PARTS_RELEASE + name, "offset": offset} for name, offset in _PARTS_FILES]
+    sources = [{"field": "*", "url": "https://github.com/o/r", "verified": "2026-10-21"}]
+    for index, part in enumerate(parts):
+        sources.append({"field": f"flash.parts[{index}].url", "url": part["url"], "verified": "2026-10-21"})
+        sources.append({"field": f"flash.parts[{index}].offset", "url": _PARTS_RELEASE + "manifest.json",
+                        "verified": "2026-10-21"})
+    return {
+        "id": "m5stick-s3__launcher", "type": "recipe", "board": "m5stick-s3", "firmware": "launcher",
+        "status": "reported", "chip_family": "esp32-s3",
+        "flash": {"method": "release-bin", "parts": parts}, "sources": sources,
+    }
+
+
+def test_validate_frontmatter_recipe_with_four_cited_parts_passes(parts_recipe_fm):
+    assert validate_frontmatter(parts_recipe_fm, "recipe") == {"ok": True, "errors": []}
+
+
+@pytest.mark.parametrize(
+    "mutate",
+    [
+        lambda p: p.update(sha256="ab"),        # unknown key in a part
+        lambda p: p.pop("offset"),              # offset missing
+        lambda p: p.pop("url"),                 # url missing
+        lambda p: p.update(offset=65536),       # offset must be a hex string, not a number
+        lambda p: p.update(offset="65536"),     # ...and not an ambiguous decimal string
+        lambda p: p.update(offset="0xZZ"),      # ...and actually hex
+    ],
+)
+def test_validate_frontmatter_recipe_malformed_part_fails(parts_recipe_fm, mutate):
+    fm = copy.deepcopy(parts_recipe_fm)
+    mutate(fm["flash"]["parts"][1])
+    assert validate_frontmatter(fm, "recipe")["ok"] is False
+
+
+def test_validate_frontmatter_recipe_empty_parts_fails(parts_recipe_fm):
+    fm = copy.deepcopy(parts_recipe_fm)
+    fm["flash"]["parts"] = []
+    assert validate_frontmatter(fm, "recipe")["ok"] is False
+
+
+def test_validate_frontmatter_recipe_parts_and_bin_url_together_fails(parts_recipe_fm):
+    """One shape or the other: a merged bin_url beside parts is ambiguous about what gets written."""
+    fm = copy.deepcopy(parts_recipe_fm)
+    fm["flash"]["bin_url"] = _PARTS_RELEASE + "merged.bin"
+    assert validate_frontmatter(fm, "recipe")["ok"] is False
+
+
+@pytest.mark.parametrize("index", [0, 1, 2, 3])
+def test_validate_frontmatter_recipe_part_url_without_its_source_fails(parts_recipe_fm, index):
+    fm = copy.deepcopy(parts_recipe_fm)
+    fm["sources"] = [s for s in fm["sources"] if s["field"] != f"flash.parts[{index}].url"]
+    result = validate_frontmatter(fm, "recipe")
+    assert result["ok"] is False
+    assert any(f"flash.parts[{index}].url" in e for e in result["errors"])
+
+
+def test_validate_frontmatter_recipe_part_url_cited_to_another_url_fails(parts_recipe_fm):
+    """The url's source is the binary itself, so a check_sources_live run proves that binary is live."""
+    fm = copy.deepcopy(parts_recipe_fm)
+    source = next(s for s in fm["sources"] if s["field"] == "flash.parts[3].url")
+    source["url"] = "https://github.com/o/r/releases"
+    result = validate_frontmatter(fm, "recipe")
+    assert result["ok"] is False
+    assert any("flash.parts[3].url" in e for e in result["errors"])
+
+
+@pytest.mark.parametrize("index", [0, 1, 2, 3])
+def test_validate_frontmatter_recipe_part_offset_without_its_source_fails(parts_recipe_fm, index):
+    fm = copy.deepcopy(parts_recipe_fm)
+    fm["sources"] = [s for s in fm["sources"] if s["field"] != f"flash.parts[{index}].offset"]
+    result = validate_frontmatter(fm, "recipe")
+    assert result["ok"] is False
+    assert any(f"flash.parts[{index}].offset" in e for e in result["errors"])
+
+
+def test_validate_markdown_recipe_part_without_source_fails(parts_recipe_fm):
+    """Same rule on the POST /validate + `esp-atlas validate` path, not just the CI script."""
+    fm = copy.deepcopy(parts_recipe_fm)
+    fm["sources"] = [s for s in fm["sources"] if s["field"] != "flash.parts[2].url"]
+    text = "---\n" + yaml.safe_dump(fm, sort_keys=False) + "---\n\nbody\n"
+    result = validate_markdown(text)
+    assert result["ok"] is False
+    assert any("flash.parts[2].url" in e for e in result["errors"])
+
+
+def test_validate_file_doutor_vpd_recipe_passes():
+    assert validate_file(DOUTOR_VPD_RECIPE_PATH) == {"ok": True, "errors": [], "kind": "recipe"}
