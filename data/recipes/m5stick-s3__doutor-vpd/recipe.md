@@ -5,53 +5,53 @@ board: m5stick-s3
 firmware: doutor-vpd
 status: reported
 chip_family: esp32-s3
-firmware_version: '0.2.2'
+firmware_version: '0.2.3'
 flash:
   method: release-bin
   parts:
-  - url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/bootloader.bin
+  - url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/bootloader.bin
     offset: '0x0'
-  - url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/partitions.bin
+  - url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/partitions.bin
     offset: '0x8000'
-  - url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/boot_app0.bin
+  - url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/boot_app0.bin
     offset: '0xe000'
-  - url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/firmware.bin
+  - url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/firmware.bin
     offset: '0x10000'
 notes: "flash.parts offsets QUOTED from the release's manifest.json `install` list (0, 32768, 57344, 65536). The NVS range and the history partition READ from that release's partitions.bin entries: nvs 0x9000 size 0x5000 (0x9000-0xDFFF), otadata 0xE000, app0 0x10000, history 0x310000 size 0x4E0000."
 sources:
 - field: '*'
   url: https://github.com/fcavalcantirj/doutor-vpd-firmware
-  verified: '2026-10-21'
+  verified: '2026-10-22'
 - field: firmware_version
-  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/manifest.json
-  verified: '2026-10-21'
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/manifest.json
+  verified: '2026-10-22'
 - field: flash.parts[0].url
-  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/bootloader.bin
-  verified: '2026-10-21'
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/bootloader.bin
+  verified: '2026-10-22'
 - field: flash.parts[0].offset
-  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/manifest.json
-  verified: '2026-10-21'
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/manifest.json
+  verified: '2026-10-22'
 - field: flash.parts[1].url
-  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/partitions.bin
-  verified: '2026-10-21'
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/partitions.bin
+  verified: '2026-10-22'
 - field: flash.parts[1].offset
-  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/manifest.json
-  verified: '2026-10-21'
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/manifest.json
+  verified: '2026-10-22'
 - field: flash.parts[2].url
-  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/boot_app0.bin
-  verified: '2026-10-21'
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/boot_app0.bin
+  verified: '2026-10-22'
 - field: flash.parts[2].offset
-  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/manifest.json
-  verified: '2026-10-21'
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/manifest.json
+  verified: '2026-10-22'
 - field: flash.parts[3].url
-  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/firmware.bin
-  verified: '2026-10-21'
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/firmware.bin
+  verified: '2026-10-22'
 - field: flash.parts[3].offset
-  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/manifest.json
-  verified: '2026-10-21'
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/manifest.json
+  verified: '2026-10-22'
 - field: notes
-  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.2-b4-161b08641c36/partitions.bin
-  verified: '2026-10-21'
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware/releases/download/vpd-gennie-0.2.3-b5-cfa71853c711/partitions.bin
+  verified: '2026-10-22'
 ---
 
 # m5stick-s3 x doutor-vpd
