@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-29T14:00:59.850259+00:00",
+      "expires": "2026-10-29T15:00:59.628002+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-22T14:00:59.850259+00:00"
+      "timestamp": "2026-10-22T15:00:59.628002+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-24T16:00:59.721937+00:00",
@@ -6376,6 +6376,14 @@
       "status": "expired",
       "timestamp": "2026-09-13T00:00:37.681486+00:00"
     },
+    "marauderstudio": {
+      "expires": "2026-11-21T15:00:59.628002+00:00",
+      "id": "marauderstudio",
+      "pr_ref": null,
+      "repo": "usachevip/marauderstudio",
+      "status": "seen",
+      "timestamp": "2026-10-22T15:00:59.628002+00:00"
+    },
     "marstechhan": {
       "expired_at": "2026-09-26T15:00:52.620877+00:00",
       "expires": "2026-09-26T15:00:30.165949+00:00",
@@ -10897,6 +10905,7 @@
     "unkyulee/micro-journal": "micro-journal",
     "urieldeveloper/spaceu-cardcomm": "spaceu-cardcomm",
     "urtubia/miniacid": "miniacid",
+    "usachevip/marauderstudio": "marauderstudio",
     "user154lt/doomsdaygame": "doomsdaygame",
     "users/guvtg": "guvtg",
     "usetrmnl/trmnl-firmware": "trmnl-firmware",
