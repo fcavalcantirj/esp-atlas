@@ -1,7 +1,7 @@
 {
- "calls": 5,
+ "calls": 4,
  "errors": 0,
- "fetched": "2026-10-16",
+ "fetched": "2026-10-23",
  "notes": [],
  "ref": "master",
  "repo": "chatelp/daoa-mini-cardputeradv",
@@ -10,9 +10,23 @@
    "m5stamp-s3"
   ],
   "socs": [],
-  "unresolved": []
+  "unresolved": [
+   "daoa-mini-factory"
+  ]
  },
  "signals": [
+  {
+   "extra": {
+    "asset": "daoa-mini-1.0-factory.bin",
+    "release": "v1.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "daoa-mini-factory",
+   "url": "https://github.com/chatelp/daoa-mini-cardputeradv/releases/download/v1.0/daoa-mini-1.0-factory.bin"
+  },
   {
    "extra": {
     "env": "cardputer-adv",
