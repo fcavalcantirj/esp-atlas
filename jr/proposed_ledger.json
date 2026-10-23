@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-30T22:00:59.684735+00:00",
+      "expires": "2026-10-30T23:00:59.682893+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-23T22:00:59.684735+00:00"
+      "timestamp": "2026-10-23T23:00:59.682893+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-24T16:00:59.721937+00:00",
@@ -1345,14 +1345,14 @@
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-ha-remote": {
-      "expires": "2026-10-23T23:00:45.836399+00:00",
+      "expires": "2026-11-22T23:00:59.682893+00:00",
       "id": "cardputer-ha-remote",
       "pr_ref": null,
-      "reason": "below_floor: 1 stars / 0 forks",
+      "reason": "below_floor: 4 stars / 1 forks",
       "repo": "majstertukan/cardputer-ha-remote",
       "repo_id": 1383037366,
       "status": "rejected",
-      "timestamp": "2026-09-23T23:00:45.836399+00:00"
+      "timestamp": "2026-10-23T23:00:59.682893+00:00"
     },
     "cardputer-i2c-scan": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -4643,12 +4643,13 @@
       "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "m5cardputer-knowledge": {
+      "expired_at": "2026-10-23T23:00:59.682893+00:00",
       "expires": "2026-10-23T23:00:59.619985+00:00",
       "id": "m5cardputer-knowledge",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "codigohardwareecia/m5cardputer_knowledge",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-16T23:00:59.619985+00:00"
     },
     "m5cardputer-macro-keypad": {
