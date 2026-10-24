@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-31T20:00:59.619923+00:00",
+      "expires": "2026-10-31T21:00:59.709457+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-24T20:00:59.619923+00:00"
+      "timestamp": "2026-10-24T21:00:59.709457+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-31T16:00:59.962228+00:00",
@@ -3324,14 +3324,13 @@
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "geo-tp": {
-      "expired_at": "2026-10-24T17:00:59.680160+00:00",
-      "expires": "2026-10-24T17:00:59.655196+00:00",
+      "expires": "2026-10-31T21:00:59.709457+00:00",
       "id": "geo-tp",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'geo-tp'",
       "repo": "geo-tp",
-      "status": "expired",
-      "timestamp": "2026-10-17T17:00:59.655196+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-24T21:00:59.709457+00:00"
     },
     "ghost-esp": {
       "id": "ghost-esp",
@@ -3854,14 +3853,13 @@
       "timestamp": "2026-10-09T13:00:11.675780+00:00"
     },
     "jjugs": {
-      "expired_at": "2026-10-24T17:00:59.680160+00:00",
-      "expires": "2026-10-24T17:00:59.655196+00:00",
+      "expires": "2026-10-31T21:00:59.709457+00:00",
       "id": "jjugs",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'jjugs'",
       "repo": "jjugs",
-      "status": "expired",
-      "timestamp": "2026-10-17T17:00:59.655196+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-24T21:00:59.709457+00:00"
     },
     "joustris-m5stickc-plus2": {
       "expires": "2026-11-08T18:00:11.507841+00:00",
@@ -8197,14 +8195,13 @@
       "timestamp": "2026-09-04T00:00:00+00:00"
     },
     "rymicka": {
-      "expired_at": "2026-10-24T17:00:59.680160+00:00",
-      "expires": "2026-10-24T17:00:59.655196+00:00",
+      "expires": "2026-10-31T21:00:59.709457+00:00",
       "id": "rymicka",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'rymicka'",
       "repo": "rymicka",
-      "status": "expired",
-      "timestamp": "2026-10-17T17:00:59.655196+00:00"
+      "status": "rejected",
+      "timestamp": "2026-10-24T21:00:59.709457+00:00"
     },
     "s3-decibel-meter": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
