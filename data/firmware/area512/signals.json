@@ -1,7 +1,7 @@
 {
  "calls": 5,
  "errors": 0,
- "fetched": "2026-10-17",
+ "fetched": "2026-10-24",
  "notes": [],
  "ref": "main",
  "repo": "engneer-hamachan/area512",
@@ -12,6 +12,7 @@
   ],
   "unresolved": [
    "Area512Adv",
+   "Area512TDeck",
    "Area512TFT7789",
    "Area512TFT9341",
    "Area512V11"
@@ -21,50 +22,62 @@
   {
    "extra": {
     "asset": "Area512Adv.bin",
-    "release": "v2.5"
+    "release": "v2.7"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Area512Adv",
-   "url": "https://github.com/engneer-hamachan/area512/releases/download/v2.5/Area512Adv.bin"
+   "url": "https://github.com/engneer-hamachan/area512/releases/download/v2.7/Area512Adv.bin"
+  },
+  {
+   "extra": {
+    "asset": "Area512TDeck.bin",
+    "release": "v2.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Area512TDeck",
+   "url": "https://github.com/engneer-hamachan/area512/releases/download/v2.7/Area512TDeck.bin"
   },
   {
    "extra": {
     "asset": "Area512TFT7789.bin",
-    "release": "v2.5"
+    "release": "v2.7"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Area512TFT7789",
-   "url": "https://github.com/engneer-hamachan/area512/releases/download/v2.5/Area512TFT7789.bin"
+   "url": "https://github.com/engneer-hamachan/area512/releases/download/v2.7/Area512TFT7789.bin"
   },
   {
    "extra": {
     "asset": "Area512TFT9341.bin",
-    "release": "v2.5"
+    "release": "v2.7"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Area512TFT9341",
-   "url": "https://github.com/engneer-hamachan/area512/releases/download/v2.5/Area512TFT9341.bin"
+   "url": "https://github.com/engneer-hamachan/area512/releases/download/v2.7/Area512TFT9341.bin"
   },
   {
    "extra": {
     "asset": "Area512V11.bin",
-    "release": "v2.5"
+    "release": "v2.7"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Area512V11",
-   "url": "https://github.com/engneer-hamachan/area512/releases/download/v2.5/Area512V11.bin"
+   "url": "https://github.com/engneer-hamachan/area512/releases/download/v2.7/Area512V11.bin"
   },
   {
    "extra": {},
