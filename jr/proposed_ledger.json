@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-10-31T19:00:59.659311+00:00",
+      "expires": "2026-10-31T20:00:59.619923+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-24T19:00:59.659311+00:00"
+      "timestamp": "2026-10-24T20:00:59.619923+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-31T16:00:59.962228+00:00",
@@ -3342,14 +3342,14 @@
       "timestamp": "2026-09-08T17:00:16.540728+00:00"
     },
     "ghost-firmware": {
-      "expires": "2026-10-24T20:00:27.001053+00:00",
+      "expires": "2026-11-23T20:00:59.619923+00:00",
       "id": "ghost-firmware",
       "pr_ref": null,
-      "reason": "below_floor: 0 stars / 0 forks",
+      "reason": "below_floor: 2 stars / 0 forks",
       "repo": "pinoyunknown/ghost-firmware",
       "repo_id": 1385172266,
       "status": "rejected",
-      "timestamp": "2026-09-24T20:00:27.001053+00:00"
+      "timestamp": "2026-10-24T20:00:59.619923+00:00"
     },
     "ghostble": {
       "evidence_url": "https://github.com/SmonSE/GhostBLE",
