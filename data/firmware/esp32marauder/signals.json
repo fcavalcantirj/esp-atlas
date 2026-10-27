@@ -1,7 +1,7 @@
 {
  "calls": 10,
  "errors": 0,
- "fetched": "2026-10-20",
+ "fetched": "2026-10-27",
  "notes": [],
  "ref": "master",
  "repo": "justcallmekoko/ESP32Marauder",
@@ -11,6 +11,7 @@
    "lolin-d32",
    "m5cardputer",
    "m5nanoc6",
+   "m5stack-core2",
    "m5stick-c",
    "m5stick-cplus",
    "m5stick-cplus2",
@@ -33,6 +34,7 @@
    "H4W9/TFT_eSPI",
    "LilyGo T-Dongle C5",
    "M5Cardputer ADV",
+   "M5Stack Core2 for AWS",
    "MARAUDER_C5",
    "MARAUDER_CARDPUTER",
    "MARAUDER_CARDPUTER_ADV",
@@ -43,6 +45,7 @@
    "MARAUDER_DEV_BOARD_PRO",
    "MARAUDER_FLIPPER",
    "MARAUDER_KIT",
+   "MARAUDER_M5STACK_CORE2_AWS",
    "MARAUDER_M5STICKC",
    "MARAUDER_M5STICKCP2",
    "MARAUDER_M5_NANO_C6",
@@ -56,6 +59,7 @@
    "MARAUDER_V6",
    "MARAUDER_V6_1",
    "MARAUDER_V7",
+   "MARAUDER_WS_C5_35",
    "Marauder CYD 2432S024 GUITION",
    "Marauder CYD 2432S028",
    "Marauder CYD 2432S028 2 USB",
@@ -75,6 +79,7 @@
    "User_Setup_cyd_guition.h",
    "User_Setup_cyd_micro.h",
    "User_Setup_dual_nrf24.h",
+   "User_Setup_m5stack_core2_aws.h",
    "User_Setup_marauder_m5cardputer.h",
    "User_Setup_marauder_m5cardputer_adv.h",
    "User_Setup_marauder_m5stickc.h",
@@ -84,6 +89,8 @@
    "User_Setup_marauder_rev_feather.h",
    "User_Setup_marauder_t_dongle_c5.h",
    "User_Setup_og_marauder.h",
+   "User_Setup_ws_c5_35.h",
+   "Waveshare ESP32-C5-Touch-LCD-3.5",
    "bigbrodude6119/ESPAsyncWebServer",
    "cyd_2432S024_guition",
    "cyd_2432S028",
@@ -93,12 +100,14 @@
    "esp32:esp32:d32:PartitionScheme=min_spiffs",
    "esp32:esp32:esp32c6:CDCOnBoot=cdc,PartitionScheme=min_spiffs",
    "esp32:esp32:esp32s3:PartitionScheme=min_spiffs,FlashSize=4M",
+   "esp32:esp32:m5stack_core2:PartitionScheme=default",
    "esp32:esp32:m5stick-c:PartitionScheme=min_spiffs",
    "esp32_lddb",
    "flipper",
    "kit",
    "linux",
    "m5cardputer_adv",
+   "m5stack_core2_aws",
    "macos",
    "marauder_dev_board_pro",
    "marauder_v7",
@@ -114,345 +123,370 @@
    "v6",
    "v6_1",
    "v8",
-   "windows"
+   "windows",
+   "ws_c5_35"
   ]
  },
  "signals": [
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_cyd_2432S024_guition.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_cyd_2432S024_guition.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cyd_2432S024_guition",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_cyd_2432S024_guition.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_cyd_2432S024_guition.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_cyd_2432S028.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_cyd_2432S028.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cyd_2432S028",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_cyd_2432S028.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_cyd_2432S028.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_cyd_2432S028_2usb.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_cyd_2432S028_2usb.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cyd_2432S028_2usb",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_cyd_2432S028_2usb.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_cyd_2432S028_2usb.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_cyd_3_5_inch.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_cyd_3_5_inch.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cyd_3_5_inch",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_cyd_3_5_inch.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_cyd_3_5_inch.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_dual_mini_c5.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_dual_mini_c5.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "dual_mini_c5",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_dual_mini_c5.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_dual_mini_c5.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_esp32c5devkitc1.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_esp32c5devkitc1.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32c5devkitc1",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_esp32c5devkitc1.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_esp32c5devkitc1.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_esp32_lddb.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_esp32_lddb.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32_lddb",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_esp32_lddb.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_esp32_lddb.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_flipper.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_flipper.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "flipper",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_flipper.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_flipper.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_kit.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_kit.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "kit",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_kit.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_kit.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_m5cardputer.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_m5cardputer.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5cardputer",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_m5cardputer.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_m5cardputer.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_m5cardputer_adv.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_m5cardputer_adv.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5cardputer_adv",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_m5cardputer_adv.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_m5cardputer_adv.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_m5nanoc6.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_m5nanoc6.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5nanoc6",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_m5nanoc6.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_m5nanoc6.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_m5stickc_plus.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_m5stack_core2_aws.bin",
+    "release": "v1.19.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stack_core2_aws",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_m5stack_core2_aws.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_19_2_20261023_m5stickc_plus.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stickc_plus",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_m5stickc_plus.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_m5stickc_plus.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_m5stickc_plus2.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_m5stickc_plus2.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stickc_plus2",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_m5stickc_plus2.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_m5stickc_plus2.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_marauder_dev_board_pro.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_marauder_dev_board_pro.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "marauder_dev_board_pro",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_marauder_dev_board_pro.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_marauder_dev_board_pro.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_marauder_v7.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_marauder_v7.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "marauder_v7",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_marauder_v7.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_marauder_v7.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_mini.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_mini.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "mini",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_mini.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_mini.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_mini_v3.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_mini_v3.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "mini_v3",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_mini_v3.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_mini_v3.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_multiboardS3.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_multiboardS3.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "multiboardS3",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_multiboardS3.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_multiboardS3.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_old_hardware.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_old_hardware.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "old_hardware",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_old_hardware.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_old_hardware.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_pancake.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_pancake.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "pancake",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_pancake.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_pancake.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_poom.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_poom.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "poom",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_poom.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_poom.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_rev_feather.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_rev_feather.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "rev_feather",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_rev_feather.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_rev_feather.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_t_dongle_c5.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_t_dongle_c5.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "t_dongle_c5",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_t_dongle_c5.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_t_dongle_c5.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_v6.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_v6.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "v6",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_v6.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_v6.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_v6_1.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_v6_1.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "v6_1",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_v6_1.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_v6_1.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_v8.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_v8.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "v8",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_v8.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_v8.bin"
   },
   {
    "extra": {
-    "asset": "esp32_marauder_v1_19_0_20261019_xiao_esp32c5.bin",
-    "release": "v1.19.0"
+    "asset": "esp32_marauder_v1_19_2_20261023_ws_c5_35.bin",
+    "release": "v1.19.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ws_c5_35",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_ws_c5_35.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32_marauder_v1_19_2_20261023_xiao_esp32c5.bin",
+    "release": "v1.19.2"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "xiao_esp32c5",
-   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.0/esp32_marauder_v1_19_0_20261019_xiao_esp32c5.bin"
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/releases/download/v1.19.2/esp32_marauder_v1_19_2_20261023_xiao_esp32c5.bin"
   },
   {
    "extra": {
@@ -958,6 +992,72 @@
    "rank": 3,
    "soc": null,
    "token": "User_Setup_marauder_m5stickcp2.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Stack Core2 for AWS",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_M5STACK_CORE2_AWS",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32:esp32:m5stack_core2:PartitionScheme=default",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack_core2_aws",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_m5stack_core2_aws.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack_core2",
    "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
   },
   {
@@ -1584,6 +1684,50 @@
    "line": null,
    "rank": 3,
    "soc": null,
+   "token": "Waveshare ESP32-C5-Touch-LCD-3.5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_WS_C5_35",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ws_c5_35",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_ws_c5_35.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build_parallel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
    "token": "POOM",
    "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/build_parallel.yml"
   },
@@ -2123,6 +2267,72 @@
    "line": null,
    "rank": 3,
    "soc": null,
+   "token": "M5Stack Core2 for AWS",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_M5STACK_CORE2_AWS",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32:esp32:m5stack_core2:PartitionScheme=default",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack_core2_aws",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_m5stack_core2_aws.h",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack_core2",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
    "token": "Rev Feather",
    "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
   },
@@ -2630,6 +2840,50 @@
    "rank": 3,
    "soc": null,
    "token": "ESP32-C5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "Waveshare ESP32-C5-Touch-LCD-3.5",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "MARAUDER_WS_C5_35",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ws_c5_35",
+   "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/nightly_build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "User_Setup_ws_c5_35.h",
    "url": "https://github.com/justcallmekoko/ESP32Marauder/blob/master/.github/workflows/nightly_build.yml"
   },
   {
