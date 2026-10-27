@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-11-03T19:00:59.677167+00:00",
+      "expires": "2026-11-03T20:00:59.573410+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-27T19:00:59.677167+00:00"
+      "timestamp": "2026-10-27T20:00:59.573410+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-31T16:00:59.962228+00:00",
@@ -2137,13 +2137,12 @@
       "timestamp": "2026-09-09T22:00:46.933939+00:00"
     },
     "commputer": {
-      "expired_at": "2026-10-21T13:00:59.612446+00:00",
-      "expires": "2026-10-21T13:00:09.112857+00:00",
+      "expires": "2026-11-26T20:00:59.573410+00:00",
       "id": "commputer",
       "pr_ref": null,
       "repo": "marceld23/commputer",
-      "status": "expired",
-      "timestamp": "2026-09-21T13:00:09.112857+00:00"
+      "status": "seen",
+      "timestamp": "2026-10-27T20:00:59.573410+00:00"
     },
     "controller-s3": {
       "expired_at": "2026-10-12T16:00:11.520782+00:00",
@@ -9062,15 +9061,12 @@
       "timestamp": "2026-09-12T00:00:11.345845+00:00"
     },
     "tavden-field-suite": {
-      "expired_at": "2026-10-12T00:00:11.483938+00:00",
-      "expires": "2026-10-12T00:00:11.345845+00:00",
+      "expires": "2026-11-26T20:00:59.573410+00:00",
       "id": "tavden-field-suite",
       "pr_ref": null,
-      "reason": "below_floor: 1 stars / 1 forks",
       "repo": "tavden/tavden-field-suite",
-      "repo_id": 1333701183,
-      "status": "expired",
-      "timestamp": "2026-09-12T00:00:11.345845+00:00"
+      "status": "seen",
+      "timestamp": "2026-10-27T20:00:59.573410+00:00"
     },
     "teenygpstestbed-c2": {
       "expires": "2026-10-31T16:00:59.962228+00:00",
