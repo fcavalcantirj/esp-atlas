@@ -1,9 +1,9 @@
 {
  "calls": 5,
  "errors": 0,
- "fetched": "2026-10-20",
+ "fetched": "2026-10-27",
  "notes": [
-  "latest release v1.0.17 has no binaries; read v1.0.11 instead"
+  "latest release v1.0.18 has no binaries; read v1.0.11 instead"
  ],
  "ref": "main",
  "repo": "clackups/draftling",
