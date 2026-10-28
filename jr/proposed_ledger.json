@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-11-04T17:01:00.188122+00:00",
+      "expires": "2026-11-04T18:00:59.525835+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-28T17:01:00.188122+00:00"
+      "timestamp": "2026-10-28T18:00:59.525835+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-31T16:00:59.962228+00:00",
@@ -2386,13 +2386,14 @@
       "timestamp": "2026-09-02T17:03:09.155622+00:00"
     },
     "custom-m5core2-factorytest": {
+      "expired_at": "2026-10-28T18:00:59.525835+00:00",
       "expires": "2026-10-28T18:00:51.767320+00:00",
       "id": "custom-m5core2-factorytest",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "amin45mh/custom-m5core2-factorytest",
       "repo_id": 1251402758,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-09-28T18:00:51.767320+00:00"
     },
     "cyber-clock": {
