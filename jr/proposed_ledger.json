@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-11-05T15:00:59.598439+00:00",
+      "expires": "2026-11-05T16:00:59.688159+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-29T15:00:59.598439+00:00"
+      "timestamp": "2026-10-29T16:00:59.688159+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-31T16:00:59.962228+00:00",
@@ -2109,11 +2109,12 @@
       "timestamp": "2026-09-19T18:00:53.079431+00:00"
     },
     "codex-microputer-adv": {
+      "expired_at": "2026-10-29T16:00:59.688159+00:00",
       "expires": "2026-10-29T16:00:28.597305+00:00",
       "id": "codex-microputer-adv",
       "pr_ref": null,
       "repo": "pfrankov/codex-microputer-adv",
-      "status": "seen",
+      "status": "expired",
       "timestamp": "2026-09-29T16:00:28.597305+00:00"
     },
     "columns-m5stick-plus-2": {
