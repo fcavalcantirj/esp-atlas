@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-11-05T17:00:59.699386+00:00",
+      "expires": "2026-11-05T18:00:59.695134+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-29T17:00:59.699386+00:00"
+      "timestamp": "2026-10-29T18:00:59.695134+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-31T16:00:59.962228+00:00",
@@ -8490,6 +8490,16 @@
       "status": "expired",
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
+    "sixi-tdeck-plus": {
+      "expires": "2026-11-28T18:00:59.695134+00:00",
+      "id": "sixi-tdeck-plus",
+      "pr_ref": null,
+      "reason": "below_floor: 3 stars / 0 forks",
+      "repo": "radek-sixi/sixi-tdeck-plus",
+      "repo_id": 1428591541,
+      "status": "rejected",
+      "timestamp": "2026-10-29T18:00:59.695134+00:00"
+    },
     "skycompass-cardputeradv": {
       "expires": "2026-11-05T17:47:57.745208+00:00",
       "id": "skycompass-cardputeradv",
@@ -10772,6 +10782,7 @@
     "r3dfish/heavenlypointer": "heavenlypointer",
     "r3dfish/m5cores3bluebox": "m5cores3bluebox",
     "r66282309-hub/gps_cardputer": "gps-cardputer",
+    "radek-sixi/sixi-tdeck-plus": "sixi-tdeck-plus",
     "rafags/m5cardputer-c16-emulator": "m5cardputer-c16-emulator",
     "ramborogers/m5stickcplus2-amg8833-thermal-camera": "m5stickcplus2-amg8833-thermal-camera",
     "randomsnail/m5stickc-plus2-chaos": "m5stickc-plus2-chaos",
