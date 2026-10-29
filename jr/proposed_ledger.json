@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-11-05T19:00:59.669973+00:00",
+      "expires": "2026-11-05T20:00:59.735845+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-29T19:00:59.669973+00:00"
+      "timestamp": "2026-10-29T20:00:59.735845+00:00"
     },
     "0m3gx": {
       "expires": "2026-10-31T16:00:59.962228+00:00",
@@ -517,14 +517,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "awokxdag": {
-      "expires": "2026-10-29T20:00:57.256011+00:00",
+      "expires": "2026-11-28T20:00:59.735845+00:00",
       "id": "awokxdag",
       "pr_ref": null,
-      "reason": "below_floor: 13 stars / 2 forks",
+      "reason": "below_floor: 20 stars / 3 forks",
       "repo": "dagnazty/awokxdag",
       "repo_id": 1339111780,
       "status": "rejected",
-      "timestamp": "2026-09-29T20:00:57.256011+00:00"
+      "timestamp": "2026-10-29T20:00:59.735845+00:00"
     },
     "bad-apple-on-m5stickc-plus2": {
       "expires": "2026-11-06T23:00:07.958729+00:00",
