@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-11-07T17:00:59.604583+00:00",
+      "expires": "2026-11-07T18:00:59.645495+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-10-31T17:00:59.604583+00:00"
+      "timestamp": "2026-10-31T18:00:59.645495+00:00"
     },
     "0m3gx": {
       "expires": "2026-11-07T17:00:59.604583+00:00",
@@ -3424,13 +3424,14 @@
       "timestamp": "2026-10-12T20:00:11.871872+00:00"
     },
     "grovenfc": {
-      "expires": "2026-10-31T17:00:59.680160+00:00",
+      "expires": "2026-11-30T18:00:59.645495+00:00",
       "id": "grovenfc",
       "pr_ref": null,
-      "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
-      "repo": "whywilson/grovenfc.git",
+      "reason": "below_floor: 1 stars / 3 forks",
+      "repo": "whywilson/grovenfc",
+      "repo_id": 1184333375,
       "status": "rejected",
-      "timestamp": "2026-10-24T17:00:59.680160+00:00"
+      "timestamp": "2026-10-31T18:00:59.645495+00:00"
     },
     "gs": {
       "expires": "2026-11-08T15:00:11.478381+00:00",
