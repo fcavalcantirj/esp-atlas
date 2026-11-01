@@ -1,7 +1,7 @@
 {
  "calls": 12,
  "errors": 0,
- "fetched": "2026-10-25",
+ "fetched": "2026-11-01",
  "notes": [],
  "ref": "development",
  "repo": "arendst/Tasmota",
@@ -3013,11 +3013,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 198,
+   "line": 208,
    "rank": 2,
    "soc": null,
    "token": "esp32c5ser",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L198"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L208"
   },
   {
    "extra": {
@@ -3025,11 +3025,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 223,
+   "line": 238,
    "rank": 2,
    "soc": null,
    "token": "esp32c6",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L223"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L238"
   },
   {
    "extra": {
@@ -3037,11 +3037,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 248,
+   "line": 273,
    "rank": 2,
    "soc": null,
    "token": "esp32c6ser",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L248"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L273"
   },
   {
    "extra": {
@@ -3049,11 +3049,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 273,
+   "line": 303,
    "rank": 2,
    "soc": null,
    "token": "esp32c61",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L273"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L303"
   },
   {
    "extra": {
@@ -3061,11 +3061,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 298,
+   "line": 328,
    "rank": 2,
    "soc": null,
    "token": "esp32c61ser",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L298"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L328"
   },
   {
    "extra": {
@@ -3073,11 +3073,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 323,
+   "line": 353,
    "rank": 2,
    "soc": null,
    "token": "esp32s3ser-qio_qspi",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L323"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L353"
   },
   {
    "extra": {
@@ -3085,11 +3085,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 333,
+   "line": 363,
    "rank": 2,
    "soc": null,
    "token": "esp32p4",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L333"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L363"
   },
   {
    "extra": {
@@ -3097,11 +3097,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 343,
+   "line": 373,
    "rank": 2,
    "soc": null,
    "token": "esp32p4r3",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L343"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L373"
   },
   {
    "extra": {
@@ -3109,11 +3109,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 353,
+   "line": 383,
    "rank": 2,
    "soc": null,
    "token": "esp32p4ser",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L353"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L383"
   },
   {
    "extra": {
@@ -3121,11 +3121,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 363,
+   "line": 393,
    "rank": 2,
    "soc": null,
    "token": "esp32p4r3ser",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L363"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L393"
   },
   {
    "extra": {
@@ -3145,11 +3145,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 379,
+   "line": 409,
    "rank": 2,
    "soc": null,
    "token": "esp32-solo1",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L379"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L409"
   },
   {
    "extra": {
@@ -3157,11 +3157,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 390,
+   "line": 420,
    "rank": 2,
    "soc": null,
    "token": "esp32s2",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L390"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L420"
   },
   {
    "extra": {
@@ -3169,11 +3169,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 401,
+   "line": 431,
    "rank": 2,
    "soc": null,
    "token": "esp32s2cdc",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L401"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L431"
   },
   {
    "extra": {
@@ -3181,11 +3181,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 413,
+   "line": 443,
    "rank": 2,
    "soc": null,
    "token": "esp32c2",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L413"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L443"
   },
   {
    "extra": {
@@ -3193,11 +3193,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 423,
+   "line": 453,
    "rank": 2,
    "soc": null,
    "token": "esp32c3",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L423"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L453"
   },
   {
    "extra": {
@@ -3205,11 +3205,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 431,
+   "line": 461,
    "rank": 2,
    "soc": null,
    "token": "esp32c5",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L431"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L461"
   },
   {
    "extra": {
@@ -3217,11 +3217,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 439,
+   "line": 469,
    "rank": 2,
    "soc": null,
    "token": "esp32c6",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L439"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L469"
   },
   {
    "extra": {
@@ -3229,11 +3229,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 448,
+   "line": 478,
    "rank": 2,
    "soc": null,
    "token": "esp32c61",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L448"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L478"
   },
   {
    "extra": {
@@ -3241,11 +3241,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 459,
+   "line": 489,
    "rank": 2,
    "soc": null,
    "token": "esp32p4",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L459"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L489"
   },
   {
    "extra": {
@@ -3253,11 +3253,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 468,
+   "line": 498,
    "rank": 2,
    "soc": null,
    "token": "esp32p4r3",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L468"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L498"
   },
   {
    "extra": {
@@ -3265,11 +3265,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 477,
+   "line": 507,
    "rank": 2,
    "soc": null,
    "token": "esp32s3-qio_qspi",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L477"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L507"
   },
   {
    "extra": {
@@ -3277,11 +3277,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 488,
+   "line": 518,
    "rank": 2,
    "soc": null,
    "token": "esp32s31-qio_opi",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L488"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L518"
   },
   {
    "extra": {
@@ -3289,11 +3289,11 @@
     "file": "platformio_tasmota_env32.ini"
    },
    "kind": "platformio",
-   "line": 498,
+   "line": 528,
    "rank": 2,
    "soc": null,
    "token": "esp32-fix",
-   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L498"
+   "url": "https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L528"
   },
   {
    "extra": {
