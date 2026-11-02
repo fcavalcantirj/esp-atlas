@@ -7,7 +7,7 @@ status: unverified
 chip_family: esp32-s3
 sources:
 - field: '*'
-  url: https://github.com/fcavalcantirj/droidputter
+  url: https://github.com/fcavalcantirj/droidputer
   verified: '2026-09-20'
 ---
 
