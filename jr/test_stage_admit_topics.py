@@ -55,10 +55,10 @@ def root(tmp_path):
     return tmp_path
 
 
-def _ctx(root, dry_run=False, budget=None, gh=None):
+def _ctx(root, dry_run=False, budget=None, gh=None, now=NOW):
     budget = budget or Budget(clock=lambda: 0.0)
     gh = gh or (lambda *a: SimpleNamespace(returncode=0, stdout="", stderr=""))
-    return tick.TickContext(root=root, ledger_path=root / "jr" / "proposed_ledger.json", now=NOW,
+    return tick.TickContext(root=root, ledger_path=root / "jr" / "proposed_ledger.json", now=now,
                             gh=budget.wrap(gh), git=lambda *a: None,
                             budget=budget, dry_run=dry_run, env={})
 
@@ -168,25 +168,91 @@ def test_second_tick_does_not_reauthor_an_open_pr_candidate(root, monkeypatch):
     assert second.admitted == 0 and second.paths == []
 
 
-def test_topic_search_is_routed_through_ctx_gh_and_counted(root, monkeypatch):
-    calls = []
+def _hour_surfacing(root, topic):
+    """A tick clock whose rotation slice includes `topic` — so a test can pin which seed topic
+    the stage searches without hard-coding the seed list's order."""
+    seed = source_topics.seed_topics(root)
+    for h in range(len(seed)):
+        if topic in source_topics.topics_for_tick(seed, h, tick.TOPICS_PER_TICK):
+            return datetime.fromtimestamp(h * 3600, tz=timezone.utc)
+    raise AssertionError(f"{topic} never rotates in")
 
+
+def _search_gh(results, calls):
+    """A fake ctx.gh answering `search/repositories?q=topic:X` from `results[X]`."""
     def gh(*args):
         calls.append(args)
-        if args[:2] == ("api", "search/repositories?q=topic:cardputer&sort=stars&order=desc&per_page=100"):
-            return SimpleNamespace(returncode=0, stdout=json.dumps({"items": [
-                {"full_name": "n/newtool", "description": "A Cardputer tool"}]}), stderr="")
+        prefix = "search/repositories?q=topic:"
+        if len(args) >= 2 and args[0] == "api" and args[1].startswith(prefix):
+            topic = args[1][len(prefix):].split("&", 1)[0]
+            return SimpleNamespace(returncode=0, stdout=json.dumps({"items": results.get(topic, [])}), stderr="")
         return SimpleNamespace(returncode=0, stdout=json.dumps({"items": []}), stderr="")
+    return gh
 
+
+def test_topic_search_is_routed_through_ctx_gh_and_counted(root, monkeypatch):
+    calls = []
+    gh = _search_gh({"cardputer": [{"full_name": "n/newtool", "description": "A Cardputer tool"}]}, calls)
     budget = Budget(clock=lambda: 0.0)
     metas = {"n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=101)}
     monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(metas))
 
-    res = stage_admit_topics.run(_ctx(root, budget=budget, gh=gh), budget=2)
+    res = stage_admit_topics.run(_ctx(root, budget=budget, gh=gh, now=_hour_surfacing(root, "cardputer")), budget=2)
 
     assert res.admitted == 1
-    assert len(calls) == len(source_topics.DEFAULT_TOPICS)   # one search call per topic
-    assert budget.calls >= len(source_topics.DEFAULT_TOPICS)   # every ctx.gh call is counted
+    assert len(calls) == tick.TOPICS_PER_TICK   # one search call per rotated-in topic
+    assert budget.calls >= tick.TOPICS_PER_TICK   # every ctx.gh call is counted
+
+
+def test_each_tick_searches_only_its_rotation_slice_never_more_than_topics_per_tick(root, monkeypatch):
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta({}))
+    seed = source_topics.seed_topics(root)
+    searched = set()
+    for h in range(-(-len(seed) // tick.TOPICS_PER_TICK)):
+        calls = []
+        now = datetime.fromtimestamp(h * 3600, tz=timezone.utc)
+        stage_admit_topics.run(_ctx(root, gh=_search_gh({}, calls), now=now), budget=2)
+        topics = [c[1].split("topic:", 1)[1].split("&", 1)[0] for c in calls]
+        assert len(topics) <= tick.TOPICS_PER_TICK
+        assert topics == source_topics.topics_for_tick(seed, h, tick.TOPICS_PER_TICK)
+        searched.update(topics)
+    assert searched == set(seed)   # a full rotation reaches every seed topic
+
+
+@pytest.mark.parametrize("stars,admitted", [(3, 0), (30, 1)])
+def test_floor_is_the_gate_for_a_repo_surfaced_by_a_new_topic(root, monkeypatch, stars, admitted):
+    """A repo only the expanded seed list reaches (topic:meshtastic): below the popularity floor
+    it is rejected below_floor; the SAME fixture above the floor is admitted — so the floor, not
+    some other gate, is what decides."""
+    item = {"full_name": "n/meshnode", "description": "Meshtastic mesh firmware for the LilyGO T-Deck"}
+    metas = {"n/meshnode": _meta("n/meshnode", stars=stars, forks=0, description=item["description"], rid=201)}
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(metas))
+
+    res = stage_admit_topics.run(_ctx(root, gh=_search_gh({"meshtastic": [item]}, []),
+                                      now=_hour_surfacing(root, "meshtastic")), budget=2)
+
+    assert res.admitted == admitted
+    assert (root / "data" / "firmware" / "meshnode").exists() == bool(admitted)
+    if not admitted:
+        assert res.paths == [] and res.rejects.get("below_floor") == 1
+    else:
+        assert "meshnode<-topic:meshtastic" in res.summary
+
+
+def test_report_line_names_the_rotated_topics_and_the_seed_topic_of_each_admit(root, monkeypatch):
+    item = {"full_name": "n/newtool", "description": "A Cardputer tool"}
+    metas = {"n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=101)}
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(metas))
+    now = _hour_surfacing(root, "cardputer")
+    rotated = source_topics.topics_for_tick(source_topics.seed_topics(root), source_topics.hour_index(now),
+                                            tick.TOPICS_PER_TICK)
+
+    res = stage_admit_topics.run(_ctx(root, gh=_search_gh({"cardputer": [item]}, []), now=now), budget=2)
+
+    assert res.admitted == 1
+    assert f"topics=v{source_topics.SEED_VERSION}:{','.join(rotated)}" in res.summary
+    assert "newtool<-topic:cardputer" in res.summary
+    assert res.items == [{"kind": "firmware", "id": "newtool", "source": "topic:cardputer"}]
 
 
 def test_budget_exceeded_during_topic_search_stops_cleanly(root, monkeypatch):

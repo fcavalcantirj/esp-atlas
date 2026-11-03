@@ -136,16 +136,37 @@ def _owner_repo_from_firmware_md(path: Path) -> str | None:
     return None
 
 
+def _tick_topics(ctx, per_tick: int) -> list[str]:
+    """This hour's slice of the versioned seed list (jr/source_topics.seed_topics over the
+    worktree's own catalog) — at most `per_tick` topics, rotating so every seed topic is searched
+    within ceil(N / per_tick) hourly ticks."""
+    return source_topics.topics_for_tick(source_topics.seed_topics(ctx.root),
+                                         source_topics.hour_index(ctx.now), per_tick)
+
+
+def _source_by_repo(entries) -> dict:
+    """owner/repo (lowercased) -> the candidate's `source` ("topic:X", the seed topic that
+    surfaced it), so each admit can be traced back to its topic."""
+    out = {}
+    for e in entries:
+        fn = (e.get("github") or "").split("github.com/", 1)[-1].strip("/").lower()
+        out.setdefault("/".join(fn.split("/")[:2]), e.get("source"))
+    return out
+
+
 def run(ctx, budget: int):
     """The topics stage for jr/tick.py: admits AT MOST `budget` firmware from the GitHub-topics
-    source (jr/source_topics.DEFAULT_TOPICS) in one tick, via jr/drain.run_drain — the same
-    author+guard+ledger pipeline jr/author_topics.py's one-shot run used. Returns a
-    tick.StageResult, same shape as stage_admit.run's."""
+    source in one tick, via jr/drain.run_drain — the same author+guard+ledger pipeline
+    jr/author_topics.py's one-shot run used. Searches only this hour's tick.TOPICS_PER_TICK
+    topics of the rotating seed list (_tick_topics). Returns a tick.StageResult, same shape as
+    stage_admit.run's, its summary naming the rotated topics and each admit's seed topic."""
     import tick
     today = ctx.now.strftime("%Y-%m-%d")
     search = _topic_search(ctx)
+    topics = _tick_topics(ctx, tick.TOPICS_PER_TICK)
+    topics_txt = f"topics=v{source_topics.SEED_VERSION}:{','.join(topics)}"
     try:
-        entries = source_topics.fetch_topic_repos(source_topics.DEFAULT_TOPICS, search=search)
+        entries = source_topics.fetch_topic_repos(topics, search=search)
     except BudgetExceeded as e:
         return tick.StageResult("admit_topics", paths=[], summary=f"stopped: {e}", admitted=0, rejects={})
     except Exception as e:  # noqa: BLE001 — a blind stage writes nothing, flags a human
@@ -167,7 +188,7 @@ def run(ctx, budget: int):
             return tick.StageResult("admit_topics", paths=[], summary=f"stopped: {e}", admitted=0, rejects={})
         selected, _dropped_cap = drain.cap_categories(drain.rank_juicy(scored), max_per_category=budget, batch_size=budget)
         lines = [f"{s['record']['id']}: would admit" for s in selected]
-        summary = "; ".join(lines) if lines else "no candidates"
+        summary = f"{topics_txt} " + ("; ".join(lines) if lines else "no candidates")
         rejects = {"skipped_scoring": len(skipped)} if skipped else {}
         return tick.StageResult("admit_topics", paths=[], summary=summary, admitted=0, rejects=rejects)
 
@@ -189,13 +210,14 @@ def run(ctx, budget: int):
 
     authored = report["authored"]
     paths = _written_paths(ctx.root, authored)
+    source_of = _source_by_repo(entries)
     items = []
     for fid in authored:
         fmd = ctx.root / "data" / "firmware" / fid / "firmware.md"
         owner_repo = _owner_repo_from_firmware_md(fmd) if fmd.exists() else None
         if owner_repo:
             memory.record_proposed(fid, owner_repo, path=ctx.ledger_path, now=ctx.now)
-        items.append({"kind": "firmware", "id": fid})
+        items.append({"kind": "firmware", "id": fid, "source": source_of.get(owner_repo)})
 
     # run_drain's only ledger write for below-floor skips is ledger.record_seen (jr/ledger.py) —
     # a v1, TTL-less write that scripts/ledger_guard.py rejects (a "seen" record with no
@@ -217,8 +239,10 @@ def run(ctx, budget: int):
     if report["dropped_guard"]:
         rejects["guard_red"] = len(report["dropped_guard"])
 
-    summary = (f"fetched={report['fetched']} prefiltered={report['prefiltered']} "
+    summary = (f"{topics_txt} fetched={report['fetched']} prefiltered={report['prefiltered']} "
               f"scored_clean={report['scored_clean']} authored={len(authored)}")
+    if items:
+        summary += "; " + ", ".join(f"{it['id']}<-{it['source'] or 'topic:?'}" for it in items)
     if report["dropped_guard"]:
         summary += "; " + "; ".join(f"{d['id']}: {d['reason']}" for d in report["dropped_guard"])
     if not report["guard"].get("ok"):
