@@ -22,6 +22,7 @@ import re
 
 import board_alias
 import derive
+import launcher_resolve
 import memory
 import scorer
 import tools
@@ -149,6 +150,7 @@ def _verdict_text(reason: str | None, admitted: bool, needs_human: bool, page_id
 # after SEEN_TTL_DAYS.
 REJECT_TTLS = {
     "repo_unresolved": memory.UNRESOLVED_REJECT_DAYS,
+    launcher_resolve.NO_SOURCE_REPO: memory.UNRESOLVED_REJECT_DAYS,
     "archived": memory.ARCHIVED_REJECT_DAYS,
     "below_floor": memory.FLOOR_REJECT_DAYS,
 }
@@ -245,9 +247,19 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
 
     launcher_skips: dict = {}      # launcher entries are skipped by the hundred: one aggregate line, never one per entry
 
+    def count_skip(key):
+        """A launcher skip that writes nothing: counted in rejects and the aggregate line."""
+        reject(key)
+        launcher_skips[key] = launcher_skips.get(key, 0) + 1
+
     def skip_reject(fid, owner_repo, reason, repo_id, issue=None):
         """Record the rejection (memory, counts). Returns a report line for a submission (rare and
-        meaningful — the submitter reads it), or None for a launcher entry (aggregated below)."""
+        meaningful — the submitter reads it), or None for a launcher entry (aggregated below).
+        An empty id or repo is never recorded (a falsy ledger key is corruption): counted
+        `unkeyed` instead."""
+        if not fid or not owner_repo:
+            count_skip("unkeyed")
+            return None
         key = reason.split(":")[0]
         reject(key)
         if not ctx.dry_run:
@@ -263,6 +275,54 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         if line:
             lines.append(line)
 
+    resolver_calls = 0
+
+    def resolve_launcher(entry):
+        """G1b: a launcher entry with no repo (github None / owner-only) -> ("repo", owner/repo)
+        to score normally, ("skip", None) when it is decided, keyless or deferred to the next
+        tick, or ("stop", None) when admit's budget cannot afford the search plus the meta fetch.
+        Inconclusive searches are recorded once as no_source_repo under the launcher fid."""
+        nonlocal decided, resolver_calls
+        key = launcher_resolve.ledger_key(entry)
+        if key is None:
+            count_skip("unkeyed")
+            return "skip", None
+        kid, krepo = key
+        if memory.is_blocked(led, firmware_id=kid, now=ctx.now) or memory.is_seen(led, firmware_id=kid, now=ctx.now):
+            decided += 1
+            return "skip", None
+        searchable = launcher_resolve.build_query(entry) is not None
+        if searchable and resolver_calls >= launcher_resolve.RESOLVER_CALLS_PER_TICK:
+            count_skip("resolve_deferred")
+            return "skip", None
+        label = entry.get("name") or kid
+        if searchable and ctx.budget.remaining_calls() < MIN_CALLS_TO_CONTINUE + 1:
+            lines.append(f"stopped before {label}: tick budget low ({ctx.budget.remaining_calls()} calls left)")
+            return "stop", None
+        if searchable and ctx.budget.calls - calls_at_start + 2 > call_cap:   # the search + the meta fetch
+            lines.append(f"stopped before {label}: admit's call share used ({call_cap} of the tick's calls); the rest is Track B's")
+            return "stop", None
+        resolver_calls += int(searchable)
+        try:
+            res = launcher_resolve.resolve(entry, ctx.gh)
+        except BudgetExceeded as e:
+            lines.append(f"stopped during {label}: {e}")
+            return "stop", None
+        if res["repo"]:
+            return "repo", res["repo"]
+        detail = res["error"] or f"{len(res['matches'])} matches for {res['query']!r}"
+        skip_reject(kid, krepo, f"{launcher_resolve.NO_SOURCE_REPO}: {detail[:100]}", None)
+        return "skip", None
+
+    pending_note = None   # (id, repo, owner/repo): a resolved entry's own note, written once its repo is decided
+
+    def flush_note():
+        nonlocal pending_note
+        if pending_note and not ctx.dry_run:
+            kid, krepo, resolved = pending_note
+            memory.record_seen(kid, krepo, reason=f"resolved: {resolved}", path=ctx.ledger_path, now=ctx.now)
+        pending_note = None
+
     # Submissions first (one counted call to list them), then the launcher catalog.
     slug = (ctx.env or {}).get("JR_REPO_SLUG") or DEFAULT_REPO_SLUG
     submissions = _submission_entries(ctx, slug)
@@ -270,6 +330,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     entries = [dict(e) for e in submissions] + sorted(catalog, key=lambda e: ((e.get("name") or ""), (e.get("github") or "")))
 
     for entry in entries:
+        flush_note()          # the previous entry reached a decision (a break never gets here)
         issue = entry.get("issue")
         if issue and not entry.get("github"):
             reject("invalid")
@@ -280,6 +341,15 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             lines.append(f"stopped: budget reached ({admitted + would_admit} admitted)")
             break
         github = (entry.get("github") or "").strip()
+        if not issue and launcher_resolve.needs_resolution(entry):
+            action, resolved = resolve_launcher(entry)
+            if action == "stop":
+                break
+            if action == "skip":
+                continue
+            github = f"https://github.com/{resolved}"
+            entry = dict(entry, github=github)      # the scorer reads the entry's own github
+            pending_note = (*launcher_resolve.ledger_key(entry), resolved)
         owner_repo = scorer._owner_repo(github)
         if memory.is_blocked(led, repo=owner_repo, now=ctx.now) or memory.is_seen(led, repo=owner_repo, now=ctx.now):
             decided += 1
@@ -324,7 +394,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
                                     or memory.is_seen(led, repo_id=repo_id, now=ctx.now)):
             decided += 1
             continue
-        fid = scorer._slug(scorer._repo_name_from_url(github)) or owner_repo or "(unnamed entry)"   # the report names every skip
+        fid = scorer._slug(scorer._repo_name_from_url(github)) or owner_repo   # empty -> skip_reject counts it `unkeyed`
         # Popularity floor (SPEC-firmware-floor.md, via esp_atlas_core.floor — never re-typed):
         # below stars AND forks AND no independent editorial home AND no qualifying download
         # count is filler, rejected for FLOOR_REJECT_DAYS. `downloads=None` explicit: this is
@@ -444,6 +514,8 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
                      + (f" (submission #{issue})" if issue else ""))
         if issue:
             _answer(ctx, slug, issue, _verdict_text(None, True, bool(res.get("needs_human")), f"{rec['board']}__{out_id}"))
+    else:
+        flush_note()          # the last entry reached a decision
     if launcher_skips:
         total = sum(launcher_skips.values())
         lines.append(f"skipped {total} launcher entries: " + ", ".join(f"{k} {v}" for k, v in sorted(launcher_skips.items(), key=lambda kv: (-kv[1], kv[0]))))

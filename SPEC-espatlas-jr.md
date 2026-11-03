@@ -141,6 +141,20 @@ that's a coverage hole to close, not a silent gap.
     ≈ Marauder). Author `unverified` firmware + a valid recipe against a catalogued board.
   - **Persist a `seen/drained` ledger over all 2,487 `fid`s** so the backlog monotonically
     shrinks, nothing is re-proposed, and new upstream additions are detected on re-fetch.
+  - **Entries with no repo (G1b, 2026-11-03).** 1,229 entries carry `github: None` and ~20 an
+    owner-only url (`https://github.com/geo-tp`). `jr/launcher_resolve.py` resolves them
+    deterministically: ONE counted `gh api search/repositories?q=<significant name tokens>
+    user:<owner>` (owner = the owner-only url's owner, else the entry `author` normalized to a
+    GitHub login). Accepted only when EXACTLY ONE hit's repo name shares a significant name
+    token; the accepted repo then goes through the normal scorer and popularity floor
+    unchanged (the floor stays the only admission gate). Zero or several matches → recorded
+    once as `rejected` / `no_source_repo` with the unresolved TTL (7 d), keyed
+    `launcher-<fid>` (repo `launcher:<fid>`), so it is not re-searched hourly. A resolved entry
+    leaves a `seen` note under the same key (`resolved: owner/repo`, 30 d) once its repo
+    reached a decision, so resolved entries do not eat the next tick's searches. At most
+    `RESOLVER_CALLS_PER_TICK` searches per tick, inside the tick budget AND admit's call share.
+    Nothing is ever recorded with an empty id or repo: such an entry is dropped before the
+    ledger with a counted `unkeyed` skip.
   - Second firmware source in the same family: **M5Burner API** (`m5burner-api.m5stack.com`,
     live) for the M5Stack ecosystem.
   - **Only after the launcher backlog is drained** do the long-tail sources (below) matter for
