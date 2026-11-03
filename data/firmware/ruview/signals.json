@@ -1,7 +1,7 @@
 {
  "calls": 15,
  "errors": 0,
- "fetched": "2026-10-27",
+ "fetched": "2026-11-03",
  "notes": [
   "more than 10 workflows; kept the 10 named build/firmware/release/ci first"
  ],
@@ -10,6 +10,7 @@
  "resolved": {
   "boards": [],
   "socs": [
+   "esp32-c5",
    "esp32-c6",
    "esp32-s3"
   ],
@@ -22,15 +23,20 @@
    "arm64",
    "boundary-max",
    "boundary-min",
+   "c5-4mb",
    "c6-4mb",
    "default",
    "edge-tier0",
    "edge-tier1",
    "esp32-csi-node-4mb.bin",
+   "esp32-csi-node-c5.bin",
    "esp32-csi-node-c6.bin",
    "esp32-csi-node.bin",
+   "espressif/idf:v5.4",
+   "espressif/idf:v6.0.2",
    "full-adr060",
    "partition-table-4mb.bin",
+   "partition-table-c5.bin",
    "partition-table-c6.bin",
    "partition-table.bin",
    "partitions_4mb.csv",
@@ -74,6 +80,17 @@
    "rank": 3,
    "soc": null,
    "token": "8mb",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "espressif/idf:v5.4",
    "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
   },
   {
@@ -228,6 +245,61 @@
    "rank": 3,
    "soc": null,
    "token": "partition-table-c6.bin",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "c5-4mb",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "espressif/idf:v6.0.2",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32c5",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-csi-node-c5.bin",
+   "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/firmware-ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "partition-table-c5.bin",
    "url": "https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml"
   },
   {

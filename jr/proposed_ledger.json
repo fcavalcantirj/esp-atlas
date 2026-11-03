@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-11-10T13:00:59.569660+00:00",
+      "expires": "2026-11-10T14:00:59.446042+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-11-03T13:00:59.569660+00:00"
+      "timestamp": "2026-11-03T14:00:59.446042+00:00"
     },
     "0m3gx": {
       "expires": "2026-11-07T17:00:59.604583+00:00",
@@ -2475,6 +2475,13 @@
       "repo_id": 1210044672,
       "status": "expired",
       "timestamp": "2026-09-08T01:00:31.284910+00:00"
+    },
+    "cypher-puter-os": {
+      "id": "cypher-puter-os",
+      "pr_ref": null,
+      "repo": "dkyazzentwatwa/cypher-puter-os",
+      "status": "proposed",
+      "timestamp": "2026-11-03T14:00:59.446042+00:00"
     },
     "daoa-mini-cardputeradv": {
       "evidence_url": "https://github.com/chatelp/daoa-mini-cardputeradv",
@@ -8319,15 +8326,11 @@
       "timestamp": "2026-09-11T20:01:00.775055+00:00"
     },
     "saturn": {
-      "expired_at": "2026-10-11T19:00:11.582762+00:00",
-      "expires": "2026-10-11T18:00:57.443532+00:00",
       "id": "saturn",
       "pr_ref": null,
-      "reason": "described_port_of_catalogued: description links n0xa/m5stick-nemo",
       "repo": "henriquesebastiao/saturn",
-      "repo_id": 809302289,
-      "status": "expired",
-      "timestamp": "2026-09-11T18:00:57.443532+00:00"
+      "status": "proposed",
+      "timestamp": "2026-11-03T14:00:59.446042+00:00"
     },
     "schimihack": {
       "expired_at": "2026-10-11T19:00:11.582762+00:00",
@@ -10295,6 +10298,7 @@
     "dj1ch/minigotchi-esp32": "minigotchi-esp32",
     "djark13/simple-magic-8-ball": "simple-magic-8-ball",
     "djflix/cardputer_i2c_scan": "cardputer-i2c-scan",
+    "dkyazzentwatwa/cypher-puter-os": "cypher-puter-os",
     "dlazder/m5_crystal_firmware": "m5-crystal-firmware",
     "dlazder/m5stick_crystal_firmware": "m5stick-crystal-firmware",
     "dma3002/laser-for-stickc-plus2": "laser-for-stickc-plus2",

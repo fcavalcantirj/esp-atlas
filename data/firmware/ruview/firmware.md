@@ -13,8 +13,9 @@ popularity:
   forks: 12520
   as_of: '2026-09-20'
 socs:
-- esp32-s3
+- esp32-c5
 - esp32-c6
+- esp32-s3
 sources:
 - field: '*'
   url: https://github.com/ruvnet/RuView
@@ -31,6 +32,9 @@ sources:
 - field: summary
   url: https://github.com/ruvnet/RuView
   verified: '2026-10-06'
+- field: socs
+  url: https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml
+  verified: '2026-11-03'
 summary: "RuView is a WiFi\u2011based sensing platform that captures Channel State\
   \ Information from low\u2011cost ESP32 nodes to detect presence, occupancy, breathing,\
   \ heart rate, activity, and camera\u2011free 17\u2011keypoint pose through walls,\
