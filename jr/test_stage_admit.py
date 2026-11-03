@@ -417,20 +417,23 @@ def test_launcher_skips_are_one_aggregate_line_never_one_per_entry(root, monkeyp
         _entry("", "https://github.com/n/nameless"), _entry("", ""), _entry("Tiny Cardputer", "https://github.com/t/tiny")])
     metas = {"repos/t/tiny": _meta("t/tiny", stars=1, forks=0, rid=12)}
     res = stage_admit.run(_ctx(root, metas=metas), budget=3)
-    assert res.summary == "skipped 3 launcher entries: repo_unresolved 2, below_floor 1"
-    assert res.rejects == {"repo_unresolved": 2, "below_floor": 1}
+    # the empty-github entry has no fid to key it by: a counted `unkeyed` skip, never a ledger row (G1b)
+    assert res.summary == "skipped 3 launcher entries: below_floor 1, repo_unresolved 1, unkeyed 1"
+    assert res.rejects == {"repo_unresolved": 1, "below_floor": 1, "unkeyed": 1}
     assert ": skip" not in res.summary
 
 
 def test_launcher_entries_with_an_unresolvable_empty_repo_never_leave_a_falsy_key_in_the_ledger(root, monkeypatch):
     """jr/proposed_ledger.json shipped a record keyed by '' once (id empty, repo empty), and
     scripts/ledger_guard.py then refused every tick PR with "bad key". The admission stage must
-    never write a ledger record under a falsy id, whatever the launcher entry looks like."""
+    never write a ledger record under a falsy id, whatever the launcher entry looks like. G1b: nor
+    under an empty repo — the "(unnamed entry)" row with repo '' every tick is gone too."""
     monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("", "")])
     res = stage_admit.run(_ctx(root), budget=1)
-    assert res.rejects == {"repo_unresolved": 1}
+    assert res.rejects == {"unkeyed": 1}
     led = memory.load(root / "jr" / "proposed_ledger.json")
-    assert "" not in led["by_id"]
+    assert "" not in led["by_id"] and "(unnamed entry)" not in led["by_id"]
+    assert all(rec.get("repo") for rec in led["by_id"].values())
 
 
 def test_admit_stops_scanning_the_launcher_at_its_call_share_but_still_answers_submissions(root, monkeypatch):
