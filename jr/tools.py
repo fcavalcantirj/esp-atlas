@@ -11,6 +11,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 import urllib.request
 from pathlib import Path
 
@@ -32,7 +33,7 @@ def run_guard() -> dict:
     {"ok": bool, "output": str}. ok=True only when the guard is fully green — this is the
     gate every authored record must pass before a PR (SPEC §2.6)."""
     p = subprocess.run(
-        ["python3", "scripts/validate.py"],
+        [sys.executable, "scripts/validate.py"],
         cwd=REPO, capture_output=True, text=True, timeout=180,
     )
     return {"ok": p.returncode == 0, "output": (p.stdout + p.stderr).strip()[-2000:]}
@@ -451,8 +452,8 @@ def open_pr(firmware_id: str, title: str, body: str | None = None, recipe_id: st
 
 def run_ci_tests() -> dict:
     """Run the coverage-matrix regression tests (RUN_MATRIX/BUILD_MATRIX; the per-firmware run-case
-    gate itself was removed in cdb9fd8) plus the two suites below, so Jr never proposes a PR that reds main. Uses system python3 (has esp_atlas_core + pytest). {"ok","output"}."""
-    p = subprocess.run(["python3", "-m", "pytest",
+    gate itself was removed in cdb9fd8) plus the two suites below, so Jr never proposes a PR that reds main. Uses sys.executable (the tick's interpreter, JR_PYTHON) — never a PATH lookup. {"ok","output"}."""
+    p = subprocess.run([sys.executable, "-m", "pytest",
                         "apps/core/tests/test_coverage_matrix.py",   # RUN/BUILD matrix regressions
                         "apps/core/tests/test_examples.py",          # capabilities / labels
                         "apps/core/tests/test_intent_oracle.py",     # routable-by-name
