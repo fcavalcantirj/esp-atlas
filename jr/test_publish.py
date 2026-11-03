@@ -510,3 +510,14 @@ def test_publish_withholds_auto_merge_until_trust_is_earned_and_arms_it_after():
     res = publish.publish(WT, ["data/firmware/x"], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK,
                           trust=publish.TrustStatus(True, 10, 0))
     assert res.published and res.auto_merge
+
+
+def test_publish_uses_a_caller_named_branch_when_given():
+    # the daily demand runner lands on jr/demand-* so the tick's jr/tick-* triage never sees it
+    git = recorder({("diff", "--cached", "--quiet"): (1, "")})
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/9\n")})
+    res = publish.publish(WT, ["docs/demand/2026-11-03.json"], "chore(jr): demand", "body", git=git, gh=gh,
+                          now=NOW, protection=PROTECTED_OK, trust=TRUSTED, branch="jr/demand-20261103-0930")
+    assert res.branch == "jr/demand-20261103-0930"
+    assert ("checkout", "-q", "-B", "jr/demand-20261103-0930") in norm_calls(git)
+    assert ("push", "-u", "origin", "jr/demand-20261103-0930") in norm_calls(git)

@@ -168,3 +168,25 @@ def test_empty_rows_produce_zeroed_raw_and_adjusted_totals():
     totals = telemetry._ga4_breakdown_totals([])
     assert totals["raw"] == {"activeUsers": 0.0, "sessions": 0.0}
     assert totals["adjusted"] == {"activeUsers": 0.0, "sessions": 0.0}
+
+
+# --- the weekly "Top search demand" list honours the miner's impression floor ----------------------
+
+def test_top_search_demand_drops_rows_below_the_miners_impression_floor():
+    import demand
+    import telemetry
+    rows = [{"keys": ["launcher esp32"], "impressions": 115, "position": 9.4},
+            {"keys": ["bruce firmware cardputer"], "impressions": 1, "position": 4.0},
+            {"keys": ["esp32 marauder flash"], "impressions": demand.MIN_IMPRESSIONS, "position": 18.2},
+            {"keys": ["m5stick nemo ir"], "impressions": demand.MIN_IMPRESSIONS - 1, "position": 22.0},
+            {"keys": ["esp32-c6 board"], "position": 31.0}]                  # no impressions at all
+    got = telemetry.top_search_demand(rows)
+    assert [r["keys"][0] for r in got] == ["launcher esp32", "esp32 marauder flash"]
+
+
+def test_top_search_demand_caps_the_list_after_the_floor():
+    import telemetry
+    rows = [{"keys": [f"esp32-s3 board {i}"], "impressions": 1} for i in range(10)]
+    rows += [{"keys": [f"firmware {i}"], "impressions": 50 + i} for i in range(8)]
+    got = telemetry.top_search_demand(rows, n=6)
+    assert len(got) == 6 and all(r["impressions"] >= 50 for r in got)

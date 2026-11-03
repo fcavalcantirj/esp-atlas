@@ -738,6 +738,16 @@ def test_mine_does_not_send_telegram_when_disabled(tmp_path, monkeypatch):
     assert called == []
 
 
+def test_cli_telegram_digest_is_opt_in(monkeypatch, capsys):
+    # the daily runner (jr/demand_run.py) runs this CLI; a default ping would fire every day
+    seen = []
+    monkeypatch.setattr(demand, "mine", lambda **kw: seen.append(kw) or {"digest": "🎯 Jr — demand mine"})
+    demand.main([])
+    demand.main(["--telegram"])
+    assert [kw["send_telegram"] for kw in seen] == [False, True]
+    assert "demand mine" in capsys.readouterr().out
+
+
 # ═══════════════════════════ hard-constraint regression: never wired to jr-daily ═══════════════════════════
 
 def test_module_never_imports_daily_authoring_entrypoints():
