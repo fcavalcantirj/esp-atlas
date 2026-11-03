@@ -1,0 +1,29 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-11-03",
+ "notes": [],
+ "ref": "main",
+ "repo": "dkyazzentwatwa/cypher-puter-os",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "cypher-os-launcher"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "cypher-os-launcher.bin",
+    "release": "v0.1.3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cypher-os-launcher",
+   "url": "https://github.com/dkyazzentwatwa/cypher-puter-os/releases/download/v0.1.3/cypher-os-launcher.bin"
+  }
+ ]
+}
