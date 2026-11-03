@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-11-10T15:00:59.761700+00:00",
+      "expires": "2026-11-10T16:00:59.423772+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-11-03T15:00:59.761700+00:00"
+      "timestamp": "2026-11-03T16:00:59.423772+00:00"
     },
     "0m3gx": {
       "expires": "2026-11-07T17:00:59.604583+00:00",
@@ -2103,8 +2103,8 @@
       "id": "clawdmeter",
       "pr_ref": null,
       "repo": "hermannbjorgvin/clawdmeter",
-      "status": "proposed",
-      "timestamp": "2026-11-03T15:00:59.761700+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-03T16:00:59.423772+00:00"
     },
     "cmd": {
       "expired_at": "2026-09-19T19:01:00.809202+00:00",
@@ -9461,8 +9461,8 @@
       "id": "vanguard",
       "pr_ref": null,
       "repo": "mahdy-gribkov/vanguard",
-      "status": "proposed",
-      "timestamp": "2026-11-03T15:00:59.761700+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-03T16:00:59.423772+00:00"
     },
     "vectrex-m5stickc-plus2": {
       "expires": "2026-11-06T22:00:05.760145+00:00",

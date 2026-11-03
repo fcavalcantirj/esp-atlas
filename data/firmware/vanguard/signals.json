@@ -1,0 +1,29 @@
+{
+ "calls": 7,
+ "errors": 0,
+ "fetched": "2026-11-03",
+ "notes": [],
+ "ref": "main",
+ "repo": "mahdy-gribkov/VANGUARD",
+ "resolved": {
+  "boards": [
+   "m5cardputer"
+  ],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "m5stack-cardputer",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 10,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/mahdy-gribkov/VANGUARD/blob/main/platformio.ini#L10"
+  }
+ ]
+}
