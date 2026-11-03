@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-11-10T08:00:59.599696+00:00",
+      "expires": "2026-11-10T09:00:59.699915+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-11-03T08:00:59.599696+00:00"
+      "timestamp": "2026-11-03T09:00:59.699915+00:00"
     },
     "0m3gx": {
       "expires": "2026-11-07T17:00:59.604583+00:00",
@@ -2825,12 +2825,12 @@
       "timestamp": "2026-09-12T18:00:17.136349+00:00"
     },
     "esp1312": {
-      "expires": "2026-11-03T09:00:13.342210+00:00",
+      "expires": "2026-12-03T09:00:59.699915+00:00",
       "id": "esp1312",
       "pr_ref": null,
       "repo": "bumpynux/esp1312",
       "status": "seen",
-      "timestamp": "2026-10-04T09:00:13.342210+00:00"
+      "timestamp": "2026-11-03T09:00:59.699915+00:00"
     },
     "esp32-bit-pirate": {
       "id": "esp32-bit-pirate",
