@@ -262,6 +262,8 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             return None
         key = reason.split(":")[0]
         reject(key)
+        if pending_note and owner_repo != pending_note["key"][1]:
+            pending_note["ttl"] = REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS)   # the note follows its repo's decision
         if not ctx.dry_run:
             memory.record_rejected(fid, owner_repo, reason,
                                    ttl_days=REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS),
@@ -314,13 +316,16 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         skip_reject(kid, krepo, f"{launcher_resolve.NO_SOURCE_REPO}: {detail[:100]}", None)
         return "skip", None
 
-    pending_note = None   # (id, repo, owner/repo): a resolved entry's own note, written once its repo is decided
+    # A resolved entry's own note {key, repo, ttl}, written once its repo is decided, with that
+    # decision's TTL (a repo_unresolved fetch is retried in 7 d, not behind a 30-day note).
+    pending_note = None
 
     def flush_note():
         nonlocal pending_note
         if pending_note and not ctx.dry_run:
-            kid, krepo, resolved = pending_note
-            memory.record_seen(kid, krepo, reason=f"resolved: {resolved}", path=ctx.ledger_path, now=ctx.now)
+            kid, krepo = pending_note["key"]
+            memory.record_seen(kid, krepo, reason=f"resolved: {pending_note['repo']}",
+                               ttl_days=pending_note["ttl"], path=ctx.ledger_path, now=ctx.now)
         pending_note = None
 
     # Submissions first (one counted call to list them), then the launcher catalog.
@@ -349,7 +354,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
                 continue
             github = f"https://github.com/{resolved}"
             entry = dict(entry, github=github)      # the scorer reads the entry's own github
-            pending_note = (*launcher_resolve.ledger_key(entry), resolved)
+            pending_note = {"key": launcher_resolve.ledger_key(entry), "repo": resolved, "ttl": memory.SEEN_TTL_DAYS}
         owner_repo = scorer._owner_repo(github)
         if memory.is_blocked(led, repo=owner_repo, now=ctx.now) or memory.is_seen(led, repo=owner_repo, now=ctx.now):
             decided += 1

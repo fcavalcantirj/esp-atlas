@@ -73,11 +73,19 @@ def test_query_is_name_tokens_plus_user_owner():
     assert lr.build_query({"name": "Cardputer M5Stick", "github": None, "author": "x"}) is None
 
 
+def test_no_known_owner_means_no_query_never_a_global_search():
+    """Without user:<owner> a lone token-matching hit would be a stranger's repo admitted under the
+    launcher entry's name — inconclusive instead (14 live entries have an author with no login form)."""
+    assert lr.build_query({"name": "Rare Radio Toy", "github": None, "author": "___"}) is None
+    assert lr.build_query({"name": "Rare Radio Toy", "github": None, "author": None}) is None
+
+
 def test_ledger_key_is_the_launcher_fid_and_never_empty():
     assert lr.ledger_key(IBUTTON) == ("launcher-ec0b5f11b7a6a85445a1d4dc5ad65508",
                                       "launcher:ec0b5f11b7a6a85445a1d4dc5ad65508")
     assert lr.ledger_key({"fid": "", "github": None}) is None
     assert lr.ledger_key({"github": None}) is None
+    assert lr.ledger_key({"fid": 1234, "github": None}) == ("launcher-1234", "launcher:1234")
 
 
 # --- resolving --------------------------------------------------------------------------------

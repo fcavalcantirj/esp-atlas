@@ -182,8 +182,32 @@ def test_resolved_repo_below_the_floor_is_still_rejected_below_floor(root, monke
 
 
 def test_dry_run_resolves_but_writes_no_ledger(root, monkeypatch):
-    _catalog(monkeypatch, [AMBIGUOUS])
-    fake = FakeGh()
+    _catalog(monkeypatch, [AMBIGUOUS, IBUTTON])
+    fake = FakeGh(
+        metas={"repos/geo-tp/M5Stick-IButton": _meta("geo-tp/M5Stick-IButton", stars=4, forks=1, rid=5002)},
+        searches={"ibutton user:geo-tp": [_item("geo-tp/M5Stick-IButton")]})
     res = stage_admit.run(_ctx(root, fake, dry_run=True), budget=3)
-    assert res.rejects == {"no_source_repo": 1}
+    assert res.rejects == {"no_source_repo": 1, "below_floor": 1}               # both paths ran: one resolved
     assert not (root / "jr" / "proposed_ledger.json").exists() or _ledger(root)["by_id"] == {}
+
+
+def test_resolved_entry_whose_repo_fetch_fails_is_retried_on_the_unresolved_ttl(root, monkeypatch):
+    """The launcher note follows its repo's decision: a transient 404/5xx on the resolved repo is
+    repo_unresolved (7 d), so the entry must not sit behind a 30-day note."""
+    _catalog(monkeypatch, [IBUTTON])
+    fake = FakeGh(searches={"ibutton user:geo-tp": [_item("geo-tp/M5Stick-IButton")]})   # no meta: 404
+    res = stage_admit.run(_ctx(root, fake), budget=3)
+    assert res.rejects == {"repo_unresolved": 1}
+    note = _ledger(root)["by_id"]["launcher-ec0b5f11b7a6a85445a1d4dc5ad65508"]
+    assert note["expires"] == (NOW + timedelta(days=memory.UNRESOLVED_REJECT_DAYS)).isoformat()
+
+
+def test_resolved_and_admitted_entry_keeps_the_seen_ttl(root, monkeypatch):
+    _catalog(monkeypatch, [IBUTTON])
+    fake = FakeGh(
+        metas={"repos/geo-tp/M5Stick-IButton": _meta("geo-tp/M5Stick-IButton", stars=60, forks=5, rid=5001,
+                                                     description="iButton reader for the M5StickC Plus2")},
+        searches={"ibutton user:geo-tp": [_item("geo-tp/M5Stick-IButton")]})
+    stage_admit.run(_ctx(root, fake), budget=3)
+    note = _ledger(root)["by_id"]["launcher-ec0b5f11b7a6a85445a1d4dc5ad65508"]
+    assert note["expires"] == (NOW + timedelta(days=memory.SEEN_TTL_DAYS)).isoformat()

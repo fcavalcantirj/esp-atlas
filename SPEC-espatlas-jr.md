@@ -145,13 +145,15 @@ that's a coverage hole to close, not a silent gap.
     owner-only url (`https://github.com/geo-tp`). `jr/launcher_resolve.py` resolves them
     deterministically: ONE counted `gh api search/repositories?q=<significant name tokens>
     user:<owner>` (owner = the owner-only url's owner, else the entry `author` normalized to a
-    GitHub login). Accepted only when EXACTLY ONE hit's repo name shares a significant name
+    GitHub login; no owner → no search, inconclusive — an unscoped search could hand the entry
+    a stranger's repo). Accepted only when EXACTLY ONE hit's repo name shares a significant name
     token; the accepted repo then goes through the normal scorer and popularity floor
     unchanged (the floor stays the only admission gate). Zero or several matches → recorded
     once as `rejected` / `no_source_repo` with the unresolved TTL (7 d), keyed
     `launcher-<fid>` (repo `launcher:<fid>`), so it is not re-searched hourly. A resolved entry
-    leaves a `seen` note under the same key (`resolved: owner/repo`, 30 d) once its repo
-    reached a decision, so resolved entries do not eat the next tick's searches. At most
+    leaves a `seen` note under the same key (`resolved: owner/repo`) once its repo reached a
+    decision, with that decision's TTL (30 d by default, 7 d when the repo fetch failed), so
+    resolved entries do not eat the next tick's searches. At most
     `RESOLVER_CALLS_PER_TICK` searches per tick, inside the tick budget AND admit's call share.
     Nothing is ever recorded with an empty id or repo: such an entry is dropped before the
     ledger with a counted `unkeyed` skip.

@@ -79,19 +79,20 @@ def significant_tokens(name: str | None) -> list[str]:
 
 
 def build_query(entry: dict) -> str | None:
-    """The search q: up to MAX_QUERY_TOKENS significant name tokens plus `user:<owner>` when an
-    owner is known. None when the name has no significant token (nothing to search for)."""
+    """The search q: up to MAX_QUERY_TOKENS significant name tokens plus `user:<owner>`. None
+    when the name has no significant token or no owner is known: an unscoped search over all of
+    GitHub would accept a stranger's repo on a lone shared token, so that entry is inconclusive."""
     tokens = significant_tokens(entry.get("name"))[:MAX_QUERY_TOKENS]
-    if not tokens:
-        return None
     owner = owner_hint(entry)
-    return " ".join(tokens + ([f"user:{owner}"] if owner else []))
+    if not tokens or not owner:
+        return None
+    return " ".join(tokens + [f"user:{owner}"])
 
 
 def ledger_key(entry: dict) -> tuple[str, str] | None:
     """(id, repo) the entry's own decision is recorded under: the launcher fid, never empty.
     None when the entry has no fid — it cannot be keyed, so it must never reach the ledger."""
-    fid = (entry.get("fid") or "").strip()
+    fid = str(entry.get("fid") or "").strip()
     if not fid:
         return None
     return f"{LEDGER_ID_PREFIX}{fid}", f"{LEDGER_REPO_PREFIX}{fid}"
@@ -124,7 +125,7 @@ def resolve(entry: dict, gh) -> dict:
     q = build_query(entry)
     out = {"repo": None, "query": q, "matches": [], "error": None}
     if q is None:
-        out["error"] = "no searchable name tokens"
+        out["error"] = "no searchable name tokens or owner"
         return out
     try:
         p = gh("api", f"search/repositories?q={urllib.parse.quote(q, safe=':')}&per_page={SEARCH_PER_PAGE}")
