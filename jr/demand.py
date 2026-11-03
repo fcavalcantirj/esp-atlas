@@ -18,7 +18,8 @@ SPEC §12 Phase 1.
 The only network-touching function is `_pull_live()` — every other function in this module
 is a pure function over plain dicts/lists, so `test_demand.py` runs entirely offline.
 
-Run with the composio venv:  ~/.composio-venv/bin/python demand.py
+Run with the composio venv:  ~/.composio-venv/bin/python demand.py [--telegram]
+(the Telegram digest is opt-in; the daily runner, jr/demand_run.py, leaves it off)
 """
 from __future__ import annotations
 import datetime as dt
@@ -29,6 +30,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import notify  # stdlib-only
+import telemetry  # import is side-effect free (composio loads lazily); only the floor is read here
 import tools
 import analytics_cross  # reuses fetch_trends() verbatim (SPEC-analytics-cross.md §7) — not forked here
 from capability_map import capabilities_from_text
@@ -41,7 +43,7 @@ DEMAND_DIR = REPO / "docs" / "demand"
 # ─────────────────────────── versioned constants (SPEC §3) ───────────────────────────
 WEIGHT_FORMULA_VERSION = "v2"           # v2: + Google Trends additive boost (see apply_trends_boost)
 WINDOW_DAYS = 28                        # §3.1 / ⟨Q6⟩ — wider than the digest's 7d, beats k-anonymity
-MIN_IMPRESSIONS = 10                    # D1/D4 floor — rows below this are statistically thin (§3.3)
+MIN_IMPRESSIONS = telemetry.MIN_IMPRESSIONS  # D1/D4 floor (§3.3) — one value, shared with the weekly digest
 MIN_EVENTS = 5                          # D2/D3 floor
 FIRST_PARTY_WEIGHT_MULTIPLIER = 2.0     # D2/D3 = purest intent, weighted above D1/D4 (§3.6)
 ZERO_RESULT_MULTIPLIER = 1.5            # a first-party search that returned NOTHING is the strongest signal
@@ -477,10 +479,8 @@ def _pull_live(days: int = WINDOW_DAYS) -> dict:
     executor — not forked), then fetches Google Trends once for the mined terms (`_pull_trends`,
     reusing `analytics_cross.fetch_trends`). These are the ONLY network-touching functions in
     this module; everything else (`build_demand_items` and everything it calls) is pure.
-    `telemetry` is imported lazily so importing `demand.py` never requires a composio key/package
-    to be present (keeps `test_demand.py` fully offline, per SPEC Phase 1)."""
-    import telemetry
-
+    Importing `telemetry` never requires a composio key/package (it builds the client on the first
+    `_ex()` call), so `test_demand.py` stays fully offline, per SPEC Phase 1."""
     end = dt.date.today()
     start = end - dt.timedelta(days=days)
     S, E = start.isoformat(), end.isoformat()
@@ -623,6 +623,15 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
     return {"items": items, "digest": digest, "d2_available": d2_available}
 
 
-if __name__ == "__main__":
-    result = mine()
+def main(argv=None) -> int:
+    import argparse
+    ap = argparse.ArgumentParser(description="EspAtlas Jr read-only demand miner")
+    ap.add_argument("--telegram", action="store_true", help="also send the digest to Telegram (off by default)")
+    args = ap.parse_args(argv)
+    result = mine(send_telegram=args.telegram)
     print(result["digest"])
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

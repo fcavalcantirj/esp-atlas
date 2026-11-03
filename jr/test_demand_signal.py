@@ -173,3 +173,20 @@ def test_alignment_handles_zero_weight_without_dividing_by_zero():
     align = demand_signal.alignment(_snap("2026-09-09", []), supply_row=None)
     assert align["aligned_pct"] == 0 and align["counts"]["UNCOVERED"] == 0
     assert align["demanded_but_missing"] == []
+
+
+def test_load_latest_reads_a_snapshot_the_miner_wrote_today_as_fresh_beside_unresolved(tmp_path):
+    # F2: what the daily runner lands (the miner's own writers) must read back FRESH on the same
+    # day — age 0, not stale — over the 55-day-old one, and unresolved.json is never the "newest".
+    import demand
+    _write(tmp_path, _snap("2026-09-09", MIXED["items"]))
+    rows = [{"keys": ["launcher esp32"], "impressions": 115, "clicks": 7, "ctr": 0.06, "position": 9.4},
+            {"keys": ["m5 stick s3"], "impressions": 11, "clicks": 0, "ctr": 0.0, "position": 12.5}]
+    items = demand.build_demand_items(rows, firmware_ids={"launcher"}, today="2026-11-03")
+    demand.write_snapshot(items, False, {"start": "2026-10-06", "end": "2026-11-03"}, "2026-11-03", tmp_path)
+    demand.write_unresolved(items, tmp_path)
+    assert (tmp_path / "unresolved.json").exists()
+    got = demand_signal.load_latest(tmp_path, "2026-11-03")
+    assert got is not None and got["date"] == "2026-11-03"
+    assert got["age_days"] == 0 and got["stale"] is False
+    assert {it["term"] for it in got["items"]} == {"launcher esp32", "m5 stick s3"}

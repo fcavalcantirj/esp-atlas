@@ -18,6 +18,10 @@ ENTITY = "7UQIn73xcXnpKIQiaTJzjrCRZk0VznPv"
 GA4_PROPERTY = "properties/551132215"
 GSC_SITE = "sc-domain:esp-atlas.com"
 TARGET_DATE = dt.date(2026, 11, 27)   # 1MM-user north-star (§3d)
+# GSC query floor — rows below it are statistically thin (SPEC-jr-demand-driven.md §3.3). Lives
+# HERE, stdlib-only, because jr-telemetry runs this module in the composio venv where demand.py's
+# `tools` -> esp_atlas_core import cannot load; demand.py re-exports this one value.
+MIN_IMPRESSIONS = 10
 _client = None
 
 
@@ -80,6 +84,12 @@ def _ga4_breakdown_totals(rows: list) -> dict:
     return {"raw": raw, "adjusted": adjusted}
 
 
+def top_search_demand(rows: list, n: int = 6, min_impressions: int = MIN_IMPRESSIONS) -> list:
+    """The weekly digest's "Top search demand" rows: GSC query rows at or above the demand miner's
+    own impression floor (MIN_IMPRESSIONS), first `n` — no 1-impression noise."""
+    return [r for r in rows if (r.get("impressions") or 0) >= min_impressions][:n]
+
+
 def weekly_digest(days: int = 7) -> str:
     end = dt.date.today(); start = end - dt.timedelta(days=days)
     S, E = start.isoformat(), end.isoformat()
@@ -105,8 +115,8 @@ def weekly_digest(days: int = 7) -> str:
     ctr, pos = round(t.get("ctr", 0) * 100, 2), round(t.get("position", 0), 1)
 
     tq = _ex("GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY",
-             {"siteUrl": GSC_SITE, "startDate": S, "endDate": E, "dimensions": ["query"], "rowLimit": 6})
-    queries = (tq or {}).get("rows", [])
+             {"siteUrl": GSC_SITE, "startDate": S, "endDate": E, "dimensions": ["query"], "rowLimit": 50})
+    queries = top_search_demand((tq or {}).get("rows", []))
 
     days_left = (TARGET_DATE - end).days
     lines = [f"🤖 *Jr — weekly telemetry* · esp-atlas.com · {S}→{E}",
@@ -115,7 +125,9 @@ def weekly_digest(days: int = 7) -> str:
              f"🎯 1,000,000 by {TARGET_DATE} — **{days_left} days left**",
              "",
              "*Top search demand* — Jr's data-priority signal:"]
-    for r in queries[:6]:
+    if not queries:
+        lines.append("  (no query above the miner's impression floor this week)")
+    for r in queries:
         lines.append(f"  • `{r['keys'][0]}` — imp {r.get('impressions')}, pos {round(r.get('position', 0), 1)}")
     msg = "\n".join(lines)
 
