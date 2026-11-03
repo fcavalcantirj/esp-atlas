@@ -166,6 +166,18 @@ def test_resolver_searches_stay_inside_admits_call_share(root, monkeypatch):
     assert "admit's call share used (4 of the tick's calls)" in res.summary
 
 
+def test_resolver_searches_stop_before_the_tick_budget_runs_low(root, monkeypatch):
+    entries = [dict(NOWHERE, fid=f"{i:032x}", name=f"Radio Toy {chr(97 + i) * 3}") for i in range(8)]
+    _catalog(monkeypatch, entries)
+    fake = FakeGh()
+    b = Budget(max_calls=9, clock=lambda: 0.0)                     # the catalog fetch + submissions listing take 2
+    res = stage_admit.run(_ctx(root, fake, budget=b), budget=3)
+    assert len(fake.searched()) == 2                                          # 7, 6 left -> search; 5 left -> stop
+    assert b.remaining_calls() == stage_admit.MIN_CALLS_TO_CONTINUE
+    assert "tick budget low (5 calls left)" in res.summary
+    assert len(_ledger(root)["by_id"]) == 2                                   # the unsearched ones are not recorded
+
+
 def test_resolved_repo_below_the_floor_is_still_rejected_below_floor(root, monkeypatch):
     _catalog(monkeypatch, [IBUTTON])
     fake = FakeGh(
