@@ -1,0 +1,115 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-11-03",
+ "notes": [],
+ "ref": "main",
+ "repo": "henriquesebastiao/saturn",
+ "resolved": {
+  "boards": [
+   "m5cardputer"
+  ],
+  "socs": [],
+  "unresolved": [
+   "0x0000",
+   "M5Cardputer IRRemoteESP8266 M5Stack-SD-Updater M5Unified",
+   "blue",
+   "m5stack:esp32:m5stack_cardputer",
+   "ruff",
+   "v1.3.0.en-us",
+   "v1.3.0.pt-br"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "Saturn-v1.3.0.en-us.bin",
+    "release": "v1.3.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "v1.3.0.en-us",
+   "url": "https://github.com/henriquesebastiao/saturn/releases/download/v1.3.0/Saturn-v1.3.0.en-us.bin"
+  },
+  {
+   "extra": {
+    "asset": "Saturn-v1.3.0.pt-br.bin",
+    "release": "v1.3.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "v1.3.0.pt-br",
+   "url": "https://github.com/henriquesebastiao/saturn/releases/download/v1.3.0/Saturn-v1.3.0.pt-br.bin"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Cardputer",
+   "url": "https://github.com/henriquesebastiao/saturn/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack:esp32:m5stack_cardputer",
+   "url": "https://github.com/henriquesebastiao/saturn/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "M5Cardputer IRRemoteESP8266 M5Stack-SD-Updater M5Unified",
+   "url": "https://github.com/henriquesebastiao/saturn/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "0x0000",
+   "url": "https://github.com/henriquesebastiao/saturn/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ruff",
+   "url": "https://github.com/henriquesebastiao/saturn/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "blue",
+   "url": "https://github.com/henriquesebastiao/saturn/blob/main/.github/workflows/ci.yml"
+  }
+ ]
+}

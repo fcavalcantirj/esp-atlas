@@ -1,13 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
-      "expires": "2026-11-10T14:00:59.446042+00:00",
+      "expires": "2026-11-10T15:00:59.761700+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
       "status": "rejected",
-      "timestamp": "2026-11-03T14:00:59.446042+00:00"
+      "timestamp": "2026-11-03T15:00:59.761700+00:00"
     },
     "0m3gx": {
       "expires": "2026-11-07T17:00:59.604583+00:00",
@@ -2099,6 +2099,13 @@
       "status": "rejected",
       "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
+    "clawdmeter": {
+      "id": "clawdmeter",
+      "pr_ref": null,
+      "repo": "hermannbjorgvin/clawdmeter",
+      "status": "proposed",
+      "timestamp": "2026-11-03T15:00:59.761700+00:00"
+    },
     "cmd": {
       "expired_at": "2026-09-19T19:01:00.809202+00:00",
       "expires": "2026-09-19T19:00:24.500904+00:00",
@@ -2480,8 +2487,8 @@
       "id": "cypher-puter-os",
       "pr_ref": null,
       "repo": "dkyazzentwatwa/cypher-puter-os",
-      "status": "proposed",
-      "timestamp": "2026-11-03T14:00:59.446042+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-03T15:00:59.761700+00:00"
     },
     "daoa-mini-cardputeradv": {
       "evidence_url": "https://github.com/chatelp/daoa-mini-cardputeradv",
@@ -8329,8 +8336,8 @@
       "id": "saturn",
       "pr_ref": null,
       "repo": "henriquesebastiao/saturn",
-      "status": "proposed",
-      "timestamp": "2026-11-03T14:00:59.446042+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-03T15:00:59.761700+00:00"
     },
     "schimihack": {
       "expired_at": "2026-10-11T19:00:11.582762+00:00",
@@ -9450,6 +9457,13 @@
       "status": "expired",
       "timestamp": "2026-09-12T03:00:29.761890+00:00"
     },
+    "vanguard": {
+      "id": "vanguard",
+      "pr_ref": null,
+      "repo": "mahdy-gribkov/vanguard",
+      "status": "proposed",
+      "timestamp": "2026-11-03T15:00:59.761700+00:00"
+    },
     "vectrex-m5stickc-plus2": {
       "expires": "2026-11-06T22:00:05.760145+00:00",
       "id": "vectrex-m5stickc-plus2",
@@ -10440,6 +10454,7 @@
     "helloruru/ruru-reader-papers3": "ruru-reader-papers3",
     "hengmyj/xiaozhi-adv-car": "xiaozhi-adv-car",
     "henriquesebastiao/saturn": "saturn",
+    "hermannbjorgvin/clawdmeter": "clawdmeter",
     "hermes-gadget/sigurdos-tdeck": "sigurdos-tdeck",
     "hiroki-kawakami/kyoshin": "kyoshin",
     "hiroki-kawakami/namecardknot": "namecardknot",
@@ -10645,6 +10660,7 @@
     "m5stack/vameter-firmware": "vameter-firmware",
     "m5sxftyxx/m5-stick-help": "m5-stick-help",
     "madboy134/saldotransporte": "saldotransporte",
+    "mahdy-gribkov/vanguard": "vanguard",
     "majstertukan/cardputer-ha-remote": "cardputer-ha-remote",
     "manba036/m5core2_sg90_stackchan_voicetext_ataru": "m5core2-sg90-stackchan-voicetext-ataru",
     "mangox0567/m5stack-cardputer-ssh": "m5stack-cardputer-ssh",
