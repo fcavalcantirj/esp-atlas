@@ -18,7 +18,8 @@ SPEC §12 Phase 1.
 The only network-touching function is `_pull_live()` — every other function in this module
 is a pure function over plain dicts/lists, so `test_demand.py` runs entirely offline.
 
-Run with the composio venv:  ~/.composio-venv/bin/python demand.py
+Run with the composio venv:  ~/.composio-venv/bin/python demand.py [--telegram]
+(the Telegram digest is opt-in; the daily runner, jr/demand_run.py, leaves it off)
 """
 from __future__ import annotations
 import datetime as dt
@@ -623,6 +624,15 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
     return {"items": items, "digest": digest, "d2_available": d2_available}
 
 
-if __name__ == "__main__":
-    result = mine()
+def main(argv=None) -> int:
+    import argparse
+    ap = argparse.ArgumentParser(description="EspAtlas Jr read-only demand miner")
+    ap.add_argument("--telegram", action="store_true", help="also send the digest to Telegram (off by default)")
+    args = ap.parse_args(argv)
+    result = mine(send_telegram=args.telegram)
     print(result["digest"])
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

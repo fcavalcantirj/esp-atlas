@@ -275,8 +275,29 @@ def test_the_default_miner_passes_telegram_only_when_asked(monkeypatch, tmp_path
     assert argvs[0][1]["cwd"] == tmp_path                            # main's code, main's catalog
 
 
+def test_the_default_miner_imports_the_worktrees_esp_atlas_core(monkeypatch, tmp_path):
+    # the composio venv has no esp_atlas_core installed (jr/tools.py imports it): without this
+    # the miner dies on import — and must read the WORKTREE's core and data, never the clone's
+    seen = {}
+    monkeypatch.setattr(demand_run.subprocess, "run", lambda argv, **kw: seen.update(kw) or Proc())
+    monkeypatch.setenv("PYTHONPATH", "/somewhere")
+    demand_run.default_miner(tmp_path, python="/venv/bin/python", telegram=False)
+    env = seen["env"]
+    assert env["PYTHONPATH"].split(":")[0] == str(tmp_path / "apps" / "core" / "src")
+    assert env["ESP_ATLAS_REPO_ROOT"] == str(tmp_path)
+
+
 def test_exit_code_is_nonzero_only_on_abort(monkeypatch):
     monkeypatch.setattr(demand_run, "run", lambda **kw: demand_run.RunResult(aborted="miner failed (rc 1)"))
     assert demand_run.main([]) == 1
     monkeypatch.setattr(demand_run, "run", lambda **kw: demand_run.RunResult(reason="no-op: x"))
     assert demand_run.main([]) == 0
+
+
+def test_the_local_demand_branch_is_deleted_only_after_its_worktree_is_gone(tmp_path):
+    git = git_ok()
+    run(tmp_path, git=git)
+    calls = norm_calls(git)
+    remove = next(i for i, c in enumerate(calls) if c[:2] == ("worktree", "remove"))
+    delete = next(i for i, c in enumerate(calls) if c[:2] == ("branch", "-D"))
+    assert calls[delete] == ("branch", "-D", "jr/demand-20261103-0930") and delete > remove

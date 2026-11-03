@@ -294,12 +294,13 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
             git=default_git, gh=default_gh, now: datetime | None = None,
             repo_slug: str | None = None, needs_human: bool = False,
             protection: ProtectionStatus | None = None, auto_merge: bool = True,
-            trust: TrustStatus | None = None) -> PublishResult:
-    """Stage `paths` (+ the ledger) in the worktree, commit, push a fresh `jr/tick-…` branch, open
-    the PR, and request auto-merge only when allowed (see the module docstring). Returns a
-    PublishResult; never raises for a normal "nothing to publish" or a refused deletion."""
+            trust: TrustStatus | None = None, branch: str | None = None) -> PublishResult:
+    """Stage `paths` (+ the ledger) in the worktree, commit, push a fresh `jr/tick-…` branch (or
+    the caller's `branch`, e.g. the daily demand runner's `jr/demand-…`), open the PR, and request
+    auto-merge only when allowed (see the module docstring). Returns a PublishResult; never raises
+    for a normal "nothing to publish" or a refused deletion."""
     now = now or datetime.now(timezone.utc)
-    branch = branch_name(now)
+    branch = branch or branch_name(now)
     pathspec = list(dict.fromkeys([*paths, *memory.staged_paths()]))
 
     # 1. stage exactly the pathspec; nothing else can reach the commit. git aborts the WHOLE add
