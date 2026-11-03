@@ -1,0 +1,219 @@
+{
+ "date": "2026-11-03",
+ "window": {
+  "start": "2026-10-06",
+  "end": "2026-11-03"
+ },
+ "weight_formula_version": "v2",
+ "d2_available": false,
+ "count": 8,
+ "items": [
+  {
+   "term": "esp32 c5",
+   "raw_terms": [
+    "esp32 c5",
+    "esp32-c5"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 64,
+   "clicks": 1,
+   "ctr": 0.0156,
+   "position": 48.5,
+   "events": null,
+   "zero_result": null,
+   "weight": 305.56,
+   "resolved": {
+    "board": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-c5"
+   },
+   "gap": "RANKS_POORLY",
+   "landing_page": "https://esp-atlas.com/parts/esp32-c5",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-03"
+  },
+  {
+   "term": "esp32 c6 specs",
+   "raw_terms": [
+    "esp32 c6 specs",
+    "esp32-c6",
+    "esp32-c6 specs"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 50,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 30.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 150.5,
+   "resolved": {
+    "board": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-c6"
+   },
+   "gap": "RANKS_POORLY",
+   "landing_page": "https://esp-atlas.com/parts/esp32-c6",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-03"
+  },
+  {
+   "term": "esp32 h2",
+   "raw_terms": [
+    "esp32 h2"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 23,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 50.5,
+   "events": null,
+   "zero_result": null,
+   "weight": 116.15,
+   "resolved": {
+    "board": null,
+    "chip": "esp32",
+    "firmware_token": null,
+    "capability": [],
+    "part": "esp32-h2"
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/parts/esp32-h2",
+   "first_seen": "2026-09-09",
+   "last_seen": "2026-11-03"
+  },
+  {
+   "term": "bruce esp32 flasher",
+   "raw_terms": [
+    "bruce esp32 flasher"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 21,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 9.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 19.11,
+   "resolved": {
+    "board": null,
+    "chip": "esp32",
+    "firmware_token": "bruce",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/bruce",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-03"
+  },
+  {
+   "term": "fnk0104s",
+   "raw_terms": [
+    "fnk0104s"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 23,
+   "clicks": 1,
+   "ctr": 0.0435,
+   "position": 8.4,
+   "events": null,
+   "zero_result": null,
+   "weight": 18.48,
+   "resolved": null,
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/parts/esp32-s3",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-03"
+  },
+  {
+   "term": "m5gotchi",
+   "raw_terms": [
+    "m5gotchi"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 30,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 5.5,
+   "events": null,
+   "zero_result": null,
+   "weight": 16.5,
+   "resolved": {
+    "board": null,
+    "chip": null,
+    "firmware_token": "m5gotchi",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/m5gotchi",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-03"
+  },
+  {
+   "term": "keeloq_mfcodes",
+   "raw_terms": [
+    "keeloq_mfcodes"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 10,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 10.0,
+   "events": null,
+   "zero_result": null,
+   "weight": 10.0,
+   "resolved": null,
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/firmware/flipper-zero-meets-m5stack-cardputer",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-03"
+  },
+  {
+   "term": "cathack firmware",
+   "raw_terms": [
+    "cathack firmware"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 13,
+   "clicks": 3,
+   "ctr": 0.2308,
+   "position": 5.8,
+   "events": null,
+   "zero_result": null,
+   "weight": 5.8,
+   "resolved": {
+    "board": null,
+    "chip": null,
+    "firmware_token": "cathack",
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
+   "landing_page": "https://esp-atlas.com/firmware/cathack",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-03"
+  }
+ ]
+}
