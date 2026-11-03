@@ -190,3 +190,26 @@ def test_top_search_demand_caps_the_list_after_the_floor():
     rows += [{"keys": [f"firmware {i}"], "impressions": 50 + i} for i in range(8)]
     got = telemetry.top_search_demand(rows, n=6)
     assert len(got) == 6 and all(r["impressions"] >= 50 for r in got)
+
+
+def test_the_floor_works_in_the_composio_venv_where_esp_atlas_core_is_not_installed(monkeypatch):
+    # jr-telemetry runs this module under ~/.composio-venv with no PYTHONPATH: reaching for the
+    # floor must never import demand.py -> tools.py -> esp_atlas_core
+    real_import = builtins.__import__
+
+    def blocked_import(name, *args, **kwargs):
+        if name in ("demand", "tools") or name.startswith("esp_atlas_core"):
+            raise ImportError(f"No module named {name!r}")
+        return real_import(name, *args, **kwargs)
+
+    import telemetry
+    monkeypatch.setattr(builtins, "__import__", blocked_import)
+    got = telemetry.top_search_demand([{"keys": ["launcher esp32"], "impressions": 115},
+                                       {"keys": ["bruce firmware"], "impressions": 1}])
+    assert [r["keys"][0] for r in got] == ["launcher esp32"]
+
+
+def test_the_miner_and_the_digest_share_one_floor():
+    import demand
+    import telemetry
+    assert demand.MIN_IMPRESSIONS == telemetry.MIN_IMPRESSIONS == 10

@@ -175,7 +175,7 @@ def test_the_noop_run_neither_commits_nor_pushes(tmp_path):
 
 # --- landing through the tick's PR path -----------------------------------------------------------
 
-def test_changed_demand_lands_both_files_on_a_demand_branch_with_auto_merge_path(tmp_path):
+def test_changed_demand_lands_both_files_on_a_demand_branch(tmp_path):
     _write_prev(tmp_path, "2026-09-09", _items(GSC_ROWS[:2], "2026-09-09"))
     git, gh = git_ok(), gh_ok()
     res = run(tmp_path, git=git, gh=gh)
@@ -301,3 +301,60 @@ def test_the_local_demand_branch_is_deleted_only_after_its_worktree_is_gone(tmp_
     remove = next(i for i, c in enumerate(calls) if c[:2] == ("worktree", "remove"))
     delete = next(i for i, c in enumerate(calls) if c[:2] == ("branch", "-D"))
     assert calls[delete] == ("branch", "-D", "jr/demand-20261103-0930") and delete > remove
+
+
+def test_auto_merge_is_requested_through_the_same_protection_and_trust_gate(tmp_path, monkeypatch):
+    import publish
+    monkeypatch.setattr(publish, "protection_status", lambda slug, gh=None: publish.ProtectionStatus(
+        True, ("schema", "tests", "jr-tests"), True))
+    monkeypatch.setattr(publish, "trust_status", lambda gh=None: publish.TrustStatus(True, 10, 0))
+    gh = gh_ok()
+    res = run(tmp_path, gh=gh)
+    assert res.auto_merge is True
+    assert ("pr", "merge", "https://github.com/fcavalcantirj/esp-atlas/pull/1401", "--auto", "--squash") in gh.calls
+
+
+def test_auto_merge_is_withheld_when_trust_is_not_earned(tmp_path, monkeypatch):
+    import publish
+    monkeypatch.setattr(publish, "protection_status", lambda slug, gh=None: publish.ProtectionStatus(
+        True, ("schema", "tests", "jr-tests"), True))
+    monkeypatch.setattr(publish, "trust_status", lambda gh=None: publish.TrustStatus(False, 3, 0, reason="3/10 clean merges"))
+    gh = gh_ok()
+    res = run(tmp_path, gh=gh)
+    assert res.published is True and res.auto_merge is False and "3/10" in res.reason
+    assert not any(c[:2] == ("pr", "merge") for c in gh.calls)
+
+
+def test_a_miner_that_leaves_mains_snapshot_untouched_aborts(tmp_path):
+    # main's committed snapshot is there; the miner exits 0 but writes nothing -> never mistake
+    # the checked-out file for a fresh mine
+    _write_prev(tmp_path, TODAY, _items(GSC_ROWS))
+    gh = gh_ok()
+    res = run(tmp_path, gh=gh, miner=lambda wt, **kw: Proc(returncode=0))
+    assert res.published is False and "no snapshot" in res.aborted
+
+
+def test_a_same_day_rerun_that_rewrites_identical_demand_is_a_noop(tmp_path):
+    _write_prev(tmp_path, TODAY, _items(GSC_ROWS))
+    res = run(tmp_path)
+    assert res.aborted == "" and res.reason.startswith("no-op")
+
+
+def test_a_failed_push_or_pr_is_an_abort_not_a_quiet_noop(tmp_path):
+    git = recorder({("diff", "--cached", "--quiet"): (1, ""), ("push",): (1, "")})
+    res = run(tmp_path / "a", git=git)
+    assert res.published is False and res.aborted == "publish failed: push failed"
+    gh = recorder({("pr", "create"): (1, "")})
+    res = run(tmp_path / "b", gh=gh)
+    assert res.aborted == "publish failed: pr create failed"
+
+
+def test_the_refresh_age_is_measured_between_the_miners_own_dates(tmp_path):
+    # the miner dates in local time; a 21:30 -03 run is already "tomorrow" in UTC — the age must
+    # come from the two snapshots' own dates, never mix clocks
+    prev_items = _items(GSC_ROWS, "2026-10-28")
+    _write_prev(tmp_path, "2026-10-28", prev_items)
+    late = datetime(2026, 11, 4, 0, 30, tzinfo=timezone.utc)      # UTC day 7 after 10-28; local day 6
+    res = demand_run.run(now=late, root=tmp_path, repo_slug=SLUG, python="/venv/bin/python",
+                         git=git_ok(), gh=gh_ok(), miner=fake_miner(today="2026-11-03"))
+    assert res.reason.startswith("no-op")

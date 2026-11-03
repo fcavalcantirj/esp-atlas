@@ -18,6 +18,10 @@ ENTITY = "7UQIn73xcXnpKIQiaTJzjrCRZk0VznPv"
 GA4_PROPERTY = "properties/551132215"
 GSC_SITE = "sc-domain:esp-atlas.com"
 TARGET_DATE = dt.date(2026, 11, 27)   # 1MM-user north-star (§3d)
+# GSC query floor — rows below it are statistically thin (SPEC-jr-demand-driven.md §3.3). Lives
+# HERE, stdlib-only, because jr-telemetry runs this module in the composio venv where demand.py's
+# `tools` -> esp_atlas_core import cannot load; demand.py re-exports this one value.
+MIN_IMPRESSIONS = 10
 _client = None
 
 
@@ -80,12 +84,9 @@ def _ga4_breakdown_totals(rows: list) -> dict:
     return {"raw": raw, "adjusted": adjusted}
 
 
-def top_search_demand(rows: list, n: int = 6, min_impressions: int | None = None) -> list:
+def top_search_demand(rows: list, n: int = 6, min_impressions: int = MIN_IMPRESSIONS) -> list:
     """The weekly digest's "Top search demand" rows: GSC query rows at or above the demand miner's
-    own impression floor (`demand.MIN_IMPRESSIONS` — below it a row is statistically thin, §3.3),
-    first `n`. Imported lazily: demand.py already imports this module."""
-    if min_impressions is None:
-        from demand import MIN_IMPRESSIONS as min_impressions
+    own impression floor (MIN_IMPRESSIONS), first `n` — no 1-impression noise."""
     return [r for r in rows if (r.get("impressions") or 0) >= min_impressions][:n]
 
 

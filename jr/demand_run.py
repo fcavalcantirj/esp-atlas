@@ -28,7 +28,6 @@ import os
 import signal
 import subprocess
 import sys
-import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -162,26 +161,27 @@ def _close_superseded(gh, keep_branch: str) -> list[int]:
 
 # --- the run -----------------------------------------------------------------------------------------
 
-def _written_since(demand_dir: Path, started: float) -> bool:
+def _newest_stamp(demand_dir: Path) -> tuple | None:
+    """(name, mtime_ns) of the newest dated snapshot: any (re)write by the miner changes it, even a
+    same-day rewrite with identical content; main's untouched checkout never does."""
     files = _dated_snapshots(demand_dir)
-    return bool(files) and files[-1].stat().st_mtime >= started - 1
+    return (files[-1].name, files[-1].stat().st_mtime_ns) if files else None
 
 
-def _mine_and_decide(wt: publish.Worktree, miner, python: str, telegram: bool,
-                     today_str: str) -> tuple[dict, bool, str]:
+def _mine_and_decide(wt: publish.Worktree, miner, python: str, telegram: bool) -> tuple[dict, bool, str]:
     demand_dir = wt.path / DEMAND_RELDIR
     prev = _read_latest(demand_dir)          # read BEFORE the miner may overwrite a same-day file
-    started = time.time()
+    before = _newest_stamp(demand_dir)
     p = miner(wt.path, python=python, telegram=telegram)
     if getattr(p, "returncode", 1) != 0:
         err = ((getattr(p, "stderr", "") or "").strip().splitlines() or [""])[-1]
         raise RunAbort(f"miner failed (rc {getattr(p, 'returncode', '?')}): {err[:160]}")
     new = _read_latest(demand_dir)
-    if new is None or not new.get("date") or not _written_since(demand_dir, started):
+    if new is None or not new.get("date") or _newest_stamp(demand_dir) == before:
         raise RunAbort("miner wrote no snapshot")
     if not new.get("items"):
         raise RunAbort("miner returned no demand items (Composio/GSC outage?) — not landing an empty steer")
-    land, why = should_land(new, prev, today_str)
+    land, why = should_land(new, prev, new["date"])    # age between the miner's own dates: one clock
     return new, land, why
 
 
@@ -195,7 +195,7 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         wt = publish.add_worktree(git=git, root=root)
         if not publish.is_clean(wt, git=git):
             raise RunAbort("fresh worktree is not clean")
-        snap, land, why = _mine_and_decide(wt, miner, python, telegram, now.strftime("%Y-%m-%d"))
+        snap, land, why = _mine_and_decide(wt, miner, python, telegram)
         res.date = snap["date"]
         if not land:
             res.reason = why
@@ -207,8 +207,9 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
                               repo_slug=repo_slug, auto_merge=auto_merge, branch=branch)
         res.published, res.pr_url, res.auto_merge = pub.published, pub.pr_url, pub.auto_merge
         res.reason = pub.reason or why
-        if pub.published:
-            res.superseded = _close_superseded(gh, branch)
+        if not pub.published:
+            raise RunAbort(f"publish failed: {pub.reason}")    # never exit 0 like a no-op
+        res.superseded = _close_superseded(gh, branch)
     except RunAbort as e:
         res.aborted = str(e)
     except Exception as e:  # noqa: BLE001 — a run must always end with a report line
