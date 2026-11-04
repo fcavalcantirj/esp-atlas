@@ -526,6 +526,16 @@
       "status": "seen",
       "timestamp": "2026-09-02T16:03:28.042111+00:00"
     },
+    "atoms3r-cam-userdemo": {
+      "expires": "2026-12-04T20:00:59.893271+00:00",
+      "id": "atoms3r-cam-userdemo",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 1 forks",
+      "repo": "m5stack/atoms3r-cam-userdemo",
+      "repo_id": 966581146,
+      "status": "rejected",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
+    },
     "audiowiz": {
       "expires": "2026-11-06T23:00:07.958729+00:00",
       "id": "audiowiz",
@@ -535,6 +545,15 @@
       "repo_id": 1238853242,
       "status": "rejected",
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
+    },
+    "awesome-brucescript": {
+      "expires": "2027-01-03T20:00:59.893271+00:00",
+      "id": "awesome-brucescript",
+      "pr_ref": null,
+      "reason": "not_device_firmware: no espressif32 platformio.ini, ESP-IDF project, Arduino sketch or release .bin",
+      "repo": "img1982-nano/awesome-brucescript",
+      "status": "rejected",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "awokxdag": {
       "expires": "2026-11-28T20:00:59.735845+00:00",
@@ -4115,6 +4134,15 @@
       "status": "rejected",
       "timestamp": "2026-11-04T00:00:59.597130+00:00"
     },
+    "launcher-01beaea52d74eac7ab36ac2861da70cc": {
+      "expires": "2026-11-11T20:00:59.893271+00:00",
+      "id": "launcher-01beaea52d74eac7ab36ac2861da70cc",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:01beaea52d74eac7ab36ac2861da70cc",
+      "status": "rejected",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
+    },
     "launcher-077e98d335ed1c61aa37353df7fb5575": {
       "expires": "2026-11-11T01:00:59.777703+00:00",
       "id": "launcher-077e98d335ed1c61aa37353df7fb5575",
@@ -4159,6 +4187,15 @@
       "repo": "launcher:0f09adafd7adf776632c2b2eb48ccb12",
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
+    },
+    "launcher-0facba8295ac5547acc9dbc8b326f447": {
+      "expires": "2026-11-11T20:00:59.893271+00:00",
+      "id": "launcher-0facba8295ac5547acc9dbc8b326f447",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'atoms3r cam m12 user user:m5stack'",
+      "repo": "launcher:0facba8295ac5547acc9dbc8b326f447",
+      "status": "rejected",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-12cdb71fb672a72ed256c472ee1e5908": {
       "expires": "2026-11-11T00:00:59.597130+00:00",
@@ -4331,6 +4368,15 @@
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
+    "launcher-519497f4510432bcbbfdb25565bbaae2": {
+      "expires": "2026-11-11T20:00:59.893271+00:00",
+      "id": "launcher-519497f4510432bcbbfdb25565bbaae2",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:519497f4510432bcbbfdb25565bbaae2",
+      "status": "rejected",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
+    },
     "launcher-52de7443325c3dd101e5e605bd5df9c9": {
       "expires": "2026-11-10T23:00:59.739871+00:00",
       "id": "launcher-52de7443325c3dd101e5e605bd5df9c9",
@@ -4412,6 +4458,15 @@
       "status": "rejected",
       "timestamp": "2026-11-04T01:00:59.777703+00:00"
     },
+    "launcher-78b1ffce115a35308b558323d323778b": {
+      "expires": "2026-12-04T20:00:59.893271+00:00",
+      "id": "launcher-78b1ffce115a35308b558323d323778b",
+      "pr_ref": null,
+      "reason": "resolved: m5stack/AtomS3R-CAM-UserDemo",
+      "repo": "launcher:78b1ffce115a35308b558323d323778b",
+      "status": "seen",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
+    },
     "launcher-79bfc1fb6702f9347b429c44d3edb3c7": {
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-79bfc1fb6702f9347b429c44d3edb3c7",
@@ -4429,6 +4484,15 @@
       "repo": "launcher:7d46a337dcdf6795806bb5e406bd8ab6",
       "status": "rejected",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
+    },
+    "launcher-7f6c7acb9cfd3d0aa051ba3830a75fd5": {
+      "expires": "2026-12-04T20:00:59.893271+00:00",
+      "id": "launcher-7f6c7acb9cfd3d0aa051ba3830a75fd5",
+      "pr_ref": null,
+      "reason": "resolved: m5stack/AtomS3R-CAM-UserDemo",
+      "repo": "launcher:7f6c7acb9cfd3d0aa051ba3830a75fd5",
+      "status": "seen",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-840c997c1d7296bd95d4f0c80ba2d614": {
       "expires": "2026-11-11T00:00:59.597130+00:00",
@@ -4511,6 +4575,15 @@
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
+    "launcher-ad32239e5b8177b358b1488168e02b58": {
+      "expires": "2026-11-11T20:00:59.893271+00:00",
+      "id": "launcher-ad32239e5b8177b358b1488168e02b58",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'lite factory test user:m5stack'",
+      "repo": "launcher:ad32239e5b8177b358b1488168e02b58",
+      "status": "rejected",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
+    },
     "launcher-afe6f6a0dcc3868491160a92a42a0725": {
       "expires": "2026-11-11T19:00:59.711024+00:00",
       "id": "launcher-afe6f6a0dcc3868491160a92a42a0725",
@@ -4519,6 +4592,15 @@
       "repo": "launcher:afe6f6a0dcc3868491160a92a42a0725",
       "status": "rejected",
       "timestamp": "2026-11-04T19:00:59.711024+00:00"
+    },
+    "launcher-b285f3915e27de2728764e3d8a272bce": {
+      "expires": "2026-11-11T20:00:59.893271+00:00",
+      "id": "launcher-b285f3915e27de2728764e3d8a272bce",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:b285f3915e27de2728764e3d8a272bce",
+      "status": "rejected",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-b52861e0a60548f81d846255312d68fe": {
       "expires": "2026-11-11T02:00:59.526867+00:00",
@@ -4537,6 +4619,15 @@
       "repo": "launcher:b6d59b635d6b7c195962973632662a68",
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
+    },
+    "launcher-ba47d3cb377a65ca92fced7cb42636b0": {
+      "expires": "2026-11-11T20:00:59.893271+00:00",
+      "id": "launcher-ba47d3cb377a65ca92fced7cb42636b0",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'atomnyan argh miss ver user:goooood-san'",
+      "repo": "launcher:ba47d3cb377a65ca92fced7cb42636b0",
+      "status": "rejected",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-bbadbfe92da9f9ad7f91c4ef54dd8fcf": {
       "expires": "2026-11-11T19:00:59.711024+00:00",
@@ -4574,6 +4665,15 @@
       "status": "rejected",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
+    "launcher-c496984bd4f905e2fe45d2f3a7fe1cae": {
+      "expires": "2026-11-11T20:00:59.893271+00:00",
+      "id": "launcher-c496984bd4f905e2fe45d2f3a7fe1cae",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'matrix factory test user:m5stack'",
+      "repo": "launcher:c496984bd4f905e2fe45d2f3a7fe1cae",
+      "status": "rejected",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
+    },
     "launcher-c4dce0a2fbb839e71a7e1ce44108d41a": {
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-c4dce0a2fbb839e71a7e1ce44108d41a",
@@ -4582,6 +4682,15 @@
       "repo": "launcher:c4dce0a2fbb839e71a7e1ce44108d41a",
       "status": "rejected",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
+    },
+    "launcher-cd52ab8d7b985fb76c73abe3ec32ed43": {
+      "expires": "2026-11-11T20:00:59.893271+00:00",
+      "id": "launcher-cd52ab8d7b985fb76c73abe3ec32ed43",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'atoms3r m12volcano engine voice user:m5stack'",
+      "repo": "launcher:cd52ab8d7b985fb76c73abe3ec32ed43",
+      "status": "rejected",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-d3cc2e38753d28c587f190d0343cdbc3": {
       "expires": "2026-11-11T19:00:59.711024+00:00",
@@ -11132,6 +11241,7 @@
     "ilanovikov088-source/pingpongs3": "pingpongs3",
     "ilanovikov088-source/race-2d-sticks3": "race-2d-sticks3",
     "ilanovikov088-source/randomic": "randomic",
+    "img1982-nano/awesome-brucescript": "awesome-brucescript",
     "imink/aqualife": "aqualife",
     "imliubo/retro-go": "retro-go",
     "imlunchtime/tab5_launcher": "tab5-launcher",
@@ -11230,11 +11340,13 @@
     "launcher:00f51d5d4b94fd46c46a017f9b0964f8": "launcher-00f51d5d4b94fd46c46a017f9b0964f8",
     "launcher:0108d9ac943687bbcde26452540d4aee": "launcher-0108d9ac943687bbcde26452540d4aee",
     "launcher:01aed692ec78072a456af2ddebe25d0e": "launcher-01aed692ec78072a456af2ddebe25d0e",
+    "launcher:01beaea52d74eac7ab36ac2861da70cc": "launcher-01beaea52d74eac7ab36ac2861da70cc",
     "launcher:077e98d335ed1c61aa37353df7fb5575": "launcher-077e98d335ed1c61aa37353df7fb5575",
     "launcher:0816d632de9903bcf924498354bb2b28": "launcher-0816d632de9903bcf924498354bb2b28",
     "launcher:0870128d7e7bf8073ec04ab6871d9d16": "launcher-0870128d7e7bf8073ec04ab6871d9d16",
     "launcher:0db638a89b11e7027f6f04313943e92f": "launcher-0db638a89b11e7027f6f04313943e92f",
     "launcher:0f09adafd7adf776632c2b2eb48ccb12": "launcher-0f09adafd7adf776632c2b2eb48ccb12",
+    "launcher:0facba8295ac5547acc9dbc8b326f447": "launcher-0facba8295ac5547acc9dbc8b326f447",
     "launcher:12cdb71fb672a72ed256c472ee1e5908": "launcher-12cdb71fb672a72ed256c472ee1e5908",
     "launcher:15aaf739a7dccb5d30b55f9f86280437": "launcher-15aaf739a7dccb5d30b55f9f86280437",
     "launcher:16d2c9ac8c0a7982e60fa99b98c1d368": "launcher-16d2c9ac8c0a7982e60fa99b98c1d368",
@@ -11254,6 +11366,7 @@
     "launcher:476a75ab7404402c4651606d80686a17": "launcher-476a75ab7404402c4651606d80686a17",
     "launcher:4d0825252b3c369e23d55db9a6ede201": "launcher-4d0825252b3c369e23d55db9a6ede201",
     "launcher:4f9f5abd4c8d321c3a1372c6e0ec702f": "launcher-4f9f5abd4c8d321c3a1372c6e0ec702f",
+    "launcher:519497f4510432bcbbfdb25565bbaae2": "launcher-519497f4510432bcbbfdb25565bbaae2",
     "launcher:52de7443325c3dd101e5e605bd5df9c9": "launcher-52de7443325c3dd101e5e605bd5df9c9",
     "launcher:576a41e5a2c4afb896cd01a021b14b17": "launcher-576a41e5a2c4afb896cd01a021b14b17",
     "launcher:58b842c955eafe5dd0caafee85067820": "launcher-58b842c955eafe5dd0caafee85067820",
@@ -11263,8 +11376,10 @@
     "launcher:664485fc037d6986bff4c066364db6af": "launcher-664485fc037d6986bff4c066364db6af",
     "launcher:6befae08a0d4700385c1d322c0c6ad64": "launcher-6befae08a0d4700385c1d322c0c6ad64",
     "launcher:6c6e4a638006e8ea1cc86957fad8ca01": "launcher-6c6e4a638006e8ea1cc86957fad8ca01",
+    "launcher:78b1ffce115a35308b558323d323778b": "launcher-78b1ffce115a35308b558323d323778b",
     "launcher:79bfc1fb6702f9347b429c44d3edb3c7": "launcher-79bfc1fb6702f9347b429c44d3edb3c7",
     "launcher:7d46a337dcdf6795806bb5e406bd8ab6": "launcher-7d46a337dcdf6795806bb5e406bd8ab6",
+    "launcher:7f6c7acb9cfd3d0aa051ba3830a75fd5": "launcher-7f6c7acb9cfd3d0aa051ba3830a75fd5",
     "launcher:840c997c1d7296bd95d4f0c80ba2d614": "launcher-840c997c1d7296bd95d4f0c80ba2d614",
     "launcher:8ce57fb3a0b25847993375b6522ed164": "launcher-8ce57fb3a0b25847993375b6522ed164",
     "launcher:9470218aef2a345c4fc24c3becbe1deb": "launcher-9470218aef2a345c4fc24c3becbe1deb",
@@ -11274,14 +11389,19 @@
     "launcher:9fb9a50e180cd108832b614a7751ba7b": "launcher-9fb9a50e180cd108832b614a7751ba7b",
     "launcher:a68c6316d833dcfa8a7b7b32fcfc4d49": "launcher-a68c6316d833dcfa8a7b7b32fcfc4d49",
     "launcher:a72400528da2e50f179a3ae1f8d1db35": "launcher-a72400528da2e50f179a3ae1f8d1db35",
+    "launcher:ad32239e5b8177b358b1488168e02b58": "launcher-ad32239e5b8177b358b1488168e02b58",
     "launcher:afe6f6a0dcc3868491160a92a42a0725": "launcher-afe6f6a0dcc3868491160a92a42a0725",
+    "launcher:b285f3915e27de2728764e3d8a272bce": "launcher-b285f3915e27de2728764e3d8a272bce",
     "launcher:b52861e0a60548f81d846255312d68fe": "launcher-b52861e0a60548f81d846255312d68fe",
     "launcher:b6d59b635d6b7c195962973632662a68": "launcher-b6d59b635d6b7c195962973632662a68",
+    "launcher:ba47d3cb377a65ca92fced7cb42636b0": "launcher-ba47d3cb377a65ca92fced7cb42636b0",
     "launcher:bbadbfe92da9f9ad7f91c4ef54dd8fcf": "launcher-bbadbfe92da9f9ad7f91c4ef54dd8fcf",
     "launcher:bea471a4a2942ae979bed3e44735dc68": "launcher-bea471a4a2942ae979bed3e44735dc68",
     "launcher:c2765e6d5eadbe38a82e0f195573d33f": "launcher-c2765e6d5eadbe38a82e0f195573d33f",
     "launcher:c3c3e139ecb9add9e14fe86d263645b6": "launcher-c3c3e139ecb9add9e14fe86d263645b6",
+    "launcher:c496984bd4f905e2fe45d2f3a7fe1cae": "launcher-c496984bd4f905e2fe45d2f3a7fe1cae",
     "launcher:c4dce0a2fbb839e71a7e1ce44108d41a": "launcher-c4dce0a2fbb839e71a7e1ce44108d41a",
+    "launcher:cd52ab8d7b985fb76c73abe3ec32ed43": "launcher-cd52ab8d7b985fb76c73abe3ec32ed43",
     "launcher:d3cc2e38753d28c587f190d0343cdbc3": "launcher-d3cc2e38753d28c587f190d0343cdbc3",
     "launcher:d4f56ec2f3f5ec691cfae54052bb3b53": "launcher-d4f56ec2f3f5ec691cfae54052bb3b53",
     "launcher:d56ab7be200d0fdb509ba0d8005f2ac4": "launcher-d56ab7be200d0fdb509ba0d8005f2ac4",
@@ -11353,6 +11473,7 @@
     "m5stack": "m5stack",
     "m5stack/aiflow": "aiflow",
     "m5stack/atom-joystick": "atom-joystick",
+    "m5stack/atoms3r-cam-userdemo": "atoms3r-cam-userdemo",
     "m5stack/cores3-box": "cores3-box",
     "m5stack/cores3-userdemo": "cores3-userdemo",
     "m5stack/m5cardputer": "m5cardputer",
