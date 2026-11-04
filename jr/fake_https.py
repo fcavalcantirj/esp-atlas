@@ -22,7 +22,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 PUBLIC_IP = "93.184.215.14"     # a global unicast address the test `dial` maps to the local server
-HOSTS = ("assets.test", "cdn.test")
+HOSTS = ("assets.test", "cdn.test")             # the names the certificate carries
+UNCERTIFIED_HOST = "uncertified.test"           # resolves like HOSTS, absent from the certificate
 
 
 def write_cert(dirpath: Path) -> tuple[Path, Path]:
@@ -103,7 +104,7 @@ class Server:
         def resolve(host, port):
             if resolve_log is not None:
                 resolve_log.append(host)
-            if host in HOSTS:
+            if host in HOSTS or host == UNCERTIFIED_HOST:
                 return [PUBLIC_IP]
             return [ai[4][0] for ai in socket.getaddrinfo(host, port, type=socket.SOCK_STREAM)]
 
@@ -120,10 +121,12 @@ class Server:
 
 # --- response shapes -------------------------------------------------------------------------------
 
-def body(data: bytes, content_length: int | None = None, status: str = "200 OK"):
-    """A body with a Content-Length that may lie (default: the true length; None: absent)."""
+def body(data: bytes, content_length: int | None = None, status: str = "200 OK", keep_alive: bool = False):
+    """A body with a Content-Length that may lie (default: the true length; None: absent). With
+    `keep_alive` the response claims a persistent connection instead of `Connection: close`."""
     def route(h):
-        head = f"HTTP/1.1 {status}\r\nContent-Type: application/octet-stream\r\nConnection: close\r\n"
+        head = (f"HTTP/1.1 {status}\r\nContent-Type: application/octet-stream\r\n"
+                + ("Connection: keep-alive\r\n" if keep_alive else "Connection: close\r\n"))
         if content_length is not None:
             head += f"Content-Length: {content_length}\r\n"
         h.raw(head.encode() + b"\r\n" + data)

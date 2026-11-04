@@ -284,3 +284,61 @@ def test_an_end_of_body_caused_by_the_watchdog_is_a_timeout_never_a_whole_body()
     with pytest.raises(sf._Stop) as stop:
         hop._read_capped(Resp(), Watchdog)
     assert stop.value.reason == sf.TIMEOUT
+
+
+# --- checker findings 2026-11-04 -------------------------------------------------------------------
+
+def test_the_default_dial_connects_to_the_validated_ip_and_port(https_server, monkeypatch):
+    """No `dial` seam: production's own dial must get (validated ip, 443) and a timeout."""
+    import socket
+    https_server.routes["/fw.bin"] = fake_https.exact(VALID_S3_IMAGE)
+    real, dialed = socket.create_connection, []
+
+    def create_connection(address, timeout=None, *a, **k):
+        dialed.append((address, timeout))
+        return real(("127.0.0.1", https_server.port), timeout)
+    monkeypatch.setattr(socket, "create_connection", create_connection)
+    seams = https_server.seams()
+    del seams["dial"]
+    got = sf.fetch_capped(URL, max_bytes=CAP, connect_timeout=7.0, **seams)
+    assert got.ok and got.data == VALID_S3_IMAGE
+    assert dialed == [((PUBLIC_IP, 443), 7.0)]
+
+
+def test_a_certificate_not_naming_the_host_is_refused_even_on_the_validated_ip(https_server):
+    https_server.routes["/fw.bin"] = fake_https.exact(VALID_S3_IMAGE)
+    got = fetch(https_server, f"https://{fake_https.UNCERTIFIED_HOST}/fw.bin")
+    assert got.reason == sf.TLS_ERROR
+
+
+@pytest.mark.parametrize("location", ["https://assets.test/a b", "https://assets.test/a\x7fb"])
+def test_a_redirect_to_a_malformed_url_is_a_refusal_not_an_outage(https_server, location):
+    https_server.routes["/fw.bin"] = fake_https.redirect(location)
+    assert fetch(https_server).reason == sf.BAD_URL
+
+
+@pytest.mark.parametrize("url", ["https://[2606:4700::1%25a b]/fw.bin", "https://[2606:4700::1%25eth0]/fw.bin",
+                                 "https://ass ets.test/fw.bin"])
+def test_a_host_with_a_zone_id_or_a_space_is_a_bad_url_and_fetch_never_raises(https_server, url):
+    assert fetch(https_server, url).reason == sf.BAD_URL
+
+
+def test_a_failed_handshake_closes_the_dialed_socket(https_server):
+    https_server.routes["/fw.bin"] = fake_https.exact(VALID_S3_IMAGE)
+    dialed = []
+    seams = https_server.seams()
+    inner = seams["dial"]
+    seams["dial"] = lambda ip, port, timeout: dialed.append(inner(ip, port, timeout)) or dialed[-1]
+    seams["ssl_context"] = None                 # untrusted CA: the handshake fails
+    assert sf.fetch_capped(URL, max_bytes=CAP, **seams).reason == sf.TLS_ERROR
+    assert dialed and dialed[0].fileno() == -1
+
+
+def test_a_keep_alive_server_s_short_content_length_bounds_what_is_read(https_server):
+    """A server that keeps the connection open is framed by its Content-Length: the bytes past it
+    are never read as the asset (and never count past the cap). Only a closing server is read to
+    the close."""
+    https_server.routes["/fw.bin"] = fake_https.body(VALID_S3_IMAGE + b"\xff" * (CAP * 4), content_length=100,
+                                                     keep_alive=True)
+    got = fetch(https_server)
+    assert got.ok and got.data == VALID_S3_IMAGE[:100]

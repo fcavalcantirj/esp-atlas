@@ -12,9 +12,12 @@ spec 2026-11-04 (fetch side) for that download, all enforced here:
                       Teredo forms whatever they embed. The connection is dialed to that validated
                       address (TLS still verifies the hostname), so a second DNS answer — rebinding
                       — can never pick the destination.
-  a byte cap          max_bytes counted on bytes RECEIVED while streaming; Content-Length is never
-                      trusted. A server that closes the connection (we ask it to) is read to the
-                      close, so a short claim cannot hide a long body; one byte over aborts.
+  a byte cap          max_bytes counted on bytes RECEIVED while streaming; Content-Length never
+                      raises or lowers it. A server that closes the connection (we ask it to) is
+                      read to the close, so a short claim cannot hide a long body; one that keeps
+                      it open is framed by its Content-Length, so bytes past the claim are never
+                      read as the asset. One byte over the cap aborts. A body that merely ends
+                      early is returned as received: the validator's checksum and digest judge it.
   bounded time        connect_timeout per dial and TLS handshake, read_timeout per read, and
                       total_timeout over everything (DNS included) — a watchdog shuts the socket,
                       so a slow drip of headers or body cannot outlive it.
@@ -28,6 +31,7 @@ from __future__ import annotations
 
 import http.client
 import ipaddress
+import re
 import socket
 import ssl
 import threading
@@ -56,6 +60,8 @@ NOT_FOUND = "not_found"
 UNAVAILABLE = "unavailable"
 
 _REDIRECT_STATUSES = frozenset({301, 302, 303, 307, 308})
+_HOST_CHARS = re.compile(r"^[A-Za-z0-9.:-]+$")      # a DNS name or an IP literal; never a zone id
+_UNSAFE_TARGET = re.compile(r"[\x00-\x20\x7f]")
 _TUNNEL_NETS = (ipaddress.ip_network("64:ff9b::/96"), ipaddress.ip_network("64:ff9b:1::/48"))   # NAT64
 # Checked in this order, so 169.254.169.254 reads "link-local", not the broader "private".
 _BLOCKED_KINDS = ("is_unspecified", "is_loopback", "is_link_local", "is_multicast", "is_private", "is_reserved")
@@ -109,7 +115,7 @@ def fetch_capped(url: str, max_bytes: int = MAX_BYTES, connect_timeout: float = 
     -> socket` default to getaddrinfo and socket.create_connection; `ssl_context` to the system
     trust store."""
     hop = _Hop(max_bytes, connect_timeout, read_timeout, time.monotonic() + total_timeout,
-               resolve or _getaddrinfo, dial or socket.create_connection, ssl_context or ssl.create_default_context())
+               resolve or _getaddrinfo, dial or _dial, ssl_context or ssl.create_default_context())
     hops: list[str] = []
     try:
         for _ in range(max_redirects + 1):
@@ -127,6 +133,10 @@ def _getaddrinfo(host: str, port: int) -> list[str]:
     return [ai[4][0] for ai in socket.getaddrinfo(host, port, type=socket.SOCK_STREAM)]
 
 
+def _dial(ip: str, port: int, timeout: float) -> socket.socket:
+    return socket.create_connection((ip, port), timeout)
+
+
 def _check_url(url: str) -> tuple[str, str]:
     """(host, request target) of a URL the policy allows, else _Stop."""
     try:
@@ -140,9 +150,14 @@ def _check_url(url: str) -> tuple[str, str]:
         raise _Stop(BAD_URL, f"{url!r}: credentials in the URL")
     if not parts.hostname:
         raise _Stop(BAD_URL, f"{url!r}: no host")
+    if not _HOST_CHARS.match(parts.hostname):
+        raise _Stop(BAD_URL, f"{url!r}: the host is neither a DNS name nor a plain IP literal")
     if port not in (None, HTTPS_PORT):
         raise _Stop(BAD_URL, f"{url!r}: port {port}, only {HTTPS_PORT} is fetched")
-    return parts.hostname, (parts.path or "/") + (f"?{parts.query}" if parts.query else "")
+    target = (parts.path or "/") + (f"?{parts.query}" if parts.query else "")
+    if _UNSAFE_TARGET.search(target):
+        raise _Stop(BAD_URL, f"{url!r}: whitespace or control characters in the path")
+    return parts.hostname, target
 
 
 class _Watchdog:
@@ -192,9 +207,13 @@ class _PinnedHTTPS(http.client.HTTPSConnection):
 
     def connect(self) -> None:
         raw = self._dial(self._ip, HTTPS_PORT, self.timeout)
-        self._watchdog.attach(raw)
-        raw.settimeout(self.timeout)                      # the TLS handshake: connect_timeout
-        self.sock = self._tls.wrap_socket(raw, server_hostname=self.host)
+        try:
+            self._watchdog.attach(raw)
+            raw.settimeout(self.timeout)                  # the TLS handshake: connect_timeout
+            self.sock = self._tls.wrap_socket(raw, server_hostname=self.host)
+        except BaseException:
+            raw.close()
+            raise
         self.sock.settimeout(self._read_timeout)
 
 
@@ -215,10 +234,10 @@ class _Hop:
         """(body, None) or (None, the next URL) for one request, else _Stop."""
         host, target = _check_url(url)
         ip = self._pinned_ip(host)
-        watchdog = _Watchdog(self.remaining())
-        conn = _PinnedHTTPS(host, ip, self.tls, self.dial, watchdog,
-                            min(self.connect_timeout, max(self.remaining(), 0.001)), self.read_timeout)
+        watchdog, conn = _Watchdog(self.remaining()), None
         try:
+            conn = _PinnedHTTPS(host, ip, self.tls, self.dial, watchdog,
+                                min(self.connect_timeout, max(self.remaining(), 0.001)), self.read_timeout)
             conn.request("GET", target, headers={"User-Agent": USER_AGENT, "Accept-Encoding": "identity",
                                                  "Connection": "close"})
             resp = conn.getresponse()
@@ -230,7 +249,8 @@ class _Hop:
             raise self._transport_stop(url, e, watchdog) from None
         finally:
             watchdog.cancel()
-            conn.close()
+            if conn is not None:
+                conn.close()
 
     def _pinned_ip(self, host: str) -> str:
         """The one address this hop dials: every answer for `host` must be public."""
@@ -304,6 +324,6 @@ class _Hop:
             return _Stop(TIMEOUT, f"connect or read timeout ({what})")
         if isinstance(e, ssl.SSLCertVerificationError):
             return _Stop(TLS_ERROR, what)
-        if isinstance(e, ValueError):           # http.client's InvalidURL: control characters
+        if isinstance(e, (http.client.InvalidURL, ValueError)):
             return _Stop(BAD_URL, what)
         return _Stop(UNAVAILABLE, what)
