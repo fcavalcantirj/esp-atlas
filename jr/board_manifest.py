@@ -159,10 +159,15 @@ def _serial_for_hwid(vid: int | None, pid: int | None, serial_jtag: bool) -> str
 
 
 def usb_serial_from_manifest(manifest: dict, serial_jtag: bool) -> tuple[str | None, str | None]:
-    """(value, None) when every hwid in the manifest maps to the SAME usb_serial value, else
-    (None, reason): FIELD_ABSENT when the manifest lists no hwids, NO_PATTERN_MATCH when a hwid
-    is unknown or two hwids disagree."""
-    hwids = ((manifest or {}).get("build") or {}).get("hwids")
+    """usb_serial from the manifest's `build.hwids` (see usb_serial_from_hwids)."""
+    return usb_serial_from_hwids(((manifest or {}).get("build") or {}).get("hwids"), serial_jtag)
+
+
+def usb_serial_from_hwids(hwids, serial_jtag: bool) -> tuple[str | None, str | None]:
+    """(value, None) when every [vid, pid] pair maps to the SAME usb_serial value through the
+    fixed vendor-id table, else (None, reason): FIELD_ABSENT when there are no pairs,
+    NO_PATTERN_MATCH when a pair is unknown or two pairs disagree. Shared by every source that
+    states USB ids (the PlatformIO manifest, the Arduino-ESP32 boards.txt)."""
     if not hwids:
         return None, FIELD_ABSENT
     values = set()

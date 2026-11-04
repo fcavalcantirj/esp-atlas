@@ -14,7 +14,8 @@ Budget = boards ATTEMPTED; "complete" boards cost no fetch and don't count. A bo
 every source failed (status "skipped") is cooled down for board_cooldown.COOLDOWN_DAYS
 (jr/board_cooldown.json, shipped with the tick): while cooling it is passed over for free, so
 the budget moves to boards that can still be filled. Each skip line names its per-field
-reasons, vendor/manifest (no_pattern_match, field_absent, doc_unreachable, no_manifest).
+reasons, vendor/manifest/boards_txt (no_pattern_match, field_absent, doc_unreachable,
+no_manifest, no_board_key).
 """
 from __future__ import annotations
 
@@ -22,8 +23,8 @@ import board_backfill
 import board_cooldown
 
 DEFAULT_BUDGET = 4
-CALLS_PER_BOARD = 2        # the vendor user guide + the PlatformIO manifest
-SECONDS_PER_BOARD = 20.0   # two fetches + parse
+CALLS_PER_BOARD = 3        # the vendor user guide + the PlatformIO manifest + boards.txt
+SECONDS_PER_BOARD = 30.0   # three fetches (boards.txt is ~3 MB) + parse
 # Skips where every source was actually tried and failed. A no-soc skip fetched nothing: it is
 # fixed by editing the record, so it must not wait out a cooldown.
 COOLDOWN_REASONS = ("doc-unreachable", "nothing-groundable")
@@ -105,7 +106,8 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
 
 
 def _skip_line(entry: dict) -> str:
-    """`<board>: skip <reason> [field=vendor/manifest, ...]` — why each missing field stayed empty."""
+    """`<board>: skip <reason> [field=vendor/manifest/boards_txt, ...]` — why each missing field
+    stayed empty."""
     line = f"{entry['board_id']}: skip {entry.get('reason', '')}"
     reasons = entry.get("field_reasons") or {}
     if reasons:

@@ -136,3 +136,15 @@ def test_brand_without_a_registered_resolver_is_not_in_the_worklist(tmp_path, mo
     stage_backfill.run(Ctx(tmp_path), budget=10)
     assert any(p.endswith("espressif/esp32-c3-devkitc-2/board.md") for p in seen)
     assert not any("noresolver-vendor" in p for p in seen)
+
+
+def test_a_board_needs_a_call_for_each_of_its_three_sources(tmp_path, monkeypatch):
+    # vendor page + PlatformIO manifest + Arduino-ESP32 boards.txt (G3b): with only two calls
+    # left the third source could not run, so the board is not started
+    _mk_boards(tmp_path, ["b1"])
+    _fake_backfill({"b1": "backfilled"}, monkeypatch)
+    res = stage_backfill.run(Ctx(tmp_path, FakeBudget(calls=2)), budget=5)
+    assert res.paths == []
+    assert "budget low" in res.summary
+    res = stage_backfill.run(Ctx(tmp_path, FakeBudget(calls=3)), budget=5)
+    assert res.paths == ["data/boards/espressif/b1/board.md"]

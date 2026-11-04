@@ -1,0 +1,60 @@
+# Fixture modelled on espressif/arduino-esp32 boards.txt: <key>.<property>=<value>, one board
+# per key, vid/pid pairs indexed .0, .1, ... Comment lines must never be read as data.
+menu.UploadSpeed=Upload Speed
+menu.USBMode=USB Mode
+
+##############################################################
+fixture_native_s3.name=Fixture Native S3
+fixture_native_s3.vid.0=0x303a
+fixture_native_s3.pid.0=0x1001
+fixture_native_s3.upload.tool=esptool_py
+fixture_native_s3.upload.use_1200bps_touch=false
+fixture_native_s3.build.mcu=esp32s3
+fixture_native_s3.menu.USBMode.hwcdc=Hardware CDC and JTAG
+
+##############################################################
+# a longer key sharing the prefix: its lines must not leak into fixture_native_s3
+fixture_native_s3_plus.name=Fixture Native S3 Plus
+fixture_native_s3_plus.vid.0=0x1A86
+fixture_native_s3_plus.pid.0=0x55D4
+
+##############################################################
+fixture_ch340.name=Fixture CH340 ESP32
+fixture_ch340.vid.0=0x1A86
+fixture_ch340.pid.0=0x7523
+#fixture_ch340.vid.1=0x303a
+#fixture_ch340.pid.1=0x1001
+fixture_ch340.build.mcu=esp32
+
+##############################################################
+fixture_unknown.name=Fixture TinyUSB S3
+fixture_unknown.vid.0=0x239A
+fixture_unknown.pid.0=0x811B
+fixture_unknown.vid.1=0x239A
+fixture_unknown.pid.1=0x011B
+fixture_unknown.build.mcu=esp32s3
+
+##############################################################
+fixture_no_vid.name=Fixture No VID ESP32
+fixture_no_vid.upload.tool=esptool_py
+fixture_no_vid.build.mcu=esp32
+
+##############################################################
+fixture_mixed.name=Fixture Mixed VIDs S3
+fixture_mixed.vid.0=0x303a
+fixture_mixed.pid.0=0x1001
+fixture_mixed.vid.1=0x2886
+fixture_mixed.pid.1=0x0056
+
+##############################################################
+fixture_wch_no_pid.name=Fixture WCH without pid
+fixture_wch_no_pid.vid.0=0x1A86
+
+##############################################################
+# menu-scoped ids are per-option build flags, not the board's own vid/pid lines
+fixture_menu_scoped.name=Fixture Menu Scoped
+fixture_menu_scoped.menu.USBMode.default.vid.0=0x303a
+fixture_menu_scoped.upload_port.0.vid=0x1A86
+fixture_crlf.name=Fixture CRLF
+  fixture_crlf.vid.0 = 0x1A86 
+fixture_crlf.pid.0=0x55D3

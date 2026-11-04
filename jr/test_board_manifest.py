@@ -205,7 +205,8 @@ def test_manifest_unknown_vid_writes_nothing_and_says_why(tmp_path, monkeypatch)
     assert entry["status"] == "skipped"
     assert path.read_text() == before
     assert entry["field_reasons"]["usb_serial"] == {"vendor": bm.FIELD_ABSENT,
-                                                    "manifest": bm.NO_PATTERN_MATCH}
+                                                    "manifest": bm.NO_PATTERN_MATCH,
+                                                    "boards_txt": "no_board_key"}
     assert entry["field_reasons"]["download_mode"]["manifest"] == bm.FIELD_ABSENT
 
 
