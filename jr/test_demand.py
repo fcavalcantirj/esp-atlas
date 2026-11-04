@@ -516,6 +516,12 @@ def test_ga4_only_not_set_or_empty_terms_marks_d2_unavailable_and_never_crashes(
     assert items
 
 
+def test_ga4_other_bucket_is_dropped_like_not_set():
+    """GA4 folds high-cardinality values into "(other)" — an aggregate, never a typed term."""
+    rows = [_ga4_row("search_submit", "(other)", 50), _ga4_row("search_empty", "(other)", 9)]
+    assert demand.parse_ga4_searchterm_rows(rows) == ([], False)
+
+
 def test_ga4_legacy_single_dimension_searchterm_rows_are_ignored():
     """The old `searchTerm`-only shape (one dimension value) can't carry an eventName — never
     misread it as a term."""
@@ -583,6 +589,59 @@ def test_pull_live_queries_ga4_event_name_by_customevent_q(monkeypatch):
     assert args["dimensionFilter"] == {"filter": {
         "fieldName": "eventName", "inListFilter": {"values": ["search_submit", "search_empty"]}}}
     assert live["ga4_searchterm_raw_rows"] == GA4_LIVE_ROWS
+
+
+def test_pull_live_flags_a_failed_ga4_call(monkeypatch):
+    """`telemetry._ex` returns None when Composio reports failure — that must stay
+    distinguishable from 'GA4 answered with no terms'."""
+    import telemetry
+    monkeypatch.setattr(telemetry, "_ex", lambda slug, args: None if slug == "GOOGLE_ANALYTICS_RUN_REPORT" else {"rows": []})
+    monkeypatch.setattr(demand.analytics_cross, "fetch_trends", lambda terms: {})
+    live = demand._pull_live(days=7)
+    assert live["ga4_pull_ok"] is False
+    assert live["ga4_searchterm_raw_rows"] == []
+
+
+def test_pull_live_marks_an_answered_ga4_call_ok_even_with_no_rows(monkeypatch):
+    import telemetry
+    monkeypatch.setattr(telemetry, "_ex", lambda slug, args: {})
+    monkeypatch.setattr(demand.analytics_cross, "fetch_trends", lambda terms: {})
+    assert demand._pull_live(days=7)["ga4_pull_ok"] is True
+
+
+def test_digest_says_ga4_pull_failed_instead_of_no_terms():
+    items = _build()
+    window = {"start": "2026-08-03", "end": "2026-08-31"}
+    failed = demand.build_digest(items, d2_available=False, window=window, d2_pull_failed=True)
+    empty = demand.build_digest(items, d2_available=False, window=window)
+    assert "pull failed" in failed
+    assert "no site-search terms" not in failed
+    assert "no site-search terms" in empty
+
+
+def test_mine_reports_failed_ga4_pull_in_digest(tmp_path, monkeypatch):
+    monkeypatch.setattr(demand, "_pull_live", lambda days=demand.WINDOW_DAYS: {
+        "window": {"start": "2026-08-03", "end": "2026-08-31"},
+        "gsc_query_rows": D1_ROWS, "gsc_query_page_rows": D4_ROWS, "ga4_searchterm_raw_rows": [],
+        "ga4_pull_ok": False,
+    })
+    result = demand.mine(send_telegram=False, demand_dir=tmp_path)
+    assert result["d2_available"] is False
+    assert "pull failed" in result["digest"]
+
+
+def test_mine_d2_term_above_floor_reaches_the_snapshot(tmp_path, monkeypatch):
+    ga4 = [_ga4_row("search_submit", "Waveshare", 6), _ga4_row("search_empty", "waveshare", 6)]
+    monkeypatch.setattr(demand, "_pull_live", lambda days=demand.WINDOW_DAYS: {
+        "window": {"start": "2026-08-03", "end": "2026-08-31"},
+        "gsc_query_rows": D1_ROWS, "gsc_query_page_rows": D4_ROWS, "ga4_searchterm_raw_rows": ga4,
+    })
+    demand.mine(send_telegram=False, demand_dir=tmp_path)
+    snapshot = json.loads(next(p for p in tmp_path.glob("*.json") if p.stem != "unresolved").read_text())
+    waveshare = next(it for it in snapshot["items"] if it["term"] == "waveshare")
+    assert waveshare["zero_result"] is True
+    assert waveshare["events"] == 6
+    assert "ga4_sitesearch" in waveshare["source"]
 
 
 def test_mine_marks_d2_available_from_live_shaped_ga4_rows(tmp_path, monkeypatch):

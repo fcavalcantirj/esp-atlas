@@ -53,7 +53,7 @@ TRENDS_BOOST_MAX = 0.5                  # v2: Trends interest=100 -> +50% weight
 GA4_SEARCH_SUBMIT = "search_submit"
 GA4_SEARCH_EMPTY = "search_empty"
 GA4_SITE_SEARCH_EVENTS = (GA4_SEARCH_SUBMIT, GA4_SEARCH_EMPTY)
-GA4_NOT_SET = "(not set)"               # GA4's placeholder when the event carried no `q`
+GA4_PLACEHOLDER_TERMS = {"(not set)", "(other)"}  # no `q` sent / high-cardinality rollup — never a typed term
 
 # RANKS_POORLY thresholds (§4) — "high-impression + low-CTR + weak-position" made concrete
 RANKS_POORLY_MIN_IMPRESSIONS = 50
@@ -336,7 +336,7 @@ def parse_ga4_searchterm_rows(raw_rows: list[dict]) -> tuple[list[dict], bool]:
     `zero_result` = the term has any `search_empty` row. Case/whitespace variants merge (same
     `normalize_term()` as GSC). **FIXED 2026-11-04 (SPEC ⟨Q1⟩ amended):** the site always sent
     the term as param `q`; the miner used to query the built-in `searchTerm` dimension, which
-    came back EMPTY, so D2 was blind. Rows with an empty or `(not set)` term, another event
+    came back EMPTY, so D2 was blind. Rows with an empty/`(not set)`/`(other)` term, another event
     name, or the legacy single-dimension shape are dropped, never raised; `d2_available` is
     True only when at least one real term parses — otherwise the miner runs on D1/D4 only
     (§8: 'no silent degradation')."""
@@ -347,7 +347,7 @@ def parse_ga4_searchterm_rows(raw_rows: list[dict]) -> tuple[list[dict], bool]:
             continue
         event_name = (dims[0] or {}).get("value")
         term = normalize_term((dims[1] or {}).get("value"))
-        if event_name not in GA4_SITE_SEARCH_EVENTS or not term or term == GA4_NOT_SET:
+        if event_name not in GA4_SITE_SEARCH_EVENTS or not term or term in GA4_PLACEHOLDER_TERMS:
             continue
         row = by_term.setdefault(term, {"term": term, "events": 0, "zero_result": False})
         if event_name == GA4_SEARCH_SUBMIT:
@@ -525,6 +525,7 @@ def _pull_live(days: int = WINDOW_DAYS) -> dict:
         "gsc_query_rows": gsc_query_rows,
         "gsc_query_page_rows": (gsc_query_page or {}).get("rows") or [],
         "ga4_searchterm_raw_rows": (ga4_searchterm or {}).get("rows") or [],
+        "ga4_pull_ok": ga4_searchterm is not None,  # `_ex` returns None on a Composio failure
         "trends": _pull_trends(gsc_query_rows),
     }
 
@@ -577,7 +578,16 @@ def write_unresolved(items: list[dict], demand_dir: Path = DEMAND_DIR) -> Path:
 _GAP_EMOJI = {GAP_UNCOVERED: "🆕", GAP_RANKS_POORLY: "📉", GAP_COVERED_OK: "✅", GAP_UNRESOLVED: "❓"}
 
 
-def build_digest(items: list[dict], d2_available: bool, window: dict, top_n: int = 10) -> str:
+def _d2_status_line(d2_available: bool, d2_pull_failed: bool) -> str:
+    if d2_pull_failed:
+        return "🔴 D2 blind: GA4 site-search pull failed (customEvent:q) — check Composio/GA4"
+    if not d2_available:
+        return "🔴 D2 blind: no site-search terms in GA4 this window (customEvent:q)"
+    return "🟢 D2 live: first-party site-search terms captured"
+
+
+def build_digest(items: list[dict], d2_available: bool, window: dict, top_n: int = 10,
+                 d2_pull_failed: bool = False) -> str:
     """The Telegram digest (§12 Phase 1: 'ship the ranked demand snapshot to Telegram for
     Felipe to eyeball vs reality'). Surfaces top demand + gap labels + the D2-blind note.
 
@@ -612,8 +622,7 @@ def build_digest(items: list[dict], d2_available: bool, window: dict, top_n: int
             lines.append(f"  📉 `{it['term']}` — imp {it['impressions']}, ctr {it['ctr']}, pos {it['position']}")
 
     lines.append("")
-    lines.append("🔴 D2 blind: no site-search terms in GA4 this window (customEvent:q)"
-                if not d2_available else "🟢 D2 live: first-party site-search terms captured")
+    lines.append(_d2_status_line(d2_available, d2_pull_failed))
     return "\n".join(lines)
 
 
@@ -640,7 +649,8 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
     )
     write_snapshot(items, d2_available, live["window"], today, demand_dir)
     write_unresolved(items, demand_dir)
-    digest = build_digest(items, d2_available, live["window"])
+    digest = build_digest(items, d2_available, live["window"],
+                          d2_pull_failed=not live.get("ga4_pull_ok", True))
     if send_telegram:
         notify.send_telegram(digest)
     return {"items": items, "digest": digest, "d2_available": d2_available}

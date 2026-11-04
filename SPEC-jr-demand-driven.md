@@ -88,7 +88,7 @@ and not a vibe.
 **Reliability caveats baked into the spec:**
 - **GSC k-anonymity:** rare queries are omitted by Google entirely. A brand-new niche
   firmware with <~10 searches/period is **invisible** — D2/D3 (first-party) catch what GSC
-  cannot, which is why site-search is worth enabling (⟨Q1⟩).
+  cannot — first-party site search (`customEvent:q`, live since 2026-11-04, ⟨Q1⟩).
 - **GSC lag:** data is ~2–3 days behind; freshest signal is stale by design → weekly mine
   cadence, not daily (§11).
 - **Position/CTR noise:** low volume rows are statistically thin. The miner applies a
@@ -213,9 +213,10 @@ a record to satisfy demand** (§7).
 - **Thin GSC data** (new/small site): D1 sparse. Bootstrap with **category-level demand** —
   broad terms (`"esp32 marauder"`, `"m5 firmware"`) resolve to *categories* not exact SKUs;
   fill category breadth so pages exist to *earn* impressions, then D1 sharpens next cycle.
-- **Site-search off** (⟨Q1⟩): D2/D3 unavailable → miner runs on D1/D4 only and **says so
-  loudly** in the digest ("first-party demand blind — enable GA4 site-search"). No silent
-  degradation.
+- **No site-search terms** (⟨Q1⟩): D2/D3 unavailable → miner runs on D1/D4 only and **says so
+  loudly** in the digest — "D2 blind: GA4 site-search pull failed" when the Composio call
+  fails, "D2 blind: no site-search terms in GA4 this window" when GA4 answers with none. No
+  silent degradation.
 - **All demand exhausted for a tick:** queue falls through to staleness backfill (§5.3) — Jr
   is never idle, never blocked on demand.
 
