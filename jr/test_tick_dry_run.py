@@ -84,6 +84,29 @@ def _fingerprint(root: Path) -> dict:
     return out
 
 
+REAL_CLONE = Path(tick.__file__).resolve().parent.parent   # tools.REPO, ledger.DEFAULT_LEDGER_PATH, … point here
+
+
+def _real_clone_state() -> dict:
+    """The developer's own clone, where every module-level REPO constant points: a writer anchored
+    on one of those (not on ctx.root) would land here, outside the fake checkout."""
+    out = {}
+    for rel in ("data", "docs"):
+        out.update({f"{rel}/{k}": v for k, v in _fingerprint(REAL_CLONE / rel).items()})
+    for p in sorted((REAL_CLONE / "jr").glob("*.json")) + [REAL_CLONE / "COVERAGE.md"]:
+        if p.is_file():
+            out[str(p.relative_to(REAL_CLONE))] = hashlib.sha256(p.read_bytes()).hexdigest()
+    return out
+
+
+MUTATING_GH = (("pr", "create"), ("pr", "merge"), ("pr", "close"), ("pr", "edit"), ("pr", "comment"),
+               ("issue", "comment"), ("issue", "close"), ("label", "create"))
+
+
+def _mutating(gh) -> list:
+    return [c for c in gh.calls if tuple(c[:2]) in MUTATING_GH or "-X" in c or "--method" in c]
+
+
 def _vendor_fetch(url):
     """Fake http: the groundable board's user guide answers 200, everything else 404."""
     if url == bb.board_user_guide_url(GROUNDABLE, "esp32-s3"):
@@ -97,8 +120,8 @@ def offline(monkeypatch):
     monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda *a, **k: [])
 
 
-def _run(dry_run: bool, git, tmp_path: Path):
-    return tick.run_tick(dry_run=dry_run, git=git, gh=gh_ok(), now=NOW, env={}, stages=None,
+def _run(dry_run: bool, git, tmp_path: Path, gh=None):
+    return tick.run_tick(dry_run=dry_run, git=git, gh=gh or gh_ok(), now=NOW, env={}, stages=None,
                          gauge=GAUGE, guard=GUARD_OK, notifier=None, snapshot=NO_SNAPSHOT,
                          demand=NO_DEMAND, budget=Budget(clock=lambda: 0.0),
                          lock_path=tmp_path / "lock")
@@ -107,12 +130,16 @@ def _run(dry_run: bool, git, tmp_path: Path):
 def test_dry_run_with_the_real_stages_leaves_the_checkout_byte_identical(tmp_path, monkeypatch, offline, capsys):
     checkout = _checkout(tmp_path / "checkout")
     monkeypatch.setattr(tick, "REPO", checkout)
-    before = _fingerprint(checkout)
+    before, clone_before = _fingerprint(checkout), _real_clone_state()
+    gh = gh_ok()
 
-    r = _run(True, git_ok(tmp_path), tmp_path)
+    r = _run(True, git_ok(tmp_path), tmp_path, gh=gh)
 
     assert not r.aborted, r.aborted
     assert _fingerprint(checkout) == before          # no byte changed, no file or dir appeared
+    assert _real_clone_state() == clone_before       # nor in the clone the module REPO constants point at
+    assert _mutating(gh) == []                       # no PR, comment, close or label on GitHub
+    assert not [w for w in r.warnings if "ignores dry-run" in w]   # no stage wrote even the throwaway copy
     assert [s["name"] for s in r.stages][0] == "backfill"
     writes = {(w["path"], w["field"]) for w in r.would_write}
     assert (GROUNDABLE_MD, "usb_serial") in writes
@@ -166,6 +193,7 @@ def test_a_step_that_ignores_dry_run_writes_only_the_copy_and_is_reported(tmp_pa
     def careless(ctx):
         (ctx.root / "data" / "boards" / "espressif" / GROUNDABLE / "board.md").write_text("clobbered\n")
         (ctx.root / "data" / "stray.json").write_text("{}\n")
+        (ctx.root / "COVERAGE.md").unlink()
         return tick.StageResult("careless")
 
     r = tick.run_tick(dry_run=True, git=git_ok(tmp_path), gh=gh_ok(), now=NOW, env={}, stages=[careless],
@@ -175,5 +203,23 @@ def test_a_step_that_ignores_dry_run_writes_only_the_copy_and_is_reported(tmp_pa
     assert not r.aborted, r.aborted
     assert _fingerprint(checkout) == before
     writes = {(w["path"], w["field"]) for w in r.would_write}
-    assert {(GROUNDABLE_MD, "*"), ("data/stray.json", "*")} <= writes
-    assert sum("ignores dry-run" in w for w in r.warnings) == 2
+    assert {(GROUNDABLE_MD, "*"), ("data/stray.json", "*"), ("COVERAGE.md", "(deleted)")} <= writes
+    assert sum("ignores dry-run" in w for w in r.warnings) == 3
+
+
+def test_a_dry_run_that_aborts_mid_stage_still_reports_its_strays_and_drops_the_copy(tmp_path, monkeypatch, offline):
+    checkout = _checkout(tmp_path / "checkout")
+    monkeypatch.setattr(tick, "REPO", checkout)
+    before = _fingerprint(checkout)
+
+    def crashes(ctx):
+        (ctx.root / "data" / "half.json").write_text("{")
+        raise RuntimeError("boom")
+
+    r = tick.run_tick(dry_run=True, git=git_ok(tmp_path), gh=gh_ok(), now=NOW, env={}, stages=[crashes],
+                      gauge=GAUGE, guard=GUARD_OK, notifier=None, snapshot=NO_SNAPSHOT, demand=NO_DEMAND,
+                      budget=Budget(clock=lambda: 0.0))
+
+    assert r.aborted == "RuntimeError: boom"
+    assert _fingerprint(checkout) == before
+    assert ("data/half.json", "*") in {(w["path"], w["field"]) for w in r.would_write}

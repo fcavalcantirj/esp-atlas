@@ -148,8 +148,20 @@ def test_dry_run_scores_but_writes_nothing(root, monkeypatch):
     assert "newtool: would admit" in res.summary
     assert {p.name for p in (root / "data" / "firmware").iterdir()} == {"seed-original"}
     assert not root.joinpath("jr", "proposed_ledger.json").exists()
-    assert {(w["path"], w["field"]) for w in res.would_write} == {
-        ("data/firmware/newtool/firmware.md", "*"), ("jr/proposed_ledger.json", "by_id.newtool")}
+    writes = {(w["path"], w["field"]) for w in res.would_write}
+    assert ("data/firmware/newtool/firmware.md", "*") in writes and ("jr/proposed_ledger.json", "by_id.newtool") in writes
+    assert any(p.startswith("data/recipes/") and p.endswith("__newtool/recipe.md") for p, _ in writes)
+
+
+def test_dry_run_lists_the_below_floor_note_a_real_run_records(root, monkeypatch):
+    entries = [_topic_entry("Tiny Cardputer Tool", "https://github.com/t/tiny", "A Cardputer tool")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta({"t/tiny": _meta("t/tiny", stars=1, forks=0, rid=7, description="A Cardputer tool")}))
+
+    res = stage_admit_topics.run(_ctx(root, dry_run=True), budget=2)
+
+    assert res.would_write == [{"path": "jr/proposed_ledger.json", "field": "by_id.tiny", "value": "seen (below floor)"}], (res.summary, res.rejects)
+    assert not root.joinpath("jr", "proposed_ledger.json").exists()
 
 
 def test_authored_ids_are_recorded_proposed_in_the_ledger(root, monkeypatch):

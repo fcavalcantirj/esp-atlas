@@ -742,11 +742,12 @@ def test_a_stale_bookkeeping_only_tick_pr_is_closed_even_when_mergeable(wt_dir):
 
 
 def test_a_fresh_mergeable_tick_pr_is_left_alone_and_its_files_never_fetched(tmp_path):
-    # dry-run: the memory step's open-PR hydration (which reads files too) does not run there
+    # dry-run (no publish). The triage never reads its files; the ONE files read is the memory
+    # step's open-PR hydration, which a dry run runs too (on its throwaway ledger copy).
     gh = gh_with_prs([_tick_pr(790, FRESH)], files={790: BOOKKEEPING})
     r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
     assert not r.aborted and _closes(gh) == [] and not any("superseded" in w for w in r.warnings)
-    assert all(c[:2] != ("pr", "view") or c[3:] != ("--json", "files") for c in gh.calls)
+    assert sum(c[:2] == ("pr", "view") and c[3:] == ("--json", "files") for c in gh.calls) == 1
 
 
 def test_a_stale_conflicting_content_pr_is_never_closed_and_aborts_naming_it(wt_dir):

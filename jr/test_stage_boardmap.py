@@ -167,8 +167,12 @@ def test_map_one_resolves_against_root_not_the_clone(root):
 def test_map_one_dry_run_writes_nothing_but_reports(root):
     r = sb.map_one("marauder", root=root, api=fake_api, raw=fake_raw, today="2026-09-07", dry_run=True)
     assert r["paths"] == [] and "m5cardputer__marauder" in r["would_write"]
-    assert "data/recipes/m5cardputer__marauder/recipe.md" in r["would_write_paths"]
-    assert "data/firmware/marauder/signals.json" in r["would_write_paths"]
+    paths = {w["path"] for w in r["would_write_paths"]}
+    assert "data/recipes/m5cardputer__marauder/recipe.md" in paths
+    assert "data/firmware/marauder/signals.json" in paths
+    socs = [w for w in r["would_write_paths"] if w["field"] == "socs"]   # the same widening a real map_one makes
+    assert socs and socs[0]["path"] == "data/firmware/marauder/firmware.md"
+    assert {"esp32-s3", "esp32-c6"} <= set(socs[0]["value"])
     assert not (root / "data/firmware/marauder/signals.json").exists()
     assert not list((root / "data/recipes").iterdir())
 

@@ -55,7 +55,10 @@ def fingerprint(root: Path) -> dict[str, str]:
             for p in sorted(root.rglob("*")) if p.is_file()}
 
 
-def changed(before: dict[str, str], scratch: Path) -> list[str]:
-    """The relpaths created or modified in `scratch` since `before` (its fingerprint at copy time)."""
+def changed(before: dict[str, str], scratch: Path) -> list[tuple[str, str]]:
+    """(relpath, "written" | "deleted") for every file created, modified or removed in `scratch`
+    since `before` (its fingerprint at copy time), sorted by path."""
     after = fingerprint(scratch)
-    return sorted(p for p, h in after.items() if before.get(p) != h)
+    out = [(p, "written") for p, h in after.items() if before.get(p) != h]
+    out += [(p, "deleted") for p in before if p not in after]
+    return sorted(out)

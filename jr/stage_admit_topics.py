@@ -189,6 +189,23 @@ def _source_by_repo(entries) -> dict:
     return out
 
 
+def _would_write(selected, skipped) -> list[dict]:
+    """Dry-run: what run_drain + the ledger notes below would write for this tick's candidates —
+    each admit's firmware.md and recipe, its `proposed` record, and every remembered skip."""
+    out = []
+    for sel in selected:
+        rec = sel["record"]
+        fid = rec["id"]
+        out += [{"path": f"data/firmware/{fid}/firmware.md", "field": "*", "value": fid},
+                {"path": f"data/recipes/{rec['board']}__{fid}/recipe.md", "field": "*", "value": rec["board"]},
+                {"path": memory.LEDGER_RELPATH, "field": f"by_id.{fid}", "value": "proposed"}]
+    out += [{"path": memory.LEDGER_RELPATH, "field": f"by_id.{s['firmware_id']}", "value": "seen (below floor)"}
+            for s in skipped if s.get("reason") == "below-popularity-floor"]
+    out += [{"path": memory.LEDGER_RELPATH, "field": f"by_id.{s['firmware_id']}",
+             "value": f"rejected ({s['reason'].split(':')[0]})"} for s in drain.device_skips(skipped)]
+    return out
+
+
 def run(ctx, budget: int, raw=None):
     """The topics stage for jr/tick.py: admits AT MOST `budget` firmware from the GitHub-topics
     source in one tick, via jr/drain.run_drain — the same author+guard+ledger pipeline
@@ -232,13 +249,7 @@ def run(ctx, budget: int, raw=None):
         rejects = _device_rejects(skipped)
         if len(skipped) > sum(rejects.values()):
             rejects["skipped_scoring"] = len(skipped) - sum(rejects.values())
-        would_write = []
-        for sel in selected:
-            fid = sel["record"]["id"]
-            would_write += [{"path": f"data/firmware/{fid}/firmware.md", "field": "*", "value": fid},
-                            {"path": memory.LEDGER_RELPATH, "field": f"by_id.{fid}", "value": "proposed"}]
-        would_write += [{"path": memory.LEDGER_RELPATH, "field": f"by_id.{d['firmware_id']}",
-                         "value": f"rejected ({d['reason'].split(':')[0]})"} for d in drain.device_skips(skipped)]
+        would_write = _would_write(selected, skipped)
         return tick.StageResult("admit_topics", paths=[], summary=summary, admitted=0, rejects=rejects, review=review,
                                 would_write=would_write)
 

@@ -148,24 +148,13 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
     sig_path = fmd.parent / "signals.json"
     old = _load_json(sig_path)
     if dry_run:
-        out["would_write"] = [f"{b}__{fid}" for b in res["boards"]
-                              if not (root / "data" / "recipes" / f"{b}__{fid}" / "recipe.md").exists()]
-        out["would_write_paths"] = [f"data/recipes/{rid}/recipe.md" for rid in out["would_write"]]
-        if not _keeps_old_signals(out["errors"], old, res["boards"]):
-            out["would_write_paths"].append(str(sig_path.relative_to(root)))
-        return out
+        return _would_map(out, fid, fm, res, root=root, board_soc=board_soc, fmd=fmd, sig_path=sig_path, old=old)
     w = writers.write_recipes(fid, fm.get("url", ""), res, root=root, today=today, board_soc=board_soc)
     out.update(written=w["written"], existing=w["existing"], refused=w["refused"])
     out["paths"] += w["paths"]
     # socs: widen to the cited union, one source per page that proves an added chip
-    before = set(fm.get("socs") or [])
-    new_socs = sorted(set(w["socs"]) - before)
+    new_socs, urls = _socs_to_widen(fm, w["socs"], w["refused"], res, board_soc)
     if new_socs:
-        refused = {b for b, _ in w["refused"]}
-        urls: list[str] = []
-        for soc in new_socs:
-            urls += _soc_proof_urls(soc, res, refused, board_soc)
-        urls = list(dict.fromkeys(urls))
         if not urls:
             out["notes"].append(f"socs not widened (+{','.join(new_socs)}): no citable signal")
         else:
@@ -186,6 +175,33 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
                                      "unresolved": sorted({s["token"] for s in res["unresolved"]})}}
         sig_path.write_text(json.dumps(payload, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
         out["paths"].append(str(sig_path.relative_to(root)))
+    return out
+
+
+def _socs_to_widen(fm: dict, socs: list, refused_pairs: list, res: dict, board_soc) -> tuple[list, list]:
+    """(the chips the firmware would gain, the pages that prove them) — empty urls: not citable."""
+    new_socs = sorted(set(socs) - set(fm.get("socs") or []))
+    refused = {b for b, _ in refused_pairs}
+    urls: list[str] = []
+    for soc in new_socs:
+        urls += _soc_proof_urls(soc, res, refused, board_soc)
+    return new_socs, list(dict.fromkeys(urls))
+
+
+def _would_map(out: dict, fid: str, fm: dict, res: dict, *, root: Path, board_soc, fmd: Path,
+               sig_path: Path, old) -> dict:
+    """Dry-run: what map_one would write — new recipes, the socs widening, signals.json — as
+    out["would_write"] (recipe ids) and out["would_write_paths"] ({"path", "field", "value"})."""
+    plan = writers.plan_recipes(fid, res, root=root, board_soc=board_soc)
+    out.update(existing=plan["existing"], refused=plan["refused"])
+    out["would_write"] = [rid for rid, *_ in plan["new"]]
+    writes = [{"path": f"data/recipes/{rid}/recipe.md", "field": "*", "value": rid} for rid in out["would_write"]]
+    new_socs, urls = _socs_to_widen(fm, plan["socs"], plan["refused"], res, board_soc)
+    if new_socs and urls:
+        writes.append({"path": str(fmd.relative_to(root)), "field": "socs", "value": new_socs})
+    if not _keeps_old_signals(out["errors"], old, res["boards"]):
+        writes.append({"path": str(sig_path.relative_to(root)), "field": "*", "value": None})
+    out["would_write_paths"] = writes
     return out
 
 
@@ -261,7 +277,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
             reject("chip_clash" if "disagrees" in why else "no_soc")
         extra = "".join(f"; {n}" for n in r["notes"] if n.startswith(("socs not widened", "degraded read")))
         if ctx.dry_run:
-            would_write += [{"path": p, "field": "*", "value": None} for p in r.get("would_write_paths", [])]
+            would_write += r.get("would_write_paths", [])
             lines.append(f"{fid}: {r['signals']} signals, would write {len(r.get('would_write', []))} recipe(s), "
                          f"{r['unresolved']} unresolved{extra}")
         else:

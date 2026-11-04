@@ -65,6 +65,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 
+if __name__ == "__main__" and "--dry-run" in sys.argv[1:]:
+    sys.dont_write_bytecode = True   # a dry run leaves no byte in the checkout, not even a __pycache__/*.pyc
 _JR_DIR = Path(__file__).resolve().parent
 if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
@@ -485,26 +487,23 @@ def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None) -> list[str]:
 
 # --- dry run -----------------------------------------------------------------------------------
 
-def _dry_run_memory(catalogued: set, ledger_path: Path, now: datetime) -> list[dict]:
-    """The local ledger reconciliations a real tick would write, run against the dry run's
-    throwaway ledger copy: [{"path", "field", "value"}]. PR settlement (gh pr view per proposed
-    record) and the open-PR hydration are not queried on a dry run."""
-    rel = memory.LEDGER_RELPATH
-    changes = [(fid, "expired") for fid in memory.expire(path=ledger_path, now=now)]
-    changes += [(fid, "merged") for fid in memory.reconcile_merged(catalogued, path=ledger_path, now=now)]
-    changes += [(fid, "rejected (removed from catalog)")
-                for fid in memory.reconcile_removed(catalogued, path=ledger_path, now=now)]
-    return [{"path": rel, "field": f"by_id.{fid}", "value": v} for fid, v in changes]
+def _ledger_changes(before: dict, ledger_path: Path) -> list[dict]:
+    """Dry-run: the ledger records the memory step changed in the throwaway copy, as would-be
+    writes [{"path", "field": "by_id.<id>", "value": <new status>}]."""
+    after = memory.load(ledger_path)["by_id"]
+    return [{"path": memory.LEDGER_RELPATH, "field": f"by_id.{fid}", "value": rec.get("status")}
+            for fid, rec in sorted(after.items()) if before.get(fid) != rec]
 
 
 def _dry_run_strays(r: report.TickReport, baseline: dict, scratch: Path) -> None:
-    """Files that changed in the throwaway copy although no writer declared them: a writer that
-    ignored ctx.dry_run. The copy absorbed the write; the report still owes the owner the line."""
+    """Files created, changed or deleted in the throwaway copy since `baseline` (taken after the
+    memory step, the one step that writes the copy on purpose): a writer that ignored ctx.dry_run.
+    The copy absorbed it; the report warns, and lists the file if no writer declared it."""
     declared = {w.get("path") for w in r.would_write}
-    for p in dry_run_tree.changed(baseline, scratch):
+    for p, what in dry_run_tree.changed(baseline, scratch):
+        r.warnings.append(f"dry-run: {p} was {what} by a step that ignores dry-run (throwaway copy only)")
         if p not in declared:
-            r.dry_writes.append({"path": p, "field": "*", "value": None})
-            r.warnings.append(f"dry-run: {p} was written by a step that ignores dry-run (throwaway copy only)")
+            r.dry_writes.append({"path": p, "field": "*" if what == "written" else "(deleted)", "value": None})
 
 
 # --- the tick ----------------------------------------------------------------------------------
@@ -571,35 +570,43 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             r.base_sha = wt.base_sha[:7]
 
         # 3. memory
+        #    A dry run runs the same reconciliation against its throwaway ledger copy and reports
+        #    the records it changed as would-be writes; it never purges the site's cache.
         catalogued = {p.parent.name for p in (root / "data" / "firmware").glob("*/firmware.md")}
+        ledger_before = memory.load(ledger_path)["by_id"] if dry_run else {}
+        expired = memory.expire(path=ledger_path, now=now)
+        state_fn = pr_state or (lambda ref: memory.gh_pr_state(ref, gh=gh_c))
+        settled = memory.reconcile_prs(state_fn, path=ledger_path, now=now)
+        # 3b. hydrate the working ledger from open Jr PRs BEFORE reconcile_merged, so the
+        #     content stages can see firmware already sitting in an un-merged PR (this worktree
+        #     started from origin/main, whose ledger lacks those entries) and do not re-author
+        #     it — and so an accidental merged->proposed mislabel self-heals within the same
+        #     tick (reconcile_merged flips any hydrated id that is already catalogued back to
+        #     merged). Best-effort: a dedup step (incl. a spent budget) must never abort a tick;
+        #     the stages enforce the budget. memory.record_proposed already refuses to downgrade
+        #     a merged or permanently-rejected record.
+        try:
+            r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug)
+        except Exception as e:  # noqa: BLE001
+            r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")
+        merged = memory.reconcile_merged(catalogued, path=ledger_path, now=now)
+        # A PR that merged between our fetch of origin/main and the `gh pr view` above is
+        # catalogued on GitHub but not yet in this worktree: treat what reconcile_prs just
+        # settled as catalogued, or it would be rejected as "removed from catalog".
+        removed = memory.reconcile_removed(catalogued | set(settled["merged"]), path=ledger_path, now=now)
+        counts = {"expired": len(expired), "merged": len(settled["merged"]) + len(merged),
+                  "rejected": len(settled["rejected"]), "removed": len(removed)}
+        purge = bool(settled["merged"] or merged or removed)
         if dry_run:
             r.memory = {}
-            r.dry_writes += _dry_run_memory(catalogued, ledger_path, now)
-            r.warnings.append("memory: dry-run, no reconciliation written (PR settlement not queried)")
+            r.dry_writes += _ledger_changes(ledger_before, ledger_path)
+            baseline = dry_run_tree.fingerprint(scratch)     # from here on, nothing may change the copy
+            r.warnings.append("memory: dry-run, reconciliation not written ("
+                              + ", ".join(f"{k} {v}" for k, v in counts.items())
+                              + (", would purge the catalog cache)" if purge else ")"))
         else:
-            expired = memory.expire(path=ledger_path, now=now)
-            state_fn = pr_state or (lambda ref: memory.gh_pr_state(ref, gh=gh_c))
-            settled = memory.reconcile_prs(state_fn, path=ledger_path, now=now)
-            # 3b. hydrate the working ledger from open Jr PRs BEFORE reconcile_merged, so the
-            #     content stages can see firmware already sitting in an un-merged PR (this worktree
-            #     started from origin/main, whose ledger lacks those entries) and do not re-author
-            #     it — and so an accidental merged->proposed mislabel self-heals within the same
-            #     tick (reconcile_merged flips any hydrated id that is already catalogued back to
-            #     merged). Best-effort: a dedup step (incl. a spent budget) must never abort a tick;
-            #     the stages enforce the budget. memory.record_proposed already refuses to downgrade
-            #     a merged or permanently-rejected record.
-            try:
-                r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug)
-            except Exception as e:  # noqa: BLE001
-                r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")
-            merged = memory.reconcile_merged(catalogued, path=ledger_path, now=now)
-            # A PR that merged between our fetch of origin/main and the `gh pr view` above is
-            # catalogued on GitHub but not yet in this worktree: treat what reconcile_prs just
-            # settled as catalogued, or it would be rejected as "removed from catalog".
-            removed = memory.reconcile_removed(catalogued | set(settled["merged"]), path=ledger_path, now=now)
-            r.memory = {"expired": len(expired), "merged": len(settled["merged"]) + len(merged),
-                        "rejected": len(settled["rejected"]), "removed": len(removed)}
-            if settled["merged"] or merged or removed:
+            r.memory = counts
+            if purge:
                 r.revalidate = revalidate(env.get("REVALIDATE_SECRET"))
 
         # 4. gauge
@@ -702,8 +709,6 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                                   now=now, repo_slug=slug, needs_human=r.needs_human,
                                   protection=protection, auto_merge=auto_merge, stages=r.stages)
             r.publish = res.as_dict()
-        if scratch is not None:
-            _dry_run_strays(r, baseline, scratch)
     except BudgetExceeded as e:
         r.aborted = f"budget: {e}"
     except TickAbort as e:
@@ -719,6 +724,10 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             except Exception as e:  # noqa: BLE001 — cleanup must never eat the report
                 r.warnings.append(f"worktree cleanup failed: {type(e).__name__}: {e}")
         if scratch is not None:
+            try:
+                _dry_run_strays(r, baseline, scratch)   # also after an abort: what got written is still owed
+            except Exception as e:  # noqa: BLE001 — the report line must always print
+                r.warnings.append(f"dry-run stray check failed: {type(e).__name__}: {e}")
             dry_run_tree.remove(scratch)
         if lock is not None:
             _release_tick_lock(lock)

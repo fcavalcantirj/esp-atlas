@@ -127,14 +127,12 @@ def render_recipe(recipe_id: str, board: str, firmware: str, chip_family: str, f
     return "\n".join(lines) + "\n\n" + "\n".join(body) + "\n"
 
 
-def write_recipes(firmware_id: str, firmware_url: str, resolved: dict, *, root: Path, today: str,
-                  board_soc=None) -> dict:
-    """Write the missing recipes for `firmware_id` under `root`. Returns
-    {"written": [recipe_id…], "paths": [relative dir…], "existing": [recipe_id…],
-     "refused": [(atlas_id, why)…], "socs": sorted cited union}.
-    `board_soc` defaults to reading `root`'s own board records."""
+def plan_recipes(firmware_id: str, resolved: dict, *, root: Path, board_soc=None) -> dict:
+    """What write_recipes would do for `firmware_id` under `root`, writing nothing (the tick's
+    dry-run reports it). Returns {"new": [(recipe_id, atlas_id, soc, signals)…],
+    "existing": [recipe_id…], "refused": [(atlas_id, why)…], "socs": sorted cited union}."""
     board_soc = board_soc or (lambda b: tools.board_soc(b, repo=root))
-    written, paths, existing, refused, socs = [], [], [], [], set()
+    new, existing, refused, socs = [], [], [], set()
     for atlas_id, signals in sorted(resolved.get("boards", {}).items()):
         soc = board_soc(atlas_id)
         if not soc:
@@ -145,18 +143,32 @@ def write_recipes(firmware_id: str, firmware_url: str, resolved: dict, *, root: 
             refused.append((atlas_id, f"signal chip {clash[0]['soc']} disagrees with the board's {soc}"))
             continue
         rid = f"{atlas_id}__{firmware_id}"
-        rdir = root / "data" / "recipes" / rid
         socs.add(soc)
-        if (rdir / "recipe.md").exists():
+        if (root / "data" / "recipes" / rid / "recipe.md").exists():
             existing.append(rid)
             continue
+        new.append((rid, atlas_id, soc, signals))
+    for soc in resolved.get("socs", {}):
+        socs.add(soc)
+    return {"new": new, "existing": existing, "refused": refused, "socs": sorted(socs)}
+
+
+def write_recipes(firmware_id: str, firmware_url: str, resolved: dict, *, root: Path, today: str,
+                  board_soc=None) -> dict:
+    """Write the missing recipes for `firmware_id` under `root`. Returns
+    {"written": [recipe_id…], "paths": [relative dir…], "existing": [recipe_id…],
+     "refused": [(atlas_id, why)…], "socs": sorted cited union}.
+    `board_soc` defaults to reading `root`'s own board records."""
+    plan = plan_recipes(firmware_id, resolved, root=root, board_soc=board_soc)
+    written, paths = [], []
+    for rid, atlas_id, soc, signals in plan["new"]:
+        rdir = root / "data" / "recipes" / rid
         rdir.mkdir(parents=True, exist_ok=True)
         (rdir / "recipe.md").write_text(render_recipe(rid, atlas_id, firmware_id, soc, firmware_url, signals, today), encoding="utf-8")
         written.append(rid)
         paths.append(str((rdir).relative_to(root)))
-    for soc in resolved.get("socs", {}):
-        socs.add(soc)
-    return {"written": written, "paths": paths, "existing": existing, "refused": refused, "socs": sorted(socs)}
+    return {"written": written, "paths": paths, "existing": plan["existing"], "refused": plan["refused"],
+            "socs": plan["socs"]}
 
 
 def socs_for(firmware_id: str, root: Path, board_soc=None) -> list[str]:
