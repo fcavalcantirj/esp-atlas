@@ -389,12 +389,14 @@ def _write_fields(path: Path, fm: dict, body: str, extracted: dict, citations: d
     path.write_text(f"---\n{front}\n---\n\n{body.strip()}\n")
 
 
-def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
+def backfill_board(path: Path, data_root: Path, fetch, today: str, write: bool = True) -> dict:
     """Backfill ONE board.md. Returns a report entry with `status`:
       * "complete"    — nothing was missing (not part of the worklist).
       * "skipped"     — doc-unreachable / no-soc / nothing-groundable; NOT modified.
       * "backfilled"  — >=1 missing field grounded and written; `written`/`omitted` list
-                        which; `partial` is True when some missing field was omitted."""
+                        which; `partial` is True when some missing field was omitted.
+    `write=False` (the tick's dry-run) grounds exactly the same way but leaves the file alone:
+    `written` then names what a real run WOULD write, `values` what, and `modified` is False."""
     fm, body = parse_frontmatter(path)
     board_id = fm.get("id") or path.parent.name
     brand = fm.get("brand") or path.parent.parent.name
@@ -437,12 +439,13 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
                   "doc-unreachable" if res is None else "nothing-groundable")
         return {**base, "status": "skipped", "reason": reason, "url": url, **checked}
 
-    _write_fields(path, fm, body, extracted, citations, today)
+    if write:
+        _write_fields(path, fm, body, extracted, citations, today)
     written = [f for f in BACKFILL_FIELDS if f in extracted]
     omitted = [f for f in missing if f not in extracted]
     return {**base, "status": "backfilled", "url": url,
-            "written": written, "omitted": omitted, "partial": bool(omitted), "modified": True,
-            "citations": citations, **checked}
+            "written": written, "omitted": omitted, "partial": bool(omitted), "modified": write,
+            "values": {f: extracted[f] for f in written}, "citations": citations, **checked}
 
 
 def _fetch_first(candidates: list[str], fetch) -> tuple[dict | None, str | None]:

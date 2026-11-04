@@ -145,9 +145,14 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
         out["failed"] = True
         out["notes"].append(f"read failed ({out['errors']} unavailable endpoint(s)), nothing persisted")
         return out
+    sig_path = fmd.parent / "signals.json"
+    old = _load_json(sig_path)
     if dry_run:
         out["would_write"] = [f"{b}__{fid}" for b in res["boards"]
                               if not (root / "data" / "recipes" / f"{b}__{fid}" / "recipe.md").exists()]
+        out["would_write_paths"] = [f"data/recipes/{rid}/recipe.md" for rid in out["would_write"]]
+        if not _keeps_old_signals(out["errors"], old, res["boards"]):
+            out["would_write_paths"].append(str(sig_path.relative_to(root)))
         return out
     w = writers.write_recipes(fid, fm.get("url", ""), res, root=root, today=today, board_soc=board_soc)
     out.update(written=w["written"], existing=w["existing"], refused=w["refused"])
@@ -171,11 +176,9 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
             except ValueError as e:
                 out["notes"].append(f"socs not widened: {str(e)[:160]}")
     # signals.json: the evidence the G1 audit reads offline
-    sig_path = fmd.parent / "signals.json"
-    old = _load_json(sig_path)
     old_boards = set(((old or {}).get("resolved") or {}).get("boards") or [])
     new_boards = set(res["boards"])
-    if out["errors"] and old and not new_boards >= old_boards:
+    if _keeps_old_signals(out["errors"], old, new_boards):
         out["notes"].append(f"degraded read ({out['errors']} unavailable endpoint(s), "
                             f"{len(old_boards)} -> {len(new_boards)} boards): previous signals kept")
     else:
@@ -184,6 +187,12 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
         sig_path.write_text(json.dumps(payload, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
         out["paths"].append(str(sig_path.relative_to(root)))
     return out
+
+
+def _keeps_old_signals(errors: int, old: dict | None, new_boards) -> bool:
+    """A degraded read (some endpoints failed) that resolved fewer boards keeps the old signals.json."""
+    old_boards = set(((old or {}).get("resolved") or {}).get("boards") or [])
+    return bool(errors and old and not set(new_boards) >= old_boards)
 
 
 def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int = FRESH_DAYS,
@@ -197,7 +206,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
     api = api or (lambda path: json.loads(ctx.gh("api", path).stdout))    # ctx.gh is budget-wrapped
     raw = ctx.budget.wrap(raw or derive.default_raw, "raw")
     led = memory.load(ctx.ledger_path)   # read-only: the open-PR skip reads the hydrated ledger (tick.hydrate_open_pr_ledger)
-    paths, lines, admitted, rejects, needs_human, items = [], [], 0, {}, False, []
+    paths, lines, admitted, rejects, needs_human, items, would_write = [], [], 0, {}, False, [], []
     if only:
         chosen = []
         for fid in only:
@@ -252,6 +261,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
             reject("chip_clash" if "disagrees" in why else "no_soc")
         extra = "".join(f"; {n}" for n in r["notes"] if n.startswith(("socs not widened", "degraded read")))
         if ctx.dry_run:
+            would_write += [{"path": p, "field": "*", "value": None} for p in r.get("would_write_paths", [])]
             lines.append(f"{fid}: {r['signals']} signals, would write {len(r.get('would_write', []))} recipe(s), "
                          f"{r['unresolved']} unresolved{extra}")
         else:
@@ -260,4 +270,4 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
                          + (f", socs +{','.join(r['socs_added'])}" if r["socs_added"] else "") + extra)
     summary = "; ".join(lines) if lines else "no firmware selected"
     return tick.StageResult("boardmap", paths=paths, summary=summary, admitted=admitted, rejects=rejects,
-                            needs_human=needs_human, items=items)
+                            needs_human=needs_human, items=items, would_write=would_write)

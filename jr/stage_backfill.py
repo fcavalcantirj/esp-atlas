@@ -21,6 +21,10 @@ The PlatformIO manifest and boards.txt are corroboration only (owner mandate G3,
 jr/board_corroboration.py): every board line carries what they said, with their pinned citations.
 A board whose vendor usb_serial conflicts with them is not written; the stage flags needs_human
 (auto-merge withheld) and cools the board down so the same conflict is not re-flagged hourly.
+
+Dry-run (ctx.dry_run): every board is grounded exactly as for real, but no board.md and no
+cooldown is written; each would-be write is returned in StageResult.would_write instead
+(`{"path", "field", "value"}`), so the tick report shows what a real run would do.
 """
 from __future__ import annotations
 
@@ -68,7 +72,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
 
     cooldown_path = ctx.root / board_cooldown.RELPATH
     cooldown = board_cooldown.load(cooldown_path)
-    paths, lines, filled, skipped, attempted, cooling, cooled = [], [], 0, 0, 0, 0, 0
+    paths, would_write, lines, filled, skipped, attempted, cooling, cooled = [], [], [], 0, 0, 0, 0, 0
     needs_human = False
     for path in boards:
         if attempted >= budget:
@@ -79,15 +83,20 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
         if ctx.budget.remaining_calls() < CALLS_PER_BOARD or ctx.budget.remaining_seconds() < SECONDS_PER_BOARD:
             lines.append(f"stopped: tick budget low ({ctx.budget.remaining_calls()} calls left)")
             break
-        entry = board_backfill.backfill_board(path, data_root, fetch, today)
+        entry = board_backfill.backfill_board(path, data_root, fetch, today, write=not ctx.dry_run)
         status = entry["status"]
         if status == "complete":
             continue  # not on the worklist; no fetch spent
         attempted += 1
         if status == "backfilled":
-            paths.append(str(path.relative_to(ctx.root)))
+            rel = str(path.relative_to(ctx.root))
+            if ctx.dry_run:
+                values = entry.get("values") or {}
+                would_write += [{"path": rel, "field": f, "value": values.get(f)} for f in entry["written"]]
+            else:
+                paths.append(rel)
             filled += 1
-            note = f"{entry['board_id']}: +{'+'.join(entry['written'])}"
+            note = f"{entry['board_id']}: {'would ' if ctx.dry_run else ''}+{'+'.join(entry['written'])}"
             if entry.get("omitted"):
                 note += f" (omitted {','.join(entry['omitted'])})"
             lines.append(_with_corroboration(note, entry))
@@ -97,23 +106,28 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
         if entry.get("needs_review"):
             needs_human = True
         if entry.get("needs_review") or entry.get("reason") in COOLDOWN_REASONS:
-            board_cooldown.record(cooldown, path.parent.name,
-                                  entry.get("reason") or "needs-review",
+            reason = entry.get("reason") or "needs-review"
+            board_cooldown.record(cooldown, path.parent.name, reason,
                                   entry.get("field_reasons") or {}, now=ctx.now)
+            if ctx.dry_run:
+                would_write.append({"path": board_cooldown.RELPATH, "field": f"by_board.{path.parent.name}",
+                                    "value": reason})
             cooled += 1
 
-    if cooled:
+    if cooled and not ctx.dry_run:
         board_cooldown.save(cooldown, cooldown_path, now=ctx.now)
         paths.append(board_cooldown.RELPATH)
 
-    summary = f"backfilled {filled}, skipped {skipped}"
+    verb = "would backfill" if ctx.dry_run else "backfilled"
+    summary = f"{verb} {filled}, skipped {skipped}"
     if cooled:
-        summary += f", cooled {cooled} for {board_cooldown.COOLDOWN_DAYS}d"
+        summary += f", {'would cool' if ctx.dry_run else 'cooled'} {cooled} for {board_cooldown.COOLDOWN_DAYS}d"
     if cooling:
         summary += f", cooling {cooling}"
     if lines:
         summary += " · " + "; ".join(lines)
-    return tick.StageResult("backfill", paths=paths, summary=summary, needs_human=needs_human)
+    return tick.StageResult("backfill", paths=paths, summary=summary, needs_human=needs_human,
+                            would_write=would_write)
 
 
 def _with_corroboration(line: str, entry: dict) -> str:

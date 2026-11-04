@@ -1,6 +1,6 @@
 """EspAtlas Jr — the hourly tick (jr/tick.py). Phase 2 skeleton: everything but the content.
 
-    python3 jr/tick.py --dry-run          # gauge + allocation + "nothing to do"; writes nothing
+    python3 jr/tick.py --dry-run          # every stage on a throwaway copy; lists what it WOULD write
     python3 jr/tick.py                    # the real thing (hermes cron `jr-tick`, via scripts/jr-tick.sh)
 
 One tick, in order (PLAN §3.2):
@@ -22,6 +22,10 @@ One tick, in order (PLAN §3.2):
     "PR + auto-merge" is direct-to-main under another name.
  2. Worktree — a fresh `git worktree` detached at `origin/main`, outside the repo tree. Every
     read and write below happens there. The clone's checkout is never touched. (jr/publish.py)
+    A dry run gets no worktree: it copies the clone's data/, docs/ and jr/*.json into a throwaway
+    temp dir (jr/dry_run_tree.py) and runs everything there, so no write can reach the checkout.
+    Every writer also honours ctx.dry_run and reports "would write <path>[<field>]" instead; any
+    file that still changed in the copy is listed too (and warned about), then the copy is removed.
  3. Memory — expire TTL'd decisions; settle proposed PRs (closed → permanent rejection,
     merged → merged); mark ledger ids now in the catalog as merged; a merged id that vanished
     from the catalog becomes a permanent rejection. (jr/memory.py) If anything merged or was
@@ -71,6 +75,7 @@ import report   # noqa: E402
 import allocator  # noqa: E402
 import demand_signal  # noqa: E402
 import review_routing  # noqa: E402
+import dry_run_tree  # noqa: E402
 from budget import Budget, BudgetExceeded  # noqa: E402
 
 REPO = _JR_DIR.parent
@@ -119,6 +124,7 @@ class StageResult:
     rejects: dict = field(default_factory=dict)    # reason -> count
     items: list = field(default_factory=list)      # structured facts per proposed record, for the PR body's verdict
     review: list = field(default_factory=list)     # repos the owner must judge: {"id", "repo", "kind", "url", "why"}
+    would_write: list = field(default_factory=list)  # dry-run only: {"path", "field", "value"} a real run would write
 
 
 Stage = Callable[[TickContext], StageResult]
@@ -477,6 +483,30 @@ def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None) -> list[str]:
     return hydrated
 
 
+# --- dry run -----------------------------------------------------------------------------------
+
+def _dry_run_memory(catalogued: set, ledger_path: Path, now: datetime) -> list[dict]:
+    """The local ledger reconciliations a real tick would write, run against the dry run's
+    throwaway ledger copy: [{"path", "field", "value"}]. PR settlement (gh pr view per proposed
+    record) and the open-PR hydration are not queried on a dry run."""
+    rel = memory.LEDGER_RELPATH
+    changes = [(fid, "expired") for fid in memory.expire(path=ledger_path, now=now)]
+    changes += [(fid, "merged") for fid in memory.reconcile_merged(catalogued, path=ledger_path, now=now)]
+    changes += [(fid, "rejected (removed from catalog)")
+                for fid in memory.reconcile_removed(catalogued, path=ledger_path, now=now)]
+    return [{"path": rel, "field": f"by_id.{fid}", "value": v} for fid, v in changes]
+
+
+def _dry_run_strays(r: report.TickReport, baseline: dict, scratch: Path) -> None:
+    """Files that changed in the throwaway copy although no writer declared them: a writer that
+    ignored ctx.dry_run. The copy absorbed the write; the report still owes the owner the line."""
+    declared = {w.get("path") for w in r.would_write}
+    for p in dry_run_tree.changed(baseline, scratch):
+        if p not in declared:
+            r.dry_writes.append({"path": p, "field": "*", "value": None})
+            r.warnings.append(f"dry-run: {p} was written by a step that ignores dry-run (throwaway copy only)")
+
+
 # --- the tick ----------------------------------------------------------------------------------
 
 def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.default_gh,
@@ -495,7 +525,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
     r = report.TickReport(when=now, dry_run=dry_run)
     hourly = stages is None   # the hourly path: gauge-driven split; --track overrides it
     stages = STAGES if hourly else stages
-    wt = lock = None
+    wt = lock = scratch = None
+    baseline: dict = {}
     try:
         # 1. preflight
         if not dry_run:
@@ -527,9 +558,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             else:
                 raise TickAbort(f"branch protection: {protection.reason}")
 
-        # 2. worktree (real runs only); dry-run reads the clone's tree and writes nothing
+        # 2. worktree (real runs only); a dry run works on a throwaway copy of the clone's tree
         if dry_run:
-            root, ledger_path = REPO, ledger.DEFAULT_LEDGER_PATH
+            scratch = dry_run_tree.copy(REPO)
+            baseline = dry_run_tree.fingerprint(scratch)
+            root, ledger_path = scratch, scratch / "jr" / "proposed_ledger.json"
         else:
             wt = publish.add_worktree(git=git)
             if not publish.is_clean(wt, git=git):
@@ -541,7 +574,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         catalogued = {p.parent.name for p in (root / "data" / "firmware").glob("*/firmware.md")}
         if dry_run:
             r.memory = {}
-            r.warnings.append("memory: dry-run, no reconciliation written")
+            r.dry_writes += _dry_run_memory(catalogued, ledger_path, now)
+            r.warnings.append("memory: dry-run, no reconciliation written (PR settlement not queried)")
         else:
             expired = memory.expire(path=ledger_path, now=now)
             state_fn = pr_state or (lambda ref: memory.gh_pr_state(ref, gh=gh_c))
@@ -586,6 +620,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                         r.extra_paths.append(p)
             except Exception as e:  # noqa: BLE001 — a report step must never abort the tick
                 r.warnings.append(f"data snapshot failed: {type(e).__name__}: {e}")
+        else:
+            import data_snapshot  # noqa: E402  (jr/ is already on sys.path)
+            today = now.strftime("%Y-%m-%d")
+            r.dry_writes += [{"path": p, "field": f"row {today}" if p.endswith(".jsonl") else "*", "value": None}
+                             for p in data_snapshot.snapshot_paths(today)]
 
         # 5. allocation — hourly: the gauge-driven A/B split, TILTED by demand; manual (--track):
         #    the override text. The demand steer (SPEC-demand-steering.md) is best-effort like the
@@ -635,7 +674,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         for stage in stages:
             res = stage(ctx)
             r.stages.append({"name": res.name, "paths": list(res.paths), "summary": res.summary,
-                             "needs_human": res.needs_human, "items": list(res.items), "review": list(res.review)})
+                             "needs_human": res.needs_human, "items": list(res.items), "review": list(res.review),
+                             "would_write": list(res.would_write) if dry_run else []})
             r.admitted += res.admitted
             for k, v in res.rejects.items():
                 r.rejects[k] = r.rejects.get(k, 0) + v
@@ -662,6 +702,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                                   now=now, repo_slug=slug, needs_human=r.needs_human,
                                   protection=protection, auto_merge=auto_merge, stages=r.stages)
             r.publish = res.as_dict()
+        if scratch is not None:
+            _dry_run_strays(r, baseline, scratch)
     except BudgetExceeded as e:
         r.aborted = f"budget: {e}"
     except TickAbort as e:
@@ -676,6 +718,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                     publish.cleanup_branch(r.publish["branch"], git=git)
             except Exception as e:  # noqa: BLE001 — cleanup must never eat the report
                 r.warnings.append(f"worktree cleanup failed: {type(e).__name__}: {e}")
+        if scratch is not None:
+            dry_run_tree.remove(scratch)
         if lock is not None:
             _release_tick_lock(lock)
         r.budget = budget.summary()
@@ -718,7 +762,8 @@ def stages_for(track: str | None, budget_units: int, only: list[str] | None = No
 def main(argv=None) -> int:
     signal.signal(signal.SIGTERM, _on_sigterm)
     ap = argparse.ArgumentParser(description="EspAtlas Jr hourly tick")
-    ap.add_argument("--dry-run", action="store_true", help="read-only: no worktree, no writes, no PR, no Telegram")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="read-only: stages run on a throwaway copy, would-be writes listed; no PR, no Telegram")
     ap.add_argument("--no-telegram", action="store_true")
     ap.add_argument("--max-calls", type=int, default=Budget().max_calls)
     ap.add_argument("--max-seconds", type=float, default=Budget().max_seconds)

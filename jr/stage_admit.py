@@ -256,7 +256,11 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     cat_token_sets = tools._catalogued_token_sets(ctx.root / "data" / "firmware")
     cat_ids = _catalogued_ids(led, ctx.now)
     paths, lines, admitted, rejects, needs_human = [], [], 0, {}, False
-    would_admit, decided, items, review = 0, 0, [], []
+    would_admit, decided, items, review, would_write = 0, 0, [], [], []
+
+    def would(path, field, value=None):
+        """Dry-run: a write a real run would make, for the tick report."""
+        would_write.append({"path": path, "field": field, "value": value})
 
     def reject(key):
         rejects[key] = rejects.get(key, 0) + 1
@@ -280,7 +284,9 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         reject(key)
         if pending_note and owner_repo != pending_note["key"][1]:
             pending_note["ttl"] = REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS)   # the note follows its repo's decision
-        if not ctx.dry_run:
+        if ctx.dry_run:
+            would(memory.LEDGER_RELPATH, f"by_id.{fid}", f"rejected ({key})")
+        else:
             memory.record_rejected(fid, owner_repo, reason,
                                    ttl_days=REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS),
                                    repo_id=repo_id, path=ctx.ledger_path, now=ctx.now)
@@ -338,7 +344,9 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
 
     def flush_note():
         nonlocal pending_note
-        if pending_note and not ctx.dry_run:
+        if pending_note and ctx.dry_run:
+            would(memory.LEDGER_RELPATH, f"by_id.{pending_note['key'][0]}", "seen")
+        elif pending_note:
             kid, krepo = pending_note["key"]
             memory.record_seen(kid, krepo, reason=f"resolved: {pending_note['repo']}",
                                ttl_days=pending_note["ttl"], path=ctx.ledger_path, now=ctx.now)
@@ -504,6 +512,11 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             lines.append(f"{out_id}: would admit{' (needs_human)' if res.get('needs_human') else ''}"
                          + (f" (submission #{issue})" if issue else ""))
             would_admit += 1
+            would(str(fmd.relative_to(ctx.root)), "*", out_id)
+            rdir = ctx.root / "data" / "recipes" / f"{rec['board']}__{out_id}"
+            if not (rdir / "recipe.md").exists():
+                would(str((rdir / "recipe.md").relative_to(ctx.root)), "*", f"{rec['board']}__{out_id}")
+            would(memory.LEDGER_RELPATH, f"by_id.{out_id}", "proposed")
             continue
         repo_url = rec["url"]
         # Coerce whatever GitHub actually returned; a missing forks_count stays None so the
@@ -573,4 +586,5 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     elif decided:
         summary = f"{decided} already decided, skipped"
     return tick.StageResult("admit", paths=paths, summary=summary, admitted=admitted,
-                            rejects=rejects, needs_human=needs_human, items=items, review=review)
+                            rejects=rejects, needs_human=needs_human, items=items, review=review,
+                            would_write=would_write)

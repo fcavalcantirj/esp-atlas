@@ -115,7 +115,9 @@ def test_dry_run_prints_gauge_allocation_and_nothing_to_do_and_writes_nothing(ca
     out = capsys.readouterr().out
     assert not r.aborted
     assert "jr-tick (dry-run)" in out and "boards 42.5%" in out
-    assert "boards 42.5% -> A0/B0 (no content stages registered)" in out and "nothing to do" in out
+    assert "boards 42.5% -> A0/B0 (no content stages registered)" in out
+    # a real tick always writes the day's trend snapshot, so the dry run says so instead of "nothing to do"
+    assert "no PR (dry-run)" in out and "would write" in out and "docs/telemetry/data-trend.jsonl[row 2026-09-05]" in out
     # read-only: no worktree, no add/commit/push, no PR, only read calls to gh
     assert all(c[0] not in ("worktree", "add", "commit", "push", "checkout") for c in norm(git))
     assert all(c[:2] in (("api", "rate_limit"), ("pr", "list"), ("api", "repos/o/r/rules/branches/main"),

@@ -167,6 +167,8 @@ def test_map_one_resolves_against_root_not_the_clone(root):
 def test_map_one_dry_run_writes_nothing_but_reports(root):
     r = sb.map_one("marauder", root=root, api=fake_api, raw=fake_raw, today="2026-09-07", dry_run=True)
     assert r["paths"] == [] and "m5cardputer__marauder" in r["would_write"]
+    assert "data/recipes/m5cardputer__marauder/recipe.md" in r["would_write_paths"]
+    assert "data/firmware/marauder/signals.json" in r["would_write_paths"]
     assert not (root / "data/firmware/marauder/signals.json").exists()
     assert not list((root / "data/recipes").iterdir())
 
@@ -234,6 +236,7 @@ def test_stage_run_dry_run_reads_the_network_charged_but_writes_nothing(root):
     c = ctx(root, dry_run=True, budget=b, counter=n)
     res = sb.run(c, budget=2, raw=lambda u: (n.__setitem__("raw", n["raw"] + 1), None)[1])
     assert res.paths == [] and "would write" in res.summary
+    assert {"path": "data/firmware/marauder/signals.json", "field": "*", "value": None} in res.would_write
     assert b.calls == n["api"] + n["raw"] >= 3
     assert not list((root / "data/recipes").iterdir()) and not (root / "data/firmware/marauder/signals.json").exists()
 

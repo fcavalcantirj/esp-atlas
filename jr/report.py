@@ -41,6 +41,7 @@ class TickReport:
     publish: dict | None = None                       # PublishResult.as_dict()
     budget: str = ""
     warnings: list = field(default_factory=list)      # dry-run preflight notes, never fatal
+    dry_writes: list = field(default_factory=list)    # dry-run: tick-owned would-be writes (ledger, trend), {"path","field","value"}
     aborted: str = ""                                 # non-empty → the tick stopped early, why
 
     @property
@@ -54,6 +55,11 @@ class TickReport:
             if p not in out:
                 out.append(p)
         return out
+
+    @property
+    def would_write(self) -> list[dict]:
+        """Dry-run: every write a real run would make — each stage's, then the tick's own."""
+        return [w for s in self.stages for w in s.get("would_write", [])] + list(self.dry_writes)
 
     @property
     def needs_human(self) -> bool:
@@ -95,7 +101,7 @@ def render_line(r: TickReport) -> str:
         pr_txt = f"PR {pr}" + (" · auto-merge" if r.publish.get("auto_merge") else f" · {r.publish.get('reason') or 'human merge'}")
     elif r.publish:
         pr_txt = f"no PR ({r.publish.get('reason') or 'nothing to publish'})"
-    elif r.paths:
+    elif r.paths or (r.dry_run and r.would_write):
         pr_txt = "no PR (dry-run)" if r.dry_run else "no PR"
     else:
         pr_txt = "nothing to do"
@@ -105,9 +111,20 @@ def render_line(r: TickReport) -> str:
         reval = " · revalidate " + ("ok" if r.revalidate.get("ok") else str(r.revalidate.get("status") or r.revalidate.get("skipped") or "failed"))
     warn = "".join(f" · ⚠ {w}" for w in r.warnings)
     stage_txt = "".join(f" · {s.get('name', 'stage')}: {s.get('summary', '')[:300]}" for s in r.stages if s.get("summary"))
+    if r.dry_run and r.would_write:
+        stage_txt += render_would_write(r.would_write)
     return (f"🤖 {head} {stamp}: boards {_pct(r.boards_pct)} (overall {_pct(r.overall_pct)}) · "
             f"{r.allocation or 'allocation n/a'} · admitted {r.admitted} · rejects {rej} · "
             f"{mem_txt}{guard_txt}{reval} · {pr_txt}{render_review_prs(r)}{stage_txt}{warn} · {r.budget}").rstrip(" ·")
+
+
+def render_would_write(writes: list[dict]) -> str:
+    """Dry-run: every would-be write, grouped by file — ` · would write N in M file(s): p[f1,f2], …`."""
+    by_path: dict = {}
+    for w in writes:
+        by_path.setdefault(w.get("path"), []).append(str(w.get("field")))
+    files = ", ".join(f"{p}[{','.join(dict.fromkeys(fields))}]" for p, fields in by_path.items())
+    return f" · would write {len(writes)} in {len(by_path)} file(s): {files}"
 
 
 def _paren(value: str, delta, fmt) -> str:

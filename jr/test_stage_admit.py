@@ -258,6 +258,11 @@ def test_dry_run_scores_and_reports_but_writes_nothing(root, monkeypatch):
     assert "would admit" in res.summary
     assert not (root / "data" / "firmware" / "newtool").exists()
     assert not (root / "jr" / "proposed_ledger.json").exists()   # memory untouched
+    writes = {(w["path"], w["field"]) for w in res.would_write}
+    assert ("data/firmware/newtool/firmware.md", "*") in writes
+    assert ("jr/proposed_ledger.json", "by_id.newtool") in writes
+    assert ("jr/proposed_ledger.json", "by_id.tiny") in writes      # the below-floor rejection a real run records
+    assert any(p.startswith("data/recipes/") and p.endswith("__newtool/recipe.md") for p, _ in writes)
 
 
 def test_repo_id_memory_hit_skips_before_fetch(root, monkeypatch):

@@ -148,6 +148,8 @@ def test_dry_run_scores_but_writes_nothing(root, monkeypatch):
     assert "newtool: would admit" in res.summary
     assert {p.name for p in (root / "data" / "firmware").iterdir()} == {"seed-original"}
     assert not root.joinpath("jr", "proposed_ledger.json").exists()
+    assert {(w["path"], w["field"]) for w in res.would_write} == {
+        ("data/firmware/newtool/firmware.md", "*"), ("jr/proposed_ledger.json", "by_id.newtool")}
 
 
 def test_authored_ids_are_recorded_proposed_in_the_ledger(root, monkeypatch):

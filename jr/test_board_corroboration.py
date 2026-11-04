@@ -300,6 +300,7 @@ class _Ctx:
         self.root = root
         self.now = datetime(2026, 11, 4, 12, tzinfo=timezone.utc)
         self.budget = _Budget()
+        self.dry_run = False
 
 
 def test_stage_flags_needs_human_cools_the_board_and_cites_the_conflict(tmp_path, monkeypatch):

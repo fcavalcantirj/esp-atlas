@@ -232,7 +232,15 @@ def run(ctx, budget: int, raw=None):
         rejects = _device_rejects(skipped)
         if len(skipped) > sum(rejects.values()):
             rejects["skipped_scoring"] = len(skipped) - sum(rejects.values())
-        return tick.StageResult("admit_topics", paths=[], summary=summary, admitted=0, rejects=rejects, review=review)
+        would_write = []
+        for sel in selected:
+            fid = sel["record"]["id"]
+            would_write += [{"path": f"data/firmware/{fid}/firmware.md", "field": "*", "value": fid},
+                            {"path": memory.LEDGER_RELPATH, "field": f"by_id.{fid}", "value": "proposed"}]
+        would_write += [{"path": memory.LEDGER_RELPATH, "field": f"by_id.{d['firmware_id']}",
+                         "value": f"rejected ({d['reason'].split(':')[0]})"} for d in drain.device_skips(skipped)]
+        return tick.StageResult("admit_topics", paths=[], summary=summary, admitted=0, rejects=rejects, review=review,
+                                would_write=would_write)
 
     fetch_meta = ctx.budget.wrap(drain.default_fetch_meta, "gh")
     try:
