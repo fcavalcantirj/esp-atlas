@@ -92,6 +92,8 @@ def gh(prs="[]", pr_files=PR_FILES):
             "topics": [], "homepage": None, "default_branch": "main", "stargazers_count": 30,
             "archived": False, "forks_count": 2, "id": 4242, "fork": False, "source": None,
             "parent": None, "pushed_at": "2026-09-01T00:00:00Z", "language": "C"})),
+        # The device-build evidence gate reads the tree before authoring: an Arduino sketch passes it.
+        ("api", "repos/n/newtool/git/trees/main?recursive=1"): (0, json.dumps({"tree": [{"path": "newtool.ino", "type": "blob"}]})),
         ("pr", "create"): (0, "https://github.com/o/r/pull/159\n"),
         ("pr", "merge"): (0, ""),
     })

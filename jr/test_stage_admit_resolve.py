@@ -15,7 +15,7 @@ import stage_admit
 import tick
 import tools
 from budget import Budget
-from test_stage_admit import NOW, _meta, root  # noqa: F401 — `root` is the shared tmp-tree fixture
+from test_stage_admit import DEVICE_TREE, NOW, _meta, root  # noqa: F401 — `root` is the shared tmp-tree fixture
 
 IBUTTON = {"fid": "ec0b5f11b7a6a85445a1d4dc5ad65508", "name": "IButton M5Stick C Plus2",
            "author": "geo_tp", "github": "https://github.com/geo-tp", "category": "stickc",
@@ -50,6 +50,8 @@ class FakeGh:
                                                                      "incomplete_results": False,
                                                                      "items": items}), stderr="")
         doc = {k.lower(): v for k, v in self.metas.items()}.get(a[1].lower())
+        if doc is None and "/git/trees/" in a[1]:
+            doc = DEVICE_TREE              # the device-build evidence gate passes: not under test here
         if doc is None:
             return SimpleNamespace(returncode=1, stdout="", stderr="404 not found")
         return SimpleNamespace(returncode=0, stdout=json.dumps(doc), stderr="")

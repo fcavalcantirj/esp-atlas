@@ -22,6 +22,7 @@ import re
 
 import board_alias
 import derive
+import device_evidence
 import launcher_resolve
 import memory
 import scorer
@@ -50,6 +51,9 @@ REASON_HELP = {
     "already_catalogued": "this repository is already in the catalog",
     "no_board_evidence": "name a catalogued board in the Boards line (esp-atlas.com/boards), or ship release assets / a platformio.ini that name one",
     "archived": "archived repositories are not catalogued",
+    device_evidence.NOT_DEVICE_FIRMWARE: "a firmware must build for an ESP: an espressif32 platformio.ini, an ESP-IDF "
+                                         "project, an Arduino sketch or a release .bin (companion apps and servers are not firmware)",
+    device_evidence.EVIDENCE_UNREADABLE: "the repository's build files could not be read; it is re-checked automatically",
     "repo_unresolved": "the repository could not be read (private, renamed or missing)",
     "invalid": "the issue must contain a github.com/owner/repo URL",
 }
@@ -124,6 +128,23 @@ def _derived_board(ctx, owner_repo: str, atlas: dict, raw=None) -> tuple[str | N
     return best[0][0], dict(best[0][1][0])
 
 
+def _gh_api(ctx):
+    """api(path) -> parsed JSON through ctx.gh (counted); a failed call raises with gh's stderr, so
+    derive._Calls can tell a 404 (a fact) from an outage (unknown)."""
+    def api(path):
+        p = ctx.gh("api", path)
+        if getattr(p, "returncode", 1) != 0:
+            raise RuntimeError((getattr(p, "stderr", "") or "gh api failed").strip()[:200])
+        return json.loads(p.stdout or "null")
+    return api
+
+
+def _device_evidence(ctx, owner_repo: str, ref: str | None, raw=None) -> dict:
+    """jr/device_evidence.check through the tick's counted gh and raw reader."""
+    return device_evidence.check(owner_repo, api=_gh_api(ctx), raw=ctx.budget.wrap(raw or derive.default_raw, "raw"),
+                                 ref=ref)
+
+
 def _answer(ctx, slug: str, issue: int, text: str, close: bool = True) -> None:
     """Comment the verdict on the submission issue and close it. Dry-run: nothing."""
     if ctx.dry_run or not issue:
@@ -153,6 +174,8 @@ REJECT_TTLS = {
     launcher_resolve.NO_SOURCE_REPO: memory.UNRESOLVED_REJECT_DAYS,
     "archived": memory.ARCHIVED_REJECT_DAYS,
     "below_floor": memory.FLOOR_REJECT_DAYS,
+    device_evidence.NOT_DEVICE_FIRMWARE: memory.NO_BUILD_SIGNAL_DAYS,
+    device_evidence.EVIDENCE_UNREADABLE: memory.UNRESOLVED_REJECT_DAYS,
 }
 
 
@@ -454,6 +477,24 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             lines.append(f"{out_id}: record exists, nothing written")
             if issue:
                 _answer(ctx, slug, issue, _verdict_text(f"already_catalogued: {out_id}", False, False))
+            continue
+        # Device-build evidence (jr/device_evidence.py, review finding 3): a record says "flash this
+        # onto an ESP", so the repo itself must build for one. Topics/description naming a board
+        # are not enough — rebelthor/warble, a Go server, passed every gate above on them alone.
+        if ctx.budget.remaining_calls() < device_evidence.MAX_CALLS:
+            lines.append(f"stopped before {owner_repo}'s build evidence: tick budget low "
+                         f"({ctx.budget.remaining_calls()} calls left)")
+            break
+        try:
+            ev = _device_evidence(ctx, owner_repo, meta.get("default_branch"), raw=raw)
+        except BudgetExceeded as e:
+            lines.append(f"stopped during {owner_repo}: {e}")
+            break
+        if not ev["ok"]:
+            reason = device_evidence.reject_reason(ev)
+            note(skip_reject(out_id, owner_repo, reason, repo_id, issue=issue))
+            if issue:
+                _answer(ctx, slug, issue, _verdict_text(reason, False, False))
             continue
         if res.get("needs_human"):
             needs_human = True

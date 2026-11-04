@@ -68,15 +68,29 @@ def root(tmp_path):
     return tmp_path
 
 
+# The device-build evidence gate (jr/device_evidence.py) reads every candidate's tree: unless a test
+# serves its own, a repo has an Arduino sketch, so the gates under test here are the only ones that bite.
+DEVICE_TREE = {"tree": [{"path": "src/main.ino", "type": "blob"}], "truncated": False}
+
+
+def _reply(doc, path):
+    """A fake `gh api` reply: a missing doc is 404 (a tree defaults to DEVICE_TREE), a doc
+    {"__status__": msg} a failed call with that stderr."""
+    if doc is None and "/git/trees/" in path:
+        doc = DEVICE_TREE
+    if doc is None:
+        return SimpleNamespace(returncode=1, stdout="", stderr="404 not found")
+    if isinstance(doc, dict) and "__status__" in doc:
+        return SimpleNamespace(returncode=1, stdout="", stderr=doc["__status__"])
+    return SimpleNamespace(returncode=0, stdout=json.dumps(doc), stderr="")
+
+
 def _ctx(root, dry_run=False, budget=None, metas=None):
     metas = metas or {}
     budget = budget or Budget(clock=lambda: 0.0)
 
     def gh(*a):
-        doc = metas.get(a[1])
-        if doc is None:
-            return SimpleNamespace(returncode=1, stdout="", stderr="404 not found")
-        return SimpleNamespace(returncode=0, stdout=json.dumps(doc), stderr="")
+        return _reply(metas.get(a[1]), a[1])
 
     return tick.TickContext(root=root, ledger_path=root / "jr" / "proposed_ledger.json", now=NOW,
                             gh=budget.wrap(gh), git=lambda *a: None,
@@ -286,9 +300,7 @@ def _ctx_sub(root, issues, metas=None, api_docs=None, dry_run=False, budget=None
         doc = metas.get(a[1]) if len(a) > 1 else None
         if doc is None:
             doc = api_docs.get(a[1]) if len(a) > 1 else None
-        if doc is None:
-            return SimpleNamespace(returncode=1, stdout="", stderr="404 not found")
-        return SimpleNamespace(returncode=0, stdout=json.dumps(doc), stderr="")
+        return _reply(doc, a[1] if len(a) > 1 else "")
     ctx = tick.TickContext(root=root, ledger_path=root / "jr" / "proposed_ledger.json", now=NOW,
                            gh=budget.wrap(gh), git=lambda *a: None, budget=budget, dry_run=dry_run, env={})
     ctx.calls = calls   # type: ignore[attr-defined]
@@ -337,6 +349,7 @@ def test_submission_without_a_hint_uses_the_repo_build_files_as_evidence(root, m
                     {"name": "relwriter-v1.2.0-m5cardputer.bin", "size": 10, "browser_download_url": "https://github.com/s/relwriter/releases/download/v1/relwriter-v1.2.0-m5cardputer.bin"},
                     {"name": "relwriter-v1.2.0-m5stick_cplus2.bin", "size": 10, "browser_download_url": "https://github.com/s/relwriter/releases/download/v1/relwriter-v1.2.0-m5stick_cplus2.bin"}]},
                 "repos/s/relwriter/git/trees/main?recursive=1": {"tree": [{"path": "README.md", "type": "blob"}], "truncated": False}}
+    api_docs["repos/s/relwriter/releases?per_page=10"] = [api_docs["repos/s/relwriter/releases/latest"]]   # the evidence gate's read
     ctx = _ctx_sub(root, issues, metas, api_docs)
     res = stage_admit.run(ctx, budget=1, raw=lambda u: None)          # no network: raw files absent
     assert res.admitted == 1 and "relwriter: +record (submission #8)" in res.summary
