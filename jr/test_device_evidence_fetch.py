@@ -31,6 +31,7 @@ def why(res):
     return dev.review_note(res)["why"]
 
 
+@pytest.mark.sandbox
 def test_a_valid_image_behind_a_redirect_is_esp_target(https_server):
     https_server.routes["/o/r/releases/download/v1/fw.bin"] = fake_https.redirect("https://cdn.test/blob")
     https_server.routes["/blob"] = fake_https.exact(VALID_S3_IMAGE)
@@ -38,6 +39,7 @@ def test_a_valid_image_behind_a_redirect_is_esp_target(https_server):
     assert res["ok"] is True and res["verdict"] == dev.ESP_TARGET and res["kind"] == "release_bin"
 
 
+@pytest.mark.sandbox
 def test_a_content_length_claiming_large_with_a_small_valid_image_is_esp_target(https_server):
     https_server.routes["/o/r/releases/download/v1/fw.bin"] = fake_https.body(VALID_S3_IMAGE, content_length=10**9)
     assert gate(https_server)["verdict"] == dev.ESP_TARGET
@@ -115,6 +117,7 @@ def test_a_validator_crash_timeout_or_garbage_needs_review(https_server, tmp_pat
     assert res["verdict"] == dev.NEEDS_REVIEW and "image validator sandbox" in why(res)
 
 
+@pytest.mark.sandbox
 def test_a_validator_that_opens_a_socket_never_reaches_esp_target(https_server, tmp_path, monkeypatch):
     """Were the child networked, this validator would phone home and answer esp_target."""
     _validator(tmp_path, monkeypatch, "import socket; socket.create_connection(('93.184.215.14', 443), 1); "

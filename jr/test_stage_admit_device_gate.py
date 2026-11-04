@@ -65,7 +65,8 @@ EVIDENCE_SHAPES = {
 }
 
 
-@pytest.mark.parametrize("shape", sorted(EVIDENCE_SHAPES))
+@pytest.mark.parametrize("shape", [pytest.param(s, marks=pytest.mark.sandbox) if s == "release_bin" else s
+                                   for s in sorted(EVIDENCE_SHAPES)])  # release_bin runs the real image sandbox
 def test_repo_with_a_device_build_signal_is_admitted(root, monkeypatch, shape):
     api_docs, files = EVIDENCE_SHAPES[shape]
     monkeypatch.setattr(device_evidence, "default_fetch", lambda url: safe_fetch.Fetched(VALID_S3_IMAGE, url=url) if url == "https://x/tool.bin"
@@ -180,6 +181,7 @@ def test_needs_review_submission_is_answered_with_how_to_state_the_target(root, 
     assert "owner reviews it" in answer and "sketch.yaml" in answer and "CONFIG_IDF_TARGET" in answer
 
 
+@pytest.mark.sandbox
 def test_the_asset_get_of_a_release_bin_is_charged_to_the_tick_budget(root, monkeypatch):
     heads = []
     monkeypatch.setattr(device_evidence, "default_fetch", lambda url: heads.append(url) or safe_fetch.Fetched(VALID_S3_IMAGE, url=url))

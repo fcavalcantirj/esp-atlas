@@ -54,7 +54,8 @@ SHAPES = {
 }
 
 
-@pytest.mark.parametrize("shape", sorted(SHAPES))
+@pytest.mark.parametrize("shape", [pytest.param(s, marks=pytest.mark.sandbox) if s == "release_bin" else s
+                                   for s in sorted(SHAPES)])  # release_bin runs the real image sandbox
 def test_score_candidates_passes_a_repo_with_a_device_build_signal(shape):
     entry = _topic_entry("Zap Cardputer", "https://github.com/z/zap", "A Cardputer tool")
     meta = _meta("z/zap", stars=40, description="A Cardputer tool", rid=5)

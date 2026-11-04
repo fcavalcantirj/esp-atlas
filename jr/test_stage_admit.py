@@ -346,6 +346,7 @@ def test_submission_with_a_board_hint_is_admitted_first_and_answered(root, monke
     assert ctx.calls[0][:2] == ("api", ISSUES_PATH)                       # listed before any meta fetch
 
 
+@pytest.mark.sandbox
 def test_submission_without_a_hint_uses_the_repo_build_files_as_evidence(root, monkeypatch):
     monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
     issues = [_issue(8, "https://github.com/s/relwriter")]

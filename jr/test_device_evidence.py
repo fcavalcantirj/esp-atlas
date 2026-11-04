@@ -126,6 +126,7 @@ def test_ino_with_sketch_yaml_esp32_fqbn_is_esp_target():
     assert res["url"] == "https://github.com/o/r/blob/main/Sketch/sketch.yaml#L1"
 
 
+@pytest.mark.sandbox
 def test_release_bin_with_a_valid_esp32s3_image_is_esp_target():
     res, log = check(tree=["README.md"], releases=release("fw-cardputer.bin"),
                      assets={asset_url("fw-cardputer.bin"): VALID_S3_IMAGE})
@@ -217,6 +218,7 @@ def test_a_non_esp_fqbn_does_not_name_an_esp():
 
 # --- release_bin: the whole image, validated offline (jr/esp_image.py) ---------------------------------
 
+@pytest.mark.sandbox
 def test_a_bare_esp_image_header_is_no_longer_enough():
     """The old gate passed on 16 bytes (0xE9 + chip id 9). A header is not an image: review."""
     res, _ = check(tree=["README.md"], releases=release("fw.bin"), assets={asset_url("fw.bin"): VALID_S3_IMAGE[:16]})
@@ -224,6 +226,7 @@ def test_a_bare_esp_image_header_is_no_longer_enough():
     assert "truncated" in dev.review_note(res)["why"]
 
 
+@pytest.mark.sandbox
 @pytest.mark.parametrize("fixture,why", [("bad_checksum.bin", "checksum mismatch"), ("bad_sha256.bin", "SHA-256 mismatch"),
                                          ("corrupt_after_first_segment.bin", "checksum mismatch"),
                                          ("merged_bootloader_0x0.bin", "merged flash image"),
@@ -263,6 +266,7 @@ def test_a_release_bin_asset_that_404s_needs_review():
     assert res["verdict"] == dev.NEEDS_REVIEW and "not readable" in dev.review_note(res)["why"]
 
 
+@pytest.mark.sandbox
 def test_the_probe_prefers_the_app_image_over_a_partition_table():
     res, log = check(tree=["README.md"], releases=release("partitions.bin", "app.bin"),
                      assets={asset_url("partitions.bin"): b"\xaa\x50" + bytes(14), asset_url("app.bin"): VALID_S3_IMAGE})
