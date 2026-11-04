@@ -542,12 +542,21 @@ FIXTURE_ID = "zzz-test-fixture-drain-firmware"
 
 
 @pytest.fixture
-def cleanup_fixture():
-    yield
-    shutil.rmtree(tools.FIRMWARE_DIR / FIXTURE_ID, ignore_errors=True)
-    for rdir in (REPO / "data/recipes").glob(f"*__{FIXTURE_ID}"):
-        shutil.rmtree(rdir, ignore_errors=True)
-    # No run-case to unwind: authoring no longer edits apps/core/tests/test_coverage_matrix.py.
+def tmp_atlas(tmp_path, monkeypatch):
+    """A throwaway copy of data/ that authoring writes into and the real guard validates — a test
+    must never write into the real atlas (a killed run used to leave this fixture in data/).
+    ESP_ATLAS_REPO_ROOT points the guard subprocess at the copy; scripts/, apps/ and schema/
+    are read-only, so they're symlinked. Returns the copy's root."""
+    shutil.copytree(REPO / "data", tmp_path / "data")
+    for d in ("scripts", "apps", "schema"):
+        (tmp_path / d).symlink_to(REPO / d)
+    monkeypatch.setenv("ESP_ATLAS_REPO_ROOT", str(tmp_path))
+    monkeypatch.setattr(tools, "REPO", tmp_path)
+    monkeypatch.setattr(tools, "FIRMWARE_DIR", tmp_path / "data" / "firmware")
+    monkeypatch.setattr(tools, "BOARDS_DIR", tmp_path / "data" / "boards")
+    monkeypatch.setattr(tools, "SOCS_DIR", tmp_path / "data" / "socs")
+    monkeypatch.setattr(tools, "MODULES_DIR", tmp_path / "data" / "modules")
+    return tmp_path
 
 
 def _fixture_selected(**overrides):
@@ -565,7 +574,7 @@ def _fixture_selected(**overrides):
              "description": "A fixture firmware for drain tests."}]
 
 
-def test_author_selected_writes_schema_valid_firmware_and_recipe(cleanup_fixture):
+def test_author_selected_writes_schema_valid_firmware_and_recipe(tmp_atlas):
     authored, dropped = drain.author_selected(_fixture_selected(), existing_ids=set())
 
     assert dropped == []
@@ -574,13 +583,15 @@ def test_author_selected_writes_schema_valid_firmware_and_recipe(cleanup_fixture
     jsonschema.validate(fm, FIRMWARE_SCHEMA)
     assert fm["category"] == "multi"
     assert fm["socs"] == ["esp32-s3"]
-    rc = tools._frontmatter(REPO / "data/recipes" / f"m5cardputer__{FIXTURE_ID}" / "recipe.md")
+    rc = tools._frontmatter(tmp_atlas / "data/recipes" / f"m5cardputer__{FIXTURE_ID}" / "recipe.md")
     jsonschema.validate(rc, RECIPE_SCHEMA)
     assert rc["firmware"] == FIXTURE_ID
     assert rc["board"] == "m5cardputer"
+    assert not (REPO / "data/firmware" / FIXTURE_ID).exists()      # never the real atlas
+    assert not list((REPO / "data/recipes").glob(f"*__{FIXTURE_ID}"))
 
 
-def test_author_selected_stamps_popularity_block_with_citation(cleanup_fixture):
+def test_author_selected_stamps_popularity_block_with_citation(tmp_atlas):
     """(a) Authoring persists a dated popularity{stars,forks,downloads,as_of} snapshot from the
     candidate's repo stars/forks PLUS the launcher's own download count — the fourth floor
     signal (SPEC-firmware-floor.md), threaded through so a record that clears the floor only on
@@ -599,7 +610,7 @@ def test_author_selected_stamps_popularity_block_with_citation(cleanup_fixture):
                for s in fm["sources"])
 
 
-def test_author_selected_stamps_editorial_home_and_clears_the_offline_audit(cleanup_fixture):
+def test_author_selected_stamps_editorial_home_and_clears_the_offline_audit(tmp_atlas):
     """REGRESSION (floor-enforcement drift, fixed 2026-10-08): a RogueDuck-class candidate --
     few stars, 0 forks, no qualifying downloads, but a real independent editorial homepage --
     clears clears_popularity_floor() at admit (score_candidates) because meta['homepage'] is
@@ -634,12 +645,12 @@ def test_author_selected_stamps_editorial_home_and_clears_the_offline_audit(clea
                                 "editorial_home": "https://ethicalhackersden.org",
                                 "as_of": "2026-09-01"}
 
-    report = firmware_floor_audit.audit()
+    report = firmware_floor_audit.audit(tmp_atlas / "data")
     assert FIXTURE_ID not in {e["id"] for e in report["flagged"]}
     assert FIXTURE_ID not in {e["id"] for e in report["unstamped"]}
 
 
-def test_author_selected_dedups_against_existing_ids(cleanup_fixture):
+def test_author_selected_dedups_against_existing_ids(tmp_atlas):
     authored, dropped = drain.author_selected(_fixture_selected(), existing_ids={FIXTURE_ID})
 
     assert authored == []
@@ -648,7 +659,7 @@ def test_author_selected_dedups_against_existing_ids(cleanup_fixture):
     assert not (tools.FIRMWARE_DIR / FIXTURE_ID).exists()
 
 
-def test_author_selected_drops_and_cleans_up_on_guard_red(cleanup_fixture):
+def test_author_selected_drops_and_cleans_up_on_guard_red(tmp_atlas):
     selected = _fixture_selected(category="not-a-real-category")
 
     authored, dropped = drain.author_selected(selected, existing_ids=set())
@@ -657,10 +668,10 @@ def test_author_selected_drops_and_cleans_up_on_guard_red(cleanup_fixture):
     assert dropped[0]["id"] == FIXTURE_ID
     assert "guard_red" in dropped[0]["reason"]
     assert not (tools.FIRMWARE_DIR / FIXTURE_ID).exists()
-    assert not list((REPO / "data/recipes").glob(f"*__{FIXTURE_ID}"))
+    assert not list((tmp_atlas / "data/recipes").glob(f"*__{FIXTURE_ID}"))
 
 
-def test_author_selected_second_candidate_still_authored_after_first_is_dropped(cleanup_fixture):
+def test_author_selected_second_candidate_still_authored_after_first_is_dropped(tmp_atlas):
     """A guard-red candidate must not poison the rest of the batch."""
     bad = _fixture_selected(category="not-a-real-category")[0]
     good = _fixture_selected()[0]
@@ -673,7 +684,7 @@ def test_author_selected_second_candidate_still_authored_after_first_is_dropped(
     assert dropped[0]["reason"].startswith("guard_red")
 
 
-def test_author_selected_reports_author_error_without_touching_guard(monkeypatch, cleanup_fixture):
+def test_author_selected_reports_author_error_without_touching_guard(monkeypatch, tmp_atlas):
     """author_firmware_and_recipes() itself can refuse (e.g. no catalogued board with a known
     soc) — that must be reported as author_error and never even reach run_guard()."""
     monkeypatch.setattr(tools, "author_firmware_and_recipes",
@@ -792,7 +803,7 @@ def test_default_fetch_meta_checks_at_most_the_two_manifest_files(monkeypatch):
 
 # ─────────────────────────── run_drain (full pipeline, mocked I/O) ───────────────────────────
 
-def test_run_drain_full_pipeline_authors_a_clean_candidate(cleanup_fixture):
+def test_run_drain_full_pipeline_authors_a_clean_candidate(tmp_atlas):
     entry = {
         "name": "Zzzuniq Sentinelprobe Gadget", "description": "WiFi deauther and packet sniffer gadget.",
         "category": "cardputer", "github": f"https://github.com/octocat/{FIXTURE_ID}", "download": 777,
@@ -828,7 +839,7 @@ def test_run_drain_reports_skips_and_authors_nothing_when_catalog_is_all_noise()
     assert report["guard"]["ok"] is True
 
 
-def test_run_drain_skips_a_candidate_already_proposed_in_an_injected_ledger(tmp_path, cleanup_fixture):
+def test_run_drain_skips_a_candidate_already_proposed_in_an_injected_ledger(tmp_path, tmp_atlas):
     """A second run within the same review window (same ledger, unmerged) must NOT re-author an
     id it already proposed — the end-to-end proof of deliverable 3."""
     entry = {
