@@ -338,3 +338,14 @@ def test_pr_body_lists_corroboration_and_never_cites_a_toolchain_as_the_written_
     assert f"`usb_serial` via {murl}" not in body
     assert f"manifest ch340 corroborates {murl}" in body
     assert "corroboration only" in body
+
+
+def test_standalone_lane_names_a_conflict_even_when_nothing_was_backfilled(tmp_path, monkeypatch, capsys):
+    path = _setup(tmp_path, monkeypatch, "fixture-main", ard_key="fixture_ch340")
+    fetch = _fetcher({_vendor("fixture-main"): VENDOR_PAGE_CP2102N, ba.BOARDS_TXT_URL: BOARDS_TXT})
+    out = bb.main(data_root=tmp_path, fetch=fetch, today=TODAY)
+    assert out["pr"] is None
+    printed = capsys.readouterr().out
+    assert "1 needing review" in printed
+    assert f"fixture-main: usb_serial needs_review (board cp2102n; boards_txt ch340 conflicts {ba.BOARDS_TXT_URL})" in printed
+    assert path.read_text().count("usb_serial") == 0

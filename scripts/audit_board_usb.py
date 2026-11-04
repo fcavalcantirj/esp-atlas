@@ -58,14 +58,20 @@ _TOOLCHAIN_URL_RE = re.compile(
 
 
 def audit(data_dir=None, fetch=None) -> dict:
-    """{"entries": [...], "counts": {field: {class: n}}} over every board's existing usb_serial /
-    download_mode. `fetch(url) -> {"ok", "text"}` reads the pinned toolchain sources (None =
+    """{"entries": [...], "unreadable": [paths], "counts": {field: {class: n}}} over every board's
+    existing usb_serial / download_mode (a board.md whose frontmatter cannot be parsed is listed
+    under "unreadable", never fatal). `fetch(url) -> {"ok", "text"}` reads the pinned toolchain sources (None =
     offline, citations only)."""
     root = Path(data_dir) if data_dir is not None else DATA_DIR
     fetch = _memo(fetch) if fetch is not None else None
-    report: dict = {"entries": [], "counts": {f: {c: 0 for c in CLASSES} for f in AUDITED_FIELDS}}
+    report: dict = {"entries": [], "unreadable": [],
+                    "counts": {f: {c: 0 for c in CLASSES} for f in AUDITED_FIELDS}}
     for path in sorted(root.glob("boards/*/*/board.md")):
-        fm, _ = parse_frontmatter(path)
+        try:
+            fm, _ = parse_frontmatter(path)
+        except (ValueError, OSError):
+            report["unreadable"].append(str(path))
+            continue
         fm = fm or {}
         for field in AUDITED_FIELDS:
             if not board_backfill._is_present(fm.get(field)):
@@ -134,6 +140,7 @@ def render(report: dict) -> str:
         if detail:
             line += f"  ({'; '.join(detail)})"
         lines.append(line)
+    lines += [f"unreadable  {p}" for p in report["unreadable"]]
     lines.append("")
     for field, counts in report["counts"].items():
         lines.append(f"{field}: " + ", ".join(f"{c} {counts[c]}" for c in CLASSES))

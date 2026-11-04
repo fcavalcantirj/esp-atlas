@@ -102,7 +102,7 @@ def test_download_mode_is_never_checked_against_a_toolchain(tmp_path, monkeypatc
 def test_each_pinned_source_is_fetched_once_for_the_whole_run(tmp_path, monkeypatch):
     log: list = []
     audit.audit(_tree(tmp_path, monkeypatch), fetch=_fetch(log))
-    assert log.count(ba.BOARDS_TXT_URL) <= 1
+    assert log.count(ba.BOARDS_TXT_URL) == 1
     assert log.count(bm.manifest_url("fixture_ch340")) == 1
 
 
@@ -140,3 +140,23 @@ def test_main_json_is_the_report(tmp_path, monkeypatch, capsys):
     data = json.loads(capsys.readouterr().out)
     assert data["counts"]["usb_serial"][audit.CONFLICT] == 1
     assert len(data["entries"]) == 8
+
+
+def test_a_board_with_unreadable_frontmatter_is_listed_not_fatal(tmp_path, monkeypatch, capsys):
+    root = _tree(tmp_path, monkeypatch)
+    broken = root / "boards" / "fixture" / "broken-board"
+    broken.mkdir()
+    (broken / "board.md").write_text("no frontmatter here\n")
+    report = audit.audit(root, fetch=None)
+    assert report["unreadable"] == [str(broken / "board.md")]
+    assert audit.main(["--data-dir", str(root), "--offline"]) == 0
+    assert "unreadable" in capsys.readouterr().out
+
+
+def test_a_board_without_a_soc_is_classified_from_citations_alone(tmp_path, monkeypatch):
+    root = _tree(tmp_path, monkeypatch)
+    path = root / "boards" / "fixture" / "pio-board" / "board.md"
+    path.write_text(path.read_text().replace("soc: esp32\n", ""))
+    by = _by(audit.audit(root, fetch=_fetch()))
+    assert by[("pio-board", "usb_serial")]["checks"] == []
+    assert by[("pio-board", "usb_serial")]["class"] == audit.TOOLCHAIN_CORROBORATION

@@ -650,8 +650,12 @@ def main(run=run, git=default_git, gh=default_gh, now: datetime | None = None,
          data_root: Path | None = None, fetch=default_fetch, today: str | None = None) -> dict:
     report = run(data_root=data_root, fetch=fetch, today=today)
     if not report["backfilled"]:
+        review = [e for e in report["skipped"] if e.get("needs_review")]
         print(f"jr-board-backfill: nothing to backfill — no board fields grounded "
-              f"({len(report['skipped'])} skipped)")
+              f"({len(report['skipped'])} skipped, {len(review)} needing review)")
+        for e in review:  # a conflict opens no PR here, so a human must see it in the output
+            for note in board_corroboration.describe(e["corroboration"]):
+                print(f"  {e['board_id']}: {note}")
         return {"report": report, "pr": None}
     pr = open_backfill_pr(report, git=git, gh=gh, now=now)
     link = pr.get("pr_url") or "(PR creation failed)"
