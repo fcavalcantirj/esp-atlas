@@ -560,6 +560,10 @@ def pr_body(report: dict) -> str:
         tag = " · partial" if e.get("partial") else ""
         got = ", ".join(f"`{f}`" for f in e.get("written", []))
         line = f"- `{e['board_id']}` — {got}{tag} — {e.get('url', '')}"
+        others = [f"`{f}` via {u}" for f, u in (e.get("citations") or {}).items()
+                  if u != e.get("url")]
+        if others:
+            line += f" ({'; '.join(others)})"
         if e.get("omitted"):
             line += f" (omitted: {', '.join(e['omitted'])})"
         lines.append(line)
@@ -580,7 +584,8 @@ def pr_body(report: dict) -> str:
     lines += [
         "",
         "Cite-or-omit STRICTLY: every written field carries its own `{field,url,verified}` "
-        "citation to the board's official Espressif user guide; anything the doc did not "
+        "citation to its source — the board's official vendor doc, or its PlatformIO "
+        "espressif32 manifest at a pinned commit; anything the source did not "
         "explicitly state was OMITTED (a wrong download-mode step is safety-critical). "
         "No LLM, no API key — extraction is regex/text over the fetched doc.",
         "",

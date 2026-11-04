@@ -123,3 +123,14 @@ def test_skip_line_carries_per_field_reasons(tmp_path, monkeypatch):
 def test_cooldown_file_is_tick_bookkeeping():
     assert board_cooldown.RELPATH == "jr/board_cooldown.json"
     assert tick._is_bookkeeping(board_cooldown.RELPATH)
+
+
+def test_no_soc_skip_is_not_cooled_because_no_source_was_tried(tmp_path, monkeypatch):
+    _mk_boards(tmp_path, ["b1"])
+
+    def fake_bb(path, data_root, fetch, today):
+        return {"board_id": "b1", "status": "skipped", "reason": "no-soc", "url": None}
+    monkeypatch.setattr(board_backfill, "backfill_board", fake_bb)
+    res = _tick(tmp_path, T0)
+    assert board_cooldown.RELPATH not in res.paths
+    assert "cooled" not in res.summary

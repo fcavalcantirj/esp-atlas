@@ -24,6 +24,9 @@ import board_cooldown
 DEFAULT_BUDGET = 4
 CALLS_PER_BOARD = 2        # the vendor user guide + the PlatformIO manifest
 SECONDS_PER_BOARD = 20.0   # two fetches + parse
+# Skips where every source was actually tried and failed. A no-soc skip fetched nothing: it is
+# fixed by editing the record, so it must not wait out a cooldown.
+COOLDOWN_REASONS = ("doc-unreachable", "nothing-groundable")
 
 
 def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
@@ -82,9 +85,10 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
         else:
             skipped += 1
             lines.append(_skip_line(entry))
-            board_cooldown.record(cooldown, path.parent.name, entry.get("reason", ""),
-                                  entry.get("field_reasons") or {}, now=ctx.now)
-            cooled += 1
+            if entry.get("reason") in COOLDOWN_REASONS:
+                board_cooldown.record(cooldown, path.parent.name, entry["reason"],
+                                      entry.get("field_reasons") or {}, now=ctx.now)
+                cooled += 1
 
     if cooled:
         board_cooldown.save(cooldown, cooldown_path, now=ctx.now)

@@ -256,3 +256,14 @@ def test_vendor_reason_separates_a_topic_never_mentioned_from_one_no_pattern_mat
     entry2 = bb.backfill_board(path2, tmp_path, fetch2, TODAY)
     assert entry2["field_reasons"]["usb_serial"]["vendor"] == bm.FIELD_ABSENT
     assert entry2["field_reasons"]["download_mode"]["vendor"] == bm.FIELD_ABSENT
+
+
+def test_standalone_pr_body_names_the_manifest_citation(tmp_path, monkeypatch):
+    path = _setup(tmp_path, monkeypatch, "fixture-body", "fixture_native")
+    murl = bm.manifest_url("fixture_native")
+    fetch = _fetcher({_vendor_url("fixture-body", "esp32-s3"): VENDOR_PAGE_NO_USB,
+                      murl: _raw("native_usb_s3")})
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+    body = bb.pr_body({"backfilled": [entry], "skipped": [], "needs_doc_url": [], "today": TODAY})
+    assert f"`usb_serial` via {murl}" in body
+    assert "PlatformIO" in body
