@@ -870,6 +870,16 @@
       "status": "rejected",
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
     },
+    "bus-aunty-mini": {
+      "expires": "2026-12-04T19:00:59.711024+00:00",
+      "id": "bus-aunty-mini",
+      "pr_ref": null,
+      "reason": "below_floor: 8 stars / 2 forks",
+      "repo": "awesomelionel/bus-aunty-mini",
+      "repo_id": 1354875275,
+      "status": "rejected",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
+    },
     "bus-pirate-cardputer-adv-deepseek": {
       "expires": "2026-11-07T17:00:59.604583+00:00",
       "id": "bus-pirate-cardputer-adv-deepseek",
@@ -4132,6 +4142,15 @@
       "status": "rejected",
       "timestamp": "2026-11-04T00:00:59.597130+00:00"
     },
+    "launcher-0db638a89b11e7027f6f04313943e92f": {
+      "expires": "2026-11-11T19:00:59.711024+00:00",
+      "id": "launcher-0db638a89b11e7027f6f04313943e92f",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'arsial user:arsial'",
+      "repo": "launcher:0db638a89b11e7027f6f04313943e92f",
+      "status": "rejected",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
+    },
     "launcher-0f09adafd7adf776632c2b2eb48ccb12": {
       "expires": "2026-11-10T23:00:59.739871+00:00",
       "id": "launcher-0f09adafd7adf776632c2b2eb48ccb12",
@@ -4177,6 +4196,15 @@
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
+    "launcher-200c164bf2eb0580d08e36bc257689b3": {
+      "expires": "2026-11-11T19:00:59.711024+00:00",
+      "id": "launcher-200c164bf2eb0580d08e36bc257689b3",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'echos3r xiaozhi voice assistant user:m5stack'",
+      "repo": "launcher:200c164bf2eb0580d08e36bc257689b3",
+      "status": "rejected",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
+    },
     "launcher-2124f637db75857c962f9097575271f4": {
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-2124f637db75857c962f9097575271f4",
@@ -4195,6 +4223,15 @@
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
+    "launcher-2548946a6457aaec0fdb7586e1eec770": {
+      "expires": "2026-11-11T19:00:59.711024+00:00",
+      "id": "launcher-2548946a6457aaec0fdb7586e1eec770",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'aruce user:bynever'",
+      "repo": "launcher:2548946a6457aaec0fdb7586e1eec770",
+      "status": "rejected",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
+    },
     "launcher-2a79e3af332931b6e2ec802755c6726b": {
       "expires": "2026-11-11T00:00:59.597130+00:00",
       "id": "launcher-2a79e3af332931b6e2ec802755c6726b",
@@ -4212,6 +4249,15 @@
       "repo": "launcher:35b809ece6e36393c5e963a4257bf11d",
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
+    },
+    "launcher-37d482c7364519ecac63b03addf68900": {
+      "expires": "2026-11-11T19:00:59.711024+00:00",
+      "id": "launcher-37d482c7364519ecac63b03addf68900",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'echos3r usb uac user:m5stack'",
+      "repo": "launcher:37d482c7364519ecac63b03addf68900",
+      "status": "rejected",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
     "launcher-3d40af9dec44d395b6056fda4de43191": {
       "expires": "2026-12-03T23:00:59.739871+00:00",
@@ -4312,6 +4358,15 @@
       "status": "rejected",
       "timestamp": "2026-11-04T01:00:59.777703+00:00"
     },
+    "launcher-5fc0406f725cf94d240e7c3ade99078a": {
+      "expires": "2026-11-11T19:00:59.711024+00:00",
+      "id": "launcher-5fc0406f725cf94d240e7c3ade99078a",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'voice audio user:m5stack'",
+      "repo": "launcher:5fc0406f725cf94d240e7c3ade99078a",
+      "status": "rejected",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
+    },
     "launcher-6094706fa0444730779a65e0fb26e60f": {
       "expires": "2026-11-11T01:00:59.777703+00:00",
       "id": "launcher-6094706fa0444730779a65e0fb26e60f",
@@ -4384,6 +4439,15 @@
       "status": "rejected",
       "timestamp": "2026-11-04T00:00:59.597130+00:00"
     },
+    "launcher-8ce57fb3a0b25847993375b6522ed164": {
+      "expires": "2026-11-11T19:00:59.711024+00:00",
+      "id": "launcher-8ce57fb3a0b25847993375b6522ed164",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'arduinomegachess user:davidabevan'",
+      "repo": "launcher:8ce57fb3a0b25847993375b6522ed164",
+      "status": "rejected",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
+    },
     "launcher-9470218aef2a345c4fc24c3becbe1deb": {
       "expires": "2026-11-10T23:00:59.739871+00:00",
       "id": "launcher-9470218aef2a345c4fc24c3becbe1deb",
@@ -4447,6 +4511,15 @@
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
+    "launcher-afe6f6a0dcc3868491160a92a42a0725": {
+      "expires": "2026-11-11T19:00:59.711024+00:00",
+      "id": "launcher-afe6f6a0dcc3868491160a92a42a0725",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'arduino nesso factory code user:kawacci'",
+      "repo": "launcher:afe6f6a0dcc3868491160a92a42a0725",
+      "status": "rejected",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
+    },
     "launcher-b52861e0a60548f81d846255312d68fe": {
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-b52861e0a60548f81d846255312d68fe",
@@ -4464,6 +4537,15 @@
       "repo": "launcher:b6d59b635d6b7c195962973632662a68",
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
+    },
+    "launcher-bbadbfe92da9f9ad7f91c4ef54dd8fcf": {
+      "expires": "2026-11-11T19:00:59.711024+00:00",
+      "id": "launcher-bbadbfe92da9f9ad7f91c4ef54dd8fcf",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'printer userdemo user:m5stack'",
+      "repo": "launcher:bbadbfe92da9f9ad7f91c4ef54dd8fcf",
+      "status": "rejected",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
     "launcher-bea471a4a2942ae979bed3e44735dc68": {
       "expires": "2026-11-11T00:00:59.597130+00:00",
@@ -4500,6 +4582,15 @@
       "repo": "launcher:c4dce0a2fbb839e71a7e1ce44108d41a",
       "status": "rejected",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
+    },
+    "launcher-d3cc2e38753d28c587f190d0343cdbc3": {
+      "expires": "2026-11-11T19:00:59.711024+00:00",
+      "id": "launcher-d3cc2e38753d28c587f190d0343cdbc3",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:d3cc2e38753d28c587f190d0343cdbc3",
+      "status": "rejected",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
     "launcher-d4f56ec2f3f5ec691cfae54052bb3b53": {
       "expires": "2026-11-11T01:00:59.777703+00:00",
@@ -4581,6 +4672,15 @@
       "repo": "launcher:efe705a4319ad68f0d45c3df2446a79d",
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
+    },
+    "launcher-f94f2406b46c7159bec94b0fead00ac5": {
+      "expires": "2026-11-11T19:00:59.711024+00:00",
+      "id": "launcher-f94f2406b46c7159bec94b0fead00ac5",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'echo speaker test user:kuriko'",
+      "repo": "launcher:f94f2406b46c7159bec94b0fead00ac5",
+      "status": "rejected",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
     "launcher-salmi-fork": {
       "expires": "2026-11-08T21:00:11.572797+00:00",
@@ -10697,6 +10797,7 @@
     "atomnft/m5stick-marauder": "m5stick-marauder",
     "atomnft/rogue-radar": "rogue-radar",
     "autoflowdanilo-it/blipputer": "blipputer",
+    "awesomelionel/bus-aunty-mini": "bus-aunty-mini",
     "azure/iot-central-firmware": "iot-central-firmware",
     "beakes/teenygpstestbed_c2": "teenygpstestbed-c2",
     "beanpiechen/micropythonshell": "micropythonshell",
@@ -11131,15 +11232,19 @@
     "launcher:077e98d335ed1c61aa37353df7fb5575": "launcher-077e98d335ed1c61aa37353df7fb5575",
     "launcher:0816d632de9903bcf924498354bb2b28": "launcher-0816d632de9903bcf924498354bb2b28",
     "launcher:0870128d7e7bf8073ec04ab6871d9d16": "launcher-0870128d7e7bf8073ec04ab6871d9d16",
+    "launcher:0db638a89b11e7027f6f04313943e92f": "launcher-0db638a89b11e7027f6f04313943e92f",
     "launcher:0f09adafd7adf776632c2b2eb48ccb12": "launcher-0f09adafd7adf776632c2b2eb48ccb12",
     "launcher:12cdb71fb672a72ed256c472ee1e5908": "launcher-12cdb71fb672a72ed256c472ee1e5908",
     "launcher:15aaf739a7dccb5d30b55f9f86280437": "launcher-15aaf739a7dccb5d30b55f9f86280437",
     "launcher:16d2c9ac8c0a7982e60fa99b98c1d368": "launcher-16d2c9ac8c0a7982e60fa99b98c1d368",
     "launcher:1a9569cffe9c1a81b34e577fc1e8c7a4": "launcher-1a9569cffe9c1a81b34e577fc1e8c7a4",
+    "launcher:200c164bf2eb0580d08e36bc257689b3": "launcher-200c164bf2eb0580d08e36bc257689b3",
     "launcher:2124f637db75857c962f9097575271f4": "launcher-2124f637db75857c962f9097575271f4",
     "launcher:215b511e97a94512db05452db92ba0bf": "launcher-215b511e97a94512db05452db92ba0bf",
+    "launcher:2548946a6457aaec0fdb7586e1eec770": "launcher-2548946a6457aaec0fdb7586e1eec770",
     "launcher:2a79e3af332931b6e2ec802755c6726b": "launcher-2a79e3af332931b6e2ec802755c6726b",
     "launcher:35b809ece6e36393c5e963a4257bf11d": "launcher-35b809ece6e36393c5e963a4257bf11d",
+    "launcher:37d482c7364519ecac63b03addf68900": "launcher-37d482c7364519ecac63b03addf68900",
     "launcher:3d40af9dec44d395b6056fda4de43191": "launcher-3d40af9dec44d395b6056fda4de43191",
     "launcher:3f609bae56511658dddfd59a47e8a631": "launcher-3f609bae56511658dddfd59a47e8a631",
     "launcher:42f94b0a097a0f2f719602007442674e": "launcher-42f94b0a097a0f2f719602007442674e",
@@ -11151,6 +11256,7 @@
     "launcher:52de7443325c3dd101e5e605bd5df9c9": "launcher-52de7443325c3dd101e5e605bd5df9c9",
     "launcher:576a41e5a2c4afb896cd01a021b14b17": "launcher-576a41e5a2c4afb896cd01a021b14b17",
     "launcher:58b842c955eafe5dd0caafee85067820": "launcher-58b842c955eafe5dd0caafee85067820",
+    "launcher:5fc0406f725cf94d240e7c3ade99078a": "launcher-5fc0406f725cf94d240e7c3ade99078a",
     "launcher:6094706fa0444730779a65e0fb26e60f": "launcher-6094706fa0444730779a65e0fb26e60f",
     "launcher:6637626f52a144f67ba568f71f88d18a": "launcher-6637626f52a144f67ba568f71f88d18a",
     "launcher:664485fc037d6986bff4c066364db6af": "launcher-664485fc037d6986bff4c066364db6af",
@@ -11159,6 +11265,7 @@
     "launcher:79bfc1fb6702f9347b429c44d3edb3c7": "launcher-79bfc1fb6702f9347b429c44d3edb3c7",
     "launcher:7d46a337dcdf6795806bb5e406bd8ab6": "launcher-7d46a337dcdf6795806bb5e406bd8ab6",
     "launcher:840c997c1d7296bd95d4f0c80ba2d614": "launcher-840c997c1d7296bd95d4f0c80ba2d614",
+    "launcher:8ce57fb3a0b25847993375b6522ed164": "launcher-8ce57fb3a0b25847993375b6522ed164",
     "launcher:9470218aef2a345c4fc24c3becbe1deb": "launcher-9470218aef2a345c4fc24c3becbe1deb",
     "launcher:9af63f465978e26577886f92b749affd": "launcher-9af63f465978e26577886f92b749affd",
     "launcher:9b08cffbc9ac2f55f2cb8e44c725a06e": "launcher-9b08cffbc9ac2f55f2cb8e44c725a06e",
@@ -11166,12 +11273,15 @@
     "launcher:9fb9a50e180cd108832b614a7751ba7b": "launcher-9fb9a50e180cd108832b614a7751ba7b",
     "launcher:a68c6316d833dcfa8a7b7b32fcfc4d49": "launcher-a68c6316d833dcfa8a7b7b32fcfc4d49",
     "launcher:a72400528da2e50f179a3ae1f8d1db35": "launcher-a72400528da2e50f179a3ae1f8d1db35",
+    "launcher:afe6f6a0dcc3868491160a92a42a0725": "launcher-afe6f6a0dcc3868491160a92a42a0725",
     "launcher:b52861e0a60548f81d846255312d68fe": "launcher-b52861e0a60548f81d846255312d68fe",
     "launcher:b6d59b635d6b7c195962973632662a68": "launcher-b6d59b635d6b7c195962973632662a68",
+    "launcher:bbadbfe92da9f9ad7f91c4ef54dd8fcf": "launcher-bbadbfe92da9f9ad7f91c4ef54dd8fcf",
     "launcher:bea471a4a2942ae979bed3e44735dc68": "launcher-bea471a4a2942ae979bed3e44735dc68",
     "launcher:c2765e6d5eadbe38a82e0f195573d33f": "launcher-c2765e6d5eadbe38a82e0f195573d33f",
     "launcher:c3c3e139ecb9add9e14fe86d263645b6": "launcher-c3c3e139ecb9add9e14fe86d263645b6",
     "launcher:c4dce0a2fbb839e71a7e1ce44108d41a": "launcher-c4dce0a2fbb839e71a7e1ce44108d41a",
+    "launcher:d3cc2e38753d28c587f190d0343cdbc3": "launcher-d3cc2e38753d28c587f190d0343cdbc3",
     "launcher:d4f56ec2f3f5ec691cfae54052bb3b53": "launcher-d4f56ec2f3f5ec691cfae54052bb3b53",
     "launcher:d56ab7be200d0fdb509ba0d8005f2ac4": "launcher-d56ab7be200d0fdb509ba0d8005f2ac4",
     "launcher:d73f7e34785d6a6a3d788ca8815e06ac": "launcher-d73f7e34785d6a6a3d788ca8815e06ac",
@@ -11181,6 +11291,7 @@
     "launcher:eaa60374be2f76896c2e04e521801949": "launcher-eaa60374be2f76896c2e04e521801949",
     "launcher:eb73543c1e2ba5948a948127e4622d2b": "launcher-eb73543c1e2ba5948a948127e4622d2b",
     "launcher:efe705a4319ad68f0d45c3df2446a79d": "launcher-efe705a4319ad68f0d45c3df2446a79d",
+    "launcher:f94f2406b46c7159bec94b0fead00ac5": "launcher-f94f2406b46c7159bec94b0fead00ac5",
     "layer812": "layer812",
     "layer812/cardputer_llm": "cardputer-llm",
     "layer812/cccp": "cccp",

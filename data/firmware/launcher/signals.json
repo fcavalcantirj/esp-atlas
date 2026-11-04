@@ -1,7 +1,7 @@
 {
  "calls": 30,
  "errors": 0,
- "fetched": "2026-10-27",
+ "fetched": "2026-11-04",
  "notes": [
   "extra_configs matched more than 40 files; kept the 40 naming an ESP32 family first",
   "call budget exhausted while expanding extra_configs",
@@ -1138,6 +1138,18 @@
   },
   {
    "extra": {
+    "env": "waveshare-esp32-c5-touch-lcd-35",
+    "file": "boards/waveshare-esp32-c5-touch-lcd-35/platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 17,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32c5",
+   "url": "https://github.com/bmorcelli/Launcher/blob/main/boards/waveshare-esp32-c5-touch-lcd-35/platformio.ini#L17"
+  },
+  {
+   "extra": {
     "env": "waveshare-esp32-s3-lcd-147",
     "file": "boards/waveshare-esp32-s3-lcd-147/platformio.ini"
    },
@@ -1390,6 +1402,18 @@
   },
   {
    "extra": {
+    "env": "ES3C40P",
+    "file": "boards/ES3C28P/ES3C40P.ini"
+   },
+   "kind": "platformio",
+   "line": 5,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3",
+   "url": "https://github.com/bmorcelli/Launcher/blob/main/boards/ES3C28P/ES3C40P.ini#L5"
+  },
+  {
+   "extra": {
     "env": "ES3C28P",
     "file": "boards/ES3C28P/platformio.ini"
    },
@@ -1507,30 +1531,6 @@
    "soc": null,
    "token": "esp32c5",
    "url": "https://github.com/bmorcelli/Launcher/blob/main/boards/NM-CYD-C5/platformio.ini#L13"
-  },
-  {
-   "extra": {
-    "env": "_New-Device-Model",
-    "file": "boards/_New-Device-Model/platformio.ini"
-   },
-   "kind": "platformio",
-   "line": 15,
-   "rank": 2,
-   "soc": null,
-   "token": "esp32s3",
-   "url": "https://github.com/bmorcelli/Launcher/blob/main/boards/_New-Device-Model/platformio.ini#L15"
-  },
-  {
-   "extra": {
-    "env": "arduino-nesso-n1",
-    "file": "boards/arduino-nesso-n1/platformio.ini"
-   },
-   "kind": "platformio",
-   "line": 12,
-   "rank": 2,
-   "soc": null,
-   "token": "esp32c6",
-   "url": "https://github.com/bmorcelli/Launcher/blob/main/boards/arduino-nesso-n1/platformio.ini#L12"
   }
  ]
 }
