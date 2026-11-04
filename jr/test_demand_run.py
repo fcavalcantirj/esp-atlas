@@ -53,8 +53,11 @@ def norm_calls(fn):
 
 
 def git_ok():
-    # `diff --cached --quiet` rc 1 = there IS something staged (publish proceeds)
-    return recorder({("diff", "--cached", "--quiet"): (1, ""), ("rev-parse",): (0, "abc1234\n")})
+    # `diff --cached --quiet` rc 1 = there IS something staged (publish proceeds); the staged diff is
+    # the two demand snapshot paths, which jr/review_routing.py routes AUTO
+    return recorder({("diff", "--cached", "--quiet"): (1, ""), ("rev-parse",): (0, "abc1234\n"),
+                     ("diff", "--cached", "--name-status", "--no-renames", "-z"):
+                         (0, "A\0docs/demand/2026-11-03.json\0M\0docs/demand/unresolved.json\0")})
 
 
 def gh_ok(open_prs="[]"):
