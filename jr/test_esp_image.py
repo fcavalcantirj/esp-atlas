@@ -4,7 +4,8 @@ Owner spec (2026-11-04): pinned esptool parser; every declared segment walked; p
 address 0) and zero-length segments legal; checksum and appended SHA-256 explicitly recomputed and
 compared; unknown chip, merged/flash images, truncation, mismatches and any parser exception go to
 review. A clean parse alone never passes. Fixtures in jr/fixtures/esp_image/ come from the pinned
-esptool's own writer (build.py), and are checked against a fresh build below."""
+esptool's own writer (build.py), and are checked against a fresh build below — except real/, a
+released ESP-IDF image kept as published, so the validator is not only tested on its parser's kind."""
 from __future__ import annotations
 
 import hashlib
@@ -263,3 +264,99 @@ def test_a_parser_reading_that_disagrees_with_the_raw_walk_needs_review(monkeypa
         return img
     monkeypatch.setattr(bin_image, "LoadFirmwareImage", skewed)
     assert_review(esp_image.validate(fixture("app_esp32s3.bin")), "disagree")
+
+
+# --- owner additions 2026-11-04 ---------------------------------------------------------------------------
+
+REAL = FIXTURES / "real"
+REAL_APP = "esp32-wifi-penetration-tool-v1.0.bin"
+REAL_APP_SHA256 = "4b02feedb8aabd4c090901053b3894274eda28a97c9d9cb7cb5dcf44b9755a29"
+
+
+def _segments(data: bytes) -> list[tuple[int, int]]:
+    """[(data offset, length)] per declared segment, walked here independently of esp_image."""
+    off, out = 24, []
+    for _ in range(data[1]):
+        size = int.from_bytes(data[off + 4:off + 8], "little")
+        out.append((off + 8, size))
+        off += 8 + size
+    return out
+
+
+def _xor_checksum(data: bytes) -> tuple[int, int]:
+    """(stored checksum byte, 0xEF XOR every segment data byte) — the checksum ALONE."""
+    computed, end = esp_image.CHECKSUM_SEED, 24
+    for off, size in _segments(data):
+        for b in data[off:off + size]:
+            computed ^= b
+        end = off + size
+    return data[end + (15 - end % 16)], computed
+
+
+def test_the_real_image_is_the_released_asset_its_readme_names():
+    data = (REAL / REAL_APP).read_bytes()
+    assert hashlib.sha256(data).hexdigest() == REAL_APP_SHA256
+    readme = (REAL / "README.md").read_text()
+    for fact in (REAL_APP_SHA256, "releases/download/v1.0/esp32-wifi-penetration-tool.bin", "MIT"):
+        assert fact in readme, fact
+
+
+def test_a_real_released_esp32_app_image_is_an_esp_target():
+    """Built by ESP-IDF (not by the esptool writer behind the other fixtures) and published as a
+    GitHub release asset: the validator must accept a real-world image, not only its own kind."""
+    res = esp_image.validate((REAL / REAL_APP).read_bytes())
+    assert res["status"] == esp_image.ESP_TARGET and res["chip"] == "esp32"
+    assert "6 segments" in " ".join(res["reasons"]) and "SHA-256 verified" in " ".join(res["reasons"])
+
+
+def test_the_real_image_corrupted_in_its_last_segment_needs_review():
+    data = bytearray((REAL / REAL_APP).read_bytes())
+    off, size = _segments(bytes(data))[-1]
+    data[off + size // 2] ^= 0x01
+    data[-32:] = hashlib.sha256(bytes(data[:-32])).digest()       # re-sealed: the checksum must catch it
+    assert_review(esp_image.validate(bytes(data)), "checksum mismatch")
+
+
+def test_the_real_image_truncated_inside_its_last_segment_needs_review():
+    data = (REAL / REAL_APP).read_bytes()
+    off, size = _segments(data)[-1]
+    assert_review(esp_image.validate(data[:off + size // 2]), "truncated", "segment 6 of 6")
+
+
+@pytest.mark.parametrize("name,digest", [("app_esp32s3.bin", True), ("app_esp32s3_no_sha256.bin", False)])
+def test_images_with_and_without_the_appended_sha256_are_esp_targets(name, digest):
+    data = fixture(name)
+    assert data[23] == int(digest)                                # header hash_appended flag
+    res = esp_image.validate(data)
+    assert res["status"] == esp_image.ESP_TARGET and res["chip"] == "esp32s3"
+    assert ("SHA-256 verified" if digest else "no SHA-256 appended") in " ".join(res["reasons"])
+
+
+def test_the_digest_and_no_digest_fixtures_differ_only_by_the_flag_and_the_digest():
+    with_digest, without = fixture("app_esp32s3.bin"), fixture("app_esp32s3_no_sha256.bin")
+    assert len(with_digest) == len(without) + 32
+    assert with_digest[:23] + with_digest[24:-32] == without[:23] + without[24:]
+
+
+def test_corruption_inside_the_last_segment_needs_review():
+    data = fixture("corrupt_last_segment.bin")
+    assert len(_segments(data)) == 4
+    stored, computed = _xor_checksum(data)
+    assert stored != computed
+    assert_review(esp_image.validate(data), "checksum mismatch", "over 4 segments")
+
+
+def test_truncation_inside_a_late_segment_needs_review():
+    assert_review(esp_image.validate(fixture("truncated_late_segment.bin")), "truncated", "segment 4 of 4")
+
+
+def test_a_mutation_that_keeps_the_xor_checksum_but_breaks_the_sha256_needs_review():
+    """Two bytes of one segment flipped by the same mask cancel in the XOR checksum: only the
+    recomputed SHA-256 can tell this image from the original."""
+    data, original = fixture("xor_cancelling_pair.bin"), fixture("app_esp32s3.bin")
+    assert data != original and len(data) == len(original)
+    stored, computed = _xor_checksum(data)
+    assert stored == computed == _xor_checksum(original)[0]       # the checksum alone still matches
+    res = esp_image.validate(data)
+    assert_review(res, "sha-256 mismatch")
+    assert "checksum mismatch" not in " ".join(res["reasons"]).lower()
