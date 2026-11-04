@@ -1,0 +1,20 @@
+{
+  "build": {
+    "arduino": {"ldscript": "esp32s3_out.ld"},
+    "core": "esp32",
+    "extra_flags": ["-DARDUINO_USB_MODE=1", "-DARDUINO_USB_CDC_ON_BOOT=1"],
+    "f_cpu": "240000000L",
+    "f_flash": "80000000L",
+    "flash_mode": "qio",
+    "hwids": [["0x303A", "0x1001"]],
+    "mcu": "esp32s3",
+    "variant": "esp32s3"
+  },
+  "connectivity": ["wifi", "bluetooth"],
+  "frameworks": ["arduino", "espidf"],
+  "name": "Fixture Native-USB ESP32-S3",
+  "upload": {"flash_size": "8MB", "maximum_ram_size": 327680, "maximum_size": 8388608,
+             "require_upload_port": true, "speed": 460800},
+  "url": "https://example.test/native-usb-s3",
+  "vendor": "Fixture"
+}

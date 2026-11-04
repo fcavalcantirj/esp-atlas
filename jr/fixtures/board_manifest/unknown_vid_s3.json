@@ -1,0 +1,18 @@
+{
+  "build": {
+    "core": "esp32",
+    "f_cpu": "240000000L",
+    "f_flash": "80000000L",
+    "flash_mode": "qio",
+    "hwids": [["0x239A", "0x811B"], ["0x239A", "0x011B"]],
+    "mcu": "esp32s3",
+    "variant": "fixture_tinyusb_s3"
+  },
+  "frameworks": ["arduino", "espidf"],
+  "name": "Fixture TinyUSB ESP32-S3 (vendor VID)",
+  "upload": {"flash_size": "4MB", "maximum_ram_size": 327680, "maximum_size": 4194304,
+             "require_upload_port": true, "speed": 460800,
+             "use_1200bps_touch": true, "wait_for_upload_port": true},
+  "url": "https://example.test/unknown-vid-s3",
+  "vendor": "Fixture"
+}
