@@ -227,11 +227,12 @@ def _rate_limit_remaining(gh) -> int | None:
         return None
 
 
-BOOKKEEPING_FILES = ("jr/proposed_ledger.json",)
+BOOKKEEPING_FILES = ("jr/proposed_ledger.json", "jr/board_cooldown.json")
 BOOKKEEPING_DIRS = ("docs/telemetry/",)
 SUPERSEDED_COMMENT = ("Superseded by later Jr ticks. This PR only touched tick bookkeeping "
-                      "(jr/proposed_ledger.json, docs/telemetry/**), which every tick regenerates from "
-                      "main, so closing it loses nothing. Closed automatically by the jr/tick.py preflight.")
+                      "(jr/proposed_ledger.json, jr/board_cooldown.json, docs/telemetry/**), which later ticks regenerate "
+                      "(a dropped board cooldown is re-derived the next time that board fails), so closing it loses "
+                      "nothing. Closed automatically by the jr/tick.py preflight.")
 
 
 def _list_tick_prs(gh) -> list | None:

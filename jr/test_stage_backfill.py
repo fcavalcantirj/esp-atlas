@@ -72,7 +72,8 @@ def test_skipped_boards_count_against_budget(tmp_path, monkeypatch):
     _mk_boards(tmp_path, ["b1", "b2", "b3"])
     _fake_backfill({"b1": "skipped", "b2": "backfilled", "b3": "backfilled"}, monkeypatch)
     res = stage_backfill.run(Ctx(tmp_path), budget=2)   # b1 skip + b2 fill = 2 attempts; b3 not reached
-    assert res.paths == ["data/boards/espressif/b2/board.md"]
+    # the skipped b1 is cooled down, and that decision ships with the tick (jr/board_cooldown.json)
+    assert res.paths == ["data/boards/espressif/b2/board.md", "jr/board_cooldown.json"]
     assert "backfilled 1, skipped 1" in res.summary
 
 

@@ -315,6 +315,15 @@ def _missing_fields(fm: dict) -> list[str]:
 # same filename heuristic, same function object). The registry drives images grounding in
 # _extract_for below, keyed by brand, falling back to the espressif heuristic for any brand
 # with no dedicated extractor.
+# Second source per field (G3a): the PlatformIO espressif32 board manifest at a pinned commit,
+# plus the per-field skip reasons every source reports (jr/board_manifest.py).
+from board_manifest import (  # noqa: E402
+    DOC_UNREACHABLE,
+    FIELD_ABSENT,
+    NO_PATTERN_MATCH,
+    SOURCE_GATED,
+    ground_from_manifest,
+)
 from board_image_extractors import (  # noqa: E402,F401
     IMAGE_EXTRACTORS,
     extract_images,
@@ -348,10 +357,12 @@ def _extract_for(text: str, url: str, missing: list[str], raw: str | None = None
     return out
 
 
-def _write_fields(path: Path, fm: dict, body: str, extracted: dict, url: str, today: str) -> None:
+def _write_fields(path: Path, fm: dict, body: str, extracted: dict, citations: dict,
+                 today: str) -> None:
     """Add ONLY the extracted (missing) fields to the frontmatter, each with its own
-    {field, url, verified} source entry appended (the exact shape the C5 uses). Existing
-    fields and their existing citations are preserved untouched; `sources` is kept last."""
+    {field, url, verified} source entry appended (the exact shape the C5 uses), the url being
+    the source that grounded THAT field (`citations[field]`). Existing fields and their existing
+    citations are preserved untouched; `sources` is kept last."""
     sources = fm.pop("sources", None) or []
     for field in BACKFILL_FIELDS:  # deterministic order
         if field not in extracted:
@@ -359,7 +370,7 @@ def _write_fields(path: Path, fm: dict, body: str, extracted: dict, url: str, to
         if _is_present(fm.get(field)):  # belt-and-suspenders: never overwrite a filled field
             continue
         fm[field] = extracted[field]
-        sources.append({"field": field, "url": url, "verified": today})
+        sources.append({"field": field, "url": citations[field], "verified": today})
     fm["sources"] = sources
     front = yaml.safe_dump(fm, sort_keys=False, default_flow_style=False, allow_unicode=True).strip()
     path.write_text(f"---\n{front}\n---\n\n{body.strip()}\n")
@@ -391,34 +402,89 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
     if not soc:
         return {**base, "status": "skipped", "reason": "no-soc", "url": None}
 
-    candidates = resolver(board_id, soc)
-    if not candidates:  # resolver has no verified URL for this board — skip, never guess
-        return {**base, "status": "skipped", "reason": "doc-unreachable", "url": None}
-    res, url = None, candidates[-1]
+    res, url = _fetch_first(resolver(board_id, soc), fetch)
+    extracted, vendor_reasons = _ground_from_vendor(res, url, missing, brand)
+    citations = {f: url for f in extracted}
+
+    # Second source: the PlatformIO manifest fills ONLY the fields the vendor page left missing.
+    pio = ground_from_manifest(fm, board_id, soc, data_root,
+                               [f for f in missing if f not in extracted], fetch)
+    for field, value in pio["values"].items():
+        extracted[field] = value
+        citations[field] = pio["url"]
+    field_reasons = _field_reasons(missing, extracted, vendor_reasons, pio["reasons"])
+
+    if not extracted:
+        reason = "doc-unreachable" if res is None else "nothing-groundable"
+        return {**base, "status": "skipped", "reason": reason, "url": url,
+                "field_reasons": field_reasons}
+
+    _write_fields(path, fm, body, extracted, citations, today)
+    written = [f for f in BACKFILL_FIELDS if f in extracted]
+    omitted = [f for f in missing if f not in extracted]
+    return {**base, "status": "backfilled", "url": url if res is not None else pio["url"],
+            "written": written, "omitted": omitted, "partial": bool(omitted), "modified": True,
+            "citations": citations, "field_reasons": field_reasons}
+
+
+def _fetch_first(candidates: list[str], fetch) -> tuple[dict | None, str | None]:
+    """The first candidate doc URL that fetches 200, cited as the slug that actually resolved;
+    (None, last candidate) when none does, (None, None) when the resolver had none."""
     for u in candidates:
         r = fetch(u)
         if r.get("ok"):
-            res, url = r, u          # cite the slug that actually resolved
-            break
-    if res is None:
-        return {**base, "status": "skipped", "reason": "doc-unreachable", "url": url}
+            return r, u
+    return None, (candidates[-1] if candidates else None)
 
+
+def _ground_from_vendor(res: dict | None, url: str | None, missing: list[str],
+                        brand: str) -> tuple[dict, dict]:
+    """(extracted, reasons) from the vendor doc page: every missing field is either grounded or
+    carries the reason it was not."""
+    if res is None:
+        return {}, {f: DOC_UNREACHABLE for f in missing}
     raw = res.get("text", "")
     text = _visible_text(raw)
     # Fields this vendor's doc source cannot reliably ground (a shared page element false-
     # positives the extractor) are excluded from extraction — never written — but kept in
-    # `missing` so they surface honestly as OMITTED below (cite-or-omit).
+    # `missing` so they surface honestly as OMITTED (cite-or-omit).
     gated = VENDOR_UNGROUNDABLE_FIELDS.get(brand, frozenset())
     extracted = _extract_for(text, url, [f for f in missing if f not in gated], raw=raw,
                              brand=brand)
-    if not extracted:
-        return {**base, "status": "skipped", "reason": "nothing-groundable", "url": url}
+    reasons = {f: SOURCE_GATED if f in gated else _vendor_miss_reason(f, text, raw)
+               for f in missing if f not in extracted}
+    return extracted, reasons
 
-    _write_fields(path, fm, body, extracted, url, today)
-    written = [f for f in BACKFILL_FIELDS if f in extracted]
-    omitted = [f for f in missing if f not in extracted]
-    return {**base, "status": "backfilled", "url": url, "written": written,
-            "omitted": omitted, "partial": bool(omitted), "modified": True}
+
+# A page that MENTIONS a field's topic but grounds nothing is a no_pattern_match (an extractor
+# could learn its phrasing); a page that never mentions it is field_absent (another source is
+# needed). Deliberately broad: it only labels a miss, it never writes a value.
+_TOPIC_RES = {
+    "download_mode": re.compile(r"download mode|upload mode|bootloader|\bboot\b", re.I),
+    "usb_serial": re.compile(r"\busb\b.{0,40}\b(?:serial|uart|jtag|bridge|cdc)\b"
+                             r"|\b(?:serial|uart|jtag|bridge)\b.{0,40}\busb\b", re.I),
+}
+
+
+def _vendor_miss_reason(field: str, text: str, raw: str) -> str:
+    if field == "images":
+        mentioned = re.search(r"<img\b|og:image", raw or "", re.I) is not None
+    else:
+        topic = _TOPIC_RES.get(field)
+        mentioned = topic is not None and topic.search(text) is not None
+    return NO_PATTERN_MATCH if mentioned else FIELD_ABSENT
+
+
+def _field_reasons(missing: list[str], extracted: dict, vendor: dict, manifest: dict) -> dict:
+    """{field: {"vendor": reason[, "manifest": reason]}} for every missing field left unfilled."""
+    out: dict = {}
+    for field in missing:
+        if field in extracted:
+            continue
+        out[field] = {"vendor": vendor.get(field, FIELD_ABSENT)}
+        if field in manifest:
+            out[field]["manifest"] = manifest[field]
+    return out
 
 
 # ─────────────────────────── run (worklist over espressif) ───────────────────────────
@@ -494,6 +560,10 @@ def pr_body(report: dict) -> str:
         tag = " · partial" if e.get("partial") else ""
         got = ", ".join(f"`{f}`" for f in e.get("written", []))
         line = f"- `{e['board_id']}` — {got}{tag} — {e.get('url', '')}"
+        others = [f"`{f}` via {u}" for f, u in (e.get("citations") or {}).items()
+                  if u != e.get("url")]
+        if others:
+            line += f" ({'; '.join(others)})"
         if e.get("omitted"):
             line += f" (omitted: {', '.join(e['omitted'])})"
         lines.append(line)
@@ -514,7 +584,8 @@ def pr_body(report: dict) -> str:
     lines += [
         "",
         "Cite-or-omit STRICTLY: every written field carries its own `{field,url,verified}` "
-        "citation to the board's official Espressif user guide; anything the doc did not "
+        "citation to its source — the board's official vendor doc, or its PlatformIO "
+        "espressif32 manifest at a pinned commit; anything the source did not "
         "explicitly state was OMITTED (a wrong download-mode step is safety-critical). "
         "No LLM, no API key — extraction is regex/text over the fetched doc.",
         "",
