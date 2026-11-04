@@ -10,18 +10,20 @@ own PR — the tick opens the single PR from every stage's paths (board_backfill
 main()/open_backfill_pr() is the standalone manual lane; the stage reuses only its pure
 per-board writer).
 
-Budget = boards ATTEMPTED (a fetch each); "complete" boards cost no fetch and don't count.
-Known limit (follow-up): a doc-unreachable board is retried each tick (no skip-cache yet),
-so a run of unreachable boards can consume the budget before a fillable one — bounded by
-the tick's own call budget.
+Budget = boards ATTEMPTED; "complete" boards cost no fetch and don't count. A board on which
+every source failed (status "skipped") is cooled down for board_cooldown.COOLDOWN_DAYS
+(jr/board_cooldown.json, shipped with the tick): while cooling it is passed over for free, so
+the budget moves to boards that can still be filled. Each skip line names its per-field
+reasons, vendor/manifest (no_pattern_match, field_absent, doc_unreachable, no_manifest).
 """
 from __future__ import annotations
 
 import board_backfill
+import board_cooldown
 
 DEFAULT_BUDGET = 4
-CALLS_PER_BOARD = 1
-SECONDS_PER_BOARD = 20.0   # one user-guide fetch + parse
+CALLS_PER_BOARD = 2        # the vendor user guide + the PlatformIO manifest
+SECONDS_PER_BOARD = 20.0   # two fetches + parse
 
 
 def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
@@ -53,10 +55,15 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
         start = (hour_index * max(1, budget)) % n
         boards = boards[start:] + boards[:start]
 
-    paths, lines, filled, skipped, attempted = [], [], 0, 0, 0
+    cooldown_path = ctx.root / board_cooldown.RELPATH
+    cooldown = board_cooldown.load(cooldown_path)
+    paths, lines, filled, skipped, attempted, cooling, cooled = [], [], 0, 0, 0, 0, 0
     for path in boards:
         if attempted >= budget:
             break
+        if board_cooldown.is_cooling(cooldown, path.parent.name, ctx.now):
+            cooling += 1
+            continue  # every source failed for it recently; no fetch spent
         if ctx.budget.remaining_calls() < CALLS_PER_BOARD or ctx.budget.remaining_seconds() < SECONDS_PER_BOARD:
             lines.append(f"stopped: tick budget low ({ctx.budget.remaining_calls()} calls left)")
             break
@@ -74,9 +81,30 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
             lines.append(note)
         else:
             skipped += 1
-            lines.append(f"{entry['board_id']}: skip {entry.get('reason', '')}")
+            lines.append(_skip_line(entry))
+            board_cooldown.record(cooldown, path.parent.name, entry.get("reason", ""),
+                                  entry.get("field_reasons") or {}, now=ctx.now)
+            cooled += 1
+
+    if cooled:
+        board_cooldown.save(cooldown, cooldown_path, now=ctx.now)
+        paths.append(board_cooldown.RELPATH)
 
     summary = f"backfilled {filled}, skipped {skipped}"
+    if cooled:
+        summary += f", cooled {cooled} for {board_cooldown.COOLDOWN_DAYS}d"
+    if cooling:
+        summary += f", cooling {cooling}"
     if lines:
         summary += " · " + "; ".join(lines)
     return tick.StageResult("backfill", paths=paths, summary=summary)
+
+
+def _skip_line(entry: dict) -> str:
+    """`<board>: skip <reason> [field=vendor/manifest, ...]` — why each missing field stayed empty."""
+    line = f"{entry['board_id']}: skip {entry.get('reason', '')}"
+    reasons = entry.get("field_reasons") or {}
+    if reasons:
+        parts = [f"{field}={'/'.join(by_source.values())}" for field, by_source in reasons.items()]
+        line += f" [{', '.join(parts)}]"
+    return line
