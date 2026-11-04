@@ -1,17 +1,18 @@
-"""EspAtlas Jr — PlatformIO board manifests as a SECOND cited source for board fields (G3a).
+"""EspAtlas Jr — PlatformIO board manifests as a CORROBORATION source for board fields (G3a).
 
-The vendor doc page (jr/board_doc_resolvers.py) stays the first source. When it leaves
-`usb_serial` missing, this module reads the board's PlatformIO espressif32 manifest
+The vendor doc page (jr/board_doc_resolvers.py) is the only source that writes. When a record is
+missing `usb_serial`, this module reads the board's PlatformIO espressif32 manifest
 (`boards/<id>.json`) at a PINNED commit and derives `usb_serial` from its `build.hwids` USB
-vendor id with a fixed table. Every value it returns is cited to that pinned manifest URL by the
-caller (cite-or-omit, same rule as the vendor source).
+vendor id with a fixed table. Owner mandate G3 (2026-11-04): that value is corroboration only —
+jr/board_corroboration.py records it against the vendor's, cited to the pinned manifest URL, and
+it is never written (a USB id names a build target, not the board's wired connection).
 
 Mapping a catalog board to a manifest is DETERMINISTIC: an explicit `platformio` id on the board
 record wins, else the curated PIO_BOARD_IDS table. Nothing is ever fuzzy-matched — a board absent
 from both is skipped `no_manifest`.
 
-`download_mode` is written only when the manifest states it explicitly. PlatformIO's manifest
-format has no download-mode key: `build.flash_mode` is the SPI flash mode (qio/dio) and
+`download_mode` is never taken from a manifest. PlatformIO's manifest format has no download-mode
+key: `build.flash_mode` is the SPI flash mode (qio/dio) and
 `upload.use_1200bps_touch` is a CDC reset trick, neither is a download-mode statement. So today
 the manifest never grounds download_mode and reports it `field_absent`.
 

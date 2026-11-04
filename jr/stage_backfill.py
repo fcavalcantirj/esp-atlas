@@ -15,19 +15,26 @@ every source failed (status "skipped") is cooled down for board_cooldown.COOLDOW
 (jr/board_cooldown.json, shipped with the tick): while cooling it is passed over for free, so
 the budget moves to boards that can still be filled. Each skip line names its per-field
 reasons, vendor/manifest/boards_txt (no_pattern_match, field_absent, doc_unreachable,
-no_manifest, no_board_key).
+no_manifest, no_board_key, corroboration_only, conflicts, needs_review).
+
+The PlatformIO manifest and boards.txt are corroboration only (owner mandate G3,
+jr/board_corroboration.py): every board line carries what they said, with their pinned citations.
+A board whose vendor usb_serial conflicts with them is not written; the stage flags needs_human
+(auto-merge withheld) and cools the board down so the same conflict is not re-flagged hourly.
 """
 from __future__ import annotations
 
 import board_backfill
 import board_cooldown
+import board_corroboration
 
 DEFAULT_BUDGET = 4
 CALLS_PER_BOARD = 3        # the vendor user guide + the PlatformIO manifest + boards.txt
 SECONDS_PER_BOARD = 30.0   # three fetches (boards.txt is ~3 MB) + parse
-# Skips where every source was actually tried and failed. A no-soc skip fetched nothing: it is
-# fixed by editing the record, so it must not wait out a cooldown.
-COOLDOWN_REASONS = ("doc-unreachable", "nothing-groundable")
+# Skips where every source was actually tried and failed, or the board's usb_serial conflicts with
+# a pinned toolchain source (re-fetching cannot change that; a human resolves it). A no-soc skip
+# fetched nothing: it is fixed by editing the record, so it must not wait out a cooldown.
+COOLDOWN_REASONS = ("doc-unreachable", "nothing-groundable", "needs-review")
 
 
 def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
@@ -62,6 +69,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
     cooldown_path = ctx.root / board_cooldown.RELPATH
     cooldown = board_cooldown.load(cooldown_path)
     paths, lines, filled, skipped, attempted, cooling, cooled = [], [], 0, 0, 0, 0, 0
+    needs_human = False
     for path in boards:
         if attempted >= budget:
             break
@@ -82,14 +90,17 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
             note = f"{entry['board_id']}: +{'+'.join(entry['written'])}"
             if entry.get("omitted"):
                 note += f" (omitted {','.join(entry['omitted'])})"
-            lines.append(note)
+            lines.append(_with_corroboration(note, entry))
         else:
             skipped += 1
-            lines.append(_skip_line(entry))
-            if entry.get("reason") in COOLDOWN_REASONS:
-                board_cooldown.record(cooldown, path.parent.name, entry["reason"],
-                                      entry.get("field_reasons") or {}, now=ctx.now)
-                cooled += 1
+            lines.append(_with_corroboration(_skip_line(entry), entry))
+        if entry.get("needs_review"):
+            needs_human = True
+        if entry.get("needs_review") or entry.get("reason") in COOLDOWN_REASONS:
+            board_cooldown.record(cooldown, path.parent.name,
+                                  entry.get("reason") or "needs-review",
+                                  entry.get("field_reasons") or {}, now=ctx.now)
+            cooled += 1
 
     if cooled:
         board_cooldown.save(cooldown, cooldown_path, now=ctx.now)
@@ -102,7 +113,13 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
         summary += f", cooling {cooling}"
     if lines:
         summary += " · " + "; ".join(lines)
-    return tick.StageResult("backfill", paths=paths, summary=summary)
+    return tick.StageResult("backfill", paths=paths, summary=summary, needs_human=needs_human)
+
+
+def _with_corroboration(line: str, entry: dict) -> str:
+    """The board's line plus what the toolchain sources said, each with its citation."""
+    notes = board_corroboration.describe(entry.get("corroboration") or {})
+    return f"{line} · {' · '.join(notes)}" if notes else line
 
 
 def _skip_line(entry: dict) -> str:
