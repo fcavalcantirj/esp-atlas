@@ -4,10 +4,15 @@ Owner spec 2026-11-04: the parser reads bytes a stranger chose, so it runs in a 
 with an empty environment (no tokens), the asset on stdin only, CPU / wall-clock / memory limits,
 no network (socket patched before esptool is imported) and no serial port. The parent turns a
 crash, a timeout or output that is not the validator's JSON into needs_review, never esp_target.
-Each probe below is a tiny module the child runs in place of esp_image.validate."""
+Each probe below is a tiny module the child runs in place of esp_image.validate.
+
+Every test here needs the real bwrap sandbox: the `sandbox` mark makes jr/conftest.py skip them, with
+the reason, on a host that cannot build it. What such a host must do instead (fail closed) is
+jr/test_image_sandbox_fail_closed.py, which always runs."""
 from __future__ import annotations
 
 import hashlib
+import os
 import textwrap
 import time
 from pathlib import Path
@@ -19,6 +24,8 @@ import image_sandbox as sb
 
 FIXTURES = Path(__file__).resolve().parent / "fixtures" / "esp_image"
 IMAGES = sorted(FIXTURES.glob("*.bin")) + sorted((FIXTURES / "real").glob("*.bin"))
+
+pytestmark = pytest.mark.sandbox
 
 
 def probe(tmp_path, body: str, name="probe") -> Path:
@@ -301,3 +308,106 @@ def test_a_child_cannot_raise_its_own_limits(tmp_path):
 def test_the_child_can_still_import_the_library_it_needs(tmp_path):
     got = run(tmp_path, "import json, hashlib, struct, esptool\nfrom esptool import bin_image\nreturn esptool.__version__")
     assert got == {"ok": True, "value": esp_image.PINNED_ESPTOOL}
+
+
+# --- the OS layer alone: guard=False drops the Python-level guard, the jail must still hold ---------
+
+def bare(tmp_path, body, data=b"", **limits):
+    return sb.run_isolated(probe(tmp_path, body), "run", data, guard=False, **limits)
+
+
+ATTEMPT = """
+out = {}
+for name, attempt in ATTEMPTS.items():
+    try:
+        out[name] = "done: " + str(attempt())[:60]
+    except Exception as e:
+        out[name] = type(e).__name__ + ": " + str(e)
+return out
+"""
+
+
+def attempts(tmp_path, attempts_src: str, **kw):
+    got = bare(tmp_path, "import os, socket, signal, resource\nATTEMPTS = " + attempts_src + ATTEMPT, **kw)
+    assert got["ok"], got
+    return got["value"]
+
+
+def test_without_the_guard_the_network_is_unreachable(tmp_path):
+    out = attempts(tmp_path, """{"tcp": lambda: socket.create_connection(("93.184.215.14", 443), 1),
+                                 "dns": lambda: socket.getaddrinfo("github.com", 443)}""")
+    assert out["tcp"].startswith("OSError: [Errno 101]") and out["dns"].startswith("gaierror"), out
+
+
+def test_without_the_guard_no_host_file_is_there_to_read(tmp_path, tmp_path_factory, monkeypatch):
+    monkeypatch.setenv("GH_TOKEN", "ghp_secret_for_the_test")
+    secret = tmp_path_factory.mktemp("config") / "hosts.yml"
+    secret.write_text("oauth_token: ghp_secret_for_the_test\n")
+    out = attempts(tmp_path, f"""{{"token file": lambda: open({str(secret)!r}).read(),
+                                   "passwd": lambda: open("/etc/passwd").read(),
+                                   "parent environ": lambda: open("/proc/1/environ", "rb").read(),
+                                   "repo": lambda: open({str(Path(sb.__file__).with_name("tick.py"))!r}).read(),
+                                   "list /": lambda: os.listdir("/"), "list /home": lambda: os.listdir("/home"),
+                                   "environ": lambda: sorted(os.environ)}}""")
+    assert out["token file"].startswith("FileNotFoundError") and out["parent environ"].startswith("FileNotFoundError"), out
+    assert out["repo"].startswith("FileNotFoundError"), out
+    assert out["passwd"] == "done: validator:x:%d:%d::/nonexistent:/nonexistent\n" % (os.getuid(), os.getgid()), out
+    assert out["list /"].startswith("PermissionError") and out["list /home"].startswith("PermissionError"), out
+    assert out["environ"] == "done: ['LC_CTYPE']" and "ghp_secret" not in str(out), out
+
+
+def test_without_the_guard_nothing_can_be_written_or_changed(tmp_path, tmp_path_factory):
+    victim = tmp_path_factory.mktemp("victim") / "keep.txt"
+    victim.write_text("precious")
+    module = str(Path(sb.ESP_IMAGE))
+    out = attempts(tmp_path, f"""{{"new file at /": lambda: open("/x", "w"),
+                                   "victim": lambda: os.remove({str(victim)!r}),
+                                   "the bound validator": lambda: open({module!r}, "a"),
+                                   "rename in the interpreter": lambda: os.rename(os.__file__, os.__file__ + ".x"),
+                                   "fifo": lambda: os.mkfifo("/fifo")}}""")
+    assert out["victim"].startswith("FileNotFoundError"), out
+    for name in ("new file at /", "the bound validator", "rename in the interpreter", "fifo"):
+        assert out[name].startswith("OSError: [Errno 30] Read-only file system"), out
+    assert victim.read_text() == "precious"
+
+
+def test_without_the_guard_no_serial_device_exists(tmp_path):
+    out = attempts(tmp_path, """{dev: (lambda d=dev: open(d, "rb")) for dev in
+                                 ("/dev/ttyUSB0", "/dev/ttyACM0", "/dev/ttyS0", "/dev/mem", "/dev/tty")}""")
+    assert all(v.startswith("FileNotFoundError") for v in out.values()), out
+
+
+def test_without_the_guard_processes_outside_the_sandbox_are_invisible(tmp_path):
+    out = attempts(tmp_path, f"""{{"the test runner": lambda: os.kill({os.getpid()}, 0),
+                                   "own pid": lambda: os.getpid()}}""")
+    assert out["the test runner"].startswith("ProcessLookupError") and out["own pid"] == "done: 2", out
+
+
+def test_without_the_guard_the_child_cannot_start_a_process(tmp_path):
+    out = attempts(tmp_path, """{"fork": os.fork, "exec a shell": lambda: os.execv("/bin/sh", ["sh"])}""")
+    assert out["fork"].startswith("BlockingIOError"), out           # RLIMIT_NPROC 0
+    assert out["exec a shell"].startswith("FileNotFoundError"), out  # no /bin, no /usr/bin in the root
+
+
+def test_without_the_guard_the_hard_limits_cannot_be_raised(tmp_path):
+    out = attempts(tmp_path, """{name: (lambda r=r: resource.setrlimit(r, (resource.RLIM_INFINITY,) * 2))
+                                 for name, r in {"cpu": resource.RLIMIT_CPU, "as": resource.RLIMIT_AS,
+                                                 "nofile": resource.RLIMIT_NOFILE, "fsize": resource.RLIMIT_FSIZE,
+                                                 "nproc": resource.RLIMIT_NPROC}.items()}""")
+    assert all("not allowed to raise maximum limit" in v for v in out.values()), out
+
+
+def test_without_the_guard_the_hard_limits_are_the_ones_set(tmp_path):
+    out = attempts(tmp_path, """{name: (lambda r=r: resource.getrlimit(r)[1])
+                                 for name, r in {"cpu": resource.RLIMIT_CPU, "as": resource.RLIMIT_AS,
+                                                 "nofile": resource.RLIMIT_NOFILE, "fsize": resource.RLIMIT_FSIZE,
+                                                 "core": resource.RLIMIT_CORE, "nproc": resource.RLIMIT_NPROC}.items()}""",
+                   cpu_seconds=7, memory_bytes=300 * 1024 * 1024)
+    assert out == {"cpu": "done: 8", "as": f"done: {300 * 1024 * 1024}", "nofile": f"done: {sb.OPEN_FILES}",
+                   "fsize": "done: 0", "core": "done: 0", "nproc": "done: 0"}, out
+
+
+def test_without_the_guard_the_validator_still_agrees(tmp_path):
+    data = (FIXTURES / "app_esp32s3.bin").read_bytes()
+    got = sb.run_isolated(sb.ESP_IMAGE, "validate", data, guard=False)
+    assert got == {"ok": True, "value": esp_image.validate(data)}

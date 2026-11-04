@@ -1,25 +1,39 @@
-"""EspAtlas Jr — jr/esp_image.validate in a restricted child process (jr/image_sandbox.py).
+"""EspAtlas Jr — jr/esp_image.validate in an OS-level sandbox (jr/image_sandbox.py).
 
 The release asset device_evidence downloads was chosen by a stranger, and the pinned esptool
 parser reading it is a large dependency tree. Owner spec 2026-11-04: parse in a restricted process
-— no credentials, no network, no serial. validate(data) runs esp_image.validate in
+— no credentials, no network, no serial. validate(data) runs esp_image.validate in a fresh
+`python -I -B` under bubblewrap (/usr/bin/bwrap):
 
-  a fresh interpreter   `sys.executable -I -B`: no PYTHON* variables, no user site, no cwd on
-                        sys.path, no bytecode written; cwd is /
-  an empty environment  env={} — no GH_TOKEN, no API keys (Python itself adds only LC_CTYPE)
-  stdin only            the asset arrives on stdin; the result leaves as one JSON document
-  hard limits           RLIMIT_CPU (SIGXCPU), RLIMIT_AS (MemoryError), RLIMIT_FSIZE 0, no core,
-                        and a wall-clock timeout after which the parent kills it
-  no network            `socket`/`_socket` patched BEFORE esptool is imported (socket(),
-                        socketpair, create_connection, getaddrinfo... raise), and an audit hook
-                        refusing every `socket.*` event underneath, so a saved reference to the
-                        original class is refused too
-  no serial, no I/O     the same hook refuses opening any device node (anything under /dev but
-                        null/random/urandom, or any char/block device reached by a symlink), any
-                        file write, and starting a process (subprocess, system, fork, exec, spawn)
+  namespaces      --unshare-all plus a mandatory user and cgroup namespace (net, pid, ipc, uts,
+                  user, cgroup), --disable-userns, --cap-drop ALL, --new-session, --die-with-parent
+  a tmpfs root    remounted read-only, holding only read-only binds of the interpreter's prefixes
+                  (a venv and the install it links to), the site-packages esptool lives in, the
+                  validator module, the dynamic loader's libraries (/usr/lib, /lib*, ld.so.cache:
+                  the interpreter is dynamically linked), /dev/null + /dev/urandom, and a one-line
+                  /etc/passwd of its own (home /nonexistent — esptool's config lookup wants one). No /home,
+                  no /proc, no /tmp, no /etc, no serial device. Every other directory on the way
+                  to a bind is 0111: traversable, never listable
+  an empty env    env={} and --clearenv (bwrap's own PWD is dropped first thing; Python adds only
+                  LC_CTYPE)
+  hard rlimits    RLIMIT_AS, RLIMIT_CPU (SIGXCPU), RLIMIT_NOFILE, RLIMIT_FSIZE 0 and RLIMIT_CORE 0
+                  set in the forked child before it execs bwrap, so they bind the whole sandbox
+                  from its first instruction; RLIMIT_NPROC 0 is the child's first act instead —
+                  a NPROC cap set before bwrap makes the kernel refuse the user namespace (its
+                  process count is charged to the user's whole count). Hard limits stay lowered:
+                  raising one needs CAP_SYS_RESOURCE in the initial namespace
+  a wall clock    the parent kills bwrap after WALL_TIMEOUT; --die-with-parent takes the rest
+  stdin only      the asset arrives on stdin; the result leaves as one JSON document on stdout
 
-An audit hook cannot be removed once added (PEP 578). It is a guard against the parser's own code
-paths, not a jail against native code: there is no seccomp/namespace here.
+FAIL CLOSED: no bwrap, or bwrap failing to build the sandbox (namespace creation refused, a bind
+it cannot make), is needs_review with reason `sandbox_unavailable`. There is no unsandboxed path.
+
+On top of the jail, the child keeps a Python-level guard (`guard=False` turns it off, for the tests
+that prove the OS layer holds by itself): `socket` patched before esptool is imported, and an
+audit hook (PEP 578: it cannot be removed) refusing with PermissionError every socket, ctypes and
+process-start event, any write, any read or listing outside the bound roots, any device node but
+the two harmless ones, file mutation, signals and rlimit changes. The guard makes refusals uniform
+and readable; it is not what keeps native code in — the namespaces are.
 
 The parent maps a crash, a signal, a timeout, output that is not JSON, or JSON that is not a
 well-formed validator result to needs_review — never esp_target. A well-formed result passes
@@ -27,40 +41,56 @@ through unchanged. `run_isolated` is the generic runner the tests drive with pro
 """
 from __future__ import annotations
 
+import importlib.util
 import json
+import os
+import resource
 import signal
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import esp_image
 
 ESP_IMAGE = Path(__file__).resolve().with_name("esp_image.py")
+BWRAP = Path("/usr/bin/bwrap")
+SANDBOX_UNAVAILABLE = "sandbox_unavailable"
 WALL_TIMEOUT = 60.0             # seconds: a 16 MB image validates in well under 2 s on the Pi
 CPU_SECONDS = 30
 MEMORY_BYTES = 512 * 1024 * 1024    # address space; the child peaks near 75 MB of it on a 16 MB asset
+OPEN_FILES = 64
+DEVICES = ("/dev/null", "/dev/urandom")
+# What the dynamic loader needs, bound read-only (a symlinked one, as on merged-/usr, is recreated).
+LOADER_PATHS = ("/usr/lib", "/usr/lib64", "/usr/lib32", "/lib", "/lib64", "/lib32", "/etc/ld.so.cache")
 
 # The child's whole program, passed with -c so nothing on disk but the validated module is loaded
-# from outside the interpreter's own library. argv: module path, function, memory bytes, cpu seconds.
+# from outside the interpreter's own library. argv: module path, function, JSON list of the
+# readable roots, "guard" or "noguard".
 _CHILD = r'''
+import json
 import os
 import stat
 import sys
 
 NO_NET = "network is disabled in the image validator sandbox"
 NO_PROC = "starting a process is disabled in the image validator sandbox"
-_NO_PROCESS = {"subprocess.Popen", "os.system", "os.fork", "os.forkpty", "os.exec", "os.posix_spawn",
-               "os.spawn", "pty.spawn"}
+_REFUSED = {
+    **dict.fromkeys(("subprocess.Popen", "os.system", "os.fork", "os.forkpty", "os.exec", "os.posix_spawn",
+                     "os.spawn", "pty.spawn"), NO_PROC),
+    **dict.fromkeys(("os.remove", "os.rename", "os.rmdir", "os.mkdir", "os.truncate", "os.chmod", "os.chown",
+                     "os.chflags", "os.utime", "os.symlink", "os.link", "os.setxattr", "os.removexattr"),
+                    "changing files is disabled in the image validator sandbox"),
+    **dict.fromkeys(("os.kill", "os.killpg", "signal.pthread_kill"),
+                    "signalling processes is disabled in the image validator sandbox"),
+    **dict.fromkeys(("resource.setrlimit", "resource.prlimit"),
+                    "changing resource limits is disabled in the image validator sandbox"),
+}
+_REFUSED_PREFIXES = {"socket.": NO_NET, "ctypes.": "native code through ctypes is disabled in the image validator sandbox",
+                     "shutil.": "changing files is disabled in the image validator sandbox"}
 _WRITE_FLAGS = os.O_WRONLY | os.O_RDWR | os.O_APPEND | os.O_CREAT | os.O_TRUNC
-_HARMLESS_DEVICES = {"/dev/null", "/dev/random", "/dev/urandom"}
-
-
-def _limits(memory, cpu):
-    import resource
-    resource.setrlimit(resource.RLIMIT_AS, (memory, memory))
-    resource.setrlimit(resource.RLIMIT_CPU, (cpu, cpu + 1))
-    resource.setrlimit(resource.RLIMIT_FSIZE, (0, 0))
-    resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+_HARMLESS_DEVICES = {"/dev/null", "/dev/urandom"}
+_ROOTS = []
 
 
 def _deny(*args, **kwargs):
@@ -83,8 +113,11 @@ def _patch_socket():
                 setattr(module, name, _deny)
 
 
-def _is_device(path):
-    real = os.path.realpath(os.fsdecode(path))
+def _real(path):
+    return os.path.realpath(os.fsdecode(path))
+
+
+def _is_device(real):
     if real in _HARMLESS_DEVICES:
         return False
     if real.startswith("/dev/"):
@@ -96,31 +129,53 @@ def _is_device(path):
     return stat.S_ISCHR(mode) or stat.S_ISBLK(mode)
 
 
+def _readable(real):
+    return real in _HARMLESS_DEVICES or any(real == r or real.startswith(r + os.sep) for r in _ROOTS)
+
+
+def _check_read(path):
+    if isinstance(path, int):
+        return
+    if not _readable(_real("." if path is None else path)):
+        raise PermissionError(f"reading outside the interpreter and the validator module is disabled in the image validator sandbox: {path!r}")
+
+
 def _check_open(path, mode=None, flags=None):
-    if isinstance(path, (str, bytes)) and _is_device(path):
+    if isinstance(path, int):
+        return
+    if _is_device(_real(path)):
         raise PermissionError(f"serial and device files are disabled in the image validator sandbox: {path!r}")
     writes = flags & _WRITE_FLAGS if isinstance(flags, int) else any(c in (mode or "") for c in "wax+")
     if writes:
         raise PermissionError(f"file writes are disabled in the image validator sandbox: {path!r}")
+    _check_read(path)
 
 
 def _hook(event, args):
-    if event.startswith("socket."):
-        raise PermissionError(NO_NET)
-    if event in _NO_PROCESS:
-        raise PermissionError(NO_PROC)
+    why = _REFUSED.get(event) or next((w for p, w in _REFUSED_PREFIXES.items() if event.startswith(p)), None)
+    if why:
+        raise PermissionError(why)
     if event == "open":
         _check_open(*args[:3])
+    elif event in ("os.listdir", "os.scandir"):
+        _check_read(args[0])
+
+
+def _no_more_processes():
+    import resource
+    resource.setrlimit(resource.RLIMIT_NPROC, (0, 0))
 
 
 def main():
-    path, func, memory, cpu = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])
-    _limits(memory, cpu)
-    _patch_socket()                 # before anything imports esptool or pyserial
-    sys.addaudithook(_hook)
+    path, func, roots, guard = sys.argv[1], sys.argv[2], json.loads(sys.argv[3]), sys.argv[4] == "guard"
+    os.environ.pop("PWD", None)     # bwrap's own, set after --clearenv
+    _no_more_processes()
+    if guard:
+        _ROOTS.extend(os.path.realpath(r) for r in roots)
+        _patch_socket()             # before anything imports esptool or pyserial
+        sys.addaudithook(_hook)
     data = sys.stdin.buffer.read()
     import importlib.util
-    import json
     spec = importlib.util.spec_from_file_location("sandboxed_validator", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -132,24 +187,136 @@ main()
 
 
 def run_isolated(module_path: Path, func: str, data: bytes, *, wall_timeout: float | None = None,
-                 cpu_seconds: int | None = None, memory_bytes: int | None = None) -> dict:
+                 cpu_seconds: int | None = None, memory_bytes: int | None = None, guard: bool = True) -> dict:
     """{"ok": True, "value": <the JSON `func(data)` returned>} or {"ok": False, "why": str} for
-    `module_path`'s `func` run on `data` in the restricted child. Unset limits are the module's."""
+    `module_path`'s `func` run on `data` in the sandboxed child. Unset limits are the module's.
+    A `why` starting with SANDBOX_UNAVAILABLE means the sandbox was never built: nothing ran."""
     wall_timeout, cpu_seconds = wall_timeout or WALL_TIMEOUT, cpu_seconds or CPU_SECONDS
     memory_bytes = memory_bytes or MEMORY_BYTES
-    cmd = [sys.executable, "-I", "-B", "-c", _CHILD, str(module_path), func, str(memory_bytes), str(cpu_seconds)]
+    if not BWRAP.is_file():
+        return _failed(f"{SANDBOX_UNAVAILABLE}: {BWRAP} not found")
+    if not Path(sys.executable).is_file():
+        return _failed(f"could not start the child: no interpreter at {sys.executable}")
+    module = Path(module_path).resolve()
+    roots = _python_roots()
+    child = [sys.executable, "-I", "-B", "-c", _CHILD, str(module), func, json.dumps(roots + [str(module)]),
+             "guard" if guard else "noguard"]
     try:
-        proc = subprocess.run(cmd, input=bytes(data), capture_output=True, env={}, cwd="/", timeout=wall_timeout)
+        with tempfile.TemporaryDirectory(prefix="image-sandbox-") as private:
+            proc = subprocess.run(sandbox_command(roots + [str(module)], child, passwd=_passwd_file(private)),
+                                  input=bytes(data), capture_output=True, env={}, cwd="/", timeout=wall_timeout,
+                                  preexec_fn=_hard_limits(memory_bytes, cpu_seconds))
     except subprocess.TimeoutExpired:
         return _failed(f"killed after the {wall_timeout:g} s wall-clock timeout")
     except OSError as e:
-        return _failed(f"could not start the child: {e}")
+        return _failed(f"{SANDBOX_UNAVAILABLE}: could not run {BWRAP}: {e}")
     if proc.returncode != 0:
+        refused = _bwrap_error(proc.stderr)
+        if refused:
+            return _failed(f"{SANDBOX_UNAVAILABLE}: {refused}")
         return _failed(f"child {_exit(proc.returncode)}: {_last_line(proc.stderr)}")
     try:
         return {"ok": True, "value": json.loads(proc.stdout)}
     except ValueError:
         return _failed(f"child output is not JSON: {proc.stdout[:120]!r}")
+
+
+def unavailable_reason() -> str | None:
+    """None when this host can build the sandbox, else why not (bwrap missing, user namespaces
+    refused...). Runs the real validator on an empty asset through the real sandbox."""
+    run = run_isolated(ESP_IMAGE, "validate", b"")
+    return run["why"] if not run["ok"] and run["why"].startswith(SANDBOX_UNAVAILABLE) else None
+
+
+def sandbox_command(binds: list[str], child: list[str], *, passwd: str) -> list[str]:
+    """The bwrap argv running `child` with read-only `binds` (plus the loader, two devices and the
+    `passwd` bound as /etc/passwd)."""
+    cmd = [str(BWRAP), "--unshare-all", "--unshare-user", "--unshare-cgroup", "--disable-userns",
+           "--die-with-parent", "--new-session", "--clearenv", "--cap-drop", "ALL",
+           "--ro-bind", passwd, "/etc/passwd"]
+    dests = ["/etc/passwd"]
+    for path in LOADER_PATHS:
+        if os.path.islink(path):
+            cmd += ["--symlink", os.readlink(path), path]
+        elif os.path.exists(path):
+            cmd += ["--ro-bind", path, path]
+            dests.append(path)
+    for path in _outermost(binds):
+        cmd += ["--ro-bind", path, path]
+        dests.append(path)
+    for dev in DEVICES:
+        cmd += ["--dev-bind", dev, dev]
+        dests.append(dev)
+    for directory in _unlisted_ancestors(dests):
+        cmd += ["--chmod", "0111", directory]
+    return cmd + ["--chdir", "/", "--remount-ro", "/", "--"] + child
+
+
+def _python_roots() -> list[str]:
+    """The directories the interpreter runs from: its prefixes, every install a symlink hop of the
+    executable lands in (a venv's bin/python -> the base install's), and esptool's site-packages.
+    jr runs from jr/.venv (CI: setup-python's toolcache); a distro interpreter's prefix is all of /usr."""
+    roots = {sys.prefix, sys.base_prefix, sys.exec_prefix, sys.base_exec_prefix}
+    roots.update(os.path.dirname(os.path.dirname(hop)) for hop in _symlink_hops(sys.executable))
+    spec = importlib.util.find_spec("esptool")
+    if spec and spec.origin:
+        roots.add(str(Path(spec.origin).parent.parent))
+    return sorted(r for r in roots if r and os.path.isdir(r))
+
+
+def _symlink_hops(path: str) -> list[str]:
+    hops = [os.path.abspath(path)]
+    while os.path.islink(hops[-1]) and len(hops) < 40:
+        hops.append(os.path.normpath(os.path.join(os.path.dirname(hops[-1]), os.readlink(hops[-1]))))
+    return hops
+
+
+def _outermost(paths: list[str]) -> list[str]:
+    """`paths` without the ones already inside another."""
+    ordered = sorted(set(paths), key=len)
+    return [p for i, p in enumerate(ordered) if not any(_inside(p, q) for q in ordered[:i])]
+
+
+def _unlisted_ancestors(dests: list[str]) -> list[str]:
+    """Every directory bwrap creates on the way to a bind (the root included), outermost first."""
+    ancestors = {"/"}
+    for dest in dests:
+        parent = os.path.dirname(dest)
+        while parent != "/":
+            ancestors.add(parent)
+            parent = os.path.dirname(parent)
+    return sorted((a for a in ancestors if not any(_inside(a, d) for d in dests)), key=len)
+
+
+def _inside(path: str, root: str) -> bool:
+    return path == root or path.startswith(root.rstrip("/") + "/")
+
+
+def _passwd_file(private: str) -> str:
+    """A one-line /etc/passwd for the sandbox's user, home /nonexistent, written in the run's private
+    directory: esptool's config lookup (esp_pylib) asks for a home directory, and the host's passwd
+    stays out. Bound, not copied in (--ro-bind-data writes a file, which RLIMIT_FSIZE 0 forbids)."""
+    path = os.path.join(private, "passwd")
+    with open(path, "w") as f:
+        f.write(f"validator:x:{os.getuid()}:{os.getgid()}::/nonexistent:/nonexistent\n")
+    return path
+
+
+def _hard_limits(memory: int, cpu: int):
+    def apply():        # in the forked child, before exec: only resource.setrlimit, no Python-level locks
+        resource.setrlimit(resource.RLIMIT_AS, (memory, memory))
+        resource.setrlimit(resource.RLIMIT_CPU, (cpu, cpu + 1))
+        resource.setrlimit(resource.RLIMIT_NOFILE, (OPEN_FILES, OPEN_FILES))
+        resource.setrlimit(resource.RLIMIT_FSIZE, (0, 0))
+        resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+    return apply
+
+
+def _bwrap_error(stderr: bytes) -> str | None:
+    """bwrap's own refusal (every message it prints starts "bwrap: "), which it emits before the
+    child ever runs. A child printing one is still needs_review, so mimicry gains it nothing."""
+    first = next((ln for ln in stderr.decode("utf-8", "replace").splitlines() if ln.strip()), "")
+    return first[:200] if first.startswith("bwrap: ") else None
 
 
 def validate(data: bytes, *, module: Path | None = None, func: str = "validate", **limits) -> dict:
@@ -183,11 +350,13 @@ def _failed(why: str) -> dict:
 
 
 def _exit(code: int) -> str:
-    if code < 0:
+    """bwrap exits 128+N when its child dies of signal N; a negative code is bwrap itself killed."""
+    signum = -code if code < 0 else code - 128 if code > 128 else 0
+    if signum:
         try:
-            return f"killed by {signal.Signals(-code).name}"
+            return f"killed by {signal.Signals(signum).name}"
         except ValueError:
-            return f"killed by signal {-code}"
+            return f"killed by signal {signum}"
     return f"exited with status {code}"
 
 

@@ -86,3 +86,20 @@ def https_server(_test_cert):
     server = fake_https.Server(*_test_cert)
     yield server
     server.close()
+
+
+def pytest_collection_modifyitems(config, items):
+    """A `sandbox`-marked test needs jr/image_sandbox.py's real bwrap sandbox. On a host that cannot
+    build it (no bwrap, user namespaces refused — the stock GitHub ubuntu runner) it is SKIPPED with
+    that reason, never passed: `pytest -rs` lists every one. The fail-closed behaviour such a host
+    must show is jr/test_image_sandbox_fail_closed.py, which is not marked and always runs."""
+    marked = [item for item in items if item.get_closest_marker("sandbox")]
+    if not marked:
+        return
+    import image_sandbox
+    why = image_sandbox.unavailable_reason()
+    if why:
+        skip = pytest.mark.skip(reason=f"needs the bwrap image sandbox, unavailable on this host: {why}")
+        for item in marked:
+            item.add_marker(skip)
+

@@ -76,13 +76,25 @@ exist as verified logic (118 passing tests on the logic branch — see "Reuses" 
      Content-Length is never trusted (absent, wrong or lying), a closing server is read to the
      close — and one byte over aborts. Connect (10 s), read (30 s) and total (120 s, a watchdog
      that also bounds slow-dripped headers and DNS) timeouts.
-     **The parse** (`jr/image_sandbox.py`): `esp_image.validate` runs in a fresh
-     `sys.executable -I -B` child with an empty environment (no tokens or keys), the asset on
-     stdin only, RLIMIT_CPU 30 s, RLIMIT_AS 512 MB, RLIMIT_FSIZE 0, a 60 s wall-clock kill;
-     `socket` is patched before esptool is imported and a PEP 578 audit hook refuses every
-     socket event, device-node opens (serial), file writes and process starts.
-     **Mapping:** a refused, timed-out or over-cap fetch, a 404, and a validator child that
-     crashed, was killed, timed out or printed anything but a well-formed result →
+     **The parse** (`jr/image_sandbox.py`, owner spec 2026-11-04): `esp_image.validate` runs in a
+     fresh `sys.executable -I -B` child under bubblewrap (`/usr/bin/bwrap`): new net, pid, ipc,
+     uts, user and cgroup namespaces, `--disable-userns`, `--cap-drop ALL`, `--new-session`,
+     `--die-with-parent`, `--clearenv`; a read-only tmpfs root holding only read-only binds of the
+     interpreter's prefixes, esptool's site-packages, the validator module, the loader's
+     libraries (`/usr/lib`, `/lib*`, `ld.so.cache`), `/dev/null` + `/dev/urandom` and a one-line
+     `/etc/passwd` of its own — no `/home`, `/proc`, `/tmp`, serial device or host config, and
+     every other directory on the way is 0111 (not listable). Hard RLIMIT_AS 512 MB, RLIMIT_CPU
+     30 s, RLIMIT_NOFILE 64, RLIMIT_FSIZE 0, RLIMIT_CORE 0 set before exec; RLIMIT_NPROC 0 set
+     as the child's first act (before exec it would make the kernel refuse the user namespace);
+     a 60 s wall-clock kill in the parent. The asset arrives on stdin only. On top, a Python
+     guard: `socket` patched before esptool is imported and a PEP 578 audit hook refusing
+     socket, ctypes and process-start events, writes, reads/listings outside the bound roots,
+     device-node opens, file mutation, signals and rlimit changes.
+     **Fail closed:** no bwrap, or bwrap refusing to build the sandbox (namespaces denied), is
+     `needs_review` with reason `sandbox_unavailable` — there is no unsandboxed fallback.
+     **Mapping:** a refused, timed-out or over-cap fetch, a 404, an unavailable sandbox, and a
+     validator child that crashed, was killed, timed out or printed anything but a well-formed
+     result →
      `needs_review` (never `esp_target`); a 5xx/429, DNS failure or refused connection is an
      outage → unknown (`device_evidence_unreadable`, retried).
 
