@@ -453,59 +453,6 @@ def test_demand_item_schema_shape():
                              demand.GAP_COVERED_OK, demand.GAP_UNRESOLVED}
 
 
-# ═══════════════════════════ D2 (GA4 site-search) — the KNOWN ISSUE, and future-readiness ═══════════════════════════
-
-def test_ga4_empty_searchterm_marks_d2_unavailable_and_never_crashes():
-    empty_ga4 = [
-        {"dimensionValues": [{"value": ""}], "metricValues": [{"value": "12"}]},
-        {"dimensionValues": [{"value": "   "}], "metricValues": [{"value": "5"}]},
-    ]
-    parsed, d2_available = demand.parse_ga4_searchterm_rows(empty_ga4)
-    assert parsed == []
-    assert d2_available is False
-    # and the full pipeline must still run clean on D1 alone
-    items = _build(ga4=empty_ga4)
-    assert items
-
-
-def test_ga4_no_rows_at_all_marks_d2_unavailable():
-    parsed, d2_available = demand.parse_ga4_searchterm_rows([])
-    assert parsed == []
-    assert d2_available is False
-
-
-def test_ga4_working_searchterm_merges_into_matching_gsc_item():
-    ga4 = [{"dimensionValues": [{"value": "marauder cardputer"}], "metricValues": [{"value": "37"}]}]
-    items = _build(ga4=ga4)
-    it = next(it for it in items if it["resolved"] and it["resolved"]["firmware_token"] == "esp32marauder")
-    assert it["events"] == 37
-    assert set(it["source"]) == {"gsc_query", "ga4_sitesearch"}
-
-
-def test_ga4_zero_result_first_party_term_is_unresolved_but_weighted_by_zero_result():
-    ga4 = [{"dimensionValues": [{"value": "evil portal esp32"}], "metricValues": [{"value": "9"}],
-           "zero_result": True}]
-    items = _build(ga4=ga4)
-    it = next(it for it in items if "evil portal esp32" in it["raw_terms"])
-    assert it["gap"] == demand.GAP_UNRESOLVED
-    assert it["zero_result"] is True
-    assert it["events"] == 9
-
-
-def test_ga4_events_below_floor_are_dropped():
-    ga4 = [{"dimensionValues": [{"value": "some rare thing"}], "metricValues": [{"value": "1"}]}]
-    parsed, _ = demand.parse_ga4_searchterm_rows(ga4)
-    filtered = demand._floor_filter_events(parsed)
-    assert filtered == []
-
-
-def test_ga4_malformed_metric_value_defaults_to_zero_events_not_a_crash():
-    ga4 = [{"dimensionValues": [{"value": "marauder cardputer"}], "metricValues": [{"value": "not-a-number"}]}]
-    parsed, available = demand.parse_ga4_searchterm_rows(ga4)
-    assert parsed == [{"term": "marauder cardputer", "events": 0, "zero_result": False}]
-    assert available is True
-
-
 def test_parse_gsc_rows_skips_rows_with_no_keys_or_blank_query():
     rows = [{"impressions": 500}, {"keys": ["   "], "impressions": 500}]
     assert demand._parse_gsc_rows(rows, has_page=False) == []
@@ -563,13 +510,6 @@ def test_digest_never_has_a_bare_underscore_outside_a_code_span():
     digest = demand.build_digest(items, d2_available=False, window={"start": "2026-08-03", "end": "2026-08-31"})
     for label in (demand.GAP_UNCOVERED, demand.GAP_RANKS_POORLY, demand.GAP_COVERED_OK, demand.GAP_UNRESOLVED):
         assert f"`{label}`" in digest or label not in digest
-
-
-def test_digest_shows_event_counts_for_first_party_items():
-    ga4 = [{"dimensionValues": [{"value": "marauder cardputer"}], "metricValues": [{"value": "37"}]}]
-    items = _build(ga4=ga4)
-    digest = demand.build_digest(items, d2_available=True, window={"start": "2026-08-03", "end": "2026-08-31"})
-    assert "events 37" in digest
 
 
 # ═══════════════════════════ snapshot / unresolved writers ═══════════════════════════

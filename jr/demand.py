@@ -1,7 +1,7 @@
 """EspAtlas Jr — read-only demand miner (SPEC-jr-demand-driven.md §3, Phase 1 — §12).
 
 Pulls GSC query-gap demand (D1 `[query]`, D4 `[query,page]`) and attempts GA4 on-site
-search (D2 `searchTerm`) via **Composio** — reusing `telemetry.py`'s exact auth pattern
+search (D2 `eventName` × `customEvent:q`) via **Composio** — reusing `telemetry.py`'s exact auth pattern
 (same `KEY`/`ENTITY`/`GA4_PROPERTY`/`GSC_SITE`, same `_ex()` executor; not forked here, see
 `_pull_live()`). Normalizes, floor-filters, dedups/merges, weights (a pure versioned
 formula), resolves each term to a catalog entity by REUSING `scorer.py`'s `device_map` /
@@ -48,6 +48,12 @@ MIN_EVENTS = 5                          # D2/D3 floor
 FIRST_PARTY_WEIGHT_MULTIPLIER = 2.0     # D2/D3 = purest intent, weighted above D1/D4 (§3.6)
 ZERO_RESULT_MULTIPLIER = 1.5            # a first-party search that returned NOTHING is the strongest signal
 TRENDS_BOOST_MAX = 0.5                  # v2: Trends interest=100 -> +50% weight; interest=0/absent -> +0% (long-tail safe)
+
+# D2 = GA4 site-search events the site sends with param `q` (apps/web/lib/use-explorer.ts)
+GA4_SEARCH_SUBMIT = "search_submit"
+GA4_SEARCH_EMPTY = "search_empty"
+GA4_SITE_SEARCH_EVENTS = (GA4_SEARCH_SUBMIT, GA4_SEARCH_EMPTY)
+GA4_PLACEHOLDER_TERMS = {"(not set)", "(other)"}  # no `q` sent / high-cardinality rollup — never a typed term
 
 # RANKS_POORLY thresholds (§4) — "high-impression + low-CTR + weak-position" made concrete
 RANKS_POORLY_MIN_IMPRESSIONS = 50
@@ -315,26 +321,40 @@ def _parse_gsc_rows(rows: list[dict], has_page: bool) -> list[dict]:
     return out
 
 
+def _ga4_event_count(row: dict) -> int:
+    metrics = row.get("metricValues") or []
+    try:
+        return int(float((metrics[0] or {}).get("value", 0))) if metrics else 0
+    except (TypeError, ValueError):
+        return 0
+
+
 def parse_ga4_searchterm_rows(raw_rows: list[dict]) -> tuple[list[dict], bool]:
-    """Raw `GOOGLE_ANALYTICS_RUN_REPORT` (dim `searchTerm`, metric `eventCount`) rows -> plain
-    dicts + a `d2_available` flag. **KNOWN ISSUE (SPEC ⟨Q1⟩ resolved 2026-08-31):** the
-    `searchTerm` dimension value currently comes back EMPTY upstream (term-capture not
-    configured — a site-code fix, not Jr's). Rows with a blank/whitespace-only term are
-    dropped, never raised; if EVERY row is blank (today's live reality) or there are no rows at
-    all, `d2_available` is False and the miner runs on D1/D4 only (§8: 'no silent degradation')."""
-    parsed = []
+    """Raw `GOOGLE_ANALYTICS_RUN_REPORT` rows (dims `[eventName, customEvent:q]`, metric
+    `eventCount`, filtered to `GA4_SITE_SEARCH_EVENTS` — see `_pull_live`) -> one plain dict per
+    normalized term + a `d2_available` flag. `events` = the term's `search_submit` count;
+    `zero_result` = the term has any `search_empty` row. Case/whitespace variants merge (same
+    `normalize_term()` as GSC). **FIXED 2026-11-04 (SPEC ⟨Q1⟩ amended):** the site always sent
+    the term as param `q`; the miner used to query the built-in `searchTerm` dimension, which
+    came back EMPTY, so D2 was blind. Rows with an empty/`(not set)`/`(other)` term, another event
+    name, or the legacy single-dimension shape are dropped, never raised; `d2_available` is
+    True only when at least one real term parses — otherwise the miner runs on D1/D4 only
+    (§8: 'no silent degradation')."""
+    by_term: dict[str, dict] = {}
     for r in raw_rows or []:
         dims = r.get("dimensionValues") or []
-        raw_term = (dims[0].get("value") if dims else "") or ""
-        term = normalize_term(raw_term)
-        if not term:
+        if len(dims) < 2:
             continue
-        metrics = r.get("metricValues") or []
-        try:
-            events = int(float((metrics[0] or {}).get("value", 0))) if metrics else 0
-        except (TypeError, ValueError):
-            events = 0
-        parsed.append({"term": term, "events": events, "zero_result": bool(r.get("zero_result"))})
+        event_name = (dims[0] or {}).get("value")
+        term = normalize_term((dims[1] or {}).get("value"))
+        if event_name not in GA4_SITE_SEARCH_EVENTS or not term or term in GA4_PLACEHOLDER_TERMS:
+            continue
+        row = by_term.setdefault(term, {"term": term, "events": 0, "zero_result": False})
+        if event_name == GA4_SEARCH_SUBMIT:
+            row["events"] += _ga4_event_count(r)
+        else:
+            row["zero_result"] = True
+    parsed = list(by_term.values())
     return parsed, bool(parsed)
 
 
@@ -474,7 +494,7 @@ def _pull_trends(gsc_query_rows: list[dict]) -> dict[str, int]:
 
 
 def _pull_live(days: int = WINDOW_DAYS) -> dict:
-    """Pulls D1/D4 (GSC) and attempts D2 (GA4 searchTerm) via **Composio**, reusing
+    """Pulls D1/D4 (GSC) and attempts D2 (GA4 site search, `customEvent:q`) via **Composio**, reusing
     `telemetry.py`'s auth VERBATIM (same `KEY`/`ENTITY`/`GA4_PROPERTY`/`GSC_SITE`, same `_ex()`
     executor — not forked), then fetches Google Trends once for the mined terms (`_pull_trends`,
     reusing `analytics_cross.fetch_trends`). These are the ONLY network-touching functions in
@@ -493,7 +513,10 @@ def _pull_live(days: int = WINDOW_DAYS) -> dict:
          "dimensions": ["query", "page"], "rowLimit": 500})
     ga4_searchterm = telemetry._ex("GOOGLE_ANALYTICS_RUN_REPORT",
         {"property": telemetry.GA4_PROPERTY, "dateRanges": [{"startDate": S, "endDate": E}],
-         "dimensions": [{"name": "searchTerm"}], "metrics": [{"name": "eventCount"}]})
+         "dimensions": [{"name": "eventName"}, {"name": "customEvent:q"}],
+         "metrics": [{"name": "eventCount"}],
+         "dimensionFilter": {"filter": {"fieldName": "eventName",
+                                        "inListFilter": {"values": list(GA4_SITE_SEARCH_EVENTS)}}}})
 
     gsc_query_rows = (gsc_query or {}).get("rows") or []
 
@@ -502,6 +525,7 @@ def _pull_live(days: int = WINDOW_DAYS) -> dict:
         "gsc_query_rows": gsc_query_rows,
         "gsc_query_page_rows": (gsc_query_page or {}).get("rows") or [],
         "ga4_searchterm_raw_rows": (ga4_searchterm or {}).get("rows") or [],
+        "ga4_pull_ok": ga4_searchterm is not None,  # `_ex` returns None on a Composio failure
         "trends": _pull_trends(gsc_query_rows),
     }
 
@@ -554,7 +578,16 @@ def write_unresolved(items: list[dict], demand_dir: Path = DEMAND_DIR) -> Path:
 _GAP_EMOJI = {GAP_UNCOVERED: "🆕", GAP_RANKS_POORLY: "📉", GAP_COVERED_OK: "✅", GAP_UNRESOLVED: "❓"}
 
 
-def build_digest(items: list[dict], d2_available: bool, window: dict, top_n: int = 10) -> str:
+def _d2_status_line(d2_available: bool, d2_pull_failed: bool) -> str:
+    if d2_pull_failed:
+        return "🔴 D2 blind: GA4 site-search pull failed (customEvent:q) — check Composio/GA4"
+    if not d2_available:
+        return "🔴 D2 blind: no site-search terms in GA4 this window (customEvent:q)"
+    return "🟢 D2 live: first-party site-search terms captured"
+
+
+def build_digest(items: list[dict], d2_available: bool, window: dict, top_n: int = 10,
+                 d2_pull_failed: bool = False) -> str:
     """The Telegram digest (§12 Phase 1: 'ship the ranked demand snapshot to Telegram for
     Felipe to eyeball vs reality'). Surfaces top demand + gap labels + the D2-blind note.
 
@@ -589,8 +622,7 @@ def build_digest(items: list[dict], d2_available: bool, window: dict, top_n: int
             lines.append(f"  📉 `{it['term']}` — imp {it['impressions']}, ctr {it['ctr']}, pos {it['position']}")
 
     lines.append("")
-    lines.append("🔴 D2 blind: term-capture off (GA4 searchTerm empty upstream — site-code fix, ⟨Q1⟩)"
-                if not d2_available else "🟢 D2 live: first-party site-search terms captured")
+    lines.append(_d2_status_line(d2_available, d2_pull_failed))
     return "\n".join(lines)
 
 
@@ -617,7 +649,8 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
     )
     write_snapshot(items, d2_available, live["window"], today, demand_dir)
     write_unresolved(items, demand_dir)
-    digest = build_digest(items, d2_available, live["window"])
+    digest = build_digest(items, d2_available, live["window"],
+                          d2_pull_failed=not live.get("ga4_pull_ok", True))
     if send_telegram:
         notify.send_telegram(digest)
     return {"items": items, "digest": digest, "d2_available": d2_available}

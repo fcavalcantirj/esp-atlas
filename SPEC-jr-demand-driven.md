@@ -81,14 +81,14 @@ and not a vibe.
 | # | Source | Composio tool | What it means | Status |
 |---|---|---|---|---|
 | D1 | **GSC query-gap** | `GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY` (dims `[query]`, and `[query,page]`) | Terms where esp-atlas **already appears** (impressions) but wins little — high-impression + low-CTR + weak-position = *we rank but have no good page*. **The gold.** | **[REAL]** — `jr/telemetry.py` ships these weekly today |
-| D2 | **GA4 on-site search** | `GOOGLE_ANALYTICS_RUN_REPORT` (dim `searchTerm`, metric `eventCount`; zero-result via a `no_results` param/event) | Terms typed into esp-atlas.com's **own search box** — the purest intent. Zero-result terms = direct catalog gap. | **[PARTIAL] — ⟨Q1 RESOLVED 2026-08-31⟩:** events fire (**1,424 in 90d**) but `searchTerm` is **empty** → term-capture not configured. Plumbing exists; one **site-code fix (ours, not Jr)** unlocks it. |
+| D2 | **GA4 on-site search** | `GOOGLE_ANALYTICS_RUN_REPORT` (dims `[eventName, customEvent:q]`, metric `eventCount`, `dimensionFilter` eventName ∈ {`search_submit`, `search_empty`}). Term = `customEvent:q` (normalized like GSC terms; `(not set)`/empty dropped); `events` = the term's `search_submit` count; `zero_result` = the term has any `search_empty` row. | Terms typed into esp-atlas.com's **own search box** — the purest intent. Zero-result terms = direct catalog gap. | **[REAL] — ⟨Q1⟩ re-resolved 2026-11-04:** the site (`apps/web/lib/use-explorer.ts`) always sent the term as event param `q`; the miner was querying the built-in `searchTerm` dimension (one empty value over 6,198 events). Querying the `customEvent:q` custom dimension returns the real terms. `d2_available` = at least one real term parsed. |
 | D3 | **GA4 404 / not-found** | `GOOGLE_ANALYTICS_RUN_REPORT` (dim `pagePath` filtered to the 404 route/title) | URLs people reached that don't exist — often a firmware/board slug they expected us to have. | **[UNVERIFIED]** — depends on 404 page fires a GA4 event ⟨Q2⟩ |
 | D4 | **GSC query+page** | same as D1, dims `[query, page]` | Which existing page a query lands on → find queries with **no** owning page (gap) vs pages that under-convert (improve). | **[REAL]** — same tool, extra dimension |
 
 **Reliability caveats baked into the spec:**
 - **GSC k-anonymity:** rare queries are omitted by Google entirely. A brand-new niche
   firmware with <~10 searches/period is **invisible** — D2/D3 (first-party) catch what GSC
-  cannot, which is why site-search is worth enabling (⟨Q1⟩).
+  cannot — first-party site search (`customEvent:q`, live since 2026-11-04, ⟨Q1⟩).
 - **GSC lag:** data is ~2–3 days behind; freshest signal is stale by design → weekly mine
   cadence, not daily (§11).
 - **Position/CTR noise:** low volume rows are statistically thin. The miner applies a
@@ -213,9 +213,10 @@ a record to satisfy demand** (§7).
 - **Thin GSC data** (new/small site): D1 sparse. Bootstrap with **category-level demand** —
   broad terms (`"esp32 marauder"`, `"m5 firmware"`) resolve to *categories* not exact SKUs;
   fill category breadth so pages exist to *earn* impressions, then D1 sharpens next cycle.
-- **Site-search off** (⟨Q1⟩): D2/D3 unavailable → miner runs on D1/D4 only and **says so
-  loudly** in the digest ("first-party demand blind — enable GA4 site-search"). No silent
-  degradation.
+- **No site-search terms** (⟨Q1⟩): D2/D3 unavailable → miner runs on D1/D4 only and **says so
+  loudly** in the digest — "D2 blind: GA4 site-search pull failed" when the Composio call
+  fails, "D2 blind: no site-search terms in GA4 this window" when GA4 answers with none. No
+  silent degradation.
 - **All demand exhausted for a tick:** queue falls through to staleness backfill (§5.3) — Jr
   is never idle, never blocked on demand.
 
@@ -307,6 +308,9 @@ Each phase = its own delegated task, TDD, guard-gated, on a branch. `jr-daily` u
   site-code fix (populate `search_term` / GA4 query-param) unlocks 1,424 searches of pure
   intent. **That fix is ours (site code), not Jr.** Phase 1 proceeds on GSC (D1/D4, confirmed
   live) in the meantime; D2 lights up once term-capture is fixed. → **new task for us.**
+  **Amended 2026-11-04:** the diagnosis above was wrong — term-capture was never off. The site sends
+  `search_submit` / `search_results` / `search_empty` with param `q`; GA4 exposes it as
+  `customEvent:q`. The miner now queries that dimension (see the D2 row, §2) — no site-code change.
 - **⟨Q2⟩** Does the 404 page **fire a GA4 event** we can query (D3)? If not, cheap to add.
 - **⟨Q3⟩ RESOLVED (2026-08-31): Jr does not code.** `RANKS_POORLY` (content/SEO) is **ours
   (Felipe + DasBrowCoder)**, never Jr. Jr's lane is authoring catalog records for `UNCOVERED`.
