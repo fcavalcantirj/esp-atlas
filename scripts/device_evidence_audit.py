@@ -1,23 +1,25 @@
 #!/usr/bin/env python3
 """Device-build evidence AUDIT — read-only (review finding 3, 2026-11-04).
 
-Jr's admission now requires a device-build signal before authoring a firmware record
-(jr/device_evidence.py): an espressif32 platformio.ini, an ESP-IDF project (CMakeLists.txt
-including project.cmake, or an idf_component.yml), an Arduino sketch (.ino) or a release .bin.
-Records admitted BEFORE that gate never had to show one — rebelthor/warble, a Go server, got in on
-its GitHub topics. This script runs the SAME check over every catalogued firmware's GitHub repo and
-lists the ones with none, for the owner to review. It decides nothing and writes nothing: no data,
-no ledger, no recipe is touched.
+Jr's admission requires evidence that a repo TARGETS an ESP chip before authoring a firmware record
+(jr/device_evidence.py): an espressif32 platformio.ini, an ESP-IDF project stating its target, an
+Arduino sketch naming an ESP board, or a release .bin carrying an ESP image header. Records
+admitted BEFORE that gate never had to show one — rebelthor/warble, a Go server, got in on its
+GitHub topics. This script runs the SAME check over every catalogued firmware's GitHub repo and
+sorts it into the gate's three classes, for the owner to review. It decides nothing and writes
+nothing: no data, no ledger, no recipe is touched.
 
-LIVE: one check costs 1–8 `gh api` / raw.githubusercontent.com reads (jr/device_evidence.MAX_CALLS).
+LIVE: one check costs 1–15 `gh api` / raw.githubusercontent.com / ranged release-asset reads
+(jr/device_evidence.MAX_CALLS).
 
     python3 scripts/device_evidence_audit.py               # every firmware in data/firmware
     python3 scripts/device_evidence_audit.py --only warble,bruce
     python3 scripts/device_evidence_audit.py --json
 
-Three outcomes per firmware: a signal (its kind + citing URL), NO signal (the review list), or
-UNKNOWN (an endpoint failed for a reason other than 404 — re-run later). A firmware whose url is
-not a github.com repo cannot be checked this way and is listed as such. Always exits 0.
+Classes: ESP_TARGET (the evidence kind + citing URL), NOT_DEVICE_FIRMWARE (no build signal at
+all), NEEDS_REVIEW (only an ambiguous signal: the citing URL and why). Plus UNKNOWN (an endpoint
+failed for a reason other than 404 — re-run later) and NOT A GITHUB REPO (cannot be checked this
+way). Always exits 0.
 """
 from __future__ import annotations
 
@@ -36,11 +38,15 @@ from esp_atlas_core.paths import DATA_DIR  # noqa: E402
 from firmware_floor_audit import _owner_repo  # noqa: E402
 
 
+CLASSES = (device_evidence.ESP_TARGET, device_evidence.NOT_DEVICE_FIRMWARE, device_evidence.NEEDS_REVIEW)
+
+
 def audit(data_dir=None, check=device_evidence.check, only: set[str] | None = None) -> dict:
-    """{"entries", "no_signal", "unknown", "not_github"} over every catalogued firmware (or the
-    ids in `only`). `check(owner_repo) -> device_evidence result` is injectable for tests."""
+    """{"entries", "esp_target", "not_device_firmware", "needs_review", "unknown", "not_github"}
+    over every catalogued firmware (or the ids in `only`). `check(owner_repo) -> device_evidence
+    result` is injectable for tests."""
     root = Path(data_dir) if data_dir is not None else DATA_DIR
-    entries, no_signal, unknown, not_github = [], [], [], []
+    report: dict = {"entries": [], **{c: [] for c in CLASSES}, "unknown": [], "not_github": []}
     for path in sorted(root.glob(DATA_PATTERNS["firmware"])):
         try:
             fm, _body = parse_frontmatter(path)
@@ -52,41 +58,44 @@ def audit(data_dir=None, check=device_evidence.check, only: set[str] | None = No
         if only and fid not in only:
             continue
         entry = {"id": fid, "url": fm.get("url"), "repo": _owner_repo(fm.get("url")),
-                 "ok": None, "kind": None, "evidence": None, "notes": []}
-        entries.append(entry)
+                 "ok": None, "verdict": None, "kind": None, "evidence": None, "why": None, "notes": []}
+        report["entries"].append(entry)
         if not entry["repo"]:
-            not_github.append(entry)
+            report["not_github"].append(entry)
             continue
         res = check(entry["repo"])
-        entry.update(ok=res.get("ok"), kind=res.get("kind"), evidence=res.get("url"), notes=res.get("notes") or [])
-        if entry["ok"] is False:
-            no_signal.append(entry)
-        elif entry["ok"] is None:
-            unknown.append(entry)
-    return {"entries": entries, "no_signal": no_signal, "unknown": unknown, "not_github": not_github}
+        entry.update(ok=res.get("ok"), verdict=res.get("verdict"), kind=res.get("kind"), evidence=res.get("url"),
+                     notes=res.get("notes") or [])
+        if entry["verdict"] == device_evidence.NEEDS_REVIEW:
+            entry["why"] = device_evidence.review_note(res)["why"]
+        report[entry["verdict"] if entry["verdict"] in CLASSES else "unknown"].append(entry)
+    return report
+
+
+def _section(title: str, entries: list[dict], line) -> None:
+    print(f"\n{title}:")
+    for e in entries:
+        print("    " + line(e))
+    if not entries:
+        print("    none")
 
 
 def print_report(report: dict) -> None:
-    entries = report["entries"]
     print("FIRMWARE DEVICE-BUILD EVIDENCE AUDIT (live, read-only)")
-    print("  signal: espressif32 platformio.ini · ESP-IDF project · Arduino .ino · release .bin")
-    print(f"  scanned {len(entries)} firmware · {len(report['no_signal'])} with NO signal · "
-          f"{len(report['unknown'])} unknown · {len(report['not_github'])} not a GitHub repo\n")
-    print("NO DEVICE-BUILD SIGNAL (owner review: id · repo):")
-    for e in report["no_signal"] or []:
-        print(f"    {e['id']}  ({e['repo']})")
-    if not report["no_signal"]:
-        print("    none")
-    print("\nUNKNOWN (an endpoint failed; re-run):")
-    for e in report["unknown"]:
-        print(f"    {e['id']}  ({e['repo']}): {'; '.join(e['notes'])[:160]}")
-    if not report["unknown"]:
-        print("    none")
-    print("\nNOT A GITHUB REPO (not checkable here):")
-    for e in report["not_github"]:
-        print(f"    {e['id']}  ({e['url']})")
-    if not report["not_github"]:
-        print("    none")
+    print("  esp_target: espressif32 platformio.ini · ESP-IDF project + stated target · "
+          "Arduino sketch + ESP board · release .bin with an ESP image header")
+    print(f"  scanned {len(report['entries'])} firmware · "
+          + " · ".join(f"{len(report[c])} {c}" for c in CLASSES)
+          + f" · {len(report['unknown'])} unknown · {len(report['not_github'])} not a GitHub repo")
+    _section("ESP TARGET (id · repo: evidence)", report[device_evidence.ESP_TARGET],
+             lambda e: f"{e['id']}  ({e['repo']}): {e['kind']} {e['evidence']}")
+    _section("NOT DEVICE FIRMWARE (no build signal; owner review: id · repo)", report[device_evidence.NOT_DEVICE_FIRMWARE],
+             lambda e: f"{e['id']}  ({e['repo']})")
+    _section("NEEDS REVIEW (no ESP target stated; owner review: id · repo: citation — why)", report[device_evidence.NEEDS_REVIEW],
+             lambda e: f"{e['id']}  ({e['repo']}): {e['kind']} {e['evidence']} — {e['why']}")
+    _section("UNKNOWN (an endpoint failed; re-run)", report["unknown"],
+             lambda e: f"{e['id']}  ({e['repo']}): {'; '.join(e['notes'])[:160]}")
+    _section("NOT A GITHUB REPO (not checkable here)", report["not_github"], lambda e: f"{e['id']}  ({e['url']})")
 
 
 def main(argv=None) -> int:
