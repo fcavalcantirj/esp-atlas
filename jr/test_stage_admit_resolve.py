@@ -9,6 +9,8 @@ import urllib.parse
 from datetime import timedelta
 from types import SimpleNamespace
 
+import pytest
+
 import launcher_resolve
 import memory
 import stage_admit
@@ -16,6 +18,8 @@ import tick
 import tools
 from budget import Budget
 from test_stage_admit import DEVICE_TREE, NOW, _meta, root  # noqa: F401 — `root` is the shared tmp-tree fixture
+
+pytestmark = pytest.mark.usefixtures("esp_sketch_raw")
 
 IBUTTON = {"fid": "ec0b5f11b7a6a85445a1d4dc5ad65508", "name": "IButton M5Stick C Plus2",
            "author": "geo_tp", "github": "https://github.com/geo-tp", "category": "stickc",

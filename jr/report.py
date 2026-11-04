@@ -23,7 +23,7 @@ class TickReport:
     boards_pct: float | None = None
     overall_pct: float | None = None
     allocation: str = ""
-    stages: list = field(default_factory=list)        # [{"name", "paths", "summary", "needs_human"}]
+    stages: list = field(default_factory=list)        # [{"name", "paths", "summary", "needs_human", "items", "review"}]
     extra_paths: list = field(default_factory=list)    # tick-owned paths outside stages (data-trend snapshot)
     data_row: dict | None = None                       # SPEC-data-trend.md row for this tick
     data_delta: dict | None = None                     # its diff vs the prior day (None on first snapshot)
@@ -56,6 +56,11 @@ class TickReport:
     @property
     def needs_human(self) -> bool:
         return any(s.get("needs_human") for s in self.stages)
+
+    @property
+    def review(self) -> list[dict]:
+        """Every stage's needs-owner-review repos (the device-build gate's needs_review verdicts)."""
+        return [it for s in self.stages for it in (s.get("review") or [])]
 
 
 def _pct(v: float | None) -> str:
@@ -204,6 +209,19 @@ def _fmt_recipes_item(it: dict) -> list[str]:
     return out
 
 
+def render_review_section(r: TickReport) -> list[str]:
+    """Repos the device-build evidence gate would not guess about (jr/device_evidence.py
+    needs_review): one line each, the citing URL and why it is ambiguous. Empty when none."""
+    if not r.review:
+        return []
+    lines = ["### Needs owner review — no ESP target stated (not admitted)"]
+    for it in r.review:
+        lines.append(f"- `{it.get('repo')}` (`{it.get('id')}`) — {it.get('kind')} {it.get('url')}: {it.get('why')}")
+    lines.append("Re-checked after the reject TTL; admit by hand if it does target an ESP.")
+    lines.append("")
+    return lines
+
+
 def render_pr_body(r: TickReport) -> str:
     """The PR as a VERDICT a human can read top to bottom: what is proposed and which gates it
     passed (one checklist per record), what was skipped (counts only — the launcher backlog is
@@ -239,6 +257,7 @@ def render_pr_body(r: TickReport) -> str:
     else:
         lines.append("- none")
     lines.append("")
+    lines += render_review_section(r)
     mem = r.memory or {}
     guard = "n/a" if r.guard is None else ("green" if r.guard.get("ok") else "RED")
     lines.append("### Summary")

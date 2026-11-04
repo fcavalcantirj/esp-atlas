@@ -100,3 +100,22 @@ def test_pr_body_truncates_a_runaway_stage_summary():
     r = report.TickReport(when=NOW, stages=[{"name": "admit", "paths": [], "summary": "x" * 5000, "needs_human": False}])
     body = report.render_pr_body(r)
     assert "… (truncated" in body and len(body) < 2500
+
+
+def test_pr_body_lists_repos_that_need_the_owner_to_review_their_esp_target():
+    """The device-build gate's needs_review verdicts are never admitted and never guessed: the
+    owner reads them here, one line per repo with the citing URL and why it is ambiguous."""
+    review = [{"id": "zap", "repo": "z/zap", "kind": "arduino_sketch", "url": "https://github.com/z/zap/blob/HEAD/zap.ino",
+               "why": "a .ino but no ESP board named"}]
+    r = _r(stages=[{"name": "admit", "paths": [], "summary": "s", "needs_human": False, "review": review},
+                   {"name": "boardmap", "paths": [], "summary": "t", "needs_human": False}],
+           rejects={"needs_review_target": 1})
+    body = report.render_pr_body(r)
+    assert "### Needs owner review — no ESP target stated (not admitted)" in body
+    assert "- `z/zap` (`zap`) — arduino_sketch https://github.com/z/zap/blob/HEAD/zap.ino: a .ino but no ESP board named" in body
+    assert body.index("### Skipped this tick") < body.index("### Needs owner review") < body.index("### Summary")
+    assert r.review == review
+
+
+def test_pr_body_without_review_items_has_no_review_section():
+    assert "Needs owner review" not in report.render_pr_body(_r())

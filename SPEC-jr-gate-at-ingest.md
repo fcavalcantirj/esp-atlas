@@ -43,17 +43,35 @@ exist as verified logic (118 passing tests on the logic branch — see "Reuses" 
 4. **Title sanitize.** Strip status banners (`【…】`, WIP, DEPRECATED, `[test]`, …) from the name.
    *(jr/normalize.py — already shipped to main)*
 
-5. **Device-build evidence** *(added 2026-11-04, review finding 3)*. The repo must build for an
-   ESP: at least one of an Arduino sketch (`*.ino` in the tree), an `idf_component.yml`, a
-   non-draft release asset ending `.bin`/`.bin.gz`/`.uf2`, a `platformio.ini` whose `platform`
-   names `espressif32`, or a `CMakeLists.txt` that includes ESP-IDF's `project.cmake`. None →
-   rejected `not_device_firmware`, remembered `memory.NO_BUILD_SIGNAL_DAYS`. An endpoint that
-   failed for a reason other than 404 is unknown, never a rejection: `device_evidence_unreadable`,
-   retried after `memory.UNRESOLVED_REJECT_DAYS`. Runs last (it costs 1–8 reads), on every path
-   that authors a record: launcher + submissions (jr/stage_admit.py) and the topics/launcher drain
-   (jr/drain.score_candidates). Topics and descriptions naming a board are NOT evidence: a Go
-   server (rebelthor/warble) passed checks 1–4 on its `esp32-s3`/`m5stack` topics alone.
-   *(jr/device_evidence.py; read-only catalog audit: scripts/device_evidence_audit.py)*
+5. **Device-build evidence** *(added 2026-11-04, review finding 3; tightened 2026-11-04 on the
+   owner's rule)*. The repo is admitted only with evidence that it **targets an ESP chip** — never
+   a generic build file or binary; an ambiguous repo goes to a human, never guessed. ESP target:
+   - `platformio`: a `platformio.ini` whose `platform` names `espressif32` (extra_configs and
+     `${section.option}` resolved);
+   - `idf_project`: a `CMakeLists.txt` including ESP-IDF's `project.cmake` **and** an ESP target
+     stated — `CONFIG_IDF_TARGET` in `sdkconfig.defaults` (or a committed `sdkconfig`), `targets`
+     in an `idf_component.yml`, or `target` in a `dependencies.lock` (`linux` is not an ESP);
+   - `arduino_sketch`: a `*.ino` **and** an ESP board named — a `sketch.yaml` fqbn
+     `<vendor>:esp32:<board>`, a `.github/workflows` file compiling for one, or
+     `library.properties` `architectures` listing `esp32`;
+   - `release_bin`: a non-draft release `.bin` whose first 16 bytes (ONE ranged GET) are an ESP
+     image header: magic `0xE9` at offset 0 and a chip id (LE u16) at offset 12 that ESP-IDF's
+     `esp_app_format.h` defines (e.g. 9 = ESP32-S3).
+
+   Three verdicts. **`esp_target`** → the admit path continues. **`needs_review`** — only the
+   ambiguous half was found (project.cmake with no stated target, a bare `.ino`, a `.bin` without
+   the header, a `.uf2`/`.bin.gz` only, an `idf_component.yml` with no project) → not admitted,
+   recorded rejected `needs_review_target` with the reject TTL (`memory.NO_BUILD_SIGNAL_DAYS`, so
+   it is not re-checked hourly) and listed in the tick PR body under "Needs owner review" with the
+   citing URL and why. **`not_device_firmware`** — no signal at all → rejected, remembered
+   `memory.NO_BUILD_SIGNAL_DAYS`. An endpoint that failed for a reason other than 404 is unknown,
+   never a verdict: `device_evidence_unreadable`, retried after `memory.UNRESOLVED_REJECT_DAYS`.
+   Runs last (it costs 1–15 reads), on every path that authors a record: launcher + submissions
+   (jr/stage_admit.py) and the topics/launcher drain (jr/drain.score_candidates). Topics and
+   descriptions naming a board are NOT evidence: a Go server (rebelthor/warble) passed checks 1–4
+   on its `esp32-s3`/`m5stack` topics alone.
+   *(jr/device_evidence.py; read-only catalog audit printing the three classes:
+   scripts/device_evidence_audit.py)*
 
 Only candidates passing all five are authored.
 

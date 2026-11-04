@@ -12,12 +12,14 @@ from types import SimpleNamespace
 import pytest
 import yaml
 
+import device_evidence
 import memory
 import stage_admit
 import tick
 import tools
 import writers
 from budget import Budget
+from test_device_evidence import esp_image
 
 REPO = Path(__file__).resolve().parent.parent
 NOW = datetime(2026, 9, 7, 12, 0, tzinfo=timezone.utc)
@@ -69,8 +71,10 @@ def root(tmp_path):
 
 
 # The device-build evidence gate (jr/device_evidence.py) reads every candidate's tree: unless a test
-# serves its own, a repo has an Arduino sketch, so the gates under test here are the only ones that bite.
-DEVICE_TREE = {"tree": [{"path": "src/main.ino", "type": "blob"}], "truncated": False}
+# serves its own, a repo has an Arduino sketch whose sketch.yaml names an ESP board (served by the
+# esp_sketch_raw fixture), so the gates under test here are the only ones that bite.
+DEVICE_TREE = {"tree": [{"path": "src/main.ino", "type": "blob"}, {"path": "src/sketch.yaml", "type": "blob"}], "truncated": False}
+pytestmark = pytest.mark.usefixtures("esp_sketch_raw")
 
 
 def _reply(doc, path):
@@ -350,6 +354,7 @@ def test_submission_without_a_hint_uses_the_repo_build_files_as_evidence(root, m
                     {"name": "relwriter-v1.2.0-m5stick_cplus2.bin", "size": 10, "browser_download_url": "https://github.com/s/relwriter/releases/download/v1/relwriter-v1.2.0-m5stick_cplus2.bin"}]},
                 "repos/s/relwriter/git/trees/main?recursive=1": {"tree": [{"path": "README.md", "type": "blob"}], "truncated": False}}
     api_docs["repos/s/relwriter/releases?per_page=10"] = [api_docs["repos/s/relwriter/releases/latest"]]   # the evidence gate's read
+    monkeypatch.setattr(device_evidence, "default_head", lambda url, n: esp_image(9)[:n])   # the gate's ranged GET: an S3 image
     ctx = _ctx_sub(root, issues, metas, api_docs)
     res = stage_admit.run(ctx, budget=1, raw=lambda u: None)          # no network: raw files absent
     assert res.admitted == 1 and "relwriter: +record (submission #8)" in res.summary

@@ -22,6 +22,8 @@ import tick
 import tools
 from budget import Budget, BudgetExceeded
 
+pytestmark = pytest.mark.usefixtures("esp_sketch_raw")   # the device-build gate passes (conftest)
+
 REPO = Path(__file__).resolve().parent.parent
 NOW = datetime(2026, 9, 20, 12, 0, tzinfo=timezone.utc)
 
@@ -56,10 +58,12 @@ def root(tmp_path):
 
 
 def _default_gh(*a):
-    """Empty replies, except a repo tree: an Arduino sketch, so the device-build evidence gate
-    (jr/device_evidence.py) passes and the gates under test here are the only ones that bite."""
+    """Empty replies, except a repo tree: an Arduino sketch whose sketch.yaml names an ESP board
+    (esp_sketch_raw), so the device-build evidence gate (jr/device_evidence.py) passes and the
+    gates under test here are the only ones that bite."""
     if len(a) > 1 and "/git/trees/" in a[1]:
-        return SimpleNamespace(returncode=0, stdout=json.dumps({"tree": [{"path": "main.ino", "type": "blob"}]}), stderr="")
+        return SimpleNamespace(returncode=0, stdout=json.dumps({"tree": [{"path": "main.ino", "type": "blob"},
+                                                                         {"path": "sketch.yaml", "type": "blob"}]}), stderr="")
     return SimpleNamespace(returncode=0, stdout="", stderr="")
 
 

@@ -167,9 +167,10 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
 
     `evidence` is an `(owner_repo, ref) -> device_evidence.check result` callable (default:
     default_device_evidence, live). Run LAST — only for a candidate every cheaper gate kept — on
-    the repo actually being authored: one with no device-build signal is skipped
-    `not_device_firmware` (or `device_evidence_unreadable`), carrying id+repo so the caller can
-    remember it (review finding 3: a Go server admitted as ESP32-S3 firmware on its topics)."""
+    the repo actually being authored: one with no ESP target is skipped `not_device_firmware`,
+    `needs_review_target` (an ambiguous signal; the skip carries `review` {kind, url, why} for the
+    owner) or `device_evidence_unreadable`, carrying id+repo so the caller can remember it (review
+    finding 3: a Go server admitted as ESP32-S3 firmware on its topics)."""
     scored, skipped = [], []
     seen_sources: set[str] = set()
     for e in entries:
@@ -222,8 +223,11 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
         authored_repo = _owner_repo(rec["url"])
         ev = (evidence or default_device_evidence)(authored_repo, meta.get("default_branch") if authored_repo == owner_repo else None)
         if not ev.get("ok"):
-            skipped.append({"name": e.get("name"), "github": gh, "reason": device_evidence.reject_reason(ev),
-                            "firmware_id": rec["id"], "repo": authored_repo})
+            skip = {"name": e.get("name"), "github": gh, "reason": device_evidence.reject_reason(ev),
+                    "firmware_id": rec["id"], "repo": authored_repo}
+            if ev.get("verdict") == device_evidence.NEEDS_REVIEW:
+                skip["review"] = device_evidence.review_note(ev)
+            skipped.append(skip)
             continue
         scored.append({
             "record": rec,
@@ -237,8 +241,9 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
 
 
 def device_skips(skipped: list[dict]) -> list[dict]:
-    """The skips the device-build evidence gate made (not_device_firmware / unreadable)."""
-    keys = (device_evidence.NOT_DEVICE_FIRMWARE, device_evidence.EVIDENCE_UNREADABLE)
+    """The skips the device-build evidence gate made (not_device_firmware / needs_review_target /
+    unreadable); a deferred check is neither."""
+    keys = (device_evidence.NOT_DEVICE_FIRMWARE, device_evidence.NEEDS_REVIEW_TARGET, device_evidence.EVIDENCE_UNREADABLE)
     return [s for s in skipped if str(s.get("reason", "")).split(":")[0] in keys]
 
 

@@ -53,6 +53,10 @@ REASON_HELP = {
     "archived": "archived repositories are not catalogued",
     device_evidence.NOT_DEVICE_FIRMWARE: "a firmware must build for an ESP: an espressif32 platformio.ini, an ESP-IDF "
                                          "project, an Arduino sketch or a release .bin (companion apps and servers are not firmware)",
+    device_evidence.NEEDS_REVIEW_TARGET: "the repository builds something but never states that it targets an ESP chip, so the "
+                                         "owner reviews it by hand. To be admitted automatically, state the target: an espressif32 "
+                                         "platformio.ini, CONFIG_IDF_TARGET in sdkconfig.defaults, a sketch.yaml "
+                                         "`default_fqbn: esp32:esp32:<board>`, or a release .bin that is an ESP image",
     "repo_unresolved": "the repository could not be read (private, renamed or missing)",
     "invalid": "the issue must contain a github.com/owner/repo URL",
 }
@@ -130,7 +134,7 @@ def _derived_board(ctx, owner_repo: str, atlas: dict, raw=None) -> tuple[str | N
 def _device_evidence(ctx, owner_repo: str, ref: str | None, raw=None) -> dict:
     """jr/device_evidence.check through the tick's counted gh and raw reader."""
     return device_evidence.check(owner_repo, api=device_evidence.gh_api(ctx.gh), raw=ctx.budget.wrap(raw or derive.default_raw, "raw"),
-                                 ref=ref)
+                                 head=ctx.budget.wrap(device_evidence.default_head, "raw"), ref=ref)
 
 
 def _answer(ctx, slug: str, issue: int, text: str, close: bool = True) -> None:
@@ -163,6 +167,7 @@ REJECT_TTLS = {
     "archived": memory.ARCHIVED_REJECT_DAYS,
     "below_floor": memory.FLOOR_REJECT_DAYS,
     device_evidence.NOT_DEVICE_FIRMWARE: memory.NO_BUILD_SIGNAL_DAYS,
+    device_evidence.NEEDS_REVIEW_TARGET: memory.NO_BUILD_SIGNAL_DAYS,
     device_evidence.EVIDENCE_UNREADABLE: memory.UNRESOLVED_REJECT_DAYS,
 }
 
@@ -251,7 +256,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     cat_token_sets = tools._catalogued_token_sets(ctx.root / "data" / "firmware")
     cat_ids = _catalogued_ids(led, ctx.now)
     paths, lines, admitted, rejects, needs_human = [], [], 0, {}, False
-    would_admit, decided, items = 0, 0, []
+    would_admit, decided, items, review = 0, 0, [], []
 
     def reject(key):
         rejects[key] = rejects.get(key, 0) + 1
@@ -486,6 +491,10 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         if not ev["ok"]:
             reason = device_evidence.reject_reason(ev)
             note(skip_reject(out_id, owner_repo, reason, repo_id, issue=issue))
+            if ev.get("verdict") == device_evidence.NEEDS_REVIEW:
+                # Ambiguous, never guessed: not admitted, and listed in the tick report for the owner.
+                review.append({"id": out_id, "repo": owner_repo, **device_evidence.review_note(ev)})
+                lines.append(f"needs owner review: {owner_repo} ({ev['kind']}) {ev['url']}")
             if issue:
                 _answer(ctx, slug, issue, _verdict_text(reason, False, False))
             continue
@@ -564,4 +573,4 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     elif decided:
         summary = f"{decided} already decided, skipped"
     return tick.StageResult("admit", paths=paths, summary=summary, admitted=admitted,
-                            rejects=rejects, needs_human=needs_human, items=items)
+                            rejects=rejects, needs_human=needs_human, items=items, review=review)

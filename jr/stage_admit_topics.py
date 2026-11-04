@@ -91,12 +91,13 @@ def _evidence(ctx, raw=None):
     let BudgetExceeded abort run_drain and drop every note this stage made."""
     api = device_evidence.gh_api(ctx.gh)
     counted_raw = ctx.budget.wrap(raw or derive.default_raw, "raw")
+    counted_head = ctx.budget.wrap(device_evidence.default_head, "raw")
 
     def evidence(owner_repo, ref):
         left = ctx.budget.remaining_calls()
         if left < device_evidence.MAX_CALLS:
             return device_evidence.deferred(f"tick budget low ({left} calls left)")
-        return device_evidence.check(owner_repo, api=api, raw=counted_raw, ref=ref)
+        return device_evidence.check(owner_repo, api=api, raw=counted_raw, head=counted_head, ref=ref)
     return evidence
 
 
@@ -107,6 +108,13 @@ def _device_rejects(skipped) -> dict:
         key = s["reason"].split(":")[0]
         out[key] = out.get(key, 0) + 1
     return out
+
+
+def _review(skipped) -> tuple[list[dict], str]:
+    """(StageResult.review, summary suffix) for the gate's needs_review skips: the repos the
+    owner must judge, never admitted and never guessed."""
+    review = [{"id": s["firmware_id"], "repo": s["repo"], **s["review"]} for s in skipped if s.get("review")]
+    return review, "".join(f"; needs owner review: {r['repo']} ({r['kind']}) {r['url']}" for r in review)
 
 
 @contextmanager
@@ -219,11 +227,12 @@ def run(ctx, budget: int, raw=None):
             return tick.StageResult("admit_topics", paths=[], summary=f"stopped: {e}", admitted=0, rejects={})
         selected, _dropped_cap = drain.cap_categories(drain.rank_juicy(scored), max_per_category=budget, batch_size=budget)
         lines = [f"{s['record']['id']}: would admit" for s in selected]
-        summary = f"{topics_txt} " + ("; ".join(lines) if lines else "no candidates")
+        review, review_txt = _review(skipped)
+        summary = f"{topics_txt} " + ("; ".join(lines) if lines else "no candidates") + review_txt
         rejects = _device_rejects(skipped)
         if len(skipped) > sum(rejects.values()):
             rejects["skipped_scoring"] = len(skipped) - sum(rejects.values())
-        return tick.StageResult("admit_topics", paths=[], summary=summary, admitted=0, rejects=rejects)
+        return tick.StageResult("admit_topics", paths=[], summary=summary, admitted=0, rejects=rejects, review=review)
 
     fetch_meta = ctx.budget.wrap(drain.default_fetch_meta, "gh")
     try:
@@ -262,8 +271,8 @@ def run(ctx, budget: int, raw=None):
     for s in report["skipped_popularity"]:
         memory.record_seen(s["firmware_id"], s["repo"], path=ctx.ledger_path, now=ctx.now)
 
-    # Device-build evidence skips (no espressif32 platformio.ini, ESP-IDF project, sketch or
-    # release .bin): remembered as a TTL'd rejection, so the next ticks do not re-fetch them.
+    # Device-build evidence skips (no ESP target, or only an ambiguous one for the owner to
+    # review): remembered as a TTL'd rejection, so the next ticks do not re-fetch them.
     for s in report["skipped_device"]:
         memory.record_rejected(s["firmware_id"], s["repo"], s["reason"],
                                ttl_days=device_evidence.ttl_days(s["reason"]), path=ctx.ledger_path, now=ctx.now)
@@ -287,6 +296,7 @@ def run(ctx, budget: int, raw=None):
         summary += "; " + "; ".join(f"{d['id']}: {d['reason']}" for d in report["dropped_guard"])
     if not report["guard"].get("ok"):
         summary += f"; final guard red: {(report['guard'].get('output') or '')[-160:]}"
+    review, review_txt = _review(report["skipped_device"])
 
-    return tick.StageResult("admit_topics", paths=paths, summary=summary, admitted=len(authored),
-                            rejects=rejects, items=items)
+    return tick.StageResult("admit_topics", paths=paths, summary=summary + review_txt, admitted=len(authored),
+                            rejects=rejects, items=items, review=review)
