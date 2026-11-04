@@ -439,7 +439,7 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
     written = [f for f in BACKFILL_FIELDS if f in extracted]
     omitted = [f for f in missing if f not in extracted]
     return {**base, "status": "backfilled",
-            "url": url if res is not None else (pio["url"] or ard["url"]),
+            "url": url if res is not None else next(iter(citations.values())),
             "written": written, "omitted": omitted, "partial": bool(omitted), "modified": True,
             "citations": citations, "field_reasons": field_reasons}
 

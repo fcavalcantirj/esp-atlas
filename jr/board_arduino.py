@@ -38,6 +38,8 @@ ARDUINO_FIELDS = ("usb_serial",)
 # boards.txt at ARDUINO_PINNED_REF: same vendor, same product name (`<key>.name`), same mcu.
 # Left out on purpose:
 #   * lolin-s3, esp32-s3-devkitc-1 — two USB ports (native + UART bridge).
+#   * heltec V3 boards — same exclusion as G3a's PIO_BOARD_IDS: their PlatformIO hwid says
+#     0x303A while Heltec documents a CP2102 bridge, so no USB-id table entry is trusted for them.
 #   * one key for several products: m5stack_atom (Atom Lite/Matrix/Echo) for m5atom-lite;
 #     m5stack_core (Basic/Gray/AWS) for m5stack-core, m5stack-core-aws; m5stack_atoms3 for
 #     m5atoms3-lite; m5stack_cores3 for m5stack-cores3-se; m5stack_cardputer (Cardputer and
@@ -84,10 +86,7 @@ ARDUINO_BOARD_KEYS: dict[str, str] = {
     "firebeetle-2-esp32-s3": "dfrobot_firebeetle2_esp32s3",
     "firebeetle-esp32": "firebeetle32",
     # heltec
-    "heltec-wifi-kit-32-v3": "heltec_wifi_kit_32_V3",
-    "heltec-wifi-lora-32-v3": "heltec_wifi_lora_32_V3",
     "heltec-wireless-paper": "heltec_wireless_paper",
-    "heltec-wireless-stick-v3": "heltec_wireless_stick_V3",
     # lilygo
     "lilygo-t-display": "lilygo_t_display",
     "lilygo-t-display-s3": "lilygo_t_display_s3",
@@ -148,7 +147,7 @@ def hwids_for_key(text: str, key: str) -> list[tuple[str | None, str | None]] | 
             continue
         found = True
         prop, value = line[len(prefix):].split("=", 1)
-        m = _HWID_RE.fullmatch(prop)
+        m = _HWID_RE.fullmatch(prop.strip())
         if m:
             by_index.setdefault(int(m.group(2)), {})[m.group(1)] = value.strip()
     if not found:

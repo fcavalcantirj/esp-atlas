@@ -49,3 +49,12 @@ fixture_mixed.pid.1=0x0056
 ##############################################################
 fixture_wch_no_pid.name=Fixture WCH without pid
 fixture_wch_no_pid.vid.0=0x1A86
+
+##############################################################
+# menu-scoped ids are per-option build flags, not the board's own vid/pid lines
+fixture_menu_scoped.name=Fixture Menu Scoped
+fixture_menu_scoped.menu.USBMode.default.vid.0=0x303a
+fixture_menu_scoped.upload_port.0.vid=0x1A86
+fixture_crlf.name=Fixture CRLF
+  fixture_crlf.vid.0 = 0x1A86 
+fixture_crlf.pid.0=0x55D3

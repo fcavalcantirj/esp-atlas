@@ -83,7 +83,9 @@ def test_two_usb_port_and_product_family_boards_are_left_out():
     for board_id in ("lolin-s3", "esp32-s3-devkitc-1",            # two USB ports
                      "m5atom-lite", "m5stack-core", "m5stack-core-aws", "m5atoms3-lite",
                      "m5stack-cores3-se", "m5cardputer", "xiao-esp32s3-sense",
-                     "lilygo-t-beam", "esp-wrover-kit", "esp32-pico-kit"):  # one key, many products
+                     "lilygo-t-beam", "esp-wrover-kit", "esp32-pico-kit",   # one key, many products
+                     "heltec-wifi-kit-32-v3", "heltec-wifi-lora-32-v3",     # G3a: hwid vs CP2102 doc
+                     "heltec-wireless-stick-v3"):
         assert ba.board_key(board_id) is None, board_id
 
 
@@ -95,6 +97,17 @@ def test_hwids_are_read_only_from_the_keys_own_lines():
     assert ba.hwids_for_key(BOARDS_TXT, "fixture_ch340") == [("0x1A86", "0x7523")]
     assert ba.hwids_for_key(BOARDS_TXT, "fixture_unknown") == [("0x239A", "0x811B"),
                                                                ("0x239A", "0x011B")]
+
+
+def test_a_key_prefix_of_another_key_is_not_found():
+    # "fixture_native_s3_p" only prefixes "fixture_native_s3_plus" — it is not in the file
+    assert ba.hwids_for_key(BOARDS_TXT, "fixture_native_s3_p") is None
+
+
+def test_menu_scoped_ids_are_ignored_and_crlf_and_padding_are_tolerated():
+    assert ba.hwids_for_key(BOARDS_TXT, "fixture_menu_scoped") == []
+    assert ba.usb_serial_from_boards_txt(BOARDS_TXT, "fixture_crlf", serial_jtag=False) == (
+        "ch343", None)
 
 
 def test_key_without_vid_lines_has_no_hwids_and_an_absent_key_is_none():
@@ -288,3 +301,15 @@ def test_default_fetch_refuses_a_body_over_the_cap_instead_of_truncating(monkeyp
     res = bb.default_fetch(ba.BOARDS_TXT_URL)
     assert res["ok"] is False
     assert "too large" in res["error"]
+
+
+def test_report_url_names_the_source_that_grounded_when_the_vendor_page_failed(tmp_path, monkeypatch):
+    # vendor 404, the manifest fetches but grounds nothing, boards.txt fills usb_serial: the
+    # report must name boards.txt, not the manifest that grounded nothing
+    path = _setup(tmp_path, monkeypatch, "fixture-ard-url", "fixture_native_s3",
+                  pio_id="fixture_unknown")
+    fetch = _fetcher({bm.manifest_url("fixture_unknown"): _pio_raw("unknown_vid_s3"),
+                      ba.BOARDS_TXT_URL: BOARDS_TXT})
+    entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+    assert entry["status"] == "backfilled"
+    assert entry["url"] == ba.BOARDS_TXT_URL
