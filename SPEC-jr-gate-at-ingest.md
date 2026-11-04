@@ -43,7 +43,19 @@ exist as verified logic (118 passing tests on the logic branch — see "Reuses" 
 4. **Title sanitize.** Strip status banners (`【…】`, WIP, DEPRECATED, `[test]`, …) from the name.
    *(jr/normalize.py — already shipped to main)*
 
-Only candidates passing all four are authored.
+5. **Device-build evidence** *(added 2026-11-04, review finding 3)*. The repo must build for an
+   ESP: at least one of an Arduino sketch (`*.ino` in the tree), an `idf_component.yml`, a
+   non-draft release asset ending `.bin`/`.bin.gz`/`.uf2`, a `platformio.ini` whose `platform`
+   names `espressif32`, or a `CMakeLists.txt` that includes ESP-IDF's `project.cmake`. None →
+   rejected `not_device_firmware`, remembered `memory.NO_BUILD_SIGNAL_DAYS`. An endpoint that
+   failed for a reason other than 404 is unknown, never a rejection: `device_evidence_unreadable`,
+   retried after `memory.UNRESOLVED_REJECT_DAYS`. Runs last (it costs 1–8 reads), on every path
+   that authors a record: launcher + submissions (jr/stage_admit.py) and the topics/launcher drain
+   (jr/drain.score_candidates). Topics and descriptions naming a board are NOT evidence: a Go
+   server (rebelthor/warble) passed checks 1–4 on its `esp32-s3`/`m5stack` topics alone.
+   *(jr/device_evidence.py; read-only catalog audit: scripts/device_evidence_audit.py)*
+
+Only candidates passing all five are authored.
 
 ## What gets DELETED
 

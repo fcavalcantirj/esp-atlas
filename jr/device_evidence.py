@@ -22,6 +22,7 @@ through untouched. Read-only: this module writes nothing.
 """
 from __future__ import annotations
 
+import json
 import re
 
 import derive
@@ -34,6 +35,17 @@ MAX_BUILD_FILES = 3            # per build-file kind, shallowest first (the proj
 
 _PROJECT_CMAKE = re.compile(r"^\s*include\s*\(.*project\.cmake", re.I)
 _TTLS = {NOT_DEVICE_FIRMWARE: memory.NO_BUILD_SIGNAL_DAYS, EVIDENCE_UNREADABLE: memory.UNRESOLVED_REJECT_DAYS}
+
+
+def gh_api(gh):
+    """api(path) -> parsed JSON over a `gh` callable (the tick's counted ctx.gh). A failed call
+    raises with gh's stderr, so derive._Calls tells a 404 (a fact) from an outage (unknown)."""
+    def api(path):
+        p = gh("api", path)
+        if getattr(p, "returncode", 1) != 0:
+            raise RuntimeError((getattr(p, "stderr", "") or "gh api failed").strip()[:200])
+        return json.loads(p.stdout or "null")
+    return api
 
 
 def _found(kind: str, url: str, calls, notes: list[str]) -> dict:
@@ -81,12 +93,12 @@ def _project_cmake_line(text: str) -> int | None:
     return next((n for n, line in enumerate(text.split("\n"), 1) if _PROJECT_CMAKE.match(line)), None)
 
 
-def check(owner_repo: str, *, api=derive.default_api, raw=derive.default_raw, ref: str | None = None,
-          max_calls: int = MAX_CALLS) -> dict:
+def check(owner_repo: str, *, api=None, raw=None, ref: str | None = None, max_calls: int = MAX_CALLS) -> dict:
     """{"ok": True|False|None, "kind", "url", "calls", "notes"} for `owner/repo` at `ref` (default
-    HEAD, the default branch). Cheapest evidence first; stops at the first signal."""
+    HEAD, the default branch). Cheapest evidence first; stops at the first signal. `api`/`raw`
+    default to derive.default_api/default_raw, resolved at call time."""
     ref = ref or "HEAD"
-    calls, notes = derive._Calls(api, raw, max_calls), []
+    calls, notes = derive._Calls(api or derive.default_api, raw or derive.default_raw, max_calls), []
     blob = f"https://github.com/{owner_repo}/blob/{ref}/"
     base_raw = f"https://raw.githubusercontent.com/{owner_repo}/{ref}/"
     tree_doc = calls.get_api(f"repos/{owner_repo}/git/trees/{ref}?recursive=1")

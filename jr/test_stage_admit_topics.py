@@ -55,9 +55,17 @@ def root(tmp_path):
     return tmp_path
 
 
+def _default_gh(*a):
+    """Empty replies, except a repo tree: an Arduino sketch, so the device-build evidence gate
+    (jr/device_evidence.py) passes and the gates under test here are the only ones that bite."""
+    if len(a) > 1 and "/git/trees/" in a[1]:
+        return SimpleNamespace(returncode=0, stdout=json.dumps({"tree": [{"path": "main.ino", "type": "blob"}]}), stderr="")
+    return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+
 def _ctx(root, dry_run=False, budget=None, gh=None, now=NOW):
     budget = budget or Budget(clock=lambda: 0.0)
-    gh = gh or (lambda *a: SimpleNamespace(returncode=0, stdout="", stderr=""))
+    gh = gh or _default_gh
     return tick.TickContext(root=root, ledger_path=root / "jr" / "proposed_ledger.json", now=now,
                             gh=budget.wrap(gh), git=lambda *a: None,
                             budget=budget, dry_run=dry_run, env={})
@@ -179,8 +187,11 @@ def _hour_surfacing(root, topic):
 
 
 def _search_gh(results, calls):
-    """A fake ctx.gh answering `search/repositories?q=topic:X` from `results[X]`."""
+    """A fake ctx.gh answering `search/repositories?q=topic:X` from `results[X]` (recorded in
+    `calls`); a repo-tree read gets _default_gh's sketch (not recorded: it is not a search)."""
     def gh(*args):
+        if len(args) >= 2 and "/git/trees/" in args[1]:
+            return _default_gh(*args)
         calls.append(args)
         prefix = "search/repositories?q=topic:"
         if len(args) >= 2 and args[0] == "api" and args[1].startswith(prefix):

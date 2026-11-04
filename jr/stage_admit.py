@@ -128,20 +128,9 @@ def _derived_board(ctx, owner_repo: str, atlas: dict, raw=None) -> tuple[str | N
     return best[0][0], dict(best[0][1][0])
 
 
-def _gh_api(ctx):
-    """api(path) -> parsed JSON through ctx.gh (counted); a failed call raises with gh's stderr, so
-    derive._Calls can tell a 404 (a fact) from an outage (unknown)."""
-    def api(path):
-        p = ctx.gh("api", path)
-        if getattr(p, "returncode", 1) != 0:
-            raise RuntimeError((getattr(p, "stderr", "") or "gh api failed").strip()[:200])
-        return json.loads(p.stdout or "null")
-    return api
-
-
 def _device_evidence(ctx, owner_repo: str, ref: str | None, raw=None) -> dict:
     """jr/device_evidence.check through the tick's counted gh and raw reader."""
-    return device_evidence.check(owner_repo, api=_gh_api(ctx), raw=ctx.budget.wrap(raw or derive.default_raw, "raw"),
+    return device_evidence.check(owner_repo, api=device_evidence.gh_api(ctx.gh), raw=ctx.budget.wrap(raw or derive.default_raw, "raw"),
                                  ref=ref)
 
 
