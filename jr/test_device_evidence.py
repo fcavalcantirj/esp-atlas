@@ -231,6 +231,13 @@ def test_a_release_bin_failing_validation_needs_review_with_the_validator_s_reas
     assert why in dev.review_note(res)["why"] and why in dev.reject_reason(res)
 
 
+def test_a_release_bin_that_fills_the_size_cap_needs_review():
+    """A read that stopped at MAX_IMAGE_BYTES may have cut the asset: never proven whole."""
+    padded = VALID_S3_IMAGE + b"\xff" * (dev.MAX_IMAGE_BYTES - len(VALID_S3_IMAGE))
+    res, _ = check(tree=["README.md"], releases=release("fw.bin"), assets={asset_url("fw.bin"): padded + b"tail"})
+    assert res["verdict"] == dev.NEEDS_REVIEW and "16 MB" in dev.review_note(res)["why"]
+
+
 def test_a_release_bin_asset_that_404s_needs_review():
     res, _ = check(tree=["README.md"], releases=release("fw.bin"), assets={})
     assert res["verdict"] == dev.NEEDS_REVIEW and "not readable" in dev.review_note(res)["why"]

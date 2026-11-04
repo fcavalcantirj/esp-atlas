@@ -146,6 +146,10 @@ def _walk(data: bytes) -> tuple[list[tuple[int, int, int]], int]:
         if off + SEGMENT_HEADER_LEN + size > len(data):
             raise _Review(f"truncated: segment {i + 1} of {declared} declares {size} bytes at {off:#x}, "
                           f"{len(data) - off - SEGMENT_HEADER_LEN} remain")
+        if size % 4:
+            # esptool's writer refuses it and ESP-IDF checksums whole words; the parser would
+            # silently zero-pad its own copy, so the walk is where this must be caught.
+            raise _Review(f"segment {i + 1} of {declared} length {size} is not a multiple of 4")
         segments.append((off, addr, size))
         off += SEGMENT_HEADER_LEN + size
     return segments, off
@@ -153,8 +157,8 @@ def _walk(data: bytes) -> tuple[list[tuple[int, int, int]], int]:
 
 def _agrees_with_parser(image, segments, chip_id: int) -> None:
     """The parser read the same structure this module walked — else neither reading is trusted."""
-    parsed = [(s.file_offs, s.addr) for s in image.segments]
-    if parsed != [(off, addr) for off, addr, _n in segments] or image.chip_id != chip_id:
+    parsed = [(s.file_offs, s.addr, len(s.data)) for s in image.segments]
+    if parsed != segments or image.chip_id != chip_id:
         raise _Review("the parser and the raw segment walk disagree on the image structure")
 
 

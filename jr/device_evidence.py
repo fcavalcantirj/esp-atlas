@@ -323,6 +323,8 @@ def _release_bin(repo: _Repo) -> _Hit | None:
     data = repo.calls.get_head(url) if url else None
     if data is None:
         return _Hit(NEEDS_REVIEW, "release_bin", url or page, f"{name} not readable (no download url, or 404)")
+    if len(data) >= MAX_IMAGE_BYTES:   # the read stopped at the cap: what follows was never seen
+        return _Hit(NEEDS_REVIEW, "release_bin", url, f"{name} reaches the 16 MB cap; not read whole")
     image = esp_image.validate(data)
     if image["status"] == esp_image.ESP_TARGET:
         return _Hit(ESP_TARGET, "release_bin", url, f"{name}: {'; '.join(image['reasons'])}")

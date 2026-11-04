@@ -98,7 +98,8 @@ def test_an_image_without_an_appended_digest_passes_on_its_checksum():
 # --- needs_review: integrity ------------------------------------------------------------------------
 
 def test_corruption_after_the_first_segment_needs_review():
-    """The defect sits in segment 2: a validator that stopped at segment 1 would pass it."""
+    """The defect sits in segment 2's data, the stored checksum is untouched and the SHA-256 is
+    re-sealed: only a checksum recomputed over EVERY segment catches it."""
     assert_review(esp_image.validate(fixture("corrupt_after_first_segment.bin")), "checksum mismatch")
 
 
@@ -119,18 +120,25 @@ def test_a_wrong_appended_sha256_needs_review():
     assert_review(esp_image.validate(fixture("bad_sha256.bin")), "sha-256 mismatch")
 
 
-def test_a_clean_parse_alone_never_passes(monkeypatch):
-    """Even if the parser itself reported no problem, the explicit recomputation decides."""
+@pytest.mark.parametrize("name,why", [("bad_checksum.bin", "checksum mismatch"), ("bad_sha256.bin", "sha-256 mismatch")])
+def test_a_clean_parse_alone_never_passes(monkeypatch, name, why):
+    """The parser loads these without raising (its verify() only counts segments). Even when its
+    own reading is made to say all is well — stored checksum = computed, stored digest = computed —
+    the bytes this module recomputes decide."""
     from esptool import bin_image
-    data = fixture("bad_checksum.bin")
     real = bin_image.LoadFirmwareImage
+    loaded = []
 
-    def lenient(chip, image_data):
+    def vouching(chip, image_data):
         img = real(chip, image_data)
-        img.verify = lambda: None
+        img.checksum = img.calculate_checksum()
+        img.stored_digest = img.calc_digest
+        img.verify()
+        loaded.append(img)
         return img
-    monkeypatch.setattr(bin_image, "LoadFirmwareImage", lenient)
-    assert_review(esp_image.validate(data), "checksum mismatch")
+    monkeypatch.setattr(bin_image, "LoadFirmwareImage", vouching)
+    assert_review(esp_image.validate(fixture(name)), why)
+    assert loaded, "the parser must have run and succeeded"
 
 
 # --- needs_review: not a (single, known) ESP app image ---------------------------------------------------
@@ -174,10 +182,32 @@ def test_a_header_with_no_segments_needs_review():
     assert_review(esp_image.validate(bytes(data)), "no segments")
 
 
-def test_more_segments_than_the_header_declares_is_trailing_data():
+def test_a_header_declaring_fewer_segments_than_the_image_has_needs_review():
     data = fixture("zero_length_segment.bin")
     fewer = bytes([data[0], data[1] - 1]) + data[2:]          # the header now hides the last segment
-    assert_review(esp_image.validate(fewer))
+    assert_review(esp_image.validate(fewer), "checksum mismatch", "after the image end")
+
+
+def _one_segment_image(payload: bytes) -> bytes:
+    """A hand-built S3 image with one segment of len(payload) bytes, checksum and SHA-256 correct."""
+    data = bytearray(fixture("app_esp32s3.bin")[:24])
+    data[1] = 1
+    data += (0x3FC90000).to_bytes(4, "little") + len(payload).to_bytes(4, "little") + payload
+    checksum = esp_image.CHECKSUM_SEED
+    for b in payload:
+        checksum ^= b
+    data += bytes(15 - len(data) % 16) + bytes([checksum])
+    return bytes(data) + hashlib.sha256(bytes(data)).digest()
+
+
+def test_the_hand_built_one_segment_image_is_valid():
+    assert esp_image.validate(_one_segment_image(b"ABCDEFGH"))["status"] == esp_image.ESP_TARGET
+
+
+def test_a_segment_length_that_is_not_a_multiple_of_4_needs_review():
+    """esptool's writer refuses such a length and ESP-IDF checksums words: the parser's silent zero
+    padding must not let an otherwise self-consistent image through."""
+    assert_review(esp_image.validate(_one_segment_image(b"ABCDE")), "multiple of 4")
 
 
 def test_any_parser_exception_needs_review(monkeypatch):
