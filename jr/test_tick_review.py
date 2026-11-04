@@ -70,6 +70,8 @@ def test_the_pr_list_query_asks_for_labels():
     tick._list_open_prs(gh)
     (call,) = gh.calls
     assert "labels" in call[call.index("--json") + 1].split(",")
+    # gh's default is 30, newest first; jr-review PRs are the oldest open ones and must stay visible
+    assert int(call[call.index("--limit") + 1]) >= 500
 
 
 # --- the cap ---------------------------------------------------------------------------------------

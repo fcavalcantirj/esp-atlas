@@ -318,20 +318,31 @@ def _staged_changes(wt: Worktree, git) -> list:
     return changes
 
 
-def apply_review_label(pr_url: str, gh=default_gh) -> tuple[bool, str]:
-    """Put the jr-review label on the PR. A first failure is read as "label missing": the label is
-    created and the edit retried once. Returns (labelled, why-not)."""
+def _err(p) -> str:
+    return (getattr(p, "stderr", "") or "").strip()[:120]
+
+
+def apply_review_label(pr_url: str, gh=default_gh, repo_slug: str | None = None) -> tuple[bool, str]:
+    """Put the jr-review label on the PR; returns (labelled, why-not). The label is ensured first
+    (`label create --force` is idempotent, so a failure there is noted, not fatal — the label may
+    already exist), then `gh pr edit --add-label`; if that fails, once more through the REST issues
+    endpoint, which takes a different path than pr edit's GraphQL mutation."""
     label = review_routing.REVIEW_LABEL
-    if _ok(gh("pr", "edit", pr_url, "--add-label", label)):
-        return True, ""
     c = gh("label", "create", label, "--color", review_routing.REVIEW_LABEL_COLOR,
-           "--description", review_routing.REVIEW_LABEL_DESCRIPTION)
-    if not _ok(c):
-        return False, f"label create failed: {(getattr(c, 'stderr', '') or '').strip()[:120]}"
+           "--description", review_routing.REVIEW_LABEL_DESCRIPTION, "--force")
     e = gh("pr", "edit", pr_url, "--add-label", label)
-    if not _ok(e):
-        return False, f"pr edit --add-label failed: {(getattr(e, 'stderr', '') or '').strip()[:120]}"
-    return True, ""
+    if _ok(e):
+        return True, ""
+    why = [f"label create: {_err(c)}"] if not _ok(c) else []
+    why.append(f"pr edit --add-label: {_err(e)}")
+    m = re.search(r"/pull/(\d+)", pr_url)
+    if m:
+        a = gh("api", "--method", "POST", f"repos/{repo_slug or '{owner}/{repo}'}/issues/{m.group(1)}/labels",
+               "-f", f"labels[]={label}")
+        if _ok(a):
+            return True, ""
+        why.append(f"REST issues labels: {_err(a)}")
+    return False, "; ".join(why)
 
 
 def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
@@ -389,7 +400,7 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
     # 5. risk routing: a review route is labelled and NEVER auto-merges, labelled or not
     route = review_routing.classify(changes, stages or (), needs_human=needs_human)
     if route.review:
-        labelled, why = apply_review_label(pr_url, gh=gh)
+        labelled, why = apply_review_label(pr_url, gh=gh, repo_slug=repo_slug)
         reason = f"jr-review ({'; '.join(route.reasons)[:300]}): auto-merge withheld"
         if not labelled:
             reason += f" · jr-review label FAILED ({why}) — the owner must find this PR by hand"

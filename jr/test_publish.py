@@ -557,7 +557,7 @@ def test_a_bookkeeping_only_pr_stays_auto_and_is_never_labelled():
 def test_a_label_failure_still_withholds_auto_merge_and_says_so():
     git = _git_ok(deletions=_z(("A", "data/recipes/b__x/recipe.md")))
     gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/13\n"),
-                   ("pr", "edit"): (1, ""), ("label", "create"): (1, "")})
+                   ("pr", "edit"): (1, ""), ("label", "create"): (1, ""), ("api", "--method", "POST"): (1, "")})
     res = publish.publish(WT, ["data/recipes/b__x"], "s", "b", git=git, gh=gh, now=NOW,
                           protection=PROTECTED_OK, trust=TRUSTED)
     assert res.published and not res.auto_merge and res.route == "review" and not res.labelled
@@ -565,23 +565,27 @@ def test_a_label_failure_still_withholds_auto_merge_and_says_so():
     assert all(c[:2] != ("pr", "merge") for c in gh.calls)
 
 
-def test_a_missing_label_is_created_then_applied():
-    edits = []
-
-    def gh(*args):
-        gh.calls.append(args)
-        if args[:2] == ("pr", "create"):
-            return Proc(stdout="https://github.com/o/r/pull/14\n")
-        if args[:2] == ("pr", "edit"):
-            edits.append(args)
-            return Proc(returncode=1 if len(edits) == 1 else 0, stderr="label not found")
-        return Proc()
-    gh.calls = []
+def test_the_label_is_ensured_idempotently_before_it_is_applied():
     git = _git_ok(deletions=_z(("A", "data/firmware/n/firmware.md")))
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/14\n")})
     res = publish.publish(WT, ["data/firmware/n"], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK, trust=TRUSTED)
-    assert res.labelled and not res.auto_merge and len(edits) == 2
-    create = [c for c in gh.calls if c[:2] == ("label", "create")]
-    assert len(create) == 1 and create[0][2] == "jr-review"
+    assert res.labelled and not res.auto_merge
+    kinds = [c[:2] for c in gh.calls]
+    assert kinds.index(("label", "create")) < kinds.index(("pr", "edit"))
+    (create,) = [c for c in gh.calls if c[:2] == ("label", "create")]
+    assert create[2] == "jr-review" and "--force" in create          # --force: an existing label is not an error
+
+
+def test_a_failed_pr_edit_falls_back_to_the_rest_labels_endpoint():
+    """`label create --force` fails transiently (or the label exists and the token cannot update
+    it) and `pr edit` fails too: the REST issues endpoint still labels the PR."""
+    git = _git_ok(deletions=_z(("A", "data/firmware/n/firmware.md")))
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/17\n"),
+                   ("label", "create"): (1, ""), ("pr", "edit"): (1, "")})
+    res = publish.publish(WT, ["data/firmware/n"], "s", "b", git=git, gh=gh, now=NOW, repo_slug="o/r",
+                          protection=PROTECTED_OK, trust=TRUSTED)
+    assert res.labelled and not res.auto_merge
+    assert ("api", "--method", "POST", "repos/o/r/issues/17/labels", "-f", "labels[]=jr-review") in gh.calls
     assert all(c[:2] != ("pr", "merge") for c in gh.calls)
 
 

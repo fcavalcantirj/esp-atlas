@@ -217,6 +217,14 @@ def test_an_older_open_demand_pr_is_closed_as_superseded_after_landing(tmp_path)
     assert res.superseded == [1390]
 
 
+def test_a_jr_review_demand_pr_is_never_closed_as_superseded(tmp_path):
+    prs = json.dumps([{"number": 1391, "headRefName": "jr/demand-20261101-0930", "labels": [{"name": "jr-review"}]},
+                      {"number": 1392, "headRefName": "jr/demand-20261102-0930", "labels": []}])
+    gh = gh_ok(open_prs=prs)
+    res = run(tmp_path, gh=gh)
+    assert [c[2] for c in gh.calls if c[:2] == ("pr", "close")] == ["1392"] and res.superseded == [1392]
+
+
 # --- failures never land anything -------------------------------------------------------------------
 
 def test_a_failed_miner_aborts_without_a_pr(tmp_path):

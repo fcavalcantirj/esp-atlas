@@ -115,7 +115,7 @@ def test_an_unreadable_record_diff_is_review():
 def test_a_path_off_the_low_risk_list_is_review():
     for change in (Change("data/boards/x/new/board.md", "A"), Change("data/board_universe.json", "M"),
                    Change("apps/core/src/x.py", "M"), Change("jr/state/etags.json", "D"),
-                   Change("data/firmware/tool/signals.json", "D")):
+                   Change("data/firmware/tool/signals.json", "D"), Change("docs/demand/2026-11-04.json", "D")):
         assert rr.classify([change]).route == rr.REVIEW, change
 
 

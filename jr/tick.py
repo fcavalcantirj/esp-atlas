@@ -76,6 +76,8 @@ from budget import Budget, BudgetExceeded  # noqa: E402
 REPO = _JR_DIR.parent
 MIN_RATE_LIMIT = 500
 STALE_PR_HOURS = 3.0
+OPEN_PR_LIMIT = 500   # gh pr list returns 30 by default, newest first: jr-review PRs are the OLDEST open
+                      # ones by design, so without a limit they would fall off the list and escape the cap
 TICK_BRANCH_PREFIX = "jr/tick-"
 TICK_LOCK_NAME = "jr-tick-run.lock"   # NOT scripts/jr-tick.sh's jr-tick.lock: its `flock` holds that
                                       # file for the tick's whole life, so re-locking it would always fail
@@ -244,7 +246,8 @@ SUPERSEDED_COMMENT = ("Superseded by later Jr ticks. This PR only touched tick b
 def _list_open_prs(gh) -> list | None:
     """Every open PR with its age, mergeability and labels, or None when the query itself fails —
     fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not open another."""
-    p = gh("pr", "list", "--state", "open", "--json", "number,createdAt,headRefName,mergeable,labels")
+    p = gh("pr", "list", "--state", "open", "--limit", str(OPEN_PR_LIMIT),
+           "--json", "number,createdAt,headRefName,mergeable,labels")
     if getattr(p, "returncode", 1) != 0:
         return None
     try:

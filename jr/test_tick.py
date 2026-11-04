@@ -324,8 +324,9 @@ def test_a_stage_review_list_reaches_the_published_pr_body(wt_dir):
 
 def test_needs_human_withholds_auto_merge(wt_dir):
     gh = gh_ok()
-    r = run(git=git_ok(wt_dir), gh=gh, stages=[_stage(["data/firmware/x"], needs_human=True)])
-    assert r.publish["published"] and not r.publish["auto_merge"]
+    # a low-risk diff, so ONLY the stage's needs_human can withhold auto-merge here
+    r = run(git=git_ok(wt_dir, diff=SIGNALS_REFRESH), gh=gh, stages=[_stage(["data/firmware/x"], needs_human=True)])
+    assert r.publish["published"] and not r.publish["auto_merge"] and r.publish["route"] == "review"
     assert all(c[:2] != ("pr", "merge") for c in gh.calls)
 
 

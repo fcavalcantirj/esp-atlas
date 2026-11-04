@@ -113,12 +113,12 @@ def _record_edit_reason(change: Change) -> str | None:
 def _change_reason(change: Change) -> str | None:
     """None when the change is on the AUTO list; otherwise the reason it goes to review."""
     path, status = change.path, change.status[:1]
-    if is_bookkeeping(path) or path.startswith(SNAPSHOT_DIRS):
-        return None
-    if _is_signals(path) and status in ("A", "M"):
+    if is_bookkeeping(path):
         return None
     if status == "D":
         return f"deletion: {path}"
+    if path.startswith(SNAPSHOT_DIRS) or (_is_signals(path) and status in ("A", "M")):
+        return None
     if path.startswith("data/recipes/"):
         return f"recipe (compatibility claim) {'added' if status == 'A' else 'changed'}: {path}"
     if path.startswith("data/firmware/") and status == "A":
