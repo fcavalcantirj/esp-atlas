@@ -19,7 +19,7 @@ import tick
 import tools
 import writers
 from budget import Budget
-from test_device_evidence import esp_image
+from test_device_evidence import VALID_S3_IMAGE
 
 REPO = Path(__file__).resolve().parent.parent
 NOW = datetime(2026, 9, 7, 12, 0, tzinfo=timezone.utc)
@@ -354,7 +354,7 @@ def test_submission_without_a_hint_uses_the_repo_build_files_as_evidence(root, m
                     {"name": "relwriter-v1.2.0-m5stick_cplus2.bin", "size": 10, "browser_download_url": "https://github.com/s/relwriter/releases/download/v1/relwriter-v1.2.0-m5stick_cplus2.bin"}]},
                 "repos/s/relwriter/git/trees/main?recursive=1": {"tree": [{"path": "README.md", "type": "blob"}], "truncated": False}}
     api_docs["repos/s/relwriter/releases?per_page=10"] = [api_docs["repos/s/relwriter/releases/latest"]]   # the evidence gate's read
-    monkeypatch.setattr(device_evidence, "default_head", lambda url, n: esp_image(9)[:n])   # the gate's ranged GET: an S3 image
+    monkeypatch.setattr(device_evidence, "default_head", lambda url, n: VALID_S3_IMAGE[:n])   # the gate's GET: a whole S3 image
     ctx = _ctx_sub(root, issues, metas, api_docs)
     res = stage_admit.run(ctx, budget=1, raw=lambda u: None)          # no network: raw files absent
     assert res.admitted == 1 and "relwriter: +record (submission #8)" in res.summary

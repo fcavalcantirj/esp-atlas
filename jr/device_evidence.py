@@ -14,12 +14,13 @@ generic build file or binary is never enough, and an ambiguous repo goes to a hu
                 in an idf_component.yml, or `target` in a dependencies.lock
   arduino_sketch  a `*.ino` AND an ESP board named: a sketch.yaml fqbn `<vendor>:esp32:<board>`,
                 a build workflow compiling for one, or library.properties `architectures=esp32`
-  release_bin   a non-draft release `.bin` whose first 16 bytes (one ranged GET) are an ESP image
-                header: magic 0xE9 at offset 0, a known chip id (LE u16) at offset 12
+  release_bin   a non-draft release `.bin` that jr/esp_image.py validates offline as a whole ESP
+                image: a chip the pinned esptool parser knows, every segment walked, checksum and
+                appended SHA-256 recomputed and matched (chip target + integrity, never authorship)
 
 Three verdicts. `esp_target`: one signal above holds (ok=True). `needs_review`: only the ambiguous
-half of one was found — project.cmake with no stated target, a bare .ino, a .bin without the
-header, a .uf2 / .bin.gz, an idf_component.yml with no project — so a human decides (ok=False,
+half of one was found — project.cmake with no stated target, a bare .ino, a .bin the validator
+sends to review (merged, truncated, corrupt, unknown chip, not an image), a .uf2 / .bin.gz, an idf_component.yml with no project — so a human decides (ok=False,
 reason `needs_review_target`). `not_device_firmware`: nothing at all (ok=False). Both rejects are
 remembered memory.NO_BUILD_SIGNAL_DAYS. An endpoint that failed for any reason other than 404 is
 not a fact about the repo: the answer is unknown (ok=None, `device_evidence_unreadable`, retried
@@ -36,6 +37,7 @@ import re
 from dataclasses import dataclass
 
 import derive
+import esp_image
 import memory
 from budget import BudgetExceeded
 
@@ -50,14 +52,9 @@ MAX_BUILD_FILES = 3            # per file kind, shallowest first (the project ro
 # and Arduino board files. A platformio.ini's extra_configs share the same cap, so a repo with many can
 # exhaust it: then an ambiguous signal already found goes to review, and none at all is unknown.
 MAX_CALLS = 3 + 4 * MAX_BUILD_FILES
-IMAGE_HEADER_BYTES = 16
-
-# ESP-IDF components/bootloader_support/include/esp_app_format.h: esp_image_header_t / esp_chip_id_t.
-ESP_IMAGE_MAGIC = 0xE9
-ESP_CHIP_IDS = {0x0000: "ESP32", 0x0002: "ESP32-S2", 0x0005: "ESP32-C3", 0x0009: "ESP32-S3",
-                0x000C: "ESP32-C2", 0x000D: "ESP32-C6", 0x0010: "ESP32-H2", 0x0012: "ESP32-P4",
-                0x0014: "ESP32-C61", 0x0017: "ESP32-C5", 0x0019: "ESP32-H21", 0x001C: "ESP32-H4",
-                0x0020: "ESP32-S31"}
+# The owner's 16 MB cap on a release asset. For now default_head's read(n) stops there; hardening
+# the fetch itself (streaming cap, timeouts, URL/redirect policy, restricted parser process) is next.
+MAX_IMAGE_BYTES = 16 * 1024 * 1024
 # ESP-IDF tools/idf_py_actions/constants.py SUPPORTED_TARGETS + PREVIEW_TARGETS, less `linux`.
 IDF_TARGETS = frozenset({"esp32", "esp32s2", "esp32s3", "esp32c2", "esp32c3", "esp32c5", "esp32c6", "esp32c61",
                          "esp32h2", "esp32h21", "esp32h4", "esp32p4", "esp32s31"})
@@ -91,8 +88,9 @@ def gh_api(gh):
 
 
 def default_head(url: str, nbytes: int) -> bytes | None:
-    """The first `nbytes` of a release asset: ONE ranged GET (`Range: bytes=0-<n-1>`; a server that
-    ignores the range is still read no further). 404 / 416 (nothing that long) -> None."""
+    """At most the first `nbytes` of a release asset (the gate asks for MAX_IMAGE_BYTES, the whole
+    image): ONE ranged GET (`Range: bytes=0-<n-1>`; a server that ignores the range is still read
+    no further). 404 / 416 -> None."""
     import urllib.error
     import urllib.request
     req = urllib.request.Request(url, headers={"User-Agent": "esp-atlas-jr-derive/0.1",
@@ -106,16 +104,8 @@ def default_head(url: str, nbytes: int) -> bytes | None:
         raise
 
 
-def esp_image_chip(header: bytes | None) -> str | None:
-    """The chip an ESP image header names ("ESP32-S3"), or None: no 0xE9 magic, too short, or a
-    chip id ESP-IDF does not define."""
-    if not header or len(header) < 14 or header[0] != ESP_IMAGE_MAGIC:
-        return None
-    return ESP_CHIP_IDS.get(int.from_bytes(header[12:14], "little"))
-
-
 class _Calls(derive._Calls):
-    """derive's call counter plus the ranged GET of a release asset's header."""
+    """derive's call counter plus the capped GET of a release asset."""
 
     def __init__(self, api, raw, head, max_calls: int):
         super().__init__(api, raw, max_calls)
@@ -125,7 +115,7 @@ class _Calls(derive._Calls):
         if not self._charge():
             return None
         try:
-            return self.head(url, IMAGE_HEADER_BYTES)
+            return self.head(url, MAX_IMAGE_BYTES)
         except BudgetExceeded:
             raise
         except Exception as e:  # noqa: BLE001 — a missing asset is a fact; anything else is counted
@@ -328,12 +318,15 @@ def _release_bin(repo: _Repo) -> _Hit | None:
     bins = sorted((a for a in assets if a["name"].lower().endswith(".bin")), key=lambda a: bool(_NOT_AN_APP.search(a["name"])))
     if not bins:
         return _Hit(NEEDS_REVIEW, "release_bin", assets[0].get("browser_download_url") or page,
-                    f"release ships {assets[0]['name']} only; no ESP image header to read")
+                    f"release ships {assets[0]['name']} only; no ESP image to validate")
     name, url = bins[0]["name"], bins[0].get("browser_download_url")
-    chip = esp_image_chip(repo.calls.get_head(url)) if url else None
-    if chip:
-        return _Hit(ESP_TARGET, "release_bin", url, f"{name}: ESP image header for {chip}")
-    return _Hit(NEEDS_REVIEW, "release_bin", url or page, f"{name} is not an ESP image (magic 0xE9 + a known chip id at offset 12)")
+    data = repo.calls.get_head(url) if url else None
+    if data is None:
+        return _Hit(NEEDS_REVIEW, "release_bin", url or page, f"{name} not readable (no download url, or 404)")
+    image = esp_image.validate(data)
+    if image["status"] == esp_image.ESP_TARGET:
+        return _Hit(ESP_TARGET, "release_bin", url, f"{name}: {'; '.join(image['reasons'])}")
+    return _Hit(NEEDS_REVIEW, "release_bin", url, f"{name} needs review: {'; '.join(image['reasons'])}")
 
 
 # --- the check -------------------------------------------------------------------------------------

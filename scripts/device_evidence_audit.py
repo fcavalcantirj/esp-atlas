@@ -3,9 +3,9 @@
 
 Jr's admission requires evidence that a repo TARGETS an ESP chip before authoring a firmware record
 (jr/device_evidence.py): an espressif32 platformio.ini, an ESP-IDF project stating its target, an
-Arduino sketch naming an ESP board, or a release .bin carrying an ESP image header. Records
-admitted BEFORE that gate never had to show one — rebelthor/warble, a Go server, got in on its
-GitHub topics. This script runs the SAME check over every catalogued firmware's GitHub repo and
+Arduino sketch naming an ESP board, or a release .bin that jr/esp_image.py validates as a whole
+ESP image. Records admitted BEFORE that gate never had to show one — rebelthor/warble, a Go
+server, got in on its GitHub topics. This script runs the SAME check over every catalogued firmware's GitHub repo and
 sorts it into the gate's three classes, for the owner to review. It decides nothing and writes
 nothing: no data, no ledger, no recipe is touched.
 
@@ -83,7 +83,7 @@ def _section(title: str, entries: list[dict], line) -> None:
 def print_report(report: dict) -> None:
     print("FIRMWARE DEVICE-BUILD EVIDENCE AUDIT (live, read-only)")
     print("  esp_target: espressif32 platformio.ini · ESP-IDF project + stated target · "
-          "Arduino sketch + ESP board · release .bin with an ESP image header")
+          "Arduino sketch + ESP board · release .bin validated as an ESP image")
     print(f"  scanned {len(report['entries'])} firmware · "
           + " · ".join(f"{len(report[c])} {c}" for c in CLASSES)
           + f" · {len(report['unknown'])} unknown · {len(report['not_github'])} not a GitHub repo")

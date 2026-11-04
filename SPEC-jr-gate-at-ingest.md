@@ -56,13 +56,22 @@ exist as verified logic (118 passing tests on the logic branch — see "Reuses" 
      `library.properties` `architectures` listing `esp32` (sketches and board files under vendored
      trees — `lib/`, `libraries/`, `components/`, `managed_components/`, `vendor/`, … — are other
      projects' and never count);
-   - `release_bin`: a non-draft release `.bin` whose first 16 bytes (ONE ranged GET) are an ESP
-     image header: magic `0xE9` at offset 0 and a chip id (LE u16) at offset 12 that ESP-IDF's
-     `esp_app_format.h` defines (e.g. 9 = ESP32-S3).
+   - `release_bin`: a non-draft release `.bin` (ONE GET, at most 16 MB) that `jr/esp_image.py`
+     validates OFFLINE as a whole ESP image (owner spec 2026-11-04): parsed with esptool's image
+     module pinned exactly (`esptool==5.6.0`, `jr/requirements-image.txt`; never its serial or
+     flashing code), a chip id the parser knows, EVERY declared segment walked (padding segments
+     at load address 0 and zero-length segments are legal), the checksum byte and — when the
+     header's `hash_appended` is set — the appended SHA-256 recomputed and compared. A clean parse
+     or esptool's `verify()` alone never counts. Unknown chip, a merged flash image (no header at
+     offset 0, e.g. the bootloader at 0x1000, or bootloader + partition table at 0x8000 + app),
+     truncation, a checksum/digest mismatch, unexplained non-0xFF bytes after the image, or any
+     parser exception → `needs_review` with the validator's reasons. Passing means chip target +
+     integrity only, never authorship or board compatibility. (Fetch hardening — streaming cap,
+     timeouts, URL/redirect policy, a restricted parser process — is the next step.)
 
    Three verdicts. **`esp_target`** → the admit path continues. **`needs_review`** — only the
-   ambiguous half was found (project.cmake with no stated target, a bare `.ino`, a `.bin` without
-   the header, a `.uf2`/`.bin.gz` only, an `idf_component.yml` with no project) → not admitted,
+   ambiguous half was found (project.cmake with no stated target, a bare `.ino`, a `.bin` the
+   validator sends to review, a `.uf2`/`.bin.gz` only, an `idf_component.yml` with no project) → not admitted,
    recorded rejected `needs_review_target` with the reject TTL (`memory.NO_BUILD_SIGNAL_DAYS`, so
    it is not re-checked hourly) and listed in the tick PR body under "Needs owner review" with the
    citing URL and why. **`not_device_firmware`** — no signal at all → rejected, remembered

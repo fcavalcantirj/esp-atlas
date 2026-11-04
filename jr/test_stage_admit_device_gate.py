@@ -11,7 +11,7 @@ import device_evidence
 import memory
 import stage_admit
 import tools
-from test_device_evidence import ESP_SKETCH_YAML, IDF_CMAKE, WARBLE_TREE, esp_image
+from test_device_evidence import ESP_SKETCH_YAML, IDF_CMAKE, WARBLE_TREE, VALID_S3_IMAGE
 from test_stage_admit import NOW, _answers, _ctx, _ctx_sub, _entry, _issue, _meta, root  # noqa: F401 — root is a fixture
 
 TREE = "repos/{}/git/trees/main?recursive=1"
@@ -67,7 +67,7 @@ EVIDENCE_SHAPES = {
 @pytest.mark.parametrize("shape", sorted(EVIDENCE_SHAPES))
 def test_repo_with_a_device_build_signal_is_admitted(root, monkeypatch, shape):
     api_docs, files = EVIDENCE_SHAPES[shape]
-    monkeypatch.setattr(device_evidence, "default_head", lambda url, n: esp_image(9)[:n] if url == "https://x/tool.bin" else None)
+    monkeypatch.setattr(device_evidence, "default_head", lambda url, n: VALID_S3_IMAGE[:n] if url == "https://x/tool.bin" else None)
     monkeypatch.setattr(tools, "fetch_launcher_catalog",
                         lambda: [_entry("Zapkit", "https://github.com/z/zapkit")])
     metas = {"repos/z/zapkit": _meta("z/zapkit", stars=40, description="A Cardputer tool", rid=21),
@@ -180,7 +180,7 @@ def test_needs_review_submission_is_answered_with_how_to_state_the_target(root, 
 
 def test_the_ranged_get_of_a_release_bin_is_charged_to_the_tick_budget(root, monkeypatch):
     heads = []
-    monkeypatch.setattr(device_evidence, "default_head", lambda url, n: heads.append((url, n)) or esp_image(9)[:n])
+    monkeypatch.setattr(device_evidence, "default_head", lambda url, n: heads.append((url, n)) or VALID_S3_IMAGE[:n])
     monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Zapkit", "https://github.com/z/zapkit")])
     api_docs, files = EVIDENCE_SHAPES["release_bin"]
     metas = {"repos/z/zapkit": _meta("z/zapkit", stars=40, description="A Cardputer tool", rid=25),
@@ -190,5 +190,5 @@ def test_the_ranged_get_of_a_release_bin_is_charged_to_the_tick_budget(root, mon
     real_charge = ctx.budget.charge
     monkeypatch.setattr(ctx.budget, "charge", lambda n=1, what="gh": charged.append(what) or real_charge(n, what))
     res = stage_admit.run(ctx, budget=3, raw=_raw(files))
-    assert res.admitted == 1 and heads == [("https://x/tool.bin", 16)]
+    assert res.admitted == 1 and heads == [("https://x/tool.bin", device_evidence.MAX_IMAGE_BYTES)]
     assert charged.count("raw") == 1          # the tree has no build files: the one raw charge is the ranged GET

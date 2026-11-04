@@ -5,6 +5,8 @@ binary; an ambiguous repo goes to human review, never guessed. Every repo shape 
 (api, raw, head) triple: no live network."""
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 import device_evidence as dev
@@ -52,11 +54,9 @@ def check(owner_repo="o/r", **shape):
     return dev.check(owner_repo, api=api, raw=raw, head=head, ref="main"), log
 
 
-def esp_image(chip_id: int, magic: int = 0xE9) -> bytes:
-    """The first bytes of an ESP-IDF app image (esp_app_format.h esp_image_header_t): magic,
-    segment count, SPI mode, speed/size, entry address, WP pin, 3 drive bytes, chip id (LE u16)."""
-    return bytes([magic, 4, 2, 0x2F]) + (0x40378000).to_bytes(4, "little") + bytes([0xEE, 0, 0, 0]) \
-        + chip_id.to_bytes(2, "little") + bytes(16)
+ESP_IMAGE_FIXTURES = Path(__file__).resolve().parent / "fixtures" / "esp_image"
+# A whole ESP32-S3 app image written by the pinned esptool (jr/fixtures/esp_image/build.py).
+VALID_S3_IMAGE = (ESP_IMAGE_FIXTURES / "app_esp32s3.bin").read_bytes()
 
 
 def release(*names, draft=False):
@@ -121,13 +121,13 @@ def test_ino_with_sketch_yaml_esp32_fqbn_is_esp_target():
     assert res["url"] == "https://github.com/o/r/blob/main/Sketch/sketch.yaml#L1"
 
 
-def test_release_bin_with_an_esp32s3_image_header_is_esp_target():
+def test_release_bin_with_a_valid_esp32s3_image_is_esp_target():
     res, log = check(tree=["README.md"], releases=release("fw-cardputer.bin"),
-                     assets={asset_url("fw-cardputer.bin"): esp_image(9)})
+                     assets={asset_url("fw-cardputer.bin"): VALID_S3_IMAGE})
     assert res["verdict"] == dev.ESP_TARGET and res["kind"] == "release_bin"
     assert res["url"] == asset_url("fw-cardputer.bin")
-    assert any("ESP32-S3" in n for n in res["notes"])
-    assert [e for e in log if e[0] == "head"] == [("head", asset_url("fw-cardputer.bin"), 16)]   # one ranged GET
+    assert any("esp32s3" in n and "checksum" in n and "SHA-256 verified" in n for n in res["notes"])
+    assert [e for e in log if e[0] == "head"] == [("head", asset_url("fw-cardputer.bin"), dev.MAX_IMAGE_BYTES)]   # one GET, capped
 
 
 def test_release_bin_without_the_esp_magic_needs_review():
@@ -210,28 +210,41 @@ def test_a_non_esp_fqbn_does_not_name_an_esp():
     assert res["verdict"] == dev.NEEDS_REVIEW
 
 
-# --- release_bin: the ESP image header ---------------------------------------------------------------
+# --- release_bin: the whole image, validated offline (jr/esp_image.py) ---------------------------------
 
-@pytest.mark.parametrize("chip_id,name", [(0x0000, "ESP32"), (0x0005, "ESP32-C3"), (0x000D, "ESP32-C6"), (0x0012, "ESP32-P4")])
-def test_every_esp_chip_id_maps_to_its_chip(chip_id, name):
-    assert dev.esp_image_chip(esp_image(chip_id)) == name
+def test_a_bare_esp_image_header_is_no_longer_enough():
+    """The old gate passed on 16 bytes (0xE9 + chip id 9). A header is not an image: review."""
+    res, _ = check(tree=["README.md"], releases=release("fw.bin"), assets={asset_url("fw.bin"): VALID_S3_IMAGE[:16]})
+    assert res["verdict"] == dev.NEEDS_REVIEW and res["kind"] == "release_bin"
+    assert "truncated" in dev.review_note(res)["why"]
 
 
-def test_magic_with_an_unknown_chip_id_is_not_an_esp_image():
-    assert dev.esp_image_chip(esp_image(0x0042)) is None
-    assert dev.esp_image_chip(esp_image(9, magic=0xEA)) is None
-    assert dev.esp_image_chip(b"\xe9\x04") is None                       # too short to carry a chip id
+@pytest.mark.parametrize("fixture,why", [("bad_checksum.bin", "checksum mismatch"), ("bad_sha256.bin", "SHA-256 mismatch"),
+                                         ("corrupt_after_first_segment.bin", "checksum mismatch"),
+                                         ("merged_bootloader_0x0.bin", "merged flash image"),
+                                         ("merged_bootloader_0x1000.bin", "merged flash image"),
+                                         ("unknown_chip.bin", "unknown chip id"), ("truncated.bin", "truncated")])
+def test_a_release_bin_failing_validation_needs_review_with_the_validator_s_reason(fixture, why):
+    data = (ESP_IMAGE_FIXTURES / fixture).read_bytes()
+    res, _ = check(tree=["README.md"], releases=release("fw.bin"), assets={asset_url("fw.bin"): data})
+    assert res["verdict"] == dev.NEEDS_REVIEW and res["kind"] == "release_bin" and res["url"] == asset_url("fw.bin")
+    assert why in dev.review_note(res)["why"] and why in dev.reject_reason(res)
+
+
+def test_a_release_bin_asset_that_404s_needs_review():
+    res, _ = check(tree=["README.md"], releases=release("fw.bin"), assets={})
+    assert res["verdict"] == dev.NEEDS_REVIEW and "not readable" in dev.review_note(res)["why"]
 
 
 def test_the_probe_prefers_the_app_image_over_a_partition_table():
     res, log = check(tree=["README.md"], releases=release("partitions.bin", "app.bin"),
-                     assets={asset_url("partitions.bin"): b"\xaa\x50" + bytes(14), asset_url("app.bin"): esp_image(9)})
+                     assets={asset_url("partitions.bin"): b"\xaa\x50" + bytes(14), asset_url("app.bin"): VALID_S3_IMAGE})
     assert res["verdict"] == dev.ESP_TARGET and res["url"] == asset_url("app.bin")
     assert [e[1] for e in log if e[0] == "head"] == [asset_url("app.bin")]
 
 
 def test_a_draft_release_bin_is_not_evidence():
-    res, log = check(tree=["README.md"], releases=release("fw.bin", draft=True), assets={asset_url("fw.bin"): esp_image(9)})
+    res, log = check(tree=["README.md"], releases=release("fw.bin", draft=True), assets={asset_url("fw.bin"): VALID_S3_IMAGE})
     assert res["verdict"] == dev.NOT_DEVICE_FIRMWARE and not [e for e in log if e[0] == "head"]
 
 

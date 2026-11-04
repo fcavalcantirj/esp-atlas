@@ -13,7 +13,7 @@ import drain
 import memory
 import source_topics
 import stage_admit_topics
-from test_device_evidence import ESP_SKETCH_YAML, IDF_CMAKE, WARBLE_TREE, esp_image, fake_repo
+from test_device_evidence import ESP_SKETCH_YAML, IDF_CMAKE, WARBLE_TREE, VALID_S3_IMAGE, fake_repo
 from test_stage_admit_topics import NOW, _ctx, _fake_fetch_meta, _meta, _topic_entry, root  # noqa: F401 — root is a fixture
 import tools
 
@@ -50,7 +50,7 @@ SHAPES = {
                 "files": {"CMakeLists.txt": IDF_CMAKE, "main/idf_component.yml": "targets:\n  - esp32c6\n"}},
     "arduino": {"tree": ["zap/zap.ino", "zap/sketch.yaml"], "files": {"zap/sketch.yaml": ESP_SKETCH_YAML}},
     "release_bin": {"tree": ["README.md"], "releases": [{"draft": False, "assets": [{"name": "zap.bin", "browser_download_url": "u"}]}],
-                    "assets": {"u": esp_image(9)}},
+                    "assets": {"u": VALID_S3_IMAGE}},
 }
 
 

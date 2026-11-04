@@ -181,14 +181,12 @@ def test_more_segments_than_the_header_declares_is_trailing_data():
 
 
 def test_any_parser_exception_needs_review(monkeypatch):
+    import struct
+
     from esptool import bin_image
 
     def boom(chip, image_data):
-        raise struct_error()
-
-    def struct_error():
-        import struct
-        return struct.error("unpack requires a buffer of 8 bytes")
+        raise struct.error("unpack requires a buffer of 8 bytes")
     monkeypatch.setattr(bin_image, "LoadFirmwareImage", boom)
     assert_review(esp_image.validate(fixture("app_esp32s3.bin")), "parser", "unpack")
 
@@ -217,3 +215,21 @@ def test_validate_never_opens_a_serial_port_or_connects_a_loader(monkeypatch):
     monkeypatch.setattr(loader.ESPLoader, "__init__", forbidden)
     monkeypatch.setattr(cmds, "detect_chip", forbidden)
     assert esp_image.validate(fixture("app_esp32s3.bin"))["status"] == esp_image.ESP_TARGET
+
+
+def test_an_image_cut_inside_a_segment_header_needs_review():
+    data = fixture("app_esp32s3.bin")
+    second = 24 + 8 + int.from_bytes(data[28:32], "little")
+    assert_review(esp_image.validate(data[:second + 4]), "truncated", "segment 2 of 2 has no header")
+
+
+def test_a_parser_reading_that_disagrees_with_the_raw_walk_needs_review(monkeypatch):
+    from esptool import bin_image
+    real = bin_image.LoadFirmwareImage
+
+    def skewed(chip, image_data):
+        img = real(chip, image_data)
+        img.segments = img.segments[:1]
+        return img
+    monkeypatch.setattr(bin_image, "LoadFirmwareImage", skewed)
+    assert_review(esp_image.validate(fixture("app_esp32s3.bin")), "disagree")
