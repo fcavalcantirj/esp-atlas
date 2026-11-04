@@ -453,19 +453,79 @@ def test_demand_item_schema_shape():
                              demand.GAP_COVERED_OK, demand.GAP_UNRESOLVED}
 
 
-# ═══════════════════════════ D2 (GA4 site-search) — the KNOWN ISSUE, and future-readiness ═══════════════════════════
+# ═══════════════════════════ D2 (GA4 site-search, eventName × customEvent:q) ═══════════════════════════
 
-def test_ga4_empty_searchterm_marks_d2_unavailable_and_never_crashes():
-    empty_ga4 = [
-        {"dimensionValues": [{"value": ""}], "metricValues": [{"value": "12"}]},
-        {"dimensionValues": [{"value": "   "}], "metricValues": [{"value": "5"}]},
+def _ga4_row(event_name, q, count):
+    """One row in the exact live `GOOGLE_ANALYTICS_RUN_REPORT` shape for dims
+    `[eventName, customEvent:q]` + metric `eventCount` (GA4 returns metric values as strings)."""
+    return {"dimensionValues": [{"value": event_name}, {"value": q}], "metricValues": [{"value": str(count)}]}
+
+
+# real terms from the live property (2026-11-04): waveshare came back on search_empty,
+# Gps on search_results; "(not set)" is GA4's placeholder when the param is absent
+GA4_LIVE_ROWS = [
+    _ga4_row("search_submit", "waveshare", 2),
+    _ga4_row("search_empty", "waveshare", 2),
+    _ga4_row("search_submit", "Gps", 3),
+    _ga4_row("search_submit", "  gps ", 1),
+    _ga4_row("search_submit", "(not set)", 40),
+    _ga4_row("search_empty", "(not set)", 7),
+    _ga4_row("search_submit", "", 12),
+]
+
+
+def test_ga4_zero_result_term_is_flagged_and_counts_submits():
+    parsed, _ = demand.parse_ga4_searchterm_rows(GA4_LIVE_ROWS)
+    waveshare = next(r for r in parsed if r["term"] == "waveshare")
+    assert waveshare == {"term": "waveshare", "events": 2, "zero_result": True}
+
+
+def test_ga4_term_with_results_is_not_zero_result():
+    parsed, _ = demand.parse_ga4_searchterm_rows(GA4_LIVE_ROWS)
+    gps = next(r for r in parsed if r["term"] == "gps")
+    assert gps["zero_result"] is False
+
+
+def test_ga4_not_set_and_empty_terms_are_dropped():
+    parsed, _ = demand.parse_ga4_searchterm_rows(GA4_LIVE_ROWS)
+    assert {r["term"] for r in parsed} == {"waveshare", "gps"}
+
+
+def test_ga4_case_and_whitespace_variants_merge_into_one_term():
+    parsed, _ = demand.parse_ga4_searchterm_rows(GA4_LIVE_ROWS)
+    gps = [r for r in parsed if r["term"] == "gps"]
+    assert gps == [{"term": "gps", "events": 4, "zero_result": False}]
+
+
+def test_ga4_one_real_term_marks_d2_available():
+    _, d2_available = demand.parse_ga4_searchterm_rows(GA4_LIVE_ROWS)
+    assert d2_available is True
+
+
+def test_ga4_only_not_set_or_empty_terms_marks_d2_unavailable_and_never_crashes():
+    blank_ga4 = [
+        _ga4_row("search_submit", "(not set)", 40),
+        _ga4_row("search_submit", "", 12),
+        _ga4_row("search_empty", "   ", 5),
     ]
-    parsed, d2_available = demand.parse_ga4_searchterm_rows(empty_ga4)
+    parsed, d2_available = demand.parse_ga4_searchterm_rows(blank_ga4)
     assert parsed == []
     assert d2_available is False
     # and the full pipeline must still run clean on D1 alone
-    items = _build(ga4=empty_ga4)
+    items = _build(ga4=blank_ga4)
     assert items
+
+
+def test_ga4_legacy_single_dimension_searchterm_rows_are_ignored():
+    """The old `searchTerm`-only shape (one dimension value) can't carry an eventName — never
+    misread it as a term."""
+    legacy = [{"dimensionValues": [{"value": "marauder cardputer"}], "metricValues": [{"value": "37"}]}]
+    assert demand.parse_ga4_searchterm_rows(legacy) == ([], False)
+
+
+def test_ga4_other_event_names_are_ignored():
+    rows = [_ga4_row("search_results", "gps", 9), _ga4_row("page_view", "gps", 99)]
+    assert demand.parse_ga4_searchterm_rows(rows) == ([], False)
 
 
 def test_ga4_no_rows_at_all_marks_d2_unavailable():
@@ -474,8 +534,8 @@ def test_ga4_no_rows_at_all_marks_d2_unavailable():
     assert d2_available is False
 
 
-def test_ga4_working_searchterm_merges_into_matching_gsc_item():
-    ga4 = [{"dimensionValues": [{"value": "marauder cardputer"}], "metricValues": [{"value": "37"}]}]
+def test_ga4_working_term_merges_into_matching_gsc_item():
+    ga4 = [_ga4_row("search_submit", "Marauder Cardputer", 37)]
     items = _build(ga4=ga4)
     it = next(it for it in items if it["resolved"] and it["resolved"]["firmware_token"] == "esp32marauder")
     assert it["events"] == 37
@@ -483,8 +543,7 @@ def test_ga4_working_searchterm_merges_into_matching_gsc_item():
 
 
 def test_ga4_zero_result_first_party_term_is_unresolved_but_weighted_by_zero_result():
-    ga4 = [{"dimensionValues": [{"value": "evil portal esp32"}], "metricValues": [{"value": "9"}],
-           "zero_result": True}]
+    ga4 = [_ga4_row("search_submit", "Evil Portal ESP32", 9), _ga4_row("search_empty", "evil portal esp32", 9)]
     items = _build(ga4=ga4)
     it = next(it for it in items if "evil portal esp32" in it["raw_terms"])
     assert it["gap"] == demand.GAP_UNRESOLVED
@@ -493,17 +552,48 @@ def test_ga4_zero_result_first_party_term_is_unresolved_but_weighted_by_zero_res
 
 
 def test_ga4_events_below_floor_are_dropped():
-    ga4 = [{"dimensionValues": [{"value": "some rare thing"}], "metricValues": [{"value": "1"}]}]
-    parsed, _ = demand.parse_ga4_searchterm_rows(ga4)
+    parsed, _ = demand.parse_ga4_searchterm_rows([_ga4_row("search_submit", "some rare thing", 1)])
     filtered = demand._floor_filter_events(parsed)
     assert filtered == []
 
 
 def test_ga4_malformed_metric_value_defaults_to_zero_events_not_a_crash():
-    ga4 = [{"dimensionValues": [{"value": "marauder cardputer"}], "metricValues": [{"value": "not-a-number"}]}]
+    ga4 = [_ga4_row("search_submit", "marauder cardputer", "not-a-number")]
     parsed, available = demand.parse_ga4_searchterm_rows(ga4)
     assert parsed == [{"term": "marauder cardputer", "events": 0, "zero_result": False}]
     assert available is True
+
+
+def test_pull_live_queries_ga4_event_name_by_customevent_q(monkeypatch):
+    import telemetry
+    seen = {}
+
+    def fake_ex(slug, args):
+        if slug == "GOOGLE_ANALYTICS_RUN_REPORT":
+            seen["args"] = args
+            return {"rows": GA4_LIVE_ROWS}
+        return {"rows": []}
+
+    monkeypatch.setattr(telemetry, "_ex", fake_ex)
+    monkeypatch.setattr(demand.analytics_cross, "fetch_trends", lambda terms: {})
+    live = demand._pull_live(days=7)
+    args = seen["args"]
+    assert args["dimensions"] == [{"name": "eventName"}, {"name": "customEvent:q"}]
+    assert args["metrics"] == [{"name": "eventCount"}]
+    assert args["dimensionFilter"] == {"filter": {
+        "fieldName": "eventName", "inListFilter": {"values": ["search_submit", "search_empty"]}}}
+    assert live["ga4_searchterm_raw_rows"] == GA4_LIVE_ROWS
+
+
+def test_mine_marks_d2_available_from_live_shaped_ga4_rows(tmp_path, monkeypatch):
+    monkeypatch.setattr(demand, "_pull_live", lambda days=demand.WINDOW_DAYS: {
+        "window": {"start": "2026-08-03", "end": "2026-08-31"},
+        "gsc_query_rows": D1_ROWS, "gsc_query_page_rows": D4_ROWS, "ga4_searchterm_raw_rows": GA4_LIVE_ROWS,
+    })
+    result = demand.mine(send_telegram=False, demand_dir=tmp_path)
+    assert result["d2_available"] is True
+    snapshot = json.loads(next(p for p in tmp_path.glob("*.json") if p.stem != "unresolved").read_text())
+    assert snapshot["d2_available"] is True
 
 
 def test_parse_gsc_rows_skips_rows_with_no_keys_or_blank_query():
@@ -566,7 +656,7 @@ def test_digest_never_has_a_bare_underscore_outside_a_code_span():
 
 
 def test_digest_shows_event_counts_for_first_party_items():
-    ga4 = [{"dimensionValues": [{"value": "marauder cardputer"}], "metricValues": [{"value": "37"}]}]
+    ga4 = [_ga4_row("search_submit", "marauder cardputer", 37)]
     items = _build(ga4=ga4)
     digest = demand.build_digest(items, d2_available=True, window={"start": "2026-08-03", "end": "2026-08-31"})
     assert "events 37" in digest
