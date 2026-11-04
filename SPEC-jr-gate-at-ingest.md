@@ -114,7 +114,12 @@ exist as verified logic (118 passing tests on the logic branch — see "Reuses" 
      every other directory on the way is 0111 (not listable). Hard RLIMIT_AS 512 MB, RLIMIT_CPU
      30 s, RLIMIT_NOFILE 64, RLIMIT_FSIZE 0, RLIMIT_CORE 0 set before exec; RLIMIT_NPROC 0 set
      as the child's first act (before exec it would make the kernel refuse the user namespace);
-     a 60 s wall-clock kill in the parent. The asset arrives on stdin only. On top, a Python
+     a 60 s wall-clock kill in the parent, running while the output is read. The asset arrives
+     on stdin only; the child's stdout (cap 64 KiB) and stderr (16 KiB) are read concurrently,
+     and a stream over its cap kills bwrap's whole process group at once (`output_overflow`,
+     naming the stream). The result is one JSON envelope `{"value": ...}`: its nesting (8 at
+     most) is checked before it is decoded, and output that is not that envelope — not JSON,
+     too deep, another shape, any decode error — is `bad_child_output`. On top, a Python
      guard: `socket` patched before esptool is imported and a PEP 578 audit hook refusing
      socket, ctypes and process-start events, writes, reads/listings outside the bound roots,
      device-node opens, file mutation, signals and rlimit changes.

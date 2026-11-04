@@ -26,13 +26,13 @@ NO_NAMESPACE = ("bwrap: No permissions to create a new namespace, likely because
 def started(monkeypatch):
     """Every command run_isolated starts (each still runs)."""
     calls = []
-    real = subprocess.run
+    real = subprocess.Popen
 
     def record(cmd, *args, **kwargs):
         calls.append(list(cmd))
         return real(cmd, *args, **kwargs)
 
-    monkeypatch.setattr(sb.subprocess, "run", record)
+    monkeypatch.setattr(sb.subprocess, "Popen", record)
     return calls
 
 

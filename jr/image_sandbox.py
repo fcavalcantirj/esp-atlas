@@ -22,8 +22,11 @@ parser reading it is a large dependency tree. Owner spec 2026-11-04: parse in a 
                   a NPROC cap set before bwrap makes the kernel refuse the user namespace (its
                   process count is charged to the user's whole count). Hard limits stay lowered:
                   raising one needs CAP_SYS_RESOURCE in the initial namespace
-  a wall clock    the parent kills bwrap after WALL_TIMEOUT; --die-with-parent takes the rest
-  stdin only      the asset arrives on stdin; the result leaves as one JSON document on stdout
+  a wall clock    the parent kills bwrap's process group after WALL_TIMEOUT, counted while the
+                  output is read; --die-with-parent and the pid namespace take the rest
+  stdin only      the asset arrives on stdin; the result leaves as one JSON envelope on stdout
+  capped output   stdout (STDOUT_CAP) and stderr (STDERR_CAP) are read concurrently; a stream one
+                  byte over its cap kills the process group at once: `output_overflow`
 
 FAIL CLOSED: no bwrap, or bwrap failing to build the sandbox (namespace creation refused, a bind
 it cannot make), is needs_review with reason `sandbox_unavailable`. There is no unsandboxed path.
@@ -35,8 +38,10 @@ process-start event, any write, any read or listing outside the bound roots, any
 the two harmless ones, file mutation, signals and rlimit changes. The guard makes refusals uniform
 and readable; it is not what keeps native code in — the namespaces are.
 
-The parent maps a crash, a signal, a timeout, output that is not JSON, or JSON that is not a
-well-formed validator result to needs_review — never esp_target. A well-formed result passes
+The parent maps a crash, a signal, a timeout, an output overflow, output that is not the child's
+`{"value": ...}` envelope (`bad_child_output`: not JSON, nested deeper than MAX_DEPTH — checked
+before json decodes it — or any decode error), or a value that is not a well-formed validator
+result to needs_review — never esp_target. A well-formed result passes
 through unchanged. `run_isolated` is the generic runner the tests drive with probe modules.
 """
 from __future__ import annotations
@@ -45,10 +50,13 @@ import importlib.util
 import json
 import os
 import resource
+import select
+import selectors
 import signal
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 import esp_image
@@ -56,10 +64,17 @@ import esp_image
 ESP_IMAGE = Path(__file__).resolve().with_name("esp_image.py")
 BWRAP = Path("/usr/bin/bwrap")
 SANDBOX_UNAVAILABLE = "sandbox_unavailable"
+TIMEOUT = "timeout"
+OUTPUT_OVERFLOW = "output_overflow"
+BAD_CHILD_OUTPUT = "bad_child_output"
 WALL_TIMEOUT = 60.0             # seconds: a 16 MB image validates in well under 2 s on the Pi
 CPU_SECONDS = 30
 MEMORY_BYTES = 512 * 1024 * 1024    # address space; the child peaks near 75 MB of it on a 16 MB asset
 OPEN_FILES = 64
+STDOUT_CAP = 64 * 1024          # bytes: a validator result is well under 1 KiB
+STDERR_CAP = 16 * 1024          # bytes: enough for a traceback's last line
+MAX_DEPTH = 8                   # JSON nesting, the envelope included: a validator result is 3 deep
+_READ_CHUNK = 32 * 1024
 DEVICES = ("/dev/null", "/dev/urandom")
 # What the dynamic loader needs, bound read-only (a symlinked one, as on merged-/usr, is recreated).
 LOADER_PATHS = ("/usr/lib", "/usr/lib64", "/usr/lib32", "/lib", "/lib64", "/lib32", "/etc/ld.so.cache")
@@ -179,7 +194,7 @@ def main():
     spec = importlib.util.spec_from_file_location("sandboxed_validator", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    sys.stdout.write(json.dumps(getattr(module, func)(data)))
+    sys.stdout.write(json.dumps({"value": getattr(module, func)(data)}))
 
 
 main()
@@ -187,12 +202,13 @@ main()
 
 
 def run_isolated(module_path: Path, func: str, data: bytes, *, wall_timeout: float | None = None,
-                 cpu_seconds: int | None = None, memory_bytes: int | None = None, guard: bool = True) -> dict:
+                 cpu_seconds: int | None = None, memory_bytes: int | None = None, stdout_cap: int | None = None,
+                 guard: bool = True) -> dict:
     """{"ok": True, "value": <the JSON `func(data)` returned>} or {"ok": False, "why": str} for
     `module_path`'s `func` run on `data` in the sandboxed child. Unset limits are the module's.
     A `why` starting with SANDBOX_UNAVAILABLE means the sandbox was never built: nothing ran."""
     wall_timeout, cpu_seconds = wall_timeout or WALL_TIMEOUT, cpu_seconds or CPU_SECONDS
-    memory_bytes = memory_bytes or MEMORY_BYTES
+    memory_bytes, stdout_cap = memory_bytes or MEMORY_BYTES, stdout_cap or STDOUT_CAP
     if not BWRAP.is_file():
         return _failed(f"{SANDBOX_UNAVAILABLE}: {BWRAP} not found")
     if not Path(sys.executable).is_file():
@@ -201,24 +217,140 @@ def run_isolated(module_path: Path, func: str, data: bytes, *, wall_timeout: flo
     roots = _python_roots()
     child = [sys.executable, "-I", "-B", "-c", _CHILD, str(module), func, json.dumps(roots + [str(module)]),
              "guard" if guard else "noguard"]
-    try:
-        with tempfile.TemporaryDirectory(prefix="image-sandbox-") as private:
-            proc = subprocess.run(sandbox_command(roots + [str(module)], child, passwd=_passwd_file(private)),
-                                  input=bytes(data), capture_output=True, env={}, cwd="/", timeout=wall_timeout,
-                                  preexec_fn=_hard_limits(memory_bytes, cpu_seconds))
-    except subprocess.TimeoutExpired:
-        return _failed(f"killed after the {wall_timeout:g} s wall-clock timeout")
-    except OSError as e:
-        return _failed(f"{SANDBOX_UNAVAILABLE}: could not run {BWRAP}: {e}")
+    with tempfile.TemporaryDirectory(prefix="image-sandbox-") as private:
+        deadline = time.monotonic() + wall_timeout
+        try:
+            proc = subprocess.Popen(sandbox_command(roots + [str(module)], child, passwd=_passwd_file(private)),
+                                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                    env={}, cwd="/", process_group=0,
+                                    preexec_fn=_hard_limits(memory_bytes, cpu_seconds))
+        except OSError as e:
+            return _failed(f"{SANDBOX_UNAVAILABLE}: could not run {BWRAP}: {e}")
+        try:
+            stdout, stderr, cut = _communicate(proc, bytes(data), deadline, stdout_cap)
+        except OSError as e:
+            return _failed(f"could not read the child: {e}")
+        finally:
+            _stop(proc)
+    if cut == TIMEOUT:
+        return _failed(f"{TIMEOUT}: killed after the {wall_timeout:g} s wall-clock timeout")
+    if cut:
+        return _failed(f"{OUTPUT_OVERFLOW}: child {cut}")
     if proc.returncode != 0:
-        refused = _bwrap_error(proc.stderr)
+        refused = _bwrap_error(stderr)
         if refused:
             return _failed(f"{SANDBOX_UNAVAILABLE}: {refused}")
-        return _failed(f"child {_exit(proc.returncode)}: {_last_line(proc.stderr)}")
+        return _failed(f"child {_exit(proc.returncode)}: {_last_line(stderr)}")
+    return decode_child_output(stdout)
+
+
+def _communicate(proc: subprocess.Popen, data: bytes, deadline: float, stdout_cap: int):
+    """(stdout, stderr, cut): `data` written to the child's stdin while both its output streams are
+    read, each held to its cap, until both close and the child exits. `cut` is None, TIMEOUT once
+    `deadline` passes, or "<stream> exceeded <cap> bytes" the moment a stream goes one byte over;
+    the caller kills the child either way."""
+    caps = {proc.stdout: ("stdout", stdout_cap), proc.stderr: ("stderr", STDERR_CAP)}
+    output = {proc.stdout: bytearray(), proc.stderr: bytearray()}
+    pending, offset = memoryview(data), 0
+    with selectors.DefaultSelector() as selector:
+        if pending:
+            selector.register(proc.stdin, selectors.EVENT_WRITE)
+        else:
+            _close(proc.stdin)
+        for stream in caps:
+            selector.register(stream, selectors.EVENT_READ)
+        while selector.get_map():
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                return bytes(output[proc.stdout]), bytes(output[proc.stderr]), TIMEOUT
+            for key, _ in selector.select(remaining):
+                stream = key.fileobj
+                if stream is proc.stdin:
+                    try:        # select promised room for PIPE_BUF bytes: this write cannot block
+                        offset += os.write(stream.fileno(), pending[offset:offset + select.PIPE_BUF])
+                    except BrokenPipeError:
+                        offset = len(pending)
+                    if offset >= len(pending):
+                        selector.unregister(stream)
+                        _close(stream)
+                    continue
+                name, cap = caps[stream]
+                buf = output[stream]
+                chunk = os.read(stream.fileno(), min(_READ_CHUNK, cap + 1 - len(buf)))
+                if not chunk:
+                    selector.unregister(stream)
+                    _close(stream)
+                    continue
+                buf += chunk
+                if len(buf) > cap:
+                    return bytes(output[proc.stdout]), bytes(output[proc.stderr]), f"{name} exceeded {cap} bytes"
     try:
-        return {"ok": True, "value": json.loads(proc.stdout)}
-    except ValueError:
-        return _failed(f"child output is not JSON: {proc.stdout[:120]!r}")
+        proc.wait(timeout=max(deadline - time.monotonic(), 0))
+    except subprocess.TimeoutExpired:
+        return bytes(output[proc.stdout]), bytes(output[proc.stderr]), TIMEOUT
+    return bytes(output[proc.stdout]), bytes(output[proc.stderr]), None
+
+
+def _stop(proc: subprocess.Popen) -> None:
+    """SIGKILL bwrap's process group (it leads its own: process_group=0) unless bwrap has already
+    exited and been reaped — only then could its pid name someone else — and reap it."""
+    if proc.returncode is None:
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+    proc.wait()
+    for stream in (proc.stdin, proc.stdout, proc.stderr):
+        _close(stream)
+
+
+def _close(stream) -> None:
+    try:
+        stream.close()
+    except OSError:
+        pass
+
+
+def decode_child_output(raw: bytes) -> dict:
+    """{"ok": True, "value": ...} for the child's one-key `{"value": ...}` envelope, else a
+    BAD_CHILD_OUTPUT failure. The nesting is checked before json sees the text, and no decode
+    error (RecursionError and MemoryError included) gets past this function."""
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return _failed(f"{BAD_CHILD_OUTPUT}: child output is not JSON (not UTF-8): {raw[:120]!r}")
+    if _nested_deeper_than(text, MAX_DEPTH):
+        return _failed(f"{BAD_CHILD_OUTPUT}: child output is nested deeper than {MAX_DEPTH}: {raw[:120]!r}")
+    try:
+        doc = json.loads(text)
+    except (ValueError, RecursionError, MemoryError, TypeError):
+        return _failed(f"{BAD_CHILD_OUTPUT}: child output is not JSON: {raw[:120]!r}")
+    if not (isinstance(doc, dict) and set(doc) == {"value"}):
+        return _failed(f"{BAD_CHILD_OUTPUT}: child output is not the child's envelope: {raw[:120]!r}")
+    return {"ok": True, "value": doc["value"]}
+
+
+def _nested_deeper_than(text: str, limit: int) -> bool:
+    """Whether `text`'s arrays and objects (brackets outside strings) open more than `limit` deep.
+    Exact for valid JSON; on invalid JSON json.loads stops at the first bracket this miscounts."""
+    depth, in_string, escaped = 0, False, False
+    for ch in text:
+        if in_string:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == '"':
+                in_string = False
+        elif ch == '"':
+            in_string = True
+        elif ch in "[{":
+            depth += 1
+            if depth > limit:
+                return True
+        elif ch in "]}":
+            depth -= 1
+    return False
 
 
 def unavailable_reason() -> str | None:
