@@ -4143,6 +4143,15 @@
       "status": "rejected",
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
+    "launcher-02acdf9cd5755ba69bf1c99080234aa6": {
+      "expires": "2026-11-11T22:00:59.737834+00:00",
+      "id": "launcher-02acdf9cd5755ba69bf1c99080234aa6",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'balac user user:m5stack'",
+      "repo": "launcher:02acdf9cd5755ba69bf1c99080234aa6",
+      "status": "rejected",
+      "timestamp": "2026-11-04T22:00:59.737834+00:00"
+    },
     "launcher-077e98d335ed1c61aa37353df7fb5575": {
       "expires": "2026-11-11T01:00:59.777703+00:00",
       "id": "launcher-077e98d335ed1c61aa37353df7fb5575",
@@ -4242,6 +4251,15 @@
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
+    "launcher-166d16d006eeb0b251cf18b92d258871": {
+      "expires": "2026-11-11T22:00:59.737834+00:00",
+      "id": "launcher-166d16d006eeb0b251cf18b92d258871",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:166d16d006eeb0b251cf18b92d258871",
+      "status": "rejected",
+      "timestamp": "2026-11-04T22:00:59.737834+00:00"
+    },
     "launcher-16d2c9ac8c0a7982e60fa99b98c1d368": {
       "expires": "2026-11-11T00:00:59.597130+00:00",
       "id": "launcher-16d2c9ac8c0a7982e60fa99b98c1d368",
@@ -4259,6 +4277,15 @@
       "repo": "launcher:1a9569cffe9c1a81b34e577fc1e8c7a4",
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
+    },
+    "launcher-1d67dee222a62c2550006206728b476c": {
+      "expires": "2026-11-11T22:00:59.737834+00:00",
+      "id": "launcher-1d67dee222a62c2550006206728b476c",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:1d67dee222a62c2550006206728b476c",
+      "status": "rejected",
+      "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-200c164bf2eb0580d08e36bc257689b3": {
       "expires": "2026-11-11T19:00:59.711024+00:00",
@@ -4395,6 +4422,15 @@
       "status": "rejected",
       "timestamp": "2026-11-04T01:00:59.777703+00:00"
     },
+    "launcher-49508dd8cab1c07e077d0f57dec9a54f": {
+      "expires": "2026-11-11T22:00:59.737834+00:00",
+      "id": "launcher-49508dd8cab1c07e077d0f57dec9a54f",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:49508dd8cab1c07e077d0f57dec9a54f",
+      "status": "rejected",
+      "timestamp": "2026-11-04T22:00:59.737834+00:00"
+    },
     "launcher-4d0825252b3c369e23d55db9a6ede201": {
       "expires": "2026-11-10T23:00:59.739871+00:00",
       "id": "launcher-4d0825252b3c369e23d55db9a6ede201",
@@ -4449,6 +4485,24 @@
       "status": "rejected",
       "timestamp": "2026-11-04T01:00:59.777703+00:00"
     },
+    "launcher-5f406244bc0d8f04612565b9acf13516": {
+      "expires": "2026-11-11T22:00:59.737834+00:00",
+      "id": "launcher-5f406244bc0d8f04612565b9acf13516",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:5f406244bc0d8f04612565b9acf13516",
+      "status": "rejected",
+      "timestamp": "2026-11-04T22:00:59.737834+00:00"
+    },
+    "launcher-5f647d94aa0375b54dea385ed4c91e4f": {
+      "expires": "2026-11-11T22:00:59.737834+00:00",
+      "id": "launcher-5f647d94aa0375b54dea385ed4c91e4f",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'backrooms walker user:andjiang'",
+      "repo": "launcher:5f647d94aa0375b54dea385ed4c91e4f",
+      "status": "rejected",
+      "timestamp": "2026-11-04T22:00:59.737834+00:00"
+    },
     "launcher-5fc0406f725cf94d240e7c3ade99078a": {
       "expires": "2026-11-11T19:00:59.711024+00:00",
       "id": "launcher-5fc0406f725cf94d240e7c3ade99078a",
@@ -4457,6 +4511,15 @@
       "repo": "launcher:5fc0406f725cf94d240e7c3ade99078a",
       "status": "rejected",
       "timestamp": "2026-11-04T19:00:59.711024+00:00"
+    },
+    "launcher-6036b1aed48dabcd924fd1634371ab45": {
+      "expires": "2026-11-11T22:00:59.737834+00:00",
+      "id": "launcher-6036b1aed48dabcd924fd1634371ab45",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:6036b1aed48dabcd924fd1634371ab45",
+      "status": "rejected",
+      "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-6094706fa0444730779a65e0fb26e60f": {
       "expires": "2026-11-11T01:00:59.777703+00:00",
@@ -4493,6 +4556,15 @@
       "repo": "launcher:67154bae11fb638647ce63fadebd0a8b",
       "status": "rejected",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
+    },
+    "launcher-68a20ce2541db6e5a2cb9ae48b561c57": {
+      "expires": "2026-11-11T22:00:59.737834+00:00",
+      "id": "launcher-68a20ce2541db6e5a2cb9ae48b561c57",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'badgeos user:zhuzhe'",
+      "repo": "launcher:68a20ce2541db6e5a2cb9ae48b561c57",
+      "status": "rejected",
+      "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-6befae08a0d4700385c1d322c0c6ad64": {
       "expires": "2026-11-10T23:00:59.739871+00:00",
@@ -4556,6 +4628,24 @@
       "repo": "launcher:7f6c7acb9cfd3d0aa051ba3830a75fd5",
       "status": "seen",
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
+    },
+    "launcher-7fd26487cff4749001b90ed3b29ff2cc": {
+      "expires": "2026-11-11T22:00:59.737834+00:00",
+      "id": "launcher-7fd26487cff4749001b90ed3b29ff2cc",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:7fd26487cff4749001b90ed3b29ff2cc",
+      "status": "rejected",
+      "timestamp": "2026-11-04T22:00:59.737834+00:00"
+    },
+    "launcher-82cf10ad6cd62aa24966fdd244292450": {
+      "expires": "2026-11-11T22:00:59.737834+00:00",
+      "id": "launcher-82cf10ad6cd62aa24966fdd244292450",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'ballmaze user:lovyan03'",
+      "repo": "launcher:82cf10ad6cd62aa24966fdd244292450",
+      "status": "rejected",
+      "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-840c997c1d7296bd95d4f0c80ba2d614": {
       "expires": "2026-11-11T00:00:59.597130+00:00",
@@ -11442,6 +11532,7 @@
     "launcher:0108d9ac943687bbcde26452540d4aee": "launcher-0108d9ac943687bbcde26452540d4aee",
     "launcher:01aed692ec78072a456af2ddebe25d0e": "launcher-01aed692ec78072a456af2ddebe25d0e",
     "launcher:01beaea52d74eac7ab36ac2861da70cc": "launcher-01beaea52d74eac7ab36ac2861da70cc",
+    "launcher:02acdf9cd5755ba69bf1c99080234aa6": "launcher-02acdf9cd5755ba69bf1c99080234aa6",
     "launcher:077e98d335ed1c61aa37353df7fb5575": "launcher-077e98d335ed1c61aa37353df7fb5575",
     "launcher:0816d632de9903bcf924498354bb2b28": "launcher-0816d632de9903bcf924498354bb2b28",
     "launcher:0870128d7e7bf8073ec04ab6871d9d16": "launcher-0870128d7e7bf8073ec04ab6871d9d16",
@@ -11453,8 +11544,10 @@
     "launcher:0facba8295ac5547acc9dbc8b326f447": "launcher-0facba8295ac5547acc9dbc8b326f447",
     "launcher:12cdb71fb672a72ed256c472ee1e5908": "launcher-12cdb71fb672a72ed256c472ee1e5908",
     "launcher:15aaf739a7dccb5d30b55f9f86280437": "launcher-15aaf739a7dccb5d30b55f9f86280437",
+    "launcher:166d16d006eeb0b251cf18b92d258871": "launcher-166d16d006eeb0b251cf18b92d258871",
     "launcher:16d2c9ac8c0a7982e60fa99b98c1d368": "launcher-16d2c9ac8c0a7982e60fa99b98c1d368",
     "launcher:1a9569cffe9c1a81b34e577fc1e8c7a4": "launcher-1a9569cffe9c1a81b34e577fc1e8c7a4",
+    "launcher:1d67dee222a62c2550006206728b476c": "launcher-1d67dee222a62c2550006206728b476c",
     "launcher:200c164bf2eb0580d08e36bc257689b3": "launcher-200c164bf2eb0580d08e36bc257689b3",
     "launcher:2124f637db75857c962f9097575271f4": "launcher-2124f637db75857c962f9097575271f4",
     "launcher:215b511e97a94512db05452db92ba0bf": "launcher-215b511e97a94512db05452db92ba0bf",
@@ -11470,17 +11563,22 @@
     "launcher:4645835daf4d9d3627b67a8885b80331": "launcher-4645835daf4d9d3627b67a8885b80331",
     "launcher:46a4860169f776b5382d6016542e6421": "launcher-46a4860169f776b5382d6016542e6421",
     "launcher:476a75ab7404402c4651606d80686a17": "launcher-476a75ab7404402c4651606d80686a17",
+    "launcher:49508dd8cab1c07e077d0f57dec9a54f": "launcher-49508dd8cab1c07e077d0f57dec9a54f",
     "launcher:4d0825252b3c369e23d55db9a6ede201": "launcher-4d0825252b3c369e23d55db9a6ede201",
     "launcher:4f9f5abd4c8d321c3a1372c6e0ec702f": "launcher-4f9f5abd4c8d321c3a1372c6e0ec702f",
     "launcher:519497f4510432bcbbfdb25565bbaae2": "launcher-519497f4510432bcbbfdb25565bbaae2",
     "launcher:52de7443325c3dd101e5e605bd5df9c9": "launcher-52de7443325c3dd101e5e605bd5df9c9",
     "launcher:576a41e5a2c4afb896cd01a021b14b17": "launcher-576a41e5a2c4afb896cd01a021b14b17",
     "launcher:58b842c955eafe5dd0caafee85067820": "launcher-58b842c955eafe5dd0caafee85067820",
+    "launcher:5f406244bc0d8f04612565b9acf13516": "launcher-5f406244bc0d8f04612565b9acf13516",
+    "launcher:5f647d94aa0375b54dea385ed4c91e4f": "launcher-5f647d94aa0375b54dea385ed4c91e4f",
     "launcher:5fc0406f725cf94d240e7c3ade99078a": "launcher-5fc0406f725cf94d240e7c3ade99078a",
+    "launcher:6036b1aed48dabcd924fd1634371ab45": "launcher-6036b1aed48dabcd924fd1634371ab45",
     "launcher:6094706fa0444730779a65e0fb26e60f": "launcher-6094706fa0444730779a65e0fb26e60f",
     "launcher:6637626f52a144f67ba568f71f88d18a": "launcher-6637626f52a144f67ba568f71f88d18a",
     "launcher:664485fc037d6986bff4c066364db6af": "launcher-664485fc037d6986bff4c066364db6af",
     "launcher:67154bae11fb638647ce63fadebd0a8b": "launcher-67154bae11fb638647ce63fadebd0a8b",
+    "launcher:68a20ce2541db6e5a2cb9ae48b561c57": "launcher-68a20ce2541db6e5a2cb9ae48b561c57",
     "launcher:6befae08a0d4700385c1d322c0c6ad64": "launcher-6befae08a0d4700385c1d322c0c6ad64",
     "launcher:6c6e4a638006e8ea1cc86957fad8ca01": "launcher-6c6e4a638006e8ea1cc86957fad8ca01",
     "launcher:78b1ffce115a35308b558323d323778b": "launcher-78b1ffce115a35308b558323d323778b",
@@ -11488,6 +11586,8 @@
     "launcher:79dd6703b4f58e9b444f20f2adf52d4d": "launcher-79dd6703b4f58e9b444f20f2adf52d4d",
     "launcher:7d46a337dcdf6795806bb5e406bd8ab6": "launcher-7d46a337dcdf6795806bb5e406bd8ab6",
     "launcher:7f6c7acb9cfd3d0aa051ba3830a75fd5": "launcher-7f6c7acb9cfd3d0aa051ba3830a75fd5",
+    "launcher:7fd26487cff4749001b90ed3b29ff2cc": "launcher-7fd26487cff4749001b90ed3b29ff2cc",
+    "launcher:82cf10ad6cd62aa24966fdd244292450": "launcher-82cf10ad6cd62aa24966fdd244292450",
     "launcher:840c997c1d7296bd95d4f0c80ba2d614": "launcher-840c997c1d7296bd95d4f0c80ba2d614",
     "launcher:8ce57fb3a0b25847993375b6522ed164": "launcher-8ce57fb3a0b25847993375b6522ed164",
     "launcher:9470218aef2a345c4fc24c3becbe1deb": "launcher-9470218aef2a345c4fc24c3becbe1deb",
