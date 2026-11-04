@@ -26,10 +26,10 @@ def _no_live_device_evidence(monkeypatch):
     so the candidate is skipped, never fetched), and the drain's live device-build
     evidence check (jr/device_evidence.py) passes by default so the gates a drain test targets stay
     the only ones that bite; tests of that gate inject `evidence=` or patch it themselves. The
-    gate's ranged GET of a release asset is offline the same way."""
+    gate's GET of a release asset is offline the same way."""
     monkeypatch.setattr(derive, "default_api", _offline)
     monkeypatch.setattr(derive, "default_raw", _offline)
-    monkeypatch.setattr(device_evidence, "default_head", _offline)
+    monkeypatch.setattr(device_evidence, "default_fetch", _offline)
     monkeypatch.setattr(drain, "default_device_evidence",
                         lambda owner_repo, ref: {"ok": True, "verdict": device_evidence.ESP_TARGET, "kind": "arduino_sketch",
                                                  "url": None, "calls": 0, "notes": [], "ambiguous": []})

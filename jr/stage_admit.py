@@ -134,7 +134,7 @@ def _derived_board(ctx, owner_repo: str, atlas: dict, raw=None) -> tuple[str | N
 def _device_evidence(ctx, owner_repo: str, ref: str | None, raw=None) -> dict:
     """jr/device_evidence.check through the tick's counted gh and raw reader."""
     return device_evidence.check(owner_repo, api=device_evidence.gh_api(ctx.gh), raw=ctx.budget.wrap(raw or derive.default_raw, "raw"),
-                                 head=ctx.budget.wrap(device_evidence.default_head, "raw"), ref=ref)
+                                 fetch=ctx.budget.wrap(device_evidence.default_fetch, "raw"), ref=ref)
 
 
 def _answer(ctx, slug: str, issue: int, text: str, close: bool = True) -> None:

@@ -16,17 +16,22 @@ generic build file or binary is never enough, and an ambiguous repo goes to a hu
                 a build workflow compiling for one, or library.properties `architectures=esp32`
   release_bin   a non-draft release `.bin` that jr/esp_image.py validates offline as a whole ESP
                 image: a chip the pinned esptool parser knows, every segment walked, checksum and
-                appended SHA-256 recomputed and matched (chip target + integrity, never authorship)
+                appended SHA-256 recomputed and matched (chip target + integrity, never authorship).
+                The asset is fetched by jr/safe_fetch.py (https only, redirects re-validated per
+                hop, public addresses only, 16 MB cap while streaming, timeouts) and validated in
+                jr/image_sandbox.py's restricted child (no credentials, network or serial)
 
 Three verdicts. `esp_target`: one signal above holds (ok=True). `needs_review`: only the ambiguous
 half of one was found — project.cmake with no stated target, a bare .ino, a .bin the validator
-sends to review (merged, truncated, corrupt, unknown chip, not an image), a .uf2 / .bin.gz, an idf_component.yml with no project — so a human decides (ok=False,
+sends to review (merged, truncated, corrupt, unknown chip, not an image), a .bin whose fetch was
+refused, timed out or overflowed the cap, a validator child that crashed, timed out or printed
+garbage, a .uf2 / .bin.gz, an idf_component.yml with no project — so a human decides (ok=False,
 reason `needs_review_target`). `not_device_firmware`: nothing at all (ok=False). Both rejects are
 remembered memory.NO_BUILD_SIGNAL_DAYS. An endpoint that failed for any reason other than 404 is
 not a fact about the repo: the answer is unknown (ok=None, `device_evidence_unreadable`, retried
 after memory.UNRESOLVED_REJECT_DAYS), never a rejection.
 
-Network effects are injected (`api`, `raw`, `head`) exactly as in jr/derive.py and charged through
+Network effects are injected (`api`, `raw`, `fetch`) exactly as in jr/derive.py and charged through
 its _Calls, so tests run offline and `max_calls` bounds one check. The tick's BudgetExceeded passes
 through untouched. Read-only: this module writes nothing.
 """
@@ -38,7 +43,9 @@ from dataclasses import dataclass
 
 import derive
 import esp_image
+import image_sandbox
 import memory
+import safe_fetch
 from budget import BudgetExceeded
 
 ESP_TARGET = "esp_target"
@@ -48,13 +55,11 @@ NEEDS_REVIEW_TARGET = "needs_review_target"     # the ledger/report reason key o
 EVIDENCE_UNREADABLE = "device_evidence_unreadable"
 DEFERRED = "device_evidence_deferred"   # not checked this tick (budget): neither remembered nor answered
 MAX_BUILD_FILES = 3            # per file kind, shallowest first (the project root wins)
-# tree + releases + one ranged GET + MAX_BUILD_FILES each of platformio.ini, CMakeLists.txt, IDF target
+# tree + releases + one asset GET + MAX_BUILD_FILES each of platformio.ini, CMakeLists.txt, IDF target
 # and Arduino board files. A platformio.ini's extra_configs share the same cap, so a repo with many can
 # exhaust it: then an ambiguous signal already found goes to review, and none at all is unknown.
 MAX_CALLS = 3 + 4 * MAX_BUILD_FILES
-# The owner's 16 MB cap on a release asset. For now default_head's read(n) stops there; hardening
-# the fetch itself (streaming cap, timeouts, URL/redirect policy, restricted parser process) is next.
-MAX_IMAGE_BYTES = 16 * 1024 * 1024
+MAX_IMAGE_BYTES = safe_fetch.MAX_BYTES     # the owner's 16 MB cap on a release asset
 # ESP-IDF tools/idf_py_actions/constants.py SUPPORTED_TARGETS + PREVIEW_TARGETS, less `linux`.
 IDF_TARGETS = frozenset({"esp32", "esp32s2", "esp32s3", "esp32c2", "esp32c3", "esp32c5", "esp32c6", "esp32c61",
                          "esp32h2", "esp32h21", "esp32h4", "esp32p4", "esp32s31"})
@@ -87,40 +92,34 @@ def gh_api(gh):
     return api
 
 
-def default_head(url: str, nbytes: int) -> bytes | None:
-    """At most the first `nbytes` of a release asset (the gate asks for MAX_IMAGE_BYTES, the whole
-    image): ONE ranged GET (`Range: bytes=0-<n-1>`; a server that ignores the range is still read
-    no further). 404 / 416 -> None."""
-    import urllib.error
-    import urllib.request
-    req = urllib.request.Request(url, headers={"User-Agent": "esp-atlas-jr-derive/0.1",
-                                               "Range": f"bytes=0-{nbytes - 1}"})
-    try:
-        with urllib.request.urlopen(req, timeout=60) as r:
-            return r.read(nbytes)
-    except urllib.error.HTTPError as e:
-        if e.code in (404, 416):
-            return None
-        raise
+def default_fetch(url: str) -> safe_fetch.Fetched:
+    """The whole release asset under jr/safe_fetch.py's policy, capped at MAX_IMAGE_BYTES."""
+    return safe_fetch.fetch_capped(url, max_bytes=MAX_IMAGE_BYTES)
 
 
 class _Calls(derive._Calls):
     """derive's call counter plus the capped GET of a release asset."""
 
-    def __init__(self, api, raw, head, max_calls: int):
+    def __init__(self, api, raw, fetch, max_calls: int):
         super().__init__(api, raw, max_calls)
-        self.head = head
+        self.fetch = fetch
 
-    def get_head(self, url: str) -> bytes | None:
+    def get_asset(self, url: str) -> safe_fetch.Fetched | None:
+        """The fetch's answer, or None when it was not charged or says nothing about the asset (an
+        outage — counted, so the check is unknown, never a verdict)."""
         if not self._charge():
             return None
         try:
-            return self.head(url, MAX_IMAGE_BYTES)
+            got = self.fetch(url)
         except BudgetExceeded:
             raise
-        except Exception as e:  # noqa: BLE001 — a missing asset is a fact; anything else is counted
-            self._fail(f"head {url}", e)
+        except Exception as e:  # noqa: BLE001 — a refusal comes back as Fetched; a raise is an outage
+            self._fail(f"fetch {url}", e)
             return None
+        if got.reason == safe_fetch.UNAVAILABLE:
+            self._fail(f"fetch {url}", RuntimeError(got.detail))
+            return None
+        return got
 
 
 @dataclass
@@ -320,12 +319,15 @@ def _release_bin(repo: _Repo) -> _Hit | None:
         return _Hit(NEEDS_REVIEW, "release_bin", assets[0].get("browser_download_url") or page,
                     f"release ships {assets[0]['name']} only; no ESP image to validate")
     name, url = bins[0]["name"], bins[0].get("browser_download_url")
-    data = repo.calls.get_head(url) if url else None
-    if data is None:
-        return _Hit(NEEDS_REVIEW, "release_bin", url or page, f"{name} not readable (no download url, or 404)")
-    if len(data) >= MAX_IMAGE_BYTES:   # the read stopped at the cap: what follows was never seen
-        return _Hit(NEEDS_REVIEW, "release_bin", url, f"{name} reaches the 16 MB cap; not read whole")
-    image = esp_image.validate(data)
+    got = repo.calls.get_asset(url) if url else None
+    if got is None or got.reason == safe_fetch.NOT_FOUND:
+        return _Hit(NEEDS_REVIEW, "release_bin", url or page,
+                    f"{name} not readable ({got.detail if got else 'no download url, or the fetch failed'})")
+    if not got.ok:          # refused, timed out or over the cap: never proven to be the asset
+        return _Hit(NEEDS_REVIEW, "release_bin", url, f"{name} not fetched — {got.reason}: {got.detail}")
+    if len(got.data) > MAX_IMAGE_BYTES:     # an injected fetch that ignored the cap
+        return _Hit(NEEDS_REVIEW, "release_bin", url, f"{name} is over the 16 MB cap")
+    image = image_sandbox.validate(got.data)
     if image["status"] == esp_image.ESP_TARGET:
         return _Hit(ESP_TARGET, "release_bin", url, f"{name}: {'; '.join(image['reasons'])}")
     return _Hit(NEEDS_REVIEW, "release_bin", url, f"{name} needs review: {'; '.join(image['reasons'])}")
@@ -350,14 +352,14 @@ def _result(ok, verdict, calls, notes, hit: _Hit | None = None, ambiguous=()) ->
             "calls": calls.n, "notes": notes, "ambiguous": [{"kind": a.kind, "url": a.url, "why": a.why} for a in ambiguous]}
 
 
-def check(owner_repo: str, *, api=None, raw=None, head=None, ref: str | None = None, max_calls: int = MAX_CALLS) -> dict:
+def check(owner_repo: str, *, api=None, raw=None, fetch=None, ref: str | None = None, max_calls: int = MAX_CALLS) -> dict:
     """{"ok", "verdict", "kind", "url", "calls", "notes", "ambiguous"} for `owner/repo` at `ref`
     (default HEAD, the default branch). ok=True only for ESP_TARGET; NEEDS_REVIEW and
     NOT_DEVICE_FIRMWARE are ok=False; unknown is ok=None, verdict None. Stops at the first ESP
     target; a needs_review result cites its first ambiguous signal and lists them all.
-    `api`/`raw`/`head` default to derive.default_api/default_raw and default_head."""
+    `api`/`raw`/`fetch` default to derive.default_api/default_raw and default_fetch."""
     ref = ref or "HEAD"
-    calls, notes = _Calls(api or derive.default_api, raw or derive.default_raw, head or default_head, max_calls), []
+    calls, notes = _Calls(api or derive.default_api, raw or derive.default_raw, fetch or default_fetch, max_calls), []
     repo = _Repo(owner_repo, ref, calls, *_listing(owner_repo, ref, calls, notes))
     ambiguous = []
     for probe in _PROBES:

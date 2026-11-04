@@ -56,7 +56,7 @@ exist as verified logic (118 passing tests on the logic branch — see "Reuses" 
      `library.properties` `architectures` listing `esp32` (sketches and board files under vendored
      trees — `lib/`, `libraries/`, `components/`, `managed_components/`, `vendor/`, … — are other
      projects' and never count);
-   - `release_bin`: a non-draft release `.bin` (ONE GET, at most 16 MB) that `jr/esp_image.py`
+   - `release_bin`: a non-draft release `.bin` (ONE GET through `jr/safe_fetch.py`) that `jr/esp_image.py`
      validates OFFLINE as a whole ESP image (owner spec 2026-11-04): parsed with esptool's image
      module pinned exactly (`esptool==5.6.0`, `jr/requirements-image.txt`; never its serial or
      flashing code), a chip id the parser knows, EVERY declared segment walked (padding segments
@@ -66,8 +66,25 @@ exist as verified logic (118 passing tests on the logic branch — see "Reuses" 
      offset 0, e.g. the bootloader at 0x1000, or bootloader + partition table at 0x8000 + app),
      truncation, a checksum/digest mismatch, unexplained non-0xFF bytes after the image, or any
      parser exception → `needs_review` with the validator's reasons. Passing means chip target +
-     integrity only, never authorship or board compatibility. (Fetch hardening — streaming cap,
-     timeouts, URL/redirect policy, a restricted parser process — is the next step.)
+     integrity only, never authorship or board compatibility.
+     **The fetch** (`jr/safe_fetch.py`, owner spec 2026-11-04): https only on port 443, no URL
+     credentials; redirects followed by hand, at most 5, every hop re-validated; each hop's host
+     resolved once and refused if ANY answer is private, loopback, link-local, multicast, reserved,
+     unspecified, shared (100.64/10), an IPv4-mapped form of those, or a 6to4/NAT64/Teredo address;
+     the connection is dialed to that validated address (TLS verifies the hostname), so DNS
+     rebinding cannot swap it. The 16 MB cap counts bytes received while streaming —
+     Content-Length is never trusted (absent, wrong or lying), a closing server is read to the
+     close — and one byte over aborts. Connect (10 s), read (30 s) and total (120 s, a watchdog
+     that also bounds slow-dripped headers and DNS) timeouts.
+     **The parse** (`jr/image_sandbox.py`): `esp_image.validate` runs in a fresh
+     `sys.executable -I -B` child with an empty environment (no tokens or keys), the asset on
+     stdin only, RLIMIT_CPU 30 s, RLIMIT_AS 512 MB, RLIMIT_FSIZE 0, a 60 s wall-clock kill;
+     `socket` is patched before esptool is imported and a PEP 578 audit hook refuses every
+     socket event, device-node opens (serial), file writes and process starts.
+     **Mapping:** a refused, timed-out or over-cap fetch, a 404, and a validator child that
+     crashed, was killed, timed out or printed anything but a well-formed result →
+     `needs_review` (never `esp_target`); a 5xx/429, DNS failure or refused connection is an
+     outage → unknown (`device_evidence_unreadable`, retried).
 
    Three verdicts. **`esp_target`** → the admit path continues. **`needs_review`** — only the
    ambiguous half was found (project.cmake with no stated target, a bare `.ino`, a `.bin` the

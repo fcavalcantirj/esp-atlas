@@ -91,13 +91,13 @@ def _evidence(ctx, raw=None):
     let BudgetExceeded abort run_drain and drop every note this stage made."""
     api = device_evidence.gh_api(ctx.gh)
     counted_raw = ctx.budget.wrap(raw or derive.default_raw, "raw")
-    counted_head = ctx.budget.wrap(device_evidence.default_head, "raw")
+    counted_fetch = ctx.budget.wrap(device_evidence.default_fetch, "raw")
 
     def evidence(owner_repo, ref):
         left = ctx.budget.remaining_calls()
         if left < device_evidence.MAX_CALLS:
             return device_evidence.deferred(f"tick budget low ({left} calls left)")
-        return device_evidence.check(owner_repo, api=api, raw=counted_raw, head=counted_head, ref=ref)
+        return device_evidence.check(owner_repo, api=api, raw=counted_raw, fetch=counted_fetch, ref=ref)
     return evidence
 
 

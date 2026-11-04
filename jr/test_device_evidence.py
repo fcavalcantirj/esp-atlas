@@ -2,7 +2,7 @@
 
 Owner rule: admitted only with evidence the repo TARGETS an ESP chip, never a generic build file or
 binary; an ambiguous repo goes to human review, never guessed. Every repo shape is a fake
-(api, raw, head) triple: no live network."""
+(api, raw, fetch) triple: no live network."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -11,15 +11,16 @@ import pytest
 
 import device_evidence as dev
 import memory
+import safe_fetch
 from budget import BudgetExceeded
 
-REAL_DEFAULT_HEAD = dev.default_head      # bound at import: conftest replaces the module's with an offline stub
+REAL_DEFAULT_FETCH = dev.default_fetch    # bound at import: conftest replaces the module's with an offline stub
 
 
 def fake_repo(owner_repo="o/r", ref="main", tree=None, files=None, releases=None, assets=None, fail=()):
-    """(api, raw, head, log) serving one repo: `tree` paths, `files` {path: text} on raw, `releases`
-    the `releases?per_page=10` list, `assets` {download url: bytes} for ranged GETs. Anything else
-    is a 404. `fail` paths/urls raise a non-404 error."""
+    """(api, raw, fetch, log) serving one repo: `tree` paths, `files` {path: text} on raw, `releases`
+    the `releases?per_page=10` list, `assets` {download url: bytes, or a safe_fetch.Fetched refusal}
+    for the asset GET. Anything else is a 404. `fail` paths/urls raise a non-404 error."""
     files, assets, log = files or {}, assets or {}, []
 
     def api(path):
@@ -39,19 +40,23 @@ def fake_repo(owner_repo="o/r", ref="main", tree=None, files=None, releases=None
             raise RuntimeError("HTTP 503")
         return files.get(url[len(prefix):]) if url.startswith(prefix) else None
 
-    def head(url, nbytes):
-        log.append(("head", url, nbytes))
+    def fetch(url):
+        log.append(("fetch", url))
         if url in fail:
             raise RuntimeError("HTTP 503")
         data = assets.get(url)
-        return None if data is None else data[:nbytes]
+        if isinstance(data, safe_fetch.Fetched):
+            return data
+        if data is None:
+            return safe_fetch.Fetched(None, safe_fetch.NOT_FOUND, f"HTTP 404 from {url}", url)
+        return safe_fetch.Fetched(data, url=url)
 
-    return api, raw, head, log
+    return api, raw, fetch, log
 
 
 def check(owner_repo="o/r", **shape):
-    api, raw, head, log = fake_repo(owner_repo, **shape)
-    return dev.check(owner_repo, api=api, raw=raw, head=head, ref="main"), log
+    api, raw, fetch, log = fake_repo(owner_repo, **shape)
+    return dev.check(owner_repo, api=api, raw=raw, fetch=fetch, ref="main"), log
 
 
 ESP_IMAGE_FIXTURES = Path(__file__).resolve().parent / "fixtures" / "esp_image"
@@ -127,7 +132,7 @@ def test_release_bin_with_a_valid_esp32s3_image_is_esp_target():
     assert res["verdict"] == dev.ESP_TARGET and res["kind"] == "release_bin"
     assert res["url"] == asset_url("fw-cardputer.bin")
     assert any("esp32s3" in n and "checksum" in n and "SHA-256 verified" in n for n in res["notes"])
-    assert [e for e in log if e[0] == "head"] == [("head", asset_url("fw-cardputer.bin"), dev.MAX_IMAGE_BYTES)]   # one GET, capped
+    assert [e for e in log if e[0] == "fetch"] == [("fetch", asset_url("fw-cardputer.bin"))]   # one GET
 
 
 def test_release_bin_without_the_esp_magic_needs_review():
@@ -139,7 +144,7 @@ def test_release_bin_without_the_esp_magic_needs_review():
 def test_uf2_only_release_needs_review_without_reading_it():
     res, log = check(tree=["README.md"], releases=release("fw.uf2"))
     assert res["verdict"] == dev.NEEDS_REVIEW and res["kind"] == "release_bin"
-    assert not [e for e in log if e[0] == "head"]
+    assert not [e for e in log if e[0] == "fetch"]
 
 
 # --- idf_project: where a target may be stated ------------------------------------------------------
@@ -231,10 +236,25 @@ def test_a_release_bin_failing_validation_needs_review_with_the_validator_s_reas
     assert why in dev.review_note(res)["why"] and why in dev.reject_reason(res)
 
 
-def test_a_release_bin_that_fills_the_size_cap_needs_review():
-    """A read that stopped at MAX_IMAGE_BYTES may have cut the asset: never proven whole."""
-    padded = VALID_S3_IMAGE + b"\xff" * (dev.MAX_IMAGE_BYTES - len(VALID_S3_IMAGE))
-    res, _ = check(tree=["README.md"], releases=release("fw.bin"), assets={asset_url("fw.bin"): padded + b"tail"})
+@pytest.mark.parametrize("reason", [safe_fetch.TOO_LARGE, safe_fetch.BLOCKED_ADDRESS, safe_fetch.TIMEOUT, safe_fetch.NOT_HTTPS,
+                                    safe_fetch.TOO_MANY_REDIRECTS, safe_fetch.TLS_ERROR, safe_fetch.HTTP_STATUS, safe_fetch.BAD_URL])
+def test_a_refused_fetch_needs_review_never_esp_target(reason):
+    refused = safe_fetch.Fetched(None, reason, "the detail", asset_url("fw.bin"))
+    res, _ = check(tree=["README.md"], releases=release("fw.bin"), assets={asset_url("fw.bin"): refused})
+    assert res["verdict"] == dev.NEEDS_REVIEW and res["ok"] is False and res["kind"] == "release_bin"
+    assert f"{reason}: the detail" in dev.review_note(res)["why"]
+
+
+def test_an_unavailable_fetch_is_unknown_not_a_verdict():
+    """A 5xx/429, DNS failure or refused connection says nothing about the asset: retry."""
+    down = safe_fetch.Fetched(None, safe_fetch.UNAVAILABLE, "HTTP 503 from x", asset_url("fw.bin"))
+    res, _ = check(tree=["README.md"], releases=release("fw.bin"), assets={asset_url("fw.bin"): down})
+    assert res["ok"] is None and "HTTP 503" in dev.reject_reason(res)
+
+
+def test_a_body_over_the_cap_from_an_injected_fetch_still_needs_review():
+    padded = VALID_S3_IMAGE + b"\xff" * (dev.MAX_IMAGE_BYTES + 1 - len(VALID_S3_IMAGE))
+    res, _ = check(tree=["README.md"], releases=release("fw.bin"), assets={asset_url("fw.bin"): padded})
     assert res["verdict"] == dev.NEEDS_REVIEW and "16 MB" in dev.review_note(res)["why"]
 
 
@@ -247,35 +267,19 @@ def test_the_probe_prefers_the_app_image_over_a_partition_table():
     res, log = check(tree=["README.md"], releases=release("partitions.bin", "app.bin"),
                      assets={asset_url("partitions.bin"): b"\xaa\x50" + bytes(14), asset_url("app.bin"): VALID_S3_IMAGE})
     assert res["verdict"] == dev.ESP_TARGET and res["url"] == asset_url("app.bin")
-    assert [e[1] for e in log if e[0] == "head"] == [asset_url("app.bin")]
+    assert [e[1] for e in log if e[0] == "fetch"] == [asset_url("app.bin")]
 
 
 def test_a_draft_release_bin_is_not_evidence():
     res, log = check(tree=["README.md"], releases=release("fw.bin", draft=True), assets={asset_url("fw.bin"): VALID_S3_IMAGE})
-    assert res["verdict"] == dev.NOT_DEVICE_FIRMWARE and not [e for e in log if e[0] == "head"]
+    assert res["verdict"] == dev.NOT_DEVICE_FIRMWARE and not [e for e in log if e[0] == "fetch"]
 
 
-def test_default_head_sends_one_ranged_get_and_reads_only_the_header(monkeypatch):
-    import urllib.request
+def test_default_fetch_is_safe_fetch_capped_at_the_image_cap(monkeypatch):
     seen = []
-
-    class Resp:
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *a):
-            return False
-
-        def read(self, n):
-            seen.append(n)
-            return bytes(range(64))[:n]
-
-    def urlopen(req, timeout):
-        seen.append(req.get_header("Range"))
-        return Resp()
-    monkeypatch.setattr(urllib.request, "urlopen", urlopen)
-    assert REAL_DEFAULT_HEAD("https://x/fw.bin", 16) == bytes(range(16))
-    assert seen == ["bytes=0-15", 16]
+    monkeypatch.setattr(safe_fetch, "fetch_capped", lambda url, max_bytes: seen.append((url, max_bytes)) or "fetched")
+    assert REAL_DEFAULT_FETCH("https://x/fw.bin") == "fetched"
+    assert seen == [("https://x/fw.bin", 16 * 1024 * 1024)] and dev.MAX_IMAGE_BYTES == safe_fetch.MAX_BYTES
 
 
 # --- precedence, unknowns, budget ---------------------------------------------------------------------
@@ -313,7 +317,7 @@ def test_an_unreadable_target_file_makes_an_ambiguous_repo_unknown_not_needs_rev
     assert res["ok"] is None
 
 
-def test_an_unreadable_bin_header_is_unknown():
+def test_an_asset_fetch_that_raises_is_unknown():
     res, _ = check(tree=["README.md"], releases=release("fw.bin"), fail=(asset_url("fw.bin"),))
     assert res["ok"] is None
 
@@ -324,8 +328,8 @@ def test_not_device_firmware_uses_the_no_build_signal_ttl():
 
 def test_call_cap_is_respected():
     many = [f"p{i}/platformio.ini" for i in range(10)]
-    api, raw, head, log = fake_repo(tree=many, files={p: "[env:x]\nplatform = atmelavr\n" for p in many}, releases=[])
-    res = dev.check("o/r", api=api, raw=raw, head=head, ref="main", max_calls=4)
+    api, raw, fetch, log = fake_repo(tree=many, files={p: "[env:x]\nplatform = atmelavr\n" for p in many}, releases=[])
+    res = dev.check("o/r", api=api, raw=raw, fetch=fetch, ref="main", max_calls=4)
     assert res["calls"] <= 4 and len(log) <= 4
 
 
@@ -333,20 +337,20 @@ def test_budget_exceeded_propagates():
     def api(path):
         raise BudgetExceeded("tick budget")
     with pytest.raises(BudgetExceeded):
-        dev.check("o/r", api=api, raw=lambda u: None, head=lambda u, n: None, ref="main")
+        dev.check("o/r", api=api, raw=lambda u: None, fetch=lambda u: None, ref="main")
 
 
-def test_budget_exceeded_on_the_ranged_get_propagates():
-    def head(url, n):
+def test_budget_exceeded_on_the_asset_get_propagates():
+    def fetch(url):
         raise BudgetExceeded("tick budget")
-    api, raw, _h, _ = fake_repo(tree=["README.md"], releases=release("fw.bin"))
+    api, raw, _f, _ = fake_repo(tree=["README.md"], releases=release("fw.bin"))
     with pytest.raises(BudgetExceeded):
-        dev.check("o/r", api=api, raw=raw, head=head, ref="main")
+        dev.check("o/r", api=api, raw=raw, fetch=fetch, ref="main")
 
 
 def test_ref_defaults_to_head():
-    api, raw, head, log = fake_repo(ref="HEAD", tree=["a.ino", "sketch.yaml"], files={"sketch.yaml": ESP_SKETCH_YAML})
-    assert dev.check("o/r", api=api, raw=raw, head=head)["ok"] is True
+    api, raw, fetch, log = fake_repo(ref="HEAD", tree=["a.ino", "sketch.yaml"], files={"sketch.yaml": ESP_SKETCH_YAML})
+    assert dev.check("o/r", api=api, raw=raw, fetch=fetch)["ok"] is True
     assert log[0] == ("api", "repos/o/r/git/trees/HEAD?recursive=1")
 
 
@@ -390,21 +394,6 @@ def test_review_note_carries_the_citation_and_every_reason():
     assert "project.cmake" in note["why"] and "no ESP board named" in note["why"]
 
 
-def test_default_head_treats_a_missing_asset_as_none_and_raises_on_an_outage(monkeypatch):
-    import urllib.error
-    import urllib.request
-
-    def urlopen_with(code):
-        def urlopen(req, timeout):
-            raise urllib.error.HTTPError(req.full_url, code, "x", {}, None)
-        return urlopen
-    monkeypatch.setattr(urllib.request, "urlopen", urlopen_with(404))
-    assert REAL_DEFAULT_HEAD("https://x/fw.bin", 16) is None
-    monkeypatch.setattr(urllib.request, "urlopen", urlopen_with(502))
-    with pytest.raises(urllib.error.HTTPError):
-        REAL_DEFAULT_HEAD("https://x/fw.bin", 16)
-
-
 def test_a_targets_block_ends_at_the_next_top_level_key():
     """`targets:` then another key: a later list item belongs to that key, not to targets."""
     comp = "targets:\n  # supported\n  - linux\ndependencies:\n  - esp32s3\n"
@@ -439,14 +428,14 @@ def test_an_exhausted_call_cap_with_an_ambiguous_signal_goes_to_review_not_retry
     """Exhaustion is a property of the repo's shape (it recurs every retry), so an ambiguous
     signal found before the cap goes to the owner rather than looping as unknown."""
     many = [f"p{i}/CMakeLists.txt" for i in range(3)]
-    api, raw, head, _ = fake_repo(tree=["CMakeLists.txt", "a.ino", "a/sketch.yaml"] + many,
+    api, raw, fetch, _ = fake_repo(tree=["CMakeLists.txt", "a.ino", "a/sketch.yaml"] + many,
                                   files={"CMakeLists.txt": IDF_CMAKE, "a/sketch.yaml": ESP_SKETCH_YAML}, releases=[])
-    res = dev.check("o/r", api=api, raw=raw, head=head, ref="main", max_calls=2)   # tree + root CMakeLists; sketch.yaml unread
+    res = dev.check("o/r", api=api, raw=raw, fetch=fetch, ref="main", max_calls=2)   # tree + root CMakeLists; sketch.yaml unread
     assert res["verdict"] == dev.NEEDS_REVIEW and any("call budget exhausted at 2" in n for n in res["notes"])
 
 
 def test_an_exhausted_call_cap_with_nothing_found_is_unknown():
     many = [f"p{i}/platformio.ini" for i in range(10)]
-    api, raw, head, _ = fake_repo(tree=many, files={p: "[env:x]\nplatform = atmelavr\n" for p in many}, releases=[])
-    res = dev.check("o/r", api=api, raw=raw, head=head, ref="main", max_calls=4)
+    api, raw, fetch, _ = fake_repo(tree=many, files={p: "[env:x]\nplatform = atmelavr\n" for p in many}, releases=[])
+    res = dev.check("o/r", api=api, raw=raw, fetch=fetch, ref="main", max_calls=4)
     assert res["ok"] is None and res["verdict"] is None

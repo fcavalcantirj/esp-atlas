@@ -28,8 +28,8 @@ def _warble_meta():
 
 def _evidence(**shape):
     """An evidence(owner_repo, ref) callable running the REAL check over one fake repo shape."""
-    api, raw, head, _ = fake_repo(owner_repo=shape.pop("owner_repo"), ref="main", **shape)
-    return lambda owner_repo, ref: dev.check(owner_repo, api=api, raw=raw, head=head, ref=ref)
+    api, raw, fetch, _ = fake_repo(owner_repo=shape.pop("owner_repo"), ref="main", **shape)
+    return lambda owner_repo, ref: dev.check(owner_repo, api=api, raw=raw, fetch=fetch, ref=ref)
 
 
 def test_score_candidates_rejects_a_warble_shaped_repo_not_device_firmware():

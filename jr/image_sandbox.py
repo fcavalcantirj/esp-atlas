@@ -131,10 +131,12 @@ main()
 '''
 
 
-def run_isolated(module_path: Path, func: str, data: bytes, *, wall_timeout: float = WALL_TIMEOUT,
-                 cpu_seconds: int = CPU_SECONDS, memory_bytes: int = MEMORY_BYTES) -> dict:
+def run_isolated(module_path: Path, func: str, data: bytes, *, wall_timeout: float | None = None,
+                 cpu_seconds: int | None = None, memory_bytes: int | None = None) -> dict:
     """{"ok": True, "value": <the JSON `func(data)` returned>} or {"ok": False, "why": str} for
-    `module_path`'s `func` run on `data` in the restricted child."""
+    `module_path`'s `func` run on `data` in the restricted child. Unset limits are the module's."""
+    wall_timeout, cpu_seconds = wall_timeout or WALL_TIMEOUT, cpu_seconds or CPU_SECONDS
+    memory_bytes = memory_bytes or MEMORY_BYTES
     cmd = [sys.executable, "-I", "-B", "-c", _CHILD, str(module_path), func, str(memory_bytes), str(cpu_seconds)]
     try:
         proc = subprocess.run(cmd, input=bytes(data), capture_output=True, env={}, cwd="/", timeout=wall_timeout)
