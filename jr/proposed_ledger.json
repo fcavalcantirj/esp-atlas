@@ -4170,6 +4170,33 @@
       "status": "rejected",
       "timestamp": "2026-11-04T00:00:59.597130+00:00"
     },
+    "launcher-096107bca354e8c6ac3f7400fc2f27ed": {
+      "expires": "2026-11-11T21:00:59.635399+00:00",
+      "id": "launcher-096107bca354e8c6ac3f7400fc2f27ed",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'audio spectrum analyzer user:cryptohasher'",
+      "repo": "launcher:096107bca354e8c6ac3f7400fc2f27ed",
+      "status": "rejected",
+      "timestamp": "2026-11-04T21:00:59.635399+00:00"
+    },
+    "launcher-0bcfa83e71bb823e69ec698fd127d3f6": {
+      "expires": "2026-11-11T21:00:59.635399+00:00",
+      "id": "launcher-0bcfa83e71bb823e69ec698fd127d3f6",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'badmonster user:madmind'",
+      "repo": "launcher:0bcfa83e71bb823e69ec698fd127d3f6",
+      "status": "rejected",
+      "timestamp": "2026-11-04T21:00:59.635399+00:00"
+    },
+    "launcher-0cc23347ba289784665068ea291b37ce": {
+      "expires": "2026-11-11T21:00:59.635399+00:00",
+      "id": "launcher-0cc23347ba289784665068ea291b37ce",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:0cc23347ba289784665068ea291b37ce",
+      "status": "rejected",
+      "timestamp": "2026-11-04T21:00:59.635399+00:00"
+    },
     "launcher-0db638a89b11e7027f6f04313943e92f": {
       "expires": "2026-11-11T19:00:59.711024+00:00",
       "id": "launcher-0db638a89b11e7027f6f04313943e92f",
@@ -4269,6 +4296,15 @@
       "status": "rejected",
       "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
+    "launcher-2668136b33fc4e91f6db9e8e06ea7165": {
+      "expires": "2026-11-11T21:00:59.635399+00:00",
+      "id": "launcher-2668136b33fc4e91f6db9e8e06ea7165",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'atoms3rxiaoling voice assistant user:m5stack'",
+      "repo": "launcher:2668136b33fc4e91f6db9e8e06ea7165",
+      "status": "rejected",
+      "timestamp": "2026-11-04T21:00:59.635399+00:00"
+    },
     "launcher-2a79e3af332931b6e2ec802755c6726b": {
       "expires": "2026-11-11T00:00:59.597130+00:00",
       "id": "launcher-2a79e3af332931b6e2ec802755c6726b",
@@ -4277,6 +4313,15 @@
       "repo": "launcher:2a79e3af332931b6e2ec802755c6726b",
       "status": "rejected",
       "timestamp": "2026-11-04T00:00:59.597130+00:00"
+    },
+    "launcher-3160ff37678051b48081e9ac0a135e99": {
+      "expires": "2026-11-11T21:00:59.635399+00:00",
+      "id": "launcher-3160ff37678051b48081e9ac0a135e99",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'aura msx user:altaris'",
+      "repo": "launcher:3160ff37678051b48081e9ac0a135e99",
+      "status": "rejected",
+      "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-35b809ece6e36393c5e963a4257bf11d": {
       "expires": "2026-11-10T23:00:59.739871+00:00",
@@ -4440,6 +4485,15 @@
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
+    "launcher-67154bae11fb638647ce63fadebd0a8b": {
+      "expires": "2026-11-11T21:00:59.635399+00:00",
+      "id": "launcher-67154bae11fb638647ce63fadebd0a8b",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'blackjack adv error 500 user:vc1235'",
+      "repo": "launcher:67154bae11fb638647ce63fadebd0a8b",
+      "status": "rejected",
+      "timestamp": "2026-11-04T21:00:59.635399+00:00"
+    },
     "launcher-6befae08a0d4700385c1d322c0c6ad64": {
       "expires": "2026-11-10T23:00:59.739871+00:00",
       "id": "launcher-6befae08a0d4700385c1d322c0c6ad64",
@@ -4475,6 +4529,15 @@
       "repo": "launcher:79bfc1fb6702f9347b429c44d3edb3c7",
       "status": "rejected",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
+    },
+    "launcher-79dd6703b4f58e9b444f20f2adf52d4d": {
+      "expires": "2026-11-11T21:00:59.635399+00:00",
+      "id": "launcher-79dd6703b4f58e9b444f20f2adf52d4d",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:79dd6703b4f58e9b444f20f2adf52d4d",
+      "status": "rejected",
+      "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-7d46a337dcdf6795806bb5e406bd8ab6": {
       "expires": "2026-11-11T02:00:59.526867+00:00",
@@ -4683,6 +4746,15 @@
       "status": "rejected",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
+    "launcher-c6f87a687e831a51d604e3e4aae316cf": {
+      "expires": "2026-11-11T21:00:59.635399+00:00",
+      "id": "launcher-c6f87a687e831a51d604e3e4aae316cf",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'pageturner grove user:linclip'",
+      "repo": "launcher:c6f87a687e831a51d604e3e4aae316cf",
+      "status": "rejected",
+      "timestamp": "2026-11-04T21:00:59.635399+00:00"
+    },
     "launcher-cd52ab8d7b985fb76c73abe3ec32ed43": {
       "expires": "2026-11-11T20:00:59.893271+00:00",
       "id": "launcher-cd52ab8d7b985fb76c73abe3ec32ed43",
@@ -4755,6 +4827,15 @@
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
+    "launcher-e9128106328461859f39404b676bd83d": {
+      "expires": "2026-12-04T21:00:59.635399+00:00",
+      "id": "launcher-e9128106328461859f39404b676bd83d",
+      "pr_ref": null,
+      "reason": "resolved: KKQ-KKQ/m5stickc-audiospectrum",
+      "repo": "launcher:e9128106328461859f39404b676bd83d",
+      "status": "seen",
+      "timestamp": "2026-11-04T21:00:59.635399+00:00"
+    },
     "launcher-eaa60374be2f76896c2e04e521801949": {
       "expires": "2026-11-11T01:00:59.777703+00:00",
       "id": "launcher-eaa60374be2f76896c2e04e521801949",
@@ -4781,6 +4862,15 @@
       "repo": "launcher:efe705a4319ad68f0d45c3df2446a79d",
       "status": "rejected",
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
+    },
+    "launcher-f1ded42005c7fe2bc769783034446f5b": {
+      "expires": "2026-11-11T21:00:59.635399+00:00",
+      "id": "launcher-f1ded42005c7fe2bc769783034446f5b",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:f1ded42005c7fe2bc769783034446f5b",
+      "status": "rejected",
+      "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-f94f2406b46c7159bec94b0fead00ac5": {
       "expires": "2026-11-11T19:00:59.711024+00:00",
@@ -6613,6 +6703,16 @@
       "repo_id": 175354774,
       "status": "rejected",
       "timestamp": "2026-10-09T17:00:11.481511+00:00"
+    },
+    "m5stickc-audiospectrum": {
+      "expires": "2026-12-04T21:00:59.635399+00:00",
+      "id": "m5stickc-audiospectrum",
+      "pr_ref": null,
+      "reason": "below_floor: 17 stars / 8 forks",
+      "repo": "kkq-kkq/m5stickc-audiospectrum",
+      "repo_id": 277768892,
+      "status": "rejected",
+      "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "m5stickc-companion-v4-satellite": {
       "expired_at": "2026-10-09T03:00:12.533071+00:00",
@@ -11316,6 +11416,7 @@
     "kion85/keyboard-stick": "keyboard-stick",
     "kirosapm8120/spacewar-m5stickc-plus2": "spacewar-m5stickc-plus2",
     "kisaragi-mochi/stackchan-mcp": "stackchan-mcp",
+    "kkq-kkq/m5stickc-audiospectrum": "m5stickc-audiospectrum",
     "konradmohr/pbashos": "pbashos",
     "konsumer/cardputer-examples": "cardputer-examples",
     "konsumer/weathergrrl": "weathergrrl",
@@ -11344,6 +11445,9 @@
     "launcher:077e98d335ed1c61aa37353df7fb5575": "launcher-077e98d335ed1c61aa37353df7fb5575",
     "launcher:0816d632de9903bcf924498354bb2b28": "launcher-0816d632de9903bcf924498354bb2b28",
     "launcher:0870128d7e7bf8073ec04ab6871d9d16": "launcher-0870128d7e7bf8073ec04ab6871d9d16",
+    "launcher:096107bca354e8c6ac3f7400fc2f27ed": "launcher-096107bca354e8c6ac3f7400fc2f27ed",
+    "launcher:0bcfa83e71bb823e69ec698fd127d3f6": "launcher-0bcfa83e71bb823e69ec698fd127d3f6",
+    "launcher:0cc23347ba289784665068ea291b37ce": "launcher-0cc23347ba289784665068ea291b37ce",
     "launcher:0db638a89b11e7027f6f04313943e92f": "launcher-0db638a89b11e7027f6f04313943e92f",
     "launcher:0f09adafd7adf776632c2b2eb48ccb12": "launcher-0f09adafd7adf776632c2b2eb48ccb12",
     "launcher:0facba8295ac5547acc9dbc8b326f447": "launcher-0facba8295ac5547acc9dbc8b326f447",
@@ -11355,7 +11459,9 @@
     "launcher:2124f637db75857c962f9097575271f4": "launcher-2124f637db75857c962f9097575271f4",
     "launcher:215b511e97a94512db05452db92ba0bf": "launcher-215b511e97a94512db05452db92ba0bf",
     "launcher:2548946a6457aaec0fdb7586e1eec770": "launcher-2548946a6457aaec0fdb7586e1eec770",
+    "launcher:2668136b33fc4e91f6db9e8e06ea7165": "launcher-2668136b33fc4e91f6db9e8e06ea7165",
     "launcher:2a79e3af332931b6e2ec802755c6726b": "launcher-2a79e3af332931b6e2ec802755c6726b",
+    "launcher:3160ff37678051b48081e9ac0a135e99": "launcher-3160ff37678051b48081e9ac0a135e99",
     "launcher:35b809ece6e36393c5e963a4257bf11d": "launcher-35b809ece6e36393c5e963a4257bf11d",
     "launcher:37d482c7364519ecac63b03addf68900": "launcher-37d482c7364519ecac63b03addf68900",
     "launcher:3d40af9dec44d395b6056fda4de43191": "launcher-3d40af9dec44d395b6056fda4de43191",
@@ -11374,10 +11480,12 @@
     "launcher:6094706fa0444730779a65e0fb26e60f": "launcher-6094706fa0444730779a65e0fb26e60f",
     "launcher:6637626f52a144f67ba568f71f88d18a": "launcher-6637626f52a144f67ba568f71f88d18a",
     "launcher:664485fc037d6986bff4c066364db6af": "launcher-664485fc037d6986bff4c066364db6af",
+    "launcher:67154bae11fb638647ce63fadebd0a8b": "launcher-67154bae11fb638647ce63fadebd0a8b",
     "launcher:6befae08a0d4700385c1d322c0c6ad64": "launcher-6befae08a0d4700385c1d322c0c6ad64",
     "launcher:6c6e4a638006e8ea1cc86957fad8ca01": "launcher-6c6e4a638006e8ea1cc86957fad8ca01",
     "launcher:78b1ffce115a35308b558323d323778b": "launcher-78b1ffce115a35308b558323d323778b",
     "launcher:79bfc1fb6702f9347b429c44d3edb3c7": "launcher-79bfc1fb6702f9347b429c44d3edb3c7",
+    "launcher:79dd6703b4f58e9b444f20f2adf52d4d": "launcher-79dd6703b4f58e9b444f20f2adf52d4d",
     "launcher:7d46a337dcdf6795806bb5e406bd8ab6": "launcher-7d46a337dcdf6795806bb5e406bd8ab6",
     "launcher:7f6c7acb9cfd3d0aa051ba3830a75fd5": "launcher-7f6c7acb9cfd3d0aa051ba3830a75fd5",
     "launcher:840c997c1d7296bd95d4f0c80ba2d614": "launcher-840c997c1d7296bd95d4f0c80ba2d614",
@@ -11401,6 +11509,7 @@
     "launcher:c3c3e139ecb9add9e14fe86d263645b6": "launcher-c3c3e139ecb9add9e14fe86d263645b6",
     "launcher:c496984bd4f905e2fe45d2f3a7fe1cae": "launcher-c496984bd4f905e2fe45d2f3a7fe1cae",
     "launcher:c4dce0a2fbb839e71a7e1ce44108d41a": "launcher-c4dce0a2fbb839e71a7e1ce44108d41a",
+    "launcher:c6f87a687e831a51d604e3e4aae316cf": "launcher-c6f87a687e831a51d604e3e4aae316cf",
     "launcher:cd52ab8d7b985fb76c73abe3ec32ed43": "launcher-cd52ab8d7b985fb76c73abe3ec32ed43",
     "launcher:d3cc2e38753d28c587f190d0343cdbc3": "launcher-d3cc2e38753d28c587f190d0343cdbc3",
     "launcher:d4f56ec2f3f5ec691cfae54052bb3b53": "launcher-d4f56ec2f3f5ec691cfae54052bb3b53",
@@ -11409,9 +11518,11 @@
     "launcher:d79558c810dc19522b497d9b7fad94ea": "launcher-d79558c810dc19522b497d9b7fad94ea",
     "launcher:d923a163b974bb421bd948e4bc1e252b": "launcher-d923a163b974bb421bd948e4bc1e252b",
     "launcher:e7c7cb4167ad20780376f0452d035b0f": "launcher-e7c7cb4167ad20780376f0452d035b0f",
+    "launcher:e9128106328461859f39404b676bd83d": "launcher-e9128106328461859f39404b676bd83d",
     "launcher:eaa60374be2f76896c2e04e521801949": "launcher-eaa60374be2f76896c2e04e521801949",
     "launcher:eb73543c1e2ba5948a948127e4622d2b": "launcher-eb73543c1e2ba5948a948127e4622d2b",
     "launcher:efe705a4319ad68f0d45c3df2446a79d": "launcher-efe705a4319ad68f0d45c3df2446a79d",
+    "launcher:f1ded42005c7fe2bc769783034446f5b": "launcher-f1ded42005c7fe2bc769783034446f5b",
     "launcher:f94f2406b46c7159bec94b0fead00ac5": "launcher-f94f2406b46c7159bec94b0fead00ac5",
     "layer812": "layer812",
     "layer812/cardputer_llm": "cardputer-llm",
