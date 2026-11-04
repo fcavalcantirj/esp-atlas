@@ -64,6 +64,23 @@ def test_a_bwrap_refused_its_namespaces_is_sandbox_unavailable_and_only_bwrap_ra
     assert [cmd[0] for cmd in started] == [str(refusing_bwrap)]     # the interpreter only as bwrap's argument
 
 
+def test_the_validator_is_bound_read_only_where_the_child_loads_it(refusing_bwrap, started):
+    """What test_image_sandbox's write test proves at runtime for the module in the validator's slot,
+    pinned here for esp_image.py itself: the child loads it from its real path, a --ro-bind covers that
+    path in the sandbox, nothing is bound writable and the root is remounted read-only."""
+    sb.validate(VALID)
+    (cmd,) = started
+    bwrap, child = cmd[:cmd.index("--")], cmd[cmd.index("--") + 1:]
+    module = str(sb.ESP_IMAGE)
+    assert child[child.index("-c") + 2] == module
+    ro_binds = [(bwrap[i + 1], bwrap[i + 2]) for i, arg in enumerate(bwrap) if arg == "--ro-bind"]
+    assert any(src == dest and (module == src or module.startswith(src + "/")) for src, dest in ro_binds), ro_binds
+    assert not {"--bind", "--bind-try", "--tmpfs", "--file", "--bind-data"} & set(bwrap), bwrap
+    assert [(bwrap[i + 1], bwrap[i + 2]) for i, arg in enumerate(bwrap) if arg == "--dev-bind"] == \
+        [(dev, dev) for dev in sb.DEVICES], bwrap
+    assert bwrap[-2:] == ["--remount-ro", "/"], bwrap
+
+
 def test_a_bwrap_that_cannot_be_executed_is_sandbox_unavailable(tmp_path, monkeypatch):
     broken = tmp_path / "bwrap"
     broken.write_text("not a program")

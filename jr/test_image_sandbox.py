@@ -359,12 +359,16 @@ def test_without_the_guard_no_host_file_is_there_to_read(tmp_path, tmp_path_fact
 def test_without_the_guard_nothing_can_be_written_or_changed(tmp_path, tmp_path_factory):
     victim = tmp_path_factory.mktemp("victim") / "keep.txt"
     victim.write_text("precious")
-    module = str(Path(sb.ESP_IMAGE))
+    # The probe sits in the validator's slot: run_isolated ro-binds the module it runs (esp_image.py in
+    # production, pinned by test_image_sandbox_fail_closed). Reading it first proves the EROFS comes
+    # from that bind, not from O_CREAT under a bwrap-made parent directory of a path that is not there.
     out = attempts(tmp_path, f"""{{"new file at /": lambda: open("/x", "w"),
                                    "victim": lambda: os.remove({str(victim)!r}),
-                                   "the bound validator": lambda: open({module!r}, "a"),
+                                   "read the bound validator": lambda: open(__file__).readline(),
+                                   "the bound validator": lambda: open(__file__, "a"),
                                    "rename in the interpreter": lambda: os.rename(os.__file__, os.__file__ + ".x"),
                                    "fifo": lambda: os.mkfifo("/fifo")}}""")
+    assert out["read the bound validator"] == "done: def run(data):\n", out
     assert out["victim"].startswith("FileNotFoundError"), out
     for name in ("new file at /", "the bound validator", "rename in the interpreter", "fifo"):
         assert out[name].startswith("OSError: [Errno 30] Read-only file system"), out
