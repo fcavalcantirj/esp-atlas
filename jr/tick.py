@@ -13,7 +13,10 @@ One tick, in order (PLAN §3.2):
     regenerates those files, so nothing is lost; dry-run only reports it). A stale one touching
     anything else (data/**) is NEVER closed — jr/memory.py reads a closed PR as a permanent
     rejection of its firmware — so the tick aborts naming it, whether it conflicts, and that it
-    needs a human. Last: branch protection on `main` requires schema + tests + jr-tests and
+    needs a human. A PR labelled `jr-review` (jr/review_routing.py) is waiting for the owner ON
+    PURPOSE: it is never stuck and never closed, whatever its age; it is listed in the report with
+    its age, and at MAX_OPEN_REVIEW_PRS open ones the review-producing stages are skipped (the cap,
+    SPEC-jr-review-routing.md). Last: branch protection on `main` requires schema + tests + jr-tests and
     auto-merge is allowed. Any of these red → the tick ABORTS before touching anything; every
     query failure here fails CLOSED. Protection missing is the one that matters most: without it
     "PR + auto-merge" is direct-to-main under another name.
@@ -33,7 +36,8 @@ One tick, in order (PLAN §3.2):
  7. Guard once — only if something was written: `scripts/validate.py` in the worktree, then the
     CI regression tests. Red → the worktree is discarded, nothing is published, the report says so.
  8. Publish — pathspec-only commit on `jr/tick-…`, push, PR, auto-merge only when the gate is
-    real and no stage asked for a human. (jr/publish.py)
+    real and the risk classifier routes it AUTO; a REVIEW route is labelled `jr-review` and waits
+    for the owner. (jr/publish.py, jr/review_routing.py)
  9. Report — ONE line, always, to stdout and Telegram. (jr/report.py)
 10. The worktree is removed in `finally`, whatever happened.
 
@@ -66,6 +70,7 @@ import publish  # noqa: E402
 import report   # noqa: E402
 import allocator  # noqa: E402
 import demand_signal  # noqa: E402
+import review_routing  # noqa: E402
 from budget import Budget, BudgetExceeded  # noqa: E402
 
 REPO = _JR_DIR.parent
@@ -228,26 +233,29 @@ def _rate_limit_remaining(gh) -> int | None:
         return None
 
 
-BOOKKEEPING_FILES = ("jr/proposed_ledger.json", "jr/board_cooldown.json")
-BOOKKEEPING_DIRS = ("docs/telemetry/",)
+BOOKKEEPING_FILES = review_routing.BOOKKEEPING_FILES     # one definition: the classifier's AUTO list
+BOOKKEEPING_DIRS = review_routing.BOOKKEEPING_DIRS
 SUPERSEDED_COMMENT = ("Superseded by later Jr ticks. This PR only touched tick bookkeeping "
                       "(jr/proposed_ledger.json, jr/board_cooldown.json, docs/telemetry/**), which later ticks regenerate "
                       "(a dropped board cooldown is re-derived the next time that board fails), so closing it loses "
                       "nothing. Closed automatically by the jr/tick.py preflight.")
 
 
-def _list_tick_prs(gh) -> list | None:
-    """Every open Jr tick PR with its age and mergeability, or None when the query itself fails —
+def _list_open_prs(gh) -> list | None:
+    """Every open PR with its age, mergeability and labels, or None when the query itself fails —
     fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not open another."""
-    p = gh("pr", "list", "--state", "open", "--json", "number,createdAt,headRefName,mergeable")
+    p = gh("pr", "list", "--state", "open", "--json", "number,createdAt,headRefName,mergeable,labels")
     if getattr(p, "returncode", 1) != 0:
         return None
     try:
         prs = json.loads(p.stdout or "[]")
     except json.JSONDecodeError:
         return None
-    return [pr for pr in prs if isinstance(pr, dict)
-            and str(pr.get("headRefName", "")).startswith(TICK_BRANCH_PREFIX)]
+    return [pr for pr in prs if isinstance(pr, dict)] if isinstance(prs, list) else None
+
+
+def _is_tick_pr(pr: dict) -> bool:
+    return str(pr.get("headRefName", "")).startswith(TICK_BRANCH_PREFIX)
 
 
 def _pr_age_hours(pr: dict, now: datetime) -> float | None:
@@ -258,8 +266,19 @@ def _pr_age_hours(pr: dict, now: datetime) -> float | None:
     return (now - created).total_seconds() / 3600
 
 
-def _is_bookkeeping(path: str) -> bool:
-    return path in BOOKKEEPING_FILES or path.startswith(BOOKKEEPING_DIRS)
+_is_bookkeeping = review_routing.is_bookkeeping
+
+
+def _open_review_prs(prs: list, now: datetime) -> list[dict]:
+    """The open jr-review PRs (any branch) for the owner's list: number, branch, age, conflict."""
+    out = []
+    for pr in prs:
+        if review_routing.has_review_label(pr):
+            age = _pr_age_hours(pr, now)
+            out.append({"number": pr.get("number"), "headRefName": pr.get("headRefName"),
+                        "age_hours": None if age is None else round(age, 1),
+                        "conflicting": pr.get("mergeable") == "CONFLICTING"})
+    return out
 
 
 def _pr_changed_paths(gh, number) -> list[str]:
@@ -282,9 +301,12 @@ def _triage_tick_prs(gh, prs: list, now: datetime, hours: float) -> tuple[list, 
     bookkeeping is superseded: a later tick already rewrote those files, so it can be closed.
     A stale one that touches anything else (data/**, …) is stuck and needs a human — it is NEVER
     closed here, because jr/memory.py reads a closed proposed PR as a PERMANENT rejection of its
-    firmware. A young conflicting content PR is left alone until it goes stale."""
+    firmware. A young conflicting content PR is left alone until it goes stale. A PR labelled
+    jr-review is skipped outright: it waits for the owner by design, so it is neither."""
     superseded, stuck = [], []
     for pr in prs:
+        if review_routing.has_review_label(pr):
+            continue
         age = _pr_age_hours(pr, now)
         is_stale = age is not None and age > hours
         conflicting = pr.get("mergeable") == "CONFLICTING"
@@ -461,7 +483,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              pr_state=None, revalidate=publish.revalidate_catalog, budget: Budget | None = None,
              repo_slug: str | None = None, min_rate_limit: int = MIN_RATE_LIMIT,
              stale_pr_hours: float = STALE_PR_HOURS, telegram: bool = True,
-             auto_merge: bool = True, lock_path: Path | None = None) -> report.TickReport:
+             auto_merge: bool = True, lock_path: Path | None = None,
+             review_cap: int = review_routing.MAX_OPEN_REVIEW_PRS) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
     env = os.environ if env is None else env
     budget = budget or Budget()
@@ -479,9 +502,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             raise TickAbort("gh unavailable (rate_limit query failed)")
         if remaining < min_rate_limit:
             raise TickAbort(f"GitHub rate limit low: {remaining} < {min_rate_limit}")
-        tick_prs = _list_tick_prs(gh_c)
-        if tick_prs is None:
+        open_prs = _list_open_prs(gh_c)
+        if open_prs is None:
             raise TickAbort("gh pr list failed (cannot see open Jr PRs)")
+        r.review_prs = _open_review_prs(open_prs, now)
+        tick_prs = [pr for pr in open_prs if _is_tick_pr(pr)]
         superseded, stuck = _triage_tick_prs(gh_c, tick_prs, now, stale_pr_hours)
         for pr in superseded:
             if dry_run:
@@ -592,6 +617,15 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             r.allocation = (f"boards {r.boards_pct:.1f}% -> A0/B{n} (manual track)" if n
                             else f"boards {r.boards_pct:.1f}% -> A0/B0 (no content stages registered)")
 
+        # 5b. the jr-review cap: at the cap, no stage that can open another review PR runs. A stage
+        #     opts out only by declaring `produces_review = False`; unsure -> it produces review.
+        if len(r.review_prs) >= review_cap:
+            keep = [s for s in stages if getattr(s, "produces_review", True) is False]
+            r.review_capped = (f"jr-review cap reached ({len(r.review_prs)}/{review_cap} open): "
+                               f"skipped {len(stages) - len(keep)} review-producing stage(s)")
+            r.warnings.append(r.review_capped)
+            stages = keep
+
         # 6. stages
         ctx = TickContext(root=root, ledger_path=ledger_path, now=now, gh=gh_c, git=git,
                           budget=budget, dry_run=dry_run, env=env)
@@ -623,7 +657,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             r.budget = budget.summary()          # the body must carry the real spend, not an empty field
             res = publish.publish(wt, r.paths, subject, report.render_pr_body(r), git=git, gh=gh,
                                   now=now, repo_slug=slug, needs_human=r.needs_human,
-                                  protection=protection, auto_merge=auto_merge)
+                                  protection=protection, auto_merge=auto_merge, stages=r.stages)
             r.publish = res.as_dict()
     except BudgetExceeded as e:
         r.aborted = f"budget: {e}"
@@ -645,7 +679,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
 
     line = report.render_line(r)
     print(line)
-    if telegram and not dry_run and notifier is not None and (r.aborted or r.needs_human):
+    review_opened = (r.publish or {}).get("route") == review_routing.REVIEW
+    if telegram and not dry_run and notifier is not None and (r.aborted or r.needs_human or review_opened):
         try:
             notifier(line)
         except Exception:  # noqa: BLE001 — Telegram down must not fail the tick

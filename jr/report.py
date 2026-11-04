@@ -34,6 +34,8 @@ class TickReport:
     rejects: dict = field(default_factory=dict)       # reason -> count
     memory: dict = field(default_factory=dict)        # {"expired", "merged", "rejected", "removed"}
     hydrated: list = field(default_factory=list)       # firmware ids marked proposed from open Jr PRs at tick start
+    review_prs: list = field(default_factory=list)     # open jr-review PRs: {"number", "headRefName", "age_hours", "conflicting"}
+    review_capped: str = ""                            # non-empty → the jr-review cap skipped stages, why
     revalidate: dict | None = None
     guard: dict | None = None                         # {"ok": bool, "output": str}
     publish: dict | None = None                       # PublishResult.as_dict()
@@ -67,12 +69,23 @@ def _pct(v: float | None) -> str:
     return "n/a" if v is None else f"{v:.1f}%"
 
 
+def render_review_prs(r: TickReport) -> str:
+    """` · jr-review open N: #12 30h, #15 4h (conflicting)` — the PRs waiting for the owner."""
+    if not r.review_prs:
+        return ""
+    def one(pr: dict) -> str:
+        age = pr.get("age_hours")
+        return (f"#{pr.get('number')} {'?' if age is None else int(age)}h"
+                + (" (conflicting)" if pr.get("conflicting") else ""))
+    return f" · jr-review open {len(r.review_prs)}: " + ", ".join(one(pr) for pr in r.review_prs)
+
+
 def render_line(r: TickReport) -> str:
     """The one line. Telegram-friendly, no markdown tables, every field always present."""
     stamp = r.when.strftime("%Y-%m-%d %H:%M UTC")
     head = "jr-tick" + (" (dry-run)" if r.dry_run else "")
     if r.aborted:
-        return f"🛑 {head} {stamp}: aborted — {r.aborted} · {r.budget}".rstrip(" ·")
+        return f"🛑 {head} {stamp}: aborted — {r.aborted}{render_review_prs(r)} · {r.budget}".rstrip(" ·")
     mem = r.memory or {}
     mem_txt = (f"memory expired {mem.get('expired', 0)} / merged {mem.get('merged', 0)} / "
                f"rejected {mem.get('rejected', 0)} / removed {mem.get('removed', 0)}")
@@ -94,7 +107,7 @@ def render_line(r: TickReport) -> str:
     stage_txt = "".join(f" · {s.get('name', 'stage')}: {s.get('summary', '')[:300]}" for s in r.stages if s.get("summary"))
     return (f"🤖 {head} {stamp}: boards {_pct(r.boards_pct)} (overall {_pct(r.overall_pct)}) · "
             f"{r.allocation or 'allocation n/a'} · admitted {r.admitted} · rejects {rej} · "
-            f"{mem_txt}{guard_txt}{reval} · {pr_txt}{stage_txt}{warn} · {r.budget}").rstrip(" ·")
+            f"{mem_txt}{guard_txt}{reval} · {pr_txt}{render_review_prs(r)}{stage_txt}{warn} · {r.budget}").rstrip(" ·")
 
 
 def _paren(value: str, delta, fmt) -> str:

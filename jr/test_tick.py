@@ -60,13 +60,18 @@ def gh_ok(rate="4999", prs="[]", protection_rc=0, allow="true", pr_url="https://
     })
 
 
-def git_ok(wt_dir: Path, staged=True):
+SIGNALS_REFRESH = "M\0data/firmware/x/signals.json\0"      # review_routing: AUTO
+LEDGER_ONLY = "M\0jr/proposed_ledger.json\0"                # review_routing: AUTO
+
+
+def git_ok(wt_dir: Path, staged=True, diff="A\0data/firmware/x/firmware.md\0"):
+    """`diff` is the staged `--name-status -z` answer; the default (a new firmware) routes REVIEW."""
     return recorder({
         ("remote", "get-url", "origin"): (0, "https://github.com/o/r.git\n"),
         ("rev-parse", "origin/main"): (0, "6190d21abc\n"),
         ("status", "--porcelain"): (0, ""),
         ("diff", "--cached", "--quiet"): (1 if staged else 0, ""),
-        ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, "A\0data/firmware/x/firmware.md\0"),
+        ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, diff),
         ("rev-parse", "HEAD"): (0, "feedbee\n"),
     })
 
@@ -282,7 +287,7 @@ def _stage(paths, needs_human=False, admitted=1, rejects=None):
 
 
 def test_stage_output_is_guarded_then_published_with_auto_merge(wt_dir):
-    git, gh = git_ok(wt_dir), gh_ok()
+    git, gh = git_ok(wt_dir, diff=SIGNALS_REFRESH), gh_ok()     # a low-risk diff: the AUTO route
     guard_calls = []
     r = run(git=git, gh=gh, stages=[_stage(["data/firmware/x"], rejects={"fork": 2})],
             guard=lambda root: guard_calls.append(root) or {"ok": True, "output": ""})
@@ -522,7 +527,7 @@ def test_a_ledger_only_change_is_published_without_running_the_guard(wt_dir):
     and every hourly tick redoes it. No data changed, so validate.py is skipped."""
     lp = wt_dir / "jr" / "proposed_ledger.json"
     ledger.record_proposed("done", "o/done", pr_ref="https://github.com/o/r/pull/4", path=lp)
-    git, gh, guard_calls = git_ok(wt_dir), gh_ok(), []
+    git, gh, guard_calls = git_ok(wt_dir, diff=LEDGER_ONLY), gh_ok(), []
     r = run(git=git, gh=gh, pr_state=lambda ref: "merged", revalidate=lambda s: {"ok": True},
             guard=lambda root: guard_calls.append(root) or {"ok": True, "output": ""})
     assert not r.aborted and guard_calls == [] and r.guard is None
@@ -565,7 +570,8 @@ def test_publish_gets_the_uncounted_gh_so_budget_cannot_cut_it_off_mid_publish(w
     gh = gh_ok()
     # preflight = rate_limit + pr list + rules + protection + allow_auto_merge = 5 counted calls; the budget
     # is exactly that, so publish's own pr create / pr merge would die if they were counted
-    r = run(git=git_ok(wt_dir), gh=gh, stages=[_stage(["data/firmware/x"])], budget=Budget(max_calls=5, clock=lambda: 0.0))
+    r = run(git=git_ok(wt_dir, diff=SIGNALS_REFRESH), gh=gh, stages=[_stage(["data/firmware/x"])],
+            budget=Budget(max_calls=5, clock=lambda: 0.0))
     assert not r.aborted and r.publish["published"] and r.publish["auto_merge"]
     assert r.budget.startswith("gh calls 5/5")
 
