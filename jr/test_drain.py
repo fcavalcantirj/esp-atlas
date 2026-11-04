@@ -13,7 +13,6 @@ Run: cd jr && python3 -m pytest test_drain.py -v
 """
 from __future__ import annotations
 import json
-import shutil
 import sys
 from pathlib import Path
 
@@ -539,24 +538,6 @@ def test_cap_categories_respects_batch_size():
 # ─────────────────────────── author_selected (writes real firmware+recipe, real guard) ───────────────────────────
 
 FIXTURE_ID = "zzz-test-fixture-drain-firmware"
-
-
-@pytest.fixture
-def tmp_atlas(tmp_path, monkeypatch):
-    """A throwaway copy of data/ that authoring writes into and the real guard validates — a test
-    must never write into the real atlas (a killed run used to leave this fixture in data/).
-    ESP_ATLAS_REPO_ROOT points the guard subprocess at the copy; scripts/, apps/ and schema/
-    are read-only, so they're symlinked. Returns the copy's root."""
-    shutil.copytree(REPO / "data", tmp_path / "data")
-    for d in ("scripts", "apps", "schema"):
-        (tmp_path / d).symlink_to(REPO / d)
-    monkeypatch.setenv("ESP_ATLAS_REPO_ROOT", str(tmp_path))
-    monkeypatch.setattr(tools, "REPO", tmp_path)
-    monkeypatch.setattr(tools, "FIRMWARE_DIR", tmp_path / "data" / "firmware")
-    monkeypatch.setattr(tools, "BOARDS_DIR", tmp_path / "data" / "boards")
-    monkeypatch.setattr(tools, "SOCS_DIR", tmp_path / "data" / "socs")
-    monkeypatch.setattr(tools, "MODULES_DIR", tmp_path / "data" / "modules")
-    return tmp_path
 
 
 def _fixture_selected(**overrides):

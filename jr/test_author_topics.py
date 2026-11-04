@@ -12,7 +12,6 @@ Run: cd jr && python3 -m pytest test_author_topics.py -v
 """
 from __future__ import annotations
 import json
-import shutil
 import sys
 from pathlib import Path
 
@@ -30,14 +29,6 @@ FIRMWARE_SCHEMA = json.loads((REPO / "schema/firmware.schema.json").read_text())
 RECIPE_SCHEMA = json.loads((REPO / "schema/recipe.schema.json").read_text())
 
 FIXTURE_ID = "zzz-test-fixture-author-topics"
-
-
-@pytest.fixture
-def cleanup_fixture():
-    yield
-    shutil.rmtree(tools.FIRMWARE_DIR / FIXTURE_ID, ignore_errors=True)
-    for rdir in (REPO / "data/recipes").glob(f"*__{FIXTURE_ID}"):
-        shutil.rmtree(rdir, ignore_errors=True)
 
 
 # ─────────────────────────── reuses drain.run_drain — no duplicated authoring loop ───────────────────────────
@@ -148,7 +139,7 @@ def test_no_limit_means_the_full_one_shot_batch_size(monkeypatch):
 
 # ─────────────────────────── end-to-end: real run_drain, fake I/O, real guard ───────────────────────────
 
-def test_main_full_pipeline_authors_a_clean_topic_candidate(cleanup_fixture, capsys):
+def test_main_full_pipeline_authors_a_clean_topic_candidate(tmp_atlas, capsys):
     def fake_search(topic, per_page):
         if topic != "cardputer":
             return []
@@ -167,8 +158,9 @@ def test_main_full_pipeline_authors_a_clean_topic_candidate(cleanup_fixture, cap
     fm = tools._frontmatter(tools.FIRMWARE_DIR / FIXTURE_ID / "firmware.md")
     jsonschema.validate(fm, FIRMWARE_SCHEMA)
     assert fm["category"] == "pentest"
-    rc_dirs = list((REPO / "data/recipes").glob(f"*__{FIXTURE_ID}"))
+    rc_dirs = list((tmp_atlas / "data/recipes").glob(f"*__{FIXTURE_ID}"))
     assert len(rc_dirs) == 1
+    assert not (REPO / "data/firmware" / FIXTURE_ID).exists()      # never the real atlas
     jsonschema.validate(tools._frontmatter(rc_dirs[0] / "recipe.md"), RECIPE_SCHEMA)
 
     out = capsys.readouterr().out

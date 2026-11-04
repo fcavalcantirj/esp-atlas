@@ -1,12 +1,15 @@
 """Shared jr/ test fixtures."""
 from __future__ import annotations
 
+import shutil
+
 import pytest
 
 import derive
 import device_evidence
 import drain
 import tick
+import tools
 
 
 @pytest.fixture(autouse=True)
@@ -49,3 +52,22 @@ def esp_sketch_raw(monkeypatch):
             return ESP_SKETCH_YAML
         return _offline(url)
     monkeypatch.setattr(derive, "default_raw", raw)
+
+
+@pytest.fixture
+def tmp_atlas(tmp_path, monkeypatch):
+    """A throwaway copy of data/ that authoring writes into and the real guard validates — a test
+    must never write into the real atlas (a killed run used to leave its fixture in data/).
+    ESP_ATLAS_REPO_ROOT points the guard subprocess at the copy; scripts/, apps/ and schema/
+    are read-only, so they're symlinked. Returns the copy's root."""
+    repo = tools.REPO
+    shutil.copytree(repo / "data", tmp_path / "data")
+    for d in ("scripts", "apps", "schema"):
+        (tmp_path / d).symlink_to(repo / d)
+    monkeypatch.setenv("ESP_ATLAS_REPO_ROOT", str(tmp_path))
+    monkeypatch.setattr(tools, "REPO", tmp_path)
+    monkeypatch.setattr(tools, "FIRMWARE_DIR", tmp_path / "data" / "firmware")
+    monkeypatch.setattr(tools, "BOARDS_DIR", tmp_path / "data" / "boards")
+    monkeypatch.setattr(tools, "SOCS_DIR", tmp_path / "data" / "socs")
+    monkeypatch.setattr(tools, "MODULES_DIR", tmp_path / "data" / "modules")
+    return tmp_path
