@@ -1,0 +1,44 @@
+{
+  "by_board": {
+    "adafruit-qt-py-esp32": {
+      "board": "adafruit-qt-py-esp32",
+      "expires": "2026-11-11T02:00:59.526867+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-04T02:00:59.526867+00:00"
+    },
+    "adafruit-qualia-esp32-s3": {
+      "board": "adafruit-qualia-esp32-s3",
+      "expires": "2026-11-11T02:00:59.526867+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-04T02:00:59.526867+00:00"
+    },
+    "beetle-esp32-c3": {
+      "board": "beetle-esp32-c3",
+      "expires": "2026-11-11T02:00:59.526867+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "manifest": "no_pattern_match",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-04T02:00:59.526867+00:00"
+    }
+  }
+}
