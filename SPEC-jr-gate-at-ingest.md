@@ -56,6 +56,34 @@ exist as verified logic (118 passing tests on the logic branch — see "Reuses" 
      `library.properties` `architectures` listing `esp32` (sketches and board files under vendored
      trees — `lib/`, `libraries/`, `components/`, `managed_components/`, `vendor/`, … — are other
      projects' and never count);
+   - **whose evidence** *(independent review of PR 1415, 2026-11-04)*: the three build signals
+     above count only when they belong to the project being classified — found at the repo root,
+     or in the project's **declared build directory**: any non-vendored dir when the root holds no
+     project of its own, otherwise only a dir that the root README or first root build file
+     (Makefile, justfile, CMakeLists.txt, …) points to — `cd firmware`, make/idf.py/pio
+     `-C|-d|--project-dir firmware`, `add_subdirectory(firmware)`, a markdown link to the dir itself
+     `](firmware)`,
+     or a path to its build file (`firmware/platformio.ini`, `firmware/CMakeLists.txt`,
+     `firmware/sdkconfig…`, `firmware/x.ino`); a bare word or `firmware/` in prose is not a
+     pointer. A root project of its own is a host-side manifest (`go.mod`, `Cargo.toml` — not
+     read, so an esp-rs crate counts as host —, `package.json`, `pyproject.toml`, `setup.py`,
+     `requirements.txt`, …) or a generic root build file (`CMakeLists.txt`, `Makefile`,
+     `meson.build`, …); a truncated tree listing cannot prove there is none, so it counts as one.
+     A signal found ONLY under a vendored or example tree — `examples/`, `example/`, `samples/`,
+     `demo/`, `test/`, `tests/`, `third_party/` (and `third-party/`, `thirdparty/`, `3rdparty/`),
+     `vendor/`, `vendored/`, `external/`, `extern/`, `deps/`, `contrib/`, `lib/`, `libs/`,
+     `libraries/`, `components/<name>/examples`, `managed_components/`, `node_modules/`, `.pio/`,
+     `build/`, a dir named like an example (`esp32-example/`, `my_demo/`), a git submodule
+     (`.gitmodules` `path`, or a tree gitlink) — is `needs_review` with
+     `vendored_or_example_only`; one only in a host repo's undeclared subdir is `needs_review`
+     with `undeclared_project_dir`. Neither is ever `esp_target`; a README pointer never makes a
+     vendored/example tree the project. An IDF project's target must be its own:
+     `sdkconfig*`/`dependencies.lock` in the project dir, an `idf_component.yml` in its own
+     (non-vendored) subtree. An Arduino ESP board counts for the repo's own sketch it is FOR, from
+     the repo's own board file: a `sketch.yaml` is its folder's sketch, a `library.properties` the
+     sketches below it, a root workflow (the repo's own CI) the sketches whose folder an ESP-fqbn
+     line of it names — naming none, every sketch only when all are the repo's own. A root `library.properties` makes
+     the repo an Arduino library whose top-level `examples/` are its own, whatever they are named;
    - `release_bin`: a non-draft release `.bin` (ONE GET through `jr/safe_fetch.py`) that `jr/esp_image.py`
      validates OFFLINE as a whole ESP image (owner spec 2026-11-04): parsed with esptool's image
      module pinned exactly (`esptool==5.6.0`, `jr/requirements-image.txt`; never its serial or
@@ -106,7 +134,7 @@ exist as verified logic (118 passing tests on the logic branch — see "Reuses" 
    citing URL and why. **`not_device_firmware`** — no signal at all → rejected, remembered
    `memory.NO_BUILD_SIGNAL_DAYS`. An endpoint that failed for a reason other than 404 is unknown,
    never a verdict: `device_evidence_unreadable`, retried after `memory.UNRESOLVED_REJECT_DAYS`.
-   Runs last (it costs 1–15 reads), on every path that authors a record: launcher + submissions
+   Runs last (it costs 1–18 reads), on every path that authors a record: launcher + submissions
    (jr/stage_admit.py) and the topics/launcher drain (jr/drain.score_candidates). Topics and
    descriptions naming a board are NOT evidence: a Go server (rebelthor/warble) passed checks 1–4
    on its `esp32-s3`/`m5stack` topics alone.
