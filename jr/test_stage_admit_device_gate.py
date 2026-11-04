@@ -176,3 +176,19 @@ def test_needs_review_submission_is_answered_with_how_to_state_the_target(root, 
     answer = _answers(ctx)[0][2]
     assert "**Not admitted** — `needs_review_target" in answer
     assert "owner reviews it" in answer and "sketch.yaml" in answer and "CONFIG_IDF_TARGET" in answer
+
+
+def test_the_ranged_get_of_a_release_bin_is_charged_to_the_tick_budget(root, monkeypatch):
+    heads = []
+    monkeypatch.setattr(device_evidence, "default_head", lambda url, n: heads.append((url, n)) or esp_image(9)[:n])
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Zapkit", "https://github.com/z/zapkit")])
+    api_docs, files = EVIDENCE_SHAPES["release_bin"]
+    metas = {"repos/z/zapkit": _meta("z/zapkit", stars=40, description="A Cardputer tool", rid=25),
+             TREE.format("z/zapkit"): api_docs["tree"], RELEASES.format("z/zapkit"): api_docs["releases"]}
+    ctx = _ctx(root, metas=metas)
+    charged = []
+    real_charge = ctx.budget.charge
+    monkeypatch.setattr(ctx.budget, "charge", lambda n=1, what="gh": charged.append(what) or real_charge(n, what))
+    res = stage_admit.run(ctx, budget=3, raw=_raw(files))
+    assert res.admitted == 1 and heads == [("https://x/tool.bin", 16)]
+    assert charged.count("raw") == 1          # the tree has no build files: the one raw charge is the ranged GET

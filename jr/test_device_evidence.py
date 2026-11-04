@@ -391,3 +391,42 @@ def test_a_targets_block_ends_at_the_next_top_level_key():
     res, _ = check(tree=IDF_TREE + ["main/idf_component.yml"], releases=[],
                    files={"CMakeLists.txt": IDF_CMAKE, "main/idf_component.yml": comp})
     assert res["verdict"] == dev.NEEDS_REVIEW
+
+
+def test_a_vendored_library_example_is_not_the_repo_s_own_sketch():
+    """lib/ (PlatformIO), libraries/ (Arduino) and other vendored trees carry other projects'
+    sketches and compatibility claims: never evidence that THIS repo targets an ESP."""
+    res, _ = check(tree=["platformio.ini", "src/main.cpp", "lib/SomeLib/examples/Demo/Demo.ino", "lib/SomeLib/library.properties"],
+                   files={"platformio.ini": "[env:nrf]\nplatform = nordicnrf52\n",
+                          "lib/SomeLib/library.properties": "architectures=esp32,nrf52\n"}, releases=[])
+    assert res["verdict"] == dev.NOT_DEVICE_FIRMWARE
+
+
+def test_a_vendored_board_file_does_not_name_the_repo_s_board():
+    res, _ = check(tree=["app/app.ino", "libraries/Zap/library.properties", "libraries/Zap/sketch.yaml"],
+                   files={"libraries/Zap/library.properties": "architectures=esp32\n", "libraries/Zap/sketch.yaml": ESP_SKETCH_YAML},
+                   releases=[])
+    assert res["verdict"] == dev.NEEDS_REVIEW and res["kind"] == "arduino_sketch"
+
+
+def test_a_root_arduino_library_with_architectures_esp32_still_counts():
+    res, _ = check(tree=["library.properties", "examples/Basic/Basic.ino", "src/Zap.cpp"],
+                   files={"library.properties": "name=Zap\narchitectures=esp32\n"})
+    assert res["verdict"] == dev.ESP_TARGET
+
+
+def test_an_exhausted_call_cap_with_an_ambiguous_signal_goes_to_review_not_retry():
+    """Exhaustion is a property of the repo's shape (it recurs every retry), so an ambiguous
+    signal found before the cap goes to the owner rather than looping as unknown."""
+    many = [f"p{i}/CMakeLists.txt" for i in range(3)]
+    api, raw, head, _ = fake_repo(tree=["CMakeLists.txt", "a.ino", "a/sketch.yaml"] + many,
+                                  files={"CMakeLists.txt": IDF_CMAKE, "a/sketch.yaml": ESP_SKETCH_YAML}, releases=[])
+    res = dev.check("o/r", api=api, raw=raw, head=head, ref="main", max_calls=2)   # tree + root CMakeLists; sketch.yaml unread
+    assert res["verdict"] == dev.NEEDS_REVIEW and any("call budget exhausted at 2" in n for n in res["notes"])
+
+
+def test_an_exhausted_call_cap_with_nothing_found_is_unknown():
+    many = [f"p{i}/platformio.ini" for i in range(10)]
+    api, raw, head, _ = fake_repo(tree=many, files={p: "[env:x]\nplatform = atmelavr\n" for p in many}, releases=[])
+    res = dev.check("o/r", api=api, raw=raw, head=head, ref="main", max_calls=4)
+    assert res["ok"] is None and res["verdict"] is None

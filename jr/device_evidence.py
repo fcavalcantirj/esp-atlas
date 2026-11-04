@@ -46,7 +46,10 @@ NEEDS_REVIEW_TARGET = "needs_review_target"     # the ledger/report reason key o
 EVIDENCE_UNREADABLE = "device_evidence_unreadable"
 DEFERRED = "device_evidence_deferred"   # not checked this tick (budget): neither remembered nor answered
 MAX_BUILD_FILES = 3            # per file kind, shallowest first (the project root wins)
-MAX_CALLS = 3 + 4 * MAX_BUILD_FILES   # tree + releases + one ranged GET; platformio.ini, CMakeLists.txt, IDF target, Arduino board files
+# tree + releases + one ranged GET + MAX_BUILD_FILES each of platformio.ini, CMakeLists.txt, IDF target
+# and Arduino board files. A platformio.ini's extra_configs share the same cap, so a repo with many can
+# exhaust it: then an ambiguous signal already found goes to review, and none at all is unknown.
+MAX_CALLS = 3 + 4 * MAX_BUILD_FILES
 IMAGE_HEADER_BYTES = 16
 
 # ESP-IDF components/bootloader_support/include/esp_app_format.h: esp_image_header_t / esp_chip_id_t.
@@ -68,6 +71,9 @@ _YML_ITEM = re.compile(r"""^\s*-\s*["']?([\w-]+)""")
 _SKETCH_FQBN = re.compile(r"^\s*(?:default_)?fqbn\s*:\s*[\w.-]+:esp32:[\w.-]+")
 _ESP_FQBN = re.compile(r"\b[\w.-]+:esp32:[\w.-]+")
 _ARCHITECTURES = re.compile(r"^\s*architectures\s*=\s*(.*)$")
+# Trees that hold OTHER projects' code (PlatformIO lib/, Arduino libraries/, IDF components, vendored
+# deps): their sketches and compatibility claims say nothing about what this repo targets.
+_VENDORED = re.compile(r"(^|/)(lib|libs|libraries|\.pio|managed_components|components|vendor|third_party|external)/", re.I)
 _NOT_AN_APP = re.compile(r"partition|boot_app0|ota_data|spiffs|littlefs|fatfs|nvs", re.I)
 _TTLS = {NOT_DEVICE_FIRMWARE: memory.NO_BUILD_SIGNAL_DAYS, NEEDS_REVIEW_TARGET: memory.NO_BUILD_SIGNAL_DAYS,
          EVIDENCE_UNREADABLE: memory.UNRESOLVED_REJECT_DAYS}
@@ -278,9 +284,10 @@ def _idf_project(repo: _Repo) -> _Hit | None:
 # --- Arduino sketch --------------------------------------------------------------------------------
 
 def _board_files(repo: _Repo) -> list[str]:
-    """Where a sketch names its board: sketch.yaml, library.properties, then build workflows."""
-    sketch = repo.listed(lambda p: _base(p) in ("sketch.yaml", "sketch.yml"))
-    props = repo.listed(lambda p: _base(p) == "library.properties")
+    """Where a sketch names its board: sketch.yaml, library.properties, then build workflows —
+    the repo's own, never a vendored library's."""
+    sketch = repo.listed(lambda p: _base(p) in ("sketch.yaml", "sketch.yml") and not _VENDORED.search(p))
+    props = repo.listed(lambda p: _base(p) == "library.properties" and not _VENDORED.search(p))
     workflows = repo.listed(lambda p: p.startswith(".github/workflows/") and p.endswith((".yml", ".yaml")))
     return (sketch + props + workflows)[:MAX_BUILD_FILES]
 
@@ -298,7 +305,7 @@ def _esp_board_line(path: str, text: str) -> int | None:
 
 
 def _arduino(repo: _Repo) -> _Hit | None:
-    sketches = repo.listed(lambda p: p.lower().endswith(".ino"))
+    sketches = repo.listed(lambda p: p.lower().endswith(".ino") and not _VENDORED.search(p))
     if not sketches:
         return None
     for p in _board_files(repo):
@@ -369,7 +376,7 @@ def check(owner_repo: str, *, api=None, raw=None, head=None, ref: str | None = N
     notes += calls.failures
     if calls.errors:          # an unread file could have stated the target: retry, never decide
         return _result(None, None, calls, notes)
-    if ambiguous:
+    if ambiguous:             # exhaustion recurs on every retry (the repo's shape): the owner decides
         return _result(False, NEEDS_REVIEW, calls, notes + [a.why for a in ambiguous], ambiguous[0], ambiguous)
     if calls.exhausted:
         return _result(None, None, calls, notes)

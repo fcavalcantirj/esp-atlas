@@ -53,7 +53,9 @@ exist as verified logic (118 passing tests on the logic branch — see "Reuses" 
      in an `idf_component.yml`, or `target` in a `dependencies.lock` (`linux` is not an ESP);
    - `arduino_sketch`: a `*.ino` **and** an ESP board named — a `sketch.yaml` fqbn
      `<vendor>:esp32:<board>`, a `.github/workflows` file compiling for one, or
-     `library.properties` `architectures` listing `esp32`;
+     `library.properties` `architectures` listing `esp32` (sketches and board files under vendored
+     trees — `lib/`, `libraries/`, `components/`, `managed_components/`, `vendor/`, … — are other
+     projects' and never count);
    - `release_bin`: a non-draft release `.bin` whose first 16 bytes (ONE ranged GET) are an ESP
      image header: magic `0xE9` at offset 0 and a chip id (LE u16) at offset 12 that ESP-IDF's
      `esp_app_format.h` defines (e.g. 9 = ESP32-S3).

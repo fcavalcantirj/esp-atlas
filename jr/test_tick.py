@@ -300,6 +300,23 @@ def test_stage_output_is_guarded_then_published_with_auto_merge(wt_dir):
     assert "- **fake** — wrote" in body[body.index("--body") + 1]
 
 
+def test_a_stage_review_list_reaches_the_published_pr_body(wt_dir):
+    """The device-build gate's needs_review repos are for the owner: they must survive the trip
+    from StageResult.review into the PR body the owner reads."""
+    review = [{"id": "zap", "repo": "z/zap", "kind": "arduino_sketch", "url": "https://github.com/z/zap/blob/main/zap.ino",
+               "why": "a .ino but no ESP board named"}]
+
+    def stage(ctx):
+        return tick.StageResult("admit", paths=["data/firmware/x"], summary="wrote", admitted=1,
+                                rejects={"needs_review_target": 1}, review=review)
+    gh = gh_ok()
+    r = run(git=git_ok(wt_dir), gh=gh, stages=[stage])
+    assert r.review == review
+    body = [c for c in gh.calls if c[:2] == ("pr", "create")][0]
+    text = body[body.index("--body") + 1]
+    assert "### Needs owner review" in text and "- `z/zap` (`zap`) — arduino_sketch https://github.com/z/zap/blob/main/zap.ino" in text
+
+
 def test_needs_human_withholds_auto_merge(wt_dir):
     gh = gh_ok()
     r = run(git=git_ok(wt_dir), gh=gh, stages=[_stage(["data/firmware/x"], needs_human=True)])
