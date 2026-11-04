@@ -180,6 +180,22 @@ def test_backfill_usb_serial_cp2102n_cited(tmp_path):
     assert cited["usb_serial"]["url"] == url and cited["usb_serial"]["verified"] == TODAY
 
 
+# ── write=False (the tick's dry-run) grounds the same fields but writes nothing ─
+
+def test_backfill_write_false_reports_the_would_be_fields_and_leaves_the_file(tmp_path):
+    soc = "esp32-s3"
+    bid = "esp32-s3-devkit-coder-1"
+    path = _write_board(tmp_path, bid, soc)
+    before = path.read_bytes()
+    entry = bb.backfill_board(path, tmp_path, _fetcher({_url(bid, soc): DOC_WITH_MANUAL}), TODAY, write=False)
+
+    assert path.read_bytes() == before
+    assert entry["status"] == "backfilled" and entry["modified"] is False
+    assert {"download_mode", "usb_serial", "getting_started"} <= set(entry["written"])
+    assert entry["values"]["usb_serial"] == "cp2102n"
+    assert entry["values"]["download_mode"] == {"mode": "manual", "steps": MANUAL_SENTENCE}
+
+
 # ── (d) fetch failure -> board skipped, not modified ──────────────────────────
 
 def test_fetch_failure_skips_and_does_not_modify(tmp_path):

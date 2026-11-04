@@ -23,7 +23,7 @@ class TickReport:
     boards_pct: float | None = None
     overall_pct: float | None = None
     allocation: str = ""
-    stages: list = field(default_factory=list)        # [{"name", "paths", "summary", "needs_human"}]
+    stages: list = field(default_factory=list)        # [{"name", "paths", "summary", "needs_human", "items", "review"}]
     extra_paths: list = field(default_factory=list)    # tick-owned paths outside stages (data-trend snapshot)
     data_row: dict | None = None                       # SPEC-data-trend.md row for this tick
     data_delta: dict | None = None                     # its diff vs the prior day (None on first snapshot)
@@ -34,11 +34,14 @@ class TickReport:
     rejects: dict = field(default_factory=dict)       # reason -> count
     memory: dict = field(default_factory=dict)        # {"expired", "merged", "rejected", "removed"}
     hydrated: list = field(default_factory=list)       # firmware ids marked proposed from open Jr PRs at tick start
+    review_prs: list = field(default_factory=list)     # open jr-review PRs: {"number", "headRefName", "age_hours", "conflicting"}
+    review_capped: str = ""                            # non-empty → the jr-review cap skipped stages, why
     revalidate: dict | None = None
     guard: dict | None = None                         # {"ok": bool, "output": str}
     publish: dict | None = None                       # PublishResult.as_dict()
     budget: str = ""
     warnings: list = field(default_factory=list)      # dry-run preflight notes, never fatal
+    dry_writes: list = field(default_factory=list)    # dry-run: tick-owned would-be writes (ledger, trend), {"path","field","value"}
     aborted: str = ""                                 # non-empty → the tick stopped early, why
 
     @property
@@ -54,12 +57,33 @@ class TickReport:
         return out
 
     @property
+    def would_write(self) -> list[dict]:
+        """Dry-run: every write a real run would make — each stage's, then the tick's own."""
+        return [w for s in self.stages for w in s.get("would_write", [])] + list(self.dry_writes)
+
+    @property
     def needs_human(self) -> bool:
         return any(s.get("needs_human") for s in self.stages)
+
+    @property
+    def review(self) -> list[dict]:
+        """Every stage's needs-owner-review repos (the device-build gate's needs_review verdicts)."""
+        return [it for s in self.stages for it in (s.get("review") or [])]
 
 
 def _pct(v: float | None) -> str:
     return "n/a" if v is None else f"{v:.1f}%"
+
+
+def render_review_prs(r: TickReport) -> str:
+    """` · jr-review open N: #12 30h, #15 4h (conflicting)` — the PRs waiting for the owner."""
+    if not r.review_prs:
+        return ""
+    def one(pr: dict) -> str:
+        age = pr.get("age_hours")
+        return (f"#{pr.get('number')} {'?' if age is None else int(age)}h"
+                + (" (conflicting)" if pr.get("conflicting") else ""))
+    return f" · jr-review open {len(r.review_prs)}: " + ", ".join(one(pr) for pr in r.review_prs)
 
 
 def render_line(r: TickReport) -> str:
@@ -67,7 +91,7 @@ def render_line(r: TickReport) -> str:
     stamp = r.when.strftime("%Y-%m-%d %H:%M UTC")
     head = "jr-tick" + (" (dry-run)" if r.dry_run else "")
     if r.aborted:
-        return f"🛑 {head} {stamp}: aborted — {r.aborted} · {r.budget}".rstrip(" ·")
+        return f"🛑 {head} {stamp}: aborted — {r.aborted}{render_review_prs(r)} · {r.budget}".rstrip(" ·")
     mem = r.memory or {}
     mem_txt = (f"memory expired {mem.get('expired', 0)} / merged {mem.get('merged', 0)} / "
                f"rejected {mem.get('rejected', 0)} / removed {mem.get('removed', 0)}")
@@ -77,7 +101,7 @@ def render_line(r: TickReport) -> str:
         pr_txt = f"PR {pr}" + (" · auto-merge" if r.publish.get("auto_merge") else f" · {r.publish.get('reason') or 'human merge'}")
     elif r.publish:
         pr_txt = f"no PR ({r.publish.get('reason') or 'nothing to publish'})"
-    elif r.paths:
+    elif r.paths or (r.dry_run and r.would_write):
         pr_txt = "no PR (dry-run)" if r.dry_run else "no PR"
     else:
         pr_txt = "nothing to do"
@@ -87,9 +111,20 @@ def render_line(r: TickReport) -> str:
         reval = " · revalidate " + ("ok" if r.revalidate.get("ok") else str(r.revalidate.get("status") or r.revalidate.get("skipped") or "failed"))
     warn = "".join(f" · ⚠ {w}" for w in r.warnings)
     stage_txt = "".join(f" · {s.get('name', 'stage')}: {s.get('summary', '')[:300]}" for s in r.stages if s.get("summary"))
+    if r.dry_run and r.would_write:
+        stage_txt += render_would_write(r.would_write)
     return (f"🤖 {head} {stamp}: boards {_pct(r.boards_pct)} (overall {_pct(r.overall_pct)}) · "
             f"{r.allocation or 'allocation n/a'} · admitted {r.admitted} · rejects {rej} · "
-            f"{mem_txt}{guard_txt}{reval} · {pr_txt}{stage_txt}{warn} · {r.budget}").rstrip(" ·")
+            f"{mem_txt}{guard_txt}{reval} · {pr_txt}{render_review_prs(r)}{stage_txt}{warn} · {r.budget}").rstrip(" ·")
+
+
+def render_would_write(writes: list[dict]) -> str:
+    """Dry-run: every would-be write, grouped by file — ` · would write N in M file(s): p[f1,f2], …`."""
+    by_path: dict = {}
+    for w in writes:
+        by_path.setdefault(w.get("path"), []).append(str(w.get("field")))
+    files = ", ".join(f"{p}[{','.join(dict.fromkeys(fields))}]" for p, fields in by_path.items())
+    return f" · would write {len(writes)} in {len(by_path)} file(s): {files}"
 
 
 def _paren(value: str, delta, fmt) -> str:
@@ -204,6 +239,19 @@ def _fmt_recipes_item(it: dict) -> list[str]:
     return out
 
 
+def render_review_section(r: TickReport) -> list[str]:
+    """Repos the device-build evidence gate would not guess about (jr/device_evidence.py
+    needs_review): one line each, the citing URL and why it is ambiguous. Empty when none."""
+    if not r.review:
+        return []
+    lines = ["### Needs owner review — no ESP target stated (not admitted)"]
+    for it in r.review:
+        lines.append(f"- `{it.get('repo')}` (`{it.get('id')}`) — {it.get('kind')} {it.get('url')}: {it.get('why')}")
+    lines.append("Re-checked after the reject TTL; admit by hand if it does target an ESP.")
+    lines.append("")
+    return lines
+
+
 def render_pr_body(r: TickReport) -> str:
     """The PR as a VERDICT a human can read top to bottom: what is proposed and which gates it
     passed (one checklist per record), what was skipped (counts only — the launcher backlog is
@@ -239,6 +287,7 @@ def render_pr_body(r: TickReport) -> str:
     else:
         lines.append("- none")
     lines.append("")
+    lines += render_review_section(r)
     mem = r.memory or {}
     guard = "n/a" if r.guard is None else ("green" if r.guard.get("ok") else "RED")
     lines.append("### Summary")

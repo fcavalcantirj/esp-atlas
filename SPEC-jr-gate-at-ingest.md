@@ -43,7 +43,110 @@ exist as verified logic (118 passing tests on the logic branch — see "Reuses" 
 4. **Title sanitize.** Strip status banners (`【…】`, WIP, DEPRECATED, `[test]`, …) from the name.
    *(jr/normalize.py — already shipped to main)*
 
-Only candidates passing all four are authored.
+5. **Device-build evidence** *(added 2026-11-04, review finding 3; tightened 2026-11-04 on the
+   owner's rule)*. The repo is admitted only with evidence that it **targets an ESP chip** — never
+   a generic build file or binary; an ambiguous repo goes to a human, never guessed. ESP target:
+   - `platformio`: a `platformio.ini` whose `platform` names `espressif32` (extra_configs and
+     `${section.option}` resolved);
+   - `idf_project`: a `CMakeLists.txt` including ESP-IDF's `project.cmake` **and** an ESP target
+     stated — `CONFIG_IDF_TARGET` in `sdkconfig.defaults` (or a committed `sdkconfig`), `targets`
+     in an `idf_component.yml`, or `target` in a `dependencies.lock` (`linux` is not an ESP);
+   - `arduino_sketch`: a `*.ino` **and** an ESP board named — a `sketch.yaml` fqbn
+     `<vendor>:esp32:<board>`, a `.github/workflows` file compiling for one, or
+     `library.properties` `architectures` listing `esp32` (sketches and board files under vendored
+     trees — `lib/`, `libraries/`, `components/`, `managed_components/`, `vendor/`, … — are other
+     projects' and never count);
+   - **whose evidence** *(independent review of PR 1415, 2026-11-04)*: the three build signals
+     above count only when they belong to the project being classified — found at the repo root,
+     or in the project's **declared build directory**: any non-vendored dir when the root holds no
+     project of its own, otherwise only a dir that the root README or first root build file
+     (Makefile, justfile, CMakeLists.txt, …) points to — `cd firmware`, make/idf.py/pio
+     `-C|-d|--project-dir firmware`, `add_subdirectory(firmware)`, a markdown link to the dir itself
+     `](firmware)`,
+     or a path to its build file (`firmware/platformio.ini`, `firmware/CMakeLists.txt`,
+     `firmware/sdkconfig…`, `firmware/x.ino`); a bare word or `firmware/` in prose is not a
+     pointer. A root project of its own is a host-side manifest (`go.mod`, `Cargo.toml` — not
+     read, so an esp-rs crate counts as host —, `package.json`, `pyproject.toml`, `setup.py`,
+     `requirements.txt`, …) or a generic root build file (`CMakeLists.txt`, `Makefile`,
+     `meson.build`, …); a truncated tree listing cannot prove there is none, so it counts as one.
+     A signal found ONLY under a vendored or example tree — `examples/`, `example/`, `samples/`,
+     `demo/`, `test/`, `tests/`, `third_party/` (and `third-party/`, `thirdparty/`, `3rdparty/`),
+     `vendor/`, `vendored/`, `external/`, `extern/`, `deps/`, `contrib/`, `lib/`, `libs/`,
+     `libraries/`, `components/<name>/examples`, `managed_components/`, `node_modules/`, `.pio/`,
+     `build/`, a dir named like an example (`esp32-example/`, `my_demo/`), a git submodule
+     (`.gitmodules` `path`, or a tree gitlink) — is `needs_review` with
+     `vendored_or_example_only`; one only in a host repo's undeclared subdir is `needs_review`
+     with `undeclared_project_dir`. Neither is ever `esp_target`; a README pointer never makes a
+     vendored/example tree the project. An IDF project's target must be its own:
+     `sdkconfig*`/`dependencies.lock` in the project dir, an `idf_component.yml` in its own
+     (non-vendored) subtree. An Arduino ESP board counts for the repo's own sketch it is FOR, from
+     the repo's own board file: a `sketch.yaml` is its folder's sketch, a `library.properties` the
+     sketches below it, a root workflow (the repo's own CI) the sketches whose folder an ESP-fqbn
+     line of it names — naming none, every sketch only when all are the repo's own. A root `library.properties` makes
+     the repo an Arduino library whose top-level `examples/` are its own, whatever they are named;
+   - `release_bin`: a non-draft release `.bin` (ONE GET through `jr/safe_fetch.py`) that `jr/esp_image.py`
+     validates OFFLINE as a whole ESP image (owner spec 2026-11-04): parsed with esptool's image
+     module pinned exactly (`esptool==5.6.0`, `jr/requirements-image.txt`; never its serial or
+     flashing code), a chip id the parser knows, EVERY declared segment walked (padding segments
+     at load address 0 and zero-length segments are legal), the checksum byte and — when the
+     header's `hash_appended` is set — the appended SHA-256 recomputed and compared. A clean parse
+     or esptool's `verify()` alone never counts. Unknown chip, a merged flash image (no header at
+     offset 0, e.g. the bootloader at 0x1000, or bootloader + partition table at 0x8000 + app),
+     truncation, a checksum/digest mismatch, unexplained non-0xFF bytes after the image, or any
+     parser exception → `needs_review` with the validator's reasons. Passing means chip target +
+     integrity only, never authorship or board compatibility.
+     **The fetch** (`jr/safe_fetch.py`, owner spec 2026-11-04): https only on port 443, no URL
+     credentials; redirects followed by hand, at most 5, every hop re-validated; each hop's host
+     resolved once and refused if ANY answer is private, loopback, link-local, multicast, reserved,
+     unspecified, shared (100.64/10), an IPv4-mapped form of those, or a 6to4/NAT64/Teredo address;
+     the connection is dialed to that validated address (TLS verifies the hostname), so DNS
+     rebinding cannot swap it. The 16 MB cap counts bytes received while streaming —
+     Content-Length is never trusted (absent, wrong or lying), a closing server is read to the
+     close — and one byte over aborts. Connect (10 s), read (30 s) and total (120 s, a watchdog
+     that also bounds slow-dripped headers and DNS) timeouts.
+     **The parse** (`jr/image_sandbox.py`, owner spec 2026-11-04): `esp_image.validate` runs in a
+     fresh `sys.executable -I -B` child under bubblewrap (`/usr/bin/bwrap`): new net, pid, ipc,
+     uts, user and cgroup namespaces, `--disable-userns`, `--cap-drop ALL`, `--new-session`,
+     `--die-with-parent`, `--clearenv`; a read-only tmpfs root holding only read-only binds of the
+     interpreter's prefixes, esptool's site-packages, the validator module, the loader's
+     libraries (`/usr/lib`, `/lib*`, `ld.so.cache`), `/dev/null` + `/dev/urandom` and a one-line
+     `/etc/passwd` of its own — no `/home`, `/proc`, `/tmp`, serial device or host config, and
+     every other directory on the way is 0111 (not listable). Hard RLIMIT_AS 512 MB, RLIMIT_CPU
+     30 s, RLIMIT_NOFILE 64, RLIMIT_FSIZE 0, RLIMIT_CORE 0 set before exec; RLIMIT_NPROC 0 set
+     as the child's first act (before exec it would make the kernel refuse the user namespace);
+     a 60 s wall-clock kill in the parent, running while the output is read. The asset arrives
+     on stdin only; the child's stdout (cap 64 KiB) and stderr (16 KiB) are read concurrently,
+     and a stream over its cap kills bwrap's whole process group at once (`output_overflow`,
+     naming the stream). The result is one JSON envelope `{"value": ...}`: its nesting (8 at
+     most) is checked before it is decoded, and output that is not that envelope — not JSON,
+     too deep, another shape, any decode error — is `bad_child_output`. On top, a Python
+     guard: `socket` patched before esptool is imported and a PEP 578 audit hook refusing
+     socket, ctypes and process-start events, writes, reads/listings outside the bound roots,
+     device-node opens, file mutation, signals and rlimit changes.
+     **Fail closed:** no bwrap, or bwrap refusing to build the sandbox (namespaces denied), is
+     `needs_review` with reason `sandbox_unavailable` — there is no unsandboxed fallback.
+     **Mapping:** a refused, timed-out or over-cap fetch, a 404, an unavailable sandbox, and a
+     validator child that crashed, was killed, timed out or printed anything but a well-formed
+     result →
+     `needs_review` (never `esp_target`); a 5xx/429, DNS failure or refused connection is an
+     outage → unknown (`device_evidence_unreadable`, retried).
+
+   Three verdicts. **`esp_target`** → the admit path continues. **`needs_review`** — only the
+   ambiguous half was found (project.cmake with no stated target, a bare `.ino`, a `.bin` the
+   validator sends to review, a `.uf2`/`.bin.gz` only, an `idf_component.yml` with no project) → not admitted,
+   recorded rejected `needs_review_target` with the reject TTL (`memory.NO_BUILD_SIGNAL_DAYS`, so
+   it is not re-checked hourly) and listed in the tick PR body under "Needs owner review" with the
+   citing URL and why. **`not_device_firmware`** — no signal at all → rejected, remembered
+   `memory.NO_BUILD_SIGNAL_DAYS`. An endpoint that failed for a reason other than 404 is unknown,
+   never a verdict: `device_evidence_unreadable`, retried after `memory.UNRESOLVED_REJECT_DAYS`.
+   Runs last (it costs 1–18 reads), on every path that authors a record: launcher + submissions
+   (jr/stage_admit.py) and the topics/launcher drain (jr/drain.score_candidates). Topics and
+   descriptions naming a board are NOT evidence: a Go server (rebelthor/warble) passed checks 1–4
+   on its `esp32-s3`/`m5stack` topics alone.
+   *(jr/device_evidence.py; read-only catalog audit printing the three classes:
+   scripts/device_evidence_audit.py)*
+
+Only candidates passing all five are authored.
 
 ## What gets DELETED
 

@@ -1,10 +1,10 @@
-"""EspAtlas Jr — the Arduino-ESP32 core `boards.txt` as a THIRD cited source for `usb_serial` (G3b).
+"""EspAtlas Jr — the Arduino-ESP32 core `boards.txt` as a CORROBORATION source for `usb_serial` (G3b).
 
 Order per field stays: the vendor doc page (jr/board_doc_resolvers.py), then the PlatformIO
-manifest (jr/board_manifest.py), then this. It is consulted only for a board whose `usb_serial`
-is still missing after both, and it grounds nothing else — download_mode and pinout are out of
-its scope. Every value it returns is cited by the caller to boards.txt at a PINNED release commit
-(cite-or-omit, same rule as the other sources).
+manifest (jr/board_manifest.py), then this. It is consulted for every board whose record is missing
+`usb_serial`, and it states nothing else — download_mode and pinout are out of its scope. Owner
+mandate G3 (2026-11-04): its value is corroboration only — jr/board_corroboration.py records it
+against the vendor's, cited to boards.txt at a PINNED release commit, and it is never written.
 
 Mapping a catalog board to a boards.txt key is DETERMINISTIC: the curated ARDUINO_BOARD_KEYS
 table only. Nothing is ever fuzzy-matched — a board absent from it is skipped `no_board_key`.

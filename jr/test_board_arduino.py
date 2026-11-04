@@ -1,6 +1,7 @@
 """Tests for jr/board_arduino.py — G3b: the Arduino-ESP32 core `boards.txt` at a pinned release
-commit as a THIRD, cited source for `usb_serial`, consulted only when the vendor page and the
-PlatformIO manifest both left it missing. download_mode and pinout are out of scope.
+commit, read for `usb_serial` whenever the record is missing it. download_mode and pinout are out
+of scope. Since owner mandate G3 (2026-11-04) it is corroboration only: its value is recorded and
+cited, never written (jr/test_board_corroboration.py).
 
 NO NETWORK: boards.txt is a committed fixture under jr/fixtures/board_arduino/, served by an
 injected fake fetch keyed on the pinned raw.githubusercontent.com URL.
@@ -144,36 +145,35 @@ def test_key_without_vid_is_field_absent_and_missing_key_is_no_board_key():
 
 # ── end to end through backfill_board: vendor, then PlatformIO, then boards.txt ──
 
-def test_0x303a_key_writes_native_usb_cited_to_the_pinned_boards_txt(tmp_path, monkeypatch):
+def test_0x303a_key_is_recorded_as_native_usb_cited_but_not_written(tmp_path, monkeypatch):
     path = _setup(tmp_path, monkeypatch, "fixture-ard-native", "fixture_native_s3")
+    before = path.read_text()
     log: list = []
     fetch = _fetcher({_vendor("fixture-ard-native"): VENDOR_PAGE_NO_USB,
                       ba.BOARDS_TXT_URL: BOARDS_TXT}, log)
     entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
-    assert entry["status"] == "backfilled"
-    assert entry["written"] == ["usb_serial"]
-    fm, _ = bb.parse_frontmatter(path)
-    assert fm["usb_serial"] == "native-usb-serial-jtag"
-    assert {"field": "usb_serial", "url": ba.BOARDS_TXT_URL, "verified": TODAY} in fm["sources"]
-    assert entry["citations"]["usb_serial"] == ba.BOARDS_TXT_URL
-    assert "download_mode" not in fm
+    assert entry["status"] == "skipped"
+    assert path.read_text() == before
+    assert entry["corroboration"]["usb_serial"]["checks"] == [
+        {"source": "boards_txt", "url": ba.BOARDS_TXT_URL, "value": "native-usb-serial-jtag",
+         "verdict": "corroboration_only"}]
     # boards.txt never reports on download_mode: it is out of this source's scope
     assert "boards_txt" not in entry["field_reasons"]["download_mode"]
 
 
-def test_0x1a86_key_writes_the_wch_chip_with_its_citation(tmp_path, monkeypatch):
+def test_0x1a86_key_is_recorded_as_the_wch_chip_with_its_citation(tmp_path, monkeypatch):
     path = _setup(tmp_path, monkeypatch, "fixture-ard-ch340", "fixture_ch340",
                   soc="esp32", usb_type="none")
     fetch = _fetcher({_vendor("fixture-ard-ch340", "esp32"): VENDOR_PAGE_NO_USB,
                       ba.BOARDS_TXT_URL: BOARDS_TXT})
     entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
     fm, _ = bb.parse_frontmatter(path)
-    assert entry["status"] == "backfilled"
-    assert fm["usb_serial"] == "ch340"
-    assert {"field": "usb_serial", "url": ba.BOARDS_TXT_URL, "verified": TODAY} in fm["sources"]
+    assert "usb_serial" not in fm
+    check = entry["corroboration"]["usb_serial"]["checks"][0]
+    assert (check["value"], check["url"]) == ("ch340", ba.BOARDS_TXT_URL)
 
 
-def test_boards_txt_fills_what_the_manifest_could_not(tmp_path, monkeypatch):
+def test_sources_are_tried_vendor_then_platformio_then_boards_txt(tmp_path, monkeypatch):
     path = _setup(tmp_path, monkeypatch, "fixture-ard-after-pio", "fixture_native_s3",
                   pio_id="fixture_unknown")
     log: list = []
@@ -181,10 +181,12 @@ def test_boards_txt_fills_what_the_manifest_could_not(tmp_path, monkeypatch):
     fetch = _fetcher({vurl: VENDOR_PAGE_NO_USB, murl: _pio_raw("unknown_vid_s3"),
                       ba.BOARDS_TXT_URL: BOARDS_TXT}, log)
     entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
-    assert log == [vurl, murl, ba.BOARDS_TXT_URL]   # vendor, then PlatformIO, then boards.txt
+    assert log == [vurl, murl, ba.BOARDS_TXT_URL]
     fm, _ = bb.parse_frontmatter(path)
-    assert fm["usb_serial"] == "native-usb-serial-jtag"
-    assert {"field": "usb_serial", "url": ba.BOARDS_TXT_URL, "verified": TODAY} in fm["sources"]
+    assert "usb_serial" not in fm
+    assert entry["field_reasons"]["usb_serial"] == {"vendor": bm.FIELD_ABSENT,
+                                                    "manifest": bm.NO_PATTERN_MATCH,
+                                                    "boards_txt": "corroboration_only"}
 
 
 def test_unknown_vid_writes_nothing_and_says_why_per_source(tmp_path, monkeypatch):
@@ -200,21 +202,21 @@ def test_unknown_vid_writes_nothing_and_says_why_per_source(tmp_path, monkeypatc
                                                     "boards_txt": bm.NO_PATTERN_MATCH}
 
 
-def test_board_filled_by_the_manifest_is_not_overwritten_nor_boards_txt_fetched(tmp_path, monkeypatch):
-    # boards.txt would say ch340; the PlatformIO manifest says native USB and wins
+def test_both_toolchains_are_consulted_and_neither_wins(tmp_path, monkeypatch):
+    # boards.txt says ch340, the PlatformIO manifest says native USB: both are recorded, and with
+    # no board-specific value neither is written
     path = _setup(tmp_path, monkeypatch, "fixture-ard-pio-wins", "fixture_ch340",
                   pio_id="fixture_native")
+    before = path.read_text()
     log: list = []
     murl = bm.manifest_url("fixture_native")
     fetch = _fetcher({_vendor("fixture-ard-pio-wins"): VENDOR_PAGE_NO_USB,
                       murl: _pio_raw("native_usb_s3"), ba.BOARDS_TXT_URL: BOARDS_TXT}, log)
     entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
-    fm, _ = bb.parse_frontmatter(path)
-    assert fm["usb_serial"] == "native-usb-serial-jtag"
-    assert {"field": "usb_serial", "url": murl, "verified": TODAY} in fm["sources"]
-    assert not any(s["url"] == ba.BOARDS_TXT_URL for s in fm["sources"])
-    assert ba.BOARDS_TXT_URL not in log
-    assert entry["citations"]["usb_serial"] == murl
+    assert path.read_text() == before
+    assert ba.BOARDS_TXT_URL in log
+    values = {c["source"]: c["value"] for c in entry["corroboration"]["usb_serial"]["checks"]}
+    assert values == {"manifest": "native-usb-serial-jtag", "boards_txt": "ch340"}
 
 
 def test_record_already_carrying_usb_serial_is_never_touched(tmp_path, monkeypatch):
@@ -261,8 +263,8 @@ def test_standalone_pr_body_names_the_boards_txt_citation(tmp_path, monkeypatch)
     fetch = _fetcher({_vendor("fixture-ard-body"): VENDOR_PAGE_NO_USB,
                       ba.BOARDS_TXT_URL: BOARDS_TXT})
     entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
-    body = bb.pr_body({"backfilled": [entry], "skipped": [], "needs_doc_url": [], "today": TODAY})
-    assert f"`usb_serial` via {ba.BOARDS_TXT_URL}" in body
+    body = bb.pr_body({"backfilled": [], "skipped": [entry], "needs_doc_url": [], "today": TODAY})
+    assert f"boards_txt native-usb-serial-jtag corroboration_only {ba.BOARDS_TXT_URL}" in body
     assert "Arduino-ESP32" in body
 
 
@@ -303,13 +305,13 @@ def test_default_fetch_refuses_a_body_over_the_cap_instead_of_truncating(monkeyp
     assert "too large" in res["error"]
 
 
-def test_report_url_names_the_source_that_grounded_when_the_vendor_page_failed(tmp_path, monkeypatch):
-    # vendor 404, the manifest fetches but grounds nothing, boards.txt fills usb_serial: the
-    # report must name boards.txt, not the manifest that grounded nothing
+def test_vendor_page_failed_leaves_the_board_skipped_whatever_boards_txt_says(tmp_path, monkeypatch):
     path = _setup(tmp_path, monkeypatch, "fixture-ard-url", "fixture_native_s3",
                   pio_id="fixture_unknown")
+    before = path.read_text()
     fetch = _fetcher({bm.manifest_url("fixture_unknown"): _pio_raw("unknown_vid_s3"),
                       ba.BOARDS_TXT_URL: BOARDS_TXT})
     entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
-    assert entry["status"] == "backfilled"
-    assert entry["url"] == ba.BOARDS_TXT_URL
+    assert entry["status"] == "skipped" and entry["reason"] == "doc-unreachable"
+    assert entry["url"] == _vendor("fixture-ard-url")
+    assert path.read_text() == before

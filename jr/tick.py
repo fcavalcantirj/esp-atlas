@@ -1,6 +1,6 @@
 """EspAtlas Jr — the hourly tick (jr/tick.py). Phase 2 skeleton: everything but the content.
 
-    python3 jr/tick.py --dry-run          # gauge + allocation + "nothing to do"; writes nothing
+    python3 jr/tick.py --dry-run          # every stage on a throwaway copy; lists what it WOULD write
     python3 jr/tick.py                    # the real thing (hermes cron `jr-tick`, via scripts/jr-tick.sh)
 
 One tick, in order (PLAN §3.2):
@@ -13,12 +13,19 @@ One tick, in order (PLAN §3.2):
     regenerates those files, so nothing is lost; dry-run only reports it). A stale one touching
     anything else (data/**) is NEVER closed — jr/memory.py reads a closed PR as a permanent
     rejection of its firmware — so the tick aborts naming it, whether it conflicts, and that it
-    needs a human. Last: branch protection on `main` requires schema + tests + jr-tests and
+    needs a human. A PR labelled `jr-review` (jr/review_routing.py) is waiting for the owner ON
+    PURPOSE: it is never stuck and never closed, whatever its age; it is listed in the report with
+    its age, and at MAX_OPEN_REVIEW_PRS open ones the review-producing stages are skipped (the cap,
+    SPEC-jr-review-routing.md). Last: branch protection on `main` requires schema + tests + jr-tests and
     auto-merge is allowed. Any of these red → the tick ABORTS before touching anything; every
     query failure here fails CLOSED. Protection missing is the one that matters most: without it
     "PR + auto-merge" is direct-to-main under another name.
  2. Worktree — a fresh `git worktree` detached at `origin/main`, outside the repo tree. Every
     read and write below happens there. The clone's checkout is never touched. (jr/publish.py)
+    A dry run gets no worktree: it copies the clone's data/, docs/ and jr/*.json into a throwaway
+    temp dir (jr/dry_run_tree.py) and runs everything there, so no write can reach the checkout.
+    Every writer also honours ctx.dry_run and reports "would write <path>[<field>]" instead; any
+    file that still changed in the copy is listed too (and warned about), then the copy is removed.
  3. Memory — expire TTL'd decisions; settle proposed PRs (closed → permanent rejection,
     merged → merged); mark ledger ids now in the catalog as merged; a merged id that vanished
     from the catalog becomes a permanent rejection. (jr/memory.py) If anything merged or was
@@ -33,7 +40,8 @@ One tick, in order (PLAN §3.2):
  7. Guard once — only if something was written: `scripts/validate.py` in the worktree, then the
     CI regression tests. Red → the worktree is discarded, nothing is published, the report says so.
  8. Publish — pathspec-only commit on `jr/tick-…`, push, PR, auto-merge only when the gate is
-    real and no stage asked for a human. (jr/publish.py)
+    real and the risk classifier routes it AUTO; a REVIEW route is labelled `jr-review` and waits
+    for the owner. (jr/publish.py, jr/review_routing.py)
  9. Report — ONE line, always, to stdout and Telegram. (jr/report.py)
 10. The worktree is removed in `finally`, whatever happened.
 
@@ -57,6 +65,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 
+if __name__ == "__main__" and "--dry-run" in sys.argv[1:]:
+    sys.dont_write_bytecode = True   # a dry run leaves no byte in the checkout, not even a __pycache__/*.pyc
 _JR_DIR = Path(__file__).resolve().parent
 if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
@@ -66,11 +76,15 @@ import publish  # noqa: E402
 import report   # noqa: E402
 import allocator  # noqa: E402
 import demand_signal  # noqa: E402
+import review_routing  # noqa: E402
+import dry_run_tree  # noqa: E402
 from budget import Budget, BudgetExceeded  # noqa: E402
 
 REPO = _JR_DIR.parent
 MIN_RATE_LIMIT = 500
 STALE_PR_HOURS = 3.0
+OPEN_PR_LIMIT = 500   # gh pr list returns 30 by default, newest first: jr-review PRs are the OLDEST open
+                      # ones by design, so without a limit they would fall off the list and escape the cap
 TICK_BRANCH_PREFIX = "jr/tick-"
 TICK_LOCK_NAME = "jr-tick-run.lock"   # NOT scripts/jr-tick.sh's jr-tick.lock: its `flock` holds that
                                       # file for the tick's whole life, so re-locking it would always fail
@@ -111,6 +125,8 @@ class StageResult:
     admitted: int = 0
     rejects: dict = field(default_factory=dict)    # reason -> count
     items: list = field(default_factory=list)      # structured facts per proposed record, for the PR body's verdict
+    review: list = field(default_factory=list)     # repos the owner must judge: {"id", "repo", "kind", "url", "why"}
+    would_write: list = field(default_factory=list)  # dry-run only: {"path", "field", "value"} a real run would write
 
 
 Stage = Callable[[TickContext], StageResult]
@@ -227,26 +243,30 @@ def _rate_limit_remaining(gh) -> int | None:
         return None
 
 
-BOOKKEEPING_FILES = ("jr/proposed_ledger.json", "jr/board_cooldown.json")
-BOOKKEEPING_DIRS = ("docs/telemetry/",)
+BOOKKEEPING_FILES = review_routing.BOOKKEEPING_FILES     # one definition: the classifier's AUTO list
+BOOKKEEPING_DIRS = review_routing.BOOKKEEPING_DIRS
 SUPERSEDED_COMMENT = ("Superseded by later Jr ticks. This PR only touched tick bookkeeping "
                       "(jr/proposed_ledger.json, jr/board_cooldown.json, docs/telemetry/**), which later ticks regenerate "
                       "(a dropped board cooldown is re-derived the next time that board fails), so closing it loses "
                       "nothing. Closed automatically by the jr/tick.py preflight.")
 
 
-def _list_tick_prs(gh) -> list | None:
-    """Every open Jr tick PR with its age and mergeability, or None when the query itself fails —
+def _list_open_prs(gh) -> list | None:
+    """Every open PR with its age, mergeability and labels, or None when the query itself fails —
     fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not open another."""
-    p = gh("pr", "list", "--state", "open", "--json", "number,createdAt,headRefName,mergeable")
+    p = gh("pr", "list", "--state", "open", "--limit", str(OPEN_PR_LIMIT),
+           "--json", "number,createdAt,headRefName,mergeable,labels")
     if getattr(p, "returncode", 1) != 0:
         return None
     try:
         prs = json.loads(p.stdout or "[]")
     except json.JSONDecodeError:
         return None
-    return [pr for pr in prs if isinstance(pr, dict)
-            and str(pr.get("headRefName", "")).startswith(TICK_BRANCH_PREFIX)]
+    return [pr for pr in prs if isinstance(pr, dict)] if isinstance(prs, list) else None
+
+
+def _is_tick_pr(pr: dict) -> bool:
+    return str(pr.get("headRefName", "")).startswith(TICK_BRANCH_PREFIX)
 
 
 def _pr_age_hours(pr: dict, now: datetime) -> float | None:
@@ -257,8 +277,19 @@ def _pr_age_hours(pr: dict, now: datetime) -> float | None:
     return (now - created).total_seconds() / 3600
 
 
-def _is_bookkeeping(path: str) -> bool:
-    return path in BOOKKEEPING_FILES or path.startswith(BOOKKEEPING_DIRS)
+_is_bookkeeping = review_routing.is_bookkeeping
+
+
+def _open_review_prs(prs: list, now: datetime) -> list[dict]:
+    """The open jr-review PRs (any branch) for the owner's list: number, branch, age, conflict."""
+    out = []
+    for pr in prs:
+        if review_routing.has_review_label(pr):
+            age = _pr_age_hours(pr, now)
+            out.append({"number": pr.get("number"), "headRefName": pr.get("headRefName"),
+                        "age_hours": None if age is None else round(age, 1),
+                        "conflicting": pr.get("mergeable") == "CONFLICTING"})
+    return out
 
 
 def _pr_changed_paths(gh, number) -> list[str]:
@@ -281,9 +312,12 @@ def _triage_tick_prs(gh, prs: list, now: datetime, hours: float) -> tuple[list, 
     bookkeeping is superseded: a later tick already rewrote those files, so it can be closed.
     A stale one that touches anything else (data/**, …) is stuck and needs a human — it is NEVER
     closed here, because jr/memory.py reads a closed proposed PR as a PERMANENT rejection of its
-    firmware. A young conflicting content PR is left alone until it goes stale."""
+    firmware. A young conflicting content PR is left alone until it goes stale. A PR labelled
+    jr-review is skipped outright: it waits for the owner by design, so it is neither."""
     superseded, stuck = [], []
     for pr in prs:
+        if review_routing.has_review_label(pr):
+            continue
         age = _pr_age_hours(pr, now)
         is_stale = age is not None and age > hours
         conflicting = pr.get("mergeable") == "CONFLICTING"
@@ -451,6 +485,27 @@ def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None) -> list[str]:
     return hydrated
 
 
+# --- dry run -----------------------------------------------------------------------------------
+
+def _ledger_changes(before: dict, ledger_path: Path) -> list[dict]:
+    """Dry-run: the ledger records the memory step changed in the throwaway copy, as would-be
+    writes [{"path", "field": "by_id.<id>", "value": <new status>}]."""
+    after = memory.load(ledger_path)["by_id"]
+    return [{"path": memory.LEDGER_RELPATH, "field": f"by_id.{fid}", "value": rec.get("status")}
+            for fid, rec in sorted(after.items()) if before.get(fid) != rec]
+
+
+def _dry_run_strays(r: report.TickReport, baseline: dict, scratch: Path) -> None:
+    """Files created, changed or deleted in the throwaway copy since `baseline` (taken after the
+    memory step, the one step that writes the copy on purpose): a writer that ignored ctx.dry_run.
+    The copy absorbed it; the report warns, and lists the file if no writer declared it."""
+    declared = {w.get("path") for w in r.would_write}
+    for p, what in dry_run_tree.changed(baseline, scratch):
+        r.warnings.append(f"dry-run: {p} was {what} by a step that ignores dry-run (throwaway copy only)")
+        if p not in declared:
+            r.dry_writes.append({"path": p, "field": "*" if what == "written" else "(deleted)", "value": None})
+
+
 # --- the tick ----------------------------------------------------------------------------------
 
 def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.default_gh,
@@ -460,7 +515,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              pr_state=None, revalidate=publish.revalidate_catalog, budget: Budget | None = None,
              repo_slug: str | None = None, min_rate_limit: int = MIN_RATE_LIMIT,
              stale_pr_hours: float = STALE_PR_HOURS, telegram: bool = True,
-             auto_merge: bool = True, lock_path: Path | None = None) -> report.TickReport:
+             auto_merge: bool = True, lock_path: Path | None = None,
+             review_cap: int = review_routing.MAX_OPEN_REVIEW_PRS) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
     env = os.environ if env is None else env
     budget = budget or Budget()
@@ -468,7 +524,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
     r = report.TickReport(when=now, dry_run=dry_run)
     hourly = stages is None   # the hourly path: gauge-driven split; --track overrides it
     stages = STAGES if hourly else stages
-    wt = lock = None
+    wt = lock = scratch = None
+    baseline: dict = {}
     try:
         # 1. preflight
         if not dry_run:
@@ -478,9 +535,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             raise TickAbort("gh unavailable (rate_limit query failed)")
         if remaining < min_rate_limit:
             raise TickAbort(f"GitHub rate limit low: {remaining} < {min_rate_limit}")
-        tick_prs = _list_tick_prs(gh_c)
-        if tick_prs is None:
+        open_prs = _list_open_prs(gh_c)
+        if open_prs is None:
             raise TickAbort("gh pr list failed (cannot see open Jr PRs)")
+        r.review_prs = _open_review_prs(open_prs, now)
+        tick_prs = [pr for pr in open_prs if _is_tick_pr(pr)]
         superseded, stuck = _triage_tick_prs(gh_c, tick_prs, now, stale_pr_hours)
         for pr in superseded:
             if dry_run:
@@ -498,9 +557,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             else:
                 raise TickAbort(f"branch protection: {protection.reason}")
 
-        # 2. worktree (real runs only); dry-run reads the clone's tree and writes nothing
+        # 2. worktree (real runs only); a dry run works on a throwaway copy of the clone's tree
         if dry_run:
-            root, ledger_path = REPO, ledger.DEFAULT_LEDGER_PATH
+            scratch = dry_run_tree.copy(REPO)
+            baseline = dry_run_tree.fingerprint(scratch)
+            root, ledger_path = scratch, scratch / "jr" / "proposed_ledger.json"
         else:
             wt = publish.add_worktree(git=git)
             if not publish.is_clean(wt, git=git):
@@ -509,34 +570,43 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             r.base_sha = wt.base_sha[:7]
 
         # 3. memory
+        #    A dry run runs the same reconciliation against its throwaway ledger copy and reports
+        #    the records it changed as would-be writes; it never purges the site's cache.
         catalogued = {p.parent.name for p in (root / "data" / "firmware").glob("*/firmware.md")}
+        ledger_before = memory.load(ledger_path)["by_id"] if dry_run else {}
+        expired = memory.expire(path=ledger_path, now=now)
+        state_fn = pr_state or (lambda ref: memory.gh_pr_state(ref, gh=gh_c))
+        settled = memory.reconcile_prs(state_fn, path=ledger_path, now=now)
+        # 3b. hydrate the working ledger from open Jr PRs BEFORE reconcile_merged, so the
+        #     content stages can see firmware already sitting in an un-merged PR (this worktree
+        #     started from origin/main, whose ledger lacks those entries) and do not re-author
+        #     it — and so an accidental merged->proposed mislabel self-heals within the same
+        #     tick (reconcile_merged flips any hydrated id that is already catalogued back to
+        #     merged). Best-effort: a dedup step (incl. a spent budget) must never abort a tick;
+        #     the stages enforce the budget. memory.record_proposed already refuses to downgrade
+        #     a merged or permanently-rejected record.
+        try:
+            r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug)
+        except Exception as e:  # noqa: BLE001
+            r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")
+        merged = memory.reconcile_merged(catalogued, path=ledger_path, now=now)
+        # A PR that merged between our fetch of origin/main and the `gh pr view` above is
+        # catalogued on GitHub but not yet in this worktree: treat what reconcile_prs just
+        # settled as catalogued, or it would be rejected as "removed from catalog".
+        removed = memory.reconcile_removed(catalogued | set(settled["merged"]), path=ledger_path, now=now)
+        counts = {"expired": len(expired), "merged": len(settled["merged"]) + len(merged),
+                  "rejected": len(settled["rejected"]), "removed": len(removed)}
+        purge = bool(settled["merged"] or merged or removed)
         if dry_run:
             r.memory = {}
-            r.warnings.append("memory: dry-run, no reconciliation written")
+            r.dry_writes += _ledger_changes(ledger_before, ledger_path)
+            baseline = dry_run_tree.fingerprint(scratch)     # from here on, nothing may change the copy
+            r.warnings.append("memory: dry-run, reconciliation not written ("
+                              + ", ".join(f"{k} {v}" for k, v in counts.items())
+                              + (", would purge the catalog cache)" if purge else ")"))
         else:
-            expired = memory.expire(path=ledger_path, now=now)
-            state_fn = pr_state or (lambda ref: memory.gh_pr_state(ref, gh=gh_c))
-            settled = memory.reconcile_prs(state_fn, path=ledger_path, now=now)
-            # 3b. hydrate the working ledger from open Jr PRs BEFORE reconcile_merged, so the
-            #     content stages can see firmware already sitting in an un-merged PR (this worktree
-            #     started from origin/main, whose ledger lacks those entries) and do not re-author
-            #     it — and so an accidental merged->proposed mislabel self-heals within the same
-            #     tick (reconcile_merged flips any hydrated id that is already catalogued back to
-            #     merged). Best-effort: a dedup step (incl. a spent budget) must never abort a tick;
-            #     the stages enforce the budget. memory.record_proposed already refuses to downgrade
-            #     a merged or permanently-rejected record.
-            try:
-                r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug)
-            except Exception as e:  # noqa: BLE001
-                r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")
-            merged = memory.reconcile_merged(catalogued, path=ledger_path, now=now)
-            # A PR that merged between our fetch of origin/main and the `gh pr view` above is
-            # catalogued on GitHub but not yet in this worktree: treat what reconcile_prs just
-            # settled as catalogued, or it would be rejected as "removed from catalog".
-            removed = memory.reconcile_removed(catalogued | set(settled["merged"]), path=ledger_path, now=now)
-            r.memory = {"expired": len(expired), "merged": len(settled["merged"]) + len(merged),
-                        "rejected": len(settled["rejected"]), "removed": len(removed)}
-            if settled["merged"] or merged or removed:
+            r.memory = counts
+            if purge:
                 r.revalidate = revalidate(env.get("REVALIDATE_SECRET"))
 
         # 4. gauge
@@ -557,6 +627,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                         r.extra_paths.append(p)
             except Exception as e:  # noqa: BLE001 — a report step must never abort the tick
                 r.warnings.append(f"data snapshot failed: {type(e).__name__}: {e}")
+        else:
+            import data_snapshot  # noqa: E402  (jr/ is already on sys.path)
+            today = now.strftime("%Y-%m-%d")
+            r.dry_writes += [{"path": p, "field": f"row {today}" if p.endswith(".jsonl") else "*", "value": None}
+                             for p in data_snapshot.snapshot_paths(today)]
 
         # 5. allocation — hourly: the gauge-driven A/B split, TILTED by demand; manual (--track):
         #    the override text. The demand steer (SPEC-demand-steering.md) is best-effort like the
@@ -591,13 +666,23 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             r.allocation = (f"boards {r.boards_pct:.1f}% -> A0/B{n} (manual track)" if n
                             else f"boards {r.boards_pct:.1f}% -> A0/B0 (no content stages registered)")
 
+        # 5b. the jr-review cap: at the cap, no stage that can open another review PR runs. A stage
+        #     opts out only by declaring `produces_review = False`; unsure -> it produces review.
+        if len(r.review_prs) >= review_cap:
+            keep = [s for s in stages if getattr(s, "produces_review", True) is False]
+            r.review_capped = (f"jr-review cap reached ({len(r.review_prs)}/{review_cap} open): "
+                               f"skipped {len(stages) - len(keep)} review-producing stage(s)")
+            r.warnings.append(r.review_capped)
+            stages = keep
+
         # 6. stages
         ctx = TickContext(root=root, ledger_path=ledger_path, now=now, gh=gh_c, git=git,
                           budget=budget, dry_run=dry_run, env=env)
         for stage in stages:
             res = stage(ctx)
             r.stages.append({"name": res.name, "paths": list(res.paths), "summary": res.summary,
-                             "needs_human": res.needs_human, "items": list(res.items)})
+                             "needs_human": res.needs_human, "items": list(res.items), "review": list(res.review),
+                             "would_write": list(res.would_write) if dry_run else []})
             r.admitted += res.admitted
             for k, v in res.rejects.items():
                 r.rejects[k] = r.rejects.get(k, 0) + v
@@ -622,7 +707,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             r.budget = budget.summary()          # the body must carry the real spend, not an empty field
             res = publish.publish(wt, r.paths, subject, report.render_pr_body(r), git=git, gh=gh,
                                   now=now, repo_slug=slug, needs_human=r.needs_human,
-                                  protection=protection, auto_merge=auto_merge)
+                                  protection=protection, auto_merge=auto_merge, stages=r.stages)
             r.publish = res.as_dict()
     except BudgetExceeded as e:
         r.aborted = f"budget: {e}"
@@ -638,13 +723,20 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                     publish.cleanup_branch(r.publish["branch"], git=git)
             except Exception as e:  # noqa: BLE001 — cleanup must never eat the report
                 r.warnings.append(f"worktree cleanup failed: {type(e).__name__}: {e}")
+        if scratch is not None:
+            try:
+                _dry_run_strays(r, baseline, scratch)   # also after an abort: what got written is still owed
+            except Exception as e:  # noqa: BLE001 — the report line must always print
+                r.warnings.append(f"dry-run stray check failed: {type(e).__name__}: {e}")
+            dry_run_tree.remove(scratch)
         if lock is not None:
             _release_tick_lock(lock)
         r.budget = budget.summary()
 
     line = report.render_line(r)
     print(line)
-    if telegram and not dry_run and notifier is not None and (r.aborted or r.needs_human):
+    review_opened = (r.publish or {}).get("route") == review_routing.REVIEW
+    if telegram and not dry_run and notifier is not None and (r.aborted or r.needs_human or review_opened):
         try:
             notifier(line)
         except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
@@ -679,7 +771,8 @@ def stages_for(track: str | None, budget_units: int, only: list[str] | None = No
 def main(argv=None) -> int:
     signal.signal(signal.SIGTERM, _on_sigterm)
     ap = argparse.ArgumentParser(description="EspAtlas Jr hourly tick")
-    ap.add_argument("--dry-run", action="store_true", help="read-only: no worktree, no writes, no PR, no Telegram")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="read-only: stages run on a throwaway copy, would-be writes listed; no PR, no Telegram")
     ap.add_argument("--no-telegram", action="store_true")
     ap.add_argument("--max-calls", type=int, default=Budget().max_calls)
     ap.add_argument("--max-seconds", type=float, default=Budget().max_seconds)

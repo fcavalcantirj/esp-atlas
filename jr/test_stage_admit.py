@@ -12,12 +12,15 @@ from types import SimpleNamespace
 import pytest
 import yaml
 
+import device_evidence
 import memory
+import safe_fetch
 import stage_admit
 import tick
 import tools
 import writers
 from budget import Budget
+from test_device_evidence import VALID_S3_IMAGE
 
 REPO = Path(__file__).resolve().parent.parent
 NOW = datetime(2026, 9, 7, 12, 0, tzinfo=timezone.utc)
@@ -68,15 +71,31 @@ def root(tmp_path):
     return tmp_path
 
 
+# The device-build evidence gate (jr/device_evidence.py) reads every candidate's tree: unless a test
+# serves its own, a repo has an Arduino sketch whose sketch.yaml names an ESP board (served by the
+# esp_sketch_raw fixture), so the gates under test here are the only ones that bite.
+DEVICE_TREE = {"tree": [{"path": "src/main.ino", "type": "blob"}, {"path": "src/sketch.yaml", "type": "blob"}], "truncated": False}
+pytestmark = pytest.mark.usefixtures("esp_sketch_raw")
+
+
+def _reply(doc, path):
+    """A fake `gh api` reply: a missing doc is 404 (a tree defaults to DEVICE_TREE), a doc
+    {"__status__": msg} a failed call with that stderr."""
+    if doc is None and "/git/trees/" in path:
+        doc = DEVICE_TREE
+    if doc is None:
+        return SimpleNamespace(returncode=1, stdout="", stderr="404 not found")
+    if isinstance(doc, dict) and "__status__" in doc:
+        return SimpleNamespace(returncode=1, stdout="", stderr=doc["__status__"])
+    return SimpleNamespace(returncode=0, stdout=json.dumps(doc), stderr="")
+
+
 def _ctx(root, dry_run=False, budget=None, metas=None):
     metas = metas or {}
     budget = budget or Budget(clock=lambda: 0.0)
 
     def gh(*a):
-        doc = metas.get(a[1])
-        if doc is None:
-            return SimpleNamespace(returncode=1, stdout="", stderr="404 not found")
-        return SimpleNamespace(returncode=0, stdout=json.dumps(doc), stderr="")
+        return _reply(metas.get(a[1]), a[1])
 
     return tick.TickContext(root=root, ledger_path=root / "jr" / "proposed_ledger.json", now=NOW,
                             gh=budget.wrap(gh), git=lambda *a: None,
@@ -239,6 +258,11 @@ def test_dry_run_scores_and_reports_but_writes_nothing(root, monkeypatch):
     assert "would admit" in res.summary
     assert not (root / "data" / "firmware" / "newtool").exists()
     assert not (root / "jr" / "proposed_ledger.json").exists()   # memory untouched
+    writes = {(w["path"], w["field"]) for w in res.would_write}
+    assert ("data/firmware/newtool/firmware.md", "*") in writes
+    assert ("jr/proposed_ledger.json", "by_id.newtool") in writes
+    assert ("jr/proposed_ledger.json", "by_id.tiny") in writes      # the below-floor rejection a real run records
+    assert any(p.startswith("data/recipes/") and p.endswith("__newtool/recipe.md") for p, _ in writes)
 
 
 def test_repo_id_memory_hit_skips_before_fetch(root, monkeypatch):
@@ -286,9 +310,7 @@ def _ctx_sub(root, issues, metas=None, api_docs=None, dry_run=False, budget=None
         doc = metas.get(a[1]) if len(a) > 1 else None
         if doc is None:
             doc = api_docs.get(a[1]) if len(a) > 1 else None
-        if doc is None:
-            return SimpleNamespace(returncode=1, stdout="", stderr="404 not found")
-        return SimpleNamespace(returncode=0, stdout=json.dumps(doc), stderr="")
+        return _reply(doc, a[1] if len(a) > 1 else "")
     ctx = tick.TickContext(root=root, ledger_path=root / "jr" / "proposed_ledger.json", now=NOW,
                            gh=budget.wrap(gh), git=lambda *a: None, budget=budget, dry_run=dry_run, env={})
     ctx.calls = calls   # type: ignore[attr-defined]
@@ -329,6 +351,7 @@ def test_submission_with_a_board_hint_is_admitted_first_and_answered(root, monke
     assert ctx.calls[0][:2] == ("api", ISSUES_PATH)                       # listed before any meta fetch
 
 
+@pytest.mark.sandbox
 def test_submission_without_a_hint_uses_the_repo_build_files_as_evidence(root, monkeypatch):
     monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
     issues = [_issue(8, "https://github.com/s/relwriter")]
@@ -337,6 +360,8 @@ def test_submission_without_a_hint_uses_the_repo_build_files_as_evidence(root, m
                     {"name": "relwriter-v1.2.0-m5cardputer.bin", "size": 10, "browser_download_url": "https://github.com/s/relwriter/releases/download/v1/relwriter-v1.2.0-m5cardputer.bin"},
                     {"name": "relwriter-v1.2.0-m5stick_cplus2.bin", "size": 10, "browser_download_url": "https://github.com/s/relwriter/releases/download/v1/relwriter-v1.2.0-m5stick_cplus2.bin"}]},
                 "repos/s/relwriter/git/trees/main?recursive=1": {"tree": [{"path": "README.md", "type": "blob"}], "truncated": False}}
+    api_docs["repos/s/relwriter/releases?per_page=10"] = [api_docs["repos/s/relwriter/releases/latest"]]   # the evidence gate's read
+    monkeypatch.setattr(device_evidence, "default_fetch", lambda url: safe_fetch.Fetched(VALID_S3_IMAGE, url=url))   # the gate's GET: a whole S3 image
     ctx = _ctx_sub(root, issues, metas, api_docs)
     res = stage_admit.run(ctx, budget=1, raw=lambda u: None)          # no network: raw files absent
     assert res.admitted == 1 and "relwriter: +record (submission #8)" in res.summary

@@ -36,6 +36,7 @@ from pathlib import Path
 _JR_DIR = Path(__file__).resolve().parent
 if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
+import device_evidence  # noqa: E402
 import forks  # noqa: E402
 import ledger  # noqa: E402
 import tools  # noqa: E402
@@ -136,9 +137,14 @@ def default_fetch_meta(github_url: str) -> dict:
     return meta
 
 
+def default_device_evidence(owner_repo: str, ref: str | None) -> dict:
+    """The live device-build evidence check (jr/device_evidence.check over `gh api` + raw)."""
+    return device_evidence.check(owner_repo, ref=ref)
+
+
 def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued_tokens: set[str],
                      fetch_meta=default_fetch_meta, ledger_state: dict | None = None,
-                     resolve_source=None) -> tuple[list[dict], list[dict]]:
+                     resolve_source=None, evidence=None) -> tuple[list[dict], list[dict]]:
     """Fetch real GitHub metadata for each (already-prefiltered) entry and hand it to
     score_entry() — the ONE judgment call in this whole pipeline, and it's deterministic. Once
     score_entry() derives the candidate's firmware id (only knowable after a live fetch — the id
@@ -157,7 +163,14 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
     given, every scored candidate is authored under its resolved SOURCE repo's identity
     (url/maintainer/stars/forks), never the fork's own thin stats, and a source already
     represented (catalogued, or another candidate in THIS batch already resolved to it) is
-    skipped rather than authored twice under two different firmware ids."""
+    skipped rather than authored twice under two different firmware ids.
+
+    `evidence` is an `(owner_repo, ref) -> device_evidence.check result` callable (default:
+    default_device_evidence, live). Run LAST — only for a candidate every cheaper gate kept — on
+    the repo actually being authored: one with no ESP target is skipped `not_device_firmware`,
+    `needs_review_target` (an ambiguous signal; the skip carries `review` {kind, url, why} for the
+    owner) or `device_evidence_unreadable`, carrying id+repo so the caller can remember it (review
+    finding 3: a Go server admitted as ESP32-S3 firmware on its topics)."""
     scored, skipped = [], []
     seen_sources: set[str] = set()
     for e in entries:
@@ -207,6 +220,15 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
                             "firmware_id": rec["id"], "repo": owner_repo,
                             "stars": stars, "forks": forks_count})
             continue
+        authored_repo = _owner_repo(rec["url"])
+        ev = (evidence or default_device_evidence)(authored_repo, meta.get("default_branch") if authored_repo == owner_repo else None)
+        if not ev.get("ok"):
+            skip = {"name": e.get("name"), "github": gh, "reason": device_evidence.reject_reason(ev),
+                    "firmware_id": rec["id"], "repo": authored_repo}
+            if ev.get("verdict") == device_evidence.NEEDS_REVIEW:
+                skip["review"] = device_evidence.review_note(ev)
+            skipped.append(skip)
+            continue
         scored.append({
             "record": rec,
             "download": e.get("download") or 0,
@@ -216,6 +238,13 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
             "description": (meta.get("description") or e.get("description") or "").strip(),
         })
     return scored, skipped
+
+
+def device_skips(skipped: list[dict]) -> list[dict]:
+    """The skips the device-build evidence gate made (not_device_firmware / needs_review_target /
+    unreadable); a deferred check is neither."""
+    keys = (device_evidence.NOT_DEVICE_FIRMWARE, device_evidence.NEEDS_REVIEW_TARGET, device_evidence.EVIDENCE_UNREADABLE)
+    return [s for s in skipped if str(s.get("reason", "")).split(":")[0] in keys]
 
 
 def rank_juicy(scored: list[dict]) -> list[dict]:
@@ -323,7 +352,7 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
 def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
              max_per_category: int = MAX_PER_CATEGORY, fetch_catalog=tools.fetch_launcher_catalog,
              fetch_meta=default_fetch_meta, ledger_path=ledger.DEFAULT_LEDGER_PATH,
-             today: str | None = None, resolve_source=None) -> dict:
+             today: str | None = None, resolve_source=None, evidence=None) -> dict:
     """The full drain, end to end. Additive-only: writes new data/firmware/<id>/ +
     data/recipes/<board>__<id>/ dirs and never touches jr-daily
     (agent.py/run.py) or scorer.py's public behavior. Loads jr/ledger.py's proposed-ledger
@@ -332,14 +361,17 @@ def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
     re-authored (deliverable 3) — catalogued-in-main dedup (catalogued_repos/catalogued_tokens)
     continues to cover merged the same way it always has. `resolve_source` (default None, see
     score_candidates' docstring) threads jr/forks.py's fork -> canonical-source resolution
-    through — the real `if __name__` run below wires it to a live `gh api` client."""
+    through — the real `if __name__` run below wires it to a live `gh api` client. `evidence`
+    (see score_candidates) is the device-build gate; its skips are reported in `skipped_device`
+    and NOT written here (the ledger writes below are TTL-less v1 notes) — the caller remembers
+    them with device_evidence.ttl_days, as jr/stage_admit_topics.py does."""
     entries = fetch_catalog()
     catalogued_repos, catalogued_tokens = tools._catalogued_repos_and_tokens()
     ledger_state = ledger.load_ledger(ledger_path)
     prefiltered = prefilter(entries, catalogued_repos, catalogued_tokens, ledger_state=ledger_state)[:fetch_limit]
     scored, skipped = score_candidates(prefiltered, catalogued_repos, catalogued_tokens,
                                        fetch_meta=fetch_meta, ledger_state=ledger_state,
-                                       resolve_source=resolve_source)
+                                       resolve_source=resolve_source, evidence=evidence)
     # Candidates skipped for clearing NONE of the three popularity signals (SPEC-firmware-floor.md):
     # record each "seen" in the ledger so the next run's prefilter skips it before any fetch, and report them.
     skipped_popularity = [s for s in skipped if s.get("reason") == "below-popularity-floor"]
@@ -355,6 +387,7 @@ def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
         "scored_clean": len(scored),
         "skipped_scoring": len(skipped),
         "skipped_popularity": skipped_popularity,
+        "skipped_device": device_skips(skipped),
         "selected": len(selected),
         "dropped_cap": len(dropped_cap),
         "authored": authored,
