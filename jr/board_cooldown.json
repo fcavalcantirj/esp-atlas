@@ -194,6 +194,54 @@
       },
       "reason": "doc-unreachable",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
+    },
+    "m5stack-core2": {
+      "board": "m5stack-core2",
+      "expires": "2026-11-11T22:00:59.737834+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-04T22:00:59.737834+00:00"
+    },
+    "m5stack-cores3": {
+      "board": "m5stack-cores3",
+      "expires": "2026-11-11T22:00:59.737834+00:00",
+      "field_reasons": {
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-04T22:00:59.737834+00:00"
+    },
+    "m5stack-cores3-se": {
+      "board": "m5stack-cores3-se",
+      "expires": "2026-11-11T22:00:59.737834+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "images": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-04T22:00:59.737834+00:00"
     }
   }
 }
