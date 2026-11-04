@@ -21,7 +21,10 @@ direct answer to that:
    `protection_status()` reads the live rule; auto-merge is requested ONLY when `main` requires
    `schema`, `tests` and `jr-tests` AND the repo allows auto-merge. Otherwise the PR still opens
    and a human merges — bot proposes, CI disposes, human may veto.
-5. **No git command ever names `main` as a write target.** The only `main`s in this module are
+5. **Risky changes wait for the owner.** jr/review_routing.py classifies the STAGED diff; a
+   `review` route labels the PR `jr-review` and never requests auto-merge — even when the label
+   itself cannot be applied (fail closed; the result says so). SPEC-jr-review-routing.md.
+6. **No git command ever names `main` as a write target.** The only `main`s in this module are
    `fetch origin main`, `worktree add --detach … origin/main` and `gh pr create --base main`.
 
 `git` and `gh` are injectable callables `(*argv) -> object with returncode/stdout/stderr`, so the
@@ -39,6 +42,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import memory
+import review_routing
 
 REPO = Path(__file__).resolve().parent.parent
 REQUIRED_CHECKS = ("schema", "tests", "jr-tests")
@@ -270,35 +274,88 @@ class PublishResult:
     auto_merge: bool = False
     paths: list = field(default_factory=list)
     reason: str = ""
+    route: str = ""                                       # review_routing.REVIEW | AUTO ("" before routing)
+    review_reasons: list = field(default_factory=list)
+    labelled: bool = False                                # the jr-review label is on the PR
 
     def as_dict(self) -> dict:
         return self.__dict__.copy()
 
 
-def _staged_deletions(wt: Worktree, git) -> list[str]:
-    """Paths staged as deletions. `--no-renames`: git's default rename detection would report a
-    deleted record whose content moved to a new id as `R100 old new`, hiding the deletion from
-    the G2 check. `-z`: NUL-separated, so a non-ASCII path is never C-quoted into a mismatch."""
+def _staged_status(wt: Worktree, git) -> list[tuple[str, str]]:
+    """(status, path) of every staged path. `--no-renames`: git's default rename detection would
+    report a deleted record whose content moved to a new id as `R100 old new`, hiding the deletion
+    from the G2 check. `-z`: NUL-separated, so a non-ASCII path is never C-quoted into a mismatch."""
     p = git("-C", str(wt.path), "diff", "--cached", "--name-status", "--no-renames", "-z")
     fields = [f for f in (getattr(p, "stdout", "") or "").split("\0")]
-    deleted, i = [], 0
+    out, i = [], 0
     while i + 1 < len(fields):
         status, path = fields[i], fields[i + 1]
-        if status.startswith("D") and path:
-            deleted.append(path)
+        if status and path:
+            out.append((status, path))
         i += 2
-    return deleted
+    return out
+
+
+def _staged_deletions(wt: Worktree, git) -> list[str]:
+    return [path for status, path in _staged_status(wt, git) if status.startswith("D")]
+
+
+def _git_text(wt: Worktree, git, rev_path: str) -> str | None:
+    p = git("-C", str(wt.path), "show", rev_path)
+    return getattr(p, "stdout", None) if _ok(p) else None
+
+
+def _staged_changes(wt: Worktree, git) -> list:
+    """The staged diff as review_routing.Change entries. A modified data/**.md record carries its
+    HEAD and index text, so the classifier can tell a star/date refresh from a content edit."""
+    changes = []
+    for status, path in _staged_status(wt, git):
+        old = new = None
+        if status.startswith("M") and path.startswith("data/") and path.endswith(".md"):
+            old, new = _git_text(wt, git, f"HEAD:{path}"), _git_text(wt, git, f":{path}")
+        changes.append(review_routing.Change(path, status, old, new))
+    return changes
+
+
+def _err(p) -> str:
+    return (getattr(p, "stderr", "") or "").strip()[:120]
+
+
+def apply_review_label(pr_url: str, gh=default_gh, repo_slug: str | None = None) -> tuple[bool, str]:
+    """Put the jr-review label on the PR; returns (labelled, why-not). The label is ensured first
+    (`label create --force` is idempotent, so a failure there is noted, not fatal — the label may
+    already exist), then `gh pr edit --add-label`; if that fails, once more through the REST issues
+    endpoint, which takes a different path than pr edit's GraphQL mutation."""
+    label = review_routing.REVIEW_LABEL
+    c = gh("label", "create", label, "--color", review_routing.REVIEW_LABEL_COLOR,
+           "--description", review_routing.REVIEW_LABEL_DESCRIPTION, "--force")
+    e = gh("pr", "edit", pr_url, "--add-label", label)
+    if _ok(e):
+        return True, ""
+    why = [f"label create: {_err(c)}"] if not _ok(c) else []
+    why.append(f"pr edit --add-label: {_err(e)}")
+    m = re.search(r"/pull/(\d+)", pr_url)
+    if m:
+        a = gh("api", "--method", "POST", f"repos/{repo_slug or '{owner}/{repo}'}/issues/{m.group(1)}/labels",
+               "-f", f"labels[]={label}")
+        if _ok(a):
+            return True, ""
+        why.append(f"REST issues labels: {_err(a)}")
+    return False, "; ".join(why)
 
 
 def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
             git=default_git, gh=default_gh, now: datetime | None = None,
             repo_slug: str | None = None, needs_human: bool = False,
             protection: ProtectionStatus | None = None, auto_merge: bool = True,
-            trust: TrustStatus | None = None, branch: str | None = None) -> PublishResult:
+            trust: TrustStatus | None = None, branch: str | None = None,
+            stages: list | None = None) -> PublishResult:
     """Stage `paths` (+ the ledger) in the worktree, commit, push a fresh `jr/tick-…` branch (or
     the caller's `branch`, e.g. the daily demand runner's `jr/demand-…`), open the PR, and request
-    auto-merge only when allowed (see the module docstring). Returns a PublishResult; never raises
-    for a normal "nothing to publish" or a refused deletion."""
+    auto-merge only when allowed (see the module docstring). `stages` are the tick's stage-result
+    dicts, read by review_routing (needs_human, device-evidence review items). Returns a
+    PublishResult; never raises for a normal "nothing to publish" or a refused deletion."""
     now = now or datetime.now(timezone.utc)
     branch = branch or branch_name(now)
     pathspec = list(dict.fromkeys([*paths, *memory.staged_paths()]))
@@ -314,7 +371,8 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
         return PublishResult(False, branch=branch, paths=pathspec, reason="nothing to publish")
 
     # 2. G2: no record deletion may be committed until the guard exists in CI
-    deleted = _staged_deletions(wt, git)
+    changes = _staged_changes(wt, git)
+    deleted = [c.path for c in changes if c.status.startswith("D")]
     protected = [d for d in deleted if d.startswith(PROTECTED_PREFIXES)]
     if protected:
         git("-C", str(wt.path), "reset", "-q", "--", *pathspec)
@@ -339,29 +397,42 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
         return PublishResult(False, branch=branch, commit=sha, paths=pathspec, reason="pr create failed")
     pr_url = (getattr(pr, "stdout", "") or "").strip()
 
-    # 5. auto-merge only when the gate is real and nothing asks for a human
-    if needs_human:
-        return PublishResult(True, branch, sha, pr_url, False, pathspec, reason="needs_human: auto-merge withheld")
+    # 5. risk routing: a review route is labelled and NEVER auto-merges, labelled or not
+    route = review_routing.classify(changes, stages or (), needs_human=needs_human)
+    if route.review:
+        labelled, why = apply_review_label(pr_url, gh=gh, repo_slug=repo_slug)
+        reason = f"jr-review ({'; '.join(route.reasons)[:300]}): auto-merge withheld"
+        if not labelled:
+            reason += f" · jr-review label FAILED ({why}) — the owner must find this PR by hand"
+        return PublishResult(True, branch, sha, pr_url, False, pathspec, reason=reason,
+                             route=route.route, review_reasons=list(route.reasons), labelled=labelled)
+
+    # 6. auto-merge only when the gate is real
+    armed, reason = _auto_merge(pr_url, gh, git, auto_merge, deleted, protection, trust, repo_slug)
+    return PublishResult(True, branch, sha, pr_url, armed, pathspec, reason=reason, route=route.route)
+
+
+def _auto_merge(pr_url: str, gh, git, auto_merge: bool, deleted: list, protection, trust,
+                repo_slug) -> tuple[bool, str]:
+    """(auto_merge_armed, reason) for an AUTO-routed PR: the caller, deletions, branch protection
+    and earned trust must all allow it before `gh pr merge --auto` is requested."""
     if not auto_merge:
-        return PublishResult(True, branch, sha, pr_url, False, pathspec, reason="auto-merge disabled by the caller (--no-auto-merge)")
+        return False, "auto-merge disabled by the caller (--no-auto-merge)"
     if deleted:
-        return PublishResult(True, branch, sha, pr_url, False, pathspec,
-                             reason=f"deletions outside data/: auto-merge withheld ({', '.join(deleted)})")
+        return False, f"deletions outside data/: auto-merge withheld ({', '.join(deleted)})"
     if protection is None:
         if repo_slug is None:
             remote = (getattr(git("remote", "get-url", "origin"), "stdout", "") or "").strip()
             repo_slug = owner_repo(remote)
         protection = protection_status(repo_slug, gh=gh)
     if not protection.ok:
-        return PublishResult(True, branch, sha, pr_url, False, pathspec,
-                             reason=f"auto-merge withheld: {protection.reason}")
+        return False, f"auto-merge withheld: {protection.reason}"
     trust = trust_status(gh=gh) if trust is None else trust
     if not trust.ok:
-        return PublishResult(True, branch, sha, pr_url, False, pathspec, reason=f"auto-merge withheld: {trust.reason}")
-    am = gh("pr", "merge", pr_url, "--auto", "--squash")
-    if not _ok(am):
-        return PublishResult(True, branch, sha, pr_url, False, pathspec, reason="gh pr merge --auto failed")
-    return PublishResult(True, branch, sha, pr_url, True, pathspec)
+        return False, f"auto-merge withheld: {trust.reason}"
+    if not _ok(gh("pr", "merge", pr_url, "--auto", "--squash")):
+        return False, "gh pr merge --auto failed"
+    return True, ""
 
 
 # --- post-merge cache purge -------------------------------------------------------------------

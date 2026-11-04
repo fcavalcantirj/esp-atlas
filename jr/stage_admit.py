@@ -22,6 +22,7 @@ import re
 
 import board_alias
 import derive
+import device_evidence
 import launcher_resolve
 import memory
 import scorer
@@ -50,6 +51,12 @@ REASON_HELP = {
     "already_catalogued": "this repository is already in the catalog",
     "no_board_evidence": "name a catalogued board in the Boards line (esp-atlas.com/boards), or ship release assets / a platformio.ini that name one",
     "archived": "archived repositories are not catalogued",
+    device_evidence.NOT_DEVICE_FIRMWARE: "a firmware must build for an ESP: an espressif32 platformio.ini, an ESP-IDF "
+                                         "project, an Arduino sketch or a release .bin (companion apps and servers are not firmware)",
+    device_evidence.NEEDS_REVIEW_TARGET: "the repository builds something but never states that it targets an ESP chip, so the "
+                                         "owner reviews it by hand. To be admitted automatically, state the target: an espressif32 "
+                                         "platformio.ini, CONFIG_IDF_TARGET in sdkconfig.defaults, a sketch.yaml "
+                                         "`default_fqbn: esp32:esp32:<board>`, or a release .bin that is an ESP image",
     "repo_unresolved": "the repository could not be read (private, renamed or missing)",
     "invalid": "the issue must contain a github.com/owner/repo URL",
 }
@@ -124,6 +131,12 @@ def _derived_board(ctx, owner_repo: str, atlas: dict, raw=None) -> tuple[str | N
     return best[0][0], dict(best[0][1][0])
 
 
+def _device_evidence(ctx, owner_repo: str, ref: str | None, raw=None) -> dict:
+    """jr/device_evidence.check through the tick's counted gh and raw reader."""
+    return device_evidence.check(owner_repo, api=device_evidence.gh_api(ctx.gh), raw=ctx.budget.wrap(raw or derive.default_raw, "raw"),
+                                 fetch=ctx.budget.wrap(device_evidence.default_fetch, "raw"), ref=ref)
+
+
 def _answer(ctx, slug: str, issue: int, text: str, close: bool = True) -> None:
     """Comment the verdict on the submission issue and close it. Dry-run: nothing."""
     if ctx.dry_run or not issue:
@@ -153,6 +166,9 @@ REJECT_TTLS = {
     launcher_resolve.NO_SOURCE_REPO: memory.UNRESOLVED_REJECT_DAYS,
     "archived": memory.ARCHIVED_REJECT_DAYS,
     "below_floor": memory.FLOOR_REJECT_DAYS,
+    device_evidence.NOT_DEVICE_FIRMWARE: memory.NO_BUILD_SIGNAL_DAYS,
+    device_evidence.NEEDS_REVIEW_TARGET: memory.NO_BUILD_SIGNAL_DAYS,
+    device_evidence.EVIDENCE_UNREADABLE: memory.UNRESOLVED_REJECT_DAYS,
 }
 
 
@@ -240,7 +256,11 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     cat_token_sets = tools._catalogued_token_sets(ctx.root / "data" / "firmware")
     cat_ids = _catalogued_ids(led, ctx.now)
     paths, lines, admitted, rejects, needs_human = [], [], 0, {}, False
-    would_admit, decided, items = 0, 0, []
+    would_admit, decided, items, review, would_write = 0, 0, [], [], []
+
+    def would(path, field, value=None):
+        """Dry-run: a write a real run would make, for the tick report."""
+        would_write.append({"path": path, "field": field, "value": value})
 
     def reject(key):
         rejects[key] = rejects.get(key, 0) + 1
@@ -264,7 +284,9 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         reject(key)
         if pending_note and owner_repo != pending_note["key"][1]:
             pending_note["ttl"] = REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS)   # the note follows its repo's decision
-        if not ctx.dry_run:
+        if ctx.dry_run:
+            would(memory.LEDGER_RELPATH, f"by_id.{fid}", f"rejected ({key})")
+        else:
             memory.record_rejected(fid, owner_repo, reason,
                                    ttl_days=REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS),
                                    repo_id=repo_id, path=ctx.ledger_path, now=ctx.now)
@@ -322,7 +344,9 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
 
     def flush_note():
         nonlocal pending_note
-        if pending_note and not ctx.dry_run:
+        if pending_note and ctx.dry_run:
+            would(memory.LEDGER_RELPATH, f"by_id.{pending_note['key'][0]}", "seen")
+        elif pending_note:
             kid, krepo = pending_note["key"]
             memory.record_seen(kid, krepo, reason=f"resolved: {pending_note['repo']}",
                                ttl_days=pending_note["ttl"], path=ctx.ledger_path, now=ctx.now)
@@ -455,12 +479,44 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             if issue:
                 _answer(ctx, slug, issue, _verdict_text(f"already_catalogued: {out_id}", False, False))
             continue
+        # Device-build evidence (jr/device_evidence.py, review finding 3): a record says "flash this
+        # onto an ESP", so the repo itself must build for one. Topics/description naming a board
+        # are not enough — rebelthor/warble, a Go server, passed every gate above on them alone.
+        if ctx.budget.remaining_calls() < device_evidence.MAX_CALLS:
+            lines.append(f"stopped before {owner_repo}'s build evidence: tick budget low "
+                         f"({ctx.budget.remaining_calls()} calls left)")
+            break
+        try:
+            ev = _device_evidence(ctx, owner_repo, meta.get("default_branch"), raw=raw)
+        except BudgetExceeded as e:
+            lines.append(f"stopped during {owner_repo}: {e}")
+            break
+        if ev["ok"] is None and issue:
+            # Unreadable is not a verdict, and submissions are read from OPEN issues only: leave
+            # it open and unremembered so the next tick checks it again.
+            lines.append(f"submission #{issue}: deferred, build evidence unreadable")
+            continue
+        if not ev["ok"]:
+            reason = device_evidence.reject_reason(ev)
+            note(skip_reject(out_id, owner_repo, reason, repo_id, issue=issue))
+            if ev.get("verdict") == device_evidence.NEEDS_REVIEW:
+                # Ambiguous, never guessed: not admitted, and listed in the tick report for the owner.
+                review.append({"id": out_id, "repo": owner_repo, **device_evidence.review_note(ev)})
+                lines.append(f"needs owner review: {owner_repo} ({ev['kind']}) {ev['url']}")
+            if issue:
+                _answer(ctx, slug, issue, _verdict_text(reason, False, False))
+            continue
         if res.get("needs_human"):
             needs_human = True
         if ctx.dry_run:
             lines.append(f"{out_id}: would admit{' (needs_human)' if res.get('needs_human') else ''}"
                          + (f" (submission #{issue})" if issue else ""))
             would_admit += 1
+            would(str(fmd.relative_to(ctx.root)), "*", out_id)
+            rdir = ctx.root / "data" / "recipes" / f"{rec['board']}__{out_id}"
+            if not (rdir / "recipe.md").exists():
+                would(str((rdir / "recipe.md").relative_to(ctx.root)), "*", f"{rec['board']}__{out_id}")
+            would(memory.LEDGER_RELPATH, f"by_id.{out_id}", "proposed")
             continue
         repo_url = rec["url"]
         # Coerce whatever GitHub actually returned; a missing forks_count stays None so the
@@ -530,4 +586,5 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     elif decided:
         summary = f"{decided} already decided, skipped"
     return tick.StageResult("admit", paths=paths, summary=summary, admitted=admitted,
-                            rejects=rejects, needs_human=needs_human, items=items)
+                            rejects=rejects, needs_human=needs_human, items=items, review=review,
+                            would_write=would_write)

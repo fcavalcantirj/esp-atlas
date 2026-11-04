@@ -44,6 +44,35 @@ phase that touches one side states, in its PR, what it does to the other.
 - **Extraction stays deterministic:** regex / plain-text over the fetched doc. **No LLM, no API
   keys, no crawling, no JS.** One request per candidate URL (the current `default_fetch` contract).
 
+### Toolchain sources are corroboration only (owner mandate G3, 2026-11-04)
+The PlatformIO espressif32 manifests (`jr/board_manifest.py`) and the Arduino-ESP32 `boards.txt`
+(`jr/board_arduino.py`), both at pinned commits, stay loaded and cited — but they are **discovery /
+corroboration only**. A toolchain USB id says what a build target enumerates as, not which
+connection a given board actually wires; it is not board-specific evidence.
+- **They never write `usb_serial` or `download_mode`.** `backfill_board` never copies a toolchain
+  value into a record.
+- **`usb_serial` is written only from board-specific evidence** — the vendor page/schematic the
+  vendor resolver fetched and cites. When the record is missing `usb_serial`, both toolchain sources
+  are still consulted and each is recorded per board and field in the entry's `corroboration`
+  (`{"usb_serial": {"verdict", "board_value", "checks": [{"source", "url", "value", "verdict"}]}}`):
+  - vendor value + every toolchain value agrees (or none states one) → written; field verdict
+    `corroborated` (or `uncorroborated`); per source `corroborates`.
+  - vendor value + any toolchain value disagrees → **not written**; field verdict `needs_review`,
+    per source `conflicts`; the entry lists the field in `needs_review`, the Track-A stage flags
+    `needs_human` (auto-merge withheld) and cools the board down so it is not re-flagged hourly.
+  - no vendor value, a toolchain value → **not written**; field verdict and per-source reason
+    `corroboration_only`.
+  - "Agrees" is equality, plus the two unnamed forms: a toolchain Silicon Labs VID
+    (`usb-uart-bridge-unspecified`) agrees with a vendor `cp2102`/`cp2102n`, and a vendor
+    `usb-uart-bridge-unspecified` agrees with any named toolchain bridge (never native USB).
+- **`download_mode` is never inferred from the chip** (or a native-USB soc, or a toolchain key). Only
+  the board-specific page states it; a manual BOOT/reset sequence found there is kept as written.
+- **Existing values are never changed by this rule.** `scripts/audit_board_usb.py` (read-only, writes
+  nothing) lists every existing `usb_serial` / `download_mode` with what supports it —
+  `board_evidence` (a field-specific non-toolchain citation), `toolchain_corroboration` (only a
+  toolchain citation / value), `conflict` (a pinned toolchain value disagrees), `none` — and prints
+  the counts, for the owner to review.
+
 ## Doc resolution (future phases)
 - **Espressif** currently resolves via ONE hardcoded template:
   `https://docs.espressif.com/projects/esp-dev-kits/en/latest/<chipseg>/<board_id>/user_guide.html`.

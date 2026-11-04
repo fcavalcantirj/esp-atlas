@@ -39,6 +39,98 @@
       },
       "reason": "nothing-groundable",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
+    },
+    "lolin-s3": {
+      "board": "lolin-s3",
+      "expires": "2026-11-11T19:00:59.711024+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
+    },
+    "lolin-s3-mini": {
+      "board": "lolin-s3-mini",
+      "expires": "2026-11-11T19:00:59.711024+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
+    },
+    "m5atom-lite": {
+      "board": "m5atom-lite",
+      "expires": "2026-11-11T19:00:59.711024+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-04T19:00:59.711024+00:00"
+    },
+    "m5atoms3": {
+      "board": "m5atoms3",
+      "expires": "2026-11-11T20:00:59.893271+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
+    },
+    "m5atoms3-lite": {
+      "board": "m5atoms3-lite",
+      "expires": "2026-11-11T20:00:59.893271+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
+    },
+    "m5cardputer": {
+      "board": "m5cardputer",
+      "expires": "2026-11-11T20:00:59.893271+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-04T20:00:59.893271+00:00"
     }
   }
 }

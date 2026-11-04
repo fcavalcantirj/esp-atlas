@@ -35,6 +35,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import demand_signal  # noqa: E402
 import publish  # noqa: E402
+import review_routing  # noqa: E402
 from tick import guard_env  # noqa: E402 — the one "esp_atlas_core sees the worktree" env
 
 DEFAULT_DEMAND_PYTHON = "/home/browbot/.composio-venv/bin/python"
@@ -144,7 +145,7 @@ def _pr_body(snap: dict, why: str) -> str:
 
 
 def _close_superseded(gh, keep_branch: str) -> list[int]:
-    p = gh("pr", "list", "--state", "open", "--json", "number,headRefName")
+    p = gh("pr", "list", "--state", "open", "--limit", "500", "--json", "number,headRefName,labels")
     try:
         prs = json.loads(getattr(p, "stdout", "") or "[]") if getattr(p, "returncode", 1) == 0 else []
     except json.JSONDecodeError:
@@ -152,7 +153,8 @@ def _close_superseded(gh, keep_branch: str) -> list[int]:
     closed = []
     for pr in prs:
         head = str(pr.get("headRefName", "")) if isinstance(pr, dict) else ""
-        if head.startswith(BRANCH_PREFIX) and head != keep_branch:
+        # a jr-review PR waits for the owner by design (SPEC-jr-review-routing.md): never superseded
+        if head.startswith(BRANCH_PREFIX) and head != keep_branch and not review_routing.has_review_label(pr):
             r = gh("pr", "close", str(pr.get("number")), "--comment", SUPERSEDED_COMMENT, "--delete-branch")
             if getattr(r, "returncode", 1) == 0:
                 closed.append(pr.get("number"))

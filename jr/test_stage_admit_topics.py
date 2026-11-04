@@ -22,6 +22,8 @@ import tick
 import tools
 from budget import Budget, BudgetExceeded
 
+pytestmark = pytest.mark.usefixtures("esp_sketch_raw")   # the device-build gate passes (conftest)
+
 REPO = Path(__file__).resolve().parent.parent
 NOW = datetime(2026, 9, 20, 12, 0, tzinfo=timezone.utc)
 
@@ -55,9 +57,19 @@ def root(tmp_path):
     return tmp_path
 
 
+def _default_gh(*a):
+    """Empty replies, except a repo tree: an Arduino sketch whose sketch.yaml names an ESP board
+    (esp_sketch_raw), so the device-build evidence gate (jr/device_evidence.py) passes and the
+    gates under test here are the only ones that bite."""
+    if len(a) > 1 and "/git/trees/" in a[1]:
+        return SimpleNamespace(returncode=0, stdout=json.dumps({"tree": [{"path": "main.ino", "type": "blob"},
+                                                                         {"path": "sketch.yaml", "type": "blob"}]}), stderr="")
+    return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+
 def _ctx(root, dry_run=False, budget=None, gh=None, now=NOW):
     budget = budget or Budget(clock=lambda: 0.0)
-    gh = gh or (lambda *a: SimpleNamespace(returncode=0, stdout="", stderr=""))
+    gh = gh or _default_gh
     return tick.TickContext(root=root, ledger_path=root / "jr" / "proposed_ledger.json", now=now,
                             gh=budget.wrap(gh), git=lambda *a: None,
                             budget=budget, dry_run=dry_run, env={})
@@ -136,6 +148,20 @@ def test_dry_run_scores_but_writes_nothing(root, monkeypatch):
     assert "newtool: would admit" in res.summary
     assert {p.name for p in (root / "data" / "firmware").iterdir()} == {"seed-original"}
     assert not root.joinpath("jr", "proposed_ledger.json").exists()
+    writes = {(w["path"], w["field"]) for w in res.would_write}
+    assert ("data/firmware/newtool/firmware.md", "*") in writes and ("jr/proposed_ledger.json", "by_id.newtool") in writes
+    assert any(p.startswith("data/recipes/") and p.endswith("__newtool/recipe.md") for p, _ in writes)
+
+
+def test_dry_run_lists_the_below_floor_note_a_real_run_records(root, monkeypatch):
+    entries = [_topic_entry("Tiny Cardputer Tool", "https://github.com/t/tiny", "A Cardputer tool")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta({"t/tiny": _meta("t/tiny", stars=1, forks=0, rid=7, description="A Cardputer tool")}))
+
+    res = stage_admit_topics.run(_ctx(root, dry_run=True), budget=2)
+
+    assert res.would_write == [{"path": "jr/proposed_ledger.json", "field": "by_id.tiny", "value": "seen (below floor)"}], (res.summary, res.rejects)
+    assert not root.joinpath("jr", "proposed_ledger.json").exists()
 
 
 def test_authored_ids_are_recorded_proposed_in_the_ledger(root, monkeypatch):
@@ -179,8 +205,11 @@ def _hour_surfacing(root, topic):
 
 
 def _search_gh(results, calls):
-    """A fake ctx.gh answering `search/repositories?q=topic:X` from `results[X]`."""
+    """A fake ctx.gh answering `search/repositories?q=topic:X` from `results[X]` (recorded in
+    `calls`); a repo-tree read gets _default_gh's sketch (not recorded: it is not a search)."""
     def gh(*args):
+        if len(args) >= 2 and "/git/trees/" in args[1]:
+            return _default_gh(*args)
         calls.append(args)
         prefix = "search/repositories?q=topic:"
         if len(args) >= 2 and args[0] == "api" and args[1].startswith(prefix):

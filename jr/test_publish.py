@@ -192,17 +192,21 @@ def test_protection_reads_checks_array_form_too():
 
 # --- publish sequence --------------------------------------------------------------------------
 
-def _git_ok(deletions=""):
-    """`deletions` is git's `--name-status --no-renames -z` output: NUL-separated status/path pairs."""
+def _z(*pairs):
+    return "".join(f"{st}\0{path}\0" for st, path in pairs)
+
+
+LOW_RISK = _z(("M", "jr/proposed_ledger.json"))     # a bookkeeping-only diff: review_routing says auto
+
+
+def _git_ok(deletions=LOW_RISK):
+    """`deletions` is git's `--name-status --no-renames -z` output: NUL-separated status/path pairs.
+    The default is a bookkeeping-only diff, so the auto-merge mechanics are tested on an AUTO route."""
     return recorder({
         ("diff", "--cached", "--quiet"): (1, ""),                 # something IS staged
         ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, deletions),
         ("rev-parse", "HEAD"): (0, "feedbee\n"),
     })
-
-
-def _z(*pairs):
-    return "".join(f"{st}\0{path}\0" for st, path in pairs)
 
 
 def test_publish_stages_only_the_pathspec_plus_ledger_then_commits_pushes_and_opens_pr():
@@ -521,3 +525,95 @@ def test_publish_uses_a_caller_named_branch_when_given():
     assert res.branch == "jr/demand-20261103-0930"
     assert ("checkout", "-q", "-B", "jr/demand-20261103-0930") in norm_calls(git)
     assert ("push", "-u", "origin", "jr/demand-20261103-0930") in norm_calls(git)
+
+
+# --- risk-based review routing (SPEC-jr-review-routing.md) -----------------------------------------
+
+def _label_calls(gh):
+    return [c for c in gh.calls if c[:2] in (("pr", "edit"), ("label", "create"))]
+
+
+def test_a_new_firmware_pr_is_routed_to_review_labelled_and_auto_merge_withheld():
+    git = _git_ok(deletions=_z(("A", "data/firmware/newtool/firmware.md"), ("M", "jr/proposed_ledger.json")))
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/11\n")})
+    res = publish.publish(WT, ["data/firmware/newtool"], "s", "b", git=git, gh=gh, now=NOW,
+                          protection=PROTECTED_OK, trust=TRUSTED)
+    assert res.published and not res.auto_merge
+    assert res.route == "review" and res.labelled
+    assert any("new firmware" in r for r in res.review_reasons)
+    assert "jr-review" in res.reason and "withheld" in res.reason
+    assert ("pr", "edit", "https://github.com/o/r/pull/11", "--add-label", "jr-review") in gh.calls
+    assert all(c[:2] != ("pr", "merge") for c in gh.calls)
+
+
+def test_a_bookkeeping_only_pr_stays_auto_and_is_never_labelled():
+    git, gh = _git_ok(), recorder({("pr", "create"): (0, "https://github.com/o/r/pull/12\n")})
+    res = publish.publish(WT, [], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK, trust=TRUSTED)
+    assert res.published and res.auto_merge and res.route == "auto" and not res.labelled
+    assert _label_calls(gh) == []
+    assert ("pr", "merge", "https://github.com/o/r/pull/12", "--auto", "--squash") in gh.calls
+
+
+def test_a_label_failure_still_withholds_auto_merge_and_says_so():
+    git = _git_ok(deletions=_z(("A", "data/recipes/b__x/recipe.md")))
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/13\n"),
+                   ("pr", "edit"): (1, ""), ("label", "create"): (1, ""), ("api", "--method", "POST"): (1, "")})
+    res = publish.publish(WT, ["data/recipes/b__x"], "s", "b", git=git, gh=gh, now=NOW,
+                          protection=PROTECTED_OK, trust=TRUSTED)
+    assert res.published and not res.auto_merge and res.route == "review" and not res.labelled
+    assert "jr-review label FAILED" in res.reason and "withheld" in res.reason
+    assert all(c[:2] != ("pr", "merge") for c in gh.calls)
+
+
+def test_the_label_is_ensured_idempotently_before_it_is_applied():
+    git = _git_ok(deletions=_z(("A", "data/firmware/n/firmware.md")))
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/14\n")})
+    res = publish.publish(WT, ["data/firmware/n"], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK, trust=TRUSTED)
+    assert res.labelled and not res.auto_merge
+    kinds = [c[:2] for c in gh.calls]
+    assert kinds.index(("label", "create")) < kinds.index(("pr", "edit"))
+    (create,) = [c for c in gh.calls if c[:2] == ("label", "create")]
+    assert create[2] == "jr-review" and "--force" in create          # --force: an existing label is not an error
+
+
+def test_a_failed_pr_edit_falls_back_to_the_rest_labels_endpoint():
+    """`label create --force` fails transiently (or the label exists and the token cannot update
+    it) and `pr edit` fails too: the REST issues endpoint still labels the PR."""
+    git = _git_ok(deletions=_z(("A", "data/firmware/n/firmware.md")))
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/17\n"),
+                   ("label", "create"): (1, ""), ("pr", "edit"): (1, "")})
+    res = publish.publish(WT, ["data/firmware/n"], "s", "b", git=git, gh=gh, now=NOW, repo_slug="o/r",
+                          protection=PROTECTED_OK, trust=TRUSTED)
+    assert res.labelled and not res.auto_merge
+    assert ("api", "--method", "POST", "repos/o/r/issues/17/labels", "-f", "labels[]=jr-review") in gh.calls
+    assert all(c[:2] != ("pr", "merge") for c in gh.calls)
+
+
+RECORD = "---\nid: t\npopularity:\n  stars: 1\n  as_of: '2026-09-01'\nsources:\n- field: '*'\n  url: u\n  verified: '2026-09-01'\n---\nbody\n"
+
+
+def test_a_star_refresh_reads_head_and_index_text_and_stays_auto():
+    refreshed = RECORD.replace("stars: 1", "stars: 9").replace("2026-09-01", "2026-11-04")
+    git = recorder({("diff", "--cached", "--quiet"): (1, ""), ("rev-parse", "HEAD"): (0, "feedbee\n"),
+                    ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, _z(("M", "data/firmware/t/firmware.md"))),
+                    ("show", "HEAD:data/firmware/t/firmware.md"): (0, RECORD),
+                    ("show", ":data/firmware/t/firmware.md"): (0, refreshed)})
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/15\n")})
+    res = publish.publish(WT, ["data/firmware/t"], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK, trust=TRUSTED)
+    assert res.route == "auto" and res.auto_merge, res.review_reasons
+    # the same record whose show fails is unreadable -> review, fail closed
+    git_bad = recorder({("diff", "--cached", "--quiet"): (1, ""),
+                        ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, _z(("M", "data/firmware/t/firmware.md"))),
+                        ("show",): (128, "")})
+    res = publish.publish(WT, ["data/firmware/t"], "s", "b", git=git_bad, gh=recorder({("pr", "create"): (0, "u\n")}),
+                          now=NOW, protection=PROTECTED_OK, trust=TRUSTED)
+    assert res.route == "review" and not res.auto_merge
+
+
+def test_a_stage_needs_review_item_routes_the_pr_to_review():
+    stages = [{"name": "admit_topics", "review": [{"id": "z", "repo": "z/z", "kind": "release_bin", "url": "u", "why": "w"}]}]
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/16\n")})
+    res = publish.publish(WT, [], "s", "b", git=_git_ok(), gh=gh, now=NOW, protection=PROTECTED_OK, trust=TRUSTED,
+                          stages=stages)
+    assert res.route == "review" and res.labelled and not res.auto_merge
+    assert any("z/z" in r for r in res.review_reasons)

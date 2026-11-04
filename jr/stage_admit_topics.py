@@ -47,6 +47,8 @@ import urllib.parse
 from contextlib import contextmanager
 from pathlib import Path
 
+import derive
+import device_evidence
 import drain
 import ledger
 import memory
@@ -80,6 +82,39 @@ def _topic_search(ctx):
         items = data.get("items") if isinstance(data, dict) else None
         return items if isinstance(items, list) else []
     return search
+
+
+def _evidence(ctx, raw=None):
+    """evidence(owner_repo, ref) for drain.score_candidates: jr/device_evidence.check through the
+    tick's counted gh and raw reader (`raw`: tests replace derive.default_raw). When the tick
+    cannot afford one full check the candidate is DEFERRED (skipped, not remembered) rather than
+    let BudgetExceeded abort run_drain and drop every note this stage made."""
+    api = device_evidence.gh_api(ctx.gh)
+    counted_raw = ctx.budget.wrap(raw or derive.default_raw, "raw")
+    counted_fetch = ctx.budget.wrap(device_evidence.default_fetch, "raw")
+
+    def evidence(owner_repo, ref):
+        left = ctx.budget.remaining_calls()
+        if left < device_evidence.MAX_CALLS:
+            return device_evidence.deferred(f"tick budget low ({left} calls left)")
+        return device_evidence.check(owner_repo, api=api, raw=counted_raw, fetch=counted_fetch, ref=ref)
+    return evidence
+
+
+def _device_rejects(skipped) -> dict:
+    """{reason key: count} for the device-build evidence gate's skips."""
+    out: dict = {}
+    for s in drain.device_skips(skipped):
+        key = s["reason"].split(":")[0]
+        out[key] = out.get(key, 0) + 1
+    return out
+
+
+def _review(skipped) -> tuple[list[dict], str]:
+    """(StageResult.review, summary suffix) for the gate's needs_review skips: the repos the
+    owner must judge, never admitted and never guessed."""
+    review = [{"id": s["firmware_id"], "repo": s["repo"], **s["review"]} for s in skipped if s.get("review")]
+    return review, "".join(f"; needs owner review: {r['repo']} ({r['kind']}) {r['url']}" for r in review)
 
 
 @contextmanager
@@ -154,12 +189,31 @@ def _source_by_repo(entries) -> dict:
     return out
 
 
-def run(ctx, budget: int):
+def _would_write(selected, skipped) -> list[dict]:
+    """Dry-run: what run_drain + the ledger notes below would write for this tick's candidates —
+    each admit's firmware.md and recipe, its `proposed` record, and every remembered skip."""
+    out = []
+    for sel in selected:
+        rec = sel["record"]
+        fid = rec["id"]
+        out += [{"path": f"data/firmware/{fid}/firmware.md", "field": "*", "value": fid},
+                {"path": f"data/recipes/{rec['board']}__{fid}/recipe.md", "field": "*", "value": rec["board"]},
+                {"path": memory.LEDGER_RELPATH, "field": f"by_id.{fid}", "value": "proposed"}]
+    out += [{"path": memory.LEDGER_RELPATH, "field": f"by_id.{s['firmware_id']}", "value": "seen (below floor)"}
+            for s in skipped if s.get("reason") == "below-popularity-floor"]
+    out += [{"path": memory.LEDGER_RELPATH, "field": f"by_id.{s['firmware_id']}",
+             "value": f"rejected ({s['reason'].split(':')[0]})"} for s in drain.device_skips(skipped)]
+    return out
+
+
+def run(ctx, budget: int, raw=None):
     """The topics stage for jr/tick.py: admits AT MOST `budget` firmware from the GitHub-topics
     source in one tick, via jr/drain.run_drain — the same author+guard+ledger pipeline
     jr/author_topics.py's one-shot run used. Searches only this hour's tick.TOPICS_PER_TICK
-    topics of the rotating seed list (_tick_topics). Returns a tick.StageResult, same shape as
-    stage_admit.run's, its summary naming the rotated topics and each admit's seed topic."""
+    topics of the rotating seed list (_tick_topics). Every candidate must show device-build
+    evidence (jr/device_evidence.py) before it is authored; one without is remembered rejected
+    for device_evidence.ttl_days. Returns a tick.StageResult, same shape as stage_admit.run's,
+    its summary naming the rotated topics and each admit's seed topic."""
     import tick
     today = ctx.now.strftime("%Y-%m-%d")
     search = _topic_search(ctx)
@@ -174,6 +228,7 @@ def run(ctx, budget: int):
                                 admitted=0, rejects={}, needs_human=True)
 
     fetch_limit = budget * SCORE_MULTIPLIER
+    evidence = _evidence(ctx, raw)
 
     if ctx.dry_run:
         catalogued_repos, catalogued_tokens = tools._catalogued_repos_and_tokens(ctx.root / "data" / "firmware")
@@ -183,14 +238,20 @@ def run(ctx, budget: int):
         try:
             scored, skipped = drain.score_candidates(prefiltered, catalogued_repos, catalogued_tokens,
                                                       fetch_meta=fetch_meta, ledger_state=led,
-                                                      resolve_source=lambda owner, repo: {})
+                                                      resolve_source=lambda owner, repo: {},
+                                                      evidence=evidence)
         except BudgetExceeded as e:
             return tick.StageResult("admit_topics", paths=[], summary=f"stopped: {e}", admitted=0, rejects={})
         selected, _dropped_cap = drain.cap_categories(drain.rank_juicy(scored), max_per_category=budget, batch_size=budget)
         lines = [f"{s['record']['id']}: would admit" for s in selected]
-        summary = f"{topics_txt} " + ("; ".join(lines) if lines else "no candidates")
-        rejects = {"skipped_scoring": len(skipped)} if skipped else {}
-        return tick.StageResult("admit_topics", paths=[], summary=summary, admitted=0, rejects=rejects)
+        review, review_txt = _review(skipped)
+        summary = f"{topics_txt} " + ("; ".join(lines) if lines else "no candidates") + review_txt
+        rejects = _device_rejects(skipped)
+        if len(skipped) > sum(rejects.values()):
+            rejects["skipped_scoring"] = len(skipped) - sum(rejects.values())
+        would_write = _would_write(selected, skipped)
+        return tick.StageResult("admit_topics", paths=[], summary=summary, admitted=0, rejects=rejects, review=review,
+                                would_write=would_write)
 
     fetch_meta = ctx.budget.wrap(drain.default_fetch_meta, "gh")
     try:
@@ -204,6 +265,7 @@ def run(ctx, budget: int):
                 ledger_path=ctx.ledger_path,
                 today=today,
                 resolve_source=lambda owner, repo: {},
+                evidence=evidence,
             )
     except BudgetExceeded as e:
         return tick.StageResult("admit_topics", paths=[], summary=f"stopped: {e}", admitted=0, rejects={})
@@ -228,10 +290,16 @@ def run(ctx, budget: int):
     for s in report["skipped_popularity"]:
         memory.record_seen(s["firmware_id"], s["repo"], path=ctx.ledger_path, now=ctx.now)
 
-    rejects = {}
+    # Device-build evidence skips (no ESP target, or only an ambiguous one for the owner to
+    # review): remembered as a TTL'd rejection, so the next ticks do not re-fetch them.
+    for s in report["skipped_device"]:
+        memory.record_rejected(s["firmware_id"], s["repo"], s["reason"],
+                               ttl_days=device_evidence.ttl_days(s["reason"]), path=ctx.ledger_path, now=ctx.now)
+
+    rejects = _device_rejects(report["skipped_device"])
     if report["skipped_popularity"]:
         rejects["below_floor"] = len(report["skipped_popularity"])
-    other_skipped = report["skipped_scoring"] - len(report["skipped_popularity"])
+    other_skipped = report["skipped_scoring"] - len(report["skipped_popularity"]) - len(report["skipped_device"])
     if other_skipped > 0:
         rejects["skipped_scoring"] = other_skipped
     if report["dropped_cap"]:
@@ -247,6 +315,7 @@ def run(ctx, budget: int):
         summary += "; " + "; ".join(f"{d['id']}: {d['reason']}" for d in report["dropped_guard"])
     if not report["guard"].get("ok"):
         summary += f"; final guard red: {(report['guard'].get('output') or '')[-160:]}"
+    review, review_txt = _review(report["skipped_device"])
 
-    return tick.StageResult("admit_topics", paths=paths, summary=summary, admitted=len(authored),
-                            rejects=rejects, items=items)
+    return tick.StageResult("admit_topics", paths=paths, summary=summary + review_txt, admitted=len(authored),
+                            rejects=rejects, items=items, review=review)

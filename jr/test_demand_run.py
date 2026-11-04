@@ -53,8 +53,11 @@ def norm_calls(fn):
 
 
 def git_ok():
-    # `diff --cached --quiet` rc 1 = there IS something staged (publish proceeds)
-    return recorder({("diff", "--cached", "--quiet"): (1, ""), ("rev-parse",): (0, "abc1234\n")})
+    # `diff --cached --quiet` rc 1 = there IS something staged (publish proceeds); the staged diff is
+    # the two demand snapshot paths, which jr/review_routing.py routes AUTO
+    return recorder({("diff", "--cached", "--quiet"): (1, ""), ("rev-parse",): (0, "abc1234\n"),
+                     ("diff", "--cached", "--name-status", "--no-renames", "-z"):
+                         (0, "A\0docs/demand/2026-11-03.json\0M\0docs/demand/unresolved.json\0")})
 
 
 def gh_ok(open_prs="[]"):
@@ -212,6 +215,14 @@ def test_an_older_open_demand_pr_is_closed_as_superseded_after_landing(tmp_path)
     closes = [c for c in gh.calls if c[:2] == ("pr", "close")]
     assert [c[2] for c in closes] == ["1390"]                       # a tick PR is never touched
     assert res.superseded == [1390]
+
+
+def test_a_jr_review_demand_pr_is_never_closed_as_superseded(tmp_path):
+    prs = json.dumps([{"number": 1391, "headRefName": "jr/demand-20261101-0930", "labels": [{"name": "jr-review"}]},
+                      {"number": 1392, "headRefName": "jr/demand-20261102-0930", "labels": []}])
+    gh = gh_ok(open_prs=prs)
+    res = run(tmp_path, gh=gh)
+    assert [c[2] for c in gh.calls if c[:2] == ("pr", "close")] == ["1392"] and res.superseded == [1392]
 
 
 # --- failures never land anything -------------------------------------------------------------------

@@ -60,13 +60,18 @@ def gh_ok(rate="4999", prs="[]", protection_rc=0, allow="true", pr_url="https://
     })
 
 
-def git_ok(wt_dir: Path, staged=True):
+SIGNALS_REFRESH = "M\0data/firmware/x/signals.json\0"      # review_routing: AUTO
+LEDGER_ONLY = "M\0jr/proposed_ledger.json\0"                # review_routing: AUTO
+
+
+def git_ok(wt_dir: Path, staged=True, diff="A\0data/firmware/x/firmware.md\0"):
+    """`diff` is the staged `--name-status -z` answer; the default (a new firmware) routes REVIEW."""
     return recorder({
         ("remote", "get-url", "origin"): (0, "https://github.com/o/r.git\n"),
         ("rev-parse", "origin/main"): (0, "6190d21abc\n"),
         ("status", "--porcelain"): (0, ""),
         ("diff", "--cached", "--quiet"): (1 if staged else 0, ""),
-        ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, "A\0data/firmware/x/firmware.md\0"),
+        ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, diff),
         ("rev-parse", "HEAD"): (0, "feedbee\n"),
     })
 
@@ -110,7 +115,9 @@ def test_dry_run_prints_gauge_allocation_and_nothing_to_do_and_writes_nothing(ca
     out = capsys.readouterr().out
     assert not r.aborted
     assert "jr-tick (dry-run)" in out and "boards 42.5%" in out
-    assert "boards 42.5% -> A0/B0 (no content stages registered)" in out and "nothing to do" in out
+    assert "boards 42.5% -> A0/B0 (no content stages registered)" in out
+    # a real tick always writes the day's trend snapshot, so the dry run says so instead of "nothing to do"
+    assert "no PR (dry-run)" in out and "would write" in out and "docs/telemetry/data-trend.jsonl[row 2026-09-05]" in out
     # read-only: no worktree, no add/commit/push, no PR, only read calls to gh
     assert all(c[0] not in ("worktree", "add", "commit", "push", "checkout") for c in norm(git))
     assert all(c[:2] in (("api", "rate_limit"), ("pr", "list"), ("api", "repos/o/r/rules/branches/main"),
@@ -282,7 +289,7 @@ def _stage(paths, needs_human=False, admitted=1, rejects=None):
 
 
 def test_stage_output_is_guarded_then_published_with_auto_merge(wt_dir):
-    git, gh = git_ok(wt_dir), gh_ok()
+    git, gh = git_ok(wt_dir, diff=SIGNALS_REFRESH), gh_ok()     # a low-risk diff: the AUTO route
     guard_calls = []
     r = run(git=git, gh=gh, stages=[_stage(["data/firmware/x"], rejects={"fork": 2})],
             guard=lambda root: guard_calls.append(root) or {"ok": True, "output": ""})
@@ -300,10 +307,28 @@ def test_stage_output_is_guarded_then_published_with_auto_merge(wt_dir):
     assert "- **fake** — wrote" in body[body.index("--body") + 1]
 
 
+def test_a_stage_review_list_reaches_the_published_pr_body(wt_dir):
+    """The device-build gate's needs_review repos are for the owner: they must survive the trip
+    from StageResult.review into the PR body the owner reads."""
+    review = [{"id": "zap", "repo": "z/zap", "kind": "arduino_sketch", "url": "https://github.com/z/zap/blob/main/zap.ino",
+               "why": "a .ino but no ESP board named"}]
+
+    def stage(ctx):
+        return tick.StageResult("admit", paths=["data/firmware/x"], summary="wrote", admitted=1,
+                                rejects={"needs_review_target": 1}, review=review)
+    gh = gh_ok()
+    r = run(git=git_ok(wt_dir), gh=gh, stages=[stage])
+    assert r.review == review
+    body = [c for c in gh.calls if c[:2] == ("pr", "create")][0]
+    text = body[body.index("--body") + 1]
+    assert "### Needs owner review" in text and "- `z/zap` (`zap`) — arduino_sketch https://github.com/z/zap/blob/main/zap.ino" in text
+
+
 def test_needs_human_withholds_auto_merge(wt_dir):
     gh = gh_ok()
-    r = run(git=git_ok(wt_dir), gh=gh, stages=[_stage(["data/firmware/x"], needs_human=True)])
-    assert r.publish["published"] and not r.publish["auto_merge"]
+    # a low-risk diff, so ONLY the stage's needs_human can withhold auto-merge here
+    r = run(git=git_ok(wt_dir, diff=SIGNALS_REFRESH), gh=gh, stages=[_stage(["data/firmware/x"], needs_human=True)])
+    assert r.publish["published"] and not r.publish["auto_merge"] and r.publish["route"] == "review"
     assert all(c[:2] != ("pr", "merge") for c in gh.calls)
 
 
@@ -505,7 +530,7 @@ def test_a_ledger_only_change_is_published_without_running_the_guard(wt_dir):
     and every hourly tick redoes it. No data changed, so validate.py is skipped."""
     lp = wt_dir / "jr" / "proposed_ledger.json"
     ledger.record_proposed("done", "o/done", pr_ref="https://github.com/o/r/pull/4", path=lp)
-    git, gh, guard_calls = git_ok(wt_dir), gh_ok(), []
+    git, gh, guard_calls = git_ok(wt_dir, diff=LEDGER_ONLY), gh_ok(), []
     r = run(git=git, gh=gh, pr_state=lambda ref: "merged", revalidate=lambda s: {"ok": True},
             guard=lambda root: guard_calls.append(root) or {"ok": True, "output": ""})
     assert not r.aborted and guard_calls == [] and r.guard is None
@@ -548,7 +573,8 @@ def test_publish_gets_the_uncounted_gh_so_budget_cannot_cut_it_off_mid_publish(w
     gh = gh_ok()
     # preflight = rate_limit + pr list + rules + protection + allow_auto_merge = 5 counted calls; the budget
     # is exactly that, so publish's own pr create / pr merge would die if they were counted
-    r = run(git=git_ok(wt_dir), gh=gh, stages=[_stage(["data/firmware/x"])], budget=Budget(max_calls=5, clock=lambda: 0.0))
+    r = run(git=git_ok(wt_dir, diff=SIGNALS_REFRESH), gh=gh, stages=[_stage(["data/firmware/x"])],
+            budget=Budget(max_calls=5, clock=lambda: 0.0))
     assert not r.aborted and r.publish["published"] and r.publish["auto_merge"]
     assert r.budget.startswith("gh calls 5/5")
 
@@ -716,11 +742,12 @@ def test_a_stale_bookkeeping_only_tick_pr_is_closed_even_when_mergeable(wt_dir):
 
 
 def test_a_fresh_mergeable_tick_pr_is_left_alone_and_its_files_never_fetched(tmp_path):
-    # dry-run: the memory step's open-PR hydration (which reads files too) does not run there
+    # dry-run (no publish). The triage never reads its files; the ONE files read is the memory
+    # step's open-PR hydration, which a dry run runs too (on its throwaway ledger copy).
     gh = gh_with_prs([_tick_pr(790, FRESH)], files={790: BOOKKEEPING})
     r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
     assert not r.aborted and _closes(gh) == [] and not any("superseded" in w for w in r.warnings)
-    assert all(c[:2] != ("pr", "view") or c[3:] != ("--json", "files") for c in gh.calls)
+    assert sum(c[:2] == ("pr", "view") and c[3:] == ("--json", "files") for c in gh.calls) == 1
 
 
 def test_a_stale_conflicting_content_pr_is_never_closed_and_aborts_naming_it(wt_dir):
