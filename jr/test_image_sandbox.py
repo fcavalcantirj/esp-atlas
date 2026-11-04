@@ -200,3 +200,104 @@ def test_a_child_that_cannot_start_is_a_failure(monkeypatch, tmp_path):
     monkeypatch.setattr(sb.sys, "executable", str(tmp_path / "no-python-here"))
     got = sb.validate(b"")
     assert got["status"] == esp_image.NEEDS_REVIEW and "could not start" in got["reasons"][0]
+
+
+# --- checker findings 2026-11-04: what plain Python could still reach --------------------------------
+
+def _all_refused(got):
+    assert got["ok"], got
+    assert got["value"] and all(v.startswith("PermissionError") for v in got["value"].values()), got["value"]
+
+
+def test_a_child_cannot_reach_libc_through_ctypes(tmp_path):
+    got = run(tmp_path, """
+        out = {}
+        for name, attempt in {"import+CDLL": lambda: __import__("ctypes").CDLL(None),
+                              "libc.socket": lambda: __import__("ctypes").CDLL(None).socket(2, 1, 0)}.items():
+            try:
+                attempt()
+                out[name] = "reached"
+            except Exception as e:
+                out[name] = type(e).__name__ + ": " + str(e)
+        return out
+    """)
+    _all_refused(got)
+
+
+def test_a_child_cannot_change_existing_files(tmp_path, tmp_path_factory):
+    victim = tmp_path_factory.mktemp("victim") / "keep.txt"
+    victim.write_text("precious")
+    got = run(tmp_path, f"""
+        import os
+        p = {str(victim)!r}
+        out = {{}}
+        for name, attempt in {{"remove": lambda: os.remove(p), "rename": lambda: os.rename(p, p + ".x"),
+                               "truncate": lambda: os.truncate(p, 0), "chmod": lambda: os.chmod(p, 0o777),
+                               "symlink": lambda: os.symlink(p, p + ".lnk"), "mkdir": lambda: os.mkdir(p + ".d"),
+                               "utime": lambda: os.utime(p, (0, 0))}}.items():
+            try:
+                attempt()
+                out[name] = "done"
+            except Exception as e:
+                out[name] = type(e).__name__ + ": " + str(e)
+        return out
+    """)
+    _all_refused(got)
+    assert victim.read_text() == "precious" and sorted(p.name for p in victim.parent.iterdir()) == ["keep.txt"]
+
+
+def test_a_child_cannot_signal_other_processes(tmp_path):
+    got = run(tmp_path, """
+        import os, signal
+        out = {}
+        for name, attempt in {"kill parent (signal 0)": lambda: os.kill(os.getppid(), 0),
+                              "killpg": lambda: os.killpg(os.getpgid(0), 0),
+                              "pthread_kill": lambda: signal.pthread_kill(__import__("threading").main_thread().ident, 0)}.items():
+            try:
+                attempt()
+                out[name] = "sent"
+            except Exception as e:
+                out[name] = type(e).__name__ + ": " + str(e)
+        return out
+    """)
+    _all_refused(got)
+
+
+def test_a_child_cannot_read_credentials_outside_the_interpreter_and_its_module(tmp_path, tmp_path_factory, monkeypatch):
+    """Not the parent's environment through /proc, not a token file elsewhere on disk, not a listing."""
+    monkeypatch.setenv("GH_TOKEN", "ghp_secret_for_the_test")
+    secret = tmp_path_factory.mktemp("config") / "hosts.yml"
+    secret.write_text("oauth_token: ghp_secret_for_the_test\n")
+    got = run(tmp_path, f"""
+        import os
+        out = {{}}
+        for name, attempt in {{"parent environ": lambda: open(f"/proc/{{os.getppid()}}/environ", "rb").read(),
+                               "token file": lambda: open({str(secret)!r}).read(),
+                               "os.open": lambda: os.open({str(secret)!r}, os.O_RDONLY),
+                               "listdir": lambda: os.listdir({str(secret.parent)!r}),
+                               "scandir": lambda: list(os.scandir("/home"))}}.items():
+            try:
+                out[name] = "read: " + str(attempt())[:40]
+            except Exception as e:
+                out[name] = type(e).__name__ + ": " + str(e)
+        return out
+    """)
+    _all_refused(got)
+    assert "ghp_secret" not in str(got)
+
+
+def test_a_child_cannot_raise_its_own_limits(tmp_path):
+    got = run(tmp_path, """
+        import resource
+        try:
+            resource.setrlimit(resource.RLIMIT_CPU, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
+            return {"setrlimit": "raised"}
+        except Exception as e:
+            return {"setrlimit": type(e).__name__ + ": " + str(e)}
+    """)
+    _all_refused(got)
+
+
+def test_the_child_can_still_import_the_library_it_needs(tmp_path):
+    got = run(tmp_path, "import json, hashlib, struct, esptool\nfrom esptool import bin_image\nreturn esptool.__version__")
+    assert got == {"ok": True, "value": esp_image.PINNED_ESPTOOL}
