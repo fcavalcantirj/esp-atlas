@@ -45,6 +45,9 @@ from esp_atlas_core.frontmatter import parse_frontmatter  # noqa: E402,F401 (re-
 from esp_atlas_core.paths import DATA_DIR  # noqa: E402
 
 FETCH_USER_AGENT = "esp-atlas-jr/0.1 (+https://esp-atlas.com; board-backfill bot)"
+# Room for the largest source (the pinned Arduino-ESP32 boards.txt is ~3 MB). A body over the
+# cap is a clean miss, never a silently truncated text that could drop a board's lines.
+FETCH_MAX_BYTES = 8_000_000
 
 # The fields this backfill can ground, in write order (also the frontmatter order).
 BACKFILL_FIELDS = ("download_mode", "usb_serial", "getting_started", "images")
@@ -126,8 +129,12 @@ def default_fetch(url: str) -> dict:
     try:
         with urllib.request.urlopen(req, timeout=15) as r:
             charset = r.headers.get_content_charset() or "utf-8"
-            raw = r.read(2_000_000).decode(charset, "ignore")
-            return {"ok": True, "status": getattr(r, "status", 200), "text": raw}
+            body = r.read(FETCH_MAX_BYTES + 1)
+            if len(body) > FETCH_MAX_BYTES:
+                return {"ok": False, "status": getattr(r, "status", 200),
+                        "error": f"body too large (> {FETCH_MAX_BYTES} bytes)"}
+            return {"ok": True, "status": getattr(r, "status", 200),
+                    "text": body.decode(charset, "ignore")}
     except urllib.error.HTTPError as e:
         return {"ok": False, "status": e.code, "error": f"HTTP {e.code}"}
     except Exception as e:  # noqa: BLE001 — any fetch failure = clean miss, board skipped
@@ -324,6 +331,8 @@ from board_manifest import (  # noqa: E402
     SOURCE_GATED,
     ground_from_manifest,
 )
+# Third source for usb_serial only (G3b): the Arduino-ESP32 core boards.txt at a pinned commit.
+from board_arduino import ground_from_boards_txt  # noqa: E402
 from board_image_extractors import (  # noqa: E402,F401
     IMAGE_EXTRACTORS,
     extract_images,
@@ -412,7 +421,14 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
     for field, value in pio["values"].items():
         extracted[field] = value
         citations[field] = pio["url"]
-    field_reasons = _field_reasons(missing, extracted, vendor_reasons, pio["reasons"])
+    # Third source: boards.txt, again ONLY for what both sources before it left missing.
+    ard = ground_from_boards_txt(board_id, soc, data_root,
+                                 [f for f in missing if f not in extracted], fetch)
+    for field, value in ard["values"].items():
+        extracted[field] = value
+        citations[field] = ard["url"]
+    field_reasons = _field_reasons(missing, extracted, vendor_reasons,
+                                   {"manifest": pio["reasons"], "boards_txt": ard["reasons"]})
 
     if not extracted:
         reason = "doc-unreachable" if res is None else "nothing-groundable"
@@ -422,7 +438,8 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
     _write_fields(path, fm, body, extracted, citations, today)
     written = [f for f in BACKFILL_FIELDS if f in extracted]
     omitted = [f for f in missing if f not in extracted]
-    return {**base, "status": "backfilled", "url": url if res is not None else pio["url"],
+    return {**base, "status": "backfilled",
+            "url": url if res is not None else (pio["url"] or ard["url"]),
             "written": written, "omitted": omitted, "partial": bool(omitted), "modified": True,
             "citations": citations, "field_reasons": field_reasons}
 
@@ -475,15 +492,17 @@ def _vendor_miss_reason(field: str, text: str, raw: str) -> str:
     return NO_PATTERN_MATCH if mentioned else FIELD_ABSENT
 
 
-def _field_reasons(missing: list[str], extracted: dict, vendor: dict, manifest: dict) -> dict:
-    """{field: {"vendor": reason[, "manifest": reason]}} for every missing field left unfilled."""
+def _field_reasons(missing: list[str], extracted: dict, vendor: dict, later: dict) -> dict:
+    """{field: {"vendor": reason[, "<source>": reason, ...]}} for every missing field left
+    unfilled; `later` maps each later source name to its {field: reason}, in the order tried."""
     out: dict = {}
     for field in missing:
         if field in extracted:
             continue
         out[field] = {"vendor": vendor.get(field, FIELD_ABSENT)}
-        if field in manifest:
-            out[field]["manifest"] = manifest[field]
+        for source, reasons in later.items():
+            if field in reasons:
+                out[field][source] = reasons[field]
     return out
 
 
@@ -585,7 +604,8 @@ def pr_body(report: dict) -> str:
         "",
         "Cite-or-omit STRICTLY: every written field carries its own `{field,url,verified}` "
         "citation to its source — the board's official vendor doc, or its PlatformIO "
-        "espressif32 manifest at a pinned commit; anything the source did not "
+        "espressif32 manifest or the Arduino-ESP32 core boards.txt, each at a pinned "
+        "commit; anything the source did not "
         "explicitly state was OMITTED (a wrong download-mode step is safety-critical). "
         "No LLM, no API key — extraction is regex/text over the fetched doc.",
         "",
