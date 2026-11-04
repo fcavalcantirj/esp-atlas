@@ -18,7 +18,8 @@ def _isolated_tick_lock(tmp_path, monkeypatch):
 @pytest.fixture(autouse=True)
 def _no_live_device_evidence(monkeypatch):
     """No jr test reaches GitHub. derive's default network effects raise (a test that forgets to
-    inject `api`/`raw` fails loudly instead of fetching), and the drain's live device-build
+    inject `api`/`raw` sees its reads fail — derive._Calls turns that into an unreadable result,
+    so the candidate is skipped, never fetched), and the drain's live device-build
     evidence check (jr/device_evidence.py) passes by default so the gates a drain test targets stay
     the only ones that bite; tests of that gate inject `evidence=` or patch it themselves."""
     def offline(*a, **k):

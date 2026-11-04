@@ -86,10 +86,18 @@ def _topic_search(ctx):
 
 def _evidence(ctx, raw=None):
     """evidence(owner_repo, ref) for drain.score_candidates: jr/device_evidence.check through the
-    tick's counted gh and raw reader (`raw`: tests replace derive.default_raw)."""
+    tick's counted gh and raw reader (`raw`: tests replace derive.default_raw). When the tick
+    cannot afford one full check the candidate is DEFERRED (skipped, not remembered) rather than
+    let BudgetExceeded abort run_drain and drop every note this stage made."""
     api = device_evidence.gh_api(ctx.gh)
     counted_raw = ctx.budget.wrap(raw or derive.default_raw, "raw")
-    return lambda owner_repo, ref: device_evidence.check(owner_repo, api=api, raw=counted_raw, ref=ref)
+
+    def evidence(owner_repo, ref):
+        left = ctx.budget.remaining_calls()
+        if left < device_evidence.MAX_CALLS:
+            return device_evidence.deferred(f"tick budget low ({left} calls left)")
+        return device_evidence.check(owner_repo, api=api, raw=counted_raw, ref=ref)
+    return evidence
 
 
 def _device_rejects(skipped) -> dict:

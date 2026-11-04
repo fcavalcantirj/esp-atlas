@@ -53,7 +53,6 @@ REASON_HELP = {
     "archived": "archived repositories are not catalogued",
     device_evidence.NOT_DEVICE_FIRMWARE: "a firmware must build for an ESP: an espressif32 platformio.ini, an ESP-IDF "
                                          "project, an Arduino sketch or a release .bin (companion apps and servers are not firmware)",
-    device_evidence.EVIDENCE_UNREADABLE: "the repository's build files could not be read; it is re-checked automatically",
     "repo_unresolved": "the repository could not be read (private, renamed or missing)",
     "invalid": "the issue must contain a github.com/owner/repo URL",
 }
@@ -479,6 +478,11 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         except BudgetExceeded as e:
             lines.append(f"stopped during {owner_repo}: {e}")
             break
+        if ev["ok"] is None and issue:
+            # Unreadable is not a verdict, and submissions are read from OPEN issues only: leave
+            # it open and unremembered so the next tick checks it again.
+            lines.append(f"submission #{issue}: deferred, build evidence unreadable")
+            continue
         if not ev["ok"]:
             reason = device_evidence.reject_reason(ev)
             note(skip_reject(out_id, owner_repo, reason, repo_id, issue=issue))

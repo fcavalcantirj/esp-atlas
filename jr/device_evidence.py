@@ -9,7 +9,8 @@ submission paths alike — the repo must show at least one device-build signal:
   arduino_sketch   a `*.ino` anywhere in the tree                         (tree only)
   idf_component    an `idf_component.yml` anywhere in the tree            (tree only)
   release_bin      a non-draft release carrying a `.bin`/`.bin.gz`/`.uf2` (derive._has_bins)
-  platformio       a `platformio.ini` whose `platform` names espressif32  (derive.parse_ini)
+  platformio       a `platformio.ini` whose `platform` names espressif32, its `extra_configs`
+                   and `${section.option}` references resolved           (derive's ini model)
   idf_project      a `CMakeLists.txt` that includes ESP-IDF's `project.cmake`
 
 A repo with none is `not_device_firmware` (memory.NO_BUILD_SIGNAL_DAYS). An endpoint that failed
@@ -30,6 +31,7 @@ import memory
 
 NOT_DEVICE_FIRMWARE = "not_device_firmware"
 EVIDENCE_UNREADABLE = "device_evidence_unreadable"
+DEFERRED = "device_evidence_deferred"   # not checked this tick (budget): neither remembered nor answered
 MAX_CALLS = 8                  # tree + releases + MAX_BUILD_FILES platformio.ini + MAX_BUILD_FILES CMakeLists.txt
 MAX_BUILD_FILES = 3            # per build-file kind, shallowest first (the project root wins)
 
@@ -81,16 +83,39 @@ def _release_bin(owner_repo: str, calls) -> str | None:
     return None
 
 
-def _espressif_platform_line(text: str) -> int | None:
-    """The line of the first `platform =` option (any section) naming espressif32 — the official
-    platform, a pinned `espressif32@x`, or a fork URL such as pioarduino's platform-espressif32."""
-    hits = [opt["line"] for opts in derive.parse_ini(text).values() for key, opt in opts.items()
-            if key == "platform" and any("espressif32" in v.lower() for v in opt["values"])]
-    return min(hits) if hits else None
+def _extra_configs(path: str, text: str, tree: list[str] | None) -> list[str]:
+    """The tree files a platformio.ini's `extra_configs` globs match (relative to its directory),
+    ESP32-named first (derive._chip_priority), at most MAX_BUILD_FILES."""
+    base = path[: path.rfind("/") + 1]
+    globs = (derive.parse_ini(text, path).get("platformio", {}).get("extra_configs") or {"values": []})["values"]
+    matched = [p for g in globs for p in (tree or [])
+               if p.startswith(base) and p != path and derive.glob_to_regex(g).match(p[len(base):])]
+    return sorted(dict.fromkeys(matched), key=derive._chip_priority)[:MAX_BUILD_FILES]
 
 
-def _project_cmake_line(text: str) -> int | None:
-    return next((n for n, line in enumerate(text.split("\n"), 1) if _PROJECT_CMAKE.match(line)), None)
+def _platformio_hit(path: str, tree: list[str] | None, calls, base_raw: str) -> tuple[str, int] | None:
+    """(file, line) of the first `platform =` option naming espressif32 — the official platform, a
+    pinned `espressif32@x`, or a fork URL such as pioarduino's platform-espressif32 — across the
+    file and its extra_configs, `${section.option}` resolved the way derive models PlatformIO."""
+    text = calls.get_raw(base_raw + path)
+    if not text:
+        return None
+    files = [(path, text)]
+    for extra in _extra_configs(path, text, tree):
+        t = calls.get_raw(base_raw + extra)
+        if t:
+            files.append((extra, t))
+    order = {f: i for i, (f, _t) in enumerate(files)}
+    sections = derive.merge_ini(files)
+    hits = [(order[opt["file"]], opt["line"], opt["file"]) for opts in sections.values() for key, opt in opts.items()
+            if key == "platform" and any("espressif32" in v.lower() for v in derive._interpolate(opt["values"], sections))]
+    return (min(hits)[2], min(hits)[1]) if hits else None
+
+
+def _idf_project_hit(path: str, tree, calls, base_raw: str) -> tuple[str, int] | None:
+    text = calls.get_raw(base_raw + path)
+    line = next((n for n, ln in enumerate((text or "").split("\n"), 1) if _PROJECT_CMAKE.match(ln)), None)
+    return (path, line) if line else None
 
 
 def check(owner_repo: str, *, api=None, raw=None, ref: str | None = None, max_calls: int = MAX_CALLS) -> dict:
@@ -114,13 +139,12 @@ def check(owner_repo: str, *, api=None, raw=None, ref: str | None = None, max_ca
     url = _release_bin(owner_repo, calls)
     if url:
         return _found("release_bin", url, calls, notes)
-    for kind, name, line_of in (("platformio", "platformio.ini", _espressif_platform_line),
-                                ("idf_project", "CMakeLists.txt", _project_cmake_line)):
+    for kind, name, hit_of in (("platformio", "platformio.ini", _platformio_hit),
+                               ("idf_project", "CMakeLists.txt", _idf_project_hit)):
         for p in _shallowest(tree, name, truncated):
-            text = calls.get_raw(base_raw + p)
-            line = line_of(text) if text else None
-            if line:
-                return _found(kind, f"{blob}{p}#L{line}", calls, notes)
+            hit = hit_of(p, tree, calls, base_raw)
+            if hit:
+                return _found(kind, f"{blob}{hit[0]}#L{hit[1]}", calls, notes)
     if calls.exhausted:
         notes.append(f"call budget exhausted at {max_calls}")
     notes += calls.failures
@@ -128,8 +152,15 @@ def check(owner_repo: str, *, api=None, raw=None, ref: str | None = None, max_ca
     return {"ok": None if unknown else False, "kind": None, "url": None, "calls": calls.n, "notes": notes}
 
 
+def deferred(why: str) -> dict:
+    """A check that was not run (e.g. the tick cannot afford MAX_CALLS): not ok, not a fact."""
+    return {"ok": None, "deferred": True, "kind": None, "url": None, "calls": 0, "notes": [why]}
+
+
 def reject_reason(result: dict) -> str:
     """The ledger/report reason for a result that is not ok (`<key>: <detail>`)."""
+    if result.get("deferred"):
+        return f"{DEFERRED}: {'; '.join(result.get('notes') or [])[:120]}"
     if result.get("ok") is None:
         return f"{EVIDENCE_UNREADABLE}: {'; '.join(result.get('notes') or ['endpoint unavailable'])[:120]}"
     return (f"{NOT_DEVICE_FIRMWARE}: no espressif32 platformio.ini, ESP-IDF project, "

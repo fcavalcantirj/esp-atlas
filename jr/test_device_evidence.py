@@ -160,3 +160,28 @@ def test_ref_defaults_to_head():
     api, raw, log = fake_repo(ref="HEAD", tree=["a.ino"])
     assert dev.check("o/r", api=api, raw=raw)["ok"] is True
     assert log[0] == ("api", "repos/o/r/git/trees/HEAD?recursive=1")
+
+
+def test_platformio_platform_in_an_extra_config_file_counts():
+    """Meshtastic-style: the root file only lists extra_configs; the platform lives in arch/*.ini."""
+    root_ini = "[platformio]\nextra_configs =\n  arch/*/*.ini\n\n[env]\nframework = arduino\n"
+    arch = "[esp32_base]\nplatform = platformio/espressif32@6.9.0\n"
+    api, raw, _ = fake_repo(tree=["platformio.ini", "arch/esp32/esp32.ini", "arch/nrf52/nrf52.ini"],
+                            files={"platformio.ini": root_ini, "arch/esp32/esp32.ini": arch,
+                                   "arch/nrf52/nrf52.ini": "[nrf52_base]\nplatform = nordicnrf52\n"},
+                            releases=[])
+    res = dev.check("o/r", api=api, raw=raw, ref="main")
+    assert res["ok"] is True and res["kind"] == "platformio"
+    assert res["url"] == "https://github.com/o/r/blob/main/arch/esp32/esp32.ini#L2"
+
+
+def test_platformio_platform_interpolated_from_another_option_counts():
+    ini = "[common]\nesp32_platform = espressif32@6.4.0\n\n[env:x]\nplatform = ${common.esp32_platform}\nboard = esp32dev\n"
+    api, raw, _ = fake_repo(tree=["platformio.ini"], files={"platformio.ini": ini}, releases=[])
+    res = dev.check("o/r", api=api, raw=raw, ref="main")
+    assert res["ok"] is True and res["url"] == "https://github.com/o/r/blob/main/platformio.ini#L5"
+
+
+def test_deferred_result_has_its_own_reason():
+    reason = dev.reject_reason(dev.deferred("tick budget low"))
+    assert reason.startswith("device_evidence_deferred:")

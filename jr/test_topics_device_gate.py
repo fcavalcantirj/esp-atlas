@@ -125,3 +125,16 @@ def test_topics_stage_dry_run_never_claims_warble_would_admit(root, monkeypatch,
     res = stage_admit_topics.run(_ctx(root, gh=gh, dry_run=True), budget=2, raw=lambda url: None)
     assert "would admit" not in res.summary and res.rejects.get("not_device_firmware") == 1
     assert not (root / "jr" / "proposed_ledger.json").exists()
+
+
+def test_topics_stage_defers_the_gate_when_the_tick_budget_is_low(root, monkeypatch, _no_real_guard):
+    """Never a BudgetExceeded mid-drain (it would drop every note this tick made): with fewer
+    calls left than one check can spend, the candidate is deferred — not remembered, retried."""
+    from budget import Budget
+    gh = _warble_stage(monkeypatch)
+    budget = Budget(max_calls=dev.MAX_CALLS, clock=lambda: 0.0)   # the meta fetch leaves MAX_CALLS - 1
+    res = stage_admit_topics.run(_ctx(root, gh=gh, budget=budget), budget=2, raw=lambda url: None)
+    assert res.admitted == 0 and "stopped" not in res.summary
+    assert res.rejects.get("skipped_scoring") == 1 and "not_device_firmware" not in res.rejects
+    assert not (root / "jr" / "proposed_ledger.json").exists() or \
+        "warble" not in memory.load(root / "jr" / "proposed_ledger.json")["by_id"]

@@ -112,3 +112,20 @@ def test_warble_shaped_submission_is_answered_not_device_firmware(root, monkeypa
     assert "warble: skip not_device_firmware (submission #9)" in res.summary
     answer = _answers(ctx)[0][2]
     assert "**Not admitted** — `not_device_firmware" in answer and "platformio.ini" in answer
+
+
+def test_unreadable_submission_is_deferred_open_never_answered_or_remembered(root, monkeypatch):
+    """Submissions are read from OPEN issues only: closing one on an outage would lose it."""
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
+    issues = [_issue(11, "### Repository URL\n\nhttps://github.com/z/zapkit\n\n### Boards\n\nM5Stack Cardputer\n")]
+    metas = {"repos/z/zapkit": _meta("z/zapkit", stars=40, description="A Cardputer tool", rid=23),
+             TREE.format("z/zapkit"): {"__status__": "HTTP 502"}, RELEASES.format("z/zapkit"): {"__status__": "HTTP 502"}}
+
+    def boom(url):
+        raise RuntimeError("HTTP 503")
+    ctx = _ctx_sub(root, issues, metas)
+    res = stage_admit.run(ctx, budget=3, raw=boom)
+    assert res.admitted == 0 and "submission #11: deferred, build evidence unreadable" in res.summary
+    assert _answers(ctx) == []
+    assert not (root / "jr" / "proposed_ledger.json").exists() or \
+        "zapkit" not in memory.load(root / "jr" / "proposed_ledger.json")["by_id"]
