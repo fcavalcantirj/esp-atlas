@@ -69,6 +69,15 @@ def test_manifest_url_is_pinned_to_an_immutable_commit():
         f"{bm.PIO_PINNED_REF}/boards/m5stack-atoms3.json")
 
 
+def test_explicit_record_id_cannot_escape_the_pinned_boards_dir(monkeypatch):
+    # a record's `platformio` id lands in the URL path: one with a slash could point at a
+    # moving branch (../../main/boards/x), so it is refused and the curated table decides
+    monkeypatch.setitem(bm.PIO_BOARD_IDS, "fixture-board", "fixture_from_table")
+    for bad in ("../../main/boards/x", "a/b", "x?ref=main", "x#y", ".."):
+        assert bm.manifest_id({"platformio": bad}, "fixture-board") == "fixture_from_table"
+        assert bm.manifest_id({"platformio": bad}, "unmapped-board") is None
+
+
 def test_mapping_is_explicit_record_id_first_then_curated_table_never_guessed(monkeypatch):
     monkeypatch.setitem(bm.PIO_BOARD_IDS, "fixture-board", "fixture_from_table")
     assert bm.manifest_id({"platformio": "explicit_id"}, "fixture-board") == "explicit_id"
@@ -188,9 +197,11 @@ def test_manifest_0x1a86_writes_ch340_with_its_citation(tmp_path, monkeypatch):
 def test_manifest_unknown_vid_writes_nothing_and_says_why(tmp_path, monkeypatch):
     path = _setup(tmp_path, monkeypatch, "fixture-tinyusb", "fixture_unknown")
     before = path.read_text()
-    fetch = _fetcher({_vendor_url("fixture-tinyusb", "esp32-s3"): VENDOR_PAGE_NO_USB,
-                      bm.manifest_url("fixture_unknown"): _raw("unknown_vid_s3")})
+    log: list = []
+    vurl, murl = _vendor_url("fixture-tinyusb", "esp32-s3"), bm.manifest_url("fixture_unknown")
+    fetch = _fetcher({vurl: VENDOR_PAGE_NO_USB, murl: _raw("unknown_vid_s3")}, log)
     entry = bb.backfill_board(path, tmp_path, fetch, TODAY)
+    assert log == [vurl, murl]   # the vendor page is still tried first
     assert entry["status"] == "skipped"
     assert path.read_text() == before
     assert entry["field_reasons"]["usb_serial"] == {"vendor": bm.FIELD_ABSENT,

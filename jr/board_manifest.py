@@ -20,6 +20,7 @@ NO LLM, NO API KEY. The fetch is injected (board_backfill.default_fetch on real 
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import yaml
@@ -124,12 +125,16 @@ BRIDGE_VIDS = {0x10C4: "usb-uart-bridge-unspecified", 0x0403: "other"}
 
 NATIVE_USB = "native-usb-serial-jtag"
 
+# A manifest id is one filename under boards/ at the pinned ref: no slash, query or fragment
+# that could point the cited URL somewhere else (a moving branch), and not a bare dot segment.
+_PIO_ID_RE = re.compile(r"(?!\.+$)[A-Za-z0-9_.-]+")
+
 
 def manifest_id(fm: dict, board_id: str) -> str | None:
-    """The board's PlatformIO board id: the record's explicit `platformio` id, else the curated
-    table. None when neither names one."""
+    """The board's PlatformIO board id: the record's explicit `platformio` id (when it is a plain
+    filename), else the curated table. None when neither names one."""
     explicit = (fm or {}).get("platformio")
-    if isinstance(explicit, str) and explicit.strip():
+    if isinstance(explicit, str) and _PIO_ID_RE.fullmatch(explicit.strip()):
         return explicit.strip()
     return PIO_BOARD_IDS.get(board_id)
 
