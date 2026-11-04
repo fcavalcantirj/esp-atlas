@@ -71,3 +71,18 @@ def tmp_atlas(tmp_path, monkeypatch):
     monkeypatch.setattr(tools, "SOCS_DIR", tmp_path / "data" / "socs")
     monkeypatch.setattr(tools, "MODULES_DIR", tmp_path / "data" / "modules")
     return tmp_path
+
+
+@pytest.fixture(scope="session")
+def _test_cert(tmp_path_factory):
+    import fake_https
+    return fake_https.write_cert(tmp_path_factory.mktemp("tls"))
+
+
+@pytest.fixture
+def https_server(_test_cert):
+    """A local HTTPS server (jr/fake_https.py) with fresh routes; `.seams()` reaches it."""
+    import fake_https
+    server = fake_https.Server(*_test_cert)
+    yield server
+    server.close()
