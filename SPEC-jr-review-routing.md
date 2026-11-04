@@ -36,17 +36,21 @@ names every path/stage that forced review.
 
 ### 2. Publish applies the label — fail closed
 
-A `review` route opens the PR, then `gh pr edit <url> --add-label jr-review`. If that fails, the label
-is created (`gh label create jr-review …`) and the edit is retried once. Auto-merge is **never**
+A `review` route opens the PR, ensures the label (`gh label create jr-review … --force`, idempotent; a
+failure is noted, not fatal), then `gh pr edit <url> --add-label jr-review`; if that fails, once more
+through REST (`POST repos/{o}/{r}/issues/<n>/labels`). Auto-merge is **never**
 requested on a `review` route. If labelling still fails, the result says so
 (`labelled=False`, reason contains `jr-review label FAILED`) — auto-merge stays withheld either way.
 `PublishResult` gains `route`, `review_reasons`, `labelled`.
 
 ### 3. Tick triage
 
+- The open-PR list is read with `--limit 500` (gh defaults to 30, newest first; review PRs are the oldest).
 - An open PR carrying `jr-review` is **never stuck** (never raises `TickAbort`) and **never closed as
   superseded**, whatever its age or mergeability.
-- Unlabelled stale content PRs keep the old behaviour (abort, naming the PR).
+- Unlabelled stale content PRs keep the old behaviour (abort, naming the PR) — including a review PR
+  whose labelling failed: the abort is the fail-closed signal that it needs the owner.
+- `jr/demand_run.py` never closes a `jr-review` demand PR as superseded either.
 - **Cap:** `MAX_OPEN_REVIEW_PRS = 10` concurrent open `jr-review` PRs (any branch). At or above the
   cap the tick skips every review-producing stage (every content stage unless it declares
   `produces_review = False`) and reports `jr-review cap reached …` instead of piling up. Memory
