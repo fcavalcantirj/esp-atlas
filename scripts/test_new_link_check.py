@@ -13,6 +13,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import pytest
+import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import new_link_check as nlc  # noqa: E402
@@ -259,6 +260,77 @@ def test_the_exact_punctuated_url_is_requested_and_its_404_fails(tmp_path, serve
     assert server.hit("/important!") == ["HEAD", "GET", "GET"]
     assert server.hit("/important") == []
     assert server.url("/important!") in capsys.readouterr().out
+
+
+# YAML is read the way yaml.safe_load reads it: a quoted key or a flow mapping still holds a
+# whole-URL value, so its "!" is the author's. The oracle is the test's own safe_load.
+
+def _safe_load_strings(path, text):
+    if path.endswith(".md"):
+        text = text.split("---\n")[1]
+    stack, out = [yaml.safe_load(text)], []
+    while stack:
+        node = stack.pop()
+        if isinstance(node, dict):
+            stack.extend([*node.keys(), *node.values()])
+        elif isinstance(node, list):
+            stack.extend(node)
+        elif isinstance(node, str):
+            out.append(node)
+    return out
+
+
+@pytest.mark.parametrize("path,text", [
+    (SOURCES, lambda u: f"'url': {u}\n"),
+    (SOURCES, lambda u: f'"url": {u}\n'),
+    (SOURCES, lambda u: f"{{url: {u}}}\n"),
+    (SOURCES, lambda u: f"- {{url: {u}, verified: '2026-11-05'}}\n"),
+    (BOARD, lambda u: f"---\nid: acme-one\n'url': {u}\n---\n\n# Acme One\n"),
+    (BOARD, lambda u: f"---\nid: acme-one\nsource: {{url: {u}}}\n---\n\n# Acme One\n"),
+], ids=["yaml-single-quoted-key", "yaml-double-quoted-key", "yaml-flow-mapping",
+        "yaml-flow-mapping-list-item", "frontmatter-quoted-key", "frontmatter-flow-mapping"])
+def test_the_url_yaml_safe_load_reads_is_the_one_requested(tmp_path, server, capsys, path, text):
+    url = server.url("/important!")
+    content = text(url)
+    assert url in _safe_load_strings(path, content)
+    repo = make_repo(tmp_path, {}, {path: content})
+    assert run(repo) == 1
+    assert server.hit("/important!") == ["HEAD", "GET", "GET"]
+    assert server.hit("/important") == []
+    assert f"Dead link (HTTP 404, then 404, confirmed): {url}" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("path,text", [
+    (SOURCES, lambda u: f"'url': {u}\nnotes: [never closed\n"),
+    (SOURCES, lambda u: f"{{url: {u}}}\n  bad: indent\n"),
+    (BOARD, lambda u: f"---\nid: acme-one\n'url': {u}\nnotes: [never closed\n---\n\n# Acme One\n"),
+    (BOARD, lambda u: f"---\nid: acme-one\nsource: {{url: {u}\n---\n\n# Acme One\n"),
+], ids=["yaml-quoted-key", "yaml-flow-mapping", "frontmatter-quoted-key", "frontmatter-flow-mapping"])
+def test_yaml_that_does_not_parse_is_inconclusive_never_a_trimmed_url(tmp_path, server, capsys, path, text):
+    content = text(server.url("/important!"))
+    with pytest.raises(yaml.YAMLError):
+        _safe_load_strings(path, content)
+    repo = make_repo(tmp_path, {}, {path: content})
+    assert run(repo) == 0
+    assert server.hits == []
+    out = capsys.readouterr().out
+    assert "INCONCLUSIVE" in out and "ALIVE" not in out
+
+
+def test_without_a_yaml_reader_yaml_urls_are_inconclusive(tmp_path, server, capsys, monkeypatch):
+    monkeypatch.setattr(nlc, "yaml", None)
+    repo = make_repo(tmp_path, {}, {SOURCES: f"{{url: {server.url('/important!')}}}\n"})
+    assert run(repo) == 0
+    assert server.hits == []
+    assert "INCONCLUSIVE" in capsys.readouterr().out
+
+
+def test_body_prose_after_yaml_frontmatter_still_drops_sentence_punctuation(tmp_path, server):
+    url = server.url("/important!")
+    repo = make_repo(tmp_path, {}, {BOARD: f"---\nid: acme-one\nsource: {{url: {server.url('/ok')}}}\n---\n\nSee {url}\n"})
+    assert run(repo) == 0
+    assert server.hit("/important") == ["HEAD"]
+    assert server.hit("/important!") == []
 
 
 def test_an_escaped_json_url_is_decoded_to_the_path_it_names(tmp_path, server, capsys):
