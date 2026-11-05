@@ -12,8 +12,9 @@ current atlas (`data/firmware/`, `data/recipes/` — the same ground truth `tool
 reads) into one of UNCOVERED / RANKS_POORLY / COVERED_OK / UNRESOLVED.
 
 **READ-ONLY.** This module never authors a record, opens a PR, or touches `main`. It writes
-a git-tracked snapshot (`docs/demand/<date>.json`) and a Telegram digest — that's it. See
-SPEC §12 Phase 1.
+a git-tracked snapshot (`docs/demand/<date>.json`), the zero-result research queue
+(`docs/demand/research-queue.json`, SPEC-demand-research-queue.md) and a Telegram digest —
+that's it. See SPEC §12 Phase 1.
 
 The only network-touching function is `_pull_live()` — every other function in this module
 is a pure function over plain dicts/lists, so `test_demand.py` runs entirely offline.
@@ -33,6 +34,8 @@ import notify  # stdlib-only
 import telemetry  # import is side-effect free (composio loads lazily); only the floor is read here
 import tools
 import analytics_cross  # reuses fetch_trends() verbatim (SPEC-analytics-cross.md §7) — not forked here
+import demand_signal  # is_dated_snapshot: the one rule for which docs/demand/*.json is a snapshot
+import research_queue  # the zero-result research lane (SPEC-demand-research-queue.md)
 from capability_map import capabilities_from_text
 from device_map import device_from_text
 
@@ -53,6 +56,7 @@ TRENDS_BOOST_MAX = 0.5                  # v2: Trends interest=100 -> +50% weight
 GA4_SEARCH_SUBMIT = "search_submit"
 GA4_SEARCH_EMPTY = "search_empty"
 GA4_SITE_SEARCH_EVENTS = (GA4_SEARCH_SUBMIT, GA4_SEARCH_EMPTY)
+GA4_RESEARCH_SOURCE = f"ga4 {GA4_SEARCH_EMPTY}"   # the research queue's provenance for these counts
 GA4_PLACEHOLDER_TERMS = {"(not set)", "(other)"}  # no `q` sent / high-cardinality rollup — never a typed term
 
 # RANKS_POORLY thresholds (§4) — "high-impression + low-CTR + weak-position" made concrete
@@ -329,6 +333,34 @@ def _ga4_event_count(row: dict) -> int:
         return 0
 
 
+def _ga4_terms(raw_rows: list[dict]) -> list[dict]:
+    """Per normalized term: `searches` (`search_submit` count), `zero_result_searches`
+    (`search_empty` count) and `has_empty` (any `search_empty` row at all). Rows with an
+    empty/placeholder term, another event name or the legacy single-dimension shape are dropped."""
+    by_term: dict[str, dict] = {}
+    for r in raw_rows or []:
+        dims = r.get("dimensionValues") or []
+        if len(dims) < 2:
+            continue
+        event_name = (dims[0] or {}).get("value")
+        term = normalize_term((dims[1] or {}).get("value"))
+        if event_name not in GA4_SITE_SEARCH_EVENTS or not term or term in GA4_PLACEHOLDER_TERMS:
+            continue
+        row = by_term.setdefault(term, {"term": term, "searches": 0, "zero_result_searches": 0, "has_empty": False})
+        if event_name == GA4_SEARCH_SUBMIT:
+            row["searches"] += _ga4_event_count(r)
+        else:
+            row["zero_result_searches"] += _ga4_event_count(r)
+            row["has_empty"] = True
+    return list(by_term.values())
+
+
+def ga4_term_counts(raw_rows: list[dict]) -> list[dict]:
+    """`{term, searches, zero_result_searches}` per normalized term, UNfloored — the research
+    queue's input (SPEC-demand-research-queue.md)."""
+    return [{k: t[k] for k in ("term", "searches", "zero_result_searches")} for t in _ga4_terms(raw_rows)]
+
+
 def parse_ga4_searchterm_rows(raw_rows: list[dict]) -> tuple[list[dict], bool]:
     """Raw `GOOGLE_ANALYTICS_RUN_REPORT` rows (dims `[eventName, customEvent:q]`, metric
     `eventCount`, filtered to `GA4_SITE_SEARCH_EVENTS` — see `_pull_live`) -> one plain dict per
@@ -340,21 +372,8 @@ def parse_ga4_searchterm_rows(raw_rows: list[dict]) -> tuple[list[dict], bool]:
     name, or the legacy single-dimension shape are dropped, never raised; `d2_available` is
     True only when at least one real term parses — otherwise the miner runs on D1/D4 only
     (§8: 'no silent degradation')."""
-    by_term: dict[str, dict] = {}
-    for r in raw_rows or []:
-        dims = r.get("dimensionValues") or []
-        if len(dims) < 2:
-            continue
-        event_name = (dims[0] or {}).get("value")
-        term = normalize_term((dims[1] or {}).get("value"))
-        if event_name not in GA4_SITE_SEARCH_EVENTS or not term or term in GA4_PLACEHOLDER_TERMS:
-            continue
-        row = by_term.setdefault(term, {"term": term, "events": 0, "zero_result": False})
-        if event_name == GA4_SEARCH_SUBMIT:
-            row["events"] += _ga4_event_count(r)
-        else:
-            row["zero_result"] = True
-    parsed = list(by_term.values())
+    parsed = [{"term": t["term"], "events": t["searches"], "zero_result": t["has_empty"]}
+              for t in _ga4_terms(raw_rows)]
     return parsed, bool(parsed)
 
 
@@ -536,7 +555,7 @@ def _latest_prior_snapshot(demand_dir: Path = DEMAND_DIR) -> list[dict]:
     """The most recent dated snapshot's items (for carrying `first_seen` forward), or []."""
     if not demand_dir.exists():
         return []
-    files = sorted(p for p in demand_dir.glob("*.json") if p.stem != "unresolved")
+    files = sorted(p for p in demand_dir.glob("*.json") if demand_signal.is_dated_snapshot(p))
     if not files:
         return []
     try:
@@ -649,11 +668,31 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
     )
     write_snapshot(items, d2_available, live["window"], today, demand_dir)
     write_unresolved(items, demand_dir)
+    try:
+        research_line, research = update_research_queue(ga4_raw, today, live["window"], demand_dir)
+    except Exception as e:  # noqa: BLE001 — the research lane must never block the demand steer
+        research = {"error": f"{type(e).__name__}: {e}"}
+        research_line = f"🔴 research queue NOT updated: {research['error'][:160]}"
     digest = build_digest(items, d2_available, live["window"],
-                          d2_pull_failed=not live.get("ga4_pull_ok", True))
+                          d2_pull_failed=not live.get("ga4_pull_ok", True)) + "\n" + research_line
     if send_telegram:
         notify.send_telegram(digest)
-    return {"items": items, "digest": digest, "d2_available": d2_available}
+    return {"items": items, "digest": digest, "d2_available": d2_available, "research": research}
+
+
+def update_research_queue(ga4_raw_rows: list[dict], today: str, window: dict,
+                          demand_dir: Path = DEMAND_DIR) -> tuple[str, dict]:
+    """The zero-result research lane (SPEC-demand-research-queue.md): every UNfloored GA4 term
+    that returned nothing becomes (or refreshes) a candidate in `research-queue.json`, classified
+    against the catalog read-only. `today` is the intake date; `window` is the {start, end} the
+    GA4 pull queried, stored as the counts' provenance. Returns (digest line, run report). Writes
+    only that file."""
+    path = demand_dir / research_queue.QUEUE_NAME
+    queue, report = research_queue.update_queue(
+        research_queue.load_queue(path), ga4_term_counts(ga4_raw_rows),
+        research_queue.load_catalog(REPO), today, source=GA4_RESEARCH_SOURCE, window=window)
+    research_queue.write_queue(queue, path)
+    return research_queue.digest_line(queue, report), report
 
 
 def main(argv=None) -> int:

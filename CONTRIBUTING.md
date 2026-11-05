@@ -55,9 +55,13 @@ esp-atlas search "<name>"      # or: GET /search?q=<name>
 4. Open a PR and fill in the template — including your source links.
 
 CI enforces all of this automatically, with no human in the loop: a PR adding
-or editing a board must pass schema validation, the full pytest suite
-(including the wizard's oracle invariants), and have every cited source URL
-resolve live before it can merge.
+or editing a board must pass schema validation and the full pytest suite
+(including the wizard's oracle invariants). On pull requests the required
+`schema` check also checks every URL the PR adds or changes
+(`scripts/new_link_check.py`): a confirmed 404/410 fails `schema` and blocks the
+merge until you fix the link. An inconclusive answer (timeout, rate limit, 5xx,
+bot wall) never blocks. Links that were already broken on main are reported by
+the non-blocking `sources-live` job, not charged to your PR.
 
 ## Data model
 

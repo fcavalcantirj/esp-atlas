@@ -140,7 +140,7 @@ function FontSizeControls() {
 
 export default function HeaderControls() {
   return (
-    <div className="header-controls">
+    <div className="header-controls" role="group" aria-label="Display settings">
       <FontSizeControls />
       <ThemeToggle />
     </div>

@@ -309,4 +309,8 @@ not as a recipe.
   bytes, we do not host, version, or index them. Storing copies of binaries (Bruce's
   approach) remains off-limits.
 - Never claim an untested combo works — trust tiers enforce it.
+  Run answers derive their entire summary from catalog data and recipe trust
+  tiers. Optional model notes are limited to `known-good` recipe rows; other
+  tiers retain their deterministic hardware reasons and caveats. A recorded
+  source URL alone does not substantiate arbitrary model compatibility prose.
 - Not a firmware forum, not a store. The wizard flashes; it does not sell or host.
