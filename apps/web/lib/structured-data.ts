@@ -5,12 +5,14 @@
 // so its SoftwareApplication node has something for Google to render; never a
 // fabricated rating or review.
 import type { BrandFacet, Firmware, PartDetail, PartRecord } from "@/lib/api";
-import { brandLabel } from "@/lib/brand";
-import { faqPage } from "@/lib/faq";
-import { firmwareMetaDescription, partMetaDescription, typeLabel, typePlural } from "@/lib/format";
-import { typeIndexPath } from "@/lib/routes";
-import { dataFolderUrl, repoUrl } from "@/lib/github";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, websiteSearchAction } from "@/lib/site";
+// Relative (not "@/") runtime imports so plain `node --test` can load this file
+// (see structured-data.test.ts); type-only imports are erased and may stay "@/".
+import { brandLabel } from "./brand.ts";
+import { faqPage } from "./faq.ts";
+import { firmwareMetaDescription, partMetaDescription, typeLabel, typePlural } from "./format.ts";
+import { typeIndexPath } from "./routes.ts";
+import { dataFolderUrl, repoUrl } from "./github.ts";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, websiteSearchAction } from "./site.ts";
 
 const CONTEXT = "https://schema.org";
 const ORG_ID = `${SITE_URL}/#organization`;
