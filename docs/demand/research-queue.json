@@ -14,7 +14,7 @@
    },
    "searches": 1,
    "zero_result_searches": 1,
-   "status": "validated",
+   "status": "linked",
    "classification": "missing_content",
    "evidence": {
     "rule": "no catalog id, title or alias matches",
@@ -22,7 +22,9 @@
     "matches": [],
     "checked": 284
    },
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1449"
+   ],
    "outcome": null,
    "closed_on": null,
    "history": []
