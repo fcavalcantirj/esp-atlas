@@ -408,3 +408,20 @@ def test_extract_urls_dedupes_ignoring_the_fragment_and_keeps_every_location():
         ("b.md", 7, "url: https://a.example/p#L2"),
     ])
     assert found == {"https://a.example/p": [("a.md", 1), ("b.md", 7)]}
+
+
+# --- the process exit code CI sees ---------------------------------------------------------
+# The required schema check runs this script as a plain step: its exit code IS the verdict.
+
+SCRIPT = Path(__file__).resolve().parent / "new_link_check.py"
+
+
+@pytest.mark.parametrize("path,expected", [
+    ("/ok", 0), ("/down503", 0), ("/slow", 0), ("/gone404", 1), ("/gone410", 1),
+], ids=["alive", "inconclusive-5xx", "inconclusive-timeout", "dead-404", "dead-410"])
+def test_the_script_exit_code_is_nonzero_only_for_a_confirmed_dead_link(tmp_path, server, path, expected):
+    repo = make_repo(tmp_path, {BOARD: board_md(server.url("/ok"))},
+                     {BOARD: board_md(server.url("/ok"), server.url(path))})
+    proc = subprocess.run([sys.executable, str(SCRIPT), "--repo", str(repo), "--base", "main",
+                           "--timeout", "0.5", "--recheck-delay", "0"], capture_output=True, text=True)
+    assert proc.returncode == expected, proc.stdout + proc.stderr
