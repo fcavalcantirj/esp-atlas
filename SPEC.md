@@ -77,6 +77,17 @@ visibly separate from the verified fields above it.
 ## Governance
 - CI gate: `scripts/validate.py` (schema + source rule, plus the dataset-level
   no-orphan-firmware check — every `firmware` must have ≥1 `recipe`) on every PR.
+- New-link gate (`new-links` job, `scripts/new_link_check.py`, pull_request only, blocking):
+  a URL on a line the PR ADDS or CHANGES under `data/**` (`.md` frontmatter sources/fields
+  and body links, `.json`/`.yml` cited-source fields) that answers a **confirmed** 404 or
+  410 (asked twice) blocks the PR. HEAD, then GET fallback; short timeout; small
+  concurrency cap; polite User-Agent. Timeouts, DNS/TLS failures, 429, 5xx, 403 bot walls
+  and any other status are **inconclusive** and never block. URLs on untouched lines are
+  never checked, so a link already broken on main does not block an unrelated PR.
+- Existing-link tracker (`sources-live` job, `scripts/check_sources_live.py`):
+  `continue-on-error`, not required — it reports every cited URL already broken on main.
+  No CI bot path commits reports back to the repo, so its dead list lives in the job log
+  (no `docs/link-health.json`); fixing those is tracked work, not a PR gate.
 - CODEOWNERS per brand folder (as boards grow).
 - oracle-loop bot opens PRs for missing/stale parts; humans always merge. The daily
   freshness engine (link-liveness, firmware-release/recipe drift, board/brand
