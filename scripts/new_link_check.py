@@ -54,10 +54,11 @@ _BARE = re.compile(r"https?:(?:\\?/){2}[^\s<>\"`\[\]{}|^]+")  # https:\/\/ too: 
 _TOKEN = re.compile(r"\"|'(?=https?:)|<(?=https?:)|\]\(|https?:(?:\\?/){2}")
 _DOUBLE_QUOTED = re.compile(r'"((?:[^"\\]|\\.)*)"')
 _SINGLE_QUOTED = re.compile(r"'((?:[^']|'')*)'")
-_AUTOLINK = re.compile(r"<(https?:[^\s<>]*)>")
+_AUTOLINK = re.compile(r"<(https?://[^\s<>]*)>")
 _WHOLE_URL = re.compile(r"https?://\S+")
 _TRAILING = ".,;:!?*'"
 _ESCAPED = re.compile(r"\\([!-/:-@\[-`{-~])")  # markdown/JSON backslash escapes: my\_repo, \/
+_UNICODE_ESCAPE = re.compile(r"\\u([0-9a-fA-F]{4})")
 _HUNK = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@")
 
 
@@ -108,11 +109,11 @@ def _unescape(text: str) -> str:
 
 def _json_string(raw: str) -> str:
     """A "..." body decoded as JSON (also right for YAML double quotes); unknown escapes such as
-    markdown's my\\_repo fall back to dropping the backslash."""
+    markdown's my\\_repo fall back to dropping the backslash, \\uXXXX still decoded."""
     try:
         return json.loads(f'"{raw}"')
     except ValueError:
-        return _unescape(raw)
+        return _unescape(_UNICODE_ESCAPE.sub(lambda m: chr(int(m.group(1), 16)), raw))
 
 
 def _delimited(value: str) -> list[str]:
@@ -177,7 +178,7 @@ def urls_in(line: str) -> list[str]:
     my\\_repo, YAML 'it''s'). Punctuation inside an explicit delimiter -- a quoted value that is
     the whole URL, a markdown (target) or an <autolink> -- belongs to the URL; only a bare URL
     in prose loses trailing sentence punctuation."""
-    return [url for url in _scan(line) if url.split("://", 1)[1]]
+    return [url for url in _scan(line) if _WHOLE_URL.fullmatch(url)]
 
 
 def extract_urls(lines) -> dict[str, list[tuple[str, int]]]:

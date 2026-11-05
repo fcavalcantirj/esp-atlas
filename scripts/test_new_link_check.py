@@ -395,6 +395,8 @@ def test_added_lines_keep_only_data_text_files_with_new_line_numbers():
     ('"notes": "pinout at https://example.com/pinout."', ["https://example.com/pinout"]),
     ("unclosed [x](https://example.com/a.", ["https://example.com/a"]),
     ("a scheme alone https:// or 'https://' or \"https:\" is no URL", []),
+    ("See <https:example.com>. or <https:\\/\\/example.com/x>", ["https://example.com/x"]),
+    ('"url": "https://github.com/o/my\\_repo/\\u0067"', ["https://github.com/o/my_repo/g"]),
 ])
 def test_urls_in_a_line(line, urls):
     assert nlc.urls_in(line) == urls
