@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Newsreader, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Providers from "@/app/providers";
 import SiteFooter from "@/components/SiteFooter";
@@ -10,17 +10,20 @@ import "./flash-wizard.css";
 import "./verify.css";
 import "./status.css";
 
-// Language is set in a high-contrast serif; data is set in mono. Two voices only.
-const newsreader = Newsreader({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  style: ["normal", "italic"],
+// Bundled variable fonts keep the shell independent of a remote font request.
+// Both families are licensed under the accompanying SIL Open Font License.
+const geist = localFont({
+  src: "./fonts/Geist.ttf",
+  variable: "--font-geist-sans",
+  weight: "100 900",
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
+const geistMono = localFont({
+  src: "./fonts/GeistMono.ttf",
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: "100 900",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -48,8 +51,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f1115" },
+    { media: "(prefers-color-scheme: light)", color: "#e9e7e1" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0c0d" },
   ],
 };
 
@@ -61,7 +64,7 @@ const fontScaleScript = `try{var s=localStorage.getItem(${JSON.stringify(
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${newsreader.variable} ${geistMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${geist.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: fontScaleScript }} />
         <Providers>
