@@ -165,7 +165,7 @@
       "pr_ref": "#1445",
       "repo": "acidvegas/acid-drop",
       "status": "proposed",
-      "timestamp": "2026-11-05T20:00:59.980852+00:00"
+      "timestamp": "2026-11-05T22:00:59.905926+00:00"
     },
     "acidtrip-psychedelic-m5core-60-visuals": {
       "expired_at": "2026-10-11T16:00:12.884585+00:00",
@@ -1070,7 +1070,7 @@
       "pr_ref": "#1448",
       "repo": "oldtokage-collab/c.p.s.--cardputer-syhnth--",
       "status": "proposed",
-      "timestamp": "2026-11-05T20:00:59.980852+00:00"
+      "timestamp": "2026-11-05T22:00:59.905926+00:00"
     },
     "c4-stick": {
       "expires": "2026-12-05T19:01:17.341039+00:00",
@@ -3514,13 +3514,14 @@
       "timestamp": "2026-09-02T17:03:09.114569+00:00"
     },
     "game-snake-m5cardputer": {
+      "expired_at": "2026-11-05T22:00:59.905926+00:00",
       "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "game-snake-m5cardputer",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 2 forks",
       "repo": "zrutra/game-snake-m5cardputer",
       "repo_id": 830932613,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "gameboy-enhanced-firmware-m5stack-cardpu": {
@@ -3575,13 +3576,14 @@
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
     "geminiputer": {
+      "expired_at": "2026-11-05T22:00:59.905926+00:00",
       "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "geminiputer",
       "pr_ref": null,
       "reason": "below_floor: 23 stars / 9 forks",
       "repo": "nishad2m8/geminiputer",
       "repo_id": 883370098,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "geo-tp": {
@@ -3986,7 +3988,7 @@
       "pr_ref": "#1434",
       "repo": "jgauchia/icenav-v3",
       "status": "proposed",
-      "timestamp": "2026-11-05T20:00:59.980852+00:00"
+      "timestamp": "2026-11-05T22:00:59.905926+00:00"
     },
     "iching-xiaozhi-card": {
       "expired_at": "2026-09-19T14:00:22.488207+00:00",
@@ -5877,13 +5879,14 @@
       "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
     "little-devhelper": {
+      "expired_at": "2026-11-05T22:00:59.905926+00:00",
       "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "little-devhelper",
       "pr_ref": null,
       "reason": "below_floor: 6 stars / 1 forks",
       "repo": "chrisdacrunk/little-devhelper",
       "repo_id": 1109157152,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "lorachat-for-as923": {
@@ -5988,13 +5991,14 @@
       "timestamp": "2026-09-09T04:00:10.126216+00:00"
     },
     "m5-card-computer-i2c-scanner": {
+      "expired_at": "2026-11-05T22:00:59.905926+00:00",
       "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "m5-card-computer-i2c-scanner",
       "pr_ref": null,
       "reason": "below_floor: 24 stars / 4 forks",
       "repo": "geo-tp/m5-card-computer-i2c-scanner",
       "repo_id": 802222350,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5-cardputer-sd-security-firmware": {
@@ -6009,13 +6013,14 @@
       "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "m5-chameleon-ultra": {
+      "expired_at": "2026-11-05T22:00:59.905926+00:00",
       "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "m5-chameleon-ultra",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 1 forks",
       "repo": "rennancockles/m5-chameleon-ultra",
       "repo_id": 885472450,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5-clicker-game": {
@@ -6575,13 +6580,14 @@
       "timestamp": "2026-10-10T00:00:13.827729+00:00"
     },
     "m5cardputer-webradio-dutch": {
+      "expired_at": "2026-11-05T22:00:59.905926+00:00",
       "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "m5cardputer-webradio-dutch",
       "pr_ref": null,
       "reason": "below_floor: 8 stars / 4 forks",
       "repo": "rolandbreedveld/m5cardputer_webradio_dutch",
       "repo_id": 805815914,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5cardputer-webradio-fr": {
@@ -6775,13 +6781,14 @@
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "m5core2-touchpanel-recovery": {
+      "expired_at": "2026-11-05T22:00:59.905926+00:00",
       "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "m5core2-touchpanel-recovery",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 2 forks",
       "repo": "m5stack/m5core2-touchpanel-recovery",
       "repo_id": 561151768,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5core2-voronoi": {
@@ -7307,13 +7314,14 @@
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
     "m5stack-cardputer-adv-gps-tracker": {
+      "expired_at": "2026-11-05T22:00:59.905926+00:00",
       "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "m5stack-cardputer-adv-gps-tracker",
       "pr_ref": null,
       "reason": "below_floor: 6 stars / 0 forks",
       "repo": "meister5/m5stack-cardputer-adv-gps-tracker",
       "repo_id": 1115446925,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "m5stack-cardputer-sparks": {
@@ -7601,7 +7609,7 @@
       "pr_ref": "#1439",
       "repo": "h1romas4/m5stamp-c3dev",
       "status": "proposed",
-      "timestamp": "2026-11-05T20:00:59.980852+00:00"
+      "timestamp": "2026-11-05T22:00:59.905926+00:00"
     },
     "m5stampfly": {
       "expired_at": "2026-10-13T06:00:59.967904+00:00",
@@ -9349,13 +9357,14 @@
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
     "piano-tiles-adv": {
+      "expired_at": "2026-11-05T22:00:59.905926+00:00",
       "expires": "2026-11-05T20:01:00.563893+00:00",
       "id": "piano-tiles-adv",
       "pr_ref": null,
       "reason": "already_catalogued: zeloksa/piano-tiles-adv is already in the atlas",
       "repo": "zeloksa/piano-tiles-adv",
       "repo_id": 1189533961,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "picoware": {
@@ -10792,7 +10801,7 @@
       "pr_ref": "#1445",
       "repo": "xinyuan-lilygo/t-deck",
       "status": "proposed",
-      "timestamp": "2026-11-05T20:00:59.980852+00:00"
+      "timestamp": "2026-11-05T22:00:59.905926+00:00"
     },
     "t-display-c5": {
       "expires": "2026-11-08T14:00:12.109822+00:00",
@@ -11144,7 +11153,7 @@
       "pr_ref": "#1447",
       "repo": "vicliu624/trail-mate",
       "status": "proposed",
-      "timestamp": "2026-11-05T20:00:59.980852+00:00"
+      "timestamp": "2026-11-05T22:00:59.905926+00:00"
     },
     "trmnl-firmware": {
       "expired_at": "2026-10-11T22:00:11.491359+00:00",
