@@ -5,7 +5,7 @@ import { SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 
 // Per-firmware social preview (og:image / twitter:image), rendered from the
 // same record the page shows: name, category and maintainer, plus the SoCs
-// it's verified to run on. Mirrors app/parts/[id]/opengraph-image.tsx exactly
+// its record targets. Mirrors app/parts/[id]/opengraph-image.tsx exactly
 // (size, fonts, colours, cached fetch + wordmark fallback) so the two social
 // cards read as one system.
 // The API fetch is the page's own (cached an hour, 3 s bound, never throws);

@@ -51,3 +51,9 @@ test("boardFlashCtaParams carries the board's part_id plus the count and tier fo
   assert.equal(params.count, 2);
   assert.equal(params.tier, "known-good");
 });
+
+test("ranks the data's `declared` tier between reported and unverified, with its own label", () => {
+  assert.equal(highestTrustTier([row("unverified"), row("declared")]), "declared");
+  assert.equal(highestTrustTier([row("declared"), row("reported")]), "reported");
+  assert.equal(boardFlashCtaLabel([row("declared")]), "1 firmware option · Declared");
+});

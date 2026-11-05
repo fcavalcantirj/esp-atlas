@@ -96,7 +96,7 @@ export default async function Home() {
       <BrowseSection
         id="browse-firmware"
         title="Popular firmware"
-        hint="The most-starred flashable projects in the atlas, with the boards they're verified to run on."
+        hint="The most-starred flashable projects in the atlas, with the boards they have recipes for, each labelled by trust tier."
         items={popularFirmware}
         origin="popular_firmware"
       />

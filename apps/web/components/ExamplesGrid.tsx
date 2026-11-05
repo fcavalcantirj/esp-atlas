@@ -18,7 +18,7 @@ const GROUPS: { id: ExampleGroup; title: string; hint: string }[] = [
   {
     id: "run-firmware",
     title: "Run a firmware",
-    hint: "Projects with a verified recipe — see every board each one runs on.",
+    hint: "Projects with a cited recipe — see the boards each has recipes for. Unverified pairings and discovery leads are listed too, labelled by trust tier.",
   },
   {
     id: "build-project",
@@ -39,7 +39,7 @@ function ExampleCard({ example, hidden = false }: { example: Example; hidden?: b
         <span className="example-card-label">{example.label}</span>
         {example.description && <span className="example-card-desc">{example.description}</span>}
         <span className="example-card-reason">
-          Runs on {example.count} {example.count === 1 ? "board" : "boards"}
+          Recipes for {example.count} {example.count === 1 ? "board" : "boards"}
         </span>
         <PopularityGlance popularity={{ stars: example.stars, forks: example.forks }} />
       </Link>

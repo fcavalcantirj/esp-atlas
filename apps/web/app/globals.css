@@ -1291,7 +1291,7 @@ input[type="checkbox"]:checked::after {
   white-space: nowrap;
 }
 
-/* SPEC-firmware-ordering.md §5: "Runs on N boards" card glance, same quiet
+/* SPEC-firmware-ordering.md §5: "Recipes for N boards" card glance, same quiet
    mono register as .popularity-glance -- another datum, not a call to action. */
 .part-card-boards {
   font-family: var(--font-data);
