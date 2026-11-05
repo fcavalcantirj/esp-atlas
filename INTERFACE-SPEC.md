@@ -138,6 +138,16 @@ query ─▶ structured filter (radio/band/protocol/form) + FTS (name/prose/note
     `esp_atlas_core.status`) so one failing probe reports as `warn`/`down`
     instead of crashing the response — this endpoint must **never 500**, and
     makes no outbound network calls (stays fast).
+  - This snapshot covers the API/index/catalog/deploy components above; it does
+    **not** establish external inference availability. The external uptime
+    monitor must separately run `python3 scripts/intent_availability.py
+    https://esp-atlas.com/api` at a bounded cadence (for example hourly), alert
+    on its nonzero exit, and report recovery only after an uncached successful
+    probe. A cached intent or deterministic firmware lookup cannot prove that
+    the provider is reachable. The probe sends no browser analytics events and
+    prints only a safe component/reason/status receipt, never provider payloads
+    or credentials. Scheduling and alert delivery remain operational setup;
+    adding this script alone does not enable monitoring.
 
 **Site** (Next.js, SSG)
 - `/` home: wizard + ask box
