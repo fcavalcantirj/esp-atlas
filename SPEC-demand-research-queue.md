@@ -96,6 +96,11 @@ First rule that fires wins:
    same identity tokens in any order (generic words dropped: `marauder` ~ `ESP32 Marauder`), or (for terms of 4+ compact characters) an edit distance
    within `1` (`2` for terms of 10+). Evidence: the matching ids with `via` and `distance`.
    More than 3 distinct ids → `unclear` (ambiguous, evidence kept).
+   Positive edit distance does not establish equivalence between digit-bearing board/part
+   model identifiers: `ES3N28P` is not an alias for `ES3C28P`. Exact aliases, the same identity
+   tokens and exact vendor-prefix/model matches remain valid; ordinary word and firmware
+   typo matching is unchanged. A nearby physical model stays a research candidate until its
+   identity is checked against a primary source.
 4. **`alias_typo` (vendor-prefix / model number)** — only when rule 3 found nothing: board ids
    are vendor-prefixed (`freenove-fnk0104s`), so a search for the bare model number never
    equals an id. The term (compact) equals a record's **model key** — its id without the
@@ -171,7 +176,7 @@ runner, the miner's `first_seen` carry-forward) read only `<YYYY-MM-DD>.json` fi
 - the 6th new candidate on one day is deferred;
 - a term with no catalog match (the made-up SKU `zz9q41x`) → `missing_content`;
 - `es3c28p` → `alias_typo` with exactly `lcdwiki-es3c28p` (its alias; the vendor-prefix rule
-  alone lands on the same id); known gap: the sibling `es3n28p` also fuzzy-matches it (xfail);
+  alone lands on the same id); the distinct sibling `es3n28p` never resolves to that touch board;
 - one typo away from a board id → `alias_typo` with that id as evidence;
 - a bare model number (`fnk0104s`) → `alias_typo` with exactly its vendor-prefixed id;
 - equal to an id but zero results → `search_defect`;

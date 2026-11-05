@@ -315,11 +315,12 @@ def test_an_id_without_its_brand_prefix_offers_no_suffix():
     assert rq.classify("pros3x", CATALOG + other)[0] == "missing_content"
 
 
-def test_a_fuzzy_match_still_wins_over_a_model_number():
+def test_an_exact_model_number_wins_over_a_nearby_physical_identifier():
     catalog = CATALOG + [{"id": "acme-qx5000", "kind": "board", "brand": "acme", "title": "", "aliases": []},
                          {"id": "qx5001", "kind": "board", "brand": "", "title": "", "aliases": []}]
     cls, ev = rq.classify("qx5000", catalog)
-    assert (cls, ev["ids"]) == ("alias_typo", ["qx5001"]) and "vendor-prefix" not in ev["rule"]
+    assert (cls, ev["ids"]) == ("alias_typo", ["acme-qx5000"])
+    assert "vendor-prefix" in ev["rule"]
 
 
 def test_a_new_candidate_records_its_classification_and_evidence():
@@ -384,8 +385,6 @@ def test_es3c28p_now_resolves_to_its_real_lcdwiki_board():
     assert "vendor-prefix" in ev["rule"]
 
 
-@pytest.mark.xfail(strict=True, reason="known: the fuzzy rule's edit distance 1 sends the sibling "
-                   "SKU es3n28p to lcdwiki-es3c28p via its 'ES3C28P' alias")
 def test_the_sibling_es3n28p_does_not_resolve_to_lcdwiki_es3c28p():
     cls, ev = rq.classify("es3n28p", rq.load_catalog(REPO))
     assert "lcdwiki-es3c28p" not in ev["ids"]

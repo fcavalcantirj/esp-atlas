@@ -148,7 +148,7 @@ def _identity(text: str) -> frozenset[str]:
 
 def _fuzzy_matches(term: str, term_c: str, catalog: list[dict]) -> list[dict]:
     """An exact alias, the same identity tokens in any order ('marauder' ~ 'ESP32 Marauder'), or
-    a small edit distance."""
+    a small edit distance. Physical model identifiers require zero-distance evidence."""
     cap = 2 if len(term_c) >= LONG_TERM_CHARS else 1
     term_identity = _identity(term)
     out = []
@@ -161,6 +161,12 @@ def _fuzzy_matches(term: str, term_c: str, catalog: list[dict]) -> list[dict]:
             if _identity(label) == term_identity:
                 d = 0
             elif len(term_c) >= MIN_FUZZY_CHARS or label_c == term_c:
+                # A one-character SKU change can identify different hardware:
+                # ES3N28P is not a typo for ES3C28P. Keep exact aliases/tokens
+                # and the later exact model-key rule, without guessing variants.
+                if (entry.get("kind") in {"board", "part"} and label_c != term_c
+                        and _is_model_key(term_c) and _is_model_key(label_c)):
+                    continue
                 d = edit_distance(term_c, label_c, cap)
             else:
                 continue
