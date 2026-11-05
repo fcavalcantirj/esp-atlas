@@ -16,8 +16,8 @@ How:
      The URL checked is the one the author wrote. YAML (a .yml/.yaml file, .md frontmatter;
      read at HEAD) is read with yaml's SafeLoader, so a value that is the URL is exactly what
      yaml.safe_load yields -- `url: https://x/a!`, `'url': https://x/a!`, `{url: https://x/a!}`
-     all keep the "!"; YAML that cannot be read leaves its URLs inconclusive, never a trimmed
-     guess. Elsewhere JSON/markdown escapes are decoded first (https:\\/\\/x is https://x),
+     all keep the "!"; YAML that safe_load refuses, or with a line break git does not count,
+     leaves its URLs inconclusive, never a trimmed guess. Elsewhere JSON/markdown escapes are decoded first (https:\\/\\/x is https://x),
      and punctuation inside quotes, a markdown (target) or an <autolink> is kept; only a bare
      URL in prose (a .md body, a YAML comment or a longer YAML string) drops trailing sentence
      punctuation;
@@ -75,6 +75,11 @@ _ESCAPED = re.compile(r"\\([!-/:-@\[-`{-~])")  # markdown/JSON backslash escapes
 _UNICODE_ESCAPE = re.compile(r"\\u([0-9a-fA-F]{4})")
 _HUNK = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@")
 _YAML_COMMENT = re.compile(r"(?<![^ \t])#")
+_ANY_SPACE = re.compile(r"\s")  # Unicode-aware: NBSP and U+3000 too
+_YAML_SPACE = " \t\r\n"  # YAML's whitespace; NBSP and other Unicode spaces are content
+_YAML_URL = re.compile(r"https?://[^ \t\r\n]+")
+_FOREIGN_BREAK = re.compile(r"\r(?!\n)|[\x0b\x0c\x1c-\x1e\x85\u2028\u2029]")  # git counts only \n
+_FENCE = re.compile(r"(?:---|\.\.\.)(?:[ \t]|$)")  # a YAML document marker, comment allowed
 YAML_SUFFIXES = (".yml", ".yaml")
 FRONTMATTER_FENCES = ("---", "...")
 
@@ -91,7 +96,7 @@ def added_lines(diff_text: str) -> list[tuple[str, int, str]]:
     A `+++ b/<path>` line is a file header only before the first hunk of a file; inside a hunk
     it is content that happens to start with '++'."""
     out, path, line_no, in_hunk = [], None, 0, False
-    for line in diff_text.splitlines():
+    for line in diff_text.split("\n"):  # git's lines: a form feed or U+2028 is not a line break
         if line.startswith("diff --git "):
             path, in_hunk = None, False
         elif not in_hunk and line.startswith("+++ "):
@@ -201,11 +206,11 @@ def urls_in(line: str) -> list[str]:
 def frontmatter_span(text: str) -> range:
     """Line numbers (1-based) between a markdown file's opening --- and its closing ---/...;
     empty when the file has no closed frontmatter."""
-    lines = text.splitlines()
-    if not lines or lines[0].rstrip() != FRONTMATTER_FENCES[0]:
+    lines = text.split("\n")
+    if lines[0].rstrip() != FRONTMATTER_FENCES[0]:
         return range(0)
     for line_no, line in enumerate(lines[1:], start=2):
-        if line.rstrip() in FRONTMATTER_FENCES:
+        if _FENCE.match(line.rstrip("\r")):
             return range(2, line_no)
     return range(0)
 
@@ -232,8 +237,12 @@ class _Scalar:
     end_col: int | None
 
     @property
+    def url(self) -> str:
+        return self.value.strip(_YAML_SPACE)
+
+    @property
     def is_url(self) -> bool:
-        return bool(_WHOLE_URL.fullmatch(self.value.strip()))
+        return bool(_YAML_URL.fullmatch(self.url))
 
 
 def _scalar_nodes(node, seen):
@@ -254,19 +263,21 @@ def _scalar_nodes(node, seen):
 class YamlDoc:
     """The YAML of one file -- a .yml/.yaml file, or a .md file's frontmatter -- read with
     yaml's SafeLoader, so a URL is exactly the value yaml.safe_load yields, whatever the syntax
-    around it (quoted key, flow mapping, block scalar). `ok` is False when it cannot be read
-    (no YAML reader, a parse error, the file missing at HEAD): its URLs are then inconclusive."""
+    around it (quoted key, flow mapping, block scalar). `ok` is False when it cannot be read --
+    no YAML reader, the file missing at HEAD, anything yaml.safe_load refuses (a parse error,
+    an unknown tag, a second document), or a line break git does not count, which would shift
+    YAML's line numbers off the diff's: its URLs are then inconclusive."""
 
     def __init__(self, text: str, span: range):
         self.span, self.ok, self._scalars = span, False, []
-        if yaml is None or not text:
+        if yaml is None or not text or _FOREIGN_BREAK.search(text):
             return
         try:
-            docs = list(yaml.compose_all(text, Loader=yaml.SafeLoader))
+            yaml.safe_load(text)
+            root = yaml.compose(text, Loader=yaml.SafeLoader)
         except yaml.YAMLError:
             return
-        seen: set[int] = set()
-        for node in (n for doc in docs if doc is not None for n in _scalar_nodes(doc, seen)):
+        for node in _scalar_nodes(root, set()) if root is not None else ():
             start, end = node.start_mark, node.end_mark
             fills_last = end.column == 0 and end.line > start.line
             self._scalars.append(_Scalar(node.value, span.start + start.line,
@@ -290,7 +301,7 @@ class YamlDoc:
             return [], urls_in(text)
         scalars = [s for s in self._scalars if s.first <= line_no <= s.last]
         cut = self._comment_at(line_no, text, scalars)
-        urls = [u for s in scalars for u in ([s.value.strip()] if s.is_url else
+        urls = [u for s in scalars for u in ([s.url] if s.is_url else
                                              urls_in(s.value) if s.first == s.last else [])]
         unresolved = []
         for url in urls_in(text[:cut]):
@@ -312,7 +323,7 @@ def yaml_docs(repo: Path, lines) -> dict[str, YamlDoc]:
             text = _at_head(repo, path)
             span = frontmatter_span(text)
             if span:
-                docs[path] = YamlDoc("\n".join(text.splitlines()[span.start - 1:span.stop - 1]) + "\n", span)
+                docs[path] = YamlDoc("\n".join(text.split("\n")[span.start - 1:span.stop - 1]) + "\n", span)
     return docs
 
 
@@ -341,7 +352,10 @@ def extract_urls(lines, docs: dict[str, YamlDoc] | None = None) -> tuple[Locatio
 
 def _request(url: str, method: str, timeout: float) -> tuple[int | None, str]:
     """(HTTP status, detail); status None when the server never answered -- or was never asked,
-    because the URL is too malformed to build a request from (http://[ is a ValueError)."""
+    because the URL is too malformed to build a request from (http://[ is a ValueError), or
+    holds whitespace, which urllib would silently strip into another URL (a YAML NBSP)."""
+    if _ANY_SPACE.search(url):
+        return None, "whitespace in URL"
     try:
         req = urllib.request.Request(url, method=method, headers={"User-Agent": USER_AGENT, "Accept": "*/*"})
         with urllib.request.urlopen(req, timeout=timeout) as response:

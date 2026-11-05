@@ -91,10 +91,13 @@ visibly separate from the verified fields above it.
   file, `.md` frontmatter -- read from the PR's HEAD) is read with PyYAML's SafeLoader, so a
   YAML value that is the URL is exactly what `yaml.safe_load` yields, whatever the syntax
   around it: `url: https://x/important!`, `'url': https://x/important!` and
-  `{url: https://x/important!}` all keep the `!`. YAML that cannot be read (a parse error, the
-  file missing at HEAD, no PyYAML) leaves its URLs **inconclusive** -- never a trimmed guess
+  `{url: https://x/important!}` all keep the `!`. YAML that cannot be read (anything `yaml.safe_load` refuses --
+  a parse error, an unknown tag, a second document --, a line break git does not count such as
+  a form feed or U+2028, the file missing at HEAD, no PyYAML) leaves its URLs **inconclusive** -- never a trimmed guess
   that could pass as alive. Only a bare URL in prose (a `.md` body, a YAML comment or a
-  longer YAML string) drops trailing sentence punctuation. A URL too malformed to request (`http://[`) is inconclusive, never a crash. A changed line counts even when it keeps the same
+  longer YAML string) drops trailing sentence punctuation. A URL too malformed to request (`http://[`), or holding whitespace (a YAML NBSP, which
+  urllib would strip into another URL), is inconclusive, never a crash. Frontmatter closes at
+  the first `---`/`...` document marker, a trailing comment allowed. A changed line counts even when it keeps the same
   URL, and a pure file move (git rename) changes no line. HEAD, then GET fallback; short timeout; small
   concurrency cap; polite User-Agent. Timeouts, DNS/TLS failures, 429, 5xx, 403 bot walls
   and any other status are **inconclusive**: they exit 0 and never block. URLs on untouched lines are
