@@ -194,9 +194,10 @@ def extract_urls(lines) -> dict[str, list[tuple[str, int]]]:
 # --- is it alive? --------------------------------------------------------------------------
 
 def _request(url: str, method: str, timeout: float) -> tuple[int | None, str]:
-    """(HTTP status, detail); status None when the server never answered."""
-    req = urllib.request.Request(url, method=method, headers={"User-Agent": USER_AGENT, "Accept": "*/*"})
+    """(HTTP status, detail); status None when the server never answered -- or was never asked,
+    because the URL is too malformed to build a request from (http://[ is a ValueError)."""
     try:
+        req = urllib.request.Request(url, method=method, headers={"User-Agent": USER_AGENT, "Accept": "*/*"})
         with urllib.request.urlopen(req, timeout=timeout) as response:
             return response.status, f"HTTP {response.status}"
     except urllib.error.HTTPError as e:
