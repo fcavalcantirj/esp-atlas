@@ -119,3 +119,35 @@ def test_pr_body_lists_repos_that_need_the_owner_to_review_their_esp_target():
 
 def test_pr_body_without_review_items_has_no_review_section():
     assert "Needs owner review" not in report.render_pr_body(_r())
+
+
+def _proposed_lines(body):
+    return body[body.index("### Proposed in this PR"):body.index("### Skipped this tick")]
+
+
+def test_firmware_item_with_absent_fields_never_prints_none():
+    """PR #1434: a topics-path item carried only kind/id/source, and the body read
+    '— None' and 'board None (None): None -> recipe None'. Absent values are omitted or
+    'unknown', never the literal None; a claim with no backing field is not made."""
+    it = {"kind": "firmware", "id": "icenav-v3", "source": "topic:gps"}
+    body = report.render_pr_body(_r(stages=[{"name": "admit_topics", "paths": [], "summary": "s", "items": [it]}]))
+    proposed = _proposed_lines(body)
+    assert "None" not in body
+    assert "- **icenav-v3** (`icenav-v3`)\n" in proposed
+    assert "not a fork" not in proposed and "not archived" not in proposed
+    assert "recipe" not in proposed                    # no recipe written -> no recipe line
+
+
+def test_firmware_item_board_line_omits_absent_chip_and_evidence_and_says_unknown_board():
+    it = {"kind": "firmware", "id": "x", "name": "X", "url": "https://github.com/o/x", "recipe": "b__x"}
+    body = report.render_pr_body(_r(stages=[{"name": "admit_topics", "paths": [], "summary": "s", "items": [it]}]))
+    assert "None" not in body
+    assert "  - ✅ board `unknown` → recipe `b__x`, status unverified" in body
+
+
+def test_firmware_item_without_recipe_keeps_board_but_prints_no_recipe_line():
+    it = {"kind": "firmware", "id": "x", "name": "X", "url": "https://github.com/o/x",
+          "board": "m5stack-cardputer", "chip": "esp32-s3", "evidence": "named in the repository name/description"}
+    body = report.render_pr_body(_r(stages=[{"name": "admit_topics", "paths": [], "summary": "s", "items": [it]}]))
+    assert "  - board `m5stack-cardputer` (esp32-s3): named in the repository name/description\n" in body
+    assert "recipe" not in _proposed_lines(body) and "None" not in body
