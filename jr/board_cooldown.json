@@ -40,6 +40,52 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
+    "beetle-esp32-c6": {
+      "board": "beetle-esp32-c6",
+      "expires": "2026-11-12T15:01:00.465426+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T15:01:00.465426+00:00"
+    },
+    "firebeetle-2-esp32-c6": {
+      "board": "firebeetle-2-esp32-c6",
+      "expires": "2026-11-12T15:01:00.465426+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T15:01:00.465426+00:00"
+    },
+    "firebeetle-2-esp32-e": {
+      "board": "firebeetle-2-esp32-e",
+      "expires": "2026-11-12T15:01:00.465426+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T15:01:00.465426+00:00"
+    },
     "lolin-s3": {
       "board": "lolin-s3",
       "expires": "2026-11-11T19:00:59.711024+00:00",
