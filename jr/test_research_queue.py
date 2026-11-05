@@ -352,3 +352,35 @@ def test_the_cli_reports_a_refused_transition_without_writing(tmp_path, capsys):
     assert rq.main(["--queue", str(path), "link", "es3c28p", "#1"]) == 1
     assert path.read_text() == before
     assert "validated" in capsys.readouterr().err
+
+
+# ─────────────────────────── checker findings (2026-11-04) ───────────────────────────
+
+def test_a_non_ascii_term_is_kept_and_folded_not_dropped():
+    assert rq.term_key("Módulo  ESP32") == "módulo esp32"
+    queue, report = run([row("开发板")])
+    assert report["opened"] == ["开发板"]
+
+
+def test_close_refuses_a_date_that_is_not_iso():
+    queue, _ = run([row("es3c28p")])
+    with pytest.raises(ValueError, match="YYYY-MM-DD"):
+        rq.close(queue, "es3c28p", "fixed", "2026/11/04")
+    assert queue["candidates"]["es3c28p"]["status"] == "new"
+
+
+def test_a_closed_candidate_with_no_readable_date_is_never_reopened():
+    queue = _closed_queue("2026-11-04")
+    queue["candidates"]["es3c28p"].update(closed_on="garbage", last_seen=None)
+    queue, report = run([row("es3c28p")], queue=queue, today="2027-06-01")
+    assert report["suppressed_closed"] == ["es3c28p"]
+
+
+def test_the_queue_files_own_cap_and_reopen_window_are_enforced():
+    queue = rq.empty_queue()
+    queue.update(max_new_per_day=2, reopen_after_days=7)
+    queue, report = rq.update_queue(queue, SIX, CATALOG, TODAY)
+    assert len(report["opened"]) == 2
+    rq.close(queue, "aaaa1", "done", TODAY)
+    queue, report = rq.update_queue(queue, [row("aaaa1")], CATALOG, "2026-11-11")
+    assert report["reopened"] == ["aaaa1"]

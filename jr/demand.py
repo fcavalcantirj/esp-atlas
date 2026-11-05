@@ -667,7 +667,11 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
     )
     write_snapshot(items, d2_available, live["window"], today, demand_dir)
     write_unresolved(items, demand_dir)
-    research_line, research = update_research_queue(ga4_raw, today, demand_dir)
+    try:
+        research_line, research = update_research_queue(ga4_raw, today, demand_dir)
+    except Exception as e:  # noqa: BLE001 — the research lane must never block the demand steer
+        research = {"error": f"{type(e).__name__}: {e}"}
+        research_line = f"🔴 research queue NOT updated: {research['error'][:160]}"
     digest = build_digest(items, d2_available, live["window"],
                           d2_pull_failed=not live.get("ga4_pull_ok", True)) + "\n" + research_line
     if send_telegram:

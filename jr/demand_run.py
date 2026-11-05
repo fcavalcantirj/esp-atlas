@@ -117,16 +117,25 @@ def _read_bytes(path: Path) -> bytes | None:
 
 
 def _queue_comparable(raw: bytes | None):
-    """The queue minus each candidate's `last_seen`: an open candidate is re-sighted every day the
-    28-day window holds it, which alone must not open a PR (the weekly refresh carries it)."""
+    """The queue minus each candidate's `last_seen` and `evidence.checked`: an open candidate is
+    re-sighted every day the 28-day window holds it, and the catalog grows hourly — neither alone
+    may open a PR (the weekly refresh carries them)."""
     try:
         queue = json.loads(raw) if raw else None
     except (ValueError, UnicodeDecodeError):
         return raw
     if not isinstance(queue, dict) or not isinstance(queue.get("candidates"), dict):
         return queue
-    return {**queue, "candidates": {k: {f: v for f, v in c.items() if f != "last_seen"}
-                                    for k, c in queue["candidates"].items() if isinstance(c, dict)}}
+    return {**queue, "candidates": {k: _candidate_comparable(c) for k, c in queue["candidates"].items()}}
+
+
+def _candidate_comparable(c):
+    if not isinstance(c, dict):
+        return c
+    out = {f: v for f, v in c.items() if f != "last_seen"}
+    if isinstance(out.get("evidence"), dict):
+        out["evidence"] = {f: v for f, v in out["evidence"].items() if f != "checked"}
+    return out
 
 
 def _queue_line(demand_dir: Path, before: bytes | None) -> str | None:
@@ -140,7 +149,10 @@ def _queue_line(demand_dir: Path, before: bytes | None) -> str | None:
     except (ValueError, AttributeError):
         return None
     opened = [k for k in queue["candidates"] if k not in prev]
-    return research_queue.digest_line(queue, {"opened": opened})
+    reopened = [k for k, c in queue["candidates"].items() if isinstance(prev.get(k), dict)
+                and prev[k].get("status") == research_queue.STATUS_CLOSED
+                and c.get("status") != research_queue.STATUS_CLOSED]
+    return research_queue.digest_line(queue, {"opened": opened, "reopened": reopened})
 
 
 def _read_latest(demand_dir: Path) -> dict | None:

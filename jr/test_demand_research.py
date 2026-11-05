@@ -140,7 +140,8 @@ def test_the_runner_never_reads_the_queue_as_a_snapshot(tmp_path):
 def test_the_miner_carries_first_seen_from_the_snapshot_not_the_queue(tmp_path):
     d = tmp_path / "docs" / "demand"
     _seed(d)
-    assert demand._latest_prior_snapshot(d)
+    snapshot_items = json.loads((d / "2026-11-02.json").read_text())["items"]
+    assert demand._latest_prior_snapshot(d) == snapshot_items != []
 
 
 # ─────────────────────────── the daily runner lands the queue ───────────────────────────
@@ -211,3 +212,46 @@ def test_the_pr_body_carries_the_research_queue_line(tmp_path):
     create = next(c for c in gh.calls if c[:2] == ("pr", "create"))
     body = create[create.index("--body") + 1]
     assert "research queue" in body and "1 open" in body
+
+
+# ─────────────────────────── checker findings (2026-11-04) ───────────────────────────
+
+def test_a_broken_research_queue_never_blocks_the_demand_snapshot(tmp_path, monkeypatch):
+    (tmp_path / rq.QUEUE_NAME).write_text("{not json")
+    ga4 = [_ga4_row("search_submit", "es3c28p", 1), _ga4_row("search_empty", "es3c28p", 1)]
+    monkeypatch.setattr(demand, "_pull_live", _live(ga4))
+    result = demand.mine(send_telegram=False, demand_dir=tmp_path)
+    assert any(demand_signal.is_dated_snapshot(p) for p in tmp_path.iterdir())
+    assert (tmp_path / rq.QUEUE_NAME).read_text() == "{not json"      # human triage never reset
+    assert "research queue NOT updated" in result["digest"] and result["research"]["error"]
+
+
+def test_a_growing_catalog_alone_does_not_land_a_queue_change(tmp_path):
+    _write_prev(tmp_path, "2026-11-02", _items(GSC_ROWS, "2026-11-02"))
+    d = tmp_path / "docs" / "demand"
+    row_ = [{"term": "es3c28p", "searches": 1, "zero_result_searches": 1}]
+    queue, _ = rq.update_queue(rq.empty_queue(), row_, [], "2026-11-02")
+    rq.write_queue(queue, d / rq.QUEUE_NAME)
+    grown = [{"id": "zzzz9", "kind": "board", "title": "", "aliases": []}]
+
+    def miner(wt_path, *, python, telegram):
+        p = fake_miner()(wt_path, python=python, telegram=telegram)
+        path = wt_path / "docs" / "demand" / rq.QUEUE_NAME
+        rq.write_queue(rq.update_queue(rq.load_queue(path), row_, grown, TODAY)[0], path)
+        return p
+
+    res = run_runner(tmp_path, miner=miner)
+    assert json.loads((d / rq.QUEUE_NAME).read_text())["candidates"]["es3c28p"]["evidence"]["checked"] == 1
+    assert res.published is False and res.reason.startswith("no-op")
+
+
+def test_the_pr_body_counts_a_reopened_candidate(tmp_path):
+    d = tmp_path / "docs" / "demand"
+    row_ = [{"term": "es3c28p", "searches": 1, "zero_result_searches": 1}]
+    queue, _ = rq.update_queue(rq.empty_queue(), row_, [], "2026-09-01")
+    rq.close(queue, "es3c28p", "done", "2026-09-01")
+    rq.write_queue(queue, d / rq.QUEUE_NAME)
+    gh = gh_ok()
+    run_runner(tmp_path, gh=gh, miner=queue_miner(["es3c28p"]))
+    create = next(c for c in gh.calls if c[:2] == ("pr", "create"))
+    assert "1 reopened" in create[create.index("--body") + 1]

@@ -48,13 +48,13 @@ CATALOG_SOURCES = (("boards/*/*", "board.md", "board"), ("firmware/*", "firmware
                    ("socs/*", "chip.md", "part"), ("modules/*", "module.md", "part"),
                    ("brands/*", "brand.md", "brand"))
 
-_TOKEN_RE = re.compile(r"[a-z0-9]+")
+_TOKEN_RE = re.compile(r"[^\W_]+")       # Unicode letters/digits: 'módulo', '开发板' are terms too
 
 
 # ═══════════════════════════ normalization ═══════════════════════════
 
 def _tokens(text: str | None) -> list[str]:
-    return _TOKEN_RE.findall((text or "").lower())
+    return _TOKEN_RE.findall((text or "").casefold())
 
 
 def term_key(term: str | None) -> str:
@@ -238,11 +238,16 @@ def _reopen(c: dict, r: dict, today: str, catalog: list[dict]) -> None:
 
 
 def update_queue(queue: dict, rows: list[dict], catalog: list[dict], today: str,
-                 max_new_per_day: int = MAX_NEW_PER_DAY,
-                 reopen_after_days: int = REOPEN_AFTER_DAYS) -> tuple[dict, dict]:
+                 max_new_per_day: int | None = None,
+                 reopen_after_days: int | None = None) -> tuple[dict, dict]:
     """Fold one GA4 window's `{term, searches, zero_result_searches}` rows into the queue (in
     place, also returned) and report what happened. Append-only: nothing is deleted, and a
-    human's status/linked_work/outcome is never overwritten."""
+    human's status/linked_work/outcome is never overwritten. The cap and reopen window come from
+    the arguments, else the queue file's own settings, else the defaults."""
+    max_new_per_day = max_new_per_day if max_new_per_day is not None else int(
+        queue.get("max_new_per_day", MAX_NEW_PER_DAY))
+    reopen_after_days = reopen_after_days if reopen_after_days is not None else int(
+        queue.get("reopen_after_days", REOPEN_AFTER_DAYS))
     candidates = queue.setdefault("candidates", {})
     report = {"opened": [], "reopened": [], "refreshed": [], "deferred": [], "suppressed_closed": []}
     slots = max_new_per_day - sum(1 for c in candidates.values() if _opened_on(c) == today)
@@ -254,7 +259,7 @@ def update_queue(queue: dict, rows: list[dict], catalog: list[dict], today: str,
             continue
         if c is not None:
             age = _days_between(c.get("closed_on") or c.get("last_seen"), today)
-            if age is not None and age < reopen_after_days:
+            if age is None or age < reopen_after_days:       # an unreadable date fails closed
                 report["suppressed_closed"].append(key)
                 continue
         if slots <= 0:
@@ -300,6 +305,10 @@ def link(queue: dict, term: str, ref: str) -> dict:
 
 def close(queue: dict, term: str, outcome: str, today: str) -> dict:
     c = _get(queue, term)
+    try:
+        dt.date.fromisoformat(today)
+    except (TypeError, ValueError):
+        raise ValueError(f"close date must be YYYY-MM-DD, got {today!r}") from None
     if c["status"] == STATUS_CLOSED:
         raise ValueError("this candidate is already closed")
     c.update(status=STATUS_CLOSED, outcome=outcome, closed_on=today)

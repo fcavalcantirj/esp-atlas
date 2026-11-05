@@ -30,7 +30,7 @@ returned results creates nothing, however often it was searched.
   "reopen_after_days": 30,
   "candidates": {
     "esp32 c6": {                          // key: normalized term (see Dedupe)
-      "term": "ESP32-C6",                  // first wording seen
+      "term": "esp32-c6",                  // first wording seen (the miner lowercases it)
       "first_seen": "2026-11-04", "last_seen": "2026-11-05",
       "searches": 1, "zero_result_searches": 1,   // latest window that saw it, NOT a running sum
       "status": "new",                     // new | validated | linked | closed
@@ -56,18 +56,22 @@ returned results creates nothing, however often it was searched.
 
 ## Dedupe
 
-The key is the term lowercased with every run of non-alphanumerics (whitespace, punctuation,
-`-`, `_`) collapsed to one space: `ESP32-C6`, `esp32 c6`, ` esp32_c6! ` → `esp32 c6`.
+The key is the term case-folded with every run of non-alphanumerics (whitespace, punctuation,
+`-`, `_`) collapsed to one space: `ESP32-C6`, `esp32 c6`, ` esp32_c6! ` → `esp32 c6`. Letters
+and digits are Unicode-aware: `Módulo` → `módulo`, `开发板` stays a term.
 
 ## Rate limit
 
+- The cap and reopen window are the queue file's own `max_new_per_day` / `reopen_after_days`
+  (defaults 5 / 30), so a hand edit there is what the miner enforces.
 - At most `max_new_per_day` (default **5**) candidates are opened per day. A reopened
   candidate counts as opened. Same-day reruns are idempotent: candidates opened earlier the
   same day count toward the cap. Ordering is deterministic (most zero-result searches, then
   most searches, then key). Terms over the cap are **deferred** — reported, not written; the
   28-day window brings them back on a later day.
 - A `closed` candidate is **never reopened within `reopen_after_days` (30)** of its
-  `closed_on` (falling back to `last_seen` when unset), and is left untouched meanwhile.
+  `closed_on` (falling back to `last_seen` when unset), and is left untouched meanwhile. With
+  no readable date at all it is never reopened (fails closed); `close` accepts only YYYY-MM-DD.
   After that, a new zero-result sighting reopens it as `new`, reclassified, with the prior
   closure appended to `history`.
 
@@ -115,7 +119,10 @@ digest can show linked work that has not fixed the search yet.
 `research-queue.json` alongside the snapshot and `unresolved.json` (all under `docs/demand/`,
 which `jr/review_routing.py` routes AUTO as bookkeeping). A run whose snapshot is unchanged
 but whose queue changed still lands — a change in `last_seen` alone does not count (an open
-candidate is re-sighted daily while the window holds it; the weekly refresh carries it). Dated-snapshot readers (`demand_signal.load_latest`, the
+candidate is re-sighted daily while the window holds it; the weekly refresh carries it), nor
+does `evidence.checked` growing with the catalog. A queue or catalog error never blocks the
+snapshot: the miner leaves the queue file untouched and the digest says `research queue NOT
+updated`. Dated-snapshot readers (`demand_signal.load_latest`, the
 runner, the miner's `first_seen` carry-forward) read only `<YYYY-MM-DD>.json` files.
 
 ## Invariants (tested — `jr/test_research_queue.py`, `jr/test_demand_research.py`)
