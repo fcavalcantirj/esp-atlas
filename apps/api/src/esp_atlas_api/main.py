@@ -5,6 +5,7 @@ module only maps HTTP in/out to that library's public functions.
 """
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
+import logging
 from pathlib import Path
 from typing import Optional
 
@@ -21,7 +22,7 @@ from esp_atlas_core.boot import list_boot_modes as core_list_boot_modes
 from esp_atlas_core.build_guide import build_guide as core_build_guide
 from esp_atlas_core.clarify import clarify as core_clarify
 from esp_atlas_core.intent import parse_intent as core_parse_intent
-from esp_atlas_core.llm import GroqConfigError, GroqRateLimitError
+from esp_atlas_core.llm import GroqConfigError, GroqRateLimitError, GroqUnavailableError
 from esp_atlas_core.flash import MAX_REDIRECT_HOPS
 from esp_atlas_core.flash import bin_url_for as core_bin_url_for
 from esp_atlas_core.flash import next_hop as core_next_hop
@@ -74,6 +75,7 @@ from esp_atlas_api.security import build_limiter, resolve_cors_origins, resolve_
 from esp_atlas_api.settings import resolve_db_path
 
 _ALL_PARTS_LIMIT = 10_000
+logger = logging.getLogger(__name__)
 _REDIRECT_CODES = frozenset({301, 302, 303, 307, 308})
 FIRMWARE_DATA_DIR = DATA_DIR / "firmware"
 
@@ -371,6 +373,14 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
             raise HTTPException(status_code=503, detail="Intent parsing is unavailable: no Groq API key configured.") from exc
         except GroqRateLimitError as exc:
             raise HTTPException(status_code=503, detail="Intent parsing is rate-limited right now.") from exc
+        except GroqUnavailableError as exc:
+            # Controlled fields only: provider bodies, queries and credentials
+            # must not enter public errors or monitoring logs.
+            logger.warning("intent_provider_unavailable reason=%s upstream_status=%s", exc.reason, exc.status_code)
+            raise HTTPException(
+                status_code=503,
+                detail="Intent parsing is temporarily unavailable. Keyword search is still available.",
+            ) from None
 
     @app.post("/build", response_model=BuildGuideResponse, response_model_exclude_none=True)
     @limiter.limit(limits["llm"])
