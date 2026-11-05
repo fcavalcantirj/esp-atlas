@@ -115,6 +115,38 @@ test("the broken panel cites the recipe's own explanation and its docs, never th
   assert.deepEqual(content.docs, [WIKI]);
 });
 
+// The docs list shares recipeSourceHref's policy: a whole-record citation of the
+// project's flasher, or of any binary, is an install handoff, not documentation.
+test("the broken panel drops flasher and binary citations under any field, on either rail", () => {
+  const HISTORY_BIN = "https://example.org/releases/history.BIN";
+  for (const rail of RAILS) {
+    const recipe: Recipe = {
+      ...withRail(brokenReleaseBin, "broken", rail),
+      sources: [
+        { field: "*", url: FLASHER, verified: "2026-08-30" },
+        { field: "*", url: `${FLASHER}#install`, verified: "2026-08-30" },
+        { field: "*", url: `${HISTORY_BIN}#history`, verified: "2026-08-30" },
+        { field: "flash.parts[0].url", url: "https://example.org/releases/part-notes", verified: "2026-08-30" },
+        { field: "*", url: WIKI, verified: "2026-08-30" },
+      ],
+    };
+    for (const phase of PHASES) {
+      const content = flashPanelContent(recipe, phase, handoff, "Board");
+      assert.equal(content.kind, "broken", `${rail} / ${phase.kind}`);
+      if (content.kind !== "broken") continue;
+      assert.deepEqual(content.docs, [WIKI], `${rail} / ${phase.kind}`);
+    }
+  }
+});
+
+test("the broken panel ignores the fragment of a recorded flasher URL too", () => {
+  const recipe: Recipe = { ...brokenReleaseBin, sources: [{ field: "*", url: FLASHER, verified: "2026-08-30" }] };
+  const fragmented: FlashHandoff = { ...handoff, flasherUrls: [`${FLASHER}#start`] };
+  const content = flashPanelContent(recipe, { kind: "broken" }, fragmented, "Board");
+  assert.equal(content.kind, "broken");
+  if (content.kind === "broken") assert.deepEqual(content.docs, []);
+});
+
 test("a broken recipe without notes still explains itself", () => {
   const content = flashPanelContent({ ...brokenReleaseBin, notes: "  " }, { kind: "broken" }, handoff, "Board");
   assert.equal(content.kind, "broken");
