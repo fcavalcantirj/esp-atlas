@@ -169,7 +169,9 @@ runner, the miner's `first_seen` carry-forward) read only `<YYYY-MM-DD>.json` fi
 
 - one zero-result search → exactly one candidate; the same term in another case → one;
 - the 6th new candidate on one day is deferred;
-- `es3c28p` with no catalog match → `missing_content`;
+- a term with no catalog match (the made-up SKU `zz9q41x`) → `missing_content`;
+- `es3c28p` → `alias_typo` with exactly `lcdwiki-es3c28p` (its alias; the vendor-prefix rule
+  alone lands on the same id); known gap: the sibling `es3n28p` also fuzzy-matches it (xfail);
 - one typo away from a board id → `alias_typo` with that id as evidence;
 - a bare model number (`fnk0104s`) → `alias_typo` with exactly its vendor-prefixed id;
 - equal to an id but zero results → `search_defect`;

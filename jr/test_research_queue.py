@@ -352,8 +352,15 @@ def test_the_real_catalog_indexes_boards_firmware_parts_and_brands():
     assert beam["title"] == "T-Beam" and "ttgo-t-beam" in beam["aliases"]
 
 
-def test_es3c28p_has_no_match_in_the_real_catalog():
-    assert rq.classify("es3c28p", rq.load_catalog(REPO))[0] == "missing_content"
+# A made-up board SKU — the real-catalog stand-in for a term with no match at all.
+ABSENT_SKU = "zz9q41x"
+
+
+def test_a_made_up_sku_has_no_match_in_the_real_catalog():
+    catalog = rq.load_catalog(REPO)
+    assert not any(ABSENT_SKU in rq.compact(" ".join([e["id"], e["title"] or "", *e["aliases"]]))
+                   for e in catalog)
+    assert rq.classify(ABSENT_SKU, catalog)[0] == "missing_content"
 
 
 def test_a_bare_model_number_matches_only_its_real_vendor_prefixed_board():
@@ -361,8 +368,27 @@ def test_a_bare_model_number_matches_only_its_real_vendor_prefixed_board():
     cls, ev = rq.classify("fnk0104s", catalog)
     assert cls == "alias_typo" and ev["ids"] == ["freenove-fnk0104s"]
     assert "vendor-prefix" in ev["rule"]
-    assert rq.classify("es3c28p", catalog)[0] == "missing_content"
+    assert rq.classify(ABSENT_SKU, catalog)[0] == "missing_content"
     assert rq.classify("esp32-c3", catalog)[0] == "search_defect"
+
+
+def test_es3c28p_now_resolves_to_its_real_lcdwiki_board():
+    catalog = rq.load_catalog(REPO)
+    cls, ev = rq.classify("es3c28p", catalog)
+    assert cls == "alias_typo" and ev["ids"] == ["lcdwiki-es3c28p"]
+    # the board's own 'ES3C28P' alias wins first; without it the vendor-prefix rule lands on
+    # exactly the same board
+    unaliased = [dict(e, aliases=[]) if e["id"] == "lcdwiki-es3c28p" else e for e in catalog]
+    cls, ev = rq.classify("es3c28p", unaliased)
+    assert cls == "alias_typo" and ev["ids"] == ["lcdwiki-es3c28p"]
+    assert "vendor-prefix" in ev["rule"]
+
+
+@pytest.mark.xfail(strict=True, reason="known: the fuzzy rule's edit distance 1 sends the sibling "
+                   "SKU es3n28p to lcdwiki-es3c28p via its 'ES3C28P' alias")
+def test_the_sibling_es3n28p_does_not_resolve_to_lcdwiki_es3c28p():
+    cls, ev = rq.classify("es3n28p", rq.load_catalog(REPO))
+    assert "lcdwiki-es3c28p" not in ev["ids"]
 
 
 @pytest.mark.parametrize("term", ["tenstar", "tenstar robot", "tenstar esp32-s3", "security",

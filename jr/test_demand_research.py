@@ -66,14 +66,15 @@ def test_min_events_steering_is_unchanged_for_a_single_zero_result_search():
 # ─────────────────────────── mine() ───────────────────────────
 
 def test_mine_turns_one_zero_result_search_into_one_candidate(tmp_path, monkeypatch):
-    ga4 = [_ga4_row("search_submit", "ES3C28P", 1), _ga4_row("search_empty", "ES3C28P", 1)]
+    # a made-up SKU, absent from the real catalog mine() reads
+    ga4 = [_ga4_row("search_submit", "ZZ9Q41X", 1), _ga4_row("search_empty", "ZZ9Q41X", 1)]
     monkeypatch.setattr(demand, "_pull_live", _live(ga4))
     result = demand.mine(send_telegram=False, demand_dir=tmp_path)
     queue = _queue(tmp_path)
-    assert list(queue) == ["es3c28p"]
-    assert queue["es3c28p"]["classification"] == "missing_content"
+    assert list(queue) == ["zz9q41x"]
+    assert queue["zz9q41x"]["classification"] == "missing_content"
     assert "research queue" in result["digest"] and "+1 new" in result["digest"]
-    assert result["research"]["opened"] == ["es3c28p"]
+    assert result["research"]["opened"] == ["zz9q41x"]
 
 
 def test_mine_creates_nothing_for_a_term_that_returned_results(tmp_path, monkeypatch):
