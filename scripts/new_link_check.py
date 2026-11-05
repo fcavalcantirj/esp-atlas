@@ -45,8 +45,9 @@ TEXT_SUFFIXES = (".md", ".json", ".yml", ".yaml")
 
 ALIVE, DEAD, INCONCLUSIVE = "alive", "dead", "inconclusive"
 
-_URL = re.compile(r"https?://[^\s<>\"'`\[\]{}|\\^]+")
-_TRAILING = ".,;:!?*"
+_URL = re.compile(r"https?://[^\s<>\"`\[\]{}|^]+")
+_TRAILING = ".,;:!?*'"
+_ESCAPED = re.compile(r"\\([!-/:-@\[-`{-~])")  # markdown/JSON backslash escapes: my\_repo, \/
 _HUNK = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@")
 
 
@@ -91,8 +92,21 @@ def _trim(url: str) -> str:
     return url
 
 
+def _unquote(url: str, opener: str) -> str:
+    """A URL inside '...' ends at the closing quote; YAML writes a literal ' as ''."""
+    if opener != "'":
+        return url
+    return re.split(r"'(?!')", url.replace("''", "\0"), maxsplit=1)[0].replace("\0", "'")
+
+
 def urls_in(line: str) -> list[str]:
-    return [u for u in (_trim(m) for m in _URL.findall(line)) if u.split("://", 1)[1]]
+    urls = []
+    for m in _URL.finditer(line):
+        opener = line[m.start() - 1] if m.start() else ""
+        url = _trim(_ESCAPED.sub(r"\1", _unquote(m.group(), opener)))
+        if url.split("://", 1)[1]:
+            urls.append(url)
+    return urls
 
 
 def extract_urls(lines) -> dict[str, list[tuple[str, int]]]:
@@ -168,9 +182,10 @@ def render_table(found, results) -> str:
 
 
 def _diff(repo: Path, base: str) -> subprocess.CompletedProcess:
+    """Bytes that are not UTF-8 are replaced, never fatal: only a dead link may fail the job."""
     return subprocess.run(["git", "-c", "core.quotePath=false", "diff", "--no-color", "--no-ext-diff",
                            "-M", "--unified=0", f"{base}...HEAD", "--", DATA_PREFIX],
-                          cwd=repo, capture_output=True, text=True, timeout=120)
+                          cwd=repo, capture_output=True, text=True, errors="replace", timeout=120)
 
 
 def main(argv=None) -> int:
@@ -183,7 +198,11 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
     base = args.base or (f"origin/{os.environ['GITHUB_BASE_REF']}" if os.environ.get("GITHUB_BASE_REF") else "origin/main")
 
-    diff = _diff(args.repo, base)
+    try:
+        diff = _diff(args.repo, base)
+    except subprocess.TimeoutExpired:
+        print(f"::error::git diff against {base} timed out")
+        return 2
     if diff.returncode != 0:
         print(f"::error::git diff against {base} failed: {diff.stderr.strip()[:200]}")
         return 2

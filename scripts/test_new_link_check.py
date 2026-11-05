@@ -187,6 +187,34 @@ def test_a_bad_base_ref_fails_closed(tmp_path, server, capsys):
     assert "::error::" in capsys.readouterr().out
 
 
+def test_a_pure_rename_checks_nothing(tmp_path, server):
+    moved = "data/boards/acme/acme-two/board.md"
+    repo = make_repo(tmp_path, {BOARD: board_md(server.url("/gone404"))}, {})
+    (repo / moved).parent.mkdir(parents=True)
+    git(repo, "mv", BOARD, moved)
+    git(repo, "commit", "-q", "-m", "move")
+    assert run(repo) == 0
+    assert server.hit("/gone404") == []
+
+
+def test_a_diff_that_is_not_utf8_does_not_crash_the_job(tmp_path, server):
+    raw = b"---\nid: acme-one\nnotes:\n- caf\xe9\n---\n"
+    repo = make_repo(tmp_path, {BOARD: board_md(server.url("/ok"))}, {})
+    (repo / BOARD).write_bytes(raw + f"See {server.url('/ok')}\n".encode())
+    git(repo, "commit", "-qam", "latin-1")
+    assert run(repo) == 0
+    assert server.hit("/ok") != []
+
+
+def test_a_git_diff_that_hangs_fails_closed_with_a_message(tmp_path, monkeypatch, capsys):
+    def hang(*a, **k):
+        raise subprocess.TimeoutExpired(cmd="git diff", timeout=120)
+
+    monkeypatch.setattr(nlc.subprocess, "run", hang)
+    assert nlc.main(["--repo", str(tmp_path), "--base", "main"]) == 2
+    assert "::error::" in capsys.readouterr().out
+
+
 def test_dead_links_are_annotated_with_file_and_line(tmp_path, server, capsys):
     repo = make_repo(tmp_path, {BOARD: board_md(server.url("/ok"))},
                      {BOARD: board_md(server.url("/ok"), server.url("/gone404"))})
@@ -228,11 +256,25 @@ def test_a_refused_connection_is_inconclusive(server):
     assert nlc.check_url(f"http://127.0.0.1:{port}/x", **FAST)[0] == "inconclusive"
 
 
-def test_check_all_dedupes_and_respects_the_concurrency_cap(server):
-    urls = [server.url(f"/ok?{i}") for i in range(6)]
-    results = nlc.check_all(urls, concurrency=2, **FAST)
+def test_check_all_dedupes_and_respects_the_concurrency_cap(monkeypatch):
+    lock, state, asked = threading.Lock(), {"now": 0, "peak": 0}, []
+
+    def fake_check(url, **_):
+        with lock:
+            asked.append(url)
+            state["now"] += 1
+            state["peak"] = max(state["peak"], state["now"])
+        time.sleep(0.05)
+        with lock:
+            state["now"] -= 1
+        return nlc.ALIVE, "HTTP 200"
+
+    monkeypatch.setattr(nlc, "check_url", fake_check)
+    urls = [f"https://a.example/{i}" for i in range(8)] * 2
+    results = nlc.check_all(urls, concurrency=3)
+    assert sorted(asked) == sorted(set(urls))
     assert set(results) == set(urls)
-    assert all(v[0] == "alive" for v in results.values())
+    assert state["peak"] == 3
 
 
 # --- diff parsing and URL extraction -------------------------------------------------------
@@ -257,10 +299,14 @@ diff --git a/data/firmware/f/signals.json b/data/firmware/f/signals.json
 @@ -10,0 +11 @@
 +      "url": "https://github.com/o/r/blob/dev/platformio.ini#L285",
 diff --git a/data/boards/a/b/photo.png b/data/boards/a/b/photo.png
+new file mode 100644
+Binary files /dev/null and b/data/boards/a/b/photo.png differ
+diff --git a/data/boards/a/b/notes.txt b/data/boards/a/b/notes.txt
 --- /dev/null
-+++ b/data/boards/a/b/photo.png
-@@ -0,0 +1 @@
-+https://binary.example/
++++ b/data/boards/a/b/notes.txt
+@@ -0,0 +1,2 @@
++https://txt.example/
+\\ No newline at end of file
 """
 
 
@@ -279,6 +325,10 @@ def test_added_lines_keep_only_data_text_files_with_new_line_numbers():
     ("- 'https://a.example/p' quoted", ["https://a.example/p"]),
     ("[wiki](https://en.wikipedia.org/wiki/Foo_(bar))", ["https://en.wikipedia.org/wiki/Foo_(bar)"]),
     ("no links here", []),
+    ("[guide](https://a.example/docs/user's-guide.md)", ["https://a.example/docs/user's-guide.md"]),
+    ("  - 'https://a.example/it''s'", ["https://a.example/it's"]),
+    ("https://github.com/o/my\\_repo", ["https://github.com/o/my_repo"]),
+    ('"see https://a.example/x" and \'https://b.example/y\'', ["https://a.example/x", "https://b.example/y"]),
 ])
 def test_urls_in_a_line(line, urls):
     assert nlc.urls_in(line) == urls

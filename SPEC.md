@@ -78,9 +78,10 @@ visibly separate from the verified fields above it.
 - CI gate: `scripts/validate.py` (schema + source rule, plus the dataset-level
   no-orphan-firmware check — every `firmware` must have ≥1 `recipe`) on every PR.
 - New-link gate (`new-links` job, `scripts/new_link_check.py`, pull_request only, blocking):
-  a URL on a line the PR ADDS or CHANGES under `data/**` (`.md` frontmatter sources/fields
-  and body links, `.json`/`.yml` cited-source fields) that answers a **confirmed** 404 or
-  410 (asked twice) blocks the PR. HEAD, then GET fallback; short timeout; small
+  any URL on a line the PR ADDS or CHANGES in a `data/**` text file (`.md` frontmatter
+  sources/fields and body links, every URL in `.json`/`.yml`) that answers a **confirmed**
+  404 or 410 (asked twice) blocks the PR. A changed line counts even when it keeps the same
+  URL, and a pure file move (git rename) changes no line. HEAD, then GET fallback; short timeout; small
   concurrency cap; polite User-Agent. Timeouts, DNS/TLS failures, 429, 5xx, 403 bot walls
   and any other status are **inconclusive** and never block. URLs on untouched lines are
   never checked, so a link already broken on main does not block an unrelated PR.
