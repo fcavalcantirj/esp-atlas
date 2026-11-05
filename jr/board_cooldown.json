@@ -290,6 +290,64 @@
       },
       "reason": "nothing-groundable",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
+    },
+    "m5stick-c": {
+      "board": "m5stick-c",
+      "expires": "2026-11-12T00:00:59.720006+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "images": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-05T00:00:59.720006+00:00"
+    },
+    "m5stick-cplus": {
+      "board": "m5stick-cplus",
+      "expires": "2026-11-12T00:00:59.720006+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "images": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-05T00:00:59.720006+00:00"
+    },
+    "m5stick-cplus2": {
+      "board": "m5stick-cplus2",
+      "expires": "2026-11-12T00:00:59.720006+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T00:00:59.720006+00:00"
     }
   }
 }
