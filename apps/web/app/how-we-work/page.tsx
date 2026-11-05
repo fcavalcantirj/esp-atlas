@@ -61,7 +61,7 @@ export default function HowWeWorkPage() {
         data-maintainer, runs every day: it checks that sources are still alive, watches firmware releases, notices when
         a recipe has drifted, and discovers new boards and projects from official catalogs and community signal. It
         never writes to main. Every change is a pull request with a cited source, and automated checks — schema, data
-        validation, tests, an ESP-target evidence gate, link checks — must pass. New firmware entries, board–firmware
+        validation, tests and an ESP-target evidence gate — must pass. New firmware entries, board–firmware
         compatibility recipes, and flashing, download-mode or USB claims are held for a human maintainer to review
         before they publish; low-risk updates (stars, dates, source signals) publish automatically once the checks
         pass. A recipe marked <em>known good</em> carries a cited source for that exact board — usually the firmware
