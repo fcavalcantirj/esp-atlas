@@ -183,7 +183,7 @@ test("falls back to the category/socs/boards template when there is no summary",
     boards: 12,
     summary: undefined,
   });
-  assert.equal(description, "ESPHome: Home firmware for ESP32, ESP32-S3. Verified to flash on 12 boards.");
+  assert.equal(description, "ESPHome: Home firmware for ESP32, ESP32-S3. Recipes for 12 boards, each labelled with its trust tier.");
   assert.ok(description.length <= DESCRIPTION_MAX);
 });
 

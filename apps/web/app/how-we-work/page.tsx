@@ -60,13 +60,18 @@ export default function HowWeWorkPage() {
         Nobody can curate this by hand, so we don&apos;t pretend to. <strong>EspAtlas Jr.</strong>, our autonomous
         data-maintainer, runs every day: it checks that sources are still alive, watches firmware releases, notices when
         a recipe has drifted, and discovers new boards and projects from official catalogs and community signal. It
-        never writes to main. Every change is a pull request with a cited source, and automated checks — schema, data
-        validation, tests and an ESP-target evidence gate — must pass. New firmware entries, board–firmware
-        compatibility recipes, and flashing, download-mode or USB claims are held for a human maintainer to review
-        before they publish; low-risk updates (stars, dates, source signals) publish automatically once the checks
-        pass. A recipe marked <em>known good</em> carries a cited source for that exact board — usually the firmware
-        project listing it — not proof that someone flashed it, unless its notes record a hardware test.
-        Auto-harvested recipes land marked <em>declared</em> or <em>unverified</em>. Staleness is shown, not hidden.
+        never writes to main, and every change is a pull request with a cited source. The checks happen in three
+        separate places. Jr checks a project&apos;s ESP-target evidence before it proposes a new firmware; a project
+        that fails is never proposed. On every pull request, CI validates the schema and the data, runs the tests,
+        and re-checks that each newly added firmware repository is still eligible (public, not a fork, not archived,
+        above the popularity floor) — it does not rerun Jr&apos;s evidence check. Higher-risk proposals — new
+        firmware entries, board–firmware compatibility recipes, and flashing, download-mode or USB claims — are
+        held for a human maintainer to review before they publish; low-risk updates (stars, dates, source signals)
+        publish automatically once CI passes. A recipe marked <em>known good</em> carries a cited source for that
+        exact board — usually the firmware project listing it — not proof that someone flashed it, unless its notes
+        record a hardware test. Auto-harvested recipes land marked <em>declared</em> or <em>unverified</em>, and
+        some unverified recipes are only discovery leads — a third-party listing with no upstream board target or
+        artifact behind it — whose notes say so. Staleness is shown, not hidden.
       </p>
       <ul className="how-links" aria-label="EspAtlas Jr. links">
         <li>

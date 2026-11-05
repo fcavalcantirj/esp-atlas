@@ -48,7 +48,7 @@ export function sortHref(sort: string): string {
 export function firmwareLeadCopy(sort: string, count: number): string {
   if (count === 0) return "The firmware list could not be loaded right now — try again in a moment.";
   const option = SORT_OPTIONS.find((o) => o.value === sort) ?? SORT_OPTIONS[0];
-  return `${count} flashable firmware projects, ${option.lead} — open one to see the boards it's verified to run on.`;
+  return `${count} flashable firmware projects, ${option.lead} — open one to see the boards it has recipes for, by trust tier.`;
 }
 
 export type FirmwareRobots = { index: boolean; follow: boolean } | undefined;

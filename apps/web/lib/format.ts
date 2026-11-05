@@ -146,8 +146,8 @@ function buildMetaTitle(name: string, benefit: string): string {
 
 /**
  * SERP title for a firmware: leads with its exact name, then the strongest
- * flash/install benefit its own record can prove -- the boards it's
- * verified to run on when that count exists, else the SoCs it targets,
+ * flash/install benefit its own record can prove -- how many boards it has
+ * recipes for (any trust tier) when that count exists, else the SoCs it targets,
  * else a bare flash-guide fallback. Cite-or-omit: never states a board
  * count or SoC the record doesn't carry.
  *
@@ -196,7 +196,8 @@ export function firmwareMetaDescription(
   if (firmware.summary) return truncateAtWord(firmware.summary, DESCRIPTION_MAX);
   const socsLabel = firmware.socs.length > 0 ? firmware.socs.map(socDisplay).join(", ") : "ESP32";
   const boards = firmware.boards ?? 0;
-  const boardsClause = boards > 0 ? ` Verified to flash on ${boards} board${boards === 1 ? "" : "s"}.` : "";
+  // `boards` counts recipes at every trust tier, unverified leads included — never "verified".
+  const boardsClause = boards > 0 ? ` Recipes for ${boards} board${boards === 1 ? "" : "s"}, each labelled with its trust tier.` : "";
   const base = `${firmware.name}: ${firmwareCategoryLabel(firmware.category)} firmware for ${socsLabel}.${boardsClause}`;
   return truncateAtWord(base, DESCRIPTION_MAX);
 }

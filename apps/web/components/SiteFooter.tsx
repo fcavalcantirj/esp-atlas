@@ -19,7 +19,8 @@ export default function SiteFooter() {
             <p>
               A bot watches the sources every day and proposes what changed; automated checks gate every change,
               and new firmware, recipes and flashing claims wait for a human maintainer; nothing lands without a
-              source. If it isn&apos;t verified, it isn&apos;t stated.
+              source. Unverified recipes and discovery leads are listed too, labelled as such — every recipe shows its
+              trust tier.
             </p>
             <p>
               <Link href="/how-we-work" className="footer-how">
