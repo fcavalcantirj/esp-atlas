@@ -36,6 +36,19 @@ jobs:
         run: pip install -e apps/core[test] -e apps/api[test] -e apps/cli[test]
       - name: Run full pytest suite (includes wizard oracle invariants)
         run: python3 -m pytest apps/core/tests apps/api/tests apps/cli/tests
+      # The web unit tests (lib/*.test.ts, including the public-copy guard) ride this required
+      # job on purpose; scripts/test_validate_workflow.py fails if they move out or go soft.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install web dependencies
+        working-directory: apps/web
+        run: npm ci
+      - name: Run web unit tests (node --test lib/*.test.ts)
+        working-directory: apps/web
+        run: npm test
 
   jr-tests:
     runs-on: ubuntu-latest
