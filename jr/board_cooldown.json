@@ -40,6 +40,57 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
+    "elecrow-crowpanel-esp32-s3-579-epaper": {
+      "board": "elecrow-crowpanel-esp32-s3-579-epaper",
+      "expires": "2026-11-12T18:01:00.118060+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T18:01:00.118060+00:00"
+    },
+    "freenove-fnk0104a": {
+      "board": "freenove-fnk0104a",
+      "expires": "2026-11-12T18:01:00.118060+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T18:01:00.118060+00:00"
+    },
+    "freenove-fnk0104b": {
+      "board": "freenove-fnk0104b",
+      "expires": "2026-11-12T18:01:00.118060+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T18:01:00.118060+00:00"
+    },
     "lolin-s3": {
       "board": "lolin-s3",
       "expires": "2026-11-11T19:00:59.711024+00:00",
