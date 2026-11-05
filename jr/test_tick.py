@@ -2,13 +2,16 @@
 
 No test here runs git, gh, validate.py, pytest, Telegram or the network: git/gh are scripted
 recorders, the gauge/guard/notifier/pr_state/revalidate are injected fakes, and the "worktree"
-is a tmp_path. The real data/ tree is read by exactly one test (the dry-run gauge).
+is a tmp_path. A dry run copies tick.REPO, so every test points it at a tmp checkout with a known
+jr/ state (the `checkout` fixture); the real data/ tree is read by exactly one test (the dry-run
+gauge), and the clone's jr/proposed_ledger.json by none.
 
 Run: cd jr && python3 -m pytest test_tick.py -v
 """
 from __future__ import annotations
 
 import json
+import shutil
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from types import SimpleNamespace
@@ -90,6 +93,40 @@ def wt_dir(tmp_path, monkeypatch):
     return d
 
 
+REAL_REPO = tick.REPO
+EMPTY_LEDGER = {"by_id": {}, "by_repo": {}}
+
+
+def write_jr_state(checkout: Path, ledger_doc=None, cooldown_doc=None) -> None:
+    """The checkout's committed Jr decisions (jr/proposed_ledger.json, jr/board_cooldown.json)."""
+    (checkout / "jr").mkdir(parents=True, exist_ok=True)
+    (checkout / "jr" / "proposed_ledger.json").write_text(json.dumps(ledger_doc or EMPTY_LEDGER, indent=2) + "\n")
+    (checkout / "jr" / "board_cooldown.json").write_text(json.dumps(cooldown_doc or {"by_board": {}}, indent=2) + "\n")
+
+
+@pytest.fixture(autouse=True)
+def checkout(tmp_path, monkeypatch):
+    """A dry run copies tick.REPO's data/, docs/ and jr/*.json, then reconciles the copied ledger
+    against gh. Pointed at the real clone, a test would read whatever the clone's ledger holds — and
+    an open jr-review PR's `proposed` entries make the dry run `gh pr view` them (#1434, #1439 broke
+    every tick PR's jr-tests that way). Every test here gets a tmp checkout with a known, empty state."""
+    root = tmp_path / "checkout"
+    (root / "data" / "firmware").mkdir(parents=True)
+    (root / "docs" / "telemetry").mkdir(parents=True)
+    write_jr_state(root)
+    monkeypatch.setattr(tick, "REPO", root)
+    return root
+
+
+def is_read_only_gh(call) -> bool:
+    """The gh calls a dry run may make: preflight reads, and `gh pr view <ref> --json …` (the
+    memory step's PR-state and open-PR file reads). Anything else may write to GitHub."""
+    if call[:2] == ("pr", "view"):
+        return "--json" in call
+    return call[:2] in (("api", "rate_limit"), ("pr", "list"), ("api", "repos/o/r/rules/branches/main"),
+                        ("api", "repos/o/r/branches/main/protection"), ("api", "repos/o/r"))
+
+
 NO_SNAPSHOT = lambda root, date: (None, None, [])   # noqa: E731 — default: write no trend paths
 NO_DEMAND = lambda root, date: None                 # noqa: E731 — default: no demand snapshot → no steer
 
@@ -118,11 +155,31 @@ def test_dry_run_prints_gauge_allocation_and_nothing_to_do_and_writes_nothing(ca
     assert "boards 42.5% -> A0/B0 (no content stages registered)" in out
     # a real tick always writes the day's trend snapshot, so the dry run says so instead of "nothing to do"
     assert "no PR (dry-run)" in out and "would write" in out and "docs/telemetry/data-trend.jsonl[row 2026-09-05]" in out
-    # read-only: no worktree, no add/commit/push, no PR, only read calls to gh
+    # read-only: no worktree, no add/commit/push, no PR, only read calls to gh — and with an empty
+    # ledger and no open PRs, nothing for the memory step to `gh pr view`
     assert all(c[0] not in ("worktree", "add", "commit", "push", "checkout") for c in norm(git))
-    assert all(c[:2] in (("api", "rate_limit"), ("pr", "list"), ("api", "repos/o/r/rules/branches/main"),
-                         ("api", "repos/o/r/branches/main/protection"), ("api", "repos/o/r")) for c in gh.calls)
+    assert all(is_read_only_gh(c) and c[:2] != ("pr", "view") for c in gh.calls)
     assert r.memory == {} and any("dry-run" in w for w in r.warnings)
+
+
+def test_dry_run_reads_the_checkout_ledger_not_the_real_clone(checkout, tmp_path):
+    proposed = {"id": "fw-under-review", "repo": "o/fw-under-review", "status": "proposed", "reason": None,
+                "pr_ref": "#9999", "timestamp": NOW.isoformat(), "expires": None}
+    write_jr_state(checkout, {"by_id": {"fw-under-review": proposed}, "by_repo": {"o/fw-under-review": "fw-under-review"}})
+    gh = gh_ok()
+    r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
+    assert not r.aborted
+    # the seeded entry (not the clone's ledger) is what the memory step settles
+    assert [c for c in gh.calls if c[:2] == ("pr", "view")] == [("pr", "view", "#9999", "--json", "state,mergedAt")]
+    assert all(is_read_only_gh(c) for c in gh.calls), [c for c in gh.calls if not is_read_only_gh(c)]
+    assert json.loads((checkout / "jr" / "proposed_ledger.json").read_text())["by_id"]["fw-under-review"] == proposed
+
+
+def test_read_only_gh_allows_pr_view_only_with_json():
+    assert is_read_only_gh(("pr", "view", "#9999", "--json", "state,mergedAt"))
+    assert not is_read_only_gh(("pr", "view", "#9999", "--web"))
+    assert not is_read_only_gh(("pr", "close", "#9999"))
+    assert not is_read_only_gh(("pr", "merge", "#9999", "--auto"))
 
 
 def _fake_stage_modules(monkeypatch, calls):
@@ -182,9 +239,13 @@ def test_hourly_stages_topics_stage_runs_even_with_both_tracks_empty(monkeypatch
     assert calls == [("admit_topics", tick.TOPICS_PER_TICK)]
 
 
-def test_dry_run_with_real_gauge_reads_the_repo_tree(tmp_path):
-    if not (tick.REPO / "data" / "boards").is_dir():
+def test_dry_run_with_real_gauge_reads_the_repo_tree(checkout, tmp_path):
+    if not (REAL_REPO / "data" / "boards").is_dir():
         pytest.skip("tick.py is not inside the repo (scratch run)")
+    # the real catalog and the gauge's scripts/, but the checkout's known jr/ state, never the clone's
+    shutil.rmtree(checkout / "data")
+    (checkout / "data").symlink_to(REAL_REPO / "data")
+    (checkout / "scripts").symlink_to(REAL_REPO / "scripts")
     r = run(dry_run=True, git=git_ok(tmp_path), gh=gh_ok(), gauge=tick.default_gauge)
     assert not r.aborted and r.boards_pct is not None and 0 < r.boards_pct < 100
 
@@ -690,7 +751,7 @@ def test_main_firmware_and_no_auto_merge_flags_reach_the_stage_and_run_tick(monk
         tick.main(["--dry-run", "--track", "A", "--firmware", "wled", "--no-telegram"])      # --firmware is Track B only
 
 
-# --- preflight: superseded tick PRs + the overlap lock (incident 2026-10-09, #785) --------------
+# --- preflight: superseded tick PRs (incident 2026-10-09, #785; the overlap lock: test_tick_lock.py)
 
 STALE = (NOW - timedelta(hours=4)).isoformat().replace("+00:00", "Z")
 FRESH = (NOW - timedelta(minutes=30)).isoformat().replace("+00:00", "Z")
@@ -804,50 +865,14 @@ def test_dry_run_only_reports_the_superseded_pr_it_would_close(tmp_path):
     assert any("would close" in w and "#785" in w for w in r.warnings)
 
 
-def test_a_held_lock_aborts_cleanly_before_any_github_call(tmp_path):
-    import fcntl
-    lock = tmp_path / "held.lock"
-    gh = gh_ok()
-    with open(lock, "a+") as fh:
-        fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        r = run(git=git_ok(tmp_path), gh=gh, lock_path=lock)
-    assert r.aborted == f"another tick is running (lock held: {lock})"
-    assert gh.calls == []
 
 
-def test_the_lock_is_released_after_a_tick_and_after_an_abort(wt_dir, tmp_path):
-    import fcntl
-    lock = tmp_path / "run.lock"
-    for gh in (gh_ok(), gh_ok(rate="1")):          # a clean tick, then an aborted one
-        run(git=git_ok(wt_dir), gh=gh, lock_path=lock)
-        with open(lock, "a+") as fh:
-            fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)    # raises BlockingIOError if still held
 
 
-def test_the_default_lock_lives_outside_the_repo_and_apart_from_the_wrapper_lock():
-    # scripts/jr-tick.sh's `flock` holds /tmp/jr-tick.lock for its child's whole life; the tick
-    # re-locking that same file would see it held by its own parent and abort every hour.
-    # (conftest pins tick.DEFAULT_TICK_LOCK into tmp_path, so check what it is built from.)
-    default = Path(tick.tempfile.gettempdir()) / tick.TICK_LOCK_NAME
-    assert tick.REPO not in default.parents
-    assert tick.TICK_LOCK_NAME != "jr-tick.lock"
 
 
-def test_main_honors_jr_tick_lock_from_the_environment(monkeypatch):
-    seen = {}
-    monkeypatch.setattr(tick, "run_tick", lambda **kw: seen.update(kw) or tick.report.TickReport(when=NOW))
-    monkeypatch.setenv("JR_TICK_LOCK", "/run/jr/tick.lock")
-    tick.main(["--no-telegram"])
-    assert seen["lock_path"] == Path("/run/jr/tick.lock")
-    monkeypatch.delenv("JR_TICK_LOCK")
-    tick.main(["--no-telegram"])
-    assert seen["lock_path"] is None
 
 
-def test_dry_run_takes_no_lock(tmp_path):
-    lock = tmp_path / "never.lock"
-    run(dry_run=True, git=git_ok(tmp_path), gh=gh_ok(), lock_path=lock)
-    assert not lock.exists()
 
 
 def test_an_unparseable_pr_list_aborts_closed(tmp_path):
@@ -861,9 +886,3 @@ def test_a_pr_with_an_unreadable_age_is_judged_by_mergeability_alone(tmp_path):
     r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
     assert not r.aborted
     assert [w for w in r.warnings if "would close" in w] == ["would close superseded bookkeeping-only tick PR #787"]
-
-
-def test_an_unopenable_lock_aborts_closed(tmp_path):
-    gh = gh_ok()
-    r = run(git=git_ok(tmp_path), gh=gh, lock_path=tmp_path / "no-such-dir" / "x.lock")
-    assert r.aborted.startswith("cannot open tick lock") and gh.calls == []
