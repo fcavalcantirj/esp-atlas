@@ -7,7 +7,7 @@ This first production slice adds `/atlas` and carries the approved bone, black a
 - Load the complete `/parts`, `/firmware` and `/recipes` collections concurrently. Preserve the existing `catalog` cache tag, one-hour fetch revalidation and bounded transport retry. A missing, malformed, inconsistent or truncated collection is an error, never a successful empty atlas.
 - Draw only recorded hardware lineage and exact recipe edges. A board's module reference takes precedence over its inherited silicon reference. Shared silicon does not establish compatibility; unresolved references are disclosed rather than fabricated.
 - Preserve every recipe ID, endpoint, status, note and source. Resolve an explicit recipe only when its ID, board and firmware all match. The API's combined board/firmware filters are not assumed to intersect.
-- Keep all five evidence tiers and unknown future statuses visible. RuView discovery caveats and absent artifacts remain intact. Broken pairings have documentation and cited history, with no installation action in this workspace.
+- Keep all five evidence tiers and unknown future statuses visible. RuView discovery caveats and absent artifacts remain intact. Broken pairings have documentation and cited history, with no installation action in this workspace. Binary, manifest and installer citations retain their URL and verification date as non-clickable text; documentation links remain available.
 - Load and validate part detail on selection; abort abandoned requests and preserve a recoverable error state. Inherited specifications remain on their originating records. Repository popularity is shown only with its recorded observation date and source.
 
 ## Interaction contract

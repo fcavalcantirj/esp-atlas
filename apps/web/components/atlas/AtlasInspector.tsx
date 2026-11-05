@@ -7,18 +7,23 @@ import TrustTierBadge from "@/components/TrustTierBadge";
 import { API_BASE, type SourceEntry, type Recipe } from "@/lib/api";
 import type { AtlasCatalog, AtlasNode } from "@/lib/atlas-model";
 import { atlasPartDetail, type AtlasPartDetail } from "@/lib/atlas-detail";
-import { sourceHref } from "@/lib/atlas-route";
+import { recipeSourceHref, sourceHref } from "@/lib/atlas-route";
 import { tierClaim, recipeCaveat } from "@/lib/flash-copy";
 import { viewSourceUrl } from "@/lib/github";
 import styles from "./AtlasExplorer.module.css";
 
-export function AtlasSources({ sources }: { sources: SourceEntry[] }) {
+export function AtlasSources({ sources, recipe }: { sources: SourceEntry[]; recipe?: Recipe }) {
   if (!sources.length) return <p className={styles.muted}>No citation recorded.</p>;
   return <ul className={styles.sources}>{sources.map((source, i) => {
-    const href = sourceHref(source.url);
+    const recordedHref = sourceHref(source.url);
+    const href = recipe ? recipeSourceHref(recipe, source) : recordedHref;
+    const withheldArtifact = recordedHref && !href;
     return <li key={`${source.field}:${source.url}:${i}`}>
       <span>{source.field === "*" ? "Whole record" : source.field}</span>
-      {href ? <TrackedLink href={href} linkType="source" title={href}>{new URL(href).hostname} ↗</TrackedLink> : <span>Source link unavailable</span>}
+      {href ? <TrackedLink href={href} linkType="source" title={href}>{new URL(href).hostname} ↗</TrackedLink> : withheldArtifact ? <>
+        <span>{source.url}</span>
+        <small>Artifact citation retained. Download disabled for this broken recipe.</small>
+      </> : <span>Source link unavailable</span>}
       <small>{source.verified ? `Verified ${source.verified}` : "Verification date not recorded"}</small>
     </li>;
   })}</ul>;
@@ -37,7 +42,7 @@ export function AtlasRecipe({ recipe, catalog }: { recipe: Recipe; catalog: Atla
     {recipe.verified_at ? <p className={styles.muted}>Verification recorded {recipe.verified_at}{recipe.verified_by ? ` by ${recipe.verified_by}` : ""}.</p> : null}
     {recipe.firmware_version ? <p>Recorded version: <code>{recipe.firmware_version}</code></p> : null}
     {recipe.status === "broken" ? <p className={styles.notice}>Installation is unavailable for this broken pairing. Its cited history remains here.</p> : !recipe.flash ? <p className={styles.notice}>No installation artifact is recorded for this pairing.</p> : <p className={styles.muted}>Installation requirements and actions belong to the firmware record. A recipe tier is not a guarantee.</p>}
-    <AtlasSources sources={recipe.sources} />
+    <AtlasSources sources={recipe.sources} recipe={recipe} />
     <TrackedLink href={viewSourceUrl(`data/recipes/${encodeURIComponent(recipe.id)}/recipe.md`)} linkType="github_view">Read the recipe record ↗</TrackedLink>
   </section>;
 }
