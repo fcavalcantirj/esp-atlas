@@ -1,6 +1,7 @@
 // The Flash Wizard panel's decisions (SPEC-wizard P2b), kept free of React and
 // of the "@/" alias so plain `node --test` can pin them (see format.ts's header).
-// FlashAction renders whatever flashPanelContent() returns and nothing else.
+// FlashAction renders whatever flashPanelContent() returns and nothing else: its
+// raw preflight state is never read by the render, so no stale result leaks.
 import type { Recipe } from "./api.ts";
 import type { FlashHandoff, Manifest } from "./esp-web-tools.ts";
 import { tierClaim } from "./flash-copy.ts";
@@ -25,7 +26,7 @@ export interface TerminalFallback {
 export type FlashPanelContent =
   | { kind: "closed" }
   | { kind: "loading" }
-  | { kind: "install"; manifest: Manifest; manifestUrl: string; terminal: TerminalFallback | null }
+  | { kind: "ready"; manifest: Manifest; manifestUrl: string; terminal: TerminalFallback | null }
   | { kind: "handoff"; reason: string; flasherUrls: string[]; repoUrl: string | null }
   | { kind: "broken"; claim: string; explanation: string; docs: string[] };
 
@@ -89,7 +90,7 @@ export function flashPanelContent(recipe: Recipe, phase: FlashPhase, handoff: Fl
     case "loading":
       return { kind: phase.kind };
     case "ready":
-      return { kind: "install", manifest: phase.manifest, manifestUrl: phase.manifestUrl, terminal: terminalFallbackFor(recipe) };
+      return { kind: "ready", manifest: phase.manifest, manifestUrl: phase.manifestUrl, terminal: terminalFallbackFor(recipe) };
     case "handoff":
       return { kind: "handoff", reason: phase.reason, flasherUrls: handoff.flasherUrls, repoUrl: handoff.repoUrl };
     case "broken":

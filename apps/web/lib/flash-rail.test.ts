@@ -1,4 +1,6 @@
 import { test } from "node:test";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import assert from "node:assert/strict";
 import type { Recipe } from "./api.ts";
 import type { FlashHandoff, Manifest } from "./esp-web-tools.ts";
@@ -131,15 +133,15 @@ test("positive control: other tiers keep the install rail, terminal fallback and
   for (const status of OTHER_TIERS) {
     const bin = withRail(brokenReleaseBin, status, "release-bin");
     const installed = flashPanelContent(bin, { kind: "ready", manifest, manifestUrl: API_MANIFEST }, handoff, "Board");
-    assert.equal(installed.kind, "install", status);
-    if (installed.kind !== "install") continue;
+    assert.equal(installed.kind, "ready", status);
+    if (installed.kind !== "ready") continue;
     assert.equal(installed.manifestUrl, API_MANIFEST);
     assert.deepEqual(installed.terminal, { chip: "esp32c5", offset: "0x0", file: BIN.split("/").pop(), url: BIN });
 
     const project = withRail(brokenReleaseBin, status, "project-manifest");
     const projectInstall = flashPanelContent(project, { kind: "ready", manifest, manifestUrl: PROJECT_MANIFEST }, handoff, "Board");
-    assert.equal(projectInstall.kind, "install", status);
-    if (projectInstall.kind === "install") assert.equal(projectInstall.terminal, null);
+    assert.equal(projectInstall.kind, "ready", status);
+    if (projectInstall.kind === "ready") assert.equal(projectInstall.terminal, null);
 
     const handed = flashPanelContent(bin, { kind: "handoff", reason: "use theirs" }, handoff, "Board");
     assert.deepEqual(handed, { kind: "handoff", reason: "use theirs", flasherUrls: [FLASHER], repoUrl: REPO }, status);
@@ -156,4 +158,45 @@ test("the in-browser pill never glows for a broken recipe, on either rail", () =
       assert.equal(inBrowserRail(withRail(brokenReleaseBin, status, rail), "handoff"), false, `${status} ${rail}`);
     }
   }
+});
+
+test("a preflight that resolved before the recipe turned broken cannot re-enable install, on either rail", () => {
+  for (const rail of RAILS) {
+    const url = rail === "release-bin" ? API_MANIFEST : PROJECT_MANIFEST;
+    // The preflight ran while the recipe was still installable and landed "ready"…
+    const installable = withRail(brokenReleaseBin, "reported", rail);
+    const stale: FlashPhase = { kind: "ready", manifest, manifestUrl: url };
+    assert.equal(flashPanelContent(installable, stale, handoff, "Board").kind, "ready", rail);
+    // …then the record says broken: the same held phase renders no rail at all.
+    const broken = withRail(brokenReleaseBin, "broken", rail);
+    const content = flashPanelContent(broken, stale, handoff, "Board");
+    assert.equal(content.kind, "broken", rail);
+    assert.ok(!JSON.stringify(content).includes(url), `${rail} keeps the stale manifest`);
+    assert.equal(inBrowserRail(broken, "ready"), false, rail);
+  }
+});
+
+// FlashAction is a React client component node --test cannot render; pin at the
+// source that it renders only the sanitized panel content, never its raw preflight.
+const flashAction = readFileSync(path.resolve(import.meta.dirname, "../components/flash/FlashAction.tsx"), "utf8");
+
+test("FlashAction renders only flashPanelContent, never its raw preflight state", () => {
+  assert.match(flashAction, /const \[preflight, setPreflight\] = useState<FlashPhase>/);
+  assert.match(flashAction, /const phase = flashPanelContent\(recipe, preflight, handoff, boardName\);/);
+  // The raw state is read only to know whether the drawer is closed.
+  const reads = flashAction.match(/\bpreflight\.\w+/g) ?? [];
+  assert.ok(reads.length > 0 && reads.every((r) => r === "preflight.kind"), reads.join(", "));
+  assert.equal((flashAction.match(/preflight\.kind(?! === "closed")/g) ?? []).length, 0);
+});
+
+test("FlashAction mounts the install button and the esptool command only on the ready content", () => {
+  const ready = flashAction.indexOf('{phase.kind === "ready" && (');
+  const handoffAt = flashAction.indexOf('{phase.kind === "handoff" && (');
+  assert.ok(ready > 0 && handoffAt > ready);
+  for (const marker of ["<esp-web-install-button", "esptool --chip", "Connect and flash"]) {
+    const at = flashAction.indexOf(marker);
+    assert.ok(at > ready && at < handoffAt, `${marker} must sit inside the ready block`);
+    assert.equal(flashAction.indexOf(marker, at + 1), -1, `${marker} appears twice`);
+  }
+  assert.match(flashAction, /\{phase\.kind === "broken" && \(/);
 });
