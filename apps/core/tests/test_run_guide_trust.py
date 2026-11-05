@@ -102,11 +102,13 @@ def test_llm_known_to_run_summary_cannot_reach_the_response(built_db_path, pin_r
     assert "Core2 (unverified" in result["summary"]
 
 
-def test_llm_summary_that_only_describes_the_firmware_is_kept_with_the_trust_line(built_db_path, pin_recipes):
+def test_summary_uses_catalog_text_even_when_the_model_description_sounds_safe(built_db_path, pin_recipes):
     pin_recipes(CORE2_UNVERIFIED)
     described = "CircuitPython is a beginner-friendly Python for microcontrollers."
     result = run_guide("circuitpython", llm_client=StubLLM({"summary": described, "boards": []}), db_path=built_db_path)
-    assert result["summary"].startswith(described)
+    baseline = run_guide("circuitpython", llm_client=_QUIET, db_path=built_db_path)
+    assert result["summary"] == baseline["summary"]
+    assert described not in result["summary"]
     assert "Core2 (unverified" in result["summary"]
 
 
@@ -193,3 +195,47 @@ def test_run_guide_never_shows_a_known_to_run_note_for_an_unverified_recipe(buil
     stub = StubLLM({"summary": "", "boards": [{"board_id": "m5stack-core2", "note": "Runs great on the Core2.", "source_url": None}]})
     result = run_guide("circuitpython", llm_client=stub, db_path=built_db_path)
     assert all("note" not in b for b in result["boards"])
+
+
+@pytest.mark.parametrize("summary", [
+    "These boards can run CircuitPython.",
+    "CircuitPython executes on every ESP32 board.",
+])
+@pytest.mark.parametrize("source_url", [None, "https://github.com/adafruit/circuitpython"])
+def test_full_response_omits_model_compatibility_prose(built_db_path, pin_recipes, summary, source_url):
+    """A valid source URL does not establish what an arbitrary sentence claims."""
+    pin_recipes(CORE2_UNVERIFIED, CARDPUTER_KNOWN_GOOD)
+    note = "This board can run CircuitPython."
+    stub = StubLLM({"summary": summary, "boards": [
+        {"board_id": "m5stack-core2", "note": note, "source_url": source_url},
+    ]})
+    baseline = run_guide("circuitpython", llm_client=_QUIET, db_path=built_db_path)
+    result = run_guide("circuitpython", llm_client=stub, db_path=built_db_path)
+    rendered = json.dumps(result)
+    assert summary not in rendered
+    assert note not in rendered
+    assert "Core2 (unverified" in result["summary"]
+    assert "Cardputer (known-good" in result["summary"]
+    by_id = {b["board_id"]: b for b in result["boards"]}
+    assert by_id["m5stack-core2"]["status"] == "unverified"
+    assert by_id["m5cardputer"]["status"] == "known-good"
+    assert by_id["m5stack-core2"]["fit"] == "unconfirmed"
+    assert result["boards"] == baseline["boards"]
+    assert by_id["m5stack-core2"]["sources"] == CORE2_UNVERIFIED["sources"]
+
+
+@pytest.mark.parametrize("status", ["unverified", "reported", "declared", "broken", "known-good"])
+def test_model_notes_are_only_optional_on_known_good_recipes(built_db_path, pin_recipes, status):
+    recipe = dict(CORE2_UNVERIFIED, status=status)
+    pin_recipes(recipe)
+    note = "The Core2 has 2.4 GHz Wi-Fi."
+    stub = StubLLM({"summary": "", "boards": [
+        {"board_id": "m5stack-core2", "note": note, "source_url": None},
+    ]})
+    baseline = run_guide("circuitpython", llm_client=_QUIET, db_path=built_db_path)
+    result = run_guide("circuitpython", llm_client=stub, db_path=built_db_path)
+    board = result["boards"][0]
+    assert board["status"] == status
+    assert bool(board.get("note")) == (status == "known-good")
+    assert board["reasons"] == baseline["boards"][0]["reasons"]
+    assert board["particularities"]

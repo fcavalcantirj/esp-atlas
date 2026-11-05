@@ -20,7 +20,7 @@ or invents a fact.
     #                  "sources": [...], "note": "..."}, ...],
     #     "flash_next": [...], "citations": [...], "grounded": True}
 
-Three things keep this honest ("nothing guessed, nothing invented"):
+Four things keep this honest ("nothing guessed, nothing invented"):
 
 1. **The board set is closed over the recipe graph.** boards[] can only ever be
    the boards `recipes_for_firmware` already lists -- the LLM is never asked
@@ -32,21 +32,19 @@ Three things keep this honest ("nothing guessed, nothing invented"):
    board_signal it names -- the same columns esp_atlas_core.search filters on
    -- and states plainly when a capability cannot be proven from structured
    data, rather than guessing either way.
-3. **A grounding validator (`validate_grounded_output`) gates every LLM
-   sentence** before it can reach the response: a board id outside the recipe
+3. **A grounding validator (`validate_grounded_output`) gates optional LLM
+   notes** before they can reach the response: a board id outside the recipe
    set, a source URL outside that board's own recorded sources, or a spec
    claim (a GHz band, a Bluetooth Classic claim, an MB figure) that
    contradicts the board's real record is rejected outright -- the whole note
-   is dropped, not sanitized, so a partially-hallucinated sentence can never
-   surface. `boards[].reasons`/`fit`/`sources` are never touched by this path
-   at all; only the optional `boards[].note` and top-level `summary` come from
-   the model, and both fall back to deterministic, template-only text if the
-   model is unreachable, rate-limited, or returns garbage.
-4. **A recipe is a cited pairing, not proof it runs.** The summary's board
-   sentence is always deterministic -- "Boards with a recipe:", each board
-   with its own trust tier and that tier's caveat -- and a model summary that
-   names a board or claims compatibility is rejected, so an `unverified`
-   recipe can never surface as "Known to run on".
+   is dropped, not sanitized. `boards[].reasons`/`fit`/`sources` are never
+   touched by this path. Only `known-good` rows may receive an optional model
+   note; other tiers keep their deterministic hardware explanations. When
+   the model fails, optional notes are simply omitted.
+4. **A recipe is a cited pairing, not proof it runs.** The entire summary is
+   deterministic catalog text -- "Boards with a recipe:", each board with
+   its own trust tier and caveat. No model summary reaches the response:
+   a phrase blacklist cannot establish arbitrary prose's compatibility claims.
 """
 import json
 import re
@@ -563,8 +561,7 @@ using only the given facts -- never invent a missing spec, and never state
 that PSRAM is required.
 
 Reply with JSON only, no prose, in exactly this shape:
-{"summary": "<=2 sentences: what the firmware is and what it needs -- never name a board, never say it runs, works, or is supported on any board; each board's trust tier is stated separately>",
- "boards": [{"board_id": "<id from the data>", "note": "<=1 sentence elaborating that board's fit, using ONLY the given facts -- never say the firmware runs, boots, or works on it>", "source_url": "<a url from that board's own sources, or null>"}]}
+{"boards": [{"board_id": "<id from the data>", "note": "<=1 sentence elaborating that board's fit, using ONLY the given facts -- never say the firmware runs, boots, or works on it>", "source_url": "<a url from that board's own sources, or null>"}]}
 
 Never name a board_id that is not listed below. Never state a spec, a GHz band,
 a Bluetooth capability, or a memory size that is not given for that board.
@@ -759,26 +756,28 @@ def run_guide(firmware_id, constraints=None, llm_client=None, db_path=None):
             }
         )
 
-    allowed_board_ids = {e["recipe"]["board"] for e in board_entries}
+    # Free prose cannot establish compatibility. Keep every trust tier's
+    # deterministic reasons, but request optional model notes only for pairings
+    # whose catalog status already establishes that they are known-good.
+    explain_entries = [e for e in board_entries if e["recipe"].get("status") == "known-good"]
+    allowed_board_ids = {e["recipe"]["board"] for e in explain_entries}
     sources_by_board = {
-        e["recipe"]["board"]: {s["url"] for s in (e["recipe"].get("sources") or [])} for e in board_entries
+        e["recipe"]["board"]: {s["url"] for s in (e["recipe"].get("sources") or [])} for e in explain_entries
     }
-    hardware_match_by_board = {e["recipe"]["board"]: e["hardware_match"] for e in board_entries}
-    board_facts_by_id = {e["recipe"]["board"]: e["board"] for e in board_entries}
+    hardware_match_by_board = {e["recipe"]["board"]: e["hardware_match"] for e in explain_entries}
+    board_facts_by_id = {e["recipe"]["board"]: e["board"] for e in explain_entries}
 
     summary = _fallback_summary(firmware, requirements, board_entries, chip_constraint)
     notes = {}
 
-    if board_entries:
+    if explain_entries:
         client = llm_client or GroqClient(model=FAST_MODEL)
-        prompt = _build_prompt(firmware, requirements, board_entries, chip_constraint)
+        prompt = _build_prompt(firmware, requirements, explain_entries, chip_constraint)
         try:
             raw = client.complete(SYSTEM_PROMPT, prompt, temperature=0)
             validated = validate_grounded_output(
                 raw, allowed_board_ids, sources_by_board, hardware_match_by_board, board_facts_by_id
             )
-            if validated["summary"]:
-                summary = f"{validated['summary']} {_boards_sentence(board_entries, chip_constraint)}"
             notes = validated["notes"]
         except Exception:
             pass  # graceful degradation: keep the deterministic fallback, never invent, never raise
@@ -800,7 +799,7 @@ def run_guide(firmware_id, constraints=None, llm_client=None, db_path=None):
             "sources": recipe.get("sources") or [],
         }
         note = notes.get(board_id)
-        if note and note["note"]:
+        if recipe.get("status") == "known-good" and note and note["note"]:
             out["note"] = note["note"]
         boards_out.append(out)
 
