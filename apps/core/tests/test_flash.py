@@ -72,12 +72,13 @@ def test_no_manifest_for_unknown_or_non_release_bin_recipes(built_db_path):
     assert build_manifest(handoff["id"], db_path=built_db_path) is None
 
 
-def test_every_release_bin_recipe_with_a_url_yields_a_manifest(built_db_path):
-    """No half-configured recipe: if it records a binary, it must flash."""
+def test_every_eligible_release_bin_recipe_with_a_url_yields_a_manifest(built_db_path):
+    """Other tiers keep their rail; broken artifacts remain documentation only."""
     broken = [
         r["id"]
         for r in _release_bin_recipes()
-        if (r.get("flash") or {}).get("bin_url") and build_manifest(r["id"], db_path=built_db_path) is None
+        if r.get("status") != "broken" and (r.get("flash") or {}).get("bin_url")
+        and build_manifest(r["id"], db_path=built_db_path) is None
     ]
     assert not broken, f"recipe(s) record a binary but produce no manifest: {broken}"
 
