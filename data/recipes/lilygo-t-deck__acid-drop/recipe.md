@@ -5,10 +5,19 @@ board: lilygo-t-deck
 firmware: acid-drop
 status: unverified
 chip_family: esp32-s3
+notes: "Board-specific evidence: acid-drop's platformio.ini defines a dedicated env:t-deck for the original T-Deck, separate from env:t-deck-plus (commit 51a98f1). Per that file, the two builds differ only in the board name and the GNSS module, which the original T-Deck build no longer drives. Not verified: no current successful build confirmed and not tested on hardware for this atlas."
 sources:
 - field: '*'
   url: https://github.com/acidvegas/acid-drop
   verified: '2026-11-05'
+- field: 'board'
+  url: https://github.com/acidvegas/acid-drop/blob/51a98f13d1efd1a9d07333be3957dd60b1ca7cf7/platformio.ini
+  verified: '2026-11-05'
 ---
 
-acid-drop on the lilygo-t-deck (esp32-s3). `unverified`; the repo lists lilygo-t-deck as a supported device.
+acid-drop on the LilyGO T-Deck (ESP32-S3). `unverified`.
+
+The project ships a dedicated `t-deck` PlatformIO environment for the original
+T-Deck, separate from the `t-deck-plus` one. That is source evidence of intended
+support, not proof that today's code builds or runs: no current successful build
+has been confirmed, and it has not been tested on hardware for this atlas.
