@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Blocking check on the links a PR ADDS or CHANGES (scripts/new_link_check.py).
+"""Check on the links a PR ADDS or CHANGES (scripts/new_link_check.py).
 
-Owner rule: a confirmed 404 or 410 on a link the PR adds or changes blocks that PR. Nothing
-else does. Timeouts, DNS and TLS failures, 429, 5xx, a 403 from a bot wall and any other odd
+Owner rule: a confirmed 404 or 410 on a link the PR adds or changes fails this check. Nothing
+else does. (The `new-links` CI job is not a required status check today, so a failure does
+not by itself block merge.) Timeouts, DNS and TLS failures, 429, 5xx, a 403 from a bot wall and any other odd
 status are INCONCLUSIVE -- the server declined to answer, which says nothing about the link.
 Links already broken on main are never looked at here (they sit on lines the PR did not
 touch); the non-blocking `sources-live` job tracks those.
@@ -10,7 +11,10 @@ touch); the non-blocking `sources-live` job tracks those.
 How:
   1. `git diff <base>...HEAD -- data/` (the merge base, so main moving on is not the PR's doing);
   2. every URL on an added or changed line of a data text file (.md frontmatter fields and
-     sources, body links, .json/.yml cited-source fields), de-duplicated ignoring #fragments;
+     sources, body links, .json/.yml cited-source fields), de-duplicated ignoring #fragments.
+     The URL checked is the one the author wrote: JSON/YAML/markdown escapes are decoded first
+     (https:\\/\\/x is https://x), and punctuation inside quotes, a markdown (target) or an
+     <autolink> is kept; only a bare URL in prose drops trailing sentence punctuation;
   3. each checked once: HEAD, then GET when HEAD is not a clean yes; a 404/410 GET is asked
      again after a short pause and is DEAD only if it says so twice. Short timeout, small
      concurrency cap, a User-Agent that says who we are.
@@ -24,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import http.client
+import json
 import os
 import re
 import subprocess
@@ -45,7 +50,12 @@ TEXT_SUFFIXES = (".md", ".json", ".yml", ".yaml")
 
 ALIVE, DEAD, INCONCLUSIVE = "alive", "dead", "inconclusive"
 
-_URL = re.compile(r"https?://[^\s<>\"`\[\]{}|^]+")
+_BARE = re.compile(r"https?:(?:\\?/){2}[^\s<>\"`\[\]{}|^]+")  # https:\/\/ too: a JSON-escaped scheme
+_TOKEN = re.compile(r"\"|'(?=https?:)|<(?=https?:)|\]\(|https?:(?:\\?/){2}")
+_DOUBLE_QUOTED = re.compile(r'"((?:[^"\\]|\\.)*)"')
+_SINGLE_QUOTED = re.compile(r"'((?:[^']|'')*)'")
+_AUTOLINK = re.compile(r"<(https?:[^\s<>]*)>")
+_WHOLE_URL = re.compile(r"https?://\S+")
 _TRAILING = ".,;:!?*'"
 _ESCAPED = re.compile(r"\\([!-/:-@\[-`{-~])")  # markdown/JSON backslash escapes: my\_repo, \/
 _HUNK = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@")
@@ -92,21 +102,82 @@ def _trim(url: str) -> str:
     return url
 
 
-def _unquote(url: str, opener: str) -> str:
-    """A URL inside '...' ends at the closing quote; YAML writes a literal ' as ''."""
-    if opener != "'":
-        return url
-    return re.split(r"'(?!')", url.replace("''", "\0"), maxsplit=1)[0].replace("\0", "'")
+def _unescape(text: str) -> str:
+    return _ESCAPED.sub(r"\1", text)
+
+
+def _json_string(raw: str) -> str:
+    """A "..." body decoded as JSON (also right for YAML double quotes); unknown escapes such as
+    markdown's my\\_repo fall back to dropping the backslash."""
+    try:
+        return json.loads(f'"{raw}"')
+    except ValueError:
+        return _unescape(raw)
+
+
+def _delimited(value: str) -> list[str]:
+    """A quoted value that IS a URL is taken exactly -- its punctuation is the author's; a value
+    that merely contains one is prose."""
+    if _WHOLE_URL.fullmatch(value.strip()):
+        return [value.strip()]
+    return _scan(value)
+
+
+def _read_double_quoted(text: str, at: int):
+    m = _DOUBLE_QUOTED.match(text, at)
+    return (_delimited(_json_string(m.group(1))), m.end()) if m else ([], at + 1)
+
+
+def _read_single_quoted(text: str, at: int):
+    """YAML single quotes: no backslash escapes; a literal ' is written ''."""
+    m = _SINGLE_QUOTED.match(text, at)
+    return (_delimited(m.group(1).replace("''", "'")), m.end()) if m else ([], at + 1)
+
+
+def _read_autolink(text: str, at: int):
+    m = _AUTOLINK.match(text, at)
+    return ([m.group(1)], m.end()) if m else ([], at + 1)
+
+
+def _read_link_target(text: str, at: int):
+    """[text](target "title"): the target runs to the matching paren, backslash escapes aside."""
+    depth, i = 1, at + 2
+    while i < len(text) and depth:
+        depth += {"(": 1, ")": -1}.get(text[i], 0)
+        i += 2 if text[i] == "\\" else 1
+    if depth:
+        return [], at + 2
+    inner = text[at + 2:i - 1].strip()
+    target = inner[1:].split(">", 1)[0] if inner.startswith("<") else (inner.split() or [""])[0]
+    target = _unescape(target)
+    return ([target] if _WHOLE_URL.fullmatch(target) else []), i
+
+
+def _read_bare(text: str, at: int):
+    m = _BARE.match(text, at)
+    return ([_trim(_unescape(m.group()))], m.end()) if m else ([], at + 1)
+
+
+_READERS = {'"': _read_double_quoted, "'": _read_single_quoted, "<": _read_autolink,
+            "]": _read_link_target, "h": _read_bare}
+
+
+def _scan(text: str) -> list[str]:
+    urls, pos = [], 0
+    while m := _TOKEN.search(text, pos):
+        found, pos = _READERS[m.group()[0]](text, m.start())
+        urls.extend(found)
+    return urls
 
 
 def urls_in(line: str) -> list[str]:
-    urls = []
-    for m in _URL.finditer(line):
-        opener = line[m.start() - 1] if m.start() else ""
-        url = _trim(_ESCAPED.sub(r"\1", _unquote(m.group(), opener)))
-        if url.split("://", 1)[1]:
-            urls.append(url)
-    return urls
+    """Every URL on a line, exactly as its author wrote it.
+
+    Structured escapes are decoded before discovery (JSON/YAML "https:\\/\\/x", markdown
+    my\\_repo, YAML 'it''s'). Punctuation inside an explicit delimiter -- a quoted value that is
+    the whole URL, a markdown (target) or an <autolink> -- belongs to the URL; only a bare URL
+    in prose loses trailing sentence punctuation."""
+    return [url for url in _scan(line) if url.split("://", 1)[1]]
 
 
 def extract_urls(lines) -> dict[str, list[tuple[str, int]]]:

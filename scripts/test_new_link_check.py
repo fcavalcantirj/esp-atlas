@@ -1,4 +1,4 @@
-"""Tests for scripts/new_link_check.py — the blocking check on URLs a PR adds or changes.
+"""Tests for scripts/new_link_check.py — the check on URLs a PR adds or changes.
 
 Everything is local: a fake HTTP server on 127.0.0.1 answers with scripted statuses, and each
 end-to-end test builds a throwaway git repo (main + a PR branch) so the diff is real.
@@ -73,6 +73,8 @@ ROUTES = {
     "/flaky": {"HEAD": [405], "GET": [404, 200]},
     "/flaky503": {"HEAD": [405], "GET": [404, 503]},
     "/head-refused": {"HEAD": [405], "GET": [200]},
+    "/important!": {"GET": [404], "HEAD": [404]},
+    "/escaped/gone": {"GET": [404], "HEAD": [404]},
 }
 
 
@@ -222,6 +224,51 @@ def test_dead_links_are_annotated_with_file_and_line(tmp_path, server, capsys):
     assert f"::error file={BOARD},line=11::" in capsys.readouterr().out
 
 
+# --- the exact URL the PR adds is the one requested ----------------------------------------
+# The fake server records every request path: /important! answers 404 and /important 200, so
+# a checker that drops the "!" would wrongly pass, and one that keeps "\\/" would ask for a
+# path nobody wrote.
+
+SIGNALS = "data/firmware/acme-fw/signals.json"
+SOURCES = "data/boards/acme/acme-one/sources.yml"
+
+
+def _escaped(url):
+    return url.replace("/", "\\/")
+
+
+@pytest.mark.parametrize("path,line", [
+    (SIGNALS, lambda u: f'{{"url": "{_escaped(u)}"}}\n'),
+    (SIGNALS, lambda u: f'{{"url": "{u}"}}\n'),
+    (SOURCES, lambda u: f"- url: '{u}'\n"),
+    (BOARD, lambda u: f"# Acme One\n\nSee the [reference]({u}).\n"),
+    (BOARD, lambda u: f"# Acme One\n\nSee <{u}>.\n"),
+], ids=["json-escaped", "json", "yaml-single-quoted", "markdown-link", "markdown-autolink"])
+def test_the_exact_punctuated_url_is_requested_and_its_404_fails(tmp_path, server, capsys, path, line):
+    repo = make_repo(tmp_path, {}, {path: line(server.url("/important!"))})
+    assert run(repo) == 1
+    assert server.hit("/important!") == ["HEAD", "GET", "GET"]
+    assert server.hit("/important") == []
+    assert server.url("/important!") in capsys.readouterr().out
+
+
+def test_an_escaped_json_url_is_decoded_to_the_path_it_names(tmp_path, server, capsys):
+    url = server.url("/escaped/gone")
+    repo = make_repo(tmp_path, {}, {SIGNALS: f'{{"url": "{_escaped(url)}"}}\n'})
+    assert run(repo) == 1
+    assert server.hit("/escaped/gone") == ["HEAD", "GET", "GET"]
+    assert all("\\" not in p for _, p in server.hits)
+    assert f"Dead link (HTTP 404, then 404, confirmed): {url}" in capsys.readouterr().out
+
+
+def test_a_bare_url_in_prose_drops_the_sentence_punctuation(tmp_path, server):
+    url = server.url("/important!")
+    repo = make_repo(tmp_path, {}, {BOARD: f"# Acme One\n\nRead {url}\n"})
+    assert run(repo) == 0
+    assert server.hit("/important") == ["HEAD"]
+    assert server.hit("/important!") == []
+
+
 # --- classification ------------------------------------------------------------------------
 
 @pytest.mark.parametrize("path,status", [
@@ -329,6 +376,25 @@ def test_added_lines_keep_only_data_text_files_with_new_line_numbers():
     ("  - 'https://a.example/it''s'", ["https://a.example/it's"]),
     ("https://github.com/o/my\\_repo", ["https://github.com/o/my_repo"]),
     ('"see https://a.example/x" and \'https://b.example/y\'', ["https://a.example/x", "https://b.example/y"]),
+    # structured escapes are decoded before discovery
+    ('"url": "https:\\/\\/example.com\\/gone"', ["https://example.com/gone"]),
+    ('"url": "https://example.com/\\u0067one"', ["https://example.com/gone"]),
+    ('"url": "https://github.com/o/my\\_repo"', ["https://github.com/o/my_repo"]),
+    # punctuation inside explicit delimiters is part of the URL
+    ('"url": "https://example.com/important!"', ["https://example.com/important!"]),
+    ("  url: 'https://example.com/important!'", ["https://example.com/important!"]),
+    ("[reference](https://example.com/important!)", ["https://example.com/important!"]),
+    ("![pinout](https://example.com/pin.png) and [ref](https://example.com/a?b=c \"Title\")",
+     ["https://example.com/pin.png", "https://example.com/a?b=c"]),
+    ("[esc](https://example.com/a\\(b\\))", ["https://example.com/a(b)"]),
+    ("<https://example.com/important!>", ["https://example.com/important!"]),
+    ('"vendor_url": "https://example.com/v1."', ["https://example.com/v1."]),
+    ("- 'https://example.com/v1.'", ["https://example.com/v1."]),
+    # bare URLs in prose -- including prose inside a quoted string -- lose sentence punctuation
+    ("See https://example.com/important!", ["https://example.com/important"]),
+    ('"notes": "pinout at https://example.com/pinout."', ["https://example.com/pinout"]),
+    ("unclosed [x](https://example.com/a.", ["https://example.com/a"]),
+    ("a scheme alone https:// or 'https://' or \"https:\" is no URL", []),
 ])
 def test_urls_in_a_line(line, urls):
     assert nlc.urls_in(line) == urls
