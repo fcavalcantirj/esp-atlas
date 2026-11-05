@@ -59,6 +59,13 @@ def test_nothing_swallows_the_new_link_exit_code(jobs):
     assert not SHELL_OPERATORS.search(step["run"]), step["run"]
 
 
+def test_pyyaml_is_installed_before_the_new_link_check(jobs):
+    """Without PyYAML every YAML URL is inconclusive: the check would pass blind."""
+    steps = jobs["schema"]["steps"]
+    installs = [i for i, s in enumerate(steps) if "pip install" in str(s.get("run", "")) and "pyyaml" in s["run"]]
+    assert installs and installs[0] < steps.index(_new_link_step(jobs))
+
+
 def test_the_schema_checkout_has_full_history_for_the_base_diff(jobs):
     checkout = next(s for s in jobs["schema"]["steps"] if str(s.get("uses", "")).startswith("actions/checkout"))
     assert checkout.get("with", {}).get("fetch-depth") == 0

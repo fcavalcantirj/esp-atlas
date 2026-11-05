@@ -28,7 +28,7 @@ jobs:
         # Reads data/firmware/<id>/signals.json written by Track B (jr/stage_boardmap.py); offline.
         # Becomes blocking (--strict) once the known under-maps are closed.
         run: python3 scripts/firmware_boards_audit.py --ci
-      - name: No confirmed-dead link among the URLs this PR adds or changes (stdlib only)
+      - name: No confirmed-dead link among the URLs this PR adds or changes (PyYAML from above)
         # Inside the required schema check, so a confirmed 404/410 (asked twice) on a URL this
         # PR ADDS or CHANGES under data/** blocks merge. Deliberately no continue-on-error and
         # no pipe: the script's exit code is the verdict. Timeouts, DNS/TLS errors, 429, 5xx

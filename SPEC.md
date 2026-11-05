@@ -87,11 +87,14 @@ visibly separate from the verified fields above it.
   that cannot be taken exits 2 (fails closed). The URL
   checked is the exact one the PR wrote: JSON/YAML/markdown escapes are decoded first
   (`https:\/\/x` is `https://x`), punctuation inside explicit delimiters (a quoted value that
-  is the whole URL, a markdown `(target)`, an `<autolink>`) is kept, and so is the whole of an
-  unquoted YAML value that is the URL (`url: https://x/important!` in a `.yml`/`.yaml` file or
-  in `.md` frontmatter -- the frontmatter span is read from the PR's HEAD); only a bare URL in
-  prose (a `.md` body, a YAML comment or a longer YAML string) drops trailing sentence
-  punctuation. A URL too malformed to request (`http://[`) is inconclusive, never a crash. A changed line counts even when it keeps the same
+  is the whole URL, a markdown `(target)`, an `<autolink>`) is kept. YAML (a `.yml`/`.yaml`
+  file, `.md` frontmatter -- read from the PR's HEAD) is read with PyYAML's SafeLoader, so a
+  YAML value that is the URL is exactly what `yaml.safe_load` yields, whatever the syntax
+  around it: `url: https://x/important!`, `'url': https://x/important!` and
+  `{url: https://x/important!}` all keep the `!`. YAML that cannot be read (a parse error, the
+  file missing at HEAD, no PyYAML) leaves its URLs **inconclusive** -- never a trimmed guess
+  that could pass as alive. Only a bare URL in prose (a `.md` body, a YAML comment or a
+  longer YAML string) drops trailing sentence punctuation. A URL too malformed to request (`http://[`) is inconclusive, never a crash. A changed line counts even when it keeps the same
   URL, and a pure file move (git rename) changes no line. HEAD, then GET fallback; short timeout; small
   concurrency cap; polite User-Agent. Timeouts, DNS/TLS failures, 429, 5xx, 403 bot walls
   and any other status are **inconclusive**: they exit 0 and never block. URLs on untouched lines are
