@@ -11,124 +11,67 @@ export default function SiteFooter() {
     <footer className="site-footer">
       <div className="site-footer-inner">
         <div className="site-footer-grid">
-          <section className="footer-col footer-col--about">
-            <p className="footer-title">Why {SITE_NAME}</p>
-            <p className="footer-standfirst">
-              A community wiki for ESP32 hardware, <em>cited to the datasheet</em>.
+          <section className="footer-col footer-col--about" aria-label={`About ${SITE_NAME}`}>
+            <Link href="/" className="footer-wordmark" aria-label={`${SITE_NAME} home`}>
+              esp<span>/</span><wbr />atlas
+            </Link>
+            <p className="footer-standfirst">Every ESP32, mapped and cited.</p>
+            <p className="footer-summary">
+              Find the board. See what runs. Flash it. Debug it.
+              Every record keeps its sources; every recipe shows its trust tier.
             </p>
-            <p>
-              A bot watches the sources every day and proposes what changed; humans review it; nothing lands
-              without a source. If it isn&apos;t verified, it isn&apos;t stated.
-            </p>
-            <p>
-              <Link href="/how-we-work" className="footer-how">
-                How we work →
-              </Link>
-            </p>
+            <Link href="/how-we-work" className="footer-how">How we work <span aria-hidden="true">↗</span></Link>
           </section>
 
-          <section className="footer-col">
-            <p className="footer-title">Contribute</p>
+          <section className="footer-col" aria-labelledby="footer-explore">
+            <h2 className="footer-title" id="footer-explore">Explore</h2>
             <ul className="footer-links">
-              <li>
-                <Link href="/submit">Submit a firmware</Link>
-              </li>
-              <li>
-                <TrackedLink href={contributingUrl()} linkType="contributing">
-                  Add or fix a part
-                </TrackedLink>
-              </li>
-              <li>
-                <TrackedLink href={discussionsUrl()} linkType="discussions">
-                  Suggestions &amp; questions
-                </TrackedLink>
-              </li>
-              <li>
-                <TrackedLink href={issuesUrl()} linkType="issues">
-                  Report a bug or wrong spec
-                </TrackedLink>
-              </li>
-              <li>
-                <TrackedLink href={agentsUrl()} linkType="agents">
-                  AGENTS.md for coding agents
-                </TrackedLink>
-              </li>
-            </ul>
-          </section>
-
-          <section className="footer-col">
-            <p className="footer-title">Data &amp; code</p>
-            <ul className="footer-links">
-              <li>
-                <TrackedLink href={dataFolderUrl()} linkType="data_folder">
-                  Browse the dataset on GitHub
-                </TrackedLink>
-              </li>
-              <li>
-                <TrackedLink href={repoUrl()} linkType="github_repo">
-                  Source repository
-                </TrackedLink>
-              </li>
-              <li>
-                <TrackedLink href={API_DOCS_PATH} linkType="api_docs">
-                  API docs
-                </TrackedLink>
-              </li>
-              <li>
-                <TrackedLink href={LLMS_TXT_PATH} linkType="llms_txt">
-                  llms.txt
-                </TrackedLink>
-              </li>
-            </ul>
-          </section>
-
-          <section className="footer-col">
-            <p className="footer-title">Explore</p>
-            <ul className="footer-links">
-              <li>
-                <Link href="/">Wizard &amp; search</Link>
-              </li>
-              <li>
-                <Link href="/compare">Compare parts</Link>
-              </li>
-              <li>
-                <Link href="/brands">Brands</Link>
-              </li>
-              <li>
-                <Link href="/firmware">Flash a board</Link>
-              </li>
-              <li>
-                <Link href="/debug">Debug</Link>
-              </li>
-              <li>
-                <Link href="/status">Status</Link>
-              </li>
-              <li>
-                <Link href="/parts/esp32-c6">ESP32-C6</Link> · <Link href="/parts/esp32-s3">ESP32-S3</Link> ·{" "}
+              <li><Link href="/atlas">The interactive atlas</Link></li>
+              <li><Link href="/">Wizard &amp; search</Link></li>
+              <li><Link href="/boards">Boards &amp; hardware</Link></li>
+              <li><Link href="/firmware">Firmware &amp; flashing</Link></li>
+              <li><Link href="/compare">Compare parts</Link></li>
+              <li><Link href="/brands">Brands</Link></li>
+              <li><Link href="/debug">Debug</Link></li>
+              <li><Link href="/status">Status</Link></li>
+              <li className="footer-chip-links">
+                <Link href="/parts/esp32-c6">ESP32-C6</Link>
+                <Link href="/parts/esp32-s3">ESP32-S3</Link>
                 <Link href="/parts/esp32-h2">ESP32-H2</Link>
               </li>
+            </ul>
+          </section>
+
+          <section className="footer-col" aria-labelledby="footer-contribute">
+            <h2 className="footer-title" id="footer-contribute">Contribute</h2>
+            <ul className="footer-links">
+              <li><Link href="/submit">Submit a firmware</Link></li>
+              <li><TrackedLink href={contributingUrl()} linkType="contributing">Add or fix a part</TrackedLink></li>
+              <li><TrackedLink href={discussionsUrl()} linkType="discussions">Suggestions &amp; questions</TrackedLink></li>
+              <li><TrackedLink href={issuesUrl()} linkType="issues">Report a bug or wrong spec</TrackedLink></li>
+              <li><TrackedLink href={agentsUrl()} linkType="agents">AGENTS.md for coding agents</TrackedLink></li>
+            </ul>
+          </section>
+
+          <section className="footer-col" aria-labelledby="footer-data">
+            <h2 className="footer-title" id="footer-data">Data &amp; code</h2>
+            <ul className="footer-links">
+              <li><TrackedLink href={dataFolderUrl()} linkType="data_folder">Browse the dataset</TrackedLink></li>
+              <li><TrackedLink href={repoUrl()} linkType="github_repo">Source repository</TrackedLink></li>
+              <li><TrackedLink href={API_DOCS_PATH} linkType="api_docs">API documentation</TrackedLink></li>
+              <li><TrackedLink href={LLMS_TXT_PATH} linkType="llms_txt">llms.txt</TrackedLink></li>
             </ul>
           </section>
         </div>
 
         <div className="footer-bottom">
-          <strong className="footer-mission">
-            esp-atlas — every ESP32, mapped and cited: find the board, see what runs, flash it, debug it. Chewed
-            daily by a bot, checked by humans, fixable by anyone in one PR.
-          </strong>
           <span>
-            Data (<code>data/</code>, <code>schema/</code>) is{" "}
-            <TrackedLink href="https://creativecommons.org/licenses/by-sa/4.0/" linkType="license">
-              CC-BY-SA 4.0
-            </TrackedLink>
-            ; code is{" "}
-            <TrackedLink href={licenseUrl()} linkType="license">
-              MIT
-            </TrackedLink>
-            .
+            Data (<code>data/</code>, <code>schema/</code>):{" "}
+            <TrackedLink href="https://creativecommons.org/licenses/by-sa/4.0/" linkType="license">CC-BY-SA 4.0</TrackedLink>
+            {" · "}Code: <TrackedLink href={licenseUrl()} linkType="license">MIT</TrackedLink>
           </span>
-          <span className="muted">Flash &amp; verify need a Chromium browser (Chrome, Edge).</span>
-          <span className="muted">Uses Google Analytics to learn how people search for parts.</span>
+          <span>Flash &amp; verify need a Chromium browser (Chrome, Edge).</span>
+          <span>Uses Google Analytics to learn how people search for parts.</span>
         </div>
       </div>
     </footer>

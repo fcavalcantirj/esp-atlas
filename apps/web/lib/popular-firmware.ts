@@ -15,7 +15,7 @@ function hasPopularitySignal(firmware: Firmware): boolean {
 }
 
 /** Ranks `firmware` for the home shelf: cited stars desc, then boards-count
- * (how many boards it's verified on) as a tiebreak, then name for stable
+ * (how many boards it has recipes for, any trust tier) as a tiebreak, then name for stable
  * ordering, capped to `limit`. Firmware with neither signal is excluded
  * rather than fabricated a rank (see `hasPopularitySignal`). */
 export function selectPopularFirmware(firmware: Firmware[], limit: number = POPULAR_FIRMWARE_LIMIT): Firmware[] {

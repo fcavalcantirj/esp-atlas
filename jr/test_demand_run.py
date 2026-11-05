@@ -208,7 +208,9 @@ def test_the_worktree_is_always_removed(tmp_path):
 
 
 def test_an_older_open_demand_pr_is_closed_as_superseded_after_landing(tmp_path):
-    prs = json.dumps([{"number": 1390, "headRefName": "jr/demand-20261102-0930"},
+    prs = json.dumps([{"number": 1390, "headRefName": "jr/demand-20261102-0930",
+                       "files": [{"path": "docs/demand/2026-11-02.json", "changeType": "ADDED"},
+                                 {"path": "docs/demand/unresolved.json", "changeType": "MODIFIED"}], "changedFiles": 2},
                       {"number": 1399, "headRefName": "jr/tick-20261103-0900"}])
     gh = gh_ok(open_prs=prs)
     res = run(tmp_path, gh=gh)
@@ -218,8 +220,9 @@ def test_an_older_open_demand_pr_is_closed_as_superseded_after_landing(tmp_path)
 
 
 def test_a_jr_review_demand_pr_is_never_closed_as_superseded(tmp_path):
-    prs = json.dumps([{"number": 1391, "headRefName": "jr/demand-20261101-0930", "labels": [{"name": "jr-review"}]},
-                      {"number": 1392, "headRefName": "jr/demand-20261102-0930", "labels": []}])
+    manifest = {"files": [{"path": "docs/demand/2026-11-02.json", "changeType": "ADDED"}], "changedFiles": 1}
+    prs = json.dumps([{"number": 1391, "headRefName": "jr/demand-20261101-0930", "labels": [{"name": "jr-review"}], **manifest},
+                      {"number": 1392, "headRefName": "jr/demand-20261102-0930", "labels": [], **manifest}])
     gh = gh_ok(open_prs=prs)
     res = run(tmp_path, gh=gh)
     assert [c[2] for c in gh.calls if c[:2] == ("pr", "close")] == ["1392"] and res.superseded == [1392]

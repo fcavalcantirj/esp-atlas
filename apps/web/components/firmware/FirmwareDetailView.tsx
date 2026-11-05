@@ -89,8 +89,6 @@ export default function FirmwareDetailView({
   readme?: RepoReadme | null;
 }) {
   const rows = firmwareBoardRows(recipes, parts, firmware);
-  const boardById = new Map(parts.map((p) => [p.id, p]));
-  const boards = recipes.map((r) => boardById.get(r.board)).filter((b): b is PartRecord => b !== undefined);
   const dek = firmware.summary;
   const translatedReadme = firmware.readme_en;
 
@@ -103,7 +101,7 @@ export default function FirmwareDetailView({
 
   return (
     <main id="main" className="container container--wide" tabIndex={-1}>
-      <JsonLd data={firmwareGraph(firmware, boards)} />
+      <JsonLd data={firmwareGraph(firmware, recipes, parts)} />
       <FirmwareViewTracker firmware={firmware} />
       <nav className="breadcrumb" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
@@ -149,7 +147,7 @@ export default function FirmwareDetailView({
         </section>
       )}
       <section className="firmware-boards" aria-labelledby="firmware-boards">
-        <h2 id="firmware-boards">Runs on these boards</h2>
+        <h2 id="firmware-boards">Boards with a recipe, by trust tier</h2>
         {rows.length === 0 ? <p className="muted">No boards recorded for this firmware yet.</p> : <RecipeGroupList rows={rows} />}
       </section>
       {(translatedReadme || readme) && (

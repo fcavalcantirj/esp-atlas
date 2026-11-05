@@ -4,7 +4,7 @@
 > family — SoCs, modules, dev boards, AND the firmware that runs on them (Cardputer,
 > M5Stack, Flipper-devboard, and pentest/RF tools like Marauder, Bruce, Ghost ESP,
 > Meshcore). Stored as plain markdown with YAML frontmatter; every hard spec cites an
-> official source — if it isn't verified, it isn't stated. Each firmware page is a
+> official source — if it has no source, it isn't stated. Each firmware page is a
 > flash guide: which board it runs on, what it does, and how to flash it. Queryable
 > via search/wizard and a JSON API, and every page also serves a clean markdown view
 > for LLMs and agents (append `?format=md`).

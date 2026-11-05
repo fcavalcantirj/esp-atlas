@@ -67,11 +67,12 @@ export const PRICE_TIER_NOTE =
   "Approximate, editorial street-price tier — not a datasheet-verified spec. Used only by the wizard's budget filter.";
 
 // Trust tiers, most to least trusted (SPEC-wizard.md "the honesty layer").
-export const RECIPE_TIER_ORDER = ["known-good", "reported", "unverified", "broken"] as const;
+export const RECIPE_TIER_ORDER = ["known-good", "reported", "declared", "unverified", "broken"] as const;
 
 export const RECIPE_TIER_LABEL: Record<string, string> = {
   "known-good": "Known good",
   reported: "Reported",
+  declared: "Declared",
   unverified: "Unverified",
   broken: "Broken",
 };
@@ -102,11 +103,12 @@ export function firmwareCategoryLabel(category: string): string {
   return FIRMWARE_CATEGORY_LABEL[category] ?? category;
 }
 
-/** "Runs on N boards" card glance (SPEC-firmware-ordering.md §4.A/§5) -- null
- * below 1 so an un-recipe'd firmware renders nothing rather than "0 boards". */
+/** "Recipes for N boards" card glance (SPEC-firmware-ordering.md §4.A/§5) -- the
+ * count spans every trust tier, so it never says "runs on". Null below 1 so an
+ * un-recipe'd firmware renders nothing rather than "0 boards". */
 export function boardsLabel(boards: number | null | undefined): string | null {
   if (!boards || boards < 1) return null;
-  return `Runs on ${boards} board${boards === 1 ? "" : "s"}`;
+  return `Recipes for ${boards} board${boards === 1 ? "" : "s"}`;
 }
 
 // Google truncates SERP titles/descriptions mid-word around these lengths
@@ -145,8 +147,8 @@ function buildMetaTitle(name: string, benefit: string): string {
 
 /**
  * SERP title for a firmware: leads with its exact name, then the strongest
- * flash/install benefit its own record can prove -- the boards it's
- * verified to run on when that count exists, else the SoCs it targets,
+ * flash/install benefit its own record can prove -- how many boards it has
+ * recipes for (any trust tier) when that count exists, else the SoCs it targets,
  * else a bare flash-guide fallback. Cite-or-omit: never states a board
  * count or SoC the record doesn't carry.
  *
@@ -195,7 +197,8 @@ export function firmwareMetaDescription(
   if (firmware.summary) return truncateAtWord(firmware.summary, DESCRIPTION_MAX);
   const socsLabel = firmware.socs.length > 0 ? firmware.socs.map(socDisplay).join(", ") : "ESP32";
   const boards = firmware.boards ?? 0;
-  const boardsClause = boards > 0 ? ` Verified to flash on ${boards} board${boards === 1 ? "" : "s"}.` : "";
+  // `boards` counts recipes at every trust tier, unverified leads included — never "verified".
+  const boardsClause = boards > 0 ? ` Recipes for ${boards} board${boards === 1 ? "" : "s"}, each labelled with its trust tier.` : "";
   const base = `${firmware.name}: ${firmwareCategoryLabel(firmware.category)} firmware for ${socsLabel}.${boardsClause}`;
   return truncateAtWord(base, DESCRIPTION_MAX);
 }
