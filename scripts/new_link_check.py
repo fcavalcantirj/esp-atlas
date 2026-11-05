@@ -2,9 +2,10 @@
 """Check on the links a PR ADDS or CHANGES (scripts/new_link_check.py).
 
 Owner rule: a confirmed 404 or 410 on a link the PR adds or changes fails this check. Nothing
-else does. (The `new-links` CI job is not a required status check today, so a failure does
-not by itself block merge.) Timeouts, DNS and TLS failures, 429, 5xx, a 403 from a bot wall and any other odd
-status are INCONCLUSIVE -- the server declined to answer, which says nothing about the link.
+else does. It runs as a pull_request-only step of the REQUIRED `schema` CI check, so that
+failure blocks merge. Timeouts, DNS and TLS failures, 429, 5xx, a 403 from a bot wall and any
+other odd status are INCONCLUSIVE -- the server declined to answer, which says nothing about
+the link -- and exit 0.
 Links already broken on main are never looked at here (they sit on lines the PR did not
 touch); the non-blocking `sources-live` job tracks those.
 
@@ -254,7 +255,7 @@ def render_table(found, results) -> str:
 
 
 def _diff(repo: Path, base: str) -> subprocess.CompletedProcess:
-    """Bytes that are not UTF-8 are replaced, never fatal: only a dead link may fail the job."""
+    """Bytes that are not UTF-8 are replaced, never fatal: only a dead link may fail the check."""
     return subprocess.run(["git", "-c", "core.quotePath=false", "diff", "--no-color", "--no-ext-diff",
                            "-M", "--unified=0", f"{base}...HEAD", "--", DATA_PREFIX],
                           cwd=repo, capture_output=True, text=True, errors="replace", timeout=120)

@@ -56,13 +56,12 @@ esp-atlas search "<name>"      # or: GET /search?q=<name>
 
 CI enforces all of this automatically, with no human in the loop: a PR adding
 or editing a board must pass schema validation and the full pytest suite
-(including the wizard's oracle invariants). The `new-links` job also checks
-every URL the PR adds or changes (`scripts/new_link_check.py`) and fails on a
-confirmed 404/410; a timeout, rate limit or 5xx never fails it. `new-links` is
-not a required status check today, so a red run does not by itself block the
-merge — but fix the link before asking for review. Links that were already
-broken on main are reported by the non-blocking `sources-live` job, not charged
-to your PR.
+(including the wizard's oracle invariants). On pull requests the required
+`schema` check also checks every URL the PR adds or changes
+(`scripts/new_link_check.py`): a confirmed 404/410 fails `schema` and blocks the
+merge until you fix the link. An inconclusive answer (timeout, rate limit, 5xx,
+bot wall) never blocks. Links that were already broken on main are reported by
+the non-blocking `sources-live` job, not charged to your PR.
 
 ## Data model
 
