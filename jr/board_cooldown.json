@@ -1,5 +1,56 @@
 {
   "by_board": {
+    "adafruit-funhouse": {
+      "board": "adafruit-funhouse",
+      "expires": "2026-11-12T10:00:59.557095+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-05T10:00:59.557095+00:00"
+    },
+    "adafruit-magtag": {
+      "board": "adafruit-magtag",
+      "expires": "2026-11-12T10:00:59.557095+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-05T10:00:59.557095+00:00"
+    },
+    "adafruit-matrixportal-s3": {
+      "board": "adafruit-matrixportal-s3",
+      "expires": "2026-11-12T10:00:59.557095+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T10:00:59.557095+00:00"
+    },
     "adafruit-qt-py-esp32": {
       "board": "adafruit-qt-py-esp32",
       "expires": "2026-11-11T02:00:59.526867+00:00",
