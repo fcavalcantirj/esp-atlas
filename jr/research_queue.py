@@ -17,7 +17,9 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import os
 import re
+import tempfile
 import sys
 from pathlib import Path
 
@@ -273,45 +275,59 @@ def _candidate_rows(rows: list[dict]) -> dict[str, dict]:
     return {k: hits[k] for k in order}
 
 
-def _new_candidate(r: dict, today: str, catalog: list[dict]) -> dict:
+def _provenance(source: str | None, window: dict | None) -> dict:
+    """Where the counts come from: the signal and the exact window the miner queried — never
+    the intake dates (first_seen / last_seen)."""
+    out = {"source": source} if source else {}
+    if window:
+        out["window"] = {"start": window.get("start"), "end": window.get("end")}
+    return out
+
+
+def _new_candidate(r: dict, today: str, catalog: list[dict], provenance: dict) -> dict:
     cls, ev = classify(r["term"], catalog)
-    return {"term": r["term"], "first_seen": today, "last_seen": today,
+    return {"term": r["term"], "first_seen": today, "last_seen": today, **provenance,
             "searches": r["searches"], "zero_result_searches": r["zero_result_searches"],
             "status": STATUS_NEW, "classification": cls, "evidence": ev,
             "linked_work": [], "outcome": None, "closed_on": None, "history": []}
 
 
-def _refresh(c: dict, r: dict, today: str, catalog: list[dict]) -> None:
-    c.update(last_seen=today, searches=r["searches"], zero_result_searches=r["zero_result_searches"])
+def _refresh(c: dict, r: dict, today: str, catalog: list[dict], provenance: dict) -> None:
+    c.update(last_seen=today, searches=r["searches"], zero_result_searches=r["zero_result_searches"],
+             **provenance)
     if c["status"] == STATUS_NEW:
         c["classification"], c["evidence"] = classify(c["term"], catalog)
 
 
-def _reopen(c: dict, r: dict, today: str, catalog: list[dict]) -> None:
+def _reopen(c: dict, r: dict, today: str, catalog: list[dict], provenance: dict) -> None:
     c.setdefault("history", []).append({"event": "reopened", "date": today, "closed_on": c.get("closed_on"),
                                         "outcome": c.get("outcome"), "linked_work": c.get("linked_work") or []})
     c.update(status=STATUS_NEW, outcome=None, closed_on=None, linked_work=[])
-    _refresh(c, r, today, catalog)
+    _refresh(c, r, today, catalog, provenance)
 
 
 def update_queue(queue: dict, rows: list[dict], catalog: list[dict], today: str,
                  max_new_per_day: int | None = None,
-                 reopen_after_days: int | None = None) -> tuple[dict, dict]:
+                 reopen_after_days: int | None = None, *,
+                 source: str | None = None, window: dict | None = None) -> tuple[dict, dict]:
     """Fold one GA4 window's `{term, searches, zero_result_searches}` rows into the queue (in
     place, also returned) and report what happened. Append-only: nothing is deleted, and a
     human's status/linked_work/outcome is never overwritten. The cap and reopen window come from
-    the arguments, else the queue file's own settings, else the defaults."""
+    the arguments, else the queue file's own settings, else the defaults. `source` / `window`
+    (the signal and the {start, end} it was queried over) are stored with the counts they explain;
+    `today` is only the intake date."""
     max_new_per_day = max_new_per_day if max_new_per_day is not None else int(
         queue.get("max_new_per_day", MAX_NEW_PER_DAY))
     reopen_after_days = reopen_after_days if reopen_after_days is not None else int(
         queue.get("reopen_after_days", REOPEN_AFTER_DAYS))
     candidates = queue.setdefault("candidates", {})
+    provenance = _provenance(source, window)
     report = {"opened": [], "reopened": [], "refreshed": [], "deferred": [], "suppressed_closed": []}
     slots = max_new_per_day - sum(1 for c in candidates.values() if _opened_on(c) == today)
     for key, r in _candidate_rows(rows).items():
         c = candidates.get(key)
         if c is not None and c["status"] != STATUS_CLOSED:
-            _refresh(c, r, today, catalog)
+            _refresh(c, r, today, catalog, provenance)
             report["refreshed"].append(key)
             continue
         if c is not None:
@@ -324,10 +340,10 @@ def update_queue(queue: dict, rows: list[dict], catalog: list[dict], today: str,
             continue
         slots -= 1
         if c is None:
-            candidates[key] = _new_candidate(r, today, catalog)
+            candidates[key] = _new_candidate(r, today, catalog, provenance)
             report["opened"].append(key)
         else:
-            _reopen(c, r, today, catalog)
+            _reopen(c, r, today, catalog, provenance)
             report["reopened"].append(key)
     queue["candidates"] = dict(sorted(candidates.items()))
     return queue, report
@@ -390,12 +406,26 @@ def load_queue(path: Path = QUEUE_PATH) -> dict:
 
 
 def write_queue(queue: dict, path: Path = QUEUE_PATH) -> Path:
+    """Atomic: a temp file in the queue's own directory, flushed and fsynced, then os.replace'd
+    over the queue. Any OSError leaves the previous file byte-identical, removes the temp file
+    and is raised — a truncated queue (human triage) can never be published."""
     path = Path(path)
     data_dir = (REPO / "data").resolve()
     if path.resolve().is_relative_to(data_dir):
         raise ValueError("the research queue never writes under data/")
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(queue, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    text = json.dumps(queue, indent=1, ensure_ascii=False) + "\n"
+    fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=f".{path.name}.", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(text)
+            f.flush()
+            os.fsync(f.fileno())
+        os.chmod(tmp, 0o644)                  # mkstemp's 0600 would differ from a normal checkout
+        os.replace(tmp, path)
+    except BaseException:
+        Path(tmp).unlink(missing_ok=True)
+        raise
     return path
 
 

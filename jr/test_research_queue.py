@@ -501,3 +501,59 @@ def test_the_queue_files_own_cap_and_reopen_window_are_enforced():
     rq.close(queue, "aaaa1", "done", TODAY)
     queue, report = rq.update_queue(queue, [row("aaaa1")], CATALOG, "2026-11-11")
     assert report["reopened"] == ["aaaa1"]
+
+
+# ─────────────────────────── provenance (2026-11-05) ───────────────────────────
+
+WINDOW = {"start": "2026-10-07", "end": "2026-11-04"}
+
+
+def test_a_candidate_stores_its_source_and_the_queried_window_apart_from_intake_dates():
+    queue, _ = run([row("es3c28p")], today="2026-11-05", source="ga4 search_empty", window=WINDOW)
+    c = queue["candidates"]["es3c28p"]
+    assert c["source"] == "ga4 search_empty"
+    assert c["window"] == WINDOW and c["window"] is not WINDOW
+    assert (c["first_seen"], c["last_seen"]) == ("2026-11-05", "2026-11-05")
+
+
+def test_a_refresh_moves_the_window_with_the_counts_and_keeps_first_seen():
+    queue, _ = run([row("es3c28p")], today="2026-11-04", source="ga4 search_empty", window=WINDOW)
+    later = {"start": "2026-10-08", "end": "2026-11-05"}
+    queue, _ = run([row("es3c28p", 2, 2)], queue, today="2026-11-05", source="ga4 search_empty", window=later)
+    c = queue["candidates"]["es3c28p"]
+    assert (c["searches"], c["window"], c["first_seen"], c["last_seen"]) == (2, later, "2026-11-04", "2026-11-05")
+
+
+def test_a_reopen_records_the_new_window():
+    queue, _ = run([row("es3c28p")], today="2026-09-01", source="ga4 search_empty", window=WINDOW)
+    rq.close(queue, "es3c28p", "done", "2026-09-01")
+    later = {"start": "2026-10-08", "end": "2026-11-05"}
+    queue, report = run([row("es3c28p")], queue, today="2026-11-05", source="ga4 search_empty", window=later)
+    assert report["reopened"] == ["es3c28p"] and queue["candidates"]["es3c28p"]["window"] == later
+
+
+# ─────────────────────────── atomic write (2026-11-05) ───────────────────────────
+
+def test_write_queue_replaces_the_file_and_leaves_no_temp_behind(tmp_path):
+    path = tmp_path / rq.QUEUE_NAME
+    rq.write_queue(rq.empty_queue(), path)
+    queue, _ = run([row("es3c28p")])
+    rq.write_queue(queue, path)
+    assert rq.load_queue(path) == queue
+    assert [p.name for p in tmp_path.iterdir()] == [rq.QUEUE_NAME]
+
+
+@pytest.mark.parametrize("fail", ["fsync", "replace"])
+def test_a_failed_write_keeps_the_prior_bytes_and_is_surfaced(tmp_path, monkeypatch, fail):
+    path = tmp_path / rq.QUEUE_NAME
+    rq.write_queue(run([row("es3c28p")])[0], path)
+    before = path.read_bytes()
+
+    def boom(*a, **kw):
+        raise OSError(28, "No space left on device")
+
+    monkeypatch.setattr(rq.os, fail, boom)
+    with pytest.raises(OSError, match="No space left"):
+        rq.write_queue(run([row("es3c28p"), row("lilygo-t-bea")])[0], path)
+    assert path.read_bytes() == before
+    assert [p.name for p in tmp_path.iterdir()] == [rq.QUEUE_NAME]
