@@ -11,7 +11,9 @@ it once a day and lands the snapshot through the tick's own PR path (jr/publish.
    inside the worktree. Its Telegram digest is opt-in (`--telegram`), off by default;
 3. no-op when the new snapshot equals the previous one apart from its date fields — unless the
    previous one is REFRESH_DAYS old, so steady demand never reads as stale to the tick;
-4. otherwise publish.publish() with exactly those two paths (bookkeeping only, no catalog write)
+   A changed research queue (`docs/demand/research-queue.json`, SPEC-demand-research-queue.md)
+   lands even when the snapshot is a no-op;
+4. otherwise publish.publish() with exactly those paths (bookkeeping only, no catalog write)
    on a `jr/demand-…` branch — outside the tick's `jr/tick-*` triage — with the same protection
    and earned-trust auto-merge gate as a tick. An older open demand PR is then closed as
    superseded (no veto label, so trust is unaffected).
@@ -35,6 +37,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import demand_signal  # noqa: E402
 import publish  # noqa: E402
+import research_queue  # noqa: E402
 import review_routing  # noqa: E402
 from tick import guard_env  # noqa: E402 — the one "esp_atlas_core sees the worktree" env
 
@@ -103,7 +106,41 @@ def should_land(new: dict, prev: dict | None, today_str: str,
 # --- snapshot files ----------------------------------------------------------------------------------
 
 def _dated_snapshots(demand_dir: Path) -> list[Path]:
-    return sorted(p for p in demand_dir.glob("*.json") if p.stem != UNRESOLVED_NAME[:-5])
+    return sorted(p for p in demand_dir.glob("*.json") if demand_signal.is_dated_snapshot(p))
+
+
+def _read_bytes(path: Path) -> bytes | None:
+    try:
+        return path.read_bytes()
+    except OSError:
+        return None
+
+
+def _queue_comparable(raw: bytes | None):
+    """The queue minus each candidate's `last_seen`: an open candidate is re-sighted every day the
+    28-day window holds it, which alone must not open a PR (the weekly refresh carries it)."""
+    try:
+        queue = json.loads(raw) if raw else None
+    except (ValueError, UnicodeDecodeError):
+        return raw
+    if not isinstance(queue, dict) or not isinstance(queue.get("candidates"), dict):
+        return queue
+    return {**queue, "candidates": {k: {f: v for f, v in c.items() if f != "last_seen"}
+                                    for k, c in queue["candidates"].items() if isinstance(c, dict)}}
+
+
+def _queue_line(demand_dir: Path, before: bytes | None) -> str | None:
+    """The research-queue line for the PR body: candidates added by this run + what is open."""
+    path = demand_dir / research_queue.QUEUE_NAME
+    if not path.exists():
+        return None
+    try:
+        queue = research_queue.load_queue(path)
+        prev = json.loads(before).get("candidates", {}) if before else {}
+    except (ValueError, AttributeError):
+        return None
+    opened = [k for k in queue["candidates"] if k not in prev]
+    return research_queue.digest_line(queue, {"opened": opened})
 
 
 def _read_latest(demand_dir: Path) -> dict | None:
@@ -127,7 +164,7 @@ def default_miner(wt_path: Path, *, python: str, telegram: bool) -> subprocess.C
     return subprocess.run(argv, cwd=wt_path, capture_output=True, text=True, env=guard_env(wt_path))
 
 
-def _pr_body(snap: dict, why: str) -> str:
+def _pr_body(snap: dict, why: str, research: str | None = None) -> str:
     items = snap.get("items") or []
     align = demand_signal.alignment(snap, None, top_n=5)
     bias = demand_signal.steer_signal(snap)["bias"]
@@ -139,6 +176,9 @@ def _pr_body(snap: dict, why: str) -> str:
              "",
              "Top demanded-but-missing:"]
     lines += [f"- `{m['term']}` — {m['gap']}, w={m['weight']}" for m in align["demanded_but_missing"]] or ["- none"]
+    if research:
+        lines += ["", research, "(zero-result searches to research — never catalog content; "
+                  "SPEC-demand-research-queue.md)"]
     lines += ["", "Bookkeeping only (docs/demand/**), no catalog writes. Read-only miner: jr/demand.py; "
               "runner: jr/demand_run.py (F2)."]
     return "\n".join(lines)
@@ -170,10 +210,12 @@ def _newest_stamp(demand_dir: Path) -> tuple | None:
     return (files[-1].name, files[-1].stat().st_mtime_ns) if files else None
 
 
-def _mine_and_decide(wt: publish.Worktree, miner, python: str, telegram: bool) -> tuple[dict, bool, str]:
+def _mine_and_decide(wt: publish.Worktree, miner, python: str,
+                     telegram: bool) -> tuple[dict, bool, str, str | None]:
     demand_dir = wt.path / DEMAND_RELDIR
     prev = _read_latest(demand_dir)          # read BEFORE the miner may overwrite a same-day file
     before = _newest_stamp(demand_dir)
+    queue_before = _read_bytes(demand_dir / research_queue.QUEUE_NAME)
     p = miner(wt.path, python=python, telegram=telegram)
     if getattr(p, "returncode", 1) != 0:
         err = ((getattr(p, "stderr", "") or "").strip().splitlines() or [""])[-1]
@@ -184,7 +226,10 @@ def _mine_and_decide(wt: publish.Worktree, miner, python: str, telegram: bool) -
     if not new.get("items"):
         raise RunAbort("miner returned no demand items (Composio/GSC outage?) — not landing an empty steer")
     land, why = should_land(new, prev, new["date"])    # age between the miner's own dates: one clock
-    return new, land, why
+    queue_after = _read_bytes(demand_dir / research_queue.QUEUE_NAME)
+    if not land and _queue_comparable(queue_after) != _queue_comparable(queue_before):
+        land, why = True, f"research queue changed ({why})"
+    return new, land, why, _queue_line(demand_dir, queue_before)
 
 
 def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
@@ -197,15 +242,17 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         wt = publish.add_worktree(git=git, root=root)
         if not publish.is_clean(wt, git=git):
             raise RunAbort("fresh worktree is not clean")
-        snap, land, why = _mine_and_decide(wt, miner, python, telegram)
+        snap, land, why, research = _mine_and_decide(wt, miner, python, telegram)
         res.date = snap["date"]
         if not land:
             res.reason = why
             return res
         branch = f"{BRANCH_PREFIX}{now.strftime('%Y%m%d-%H%M')}"
         paths = [f"{DEMAND_RELDIR}/{snap['date']}.json", f"{DEMAND_RELDIR}/{UNRESOLVED_NAME}"]
+        if (wt.path / DEMAND_RELDIR / research_queue.QUEUE_NAME).exists():
+            paths.append(f"{DEMAND_RELDIR}/{research_queue.QUEUE_NAME}")
         subject = f"chore(jr): demand snapshot {snap['date']} — {len(snap['items'])} item(s)"
-        pub = publish.publish(wt, paths, subject, _pr_body(snap, why), git=git, gh=gh, now=now,
+        pub = publish.publish(wt, paths, subject, _pr_body(snap, why, research), git=git, gh=gh, now=now,
                               repo_slug=repo_slug, auto_merge=auto_merge, branch=branch)
         res.published, res.pr_url, res.auto_merge = pub.published, pub.pr_url, pub.auto_merge
         res.reason = pub.reason or why
