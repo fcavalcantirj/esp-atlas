@@ -83,7 +83,7 @@ def test_manifest_tree_refs_ignores_paths_outside_a_manifest_dir():
     non_manifest = [t["path"] for t in ESP_CLAW_TREE["tree"] if t["type"] == "blob"
                     and not t["path"].startswith("application/edge_agent/boards/")]
     assert non_manifest                                             # the fixture carries some
-    assert bdec.manifest_tree_refs(non_manifest) == {"refs": [], "root": None}
+    assert bdec.manifest_tree_refs(non_manifest) == {"refs": [], "root": None, "roots": [], "ref_roots": {}}
 
 
 def test_manifest_tree_refs_matches_variants_and_targets_dirs_too():
@@ -103,7 +103,7 @@ def test_extract_manifest_tree_calls_the_git_trees_api_and_cites_the_matched_dir
 def test_extract_manifest_tree_empty_when_repo_has_no_manifest_dir():
     api = FakeApi({"repos/o/r/git/trees/main?recursive=1": {"tree": [{"path": "src/main.c", "type": "blob"}]}})
     out = bdec.extract_manifest_tree("o/r", "main", api=api)
-    assert out == {"refs": [], "source_url": None, "source_type": "manifest_tree"}
+    assert out == {"refs": [], "source_url": None, "source_type": "manifest_tree", "source_urls": {}, "ref_roots": {}}
 
 
 # --- esp-claw oracle: resolved boards + the P4/C5 boards resolve to nothing (never a SoC) --------
