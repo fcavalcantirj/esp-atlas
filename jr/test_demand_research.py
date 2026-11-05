@@ -22,6 +22,7 @@ from test_demand import D1_ROWS, D4_ROWS  # noqa: E402
 from test_demand_ga4 import _ga4_row  # noqa: E402
 from test_demand_run import GSC_ROWS, TODAY, _items, _write_prev, fake_miner, norm_calls  # noqa: E402
 from test_demand_run import gh_ok, git_ok, run as run_runner  # noqa: E402
+from test_demand_run import NOW  # noqa: E402
 
 REPO = Path(__file__).resolve().parent.parent
 WINDOW = {"start": "2026-08-03", "end": "2026-08-31"}
@@ -392,8 +393,8 @@ def test_a_queue_only_run_never_closes_an_open_snapshot_pr(tmp_path):
                            {"number": 8, "headRefName": "jr/demand-queue-20261102-0930", "labels": []}])
     gh = gh_ok(open_prs)
     res = run_runner(tmp_path, gh=gh, miner=queue_miner(["es3c28p"], rows=[]))
-    assert res.published is True and res.superseded == [8]
-    assert not any(c[:3] == ("pr", "close", "7") for c in gh.calls)
+    assert res.published is True and res.superseded == []
+    assert not any(c[:2] == ("pr", "close") for c in gh.calls)
 
 
 def test_an_outage_that_only_creates_an_empty_queue_still_aborts(tmp_path):
@@ -406,14 +407,72 @@ def test_an_outage_that_only_creates_an_empty_queue_still_aborts(tmp_path):
 _QUEUE_PR = json.dumps([{"number": 8, "headRefName": "jr/demand-queue-20261102-0930", "labels": []}])
 
 
-def test_a_snapshot_run_carrying_a_rebuilt_queue_supersedes_a_queue_only_pr(tmp_path):
+def test_a_snapshot_run_carrying_a_rebuilt_queue_retains_a_queue_only_pr(tmp_path):
     gh = gh_ok(_QUEUE_PR)
     res = run_runner(tmp_path, gh=gh, miner=queue_miner(["es3c28p"]))
-    assert res.published is True and res.superseded == [8]
+    assert res.published is True and res.superseded == []
+    assert not any(c[:2] == ("pr", "close") for c in gh.calls)
 
 
 def test_a_snapshot_run_whose_queue_did_not_change_spares_a_queue_only_pr(tmp_path):
     gh = gh_ok(_QUEUE_PR)                       # e.g. its research lane failed: main's queue as-is
     res = run_runner(tmp_path, gh=gh)
     assert res.published is True and res.superseded == []
+    assert not any(c[:2] == ("pr", "close") for c in gh.calls)
+
+
+@pytest.mark.parametrize("queue_only", [False, True])
+@pytest.mark.parametrize("status", ["linked", "closed"])
+def test_fresh_main_runs_retain_an_unmerged_queue_and_its_lifecycle(tmp_path, queue_only, status):
+    """A new queue rebuilt from main never read the earlier PR's unique candidate."""
+    old_wt, new_wt = tmp_path / "old", tmp_path / "new"
+    old_mine = queue_miner(["es3c28p"], today="2026-11-02", rows=[] if queue_only else GSC_ROWS)
+
+    def mine_with_reviewed_lifecycle(wt_path, **kwargs):
+        result = old_mine(wt_path, **kwargs)
+        path = wt_path / "docs" / "demand" / rq.QUEUE_NAME
+        queue = rq.load_queue(path)
+        rq.validate(queue, "es3c28p")
+        rq.link(queue, "es3c28p", "https://github.com/fcavalcantirj/esp-atlas/issues/42")
+        if status == "closed":
+            rq.close(queue, "es3c28p", "primary source reviewed; follow the linked work", "2026-11-02")
+        rq.write_queue(queue, path)
+        return result
+
+    old_gh = gh_ok()
+    old_result = demand_run.run(now=NOW.replace(day=2), root=old_wt,
+                               git=git_ok(), gh=old_gh, miner=mine_with_reviewed_lifecycle,
+                               repo_slug="fcavalcantirj/esp-atlas", python="/venv/bin/python")
+    assert old_result.published and not old_result.aborted
+    old_path = old_wt / "docs" / "demand" / rq.QUEUE_NAME
+    before = old_path.read_bytes()
+    create = next(c for c in old_gh.calls if c[:2] == ("pr", "create"))
+    old_head = create[create.index("--head") + 1]
+    queue_path = "docs/demand/research-queue.json"
+    old_files = [queue_path] if queue_only else ["docs/demand/2026-11-02.json", queue_path]
+    open_pr = {"number": 8, "headRefName": old_head, "labels": [],
+               "files": [{"path": p, "changeType": "ADDED"} for p in old_files], "changedFiles": len(old_files)}
+    new_gh = gh_ok(json.dumps([open_pr]))
+    new_result = run_runner(new_wt, gh=new_gh, miner=queue_miner(["qx5000"]))
+    assert new_result.published and not new_result.aborted
+    assert set(_queue(new_wt / "docs" / "demand")) == {"qx5000"}
+    assert old_path.read_bytes() == before
+    assert _queue(old_wt / "docs" / "demand")["es3c28p"]["status"] == status
+    assert new_result.superseded == []
+    assert not any(c[:2] == ("pr", "close") for c in new_gh.calls)
+
+
+@pytest.mark.parametrize("manifest", [
+    {},
+    {"files": None, "changedFiles": 1},
+    {"files": [{"path": "docs/demand/2026-11-02.json"}], "changedFiles": 2},
+    {"files": [{}], "changedFiles": 1},
+    {"files": [{"path": "data/boards/example/index.md"}], "changedFiles": 1},
+    # A queue renamed to a snapshot-looking name must not become eligible for deletion.
+    {"files": [{"path": "docs/demand/2026-11-02.json", "changeType": "RENAMED"}], "changedFiles": 1},
+])
+def test_unknown_or_incomplete_pr_files_cannot_authorize_superseding(manifest):
+    pr = {"number": 8, "headRefName": "jr/demand-20261102-0930", "labels": [], **manifest}
+    gh = gh_ok(json.dumps([pr]))
+    assert demand_run._close_superseded(gh, "jr/demand-20261103-0930") == []
     assert not any(c[:2] == ("pr", "close") for c in gh.calls)

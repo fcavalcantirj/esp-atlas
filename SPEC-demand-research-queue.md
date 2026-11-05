@@ -147,9 +147,15 @@ miner touched, so neither the dated snapshot nor `unresolved.json` is replaced o
 items with an unchanged queue (including an identical rerun of a landed queue-only run) still
 aborts, as does a failed miner. A missing queue file compares equal to an empty queue, so an
 outage that only creates an empty queue aborts too. A queue-only PR lands on
-`jr/demand-queue-…` and supersedes only older queue-only PRs; a snapshot run supersedes it only
-when that run's own queue changed (an unchanged queue — e.g. its research lane failed — would
-drop the queue-only PR's candidates).
+`jr/demand-queue-…`. Queue-bearing PRs are never automatically superseded: this includes
+queue-only branches AND ordinary demand snapshot PRs that change the queue. Each fresh run
+starts from main and may not have read an earlier unmerged PR's candidates, lifecycle status,
+linked work or outcomes. A newer queue changing is not proof those were preserved. Only a
+PR with a complete, readable changed-file manifest proving it contains dated snapshots and/or
+`unresolved.json` alone can be closed automatically. Missing, malformed or truncated manifests,
+and renames whose original paths are not known, retain the older PR for review.
+Consolidating queue-bearing PRs requires checking their full
+candidate lifecycle data before closing them.
 
 **Atomic write.** `write_queue` writes a temp file in the queue's own directory, flushes and
 fsyncs it, then `os.replace`s it over the queue. An `OSError` anywhere leaves the previous file
@@ -173,5 +179,7 @@ runner, the miner's `first_seen` carry-forward) read only `<YYYY-MM-DD>.json` fi
 - each candidate carries `source` and the queried GA4 `window`; only terms with a
   `search_empty` event become candidates;
 - zero demand items + a changed queue → a queue-only PR; the dated snapshot is untouched;
+- fresh main-based runs never close/delete an older queue-bearing PR, including a normal
+  demand PR, and unknown/incomplete changed-file manifests cannot authorize superseding;
 - a failed queue write leaves the previous file byte-identical and is surfaced;
 - nothing under `data/` is written.

@@ -17,8 +17,8 @@ it once a day and lands the snapshot through the tick's own PR path (jr/publish.
    docs/demand file the miner touched is restored, so the dated snapshot is never replaced;
 4. otherwise publish.publish() with exactly those paths (bookkeeping only, no catalog write)
    on a `jr/demand-…` branch — outside the tick's `jr/tick-*` triage — with the same protection
-   and earned-trust auto-merge gate as a tick. An older open demand PR is then closed as
-   superseded (no veto label, so trust is unaffected).
+   and earned-trust auto-merge gate as a tick. Only an older proven snapshot-only demand PR
+   is closed as superseded; queue-bearing or unreadable PRs wait for review.
 
 An empty pull (zero items) is refused as a steer: it is a Composio/GSC outage far more often than
 zero demand, and landing it would erase the steer — only a changed research queue may land then. `git`, `gh` and the miner are injectable; tests use fakes.
@@ -47,13 +47,13 @@ DEFAULT_DEMAND_PYTHON = "/home/browbot/.composio-venv/bin/python"
 DEMAND_RELDIR = "docs/demand"
 UNRESOLVED_NAME = "unresolved.json"
 BRANCH_PREFIX = "jr/demand-"
-QUEUE_ONLY_PREFIX = "jr/demand-queue-"   # a queue-only PR: superseded by any demand PR, supersedes only its kind
+QUEUE_ONLY_PREFIX = "jr/demand-queue-"   # queue-bearing PRs are never automatically superseded
 REFRESH_DAYS = 7          # half the loader's 14-day stale window: an unchanged snapshot still lands weekly
 DATE_FIELDS = ("date", "window")
 ITEM_DATE_FIELDS = ("first_seen", "last_seen")
-SUPERSEDED_COMMENT = ("Superseded by a newer daily demand snapshot. This PR only touched "
-                      "docs/demand/**, which every run regenerates from main, so closing it loses "
-                      "nothing. Closed automatically by jr/demand_run.py.")
+SUPERSEDED_COMMENT = ("Superseded by a newer daily demand snapshot. The complete changed-file "
+                      "manifest contains only dated demand snapshots and/or unresolved.json, "
+                      "not the research queue. Closed automatically by jr/demand_run.py.")
 
 
 @dataclass
@@ -246,8 +246,26 @@ def _queue_only_body(snap: dict, why: str, research: str | None) -> str:
         "Runner: jr/demand_run.py."])
 
 
-def _close_superseded(gh, keep_branch: str, prefix: str = BRANCH_PREFIX, spare: str | None = None) -> list[int]:
-    p = gh("pr", "list", "--state", "open", "--limit", "500", "--json", "number,headRefName,labels")
+def _snapshot_only(pr: dict) -> bool:
+    """Closing needs positive evidence: incomplete file lists can hide queue changes."""
+    files, count = pr.get("files"), pr.get("changedFiles")
+    if not isinstance(files, list) or type(count) is not int or count <= 0 or len(files) != count:
+        return False
+    for entry in files:
+        path = entry.get("path") if isinstance(entry, dict) else None
+        if not isinstance(path, str) or Path(path).parent != Path(DEMAND_RELDIR):
+            return False
+        # A renamed queue can have a snapshot-looking new path; without the
+        # original path this manifest cannot prove it was only a snapshot.
+        if entry.get("changeType") not in {"ADDED", "MODIFIED", "DELETED"}:
+            return False
+        if Path(path).name != UNRESOLVED_NAME and not demand_signal.is_dated_snapshot(Path(path)):
+            return False
+    return True
+
+
+def _close_superseded(gh, keep_branch: str, prefix: str = BRANCH_PREFIX) -> list[int]:
+    p = gh("pr", "list", "--state", "open", "--limit", "500", "--json", "number,headRefName,labels,files,changedFiles")
     try:
         prs = json.loads(getattr(p, "stdout", "") or "[]") if getattr(p, "returncode", 1) == 0 else []
     except json.JSONDecodeError:
@@ -255,8 +273,10 @@ def _close_superseded(gh, keep_branch: str, prefix: str = BRANCH_PREFIX, spare: 
     closed = []
     for pr in prs:
         head = str(pr.get("headRefName", "")) if isinstance(pr, dict) else ""
-        # a jr-review PR waits for the owner by design (SPEC-jr-review-routing.md): never superseded
-        if head.startswith(prefix) and not (spare and head.startswith(spare)) and head != keep_branch and not review_routing.has_review_label(pr):
+        # Every run starts from main, not the previous PR. Never discard an unmerged
+        # queue or its human lifecycle data merely because a new queue was generated.
+        if (head.startswith(prefix) and not head.startswith(QUEUE_ONLY_PREFIX) and head != keep_branch
+                and not review_routing.has_review_label(pr) and _snapshot_only(pr)):
             r = gh("pr", "close", str(pr.get("number")), "--comment", SUPERSEDED_COMMENT, "--delete-branch")
             if getattr(r, "returncode", 1) == 0:
                 closed.append(pr.get("number"))
@@ -337,10 +357,7 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         res.reason = pub.reason or decision.why
         if not pub.published:
             raise RunAbort(f"publish failed: {pub.reason}")    # never exit 0 like a no-op
-        # a snapshot run supersedes a queue-only PR only when it carries a rebuilt queue itself: an
-        # unchanged one (e.g. its research lane failed) would drop that PR's candidates
-        spare = None if decision.queue_changed else QUEUE_ONLY_PREFIX
-        res.superseded = _close_superseded(gh, branch, prefix, spare)
+        res.superseded = _close_superseded(gh, branch, prefix)
     except RunAbort as e:
         res.aborted = str(e)
     except Exception as e:  # noqa: BLE001 — a run must always end with a report line
