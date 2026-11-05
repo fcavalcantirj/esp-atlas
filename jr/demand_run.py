@@ -13,13 +13,15 @@ it once a day and lands the snapshot through the tick's own PR path (jr/publish.
    previous one is REFRESH_DAYS old, so steady demand never reads as stale to the tick;
    A changed research queue (`docs/demand/research-queue.json`, SPEC-demand-research-queue.md)
    lands even when the snapshot is a no-op;
+   with zero demand items it lands ALONE (a queue-only PR on `jr/demand-queue-…`): every other
+   docs/demand file the miner touched is restored, so the dated snapshot is never replaced;
 4. otherwise publish.publish() with exactly those paths (bookkeeping only, no catalog write)
    on a `jr/demand-…` branch — outside the tick's `jr/tick-*` triage — with the same protection
    and earned-trust auto-merge gate as a tick. An older open demand PR is then closed as
    superseded (no veto label, so trust is unaffected).
 
-An empty pull (zero items) is refused: it is a Composio/GSC outage far more often than zero demand,
-and landing it would erase the steer. `git`, `gh` and the miner are injectable; tests use fakes.
+An empty pull (zero items) is refused as a steer: it is a Composio/GSC outage far more often than
+zero demand, and landing it would erase the steer — only a changed research queue may land then. `git`, `gh` and the miner are injectable; tests use fakes.
 """
 from __future__ import annotations
 
@@ -45,6 +47,7 @@ DEFAULT_DEMAND_PYTHON = "/home/browbot/.composio-venv/bin/python"
 DEMAND_RELDIR = "docs/demand"
 UNRESOLVED_NAME = "unresolved.json"
 BRANCH_PREFIX = "jr/demand-"
+QUEUE_ONLY_PREFIX = "jr/demand-queue-"   # a queue-only PR: superseded by any demand PR, supersedes only its kind
 REFRESH_DAYS = 7          # half the loader's 14-day stale window: an unchanged snapshot still lands weekly
 DATE_FIELDS = ("date", "window")
 ITEM_DATE_FIELDS = ("first_seen", "last_seen")
@@ -74,6 +77,15 @@ class RunResult:
 
 class RunAbort(Exception):
     pass
+
+
+@dataclass
+class Decision:
+    snap: dict
+    land: bool
+    why: str
+    research: str | None = None
+    queue_only: bool = False      # zero demand items, a changed queue: land the queue alone
 
 
 # --- the no-op rule ----------------------------------------------------------------------------------
@@ -117,8 +129,9 @@ def _read_bytes(path: Path) -> bytes | None:
 
 
 def _queue_comparable(raw: bytes | None):
-    """The queue minus each candidate's `last_seen` and `evidence.checked`: an open candidate is
-    re-sighted every day the 28-day window holds it, and the catalog grows hourly — neither alone
+    """The queue minus each candidate's `last_seen`, `window` and `evidence.checked`: an open
+    candidate is re-sighted (over a window one day later) every day the 28-day window holds it,
+    and the catalog grows hourly — neither alone
     may open a PR (the weekly refresh carries them)."""
     try:
         queue = json.loads(raw) if raw else None
@@ -129,10 +142,13 @@ def _queue_comparable(raw: bytes | None):
     return {**queue, "candidates": {k: _candidate_comparable(c) for k, c in queue["candidates"].items()}}
 
 
+QUEUE_MOVING_FIELDS = ("last_seen", "window")   # move every day the 28-day window still holds a term
+
+
 def _candidate_comparable(c):
     if not isinstance(c, dict):
         return c
-    out = {f: v for f, v in c.items() if f != "last_seen"}
+    out = {f: v for f, v in c.items() if f not in QUEUE_MOVING_FIELDS}
     if isinstance(out.get("evidence"), dict):
         out["evidence"] = {f: v for f, v in out["evidence"].items() if f != "checked"}
     return out
@@ -153,6 +169,26 @@ def _queue_line(demand_dir: Path, before: bytes | None) -> str | None:
                 and prev[k].get("status") == research_queue.STATUS_CLOSED
                 and c.get("status") != research_queue.STATUS_CLOSED]
     return research_queue.digest_line(queue, {"opened": opened, "reopened": reopened})
+
+
+def _demand_files(demand_dir: Path) -> dict[str, bytes]:
+    """Every docs/demand file but the research queue, by name — what a queue-only run restores."""
+    if not demand_dir.is_dir():
+        return {}
+    return {p.name: p.read_bytes() for p in demand_dir.iterdir()
+            if p.is_file() and p.name != research_queue.QUEUE_NAME}
+
+
+def _restore_demand_files(demand_dir: Path, before: dict[str, bytes]) -> None:
+    """Undo the miner's snapshot writes: drop files it added, put back the bytes it changed."""
+    for name, data in _demand_files(demand_dir).items():
+        if name not in before:
+            (demand_dir / name).unlink()
+        elif data != before[name]:
+            (demand_dir / name).write_bytes(before[name])
+    for name, data in before.items():
+        if not (demand_dir / name).exists():
+            (demand_dir / name).write_bytes(data)
 
 
 def _read_latest(demand_dir: Path) -> dict | None:
@@ -196,7 +232,20 @@ def _pr_body(snap: dict, why: str, research: str | None = None) -> str:
     return "\n".join(lines)
 
 
-def _close_superseded(gh, keep_branch: str) -> list[int]:
+def _queue_only_body(snap: dict, why: str, research: str | None) -> str:
+    window = snap.get("window") or {}
+    return "\n".join([
+        f"Research queue `{DEMAND_RELDIR}/{research_queue.QUEUE_NAME}` only — {why}.", "",
+        research or "🔬 research queue changed",
+        "(zero-result searches to research — never catalog content; SPEC-demand-research-queue.md)", "",
+        f"The miner returned 0 demand items for window {window.get('start')}→{window.get('end')}, so the "
+        f"dated snapshot `{DEMAND_RELDIR}/{snap.get('date')}.json` is not landed (an empty pull is an "
+        "outage far more often than zero demand); the steer keeps main's latest snapshot.", "",
+        f"Bookkeeping only ({DEMAND_RELDIR}/{research_queue.QUEUE_NAME}), no catalog writes. "
+        "Runner: jr/demand_run.py."])
+
+
+def _close_superseded(gh, keep_branch: str, prefix: str = BRANCH_PREFIX) -> list[int]:
     p = gh("pr", "list", "--state", "open", "--limit", "500", "--json", "number,headRefName,labels")
     try:
         prs = json.loads(getattr(p, "stdout", "") or "[]") if getattr(p, "returncode", 1) == 0 else []
@@ -206,7 +255,7 @@ def _close_superseded(gh, keep_branch: str) -> list[int]:
     for pr in prs:
         head = str(pr.get("headRefName", "")) if isinstance(pr, dict) else ""
         # a jr-review PR waits for the owner by design (SPEC-jr-review-routing.md): never superseded
-        if head.startswith(BRANCH_PREFIX) and head != keep_branch and not review_routing.has_review_label(pr):
+        if head.startswith(prefix) and head != keep_branch and not review_routing.has_review_label(pr):
             r = gh("pr", "close", str(pr.get("number")), "--comment", SUPERSEDED_COMMENT, "--delete-branch")
             if getattr(r, "returncode", 1) == 0:
                 closed.append(pr.get("number"))
@@ -222,11 +271,11 @@ def _newest_stamp(demand_dir: Path) -> tuple | None:
     return (files[-1].name, files[-1].stat().st_mtime_ns) if files else None
 
 
-def _mine_and_decide(wt: publish.Worktree, miner, python: str,
-                     telegram: bool) -> tuple[dict, bool, str, str | None]:
+def _mine_and_decide(wt: publish.Worktree, miner, python: str, telegram: bool) -> Decision:
     demand_dir = wt.path / DEMAND_RELDIR
     prev = _read_latest(demand_dir)          # read BEFORE the miner may overwrite a same-day file
     before = _newest_stamp(demand_dir)
+    files_before = _demand_files(demand_dir)
     queue_before = _read_bytes(demand_dir / research_queue.QUEUE_NAME)
     p = miner(wt.path, python=python, telegram=telegram)
     if getattr(p, "returncode", 1) != 0:
@@ -235,13 +284,32 @@ def _mine_and_decide(wt: publish.Worktree, miner, python: str,
     new = _read_latest(demand_dir)
     if new is None or not new.get("date") or _newest_stamp(demand_dir) == before:
         raise RunAbort("miner wrote no snapshot")
+    queue_changed = (_queue_comparable(_read_bytes(demand_dir / research_queue.QUEUE_NAME))
+                     != _queue_comparable(queue_before))
+    research = _queue_line(demand_dir, queue_before)
     if not new.get("items"):
-        raise RunAbort("miner returned no demand items (Composio/GSC outage?) — not landing an empty steer")
+        _restore_demand_files(demand_dir, files_before)      # an empty pull never replaces the snapshot
+        if not queue_changed:
+            raise RunAbort("miner returned no demand items (Composio/GSC outage?) — not landing an empty steer")
+        return Decision(new, True, "research queue changed; 0 demand items, snapshot not landed",
+                        research, queue_only=True)
     land, why = should_land(new, prev, new["date"])    # age between the miner's own dates: one clock
-    queue_after = _read_bytes(demand_dir / research_queue.QUEUE_NAME)
-    if not land and _queue_comparable(queue_after) != _queue_comparable(queue_before):
+    if not land and queue_changed:
         land, why = True, f"research queue changed ({why})"
-    return new, land, why, _queue_line(demand_dir, queue_before)
+    return Decision(new, land, why, research)
+
+
+def _publication(d: Decision, wt_path: Path) -> tuple[list[str], str, str]:
+    """(paths, subject, body) of the PR a landing decision opens."""
+    snap, queue_path = d.snap, f"{DEMAND_RELDIR}/{research_queue.QUEUE_NAME}"
+    if d.queue_only:
+        return ([queue_path], f"chore(jr): research queue {snap['date']} — demand snapshot not landed (0 items)",
+                _queue_only_body(snap, d.why, d.research))
+    paths = [f"{DEMAND_RELDIR}/{snap['date']}.json", f"{DEMAND_RELDIR}/{UNRESOLVED_NAME}"]
+    if (wt_path / queue_path).exists():
+        paths.append(queue_path)
+    return (paths, f"chore(jr): demand snapshot {snap['date']} — {len(snap['items'])} item(s)",
+            _pr_body(snap, d.why, d.research))
 
 
 def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
@@ -254,23 +322,21 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         wt = publish.add_worktree(git=git, root=root)
         if not publish.is_clean(wt, git=git):
             raise RunAbort("fresh worktree is not clean")
-        snap, land, why, research = _mine_and_decide(wt, miner, python, telegram)
-        res.date = snap["date"]
-        if not land:
-            res.reason = why
+        decision = _mine_and_decide(wt, miner, python, telegram)
+        res.date = decision.snap["date"]
+        if not decision.land:
+            res.reason = decision.why
             return res
-        branch = f"{BRANCH_PREFIX}{now.strftime('%Y%m%d-%H%M')}"
-        paths = [f"{DEMAND_RELDIR}/{snap['date']}.json", f"{DEMAND_RELDIR}/{UNRESOLVED_NAME}"]
-        if (wt.path / DEMAND_RELDIR / research_queue.QUEUE_NAME).exists():
-            paths.append(f"{DEMAND_RELDIR}/{research_queue.QUEUE_NAME}")
-        subject = f"chore(jr): demand snapshot {snap['date']} — {len(snap['items'])} item(s)"
-        pub = publish.publish(wt, paths, subject, _pr_body(snap, why, research), git=git, gh=gh, now=now,
+        prefix = QUEUE_ONLY_PREFIX if decision.queue_only else BRANCH_PREFIX
+        branch = f"{prefix}{now.strftime('%Y%m%d-%H%M')}"
+        paths, subject, body = _publication(decision, wt.path)
+        pub = publish.publish(wt, paths, subject, body, git=git, gh=gh, now=now,
                               repo_slug=repo_slug, auto_merge=auto_merge, branch=branch)
         res.published, res.pr_url, res.auto_merge = pub.published, pub.pr_url, pub.auto_merge
-        res.reason = pub.reason or why
+        res.reason = pub.reason or decision.why
         if not pub.published:
             raise RunAbort(f"publish failed: {pub.reason}")    # never exit 0 like a no-op
-        res.superseded = _close_superseded(gh, branch)
+        res.superseded = _close_superseded(gh, branch, prefix)
     except RunAbort as e:
         res.aborted = str(e)
     except Exception as e:  # noqa: BLE001 — a run must always end with a report line

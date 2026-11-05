@@ -25,6 +25,7 @@ from test_demand_run import gh_ok, git_ok, run as run_runner  # noqa: E402
 
 REPO = Path(__file__).resolve().parent.parent
 WINDOW = {"start": "2026-08-03", "end": "2026-08-31"}
+GA4_WINDOW = {"start": "2026-10-06", "end": TODAY}
 
 
 def _live(ga4):
@@ -146,15 +147,16 @@ def test_the_miner_carries_first_seen_from_the_snapshot_not_the_queue(tmp_path):
 
 # ─────────────────────────── the daily runner lands the queue ───────────────────────────
 
-def queue_miner(terms, today=TODAY):
+def queue_miner(terms, today=TODAY, rows=GSC_ROWS, window=None, rc=0):
     """fake_miner + the queue the real miner writes beside the snapshot."""
-    base = fake_miner(today=today)
+    base = fake_miner(rows=rows, today=today, rc=rc)
 
     def miner(wt_path: Path, *, python: str, telegram: bool):
         p = base(wt_path, python=python, telegram=telegram)
         path = wt_path / "docs" / "demand" / rq.QUEUE_NAME
-        rows = [{"term": t, "searches": 1, "zero_result_searches": 1} for t in terms]
-        queue, _ = rq.update_queue(rq.load_queue(path), rows, [], today)
+        counts = [{"term": t, "searches": 1, "zero_result_searches": 1} for t in terms]
+        queue, _ = rq.update_queue(rq.load_queue(path), counts, [], today,
+                                   source=demand.GA4_RESEARCH_SOURCE, window=window or GA4_WINDOW)
         rq.write_queue(queue, path)
         return p
 
@@ -191,7 +193,9 @@ def test_a_queue_change_in_last_seen_only_is_still_a_noop(tmp_path):
     _write_prev(tmp_path, "2026-11-02", _items(GSC_ROWS, "2026-11-02"))
     d = tmp_path / "docs" / "demand"
     queue, _ = rq.update_queue(rq.empty_queue(), [{"term": "es3c28p", "searches": 1,
-                                                   "zero_result_searches": 1}], [], "2026-11-02")
+                                                   "zero_result_searches": 1}], [], "2026-11-02",
+                               source=demand.GA4_RESEARCH_SOURCE,
+                               window={"start": "2026-10-05", "end": "2026-11-02"})
     rq.write_queue(queue, d / rq.QUEUE_NAME)
     res = run_runner(tmp_path, miner=queue_miner(["es3c28p"]))     # refreshes last_seen to TODAY
     assert json.loads((d / rq.QUEUE_NAME).read_text())["candidates"]["es3c28p"]["last_seen"] == TODAY
@@ -255,3 +259,138 @@ def test_the_pr_body_counts_a_reopened_candidate(tmp_path):
     run_runner(tmp_path, gh=gh, miner=queue_miner(["es3c28p"]))
     create = next(c for c in gh.calls if c[:2] == ("pr", "create"))
     assert "1 reopened" in create[create.index("--body") + 1]
+
+
+# ─────────────────────────── provenance: the GA4 window, not the run day (2026-11-05) ───────────────────────────
+
+# modelled on the live property (2026-11-04): every typed term has one search_submit; only
+# es3c28p came back on search_empty
+REALISTIC_GA4 = [_ga4_row("search_submit", t, 1) for t in
+                 ("es3c28p", "esp32-c3", "tenstar", "tenstar robot", "tenstar esp32-s3", "security")]
+REALISTIC_GA4 += [_ga4_row("search_empty", "es3c28p", 1)]
+
+
+def test_the_default_pipeline_opens_one_candidate_with_its_source_and_window(tmp_path, monkeypatch):
+    monkeypatch.setattr(demand, "_pull_live", _live(REALISTIC_GA4))
+    demand.mine(send_telegram=False, demand_dir=tmp_path)
+    queue = _queue(tmp_path)
+    assert list(queue) == ["es3c28p"]
+    c = queue["es3c28p"]
+    assert c["source"] == "ga4 search_empty"
+    assert c["window"] == WINDOW
+    assert c["first_seen"] == c["last_seen"] != WINDOW["end"]       # intake date, not the window
+    assert (c["searches"], c["zero_result_searches"]) == (1, 1)
+
+
+def test_the_realistic_pull_leaves_min_events_steering_unchanged(tmp_path, monkeypatch):
+    def items(ga4, d):
+        monkeypatch.setattr(demand, "_pull_live", _live(ga4))
+        return demand.mine(send_telegram=False, demand_dir=d)["items"]
+
+    with_search = items(REALISTIC_GA4, tmp_path / "a")
+    assert with_search == items([], tmp_path / "b")
+    assert not {it["term"] for it in with_search} & {"es3c28p", "esp32-c3", "tenstar", "security"}
+
+
+def test_a_failed_queue_write_leaves_the_prior_queue_and_is_reported(tmp_path, monkeypatch):
+    monkeypatch.setattr(demand, "_pull_live", _live(REALISTIC_GA4))
+    demand.mine(send_telegram=False, demand_dir=tmp_path)
+    before = (tmp_path / rq.QUEUE_NAME).read_bytes()
+
+    def boom(*a, **kw):
+        raise OSError(28, "No space left on device")
+
+    monkeypatch.setattr(demand, "_pull_live", _live(REALISTIC_GA4 + [_ga4_row("search_submit", "zz9", 1),
+                                                                     _ga4_row("search_empty", "zz9", 1)]))
+    monkeypatch.setattr(rq.os, "fsync", boom)
+    result = demand.mine(send_telegram=False, demand_dir=tmp_path)
+    assert (tmp_path / rq.QUEUE_NAME).read_bytes() == before
+    assert "research queue NOT updated" in result["digest"] and "No space left" in result["research"]["error"]
+
+
+def test_a_sliding_window_alone_does_not_land_a_queue_change(tmp_path):
+    _write_prev(tmp_path, "2026-11-02", _items(GSC_ROWS, "2026-11-02"))
+    d = tmp_path / "docs" / "demand"
+    row_ = [{"term": "es3c28p", "searches": 1, "zero_result_searches": 1}]
+    queue, _ = rq.update_queue(rq.empty_queue(), row_, [], "2026-11-02", source=demand.GA4_RESEARCH_SOURCE,
+                               window={"start": "2026-10-05", "end": "2026-11-02"})
+    rq.write_queue(queue, d / rq.QUEUE_NAME)
+    res = run_runner(tmp_path, miner=queue_miner(["es3c28p"]))
+    assert json.loads((d / rq.QUEUE_NAME).read_text())["candidates"]["es3c28p"]["window"] == GA4_WINDOW
+    assert res.published is False and res.reason.startswith("no-op")
+
+
+# ─────────────────────────── queue-only run: zero demand items, a changed queue (2026-11-05) ───────────────────────────
+
+def _demand_bytes(d: Path) -> dict:
+    return {p.name: p.read_bytes() for p in sorted(d.iterdir()) if p.name != rq.QUEUE_NAME}
+
+
+def _staged(git) -> list:
+    return next(c for c in norm_calls(git) if c[:1] == ("add",))[2:]
+
+
+def test_zero_items_with_a_changed_queue_lands_the_queue_alone(tmp_path):
+    _write_prev(tmp_path, "2026-11-02", _items(GSC_ROWS, "2026-11-02"))
+    d = tmp_path / "docs" / "demand"
+    prior = _demand_bytes(d)
+    git, gh = git_ok(), gh_ok()
+    res = run_runner(tmp_path, git=git, gh=gh, miner=queue_miner(["es3c28p"], rows=[]))
+    assert res.published is True and not res.aborted
+    assert [p for p in _staged(git) if p.startswith("docs/")] == ["docs/demand/research-queue.json"]
+    assert not any(p.startswith("data/") for p in _staged(git))
+    assert _demand_bytes(d) == prior                     # no empty dated snapshot, unresolved untouched
+    assert "es3c28p" in json.loads((d / rq.QUEUE_NAME).read_text())["candidates"]
+    create = next(c for c in gh.calls if c[:2] == ("pr", "create"))
+    title, body = create[create.index("--title") + 1], create[create.index("--body") + 1]
+    assert "research queue" in title and "snapshot" not in title.split("—")[0]
+    assert "research queue" in body and "not landed" in body and "1 open" in body
+
+
+def test_a_queue_only_run_restores_a_same_day_snapshot_the_miner_overwrote(tmp_path):
+    _write_prev(tmp_path, TODAY, _items(GSC_ROWS, TODAY))
+    d = tmp_path / "docs" / "demand"
+    prior = _demand_bytes(d)
+    res = run_runner(tmp_path, miner=queue_miner(["es3c28p"], rows=[]))
+    assert res.published is True
+    assert _demand_bytes(d) == prior
+
+
+def test_an_identical_queue_only_rerun_lands_nothing(tmp_path):
+    _write_prev(tmp_path, "2026-11-02", _items(GSC_ROWS, "2026-11-02"))
+    d = tmp_path / "docs" / "demand"
+    assert run_runner(tmp_path, miner=queue_miner(["es3c28p"], rows=[])).published is True
+    landed, prior = (d / rq.QUEUE_NAME).read_bytes(), _demand_bytes(d)
+    gh = gh_ok()
+    res = run_runner(tmp_path, gh=gh, miner=queue_miner(["es3c28p"], rows=[]))
+    assert res.published is False and "no demand items" in res.aborted
+    assert not any(c[:2] == ("pr", "create") for c in gh.calls)
+    assert (d / rq.QUEUE_NAME).read_bytes() == landed and _demand_bytes(d) == prior
+
+
+def test_zero_items_with_only_last_seen_moved_still_aborts(tmp_path):
+    d = tmp_path / "docs" / "demand"
+    row_ = [{"term": "es3c28p", "searches": 1, "zero_result_searches": 1}]
+    queue, _ = rq.update_queue(rq.empty_queue(), row_, [], "2026-11-02", source=demand.GA4_RESEARCH_SOURCE,
+                               window=GA4_WINDOW)
+    rq.write_queue(queue, d / rq.QUEUE_NAME)
+    gh = gh_ok()
+    res = run_runner(tmp_path, gh=gh, miner=queue_miner(["es3c28p"], rows=[]))
+    assert res.published is False and "no demand items" in res.aborted
+    assert not any(c[:2] == ("pr", "create") for c in gh.calls)
+
+
+def test_a_failed_miner_with_a_changed_queue_still_aborts(tmp_path):
+    gh = gh_ok()
+    res = run_runner(tmp_path, gh=gh, miner=queue_miner(["es3c28p"], rows=[], rc=1))
+    assert res.published is False and res.aborted.startswith("miner failed (rc 1)")
+    assert not any(c[:2] == ("pr", "create") for c in gh.calls)
+
+
+def test_a_queue_only_run_never_closes_an_open_snapshot_pr(tmp_path):
+    open_prs = json.dumps([{"number": 7, "headRefName": "jr/demand-20261102-0930", "labels": []},
+                           {"number": 8, "headRefName": "jr/demand-queue-20261102-0930", "labels": []}])
+    gh = gh_ok(open_prs)
+    res = run_runner(tmp_path, gh=gh, miner=queue_miner(["es3c28p"], rows=[]))
+    assert res.published is True and res.superseded == [8]
+    assert not any(c[:3] == ("pr", "close", "7") for c in gh.calls)

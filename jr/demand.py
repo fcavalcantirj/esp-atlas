@@ -56,6 +56,7 @@ TRENDS_BOOST_MAX = 0.5                  # v2: Trends interest=100 -> +50% weight
 GA4_SEARCH_SUBMIT = "search_submit"
 GA4_SEARCH_EMPTY = "search_empty"
 GA4_SITE_SEARCH_EVENTS = (GA4_SEARCH_SUBMIT, GA4_SEARCH_EMPTY)
+GA4_RESEARCH_SOURCE = f"ga4 {GA4_SEARCH_EMPTY}"   # the research queue's provenance for these counts
 GA4_PLACEHOLDER_TERMS = {"(not set)", "(other)"}  # no `q` sent / high-cardinality rollup — never a typed term
 
 # RANKS_POORLY thresholds (§4) — "high-impression + low-CTR + weak-position" made concrete
@@ -668,7 +669,7 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
     write_snapshot(items, d2_available, live["window"], today, demand_dir)
     write_unresolved(items, demand_dir)
     try:
-        research_line, research = update_research_queue(ga4_raw, today, demand_dir)
+        research_line, research = update_research_queue(ga4_raw, today, live["window"], demand_dir)
     except Exception as e:  # noqa: BLE001 — the research lane must never block the demand steer
         research = {"error": f"{type(e).__name__}: {e}"}
         research_line = f"🔴 research queue NOT updated: {research['error'][:160]}"
@@ -679,14 +680,17 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
     return {"items": items, "digest": digest, "d2_available": d2_available, "research": research}
 
 
-def update_research_queue(ga4_raw_rows: list[dict], today: str, demand_dir: Path = DEMAND_DIR) -> tuple[str, dict]:
+def update_research_queue(ga4_raw_rows: list[dict], today: str, window: dict,
+                          demand_dir: Path = DEMAND_DIR) -> tuple[str, dict]:
     """The zero-result research lane (SPEC-demand-research-queue.md): every UNfloored GA4 term
     that returned nothing becomes (or refreshes) a candidate in `research-queue.json`, classified
-    against the catalog read-only. Returns (digest line, run report). Writes only that file."""
+    against the catalog read-only. `today` is the intake date; `window` is the {start, end} the
+    GA4 pull queried, stored as the counts' provenance. Returns (digest line, run report). Writes
+    only that file."""
     path = demand_dir / research_queue.QUEUE_NAME
     queue, report = research_queue.update_queue(
         research_queue.load_queue(path), ga4_term_counts(ga4_raw_rows),
-        research_queue.load_catalog(REPO), today)
+        research_queue.load_catalog(REPO), today, source=GA4_RESEARCH_SOURCE, window=window)
     research_queue.write_queue(queue, path)
     return research_queue.digest_line(queue, report), report
 
