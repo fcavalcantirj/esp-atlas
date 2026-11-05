@@ -5,18 +5,20 @@ board: m5cardputer
 firmware: c-p-s-cardputer-syhnth
 status: unverified
 chip_family: esp32-s3
-notes: "c-p-s-cardputer-syhnth names this board as Cardputer in its repository name/description; named in the repository itself, not verified on hardware."
+notes: "Board-specific evidence: the C.P.S. README says it targets the M5Stack Cardputer family (Cardputer ADV and the original Cardputer) and that original-Cardputer support was added, with the missing IMU auto-detected at boot (commit 1931da2). Some features, such as the arpeggiator, are Cardputer ADV only. Its platformio.ini builds against the generic esp32-s3-devkitc-1 board definition, not a Cardputer-specific one. Not verified: no current successful build confirmed and not tested on hardware for this atlas."
 sources:
 - field: '*'
   url: https://github.com/oldtokage-collab/C.P.S.--Cardputer-SYHNTH--
   verified: '2026-11-05'
-- field: board
-  url: https://github.com/oldtokage-collab/C.P.S.--Cardputer-SYHNTH--
+- field: 'board'
+  url: https://github.com/oldtokage-collab/C.P.S.--Cardputer-SYHNTH--/blob/1931da267bdec85ccbd6ccec8be1a4ff6d195878/README.md
   verified: '2026-11-05'
 ---
 
-# m5cardputer x c-p-s-cardputer-syhnth
+C.P.S. (CardPuter Synth) on the M5Stack Cardputer (ESP32-S3). `unverified`.
 
-`c-p-s-cardputer-syhnth` declares `Cardputer` in its repository name/description; that name resolves to the catalogued board `m5cardputer` (esp32-s3). Status `unverified` until someone with the hardware confirms it.
-
-- rank 0 repo: `Cardputer` — https://github.com/oldtokage-collab/C.P.S.--Cardputer-SYHNTH--
+The README names the original Cardputer as supported alongside the Cardputer ADV;
+on the original Cardputer, which has no IMU, the synth falls back to key-driven
+control, and ADV-only features like the arpeggiator are unavailable. No current
+successful build has been confirmed, and it has not been tested on hardware for
+this atlas.

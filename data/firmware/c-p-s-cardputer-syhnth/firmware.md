@@ -20,4 +20,4 @@ popularity:
   as_of: '2026-11-05'
 ---
 
-Admitted by jr/scorer.py rule authored.
+A DIY synthesizer for the M5Stack Cardputer family (Cardputer ADV and the original Cardputer), built with PlatformIO and Arduino; it can be played from the keyboard and, on the ADV, the IMU.
