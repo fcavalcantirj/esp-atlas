@@ -12,6 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import demand  # noqa: E402
+import demand_signal  # noqa: E402
 from test_demand import D1_ROWS, D4_ROWS, _build  # noqa: E402
 
 
@@ -199,7 +200,7 @@ def test_mine_d2_term_above_floor_reaches_the_snapshot(tmp_path, monkeypatch):
         "gsc_query_rows": D1_ROWS, "gsc_query_page_rows": D4_ROWS, "ga4_searchterm_raw_rows": ga4,
     })
     demand.mine(send_telegram=False, demand_dir=tmp_path)
-    snapshot = json.loads(next(p for p in tmp_path.glob("*.json") if p.stem != "unresolved").read_text())
+    snapshot = json.loads(next(p for p in tmp_path.glob("*.json") if demand_signal.is_dated_snapshot(p)).read_text())
     waveshare = next(it for it in snapshot["items"] if it["term"] == "waveshare")
     assert waveshare["zero_result"] is True
     assert waveshare["events"] == 6
@@ -213,7 +214,7 @@ def test_mine_marks_d2_available_from_live_shaped_ga4_rows(tmp_path, monkeypatch
     })
     result = demand.mine(send_telegram=False, demand_dir=tmp_path)
     assert result["d2_available"] is True
-    snapshot = json.loads(next(p for p in tmp_path.glob("*.json") if p.stem != "unresolved").read_text())
+    snapshot = json.loads(next(p for p in tmp_path.glob("*.json") if demand_signal.is_dated_snapshot(p)).read_text())
     assert snapshot["d2_available"] is True
 
 

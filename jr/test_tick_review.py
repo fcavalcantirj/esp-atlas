@@ -14,7 +14,7 @@ from datetime import timedelta
 
 import review_routing
 import tick
-from test_tick import (BOOKKEEPING, NOW, STALE, Proc, _closes, _fake_stage_modules, _stage, _tick_pr,  # noqa: F401
+from test_tick import (BOOKKEEPING, NOW, STALE, Proc, _closes, _fake_stage_modules, _stage, _tick_pr, checkout,  # noqa: F401
                        gh_with_prs, git_ok, recorder, run, wt_dir)
 
 

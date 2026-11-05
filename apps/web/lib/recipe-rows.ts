@@ -33,7 +33,7 @@ export function boardFirmwareRows(
   });
 }
 
-/** A firmware page's "Runs on these boards" rows — the same edge from the other side. */
+/** A firmware page's "Boards with a recipe" rows — the same edge from the other side. */
 export function firmwareBoardRows(recipes: Recipe[], parts: PartRecord[], firmware: Firmware): RecipeRow[] {
   const boardById = new Map(parts.map((part) => [part.id, part]));
   const handoff = handoffFor(firmware);

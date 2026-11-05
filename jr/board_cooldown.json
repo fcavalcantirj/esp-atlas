@@ -91,6 +91,96 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
+    "freenove-fnk0104a": {
+      "board": "freenove-fnk0104a",
+      "expires": "2026-11-12T19:01:17.341039+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T19:01:17.341039+00:00"
+    },
+    "freenove-fnk0104b": {
+      "board": "freenove-fnk0104b",
+      "expires": "2026-11-12T19:01:17.341039+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T19:01:17.341039+00:00"
+    },
+    "freenove-fnk0104s": {
+      "board": "freenove-fnk0104s",
+      "expires": "2026-11-12T19:01:17.341039+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T19:01:17.341039+00:00"
+    },
+    "heltec-wifi-kit-32-v3": {
+      "board": "heltec-wifi-kit-32-v3",
+      "expires": "2026-11-12T20:00:59.980852+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T20:00:59.980852+00:00"
+    },
+    "heltec-wifi-lora-32-v3": {
+      "board": "heltec-wifi-lora-32-v3",
+      "expires": "2026-11-12T20:00:59.980852+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T20:00:59.980852+00:00"
+    },
+    "heltec-wireless-paper": {
+      "board": "heltec-wireless-paper",
+      "expires": "2026-11-12T20:00:59.980852+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        },
+        "images": {
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T20:00:59.980852+00:00"
+    },
     "lolin-s3": {
       "board": "lolin-s3",
       "expires": "2026-11-11T19:00:59.711024+00:00",

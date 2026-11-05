@@ -17,8 +17,8 @@ export function shouldShowBoardFlashCta(partType: string, rows: FlashCtaRow[] | 
   return partType === "board" && rows !== null && rows.length > 0;
 }
 
-/** Most trusted tier present among rows, known-good > reported > unverified
- * > broken (SPEC-wizard.md "the honesty layer") -- null only for zero rows. */
+/** Most trusted tier present among rows, known-good > reported > declared
+ * > unverified > broken (SPEC-wizard.md "the honesty layer") -- null only for zero rows. */
 export function highestTrustTier(rows: FlashCtaRow[]): string | null {
   for (const tier of RECIPE_TIER_ORDER) {
     if (rows.some((r) => r.recipe.status === tier)) return tier;

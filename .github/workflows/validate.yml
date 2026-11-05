@@ -7,9 +7,13 @@ on:
 
 jobs:
   schema:
+    # REQUIRED status check (branch protection). On pull requests it also runs the new-link
+    # check below, so a confirmed-dead link a PR adds blocks merge through this job.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the new-link check diffs against the PR's merge base
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -24,6 +28,14 @@ jobs:
         # Reads data/firmware/<id>/signals.json written by Track B (jr/stage_boardmap.py); offline.
         # Becomes blocking (--strict) once the known under-maps are closed.
         run: python3 scripts/firmware_boards_audit.py --ci
+      - name: No confirmed-dead link among the URLs this PR adds or changes (PyYAML from above)
+        # Inside the required schema check, so a confirmed 404/410 (asked twice) on a URL this
+        # PR ADDS or CHANGES under data/** blocks merge. Deliberately no continue-on-error and
+        # no pipe: the script's exit code is the verdict. Timeouts, DNS/TLS errors, 429, 5xx
+        # and 403 bot walls are inconclusive and exit 0. Untouched lines are never checked, so
+        # a link already broken on main does not fail an unrelated PR (sources-live tracks those).
+        if: github.event_name == 'pull_request'
+        run: python3 scripts/new_link_check.py
 
   tests:
     runs-on: ubuntu-latest
@@ -36,6 +48,19 @@ jobs:
         run: pip install -e apps/core[test] -e apps/api[test] -e apps/cli[test]
       - name: Run full pytest suite (includes wizard oracle invariants)
         run: python3 -m pytest apps/core/tests apps/api/tests apps/cli/tests
+      # The web unit tests (lib/*.test.ts, including the public-copy guard) ride this required
+      # job on purpose; scripts/test_validate_workflow.py fails if they move out or go soft.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install web dependencies
+        working-directory: apps/web
+        run: npm ci
+      - name: Run web unit tests (node --test lib/*.test.ts)
+        working-directory: apps/web
+        run: npm test
 
   jr-tests:
     runs-on: ubuntu-latest
@@ -66,6 +91,10 @@ jobs:
         run: python3 -m pytest jr scripts -q -rs
 
   sources-live:
+    # NON-BLOCKING tracker of links already broken on main: checks every cited URL, never a
+    # required check. No CI bot path commits back to the repo, so its dead list lives in this
+    # job's log rather than a tracked report file. PR-added links are the schema job's
+    # new-link step above.
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:

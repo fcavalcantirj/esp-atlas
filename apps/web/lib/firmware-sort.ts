@@ -21,7 +21,7 @@ export const SORT_OPTIONS: SortOption[] = [
   { value: "name", label: "Name (A→Z)", lead: "sorted A→Z by name" },
   { value: "name-desc", label: "Name (Z→A)", lead: "sorted Z→A by name" },
   { value: "forks", label: "Most forks", lead: "sorted by most forks" },
-  { value: "boards", label: "Runs on most boards", lead: "sorted by boards supported" },
+  { value: "boards", label: "Most boards with recipes", lead: "sorted by boards with recipes" },
 ];
 
 const VALID_SORTS = new Set(SORT_OPTIONS.map((o) => o.value));
@@ -48,7 +48,7 @@ export function sortHref(sort: string): string {
 export function firmwareLeadCopy(sort: string, count: number): string {
   if (count === 0) return "The firmware list could not be loaded right now — try again in a moment.";
   const option = SORT_OPTIONS.find((o) => o.value === sort) ?? SORT_OPTIONS[0];
-  return `${count} flashable firmware projects, ${option.lead} — open one to see the boards it's verified to run on.`;
+  return `${count} flashable firmware projects, ${option.lead} — open one to see the boards it has recipes for, by trust tier.`;
 }
 
 export type FirmwareRobots = { index: boolean; follow: boolean } | undefined;
