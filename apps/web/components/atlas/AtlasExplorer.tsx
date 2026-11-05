@@ -54,7 +54,7 @@ export default function AtlasExplorer({ catalog }: { catalog: AtlasCatalog }) {
   return <div className={styles.explorer}>
     <header className={styles.intro}>
       <div><p className={styles.eyebrow}>ESP / Atlas</p><h1>The ESP32 world.<br /><span>Mapped.</span></h1></div>
-      <div className={styles.introAside}><p>A living index of hardware and software.<br />Follow a connection. Inspect its evidence.</p><dl className={styles.totals}><div><dt>Parts</dt><dd>{catalog.parts.length}</dd></div><div><dt>Firmware</dt><dd>{catalog.firmware.length}</dd></div><div><dt>Recipes</dt><dd>{catalog.recipes.length}</dd></div></dl><p className={styles.muted}>Counts from the loaded catalog. Recipe totals include every trust tier.</p></div>
+      <div className={styles.introAside}><p>A living index of hardware and software.<br />Follow a connection. Inspect its evidence.</p><dl className={styles.totals}><div><dt>Parts</dt><dd>{catalog.parts.length}</dd></div><div><dt>Firmwares</dt><dd>{catalog.firmware.length}</dd></div><div><dt>Recipes</dt><dd>{catalog.recipes.length}</dd></div></dl><p className={styles.muted}>Counts from the loaded catalog. Recipe totals include every trust tier.</p></div>
     </header>
     <nav className={styles.lenses} aria-label="Atlas lenses">{ATLAS_LENSES.map((item, index) => <Link key={item} href={atlasHref(query, { lens: item })} prefetch={false} scroll={false} onNavigate={event => { event.preventDefault(); navigate({ lens: item }); }} aria-current={lens === item ? "page" : undefined}><small aria-hidden="true">0{index + 1}</small>{LENS_COPY[item].name}<span aria-hidden="true">↗</span></Link>)}</nav>
     <div className={styles.context} aria-label="Selected context">
