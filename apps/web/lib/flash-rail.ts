@@ -29,17 +29,21 @@ export type FlashPanelContent =
   | { kind: "handoff"; reason: string; flasherUrls: string[]; repoUrl: string | null }
   | { kind: "broken"; claim: string; explanation: string; docs: string[] };
 
+/** A recipe recorded as broken offers no install path at all — the API refuses
+ * its manifest (404) and binary proxy (403); the panel mirrors that on every rail. */
 export function installBlocked(recipe: Pick<Recipe, "status">): boolean {
-  return false;
+  return recipe.status === "broken";
 }
 
+/** What opening the panel does: a broken recipe never preflights any manifest. */
 export function flashOpenPlan(recipe: Recipe, manifestUrl: string | null): FlashOpenPlan {
+  if (installBlocked(recipe)) return { kind: "broken" };
   return manifestUrl ? { kind: "preflight", manifestUrl } : { kind: "no_rail" };
 }
 
 /** Statically: does the record carry what the in-browser rail needs? The preflight remains the truth. */
 export function inBrowserRail(recipe: Recipe, phaseKind: FlashPhase["kind"]): boolean {
-  if (recipe.status === "broken" || phaseKind === "handoff") return false;
+  if (installBlocked(recipe) || phaseKind === "handoff") return false;
   const flash = recipe.flash;
   if (!flash) return false;
   if (flash.method === "release-bin") return Boolean(flash.bin_url);
@@ -62,7 +66,24 @@ function terminalFallbackFor(recipe: Recipe): TerminalFallback | null {
   };
 }
 
+const BROKEN_FALLBACK = "esp-atlas records this pairing as broken; no explanation is cited yet.";
+
+/** The recipe's cited documentation — every source except its install artifacts (binary, manifest). */
+function docsFor(recipe: Recipe): string[] {
+  const artifacts = new Set([recipe.flash?.bin_url, recipe.flash?.manifest_url].filter(Boolean));
+  const urls = recipe.sources.filter((s) => !s.field.startsWith("flash.") && !artifacts.has(s.url)).map((s) => s.url);
+  return Array.from(new Set(urls));
+}
+
+function brokenContent(recipe: Recipe, boardName: string): FlashPanelContent {
+  const explanation = recipe.notes?.trim() || BROKEN_FALLBACK;
+  return { kind: "broken", claim: tierClaim(recipe.status, boardName), explanation, docs: docsFor(recipe) };
+}
+
+/** What the panel shows. For a broken recipe any open phase — including a stale
+ * or late preflight result — renders the cited explanation and nothing installable. */
 export function flashPanelContent(recipe: Recipe, phase: FlashPhase, handoff: FlashHandoff, boardName: string): FlashPanelContent {
+  if (phase.kind !== "closed" && installBlocked(recipe)) return brokenContent(recipe, boardName);
   switch (phase.kind) {
     case "closed":
     case "loading":
@@ -72,6 +93,6 @@ export function flashPanelContent(recipe: Recipe, phase: FlashPhase, handoff: Fl
     case "handoff":
       return { kind: "handoff", reason: phase.reason, flasherUrls: handoff.flasherUrls, repoUrl: handoff.repoUrl };
     case "broken":
-      return { kind: "broken", claim: tierClaim(recipe.status, boardName), explanation: recipe.notes ?? "", docs: [] };
+      return brokenContent(recipe, boardName);
   }
 }
