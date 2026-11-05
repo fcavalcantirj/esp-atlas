@@ -149,7 +149,7 @@ export default function FirmwareDetailView({
         </section>
       )}
       <section className="firmware-boards" aria-labelledby="firmware-boards">
-        <h2 id="firmware-boards">Runs on these boards</h2>
+        <h2 id="firmware-boards">Boards with a recipe, by trust tier</h2>
         {rows.length === 0 ? <p className="muted">No boards recorded for this firmware yet.</p> : <RecipeGroupList rows={rows} />}
       </section>
       {(translatedReadme || readme) && (

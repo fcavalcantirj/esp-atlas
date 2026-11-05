@@ -133,7 +133,7 @@ export interface Firmware {
   sources: SourceEntry[];
   popularity?: FirmwarePopularity | null;
   /** Recipe count for this firmware (SPEC-firmware-ordering.md §4.A) -- how
-   * many boards it's verified to run on, projected server-side. */
+   * many boards it has a recipe for, at any trust tier, projected server-side. */
   boards?: number;
   /** Groq-generated grounded one-liner, cached on the record. */
   summary?: string;
@@ -147,7 +147,7 @@ export interface Firmware {
   readme_en?: string;
 }
 
-export type RecipeStatus = "known-good" | "reported" | "unverified" | "broken";
+export type RecipeStatus = "known-good" | "reported" | "declared" | "unverified" | "broken";
 
 export interface RecipeFlash {
   method: string | null;

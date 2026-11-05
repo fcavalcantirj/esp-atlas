@@ -57,7 +57,7 @@ test("firmwareRobots noindexes the default sort too when the API is cold/down", 
 test("firmwareLeadCopy for the default sort is byte-identical to the page's original copy", () => {
   assert.equal(
     firmwareLeadCopy(DEFAULT_SORT, 117),
-    "117 flashable firmware projects, ranked by GitHub popularity — open one to see the boards it's verified to run on.",
+    "117 flashable firmware projects, ranked by GitHub popularity — open one to see the boards it has recipes for, by trust tier.",
   );
 });
 
@@ -69,6 +69,6 @@ test("firmwareLeadCopy for an empty list is unchanged regardless of sort", () =>
 test("firmwareLeadCopy states the active mode for a non-default sort", () => {
   assert.equal(
     firmwareLeadCopy("boards", 42),
-    "42 flashable firmware projects, sorted by boards supported — open one to see the boards it's verified to run on.",
+    "42 flashable firmware projects, sorted by boards with recipes — open one to see the boards it has recipes for, by trust tier.",
   );
 });

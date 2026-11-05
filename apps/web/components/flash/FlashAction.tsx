@@ -7,6 +7,7 @@ import TrustTierBadge from "@/components/TrustTierBadge";
 import type { Recipe } from "@/lib/api";
 import { track } from "@/lib/analytics";
 import { ensureEspWebTools, isManifest, manifestUrlFor, type FlashHandoff, type Manifest } from "@/lib/esp-web-tools";
+import { recipeCaveat, tierClaim as tierClaimFor } from "@/lib/flash-copy";
 import { flashMethodLabel } from "@/lib/format";
 import { hostOf } from "@/lib/analytics";
 import { downloadModeView, type DownloadMode } from "@/lib/troubleshooter";
@@ -40,15 +41,6 @@ interface FlashActionProps {
   /** The board's cited `download_mode` (board page), for the plug-in hint. Absent -> generic BOOT line. */
   downloadMode?: DownloadMode | null;
 }
-
-// What each trust tier actually asserts (SPEC-wizard "Trust tiers") — the
-// panel says this in words so "validated" never means more than the record does.
-const TIER_CLAIM: Record<string, (board: string) => string> = {
-  "known-good": (board) => `Known-good on ${board} — listed by the maintainer, or verified on real hardware.`,
-  reported: (board) => `Reported on ${board} — community-submitted and cited, not independently verified.`,
-  unverified: (board) => `Unverified on ${board} — harvested from the project's build targets, no human citation yet.`,
-  broken: (board) => `Broken on ${board} — known incompatible, or regressed at a version.`,
-};
 
 function chips(manifest: Manifest): string {
   return Array.from(new Set(manifest.builds.map((b) => b.chipFamily))).join(" / ");
@@ -131,7 +123,10 @@ export default function FlashAction({
   const inBrowser = !broken && phase.kind !== "handoff" && looksFlashableInBrowser(recipe);
   // Which rail: our generated manifest + streaming proxy, or the project's own manifest.
   const projectRail = method === "esp-web-tools";
-  const tierClaim = (TIER_CLAIM[recipe.status] ?? ((board) => `${recipe.status} on ${board}.`))(boardName);
+  const tierClaim = tierClaimFor(recipe.status, boardName);
+  // The record's own caveat (e.g. "a discovery lead, nothing upstream confirms this board"):
+  // shown before any rail, so no flash path skips past it.
+  const caveat = recipeCaveat(recipe);
   // The board's cited download-mode steps when known; otherwise the generic
   // BOOT line. The esp-web-install-button behavior is unaffected by this hint.
   const dmView = downloadModeView(downloadMode);
@@ -220,6 +215,7 @@ export default function FlashAction({
           </span>
           {recipe.status === "known-good" && <span className="flash-action-tag flash-action-tag--tier">known-good</span>}
           {broken && <span className="flash-action-tag flash-action-tag--broken">broken</span>}
+          {caveat && <span className="flash-action-tag flash-action-tag--caveat">read the caveat</span>}
         </span>
         {/* The tip must not toggle the drawer: stop the click before <summary> sees it. */}
         <span
@@ -244,6 +240,12 @@ export default function FlashAction({
         <p className="flash-disclaimer">
           <TrustTierBadge status={recipe.status} /> {DISCLAIMER}
         </p>
+
+        {caveat && (
+          <p className="flash-caveat" role="note" aria-label="Caveat from this recipe">
+            <strong>Caveat:</strong> {caveat}
+          </p>
+        )}
 
         {phase.kind === "loading" && <p className="muted mono">Checking for an in-browser flash…</p>}
 

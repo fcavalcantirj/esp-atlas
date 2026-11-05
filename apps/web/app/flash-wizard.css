@@ -126,6 +126,10 @@
   color: var(--danger);
 }
 
+.flash-action-tag--caveat {
+  color: color-mix(in srgb, var(--warn) 70%, var(--fg));
+}
+
 .flash-checks {
   margin: 0;
   padding-left: 1.4rem;
@@ -201,6 +205,15 @@
 
 .flash-disclaimer .tier-badge {
   margin-right: 0.35rem;
+}
+
+/* The recipe's own caveat (its notes), set like the disclaimer it qualifies. */
+.flash-caveat {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--warn);
+  font-size: var(--t-sm);
+  line-height: var(--lead-snug);
 }
 
 .flash-panel esp-web-install-button {

@@ -30,42 +30,79 @@ import tools
 
 _MANIFEST_DIR_RE = re.compile(r"(?:^|/)(boards|variants|targets)/([^/]+)/([^/]+)/")
 
+# A manifest dir under one of these segments belongs to a vendored / third-party / study copy of
+# someone else's tree, not to the firmware's own build (SPEC §3.1 — NucleoOS's
+# `reference/esp-claw/.../boards` is "study material only"). Matched case-insensitively, as whole
+# path segments, and only BEFORE the manifest dir (after it, the segment is the vendor slot).
+_VENDORED_SEGMENTS = frozenset({
+    "reference", "references", "third_party", "third-party", "thirdparty", "vendor", "vendored",
+    "external", "extern", "deps", "managed_components",
+})
+
+
+def _is_vendored(root: str) -> bool:
+    return any(seg.lower() in _VENDORED_SEGMENTS for seg in root.split("/")[:-1])
+
 
 def manifest_tree_refs(tree_paths: list[str]) -> dict:
-    """Raw board leaf-dir names from a `boards/`/`variants/`/`targets/` manifest tree, found
-    anywhere in `tree_paths` (a flat blob-path listing, e.g. from a git-trees API call — matches
-    at any depth, since esp-claw's tree lives at `application/edge_agent/boards/...`). Vendor is
-    the parent path segment; only the leaf dir name is returned as the raw ref — the bare name is
+    """Raw board leaf-dir names from the firmware's OWN `boards/`/`variants/`/`targets/` manifest
+    trees in `tree_paths` (a flat blob-path listing, e.g. from a git-trees API call). A manifest
+    dir may sit at any depth (esp-claw's lives at `application/edge_agent/boards/...`), but one
+    under a vendored / third-party / study segment (_VENDORED_SEGMENTS) is skipped. Vendor is the
+    parent path segment; only the leaf dir name is returned as the raw ref — the bare name is
     what board_resolver.resolve() expects (its own oracle keys off e.g. 'm5stack_cores3', not
     'm5stack/m5stack_cores3'). Returns {"refs": [...] (first-seen order, deduped),
-    "root": <matched manifest dir path, e.g. 'application/edge_agent/boards'> | None}."""
+    "roots": [<manifest dir path, e.g. 'application/edge_agent/boards'>, ...] (first-seen order),
+    "ref_roots": {ref: <the root it was first found under>}, "root": roots[0] | None}."""
     refs: list[str] = []
-    root = None
+    roots: list[str] = []
+    ref_roots: dict[str, str] = {}
     for path in tree_paths:
         m = _MANIFEST_DIR_RE.search(path)
         if not m:
             continue
-        if root is None:
-            root = path[: m.end(1)]
+        root = path[: m.end(1)]
+        if _is_vendored(root):
+            continue
         board = m.group(3)
-        if board not in refs:
-            refs.append(board)
-    return {"refs": refs, "root": root}
+        if board in ref_roots:
+            continue
+        if root not in roots:
+            roots.append(root)
+        refs.append(board)
+        ref_roots[board] = root
+    return {"refs": refs, "root": roots[0] if roots else None, "roots": roots, "ref_roots": ref_roots}
 
 
 def extract_manifest_tree(owner_repo: str, ref: str, api=derive.default_api) -> dict:
     """Fetch `owner_repo`@`ref`'s git tree and run manifest_tree_refs over it. `api` defaults to
     derive.default_api (`gh api <path>`, authenticated) — the injected callable tests replace with
-    a fake. Returns {"refs": [...], "source_url": <github tree URL> | None, "source_type":
-    "manifest_tree"}; `source_url` is None (and `refs` empty) when the repo has no manifest dir."""
+    a fake. Returns {"refs": [...], "source_url": <first root's github tree URL> | None,
+    "source_type": "manifest_tree", "source_urls": {root: <that root's github tree URL>},
+    "ref_roots": {ref: root}}; cite a ref via source_urls[ref_roots[ref]] (ref_source_url), never
+    via `source_url`, which is kept only for back-compat and names just the first root.
+    `source_url` is None (and everything else empty) when the repo has no first-party manifest dir."""
     tree_doc = api(f"repos/{owner_repo}/git/trees/{ref}?recursive=1")
     paths = [
         t["path"] for t in (tree_doc.get("tree") or [])
         if isinstance(t, dict) and t.get("type") == "blob" and t.get("path")
     ] if isinstance(tree_doc, dict) else []
     found = manifest_tree_refs(paths)
-    source_url = f"https://github.com/{owner_repo}/tree/{ref}/{found['root']}" if found["root"] else None
-    return {"refs": found["refs"], "source_url": source_url, "source_type": "manifest_tree"}
+    source_urls = {root: f"https://github.com/{owner_repo}/tree/{ref}/{root}" for root in found["roots"]}
+    return {
+        "refs": found["refs"],
+        "source_url": source_urls.get(found["root"]),
+        "source_type": "manifest_tree",
+        "source_urls": source_urls,
+        "ref_roots": found["ref_roots"],
+    }
+
+
+def ref_source_url(source: dict, raw: str) -> str | None:
+    """The URL that cites `raw` within an extractor result: its own manifest root's URL when the
+    source carries per-ref roots (extract_manifest_tree), else the source's single `source_url`."""
+    root = (source.get("ref_roots") or {}).get(raw)
+    return (source.get("source_urls") or {}).get(root) or source["source_url"]
 
 
 # --- source 2: README device table (SPEC §3.3) ---------------------------------------------------
@@ -219,7 +256,7 @@ def extract_declared_boards(owner_repo: str, ref: str | None = None, *,
     for source in (manifest, readme):
         for raw in source["refs"]:
             if raw not in source_of:
-                source_of[raw] = {"source_url": source["source_url"], "source_type": source["source_type"]}
+                source_of[raw] = {"source_url": ref_source_url(source, raw), "source_type": source["source_type"]}
                 ordered_raws.append(raw)
 
     result = board_resolver.resolve_boards(ordered_raws)
