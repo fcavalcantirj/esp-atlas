@@ -379,6 +379,52 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-05T03:01:00.115486+00:00"
     },
+    "sparkfun-iot-redboard-esp32": {
+      "board": "sparkfun-iot-redboard-esp32",
+      "expires": "2026-11-12T04:01:00.233803+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T04:01:00.233803+00:00"
+    },
+    "sparkfun-micromod-esp32-processor": {
+      "board": "sparkfun-micromod-esp32-processor",
+      "expires": "2026-11-12T04:01:00.233803+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T04:01:00.233803+00:00"
+    },
+    "sparkfun-thing-plus-esp32-s2-wroom": {
+      "board": "sparkfun-thing-plus-esp32-s2-wroom",
+      "expires": "2026-11-12T04:01:00.233803+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-05T04:01:00.233803+00:00"
+    },
     "xiao-esp32c3": {
       "board": "xiao-esp32c3",
       "expires": "2026-11-12T01:01:14.781862+00:00",
