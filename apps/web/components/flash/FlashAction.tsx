@@ -97,7 +97,7 @@ export default function FlashAction({
   usbConnector = null,
   downloadMode = null,
 }: FlashActionProps) {
-  const [phase, setPhase] = useState<FlashPhase>({ kind: "closed" });
+  const [preflight, setPreflight] = useState<FlashPhase>({ kind: "closed" });
   const [consent, setConsent] = useState(false);
   const consentId = useId();
   const detailsRef = useRef<HTMLDetailsElement>(null);
@@ -106,6 +106,10 @@ export default function FlashAction({
   const method = recipe.flash?.method ?? null;
   const methodLabel = flashMethodLabel(method);
   const broken = installBlocked(recipe);
+  // Everything below renders from this alone, never from the raw preflight: a
+  // broken recipe maps every open phase — even a stale or late result — to its
+  // cited explanation, with nothing installable.
+  const phase = flashPanelContent(recipe, preflight, handoff, boardName);
   // The record's own claim until the preflight rules; a handoff result corrects
   // the pill, and a recipe recorded as broken never glows.
   const inBrowser = inBrowserRail(recipe, phase.kind);
@@ -119,9 +123,6 @@ export default function FlashAction({
   // BOOT line. The esp-web-install-button behavior is unaffected by this hint.
   const dmView = downloadModeView(downloadMode);
   const usbText = usbConnector ? ` (${usbConnector.toUpperCase()})` : "";
-  // Everything below renders from this alone: a broken recipe maps every phase,
-  // even a stale or late preflight result, to its explanation.
-  const content = flashPanelContent(recipe, phase, handoff, boardName);
 
   async function open() {
     const gen = ++generation.current;
@@ -129,16 +130,16 @@ export default function FlashAction({
     track("flash_open", { recipe_id: recipe.id, method });
     const plan = flashOpenPlan(recipe, manifestUrlFor(recipe));
     if (plan.kind === "broken") {
-      setPhase({ kind: "broken" });
+      setPreflight({ kind: "broken" });
       return;
     }
     if (plan.kind === "no_rail") {
       track("flash_handoff", { recipe_id: recipe.id, method, reason: "no_rail" });
-      setPhase({ kind: "handoff", reason: handoffReason(recipe, handoff, "no_rail") });
+      setPreflight({ kind: "handoff", reason: handoffReason(recipe, handoff, "no_rail") });
       return;
     }
     const { manifestUrl } = plan;
-    setPhase({ kind: "loading" });
+    setPreflight({ kind: "loading" });
     let failure: PreflightFailure = "load_failed";
     try {
       const [, res] = await Promise.all([
@@ -155,7 +156,7 @@ export default function FlashAction({
         if (isManifest(body)) {
           if (!current()) return;
           track("flash_ready", { recipe_id: recipe.id, chip: body.builds.map((b) => b.chipFamily).join(","), version: body.version });
-          setPhase({ kind: "ready", manifest: body, manifestUrl });
+          setPreflight({ kind: "ready", manifest: body, manifestUrl });
           return;
         }
         failure = "manifest_invalid";
@@ -167,12 +168,12 @@ export default function FlashAction({
     }
     if (!current()) return;
     track("flash_handoff", { recipe_id: recipe.id, method, reason: failure });
-    setPhase({ kind: "handoff", reason: handoffReason(recipe, handoff, failure) });
+    setPreflight({ kind: "handoff", reason: handoffReason(recipe, handoff, failure) });
   }
 
   // A <details> toggled open before hydration never fires onToggle: catch up on mount.
   useEffect(() => {
-    if (detailsRef.current?.open && phase.kind === "closed") void open();
+    if (detailsRef.current?.open && preflight.kind === "closed") void open();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -182,10 +183,10 @@ export default function FlashAction({
       className={"flash-action" + (inBrowser ? " flash-action--browser" : "")}
       onToggle={(event) => {
         if (event.currentTarget.open) {
-          if (phase.kind === "closed") void open();
+          if (preflight.kind === "closed") void open();
         } else {
           generation.current++; // drop any preflight still in flight
-          setPhase({ kind: "closed" });
+          setPreflight({ kind: "closed" });
           setConsent(false);
         }
       }}
@@ -224,63 +225,43 @@ export default function FlashAction({
       </summary>
 
       <div className="flash-panel" aria-live="polite">
-        {content.kind === "broken" ? (
-          <div className="flash-broken" role="note" aria-label="Why this recipe is not installable">
-            <p className="flash-disclaimer">
-              <TrustTierBadge status={recipe.status} /> {content.claim} esp-atlas offers no install for it — no in-browser
-              flash, no terminal command, no flasher handoff.
-            </p>
-            <p className="flash-caveat">
-              <strong>Why:</strong> {content.explanation}
-            </p>
-            {content.docs.length > 0 && (
-              <ul className="flash-handoff-links" aria-label="Cited docs">
-                {content.docs.map((url) => (
-                  <li key={url}>
-                    <TrackedLink href={url} linkType="source" extra={{ recipe_id: recipe.id, kind: "broken_doc" }}>
-                      {hostOf(url)}
-                    </TrackedLink>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ) : (
-          <p className="flash-disclaimer">
-            <TrustTierBadge status={recipe.status} /> {DISCLAIMER}
-          </p>
-        )}
+        <p className="flash-disclaimer">
+          <TrustTierBadge status={recipe.status} />{" "}
+          {phase.kind === "broken"
+            ? `${phase.claim} esp-atlas offers no install for it — no in-browser flash, no terminal command, no flasher handoff.`
+            : DISCLAIMER}
+        </p>
 
-        {caveat && content.kind !== "broken" && (
+        {caveat && (
           <p className="flash-caveat" role="note" aria-label="Caveat from this recipe">
-            <strong>Caveat:</strong> {caveat}
+            <strong>{broken ? "Why:" : "Caveat:"}</strong> {caveat}
           </p>
         )}
 
-        {content.kind === "loading" && <p className="muted mono">Checking for an in-browser flash…</p>}
+        {phase.kind === "loading" && <p className="muted mono">Checking for an in-browser flash…</p>}
 
-        {content.kind === "install" && (
+        {phase.kind === "ready" && (
           <>
             <ul className="flash-checks" role="list" aria-label="What esp-atlas checked">
               <li>{tierClaim}</li>
               {projectRail ? (
                 <li>
-                  The project&apos;s own manifest offers builds for {chips(content.manifest)}; the flasher reads the connected chip and
+                  The project&apos;s own manifest offers builds for {chips(phase.manifest)}; the flasher reads the connected chip and
                   refuses to write if none matches.
                 </li>
               ) : (
                 <li>
-                  Built for {chips(content.manifest)} — the same chip family as {boardName} (CI checks this for every recipe); the flasher
+                  Built for {chips(phase.manifest)} — the same chip family as {boardName} (CI checks this for every recipe); the flasher
                   re-reads the connected chip and refuses a mismatch before writing.
                 </li>
               )}
               <li>
                 {firmwareName}
-                {versionText(content.manifest)},{" "}
+                {versionText(phase.manifest)},{" "}
                 {projectRail
                   ? "fetched from the project's own manifest — esp-atlas never touches the binary"
                   : "the project's own release binary, streamed through esp-atlas unmodified"}
-                {content.manifest.new_install_prompt_erase ? " — you are asked before any full-chip erase" : ""}.
+                {phase.manifest.new_install_prompt_erase ? " — you are asked before any full-chip erase" : ""}.
               </li>
             </ul>
             <label className="checkbox-label">
@@ -296,7 +277,7 @@ export default function FlashAction({
                 I understand — enable the flash button
               </span>
             </label>
-            <esp-web-install-button manifest={content.manifestUrl}>
+            <esp-web-install-button manifest={phase.manifestUrl}>
               <button
                 slot="activate"
                 type="button"
@@ -319,17 +300,17 @@ export default function FlashAction({
                 : dmView.steps}
             </p>
             {!dmView.isGeneric && dmView.note && <p className="muted flash-hint">{dmView.note}</p>}
-            {content.terminal && (
+            {phase.terminal && (
               <p className="muted flash-hint flash-fallback">
                 If the flasher stops at <span className="mono">Unexpected CHIP magic value</span>, your silicon revision is newer than the
                 browser flasher’s chip table (see <em>Verify my board</em> above) — the board is fine. Flash the same image from a
                 terminal instead:{" "}
                 <span className="mono">
-                  esptool --chip {content.terminal.chip} write-flash {content.terminal.offset} {content.terminal.file}
+                  esptool --chip {phase.terminal.chip} write-flash {phase.terminal.offset} {phase.terminal.file}
                 </span>{" "}
                 after downloading it from{" "}
-                <TrackedLink href={content.terminal.url} linkType="flash_handoff" extra={{ recipe_id: recipe.id, kind: "bin" }}>
-                  {hostOf(content.terminal.url)}
+                <TrackedLink href={phase.terminal.url} linkType="flash_handoff" extra={{ recipe_id: recipe.id, kind: "bin" }}>
+                  {hostOf(phase.terminal.url)}
                 </TrackedLink>
                 .
               </p>
@@ -337,21 +318,21 @@ export default function FlashAction({
           </>
         )}
 
-        {content.kind === "handoff" && (
+        {phase.kind === "handoff" && (
           <div className="flash-handoff">
-            <p>{content.reason}</p>
-            {(content.flasherUrls.length > 0 || content.repoUrl) && (
+            <p>{phase.reason}</p>
+            {(phase.flasherUrls.length > 0 || phase.repoUrl) && (
               <ul className="flash-handoff-links">
-                {content.flasherUrls.map((url) => (
+                {phase.flasherUrls.map((url) => (
                   <li key={url}>
                     <TrackedLink href={url} linkType="flash_handoff" extra={{ recipe_id: recipe.id, kind: "flasher" }}>
                       Official flasher — {hostOf(url)}
                     </TrackedLink>
                   </li>
                 ))}
-                {content.repoUrl && (
+                {phase.repoUrl && (
                   <li>
-                    <TrackedLink href={content.repoUrl} linkType="flash_handoff" extra={{ recipe_id: recipe.id, kind: "repo" }}>
+                    <TrackedLink href={phase.repoUrl} linkType="flash_handoff" extra={{ recipe_id: recipe.id, kind: "repo" }}>
                       Project repository — releases and instructions
                     </TrackedLink>
                   </li>
@@ -365,6 +346,24 @@ export default function FlashAction({
                 : dmView.steps}
             </p>
             {!dmView.isGeneric && dmView.note && <p className="muted flash-hint">{dmView.note}</p>}
+          </div>
+        )}
+
+        {phase.kind === "broken" && (
+          <div className="flash-broken" role="note" aria-label="Why this recipe is not installable">
+            {/* The recipe's notes already show as the caveat above; this is the fallback when it has none. */}
+            {!caveat && <p>{phase.explanation}</p>}
+            {phase.docs.length > 0 && (
+              <ul className="flash-handoff-links" aria-label="Cited docs">
+                {phase.docs.map((url) => (
+                  <li key={url}>
+                    <TrackedLink href={url} linkType="source" extra={{ recipe_id: recipe.id, kind: "broken_doc" }}>
+                      {hostOf(url)}
+                    </TrackedLink>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
       </div>

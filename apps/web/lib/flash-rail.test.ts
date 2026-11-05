@@ -193,7 +193,7 @@ test("FlashAction mounts the install button and the esptool command only on the 
   const ready = flashAction.indexOf('{phase.kind === "ready" && (');
   const handoffAt = flashAction.indexOf('{phase.kind === "handoff" && (');
   assert.ok(ready > 0 && handoffAt > ready);
-  for (const marker of ["<esp-web-install-button", "esptool --chip", "Connect and flash"]) {
+  for (const marker of ["<esp-web-install-button manifest=", "esptool --chip {", "Connect and flash"]) {
     const at = flashAction.indexOf(marker);
     assert.ok(at > ready && at < handoffAt, `${marker} must sit inside the ready block`);
     assert.equal(flashAction.indexOf(marker, at + 1), -1, `${marker} appears twice`);
