@@ -31,7 +31,9 @@ returned results creates nothing, however often it was searched.
   "candidates": {
     "esp32 c6": {                          // key: normalized term (see Dedupe)
       "term": "esp32-c6",                  // first wording seen (the miner lowercases it)
-      "first_seen": "2026-11-04", "last_seen": "2026-11-05",
+      "first_seen": "2026-11-04", "last_seen": "2026-11-05",   // intake dates (the miner's run day)
+      "source": "ga4 search_empty",        // which signal produced the counts
+      "window": {"start": "2026-10-08", "end": "2026-11-05"},   // the GA4 window the miner queried
       "searches": 1, "zero_result_searches": 1,   // latest window that saw it, NOT a running sum
       "status": "new",                     // new | validated | linked | closed
       "classification": "search_defect",   // alias_typo | search_defect | missing_content | unclear
@@ -51,6 +53,10 @@ returned results creates nothing, however often it was searched.
 - **Counts are a window, not a total.** The GA4 window overlaps day to day; summing daily
   pulls would multi-count the same search. `searches` / `zero_result_searches` are the latest
   window's values.
+- **Provenance.** `source` names the signal (`ga4 search_empty` for the miner) and `window` is
+  the exact `start`/`end` the miner queried (`_pull_live`'s window) — the window the counts come
+  from. Both refresh with the counts; `first_seen` / `last_seen` stay intake dates and are never
+  derived from the window.
 - **Classification refreshes only while `new`.** An untriaged candidate always reflects the
   current catalog; once a human moves it on, the record is theirs.
 
@@ -131,7 +137,20 @@ digest can show linked work that has not fixed the search yet.
 which `jr/review_routing.py` routes AUTO as bookkeeping). A run whose snapshot is unchanged
 but whose queue changed still lands — a change in `last_seen` alone does not count (an open
 candidate is re-sighted daily while the window holds it; the weekly refresh carries it), nor
-does `evidence.checked` growing with the catalog. A queue or catalog error never blocks the
+does `evidence.checked` growing with the catalog, nor the GA4 `window` sliding a day.
+
+**Queue-only run.** A successful miner run (exit 0, snapshot written) whose snapshot has **zero
+items** is still refused as a steer — it is an outage far more often than zero demand. But when
+the research queue changed (same comparison as above), the runner lands a **queue-only** PR: it
+stages `docs/demand/research-queue.json` alone and restores every other `docs/demand/*.json` the
+miner touched, so neither the dated snapshot nor `unresolved.json` is replaced or added. Zero
+items with an unchanged queue (including an identical rerun of a landed queue-only run) still
+aborts, as does a failed miner.
+
+**Atomic write.** `write_queue` writes a temp file in the queue's own directory, flushes and
+fsyncs it, then `os.replace`s it over the queue. An `OSError` anywhere leaves the previous file
+byte-identical, removes the temp file and is raised — so `mine()` reports `research queue NOT
+updated` and the runner sees no queue change, never a truncated queue. A queue or catalog error never blocks the
 snapshot: the miner leaves the queue file untouched and the digest says `research queue NOT
 updated`. Dated-snapshot readers (`demand_signal.load_latest`, the
 runner, the miner's `first_seen` carry-forward) read only `<YYYY-MM-DD>.json` files.
@@ -147,4 +166,8 @@ runner, the miner's `first_seen` carry-forward) read only `<YYYY-MM-DD>.json` fi
 - a closed candidate is not reopened within 30 days;
 - a term with results and 1 search creates nothing;
 - `MIN_EVENTS` steering unchanged;
+- each candidate carries `source` and the queried GA4 `window`; only terms with a
+  `search_empty` event become candidates;
+- zero demand items + a changed queue → a queue-only PR; the dated snapshot is untouched;
+- a failed queue write leaves the previous file byte-identical and is surfaced;
 - nothing under `data/` is written.
