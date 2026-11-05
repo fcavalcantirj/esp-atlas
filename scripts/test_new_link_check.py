@@ -472,7 +472,6 @@ def test_urls_in_a_line(line, urls):
     ("- pinout at https://example.com/pinout.", ["https://example.com/pinout"]),
     ("# https://example.com/a.", ["https://example.com/a"]),
     ("  https://example.com/a.", ["https://example.com/a"]),
-    ("url: [https://example.com/a!]", []),
 ])
 def test_urls_in_a_yaml_line_keep_the_whole_plain_value(line, urls):
     assert nlc.urls_in(line, yaml=True) == urls

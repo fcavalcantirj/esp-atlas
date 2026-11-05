@@ -15,7 +15,9 @@ How:
      sources, body links, .json/.yml cited-source fields), de-duplicated ignoring #fragments.
      The URL checked is the one the author wrote: JSON/YAML/markdown escapes are decoded first
      (https:\\/\\/x is https://x), and punctuation inside quotes, a markdown (target) or an
-     <autolink> is kept; only a bare URL in prose drops trailing sentence punctuation;
+     <autolink> is kept, as is the whole of an unquoted YAML value that is the URL
+     (`url: https://x/a!` in a .yml/.yaml file or in .md frontmatter, read at HEAD); only a
+     bare URL in prose drops trailing sentence punctuation;
   3. each checked once: HEAD, then GET when HEAD is not a clean yes; a 404/410 GET is asked
      again after a short pause and is DEAD only if it says so twice. Short timeout, small
      concurrency cap, a User-Agent that says who we are.
@@ -61,6 +63,10 @@ _TRAILING = ".,;:!?*'"
 _ESCAPED = re.compile(r"\\([!-/:-@\[-`{-~])")  # markdown/JSON backslash escapes: my\_repo, \/
 _UNICODE_ESCAPE = re.compile(r"\\u([0-9a-fA-F]{4})")
 _HUNK = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@")
+_YAML_PLAIN_URL = re.compile(r"[ \t]*(?:(?:-[ \t]+)+(?:[\w.-]+:[ \t]+)?|[\w.-]+:[ \t]+)(?=https?://)")
+_YAML_COMMENT = re.compile(r"[ \t]#")
+YAML_SUFFIXES = (".yml", ".yaml")
+FRONTMATTER_FENCES = ("---", "...")
 
 
 # --- what the PR added ---------------------------------------------------------------------
@@ -172,21 +178,71 @@ def _scan(text: str) -> list[str]:
     return urls
 
 
-def urls_in(line: str) -> list[str]:
+def _yaml_scan(line: str) -> list[str]:
+    """A plain (unquoted) YAML value -- `url: x`, `- url: x`, `- x` -- that is the whole URL is
+    taken exactly: YAML has no escapes there and no sentence to end. A ` #` comment after it,
+    and every other shape (quoted, flow, a value that is prose), reads as anywhere else."""
+    m = _YAML_PLAIN_URL.match(line)
+    if not m:
+        return _scan(line)
+    value, *comment = _YAML_COMMENT.split(line[m.end():], 1)
+    return _delimited(value) + _scan("".join(comment))
+
+
+def urls_in(line: str, yaml: bool = False) -> list[str]:
     """Every URL on a line, exactly as its author wrote it.
 
     Structured escapes are decoded before discovery (JSON/YAML "https:\\/\\/x", markdown
     my\\_repo, YAML 'it''s'). Punctuation inside an explicit delimiter -- a quoted value that is
-    the whole URL, a markdown (target) or an <autolink> -- belongs to the URL; only a bare URL
-    in prose loses trailing sentence punctuation."""
-    return [url for url in _scan(line) if _WHOLE_URL.fullmatch(url)]
+    the whole URL, a markdown (target) or an <autolink> -- belongs to the URL, and so does a
+    plain YAML value that is the whole URL when the line is YAML; only a bare URL in prose
+    loses trailing sentence punctuation."""
+    found = _yaml_scan(line) if yaml else _scan(line)
+    return [url for url in found if _WHOLE_URL.fullmatch(url)]
 
 
-def extract_urls(lines) -> dict[str, list[tuple[str, int]]]:
-    """{url without #fragment: [(path, line), ...]} in first-seen order."""
+def frontmatter_span(text: str) -> range:
+    """Line numbers (1-based) between a markdown file's opening --- and its closing ---/...;
+    empty when the file has no closed frontmatter."""
+    lines = text.splitlines()
+    if not lines or lines[0].rstrip() != FRONTMATTER_FENCES[0]:
+        return range(0)
+    for line_no, line in enumerate(lines[1:], start=2):
+        if line.rstrip() in FRONTMATTER_FENCES:
+            return range(2, line_no)
+    return range(0)
+
+
+def _at_head(repo: Path, path: str) -> str:
+    """The file as the PR leaves it (the side the diff's line numbers count); "" when git cannot
+    show it, so its lines read as prose -- never a reason to fail the check."""
+    try:
+        shown = subprocess.run(["git", "show", f"HEAD:{path}"], cwd=repo, capture_output=True,
+                               text=True, errors="replace", timeout=60)
+    except (subprocess.TimeoutExpired, OSError):
+        return ""
+    return shown.stdout if shown.returncode == 0 else ""
+
+
+def yaml_lines(repo: Path, lines) -> set[tuple[str, int]]:
+    """(path, line) of every added line that is YAML: all of a .yml/.yaml file, and the
+    frontmatter of a .md file -- its body is prose, however YAML-shaped a line looks."""
+    spans: dict[str, range] = {}
+    out = set()
+    for path, line_no, _ in lines:
+        if path.endswith(".md") and path not in spans:
+            spans[path] = frontmatter_span(_at_head(repo, path))
+        if path.endswith(YAML_SUFFIXES) or line_no in spans.get(path, ()):
+            out.add((path, line_no))
+    return out
+
+
+def extract_urls(lines, yaml=frozenset()) -> dict[str, list[tuple[str, int]]]:
+    """{url without #fragment: [(path, line), ...]} in first-seen order; `yaml` holds the
+    (path, line) pairs to read as YAML."""
     found: dict[str, list[tuple[str, int]]] = {}
     for path, line_no, text in lines:
-        for url in urls_in(text):
+        for url in urls_in(text, yaml=(path, line_no) in yaml):
             found.setdefault(url.split("#", 1)[0], []).append((path, line_no))
     return found
 
@@ -280,7 +336,8 @@ def main(argv=None) -> int:
     if diff.returncode != 0:
         print(f"::error::git diff against {base} failed: {diff.stderr.strip()[:200]}")
         return 2
-    found = extract_urls(added_lines(diff.stdout))
+    lines = added_lines(diff.stdout)
+    found = extract_urls(lines, yaml=yaml_lines(args.repo, lines))
     if not found:
         print(f"new-link check: no added or changed URLs under {DATA_PREFIX} (base {base})")
         return 0
