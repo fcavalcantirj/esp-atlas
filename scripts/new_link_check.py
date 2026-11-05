@@ -13,11 +13,14 @@ How:
   1. `git diff <base>...HEAD -- data/` (the merge base, so main moving on is not the PR's doing);
   2. every URL on an added or changed line of a data text file (.md frontmatter fields and
      sources, body links, .json/.yml cited-source fields), de-duplicated ignoring #fragments.
-     The URL checked is the one the author wrote: JSON/YAML/markdown escapes are decoded first
-     (https:\\/\\/x is https://x), and punctuation inside quotes, a markdown (target) or an
-     <autolink> is kept, as is the whole of an unquoted YAML value that is the URL
-     (`url: https://x/a!` in a .yml/.yaml file or in .md frontmatter, read at HEAD); only a
-     bare URL in prose drops trailing sentence punctuation;
+     The URL checked is the one the author wrote. YAML (a .yml/.yaml file, .md frontmatter;
+     read at HEAD) is read with yaml's SafeLoader, so a value that is the URL is exactly what
+     yaml.safe_load yields -- `url: https://x/a!`, `'url': https://x/a!`, `{url: https://x/a!}`
+     all keep the "!"; YAML that cannot be read leaves its URLs inconclusive, never a trimmed
+     guess. Elsewhere JSON/markdown escapes are decoded first (https:\\/\\/x is https://x),
+     and punctuation inside quotes, a markdown (target) or an <autolink> is kept; only a bare
+     URL in prose (a .md body, a YAML comment or a longer YAML string) drops trailing sentence
+     punctuation;
   3. each checked once: HEAD, then GET when HEAD is not a clean yes; a 404/410 GET is asked
      again after a short pause and is DEAD only if it says so twice. Short timeout, small
      concurrency cap, a User-Agent that says who we are.
@@ -25,7 +28,8 @@ How:
     python3 scripts/new_link_check.py              # base origin/$GITHUB_BASE_REF or origin/main
 
 Exit 0: no dead link · 1: at least one confirmed dead link · 2: the diff could not be taken.
-Stdlib only, so the CI job needs no installs.
+Stdlib plus PyYAML, which the schema job already installs; without PyYAML, YAML URLs are
+inconclusive.
 """
 from __future__ import annotations
 
@@ -40,7 +44,13 @@ import time
 import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
 from pathlib import Path
+
+try:
+    import yaml
+except ImportError:  # no reader: every YAML line is inconclusive, never a guess
+    yaml = None
 
 REPO = Path(__file__).resolve().parent.parent
 TIMEOUT_SECONDS = 10.0
@@ -52,6 +62,7 @@ DATA_PREFIX = "data/"
 TEXT_SUFFIXES = (".md", ".json", ".yml", ".yaml")
 
 ALIVE, DEAD, INCONCLUSIVE = "alive", "dead", "inconclusive"
+UNREAD_YAML = "YAML not read; not asked"
 
 _BARE = re.compile(r"https?:(?:\\?/){2}[^\s<>\"`\[\]{}|^]+")  # https:\/\/ too: a JSON-escaped scheme
 _TOKEN = re.compile(r"\"|'(?=https?:)|<(?=https?:)|\]\(|https?:(?:\\?/){2}")
@@ -63,8 +74,7 @@ _TRAILING = ".,;:!?*'"
 _ESCAPED = re.compile(r"\\([!-/:-@\[-`{-~])")  # markdown/JSON backslash escapes: my\_repo, \/
 _UNICODE_ESCAPE = re.compile(r"\\u([0-9a-fA-F]{4})")
 _HUNK = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@")
-_YAML_PLAIN_URL = re.compile(r"[ \t]*(?:(?:-[ \t]+)+(?:[\w.-]+:[ \t]+)?|[\w.-]+:[ \t]+)(?=https?://)")
-_YAML_COMMENT = re.compile(r"[ \t]#")
+_YAML_COMMENT = re.compile(r"(?<![^ \t])#")
 YAML_SUFFIXES = (".yml", ".yaml")
 FRONTMATTER_FENCES = ("---", "...")
 
@@ -178,27 +188,14 @@ def _scan(text: str) -> list[str]:
     return urls
 
 
-def _yaml_scan(line: str) -> list[str]:
-    """A plain (unquoted) YAML value -- `url: x`, `- url: x`, `- x` -- that is the whole URL is
-    taken exactly: YAML has no escapes there and no sentence to end. A ` #` comment after it,
-    and every other shape (quoted, flow, a value that is prose), reads as anywhere else."""
-    m = _YAML_PLAIN_URL.match(line)
-    if not m:
-        return _scan(line)
-    value, *comment = _YAML_COMMENT.split(line[m.end():], 1)
-    return _delimited(value) + _scan("".join(comment))
+def urls_in(line: str) -> list[str]:
+    """Every URL on a line of prose or JSON, exactly as its author wrote it.
 
-
-def urls_in(line: str, yaml: bool = False) -> list[str]:
-    """Every URL on a line, exactly as its author wrote it.
-
-    Structured escapes are decoded before discovery (JSON/YAML "https:\\/\\/x", markdown
-    my\\_repo, YAML 'it''s'). Punctuation inside an explicit delimiter -- a quoted value that is
-    the whole URL, a markdown (target) or an <autolink> -- belongs to the URL, and so does a
-    plain YAML value that is the whole URL when the line is YAML; only a bare URL in prose
-    loses trailing sentence punctuation."""
-    found = _yaml_scan(line) if yaml else _scan(line)
-    return [url for url in found if _WHOLE_URL.fullmatch(url)]
+    Structured escapes are decoded before discovery (JSON "https:\\/\\/x", markdown my\\_repo,
+    YAML 'it''s'). Punctuation inside an explicit delimiter -- a quoted value that is the whole
+    URL, a markdown (target) or an <autolink> -- belongs to the URL; only a bare URL in prose
+    loses trailing sentence punctuation. YAML lines are read by YamlDoc instead."""
+    return [url for url in _scan(line) if _WHOLE_URL.fullmatch(url)]
 
 
 def frontmatter_span(text: str) -> range:
@@ -215,7 +212,8 @@ def frontmatter_span(text: str) -> range:
 
 def _at_head(repo: Path, path: str) -> str:
     """The file as the PR leaves it (the side the diff's line numbers count); "" when git cannot
-    show it, so its lines read as prose -- never a reason to fail the check."""
+    show it -- a .md body then reads as prose, a YAML file as unread (inconclusive) -- never a
+    reason to fail the check."""
     try:
         shown = subprocess.run(["git", "show", f"HEAD:{path}"], cwd=repo, capture_output=True,
                                text=True, errors="replace", timeout=60)
@@ -224,27 +222,119 @@ def _at_head(repo: Path, path: str) -> str:
     return shown.stdout if shown.returncode == 0 else ""
 
 
-def yaml_lines(repo: Path, lines) -> set[tuple[str, int]]:
-    """(path, line) of every added line that is YAML: all of a .yml/.yaml file, and the
+@dataclass(frozen=True)
+class _Scalar:
+    """One YAML scalar (key or value) as yaml.safe_load reads it, on file lines first..last;
+    end_col is where it stops on its last line, None when it fills that line (a block scalar)."""
+    value: str
+    first: int
+    last: int
+    end_col: int | None
+
+    @property
+    def is_url(self) -> bool:
+        return bool(_WHOLE_URL.fullmatch(self.value.strip()))
+
+
+def _scalar_nodes(node, seen):
+    if id(node) in seen:  # an alias points back at a node already read
+        return
+    seen.add(id(node))
+    if isinstance(node, yaml.ScalarNode):
+        yield node
+    elif isinstance(node, yaml.SequenceNode):
+        for child in node.value:
+            yield from _scalar_nodes(child, seen)
+    elif isinstance(node, yaml.MappingNode):
+        for key, value in node.value:
+            yield from _scalar_nodes(key, seen)
+            yield from _scalar_nodes(value, seen)
+
+
+class YamlDoc:
+    """The YAML of one file -- a .yml/.yaml file, or a .md file's frontmatter -- read with
+    yaml's SafeLoader, so a URL is exactly the value yaml.safe_load yields, whatever the syntax
+    around it (quoted key, flow mapping, block scalar). `ok` is False when it cannot be read
+    (no YAML reader, a parse error, the file missing at HEAD): its URLs are then inconclusive."""
+
+    def __init__(self, text: str, span: range):
+        self.span, self.ok, self._scalars = span, False, []
+        if yaml is None or not text:
+            return
+        try:
+            docs = list(yaml.compose_all(text, Loader=yaml.SafeLoader))
+        except yaml.YAMLError:
+            return
+        seen: set[int] = set()
+        for node in (n for doc in docs if doc is not None for n in _scalar_nodes(doc, seen)):
+            start, end = node.start_mark, node.end_mark
+            fills_last = end.column == 0 and end.line > start.line
+            self._scalars.append(_Scalar(node.value, span.start + start.line,
+                                         span.start + end.line - fills_last, None if fills_last else end.column))
+        self.ok = True
+
+    def _comment_at(self, line_no: int, text: str, scalars) -> int:
+        """Where the line's ` #` comment starts (len(text) if none): only after its last scalar."""
+        if any(s.last > line_no or s.end_col is None for s in scalars):
+            return len(text)
+        after = max((s.end_col for s in scalars if s.last == line_no), default=0)
+        m = _YAML_COMMENT.search(text, after)
+        return m.start() if m else len(text)
+
+    def urls_on(self, line_no: int, text: str) -> tuple[list[str], list[str]]:
+        """(URLs, unresolved) on one added line. A scalar that is the whole URL is taken exactly;
+        a one-line scalar of prose, and a comment, drop a bare URL's sentence punctuation. Any
+        URL on the line that no scalar accounts for is unresolved -- inconclusive, never swapped
+        for a trimmed neighbour."""
+        if not self.ok:
+            return [], urls_in(text)
+        scalars = [s for s in self._scalars if s.first <= line_no <= s.last]
+        cut = self._comment_at(line_no, text, scalars)
+        urls = [u for s in scalars for u in ([s.value.strip()] if s.is_url else
+                                             urls_in(s.value) if s.first == s.last else [])]
+        unresolved = []
+        for url in urls_in(text[:cut]):
+            if url in urls or any(url in s.value for s in scalars if s.is_url or s.first == s.last):
+                continue  # already read from the value itself
+            (urls if any(url in s.value for s in scalars) else unresolved).append(url)
+        return urls + urls_in(text[cut:]), unresolved
+
+
+def yaml_docs(repo: Path, lines) -> dict[str, YamlDoc]:
+    """{path: YamlDoc} for every file with an added YAML line: all of a .yml/.yaml file, and the
     frontmatter of a .md file -- its body is prose, however YAML-shaped a line looks."""
-    spans: dict[str, range] = {}
-    out = set()
-    for path, line_no, _ in lines:
-        if path.endswith(".md") and path not in spans:
-            spans[path] = frontmatter_span(_at_head(repo, path))
-        if path.endswith(YAML_SUFFIXES) or line_no in spans.get(path, ()):
-            out.add((path, line_no))
-    return out
+    docs: dict[str, YamlDoc] = {}
+    for path in dict.fromkeys(p for p, _, _ in lines):
+        if path.endswith(YAML_SUFFIXES):
+            text = _at_head(repo, path)
+            docs[path] = YamlDoc(text, range(1, sys.maxsize))
+        elif path.endswith(".md"):
+            text = _at_head(repo, path)
+            span = frontmatter_span(text)
+            if span:
+                docs[path] = YamlDoc("\n".join(text.splitlines()[span.start - 1:span.stop - 1]) + "\n", span)
+    return docs
 
 
-def extract_urls(lines, yaml=frozenset()) -> dict[str, list[tuple[str, int]]]:
-    """{url without #fragment: [(path, line), ...]} in first-seen order; `yaml` holds the
-    (path, line) pairs to read as YAML."""
-    found: dict[str, list[tuple[str, int]]] = {}
+Locations = dict[str, list[tuple[str, int]]]
+
+
+def extract_urls(lines, docs: dict[str, YamlDoc] | None = None) -> tuple[Locations, Locations]:
+    """({url without #fragment: [(path, line), ...]}, {unresolved url: [...]}) in first-seen
+    order; a line inside one of `docs` is read as YAML, every other line as prose or JSON."""
+    found: Locations = {}
+    unresolved: Locations = {}
     for path, line_no, text in lines:
-        for url in urls_in(text, yaml=(path, line_no) in yaml):
+        doc = (docs or {}).get(path)
+        if doc and line_no in doc.span:
+            urls, unknown = doc.urls_on(line_no, text)
+        else:
+            urls, unknown = urls_in(text), []
+        for url in urls:
             found.setdefault(url.split("#", 1)[0], []).append((path, line_no))
-    return found
+        for url in unknown:
+            unresolved.setdefault(url, []).append((path, line_no))
+    return found, unresolved
 
 
 # --- is it alive? --------------------------------------------------------------------------
@@ -300,13 +390,15 @@ _MARKS = {ALIVE: "✓", DEAD: "✗", INCONCLUSIVE: "?"}
 _ORDER = {DEAD: 0, INCONCLUSIVE: 1, ALIVE: 2}
 
 
-def render_table(found, results) -> str:
-    rows = sorted(found, key=lambda u: (_ORDER[results[u][0]], u))
-    width = max([len(results[u][1]) for u in rows] + [len("DETAIL")])
+def render_table(found, results, unresolved=None) -> str:
+    """One row per checked URL, plus one INCONCLUSIVE row per unresolved YAML URL (never asked)."""
+    rows = [(u, *results[u], found[u]) for u in found]
+    rows += [(u, INCONCLUSIVE, UNREAD_YAML, where) for u, where in (unresolved or {}).items()]
+    rows.sort(key=lambda r: (_ORDER[r[1]], r[0]))
+    width = max([len(r[2]) for r in rows] + [len("DETAIL")])
     lines = [f"  {'STATUS':14s} {'DETAIL':{width}s}  URL  <-  WHERE"]
-    for url in rows:
-        status, detail = results[url]
-        where = ", ".join(f"{p}:{n}" for p, n in found[url])
+    for url, status, detail, where in rows:
+        where = ", ".join(f"{p}:{n}" for p, n in where)
         lines.append(f"  {_MARKS[status]} {status.upper():12s} {detail:{width}s}  {url}  <-  {where}")
     return "\n".join(lines)
 
@@ -337,15 +429,16 @@ def main(argv=None) -> int:
         print(f"::error::git diff against {base} failed: {diff.stderr.strip()[:200]}")
         return 2
     lines = added_lines(diff.stdout)
-    found = extract_urls(lines, yaml=yaml_lines(args.repo, lines))
-    if not found:
+    found, unresolved = extract_urls(lines, docs=yaml_docs(args.repo, lines))
+    if not found and not unresolved:
         print(f"new-link check: no added or changed URLs under {DATA_PREFIX} (base {base})")
         return 0
 
     results = check_all(found, concurrency=args.concurrency, timeout=args.timeout, recheck_delay=args.recheck_delay)
-    print(render_table(found, results))
+    print(render_table(found, results, unresolved))
     counts = {s: sum(1 for v in results.values() if v[0] == s) for s in (ALIVE, DEAD, INCONCLUSIVE)}
-    print(f"\nnew-link check: {len(found)} URL(s) on added/changed lines (base {base}) — "
+    counts[INCONCLUSIVE] += len(unresolved)
+    print(f"\nnew-link check: {len(found) + len(unresolved)} URL(s) on added/changed lines (base {base}) — "
           f"{counts[ALIVE]} alive, {counts[DEAD]} dead, {counts[INCONCLUSIVE]} inconclusive")
     for url, (status, detail) in results.items():
         if status == DEAD:

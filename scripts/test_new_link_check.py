@@ -382,9 +382,17 @@ def test_the_frontmatter_span_is_the_lines_between_the_fences(text, span):
     assert nlc.frontmatter_span(text) == span
 
 
-def test_a_file_that_cannot_be_read_at_head_is_prose(tmp_path):
+def test_a_markdown_file_that_cannot_be_read_at_head_is_prose(tmp_path):
     lines = [("data/boards/x/y/board.md", 2, "url: https://example.com/a!")]
-    assert nlc.yaml_lines(tmp_path, lines) == set()
+    assert nlc.yaml_docs(tmp_path, lines) == {}
+    assert nlc.extract_urls(lines, docs={}) == ({"https://example.com/a": [lines[0][:2]]}, {})
+
+
+def test_a_yaml_file_that_cannot_be_read_at_head_is_unresolved(tmp_path):
+    lines = [("data/boards/x/y/sources.yml", 2, "url: https://example.com/a!")]
+    docs = nlc.yaml_docs(tmp_path, lines)
+    assert not docs["data/boards/x/y/sources.yml"].ok
+    assert nlc.extract_urls(lines, docs=docs) == ({}, {"https://example.com/a": [lines[0][:2]]})
 
 
 # --- classification ------------------------------------------------------------------------
@@ -543,10 +551,42 @@ def test_urls_in_a_line(line, urls):
     ("notes: pinout at https://example.com/pinout.", ["https://example.com/pinout"]),
     ("- pinout at https://example.com/pinout.", ["https://example.com/pinout"]),
     ("# https://example.com/a.", ["https://example.com/a"]),
-    ("  https://example.com/a.", ["https://example.com/a"]),
+    ("  https://example.com/a.", ["https://example.com/a."]),
+    ("'url': https://example.com/a!", ["https://example.com/a!"]),
+    ('"url": https://example.com/a!', ["https://example.com/a!"]),
+    ("{url: https://example.com/a!, v: 1}  # see https://b.example/c.", ["https://example.com/a!", "https://b.example/c"]),
+    ("- [https://example.com/a!, 'https://example.com/b.']", ["https://example.com/a!", "https://example.com/b."]),
+    ("? https://example.com/key!\n: x", ["https://example.com/key!"]),
+    ("notes: {why: see https://example.com/a!}", ["https://example.com/a"]),
 ])
-def test_urls_in_a_yaml_line_keep_the_whole_plain_value(line, urls):
-    assert nlc.urls_in(line, yaml=True) == urls
+def test_urls_in_a_yaml_line_are_the_values_safe_load_reads(line, urls):
+    assert _yaml_urls(line) == (urls, [])
+
+
+def _yaml_urls(text, line_no=1):
+    return nlc.YamlDoc(text + "\n", range(1, 99)).urls_on(line_no, text.splitlines()[line_no - 1])
+
+
+@pytest.mark.parametrize("text,line_no,urls", [
+    # a block scalar's URL line, and its indicator line, read the whole value
+    ("url: |-\n  https://example.com/a!\nnext: 1", 2, (["https://example.com/a!"], [])),
+    ("url: >-\n  https://example.com/a!\nnext: 1", 1, (["https://example.com/a!"], [])),
+    ("url: |-\n  https://example.com/a!\nnext: https://b.example/c!", 3, (["https://b.example/c!"], [])),
+    # a plain scalar folded over two lines is prose on each of them
+    ("notes: pinout at\n  https://example.com/a! and more", 2, (["https://example.com/a"], [])),
+    # an alias repeats a value without a second copy of its URL
+    ("a: &u https://example.com/a!\nb: *u", 1, (["https://example.com/a!"], [])),
+    # what no scalar accounts for -- here a comment after a block indicator -- is unresolved
+    ("url: | # https://example.com/c!\n  x", 1, ([], ["https://example.com/c"])),
+])
+def test_yaml_over_several_lines_reads_the_value_on_each_line(text, line_no, urls):
+    assert _yaml_urls(text, line_no) == urls
+
+
+def test_yaml_that_does_not_parse_leaves_every_url_on_its_lines_unresolved():
+    doc = nlc.YamlDoc("{url: https://example.com/a!\n", range(1, 99))
+    assert not doc.ok
+    assert doc.urls_on(1, "{url: https://example.com/a!") == ([], ["https://example.com/a"])
 
 
 def test_a_yaml_shaped_line_outside_yaml_is_still_prose():
@@ -555,7 +595,10 @@ def test_a_yaml_shaped_line_outside_yaml_is_still_prose():
 
 def test_extract_urls_reads_only_the_yaml_lines_as_yaml():
     lines = [("a.md", 2, "url: https://a.example/p!"), ("a.md", 9, "url: https://a.example/q!")]
-    assert list(nlc.extract_urls(lines, yaml={("a.md", 2)})) == ["https://a.example/p!", "https://a.example/q"]
+    docs = {"a.md": nlc.YamlDoc("url: https://a.example/p!\n", range(2, 3))}
+    found, unresolved = nlc.extract_urls(lines, docs=docs)
+    assert list(found) == ["https://a.example/p!", "https://a.example/q"]
+    assert unresolved == {}
 
 
 def test_extract_urls_dedupes_ignoring_the_fragment_and_keeps_every_location():
@@ -563,7 +606,7 @@ def test_extract_urls_dedupes_ignoring_the_fragment_and_keeps_every_location():
         ("a.md", 1, "url: https://a.example/p#L1"),
         ("b.md", 7, "url: https://a.example/p#L2"),
     ])
-    assert found == {"https://a.example/p": [("a.md", 1), ("b.md", 7)]}
+    assert found == ({"https://a.example/p": [("a.md", 1), ("b.md", 7)]}, {})
 
 
 @pytest.mark.parametrize("path,text", [
@@ -573,8 +616,9 @@ def test_extract_urls_dedupes_ignoring_the_fragment_and_keeps_every_location():
     (BOARD, "# Acme One\n\nSee <http://[>.\n"),
 ], ids=["yaml-quoted", "yaml-plain", "json", "markdown-autolink"])
 def test_a_malformed_url_is_extracted_and_inconclusive_not_a_crash(tmp_path, server, capsys, path, text):
-    lines = nlc.added_lines(f"diff --git a/{path} b/{path}\n+++ b/{path}\n@@ -0,0 +1 @@\n+{text.splitlines()[-1]}\n")
-    assert [u for _, _, line in lines for u in nlc.urls_in(line, yaml=path == SOURCES)] in (["http://["], ["https://["])
+    line = text.splitlines()[-1]
+    urls = _yaml_urls(line) if path == SOURCES else (nlc.urls_in(line), [])
+    assert urls in ((["http://["], []), (["https://["], []))
     repo = make_repo(tmp_path, {}, {path: text})
     assert run(repo) == 0
     assert "INCONCLUSIVE" in capsys.readouterr().out
