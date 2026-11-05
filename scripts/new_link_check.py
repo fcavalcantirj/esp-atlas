@@ -34,6 +34,7 @@ inconclusive.
 from __future__ import annotations
 
 import argparse
+import codecs
 import http.client
 import json
 import os
@@ -100,7 +101,9 @@ def added_lines(diff_text: str) -> list[tuple[str, int, str]]:
         if line.startswith("diff --git "):
             path, in_hunk = None, False
         elif not in_hunk and line.startswith("+++ "):
-            target = line[4:].strip().strip('"')
+            target = line[4:].strip()
+            if target.startswith('"') and target.endswith('"'):
+                target = codecs.escape_decode(target[1:-1].encode("utf-8"))[0].decode("utf-8", errors="replace")
             path = target[2:] if target.startswith("b/") else None
         elif m := _HUNK.match(line):
             in_hunk, line_no = True, int(m.group(1))
@@ -215,16 +218,14 @@ def frontmatter_span(text: str) -> range:
     return range(0)
 
 
-def _at_head(repo: Path, path: str) -> str:
-    """The file as the PR leaves it (the side the diff's line numbers count); "" when git cannot
-    show it -- a .md body then reads as prose, a YAML file as unread (inconclusive) -- never a
-    reason to fail the check."""
+def _at_head(repo: Path, path: str) -> str | None:
+    """The file as the PR leaves it, preserving Git's line endings; None on read failure.
+    A missing file is unread/inconclusive, distinct from an empty prose file."""
     try:
-        shown = subprocess.run(["git", "show", f"HEAD:{path}"], cwd=repo, capture_output=True,
-                               text=True, errors="replace", timeout=60)
+        shown = subprocess.run(["git", "show", f"HEAD:{path}"], cwd=repo, capture_output=True, timeout=60)
     except (subprocess.TimeoutExpired, OSError):
-        return ""
-    return shown.stdout if shown.returncode == 0 else ""
+        return None
+    return shown.stdout.decode("utf-8", errors="replace") if shown.returncode == 0 else None
 
 
 @dataclass(frozen=True)
@@ -269,6 +270,7 @@ class YamlDoc:
     YAML's line numbers off the diff's: its URLs are then inconclusive."""
 
     def __init__(self, text: str, span: range):
+        self.text = text
         self.span, self.ok, self._scalars = span, False, []
         if yaml is None or not text or _FOREIGN_BREAK.search(text):
             return
@@ -311,6 +313,34 @@ class YamlDoc:
         return urls + urls_in(text[cut:]), unresolved
 
 
+class FrontmatterDoc(YamlDoc):
+    """The exact substring the repository parser passes to YAML, plus its body boundary."""
+
+    def __init__(self, text: str, end: int):
+        self._last_line = text.count("\n", 0, end) + 1
+        self._last_column = end - (text.rfind("\n", 0, end) + 1)
+        super().__init__(text[3:end], range(1, self._last_line + 1))
+
+    def urls_on(self, line_no: int, text: str) -> tuple[list[str], list[str]]:
+        start = 3 if line_no == 1 else 0
+        stop = self._last_column if line_no == self._last_line else len(text)
+        urls, unresolved = super().urls_on(line_no, text[start:stop])
+        body = text[self._last_column + 3:] if line_no == self._last_line else ""
+        return urls + urls_in(body), unresolved
+
+
+def frontmatter_doc(text: str | None) -> YamlDoc | None:
+    """Mirror parse_frontmatter_text: any leading --- opens, the next --- closes."""
+    if text is None:
+        return YamlDoc("", range(1, sys.maxsize))
+    if not text.startswith("---"):
+        return None
+    end = text.find("---", 3)
+    if end < 0:
+        return YamlDoc("", range(1, sys.maxsize))
+    return FrontmatterDoc(text, end)
+
+
 def yaml_docs(repo: Path, lines) -> dict[str, YamlDoc]:
     """{path: YamlDoc} for every file with an added YAML line: all of a .yml/.yaml file, and the
     frontmatter of a .md file -- its body is prose, however YAML-shaped a line looks."""
@@ -318,12 +348,12 @@ def yaml_docs(repo: Path, lines) -> dict[str, YamlDoc]:
     for path in dict.fromkeys(p for p, _, _ in lines):
         if path.endswith(YAML_SUFFIXES):
             text = _at_head(repo, path)
-            docs[path] = YamlDoc(text, range(1, sys.maxsize))
+            docs[path] = YamlDoc(text or "", range(1, sys.maxsize))
         elif path.endswith(".md"):
             text = _at_head(repo, path)
-            span = frontmatter_span(text)
-            if span:
-                docs[path] = YamlDoc("\n".join(text.split("\n")[span.start - 1:span.stop - 1]) + "\n", span)
+            doc = frontmatter_doc(text)
+            if doc is not None:
+                docs[path] = doc
     return docs
 
 
@@ -419,9 +449,12 @@ def render_table(found, results, unresolved=None) -> str:
 
 def _diff(repo: Path, base: str) -> subprocess.CompletedProcess:
     """Bytes that are not UTF-8 are replaced, never fatal: only a dead link may fail the check."""
-    return subprocess.run(["git", "-c", "core.quotePath=false", "diff", "--no-color", "--no-ext-diff",
+    diff = subprocess.run(["git", "-c", "core.quotePath=false", "diff", "--no-color", "--no-ext-diff",
                            "-M", "--unified=0", f"{base}...HEAD", "--", DATA_PREFIX],
-                          cwd=repo, capture_output=True, text=True, errors="replace", timeout=120)
+                          cwd=repo, capture_output=True, timeout=120)
+    diff.stdout = diff.stdout.decode("utf-8", errors="replace")
+    diff.stderr = diff.stderr.decode("utf-8", errors="replace")
+    return diff
 
 
 def main(argv=None) -> int:
