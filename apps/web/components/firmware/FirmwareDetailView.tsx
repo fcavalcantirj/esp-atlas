@@ -89,8 +89,6 @@ export default function FirmwareDetailView({
   readme?: RepoReadme | null;
 }) {
   const rows = firmwareBoardRows(recipes, parts, firmware);
-  const boardById = new Map(parts.map((p) => [p.id, p]));
-  const boards = recipes.map((r) => boardById.get(r.board)).filter((b): b is PartRecord => b !== undefined);
   const dek = firmware.summary;
   const translatedReadme = firmware.readme_en;
 
@@ -103,7 +101,7 @@ export default function FirmwareDetailView({
 
   return (
     <main id="main" className="container container--wide" tabIndex={-1}>
-      <JsonLd data={firmwareGraph(firmware, boards)} />
+      <JsonLd data={firmwareGraph(firmware, recipes, parts)} />
       <FirmwareViewTracker firmware={firmware} />
       <nav className="breadcrumb" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
