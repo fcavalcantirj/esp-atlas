@@ -231,6 +231,13 @@
   font-size: var(--t-xs);
 }
 
+/* A broken recipe: its cited explanation and docs stand where the rail would be. */
+.flash-broken {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .flash-handoff {
   display: flex;
   flex-direction: column;

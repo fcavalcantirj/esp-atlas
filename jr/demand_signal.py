@@ -42,8 +42,18 @@ _GAP_CLASSES = (GAP_UNCOVERED, GAP_RANKS_POORLY, GAP_COVERED_OK, GAP_UNRESOLVED)
 
 # ─────────────────────────── load the latest snapshot ───────────────────────────
 
+def is_dated_snapshot(path) -> bool:
+    """True for a `docs/demand/<YYYY-MM-DD>.json` snapshot — never `unresolved.json` or
+    `research-queue.json`, which share the dir (and sort after every date)."""
+    try:
+        dt.date.fromisoformat(Path(path).stem)
+    except ValueError:
+        return False
+    return Path(path).suffix == ".json"
+
+
 def load_latest(demand_dir, today_str: str, stale_days: int = DEFAULT_STALE_DAYS) -> dict | None:
-    """The newest `docs/demand/<date>.json` (ignoring `unresolved.json`), parsed, plus a
+    """The newest `docs/demand/<date>.json` (`is_dated_snapshot`), parsed, plus a
     computed `age_days` (days from its `date` to `today_str`) and `stale` flag
     (`age_days > stale_days`). None when the dir is missing/empty or nothing parses.
 
@@ -52,7 +62,7 @@ def load_latest(demand_dir, today_str: str, stale_days: int = DEFAULT_STALE_DAYS
     demand_dir = Path(demand_dir)
     if not demand_dir.exists():
         return None
-    files = sorted(p for p in demand_dir.glob("*.json") if p.stem != "unresolved")
+    files = sorted(p for p in demand_dir.glob("*.json") if is_dated_snapshot(p))
     if not files:
         return None
     try:
