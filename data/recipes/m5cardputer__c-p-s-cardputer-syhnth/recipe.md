@@ -5,7 +5,7 @@ board: m5cardputer
 firmware: c-p-s-cardputer-syhnth
 status: unverified
 chip_family: esp32-s3
-notes: "Board-specific evidence: the C.P.S. README says it targets the M5Stack Cardputer family (Cardputer ADV and the original Cardputer) and that original-Cardputer support was added, with the missing IMU auto-detected at boot (commit 1931da2). Some features, such as the arpeggiator, are Cardputer ADV only. Its platformio.ini builds against the generic esp32-s3-devkitc-1 board definition, not a Cardputer-specific one. Not verified: no current successful build confirmed and not tested on hardware for this atlas."
+notes: "Board-specific evidence: the C.P.S. README says it targets the M5Stack Cardputer family (Cardputer ADV and the original Cardputer) and that original-Cardputer support was added, with the missing IMU auto-detected at boot (commit 1931da2). The upstream author explicitly says they have not personally tested the original Cardputer; it has a three-key rollover limit and substitutes key-driven PAD control for the missing IMU. Some features, such as the arpeggiator, are Cardputer ADV only. Its platformio.ini builds against the generic esp32-s3-devkitc-1 board definition, not a Cardputer-specific one. Not verified: no current successful build confirmed and not tested on hardware for this atlas."
 sources:
 - field: '*'
   url: https://github.com/oldtokage-collab/C.P.S.--Cardputer-SYHNTH--
