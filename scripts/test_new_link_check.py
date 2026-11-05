@@ -14,6 +14,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from esp_atlas_core.frontmatter import parse_frontmatter_text
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import new_link_check as nlc  # noqa: E402
@@ -263,12 +264,11 @@ def test_the_exact_punctuated_url_is_requested_and_its_404_fails(tmp_path, serve
 
 
 # YAML is read the way yaml.safe_load reads it: a quoted key or a flow mapping still holds a
-# whole-URL value, so its "!" is the author's. The oracle is the test's own safe_load.
+# whole-URL value, so its "!" is the author's. The oracle is yaml.safe_load itself -- for a .md
+# file through the repo's own frontmatter parser, the one scripts/validate.py uses.
 
 def _safe_load_strings(path, text):
-    if path.endswith(".md"):
-        text = text.split("---\n")[1]
-    stack, out = [yaml.safe_load(text)], []
+    stack, out = [parse_frontmatter_text(text)[0] if path.endswith(".md") else yaml.safe_load(text)], []
     while stack:
         node = stack.pop()
         if isinstance(node, dict):
@@ -339,8 +339,38 @@ def test_yaml_safe_load_does_not_read_as_that_url_never_requests_a_trimmed_one(t
 def test_a_frontmatter_closed_by_a_commented_fence_is_still_yaml(tmp_path, server, capsys):
     url = server.url("/important!")
     content = f"---\nid: acme-one\nurl: {url}\n--- # end\n\n# Acme One\n"
-    assert url in _safe_load_strings(BOARD, content.replace("--- # end", "---"))
+    assert url in _safe_load_strings(BOARD, content)
     repo = make_repo(tmp_path, {}, {BOARD: content})
+    assert run(repo) == 1
+    assert server.hit("/important!") == ["HEAD", "GET", "GET"]
+    assert server.hit("/important") == []
+
+
+@pytest.mark.parametrize("opening", ["---#", "--- # fm", "---  "])
+def test_a_frontmatter_the_repo_parser_opens_is_yaml_whatever_follows_its_fence(tmp_path, server, opening):
+    url = server.url("/important!")
+    content = f"{opening}\nid: acme-one\nurl: {url}\n---\n\nSee {server.url('/ok')}.\n"
+    assert url in _safe_load_strings(BOARD, content)
+    repo = make_repo(tmp_path, {}, {BOARD: content})
+    assert run(repo) == 1
+    assert server.hit("/important!") == ["HEAD", "GET", "GET"]
+    assert server.hit("/important") == []
+
+
+def test_a_lone_carriage_return_is_seen_as_git_sees_it(tmp_path, server, capsys):
+    """Text-mode pipes would turn the lone CR into a line break git never counted, shifting the
+    YAML lines one off the diff's: line 2 would read as the prose scalar and trim the URL."""
+    url = server.url("/important!")
+    repo = make_repo(tmp_path, {}, {SOURCES: f"a: 1\rnote: see {url}\nurl: {url}\n"})
+    assert run(repo) == 0
+    assert server.hit("/important") == []
+    assert "INCONCLUSIVE" in capsys.readouterr().out
+
+
+def test_a_path_git_quotes_is_read_at_head(tmp_path, server):
+    path = 'data/boards/acme/acme "one"/board.md'
+    url = server.url("/important!")
+    repo = make_repo(tmp_path, {}, {path: f"---\nid: acme-one\nurl: {url}\n---\n"})
     assert run(repo) == 1
     assert server.hit("/important!") == ["HEAD", "GET", "GET"]
     assert server.hit("/important") == []
@@ -400,24 +430,44 @@ def test_only_the_frontmatter_lines_of_a_markdown_file_are_yaml(tmp_path, server
 
 
 @pytest.mark.parametrize("text,span", [
-    ("---\nid: a\nurl: x\n---\nbody\n", range(2, 4)),
-    ("---\nid: a\n...\nbody\n", range(2, 3)),
-    ("---\r\nid: a\r\n---\r\n", range(2, 3)),
-    ("---\nid: a\n--- # end\nbody\n", range(2, 3)),
-    ("---\nid: a\n---x: 1\n---\n", range(2, 4)),
-    ("---\nid: a\x0c\nb: 1\n---\n", range(2, 4)),
-    ("# no frontmatter\n---\nid: a\n---\n", range(0)),
-    ("---\nid: a\nnever closed\n", range(0)),
-    ("", range(0)),
+    ("---\nid: a\nurl: x\n---\nbody\n", range(1, 5)),
+    ("---\r\nid: a\r\n---\r\n", range(1, 4)),
+    ("---\nid: a\n--- # end\nbody\n", range(1, 4)),
+    ("---#\nid: a\n---\n", range(1, 4)),
+    ("---\nid: a\n---x: 1\n---\n", range(1, 4)),
+    ("---\nid: a\nnotes: a---b\n", range(1, 4)),
+    ("---\nid: a\x0c\nb: 1\n---\n", range(1, 5)),
 ])
-def test_the_frontmatter_span_is_the_lines_between_the_fences(text, span):
-    assert nlc.frontmatter_span(text) == span
+def test_the_frontmatter_is_what_the_repo_parser_hands_safe_load(text, span):
+    doc = nlc.frontmatter_doc(text)
+    assert doc.span == span
+    assert doc.text == text.split("---", 2)[1]
 
 
-def test_a_markdown_file_that_cannot_be_read_at_head_is_prose(tmp_path):
+@pytest.mark.parametrize("text,unread", [
+    ("# no frontmatter\n---\nid: a\n---\n", False),
+    ("", False),
+    ("---\nid: a\n...\nbody\n", True),
+    ("---\nid: a\nnever closed\n", True),
+])
+def test_a_file_without_closed_frontmatter_is_prose_or_all_unread(text, unread):
+    doc = nlc.frontmatter_doc(text)
+    assert (doc is not None and not doc.ok and 10**6 in doc.span) if unread else doc is None
+
+
+def test_the_fence_lines_split_into_yaml_and_body():
+    doc = nlc.frontmatter_doc("---\nurl: https://a.example/p!\n--- see https://b.example/q.\n")
+    lines = [("a.md", 2, "url: https://a.example/p!"), ("a.md", 3, "--- see https://b.example/q.")]
+    assert nlc.extract_urls(lines, docs={"a.md": doc}) == (
+        {"https://a.example/p!": [("a.md", 2)], "https://b.example/q": [("a.md", 3)]}, {})
+
+
+def test_a_markdown_file_that_cannot_be_read_at_head_is_unresolved(tmp_path):
+    """Its frontmatter cannot be told from its body, so no line may be trimmed as prose."""
     lines = [("data/boards/x/y/board.md", 2, "url: https://example.com/a!")]
-    assert nlc.yaml_docs(tmp_path, lines) == {}
-    assert nlc.extract_urls(lines, docs={}) == ({"https://example.com/a": [lines[0][:2]]}, {})
+    docs = nlc.yaml_docs(tmp_path, lines)
+    assert not docs["data/boards/x/y/board.md"].ok
+    assert nlc.extract_urls(lines, docs=docs) == ({}, {"https://example.com/a": [lines[0][:2]]})
 
 
 def test_a_yaml_file_that_cannot_be_read_at_head_is_unresolved(tmp_path):
