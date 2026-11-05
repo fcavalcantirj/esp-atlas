@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { fetchReadme } from "./readme.ts";
+import { fetchReadme, resolveReadmeHref } from "./readme.ts";
 
 function stubFetch(handler: (url: string) => Response) {
   const calls: string[] = [];
@@ -37,7 +37,7 @@ test("returns the first 200 response as markdown + owner/repo, tagged for a day-
   );
   try {
     const result = await fetchReadme("https://github.com/robo8080/AI_StackChan2_README");
-    assert.deepEqual(result, { markdown: "# hello", owner: "robo8080", repo: "AI_StackChan2_README" });
+    assert.deepEqual(result, { markdown: "# hello", owner: "robo8080", repo: "AI_StackChan2_README", branch: "main", file: "README.md" });
     assert.equal(stub.calls[0], "https://raw.githubusercontent.com/robo8080/AI_StackChan2_README/main/README.md");
   } finally {
     stub.restore();
@@ -52,7 +52,7 @@ test("falls through branches and filenames until one hits, then stops", async ()
   );
   try {
     const result = await fetchReadme("https://github.com/o/r");
-    assert.deepEqual(result, { markdown: "body", owner: "o", repo: "r" });
+    assert.deepEqual(result, { markdown: "body", owner: "o", repo: "r", branch: "master", file: "readme.md" });
     assert.equal(stub.calls.length, 6);
   } finally {
     stub.restore();
@@ -89,8 +89,17 @@ test("strips a trailing .git suffix from the repo name", async () => {
   );
   try {
     const result = await fetchReadme("https://github.com/o/r.git");
-    assert.deepEqual(result, { markdown: "x", owner: "o", repo: "r" });
+    assert.deepEqual(result, { markdown: "x", owner: "o", repo: "r", branch: "main", file: "README.md" });
   } finally {
     stub.restore();
   }
+});
+
+test("README links resolve against the fetched repository branch and path", () => {
+  const readme = { markdown: "", owner: "o", repo: "r", branch: "master", file: "docs/README.md" };
+  assert.equal(resolveReadmeHref("../src/config.json#options", readme), "https://github.com/o/r/blob/master/src/config.json#options");
+  assert.equal(resolveReadmeHref("/examples/", readme), "https://github.com/o/r/tree/master/examples");
+  assert.equal(resolveReadmeHref("#install", readme), "https://github.com/o/r/blob/master/docs/README.md#install");
+  assert.equal(resolveReadmeHref("https://example.com/a", readme), "https://example.com/a");
+  assert.equal(resolveReadmeHref("./docs/guide.md", null, "https://github.com/o/r"), "https://github.com/o/r");
 });

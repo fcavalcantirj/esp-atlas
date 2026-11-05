@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { preload } from "react-dom";
 import JsonLd from "@/components/JsonLd";
-import PartDetailClient from "@/components/part/PartDetailClient";
 import PartDetailView from "@/components/part/PartDetailView";
 import PartViewTracker from "@/components/part/PartViewTracker";
 import type { RecipeRow } from "@/components/RecipeGroupList";
@@ -40,12 +40,13 @@ function downloadModeFromFrontmatter(fm: Record<string, unknown>): DownloadMode 
 
 // Server-rendered so every part page ships with its own title/description for
 // search engines and link previews. The API fetch is cached for an hour; if the
-// Python function is cold or unreachable, the page falls back to client-side
-// fetching instead of failing.
+// Python function is cold or unreachable, the page must fail with a server
+// error rather than publish a 200/noindex loading shell for a valid record.
 
 export async function generateMetadata({ params }: PageProps<"/parts/[id]">): Promise<Metadata> {
   const { id } = await params;
   const result = await fetchPartDetail(id);
+  if (result.status === "error") throw new Error(`Part API unavailable for ${id}`);
   if (result.status !== "ok") {
     return { title: id, robots: detailRobots(result.status) };
   }
@@ -68,28 +69,23 @@ export async function generateMetadata({ params }: PageProps<"/parts/[id]">): Pr
 
 export default async function PartPage({ params }: PageProps<"/parts/[id]">) {
   const { id } = await params;
+  if (id === "m5cardputer") preload("/board-images/cardputer.webp", { as: "image", fetchPriority: "high" });
   const result = await fetchPartDetail(id);
   if (result.status === "not_found") notFound();
+  if (result.status === "error") throw new Error(`Part API unavailable for ${id}`);
 
   // The board's cited USB connector feeds the flash panel's plug-in hint; absent on many records (cite-or-omit).
-  const usbConnector = result.status === "ok" ? asString(fmObject(result.data.frontmatter, "usb")?.connector) : null;
-  const downloadMode = result.status === "ok" ? downloadModeFromFrontmatter(result.data.frontmatter) : null;
-  const boardFirmwareRows =
-    result.status === "ok" && result.data.type === "board"
-      ? await fetchBoardFirmwareRows(id, result.data.name, usbConnector, downloadMode)
-      : null;
+  const usbConnector = asString(fmObject(result.data.frontmatter, "usb")?.connector);
+  const downloadMode = downloadModeFromFrontmatter(result.data.frontmatter);
+  const boardFirmwareRows = result.data.type === "board"
+    ? await fetchBoardFirmwareRows(id, result.data.name, usbConnector, downloadMode)
+    : null;
 
   return (
     <main id="main" className="container" tabIndex={-1}>
-      {result.status === "ok" ? (
-        <>
-          <JsonLd data={partGraph(result.data)} />
-          <PartViewTracker part={result.data} />
-          <PartDetailView part={result.data} boardFirmwareRows={boardFirmwareRows} />
-        </>
-      ) : (
-        <PartDetailClient id={id} />
-      )}
+      <JsonLd data={partGraph(result.data)} />
+      <PartViewTracker part={result.data} />
+      <PartDetailView part={result.data} boardFirmwareRows={boardFirmwareRows} />
     </main>
   );
 }

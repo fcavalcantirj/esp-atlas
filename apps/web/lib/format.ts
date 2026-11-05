@@ -266,6 +266,12 @@ export function partMetaTitle(
 ): string {
   const specs = partKeySpecs(part);
   const benefit = specs.length > 0 ? `${specs.join(" + ")} ${typeLabel(part.type)} specs` : `${typeLabel(part.type)} specs`;
+  if (part.type === "board") {
+    const full = `${part.name}${hasPinout ? " pinout" : ""} — ${benefit}`;
+    if (full.length <= TITLE_MAX) return full;
+    // Exact model/SKU identity wins over a length target and generic radio text.
+    return `${part.name} — ${hasPinout ? "pinout & " : ""}Board specs`;
+  }
   if (!hasPinout) return buildMetaTitle(part.name, benefit);
 
   // "pinout" must survive truncation, so it can't ride inside the name

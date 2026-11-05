@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import FirmwareDetailClient from "@/components/firmware/FirmwareDetailClient";
 import FirmwareDetailView from "@/components/firmware/FirmwareDetailView";
 import { fetchAllParts, fetchFirmware, fetchRecipesForFirmware } from "@/lib/api-server";
 import { detailRobots } from "@/lib/detail-robots";
@@ -17,6 +16,7 @@ import { SITE_NAME } from "@/lib/site";
 export async function generateMetadata({ params }: PageProps<"/firmware/[id]">): Promise<Metadata> {
   const { id } = await params;
   const result = await fetchFirmware(id);
+  if (result.status === "error") throw new Error(`Firmware API unavailable for ${id}`);
   if (result.status !== "ok") {
     return { title: id, robots: detailRobots(result.status) };
   }
@@ -40,14 +40,13 @@ export default async function FirmwarePage({ params }: PageProps<"/firmware/[id]
   const { id } = await params;
   const result = await fetchFirmware(id);
   if (result.status === "not_found") notFound();
-  // Cold or gated API: render client-side instead of a dead end.
-  if (result.status !== "ok") return <FirmwareDetailClient id={id} />;
+  if (result.status === "error") throw new Error(`Firmware API unavailable for ${id}`);
 
   const firmware = result.data;
   const [recipesResult, parts, readme] = await Promise.all([
     fetchRecipesForFirmware(id),
     fetchAllParts(),
-    firmware.readme_en ? Promise.resolve(null) : fetchReadme(firmware.url),
+    fetchReadme(firmware.url),
   ]);
   const recipes = recipesResult.status === "ok" ? recipesResult.data.results : [];
   return <FirmwareDetailView firmware={firmware} recipes={recipes} parts={parts} readme={readme} />;

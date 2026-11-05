@@ -61,12 +61,16 @@ export const viewport: Viewport = {
 const fontScaleScript = `try{var s=localStorage.getItem(${JSON.stringify(
   FONT_SCALE_KEY,
 )});if(s)document.documentElement.style.setProperty("--font-scale",s)}catch(e){}`;
+const analyticsQueueScript = GA_ID
+  ? `window.__ESP_ATLAS_GA_ID=${JSON.stringify(GA_ID)};window.dataLayer=window.dataLayer||[];try{if(localStorage.getItem("esp-atlas:analytics-disabled")==="1")window["ga-disable-${GA_ID}"]=true}catch(e){}`
+  : "";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geist.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: fontScaleScript }} />
+        {GA_ID && <script dangerouslySetInnerHTML={{ __html: analyticsQueueScript }} />}
         <Providers>
           <a href="#main" className="skip-link">
             Skip to content

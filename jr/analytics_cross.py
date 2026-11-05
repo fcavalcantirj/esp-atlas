@@ -1,9 +1,8 @@
 """EspAtlas Jr — analytics crossing: GA4 x Search Console joined on landing page
 (SPEC-analytics-cross.md).
 
-Exposes the acquisition -> activation funnel today's telemetry cannot see: which query
-lands on which page, and what that page's visitors do next (page_view -> part_view ->
-flash_open). Reuses jr/telemetry.py's Composio calling convention EXACTLY -- same _ex(),
+Joins page-level search and GA event aggregates. These counts cannot establish
+session conversion or a user journey. Reuses jr/telemetry.py's calling convention -- same _ex(),
 same GA4_PROPERTY/GSC_SITE, no new auth path. The Google Trends demand axis (SPEC §7) is
 the one exception: it's unofficial and outside Composio, fetched via the `pytrends` pip
 dep through its own fetch_trends() wrapper.
@@ -16,7 +15,6 @@ build_funnel(), which is.
 """
 from __future__ import annotations
 
-import datetime as dt
 import sys
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
@@ -35,9 +33,6 @@ TRENDS_TIMEFRAME = "today 1-m"
 FUNNEL_EVENT_NAMES = ("part_view", "flash_open")
 STRIKING_DISTANCE_MIN = 8
 STRIKING_DISTANCE_MAX = 20
-LEAK_MIN_IMPRESSIONS = 10
-LEAK_MAX_POSITION = 20
-LEAK_MAX_CONVERSION = 0.05
 TOP_QUERIES_CAP = 10
 AXES = ("ga_pages", "ga_events", "gsc_pages", "gsc_queries")
 
@@ -122,7 +117,13 @@ def _parse_ga_pages(rows: list) -> dict:
     for row in rows:
         page = normalize_page(row["dimensionValues"][0]["value"])
         views, users, sessions = (int(mv["value"]) for mv in row["metricValues"])
-        out[page] = {"page_views": views, "active_users": users, "sessions": sessions}
+        if page in out:
+            out[page]["page_views"] += views
+            # A user/session can visit both URL variants; these are not additive.
+            out[page]["active_users"] = None
+            out[page]["sessions"] = None
+        else:
+            out[page] = {"page_views": views, "active_users": users, "sessions": sessions}
     return out
 
 
@@ -210,8 +211,8 @@ def _build_row(page: str, ga_page_stats, ga_event_stats, gsc_page_stats, gsc_que
     top_queries = sorted(queries, key=lambda q: q["impressions"], reverse=True)[:TOP_QUERIES_CAP]
     demand = trends.get(top_queries[0]["query"]) if top_queries else None
 
-    conv_view_to_part = _rate(part_view, page_views)
-    conv_part_to_flash = _rate(flash_open, part_view)
+    view_event_ratio = _rate(part_view, page_views)
+    flash_event_ratio = _rate(flash_open, part_view)
 
     striking_distance = any(
         q["position"] is not None
@@ -219,11 +220,8 @@ def _build_row(page: str, ga_page_stats, ga_event_stats, gsc_page_stats, gsc_que
         and q["impressions"] > 0
         for q in queries
     )
-    leak_flag = (
-        impressions is not None and impressions >= LEAK_MIN_IMPRESSIONS
-        and avg_position is not None and avg_position <= LEAK_MAX_POSITION
-        and conv_view_to_part is not None and conv_view_to_part < LEAK_MAX_CONVERSION
-    )
+    # Page-local event ratios cannot establish a missed session conversion.
+    leak_flag = False
 
     return {
         "page": page,
@@ -236,8 +234,8 @@ def _build_row(page: str, ga_page_stats, ga_event_stats, gsc_page_stats, gsc_que
         "sessions": sessions,
         "part_view": part_view,
         "flash_open": flash_open,
-        "conv_view_to_part": conv_view_to_part,
-        "conv_part_to_flash": conv_part_to_flash,
+        "part_view_per_page_view": view_event_ratio,
+        "flash_open_per_part_view": flash_event_ratio,
         "top_queries": top_queries,
         "demand": demand,  # Google Trends relative-interest score (0-100) for the top query (SPEC §7)
         "striking_distance": striking_distance,
@@ -294,12 +292,10 @@ def _top_query_per_page(gsc_queries) -> list:
 
 
 def weekly_funnel(days: int = 7) -> dict:
-    """Convenience orchestrator: fetches all four axes over the trailing `days`, fetches
+    """Convenience orchestrator: fetches all four axes over `days` completed dates, fetches
     Google Trends for each page's top query, and joins them. No Telegram/snapshot wiring here
     (SPEC §8 non-goals) -- callers decide what to do with the returned FunnelTable."""
-    end = dt.date.today()
-    start = end - dt.timedelta(days=days)
-    start_s, end_s = start.isoformat(), end.isoformat()
+    start_s, end_s = telemetry.completed_window(days)
     gsc_queries = fetch_gsc_queries(start_s, end_s)
     trends = fetch_trends(_top_query_per_page(gsc_queries))
     return build_funnel(

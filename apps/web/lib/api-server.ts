@@ -78,8 +78,12 @@ export function fetchPartDetail(id: string): Promise<ServerFetchResult<PartDetai
   return serverFetch<PartDetail>(`/parts/${encodeURIComponent(id)}`);
 }
 
+export function fetchAllPartsResult(): Promise<ServerFetchResult<{ results: PartRecord[] }>> {
+  return serverFetch<{ results: PartRecord[] }>(`/parts`);
+}
+
 export async function fetchAllParts(): Promise<PartRecord[]> {
-  const result = await serverFetch<{ results: PartRecord[] }>(`/parts`);
+  const result = await fetchAllPartsResult();
   return result.status === "ok" ? result.data.results : [];
 }
 
