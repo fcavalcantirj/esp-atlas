@@ -18,7 +18,7 @@ const GROUPS: { id: ExampleGroup; title: string; hint: string }[] = [
   {
     id: "run-firmware",
     title: "Run a firmware",
-    hint: "Projects with a verified recipe — see every board each one runs on.",
+    hint: "Projects with a cited recipe — see every board each one runs on, by trust tier.",
   },
   {
     id: "build-project",

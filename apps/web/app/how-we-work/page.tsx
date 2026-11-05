@@ -10,7 +10,7 @@ import { howWeWorkGraph } from "@/lib/structured-data";
 // (architect brief, 2026-08-24); this file only sets it in the type system.
 const TITLE = "How esp-atlas works";
 const DESCRIPTION =
-  "A small agent watches the ESP32 world every day and proposes what changed; humans review it; nothing lands without a source. What esp-atlas promises, and what it doesn't.";
+  "A small agent watches the ESP32 world every day and proposes each change as a cited pull request; automated checks gate every one, and new firmware, recipes and flashing claims wait for a human maintainer. What esp-atlas promises, and what it doesn't.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -34,9 +34,10 @@ export default function HowWeWorkPage() {
         There is more ESP32 information than any of us can read. New boards, new firmware, new recipes appear every
         week across a hundred repos, forums, and vendor pages — and most guides are one person&apos;s blog, frozen the
         day it was published. esp-atlas is an attempt to keep up, honestly. A small agent watches those sources every
-        day and proposes what changed; humans review it; nothing lands without a source. The result is a public map
-        of the ESP32 family — which chip or board to buy and <em>why</em>, and firmware recipes that someone actually
-        flashed — that you can query, and that anyone can correct with a pull request. We won&apos;t have everything.
+        day and proposes what changed as a pull request with a cited source; automated checks must pass, and the riskier
+        changes wait for a human maintainer; nothing lands without a source. The result is a public map of the ESP32
+        family — which chip or board to buy and <em>why</em>, and firmware recipes that show their source and trust
+        level — that you can query, and that anyone can correct with a pull request. We won&apos;t have everything.
         We&apos;d rather say &lsquo;not verified&rsquo; than guess.
       </p>
 
@@ -50,7 +51,7 @@ export default function HowWeWorkPage() {
       <h2>What esp-atlas is</h2>
       <p>
         A shared, public knowledge base that answers &lsquo;which ESP should I buy for X, and why?&rsquo; and hands you a
-        firmware or wiring recipe that has been tested. Every hard spec cites an official source. The data is plain
+        firmware or wiring recipe with its source and trust level shown. Every hard spec cites an official source. The data is plain
         markdown in a git repo, so a wrong number is a bug and a missing board is one PR away.
       </p>
 
@@ -59,9 +60,13 @@ export default function HowWeWorkPage() {
         Nobody can curate this by hand, so we don&apos;t pretend to. <strong>EspAtlas Jr.</strong>, our autonomous
         data-maintainer, runs every day: it checks that sources are still alive, watches firmware releases, notices when
         a recipe has drifted, and discovers new boards and projects from official catalogs and community signal. It
-        never writes to main. It opens pull requests with a citation attached, and a human decides. Auto-harvested
-        recipes land marked <em>unverified</em> until someone with the hardware confirms them. Staleness is shown, not
-        hidden.
+        never writes to main. Every change is a pull request with a cited source, and automated checks — schema, data
+        validation, tests, an ESP-target evidence gate, link checks — must pass. New firmware entries, board–firmware
+        compatibility recipes, and flashing, download-mode or USB claims are held for a human maintainer to review
+        before they publish; low-risk updates (stars, dates, source signals) publish automatically once the checks
+        pass. A recipe marked <em>known good</em> carries a cited source for that exact board — usually the firmware
+        project listing it — not proof that someone flashed it, unless its notes record a hardware test.
+        Auto-harvested recipes land marked <em>declared</em> or <em>unverified</em>. Staleness is shown, not hidden.
       </p>
       <ul className="how-links" aria-label="EspAtlas Jr. links">
         <li>
