@@ -35,6 +35,8 @@ MAX_EVIDENCE_IDS = 3          # a fuzzy match against more distinct ids than thi
 MIN_IDENTITY_CHARS = 3        # shorter compact terms carry no identity
 MIN_FUZZY_CHARS = 4           # shorter terms are only matched exactly
 LONG_TERM_CHARS = 10          # from here on, two edits are still "a typo"
+MIN_MODEL_CHARS = 5           # shorter keys ('s3', 'lite', 'zz12') are never a model number
+MODEL_MAX_HOLDERS = 1         # a model number names one record; a key two records share is a family word
 
 STATUS_NEW, STATUS_VALIDATED, STATUS_LINKED, STATUS_CLOSED = "new", "validated", "linked", "closed"
 ALIAS_TYPO, SEARCH_DEFECT, MISSING_CONTENT, UNCLEAR = "alias_typo", "search_defect", "missing_content", "unclear"
@@ -49,6 +51,8 @@ CATALOG_SOURCES = (("boards/*/*", "board.md", "board"), ("firmware/*", "firmware
                    ("brands/*", "brand.md", "brand"))
 
 _TOKEN_RE = re.compile(r"[^\W_]+")       # Unicode letters/digits: 'módulo', '开发板' are terms too
+_DIGIT_RE = re.compile(r"\d")
+_LETTER_RE = re.compile(r"[^\W\d_]")
 
 
 # ═══════════════════════════ normalization ═══════════════════════════
@@ -95,15 +99,19 @@ def _frontmatter(md: Path) -> dict:
 
 def load_catalog(repo: Path = REPO) -> list[dict]:
     """Every catalog entry's id, title (`name`) and aliases (`aka`) — boards, firmware, parts
-    (socs + modules) and brands. Reads data/ only; writes nothing."""
+    (socs + modules) and brands — plus a board's brand (its folder under data/boards/). Reads
+    data/ only; writes nothing."""
     out = []
     for pattern, record, kind in CATALOG_SOURCES:
         for md in sorted((repo / "data").glob(f"{pattern}/{record}")):
             fm = _frontmatter(md)
             aliases = fm.get("aka") or []
-            out.append({"id": str(fm.get("id") or md.parent.name), "kind": kind,
-                        "title": str(fm.get("name") or ""),
-                        "aliases": [str(a) for a in aliases] if isinstance(aliases, list) else []})
+            entry = {"id": str(fm.get("id") or md.parent.name), "kind": kind,
+                     "title": str(fm.get("name") or ""),
+                     "aliases": [str(a) for a in aliases] if isinstance(aliases, list) else []}
+            if kind == "board":
+                entry["brand"] = str(fm.get("brand") or md.parent.parent.name)
+            out.append(entry)
     return out
 
 
@@ -161,10 +169,55 @@ def _fuzzy_matches(term: str, term_c: str, catalog: list[dict]) -> list[dict]:
     return sorted(out, key=lambda m: (m["distance"], m["id"]))
 
 
+def _is_model_key(key: str) -> bool:
+    """Long enough, a letter and a digit, not a generic word: 'fnk0104s' yes; 'esp32', 's3',
+    'lite', 'display' no."""
+    return (len(key) >= MIN_MODEL_CHARS and key not in GENERIC_WORDS
+            and bool(_DIGIT_RE.search(key)) and bool(_LETTER_RE.search(key)))
+
+
+def _model_keys(entry: dict):
+    """(via, label, key): the id without its '<brand>-' prefix — when the suffix itself holds a
+    model number, so 's3-mini' never joins two short words into one — and each title token."""
+    brand, eid = entry.get("brand") or "", entry["id"]
+    suffix = eid[len(brand) + 1:] if brand and eid.startswith(f"{brand}-") else ""
+    if any(_is_model_key(t) for t in _tokens(suffix)):
+        yield "id", eid, compact(suffix)
+    for token in _tokens(entry.get("title")):
+        yield "title", entry["title"], token
+
+
+def _spells(label: str, key: str) -> bool:
+    """Whether a run of the label's consecutive tokens joins to the key: 'Gamma QX5000 Pro'
+    spells 'qx5000', 'qx5000pro' and 'gammaqx5000pro'."""
+    tokens = _tokens(label)
+    return any("".join(tokens[i:j]) == key for i in range(len(tokens)) for j in range(i + 1, len(tokens) + 1))
+
+
+def _carries(entry: dict, key: str) -> bool:
+    """Whether any id/title/alias of the entry spells the key."""
+    return any(_spells(label, key) for _, label in _labels(entry))
+
+
+def _model_matches(term_c: str, catalog: list[dict]) -> list[dict]:
+    """The record whose model key equals the term — only when no more than MODEL_MAX_HOLDERS
+    record carries that key in any label, so 'fnk0104s' never reaches 'fnk0104a' / 'fnk0104b'."""
+    if not _is_model_key(term_c):
+        return []
+    matches, holders = [], 0
+    for entry in catalog:
+        hit = next(((via, label) for via, label, key in _model_keys(entry) if key == term_c), None)
+        if hit:
+            matches.append(_match(entry, *hit, 0))
+        holders += bool(hit) or _carries(entry, term_c)
+    return matches if holders <= MODEL_MAX_HOLDERS else []
+
+
 def classify(term: str, catalog: list[dict]) -> tuple[str, dict]:
     """(classification, evidence) for a zero-result term. First rule wins: an exact id/title →
     search_defect; no identity → unclear; a fuzzy id/title/alias match → alias_typo (unclear when
-    more than MAX_EVIDENCE_IDS ids match); nothing → missing_content."""
+    more than MAX_EVIDENCE_IDS ids match); a model number — the id without its vendor prefix or a
+    title token, held by one record → alias_typo; nothing → missing_content."""
     term_c, checked = compact(term), len(catalog)
     exact = _exact_matches(term_c, catalog) if term_c else []
     if exact:
@@ -178,6 +231,10 @@ def classify(term: str, catalog: list[dict]) -> tuple[str, dict]:
     if fuzzy:
         return ALIAS_TYPO, _evidence("fuzzy id/title/alias match (alias, identity tokens or edit distance)",
                                      fuzzy, checked)
+    model = _model_matches(term_c, catalog)
+    if model:
+        return ALIAS_TYPO, _evidence("vendor-prefix match: the term is a board id without its brand prefix, "
+                                     "or a model-number token of one record's title", model, checked)
     return MISSING_CONTENT, _evidence("no catalog id, title or alias matches", [], checked)
 
 

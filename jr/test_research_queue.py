@@ -225,6 +225,103 @@ def test_a_fuzzy_match_against_more_than_three_ids_is_unclear():
     assert cls == "unclear" and len(ev["ids"]) == 5
 
 
+# vendor-prefixed board ids: the bare model number is the id without its '<brand>-' prefix
+FREENOVE = [
+    {"id": f"freenove-fnk0104{v}", "kind": "board", "brand": "freenove",
+     "title": f"ESP32-S3 Display FNK0104{v.upper()}", "aliases": [f"freenove_fnk0104{v}"]}
+    for v in "abs"
+]
+MODELS = CATALOG + FREENOVE + [
+    {"id": "acme-widget", "kind": "board", "brand": "acme", "title": "Widget AB1234X Lite", "aliases": []},
+    {"id": "acme-zz12", "kind": "board", "brand": "acme", "title": "ZZ12 Display", "aliases": []},
+]
+
+
+@pytest.mark.parametrize("term", ["fnk0104s", "FNK0104S", "fnk-0104s", " fnk_0104s "])
+def test_a_bare_model_number_is_alias_typo_with_only_its_vendor_prefixed_id(term):
+    cls, ev = rq.classify(term, MODELS)
+    assert cls == "alias_typo"
+    assert ev["ids"] == ["freenove-fnk0104s"]
+    assert "vendor-prefix" in ev["rule"]
+    assert ev["matches"] == [{"id": "freenove-fnk0104s", "kind": "board", "via": "id",
+                              "label": "freenove-fnk0104s", "distance": 0}]
+
+
+def test_a_model_number_token_of_the_title_is_alias_typo_when_the_id_lacks_it():
+    cls, ev = rq.classify("ab1234x", MODELS)
+    assert (cls, ev["ids"]) == ("alias_typo", ["acme-widget"])
+    assert "vendor-prefix" in ev["rule"]
+    assert ev["matches"][0]["via"] == "title" and ev["matches"][0]["label"] == "Widget AB1234X Lite"
+
+
+@pytest.mark.parametrize("term,expected", [
+    ("lite", "missing_content"),       # a title word under 5 chars
+    ("display", "missing_content"),    # no digit: a word, not a model number
+    ("zz12", "missing_content"),       # the id suffix is under 5 chars
+    ("esp32", "search_defect"),        # generic: still the exact part id
+    ("s3", "unclear"),
+])
+def test_a_short_or_generic_token_is_never_a_model_number(term, expected):
+    cls, ev = rq.classify(term, MODELS)
+    assert cls == expected and "vendor-prefix" not in ev["rule"]
+
+
+def test_short_suffix_words_joined_are_not_a_model_number():
+    mini = [{"id": "acme-s3-mini", "kind": "board", "brand": "acme", "title": "Acme Small Board", "aliases": []}]
+    assert rq.classify("s3 mini", CATALOG + mini)[0] == "missing_content"
+
+
+def test_a_generic_word_split_by_the_search_is_not_a_model_number():
+    only_holder = [{"id": "acme-board", "kind": "board", "brand": "acme", "title": "Acme ESP32 Board", "aliases": []}]
+    assert rq.classify("esp 32", only_holder)[0] == "missing_content"
+
+
+def test_an_all_digit_title_token_is_not_a_model_number():
+    cell = [{"id": "acme-cell", "kind": "board", "brand": "acme", "title": "Battery 18650 Holder", "aliases": []}]
+    assert rq.classify("18650", CATALOG + cell)[0] == "missing_content"
+
+
+@pytest.mark.parametrize("other", [
+    {"id": "orca", "kind": "firmware", "title": "", "aliases": ["orca qx5000 port"]},
+    {"id": "orca-qx5000-port", "kind": "firmware", "title": "", "aliases": []},
+    {"id": "um-qx5000", "kind": "board", "brand": "unexpected-maker", "title": "", "aliases": []},
+])
+def test_a_key_another_record_carries_in_any_label_is_not_a_model_number(other):
+    owner = {"id": "acme-qx5000", "kind": "board", "brand": "acme", "title": "", "aliases": []}
+    assert rq.classify("qx5000", CATALOG + [owner, other])[0] == "missing_content"
+
+
+def test_a_multi_word_suffix_another_record_spells_across_tokens_is_not_a_model_number():
+    pair = [{"id": "acme-qx5000-pro", "kind": "board", "brand": "acme", "title": "", "aliases": []},
+            {"id": "gm-qx5000-pro", "kind": "board", "brand": "gamma", "title": "Gamma QX5000 Pro", "aliases": []}]
+    assert rq.classify("qx5000 pro", CATALOG + pair)[0] == "missing_content"
+
+
+def test_a_token_two_records_share_is_not_a_model_number():
+    shared = [{"id": f"acme-board{i}", "kind": "board", "brand": "acme", "title": f"Board{i} QX5000",
+               "aliases": []} for i in range(2)]
+    cls, ev = rq.classify("qx5000", CATALOG + shared)
+    assert (cls, ev["ids"]) == ("missing_content", [])
+
+
+def test_a_suffix_two_brands_share_is_not_a_model_number():
+    shared = [{"id": f"{b}-qx5000", "kind": "board", "brand": b, "title": "", "aliases": []}
+              for b in ("acme", "beta")]
+    assert rq.classify("qx5000", CATALOG + shared)[0] == "missing_content"
+
+
+def test_an_id_without_its_brand_prefix_offers_no_suffix():
+    other = [{"id": "um-pros3x", "kind": "board", "brand": "unexpected-maker", "title": "", "aliases": []}]
+    assert rq.classify("pros3x", CATALOG + other)[0] == "missing_content"
+
+
+def test_a_fuzzy_match_still_wins_over_a_model_number():
+    catalog = CATALOG + [{"id": "acme-qx5000", "kind": "board", "brand": "acme", "title": "", "aliases": []},
+                         {"id": "qx5001", "kind": "board", "brand": "", "title": "", "aliases": []}]
+    cls, ev = rq.classify("qx5000", catalog)
+    assert (cls, ev["ids"]) == ("alias_typo", ["qx5001"]) and "vendor-prefix" not in ev["rule"]
+
+
 def test_a_new_candidate_records_its_classification_and_evidence():
     queue, _ = run([row("lilygo-t-bem")])
     c = queue["candidates"]["lilygo t bem"]
@@ -257,6 +354,26 @@ def test_the_real_catalog_indexes_boards_firmware_parts_and_brands():
 
 def test_es3c28p_has_no_match_in_the_real_catalog():
     assert rq.classify("es3c28p", rq.load_catalog(REPO))[0] == "missing_content"
+
+
+def test_a_bare_model_number_matches_only_its_real_vendor_prefixed_board():
+    catalog = rq.load_catalog(REPO)
+    cls, ev = rq.classify("fnk0104s", catalog)
+    assert cls == "alias_typo" and ev["ids"] == ["freenove-fnk0104s"]
+    assert "vendor-prefix" in ev["rule"]
+    assert rq.classify("es3c28p", catalog)[0] == "missing_content"
+    assert rq.classify("esp32-c3", catalog)[0] == "search_defect"
+
+
+@pytest.mark.parametrize("term", ["tenstar", "tenstar robot", "tenstar esp32-s3", "security",
+                                  "s3 mini", "s2 mini", "c3 mini"])
+def test_unknown_real_terms_stay_missing_content(term):
+    assert rq.classify(term, rq.load_catalog(REPO))[0] == "missing_content"
+
+
+def test_the_real_catalog_records_each_boards_brand():
+    board = next(e for e in rq.load_catalog(REPO) if e["id"] == "freenove-fnk0104s")
+    assert board["brand"] == "freenove"
 
 
 def test_a_typo_of_a_real_board_id_is_alias_typo():

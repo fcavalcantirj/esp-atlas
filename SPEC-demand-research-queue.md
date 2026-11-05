@@ -90,7 +90,18 @@ First rule that fires wins:
    same identity tokens in any order (generic words dropped: `marauder` ~ `ESP32 Marauder`), or (for terms of 4+ compact characters) an edit distance
    within `1` (`2` for terms of 10+). Evidence: the matching ids with `via` and `distance`.
    More than 3 distinct ids → `unclear` (ambiguous, evidence kept).
-4. **`missing_content`** — nothing in the catalog matches. Evidence: no ids, plus how many
+4. **`alias_typo` (vendor-prefix / model number)** — only when rule 3 found nothing: board ids
+   are vendor-prefixed (`freenove-fnk0104s`), so a search for the bare model number never
+   equals an id. The term (compact) equals a record's **model key** — its id without the
+   `<brand>-` prefix (`fnk0104s`), or a token of its title (`ESP32-S3 Display FNK0104S` →
+   `fnk0104s`). Evidence: that id, `via` `id`/`title`, distance 0, and a rule naming the
+   vendor-prefix match. A key is a model number only if it is 5+ characters, holds a letter
+   and a digit, is not a generic word, and **exactly one** record carries it in any id, title
+   or alias (as a run of consecutive tokens, the whole label included) — so `esp32`, `s3`, `lite`, `display`, `18650` or a token two
+   records share never match, and `fnk0104s` never matches its siblings `fnk0104a` /
+   `fnk0104b`. An id suffix counts only if one of its own tokens is a model number, so short
+   words never join into one (`s3 mini` does not match `lolin-s3-mini`).
+5. **`missing_content`** — nothing in the catalog matches. Evidence: no ids, plus how many
    catalog entries were checked.
 
 ## What it never does
@@ -131,6 +142,7 @@ runner, the miner's `first_seen` carry-forward) read only `<YYYY-MM-DD>.json` fi
 - the 6th new candidate on one day is deferred;
 - `es3c28p` with no catalog match → `missing_content`;
 - one typo away from a board id → `alias_typo` with that id as evidence;
+- a bare model number (`fnk0104s`) → `alias_typo` with exactly its vendor-prefixed id;
 - equal to an id but zero results → `search_defect`;
 - a closed candidate is not reopened within 30 days;
 - a term with results and 1 search creates nothing;
