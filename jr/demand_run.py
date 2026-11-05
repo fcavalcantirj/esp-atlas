@@ -86,6 +86,7 @@ class Decision:
     why: str
     research: str | None = None
     queue_only: bool = False      # zero demand items, a changed queue: land the queue alone
+    queue_changed: bool = False
 
 
 # --- the no-op rule ----------------------------------------------------------------------------------
@@ -134,7 +135,7 @@ def _queue_comparable(raw: bytes | None):
     and the catalog grows hourly — neither alone
     may open a PR (the weekly refresh carries them)."""
     try:
-        queue = json.loads(raw) if raw else None
+        queue = json.loads(raw) if raw else research_queue.empty_queue()   # absent == empty
     except (ValueError, UnicodeDecodeError):
         return raw
     if not isinstance(queue, dict) or not isinstance(queue.get("candidates"), dict):
@@ -245,7 +246,7 @@ def _queue_only_body(snap: dict, why: str, research: str | None) -> str:
         "Runner: jr/demand_run.py."])
 
 
-def _close_superseded(gh, keep_branch: str, prefix: str = BRANCH_PREFIX) -> list[int]:
+def _close_superseded(gh, keep_branch: str, prefix: str = BRANCH_PREFIX, spare: str | None = None) -> list[int]:
     p = gh("pr", "list", "--state", "open", "--limit", "500", "--json", "number,headRefName,labels")
     try:
         prs = json.loads(getattr(p, "stdout", "") or "[]") if getattr(p, "returncode", 1) == 0 else []
@@ -255,7 +256,7 @@ def _close_superseded(gh, keep_branch: str, prefix: str = BRANCH_PREFIX) -> list
     for pr in prs:
         head = str(pr.get("headRefName", "")) if isinstance(pr, dict) else ""
         # a jr-review PR waits for the owner by design (SPEC-jr-review-routing.md): never superseded
-        if head.startswith(prefix) and head != keep_branch and not review_routing.has_review_label(pr):
+        if head.startswith(prefix) and not (spare and head.startswith(spare)) and head != keep_branch and not review_routing.has_review_label(pr):
             r = gh("pr", "close", str(pr.get("number")), "--comment", SUPERSEDED_COMMENT, "--delete-branch")
             if getattr(r, "returncode", 1) == 0:
                 closed.append(pr.get("number"))
@@ -292,11 +293,11 @@ def _mine_and_decide(wt: publish.Worktree, miner, python: str, telegram: bool) -
         if not queue_changed:
             raise RunAbort("miner returned no demand items (Composio/GSC outage?) — not landing an empty steer")
         return Decision(new, True, "research queue changed; 0 demand items, snapshot not landed",
-                        research, queue_only=True)
+                        research, queue_only=True, queue_changed=True)
     land, why = should_land(new, prev, new["date"])    # age between the miner's own dates: one clock
     if not land and queue_changed:
         land, why = True, f"research queue changed ({why})"
-    return Decision(new, land, why, research)
+    return Decision(new, land, why, research, queue_changed=queue_changed)
 
 
 def _publication(d: Decision, wt_path: Path) -> tuple[list[str], str, str]:
@@ -336,7 +337,10 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         res.reason = pub.reason or decision.why
         if not pub.published:
             raise RunAbort(f"publish failed: {pub.reason}")    # never exit 0 like a no-op
-        res.superseded = _close_superseded(gh, branch, prefix)
+        # a snapshot run supersedes a queue-only PR only when it carries a rebuilt queue itself: an
+        # unchanged one (e.g. its research lane failed) would drop that PR's candidates
+        spare = None if decision.queue_changed else QUEUE_ONLY_PREFIX
+        res.superseded = _close_superseded(gh, branch, prefix, spare)
     except RunAbort as e:
         res.aborted = str(e)
     except Exception as e:  # noqa: BLE001 — a run must always end with a report line

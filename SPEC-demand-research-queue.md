@@ -145,7 +145,11 @@ the research queue changed (same comparison as above), the runner lands a **queu
 stages `docs/demand/research-queue.json` alone and restores every other `docs/demand/*.json` the
 miner touched, so neither the dated snapshot nor `unresolved.json` is replaced or added. Zero
 items with an unchanged queue (including an identical rerun of a landed queue-only run) still
-aborts, as does a failed miner.
+aborts, as does a failed miner. A missing queue file compares equal to an empty queue, so an
+outage that only creates an empty queue aborts too. A queue-only PR lands on
+`jr/demand-queue-…` and supersedes only older queue-only PRs; a snapshot run supersedes it only
+when that run's own queue changed (an unchanged queue — e.g. its research lane failed — would
+drop the queue-only PR's candidates).
 
 **Atomic write.** `write_queue` writes a temp file in the queue's own directory, flushes and
 fsyncs it, then `os.replace`s it over the queue. An `OSError` anywhere leaves the previous file

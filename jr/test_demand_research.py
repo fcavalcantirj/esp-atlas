@@ -394,3 +394,26 @@ def test_a_queue_only_run_never_closes_an_open_snapshot_pr(tmp_path):
     res = run_runner(tmp_path, gh=gh, miner=queue_miner(["es3c28p"], rows=[]))
     assert res.published is True and res.superseded == [8]
     assert not any(c[:3] == ("pr", "close", "7") for c in gh.calls)
+
+
+def test_an_outage_that_only_creates_an_empty_queue_still_aborts(tmp_path):
+    gh = gh_ok()
+    res = run_runner(tmp_path, gh=gh, miner=queue_miner([], rows=[]))     # no queue on main yet
+    assert res.published is False and "no demand items" in res.aborted
+    assert not any(c[:2] == ("pr", "create") for c in gh.calls)
+
+
+_QUEUE_PR = json.dumps([{"number": 8, "headRefName": "jr/demand-queue-20261102-0930", "labels": []}])
+
+
+def test_a_snapshot_run_carrying_a_rebuilt_queue_supersedes_a_queue_only_pr(tmp_path):
+    gh = gh_ok(_QUEUE_PR)
+    res = run_runner(tmp_path, gh=gh, miner=queue_miner(["es3c28p"]))
+    assert res.published is True and res.superseded == [8]
+
+
+def test_a_snapshot_run_whose_queue_did_not_change_spares_a_queue_only_pr(tmp_path):
+    gh = gh_ok(_QUEUE_PR)                       # e.g. its research lane failed: main's queue as-is
+    res = run_runner(tmp_path, gh=gh)
+    assert res.published is True and res.superseded == []
+    assert not any(c[:2] == ("pr", "close") for c in gh.calls)
