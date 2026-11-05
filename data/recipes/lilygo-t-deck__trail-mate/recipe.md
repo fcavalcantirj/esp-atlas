@@ -5,7 +5,7 @@ board: lilygo-t-deck
 firmware: trail-mate
 status: unverified
 chip_family: esp32-s3
-notes: "Board-specific evidence: trail-mate's README support table lists the LILYGO T-Deck as a primary validation target with its own tdeck environment, separate from the T-Deck Pro, and the repository has a dedicated variants/tdeck/envs/tdeck.ini and boards/tdeck (commit 4732374). Build the tdeck environment; the default environment targets the T-LoRa-Pager. Not verified: no current successful build confirmed and not tested on hardware for this atlas."
+notes: "Board-specific evidence: trail-mate's README support table lists the LILYGO T-Deck as a primary validation target with its own tdeck environment, separate from the T-Deck Pro, and the repository has a dedicated variants/tdeck/envs/tdeck.ini and boards/tdeck (commit 4732374). Build the tdeck environment; the default environment targets the T-LoRa-Pager. This target selects the SX1262 LoRa transceiver; LoRa functionality requires that optional radio hardware. Not verified: no current successful build confirmed and not tested on hardware for this atlas."
 sources:
 - field: '*'
   url: https://github.com/vicliu624/trail-mate
