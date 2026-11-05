@@ -42,6 +42,11 @@ Three things keep this honest ("nothing guessed, nothing invented"):
    at all; only the optional `boards[].note` and top-level `summary` come from
    the model, and both fall back to deterministic, template-only text if the
    model is unreachable, rate-limited, or returns garbage.
+4. **A recipe is a cited pairing, not proof it runs.** The summary's board
+   sentence is always deterministic -- "Boards with a recipe:", each board
+   with its own trust tier and that tier's caveat -- and a model summary that
+   names a board or claims compatibility is rejected, so an `unverified`
+   recipe can never surface as "Known to run on".
 """
 import json
 import re
@@ -494,14 +499,41 @@ def _flash_next(recipes):
     return entries
 
 
-def _fallback_summary(firmware, requirements, board_entries, chip_constraint):
+# What each recipe trust tier asserts -- the same lines the web flash panel
+# draws (apps/web/lib/flash-copy.ts). A recipe is a cited pairing, never proof
+# the firmware runs, so the summary names every board's own tier and caveat.
+_TIER_CAVEAT = {
+    "known-good": "cited to a source for this exact board",
+    "reported": "community-reported, not independently verified",
+    "declared": "named in the project's own build files, no flashable build confirmed",
+    "unverified": "a plausible pairing, not confirmed for this board",
+    "broken": "known incompatible or regressed",
+}
+
+
+def _firmware_sentence(firmware, requirements):
     description = describe_firmware(firmware) or firmware.get("category") or "Firmware"
     req_text = f" It needs: {', '.join(requirements)}." if requirements else ""
+    return f"{firmware['name']} ({description}).{req_text}"
+
+
+def _trust_label(entry):
+    status = entry["recipe"].get("status") or "unrated"
+    caveat = _TIER_CAVEAT.get(status)
+    return f"{entry['board']['name']} ({status} — {caveat})" if caveat else f"{entry['board']['name']} ({status})"
+
+
+def _boards_sentence(board_entries, chip_constraint):
+    """Which boards have a recipe, each with its own tier -- scope-neutral, so
+    an unverified pairing is never stated as "runs on"."""
     if not board_entries:
         constraint_text = f" matching {chip_constraint}" if chip_constraint else ""
-        return f"{firmware['name']} ({description}).{req_text} No boards in esp-atlas{constraint_text} are known to run it yet."
-    names = ", ".join(e["board"]["name"] for e in board_entries)
-    return f"{firmware['name']} ({description}).{req_text} Known to run on: {names}."
+        return f"No boards in esp-atlas{constraint_text} have a recipe for it yet."
+    return f"Boards with a recipe: {'; '.join(_trust_label(e) for e in board_entries)}."
+
+
+def _fallback_summary(firmware, requirements, board_entries, chip_constraint):
+    return f"{_firmware_sentence(firmware, requirements)} {_boards_sentence(board_entries, chip_constraint)}"
 
 
 def _not_found(firmware_id):
@@ -517,8 +549,8 @@ def _not_found(firmware_id):
     }
 
 
-SYSTEM_PROMPT = """You explain, in plain language, why a firmware runs well -- or with
-which named tradeoff -- on a set of boards.
+SYSTEM_PROMPT = """You explain, in plain language, how a firmware's needs match -- or with
+which named tradeoff -- the real specs of a set of boards.
 
 You are given the firmware's name and requirements, and for EACH board a list
 of facts already verified against that board's own real specs -- the exact
@@ -531,8 +563,8 @@ using only the given facts -- never invent a missing spec, and never state
 that PSRAM is required.
 
 Reply with JSON only, no prose, in exactly this shape:
-{"summary": "<=2 sentences: what the firmware is and why these boards run it>",
- "boards": [{"board_id": "<id from the data>", "note": "<=1 sentence elaborating that board's fit, using ONLY the given facts>", "source_url": "<a url from that board's own sources, or null>"}]}
+{"summary": "<=2 sentences: what the firmware is and what it needs -- never name a board, never say it runs, works, or is supported on any board; each board's trust tier is stated separately>",
+ "boards": [{"board_id": "<id from the data>", "note": "<=1 sentence elaborating that board's fit, using ONLY the given facts -- never say the firmware runs, boots, or works on it>", "source_url": "<a url from that board's own sources, or null>"}]}
 
 Never name a board_id that is not listed below. Never state a spec, a GHz band,
 a Bluetooth capability, or a memory size that is not given for that board.
@@ -616,16 +648,48 @@ def _has_ungrounded_spec_claim(note, board, hardware_match):
     return False
 
 
+# A claim that the firmware runs on some board: "runs fine on", "boots on",
+# "works great with", "supports M5Stack devices", "a solid choice for", ...
+# Deliberately broad -- a false reject only costs model prose, never a fact.
+_COMPATIBILITY_CLAIM_RE = re.compile(
+    r"known to run"
+    r"|\b(?:runs?|running|boots?|booting|works?|working)\b(?:\s+\w+){0,2}\s+(?:on|with|well)\b"
+    r"|\bsupport(?:s|ed)?\b(?:\s+[\w-]+){0,3}\s+(?:boards?|devices?|hardware)\b|\bsupported\s+(?:on|by)\b"
+    r"|\b(?:fit|match|choice|pick)\s+for\b"
+    r"|\bcompatib|\bverified\b|\btested\b|\bconfirmed\b"
+)
+
+
+def _claims_board_compatibility(summary, board_facts_by_id):
+    """True if the summary names a board or claims the firmware runs on one.
+    Board-level trust is stated deterministically from each recipe's tier, so
+    the model's summary may only describe the firmware -- otherwise an
+    unverified pairing could surface as "Known to run on"."""
+    text = summary.lower()
+    if _COMPATIBILITY_CLAIM_RE.search(text):
+        return True
+    for board_id, board in board_facts_by_id.items():
+        for label in (board_id, board.get("name")):
+            if label and re.search(rf"(?<![\w-]){re.escape(label.lower())}(?![\w-])", text):
+                return True
+    return False
+
+
 def validate_grounded_output(raw_text, allowed_board_ids, sources_by_board, hardware_match_by_board, board_facts_by_id):
     """The grounding gate: turns a raw LLM reply into {"summary", "notes"},
     keeping ONLY prose that is fully backed by the given facts. A board id
     outside `allowed_board_ids`, a source URL outside that board's own
     recorded sources, or a spec claim `_has_ungrounded_spec_claim` catches
-    each reject the WHOLE board entry -- never a partially-cleaned sentence."""
+    each reject the WHOLE board entry -- never a partially-cleaned sentence.
+    A summary that names a board or claims compatibility is rejected whole
+    (`_claims_board_compatibility`), and so is a note claiming its board runs
+    the firmware: recipe trust is never the model's call."""
     parsed = _parse_json(raw_text) or {}
 
     summary = parsed.get("summary")
     summary = summary.strip() if isinstance(summary, str) and summary.strip() else None
+    if summary and _claims_board_compatibility(summary, board_facts_by_id):
+        summary = None
 
     notes = {}
     for entry in parsed.get("boards") or []:
@@ -647,6 +711,9 @@ def validate_grounded_output(raw_text, allowed_board_ids, sources_by_board, hard
 
         if _has_ungrounded_spec_claim(note, board_facts_by_id[board_id], hardware_match_by_board.get(board_id, {})):
             continue  # asserts a spec the board record does not have -- reject
+
+        if _COMPATIBILITY_CLAIM_RE.search(note.lower()):
+            continue  # claims the board runs it -- the recipe's tier says that, not the model
 
         notes[board_id] = {"note": note, "source_url": source_url}
 
@@ -711,7 +778,7 @@ def run_guide(firmware_id, constraints=None, llm_client=None, db_path=None):
                 raw, allowed_board_ids, sources_by_board, hardware_match_by_board, board_facts_by_id
             )
             if validated["summary"]:
-                summary = validated["summary"]
+                summary = f"{validated['summary']} {_boards_sentence(board_entries, chip_constraint)}"
             notes = validated["notes"]
         except Exception:
             pass  # graceful degradation: keep the deterministic fallback, never invent, never raise

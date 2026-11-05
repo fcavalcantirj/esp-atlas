@@ -148,3 +148,48 @@ def test_mixed_tiers_keep_each_boards_own_status_and_never_promote(built_db_path
         assert "Core2 (known-good" not in summary
         statuses = {b["board_id"]: b["status"] for b in result["boards"]}
         assert statuses == {"m5stack-core2": "unverified", "m5cardputer": "known-good"}
+
+
+# --- board-free overclaims and per-board notes ---------------------------------
+
+
+def _validate(summary="", boards=()):
+    return validate_grounded_output(
+        json.dumps({"summary": summary, "boards": list(boards)}),
+        {"m5stack-core2"},
+        {"m5stack-core2": {"https://github.com/adafruit/circuitpython"}},
+        {"m5stack-core2": {}},
+        {"m5stack-core2": {"id": "m5stack-core2", "name": "Core2"}},
+    )
+
+
+@pytest.mark.parametrize(
+    "summary",
+    [
+        "CircuitPython runs fine on M5Stack hardware.",
+        "A Python for microcontrollers, running on any ESP32 board.",
+        "It boots on ESP32 devices in seconds.",
+        "It works great with M5Stack devices.",
+        "It supports M5Stack devices out of the box.",
+        "A solid choice for ESP32 boards.",
+    ],
+)
+def test_validator_rejects_a_board_free_compatibility_claim(summary):
+    assert _validate(summary=summary)["summary"] is None
+
+
+def test_validator_rejects_a_note_claiming_the_board_runs_it():
+    note = {"board_id": "m5stack-core2", "note": "Known to run on the Core2, a strong fit.", "source_url": None}
+    assert _validate(boards=[note])["notes"] == {}
+
+
+def test_validator_keeps_a_fit_note_that_claims_no_compatibility():
+    note = {"board_id": "m5stack-core2", "note": "The Core2 has 2.4 GHz Wi-Fi, which CircuitPython needs.", "source_url": None}
+    assert _validate(boards=[note])["notes"] == {"m5stack-core2": {"note": note["note"], "source_url": None}}
+
+
+def test_run_guide_never_shows_a_known_to_run_note_for_an_unverified_recipe(built_db_path, pin_recipes):
+    pin_recipes(CORE2_UNVERIFIED)
+    stub = StubLLM({"summary": "", "boards": [{"board_id": "m5stack-core2", "note": "Runs great on the Core2.", "source_url": None}]})
+    result = run_guide("circuitpython", llm_client=stub, db_path=built_db_path)
+    assert all("note" not in b for b in result["boards"])
