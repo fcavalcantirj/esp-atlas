@@ -66,10 +66,12 @@ jobs:
         run: python3 -m pytest jr scripts -q -rs
 
   new-links:
-    # BLOCKING (make it a required check): a confirmed 404/410 on a URL this PR ADDS or CHANGES
-    # under data/** fails the PR. Timeouts, DNS/TLS errors, 429, 5xx and 403 bot walls are
-    # inconclusive and never fail. Untouched lines are never checked, so a link already broken
-    # on main does not block an unrelated PR (sources-live tracks those).
+    # A confirmed 404/410 on a URL this PR ADDS or CHANGES under data/** fails this job.
+    # NOT a required status check today: a red new-links does not by itself block merge
+    # (required checks live in branch protection; this file does not change them).
+    # Timeouts, DNS/TLS errors, 429, 5xx and 403 bot walls are inconclusive and never fail.
+    # Untouched lines are never checked, so a link already broken on main does not fail an
+    # unrelated PR's run (sources-live tracks those).
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
@@ -85,7 +87,7 @@ jobs:
   sources-live:
     # NON-BLOCKING tracker of links already broken on main: checks every cited URL, never a
     # required check. No CI bot path commits back to the repo, so its dead list lives in this
-    # job's log rather than a tracked report file. The PR gate is new-links above.
+    # job's log rather than a tracked report file. PR-added links are new-links' job above.
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:

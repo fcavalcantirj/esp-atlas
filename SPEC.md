@@ -77,14 +77,20 @@ visibly separate from the verified fields above it.
 ## Governance
 - CI gate: `scripts/validate.py` (schema + source rule, plus the dataset-level
   no-orphan-firmware check — every `firmware` must have ≥1 `recipe`) on every PR.
-- New-link gate (`new-links` job, `scripts/new_link_check.py`, pull_request only, blocking):
-  any URL on a line the PR ADDS or CHANGES in a `data/**` text file (`.md` frontmatter
-  sources/fields and body links, every URL in `.json`/`.yml`) that answers a **confirmed**
-  404 or 410 (asked twice) blocks the PR. A changed line counts even when it keeps the same
+- New-link check (`new-links` job, `scripts/new_link_check.py`, pull_request only): any URL
+  on a line the PR ADDS or CHANGES in a `data/**` text file (`.md` frontmatter sources/fields
+  and body links, every URL in `.json`/`.yml`) that answers a **confirmed** 404 or 410 (asked
+  twice) fails the job. It is **not a required status check today**: a failing `new-links`
+  does not by itself block merge (the required checks are set in branch protection, which
+  this job does not change); a red run is a signal for the reviewer to act on. The URL
+  checked is the exact one the PR wrote: JSON/YAML/markdown escapes are decoded first
+  (`https:\/\/x` is `https://x`), punctuation inside explicit delimiters (a quoted value that
+  is the whole URL, a markdown `(target)`, an `<autolink>`) is kept, and only a bare URL in
+  prose drops trailing sentence punctuation. A changed line counts even when it keeps the same
   URL, and a pure file move (git rename) changes no line. HEAD, then GET fallback; short timeout; small
   concurrency cap; polite User-Agent. Timeouts, DNS/TLS failures, 429, 5xx, 403 bot walls
-  and any other status are **inconclusive** and never block. URLs on untouched lines are
-  never checked, so a link already broken on main does not block an unrelated PR.
+  and any other status are **inconclusive** and never fail it. URLs on untouched lines are
+  never checked, so a link already broken on main does not fail an unrelated PR's run.
 - Existing-link tracker (`sources-live` job, `scripts/check_sources_live.py`):
   `continue-on-error`, not required — it reports every cited URL already broken on main.
   No CI bot path commits reports back to the repo, so its dead list lives in the job log
