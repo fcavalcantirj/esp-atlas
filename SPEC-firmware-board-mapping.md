@@ -56,7 +56,15 @@ measurable* instead of hand-seeded and frozen.
 ## 3. Board-source taxonomy (extract in this priority; a firmware may hit several)
 1. **Manifest tree** — `boards/`, `variants/`, `targets/` dir with one entry per board
    (ESP-IDF / esp-claw style). Most authoritative. Enumerate leaf dirs; the vendor is
-   the parent segment.
+   the parent segment. A manifest dir may be nested (esp-claw's own
+   `application/edge_agent/boards`), but a dir under a **vendored / third-party / study
+   tree** is NOT the firmware's own build manifest and is skipped: any path whose segments
+   before the `boards`/`variants`/`targets` dir include `reference`, `references`,
+   `third_party`, `third-party`, `thirdparty`, `vendor`, `vendored`, `external`, `extern`,
+   `deps` or `managed_components` (case-insensitive). (NucleoOS 2026-11-05: its
+   `reference/esp-claw/.../boards` copy is "study material only" — six false edges.)
+   **Per-ref provenance:** every ref records the manifest root it was found under, and
+   each root gets its own source URL — a ref never cites another root's URL.
 2. **`platformio.ini`** — `[env:*]` `board = ...` fields.
 3. **README structured device list** — HTML `<table>` or markdown table/bullets under a
    "Supported / Compatible / Devices / Hardware" heading (evil-m5project style). Parse
