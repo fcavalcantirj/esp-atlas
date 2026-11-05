@@ -317,6 +317,35 @@ def test_yaml_that_does_not_parse_is_inconclusive_never_a_trimmed_url(tmp_path, 
     assert "INCONCLUSIVE" in out and "ALIVE" not in out
 
 
+@pytest.mark.parametrize("path,text", [
+    # a line break git does not count (form feed, U+2028) would shift YAML's lines off git's
+    (BOARD, lambda u: f"---\ntitle: x # note\x0c\nnote: >\n  {u[:-1]} is\n  great\nurl: {u}\n---\n"),
+    (SOURCES, lambda u: f"# note \nnote: >\n  {u[:-1]} is\n  great\nurl: {u}\n"),
+    # yaml.safe_load refuses what the composer alone would accept
+    (SOURCES, lambda u: f"url: !custom {u}\n"),
+    (SOURCES, lambda u: f"url: {u}\n---\nnext: 1\n"),
+    # a value that is not a whole URL once YAML's own whitespace is all that is stripped
+    (SOURCES, lambda u: f"url: {u} \n"),
+    (SOURCES, lambda u: f"url: {u[:-1]}　x!\n"),
+], ids=["frontmatter-form-feed", "yaml-line-separator", "yaml-unknown-tag", "yaml-two-documents",
+        "yaml-nbsp-after-url", "yaml-ideographic-space-in-url"])
+def test_yaml_safe_load_does_not_read_as_that_url_never_requests_a_trimmed_one(tmp_path, server, capsys, path, text):
+    repo = make_repo(tmp_path, {}, {path: text(server.url("/important!"))})
+    assert run(repo) == 0
+    assert server.hit("/important") == []
+    assert "INCONCLUSIVE" in capsys.readouterr().out
+
+
+def test_a_frontmatter_closed_by_a_commented_fence_is_still_yaml(tmp_path, server, capsys):
+    url = server.url("/important!")
+    content = f"---\nid: acme-one\nurl: {url}\n--- # end\n\n# Acme One\n"
+    assert url in _safe_load_strings(BOARD, content.replace("--- # end", "---"))
+    repo = make_repo(tmp_path, {}, {BOARD: content})
+    assert run(repo) == 1
+    assert server.hit("/important!") == ["HEAD", "GET", "GET"]
+    assert server.hit("/important") == []
+
+
 def test_without_a_yaml_reader_yaml_urls_are_inconclusive(tmp_path, server, capsys, monkeypatch):
     monkeypatch.setattr(nlc, "yaml", None)
     repo = make_repo(tmp_path, {}, {SOURCES: f"{{url: {server.url('/important!')}}}\n"})
