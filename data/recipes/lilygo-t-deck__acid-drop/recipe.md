@@ -5,7 +5,7 @@ board: lilygo-t-deck
 firmware: acid-drop
 status: unverified
 chip_family: esp32-s3
-notes: "Board-specific evidence: acid-drop's platformio.ini defines a dedicated env:t-deck for the original T-Deck, separate from env:t-deck-plus (commit 51a98f1). Per that file, the two builds differ only in the board name and the GNSS module, which the original T-Deck build no longer drives. Not verified: no current successful build confirmed and not tested on hardware for this atlas."
+notes: "Board-specific evidence: acid-drop's platformio.ini defines a dedicated env:t-deck for the original T-Deck, separate from env:t-deck-plus (commit 51a98f1). The default environment is t-deck-plus; select pio run -e t-deck explicitly for this original-board recipe. Not verified: no current successful build confirmed and not tested on hardware for this atlas."
 sources:
 - field: '*'
   url: https://github.com/acidvegas/acid-drop
