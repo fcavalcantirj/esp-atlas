@@ -67,11 +67,12 @@ export const PRICE_TIER_NOTE =
   "Approximate, editorial street-price tier — not a datasheet-verified spec. Used only by the wizard's budget filter.";
 
 // Trust tiers, most to least trusted (SPEC-wizard.md "the honesty layer").
-export const RECIPE_TIER_ORDER = ["known-good", "reported", "unverified", "broken"] as const;
+export const RECIPE_TIER_ORDER = ["known-good", "reported", "declared", "unverified", "broken"] as const;
 
 export const RECIPE_TIER_LABEL: Record<string, string> = {
   "known-good": "Known good",
   reported: "Reported",
+  declared: "Declared",
   unverified: "Unverified",
   broken: "Broken",
 };

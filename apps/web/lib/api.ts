@@ -147,7 +147,7 @@ export interface Firmware {
   readme_en?: string;
 }
 
-export type RecipeStatus = "known-good" | "reported" | "unverified" | "broken";
+export type RecipeStatus = "known-good" | "reported" | "declared" | "unverified" | "broken";
 
 export interface RecipeFlash {
   method: string | null;

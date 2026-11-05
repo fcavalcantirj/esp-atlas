@@ -44,9 +44,11 @@ interface FlashActionProps {
 // What each trust tier actually asserts (SPEC-wizard "Trust tiers") — the
 // panel says this in words so "validated" never means more than the record does.
 const TIER_CLAIM: Record<string, (board: string) => string> = {
-  "known-good": (board) => `Known-good on ${board} — listed by the maintainer, or verified on real hardware.`,
+  "known-good": (board) =>
+    `Known-good on ${board} — cited to a source for this exact board (usually the firmware project listing it); flashed on real hardware only where its notes say so.`,
   reported: (board) => `Reported on ${board} — community-submitted and cited, not independently verified.`,
-  unverified: (board) => `Unverified on ${board} — harvested from the project's build targets, no human citation yet.`,
+  declared: (board) => `Declared on ${board} — the project's own build files or board list name it; no flashable build confirmed yet.`,
+  unverified: (board) => `Unverified on ${board} — harvested from the project's build targets, plausible, not confirmed for this board.`,
   broken: (board) => `Broken on ${board} — known incompatible, or regressed at a version.`,
 };
 
