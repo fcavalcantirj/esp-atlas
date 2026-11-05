@@ -4,11 +4,12 @@
 // is the one exception — it carries a truthful $0 Offer (it's free/open-source)
 // so its SoftwareApplication node has something for Google to render; never a
 // fabricated rating or review.
-import type { BrandFacet, Firmware, PartDetail, PartRecord } from "@/lib/api";
+import type { BrandFacet, Firmware, PartDetail, PartRecord, Recipe } from "@/lib/api";
 // Relative (not "@/") runtime imports so plain `node --test` can load this file
 // (see structured-data.test.ts); type-only imports are erased and may stay "@/".
 import { brandLabel } from "./brand.ts";
 import { faqPage } from "./faq.ts";
+import { tierClaim } from "./flash-copy.ts";
 import { firmwareMetaDescription, partMetaDescription, typeLabel, typePlural } from "./format.ts";
 import { typeIndexPath } from "./routes.ts";
 import { dataFolderUrl, repoUrl } from "./github.ts";
@@ -222,9 +223,18 @@ export function firmwareIndexGraph(firmware: Firmware[]) {
   };
 }
 
-/** /firmware/<id>: the firmware itself plus every board it's a recipe for, as a SoftwareApplication + ItemList. */
-export function firmwareGraph(firmware: Firmware, boards: PartRecord[]) {
+/** /firmware/<id>: the firmware itself plus every board it's a recipe for, as a SoftwareApplication + ItemList.
+ * A recipe is a cited pairing at a trust tier, not proof the firmware runs: the
+ * list is named for recipes and each item states its own tier (same words as the
+ * flash panel), so an unverified pairing never reads as "runs on". Recipes whose
+ * board record is missing are left out. */
+export function firmwareGraph(firmware: Firmware, recipes: Recipe[], parts: PartRecord[]) {
   const url = `${SITE_URL}/firmware/${encodeURIComponent(firmware.id)}`;
+  const boardById = new Map(parts.map((p) => [p.id, p]));
+  const boards = recipes.flatMap((r) => {
+    const board = boardById.get(r.board);
+    return board ? [{ board, status: r.status }] : [];
+  });
   return {
     "@context": CONTEXT,
     "@graph": [
@@ -250,13 +260,14 @@ export function firmwareGraph(firmware: Firmware, boards: PartRecord[]) {
             {
               "@type": "ItemList",
               "@id": `${url}#boards`,
-              name: `Boards ${firmware.name} runs on`,
+              name: `Boards with a ${firmware.name} recipe, by trust tier`,
               numberOfItems: boards.length,
-              itemListElement: boards.map((b, i) => ({
+              itemListElement: boards.map(({ board, status }, i) => ({
                 "@type": "ListItem",
                 position: i + 1,
-                name: b.name,
-                url: `${SITE_URL}/parts/${encodeURIComponent(b.id)}`,
+                name: board.name,
+                description: tierClaim(status, board.name),
+                url: `${SITE_URL}/parts/${encodeURIComponent(board.id)}`,
               })),
             },
           ]
