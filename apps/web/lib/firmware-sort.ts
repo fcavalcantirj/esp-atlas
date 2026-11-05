@@ -21,7 +21,7 @@ export const SORT_OPTIONS: SortOption[] = [
   { value: "name", label: "Name (A→Z)", lead: "sorted A→Z by name" },
   { value: "name-desc", label: "Name (Z→A)", lead: "sorted Z→A by name" },
   { value: "forks", label: "Most forks", lead: "sorted by most forks" },
-  { value: "boards", label: "Runs on most boards", lead: "sorted by boards supported" },
+  { value: "boards", label: "Most boards with recipes", lead: "sorted by boards with recipes" },
 ];
 
 const VALID_SORTS = new Set(SORT_OPTIONS.map((o) => o.value));

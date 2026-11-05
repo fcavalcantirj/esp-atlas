@@ -103,11 +103,12 @@ export function firmwareCategoryLabel(category: string): string {
   return FIRMWARE_CATEGORY_LABEL[category] ?? category;
 }
 
-/** "Runs on N boards" card glance (SPEC-firmware-ordering.md §4.A/§5) -- null
- * below 1 so an un-recipe'd firmware renders nothing rather than "0 boards". */
+/** "Recipes for N boards" card glance (SPEC-firmware-ordering.md §4.A/§5) -- the
+ * count spans every trust tier, so it never says "runs on". Null below 1 so an
+ * un-recipe'd firmware renders nothing rather than "0 boards". */
 export function boardsLabel(boards: number | null | undefined): string | null {
   if (!boards || boards < 1) return null;
-  return `Runs on ${boards} board${boards === 1 ? "" : "s"}`;
+  return `Recipes for ${boards} board${boards === 1 ? "" : "s"}`;
 }
 
 // Google truncates SERP titles/descriptions mid-word around these lengths

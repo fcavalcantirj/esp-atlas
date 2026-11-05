@@ -31,12 +31,12 @@ test("boardsLabel is null for zero/missing boards, never '0 boards'", () => {
 });
 
 test("boardsLabel singularizes exactly 1 board", () => {
-  assert.equal(boardsLabel(1), "Runs on 1 board");
+  assert.equal(boardsLabel(1), "Recipes for 1 board");
 });
 
 test("boardsLabel pluralizes 2+ boards", () => {
-  assert.equal(boardsLabel(2), "Runs on 2 boards");
-  assert.equal(boardsLabel(12), "Runs on 12 boards");
+  assert.equal(boardsLabel(2), "Recipes for 2 boards");
+  assert.equal(boardsLabel(12), "Recipes for 12 boards");
 });
 
 // firmwareMetaTitle()/firmwareMetaDescription() are shared by the firmware
@@ -44,10 +44,10 @@ test("boardsLabel pluralizes 2+ boards", () => {
 // (which pulls in the rest of the app's "@/" alias graph and can't run under
 // plain `node --test` — see faq-jsonld.test.ts) — this is the testable seam
 // for both call sites. SPEC-serp-ctr.md: titles <=60 chars, descriptions
-// <=155 chars, snippet leads with the boards/socs a firmware is verified to
-// run on (the click-through lever), never fabricated.
+// <=155 chars, snippet leads with the boards a firmware has recipes for and
+// the socs it targets (the click-through lever), never fabricated.
 
-test("firmware title leads with the name and states the boards + socs it's verified for", () => {
+test("firmware title leads with the name and states its recipe board count + socs", () => {
   const title = firmwareMetaTitle({ name: "ESPHome", socs: ["esp32", "esp32-s3"], boards: 12 });
   assert.equal(title, "ESPHome — flash guide for ESP32/ESP32-S3, 12 boards");
   assert.ok(title.length <= TITLE_MAX);
@@ -187,7 +187,7 @@ test("falls back to the category/socs/boards template when there is no summary",
   assert.ok(description.length <= DESCRIPTION_MAX);
 });
 
-test("template omits the boards clause when there is no verified board count", () => {
+test("template omits the boards clause when there is no recipe board count", () => {
   const description = firmwareMetaDescription({
     name: "Bruce",
     category: "pentest",

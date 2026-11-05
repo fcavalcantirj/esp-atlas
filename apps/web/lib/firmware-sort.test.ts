@@ -69,6 +69,6 @@ test("firmwareLeadCopy for an empty list is unchanged regardless of sort", () =>
 test("firmwareLeadCopy states the active mode for a non-default sort", () => {
   assert.equal(
     firmwareLeadCopy("boards", 42),
-    "42 flashable firmware projects, sorted by boards supported — open one to see the boards it has recipes for, by trust tier.",
+    "42 flashable firmware projects, sorted by boards with recipes — open one to see the boards it has recipes for, by trust tier.",
   );
 });

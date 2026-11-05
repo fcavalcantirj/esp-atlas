@@ -95,9 +95,9 @@ export default function HowWeWorkPage() {
       <p>
         Paste the repository at <Link href="/submit">/submit</Link> (or open a{" "}
         <a href="https://github.com/fcavalcantirj/esp-atlas/issues/new?template=submission.yml">submission issue</a> on GitHub).
-        EspAtlas Jr scores it with the catalog&apos;s fixed rules — 25 stars or 25 forks, a real public repo, not a fork of
-        something already listed, a catalogued board named — comments the verdict on the issue, and, if it passes, opens a
-        cited pull request. No login, no account, nothing decided by a model.
+        EspAtlas Jr scores it with the catalog&apos;s fixed rules — 25 stars or 25 forks, a real public repo, not a fork,
+        not already listed, a catalogued board named, and build files showing it targets an ESP chip — comments the
+        verdict on the issue, and, if it passes, opens a cited pull request. No login, no account, nothing decided by a model.
       </p>
 
       <h2>What we promise, and what we don&apos;t</h2>

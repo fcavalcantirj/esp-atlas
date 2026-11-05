@@ -9,7 +9,7 @@ const TIER_CLAIM: Record<string, (board: string) => string> = {
     `Known-good on ${board} — cited to a source for this exact board (usually the firmware project listing it); flashed on real hardware only where its notes say so.`,
   reported: (board) => `Reported on ${board} — community-submitted and cited, not independently verified.`,
   declared: (board) => `Declared on ${board} — the project's own build files or board list name it; no flashable build confirmed yet.`,
-  unverified: (board) => `Unverified on ${board} — a plausible pairing that no cited source confirms for this board.`,
+  unverified: (board) => `Unverified on ${board} — listed as a plausible pairing from its cited source, not confirmed for this board.`,
   broken: (board) => `Broken on ${board} — known incompatible, or regressed at a version.`,
 };
 

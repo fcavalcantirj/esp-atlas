@@ -4,7 +4,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { unscopedHumanReviewClaims } from "./public-copy.ts";
 import { recipeCaveat, tierClaim } from "./flash-copy.ts";
-import { firmwareMetaDescription } from "./format.ts";
+import { boardsLabel, firmwareMetaDescription } from "./format.ts";
 
 const WEB_ROOT = path.resolve(import.meta.dirname, "..");
 const REPO_ROOT = path.resolve(WEB_ROOT, "../..");
@@ -49,6 +49,9 @@ const OVERCLAIMS = [
   "verified to flash on",
   "verified to run on",
   "tests and an esp-target evidence gate",
+  "runs on these boards",
+  "runs on most boards",
+  "sorted by boards supported",
 ];
 
 /** Lower-cased, whitespace-collapsed, with JSX apostrophe entities and curly quotes read as "'". */
@@ -68,6 +71,8 @@ test("the unverified tier claim is source-neutral", () => {
   const claim = tierClaim("unverified", "M5Stack Cardputer");
   assert.match(claim, /^Unverified on M5Stack Cardputer/);
   assert.doesNotMatch(claim, /harvest|build target|build files/i);
+  // Unverified recipes still cite where the pairing came from (build file, catalog): never deny that.
+  assert.doesNotMatch(claim, /no (cited )?source/i);
 });
 
 test("the RuView Cardputer caveat renders at the flash action", () => {
@@ -86,6 +91,9 @@ test("the RuView Cardputer caveat renders at the flash action", () => {
   // Shown inside the panel before any rail (ready or handoff) renders, so no flash path skips it.
   const caveatAt = flashAction.indexOf('className="flash-caveat"');
   assert.ok(caveatAt > flashAction.indexOf('className="flash-panel"'), "caveat must render inside the flash panel");
+  // Gated on the caveat alone, never on a phase, and ahead of the loading line.
+  assert.match(flashAction, /\n {8}\{caveat && \(\s*<p className="flash-caveat"/);
+  assert.ok(caveatAt < flashAction.indexOf('phase.kind === "loading"'), "caveat must render before any phase output");
   assert.ok(caveatAt < flashAction.indexOf('phase.kind === "ready" && ('), "caveat must render before the flash button");
   assert.ok(caveatAt < flashAction.indexOf('phase.kind === "handoff" && ('), "caveat must render before the handoff links");
 });
@@ -94,6 +102,8 @@ test("a firmware board count is never described as verified", () => {
   const description = firmwareMetaDescription({ name: "RuView", category: "other", socs: ["esp32-s3"], boards: 3, summary: undefined });
   assert.doesNotMatch(description, /verified/i);
   assert.match(description, /3 boards/);
+  // The card glance counts the same recipes: no "runs on" for an unverified lead.
+  assert.equal(boardsLabel(3), "Recipes for 3 boards");
 });
 
 test("how-we-work separates Jr's evidence check, per-PR CI and owner review", () => {
