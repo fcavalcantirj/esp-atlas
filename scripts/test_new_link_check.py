@@ -73,6 +73,7 @@ ROUTES = {
     "/flaky": {"HEAD": [405], "GET": [404, 200]},
     "/flaky503": {"HEAD": [405], "GET": [404, 503]},
     "/head-refused": {"HEAD": [405], "GET": [200]},
+    "/important": {},
     "/important!": {"GET": [404], "HEAD": [404]},
     "/escaped/gone": {"GET": [404], "HEAD": [404]},
 }
@@ -243,7 +244,15 @@ def _escaped(url):
     (SOURCES, lambda u: f"- url: '{u}'\n"),
     (BOARD, lambda u: f"# Acme One\n\nSee the [reference]({u}).\n"),
     (BOARD, lambda u: f"# Acme One\n\nSee <{u}>.\n"),
-], ids=["json-escaped", "json", "yaml-single-quoted", "markdown-link", "markdown-autolink"])
+    (SOURCES, lambda u: f"url: {u}\n"),
+    (SOURCES, lambda u: f"- url: {u}\n"),
+    (SOURCES, lambda u: f"- {u}\n"),
+    (SOURCES, lambda u: f"- url: {u}  # the vendor page\n"),
+    (BOARD, lambda u: board_md(u)),
+    (BOARD, lambda u: f"---\nid: acme-one\nsources:\n- url: {u}\n---\n\n# Acme One\n"),
+], ids=["json-escaped", "json", "yaml-single-quoted", "markdown-link", "markdown-autolink",
+        "yaml-plain", "yaml-plain-list-item-key", "yaml-plain-list-item", "yaml-plain-commented",
+        "frontmatter-plain", "frontmatter-plain-list-item-key"])
 def test_the_exact_punctuated_url_is_requested_and_its_404_fails(tmp_path, server, capsys, path, line):
     repo = make_repo(tmp_path, {}, {path: line(server.url("/important!"))})
     assert run(repo) == 1
@@ -261,12 +270,49 @@ def test_an_escaped_json_url_is_decoded_to_the_path_it_names(tmp_path, server, c
     assert f"Dead link (HTTP 404, then 404, confirmed): {url}" in capsys.readouterr().out
 
 
-def test_a_bare_url_in_prose_drops_the_sentence_punctuation(tmp_path, server):
-    url = server.url("/important!")
-    repo = make_repo(tmp_path, {}, {BOARD: f"# Acme One\n\nRead {url}\n"})
+@pytest.mark.parametrize("path,text", [
+    (BOARD, lambda u: f"# Acme One\n\nRead {u}\n"),
+    # YAML-shaped lines in a markdown body are prose, not frontmatter
+    (BOARD, lambda u: f"---\nid: acme-one\n---\n\nurl: {u}\n"),
+    (BOARD, lambda u: f"# Acme One\n\n- url: {u}\n"),
+    # a YAML comment, or a YAML string that only contains the URL, is prose too
+    (SOURCES, lambda u: f"# see {u}\n"),
+    (SOURCES, lambda u: f"notes: pinout at {u}\n"),
+    (BOARD, lambda u: f"---\nid: acme-one\nnotes:\n- pinout at {u}\n---\n"),
+], ids=["md-body", "md-body-after-frontmatter", "md-without-frontmatter", "yaml-comment",
+        "yaml-prose-value", "frontmatter-prose-value"])
+def test_a_bare_url_in_prose_drops_the_sentence_punctuation(tmp_path, server, path, text):
+    repo = make_repo(tmp_path, {}, {path: text(server.url("/important!"))})
     assert run(repo) == 0
     assert server.hit("/important") == ["HEAD"]
     assert server.hit("/important!") == []
+
+
+def test_only_the_frontmatter_lines_of_a_markdown_file_are_yaml(tmp_path, server, capsys):
+    url = server.url("/important!")
+    text = f"---\nid: acme-one\nsources:\n- url: {url}\n---\n\nurl: {url}\n"
+    repo = make_repo(tmp_path, {}, {BOARD: text})
+    assert run(repo) == 1
+    assert server.hit("/important!") == ["HEAD", "GET", "GET"]
+    assert server.hit("/important") == ["HEAD"]
+    assert f"::error file={BOARD},line=4::" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("text,span", [
+    ("---\nid: a\nurl: x\n---\nbody\n", range(2, 4)),
+    ("---\nid: a\n...\nbody\n", range(2, 3)),
+    ("---\r\nid: a\r\n---\r\n", range(2, 3)),
+    ("# no frontmatter\n---\nid: a\n---\n", range(0)),
+    ("---\nid: a\nnever closed\n", range(0)),
+    ("", range(0)),
+])
+def test_the_frontmatter_span_is_the_lines_between_the_fences(text, span):
+    assert nlc.frontmatter_span(text) == span
+
+
+def test_a_file_that_cannot_be_read_at_head_is_prose(tmp_path):
+    lines = [("data/boards/x/y/board.md", 2, "url: https://example.com/a!")]
+    assert nlc.yaml_lines(tmp_path, lines) == set()
 
 
 # --- classification ------------------------------------------------------------------------
@@ -301,6 +347,17 @@ def test_a_refused_connection_is_inconclusive(server):
     port = server.httpd.server_address[1]
     server.close()
     assert nlc.check_url(f"http://127.0.0.1:{port}/x", **FAST)[0] == "inconclusive"
+
+
+@pytest.mark.parametrize("url", ["http://[", "https://[", "http://[::1", "https://[/x"])
+def test_a_url_too_malformed_to_request_is_inconclusive(url):
+    assert nlc.check_url(url, **FAST)[0] == "inconclusive"
+
+
+def test_check_all_survives_a_malformed_url(server):
+    results = nlc.check_all(["http://[", server.url("/ok")], **FAST)
+    assert results["http://["][0] == "inconclusive"
+    assert results[server.url("/ok")][0] == "alive"
 
 
 def test_check_all_dedupes_and_respects_the_concurrency_cap(monkeypatch):
@@ -402,12 +459,60 @@ def test_urls_in_a_line(line, urls):
     assert nlc.urls_in(line) == urls
 
 
+@pytest.mark.parametrize("line,urls", [
+    ("url: https://example.com/important!", ["https://example.com/important!"]),
+    ("  - url: https://example.com/v1.", ["https://example.com/v1."]),
+    ("- https://example.com/a)", ["https://example.com/a)"]),
+    ("url: https://example.com/a#frag!", ["https://example.com/a#frag!"]),
+    ("url:   https://example.com/a!   ", ["https://example.com/a!"]),
+    ("url: https://example.com/a!  # see https://b.example/c.", ["https://example.com/a!", "https://b.example/c"]),
+    ("url: 'https://example.com/a!'", ["https://example.com/a!"]),
+    ('url: "https:\\/\\/example.com/a!"', ["https://example.com/a!"]),
+    ("notes: pinout at https://example.com/pinout.", ["https://example.com/pinout"]),
+    ("- pinout at https://example.com/pinout.", ["https://example.com/pinout"]),
+    ("# https://example.com/a.", ["https://example.com/a"]),
+    ("  https://example.com/a.", ["https://example.com/a"]),
+    ("url: [https://example.com/a!]", []),
+])
+def test_urls_in_a_yaml_line_keep_the_whole_plain_value(line, urls):
+    assert nlc.urls_in(line, yaml=True) == urls
+
+
+def test_a_yaml_shaped_line_outside_yaml_is_still_prose():
+    assert nlc.urls_in("url: https://example.com/important!") == ["https://example.com/important"]
+
+
+def test_extract_urls_reads_only_the_yaml_lines_as_yaml():
+    lines = [("a.md", 2, "url: https://a.example/p!"), ("a.md", 9, "url: https://a.example/q!")]
+    assert list(nlc.extract_urls(lines, yaml={("a.md", 2)})) == ["https://a.example/p!", "https://a.example/q"]
+
+
 def test_extract_urls_dedupes_ignoring_the_fragment_and_keeps_every_location():
     found = nlc.extract_urls([
         ("a.md", 1, "url: https://a.example/p#L1"),
         ("b.md", 7, "url: https://a.example/p#L2"),
     ])
     assert found == {"https://a.example/p": [("a.md", 1), ("b.md", 7)]}
+
+
+@pytest.mark.parametrize("path,text", [
+    (SOURCES, "- url: 'http://['\n"),
+    (SOURCES, "- url: http://[\n"),
+    (SIGNALS, '{"url": "https://["}\n'),
+    (BOARD, "# Acme One\n\nSee <http://[>.\n"),
+], ids=["yaml-quoted", "yaml-plain", "json", "markdown-autolink"])
+def test_a_malformed_url_is_extracted_and_inconclusive_not_a_crash(tmp_path, server, capsys, path, text):
+    lines = nlc.added_lines(f"diff --git a/{path} b/{path}\n+++ b/{path}\n@@ -0,0 +1 @@\n+{text.splitlines()[-1]}\n")
+    assert [u for _, _, line in lines for u in nlc.urls_in(line, yaml=path == SOURCES)] in (["http://["], ["https://["])
+    repo = make_repo(tmp_path, {}, {path: text})
+    assert run(repo) == 0
+    assert "INCONCLUSIVE" in capsys.readouterr().out
+
+
+def test_a_malformed_url_does_not_hide_a_dead_one_beside_it(tmp_path, server):
+    repo = make_repo(tmp_path, {}, {SOURCES: f"- url: 'http://['\n- url: {server.url('/gone404')}\n"})
+    assert run(repo) == 1
+    assert server.hit("/gone404") == ["HEAD", "GET", "GET"]
 
 
 # --- the process exit code CI sees ---------------------------------------------------------
