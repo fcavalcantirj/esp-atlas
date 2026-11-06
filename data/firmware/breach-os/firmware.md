@@ -8,9 +8,11 @@ maintainer: zedward856-spec
 capabilities:
 - wifi
 popularity:
-  stars: 25
+  stars: 27
   forks: 2
-  as_of: '2026-09-20'
+  as_of: '2026-11-06'
+  github_repo_id: 1277625033
+  github_as_of: '2026-11-06T23:01:26Z'
 socs:
 - esp32-s3
 sources:
@@ -23,6 +25,18 @@ sources:
 - field: summary
   url: https://github.com/zedward856-spec/Breach_OS
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/zedward856-spec/Breach_OS
+  verified: '2026-11-06'
+- field: popularity.github_as_of
+  url: https://github.com/zedward856-spec/Breach_OS
+  verified: '2026-11-06'
+- field: popularity.github_repo_id
+  url: https://github.com/zedward856-spec/Breach_OS
+  verified: '2026-11-06'
+- field: popularity.stars
+  url: https://github.com/zedward856-spec/Breach_OS
+  verified: '2026-11-06'
 summary: "Breach_OS is firmware for the M5Stack Cardputer that offers a Breach Protocol\u2011\
   style hacking minigame alongside a collection of utilities\u2014including online\
   \ play, SSH/Telnet terminals, file managers, USB mass\u2011storage, DuckyScript\

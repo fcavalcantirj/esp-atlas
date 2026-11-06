@@ -8,7 +8,9 @@ maintainer: megabitsenmzq
 popularity:
   stars: 52
   forks: 4
-  as_of: '2026-09-20'
+  as_of: '2026-11-06'
+  github_repo_id: 562570781
+  github_as_of: '2026-11-06T23:01:26Z'
 socs:
 - esp32
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/megabitsenmzq/ESP32-HomeKit-Remote
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/megabitsenmzq/ESP32-HomeKit-Remote
+  verified: '2026-11-06'
+- field: popularity.github_as_of
+  url: https://github.com/megabitsenmzq/ESP32-HomeKit-Remote
+  verified: '2026-11-06'
+- field: popularity.github_repo_id
+  url: https://github.com/megabitsenmzq/ESP32-HomeKit-Remote
+  verified: '2026-11-06'
+- field: popularity.stars
+  url: https://github.com/megabitsenmzq/ESP32-HomeKit-Remote
+  verified: '2026-11-06'
 summary: "ESP32-HomeKit-Remote is firmware for an ESP32 board (e.g., M5Atom Lite)\
   \ that enables control of a Panasonic air conditioner through the iOS Home app via\
   \ HomeKit, using an infrared LED and optional environmental sensors. It also provides\
