@@ -2,12 +2,16 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
+import { track } from "@/lib/analytics";
 import styles from "./AtlasExplorer.module.css";
 
 export default function AtlasUnavailable() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  useEffect(() => {
+    track("atlas_error", { surface: "atlas", stage: "catalog", outcome: "unavailable" });
+  }, []);
   return <section className={styles.unavailable} aria-busy={pending}>
     <p className={styles.eyebrow}>Atlas / catalog unavailable</p>
     <h1>The atlas couldn’t load.</h1>

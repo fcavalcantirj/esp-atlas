@@ -13,7 +13,7 @@ import ResultsPanel from "@/components/ResultsPanel";
 import RunGuideAnswer from "@/components/RunGuideAnswer";
 import SearchBox from "@/components/SearchBox";
 import WizardForm from "@/components/WizardForm";
-import { track } from "@/lib/analytics";
+import { newAnalyticsAttemptId, track } from "@/lib/analytics";
 import {
   ApiError,
   buildGuide,
@@ -88,14 +88,16 @@ export default function HomeView({ examples }: { examples: Example[] }) {
     void executeWizard(extra, scrollToResults);
   }
 
-  async function loadRunGuide(firmwareId: string) {
+  async function loadRunGuide(firmwareId: string, attemptId: string) {
+    const started = performance.now();
+    track("guide_submit", { attempt_id: attemptId, surface: "home", kind: "run" });
     setGuideLoading(true);
     setGuideError(null);
     try {
       setGuide(await runGuide(firmwareId));
-      track("guide_result", { surface: "home", kind: "run", outcome: "success" });
+      track("guide_result", { attempt_id: attemptId, surface: "home", kind: "run", outcome: "success", latency_ms: Math.round(performance.now() - started) });
     } catch (err) {
-      track("guide_error", { surface: "home", kind: "run", status: err instanceof ApiError ? err.status : "network" });
+      track("guide_error", { attempt_id: attemptId, surface: "home", kind: "run", outcome: "error", status: err instanceof ApiError ? err.status : "network", latency_ms: Math.round(performance.now() - started) });
       setGuide(null);
       setGuideError(err instanceof ApiError ? err.message : "The API did not answer in time.");
     } finally {
@@ -103,14 +105,16 @@ export default function HomeView({ examples }: { examples: Example[] }) {
     }
   }
 
-  async function loadBuildGuide(text: string) {
+  async function loadBuildGuide(text: string, attemptId: string) {
+    const started = performance.now();
+    track("guide_submit", { attempt_id: attemptId, surface: "home", kind: "build" });
     setBuildGuideLoading(true);
     setBuildGuideError(null);
     try {
       setBuildGuideData(await buildGuide(text));
-      track("guide_result", { surface: "home", kind: "build", outcome: "success" });
+      track("guide_result", { attempt_id: attemptId, surface: "home", kind: "build", outcome: "success", latency_ms: Math.round(performance.now() - started) });
     } catch (err) {
-      track("guide_error", { surface: "home", kind: "build", status: err instanceof ApiError ? err.status : "network" });
+      track("guide_error", { attempt_id: attemptId, surface: "home", kind: "build", outcome: "error", fallback: "search", status: err instanceof ApiError ? err.status : "network", latency_ms: Math.round(performance.now() - started) });
       setBuildGuideData(null);
       setBuildGuideError(err instanceof ApiError ? err.message : "The API did not answer in time.");
     } finally {
@@ -120,7 +124,8 @@ export default function HomeView({ examples }: { examples: Example[] }) {
 
   async function onIntent(text: string) {
     const started = performance.now();
-    track("intent_submit", { surface: "home", q_length: text.length });
+    const attemptId = newAnalyticsAttemptId();
+    track("intent_submit", { attempt_id: attemptId, surface: "home", q_length: text.length });
     setParsing(true);
     setParse(null);
     setGuide(null);
@@ -130,18 +135,24 @@ export default function HomeView({ examples }: { examples: Example[] }) {
     try {
       const parsed = await parseIntent(text);
       setParse(parsed);
-      track("intent_parse", { q: text, kind: parsed.kind, cached: parsed.cached });
-      track("intent_result", { surface: "home", kind: parsed.kind, latency_ms: Math.round(performance.now() - started) });
+      track("intent_parse", { attempt_id: attemptId, q: text, kind: parsed.kind, cached: parsed.cached });
+      const fallbackSearch = parsed.kind === "unreadable" || (parsed.kind === "firmware" && !parsed.firmware);
+      track("intent_result", {
+        attempt_id: attemptId, surface: "home", kind: parsed.kind,
+        outcome: fallbackSearch ? "fallback" : parsed.kind === "unmapped" ? "unmapped" : "success",
+        fallback: fallbackSearch ? "search" : parsed.kind === "unmapped" ? "build_guide" : undefined,
+        latency_ms: Math.round(performance.now() - started),
+      });
 
       if (parsed.kind === "firmware" && parsed.firmware) {
         // Answer inline, grounded against the recipe graph. The full firmware
         // page stays one click away, never automatic.
-        void loadRunGuide(parsed.firmware);
+        void loadRunGuide(parsed.firmware, attemptId);
         return;
       }
       if (parsed.kind === "filters") {
         setNeeds(parsed.filters);
-        void executeWizard(parsed.filters, scrollToResults);
+        void executeWizard(parsed.filters, scrollToResults, attemptId);
         return;
       }
       if (parsed.kind === "unmapped") {
@@ -149,24 +160,24 @@ export default function HomeView({ examples }: { examples: Example[] }) {
         // the build guide (firmware + real boards + honest add-on note) is
         // the primary answer now, so keyword matches run quietly in the
         // background instead of pulling focus down the page.
-        void loadBuildGuide(text);
+        void loadBuildGuide(text, attemptId);
         const next = { q: text };
         setFilters(next);
-        void executeSearch(next);
+        void executeSearch(next, undefined, attemptId);
         return;
       }
       // Unreadable: fall back to keyword search, but say so — never pass a
       // keyword dump off as understanding.
       const next = { q: text };
       setFilters(next);
-      void executeSearch(next, scrollToResults);
+      void executeSearch(next, scrollToResults, attemptId);
     } catch {
       // Inference unavailable (no key, rate-limited). The prompt must still work.
-      track("intent_error", { surface: "home", stage: "parse", fallback: "search", latency_ms: Math.round(performance.now() - started) });
+      track("intent_error", { attempt_id: attemptId, surface: "home", stage: "parse", outcome: "error", fallback: "search", latency_ms: Math.round(performance.now() - started) });
       setParse(null);
       const next = { q: text };
       setFilters(next);
-      void executeSearch(next, scrollToResults);
+      void executeSearch(next, scrollToResults, attemptId);
     } finally {
       setParsing(false);
     }

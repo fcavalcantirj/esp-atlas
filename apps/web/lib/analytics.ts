@@ -21,6 +21,7 @@ export type EventName =
   | "intent_submit"
   | "intent_result"
   | "intent_error"
+  | "guide_submit"
   | "guide_result"
   | "guide_error"
   | "intent_clarifier_click"
@@ -65,7 +66,9 @@ export type EventName =
   | "atlas_inspect"
   | "atlas_recipe_inspect"
   | "atlas_handoff"
-  | "atlas_search";
+  | "atlas_search"
+  | "atlas_lookup"
+  | "atlas_error";
 
 export type OutboundLinkType =
   | "source"
@@ -95,6 +98,11 @@ export type ResultOrigin =
   | "popular_firmware"
   | "intent"
   | "build_guide";
+
+// A fresh, unpersisted ID joins the bounded events from one user action.
+export function newAnalyticsAttemptId(): string {
+  return globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
+}
 
 export function track(name: EventName, params: EventParams = {}): void {
   const clean = trackedEventParams(name, params);
