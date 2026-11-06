@@ -1069,6 +1069,7 @@
       "id": "c-p-s-cardputer-syhnth",
       "pr_ref": "#1448",
       "repo": "oldtokage-collab/c.p.s.--cardputer-syhnth--",
+      "repo_id": 1285537940,
       "status": "merged",
       "timestamp": "2026-11-06T11:00:54.918343+00:00"
     },
@@ -1163,13 +1164,14 @@
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardelbrot": {
-      "expired_at": "2026-11-05T19:01:17.341039+00:00",
-      "expires": "2026-11-05T17:47:57.745208+00:00",
+      "expires": "2026-12-06T20:00:59.122628+00:00",
       "id": "cardelbrot",
       "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
       "repo": "robertklofgren/cardelbrot",
-      "status": "expired",
-      "timestamp": "2026-09-02T16:03:28.014835+00:00"
+      "repo_id": 905446540,
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "cardlife": {
       "expires": "2026-11-08T01:00:12.099811+00:00",
@@ -1441,6 +1443,16 @@
       "status": "rejected",
       "timestamp": "2026-10-09T02:00:12.078416+00:00"
     },
+    "cardputer-charge-station": {
+      "expires": "2026-12-06T20:00:59.122628+00:00",
+      "id": "cardputer-charge-station",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "andjiang0083/cardputer-charge-station",
+      "repo_id": 1431702365,
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
     "cardputer-chess": {
       "expires": "2026-11-08T02:00:12.078416+00:00",
       "id": "cardputer-chess",
@@ -1608,13 +1620,14 @@
       "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
     "cardputer-llm": {
-      "expired_at": "2026-11-05T19:01:17.341039+00:00",
-      "expires": "2026-11-05T17:47:57.745208+00:00",
+      "expires": "2026-12-06T20:00:59.122628+00:00",
       "id": "cardputer-llm",
       "pr_ref": null,
+      "reason": "below_floor: 5 stars / 1 forks",
       "repo": "layer812/cardputer_llm",
-      "status": "expired",
-      "timestamp": "2026-09-02T16:03:28.061505+00:00"
+      "repo_id": 929467204,
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "cardputer-message-terminal": {
       "expires": "2026-11-07T17:00:59.604583+00:00",
@@ -1734,15 +1747,14 @@
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-remote-cloner": {
-      "expired_at": "2026-11-05T19:01:17.341039+00:00",
-      "expires": "2026-11-05T19:00:58.979878+00:00",
+      "expires": "2026-12-06T20:00:59.122628+00:00",
       "id": "cardputer-remote-cloner",
       "pr_ref": null,
       "reason": "below_floor: 22 stars / 0 forks",
       "repo": "warko-san/cardputer-remote-cloner",
       "repo_id": 760701367,
-      "status": "expired",
-      "timestamp": "2026-10-06T19:00:58.979878+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "cardputer-rng": {
       "expires": "2026-11-08T01:00:12.099811+00:00",
@@ -1764,15 +1776,57 @@
       "timestamp": "2026-09-02T17:03:09.146031+00:00"
     },
     "cardputer-system-monitor": {
-      "expired_at": "2026-11-05T19:01:17.341039+00:00",
-      "expires": "2026-11-05T19:00:58.979878+00:00",
+      "expires": "2027-01-05T19:03:17+00:00",
+      "history": [
+        {
+          "expired_at": "2026-11-05T19:01:17.341039+00:00",
+          "expires": "2026-11-05T19:00:58.979878+00:00",
+          "id": "cardputer-system-monitor",
+          "pr_ref": null,
+          "reason": "below_floor: 24 stars / 2 forks",
+          "repo": "gdantas04/cardputer-system-monitor",
+          "repo_id": 831377003,
+          "status": "expired",
+          "timestamp": "2026-10-06T19:00:58.979878+00:00"
+        },
+        {
+          "expires": "2027-01-05T19:03:17+00:00",
+          "id": "cardputer-system-monitor",
+          "pr_ref": null,
+          "reason": "needs_review_target: owner review raised in #1496",
+          "repo": "gdantas04/cardputer-system-monitor",
+          "repo_id": 831377003,
+          "review": {
+            "evidence": null,
+            "evidence_rev": null,
+            "outcome": "open",
+            "pr_ref": "#1496",
+            "raised_at": "2026-11-06T19:03:17+00:00"
+          },
+          "status": "rejected",
+          "timestamp": "2026-11-06T19:03:17+00:00"
+        }
+      ],
       "id": "cardputer-system-monitor",
       "pr_ref": null,
-      "reason": "below_floor: 24 stars / 2 forks",
+      "reason": "needs_review_target: owner review raised in #1496",
       "repo": "gdantas04/cardputer-system-monitor",
       "repo_id": 831377003,
-      "status": "expired",
-      "timestamp": "2026-10-06T19:00:58.979878+00:00"
+      "review": {
+        "evidence": {
+          "downloads": 2514,
+          "editorial_home": null,
+          "forks": 2,
+          "source": "2024-07-24T13:26:39Z",
+          "stars": 25
+        },
+        "evidence_rev": "9052a13b0207",
+        "outcome": "open",
+        "pr_ref": "#1496",
+        "raised_at": "2026-11-06T19:03:17+00:00"
+      },
+      "status": "rejected",
+      "timestamp": "2026-11-06T19:03:17+00:00"
     },
     "cardputer-typeless": {
       "expires": "2026-11-08T02:00:12.078416+00:00",
@@ -1803,6 +1857,16 @@
       "repo_id": 1208489670,
       "status": "rejected",
       "timestamp": "2026-10-09T02:00:12.078416+00:00"
+    },
+    "cardputer-webcam-viewer": {
+      "expires": "2026-12-06T20:00:59.122628+00:00",
+      "id": "cardputer-webcam-viewer",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "lullaby232/cardputer-webcam-viewer",
+      "repo_id": 1441892169,
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "cardputer-webradio": {
       "expires": "2026-11-08T02:00:12.078416+00:00",
@@ -1866,13 +1930,14 @@
       "timestamp": "2026-10-09T02:00:12.078416+00:00"
     },
     "cardputeradv-cc1101-manufactured": {
-      "expired_at": "2026-11-05T19:01:17.341039+00:00",
-      "expires": "2026-11-05T17:47:57.745208+00:00",
+      "expires": "2026-12-06T20:00:59.122628+00:00",
       "id": "cardputeradv-cc1101-manufactured",
       "pr_ref": null,
+      "reason": "below_floor: 2 stars / 1 forks",
       "repo": "girs1982/cardputeradv-cc1101-manufactured",
-      "status": "expired",
-      "timestamp": "2026-09-02T16:03:28.033508+00:00"
+      "repo_id": 1121289919,
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "cardputeradv-motionlab": {
       "expired_at": "2026-11-05T19:01:17.341039+00:00",
@@ -1894,15 +1959,14 @@
       "timestamp": "2026-10-09T02:00:12.078416+00:00"
     },
     "cardputeradvanceddoom": {
-      "expired_at": "2026-11-05T19:01:17.341039+00:00",
-      "expires": "2026-11-05T19:00:58.979878+00:00",
+      "expires": "2026-12-06T20:00:59.122628+00:00",
       "id": "cardputeradvanceddoom",
       "pr_ref": null,
-      "reason": "below_floor: 13 stars / 3 forks",
+      "reason": "below_floor: 13 stars / 4 forks",
       "repo": "zspuspoki/cardputeradvanceddoom",
       "repo_id": 1135891973,
-      "status": "expired",
-      "timestamp": "2026-10-06T19:00:58.979878+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "cardputergpsmap": {
       "expires": "2026-11-08T15:00:11.478381+00:00",
@@ -1944,13 +2008,14 @@
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
     },
     "cardputermictalk": {
-      "expired_at": "2026-11-05T19:01:17.341039+00:00",
-      "expires": "2026-11-05T17:47:57.745208+00:00",
+      "expires": "2026-12-06T20:00:59.122628+00:00",
       "id": "cardputermictalk",
       "pr_ref": null,
+      "reason": "below_floor: 8 stars / 0 forks",
       "repo": "ns96/cardputermictalk",
-      "status": "expired",
-      "timestamp": "2026-09-02T16:03:28.037229+00:00"
+      "repo_id": 1103132705,
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "cardputermidimonitor": {
       "expired_at": "2026-11-05T19:01:17.341039+00:00",
@@ -2100,13 +2165,14 @@
       "timestamp": "2026-10-14T06:00:59.832632+00:00"
     },
     "cardtastic": {
-      "expired_at": "2026-11-05T19:01:17.341039+00:00",
-      "expires": "2026-11-05T17:47:57.745208+00:00",
+      "expires": "2026-12-06T20:00:59.122628+00:00",
       "id": "cardtastic",
       "pr_ref": null,
+      "reason": "below_floor: 7 stars / 0 forks",
       "repo": "reydeargentina/cardtastic",
-      "status": "expired",
-      "timestamp": "2026-09-02T17:03:09.101221+00:00"
+      "repo_id": 1134223189,
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "cardtube": {
       "expires": "2026-12-05T20:00:59.980852+00:00",
@@ -2119,15 +2185,14 @@
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
     "carduboy-arduboy-for-cardputer": {
-      "expired_at": "2026-11-05T19:01:17.341039+00:00",
-      "expires": "2026-11-05T19:00:58.979878+00:00",
+      "expires": "2026-12-06T20:00:59.122628+00:00",
       "id": "carduboy-arduboy-for-cardputer",
       "pr_ref": null,
-      "reason": "below_floor: 5 stars / 1 forks",
+      "reason": "below_floor: 6 stars / 1 forks",
       "repo": "bomberman30/carduboy-arduboy-for-cardputer",
       "repo_id": 1133080098,
-      "status": "expired",
-      "timestamp": "2026-10-06T19:00:58.979878+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "cardui": {
       "expires": "2026-11-08T01:00:12.099811+00:00",
@@ -2219,6 +2284,16 @@
       "repo_id": 1395566008,
       "status": "rejected",
       "timestamp": "2026-11-03T03:00:59.632283+00:00"
+    },
+    "christdadriver": {
+      "expires": "2026-12-06T20:00:59.122628+00:00",
+      "id": "christdadriver",
+      "pr_ref": null,
+      "reason": "already_catalogued: chrisdacrunk/christdadriver is already in the atlas",
+      "repo": "chrisdacrunk/christdadriver",
+      "repo_id": 1401740984,
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "christmas-tree-clock": {
       "expires": "2026-11-08T02:00:12.078416+00:00",
@@ -2942,6 +3017,22 @@
       "repo_id": 1284490908,
       "status": "rejected",
       "timestamp": "2026-10-09T13:00:11.675780+00:00"
+    },
+    "eight-sleep-m5stack-atoms3": {
+      "expires": "2027-01-04T13:02:43+00:00",
+      "id": "eight-sleep-m5stack-atoms3",
+      "pr_ref": null,
+      "reason": "needs_review_target: owner review raised in #1442",
+      "repo": "jkpe/eight-sleep-m5stack-atoms3",
+      "review": {
+        "evidence": null,
+        "evidence_rev": null,
+        "outcome": "closed",
+        "pr_ref": "#1442",
+        "raised_at": "2026-11-05T13:02:43+00:00"
+      },
+      "status": "rejected",
+      "timestamp": "2026-11-05T13:02:43+00:00"
     },
     "eiswolfs-flightradar-cyd": {
       "expires": "2026-11-08T13:00:11.675780+00:00",
@@ -3687,6 +3778,22 @@
       "status": "seen",
       "timestamp": "2026-10-12T20:00:11.871872+00:00"
     },
+    "groki-bot": {
+      "expires": "2027-01-04T04:02:36+00:00",
+      "id": "groki-bot",
+      "pr_ref": null,
+      "reason": "needs_review_target: owner review raised in #1432",
+      "repo": "josssphzhou/groki-bot",
+      "review": {
+        "evidence": null,
+        "evidence_rev": null,
+        "outcome": "closed",
+        "pr_ref": "#1432",
+        "raised_at": "2026-11-05T04:02:36+00:00"
+      },
+      "status": "rejected",
+      "timestamp": "2026-11-05T04:02:36+00:00"
+    },
     "grovenfc": {
       "expires": "2026-11-30T18:00:59.645495+00:00",
       "id": "grovenfc",
@@ -3755,6 +3862,22 @@
       "repo_id": 1115714307,
       "status": "expired",
       "timestamp": "2026-09-10T00:00:50.127806+00:00"
+    },
+    "hacking-pentesting-utils": {
+      "expires": "2027-01-04T12:02:47+00:00",
+      "id": "hacking-pentesting-utils",
+      "pr_ref": null,
+      "reason": "needs_review_target: owner review raised in #1441",
+      "repo": "soynx/hacking-pentesting-utils",
+      "review": {
+        "evidence": null,
+        "evidence_rev": null,
+        "outcome": "closed",
+        "pr_ref": "#1441",
+        "raised_at": "2026-11-05T12:02:47+00:00"
+      },
+      "status": "rejected",
+      "timestamp": "2026-11-05T12:02:47+00:00"
     },
     "hakrwatch": {
       "expired_at": "2026-10-12T20:00:11.871872+00:00",
@@ -4531,6 +4654,15 @@
       "status": "seen",
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
+    "launcher-1897200000000000010": {
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "id": "launcher-1897200000000000010",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'atomxiaozhi user:peien'",
+      "repo": "launcher:1897200000000000010",
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
     "launcher-1897200000000000023": {
       "expires": "2026-11-12T20:00:59.980852+00:00",
       "id": "launcher-1897200000000000023",
@@ -4548,6 +4680,15 @@
       "repo": "launcher:1897200000000000126",
       "status": "rejected",
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
+    },
+    "launcher-1897200000000000274": {
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "id": "launcher-1897200000000000274",
+      "pr_ref": null,
+      "reason": "no_source_repo: no searchable name tokens or owner",
+      "repo": "launcher:1897200000000000274",
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "launcher-1897200000000000291": {
       "expires": "2026-11-12T20:00:59.980852+00:00",
@@ -4567,6 +4708,15 @@
       "status": "rejected",
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
+    "launcher-1897200000000000938": {
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "id": "launcher-1897200000000000938",
+      "pr_ref": null,
+      "reason": "no_source_repo: 28 matches for 'userdemo user:m5stack'",
+      "repo": "launcher:1897200000000000938",
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
     "launcher-1897200000000001155": {
       "expires": "2026-11-12T20:00:59.980852+00:00",
       "id": "launcher-1897200000000001155",
@@ -4575,6 +4725,42 @@
       "repo": "launcher:1897200000000001155",
       "status": "rejected",
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
+    },
+    "launcher-1897200000000001167": {
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "id": "launcher-1897200000000001167",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'blynkuniversal user:peien'",
+      "repo": "launcher:1897200000000001167",
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
+    "launcher-1897200000000001281": {
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "id": "launcher-1897200000000001281",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'atomu stt user:m5stack'",
+      "repo": "launcher:1897200000000001281",
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
+    "launcher-1897200000000001435": {
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "id": "launcher-1897200000000001435",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'tasmotafirmware user:peien'",
+      "repo": "launcher:1897200000000001435",
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
+    "launcher-1897200000000001652": {
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "id": "launcher-1897200000000001652",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'spiffsfile management system user:peien'",
+      "repo": "launcher:1897200000000001652",
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "launcher-1897200000000001737": {
       "expires": "2026-11-12T20:00:59.980852+00:00",
@@ -4594,6 +4780,24 @@
       "status": "rejected",
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
+    "launcher-1897200000000002066": {
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "id": "launcher-1897200000000002066",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'afternoon paralysis user:jrdntnnr'",
+      "repo": "launcher:1897200000000002066",
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
+    "launcher-1897200000000002434": {
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "id": "launcher-1897200000000002434",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:1897200000000002434",
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
     "launcher-1897200000000002468": {
       "expires": "2026-11-12T20:00:59.980852+00:00",
       "id": "launcher-1897200000000002468",
@@ -4612,6 +4816,15 @@
       "status": "rejected",
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
+    "launcher-1897200000000002873": {
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "id": "launcher-1897200000000002873",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:1897200000000002873",
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
     "launcher-1897200000000002904": {
       "expires": "2026-11-12T20:00:59.980852+00:00",
       "id": "launcher-1897200000000002904",
@@ -4620,6 +4833,15 @@
       "repo": "launcher:1897200000000002904",
       "status": "rejected",
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
+    },
+    "launcher-1897200000000003208": {
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "id": "launcher-1897200000000003208",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'printer emqx user:fancyoung'",
+      "repo": "launcher:1897200000000003208",
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "launcher-18b280f247c39830af38681b63e0d4a8": {
       "expires": "2026-11-12T05:01:00.482196+00:00",
@@ -6034,15 +6256,14 @@
       "timestamp": "2026-10-09T22:00:11.580160+00:00"
     },
     "m5-clicker-hamster": {
-      "expired_at": "2026-11-05T19:01:17.341039+00:00",
-      "expires": "2026-11-05T19:00:58.979878+00:00",
+      "expires": "2026-12-06T20:00:59.122628+00:00",
       "id": "m5-clicker-hamster",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "m5dev1000/m5-clicker-hamster",
       "repo_id": 850672057,
-      "status": "expired",
-      "timestamp": "2026-10-06T19:00:58.979878+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "m5-crystal-firmware": {
       "expires": "2026-11-08T03:00:12.533071+00:00",
@@ -8789,7 +9010,7 @@
       "pr_ref": "#1480",
       "repo": "plummerssoftwarellc/nightdriverstrip",
       "status": "proposed",
-      "timestamp": "2026-11-06T14:00:55.181895+00:00"
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "nikos": {
       "expired_at": "2026-10-10T05:00:11.491118+00:00",
@@ -8978,15 +9199,14 @@
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
     "operating-system-cardputer": {
-      "expired_at": "2026-11-05T19:01:17.341039+00:00",
-      "expires": "2026-11-05T19:00:58.979878+00:00",
+      "expires": "2026-12-06T20:00:59.122628+00:00",
       "id": "operating-system-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "erwantesti23/operating-system-cardputer",
       "repo_id": 893132542,
-      "status": "expired",
-      "timestamp": "2026-10-06T19:00:58.979878+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "operating-system-code": {
       "expires": "2026-10-11T13:00:49.050627+00:00",
@@ -9708,6 +9928,22 @@
       "repo_id": 1109514517,
       "status": "expired",
       "timestamp": "2026-09-11T16:00:54.676058+00:00"
+    },
+    "quotaframe": {
+      "expires": "2027-01-05T00:04:11+00:00",
+      "id": "quotaframe",
+      "pr_ref": null,
+      "reason": "needs_review_target: owner review raised in #1463",
+      "repo": "emuqi/quotaframe",
+      "review": {
+        "evidence": null,
+        "evidence_rev": null,
+        "outcome": "closed",
+        "pr_ref": "#1463",
+        "raised_at": "2026-11-06T00:04:11+00:00"
+      },
+      "status": "rejected",
+      "timestamp": "2026-11-06T00:04:11+00:00"
     },
     "r8atoms3r": {
       "expired_at": "2026-10-11T17:00:12.065810+00:00",
@@ -10512,6 +10748,13 @@
       "repo_id": 1102036181,
       "status": "expired",
       "timestamp": "2026-09-11T20:01:00.775055+00:00"
+    },
+    "squachwatch-cyd": {
+      "id": "squachwatch-cyd",
+      "pr_ref": "#1496",
+      "repo": "skizzophrenic/squachwatch-cyd",
+      "status": "proposed",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "stack-chan-tester": {
       "expired_at": "2026-10-11T21:00:11.605277+00:00",
@@ -11529,13 +11772,14 @@
       "timestamp": "2026-09-12T05:00:34.806916+00:00"
     },
     "whisplay-groq-chatbot": {
-      "expired_at": "2026-11-05T19:01:17.341039+00:00",
-      "expires": "2026-11-05T17:47:57.745208+00:00",
+      "expires": "2026-12-06T20:00:59.122628+00:00",
       "id": "whisplay-groq-chatbot",
       "pr_ref": null,
+      "reason": "below_floor: 1 stars / 1 forks",
       "repo": "coreymillia/whisplay-groq-chatbot",
-      "status": "expired",
-      "timestamp": "2026-09-02T17:03:09.188711+00:00"
+      "repo_id": 1227776530,
+      "status": "rejected",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "wi-pwn": {
       "expired_at": "2026-09-19T15:39:16.007271+00:00",
@@ -12023,6 +12267,7 @@
     "amiika/bytebed": "bytebed",
     "amin45mh/custom-m5core2-factorytest": "custom-m5core2-factorytest",
     "andgohq/seed-phrase-checker": "seed-phrase-checker",
+    "andjiang0083/cardputer-charge-station": "cardputer-charge-station",
     "andjiang0083/cyber-clock": "cyber-clock",
     "andjiang0083/gbcams": "gbcams",
     "andrea-dandrea/coreink-meteo": "coreink-meteo",
@@ -12111,6 +12356,7 @@
     "chillyc0de/totp-auth-for-cardputer-adv": "totp-auth-for-cardputer-adv",
     "chlp/meme-board": "meme-board",
     "chongjiazhen/cardputer-puzzles": "cardputer-puzzles",
+    "chrisdacrunk/christdadriver": "christdadriver",
     "chrisdacrunk/little-devhelper": "little-devhelper",
     "chrisdiana/breezybox-cardputer": "breezybox-cardputer",
     "ciniml/m5stack_matter_examples": "m5stack-matter-examples",
@@ -12253,6 +12499,7 @@
     "emanuelelaface/cardputer-aprs": "cardputer-aprs",
     "embedded-music/pattern256": "pattern256",
     "emilnier/m5cardputer-ir-tool": "m5cardputer-ir-tool",
+    "emuqi/quotaframe": "quotaframe",
     "endarthur/relaykvm": "relaykvm",
     "enemyofglados/cores3-env3-monitor": "cores3-env3-monitor",
     "enemyofglados/cores3_rom_launcher": "cores3-rom-launcher",
@@ -12435,6 +12682,7 @@
     "jimgat/cym-nm28c5": "cym-nm28c5",
     "jjugs": "jjugs",
     "jjugs/cardputer-laptop-monitor": "cardputer-laptop-monitor",
+    "jkpe/eight-sleep-m5stack-atoms3": "eight-sleep-m5stack-atoms3",
     "jl1nie/wifikey2": "wifikey2",
     "joejee90/cardputer-camera-companion": "cardputer-camera-companion",
     "joejee90/tiny-journal": "tiny-journal",
@@ -12442,6 +12690,7 @@
     "jojorel/rfid-pn532-i2c-cardputer": "rfid-pn532-i2c-cardputer",
     "jonaslacerda/crowos": "crowos",
     "jong-9999/nemomodified.git": "nemomodified",
+    "josssphzhou/groki-bot": "groki-bot",
     "jpmarquesss/m5stickcp2oscilloscope": "m5stickcp2oscilloscope",
     "jrdntnnr/m5chord": "m5chord",
     "jrydval/m5cardputer-env-iv-app": "m5cardputer-env-iv-app",
@@ -12523,16 +12772,27 @@
     "launcher:166d16d006eeb0b251cf18b92d258871": "launcher-166d16d006eeb0b251cf18b92d258871",
     "launcher:16d2c9ac8c0a7982e60fa99b98c1d368": "launcher-16d2c9ac8c0a7982e60fa99b98c1d368",
     "launcher:1897200000000000009": "launcher-1897200000000000009",
+    "launcher:1897200000000000010": "launcher-1897200000000000010",
     "launcher:1897200000000000023": "launcher-1897200000000000023",
     "launcher:1897200000000000126": "launcher-1897200000000000126",
+    "launcher:1897200000000000274": "launcher-1897200000000000274",
     "launcher:1897200000000000291": "launcher-1897200000000000291",
     "launcher:1897200000000000518": "launcher-1897200000000000518",
+    "launcher:1897200000000000938": "launcher-1897200000000000938",
     "launcher:1897200000000001155": "launcher-1897200000000001155",
+    "launcher:1897200000000001167": "launcher-1897200000000001167",
+    "launcher:1897200000000001281": "launcher-1897200000000001281",
+    "launcher:1897200000000001435": "launcher-1897200000000001435",
+    "launcher:1897200000000001652": "launcher-1897200000000001652",
     "launcher:1897200000000001737": "launcher-1897200000000001737",
     "launcher:1897200000000002035": "launcher-1897200000000002035",
+    "launcher:1897200000000002066": "launcher-1897200000000002066",
+    "launcher:1897200000000002434": "launcher-1897200000000002434",
     "launcher:1897200000000002468": "launcher-1897200000000002468",
     "launcher:1897200000000002584": "launcher-1897200000000002584",
+    "launcher:1897200000000002873": "launcher-1897200000000002873",
     "launcher:1897200000000002904": "launcher-1897200000000002904",
+    "launcher:1897200000000003208": "launcher-1897200000000003208",
     "launcher:18b280f247c39830af38681b63e0d4a8": "launcher-18b280f247c39830af38681b63e0d4a8",
     "launcher:1a9569cffe9c1a81b34e577fc1e8c7a4": "launcher-1a9569cffe9c1a81b34e577fc1e8c7a4",
     "launcher:1d67dee222a62c2550006206728b476c": "launcher-1d67dee222a62c2550006206728b476c",
@@ -12709,6 +12969,7 @@
     "lukasdurjan/airputer-for-cardputer-adv-cap-lora-1262-": "airputer-for-cardputer-adv-cap-lora-1262",
     "lukastrhan-hub/dino-and-bomb-game": "dino-and-bomb-game",
     "lukastrhan-hub/google-dino-for-m5stickcplus2": "google-dino-for-m5stickcplus2",
+    "lullaby232/cardputer-webcam-viewer": "cardputer-webcam-viewer",
     "lunarc3/ballisticcalc": "ballisticcalc",
     "lunarc3/cardputergpsmap": "cardputergpsmap",
     "lunarc3/cardputertiltjump": "cardputertiltjump",
@@ -12993,6 +13254,7 @@
     "simont73/schimihack": "schimihack",
     "sira-fiinikkusu/reterminal-sticky-voice-companion": "reterminal-sticky-voice-companion",
     "sjoyce1/plai-meshcore": "plai-meshcore",
+    "skizzophrenic/squachwatch-cyd": "squachwatch-cyd",
     "sky18dragon/ricoh-gr-live-view-shooting": "ricoh-gr-live-view-shooting",
     "skyper02/evil-m5project": "evil-m5project",
     "slowlane112/cardputer_8_bit_tape_loader": "cardputer-8-bit-tape-loader",
@@ -13012,6 +13274,7 @@
     "sourcels/xcalc_cardputer": "xcalc-cardputer",
     "soykhaler/tinycardputer": "tinycardputer",
     "soykhaler/zx-spectrum-cardputer-internal": "zx-spectrum-cardputer-internal",
+    "soynx/hacking-pentesting-utils": "hacking-pentesting-utils",
     "spreedated/cardcharge": "cardcharge",
     "squirmen/papers3weather": "papers3weather",
     "st4lk3r-unit/beamstalker": "beamstalker",
