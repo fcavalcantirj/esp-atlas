@@ -71,7 +71,8 @@ def recorder(script=None):
 def git_ok(wt_dir: Path):
     return recorder({
         ("remote", "get-url", "origin"): (0, "https://github.com/o/r.git\n"),
-        ("rev-parse", "origin/main"): (0, "6190d21abc\n"),
+        ("rev-parse", "--verify", "origin/main^{commit}"): (0, "6190d21abc\n"),
+        ("rev-parse", "--verify", "HEAD^{commit}"): (0, "6190d21abc\n"),   # the worktree's HEAD
         ("status", "--porcelain"): (0, ""),
         ("diff", "--cached", "--quiet"): (1, ""),   # something staged
         ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, "A\0data/firmware/newtool/firmware.md\0"),

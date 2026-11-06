@@ -1,0 +1,1370 @@
+{
+ "version": 1,
+ "source": "pam_feed",
+ "checked_at": "2026-11-06T04:22:34.124739Z",
+ "feeds": {
+  "products": {
+   "url": "https://pamfinds.com/api/products.json",
+   "fetched_at": "2026-11-06T04:22:34.124739Z",
+   "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+   "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+   "bytes": 110684
+  },
+  "specs": {
+   "url": "https://pamfinds.com/api/specs.json",
+   "fetched_at": "2026-11-06T04:22:34.124739Z",
+   "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+   "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+   "bytes": 349157
+  }
+ },
+ "leads": [
+  {
+   "source_id": "arduino-nano-esp32",
+   "name_hint": "Arduino Nano ESP32",
+   "chip_hint": "ESP32-S3",
+   "page": "https://pamfinds.com/esp32/arduino-nano-esp32/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "psram_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "wifi": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "ble": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "gpio_count": [
+     "https://docs.arduino.cc/hardware/nano-esp32/"
+    ],
+    "adc_channels": [
+     "https://docs.arduino.cc/hardware/nano-esp32/"
+    ],
+    "spi": [
+     "https://docs.arduino.cc/hardware/nano-esp32/"
+    ],
+    "i2c": [
+     "https://docs.arduino.cc/hardware/nano-esp32/"
+    ],
+    "uart": [
+     "https://docs.arduino.cc/hardware/nano-esp32/"
+    ],
+    "usb_type": [
+     "https://docs.arduino.cc/hardware/nano-esp32/"
+    ],
+    "input_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "operating_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://docs.arduino.cc/hardware/nano-esp32/"
+    ],
+    "form_factor": [
+     "https://docs.arduino.cc/hardware/nano-esp32/"
+    ]
+   },
+   "fingerprint": "fc279054ab4722d31c6e17c77257649f8dab0a49927d4477687fab0531e852a5",
+   "matches": [],
+   "status": "potential_identity_gap"
+  },
+  {
+   "source_id": "esp32-c3-devkitm",
+   "name_hint": "ESP32-C3-DevKitM-1",
+   "chip_hint": "ESP32-C3",
+   "page": "https://pamfinds.com/esp32/esp32-c3-devkitm/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"
+    ],
+    "wifi": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"
+    ],
+    "ble": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"
+    ],
+    "gpio_count": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/user_guide.html"
+    ],
+    "adc_channels": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/user_guide.html"
+    ],
+    "spi": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/user_guide.html"
+    ],
+    "i2c": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/user_guide.html"
+    ],
+    "uart": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/user_guide.html"
+    ],
+    "usb_type": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/user_guide.html"
+    ],
+    "input_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"
+    ],
+    "deep_sleep_ua": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/user_guide.html"
+    ],
+    "form_factor": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/user_guide.html"
+    ]
+   },
+   "fingerprint": "c54c4d5745c868dddea9e701800a097423cc454825c5d78b201ca0fdd3b1708f",
+   "matches": [
+    "esp32-c3-devkitm-1"
+   ],
+   "status": "possible_match"
+  },
+  {
+   "source_id": "esp32-c5-devkitc",
+   "name_hint": "ESP32-C5-DevKitC-1",
+   "chip_hint": "ESP32-C5",
+   "page": "https://pamfinds.com/esp32/esp32-c5-devkitc/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    ],
+    "lp_sram_kb": [
+     "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    ],
+    "wifi": [
+     "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    ],
+    "ble": [
+     "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    ],
+    "thread": [
+     "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    ],
+    "zigbee": [
+     "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    ],
+    "matter": [
+     "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    ],
+    "dual_band": [
+     "https://www.espressif.com/en/products/socs/esp32-c5"
+    ],
+    "gpio_count": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html"
+    ],
+    "adc_channels": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html"
+    ],
+    "spi": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html"
+    ],
+    "i2c": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html"
+    ],
+    "uart": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html"
+    ],
+    "usb_type": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html"
+    ],
+    "input_voltage": [
+     "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    ],
+    "deep_sleep_ua": [
+     "https://documentation.espressif.com/esp32-c5_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html"
+    ],
+    "form_factor": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c5/esp32-c5-devkitc-1/user_guide.html"
+    ]
+   },
+   "fingerprint": "24452d8d3ecd31977e0c38808e2a06fbe3dc20cd909cff0b08f5c04aa2ac8a82",
+   "matches": [
+    "esp32-c5-devkitc-1"
+   ],
+   "status": "possible_match"
+  },
+  {
+   "source_id": "esp32-c6-devkitc",
+   "name_hint": "ESP32-C6-DevKitC-1",
+   "chip_hint": "ESP32-C6",
+   "page": "https://pamfinds.com/esp32/esp32-c6-devkitc/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf"
+    ],
+    "cpu_lp_core": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf"
+    ],
+    "wifi": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf"
+    ],
+    "ble": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf"
+    ],
+    "thread": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf"
+    ],
+    "zigbee": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf"
+    ],
+    "matter": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf"
+    ],
+    "gpio_count": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html"
+    ],
+    "adc_channels": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html"
+    ],
+    "spi": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html"
+    ],
+    "i2c": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html"
+    ],
+    "uart": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html"
+    ],
+    "usb_type": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html"
+    ],
+    "input_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf"
+    ],
+    "deep_sleep_ua": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html"
+    ],
+    "form_factor": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html"
+    ]
+   },
+   "fingerprint": "ccc0e4c2dd0bf6f24e41d19ebd899b8ef20f42c363164abc1ee5708ce22261a2",
+   "matches": [
+    "esp32-c6-devkitc-1"
+   ],
+   "status": "possible_match"
+  },
+  {
+   "source_id": "esp32-cam",
+   "name_hint": "ESP32-CAM (AI-Thinker)",
+   "chip_hint": "ESP32",
+   "page": "https://pamfinds.com/esp32/esp32-cam/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "psram_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "wifi": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "ble": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "camera": [
+     "https://docs.platformio.org/en/latest/boards/espressif32/esp32cam.html"
+    ],
+    "camera_resolution": [
+     "https://docs.platformio.org/en/latest/boards/espressif32/esp32cam.html"
+    ],
+    "sd_card": [
+     "https://docs.platformio.org/en/latest/boards/espressif32/esp32cam.html"
+    ],
+    "gpio_count": [
+     "https://docs.platformio.org/en/latest/boards/espressif32/esp32cam.html"
+    ],
+    "flash_led": [
+     "https://docs.platformio.org/en/latest/boards/espressif32/esp32cam.html"
+    ],
+    "uart": [
+     "https://docs.platformio.org/en/latest/boards/espressif32/esp32cam.html"
+    ],
+    "usb_type": [
+     "https://docs.platformio.org/en/latest/boards/espressif32/esp32cam.html"
+    ],
+    "input_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "deep_sleep_ua": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://docs.platformio.org/en/latest/boards/espressif32/esp32cam.html"
+    ],
+    "form_factor": [
+     "https://docs.platformio.org/en/latest/boards/espressif32/esp32cam.html"
+    ]
+   },
+   "fingerprint": "eecc5269efac21e192c659f5982ca0793403646321f2049d79fb67602ee41dbd",
+   "matches": [],
+   "status": "potential_identity_gap"
+  },
+  {
+   "source_id": "esp32-devkitc",
+   "name_hint": "ESP32-DevKitC V4",
+   "chip_hint": "ESP32",
+   "page": "https://pamfinds.com/esp32/esp32-devkitc/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "wifi": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "ble": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "gpio_count": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/index.html"
+    ],
+    "adc_channels": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/index.html"
+    ],
+    "spi": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/index.html"
+    ],
+    "i2c": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/index.html"
+    ],
+    "uart": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/index.html"
+    ],
+    "usb_type": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/index.html"
+    ],
+    "input_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "deep_sleep_ua": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/index.html"
+    ],
+    "form_factor": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/index.html"
+    ]
+   },
+   "fingerprint": "dea38b16a0d96201f45dc3eb74934e2b965f2b34d0e9c4c8443c50631f7c0081",
+   "matches": [
+    "esp32-devkitc-v4"
+   ],
+   "status": "possible_match"
+  },
+  {
+   "source_id": "esp32-h2-devkitm",
+   "name_hint": "ESP32-H2-DevKitM-1",
+   "chip_hint": "ESP32-H2",
+   "page": "https://pamfinds.com/esp32/esp32-h2-devkitm/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_en.pdf"
+    ],
+    "ble": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_en.pdf"
+    ],
+    "thread": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_en.pdf"
+    ],
+    "zigbee": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_en.pdf"
+    ],
+    "matter": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_en.pdf"
+    ],
+    "ieee802154": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_en.pdf"
+    ],
+    "gpio_count": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html"
+    ],
+    "adc_channels": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html"
+    ],
+    "spi": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html"
+    ],
+    "i2c": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html"
+    ],
+    "uart": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html"
+    ],
+    "usb_type": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html"
+    ],
+    "input_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_en.pdf"
+    ],
+    "deep_sleep_ua": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html"
+    ],
+    "form_factor": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html"
+    ]
+   },
+   "fingerprint": "ef994412fbf98c11523c004f59c7c549b0ce236ff0d6fc427dd6bf11d448625b",
+   "matches": [
+    "esp32-h2-devkitm-1"
+   ],
+   "status": "possible_match"
+  },
+  {
+   "source_id": "esp32-p4-function-ev",
+   "name_hint": "ESP32-P4 Function EV Board",
+   "chip_hint": "ESP32-P4",
+   "page": "https://pamfinds.com/esp32/esp32-p4-function-ev/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_en.pdf"
+    ],
+    "cpu_lp_core": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_en.pdf"
+    ],
+    "ai_acceleration": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_en.pdf"
+    ],
+    "psram_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_en.pdf"
+    ],
+    "wireless_note": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html"
+    ],
+    "gpio_count": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html"
+    ],
+    "mipi_csi": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html"
+    ],
+    "mipi_dsi": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html"
+    ],
+    "usb_type": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html"
+    ],
+    "sdmmc": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html"
+    ],
+    "ethernet": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html"
+    ],
+    "spi": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html"
+    ],
+    "i2c": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html"
+    ],
+    "uart": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html"
+    ],
+    "adc_channels": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html"
+    ],
+    "input_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html"
+    ],
+    "form_factor": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html"
+    ]
+   },
+   "fingerprint": "6e67a9a5cf55e8db8f5f6c834123d887a5b93f8c258dcb1e862034028f61dac7",
+   "matches": [],
+   "status": "potential_identity_gap"
+  },
+  {
+   "source_id": "esp32-s2-devkitm",
+   "name_hint": "ESP32-S2-DevKitM-1",
+   "chip_hint": "ESP32-S2",
+   "page": "https://pamfinds.com/esp32/esp32-s2-devkitm/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+    ],
+    "psram_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+    ],
+    "wifi": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+    ],
+    "gpio_count": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+    ],
+    "adc_channels": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+    ],
+    "spi": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+    ],
+    "i2c": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+    ],
+    "uart": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+    ],
+    "usb_type": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+    ],
+    "input_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+    ],
+    "deep_sleep_ua": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+    ],
+    "form_factor": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+    ]
+   },
+   "fingerprint": "984732bc4d27728673e2266dabc4f312339a0a2b3f676eb25bccfaed3b4012b2",
+   "matches": [],
+   "status": "potential_identity_gap"
+  },
+  {
+   "source_id": "esp32-s3-devkitc",
+   "name_hint": "ESP32-S3-DevKitC-1",
+   "chip_hint": "ESP32-S3",
+   "page": "https://pamfinds.com/esp32/esp32-s3-devkitc/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "psram_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "wifi": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "ble": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "ai_acceleration": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "gpio_count": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/index.html"
+    ],
+    "adc_channels": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/index.html"
+    ],
+    "spi": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/index.html"
+    ],
+    "i2c": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/index.html"
+    ],
+    "uart": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/index.html"
+    ],
+    "usb_type": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/index.html"
+    ],
+    "camera_interface": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/index.html"
+    ],
+    "lcd_interface": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/index.html"
+    ],
+    "input_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "deep_sleep_ua": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/index.html"
+    ],
+    "form_factor": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/index.html"
+    ]
+   },
+   "fingerprint": "7167bf22b695dfe49ae4e25d8ac2ff342ceaaf63179f983c41435cab5091b352",
+   "matches": [
+    "esp32-s3-devkitc-1"
+   ],
+   "status": "possible_match"
+  },
+  {
+   "source_id": "freenove-esp32-wrover-kit",
+   "name_hint": "Freenove ESP32-WROVER Starter Kit",
+   "chip_hint": "ESP32",
+   "page": "https://pamfinds.com/kits/freenove-esp32-wrover-kit/",
+   "source_pointers": {
+    "included_board": [
+     "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+    ],
+    "component_count": [
+     "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+    ],
+    "tutorial_count": [
+     "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+    ],
+    "skill_level": [
+     "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+    ],
+    "includes_breadboard": [
+     "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+    ],
+    "includes_power_supply": [
+     "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+    ],
+    "includes_sensors": [
+     "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+    ],
+    "includes_display": [
+     "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+    ],
+    "includes_motors": [
+     "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+    ],
+    "includes_camera": [
+     "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+    ],
+    "project_book": [
+     "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+    ]
+   },
+   "fingerprint": "ca31b8dbed6eea51f76bd06c98774a96e11495d9b89dbe7b36ebed6dcf41d8a9",
+   "matches": [],
+   "status": "potential_identity_gap"
+  },
+  {
+   "source_id": "heltec-wifi-lora-32-v3",
+   "name_hint": "Heltec WiFi LoRa 32 V3",
+   "chip_hint": "ESP32-S3",
+   "page": "https://pamfinds.com/esp32/heltec-wifi-lora-32-v3/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "cpu_cores": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "flash_mb": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "sram_kb": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "wifi": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "ble": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "lora": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "lora_range": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "meshtastic": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "display": [
+     "https://heltec.org/project/wifi-lora-32-v3/"
+    ],
+    "gpio_count": [
+     "https://heltec.org/project/wifi-lora-32-v3/"
+    ],
+    "adc_channels": [
+     "https://heltec.org/project/wifi-lora-32-v3/"
+    ],
+    "spi": [
+     "https://heltec.org/project/wifi-lora-32-v3/"
+    ],
+    "i2c": [
+     "https://heltec.org/project/wifi-lora-32-v3/"
+    ],
+    "uart": [
+     "https://heltec.org/project/wifi-lora-32-v3/"
+    ],
+    "usb_type": [
+     "https://heltec.org/project/wifi-lora-32-v3/"
+    ],
+    "input_voltage": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "battery_charging": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "deep_sleep_ua": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "dimensions_mm": [
+     "https://heltec.org/project/wifi-lora-32-v3/"
+    ],
+    "form_factor": [
+     "https://heltec.org/project/wifi-lora-32-v3/"
+    ]
+   },
+   "fingerprint": "fcd39b33e00847bbd145241c5762bc3141215be214f68fb7c194f2d403ebfd31",
+   "matches": [
+    "heltec-wifi-lora-32-v3"
+   ],
+   "status": "possible_match"
+  },
+  {
+   "source_id": "heltec-wifi-lora-32-v4",
+   "name_hint": "Heltec WiFi LoRa 32 V4",
+   "chip_hint": "ESP32-S3",
+   "page": "https://pamfinds.com/esp32/heltec-wifi-lora-32-v4/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+    ],
+    "cpu_cores": [
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+    ],
+    "flash_mb": [
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+    ],
+    "sram_kb": [
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+    ],
+    "psram_mb": [
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+    ],
+    "wifi": [
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+    ],
+    "ble": [
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+    ],
+    "lora": [
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+    ],
+    "lora_tx_power": [
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+    ],
+    "meshtastic": [
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+    ],
+    "display": [
+     "https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/"
+    ],
+    "gps": [
+     "https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/"
+    ],
+    "usb_type": [
+     "https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/"
+    ],
+    "battery_charging": [
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+    ],
+    "deep_sleep_ua": [
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf"
+    ],
+    "dimensions_mm": [
+     "https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/"
+    ],
+    "form_factor": [
+     "https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/"
+    ]
+   },
+   "fingerprint": "e4bf3b30e2f4ee930ce296178887c84aee63d253e51b30f9ddcfc263759f7e5b",
+   "matches": [],
+   "status": "potential_identity_gap"
+  },
+  {
+   "source_id": "lilygo-t-beam-supreme",
+   "name_hint": "LILYGO T-Beam Supreme",
+   "chip_hint": "ESP32-S3",
+   "page": "https://pamfinds.com/esp32/lilygo-t-beam-supreme/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "cpu_cores": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "flash_mb": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "sram_kb": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "psram_mb": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "wifi": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "ble": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "lora": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "lora_range": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "meshtastic": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "gps": [
+     "https://lilygo.cc/en-us/products/t-beam-supreme"
+    ],
+    "display": [
+     "https://lilygo.cc/en-us/products/t-beam-supreme"
+    ],
+    "gpio_count": [
+     "https://lilygo.cc/en-us/products/t-beam-supreme"
+    ],
+    "spi": [
+     "https://lilygo.cc/en-us/products/t-beam-supreme"
+    ],
+    "i2c": [
+     "https://lilygo.cc/en-us/products/t-beam-supreme"
+    ],
+    "usb_type": [
+     "https://lilygo.cc/en-us/products/t-beam-supreme"
+    ],
+    "sd_card": [
+     "https://lilygo.cc/en-us/products/t-beam-supreme"
+    ],
+    "input_voltage": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "battery_charging": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "solar_charging": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "deep_sleep_ua": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "dimensions_mm": [
+     "https://lilygo.cc/en-us/products/t-beam-supreme"
+    ],
+    "form_factor": [
+     "https://lilygo.cc/en-us/products/t-beam-supreme"
+    ]
+   },
+   "fingerprint": "2665070be54d411ea0f30ecbdbe6e863a71cffa1ecc9fcfbdc1630517fa4a170",
+   "matches": [],
+   "status": "potential_identity_gap"
+  },
+  {
+   "source_id": "lilygo-t-deck",
+   "name_hint": "LilyGo T-Deck",
+   "chip_hint": "ESP32-S3",
+   "page": "https://pamfinds.com/esp32/lilygo-t-deck/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "cpu_cores": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "flash_mb": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "sram_kb": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "psram_mb": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "wifi": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "ble": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "lora": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "gps": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "display": [
+     "https://www.lilygo.cc/products/t-deck"
+    ],
+    "keyboard": [
+     "https://www.lilygo.cc/products/t-deck"
+    ],
+    "trackball": [
+     "https://www.lilygo.cc/products/t-deck"
+    ],
+    "speaker": [
+     "https://github.com/Xinyuan-LilyGO/T-Deck"
+    ],
+    "microphone": [
+     "https://www.lilygo.cc/products/t-deck"
+    ],
+    "usb_type": [
+     "https://www.lilygo.cc/products/t-deck"
+    ],
+    "sd_card": [
+     "https://www.lilygo.cc/products/t-deck"
+    ],
+    "battery": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "input_voltage": [
+     "https://www.semtech.com/products/wireless-rf/lora-connect/sx1262"
+    ],
+    "dimensions_mm": [
+     "https://www.lilygo.cc/products/t-deck"
+    ],
+    "weight_g": [
+     "https://www.lilygo.cc/products/t-deck"
+    ],
+    "form_factor": [
+     "https://www.lilygo.cc/products/t-deck"
+    ]
+   },
+   "fingerprint": "11a50b923c35b9e199cc306bd757dddcc9ccacc18a8da1da46b74d5c416b6e77",
+   "matches": [
+    "lilygo-t-deck"
+   ],
+   "status": "possible_match"
+  },
+  {
+   "source_id": "qt-py-esp32-s3",
+   "name_hint": "Adafruit QT Py ESP32-S3",
+   "chip_hint": "ESP32-S3",
+   "page": "https://pamfinds.com/esp32/qt-py-esp32-s3/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "wifi": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "ble": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "gpio_count": [
+     "https://learn.adafruit.com/adafruit-qt-py-esp32-s3"
+    ],
+    "adc_channels": [
+     "https://learn.adafruit.com/adafruit-qt-py-esp32-s3"
+    ],
+    "spi": [
+     "https://learn.adafruit.com/adafruit-qt-py-esp32-s3"
+    ],
+    "i2c": [
+     "https://learn.adafruit.com/adafruit-qt-py-esp32-s3"
+    ],
+    "uart": [
+     "https://learn.adafruit.com/adafruit-qt-py-esp32-s3"
+    ],
+    "usb_type": [
+     "https://learn.adafruit.com/adafruit-qt-py-esp32-s3"
+    ],
+    "stemma_qt": [
+     "https://learn.adafruit.com/adafruit-qt-py-esp32-s3"
+    ],
+    "input_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "deep_sleep_ua": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://learn.adafruit.com/adafruit-qt-py-esp32-s3"
+    ],
+    "form_factor": [
+     "https://learn.adafruit.com/adafruit-qt-py-esp32-s3"
+    ]
+   },
+   "fingerprint": "7ce3b2ebeb153ee10c748136cf41aae8bbd8597f5b1fd427f0adfc81a8a9847c",
+   "matches": [
+    "adafruit-qt-py-esp32-s3"
+   ],
+   "status": "possible_match"
+  },
+  {
+   "source_id": "t-display-s3",
+   "name_hint": "LILYGO T-Display S3",
+   "chip_hint": "ESP32-S3",
+   "page": "https://pamfinds.com/esp32/t-display-s3/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "psram_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "wifi": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "ble": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "display": [
+     "https://github.com/Xinyuan-LilyGO/T-Display-S3"
+    ],
+    "display_touch": [
+     "https://github.com/Xinyuan-LilyGO/T-Display-S3"
+    ],
+    "gpio_count": [
+     "https://github.com/Xinyuan-LilyGO/T-Display-S3"
+    ],
+    "adc_channels": [
+     "https://github.com/Xinyuan-LilyGO/T-Display-S3"
+    ],
+    "spi": [
+     "https://github.com/Xinyuan-LilyGO/T-Display-S3"
+    ],
+    "i2c": [
+     "https://github.com/Xinyuan-LilyGO/T-Display-S3"
+    ],
+    "uart": [
+     "https://github.com/Xinyuan-LilyGO/T-Display-S3"
+    ],
+    "usb_type": [
+     "https://github.com/Xinyuan-LilyGO/T-Display-S3"
+    ],
+    "input_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "deep_sleep_ua": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "battery_charging": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://github.com/Xinyuan-LilyGO/T-Display-S3"
+    ],
+    "form_factor": [
+     "https://github.com/Xinyuan-LilyGO/T-Display-S3"
+    ]
+   },
+   "fingerprint": "fbd1e923da013b18364930cd875392b7c3c50887e7affddaee1a134fb96834f6",
+   "matches": [
+    "lilygo-t-display-s3"
+   ],
+   "status": "possible_match"
+  },
+  {
+   "source_id": "thing-plus-esp32-s3",
+   "name_hint": "SparkFun Thing Plus - ESP32-S3",
+   "chip_hint": "ESP32-S3",
+   "page": "https://pamfinds.com/esp32/thing-plus-esp32-s3/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "psram_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "wifi": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "ble": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "gpio_count": [
+     "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+    ],
+    "adc_channels": [
+     "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+    ],
+    "spi": [
+     "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+    ],
+    "i2c": [
+     "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+    ],
+    "uart": [
+     "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+    ],
+    "usb_type": [
+     "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+    ],
+    "qwiic": [
+     "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+    ],
+    "sd_card": [
+     "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+    ],
+    "input_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "deep_sleep_ua": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "battery_charging": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "fuel_gauge": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+    ],
+    "form_factor": [
+     "https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html"
+    ]
+   },
+   "fingerprint": "292953c4751a5960ddd7458d3df2c5c09caa1ab0a37d51ddb3fe6d383092a8b6",
+   "matches": [],
+   "status": "potential_identity_gap"
+  },
+  {
+   "source_id": "xiao-esp32s3",
+   "name_hint": "Seeed Studio XIAO ESP32S3",
+   "chip_hint": "ESP32-S3",
+   "page": "https://pamfinds.com/esp32/xiao-esp32s3/",
+   "source_pointers": {
+    "cpu_arch": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "cpu_cores": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "cpu_freq_mhz": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "flash_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "sram_kb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "psram_mb": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "wifi": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "ble": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "gpio_count": [
+     "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/"
+    ],
+    "adc_channels": [
+     "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/"
+    ],
+    "spi": [
+     "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/"
+    ],
+    "i2c": [
+     "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/"
+    ],
+    "uart": [
+     "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/"
+    ],
+    "usb_type": [
+     "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/"
+    ],
+    "camera_connector": [
+     "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/"
+    ],
+    "input_voltage": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "deep_sleep_ua": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "battery_charging": [
+     "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+    ],
+    "dimensions_mm": [
+     "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/"
+    ],
+    "form_factor": [
+     "https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/"
+    ]
+   },
+   "fingerprint": "927c72a9323f2e109d9c122a727cf8d41006f2d333a14c54e28a436a8183df94",
+   "matches": [
+    "xiao-esp32s3"
+   ],
+   "status": "possible_match"
+  }
+ ]
+}

@@ -76,12 +76,17 @@ def test_owner_repo_rejects_non_github():
 
 # --- worktree lifecycle -------------------------------------------------------------------------
 
-def test_add_worktree_fetches_then_detaches_at_origin_main(tmp_path):
-    git = recorder({("rev-parse", "origin/main"): (0, "abc1234\n")})
+RESOLVED = {("rev-parse", "--verify"): (0, "abc1234\n")}         # origin/main and the worktree's HEAD
+
+
+def test_add_worktree_fetches_then_detaches_at_the_resolved_origin_main(tmp_path):
+    git = recorder(RESOLVED)
     wt = publish.add_worktree(git=git, root=tmp_path / "wt")
     assert git.calls[0] == ("fetch", "origin", "main")
     assert git.calls[1] == ("worktree", "prune")                    # stale entries from a killed tick
-    assert git.calls[2] == ("worktree", "add", "--detach", str(tmp_path / "wt"), "origin/main")
+    assert git.calls[2] == ("rev-parse", "--verify", "origin/main^{commit}")
+    assert git.calls[3] == ("worktree", "add", "--detach", str(tmp_path / "wt"), "abc1234")
+    assert git.calls[4] == ("-C", str(tmp_path / "wt"), "rev-parse", "--verify", "HEAD^{commit}")
     assert wt.base_sha == "abc1234"
     assert wt.path == tmp_path / "wt"
 
@@ -317,21 +322,21 @@ def test_publish_reports_a_failed_push_without_opening_a_pr():
 
 
 def test_no_git_call_ever_writes_to_main():
-    """The only `main`s allowed: `fetch origin main`, `worktree add … origin/main`, and the
-    `gh pr create --base main` API call. Never `checkout main`, `push origin main`, `reset` on
+    """The only `main`s allowed: `fetch origin main`, `rev-parse --verify origin/main^{commit}`, and
+    the `gh pr create --base main` API call. Never `checkout main`, `push origin main`, `reset` on
     main, `merge`, or a branch named main."""
-    git = _git_ok()
+    git = recorder({**RESOLVED, ("diff", "--cached", "--quiet"): (1, ""),
+                    ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, LOW_RISK),
+                    ("rev-parse", "HEAD"): (0, "feedbee\n")})
     git_calls_before = len(git.calls)
-    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/8\n"),
-                   ("rev-parse", "origin/main"): (0, "x\n")})
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/8\n")})
     wt = publish.add_worktree(git=git, root=Path("/tmp/jr-tick-fake"))
     publish.publish(wt, ["data/firmware/x"], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK)
     publish.remove_worktree(wt, git=git)
     for c in norm_calls(git)[git_calls_before:]:
         if "main" in c or "origin/main" in c:
             assert c in (("fetch", "origin", "main"),
-                         ("worktree", "add", "--detach", "/tmp/jr-tick-fake", "origin/main"),
-                         ("rev-parse", "origin/main")), c
+                         ("rev-parse", "--verify", "origin/main^{commit}")), c
         assert c[0] not in ("merge", "rebase", "reset") or c == ("reset", "-q", "--", "data/firmware/x", "jr/proposed_ledger.json"), c
         if c[0] == "push":
             assert "main" not in c
@@ -393,7 +398,7 @@ def test_a_failed_git_add_is_reported_not_read_as_nothing_to_publish():
 def test_add_worktree_prunes_first_and_removes_the_temp_dir_when_add_fails(tmp_path):
     d = tmp_path / "wt"
     d.mkdir()
-    git = recorder({("worktree", "add"): (128, "fatal: nope")})
+    git = recorder({**RESOLVED, ("worktree", "add"): (128, "fatal: nope")})
     with pytest.raises(RuntimeError):
         publish.add_worktree(git=git, root=d)
     assert not d.exists()

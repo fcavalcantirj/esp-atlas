@@ -112,6 +112,65 @@ miner-resolver repair, verify a fresh successful miner run at code containing th
 merge, its resolved target and expected classification. The receipt must name the
 same merge and be observed on the current UTC day; HTTP success alone is insufficient.
 
+### Autonomous RECONCILE closure (broker, 2026-11-06)
+
+A linked item that is never verified never closes, and an open linked item is RECONCILE on
+every run, so it blocks all new work, PAM leads included. The daily broker therefore verifies
+it itself (`jr/demand_closure.py`, called from `demand_broker.reserve`):
+
+- On RECONCILE for a committed `linked` candidate with exactly one linked PR, read that PR
+  through the injected `gh` (`state`, `mergedAt`, `mergeCommit`). Unreadable PR state, several
+  linked PRs or a candidate absent from the committed queue stay pending. Several PRs on the work's
+  deterministic branch defer the closure, as they defer START.
+- `demand_resolution`: the observation is this run's miner result: the snapshot just mined,
+  at the catalog revision mined (`wt.base_sha`, passed in explicitly by `demand_run`).
+  `exit_code` 0 is recorded only because the broker runs after a successful mine (a failed
+  mine never reaches it). `contains_merge` is true only when `git merge-base --is-ancestor
+  <merge> <revision>` says so; a negative or unknown answer is false. `resolved` and `gap` come
+  from the one snapshot item whose own term is the candidate's term. A wording merged into
+  another item (`raw_terms`) is not proof, because the group's `resolved` describes its first
+  wording, so that case stays pending. `checked_at` is the run's UTC clock, so a merge that
+  lands mid-run stays pending.
+- `catalog_search`: the broker never performs or invents a live search, so such work stays
+  pending with that reason until a real deployment-search receipt exists.
+- `research_work.verify_resolution` is the only judge and is not weakened by the broker.
+- `delivered`: the queue candidate becomes `closed` with `outcome` = the verification evidence,
+  `closed_on`, and one appended `history` entry (`event: closed`, carrying any earlier `outcome`
+  as `previous_outcome`); the work receipt becomes
+  `delivered` with a `resolution` object carrying the same evidence. Provenance, attempt and
+  linked work are kept; earlier history is never rewritten; rows are never deleted.
+- `rejected` (PR closed unmerged): the receipt becomes `rejected`; the queue candidate becomes
+  `closed` with `outcome.status: rejected` and its reason. It stays `closed` rather than a new
+  `rejected` queue status because `plan_work` treats an unknown status as blocking every run,
+  and the reopening rule applies only to `closed`. A rejection is never labelled delivered.
+- `pending`: nothing is written; the reason is reported on the run line.
+- Both files are written with the queue's atomic writer under START's compare-and-swap guard,
+  extended to both files: if either changed since the call read it, neither is written. The
+  queue closes first (the reverse order would leave a settled receipt beside a `linked`
+  candidate, which would RECONCILE on every run). If the receipts write then fails, the queue
+  is restored to the exact bytes the call read, and only while the queue still holds exactly
+  the bytes this closure wrote. A queue another writer changed after the closure's write is
+  never overwritten. Every such failure is a `defer`, never a closure.
+- An inconsistent pair is a candidate `closed` by a closure (its last `history` entry is
+  `event: closed` naming the `work` id) while a receipt for that work id is still live (not
+  delivered, rejected or abandoned). It arises only when the receipts write and the restore both
+  fail, or a foreign queue write wins the race. `plan_work` reports it as blocking (no new START,
+  so no PAM lead either) until a human settles that receipt; nothing repairs it automatically.
+  `demand_run` refuses to publish while the run's queue and its landing receipts hold such a pair
+  (even a PAM-only publication that would not stage the queue: refusing errs safe).
+- After a closure, the broker re-plans once in the same call. The next eligible candidate starts
+  only if `new_pam`, `MAX_NEW_PER_DAY`, remote recovery and every other existing gate allow it.
+  The outcome reports both the closed key and the newly started key. On 2026-11-06 itself the
+  daily cap is already used by the closed item's own reservation, so the re-plan defers.
+- `demand_run` lands `research-queue.json` and `work-receipts.json` in the demand PR whenever a
+  closure changed them, including on an otherwise unchanged demand day. It recognizes a closure
+  only from the broker's explicit result, never from before/after file bytes, so a file another
+  writer changed is never landed as this run's work. The broker also hands that result to a
+  caller-supplied list as soon as both files are durable, so the closure still lands if the
+  re-plan then raises. Its second PAM pass
+  (`new_pam`) also runs after a closure, not only after a NOOP. That pass is `close=False`, so a
+  run closes at most one item.
+
 The first genuine candidate identified is GSC `fnk0104s`, snapshot 2026-11-05,
 window 2026-10-08..2026-11-05: 22 impressions, 1 click, position 8.2, UNRESOLVED.
 Public search already returns `freenove-fnk0104s`. Its new work is therefore a

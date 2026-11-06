@@ -71,7 +71,8 @@ def git_ok(wt_dir: Path, staged=True, diff="A\0data/firmware/x/firmware.md\0"):
     """`diff` is the staged `--name-status -z` answer; the default (a new firmware) routes REVIEW."""
     return recorder({
         ("remote", "get-url", "origin"): (0, "https://github.com/o/r.git\n"),
-        ("rev-parse", "origin/main"): (0, "6190d21abc\n"),
+        ("rev-parse", "--verify", "origin/main^{commit}"): (0, "6190d21abc\n"),
+        ("rev-parse", "--verify", "HEAD^{commit}"): (0, "6190d21abc\n"),   # the worktree's HEAD
         ("status", "--porcelain"): (0, ""),
         ("diff", "--cached", "--quiet"): (1 if staged else 0, ""),
         ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, diff),
@@ -313,7 +314,8 @@ def test_real_run_with_a_memory_change_uses_a_worktree_and_ships_the_ledger_only
     calls = norm(git)
     i = calls.index(("fetch", "origin", "main"))
     assert calls[i + 1] == ("worktree", "prune")
-    assert calls[i + 2] == ("worktree", "add", "--detach", str(wt_dir), "origin/main")
+    assert calls[i + 2] == ("rev-parse", "--verify", "origin/main^{commit}")
+    assert calls[i + 3] == ("worktree", "add", "--detach", str(wt_dir), "6190d21abc")   # the resolved commit
     assert all(c[0] != "worktree" for c in calls[:i])            # nothing before the fetch
     assert ("worktree", "remove", "--force", str(wt_dir)) in calls
     assert ("add", "--", "jr/proposed_ledger.json") in calls
