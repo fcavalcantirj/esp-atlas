@@ -74,10 +74,10 @@ first-party term coverage; GSC supplies unconstrained search terms. Set localSto
 
 | Event | Params |
 |---|---|
-| `wizard_submit` / `wizard_results` / `wizard_empty` / `wizard_error` | `form, budget, radio, band, type, ieee802154, usb_native, needs_count, result_count, status` |
-| `search_submit` / `search_results` / `search_empty` / `search_error` | `q_length, q (eligible public model token only on submit/empty), type, radio, band, form, protocol, filters_length, filter_count, has_query, result_count, status` |
-| `intent_submit` / `intent_result` / `intent_error` | `surface, q_length, kind, stage, fallback, latency_ms` |
-| `guide_result` / `guide_error` | `surface, kind, outcome, status` |
+| `wizard_submit` / `wizard_results` / `wizard_empty` / `wizard_error` | `attempt_id, surface, outcome, latency_ms, form, budget, radio, band, type, ieee802154, usb_native, needs_count, result_count, status` |
+| `search_submit` / `search_results` / `search_empty` / `search_error` | `attempt_id, surface, outcome, latency_ms, q_length, q (eligible public model token only on submit/empty), type, radio, band, form, protocol, filters_length, filter_count, has_query, result_count, status` |
+| `intent_submit` / `intent_result` / `intent_error` | `attempt_id, surface, outcome, q_length, kind, stage, fallback, latency_ms` |
+| `guide_submit` / `guide_result` / `guide_error` | `attempt_id, surface, kind, outcome, status, fallback, latency_ms` |
 | `preset_click`, `relax_filter` | `preset` (compare page) · `removed_key` |
 | `example_click` | `example, kind (firmware\|needs)` — a generated home example chip |
 | `result_click` | `part_id, part_type, origin (wizard\|search\|related\|compare\|browse\|brand), position` |
@@ -87,7 +87,16 @@ first-party term coverage; GSC supplies unconstrained search terms. Set localSto
 | `theme_change`, `font_size_change` | `theme` · `scale, direction` |
 | `outbound_click` | `link_type (source\|github_edit\|github_view\|github_repo\|contributing\|agents\|issues\|new_issue\|discussions\|license\|data_folder\|llms_txt\|api_docs), host, part_id?, field?` |
 | `api_error`, `not_found` | `endpoint, status` · `path` |
-| `atlas_lens_select`, `atlas_inspect`, `atlas_recipe_inspect`, `atlas_handoff`, `atlas_search` | `lens` · `record_id, record_type, lens` · `recipe_id, tier, lens` · `record_id, record_type` · `q_length` |
+| `atlas_lens_select`, `atlas_inspect`, `atlas_recipe_inspect`, `atlas_handoff`, `atlas_search`, `atlas_lookup`, `atlas_error` | `lens` · `record_id, record_type, lens` · `recipe_id, tier, lens` · `record_id, record_type` · `q_length` · `lens, q_length, result_count, outcome` · `stage, outcome, lens` |
+
+`attempt_id` is generated anew for each submitted action and sent only with its
+related events; it is not stored in a browser cookie or local storage. An intent
+fallback and its search or guide events reuse the same ID; no prompt text or URL
+is placed in it. Keep `attempt_id`
+unregistered in standard GA4 reports: its unique values are high cardinality
+and can cause rows to be condensed into `(other)` ([GA4 cardinality guidance](https://support.google.com/analytics/answer/12226705)).
+Use it only where raw event parameters are available, such as a configured
+event export or DebugView; do not infer joined attempts from aggregate reports.
 
 The tag sends an initial `page_view`. SPA page views depend on GA4 Enhanced
 Measurement's "page changes based on browser history events" setting; verify
@@ -99,8 +108,9 @@ and [redaction](https://support.google.com/analytics/answer/13544947) documentat
 Custom parameters are only reportable after you
 register them in GA4 Admin → Custom definitions: dimensions `part_id, part_type,
 origin, q, q_length, form, budget, radio, band, protocol, type, field,
-theme, link_type, preset, example, kind, relation, part_ids, removed_key, host`; metrics
-`result_count, position, scale, selected_count, needs_count, filter_count`.
+theme, link_type, preset, example, kind, relation, part_ids, removed_key, host,
+surface, outcome, stage, fallback, lens`; metrics
+`result_count, position, scale, selected_count, needs_count, filter_count, latency_ms`.
 
 ## Layout
 

@@ -34,3 +34,15 @@ test("only eligible public model tokens reach the registered search dimension", 
   }
   assert.ok(!("q" in trackedEventParams("intent_submit", { q: "FNK0104S" })));
 });
+
+test("one action ID survives sanitization while private text is removed", () => {
+  const attemptId = "11111111-2222-4333-8444-555555555555";
+  const payload = trackedEventParams("intent_submit", {
+    attempt_id: attemptId,
+    q: "private project plan",
+    surface: "home",
+  });
+  assert.equal(payload.attempt_id, attemptId);
+  assert.equal(payload.q_length, "private project plan".length);
+  assert.ok(!JSON.stringify(payload).includes("private project plan"));
+});
