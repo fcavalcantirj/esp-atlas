@@ -25,9 +25,9 @@ interface ConnectTroubleshooterProps {
 
 export default function ConnectTroubleshooter({ bootBoards = [], defaultBoardId, onRetry }: ConnectTroubleshooterProps) {
   const [boards, setBoards] = useState<BootBoard[]>(bootBoards);
-  const [selectedId, setSelectedId] = useState(
-    defaultBoardId && bootBoards.some((b) => b.id === defaultBoardId) ? defaultBoardId : "",
-  );
+  // Null means the visitor has not chosen a value yet. An explicit empty
+  // selection keeps "Generic ESP32" even if a default board arrives later.
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   // Fallback fetch when the server-side list came back empty.
   useEffect(() => {
@@ -40,14 +40,8 @@ export default function ConnectTroubleshooter({ bootBoards = [], defaultBoardId,
     return () => { cancelled = true; };
   }, [boards.length]);
 
-  // Prefill the default board once it becomes available (from prop or fetch).
-  useEffect(() => {
-    if (!selectedId && defaultBoardId && boards.some((b) => b.id === defaultBoardId)) {
-      setSelectedId(defaultBoardId);
-    }
-  }, [boards, defaultBoardId, selectedId]);
-
-  const selected = boards.find((b) => b.id === selectedId) ?? null;
+  const effectiveSelectedId = selectedId ?? (defaultBoardId && boards.some((b) => b.id === defaultBoardId) ? defaultBoardId : "");
+  const selected = boards.find((b) => b.id === effectiveSelectedId) ?? null;
   const view = resolveDownloadMode(selected);
   const notes = firstFlashNotes(selected);
 
@@ -63,7 +57,7 @@ export default function ConnectTroubleshooter({ bootBoards = [], defaultBoardId,
           Put the board in <strong>download / flash mode</strong>.
           <label className="verify-troubleshooter-picker">
             My board
-            <select value={selectedId} onChange={(e) => setSelectedId(e.target.value)}>
+            <select value={effectiveSelectedId} onChange={(e) => setSelectedId(e.target.value)}>
               <option value="">Generic ESP32</option>
               {boards.map((b) => (
                 <option key={b.id} value={b.id}>

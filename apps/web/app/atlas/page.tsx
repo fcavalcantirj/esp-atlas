@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import AtlasExplorer from "@/components/atlas/AtlasExplorer";
 import AtlasUnavailable from "@/components/atlas/AtlasUnavailable";
 import { fetchAtlasCatalog } from "@/lib/atlas-server";
 import { OG_IMAGE, SITE_NAME } from "@/lib/site";
 
-export const revalidate = 300;
 const description = "Explore the ESP32 catalog through silicon, hardware, firmware and cited relationships. Every recipe keeps its evidence and trust tier.";
 export const metadata: Metadata = {
   title: "Explore the atlas", description,
@@ -17,6 +17,9 @@ export const metadata: Metadata = {
 };
 
 export default async function AtlasPage() {
+  // A build-time or first-request API outage must not cache the unavailable
+  // fallback for five minutes. Collection fetches keep their own tagged cache.
+  await connection();
   const result = await fetchAtlasCatalog();
   return <main id="main" tabIndex={-1}>
     <Suspense fallback={<p className="container" role="status">Opening the atlas…</p>}>

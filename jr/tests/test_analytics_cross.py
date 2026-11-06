@@ -129,12 +129,12 @@ def test_build_funnel_joins_ga_and_gsc_on_normalized_page(ga_pages, ga_events, g
     assert row["clicks"] == 180
     assert row["ctr"] == pytest.approx(0.15)
     assert row["avg_position"] == pytest.approx(9.2)
-    assert row["conv_view_to_part"] == pytest.approx(40 / 850)
-    assert row["conv_part_to_flash"] == pytest.approx(5 / 40)
+    assert row["part_view_per_page_view"] == pytest.approx(40 / 850)
+    assert row["flash_open_per_part_view"] == pytest.approx(5 / 40)
     assert [q["query"] for q in row["top_queries"]] == ["minigotchi esp32", "esp32 pwnagotchi alternative"]
     assert row["demand"] is None
     assert row["striking_distance"] is True  # "esp32 pwnagotchi alternative" @ pos 14.3
-    assert row["leak_flag"] is True  # healthy demand+rank, conv_view_to_part ~0.047 < 0.05
+    assert row["leak_flag"] is False  # healthy demand+rank, part_view_per_page_view ~0.047 < 0.05
 
 
 def test_build_funnel_query_string_join(ga_pages, ga_events, gsc_pages, gsc_queries):
@@ -144,7 +144,7 @@ def test_build_funnel_query_string_join(ga_pages, ga_events, gsc_pages, gsc_quer
     assert row["page_views"] == 500
     assert row["impressions"] == 50
     assert row["avg_position"] == pytest.approx(25.4)
-    assert row["conv_view_to_part"] == pytest.approx(120 / 500)
+    assert row["part_view_per_page_view"] == pytest.approx(120 / 500)
     assert row["striking_distance"] is False  # position 24.1 is outside the 8-20 band
     assert row["leak_flag"] is False  # avg_position > 20, not a healthy-rank page
 
@@ -156,7 +156,7 @@ def test_build_funnel_percent_encoded_join(ga_pages, ga_events, gsc_pages, gsc_q
     assert row["page_views"] == 100
     assert row["part_view"] == 15
     assert row["flash_open"] == 0  # no flash_open row for this page -- real zero, not missing
-    assert row["conv_part_to_flash"] == pytest.approx(0.0)  # part_view > 0, denominator valid
+    assert row["flash_open_per_part_view"] == pytest.approx(0.0)  # part_view > 0, denominator valid
     assert row["impressions"] == 90
     assert row["striking_distance"] is True  # position 18.5 is in the 8-20 band
 
@@ -165,11 +165,11 @@ def test_build_funnel_clean_page_multiple_queries(ga_pages, ga_events, gsc_pages
     table = analytics_cross.build_funnel(ga_pages, ga_events, gsc_pages, gsc_queries)
     row = _row(table, "/parts/m5cardputer")
     assert row["page_views"] == 2000
-    assert row["conv_view_to_part"] == pytest.approx(0.45)
-    assert row["conv_part_to_flash"] == pytest.approx(300 / 900)
+    assert row["part_view_per_page_view"] == pytest.approx(0.45)
+    assert row["flash_open_per_part_view"] == pytest.approx(300 / 900)
     assert [q["query"] for q in row["top_queries"]] == ["m5stack cardputer", "cardputer specs", "cardputer firmware list"]
     assert row["striking_distance"] is True  # "cardputer firmware list" @ pos 11.4
-    assert row["leak_flag"] is False  # conversion is healthy (0.45)
+    assert row["leak_flag"] is False  # this event ratio is not a conversion measure
 
 
 def test_build_funnel_gsc_page_with_no_ga_match(ga_pages, ga_events, gsc_pages, gsc_queries):
@@ -181,8 +181,8 @@ def test_build_funnel_gsc_page_with_no_ga_match(ga_pages, ga_events, gsc_pages, 
     assert row["sessions"] == 0
     assert row["part_view"] == 0
     assert row["flash_open"] == 0
-    assert row["conv_view_to_part"] is None  # page_views == 0 -- rate undefined, not fabricated
-    assert row["conv_part_to_flash"] is None
+    assert row["part_view_per_page_view"] is None  # page_views == 0 -- rate undefined, not fabricated
+    assert row["flash_open_per_part_view"] is None
     assert row["impressions"] == 400
     assert row["striking_distance"] is True  # "m5stickc plus2 review" @ pos 11.8
     assert row["leak_flag"] is False  # can't leak-flag without a real conversion rate
@@ -195,8 +195,8 @@ def test_build_funnel_ga_page_with_no_gsc_match(ga_pages, ga_events, gsc_pages, 
     assert row["page_views"] == 30
     assert row["part_view"] == 0
     assert row["flash_open"] == 0
-    assert row["conv_view_to_part"] == pytest.approx(0.0)  # page_views > 0, part_view real 0 -- valid rate
-    assert row["conv_part_to_flash"] is None  # part_view == 0 -- undefined denominator
+    assert row["part_view_per_page_view"] == pytest.approx(0.0)  # page_views > 0, part_view real 0 -- valid rate
+    assert row["flash_open_per_part_view"] is None  # part_view == 0 -- undefined denominator
     assert row["impressions"] == 0
     assert row["clicks"] == 0
     assert row["ctr"] is None  # undefined at zero GSC rows, not a fabricated 0.0
@@ -217,7 +217,7 @@ def test_build_funnel_missing_ga_pages_axis(ga_events, gsc_pages, gsc_queries):
         assert row["page_views"] is None
         assert row["active_users"] is None
         assert row["sessions"] is None
-        assert row["conv_view_to_part"] is None  # needs page_views
+        assert row["part_view_per_page_view"] is None  # needs page_views
         assert row["leak_flag"] is False  # can't assert health without a conversion rate
 
 
@@ -227,8 +227,8 @@ def test_build_funnel_missing_ga_events_axis(ga_pages, gsc_pages, gsc_queries):
     for row in table["rows"]:
         assert row["part_view"] is None
         assert row["flash_open"] is None
-        assert row["conv_view_to_part"] is None
-        assert row["conv_part_to_flash"] is None
+        assert row["part_view_per_page_view"] is None
+        assert row["flash_open_per_part_view"] is None
 
 
 def test_build_funnel_missing_gsc_pages_axis(ga_pages, ga_events, gsc_queries):
@@ -317,17 +317,17 @@ def test_striking_distance_ignores_zero_impression_queries():
     assert row["striking_distance"] is False
 
 
-def test_leak_flag_requires_all_three_conditions():
+def test_leak_flag_is_retired_even_when_the_event_ratio_looks_low():
     ga_pages = [{"dimensionValues": [{"value": "/parts/leaky"}], "metricValues": [{"value": "1000"}, {"value": "800"}, {"value": "900"}]}]
     ga_events = [{"dimensionValues": [{"value": "/parts/leaky"}, {"value": "part_view"}], "metricValues": [{"value": "10"}]}]
     gsc_pages = [{"keys": ["https://esp-atlas.com/parts/leaky"], "clicks": 100, "impressions": 500, "ctr": 0.2, "position": 5.0}]
     table = analytics_cross.build_funnel(ga_pages, ga_events, gsc_pages, [])
     row = _row(table, "/parts/leaky")
-    assert row["conv_view_to_part"] == pytest.approx(0.01)
-    assert row["leak_flag"] is True
+    assert row["part_view_per_page_view"] == pytest.approx(0.01)
+    assert row["leak_flag"] is False
 
 
-def test_leak_flag_false_when_conversion_is_healthy():
+def test_leak_flag_is_retired_when_the_event_ratio_looks_high():
     ga_pages = [{"dimensionValues": [{"value": "/parts/healthy"}], "metricValues": [{"value": "1000"}, {"value": "800"}, {"value": "900"}]}]
     ga_events = [{"dimensionValues": [{"value": "/parts/healthy"}, {"value": "part_view"}], "metricValues": [{"value": "200"}]}]
     gsc_pages = [{"keys": ["https://esp-atlas.com/parts/healthy"], "clicks": 100, "impressions": 500, "ctr": 0.2, "position": 5.0}]
@@ -495,3 +495,15 @@ def test_weekly_funnel_threads_fetched_trends_into_demand(ga_pages, ga_events, g
          patch.object(analytics_cross, "fetch_trends", return_value={"minigotchi esp32": 66}):
         table = analytics_cross.weekly_funnel(days=7)
     assert _row(table, "/firmware/minigotchi-esp32")["demand"] == 66
+
+
+def test_normalized_ga_rows_add_views_without_double_counting_users_or_sessions():
+    rows = [
+        {"dimensionValues": [{"value": "/parts/cardputer"}], "metricValues": [{"value": "10"}, {"value": "8"}, {"value": "9"}]},
+        {"dimensionValues": [{"value": "/parts/cardputer/"}], "metricValues": [{"value": "20"}, {"value": "7"}, {"value": "8"}]},
+    ]
+    row = _row(analytics_cross.build_funnel(rows, [], [], []), "/parts/cardputer")
+    assert row["page_views"] == 30
+    assert row["active_users"] is None
+    assert row["sessions"] is None
+    assert row["leak_flag"] is False

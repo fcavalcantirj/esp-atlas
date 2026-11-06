@@ -245,7 +245,7 @@ test("part title falls back to a bare type when the record cites no headline spe
   assert.equal(title, "Generic Module — Module specs");
 });
 
-test("part title shortens a long name at a word boundary instead of dropping the spec", () => {
+test("part title preserves a long board name and shortens generic specs", () => {
   const title = partMetaTitle({
     name: "M5Stack Core2 v1.1 with AWS IoT EduKit Bundle and Extra Long Product Name",
     type: "board",
@@ -256,8 +256,8 @@ test("part title shortens a long name at a word boundary instead of dropping the
     usb_native: false,
     form_factor: null,
   });
-  assert.ok(title.length <= TITLE_MAX, `expected <=${TITLE_MAX} chars, got ${title.length}: ${title}`);
-  assert.ok(title.endsWith("… — Wi-Fi 4 + BLE 4.2 Board specs"));
+  assert.ok(title.startsWith("M5Stack Core2 v1.1 with AWS IoT EduKit Bundle and Extra Long Product Name"));
+  assert.ok(title.endsWith(" — Board specs"));
 });
 
 // pinout in the title: search-intent word ("lolin s2 mini pinout") that Google
@@ -300,7 +300,7 @@ test("part title is unchanged and omits 'pinout' when the part has no pinout dia
   assert.equal(title, partMetaTitle(soc));
 });
 
-test("a long name plus pinout still fits TITLE_MAX (data/boards/m5stack/m5stack-core2/board.md images.pinout)", () => {
+test("a long name plus pinout preserves exact identity (data/boards/m5stack/m5stack-core2/board.md images.pinout)", () => {
   const title = partMetaTitle(
     {
       name: "Core2 v1.1 with AWS IoT EduKit Bundle and Extra Long Product Name",
@@ -314,8 +314,36 @@ test("a long name plus pinout still fits TITLE_MAX (data/boards/m5stack/m5stack-
     },
     true,
   );
-  assert.ok(title.length <= TITLE_MAX, `expected <=${TITLE_MAX} chars, got ${title.length}: ${title}`);
+  assert.ok(title.startsWith("Core2 v1.1 with AWS IoT EduKit Bundle and Extra Long Product Name"));
   assert.ok(title.includes("pinout"), `expected title to include "pinout": ${title}`);
+});
+
+test("all 17 board names in the November audit collision groups remain distinct", () => {
+  const names = [
+    "Adafruit ESP32-S3 Feather (4MB Flash 2MB PSRAM)",
+    "Adafruit ESP32-S3 Feather (8MB Flash No PSRAM)",
+    "Adafruit ESP32-S3 Reverse TFT Feather (4MB Flash 2MB PSRAM)",
+    "Adafruit QT Py ESP32-C3 WiFi Dev Board with STEMMA QT",
+    "Adafruit QT Py ESP32-S3 WiFi Dev Board with STEMMA QT (8 MB Flash No PSRAM)",
+    "Adafruit QT Py ESP32-S3 WiFi Dev Board with STEMMA QT (8MB Flash No PSRAM)",
+    "Adafruit Sparkle Motion",
+    "Adafruit Sparkle Motion Mini",
+    "Adafruit Sparkle Motion Stick",
+    "DFRobot FireBeetle 2 ESP32-E",
+    "DFRobot FireBeetle ESP32",
+    "ESP32-S3 Display FNK0104A",
+    "ESP32-S3 Display FNK0104B",
+    "ESP32-S3 Display FNK0104S",
+    "Seeed Studio XIAO ESP32C3",
+    "Seeed Studio XIAO ESP32S3",
+    "Seeed Studio XIAO ESP32S3 Sense",
+  ];
+  const titles = names.map((name) => partMetaTitle({
+    name, type: "board", wifi_standard: "wifi-4", ble_version: "5", ieee802154: false,
+    ieee802154_protocols: null, usb_native: false, form_factor: null,
+  }, true));
+  assert.equal(new Set(titles).size, 17);
+  titles.forEach((title, i) => assert.ok(title.startsWith(names[i]), title));
 });
 
 const NO_SPEC_PART = {

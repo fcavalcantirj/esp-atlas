@@ -98,7 +98,9 @@ export default function SerialMonitor() {
 
   async function disconnect() {
     closingRef.current = true;
-    track("monitor_disconnect", {});
+    const port = portRef.current;
+    portRef.current = null;
+    if (port) track("monitor_disconnect", { reason: "close" });
     try {
       await readerRef.current?.cancel();
     } catch {
@@ -112,11 +114,10 @@ export default function SerialMonitor() {
       // already settled
     }
     try {
-      await portRef.current?.close();
+      await port?.close();
     } catch {
       // already gone
     }
-    portRef.current = null;
     readerRef.current = null;
     readableClosedRef.current = null;
     setConnected(false);

@@ -45,14 +45,27 @@ export function serverApiBase(): string {
   return "http://localhost:8000";
 }
 
+/** Preview deployments are protected from their own server-side HTTP fetches.
+ * Vercel injects this system secret only when automation bypass is configured.
+ * Never forward it to API_INTERNAL_URL, NEXT_PUBLIC_API_URL, or another host. */
+export function serverApiHeaders(base = serverApiBase()): HeadersInit | undefined {
+  const deployment = process.env.VERCEL_URL;
+  const secret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+  if (process.env.VERCEL_ENV !== "preview" || !deployment || !secret) return undefined;
+  if (base !== `https://${deployment}/api`) return undefined;
+  return { "x-vercel-protection-bypass": secret };
+}
+
 export type ServerFetchResult<T> =
   | { status: "ok"; data: T }
   | { status: "not_found" }
   | { status: "error"; message: string };
 
 async function attempt<T>(path: string, timeoutMs: number): Promise<ServerFetchResult<T>> {
-  const res = await fetch(`${serverApiBase()}${path}`, {
+  const base = serverApiBase();
+  const res = await fetch(`${base}${path}`, {
     next: { revalidate: REVALIDATE_SECONDS, tags: [CATALOG_TAG] },
+    headers: serverApiHeaders(base),
     signal: AbortSignal.timeout(timeoutMs),
   });
   if (res.status === 404) return { status: "not_found" };
@@ -78,8 +91,12 @@ export function fetchPartDetail(id: string): Promise<ServerFetchResult<PartDetai
   return serverFetch<PartDetail>(`/parts/${encodeURIComponent(id)}`);
 }
 
+export function fetchAllPartsResult(): Promise<ServerFetchResult<{ results: PartRecord[] }>> {
+  return serverFetch<{ results: PartRecord[] }>(`/parts`);
+}
+
 export async function fetchAllParts(): Promise<PartRecord[]> {
-  const result = await serverFetch<{ results: PartRecord[] }>(`/parts`);
+  const result = await fetchAllPartsResult();
   return result.status === "ok" ? result.data.results : [];
 }
 

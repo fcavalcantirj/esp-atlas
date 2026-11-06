@@ -469,35 +469,6 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-05T03:01:00.115486+00:00"
     },
-    "sparkfun-iot-redboard-esp32": {
-      "board": "sparkfun-iot-redboard-esp32",
-      "expires": "2026-11-13T10:00:55.111876+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
-          "vendor": "field_absent"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-06T10:00:55.111876+00:00"
-    },
-    "sparkfun-micromod-esp32-processor": {
-      "board": "sparkfun-micromod-esp32-processor",
-      "expires": "2026-11-13T10:00:55.111876+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
-          "vendor": "field_absent"
-        },
-        "usb_serial": {
-          "boards_txt": "field_absent",
-          "manifest": "field_absent",
-          "vendor": "field_absent"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-06T10:00:55.111876+00:00"
-    },
     "um-feathers3": {
       "board": "um-feathers3",
       "expires": "2026-11-12T05:01:00.482196+00:00",
@@ -566,19 +537,6 @@
       },
       "reason": "doc-unreachable",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
-    },
-    "xiao-esp32c6": {
-      "board": "xiao-esp32c6",
-      "expires": "2026-11-13T10:00:55.111876+00:00",
-      "field_reasons": {
-        "usb_serial": {
-          "boards_txt": "field_absent",
-          "manifest": "no_pattern_match",
-          "vendor": "field_absent"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-06T10:00:55.111876+00:00"
     },
     "xiao-esp32s3": {
       "board": "xiao-esp32s3",
