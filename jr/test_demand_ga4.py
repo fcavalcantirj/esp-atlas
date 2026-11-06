@@ -182,6 +182,19 @@ def test_digest_says_ga4_pull_failed_instead_of_no_terms():
     assert "no site-search terms" in empty
 
 
+def test_digest_live_line_admits_partial_eligible_token_coverage():
+    """The web app sends `q` only for exact public model tokens (FNKddddL, ES3CddP, ...);
+    every other query arrives as `q_length` only — D2 live must never read as full coverage."""
+    window = {"start": "2026-08-03", "end": "2026-08-31"}
+    digest = demand.build_digest(_build(), d2_available=True, window=window)
+    live = next(line for line in digest.splitlines() if "D2 live" in line)
+    assert "partial" in live
+    assert "eligible" in live
+    assert "all searches" not in live
+    assert "all site searches" not in live
+    assert "site-search terms captured" not in live
+
+
 def test_mine_reports_failed_ga4_pull_in_digest(tmp_path, monkeypatch):
     monkeypatch.setattr(demand, "_pull_live", lambda days=demand.WINDOW_DAYS: {
         "window": {"start": "2026-08-03", "end": "2026-08-31"},
