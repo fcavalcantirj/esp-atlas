@@ -60,7 +60,12 @@ export type EventName =
   | "verify_error"
   | "verify_unknown_chip"
   | "monitor_connect"
-  | "monitor_disconnect";
+  | "monitor_disconnect"
+  | "atlas_lens_select"
+  | "atlas_inspect"
+  | "atlas_recipe_inspect"
+  | "atlas_handoff"
+  | "atlas_search";
 
 export type OutboundLinkType =
   | "source"

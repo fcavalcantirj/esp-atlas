@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import TrustTierBadge from "@/components/TrustTierBadge";
 import type { Recipe } from "@/lib/api";
+import { track } from "@/lib/analytics";
 import { buildAtlasModel, exactRecipe, type AtlasCatalog } from "@/lib/atlas-model";
 import { ATLAS_LENSES, atlasHref, atlasLens, type AtlasLens } from "@/lib/atlas-route";
 import AtlasGraph from "./AtlasGraph";
@@ -47,16 +48,20 @@ export default function AtlasExplorer({ catalog }: { catalog: AtlasCatalog }) {
   function inspect(key: string) {
     const selected = model.nodes.find(record => record.key === key);
     if (!selected) return;
+    track("atlas_inspect", { record_id: selected.id, record_type: selected.kind, lens });
     navigate(selected.kind === "firmware" ? { firmware: selected.id, focus: "firmware", recipe: null } : { part: selected.id, focus: "part", recipe: null });
   }
-  function inspectRecipe(selected: Recipe) { navigate({ part: selected.board, firmware: selected.firmware, recipe: selected.id, lens: "evidence", focus: "firmware" }); }
+  function inspectRecipe(selected: Recipe) {
+    track("atlas_recipe_inspect", { recipe_id: selected.id, tier: selected.status, lens });
+    navigate({ part: selected.board, firmware: selected.firmware, recipe: selected.id, lens: "evidence", focus: "firmware" });
+  }
 
   return <div className={styles.explorer}>
     <header className={styles.intro}>
       <div><p className={styles.eyebrow}>ESP / Atlas</p><h1>The ESP32 world.<br /><span>Mapped.</span></h1></div>
       <div className={styles.introAside}><p>A living index of hardware and software.<br />Follow a connection. Inspect its evidence.</p><dl className={styles.totals}><div><dt>Parts</dt><dd>{catalog.parts.length}</dd></div><div><dt>Firmwares</dt><dd>{catalog.firmware.length}</dd></div><div><dt>Recipes</dt><dd>{catalog.recipes.length}</dd></div></dl><p className={styles.muted}>Counts from the loaded catalog. Recipe totals include every trust tier.</p></div>
     </header>
-    <nav className={styles.lenses} aria-label="Atlas lenses">{ATLAS_LENSES.map((item, index) => <Link key={item} href={atlasHref(query, { lens: item })} prefetch={false} scroll={false} onNavigate={event => { event.preventDefault(); navigate({ lens: item }); }} aria-current={lens === item ? "page" : undefined}><small aria-hidden="true">0{index + 1}</small>{LENS_COPY[item].name}<span aria-hidden="true">↗</span></Link>)}</nav>
+    <nav className={styles.lenses} aria-label="Atlas lenses">{ATLAS_LENSES.map((item, index) => <Link key={item} href={atlasHref(query, { lens: item })} prefetch={false} scroll={false} onNavigate={event => { event.preventDefault(); track("atlas_lens_select", { lens: item }); navigate({ lens: item }); }} aria-current={lens === item ? "page" : undefined}><small aria-hidden="true">0{index + 1}</small>{LENS_COPY[item].name}<span aria-hidden="true">↗</span></Link>)}</nav>
     <div className={styles.context} aria-label="Selected context">
       <span>{part?.name ?? (partId ? `Unknown part: ${partId}` : "No hardware selected")}</span><span aria-hidden="true">×</span><span>{firmware?.name ?? (firmwareId ? `Unknown firmware: ${firmwareId}` : "No firmware selected")}</span>
       {recipe ? <TrustTierBadge status={recipe.status} /> : null}
@@ -81,7 +86,7 @@ export default function AtlasExplorer({ catalog }: { catalog: AtlasCatalog }) {
         {lens === "projects" ? <div className={styles.projects}>
           <span className={styles.projectMark} aria-hidden="true">✳</span><h3>What do you want<br />to build?</h3><p>Explore an idea with the project finder, or specify radio, memory, USB and form-factor needs in the wizard. Recommendations and ranking come from the existing catalog services.</p>
           <div className={styles.projectChoices}><Link href="/">Describe a project <span aria-hidden="true">↗</span></Link><Link href="/wizard">Choose capabilities <span aria-hidden="true">↗</span></Link></div>
-          <form action="/wizard" method="get" className={styles.keywordSearch}><label htmlFor="atlas-keyword">Already know a name, model or alias?</label><div><input id="atlas-keyword" name="q" type="search" placeholder="e.g. es3c28p" required /><button type="submit" className="btn btn--primary">Search parts ↗</button></div></form>
+          <form action="/wizard" method="get" className={styles.keywordSearch} onSubmit={event => { const q = new FormData(event.currentTarget).get("q"); track("atlas_search", { q_length: typeof q === "string" ? q.length : 0 }); }}><label htmlFor="atlas-keyword">Already know a name, model or alias?</label><div><input id="atlas-keyword" name="q" type="search" placeholder="e.g. es3c28p" required /><button type="submit" className="btn btn--primary">Search parts ↗</button></div></form>
           <p className={styles.muted}>The finder and wizard open their existing workspaces. Your atlas selection remains in this page’s URL for Back.</p>
         </div> : null}
         {lens === "evidence" ? <div className={styles.evidence}>

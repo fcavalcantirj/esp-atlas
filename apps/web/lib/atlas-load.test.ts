@@ -103,6 +103,25 @@ test("firmware recipe counts detect a silently incomplete recipes collection wit
   if (withOrphan.status === "ok") assert.equal(withOrphan.catalog.recipes.length, 2);
 });
 
+test("a mixed cached revision gets one full-collection retry with a new tagged cache key", async () => {
+  const calls: { path: string; fresh: boolean }[] = [];
+  const fetcher = (async (input, init) => {
+    const url = new URL(String(input));
+    const path = url.pathname;
+    const fresh = url.searchParams.has("_atlas_refresh");
+    calls.push({ path, fresh });
+    assert.deepEqual(init?.next, { revalidate: 3600, tags: ["catalog"] });
+    const body = path === "/firmware" && !fresh
+      ? { results: [{ ...firmware, boards: 0 }], total: 1 }
+      : envelopes()[path];
+    return new Response(JSON.stringify(body));
+  }) as typeof fetch;
+  const result = await loadAtlasCatalog("https://api.example.test", fetcher);
+  assert.equal(result.status, "ok");
+  assert.deepEqual(calls.slice(0, 3).map(call => call.fresh), [false, false, false]);
+  assert.deepEqual(calls.slice(3).map(call => call.fresh), [true, true, true]);
+});
+
 test("only transport failures retry with 3s then 9s signals; HTTP and invalid JSON do not retry", async (t) => {
   const timeout = AbortSignal.timeout.bind(AbortSignal);
   const budgets: number[] = [];

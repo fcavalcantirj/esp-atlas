@@ -5,6 +5,7 @@ import Link from "next/link";
 import TrackedLink from "@/components/TrackedLink";
 import TrustTierBadge from "@/components/TrustTierBadge";
 import { API_BASE, type SourceEntry, type Recipe } from "@/lib/api";
+import { track } from "@/lib/analytics";
 import type { AtlasCatalog, AtlasNode } from "@/lib/atlas-model";
 import { atlasPartDetail, type AtlasPartDetail } from "@/lib/atlas-detail";
 import { recipeSourceHref, sourceHref } from "@/lib/atlas-route";
@@ -87,7 +88,7 @@ export default function AtlasInspector({ node, catalog, onInspect, onRecipe }: {
     <p className={styles.eyebrow}>Selected {node.kind === "soc" ? "silicon" : node.kind}</p>
     <h2>{node.name}</h2>
     <p className={styles.recordId}>{node.id}</p>
-    <Link className={styles.recordLink} href={`/${node.kind === "firmware" ? "firmware" : "parts"}/${encodeURIComponent(node.id)}`}>Open the full record <span aria-hidden="true">↗</span></Link>
+    <Link className={styles.recordLink} href={`/${node.kind === "firmware" ? "firmware" : "parts"}/${encodeURIComponent(node.id)}`} onClick={() => track("atlas_handoff", { record_id: node.id, record_type: node.kind })}>Open the full record <span aria-hidden="true">↗</span></Link>
     {node.part ? <PartContext key={node.key} node={node} onInspect={onInspect} /> : null}
     {node.firmware ? <>
       {node.firmware.summary ? <p>{node.firmware.summary}</p> : null}

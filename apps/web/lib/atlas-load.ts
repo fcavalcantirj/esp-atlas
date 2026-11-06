@@ -76,12 +76,13 @@ function error(path: string, message: string): { status: "error"; message: strin
 }
 
 async function collection<T extends { id: string }>(
-  baseUrl: string, path: string, guard: Guard<T>, fetcher: typeof fetch,
+  baseUrl: string, path: string, guard: Guard<T>, fetcher: typeof fetch, refreshKey: string | null,
 ): Promise<CollectionResult<T>> {
   let response: Response | undefined;
   for (const timeout of [TIMEOUT_MS, COLD_START_TIMEOUT_MS]) {
     try {
-      response = await fetcher(`${baseUrl.replace(/\/+$/, "")}${path}`, {
+      const url = `${baseUrl.replace(/\/+$/, "")}${path}${refreshKey ? `?_atlas_refresh=${refreshKey}` : ""}`;
+      response = await fetcher(url, {
         next: { revalidate: 3600, tags: [CATALOG_TAG] },
         signal: AbortSignal.timeout(timeout),
       });
@@ -112,11 +113,15 @@ async function collection<T extends { id: string }>(
 
 /** Full collections only. An unavailable or incomplete response never becomes
  * an empty catalog or a successful partial graph. */
-export async function loadAtlasCatalog(baseUrl: string, fetcher: typeof fetch = fetch): Promise<AtlasCatalogResult> {
+async function loadAtlasCatalogOnce(baseUrl: string, fetcher: typeof fetch, fresh: boolean): Promise<AtlasCatalogResult> {
+  // Use one new cache key for all three collections on the rare retry. This
+  // bypasses a mixed old snapshot without turning normal Atlas renders into
+  // uncached cold API calls or disabling page prerendering.
+  const refreshKey = fresh ? Date.now().toString(36) : null;
   const [parts, firmware, recipes] = await Promise.all([
-    collection(baseUrl, "/parts", isPart, fetcher),
-    collection(baseUrl, "/firmware", isFirmware, fetcher),
-    collection(baseUrl, "/recipes", isRecipe, fetcher),
+    collection(baseUrl, "/parts", isPart, fetcher, refreshKey),
+    collection(baseUrl, "/firmware", isFirmware, fetcher, refreshKey),
+    collection(baseUrl, "/recipes", isRecipe, fetcher, refreshKey),
   ]);
   if (parts.status !== "ok" || firmware.status !== "ok" || recipes.status !== "ok") {
     return { status: "error", message: [parts, firmware, recipes]
@@ -132,7 +137,15 @@ export async function loadAtlasCatalog(baseUrl: string, fetcher: typeof fetch = 
   const mismatched = firmware.records.filter((record) =>
     record.boards !== undefined && record.boards !== (recipeCounts.get(record.id) ?? 0));
   if (mismatched.length > 0) {
+    // A deploy can leave independently cached collections at different
+    // revisions. Retry the entire snapshot once; a real disagreement still
+    // fails closed instead of publishing a plausible partial graph.
+    if (!fresh) return loadAtlasCatalogOnce(baseUrl, fetcher, true);
     return error("/recipes", `Recipe counts disagree with /firmware for ${mismatched.length} project(s); completeness is unknown.`);
   }
   return { status: "ok", catalog: { parts: parts.records, firmware: firmware.records, recipes: recipes.records } };
+}
+
+export function loadAtlasCatalog(baseUrl: string, fetcher: typeof fetch = fetch): Promise<AtlasCatalogResult> {
+  return loadAtlasCatalogOnce(baseUrl, fetcher, false);
 }

@@ -83,6 +83,7 @@ are omitted; their lengths may be sent instead. Set localStorage
 | `theme_change`, `font_size_change` | `theme` · `scale, direction` |
 | `outbound_click` | `link_type (source\|github_edit\|github_view\|github_repo\|contributing\|agents\|issues\|new_issue\|discussions\|license\|data_folder\|llms_txt\|api_docs), host, part_id?, field?` |
 | `api_error`, `not_found` | `endpoint, status` · `path` |
+| `atlas_lens_select`, `atlas_inspect`, `atlas_recipe_inspect`, `atlas_handoff`, `atlas_search` | `lens` · `record_id, record_type, lens` · `recipe_id, tier, lens` · `record_id, record_type` · `q_length` |
 
 The tag sends an initial `page_view`. SPA page views depend on GA4 Enhanced
 Measurement's "page changes based on browser history events" setting; verify
