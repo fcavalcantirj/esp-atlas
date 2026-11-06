@@ -207,7 +207,10 @@ def test_mine_resolves_model_numbers_against_the_real_catalog(tmp_path, monkeypa
 # identifier, never one with an alphanumeric affix joined by '-', '_', '.' or '/'.
 
 COMPOUNDS = ["fnk0104s-a", "fnk0104s-b", "fnk0104sx", "FNK0104S-A", "fnk0104s_a", "fnk0104s.b",
-             "fnk0104s/a", "x-fnk0104s", "fnk0104s-a datasheet", "fnk0104s/fnk0104b"]
+             "fnk0104s/a", "x-fnk0104s", "fnk0104s-a datasheet", "fnk0104s/fnk0104b",
+             # a run of joins, or a Unicode hyphen/dash, is still one attached affix
+             "fnk0104s--a", "fnk0104s-_a", "fnk0104s..a", "x--fnk0104s",
+             "fnk0104s\u2010a", "fnk0104s\u2011a", "fnk0104s\u2013a", "fnk0104s\u2014b"]
 
 
 @pytest.mark.parametrize("term", COMPOUNDS)
@@ -227,6 +230,24 @@ def test_model_board_refuses_a_model_key_with_an_attached_affix(catalog, term):
 ])
 def test_model_board_whole_identifiers_still_resolve(catalog, term, board):
     assert rq.model_board(term, catalog) == (board, "fnk0104" + board[-1])
+
+
+def _acme(**over):
+    entry = {"id": "acme-qx5000", "kind": "board", "brand": "acme", "title": "Gamma QX5000 Pro",
+             "aliases": ["QX5000_REV2"]}
+    entry.update(over)
+    return [entry]
+
+
+@pytest.mark.parametrize("term", ["qx5000_rev2", "qx5000-rev2", "gamma-qx5000", "qx5000.pro"])
+def test_model_board_accepts_a_join_its_own_alias_or_title_spells(term):
+    assert rq.model_board(term, _acme()) == ("acme-qx5000", "qx5000")
+
+
+@pytest.mark.parametrize("term", ["qx5000-rev3", "qx5000_rev2", "gamma-qx5000"])
+def test_model_board_join_exception_is_not_the_id_alone(term):
+    """Without the alias/title, only the bare key and the id itself are whole identifiers."""
+    assert rq.model_board(term, _acme(title="", aliases=[])) is None
 
 
 def test_model_board_refuses_another_vendors_prefix(catalog):
