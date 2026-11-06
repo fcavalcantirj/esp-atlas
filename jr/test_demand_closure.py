@@ -486,3 +486,67 @@ def test_no_closure_is_reported_when_its_writes_are_refused(tmp_path):
     broker.reserve(d, SNAP, gh=gh_that_races, git=git_for(), repo_slug=SLUG, today=NEXT_DAY, now=NEXT_NOW,
                    mined_revision=MAIN_SHA, closures=closures)
     assert closures == [] and (d / QUEUE).read_bytes() == FOREIGN
+
+
+# --- an inconsistent pair: closed by a closure, receipt still live -------------------------------
+
+def double_failure(monkeypatch):
+    """The receipts write fails, and so does the queue restore after it."""
+    real_replace, queue_writes = os.replace, []
+
+    def replace(src, dst):
+        if Path(dst).name == RECEIPTS:
+            raise OSError("disk full")
+        if Path(dst).name == QUEUE:
+            queue_writes.append(dst)
+            if len(queue_writes) > 1:
+                raise OSError("read-only")
+        return real_replace(src, dst)
+
+    monkeypatch.setattr(os, "replace", replace)
+    return real_replace
+
+
+def test_a_double_failure_defers_and_starts_nothing(tmp_path, monkeypatch):
+    d = demand_dir(tmp_path)
+    double_failure(monkeypatch)
+    out = reserve(d)
+    assert out.action == rw.DEFER and "restore failed" in out.reason
+    assert not out.changed and not out.closed and not out.receipts_changed
+    assert fnk(d)["status"] == "closed" and (d / RECEIPTS).read_bytes() == RECEIPTS_RAW
+
+
+def test_the_next_run_holds_an_inconsistent_pair_instead_of_starting_new_work(tmp_path, monkeypatch):
+    d = demand_dir(tmp_path)
+    real_replace = double_failure(monkeypatch)
+    reserve(d)
+    monkeypatch.setattr(os, "replace", real_replace)
+    queue, receipts = (d / QUEUE).read_bytes(), (d / RECEIPTS).read_bytes()
+    gh = gh_for()
+    following = reserve(d, gh=gh)
+    assert following.action == rw.DEFER and "inconsistent" in following.reason and KEY in following.reason
+    assert not following.changed and following.action != rw.START
+    assert (d / QUEUE).read_bytes() == queue and (d / RECEIPTS).read_bytes() == receipts   # nothing clobbered
+    assert not [c for c in gh.calls if c[:2] == ("pr", "view")]                         # no second closure
+
+
+def test_plan_work_blocks_a_closure_whose_receipt_is_still_live():
+    queue = json.loads(QUEUE_RAW)
+    c = queue["candidates"]["fnk0104s"]
+    c.update(status="closed", closed_on=NEXT_DAY,
+             history=[{"event": "closed", "date": NEXT_DAY, "resolution": "delivered", "work": KEY}])
+    receipts = json.loads(RECEIPTS_RAW)["receipts"]
+    plan = rw.plan_work(queue, receipts, NEXT_DAY, remote_complete=True)
+    assert plan.action == rw.DEFER and "inconsistent" in plan.reason and KEY in plan.reason
+    assert rw.inconsistent_closures(queue, receipts) == [KEY]
+    settled = [{**receipts[0], "state": "delivered"}]
+    assert rw.inconsistent_closures(queue, settled) == []
+    assert rw.plan_work(queue, settled, NEXT_DAY, remote_complete=True).action == rw.NOOP
+
+
+def test_a_candidate_closed_by_hand_beside_a_live_receipt_is_not_a_closure_pair():
+    queue = json.loads(QUEUE_RAW)
+    queue["candidates"]["fnk0104s"].update(status="closed", closed_on=NEXT_DAY, outcome="closed by triage")
+    receipts = json.loads(RECEIPTS_RAW)["receipts"]
+    assert rw.inconsistent_closures(queue, receipts) == []
+    assert rw.plan_work(queue, receipts, NEXT_DAY, remote_complete=True).action == rw.NOOP

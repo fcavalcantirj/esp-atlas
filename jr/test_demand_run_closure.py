@@ -10,6 +10,8 @@ Run: cd jr && python3 -m pytest test_demand_run_closure.py -v
 from __future__ import annotations
 
 import json
+import os
+from pathlib import Path
 
 import demand_run
 import pam_leads
@@ -177,3 +179,23 @@ def test_a_cas_refusal_on_an_unchanged_demand_day_publishes_nothing(tmp_path):
     res = run(root, git=git, gh=gh)
     assert res.published is False and "changed during the run" in res.work
     assert not [c for c in gh.calls if c[:2] == ("pr", "create")] and staged(git) == []
+
+
+def test_a_double_failure_blocks_publication_and_new_work(tmp_path, monkeypatch):
+    real_replace, queue_writes = os.replace, []
+
+    def replace(src, dst):
+        if Path(dst).name == "work-receipts.json":
+            raise OSError("disk full")
+        if Path(dst).name == "research-queue.json":
+            queue_writes.append(dst)
+            if len(queue_writes) > 1:
+                raise OSError("read-only")
+        return real_replace(src, dst)
+
+    monkeypatch.setattr(os, "replace", replace)
+    root, git, gh = tree(tmp_path), git_ok(), gh_all()
+    res = run(root, git=git, gh=gh, pam_refresh=pam_unchanged)
+    assert res.published is False and "inconsistent" in res.aborted and KEY in res.aborted
+    assert not [c for c in gh.calls if c[:2] == ("pr", "create")] and staged(git) == []
+    assert (root / RECEIPTS_PATH).read_bytes() == RECEIPTS_RAW          # no new START, PAM or search
