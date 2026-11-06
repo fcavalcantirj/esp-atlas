@@ -108,7 +108,7 @@ class GitHubSim:
             return Proc()
         if norm[:3] == ("remote", "get-url", "origin"):
             return Proc(stdout="https://github.com/o/r.git\n")
-        if norm[:2] in (("rev-parse", "origin/main"), ("rev-parse", "HEAD")):
+        if norm[:1] == ("rev-parse",):                                     # incl. publish's `--verify …^{commit}`
             return Proc(stdout="6190d21abc\n")
         if norm[:3] == ("diff", "--cached", "--quiet"):
             return Proc(returncode=1)
