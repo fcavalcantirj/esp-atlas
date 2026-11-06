@@ -18,6 +18,7 @@ from pathlib import Path
 import yaml
 
 import backfill_popularity
+from esp_atlas_core.floor import CURATED_EXEMPT, clears_popularity_floor
 
 MAX_REPOS_PER_TICK = 7
 MIN_REMAINING_CALLS = 10
@@ -126,7 +127,7 @@ def run(ctx):
     hour = int(now.timestamp() // 3600)
     selected = [repo for i, repo in enumerate(repos) if i % slots == hour % slots]
     result = StageResult("popularity_refresh")
-    refreshed = unchanged = skipped = 0
+    refreshed = unchanged = skipped = floor_deferred = 0
     for repo in selected:
         if ctx.budget.remaining_calls() < MIN_REMAINING_CALLS or \
                 ctx.budget.remaining_seconds() < MIN_REMAINING_SECONDS:
@@ -147,11 +148,19 @@ def run(ctx):
                 continue
             break
         for path, fm, original in due:
-            old = fm.get("popularity") or {}
-            old_id = old.get("github_repo_id") if isinstance(old, dict) else None
+            old = fm.get("popularity") if isinstance(fm.get("popularity"), dict) else {}
+            old_id = old.get("github_repo_id")
             stats = _payload(getattr(response, "stdout", ""), repo, old_id)
             if stats is None:
                 skipped += 1
+                continue
+            if path.parent.name not in CURATED_EXEMPT and not clears_popularity_floor(
+                    stats["stars"], stats["forks"], old.get("editorial_home"), old.get("downloads")):
+                # A true count can move a record below the catalog's CI floor.
+                # Preserve the published last-good record and surface the
+                # decision for human data review instead of aborting the whole
+                # tick's unrelated work in its guard.
+                floor_deferred += 1
                 continue
             rewritten = _rewrite(original, stats, now)
             if rewritten is None:
@@ -169,7 +178,8 @@ def run(ctx):
                 result.paths.append(relative)
             refreshed += 1
     result.summary = (f"GitHub popularity: {refreshed} {'would refresh' if ctx.dry_run else 'refreshed'}, "
-                      f"{unchanged} current, {skipped} skipped; {len(selected)} repos in slot")
+                      f"{unchanged} current, {skipped} skipped, {floor_deferred} below-floor deferred; "
+                      f"{len(selected)} repos in slot")
     return result
 
 

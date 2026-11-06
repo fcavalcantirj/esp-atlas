@@ -78,11 +78,22 @@ def test_dry_run_and_quarantined_nyan_never_write(tmp_path):
     nyan = _record(tmp_path, "nyan", "TeMPOraL/nyan-mode", {"stars": 1, "as_of": "2026-09-20"})
     original = path.read_text()
     ctx, calls = _ctx(tmp_path, {"full_name": "owner/example", "id": 123,
-                                "stargazers_count": 11, "forks_count": 3}, dry_run=True)
+                                "stargazers_count": 30, "forks_count": 3}, dry_run=True)
     result = refresh.run(ctx)
     assert len(calls) == 1 and "nyan-mode" not in str(calls)
     assert len(result.would_write) == 1 and result.paths == []
     assert path.read_text() == original and nyan.exists()
+
+
+def test_below_floor_count_is_deferred_without_aborting_other_tick_work(tmp_path):
+    path = _record(tmp_path, "example", "owner/example",
+                   {"stars": 30, "forks": 2, "as_of": "2026-09-20"})
+    original = path.read_text()
+    ctx, _ = _ctx(tmp_path, {"full_name": "owner/example", "id": 123,
+                            "stargazers_count": 10, "forks_count": 2})
+    result = refresh.run(ctx)
+    assert result.paths == [] and "1 below-floor deferred" in result.summary
+    assert path.read_text() == original
 
 
 def test_fresh_snapshot_and_low_budget_make_no_upstream_call(tmp_path):
