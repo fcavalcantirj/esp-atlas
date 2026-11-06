@@ -1,0 +1,44 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-11-06",
+ "notes": [],
+ "ref": "main",
+ "repo": "oldtokage-collab/C.P.S.--Cardputer-SYHNTH--",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "C.P.S.v1.0",
+   "esp32-s3-devkitc-1"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "C.P.S.v1.0.bin",
+    "release": "v1.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "C.P.S.v1.0",
+   "url": "https://github.com/oldtokage-collab/C.P.S.--Cardputer-SYHNTH--/releases/download/v1.0/C.P.S.v1.0.bin"
+  },
+  {
+   "extra": {
+    "env": "cps",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 6,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/oldtokage-collab/C.P.S.--Cardputer-SYHNTH--/blob/main/platformio.ini#L6"
+  }
+ ]
+}
