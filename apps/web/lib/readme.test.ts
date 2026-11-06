@@ -83,6 +83,26 @@ test("never throws -- a network error is swallowed and treated as a miss", async
   }
 });
 
+test("rejects a README whose declared size exceeds the optional 256 KiB budget", async () => {
+  const stub = stubFetch(() => new Response("large", { status: 200, headers: { "content-length": "262145" } }));
+  try {
+    assert.equal(await fetchReadme("https://github.com/o/r"), null);
+    assert.equal(stub.calls.length, 1);
+  } finally {
+    stub.restore();
+  }
+});
+
+test("enforces the README byte budget when the server omits content-length", async () => {
+  const stub = stubFetch(() => new Response("x".repeat(262145), { status: 200 }));
+  try {
+    assert.equal(await fetchReadme("https://github.com/o/r"), null);
+    assert.equal(stub.calls.length, 1);
+  } finally {
+    stub.restore();
+  }
+});
+
 test("strips a trailing .git suffix from the repo name", async () => {
   const stub = stubFetch((url) =>
     url === "https://raw.githubusercontent.com/o/r/main/README.md" ? new Response("x", { status: 200 }) : new Response("", { status: 404 }),

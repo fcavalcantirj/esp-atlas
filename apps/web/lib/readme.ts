@@ -5,6 +5,7 @@ const BRANCHES = ["main", "master"];
 const FILES = ["README.md", "readme.md", "README.MD", "README"];
 const REVALIDATE_SECONDS = 86400;
 const TOTAL_BUDGET_MS = 3000;
+const MAX_README_BYTES = 256 * 1024;
 
 export interface RepoReadme {
   markdown: string;
@@ -49,6 +50,36 @@ function parseGithubRepo(repoUrl: string): { owner: string; repo: string } | nul
   return { owner, repo: repo.replace(/\.git$/, "") };
 }
 
+async function boundedReadmeText(response: Response): Promise<string | null> {
+  const declaredBytes = Number(response.headers.get("content-length"));
+  if (Number.isFinite(declaredBytes) && declaredBytes > MAX_README_BYTES) {
+    await response.body?.cancel().catch(() => {});
+    return null;
+  }
+  if (!response.body) return "";
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  const chunks: string[] = [];
+  let bytes = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      bytes += value.byteLength;
+      if (bytes > MAX_README_BYTES) {
+        await reader.cancel().catch(() => {});
+        return null;
+      }
+      chunks.push(decoder.decode(value, { stream: true }));
+    }
+    chunks.push(decoder.decode());
+    return chunks.join("");
+  } finally {
+    reader.releaseLock();
+  }
+}
+
 export async function fetchReadme(repoUrl: string): Promise<RepoReadme | null> {
   const parsed = parseGithubRepo(repoUrl);
   if (!parsed) return null;
@@ -65,7 +96,8 @@ export async function fetchReadme(repoUrl: string): Promise<RepoReadme | null> {
           signal: AbortSignal.timeout(remaining),
         });
         if (res.status === 200) {
-          const markdown = await res.text();
+          const markdown = await boundedReadmeText(res);
+          if (markdown === null) return null;
           return { markdown, owner, repo, branch, file };
         }
       } catch {
