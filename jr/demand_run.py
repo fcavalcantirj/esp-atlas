@@ -414,6 +414,15 @@ def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str 
     return work.line()
 
 
+def _inconsistent_landing(demand_dir: Path, d: Decision, receipts_before: bytes | None) -> str:
+    """Why the bookkeeping as it would land must not: a queue closed by a closure beside a still-live
+    receipt for that work (the receipts write and the restore both failed), or ""."""
+    receipts = _read_bytes(demand_dir / demand_broker.RECEIPTS_NAME) if d.receipts_changed else receipts_before
+    keys = demand_broker.inconsistent_closures(_read_bytes(demand_dir / research_queue.QUEUE_NAME), receipts)
+    return (f"inconsistent closure bookkeeping for work {', '.join(keys)} (queue closed, receipt still live): "
+            "not published" if keys else "")
+
+
 def _refresh_pam(wt_path: Path, d: Decision, res: RunResult, refresh, now: datetime) -> None:
     """A deferred secondary source never prevents publishing successful search demand."""
     if refresh is None:
@@ -475,6 +484,7 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
                                 False, "search refresh unavailable", pam_only=True)
         res.date = decision.snap["date"]
         closer = {"git": git, "mined_revision": wt.base_sha}     # the catalog revision this run mined
+        receipts_before = _read_bytes(demand_dir / demand_broker.RECEIPTS_NAME)
         if not res.source_error:
             res.work = _reserve_work(wt.path, decision, gh, now, repo_slug, **closer)
         _refresh_pam(wt.path, decision, res, pam_refresh, now)
@@ -496,6 +506,9 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
             if res.source_error:
                 res.aborted = res.source_error
             return res
+        inconsistent = _inconsistent_landing(demand_dir, decision, receipts_before)
+        if inconsistent:
+            raise RunAbort(inconsistent)        # never land a closed queue beside its live receipt
         prefix = QUEUE_ONLY_PREFIX if decision.queue_only or decision.pam_only else BRANCH_PREFIX
         branch = f"{prefix}{now.strftime('%Y%m%d-%H%M')}"
         paths, subject, body = _publication(decision, wt.path)

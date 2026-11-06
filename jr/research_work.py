@@ -6,6 +6,8 @@ what the consumer may DO about it on one run, and when a linked change actually 
 - `plan_work` picks at most one action per run: reconcile/resume existing work first (allowed at
   the cap), else start one new item when the daily cap and the remote listing allow it. A `new`
   candidate permits research only; authoring needs a readable primary-source validation receipt.
+- A queue candidate a closure closed while that work's receipt is still live (`inconsistent_closures`)
+  blocks every new start until a human settles the receipt.
 - `verify_resolution` closes a candidate only on a merged, associated PR plus a same-day receipt
   of the postcondition its validation names: exactly the expected public search id set, with no
   forbidden or undeclared id (a possible sibling SKU), at a deployment containing the merge; or a
@@ -260,6 +262,28 @@ def _open_candidates(queue) -> list[dict] | None:
     return sorted(rows.values(), key=lambda c: (term_key(c.get("term")), str(c.get("term"))))
 
 
+def _closure_work(candidate: dict) -> str | None:
+    """The work id a broker closure recorded on a closed candidate (its last history entry), else None.
+    A candidate closed by hand records no such entry."""
+    history = candidate.get("history")
+    last = history[-1] if isinstance(history, list) and history else None
+    if candidate.get("status") != STATUS_CLOSED or not isinstance(last, dict) or last.get("event") != "closed":
+        return None
+    return last["work"] if _text(last.get("work")) else None
+
+
+def inconsistent_closures(queue, receipts) -> list[str]:
+    """Work ids a closure closed in the queue while a receipt for that work is still live: the
+    receipts write and the queue restore both failed, or a foreign queue write won the race.
+    Sorted; [] when the queue is unreadable (plan_work refuses that on its own)."""
+    rows = _open_candidates(queue)
+    if rows is None:
+        return []
+    closed = {_closure_work(c) for c in rows} - {None}
+    live = {r.get("key") for r in receipts or [] if isinstance(r, dict) and r.get("state") not in TERMINAL_STATES}
+    return sorted(closed & live)
+
+
 def plan_work(queue: dict, receipts: list[dict], today: str, *, remote_complete: bool = False,
               prefer: set | frozenset = frozenset()) -> Plan:
     """The one action this run may take. `receipts` are the consumer's persisted work receipts;
@@ -278,7 +302,10 @@ def plan_work(queue: dict, receipts: list[dict], today: str, *, remote_complete:
     if rows is None:
         return Plan(DEFER, reason="unreadable research queue")
 
-    blocked, startable, settled_keys, open_keys = [], [], set(), set()
+    blocked = [f"inconsistent closure of work {k}: the queue closed it but its receipt is still live; "
+               "settle that receipt before new work"
+               for k in inconsistent_closures(queue, receipts)]
+    startable, settled_keys, open_keys = [], set(), set()
     for c in rows:
         if not isinstance(c.get("status"), str) or c["status"] not in STATUSES:
             blocked.append(f"{c.get('term')!r}: unknown status {c.get('status')!r}")

@@ -22,7 +22,8 @@ appended) — another candidate, another receipt or a recorded outcome is never 
 unreadable file or an unknown schema version is preserved byte-for-byte and blocks new work.
 Writes are atomic and compare-and-swap: a file that changed since this call read it is never
 overwritten (a closure checks both files, closes the queue first, and restores the read bytes
-when the receipts write fails — only over its own write, never over a later writer's).
+when the receipts write fails — only over its own write, never over a later writer's). A closed
+candidate whose receipt is still live (both writes failed) blocks new work until a human settles it.
 
 Lock scope: scripts/jr-demand.sh's host-local flock serializes runs on one host, and each run
 works in its own fresh worktree. That is not global exactly-once: a reservation is durable once
@@ -222,15 +223,28 @@ def _read(path: Path) -> bytes | None:
         return None
 
 
+def _load_queue_bytes(raw: bytes | None):
+    """The parsed queue: absent is an empty queue, unreadable None."""
+    if raw is None:
+        return research_queue.empty_queue()
+    try:
+        return json.loads(raw)
+    except (ValueError, UnicodeDecodeError):
+        return None
+
+
 def _load_queue(demand_dir: Path):
     """(raw bytes, parsed queue): an absent file is an empty queue, an unreadable one None."""
     raw = _read(demand_dir / research_queue.QUEUE_NAME)
-    if raw is None:
-        return raw, research_queue.empty_queue()
-    try:
-        return raw, json.loads(raw)
-    except (ValueError, UnicodeDecodeError):
-        return raw, None
+    return raw, _load_queue_bytes(raw)
+
+
+def inconsistent_closures(queue_raw: bytes | None, receipts_raw: bytes | None) -> list[str]:
+    """research_work.inconsistent_closures over the two files' bytes; unreadable files yield []
+    (each is refused on its own)."""
+    queue = _load_queue_bytes(queue_raw)
+    doc = _load_receipts(receipts_raw)
+    return rw.inconsistent_closures(queue, doc["receipts"]) if doc is not None and queue is not None else []
 
 
 # --- reserve -----------------------------------------------------------------------------------

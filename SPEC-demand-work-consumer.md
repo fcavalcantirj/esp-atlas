@@ -155,9 +155,8 @@ it itself (`jr/demand_closure.py`, called from `demand_broker.reserve`):
   `event: closed` naming the `work` id) while a receipt for that work id is still live (not
   delivered, rejected or abandoned). It arises only when the receipts write and the restore both
   fail, or a foreign queue write wins the race. `plan_work` reports it as blocking (no new START,
-  so no PAM lead either) until a human settles the receipt or reopens the candidate; nothing
-  repairs it automatically. `demand_run` refuses to publish while the bookkeeping that would
-  land holds such a pair.
+  so no PAM lead either) until a human settles that receipt; nothing repairs it automatically.
+  `demand_run` refuses to publish while the bookkeeping that would land holds such a pair.
 - After a closure, the broker re-plans once in the same call. The next eligible candidate starts
   only if `new_pam`, `MAX_NEW_PER_DAY`, remote recovery and every other existing gate allow it.
   The outcome reports both the closed key and the newly started key. On 2026-11-06 itself the
