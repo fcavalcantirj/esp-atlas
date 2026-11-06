@@ -200,3 +200,72 @@ def test_mine_resolves_model_numbers_against_the_real_catalog(tmp_path, monkeypa
     (it,) = result["items"]
     assert it["resolved"]["board"] == "freenove-fnk0104s"
     assert it["gap"] == demand.GAP_COVERED_OK
+
+
+# ═══════════════════════════ whole-identifier boundary — no attached suffix/prefix ═══════════════════════════
+# `fnk0104s-a` is not a catalog id, title or alias: a model key only matches a WHOLE model
+# identifier, never one with an alphanumeric affix joined by '-', '_', '.' or '/'.
+
+COMPOUNDS = ["fnk0104s-a", "fnk0104s-b", "fnk0104sx", "FNK0104S-A", "fnk0104s_a", "fnk0104s.b",
+             "fnk0104s/a", "x-fnk0104s", "fnk0104s-a datasheet", "fnk0104s/fnk0104b"]
+
+
+@pytest.mark.parametrize("term", COMPOUNDS)
+def test_model_board_refuses_a_model_key_with_an_attached_affix(catalog, term):
+    assert rq.model_board(term, catalog) is None
+
+
+@pytest.mark.parametrize("term, board", [
+    ("fnk0104s", "freenove-fnk0104s"),
+    ("fnk0104s datasheet", "freenove-fnk0104s"),
+    ("freenove fnk0104s", "freenove-fnk0104s"),
+    ("freenove-fnk0104s", "freenove-fnk0104s"),   # vendor prefix: the board's own id
+    ("freenove_fnk0104s", "freenove-fnk0104s"),   # its canonical alias (aka)
+    ("(fnk0104s) display", "freenove-fnk0104s"),  # brackets are not a join
+    ("fnk0104a", "freenove-fnk0104a"),
+    ("fnk0104b", "freenove-fnk0104b"),
+])
+def test_model_board_whole_identifiers_still_resolve(catalog, term, board):
+    assert rq.model_board(term, catalog) == (board, "fnk0104" + board[-1])
+
+
+def test_model_board_refuses_another_vendors_prefix(catalog):
+    assert rq.model_board("lilygo-fnk0104s", catalog) is None
+
+
+@pytest.mark.parametrize("term", ["fnk0104s-a", "fnk0104s-b", "fnk0104sx"])
+def test_model_board_agrees_with_classify_on_compounds(catalog, term):
+    classification, evidence = rq.classify(term, catalog)
+    assert (classification, evidence["ids"]) == (rq.MISSING_CONTENT, [])
+    assert rq.model_board(term, catalog) is None
+
+
+@pytest.mark.parametrize("term", ["fnk0104s-a", "fnk0104s-b", "fnk0104sx"])
+def test_resolve_entity_no_board_for_a_compound_model_term(catalog, term):
+    r = demand.resolve_entity(term, FIRMWARE_IDS, catalog)
+    assert r["board"] is None
+    assert r["board_model"] is None
+
+
+def test_mine_never_covers_a_compound_model_term(tmp_path, monkeypatch):
+    terms = ["fnk0104s", "fnk0104s datasheet", "freenove fnk0104s", "fnk0104a", "fnk0104b",
+             "fnk0104s-a", "fnk0104s-b", "fnk0104sx", "fnk0104n", "esp32", "s3"]
+    monkeypatch.setattr(demand, "_pull_live", lambda days=demand.WINDOW_DAYS: {
+        "window": {"start": "2026-10-09", "end": "2026-11-05"},
+        "gsc_query_rows": [_row(t) for t in terms], "gsc_query_page_rows": [],
+        "ga4_searchterm_raw_rows": [], "trends": {},
+    })
+    items = demand.mine(send_telegram=False, demand_dir=tmp_path)["items"]
+    by_raw = {raw: it for it in items for raw in it["raw_terms"]}
+    for term in ["fnk0104s-a", "fnk0104s-b", "fnk0104sx"]:
+        it = by_raw[term]
+        assert it["gap"] != demand.GAP_COVERED_OK
+        assert (it["resolved"] or {}).get("board") is None
+    for term, board in [("fnk0104s", "freenove-fnk0104s"), ("fnk0104s datasheet", "freenove-fnk0104s"),
+                        ("freenove fnk0104s", "freenove-fnk0104s"), ("fnk0104a", "freenove-fnk0104a"),
+                        ("fnk0104b", "freenove-fnk0104b")]:
+        assert by_raw[term]["resolved"]["board"] == board
+        assert by_raw[term]["gap"] == demand.GAP_COVERED_OK
+    for term in ["fnk0104n", "esp32", "s3"]:
+        assert (by_raw[term]["resolved"] or {}).get("board") is None
+        assert by_raw[term]["gap"] != demand.GAP_COVERED_OK
