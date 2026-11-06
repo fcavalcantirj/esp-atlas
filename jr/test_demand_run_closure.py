@@ -199,3 +199,70 @@ def test_a_double_failure_blocks_publication_and_new_work(tmp_path, monkeypatch)
     assert res.published is False and "inconsistent" in res.aborted and KEY in res.aborted
     assert not [c for c in gh.calls if c[:2] == ("pr", "create")] and staged(git) == []
     assert (root / RECEIPTS_PATH).read_bytes() == RECEIPTS_RAW          # no new START, PAM or search
+
+
+def changed_demand_day(root):
+    """A previous snapshot with different demand: the run lands on demand alone (land already True)."""
+    (root / "docs/demand/2026-11-05.json").write_text(json.dumps({**SNAP, "date": "2026-11-05", "items": []}))
+    return root
+
+
+def gh_pending_with(gh):
+    """gh, but the linked PR is still open: RECONCILE stays pending and the broker writes nothing."""
+    stale = recorder({("pr", "view"): (0, pr_view(state="OPEN"))})
+
+    def fn(*args):
+        return stale(*args) if args[:2] == ("pr", "view") else gh(*args)
+
+    fn.calls = gh.calls
+    return fn
+
+
+def queue_with_new_candidate():
+    queue = json.loads(QUEUE_RAW)
+    queue["candidates"]["zz-new-term"] = {**queue["candidates"]["fnk0104s"], "term": "zz-new-term",
+                                          "status": "open"}
+    return queue
+
+
+def test_a_cas_refusal_on_a_changed_demand_day_never_stages_the_foreign_queue(tmp_path, monkeypatch):
+    seen, real = [], demand_run._publication
+
+    def spy(d, wt_path):
+        seen.append(d)
+        return real(d, wt_path)
+
+    monkeypatch.setattr(demand_run, "_publication", spy)
+    root, git = changed_demand_day(tree(tmp_path)), git_ok()
+    gh = gh_racing_queue(root)
+    res = run(root, git=git, gh=gh)
+    assert res.published is True and "changed during the run" in res.work
+    assert seen[0].land is True and seen[0].work_closed is False
+    assert QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
+    assert "docs/demand/2026-11-06.json" in staged(git) and "docs/demand/unresolved.json" in staged(git)
+    assert (root / QUEUE_PATH).read_bytes() == FOREIGN_QUEUE              # foreign bytes left untouched
+
+
+def test_a_miner_queue_rewrite_is_still_staged_on_a_changed_demand_day(tmp_path):
+    root, git = changed_demand_day(tree(tmp_path)), git_ok()
+    res = run(root, git=git, gh=gh_pending_with(gh_all()),
+              miner=snapshot_miner(SNAP, queue=queue_with_new_candidate()))
+    assert res.published is True and res.work.startswith("reconcile")
+    assert QUEUE_PATH in staged(git) and RECEIPTS_PATH not in staged(git)
+    assert "zz-new-term" in json.loads((root / QUEUE_PATH).read_text(encoding="utf-8"))["candidates"]
+
+
+def test_a_miner_queue_rewrite_overwritten_by_a_foreign_writer_is_not_staged(tmp_path):
+    root, git = changed_demand_day(tree(tmp_path)), git_ok()
+    pending = gh_pending_with(gh_all())
+
+    def gh(*args):
+        if args[:2] == ("pr", "view"):
+            (root / QUEUE_PATH).write_bytes(FOREIGN_QUEUE)
+        return pending(*args)
+
+    gh.calls = pending.calls
+    res = run(root, git=git, gh=gh, miner=snapshot_miner(SNAP, queue=queue_with_new_candidate()))
+    assert res.published is True
+    assert QUEUE_PATH not in staged(git) and "docs/demand/2026-11-06.json" in staged(git)
+    assert (root / QUEUE_PATH).read_bytes() == FOREIGN_QUEUE
