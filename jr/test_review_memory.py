@@ -257,3 +257,86 @@ def test_live_decision_ignores_plain_rejections():
 def test_a_reason_containing_a_comment_terminator_survives_the_marker():
     t = _target(reason="needs_review_target: a --> b")
     assert review_memory.parse_targets(review_memory.render_marker([t])) == [t]
+
+
+# --- one numeric repo_id, one decision: a rename never shadows a permanent veto --------------------
+
+OLD_FID, OLD_REPO = "a-old-firmware", "espdev/old-firmware"
+NEW_FID, NEW_REPO = "z-new-firmware", "espdev/new-firmware"
+SHARED_RID = 42
+OLD_VETO = {"id": OLD_FID, "repo": OLD_REPO, "repo_id": SHARED_RID, "status": "rejected", "pr_ref": "#12",
+            "reason": "human closed #12 unmerged", "timestamp": "2026-01-01T00:00:00+00:00"}
+
+
+def _renamed(**kw):
+    return _target(id=NEW_FID, repo=NEW_REPO, repo_id=SHARED_RID, **kw)
+
+
+def test_a_renamed_target_never_shadows_a_permanent_veto_for_the_same_repo_id(tmp_path):
+    path = _ledger(tmp_path, OLD_VETO)
+    gh = _gh([_pr(1495, "OPEN", NOW - timedelta(hours=2), _body(_renamed()))])
+    review_memory.reconcile(gh, path, NOW)
+    led = memory.load(path)
+    assert list(led["by_id"]) == [OLD_FID]                          # one record per repo_id, never two
+    rec = led["by_id"][OLD_FID]
+    assert memory.is_permanent_rejection(rec) and rec["reason"] == OLD_VETO["reason"]
+    assert rec["aliases"] == [{"id": NEW_FID, "repo": NEW_REPO}]    # the new name is remembered
+    later = NOW + timedelta(days=61)
+    assert led["by_repo_id"][SHARED_RID] == OLD_FID
+    assert memory.is_blocked(led, repo_id=SHARED_RID, now=later)
+    assert memory.is_blocked(led, repo=NEW_REPO, now=later)
+    before = path.read_text()
+    assert review_memory.reconcile(gh, path, NOW + timedelta(hours=1)) == []   # idempotent
+    assert path.read_text() == before
+
+
+def test_a_renamed_decision_is_written_under_the_repo_ids_record_keeping_its_history(tmp_path):
+    old_expired = {**MAIN_EXPIRED, "id": OLD_FID, "repo": OLD_REPO, "repo_id": SHARED_RID}
+    path = _ledger(tmp_path, old_expired)
+    assert memory.record_review_decision(NEW_FID, NEW_REPO, "needs_review_target: x", repo_id=SHARED_RID,
+                                         evidence_rev="a", path=path, now=NOW)
+    led = memory.load(path)
+    assert list(led["by_id"]) == [OLD_FID]
+    rec = led["by_id"][OLD_FID]
+    assert rec["status"] == "rejected" and rec["review"]["evidence_rev"] == "a"
+    assert rec["history"] == [old_expired] and rec["aliases"] == [{"id": NEW_FID, "repo": NEW_REPO}]
+    assert led["by_repo"][NEW_REPO] == OLD_FID
+    assert review_memory.live_decision(led, NOW, repo_id=SHARED_RID) is rec
+
+
+def test_record_review_decision_never_weakens_a_veto_held_under_another_id(tmp_path):
+    path = _ledger(tmp_path, OLD_VETO)
+    memory.record_review_decision(NEW_FID, NEW_REPO, "needs_review_target: x", repo_id=SHARED_RID,
+                                  evidence_rev="a", path=path, now=NOW)
+    led = memory.load(path)
+    assert set(led["by_id"]) == {OLD_FID}
+    assert {k: v for k, v in led["by_id"][OLD_FID].items() if k != "aliases"} == OLD_VETO
+    assert memory.is_blocked(led, repo_id=SHARED_RID, now=NOW + timedelta(days=61))
+
+
+def test_a_ledger_already_holding_a_shadowing_duplicate_still_resolves_the_repo_id_to_the_veto(tmp_path):
+    shadow = {"id": NEW_FID, "repo": NEW_REPO, "repo_id": SHARED_RID, "status": "rejected", "pr_ref": None,
+              "reason": "needs_review_target: x", "timestamp": NOW.isoformat(),
+              "expires": (NOW + timedelta(days=60)).isoformat(), "review": {"outcome": "open"}}
+    led = memory.load(_ledger(tmp_path, OLD_VETO, shadow))
+    assert led["by_repo_id"][SHARED_RID] == OLD_FID
+    assert memory.is_blocked(led, repo_id=SHARED_RID, now=NOW + timedelta(days=61))
+
+
+# --- latest_raises groups by the stable repo_id, not the name ---------------------------------------
+
+def test_a_newer_merged_raise_under_a_new_name_supersedes_an_older_open_one_for_the_same_repo_id(tmp_path):
+    path = _ledger(tmp_path, MAIN_EXPIRED)
+    old, new = NOW - timedelta(hours=9), NOW - timedelta(hours=1)
+    prs = [_pr(1480, "OPEN", old, _body(_target(id=OLD_FID, repo=OLD_REPO, repo_id=SHARED_RID))),
+           _pr(1494, "MERGED", new, _body(_renamed()), merged=True)]
+    assert len(review_memory.latest_raises(prs)) == 1
+    before = path.read_text()
+    assert review_memory.reconcile(_gh(prs), path, NOW) == []       # main's ledger already has the merge
+    assert path.read_text() == before
+
+
+def test_raises_without_a_repo_id_still_group_by_name():
+    old, new = NOW - timedelta(hours=9), NOW - timedelta(hours=1)
+    got = review_memory.latest_raises([_pr(1477, "CLOSED", old, LEGACY_BODY), _pr(1490, "OPEN", new, LEGACY_BODY)])
+    assert [pr["number"] for _, pr, _ in got.values()] == [1490]
