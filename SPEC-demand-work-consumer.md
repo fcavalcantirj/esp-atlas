@@ -146,17 +146,28 @@ it itself (`jr/demand_closure.py`, called from `demand_broker.reserve`):
 - `pending`: nothing is written; the reason is reported on the run line.
 - Both files are written with the queue's atomic writer under START's compare-and-swap guard,
   extended to both files: if either changed since the call read it, neither is written. The
-  queue closes first. If the receipts write then fails, the queue is restored when that is
-  byte-exact. Otherwise it stays closed beside a live `proposed` receipt. `plan_work` treats
-  that receipt as settled, so it never blocks new work. The reverse order would leave a
-  settled receipt beside a `linked` candidate, which would RECONCILE on every run.
+  queue closes first (the reverse order would leave a settled receipt beside a `linked`
+  candidate, which would RECONCILE on every run). If the receipts write then fails, the queue
+  is restored to the exact bytes the call read, and only while the queue still holds exactly
+  the bytes this closure wrote. A queue another writer changed after the closure's write is
+  never overwritten. Every such failure is a `defer`, never a closure.
+- An inconsistent pair is a candidate `closed` by a closure (its last `history` entry is
+  `event: closed` naming the `work` id) while a receipt for that work id is still live (not
+  delivered, rejected or abandoned). It arises only when the receipts write and the restore both
+  fail, or a foreign queue write wins the race. `plan_work` reports it as blocking (no new START,
+  so no PAM lead either) until a human settles the receipt or reopens the candidate; nothing
+  repairs it automatically. `demand_run` refuses to publish while the bookkeeping that would
+  land holds such a pair.
 - After a closure, the broker re-plans once in the same call. The next eligible candidate starts
   only if `new_pam`, `MAX_NEW_PER_DAY`, remote recovery and every other existing gate allow it.
   The outcome reports both the closed key and the newly started key. On 2026-11-06 itself the
   daily cap is already used by the closed item's own reservation, so the re-plan defers.
 - `demand_run` lands `research-queue.json` and `work-receipts.json` in the demand PR whenever a
-  closure changed them, including on an otherwise unchanged demand day. It detects the changes
-  by bytes, so the closure still lands if the broker raises after writing. Its second PAM pass
+  closure changed them, including on an otherwise unchanged demand day. It recognizes a closure
+  only from the broker's explicit result, never from before/after file bytes, so a file another
+  writer changed is never landed as this run's work. The broker also hands that result to a
+  caller-supplied list as soon as both files are durable, so the closure still lands if the
+  re-plan then raises. Its second PAM pass
   (`new_pam`) also runs after a closure, not only after a NOOP. That pass is `close=False`, so a
   run closes at most one item.
 
