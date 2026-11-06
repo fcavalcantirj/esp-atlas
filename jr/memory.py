@@ -26,6 +26,10 @@ What v2 adds, and why each field exists:
 - `review` + `history` (optional). An owner-review decision and the records it replaced — see
   record_review_decision and SPEC-jr-review-routing.md §5. Once a record has either, every later
   overwrite appends the replaced record to `history`: nothing is deleted.
+- `aliases` (optional). [{id, repo}] other names a decision for this record's `repo_id` arrived
+  under (a renamed repo, a re-derived firmware id). One numeric repo_id owns ONE record: a later
+  decision under a new name is written to (or, against a protected record, refused by) the record
+  that already owns the repo_id, and the new name becomes an alias — see canonical_id.
 - status `expired` + `expired_at`. A record whose TTL ran out keeps its history (the original
   `timestamp` is the decision time, `expired_at` is when it lapsed) but is neither blocking nor
   "seen": to every gate it reads as absent. ledger.is_blocked / is_seen already return False
@@ -101,12 +105,18 @@ def is_permanent_rejection(record: dict | None) -> bool:
     return bool(record) and record.get("status") == "rejected" and not record.get("expires")
 
 
+def is_protected(record: dict | None) -> bool:
+    """A record no TTL'd decision may replace: a permanent rejection, a merged or proposed one."""
+    return is_permanent_rejection(record) or (record or {}).get("status") in ("merged", "proposed")
+
+
 # --- reading ---------------------------------------------------------------------------------
 
 def load(path: Path | None = None) -> dict:
     """The ledger (jr/ledger.py's shape) plus a DERIVED `by_repo_id` view: {repo_id: firmware_id}
     over every record that carries a `repo_id`. ledger._save strips it, so it can never go stale
-    relative to the records."""
+    relative to the records. Two records sharing a repo_id (a rename written before canonical_id)
+    resolve to the protected one, so a permanent veto is never shadowed by a later TTL'd record."""
     led = load_ledger(_path(path))
     view = {}
     for fid, rec in led["by_id"].items():
@@ -114,9 +124,12 @@ def load(path: Path | None = None) -> dict:
         if rid is None:
             continue
         try:
-            view[int(rid)] = fid
+            rid = int(rid)
         except (TypeError, ValueError):
             continue
+        if rid in view and is_protected(led["by_id"][view[rid]]) and not is_protected(rec):
+            continue
+        view[rid] = fid
     led["by_repo_id"] = view
     return led
 
@@ -141,6 +154,28 @@ def lookup(led: dict, firmware_id: str | None = None, repo: str | None = None,
         if fid:
             return led["by_id"].get(fid)
     return None
+
+
+def canonical_id(led: dict, firmware_id: str | None, repo_id: int | None) -> str | None:
+    """The id a decision for (`firmware_id`, `repo_id`) is written under, resolved by the stable
+    repo_id BEFORE any record is created: the protected record owning the repo_id; else
+    `firmware_id`'s own record; else whichever record owns the repo_id; else `firmware_id`.
+    `led` must come from load() (it reads the derived by_repo_id view)."""
+    owner = led.get("by_repo_id", {}).get(int(repo_id)) if repo_id is not None else None
+    if owner and is_protected(led["by_id"].get(owner)):
+        return owner
+    if firmware_id and firmware_id in led["by_id"]:
+        return firmware_id
+    return owner or firmware_id
+
+
+def _with_alias(rec: dict, firmware_id: str, repo_key: str) -> list:
+    """`rec`'s aliases plus (firmware_id, repo_key) when that is not `rec`'s own identity."""
+    aliases = list(rec.get("aliases") or [])
+    alias = {"id": firmware_id, "repo": repo_key}
+    if (firmware_id, repo_key) != (rec.get("id"), rec.get("repo")) and alias not in aliases:
+        aliases.append(alias)
+    return aliases
 
 
 def is_blocked(led: dict, firmware_id: str | None = None, repo: str | None = None,
@@ -216,6 +251,8 @@ def _write(firmware_id: str, repo: str, status: str, reason: str | None, ttl_day
     }
     if existing and (existing.get("review") or existing.get("history")):
         rec["history"] = _history(existing)
+    if existing and existing.get("aliases"):
+        rec["aliases"] = existing["aliases"]
     if reason is not None:
         rec["reason"] = reason
     exp = _expiry(now, ttl_days)
@@ -247,34 +284,63 @@ def record_review_decision(firmware_id: str, repo: str, reason: str, *, repo_id:
     {outcome, pr_ref, raised_at, evidence_rev, evidence}. `outcome`: raised (asked in this tick's
     PR) / open / closed (the owner closed that review PR unmerged). The candidate stays unadmitted.
 
+    Identity is resolved by repo_id first (canonical_id): a decision arriving under a new name for
+    a repo_id another record owns goes to THAT record, and the new name is kept as an alias.
+
     Same refusals as _write: never over a permanent rejection, a merged or a proposed record (a
-    missing repo_id is backfilled). Idempotent: a record that already says the same is not
-    rewritten. Otherwise the replaced record is appended to `history`."""
+    missing repo_id is backfilled, a new name aliased). Idempotent: a record that already says the
+    same is not rewritten. Otherwise the replaced record is appended to `history`."""
     if not firmware_id and not repo:
         return load_ledger(_path(path))
     path = _path(path)
     raised = _aware(raised_at or now)
-    led = load_ledger(path)
-    existing = led["by_id"].get(firmware_id)
-    if existing and (is_permanent_rejection(existing) or existing.get("status") in ("merged", "proposed")):
-        if repo_id is not None and existing.get("repo_id") is None:
-            existing["repo_id"] = int(repo_id)
-            _save(led, path)
-        return led
+    led = load(path)
+    repo_key = repo.lower()
+    fid = canonical_id(led, firmware_id, repo_id)
+    existing = led["by_id"].get(fid)
+    if is_protected(existing):
+        return _refuse(led, existing, firmware_id, repo_key, repo_id, path)
     rid = int(repo_id) if repo_id is not None else (existing or {}).get("repo_id")
     review = {"outcome": outcome, "pr_ref": pr_ref, "raised_at": _iso(raised),
               "evidence_rev": evidence_rev, "evidence": evidence}
-    rec = {"id": firmware_id, "repo": repo.lower(), "status": "rejected", "timestamp": _iso(raised),
-           "pr_ref": None, "reason": reason, "expires": _expiry(raised, ttl_days), "review": review}
+    renamed = fid != firmware_id
+    rec = {"id": fid, "repo": existing.get("repo") or repo_key if renamed else repo_key, "status": "rejected",
+           "timestamp": _iso(raised), "pr_ref": None, "reason": reason,
+           "expires": _expiry(raised, ttl_days), "review": review}
     if rid is not None:
         rec["repo_id"] = rid
+    aliases = _with_alias(existing, firmware_id, repo_key) if renamed else (existing or {}).get("aliases")
+    if aliases:
+        rec["aliases"] = aliases
     if existing:
         if {k: v for k, v in existing.items() if k != "history"} == rec:
             return led
         rec["history"] = _history(existing)
-    led["by_id"][firmware_id] = rec
-    led["by_repo"][rec["repo"]] = firmware_id
+    led["by_id"][fid] = rec
+    led["by_repo"][rec["repo"]] = fid
+    led["by_repo"][repo_key] = fid
     _save(led, path)
+    return led
+
+
+def _refuse(led: dict, existing: dict, firmware_id: str, repo_key: str, repo_id: int | None,
+            path: Path) -> dict:
+    """A protected record is never replaced: backfill a missing repo_id, alias a new name (so a
+    lookup by it reaches the veto). Saves only when something changed."""
+    changed = False
+    if repo_id is not None and existing.get("repo_id") is None:
+        existing["repo_id"] = int(repo_id)
+        changed = True
+    if firmware_id != existing["id"]:
+        aliases = _with_alias(existing, firmware_id, repo_key)
+        if aliases != (existing.get("aliases") or []):
+            existing["aliases"] = aliases
+            changed = True
+        if led["by_repo"].get(repo_key) != existing["id"]:
+            led["by_repo"][repo_key] = existing["id"]
+            changed = True
+    if changed:
+        _save(led, path)
     return led
 
 
