@@ -124,6 +124,18 @@ test("README links resolve against the fetched repository branch and path", () =
   assert.equal(resolveReadmeHref("./docs/guide.md", null, "https://github.com/o/r"), "https://github.com/o/r");
 });
 
+test("README paths encode once, including escaped Unicode and stray percent signs", () => {
+  const readme = { markdown: "", owner: "o", repo: "r", branch: "main", file: "README.md" };
+  const base = "https://github.com/o/r/blob/main/";
+  assert.equal(resolveReadmeHref("docs/Getting%20Started.md", readme), `${base}docs/Getting%20Started.md`);
+  assert.equal(resolveReadmeHref("docs/école.md", readme), `${base}docs/%C3%A9cole.md`);
+  assert.equal(resolveReadmeHref("docs/%C3%A9cole.md", readme), `${base}docs/%C3%A9cole.md`);
+  assert.equal(resolveReadmeHref("docs/100%25-ready.md", readme), `${base}docs/100%25-ready.md`);
+  assert.equal(resolveReadmeHref("docs/100%-ready.md", readme), `${base}docs/100%25-ready.md`);
+  assert.equal(resolveReadmeHref("docs/a%20b%ZZ.md", readme), `${base}docs/a%20b%25ZZ.md`);
+  assert.equal(resolveReadmeHref("docs/%2E%2E/src/main.cpp", readme), `${base}src/main.cpp`);
+});
+
 test("verified stale upstream links use a live target or become plain text", () => {
   const readme = (owner: string, repo: string) => ({ markdown: "", owner, repo, branch: "main", file: "README.md" });
   assert.equal(resolveReadmeHref("BUILDIgNG.md", readme("clackups", "draftling")), "https://github.com/clackups/draftling/blob/main/BUILDING.md");

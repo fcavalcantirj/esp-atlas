@@ -30,6 +30,19 @@ export interface RepoReadme {
   file: string;
 }
 
+function decodePathSegment(segment: string): string {
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    // A stray percent escape should stay literal. Decode any valid runs so
+    // already encoded spaces and Unicode are not encoded a second time.
+    return segment.replace(/(?:%[0-9a-f]{2})+/gi, (run) => {
+      try { return decodeURIComponent(run); }
+      catch { return run; }
+    });
+  }
+}
+
 /** A README link is relative to its repository file, never to /firmware/<id>. */
 export function resolveReadmeHref(href: string, readme: RepoReadme | null, repoFallbackUrl = ""): string | null {
   if (/^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(href)) return href;
@@ -41,7 +54,8 @@ export function resolveReadmeHref(href: string, readme: RepoReadme | null, repoF
   const [path, query = ""] = pathAndQuery.split("?", 2);
   const input = !path ? readme.file : path.startsWith("/") ? path.slice(1) : `${readme.file.includes("/") ? readme.file.slice(0, readme.file.lastIndexOf("/") + 1) : ""}${path}`;
   const segments: string[] = [];
-  for (const segment of input.split("/")) {
+  for (const rawSegment of input.split("/")) {
+    const segment = decodePathSegment(rawSegment);
     if (!segment || segment === ".") continue;
     if (segment === "..") segments.pop();
     else segments.push(segment);

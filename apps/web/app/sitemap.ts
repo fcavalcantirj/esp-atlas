@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { fetchAllPartsResult, fetchFirmwareList } from "@/lib/api-server";
 import { SITE_URL } from "@/lib/site";
 import { staticContentRoutes } from "@/lib/sitemap-routes";
+import { isFirmware, isPart, validateCatalogCollection } from "@/lib/atlas-load";
 
 // Rendered on request (never at build time — the Python API is not running
 // during `next build`); the /parts and /firmware fetches underneath are each
@@ -13,8 +14,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (partsResult.status !== "ok" || firmwareResult.status !== "ok") {
     throw new Error("Catalog API unavailable; refusing to publish an incomplete sitemap");
   }
-  const parts = partsResult.data.results;
-  const firmware = firmwareResult.data.results;
+  const partsCollection = validateCatalogCollection(partsResult.data, "/parts", isPart);
+  const firmwareCollection = validateCatalogCollection(firmwareResult.data, "/firmware", isFirmware);
+  if (partsCollection.status !== "ok" || firmwareCollection.status !== "ok") {
+    throw new Error(`Catalog API returned an incomplete sitemap collection: ${
+      [partsCollection, firmwareCollection].filter((result) => result.status === "error")
+        .map((result) => result.message).join(" ")}`);
+  }
+  const parts = partsCollection.records;
+  const firmware = firmwareCollection.records;
   if (parts.length === 0 || firmware.length === 0) {
     throw new Error("Catalog API returned an empty collection; refusing to publish an incomplete sitemap");
   }
