@@ -44,7 +44,7 @@
     "position": 8.2
    },
    "snapshot": "docs/demand/2026-11-06.json",
-   "status": "validated",
+   "status": "linked",
    "classification": "alias_typo",
    "evidence": {
     "rule": "vendor-prefix match: the term is a board id without its brand prefix, or a model-number token of one record's title",
@@ -82,7 +82,9 @@
     "verification_kind": "demand_resolution",
     "notes": "Vendor README lists FNK0104A (2.8in ILI9341 NonTouch), FNK0104B (2.8in ILI9341 Touch), FNK0104N (3.5in Touch) and FNK0104S (4.0in ST7789 Touch) as distinct variants; FNK0104N is not catalogued. Display-controller facts untouched."
    },
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1476"
+   ],
    "outcome": null,
    "closed_on": null,
    "history": []
