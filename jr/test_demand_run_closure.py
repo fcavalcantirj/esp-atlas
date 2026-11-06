@@ -517,3 +517,22 @@ def test_a_foreign_receipts_edit_after_the_runners_check_is_never_closed_over(tm
     assert QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
     assert f"closed {KEY}" not in res.work and "another writer" in res.work
     assert res.published is True and "Work closed" not in pr_body(gh)
+
+
+def test_a_live_receipt_restored_before_the_re_plan_aborts_without_reporting_the_closure(tmp_path, monkeypatch):
+    """A foreign writer puts the live receipt back after the closure: the pair is inconsistent, the run
+    aborts and publishes nothing — and its report never calls the work closed."""
+    root, git, gh = tree(tmp_path), git_ok(), gh_all()
+    real = demand_run.demand_broker._write_closure
+
+    def write_then_race(*args, **kw):
+        problem = real(*args, **kw)
+        if not problem:
+            (root / RECEIPTS_PATH).write_bytes(RECEIPTS_RAW)
+        return problem
+
+    monkeypatch.setattr(demand_run.demand_broker, "_write_closure", write_then_race)
+    res = run(root, git=git, gh=gh)
+    assert "inconsistent" in res.aborted and res.published is False and staged(git) == []
+    assert (root / RECEIPTS_PATH).read_bytes() == RECEIPTS_RAW
+    assert f"closed {KEY}" not in res.line() and "not landed" in res.line()

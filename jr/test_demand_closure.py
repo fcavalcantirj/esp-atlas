@@ -651,3 +651,24 @@ def test_a_foreign_edit_before_the_re_plan_is_never_built_on_or_owned(tmp_path, 
     assert KEELOQ_KEY not in {r["key"] for r in doc(d, RECEIPTS)["receipts"]}
     assert out.action == rw.DEFER and out.foreign == (name,) and "another writer" in out.reason
     assert writes[name] != foreign[0]                              # ownership is never handed to them
+
+
+def test_a_foreign_receipts_edit_during_the_closures_queue_write_is_never_overwritten(tmp_path, monkeypatch):
+    """The closure checks both files, then writes the queue: a receipts edit landing during that write
+    is preserved, the closure's own queue write is undone, and nothing is recorded as this run's."""
+    d, writes = demand_dir(tmp_path), {}
+    foreign = b'{"version": 1, "receipts": [], "edited_by": "a concurrent triage"}\n'
+    real = research_queue.write_queue
+
+    def write_then_race(doc_, path):
+        out = real(doc_, path)
+        if Path(path).name == QUEUE:
+            (d / RECEIPTS).write_bytes(foreign)
+        return out
+
+    monkeypatch.setattr(research_queue, "write_queue", write_then_race)
+    out = broker.reserve(d, SNAP, gh=gh_for(), git=git_for(), repo_slug=SLUG, today=NEXT_DAY, now=NEXT_NOW,
+                         mined_revision=MAIN_SHA, writes=writes)
+    assert (d / RECEIPTS).read_bytes() == foreign
+    assert (d / QUEUE).read_bytes() == QUEUE_RAW                   # no closure left on one side
+    assert out.action == rw.DEFER and out.closed == "" and writes == {}
