@@ -7,8 +7,10 @@ what the consumer may DO about it on one run, and when a linked change actually 
   the cap), else start one new item when the daily cap and the remote listing allow it. A `new`
   candidate permits research only; authoring needs a readable primary-source validation receipt.
 - `verify_resolution` closes a candidate only on a merged, associated PR plus a same-day receipt
-  of the postcondition its validation names: exact public search ids at a deployment containing
-  the merge, or a fresh successful miner run at a revision containing it.
+  of the postcondition its validation names: exactly the expected public search id set, with no
+  forbidden or undeclared id (a possible sibling SKU), at a deployment containing the merge; or a
+  fresh successful miner run at a revision containing it. Closure evidence carries the reservation's
+  original provenance, not the queue's refreshed sliding window.
 
 Pure functions over plain dicts, stdlib only: no network, no file writes, inputs never mutated.
 The work key is an opaque hash of the normalized term plus its lifecycle opening date, so raw
@@ -119,6 +121,15 @@ def _metrics(row: dict) -> dict | None:
     return ga4 or None
 
 
+def _forbidden_ids(v: dict) -> list | None:
+    """The sibling ids the validation ruled out ([] when it names none), or None when the list is
+    unreadable or contradicts the expected set."""
+    forbidden = v.get("forbidden_ids", [])
+    if not (isinstance(forbidden, list) and all(_text(i) for i in forbidden)):
+        return None
+    return None if set(forbidden) & set(v["expected_ids"]) else forbidden
+
+
 def readable_validation(candidate: dict) -> dict | None:
     """The identity/primary-source receipt, only when it names THIS term and is complete."""
     v = candidate.get("validation")
@@ -132,7 +143,7 @@ def readable_validation(candidate: dict) -> dict | None:
             and isinstance(sources, list) and sources and all(_text(s) for s in sources)
             and isinstance(ids, list) and ids and all(_text(i) for i in ids)):
         return None
-    return v
+    return v if _forbidden_ids(v) is not None else None
 
 
 _SNAPSHOT_CHECKS = {"source": lambda r: _text(r["source"]), "window": _window, "metrics": _metrics}
@@ -220,10 +231,13 @@ def _open_candidates(queue) -> list[dict] | None:
     return sorted(rows.values(), key=lambda c: (term_key(c.get("term")), str(c.get("term"))))
 
 
-def plan_work(queue: dict, receipts: list[dict], today: str, *, remote_complete: bool = False) -> Plan:
+def plan_work(queue: dict, receipts: list[dict], today: str, *, remote_complete: bool = False,
+              prefer: set | frozenset = frozenset()) -> Plan:
     """The one action this run may take. `receipts` are the consumer's persisted work receipts;
     `remote_complete` says the deterministic branches and PRs/issues in all states were listed
-    completely. An uncertain listing permits nothing: no blind create, no resumed execution."""
+    completely. An uncertain listing permits nothing: no blind create, no resumed execution.
+    `prefer` names branches whose remote work exists unrecorded: such work starts first, so it is
+    recovered before any other new work takes the day's slot."""
     if _date(today) is None:
         return Plan(DEFER, reason=f"unreadable run date {today!r}")
     if not remote_complete:
@@ -267,7 +281,7 @@ def plan_work(queue: dict, receipts: list[dict], today: str, *, remote_complete:
         return Plan(NOOP, reason="no open candidate needs work")
     if len({r["key"] for r in receipts if r["started_on"] == today}) >= MAX_NEW_PER_DAY:
         return Plan(DEFER, reason=f"daily cap of {MAX_NEW_PER_DAY} new work item(s) reached")
-    startable.sort(key=lambda cw: cw[1].phase != PHASE_AUTHOR)   # stable: authoring-ready first
+    startable.sort(key=lambda cw: (cw[1].branch not in prefer, cw[1].phase != PHASE_AUTHOR))  # stable
     return Plan(START, startable[0][1], reason="new work")
 
 
@@ -314,19 +328,30 @@ def _receipt_problem(receipt: dict, candidate: dict, pr: dict, kind: str, today:
     return None
 
 
-def _catalog_search_problem(receipt: dict, expected: list) -> str | None:
+def _catalog_search_problem(receipt: dict, expected: list, forbidden: list) -> str | None:
+    """Exact-SKU: the response is exactly the declared expected set, order irrelevant. A missing
+    id (a partial positive) stays open; so does any extra id, forbidden or merely undeclared — it
+    may be a sibling the validation never named. Unreadable ids stay open, never raise."""
     if receipt.get("http") != 200 or not _text(receipt.get("deployment")):
         return "live search not successful at a known deployment"
-    ids = receipt.get("ids") if isinstance(receipt.get("ids"), list) else []
+    ids = receipt.get("ids")
+    if not (isinstance(ids, list) and all(_text(i) for i in ids)):
+        return "live search ids unreadable"
     missing = [i for i in expected if i not in ids]
-    return f"live search lacks expected ids {missing}" if missing else None
+    if missing:
+        return f"live search lacks expected ids {missing}"
+    siblings = [i for i in forbidden if i in ids]
+    if siblings:
+        return f"live search also returns forbidden sibling ids {siblings}"
+    extra = sorted(set(ids) - set(expected))
+    return f"live search also returns undeclared ids {extra}" if extra else None
 
 
-def _demand_resolution_problem(receipt: dict, expected: list) -> str | None:
+def _demand_resolution_problem(receipt: dict, expected: list, forbidden: list) -> str | None:
     if receipt.get("exit_code") != 0 or not _text(receipt.get("mined_revision")):
         return "no successful miner run at a known revision"
     resolved = receipt.get("resolved") if isinstance(receipt.get("resolved"), dict) else {}
-    if resolved.get("board") not in expected:
+    if resolved.get("board") not in expected:   # expected and forbidden are disjoint
         return f"miner resolved {resolved.get('board')!r}, not {expected}"
     if receipt.get("gap") != COVERED_GAP:
         return f"miner gap is {receipt.get('gap')!r}, not {COVERED_GAP}"
@@ -338,10 +363,13 @@ _KIND_CHECKS = {KIND_CATALOG_SEARCH: (_catalog_search_problem, ("http", "deploym
                                          ("mined_revision", "exit_code", "resolved", "gap"))}
 
 
-def verify_resolution(candidate: dict, pr: dict, observed_receipt: dict, today: str) -> Resolution:
+def verify_resolution(candidate: dict, pr: dict, observed_receipt: dict, today: str, *,
+                      work_receipts: list[dict] | None = None) -> Resolution:
     """delivered (closed_on=today, with evidence) only for the linked, merged PR plus a same-day
     receipt of the postcondition the validation's verification kind names; rejected for a PR
-    closed unmerged; pending for everything else, including any unreadable input."""
+    closed unmerged; pending for everything else, including any unreadable input. The evidence's
+    source/window/metrics come from this work's reservation in `work_receipts` (the consumer's
+    persisted receipts) when one was snapshotted, else from the candidate."""
     if not isinstance(candidate, dict) or candidate.get("status") != STATUS_LINKED or _date(today) is None:
         return _pending("candidate is not linked work or the run date is unreadable")
     validation = readable_validation(candidate)
@@ -356,15 +384,21 @@ def verify_resolution(candidate: dict, pr: dict, observed_receipt: dict, today: 
     if not isinstance(observed_receipt, dict):
         return _pending("no readable verification receipt")
     check, fields = _KIND_CHECKS[kind]
+    forbidden = _forbidden_ids(validation)
     problem = (_receipt_problem(observed_receipt, candidate, pr, kind, today)
-               or check(observed_receipt, validation["expected_ids"]))
+               or check(observed_receipt, validation["expected_ids"], forbidden))
     if problem:
         return _pending(problem)
+    receipts = list(work_receipts or [])
+    if not all(_readable_receipt(r) for r in receipts):
+        return _pending("corrupt work receipt: fail closed")
+    work = _work(candidate, receipts)
+    if work is None:
+        return _pending("unreadable provenance (source/window/metrics/date)")
     evidence = {"pr_url": pr["url"], "merge_sha": pr["merge_sha"], "merged_at": pr["merged_at"],
                 "verification_kind": kind, "query": observed_receipt["query"],
                 "checked_at": observed_receipt["checked_at"],
-                "expected_ids": list(validation["expected_ids"]),
-                "source": candidate.get("source"), "window": copy.deepcopy(candidate.get("window")),
-                "metrics": _metrics(candidate)}
+                "expected_ids": list(validation["expected_ids"]), "forbidden_ids": list(forbidden),
+                "source": work.source, "window": dict(work.window), "metrics": work.metrics}
     evidence.update({f: copy.deepcopy(observed_receipt[f]) for f in fields})
     return Resolution("delivered", f"{kind} postcondition observed", closed_on=today, evidence=evidence)

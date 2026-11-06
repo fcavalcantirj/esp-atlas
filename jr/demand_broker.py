@@ -8,10 +8,12 @@ research_work.plan_work, and records at most ONE new reservation in
 
 Bookkeeping only: no catalog write, no PR or branch for the work item, no LLM, and no network
 beyond the injected `gh`, which lists the deterministic `jr/research-*` branches and their PRs in
-all states. A listing that fails, is unreadable or may be truncated is never an empty listing:
-plan_work then permits nothing. The receipts file is append-only here — an existing receipt
-(another candidate, its linked work, its recorded outcome) is never rewritten — and an unreadable
-file is preserved byte-for-byte and blocks new work. Writes are atomic.
+all states, keeping each PR's state. A listing that fails, is unreadable or may be truncated is
+never an empty listing: plan_work then permits nothing. An OPEN PR no live receipt accounts for is
+recovered (its open candidate starts first) or defers new work; closed/merged history never blocks.
+The receipts file is append-only here — an existing receipt (another candidate, its linked work,
+its recorded outcome) is never rewritten — and an unreadable file or an unknown schema version is
+preserved byte-for-byte and blocks new work. Writes are atomic.
 
 Lock scope: scripts/jr-demand.sh's host-local flock serializes runs on one host, and each run
 works in its own fresh worktree. That is not global exactly-once: a reservation is durable once
@@ -36,6 +38,8 @@ GSC_METRICS = ("impressions", "clicks", "position")   # GSC units only — never
 GAP_UNRESOLVED = "UNRESOLVED"
 RESERVED = "reserved"
 RESERVED_BY = "jr/demand_run.py"
+PR_OPEN = "OPEN"
+PR_STATES = {PR_OPEN, "CLOSED", "MERGED"}                 # gh's PR states; anything else is unreadable
 
 
 # --- intake ------------------------------------------------------------------------------------
@@ -89,7 +93,13 @@ class Remote:
     complete: bool
     reason: str = ""
     branches: set = field(default_factory=set)
-    prs: dict = field(default_factory=dict)        # branch -> [PR url, …] in all states
+    prs: dict = field(default_factory=dict)        # branch -> [{"url", "state", "number"}, …] in all states
+
+    def urls(self, branch: str) -> list:
+        return [pr["url"] for pr in self.prs.get(branch, [])]
+
+    def open_branches(self) -> set:
+        return {b for b, prs in self.prs.items() if any(pr["state"] == PR_OPEN for pr in prs)}
 
 
 def _json_pages(text: str) -> list | None:
@@ -132,9 +142,10 @@ def _branch_prs(gh, branch: str) -> list | None:
     if not isinstance(prs, list) or len(prs) >= PR_LIST_LIMIT:
         return None
     if not all(isinstance(pr, dict) and pr.get("headRefName") == branch and isinstance(pr.get("url"), str)
-               and pr["url"].strip() for pr in prs):
+               and pr["url"].strip() and isinstance(pr.get("state"), str) and pr["state"] in PR_STATES
+               for pr in prs):
         return None
-    return [pr["url"] for pr in prs]
+    return [{"url": pr["url"], "state": pr["state"], "number": pr.get("number")} for pr in prs]
 
 
 def remote_listing(gh, branches, repo_slug: str | None = None) -> Remote:
@@ -163,7 +174,8 @@ def _load_receipts(raw: bytes | None) -> dict | None:
         return None
     if not isinstance(doc, dict) or not isinstance(doc.get("receipts"), list):
         return None
-    return doc
+    version = doc.get("version")
+    return doc if type(version) is int and version == RECEIPTS_VERSION else None   # unknown schema: refuse
 
 
 def _read(path: Path) -> bytes | None:
@@ -200,7 +212,7 @@ class Outcome:
 
 
 def _receipt(work: rw.Work, candidate: dict, remote: Remote, today: str) -> dict:
-    prs = remote.prs.get(work.branch, [])
+    prs = remote.urls(work.branch)
     receipt = {"key": work.key, "branch": work.branch, "term": work.term, "phase": work.phase,
                "state": RESERVED, "started_on": today, "source": work.source,
                "window": copy.deepcopy(work.window), "metrics": copy.deepcopy(work.metrics),
@@ -228,20 +240,29 @@ def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | No
     raw = _read(path)
     doc = _load_receipts(raw)
     if doc is None:
-        return Outcome(rw.DEFER, f"unreadable {RECEIPTS_NAME}: preserved, no new reservation")
+        return Outcome(rw.DEFER, f"unreadable {RECEIPTS_NAME} or not schema version {RECEIPTS_VERSION}: "
+                                 "preserved, no new reservation")
     receipts = doc["receipts"]
     view = intake(_load_queue(Path(demand_dir)), snap)
     live = [r["branch"] for r in receipts if isinstance(r, dict) and isinstance(r.get("branch"), str)
             and r.get("state") not in rw.TERMINAL_STATES]
     candidates = view.get("candidates", {}).values() if isinstance(view, dict) else []
-    branches = {b for c in candidates if isinstance(c, dict) and c.get("status") != rw.STATUS_CLOSED
-                for b in [_branch(c)] if b} | set(live)
-    remote = remote_listing(gh, branches, repo_slug)
-    plan = rw.plan_work(view, receipts, today, remote_complete=remote.complete)
+    open_work = {b for c in candidates if isinstance(c, dict) and c.get("status") != rw.STATUS_CLOSED
+                 for b in [_branch(c)] if b}
+    remote = remote_listing(gh, open_work | set(live), repo_slug)
+    unrecorded = remote.open_branches() - set(live)     # open remote PRs no live receipt accounts for
+    plan = rw.plan_work(view, receipts, today, remote_complete=remote.complete, prefer=unrecorded)
     reason = "; ".join(filter(None, [plan.reason, remote.reason]))
     key = plan.work.key if plan.work else ""
     if plan.action != rw.START:
         return Outcome(plan.action, reason, key)
+    stray = sorted(unrecorded - open_work)
+    if stray:
+        return Outcome(rw.DEFER, f"open remote work on {', '.join(stray)} matches no live receipt or open "
+                                 "candidate: recover or close it before new work", key)
+    if unrecorded and plan.work.branch not in unrecorded:
+        return Outcome(rw.DEFER, f"open remote work on {', '.join(sorted(unrecorded))} cannot be recovered "
+                                 "this run: no new work before it", key)
     if len(remote.prs.get(plan.work.branch, [])) > 1:
         return Outcome(rw.DEFER, f"duplicate remote PRs on {plan.work.branch}", key)
     receipt = _receipt(plan.work, _candidate_for(view, key), remote, today)
