@@ -36,6 +36,10 @@ inference availability monitor. Implementation is not activation.
   demand items. GSC impressions/clicks/position remain GSC metrics; do not invent
   GA4 submit/empty counts. Preserve the source snapshot, exact signal window and
   source-specific metrics in each work receipt. Overlapping windows are not totals.
+  PAM potential identity gaps join as typed `pam_feed` research work under
+  `SPEC-pam-discovery.md`; they retain original minimal feed provenance without a
+  fabricated search window or metrics. Existing work is recovered before any new
+  work, and new search demand has priority over market leads under the same caps.
 
 - Initial hard cap: one newly started work item per UTC day, one item per run and
   one outstanding catalog-authoring work item. Reconciliation is allowed at the
@@ -74,6 +78,10 @@ inference availability monitor. Implementation is not activation.
   than create another PR. An uncertain write response triggers readback before
   another attempt. Queue/state writes remain atomic and preserve the previous
   valid file on failure.
+- The daily producer's first pass may recover an existing PAM branch/open PR from
+  validated cached provenance, even if fresh search demand is eligible or a feed
+  refresh fails. New PAM work still requires a successful current-catalog feed
+  refresh; cached classification alone never opens a new work item.
 - Never overwrite a newer queue, another candidate's state, human review decision,
   linked work or previously recorded outcome while publishing bookkeeping.
 

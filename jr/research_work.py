@@ -24,6 +24,8 @@ import hashlib
 import re
 from dataclasses import dataclass, field
 
+import pam_leads
+
 MAX_NEW_PER_DAY = 1           # newly started work items per UTC day (an item retried later keeps its slot)
 KEY_HEX_CHARS = 16
 BRANCH_PREFIX = "jr/research-"
@@ -40,6 +42,7 @@ TERMINAL_STATES = {"delivered", "rejected", "abandoned"}
 KIND_CATALOG_SEARCH = "catalog_search"     # missing catalog content: exact public search ids
 KIND_DEMAND_RESOLUTION = "demand_resolution"  # miner-resolver repair: a fresh resolved miner run
 COVERED_GAP = "COVERED_OK"
+SOURCE_PAM = "pam_feed"
 
 _TOKEN_RE = re.compile(r"[^\W_]+")
 
@@ -69,6 +72,14 @@ def work_key(term: str, opening_date: str) -> str:
 
 def branch_for(key: str) -> str:
     return BRANCH_PREFIX + key
+
+
+def candidate_key(candidate: dict) -> str | None:
+    if candidate.get("source") == SOURCE_PAM:
+        feed = candidate.get("feed")
+        return pam_leads.work_key(feed["lead"]) if pam_leads.readable_work_provenance(feed) else None
+    term, opening = candidate.get("term"), opened_on(candidate)
+    return work_key(term, opening) if term_key(term) and _date(opening) else None
 
 
 # ═══════════════════════════ readable inputs ═══════════════════════════
@@ -154,7 +165,12 @@ def _readable_receipt(r) -> bool:
         return False
     if not isinstance(r.get("state"), str) or r["state"] not in RECEIPT_STATES:
         return False
-    if any(f in r and not check(r) for f, check in _SNAPSHOT_CHECKS.items()):
+    if r.get("source") == SOURCE_PAM:
+        if ("window" in r or "metrics" in r or not pam_leads.readable_work_provenance(r.get("feed"))
+                or r["key"] != pam_leads.work_key(r["feed"]["lead"])
+                or term_key(r.get("term")) != term_key(r["feed"]["lead"]["name_hint"])):
+            return False
+    elif any(f in r and not check(r) for f, check in _SNAPSHOT_CHECKS.items()):
         return False
     if r.get("branch") != branch_for(r["key"]) or _date(r.get("started_on")) is None:
         return False
@@ -172,9 +188,10 @@ class Work:
     term: str
     phase: str
     source: str
-    window: dict
-    metrics: dict
+    window: dict | None
+    metrics: dict | None
     linked_work: tuple = ()
+    feed: dict = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -188,8 +205,12 @@ def _provenance(candidate: dict, own: list[dict]) -> dict:
     """The signal this work answers: the earliest receipt's snapshot when one was persisted (the
     queue refreshes window/counts daily, so the reservation's copy is the original), else the
     candidate's current fields."""
-    snapshots = sorted((r for r in own if all(f in r for f in _SNAPSHOT_CHECKS)), key=lambda r: r["started_on"])
+    snapshots = sorted((r for r in own if (r.get("source") == SOURCE_PAM
+                        or all(f in r for f in _SNAPSHOT_CHECKS))), key=lambda r: r["started_on"])
     row = snapshots[0] if snapshots else candidate
+    if row.get("source") == SOURCE_PAM:
+        return {"source": SOURCE_PAM, "window": None, "metrics": None,
+                "feed": copy.deepcopy(row.get("feed"))}
     return {"source": row.get("source"), "window": _window(row), "metrics": _metrics(row)}
 
 
@@ -199,10 +220,18 @@ def _work(candidate: dict, receipts: list[dict]) -> Work | None:
     term, opening, links = candidate.get("term"), opened_on(candidate), _links(candidate)
     if not (term_key(term) and _date(opening) and links is not None):
         return None
-    key = work_key(term, opening)
+    key = candidate_key(candidate)
+    if key is None:
+        return None
     own = [r for r in receipts if r["key"] == key]
     prov = _provenance(candidate, own)
-    if not (_text(prov["source"]) and prov["window"] and prov["metrics"]):
+    if prov["source"] == SOURCE_PAM:
+        if ("window" in candidate or "metrics" in candidate
+                or not pam_leads.readable_work_provenance(prov["feed"])
+                or key != pam_leads.work_key(prov["feed"]["lead"])
+                or term_key(term) != term_key(prov["feed"]["lead"]["name_hint"])):
+            return None
+    elif not (_text(prov["source"]) and prov["window"] and prov["metrics"]):
         return None
     refs = [ref for ref in links if _text(ref)] + [r["pr_url"] for r in own if "pr_url" in r]
     phase = PHASE_AUTHOR if (candidate.get("status") in (STATUS_VALIDATED, STATUS_LINKED)
@@ -281,7 +310,8 @@ def plan_work(queue: dict, receipts: list[dict], today: str, *, remote_complete:
         return Plan(NOOP, reason="no open candidate needs work")
     if len({r["key"] for r in receipts if r["started_on"] == today}) >= MAX_NEW_PER_DAY:
         return Plan(DEFER, reason=f"daily cap of {MAX_NEW_PER_DAY} new work item(s) reached")
-    startable.sort(key=lambda cw: (cw[1].branch not in prefer, cw[1].phase != PHASE_AUTHOR))  # stable
+    startable.sort(key=lambda cw: (cw[1].branch not in prefer, cw[1].source == SOURCE_PAM,
+                                  cw[1].phase != PHASE_AUTHOR))  # search demand before market leads
     return Plan(START, startable[0][1], reason="new work")
 
 
@@ -399,6 +429,10 @@ def verify_resolution(candidate: dict, pr: dict, observed_receipt: dict, today: 
                 "verification_kind": kind, "query": observed_receipt["query"],
                 "checked_at": observed_receipt["checked_at"],
                 "expected_ids": list(validation["expected_ids"]), "forbidden_ids": list(forbidden),
-                "source": work.source, "window": dict(work.window), "metrics": work.metrics}
+                "source": work.source}
+    if work.source == SOURCE_PAM:
+        evidence["feed"] = copy.deepcopy(work.feed)
+    else:
+        evidence.update(window=dict(work.window), metrics=work.metrics)
     evidence.update({f: copy.deepcopy(observed_receipt[f]) for f in fields})
     return Resolution("delivered", f"{kind} postcondition observed", closed_on=today, evidence=evidence)

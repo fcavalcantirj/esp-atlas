@@ -2,7 +2,8 @@
 (SPEC-demand-work-consumer.md, Required execution path step 1; Idempotence and failure recovery).
 
 After the daily runner (jr/demand_run.py) mines, `reserve` hands the committed research queue,
-the eligible GSC UNRESOLVED items of the fresh snapshot and the persisted work receipts to
+the eligible GSC UNRESOLVED items of the fresh snapshot, typed PAM potential identity gaps
+and the persisted work receipts to
 research_work.plan_work, and records at most ONE new reservation in
 `docs/demand/work-receipts.json`, which lands in the demand publication PR when it changed.
 
@@ -28,6 +29,8 @@ from pathlib import Path
 
 import research_queue
 import research_work as rw
+import pam_leads
+import pam_run
 
 RECEIPTS_NAME = "work-receipts.json"
 RECEIPTS_VERSION = 1
@@ -63,9 +66,11 @@ def _gsc_candidate(item, snap: dict) -> dict | None:
             "linked_work": [], "history": [], "snapshot": f"{DEMAND_RELDIR}/{snap.get('date')}.json"}
 
 
-def intake(queue, snap: dict) -> dict | None:
+def intake(queue, snap: dict, *, pam_state=None, receipts=(), new_pam=True,
+           recovering_pam_keys=()) -> dict | None:
     """The broker's view: the committed queue's candidates plus each eligible GSC UNRESOLVED item
     whose term the queue does not already hold (the queue carries lifecycle state, so it wins).
+    Typed feed gaps join behind search demand; original PAM lifecycle snapshots recover first.
     An unreadable queue is passed through for plan_work to refuse. Inputs are never mutated."""
     if not isinstance(queue, dict) or not isinstance(queue.get("candidates"), dict):
         return queue
@@ -76,14 +81,35 @@ def intake(queue, snap: dict) -> dict | None:
         if c and rw.term_key(c["term"]) not in known:
             known.add(rw.term_key(c["term"]))
             view["candidates"][rw.term_key(c["term"])] = c
+    # Preserve reserved market work even when the latest feed no longer lists it
+    # or now matches the catalog. A fresh discovery list never erases its lifecycle.
+    for receipt in receipts:
+        if isinstance(receipt, dict) and receipt.get("source") == rw.SOURCE_PAM:
+            c = receipt.get("candidate")
+            if isinstance(c, dict) and rw.candidate_key(c) == receipt.get("key"):
+                view["candidates"].setdefault(receipt["key"], copy.deepcopy(c))
+    if pam_state is not None:
+        handled = {r.get("key") for r in receipts if isinstance(r, dict)}
+        recovering = set(recovering_pam_keys)
+        for lead in pam_leads.candidate_leads(pam_state, handled_keys=handled, recovering_keys=recovering):
+            if not new_pam and lead["key"] not in recovering:
+                continue
+            # An exact search identity owns its work; the feed must not create a
+            # parallel market job for it. Primary-source validation still follows.
+            if rw.term_key(lead["name_hint"]) in known and lead["key"] not in recovering:
+                continue
+            original = next(x for x in pam_state["leads"] if x["source_id"] == lead["source_id"])
+            c = {"term": lead["name_hint"], "source": rw.SOURCE_PAM, "status": rw.STATUS_NEW,
+                 "first_seen": lead["provenance"]["checked_at"][:10], "history": [], "linked_work": [],
+                 "snapshot": pam_run.STATE_PATH,
+                 "feed": {**copy.deepcopy(lead["provenance"]), "lead": copy.deepcopy(original)}}
+            view["candidates"].setdefault(lead["key"], c)
     return view
 
 
 def _branch(candidate: dict) -> str | None:
-    term, opening = candidate.get("term"), rw.opened_on(candidate)
-    if not (isinstance(term, str) and rw.term_key(term) and isinstance(opening, str)):
-        return None
-    return rw.branch_for(rw.work_key(term, opening))
+    key = rw.candidate_key(candidate)
+    return rw.branch_for(key) if key else None
 
 
 # --- the remote listing ------------------------------------------------------------------------
@@ -215,8 +241,11 @@ def _receipt(work: rw.Work, candidate: dict, remote: Remote, today: str) -> dict
     prs = remote.urls(work.branch)
     receipt = {"key": work.key, "branch": work.branch, "term": work.term, "phase": work.phase,
                "state": RESERVED, "started_on": today, "source": work.source,
-               "window": copy.deepcopy(work.window), "metrics": copy.deepcopy(work.metrics),
                "linked_work": list(dict.fromkeys([*work.linked_work, *prs]))}
+    if work.source == rw.SOURCE_PAM:
+        receipt.update(feed=copy.deepcopy(work.feed), candidate=copy.deepcopy(candidate))
+    else:
+        receipt.update(window=copy.deepcopy(work.window), metrics=copy.deepcopy(work.metrics))
     if prs:
         receipt["pr_url"] = prs[0]          # created before a local save: recover it, never recreate
     receipt["provenance"] = {
@@ -233,8 +262,9 @@ def _candidate_for(view: dict, key: str) -> dict:
                 if isinstance(c, dict) and _branch(c) == rw.branch_for(key))
 
 
-def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | None = None) -> Outcome:
-    """Plan one action over the committed queue + snapshot + receipts; on START append ONE
+def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | None = None,
+            new_pam: bool = True) -> Outcome:
+    """Plan one action over the committed queue + snapshot + feed state + receipts; on START append ONE
     reservation atomically. Every other action leaves the receipts file untouched."""
     path = Path(demand_dir) / RECEIPTS_NAME
     raw = _read(path)
@@ -243,18 +273,46 @@ def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | No
         return Outcome(rw.DEFER, f"unreadable {RECEIPTS_NAME} or not schema version {RECEIPTS_VERSION}: "
                                  "preserved, no new reservation")
     receipts = doc["receipts"]
-    view = intake(_load_queue(Path(demand_dir)), snap)
+    if not all(rw._readable_receipt(r) for r in receipts):
+        return Outcome(rw.DEFER, "corrupt work receipt: preserved, no new reservation")
+    pam_error = ""
+    try:
+        pam_state = pam_run.read_state(Path(demand_dir) / "pam-leads.json")
+        if pam_state is not None:
+            pam_leads.candidate_leads(pam_state)  # validate cache before it joins shared policy
+    except (ValueError, OSError, pam_leads.FeedError):
+        pam_state = None
+        pam_error = "PAM state unreadable; no new feed work" if new_pam else ""
+    queue = _load_queue(Path(demand_dir))
+    view = intake(queue, snap, receipts=receipts)
     live = [r["branch"] for r in receipts if isinstance(r, dict) and isinstance(r.get("branch"), str)
             and r.get("state") not in rw.TERMINAL_STATES]
     candidates = view.get("candidates", {}).values() if isinstance(view, dict) else []
     open_work = {b for c in candidates if isinstance(c, dict) and c.get("status") != rw.STATUS_CLOSED
                  for b in [_branch(c)] if b}
-    remote = remote_listing(gh, open_work | set(live), repo_slug)
+    # Inspect the bounded cache's deterministic branches on the first pass. A remote
+    # create can succeed before its receipt is saved; fresh-feed gating applies
+    # to starting work, never to recovering that already existing identity.
+    feed_branches = ({rw.branch_for(pam_leads.work_key(lead)) for lead in pam_state["leads"]}
+                     if pam_state is not None else set())
+    remote = remote_listing(gh, open_work | set(live) | feed_branches, repo_slug)
+    recoverable = remote.open_branches() | {b for b in remote.branches if not remote.prs.get(b)}
+    recovering = ({pam_leads.work_key(lead) for lead in pam_state["leads"]
+                   if rw.branch_for(pam_leads.work_key(lead)) in recoverable}
+                  if pam_state is not None and remote.complete else set())
+    view = intake(queue, snap, pam_state=pam_state, receipts=receipts, new_pam=new_pam,
+                  recovering_pam_keys=recovering)
+    candidates = view.get("candidates", {}).values() if isinstance(view, dict) else []
+    open_work = {b for c in candidates if isinstance(c, dict) and c.get("status") != rw.STATUS_CLOSED
+                 for b in [_branch(c)] if b}
     unrecorded = remote.open_branches() - set(live)     # open remote PRs no live receipt accounts for
-    plan = rw.plan_work(view, receipts, today, remote_complete=remote.complete, prefer=unrecorded)
+    prefer = unrecorded | {rw.branch_for(key) for key in recovering}
+    plan = rw.plan_work(view, receipts, today, remote_complete=remote.complete, prefer=prefer)
     reason = "; ".join(filter(None, [plan.reason, remote.reason]))
     key = plan.work.key if plan.work else ""
     if plan.action != rw.START:
+        if plan.action == rw.NOOP and pam_error:
+            return Outcome(rw.DEFER, pam_error)
         return Outcome(plan.action, reason, key)
     stray = sorted(unrecorded - open_work)
     if stray:

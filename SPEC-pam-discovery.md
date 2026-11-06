@@ -56,6 +56,27 @@ has no invented GA4/GSC counts or search date window. The broker must deliberate
 support this provenance type; missing search provenance must remain invalid for
 actual GA4/GSC candidates. The adapter alone is not an autonomous consumer.
 
+The broker joins validated minimal feed state into the shared policy. New search
+work has priority over new market work, while any previously reserved/linked work
+is recovered first. The same global daily and outstanding-work caps apply across
+both source types. An exact normalized search identity suppresses a parallel feed
+hint; final identity and publication still require primary-source research.
+
+A feed work key is the adapter's opaque semantic `pam-` key (source ID plus hint
+fingerprint), independent of fetch date/hash and current catalog matches. Its
+reservation retains the original minimal lead, feed receipts and candidate
+lifecycle snapshot. Recover that snapshot even if a later feed removes the lead,
+changes its hints or now matches a newly published board. Terminal semantic keys
+remain handled; a refresh never reopens them. Search candidates continue to require
+their real window and source metrics; PAM records and outcomes contain neither.
+
+Only supported, complete feed provenance permits reservation. Corrupt cache may
+defer feed work but cannot block valid search work; malformed existing work
+receipts still fail closed. A feed hint, `new` status or unverified boolean never
+permits authoring: the same readable exact-identity/primary-source receipt and
+affirmative current-head review gates apply. Delivery evidence retains the
+reservation's original feed snapshot, rather than replacing it with today's hash.
+
 Required evidence:
 
 1. Offline tests: fixed URL/size/schema bounds, ID join, last-good failure behavior,
@@ -99,6 +120,23 @@ published, and a primary search failure still produces a nonzero CLI exit even
 when the independent metadata publication succeeds. Ordinary PAM failure preserves
 last-good state while search publication continues. Host timeout aborts remain
 fatal in both the reservation and PAM paths.
+
+The runner first reconciles/reserves committed demand and existing work. Only a
+genuine policy NOOP permits a second bounded reservation pass after a successful
+PAM refresh (including 304/unchanged); caps, unreadable remote state, active work and timeouts
+never trigger that fallback. A first feed reservation publishes with its changed
+minimal feed metadata, including when the dated search snapshot is a no-op. Search
+source failure can still publish independent feed metadata but does not start new
+work from that failed pull. No new scheduler or executor is introduced by intake.
+The first pass recovers existing PAM work from its durable snapshot, or adopts an
+existing deterministic branch/open PR from validated cached provenance after a
+crash before receipt persistence. Its bounded remote inventory includes matched
+cached identities, and recovery takes priority over eligible search demand even
+when a feed refresh fails. Closed/merged history does not reopen work. The first
+pass does not start new work from yesterday's cached match classification. New lead selection
+uses the refresh's current-catalog classification, and a failed refresh permits no
+new PAM reservation. An unchanged feed can still start an unhandled research item;
+its reservation is real bookkeeping, not timestamp-only feed churn.
 
 The CLI prints a bounded `PAM receipt` containing feed statuses/hashes and distinct
 runner/catalog revisions. The runner executes from the scheduler's existing clone;

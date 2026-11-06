@@ -2,8 +2,12 @@
 import json
 from pathlib import Path
 
+import pytest
+
 import demand_run
+import pam_leads
 import pam_run
+import research_work as rw
 from test_demand_broker import (NOW, REAL_QUEUE, REAL_SNAPSHOT, SLUG, gh_remote,
                                 snapshot_miner, staged, without_unresolved)
 from test_demand_run import Proc, git_ok
@@ -44,11 +48,14 @@ def run(root, **kw):
     return demand_run.run(now=NOW, root=root, repo_slug=SLUG, python="/venv/bin/python", **kw)
 
 
-def assert_pam_only_publication(git):
+def assert_pam_only_publication(git, *, reservation=False):
     # publish.py also records its normal proposal-ledger bookkeeping.
     paths = set(staged(git))
     assert pam_run.STATE_PATH in paths
-    assert paths <= {pam_run.STATE_PATH, "jr/proposed_ledger.json"}
+    allowed = {pam_run.STATE_PATH, "jr/proposed_ledger.json"}
+    if reservation:
+        allowed.add("docs/demand/work-receipts.json")
+    assert paths <= allowed
 
 
 def test_fresh_demand_and_pam_changed_paths_share_the_daily_publication(tmp_path):
@@ -61,19 +68,21 @@ def test_fresh_demand_and_pam_changed_paths_share_the_daily_publication(tmp_path
     assert "PAM updated" in result.line()
 
 
-def test_pam_change_lands_alone_when_search_demand_is_a_noop(tmp_path):
+def test_pam_change_and_its_first_reservation_land_when_search_demand_is_a_noop(tmp_path):
     root, git = tree(tmp_path), git_ok()
     previous(root)
     result = run(root, git=git)
     assert result.published
-    assert_pam_only_publication(git)
+    assert_pam_only_publication(git, reservation=True)
+    receipt = json.loads((root / "docs/demand/work-receipts.json").read_text())["receipts"][0]
+    assert receipt["source"] == "pam_feed" and receipt["term"] == "ES3N28P"
     assert "PAM updated" in result.line()
 
 
 def test_unchanged_pam_and_noop_search_do_not_publish(tmp_path):
     root, git = tree(tmp_path), git_ok()
     previous(root)
-    pam_ok(root, now=NOW)
+    run(root)  # first run discovers/reserves the lead; the replay changes nothing
     before = (root / pam_run.STATE_PATH).read_bytes()
     def unchanged(path, *, now):
         return pam_run.refresh_worktree(path, now=now, fetch=Fetch(statuses={"products": [304], "specs": [304]}))
@@ -90,6 +99,69 @@ def test_pam_failure_preserves_successful_gsc_publication(tmp_path):
     assert pam_run.STATE_PATH not in staged(git)
     assert f"docs/demand/{DAY}.json" in staged(git)
     assert "PAM deferred" in result.line()
+
+
+def test_a_cached_gap_covered_by_the_current_catalog_takes_no_new_work_slot(tmp_path):
+    root = tree(tmp_path)
+    pam_ok(root, now=NOW)  # yesterday's minimal state still calls ES3N28P a gap
+    board = root / "data/boards/vendor/new-n/board.md"
+    board.parent.mkdir()
+    board.write_text('---\nid: new-n\nname: ES3N28P\n---\n')
+    git = git_ok()
+    result = run(root, git=git)
+    assert result.published  # refresh updates the minimal metadata classification
+    assert result.work.startswith("noop")
+    assert not (root / "docs/demand/work-receipts.json").exists()
+    assert "docs/demand/work-receipts.json" not in staged(git)
+
+
+def test_failed_feed_refresh_starts_no_new_work_from_stale_pam_classification(tmp_path):
+    root = tree(tmp_path)
+    pam_ok(root, now=NOW)
+    result = run(root, pam_refresh=pam_failed)
+    assert result.work.startswith("noop")
+    assert not (root / "docs/demand/work-receipts.json").exists()
+
+
+@pytest.mark.parametrize("refresh", [pam_ok, pam_failed])
+@pytest.mark.parametrize("covered", [False, True])
+@pytest.mark.parametrize("remote_branch", [False, True])
+def test_open_pam_pr_without_saved_receipt_recovers_before_eligible_search(
+        tmp_path, refresh, covered, remote_branch):
+    root, git = tree(tmp_path), git_ok()
+    pam_ok(root, now=NOW)
+    target = root / pam_run.STATE_PATH
+    state = json.loads(target.read_text())
+    key = pam_leads.candidate_leads(state)[0]["key"]
+    branch = rw.branch_for(key)
+    if covered:
+        for lead in state["leads"]:
+            if pam_leads.work_key(lead) == key:
+                lead.update(status="possible_match", matches=["board-n"])
+        target.write_text(json.dumps(state))
+    research_url = "https://github.com/fcavalcantirj/esp-atlas/pull/1502"
+    remote = gh_remote(refs=json.dumps([{"ref": "refs/heads/" + branch}] if remote_branch else []))
+    def gh(*args):
+        if args[:3] == ("pr", "list", "--head"):
+            remote.calls.append(args)
+            prs = [{"number": 1502, "url": research_url, "state": "OPEN", "headRefName": branch}]
+            return Proc(stdout=json.dumps(prs if args[3] == branch else []))
+        return remote(*args)
+    result = run(root, git=git, gh=gh, miner=snapshot_miner(REAL_SNAPSHOT), pam_refresh=refresh)
+    assert result.published and not result.aborted
+    assert result.work.startswith(f"reserved {key}")
+    receipts_path = root / "docs/demand/work-receipts.json"
+    rows = json.loads(receipts_path.read_text())["receipts"]
+    assert len(rows) == 1
+    assert rows[0]["key"] == key and rows[0]["source"] == "pam_feed"
+    assert rows[0]["linked_work"] == [research_url] and rows[0]["pr_url"] == research_url
+    assert rows[0]["feed"]["checked_at"] == state["checked_at"]
+    assert "docs/demand/work-receipts.json" in staged(git)
+    before = receipts_path.read_bytes()
+    replay = run(root, gh=gh, miner=snapshot_miner(REAL_SNAPSHOT), pam_refresh=refresh)
+    assert replay.work.startswith("reconcile") and receipts_path.read_bytes() == before
+    creates = [call for call in remote.calls if call[:2] == ("pr", "create")]
+    assert all(branch not in call for call in creates)  # only the metadata publisher can create a PR
 
 
 def test_empty_gsc_publishes_successful_pam_without_an_empty_steer(tmp_path):

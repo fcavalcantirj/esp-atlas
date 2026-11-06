@@ -197,8 +197,10 @@ def _classify(leads: list[dict], catalog: list[dict]) -> list[dict]:
 def _previous(state) -> None:
     if state is None:
         return
-    if (not isinstance(state, dict) or state.get("version") != VERSION or state.get("source") != "pam_feed"
-            or not isinstance(state.get("leads"), list) or not isinstance(state.get("feeds"), dict)):
+    if (not isinstance(state, dict) or type(state.get("version")) is not int or state["version"] != VERSION
+            or state.get("source") != "pam_feed" or not isinstance(state.get("leads"), list)
+            or len(state["leads"]) > MAX_PRODUCTS
+            or not isinstance(state.get("feeds"), dict) or set(state["feeds"]) != set(ENDPOINTS)):
         raise FeedError("corrupt cached PAM state")
     try:
         if dt.datetime.fromisoformat(state["checked_at"]).tzinfo is None:
@@ -207,11 +209,16 @@ def _previous(state) -> None:
         raise FeedError("corrupt cached check timestamp") from None
     for name, url in ENDPOINTS.items():
         meta = state["feeds"].get(name)
-        if (not isinstance(meta, dict) or meta.get("url") != url
+        if (not isinstance(meta, dict) or set(meta) != {"url", "fetched_at", "etag", "sha256", "bytes"}
+                or meta.get("url") != url
                 or not isinstance(meta.get("sha256"), str)
                 or not re.fullmatch(r"[0-9a-f]{64}", meta["sha256"])
                 or type(meta.get("bytes")) is not int or not 0 < meta["bytes"] <= MAX_BYTES):
             raise FeedError("corrupt cached feed provenance")
+        etag = meta["etag"]
+        if etag is not None and (not isinstance(etag, str) or len(etag) > 256
+                                 or any(c in etag for c in "\r\n")):
+            raise FeedError("corrupt cached ETag")
         try:
             if dt.datetime.fromisoformat(meta["fetched_at"]).tzinfo is None:
                 raise ValueError
@@ -277,21 +284,23 @@ def refresh(previous: dict | None, catalog: list[dict], *, now: dt.datetime,
             "feeds": copy.deepcopy(metadata), "leads": _classify(leads, catalog)}
 
 
-def candidate_leads(state: dict, *, handled_keys=()) -> list[dict]:
+def candidate_leads(state: dict, *, handled_keys=(), recovering_keys=()) -> list[dict]:
     """Unmatched identities for research, not authoring. Caller applies shared global caps.
 
     Reconcile prior work/outcomes by stable key and exact target before creating
     anything. Feed timestamps/hashes do not change work identity. No GA metrics or
     fabricated search date window are attached to these market leads.
+    `recovering_keys` names remote work the broker has already found; it may need
+    recovery even when the catalog now matches the original identity hint.
     """
     _previous(state)
     if state is None:
         raise FeedError("missing PAM state")
-    handled = set(handled_keys)
+    handled, recovering = set(handled_keys), set(recovering_keys)
     candidates = []
     for lead in state["leads"]:
-        key = "pam-" + _hash([lead["source_id"], lead["fingerprint"]])[:24]
-        if lead["status"] != "potential_identity_gap" or key in handled:
+        key = work_key(lead)
+        if (lead["status"] != "potential_identity_gap" and key not in recovering) or key in handled:
             continue
         candidates.append({"key": key, "source": "pam_feed", "source_id": lead["source_id"],
                            "name_hint": lead["name_hint"], "chip_hint": lead["chip_hint"],
@@ -300,3 +309,20 @@ def candidate_leads(state: dict, *, handled_keys=()) -> list[dict]:
                            "provenance": {"checked_at": state["checked_at"],
                                           "feeds": copy.deepcopy(state["feeds"])}})
     return candidates
+
+
+def work_key(lead: dict) -> str:
+    """Semantic feed identity, unaffected by fetch time, HTTP receipt or catalog match."""
+    return "pam-" + _hash([lead["source_id"], lead["fingerprint"]])[:24]
+
+
+def readable_work_provenance(value) -> bool:
+    """Validate the original minimal feed snapshot without fetching anything."""
+    if not isinstance(value, dict) or set(value) != {"lead", "checked_at", "feeds"}:
+        return False
+    try:
+        _previous({"version": VERSION, "source": "pam_feed", "leads": [value["lead"]],
+                   "checked_at": value["checked_at"], "feeds": value["feeds"]})
+    except (FeedError, TypeError, KeyError):
+        return False
+    return True

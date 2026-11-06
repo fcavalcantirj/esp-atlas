@@ -113,6 +113,8 @@ class Decision:
     pam_paths: tuple = ()
     pam_summary: str = ""
     pam_only: bool = False
+    work_action: str = ""
+    pam_ready: bool = False
 
 
 # --- the no-op rule ----------------------------------------------------------------------------------
@@ -356,7 +358,7 @@ def _publication(d: Decision, wt_path: Path) -> tuple[list[str], str, str]:
         note += (f"\n\nPAM discovery: {d.pam_summary}. Unverified leads and source pointers only; "
                  "every publishable catalog fact still requires primary-source verification and review.")
     if d.pam_only:
-        return (list(d.pam_paths), f"chore(jr): PAM discovery metadata {snap['date']}",
+        return (list(d.pam_paths) + receipts, f"chore(jr): PAM discovery metadata {snap['date']}",
                 "PAM discovery metadata only. The dated search-demand snapshot is not included; "
                 "the prior committed steer is preserved. No catalog writes.\n\n"
                 "Source: the two fixed public PAM feeds, through jr/pam_run.py and the existing "
@@ -372,16 +374,19 @@ def _publication(d: Decision, wt_path: Path) -> tuple[list[str], str, str]:
             _pr_body(snap, d.why, d.research) + note)
 
 
-def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str | None) -> str:
+def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str | None,
+                  *, new_pam: bool = False) -> str:
     """Bookkeeping after mining: at most one work reservation. A broker failure is reported on
     the run line, never allowed to block the demand snapshot itself."""
     today = now.astimezone(timezone.utc).date().isoformat()
     try:
-        work = demand_broker.reserve(wt_path / DEMAND_RELDIR, d.snap, gh=gh, today=today, repo_slug=repo_slug)
+        work = demand_broker.reserve(wt_path / DEMAND_RELDIR, d.snap, gh=gh, today=today,
+                                     repo_slug=repo_slug, new_pam=new_pam)
     except RunAbort:
         raise                           # host timeout is fatal, not an ordinary source failure
     except Exception as e:  # noqa: BLE001
         return f"defer: broker error {type(e).__name__}: {e}"
+    d.work_action = work.action
     if work.changed:
         d.receipts_changed, d.work = True, work.line()
         if not d.land:
@@ -403,6 +408,7 @@ def _refresh_pam(wt_path: Path, d: Decision, res: RunResult, refresh, now: datet
             res.pam = "PAM deferred: invalid changed-path manifest"
             return
         res.pam_receipt = result.report()
+        d.pam_ready = result.status in ("updated", "unchanged")
         res.pam = (f"PAM {result.status}: {result.leads} leads / {result.potential_gaps} potential gaps"
                    + (f"; {result.error}" if result.error else ""))
         if paths:
@@ -451,6 +457,11 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         if not res.source_error:
             res.work = _reserve_work(wt.path, decision, gh, now, repo_slug)
         _refresh_pam(wt.path, decision, res, pam_refresh, now)
+        # The first pass already recovers existing PAM branches/PRs from valid
+        # cached provenance. Only a prior NOOP permits starting new feed work.
+        # Existing work, caps, unreadable remote state and timeouts retain priority.
+        if not res.source_error and decision.work_action == "noop" and decision.pam_ready:
+            res.work = _reserve_work(wt.path, decision, gh, now, repo_slug, new_pam=True)
         if res.pam_receipt:
             revision = git("rev-parse", "HEAD")
             res.pam_receipt["runner_revision"] = ((getattr(revision, "stdout", "") or "").strip()

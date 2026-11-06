@@ -67,6 +67,20 @@ def test_explicit_id_join_scope_and_minimal_provenance():
     assert "searches" not in result and "window" not in result
 
 
+def test_cached_lead_inventory_cannot_exceed_the_feed_product_bound():
+    cached = state()
+    sample = cached["leads"][0]
+    identity_fields = ("source_id", "name_hint", "chip_hint", "page", "source_pointers")
+    cached["leads"] = []
+    for index in range(pam.MAX_PRODUCTS + 1):
+        lead = deepcopy(sample)
+        lead["source_id"] = f"bounded-lead-{index}"
+        lead["fingerprint"] = pam._hash({field: lead[field] for field in identity_fields})
+        cached["leads"].append(lead)
+    with pytest.raises(pam.FeedError, match="corrupt cached PAM state"):
+        pam.candidate_leads(cached)
+
+
 def test_exact_label_alias_match_never_conflates_sibling_or_chip():
     result = state([{"id": "catalog-c", "name": "Example", "aka": ["ES3C28P"], "soc": "esp32-s3"}])
     c, n = result["leads"]
