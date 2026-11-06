@@ -8,7 +8,6 @@ maintainer: skizzophrenic
 popularity:
   stars: 475
   forks: 79
-  downloads: 0
   editorial_home: https://squachwatch.com
   as_of: '2026-11-06'
 socs:
