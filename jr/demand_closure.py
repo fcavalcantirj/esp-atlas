@@ -72,14 +72,20 @@ def contains_merge(git, merge_sha, revision) -> bool:
     return getattr(git("merge-base", "--is-ancestor", merge_sha, revision), "returncode", 1) == 0
 
 
+def _spells(item: dict, candidate: dict) -> bool:
+    """The item answers the term: its own term or one of the wordings the miner merged into it."""
+    raw = item.get("raw_terms") if isinstance(item.get("raw_terms"), list) else []
+    term = rw.term_key(candidate.get("term"))
+    return any(rw.term_key(t) == term for t in [item.get("term"), *raw])
+
+
 def _miner_receipt(candidate: dict, pr: dict, snap: dict, *, mined_revision, git,
                    now: datetime) -> tuple[dict | None, str]:
     """This run's miner result for the term, or (None, why). exit_code 0 is recorded only because
     the broker runs after a successful mine (demand_run passes `mined_revision` only then)."""
     if not (isinstance(mined_revision, str) and _SHA_RE.fullmatch(mined_revision)):
         return None, "no successful miner run at a known revision this invocation"
-    term = rw.term_key(candidate.get("term"))
-    items = [i for i in (snap or {}).get("items") or [] if isinstance(i, dict) and rw.term_key(i.get("term")) == term]
+    items = [i for i in (snap or {}).get("items") or [] if isinstance(i, dict) and _spells(i, candidate)]
     if len(items) != 1:
         return None, f"this run's snapshot has no item (or several) for {candidate.get('term')!r}"
     item = items[0]
@@ -116,6 +122,8 @@ def _closed(queue: dict, ckey: str, receipts: list, key: str, record: dict, hist
             receipt_state: str, resolution: dict) -> Closure:
     queue = copy.deepcopy(queue)
     c = queue["candidates"][ckey]
+    if c.get("outcome") is not None:
+        history["previous_outcome"] = copy.deepcopy(c["outcome"])   # a recorded outcome is kept, not lost
     c.update(status=rw.STATUS_CLOSED, outcome=record, closed_on=resolution["closed_on"])
     c["history"] = [*(c.get("history") or []), history]          # earlier history is never rewritten
     settled = [({**copy.deepcopy(r), "state": receipt_state, "resolution": copy.deepcopy(resolution)}

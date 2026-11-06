@@ -378,19 +378,38 @@ def _publication(d: Decision, wt_path: Path) -> tuple[list[str], str, str]:
             _pr_body(snap, d.why, d.research) + note)
 
 
+def _bookkeeping(demand_dir: Path) -> dict:
+    return {name: _read_bytes(demand_dir / name)
+            for name in (research_queue.QUEUE_NAME, demand_broker.RECEIPTS_NAME)}
+
+
+def _note_writes(d: Decision, before: dict, after: dict) -> None:
+    """What the broker actually wrote, by bytes: a closure whose re-plan then raised still lands."""
+    if after[demand_broker.RECEIPTS_NAME] != before[demand_broker.RECEIPTS_NAME]:
+        d.receipts_changed = True
+    if after[research_queue.QUEUE_NAME] != before[research_queue.QUEUE_NAME]:
+        d.work_closed = True
+    if (d.receipts_changed or d.work_closed) and not d.land:
+        d.land, d.why = True, f"work bookkeeping changed ({d.why})"
+
+
 def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str | None,
-                  *, new_pam: bool = False, git=None, mined_revision: str | None = None) -> str:
+                  *, new_pam: bool = False, git=None, mined_revision: str | None = None,
+                  close: bool = True) -> str:
     """Bookkeeping after a SUCCESSFUL mine: at most one work reservation, after closing linked work
     the broker verified against this run's snapshot mined at `mined_revision`. A broker failure is
     reported on the run line, never allowed to block the demand snapshot itself."""
     today = now.astimezone(timezone.utc).date().isoformat()
+    demand_dir = wt_path / DEMAND_RELDIR
+    before = _bookkeeping(demand_dir)
     try:
-        work = demand_broker.reserve(wt_path / DEMAND_RELDIR, d.snap, gh=gh, today=today,
+        work = demand_broker.reserve(demand_dir, d.snap, gh=gh, today=today,
                                      repo_slug=repo_slug, new_pam=new_pam, git=git,
-                                     mined_revision=mined_revision, now=now)
+                                     mined_revision=mined_revision, now=now, close=close)
     except RunAbort:
         raise                           # host timeout is fatal, not an ordinary source failure
     except Exception as e:  # noqa: BLE001
+        _note_writes(d, before, _bookkeeping(demand_dir))
         return f"defer: broker error {type(e).__name__}: {e}"
     d.work_action = work.action
     if work.closed:
@@ -400,6 +419,7 @@ def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str 
         d.work = "; ".join(filter(None, [d.work, work.line()]))
         if not d.land:
             d.land, d.why = True, f"work {'closed' if work.closed else 'reserved'} ({d.why})"
+    _note_writes(d, before, _bookkeeping(demand_dir))
     return work.line()
 
 
@@ -472,7 +492,8 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         # work. Existing work, caps, unreadable remote state and timeouts retain priority.
         if (not res.source_error and decision.pam_ready
                 and (decision.work_action == "noop" or decision.work_closed)):
-            second = _reserve_work(wt.path, decision, gh, now, repo_slug, new_pam=True, **closer)
+            second = _reserve_work(wt.path, decision, gh, now, repo_slug, new_pam=True,
+                                   close=not decision.work_closed, **closer)   # one closure per run
             res.work = f"{res.work} · then {second}" if decision.work_closed else second
         if res.pam_receipt:
             revision = git("rev-parse", "HEAD")
