@@ -8,6 +8,7 @@ import { countLabel, explainNeeds } from "@/lib/need-labels";
 import { revealCountLabel } from "@/lib/reveal";
 import { exampleHref, SHELF_SEE_ALL } from "@/lib/routes";
 import { useReveal } from "@/lib/use-reveal";
+import { useLayoutEffect, useRef } from "react";
 
 // The three soft shelves of SPEC-home-explorer §2, in the order the home shows
 // them. Which shelf an example belongs to is decided by the API (its `group`),
@@ -35,13 +36,13 @@ function ExampleCard({ example, hidden = false }: { example: Example; hidden?: b
 
   if (example.kind === "firmware") {
     return (
-      <Link href={href} className={className} onClick={onClick}>
+      <Link href={href} className={className} hidden={hidden} onClick={onClick}>
         <span className="example-card-label">{example.label}</span>
         {example.description && <span className="example-card-desc">{example.description}</span>}
         <span className="example-card-reason">
           Recipes for {example.count} {example.count === 1 ? "board" : "boards"}
         </span>
-        <PopularityGlance popularity={{ stars: example.stars, forks: example.forks }} />
+        <PopularityGlance popularity={example} />
       </Link>
     );
   }
@@ -71,6 +72,13 @@ const RUN_FIRMWARE: ExampleGroup = "run-firmware";
 export default function ExamplesGrid({ examples }: { examples: Example[] }) {
   const firmwareCount = examples.filter((e) => e.group === RUN_FIRMWARE).length;
   const { revealed, hasMore, showMore } = useReveal(firmwareCount);
+  const firmwareGrid = useRef<HTMLDivElement>(null);
+  const focusIndex = useRef<number | null>(null);
+  useLayoutEffect(() => {
+    if (focusIndex.current === null) return;
+    (firmwareGrid.current?.children[focusIndex.current] as HTMLElement | undefined)?.focus();
+    focusIndex.current = null;
+  }, [revealed]);
 
   if (examples.length === 0) return null;
 
@@ -96,16 +104,16 @@ export default function ExamplesGrid({ examples }: { examples: Example[] }) {
               </Link>
             </div>
             <p className="example-group-hint">{group.hint}</p>
-            <div className="example-grid">
+            <div className="example-grid" ref={isFirmwareShelf ? firmwareGrid : undefined}>
               {inGroup.map((example, i) => (
                 <ExampleCard key={example.id} example={example} hidden={isFirmwareShelf && i >= revealed} />
               ))}
             </div>
             {isFirmwareShelf && (
               <div className="reveal-footer">
-                <p className="reveal-count">{revealCountLabel(revealed, inGroup.length)}</p>
+                <p className="reveal-count" role="status" aria-atomic="true">{revealCountLabel(revealed, inGroup.length)}</p>
                 {hasMore && (
-                  <button type="button" className="btn" onClick={showMore}>
+                  <button type="button" className="btn" onClick={() => { focusIndex.current = revealed; showMore(); }}>
                     Show more
                   </button>
                 )}

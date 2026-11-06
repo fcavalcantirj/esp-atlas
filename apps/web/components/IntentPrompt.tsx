@@ -22,7 +22,7 @@ export default function IntentPrompt({
       className="intent-prompt"
       onSubmit={(event) => {
         event.preventDefault();
-        if (trimmed) onSubmit(trimmed);
+        if (trimmed && !loading) onSubmit(trimmed);
       }}
     >
       <label className="intent-prompt-label" htmlFor="intent-input">

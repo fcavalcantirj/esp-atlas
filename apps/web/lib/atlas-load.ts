@@ -55,7 +55,9 @@ export function isFirmware(value: unknown): value is Firmware {
       const count = value.popularity[key];
       if (count != null && (!Number.isSafeInteger(count) || (count as number) < 0)) return false;
     }
-    if (value.popularity.as_of != null && !string(value.popularity.as_of)) return false;
+    for (const key of ["as_of", "github_as_of", "downloads_as_of", "editorial_home_as_of"]) {
+      if (value.popularity[key] != null && !string(value.popularity[key])) return false;
+    }
   }
   // Keep additional API fields (requires/not_required/benefits_from, etc.) on
   // the original record; never rebuild a smaller object that drops evidence.

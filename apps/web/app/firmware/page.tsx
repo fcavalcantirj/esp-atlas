@@ -55,7 +55,8 @@ export default async function FirmwareIndexPage({ searchParams }: PageProps<"/fi
       {firmware.length > 0 && (
         <>
           <FirmwareSortControl sort={sort} />
-          <FirmwareBrowseList firmware={firmware} />
+          <p className="firmware-metric-note">★ Stars · ⑂ Forks. Counts cover the linked GitHub repository, including shared repositories. Recipe evidence determines board compatibility.</p>
+          <FirmwareBrowseList key={sort} firmware={firmware} />
         </>
       )}
     </main>

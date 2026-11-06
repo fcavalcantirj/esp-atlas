@@ -17,16 +17,16 @@ export default function FirmwareCard({ firmware, hidden = false }: { firmware: F
   const chips = [...firmware.capabilities, ...firmware.socs];
   const boards = boardsLabel(firmware.boards);
   return (
-    <li className={hidden ? "part-card is-hidden" : "part-card"}>
+    <li className="part-card" hidden={hidden}>
       <div className="part-card-head">
-        <h3 className="part-card-title">
+        <h2 className="part-card-title">
           <Link
             href={`/firmware/${encodeURIComponent(firmware.id)}`}
             onClick={() => track("result_click", firmwareBrowseClickParams(firmware.id))}
           >
             {firmware.name}
           </Link>
-        </h3>
+        </h2>
         <p className="part-card-meta">
           <span className="badge">{firmwareCategoryLabel(firmware.category)}</span>
           {firmware.maintainer && <span className="part-card-brand">{firmware.maintainer}</span>}

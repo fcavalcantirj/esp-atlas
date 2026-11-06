@@ -3,7 +3,7 @@ import BrowseSection, { type BrowseItem } from "@/components/BrowseSection";
 import HomeView from "@/components/HomeView";
 import JsonLd from "@/components/JsonLd";
 import { fetchAllParts, fetchExamples, fetchFacets, fetchFirmwareList } from "@/lib/api-server";
-import { boardsLabel, compactCount } from "@/lib/format";
+import { boardsLabel, compactCount, repositorySnapshot } from "@/lib/format";
 import { selectPopularFirmware } from "@/lib/popular-firmware";
 
 import { homeGraph } from "@/lib/structured-data";
@@ -75,7 +75,7 @@ export default async function Home() {
           return {
             href: `/firmware/${encodeURIComponent(fw.id)}`,
             name: fw.name,
-            note: [starsNote, boards].filter(Boolean).join(" · "),
+            note: [starsNote, boards, starsNote && fw.popularity ? repositorySnapshot(fw.popularity) : null].filter(Boolean).join(" · "),
             partId: fw.id,
             partType: "firmware",
           };

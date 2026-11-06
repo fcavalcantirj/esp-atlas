@@ -424,25 +424,42 @@ test("popularityGlance formats both metrics, full numbers in the aria-label", ()
   assert.deepEqual(glance, {
     stars: "94.6k",
     forks: "12.4k",
-    ariaLabel: "94,567 GitHub stars, 12,411 forks",
+    ariaLabel: "94,567 GitHub stars, 12,411 forks. GitHub repo · date not recorded",
+    title: "94,567 GitHub stars, 12,411 forks. GitHub repo · date not recorded",
+    scope: "GitHub repo · date not recorded",
   });
 });
 
-test("popularityGlance puts as_of in a title tooltip, never inline", () => {
+test("popularityGlance labels legacy dates as historical snapshots", () => {
   const glance = popularityGlance({ stars: 94567, forks: 12411, as_of: "2026-09-14" });
-  assert.equal(glance?.title, "stars as of 2026-09-14");
+  assert.equal(glance?.scope, "GitHub repo · historical snapshot 2026-09-14");
 });
 
 test("popularityGlance omits a null/absent metric silently, no zero", () => {
   const starsOnly = popularityGlance({ stars: 42, forks: null });
-  assert.deepEqual(starsOnly, { stars: "42", ariaLabel: "42 GitHub stars" });
+  assert.equal(starsOnly?.stars, "42");
+  assert.equal(starsOnly?.forks, undefined);
 
   const forksOnly = popularityGlance({ stars: undefined, forks: 7 });
-  assert.deepEqual(forksOnly, { forks: "7", ariaLabel: "7 forks" });
+  assert.equal(forksOnly?.forks, "7");
+  assert.equal(forksOnly?.stars, undefined);
 });
 
 test("popularityGlance is null when there is nothing to show", () => {
   assert.equal(popularityGlance(null), null);
   assert.equal(popularityGlance(undefined), null);
   assert.equal(popularityGlance({ stars: null, forks: null }), null);
+});
+
+
+test("GitHub-specific date takes precedence over the legacy snapshot", () => {
+  const glance = popularityGlance({ stars: 0, forks: 7, as_of: "2026-09-14", github_as_of: "2026-11-06T17:00:00Z" });
+  assert.equal(glance?.scope, "GitHub repo · as of 2026-11-06 17:00 UTC");
+  assert.equal(glance?.stars, "0");
+  assert.ok(glance?.ariaLabel.includes("0 GitHub stars, 7 forks"));
+});
+
+test("GitHub timestamps display in UTC regardless of their encoded offset", () => {
+  assert.equal(popularityGlance({ stars: 7, github_as_of: "2026-11-06T15:30:20-03:00" })?.scope,
+    "GitHub repo · as of 2026-11-06 18:30 UTC");
 });

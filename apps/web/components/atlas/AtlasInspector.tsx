@@ -10,6 +10,7 @@ import type { AtlasCatalog, AtlasNode } from "@/lib/atlas-model";
 import { atlasPartDetail, type AtlasPartDetail } from "@/lib/atlas-detail";
 import { recipeSourceHref, sourceHref } from "@/lib/atlas-route";
 import { tierClaim, recipeCaveat } from "@/lib/flash-copy";
+import { repositorySnapshot } from "@/lib/format";
 import { viewSourceUrl } from "@/lib/github";
 import styles from "./AtlasExplorer.module.css";
 
@@ -83,7 +84,7 @@ export default function AtlasInspector({ node, catalog, onInspect, onRecipe }: {
   if (!node) return <div className={styles.inspector}><h2>Choose a record.</h2><p>Select a point on the map or use the record picker. Its sources and recorded connections appear here.</p></div>;
   const recipes = catalog.recipes.filter(recipe => node.kind === "firmware" ? recipe.firmware === node.id : recipe.board === node.id);
   const popularity = node.firmware?.popularity;
-  const popularitySources = node.firmware?.sources.filter(source => source.field === "popularity" || source.field === "*") ?? [];
+  const popularitySources = node.firmware?.sources.filter(source => source.field === "popularity" || source.field.startsWith("popularity.") || source.field === "*") ?? [];
   return <div className={styles.inspector}>
     <p className={styles.eyebrow}>Selected {node.kind === "soc" ? "silicon" : node.kind}</p>
     <h2>{node.name}</h2>
@@ -93,8 +94,8 @@ export default function AtlasInspector({ node, catalog, onInspect, onRecipe }: {
     {node.firmware ? <>
       {node.firmware.summary ? <p>{node.firmware.summary}</p> : null}
       <p className={styles.muted}>Category: {node.firmware.category || "Not recorded"}</p>
-      {popularity && popularity.as_of && popularitySources.length ? <section className={styles.popularity}>
-        <p className={styles.eyebrow}>Repository signals / observed {popularity.as_of}</p>
+      {popularity && (popularity.stars != null || popularity.forks != null) && popularitySources.length ? <section className={styles.popularity}>
+        <p className={styles.eyebrow}>{repositorySnapshot(popularity)}</p>
         <div>{typeof popularity.stars === "number" ? <span><b>{popularity.stars.toLocaleString("en-US")}</b> stars</span> : null}{typeof popularity.forks === "number" ? <span><b>{popularity.forks.toLocaleString("en-US")}</b> forks</span> : null}</div>
         <p className={styles.muted}>Popularity measures attention, not compatibility.</p>
         <AtlasSources sources={popularitySources} />
