@@ -228,9 +228,9 @@ def queue_with_new_candidate():
 def test_a_cas_refusal_on_a_changed_demand_day_never_stages_the_foreign_queue(tmp_path, monkeypatch):
     seen, real = [], demand_run._publication
 
-    def spy(d, wt_path):
+    def spy(d):
         seen.append(d)
-        return real(d, wt_path)
+        return real(d)
 
     monkeypatch.setattr(demand_run, "_publication", spy)
     root, git = changed_demand_day(tree(tmp_path)), git_ok()
@@ -279,7 +279,8 @@ def pam_writing(root, path, data, status="unchanged"):
     the linked work and before the runner publishes."""
     def refresh(wt_path, *, now):
         (root / path).write_bytes(data)
-        return pam_run.RefreshResult(status, leads=19, potential_gaps=8)
+        paths = (STATE_PATH,) if status == "updated" else ()
+        return pam_run.RefreshResult(status, changed_paths=paths, leads=19, potential_gaps=8)
     return refresh
 
 
@@ -326,8 +327,8 @@ def test_a_foreign_receipts_edit_before_the_second_pass_never_lands_a_one_sided_
     res = run(root, git=git, gh=gh, miner=snapshot_miner(without_unresolved(SNAP), queue=json.loads(QUEUE_RAW)),
               pam_refresh=pam_writing(root, RECEIPTS_PATH, FOREIGN_RECEIPTS))
     assert QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
-    assert f"closed {KEY}" not in res.work
-    assert not res.published or "Work closed" not in pr_body(gh)
+    assert f"closed {KEY}" not in res.work and "one side only" in res.work
+    assert res.published is True and "Work closed" not in pr_body(gh)
 
 
 def noop_then_real(after=None):
@@ -396,3 +397,63 @@ def test_an_owned_closure_pair_still_lands_after_an_untouched_pam_refresh(tmp_pa
     assert queue["candidates"]["fnk0104s"]["status"] == "closed"
     assert receipts(root)[0]["key"] == KEY and receipts(root)[0]["state"] == "delivered"
     assert f"closed {KEY} (delivered)" in res.work and "Work closed" in pr_body(gh)
+
+
+def test_a_withheld_closure_on_an_unchanged_day_still_lands_changed_pam_metadata_alone(tmp_path):
+    root, git, gh = pam_only_day(tmp_path), git_ok(), gh_all()
+    res = run(root, git=git, gh=gh, pam_refresh=pam_writing(root, QUEUE_PATH, FOREIGN_QUEUE, status="updated"))
+    assert res.published is True and res.aborted == ""
+    assert staged(git)[:1] == [STATE_PATH] and QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
+    assert "docs/demand/2026-11-06.json" not in staged(git)          # the unchanged snapshot never rides along
+    assert any(c[:1] == ("checkout",) and any(str(a).startswith("jr/demand-queue-") for a in c)
+               for c in [c[2:] if c[:1] == ("-C",) else c for c in git.calls])
+    assert f"closed {KEY}" not in res.work and "Work closed" not in pr_body(gh)
+
+
+# --- a later broker pass never launders a foreign writer's bytes into this run's own -------------
+
+def foreign_settled_receipts(root, *, now):
+    """Keeps the closure's delivered receipt but rewrites its resolution: a foreign edit the second
+    broker pass would read, append to and then own."""
+    doc = json.loads((root / RECEIPTS_PATH).read_text(encoding="utf-8"))
+    doc["receipts"][0]["resolution"]["reason"] = "rewritten by a concurrent triage"
+    (root / RECEIPTS_PATH).write_bytes(json.dumps(doc).encode())
+    return pam_run.RefreshResult("unchanged", leads=19, potential_gaps=8)
+
+
+def test_a_second_pass_over_foreign_receipts_never_lands_them(tmp_path):
+    root, git, gh = tree(tmp_path), git_ok(), gh_all()
+    res = run(root, git=git, gh=gh, miner=snapshot_miner(without_unresolved(SNAP), queue=json.loads(QUEUE_RAW)),
+              pam_refresh=lambda wt, *, now: foreign_settled_receipts(root, now=now))
+    assert QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
+    assert "rewritten by a concurrent triage" in (root / RECEIPTS_PATH).read_text(encoding="utf-8")
+    assert f"closed {KEY}" not in res.work and "not landed" in res.work
+    assert res.published is True and "Work closed" not in pr_body(gh)
+
+
+def test_a_closure_over_a_foreign_queue_is_never_this_runs_own(tmp_path, monkeypatch):
+    root, git, gh = pam_only_day(tmp_path), git_ok(), gh_all()
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", noop_then_real())
+    foreign = json.loads(QUEUE_RAW)
+    foreign["edited_by"] = "a concurrent triage"
+    res = run(root, git=git, gh=gh,
+              pam_refresh=pam_writing(root, QUEUE_PATH, json.dumps(foreign).encode(), status="updated"))
+    assert res.published is True and STATE_PATH in staged(git)
+    assert QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
+    assert f"closed {KEY}" not in res.work and "Work closed" not in pr_body(gh)
+
+
+def test_a_withheld_queue_that_alone_made_the_run_land_publishes_no_snapshot(tmp_path):
+    root, git = pam_only_day(tmp_path), git_ok()
+    pending = gh_pending_with(gh_all())
+
+    def gh(*args):
+        if args[:2] == ("pr", "view"):
+            (root / QUEUE_PATH).write_bytes(FOREIGN_QUEUE)
+        return pending(*args)
+
+    gh.calls = pending.calls
+    res = run(root, git=git, gh=gh, miner=snapshot_miner(SNAP, queue=queue_with_new_candidate()))
+    assert res.published is False and "not landed" in res.line()
+    assert staged(git) == [] and not [c for c in gh.calls if c[:2] == ("pr", "create")]
+    assert (root / QUEUE_PATH).read_bytes() == FOREIGN_QUEUE
