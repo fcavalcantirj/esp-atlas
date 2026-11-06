@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: PageProps<"/parts/[id]">): Pr
 
 export default async function PartPage({ params }: PageProps<"/parts/[id]">) {
   const { id } = await params;
-  if (id === "m5cardputer") preload("/board-images/cardputer.webp", { as: "image", fetchPriority: "high" });
+  if (id === "m5cardputer") preload("/board-images/cardputer.avif", { as: "image", fetchPriority: "high" });
   const result = await fetchPartDetail(id);
   if (result.status === "not_found") notFound();
   if (result.status === "error") throw new Error(`Part API unavailable for ${id}`);
