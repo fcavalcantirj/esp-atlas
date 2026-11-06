@@ -598,11 +598,18 @@ _GAP_EMOJI = {GAP_UNCOVERED: "🆕", GAP_RANKS_POORLY: "📉", GAP_COVERED_OK: "
 
 
 def _d2_status_line(d2_available: bool, d2_pull_failed: bool) -> str:
+    """The digest's D2 line. 'Live' is PARTIAL coverage, never all site searches: the bounded
+    producer contract sends `q` only for eligible exact model tokens and is still rolling out
+    (not yet deployed everywhere), so the window may also hold legacy free-form terms. The line
+    must not claim the live producer already enforces that restriction."""
+    # d2_available: at least one valid non-placeholder term parsed (see parse_ga4_searchterm_rows).
     if d2_pull_failed:
         return "🔴 D2 blind: GA4 site-search pull failed (customEvent:q) — check Composio/GA4"
     if not d2_available:
         return "🔴 D2 blind: no site-search terms in GA4 this window (customEvent:q)"
-    return "🟢 D2 live: first-party site-search terms captured"
+    return ("🟢 D2 live (partial coverage): GA4 q is live — the bounded producer contract sends q "
+            "only for eligible exact model tokens; it is rolling out, not yet deployed everywhere, "
+            "and this window may include legacy free-form terms")
 
 
 def build_digest(items: list[dict], d2_available: bool, window: dict, top_n: int = 10,
