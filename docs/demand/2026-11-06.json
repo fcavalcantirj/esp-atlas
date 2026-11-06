@@ -26,6 +26,7 @@
    "weight": 287.4,
    "resolved": {
     "board": null,
+    "board_model": null,
     "chip": "esp32",
     "firmware_token": null,
     "capability": [],
@@ -55,6 +56,7 @@
    "weight": 142.08,
    "resolved": {
     "board": null,
+    "board_model": null,
     "chip": "esp32",
     "firmware_token": null,
     "capability": [],
@@ -82,6 +84,7 @@
    "weight": 86.76,
    "resolved": {
     "board": null,
+    "board_model": null,
     "chip": "esp32",
     "firmware_token": null,
     "capability": [],
@@ -109,6 +112,7 @@
    "weight": 19.04,
    "resolved": {
     "board": null,
+    "board_model": null,
     "chip": null,
     "firmware_token": "m5gotchi",
     "capability": [],
@@ -136,6 +140,7 @@
    "weight": 17.67,
    "resolved": {
     "board": null,
+    "board_model": null,
     "chip": "esp32",
     "firmware_token": "bruce",
     "capability": [],
@@ -161,8 +166,15 @@
    "events": null,
    "zero_result": null,
    "weight": 17.22,
-   "resolved": null,
-   "gap": "UNRESOLVED",
+   "resolved": {
+    "board": "freenove-fnk0104s",
+    "board_model": "fnk0104s",
+    "chip": "esp32-s3",
+    "firmware_token": null,
+    "capability": [],
+    "part": null
+   },
+   "gap": "COVERED_OK",
    "landing_page": "https://esp-atlas.com/parts/esp32-s3",
    "first_seen": "2026-11-03",
    "last_seen": "2026-11-06"
@@ -205,6 +217,7 @@
    "weight": 5.8,
    "resolved": {
     "board": null,
+    "board_model": null,
     "chip": null,
     "firmware_token": "cathack",
     "capability": [],
