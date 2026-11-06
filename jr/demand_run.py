@@ -572,6 +572,9 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
             return res
         inconsistent = _inconsistent_landing(demand_dir, decision, receipts_before)
         if inconsistent:
+            if decision.closed:                 # a closure that never lands is never reported closed
+                decision.withheld = "the pair is inconsistent"
+                res.work = _withheld_line(decision, res.work)
             raise RunAbort(inconsistent)        # never land a closed queue beside its live receipt
         decision.bookkeeping, decision.withheld = _bookkeeping(decision, demand_dir, queue_before, main_receipts)
         if decision.withheld:

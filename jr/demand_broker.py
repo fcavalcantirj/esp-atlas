@@ -352,9 +352,11 @@ def _write_closure(demand_dir: Path, closure: demand_closure.Closure, doc: dict,
                    queue_raw: bytes | None, receipts_raw: bytes | None, writes: dict) -> str:
     """Both files through the queue's atomic writer, under START's compare-and-swap guard extended to
     the queue. The queue closes first: a settled receipt beside a linked candidate would RECONCILE
-    every run. A failed receipts write restores the queue's read bytes, but only while the queue
-    still holds exactly the bytes this call wrote: a later writer's queue is never overwritten.
-    Returns the problem, or "" once both are durable — then `writes` holds the exact bytes written."""
+    every run. The receipts are checked again right before their write: a foreign edit that landed
+    while the queue was written is kept. A refused or failed receipts write restores the queue's read
+    bytes, but only while the queue still holds exactly the bytes this call wrote: a later writer's
+    queue is never overwritten. Returns the problem, or "" once both are durable — then `writes`
+    holds the exact bytes written."""
     qpath, rpath = demand_dir / research_queue.QUEUE_NAME, demand_dir / RECEIPTS_NAME
     if _read(qpath) != queue_raw or _read(rpath) != receipts_raw:
         return f"{research_queue.QUEUE_NAME} or {RECEIPTS_NAME} changed during the run: not overwritten"
@@ -367,19 +369,26 @@ def _write_closure(demand_dir: Path, closure: demand_closure.Closure, doc: dict,
         writes[research_queue.QUEUE_NAME] = queue_bytes
         return ""
     receipts_bytes = _writer_bytes({**doc, "receipts": closure.receipts})
+    if _read(rpath) != receipts_raw:
+        return _undo_queue(qpath, queue_raw, queue_bytes, f"{RECEIPTS_NAME} changed during the closure")
     try:
         research_queue.write_queue({**doc, "receipts": closure.receipts}, rpath)
     except OSError as e:
-        if _read(qpath) != queue_bytes:
-            return (f"{RECEIPTS_NAME} write failed ({e}); {research_queue.QUEUE_NAME} changed after the "
-                    "closure wrote it: not restored")
-        try:
-            research_queue.write_bytes(queue_raw, qpath)
-        except OSError as again:
-            return f"{RECEIPTS_NAME} write failed ({e}); queue left closed, restore failed: {again}"
-        return f"{RECEIPTS_NAME} write failed, both previous files kept: {e}"
+        return _undo_queue(qpath, queue_raw, queue_bytes, f"{RECEIPTS_NAME} write failed ({e})")
     writes.update({research_queue.QUEUE_NAME: queue_bytes, RECEIPTS_NAME: receipts_bytes})
     return ""
+
+
+def _undo_queue(qpath: Path, queue_raw: bytes | None, queue_bytes: bytes, why: str) -> str:
+    """Restore the queue's read bytes once `why` stopped a closure after its queue write — only while
+    the queue still holds this call's own write. Returns the problem to report."""
+    if _read(qpath) != queue_bytes:
+        return f"{why}; {research_queue.QUEUE_NAME} changed after the closure wrote it: not restored"
+    try:
+        research_queue.write_bytes(queue_raw, qpath)
+    except OSError as again:
+        return f"{why}; queue left closed, restore failed: {again}"
+    return f"{why}: both previous files kept, not overwritten"
 
 
 def _close(demand_dir: Path, snap: dict, plan: rw.Plan, reason: str, state: dict, *, gh, today: str,
