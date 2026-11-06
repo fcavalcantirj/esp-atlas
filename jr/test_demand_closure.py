@@ -615,3 +615,39 @@ def test_the_bytes_wrapper_reads_the_pair_and_refuses_nothing_unreadable():
     as_bytes = [json.dumps(x).encode() for x in (queue, {"version": 1, "receipts": []}, {"version": 1, "receipts": base})]
     assert broker.one_sided_closures(*as_bytes) == [KEY]
     assert broker.one_sided_closures(b"{not json", as_bytes[1], as_bytes[2]) == []
+
+
+# --- the re-plan after a closure never builds on a foreign writer's bytes -------------------------
+
+def race_after_the_closure(monkeypatch, d, name):
+    """A foreign writer edits `name` the moment the closure's writes are durable, before the broker's
+    internal re-plan reads the pair. The closed candidate and its settled receipt are kept (no
+    one-sided closure gives it away); only a free-text field changes. Returns the foreign bytes."""
+    real, foreign = broker._write_closure, []
+
+    def write_then_race(*args, **kw):
+        problem = real(*args, **kw)
+        if not problem:
+            edited = doc(d, name)
+            if name == RECEIPTS:
+                edited["receipts"][0]["resolution"]["reason"] = "rewritten by a concurrent triage"
+            else:
+                edited["edited_by"] = "a concurrent triage"
+            foreign.append(json.dumps(edited).encode())
+            (d / name).write_bytes(foreign[0])
+        return problem
+
+    monkeypatch.setattr(broker, "_write_closure", write_then_race)
+    return foreign
+
+
+@pytest.mark.parametrize("name", [RECEIPTS, QUEUE])
+def test_a_foreign_edit_before_the_re_plan_is_never_built_on_or_owned(tmp_path, monkeypatch, name):
+    d, writes = demand_dir(tmp_path), {}
+    foreign = race_after_the_closure(monkeypatch, d, name)
+    out = broker.reserve(d, SNAP, gh=gh_for(), git=git_for(), repo_slug=SLUG, today=NEXT_DAY, now=NEXT_NOW,
+                         mined_revision=MAIN_SHA, writes=writes)
+    assert (d / name).read_bytes() == foreign[0]                   # kept byte-for-byte, nothing appended
+    assert KEELOQ_KEY not in {r["key"] for r in doc(d, RECEIPTS)["receipts"]}
+    assert out.action == rw.DEFER and out.foreign == (name,) and "another writer" in out.reason
+    assert writes[name] != foreign[0]                              # ownership is never handed to them

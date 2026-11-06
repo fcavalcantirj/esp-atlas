@@ -472,3 +472,29 @@ def test_an_owned_pair_that_records_a_closure_on_one_side_only_is_withheld(tmp_p
     paths, why = demand_run._bookkeeping(decision, d, QUEUE_RAW, RECEIPTS_RAW)
     assert paths == [] and f"work {KEY} would land on one side only" in why
     assert (d / "work-receipts.json").read_bytes() == owned
+
+
+# --- the broker's internal re-plan never launders a foreign edit into publication ----------------
+
+def test_a_foreign_receipts_edit_before_the_internal_re_plan_never_lands(tmp_path, monkeypatch):
+    """The foreign edit lands after this run's closure is durable and before the broker re-plans in the
+    same call — past the runner's own pre-pass check. A legitimate reservation appended over it would
+    make the combined bytes this run's own and publish the foreign edit."""
+    root, git, gh = tree(tmp_path), git_ok(), gh_all()
+    real, foreign = demand_run.demand_broker._write_closure, []
+
+    def write_then_race(*args, **kw):
+        problem = real(*args, **kw)
+        if not problem:
+            foreign_settled_receipts(root, now=NEXT_NOW)
+            foreign.append((root / RECEIPTS_PATH).read_bytes())
+        return problem
+
+    monkeypatch.setattr(demand_run.demand_broker, "_write_closure", write_then_race)
+    res = run(root, git=git, gh=gh)
+    assert foreign and (root / RECEIPTS_PATH).read_bytes() == foreign[0]    # kept, nothing appended over it
+    assert QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
+    assert f"closed {KEY}" not in res.work and f"reserved {KEELOQ_KEY}" not in res.work
+    assert "not landed" in res.work
+    assert res.published is True and "docs/demand/2026-11-06.json" in staged(git)   # the snapshot alone
+    assert "Work closed" not in pr_body(gh) and "Work reserved" not in pr_body(gh)
