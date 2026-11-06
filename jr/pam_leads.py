@@ -290,7 +290,7 @@ def candidate_leads(state: dict, *, handled_keys=()) -> list[dict]:
     handled = set(handled_keys)
     candidates = []
     for lead in state["leads"]:
-        key = "pam-" + _hash([lead["source_id"], lead["fingerprint"]])[:24]
+        key = work_key(lead)
         if lead["status"] != "potential_identity_gap" or key in handled:
             continue
         candidates.append({"key": key, "source": "pam_feed", "source_id": lead["source_id"],
@@ -300,3 +300,25 @@ def candidate_leads(state: dict, *, handled_keys=()) -> list[dict]:
                            "provenance": {"checked_at": state["checked_at"],
                                           "feeds": copy.deepcopy(state["feeds"])}})
     return candidates
+
+
+def work_key(lead: dict) -> str:
+    """Semantic feed identity, unaffected by fetch time, HTTP receipt or catalog match."""
+    return "pam-" + _hash([lead["source_id"], lead["fingerprint"]])[:24]
+
+
+def readable_work_provenance(value) -> bool:
+    """Validate the original minimal feed snapshot without fetching anything."""
+    if not isinstance(value, dict) or set(value) != {"lead", "checked_at", "feeds"}:
+        return False
+    feeds = value["feeds"]
+    fields = {"url", "fetched_at", "etag", "sha256", "bytes"}
+    if (not isinstance(feeds, dict) or set(feeds) != set(ENDPOINTS)
+            or any(not isinstance(meta, dict) or set(meta) != fields for meta in feeds.values())):
+        return False
+    try:
+        _previous({"version": VERSION, "source": "pam_feed", "leads": [value["lead"]],
+                   "checked_at": value["checked_at"], "feeds": value["feeds"]})
+    except (FeedError, TypeError, KeyError):
+        return False
+    return True

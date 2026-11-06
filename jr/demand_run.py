@@ -113,6 +113,7 @@ class Decision:
     pam_paths: tuple = ()
     pam_summary: str = ""
     pam_only: bool = False
+    work_action: str = ""
 
 
 # --- the no-op rule ----------------------------------------------------------------------------------
@@ -356,7 +357,7 @@ def _publication(d: Decision, wt_path: Path) -> tuple[list[str], str, str]:
         note += (f"\n\nPAM discovery: {d.pam_summary}. Unverified leads and source pointers only; "
                  "every publishable catalog fact still requires primary-source verification and review.")
     if d.pam_only:
-        return (list(d.pam_paths), f"chore(jr): PAM discovery metadata {snap['date']}",
+        return (list(d.pam_paths) + receipts, f"chore(jr): PAM discovery metadata {snap['date']}",
                 "PAM discovery metadata only. The dated search-demand snapshot is not included; "
                 "the prior committed steer is preserved. No catalog writes.\n\n"
                 "Source: the two fixed public PAM feeds, through jr/pam_run.py and the existing "
@@ -382,6 +383,7 @@ def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str 
         raise                           # host timeout is fatal, not an ordinary source failure
     except Exception as e:  # noqa: BLE001
         return f"defer: broker error {type(e).__name__}: {e}"
+    d.work_action = work.action
     if work.changed:
         d.receipts_changed, d.work = True, work.line()
         if not d.land:
@@ -451,6 +453,10 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         if not res.source_error:
             res.work = _reserve_work(wt.path, decision, gh, now, repo_slug)
         _refresh_pam(wt.path, decision, res, pam_refresh, now)
+        # Only a prior NOOP permits considering newly discovered feed leads.
+        # Existing work, caps, unreadable remote state and timeouts retain priority.
+        if not res.source_error and decision.work_action == "noop" and decision.pam_paths:
+            res.work = _reserve_work(wt.path, decision, gh, now, repo_slug)
         if res.pam_receipt:
             revision = git("rev-parse", "HEAD")
             res.pam_receipt["runner_revision"] = ((getattr(revision, "stdout", "") or "").strip()

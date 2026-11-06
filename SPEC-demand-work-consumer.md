@@ -36,6 +36,10 @@ inference availability monitor. Implementation is not activation.
   demand items. GSC impressions/clicks/position remain GSC metrics; do not invent
   GA4 submit/empty counts. Preserve the source snapshot, exact signal window and
   source-specific metrics in each work receipt. Overlapping windows are not totals.
+  PAM potential identity gaps join as typed `pam_feed` research work under
+  `SPEC-pam-discovery.md`; they retain original minimal feed provenance without a
+  fabricated search window or metrics. Existing work is recovered before any new
+  work, and new search demand has priority over market leads under the same caps.
 
 - Initial hard cap: one newly started work item per UTC day, one item per run and
   one outstanding catalog-authoring work item. Reconciliation is allowed at the

@@ -47,7 +47,10 @@ def _comparable(state: dict | None):
                       for name, meta in state["feeds"].items()}}
 
 
-def _previous(path: Path) -> dict | None:
+def read_state(path: Path) -> dict | None:
+    """Read bounded minimal state; reject a symlink instead of following it."""
+    if path.is_symlink():
+        raise pam_leads.FeedError("cached state is a symlink")
     if not path.exists():
         return None
     with path.open("rb") as stream:
@@ -84,7 +87,7 @@ def refresh_worktree(worktree: Path, *, now: dt.datetime | None = None,
         target = path.resolve()
         if not target.is_relative_to(root) or target.is_relative_to((root / "data").resolve()):
             raise pam_leads.FeedError("state path escapes docs worktree boundary")
-        previous = _previous(path)
+        previous = read_state(path)
         catalog = _board_identities(root)
 
         def tracked_fetch(name, etag=None):

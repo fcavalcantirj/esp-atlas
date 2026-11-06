@@ -44,11 +44,14 @@ def run(root, **kw):
     return demand_run.run(now=NOW, root=root, repo_slug=SLUG, python="/venv/bin/python", **kw)
 
 
-def assert_pam_only_publication(git):
+def assert_pam_only_publication(git, *, reservation=False):
     # publish.py also records its normal proposal-ledger bookkeeping.
     paths = set(staged(git))
     assert pam_run.STATE_PATH in paths
-    assert paths <= {pam_run.STATE_PATH, "jr/proposed_ledger.json"}
+    allowed = {pam_run.STATE_PATH, "jr/proposed_ledger.json"}
+    if reservation:
+        allowed.add("docs/demand/work-receipts.json")
+    assert paths <= allowed
 
 
 def test_fresh_demand_and_pam_changed_paths_share_the_daily_publication(tmp_path):
@@ -61,19 +64,21 @@ def test_fresh_demand_and_pam_changed_paths_share_the_daily_publication(tmp_path
     assert "PAM updated" in result.line()
 
 
-def test_pam_change_lands_alone_when_search_demand_is_a_noop(tmp_path):
+def test_pam_change_and_its_first_reservation_land_when_search_demand_is_a_noop(tmp_path):
     root, git = tree(tmp_path), git_ok()
     previous(root)
     result = run(root, git=git)
     assert result.published
-    assert_pam_only_publication(git)
+    assert_pam_only_publication(git, reservation=True)
+    receipt = json.loads((root / "docs/demand/work-receipts.json").read_text())["receipts"][0]
+    assert receipt["source"] == "pam_feed" and receipt["term"] == "ES3N28P"
     assert "PAM updated" in result.line()
 
 
 def test_unchanged_pam_and_noop_search_do_not_publish(tmp_path):
     root, git = tree(tmp_path), git_ok()
     previous(root)
-    pam_ok(root, now=NOW)
+    run(root)  # first run discovers/reserves the lead; the replay changes nothing
     before = (root / pam_run.STATE_PATH).read_bytes()
     def unchanged(path, *, now):
         return pam_run.refresh_worktree(path, now=now, fetch=Fetch(statuses={"products": [304], "specs": [304]}))
