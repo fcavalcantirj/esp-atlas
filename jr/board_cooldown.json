@@ -130,6 +130,52 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
+    "lilygo-t-display": {
+      "board": "lilygo-t-display",
+      "expires": "2026-11-13T04:00:59.953227+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-06T04:00:59.953227+00:00"
+    },
+    "lilygo-t-dongle-s3": {
+      "board": "lilygo-t-dongle-s3",
+      "expires": "2026-11-13T04:00:59.953227+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-06T04:00:59.953227+00:00"
+    },
+    "lilygo-t-embed": {
+      "board": "lilygo-t-embed",
+      "expires": "2026-11-13T04:00:59.953227+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-06T04:00:59.953227+00:00"
+    },
     "lolin-s3": {
       "board": "lolin-s3",
       "expires": "2026-11-11T19:00:59.711024+00:00",
