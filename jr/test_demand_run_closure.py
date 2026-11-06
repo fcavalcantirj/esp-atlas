@@ -536,3 +536,28 @@ def test_a_live_receipt_restored_before_the_re_plan_aborts_without_reporting_the
     assert "inconsistent" in res.aborted and res.published is False and staged(git) == []
     assert (root / RECEIPTS_PATH).read_bytes() == RECEIPTS_RAW
     assert f"closed {KEY}" not in res.line() and "not landed" in res.line()
+
+
+def test_the_daily_run_hands_its_live_getter_to_a_catalog_search_closure(tmp_path):
+    """catalog_search work closes inside the existing daily demand run, through the getter `run`
+    was given (production: demand_closure.default_fetch); no other scheduler, never /api/intent."""
+    from test_demand_closure import queue_bytes
+    from test_demand_closure_live_search import DEPLOYED, STATUS_URL, Getter
+    queue = json.loads(queue_bytes(lambda c: c["validation"].update(verification_kind="catalog_search")))
+    root, git, fetch = tree(tmp_path), git_ok(), Getter()
+    (root / QUEUE_PATH).write_text(json.dumps(queue, indent=1), encoding="utf-8")
+    res = run(root, git=git, miner=snapshot_miner(SNAP, queue=queue), fetch=fetch)
+    assert res.aborted == "" and res.published is True
+    assert f"closed {KEY} (delivered)" in res.work
+    assert fetch.calls[0] == STATUS_URL and fetch.calls[-1] == STATUS_URL and len(fetch.calls) == 3
+    assert not [u for u in fetch.calls if "/api/intent" in u]
+    assert ("merge-base", "--is-ancestor", MERGE_SHA, DEPLOYED) in [c[-4:] for c in git.calls]
+    outcome = json.loads((root / QUEUE_PATH).read_text(encoding="utf-8"))["candidates"]["fnk0104s"]["outcome"]
+    assert outcome["verification_kind"] == "catalog_search" and outcome["deployment"] == DEPLOYED
+
+
+def test_the_default_live_getter_is_the_urllib_one():
+    import inspect
+
+    import demand_closure
+    assert inspect.signature(demand_run.run).parameters["fetch"].default is demand_closure.default_fetch
