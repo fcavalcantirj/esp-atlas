@@ -1,5 +1,5 @@
 import type { Firmware, PartRecord, Recipe, SourceEntry } from "./api.ts";
-import { CATALOG_TAG } from "./api-server.ts";
+import { CATALOG_TAG, serverApiHeaders } from "./api-server.ts";
 import type { AtlasCatalog } from "./atlas-model.ts";
 
 export type AtlasCatalogResult =
@@ -84,6 +84,7 @@ async function collection<T extends { id: string }>(
       const url = `${baseUrl.replace(/\/+$/, "")}${path}${refreshKey ? `?_atlas_refresh=${refreshKey}` : ""}`;
       response = await fetcher(url, {
         next: { revalidate: 3600, tags: [CATALOG_TAG] },
+        headers: serverApiHeaders(baseUrl),
         signal: AbortSignal.timeout(timeout),
       });
       break;

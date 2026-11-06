@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { CATALOG_TAG, fetchFirmware, fetchFirmwareList } from "./api-server.ts";
+import { CATALOG_TAG, fetchFirmware, fetchFirmwareList, serverApiHeaders } from "./api-server.ts";
 
 function stubFetch(handler: (input: string, init: RequestInit) => Response) {
   const calls: RequestInit[] = [];
@@ -67,5 +67,26 @@ test("entity fetches carry the same tag and an AbortSignal.timeout signal", asyn
     assert.ok(init.signal instanceof AbortSignal);
   } finally {
     stub.restore();
+  }
+});
+
+test("preview self-fetch uses the deployment bypass only for its own API origin", () => {
+  const keys = ["VERCEL_ENV", "VERCEL_URL", "VERCEL_AUTOMATION_BYPASS_SECRET"] as const;
+  const previous = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
+  try {
+    process.env.VERCEL_ENV = "preview";
+    process.env.VERCEL_URL = "preview.example.vercel.app";
+    process.env.VERCEL_AUTOMATION_BYPASS_SECRET = "test-only-secret";
+    assert.deepEqual(serverApiHeaders("https://preview.example.vercel.app/api"), { "x-vercel-protection-bypass": "test-only-secret" });
+    assert.equal(serverApiHeaders("https://production.example.com/api"), undefined);
+    assert.equal(serverApiHeaders("https://preview.example.vercel.app/other"), undefined);
+    process.env.VERCEL_ENV = "production";
+    assert.equal(serverApiHeaders("https://preview.example.vercel.app/api"), undefined);
+  } finally {
+    for (const key of keys) {
+      const value = previous[key];
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
   }
 });
