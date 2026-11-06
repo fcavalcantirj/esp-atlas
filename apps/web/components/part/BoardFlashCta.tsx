@@ -29,7 +29,7 @@ export default function BoardFlashCta({
         document.getElementById("board-firmware")?.focus();
       }}
     >
-      Flash this board — {boardFlashCtaLabel(rows)}
+      View {boardFlashCtaLabel(rows)}
     </a>
   );
 }
