@@ -1,0 +1,34 @@
+{
+ "version": 1,
+ "receipts": [
+  {
+   "key": "a721c3339f3d6348",
+   "branch": "jr/research-a721c3339f3d6348",
+   "term": "fnk0104s",
+   "phase": "research",
+   "state": "reserved",
+   "started_on": "2026-11-06",
+   "source": "gsc_query",
+   "window": {
+    "start": "2026-10-09",
+    "end": "2026-11-06"
+   },
+   "metrics": {
+    "impressions": 22,
+    "clicks": 1,
+    "position": 8.2
+   },
+   "linked_work": [],
+   "provenance": {
+    "snapshot": "docs/demand/2026-11-06.json",
+    "opened_on": "2026-11-03",
+    "status": "new",
+    "remote": {
+     "branch": false,
+     "prs": []
+    },
+    "reserved_by": "jr/demand_run.py"
+   }
+  }
+ ]
+}
