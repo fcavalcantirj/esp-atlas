@@ -6,7 +6,7 @@ import JsonLd from "@/components/JsonLd";
 import RecipeGroupList from "@/components/RecipeGroupList";
 import TrackedLink from "@/components/TrackedLink";
 import type { Firmware, PartRecord, Recipe } from "@/lib/api";
-import { firmwareCategoryLabel } from "@/lib/format";
+import { firmwareCategoryLabel, repositorySnapshot } from "@/lib/format";
 import type { RepoReadme } from "@/lib/readme";
 import { firmwareBoardRows } from "@/lib/recipe-rows";
 import { firmwareGraph } from "@/lib/structured-data";
@@ -79,15 +79,16 @@ export default function FirmwareDetailView({
           <p className="firmware-dek-marker muted">auto-summary</p>
         </>
       )}
-      {firmware.popularity?.stars != null && (
+      {firmware.popularity && (firmware.popularity.stars != null || firmware.popularity.forks != null) && (
         <p className="firmware-popularity">
-          <span className="firmware-popularity-figure">{firmware.popularity.stars}</span> stars
-          {!!firmware.popularity.forks && firmware.popularity.forks > 0 && (
+          {firmware.popularity.stars != null && <><span className="firmware-popularity-figure">{firmware.popularity.stars}</span> stars</>}
+          {firmware.popularity.forks != null && (
             <>
-              {" · "}
+              {firmware.popularity.stars != null && " · "}
               <span className="firmware-popularity-figure">{firmware.popularity.forks}</span> forks
             </>
           )}
+          <span className="popularity-glance-scope">{repositorySnapshot(firmware.popularity)}</span>
         </p>
       )}
       {details.length > 0 && (

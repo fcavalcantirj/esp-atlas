@@ -32,9 +32,10 @@ export default function SubmitPage() {
         <h2>What happens next</h2>
         <ol>
           <li>Your submission becomes a public GitHub issue labelled <code>submission</code>, opened by the EspAtlas Jr bot. That is the only thing this box does.</li>
-          <li>Within the hour Jr reads the repository and applies the catalog&apos;s fixed rules — a real public repo, <strong>25 stars or 25 forks</strong>, not a fork of a firmware already listed, and at least one <Link href="/boards">catalogued board</Link> named here or in the repo&apos;s own release assets and <code>platformio.ini</code>. No AI decides anything.</li>
+          <li>Jr checks submissions on its hourly schedule and applies the catalog&apos;s fixed rules: a real public repository with <strong>at least 25 stars, 25 forks, or an independent project homepage</strong>. The homepage must be an external site rather than GitHub or a GitHub Pages mirror. The repository must also identify at least one <Link href="/boards">catalogued board</Link> through the submission or its own release assets and <code>platformio.ini</code>, and cannot be a fork of firmware already listed. These checks are deterministic.</li>
           <li>Jr comments the verdict on the issue. If it passes, Jr opens a pull request with a cited firmware record and its first recipe; automated checks must pass, and a human maintainer reviews it before it publishes. Then it maps every board the repo&apos;s build files name.</li>
         </ol>
+        <p>A separate launcher-catalog intake can also qualify firmware with at least 2,000 catalog-reported downloads, with recorded provenance and review. This GitHub submission form does not accept download-count claims as a qualifying signal.</p>
         <p>
           Prefer GitHub? <a href="https://github.com/fcavalcantirj/esp-atlas/issues/new?template=submission.yml">Open the submission issue yourself</a> — same gate, same bot.
           Nothing typed here is stored by this site. <Link href="/how-we-work">How we work →</Link>

@@ -34,7 +34,8 @@ export function boardFlashCtaLabel(rows: FlashCtaRow[]): string {
   return knownGood ? `${countLabel} · ${knownGood} known good` : countLabel;
 }
 
-/** board_flash_cta_click params: the board plus what the CTA advertised. */
+/** Analytics retain total recipes and the highest tier present as separate dimensions.
+ * The tier is not a claim that every recipe in count has that status. */
 export function boardFlashCtaParams(partId: string, rows: FlashCtaRow[]): EventParams {
   return { part_id: partId, count: rows.length, tier: highestTrustTier(rows) };
 }

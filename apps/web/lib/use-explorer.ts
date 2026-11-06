@@ -32,6 +32,9 @@ export function useExplorer() {
   const [filters, setFilters] = useState<SearchFilters>({ q: "" });
   const [state, setState] = useState<ExplorerState>(INITIAL_STATE);
   const resultsRef = useRef<HTMLElement>(null);
+  const request = useRef(0);
+
+  useEffect(() => () => { request.current += 1; }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -55,6 +58,7 @@ export function useExplorer() {
 
   const executeWizard = useCallback(
     async (wizardNeeds: WizardNeeds, onDone?: () => void, attemptId = newAnalyticsAttemptId()) => {
+      const requestId = ++request.current;
       const started = performance.now();
       const needsStr = serializeNeeds(wizardNeeds);
       track("wizard_submit", {
@@ -67,12 +71,14 @@ export function useExplorer() {
       setState({ results: null, loading: true, error: null, lastQuery: { kind: "wizard", needs: wizardNeeds } });
       try {
         const { results } = await runWizard(wizardNeeds);
+        if (requestId !== request.current) return;
         setState({ results, loading: false, error: null, lastQuery: { kind: "wizard", needs: wizardNeeds } });
         track(results.length ? "wizard_results" : "wizard_empty", {
           attempt_id: attemptId, surface: "wizard", outcome: results.length ? "results" : "empty",
           needs: needsStr, result_count: results.length, latency_ms: Math.round(performance.now() - started),
         });
       } catch (err) {
+        if (requestId !== request.current) return;
         reportApiError("/wizard", err, attemptId);
         track("wizard_error", {
           attempt_id: attemptId, surface: "wizard", outcome: "error",
@@ -92,6 +98,7 @@ export function useExplorer() {
 
   const executeSearch = useCallback(
     async (searchFilters: SearchFilters, onDone?: () => void, attemptId = newAnalyticsAttemptId()) => {
+      const requestId = ++request.current;
       const started = performance.now();
       const { q = "", ...structured } = searchFilters;
       const filtersStr = serializeNeeds(structured);
@@ -107,6 +114,7 @@ export function useExplorer() {
       setState({ results: null, loading: true, error: null, lastQuery: { kind: "search", filters: searchFilters } });
       try {
         const { results } = await searchParts(searchFilters);
+        if (requestId !== request.current) return;
         setState({ results, loading: false, error: null, lastQuery: { kind: "search", filters: searchFilters } });
         track(results.length ? "search_results" : "search_empty", {
           attempt_id: attemptId,
@@ -118,6 +126,7 @@ export function useExplorer() {
           latency_ms: Math.round(performance.now() - started),
         });
       } catch (err) {
+        if (requestId !== request.current) return;
         reportApiError("/search", err, attemptId);
         track("search_error", {
           attempt_id: attemptId, surface: "search", outcome: "error",
@@ -136,26 +145,29 @@ export function useExplorer() {
   );
 
   const onRelax = useCallback(
-    (key: string) => {
+    (key: string, onDone?: () => void) => {
       if (state.lastQuery?.kind === "wizard") {
         const next = { ...state.lastQuery.needs };
         delete next[key as keyof WizardNeeds];
         track("relax_filter", { removed_key: key, needs: serializeNeeds(next) });
         setNeeds(next);
-        void executeWizard(next);
+        void executeWizard(next, onDone);
       } else if (state.lastQuery?.kind === "search") {
         const next = { ...state.lastQuery.filters };
         delete next[key as keyof SearchFilters];
         if (next.q === undefined) next.q = "";
         track("relax_filter", { removed_key: key, needs: serializeNeeds(next) });
         setFilters(next);
-        void executeSearch(next);
+        void executeSearch(next, onDone);
       }
     },
     [state.lastQuery, executeWizard, executeSearch],
   );
 
-  const onClear = useCallback(() => setState(INITIAL_STATE), []);
+  const onClear = useCallback(() => {
+    request.current += 1;
+    setState(INITIAL_STATE);
+  }, []);
 
   return {
     facets,

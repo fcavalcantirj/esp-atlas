@@ -382,6 +382,7 @@ export interface PopularityInput {
   stars?: number | null;
   forks?: number | null;
   as_of?: string | null;
+  github_as_of?: string | null;
 }
 
 export interface PopularityGlance {
@@ -389,16 +390,27 @@ export interface PopularityGlance {
   forks?: string;
   ariaLabel: string;
   title?: string;
+  scope: string;
 }
 
 /** SPEC-firmware-popularity.md §2: the compact "★ 94.6k · ⑂ 12.4k" card glance.
- * `ariaLabel` carries the full, unabbreviated counts; `title` carries the
- * `as_of` tooltip when cited. Null when neither metric is present -- the
+ * Full counts remain accessible; scope and the source-specific date are visible.
+ * Legacy dates are explicitly historical. Null when neither metric is present -- the
  * caller must render nothing, never a "0" or an empty glyph. */
+export function repositorySnapshot(popularity: PopularityInput): string {
+  const raw = popularity.github_as_of;
+  const date = raw && !Number.isNaN(Date.parse(raw))
+    ? raw.length === 10 ? raw : `${new Date(raw).toISOString().slice(0, 16).replace("T", " ")} UTC`
+    : null;
+  return date ? `GitHub repo · as of ${date}`
+    : popularity.as_of ? `GitHub repo · historical snapshot ${popularity.as_of}` : "GitHub repo · date not recorded";
+}
+
 export function popularityGlance(popularity: PopularityInput | null | undefined): PopularityGlance | null {
   if (!popularity) return null;
   const labelParts: string[] = [];
-  const glance: PopularityGlance = { ariaLabel: "" };
+  const scope = repositorySnapshot(popularity);
+  const glance: PopularityGlance = { ariaLabel: "", scope };
   if (popularity.stars != null) {
     glance.stars = compactCount(popularity.stars);
     labelParts.push(`${popularity.stars.toLocaleString("en-US")} GitHub stars`);
@@ -408,8 +420,8 @@ export function popularityGlance(popularity: PopularityInput | null | undefined)
     labelParts.push(`${popularity.forks.toLocaleString("en-US")} forks`);
   }
   if (labelParts.length === 0) return null;
-  glance.ariaLabel = labelParts.join(", ");
-  if (popularity.as_of) glance.title = `stars as of ${popularity.as_of}`;
+  glance.ariaLabel = `${labelParts.join(", ")}. ${scope}`;
+  glance.title = glance.ariaLabel;
   return glance;
 }
 

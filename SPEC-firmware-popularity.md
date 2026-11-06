@@ -44,7 +44,12 @@ the one knob to flip — say so and §3.B drops out.
   - Format: `94567 → 94.6k`, `1234 → 1.2k`, `<1000 → exact`. Forks same.
   - Accessible: `aria-label="94,567 GitHub stars, 12,411 forks"`; the ★/⑂ glyphs are
     `aria-hidden`. Not a link (the card already links to the firmware).
-  - Show `as_of` only in a `title=` tooltip ("stars as of 2026-09-14"), not inline.
+  - Show repository scope and the recorded date visibly on desktop and mobile.
+    Prefer `github_as_of` for stars/forks; the legacy `as_of` is labelled a historical
+    snapshot. When neither is supplied, say the date is not recorded. Never use
+    download/editorial dates for GitHub metrics or imply a live fetch occurred.
+    Counts apply to the linked repository, including monorepos; recipe evidence
+    determines board compatibility. The full exact counts also remain in the accessible label.
   - If `stars`/`forks` is null/absent: omit that metric silently (no "0", no empty star).
 - **Ordering:** popularity desc. Tie-break: `stars desc → forks desc → name asc`
   (fully deterministic — required for the oracle in §6). Records with null stars sort

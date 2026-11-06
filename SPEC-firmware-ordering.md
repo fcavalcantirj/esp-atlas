@@ -162,6 +162,15 @@ Value is already fetched then discarded — persist, then backfill.
 
 ## 8. Acceptance
 
+Rendered visibility is part of the contract: initially only 24 records are
+visible and keyboard reachable; each reveal adds at most 24, including the final
+remainder. Counts are announced, and reveal moves focus to the first newly shown
+record instead of losing focus when the final button disappears. A sort change
+resets the cap. All five complete server-provided orders, including ties and
+unknown metrics, must survive rendering on desktop and mobile. Hidden examples
+on the homepage use the same visibility rule. Filters are not currently offered
+on this index; do not describe absent controls as tested functionality.
+
 **v1:**
 - `curl /firmware?sort=name|name-desc|forks|boards` each returns the oracle order,
   complete and correct on its own (Rule 3 litmus). Unknown `sort` → popularity.

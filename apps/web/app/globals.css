@@ -178,9 +178,16 @@ code,
 /* SPEC-firmware-popularity.md §5: the reveal cap. The element still renders
    into the server HTML (crawlable) -- this only hides it visually until
    "Show more" lifts the cap. */
-.is-hidden {
-  display: none;
+.is-hidden,
+[hidden] {
+  /* Visibility state must win over later card layouts, including media queries. */
+  display: none !important;
 }
+
+.home-answer { scroll-margin-top: 1.5rem; }
+.popularity-glance-scope { display: block; font-size: .75rem; font-weight: 400; white-space: normal; }
+.firmware-metric-note { color: var(--muted); font-size: .85rem; margin-block: .75rem 1.5rem; }
+.home-answer-status { color: var(--muted); margin: 1rem 0; }
 
 .sr-only {
   position: absolute;

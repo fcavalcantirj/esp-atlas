@@ -1,11 +1,7 @@
 "use client";
 
-// The intent-first home (SPEC-home-explorer §2, locked 2026-08-24): the prompt
-// and the generated examples lead; the spec wizard is a drawer below them, and
-// also lives in full at /wizard. Results only appear once something is asked.
-// EXPERIMENT: results-first-only relaxed 2026-09-18 — examples surfaced above
-// the fold as a cold-start fix; revert if engagement does not improve.
 import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 import BuildGuideAnswer from "@/components/BuildGuideAnswer";
 import ExamplesGrid from "@/components/ExamplesGrid";
 import IntentPrompt from "@/components/IntentPrompt";
@@ -14,297 +10,203 @@ import RunGuideAnswer from "@/components/RunGuideAnswer";
 import SearchBox from "@/components/SearchBox";
 import WizardForm from "@/components/WizardForm";
 import { newAnalyticsAttemptId, track } from "@/lib/analytics";
-import {
-  ApiError,
-  buildGuide,
-  parseIntent,
-  runGuide,
-  type BuildGuide,
-  type Example,
-  type IntentParse,
-  type NeedsExample,
-  type RunGuideResponse,
-  type WizardNeeds,
-} from "@/lib/api";
+import { ApiError, buildGuide, parseIntent, runGuide, type BuildGuide, type Example, type IntentParse,
+  type NeedsExample, type RunGuideResponse, type WizardNeeds } from "@/lib/api";
 import { useExplorer } from "@/lib/use-explorer";
-import { useState } from "react";
 
-// The catalogue has no field for what an "unmapped" goal names (a sensor,
-// camera, motor...) -- these are the real board constraints a maker can add
-// instead, each a one-tap replay of the wizard (SPEC-home-explorer §2).
 const UNMAPPED_CLARIFIERS: { label: string; needs: WizardNeeds }[] = [
-  { label: "Battery", needs: { battery: true } },
-  { label: "Wi-Fi", needs: { radio: "wifi-4" } },
-  { label: "Cheap", needs: { budget: "cheap" } },
-  { label: "Native USB", needs: { usb_native: true } },
+  { label: "Battery", needs: { battery: true } }, { label: "Wi-Fi", needs: { radio: "wifi-4" } },
+  { label: "Cheap", needs: { budget: "cheap" } }, { label: "Native USB", needs: { usb_native: true } },
 ];
+const NO_SCROLL = () => {};
+type Attempt = { id: number; text: string };
+type Answer = { kind: "idle" }
+  | (Attempt & { kind: "parsing" })
+  | (Attempt & { kind: "boards"; fallback?: string })
+  | (Attempt & { kind: "firmware"; firmware: string; name?: string; loading: boolean; data?: RunGuideResponse; error?: string })
+  | (Attempt & { kind: "build"; loading: boolean; data?: BuildGuide; error?: string });
+const message = (error: unknown) => error instanceof Error ? error.message : "The request failed. Please try again.";
 
 export default function HomeView({ examples }: { examples: Example[] }) {
-  const {
-    facets,
-    needs,
-    setNeeds,
-    filters,
-    setFilters,
-    state,
-    resultsRef,
-    executeWizard,
-    executeSearch,
-    scrollToResults,
-    onRelax,
-    onClear,
-  } = useExplorer();
-
-  const asked = state.lastQuery !== null || state.loading;
-  // What the intent box understood about the last thing typed. Kept beside the
-  // results so the user can see the parse and correct it, rather than guessing
-  // why they got what they got.
+  const { facets, needs, setNeeds, filters, setFilters, state, resultsRef, executeWizard,
+    executeSearch, onRelax, onClear } = useExplorer();
+  const [answer, setAnswer] = useState<Answer>({ kind: "idle" });
   const [parse, setParse] = useState<IntentParse | null>(null);
-  const [parsing, setParsing] = useState(false);
-  // The firmware branch answers inline (the grounded run_guide teaching), never
-  // navigates away — this is that answer, resolved from GET /run/{firmware_id}.
-  const [guide, setGuide] = useState<RunGuideResponse | null>(null);
-  const [guideLoading, setGuideLoading] = useState(false);
-  const [guideError, setGuideError] = useState<string | null>(null);
-  // The "unmapped" branch answers inline too -- the grounded build_guide
-  // teaching, replacing the old "I can't narrow this" copy (POST /build).
-  const [buildGuideData, setBuildGuideData] = useState<BuildGuide | null>(null);
-  const [buildGuideLoading, setBuildGuideLoading] = useState(false);
-  const [buildGuideError, setBuildGuideError] = useState<string | null>(null);
+  const current = useRef(0);
+  const answerRef = useRef<HTMLElement>(null);
+  const answerId = answer.kind === "idle" ? 0 : answer.id;
+  const busy = answer.kind === "parsing" || ("loading" in answer && answer.loading)
+    || (answer.kind === "boards" && state.loading);
 
+  // A submission, including a repeated query, owns one stable answer region.
+  // Move focus once at submission, never again when a late response arrives.
+  useEffect(() => {
+    if (!answerId) return;
+    answerRef.current?.focus({ preventScroll: true });
+    answerRef.current?.scrollIntoView({ block: "start", behavior: "instant" });
+  }, [answerId]);
+  useEffect(() => () => { current.current += 1; }, []);
+
+  const begin = useCallback((text: string, kind: "parsing" | "boards"): Attempt => {
+    const attempt = { id: ++current.current, text };
+    onClear();
+    setParse(null);
+    setAnswer({ ...attempt, kind });
+    return attempt;
+  }, [onClear]);
+  function clear() {
+    current.current += 1;
+    setAnswer({ kind: "idle" });
+    setParse(null);
+    onClear();
+    document.getElementById("intent-input")?.focus();
+  }
   function onExample(example: NeedsExample) {
     track("example_click", { example: example.id, kind: "needs" });
+    begin("", "boards");
     setNeeds(example.needs);
-    void executeWizard(example.needs, scrollToResults);
+    void executeWizard(example.needs, NO_SCROLL);
   }
-
-  // An "unmapped" parse understood the goal but has no board field for it --
-  // this replays the wizard with a real constraint added, promoting the
-  // secondary keyword matches out of the way with an actual answer.
   function onClarifier(extra: WizardNeeds) {
     track("intent_clarifier_click", { extra: JSON.stringify(extra) });
-    setParse(null);
+    begin("", "boards");
     setNeeds(extra);
-    void executeWizard(extra, scrollToResults);
+    void executeWizard(extra, NO_SCROLL);
+  }
+  function relax(key: string) {
+    begin("", "boards");
+    onRelax(key, NO_SCROLL);
   }
 
-  async function loadRunGuide(firmwareId: string, attemptId: string) {
+  const loadGuide = useCallback(async (attempt: Attempt, parsed: IntentParse, attemptId: string) => {
     const started = performance.now();
-    track("guide_submit", { attempt_id: attemptId, surface: "home", kind: "run" });
-    setGuideLoading(true);
-    setGuideError(null);
+    const kind = parsed.kind === "firmware" ? "run" : "build";
+    track("guide_submit", { attempt_id: attemptId, surface: "home", kind });
     try {
-      setGuide(await runGuide(firmwareId));
-      track("guide_result", { attempt_id: attemptId, surface: "home", kind: "run", outcome: "success", latency_ms: Math.round(performance.now() - started) });
-    } catch (err) {
-      track("guide_error", { attempt_id: attemptId, surface: "home", kind: "run", outcome: "error", status: err instanceof ApiError ? err.status : "network", latency_ms: Math.round(performance.now() - started) });
-      setGuide(null);
-      setGuideError(err instanceof ApiError ? err.message : "The API did not answer in time.");
-    } finally {
-      setGuideLoading(false);
+      if (parsed.kind === "firmware" && parsed.firmware) {
+        const data = await runGuide(parsed.firmware);
+        if (current.current !== attempt.id) return;
+        setAnswer({ ...attempt, kind: "firmware", firmware: parsed.firmware, name: parsed.firmware_name, loading: false, data });
+      } else {
+        const data = await buildGuide(attempt.text);
+        if (current.current !== attempt.id) return;
+        setAnswer({ ...attempt, kind: "build", loading: false, data });
+      }
+      track("guide_result", { attempt_id: attemptId, surface: "home", kind, outcome: "success", latency_ms: Math.round(performance.now() - started) });
+    } catch (error) {
+      if (current.current !== attempt.id) return;
+      setAnswer(parsed.kind === "firmware" && parsed.firmware
+        ? { ...attempt, kind: "firmware", firmware: parsed.firmware, name: parsed.firmware_name, loading: false, error: message(error) }
+        : { ...attempt, kind: "build", loading: false, error: message(error) });
+      track("guide_error", { attempt_id: attemptId, surface: "home", kind, outcome: "error",
+        fallback: kind === "build" ? "search" : undefined, status: error instanceof ApiError ? error.status : "network",
+        latency_ms: Math.round(performance.now() - started) });
     }
-  }
+  }, []);
 
-  async function loadBuildGuide(text: string, attemptId: string) {
-    const started = performance.now();
-    track("guide_submit", { attempt_id: attemptId, surface: "home", kind: "build" });
-    setBuildGuideLoading(true);
-    setBuildGuideError(null);
-    try {
-      setBuildGuideData(await buildGuide(text));
-      track("guide_result", { attempt_id: attemptId, surface: "home", kind: "build", outcome: "success", latency_ms: Math.round(performance.now() - started) });
-    } catch (err) {
-      track("guide_error", { attempt_id: attemptId, surface: "home", kind: "build", outcome: "error", fallback: "search", status: err instanceof ApiError ? err.status : "network", latency_ms: Math.round(performance.now() - started) });
-      setBuildGuideData(null);
-      setBuildGuideError(err instanceof ApiError ? err.message : "The API did not answer in time.");
-    } finally {
-      setBuildGuideLoading(false);
-    }
-  }
-
-  async function onIntent(text: string) {
+  const onIntent = useCallback(async (text: string) => {
     const started = performance.now();
     const attemptId = newAnalyticsAttemptId();
+    const attempt = begin(text, "parsing");
     track("intent_submit", { attempt_id: attemptId, surface: "home", q_length: text.length });
-    setParsing(true);
-    setParse(null);
-    setGuide(null);
-    setGuideError(null);
-    setBuildGuideData(null);
-    setBuildGuideError(null);
     try {
       const parsed = await parseIntent(text);
+      if (current.current !== attempt.id) return;
       setParse(parsed);
       track("intent_parse", { attempt_id: attemptId, q: text, kind: parsed.kind, cached: parsed.cached });
-      const fallbackSearch = parsed.kind === "unreadable" || (parsed.kind === "firmware" && !parsed.firmware);
-      track("intent_result", {
-        attempt_id: attemptId, surface: "home", kind: parsed.kind,
-        outcome: fallbackSearch ? "fallback" : parsed.kind === "unmapped" ? "unmapped" : "success",
-        fallback: fallbackSearch ? "search" : parsed.kind === "unmapped" ? "build_guide" : undefined,
-        latency_ms: Math.round(performance.now() - started),
-      });
-
+      const fallback = parsed.kind === "unreadable" || (parsed.kind === "firmware" && !parsed.firmware);
+      track("intent_result", { attempt_id: attemptId, surface: "home", kind: parsed.kind,
+        outcome: fallback ? "fallback" : parsed.kind === "unmapped" ? "unmapped" : "success",
+        fallback: fallback ? "search" : parsed.kind === "unmapped" ? "build_guide" : undefined,
+        latency_ms: Math.round(performance.now() - started) });
       if (parsed.kind === "firmware" && parsed.firmware) {
-        // Answer inline, grounded against the recipe graph. The full firmware
-        // page stays one click away, never automatic.
-        void loadRunGuide(parsed.firmware, attemptId);
-        return;
-      }
-      if (parsed.kind === "filters") {
+        setAnswer({ ...attempt, kind: "firmware", firmware: parsed.firmware, name: parsed.firmware_name, loading: true });
+        void loadGuide(attempt, parsed, attemptId);
+      } else if (parsed.kind === "filters") {
+        setAnswer({ ...attempt, kind: "boards" });
         setNeeds(parsed.filters);
-        void executeWizard(parsed.filters, scrollToResults, attemptId);
-        return;
+        void executeWizard(parsed.filters, NO_SCROLL, attemptId);
+      } else if (parsed.kind === "unmapped") {
+        setAnswer({ ...attempt, kind: "build", loading: true });
+        void loadGuide(attempt, parsed, attemptId);
+        setFilters({ q: text });
+        void executeSearch({ q: text }, NO_SCROLL, attemptId);
+      } else {
+        setAnswer({ ...attempt, kind: "boards", fallback: "I couldn't read that as a build goal. These are keyword matches instead." });
+        setFilters({ q: text });
+        void executeSearch({ q: text }, NO_SCROLL, attemptId);
       }
-      if (parsed.kind === "unmapped") {
-        // Groq understood the goal but the atlas has no board FIELD for it --
-        // the build guide (firmware + real boards + honest add-on note) is
-        // the primary answer now, so keyword matches run quietly in the
-        // background instead of pulling focus down the page.
-        void loadBuildGuide(text, attemptId);
-        const next = { q: text };
-        setFilters(next);
-        void executeSearch(next, undefined, attemptId);
-        return;
-      }
-      // Unreadable: fall back to keyword search, but say so — never pass a
-      // keyword dump off as understanding.
-      const next = { q: text };
-      setFilters(next);
-      void executeSearch(next, scrollToResults, attemptId);
     } catch {
-      // Inference unavailable (no key, rate-limited). The prompt must still work.
+      if (current.current !== attempt.id) return;
       track("intent_error", { attempt_id: attemptId, surface: "home", stage: "parse", outcome: "error", fallback: "search", latency_ms: Math.round(performance.now() - started) });
-      setParse(null);
-      const next = { q: text };
-      setFilters(next);
-      void executeSearch(next, scrollToResults, attemptId);
-    } finally {
-      setParsing(false);
+      setAnswer({ ...attempt, kind: "boards", fallback: "The request interpreter is unavailable. These are keyword matches instead." });
+      setFilters({ q: text });
+      void executeSearch({ q: text }, NO_SCROLL, attemptId);
     }
+  }, [begin, executeSearch, executeWizard, loadGuide, setFilters, setNeeds]);
+
+  function retryBoards() {
+    const query = state.lastQuery;
+    if (!query) return;
+    begin(query.kind === "search" ? query.filters.q || "" : "", "boards");
+    if (query.kind === "search") void executeSearch(query.filters, NO_SCROLL);
+    else void executeWizard(query.needs, NO_SCROLL);
   }
+
+  const status = answer.kind === "idle" ? "" : answer.kind === "parsing" ? "Reading your request…"
+    : answer.kind === "boards" ? state.loading ? "Searching the catalog…" : state.error ? "The results could not be loaded."
+      : state.results ? `${state.results.length} part${state.results.length === 1 ? "" : "s"} match.` : "Preparing results…"
+    : answer.loading ? answer.kind === "firmware" ? "Finding recorded recipes…" : "Working out what you need…"
+    : answer.error ? "The guide could not be loaded. You can try again." : "Your guide is ready.";
 
   return (
     <div className="home">
-      <IntentPrompt onSubmit={(text) => void onIntent(text)} loading={state.loading || parsing} />
-
-      {!asked && <ExamplesGrid examples={examples} />}
-
-      {parse &&
-        (parse.understood.length > 0 || parse.unmapped.length > 0 || parse.kind === "unreadable") && (
-          <div className="intent-parse" aria-live="polite">
-            {parse.understood.length > 0 && (
-              <p className="intent-parse-row">
-                <span className="intent-parse-label">Understood</span>
-                {parse.understood.map((text) => (
-                  <span className="chip chip--accent" key={text}>
-                    {text}
-                  </span>
-                ))}
-              </p>
-            )}
-            {parse.kind === "unreadable" && (
-              <p className="intent-parse-note">
-                I couldn&apos;t read that as a build goal, so these are keyword matches instead.
-              </p>
-            )}
-            {parse.kind === "filters" && parse.unmapped.length > 0 && (
-              <p className="intent-parse-note">
-                No field for {parse.unmapped.join(", ")} in the atlas yet — results don&apos;t account for
-                that.
-              </p>
-            )}
-          </div>
-        )}
-
-      {parse && parse.kind === "firmware" && parse.firmware && (
-        <section className="home-results" aria-label="Run guide" aria-live="polite" aria-busy={guideLoading}>
-          {guideLoading && <p className="results-loading">Working out why…</p>}
-          {!guideLoading && guideError && (
-            <div className="empty-state">
-              <h2>The API did not answer</h2>
-              <p className="error mono">{guideError}</p>
-              <p>Try again in a moment — the dataset itself lives on GitHub and is fine.</p>
+      <IntentPrompt onSubmit={text => void onIntent(text)} loading={busy} />
+      <p className={status ? "home-answer-status" : "sr-only"} role="status" aria-atomic="true">{status}</p>
+      {answer.kind === "idle" ? <ExamplesGrid examples={examples} /> : (
+        <section className="home-answer" ref={answerRef} tabIndex={-1} aria-label="Your atlas answer" aria-busy={busy}>
+          {answer.kind === "parsing" && <p className="results-loading">Reading your request…</p>}
+          {parse && (parse.understood.length > 0 || (parse.kind === "filters" && parse.unmapped.length > 0)) && (
+            <div className="intent-parse">
+              {parse.understood.length > 0 && <p className="intent-parse-row"><span className="intent-parse-label">Understood</span>
+                {parse.understood.map(text => <span className="chip chip--accent" key={text}>{text}</span>)}</p>}
+              {parse.kind === "filters" && parse.unmapped.length > 0 && <p className="intent-parse-note">No field for {parse.unmapped.join(", ")} in the atlas yet — results don&apos;t account for that.</p>}
             </div>
           )}
-          {!guideLoading && !guideError && guide && <RunGuideAnswer guide={guide} />}
-          <p>
-            <Link
-              href={`/firmware/${encodeURIComponent(parse.firmware)}`}
-              className="example-group-seeall"
-              onClick={() => track("shelf_see_all", { shelf: "firmware_page", href: `/firmware/${parse.firmware}` })}
-            >
-              See the full {parse.firmware_name || parse.firmware} page ›
-            </Link>
-          </p>
-        </section>
-      )}
-
-      {parse && parse.kind === "unmapped" && (
-        <section className="home-results" aria-label="Build guide" aria-live="polite" aria-busy={buildGuideLoading}>
-          {buildGuideLoading && <p className="results-loading">Working out what you need…</p>}
-          {!buildGuideLoading && buildGuideError && (
-            <div className="empty-state">
-              <h2>The API did not answer</h2>
-              <p className="error mono">{buildGuideError}</p>
-              <p>Try again in a moment — the dataset itself lives on GitHub and is fine.</p>
+          {(answer.kind === "firmware" || answer.kind === "build") && (
+            <div className="home-results">
+              {answer.loading && <p className="results-loading">{status}</p>}
+              {answer.error && <div className="empty-state"><h2>We couldn&apos;t load this guide</h2><p>{answer.error}</p>
+                <button type="button" className="btn" onClick={() => void onIntent(answer.text)}>Try again</button></div>}
+              {answer.kind === "firmware" && answer.data && <RunGuideAnswer guide={answer.data} />}
+              {answer.kind === "build" && answer.data && <BuildGuideAnswer guide={answer.data} />}
+              {answer.kind === "firmware" && <p><Link href={`/firmware/${encodeURIComponent(answer.firmware)}`} className="example-group-seeall"
+                onClick={() => track("shelf_see_all", { shelf: "firmware_page", href: `/firmware/${answer.firmware}` })}>
+                See the full {answer.name || answer.firmware} page ›</Link></p>}
+              {answer.kind === "build" && <p className="intent-parse-row"><span className="intent-parse-label">Or narrow by spec</span>
+                {UNMAPPED_CLARIFIERS.map(c => <button key={c.label} type="button" className="chip chip--button" onClick={() => onClarifier(c.needs)}>{c.label}</button>)}</p>}
             </div>
           )}
-          {!buildGuideLoading && !buildGuideError && buildGuideData && <BuildGuideAnswer guide={buildGuideData} />}
-          <p className="intent-parse-row">
-            <span className="intent-parse-label">Or narrow by spec</span>
-            {UNMAPPED_CLARIFIERS.map((clarifier) => (
-              <button
-                key={clarifier.label}
-                type="button"
-                className="chip chip--button"
-                onClick={() => onClarifier(clarifier.needs)}
-              >
-                {clarifier.label}
-              </button>
-            ))}
-          </p>
+          {answer.kind === "build" && <details className="intent-secondary-results" key={answer.id}>
+            <summary>or browse keyword matches</summary>
+            <ResultsPanel ref={resultsRef} state={state} onExample={onExample} onRelax={relax} onClear={clear} />
+          </details>}
+          {answer.kind === "boards" && <>
+            {answer.fallback && <p className="intent-parse-note">{answer.fallback}</p>}
+            <ResultsPanel ref={resultsRef} state={state} onExample={onExample} onRelax={relax} onClear={clear} />
+            {state.error && <button type="button" className="btn" onClick={retryBoards}>Try again</button>}
+          </>}
         </section>
       )}
-
-      {asked && parse?.kind === "unmapped" && (
-        <details className="intent-secondary-results">
-          <summary>or browse keyword matches</summary>
-          <ResultsPanel ref={resultsRef} state={state} onExample={onExample} onRelax={onRelax} onClear={onClear} />
-        </details>
-      )}
-      {asked && parse?.kind !== "unmapped" && (
-        <ResultsPanel ref={resultsRef} state={state} onExample={onExample} onRelax={onRelax} onClear={onClear} />
-      )}
-
-      <details
-        className="panel spec-wizard"
-        onToggle={(event) => track("advanced_filters_toggle", { panel: "spec_wizard", open: event.currentTarget.open })}
-      >
-        <summary className="spec-wizard-summary">
-          <span>Spec wizard</span>
-          <span className="spec-wizard-open">Open ›</span>
-        </summary>
-        <p className="panel-hint">
-          Know the specs you need? Filter the catalogue directly — or open the{" "}
-          <a href="/wizard">full wizard page</a>.
-        </p>
-        <WizardForm
-          facets={facets}
-          value={needs}
-          onChange={setNeeds}
-          onSubmit={() => void executeWizard(needs, scrollToResults)}
-          loading={state.loading}
-        />
-        <div className="spec-wizard-search">
-          <h3 className="panel-title">Search</h3>
+      <details className="panel spec-wizard" onToggle={event => track("advanced_filters_toggle", { panel: "spec_wizard", open: event.currentTarget.open })}>
+        <summary className="spec-wizard-summary"><span>Spec wizard</span><span className="spec-wizard-open">Open ›</span></summary>
+        <p className="panel-hint">Know the specs you need? Filter the catalogue directly — or open the <a href="/wizard">full wizard page</a>.</p>
+        <WizardForm facets={facets} value={needs} onChange={setNeeds} loading={busy}
+          onSubmit={() => { begin("", "boards"); void executeWizard(needs, NO_SCROLL); }} />
+        <div className="spec-wizard-search"><h3 className="panel-title">Search</h3>
           <p className="panel-hint">Know the name or a keyword? Free text plus exact filters.</p>
-          <SearchBox
-            facets={facets}
-            value={filters}
-            onChange={setFilters}
-            onSubmit={() => void executeSearch(filters, scrollToResults)}
-            loading={state.loading}
-          />
+          <SearchBox facets={facets} value={filters} onChange={setFilters} loading={busy}
+            onSubmit={() => { begin(filters.q || "", "boards"); void executeSearch(filters, NO_SCROLL); }} />
         </div>
       </details>
     </div>
