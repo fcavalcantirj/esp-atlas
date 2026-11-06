@@ -21,6 +21,7 @@ export default function SiteFooter() {
               Every record keeps its sources; every recipe shows its trust tier.
             </p>
             <Link href="/how-we-work" className="footer-how">How we work <span aria-hidden="true">↗</span></Link>
+            <p className="footer-contact"><a href="mailto:hello@esp-atlas.com">hello@esp-atlas.com</a></p>
           </section>
 
           <section className="footer-col" aria-labelledby="footer-explore">

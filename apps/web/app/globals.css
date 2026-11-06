@@ -446,6 +446,18 @@ main:focus {
 .footer-wordmark span { color: var(--accent); }
 .footer-standfirst { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.6rem; }
 .footer-summary { max-width: 38ch; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
+.footer-contact { margin: 0.5rem 0 0; font-family: var(--font-data); }
+.footer-contact a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.footer-contact a:hover, .footer-contact a:focus-visible { color: var(--accent); }
 
 .site-footer .footer-title {
   margin: 0 0 0.6rem;
