@@ -42,6 +42,7 @@ from esp_atlas_core.search import brand_page as core_brand_page
 from esp_atlas_core.search import get_part as core_get_part
 from esp_atlas_core.search import search as core_search
 from esp_atlas_core.status import compute_status as core_compute_status
+from esp_atlas_core.status import deployed_revision as core_deployed_revision
 from esp_atlas_core.validate import validate_frontmatter as core_validate_frontmatter
 from esp_atlas_core.validate import validate_markdown as core_validate_markdown
 from esp_atlas_core.wizard import wizard as core_wizard
@@ -65,6 +66,7 @@ from esp_atlas_api.models import (
     RecipeListResponse,
     RunGuideResponse,
     SearchResponse,
+    VersionedSearchResponse,
     StatusResponse,
     ValidateRequest,
     ValidateResponse,
@@ -178,7 +180,7 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
 
     limiter.exempt(status)  # public status page polls every 30s, must never 429
 
-    @app.get("/search", response_model=SearchResponse)
+    @app.get("/search", response_model=VersionedSearchResponse)
     def search(
         q: str = "",
         type: Optional[PartType] = None,
@@ -231,7 +233,10 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
             results = core_search(q, filters=filters, db_path=db_path)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
-        return SearchResponse(results=results)
+        # This revision belongs to the same handler deployment that produced
+        # results, so a status A / search B / status A race cannot masquerade
+        # as a search from A in Jr's live catalog verification.
+        return VersionedSearchResponse(results=results, revision=core_deployed_revision())
 
     @app.post("/wizard", response_model=WizardResponse)
     @limiter.limit(limits["llm"])

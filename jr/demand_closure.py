@@ -148,12 +148,17 @@ def _deployed_revision(fetch) -> str:
     return revision
 
 
-def _search_ids(fetch, term: str) -> list[str]:
+def _search_ids(fetch, term: str, expected_revision: str) -> list[str]:
     url = search_url(term)
     doc = _get_json(fetch, url)
     results = doc.get("results") if isinstance(doc, dict) else None
     if not (isinstance(results, list) and all(isinstance(r, dict) and rw._text(r.get("id")) for r in results)):
         raise _Unread(f"GET {url} answered unreadable search results")
+    revision = doc.get("revision")
+    if not (isinstance(revision, str) and _REVISION_RE.fullmatch(revision)):
+        raise _Unread(f"GET {url} answered unreadable search revision")
+    if revision != expected_revision:
+        raise _Unread(f"GET {url} search revision differs from /api/status")
     return [r["id"] for r in results]
 
 
@@ -167,7 +172,7 @@ def _live_search_receipt(candidate: dict, pr: dict, *, fetch, git, now: datetime
         return None, "catalog_search live check: no readable term to search"
     try:
         revision = _deployed_revision(fetch)
-        ids = _search_ids(fetch, candidate["term"])
+        ids = _search_ids(fetch, candidate["term"], revision)
         if _deployed_revision(fetch) != revision:
             raise _Unread("deployed revision changed during the live search")
     except _Unread as e:

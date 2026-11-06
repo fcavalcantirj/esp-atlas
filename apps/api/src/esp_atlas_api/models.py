@@ -175,6 +175,12 @@ class SearchResponse(BaseModel):
     results: list[Record]
 
 
+class VersionedSearchResponse(SearchResponse):
+    """GET /search binds its result IDs to the serving deployment revision."""
+
+    revision: Optional[str]
+
+
 class WizardResponse(BaseModel):
     results: list[WizardRecord]
 

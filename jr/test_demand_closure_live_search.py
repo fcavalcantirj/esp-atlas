@@ -1,8 +1,9 @@
 """Autonomous RECONCILE closure of `catalog_search` work: the live public search receipt
 (SPEC-demand-work-consumer.md, Autonomous RECONCILE closure).
 
-The broker GETs /api/status for the full deployed revision, the exact ids /api/search returns for the
-term, then /api/status again; `git merge-base --is-ancestor <merge> <revision>` says whether that
+The broker GETs /api/status for the full deployed revision, the exact ids and own revision
+/api/search returns for the term, then /api/status again; the three revisions must agree.
+`git merge-base --is-ancestor <merge> <revision>` says whether that
 deployment contains the merge. research_work.verify_resolution stays the only judge. Every network
 read goes through an injected fake getter: no test here reaches the network.
 
@@ -43,8 +44,11 @@ def status_body(revision=DEPLOYED, *, deploy=True):
                        "components": components}).encode()
 
 
-def search_body(ids=EXPECTED):
-    return json.dumps({"results": [{"id": i, "type": "board", "name": i} for i in ids]}).encode()
+def search_body(ids=EXPECTED, revision=DEPLOYED):
+    body = {"results": [{"id": i, "type": "board", "name": i} for i in ids]}
+    if revision is not ...:
+        body["revision"] = revision
+    return json.dumps(body).encode()
 
 
 class Getter:
@@ -153,6 +157,12 @@ OTHER = "b" * 40
     (Getter(statuses=[(200, status_body(DEPLOYED + "0"))]), "deployed revision"),       # 41 chars
     (Getter(statuses=[(200, status_body("--" + DEPLOYED[2:]))]), "deployed revision"),  # option-looking
     (Getter(statuses=[(200, status_body(DEPLOYED)), (200, status_body(OTHER))]), "changed during"),  # mismatched
+    (Getter(search=(200, search_body(revision=OTHER))), "search revision"),  # status A / search B / status A
+    (Getter(search=(200, search_body(revision=...))), "search revision"),
+    (Getter(search=(200, search_body(revision=None))), "search revision"),
+    (Getter(search=(200, search_body(revision=SHORT))), "search revision"),
+    (Getter(search=(200, search_body(revision=DEPLOYED + "0"))), "search revision"),
+    (Getter(search=(200, search_body(revision="g" * 40))), "search revision"),
     (Getter(statuses=[(503, status_body())]), "HTTP 503"),
     (Getter(search=(500, b"")), "HTTP 500"),
     (Getter(search=(404, search_body())), "HTTP 404"),

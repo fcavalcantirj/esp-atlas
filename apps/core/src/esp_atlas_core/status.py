@@ -92,10 +92,10 @@ def _component_deploy():
             parts.append(env)
         return {"status": "ok", "detail": " · ".join(parts)}
 
-    return {"name": "Deploy", **_safe(probe), "revision": _deployed_revision()}
+    return {"name": "Deploy", **_safe(probe), "revision": deployed_revision()}
 
 
-def _deployed_revision():
+def deployed_revision():
     """The full deployed commit SHA for machine readers (jr/demand_closure.py), lowercase; None
     when VERCEL_GIT_COMMIT_SHA is absent or not exactly 40 hex digits -- never a guess."""
     sha = os.environ.get("VERCEL_GIT_COMMIT_SHA") or ""
