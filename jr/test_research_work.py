@@ -164,6 +164,35 @@ def test_merge_and_http_200_with_wrong_sibling_is_not_delivery():
     assert c == before
 
 
+def test_expected_result_plus_wrong_sibling_is_not_delivery():
+    c, pr = linked()
+    receipt = live_receipt(ids=["vendor-model123x", "vendor-sibling123x"])
+    assert rw.verify_resolution(c, pr, receipt, DAY).status == "pending"
+
+
+def test_all_declared_expected_ids_are_required_but_order_is_irrelevant():
+    c, pr = linked()
+    c["validation"]["expected_ids"] = ["vendor-model123x", "vendor-model123x-rev2"]
+    assert rw.verify_resolution(c, pr, live_receipt(), DAY).status == "pending"
+    receipt = live_receipt(ids=["vendor-model123x-rev2", "vendor-model123x"])
+    assert rw.verify_resolution(c, pr, receipt, DAY).status == "delivered"
+
+
+def test_explicitly_forbidden_id_cannot_be_validated_as_an_expected_target():
+    c, pr = linked()
+    c["validation"].update(expected_ids=["vendor-model123x", "vendor-sibling123x"],
+                           forbidden_ids=["vendor-sibling123x"])
+    receipt = live_receipt(ids=["vendor-model123x", "vendor-sibling123x"])
+    assert rw.verify_resolution(c, pr, receipt, DAY).status == "pending"
+
+
+def test_malformed_additional_search_ids_stay_pending_without_raising():
+    c, pr = linked()
+    for malformed in (None, {"id": "vendor-sibling123x"}, ["vendor-sibling123x"]):
+        receipt = live_receipt(ids=["vendor-model123x", malformed])
+        assert rw.verify_resolution(c, pr, receipt, DAY).status == "pending"
+
+
 def test_stale_deployment_or_verification_before_merge_is_not_delivery():
     c, pr = linked()
     for fields in ({"contains_merge": False}, {"checked_at": "2026-11-05T11:59:00+00:00"},
