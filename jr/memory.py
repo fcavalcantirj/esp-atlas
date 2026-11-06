@@ -158,15 +158,17 @@ def lookup(led: dict, firmware_id: str | None = None, repo: str | None = None,
 
 def canonical_id(led: dict, firmware_id: str | None, repo_id: int | None) -> str | None:
     """The id a decision for (`firmware_id`, `repo_id`) is written under, resolved by the stable
-    repo_id BEFORE any record is created: the protected record owning the repo_id; else
-    `firmware_id`'s own record; else whichever record owns the repo_id; else `firmware_id`.
-    `led` must come from load() (it reads the derived by_repo_id view)."""
+    repo_id BEFORE any record is created: the record owning the repo_id, protected or not; else
+    `firmware_id` — or None when `firmware_id`'s record belongs to ANOTHER repo_id (an id
+    collision: an unrelated repo's record is never overwritten). `led` must come from load()
+    (it reads the derived by_repo_id view, which already prefers a protected owner)."""
     owner = led.get("by_repo_id", {}).get(int(repo_id)) if repo_id is not None else None
-    if owner and is_protected(led["by_id"].get(owner)):
+    if owner:
         return owner
-    if firmware_id and firmware_id in led["by_id"]:
-        return firmware_id
-    return owner or firmware_id
+    held = led["by_id"].get(firmware_id) if firmware_id else None
+    if repo_id is not None and (held or {}).get("repo_id") is not None:
+        return None
+    return firmware_id
 
 
 def _with_alias(rec: dict, firmware_id: str, repo_key: str) -> list:
@@ -285,7 +287,8 @@ def record_review_decision(firmware_id: str, repo: str, reason: str, *, repo_id:
     PR) / open / closed (the owner closed that review PR unmerged). The candidate stays unadmitted.
 
     Identity is resolved by repo_id first (canonical_id): a decision arriving under a new name for
-    a repo_id another record owns goes to THAT record, and the new name is kept as an alias.
+    a repo_id another record owns goes to THAT record, and the new name is kept as an alias. A
+    firmware_id whose record belongs to a different repo_id is an id collision: nothing is written.
 
     Same refusals as _write: never over a permanent rejection, a merged or a proposed record (a
     missing repo_id is backfilled, a new name aliased). Idempotent: a record that already says the
@@ -297,6 +300,8 @@ def record_review_decision(firmware_id: str, repo: str, reason: str, *, repo_id:
     led = load(path)
     repo_key = repo.lower()
     fid = canonical_id(led, firmware_id, repo_id)
+    if fid is None:
+        return led                                     # an id collision: never overwrite another repo_id
     existing = led["by_id"].get(fid)
     if is_protected(existing):
         return _refuse(led, existing, firmware_id, repo_key, repo_id, path)
@@ -317,8 +322,10 @@ def record_review_decision(firmware_id: str, repo: str, reason: str, *, repo_id:
             return led
         rec["history"] = _history(existing)
     led["by_id"][fid] = rec
-    led["by_repo"][rec["repo"]] = fid
-    led["by_repo"][repo_key] = fid
+    for key in (rec["repo"], repo_key):
+        holder = led["by_repo"].get(key)
+        if holder == fid or not is_protected(led["by_id"].get(holder)):
+            led["by_repo"][key] = fid                  # a name never moves off a veto (a legacy one has no repo_id)
     _save(led, path)
     return led
 

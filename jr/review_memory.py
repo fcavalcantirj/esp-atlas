@@ -186,8 +186,8 @@ def reconcile(gh, ledger_path, now: datetime) -> list[str] | None:
         led = memory.load(ledger_path)
         repo, rid = target.get("repo") or target.get("id"), target.get("repo_id")
         rec = memory.lookup(led, firmware_id=target.get("id"), repo=repo, repo_id=rid)
-        fid = memory.canonical_id(led, target.get("id"), rid) or (rec or {}).get("id")
-        rec = led["by_id"].get(fid, rec)                 # the repo_id's record, never a shadow of it
+        fid = memory.canonical_id(led, target.get("id") or (rec or {}).get("id"), rid)
+        rec = led["by_id"].get(fid)                      # the repo_id's record, never a shadow of it
         pr_ref = f"#{pr.get('number')}"
         if not fid or _newer_decision(rec, pr_ref, created):
             continue
@@ -196,7 +196,7 @@ def reconcile(gh, ledger_path, now: datetime) -> list[str] | None:
         prior = (rec or {}).get("review") or {}
         rev = target.get("evidence_rev") or (prior.get("evidence_rev") if prior.get("pr_ref") == pr_ref else None)
         ev = target.get("evidence") or (prior.get("evidence") if prior.get("pr_ref") == pr_ref else None)
-        memory.record_review_decision(target.get("id") or fid, repo, reason, repo_id=rid,  # aliased if renamed evidence=ev,
+        memory.record_review_decision(target.get("id") or fid, repo, reason, repo_id=rid, evidence=ev,
                                       evidence_rev=rev, pr_ref=pr_ref, outcome=outcome, raised_at=created,
                                       path=ledger_path, now=now)
         after = memory.lookup(memory.load(ledger_path), firmware_id=fid, repo=repo, repo_id=rid)

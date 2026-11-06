@@ -401,3 +401,15 @@ def test_an_id_colliding_with_another_repo_ids_record_is_never_overwritten_even_
     assert review_memory.reconcile(gh, path, NOW) == []
     assert path.read_text() == before
     assert memory.canonical_id(memory.load(path), NEW_FID, SHARED_RID) is None
+
+
+def test_the_repo_id_owner_winning_never_repoints_a_name_off_a_legacy_veto(tmp_path):
+    legacy_veto = {k: v for k, v in OLD_VETO.items() if k != "repo_id"} | {"id": NEW_FID, "repo": NEW_REPO}
+    path = _ledger(tmp_path, OLD_OWNER, legacy_veto)
+    gh = _gh([_pr(1495, "OPEN", NOW - timedelta(hours=2), _body(_renamed()))])
+    assert review_memory.reconcile(gh, path, NOW) == [OLD_FID]
+    memory.record_review_decision(NEW_FID, NEW_REPO, "needs_review_target: x", repo_id=SHARED_RID,
+                                  evidence_rev="b", path=path, now=NOW + timedelta(hours=1))
+    led, later = memory.load(path), NOW + timedelta(days=61)
+    assert led["by_id"][NEW_FID] == legacy_veto
+    assert memory.is_blocked(led, repo=NEW_REPO, now=later) and memory.is_blocked(led, firmware_id=NEW_FID, now=later)
