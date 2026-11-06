@@ -8,7 +8,6 @@ maintainer: plummerssoftwarellc
 popularity:
   stars: 1593
   forks: 241
-  downloads: 0
   as_of: '2026-11-06'
 socs:
 - esp32

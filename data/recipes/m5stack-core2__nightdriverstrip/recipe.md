@@ -10,6 +10,9 @@ sources:
 - field: '*'
   url: https://github.com/PlummersSoftwareLLC/NightDriverStrip
   verified: '2026-11-06'
+- field: 'notes'
+  url: https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/971c066b37dbe3dbb9ac1096d9e72f32ab5b3452/README.md
+  verified: '2026-11-06'
 - field: 'board'
   url: https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/971c066b37dbe3dbb9ac1096d9e72f32ab5b3452/platformio.ini
   verified: '2026-11-06'
