@@ -91,3 +91,18 @@ so a probe cannot accidentally target the helper's own checkout.
 The configured recurring hook, publication of minimal state and an actual job run
 are still required before claiming recurring consumption. The consumer must
 reconcile reserved/linked work independently of today's filtered new-lead list.
+
+The existing `scripts/jr-demand.sh` entrypoint calls `demand_run.main`, which
+explicitly passes this refresh helper. A changed feed can publish PAM metadata
+alone when search demand is unchanged or unavailable. No empty dated steer is
+published, and a primary search failure still produces a nonzero CLI exit even
+when the independent metadata publication succeeds. Ordinary PAM failure preserves
+last-good state while search publication continues. Host timeout aborts remain
+fatal in both the reservation and PAM paths.
+
+The CLI prints a bounded `PAM receipt` containing feed statuses/hashes and distinct
+runner/catalog revisions. The runner executes from the scheduler's existing clone;
+the miner reads a fresh main worktree. Deploy and verify the runner's revision as
+well as the catalog revision. A fresh catalog alone does not activate new runner
+code. A real enabled schedule/configuration and its execution receipt are required;
+the tests and an isolated manual helper run are separate evidence.
