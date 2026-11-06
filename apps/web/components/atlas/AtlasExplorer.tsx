@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import TrustTierBadge from "@/components/TrustTierBadge";
 import type { Recipe } from "@/lib/api";
 import { track } from "@/lib/analytics";
@@ -26,6 +26,7 @@ export default function AtlasExplorer({ catalog }: { catalog: AtlasCatalog }) {
   const params = useSearchParams();
   const [pending, startTransition] = useTransition();
   const [lookup, setLookup] = useState("");
+  const lookupReported = useRef(false);
   const query = params.toString();
   const lens = atlasLens(params.get("lens"));
   const partId = params.get("part");
@@ -63,7 +64,8 @@ export default function AtlasExplorer({ catalog }: { catalog: AtlasCatalog }) {
   }
   function reportLookup() {
     const length = lookup.trim().length;
-    if (!length) return;
+    if (!length || lookupReported.current) return;
+    lookupReported.current = true;
     track("atlas_lookup", {
       surface: "atlas", lens, q_length: length, result_count: lensNodes.length,
       outcome: lensNodes.length ? "results" : "empty",
@@ -90,7 +92,7 @@ export default function AtlasExplorer({ catalog }: { catalog: AtlasCatalog }) {
       <section className={styles.canvasArea} aria-label={LENS_COPY[lens].name}>
         {lens === "map" ? <AtlasGraph nodes={model.nodes} edges={model.edges} selectedKey={node?.key ?? null} onInspect={inspect} /> : null}
         {["silicon", "hardware", "firmware"].includes(lens) ? <>
-          <div className={styles.collectionHeader}><label htmlFor="atlas-name-filter">Find a name in this view<input id="atlas-name-filter" type="search" value={lookup} onChange={event => setLookup(event.target.value)} onBlur={reportLookup} placeholder="Name or record ID…" /></label><span>{lensNodes.length} of {allLensNodes.length} records</span></div>
+          <div className={styles.collectionHeader}><label htmlFor="atlas-name-filter">Find a name in this view<input id="atlas-name-filter" type="search" value={lookup} onChange={event => { lookupReported.current = false; setLookup(event.target.value); }} onBlur={reportLookup} onKeyDown={event => { if (event.key === "Enter") reportLookup(); }} placeholder="Name or record ID…" /></label><span>{lensNodes.length} of {allLensNodes.length} records</span></div>
           <div className={styles.collection}>{lensNodes.map(record => {
             const count = catalog.recipes.filter(row => record.kind === "firmware" ? row.firmware === record.id : row.board === record.id).length;
             return <button type="button" className={styles.collectionRow} key={record.key} onClick={() => inspect(record.key)} aria-pressed={node?.key === record.key}><span className={styles.eyebrow}>{record.kind === "soc" ? "Silicon" : record.kind}</span><strong>{record.name}</strong><span>{count ? `${count} recorded ${count === 1 ? "recipe" : "recipes"}` : "Inspect record"}</span><span aria-hidden="true">↗</span></button>;
