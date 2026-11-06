@@ -181,6 +181,13 @@ def test_update_popularity_partial_signal_still_persists_what_is_known():
     assert "forks" not in fm["popularity"]
 
 
+def test_partial_response_cannot_redate_an_existing_other_count():
+    data = {"full_name": "engneer-hamachan/area512",
+            "stargazers_count": 60, "forks_count": None}
+    result = bp.update_popularity(BOTH_CURRENT_MD, data, TODAY)
+    assert result == {"text": BOTH_CURRENT_MD, "changed": False, "reason": "unresolved"}
+
+
 # ─────────────────────────── backfill() (dry-run vs write), offline ───────────────────────────
 
 def _write_firmware(firmware_dir, fw_id, text):

@@ -95,11 +95,17 @@ def update_popularity(md_text: str, data: dict, today: str) -> dict:
     forks = data.get("forks_count") if isinstance(data, dict) else None
     old_pop = fm.get("popularity")
     new_pop = dict(old_pop) if isinstance(old_pop, dict) else {}
-    if type(stars) is int and stars >= 0:
+    valid_stars = type(stars) is int and stars >= 0
+    valid_forks = type(forks) is int and forks >= 0
+    # A partial response can seed an empty block, but must not pair a freshly
+    # observed count with an old count under one new GitHub observation date.
+    if ("stars" in new_pop and not valid_stars) or ("forks" in new_pop and not valid_forks):
+        return {"text": md_text, "changed": False, "reason": "unresolved"}
+    if valid_stars:
         new_pop["stars"] = stars
-    if type(forks) is int and forks >= 0:
+    if valid_forks:
         new_pop["forks"] = forks
-    if (type(stars) is not int or stars < 0) and (type(forks) is not int or forks < 0):
+    if not valid_stars and not valid_forks:
         return {"text": md_text, "changed": False, "reason": "unresolved"}
     # This one-shot has only a day, not the instant of the API response. Keep
     # old launcher/home values and the legacy date, but do not turn that
@@ -112,9 +118,9 @@ def update_popularity(md_text: str, data: dict, today: str) -> dict:
     url = fm.get("url")
     has_pop_source = any(isinstance(s, dict) and s.get("field") == "popularity" for s in sources)
     field_sources = {"popularity.github_as_of"}
-    if type(stars) is int and stars >= 0:
+    if valid_stars:
         field_sources.add("popularity.stars")
-    if type(forks) is int and forks >= 0:
+    if valid_forks:
         field_sources.add("popularity.forks")
     existing = {s.get("field") for s in sources if isinstance(s, dict)}
     if fm.get("popularity") == new_pop and has_pop_source and field_sources <= existing:
