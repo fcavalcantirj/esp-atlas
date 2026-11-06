@@ -16,11 +16,25 @@ sources:
 - field: summary
   url: https://github.com/marivaaldo/evil-portal-m5stack
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/marivaaldo/evil-portal-m5stack
+  verified: '2026-11-06'
+- field: popularity.github_as_of
+  url: https://github.com/marivaaldo/evil-portal-m5stack
+  verified: '2026-11-06'
+- field: popularity.github_repo_id
+  url: https://github.com/marivaaldo/evil-portal-m5stack
+  verified: '2026-11-06'
+- field: popularity.stars
+  url: https://github.com/marivaaldo/evil-portal-m5stack
+  verified: '2026-11-06'
 maintainer: marivaaldo
 popularity:
-  stars: 55
-  forks: 10
-  as_of: '2026-09-20'
+  stars: 57
+  forks: 9
+  as_of: '2026-11-06'
+  github_repo_id: 731870880
+  github_as_of: '2026-11-06T21:00:55Z'
 summary: "Evil Portal is firmware for the M5 Stick C Plus and M5 Cardputer that creates\
   \ a fake Wi\u2011Fi network (a honeypot) to capture credentials or data from unsuspecting\
   \ users, intended for educational use only."

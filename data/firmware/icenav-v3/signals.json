@@ -1,0 +1,261 @@
+{
+ "calls": 8,
+ "errors": 0,
+ "fetched": "2026-11-06",
+ "notes": [],
+ "ref": "master",
+ "repo": "jgauchia/IceNav-v3",
+ "resolved": {
+  "boards": [
+   "lilygo-t-deck"
+  ],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "ELECROW_ESP32",
+   "ICENAV_BOARD",
+   "T-Display-AMOLED",
+   "T4_S3",
+   "TDECK_ESP32S3",
+   "WAVESHARE_P4_35",
+   "WAVESHARE_P4_43",
+   "elecrow-esp32-s3-n16r8v-terminal",
+   "esp32-s3-devkitc-1",
+   "esp32-s3-devkitc-1-n16r8v",
+   "icenav-esp32-s3",
+   "waveshare-esp32-p4-35",
+   "waveshare-esp32-p4-43"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "ICENAV_BOARD",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 78,
+   "rank": 2,
+   "soc": null,
+   "token": "icenav-esp32-s3",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/platformio.ini#L78"
+  },
+  {
+   "extra": {
+    "env": "TDECK_ESP32S3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 93,
+   "rank": 2,
+   "soc": null,
+   "token": "T-Deck",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/platformio.ini#L93"
+  },
+  {
+   "extra": {
+    "env": "ELECROW_ESP32",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 112,
+   "rank": 2,
+   "soc": null,
+   "token": "elecrow-esp32-s3-n16r8v-terminal",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/platformio.ini#L112"
+  },
+  {
+   "extra": {
+    "env": "MAKERF_ESP32S3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 133,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/platformio.ini#L133"
+  },
+  {
+   "extra": {
+    "env": "ESP32S3_N16R8",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 156,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1-n16r8v",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/platformio.ini#L156"
+  },
+  {
+   "extra": {
+    "env": "T4_S3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 180,
+   "rank": 2,
+   "soc": null,
+   "token": "T-Display-AMOLED",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/platformio.ini#L180"
+  },
+  {
+   "extra": {
+    "env": "WAVESHARE_P4_35",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 201,
+   "rank": 2,
+   "soc": null,
+   "token": "waveshare-esp32-p4-35",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/platformio.ini#L201"
+  },
+  {
+   "extra": {
+    "env": "WAVESHARE_P4_43",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 230,
+   "rank": 2,
+   "soc": null,
+   "token": "waveshare-esp32-p4-43",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/platformio.ini#L230"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/devel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ICENAV_BOARD",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/.github/workflows/devel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/devel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "TDECK_ESP32S3",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/.github/workflows/devel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/devel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "T4_S3",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/.github/workflows/devel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/devel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ELECROW_ESP32",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/.github/workflows/devel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/devel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "WAVESHARE_P4_35",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/.github/workflows/devel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/devel.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "WAVESHARE_P4_43",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/.github/workflows/devel.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/platformio.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ICENAV_BOARD",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/.github/workflows/platformio.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/platformio.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "TDECK_ESP32S3",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/.github/workflows/platformio.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/platformio.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "T4_S3",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/.github/workflows/platformio.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/platformio.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "ELECROW_ESP32",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/.github/workflows/platformio.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/platformio.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "WAVESHARE_P4_35",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/.github/workflows/platformio.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/platformio.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "WAVESHARE_P4_43",
+   "url": "https://github.com/jgauchia/IceNav-v3/blob/master/.github/workflows/platformio.yml"
+  }
+ ]
+}

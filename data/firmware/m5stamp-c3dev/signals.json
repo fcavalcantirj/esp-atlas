@@ -1,0 +1,14 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-11-06",
+ "notes": [],
+ "ref": "main",
+ "repo": "h1romas4/m5stamp-c3dev",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": []
+}
