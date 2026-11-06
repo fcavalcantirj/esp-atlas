@@ -5,6 +5,11 @@ adjacent `Geist.ttf` (version 1.800) and `GeistMono.ttf` (version 1.701). The
 included `OFL.txt` covers both source and derived files. Keep the TTF files as
 the source for future regeneration.
 
+The app currently loads only `geist-latin.woff2`. Data labels use the system
+monospace stack, avoiding a second font request on the Cardputer page's mobile
+rendering path. The Mono source and subset remain available for future design
+work.
+
 Regenerate with fontTools 4.58.4 and Brotli 1.2.1:
 
 ```sh

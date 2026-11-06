@@ -20,13 +20,6 @@ const geist = localFont({
   display: "swap",
 });
 
-const geistMono = localFont({
-  src: "./fonts/geist-mono-latin.woff2",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -68,7 +61,7 @@ const analyticsQueueScript = GA_ID
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={geist.variable} suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: fontScaleScript }} />
         {GA_ID && <script dangerouslySetInnerHTML={{ __html: analyticsQueueScript }} />}

@@ -16,7 +16,7 @@
 
   /* Geist carries the interface; mono keeps identifiers and evidence distinct. */
   --font-language: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-  --font-data: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-data: ui-monospace, SFMono-Regular, monospace;
 
   /* Type scale — one ratio, used everywhere. No ad-hoc sizes. */
   --t-display: clamp(2.4rem, 5vw, 4.25rem);
