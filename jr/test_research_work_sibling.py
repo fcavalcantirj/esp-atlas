@@ -37,10 +37,25 @@ def test_complete_expected_set_without_a_forbidden_id_is_delivered():
     assert result.evidence["ids"] == ["lcdwiki-es3c28p"]
 
 
-def test_unrelated_extra_id_is_not_a_forbidden_sibling():
+def test_an_undeclared_extra_id_is_not_delivery_either():
+    """Exact-SKU work needs exactly the declared set: an id the validation never named may be an
+    undeclared sibling, so it leaves the work open just like a forbidden one (SPEC outcome evidence)."""
     c, pr = es3_linked()
-    receipt = es3_receipt(["lcdwiki-es3c28p", "accessory-case"])
-    assert rw.verify_resolution(c, pr, receipt, DAY).status == "delivered"
+    result = rw.verify_resolution(c, pr, es3_receipt(["lcdwiki-es3c28p", "accessory-case"]), DAY)
+    assert result.status == "pending" and "accessory-case" in result.reason
+
+
+@pytest.mark.parametrize("ids", ["lcdwiki-es3c28p", {"lcdwiki-es3c28p": 1}, None,
+                                 ["lcdwiki-es3c28p", 7], ["lcdwiki-es3c28p", ""]])
+def test_unreadable_search_ids_stay_pending(ids):
+    c, pr = es3_linked()
+    assert rw.verify_resolution(c, pr, es3_receipt(ids), DAY).status == "pending"
+
+
+def test_duplicate_expected_ids_in_the_response_are_still_exactly_the_set():
+    c, pr = es3_linked()
+    result = rw.verify_resolution(c, pr, es3_receipt(["lcdwiki-es3c28p", "lcdwiki-es3c28p"]), DAY)
+    assert result.status == "delivered"
 
 
 def test_partial_positive_response_leaves_the_work_open():
