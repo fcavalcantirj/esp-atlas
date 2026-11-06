@@ -33,7 +33,12 @@ export default function FirmwareReadme({ firmware, readme }: { firmware: Firmwar
         <div className="firmware-readme-body">
           <Markdown
             rehypePlugins={[rehypeRaw, rehypeDemoteHeadings, [rehypeSanitize, README_HTML_SCHEMA]]}
-            components={{ a: ({ href, title, children }) => <a href={resolveReadmeHref(href ?? "", readme, firmware.url)} title={title}>{children}</a> }}
+            components={{ a: ({ href, title, children }) => {
+              const target = resolveReadmeHref(href ?? "", readme, firmware.url);
+              return target
+                ? <a href={target} title={title}>{children}</a>
+                : <span title="This link is unavailable in the upstream repository">{children}</span>;
+            } }}
           >
             {translatedReadme ?? readme!.markdown}
           </Markdown>

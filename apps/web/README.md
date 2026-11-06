@@ -106,7 +106,7 @@ theme, link_type, preset, example, kind, relation, part_ids, removed_key, host`;
 
 - `lib/api.ts` — typed browser client for `/health /search /wizard /parts /parts/{id} /facets`, no logic
 - `lib/api-server.ts` — server-side fetch (absolute URL resolution, 3 s timeout, 1 h cache) for SSR + sitemap
-- `lib/readme.ts`, `components/firmware/FirmwareReadme.tsx` — optional upstream README fetch capped at 3 s and 256 KiB; the server streams firmware identity and recipes before this section resolves
+- `lib/readme.ts`, `components/firmware/FirmwareReadme.tsx` — optional upstream README fetch capped at 3 s and 256 KiB; the server streams firmware identity and recipes before this section resolves. Audited upstream links that still return 404 use a verified alternative or display as plain text.
 - `lib/analytics.ts`, `lib/site.ts`, `lib/github.ts`, `lib/format.ts`, `lib/frontmatter.ts` — analytics wrapper, constants, GitHub URLs, display formatting, safe frontmatter readers
 - `components/HomeView.tsx` — owns explorer state; `WizardForm`, `SearchBox` are controlled forms; `ResultsPanel` renders results/empty/presets; `PartResultCard` is the shared card
 - `components/part/*` — part page pieces (`PartDetailView` is shared by the server page and the client fallback)

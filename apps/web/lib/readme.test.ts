@@ -123,3 +123,16 @@ test("README links resolve against the fetched repository branch and path", () =
   assert.equal(resolveReadmeHref("https://example.com/a", readme), "https://example.com/a");
   assert.equal(resolveReadmeHref("./docs/guide.md", null, "https://github.com/o/r"), "https://github.com/o/r");
 });
+
+test("verified stale upstream links use a live target or become plain text", () => {
+  const readme = (owner: string, repo: string) => ({ markdown: "", owner, repo, branch: "main", file: "README.md" });
+  assert.equal(resolveReadmeHref("BUILDIgNG.md", readme("clackups", "draftling")), "https://github.com/clackups/draftling/blob/main/BUILDING.md");
+  assert.equal(resolveReadmeHref("releases", readme("laserir", "MCLite")), "https://github.com/laserir/MCLite/releases");
+  assert.equal(resolveReadmeHref("releases", readme("matoslav", "MicroGroove")), "https://github.com/matoslav/MicroGroove/releases");
+  assert.equal(resolveReadmeHref("releases", readme("Artem76228", "PaperWeb")), "https://github.com/Artem76228/PaperWeb/releases");
+  assert.equal(resolveReadmeHref("LICENSE", readme("Devsur11", "M5Gotchi")), null);
+  assert.equal(resolveReadmeHref("LICENSE", readme("vanshksingh", "M5Cardputer-Chat-with-Gemini-API")), null);
+  assert.equal(resolveReadmeHref("development", readme("1technophile", "OpenMQTTGateway")), null);
+  assert.equal(resolveReadmeHref("src/ricoh", readme("sky18Dragon", "RICOH-GR-Live-View-Shooting")), null);
+  assert.equal(resolveReadmeHref("LICENSE", readme("o", "r")), "https://github.com/o/r/blob/main/LICENSE");
+});
