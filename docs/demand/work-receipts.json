@@ -28,6 +28,25 @@
      "prs": []
     },
     "reserved_by": "jr/demand_run.py"
+   },
+   "last_attempt_on": "2026-11-06",
+   "attempt": {
+    "attempt_id": "40554a423a92415f885b1dd7e8eee50f",
+    "job": "0c0a03732d46",
+    "run": "40554a423a92415f885b1dd7e8eee50f",
+    "code_revision": "e7710b86e202e0080268d717741b358129e4faae",
+    "launch": "hermes cron direct run, restart-safe external worker",
+    "phase": "author",
+    "prior_attempts": [
+     {
+      "run": "dec9e7a87d954b2a91cda78cd8c18090",
+      "outcome": "unknown: owner process killed by caller 150s foreground timeout before any delegate or push"
+     }
+    ],
+    "delegate": {
+     "command": "delegate_coder.py --branch jr/research-a721c3339f3d6348 --background (implies --no-merge --no-ship)",
+     "branch": "jr/research-a721c3339f3d6348"
+    }
    }
   }
  ]
