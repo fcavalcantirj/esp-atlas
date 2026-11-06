@@ -442,16 +442,20 @@ def write_queue(queue: dict, path: Path = QUEUE_PATH) -> Path:
     """Atomic: a temp file in the queue's own directory, flushed and fsynced, then os.replace'd
     over the queue. Any OSError leaves the previous file byte-identical, removes the temp file
     and is raised — a truncated queue (human triage) can never be published."""
+    return write_bytes((json.dumps(queue, indent=1, ensure_ascii=False) + "\n").encode("utf-8"), path)
+
+
+def write_bytes(data: bytes, path: Path = QUEUE_PATH) -> Path:
+    """write_queue's atomic replace for exact bytes (a byte-exact restore of what was read)."""
     path = Path(path)
     data_dir = (REPO / "data").resolve()
     if path.resolve().is_relative_to(data_dir):
         raise ValueError("the research queue never writes under data/")
     path.parent.mkdir(parents=True, exist_ok=True)
-    text = json.dumps(queue, indent=1, ensure_ascii=False) + "\n"
     fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=f".{path.name}.", suffix=".tmp")
     try:
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
-            f.write(text)
+        with os.fdopen(fd, "wb") as f:
+            f.write(data)
             f.flush()
             os.fsync(f.fileno())
         os.chmod(tmp, 0o644)                  # mkstemp's 0600 would differ from a normal checkout

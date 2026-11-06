@@ -387,7 +387,7 @@ def test_a_failed_queue_write_keeps_both_files(tmp_path, monkeypatch):
     assert out.action == rw.DEFER and "read-only" in out.reason and not out.changed
 
 
-def test_a_queue_without_a_byte_exact_restore_is_left_closed_and_never_blocks(tmp_path, monkeypatch):
+def test_a_failed_receipts_write_restores_a_compact_queue_byte_exactly(tmp_path, monkeypatch):
     compact = json.dumps(json.loads(QUEUE_RAW)).encode()            # not the writer's own format
     d = demand_dir(tmp_path, queue=compact)
     real_replace = os.replace
@@ -399,11 +399,8 @@ def test_a_queue_without_a_byte_exact_restore_is_left_closed_and_never_blocks(tm
 
     monkeypatch.setattr(os, "replace", replace)
     out = reserve(d)
-    assert out.action == rw.DEFER and "queue left closed" in out.reason
-    assert fnk(d)["status"] == "closed" and (d / RECEIPTS).read_bytes() == RECEIPTS_RAW
-    monkeypatch.setattr(os, "replace", real_replace)
-    following = reserve(d)                       # a closed candidate settles its live receipt
-    assert following.action == rw.START and following.key == KEELOQ_KEY
+    assert out.action == rw.DEFER and "both previous files kept" in out.reason and not out.changed
+    assert (d / QUEUE).read_bytes() == compact and (d / RECEIPTS).read_bytes() == RECEIPTS_RAW
 
 
 def test_duplicate_prs_on_the_work_branch_defer_the_closure(tmp_path):
