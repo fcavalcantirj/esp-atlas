@@ -164,8 +164,8 @@
       "id": "acid-drop",
       "pr_ref": "#1445",
       "repo": "acidvegas/acid-drop",
-      "status": "proposed",
-      "timestamp": "2026-11-05T22:00:59.905926+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-06T11:00:54.918343+00:00"
     },
     "acidtrip-psychedelic-m5core-60-visuals": {
       "expired_at": "2026-10-11T16:00:12.884585+00:00",
@@ -1069,8 +1069,8 @@
       "id": "c-p-s-cardputer-syhnth",
       "pr_ref": "#1448",
       "repo": "oldtokage-collab/c.p.s.--cardputer-syhnth--",
-      "status": "proposed",
-      "timestamp": "2026-11-05T22:00:59.905926+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-06T11:00:54.918343+00:00"
     },
     "c4-stick": {
       "expires": "2026-12-05T19:01:17.341039+00:00",
@@ -3987,8 +3987,8 @@
       "id": "icenav-v3",
       "pr_ref": "#1434",
       "repo": "jgauchia/icenav-v3",
-      "status": "proposed",
-      "timestamp": "2026-11-05T22:00:59.905926+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-06T11:00:54.918343+00:00"
     },
     "iching-xiaozhi-card": {
       "expired_at": "2026-09-19T14:00:22.488207+00:00",
@@ -7608,8 +7608,8 @@
       "id": "m5stamp-c3dev",
       "pr_ref": "#1439",
       "repo": "h1romas4/m5stamp-c3dev",
-      "status": "proposed",
-      "timestamp": "2026-11-05T22:00:59.905926+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-06T11:00:54.918343+00:00"
     },
     "m5stampfly": {
       "expired_at": "2026-10-13T06:00:59.967904+00:00",
@@ -8783,6 +8783,13 @@
       "repo_id": 1120078727,
       "status": "expired",
       "timestamp": "2026-09-13T01:00:38.965157+00:00"
+    },
+    "nightdriverstrip": {
+      "id": "nightdriverstrip",
+      "pr_ref": "#1480",
+      "repo": "plummerssoftwarellc/nightdriverstrip",
+      "status": "proposed",
+      "timestamp": "2026-11-06T11:00:54.918343+00:00"
     },
     "nikos": {
       "expired_at": "2026-10-10T05:00:11.491118+00:00",
@@ -10800,8 +10807,8 @@
       "id": "t-deck",
       "pr_ref": "#1445",
       "repo": "xinyuan-lilygo/t-deck",
-      "status": "proposed",
-      "timestamp": "2026-11-05T22:00:59.905926+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-06T11:00:54.918343+00:00"
     },
     "t-display-c5": {
       "expires": "2026-11-08T14:00:12.109822+00:00",
@@ -11152,8 +11159,8 @@
       "id": "trail-mate",
       "pr_ref": "#1447",
       "repo": "vicliu624/trail-mate",
-      "status": "proposed",
-      "timestamp": "2026-11-05T22:00:59.905926+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-06T11:00:54.918343+00:00"
     },
     "trmnl-firmware": {
       "expired_at": "2026-10-11T22:00:11.491359+00:00",
@@ -12886,6 +12893,7 @@
     "pierrebak/m5cardputer_voice-changer": "m5cardputer-voice-changer",
     "pinoyunknown/ghost-firmware": "ghost-firmware",
     "pkolbas/m5-guitartuner": "m5-guitartuner",
+    "plummerssoftwarellc/nightdriverstrip": "nightdriverstrip",
     "power-pill/ascii-aquarium": "ascii-aquarium",
     "ppyne/lx_shell": "lx-shell",
     "pr3y/bruce": "bruce",
