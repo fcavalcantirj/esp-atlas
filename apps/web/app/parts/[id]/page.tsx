@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { preload } from "react-dom";
 import JsonLd from "@/components/JsonLd";
 import PartDetailView from "@/components/part/PartDetailView";
 import PartViewTracker from "@/components/part/PartViewTracker";
@@ -69,7 +68,6 @@ export async function generateMetadata({ params }: PageProps<"/parts/[id]">): Pr
 
 export default async function PartPage({ params }: PageProps<"/parts/[id]">) {
   const { id } = await params;
-  if (id === "m5cardputer") preload("/board-images/cardputer.avif", { as: "image", fetchPriority: "high" });
   const result = await fetchPartDetail(id);
   if (result.status === "not_found") notFound();
   if (result.status === "error") throw new Error(`Part API unavailable for ${id}`);
