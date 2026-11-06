@@ -197,8 +197,9 @@ def _classify(leads: list[dict], catalog: list[dict]) -> list[dict]:
 def _previous(state) -> None:
     if state is None:
         return
-    if (not isinstance(state, dict) or state.get("version") != VERSION or state.get("source") != "pam_feed"
-            or not isinstance(state.get("leads"), list) or not isinstance(state.get("feeds"), dict)):
+    if (not isinstance(state, dict) or type(state.get("version")) is not int or state["version"] != VERSION
+            or state.get("source") != "pam_feed" or not isinstance(state.get("leads"), list)
+            or not isinstance(state.get("feeds"), dict) or set(state["feeds"]) != set(ENDPOINTS)):
         raise FeedError("corrupt cached PAM state")
     try:
         if dt.datetime.fromisoformat(state["checked_at"]).tzinfo is None:
@@ -207,11 +208,16 @@ def _previous(state) -> None:
         raise FeedError("corrupt cached check timestamp") from None
     for name, url in ENDPOINTS.items():
         meta = state["feeds"].get(name)
-        if (not isinstance(meta, dict) or meta.get("url") != url
+        if (not isinstance(meta, dict) or set(meta) != {"url", "fetched_at", "etag", "sha256", "bytes"}
+                or meta.get("url") != url
                 or not isinstance(meta.get("sha256"), str)
                 or not re.fullmatch(r"[0-9a-f]{64}", meta["sha256"])
                 or type(meta.get("bytes")) is not int or not 0 < meta["bytes"] <= MAX_BYTES):
             raise FeedError("corrupt cached feed provenance")
+        etag = meta["etag"]
+        if etag is not None and (not isinstance(etag, str) or len(etag) > 256
+                                 or any(c in etag for c in "\r\n")):
+            raise FeedError("corrupt cached ETag")
         try:
             if dt.datetime.fromisoformat(meta["fetched_at"]).tzinfo is None:
                 raise ValueError
@@ -310,11 +316,6 @@ def work_key(lead: dict) -> str:
 def readable_work_provenance(value) -> bool:
     """Validate the original minimal feed snapshot without fetching anything."""
     if not isinstance(value, dict) or set(value) != {"lead", "checked_at", "feeds"}:
-        return False
-    feeds = value["feeds"]
-    fields = {"url", "fetched_at", "etag", "sha256", "bytes"}
-    if (not isinstance(feeds, dict) or set(feeds) != set(ENDPOINTS)
-            or any(not isinstance(meta, dict) or set(meta) != fields for meta in feeds.values())):
         return False
     try:
         _previous({"version": VERSION, "source": "pam_feed", "leads": [value["lead"]],

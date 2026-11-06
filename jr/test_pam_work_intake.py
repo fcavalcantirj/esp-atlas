@@ -147,9 +147,14 @@ def test_feed_reservation_write_failure_preserves_prior_work(tmp_path, monkeypat
 
 
 @pytest.mark.parametrize("search", [False, True])
-def test_corrupt_feed_cache_does_not_block_valid_search_work(tmp_path, search):
-    prepare(tmp_path)
-    (tmp_path / "pam-leads.json").write_text("{broken")
+@pytest.mark.parametrize("corruption", ["broken_json", "unknown_receipt_field", "invalid_etag"])
+def test_corrupt_feed_cache_does_not_block_valid_search_work(tmp_path, search, corruption):
+    state = prepare(tmp_path)
+    if corruption == "unknown_receipt_field":
+        state["feeds"]["products"]["metrics"] = {"searches": 99}
+    elif corruption == "invalid_etag":
+        state["feeds"]["products"]["etag"] = ["not-an-http-header"]
+    (tmp_path / "pam-leads.json").write_text("{broken" if corruption == "broken_json" else json.dumps(state))
     result = reserve(tmp_path, REAL_SNAPSHOT if search else SNAP)
     assert result.action == (rw.START if search else rw.DEFER)
     if search:
