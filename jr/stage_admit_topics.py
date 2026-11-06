@@ -171,6 +171,31 @@ def _owner_repo_from_firmware_md(path: Path) -> str | None:
     return None
 
 
+def _frontmatter(path: Path) -> dict:
+    return tools._frontmatter(path) if path.exists() else {}
+
+
+def _firmware_item(root: Path, fid: str, source: str | None) -> dict:
+    """The PR-body item for one authored id — the same fields stage_admit's item carries, read
+    back from the firmware.md and recipe.md run_drain actually wrote (never invented): a field
+    the record does not carry stays None, and jr/report.py omits it or says `unknown`.
+    run_drain authors exactly one board per firmware; the first recipe on disk is that one."""
+    fm = _frontmatter(root / "data" / "firmware" / fid / "firmware.md")
+    rdirs = sorted(d for d in (root / "data" / "recipes").glob(f"*__{fid}") if (d / "recipe.md").exists())
+    rc = _frontmatter(rdirs[0] / "recipe.md") if rdirs else {}
+    pop = fm.get("popularity") or {}
+    cites = next((s.get("url") for s in rc.get("sources") or [] if s.get("url")), None)
+    evidence = [f"surfaced by `{source}`"] if source else []
+    if cites:
+        evidence.append(f"recipe cites {cites}")
+    return {"kind": "firmware", "id": fid, "source": source,
+            "name": fm.get("name"), "url": fm.get("url"),
+            "stars": pop.get("stars"), "forks": pop.get("forks"), "license": fm.get("license"),
+            "board": rc.get("board"), "chip": rc.get("chip_family"), "recipe": rdirs[0].name if rdirs else None,
+            "evidence": "; ".join(evidence) or None,
+            "needs_human": False}   # run_drain has no needs-human verdict; nothing on this path flags one
+
+
 def _tick_topics(ctx, per_tick: int) -> list[str]:
     """This hour's slice of the versioned seed list (jr/source_topics.seed_topics over the
     worktree's own catalog) — at most `per_tick` topics, rotating so every seed topic is searched
@@ -279,7 +304,7 @@ def run(ctx, budget: int, raw=None):
         owner_repo = _owner_repo_from_firmware_md(fmd) if fmd.exists() else None
         if owner_repo:
             memory.record_proposed(fid, owner_repo, path=ctx.ledger_path, now=ctx.now)
-        items.append({"kind": "firmware", "id": fid, "source": source_of.get(owner_repo)})
+        items.append(_firmware_item(ctx.root, fid, source_of.get(owner_repo)))
 
     # run_drain's only ledger write for below-floor skips is ledger.record_seen (jr/ledger.py) —
     # a v1, TTL-less write that scripts/ledger_guard.py rejects (a "seen" record with no

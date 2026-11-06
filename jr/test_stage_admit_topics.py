@@ -281,7 +281,7 @@ def test_report_line_names_the_rotated_topics_and_the_seed_topic_of_each_admit(r
     assert res.admitted == 1
     assert f"topics=v{source_topics.SEED_VERSION}:{','.join(rotated)}" in res.summary
     assert "newtool<-topic:cardputer" in res.summary
-    assert res.items == [{"kind": "firmware", "id": "newtool", "source": "topic:cardputer"}]
+    assert [(it["id"], it["source"]) for it in res.items] == [("newtool", "topic:cardputer")]
 
 
 def test_budget_exceeded_during_topic_search_stops_cleanly(root, monkeypatch):
@@ -322,3 +322,60 @@ def test_below_floor_skips_are_recorded_seen_with_expires_and_pass_ledger_guard(
     sys.path.insert(0, str(REPO / "scripts"))
     import ledger_guard  # noqa: E402
     assert ledger_guard.check({"by_id": {}}, led) == []
+
+
+def _admit_newtool(root, monkeypatch, **meta_kw):
+    entries = [_topic_entry("My Cardputer Tool", "https://github.com/n/newtool", "A Cardputer tool")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    metas = {"n/newtool": _meta("n/newtool", description="A Cardputer tool", rid=101, **meta_kw)}
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(metas))
+    return stage_admit_topics.run(_ctx(root), budget=1)
+
+
+def test_firmware_item_carries_the_fields_of_the_record_it_wrote(root, monkeypatch):
+    """PR #1434 rendered '— None' / 'board None (None)' because this stage's item carried only
+    kind/id/source. It now carries what stage_admit's item does, read back from the firmware.md
+    and recipe.md it actually wrote — never invented."""
+    res = _admit_newtool(root, monkeypatch, stars=31, forks=4)
+
+    fm = _read_fm(root / "data" / "firmware" / "newtool" / "firmware.md")
+    [rdir] = sorted((root / "data" / "recipes").glob("*__newtool"))
+    rc = _read_fm(rdir / "recipe.md")
+    [it] = res.items
+    assert it == {"kind": "firmware", "id": "newtool", "source": "topic:cardputer",
+                  "name": fm["name"], "url": "https://github.com/n/newtool",
+                  "stars": 31, "forks": 4, "license": None,
+                  "board": rc["board"], "chip": rc["chip_family"], "recipe": rdir.name,
+                  "evidence": "surfaced by `topic:cardputer`; recipe cites https://github.com/n/newtool",
+                  "needs_human": False}
+    assert rdir.name == f"{rc['board']}__newtool" and rc["chip_family"] == "esp32-s3"
+
+
+def test_firmware_item_leaves_popularity_unknown_when_the_record_has_none(root, monkeypatch):
+    """No popularity snapshot written -> stars/forks stay None (rendered '?'), not 0."""
+    monkeypatch.setattr(tools, "author_firmware_and_recipes",
+                        _without_popularity(tools.author_firmware_and_recipes))
+    res = _admit_newtool(root, monkeypatch)
+    [it] = res.items
+    assert it["stars"] is None and it["forks"] is None
+
+
+def _without_popularity(author):
+    def wrapped(**kw):
+        return author(**{**kw, "stars": None, "forks": None, "downloads": None, "homepage": None})
+    return wrapped
+
+
+def test_topics_item_renders_in_the_pr_body_with_real_url_board_and_recipe_and_no_none(root, monkeypatch):
+    """Regression for PR #1434's body: the topics-path item, rendered end to end."""
+    import report
+    res = _admit_newtool(root, monkeypatch, stars=31, forks=4)
+    [it] = res.items
+    body = report.render_pr_body(report.TickReport(when=NOW, stages=[
+        {"name": res.name, "paths": res.paths, "summary": res.summary, "needs_human": False, "items": res.items}]))
+
+    assert "None" not in body
+    assert "- **My Cardputer Tool** (`newtool`) — https://github.com/n/newtool" in body
+    assert "31 ★ / 4 forks" in body
+    assert (f"  - ✅ board `{it['board']}` (esp32-s3): surfaced by `topic:cardputer`; recipe cites "
+            f"https://github.com/n/newtool → recipe `{it['board']}__newtool`, status unverified") in body

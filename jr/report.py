@@ -206,15 +206,40 @@ def render_demand_section(r: "TickReport") -> list[str]:
     return ["_demand snapshot missing — not steering_", ""]
 
 
-def _fmt_firmware_item(it: dict) -> list[str]:
+def _fmt_repo_check(it: dict) -> str:
+    """The repository line: a fork/archived claim only when the item carries that field."""
     stars, forks = it.get("stars"), it.get("forks")
     pop = f"{stars if stars is not None else '?'} ★ / {forks if forks is not None else '?'} forks"
-    out = [f"- **{it.get('name') or it.get('id')}** (`{it.get('id')}`) — {it.get('url')}",
-           f"  - ✅ public GitHub repository, {'not a fork' if not it.get('fork') else 'a fork'}, "
-           f"{'not archived' if not it.get('archived') else 'ARCHIVED'} · {pop} (floor: 25 stars or 25 forks)"
-           + (f" · license {it['license']}" if it.get("license") else ""),
+    claims = ["public GitHub repository"]
+    if it.get("fork") is not None:
+        claims.append("a fork" if it["fork"] else "not a fork")
+    if it.get("archived") is not None:
+        claims.append("ARCHIVED" if it["archived"] else "not archived")
+    return (f"  - ✅ {', '.join(claims)} · {pop} (floor: 25 stars or 25 forks)"
+            + (f" · license {it['license']}" if it.get("license") else ""))
+
+
+def _fmt_board_check(it: dict) -> list[str]:
+    """The board line: absent chip/evidence are omitted, an absent board reads `unknown`, and the
+    `→ recipe` part (and the ✅) appear only when a recipe was written. No board and no recipe: none."""
+    if not it.get("board") and not it.get("recipe"):
+        return []
+    line = f"board `{it.get('board') or 'unknown'}`"
+    if it.get("chip"):
+        line += f" ({it['chip']})"
+    if it.get("evidence"):
+        line += f": {it['evidence']}"
+    if not it.get("recipe"):
+        return [f"  - {line}"]
+    return [f"  - ✅ {line} → recipe `{it['recipe']}`, status unverified"]
+
+
+def _fmt_firmware_item(it: dict) -> list[str]:
+    head = f"- **{it.get('name') or it.get('id') or 'unknown'}** (`{it.get('id') or 'unknown'}`)"
+    out = [head + (f" — {it['url']}" if it.get("url") else ""),
+           _fmt_repo_check(it),
            "  - ✅ not already catalogued (repository, name tokens, repository id)",
-           f"  - ✅ board `{it.get('board')}` ({it.get('chip')}): {it.get('evidence')} → recipe `{it.get('recipe')}`, status unverified",
+           *_fmt_board_check(it),
            "  - ✅ schema-valid, cite-or-omit (guard green)"]
     if it.get("submission"):
         out.append(f"  - via submission #{it['submission']} (answered there)")
