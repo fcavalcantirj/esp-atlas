@@ -60,3 +60,49 @@ requested on a `review` route. If labelling still fails, the result says so
 
 `TickReport.review_prs` lists every open `jr-review` PR with its age; the one-line report renders
 `jr-review open N: #12 30h, …`. A tick that opens a review PR notifies Telegram like `needs_human`.
+
+### 5. Durable owner-review decisions — never re-ask an unchanged target
+
+**The bug (2026-11-06, #1478 … #1488, #1490).** The admit stage met
+`gdantas04/cardputer-system-monitor` (repo_id 831377003) every hour, the device-evidence gate said
+`needs_review_target`, the `review` item routed the whole tick PR to REVIEW and the 60-day
+rejection it wrote rode in that PR's ledger only. A review PR is not merged on its own, so main's
+ledger kept the old `expired` record and the next tick asked again — dragging every unrelated
+bookkeeping change (signals refreshes, other floor rejects, cooldowns) onto review with it.
+
+**The contract** (`jr/review_memory.py`, `memory.record_review_decision`):
+
+- **A review decision is a ledger record.** `status: rejected` (TTL `NO_BUILD_SIGNAL_DAYS` from
+  `review.raised_at`), the gate's `reason`, and a `review` block:
+  `{outcome, pr_ref, raised_at, evidence_rev, evidence}`. `outcome` is `raised` (asked in this
+  tick's PR), `open` or `closed` (the owner closed that review PR unmerged). The candidate stays
+  unadmitted in every case.
+- **Identity** is `repo_id` (rename-proof), then `owner/repo` (lowercased), then the firmware id.
+- **Evidence revision.** `evidence` keeps the raw facts — `stars`, `forks`, `downloads`,
+  `editorial_home`, `source` (GitHub `pushed_at`). `evidence_rev` hashes only what is
+  *meaningful*: whether stars / forks / downloads clear their floor
+  (`esp_atlas_core.floor`), the editorial home, and the source revision. A star more or less is
+  not new evidence; crossing a floor, a new editorial home or a new push is.
+- **The PR body carries the decision.** Every review PR body ends its "Needs owner review" section
+  with `<!-- jr-review-targets: [{id, repo, repo_id, evidence_rev, reason}] -->`. PRs opened before
+  this marker existed are read from their rendered `` - `owner/repo` (`id`) `` lines (no revision:
+  read as "unchanged").
+- **Reconciliation, every tick** (tick step 3c, after the open-PR hydration): one
+  `gh pr list --state all --label jr-review` (counted). For each target, the most recent PR that
+  raised it decides: OPEN → `outcome open`, CLOSED unmerged → `outcome closed`, MERGED → nothing
+  (its ledger already landed on main). The decision is written into the worktree ledger unless
+  it already says the same, it expired (`raised_at` + TTL ≤ now), or a newer decision exists.
+  Idempotent: an unchanged decision writes nothing. A failed lookup is a warning, never an abort.
+- **Persistence path.** Holding the target makes the tick produce **no** `review` item for it, so
+  the tick PR is routed by its files alone — bookkeeping → AUTO — and the decision-only ledger
+  change lands on main through the ordinary bookkeeping path. From then on main's ledger holds it
+  across ticks and restarts, whatever happens to the review PR.
+- **The admit gate** reads a live review decision differently from any other rejection: it
+  fetches the repo's metadata (one counted call) and compares the evidence revision. Unchanged
+  (or unknown on either side) → held, counted as already decided, no review item; a missing
+  revision is backfilled. Changed → reconsidered through every gate as if new (the held record is
+  not its own `duplicate_of`). An expired decision is reconsidered like any expired record.
+- **History.** Overwriting a review decision (or a record that already has `history`) appends the
+  previous record, minus its own `history`, to `history`. Records are never deleted.
+- **Nothing is weakened.** The classifier, the floor, the cap and every gate are unchanged: a new
+  or changed target still opens a `jr-review` PR, and new firmware/recipes still route to review.
