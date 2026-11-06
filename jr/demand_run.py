@@ -19,6 +19,8 @@ it once a day and lands the snapshot through the tick's own PR path (jr/publish.
    on a `jr/demand-…` branch — outside the tick's `jr/tick-*` triage — with the same protection
    and earned-trust auto-merge gate as a tick. Only an older proven snapshot-only demand PR
    is closed as superseded; queue-bearing or unreadable PRs wait for review.
+   The research queue joins only as this run's own write — the miner's bytes still on disk, or the
+   broker's explicit closure; a foreign edit (one a broker CAS refused) is never staged.
 5. after mining, jr/demand_broker.py reserves at most ONE demand work item
    (SPEC-demand-work-consumer.md) in `docs/demand/work-receipts.json`, which joins the
    publication only when it changed — and a new reservation lands even on a no-op demand day.
@@ -110,6 +112,7 @@ class Decision:
     queue_changed: bool = False
     receipts_changed: bool = False   # a reservation or settled receipt: docs/demand/work-receipts.json
     work_closed: bool = False        # the broker closed linked work in docs/demand/research-queue.json
+    queue_written: bytes | None = None   # the queue bytes the miner itself wrote, if it rewrote the file
     work: str = ""                   # the broker's report line for that reservation
     pam_paths: tuple = ()
     pam_summary: str = ""
@@ -334,19 +337,27 @@ def _mine_and_decide(wt: publish.Worktree, miner, python: str, telegram: bool) -
     new = _read_latest(demand_dir)
     if new is None or not new.get("date") or _newest_stamp(demand_dir) == before:
         raise MiningUnavailable("miner wrote no snapshot")
-    queue_changed = (_queue_comparable(_read_bytes(demand_dir / research_queue.QUEUE_NAME))
-                     != _queue_comparable(queue_before))
+    queue_after = _read_bytes(demand_dir / research_queue.QUEUE_NAME)
+    queue_written = queue_after if queue_after is not None and queue_after != queue_before else None
+    queue_changed = _queue_comparable(queue_after) != _queue_comparable(queue_before)
     research = _queue_line(demand_dir, queue_before)
     if not new.get("items"):
         _restore_demand_files(demand_dir, files_before)      # an empty pull never replaces the snapshot
         if not queue_changed:
             raise MiningUnavailable("miner returned no demand items (Composio/GSC outage?) — not landing an empty steer")
         return Decision(new, True, "research queue changed; 0 demand items, snapshot not landed",
-                        research, queue_only=True, queue_changed=True)
+                        research, queue_only=True, queue_changed=True, queue_written=queue_written)
     land, why = should_land(new, prev, new["date"])    # age between the miner's own dates: one clock
     if not land and queue_changed:
         land, why = True, f"research queue changed ({why})"
-    return Decision(new, land, why, research, queue_changed=queue_changed)
+    return Decision(new, land, why, research, queue_changed=queue_changed, queue_written=queue_written)
+
+
+def _owns_queue(d: Decision, wt_path: Path) -> bool:
+    """Whether the worktree queue is this run's own write: the broker's explicit closure, or the
+    miner's bytes still on disk. A foreign edit (e.g. one a broker CAS refused) is never staged."""
+    current = _read_bytes(wt_path / DEMAND_RELDIR / research_queue.QUEUE_NAME)
+    return d.work_closed or (d.queue_written is not None and current == d.queue_written)
 
 
 def _publication(d: Decision, wt_path: Path) -> tuple[list[str], str, str]:
@@ -367,13 +378,12 @@ def _publication(d: Decision, wt_path: Path) -> tuple[list[str], str, str]:
                 "the prior committed steer is preserved. No catalog writes.\n\n"
                 "Source: the two fixed public PAM feeds, through jr/pam_run.py and the existing "
                 "daily runner. No new job or monitor." + note)
+    owned = [queue_path] if _owns_queue(d, wt_path) else []
     if d.queue_only:
-        return ([queue_path, *receipts, *d.pam_paths],
+        return ([*owned, *receipts, *d.pam_paths],
                 f"chore(jr): research queue {snap['date']} — demand snapshot not landed (0 items)",
                 _queue_only_body(snap, d.why, d.research) + note)
-    paths = [f"{DEMAND_RELDIR}/{snap['date']}.json", f"{DEMAND_RELDIR}/{UNRESOLVED_NAME}"]
-    if (wt_path / queue_path).exists():
-        paths.append(queue_path)
+    paths = [f"{DEMAND_RELDIR}/{snap['date']}.json", f"{DEMAND_RELDIR}/{UNRESOLVED_NAME}", *owned]
     return (paths + receipts + list(d.pam_paths), f"chore(jr): demand snapshot {snap['date']} — {len(snap['items'])} item(s)",
             _pr_body(snap, d.why, d.research) + note)
 

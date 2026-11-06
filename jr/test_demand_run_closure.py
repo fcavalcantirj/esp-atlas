@@ -127,7 +127,7 @@ def test_a_broker_error_after_its_writes_still_publishes_them(tmp_path, monkeypa
     gh = gh_all()
     res = run(root, git=git, gh=gh)
     assert res.published is True and "broker error RuntimeError" in res.work
-    assert RECEIPTS_PATH in staged(git)                  # the queue is staged on every normal publication
+    assert RECEIPTS_PATH in staged(git) and QUEUE_PATH in staged(git)   # the closure is the run's own write
     create = next(c for c in gh.calls if c[:2] == ("pr", "create"))
     assert "Work closed" in create[create.index("--body") + 1]
 
