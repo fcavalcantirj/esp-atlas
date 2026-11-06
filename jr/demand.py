@@ -151,21 +151,26 @@ def _chip_part_candidate(term: str) -> str | None:
     return f"esp32-{m.group(1)}" if m else None
 
 
-def resolve_entity(term: str, firmware_ids: set[str]) -> dict:
+def resolve_entity(term: str, firmware_ids: set[str], catalog: list[dict] | None = None) -> dict:
     """Term -> entity candidates, PARSING ONLY via the scorer's existing maps (§4.1): no new
     intelligence, no LLM. `board` via `device_map.device_from_text` (only ever a catalogued
-    board id, by construction). `chip` from the board's ground-truth soc if a board matched,
+    board id, by construction); failing that, via the research queue's vendor-prefix model-key
+    rule against `catalog` (`research_queue.model_board`: a model number like 'fnk0104s' held by
+    exactly one board record), with that key kept as `board_model`. `chip` from the board's
+    ground-truth soc if a board matched,
     else any specific chip family named directly in the term. `firmware_token` via substring
     match against catalogued firmware ids. `part` via `_chip_part_candidate` — a SHAPE-matched
     esp32-<variant> chip/part id (§4's part/chip fix; existence checked later by classify_gap
     against the live catalog, never here). `capability` via `capability_map`'s controlled
     vocabulary. Any of these may be None/[] — the caller decides what that means (classify_gap)."""
-    board = device_from_text(term)
+    board, board_model = device_from_text(term), None
+    if not board and catalog:
+        board, board_model = research_queue.model_board(term, catalog) or (None, None)
     chip = tools.board_soc(board) if board else _chip_from_term(term)
     firmware_token = _firmware_token_match(_words(term), firmware_ids)
     capability = capabilities_from_text(term)
     part = _chip_part_candidate(term)
-    return {"board": board, "chip": chip, "firmware_token": firmware_token,
+    return {"board": board, "board_model": board_model, "chip": chip, "firmware_token": firmware_token,
             "capability": capability, "part": part}
 
 
@@ -217,9 +222,10 @@ def classify_gap(resolved: dict, firmware_ids: set[str], recipe_pairs: set[str],
                  part_ids: set[str] | None = None) -> str:
     """§4 gap classification — the crux of the miner.
 
-    A `firmware_token` or a `part` is the required anchor for anything but UNRESOLVED: with
-    zero-LLM, reuse-only resolution, `board`/`chip`/`capability` alone never identify a SPECIFIC
-    missing catalog entity (a board-only match is by construction an ALREADY-catalogued board —
+    A `firmware_token`, a `part` or a `board_model` is the required anchor for anything but
+    UNRESOLVED: with zero-LLM, reuse-only resolution, a device-map `board`, `chip` or
+    `capability` alone never identify a SPECIFIC missing catalog entity (a board-only match is
+    by construction an ALREADY-catalogued board —
     device_map only maps to those — so it can't signal a gap; a bare chip or capability token
     is too generic to say what's missing). Those partial-signal terms are exactly what §4 means
     by UNRESOLVED: "high-volume unresolved clusters are a signal to Felipe" for possible new
@@ -239,7 +245,11 @@ def classify_gap(resolved: dict, firmware_ids: set[str], recipe_pairs: set[str],
       actually catalogued yet — a real populate gap, no `board` pairing concept for parts).
     - otherwise it already exists in the atlas -> RANKS_POORLY or COVERED_OK by the same D1
       metrics test as firmware (⟨Q3 RESOLVED⟩: RANKS_POORLY is a report for Felipe+us, never an
-      authoring target for Jr, same as the firmware case above)."""
+      authoring target for Jr, same as the firmware case above).
+
+    Else, given a `board_model` (the term IS one catalogued board's model number, e.g.
+    'fnk0104s' -> freenove-fnk0104s): that board already exists -> RANKS_POORLY or COVERED_OK
+    by the same D1 metrics test."""
     firmware_token = resolved.get("firmware_token")
     if firmware_token:
         if firmware_token not in firmware_ids:
@@ -253,6 +263,9 @@ def classify_gap(resolved: dict, firmware_ids: set[str], recipe_pairs: set[str],
     if part:
         if part not in (part_ids or set()):
             return GAP_UNCOVERED
+        return _rank_or_covered(metrics)
+
+    if resolved.get("board") and resolved.get("board_model"):
         return _rank_or_covered(metrics)
 
     return GAP_UNRESOLVED
@@ -416,6 +429,7 @@ def build_demand_items(
     prior_first_seen: dict[str, str] | None = None,
     part_ids: set[str] | None = None,
     trends: dict[str, int] | None = None,
+    catalog: list[dict] | None = None,
 ) -> list[dict]:
     """The pure miner (§3): normalize -> floor-filter -> resolve -> dedup/merge -> weight ->
     classify -> emit a ranked `List[DemandItem]` (schema §9), NO network. `gsc_query_rows` /
@@ -425,7 +439,9 @@ def build_demand_items(
     `classify_gap` checks part demand against (§4's part/chip fix). `trends` is an already-fetched
     `{normalized_query: 0..100}` Google Trends map (`analytics_cross.fetch_trends`'s return shape,
     reused verbatim, SPEC-analytics-cross.md §7) applied via `apply_trends_boost` — absent/None/{}
-    degrades every item's weight to exactly its pre-Trends value (§3.6 extension)."""
+    degrades every item's weight to exactly its pre-Trends value (§3.6 extension). `catalog` is
+    `research_queue.load_catalog()`'s read-only index, used by `resolve_entity` to resolve a
+    board by its model number; None skips that rule."""
     firmware_ids = firmware_ids if firmware_ids is not None else set()
     recipe_pairs = recipe_pairs if recipe_pairs is not None else set()
     part_ids = part_ids if part_ids is not None else set()
@@ -443,7 +459,7 @@ def build_demand_items(
     groups: dict[tuple, dict] = {}
 
     for row in d1_rows:
-        resolved = resolve_entity(row["term"], firmware_ids)
+        resolved = resolve_entity(row["term"], firmware_ids, catalog)
         key = _dedup_key(row["term"], resolved)
         g = groups.setdefault(key, _new_group(resolved))
         g["raw_terms"].add(row["raw_term"])
@@ -457,7 +473,7 @@ def build_demand_items(
             g["landing_page"] = page
 
     for row in ga4_parsed:
-        resolved = resolve_entity(row["term"], firmware_ids)
+        resolved = resolve_entity(row["term"], firmware_ids, catalog)
         key = _dedup_key(row["term"], resolved)
         g = groups.setdefault(key, _new_group(resolved))
         g["raw_terms"].add(row["term"])
@@ -661,6 +677,7 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
     firmware_ids = tools.catalogued_firmware_ids()
     recipe_pairs = _recipe_pairs()
     part_ids = _catalogued_part_ids()
+    catalog = research_queue.load_catalog(REPO)
     today = dt.date.today().isoformat()
     prior_first_seen = _prior_first_seen_map(_latest_prior_snapshot(demand_dir))
 
@@ -671,7 +688,7 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
         live["gsc_query_rows"], live["gsc_query_page_rows"], ga4_raw,
         firmware_ids=firmware_ids, recipe_pairs=recipe_pairs,
         today=today, prior_first_seen=prior_first_seen, part_ids=part_ids,
-        trends=live.get("trends"),
+        trends=live.get("trends"), catalog=catalog,
     )
     write_snapshot(items, d2_available, live["window"], today, demand_dir)
     write_unresolved(items, demand_dir)

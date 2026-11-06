@@ -221,6 +221,20 @@ def _model_matches(term_c: str, catalog: list[dict]) -> list[dict]:
     return matches if holders <= MODEL_MAX_HOLDERS else []
 
 
+def model_board(term: str | None, catalog: list[dict]) -> tuple[str, str] | None:
+    """(board id, model key) when the term names exactly ONE catalogued board by its model
+    number — the same `_model_matches` rule, tried on the compact term and on each of its tokens
+    ('fnk0104s datasheet'). A key that names a non-board record, or a term naming two boards,
+    is None."""
+    keys = dict.fromkeys(k for k in (compact(term), *_tokens(term)) if _is_model_key(k))
+    boards: dict[str, str] = {}
+    for key in keys:
+        for m in _model_matches(key, catalog):
+            if m["kind"] == "board":
+                boards.setdefault(m["id"], key)
+    return next(iter(boards.items())) if len(boards) == 1 else None
+
+
 def classify(term: str, catalog: list[dict]) -> tuple[str, dict]:
     """(classification, evidence) for a zero-result term. First rule wins: an exact id/title →
     search_defect; no identity → unclear; a fuzzy id/title/alias match → alias_typo (unclear when
