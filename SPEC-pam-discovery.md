@@ -69,3 +69,25 @@ Required evidence:
    review, deployment and verified outcome. A queue entry is not completion.
 
 The adapter's output and tests do not establish that steps 3 or 4 have happened.
+
+## Daily runner hook
+
+`pam_run.refresh_worktree(fresh_worktree, ...)` is the persistence boundary. It
+reads board identities from that worktree using the research queue's shared
+catalog loader, refreshes the two feeds, and reuses its atomic JSON writer for
+`docs/demand/pam-leads.json`. It returns a changed-path manifest and bounded run
+receipt. Corrupt cache, malformed catalog, feed failure or failed persistence
+returns `deferred` without replacing last-good state. Timestamp-only refreshes
+return `unchanged` and do not create daily metadata PRs.
+
+The existing runner must call it inside its lock and include its changed path
+even when demand is unchanged or empty. Its empty-snapshot restoration must not
+discard PAM state. A deferred PAM refresh must not prevent GA/GSC work from
+continuing. This helper neither publishes a PR nor changes scheduler settings.
+An explicit manual probe is available with
+`python3 jr/pam_run.py --worktree <fresh-worktree> --json`; the path is required
+so a probe cannot accidentally target the helper's own checkout.
+
+The configured recurring hook, publication of minimal state and an actual job run
+are still required before claiming recurring consumption. The consumer must
+reconcile reserved/linked work independently of today's filtered new-lead list.
