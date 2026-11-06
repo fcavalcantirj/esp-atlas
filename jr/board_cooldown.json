@@ -1,16 +1,58 @@
 {
   "by_board": {
-    "adafruit-feather-esp32-c6": {
-      "board": "adafruit-feather-esp32-c6",
-      "expires": "2026-11-13T19:00:55.866090+00:00",
+    "adafruit-feather-esp32-s2": {
+      "board": "adafruit-feather-esp32-s2",
+      "expires": "2026-11-13T20:00:59.122628+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
           "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-06T19:00:55.866090+00:00"
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
+    "adafruit-feather-esp32-s2-reverse-tft": {
+      "board": "adafruit-feather-esp32-s2-reverse-tft",
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
+    "adafruit-feather-esp32-s2-tft": {
+      "board": "adafruit-feather-esp32-s2-tft",
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "adafruit-qt-py-esp32": {
       "board": "adafruit-qt-py-esp32",
@@ -516,40 +558,6 @@
       },
       "reason": "nothing-groundable",
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
-    },
-    "waveshare-esp32-s3-rlcd-42": {
-      "board": "waveshare-esp32-s3-rlcd-42",
-      "expires": "2026-11-13T19:00:55.866090+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "no_manifest",
-          "vendor": "source_gated"
-        },
-        "usb_serial": {
-          "boards_txt": "no_board_key",
-          "manifest": "no_manifest",
-          "vendor": "no_pattern_match"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-06T19:00:55.866090+00:00"
-    },
-    "waveshare-esp32-s3-touch-lcd-349": {
-      "board": "waveshare-esp32-s3-touch-lcd-349",
-      "expires": "2026-11-13T19:00:55.866090+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "no_manifest",
-          "vendor": "source_gated"
-        },
-        "usb_serial": {
-          "boards_txt": "no_board_key",
-          "manifest": "no_manifest",
-          "vendor": "field_absent"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-06T19:00:55.866090+00:00"
     },
     "xiao-esp32c3": {
       "board": "xiao-esp32c3",

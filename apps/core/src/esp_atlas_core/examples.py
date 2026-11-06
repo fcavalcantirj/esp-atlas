@@ -125,6 +125,10 @@ def _firmware_examples():
             example["stars"] = popularity["stars"]
         if popularity.get("forks") is not None:
             example["forks"] = popularity["forks"]
+        if popularity.get("github_as_of") is not None:
+            example["github_as_of"] = popularity["github_as_of"]
+        if popularity.get("as_of") is not None:
+            example["as_of"] = popularity["as_of"]
         examples.append(example)
     return examples
 

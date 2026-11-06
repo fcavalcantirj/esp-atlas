@@ -61,15 +61,9 @@ from esp_atlas_core.paths import DATA_DIR  # noqa: E402
 # package with its own venv and is not importable from the repo-root scripts runtime).
 # Imported, never re-typed. Both this CI gate and jr/scorer.py read the SAME constants from
 # esp_atlas_core.floor, so they cannot drift apart the way they previously did.
-from esp_atlas_core.floor import DOWNLOAD_FLOOR, FORK_FLOOR, STAR_FLOOR, clears_popularity_floor  # noqa: E402
-
-# Human-curated / known-good firmware — exempt from the floor regardless of popularity. Used
-# because the firmware schema carries no trust/tier field; this is the original curated set.
-CURATED_EXEMPT = frozenset({
-    "bruce", "esp32marauder", "rogueduck", "evil-m5project", "m5stick-nemo", "meshtastic",
-    "esphome", "tasmota", "wled", "openmqttgateway", "launcher", "nerdminer-v2", "usbarmyknife",
-    "m5-crystal", "infiltra", "cathack", "esp32-bit-pirate", "xiaozhi-esp32",
-})
+from esp_atlas_core.floor import (  # noqa: E402
+    CURATED_EXEMPT, DOWNLOAD_FLOOR, FORK_FLOOR, STAR_FLOOR, clears_popularity_floor,
+)
 
 
 def _owner_repo(url: str) -> str | None:

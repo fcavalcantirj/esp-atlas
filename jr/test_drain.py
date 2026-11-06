@@ -586,9 +586,11 @@ def test_author_selected_stamps_popularity_block_with_citation(tmp_atlas):
     fm = tools._frontmatter(tools.FIRMWARE_DIR / FIXTURE_ID / "firmware.md")
     jsonschema.validate(fm, FIRMWARE_SCHEMA)
     # _fixture_selected(): stars=30, forks=4, download=100
-    assert fm["popularity"] == {"stars": 30, "forks": 4, "downloads": 100, "as_of": "2026-09-01"}
-    assert any(s["field"] == "popularity" and s["verified"] == "2026-09-01"
-               for s in fm["sources"])
+    assert fm["popularity"] == {"stars": 30, "forks": 4, "github_as_of": "2026-09-01",
+                                "downloads": 100, "downloads_as_of": "2026-09-01", "as_of": "2026-09-01"}
+    assert {"popularity.stars", "popularity.forks", "popularity.downloads",
+            "popularity.github_as_of", "popularity.downloads_as_of"} <= {
+                s["field"] for s in fm["sources"] if s["verified"] == "2026-09-01"}
 
 
 def test_author_selected_stamps_editorial_home_and_clears_the_offline_audit(tmp_atlas):
@@ -622,8 +624,10 @@ def test_author_selected_stamps_editorial_home_and_clears_the_offline_audit(tmp_
     assert authored == [FIXTURE_ID]
     fm = tools._frontmatter(tools.FIRMWARE_DIR / FIXTURE_ID / "firmware.md")
     jsonschema.validate(fm, FIRMWARE_SCHEMA)
-    assert fm["popularity"] == {"stars": 6, "forks": 3, "downloads": 0,
+    assert fm["popularity"] == {"stars": 6, "forks": 3, "github_as_of": "2026-09-01",
+                                "downloads": 0, "downloads_as_of": "2026-09-01",
                                 "editorial_home": "https://ethicalhackersden.org",
+                                "editorial_home_as_of": "2026-09-01",
                                 "as_of": "2026-09-01"}
 
     report = firmware_floor_audit.audit(tmp_atlas / "data")

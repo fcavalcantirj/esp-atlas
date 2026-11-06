@@ -16,6 +16,7 @@ worktree. Track B widens the recipes from the build files, in the same tick (adm
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from pathlib import Path
 
 import re
@@ -25,6 +26,7 @@ import derive
 import device_evidence
 import launcher_resolve
 import memory
+import review_memory
 import scorer
 import tools
 import writers
@@ -224,6 +226,24 @@ def _catalogued_ids(led: dict, now) -> dict:
     return out
 
 
+def _raised_where(decision: dict) -> str:
+    rv = decision.get("review") or {}
+    return f"{rv.get('pr_ref')} {rv.get('outcome')}" if rv.get("pr_ref") else rv.get("outcome") or "raised"
+
+
+def _hold(ctx, decision: dict, ev: dict | None, rev: str | None, repo_id) -> None:
+    """A held decision is left as it is — except one raised before revisions existed, which gets
+    this tick's evidence revision (and repo_id) backfilled, keeping its outcome, PR and expiry."""
+    rv = decision.get("review") or {}
+    if ctx.dry_run or rv.get("evidence_rev") or rev is None:
+        return
+    raised = datetime.fromisoformat(rv["raised_at"]) if rv.get("raised_at") else ctx.now
+    memory.record_review_decision(decision["id"], decision.get("repo") or "", decision.get("reason") or "",
+                                  repo_id=repo_id, evidence=ev, evidence_rev=rev, pr_ref=rv.get("pr_ref"),
+                                  outcome=rv.get("outcome") or "raised", raised_at=raised,
+                                  path=ctx.ledger_path, now=ctx.now)
+
+
 def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     """The Track A stage for jr/tick.py: returns a tick.StageResult. `raw` (tests) replaces
     derive.default_raw for the build-file reads a submission without a board hint triggers.
@@ -272,11 +292,12 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         reject(key)
         launcher_skips[key] = launcher_skips.get(key, 0) + 1
 
-    def skip_reject(fid, owner_repo, reason, repo_id, issue=None):
+    def skip_reject(fid, owner_repo, reason, repo_id, issue=None, review_ev=None):
         """Record the rejection (memory, counts). Returns a report line for a submission (rare and
         meaningful — the submitter reads it), or None for a launcher entry (aggregated below).
         An empty id or repo is never recorded (a falsy ledger key is corruption): counted
-        `unkeyed` instead."""
+        `unkeyed` instead. `review_ev` (evidence, rev) makes it an owner-review decision
+        (SPEC-jr-review-routing.md §5) instead of a plain rejection."""
         if not fid or not owner_repo:
             count_skip("unkeyed")
             return None
@@ -286,6 +307,9 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             pending_note["ttl"] = REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS)   # the note follows its repo's decision
         if ctx.dry_run:
             would(memory.LEDGER_RELPATH, f"by_id.{fid}", f"rejected ({key})")
+        elif review_ev is not None:
+            memory.record_review_decision(fid, owner_repo, reason, repo_id=repo_id, evidence=review_ev[0],
+                                          evidence_rev=review_ev[1], path=ctx.ledger_path, now=ctx.now)
         else:
             memory.record_rejected(fid, owner_repo, reason,
                                    ttl_days=REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS),
@@ -380,7 +404,10 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             entry = dict(entry, github=github)      # the scorer reads the entry's own github
             pending_note = {"key": launcher_resolve.ledger_key(entry), "repo": resolved, "ttl": memory.SEEN_TTL_DAYS}
         owner_repo = scorer._owner_repo(github)
-        if memory.is_blocked(led, repo=owner_repo, now=ctx.now) or memory.is_seen(led, repo=owner_repo, now=ctx.now):
+        # A live owner-review decision is not a plain block: it holds only while the evidence it was
+        # taken on is unchanged, which takes the repo's metadata to tell (SPEC-jr-review-routing.md §5).
+        held = review_memory.live_decision(led, ctx.now, repo=owner_repo)
+        if not held and (memory.is_blocked(led, repo=owner_repo, now=ctx.now) or memory.is_seen(led, repo=owner_repo, now=ctx.now)):
             decided += 1
             if issue:
                 prior = memory.lookup(led, repo=owner_repo) or {}
@@ -419,10 +446,23 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             lines.append(f"stopped during {owner_repo}: {e}")   # meta fetch is read-only: nothing half-written
             break
         repo_id = meta.get("id")
-        if repo_id is not None and (memory.is_blocked(led, repo_id=repo_id, now=ctx.now)
-                                    or memory.is_seen(led, repo_id=repo_id, now=ctx.now)):
+        held = held or (review_memory.live_decision(led, ctx.now, repo_id=repo_id) if repo_id is not None else None)
+        rev_ev = review_memory.evidence(meta, downloads=entry.get("download")) if not meta.get("error") else None
+        rev = review_memory.evidence_rev(rev_ev) if rev_ev is not None else None
+        if held and review_memory.holds(held, rev):
+            decided += 1
+            _hold(ctx, held, rev_ev, rev, repo_id)
+            lines.append(f"review already raised: {owner_repo} ({_raised_where(held)}), evidence unchanged")
+            if issue:
+                _answer(ctx, slug, issue, _verdict_text(f"already_decided: {held.get('reason')} (until {held.get('expires')})",
+                                                        False, False))
+            continue
+        if repo_id is not None and memory.lookup(led, repo_id=repo_id) is not held and (
+                memory.is_blocked(led, repo_id=repo_id, now=ctx.now) or memory.is_seen(led, repo_id=repo_id, now=ctx.now)):
             decided += 1
             continue
+        if held:                                     # new evidence: reconsidered as if new, never its own duplicate
+            cat_ids = {k: v for k, v in cat_ids.items() if v != held.get("id")}
         fid = scorer._slug(scorer._repo_name_from_url(github)) or owner_repo   # empty -> skip_reject counts it `unkeyed`
         # Popularity floor (SPEC-firmware-floor.md, via esp_atlas_core.floor — never re-typed):
         # below stars AND forks AND no independent editorial home AND no qualifying download
@@ -498,10 +538,14 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             continue
         if not ev["ok"]:
             reason = device_evidence.reject_reason(ev)
-            note(skip_reject(out_id, owner_repo, reason, repo_id, issue=issue))
-            if ev.get("verdict") == device_evidence.NEEDS_REVIEW:
-                # Ambiguous, never guessed: not admitted, and listed in the tick report for the owner.
-                review.append({"id": out_id, "repo": owner_repo, **device_evidence.review_note(ev)})
+            asks = ev.get("verdict") == device_evidence.NEEDS_REVIEW
+            note(skip_reject(out_id, owner_repo, reason, repo_id, issue=issue,
+                             review_ev=(rev_ev, rev) if asks else None))
+            if asks:
+                # Ambiguous, never guessed: not admitted, and listed in the tick report for the owner —
+                # once: the decision it records holds the target until its evidence changes or it expires.
+                review.append({"id": out_id, "repo": owner_repo, **device_evidence.review_note(ev),
+                               "repo_id": repo_id, "evidence_rev": rev, "evidence": rev_ev, "reason": reason})
                 lines.append(f"needs owner review: {owner_repo} ({ev['kind']}) {ev['url']}")
             if issue:
                 _answer(ctx, slug, issue, _verdict_text(reason, False, False))

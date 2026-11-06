@@ -13,6 +13,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 
+import review_memory
+
 
 @dataclass
 class TickReport:
@@ -34,6 +36,7 @@ class TickReport:
     rejects: dict = field(default_factory=dict)       # reason -> count
     memory: dict = field(default_factory=dict)        # {"expired", "merged", "rejected", "removed"}
     hydrated: list = field(default_factory=list)       # firmware ids marked proposed from open Jr PRs at tick start
+    review_decisions: list = field(default_factory=list)  # ids whose owner-review decision was read from jr-review PRs
     review_prs: list = field(default_factory=list)     # open jr-review PRs: {"number", "headRefName", "age_hours", "conflicting"}
     review_capped: str = ""                            # non-empty → the jr-review cap skipped stages, why
     revalidate: dict | None = None
@@ -272,7 +275,9 @@ def render_review_section(r: TickReport) -> list[str]:
     lines = ["### Needs owner review — no ESP target stated (not admitted)"]
     for it in r.review:
         lines.append(f"- `{it.get('repo')}` (`{it.get('id')}`) — {it.get('kind')} {it.get('url')}: {it.get('why')}")
-    lines.append("Re-checked after the reject TTL; admit by hand if it does target an ESP.")
+    lines.append("Asked once: Jr does not ask again until the evidence changes or the decision expires; "
+                 "admit by hand if it does target an ESP.")
+    lines.append(review_memory.render_marker(r.review))
     lines.append("")
     return lines
 
