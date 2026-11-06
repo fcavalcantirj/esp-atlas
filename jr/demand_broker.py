@@ -25,7 +25,10 @@ overwritten (a closure checks both files, closes the queue first, and restores t
 when the receipts write fails — only over its own write, never over a later writer's). A closed
 candidate whose receipt is still live (both writes failed) blocks new work until a human settles it.
 `writes`, when given, receives the exact bytes of every durable write by file name: the runner stages
-a file only while it still holds those bytes, never a later writer's.
+a file only while it still holds those bytes, never a later writer's. Ownership is never re-based on
+newly observed bytes: every pass (the re-plan after a closure included) first checks the pair against
+the bytes this run last left there, and defers without planning, writing or owning over a file
+another writer changed (`Outcome.foreign`).
 
 Lock scope: scripts/jr-demand.sh's host-local flock serializes runs on one host, and each run
 works in its own fresh worktree. That is not global exactly-once: a reservation is durable once
@@ -273,6 +276,7 @@ class Outcome:
     receipts_changed: bool = False   # work-receipts.json: a reservation or a settled receipt
     closed: str = ""                 # the work key this call closed, before re-planning once
     resolution: str = ""             # delivered | rejected, for `closed`
+    foreign: tuple = ()              # pair files another writer changed under this call: never built on
 
     def line(self) -> str:
         if self.action == rw.START and self.receipts_changed:
@@ -320,7 +324,7 @@ class _Closer:
 def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | None = None,
             new_pam: bool = True, git=None, mined_revision: str | None = None,
             now: datetime | None = None, close: bool = True, closures: list | None = None,
-            writes: dict | None = None) -> Outcome:
+            writes: dict | None = None, expected: dict | None = None) -> Outcome:
     """Plan one action over the committed queue + snapshot + feed state + receipts. START appends ONE
     reservation atomically. RECONCILE verifies the linked work (jr/demand_closure.py) against `snap`,
     which must be the snapshot this run just mined at `mined_revision`; a delivered or rejected
@@ -329,10 +333,14 @@ def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | No
     closure). Every other action leaves both files untouched. `closures`, when given, receives the
     closure's own Outcome the moment both files are durable, before the re-plan: a caller still
     knows of the closure if the re-plan raises, without guessing from file bytes. `writes`, when given,
-    maps each file this call durably wrote to the exact bytes it wrote, the moment they are durable."""
+    maps each file this call durably wrote to the exact bytes it wrote, the moment they are durable.
+    `expected`, when given, maps each pair file to the bytes the caller last left there (None: absent).
+    Every pass — this one and the re-plan after a closure, which expects the closure's own writes —
+    first checks the pair it read against what it expects: a file another writer changed is never
+    planned over, written or owned; the pass defers naming it in `Outcome.foreign`."""
     closer = _Closer(git, mined_revision, now or datetime.now(timezone.utc), closures) if close else None
     return _reserve(Path(demand_dir), snap, gh=gh, today=today, repo_slug=repo_slug, new_pam=new_pam,
-                    closer=closer, writes={} if writes is None else writes)
+                    closer=closer, writes={} if writes is None else writes, expected=expected)
 
 
 def _writer_bytes(doc: dict) -> bytes:
@@ -390,17 +398,34 @@ def _close(demand_dir: Path, snap: dict, plan: rw.Plan, reason: str, state: dict
         closer.closures.append(Outcome(rw.DEFER, "the re-plan after the closure did not finish", changed=True,
                                        queue_changed=True, receipts_changed=closure.receipts_changed,
                                        closed=key, resolution=closure.status))
+    own = {research_queue.QUEUE_NAME: writes[research_queue.QUEUE_NAME],
+           RECEIPTS_NAME: writes[RECEIPTS_NAME] if closure.receipts_changed else state["raw"]}
     following = _reserve(demand_dir, snap, gh=gh, today=today, repo_slug=repo_slug, new_pam=new_pam,
-                         closer=None, writes=writes)          # re-plan ONCE: never a second closure
+                         closer=None, writes=writes, expected=own)   # re-plan ONCE, only over its own bytes
     return dataclasses.replace(following, changed=True, queue_changed=True,
                                receipts_changed=following.receipts_changed or closure.receipts_changed,
                                closed=key, resolution=closure.status)
 
 
+def _foreign(expected: dict | None, read: dict) -> Outcome | None:
+    """A DEFER naming each pair file whose bytes, as this pass read them, are not what the caller
+    expects there; None when every expected file holds its expected bytes."""
+    lost = tuple(n for n in (research_queue.QUEUE_NAME, RECEIPTS_NAME)
+                 if expected is not None and n in expected and read[n] != expected[n])
+    if not lost:
+        return None
+    return Outcome(rw.DEFER, f"{' and '.join(lost)} changed by another writer during the run: "
+                             "preserved, never planned over", foreign=lost)
+
+
 def _reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | None,
-             new_pam: bool, closer: _Closer | None, writes: dict) -> Outcome:
+             new_pam: bool, closer: _Closer | None, writes: dict, expected: dict | None = None) -> Outcome:
     path = Path(demand_dir) / RECEIPTS_NAME
     raw = _read(path)
+    queue_raw, queue = _load_queue(Path(demand_dir))
+    lost = _foreign(expected, {research_queue.QUEUE_NAME: queue_raw, RECEIPTS_NAME: raw})
+    if lost:
+        return lost
     doc = _load_receipts(raw)
     if doc is None:
         return Outcome(rw.DEFER, f"unreadable {RECEIPTS_NAME} or not schema version {RECEIPTS_VERSION}: "
@@ -416,7 +441,6 @@ def _reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | N
     except (ValueError, OSError, pam_leads.FeedError):
         pam_state = None
         pam_error = "PAM state unreadable; no new feed work" if new_pam else ""
-    queue_raw, queue = _load_queue(Path(demand_dir))
     view = intake(queue, snap, receipts=receipts)
     live = [r["branch"] for r in receipts if isinstance(r, dict) and isinstance(r.get("branch"), str)
             and r.get("state") not in rw.TERMINAL_STATES]

@@ -21,7 +21,8 @@ it once a day and lands the snapshot through the tick's own PR path (jr/publish.
    is closed as superseded; queue-bearing or unreadable PRs wait for review.
    The research queue and the receipts join only as this run's own writes: each file is staged only
    while it still holds the exact bytes the miner or the broker wrote there. They land as a pair: when
-   either half lost ownership (a foreign edit, one a broker CAS refused or one after a closure), or
+   either half lost ownership (a foreign edit, one a broker CAS refused, one after a closure or one
+   the broker found before any of its passes — the re-plan after a closure included), or
    the pair as it would land records a closure on one side only, neither is staged, the foreign
    bytes stay on disk and the work is reported not landed.
 5. after mining, jr/demand_broker.py reserves at most ONE demand work item
@@ -432,7 +433,9 @@ def _publication(d: Decision) -> tuple[list[str], str, str]:
 
 def _note_work(d: Decision, work: demand_broker.Outcome) -> None:
     """Land what the broker's explicit result says it wrote; never inferred from file bytes, which a
-    concurrent writer may have changed."""
+    concurrent writer may have changed. A pair file the broker found changed by another writer is
+    never this run's own again."""
+    d.foreign.update(work.foreign)
     if work.closed:
         d.work_closed = True
         d.closed.append(work.closed)
@@ -454,11 +457,13 @@ def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str 
     today = now.astimezone(timezone.utc).date().isoformat()
     closures: list = []
     _note_foreign(d, wt_path / DEMAND_RELDIR)          # before the broker reads the pair
+    expected = None if d.base is None else {n: d.owned.get(n, d.base.get(n)) for n in PAIR}
     try:
         work = demand_broker.reserve(wt_path / DEMAND_RELDIR, d.snap, gh=gh, today=today,
                                      repo_slug=repo_slug, new_pam=new_pam, git=git,
                                      mined_revision=mined_revision, now=now, close=close, closures=closures,
-                                     writes=d.owned)    # the exact bytes of each durable broker write
+                                     writes=d.owned,    # the exact bytes of each durable broker write
+                                     expected=expected)     # ownership history, checked before every pass
     except RunAbort:
         raise                           # host timeout is fatal, not an ordinary source failure
     except Exception as e:  # noqa: BLE001
