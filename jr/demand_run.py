@@ -19,6 +19,9 @@ it once a day and lands the snapshot through the tick's own PR path (jr/publish.
    on a `jr/demand-…` branch — outside the tick's `jr/tick-*` triage — with the same protection
    and earned-trust auto-merge gate as a tick. Only an older proven snapshot-only demand PR
    is closed as superseded; queue-bearing or unreadable PRs wait for review.
+5. after mining, jr/demand_broker.py reserves at most ONE demand work item
+   (SPEC-demand-work-consumer.md) in `docs/demand/work-receipts.json`, which joins the
+   publication only when it changed — and a new reservation lands even on a no-op demand day.
 
 An empty pull (zero items) is refused as a steer: it is a Composio/GSC outage far more often than
 zero demand, and landing it would erase the steer — only a changed research queue may land then. `git`, `gh` and the miner are injectable; tests use fakes.
@@ -37,6 +40,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import demand_broker  # noqa: E402
 import demand_signal  # noqa: E402
 import publish  # noqa: E402
 import research_queue  # noqa: E402
@@ -65,8 +69,12 @@ class RunResult:
     reason: str = ""
     aborted: str = ""
     superseded: list = field(default_factory=list)
+    work: str = ""            # the demand work broker's decision (jr/demand_broker.py)
 
     def line(self) -> str:
+        return self._head() + (f" · work {self.work}" if self.work else "")
+
+    def _head(self) -> str:
         if self.aborted:
             return f"jr-demand: ABORTED — {self.aborted}"
         if self.published:
@@ -87,6 +95,8 @@ class Decision:
     research: str | None = None
     queue_only: bool = False      # zero demand items, a changed queue: land the queue alone
     queue_changed: bool = False
+    receipts_changed: bool = False   # a new work reservation: docs/demand/work-receipts.json
+    work: str = ""                   # the broker's report line for that reservation
 
 
 # --- the no-op rule ----------------------------------------------------------------------------------
@@ -323,14 +333,33 @@ def _mine_and_decide(wt: publish.Worktree, miner, python: str, telegram: bool) -
 def _publication(d: Decision, wt_path: Path) -> tuple[list[str], str, str]:
     """(paths, subject, body) of the PR a landing decision opens."""
     snap, queue_path = d.snap, f"{DEMAND_RELDIR}/{research_queue.QUEUE_NAME}"
+    receipts = [f"{DEMAND_RELDIR}/{demand_broker.RECEIPTS_NAME}"] if d.receipts_changed else []
+    note = (f"\n\nWork reserved: {d.work} in `{receipts[0]}` (SPEC-demand-work-consumer.md) — "
+            "bookkeeping only, no work PR." if receipts else "")
     if d.queue_only:
-        return ([queue_path], f"chore(jr): research queue {snap['date']} — demand snapshot not landed (0 items)",
-                _queue_only_body(snap, d.why, d.research))
+        return ([queue_path, *receipts],
+                f"chore(jr): research queue {snap['date']} — demand snapshot not landed (0 items)",
+                _queue_only_body(snap, d.why, d.research) + note)
     paths = [f"{DEMAND_RELDIR}/{snap['date']}.json", f"{DEMAND_RELDIR}/{UNRESOLVED_NAME}"]
     if (wt_path / queue_path).exists():
         paths.append(queue_path)
-    return (paths, f"chore(jr): demand snapshot {snap['date']} — {len(snap['items'])} item(s)",
-            _pr_body(snap, d.why, d.research))
+    return (paths + receipts, f"chore(jr): demand snapshot {snap['date']} — {len(snap['items'])} item(s)",
+            _pr_body(snap, d.why, d.research) + note)
+
+
+def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str | None) -> str:
+    """Bookkeeping after mining: at most one work reservation. A broker failure is reported on
+    the run line, never allowed to block the demand snapshot itself."""
+    today = now.astimezone(timezone.utc).date().isoformat()
+    try:
+        work = demand_broker.reserve(wt_path / DEMAND_RELDIR, d.snap, gh=gh, today=today, repo_slug=repo_slug)
+    except Exception as e:  # noqa: BLE001
+        return f"defer: broker error {type(e).__name__}: {e}"
+    if work.changed:
+        d.receipts_changed, d.work = True, work.line()
+        if not d.land:
+            d.land, d.why = True, f"work reserved ({d.why})"
+    return work.line()
 
 
 def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
@@ -345,6 +374,7 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
             raise RunAbort("fresh worktree is not clean")
         decision = _mine_and_decide(wt, miner, python, telegram)
         res.date = decision.snap["date"]
+        res.work = _reserve_work(wt.path, decision, gh, now, repo_slug)
         if not decision.land:
             res.reason = decision.why
             return res
