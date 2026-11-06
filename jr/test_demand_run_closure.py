@@ -266,3 +266,133 @@ def test_a_miner_queue_rewrite_overwritten_by_a_foreign_writer_is_not_staged(tmp
     assert res.published is True
     assert QUEUE_PATH not in staged(git) and "docs/demand/2026-11-06.json" in staged(git)
     assert (root / QUEUE_PATH).read_bytes() == FOREIGN_QUEUE
+
+
+# --- ownership after a legitimate closure: the PAM refresh / publication boundary ---------------
+
+FOREIGN_RECEIPTS = b'{"version": 1, "receipts": [], "edited_by": "a concurrent triage"}\n'
+STATE_PATH = pam_run.STATE_PATH
+
+
+def pam_writing(root, path, data, status="unchanged"):
+    """A PAM refresh during which a foreign writer replaces `path` — after this run's broker closed
+    the linked work and before the runner publishes."""
+    def refresh(wt_path, *, now):
+        (root / path).write_bytes(data)
+        return pam_run.RefreshResult(status, leads=19, potential_gaps=8)
+    return refresh
+
+
+def pr_body(gh):
+    create = next(c for c in gh.calls if c[:2] == ("pr", "create"))
+    return create[create.index("--body") + 1]
+
+
+def test_a_foreign_queue_after_a_closure_never_lands_the_closure_pair(tmp_path):
+    root, git, gh = tree(tmp_path), git_ok(), gh_all()
+    res = run(root, git=git, gh=gh, pam_refresh=pam_writing(root, QUEUE_PATH, FOREIGN_QUEUE))
+    assert res.published is True                  # the first snapshot still lands on its own
+    assert "docs/demand/2026-11-06.json" in staged(git)
+    assert QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
+    assert (root / QUEUE_PATH).read_bytes() == FOREIGN_QUEUE              # foreign bytes preserved
+    assert f"closed {KEY}" not in res.work and "not landed" in res.work
+    assert "Work closed" not in pr_body(gh)
+
+
+def test_a_foreign_queue_after_a_closure_on_an_unchanged_day_publishes_nothing(tmp_path):
+    root, git, gh = tree(tmp_path), git_ok(), gh_all()
+    (root / "docs/demand/2026-11-05.json").write_text(json.dumps({**SNAP, "date": "2026-11-05"}))
+    res = run(root, git=git, gh=gh, pam_refresh=pam_writing(root, QUEUE_PATH, FOREIGN_QUEUE))
+    assert res.published is False and "not landed" in res.line()        # the closure was the only reason
+    assert not [c for c in gh.calls if c[:2] == ("pr", "create")] and staged(git) == []
+    assert (root / QUEUE_PATH).read_bytes() == FOREIGN_QUEUE
+
+
+def test_a_foreign_receipts_edit_after_a_closure_never_lands_the_closure_pair(tmp_path):
+    root, git, gh = tree(tmp_path), git_ok(), gh_all()
+    res = run(root, git=git, gh=gh,
+              pam_refresh=pam_writing(root, RECEIPTS_PATH, FOREIGN_RECEIPTS, status="deferred"))
+    assert res.published is True and "docs/demand/2026-11-06.json" in staged(git)
+    assert QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
+    assert (root / RECEIPTS_PATH).read_bytes() == FOREIGN_RECEIPTS        # foreign bytes preserved
+    assert f"closed {KEY}" not in res.work and "not landed" in res.work
+    assert "Work closed" not in pr_body(gh)
+
+
+def test_a_foreign_receipts_edit_before_the_second_pass_never_lands_a_one_sided_closure(tmp_path):
+    """The second pass reads the foreign receipts (the delivered receipt gone) and appends its own
+    reservation: the receipts are this run's bytes again, but the closed candidate lost its receipt."""
+    root, git, gh = tree(tmp_path), git_ok(), gh_all()
+    res = run(root, git=git, gh=gh, miner=snapshot_miner(without_unresolved(SNAP), queue=json.loads(QUEUE_RAW)),
+              pam_refresh=pam_writing(root, RECEIPTS_PATH, FOREIGN_RECEIPTS))
+    assert QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
+    assert f"closed {KEY}" not in res.work
+    assert not res.published or "Work closed" not in pr_body(gh)
+
+
+def noop_then_real(after=None):
+    """demand_broker.reserve, but the first pass finds nothing (NOOP) and the PAM pass closes; `after`
+    runs once the real broker returned — a foreign writer at the publication boundary."""
+    real, calls = demand_run.demand_broker.reserve, []
+
+    def reserve(demand_dir, *args, **kw):
+        calls.append(kw)
+        if len(calls) == 1:
+            return demand_run.demand_broker.Outcome(rw.NOOP, "nothing eligible")
+        out = real(demand_dir, *args, **kw)
+        if after:
+            after(Path(demand_dir))
+        return out
+    return reserve
+
+
+def pam_updated(root, *, now):
+    return pam_run.RefreshResult("updated", changed_paths=(STATE_PATH,), leads=19, potential_gaps=8)
+
+
+def pam_only_day(tmp_path):
+    root = tree(tmp_path)
+    (root / "docs/demand/2026-11-05.json").write_text(json.dumps({**SNAP, "date": "2026-11-05"}))
+    return root
+
+
+def test_the_pam_only_publication_never_lands_a_foreign_queue_as_the_closure(tmp_path, monkeypatch):
+    root, git, gh = pam_only_day(tmp_path), git_ok(), gh_all()
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", noop_then_real(
+        lambda d: (d / "research-queue.json").write_bytes(FOREIGN_QUEUE)))
+    res = run(root, git=git, gh=gh, pam_refresh=pam_updated)
+    assert res.published is True and STATE_PATH in staged(git)           # the PAM metadata still lands
+    assert QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
+    assert (root / QUEUE_PATH).read_bytes() == FOREIGN_QUEUE
+    assert f"closed {KEY}" not in res.work and "not landed" in res.work
+    assert "Work closed" not in pr_body(gh)
+
+
+def test_the_pam_only_publication_never_lands_foreign_receipts_as_the_closure(tmp_path, monkeypatch):
+    root, git, gh = pam_only_day(tmp_path), git_ok(), gh_all()
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", noop_then_real(
+        lambda d: (d / "work-receipts.json").write_bytes(FOREIGN_RECEIPTS)))
+    res = run(root, git=git, gh=gh, pam_refresh=pam_updated)
+    assert res.published is True and STATE_PATH in staged(git)
+    assert QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
+    assert (root / RECEIPTS_PATH).read_bytes() == FOREIGN_RECEIPTS
+
+
+def test_the_pam_only_publication_still_lands_an_owned_closure_pair(tmp_path, monkeypatch):
+    root, git, gh = pam_only_day(tmp_path), git_ok(), gh_all()
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", noop_then_real())
+    res = run(root, git=git, gh=gh, pam_refresh=pam_updated)
+    assert res.published is True and res.aborted == ""
+    assert {STATE_PATH, QUEUE_PATH, RECEIPTS_PATH} <= set(staged(git))
+    assert f"closed {KEY} (delivered)" in res.work and "Work closed" in pr_body(gh)
+
+
+def test_an_owned_closure_pair_still_lands_after_an_untouched_pam_refresh(tmp_path):
+    root, git, gh = tree(tmp_path), git_ok(), gh_all()
+    res = run(root, git=git, gh=gh, pam_refresh=pam_unchanged)
+    assert res.published is True and res.aborted == ""
+    assert QUEUE_PATH in staged(git) and RECEIPTS_PATH in staged(git)
+    queue = json.loads((root / QUEUE_PATH).read_text(encoding="utf-8"))
+    assert queue["candidates"]["fnk0104s"]["status"] == "closed"
+    assert receipts(root)[0]["key"] == KEY and receipts(root)[0]["state"] == "delivered"
+    assert f"closed {KEY} (delivered)" in res.work and "Work closed" in pr_body(gh)
