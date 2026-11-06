@@ -1,0 +1,60 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-11-06",
+ "notes": [
+  "latest release v1.0.0 has no binaries; read v0.1.0-beta instead"
+ ],
+ "ref": "main",
+ "repo": "acidvegas/acid-drop",
+ "resolved": {
+  "boards": [
+   "lilygo-t-deck"
+  ],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "beta",
+   "esp32-s3-devkitc-1"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "acid-drop_v0.1.0_beta.bin",
+    "release": "v0.1.0-beta"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "beta",
+   "url": "https://github.com/acidvegas/acid-drop/releases/download/v0.1.0-beta/acid-drop_v0.1.0_beta.bin"
+  },
+  {
+   "extra": {
+    "env": "t-deck-plus",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 15,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/acidvegas/acid-drop/blob/main/platformio.ini#L15"
+  },
+  {
+   "extra": {
+    "env": "t-deck",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 15,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/acidvegas/acid-drop/blob/main/platformio.ini#L15"
+  }
+ ]
+}
