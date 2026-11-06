@@ -1,27 +1,6 @@
 {
- "count": 2,
+ "count": 1,
  "items": [
-  {
-   "term": "fnk0104s",
-   "raw_terms": [
-    "fnk0104s"
-   ],
-   "source": [
-    "gsc_query"
-   ],
-   "impressions": 22,
-   "clicks": 1,
-   "ctr": 0.0455,
-   "position": 8.2,
-   "events": null,
-   "zero_result": null,
-   "weight": 17.22,
-   "resolved": null,
-   "gap": "UNRESOLVED",
-   "landing_page": "https://esp-atlas.com/parts/esp32-s3",
-   "first_seen": "2026-11-03",
-   "last_seen": "2026-11-06"
-  },
   {
    "term": "keeloq_mfcodes",
    "raw_terms": [
