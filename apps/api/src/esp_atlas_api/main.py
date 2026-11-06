@@ -162,7 +162,7 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
 
     limiter.exempt(health)  # uptime/monitoring checks must never 429
 
-    @app.get("/status", response_model=StatusResponse)
+    @app.get("/status", response_model=StatusResponse, response_model_exclude_unset=True)
     def status(db_path=Depends(get_db_path)):
         """Public live health snapshot (INTERFACE-SPEC.md `GET /status`).
 

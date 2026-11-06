@@ -6,12 +6,14 @@ probe is independently wrapped by _safe() so one failing probe reports as a
 down/warn component instead of raising and crashing the whole response.
 """
 import os
+import re
 from datetime import datetime, timezone
 
 from esp_atlas_core import db as dbmod
 from esp_atlas_core.frontmatter import iter_data_files, parse_frontmatter
 
 _ENTITY_LABELS = ("soc", "module", "board", "brand", "firmware", "recipe")
+_FULL_SHA_RE = re.compile(r"[0-9a-fA-F]{40}")
 
 
 def _safe(probe):
@@ -90,7 +92,14 @@ def _component_deploy():
             parts.append(env)
         return {"status": "ok", "detail": " · ".join(parts)}
 
-    return {"name": "Deploy", **_safe(probe)}
+    return {"name": "Deploy", **_safe(probe), "revision": _deployed_revision()}
+
+
+def _deployed_revision():
+    """The full deployed commit SHA for machine readers (jr/demand_closure.py), lowercase; None
+    when VERCEL_GIT_COMMIT_SHA is absent or not exactly 40 hex digits -- never a guess."""
+    sha = os.environ.get("VERCEL_GIT_COMMIT_SHA") or ""
+    return sha.lower() if _FULL_SHA_RE.fullmatch(sha) else None
 
 
 def compute_status(db_path=None, data_dir=None):

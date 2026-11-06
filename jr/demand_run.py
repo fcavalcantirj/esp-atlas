@@ -47,6 +47,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import demand_broker  # noqa: E402
+import demand_closure  # noqa: E402
 import demand_signal  # noqa: E402
 import publish  # noqa: E402
 import pam_run  # noqa: E402
@@ -449,7 +450,7 @@ def _note_work(d: Decision, work: demand_broker.Outcome) -> None:
 
 def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str | None,
                   *, new_pam: bool = False, git=None, mined_revision: str | None = None,
-                  close: bool = True) -> str:
+                  close: bool = True, fetch=None) -> str:
     """Bookkeeping after a SUCCESSFUL mine: at most one work reservation, after closing linked work
     the broker verified against this run's snapshot mined at `mined_revision`. A broker failure is
     reported on the run line, never allowed to block the demand snapshot itself; a closure the
@@ -462,6 +463,7 @@ def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str 
         work = demand_broker.reserve(wt_path / DEMAND_RELDIR, d.snap, gh=gh, today=today,
                                      repo_slug=repo_slug, new_pam=new_pam, git=git,
                                      mined_revision=mined_revision, now=now, close=close, closures=closures,
+                                     fetch=fetch,       # catalog_search: the live public search getter
                                      writes=d.owned,    # the exact bytes of each durable broker write
                                      expected=expected)     # ownership history, checked before every pass
     except RunAbort:
@@ -517,7 +519,7 @@ def _refresh_pam(wt_path: Path, d: Decision, res: RunResult, refresh, now: datet
 def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         python: str = DEFAULT_DEMAND_PYTHON, telegram: bool = False, now: datetime | None = None,
         root: Path | None = None, repo_slug: str | None = None, auto_merge: bool = True,
-        pam_refresh=None) -> RunResult:
+        pam_refresh=None, fetch=demand_closure.default_fetch) -> RunResult:
     now = now or datetime.now(timezone.utc)
     res = RunResult()
     wt = branch = None
@@ -547,7 +549,8 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
                                 False, "search refresh unavailable", pam_only=True)
         res.date = decision.snap["date"]
         decision.base = {research_queue.QUEUE_NAME: queue_before, demand_broker.RECEIPTS_NAME: main_receipts}
-        closer = {"git": git, "mined_revision": wt.base_sha}     # the catalog revision this run mined
+        closer = {"git": git, "mined_revision": wt.base_sha,      # the catalog revision this run mined
+                  "fetch": fetch}                                # the live getter catalog_search reads through
         receipts_before = _read_bytes(demand_dir / demand_broker.RECEIPTS_NAME)
         if not res.source_error:
             res.work = _reserve_work(wt.path, decision, gh, now, repo_slug, **closer)

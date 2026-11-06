@@ -108,7 +108,7 @@ query ─▶ structured filter (radio/band/protocol/form) + FTS (name/prose/note
       {"name": "API", "status": "ok | warn | down", "detail": "..."},
       {"name": "Data", "status": "ok | warn | down", "detail": "..."},
       {"name": "Jr / catalog", "status": "ok | warn | down", "detail": "..."},
-      {"name": "Deploy", "status": "ok | warn | down", "detail": "..."}
+      {"name": "Deploy", "status": "ok | warn | down", "detail": "...", "revision": "<40-hex sha> | null"}
     ]
   }
   ```
@@ -131,6 +131,11 @@ query ─▶ structured filter (radio/band/protocol/form) + FTS (name/prose/note
     when `VERCEL_GIT_COMMIT_SHA` is set, else `local`. Vercel's system env vars
     (per its own docs) carry no deployment-build timestamp, so this reports
     commit + branch + environment rather than inventing a build time. Always `ok`.
+    The Deploy component (only it) also carries a machine field `revision`: the
+    full deployed commit SHA from `VERCEL_GIT_COMMIT_SHA`, lowercased, when that
+    is exactly 40 hex digits; `null` when the variable is missing or anything
+    else. `detail` stays the human text above, unchanged. Jr's demand closure
+    reads `revision` to prove which deployment a live catalog search hit.
   - **Overall status**: `down` iff the API component is `down`; else `degraded`
     if any component (including Data/Jr/Deploy) is `warn` or `down`; else
     `operational`.

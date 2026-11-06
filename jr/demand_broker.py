@@ -319,12 +319,13 @@ class _Closer:
     mined_revision: str | None
     now: datetime
     closures: list | None = None
+    fetch: object = None              # the live getter a catalog_search closure reads through
 
 
 def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | None = None,
             new_pam: bool = True, git=None, mined_revision: str | None = None,
             now: datetime | None = None, close: bool = True, closures: list | None = None,
-            writes: dict | None = None, expected: dict | None = None) -> Outcome:
+            writes: dict | None = None, expected: dict | None = None, fetch=None) -> Outcome:
     """Plan one action over the committed queue + snapshot + feed state + receipts. START appends ONE
     reservation atomically. RECONCILE verifies the linked work (jr/demand_closure.py) against `snap`,
     which must be the snapshot this run just mined at `mined_revision`; a delivered or rejected
@@ -337,8 +338,10 @@ def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | No
     `expected`, when given, maps each pair file to the bytes the caller last left there (None: absent).
     Every pass — this one and the re-plan after a closure, which expects the closure's own writes —
     first checks the pair it read against what it expects: a file another writer changed is never
-    planned over, written or owned; the pass defers naming it in `Outcome.foreign`."""
-    closer = _Closer(git, mined_revision, now or datetime.now(timezone.utc), closures) if close else None
+    planned over, written or owned; the pass defers naming it in `Outcome.foreign`. `fetch` is the
+    live getter a catalog_search closure reads the public site through (demand_closure.default_fetch
+    in production); without one such work stays pending."""
+    closer = _Closer(git, mined_revision, now or datetime.now(timezone.utc), closures, fetch) if close else None
     return _reserve(Path(demand_dir), snap, gh=gh, today=today, repo_slug=repo_slug, new_pam=new_pam,
                     closer=closer, writes={} if writes is None else writes, expected=expected)
 
@@ -397,7 +400,8 @@ def _close(demand_dir: Path, snap: dict, plan: rw.Plan, reason: str, state: dict
     if len(state["remote"].prs.get(plan.work.branch, [])) > 1:      # START's duplicate check, before any verdict
         return Outcome(rw.DEFER, f"duplicate remote PRs on {plan.work.branch}: no closure", key)
     closure = demand_closure.resolve(state["queue"], state["receipts"], key, snap, gh=gh, git=closer.git,
-                                     mined_revision=closer.mined_revision, today=today, now=closer.now)
+                                     mined_revision=closer.mined_revision, today=today, now=closer.now,
+                                     fetch=closer.fetch)
     if closure.status == demand_closure.PENDING:
         return Outcome(rw.RECONCILE, f"{reason}; {closure.reason}", key)
     problem = _write_closure(demand_dir, closure, state["doc"], state["queue_raw"], state["raw"], writes)

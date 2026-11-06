@@ -203,14 +203,28 @@ def test_an_unmerged_pr_is_never_searched(tmp_path):
     assert fetch.calls == []
 
 
-def test_a_getter_failure_of_any_kind_stays_pending(tmp_path):
+@pytest.mark.parametrize("broken, why", [(ValueError("bad url"), "bad url"), (None, "failed"),
+                                         ((200,), "failed"), ("not a pair", "failed")])
+def test_a_getter_failure_of_any_kind_stays_pending(tmp_path, broken, why):
     d = catalog_search_dir(tmp_path)
     before = (d / QUEUE).read_bytes()
 
-    def broken(url):
-        raise ValueError("bad url")
-    out = live_reserve(d, broken)
-    assert_pending(d, out, before, "bad url")
+    def getter(url):
+        if isinstance(broken, BaseException):
+            raise broken
+        return broken
+    out = live_reserve(d, getter)
+    assert_pending(d, out, before, why)
+
+
+def test_an_unreadable_term_is_never_searched():
+    pr = {"url": PR_URL, "state": "merged", "merged": True, "merge_sha": MERGE_SHA,
+          "merged_at": "2026-11-06T09:19:44Z"}
+    for term in (None, "", 42):
+        candidate = {"term": term, "validation": {"verification_kind": "catalog_search"}}
+        fetch = Getter()
+        receipt, why = demand_closure._live_search_receipt(candidate, pr, fetch=fetch, git=git_for(), now=NEXT_NOW)
+        assert receipt is None and "term" in why and fetch.calls == []
 
 
 def test_demand_resolution_work_never_reads_the_live_site(tmp_path):
@@ -247,7 +261,7 @@ def test_default_fetch_uses_urllib_with_a_short_timeout(monkeypatch):
                     headers={k.lower(): v for k, v in request.header_items()})
         return _Response(200, b'{"ok": true}')
 
-    monkeypatch.setattr(demand_closure.urllib.request, "urlopen", urlopen)
+    monkeypatch.setattr(demand_closure, "_urlopen", urlopen)
     assert demand_closure.default_fetch(SEARCH_URL) == (200, b'{"ok": true}')
     assert seen["url"] == SEARCH_URL and seen["method"] == "GET"
     assert 0 < seen["timeout"] <= 15
@@ -258,8 +272,13 @@ def test_default_fetch_reports_an_http_error_status_instead_of_raising(monkeypat
     def urlopen(request, timeout):
         raise urllib.error.HTTPError(request.full_url, 503, "Service Unavailable", {}, None)
 
-    monkeypatch.setattr(demand_closure.urllib.request, "urlopen", urlopen)
+    monkeypatch.setattr(demand_closure, "_urlopen", urlopen)
     assert demand_closure.default_fetch(STATUS_URL) == (503, b"")
+
+
+def test_jr_tests_never_reach_the_live_site():
+    with pytest.raises(RuntimeError, match="live network"):
+        demand_closure.default_fetch(STATUS_URL)            # conftest keeps the real opener offline
 
 
 def test_search_urls_encode_the_term():
