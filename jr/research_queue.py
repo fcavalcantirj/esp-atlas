@@ -223,10 +223,10 @@ def _model_matches(term_c: str, catalog: list[dict]) -> list[dict]:
 
 def model_board(term: str | None, catalog: list[dict]) -> tuple[str, str] | None:
     """(board id, model key) when the term names exactly ONE catalogued board by its model
-    number — the same `_model_matches` rule, tried on the compact term and on each of its tokens
-    ('fnk0104s datasheet'). A key that names a non-board record, or a term naming two boards,
-    is None."""
-    keys = dict.fromkeys(k for k in (compact(term), *_tokens(term)) if _is_model_key(k))
+    number — the same `_model_matches` rule, tried on each token of the term ('fnk0104s
+    datasheet'), never on words joined together ('feather s3' is not 'feathers3'). A key that
+    names a non-board record, or a term naming two boards, is None."""
+    keys = dict.fromkeys(k for k in _tokens(term) if _is_model_key(k))
     boards: dict[str, str] = {}
     for key in keys:
         for m in _model_matches(key, catalog):

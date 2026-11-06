@@ -154,22 +154,23 @@ def _chip_part_candidate(term: str) -> str | None:
 def resolve_entity(term: str, firmware_ids: set[str], catalog: list[dict] | None = None) -> dict:
     """Term -> entity candidates, PARSING ONLY via the scorer's existing maps (§4.1): no new
     intelligence, no LLM. `board` via `device_map.device_from_text` (only ever a catalogued
-    board id, by construction); failing that, via the research queue's vendor-prefix model-key
-    rule against `catalog` (`research_queue.model_board`: a model number like 'fnk0104s' held by
-    exactly one board record), with that key kept as `board_model`. `chip` from the board's
-    ground-truth soc if a board matched,
-    else any specific chip family named directly in the term. `firmware_token` via substring
-    match against catalogued firmware ids. `part` via `_chip_part_candidate` — a SHAPE-matched
+    board id, by construction); failing that, and only for a term with no `firmware_token` and
+    no `part` (their behaviour stays exactly as without a catalog), via the research queue's
+    vendor-prefix model-key rule against `catalog` (`research_queue.model_board`: a model number
+    like 'fnk0104s' held by exactly one board record), with that key kept as `board_model`.
+    `chip` from the board's ground-truth soc if a board matched, else any specific chip family
+    named directly in the term. `firmware_token` via substring match against catalogued
+    firmware ids. `part` via `_chip_part_candidate` — a SHAPE-matched
     esp32-<variant> chip/part id (§4's part/chip fix; existence checked later by classify_gap
     against the live catalog, never here). `capability` via `capability_map`'s controlled
     vocabulary. Any of these may be None/[] — the caller decides what that means (classify_gap)."""
+    firmware_token = _firmware_token_match(_words(term), firmware_ids)
+    part = _chip_part_candidate(term)
     board, board_model = device_from_text(term), None
-    if not board and catalog:
+    if not (board or firmware_token or part) and catalog:
         board, board_model = research_queue.model_board(term, catalog) or (None, None)
     chip = tools.board_soc(board) if board else _chip_from_term(term)
-    firmware_token = _firmware_token_match(_words(term), firmware_ids)
     capability = capabilities_from_text(term)
-    part = _chip_part_candidate(term)
     return {"board": board, "board_model": board_model, "chip": chip, "firmware_token": firmware_token,
             "capability": capability, "part": part}
 

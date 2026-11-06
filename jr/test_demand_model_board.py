@@ -38,7 +38,6 @@ def catalog():
     ("fnk0104a", "freenove-fnk0104a"),
     ("fnk0104b", "freenove-fnk0104b"),
     ("fnk0104s datasheet", "freenove-fnk0104s"),
-    ("fnk-0104s", "freenove-fnk0104s"),
 ])
 def test_model_board_names_exactly_its_own_sku(catalog, term, board):
     assert rq.model_board(term, catalog) == (board, "fnk0104" + board[-1])
@@ -50,6 +49,7 @@ def test_model_board_names_exactly_its_own_sku(catalog, term, board):
     "esp32", "s3", "esp32 s3",  # bare chips
     "esp32s3",             # a key two real records share (xiao-esp32s3, xiao-esp32s3-sense)
     "fnk0104a fnk0104b",   # names two boards — not exactly one
+    "feather s3", "pro s3", "tiny s3",  # words never join into a key (um-feathers3, um-pros3, um-tinys3)
     "esp32 tutorial pdf",
     "",
 ])
@@ -103,6 +103,22 @@ def test_resolve_entity_without_catalog_is_unchanged():
     r = demand.resolve_entity("fnk0104s", FIRMWARE_IDS)
     assert r["board"] is None
     assert r["board_model"] is None
+
+
+@pytest.mark.parametrize("term", ["bruce fnk0104s", "launcher feathers3", "esp32-s3 fnk0104s"])
+def test_model_board_never_touches_a_firmware_or_part_term(catalog, term):
+    """firmware_token / part behaviour is byte-identical to the catalog-less resolver."""
+    assert demand.resolve_entity(term, FIRMWARE_IDS, catalog) == demand.resolve_entity(term, FIRMWARE_IDS)
+
+
+@pytest.mark.parametrize("term", ["bruce fnk0104s", "launcher feathers3", "esp32-s3 fnk0104s"])
+def test_firmware_or_part_terms_keep_their_gap_and_dedup_end_to_end(catalog, term):
+    def build(cat):
+        (it,) = demand.build_demand_items([_row(term, impressions=500)], firmware_ids=FIRMWARE_IDS,
+                                          recipe_pairs=RECIPE_PAIRS, part_ids=PART_IDS,
+                                          today="2026-11-06", catalog=cat)
+        return it
+    assert build(catalog) == build(None)
 
 
 # ═══════════════════════════ demand.classify_gap — the board-model anchor ═══════════════════════════
