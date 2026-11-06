@@ -138,17 +138,28 @@ def _when(ts) -> datetime | None:
 
 
 def latest_raises(prs: list[dict]) -> dict:
-    """{identity: (target, pr, created)} — the MOST RECENT PR that raised each target."""
+    """{identity: (target, pr, created)} — the MOST RECENT PR that raised each target. Identity is
+    GitHub's numeric repo_id, stable across renames; the name only when a raise carries none."""
     out: dict = {}
     for pr in prs:
         created = _when(pr.get("createdAt"))
         if created is None:
             continue
         for t in parse_targets(pr.get("body")):
-            key = (t.get("repo") or t.get("id") or "").lower()
+            key = _identity(t)
             if key and (key not in out or created > out[key][2]):
                 out[key] = (t, pr, created)
     return out
+
+
+def _identity(target: dict):
+    rid = target.get("repo_id")
+    if rid is not None:
+        try:
+            return ("repo_id", int(rid))
+        except (TypeError, ValueError):
+            pass
+    return (target.get("repo") or target.get("id") or "").lower()
 
 
 def _newer_decision(rec: dict | None, pr_ref: str, created: datetime) -> bool:
@@ -175,7 +186,8 @@ def reconcile(gh, ledger_path, now: datetime) -> list[str] | None:
         led = memory.load(ledger_path)
         repo, rid = target.get("repo") or target.get("id"), target.get("repo_id")
         rec = memory.lookup(led, firmware_id=target.get("id"), repo=repo, repo_id=rid)
-        fid = target.get("id") or (rec or {}).get("id")
+        fid = memory.canonical_id(led, target.get("id") or (rec or {}).get("id"), rid)
+        rec = led["by_id"].get(fid)                      # the repo_id's record, never a shadow of it
         pr_ref = f"#{pr.get('number')}"
         if not fid or _newer_decision(rec, pr_ref, created):
             continue
@@ -184,7 +196,7 @@ def reconcile(gh, ledger_path, now: datetime) -> list[str] | None:
         prior = (rec or {}).get("review") or {}
         rev = target.get("evidence_rev") or (prior.get("evidence_rev") if prior.get("pr_ref") == pr_ref else None)
         ev = target.get("evidence") or (prior.get("evidence") if prior.get("pr_ref") == pr_ref else None)
-        memory.record_review_decision(fid, repo, reason, repo_id=rid, evidence=ev,
+        memory.record_review_decision(target.get("id") or fid, repo, reason, repo_id=rid, evidence=ev,
                                       evidence_rev=rev, pr_ref=pr_ref, outcome=outcome, raised_at=created,
                                       path=ledger_path, now=now)
         after = memory.lookup(memory.load(ledger_path), firmware_id=fid, repo=repo, repo_id=rid)
