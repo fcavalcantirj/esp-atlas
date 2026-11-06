@@ -282,22 +282,26 @@ def _candidate_for(view: dict, key: str) -> dict:
 
 @dataclass(frozen=True)
 class _Closer:
-    """What a RECONCILE closure observes with: this run's miner revision, git and clock."""
+    """What a RECONCILE closure observes with: this run's miner revision, git and clock; and the
+    caller's list that receives the explicit closure result once both files are durable."""
     git: object
     mined_revision: str | None
     now: datetime
+    closures: list | None = None
 
 
 def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | None = None,
             new_pam: bool = True, git=None, mined_revision: str | None = None,
-            now: datetime | None = None, close: bool = True) -> Outcome:
+            now: datetime | None = None, close: bool = True, closures: list | None = None) -> Outcome:
     """Plan one action over the committed queue + snapshot + feed state + receipts. START appends ONE
     reservation atomically. RECONCILE verifies the linked work (jr/demand_closure.py) against `snap`,
     which must be the snapshot this run just mined at `mined_revision`; a delivered or rejected
     verdict closes the candidate in both files, then the broker re-plans ONCE so the next eligible
     candidate can START under every gate. `close=False` only reconciles (a run's later pass after a
-    closure). Every other action leaves both files untouched."""
-    closer = _Closer(git, mined_revision, now or datetime.now(timezone.utc)) if close else None
+    closure). Every other action leaves both files untouched. `closures`, when given, receives the
+    closure's own Outcome the moment both files are durable, before the re-plan: a caller still
+    knows of the closure if the re-plan raises, without guessing from file bytes."""
+    closer = _Closer(git, mined_revision, now or datetime.now(timezone.utc), closures) if close else None
     return _reserve(Path(demand_dir), snap, gh=gh, today=today, repo_slug=repo_slug, new_pam=new_pam,
                     closer=closer)
 
@@ -348,7 +352,11 @@ def _close(demand_dir: Path, snap: dict, plan: rw.Plan, reason: str, state: dict
         return Outcome(rw.RECONCILE, f"{reason}; {closure.reason}", key)
     problem = _write_closure(demand_dir, closure, state["doc"], state["queue_raw"], state["raw"])
     if problem:
-        return Outcome(rw.DEFER, problem, key)       # demand_run lands whatever the bytes say changed
+        return Outcome(rw.DEFER, problem, key)       # no closure: demand_run lands nothing for it
+    if closer.closures is not None:
+        closer.closures.append(Outcome(rw.DEFER, "the re-plan after the closure did not finish", changed=True,
+                                       queue_changed=True, receipts_changed=closure.receipts_changed,
+                                       closed=key, resolution=closure.status))
     following = _reserve(demand_dir, snap, gh=gh, today=today, repo_slug=repo_slug, new_pam=new_pam,
                          closer=None)                         # re-plan ONCE: never a second closure
     return dataclasses.replace(following, changed=True, queue_changed=True,

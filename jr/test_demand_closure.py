@@ -451,3 +451,38 @@ def test_an_option_looking_revision_never_reaches_git(tmp_path):
     out = reserve(d, git=git, revision="--output=/tmp/x")
     assert_untouched(d)
     assert git.calls == [] and out.action == rw.RECONCILE and "miner" in out.reason
+
+
+def test_a_durable_closure_is_reported_explicitly_even_when_the_re_plan_raises(tmp_path):
+    d = demand_dir(tmp_path)
+    gh, views = gh_for(), []
+
+    def gh_dies_after_the_closure(*args):
+        if args[:2] == ("pr", "view"):
+            views.append(args)
+        elif views and args[:1] == ("api",):
+            raise RuntimeError("gh vanished during the re-plan")
+        return gh(*args)
+
+    closures = []
+    with pytest.raises(RuntimeError):
+        broker.reserve(d, SNAP, gh=gh_dies_after_the_closure, git=git_for(), repo_slug=SLUG, today=NEXT_DAY,
+                       now=NEXT_NOW, mined_revision=MAIN_SHA, closures=closures)
+    assert [(o.closed, o.resolution, o.queue_changed, o.receipts_changed) for o in closures] == \
+           [(KEY, "delivered", True, True)]
+    assert fnk(d)["status"] == "closed" and own_receipt(d)["state"] == "delivered"
+
+
+def test_no_closure_is_reported_when_its_writes_are_refused(tmp_path):
+    d = demand_dir(tmp_path)
+    gh = gh_for()
+
+    def gh_that_races(*args):
+        if args[:2] == ("pr", "view"):
+            (d / QUEUE).write_bytes(FOREIGN)
+        return gh(*args)
+
+    closures = []
+    broker.reserve(d, SNAP, gh=gh_that_races, git=git_for(), repo_slug=SLUG, today=NEXT_DAY, now=NEXT_NOW,
+                   mined_revision=MAIN_SHA, closures=closures)
+    assert closures == [] and (d / QUEUE).read_bytes() == FOREIGN
