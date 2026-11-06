@@ -327,7 +327,7 @@ def test_a_foreign_receipts_edit_before_the_second_pass_never_lands_a_one_sided_
     res = run(root, git=git, gh=gh, miner=snapshot_miner(without_unresolved(SNAP), queue=json.loads(QUEUE_RAW)),
               pam_refresh=pam_writing(root, RECEIPTS_PATH, FOREIGN_RECEIPTS))
     assert QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
-    assert f"closed {KEY}" not in res.work and "one side only" in res.work
+    assert f"closed {KEY}" not in res.work and "not landed" in res.work
     assert res.published is True and "Work closed" not in pr_body(gh)
 
 
@@ -457,3 +457,18 @@ def test_a_withheld_queue_that_alone_made_the_run_land_publishes_no_snapshot(tmp
     assert res.published is False and "not landed" in res.line()
     assert staged(git) == [] and not [c for c in gh.calls if c[:2] == ("pr", "create")]
     assert (root / QUEUE_PATH).read_bytes() == FOREIGN_QUEUE
+
+
+def test_an_owned_pair_that_records_a_closure_on_one_side_only_is_withheld(tmp_path):
+    """Defense in depth behind ownership: the pair as it would land (main's bytes for a half not staged)
+    must record each closure on both sides."""
+    d = tree(tmp_path) / "docs" / "demand"
+    settled = json.loads(RECEIPTS_RAW)
+    settled["receipts"][0].update(state="delivered", resolution={"status": "delivered"})
+    owned = (json.dumps(settled, indent=1) + "\n").encode()
+    (d / "work-receipts.json").write_bytes(owned)
+    decision = demand_run.Decision(SNAP, True, "demand changed", owned={"work-receipts.json": owned},
+                                   base={"research-queue.json": QUEUE_RAW, "work-receipts.json": RECEIPTS_RAW})
+    paths, why = demand_run._bookkeeping(decision, d, QUEUE_RAW, RECEIPTS_RAW)
+    assert paths == [] and f"work {KEY} would land on one side only" in why
+    assert (d / "work-receipts.json").read_bytes() == owned

@@ -550,3 +550,68 @@ def test_a_candidate_closed_by_hand_beside_a_live_receipt_is_not_a_closure_pair(
     receipts = json.loads(RECEIPTS_RAW)["receipts"]
     assert rw.inconsistent_closures(queue, receipts) == []
     assert rw.plan_work(queue, receipts, NEXT_DAY, remote_complete=True).action == rw.NOOP
+
+
+# --- the bytes a closure owns, and a pair that records a closure on one side only ----------------
+
+def test_a_durable_closure_records_the_exact_bytes_of_each_write(tmp_path):
+    d, writes = demand_dir(tmp_path), {}
+    out = broker.reserve(d, SNAP, gh=gh_for(), git=git_for(), repo_slug=SLUG, today=NEXT_DAY, now=NEXT_NOW,
+                         mined_revision=MAIN_SHA, writes=writes)
+    assert out.closed == KEY and out.action == rw.START          # closed, then the re-plan reserved
+    assert writes == {QUEUE: (d / QUEUE).read_bytes(), RECEIPTS: (d / RECEIPTS).read_bytes()}
+
+
+def test_a_refused_closure_records_no_write(tmp_path):
+    d, gh, writes = demand_dir(tmp_path), gh_for(), {}
+
+    def gh_that_races(*args):
+        if args[:2] == ("pr", "view"):
+            (d / QUEUE).write_bytes(FOREIGN)
+        return gh(*args)
+
+    broker.reserve(d, SNAP, gh=gh_that_races, git=git_for(), repo_slug=SLUG, today=NEXT_DAY, now=NEXT_NOW,
+                   mined_revision=MAIN_SHA, writes=writes)
+    assert writes == {}
+
+
+def closed_pair():
+    queue = json.loads(QUEUE_RAW)
+    queue["candidates"]["fnk0104s"].update(
+        status="closed", closed_on=NEXT_DAY,
+        history=[{"event": "closed", "date": NEXT_DAY, "resolution": "delivered", "work": KEY}])
+    base = json.loads(RECEIPTS_RAW)["receipts"]
+    settled = [{**base[0], "state": "delivered", "resolution": {"status": "delivered", "closed_on": NEXT_DAY}}]
+    return queue, settled, base
+
+
+def test_a_closure_recorded_on_both_sides_is_consistent():
+    queue, settled, base = closed_pair()
+    assert rw.one_sided_closures(queue, settled, base) == []
+
+
+def test_a_settled_receipt_needs_its_closure_in_the_queue():
+    _, settled, base = closed_pair()
+    assert rw.one_sided_closures(json.loads(FOREIGN), settled, base) == [KEY]
+    assert rw.one_sided_closures(json.loads(QUEUE_RAW), settled, base) == [KEY]
+
+
+def test_a_closed_candidate_needs_its_settled_receipt():
+    queue, _, base = closed_pair()
+    assert rw.one_sided_closures(queue, [], base) == [KEY]                 # the receipt vanished
+    assert rw.one_sided_closures(queue, base, base) == [KEY]               # the receipt is still live
+
+
+def test_a_closure_without_a_receipt_and_a_reopened_candidate_stay_consistent():
+    queue, settled, base = closed_pair()
+    assert rw.one_sided_closures(queue, [], []) == []                     # no receipt to settle
+    c = queue["candidates"]["fnk0104s"]
+    c.update(status="open", history=[*c["history"], {"event": "reopened", "date": "2026-12-08"}])
+    assert rw.one_sided_closures(queue, settled, base) == []              # its closure stays in history
+
+
+def test_the_bytes_wrapper_reads_the_pair_and_refuses_nothing_unreadable():
+    queue, settled, base = closed_pair()
+    as_bytes = [json.dumps(x).encode() for x in (queue, {"version": 1, "receipts": []}, {"version": 1, "receipts": base})]
+    assert broker.one_sided_closures(*as_bytes) == [KEY]
+    assert broker.one_sided_closures(b"{not json", as_bytes[1], as_bytes[2]) == []
