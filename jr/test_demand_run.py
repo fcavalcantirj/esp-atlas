@@ -355,7 +355,7 @@ def test_a_same_day_rerun_that_rewrites_identical_demand_is_a_noop(tmp_path):
 
 
 def test_a_failed_push_or_pr_is_an_abort_not_a_quiet_noop(tmp_path):
-    git = recorder({("diff", "--cached", "--quiet"): (1, ""), ("push",): (1, "")})
+    git = recorder({("diff", "--cached", "--quiet"): (1, ""), ("push",): (1, ""), ("rev-parse",): (0, "abc1234\n")})
     res = run(tmp_path / "a", git=git)
     assert res.published is False and res.aborted == "publish failed: push failed"
     gh = recorder({("pr", "create"): (1, "")})
