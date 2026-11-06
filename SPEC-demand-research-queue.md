@@ -112,6 +112,9 @@ First rule that fires wins:
    records share never match, and `fnk0104s` never matches its siblings `fnk0104a` /
    `fnk0104b`. An id suffix counts only if one of its own tokens is a model number, so short
    words never join into one (`s3 mini` does not match `lolin-s3-mini`).
+   The demand miner reuses this rule as its `board_model` anchor (`research_queue.model_board`),
+   per whole model identifier only — `fnk0104s-a` names no board; see
+   `SPEC-jr-demand-driven.md` §4.1.
 5. **`missing_content`** — nothing in the catalog matches. Evidence: no ids, plus how many
    catalog entries were checked.
 
