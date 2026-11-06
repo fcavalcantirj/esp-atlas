@@ -21,7 +21,8 @@ Rows are never deleted. A reservation only appends; a closure only settles its O
 appended) — another candidate, another receipt or a recorded outcome is never rewritten. An
 unreadable file or an unknown schema version is preserved byte-for-byte and blocks new work.
 Writes are atomic and compare-and-swap: a file that changed since this call read it is never
-overwritten (a closure checks both files and settles the receipt before closing the queue).
+overwritten (a closure checks both files, closes the queue first, and restores it byte-exactly
+when the receipts write fails).
 
 Lock scope: scripts/jr-demand.sh's host-local flock serializes runs on one host, and each run
 works in its own fresh worktree. That is not global exactly-once: a reservation is durable once
@@ -301,26 +302,38 @@ def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | No
                     closer=closer)
 
 
-def _write_closure(demand_dir: Path, closure: demand_closure.Closure, doc: dict,
-                   queue_raw: bytes | None, receipts_raw: bytes | None) -> tuple[str, bool]:
+def _writer_bytes(doc: dict) -> bytes:
+    """What research_queue.write_queue puts on disk for `doc`."""
+    return (json.dumps(doc, indent=1, ensure_ascii=False) + "\n").encode()
+
+
+def _write_closure(demand_dir: Path, closure: demand_closure.Closure, doc: dict, queue: dict,
+                   queue_raw: bytes | None, receipts_raw: bytes | None) -> str:
     """Both files through the queue's atomic writer, under START's compare-and-swap guard extended to
-    the queue. The receipt is settled first: if the queue write then fails, the candidate is still
-    linked, so the next run verifies again and closes it (a settled receipt is never re-settled).
-    Returns (problem or "", whether the receipts file was written)."""
+    the queue. The queue closes first: a closed candidate beside a still-live receipt is settled to
+    plan_work and never blocks new work, while a settled receipt beside a linked candidate would
+    RECONCILE every run. A failed receipts write restores the queue only when that is byte-exact.
+    Returns the problem, or "" once both are durable."""
     qpath, rpath = demand_dir / research_queue.QUEUE_NAME, demand_dir / RECEIPTS_NAME
     if _read(qpath) != queue_raw or _read(rpath) != receipts_raw:
-        return f"{research_queue.QUEUE_NAME} or {RECEIPTS_NAME} changed during the run: not overwritten", False
-    if closure.receipts_changed:
-        try:
-            research_queue.write_queue({**doc, "receipts": closure.receipts}, rpath)
-        except OSError as e:
-            return f"{RECEIPTS_NAME} write failed, both previous files kept: {e}", False
+        return f"{research_queue.QUEUE_NAME} or {RECEIPTS_NAME} changed during the run: not overwritten"
     try:
         research_queue.write_queue(closure.queue, qpath)
     except OSError as e:
-        return (f"{research_queue.QUEUE_NAME} write failed, previous file kept; the next run verifies "
-                f"and closes it again: {e}", closure.receipts_changed)
-    return "", closure.receipts_changed
+        return f"{research_queue.QUEUE_NAME} write failed, both previous files kept: {e}"
+    if not closure.receipts_changed:
+        return ""
+    try:
+        research_queue.write_queue({**doc, "receipts": closure.receipts}, rpath)
+    except OSError as e:
+        if _writer_bytes(queue) != queue_raw:
+            return f"{RECEIPTS_NAME} write failed ({e}); queue left closed: no byte-exact restore"
+        try:
+            research_queue.write_queue(queue, qpath)
+        except OSError as again:
+            return f"{RECEIPTS_NAME} write failed ({e}); queue left closed, restore failed: {again}"
+        return f"{RECEIPTS_NAME} write failed, both previous files kept: {e}"
+    return ""
 
 
 def _close(demand_dir: Path, snap: dict, plan: rw.Plan, reason: str, state: dict, *, gh, today: str,
@@ -332,9 +345,9 @@ def _close(demand_dir: Path, snap: dict, plan: rw.Plan, reason: str, state: dict
                                      mined_revision=closer.mined_revision, today=today, now=closer.now)
     if closure.status == demand_closure.PENDING:
         return Outcome(rw.RECONCILE, f"{reason}; {closure.reason}", key)
-    problem, wrote = _write_closure(demand_dir, closure, state["doc"], state["queue_raw"], state["raw"])
+    problem = _write_closure(demand_dir, closure, state["doc"], state["queue"], state["queue_raw"], state["raw"])
     if problem:
-        return Outcome(rw.DEFER, problem, key, changed=wrote, receipts_changed=wrote)
+        return Outcome(rw.DEFER, problem, key)       # demand_run lands whatever the bytes say changed
     following = _reserve(demand_dir, snap, gh=gh, today=today, repo_slug=repo_slug, new_pam=new_pam,
                          closer=None)                         # re-plan ONCE: never a second closure
     return dataclasses.replace(following, changed=True, queue_changed=True,

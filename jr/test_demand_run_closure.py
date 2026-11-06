@@ -122,9 +122,12 @@ def test_a_broker_error_after_its_writes_still_publishes_them(tmp_path, monkeypa
     monkeypatch.setattr(demand_run.demand_broker, "reserve", writes_then_fails)
     root, git = tree(tmp_path), git_ok()
     (root / "docs/demand/2026-11-05.json").write_text(json.dumps({**SNAP, "date": "2026-11-05"}))
-    res = run(root, git=git)
+    gh = gh_all()
+    res = run(root, git=git, gh=gh)
     assert res.published is True and "broker error RuntimeError" in res.work
-    assert QUEUE_PATH in staged(git) and RECEIPTS_PATH in staged(git)
+    assert RECEIPTS_PATH in staged(git)                  # the queue is staged on every normal publication
+    create = next(c for c in gh.calls if c[:2] == ("pr", "create"))
+    assert "Work closed" in create[create.index("--body") + 1]
 
 
 def test_the_second_pass_after_a_closure_never_closes_again(tmp_path, monkeypatch):

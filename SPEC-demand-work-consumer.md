@@ -127,9 +127,10 @@ it itself (`jr/demand_closure.py`, called from `demand_broker.reserve`):
   `exit_code` 0 is recorded only because the broker runs after a successful mine (a failed
   mine never reaches it). `contains_merge` is true only when `git merge-base --is-ancestor
   <merge> <revision>` says so; a negative or unknown answer is false. `resolved` and `gap` come
-  from the one snapshot item whose term, or one of the wordings the miner merged into it
-  (`raw_terms`), is the candidate's term; `checked_at` is the run's UTC clock, so a
-  merge that lands mid-run stays pending.
+  from the one snapshot item whose own term is the candidate's term. A wording merged into
+  another item (`raw_terms`) is not proof, because the group's `resolved` describes its first
+  wording, so that case stays pending. `checked_at` is the run's UTC clock, so a merge that
+  lands mid-run stays pending.
 - `catalog_search`: the broker never performs or invents a live search, so such work stays
   pending with that reason until a real deployment-search receipt exists.
 - `research_work.verify_resolution` is the only judge and is not weakened by the broker.
@@ -145,9 +146,10 @@ it itself (`jr/demand_closure.py`, called from `demand_broker.reserve`):
 - `pending`: nothing is written; the reason is reported on the run line.
 - Both files are written with the queue's atomic writer under START's compare-and-swap guard,
   extended to both files: if either changed since the call read it, neither is written. The
-  receipt is settled first. If the queue write then fails, the candidate stays `linked`, the
-  settled receipt still lands, and the next run verifies again and closes the candidate. A
-  settled receipt is never settled twice.
+  queue closes first. If the receipts write then fails, the queue is restored when that is
+  byte-exact. Otherwise it stays closed beside a live `proposed` receipt. `plan_work` treats
+  that receipt as settled, so it never blocks new work. The reverse order would leave a
+  settled receipt beside a `linked` candidate, which would RECONCILE on every run.
 - After a closure, the broker re-plans once in the same call. The next eligible candidate starts
   only if `new_pam`, `MAX_NEW_PER_DAY`, remote recovery and every other existing gate allow it.
   The outcome reports both the closed key and the newly started key. On 2026-11-06 itself the

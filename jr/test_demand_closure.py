@@ -351,7 +351,7 @@ def test_linked_work_without_a_receipt_row_closes_the_queue_only(tmp_path):
     assert fnk(d)["outcome"]["window"] == {"start": "2026-10-09", "end": "2026-11-06"}
 
 
-def test_a_failed_queue_write_keeps_the_settled_receipt_and_the_next_run_closes_it(tmp_path, monkeypatch):
+def test_a_failed_queue_write_keeps_both_files(tmp_path, monkeypatch):
     d = demand_dir(tmp_path)
     real_replace = os.replace
 
@@ -362,15 +362,27 @@ def test_a_failed_queue_write_keeps_the_settled_receipt_and_the_next_run_closes_
 
     monkeypatch.setattr(os, "replace", replace)
     out = reserve(d)
-    assert (d / QUEUE).read_bytes() == QUEUE_RAW                      # receipts first: no lossy rollback
-    assert own_receipt(d)["state"] == "delivered"
-    assert out.action == rw.DEFER and "read-only" in out.reason
-    assert out.changed and out.receipts_changed and not out.queue_changed and not out.closed
+    assert_untouched(d)
+    assert out.action == rw.DEFER and "read-only" in out.reason and not out.changed
+
+
+def test_a_queue_without_a_byte_exact_restore_is_left_closed_and_never_blocks(tmp_path, monkeypatch):
+    compact = json.dumps(json.loads(QUEUE_RAW)).encode()            # not the writer's own format
+    d = demand_dir(tmp_path, queue=compact)
+    real_replace = os.replace
+
+    def replace(src, dst):
+        if Path(dst).name == RECEIPTS:
+            raise OSError("disk full")
+        return real_replace(src, dst)
+
+    monkeypatch.setattr(os, "replace", replace)
+    out = reserve(d)
+    assert out.action == rw.DEFER and "queue left closed" in out.reason
+    assert fnk(d)["status"] == "closed" and (d / RECEIPTS).read_bytes() == RECEIPTS_RAW
     monkeypatch.setattr(os, "replace", real_replace)
-    again = reserve(d)                                                # self-healing: verified again, closed
-    assert again.closed == KEY and fnk(d)["status"] == "closed" and again.key == KEELOQ_KEY
-    assert again.queue_changed and again.receipts_changed
-    assert [r["key"] for r in doc(d, RECEIPTS)["receipts"]] == [KEY, KEELOQ_KEY]
+    following = reserve(d)                       # a closed candidate settles its live receipt
+    assert following.action == rw.START and following.key == KEELOQ_KEY
 
 
 def test_duplicate_prs_on_the_work_branch_defer_the_closure(tmp_path):
@@ -399,10 +411,12 @@ def test_close_false_only_reconciles(tmp_path):
     assert not [c for c in gh.calls if c[:2] == ("pr", "view")]
 
 
-def test_the_term_is_found_among_the_items_merged_wordings(tmp_path):
+def test_a_merged_wording_alone_never_proves_the_term(tmp_path):
+    # the group's `resolved` describes its first wording, not necessarily this term
     d = demand_dir(tmp_path)
     out = reserve(d, snap=snap_with(term="freenove fnk0104s", raw_terms=["freenove fnk0104s", "FNK0104S"]))
-    assert out.closed == KEY and fnk(d)["outcome"]["query"] == "fnk0104s"
+    assert_untouched(d)
+    assert out.action == rw.RECONCILE and not out.closed and "no item" in out.reason
 
 
 def test_an_earlier_outcome_is_kept_in_the_appended_history(tmp_path):
