@@ -119,8 +119,11 @@ First rule that fires wins:
 
 - It **never writes under `data/`**. Its only outputs are the queue file and one line in the
   demand digest (and the daily demand PR body).
-- It never authors, proposes or opens a catalog record. A candidate becomes work only when a
-  human validates it.
+- It never authors, proposes or opens a catalog record. The separate automatic consumer in
+  `SPEC-demand-work-consumer.md` researches candidates, records primary-source identity
+  validation and opens specific reviewed work. A new candidate permits research only;
+  catalog/firmware/compatibility risk gates remain in force. The consumer, not the miner,
+  owns this execution and its outcome receipts.
 
 ## Lifecycle — connecting candidates to work
 

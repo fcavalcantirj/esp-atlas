@@ -19,6 +19,9 @@ it once a day and lands the snapshot through the tick's own PR path (jr/publish.
    on a `jr/demand-…` branch — outside the tick's `jr/tick-*` triage — with the same protection
    and earned-trust auto-merge gate as a tick. Only an older proven snapshot-only demand PR
    is closed as superseded; queue-bearing or unreadable PRs wait for review.
+5. after mining, jr/demand_broker.py reserves at most ONE demand work item
+   (SPEC-demand-work-consumer.md) in `docs/demand/work-receipts.json`, which joins the
+   publication only when it changed — and a new reservation lands even on a no-op demand day.
 
 An empty pull (zero items) is refused as a steer: it is a Composio/GSC outage far more often than
 zero demand, and landing it would erase the steer — only a changed research queue may land then. `git`, `gh` and the miner are injectable; tests use fakes.
@@ -37,8 +40,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import demand_broker  # noqa: E402
 import demand_signal  # noqa: E402
 import publish  # noqa: E402
+import pam_run  # noqa: E402
 import research_queue  # noqa: E402
 import review_routing  # noqa: E402
 from tick import guard_env  # noqa: E402 — the one "esp_atlas_core sees the worktree" env
@@ -65,8 +70,17 @@ class RunResult:
     reason: str = ""
     aborted: str = ""
     superseded: list = field(default_factory=list)
+    work: str = ""            # the demand work broker's decision (jr/demand_broker.py)
+    pam: str = ""
+    pam_receipt: dict = field(default_factory=dict)
+    source_error: str = ""    # search failed, but independent PAM metadata may still have landed
 
     def line(self) -> str:
+        return (self._head() + (f" · work {self.work}" if self.work else "")
+                + (f" · {self.pam}" if self.pam else "")
+                + (f" · search deferred: {self.source_error}" if self.source_error else ""))
+
+    def _head(self) -> str:
         if self.aborted:
             return f"jr-demand: ABORTED — {self.aborted}"
         if self.published:
@@ -79,6 +93,13 @@ class RunAbort(Exception):
     pass
 
 
+class MiningUnavailable(RunAbort):
+    """Search source failed/empty; independent source metadata can still be processed.
+
+    Timeouts and other RunAbort signals are deliberately not this subtype.
+    """
+
+
 @dataclass
 class Decision:
     snap: dict
@@ -87,6 +108,11 @@ class Decision:
     research: str | None = None
     queue_only: bool = False      # zero demand items, a changed queue: land the queue alone
     queue_changed: bool = False
+    receipts_changed: bool = False   # a new work reservation: docs/demand/work-receipts.json
+    work: str = ""                   # the broker's report line for that reservation
+    pam_paths: tuple = ()
+    pam_summary: str = ""
+    pam_only: bool = False
 
 
 # --- the no-op rule ----------------------------------------------------------------------------------
@@ -301,17 +327,17 @@ def _mine_and_decide(wt: publish.Worktree, miner, python: str, telegram: bool) -
     p = miner(wt.path, python=python, telegram=telegram)
     if getattr(p, "returncode", 1) != 0:
         err = ((getattr(p, "stderr", "") or "").strip().splitlines() or [""])[-1]
-        raise RunAbort(f"miner failed (rc {getattr(p, 'returncode', '?')}): {err[:160]}")
+        raise MiningUnavailable(f"miner failed (rc {getattr(p, 'returncode', '?')}): {err[:160]}")
     new = _read_latest(demand_dir)
     if new is None or not new.get("date") or _newest_stamp(demand_dir) == before:
-        raise RunAbort("miner wrote no snapshot")
+        raise MiningUnavailable("miner wrote no snapshot")
     queue_changed = (_queue_comparable(_read_bytes(demand_dir / research_queue.QUEUE_NAME))
                      != _queue_comparable(queue_before))
     research = _queue_line(demand_dir, queue_before)
     if not new.get("items"):
         _restore_demand_files(demand_dir, files_before)      # an empty pull never replaces the snapshot
         if not queue_changed:
-            raise RunAbort("miner returned no demand items (Composio/GSC outage?) — not landing an empty steer")
+            raise MiningUnavailable("miner returned no demand items (Composio/GSC outage?) — not landing an empty steer")
         return Decision(new, True, "research queue changed; 0 demand items, snapshot not landed",
                         research, queue_only=True, queue_changed=True)
     land, why = should_land(new, prev, new["date"])    # age between the miner's own dates: one clock
@@ -323,19 +349,78 @@ def _mine_and_decide(wt: publish.Worktree, miner, python: str, telegram: bool) -
 def _publication(d: Decision, wt_path: Path) -> tuple[list[str], str, str]:
     """(paths, subject, body) of the PR a landing decision opens."""
     snap, queue_path = d.snap, f"{DEMAND_RELDIR}/{research_queue.QUEUE_NAME}"
+    receipts = [f"{DEMAND_RELDIR}/{demand_broker.RECEIPTS_NAME}"] if d.receipts_changed else []
+    note = (f"\n\nWork reserved: {d.work} in `{receipts[0]}` (SPEC-demand-work-consumer.md) — "
+            "bookkeeping only, no work PR." if receipts else "")
+    if d.pam_paths:
+        note += (f"\n\nPAM discovery: {d.pam_summary}. Unverified leads and source pointers only; "
+                 "every publishable catalog fact still requires primary-source verification and review.")
+    if d.pam_only:
+        return (list(d.pam_paths), f"chore(jr): PAM discovery metadata {snap['date']}",
+                "PAM discovery metadata only. The dated search-demand snapshot is not included; "
+                "the prior committed steer is preserved. No catalog writes.\n\n"
+                "Source: the two fixed public PAM feeds, through jr/pam_run.py and the existing "
+                "daily runner. No new job or monitor." + note)
     if d.queue_only:
-        return ([queue_path], f"chore(jr): research queue {snap['date']} — demand snapshot not landed (0 items)",
-                _queue_only_body(snap, d.why, d.research))
+        return ([queue_path, *receipts, *d.pam_paths],
+                f"chore(jr): research queue {snap['date']} — demand snapshot not landed (0 items)",
+                _queue_only_body(snap, d.why, d.research) + note)
     paths = [f"{DEMAND_RELDIR}/{snap['date']}.json", f"{DEMAND_RELDIR}/{UNRESOLVED_NAME}"]
     if (wt_path / queue_path).exists():
         paths.append(queue_path)
-    return (paths, f"chore(jr): demand snapshot {snap['date']} — {len(snap['items'])} item(s)",
-            _pr_body(snap, d.why, d.research))
+    return (paths + receipts + list(d.pam_paths), f"chore(jr): demand snapshot {snap['date']} — {len(snap['items'])} item(s)",
+            _pr_body(snap, d.why, d.research) + note)
+
+
+def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str | None) -> str:
+    """Bookkeeping after mining: at most one work reservation. A broker failure is reported on
+    the run line, never allowed to block the demand snapshot itself."""
+    today = now.astimezone(timezone.utc).date().isoformat()
+    try:
+        work = demand_broker.reserve(wt_path / DEMAND_RELDIR, d.snap, gh=gh, today=today, repo_slug=repo_slug)
+    except RunAbort:
+        raise                           # host timeout is fatal, not an ordinary source failure
+    except Exception as e:  # noqa: BLE001
+        return f"defer: broker error {type(e).__name__}: {e}"
+    if work.changed:
+        d.receipts_changed, d.work = True, work.line()
+        if not d.land:
+            d.land, d.why = True, f"work reserved ({d.why})"
+    return work.line()
+
+
+def _refresh_pam(wt_path: Path, d: Decision, res: RunResult, refresh, now: datetime) -> None:
+    """A deferred secondary source never prevents publishing successful search demand."""
+    if refresh is None:
+        return
+    try:
+        result = refresh(wt_path, now=now)
+        paths = tuple(result.changed_paths)
+        if (result.status not in {"updated", "unchanged", "deferred"}
+                or (result.status == "updated" and paths != (pam_run.STATE_PATH,))
+                or (result.status != "updated" and paths)
+                or (paths and not (wt_path / pam_run.STATE_PATH).is_file())):
+            res.pam = "PAM deferred: invalid changed-path manifest"
+            return
+        res.pam_receipt = result.report()
+        res.pam = (f"PAM {result.status}: {result.leads} leads / {result.potential_gaps} potential gaps"
+                   + (f"; {result.error}" if result.error else ""))
+        if paths:
+            d.pam_paths = paths
+            d.pam_summary = f"{result.leads} unverified leads / {result.potential_gaps} potential gaps"
+            if not d.land:
+                d.land, d.pam_only = True, True
+                d.why = f"PAM metadata changed ({d.why})"
+    except RunAbort:
+        raise                           # a timeout must stop every source, not become a deferral
+    except Exception as exc:  # noqa: BLE001 — secondary-source failure is independently reported
+        res.pam = f"PAM deferred: {type(exc).__name__}"
 
 
 def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         python: str = DEFAULT_DEMAND_PYTHON, telegram: bool = False, now: datetime | None = None,
-        root: Path | None = None, repo_slug: str | None = None, auto_merge: bool = True) -> RunResult:
+        root: Path | None = None, repo_slug: str | None = None, auto_merge: bool = True,
+        pam_refresh=None) -> RunResult:
     now = now or datetime.now(timezone.utc)
     res = RunResult()
     wt = branch = None
@@ -343,12 +428,40 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         wt = publish.add_worktree(git=git, root=root)
         if not publish.is_clean(wt, git=git):
             raise RunAbort("fresh worktree is not clean")
-        decision = _mine_and_decide(wt, miner, python, telegram)
+        demand_dir = wt.path / DEMAND_RELDIR
+        files_before = _demand_files(demand_dir) if pam_refresh is not None else None
+        queue_before = _read_bytes(demand_dir / research_queue.QUEUE_NAME) if pam_refresh is not None else None
+        try:
+            decision = _mine_and_decide(wt, miner, python, telegram)
+        except MiningUnavailable as exc:
+            if pam_refresh is None:
+                raise
+            # A failed miner may leave partial JSON. Restore its snapshot/queue
+            # writes before considering a publication from the independent feed.
+            _restore_demand_files(demand_dir, files_before)
+            queue_path = demand_dir / research_queue.QUEUE_NAME
+            if queue_before is None:
+                queue_path.unlink(missing_ok=True)
+            else:
+                queue_path.write_bytes(queue_before)
+            res.source_error = str(exc)
+            decision = Decision({"date": now.astimezone(timezone.utc).date().isoformat(), "items": []},
+                                False, "search refresh unavailable", pam_only=True)
         res.date = decision.snap["date"]
+        if not res.source_error:
+            res.work = _reserve_work(wt.path, decision, gh, now, repo_slug)
+        _refresh_pam(wt.path, decision, res, pam_refresh, now)
+        if res.pam_receipt:
+            revision = git("rev-parse", "HEAD")
+            res.pam_receipt["runner_revision"] = ((getattr(revision, "stdout", "") or "").strip()
+                                                  if getattr(revision, "returncode", 1) == 0 else "unknown")
+            res.pam_receipt["catalog_revision"] = wt.base_sha
         if not decision.land:
             res.reason = decision.why
+            if res.source_error:
+                res.aborted = res.source_error
             return res
-        prefix = QUEUE_ONLY_PREFIX if decision.queue_only else BRANCH_PREFIX
+        prefix = QUEUE_ONLY_PREFIX if decision.queue_only or decision.pam_only else BRANCH_PREFIX
         branch = f"{prefix}{now.strftime('%Y%m%d-%H%M')}"
         paths, subject, body = _publication(decision, wt.path)
         pub = publish.publish(wt, paths, subject, body, git=git, gh=gh, now=now,
@@ -384,9 +497,12 @@ def main(argv=None) -> int:
     ap.add_argument("--no-auto-merge", action="store_true", help="open the PR but never request auto-merge")
     args = ap.parse_args(argv)
     r = run(python=os.environ.get("JR_DEMAND_PYTHON") or DEFAULT_DEMAND_PYTHON,
-            telegram=args.telegram, auto_merge=not args.no_auto_merge)
+            telegram=args.telegram, auto_merge=not args.no_auto_merge,
+            pam_refresh=pam_run.refresh_worktree)
     print(r.line())
-    return 1 if r.aborted else 0
+    if r.pam_receipt:
+        print("PAM receipt: " + json.dumps(r.pam_receipt, sort_keys=True))
+    return 1 if r.aborted or r.source_error else 0
 
 
 if __name__ == "__main__":
