@@ -88,6 +88,9 @@ inference availability monitor. Implementation is not activation.
   or returning only part of that set, is not delivery.
 - Closure evidence carries the reservation's original source/window/metrics, never the
   queue's later refreshed sliding window.
+- Exact-model catalog work requires the complete declared expected-ID set, without
+  additional sibling/unknown results. Order is irrelevant. An explicit forbidden
+  ID cannot also be accepted as an expected target; malformed IDs remain pending.
 - Closed-unmerged work is explicitly rejected/abandoned, with its reason; it is
   never labelled delivered. Unreadable merge/deployment/search state is deferred.
 - Preserve original GA4 source/window/counts and historical classification evidence.
