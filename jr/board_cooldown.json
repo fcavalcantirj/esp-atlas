@@ -469,6 +469,23 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-05T03:01:00.115486+00:00"
     },
+    "sparkfun-thing-plus-esp32-s2-wroom": {
+      "board": "sparkfun-thing-plus-esp32-s2-wroom",
+      "expires": "2026-11-13T17:00:55.170053+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-06T17:00:55.170053+00:00"
+    },
     "um-feathers3": {
       "board": "um-feathers3",
       "expires": "2026-11-12T05:01:00.482196+00:00",
@@ -504,6 +521,35 @@
       },
       "reason": "nothing-groundable",
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
+    },
+    "um-tinys3": {
+      "board": "um-tinys3",
+      "expires": "2026-11-13T17:00:55.170053+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-06T17:00:55.170053+00:00"
+    },
+    "waveshare-esp32-s3-rlcd-42": {
+      "board": "waveshare-esp32-s3-rlcd-42",
+      "expires": "2026-11-13T17:00:55.170053+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "source_gated"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-06T17:00:55.170053+00:00"
     },
     "xiao-esp32c3": {
       "board": "xiao-esp32c3",
