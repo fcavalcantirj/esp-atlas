@@ -142,3 +142,38 @@ def test_the_second_pass_after_a_closure_never_closes_again(tmp_path, monkeypatc
     run(root, miner=snapshot_miner(without_unresolved(SNAP), queue=json.loads(QUEUE_RAW)),
         pam_refresh=pam_unchanged)
     assert [(c["new_pam"], c.get("close", True)) for c in calls] == [(False, True), (True, False)]
+
+
+FOREIGN_QUEUE = b'{"version": 1, "candidates": {}, "edited_by": "a concurrent triage"}\n'
+
+
+def gh_racing_queue(root):
+    """gh_all, but a foreign writer edits the research queue while the linked PR is read."""
+    gh = gh_all()
+
+    def fn(*args):
+        if args[:2] == ("pr", "view"):
+            (root / QUEUE_PATH).write_bytes(FOREIGN_QUEUE)
+        return gh(*args)
+
+    fn.calls = gh.calls
+    return fn
+
+
+def test_a_cas_refusal_never_lands_a_foreign_queue_edit_as_this_runs_closure(tmp_path):
+    root = tree(tmp_path)
+    d = demand_run.Decision(SNAP, False, "no-op: demand unchanged since 2026-11-05")
+    line = demand_run._reserve_work(root, d, gh_racing_queue(root), NEXT_NOW, SLUG,
+                                    git=git_ok(), mined_revision="abc1234")
+    assert "changed during the run" in line
+    assert (root / QUEUE_PATH).read_bytes() == FOREIGN_QUEUE
+    assert d.land is False and d.work_closed is False and d.receipts_changed is False
+
+
+def test_a_cas_refusal_on_an_unchanged_demand_day_publishes_nothing(tmp_path):
+    root, git = tree(tmp_path), git_ok()
+    (root / "docs/demand/2026-11-05.json").write_text(json.dumps({**SNAP, "date": "2026-11-05"}))
+    gh = gh_racing_queue(root)
+    res = run(root, git=git, gh=gh)
+    assert res.published is False and "changed during the run" in res.work
+    assert not [c for c in gh.calls if c[:2] == ("pr", "create")] and staged(git) == []
