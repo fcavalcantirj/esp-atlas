@@ -26,7 +26,8 @@ cp .env.example .env.local
 | `NEXT_PUBLIC_API_URL` | Browser-side API base. Unset in production (same-origin `/api`). |
 | `NEXT_PUBLIC_REPO_URL` | GitHub repo for "Edit on GitHub" / contribute links (override in a fork). |
 | `NEXT_PUBLIC_SITE_URL` | Canonical URL for metadata, sitemap and robots. Default `https://esp-atlas.com`. |
-| `NEXT_PUBLIC_GA_ID` | GA4 measurement ID. Production builds default to `G-66L7SDXKJZ` when unset; dev sends nothing unless set. |
+| `NEXT_PUBLIC_GA_ID` | GA4 measurement ID. Production deployment defaults to `G-66L7SDXKJZ`; previews need a separate ID. |
+| `NEXT_PUBLIC_GA_ENABLED` | `0` disables collection; `1` enables a preview only with an explicit test ID. Production deployment is enabled by default. |
 | `NEXT_PUBLIC_GA_DEBUG` | `1` tags every event with `debug_mode` for GA4 DebugView. |
 | `API_INTERNAL_URL` | Server-side API base (server components, sitemap) when the Vercel defaults don't apply. |
 
@@ -62,27 +63,42 @@ data/code licenses.
 ## Analytics
 
 Google Analytics 4 via `@next/third-parties/google` (`<GoogleAnalytics>` in
-`app/layout.tsx`). All interactions go through `lib/analytics.ts#track()` with the
-values the user actually chose. Events:
+`app/layout.tsx`). All interactions go through `lib/analytics.ts#track()` with
+bounded parameters. Free-form search text, prompts, and full URLs are omitted;
+their lengths may be sent instead. Exact public model tokens matching the
+reviewed formats in `lib/analytics-params.ts` are the sole exception: on
+`search_submit` and `search_empty`, the token is emitted as GA4 `q` for Jr's
+existing `customEvent:q` demand query. This intentionally gives Jr only partial
+first-party term coverage; GSC supplies unconstrained search terms. Set localStorage
+`esp-atlas:analytics-disabled` to `1` before loading to opt out. Events:
 
 | Event | Params |
 |---|---|
-| `wizard_submit` / `wizard_results` / `wizard_empty` | `form, budget, radio, band, type, ieee802154, usb_native, needs, needs_count, result_count` |
-| `search_submit` / `search_results` / `search_empty` | `q, type, radio, band, form, protocol, filters, filter_count, has_query, result_count` |
-| `preset_click`, `relax_filter` | `preset` (compare page) · `removed_key, needs` |
+| `wizard_submit` / `wizard_results` / `wizard_empty` / `wizard_error` | `form, budget, radio, band, type, ieee802154, usb_native, needs_count, result_count, status` |
+| `search_submit` / `search_results` / `search_empty` / `search_error` | `q_length, q (eligible public model token only on submit/empty), type, radio, band, form, protocol, filters_length, filter_count, has_query, result_count, status` |
+| `intent_submit` / `intent_result` / `intent_error` | `surface, q_length, kind, stage, fallback, latency_ms` |
+| `guide_result` / `guide_error` | `surface, kind, outcome, status` |
+| `preset_click`, `relax_filter` | `preset` (compare page) · `removed_key` |
 | `example_click` | `example, kind (firmware\|needs)` — a generated home example chip |
 | `result_click` | `part_id, part_type, origin (wizard\|search\|related\|compare\|browse\|brand), position` |
 | `part_view`, `chain_click` | `part_id, part_type, brand, soc_ref` · `from_id, to_id, relation` |
-| `compare_add` / `compare_remove` / `compare_view` / `compare_filter` | `part_id, selected_count` · `part_ids, count` · `q, type` |
+| `compare_add` / `compare_remove` / `compare_view` / `compare_filter` | `part_id, selected_count` · `part_ids, count` · `q_length, type` |
 | `help_tip_open`, `advanced_filters_toggle` | `field` · `panel, open` |
 | `theme_change`, `font_size_change` | `theme` · `scale, direction` |
-| `outbound_click` | `link_type (source\|github_edit\|github_view\|github_repo\|contributing\|agents\|issues\|new_issue\|discussions\|license\|data_folder\|llms_txt\|api_docs), url, host, part_id?, field?` |
+| `outbound_click` | `link_type (source\|github_edit\|github_view\|github_repo\|contributing\|agents\|issues\|new_issue\|discussions\|license\|data_folder\|llms_txt\|api_docs), host, part_id?, field?` |
 | `api_error`, `not_found` | `endpoint, status` · `path` |
+| `atlas_lens_select`, `atlas_inspect`, `atlas_recipe_inspect`, `atlas_handoff`, `atlas_search` | `lens` · `record_id, record_type, lens` · `recipe_id, tier, lens` · `record_id, record_type` · `q_length` |
 
-Page views come from GA4 enhanced measurement (enable "page changes based on
-browser history events"). Custom parameters are only reportable after you
+The tag sends an initial `page_view`. SPA page views depend on GA4 Enhanced
+Measurement's "page changes based on browser history events" setting; verify
+that setting in the web stream before interpreting page view totals. GA can
+also collect `page_location` with a `?q=` search term. Configure web-stream
+query-parameter redaction for `q` and verify its effect in DebugView before
+using query-bearing pages for analytics. See Google's [page view](https://developers.google.com/analytics/devguides/collection/ga4/views?technology=websites)
+and [redaction](https://support.google.com/analytics/answer/13544947) documentation.
+Custom parameters are only reportable after you
 register them in GA4 Admin → Custom definitions: dimensions `part_id, part_type,
-origin, q, needs, filters, form, budget, radio, band, protocol, type, field,
+origin, q, q_length, form, budget, radio, band, protocol, type, field,
 theme, link_type, preset, example, kind, relation, part_ids, removed_key, host`; metrics
 `result_count, position, scale, selected_count, needs_count, filter_count`.
 
@@ -90,6 +106,7 @@ theme, link_type, preset, example, kind, relation, part_ids, removed_key, host`;
 
 - `lib/api.ts` — typed browser client for `/health /search /wizard /parts /parts/{id} /facets`, no logic
 - `lib/api-server.ts` — server-side fetch (absolute URL resolution, 3 s timeout, 1 h cache) for SSR + sitemap
+- `lib/readme.ts`, `components/firmware/FirmwareReadme.tsx` — optional upstream README fetch capped at 3 s and 256 KiB; the server streams firmware identity and recipes before this section resolves. Audited upstream links that still return 404 use a verified alternative or display as plain text.
 - `lib/analytics.ts`, `lib/site.ts`, `lib/github.ts`, `lib/format.ts`, `lib/frontmatter.ts` — analytics wrapper, constants, GitHub URLs, display formatting, safe frontmatter readers
 - `components/HomeView.tsx` — owns explorer state; `WizardForm`, `SearchBox` are controlled forms; `ResultsPanel` renders results/empty/presets; `PartResultCard` is the shared card
 - `components/part/*` — part page pieces (`PartDetailView` is shared by the server page and the client fallback)

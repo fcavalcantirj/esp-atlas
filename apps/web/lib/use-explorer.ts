@@ -68,6 +68,7 @@ export function useExplorer() {
         track(results.length ? "wizard_results" : "wizard_empty", { needs: needsStr, result_count: results.length });
       } catch (err) {
         reportApiError("/wizard", err);
+        track("wizard_error", { surface: "wizard", status: err instanceof ApiError ? err.status : "network" });
         setState({
           results: null,
           loading: false,
@@ -102,6 +103,7 @@ export function useExplorer() {
         });
       } catch (err) {
         reportApiError("/search", err);
+        track("search_error", { surface: "search", status: err instanceof ApiError ? err.status : "network" });
         setState({
           results: null,
           loading: false,

@@ -62,11 +62,13 @@ def _is_junk_segment(channel: str, avg_duration_s: float, engagement_rate: float
 
 
 def _ga4_breakdown_totals(rows: list) -> dict:
-    """Reduce a country x sessionDefaultChannelGroup GA4 breakdown (GA4_BREAKDOWN_METRICS order)
-    into raw totals (every segment) and human-adjusted totals (junk segments excluded per
-    _is_junk_segment). Never drops data: callers must always report both."""
-    raw = {"activeUsers": 0.0, "sessions": 0.0}
-    adjusted = {"activeUsers": 0.0, "sessions": 0.0}
+    """Diagnostic only: segment user memberships can overlap and are not distinct users.
+
+    Sessions are additive here only if the upstream report is complete. The
+    published digest obtains distinct user/session totals without dimensions.
+    """
+    raw = {"segment_user_memberships": 0.0, "sessions": 0.0}
+    adjusted = {"segment_user_memberships": 0.0, "sessions": 0.0}
     for row in rows:
         dims = [v.get("value", "") for v in row.get("dimensionValues", [])]
         channel = dims[1] if len(dims) > 1 else ""
@@ -76,10 +78,10 @@ def _ga4_breakdown_totals(rows: list) -> dict:
         sessions = m["sessions"]
         engagement_rate = (m["engagedSessions"] / sessions) if sessions else 0.0
 
-        raw["activeUsers"] += m["activeUsers"]
+        raw["segment_user_memberships"] += m["activeUsers"]
         raw["sessions"] += sessions
         if not _is_junk_segment(channel, m["averageSessionDuration"], engagement_rate):
-            adjusted["activeUsers"] += m["activeUsers"]
+            adjusted["segment_user_memberships"] += m["activeUsers"]
             adjusted["sessions"] += sessions
     return {"raw": raw, "adjusted": adjusted}
 
@@ -90,38 +92,49 @@ def top_search_demand(rows: list, n: int = 6, min_impressions: int = MIN_IMPRESS
     return [r for r in rows if (r.get("impressions") or 0) >= min_impressions][:n]
 
 
+def completed_window(days: int = 7, today_utc: dt.date | None = None) -> tuple[str, str]:
+    """Inclusive dates with a two-day UTC lag, complete in every property timezone."""
+    if days < 1:
+        raise ValueError("days must be positive")
+    today = today_utc or dt.datetime.now(dt.timezone.utc).date()
+    end = today - dt.timedelta(days=2)
+    start = end - dt.timedelta(days=days - 1)
+    return start.isoformat(), end.isoformat()
+
+
 def weekly_digest(days: int = 7) -> str:
-    end = dt.date.today(); start = end - dt.timedelta(days=days)
-    S, E = start.isoformat(), end.isoformat()
+    S, E = completed_window(days)
+    end = dt.date.fromisoformat(E)
 
     ga = _ex("GOOGLE_ANALYTICS_RUN_REPORT", {"property": GA4_PROPERTY,
              "dateRanges": [{"startDate": S, "endDate": E}],
-             "dimensions": [{"name": d} for d in GA4_BREAKDOWN_DIMS],
-             "metrics": [{"name": m} for m in GA4_BREAKDOWN_METRICS],
-             "limit": 200})
+             "dimensions": [],
+             "metrics": [{"name": "activeUsers"}, {"name": "sessions"}]})
     try:
-        totals = _ga4_breakdown_totals(ga["rows"])
-        raw, adj = totals["raw"], totals["adjusted"]
-        ga_line = (f"👥 GA4: *{int(round(adj['activeUsers']))}* users / "
-                   f"{int(round(adj['sessions']))} sessions human-adjusted — "
-                   f"{int(round(raw['activeUsers']))} / {int(round(raw['sessions']))} raw")
+        row = ga["rows"][0]["metricValues"]
+        ga_line = f"👥 GA4: *{int(float(row[0]['value']))}* distinct active users / {int(float(row[1]['value']))} sessions"
     except Exception:
-        ga_line = "👥 GA4: ?"
+        ga_line = "👥 GA4: unavailable (no complete no-dimension total)"
 
     tot = _ex("GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY",
               {"siteUrl": GSC_SITE, "startDate": S, "endDate": E, "dimensions": [], "rowLimit": 1})
-    t = ((tot or {}).get("rows") or [{}])[0]
-    clicks, imps = t.get("clicks", 0), t.get("impressions", 0)
-    ctr, pos = round(t.get("ctr", 0) * 100, 2), round(t.get("position", 0), 1)
+    t = ((tot or {}).get("rows") or [None])[0]
+    if t is None:
+        gsc_line = "🔎 GSC: unavailable (fetch failed or returned no total row)"
+    else:
+        clicks, imps = t.get("clicks", 0), t.get("impressions", 0)
+        ctr = round(clicks / imps * 100, 2) if imps else 0.0
+        pos = round(t.get("position", 0), 1)
+        gsc_line = f"🔎 GSC: {clicks} clicks · {imps} impressions · {ctr}% CTR · avg pos {pos}"
 
     tq = _ex("GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY",
              {"siteUrl": GSC_SITE, "startDate": S, "endDate": E, "dimensions": ["query"], "rowLimit": 50})
     queries = top_search_demand((tq or {}).get("rows", []))
 
-    days_left = (TARGET_DATE - end).days
+    days_left = (TARGET_DATE - dt.datetime.now(dt.timezone.utc).date()).days
     lines = [f"🤖 *Jr — weekly telemetry* · esp-atlas.com · {S}→{E}",
              ga_line,
-             f"🔎 GSC: {clicks} clicks · {imps} impressions · {ctr}% CTR · avg pos {pos}",
+             gsc_line,
              f"🎯 1,000,000 by {TARGET_DATE} — **{days_left} days left**",
              "",
              "*Top search demand* — Jr's data-priority signal:"]

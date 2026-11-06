@@ -26,7 +26,7 @@ export default function FirmwareDetailClient({ id }: { id: string }) {
         const [recipes, parts, readme] = await Promise.all([
           getRecipesForFirmware(id).then((r) => r.results, () => []),
           listParts().then((r) => r.results, () => []),
-          firmware.readme_en ? Promise.resolve(null) : fetchReadme(firmware.url),
+          fetchReadme(firmware.url),
         ]);
         if (!cancelled) setState({ status: "ok", firmware, recipes, parts, readme });
       })

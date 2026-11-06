@@ -1,5 +1,5 @@
 import type { Firmware, PartRecord, Recipe, SourceEntry } from "./api.ts";
-import { CATALOG_TAG } from "./api-server.ts";
+import { CATALOG_TAG, serverApiHeaders } from "./api-server.ts";
 import type { AtlasCatalog } from "./atlas-model.ts";
 
 export type AtlasCatalogResult =
@@ -7,8 +7,8 @@ export type AtlasCatalogResult =
   | { status: "error"; message: string };
 
 type ObjectValue = Record<string, unknown>;
-type CollectionResult<T> = { status: "ok"; records: T[] } | { status: "error"; message: string };
-type Guard<T> = (value: unknown) => value is T;
+export type CollectionResult<T> = { status: "ok"; records: T[] } | { status: "error"; message: string };
+export type Guard<T> = (value: unknown) => value is T;
 
 // apps/api/src/esp_atlas_api/main.py currently caps /parts at this value and
 // supplies no total. Reaching it without a total cannot prove completeness.
@@ -33,7 +33,7 @@ function nullableAt(value: ObjectValue, keys: string[], guard: (value: unknown) 
   return keys.every((key) => nullable(value[key], guard));
 }
 
-function isPart(value: unknown): value is PartRecord {
+export function isPart(value: unknown): value is PartRecord {
   return object(value) && nonempty(value.id) && nonempty(value.type) && nonempty(value.name)
     && stringsAt(value, ["vendor_or_brand", "brand_name", "_path"])
     && nullableAt(value, ["brand_url", "wifi_standard", "wifi_bands", "ble_version", "ieee802154_protocols", "form_factor", "price_tier", "soc_ref", "module_ref"], string)
@@ -41,7 +41,7 @@ function isPart(value: unknown): value is PartRecord {
     && nullableAt(value, ["flash_mb", "psram_mb"], number) && sources(value.sources);
 }
 
-function isFirmware(value: unknown): value is Firmware {
+export function isFirmware(value: unknown): value is Firmware {
   if (!object(value) || !nonempty(value.id) || value.type !== "firmware" || !nonempty(value.name)
     || !stringsAt(value, ["url", "category"]) || !nullableAt(value, ["maintainer", "license", "manifest_url"], string)
     || ![value.distribution, value.capabilities, value.socs].every(strings) || !sources(value.sources)) return false;
@@ -75,29 +75,13 @@ function error(path: string, message: string): { status: "error"; message: strin
   return { status: "error", message: `${path}: ${message}` };
 }
 
-async function collection<T extends { id: string }>(
-  baseUrl: string, path: string, guard: Guard<T>, fetcher: typeof fetch,
-): Promise<CollectionResult<T>> {
-  let response: Response | undefined;
-  for (const timeout of [TIMEOUT_MS, COLD_START_TIMEOUT_MS]) {
-    try {
-      response = await fetcher(`${baseUrl.replace(/\/+$/, "")}${path}`, {
-        next: { revalidate: 3600, tags: [CATALOG_TAG] },
-        signal: AbortSignal.timeout(timeout),
-      });
-      break;
-    } catch {
-      if (timeout === COLD_START_TIMEOUT_MS) return error(path, "API unavailable after retry.");
-    }
-  }
-  if (!response) return error(path, "API unavailable.");
-  if (!response.ok) return error(path, `HTTP ${response.status}.`);
-  let body: unknown;
-  try { body = await response.json(); }
-  catch { return error(path, "Invalid JSON response."); }
+/** Shared completeness gate for Atlas and the public sitemap. */
+export function validateCatalogCollection<T extends { id: string }>(
+  body: unknown, path: "/parts" | "/firmware" | "/recipes", guard: Guard<T>,
+): CollectionResult<T> {
   if (!object(body) || !Array.isArray(body.results)) return error(path, "Malformed collection response.");
   if (!body.results.every(guard)) return error(path, "Malformed catalog record.");
-  const records = body.results;
+  const records: T[] = body.results;
   if (new Set(records.map((record) => record.id)).size !== records.length) return error(path, "Duplicate record IDs.");
   const hasTotal = Object.hasOwn(body, "total");
   if (path === "/firmware" && !hasTotal) return error(path, "Missing collection total; completeness is unknown.");
@@ -110,13 +94,42 @@ async function collection<T extends { id: string }>(
   return { status: "ok", records };
 }
 
+async function collection<T extends { id: string }>(
+  baseUrl: string, path: "/parts" | "/firmware" | "/recipes", guard: Guard<T>, fetcher: typeof fetch, refreshKey: string | null,
+): Promise<CollectionResult<T>> {
+  let response: Response | undefined;
+  for (const timeout of [TIMEOUT_MS, COLD_START_TIMEOUT_MS]) {
+    try {
+      const url = `${baseUrl.replace(/\/+$/, "")}${path}${refreshKey ? `?_atlas_refresh=${refreshKey}` : ""}`;
+      response = await fetcher(url, {
+        next: { revalidate: 3600, tags: [CATALOG_TAG] },
+        headers: serverApiHeaders(baseUrl),
+        signal: AbortSignal.timeout(timeout),
+      });
+      break;
+    } catch {
+      if (timeout === COLD_START_TIMEOUT_MS) return error(path, "API unavailable after retry.");
+    }
+  }
+  if (!response) return error(path, "API unavailable.");
+  if (!response.ok) return error(path, `HTTP ${response.status}.`);
+  let body: unknown;
+  try { body = await response.json(); }
+  catch { return error(path, "Invalid JSON response."); }
+  return validateCatalogCollection(body, path, guard);
+}
+
 /** Full collections only. An unavailable or incomplete response never becomes
  * an empty catalog or a successful partial graph. */
-export async function loadAtlasCatalog(baseUrl: string, fetcher: typeof fetch = fetch): Promise<AtlasCatalogResult> {
+async function loadAtlasCatalogOnce(baseUrl: string, fetcher: typeof fetch, fresh: boolean): Promise<AtlasCatalogResult> {
+  // Use one new cache key for all three collections on the rare retry. This
+  // bypasses a mixed old snapshot without turning normal Atlas renders into
+  // uncached cold API calls or disabling page prerendering.
+  const refreshKey = fresh ? Date.now().toString(36) : null;
   const [parts, firmware, recipes] = await Promise.all([
-    collection(baseUrl, "/parts", isPart, fetcher),
-    collection(baseUrl, "/firmware", isFirmware, fetcher),
-    collection(baseUrl, "/recipes", isRecipe, fetcher),
+    collection(baseUrl, "/parts", isPart, fetcher, refreshKey),
+    collection(baseUrl, "/firmware", isFirmware, fetcher, refreshKey),
+    collection(baseUrl, "/recipes", isRecipe, fetcher, refreshKey),
   ]);
   if (parts.status !== "ok" || firmware.status !== "ok" || recipes.status !== "ok") {
     return { status: "error", message: [parts, firmware, recipes]
@@ -132,7 +145,15 @@ export async function loadAtlasCatalog(baseUrl: string, fetcher: typeof fetch = 
   const mismatched = firmware.records.filter((record) =>
     record.boards !== undefined && record.boards !== (recipeCounts.get(record.id) ?? 0));
   if (mismatched.length > 0) {
+    // A deploy can leave independently cached collections at different
+    // revisions. Retry the entire snapshot once; a real disagreement still
+    // fails closed instead of publishing a plausible partial graph.
+    if (!fresh) return loadAtlasCatalogOnce(baseUrl, fetcher, true);
     return error("/recipes", `Recipe counts disagree with /firmware for ${mismatched.length} project(s); completeness is unknown.`);
   }
   return { status: "ok", catalog: { parts: parts.records, firmware: firmware.records, recipes: recipes.records } };
+}
+
+export function loadAtlasCatalog(baseUrl: string, fetcher: typeof fetch = fetch): Promise<AtlasCatalogResult> {
+  return loadAtlasCatalogOnce(baseUrl, fetcher, false);
 }

@@ -93,7 +93,9 @@ export default function HomeView({ examples }: { examples: Example[] }) {
     setGuideError(null);
     try {
       setGuide(await runGuide(firmwareId));
+      track("guide_result", { surface: "home", kind: "run", outcome: "success" });
     } catch (err) {
+      track("guide_error", { surface: "home", kind: "run", status: err instanceof ApiError ? err.status : "network" });
       setGuide(null);
       setGuideError(err instanceof ApiError ? err.message : "The API did not answer in time.");
     } finally {
@@ -106,7 +108,9 @@ export default function HomeView({ examples }: { examples: Example[] }) {
     setBuildGuideError(null);
     try {
       setBuildGuideData(await buildGuide(text));
+      track("guide_result", { surface: "home", kind: "build", outcome: "success" });
     } catch (err) {
+      track("guide_error", { surface: "home", kind: "build", status: err instanceof ApiError ? err.status : "network" });
       setBuildGuideData(null);
       setBuildGuideError(err instanceof ApiError ? err.message : "The API did not answer in time.");
     } finally {
@@ -115,6 +119,8 @@ export default function HomeView({ examples }: { examples: Example[] }) {
   }
 
   async function onIntent(text: string) {
+    const started = performance.now();
+    track("intent_submit", { surface: "home", q_length: text.length });
     setParsing(true);
     setParse(null);
     setGuide(null);
@@ -125,6 +131,7 @@ export default function HomeView({ examples }: { examples: Example[] }) {
       const parsed = await parseIntent(text);
       setParse(parsed);
       track("intent_parse", { q: text, kind: parsed.kind, cached: parsed.cached });
+      track("intent_result", { surface: "home", kind: parsed.kind, latency_ms: Math.round(performance.now() - started) });
 
       if (parsed.kind === "firmware" && parsed.firmware) {
         // Answer inline, grounded against the recipe graph. The full firmware
@@ -155,6 +162,7 @@ export default function HomeView({ examples }: { examples: Example[] }) {
       void executeSearch(next, scrollToResults);
     } catch {
       // Inference unavailable (no key, rate-limited). The prompt must still work.
+      track("intent_error", { surface: "home", stage: "parse", fallback: "search", latency_ms: Math.round(performance.now() - started) });
       setParse(null);
       const next = { q: text };
       setFilters(next);

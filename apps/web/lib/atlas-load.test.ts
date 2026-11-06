@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { loadAtlasCatalog } from "./atlas-load.ts";
+import { isFirmware, isPart, loadAtlasCatalog, validateCatalogCollection } from "./atlas-load.ts";
 import { fetchAtlasCatalog } from "./atlas-server.ts";
 
 const part = {
@@ -84,6 +84,15 @@ test("malformed envelopes, records, evidence, duplicates and incomplete totals n
   }
 });
 
+test("sitemap's shared collection gate rejects partial totals, duplicate IDs and malformed records", () => {
+  assert.equal(validateCatalogCollection({ results: [firmware], total: 2 }, "/firmware", isFirmware).status, "error");
+  assert.equal(validateCatalogCollection({ results: [firmware, firmware], total: 2 }, "/firmware", isFirmware).status, "error");
+  assert.equal(validateCatalogCollection({ results: [{ id: "fixture-firmware" }], total: 1 }, "/firmware", isFirmware).status, "error");
+  assert.equal(validateCatalogCollection({ results: [part, part] }, "/parts", isPart).status, "error");
+  assert.equal(validateCatalogCollection({ results: [part], total: 2 }, "/parts", isPart).status, "error");
+  assert.equal(validateCatalogCollection({ results: [firmware], total: 1 }, "/firmware", isFirmware).status, "ok");
+});
+
 test("a parts response at the API cap is not claimed complete without an authoritative matching total", async () => {
   const parts = Array.from({ length: 10_000 }, (_, i) => ({ ...part, id: `part-${i}` }));
   const result = await loadAtlasCatalog("https://api.example.test", respond({ ...envelopes(), "/parts": { results: parts } }));
@@ -101,6 +110,25 @@ test("firmware recipe counts detect a silently incomplete recipes collection wit
   }));
   assert.equal(withOrphan.status, "ok");
   if (withOrphan.status === "ok") assert.equal(withOrphan.catalog.recipes.length, 2);
+});
+
+test("a mixed cached revision gets one full-collection retry with a new tagged cache key", async () => {
+  const calls: { path: string; fresh: boolean }[] = [];
+  const fetcher = (async (input, init) => {
+    const url = new URL(String(input));
+    const path = url.pathname;
+    const fresh = url.searchParams.has("_atlas_refresh");
+    calls.push({ path, fresh });
+    assert.deepEqual(init?.next, { revalidate: 3600, tags: ["catalog"] });
+    const body = path === "/firmware" && !fresh
+      ? { results: [{ ...firmware, boards: 0 }], total: 1 }
+      : envelopes()[path];
+    return new Response(JSON.stringify(body));
+  }) as typeof fetch;
+  const result = await loadAtlasCatalog("https://api.example.test", fetcher);
+  assert.equal(result.status, "ok");
+  assert.deepEqual(calls.slice(0, 3).map(call => call.fresh), [false, false, false]);
+  assert.deepEqual(calls.slice(3).map(call => call.fresh), [true, true, true]);
 });
 
 test("only transport failures retry with 3s then 9s signals; HTTP and invalid JSON do not retry", async (t) => {

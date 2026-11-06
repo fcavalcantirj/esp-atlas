@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import FirmwareDetailClient from "@/components/firmware/FirmwareDetailClient";
+import { Suspense } from "react";
+import FirmwareReadme from "@/components/firmware/FirmwareReadme";
 import FirmwareDetailView from "@/components/firmware/FirmwareDetailView";
+import type { Firmware } from "@/lib/api";
 import { fetchAllParts, fetchFirmware, fetchRecipesForFirmware } from "@/lib/api-server";
 import { detailRobots } from "@/lib/detail-robots";
 import { firmwareMetaDescription, firmwareMetaTitle } from "@/lib/format";
-import { fetchReadme } from "@/lib/readme";
+import { fetchReadme, type RepoReadme } from "@/lib/readme";
 import { SITE_NAME } from "@/lib/site";
 
 // Firmware hub: the project's own identity (GET /firmware/<id>) plus the
@@ -13,10 +15,14 @@ import { SITE_NAME } from "@/lib/site";
 // same shape as the board page's "Firmware for this board" section but from
 // the other side of the edge.
 
+async function DeferredReadme({ firmware, readmePromise }: { firmware: Firmware; readmePromise: Promise<RepoReadme | null> }) {
+  return <FirmwareReadme firmware={firmware} readme={await readmePromise} />;
+}
 
 export async function generateMetadata({ params }: PageProps<"/firmware/[id]">): Promise<Metadata> {
   const { id } = await params;
   const result = await fetchFirmware(id);
+  if (result.status === "error") throw new Error(`Firmware API unavailable for ${id}`);
   if (result.status !== "ok") {
     return { title: id, robots: detailRobots(result.status) };
   }
@@ -40,15 +46,27 @@ export default async function FirmwarePage({ params }: PageProps<"/firmware/[id]
   const { id } = await params;
   const result = await fetchFirmware(id);
   if (result.status === "not_found") notFound();
-  // Cold or gated API: render client-side instead of a dead end.
-  if (result.status !== "ok") return <FirmwareDetailClient id={id} />;
+  if (result.status === "error") throw new Error(`Firmware API unavailable for ${id}`);
 
   const firmware = result.data;
-  const [recipesResult, parts, readme] = await Promise.all([
+  // The upstream README is optional. Start its bounded fetch now, but stream
+  // the firmware identity and cited board recipes as soon as their APIs answer.
+  const readmePromise = fetchReadme(firmware.url);
+  const [recipesResult, parts] = await Promise.all([
     fetchRecipesForFirmware(id),
     fetchAllParts(),
-    firmware.readme_en ? Promise.resolve(null) : fetchReadme(firmware.url),
   ]);
   const recipes = recipesResult.status === "ok" ? recipesResult.data.results : [];
-  return <FirmwareDetailView firmware={firmware} recipes={recipes} parts={parts} readme={readme} />;
+  return (
+    <FirmwareDetailView
+      firmware={firmware}
+      recipes={recipes}
+      parts={parts}
+      readmeSection={
+        <Suspense fallback={null}>
+          <DeferredReadme firmware={firmware} readmePromise={readmePromise} />
+        </Suspense>
+      }
+    />
+  );
 }

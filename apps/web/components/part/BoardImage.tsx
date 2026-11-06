@@ -18,11 +18,18 @@ export default function BoardImage({ part }: { part: PartDetail }) {
   return (
     <section className="board-image" aria-label={`${part.name} imagery`}>
       <div className="board-image-grid">
-        {items.map((it) => (
+        {items.map((it, index) => (
           <figure key={it.url} className="board-image-figure">
             <a href={it.url} target="_blank" rel="noopener noreferrer" title={`Open full-size ${it.label.toLowerCase()}`}>
               {/* eslint-disable-next-line @next/next/no-img-element -- external official vendor image, no next/image remote config */}
-              <img src={it.url} alt={`${part.name} ${it.label.toLowerCase()}`} loading="lazy" />
+              <img
+                src={part.id === "m5cardputer" && it.label === "Board" ? "/board-images/cardputer.avif" : it.url}
+                alt={`${part.name} ${it.label.toLowerCase()}`}
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : undefined}
+                width={part.id === "m5cardputer" && it.label === "Board" ? 665 : undefined}
+                height={part.id === "m5cardputer" && it.label === "Board" ? 665 : undefined}
+              />
             </a>
             <figcaption>{it.label}</figcaption>
           </figure>

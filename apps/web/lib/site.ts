@@ -36,11 +36,15 @@ export function websiteSearchAction() {
   };
 }
 
-// GA4 measurement ID. Set NEXT_PUBLIC_GA_ID to override; production builds fall
-// back to the esp-atlas.com property so a missing Vercel env var never silently
-// disables analytics. Dev/preview builds send nothing unless the env var is set.
-export const GA_ID: string | undefined =
-  process.env.NEXT_PUBLIC_GA_ID || (process.env.NODE_ENV === "production" ? "G-66L7SDXKJZ" : undefined);
+// The public property is only enabled for the production deployment. Previews
+// need an explicit opt-in and a separate measurement ID for QA.
+const gaMode = process.env.NEXT_PUBLIC_GA_ENABLED;
+const productionDeployment = process.env.VERCEL_ENV === "production";
+const PUBLIC_GA_ID = "G-66L7SDXKJZ";
+export const GA_ID: string | undefined = gaMode === "0" ? undefined
+  : productionDeployment ? (process.env.NEXT_PUBLIC_GA_ID || PUBLIC_GA_ID)
+  : gaMode === "1" && process.env.NEXT_PUBLIC_GA_ID !== PUBLIC_GA_ID
+    ? (process.env.NEXT_PUBLIC_GA_ID || undefined) : undefined;
 
 // NEXT_PUBLIC_GA_DEBUG=1 tags every event with debug_mode so it shows up in GA4 DebugView.
 export const GA_DEBUG = process.env.NEXT_PUBLIC_GA_DEBUG === "1";

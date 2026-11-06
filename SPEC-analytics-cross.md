@@ -1,6 +1,6 @@
 # SPEC — Analytics Crossing 🔀 (GA4 × Search Console, joined on landing page)
 
-> Status: **DRAFT — implemented, first cut (2026-09-27).** Extends `jr/telemetry.py`
+> Status: **DRAFT — corrected 2026-11-05.** Extends `jr/telemetry.py`
 > (§3d growth telemetry). Depends on the same Composio OAuth calling convention
 > `telemetry.py` already uses — no new credentials, no new pip deps.
 
@@ -8,16 +8,10 @@
 
 ## 0. The gap this closes
 
-`jr/telemetry.py` reports GA4 and GSC as two disconnected numbers: "X users this week" and
-"Y search impressions this week." Neither tells Jr **which page** a search query landed on,
-nor **what that visitor did next**. Today's telemetry cannot answer the one question that
-actually drives the 1,000,000-user north-star:
-
-> For query Q, which lands on page P — did the visitor convert, or did P leak them?
-
-This module (`jr/analytics_cross.py`) joins GA4 pagePath data with GSC page data **on the
-landing page URL** to expose the acquisition → activation funnel: **query → page →
-conversion**, per page, with the page's top queries attached.
+`jr/telemetry.py` reports GA4 and GSC separately. This module joins aggregate
+GA4 `pagePath` and GSC page rows by normalized URL. A pagePath is not necessarily
+a landing page. The joined rows do not link a search click to a user, session,
+or later action. Event-count ratios are diagnostics only, never conversion rates.
 
 ---
 
@@ -74,16 +68,16 @@ FunnelRow = {
                                         # events axis is UNAVAILABLE; 0 if loaded but this
                                         # page/event combo had no row (GA4 omits zero-count rows).
     "flash_open": int | None,          # same None-vs-0 rule as part_view
-    "conv_view_to_part": float | None, # part_view / page_views. None if either is None
+    "part_view_per_page_view": float | None, # part_view / page_views; event ratio, not conversion
                                         # (axis unavailable) or page_views == 0 (undefined rate).
                                         # 0.0 is a valid, real value (page_views > 0, part_view == 0).
-    "conv_part_to_flash": float | None,# flash_open / part_view, same None-vs-0.0 rule
+    "flash_open_per_part_view": float | None,# flash_open / part_view; event ratio
     "top_queries": list[{"query": str, "impressions": int, "clicks": int, "position": float}],
     "demand": int | None,               # Google Trends relative interest (0-100) for the row's top
                                         # query (§7). None if the query has no Trends score (or the
                                         # trends map passed to build_funnel() is empty/absent).
     "striking_distance": bool,         # True if ANY attributed query has 8 <= avg_position <= 20 and impressions > 0
-    "leak_flag": bool,                 # True if demand+rank are healthy but conversion is weak (§5)
+    "leak_flag": bool,                 # Retired; always False until session-level evidence exists
 }
 
 FunnelTable = {
@@ -132,7 +126,7 @@ Edge cases explicitly under test (`test_analytics_cross.py`):
   `/parts/m5cardputer-v2` (GA4).
 - A GSC page with no GA4 counterpart at all (e.g. a page GA4 never saw, or GA4 data still
   processing) → row emitted with `page_views`/`active_users`/`sessions`/`part_view`/
-  `flash_open`/conversion rates all `None`, GSC fields populated.
+  `flash_open`/event ratios all `None`, GSC fields populated.
 - A GA4 page with no GSC counterpart (never indexed, or zero-impression) → row emitted with
   `impressions`/`clicks`/`ctr`/`avg_position`/`top_queries` all `None`/`[]`, GA4 fields
   populated.
@@ -152,10 +146,13 @@ Edge cases explicitly under test (`test_analytics_cross.py`):
 - `impressions`, `clicks` — from GSC pull #3, keyed by normalized `page`; same 0-vs-None
   rule, keyed off pull #3's availability. `ctr`, `avg_position` are `None` whenever the page
   has no GSC row at all (undefined, not zero) even if the axis itself is available.
-- `conv_view_to_part = part_view / page_views` when both are non-`None` and `page_views > 0`;
+- `part_view_per_page_view = part_view / page_views` when both are non-`None` and `page_views > 0`;
   `None` if either side is `None` (axis unavailable) or `page_views == 0` (rate undefined,
   never divide by zero). `part_view == 0` with `page_views > 0` is a real `0.0`, not `None`.
-- `conv_part_to_flash = flash_open / part_view`, same rule against `part_view`.
+- `flash_open_per_part_view = flash_open / part_view`, same rule against `part_view`.
+  Neither ratio is a session conversion; repeated events can make either exceed 1.
+  Normalized page variants add page views but leave users and sessions `None`
+  because those measures cannot be safely summed across variants.
 - `top_queries` — every GSC pull #4 row whose normalized `page` matches this row's page,
   sorted by `impressions` desc, capped at 10.
 
@@ -167,12 +164,9 @@ Edge cases explicitly under test (`test_analytics_cross.py`):
   `8 <= avg_position <= 20` and `impressions > 0` (Jr's classic "one push from page 1" SEO
   signal — reused verbatim from the position band `SPEC-jr-demand-driven.md` already treats
   as actionable).
-- **`leak_flag`** — `True` if the page has **healthy demand+rank** (`impressions` is present
-  and `>= 10`, and `avg_position` is present and `<= 20`) **but** `conv_view_to_part` is
-  present and `< 0.05` (fewer than 1 in 20 visitors even opens the part view) — i.e. Google
-  is sending qualified traffic and the page is losing it. Both `impressions`/`avg_position`
-  and `conv_view_to_part` must be non-`None` to raise this flag; a page missing either axis
-  is not flagged (§6 graceful degradation — no flag fabricated from partial data).
+- **`leak_flag`** — retired and always `False`. A page-level event ratio cannot
+  prove that a search visitor failed to take an action. A future session-level
+  eligible cohort is required to restore this flag.
 
 ---
 
@@ -187,7 +181,7 @@ Each of the four source calls (`fetch_ga_pages`, `fetch_ga_events`, `fetch_gsc_p
   (`top_queries`), never fabricated, never defaulted to `0`. (An *available* axis that
   simply has no row for a given page still yields a real `0` — see §2/§4 — that is not
   degradation, that is a fact.)
-- Conversion rates that need a `None` field are `None`, not skipped-with-an-exception.
+- Event ratios that need a `None` field are `None`, not skipped-with-an-exception.
 - Flags (`striking_distance`, `leak_flag`) default to `False` when the data needed to
   evaluate them is missing — a flag is a positive claim, and an unavailable axis cannot
   support one.

@@ -10,17 +10,18 @@ import "./flash-wizard.css";
 import "./verify.css";
 import "./status.css";
 
-// Bundled variable fonts keep the shell independent of a remote font request.
-// Both families are licensed under the accompanying SIL Open Font License.
+// Bundled Latin WOFF2 variable fonts keep the shell independent of a remote
+// font request. Both families are licensed under the accompanying SIL Open Font
+// License; the system fallback covers glyphs outside the Latin subset.
 const geist = localFont({
-  src: "./fonts/Geist.ttf",
+  src: "./fonts/geist-latin.woff2",
   variable: "--font-geist-sans",
   weight: "100 900",
   display: "swap",
 });
 
 const geistMono = localFont({
-  src: "./fonts/GeistMono.ttf",
+  src: "./fonts/geist-mono-latin.woff2",
   variable: "--font-geist-mono",
   weight: "100 900",
   display: "swap",
@@ -61,12 +62,16 @@ export const viewport: Viewport = {
 const fontScaleScript = `try{var s=localStorage.getItem(${JSON.stringify(
   FONT_SCALE_KEY,
 )});if(s)document.documentElement.style.setProperty("--font-scale",s)}catch(e){}`;
+const analyticsQueueScript = GA_ID
+  ? `window.__ESP_ATLAS_GA_ID=${JSON.stringify(GA_ID)};window.dataLayer=window.dataLayer||[];try{if(localStorage.getItem("esp-atlas:analytics-disabled")==="1")window["ga-disable-${GA_ID}"]=true}catch(e){}`
+  : "";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geist.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: fontScaleScript }} />
+        {GA_ID && <script dangerouslySetInnerHTML={{ __html: analyticsQueueScript }} />}
         <Providers>
           <a href="#main" className="skip-link">
             Skip to content

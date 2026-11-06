@@ -68,7 +68,7 @@ def test_composio_lazily_builds_and_caches_the_client(monkeypatch, tmp_path):
     assert client1 is client2              # cached across calls
 
 
-# ═══════════════════ GA4 bot filter — honest raw-vs-human-adjusted totals ═══════════════════
+# ═══════════════════ GA4 segment diagnostic — never a distinct-user total ═══════════════════
 #
 # Mirrors the behavioral junk rule deep-analytics' bot_filter.py applies to esp-atlas GA4:
 # a country x sessionDefaultChannelGroup segment is junk only when its channel is Direct AND
@@ -130,7 +130,7 @@ def test_raw_totals_sum_every_segment_regardless_of_junk():
         _row("Brazil", "Organic Search", 12, 12, 240.0, 10),     # human reading a build guide
     ]
     totals = telemetry._ga4_breakdown_totals(rows)
-    assert totals["raw"]["activeUsers"] == 52
+    assert totals["raw"]["segment_user_memberships"] == 52
     assert totals["raw"]["sessions"] == 52
 
 
@@ -141,9 +141,9 @@ def test_adjusted_totals_exclude_only_junk_segments():
         _row("Germany", "Direct", 3, 3, 300.0, 3),               # Direct but slow+engaged: human
     ]
     totals = telemetry._ga4_breakdown_totals(rows)
-    assert totals["adjusted"]["activeUsers"] == 15   # 12 (Brazil) + 3 (Germany)
+    assert totals["adjusted"]["segment_user_memberships"] == 15   # 12 (Brazil) + 3 (Germany)
     assert totals["adjusted"]["sessions"] == 15
-    assert totals["raw"]["activeUsers"] == 55
+    assert totals["raw"]["segment_user_memberships"] == 55
     assert totals["raw"]["sessions"] == 55
 
 
@@ -159,15 +159,15 @@ def test_adjusted_totals_are_zero_when_every_segment_is_junk():
         _row("China", "Direct", 20, 20, 2.0, 1),   # engagement 1/20=0.05 <= 0.10: still junk
     ]
     totals = telemetry._ga4_breakdown_totals(rows)
-    assert totals["adjusted"]["activeUsers"] == 0
+    assert totals["adjusted"]["segment_user_memberships"] == 0
     assert totals["adjusted"]["sessions"] == 0
-    assert totals["raw"]["activeUsers"] == 60
+    assert totals["raw"]["segment_user_memberships"] == 60
 
 
 def test_empty_rows_produce_zeroed_raw_and_adjusted_totals():
     totals = telemetry._ga4_breakdown_totals([])
-    assert totals["raw"] == {"activeUsers": 0.0, "sessions": 0.0}
-    assert totals["adjusted"] == {"activeUsers": 0.0, "sessions": 0.0}
+    assert totals["raw"] == {"segment_user_memberships": 0.0, "sessions": 0.0}
+    assert totals["adjusted"] == {"segment_user_memberships": 0.0, "sessions": 0.0}
 
 
 # --- the weekly "Top search demand" list honours the miner's impression floor ----------------------
@@ -213,3 +213,40 @@ def test_the_miner_and_the_digest_share_one_floor():
     import demand
     import telemetry
     assert demand.MIN_IMPRESSIONS == telemetry.MIN_IMPRESSIONS == 10
+
+
+def test_weekly_digest_uses_completed_dates_and_distinct_ga_total(monkeypatch, tmp_path):
+    import datetime as dt
+    import telemetry
+
+    assert telemetry.completed_window(7, dt.date(2026, 11, 5)) == ("2026-10-28", "2026-11-03")
+    monkeypatch.setattr(telemetry, "completed_window", lambda days: ("2026-10-28", "2026-11-03"))
+    monkeypatch.setattr(telemetry, "__file__", str(tmp_path / "jr" / "telemetry.py"))
+    monkeypatch.setattr(telemetry.notify, "send_telegram", lambda message: None)
+    calls = []
+
+    def fake_ex(slug, args):
+        calls.append((slug, args))
+        if slug == "GOOGLE_ANALYTICS_RUN_REPORT":
+            return {"rows": [{"metricValues": [{"value": "8"}, {"value": "12"}]}]}
+        if args["dimensions"] == []:
+            return {"rows": [{"clicks": 2, "impressions": 10, "position": 9.0}]}
+        return {"rows": []}
+
+    monkeypatch.setattr(telemetry, "_ex", fake_ex)
+    message = telemetry.weekly_digest(7)
+    assert "2026-10-28→2026-11-03" in message
+    assert "8* distinct active users / 12 sessions" in message
+    assert calls[0][1]["dimensions"] == []
+    assert calls[0][1]["dateRanges"] == [{"startDate": "2026-10-28", "endDate": "2026-11-03"}]
+
+
+def test_weekly_digest_marks_failed_gsc_unavailable(monkeypatch, tmp_path):
+    import telemetry
+
+    monkeypatch.setattr(telemetry, "__file__", str(tmp_path / "jr" / "telemetry.py"))
+    monkeypatch.setattr(telemetry.notify, "send_telegram", lambda message: None)
+    monkeypatch.setattr(telemetry, "_ex", lambda slug, args: None)
+    message = telemetry.weekly_digest(7)
+    assert "GSC: unavailable" in message
+    assert "GA4: unavailable" in message

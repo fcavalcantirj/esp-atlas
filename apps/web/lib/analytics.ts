@@ -1,20 +1,28 @@
 // Typed wrapper over @next/third-parties' sendGAEvent. Every user action on the
-// site goes through track() with the actual values the user chose, so GA4 can
-// answer "how do people search?" — not just "how many page views".
+// site goes through track() with bounded, non-text parameters.
 //
 // GA4 custom parameters are not reportable until registered as custom dimensions
 // / metrics in the GA4 admin (see apps/web/README.md for the list).
 import { sendGAEvent } from "@next/third-parties/google";
-import { GA_DEBUG, GA_ID } from "@/lib/site";
+import { GA_DEBUG } from "@/lib/site";
+import { trackedEventParams, type EventParams } from "./analytics-params";
+export type { EventParams } from "./analytics-params";
 
 export type EventName =
   | "wizard_submit"
   | "wizard_results"
   | "wizard_empty"
+  | "wizard_error"
   | "search_submit"
   | "search_results"
   | "search_empty"
+  | "search_error"
   | "intent_parse"
+  | "intent_submit"
+  | "intent_result"
+  | "intent_error"
+  | "guide_result"
+  | "guide_error"
   | "intent_clarifier_click"
   | "preset_click"
   | "example_click"
@@ -52,7 +60,12 @@ export type EventName =
   | "verify_error"
   | "verify_unknown_chip"
   | "monitor_connect"
-  | "monitor_disconnect";
+  | "monitor_disconnect"
+  | "atlas_lens_select"
+  | "atlas_inspect"
+  | "atlas_recipe_inspect"
+  | "atlas_handoff"
+  | "atlas_search";
 
 export type OutboundLinkType =
   | "source"
@@ -83,28 +96,21 @@ export type ResultOrigin =
   | "intent"
   | "build_guide";
 
-type ParamValue = string | number | boolean | undefined | null;
-export type EventParams = Record<string, ParamValue>;
-
-const MAX_PARAM_LENGTH = 100; // GA4 truncates event parameter values past 100 chars
-
-function cleanParams(params: EventParams): Record<string, string | number | boolean> {
-  const out: Record<string, string | number | boolean> = {};
-  for (const [key, value] of Object.entries(params)) {
-    if (value === undefined || value === null || value === "") continue;
-    out[key] = typeof value === "string" ? value.slice(0, MAX_PARAM_LENGTH) : value;
-  }
-  return out;
-}
-
 export function track(name: EventName, params: EventParams = {}): void {
-  const clean = cleanParams(params);
+  const clean = trackedEventParams(name, params);
   if (GA_DEBUG) clean.debug_mode = true;
-  if (!GA_ID) {
+  if (typeof window === "undefined") return;
+  const gaId = (window as Window & { __ESP_ATLAS_GA_ID?: string }).__ESP_ATLAS_GA_ID;
+  if (!gaId) {
     if (process.env.NODE_ENV !== "production") console.debug("[analytics]", name, clean);
     return;
   }
-  if (typeof window === "undefined") return;
+  try {
+    if (window.localStorage.getItem("esp-atlas:analytics-disabled") === "1") return;
+  } catch {
+    // Storage can be unavailable; the build-time switch still controls collection.
+  }
+  if (gaId === "G-66L7SDXKJZ" && window.location.hostname !== "esp-atlas.com") return;
   sendGAEvent("event", name, clean);
 }
 
