@@ -594,7 +594,9 @@ def test_a_failed_pr_edit_falls_back_to_the_rest_labels_endpoint():
     assert all(c[:2] != ("pr", "merge") for c in gh.calls)
 
 
-RECORD = "---\nid: t\npopularity:\n  stars: 1\n  as_of: '2026-09-01'\nsources:\n- field: '*'\n  url: u\n  verified: '2026-09-01'\n---\nbody\n"
+RECORD = ("---\nid: t\nurl: https://github.com/o/r\npopularity:\n  stars: 1\n"
+          "  as_of: '2026-09-01'\nsources:\n- field: popularity\n"
+          "  url: https://github.com/o/r\n  verified: '2026-09-01'\n---\nbody\n")
 
 
 def test_a_star_refresh_reads_head_and_index_text_and_stays_auto():

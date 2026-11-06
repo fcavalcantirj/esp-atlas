@@ -147,9 +147,9 @@ def hourly_stages(split: dict) -> list:
     Topics — a THIRD, additive firmware source (jr/stage_admit_topics, GitHub topic search):
     keeps the catalog growing after the launcher pool (Track B's admit) drained (DECISION-LOG.md).
     Fixed at TOPICS_PER_TICK, outside the allocator's split — it never competes with Track A/B for
-    units, and always runs last so an admitted topics firmware's boardmap widening waits for its
+    units, and runs after boardmap so an admitted topics firmware's widening waits for its
     own next tick (mirrors admit/boardmap ordering being the ONE thing that matters within a track,
-    not across tracks).
+    not across tracks). Popularity runs last, with at most seven repository calls.
 
     `split` is {"backfill": n, "firmware": m}. The firmware units are shared admit≈boardmap
     (boardmap takes the odd one), and admit's call_share is its fraction of the firmware units."""
@@ -171,6 +171,8 @@ def hourly_stages(split: dict) -> list:
             out.append(lambda ctx, n=bmap: stage_boardmap.run(ctx, budget=n))
     import stage_admit_topics
     out.append(lambda ctx: stage_admit_topics.run(ctx, budget=TOPICS_PER_TICK))
+    import stage_popularity_refresh
+    out.append(stage_popularity_refresh.run)
     return out
 
 

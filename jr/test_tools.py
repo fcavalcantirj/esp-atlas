@@ -583,11 +583,11 @@ def test_author_firmware_and_recipes_persists_popularity_snapshot(tmp_atlas):
 
     assert "error" not in result, result
     fm = tools._frontmatter(tools.FIRMWARE_DIR / FW_POP_FIXTURE_ID / "firmware.md")
-    assert fm["popularity"] == {"stars": 42, "forks": 17, "as_of": "2026-09-01"}
+    assert fm["popularity"] == {"stars": 42, "forks": 17, "github_as_of": "2026-09-01", "as_of": "2026-09-01"}
     assert "downloads" not in fm["popularity"]
-    pop_srcs = [s for s in fm["sources"] if s["field"] == "popularity"]
-    assert len(pop_srcs) == 1
-    assert pop_srcs[0]["verified"] == "2026-09-01"
+    pop_srcs = [s for s in fm["sources"] if s["field"].startswith("popularity.")]
+    assert {s["field"] for s in pop_srcs} == {"popularity.stars", "popularity.forks", "popularity.github_as_of"}
+    assert all(s["verified"] == "2026-09-01" for s in pop_srcs)
     # the '*' record source's verified is the same injected run date
     star_src = next(s for s in fm["sources"] if s["field"] == "*")
     assert star_src["verified"] == "2026-09-01"
@@ -607,7 +607,9 @@ def test_author_firmware_and_recipes_persists_downloads_when_known(tmp_atlas):
 
     assert "error" not in result, result
     fm = tools._frontmatter(tools.FIRMWARE_DIR / FW_POP_FIXTURE_ID / "firmware.md")
-    assert fm["popularity"] == {"stars": 1, "forks": 0, "downloads": 120_000, "as_of": "2026-09-01"}
+    assert fm["popularity"] == {"stars": 1, "forks": 0, "github_as_of": "2026-09-01",
+                                "downloads": 120_000, "downloads_as_of": "2026-09-01", "as_of": "2026-09-01"}
+    assert any(s["field"] == "popularity.downloads" and s["url"] == tools.LAUNCHERHUB for s in fm["sources"])
 
 
 def test_author_firmware_and_recipes_omits_popularity_when_unknown(tmp_atlas):
