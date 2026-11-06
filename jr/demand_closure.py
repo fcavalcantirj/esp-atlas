@@ -1,0 +1,157 @@
+"""EspAtlas Jr — autonomous RECONCILE closure for the demand work broker
+(SPEC-demand-work-consumer.md, Required execution path step 4 and Outcome evidence).
+
+When research_work.plan_work answers RECONCILE for linked work, `resolve` reads the linked PR
+through the injected `gh`, builds the observation receipt the validation's verification kind names,
+and hands both to research_work.verify_resolution, unchanged. Only its verdict decides:
+
+- delivered / rejected: `resolve` returns the committed queue and receipts with the candidate
+  closed (its earlier history kept, one entry appended) and the work receipt settled; the broker
+  writes both files with its compare-and-swap guard;
+- pending: nothing to write, only the reason.
+
+A `demand_resolution` observation is THIS run's miner result: the snapshot it just mined, at the
+catalog revision it mined (`mined_revision`), whose ancestry of the merge is asked of the injected
+`git`. A `catalog_search` observation would need a live public search at a deployment containing
+the merge; this module never invents one, so such work stays pending here.
+
+Pure apart from the injected gh/git calls: inputs are never mutated, no file is written.
+"""
+from __future__ import annotations
+
+import copy
+import json
+import re
+from dataclasses import dataclass
+from datetime import datetime
+
+import research_work as rw
+
+DELIVERED, REJECTED, PENDING = "delivered", "rejected", "pending"
+PR_FIELDS = "url,state,mergedAt,mergeCommit"
+PR_STATES = {"OPEN", "CLOSED", "MERGED"}
+_SHA_RE = re.compile(r"[0-9a-f]{7,40}")      # never hand git an option-looking or arbitrary string
+DEMAND_RELDIR = "docs/demand"
+
+
+@dataclass(frozen=True)
+class Closure:
+    status: str                       # delivered | rejected | pending
+    reason: str
+    queue: dict | None = None         # the committed queue with the candidate closed
+    receipts: list | None = None      # the receipts with this work settled
+    receipts_changed: bool = False
+
+
+def _pending(reason: str) -> Closure:
+    return Closure(PENDING, reason)
+
+
+# --- observation -------------------------------------------------------------------------------
+
+def read_pr(gh, url: str) -> dict | None:
+    """The linked PR in verify_resolution's shape, or None when gh fails or answers unreadably."""
+    p = gh("pr", "view", url, "--json", PR_FIELDS)
+    if getattr(p, "returncode", 1) != 0:
+        return None
+    try:
+        pr = json.loads(getattr(p, "stdout", "") or "")
+    except ValueError:
+        return None
+    if not isinstance(pr, dict) or pr.get("url") != url or pr.get("state") not in PR_STATES:
+        return None
+    commit = pr.get("mergeCommit") if isinstance(pr.get("mergeCommit"), dict) else {}
+    return {"url": url, "state": pr["state"].lower(), "merged": pr["state"] == "MERGED",
+            "merge_sha": commit.get("oid"), "merged_at": pr.get("mergedAt")}
+
+
+def contains_merge(git, merge_sha, revision) -> bool:
+    """True only when git says the merge is an ancestor of the mined revision; unknown is False."""
+    if git is None or not all(isinstance(s, str) and _SHA_RE.fullmatch(s) for s in (merge_sha, revision)):
+        return False
+    return getattr(git("merge-base", "--is-ancestor", merge_sha, revision), "returncode", 1) == 0
+
+
+def _miner_receipt(candidate: dict, pr: dict, snap: dict, *, mined_revision, git,
+                   now: datetime) -> tuple[dict | None, str]:
+    """This run's miner result for the term, or (None, why). exit_code 0 is recorded only because
+    the broker runs after a successful mine (demand_run passes `mined_revision` only then)."""
+    if not (isinstance(mined_revision, str) and _SHA_RE.fullmatch(mined_revision)):
+        return None, "no successful miner run at a known revision this invocation"
+    term = rw.term_key(candidate.get("term"))
+    items = [i for i in (snap or {}).get("items") or [] if isinstance(i, dict) and rw.term_key(i.get("term")) == term]
+    if len(items) != 1:
+        return None, f"this run's snapshot has no item (or several) for {candidate.get('term')!r}"
+    item = items[0]
+    return {"kind": rw.KIND_DEMAND_RESOLUTION, "query": candidate["term"], "exit_code": 0,
+            "mined_revision": mined_revision, "merge_sha": pr.get("merge_sha"),
+            "contains_merge": contains_merge(git, pr.get("merge_sha"), mined_revision),
+            "resolved": copy.deepcopy(item.get("resolved")), "gap": item.get("gap"),
+            "checked_at": now.isoformat()}, ""
+
+
+def observe(candidate: dict, pr: dict, snap: dict, *, mined_revision, git, now: datetime) -> tuple[dict | None, str]:
+    """The observation receipt for the validation's verification kind, or (None, why)."""
+    validation = rw.readable_validation(candidate) or {}
+    kind = validation.get("verification_kind", rw.KIND_CATALOG_SEARCH)
+    if kind == rw.KIND_CATALOG_SEARCH:
+        return None, ("catalog_search verification needs a live public search at a deployment containing "
+                      "the merge; the broker never invents one")
+    if kind != rw.KIND_DEMAND_RESOLUTION or not pr.get("merged"):
+        return None, ""                 # verify_resolution names the problem
+    return _miner_receipt(candidate, pr, snap, mined_revision=mined_revision, git=git, now=now)
+
+
+# --- the closed records ------------------------------------------------------------------------
+
+def _linked_pr(candidate: dict, own: list[dict]) -> tuple[str | None, str]:
+    links = candidate.get("linked_work") if isinstance(candidate.get("linked_work"), list) else []
+    urls = list(dict.fromkeys([r["pr_url"] for r in own if "pr_url" in r] + [u for u in links if rw._text(u)]))
+    if len(urls) != 1:
+        return None, f"{len(urls)} linked PRs: no single PR to verify"
+    return urls[0], ""
+
+
+def _closed(queue: dict, ckey: str, receipts: list, key: str, record: dict, history: dict,
+            receipt_state: str, resolution: dict) -> Closure:
+    queue = copy.deepcopy(queue)
+    c = queue["candidates"][ckey]
+    c.update(status=rw.STATUS_CLOSED, outcome=record, closed_on=resolution["closed_on"])
+    c["history"] = [*(c.get("history") or []), history]          # earlier history is never rewritten
+    settled = [({**copy.deepcopy(r), "state": receipt_state, "resolution": copy.deepcopy(resolution)}
+                if r["key"] == key and r["state"] not in rw.TERMINAL_STATES else r) for r in receipts]
+    return Closure(resolution["status"], resolution["reason"], queue, settled, settled != list(receipts))
+
+
+def resolve(queue: dict, receipts: list, key: str, snap: dict, *, gh, git, mined_revision,
+            today: str, now: datetime) -> Closure:
+    """Verify the linked work `key` and, when delivered or rejected, return the closed records."""
+    found = [(k, c) for k, c in (queue.get("candidates") or {}).items()
+             if isinstance(c, dict) and rw.candidate_key(c) == key]
+    if len(found) != 1:
+        return _pending("work is not one committed queue candidate: nothing to close")
+    ckey, candidate = found[0]
+    if candidate.get("status") != rw.STATUS_LINKED:
+        return _pending("candidate is not linked work yet: nothing to verify")
+    own = [r for r in receipts if r["key"] == key]
+    url, why = _linked_pr(candidate, own)
+    if url is None:
+        return _pending(why)
+    pr = read_pr(gh, url)
+    if pr is None:
+        return _pending(f"linked PR {url} unreadable: merge state deferred")
+    observed, why = observe(candidate, pr, snap, mined_revision=mined_revision, git=git, now=now)
+    res = rw.verify_resolution(candidate, pr, observed, today, work_receipts=receipts)
+    if res.status == PENDING:
+        return _pending("; ".join(filter(None, [why, res.reason])))
+    history = {"event": "closed", "date": today, "resolution": res.status, "work": key, "pr_url": url}
+    if res.status == DELIVERED:
+        history.update(merge_sha=pr["merge_sha"], snapshot=f"{DEMAND_RELDIR}/{snap.get('date')}.json")
+        resolution = {"status": DELIVERED, "reason": res.reason, "closed_on": res.closed_on,
+                      "evidence": copy.deepcopy(res.evidence)}
+        return _closed(queue, ckey, receipts, key, copy.deepcopy(res.evidence), history, DELIVERED, resolution)
+    evidence = {"pr_url": url, "pr_state": pr["state"], "merged": False, "checked_at": now.isoformat()}
+    history["reason"] = res.reason
+    resolution = {"status": REJECTED, "reason": res.reason, "closed_on": today, "evidence": evidence}
+    return _closed(queue, ckey, receipts, key, {"status": REJECTED, "reason": res.reason, **evidence},
+                   history, REJECTED, resolution)

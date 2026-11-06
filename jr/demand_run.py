@@ -108,7 +108,8 @@ class Decision:
     research: str | None = None
     queue_only: bool = False      # zero demand items, a changed queue: land the queue alone
     queue_changed: bool = False
-    receipts_changed: bool = False   # a new work reservation: docs/demand/work-receipts.json
+    receipts_changed: bool = False   # a reservation or settled receipt: docs/demand/work-receipts.json
+    work_closed: bool = False        # the broker closed linked work in docs/demand/research-queue.json
     work: str = ""                   # the broker's report line for that reservation
     pam_paths: tuple = ()
     pam_summary: str = ""
@@ -352,13 +353,16 @@ def _publication(d: Decision, wt_path: Path) -> tuple[list[str], str, str]:
     """(paths, subject, body) of the PR a landing decision opens."""
     snap, queue_path = d.snap, f"{DEMAND_RELDIR}/{research_queue.QUEUE_NAME}"
     receipts = [f"{DEMAND_RELDIR}/{demand_broker.RECEIPTS_NAME}"] if d.receipts_changed else []
-    note = (f"\n\nWork reserved: {d.work} in `{receipts[0]}` (SPEC-demand-work-consumer.md) — "
-            "bookkeeping only, no work PR." if receipts else "")
+    files = ([queue_path] if d.work_closed else []) + receipts
+    note = (f"\n\nWork {'closed' if d.work_closed else 'reserved'}: {d.work} in "
+            + " and ".join(f"`{f}`" for f in files)
+            + " (SPEC-demand-work-consumer.md) — bookkeeping only, no work PR." if files else "")
     if d.pam_paths:
         note += (f"\n\nPAM discovery: {d.pam_summary}. Unverified leads and source pointers only; "
                  "every publishable catalog fact still requires primary-source verification and review.")
     if d.pam_only:
-        return (list(d.pam_paths) + receipts, f"chore(jr): PAM discovery metadata {snap['date']}",
+        closed = [queue_path] if d.work_closed else []
+        return (list(d.pam_paths) + closed + receipts, f"chore(jr): PAM discovery metadata {snap['date']}",
                 "PAM discovery metadata only. The dated search-demand snapshot is not included; "
                 "the prior committed steer is preserved. No catalog writes.\n\n"
                 "Source: the two fixed public PAM feeds, through jr/pam_run.py and the existing "
@@ -375,22 +379,27 @@ def _publication(d: Decision, wt_path: Path) -> tuple[list[str], str, str]:
 
 
 def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str | None,
-                  *, new_pam: bool = False) -> str:
-    """Bookkeeping after mining: at most one work reservation. A broker failure is reported on
-    the run line, never allowed to block the demand snapshot itself."""
+                  *, new_pam: bool = False, git=None, mined_revision: str | None = None) -> str:
+    """Bookkeeping after a SUCCESSFUL mine: at most one work reservation, after closing linked work
+    the broker verified against this run's snapshot mined at `mined_revision`. A broker failure is
+    reported on the run line, never allowed to block the demand snapshot itself."""
     today = now.astimezone(timezone.utc).date().isoformat()
     try:
         work = demand_broker.reserve(wt_path / DEMAND_RELDIR, d.snap, gh=gh, today=today,
-                                     repo_slug=repo_slug, new_pam=new_pam)
+                                     repo_slug=repo_slug, new_pam=new_pam, git=git,
+                                     mined_revision=mined_revision, now=now)
     except RunAbort:
         raise                           # host timeout is fatal, not an ordinary source failure
     except Exception as e:  # noqa: BLE001
         return f"defer: broker error {type(e).__name__}: {e}"
     d.work_action = work.action
+    if work.closed:
+        d.work_closed = True
     if work.changed:
-        d.receipts_changed, d.work = True, work.line()
+        d.receipts_changed = d.receipts_changed or work.receipts_changed
+        d.work = "; ".join(filter(None, [d.work, work.line()]))
         if not d.land:
-            d.land, d.why = True, f"work reserved ({d.why})"
+            d.land, d.why = True, f"work {'closed' if work.closed else 'reserved'} ({d.why})"
     return work.line()
 
 
@@ -454,14 +463,17 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
             decision = Decision({"date": now.astimezone(timezone.utc).date().isoformat(), "items": []},
                                 False, "search refresh unavailable", pam_only=True)
         res.date = decision.snap["date"]
+        closer = {"git": git, "mined_revision": wt.base_sha}     # the catalog revision this run mined
         if not res.source_error:
-            res.work = _reserve_work(wt.path, decision, gh, now, repo_slug)
+            res.work = _reserve_work(wt.path, decision, gh, now, repo_slug, **closer)
         _refresh_pam(wt.path, decision, res, pam_refresh, now)
         # The first pass already recovers existing PAM branches/PRs from valid
-        # cached provenance. Only a prior NOOP permits starting new feed work.
-        # Existing work, caps, unreadable remote state and timeouts retain priority.
-        if not res.source_error and decision.work_action == "noop" and decision.pam_ready:
-            res.work = _reserve_work(wt.path, decision, gh, now, repo_slug, new_pam=True)
+        # cached provenance. Only a prior NOOP or a closure permits starting new feed
+        # work. Existing work, caps, unreadable remote state and timeouts retain priority.
+        if (not res.source_error and decision.pam_ready
+                and (decision.work_action == "noop" or decision.work_closed)):
+            second = _reserve_work(wt.path, decision, gh, now, repo_slug, new_pam=True, **closer)
+            res.work = f"{res.work} · then {second}" if decision.work_closed else second
         if res.pam_receipt:
             revision = git("rev-parse", "HEAD")
             res.pam_receipt["runner_revision"] = ((getattr(revision, "stdout", "") or "").strip()

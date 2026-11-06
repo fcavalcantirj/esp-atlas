@@ -309,3 +309,66 @@ def test_closure_is_attempted_once_a_rerun_after_closing_does_nothing_new(tmp_pa
     out = reserve(d)
     assert (d / QUEUE).read_bytes() == queue and (d / RECEIPTS).read_bytes() == receipts
     assert not out.closed and out.action == rw.RECONCILE and out.key == KEELOQ_KEY
+
+
+# --- edges ---------------------------------------------------------------------------------------
+
+def queue_bytes(mutate):
+    queue = json.loads(QUEUE_RAW)
+    mutate(queue["candidates"]["fnk0104s"])
+    return (json.dumps(queue, indent=1, ensure_ascii=False) + "\n").encode()
+
+
+def test_several_linked_prs_are_never_guessed_between(tmp_path):
+    d = demand_dir(tmp_path, queue=queue_bytes(lambda c: c["linked_work"].append("https://x/pull/2")))
+    gh = gh_for()
+    out = reserve(d, gh=gh)
+    assert out.action == rw.RECONCILE and not out.changed and "2 linked PRs" in out.reason
+    assert not [c for c in gh.calls if c[:2] == ("pr", "view")]
+
+
+def test_validated_work_without_a_link_is_not_verified(tmp_path):
+    def unlink(c):
+        c.update(status="validated", linked_work=[])
+    receipts = json.loads(RECEIPTS_RAW)
+    del receipts["receipts"][0]["pr_url"]
+    receipts["receipts"][0]["linked_work"] = []
+    d = demand_dir(tmp_path, queue=queue_bytes(unlink), receipts=json.dumps(receipts).encode())
+    gh = gh_for()
+    out = reserve(d, gh=gh, now=SAME_NOW)
+    assert out.action == rw.RECONCILE and not out.changed and "not linked" in out.reason
+    assert not [c for c in gh.calls if c[:2] == ("pr", "view")]
+
+
+def test_linked_work_without_a_receipt_row_closes_the_queue_only(tmp_path):
+    empty = b'{"version": 1, "receipts": []}\n'
+    d = demand_dir(tmp_path, receipts=empty)
+    snap = {**SNAP, "items": [i for i in SNAP["items"] if i["gap"] != "UNRESOLVED"]}
+    out = reserve(d, snap=snap, new_pam=False)
+    assert out.closed == KEY and out.resolution == "delivered"
+    assert out.queue_changed and not out.receipts_changed
+    assert (d / RECEIPTS).read_bytes() == empty
+    assert fnk(d)["outcome"]["window"] == {"start": "2026-10-09", "end": "2026-11-06"}
+
+
+def test_a_failed_queue_write_keeps_both_files(tmp_path, monkeypatch):
+    d = demand_dir(tmp_path)
+    real_replace = os.replace
+
+    def replace(src, dst):
+        if Path(dst).name == QUEUE:
+            raise OSError("read-only")
+        return real_replace(src, dst)
+
+    monkeypatch.setattr(os, "replace", replace)
+    out = reserve(d)
+    assert_untouched(d)
+    assert out.action == rw.DEFER and "read-only" in out.reason and not out.changed
+
+
+def test_an_option_looking_revision_never_reaches_git(tmp_path):
+    d = demand_dir(tmp_path)
+    git = git_for()
+    out = reserve(d, git=git, revision="--output=/tmp/x")
+    assert_untouched(d)
+    assert git.calls == [] and out.action == rw.RECONCILE and "miner" in out.reason
