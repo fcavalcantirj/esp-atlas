@@ -498,3 +498,22 @@ def test_a_foreign_receipts_edit_before_the_internal_re_plan_never_lands(tmp_pat
     assert "not landed" in res.work
     assert res.published is True and "docs/demand/2026-11-06.json" in staged(git)   # the snapshot alone
     assert "Work closed" not in pr_body(gh) and "Work reserved" not in pr_body(gh)
+
+
+def test_a_foreign_receipts_edit_after_the_runners_check_is_never_closed_over(tmp_path, monkeypatch):
+    """The window between the runner's own pre-pass check and the broker's read: the broker checks the
+    runner's ownership history itself, so its closure never settles a foreign writer's receipts."""
+    root, git, gh = tree(tmp_path), git_ok(), gh_all()
+    real, foreign = demand_run._note_foreign, FOREIGN_RECEIPTS
+
+    def check_then_race(d, demand_dir):
+        real(d, demand_dir)
+        (root / RECEIPTS_PATH).write_bytes(foreign)
+
+    monkeypatch.setattr(demand_run, "_note_foreign", check_then_race)
+    res = run(root, git=git, gh=gh)
+    assert (root / RECEIPTS_PATH).read_bytes() == foreign
+    assert json.loads((root / QUEUE_PATH).read_text(encoding="utf-8")) == json.loads(QUEUE_RAW)  # no closure
+    assert QUEUE_PATH not in staged(git) and RECEIPTS_PATH not in staged(git)
+    assert f"closed {KEY}" not in res.work and "another writer" in res.work
+    assert res.published is True and "Work closed" not in pr_body(gh)
