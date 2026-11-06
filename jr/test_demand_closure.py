@@ -302,6 +302,27 @@ def test_a_failed_receipts_write_rolls_the_queue_back(tmp_path, monkeypatch):
     assert not [p for p in d.iterdir() if p.name.endswith(".tmp")]
 
 
+FOREIGN = b'{"version": 1, "candidates": {}, "edited_by": "a concurrent triage"}\n'
+
+
+def test_a_rollback_never_overwrites_a_queue_edited_after_the_closure_wrote_it(tmp_path, monkeypatch):
+    d = demand_dir(tmp_path)
+    real_replace = os.replace
+
+    def replace(src, dst):
+        if Path(dst).name == RECEIPTS:
+            (d / QUEUE).write_bytes(FOREIGN)          # another writer lands between our two writes
+            raise OSError("disk full")
+        return real_replace(src, dst)
+
+    monkeypatch.setattr(os, "replace", replace)
+    out = reserve(d)
+    assert (d / QUEUE).read_bytes() == FOREIGN
+    assert (d / RECEIPTS).read_bytes() == RECEIPTS_RAW
+    assert out.action == rw.DEFER and not out.changed and not out.closed and not out.queue_changed
+    assert "disk full" in out.reason
+
+
 def test_closure_is_attempted_once_a_rerun_after_closing_does_nothing_new(tmp_path):
     d = demand_dir(tmp_path)
     reserve(d)
