@@ -1048,6 +1048,20 @@ input[type="checkbox"]:checked::after {
   white-space: nowrap;
 }
 
+/* Repository dates need their own line so the full evidence label stays readable. */
+.browse-section--firmware .browse-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 0.35rem;
+  height: 100%;
+  overflow-wrap: anywhere;
+}
+
+.browse-section--firmware .browse-link-note {
+  white-space: normal;
+}
+
 /* ==========================================================================
    Results
    ========================================================================== */

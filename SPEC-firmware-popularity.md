@@ -40,6 +40,11 @@ the one knob to flip — say so and §3.B drops out.
 
 ## 2. UX spec
 
+- **Home popular-firmware shelf:** names and their popularity/source-date notes
+  occupy separate lines within each link. Long notes wrap inside that link at
+  mobile, tablet and desktop widths; they must not overlap adjacent columns or
+  be clipped. Keep the complete scope/date text visible and the link crawlable.
+
 - **Glance display on the card:** a compact popularity line, e.g. `★ 94.6k · ⑂ 12.4k`.
   - Format: `94567 → 94.6k`, `1234 → 1.2k`, `<1000 → exact`. Forks same.
   - Accessible: `aria-label="94,567 GitHub stars, 12,411 forks"`; the ★/⑂ glyphs are
