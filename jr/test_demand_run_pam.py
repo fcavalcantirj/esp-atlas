@@ -97,6 +97,28 @@ def test_pam_failure_preserves_successful_gsc_publication(tmp_path):
     assert "PAM deferred" in result.line()
 
 
+def test_a_cached_gap_covered_by_the_current_catalog_takes_no_new_work_slot(tmp_path):
+    root = tree(tmp_path)
+    pam_ok(root, now=NOW)  # yesterday's minimal state still calls ES3N28P a gap
+    board = root / "data/boards/vendor/new-n/board.md"
+    board.parent.mkdir()
+    board.write_text('---\nid: new-n\nname: ES3N28P\n---\n')
+    git = git_ok()
+    result = run(root, git=git)
+    assert result.published  # refresh updates the minimal metadata classification
+    assert result.work.startswith("noop")
+    assert not (root / "docs/demand/work-receipts.json").exists()
+    assert "docs/demand/work-receipts.json" not in staged(git)
+
+
+def test_failed_feed_refresh_starts_no_new_work_from_stale_pam_classification(tmp_path):
+    root = tree(tmp_path)
+    pam_ok(root, now=NOW)
+    result = run(root, pam_refresh=pam_failed)
+    assert result.work.startswith("noop")
+    assert not (root / "docs/demand/work-receipts.json").exists()
+
+
 def test_empty_gsc_publishes_successful_pam_without_an_empty_steer(tmp_path):
     root, git = tree(tmp_path), git_ok()
     previous(root)

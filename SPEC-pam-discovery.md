@@ -122,12 +122,17 @@ last-good state while search publication continues. Host timeout aborts remain
 fatal in both the reservation and PAM paths.
 
 The runner first reconciles/reserves committed demand and existing work. Only a
-genuine policy NOOP permits a second bounded reservation pass after a changed
-successful PAM refresh; caps, unreadable remote state, active work and timeouts
+genuine policy NOOP permits a second bounded reservation pass after a successful
+PAM refresh (including 304/unchanged); caps, unreadable remote state, active work and timeouts
 never trigger that fallback. A first feed reservation publishes with its changed
 minimal feed metadata, including when the dated search snapshot is a no-op. Search
 source failure can still publish independent feed metadata but does not start new
 work from that failed pull. No new scheduler or executor is introduced by intake.
+The first pass recovers existing PAM work from its durable snapshot but does not
+start new work from yesterday's cached match classification. New lead selection
+uses the refresh's current-catalog classification, and a failed refresh permits no
+new PAM reservation. An unchanged feed can still start an unhandled research item;
+its reservation is real bookkeeping, not timestamp-only feed churn.
 
 The CLI prints a bounded `PAM receipt` containing feed statuses/hashes and distinct
 runner/catalog revisions. The runner executes from the scheduler's existing clone;

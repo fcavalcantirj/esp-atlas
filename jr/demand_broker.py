@@ -258,7 +258,8 @@ def _candidate_for(view: dict, key: str) -> dict:
                 if isinstance(c, dict) and _branch(c) == rw.branch_for(key))
 
 
-def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | None = None) -> Outcome:
+def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | None = None,
+            new_pam: bool = True) -> Outcome:
     """Plan one action over the committed queue + snapshot + feed state + receipts; on START append ONE
     reservation atomically. Every other action leaves the receipts file untouched."""
     path = Path(demand_dir) / RECEIPTS_NAME
@@ -272,7 +273,7 @@ def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | No
         return Outcome(rw.DEFER, "corrupt work receipt: preserved, no new reservation")
     pam_error = ""
     try:
-        pam_state = pam_run.read_state(Path(demand_dir) / "pam-leads.json")
+        pam_state = pam_run.read_state(Path(demand_dir) / "pam-leads.json") if new_pam else None
         if pam_state is not None:
             pam_leads.candidate_leads(pam_state)  # validate cache before it joins shared policy
     except (ValueError, OSError, pam_leads.FeedError):
