@@ -5,7 +5,7 @@
 // / metrics in the GA4 admin (see apps/web/README.md for the list).
 import { sendGAEvent } from "@next/third-parties/google";
 import { GA_DEBUG } from "@/lib/site";
-import { cleanEventParams, type EventParams } from "./analytics-params";
+import { trackedEventParams, type EventParams } from "./analytics-params";
 export type { EventParams } from "./analytics-params";
 
 export type EventName =
@@ -97,7 +97,7 @@ export type ResultOrigin =
   | "build_guide";
 
 export function track(name: EventName, params: EventParams = {}): void {
-  const clean = cleanEventParams(params);
+  const clean = trackedEventParams(name, params);
   if (GA_DEBUG) clean.debug_mode = true;
   if (typeof window === "undefined") return;
   const gaId = (window as Window & { __ESP_ATLAS_GA_ID?: string }).__ESP_ATLAS_GA_ID;

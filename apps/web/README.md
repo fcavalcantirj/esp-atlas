@@ -63,15 +63,19 @@ data/code licenses.
 ## Analytics
 
 Google Analytics 4 via `@next/third-parties/google` (`<GoogleAnalytics>` in
-`app/layout.tsx`). All interactions go through `lib/analytics.ts#track()` with the
-bounded, non-text parameters. Keys containing search text, prompts, or full URLs
-are omitted; their lengths may be sent instead. Set localStorage
+`app/layout.tsx`). All interactions go through `lib/analytics.ts#track()` with
+bounded parameters. Free-form search text, prompts, and full URLs are omitted;
+their lengths may be sent instead. Exact public model tokens matching the
+reviewed formats in `lib/analytics-params.ts` are the sole exception: on
+`search_submit` and `search_empty`, the token is emitted as GA4 `q` for Jr's
+existing `customEvent:q` demand query. This intentionally gives Jr only partial
+first-party term coverage; GSC supplies unconstrained search terms. Set localStorage
 `esp-atlas:analytics-disabled` to `1` before loading to opt out. Events:
 
 | Event | Params |
 |---|---|
 | `wizard_submit` / `wizard_results` / `wizard_empty` / `wizard_error` | `form, budget, radio, band, type, ieee802154, usb_native, needs_count, result_count, status` |
-| `search_submit` / `search_results` / `search_empty` / `search_error` | `q_length, type, radio, band, form, protocol, filters, filter_count, has_query, result_count, status` |
+| `search_submit` / `search_results` / `search_empty` / `search_error` | `q_length, q (eligible public model token only on submit/empty), type, radio, band, form, protocol, filters_length, filter_count, has_query, result_count, status` |
 | `intent_submit` / `intent_result` / `intent_error` | `surface, q_length, kind, stage, fallback, latency_ms` |
 | `guide_result` / `guide_error` | `surface, kind, outcome, status` |
 | `preset_click`, `relax_filter` | `preset` (compare page) · `removed_key` |
@@ -94,7 +98,7 @@ using query-bearing pages for analytics. See Google's [page view](https://develo
 and [redaction](https://support.google.com/analytics/answer/13544947) documentation.
 Custom parameters are only reportable after you
 register them in GA4 Admin → Custom definitions: dimensions `part_id, part_type,
-origin, q_length, form, budget, radio, band, protocol, type, field,
+origin, q, q_length, form, budget, radio, band, protocol, type, field,
 theme, link_type, preset, example, kind, relation, part_ids, removed_key, host`; metrics
 `result_count, position, scale, selected_count, needs_count, filter_count`.
 
