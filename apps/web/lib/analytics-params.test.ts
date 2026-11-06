@@ -1,6 +1,12 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { cleanEventParams, trackedEventParams } from "./analytics-params.ts";
+
+const demandContract = JSON.parse(readFileSync(new URL("./analytics-demand-contract.json", import.meta.url), "utf8")) as {
+  eligible: { input: string; emitted: string; submits: number; empty: number }[];
+  excluded: string[];
+};
 
 test("private prompt, search, and URL values cannot enter custom event payloads", () => {
   const secret = "private@example.com token=abc123";
@@ -16,12 +22,13 @@ test("private prompt, search, and URL values cannot enter custom event payloads"
 });
 
 test("only eligible public model tokens reach the registered search dimension", () => {
-  for (const [input, expected] of [[" fnk0104s ", "FNK0104S"], ["ES3C28P", "ES3C28P"], ["esp32-c6", "ESP32-C6"]]) {
-    assert.equal(trackedEventParams("search_submit", { q: input }).q, expected);
-    assert.equal(trackedEventParams("search_empty", { q: input }).q, expected);
+  for (const { input, emitted } of demandContract.eligible) {
+    assert.equal(trackedEventParams("search_submit", { q: input }).q, emitted);
+    assert.equal(trackedEventParams("search_empty", { q: input }).q, emitted);
     assert.ok(!("q" in trackedEventParams("search_results", { q: input })));
   }
-  for (const input of ["private@example.com", "https://example.com/FNK0104S", "FNK0104S token=abc123", "my API key 123", "ES3C28P pinout", "AKIA1234567890ABCDEF", "(not set)", "", "ZZ9Q41X"]) {
+  assert.equal(trackedEventParams("search_submit", { q: "esp32-c6" }).q, "ESP32-C6");
+  for (const input of [...demandContract.excluded, "my API key 123", "ES3C28P pinout", "ZZ9Q41X"]) {
     assert.ok(!("q" in trackedEventParams("search_submit", { q: input })), input);
     assert.ok(!("q" in trackedEventParams("search_empty", { q: input })), input);
   }

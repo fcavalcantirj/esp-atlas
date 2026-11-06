@@ -1,0 +1,14 @@
+{
+  "eligible": [
+    { "input": " fnk0104s ", "emitted": "FNK0104S", "submits": 6, "empty": 2 },
+    { "input": "ES3C28P", "emitted": "ES3C28P", "submits": 7, "empty": 0 }
+  ],
+  "excluded": [
+    "private@example.com",
+    "https://example.com/FNK0104S",
+    "FNK0104S token=abc123",
+    "AKIA1234567890ABCDEF",
+    "(not set)",
+    ""
+  ]
+}
