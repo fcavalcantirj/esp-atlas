@@ -208,6 +208,8 @@ def test_examples_firmware_entries_carry_popularity_and_are_ranked_by_it(client)
         popularity = firmware_by_id[ex["firmware"]].get("popularity") or {}
         assert ex.get("stars") == popularity.get("stars"), ex["id"]
         assert ex.get("forks") == popularity.get("forks"), ex["id"]
+        assert ex.get("github_as_of") == popularity.get("github_as_of"), ex["id"]
+        assert ex.get("as_of") == popularity.get("as_of"), ex["id"]
 
     # /firmware defaults to popularity order already, so filtering it down to the
     # recipe-backed subset gives exactly the expected examples order.

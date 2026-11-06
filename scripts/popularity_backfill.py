@@ -5,8 +5,10 @@ Stamps a dated `popularity` snapshot onto every existing data/firmware/*/firmwar
 NOT already carry one, so the offline CI floor gate (scripts/firmware_floor_audit.py --ci) has
 data for today's catalog. For each unstamped firmware it:
 
-  1. fetches LIVE GitHub stars + forks via `gh api repos/<owner>/<repo>` (graceful on 404/missing gh),
-  2. writes popularity{stars, forks, as_of=today} + a per-field `popularity` source citation.
+  1. fetches LIVE GitHub stars + forks via `gh api repos/<owner>/<repo>` and checks identity,
+  2. writes only verified counts with a GitHub-specific date and field citations.
+
+Unresolved or renamed repos are skipped; a missing API value is never converted to zero.
 
 Downloads are NOT fetched or stamped — the popularity floor is stars-or-forks only.
 
@@ -27,6 +29,7 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 
 import yaml
 
@@ -40,21 +43,20 @@ from esp_atlas_core.paths import DATA_DIR  # noqa: E402
 
 
 def _owner_repo(url: str) -> str | None:
-    """owner/repo (lowercased) from a github.com project url, or None if not a github repo."""
-    u = (url or "").strip()
-    if "github.com/" not in u:
+    """owner/repo from a bare github.com project URL, or None otherwise."""
+    parsed = urlparse((url or "").strip())
+    if parsed.scheme not in ("http", "https") or parsed.netloc.lower() != "github.com" or \
+            parsed.query or parsed.fragment:
         return None
-    tail = u.split("github.com/", 1)[1].strip("/")
-    parts = [p for p in tail.split("/") if p]
-    if len(parts) < 2:
+    parts = parsed.path.strip("/").split("/")
+    if len(parts) != 2 or not all(parts):
         return None
     return f"{parts[0]}/{parts[1].removesuffix('.git')}".lower()
 
 
 def default_fetch_repo_stats(owner_repo: str) -> dict | None:
-    """{"stars", "forks"} for `owner_repo` via `gh api repos/<owner>/<repo>`. Returns None on any
-    failure (missing gh, 404, network, malformed output) — the caller treats None as 0/0. Only
-    ever called on the real run; tests inject a fake."""
+    """Identity and counts from `gh api repos/<owner>/<repo>`; None on a failed fetch.
+    Only called on a real run; tests inject a fake."""
     try:
         out = subprocess.run(
             ["gh", "api", f"repos/{owner_repo}"],
@@ -66,18 +68,31 @@ def default_fetch_repo_stats(owner_repo: str) -> dict | None:
         return None
     try:
         d = json.loads(out.stdout)
-        return {"stars": d.get("stargazers_count"), "forks": d.get("forks_count")}
+        if not isinstance(d, dict):
+            return None
+        return {"full_name": d.get("full_name"), "stars": d.get("stargazers_count"),
+                "forks": d.get("forks_count")}
     except (TypeError, ValueError, json.JSONDecodeError):
         return None
 
 
-def _stamp(path: Path, fm: dict, body: str, stars: int, forks: int, today: str) -> None:
+def _stamp(path: Path, fm: dict, body: str, stars: int | None, forks: int | None, today: str) -> None:
     """Rewrite `path` with a popularity block (before sources) + a `popularity` source citation.
     Preserves every other field in author-order."""
     sources = fm.pop("sources", []) or []
-    fm["popularity"] = {"stars": int(stars), "forks": int(forks), "as_of": today}
+    pop = {}
+    if type(stars) is int and stars >= 0:
+        pop["stars"] = stars
+    if type(forks) is int and forks >= 0:
+        pop["forks"] = forks
+    pop["github_as_of"] = today
+    pop["as_of"] = today
+    fm["popularity"] = pop
     sources = list(sources)
     sources.append({"field": "popularity", "url": fm.get("url"), "verified": today})
+    for field in ("popularity.github_as_of", "popularity.stars", "popularity.forks"):
+        if field == "popularity.github_as_of" or field.rsplit(".", 1)[1] in pop:
+            sources.append({"field": field, "url": fm.get("url"), "verified": today})
     fm["sources"] = sources
     front = yaml.safe_dump(fm, sort_keys=False, default_flow_style=False).strip()
     path.write_text(f"---\n{front}\n---\n\n{body.strip()}\n", encoding="utf-8")
@@ -103,8 +118,15 @@ def backfill(data_dir=None, fetch_repo_stats=default_fetch_repo_stats, today: st
             continue
         repo = _owner_repo(fm.get("url"))
         stats = fetch_repo_stats(repo) if repo else None
-        stars = (stats or {}).get("stars") or 0
-        forks = (stats or {}).get("forks") or 0
+        full_name = stats.get("full_name") if isinstance(stats, dict) else None
+        if not isinstance(full_name, str) or full_name.lower() != repo:
+            skipped.append(fid)
+            continue
+        stars = stats.get("stars")
+        forks = stats.get("forks")
+        if (type(stars) is not int or stars < 0) and (type(forks) is not int or forks < 0):
+            skipped.append(fid)
+            continue
         _stamp(path, fm, body, stars, forks, today)
         stamped.append(fid)
     return {"stamped": stamped, "skipped": skipped}

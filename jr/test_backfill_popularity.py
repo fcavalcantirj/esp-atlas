@@ -120,7 +120,7 @@ def test_update_popularity_writes_missing_block_stars_and_forks_known():
     result = bp.update_popularity(NO_POP_MD, data, TODAY)
     assert result["changed"] is True
     fm, _ = bp._split(result["text"])
-    assert fm["popularity"] == {"stars": 12, "forks": 3, "as_of": TODAY}
+    assert fm["popularity"] == {"stars": 12, "forks": 3, "github_as_of": TODAY, "as_of": TODAY}
     # the sources[] popularity citation already existed — not duplicated
     pop_sources = [s for s in fm["sources"] if s.get("field") == "popularity"]
     assert len(pop_sources) == 1
@@ -135,6 +135,8 @@ def test_update_popularity_adds_missing_sources_entry_when_absent():
     pop_sources = [s for s in fm["sources"] if s.get("field") == "popularity"]
     assert pop_sources == [{"field": "popularity", "url": "https://github.com/clackups/draftling",
                             "verified": TODAY}]
+    assert {"popularity.stars", "popularity.forks", "popularity.github_as_of"} <= {
+        s["field"] for s in fm["sources"]}
 
 
 def test_update_popularity_fills_the_missing_forks_without_disturbing_other_fields():
@@ -142,16 +144,18 @@ def test_update_popularity_fills_the_missing_forks_without_disturbing_other_fiel
     result = bp.update_popularity(STARS_ONLY_MD, data, TODAY)
     assert result["changed"] is True
     fm, body = bp._split(result["text"])
-    assert fm["popularity"] == {"stars": 91, "forks": 5, "as_of": TODAY}
+    assert fm["popularity"] == {"stars": 91, "forks": 5, "github_as_of": TODAY, "as_of": TODAY}
     old_fm, old_body = bp._split(STARS_ONLY_MD)
     assert body == old_body
-    assert {k: v for k, v in fm.items() if k != "popularity"} == {k: v for k, v in old_fm.items() if k != "popularity"}
+    assert {k: v for k, v in fm.items() if k not in ("popularity", "sources")} == {k: v for k, v in old_fm.items() if k not in ("popularity", "sources")}
+    assert {"popularity.stars", "popularity.forks", "popularity.github_as_of"} <= {s["field"] for s in fm["sources"]}
 
 
 def test_update_popularity_is_idempotent_when_already_current():
     data = {"full_name": "engneer-hamachan/area512", "stargazers_count": 59, "forks_count": 6}
-    result = bp.update_popularity(BOTH_CURRENT_MD, data, "2026-09-19")
-    assert result == {"text": BOTH_CURRENT_MD, "changed": False, "reason": "up_to_date"}
+    first = bp.update_popularity(BOTH_CURRENT_MD, data, "2026-09-19")
+    result = bp.update_popularity(first["text"], data, "2026-09-19")
+    assert result == {"text": first["text"], "changed": False, "reason": "up_to_date"}
 
 
 def test_update_popularity_refreshes_as_of_when_counts_change_even_if_stable():
@@ -159,7 +163,7 @@ def test_update_popularity_refreshes_as_of_when_counts_change_even_if_stable():
     result = bp.update_popularity(BOTH_CURRENT_MD, data, TODAY)
     assert result["changed"] is True
     fm, _ = bp._split(result["text"])
-    assert fm["popularity"] == {"stars": 60, "forks": 6, "as_of": TODAY}
+    assert fm["popularity"] == {"stars": 60, "forks": 6, "github_as_of": TODAY, "as_of": TODAY}
 
 
 def test_update_popularity_unresolved_repo_leaves_the_file_untouched():
@@ -173,7 +177,7 @@ def test_update_popularity_partial_signal_still_persists_what_is_known():
     data = {"full_name": "clackups/draftling", "stargazers_count": 12, "forks_count": None}
     result = bp.update_popularity(NO_POP_MD, data, TODAY)
     fm, _ = bp._split(result["text"])
-    assert fm["popularity"] == {"stars": 12, "as_of": TODAY}
+    assert fm["popularity"] == {"stars": 12, "github_as_of": TODAY, "as_of": TODAY}
     assert "forks" not in fm["popularity"]
 
 
@@ -214,7 +218,7 @@ def test_backfill_without_dry_run_writes_the_file(tmp_path):
 
     assert result["updated"] == ["draftling"]
     fm, _ = bp._split(path.read_text(encoding="utf-8"))
-    assert fm["popularity"] == {"stars": 12, "forks": 3, "as_of": TODAY}
+    assert fm["popularity"] == {"stars": 12, "forks": 3, "github_as_of": TODAY, "as_of": TODAY}
 
 
 def test_backfill_skips_a_404_repo_without_touching_the_file(tmp_path):
@@ -239,7 +243,7 @@ def test_backfill_skips_a_renamed_repo_without_touching_the_file(tmp_path):
     )
 
     assert result["updated"] == []
-    assert result["skipped"] == [("draftling", "repo renamed to someoneelse/draftling-renamed")]
+    assert result["skipped"] == [("draftling", "repo identity mismatch: someoneelse/draftling-renamed")]
     assert path.read_text(encoding="utf-8") == NO_POP_MD
 
 

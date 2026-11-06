@@ -84,14 +84,14 @@ def test_stamps_an_unstamped_fixture(tmp_path):
 
     result = backfill.backfill(
         tmp_path,
-        fetch_repo_stats=_stats({"devuser/cardputer-git": {"stars": 30, "forks": 4}}),
+        fetch_repo_stats=_stats({"devuser/cardputer-git": {"full_name": "devuser/cardputer-git", "stars": 30, "forks": 4}}),
         today="2026-09-01",
     )
 
     assert result["stamped"] == ["cardputer-git"]
     assert result["skipped"] == []
     fm = _fm(path)
-    assert fm["popularity"] == {"stars": 30, "forks": 4, "as_of": "2026-09-01"}
+    assert fm["popularity"] == {"stars": 30, "forks": 4, "github_as_of": "2026-09-01", "as_of": "2026-09-01"}
     assert "downloads" not in fm["popularity"]
     assert any(s["field"] == "popularity" and s["verified"] == "2026-09-01"
                for s in fm["sources"])
@@ -113,8 +113,8 @@ def test_skips_an_already_stamped_fixture(tmp_path):
     assert fm["popularity"] == {"stars": 99, "forks": 21, "as_of": "2026-08-01"}
 
 
-def test_missing_stats_treated_as_zero(tmp_path):
-    """fetch_repo_stats returning None (unresolvable repo) is stamped as 0 stars / 0 forks, not omitted."""
+def test_missing_stats_leave_record_untouched(tmp_path):
+    """An unresolvable repo cannot support a zero count."""
     path = _write_firmware(tmp_path, "cardputer-git", FW_UNSTAMPED_MD)
 
     result = backfill.backfill(
@@ -123,30 +123,29 @@ def test_missing_stats_treated_as_zero(tmp_path):
         today="2026-09-01",
     )
 
-    assert result["stamped"] == ["cardputer-git"]
-    assert _fm(path)["popularity"] == {"stars": 0, "forks": 0, "as_of": "2026-09-01"}
+    assert result["stamped"] == []
+    assert path.read_text() == FW_UNSTAMPED_MD
 
 
-def test_partial_stats_missing_forks_treated_as_zero(tmp_path):
-    """A repo stats dict missing the 'forks' key (partial API response) stamps forks=0, not
-    invented or omitted."""
+def test_partial_stats_preserve_only_known_count(tmp_path):
+    """A partial response can support stars but cannot support an invented zero forks."""
     path = _write_firmware(tmp_path, "cardputer-git", FW_UNSTAMPED_MD)
 
     result = backfill.backfill(
         tmp_path,
-        fetch_repo_stats=lambda r: {"stars": 12},
+        fetch_repo_stats=lambda r: {"full_name": "devuser/cardputer-git", "stars": 12},
         today="2026-09-01",
     )
 
     assert result["stamped"] == ["cardputer-git"]
-    assert _fm(path)["popularity"] == {"stars": 12, "forks": 0, "as_of": "2026-09-01"}
+    assert _fm(path)["popularity"] == {"stars": 12, "github_as_of": "2026-09-01", "as_of": "2026-09-01"}
 
 
 def test_stamped_firmware_still_parses_and_keeps_other_fields(tmp_path):
     """After stamping, the record is still well-formed and every original field survives."""
     path = _write_firmware(tmp_path, "cardputer-git", FW_UNSTAMPED_MD)
 
-    backfill.backfill(tmp_path, fetch_repo_stats=lambda r: {"stars": 30, "forks": 4},
+    backfill.backfill(tmp_path, fetch_repo_stats=lambda r: {"full_name": "devuser/cardputer-git", "stars": 30, "forks": 4},
                       today="2026-09-01")
 
     fm = _fm(path)
@@ -154,3 +153,9 @@ def test_stamped_firmware_still_parses_and_keeps_other_fields(tmp_path):
     assert fm["name"] == "Cardputer Git Client"
     assert fm["socs"] == ["esp32-s3"]
     assert "# Cardputer Git Client" in path.read_text(encoding="utf-8")
+
+
+def test_owner_repo_requires_the_exact_github_host_and_bare_path():
+    assert backfill._owner_repo("https://github.com/devuser/cardputer-git") == "devuser/cardputer-git"
+    assert backfill._owner_repo("https://notgithub.com/devuser/cardputer-git") is None
+    assert backfill._owner_repo("https://github.com/devuser/cardputer-git/issues") is None

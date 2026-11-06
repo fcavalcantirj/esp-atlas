@@ -554,13 +554,34 @@ def author_firmware_and_recipes(firmware_id: str, name: str, url: str, category:
     editorial_home = homepage if is_editorial_home(homepage) else None
     popularity, fw_sources = None, src
     if stars is not None or forks is not None or downloads is not None or editorial_home is not None:
-        popularity = {"stars": int(stars or 0), "forks": int(forks or 0)}   # known → persist; never invent
-        if downloads is not None:
+        popularity = {}
+        if type(stars) is int and stars >= 0:
+            popularity["stars"] = stars
+        if type(forks) is int and forks >= 0:
+            popularity["forks"] = forks
+        if "stars" in popularity or "forks" in popularity:
+            popularity["github_as_of"] = today
+        if type(downloads) is int:
             popularity["downloads"] = int(downloads)
+            popularity["downloads_as_of"] = today
         if editorial_home is not None:
             popularity["editorial_home"] = editorial_home
-        popularity["as_of"] = today
-        fw_sources = src + [{"field": "popularity", "url": url, "verified": today}]
+            popularity["editorial_home_as_of"] = today
+        if popularity:
+            popularity["as_of"] = today
+        fw_sources = list(src)
+        if "stars" in popularity or "forks" in popularity:
+            fw_sources.append({"field": "popularity.github_as_of", "url": url, "verified": today})
+        if "stars" in popularity:
+            fw_sources.append({"field": "popularity.stars", "url": url, "verified": today})
+        if "forks" in popularity:
+            fw_sources.append({"field": "popularity.forks", "url": url, "verified": today})
+        if "downloads" in popularity:
+            fw_sources.append({"field": "popularity.downloads", "url": LAUNCHERHUB, "verified": today})
+            fw_sources.append({"field": "popularity.downloads_as_of", "url": LAUNCHERHUB, "verified": today})
+        if "editorial_home" in popularity:
+            fw_sources.append({"field": "popularity.editorial_home", "url": editorial_home, "verified": today})
+            fw_sources.append({"field": "popularity.editorial_home_as_of", "url": editorial_home, "verified": today})
     author_firmware_record(firmware_id, name, url, category, socs, fw_sources, body,
                            maintainer=maintainer, license=license,
                            distribution=distribution, capabilities=capabilities,

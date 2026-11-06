@@ -45,6 +45,8 @@ def test_firmware_examples_carry_stars_and_forks_from_their_firmware(built_db_pa
         popularity = fw.get("popularity") or {}
         assert e.get("stars") == popularity.get("stars"), e["id"]
         assert e.get("forks") == popularity.get("forks"), e["id"]
+        assert e.get("github_as_of") == popularity.get("github_as_of"), e["id"]
+        assert e.get("as_of") == popularity.get("as_of"), e["id"]
 
 
 def test_firmware_examples_omit_stars_and_forks_when_firmware_has_no_popularity(built_db_path, monkeypatch):
@@ -60,6 +62,21 @@ def test_firmware_examples_omit_stars_and_forks_when_firmware_has_no_popularity(
     assert len(examples) == 1
     assert "stars" not in examples[0]
     assert "forks" not in examples[0]
+    assert "github_as_of" not in examples[0]
+    assert "as_of" not in examples[0]
+
+
+def test_firmware_example_projects_metric_date_and_legacy_date_independently(built_db_path, monkeypatch):
+    fake_firmware = {"id": "fake-fw", "name": "Fake Firmware", "category": "multi", "capabilities": [],
+                     "popularity": {"stars": 7, "github_as_of": "2026-11-06T17:00:00Z",
+                                    "downloads": 2000, "as_of": "2026-09-20"}}
+    fake_recipe = {"id": "fake-board__fake-fw", "board": "fake-board", "firmware": "fake-fw"}
+    monkeypatch.setattr("esp_atlas_core.examples.list_firmware", lambda: [fake_firmware])
+    monkeypatch.setattr("esp_atlas_core.examples.list_recipes", lambda: [fake_recipe])
+
+    example = _by_kind(generate_examples(db_path=built_db_path), "firmware")[0]
+    assert example["github_as_of"] == "2026-11-06T17:00:00Z"
+    assert example["as_of"] == "2026-09-20"
 
 
 def test_needs_examples_use_only_known_needs(built_db_path):
