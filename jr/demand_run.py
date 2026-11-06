@@ -415,8 +415,9 @@ def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str 
 
 
 def _inconsistent_landing(demand_dir: Path, d: Decision, receipts_before: bytes | None) -> str:
-    """Why the bookkeeping as it would land must not: a queue closed by a closure beside a still-live
-    receipt for that work (the receipts write and the restore both failed), or ""."""
+    """Why this run must not publish: its queue holds a candidate closed by a closure beside a receipt,
+    as it would land, still live for that work (the receipts write and the restore both failed), or "".
+    The worktree queue is checked even when a PAM-only publication would not stage it: refusing errs safe."""
     receipts = _read_bytes(demand_dir / demand_broker.RECEIPTS_NAME) if d.receipts_changed else receipts_before
     keys = demand_broker.inconsistent_closures(_read_bytes(demand_dir / research_queue.QUEUE_NAME), receipts)
     return (f"inconsistent closure bookkeeping for work {', '.join(keys)} (queue closed, receipt still live): "
