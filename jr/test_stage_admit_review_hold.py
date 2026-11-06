@@ -33,7 +33,8 @@ def _run(root, monkeypatch, metas, now=NOW, dry_run=False):
     inner = ctx.gh
 
     def gh(*a):
-        calls.append(a[1] if len(a) > 1 else a)
+        if "/issues?" not in str(a[1:2]):                   # the submissions listing is every run's first call
+            calls.append(a[1] if len(a) > 1 else a)
         return inner(*a)
     ctx.gh = gh
     return stage_admit.run(ctx, budget=3, raw=_raw({})), calls

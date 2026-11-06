@@ -28,7 +28,9 @@ One tick, in order (PLAN §3.2):
     file that still changed in the copy is listed too (and warned about), then the copy is removed.
  3. Memory — expire TTL'd decisions; settle proposed PRs (closed → permanent rejection,
     merged → merged); mark ledger ids now in the catalog as merged; a merged id that vanished
-    from the catalog becomes a permanent rejection. (jr/memory.py) If anything merged or was
+    from the catalog becomes a permanent rejection. (jr/memory.py) Every target an open or closed
+    jr-review PR raised becomes a live owner-review decision, so it is not asked again while its
+    evidence is unchanged (jr/review_memory.py). If anything merged or was
     removed, purge the site's catalog cache (POST /api/revalidate, PR 0.5).
  4. Gauge — scripts/data_completion.compute_completion over the worktree's data/.
   5. Allocation — the hourly path splits HOURLY_TRACK_UNITS gauge-driven units between
@@ -77,6 +79,7 @@ import report   # noqa: E402
 import allocator  # noqa: E402
 import demand_signal  # noqa: E402
 import review_routing  # noqa: E402
+import review_memory  # noqa: E402
 import dry_run_tree  # noqa: E402
 from budget import Budget, BudgetExceeded  # noqa: E402
 
@@ -589,6 +592,18 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug)
         except Exception as e:  # noqa: BLE001
             r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")
+        # 3c. owner-review decisions (SPEC-jr-review-routing.md §5): every target an open or closed
+        #     jr-review PR raised becomes a live decision in this ledger BEFORE the stages, so the
+        #     admit gate holds an unchanged one instead of asking again — and the decision rides this
+        #     tick's bookkeeping (AUTO) PR onto main. Best-effort like the hydration above.
+        try:
+            reviewed = review_memory.reconcile(gh_c, ledger_path, now)
+            if reviewed is None:
+                r.warnings.append("jr-review decisions unreadable (gh pr list failed): an unchanged target may be asked again")
+            else:
+                r.review_decisions = reviewed
+        except Exception as e:  # noqa: BLE001
+            r.warnings.append(f"jr-review decisions failed: {type(e).__name__}: {e}")
         merged = memory.reconcile_merged(catalogued, path=ledger_path, now=now)
         # A PR that merged between our fetch of origin/main and the `gh pr view` above is
         # catalogued on GitHub but not yet in this worktree: treat what reconcile_prs just
@@ -689,7 +704,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
 
         # 7. guard once (data writes only), 8. publish — when a stage wrote OR memory changed;
         #    a ledger-only tick still ships, or every reconciliation would die with the worktree.
-        ledger_changed = any(r.memory.values()) if r.memory else False
+        ledger_changed = bool(r.review_decisions) or (any(r.memory.values()) if r.memory else False)
         if (r.paths or ledger_changed) and not dry_run:
             if r.paths:
                 r.guard = guard(root)

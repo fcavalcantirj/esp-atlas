@@ -252,3 +252,8 @@ def test_live_decision_ignores_plain_rejections():
     led = {"by_id": {FID: {**MAIN_EXPIRED, "status": "rejected", "expires": _iso(NOW + timedelta(days=3))}},
            "by_repo": {REPO: FID}, "by_repo_id": {RID: FID}}
     assert review_memory.live_decision(led, NOW, repo=REPO) is None
+
+
+def test_a_reason_containing_a_comment_terminator_survives_the_marker():
+    t = _target(reason="needs_review_target: a --> b")
+    assert review_memory.parse_targets(review_memory.render_marker([t])) == [t]

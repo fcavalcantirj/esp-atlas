@@ -6,7 +6,7 @@ same on-disk file, jr/proposed_ledger.json — it does not fork the ledger, it e
 
     {"by_id": {"<firmware_id>": {"id", "repo", "status", "timestamp", "pr_ref"
                                 [, "reason"] [, "expires"] [, "expired_at"] [, "repo_id"]
-                                [, "evidence_url"]}, ...},
+                                [, "evidence_url"] [, "review"] [, "history"]}, ...},
      "by_repo": {"<owner/repo>": "<firmware_id>", ...}}
 
 What v2 adds, and why each field exists:
@@ -23,6 +23,9 @@ What v2 adds, and why each field exists:
   `by_repo_id` view is DERIVED at load time from the records; ledger._save never persists it.
 - `evidence_url` (optional). The exact URL the admission decision was made from (a release
   asset, a platformio.ini, a README anchor), kept verbatim so a later reader can re-check it.
+- `review` + `history` (optional). An owner-review decision and the records it replaced — see
+  record_review_decision and SPEC-jr-review-routing.md §5. Once a record has either, every later
+  overwrite appends the replaced record to `history`: nothing is deleted.
 - status `expired` + `expired_at`. A record whose TTL ran out keeps its history (the original
   `timestamp` is the decision time, `expired_at` is when it lapsed) but is neither blocking nor
   "seen": to every gate it reads as absent. ledger.is_blocked / is_seen already return False
@@ -211,6 +214,8 @@ def _write(firmware_id: str, repo: str, status: str, reason: str | None, ttl_day
         "id": firmware_id, "repo": repo_key, "status": status,
         "timestamp": _iso(now), "pr_ref": pr_ref,
     }
+    if existing and (existing.get("review") or existing.get("history")):
+        rec["history"] = _history(existing)
     if reason is not None:
         rec["reason"] = reason
     exp = _expiry(now, ttl_days)
@@ -222,6 +227,53 @@ def _write(firmware_id: str, repo: str, status: str, reason: str | None, ttl_day
         rec["evidence_url"] = evidence_url
     led["by_id"][firmware_id] = rec
     led["by_repo"][repo_key] = firmware_id
+    _save(led, path)
+    return led
+
+
+def _history(existing: dict) -> list:
+    """`existing`'s history plus `existing` itself (minus its own history): the decision it
+    replaces is kept, never deleted (SPEC-jr-review-routing.md §5)."""
+    return list(existing.get("history") or []) + [{k: v for k, v in existing.items() if k != "history"}]
+
+
+def record_review_decision(firmware_id: str, repo: str, reason: str, *, repo_id: int | None = None,
+                           evidence: dict | None = None, evidence_rev: str | None = None,
+                           pr_ref: str | None = None, outcome: str = "raised",
+                           raised_at: datetime | None = None, ttl_days: int = NO_BUILD_SIGNAL_DAYS,
+                           path: Path | None = None, now: datetime | None = None) -> dict:
+    """An owner-review decision (SPEC-jr-review-routing.md §5): a TTL'd rejection — `ttl_days`
+    from `raised_at` (default `now`), not from whenever it is re-read — carrying a `review` block
+    {outcome, pr_ref, raised_at, evidence_rev, evidence}. `outcome`: raised (asked in this tick's
+    PR) / open / closed (the owner closed that review PR unmerged). The candidate stays unadmitted.
+
+    Same refusals as _write: never over a permanent rejection, a merged or a proposed record (a
+    missing repo_id is backfilled). Idempotent: a record that already says the same is not
+    rewritten. Otherwise the replaced record is appended to `history`."""
+    if not firmware_id and not repo:
+        return load_ledger(_path(path))
+    path = _path(path)
+    raised = _aware(raised_at or now)
+    led = load_ledger(path)
+    existing = led["by_id"].get(firmware_id)
+    if existing and (is_permanent_rejection(existing) or existing.get("status") in ("merged", "proposed")):
+        if repo_id is not None and existing.get("repo_id") is None:
+            existing["repo_id"] = int(repo_id)
+            _save(led, path)
+        return led
+    rid = int(repo_id) if repo_id is not None else (existing or {}).get("repo_id")
+    review = {"outcome": outcome, "pr_ref": pr_ref, "raised_at": _iso(raised),
+              "evidence_rev": evidence_rev, "evidence": evidence}
+    rec = {"id": firmware_id, "repo": repo.lower(), "status": "rejected", "timestamp": _iso(raised),
+           "pr_ref": None, "reason": reason, "expires": _expiry(raised, ttl_days), "review": review}
+    if rid is not None:
+        rec["repo_id"] = rid
+    if existing:
+        if {k: v for k, v in existing.items() if k != "history"} == rec:
+            return led
+        rec["history"] = _history(existing)
+    led["by_id"][firmware_id] = rec
+    led["by_repo"][rec["repo"]] = firmware_id
     _save(led, path)
     return led
 
