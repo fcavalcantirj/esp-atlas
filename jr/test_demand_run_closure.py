@@ -107,5 +107,35 @@ def test_a_pending_reconcile_publishes_no_bookkeeping(tmp_path):
 
     res = run(root, git=git, gh=gh_open)
     assert (root / RECEIPTS_PATH).read_bytes() == RECEIPTS_RAW
+    assert json.loads((root / QUEUE_PATH).read_text(encoding="utf-8")) == json.loads(QUEUE_RAW)
     assert RECEIPTS_PATH not in staged(git)
     assert res.work.startswith("reconcile") and "not merged" in res.work
+
+
+def test_a_broker_error_after_its_writes_still_publishes_them(tmp_path, monkeypatch):
+    real = demand_run.demand_broker.reserve
+
+    def writes_then_fails(*args, **kw):
+        real(*args, **kw)
+        raise RuntimeError("gh vanished during the re-plan")
+
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", writes_then_fails)
+    root, git = tree(tmp_path), git_ok()
+    (root / "docs/demand/2026-11-05.json").write_text(json.dumps({**SNAP, "date": "2026-11-05"}))
+    res = run(root, git=git)
+    assert res.published is True and "broker error RuntimeError" in res.work
+    assert QUEUE_PATH in staged(git) and RECEIPTS_PATH in staged(git)
+
+
+def test_the_second_pass_after_a_closure_never_closes_again(tmp_path, monkeypatch):
+    real, calls = demand_run.demand_broker.reserve, []
+
+    def spy(*args, **kw):
+        calls.append(kw)
+        return real(*args, **kw)
+
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", spy)
+    root = tree(tmp_path)
+    run(root, miner=snapshot_miner(without_unresolved(SNAP), queue=json.loads(QUEUE_RAW)),
+        pam_refresh=pam_unchanged)
+    assert [(c["new_pam"], c.get("close", True)) for c in calls] == [(False, True), (True, False)]

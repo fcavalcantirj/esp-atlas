@@ -351,7 +351,7 @@ def test_linked_work_without_a_receipt_row_closes_the_queue_only(tmp_path):
     assert fnk(d)["outcome"]["window"] == {"start": "2026-10-09", "end": "2026-11-06"}
 
 
-def test_a_failed_queue_write_keeps_both_files(tmp_path, monkeypatch):
+def test_a_failed_queue_write_keeps_the_settled_receipt_and_the_next_run_closes_it(tmp_path, monkeypatch):
     d = demand_dir(tmp_path)
     real_replace = os.replace
 
@@ -362,8 +362,55 @@ def test_a_failed_queue_write_keeps_both_files(tmp_path, monkeypatch):
 
     monkeypatch.setattr(os, "replace", replace)
     out = reserve(d)
+    assert (d / QUEUE).read_bytes() == QUEUE_RAW                      # receipts first: no lossy rollback
+    assert own_receipt(d)["state"] == "delivered"
+    assert out.action == rw.DEFER and "read-only" in out.reason
+    assert out.changed and out.receipts_changed and not out.queue_changed and not out.closed
+    monkeypatch.setattr(os, "replace", real_replace)
+    again = reserve(d)                                                # self-healing: verified again, closed
+    assert again.closed == KEY and fnk(d)["status"] == "closed" and again.key == KEELOQ_KEY
+    assert again.queue_changed and again.receipts_changed
+    assert [r["key"] for r in doc(d, RECEIPTS)["receipts"]] == [KEY, KEELOQ_KEY]
+
+
+def test_duplicate_prs_on_the_work_branch_defer_the_closure(tmp_path):
+    d = demand_dir(tmp_path)
+    two = json.dumps([{"headRefName": BRANCH, "url": PR_URL, "state": "CLOSED", "number": 1476},
+                      {"headRefName": BRANCH, "url": "https://x/pull/1477", "state": "MERGED", "number": 1477}])
+    gh = gh_for(state="CLOSED")
+    racing = recorder({("pr", "list", "--head", BRANCH): (0, two)})
+
+    def gh_two(*args):
+        return racing(*args) if args[:4] == ("pr", "list", "--head", BRANCH) else gh(*args)
+
+    out = reserve(d, gh=gh_two)
     assert_untouched(d)
-    assert out.action == rw.DEFER and "read-only" in out.reason and not out.changed
+    assert out.action == rw.DEFER and "duplicate remote PRs" in out.reason and not out.changed
+    assert not [c for c in gh.calls if c[:2] == ("pr", "view")]
+
+
+def test_close_false_only_reconciles(tmp_path):
+    d = demand_dir(tmp_path)
+    gh = gh_for()
+    out = broker.reserve(d, SNAP, gh=gh, git=git_for(), repo_slug=SLUG, today=NEXT_DAY, now=NEXT_NOW,
+                         mined_revision=MAIN_SHA, close=False)
+    assert_untouched(d)
+    assert out.action == rw.RECONCILE and out.key == KEY and not out.changed
+    assert not [c for c in gh.calls if c[:2] == ("pr", "view")]
+
+
+def test_the_term_is_found_among_the_items_merged_wordings(tmp_path):
+    d = demand_dir(tmp_path)
+    out = reserve(d, snap=snap_with(term="freenove fnk0104s", raw_terms=["freenove fnk0104s", "FNK0104S"]))
+    assert out.closed == KEY and fnk(d)["outcome"]["query"] == "fnk0104s"
+
+
+def test_an_earlier_outcome_is_kept_in_the_appended_history(tmp_path):
+    d = demand_dir(tmp_path, queue=queue_bytes(lambda c: c.update(outcome="adopted controller PR #1476")))
+    reserve(d)
+    entry = fnk(d)["history"][-1]
+    assert entry["previous_outcome"] == "adopted controller PR #1476"
+    assert fnk(d)["outcome"]["merge_sha"] == MERGE_SHA
 
 
 def test_an_option_looking_revision_never_reaches_git(tmp_path):
