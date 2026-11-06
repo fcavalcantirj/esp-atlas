@@ -53,6 +53,8 @@ CATALOG_SOURCES = (("boards/*/*", "board.md", "board"), ("firmware/*", "firmware
                    ("brands/*", "brand.md", "brand"))
 
 _TOKEN_RE = re.compile(r"[^\W_]+")       # Unicode letters/digits: 'módulo', '开发板' are terms too
+# tokens joined by any run of '-', '_', '.', '/' or a Unicode hyphen/dash (‐ ‑ ‒ – — ―): one identifier
+_IDENT_RE = re.compile(r"[^\W_]+(?:[-_./\u2010-\u2015]+[^\W_]+)*")
 _DIGIT_RE = re.compile(r"\d")
 _LETTER_RE = re.compile(r"[^\W\d_]")
 
@@ -219,6 +221,31 @@ def _model_matches(term_c: str, catalog: list[dict]) -> list[dict]:
             matches.append(_match(entry, *hit, 0))
         holders += bool(hit) or _carries(entry, term_c)
     return matches if holders <= MODEL_MAX_HOLDERS else []
+
+
+def _whole_identifier(ident: str, key: str, entry: dict) -> bool:
+    """Whether the key IS the joined identifier it came from, or the board's own id/title/alias
+    spells that whole identifier ('freenove-fnk0104s', 'freenove_fnk0104s') — never an affix
+    the catalog does not carry ('fnk0104s-a', 'x-fnk0104s')."""
+    whole = compact(ident)
+    return whole == key or _carries(entry, whole)
+
+
+def model_board(term: str | None, catalog: list[dict]) -> tuple[str, str] | None:
+    """(board id, model key) when the term names exactly ONE catalogued board by its model
+    number — the same `_model_matches` rule, tried on each token of the term ('fnk0104s
+    datasheet'), never on words joined together ('feather s3' is not 'feathers3'), and only
+    where the token is a whole identifier (`_whole_identifier`). A key that names a non-board
+    record, or a term naming two boards, is None."""
+    board_entries = {e["id"]: e for e in catalog if e["kind"] == "board"}
+    boards: dict[str, str] = {}
+    for ident in _IDENT_RE.findall((term or "").casefold()):
+        for key in dict.fromkeys(k for k in _tokens(ident) if _is_model_key(k)):
+            for m in _model_matches(key, catalog):
+                entry = board_entries.get(m["id"]) if m["kind"] == "board" else None
+                if entry and _whole_identifier(ident, key, entry):
+                    boards.setdefault(m["id"], key)
+    return next(iter(boards.items())) if len(boards) == 1 else None
 
 
 def classify(term: str, catalog: list[dict]) -> tuple[str, dict]:

@@ -28,6 +28,66 @@
    "outcome": "Catalogued lcdwiki-es3c28p via PR #1449 (merged 2a359d5). Deployed search es3c28p resolves only that board; sibling es3n28p does not match. Verified 2026-11-05. No firmware recipe added.",
    "closed_on": "2026-11-05",
    "history": []
+  },
+  "fnk0104s": {
+   "term": "fnk0104s",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-06",
+   "source": "gsc_query",
+   "window": {
+    "start": "2026-10-09",
+    "end": "2026-11-06"
+   },
+   "metrics": {
+    "impressions": 22,
+    "clicks": 1,
+    "position": 8.2
+   },
+   "snapshot": "docs/demand/2026-11-06.json",
+   "status": "linked",
+   "classification": "alias_typo",
+   "evidence": {
+    "rule": "vendor-prefix match: the term is a board id without its brand prefix, or a model-number token of one record's title",
+    "ids": [
+     "freenove-fnk0104s"
+    ],
+    "matches": [
+     {
+      "id": "freenove-fnk0104s",
+      "kind": "board",
+      "via": "id",
+      "label": "freenove-fnk0104s",
+      "distance": 0
+     }
+    ],
+    "checked": 292
+   },
+   "defect": "miner_resolution: jr/demand.py resolve_entity returns no board for the bare model number and classify_gap has no board anchor, so the GSC item stays UNRESOLVED although public search returns freenove-fnk0104s",
+   "validation": {
+    "term_key": "fnk0104s",
+    "identity_verified": true,
+    "validated_by": "dasbrow_brains (esp-atlas-daily-checkup run 40554a423a92415f885b1dd7e8eee50f)",
+    "verified_on": "2026-11-06",
+    "primary_sources": [
+     "https://github.com/Freenove/Freenove_ESP32_S3_Display/blob/main/README.md",
+     "https://docs.freenove.com/projects/fnk0104/en/latest/"
+    ],
+    "expected_ids": [
+     "freenove-fnk0104s"
+    ],
+    "forbidden_ids": [
+     "freenove-fnk0104a",
+     "freenove-fnk0104b"
+    ],
+    "verification_kind": "demand_resolution",
+    "notes": "Vendor README lists FNK0104A (2.8in ILI9341 NonTouch), FNK0104B (2.8in ILI9341 Touch), FNK0104N (3.5in Touch) and FNK0104S (4.0in ST7789 Touch) as distinct variants; FNK0104N is not catalogued. Display-controller facts untouched."
+   },
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1476"
+   ],
+   "outcome": null,
+   "closed_on": null,
+   "history": []
   }
  }
 }
