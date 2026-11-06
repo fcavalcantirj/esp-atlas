@@ -1,5 +1,59 @@
 {
   "by_board": {
+    "adafruit-feather-esp32-s2": {
+      "board": "adafruit-feather-esp32-s2",
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
+    "adafruit-feather-esp32-s2-reverse-tft": {
+      "board": "adafruit-feather-esp32-s2-reverse-tft",
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
+    "adafruit-feather-esp32-s2-tft": {
+      "board": "adafruit-feather-esp32-s2-tft",
+      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
     "adafruit-qt-py-esp32": {
       "board": "adafruit-qt-py-esp32",
       "expires": "2026-11-11T02:00:59.526867+00:00",

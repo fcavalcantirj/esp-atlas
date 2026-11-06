@@ -29,6 +29,7 @@ export default function BoardImage({ part }: { part: PartDetail }) {
                   width={665}
                   height={665}
                   preload
+                  fetchPriority="high"
                   unoptimized
                 />
               ) : (

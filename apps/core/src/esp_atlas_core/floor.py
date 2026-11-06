@@ -52,6 +52,14 @@ STAR_FLOOR = 25
 FORK_FLOOR = 25
 DOWNLOAD_FLOOR = 2000
 
+# Original maintainer-curated catalog entries remain exempt from the numeric
+# floor. Shared by the offline validator and the scheduled count refresher.
+CURATED_EXEMPT = frozenset({
+    "bruce", "esp32marauder", "rogueduck", "evil-m5project", "m5stick-nemo", "meshtastic",
+    "esphome", "tasmota", "wled", "openmqttgateway", "launcher", "nerdminer-v2", "usbarmyknife",
+    "m5-crystal", "infiltra", "cathack", "esp32-bit-pirate", "xiaozhi-esp32",
+})
+
 
 def is_editorial_home(homepage: str | None) -> bool:
     """True iff `homepage` is a real, independent project home — not the repo's own github.com

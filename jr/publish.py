@@ -6,9 +6,10 @@ built around the failure that caused the 2026-09-02 incident: jr/drain_pr.py ran
 main — one run produced two collision PRs of +1464/−1741 over 170 files. Every rule here is a
 direct answer to that:
 
-1. **Never the checked-out tree.** A tick gets a fresh `git worktree` detached at
-   `origin/main` (after `git fetch origin main`), writes there, and the worktree is removed when
-   the tick ends. The clone's own checkout is never read, written, switched or committed.
+1. **Never the checked-out tree.** A tick gets a fresh `git worktree` detached at the ONE commit
+   `origin/main` resolved to (after `git fetch origin main`), writes there, and the worktree is
+   removed when the tick ends. Its reported base is its own verified HEAD, never a second read of
+   `origin/main` (a concurrent fetch may have moved it). The clone's own checkout is never read, written, switched or committed.
 2. **Pathspec only.** `git add -- <paths>` with the exact paths the stages report, plus the
    ledger (memory.staged_paths()). Nothing else in the worktree can reach a commit, however it
    got there.
@@ -25,7 +26,7 @@ direct answer to that:
    `review` route labels the PR `jr-review` and never requests auto-merge — even when the label
    itself cannot be applied (fail closed; the result says so). SPEC-jr-review-routing.md.
 6. **No git command ever names `main` as a write target.** The only `main`s in this module are
-   `fetch origin main`, `worktree add --detach … origin/main` and `gh pr create --base main`.
+   `fetch origin main`, `rev-parse --verify origin/main^{commit}` and `gh pr create --base main`.
 
 `git` and `gh` are injectable callables `(*argv) -> object with returncode/stdout/stderr`, so the
 whole sequence is unit-tested with recorders and no test ever runs a real git or gh command.
@@ -47,6 +48,7 @@ import review_routing
 REPO = Path(__file__).resolve().parent.parent
 REQUIRED_CHECKS = ("schema", "tests", "jr-tests")
 PROTECTED_PREFIXES = ("data/firmware/", "data/recipes/")
+_SHA_RE = re.compile(r"[0-9a-f]{7,64}")
 
 
 def default_git(*args: str) -> subprocess.CompletedProcess:
@@ -79,26 +81,44 @@ def _ok(p) -> bool:
 
 @dataclass
 class Worktree:
-    """A detached worktree at origin/main. `path` is where the tick's stages write."""
+    """A detached worktree at the commit origin/main resolved to (`base_sha`, its verified HEAD).
+    `path` is where the tick's stages write."""
     path: Path
     base_sha: str
 
 
 def add_worktree(git=default_git, root: Path | None = None) -> Worktree:
-    """`git fetch origin main` then `git worktree add --detach <dir> origin/main`. The directory
-    lives OUTSIDE the repo tree (a temp dir) so no glob over the repo can ever see it. Raises
-    RuntimeError if either command fails — a tick must not proceed on a stale base."""
+    """`git fetch origin main`, resolve origin/main to ONE commit, then `git worktree add --detach
+    <dir> <that commit>`. The directory lives OUTSIDE the repo tree (a temp dir) so no glob over the
+    repo can ever see it. `base_sha` is the worktree's own HEAD, required to equal the resolved
+    commit: a concurrent fetch moving origin/main mid-call can never make the run report a revision
+    it did not mine. Raises RuntimeError when any step fails — a tick must not proceed on a stale
+    or unknown base."""
     p = git("fetch", "origin", "main")
     if not _ok(p):
         raise RuntimeError(f"git fetch origin main failed: {getattr(p, 'stderr', '')!s:.200}")
     git("worktree", "prune")          # a tick killed mid-run (SIGKILL) may have left a stale entry
+    base = _commit(git("rev-parse", "--verify", "origin/main^{commit}"))
+    if not base:
+        raise RuntimeError("origin/main does not resolve to a commit")
     directory = Path(root or tempfile.mkdtemp(prefix="jr-tick-"))
-    p = git("worktree", "add", "--detach", str(directory), "origin/main")
+    p = git("worktree", "add", "--detach", str(directory), base)
     if not _ok(p):
         shutil.rmtree(directory, ignore_errors=True)    # never leak the temp dir
         raise RuntimeError(f"git worktree add failed: {getattr(p, 'stderr', '')!s:.200}")
-    sha = git("rev-parse", "origin/main")
-    return Worktree(path=directory, base_sha=(getattr(sha, "stdout", "") or "").strip())
+    wt = Worktree(path=directory, base_sha=base)
+    head = _commit(git("-C", str(directory), "rev-parse", "--verify", "HEAD^{commit}"))
+    if head != base:
+        remove_worktree(wt, git=git)
+        shutil.rmtree(directory, ignore_errors=True)
+        raise RuntimeError(f"worktree HEAD {head or 'unreadable'} is not the resolved origin/main {base}")
+    return wt
+
+
+def _commit(p) -> str:
+    """The commit id a successful `rev-parse --verify` printed, or "" — never an arbitrary string."""
+    sha = (getattr(p, "stdout", "") or "").strip()
+    return sha if _ok(p) and _SHA_RE.fullmatch(sha) else ""
 
 
 def remove_worktree(wt: Worktree, git=default_git) -> None:

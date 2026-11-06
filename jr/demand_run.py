@@ -19,6 +19,12 @@ it once a day and lands the snapshot through the tick's own PR path (jr/publish.
    on a `jr/demand-…` branch — outside the tick's `jr/tick-*` triage — with the same protection
    and earned-trust auto-merge gate as a tick. Only an older proven snapshot-only demand PR
    is closed as superseded; queue-bearing or unreadable PRs wait for review.
+   The research queue and the receipts join only as this run's own writes: each file is staged only
+   while it still holds the exact bytes the miner or the broker wrote there. They land as a pair: when
+   either half lost ownership (a foreign edit, one a broker CAS refused, one after a closure or one
+   the broker found before any of its passes — the re-plan after a closure included), or
+   the pair as it would land records a closure on one side only, neither is staged, the foreign
+   bytes stay on disk and the work is reported not landed.
 5. after mining, jr/demand_broker.py reserves at most ONE demand work item
    (SPEC-demand-work-consumer.md) in `docs/demand/work-receipts.json`, which joins the
    publication only when it changed — and a new reservation lands even on a no-op demand day.
@@ -108,7 +114,15 @@ class Decision:
     research: str | None = None
     queue_only: bool = False      # zero demand items, a changed queue: land the queue alone
     queue_changed: bool = False
-    receipts_changed: bool = False   # a new work reservation: docs/demand/work-receipts.json
+    receipts_changed: bool = False   # a reservation or settled receipt: docs/demand/work-receipts.json
+    work_closed: bool = False        # the broker closed linked work in docs/demand/research-queue.json
+    closed: list = field(default_factory=list)    # the work keys this run's broker closed
+    pair_landed: bool = False        # only the queue/receipts pair (a queue change, the broker's writes) lands
+    owned: dict = field(default_factory=dict)     # file name -> the exact bytes this run last wrote there
+    base: dict | None = None         # file name -> main's bytes of the pair, before this run touched it
+    foreign: set = field(default_factory=set)     # pair files another writer changed under this run
+    bookkeeping: list = field(default_factory=list)   # the queue/receipts paths this publication stages
+    withheld: str = ""               # why the queue/receipts pair is not staged
     work: str = ""                   # the broker's report line for that reservation
     pam_paths: tuple = ()
     pam_summary: str = ""
@@ -333,65 +347,142 @@ def _mine_and_decide(wt: publish.Worktree, miner, python: str, telegram: bool) -
     new = _read_latest(demand_dir)
     if new is None or not new.get("date") or _newest_stamp(demand_dir) == before:
         raise MiningUnavailable("miner wrote no snapshot")
-    queue_changed = (_queue_comparable(_read_bytes(demand_dir / research_queue.QUEUE_NAME))
-                     != _queue_comparable(queue_before))
+    queue_after = _read_bytes(demand_dir / research_queue.QUEUE_NAME)
+    owned = ({research_queue.QUEUE_NAME: queue_after}
+             if queue_after is not None and queue_after != queue_before else {})   # the miner's own write
+    queue_changed = _queue_comparable(queue_after) != _queue_comparable(queue_before)
     research = _queue_line(demand_dir, queue_before)
     if not new.get("items"):
         _restore_demand_files(demand_dir, files_before)      # an empty pull never replaces the snapshot
         if not queue_changed:
             raise MiningUnavailable("miner returned no demand items (Composio/GSC outage?) — not landing an empty steer")
         return Decision(new, True, "research queue changed; 0 demand items, snapshot not landed",
-                        research, queue_only=True, queue_changed=True)
+                        research, queue_only=True, queue_changed=True, owned=owned, pair_landed=True)
     land, why = should_land(new, prev, new["date"])    # age between the miner's own dates: one clock
-    if not land and queue_changed:
+    pair_landed = not land and queue_changed
+    if pair_landed:
         land, why = True, f"research queue changed ({why})"
-    return Decision(new, land, why, research, queue_changed=queue_changed)
+    return Decision(new, land, why, research, queue_changed=queue_changed, owned=owned, pair_landed=pair_landed)
 
 
-def _publication(d: Decision, wt_path: Path) -> tuple[list[str], str, str]:
+PAIR = (research_queue.QUEUE_NAME, demand_broker.RECEIPTS_NAME)
+
+
+def _note_foreign(d: Decision, demand_dir: Path) -> None:
+    """Mark each pair file whose bytes are no longer what this run last left there (its own write,
+    else main's): a broker pass over them builds on a foreign writer's bytes, so whatever it then
+    writes is never this run's own."""
+    if d.base is None:
+        return
+    d.foreign.update(n for n in PAIR if _read_bytes(demand_dir / n) != d.owned.get(n, d.base.get(n)))
+
+
+def _bookkeeping(d: Decision, demand_dir: Path, base_queue: bytes | None,
+                 base_receipts: bytes | None) -> tuple[list[str], str]:
+    """(paths, why withheld) of the queue/receipts pair. A file joins only while it still holds the
+    exact bytes this run wrote there (the miner's queue rewrite, the broker's durable writes); a later
+    writer's bytes are never staged. The pair lands whole: when either half lost ownership, or the
+    pair as it would land (main's bytes for a half not staged) records a closure on one side only,
+    neither joins and both files are left on disk untouched. So does a pair a broker pass built over
+    a foreign writer's bytes (`_note_foreign`)."""
+    queue, receipts = PAIR
+    names = [n for n in ((queue,) if d.work_closed or not d.pam_only else ()) + (receipts,) if n in d.owned]
+    lost = [n for n in PAIR if n in d.foreign or (n in names and _read_bytes(demand_dir / n) != d.owned[n])]
+    if lost:
+        return [], f"{' and '.join(lost)} changed by another writer during this run"
+    landing = {queue: base_queue, receipts: base_receipts, **{n: d.owned[n] for n in names}}
+    keys = demand_broker.one_sided_closures(landing[queue], landing[receipts], base_receipts) if names else []
+    if keys:
+        return [], f"closure bookkeeping for work {', '.join(keys)} would land on one side only"
+    return [f"{DEMAND_RELDIR}/{n}" for n in names], ""
+
+
+def _withheld_line(d: Decision, work: str) -> str:
+    """The work line once the pair is withheld: a closure that does not land is never reported closed."""
+    head = (f"closure of {', '.join(d.closed)} not landed" if d.closed
+            else " · ".join(filter(None, [work, "bookkeeping not landed"])))
+    return (f"{head}: {d.withheld}; {research_queue.QUEUE_NAME} and {demand_broker.RECEIPTS_NAME} "
+            "left on disk, not staged")
+
+
+def _publication(d: Decision) -> tuple[list[str], str, str]:
     """(paths, subject, body) of the PR a landing decision opens."""
-    snap, queue_path = d.snap, f"{DEMAND_RELDIR}/{research_queue.QUEUE_NAME}"
-    receipts = [f"{DEMAND_RELDIR}/{demand_broker.RECEIPTS_NAME}"] if d.receipts_changed else []
-    note = (f"\n\nWork reserved: {d.work} in `{receipts[0]}` (SPEC-demand-work-consumer.md) — "
-            "bookkeeping only, no work PR." if receipts else "")
+    snap = d.snap
+    receipts = f"{DEMAND_RELDIR}/{demand_broker.RECEIPTS_NAME}"
+    files = d.bookkeeping if d.work_closed else [p for p in d.bookkeeping if p == receipts]
+    note = (f"\n\nWork {'closed' if d.work_closed else 'reserved'}: {d.work} in "
+            + " and ".join(f"`{f}`" for f in files)
+            + " (SPEC-demand-work-consumer.md) — bookkeeping only, no work PR." if files else "")
     if d.pam_paths:
         note += (f"\n\nPAM discovery: {d.pam_summary}. Unverified leads and source pointers only; "
                  "every publishable catalog fact still requires primary-source verification and review.")
     if d.pam_only:
-        return (list(d.pam_paths) + receipts, f"chore(jr): PAM discovery metadata {snap['date']}",
+        return (list(d.pam_paths) + d.bookkeeping, f"chore(jr): PAM discovery metadata {snap['date']}",
                 "PAM discovery metadata only. The dated search-demand snapshot is not included; "
                 "the prior committed steer is preserved. No catalog writes.\n\n"
                 "Source: the two fixed public PAM feeds, through jr/pam_run.py and the existing "
                 "daily runner. No new job or monitor." + note)
     if d.queue_only:
-        return ([queue_path, *receipts, *d.pam_paths],
+        return ([*d.bookkeeping, *d.pam_paths],
                 f"chore(jr): research queue {snap['date']} — demand snapshot not landed (0 items)",
                 _queue_only_body(snap, d.why, d.research) + note)
-    paths = [f"{DEMAND_RELDIR}/{snap['date']}.json", f"{DEMAND_RELDIR}/{UNRESOLVED_NAME}"]
-    if (wt_path / queue_path).exists():
-        paths.append(queue_path)
-    return (paths + receipts + list(d.pam_paths), f"chore(jr): demand snapshot {snap['date']} — {len(snap['items'])} item(s)",
+    paths = [f"{DEMAND_RELDIR}/{snap['date']}.json", f"{DEMAND_RELDIR}/{UNRESOLVED_NAME}", *d.bookkeeping]
+    return (paths + list(d.pam_paths), f"chore(jr): demand snapshot {snap['date']} — {len(snap['items'])} item(s)",
             _pr_body(snap, d.why, d.research) + note)
 
 
+def _note_work(d: Decision, work: demand_broker.Outcome) -> None:
+    """Land what the broker's explicit result says it wrote; never inferred from file bytes, which a
+    concurrent writer may have changed. A pair file the broker found changed by another writer is
+    never this run's own again."""
+    d.foreign.update(work.foreign)
+    if work.closed:
+        d.work_closed = True
+        d.closed.append(work.closed)
+    if work.changed:
+        d.receipts_changed = d.receipts_changed or work.receipts_changed
+        d.work = "; ".join(filter(None, [d.work, work.line()]))
+        if not d.land:
+            d.land, d.pair_landed = True, True
+            d.why = f"work {'closed' if work.closed else 'reserved'} ({d.why})"
+
+
 def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str | None,
-                  *, new_pam: bool = False) -> str:
-    """Bookkeeping after mining: at most one work reservation. A broker failure is reported on
-    the run line, never allowed to block the demand snapshot itself."""
+                  *, new_pam: bool = False, git=None, mined_revision: str | None = None,
+                  close: bool = True) -> str:
+    """Bookkeeping after a SUCCESSFUL mine: at most one work reservation, after closing linked work
+    the broker verified against this run's snapshot mined at `mined_revision`. A broker failure is
+    reported on the run line, never allowed to block the demand snapshot itself; a closure the
+    broker reported durable before it raised still lands."""
     today = now.astimezone(timezone.utc).date().isoformat()
+    closures: list = []
+    _note_foreign(d, wt_path / DEMAND_RELDIR)          # before the broker reads the pair
+    expected = None if d.base is None else {n: d.owned.get(n, d.base.get(n)) for n in PAIR}
     try:
         work = demand_broker.reserve(wt_path / DEMAND_RELDIR, d.snap, gh=gh, today=today,
-                                     repo_slug=repo_slug, new_pam=new_pam)
+                                     repo_slug=repo_slug, new_pam=new_pam, git=git,
+                                     mined_revision=mined_revision, now=now, close=close, closures=closures,
+                                     writes=d.owned,    # the exact bytes of each durable broker write
+                                     expected=expected)     # ownership history, checked before every pass
     except RunAbort:
         raise                           # host timeout is fatal, not an ordinary source failure
     except Exception as e:  # noqa: BLE001
+        for closed in closures:
+            _note_work(d, closed)
         return f"defer: broker error {type(e).__name__}: {e}"
     d.work_action = work.action
-    if work.changed:
-        d.receipts_changed, d.work = True, work.line()
-        if not d.land:
-            d.land, d.why = True, f"work reserved ({d.why})"
+    _note_work(d, work)
     return work.line()
+
+
+def _inconsistent_landing(demand_dir: Path, d: Decision, receipts_before: bytes | None) -> str:
+    """Why this run must not publish: its queue holds a candidate closed by a closure beside a receipt,
+    as it would land, still live for that work (the receipts write and the restore both failed), or "".
+    The worktree queue is checked even when a PAM-only publication would not stage it: refusing errs safe."""
+    receipts = _read_bytes(demand_dir / demand_broker.RECEIPTS_NAME) if d.receipts_changed else receipts_before
+    keys = demand_broker.inconsistent_closures(_read_bytes(demand_dir / research_queue.QUEUE_NAME), receipts)
+    return (f"inconsistent closure bookkeeping for work {', '.join(keys)} (queue closed, receipt still live): "
+            "not published" if keys else "")
 
 
 def _refresh_pam(wt_path: Path, d: Decision, res: RunResult, refresh, now: datetime) -> None:
@@ -436,7 +527,8 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
             raise RunAbort("fresh worktree is not clean")
         demand_dir = wt.path / DEMAND_RELDIR
         files_before = _demand_files(demand_dir) if pam_refresh is not None else None
-        queue_before = _read_bytes(demand_dir / research_queue.QUEUE_NAME) if pam_refresh is not None else None
+        queue_before = _read_bytes(demand_dir / research_queue.QUEUE_NAME)        # main's bookkeeping pair
+        main_receipts = _read_bytes(demand_dir / demand_broker.RECEIPTS_NAME)
         try:
             decision = _mine_and_decide(wt, miner, python, telegram)
         except MiningUnavailable as exc:
@@ -454,14 +546,20 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
             decision = Decision({"date": now.astimezone(timezone.utc).date().isoformat(), "items": []},
                                 False, "search refresh unavailable", pam_only=True)
         res.date = decision.snap["date"]
+        decision.base = {research_queue.QUEUE_NAME: queue_before, demand_broker.RECEIPTS_NAME: main_receipts}
+        closer = {"git": git, "mined_revision": wt.base_sha}     # the catalog revision this run mined
+        receipts_before = _read_bytes(demand_dir / demand_broker.RECEIPTS_NAME)
         if not res.source_error:
-            res.work = _reserve_work(wt.path, decision, gh, now, repo_slug)
+            res.work = _reserve_work(wt.path, decision, gh, now, repo_slug, **closer)
         _refresh_pam(wt.path, decision, res, pam_refresh, now)
         # The first pass already recovers existing PAM branches/PRs from valid
-        # cached provenance. Only a prior NOOP permits starting new feed work.
-        # Existing work, caps, unreadable remote state and timeouts retain priority.
-        if not res.source_error and decision.work_action == "noop" and decision.pam_ready:
-            res.work = _reserve_work(wt.path, decision, gh, now, repo_slug, new_pam=True)
+        # cached provenance. Only a prior NOOP or a closure permits starting new feed
+        # work. Existing work, caps, unreadable remote state and timeouts retain priority.
+        if (not res.source_error and decision.pam_ready
+                and (decision.work_action == "noop" or decision.work_closed)):
+            second = _reserve_work(wt.path, decision, gh, now, repo_slug, new_pam=True,
+                                   close=not decision.work_closed, **closer)   # one closure per run
+            res.work = f"{res.work} · then {second}" if decision.work_closed else second
         if res.pam_receipt:
             revision = git("rev-parse", "HEAD")
             res.pam_receipt["runner_revision"] = ((getattr(revision, "stdout", "") or "").strip()
@@ -472,9 +570,24 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
             if res.source_error:
                 res.aborted = res.source_error
             return res
+        inconsistent = _inconsistent_landing(demand_dir, decision, receipts_before)
+        if inconsistent:
+            if decision.closed:                 # a closure that never lands is never reported closed
+                decision.withheld = "the pair is inconsistent"
+                res.work = _withheld_line(decision, res.work)
+            raise RunAbort(inconsistent)        # never land a closed queue beside its live receipt
+        decision.bookkeeping, decision.withheld = _bookkeeping(decision, demand_dir, queue_before, main_receipts)
+        if decision.withheld:
+            res.work = _withheld_line(decision, res.work)
+            decision.research = None                            # the queue's digest no longer lands
+            if decision.pair_landed:                            # the withheld pair was the reason to land
+                if not decision.pam_paths:
+                    raise RunAbort(f"bookkeeping not landed: {decision.withheld}; nothing else to publish")
+                decision.pam_only, decision.queue_only = True, False
+                decision.why = f"PAM metadata changed; bookkeeping not landed: {decision.withheld}"
         prefix = QUEUE_ONLY_PREFIX if decision.queue_only or decision.pam_only else BRANCH_PREFIX
         branch = f"{prefix}{now.strftime('%Y%m%d-%H%M')}"
-        paths, subject, body = _publication(decision, wt.path)
+        paths, subject, body = _publication(decision)
         pub = publish.publish(wt, paths, subject, body, git=git, gh=gh, now=now,
                               repo_slug=repo_slug, auto_merge=auto_merge, branch=branch)
         res.published, res.pr_url, res.auto_merge = pub.published, pub.pr_url, pub.auto_merge

@@ -4,14 +4,14 @@
 // under plain `node --test` -- see format.ts's header comment for why this
 // stays free of the "@/" alias and of any component import.
 import type { EventParams } from "@/lib/analytics";
-import { RECIPE_TIER_LABEL, RECIPE_TIER_ORDER } from "./format.ts";
+import { RECIPE_TIER_ORDER } from "./format.ts";
 
 interface FlashCtaRow {
   recipe: { status: string };
 }
 
-/** The CTA only earns its above-the-fold slot when the board actually has
- * something to flash -- never for non-board parts, unfetched (null) rows,
+/** The discovery link appears when the board has recorded recipes to inspect
+ * -- never for non-board parts, unfetched (null) rows,
  * or a board with zero firmware recipes. */
 export function shouldShowBoardFlashCta(partType: string, rows: FlashCtaRow[] | null): boolean {
   return partType === "board" && rows !== null && rows.length > 0;
@@ -26,12 +26,12 @@ export function highestTrustTier(rows: FlashCtaRow[]): string | null {
   return null;
 }
 
-/** "N firmware option(s) · <tier label>" -- the CTA's own copy. */
+/** Total recorded recipes and the exact known-good subset, never an aggregate tier. */
 export function boardFlashCtaLabel(rows: FlashCtaRow[]): string {
   const count = rows.length;
-  const countLabel = `${count} firmware option${count === 1 ? "" : "s"}`;
-  const tier = highestTrustTier(rows);
-  return tier ? `${countLabel} · ${RECIPE_TIER_LABEL[tier] ?? tier}` : countLabel;
+  const countLabel = `${count} firmware recipe${count === 1 ? "" : "s"}`;
+  const knownGood = rows.filter((row) => row.recipe.status === "known-good").length;
+  return knownGood ? `${countLabel} · ${knownGood} known good` : countLabel;
 }
 
 /** board_flash_cta_click params: the board plus what the CTA advertised. */

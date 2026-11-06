@@ -226,6 +226,8 @@ class ExampleRecord(BaseModel):
     #: can show stars/forks without a second request. Absent on needs-examples.
     stars: Optional[int] = None
     forks: Optional[int] = None
+    github_as_of: Optional[str] = None
+    as_of: Optional[str] = None
 
 
 class ExamplesResponse(BaseModel):
@@ -403,10 +405,16 @@ class ValidateResponse(BaseModel):
 
 class Popularity(BaseModel):
     """A firmware's cited popularity (data/firmware/<id>/firmware.md `popularity`),
-    sourced via a `sources` entry whose field is "popularity"."""
+    with independent observation dates for GitHub, launcher and homepage signals."""
 
     stars: Optional[int] = None
     forks: Optional[int] = None
+    downloads: Optional[int] = None
+    editorial_home: Optional[str] = None
+    github_repo_id: Optional[int] = None
+    github_as_of: Optional[str] = None
+    downloads_as_of: Optional[str] = None
+    editorial_home_as_of: Optional[str] = None
     as_of: Optional[str] = None
 
 

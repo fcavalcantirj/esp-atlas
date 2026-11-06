@@ -6,7 +6,10 @@ Run: cd jr && python3 -m pytest test_review_routing.py -v
 """
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 import review_routing as rr
+import stage_popularity_refresh
 from review_routing import Change
 
 FIRMWARE_MD = """---
@@ -71,6 +74,23 @@ def test_demand_and_signals_snapshots_are_auto():
 def test_a_star_and_date_refresh_of_an_existing_record_is_auto():
     route = rr.classify([Change("data/firmware/tool/firmware.md", "M", FIRMWARE_MD, _star_refresh(FIRMWARE_MD))])
     assert route.route == rr.AUTO, route.reasons
+
+
+def test_legacy_refresh_with_new_field_citations_is_auto_but_other_sources_are_not():
+    refreshed = stage_popularity_refresh._rewrite(
+        FIRMWARE_MD, {"id": 123, "stars": 120, "forks": 12}, datetime(2026, 11, 6, tzinfo=timezone.utc))
+    change = Change("data/firmware/tool/firmware.md", "M", FIRMWARE_MD, refreshed)
+    assert rr.classify([change]).route == rr.AUTO
+    unrelated = refreshed.replace("summary: A tool.",
+                                  "- field: popularity.downloads\n  url: https://unrelated.example/x\n"
+                                  "  verified: '2026-11-06'\nsummary: A tool.")
+    assert rr.classify([Change(change.path, "M", FIRMWARE_MD, unrelated)]).route == rr.REVIEW
+    missing_citation = refreshed.replace("- field: popularity.github_repo_id\n"
+                                         "  url: https://github.com/o/tool\n"
+                                         "  verified: '2026-11-06'\n", "")
+    assert rr.classify([Change(change.path, "M", FIRMWARE_MD, missing_citation)]).route == rr.REVIEW
+    changed_qualifier = refreshed.replace("  forks: 12\n", "  forks: 12\n  downloads: 5000\n")
+    assert rr.classify([Change(change.path, "M", FIRMWARE_MD, changed_qualifier)]).route == rr.REVIEW
 
 
 # --- REVIEW --------------------------------------------------------------------------------------
