@@ -39,10 +39,16 @@ test("highestTrustTier ignores an unrecognized status when a known tier is also 
   assert.equal(highestTrustTier([row("weird"), row("reported")]), "reported");
 });
 
-test("boardFlashCtaLabel states the count and the highest trust tier, singularized at 1", () => {
-  assert.equal(boardFlashCtaLabel([row("known-good")]), "1 firmware option · Known good");
-  assert.equal(boardFlashCtaLabel([row("known-good"), row("reported")]), "2 firmware options · Known good");
-  assert.equal(boardFlashCtaLabel([row("broken"), row("broken")]), "2 firmware options · Broken");
+test("boardFlashCtaLabel counts recorded recipes and known-good recipes separately", () => {
+  assert.equal(boardFlashCtaLabel([row("known-good")]), "1 firmware recipe · 1 known good");
+  assert.equal(boardFlashCtaLabel([row("known-good"), row("reported")]), "2 firmware recipes · 1 known good");
+  assert.equal(boardFlashCtaLabel([row("broken"), row("broken")]), "2 firmware recipes");
+});
+
+test("a mixed board catalog never labels every recipe with the highest tier", () => {
+  const rows = [...Array.from({ length: 5 }, () => row("known-good")), ...Array.from({ length: 83 }, () => row("unverified"))];
+  assert.equal(boardFlashCtaLabel(rows), "88 firmware recipes · 5 known good");
+  assert.equal(boardFlashCtaLabel([row("unverified"), row("declared"), row("reported")]), "3 firmware recipes");
 });
 
 test("boardFlashCtaParams carries the board's part_id plus the count and tier for analytics", () => {
@@ -52,8 +58,8 @@ test("boardFlashCtaParams carries the board's part_id plus the count and tier fo
   assert.equal(params.tier, "known-good");
 });
 
-test("ranks the data's `declared` tier between reported and unverified, with its own label", () => {
+test("ranks declared correctly without presenting it as known-good coverage", () => {
   assert.equal(highestTrustTier([row("unverified"), row("declared")]), "declared");
   assert.equal(highestTrustTier([row("declared"), row("reported")]), "reported");
-  assert.equal(boardFlashCtaLabel([row("declared")]), "1 firmware option · Declared");
+  assert.equal(boardFlashCtaLabel([row("declared")]), "1 firmware recipe");
 });

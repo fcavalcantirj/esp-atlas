@@ -73,6 +73,10 @@ sources: [...]               # issue / release notes / video / maintainer list p
 ```
 
 ## Trust tiers (the honesty layer)
+Board-page discovery links describe **recorded recipes**, not a promise that the
+board can be flashed. When a link shows a total across tiers, any known-good
+label must state its own exact count; the best recipe's tier never labels the total.
+
 - **`known-good`** — maintainer/official lists it, or esp-atlas verified on real hardware.
 - **`reported`** — community-submitted, **cited** to a real source, not independently verified.
 - **`unverified`** — oracle-bot-harvested (an env / flag / named `.bin` exists); plausible, no human cite yet.
