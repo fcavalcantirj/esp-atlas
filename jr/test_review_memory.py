@@ -340,3 +340,64 @@ def test_raises_without_a_repo_id_still_group_by_name():
     old, new = NOW - timedelta(hours=9), NOW - timedelta(hours=1)
     got = review_memory.latest_raises([_pr(1477, "CLOSED", old, LEGACY_BODY), _pr(1490, "OPEN", new, LEGACY_BODY)])
     assert [pr["number"] for _, pr, _ in got.values()] == [1490]
+
+
+# --- a reconciled marker keeps its raw evidence -----------------------------------------------------
+
+def test_reconcile_persists_the_evidence_a_review_marker_carries(tmp_path):
+    path = _ledger(tmp_path, MAIN_EXPIRED)
+    ev = review_memory.evidence(_meta())
+    t = _target(rev=review_memory.evidence_rev(ev), evidence=ev)
+    assert review_memory.reconcile(_gh([_pr(1495, "OPEN", NOW - timedelta(hours=2), _body(t))]), path, NOW) == [FID]
+    rec = memory.lookup(memory.load(path), repo_id=RID)
+    assert rec["review"]["evidence"] == ev and rec["review"]["evidence_rev"] == t["evidence_rev"]
+
+
+# --- the numeric repo_id's owner always wins; an id collision never overwrites another repo_id ------
+
+OTHER_RID, OTHER_REPO = 99, "someone/new-firmware"
+OLD_OWNER = {**MAIN_EXPIRED, "id": OLD_FID, "repo": OLD_REPO, "repo_id": SHARED_RID}
+UNRELATED = {**MAIN_EXPIRED, "id": NEW_FID, "repo": OTHER_REPO, "repo_id": OTHER_RID}
+
+
+def _repo_id_owners(led):
+    return sorted((rec["id"], rec.get("repo_id")) for rec in led["by_id"].values())
+
+
+def _assert_owner_took_it_and_unrelated_is_untouched(led):
+    assert _repo_id_owners(led) == [(OLD_FID, SHARED_RID), (NEW_FID, OTHER_RID)]   # one record per repo_id
+    assert led["by_id"][NEW_FID] == UNRELATED
+    rec = led["by_id"][OLD_FID]
+    assert rec["status"] == "rejected" and rec["review"]["evidence_rev"]
+    assert rec["aliases"] == [{"id": NEW_FID, "repo": NEW_REPO}] and rec["history"] == [OLD_OWNER]
+    assert led["by_repo_id"] == {SHARED_RID: OLD_FID, OTHER_RID: NEW_FID}
+    assert led["by_repo"][NEW_REPO] == OLD_FID and led["by_repo"][OTHER_REPO] == NEW_FID
+
+
+def test_reconcile_writes_a_renamed_raise_to_the_unprotected_repo_id_owner_not_a_colliding_id(tmp_path):
+    path = _ledger(tmp_path, OLD_OWNER, UNRELATED)
+    gh = _gh([_pr(1495, "OPEN", NOW - timedelta(hours=2), _body(_renamed()))])
+    assert review_memory.reconcile(gh, path, NOW) == [OLD_FID]
+    _assert_owner_took_it_and_unrelated_is_untouched(memory.load(path))
+    before = path.read_text()
+    assert review_memory.reconcile(gh, path, NOW + timedelta(hours=1)) == []   # idempotent
+    assert path.read_text() == before
+
+
+def test_record_review_decision_writes_to_the_unprotected_repo_id_owner_not_a_colliding_id(tmp_path):
+    path = _ledger(tmp_path, OLD_OWNER, UNRELATED)
+    memory.record_review_decision(NEW_FID, NEW_REPO, "needs_review_target: x", repo_id=SHARED_RID,
+                                  evidence_rev="a", path=path, now=NOW)
+    _assert_owner_took_it_and_unrelated_is_untouched(memory.load(path))
+
+
+def test_an_id_colliding_with_another_repo_ids_record_is_never_overwritten_even_without_an_owner(tmp_path):
+    path = _ledger(tmp_path, UNRELATED)
+    before = path.read_text()
+    memory.record_review_decision(NEW_FID, NEW_REPO, "needs_review_target: x", repo_id=SHARED_RID,
+                                  evidence_rev="a", path=path, now=NOW)
+    assert path.read_text() == before
+    gh = _gh([_pr(1495, "OPEN", NOW - timedelta(hours=2), _body(_renamed()))])
+    assert review_memory.reconcile(gh, path, NOW) == []
+    assert path.read_text() == before
+    assert memory.canonical_id(memory.load(path), NEW_FID, SHARED_RID) is None
