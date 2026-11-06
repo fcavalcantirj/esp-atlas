@@ -193,7 +193,11 @@ def _fake_stage_modules(monkeypatch, calls):
     monkeypatch.setattr(stage_boardmap, "run", lambda ctx, budget, only=None: calls.append(("boardmap", budget)) or tick.StageResult("boardmap", summary=f"mapped {budget}"))
     monkeypatch.setattr(stage_admit, "run", lambda ctx, budget, call_share=1.0: calls.append(("admit", budget, round(call_share, 2))) or tick.StageResult("admit", summary=f"scored {budget}"))
     monkeypatch.setattr(stage_admit_topics, "run", lambda ctx, budget: calls.append(("admit_topics", budget)) or tick.StageResult("admit_topics", summary=f"scored {budget}"))
-    monkeypatch.setattr(stage_popularity_refresh, "run", lambda ctx: calls.append(("popularity_refresh",)) or tick.StageResult("popularity_refresh"))
+    def popularity_refresh(ctx):
+        calls.append(("popularity_refresh",))
+        return tick.StageResult("popularity_refresh")
+    popularity_refresh.produces_review = False
+    monkeypatch.setattr(stage_popularity_refresh, "run", popularity_refresh)
 
 
 def test_hourly_path_runs_the_content_stages_from_the_split_heavier_first(capsys, tmp_path, monkeypatch):

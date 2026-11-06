@@ -70,13 +70,13 @@ def default_fetch_repo_stats(owner_repo: str) -> dict | None:
         d = json.loads(out.stdout)
         if not isinstance(d, dict):
             return None
-        return {"full_name": d.get("full_name"), "stars": d.get("stargazers_count"),
+        return {"full_name": d.get("full_name"), "id": d.get("id"), "stars": d.get("stargazers_count"),
                 "forks": d.get("forks_count")}
     except (TypeError, ValueError, json.JSONDecodeError):
         return None
 
 
-def _stamp(path: Path, fm: dict, body: str, stars: int | None, forks: int | None, today: str) -> None:
+def _stamp(path: Path, fm: dict, body: str, repo_id: int, stars: int | None, forks: int | None, today: str) -> None:
     """Rewrite `path` with a popularity block (before sources) + a `popularity` source citation.
     Preserves every other field in author-order."""
     sources = fm.pop("sources", []) or []
@@ -85,13 +85,14 @@ def _stamp(path: Path, fm: dict, body: str, stars: int | None, forks: int | None
         pop["stars"] = stars
     if type(forks) is int and forks >= 0:
         pop["forks"] = forks
+    pop["github_repo_id"] = repo_id
     pop["github_as_of"] = today
     pop["as_of"] = today
     fm["popularity"] = pop
     sources = list(sources)
     sources.append({"field": "popularity", "url": fm.get("url"), "verified": today})
-    for field in ("popularity.github_as_of", "popularity.stars", "popularity.forks"):
-        if field == "popularity.github_as_of" or field.rsplit(".", 1)[1] in pop:
+    for field in ("popularity.github_repo_id", "popularity.github_as_of", "popularity.stars", "popularity.forks"):
+        if field.rsplit(".", 1)[1] in pop:
             sources.append({"field": field, "url": fm.get("url"), "verified": today})
     fm["sources"] = sources
     front = yaml.safe_dump(fm, sort_keys=False, default_flow_style=False).strip()
@@ -122,12 +123,16 @@ def backfill(data_dir=None, fetch_repo_stats=default_fetch_repo_stats, today: st
         if not isinstance(full_name, str) or full_name.lower() != repo:
             skipped.append(fid)
             continue
+        repo_id = stats.get("id")
+        if type(repo_id) is not int or repo_id <= 0:
+            skipped.append(fid)
+            continue
         stars = stats.get("stars")
         forks = stats.get("forks")
         if (type(stars) is not int or stars < 0) and (type(forks) is not int or forks < 0):
             skipped.append(fid)
             continue
-        _stamp(path, fm, body, stars, forks, today)
+        _stamp(path, fm, body, repo_id, stars, forks, today)
         stamped.append(fid)
     return {"stamped": stamped, "skipped": skipped}
 

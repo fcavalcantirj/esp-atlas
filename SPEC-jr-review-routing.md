@@ -31,8 +31,13 @@ names every path/stage that forced review.
 - bookkeeping: `BOOKKEEPING_FILES` (`jr/proposed_ledger.json`, `jr/board_cooldown.json`) and
   `BOOKKEEPING_DIRS` (`docs/telemetry/**`);
 - snapshots: `docs/demand/**`, `data/firmware/<id>/signals.json` (added or modified);
-- a star/date refresh of an **existing** record: the only frontmatter differences are the
-  `popularity` block and `sources[].verified` dates, and the body is unchanged.
+- a GitHub star/fork/date refresh of an **existing** firmware record: only GitHub count,
+  stable repository ID and observation date fields may change. Downloads, editorial home,
+  their dates, all other content and the body remain identical. New or updated field-exact
+  GitHub citations must name the record's repository URL and the new observation day;
+  unrelated citation additions, removals or URL edits route to REVIEW. The legacy
+  `field: popularity` citation may only advance its verification date with an old-style
+  count refresh, never change URL or scope.
 
 ### 2. Publish applies the label — fail closed
 
@@ -55,6 +60,10 @@ requested on a `review` route. If labelling still fails, the result says so
   cap the tick skips every review-producing stage (every content stage unless it declares
   `produces_review = False`) and reports `jr-review cap reached …` instead of piling up. Memory
   reconciliation and the telemetry snapshot still ship (they route AUTO).
+  `stage_popularity_refresh.run` may opt out only because it checks each proposed record
+  against this same staged-diff classifier before writing. Any change classified REVIEW is
+  deferred and counted in its summary, so the stage cannot open a new review PR through the
+  cap. A normal legacy snapshot plus new, exact GitHub field citations stays AUTO.
 
 ### 4. Tick report
 

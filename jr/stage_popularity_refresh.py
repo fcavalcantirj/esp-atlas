@@ -18,6 +18,7 @@ from pathlib import Path
 import yaml
 
 import backfill_popularity
+import review_routing
 from esp_atlas_core.floor import CURATED_EXEMPT, clears_popularity_floor
 
 MAX_REPOS_PER_TICK = 7
@@ -57,9 +58,9 @@ def _payload(raw: str, expected: str, old_id: int | None) -> dict | None:
         return None
     if data["full_name"].lower() != expected.lower():
         return None
-    repo_id, stars, forks = data.get("id"), data.get("stargazers_count"), data.get("forks_count")
-    if type(repo_id) is not int or repo_id <= 0 or (old_id is not None and
-                                                  (type(old_id) is not int or repo_id != old_id)):
+    stars, forks = data.get("stargazers_count"), data.get("forks_count")
+    repo_id = backfill_popularity.stable_repo_id(data, {"github_repo_id": old_id} if old_id is not None else {})
+    if repo_id is None:
         return None
     if any(type(v) is not int or v < 0 for v in (stars, forks)):
         return None
@@ -127,7 +128,7 @@ def run(ctx):
     hour = int(now.timestamp() // 3600)
     selected = [repo for i, repo in enumerate(repos) if i % slots == hour % slots]
     result = StageResult("popularity_refresh")
-    refreshed = unchanged = skipped = floor_deferred = 0
+    refreshed = unchanged = skipped = floor_deferred = review_deferred = 0
     for repo in selected:
         if ctx.budget.remaining_calls() < MIN_REMAINING_CALLS or \
                 ctx.budget.remaining_seconds() < MIN_REMAINING_SECONDS:
@@ -170,6 +171,12 @@ def run(ctx):
                 unchanged += 1
                 continue
             relative = str(path.relative_to(ctx.root))
+            route = review_routing.classify([review_routing.Change(relative, "M", original, rewritten)])
+            if route.review:
+                # A legacy record with unusual provenance must not sneak a
+                # new jr-review PR past the cap via this AUTO-only stage.
+                review_deferred += 1
+                continue
             if ctx.dry_run:
                 result.would_write.append({"path": relative, "field": "popularity",
                                            "value": {"stars": stats["stars"], "forks": stats["forks"]}})
@@ -178,7 +185,8 @@ def run(ctx):
                 result.paths.append(relative)
             refreshed += 1
     result.summary = (f"GitHub popularity: {refreshed} {'would refresh' if ctx.dry_run else 'refreshed'}, "
-                      f"{unchanged} current, {skipped} skipped, {floor_deferred} below-floor deferred; "
+                      f"{unchanged} current, {skipped} skipped, {floor_deferred} below-floor deferred, "
+                      f"{review_deferred} provenance deferred; "
                       f"{len(selected)} repos in slot")
     return result
 
