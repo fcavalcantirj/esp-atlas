@@ -3,7 +3,10 @@
 
 Same discipline as test_demand_run.py: `git` and `gh` are recorders, the miner is a fake that
 writes into the worktree, so nothing touches a real git/gh, the composio venv or the network.
-The GSC row and the closed ES3C28P candidate are the REAL committed docs/demand files.
+The GSC row is the REAL committed docs/demand/2026-11-05.json. The queue (closed ES3C28P
+candidate) is the real docs/demand/research-queue.json frozen as of that day in
+fixtures/demand/: the live file is mutable state the pipeline itself rewrites on every work
+branch, so reading it here made these tests flip on whichever work was in flight.
 
 Run: cd jr && python3 -m pytest test_demand_broker.py -v
 """
@@ -24,7 +27,8 @@ from test_demand_run import Proc, git_ok, norm_calls, recorder
 REPO = Path(__file__).resolve().parent.parent
 DEMAND = REPO / "docs" / "demand"
 REAL_SNAPSHOT = json.loads((DEMAND / "2026-11-05.json").read_text(encoding="utf-8"))
-REAL_QUEUE = json.loads((DEMAND / "research-queue.json").read_text(encoding="utf-8"))
+REAL_QUEUE = json.loads((REPO / "jr" / "fixtures" / "demand" / "research-queue-2026-11-05.json")
+                        .read_text(encoding="utf-8"))
 NOW = datetime(2026, 11, 5, 23, 0, tzinfo=timezone.utc)
 SLUG = "fcavalcantirj/esp-atlas"
 RECEIPTS = Path("docs/demand") / demand_broker.RECEIPTS_NAME

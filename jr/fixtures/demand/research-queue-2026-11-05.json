@@ -1,0 +1,33 @@
+{
+ "version": 1,
+ "max_new_per_day": 5,
+ "reopen_after_days": 30,
+ "candidates": {
+  "es3c28p": {
+   "term": "es3c28p",
+   "first_seen": "2026-11-05",
+   "last_seen": "2026-11-05",
+   "source": "ga4 search_empty",
+   "window": {
+    "start": "2026-10-07",
+    "end": "2026-11-04"
+   },
+   "searches": 1,
+   "zero_result_searches": 1,
+   "status": "closed",
+   "classification": "missing_content",
+   "evidence": {
+    "rule": "no catalog id, title or alias matches",
+    "ids": [],
+    "matches": [],
+    "checked": 284
+   },
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1449"
+   ],
+   "outcome": "Catalogued lcdwiki-es3c28p via PR #1449 (merged 2a359d5). Deployed search es3c28p resolves only that board; sibling es3n28p does not match. Verified 2026-11-05. No firmware recipe added.",
+   "closed_on": "2026-11-05",
+   "history": []
+  }
+ }
+}
