@@ -9,6 +9,7 @@ import pam_leads as pam
 import research_work as rw
 from test_demand_broker import (REAL_SNAPSHOT, SLUG, gh_remote, without_unresolved)
 from test_pam_leads import Fetch, NOW
+from test_demand_run import Proc
 
 DAY = "2026-11-06"
 NEXT = "2026-11-07"
@@ -121,10 +122,14 @@ def test_feed_branch_created_before_receipt_is_recovered_as_existing_work(tmp_pa
     key = pam.candidate_leads(state)[0]["key"]
     branch = rw.branch_for(key)
     url = "https://github.com/fcavalcantirj/esp-atlas/pull/1501"
-    remote = gh_remote(refs=json.dumps([{"ref": "refs/heads/" + branch}]),
-                       head_prs=json.dumps([{"number": 1501, "url": url,
-                                            "headRefName": branch, "state": "OPEN"}]))
-    result = reserve(tmp_path, gh=remote)
+    remote = gh_remote(refs=json.dumps([{"ref": "refs/heads/" + branch}]))
+    def gh(*args):
+        if args[:3] == ("pr", "list", "--head"):
+            remote.calls.append(args)
+            prs = [{"number": 1501, "url": url, "headRefName": branch, "state": "OPEN"}]
+            return Proc(stdout=json.dumps(prs if args[3] == branch else []))
+        return remote(*args)
+    result = reserve(tmp_path, gh=gh)
     assert result.action == rw.START  # durable reservation adopts, never creates the remote PR
     row = ledger(tmp_path)["receipts"][0]
     assert row["key"] == key and row["pr_url"] == url and row["linked_work"] == [url]
@@ -170,6 +175,31 @@ def test_exact_search_identity_deduplicates_the_feed_hint(tmp_path):
     assert len(view["candidates"]) == 1
     result = rw.plan_work(view, [], DAY, remote_complete=True)
     assert result.action == rw.START and result.work.source == "ga4_site_search"
+
+
+@pytest.mark.parametrize("pr_state", ["OPEN", "CLOSED", "MERGED", None])
+def test_recovery_only_pass_adopts_existing_pam_before_same_identity_search(tmp_path, pr_state):
+    state = prepare(tmp_path)
+    key = pam.candidate_leads(state)[0]["key"]
+    branch = rw.branch_for(key)
+    snap = deepcopy(REAL_SNAPSHOT)
+    snap["items"] = [{**item, "term": "ES3N28P"} for item in snap["items"]
+                     if item["term"] == "fnk0104s"]
+    assert len(snap["items"]) == 1
+    remote = gh_remote(refs=json.dumps([{"ref": "refs/heads/" + branch}]))
+    def gh(*args):
+        if args[:3] == ("pr", "list", "--head"):
+            rows = [{"number": 1502, "url": "https://github.com/fcavalcantirj/esp-atlas/pull/1502",
+                     "headRefName": branch, "state": pr_state}]
+            return Proc(stdout=json.dumps(rows if args[3] == branch and pr_state else []))
+        return remote(*args)
+    result = reserve(tmp_path, snap, gh=gh, new_pam=False)
+    assert result.action == rw.START
+    row = ledger(tmp_path)["receipts"][0]
+    if pr_state in ("OPEN", None):
+        assert row["key"] == key and row["source"] == "pam_feed"
+    else:
+        assert row["key"] != key and row["source"] == "gsc_query"
 
 
 def test_feed_authoring_still_requires_primary_source_validation(tmp_path):

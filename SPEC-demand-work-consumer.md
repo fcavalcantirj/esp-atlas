@@ -78,6 +78,10 @@ inference availability monitor. Implementation is not activation.
   than create another PR. An uncertain write response triggers readback before
   another attempt. Queue/state writes remain atomic and preserve the previous
   valid file on failure.
+- The daily producer's first pass may recover an existing PAM branch/open PR from
+  validated cached provenance, even if fresh search demand is eligible or a feed
+  refresh fails. New PAM work still requires a successful current-catalog feed
+  refresh; cached classification alone never opens a new work item.
 - Never overwrite a newer queue, another candidate's state, human review decision,
   linked work or previously recorded outcome while publishing bookkeeping.
 

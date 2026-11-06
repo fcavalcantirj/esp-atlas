@@ -199,6 +199,7 @@ def _previous(state) -> None:
         return
     if (not isinstance(state, dict) or type(state.get("version")) is not int or state["version"] != VERSION
             or state.get("source") != "pam_feed" or not isinstance(state.get("leads"), list)
+            or len(state["leads"]) > MAX_PRODUCTS
             or not isinstance(state.get("feeds"), dict) or set(state["feeds"]) != set(ENDPOINTS)):
         raise FeedError("corrupt cached PAM state")
     try:
@@ -283,21 +284,23 @@ def refresh(previous: dict | None, catalog: list[dict], *, now: dt.datetime,
             "feeds": copy.deepcopy(metadata), "leads": _classify(leads, catalog)}
 
 
-def candidate_leads(state: dict, *, handled_keys=()) -> list[dict]:
+def candidate_leads(state: dict, *, handled_keys=(), recovering_keys=()) -> list[dict]:
     """Unmatched identities for research, not authoring. Caller applies shared global caps.
 
     Reconcile prior work/outcomes by stable key and exact target before creating
     anything. Feed timestamps/hashes do not change work identity. No GA metrics or
     fabricated search date window are attached to these market leads.
+    `recovering_keys` names remote work the broker has already found; it may need
+    recovery even when the catalog now matches the original identity hint.
     """
     _previous(state)
     if state is None:
         raise FeedError("missing PAM state")
-    handled = set(handled_keys)
+    handled, recovering = set(handled_keys), set(recovering_keys)
     candidates = []
     for lead in state["leads"]:
         key = work_key(lead)
-        if lead["status"] != "potential_identity_gap" or key in handled:
+        if (lead["status"] != "potential_identity_gap" and key not in recovering) or key in handled:
             continue
         candidates.append({"key": key, "source": "pam_feed", "source_id": lead["source_id"],
                            "name_hint": lead["name_hint"], "chip_hint": lead["chip_hint"],

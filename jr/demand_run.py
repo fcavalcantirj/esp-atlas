@@ -457,7 +457,8 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         if not res.source_error:
             res.work = _reserve_work(wt.path, decision, gh, now, repo_slug)
         _refresh_pam(wt.path, decision, res, pam_refresh, now)
-        # Only a prior NOOP permits considering newly discovered feed leads.
+        # The first pass already recovers existing PAM branches/PRs from valid
+        # cached provenance. Only a prior NOOP permits starting new feed work.
         # Existing work, caps, unreadable remote state and timeouts retain priority.
         if not res.source_error and decision.work_action == "noop" and decision.pam_ready:
             res.work = _reserve_work(wt.path, decision, gh, now, repo_slug, new_pam=True)

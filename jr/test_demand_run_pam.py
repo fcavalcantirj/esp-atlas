@@ -2,8 +2,12 @@
 import json
 from pathlib import Path
 
+import pytest
+
 import demand_run
+import pam_leads
 import pam_run
+import research_work as rw
 from test_demand_broker import (NOW, REAL_QUEUE, REAL_SNAPSHOT, SLUG, gh_remote,
                                 snapshot_miner, staged, without_unresolved)
 from test_demand_run import Proc, git_ok
@@ -117,6 +121,47 @@ def test_failed_feed_refresh_starts_no_new_work_from_stale_pam_classification(tm
     result = run(root, pam_refresh=pam_failed)
     assert result.work.startswith("noop")
     assert not (root / "docs/demand/work-receipts.json").exists()
+
+
+@pytest.mark.parametrize("refresh", [pam_ok, pam_failed])
+@pytest.mark.parametrize("covered", [False, True])
+@pytest.mark.parametrize("remote_branch", [False, True])
+def test_open_pam_pr_without_saved_receipt_recovers_before_eligible_search(
+        tmp_path, refresh, covered, remote_branch):
+    root, git = tree(tmp_path), git_ok()
+    pam_ok(root, now=NOW)
+    target = root / pam_run.STATE_PATH
+    state = json.loads(target.read_text())
+    key = pam_leads.candidate_leads(state)[0]["key"]
+    branch = rw.branch_for(key)
+    if covered:
+        for lead in state["leads"]:
+            if pam_leads.work_key(lead) == key:
+                lead.update(status="possible_match", matches=["board-n"])
+        target.write_text(json.dumps(state))
+    research_url = "https://github.com/fcavalcantirj/esp-atlas/pull/1502"
+    remote = gh_remote(refs=json.dumps([{"ref": "refs/heads/" + branch}] if remote_branch else []))
+    def gh(*args):
+        if args[:3] == ("pr", "list", "--head"):
+            remote.calls.append(args)
+            prs = [{"number": 1502, "url": research_url, "state": "OPEN", "headRefName": branch}]
+            return Proc(stdout=json.dumps(prs if args[3] == branch else []))
+        return remote(*args)
+    result = run(root, git=git, gh=gh, miner=snapshot_miner(REAL_SNAPSHOT), pam_refresh=refresh)
+    assert result.published and not result.aborted
+    assert result.work.startswith(f"reserved {key}")
+    receipts_path = root / "docs/demand/work-receipts.json"
+    rows = json.loads(receipts_path.read_text())["receipts"]
+    assert len(rows) == 1
+    assert rows[0]["key"] == key and rows[0]["source"] == "pam_feed"
+    assert rows[0]["linked_work"] == [research_url] and rows[0]["pr_url"] == research_url
+    assert rows[0]["feed"]["checked_at"] == state["checked_at"]
+    assert "docs/demand/work-receipts.json" in staged(git)
+    before = receipts_path.read_bytes()
+    replay = run(root, gh=gh, miner=snapshot_miner(REAL_SNAPSHOT), pam_refresh=refresh)
+    assert replay.work.startswith("reconcile") and receipts_path.read_bytes() == before
+    creates = [call for call in remote.calls if call[:2] == ("pr", "create")]
+    assert all(branch not in call for call in creates)  # only the metadata publisher can create a PR
 
 
 def test_empty_gsc_publishes_successful_pam_without_an_empty_steer(tmp_path):
