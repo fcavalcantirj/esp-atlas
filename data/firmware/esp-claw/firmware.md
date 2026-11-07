@@ -8,9 +8,11 @@ maintainer: espressif
 socs:
 - esp32-s3
 popularity:
-  stars: 2163
-  forks: 462
-  as_of: '2026-09-20'
+  stars: 2356
+  forks: 514
+  as_of: '2026-11-07'
+  github_repo_id: 1213212865
+  github_as_of: '2026-11-07T02:00:55Z'
 sources:
 - field: '*'
   url: https://github.com/espressif/esp-claw
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/espressif/esp-claw
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/espressif/esp-claw
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/espressif/esp-claw
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/espressif/esp-claw
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/espressif/esp-claw
+  verified: '2026-11-07'
 summary: "ESP\u2011Claw is an AI\u2011agent framework for ESP32\u2011series IoT devices\
   \ that lets users define device behavior through chat, running a local agent loop\
   \ for sensing, decision\u2011making and actuation, with event\u2011driven Lua loading,\
