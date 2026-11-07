@@ -6,14 +6,17 @@ validates every record, and publishes ONE file, popularity.json (schema v1), to 
 `runtime-popularity` with a parent-SHA compare-and-swap built from git plumbing. It never
 writes main or the catalog, never touches PRs, never calls an LLM and keeps no database.
 
-Identity is pinned: a repository whose GitHub id differs from the previous snapshot's (or the
-catalog's own github_repo_id) is quarantined and excluded. Counts may fall or be zero; there is
+Identity is pinned: a repository whose GitHub id differs from the previous snapshot's, from a
+quarantine carried over from an earlier run, or from the catalog's own github_repo_id is
+quarantined and excluded until the pinned id returns. Quarantines and GitHub's rate-limit
+cooldown persist as a JSON trailer on the branch commit (never as a second file); a run inside
+the cooldown neither queries GitHub nor publishes. Counts may fall or be zero; there is
 no admission floor. A source that fails or is rate-limited keeps its last-good record, with its
 original github_as_of. A rival publish between observing the branch and pushing loses the race:
 nothing is published and the exit code says so.
 
 Usage: python jr/runtime_popularity.py [--dry-run --out PATH] [--repo PATH] [--remote origin]
-Exit codes: 0 published / dry run written, 1 unexpected error, 2 refused, 3 lost race.
+Exit codes: 0 published / dry run written / cooling down, 1 unexpected error, 2 refused, 3 lost race.
 """
 from __future__ import annotations
 
@@ -45,8 +48,12 @@ FILENAME = "popularity.json"
 DEFAULT_TIMEOUT_SECONDS = 180
 DEFAULT_MAX_CALLS = 30
 GIT_TIMEOUT_SECONDS = 60
+PUBLISH_RESERVE_SECONDS = 10  # never start a push the time bound would cut off
 COMMIT_IDENTITY = ("espatlas-jr", "hello@esp-atlas.com")
 PROTECTED_BRANCHES = {"main", "master"}
+# Collector state that must outlive one run (identity quarantines, GitHub's cooldown) rides as a
+# JSON trailer on the branch commit's message: the published tree stays popularity.json alone.
+STATE_TRAILER = "Runtime-Popularity-State: "
 DEFAULT_LOCK = Path(tempfile.gettempdir()) / "jr-runtime-popularity.lock"
 DEFAULT_DRY_RUN_OUT = Path(tempfile.gettempdir()) / "runtime-popularity.json"
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -85,7 +92,10 @@ def canonical_repository(url) -> str | None:
 def _utc(value) -> datetime | None:
     if not isinstance(value, str) or not _UTC_STAMP.fullmatch(value):
         return None
-    return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:  # matches the shape but names no real instant, e.g. month 13
+        return None
 
 
 def _stamp(moment: datetime) -> str:
@@ -145,10 +155,12 @@ def build_snapshot(catalog_revision: str, records: dict, now: datetime) -> dict:
 def make_git(repo: Path, *, budget: Budget | None = None):
     """A `git -C repo` runner; each call is bounded by the run's remaining time when given one."""
     def git(*args: str, input: str | None = None) -> subprocess.CompletedProcess:
-        timeout = max(1.0, budget.remaining_seconds()) if budget else GIT_TIMEOUT_SECONDS
+        remaining = budget.remaining_seconds() if budget else GIT_TIMEOUT_SECONDS
+        if remaining <= 0:
+            return subprocess.CompletedProcess(args, 124, "", "time budget exhausted")
         try:
             return subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True,
-                                  input=input, timeout=min(timeout, GIT_TIMEOUT_SECONDS),
+                                  input=input, timeout=min(remaining, GIT_TIMEOUT_SECONDS),
                                   env={**os.environ, "GIT_TERMINAL_PROMPT": "0"})
         except subprocess.TimeoutExpired:
             return subprocess.CompletedProcess(args, 124, "", "git timed out")
@@ -247,10 +259,12 @@ class Collection:
     kept_last_good: list = field(default_factory=list)
     excluded: dict = field(default_factory=dict)
     quarantined: dict = field(default_factory=dict)
+    cooldown_until: str | None = None
 
 
-def _fetch(repos: list[str], *, gh, budget: Budget) -> tuple[dict[str, dict], dict[str, str]]:
-    """({repo: validated stats}, {repo: failure reason}); the bounded loop of popularity_full."""
+def _fetch(repos: list[str], *, gh, budget: Budget, now: datetime):
+    """({repo: validated stats}, {repo: failure reason}, cooldown or None): popularity_full's
+    bounded loop, including where it derives a cooldown from GitHub's rate-limit replies."""
     stats: dict[str, dict] = {}
     failed = {repo: "unattempted" for repo in repos}
 
@@ -258,10 +272,10 @@ def _fetch(repos: list[str], *, gh, budget: Budget) -> tuple[dict[str, dict], di
         failed.update({repo: reason for repo in subset})
 
     if not repos:
-        return stats, failed
+        return stats, failed, None
     if budget.remaining_calls() < 1 or budget.remaining_seconds() < gql.MIN_REMAINING_SECONDS:
         mark(repos, "unattempted_budget")
-        return stats, failed
+        return stats, failed, None
     ctx = SimpleNamespace(gh=budget.wrap(gh, "graphql"))
     cost = SimpleNamespace(graphql_cost_spent=0, graphql_cost_unknown_requests=0)
     probe, headers, status = gql._call(ctx, "query { rateLimit { cost remaining resetAt } }")
@@ -269,10 +283,13 @@ def _fetch(repos: list[str], *, gh, budget: Budget) -> tuple[dict[str, dict], di
     gql._charge_cost(cost, quota)
     if gql._limited(probe, status):
         mark(repos, "unattempted_rate_limit")
-        return stats, failed
+        return stats, failed, gql._cooldown_until(now, headers, quota)
     if not isinstance(quota, dict) or type(quota.get("remaining")) is not int:
         mark(repos, "unattempted_quota_unknown")
-        return stats, failed
+        return stats, failed, None
+    if quota["remaining"] - gql._next_batch_cost_bound(repos[:gql.BATCH_SIZE]) < gql.MIN_GRAPHQL_POINTS:
+        mark(repos, "unattempted_rate_limit")
+        return stats, failed, gql._cooldown_until(now, headers, quota)
     for start in range(0, len(repos), gql.BATCH_SIZE):
         batch = repos[start:start + gql.BATCH_SIZE]
         if budget.remaining_calls() < 1 or budget.remaining_seconds() < gql.MIN_REMAINING_SECONDS:
@@ -280,7 +297,7 @@ def _fetch(repos: list[str], *, gh, budget: Budget) -> tuple[dict[str, dict], di
             break
         if quota["remaining"] - gql._next_batch_cost_bound(batch) < gql.MIN_GRAPHQL_POINTS:
             mark(repos[start:], "unattempted_rate_limit")
-            break
+            return stats, failed, gql._cooldown_until(now, {}, quota)
         doc, headers, status = gql._call(ctx, gql._query(batch))
         next_quota = gql._quota(doc, headers)
         gql._charge_cost(cost, next_quota)
@@ -288,7 +305,7 @@ def _fetch(repos: list[str], *, gh, budget: Budget) -> tuple[dict[str, dict], di
         if doc is None or not isinstance(doc.get("data"), dict):
             mark(batch, "attempted_rate_limited" if limited else "attempted_query_failure")
             mark(repos[start + len(batch):], "unattempted_rate_limit" if limited else "unattempted_query_failure")
-            break
+            return stats, failed, gql._cooldown_until(now, headers, quota) if limited else None
         error_aliases = {path[0] for error in doc.get("errors") or [] if isinstance(error, dict)
                          for path in [error.get("path")] if isinstance(path, list) and path
                          and isinstance(path[0], str)}
@@ -303,27 +320,32 @@ def _fetch(repos: list[str], *, gh, budget: Budget) -> tuple[dict[str, dict], di
         quota = next_quota if isinstance(next_quota, dict) and type(next_quota.get("remaining")) is int else None
         if limited or quota is None:
             mark(repos[start + len(batch):], "unattempted_rate_limit" if limited else "unattempted_quota_unknown")
-            break
-    return stats, failed
+            return stats, failed, gql._cooldown_until(now, headers, quota) if limited else None
+    return stats, failed, None
 
 
-def _pins(entry: Entry, previous: dict | None) -> list[int]:
-    pins = [previous["github_repo_id"]] if previous else []
-    return pins + ([entry.catalog_id] if entry.catalog_id is not None else [])
+def _same_source(row: dict | None, entry: Entry) -> dict | None:
+    """`row` when it describes this entry's repository; history of another source is no pin."""
+    return row if row and row.get("repository_url") == entry.repository_url else None
 
 
-def collect(entries: list[Entry], previous_records: dict, *, gh, budget: Budget, now: datetime) -> Collection:
-    """Fresh validated records, last-good fallbacks, exclusions and identity quarantines."""
-    stats, failed = _fetch(sorted({entry.repo for entry in entries}), gh=gh, budget=budget)
-    result = Collection()
+def collect(entries: list[Entry], previous_records: dict, *, gh, budget: Budget, now: datetime,
+            quarantine: dict | None = None) -> Collection:
+    """Fresh validated records, last-good fallbacks, exclusions and identity quarantines.
+
+    Pins: the previous snapshot's id, a quarantine carried from earlier runs, the catalog's id.
+    A quarantine lasts until GitHub reports the pinned id again or the catalog moves the source."""
+    stats, failed, cooldown = _fetch(sorted({entry.repo for entry in entries}), gh=gh, budget=budget, now=now)
+    result = Collection(cooldown_until=_stamp(cooldown) if cooldown else None)
     for entry in sorted(entries, key=lambda e: e.firmware_id):
         fid = entry.firmware_id
-        previous = previous_records.get(fid)
-        if previous and previous.get("repository_url") != entry.repository_url:
-            previous = None  # last-good from another repository is not this source's history
+        previous = _same_source(previous_records.get(fid), entry)
+        held = _same_source((quarantine or {}).get(fid), entry)
+        pins = ([previous["github_repo_id"]] if previous else []) + ([held["pinned_repo_id"]] if held else []) \
+            + ([entry.catalog_id] if entry.catalog_id is not None else [])
         found = stats.get(entry.repo)
         if found is not None:
-            mismatch = next((pin for pin in _pins(entry, previous) if pin != found["id"]), None)
+            mismatch = next((pin for pin in pins if pin != found["id"]), None)
             if mismatch is not None:
                 result.quarantined[fid] = {"repository_url": entry.repository_url,
                                            "pinned_repo_id": mismatch, "observed_repo_id": found["id"]}
@@ -332,6 +354,9 @@ def collect(entries: list[Entry], previous_records: dict, *, gh, budget: Budget,
                                    "stars": found["stars"], "forks": found["forks"],
                                    "github_as_of": _stamp(now)}
             result.fresh.append(fid)
+        elif held:
+            result.quarantined[fid] = {"repository_url": entry.repository_url,
+                                       "pinned_repo_id": held["pinned_repo_id"], "observed_repo_id": None}
         elif previous and entry.catalog_id in (None, previous["github_repo_id"]):
             result.records[fid] = dict(previous)
             result.kept_last_good.append(fid)
@@ -342,6 +367,48 @@ def collect(entries: list[Entry], previous_records: dict, *, gh, budget: Budget,
     return result
 
 
+# --- collector state (commit trailer) ------------------------------------------------------------
+
+def _empty_state() -> dict:
+    return {"quarantine": {}, "cooldown_until": None}
+
+
+def _state_is_valid(state) -> bool:
+    if not isinstance(state, dict) or set(state) != {"quarantine", "cooldown_until"}:
+        return False
+    if state["cooldown_until"] is not None and _utc(state["cooldown_until"]) is None:
+        return False
+    held = state["quarantine"]
+    return isinstance(held, dict) and all(
+        isinstance(fid, str) and _FIRMWARE_ID.fullmatch(fid) and isinstance(pin, dict)
+        and set(pin) == {"repository_url", "pinned_repo_id"}
+        and canonical_repository(pin["repository_url"]) == pin["repository_url"]
+        and type(pin["pinned_repo_id"]) is int and 0 < pin["pinned_repo_id"] <= MAX_SAFE_INT
+        for fid, pin in held.items())
+
+
+def read_state(git, commit: str) -> dict:
+    """The collector state carried on `commit`'s message; empty when it has none, Refused when
+    it is malformed (the identity pins in it must never silently vanish)."""
+    message = _out(git, "log", "-1", "--format=%B", commit, what="reading collector state")
+    lines = [line for line in message.splitlines() if line.startswith(STATE_TRAILER)]
+    if not lines:
+        return _empty_state()
+    try:
+        state = json.loads(lines[-1][len(STATE_TRAILER):])
+    except ValueError:
+        state = None
+    if not _state_is_valid(state):
+        raise Refused(f"collector state on {commit[:12]} is malformed")
+    return state
+
+
+def _next_state(result: Collection) -> dict:
+    return {"quarantine": {fid: {"repository_url": row["repository_url"], "pinned_repo_id": row["pinned_repo_id"]}
+                           for fid, row in sorted(result.quarantined.items())},
+            "cooldown_until": result.cooldown_until}
+
+
 # --- publish -------------------------------------------------------------------------------------
 
 def _remote_tip(git, remote: str, ref: str) -> str | None:
@@ -349,13 +416,18 @@ def _remote_tip(git, remote: str, ref: str) -> str | None:
     if p.returncode == 2:
         return None
     if p.returncode != 0:
-        raise Refused(f"cannot re-read {remote} {ref}")
+        raise Refused(f"push did not confirm and {remote} {ref} cannot be re-read: outcome unknown")
     return p.stdout.split()[0]
 
 
-def publish(git, *, remote: str, branch: str, parent: str | None, snapshot: dict, now: datetime) -> str:
+def publish(git, *, remote: str, branch: str, parent: str | None, snapshot: dict, now: datetime,
+            state: dict | None = None) -> str:
     """Commit ONLY popularity.json on top of `parent` (orphan when None) and push it with a lease
-    that expects exactly `parent`. Returns the new commit; LostRace when the branch moved."""
+    that expects exactly `parent`. Returns the new commit; LostRace when the branch moved.
+
+    An accepted push is the outcome, whatever a rival does afterwards. A push that reports failure
+    is settled by re-reading the branch: our commit there means it landed, `parent` there means
+    it was refused, anything else means a rival won."""
     if branch in PROTECTED_BRANCHES:
         raise Refused(f"refusing to publish to {branch}")
     errors = validate_snapshot(snapshot, now=now)
@@ -364,21 +436,22 @@ def publish(git, *, remote: str, branch: str, parent: str | None, snapshot: dict
     text = json.dumps(snapshot, indent=2, sort_keys=True) + "\n"
     blob = _out(git, "hash-object", "-w", "--stdin", input=text, what="hash-object")
     tree = _out(git, "mktree", input=f"100644 blob {blob}\t{FILENAME}\n", what="mktree")
-    message = f"popularity: runtime snapshot {snapshot['published_at']} (catalog {snapshot['catalog_revision'][:12]})"
+    subject = f"popularity: runtime snapshot {snapshot['published_at']} (catalog {snapshot['catalog_revision'][:12]})"
+    trailer = STATE_TRAILER + json.dumps(state or _empty_state(), sort_keys=True, separators=(",", ":"))
     name, email = COMMIT_IDENTITY
     commit = _out(git, "-c", f"user.name={name}", "-c", f"user.email={email}", "commit-tree", tree,
-                  *(["-p", parent] if parent else []), "-m", message, what="commit-tree")
+                  *(["-p", parent] if parent else []), "-m", subject, "-m", trailer, what="commit-tree")
     ref = f"refs/heads/{branch}"
     push = git("push", "--porcelain", "--no-verify", f"--force-with-lease={ref}:{parent or ''}",
                remote, f"{commit}:{ref}")
+    if push.returncode == 0:
+        return commit
     tip = _remote_tip(git, remote, ref)
-    if push.returncode != 0:
-        if tip != parent:
-            raise LostRace(f"{ref} moved from {parent or 'absent'} to {tip or 'absent'}")
+    if tip == commit:
+        return commit
+    if tip == parent:
         raise Refused(f"push failed: {(push.stderr or '').strip()[:200]}")
-    if tip != commit:
-        raise LostRace(f"{ref} is {tip or 'absent'} after pushing {commit}")
-    return commit
+    raise LostRace(f"{ref} moved from {parent or 'absent'} to {tip or 'absent'}")
 
 
 # --- run -----------------------------------------------------------------------------------------
@@ -416,6 +489,7 @@ class Receipt:
     quarantined: int = 0
     quarantined_ids: list = field(default_factory=list)
     excluded_ids: list = field(default_factory=list)
+    cooldown_until: str | None = None
     reason: str | None = None
 
     def line(self) -> str:
@@ -427,6 +501,8 @@ class Receipt:
             parts.append("quarantined_ids=" + ",".join(self.quarantined_ids))
         if self.excluded_ids:
             parts.append("excluded_ids=" + ",".join(self.excluded_ids))
+        if self.cooldown_until:
+            parts.append(f"cooldown_until={self.cooldown_until}")
         if self.reason:
             parts.append(f"reason={json.dumps(self.reason)}")
         return "runtime-popularity: " + " ".join(parts)
@@ -448,7 +524,14 @@ def run(*, git, gh, remote: str, branch: str, catalog_ref: str, budget: Budget, 
             receipt.catalog_revision = revision
             parent, previous = observe_branch(git, remote, branch, now=now)
             receipt.parent = parent
-            result = collect(entries, (previous or {}).get("records", {}), gh=gh, budget=budget, now=now)
+            state = read_state(git, parent) if parent else _empty_state()
+            cooldown = _utc(state["cooldown_until"])
+            if cooldown and now < cooldown:
+                receipt.status, receipt.exit_code, receipt.cooldown_until = "cooldown", 0, state["cooldown_until"]
+                return receipt
+            result = collect(entries, (previous or {}).get("records", {}), gh=gh, budget=budget, now=now,
+                             quarantine=state["quarantine"])
+            receipt.cooldown_until = result.cooldown_until
             receipt.published, receipt.kept_last_good = len(result.fresh), len(result.kept_last_good)
             receipt.excluded_ids = sorted({**catalog_excluded, **result.excluded})
             receipt.excluded = len(receipt.excluded_ids)
@@ -461,7 +544,10 @@ def run(*, git, gh, remote: str, branch: str, catalog_ref: str, budget: Budget, 
                 _write_local(out or DEFAULT_DRY_RUN_OUT, snapshot)
                 receipt.status, receipt.exit_code = "dry_run", 0
                 return receipt
-            receipt.commit = publish(git, remote=remote, branch=branch, parent=parent, snapshot=snapshot, now=now)
+            if budget.remaining_seconds() < PUBLISH_RESERVE_SECONDS:
+                raise Refused("too little time left in the run's bound to push safely")
+            receipt.commit = publish(git, remote=remote, branch=branch, parent=parent, snapshot=snapshot,
+                                     now=now, state=_next_state(result))
             receipt.status, receipt.exit_code = "published", 0
     except Refused as e:
         receipt.status, receipt.exit_code, receipt.reason = "refused", 2, str(e)

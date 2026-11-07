@@ -557,3 +557,116 @@ def test_main_reports_a_crash_as_an_error_receipt(monkeypatch, tmp_path, capsys)
 def test_receipt_names_every_excluded_firmware(repos, tmp_path):
     receipt = _run(repos, tmp_path, FakeGH({**GOOD, "octo/beta": None}), dry_run=True, out=tmp_path / "o.json")
     assert receipt.excluded_ids == ["beta"] and "excluded_ids=beta" in receipt.line()
+
+
+# --- checker round 1: persistent quarantine, cooldown, honest push outcome, total validator -------
+
+def _at(repos, tmp_path, gh, hours: float, **kw):
+    return rp.run(git=rp.make_git(repos[1]), gh=gh, remote="origin", branch=rp.BRANCH, catalog_ref="main",
+                  budget=Budget(), now=NOW + timedelta(hours=hours), lock_path=tmp_path / "rp.lock", **kw)
+
+
+def test_quarantine_persists_until_the_pinned_identity_returns(repos, tmp_path):
+    origin, _ = repos
+    assert _at(repos, tmp_path, FakeGH(GOOD), 0).status == "published"
+    swapped = {**GOOD, "octo/alpha": node("Octo/Alpha", 11, 9, 9)}
+    for hours in (1, 2):  # the pin must outlive the run that first saw the new identity
+        receipt = _at(repos, tmp_path, FakeGH(swapped), hours)
+        assert receipt.quarantined_ids == ["alpha"], hours
+        doc = json.loads(_sh(origin, "show", f"{rp.BRANCH}:popularity.json"))
+        assert "alpha" not in doc["records"]
+    fetch_failed = _at(repos, tmp_path, FakeGH({**GOOD, "octo/alpha": None}), 3)
+    assert fetch_failed.quarantined_ids == ["alpha"]
+    restored = _at(repos, tmp_path, FakeGH(GOOD), 4)
+    assert restored.quarantined_ids == [] and restored.published == 3
+    assert rp.read_state(rp.make_git(repos[1]), _remote_ref(origin, rp.BRANCH))["quarantine"] == {}
+
+
+def test_quarantine_pin_is_dropped_when_the_catalog_moves_the_source(repos, tmp_path):
+    _, work = repos
+    _at(repos, tmp_path, FakeGH(GOOD), 0)
+    _at(repos, tmp_path, FakeGH({**GOOD, "octo/alpha": node("Octo/Alpha", 11, 9, 9)}), 1)
+    _write_firmware(work, "alpha", "https://github.com/octo/alpha-new")
+    _sh(work, "commit", "-q", "-am", "alpha moved")
+    receipt = _at(repos, tmp_path, FakeGH({**GOOD, "octo/alpha-new": node("octo/alpha-new", 12, 1, 1)}), 2)
+    assert receipt.quarantined_ids == [] and receipt.published == 3
+
+
+def test_rate_limit_sets_a_cooldown_that_the_next_run_honours(repos, tmp_path):
+    origin, _ = repos
+    first = _at(repos, tmp_path, FakeGH(GOOD, limited=True), 0)
+    assert first.status == "published" and first.cooldown_until == "2026-11-07T20:00:00Z"
+    tip = _remote_ref(origin, rp.BRANCH)
+    gh = FakeGH(GOOD)
+    waiting = _at(repos, tmp_path, gh, 0.5)
+    assert waiting.status == "cooldown" and waiting.exit_code == 0 and gh.calls == []
+    assert "cooldown_until=2026-11-07T20:00:00Z" in waiting.line()
+    assert _remote_ref(origin, rp.BRANCH) == tip
+    after = _at(repos, tmp_path, FakeGH(GOOD), 1.5)
+    assert after.status == "published" and after.published == 3 and after.cooldown_until is None
+
+
+def test_low_quota_mid_run_reports_a_cooldown(repos, monkeypatch):
+    monkeypatch.setattr(rp.gql, "BATCH_SIZE", 1)
+    result = _collect(repos, FakeGH(GOOD, remaining=51))
+    assert result.cooldown_until == "2026-11-07T20:00:00Z"
+
+
+def test_malformed_state_trailer_fails_closed(repos):
+    origin, work = repos
+    doc = _valid_for(work)
+    blob = _sh(work, "hash-object", "-w", "--stdin", input=json.dumps(doc))
+    tree = _sh(work, "mktree", input=f"100644 blob {blob}\tpopularity.json\n")
+    commit = _sh(work, "commit-tree", tree, "-m", "s", "-m", rp.STATE_TRAILER + "{not json")
+    with pytest.raises(rp.Refused):
+        rp.read_state(rp.make_git(work), commit)
+    bad = _sh(work, "commit-tree", tree, "-m", "s", "-m", rp.STATE_TRAILER + '{"quarantine": {"a": 1}}')
+    with pytest.raises(rp.Refused):
+        rp.read_state(rp.make_git(work), bad)
+    plain = _sh(work, "commit-tree", tree, "-m", "no trailer")
+    assert rp.read_state(rp.make_git(work), plain) == {"quarantine": {}, "cooldown_until": None}
+
+
+def test_push_that_landed_despite_a_client_error_is_published(repos):
+    origin, work = repos
+    real = rp.make_git(work)
+
+    def git(*args, **kw):
+        p = real(*args, **kw)
+        return subprocess.CompletedProcess(args, 124, "", "timed out") if args[0] == "push" else p
+
+    commit = rp.publish(git, remote="origin", branch=rp.BRANCH, parent=None, snapshot=_valid_for(work), now=NOW)
+    assert _remote_ref(origin, rp.BRANCH) == commit
+
+
+def test_rival_moving_after_our_accepted_push_is_not_a_lost_race(repos, tmp_path):
+    origin, work = repos
+    real = rp.make_git(work)
+
+    def git(*args, **kw):
+        p = real(*args, **kw)
+        if args[0] == "push" and p.returncode == 0:
+            _sh(work, "push", "-q", "--force", "origin", f"main:refs/heads/{rp.BRANCH}")
+        return p
+
+    commit = rp.publish(git, remote="origin", branch=rp.BRANCH, parent=None, snapshot=_valid_for(work), now=NOW)
+    assert commit and _remote_ref(origin, rp.BRANCH) == _remote_ref(origin, "main")
+
+
+def test_git_never_runs_once_the_time_budget_is_spent(repos):
+    ticks = iter([0.0] + [1_000.0] * 10)
+    git = rp.make_git(repos[1], budget=Budget(max_seconds=180, clock=lambda: next(ticks)))
+    assert git("rev-parse", "HEAD").returncode == 124
+
+
+def test_too_little_time_left_refuses_to_push(repos, tmp_path, monkeypatch):
+    origin, _ = repos
+    monkeypatch.setattr(rp, "PUBLISH_RESERVE_SECONDS", 10**9)
+    receipt = _run(repos, tmp_path, FakeGH(GOOD))
+    assert receipt.status == "refused" and "time" in receipt.reason
+    assert _remote_ref(origin, rp.BRANCH) is None
+
+
+def test_impossible_dates_are_errors_not_crashes():
+    assert rp.validate_snapshot(_mutate(("published_at",), "2026-13-01T00:00:00Z"), now=NOW)
+    assert rp.validate_snapshot(_mutate(("records", "alpha", "github_as_of"), "2026-02-30T00:00:00Z"), now=NOW)
