@@ -225,3 +225,49 @@ def test_a_distinct_id_is_neither_held_nor_vetoed_by_an_aligned_admission(sim, l
     led = json.loads(sim.prs[-1]["tree"]["jr/proposed_ledger.json"])
     assert led["by_id"]["fmtcheck"].get("repo_id") == OTHER_ID, led["by_id"]["fmtcheck"]
     assert _owners_of(sim, OTHER_ID) == {"fmtcheck"} and _owners_of(sim, REPO_ID) == {"newtool"}
+
+
+# R2g (reviewer finding #1003): the verified id travels WITH the selected candidate. Two fetches in one
+# tick observe two different repositories successively occupying the canonical name n/newtool: the first
+# (id 4242) is selected, the second (id 7777, n/oldtool now redirecting to it) is rejected below the floor.
+# The rejected observation must not overwrite the selected repository's id in the item, the ledger or memory.
+
+def _successive_occupants(sim, monkeypatch):
+    """n/newtool answers id 4242 once; from then on a different repository (id 7777, no stars, no forks)
+    occupies n/newtool and the stale n/oldtool redirects to it."""
+    sim.serve("n/newtool", REPO_ID)
+    fetches = []
+
+    def fetch_meta(github_url):
+        meta = sim.fetch_meta(github_url)
+        fetches.append(meta.get("id"))
+        if fetches == [REPO_ID]:
+            sim.serve("n/newtool", OTHER_ID, "n/oldtool")
+            for name in ("n/newtool", "n/oldtool"):
+                sim.repos[name] = {**sim.repos[name], "stargazers_count": 0, "forks_count": 0}
+        return meta
+    monkeypatch.setattr(drain, "default_fetch_meta", fetch_meta)
+    return fetches
+
+
+def test_a_rejected_later_occupant_of_the_canonical_name_never_overwrites_the_selected_id(sim, listing, monkeypatch):
+    import memory
+    fetches = _successive_occupants(sim, monkeypatch)
+    proposed = []
+    real_record_proposed = memory.record_proposed
+    monkeypatch.setattr(memory, "record_proposed",
+                        lambda fid, repo, **kw: proposed.append((fid, repo, kw.get("repo_id")))
+                        or real_record_proposed(fid, repo, **kw))
+    listing[:] = [CANONICAL, STALE]
+    r = sim.tick(T0)
+    assert not r.aborted, r.aborted
+    assert fetches == [REPO_ID, OTHER_ID], fetches
+    assert r.rejects.get("below_floor") == 1, r.rejects
+    pr = sim.prs[-1]
+    assert "data/firmware/newtool/firmware.md" in pr["files"] and not _staged_for(r, "oldtool"), pr["files"]
+    assert proposed == [("newtool", "n/newtool", REPO_ID)], proposed
+    led_txt = pr["tree"]["jr/proposed_ledger.json"]
+    assert json.loads(led_txt)["by_id"]["newtool"].get("repo_id") == REPO_ID, led_txt
+    assert str(OTHER_ID) not in led_txt, led_txt
+    assert pending_prs.identities(pr["body"]) == {"newtool": (REPO_ID, "n/newtool")}, pr["body"]
+    assert str(OTHER_ID) not in pr["body"], pr["body"]
