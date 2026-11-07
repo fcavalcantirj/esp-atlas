@@ -6,9 +6,11 @@ url: https://github.com/torlando-tech/pyxis
 category: multi
 maintainer: torlando-tech
 popularity:
-  stars: 54
-  forks: 6
-  as_of: '2026-09-20'
+  stars: 57
+  forks: 7
+  as_of: '2026-11-07'
+  github_repo_id: 1151831633
+  github_as_of: '2026-11-07T10:01:20Z'
 socs:
 - esp32-s3
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/torlando-tech/pyxis
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/torlando-tech/pyxis
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/torlando-tech/pyxis
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/torlando-tech/pyxis
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/torlando-tech/pyxis
+  verified: '2026-11-07'
 summary: "Pyxis is firmware for the T\u2011Deck device that implements an LXMF/LXST\
   \ client, enabling messaging over LoRa, Wi\u2011Fi, TCP and BLE with GPS\u2011synced\
   \ time and basic UI features such as notifications and keyboard lighting."

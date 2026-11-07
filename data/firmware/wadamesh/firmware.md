@@ -11,9 +11,11 @@ socs:
 - esp32-p4
 - esp32-s3
 popularity:
-  stars: 146
-  forks: 37
-  as_of: '2026-09-20'
+  stars: 193
+  forks: 63
+  as_of: '2026-11-07'
+  github_repo_id: 1267772932
+  github_as_of: '2026-11-07T10:01:20Z'
 sources:
 - field: '*'
   url: https://github.com/ALLFATHER-BV/wadamesh
@@ -27,6 +29,18 @@ sources:
 - field: summary
   url: https://github.com/ALLFATHER-BV/wadamesh
   verified: '2026-10-06'
+- field: popularity.forks
+  url: https://github.com/ALLFATHER-BV/wadamesh
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/ALLFATHER-BV/wadamesh
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/ALLFATHER-BV/wadamesh
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/ALLFATHER-BV/wadamesh
+  verified: '2026-11-07'
 summary: "WADAMESH BETA is an open\u2011source companion\u2011radio firmware that\
   \ adds a full LVGL touchscreen user interface\u2014including map, chat, contacts,\
   \ channels and settings\u2014to MeshCore\u2011based mesh radios on ESP32\u2011S3\
