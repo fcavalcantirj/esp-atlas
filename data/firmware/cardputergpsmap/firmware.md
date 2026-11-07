@@ -9,9 +9,11 @@ capabilities:
 - gps
 - lora
 popularity:
-  stars: 27
+  stars: 28
   forks: 0
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 1256789038
+  github_as_of: '2026-11-07T14:00:55Z'
 socs:
 - esp32-s3
 sources:
@@ -24,6 +26,18 @@ sources:
 - field: summary
   url: https://github.com/lunarc3/CardputerGPSMap
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/lunarc3/CardputerGPSMap
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/lunarc3/CardputerGPSMap
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/lunarc3/CardputerGPSMap
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/lunarc3/CardputerGPSMap
+  verified: '2026-11-07'
 summary: GPSmap offline is a toy firmware for the M5Stack Cardputer that displays
   offline OpenStreetMap tiles using GPS location, allowing panning, zooming, screenshots,
   and basic GPS info on the device.
