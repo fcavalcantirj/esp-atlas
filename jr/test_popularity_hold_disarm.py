@@ -167,9 +167,14 @@ PINNED_CASES = {
     "readback_armed": ([_merge_state(), _merge_state()], 0, [VIEW, DISABLE, VIEW], "failed: "),
     "head_moved": ([_merge_state(head=MOVED)], 0, [VIEW], "failed: "),
     "closed": ([_merge_state(state="MERGED")], 0, [VIEW], "failed: "),
+    "view_fieldless": ([{"state": "OPEN", "headRefOid": HEAD}], 0, [VIEW], "failed: "),
+    "view_garbage": (["not json"], 0, [VIEW], "failed: "),
+    "readback_fieldless": ([_merge_state(), {"state": "OPEN", "headRefOid": HEAD}], 0,
+                           [VIEW, DISABLE, VIEW], "failed: "),
 }
 FAILURE_WORD = {"disable_fails": "disable-auto failed", "readback_armed": "still armed",
-                "head_moved": "head moved", "closed": "not OPEN"}
+                "head_moved": "head moved", "closed": "not OPEN", "view_fieldless": "merge state unreadable",
+                "view_garbage": "merge state unreadable", "readback_fieldless": "merge state unreadable"}
 
 
 def _assert_reported(result, outcome):
@@ -258,3 +263,25 @@ def test_pending_load_raising_is_an_unreadable_inventory_hold_that_disarms(tmp_p
     assert "pending-PR inventory" in result["reason"] and "boom" in result["reason"]
     assert gh.calls == [OPEN_INVENTORY, LOOKUP, VIEW, DISABLE, VIEW]   # load raised before its closed list
     _assert_reported(result, "verified")
+
+
+@pytest.mark.parametrize("path", PINNED_PATHS)
+def test_pinned_bot_pr_is_disarmed_but_a_human_popularity_pr_keeps_the_hold_unsafe(tmp_path, effects, path):
+    human = {**_popularity_pr(login="a-human"), "number": 10, "url": "https://github.com/o/r/pull/10",
+             "headRefName": "jr/popularity-20261107-0300"}
+    gh = FakeGh(popularity=[_popularity_pr(), human], views=[_merge_state(), _merge_state(armed=False)])
+    result, prefix = _hold(tmp_path, path, gh)
+    assert gh.calls == prefix + [LOOKUP, VIEW, DISABLE, VIEW]
+    assert gh.mutating() == [DISABLE]                      # the pinned bot PR only, never the human one
+    _assert_reported(result, "unverified: not modified")
+    assert f"{URL} disarm verified" in result["reason"] and human["url"] in result["reason"]
+
+
+def test_a_raising_disarm_is_a_failed_disarm_not_an_escaped_exception(tmp_path, effects, monkeypatch):
+    monkeypatch.setattr(publish, "_ensure_disarmed",
+                        lambda *a, **k: (_ for _ in ()).throw(RuntimeError("gh exploded")))
+    gh = FakeGh(popularity=[_popularity_pr()])
+    result, prefix = _hold(tmp_path, "recovery_held", gh)
+    assert gh.calls == prefix + [LOOKUP]
+    _assert_reported(result, "failed: ")
+    assert "gh exploded" in result["disarm"] and "publication recovery held" in result["reason"]
