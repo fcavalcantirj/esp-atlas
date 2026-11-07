@@ -87,6 +87,16 @@ def _json(fetch, url: str) -> dict | None:
         return None
 
 
+def _purge_confirmed(response: object) -> bool:
+    if not isinstance(response, dict) or response.get("ok") is not True or response.get("status") != 200:
+        return False
+    try:
+        body = json.loads(response.get("body") or "")
+    except (TypeError, ValueError):
+        return False
+    return isinstance(body, dict) and body.get("revalidated") is True and body.get("tag") == "catalog"
+
+
 def _visible_date(raw: str) -> str | None:
     try:
         if len(raw) == 10:
@@ -203,7 +213,7 @@ def reconcile(state_file: Path, *, load_state, write_state, gh, git, secret: str
                 purge = revalidate(secret)
             except Exception as exc:
                 purge = {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}
-            if not isinstance(purge, dict) or not purge.get("ok"):
+            if not _purge_confirmed(purge):
                 row["reason"] = "catalog cache invalidation failed: " + str(purge)[:200]
                 save(row)
                 continue

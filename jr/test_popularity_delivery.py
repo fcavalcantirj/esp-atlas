@@ -70,7 +70,8 @@ def test_merged_pr_waits_for_deployed_revision_then_invalidates_and_reads_back(t
         raise AssertionError(url)
     def revalidate(secret):
         calls.append(("POST", "/api/revalidate"))
-        return {"ok": remote["purge_ok"], "status": 200 if remote["purge_ok"] else 503}
+        return {"ok": remote["purge_ok"], "status": 200 if remote["purge_ok"] else 503,
+                "body": '{"revalidated":true,"tag":"catalog"}' if remote["purge_ok"] else "{}"}
 
     rows = _reconcile(path, gh, git, fetch, revalidate)
     assert rows[0]["state"] == "merged" and "awaiting deployed" in rows[0]["reason"]
@@ -91,6 +92,14 @@ def test_merged_pr_waits_for_deployed_revision_then_invalidates_and_reads_back(t
     assert saved["revalidation"] == {"status": 200, "ok": True}
     assert sum(c[0] == "POST" for c in calls) == 3
     assert any(c[:2] == ("GET", "https://esp-atlas.com/firmware/fw") for c in calls)
+
+
+def test_revalidation_requires_the_catalog_tag_response():
+    assert delivery._purge_confirmed({"ok": True, "status": 200,
+        "body": '{"revalidated":true,"tag":"catalog"}'})
+    assert not delivery._purge_confirmed({"ok": True, "status": 200, "body": "<html>login</html>"})
+    assert not delivery._purge_confirmed({"ok": True, "status": 200,
+        "body": '{"revalidated":true,"tag":"other"}'})
 
 
 def test_register_supersedes_only_unmerged_head_and_samples_changed_record(tmp_path):
