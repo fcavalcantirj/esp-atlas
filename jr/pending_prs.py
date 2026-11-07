@@ -345,15 +345,16 @@ def _ledger_identities(gh, slug: str, pr: dict, ids) -> dict | None:
 def _verified(gh, slug: str, prs: list, held_ids, gaps: list) -> list:
     """`prs`, each with the identities verified for the firmware it holds (`held_ids(paths)`): what the
     ledger committed at its head records, when the PR changes that ledger; none otherwise. The body
-    marker only claims: an ambiguous one, or a ledger that cannot be read, is a gap and its PR dropped."""
+    marker only claims: an ambiguous one on a PR that holds something, or a ledger that cannot be
+    read, is a gap and its PR dropped. A PR that holds nothing decides nothing, whatever its body."""
     out = []
     for pr in prs:
         n, paths = pr.get("number"), _paths(pr)
-        if identities(pr.get("body")) is None:
+        held, verified = held_ids(paths), {}
+        if held and identities(pr.get("body")) is None:
             gaps.append(f"Jr PR #{n}'s identity marker is ambiguous (opened twice, a firmware named twice "
                         "or unreadable)")
             continue
-        held, verified = held_ids(paths), {}
         if held and LEDGER_PATH in paths:
             verified = _ledger_identities(gh, slug, pr, held)
             if verified is None:

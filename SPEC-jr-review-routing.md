@@ -168,9 +168,9 @@ main was forgotten the same way.
     marker that agrees still covers the rename. A PR without a marker (one older than it, like
     growth PRs #1511/#1513) is verified the same way, else matched by slug. A PR that does not
     change the ledger is not read: its ids stay unknown.
-  - **An ambiguous marker fails closed.** A body that opens `jr-identity` more than once (a
-    forged, duplicate or unclosed marker), whose marker is unreadable, or that names one firmware
-    twice is a gap: the index is incomplete and the tick aborts before its worktree — nothing is
+  - **An ambiguous marker fails closed.** On a tick PR that holds a firmware, a body that opens
+    `jr-identity` more than once (a forged, duplicate or unclosed marker), whose marker is
+    unreadable, or that names one firmware twice is a gap (a PR that holds nothing decides nothing): the index is incomplete and the tick aborts before its worktree — nothing is
     written to the ledger or memory. So is an unreadable ledger (or one with no head oid to read it
     at). The renderer escapes `<` inside the marker and defangs any `jr-identity` opening in item
     text and stage summaries, so a body Jr wrote opens the marker exactly once.
@@ -178,14 +178,14 @@ main was forgotten the same way.
   - same id under a new slug → held as the original (`already_proposed` / `vetoed`), named with
     both slugs, the id and the PR (rename provenance);
   - the held slug under **another** id → `identity_ambiguous`: never admitted, nothing written to
-    the ledger (not a decision), named with both ids and the PR, re-checked every tick until the
+    the ledger (not a decision — not even a search-resolved launcher entry's `resolved:` note), named with both ids and the PR, re-checked every tick until the
     hold ends; a submission issue is left open and unanswered (`deferred, identity_ambiguous` in
     the summary), so it is read again once the hold ends;
   - a slug collision where either id is unknown (a PR older than the marker, an unreadable
     candidate) → held, fail closed. A hold without a verified id is still skipped before the
     metadata fetch; one with an id costs that one fetch to decide.
   - name similarity is never identity. The open-PR ledger hydration also records the verified
-    `repo_id`, so the ledger's own `by_repo_id` gate agrees.
+    `repo_id` — only the one verified for that same PR — so the ledger's own `by_repo_id` gate agrees.
 - **Nothing persisted, nothing weakened.** The index is rebuilt every tick, so a merge or a lapsed
   veto releases the firmware on its own. Hydration, review decisions (§5), the classifier, the
   device-evidence gate, the `jr-review` label and the open-review cap are unchanged.

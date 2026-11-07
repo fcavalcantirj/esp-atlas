@@ -469,8 +469,9 @@ def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None, pending=None) -
     already merged/catalogued — already deduped by catalogued_repos), the id stands in for the repo,
     the pre-fix behavior, so nothing regresses. Each PR/id is wrapped so one bad fetch can't abort
     hydration. `repo_slug` is the esp-atlas repo the contents API reads (None → id-as-repo for all).
-    `pending` (jr/pending_prs.py's index) supplies the GitHub repository id the open PR verified, so
-    the ledger's by_repo_id gate also holds the repository after an upstream rename.
+    `pending` (jr/pending_prs.py's index) supplies the GitHub repository id the ledger committed at
+    THIS open PR's head verified (never another PR's, never a body marker's claim), so the ledger's
+    by_repo_id gate also holds the repository after an upstream rename.
     Returns the ids hydrated."""
     hydrated = []
     for pr in _open_tick_prs(gh):
@@ -484,7 +485,7 @@ def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None, pending=None) -
                 except Exception:  # noqa: BLE001 — one bad fetch must not abort hydration
                     repo = None
             hold = (pending or pending_prs.EMPTY).hold(fid)
-            repo_id = hold.repo_id if hold and hold.state == pending_prs.OPEN else None
+            repo_id = hold.repo_id if hold and hold.state == pending_prs.OPEN and hold.pr_ref == f"#{n}" else None
             memory.record_proposed(fid, repo or fid, repo_id=repo_id, pr_ref=f"#{n}", path=ledger_path, now=now)
             hydrated.append(fid)
     return hydrated
