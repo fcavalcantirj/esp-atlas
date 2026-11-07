@@ -83,7 +83,8 @@ def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0, ledgers=None, repos
         if calls is not None:
             calls.append(a)
         if a[:1] == ("api",) and len(a) == 2 and a[1].count("/") == 2 and "/pulls/" not in a[1]:
-            rid = repos.get(a[1].removeprefix("repos/"))
+            asked = a[1].removeprefix("repos/").lower()                         # GitHub ignores the case
+            rid = next((r for name, r in repos.items() if name.lower() == asked), None)
             return SimpleNamespace(returncode=0 if rid is not None else 1, stderr="" if rid else "HTTP 404",
                                    stdout=json.dumps({"id": rid, "full_name": a[1][6:]}) if rid is not None else "")
         if a[:3] == ("api", "-H", pending_prs.RAW_MEDIA) and "/contents/data/firmware/" in a[3]:
@@ -441,7 +442,8 @@ def test_a_pr_older_than_the_marker_is_verified_from_its_committed_ledger():
     assert hold and hold.reason == "already_proposed" and hold.firmware == "oldtool" and hold.seen_as == "newtool"
     assert idx.match("lintd", 5151) is None                                      # a record the PR does not hold
     assert [c for c in calls if c[:2] == ("api", "-H")] == [
-        ("api", "-H", pending_prs.RAW_MEDIA, "repos/o/r/contents/jr/proposed_ledger.json?ref=oid1500")]
+        ("api", "-H", pending_prs.RAW_MEDIA, "repos/o/r/contents/jr/proposed_ledger.json?ref=oid1500"),
+        ("api", "-H", pending_prs.RAW_MEDIA, "repos/o/r/contents/data/firmware/oldtool/firmware.md?ref=oid1500")]
 
 
 def test_a_vetoed_pr_older_than_the_marker_is_verified_from_its_committed_ledger():
@@ -516,7 +518,8 @@ def test_a_marker_its_committed_ledger_agrees_with_still_covers_the_rename(vetoe
     hold = idx.match("newtool", 4242)
     assert hold.firmware == "oldtool" and hold.seen_as == "newtool"
     assert hold.reason == ("vetoed" if vetoed else "already_proposed")
-    assert [c[3] for c in calls if c[:2] == ("api", "-H")] == ["repos/o/r/contents/jr/proposed_ledger.json?ref=oid1500"]
+    assert [c[3] for c in calls if c[:2] == ("api", "-H")] == ["repos/o/r/contents/jr/proposed_ledger.json?ref=oid1500",
+                                                             "repos/o/r/contents/data/firmware/oldtool/firmware.md?ref=oid1500"]
 
 
 @pytest.mark.parametrize("ledger", [_ledger(), json.dumps({"by_id": {"oldtool": {"id": "oldtool", "repo": "n/oldtool",

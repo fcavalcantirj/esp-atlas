@@ -25,9 +25,12 @@ under, and match() looks a candidate up by id BEFORE slug. The id comes from the
 committed at the PR's head (one raw contents read, only when the PR changes that ledger) and from
 nowhere else — and committed text is itself only a claim any later commit can rewrite, so a ledger id
 counts only on a PR the Jr bot (JR_LOGIN) authored from a branch of this repository (no fork), read at
-the pinned headRefOid, and only once `gh api repos/<owner/repo the record names>` (GitHub follows a
-rename's redirect) answers that same id. An id that ledger records but GitHub does not confirm (404, 5xx,
-malformed metadata, the name now another repository's) is a gap, never a silent slug-only hold; a PR
+the pinned headRefOid, only when the record's owner/repo IS the source the held firmware.md committed
+at that same head names (`url:`) — a later commit can rewrite the ledger's repo and id as a pair GitHub
+truthfully confirms — and only once `gh api repos/<that source>` (GitHub follows a rename's redirect)
+answers that same id. An id that ledger records but its firmware.md source does not bind (a mismatch, an
+unreadable record) or GitHub does not confirm (404, 5xx, malformed metadata, the name now another
+repository's) is a gap, never a held or persisted foreign id nor a silent slug-only hold; a PR
 the ledger is not trusted from holds by slug alone. A PR body is
 editable by anyone who can edit the PR, so its hidden identity marker (render_identity) is never trusted alone — a marker id the ledger contradicts or does not record is
 ignored, and a PR without a marker (one older than it) is verified the same way. A body whose marker
@@ -374,10 +377,29 @@ def _github_confirms(gh, repo, rid: int) -> bool:
     return isinstance(meta, dict) and type(meta.get("id")) is int and meta["id"] == rid
 
 
+def _firmware_source(gh, slug: str, oid: str, fid: str) -> str | None:
+    """The owner/repo data/firmware/<fid>/firmware.md committed at head `oid` names as its source
+    (`url:`, lowercased as tick._owner_repo_from_url keys it), or None when unreadable or absent."""
+    p = gh("api", "-H", RAW_MEDIA, f"repos/{slug}/contents/data/firmware/{fid}/firmware.md?ref={oid}")
+    if getattr(p, "returncode", 1) != 0:
+        return None
+    try:
+        from esp_atlas_core import frontmatter
+        fm, _ = frontmatter.parse_frontmatter_text(getattr(p, "stdout", "") or "")
+    except Exception:  # noqa: BLE001 — an unparseable record names no source
+        return None
+    url = fm.get("url") if isinstance(fm, dict) else None
+    if not isinstance(url, str):
+        return None
+    return "/".join(url.strip().rstrip("/").removeprefix(_GITHUB_PREFIX).lower().split("/")[:2]) or None
+
+
 def _ledger_identities(gh, slug: str, pr: dict, ids) -> tuple[dict, list] | None:
     """({firmware id: (repo id, owner/repo)} the ledger committed at `pr`'s head records for `ids` (one
-    raw contents read) AND GitHub confirms for that owner/repo, [ids whose recorded int repo_id GitHub
-    does not confirm]); None when unreadable. A record without an int repo_id claims nothing."""
+    raw contents read) whose owner/repo IS the source the firmware.md at that same head names AND
+    GitHub confirms for it, [ids whose recorded int repo_id is not bound so]); None when unreadable. A
+    record without an int repo_id claims nothing. A later commit can rewrite the ledger's repo and id
+    as a pair GitHub truthfully confirms; only the held record's own source binds the id to it."""
     oid = pr.get("headRefOid")
     if not slug or not isinstance(oid, str) or not oid:
         return None
@@ -395,8 +417,9 @@ def _ledger_identities(gh, slug: str, pr: dict, ids) -> tuple[dict, list] | None
         rid = rec.get("repo_id") if isinstance(rec, dict) else None
         if type(rid) is not int:
             continue
-        if _github_confirms(gh, rec.get("repo"), rid):
-            out[fid] = (rid, rec["repo"].lower())
+        source = _firmware_source(gh, slug, oid, fid)
+        if source and str(rec.get("repo") or "").lower() == source and _github_confirms(gh, source, rid):
+            out[fid] = (rid, source)
         else:
             unresolved.append(fid)
     return out, unresolved
@@ -424,7 +447,8 @@ def _verified(gh, slug: str, prs: list, held_ids, gaps: list) -> list:
                 continue
             verified, unresolved = read
             if unresolved:
-                gaps.append(f"Jr PR #{n}'s committed repo id for {', '.join(unresolved)} is not confirmed by GitHub")
+                gaps.append(f"Jr PR #{n}'s committed repo id for {', '.join(unresolved)} is not bound to its "
+                            "firmware.md source at that head and confirmed by GitHub")
         out.append({**pr, "_identities": verified})
     return out
 
