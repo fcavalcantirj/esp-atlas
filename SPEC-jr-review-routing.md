@@ -138,6 +138,14 @@ main was forgotten the same way.
   branch and `mergedAt` are re-checked client-side. An open PR wins over an older veto.
 - **Merged → nothing held**: the firmware is catalogued on main and the ledger reconciles it.
 - **Unreadable → the tick aborts** before the worktree (fail closed, like every preflight query).
+- **Incomplete → the tick aborts too**, naming the gap: an index that may miss a hold is as blind
+  as an unreadable one, so no content stage runs and nothing is published (no admit, topics,
+  boardmap, recipe or popularity write). Incomplete means any of: the open list returned
+  `OPEN_PR_LIMIT` PRs, the closed list returned `CLOSED_PR_LIMIT` PRs (both may be cut), or a held
+  tick PR's file list cannot be shown whole. `gh pr list --json files` carries at most the first
+  100 files of a PR, so both lists also ask for `changedFiles`; a tick PR whose `files` count is
+  not its `changedFiles` is re-read with `gh api repos/<slug>/pulls/<n>/files?per_page=100
+  --paginate` and must then match `changedFiles` exactly (that REST listing stops at 3000 files).
 - **Every staging stage obeys it.** `stage_admit` and `stage_admit_topics` skip a held id (derived
   from the repo url exactly as the scorer authors it) before any metadata fetch; `stage_boardmap`
   maps no held firmware — no recipe on the same boards and none on a NEW board (no stacking onto

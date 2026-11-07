@@ -27,6 +27,7 @@ import pending_prs
 import review_routing
 import stage_admit
 import stage_boardmap
+import tick
 import tools
 from test_stage_boardmap import FW as MARAUDER_FW, fake_api, fake_raw
 from test_tick import REAL_REPO, Proc, gh_ok, run, wt_dir  # noqa: F401 — wt_dir is a fixture
@@ -62,11 +63,19 @@ class AtlasSim:
                      "jr/proposed_ledger.json": json.dumps({"by_id": {}, "by_repo": {}}) + "\n"}
         self.base, self.calls, self.staged, self.snapshot = gh_ok(), [], [], {}
         self.view_rc = 0                       # `gh pr view --json files` (the ledger hydration's read)
+        self.files_rc = 0                      # `gh api …/pulls/<n>/files --paginate` (a PR's whole file list)
 
     # -- GitHub -----------------------------------------------------------------------------------
     def _listed(self, pr):
+        """As `gh pr list --json …,files,changedFiles` lists a PR: only its FIRST 100 files."""
         return {k: pr[k] for k in ("number", "state", "headRefName", "createdAt", "closedAt", "mergedAt",
-                                   "mergeable", "labels", "body")} | {"files": [{"path": p} for p in pr["files"]]}
+                                   "mergeable", "labels", "body")} | {
+            "files": [{"path": p} for p in pr["files"][:100]], "changedFiles": len(pr["files"])}
+
+    def _rest_files(self, number):
+        """`gh api repos/o/r/pulls/<n>/files?per_page=100 --paginate`: REST pages printed back to back."""
+        files = self._pr(number)["files"]
+        return "".join(json.dumps([{"filename": p} for p in files[i:i + 100]]) for i in range(0, len(files), 100))
 
     def gh(self, *a):
         self.calls.append(a)
@@ -84,6 +93,9 @@ class AtlasSim:
         if a[:2] == ("pr", "view") and a[3:] == ("--json", "state,mergedAt"):
             pr = self._pr(a[2])
             return Proc(stdout=json.dumps({"state": pr["state"], "mergedAt": pr["mergedAt"]}))
+        if a[:1] == ("api",) and a[1].startswith("repos/o/r/pulls/") and a[2:] == ("--paginate",):
+            number = a[1].split("/")[4]
+            return Proc(returncode=self.files_rc, stdout=self._rest_files(number) if self.files_rc == 0 else "")
         if a[:1] == ("api",) and a[1].startswith("repos/o/r/contents/"):
             path, ref = a[1].removeprefix("repos/o/r/contents/").split("?ref=")
             pr = next(p for p in self.prs if p["headRefName"] == ref)
@@ -168,6 +180,13 @@ class AtlasSim:
         pr = self._pr(number)
         pr["files"] = [p for p in pr["files"] if keep(p)]
         pr["tree"] = {p: t for p, t in pr["tree"].items() if keep(p)}
+
+    def add_pr(self, number, branch, files, state="OPEN"):
+        """A PR the ticks did not open (a human one, an older one), with its changed files."""
+        when = _iso(self.now - timedelta(days=1))
+        self.prs.append({"number": number, "state": state, "createdAt": when, "mergedAt": None,
+                         "closedAt": None if state == "OPEN" else when, "headRefName": branch,
+                         "mergeable": "MERGEABLE", "labels": [], "body": "", "files": list(files), "tree": {}})
 
     def ledger(self):
         return json.loads(self.main["jr/proposed_ledger.json"])["by_id"]
@@ -274,10 +293,69 @@ def test_a_tick_blind_to_closed_prs_fails_closed_and_opens_nothing(sim):
     assert len(sim.prs) == 1 and r.paths == []
 
 
-def test_a_closed_pr_list_cut_at_its_limit_warns(sim, monkeypatch):
+# --- an inventory that may miss a hold stages and publishes NOTHING ------------------------------------
+
+PADDING = [f"src/parser/rule_{i:03d}.c" for i in range(100)]      # files GitHub lists before the firmware's
+
+
+def _nothing_staged_or_published(sim, r, prs_before):
+    assert r.paths == [] and r.stages == [], (r.paths, r.stages)
+    assert len(sim.prs) == prs_before and not [c for c in sim.calls if c[:2] == ("pr", "create")]
+
+
+def test_a_complete_inventory_still_stages_normally(sim):
+    sim.add_pr(1400, "feat/lexer", ["src/lexer/tokens.c"])                  # unrelated open PR, lists whole
+    sim.add_pr(1401, "feat/old-parser", ["src/parser/ast.c"], state="CLOSED")
+    _first_tick(sim)
+
+
+def test_a_closed_pr_list_cut_at_its_limit_stages_and_publishes_nothing(sim, monkeypatch):
+    sim.add_pr(1401, "feat/old-parser", ["src/parser/ast.c"], state="CLOSED")
+    monkeypatch.setattr(pending_prs, "CLOSED_PR_LIMIT", 1)                  # an older veto may be past it
+    r = sim.tick(T0)
+    assert "incomplete" in r.aborted and "closed" in r.aborted, r.aborted
+    _nothing_staged_or_published(sim, r, 1)
+
+
+def test_an_open_pr_list_cut_at_its_limit_stages_and_publishes_nothing(sim, monkeypatch):
+    sim.add_pr(1400, "feat/lexer", ["src/lexer/tokens.c"])                  # unrelated, but it fills the list
+    monkeypatch.setattr(tick, "OPEN_PR_LIMIT", 1)                           # an open tick PR may be past it
+    r = sim.tick(T0)
+    assert "incomplete" in r.aborted and "open" in r.aborted, r.aborted
+    _nothing_staged_or_published(sim, r, 1)
+
+
+def _pad(sim, pr, padding):
+    """The owner trims the PR to one recipe for CAT and GitHub lists `padding` before it."""
+    kept = next(p for p in pr["files"] if _ours(p, CAT) and p.startswith("data/recipes/"))
+    pr["files"] = list(padding) + [kept]
+    pr["tree"] = {kept: pr["tree"][kept]}
+
+
+def test_a_101st_changed_file_is_read_whole_and_still_holds_its_firmware(sim):
     pr = _first_tick(sim)
-    sim.owner_closes(pr["number"], T0 + timedelta(hours=2))
-    monkeypatch.setattr(pending_prs, "CLOSED_PR_LIMIT", 1)
-    r = sim.tick(T0 + timedelta(hours=3))
+    _pad(sim, pr, PADDING)                                                   # 101 files: the recipe is cut
+    assert sim._listed(pr)["changedFiles"] == 101 and len(sim._listed(pr)["files"]) == 100
+    r = sim.tick(T0 + timedelta(hours=1))
     assert not r.aborted, r.aborted
-    assert any("closed Jr PRs cut at 1" in w for w in r.warnings), r.warnings
+    assert _staged_for(r, CAT) == []
+    assert any(c[:2] == ("api", f"repos/o/r/pulls/{pr['number']}/files?per_page=100") for c in sim.calls)
+
+
+def test_a_101_file_pr_that_cannot_be_read_whole_stages_and_publishes_nothing(sim):
+    pr = _first_tick(sim)
+    _pad(sim, pr, PADDING)
+    sim.files_rc = 1
+    r = sim.tick(T0 + timedelta(hours=1))
+    assert "incomplete" in r.aborted and f"#{pr['number']}" in r.aborted, r.aborted
+    _nothing_staged_or_published(sim, r, 1)
+
+
+def test_a_100_file_pr_is_whole_as_listed(sim):
+    pr = _first_tick(sim)
+    _pad(sim, pr, PADDING[:99])                                              # exactly 100: nothing is cut
+    sim.calls.clear()
+    r = sim.tick(T0 + timedelta(hours=1))
+    assert not r.aborted, r.aborted
+    assert _staged_for(r, CAT) == []
+    assert not [c for c in sim.calls if c[:1] == ("api",) and "/pulls/" in c[1]]
