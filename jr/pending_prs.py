@@ -41,7 +41,8 @@ name similarity is never identity.
 
 Eligibility is decided before anything else: a tick PR is one the Jr bot authored from a branch of
 this repository. Anyone can name a fork's branch jr/tick-*, so any other PR — a foreign author, a fork,
-an unknown head — contributes nothing: no hold, no identity marker read, no gap (R2j).
+an unknown head — contributes nothing: no hold, no identity marker read, no gap (R2j); nor, in tick.py,
+a stale-PR abort, an auto-close or a hydrated ledger entry (`eligible` is the one shared rule).
 
 An index that may miss a hold is as blind as an unreadable one, so it names its gaps and the tick
 fails closed on any: an open or closed list that returned its full limit (it may be cut), or a held
@@ -368,10 +369,11 @@ def _from_jr_bot(pr: dict) -> bool:
     return isinstance(author, dict) and author.get("login") == JR_LOGIN and pr.get("isCrossRepository") is False
 
 
-def _eligible(pr: dict) -> bool:
+def eligible(pr: dict) -> bool:
     """`pr` is one of Jr's own tick PRs: a jr/tick-* branch the Jr bot opened in this repository. Anyone
     can name a fork's branch jr/tick-*: an ineligible PR holds nothing, its body and files are never
-    read, and it opens no gap — it can neither hold a victim firmware nor stop the tick."""
+    read, and it opens no gap — it can neither hold a victim firmware nor stop the tick. The ONE rule
+    for the whole tick: its stale-PR triage, auto-close and ledger hydration ask it too (tick.py)."""
     return _is_tick_pr(pr) and _from_jr_bot(pr)
 
 
@@ -488,7 +490,7 @@ def load(gh, open_prs: list, now: datetime, *, slug: str, open_limit: int) -> Pe
     """The tick's index from the preflight's open-PR list (asked for at most `open_limit`) plus the
     closed-unmerged ones; None when GitHub is unreadable — the caller fails closed (a tick blind to
     its PRs must not open another). Eligibility comes first: only the Jr bot's own same-repo tick PR
-    is read at all (`_eligible`). Every one that can hold something is shown whole first; one that
+    is read at all (`eligible`). Every one that can hold something is shown whole first; one that
     cannot, or a list that may be cut, is a gap the caller fails closed on too."""
     closed = list_closed_tick_prs(gh, now)
     if closed is None:
@@ -496,8 +498,8 @@ def load(gh, open_prs: list, now: datetime, *, slug: str, open_limit: int) -> Pe
     gaps = _list_gaps(open_prs, closed, open_limit)
     if gaps:
         return build([], [], now, tuple(gaps))
-    opened = _shown_whole(gh, slug, [pr for pr in open_prs if _eligible(pr)], gaps)
-    vetoes = _shown_whole(gh, slug, [pr for pr in closed if _eligible(pr) and _veto_until(pr, now)], gaps)
+    opened = _shown_whole(gh, slug, [pr for pr in open_prs if eligible(pr)], gaps)
+    vetoes = _shown_whole(gh, slug, [pr for pr in closed if eligible(pr) and _veto_until(pr, now)], gaps)
     opened = _verified(gh, slug, opened, firmware_ids, gaps)
     vetoes = _verified(gh, slug, vetoes, proposed_ids, gaps)
     return build(opened, vetoes, now, tuple(gaps))

@@ -45,8 +45,9 @@ PR_FILES = json.dumps({"files": [
     {"path": "data/firmware/newtool/signals.json"},
     {"path": "data/recipes/m5cardputer__newtool/recipe.md"},
 ]})
+JR_OWN = {"author": {"login": "espatlas-jr"}, "isCrossRepository": False}   # pending_prs.eligible: Jr's own PR
 OPEN_PR = [{"number": OPEN_PR_NUMBER, "createdAt": RECENT, "headRefName": "jr/tick-20260908-0400",
-            **json.loads(PR_FILES), "changedFiles": 3}]     # `gh pr list` lists the same files
+            **json.loads(PR_FILES), "changedFiles": 3, **JR_OWN}]     # `gh pr list` lists the same files
 
 
 class Proc(SimpleNamespace):
@@ -194,7 +195,8 @@ M5_PR_FILES = json.dumps({"files": [
     {"path": "data/firmware/m5stack-sd-updater/firmware.md"},
     {"path": "data/recipes/m5stack-core__m5stack-sd-updater/recipe.md"},
 ]})
-M5_PR = [{"number": M5_PR_NUMBER, "createdAt": RECENT, "headRefName": M5_HEAD, **json.loads(M5_PR_FILES), "changedFiles": 2}]
+M5_PR = [{"number": M5_PR_NUMBER, "createdAt": RECENT, "headRefName": M5_HEAD, **json.loads(M5_PR_FILES), "changedFiles": 2,
+          **JR_OWN}]
 M5_FIRMWARE_MD = (
     "---\n"
     "id: m5stack-sd-updater\n"

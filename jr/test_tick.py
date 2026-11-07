@@ -26,6 +26,7 @@ from budget import Budget
 
 NOW = datetime(2026, 9, 5, 4, 7, tzinfo=timezone.utc)
 PROTECTION_RULE = json.dumps({"required_status_checks": {"contexts": ["schema", "tests", "jr-tests"]}})
+JR_OWN = {"author": {"login": publish.JR_LOGIN}, "isCrossRepository": False}   # pending_prs.eligible: Jr's own PR
 
 
 class Proc(SimpleNamespace):
@@ -274,7 +275,7 @@ def test_aborts_on_low_rate_limit_before_any_worktree(tmp_path):
 
 def test_aborts_when_a_tick_pr_is_open_too_long(tmp_path):
     old = (NOW - timedelta(hours=4)).isoformat().replace("+00:00", "Z")
-    prs = json.dumps([{"number": 7, "createdAt": old, "headRefName": "jr/tick-20260905-0007"},
+    prs = json.dumps([{"number": 7, "createdAt": old, "headRefName": "jr/tick-20260905-0007", **JR_OWN},
                       {"number": 8, "createdAt": old, "headRefName": "feat/human-branch"}])
     r = run(git=git_ok(tmp_path), gh=gh_ok(prs=prs))
     assert r.aborted.startswith("a Jr tick PR has been open > 3 h: #7")
@@ -282,7 +283,8 @@ def test_aborts_when_a_tick_pr_is_open_too_long(tmp_path):
 
 def test_recent_tick_pr_does_not_abort(tmp_path, wt_dir):
     recent = (NOW - timedelta(minutes=30)).isoformat().replace("+00:00", "Z")
-    prs = json.dumps([{"number": 9, "createdAt": recent, "headRefName": "jr/tick-20260905-0337", "files": [], "changedFiles": 0}])
+    prs = json.dumps([{"number": 9, "createdAt": recent, "headRefName": "jr/tick-20260905-0337", "files": [], "changedFiles": 0,
+                       **JR_OWN}])
     r = run(git=git_ok(wt_dir), gh=gh_ok(prs=prs))
     assert not r.aborted
 
@@ -770,7 +772,7 @@ BOOKKEEPING = ["jr/proposed_ledger.json", "docs/telemetry/data-trend.jsonl", "do
 
 def _tick_pr(number, created, mergeable="MERGEABLE"):
     return {"number": number, "createdAt": created, "headRefName": f"jr/tick-20260905-{number:04d}",
-            "mergeable": mergeable, "files": [], "changedFiles": 0}
+            "mergeable": mergeable, "files": [], "changedFiles": 0, **JR_OWN}
 
 
 def gh_with_prs(prs, files=None, view_rc=0, close_rc=0, **kw):
@@ -875,16 +877,6 @@ def test_dry_run_only_reports_the_superseded_pr_it_would_close(tmp_path):
     r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
     assert not r.aborted and _closes(gh) == []
     assert any("would close" in w and "#785" in w for w in r.warnings)
-
-
-
-
-
-
-
-
-
-
 
 
 def test_an_unparseable_pr_list_aborts_closed(tmp_path):
