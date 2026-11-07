@@ -6,9 +6,11 @@ url: https://github.com/wisnc/stellar-map
 category: multi
 maintainer: wisnc
 popularity:
-  stars: 69
+  stars: 79
   forks: 3
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 1254985000
+  github_as_of: '2026-11-07T19:00:56Z'
 socs:
 - esp32-s3
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/wisnc/stellar-map
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/wisnc/stellar-map
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/wisnc/stellar-map
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/wisnc/stellar-map
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/wisnc/stellar-map
+  verified: '2026-11-07'
 summary: "Stellar Map is an offline planetarium firmware for the M5Stack Cardputer\u2011\
   ADV that renders naked\u2011eye stars (mag \u2264\u202F6.5), constellations, some\
   \ planets and the Moon, and can use CapLora for time and position fixes. It offers\
