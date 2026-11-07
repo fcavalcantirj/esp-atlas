@@ -178,6 +178,11 @@ class PostgresPopularityStore:
             if retry:
                 return Claim("wait", snapshot, retry_after_seconds=retry)
             until = now + _LEASE
+            if repo["full_name"].casefold() != identity.full_name.casefold():
+                # A newly cited URL for this stable ID invalidates old-name counts.
+                # Do this under the same global/repo locks before granting a lease.
+                conn.execute("UPDATE popularity_refresh_repo SET full_name=%s, stars=NULL, forks=NULL, observed_at=NULL WHERE repo_id=%s",
+                             (identity.full_name, identity.repo_id))
             conn.execute("UPDATE popularity_refresh_budget SET hour_start=%s, used=%s, lease_token=%s, lease_until=%s WHERE singleton=true",
                          (hour, used + 1, token, until))
             conn.execute("UPDATE popularity_refresh_repo SET lease_token=%s, lease_until=%s WHERE repo_id=%s",
@@ -194,7 +199,8 @@ class PostgresPopularityStore:
             repo = conn.execute("SELECT * FROM popularity_refresh_repo WHERE repo_id=%s FOR UPDATE",
                                 (identity.repo_id,)).fetchone()
             if not (budget and repo and budget["lease_token"] == token and repo["lease_token"] == token and
-                    budget["lease_until"] > now and repo["lease_until"] > now):
+                    budget["lease_until"] > now and repo["lease_until"] > now and
+                    repo["full_name"].casefold() == identity.full_name.casefold()):
                 return None
             conn.execute("UPDATE popularity_refresh_repo SET full_name=%s, stars=%s, forks=%s, observed_at=%s, lease_token=NULL, lease_until=NULL, retry_after=NULL WHERE repo_id=%s",
                          (identity.full_name, stars, forks, now, identity.repo_id))
@@ -280,7 +286,7 @@ async def live_popularity(record: dict, *, store=None, fetch=None):
         status, body, headers = await (fetch or fetch_github)(identity)
         if status == 200:
             doc = json.loads(body)
-            if not isinstance(doc, dict) or doc.get("id") != identity.repo_id or not isinstance(doc.get("full_name"), str) or doc["full_name"].casefold() != identity.full_name.casefold():
+            if not isinstance(doc, dict) or type(doc.get("id")) is not int or doc["id"] != identity.repo_id or not isinstance(doc.get("full_name"), str) or doc["full_name"].casefold() != identity.full_name.casefold():
                 raise ValueError("GitHub repository identity changed")
             stars, forks = _count(doc.get("stargazers_count")), _count(doc.get("forks_count"))
             if stars is None or forks is None:

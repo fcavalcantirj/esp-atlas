@@ -93,3 +93,17 @@ def test_catalog_newer_than_cache_forces_a_claim_without_reusing_old_counts(pg_s
     catalog_ahead = replace(identity, github_as_of=published.observed_at)
     claim = pg_store.claim(catalog_ahead, "second")
     assert claim.action == "fetch" and claim.snapshot.stars == 9
+
+
+def test_newly_cited_name_for_same_repo_id_invalidates_old_name_cache(pg_store):
+    identity = identity_from_record(RECORD)
+    assert pg_store.claim(identity, "old").action == "fetch"
+    assert pg_store.publish(identity, "old", 9, 3) is not None
+    renamed = replace(identity, full_name="example/renamed",
+                      source_url="https://github.com/example/renamed")
+    claim = pg_store.claim(renamed, "new")
+    assert claim.action == "fetch" and claim.snapshot is None
+    repo = _row(pg_store.dsn, "popularity_refresh_repo")
+    assert repo["full_name"] == "example/renamed" and repo["stars"] is None
+    assert pg_store.publish(identity, "new", 100, 100) is None
+    assert pg_store.publish(renamed, "new", 0, 0) is not None

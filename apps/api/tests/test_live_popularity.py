@@ -106,7 +106,7 @@ def test_valid_zero_counts_publish_as_fresh_with_source_and_date():
 
 
 @pytest.mark.parametrize("body", [
-    {"id": 124}, {"full_name": "other/firmware"}, {"stargazers_count": None},
+    {"id": 124}, {"id": True}, {"full_name": "other/firmware"}, {"stargazers_count": None},
     {"forks_count": -1}, {"forks_count": False},
 ])
 def test_wrong_identity_or_incomplete_counts_keep_last_good(body):
