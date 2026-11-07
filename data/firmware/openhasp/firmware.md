@@ -8,9 +8,11 @@ maintainer: haswitchplate
 capabilities:
 - mqtt
 popularity:
-  stars: 1020
-  forks: 293
-  as_of: '2026-09-20'
+  stars: 1031
+  forks: 300
+  as_of: '2026-11-07'
+  github_repo_id: 234790574
+  github_as_of: '2026-11-07T14:00:55Z'
 socs:
 - esp32
 sources:
@@ -23,6 +25,18 @@ sources:
 - field: summary
   url: https://github.com/HASwitchPlate/openHASP
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/HASwitchPlate/openHASP
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/HASwitchPlate/openHASP
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/HASwitchPlate/openHASP
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/HASwitchPlate/openHASP
+  verified: '2026-11-07'
 summary: "openHASP is firmware for ESP32 and STM32F4 that provides a customizable\
   \ touchscreen UI to control home\u2011automation devices via MQTT, using the LVGL\
   \ graphics library to drive standard displays without needing Nextion/TJC hardware."
