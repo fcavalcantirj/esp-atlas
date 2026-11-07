@@ -9,6 +9,7 @@ from types import SimpleNamespace
 import yaml
 import jsonschema
 
+import pending_prs
 import stage_popularity_refresh as refresh
 from budget import Budget
 
@@ -121,3 +122,25 @@ def test_slice_is_bounded_and_a_stable_catalog_is_covered(tmp_path):
         assert len(calls) <= refresh.MAX_REPOS_PER_TICK
         seen.update(call[1] for call in calls)
     assert len(seen) == 145
+
+
+def test_a_record_an_open_tick_pr_holds_is_deferred_a_vetoed_one_is_refreshed(tmp_path):
+    """jr/pending_prs.py: an OPEN tick PR already changes this firmware.md — a second edit would
+    conflict with it, so the refresh waits (no upstream call). A veto rejected a proposal, not the
+    catalogued record: its popularity is refreshed as usual."""
+    held = _record(tmp_path, "held", "owner/held", {"stars": 10, "forks": 2, "as_of": "2026-09-20"})
+    original = held.read_text()
+    vetoed = _record(tmp_path, "vetoed", "owner/vetoed", {"stars": 10, "forks": 2, "as_of": "2026-09-20"})
+    ctx, calls = _ctx(tmp_path, {"full_name": "owner/vetoed", "id": 7, "stargazers_count": 11, "forks_count": 3})
+    ctx.pending = pending_prs.build(
+        [{"number": 1511, "headRefName": "jr/tick-20261107-0300", "files": [{"path": "data/firmware/held/firmware.md"}]}],
+        [{"number": 1478, "headRefName": "jr/tick-20261106-0900", "mergedAt": None, "closedAt": "2026-11-05T00:00:00Z",
+          "files": [{"path": "data/firmware/vetoed/signals.json"}]}], NOW)
+    refresh.MAX_REPOS_PER_TICK, saved = 10, refresh.MAX_REPOS_PER_TICK
+    try:
+        result = refresh.run(ctx)
+    finally:
+        refresh.MAX_REPOS_PER_TICK = saved
+    assert held.read_text() == original and ("api", "repos/owner/held") not in calls
+    assert "1 pending deferred" in result.summary
+    assert "data/firmware/vetoed/firmware.md" in result.paths and _fm(vetoed)["popularity"]["stars"] == 11

@@ -234,6 +234,10 @@ def test_a_merged_pr_counts_as_catalogued(sim):
     assert sim.ledger()[NEW]["status"] == "merged"                          # reconciled and landed on main
     assert not any(p == f"data/firmware/{NEW}/firmware.md" for p in r.paths)
     assert _staged_for(r, CAT) == []                                         # freshly mapped: not re-picked
+    assert not {"already_proposed", "vetoed"} & set(r.rejects)                # nothing is HELD by the merged PR
+    later = sim.tick(T0 + timedelta(days=stage_boardmap.FRESH_DAYS + 1))      # signals stale again
+    boardmap = next(s for s in later.stages if s["name"] == "boardmap")
+    assert f"{CAT}: +" in boardmap["summary"] and "skip" not in boardmap["summary"], boardmap["summary"]
 
 
 # --- a veto (closed unmerged) holds for the veto TTL ----------------------------------------------------
@@ -268,3 +272,12 @@ def test_a_tick_blind_to_closed_prs_fails_closed_and_opens_nothing(sim):
     r = sim.tick(T0 + timedelta(hours=1))
     assert "cannot see which firmware a Jr PR holds" in r.aborted
     assert len(sim.prs) == 1 and r.paths == []
+
+
+def test_a_closed_pr_list_cut_at_its_limit_warns(sim, monkeypatch):
+    pr = _first_tick(sim)
+    sim.owner_closes(pr["number"], T0 + timedelta(hours=2))
+    monkeypatch.setattr(pending_prs, "CLOSED_PR_LIMIT", 1)
+    r = sim.tick(T0 + timedelta(hours=3))
+    assert not r.aborted, r.aborted
+    assert any("closed Jr PRs cut at 1" in w for w in r.warnings), r.warnings

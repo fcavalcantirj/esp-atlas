@@ -101,3 +101,25 @@ def test_of_reads_the_context_index_and_defaults_to_empty():
     idx = pending_prs.build([OPEN], [], NOW)
     assert pending_prs.of(SimpleNamespace(pending=idx)) is idx
     assert len(pending_prs.of(SimpleNamespace())) == 0
+
+
+def test_a_closed_pr_that_only_refreshed_a_record_vetoes_nothing_an_open_one_still_holds_it():
+    """A veto rejects what a PR PROPOSED: recipes (every new firmware ships one) or mapped signals. A
+    closed PR that only rewrote a catalogued record's firmware.md (popularity refresh) proposed nothing
+    for it; an OPEN one still holds it, since a second edit of the same file would conflict."""
+    closed = _pr(1511, ["data/firmware/atom-watch/firmware.md", "data/firmware/nightdriverstrip/firmware.md",
+                        "data/firmware/nightdriverstrip/signals.json", "data/firmware/newtool/firmware.md",
+                        "data/recipes/m5cardputer__newtool/recipe.md"],
+                 closedAt=_iso(NOW - timedelta(days=1)), mergedAt=None)
+    idx = pending_prs.build([], [closed], NOW)
+    assert idx.hold("atom-watch") is None
+    assert idx.hold("nightdriverstrip").state == idx.hold("newtool").state == pending_prs.VETOED
+    opened = _pr(1512, ["data/firmware/atom-watch/firmware.md"])
+    assert pending_prs.build([opened], [], NOW).hold("atom-watch").state == pending_prs.OPEN
+
+
+def test_a_closed_list_cut_at_its_limit_is_flagged_truncated(monkeypatch):
+    monkeypatch.setattr(pending_prs, "CLOSED_PR_LIMIT", 1)
+    closed = _pr(1478, ["data/firmware/newtool/firmware.md"], closedAt=_iso(NOW - timedelta(days=2)), mergedAt=None)
+    assert pending_prs.load(_gh([closed]), [], NOW).truncated
+    assert not pending_prs.load(_gh([]), [], NOW).truncated
