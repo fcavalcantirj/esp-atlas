@@ -308,16 +308,17 @@ def test_hydrate_records_the_stable_repo_id_the_pending_index_verified(tmp_path)
 
 
 def test_hydrate_takes_the_repo_id_only_from_the_pr_it_records(tmp_path):
-    """Another open PR's hold on the same id (here a recipe-only PR #160 without an id) must not lend
-    or drop the id hydration records for PR #158."""
+    """Another open PR's hold on the same id (here a recipe-only PR #160 whose own committed ledger
+    verified another repository id) must not lend its id to the record hydration writes for PR #158."""
     import pending_prs
     lp = tmp_path / "proposed_ledger.json"
     other = {"number": 160, "headRefName": "jr/tick-20260908-0500", "body": "",
-             "files": [{"path": "data/recipes/m5stick-c__newtool/recipe.md"}]}
+             "files": [{"path": "data/recipes/m5stick-c__newtool/recipe.md"}],
+             "_identities": {"newtool": (9999, "x/newtool")}}     # verified for #160's commit, not #158's
     pending = pending_prs.build([{**OPEN_PR[0], "body": ""}, other], [], NOW)
-    assert pending.hold("newtool").pr_ref == "#160"
+    assert pending.hold("newtool").pr_ref == "#160" and pending.hold("newtool").repo_id == 9999
     tick.hydrate_open_pr_ledger(gh(prs=json.dumps(OPEN_PR)), NOW, lp, pending=pending)
-    assert "repo_id" not in memory.load(lp)["by_id"]["newtool"]
+    assert "repo_id" not in memory.load(lp)["by_id"]["newtool"] and 9999 not in memory.load(lp)["by_repo_id"]
 
 
 def test_hydrate_never_records_an_id_only_a_body_marker_claims(tmp_path):

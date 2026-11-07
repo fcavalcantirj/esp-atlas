@@ -506,3 +506,15 @@ def test_a_legacy_markerless_growth_pr_resolves_ids_from_its_ledger_else_by_slug
     assert idx.match("cardskimmer-renamed", 777925318).firmware == "cardskimmerdetector-m5cardputer"
     assert idx.hold("nightdriverstrip").repo_id is None
     assert idx.match("nightdriverstrip", 123).reason == "already_proposed"         # slug fallback holds
+
+
+def test_an_ambiguous_marker_on_a_tick_pr_that_holds_nothing_is_no_gap():
+    """A bookkeeping-only tick PR, or a closed one that only refreshed a record, holds nothing: an
+    edited body there decides no identity, so it must not stall every tick."""
+    body = AMBIGUOUS_BODIES["conflicting-ids"]
+    bookkeeping = {**_pr(1500, ["jr/proposed_ledger.json", "docs/telemetry/data-trend.jsonl"]), "body": body}
+    refresh = _closed({**_pr(1501, ["data/firmware/oldtool/firmware.md"]), "body": body})
+    calls = []
+    idx = _load(_gh([refresh], calls=calls), [bookkeeping])
+    assert idx.complete and len(idx) == 0
+    assert not [c for c in calls if c[:2] == ("api", "-H")]

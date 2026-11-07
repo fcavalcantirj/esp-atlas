@@ -4,8 +4,9 @@ Reviewers' reproduction (PR 1512, R2): GitHub repository id 4242 sits in an open
 as `oldtool`; upstream renames it, the launcher now lists `n/newtool` — the SAME repository id. The
 slug-only pending index never kept the id, so `newtool` was admitted again: a second firmware record
 and recipe for one repository. The index now carries the stable numeric id each tick PR verified
-(its body's identity marker), matches by id before slug, and fails closed when the id and the slug
-disagree. Name similarity is never identity.
+(the ledger committed at its head — the body's identity marker only claims, R2c #986/#987), matches
+by id before slug, and fails closed when the id and the slug disagree or the marker is ambiguous.
+Name similarity is never identity.
 
 Runs the REAL jr/tick.py (preflight index, ledger hydration, publish) with the real stage_admit over
 the simulated GitHub of test_tick_pending_dedup (fake gh/git only, every file under tmp_path). Only
