@@ -12,15 +12,15 @@
    "impressions": 13,
    "clicks": 1,
    "ctr": 0.0769,
-   "position": 9.8,
+   "position": 9.3,
    "events": null,
    "zero_result": null,
-   "weight": 11.76,
+   "weight": 11.16,
    "resolved": null,
    "gap": "UNRESOLVED",
-   "landing_page": "https://esp-atlas.com/firmware/flipper-zero-meets-m5stack-cardputer",
+   "landing_page": "https://esp-atlas.com/firmware/flipper-zero-esp32-adv",
    "first_seen": "2026-11-03",
-   "last_seen": "2026-11-06"
+   "last_seen": "2026-11-07"
   }
  ]
 }

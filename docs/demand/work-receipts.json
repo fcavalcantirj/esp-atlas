@@ -6,7 +6,7 @@
    "branch": "jr/research-a721c3339f3d6348",
    "term": "fnk0104s",
    "phase": "author",
-   "state": "proposed",
+   "state": "delivered",
    "started_on": "2026-11-06",
    "source": "gsc_query",
    "window": {
@@ -50,7 +50,77 @@
      "branch": "jr/research-a721c3339f3d6348"
     }
    },
-   "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1476"
+   "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1476",
+   "resolution": {
+    "status": "delivered",
+    "reason": "demand_resolution postcondition observed",
+    "closed_on": "2026-11-07",
+    "evidence": {
+     "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1476",
+     "merge_sha": "1407ff2ec6bde72753fd22e15bc6c71df49fb713",
+     "merged_at": "2026-11-06T09:19:44Z",
+     "verification_kind": "demand_resolution",
+     "query": "fnk0104s",
+     "checked_at": "2026-11-07T11:15:54.346434+00:00",
+     "expected_ids": [
+      "freenove-fnk0104s"
+     ],
+     "forbidden_ids": [
+      "freenove-fnk0104a",
+      "freenove-fnk0104b"
+     ],
+     "source": "gsc_query",
+     "window": {
+      "start": "2026-10-09",
+      "end": "2026-11-06"
+     },
+     "metrics": {
+      "impressions": 22,
+      "clicks": 1,
+      "position": 8.2
+     },
+     "mined_revision": "d1dab3b1e532cb0ca45d116ae560724ca5b52d95",
+     "exit_code": 0,
+     "resolved": {
+      "board": "freenove-fnk0104s",
+      "board_model": "fnk0104s",
+      "chip": "esp32-s3",
+      "firmware_token": null,
+      "capability": [],
+      "part": null
+     },
+     "gap": "COVERED_OK"
+    }
+   }
+  },
+  {
+   "key": "f89f790e4ecb4d13",
+   "branch": "jr/research-f89f790e4ecb4d13",
+   "term": "keeloq_mfcodes",
+   "phase": "research",
+   "state": "reserved",
+   "started_on": "2026-11-07",
+   "source": "gsc_query",
+   "linked_work": [],
+   "window": {
+    "start": "2026-10-10",
+    "end": "2026-11-07"
+   },
+   "metrics": {
+    "impressions": 13,
+    "clicks": 1,
+    "position": 9.3
+   },
+   "provenance": {
+    "snapshot": "docs/demand/2026-11-07.json",
+    "opened_on": "2026-11-03",
+    "status": "new",
+    "remote": {
+     "branch": false,
+     "prs": []
+    },
+    "reserved_by": "jr/demand_run.py"
+   }
   }
  ]
 }
