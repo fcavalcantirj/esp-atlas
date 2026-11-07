@@ -236,19 +236,38 @@ def reconcile(state_file: Path, *, load_state, write_state, gh, git, secret: str
                            reason="newer merged popularity snapshot changed a sampled firmware")
                 save(old)
 
-    # Persist a monotonically increasing selection number so one stale older
-    # delivery cannot starve newer merges across process restarts. One live
-    # check per tick still preserves the outer 600-second source/growth budget.
+    # One live check per tick. Alternate an opportunity for the newest
+    # untried, actually deployed merge with a fair retry of older work. A
+    # transient failure followed by continuous new deployments otherwise
+    # leaves the fair queue permanently one revision behind live values.
+    # The turn and retry sequence persist across process restarts.
     active = [r for r in deliveries if isinstance(r, dict) and r.get("state") in active_states]
     if active:
         def sequence(row):
             value = row.get("live_check_sequence")
             return value if type(value) is int and value >= 0 else 0
 
-        chosen = min(enumerate(active), key=lambda pair: (sequence(pair[1]), pair[0]))[1]
         latest = state.get("delivery_live_sequence")
         latest = latest if type(latest) is int and latest >= 0 else 0
         latest = max(latest, *(sequence(row) for row in active)) + 1
+        chosen = None
+        if latest % 2 == 0:
+            untried = [row for row in active if sequence(row) == 0]
+            if untried:
+                revision = _status_revision(fetch)
+                if revision and getattr(git("fetch", "origin", "main"), "returncode", 1) == 0:
+                    ready = [row for row in untried if
+                             isinstance(row.get("merge_sha"), str) and
+                             SHA.fullmatch(row["merge_sha"]) and
+                             demand_closure.contains_merge(git, row["merge_sha"], revision)]
+                    if ready:
+                        chosen = ready[0]
+                        for candidate in ready[1:]:
+                            if demand_closure.contains_merge(git, chosen["merge_sha"],
+                                                             candidate["merge_sha"]):
+                                chosen = candidate
+        if chosen is None:
+            chosen = min(enumerate(active), key=lambda pair: (sequence(pair[1]), pair[0]))[1]
         state["delivery_live_sequence"] = latest
         chosen["live_check_sequence"] = latest
         save(chosen)

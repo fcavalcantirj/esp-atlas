@@ -201,7 +201,8 @@ box-local cooldown. Failed/partial responses retain each record's last-good cite
 The publisher stages only popularity files and that receipt, applies `scripts/validate.py`
 and the existing review classifier, then opens or exact-head-updates a bot-owned
 popularity-only PR. An existing head must match Jr's independently persisted
-publication pin; Jr merges current main into that head and publishes only by
+publication pin; Jr merges its immutable receipt-pinned main commit into that
+head and publishes only by
 normal fast-forward push. The publisher verifies auto-merge is disarmed before
 and after the update and refuses an uncertain remote state. A durable exact
 commit intent precedes any push, delivery is saved before auto-merge arming,
@@ -209,8 +210,9 @@ and arming is tied to the bot commit with `--match-head-commit`. It never stages
 Branch protection, required checks and earned-trust auto-merge remain gates.
 Every hourly run also reconciles pending popularity PRs through merge, deployed
 API revision containing the merge, successful catalog cache invalidation and
-sampled API plus exact rendered-count readback. Each transition and the fair
-live-check sequence are persisted outside the repo for restart recovery. A
+sampled API plus exact rendered-count readback. Each transition and the
+alternating newest-deployed/fair-retry live-check sequence are persisted outside
+the repo for restart recovery. A
 later live-verified snapshot that changes a sampled firmware supersedes an older
 expectation only when commit ancestry proves the order; it does not certify
 the older count. A fetched value is not visible merely because Jr wrote a PR.

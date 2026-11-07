@@ -65,7 +65,8 @@ stages only the returned firmware popularity paths, a per-record JSON receipt
 and the unchanged ledger pathspec; unrelated recipes cannot enter the commit.
 If one bot-owned AUTO popularity PR remains open at the next run, Jr advances
 its branch only when its head equals the prior head pinned in persistent
-box-local publication state. It fetches that exact head, merges current main
+box-local publication state. It fetches that exact head, merges the immutable
+main commit pinned when its worktree was created (the receipt's stated base),
 locally before collecting the next snapshot, and makes a normal fast-forward
 push. The publisher disarms and reads back any existing auto-merge request
 before publication, then verifies the same PR and safe merge state afterward.
@@ -84,9 +85,11 @@ auto-merge request, which is bound atomically to the exact bot commit using
 a PR is not a claim of committed or deployed freshness. The persistent state
 also tracks every publication through pending, merged, deployed, invalidated
 and sampled API plus rendered-page readback. Each natural hourly run advances
-this sequence, bounded to one live delivery check. A persisted least-recently
-checked sequence gives older unresolved and newly merged deliveries fair turns
-across process restarts, even as new PRs arrive. If a later *verified live*
+this sequence, bounded to one live delivery check. Persisted turns alternate
+the newest untried snapshot proven to be in the deployed revision with a fair
+retry of older unresolved work. This lets verification progress through a
+transient purge failure and continuous new deployments across process restarts.
+If a later *verified live*
 snapshot is proven to descend from an older merge and changes one of its sampled
 firmware IDs, the older expectation is marked superseded with the newer PR/merge SHA;
 it is never marked delivered. Other failed steps are retried on later runs and

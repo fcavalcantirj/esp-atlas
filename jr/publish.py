@@ -136,7 +136,9 @@ def prepare_existing_popularity_worktree(wt: Worktree, branch: str, expected_hea
     p = git("-C", str(wt.path), "checkout", "-q", "--detach", expected_head_sha)
     if not _ok(p):
         raise RuntimeError("pending popularity head checkout failed")
-    p = git("-C", str(wt.path), "merge", "--no-edit", "origin/main")
+    # The receipt names wt.base_sha. origin/main is mutable and may advance
+    # during the branch fetch, so merge the immutable pinned commit instead.
+    p = git("-C", str(wt.path), "merge", "--no-edit", wt.base_sha)
     if not _ok(p):
         raise RuntimeError("pending popularity branch cannot merge current main cleanly")
     for ancestor in (expected_head_sha, wt.base_sha):

@@ -121,10 +121,34 @@ def test_prepare_pending_popularity_head_merges_main_without_rewriting_history()
     assert calls[:4] == [("fetch", "origin", f"refs/heads/{branch}:{ref}"),
                          ("rev-parse", "--verify", f"{ref}^{{commit}}"),
                          ("checkout", "-q", "--detach", expected),
-                         ("merge", "--no-edit", "origin/main")]
+                         ("merge", "--no-edit", base)]
     assert ("merge-base", "--is-ancestor", expected, "HEAD") in calls
     assert ("merge-base", "--is-ancestor", base, "HEAD") in calls
     assert not any(c[0] == "push" for c in calls)
+
+
+def test_prepare_pending_popularity_uses_pinned_base_if_origin_main_advances():
+    branch = "jr/popularity-20261107-0100"
+    expected, pinned, advanced = "b" * 40, "a" * 40, "c" * 40
+    ref = f"refs/remotes/origin/{branch}"
+    mutable_main = {"sha": pinned}
+    calls = []
+
+    def git(*args):
+        normalized = args[2:] if args[:1] == ("-C",) else args
+        calls.append(normalized)
+        if normalized[:2] == ("fetch", "origin"):
+            mutable_main["sha"] = advanced  # concurrent main fetch after base was pinned
+        if normalized == ("rev-parse", "--verify", f"{ref}^{{commit}}"):
+            return Proc(returncode=0, stdout=expected + "\n")
+        if normalized[:2] == ("merge", "--no-edit"):
+            assert normalized[2] == pinned and normalized[2] != mutable_main["sha"]
+        return Proc()
+
+    publish.prepare_existing_popularity_worktree(publish.Worktree(WT.path, pinned),
+                                                branch, expected, git=git)
+    assert ("merge", "--no-edit", pinned) in calls
+    assert ("merge-base", "--is-ancestor", pinned, "HEAD") in calls
 
 
 @pytest.mark.parametrize("failure,match", [
@@ -150,7 +174,9 @@ def test_prepare_pending_popularity_head_fails_closed(failure, match):
 
 
 @pytest.mark.parametrize("concurrent_human_commit", [False, True])
-def test_real_git_pending_popularity_refresh_preserves_history_and_rejects_race(tmp_path, concurrent_human_commit):
+@pytest.mark.parametrize("advance_origin_main", [False, True])
+def test_real_git_pending_popularity_refresh_preserves_history_and_rejects_race(
+        tmp_path, concurrent_human_commit, advance_origin_main):
     """A bare remote proves the normal push's fast-forward and race behavior."""
     remote, clone = tmp_path / "remote.git", tmp_path / "clone"
 
@@ -183,6 +209,14 @@ def test_real_git_pending_popularity_refresh_preserves_history_and_rejects_race(
     base = git_at(clone, "rev-parse", "HEAD").stdout.strip()
     git_at(clone, "push", "origin", "main")
     git_at(clone, "fetch", "origin", "main")
+    advanced_base = None
+    if advance_origin_main:
+        (clone / "advanced.txt").write_text("fetched after the receipt pinned its base\n")
+        git_at(clone, "add", "advanced.txt")
+        git_at(clone, "commit", "-m", "concurrent main update")
+        advanced_base = git_at(clone, "rev-parse", "HEAD").stdout.strip()
+        git_at(clone, "push", "origin", "main")
+        git_at(clone, "fetch", "origin", "main")
 
     def injected_git(*args):
         return git_at(clone, *args, ok=False)
@@ -191,6 +225,9 @@ def test_real_git_pending_popularity_refresh_preserves_history_and_rejects_race(
                                                  git=injected_git)
     git_at(clone, "merge-base", "--is-ancestor", prior, "HEAD")
     git_at(clone, "merge-base", "--is-ancestor", base, "HEAD")
+    if advanced_base:
+        assert git_at(clone, "merge-base", "--is-ancestor", advanced_base, "HEAD",
+                      ok=False).returncode != 0
     git_at(clone, "checkout", "-B", branch)
     (clone / "popularity.txt").write_text("second\n")
     git_at(clone, "add", "popularity.txt")
