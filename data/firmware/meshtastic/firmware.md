@@ -38,9 +38,11 @@ not_required:
 - capability: display
   why: headless nodes are fine; a screen is optional
 popularity:
-  stars: 8318
-  forks: 2757
-  as_of: '2026-09-20'
+  stars: 8544
+  forks: 2897
+  as_of: '2026-11-07'
+  github_repo_id: 237647258
+  github_as_of: '2026-11-07T00:00:54Z'
 sources:
 - field: '*'
   url: https://github.com/meshtastic/firmware
@@ -60,6 +62,18 @@ sources:
 - field: summary
   url: https://github.com/meshtastic/firmware
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/meshtastic/firmware
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/meshtastic/firmware
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/meshtastic/firmware
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/meshtastic/firmware
+  verified: '2026-11-07'
 summary: "Meshtastic Firmware is the official open\u2011source firmware for devices\
   \ that form a LoRa\u2011based mesh network, providing low\u2011power, long\u2011\
   range text messaging, location sharing, and telemetry without relying on internet\
