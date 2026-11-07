@@ -453,6 +453,20 @@ def _pr_firmware_ids(gh, number) -> list[str]:
                                            if isinstance(f, dict)))
 
 
+def _hydrated_identity(fid, read_repo, hold, pr_ref) -> tuple[str, int | None]:
+    """(owner/repo, repo id) hydration records for `fid` in open PR `pr_ref`. The id pending_prs verified
+    rides only with the source it verified it for at the PR's pinned head (`hold.repo`): `read_repo` was
+    read at the mutable branch, which may have moved since — naming another repository it records no id
+    (unknown), never the old one. Unreadable, the verified pair itself; unverified, no id at all."""
+    verified = (hold is not None and hold.state == pending_prs.OPEN and hold.pr_ref == pr_ref
+                and hold.repo_id is not None and bool(hold.repo))
+    if not verified:
+        return read_repo or fid, None
+    if read_repo is None:
+        return hold.repo, hold.repo_id
+    return read_repo, hold.repo_id if read_repo == hold.repo else None
+
+
 def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None, pending=None) -> list[str]:
     """Mark every firmware id in an OPEN Jr tick PR as `proposed` in the worktree ledger, keyed by
     the REAL owner/repo, so BOTH dedup gates see firmware already awaiting merge (the duplicate-PR
@@ -471,7 +485,8 @@ def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None, pending=None) -
     hydration. `repo_slug` is the esp-atlas repo the contents API reads (None → id-as-repo for all).
     `pending` (jr/pending_prs.py's index) supplies the GitHub repository id the ledger committed at
     THIS open PR's head verified (never another PR's, never a body marker's claim), so the ledger's
-    by_repo_id gate also holds the repository after an upstream rename.
+    by_repo_id gate also holds the repository after an upstream rename — only alongside the source it
+    was verified for (`_hydrated_identity`): a branch moved since to another source records no id.
     Returns the ids hydrated."""
     hydrated = []
     for pr in _open_tick_prs(gh):
@@ -484,9 +499,8 @@ def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None, pending=None) -
                     repo = _pr_firmware_repo(gh, repo_slug, head_ref, fid)
                 except Exception:  # noqa: BLE001 — one bad fetch must not abort hydration
                     repo = None
-            hold = (pending or pending_prs.EMPTY).hold(fid)
-            repo_id = hold.repo_id if hold and hold.state == pending_prs.OPEN and hold.pr_ref == f"#{n}" else None
-            memory.record_proposed(fid, repo or fid, repo_id=repo_id, pr_ref=f"#{n}", path=ledger_path, now=now)
+            repo, repo_id = _hydrated_identity(fid, repo, (pending or pending_prs.EMPTY).hold(fid), f"#{n}")
+            memory.record_proposed(fid, repo, repo_id=repo_id, pr_ref=f"#{n}", path=ledger_path, now=now)
             hydrated.append(fid)
     return hydrated
 
