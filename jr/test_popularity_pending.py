@@ -251,7 +251,8 @@ def test_held_only_repo_and_unheld_control_query_only_the_control(tmp_path, effe
     receipt = _receipt(tmp_path)
     assert receipt["deferred_open_tick_pr"] == 1
     assert receipt["outcomes"] == {"deferred_open_tick_pr": 1, "validated_update": 2}
-    assert result["coverage"] == {"eligible_repositories": 2, "attempted_repositories": 2,
+    # the held repository stays in the denominator though never queried
+    assert result["coverage"] == {"eligible_repositories": 3, "attempted_repositories": 2,
                                   "validated_repositories": 2, "deferred_open_tick_pr": 1}
     assert result["complete_attempt"] is False
 
@@ -456,7 +457,7 @@ def _orphan_git(diff):
 
 
 @pytest.mark.parametrize("intent_paths,diff", [
-    (["data/firmware/held/firmware.md", RECEIPT], ["data/firmware/held/firmware.md", RECEIPT]),
+    (["data/firmware/held/firmware.md", RECEIPT], ["data/firmware/free/firmware.md", RECEIPT]),
     (["data/firmware/free/firmware.md", RECEIPT], ["data/firmware/held/firmware.md", RECEIPT]),
     (["data/firmware/free/firmware.md", RECEIPT], None),
 ], ids=["intent_paths_held", "branch_diff_held", "branch_diff_unreadable"])
@@ -485,6 +486,8 @@ def test_runner_defers_orphan_recovery_touching_an_open_held_record(
     assert "recovery deferred" in result["reason"] and ORPHAN in result["reason"]
     if diff is not None:
         assert "#1500: held" in result["reason"]
+    if "data/firmware/held/firmware.md" in intent_paths:
+        assert not any(args[0] == "fetch" for args in seen)     # held by its own intent: no git needed
     assert "deferred" in result["recovery"]
 
 

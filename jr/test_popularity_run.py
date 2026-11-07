@@ -7,6 +7,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+import pending_prs
 import popularity_run
 import publish
 from budget import Budget
@@ -241,7 +242,7 @@ def test_intent_before_push_is_durably_cleared_only_after_remote_absence(tmp_pat
     def git(*args):
         assert args[:2] == ("ls-remote", "origin")
         return subprocess.CompletedProcess(args, 0, "", "")
-    assert popularity_run._recover_publication_intent(path, gh, git) == "discarded unpushed intent"
+    assert popularity_run._recover_publication_intent(path, gh, git, index=pending_prs.EMPTY) == "discarded unpushed intent"
     assert "publication_intent" not in popularity_run._load_state(path)
 
 
@@ -261,7 +262,7 @@ def test_intent_after_push_before_pr_creates_unarmed_pr_and_registers_delivery(t
         assert args[:2] == ("ls-remote", "origin")
         return subprocess.CompletedProcess(args, 0,
             "c" * 40 + "\trefs/heads/jr/popularity-20261107-0200\n", "")
-    recovered = popularity_run._recover_publication_intent(path, gh, git)
+    recovered = popularity_run._recover_publication_intent(path, gh, git, index=pending_prs.EMPTY)
     assert "pull/9" in recovered
     assert any("--draft" in call for call in calls if call[:2] == ("pr", "create"))
     assert not any(call[:2] == ("pr", "merge") for call in calls)
@@ -282,7 +283,7 @@ def test_intent_after_pr_creation_recovers_exact_pr_across_restart(tmp_path, pr_
             "url": "https://github.com/o/r/pull/9", "state": pr_state,
             "headRefOid": "c" * 40, "author": {"login": publish.JR_LOGIN}}]), "")
     recovered = popularity_run._recover_publication_intent(path, gh,
-        lambda *a: (_ for _ in ()).throw(AssertionError("no branch query needed")))
+        lambda *a: (_ for _ in ()).throw(AssertionError("no branch query needed")), index=pending_prs.EMPTY)
     assert "pull/9" in recovered
     state = popularity_run._load_state(path)
     assert "publication_intent" not in state
@@ -299,9 +300,9 @@ def test_existing_pr_intent_recovers_updated_head_but_refuses_human_head(tmp_pat
             "url": url, "state": "OPEN", "headRefOid": head,
             "author": {"login": publish.JR_LOGIN}}), "")
     with pytest.raises(RuntimeError, match="head changed"):
-        popularity_run._recover_publication_intent(path, gh("h" * 40), lambda *a: None)
+        popularity_run._recover_publication_intent(path, gh("h" * 40), lambda *a: None, index=pending_prs.EMPTY)
     assert "publication_intent" in popularity_run._load_state(path)
-    recovered = popularity_run._recover_publication_intent(path, gh("c" * 40), lambda *a: None)
+    recovered = popularity_run._recover_publication_intent(path, gh("c" * 40), lambda *a: None, index=pending_prs.EMPTY)
     assert "pull/8" in recovered
     assert popularity_run._load_state(path)["published_head"]["sha"] == "c" * 40
 
@@ -315,7 +316,7 @@ def test_recovery_label_failure_keeps_intent_and_draft_pending_pr_is_not_auto(tm
             "url": "https://github.com/o/r/pull/9", "state": "OPEN",
             "headRefOid": "c" * 40, "author": {"login": publish.JR_LOGIN}}]), "")
     with pytest.raises(RuntimeError, match="needs jr-review label"):
-        popularity_run._recover_publication_intent(path, gh, lambda *a: None)
+        popularity_run._recover_publication_intent(path, gh, lambda *a: None, index=pending_prs.EMPTY)
     assert "publication_intent" in popularity_run._load_state(path)
     one = {"number": 9, "url": "https://github.com/o/r/pull/9",
            "headRefName": "jr/popularity-20261107-0200", "headRefOid": "c" * 40,

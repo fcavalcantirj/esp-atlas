@@ -149,13 +149,45 @@ def _save_published_head(path: Path, published: publish.PublishResult, *,
     _write_state(path, value)
 
 
-def _recover_publication_intent(path: Path, gh, git) -> str | None:
+class RecoveryDeferred(Exception):
+    """An orphan popularity branch changes a record an OPEN Jr tick PR holds: no PR is opened,
+    its intent and branch stay untouched for review."""
+
+
+def _open_holds(paths, index: pending_prs.PendingIndex) -> list[str]:
+    """The OPEN holds (`#pr: firmware`) on the firmware a set of changed paths names."""
+    holds = [index.hold(fid) for fid in sorted(pending_prs.firmware_ids(paths))]
+    return [f"{h.pr_ref}: {h.firmware}" for h in holds if h is not None and h.state == pending_prs.OPEN]
+
+
+def _check_orphan_holds(intent: dict, index: pending_prs.PendingIndex, git) -> None:
+    """Refuse to open a PR for an orphan branch that edits an OPEN-held record.
+
+    Checks the saved intent paths, then what the pushed branch really changes since it left
+    main; a branch diff git cannot list counts as held. The diff is skipped only when no
+    record is OPEN-held at all."""
+    branch = intent["branch"]
+    held = _open_holds(intent["paths"], index)
+    if not held and any(h.state == pending_prs.OPEN for h in index.holds.values()):
+        diff = None
+        if getattr(git("fetch", "origin", f"refs/heads/{branch}"), "returncode", 1) == 0:
+            diff = git("diff", "--name-only", f"origin/main...{intent['sha']}")
+        if getattr(diff, "returncode", 1) != 0:
+            raise RecoveryDeferred(f"orphan branch {branch} changes unreadable")
+        held = _open_holds((diff.stdout or "").splitlines(), index)
+    if held:
+        raise RecoveryDeferred(f"orphan branch {branch} changes a record an open Jr tick PR holds ("
+                               + ", ".join(held) + ")")
+
+
+def _recover_publication_intent(path: Path, gh, git, *, index: pending_prs.PendingIndex) -> str | None:
     """Resolve a durable pre-push intent against exact remote branch/PR state.
 
     A process may stop after push or PR creation. Never infer success from a
     branch name alone; only the recorded commit can become a delivery. An
-    orphan exact branch can be given an unarmed PR; any ambiguity stays on
-    disk and blocks the next publication for review.
+    orphan exact branch can be given an unarmed PR unless it edits a record
+    `index` shows an OPEN Jr tick PR holding (RecoveryDeferred); any ambiguity
+    stays on disk and blocks the next publication for review.
     """
     intent = _load_state(path).get("publication_intent")
     if intent is None:
@@ -217,6 +249,7 @@ def _recover_publication_intent(path: Path, gh, git) -> str | None:
                 return "discarded unpushed intent"
             if len(lines) != 1 or lines[0].split() != [sha, f"refs/heads/{branch}"]:
                 raise RuntimeError("remote branch differs from persisted publication intent")
+            _check_orphan_holds(intent, index, git)
             created = gh("pr", "create", "--draft", "--base", "main", "--head", branch,
                          "--title", intent.get("subject") or "", "--body", intent.get("body") or "")
             if getattr(created, "returncode", 1) != 0:
@@ -288,8 +321,7 @@ def _held_in_branch(wt, index: pending_prs.PendingIndex, git) -> list[str] | Non
     p = git("-C", str(wt.path), "diff", "--name-only", wt.base_sha, "HEAD")
     if getattr(p, "returncode", 1) != 0:
         return None
-    holds = [index.hold(fid) for fid in sorted(pending_prs.firmware_ids((p.stdout or "").splitlines()))]
-    return [f"{h.pr_ref}: {h.firmware}" for h in holds if h is not None and h.state == pending_prs.OPEN]
+    return _open_holds((p.stdout or "").splitlines(), index)
 
 
 def default_guard(root: Path) -> dict:
@@ -359,9 +391,14 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
             return result
         if not dry_run:
             try:
-                recovered = _recover_publication_intent(state_file, observed_gh, git)
+                recovered = _recover_publication_intent(state_file, observed_gh, git,
+                                                        index=pending_index)
                 if recovered:
                     result["recovery"] = recovered
+            except RecoveryDeferred as exc:
+                result["recovery"] = f"deferred: {exc}"
+                result["reason"] = f"publication recovery deferred: {exc}; preserve intent and branch for review"
+                return result
             except Exception as exc:
                 result["reason"] = f"publication recovery held: {type(exc).__name__}: {exc}"
                 return result

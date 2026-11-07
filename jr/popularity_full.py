@@ -241,8 +241,9 @@ def _receipt(ctx, now: datetime, result, outcomes: dict, *, quota: dict | None,
              attempted_repos: int, successful_repos: int) -> None:
     rows = [outcomes[fid] for fid in sorted(outcomes)]
     counts = Counter(row["outcome"] for row in rows)
-    queryable = [row for row in rows if not row["outcome"].startswith("excluded_") and
-                 row["outcome"] != DEFERRED_OPEN]
+    # A record an open Jr tick PR holds is never queried, yet its repository stays eligible:
+    # the denominator counts what the pass owes, so a deferral can never read as full coverage.
+    queryable = [row for row in rows if not row["outcome"].startswith("excluded_")]
     receipt = {
         "schema": 1,
         "run_at": now.isoformat(timespec="seconds").replace("+00:00", "Z"),
