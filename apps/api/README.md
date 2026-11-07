@@ -21,6 +21,32 @@ On startup, if `esp-atlas.db` (repo root, or `ESP_ATLAS_DB_PATH` if set) is
 missing, it's built automatically from `data/**/*.md` via
 `esp_atlas_core.index_build.build_index`.
 
+## Hourly GitHub counts
+
+The runtime reader consumes one public JSON file from this repository's
+`runtime-popularity` branch: `popularity.json`. A separate deterministic hourly
+publisher updates that file. The API does not write Git, invoke an LLM, or change
+catalog records or Jr review state. No database or storage service is required.
+
+The reader is disabled unless `POPULARITY_RUNTIME_ENABLED=1`. Its default source
+is `https://raw.githubusercontent.com/fcavalcantirj/esp-atlas/runtime-popularity/popularity.json`;
+`POPULARITY_SNAPSHOT_URL` can override the HTTPS URL for a controlled preview.
+No read credential is needed. Each JSON snapshot contains `schema_version: 1`,
+`version`, the source `catalog_revision`, `published_at`, and `records` keyed by
+firmware ID. Each row contains `repository_url`, `github_repo_id`, `stars`,
+`forks`, and `github_as_of`.
+
+Counts are validated and matched to the current catalog's repository identity
+before they affect sorting. The reader caches successful observations for 30
+seconds; read failures retain the last valid snapshot, or use dated catalog
+values on a cold start. GitHub and web caches can delay visibility of a new
+snapshot. Observation dates are preserved and old observations are marked stale.
+
+The data branch must contain the `apps/web/vercel.json` deployment exclusion
+before its first push, so hourly JSON updates do not create app deployments.
+Ordinary code branches continue to deploy normally. Activate the reader only
+after the publisher and its public JSON have been independently verified.
+
 ## Endpoints
 
 - `GET /health` -> `{status, count}`

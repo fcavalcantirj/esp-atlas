@@ -1,7 +1,6 @@
 """Runtime measurements must never become catalog/admission edits."""
 from copy import deepcopy
 from datetime import datetime, timezone
-import json
 
 import pytest
 
@@ -77,25 +76,53 @@ def test_missing_catalog_id_can_use_the_exact_approved_url_but_other_firmware_ca
     assert resolve_records(records, snapshot(), now=NOW)[0]["popularity"]["stars"] == 100
 
 
-def test_store_read_uses_get_only_and_never_follows_redirects(monkeypatch):
+def test_git_json_read_is_an_unauthenticated_get_and_never_follows_redirects(monkeypatch):
     import httpx
     from esp_atlas_api import runtime_popularity as runtime
     real_client = httpx.Client
     calls = []
     def handle(request):
         calls.append(request)
-        assert json.loads(request.content) == ["GET", runtime.KEY]
-        assert request.headers["authorization"] == "Bearer read-only-test"
-        return httpx.Response(200, json={"result": json.dumps(snapshot())})
+        assert request.method == "GET" and not request.content
+        assert str(request.url) == runtime.DEFAULT_SNAPSHOT_URL
+        assert "authorization" not in request.headers
+        return httpx.Response(200, json=snapshot())
     monkeypatch.setenv("POPULARITY_RUNTIME_ENABLED", "1")
-    monkeypatch.setenv("POPULARITY_REDIS_REST_URL", "https://store.example.test")
-    monkeypatch.setenv("POPULARITY_REDIS_READ_TOKEN", "read-only-test")
+    monkeypatch.delenv("POPULARITY_SNAPSHOT_URL", raising=False)
     def client(**kwargs):
         assert kwargs["follow_redirects"] is False and kwargs["timeout"] == 2.0
         return real_client(transport=httpx.MockTransport(handle), **kwargs)
     monkeypatch.setattr(runtime.httpx, "Client", client)
     assert SnapshotReader(now=lambda: NOW).read()["version"] == "run-1"
     assert len(calls) == 1
+
+
+@pytest.mark.parametrize("url", ["http://example.test/popularity.json", "https://user:secret@example.test/counts.json",
+                                  "file:///tmp/popularity.json", "https://example.test/counts.json#fragment"])
+def test_invalid_snapshot_location_is_rejected_before_request(monkeypatch, url):
+    from esp_atlas_api import runtime_popularity as runtime
+    monkeypatch.setenv("POPULARITY_SNAPSHOT_URL", url)
+    monkeypatch.setattr(runtime.httpx, "Client", lambda **kw: pytest.fail("unexpected request"))
+    with pytest.raises(ValueError):
+        runtime._load()
+
+
+@pytest.mark.parametrize("status,body", [(404,b"missing"), (429,b"limited"), (500,b"unavailable"),
+                                         (302,b"redirect"), (200,b"not json"), (200,b"x"*2_000_001)])
+def test_failed_git_json_fetch_retains_last_valid_snapshot(monkeypatch, status, body):
+    import httpx
+    from esp_atlas_api import runtime_popularity as runtime
+    real_client = httpx.Client
+    replies = iter([httpx.Response(200,json=snapshot()), httpx.Response(status,content=body)])
+    def handle(request):
+        return next(replies)
+    monkeypatch.setattr(runtime.httpx, "Client", lambda **kw: real_client(transport=httpx.MockTransport(handle), **kw))
+    monkeypatch.setenv("POPULARITY_RUNTIME_ENABLED", "1")
+    clock = [0]
+    reader = SnapshotReader(clock=lambda: clock[0], now=lambda: NOW)
+    assert reader.read()["version"] == "run-1"
+    clock[0] = 31
+    assert reader.read()["version"] == "run-1"
 
 
 def test_corrupt_and_older_store_publications_keep_last_good(monkeypatch):

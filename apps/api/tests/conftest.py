@@ -8,9 +8,9 @@ from esp_atlas_api.main import create_app
 
 @pytest.fixture(autouse=True)
 def runtime_metrics_off_by_default(monkeypatch):
-    # Never inherit production storage credentials/enabled state in tests.
+    # Never inherit production snapshot configuration/enabled state in tests.
     monkeypatch.setenv("POPULARITY_RUNTIME_ENABLED", "0")
-    monkeypatch.delenv("POPULARITY_REDIS_READ_TOKEN", raising=False)
+    monkeypatch.delenv("POPULARITY_SNAPSHOT_URL", raising=False)
 
 # Plain helpers/constants (BOARD_PATH, SOC_PATH, client_with_llm, marauder_*) live in _shared.py,
 # NOT here: a bare `from conftest import ...` collides with apps/cli/tests/conftest.py when the

@@ -1,9 +1,9 @@
 """Read-only runtime observations; never used by catalog validation or Jr admission.
 
-V1 contract: an atomic Redis JSON snapshot with schema_version, version,
+V1 contract: one JSON file published in Git with schema_version, version,
 catalog_revision, published_at and records keyed by firmware ID. Each record has
-repository_url, github_repo_id, stars, forks and github_as_of. No GitHub or LLM
-requests occur here. Disabled by default; storage errors retain the last valid
+repository_url, github_repo_id, stars, forks and github_as_of. No repository API
+or LLM calls occur here. Disabled by default; read errors retain the last valid
 snapshot, then dated catalog fallback. Observation times are never fabricated.
 """
 from copy import deepcopy
@@ -18,7 +18,7 @@ from urllib.parse import urlsplit
 
 import httpx
 
-KEY = "esp-atlas:popularity:v1:current"
+DEFAULT_SNAPSHOT_URL = "https://raw.githubusercontent.com/fcavalcantirj/esp-atlas/runtime-popularity/popularity.json"
 CACHE_SECONDS = 30
 logger = logging.getLogger(__name__)
 
@@ -76,25 +76,21 @@ def validate_snapshot(value, *, now=None):
 
 
 def _load():
-    url = os.environ.get("POPULARITY_REDIS_REST_URL", "")
-    token = os.environ.get("POPULARITY_REDIS_READ_TOKEN", "")
+    url = os.environ.get("POPULARITY_SNAPSHOT_URL", DEFAULT_SNAPSHOT_URL)
     parsed = urlsplit(url)
-    if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password or parsed.query or parsed.fragment or not token:
-        raise ValueError("runtime metrics store not configured")
-    # POST transports a Redis GET, using a read-only credential. Never redirect
-    # a credential-bearing request. Keep payloads and credentials out of logs.
+    if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password or parsed.query or parsed.fragment:
+        raise ValueError("invalid snapshot URL")
+    # Public JSON from the existing Git repository. No storage account, SDK,
+    # credential, write operation, or GitHub repository API call in the reader.
     with httpx.Client(timeout=2.0, follow_redirects=False) as client:
-        with client.stream("POST", url, headers={"Authorization": f"Bearer {token}"}, json=["GET", KEY]) as response:
+        with client.stream("GET", url, headers={"Accept": "application/json"}) as response:
             response.raise_for_status()
             body = bytearray()
             for chunk in response.iter_bytes():
                 body.extend(chunk)
                 if len(body) > 2_000_000:
                     raise ValueError("metrics snapshot exceeds size limit")
-    result = json.loads(body).get("result")
-    if not isinstance(result, str):
-        raise ValueError("metrics snapshot unavailable")
-    return json.loads(result)
+    return json.loads(body)
 
 
 class SnapshotReader:
