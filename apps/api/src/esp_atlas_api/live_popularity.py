@@ -148,7 +148,14 @@ class PostgresPopularityStore:
     def _connect(self):
         import psycopg
         from psycopg.rows import dict_row
-        return psycopg.connect(self.dsn, connect_timeout=2, autocommit=True, row_factory=dict_row)
+        conn = psycopg.connect(self.dsn, connect_timeout=2, autocommit=True, row_factory=dict_row)
+        try:
+            if conn.execute("SELECT current_setting('transaction_read_only') AS readonly").fetchone()["readonly"] != "off":
+                raise RuntimeError("popularity coordinator requires a read-write primary")
+            return conn
+        except Exception:
+            conn.close()
+            raise
 
     def claim(self, identity: Identity, token: str) -> Claim:
         with self._connect() as conn, conn.transaction():
