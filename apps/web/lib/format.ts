@@ -379,6 +379,7 @@ export function compactCount(n: number): string {
 }
 
 export interface PopularityInput {
+  stale?: boolean | null;
   stars?: number | null;
   forks?: number | null;
   as_of?: string | null;
@@ -402,8 +403,9 @@ export function repositorySnapshot(popularity: PopularityInput): string {
   const date = raw && !Number.isNaN(Date.parse(raw))
     ? raw.length === 10 ? raw : `${new Date(raw).toISOString().slice(0, 16).replace("T", " ")} UTC`
     : null;
-  return date ? `GitHub repo · as of ${date}`
+  const scope = date ? `GitHub repo · as of ${date}`
     : popularity.as_of ? `GitHub repo · historical snapshot ${popularity.as_of}` : "GitHub repo · date not recorded";
+  return popularity.stale ? `${scope} · stale` : scope;
 }
 
 export function popularityGlance(popularity: PopularityInput | null | undefined): PopularityGlance | null {
