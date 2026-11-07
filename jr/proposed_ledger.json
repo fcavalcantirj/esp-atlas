@@ -1285,7 +1285,7 @@
       "pr_ref": "#1500",
       "repo": "jay-jayismyname1/cardputer-adv-b-radar",
       "status": "proposed",
-      "timestamp": "2026-11-07T22:00:55.736287+00:00"
+      "timestamp": "2026-11-07T23:00:55.239259+00:00"
     },
     "cardputer-adv-basic": {
       "expires": "2026-11-08T01:00:12.099811+00:00",
@@ -3771,12 +3771,13 @@
       "timestamp": "2026-10-06T20:01:00.563893+00:00"
     },
     "geo-tp": {
+      "expired_at": "2026-11-07T23:00:55.239259+00:00",
       "expires": "2026-11-07T22:00:59.654249+00:00",
       "id": "geo-tp",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'geo-tp'",
       "repo": "geo-tp",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-31T22:00:59.654249+00:00"
     },
     "ghost-esp": {
@@ -4363,12 +4364,13 @@
       "timestamp": "2026-10-09T13:00:11.675780+00:00"
     },
     "jjugs": {
+      "expired_at": "2026-11-07T23:00:55.239259+00:00",
       "expires": "2026-11-07T22:00:59.654249+00:00",
       "id": "jjugs",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'jjugs'",
       "repo": "jjugs",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-31T22:00:59.654249+00:00"
     },
     "joustris-m5stickc-plus2": {
@@ -10539,12 +10541,13 @@
       "timestamp": "2026-09-04T00:00:00+00:00"
     },
     "rymicka": {
+      "expired_at": "2026-11-07T23:00:55.239259+00:00",
       "expires": "2026-11-07T22:00:59.654249+00:00",
       "id": "rymicka",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'rymicka'",
       "repo": "rymicka",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-31T22:00:59.654249+00:00"
     },
     "s3-decibel-meter": {

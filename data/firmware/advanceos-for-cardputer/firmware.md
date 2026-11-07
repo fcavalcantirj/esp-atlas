@@ -11,9 +11,11 @@ capabilities:
 socs:
 - esp32-s3
 popularity:
-  stars: 95
+  stars: 103
   forks: 10
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 1099556447
+  github_as_of: '2026-11-07T23:00:55Z'
 sources:
 - field: '*'
   url: https://github.com/bomberman30/AdvanceOS-for-cardputer
@@ -24,6 +26,18 @@ sources:
 - field: summary
   url: https://github.com/bomberman30/AdvanceOS-for-cardputer
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/bomberman30/AdvanceOS-for-cardputer
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/bomberman30/AdvanceOS-for-cardputer
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/bomberman30/AdvanceOS-for-cardputer
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/bomberman30/AdvanceOS-for-cardputer
+  verified: '2026-11-07'
 summary: "AdvanceOS is a lightweight operating system for the Cardputer ADV that offers\
   \ media playback, file browsing, and a collection of built\u2011in apps such as\
   \ a music player/composer, image viewer/editor, 3D OBJ renderer, infrared sender/editor,\
