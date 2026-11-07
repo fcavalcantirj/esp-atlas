@@ -532,6 +532,39 @@ def test_publish_uses_a_caller_named_branch_when_given():
     assert ("push", "-u", "origin", "jr/demand-20261103-0930") in norm_calls(git)
 
 
+def test_existing_popularity_pr_is_updated_only_with_exact_head_lease():
+    branch = "jr/popularity-20261107-0100"
+    url = "https://github.com/o/r/pull/8"
+    prior = "b" * 40
+    git = _git_ok()
+    gh = recorder({("pr", "view"): (0, json.dumps({"state": "OPEN", "headRefOid": "feedbee"}))})
+    result = publish.publish(WT, ["docs/telemetry/popularity/2026-11-07T02.json"], "new", "new body",
+                             git=git, gh=gh, now=NOW, protection=PROTECTED_OK, trust=TRUSTED,
+                             branch=branch, existing_pr_url=url, expected_head_sha=prior)
+    assert result.published and result.pr_url == url and result.auto_merge
+    assert ("push", f"--force-with-lease=refs/heads/{branch}:{prior}", "origin", branch) in norm_calls(git)
+    assert ("pr", "view", url, "--json", "state,headRefOid") in gh.calls
+    assert ("pr", "edit", url, "--title", "new", "--body", "new body") in gh.calls
+    assert all(call[:2] != ("pr", "create") for call in gh.calls)
+
+
+def test_existing_popularity_pr_rejects_bad_lease_or_changed_remote_head():
+    branch = "jr/popularity-20261107-0100"
+    url = "https://github.com/o/r/pull/8"
+    git = _git_ok()
+    gh = recorder()
+    bad = publish.publish(WT, ["data/firmware/x"], "s", "b", git=git, gh=gh,
+                          protection=PROTECTED_OK, branch=branch, existing_pr_url=url,
+                          expected_head_sha="not-a-sha")
+    assert not bad.published and gh.calls == []
+    gh = recorder({("pr", "view"): (0, json.dumps({"state": "OPEN", "headRefOid": "some-other-head"}))})
+    changed = publish.publish(WT, ["data/firmware/x"], "s", "b", git=git, gh=gh,
+                              protection=PROTECTED_OK, branch=branch, existing_pr_url=url,
+                              expected_head_sha="b" * 40)
+    assert not changed.published and "changed or closed" in changed.reason
+    assert all(call[:2] not in (("pr", "edit"), ("pr", "merge")) for call in gh.calls)
+
+
 # --- risk-based review routing (SPEC-jr-review-routing.md) -----------------------------------------
 
 def _label_calls(gh):

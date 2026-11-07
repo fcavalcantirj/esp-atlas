@@ -188,16 +188,10 @@ def _fake_stage_modules(monkeypatch, calls):
     import stage_admit_topics
     import stage_boardmap
     import stage_backfill
-    import stage_popularity_refresh
     monkeypatch.setattr(stage_backfill, "run", lambda ctx, budget, fetch=None: calls.append(("backfill", budget)) or tick.StageResult("backfill", summary=f"backfilled {budget}"))
     monkeypatch.setattr(stage_boardmap, "run", lambda ctx, budget, only=None: calls.append(("boardmap", budget)) or tick.StageResult("boardmap", summary=f"mapped {budget}"))
     monkeypatch.setattr(stage_admit, "run", lambda ctx, budget, call_share=1.0: calls.append(("admit", budget, round(call_share, 2))) or tick.StageResult("admit", summary=f"scored {budget}"))
     monkeypatch.setattr(stage_admit_topics, "run", lambda ctx, budget: calls.append(("admit_topics", budget)) or tick.StageResult("admit_topics", summary=f"scored {budget}"))
-    def popularity_refresh(ctx):
-        calls.append(("popularity_refresh",))
-        return tick.StageResult("popularity_refresh")
-    popularity_refresh.produces_review = False
-    monkeypatch.setattr(stage_popularity_refresh, "run", popularity_refresh)
 
 
 def test_hourly_path_runs_the_content_stages_from_the_split_heavier_first(capsys, tmp_path, monkeypatch):
@@ -208,8 +202,8 @@ def test_hourly_path_runs_the_content_stages_from_the_split_heavier_first(capsys
     assert not r.aborted
     assert "boards 42.5% -> backfill 4 / firmware 2 (hourly)" in out   # allocate(42.5, 6): backfill-heavy (finite thin)
     # backfill runs first; firmware (2 units) → admit 1 + boardmap 1; topics always runs last, fixed budget
-    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
-    assert [s["name"] for s in r.stages] == ["backfill", "admit", "boardmap", "admit_topics", "popularity_refresh"]
+    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK)]
+    assert [s["name"] for s in r.stages] == ["backfill", "admit", "boardmap", "admit_topics"]
     assert "backfilled 4" in out and "mapped 1" in out and "scored 1" in out
 
 
@@ -218,19 +212,19 @@ def test_hourly_stages_backfill_first_then_firmware_and_skip_empty_tracks(monkey
     _fake_stage_modules(monkeypatch, calls)
     for fn in tick.hourly_stages({"backfill": 4, "firmware": 2}):   # finite thin
         fn(None)
-    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
     for fn in tick.hourly_stages({"backfill": 2, "firmware": 4}):   # finite covered
         fn(None)
-    assert calls == [("backfill", 2), ("admit", 2, 0.5), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("backfill", 2), ("admit", 2, 0.5), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
     for fn in tick.hourly_stages({"backfill": 3, "firmware": 0}):   # firmware track empty
         fn(None)
-    assert calls == [("backfill", 3), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("backfill", 3), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
     for fn in tick.hourly_stages({"backfill": 0, "firmware": 3}):   # backfill track empty; boardmap takes odd unit
         fn(None)
-    assert calls == [("admit", 1, 0.33), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("admit", 1, 0.33), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
 
 
@@ -241,10 +235,10 @@ def test_hourly_stages_topics_stage_runs_even_with_both_tracks_empty(monkeypatch
     calls = []
     _fake_stage_modules(monkeypatch, calls)
     fns = tick.hourly_stages({"backfill": 0, "firmware": 0})
-    assert len(fns) == 2
+    assert len(fns) == 1
     for fn in fns:
         fn(None)
-    assert calls == [("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("admit_topics", tick.TOPICS_PER_TICK)]
 
 
 def test_dry_run_with_real_gauge_reads_the_repo_tree(checkout, tmp_path):
@@ -583,10 +577,24 @@ def test_a_failing_demand_loader_warns_but_never_aborts(tmp_path, monkeypatch):
 # --- CLI ---------------------------------------------------------------------------------------
 
 def test_main_exit_code_follows_aborted(monkeypatch):
+    import popularity_run
+    monkeypatch.setattr(popularity_run, "run", lambda **kw: {"ok": True, "stage": "prepared", "graphql_budget": "0", "all_gh_calls": 0})
     monkeypatch.setattr(tick, "run_tick", lambda **kw: tick.report.TickReport(when=NOW))
     assert tick.main(["--dry-run"]) == 0
     monkeypatch.setattr(tick, "run_tick", lambda **kw: tick.report.TickReport(when=NOW, aborted="x"))
     assert tick.main(["--dry-run", "--no-telegram", "--max-calls", "10"]) == 1
+
+
+def test_main_runs_popularity_before_growth_and_growth_after_popularity_failure(monkeypatch):
+    import popularity_run
+    calls = []
+    monkeypatch.setattr(popularity_run, "run", lambda **kw: calls.append("popularity") or
+                        {"ok": False, "stage": "rate limited", "complete_attempt": False,
+                         "graphql_budget": "0", "all_gh_calls": 1})
+    monkeypatch.setattr(tick, "run_tick", lambda **kw: calls.append("growth") or
+                        tick.report.TickReport(when=NOW))
+    assert tick.main(["--no-telegram"]) == 1
+    assert calls == ["popularity", "growth"]
 
 
 def test_stages_registry_is_empty_in_phase_two():

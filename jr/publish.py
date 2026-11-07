@@ -370,7 +370,8 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
             repo_slug: str | None = None, needs_human: bool = False,
             protection: ProtectionStatus | None = None, auto_merge: bool = True,
             trust: TrustStatus | None = None, branch: str | None = None,
-            stages: list | None = None) -> PublishResult:
+            stages: list | None = None, existing_pr_url: str | None = None,
+            expected_head_sha: str | None = None) -> PublishResult:
     """Stage `paths` (+ the ledger) in the worktree, commit, push a fresh `jr/tick-…` branch (or
     the caller's `branch`, e.g. the daily demand runner's `jr/demand-…`), open the PR, and request
     auto-merge only when allowed (see the module docstring). `stages` are the tick's stage-result
@@ -378,6 +379,8 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
     PublishResult; never raises for a normal "nothing to publish" or a refused deletion."""
     now = now or datetime.now(timezone.utc)
     branch = branch or branch_name(now)
+    if existing_pr_url and (not expected_head_sha or not re.fullmatch(r"[0-9a-f]{40,64}", expected_head_sha)):
+        return PublishResult(False, branch=branch, reason="existing PR needs an exact expected head SHA")
     pathspec = list(dict.fromkeys([*paths, *memory.staged_paths()]))
 
     # 1. stage exactly the pathspec; nothing else can reach the commit. git aborts the WHOLE add
@@ -407,15 +410,37 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
     if not _ok(p):
         return PublishResult(False, branch=branch, paths=pathspec, reason="commit failed")
     sha = (getattr(git("-C", str(wt.path), "rev-parse", "HEAD"), "stdout", "") or "").strip()
-    p = git("-C", str(wt.path), "push", "-u", "origin", branch)
+    if existing_pr_url:
+        # The bot-owned popularity PR is refreshed from current main each hour.
+        # A precise lease rejects human/other-agent edits or a branch deleted
+        # after merge, rather than overwriting them.
+        p = git("-C", str(wt.path), "push",
+                f"--force-with-lease=refs/heads/{branch}:{expected_head_sha}", "origin", branch)
+    else:
+        p = git("-C", str(wt.path), "push", "-u", "origin", branch)
     if not _ok(p):
         return PublishResult(False, branch=branch, commit=sha, paths=pathspec, reason="push failed")
 
     # 4. PR
-    pr = gh("pr", "create", "--base", "main", "--head", branch, "--title", subject, "--body", body)
-    if not _ok(pr):
-        return PublishResult(False, branch=branch, commit=sha, paths=pathspec, reason="pr create failed")
-    pr_url = (getattr(pr, "stdout", "") or "").strip()
+    if existing_pr_url:
+        checked = gh("pr", "view", existing_pr_url, "--json", "state,headRefOid")
+        try:
+            state = json.loads(checked.stdout or "{}") if _ok(checked) else {}
+        except json.JSONDecodeError:
+            state = {}
+        if state.get("state") != "OPEN" or state.get("headRefOid") != sha:
+            return PublishResult(False, branch=branch, commit=sha, paths=pathspec,
+                                 reason="existing PR changed or closed after leased push")
+        edited = gh("pr", "edit", existing_pr_url, "--title", subject, "--body", body)
+        if not _ok(edited):
+            return PublishResult(False, branch=branch, commit=sha, paths=pathspec,
+                                 reason="existing PR body update failed")
+        pr_url = existing_pr_url
+    else:
+        pr = gh("pr", "create", "--base", "main", "--head", branch, "--title", subject, "--body", body)
+        if not _ok(pr):
+            return PublishResult(False, branch=branch, commit=sha, paths=pathspec, reason="pr create failed")
+        pr_url = (getattr(pr, "stdout", "") or "").strip()
 
     # 5. risk routing: a review route is labelled and NEVER auto-merges, labelled or not
     route = review_routing.classify(changes, stages or (), needs_human=needs_human)
