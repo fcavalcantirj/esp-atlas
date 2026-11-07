@@ -700,14 +700,28 @@ def test_quarantine_survives_the_entry_leaving_the_catalog_for_a_run(repos, tmp_
     assert receipt.quarantined_ids == ["alpha"]
 
 
-def test_curated_catalog_id_releases_a_quarantine(repos, tmp_path):
+def test_catalog_seeding_the_new_id_does_not_release_a_quarantine(repos, tmp_path):
+    # Jr's hourly refresh writes a first-time github_repo_id unreviewed; it must not launder the swap
     _, work = repos
     _quarantine_alpha(repos, tmp_path)
     _write_firmware(work, "alpha", "https://github.com/Octo/Alpha", {"github_repo_id": 11})
-    _sh(work, "commit", "-q", "-am", "curator accepts the new alpha identity")
+    _sh(work, "commit", "-q", "-am", "tick seeds the swapped alpha identity")
+    receipt = _at(repos, tmp_path, FakeGH({**GOOD, "octo/alpha": node("Octo/Alpha", 11, 9, 9)}), 2)
+    assert receipt.quarantined_ids == ["alpha"]
+    assert _state_now(repos)["quarantine"]["alpha"]["pinned_repo_id"] == 10
+
+
+def test_a_human_state_commit_releases_a_quarantine(repos, tmp_path):
+    origin, work = repos
+    _quarantine_alpha(repos, tmp_path)
+    tip = _remote_ref(origin, rp.BRANCH)
+    tree = _sh(origin, "rev-parse", f"{tip}^{{tree}}")
+    _sh(work, "fetch", "-q", "origin", rp.BRANCH)
+    release = _sh(work, "commit-tree", tree, "-p", tip, "-m", "release alpha",
+                  "-m", rp.STATE_TRAILER + '{"cooldown_until":null,"quarantine":{}}')
+    _sh(work, "push", "-q", "origin", f"{release}:refs/heads/{rp.BRANCH}")
     receipt = _at(repos, tmp_path, FakeGH({**GOOD, "octo/alpha": node("Octo/Alpha", 11, 9, 9)}), 2)
     assert receipt.quarantined_ids == [] and receipt.published == 3
-    assert _state_now(repos)["quarantine"] == {}
 
 
 def _commit_with_state(work: Path, origin: Path, state_json: str) -> None:

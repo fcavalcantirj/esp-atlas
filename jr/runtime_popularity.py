@@ -337,8 +337,9 @@ def collect(entries: list[Entry], previous_records: dict, *, gh, budget: Budget,
 
     Pins: the previous snapshot's id, a quarantine carried from earlier runs, the catalog's id.
     A quarantine lasts until GitHub reports the pinned id again, the catalog moves the source, or
-    the catalog records a different github_repo_id (a curated decision). A firmware missing from
-    this run's catalog keeps its pin. `fetch=False` (cooldown) never queries GitHub."""
+    a human commits a revised state trailer on the branch. A catalog github_repo_id never releases
+    it: Jr's refresh seeds a first-time id unreviewed. A firmware missing from this run's catalog
+    keeps its pin. `fetch=False` (cooldown) never queries GitHub."""
     repos = sorted({entry.repo for entry in entries})
     if fetch:
         stats, failed, cooldown = _fetch(repos, gh=gh, budget=budget, now=now)
@@ -352,8 +353,6 @@ def collect(entries: list[Entry], previous_records: dict, *, gh, budget: Budget,
         fid = entry.firmware_id
         previous = _same_source(previous_records.get(fid), entry)
         held = _same_source(quarantine.get(fid), entry)
-        if held and entry.catalog_id not in (None, held["pinned_repo_id"]):
-            held = None  # the catalog curated a different identity: it, not the old pin, now rules
         pins = ([previous["github_repo_id"]] if previous else []) + ([held["pinned_repo_id"]] if held else []) \
             + ([entry.catalog_id] if entry.catalog_id is not None else [])
         found = stats.get(entry.repo)
