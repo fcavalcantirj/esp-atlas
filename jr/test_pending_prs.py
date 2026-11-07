@@ -48,12 +48,24 @@ def _ledger_repos(ledgers) -> dict:
     return out
 
 
+def _firmware_md(repo: str) -> str:
+    """A data/firmware/<id>/firmware.md whose `url:` names `repo` as the firmware's source."""
+    return f"---\nurl: https://github.com/{repo}\n---\n\nA tool.\n"
+
+
+def _ledger_sources(ledgers) -> dict:
+    """(head oid, firmware id) -> the source owner/repo its firmware.md names: by default the repo
+    the ledger committed at that head records for it (the two agree, as a tick writes them)."""
+    return {(oid, fid): rec["repo"] for oid, text in (ledgers or {}).items() if text
+            for fid, rec in (json.loads(text).get("by_id") or {}).items() if isinstance(rec.get("repo"), str)}
+
+
 def _number_in(route: str) -> int:
     return int(route.split("/pulls/")[1].split("/")[0])
 
 
 def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0, ledgers=None, repos=None, pages=None, heads=None,
-        counts=None):
+        counts=None, sources=None):
     """`files`: PR number -> every changed path, served by `gh api …/pulls/<n>/files --paginate`
     in REST pages of 100 printed back to back, as gh prints them (`pages`: PR number -> the pages served
     instead, as a PR edited mid-listing serves them). `gh api …/pulls/<n>` answers head sha `oid<n>`
@@ -61,8 +73,11 @@ def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0, ledgers=None, repos
     overrides). `ledgers`: head oid -> the raw jr/proposed_ledger.json committed there (None: unreadable);
     any other head serves an empty one.
     `repos`: owner/repo -> the id `gh api repos/<owner/repo>` answers (redirects followed; None or
-    absent: the call fails); by default the ids the served ledgers record."""
+    absent: the call fails); by default the ids the served ledgers record. `sources`: (head oid, firmware
+    id) -> the owner/repo the firmware.md committed there names (absent: no such file); by default
+    the repo each served ledger records."""
     repos = _ledger_repos(ledgers) if repos is None else repos
+    sources = _ledger_sources(ledgers) if sources is None else sources
 
     def gh(*a):
         if calls is not None:
@@ -71,6 +86,11 @@ def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0, ledgers=None, repos
             rid = repos.get(a[1].removeprefix("repos/"))
             return SimpleNamespace(returncode=0 if rid is not None else 1, stderr="" if rid else "HTTP 404",
                                    stdout=json.dumps({"id": rid, "full_name": a[1][6:]}) if rid is not None else "")
+        if a[:3] == ("api", "-H", pending_prs.RAW_MEDIA) and "/contents/data/firmware/" in a[3]:
+            ref, fid = a[3].split("?ref=")[1], a[3].split("/contents/data/firmware/")[1].split("/")[0]
+            source = sources.get((ref, fid))
+            return SimpleNamespace(returncode=0 if source else 1, stdout=_firmware_md(source) if source else "",
+                                   stderr="" if source else "HTTP 404")
         if a[:3] == ("api", "-H", pending_prs.RAW_MEDIA):
             ref = a[3].split("?ref=")[1]
             text = (ledgers or {}).get(ref, json.dumps({"by_id": {}, "by_repo": {}}))
