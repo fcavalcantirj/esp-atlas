@@ -204,9 +204,11 @@ replacement and refuses an uncertain remote state. It never stages a growth reci
 Branch protection, required checks and earned-trust auto-merge remain gates.
 Every hourly run also reconciles pending popularity PRs through merge, deployed
 API revision containing the merge, successful catalog cache invalidation and
-sampled API plus rendered-page readback. Each transition is persisted outside
-the repo for restart recovery. A fetched value is not visible merely because
-Jr wrote a PR.
+sampled API plus exact rendered-count readback. Each transition and the fair
+live-check sequence are persisted outside the repo for restart recovery. A
+later merged snapshot that changes a sampled firmware supersedes an older
+expectation only when commit ancestry proves the order; it does not certify
+the older count. A fetched value is not visible merely because Jr wrote a PR.
 
 ## CI floor gate (deterministic, mechanical — no LLM, no manual curation)
 - `scripts/firmware_floor_audit.py` reads the **stored** `popularity` (not a live fetch) → fully

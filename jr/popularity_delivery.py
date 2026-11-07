@@ -53,11 +53,15 @@ def register(state: dict, published: publish.PublishResult, samples: list[dict],
         if row.get("pr_url") == published.pr_url and row.get("state") == "pending":
             row["state"] = "superseded"
             row["superseded_at"] = now.isoformat()
+    changed_ids = sorted({Path(p).parent.name for p in published.paths
+                          if p.startswith("data/firmware/") and p.endswith("/firmware.md")})
+    live_sequence = state.get("delivery_live_sequence")
+    live_sequence = live_sequence if type(live_sequence) is int and live_sequence >= 0 else 0
     deliveries.append({"pr_url": published.pr_url, "head_sha": published.commit,
                        "state": "pending", "published_at": now.isoformat(),
-                       "receipt": receipt, "samples": samples,
-                       "changed_records": len([p for p in published.paths
-                                               if p.startswith("data/firmware/") and p.endswith("/firmware.md")])})
+                       "receipt": receipt, "samples": samples, "changed_ids": changed_ids,
+                       "changed_records": len(changed_ids),
+                       "live_check_sequence": live_sequence})
 
 
 def _pr(gh, url: str) -> dict | None:
@@ -107,6 +111,20 @@ def _visible_date(raw: str) -> str | None:
         return None
 
 
+def _rendered_counts(fragment: str) -> dict[str, int] | None:
+    """Read complete visible number spans, rejecting duplicates or partial digits."""
+    figures = re.findall(
+        r'<span class="firmware-popularity-figure">([0-9]+)</span>\s*(stars|forks)\b',
+        fragment,
+    )
+    counts: dict[str, int] = {}
+    for number, unit in figures:
+        if unit in counts:
+            return None
+        counts[unit] = int(number)
+    return counts
+
+
 def _readback(fetch, git, merge_sha: str, samples: list[dict]) -> tuple[bool, dict]:
     before = _status_revision(fetch)
     if not before or not demand_closure.contains_merge(git, merge_sha, before):
@@ -126,10 +144,11 @@ def _readback(fetch, git, merge_sha: str, samples: list[dict]) -> tuple[bool, di
             return False, {"reason": f"page readback unavailable for {row['id']}", "checked": checked}
         match = re.search(r'<p class="firmware-popularity">(.*?)</p>', page, re.DOTALL)
         visible = " ".join(html.unescape(re.sub(r"<[^>]*>", " ", match.group(1))).split()) if match else ""
+        counts = _rendered_counts(match.group(1)) if match else None
+        expected_counts = {unit: row[key] for key, unit in (("stars", "stars"), ("forks", "forks"))
+                           if row[key] is not None}
         date = _visible_date(row["github_as_of"])
-        if (status != 200 or not date or f"as of {date}" not in visible or
-                not all(f"{row[k]} {unit}" in visible for k, unit in (("stars", "stars"), ("forks", "forks"))
-                        if row[k] is not None)):
+        if (status != 200 or not date or f"as of {date}" not in visible or counts != expected_counts):
             return False, {"reason": f"rendered page differs for {row['id']}", "checked": checked}
         checked.append(row["id"])
     after = _status_revision(fetch)
@@ -148,8 +167,6 @@ def reconcile(state_file: Path, *, load_state, write_state, gh, git, secret: str
     deliveries = state.get("deliveries")
     if not isinstance(deliveries, list):
         return []
-    live_checks = 0
-
     def save(row):
         row["checked_at"] = now.isoformat()
         write_state(state_file, state)
@@ -191,14 +208,51 @@ def reconcile(state_file: Path, *, load_state, write_state, gh, git, secret: str
                 continue
             row.update(state="merged", merge_sha=merge_sha, merged_at=pr.get("mergedAt"), reason="")
             save(row)
-        if row["state"] in ("merged", "deployed", "invalidated"):
-            # One potentially cold multi-endpoint readback per scheduled tick
-            # leaves time for the source pass and growth under the outer 600 s.
-            if live_checks >= 1:
-                row["reason"] = "delivery check deferred to next scheduled tick"
-                save(row)
+    # A later merged commit may intentionally replace a sampled record before
+    # an older delivery is observed on the site. Prove commit order, then mark
+    # the older expectation superseded rather than forever retrying or claiming
+    # it was delivered. Missing ancestry evidence leaves it pending.
+    active_states = {"merged", "deployed", "invalidated"}
+    merged_evidence = [r for r in deliveries if isinstance(r, dict) and
+                       r.get("state") in active_states | {"readback_verified", "superseded"} and
+                       isinstance(r.get("merge_sha"), str) and SHA.fullmatch(r["merge_sha"])]
+    candidates = [(old, new) for old in merged_evidence if old.get("state") in active_states
+                  for new in merged_evidence if new is not old and new["merge_sha"] != old["merge_sha"]
+                  and {s.get("id") for s in old.get("samples") or [] if isinstance(s, dict)} &
+                  set(new.get("changed_ids") or [s.get("id") for s in new.get("samples") or []
+                                                 if isinstance(s, dict)])]
+    if candidates and getattr(git("fetch", "origin", "main"), "returncode", 1) == 0:
+        for old, new in candidates:
+            if old.get("state") not in active_states:
                 continue
-            live_checks += 1
+            if demand_closure.contains_merge(git, old["merge_sha"], new["merge_sha"]):
+                old.update(state="superseded", superseded_by=new["pr_url"],
+                           superseded_by_merge_sha=new["merge_sha"],
+                           reason="newer merged popularity snapshot changed a sampled firmware")
+                save(old)
+
+    # Persist a monotonically increasing selection number so one stale older
+    # delivery cannot starve newer merges across process restarts. One live
+    # check per tick still preserves the outer 600-second source/growth budget.
+    active = [r for r in deliveries if isinstance(r, dict) and r.get("state") in active_states]
+    if active:
+        def sequence(row):
+            value = row.get("live_check_sequence")
+            return value if type(value) is int and value >= 0 else 0
+
+        chosen = min(enumerate(active), key=lambda pair: (sequence(pair[1]), pair[0]))[1]
+        latest = state.get("delivery_live_sequence")
+        latest = latest if type(latest) is int and latest >= 0 else 0
+        latest = max(latest, *(sequence(row) for row in active)) + 1
+        state["delivery_live_sequence"] = latest
+        chosen["live_check_sequence"] = latest
+        save(chosen)
+        for queued in active:
+            if queued is not chosen:
+                queued["reason"] = "delivery check queued by fair scheduler"
+                save(queued)
+
+    for row in [chosen] if active else []:
         if row["state"] == "merged":
             revision = _status_revision(fetch)
             if not revision or getattr(git("fetch", "origin", "main"), "returncode", 1) != 0 or \

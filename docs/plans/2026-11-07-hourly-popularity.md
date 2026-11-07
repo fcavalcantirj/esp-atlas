@@ -72,11 +72,17 @@ CI and Jr's earned-trust auto-merge rule remain in force. Fetching or opening
 a PR is not a claim of committed or deployed freshness. The persistent state
 also tracks every publication through pending, merged, deployed, invalidated
 and sampled API plus rendered-page readback. Each natural hourly run advances
-this sequence, bounded to one live delivery check; a failed step is retried
-on a later run and never recorded as delivered. The deploy gate reads the
+this sequence, bounded to one live delivery check. A persisted least-recently
+checked sequence gives older unresolved and newly merged deliveries fair turns
+across process restarts, even as new PRs arrive. If a later merged commit is
+proven to descend from an older merge and changes one of its sampled firmware
+IDs, the older expectation is marked superseded with the newer PR/merge SHA;
+it is never marked delivered. Other failed steps are retried on later runs and
+never recorded as delivered. The deploy gate reads the
 public API's full revision and proves the merge is its ancestor. Only after
 that does Jr POST `/api/revalidate`, then compare sampled source dates and
-counts against `/api/firmware/{id}` and the visible firmware page, bracketing
+counts against `/api/firmware/{id}` and complete rendered numeric fields on
+the visible firmware page, including zero, bracketing
 the reads with stable API deployment revisions. A receipt-only PR is recorded
 as deployed with no changed count, not as a fresh count. The box-local state
 defaults to `~/.local/state/esp-atlas/jr-popularity.json` and must survive
@@ -88,7 +94,8 @@ Offline tests cover the 146-candidate six-batch path, Nyan exclusion,
 duplicate/budget accounting, stable ID and count failures, below-floor
 deferral, partial GraphQL data, 200/403/429 rate errors with damaged bodies,
 cooldown, pinned-head pending PR replacement, remote auto-merge disarming,
-quota boundaries, recurring delivery transitions and popularity-only pathspec.
+quota boundaries, exact page-count parsing, fair recurring delivery transitions,
+merged supersession and popularity-only pathspec.
 Catalog validation is required. The macOS local full Jr suite has unrelated
 fixture constraints (local HTTPS and Linux `bwrap`/preexec tests); required
 Linux CI is the authoritative gate for those. No paid inference test is run.
