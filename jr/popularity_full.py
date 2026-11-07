@@ -11,6 +11,7 @@ import math
 import re
 from collections import Counter
 from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 import yaml
@@ -80,7 +81,12 @@ def _cooldown_until(now: datetime, headers: dict[str, str], quota: dict | None =
             if math.isfinite(seconds) and 0 < seconds <= 86400:
                 until = max(until, now + timedelta(seconds=seconds))
         except ValueError:
-            pass
+            try:
+                target = parsedate_to_datetime(retry)
+                if target.tzinfo and now < target <= now + timedelta(days=1):
+                    until = max(until, target.astimezone(timezone.utc))
+            except (TypeError, ValueError, OverflowError):
+                pass
     reset = headers.get("x-ratelimit-reset")
     if reset:
         try:

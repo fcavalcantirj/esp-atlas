@@ -178,6 +178,11 @@ def test_http_200_rate_error_envelope_with_no_data_stops_first_batch(tmp_path):
     assert result.items[0]["cooldown_until"] >= "2026-11-07T03:00:00"
 
 
+def test_valid_retry_after_http_date_extends_cooldown():
+    until = full._cooldown_until(NOW, {"retry-after": "Sat, 07 Nov 2026 05:00:00 GMT"})
+    assert until.isoformat() == "2026-11-07T05:00:00+00:00"
+
+
 def test_identity_drift_negative_counts_and_floor_preserve_last_good(tmp_path):
     a = _record(tmp_path, "bad-id", "owner/repo-001", {"stars": 30, "forks": 3,
                 "github_repo_id": 999, "github_as_of": "2026-11-06T02:00:00Z"})
