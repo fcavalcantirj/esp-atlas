@@ -1,0 +1,767 @@
+{
+ "calls": 8,
+ "errors": 0,
+ "fetched": "2026-11-07",
+ "notes": [],
+ "ref": "main",
+ "repo": "PlummersSoftwareLLC/NightDriverStrip",
+ "resolved": {
+  "boards": [
+   "adafruit-feather-esp32-s3-tft",
+   "esp32-s3-devkitc-1",
+   "heltec-wifi-kit-32-v3",
+   "heltec-wifi-lora-32-v3",
+   "lolin-d32-pro",
+   "m5stack-core2",
+   "m5stick-c"
+  ],
+  "socs": [
+   "esp32",
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "esp-wrover-kit",
+   "esp32-s3-devkitc-1",
+   "esp32dev",
+   "heltec_wifi_kit_32",
+   "heltec_wifi_kit_32_v2",
+   "lilygo-t-amoled",
+   "m5stack-tab5-p4",
+   "tinypico"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "installer_strip",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 95,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L95"
+  },
+  {
+   "extra": {
+    "env": "installer_matrix",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 353,
+   "rank": 2,
+   "soc": null,
+   "token": "esp-wrover-kit",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L353"
+  },
+  {
+   "extra": {
+    "env": "installer_m5",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 249,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L249"
+  },
+  {
+   "extra": {
+    "env": "demo",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 95,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L95"
+  },
+  {
+   "extra": {
+    "env": "demo_v2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 95,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L95"
+  },
+  {
+   "extra": {
+    "env": "demo_v3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 95,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L95"
+  },
+  {
+   "extra": {
+    "env": "m5demo",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 231,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L231"
+  },
+  {
+   "extra": {
+    "env": "m5plusdemo",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 249,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L249"
+  },
+  {
+   "extra": {
+    "env": "m5plusdemo_sk6812",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 249,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L249"
+  },
+  {
+   "extra": {
+    "env": "m5plusdemo_v2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 728,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L728"
+  },
+  {
+   "extra": {
+    "env": "m5plusdemo_v3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 735,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L735"
+  },
+  {
+   "extra": {
+    "env": "m5plusdemo_s3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 266,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L266"
+  },
+  {
+   "extra": {
+    "env": "pdpwopr",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 249,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L249"
+  },
+  {
+   "extra": {
+    "env": "m5stackdemo",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 294,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-core2",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L294"
+  },
+  {
+   "extra": {
+    "env": "heltecdemo",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 151,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_kit_32",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L151"
+  },
+  {
+   "extra": {
+    "env": "heltecv2demo",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 161,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_kit_32_v2",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L161"
+  },
+  {
+   "extra": {
+    "env": "heltecv3demo",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 175,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_kit_32_V3",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L175"
+  },
+  {
+   "extra": {
+    "env": "heltecdemoapa102",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 175,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_kit_32_V3",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L175"
+  },
+  {
+   "extra": {
+    "env": "helteclorav3demo",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 194,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_lora_32_V3",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L194"
+  },
+  {
+   "extra": {
+    "env": "lilygo-tdisplay-s3-demo",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 361,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L361"
+  },
+  {
+   "extra": {
+    "env": "demo_amoled",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 372,
+   "rank": 2,
+   "soc": null,
+   "token": "lilygo-t-amoled",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L372"
+  },
+  {
+   "extra": {
+    "env": "ledstrip",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 151,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_wifi_kit_32",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L151"
+  },
+  {
+   "extra": {
+    "env": "ledstrip_feather",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 111,
+   "rank": 2,
+   "soc": null,
+   "token": "adafruit_feather_esp32s3_tft",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L111"
+  },
+  {
+   "extra": {
+    "env": "ledstrip_feather_hexagon",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 111,
+   "rank": 2,
+   "soc": null,
+   "token": "adafruit_feather_esp32s3_tft",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L111"
+  },
+  {
+   "extra": {
+    "env": "trimlight",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 111,
+   "rank": 2,
+   "soc": null,
+   "token": "adafruit_feather_esp32s3_tft",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L111"
+  },
+  {
+   "extra": {
+    "env": "ledstrip_feather_wrover",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 342,
+   "rank": 2,
+   "soc": null,
+   "token": "esp-wrover-kit",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L342"
+  },
+  {
+   "extra": {
+    "env": "ledstriplite",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 95,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L95"
+  },
+  {
+   "extra": {
+    "env": "ledstrip_pico",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 334,
+   "rank": 2,
+   "soc": null,
+   "token": "tinypico",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L334"
+  },
+  {
+   "extra": {
+    "env": "spectrum",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 240,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L240"
+  },
+  {
+   "extra": {
+    "env": "spectrum2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 249,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L249"
+  },
+  {
+   "extra": {
+    "env": "spectrum2_v2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 249,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L249"
+  },
+  {
+   "extra": {
+    "env": "spectrum2_v3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1099,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L1099"
+  },
+  {
+   "extra": {
+    "env": "helmet",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 240,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L240"
+  },
+  {
+   "extra": {
+    "env": "spectrum_elecrow",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 321,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L321"
+  },
+  {
+   "extra": {
+    "env": "spectrumlite",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 231,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L231"
+  },
+  {
+   "extra": {
+    "env": "spectrum_wrover_kit",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 342,
+   "rank": 2,
+   "soc": null,
+   "token": "esp-wrover-kit",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L342"
+  },
+  {
+   "extra": {
+    "env": "mesmerizer",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 353,
+   "rank": 2,
+   "soc": null,
+   "token": "esp-wrover-kit",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L353"
+  },
+  {
+   "extra": {
+    "env": "mesmerizer_tab",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 306,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-tab5-p4",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L306"
+  },
+  {
+   "extra": {
+    "env": "mesmerizer_lolin",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 211,
+   "rank": 2,
+   "soc": null,
+   "token": "lolin_d32_pro",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L211"
+  },
+  {
+   "extra": {
+    "env": "mesmerizer_devkit",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 95,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L95"
+  },
+  {
+   "extra": {
+    "env": "mesmerizer_devkit_s3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 1262,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L1262"
+  },
+  {
+   "extra": {
+    "env": "laserline",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 240,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L240"
+  },
+  {
+   "extra": {
+    "env": "lantern",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 231,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L231"
+  },
+  {
+   "extra": {
+    "env": "pdpgrid",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 249,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L249"
+  },
+  {
+   "extra": {
+    "env": "treeset",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 95,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L95"
+  },
+  {
+   "extra": {
+    "env": "chieftain",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 334,
+   "rank": 2,
+   "soc": null,
+   "token": "tinypico",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L334"
+  },
+  {
+   "extra": {
+    "env": "umbrella",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 95,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L95"
+  },
+  {
+   "extra": {
+    "env": "hexagon",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 95,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L95"
+  },
+  {
+   "extra": {
+    "env": "generic",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 95,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L95"
+  },
+  {
+   "extra": {
+    "env": "ttgo",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 95,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L95"
+  },
+  {
+   "extra": {
+    "env": "xmastrees",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 240,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L240"
+  },
+  {
+   "extra": {
+    "env": "insulators",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 240,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L240"
+  },
+  {
+   "extra": {
+    "env": "single_insulator",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 240,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L240"
+  },
+  {
+   "extra": {
+    "env": "magicmirror",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 231,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L231"
+  },
+  {
+   "extra": {
+    "env": "atomlight",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 95,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32dev",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L95"
+  },
+  {
+   "extra": {
+    "env": "spirallamp",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 240,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L240"
+  },
+  {
+   "extra": {
+    "env": "spirallamp_rgbw",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 249,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L249"
+  },
+  {
+   "extra": {
+    "env": "platecover",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 240,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L240"
+  },
+  {
+   "extra": {
+    "env": "fanset",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 240,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L240"
+  },
+  {
+   "extra": {
+    "env": "wroverkit",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 342,
+   "rank": 2,
+   "soc": null,
+   "token": "esp-wrover-kit",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L342"
+  },
+  {
+   "extra": {
+    "env": "cube",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 240,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stick-c",
+   "url": "https://github.com/PlummersSoftwareLLC/NightDriverStrip/blob/main/platformio.ini#L240"
+  }
+ ]
+}
