@@ -6,9 +6,11 @@ url: https://github.com/kisaragi-mochi/stackchan-mcp
 category: multi
 maintainer: kisaragi-mochi
 popularity:
-  stars: 139
-  forks: 60
-  as_of: '2026-09-20'
+  stars: 176
+  forks: 68
+  as_of: '2026-11-07'
+  github_repo_id: 1226065142
+  github_as_of: '2026-11-07T09:00:55Z'
 socs:
 - esp32-s3
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/kisaragi-mochi/stackchan-mcp
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/kisaragi-mochi/stackchan-mcp
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/kisaragi-mochi/stackchan-mcp
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/kisaragi-mochi/stackchan-mcp
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/kisaragi-mochi/stackchan-mcp
+  verified: '2026-11-07'
 summary: "Stackchan\u2011MCP is a Model Context Protocol bridge that enables LLM clients\
   \ to control an M5Stack official StackChan (CoreS3) device\u2014driving head servos,\
   \ capturing photos, reading touch sensors, switching avatar expressions, and accessing\
