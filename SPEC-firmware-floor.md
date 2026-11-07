@@ -213,6 +213,10 @@ overwrite a newer lease. Successful cache is fresh for one hour and retained for
 seven days as a stale fallback. HTTP 403/429 starts a global cooldown from valid
 `Retry-After`/rate-reset headers, or at least 60 seconds without usable headers.
 404/5xx/network failures keep the previous snapshot and set a per-repo backoff.
+Malformed, nonfinite, expired or out-of-range 403/429 headers cannot skip the global
+cooldown; the fallback is at least 60 seconds. The database clock is sampled only
+after the singleton and repository locks have been acquired, so a lock wait cannot
+extend an expired lease or charge the wrong UTC hour.
 Missing/unavailable storage means no GitHub call. SQL and concurrent-instance,
 lease-expiry, hour-boundary, identity, outage, cooldown, and failed-publish tests
 are required before release. The feature is not live until the store, source-validated

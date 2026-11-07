@@ -1,6 +1,7 @@
 """Offline contract checks for the optional on-view GitHub count overlay."""
 import asyncio
 import json
+import time
 from datetime import datetime, timezone
 
 import pytest
@@ -169,6 +170,34 @@ def test_403_retry_after_header_controls_global_cooldown():
     response = run(store, fetch)
     assert response["retry_after_seconds"] == 120
     assert store.failures[0][2]["global_cooldown"] == 120
+
+
+@pytest.mark.parametrize("headers", [
+    {"retry-after": "Infinity"},
+    {"x-ratelimit-reset": "Infinity"},
+    {"retry-after": "NaN", "x-ratelimit-reset": "NaN"},
+    {"retry-after": "1e309"},
+    {"retry-after": "999999999999999999999"},
+    {"x-ratelimit-reset": "999999999999999999999"},
+    {"retry-after": "-1", "x-ratelimit-reset": "-1"},
+])
+@pytest.mark.parametrize("status", [403, 429])
+def test_bad_rate_headers_still_start_a_global_cooldown(status, headers):
+    store = Store()
+    async def fetch(_):
+        return status, b"{}", headers
+    response = run(store, fetch)
+    assert response["outcome"] == "unavailable" and response["retry_after_seconds"] == 60
+    assert store.failures[0][2]["global_cooldown"] == 60
+
+
+def test_valid_reset_header_survives_an_invalid_retry_after():
+    store = Store()
+    async def fetch(_):
+        return 429, b"{}", {"Retry-After": "Infinity", "X-RateLimit-Reset": str(time.time() + 180)}
+    response = run(store, fetch)
+    assert 175 <= response["retry_after_seconds"] <= 180
+    assert store.failures[0][2]["global_cooldown"] == response["retry_after_seconds"]
 
 
 @pytest.mark.parametrize("phase", ["connect", "body"])

@@ -25,6 +25,7 @@ _STALE_AGE = timedelta(days=7)
 _LEASE = timedelta(seconds=10)
 _HOURLY_BUDGET = 20
 _FETCH_DEADLINE = 5
+_MAX_COOLDOWN_SECONDS = 24 * 60 * 60
 
 
 @dataclass(frozen=True)
@@ -139,6 +140,11 @@ def _seconds(until: datetime | None, now: datetime) -> int | None:
     return max(1, math.ceil((until - now).total_seconds())) if until and until > now else None
 
 
+def _db_now(conn) -> datetime:
+    """Clock from the locked primary, sampled after all coordinator locks."""
+    return conn.execute("SELECT clock_timestamp() AS t").fetchone()["t"]
+
+
 class PostgresPopularityStore:
     """One primary-only coordinator; claim commits before network I/O."""
 
@@ -160,7 +166,6 @@ class PostgresPopularityStore:
     def claim(self, identity: Identity, token: str) -> Claim:
         with self._connect() as conn, conn.transaction():
             conn.execute("SET LOCAL statement_timeout = '2000ms'")
-            now = conn.execute("SELECT clock_timestamp() AS t").fetchone()["t"]
             budget = conn.execute("SELECT * FROM popularity_refresh_budget WHERE singleton = true FOR UPDATE").fetchone()
             if budget is None:
                 raise RuntimeError("popularity coordinator migration missing")
@@ -168,6 +173,9 @@ class PostgresPopularityStore:
                          (identity.repo_id, identity.full_name))
             repo = conn.execute("SELECT * FROM popularity_refresh_repo WHERE repo_id = %s FOR UPDATE",
                                 (identity.repo_id,)).fetchone()
+            # Use the DB clock only after both locks: a lock wait can outlive a
+            # lease or cross an hour boundary.
+            now = _db_now(conn)
             snapshot = None
             if (repo["full_name"].casefold() == identity.full_name.casefold() and
                     _count(repo["stars"]) is not None and _count(repo["forks"]) is not None and
@@ -201,10 +209,10 @@ class PostgresPopularityStore:
             return None
         with self._connect() as conn, conn.transaction():
             conn.execute("SET LOCAL statement_timeout = '2000ms'")
-            now = conn.execute("SELECT clock_timestamp() AS t").fetchone()["t"]
             budget = conn.execute("SELECT * FROM popularity_refresh_budget WHERE singleton=true FOR UPDATE").fetchone()
             repo = conn.execute("SELECT * FROM popularity_refresh_repo WHERE repo_id=%s FOR UPDATE",
                                 (identity.repo_id,)).fetchone()
+            now = _db_now(conn)
             if not (budget and repo and budget["lease_token"] == token and repo["lease_token"] == token and
                     budget["lease_until"] > now and repo["lease_until"] > now and
                     repo["full_name"].casefold() == identity.full_name.casefold()):
@@ -217,10 +225,10 @@ class PostgresPopularityStore:
     def fail(self, identity: Identity, token: str, *, global_cooldown: int = 0, repo_backoff: int = 0) -> None:
         with self._connect() as conn, conn.transaction():
             conn.execute("SET LOCAL statement_timeout = '2000ms'")
-            now = conn.execute("SELECT clock_timestamp() AS t").fetchone()["t"]
             budget = conn.execute("SELECT * FROM popularity_refresh_budget WHERE singleton=true FOR UPDATE").fetchone()
             repo = conn.execute("SELECT * FROM popularity_refresh_repo WHERE repo_id=%s FOR UPDATE",
                                 (identity.repo_id,)).fetchone()
+            now = _db_now(conn)
             if global_cooldown:
                 until = now + timedelta(seconds=global_cooldown)
                 conn.execute("UPDATE popularity_refresh_budget SET cooldown_until=GREATEST(coalesce(cooldown_until, %s), %s) WHERE singleton=true",
@@ -253,20 +261,34 @@ async def fetch_github(identity: Identity):
 def _cooldown(headers: dict) -> int:
     now = datetime.now(timezone.utc)
     values = []
+
+    def valid_seconds(value):
+        if not isinstance(value, (int, float)) or not math.isfinite(value):
+            return None
+        return math.ceil(value) if 0 < value <= _MAX_COOLDOWN_SECONDS else None
+
+    headers = {str(k).lower(): v for k, v in headers.items()}
     retry = headers.get("retry-after")
     if retry:
         try:
-            values.append(max(1, math.ceil(float(retry))))
-        except ValueError:
+            seconds = valid_seconds(float(retry))
+            if seconds is not None:
+                values.append(seconds)
+        except (TypeError, ValueError, OverflowError):
             try:
-                values.append(max(1, math.ceil((parsedate_to_datetime(retry) - now).total_seconds())))
+                parsed = parsedate_to_datetime(retry)
+                seconds = valid_seconds((parsed - now).total_seconds()) if parsed.tzinfo else None
+                if seconds is not None:
+                    values.append(seconds)
             except (TypeError, ValueError, OverflowError):
                 pass
     reset = headers.get("x-ratelimit-reset")
     if reset:
         try:
-            values.append(max(1, math.ceil(float(reset) - now.timestamp())))
-        except ValueError:
+            seconds = valid_seconds(float(reset) - now.timestamp())
+            if seconds is not None:
+                values.append(seconds)
+        except (TypeError, ValueError, OverflowError):
             pass
     return max(values) if values else 60
 
