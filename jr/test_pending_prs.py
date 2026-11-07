@@ -632,13 +632,6 @@ def _newtool_index(vetoed, ledger_id=4242, repos=None, calls=None, **kw):
                      calls, {"n/newtool": 4242} if repos is None else repos)
 
 
-def _held_by_slug_only(idx, rid):
-    assert idx.complete, idx.gaps                                                  # no new gap: just no id
-    assert idx.hold("newtool").repo_id is None and not idx.by_repo_id
-    assert idx.match("newtool", rid).reason in ("already_proposed", "vetoed")      # the slug still holds
-    assert idx.match("renamedtool", rid) is None and idx.match("renamedtool", 4242) is None
-
-
 @pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
 def test_a_bot_same_repo_ledger_id_github_confirms_is_accepted(vetoed):
     calls = []
@@ -665,13 +658,15 @@ def test_a_ledger_id_altered_by_a_later_commit_is_a_gap(vetoed):
 @pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
 @pytest.mark.parametrize("author", [{"login": "mallory"}, {}, None], ids=["foreign", "no-login", "no-author"])
 def test_a_ledger_id_on_a_pr_not_authored_by_the_jr_bot_is_never_accepted(vetoed, author):
-    _held_by_slug_only(_newtool_index(vetoed, author=author), 4242)
+    """R2j: nor is its slug — a PR the Jr bot did not author is no tick PR and holds nothing."""
+    _contributes_nothing(_newtool_index(vetoed, author=author))
 
 
 @pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
 @pytest.mark.parametrize("cross", [True, None], ids=["fork", "unknown"])
 def test_a_ledger_id_on_a_fork_head_is_never_accepted(vetoed, cross):
-    _held_by_slug_only(_newtool_index(vetoed, isCrossRepository=cross), 4242)
+    """R2j: nor is its slug — a fork's (or an unknown head's) PR is no tick PR and holds nothing."""
+    _contributes_nothing(_newtool_index(vetoed, isCrossRepository=cross))
 
 
 def _answering(gh, route, stdout="", returncode=0):
@@ -722,3 +717,81 @@ def test_a_ledger_repo_that_is_no_plain_owner_and_name_is_never_asked_for_and_is
 def test_the_pr_lists_ask_for_the_author_and_whether_the_head_is_a_fork():
     fields = pending_prs.PR_LIST_FIELDS.split(",")
     assert "author" in fields and "isCrossRepository" in fields
+
+
+# --- R2j: eligibility is decided FIRST — only the Jr bot's own same-repository PR is a tick PR. A foreign
+#     author or a fork can name its branch jr/tick-* too: it holds nothing, its marker is never read, it
+#     opens no gap, and it can neither hold a victim firmware nor stop the tick ---
+
+VICTIM_RECIPE_FILES = ["data/recipes/m5cardputer__nightdriverstrip/recipe.md"]     # a changed recipe names the victim
+VICTIM_FIRMWARE_FILES = ["data/firmware/nightdriverstrip/firmware.md", "data/firmware/nightdriverstrip/signals.json"]
+INELIGIBLE = {"foreign-author": {"author": {"login": "mallory"}}, "no-login": {"author": {}},
+              "no-author": {"author": None}, "fork": {"isCrossRepository": True},
+              "fork-unknown": {"isCrossRepository": None},
+              "foreign-fork": {"author": {"login": "mallory"}, "isCrossRepository": True}}
+VICTIM_FILES = {"recipe": VICTIM_RECIPE_FILES, "firmware": VICTIM_FIRMWARE_FILES}
+
+
+def _listed(pr, vetoed):
+    gh = _gh([_closed(pr)] if vetoed else [])
+    return _load(gh, []) if vetoed else _load(gh, [pr])
+
+
+def _contributes_nothing(idx):
+    assert idx.complete, idx.gaps
+    assert len(idx) == 0 and not idx.by_repo_id
+    assert idx.match("nightdriverstrip", 1111) is None and idx.match("newtool", 4242) is None
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+@pytest.mark.parametrize("files", VICTIM_FILES.values(), ids=VICTIM_FILES.keys())
+@pytest.mark.parametrize("who", INELIGIBLE.values(), ids=INELIGIBLE.keys())
+def test_an_ineligible_jr_tick_pr_cannot_hold_a_victim_firmware(vetoed, files, who):
+    _contributes_nothing(_listed(_pr(1600, files, **who), vetoed))
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+@pytest.mark.parametrize("body", AMBIGUOUS_BODIES.values(), ids=AMBIGUOUS_BODIES.keys())
+@pytest.mark.parametrize("who", INELIGIBLE.values(), ids=INELIGIBLE.keys())
+def test_a_malformed_marker_on_an_ineligible_jr_tick_pr_leaves_the_index_complete(vetoed, body, who):
+    _contributes_nothing(_listed({**_pr(1600, VICTIM_RECIPE_FILES, **who), "body": body}, vetoed))
+
+
+@pytest.mark.parametrize("who", INELIGIBLE.values(), ids=INELIGIBLE.keys())
+def test_an_ineligible_jr_tick_pr_is_never_read_and_opens_no_gap(who):
+    """A file list that cannot be shown whole, an unreadable ledger: neither is read for it, neither is a gap."""
+    calls = []
+    pr = {**_pr(1600, WIDE + ["jr/proposed_ledger.json"], **who), "body": AMBIGUOUS_BODIES["unreadable"]}
+    idx = _load(_gh([], calls=calls, files_rc=1, ledgers={"oid1600": None}), [pr])
+    _contributes_nothing(idx)
+    assert not [c for c in calls if c[:1] == ("api",)], calls
+
+
+@pytest.mark.parametrize("who", INELIGIBLE.values(), ids=INELIGIBLE.keys())
+def test_an_ineligible_jr_tick_pr_cannot_stop_an_eligible_ones_hold(who):
+    bad = {**_pr(1600, VICTIM_RECIPE_FILES + NEWTOOL_PR_FILES, **who), "body": AMBIGUOUS_BODIES["conflicting-ids"]}
+    idx = _load(_gh([]), [bad, _pr(1601, NEWTOOL_PR_FILES)])
+    assert idx.complete, idx.gaps
+    assert idx.hold("newtool").pr_ref == "#1601" and idx.hold("nightdriverstrip") is None
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+@pytest.mark.parametrize("files", VICTIM_FILES.values(), ids=VICTIM_FILES.keys())
+def test_an_eligible_bot_same_repo_jr_tick_pr_still_holds_its_firmware(vetoed, files):
+    idx = _listed(_pr(1600, files), vetoed)
+    assert idx.complete, idx.gaps
+    assert idx.hold("nightdriverstrip").pr_ref == "#1600"
+    assert idx.match("nightdriverstrip", 1111).reason == ("vetoed" if vetoed else "already_proposed")
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+@pytest.mark.parametrize("body", AMBIGUOUS_BODIES.values(), ids=AMBIGUOUS_BODIES.keys())
+def test_a_malformed_marker_on_an_eligible_bot_same_repo_jr_tick_pr_still_fails_closed(vetoed, body):
+    idx = _listed({**_pr(1600, VICTIM_RECIPE_FILES), "body": body}, vetoed)
+    assert not idx.complete
+    assert any("#1600" in g and "identity marker" in g for g in idx.gaps), idx.gaps
+
+
+def test_an_eligible_bot_same_repo_jr_tick_pr_that_cannot_be_shown_whole_is_still_a_gap():
+    idx = _load(_gh([], files_rc=1), [_pr(1600, WIDE)])
+    assert not idx.complete and any("#1600" in g and "listed whole" in g for g in idx.gaps), idx.gaps
