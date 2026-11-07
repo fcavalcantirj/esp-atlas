@@ -73,6 +73,10 @@ class Refused(RuntimeError):
     """Fail closed: nothing is published (bad input, unreadable remote, invalid snapshot, lock)."""
 
 
+class MissingState(Refused):
+    """The branch tip carries no collector-state trailer (another producer or a hand edit)."""
+
+
 class LostRace(RuntimeError):
     """The branch moved after it was observed; the compare-and-swap refused the push."""
 
@@ -405,7 +409,8 @@ def read_state(git, commit: str) -> dict:
     message = _out(git, "log", "-1", "--format=%B", commit, what="reading collector state")
     lines = [line for line in message.splitlines() if line.startswith(STATE_TRAILER)]
     if not lines:
-        raise Refused(f"{commit[:12]} carries no collector state; restore it before publishing again")
+        raise MissingState(f"{commit[:12]} carries no collector state; restore it, or adopt the tip "
+                           "explicitly with --adopt-unstated-tip")
     try:
         state = json.loads(lines[-1][len(STATE_TRAILER):])
     except ValueError:
@@ -521,6 +526,19 @@ class Receipt:
         return "runtime-popularity: " + " ".join(parts)
 
 
+def _state_of(git, parent: str | None, *, adopt: bool) -> dict:
+    """The parent's collector state. Adopting a trailer-less tip (an explicit human opt-in) starts
+    from empty state; identity is still pinned by the adopted snapshot's own records."""
+    if not parent:
+        return _empty_state()
+    try:
+        return read_state(git, parent)
+    except MissingState:
+        if adopt:
+            return _empty_state()
+        raise
+
+
 def _write_local(out: Path, snapshot: dict) -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = out.with_name(out.name + ".tmp")
@@ -529,7 +547,8 @@ def _write_local(out: Path, snapshot: dict) -> None:
 
 
 def run(*, git, gh, remote: str, branch: str, catalog_ref: str, budget: Budget, now: datetime,
-        lock_path: Path, dry_run: bool = False, out: Path | None = None) -> Receipt:
+        lock_path: Path, dry_run: bool = False, out: Path | None = None,
+        adopt_unstated_tip: bool = False) -> Receipt:
     receipt = Receipt(status="refused", exit_code=2)
     try:
         with exclusive_lock(lock_path):
@@ -537,7 +556,7 @@ def run(*, git, gh, remote: str, branch: str, catalog_ref: str, budget: Budget, 
             receipt.catalog_revision = revision
             parent, previous = observe_branch(git, remote, branch, now=now)
             receipt.parent = parent
-            state = read_state(git, parent) if parent else _empty_state()
+            state = _state_of(git, parent, adopt=adopt_unstated_tip)
             cooldown = _utc(state["cooldown_until"])
             if cooldown and cooldown > now + MAX_COOLDOWN:
                 raise Refused(f"cooldown {state['cooldown_until']} is beyond any GitHub reset; state is suspect")
@@ -596,6 +615,8 @@ def main(argv=None) -> int:
     ap.add_argument("--lock-path", type=Path, default=DEFAULT_LOCK)
     ap.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT_SECONDS)
     ap.add_argument("--max-calls", type=int, default=DEFAULT_MAX_CALLS)
+    ap.add_argument("--adopt-unstated-tip", action="store_true",
+                    help="build on a branch tip that has no collector-state trailer (e.g. another producer's)")
     args = ap.parse_args(argv)
     budget = Budget(max_calls=args.max_calls, max_seconds=args.timeout)
     transport = default_gh
@@ -604,7 +625,7 @@ def main(argv=None) -> int:
                       gh=lambda *a: transport(*a, timeout=max(1.0, budget.remaining_seconds())),
                       remote=args.remote, branch=args.branch, catalog_ref=args.catalog_ref,
                       budget=budget, now=datetime.now(timezone.utc), lock_path=args.lock_path,
-                      dry_run=args.dry_run, out=args.out)
+                      dry_run=args.dry_run, out=args.out, adopt_unstated_tip=args.adopt_unstated_tip)
     except Exception as e:  # noqa: BLE001 — the receipt line is the contract, even on a crash
         receipt = Receipt(status="error", exit_code=1, reason=f"{type(e).__name__}: {e}")
     print(receipt.line())

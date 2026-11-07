@@ -765,3 +765,39 @@ def test_invalid_next_state_is_never_committed(repos, tmp_path, monkeypatch):
     monkeypatch.setattr(rp, "_next_state", lambda *a, **k: {"quarantine": {"Bad": 1}, "cooldown_until": None})
     receipt = _run(repos, tmp_path, FakeGH(GOOD))
     assert receipt.status == "refused" and _remote_ref(origin, rp.BRANCH) is None
+
+
+def _foreign_tip(repos) -> str:
+    """A valid popularity.json pushed by another producer, with no collector-state trailer."""
+    origin, work = repos
+    blob = _sh(work, "hash-object", "-w", "--stdin", input=json.dumps(_valid_for(work)))
+    tree = _sh(work, "mktree", input=f"100644 blob {blob}\tpopularity.json\n")
+    commit = _sh(work, "commit-tree", tree, "-m", "bootstrap by another producer")
+    _sh(work, "push", "-q", "origin", f"{commit}:refs/heads/{rp.BRANCH}")
+    return commit
+
+
+def test_unstated_tip_is_refused_unless_explicitly_adopted(repos, tmp_path):
+    origin, _ = repos
+    foreign = _foreign_tip(repos)
+    assert _run(repos, tmp_path, FakeGH(GOOD)).status == "refused"
+    assert _remote_ref(origin, rp.BRANCH) == foreign
+    adopted = _run(repos, tmp_path, FakeGH(GOOD), adopt_unstated_tip=True)
+    assert adopted.status == "published" and adopted.parent == foreign
+    assert _sh(origin, "rev-parse", f"{rp.BRANCH}^") == foreign
+    assert rp.read_state(rp.make_git(repos[1]), _remote_ref(origin, rp.BRANCH))["quarantine"] == {}
+
+
+def test_adoption_still_pins_identity_from_the_adopted_snapshot(repos, tmp_path):
+    _foreign_tip(repos)  # alpha recorded with id 10
+    receipt = _run(repos, tmp_path, FakeGH({**GOOD, "octo/alpha": node("Octo/Alpha", 11, 9, 9)}),
+                   adopt_unstated_tip=True)
+    assert receipt.quarantined_ids == ["alpha"]
+
+
+def test_cli_adopt_flag(repos, tmp_path, monkeypatch, capsys):
+    _, work = repos
+    _foreign_tip(repos)
+    monkeypatch.setattr(rp, "default_gh", FakeGH(GOOD))
+    code = rp.main(["--repo", str(work), "--adopt-unstated-tip", "--lock-path", str(tmp_path / "c.lock")])
+    assert code == 0 and "status=published" in capsys.readouterr().out
