@@ -272,8 +272,8 @@ def _recover_publication_intent(path: Path, gh, git, *, index: pending_prs.Pendi
     return f"recovered exact popularity PR {recovered_url} at {sha}"
 
 
-def _pending_popularity_pr(gh) -> dict | None:
-    """Find at most one bot-owned AUTO popularity PR to update without rewriting."""
+def _open_popularity_prs(gh) -> list[dict]:
+    """Every open PR on a popularity branch, whoever authored it; raises when unreadable."""
     response = gh("pr", "list", "--state", "open", "--limit", "500", "--json",
                   "number,url,headRefName,headRefOid,baseRefName,labels,author,isDraft")
     if getattr(response, "returncode", 1) != 0:
@@ -284,10 +284,17 @@ def _pending_popularity_pr(gh) -> dict | None:
         raise RuntimeError("open popularity PR list unreadable") from None
     if not isinstance(prs, list):
         raise RuntimeError("open popularity PR list malformed")
-    pending = [pr for pr in prs if isinstance(pr, dict) and
-               str(pr.get("headRefName", "")).startswith(BRANCH_PREFIX) and
-               isinstance(pr.get("author"), dict) and
-               pr["author"].get("login") == publish.JR_LOGIN]
+    return [pr for pr in prs if isinstance(pr, dict) and
+            str(pr.get("headRefName", "")).startswith(BRANCH_PREFIX)]
+
+
+def _bot_authored(pr: dict) -> bool:
+    return isinstance(pr.get("author"), dict) and pr["author"].get("login") == publish.JR_LOGIN
+
+
+def _select_pending(prs: list[dict]) -> dict | None:
+    """At most one bot-owned AUTO popularity PR among the open popularity PRs."""
+    pending = [pr for pr in prs if _bot_authored(pr)]
     if len(pending) > 1:
         raise RuntimeError(f"{len(pending)} pending bot popularity PRs need review")
     if not pending:
@@ -300,6 +307,89 @@ def _pending_popularity_pr(gh) -> dict | None:
             not isinstance(pr.get("headRefOid"), str)):
         raise RuntimeError("pending popularity PR is not an AUTO main-base bot PR")
     return pr
+
+
+def _pending_popularity_pr(gh) -> dict | None:
+    """Find at most one bot-owned AUTO popularity PR to update without rewriting."""
+    return _select_pending(_open_popularity_prs(gh))
+
+
+def _disarm_failure(seen: list, sha: str) -> str:
+    """Why publish._ensure_disarmed refused, from the last gh exchange it made."""
+    args, response = seen[-1] if seen else ((), None)
+    if args[:2] == ("pr", "merge"):
+        return "disable-auto failed"
+    try:
+        state = json.loads(getattr(response, "stdout", "") or "")
+    except (TypeError, ValueError):
+        state = None
+    if getattr(response, "returncode", 1) != 0 or not isinstance(state, dict):
+        return "merge state unreadable"
+    if state.get("state") != "OPEN":
+        return f"state {state.get('state')} not OPEN"
+    if state.get("headRefOid") != sha:
+        return "head moved since lookup"
+    return "readback still armed"
+
+
+def _disarm_pinned(url: str, sha: str, gh) -> str:
+    """Disable auto-merge on the pinned head via publish._ensure_disarmed, read back."""
+    seen = []
+
+    def recording(*args):
+        response = gh(*args)
+        seen.append((args, response))
+        return response
+
+    if publish._ensure_disarmed(url, sha, recording):
+        return "verified"
+    return "failed: " + _disarm_failure(seen, sha)
+
+
+def _disarm_outcome(state_file: Path, gh, *, dry_run: bool) -> tuple[str, str]:
+    """(outcome, detail) for the open popularity PRs a HOLD leaves behind.
+
+    Only the bot AUTO popularity PR whose exact head this runner pinned is
+    disarmed; an unpinned, human, ambiguous or otherwise unverifiable PR is
+    never modified, so the hold cannot be called safe."""
+    try:
+        prs = _open_popularity_prs(gh)
+    except Exception as exc:
+        return f"failed: {exc}", ""
+    others = [pr.get("url") for pr in prs if not _bot_authored(pr)]
+    not_bot = f"popularity PR by another author not modified: {', '.join(map(str, others))}"
+    try:
+        pending = _select_pending(prs)
+    except Exception as exc:
+        return "unverified: not modified", str(exc)
+    if pending is None:
+        return ("unverified: not modified", not_bot) if others else ("none", "")
+    url = pending["url"]
+    if not _pinned_head(state_file, pending):
+        return "unverified: not modified", f"{url} head lacks matching local bot publication pin"
+    if dry_run:
+        return f"would-disarm {url}", ""
+    outcome = _disarm_pinned(url, pending["headRefOid"], gh)
+    if outcome == "verified" and others:
+        return "unverified: not modified", f"{url} disarm verified; {not_bot}"
+    return outcome, url
+
+
+def _disarm_on_hold(result: dict, state_file: Path, gh, *, dry_run: bool) -> dict:
+    """Every HOLD return: no pinned bot popularity PR may stay armed while held.
+
+    Records result['disarm'] and result['hold_safe'] and says on the HOLD
+    line whether the hold is safe. Never raises."""
+    try:
+        outcome, detail = _disarm_outcome(state_file, gh, dry_run=dry_run)
+    except Exception as exc:
+        outcome, detail = f"failed: {type(exc).__name__}: {exc}", ""
+    result["disarm"] = outcome
+    result["hold_safe"] = outcome in ("none", "verified")
+    result["reason"] += (f"; disarm {outcome}" + (f" ({detail})" if detail else "") +
+                         ("; hold safe" if result["hold_safe"] else
+                          "; HOLD UNSAFE: a popularity PR may still auto-merge"))
+    return result
 
 
 def load_pending(gh, now: datetime, slug: str) -> pending_prs.PendingIndex | None:
@@ -383,12 +473,16 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
         if slug is None:
             remote = git("remote", "get-url", "origin")
             slug = publish.owner_repo(getattr(remote, "stdout", "") or "")
-        pending_index = load_pending(observed_gh, now, slug)
+        try:
+            pending_index = load_pending(observed_gh, now, slug)
+            gaps = ("; ".join(pending_index.gaps) if pending_index is not None
+                    else "Jr PR list unreadable")
+        except Exception as exc:
+            pending_index, gaps = None, f"{type(exc).__name__}: {exc}"
         if pending_index is None or not pending_index.complete:
-            gaps = "; ".join(pending_index.gaps) if pending_index is not None else "Jr PR list unreadable"
             result["reason"] = ("pending-PR inventory incomplete, nothing queried, staged or published: "
                                 + gaps)
-            return result
+            return _disarm_on_hold(result, state_file, observed_gh, dry_run=dry_run)
         if not dry_run:
             try:
                 recovered = _recover_publication_intent(state_file, observed_gh, git,
@@ -398,10 +492,10 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
             except RecoveryDeferred as exc:
                 result["recovery"] = f"deferred: {exc}"
                 result["reason"] = f"publication recovery deferred: {exc}; preserve intent and branch for review"
-                return result
+                return _disarm_on_hold(result, state_file, observed_gh, dry_run=dry_run)
             except Exception as exc:
                 result["reason"] = f"publication recovery held: {type(exc).__name__}: {exc}"
-                return result
+                return _disarm_on_hold(result, state_file, observed_gh, dry_run=dry_run)
             try:
                 result["delivery"] = popularity_delivery.reconcile(
                     state_file, load_state=_load_state, write_state=_write_state,
@@ -417,7 +511,7 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
         result["pending_pr"] = pending.get("url") if pending else None
         if pending and not _pinned_head(state_file, pending):
             result["reason"] = "pending popularity PR head lacks matching local bot publication pin; preserve branch for review"
-            return result
+            return _disarm_on_hold(result, state_file, observed_gh, dry_run=dry_run)
         if clock() - overall_started > MAX_RUN_SECONDS - MAX_SECONDS - GUARD_TIMEOUT - PUBLICATION_RESERVE:
             result["reason"] = "overall popularity runtime reserve exhausted before source pass; eligible records deferred"
             return result
@@ -435,7 +529,7 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
                         "changes unreadable" if held is None else
                         "already changes a record an open Jr tick PR holds (" + ", ".join(held) + ")")
                         + "; preserve branch for review")
-                    return result
+                    return _disarm_on_hold(result, state_file, observed_gh, dry_run=dry_run)
             if not publish.is_clean(wt, git=git):
                 result["reason"] = "fresh popularity worktree is not clean"
                 return result

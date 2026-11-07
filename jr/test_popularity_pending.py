@@ -222,7 +222,10 @@ def test_incomplete_pending_inventory_fails_closed_before_any_source_or_publicat
     assert not result["ok"] and result["stage"] is None and result["publish"] is None
     assert "pending-PR inventory" in result["reason"]
     assert gh.queries == [] and published == []
-    assert not {"graphql", "protection", "worktree", "delivery", "publish", "popularity_pr_lookup"} & set(events)
+    assert not {"graphql", "protection", "worktree", "delivery", "publish"} & set(events)
+    # the HOLD's only later step is the read-only disarm lookup: no bot popularity PR, a safe hold
+    assert events[-1] == "popularity_pr_lookup" and events.count("popularity_pr_lookup") == 1
+    assert result["disarm"] == "none" and result["hold_safe"] is True
     assert not any(call[:2] == ("pr", "create") for call in gh.calls)
     assert popularity_run._load_state(state_file).get("publication_intent")   # recovery never ran
     assert held.read_bytes() == before
@@ -381,7 +384,8 @@ def test_pending_load_raising_fails_closed_before_any_effect(tmp_path, effects, 
     result = _run(tmp_path, gh)
     assert not result["ok"] and result["stage"] is None and "boom" in result["reason"]
     assert gh.queries == [] and published == []
-    assert not {"protection", "worktree", "delivery", "publish", "popularity_pr_lookup"} & set(events)
+    assert not {"protection", "worktree", "delivery", "publish"} & set(events)
+    assert events == ["open_inventory", "popularity_pr_lookup"] and result["disarm"] == "none"   # read-only disarm lookup
 
 
 def test_incomplete_for_another_reason_does_not_blame_a_tick_pr(tmp_path, effects):

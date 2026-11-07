@@ -256,5 +256,5 @@ def test_pending_load_raising_is_an_unreadable_inventory_hold_that_disarms(tmp_p
     result = popularity_run.run(now=NOW, gh=gh, git=_git(), guard=lambda root: {"ok": True},
                                 repo_slug="o/r", state_file=tmp_path / "state.json")
     assert "pending-PR inventory" in result["reason"] and "boom" in result["reason"]
-    assert gh.calls == [OPEN_INVENTORY, CLOSED_INVENTORY, LOOKUP, VIEW, DISABLE, VIEW]
+    assert gh.calls == [OPEN_INVENTORY, LOOKUP, VIEW, DISABLE, VIEW]   # load raised before its closed list
     _assert_reported(result, "verified")
