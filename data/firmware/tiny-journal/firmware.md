@@ -8,9 +8,11 @@ maintainer: joejee90
 capabilities:
 - ble
 popularity:
-  stars: 43
+  stars: 46
   forks: 4
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 1106575137
+  github_as_of: '2026-11-07T01:00:56Z'
 socs:
 - esp32-s3
 sources:
@@ -23,6 +25,18 @@ sources:
 - field: summary
   url: https://github.com/joejee90/Tiny-Journal
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/joejee90/Tiny-Journal
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/joejee90/Tiny-Journal
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/joejee90/Tiny-Journal
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/joejee90/Tiny-Journal
+  verified: '2026-11-07'
 summary: "Tiny Journal is a lightweight journaling firmware for the M5Stack Cardputer\
   \ that lets you create, edit, and organize plain\u2011text (and audio) notes stored\
   \ on the device\u2019s SD card, with optional Wi\u2011Fi sync to Google Drive and\

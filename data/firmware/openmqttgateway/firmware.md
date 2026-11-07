@@ -25,9 +25,11 @@ requires:
   why: the BLE-to-MQTT gateway build decodes ~100 BLE sensor types
   board_signal: radio-ble
 popularity:
-  stars: 4095
-  forks: 906
-  as_of: '2026-09-20'
+  stars: 4117
+  forks: 912
+  as_of: '2026-11-07'
+  github_repo_id: 68460326
+  github_as_of: '2026-11-07T01:00:56Z'
 sources:
 - field: '*'
   url: https://github.com/1technophile/OpenMQTTGateway
@@ -44,6 +46,18 @@ sources:
 - field: summary
   url: https://github.com/1technophile/OpenMQTTGateway
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/1technophile/OpenMQTTGateway
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/1technophile/OpenMQTTGateway
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/1technophile/OpenMQTTGateway
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/1technophile/OpenMQTTGateway
+  verified: '2026-11-07'
 summary: OpenMQTTGateway is firmware that turns compatible boards and components (e.g.,
   sensors, RF/IR/BLE modules) into MQTT gateways, enabling integration of a wide range
   of devices with MQTT brokers.
