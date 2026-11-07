@@ -282,7 +282,7 @@ def test_aborts_when_a_tick_pr_is_open_too_long(tmp_path):
 
 def test_recent_tick_pr_does_not_abort(tmp_path, wt_dir):
     recent = (NOW - timedelta(minutes=30)).isoformat().replace("+00:00", "Z")
-    prs = json.dumps([{"number": 9, "createdAt": recent, "headRefName": "jr/tick-20260905-0337"}])
+    prs = json.dumps([{"number": 9, "createdAt": recent, "headRefName": "jr/tick-20260905-0337", "files": [], "changedFiles": 0}])
     r = run(git=git_ok(wt_dir), gh=gh_ok(prs=prs))
     assert not r.aborted
 
@@ -770,13 +770,15 @@ BOOKKEEPING = ["jr/proposed_ledger.json", "docs/telemetry/data-trend.jsonl", "do
 
 def _tick_pr(number, created, mergeable="MERGEABLE"):
     return {"number": number, "createdAt": created, "headRefName": f"jr/tick-20260905-{number:04d}",
-            "mergeable": mergeable}
+            "mergeable": mergeable, "files": [], "changedFiles": 0}
 
 
 def gh_with_prs(prs, files=None, view_rc=0, close_rc=0, **kw):
-    """gh_ok plus scripted `pr view N --json files` and `pr close N` answers per PR number."""
-    base = gh_ok(prs=json.dumps(prs), **kw)
+    """gh_ok plus scripted `pr view N --json files` and `pr close N` answers per PR number; `pr list` lists them too."""
     files = files or {}
+    listed = [{**pr, "files": [{"path": p} for p in files[pr["number"]]], "changedFiles": len(files[pr["number"]])}
+              if pr.get("number") in files else pr for pr in prs]
+    base = gh_ok(prs=json.dumps(listed), **kw)
 
     def fn(*args):
         if args[:2] == ("pr", "view") and args[3:] == ("--json", "files"):

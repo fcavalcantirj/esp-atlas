@@ -18,6 +18,12 @@ data/recipes/<board>__<id>/… paths. A veto rejects what the PR PROPOSED for an
 new firmware ships one) or mapped signals; a closed PR that only rewrote a catalogued record's
 firmware.md (a popularity refresh) vetoes nothing for it. Nothing is persisted: the index is rebuilt every tick, so a
 merge or a lapsed veto releases the firmware on its own.
+
+An index that may miss a hold is as blind as an unreadable one, so it names its gaps and the tick
+fails closed on any: an open or closed list that returned its full limit (it may be cut), or a held
+tick PR whose file list cannot be shown whole. `gh pr list --json files` carries only a PR's first
+100 files, so a tick PR whose `files` fall short of its `changedFiles` is re-read through the REST
+listing, paginated, and must then match its count exactly.
 """
 from __future__ import annotations
 
@@ -28,6 +34,8 @@ from datetime import datetime, timedelta, timezone
 
 VETO_TTL_DAYS = 30        # the tick PR body's promise: "Close = veto … does not propose it again for 30 days"
 CLOSED_PR_LIMIT = 200     # closed-unmerged tick PRs inside the TTL (11 in the 30 days to 2026-11-07)
+REST_FILES_CAP = 3000     # GitHub's REST pulls/<n>/files lists at most this many files of a PR
+PR_LIST_FIELDS = "files,changedFiles"   # both lists: changedFiles proves a listed `files` whole
 TICK_BRANCH_PREFIX = "jr/tick-"
 OPEN, VETOED = "open", "vetoed"
 
@@ -58,13 +66,17 @@ class Hold:
 @dataclass(frozen=True)
 class PendingIndex:
     holds: dict = field(default_factory=dict)     # firmware id -> Hold
-    truncated: bool = False                       # the closed list hit CLOSED_PR_LIMIT: older vetoes unseen
+    gaps: tuple = ()                              # why a hold may be unseen; any gap = fail closed
 
     def hold(self, firmware_id: str | None) -> Hold | None:
         return self.holds.get(firmware_id) if firmware_id else None
 
     def __len__(self) -> int:
         return len(self.holds)
+
+    @property
+    def complete(self) -> bool:
+        return not self.gaps
 
 
 EMPTY = PendingIndex()
@@ -119,7 +131,7 @@ def _veto_until(pr: dict, now: datetime) -> datetime | None:
     return until if until > now else None
 
 
-def build(open_prs: list, closed_prs: list, now: datetime, truncated: bool = False) -> PendingIndex:
+def build(open_prs: list, closed_prs: list, now: datetime, gaps: tuple = ()) -> PendingIndex:
     """The index over open tick PRs and closed-unmerged ones still inside VETO_TTL_DAYS. An open PR
     wins over a veto of the same firmware; among vetoes, the one that lapses last."""
     holds: dict = {}
@@ -134,7 +146,7 @@ def build(open_prs: list, closed_prs: list, now: datetime, truncated: bool = Fal
         if _is_tick_pr(pr):
             for fid in firmware_ids(_paths(pr)):
                 holds[fid] = Hold(fid, f"#{pr.get('number')}", OPEN)
-    return PendingIndex(holds, truncated)
+    return PendingIndex(holds, tuple(gaps))
 
 
 def list_closed_tick_prs(gh, now: datetime) -> list | None:
@@ -143,7 +155,7 @@ def list_closed_tick_prs(gh, now: datetime) -> list | None:
     since = (now - timedelta(days=VETO_TTL_DAYS)).date().isoformat()
     p = gh("pr", "list", "--state", "closed", "--limit", str(CLOSED_PR_LIMIT),
            "--search", f"is:unmerged closed:>={since}",
-           "--json", "number,headRefName,closedAt,mergedAt,files")
+           "--json", f"number,headRefName,closedAt,mergedAt,{PR_LIST_FIELDS}")
     if getattr(p, "returncode", 1) != 0:
         return None
     try:
@@ -153,8 +165,80 @@ def list_closed_tick_prs(gh, now: datetime) -> list | None:
     return [pr for pr in prs if isinstance(pr, dict)] if isinstance(prs, list) else None
 
 
-def load(gh, open_prs: list, now: datetime) -> PendingIndex | None:
-    """The tick's index from the preflight's open-PR list plus the closed-unmerged ones; None when
-    GitHub is unreadable — the caller fails closed (a tick blind to its PRs must not open another)."""
+def _json_pages(text: str) -> list | None:
+    """`gh api --paginate` output: JSON arrays printed back to back, flattened; None when unreadable
+    (empty output included: an empty listing is `[]`)."""
+    decoder, entries, i, text = json.JSONDecoder(), [], 0, text.strip()
+    if not text:
+        return None
+    while i < len(text):
+        try:
+            page, i = decoder.raw_decode(text, i)
+        except ValueError:
+            return None
+        if not isinstance(page, list):
+            return None
+        entries += page
+        while i < len(text) and text[i].isspace():
+            i += 1
+    return entries
+
+
+def _rest_paths(gh, slug: str, number) -> list[str] | None:
+    """Every changed path of PR `number` from the paginated REST listing, or None when unreadable."""
+    p = gh("api", f"repos/{slug}/pulls/{number}/files?per_page=100", "--paginate")
+    entries = _json_pages(getattr(p, "stdout", "") or "") if getattr(p, "returncode", 1) == 0 else None
+    if entries is None or not all(isinstance(e, dict) and isinstance(e.get("filename"), str) for e in entries):
+        return None
+    return [e["filename"] for e in entries]
+
+
+def _whole(gh, slug: str, pr: dict) -> dict | None:
+    """`pr` with its whole file list, or None when it cannot be shown whole. The listed `files` are
+    whole when they number exactly `changedFiles`; otherwise the REST listing must."""
+    count = pr.get("changedFiles")
+    if type(count) is not int or count < 0:
+        return None
+    if isinstance(pr.get("files"), list) and len(pr["files"]) == count:
+        return pr
+    if count > REST_FILES_CAP or not slug:
+        return None
+    paths = _rest_paths(gh, slug, pr.get("number"))
+    return None if paths is None or len(paths) != count else {**pr, "files": [{"path": p} for p in paths]}
+
+
+def _list_gaps(open_prs: list, closed: list, open_limit: int) -> list[str]:
+    gaps = []
+    if len(open_prs) >= open_limit:
+        gaps.append(f"open PR list hit its limit of {open_limit}: an open Jr PR may be unseen")
+    if len(closed) >= CLOSED_PR_LIMIT:
+        gaps.append(f"closed PR list hit its limit of {CLOSED_PR_LIMIT}: a veto may be unseen")
+    return gaps
+
+
+def _shown_whole(gh, slug: str, prs: list, gaps: list) -> list:
+    """`prs`, each with its whole file list; one that cannot be shown whole is dropped as a gap."""
+    out = []
+    for pr in prs:
+        whole = _whole(gh, slug, pr)
+        if whole is None:
+            gaps.append(f"Jr PR #{pr.get('number')}'s changed files cannot be listed whole")
+        else:
+            out.append(whole)
+    return out
+
+
+def load(gh, open_prs: list, now: datetime, *, slug: str, open_limit: int) -> PendingIndex | None:
+    """The tick's index from the preflight's open-PR list (asked for at most `open_limit`) plus the
+    closed-unmerged ones; None when GitHub is unreadable — the caller fails closed (a tick blind to
+    its PRs must not open another). Every tick PR that can hold something is shown whole first; one
+    that cannot, or a list that may be cut, is a gap the caller fails closed on too."""
     closed = list_closed_tick_prs(gh, now)
-    return None if closed is None else build(open_prs, closed, now, truncated=len(closed) >= CLOSED_PR_LIMIT)
+    if closed is None:
+        return None
+    gaps = _list_gaps(open_prs, closed, open_limit)
+    if gaps:
+        return build([], [], now, tuple(gaps))
+    opened = _shown_whole(gh, slug, [pr for pr in open_prs if _is_tick_pr(pr)], gaps)
+    vetoes = _shown_whole(gh, slug, [pr for pr in closed if _is_tick_pr(pr) and _veto_until(pr, now)], gaps)
+    return build(opened, vetoes, now, tuple(gaps))

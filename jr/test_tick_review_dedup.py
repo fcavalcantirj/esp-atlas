@@ -56,7 +56,9 @@ class GitHubSim:
                 RELEASES.format(REPO): [], "repos/t/tiny": _meta("t/tiny", stars=1, rid=77)}
 
     def open_prs(self):
-        return [p for p in self.prs if p["state"] == "OPEN"]
+        """As `gh pr list --json …,files,changedFiles` lists them."""
+        return [{**p, "files": [{"path": f} for f in p["files"]], "changedFiles": len(p["files"])}
+                for p in self.prs if p["state"] == "OPEN"]
 
     def review_prs(self):
         return [p for p in self.prs if review_routing.has_review_label(p)]

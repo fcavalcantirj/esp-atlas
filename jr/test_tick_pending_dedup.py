@@ -346,6 +346,7 @@ def test_a_101_file_pr_that_cannot_be_read_whole_stages_and_publishes_nothing(si
     pr = _first_tick(sim)
     _pad(sim, pr, PADDING)
     sim.files_rc = 1
+    sim.calls.clear()
     r = sim.tick(T0 + timedelta(hours=1))
     assert "incomplete" in r.aborted and f"#{pr['number']}" in r.aborted, r.aborted
     _nothing_staged_or_published(sim, r, 1)

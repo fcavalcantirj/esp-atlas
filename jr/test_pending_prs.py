@@ -53,8 +53,8 @@ PADDING = [f"src/parser/rule_{i:03d}.c" for i in range(100)]          # 100 file
 WIDE = PADDING + ["data/recipes/m5cardputer__lintd/recipe.md"]        # the 101st names the firmware
 
 
-def _load(gh, open_prs, **kw):
-    return pending_prs.load(gh, open_prs, NOW, slug=SLUG, **kw)
+def _load(gh, open_prs, open_limit=500):
+    return pending_prs.load(gh, open_prs, NOW, slug=SLUG, open_limit=open_limit)
 
 
 def test_firmware_ids_come_from_firmware_and_recipe_paths_only():
@@ -204,5 +204,21 @@ def test_a_tick_pr_whose_files_cannot_be_shown_whole_leaves_the_index_incomplete
 
 
 def test_a_cut_file_list_without_a_repo_slug_is_incomplete():
-    idx = pending_prs.load(_gh([], files={1520: WIDE}), [_pr(1520, WIDE)], NOW, slug="")
+    idx = pending_prs.load(_gh([], files={1520: WIDE}), [_pr(1520, WIDE)], NOW, slug="", open_limit=500)
     assert not idx.complete and "#1520" in idx.gaps[0]
+
+
+@pytest.mark.parametrize("stdout", ["", "  \n", "[{\"filename\": \"a.c\"}] {not json", "{\"filename\": \"a.c\"}",
+                                    "[{\"name\": \"a.c\"}]"], ids=["empty", "blank", "bad-json", "object", "no-filename"])
+def test_an_unreadable_rest_file_listing_leaves_the_index_incomplete(stdout):
+    def gh(*a):
+        if a[:1] == ("api",):
+            return SimpleNamespace(returncode=0, stdout=stdout, stderr="")
+        return SimpleNamespace(returncode=0, stdout="[]", stderr="")
+    assert not _load(gh, [_pr(1520, WIDE)]).complete
+
+
+def test_rest_pages_separated_by_whitespace_are_read_as_one_listing():
+    pages = json.dumps([{"filename": p} for p in WIDE[:100]]) + "\n" + json.dumps([{"filename": WIDE[100]}]) + "\n"
+    gh = lambda *a: SimpleNamespace(returncode=0, stdout=pages if a[:1] == ("api",) else "[]", stderr="")  # noqa: E731
+    assert _load(gh, [_pr(1520, WIDE)]).hold("lintd")

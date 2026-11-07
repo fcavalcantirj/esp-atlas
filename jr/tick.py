@@ -18,8 +18,9 @@ One tick, in order (PLAN §3.2):
     its age, and at MAX_OPEN_REVIEW_PRS open ones the review-producing stages are skipped (the cap,
     SPEC-jr-review-routing.md). Then the pending index (jr/pending_prs.py): every firmware an open
     tick PR changes, or a tick PR closed unmerged < 30 d ago changed, read from GitHub's own file
-    lists — no stage stages it again, record or recipe. Last: branch protection on `main` requires schema + tests + jr-tests and
-    auto-merge is allowed. Any of these red → the tick ABORTS before touching anything; every
+    lists — no stage stages it again, record or recipe; an index that may miss a hold (a list at its
+    limit, a PR's files not shown whole) aborts like an unreadable one. Last: branch protection on
+    `main` requires schema + tests + jr-tests and auto-merge is allowed. Any of these red → the tick ABORTS before touching anything; every
     query failure here fails CLOSED. Protection missing is the one that matters most: without it
     "PR + auto-merge" is direct-to-main under another name.
  2. Worktree — a fresh `git worktree` detached at `origin/main`, outside the repo tree. Every
@@ -264,7 +265,7 @@ def _list_open_prs(gh) -> list | None:
     itself fails — fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not
     open another. The files feed jr/pending_prs.py: what an open tick PR holds is never staged again."""
     p = gh("pr", "list", "--state", "open", "--limit", str(OPEN_PR_LIMIT),
-           "--json", "number,createdAt,headRefName,mergeable,labels,files")
+           "--json", f"number,createdAt,headRefName,mergeable,labels,{pending_prs.PR_LIST_FIELDS}")
     if getattr(p, "returncode", 1) != 0:
         return None
     try:
@@ -549,12 +550,12 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                 r.warnings.append(f"closed superseded bookkeeping-only tick PR #{pr.get('number')}")
         if stuck:
             raise TickAbort(_stuck_message(stuck[0], stale_pr_hours))
-        pending = pending_prs.load(gh_c, open_prs, now)
+        slug = repo_slug or _repo_slug(git)
+        pending = pending_prs.load(gh_c, open_prs, now, slug=slug, open_limit=OPEN_PR_LIMIT)
         if pending is None:
             raise TickAbort("gh pr list --state closed failed (cannot see which firmware a Jr PR holds)")
-        if pending.truncated:
-            r.warnings.append(f"closed Jr PRs cut at {pending_prs.CLOSED_PR_LIMIT}: an older veto may be unseen")
-        slug = repo_slug or _repo_slug(git)
+        if not pending.complete:
+            raise TickAbort("pending-PR inventory incomplete, nothing staged or published: " + "; ".join(pending.gaps))
         protection = publish.protection_status(slug, gh=gh_c)
         if not protection.ok:
             if dry_run:

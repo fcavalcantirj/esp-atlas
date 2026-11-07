@@ -40,12 +40,13 @@ PROTECTION_RULE = json.dumps({"required_status_checks": {"contexts": ["schema", 
 # One real-ish tick PR (the previous hour's un-merged proposal) whose changed files add a new
 # firmware record + its first recipe — exactly what an admit tick writes.
 OPEN_PR_NUMBER = 158
-OPEN_PR = [{"number": OPEN_PR_NUMBER, "createdAt": RECENT, "headRefName": "jr/tick-20260908-0400"}]
 PR_FILES = json.dumps({"files": [
     {"path": "data/firmware/newtool/firmware.md"},
     {"path": "data/firmware/newtool/signals.json"},
     {"path": "data/recipes/m5cardputer__newtool/recipe.md"},
 ]})
+OPEN_PR = [{"number": OPEN_PR_NUMBER, "createdAt": RECENT, "headRefName": "jr/tick-20260908-0400",
+            **json.loads(PR_FILES), "changedFiles": 3}]     # `gh pr list` lists the same files
 
 
 class Proc(SimpleNamespace):
@@ -189,11 +190,11 @@ def test_hydrate_open_pr_ledger_never_downgrades_a_merged_record(tmp_path):
 
 M5_PR_NUMBER = 189
 M5_HEAD = "jr/tick-20260909-1800"
-M5_PR = [{"number": M5_PR_NUMBER, "createdAt": RECENT, "headRefName": M5_HEAD}]
 M5_PR_FILES = json.dumps({"files": [
     {"path": "data/firmware/m5stack-sd-updater/firmware.md"},
     {"path": "data/recipes/m5stack-core__m5stack-sd-updater/recipe.md"},
 ]})
+M5_PR = [{"number": M5_PR_NUMBER, "createdAt": RECENT, "headRefName": M5_HEAD, **json.loads(M5_PR_FILES), "changedFiles": 2}]
 M5_FIRMWARE_MD = (
     "---\n"
     "id: m5stack-sd-updater\n"
