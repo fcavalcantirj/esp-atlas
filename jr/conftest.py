@@ -16,6 +16,20 @@ import drain
 import tick
 import tools
 
+from offline_test_guard import clear_production_secrets, install_network_guard
+
+
+@pytest.fixture(autouse=True)
+def _offline_network_and_credentials(monkeypatch):
+    clear_production_secrets(monkeypatch)
+    return install_network_guard(monkeypatch)
+
+
+@pytest.fixture
+def allow_local_test_server(_offline_network_and_credentials):
+    """Opt one numeric loopback host/port into this test, never external hosts."""
+    return _offline_network_and_credentials
+
 
 @pytest.fixture(autouse=True)
 def _no_live_popularity_state_or_gh(tmp_path, monkeypatch):
@@ -143,12 +157,15 @@ def _test_cert(tmp_path_factory):
 
 
 @pytest.fixture
-def https_server(_test_cert):
+def https_server(_test_cert, allow_local_test_server):
     """A local HTTPS server (jr/fake_https.py) with fresh routes; `.seams()` reaches it."""
     import fake_https
     server = fake_https.Server(*_test_cert)
-    yield server
-    server.close()
+    allow_local_test_server("127.0.0.1", server.port)
+    try:
+        yield server
+    finally:
+        server.close()
 
 
 def pytest_collection_modifyitems(config, items):
