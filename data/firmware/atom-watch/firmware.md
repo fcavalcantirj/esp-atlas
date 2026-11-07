@@ -10,7 +10,9 @@ capabilities:
 popularity:
   stars: 27
   forks: 4
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 977168025
+  github_as_of: '2026-11-07T03:00:54Z'
 socs:
 - esp32-s3
 sources:
@@ -23,6 +25,18 @@ sources:
 - field: summary
   url: https://github.com/fbiego/atom-watch
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/fbiego/atom-watch
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/fbiego/atom-watch
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/fbiego/atom-watch
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/fbiego/atom-watch
+  verified: '2026-11-07'
 summary: Atom-Watch is a smartwatch firmware for the M5Stack AtomS3R that provides
   a custom LVGL UI and BLE synchronization with an Android device via the Chronos
   app, offering time, weather, notifications, phone finding, remote camera trigger,
