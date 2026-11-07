@@ -153,7 +153,7 @@ def test_pending_pr_is_reused_only_after_pinned_head_preparation(tmp_path, monke
     monkeypatch.setattr(publish, "publish", fake_publish)
 
     def git(*args):   # what the prepared branch already changes against main: no held record
-        assert args[3:] == ("diff", "--name-only", "a" * 40, "HEAD"), args
+        assert args[2:] == ("diff", "--name-only", "a" * 40, "HEAD"), args
         return subprocess.CompletedProcess(args, 0, "data/firmware/fw/firmware.md\n", "")
 
     ctx, _ = _ctx(tmp_path)
