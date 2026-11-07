@@ -6,9 +6,11 @@ url: https://github.com/adafruit/circuitpython
 category: multi
 maintainer: adafruit
 popularity:
-  stars: 4557
-  forks: 1408
-  as_of: '2026-09-20'
+  stars: 4581
+  forks: 1425
+  as_of: '2026-11-07'
+  github_repo_id: 66166069
+  github_as_of: '2026-11-07T08:00:55Z'
 socs:
 - esp32
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/adafruit/circuitpython
   verified: '2026-10-06'
+- field: popularity.forks
+  url: https://github.com/adafruit/circuitpython
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/adafruit/circuitpython
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/adafruit/circuitpython
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/adafruit/circuitpython
+  verified: '2026-11-07'
 summary: "CircuitPython is an open\u2011source, beginner\u2011friendly version of\
   \ Python designed for microcontrollers, allowing code to be edited via drag\u2011\
   and\u2011drop on a CIRCUITPY drive (or over BLE) with automatic reload and providing\
