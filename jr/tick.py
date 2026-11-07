@@ -9,8 +9,9 @@ One tick, in order (PLAN §3.2):
     the repo; JR_TICK_LOCK overrides): held → "another tick is running", nothing else happens.
     Then: GitHub rate limit ≥ 500 remaining. Then the open Jr tick PRs — the Jr bot's
     own, never a fork's (pending_prs.eligible): one that is CONFLICTING or open longer than 3 h
-    and changes ONLY bookkeeping (jr/proposed_ledger.json, docs/telemetry/**) was superseded by later ticks — it is closed with a comment and its branch deleted (every tick
-    regenerates those files, so nothing is lost; dry-run only reports it). A stale one touching
+    and changes ONLY bookkeeping (jr/proposed_ledger.json, docs/telemetry/**) was superseded by
+    later ticks — it is closed with a comment and its branch deleted (every tick regenerates
+    those files, so nothing is lost; dry-run only reports it). A stale one touching
     anything else (data/**) is NEVER closed — jr/memory.py reads a closed PR as a permanent
     rejection of its firmware — so the tick aborts naming it, whether it conflicts, and that it
     needs a human. A PR labelled `jr-review` (jr/review_routing.py) is waiting for the owner ON
