@@ -537,13 +537,21 @@ def test_existing_popularity_pr_is_updated_only_with_exact_head_lease():
     url = "https://github.com/o/r/pull/8"
     prior = "b" * 40
     git = _git_ok()
-    gh = recorder({("pr", "view"): (0, json.dumps({"state": "OPEN", "headRefOid": "feedbee"}))})
+    calls = []
+    def gh(*args):
+        calls.append(args)
+        if args[:2] == ("pr", "view"):
+            head = prior if sum(c[:2] == ("pr", "view") for c in calls) == 1 else "feedbee"
+            return Proc(returncode=0, stdout=json.dumps({"state": "OPEN", "headRefOid": head,
+                                                          "autoMergeRequest": None}))
+        return Proc()
+    gh.calls = calls
     result = publish.publish(WT, ["docs/telemetry/popularity/2026-11-07T02.json"], "new", "new body",
                              git=git, gh=gh, now=NOW, protection=PROTECTED_OK, trust=TRUSTED,
                              branch=branch, existing_pr_url=url, expected_head_sha=prior)
     assert result.published and result.pr_url == url and result.auto_merge
     assert ("push", f"--force-with-lease=refs/heads/{branch}:{prior}", "origin", branch) in norm_calls(git)
-    assert ("pr", "view", url, "--json", "state,headRefOid") in gh.calls
+    assert ("pr", "view", url, "--json", "state,headRefOid,autoMergeRequest") in gh.calls
     assert ("pr", "edit", url, "--title", "new", "--body", "new body") in gh.calls
     assert all(call[:2] != ("pr", "create") for call in gh.calls)
 
@@ -557,12 +565,84 @@ def test_existing_popularity_pr_rejects_bad_lease_or_changed_remote_head():
                           protection=PROTECTED_OK, branch=branch, existing_pr_url=url,
                           expected_head_sha="not-a-sha")
     assert not bad.published and gh.calls == []
-    gh = recorder({("pr", "view"): (0, json.dumps({"state": "OPEN", "headRefOid": "some-other-head"}))})
+    gh = recorder({("pr", "view"): (0, json.dumps({"state": "OPEN", "headRefOid": "some-other-head",
+                                                   "autoMergeRequest": None}))})
     changed = publish.publish(WT, ["data/firmware/x"], "s", "b", git=git, gh=gh,
                               protection=PROTECTED_OK, branch=branch, existing_pr_url=url,
                               expected_head_sha="b" * 40)
-    assert not changed.published and "changed or closed" in changed.reason
+    assert not changed.published and "unsafe before replacement" in changed.reason
     assert all(call[:2] not in (("pr", "edit"), ("pr", "merge")) for call in gh.calls)
+
+
+def _armed_refresh_gh(prior, *, disable_fails=False, disable_sticks=True):
+    calls = []
+    state = {"head": prior, "armed": True}
+    def gh(*args):
+        calls.append(args)
+        if args[:2] == ("pr", "view"):
+            return Proc(returncode=0, stdout=json.dumps({"state": "OPEN", "headRefOid": state["head"],
+                "autoMergeRequest": {"enabledAt": "now"} if state["armed"] else None}))
+        if args[:3] == ("pr", "merge", "https://github.com/o/r/pull/8") and "--disable-auto" in args:
+            if disable_fails:
+                return Proc(returncode=1)
+            if disable_sticks:
+                state["armed"] = False
+        if args[:2] == ("pr", "merge") and "--auto" in args:
+            state["armed"] = True
+        return Proc()
+    gh.calls, gh.state = calls, state
+    return gh
+
+
+@pytest.mark.parametrize("auto_merge,trust,needs_human", [
+    (False, TRUSTED, False),
+    (True, publish.TrustStatus(False, 0, 0, reason="untrusted"), False),
+    (True, TRUSTED, True),
+])
+def test_refresh_disarms_existing_auto_merge_when_policy_withholds(auto_merge, trust, needs_human):
+    prior = "b" * 40
+    gh = _armed_refresh_gh(prior)
+    original = _git_ok()
+    def git(*args):
+        out = original(*args)
+        if "push" in args and out.returncode == 0:
+            gh.state["head"] = "feedbee"
+        return out
+    result = publish.publish(WT, ["docs/telemetry/popularity/x.json"], "s", "b",
+        git=git, gh=gh, now=NOW, protection=PROTECTED_OK, trust=trust,
+        branch="jr/popularity-20261107-0100", existing_pr_url="https://github.com/o/r/pull/8",
+        expected_head_sha=prior, auto_merge=auto_merge, needs_human=needs_human)
+    assert result.published and not result.auto_merge and not gh.state["armed"]
+    assert any("--disable-auto" in call for call in gh.calls)
+
+
+@pytest.mark.parametrize("disable_fails,disable_sticks", [(True, True), (False, False)])
+def test_refresh_refuses_if_remote_auto_merge_cannot_be_verified_off(disable_fails, disable_sticks):
+    prior = "b" * 40
+    gh = _armed_refresh_gh(prior, disable_fails=disable_fails, disable_sticks=disable_sticks)
+    git = _git_ok()
+    result = publish.publish(WT, ["docs/telemetry/popularity/x.json"], "s", "b",
+        git=git, gh=gh, protection=PROTECTED_OK, branch="jr/popularity-20261107-0100",
+        existing_pr_url="https://github.com/o/r/pull/8", expected_head_sha=prior)
+    assert not result.published and "unsafe before replacement" in result.reason
+    assert not any("push" in call for call in norm_calls(git))
+
+
+def test_concurrent_head_change_after_lookup_rejects_lease():
+    prior = "b" * 40
+    gh = _armed_refresh_gh(prior)
+    git = _git_ok()
+    original = git
+    def raced(*args):
+        if "push" in args:
+            original.calls.append(args)
+            return Proc(returncode=1, stderr="stale lease")
+        return original(*args)
+    result = publish.publish(WT, ["docs/telemetry/popularity/x.json"], "s", "b",
+        git=raced, gh=gh, protection=PROTECTED_OK, branch="jr/popularity-20261107-0100",
+        existing_pr_url="https://github.com/o/r/pull/8", expected_head_sha=prior)
+    assert not result.published and result.reason == "push failed"
+    assert not gh.state["armed"]
 
 
 # --- risk-based review routing (SPEC-jr-review-routing.md) -----------------------------------------

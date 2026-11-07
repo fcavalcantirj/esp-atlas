@@ -365,6 +365,34 @@ def apply_review_label(pr_url: str, gh=default_gh, repo_slug: str | None = None)
     return False, "; ".join(why)
 
 
+def _pr_merge_state(pr_url: str, gh) -> dict | None:
+    response = gh("pr", "view", pr_url, "--json", "state,headRefOid,autoMergeRequest")
+    if not _ok(response):
+        return None
+    try:
+        state = json.loads(response.stdout or "")
+    except (TypeError, ValueError):
+        return None
+    return state if isinstance(state, dict) and "autoMergeRequest" in state else None
+
+
+def _ensure_disarmed(pr_url: str, expected_sha: str, gh) -> bool:
+    """Observe the exact open head and remove any previously armed auto-merge.
+
+    A missing/unreadable field is uncertainty, not evidence of a safe remote
+    state. Re-read after disabling because gh success alone is insufficient.
+    """
+    state = _pr_merge_state(pr_url, gh)
+    if not state or state.get("state") != "OPEN" or state.get("headRefOid") != expected_sha:
+        return False
+    if state["autoMergeRequest"] is not None:
+        if not _ok(gh("pr", "merge", pr_url, "--disable-auto")):
+            return False
+        state = _pr_merge_state(pr_url, gh)
+    return bool(state and state.get("state") == "OPEN" and
+                state.get("headRefOid") == expected_sha and state["autoMergeRequest"] is None)
+
+
 def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
             git=default_git, gh=default_gh, now: datetime | None = None,
             repo_slug: str | None = None, needs_human: bool = False,
@@ -402,6 +430,13 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
         return PublishResult(False, branch=branch, paths=pathspec,
                              reason=f"deletion refused (G2 guard not in CI): {', '.join(protected)}")
 
+    # A pending PR may already be armed from a prior run. Disarm and verify
+    # before replacing its head; otherwise a later policy veto could inherit
+    # an active remote auto-merge request.
+    if existing_pr_url and not _ensure_disarmed(existing_pr_url, expected_head_sha, gh):
+        return PublishResult(False, branch=branch, paths=pathspec,
+                             reason="existing PR head or auto-merge state unsafe before replacement")
+
     # 3. branch, commit, push — on the worktree, never on the clone's checkout
     p = git("-C", str(wt.path), "checkout", "-q", "-B", branch)   # -B: a same-minute retry must not die
     if not _ok(p):
@@ -423,14 +458,9 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
 
     # 4. PR
     if existing_pr_url:
-        checked = gh("pr", "view", existing_pr_url, "--json", "state,headRefOid")
-        try:
-            state = json.loads(checked.stdout or "{}") if _ok(checked) else {}
-        except json.JSONDecodeError:
-            state = {}
-        if state.get("state") != "OPEN" or state.get("headRefOid") != sha:
+        if not _ensure_disarmed(existing_pr_url, sha, gh):
             return PublishResult(False, branch=branch, commit=sha, paths=pathspec,
-                                 reason="existing PR changed or closed after leased push")
+                                 reason="existing PR changed, closed or armed after leased push")
         edited = gh("pr", "edit", existing_pr_url, "--title", subject, "--body", body)
         if not _ok(edited):
             return PublishResult(False, branch=branch, commit=sha, paths=pathspec,
@@ -449,11 +479,18 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
         reason = f"jr-review ({'; '.join(route.reasons)[:300]}): auto-merge withheld"
         if not labelled:
             reason += f" · jr-review label FAILED ({why}) — the owner must find this PR by hand"
+        if existing_pr_url and not _ensure_disarmed(pr_url, sha, gh):
+            return PublishResult(False, branch, sha, pr_url, False, pathspec,
+                                 reason=reason + "; remote auto-merge state unsafe", route=route.route,
+                                 review_reasons=list(route.reasons), labelled=labelled)
         return PublishResult(True, branch, sha, pr_url, False, pathspec, reason=reason,
                              route=route.route, review_reasons=list(route.reasons), labelled=labelled)
 
     # 6. auto-merge only when the gate is real
     armed, reason = _auto_merge(pr_url, gh, git, auto_merge, deleted, protection, trust, repo_slug)
+    if existing_pr_url and not armed and not _ensure_disarmed(pr_url, sha, gh):
+        return PublishResult(False, branch, sha, pr_url, False, pathspec,
+                             reason=reason + "; remote auto-merge state unsafe", route=route.route)
     return PublishResult(True, branch, sha, pr_url, armed, pathspec, reason=reason, route=route.route)
 
 

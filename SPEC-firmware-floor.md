@@ -198,9 +198,15 @@ recorded separately; malformed or rate-limited responses stop later batches and 
 box-local cooldown. Failed/partial responses retain each record's last-good cited count.
 The publisher stages only popularity files and that receipt, applies `scripts/validate.py`
 and the existing review classifier, then opens or exact-head-updates a bot-owned
-popularity-only PR. It never stages a growth recipe. Branch protection, required checks,
-earned-trust auto-merge and a post-merge deployed revision/revalidation receipt remain
-separate release gates. A fetched value is not visible merely because Jr wrote a PR.
+popularity-only PR. An existing head must match Jr's independently persisted
+publication pin; the publisher verifies auto-merge is disarmed before and after
+replacement and refuses an uncertain remote state. It never stages a growth recipe.
+Branch protection, required checks and earned-trust auto-merge remain gates.
+Every hourly run also reconciles pending popularity PRs through merge, deployed
+API revision containing the merge, successful catalog cache invalidation and
+sampled API plus rendered-page readback. Each transition is persisted outside
+the repo for restart recovery. A fetched value is not visible merely because
+Jr wrote a PR.
 
 ## CI floor gate (deterministic, mechanical — no LLM, no manual curation)
 - `scripts/firmware_floor_audit.py` reads the **stored** `popularity` (not a live fetch) → fully

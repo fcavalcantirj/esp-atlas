@@ -93,6 +93,30 @@ def test_low_graphql_quota_preserves_every_last_good_and_reports_unattempted(tmp
     assert receipt["records"][0]["age_before_seconds"] == 86400
 
 
+@pytest.mark.parametrize("reported_before_probe,expected_calls", [(51, 1), (52, 2)])
+def test_graphql_reserve_is_preserved_after_next_request(tmp_path, reported_before_probe, expected_calls):
+    _record(tmp_path, "fw", "owner/repo-001", {"stars": 30, "forks": 3})
+    ctx, calls = _ctx(tmp_path, remaining=reported_before_probe)
+    full.run(ctx)
+    receipt = _receipt(tmp_path)
+    assert len(calls) == expected_calls
+    assert receipt["graphql_http_requests"] == expected_calls
+    assert receipt["graphql_cost_spent_known"] == expected_calls
+    assert receipt["attempted_repositories"] == (1 if expected_calls == 2 else 0)
+    assert receipt["graphql_rate"]["remaining"] >= full.MIN_GRAPHQL_POINTS
+
+
+def test_margin_short_of_estimated_next_query_cost_stops_before_request(tmp_path, monkeypatch):
+    _record(tmp_path, "fw", "owner/repo-001", {"stars": 30, "forks": 3})
+    monkeypatch.setattr(full, "_next_batch_cost_bound", lambda repos: 2)
+    ctx, calls = _ctx(tmp_path, remaining=52)  # after probe: 51, below 50+2
+    full.run(ctx)
+    receipt = _receipt(tmp_path)
+    assert len(calls) == receipt["graphql_http_requests"] == 1
+    assert receipt["graphql_cost_spent_known"] == 1
+    assert receipt["attempted_repositories"] == 0
+
+
 def test_failed_batch_has_no_retry_and_accounts_for_unattempted_tail(tmp_path):
     for index in range(60):
         _record(tmp_path, f"fw-{index:03}", f"owner/repo-{index:03}", {"stars": 30, "forks": 3})

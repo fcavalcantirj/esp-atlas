@@ -27,6 +27,16 @@ MIN_REMAINING_SECONDS = 20
 RECEIPT_DIR = Path("docs/telemetry/popularity")
 
 
+def _next_batch_cost_bound(repos: list[str]) -> int:
+    """Scalar-only repository lookup has no connections; GitHub's minimum is 1 point.
+
+    Keep this explicit so the admission check reserves points *after* the next
+    query, not merely before it. If fields/connections change, revise the
+    bound and its boundary tests before raising the query's cost ceiling.
+    """
+    return 1 if repos else 0
+
+
 def _age_seconds(value, now: datetime) -> int | None:
     observed = legacy._observed_at(value)
     return int((now - observed).total_seconds()) if observed else None
@@ -46,6 +56,11 @@ def _query(repos: list[str]) -> str:
 def _call(ctx, query: str) -> tuple[dict | None, dict[str, str], int | None]:
     response = ctx.gh("api", "graphql", "-i", "-f", f"query={query}")
     raw = getattr(response, "stdout", "") or ""
+    if isinstance(raw, bytes):
+        raw = raw.decode("utf-8", "replace")
+    stderr = getattr(response, "stderr", "") or ""
+    if isinstance(stderr, bytes):
+        stderr = stderr.decode("utf-8", "replace")
     headers: dict[str, str] = {}
     status = None
     if raw.startswith("HTTP/"):
@@ -60,13 +75,15 @@ def _call(ctx, query: str) -> tuple[dict | None, dict[str, str], int | None]:
                 headers[key.casefold().strip()] = value.strip()
         raw = body if separator else ""
     if status is None:
-        match = re.search(r"HTTP\s+(403|429)", getattr(response, "stderr", "") or "")
+        match = re.search(r"HTTP\s+(403|429)", stderr)
         status = int(match.group(1)) if match else None
     try:
         doc = json.loads(raw)
     except (TypeError, ValueError):
         return None, headers, status
     if not isinstance(doc, dict):
+        return None, headers, status
+    if getattr(response, "returncode", 1) == 124:
         return None, headers, status
     # gh exits nonzero for GraphQL errors even when HTTP is 200 and the JSON
     # contains valid sibling aliases. Preserve that envelope so per-alias
@@ -287,7 +304,7 @@ def run(ctx):
             result.items.append({"cooldown_until": _cooldown_until(now, headers).isoformat()})
         _receipt(ctx, now, result, outcomes, quota=None, attempted_repos=0, successful_repos=0)
         return result
-    if quota["remaining"] < MIN_GRAPHQL_POINTS:
+    if quota["remaining"] - _next_batch_cost_bound(repos[:BATCH_SIZE]) < MIN_GRAPHQL_POINTS:
         _mark(outcomes, grouped, repos, "unattempted_rate_limit", attempted=False)
         result.items.append({"cooldown_until": _cooldown_until(now, headers, quota).isoformat()})
         _receipt(ctx, now, result, outcomes, quota=quota, attempted_repos=0, successful_repos=0)
@@ -299,7 +316,7 @@ def run(ctx):
         if ctx.budget.remaining_calls() < 1 or ctx.budget.remaining_seconds() < MIN_REMAINING_SECONDS:
             _mark(outcomes, grouped, tail, "unattempted_budget", attempted=False)
             break
-        if quota["remaining"] < MIN_GRAPHQL_POINTS:
+        if quota["remaining"] - _next_batch_cost_bound(batch) < MIN_GRAPHQL_POINTS:
             _mark(outcomes, grouped, tail, "unattempted_rate_limit", attempted=False)
             result.items.append({"cooldown_until": _cooldown_until(now, {}, quota).isoformat()})
             break
