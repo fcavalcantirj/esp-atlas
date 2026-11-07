@@ -16,11 +16,25 @@ sources:
 - field: summary
   url: https://github.com/urtubia/miniacid
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/urtubia/miniacid
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/urtubia/miniacid
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/urtubia/miniacid
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/urtubia/miniacid
+  verified: '2026-11-07'
 maintainer: urtubia
 popularity:
-  stars: 108
-  forks: 7
-  as_of: '2026-09-20'
+  stars: 117
+  forks: 9
+  as_of: '2026-11-07'
+  github_repo_id: 1106865891
+  github_as_of: '2026-11-07T13:00:56Z'
 summary: "MiniAcid is a compact acid\u2011groovebox firmware for the M5Stack Cardputer\
   \ ADV that offers two TB\u2011303\u2011style synth voices and an 808\u2011style\
   \ drum section, each with 16\u2011step sequencers, live muting, and pattern/song\
