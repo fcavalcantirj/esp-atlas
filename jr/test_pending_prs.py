@@ -230,3 +230,82 @@ def test_a_tick_pr_past_what_rest_can_list_is_incomplete_without_a_call_and_one_
     assert not idx.complete and "#1520" in idx.gaps[0] and not [c for c in calls if c[:1] == ("api",)]
     idx = _load(_gh([], files={1520: at_cap}), [_pr(1520, at_cap)])
     assert idx.complete and idx.hold("lintd")
+
+
+# --- stable repository identity: the GitHub id a tick PR verified, matched before the slug ---------------
+
+def _marked(pr, *identities):
+    """`pr` whose body carries the tick's identity marker for (firmware id, owner/repo, repo id)."""
+    items = [{"kind": "firmware", "id": fid, "url": f"https://github.com/{repo}", "repo_id": rid}
+             for fid, repo, rid in identities]
+    return {**pr, "body": "EspAtlas Jr tick\n\n" + pending_prs.render_identity(items) + "\n"}
+
+
+OLDTOOL_FILES = ["data/firmware/oldtool/firmware.md", "data/recipes/m5cardputer__oldtool/recipe.md"]
+OLDTOOL_PR = _pr(1500, OLDTOOL_FILES)
+
+
+def test_the_identity_marker_round_trips_only_verified_firmware_ids():
+    items = [{"kind": "firmware", "id": "oldtool", "url": "https://github.com/n/oldtool", "repo_id": 4242},
+             {"kind": "firmware", "id": "lintd", "url": "https://github.com/n/lintd", "repo_id": None},
+             {"kind": "recipes", "firmware": "marauder", "written": ["m5cardputer__marauder"]}]
+    marker = pending_prs.render_identity(items)
+    assert pending_prs.identities(f"body\n{marker}\n") == {"oldtool": (4242, "n/oldtool")}
+    assert pending_prs.render_identity(items[1:]) == ""
+    assert pending_prs.identities(None) == {} and pending_prs.identities("<!-- jr-identity: {not json -->") == {}
+
+
+def test_a_renamed_slug_matches_the_hold_by_its_stable_id():
+    idx = pending_prs.build([_marked(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242))], [], NOW)
+    hold = idx.match("newtool", 4242)
+    assert hold and hold.reason == "already_proposed" and hold.firmware == "oldtool" and hold.pr_ref == "#1500"
+    assert hold.seen_as == "newtool" and hold.repo == "n/oldtool"                 # the slug kept as an alias
+    assert "4242" in hold.note and "oldtool" in hold.note and "newtool" in hold.note   # rename provenance
+    assert idx.match("oldtool", 4242).seen_as is None
+
+
+def test_a_vetoed_renamed_slug_is_matched_by_id_too():
+    closed = _marked(_pr(1500, OLDTOOL_FILES, closedAt=_iso(NOW - timedelta(days=2)),
+                         mergedAt=None), ("oldtool", "n/oldtool", 4242))
+    hold = pending_prs.build([], [closed], NOW).match("newtool", 4242)
+    assert hold and hold.reason == "vetoed" and hold.seen_as == "newtool"
+
+
+def test_the_same_slug_under_another_id_is_ambiguous_never_the_held_one():
+    idx = pending_prs.build([_marked(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242))], [], NOW)
+    hold = idx.match("oldtool", 7777)
+    assert hold and hold.reason == "identity_ambiguous" and hold.seen_id == 7777
+    assert "7777" in hold.note and "4242" in hold.note and "#1500" in hold.note
+
+
+def test_an_unknown_id_on_either_side_of_a_slug_collision_holds_fail_closed():
+    marked = pending_prs.build([_marked(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242))], [], NOW)
+    assert marked.match("oldtool", None).reason == "already_proposed"            # the candidate's id unread
+    legacy = pending_prs.build([OLDTOOL_PR], [], NOW)                             # a PR older than the marker
+    assert legacy.hold("oldtool").repo_id is None
+    assert legacy.match("oldtool", 7777).reason == "already_proposed"
+    assert legacy.match("newtool", 4242) is None                                  # a rename it never verified
+
+
+def test_another_id_under_another_slug_matches_nothing():
+    idx = pending_prs.build([_marked(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242))], [], NOW)
+    assert idx.match("fmtcheck", 5151) is None
+    assert idx.match("fmtcheck", None) is None
+
+
+def test_a_marker_naming_a_firmware_the_pr_does_not_hold_verifies_nothing():
+    pr = _marked(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242), ("lintd", "n/lintd", 5151))
+    idx = pending_prs.build([pr], [], NOW)
+    assert idx.match("lintd", 5151) is None and idx.hold("lintd") is None
+
+
+def test_an_open_pr_wins_the_id_over_an_older_veto():
+    closed = _marked(_pr(1499, ["data/recipes/m5cardputer__oldtool/recipe.md"],
+                         closedAt=_iso(NOW - timedelta(days=2)), mergedAt=None), ("oldtool", "n/oldtool", 4242))
+    opened = _marked(_pr(1502, ["data/firmware/newtool/firmware.md"]), ("newtool", "n/newtool", 4242))
+    hold = pending_prs.build([opened], [closed], NOW).match("newtool", 4242)
+    assert hold.pr_ref == "#1502" and hold.state == pending_prs.OPEN
+
+
+def test_the_pr_lists_ask_for_the_body_that_carries_the_marker():
+    assert "body" in pending_prs.PR_LIST_FIELDS.split(",")

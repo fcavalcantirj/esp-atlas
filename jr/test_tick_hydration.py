@@ -290,3 +290,17 @@ def test_run_tick_authors_when_no_open_pr(wt, monkeypatch):
     assert r.admitted == 1
     assert (wt / "data" / "firmware" / "newtool" / "firmware.md").exists()       # authored as before
     assert any(c[:2] == ("api", "repos/n/newtool") for c in g.calls)             # meta WAS fetched
+
+
+def test_hydrate_records_the_stable_repo_id_the_pending_index_verified(tmp_path):
+    """The ledger hydration carries the GitHub id the open PR's identity marker verified, so the
+    ledger's own by_repo_id gate also sees the held repository after an upstream rename."""
+    import pending_prs
+    lp = tmp_path / "proposed_ledger.json"
+    body = pending_prs.render_identity([{"kind": "firmware", "id": "newtool", "url": "https://github.com/n/newtool",
+                                         "repo_id": 4242}])
+    pending = pending_prs.build([{**OPEN_PR[0], "body": body}], [], NOW)
+    tick.hydrate_open_pr_ledger(gh(prs=json.dumps(OPEN_PR)), NOW, lp, pending=pending)
+    led = memory.load(lp)
+    assert led["by_id"]["newtool"]["repo_id"] == 4242
+    assert memory.is_blocked(led, repo_id=4242, now=NOW)
