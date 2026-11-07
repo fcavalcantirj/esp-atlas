@@ -64,7 +64,8 @@ def register(state: dict, published: publish.PublishResult, samples: list[dict],
                        "state": "pending", "published_at": now.isoformat(),
                        "receipt": receipt, "samples": samples, "changed_ids": changed_ids,
                        "changed_records": len(changed_ids),
-                       "live_check_sequence": live_sequence})
+                       "live_check_sequence": live_sequence,
+                       "live_check_attempted": False})
 
 
 def _pr(gh, url: str) -> dict | None:
@@ -252,7 +253,9 @@ def reconcile(state_file: Path, *, load_state, write_state, gh, git, secret: str
         latest = max(latest, *(sequence(row) for row in active)) + 1
         chosen = None
         if latest % 2 == 0:
-            untried = [row for row in active if sequence(row) == 0]
+            untried = [row for row in active if
+                       row.get("live_check_attempted") is False or
+                       ("live_check_attempted" not in row and sequence(row) == 0)]
             if untried:
                 revision = _status_revision(fetch)
                 if revision and getattr(git("fetch", "origin", "main"), "returncode", 1) == 0:
@@ -270,6 +273,7 @@ def reconcile(state_file: Path, *, load_state, write_state, gh, git, secret: str
             chosen = min(enumerate(active), key=lambda pair: (sequence(pair[1]), pair[0]))[1]
         state["delivery_live_sequence"] = latest
         chosen["live_check_sequence"] = latest
+        chosen["live_check_attempted"] = True
         save(chosen)
         for queued in active:
             if queued is not chosen:

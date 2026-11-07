@@ -292,18 +292,28 @@ def test_transient_purge_failure_then_continuous_new_deployments_still_verifies(
     def sha(number):
         return f"{number:040x}"
 
-    def row(number):
-        return {"pr_url": f"https://github.com/o/r/pull/{number}",
-                "head_sha": sha(100 + number), "state": "merged",
-                "merge_sha": sha(number), "changed_ids": ["fw"],
-                "live_check_sequence": 0,
-                "samples": [{"id": "fw", "stars": number * 10, "forks": 5,
-                             "github_as_of": f"2026-11-{number:02d}T02:00:00Z"}]}
+    def register_merged_publication(number):
+        state = popularity_run._load_state(path)
+        result = publish.PublishResult(True, branch=f"jr/popularity-20261107-{number:04d}",
+            commit=sha(100 + number), pr_url=f"https://github.com/o/r/pull/{number}",
+            paths=["data/firmware/fw/firmware.md"])
+        samples = [{"id": "fw", "stars": number * 10, "forks": 5,
+                    "github_as_of": f"2026-11-{number:02d}T02:00:00Z"}]
+        delivery.register(state, result, samples, NOW,
+                          f"docs/telemetry/popularity/tick-{number}.json")
+        if number > 1:
+            assert state["deliveries"][-1]["live_check_sequence"] > 0
+            assert state["deliveries"][-1]["live_check_attempted"] is False
+        popularity_run._write_state(path, state)
 
-    popularity_run._write_state(path, {"deliveries": [row(1)]})
+    register_merged_publication(1)
 
     def gh(*args):
-        raise AssertionError("all PRs are already merged")
+        assert args[:2] == ("pr", "view")
+        number = int(args[2].rsplit("/", 1)[-1])
+        return SimpleNamespace(returncode=0, stdout=json.dumps({
+            "state": "MERGED", "headRefOid": sha(100 + number),
+            "mergedAt": NOW.isoformat(), "mergeCommit": {"oid": sha(number)}}))
 
     def git(*args):
         if args[:2] == ("merge-base", "--is-ancestor"):
@@ -330,9 +340,7 @@ def test_transient_purge_failure_then_continuous_new_deployments_still_verifies(
 
     for number in range(1, 9):
         if number > 1:
-            state = popularity_run._load_state(path)  # each tick reloads persisted state
-            state["deliveries"].append(row(number))
-            popularity_run._write_state(path, state)
+            register_merged_publication(number)  # real registration, persisted before next tick
             live["number"] = number
         _reconcile(path, gh, git, fetch, purge)
 

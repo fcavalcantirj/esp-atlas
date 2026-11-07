@@ -87,7 +87,8 @@ also tracks every publication through pending, merged, deployed, invalidated
 and sampled API plus rendered-page readback. Each natural hourly run advances
 this sequence, bounded to one live delivery check. Persisted turns alternate
 the newest untried snapshot proven to be in the deployed revision with a fair
-retry of older unresolved work. This lets verification progress through a
+retry of older unresolved work. A separate persisted attempted flag, distinct
+from queue age, identifies newly registered snapshots. This lets verification progress through a
 transient purge failure and continuous new deployments across process restarts.
 If a later *verified live*
 snapshot is proven to descend from an older merge and changes one of its sampled
