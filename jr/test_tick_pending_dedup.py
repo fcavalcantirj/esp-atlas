@@ -64,6 +64,7 @@ class AtlasSim:
         self.base, self.calls, self.staged, self.snapshot = gh_ok(), [], [], {}
         self.view_rc = 0                       # `gh pr view --json files` (the ledger hydration's read)
         self.files_rc = 0                      # `gh api …/pulls/<n>/files --paginate` (a PR's whole file list)
+        self.git_calls = []
 
     # -- GitHub -----------------------------------------------------------------------------------
     def _listed(self, pr):
@@ -132,6 +133,7 @@ class AtlasSim:
 
     def git(self, *a):
         norm = a[2:] if a[:1] == ("-C",) else a
+        self.git_calls.append(norm)
         if norm[:2] == ("worktree", "add"):
             shutil.rmtree(self.wt, ignore_errors=True)
             for sub in ("boards", "modules"):                              # read-only copies the stages resolve against
@@ -299,6 +301,7 @@ PADDING = [f"src/parser/rule_{i:03d}.c" for i in range(100)]      # files GitHub
 
 
 def _nothing_staged_or_published(sim, r, prs_before):
+    assert not [c for c in sim.git_calls if c[:2] == ("worktree", "add")], "aborted after the worktree"
     assert r.paths == [] and r.stages == [], (r.paths, r.stages)
     assert len(sim.prs) == prs_before and not [c for c in sim.calls if c[:2] == ("pr", "create")]
 
@@ -346,7 +349,7 @@ def test_a_101_file_pr_that_cannot_be_read_whole_stages_and_publishes_nothing(si
     pr = _first_tick(sim)
     _pad(sim, pr, PADDING)
     sim.files_rc = 1
-    sim.calls.clear()
+    sim.calls.clear(), sim.git_calls.clear()
     r = sim.tick(T0 + timedelta(hours=1))
     assert "incomplete" in r.aborted and f"#{pr['number']}" in r.aborted, r.aborted
     _nothing_staged_or_published(sim, r, 1)

@@ -196,8 +196,7 @@ def test_a_cut_file_list_of_a_human_pr_or_a_lapsed_veto_needs_no_extra_call():
     (_pr(1520, WIDE), {1520: WIDE[:100]}, 0),                             # still one file short
     (_pr(1520, WIDE), {1520: WIDE + ["src/extra.c"]}, 0),                 # more than it counted
     ({**_pr(1520, WIDE[:5]), "changedFiles": None}, {1520: WIDE[:5]}, 0),  # no count to check against
-    ({**_pr(1520, WIDE), "changedFiles": 3001}, {}, 0),                   # past what REST can list
-], ids=["unreadable", "short", "long", "uncounted", "past-rest-cap"])
+], ids=["unreadable", "short", "long", "uncounted"])
 def test_a_tick_pr_whose_files_cannot_be_shown_whole_leaves_the_index_incomplete(pr, served, files_rc):
     idx = _load(_gh([], files=served, files_rc=files_rc), [pr])
     assert not idx.complete and "#1520" in idx.gaps[0]
@@ -222,3 +221,12 @@ def test_rest_pages_separated_by_whitespace_are_read_as_one_listing():
     pages = json.dumps([{"filename": p} for p in WIDE[:100]]) + "\n" + json.dumps([{"filename": WIDE[100]}]) + "\n"
     gh = lambda *a: SimpleNamespace(returncode=0, stdout=pages if a[:1] == ("api",) else "[]", stderr="")  # noqa: E731
     assert _load(gh, [_pr(1520, WIDE)]).hold("lintd")
+
+
+def test_a_tick_pr_past_what_rest_can_list_is_incomplete_without_a_call_and_one_at_the_cap_is_read():
+    calls, at_cap = [], [f"src/gen/stub_{i:04d}.c" for i in range(pending_prs.REST_FILES_CAP - 1)] + WIDE[-1:]
+    past = at_cap + ["src/gen/one_more.c"]
+    idx = _load(_gh([], calls=calls, files={1520: past}), [_pr(1520, past)])
+    assert not idx.complete and "#1520" in idx.gaps[0] and not [c for c in calls if c[:1] == ("api",)]
+    idx = _load(_gh([], files={1520: at_cap}), [_pr(1520, at_cap)])
+    assert idx.complete and idx.hold("lintd")
