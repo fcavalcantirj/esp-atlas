@@ -1285,7 +1285,7 @@
       "pr_ref": "#1500",
       "repo": "jay-jayismyname1/cardputer-adv-b-radar",
       "status": "proposed",
-      "timestamp": "2026-11-07T19:00:56.355541+00:00"
+      "timestamp": "2026-11-07T22:00:55.736287+00:00"
     },
     "cardputer-adv-basic": {
       "expires": "2026-11-08T01:00:12.099811+00:00",
@@ -4064,12 +4064,13 @@
       "timestamp": "2026-09-02T17:03:09.125971+00:00"
     },
     "heart-calculator": {
+      "expired_at": "2026-11-07T22:00:55.736287+00:00",
       "expires": "2026-11-07T19:00:59.654915+00:00",
       "id": "heart-calculator",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "erwantesti23/heart_calculator.git",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-31T19:00:59.654915+00:00"
     },
     "heavenlypointer": {
@@ -4183,12 +4184,13 @@
       "timestamp": "2026-10-31T17:00:59.604583+00:00"
     },
     "i-r-s": {
+      "expired_at": "2026-11-07T22:00:55.736287+00:00",
       "expires": "2026-11-07T20:00:59.700017+00:00",
       "id": "i-r-s",
       "pr_ref": null,
       "reason": "repo_unresolved: gh: Not Found (HTTP 404)\ngh: This API operation needs the \"repo\" scope. To reque",
       "repo": "zorikos3/i.r.s.",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-31T20:00:59.700017+00:00"
     },
     "ibutton-firmware-for-m5-stickc-plus2": {

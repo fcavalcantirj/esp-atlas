@@ -6,9 +6,11 @@ url: https://github.com/matoslav/MicroGroove
 category: multi
 maintainer: matoslav
 popularity:
-  stars: 58
-  forks: 4
-  as_of: '2026-09-20'
+  stars: 72
+  forks: 5
+  as_of: '2026-11-07'
+  github_repo_id: 1298349202
+  github_as_of: '2026-11-07T22:00:55Z'
 socs:
 - esp32-s3
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/matoslav/MicroGroove
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/matoslav/MicroGroove
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/matoslav/MicroGroove
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/matoslav/MicroGroove
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/matoslav/MicroGroove
+  verified: '2026-11-07'
 summary: "Microgroove is firmware for the M5Stack Cardputer\u2011ADV that turns the\
   \ device into a pocket\u2011sized groovebox, providing three synth tracks, eight\
   \ drum lanes, live mic sampling, resampling, and an 8\u2011pattern sequencer with\
