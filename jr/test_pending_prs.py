@@ -11,6 +11,7 @@ from types import SimpleNamespace
 import pytest
 
 import pending_prs
+import publish
 
 NOW = datetime(2026, 11, 7, 4, 0, tzinfo=timezone.utc)
 
@@ -20,8 +21,10 @@ def _iso(dt):
 
 
 def _pr(number, paths, branch="jr/tick-20261107-0300", **kw):
-    """A PR as `gh pr list --json …,files,changedFiles` lists it: at most the first 100 files."""
+    """A PR as `gh pr list --json …,files,changedFiles` lists it: at most the first 100 files. Opened
+    by the Jr bot from a branch of the base repository unless `kw` says otherwise."""
     return {"number": number, "headRefName": branch, "headRefOid": f"oid{number}",
+            "author": {"login": publish.JR_LOGIN}, "isCrossRepository": False,
             "files": [{"path": p} for p in paths[:100]], "changedFiles": len(paths), **kw}
 
 
@@ -35,13 +38,31 @@ OPEN = _pr(1500, ["data/firmware/nightdriverstrip/firmware.md", "data/firmware/n
 NEWTOOL_PR_FILES = ["data/firmware/newtool/firmware.md", "data/recipes/m5cardputer__newtool/recipe.md"]   # an admit ships both
 
 
-def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0, ledgers=None):
+def _ledger_repos(ledgers) -> dict:
+    """owner/repo -> repository id, as every served ledger records it: GitHub agrees by default."""
+    out = {}
+    for text in (ledgers or {}).values():
+        for rec in (json.loads(text).get("by_id") or {}).values() if text else ():
+            if isinstance(rec.get("repo"), str) and type(rec.get("repo_id")) is int:
+                out[rec["repo"]] = rec["repo_id"]
+    return out
+
+
+def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0, ledgers=None, repos=None):
     """`files`: PR number -> every changed path, served by `gh api …/pulls/<n>/files --paginate`
     in REST pages of 100 printed back to back, as gh prints them. `ledgers`: head oid -> the raw
-    jr/proposed_ledger.json committed there (None: unreadable); any other head serves an empty one."""
+    jr/proposed_ledger.json committed there (None: unreadable); any other head serves an empty one.
+    `repos`: owner/repo -> the id `gh api repos/<owner/repo>` answers (redirects followed; None or
+    absent: the call fails); by default the ids the served ledgers record."""
+    repos = _ledger_repos(ledgers) if repos is None else repos
+
     def gh(*a):
         if calls is not None:
             calls.append(a)
+        if a[:1] == ("api",) and len(a) == 2 and a[1].count("/") == 2 and "/pulls/" not in a[1]:
+            rid = repos.get(a[1].removeprefix("repos/"))
+            return SimpleNamespace(returncode=0 if rid is not None else 1, stderr="" if rid else "HTTP 404",
+                                   stdout=json.dumps({"id": rid, "full_name": a[1][6:]}) if rid is not None else "")
         if a[:3] == ("api", "-H", pending_prs.RAW_MEDIA):
             ref = a[3].split("?ref=")[1]
             text = (ledgers or {}).get(ref, json.dumps({"by_id": {}, "by_repo": {}}))
@@ -393,9 +414,10 @@ def _closed(pr):
     return {**pr, "closedAt": _iso(NOW - timedelta(days=2)), "mergedAt": None}
 
 
-def _index_of(pr, vetoed, ledgers, calls=None):
+def _index_of(pr, vetoed, ledgers, calls=None, repos=None):
     """load() over `pr`, listed open or closed unmerged inside the veto TTL."""
-    return _load(_gh([_closed(pr)], calls=calls, ledgers=ledgers), []) if vetoed else _load(_gh([], calls=calls, ledgers=ledgers), [pr])
+    gh = _gh([_closed(pr)] if vetoed else [], calls=calls, ledgers=ledgers, repos=repos)
+    return _load(gh, []) if vetoed else _load(gh, [pr])
 
 
 @pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
@@ -518,3 +540,84 @@ def test_an_ambiguous_marker_on_a_tick_pr_that_holds_nothing_is_no_gap():
     idx = _load(_gh([refresh], calls=calls), [bookkeeping])
     assert idx.complete and len(idx) == 0
     assert not [c for c in calls if c[:2] == ("api", "-H")]
+
+
+# --- a committed ledger id is trusted only from the Jr bot's own same-repo PR, and only once GitHub's
+#     repository metadata confirms it (#998/#1001): committed text can be altered by any later commit ---
+
+NEWTOOL_LEDGER_FILES = NEWTOOL_PR_FILES + ["jr/proposed_ledger.json"]
+NEWTOOL_META_CALL = ("api", "repos/n/newtool")
+
+
+def _newtool_index(vetoed, ledger_id=4242, repos=None, calls=None, **kw):
+    """load() over bot PR #1500 holding newtool, its committed ledger recording `ledger_id` for n/newtool."""
+    return _index_of(_pr(1500, NEWTOOL_LEDGER_FILES, **kw), vetoed, {"oid1500": _ledger(newtool=ledger_id)},
+                     calls, {"n/newtool": 4242} if repos is None else repos)
+
+
+def _held_by_slug_only(idx, rid):
+    assert idx.complete, idx.gaps                                                  # no new gap: just no id
+    assert idx.hold("newtool").repo_id is None and not idx.by_repo_id
+    assert idx.match("newtool", rid).reason == "already_proposed"                  # the slug still holds
+    assert idx.match("renamedtool", rid) is None and idx.match("renamedtool", 4242) is None
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+def test_a_bot_same_repo_ledger_id_github_confirms_is_accepted(vetoed):
+    calls = []
+    idx = _newtool_index(vetoed, calls=calls)
+    assert idx.complete and idx.hold("newtool").repo_id == 4242 and set(idx.by_repo_id) == {4242}
+    assert idx.match("renamedtool", 4242).firmware == "newtool"
+    assert NEWTOOL_META_CALL in calls                                              # independently confirmed
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+def test_a_ledger_id_altered_by_a_later_commit_is_rejected_and_the_slug_held(vetoed):
+    """A later commit on the bot's own PR rewrote the ledger: newtool is 7777. GitHub says n/newtool is 4242."""
+    idx = _newtool_index(vetoed, ledger_id=7777)
+    _held_by_slug_only(idx, 7777)
+    assert 7777 not in idx.by_repo_id and idx.match("unrelated", 7777) is None
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+@pytest.mark.parametrize("author", [{"login": "mallory"}, {}, None], ids=["foreign", "no-login", "no-author"])
+def test_a_ledger_id_on_a_pr_not_authored_by_the_jr_bot_is_never_accepted(vetoed, author):
+    _held_by_slug_only(_newtool_index(vetoed, author=author), 4242)
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+@pytest.mark.parametrize("cross", [True, None], ids=["fork", "unknown"])
+def test_a_ledger_id_on_a_fork_head_is_never_accepted(vetoed, cross):
+    _held_by_slug_only(_newtool_index(vetoed, isCrossRepository=cross), 4242)
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+def test_a_ledger_id_github_metadata_cannot_confirm_is_not_accepted(vetoed):
+    calls = []
+    idx = _newtool_index(vetoed, repos={}, calls=calls)                            # gh api repos/n/newtool fails
+    _held_by_slug_only(idx, 4242)
+    assert NEWTOOL_META_CALL in calls
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+def test_a_ledger_id_recorded_under_a_renamed_repo_is_confirmed_through_the_redirect(vetoed):
+    """The ledger records n/oldtool; GitHub renamed it n/newtool and answers the old name (redirect) with id 4242."""
+    calls = []
+    pr = _pr(1500, LEGACY_FILES)
+    idx = _index_of(pr, vetoed, {"oid1500": _ledger(oldtool=4242)}, calls, {"n/oldtool": 4242})
+    assert idx.complete and idx.hold("oldtool").repo_id == 4242
+    assert idx.match("newtool", 4242).firmware == "oldtool"
+    assert ("api", "repos/n/oldtool") in calls
+
+
+def test_a_ledger_repo_that_is_no_plain_owner_and_name_is_never_asked_for():
+    led = json.dumps({"by_id": {"oldtool": {"id": "oldtool", "repo": "n/../../user", "repo_id": 4242}}, "by_repo": {}})
+    calls = []
+    idx = _load(_gh([], calls=calls, ledgers={"oid1500": led}, repos={}), [_pr(1500, LEGACY_FILES)])
+    assert idx.complete and idx.hold("oldtool").repo_id is None
+    assert not [c for c in calls if c[:1] == ("api",) and len(c) == 2 and "/pulls/" not in c[1]]
+
+
+def test_the_pr_lists_ask_for_the_author_and_whether_the_head_is_a_fork():
+    fields = pending_prs.PR_LIST_FIELDS.split(",")
+    assert "author" in fields and "isCrossRepository" in fields

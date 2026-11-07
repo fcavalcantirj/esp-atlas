@@ -24,6 +24,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 import pending_prs
+import publish
 import review_routing
 import stage_admit
 import stage_boardmap
@@ -68,11 +69,12 @@ class AtlasSim:
 
     # -- GitHub -----------------------------------------------------------------------------------
     def _listed(self, pr):
-        """As `gh pr list --json …,files,changedFiles` lists a PR: only its FIRST 100 files."""
+        """As `gh pr list --json …,files,changedFiles` lists a PR: only its FIRST 100 files. Every PR
+        here is the Jr bot's own, opened from a branch of o/r itself (no fork)."""
         return {k: pr[k] for k in ("number", "state", "headRefName", "createdAt", "closedAt", "mergedAt",
                                    "mergeable", "labels", "body")} | {
             "files": [{"path": p} for p in pr["files"][:100]], "changedFiles": len(pr["files"]),
-            "headRefOid": f"oid{pr['number']}"}
+            "headRefOid": f"oid{pr['number']}", "author": {"login": publish.JR_LOGIN}, "isCrossRepository": False}
 
     def _rest_files(self, number):
         """`gh api repos/o/r/pulls/<n>/files?per_page=100 --paginate`: REST pages printed back to back."""
