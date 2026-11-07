@@ -24,7 +24,11 @@ for (const theme of [":root", '[data-theme="dark"]']) {
   test(`popularity accent meets AA small-text contrast in ${theme}`, () => {
     const tokens = css.slice(css.indexOf(`${theme} {`)).split("}")[0];
     const token = (name: string) => tokens.match(new RegExp(`--${name}:\\s*(#[a-fA-F0-9]{6})`))![1];
-    const foreground = luminance(token("popularity-accent"));
+    const popularity = token("popularity-accent");
+    assert.notEqual(popularity, token("accent"), "repository metadata must differ from recipe orange");
+    const [red, green, blue] = popularity.slice(1).match(/.{2}/g)!.map((part) => parseInt(part, 16));
+    assert.ok(green > red && blue > red, "keep metadata in the restrained cool palette, not orange");
+    const foreground = luminance(popularity);
     for (const background of ["bg", "surface", "accent-soft"]) {
       const value = luminance(token(background));
       const contrast = (Math.max(foreground, value) + 0.05) / (Math.min(foreground, value) + 0.05);
