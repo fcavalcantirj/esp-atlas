@@ -457,6 +457,30 @@ class FirmwareRecord(BaseModel):
     readme_en: Optional[str] = None
 
 
+class LivePopularityCatalog(BaseModel):
+    stars: Optional[int] = None
+    forks: Optional[int] = None
+    github_as_of: Optional[str] = None
+    source_url: Optional[str] = None
+    repo_id: Optional[int] = None
+
+
+class LivePopularityGithub(BaseModel):
+    stars: int
+    forks: int
+    observed_at: str
+    source_url: str
+    repo_id: int
+
+
+class LivePopularityResponse(BaseModel):
+    firmware_id: str
+    outcome: Literal["fresh", "cached", "stale", "unavailable", "ineligible"]
+    catalog: LivePopularityCatalog
+    github: Optional[LivePopularityGithub] = None
+    retry_after_seconds: Optional[int] = None
+
+
 class FirmwareListResponse(BaseModel):
     results: list[FirmwareRecord]
     total: int

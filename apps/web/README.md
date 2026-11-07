@@ -30,6 +30,7 @@ cp .env.example .env.local
 | `NEXT_PUBLIC_GA_ENABLED` | `0` disables collection; `1` enables a preview only with an explicit test ID. Production deployment is enabled by default. |
 | `NEXT_PUBLIC_GA_DEBUG` | `1` tags every event with `debug_mode` for GA4 DebugView. |
 | `API_INTERNAL_URL` | Server-side API base (server components, sitemap) when the Vercel defaults don't apply. |
+| `POPULARITY_DATABASE_URL` | Optional read-write Postgres **primary** connection for `/api/firmware/{id}/popularity/live`. Leave unset until `migrations/20261106_live_popularity.sql` is applied and reviewed; the endpoint then serves the cited catalog without calling GitHub. Never use a read replica. |
 
 ## Run
 

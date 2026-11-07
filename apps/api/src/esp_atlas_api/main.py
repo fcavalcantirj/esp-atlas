@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Optional
 
 import httpx
-from fastapi import Depends, FastAPI, HTTPException, Query, Request
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from slowapi import _rate_limit_exceeded_handler
@@ -59,6 +59,7 @@ from esp_atlas_api.models import (
     FacetsResponse,
     FirmwareListResponse,
     FirmwareRecord,
+    LivePopularityResponse,
     HealthResponse,
     PartDetail,
     PartType,
@@ -71,6 +72,7 @@ from esp_atlas_api.models import (
     WizardRequest,
     WizardResponse,
 )
+from esp_atlas_api.live_popularity import live_popularity
 from esp_atlas_api.security import build_limiter, resolve_cors_origins, resolve_rate_limits
 from esp_atlas_api.settings import resolve_db_path
 
@@ -441,6 +443,15 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
         if record is None:
             raise HTTPException(status_code=404, detail=f"firmware not found: {firmware_id}")
         return _with_readme_en(record)
+
+    @app.get("/firmware/{firmware_id}/popularity/live", response_model=LivePopularityResponse)
+    async def get_live_firmware_popularity(firmware_id: str, response: Response):
+        response.headers["Cache-Control"] = "no-store"
+        record = core_get_firmware(firmware_id)
+        if record is None:
+            raise HTTPException(status_code=404, detail=f"firmware not found: {firmware_id}",
+                                headers={"Cache-Control": "no-store"})
+        return await live_popularity(record)
 
     @app.get("/recipes", response_model=RecipeListResponse)
     def list_recipes(board: Optional[str] = None, firmware: Optional[str] = None):

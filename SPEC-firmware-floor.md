@@ -168,9 +168,55 @@ legacy dates so clients can label scope honestly.
 
 This code is not operational proof: the first natural scheduled tick must provide its run ID,
 source revision, upstream results, persisted counts and deployed readback. A page view must not
-call GitHub. A live stale-while-revalidate endpoint remains dependent on an atomic shared
-cross-instance coordinator and global rate budget; the current regional Runtime Cache cannot
-provide either alone.
+call GitHub without an atomic shared cross-instance coordinator and global rate budget; the
+current regional Runtime Cache cannot provide either alone.
+
+### On-view GitHub counts (backend contract, pending deployment proof)
+
+`GET /api/firmware/{id}/popularity/live` is an optional, no-store detail-page read.
+The handler loads the canonical firmware record; the client cannot supply a repository URL.
+Only a bare `https://github.com/<owner>/<repo>` URL, a positive cited
+`popularity.github_repo_id`, and a cited `popularity.github_as_of` date make a record
+eligible. The response always includes `firmware_id`, `outcome` (`fresh`, `cached`,
+`stale`, `unavailable`, or `ineligible`), `catalog` (GitHub stars/forks/date/source URL/
+repository ID), `github` (validated live stars/forks/observation time/source URL/
+repository ID, or null), and `retry_after_seconds` (or null). Counts of zero are valid;
+missing counts are never converted to zero. The GitHub overlay is exposed only when
+it is newer than the catalog's GitHub observation. It never changes the authored
+catalog snapshot, sorting, recipe trust, or admission floor. The UI shows the source
+and observation date and retains the cited catalog values on any failure.
+
+The shared coordinator is one **read-write Postgres primary** (Neon through Vercel
+Marketplace), not an eventually consistent read replica or per-instance memory.
+Postgres [row locks](https://www.postgresql.org/docs/current/explicit-locking.html)
+serialize competing claims on the singleton row; Neon's
+[write path](https://neon.com/blog/wal-s3-lakebase-storage-for-the-era-of-agents)
+acknowledges a transaction after quorum WAL persistence. The
+[Vercel Marketplace integration](https://vercel.com/marketplace/neon) supplies a
+Postgres resource, but no resource is provisioned for this feature yet.
+Provisioning and migration are separate release gates. Every claim/publish/failure
+transaction locks the precreated singleton budget row with `FOR UPDATE` before its
+repository row, in that order. The claim checks a one-hour cache, one global in-flight
+lease plus the per-repo lease, cooldowns and a conservative 20-reservation cap per UTC
+hour. It uses the database clock for the hour boundary, leases, and cooldowns and
+commits the reservation and random fencing token **before** GitHub is contacted. An
+ambiguous or failed claim commit means no GitHub call. A lease lasts ten seconds;
+the handler makes one GitHub request with `httpx.AsyncClient` inside an
+`asyncio.timeout(5)` scope covering connect, response and complete bounded body read.
+The request is never retried in the same page view.
+
+The publish transaction requires both matching, unexpired global and repo lease
+tokens, the same repository ID and full name, and complete nonnegative star/fork
+counts before replacing the last-good cache. A failed/ambiguous publish returns the
+preexisting last-good overlay or catalog, never `fresh`; a late response cannot
+overwrite a newer lease. Successful cache is fresh for one hour and retained for
+seven days as a stale fallback. HTTP 403/429 starts a global cooldown from valid
+`Retry-After`/rate-reset headers, or at least 60 seconds without usable headers.
+404/5xx/network failures keep the previous snapshot and set a per-repo backoff.
+Missing/unavailable storage means no GitHub call. SQL and concurrent-instance,
+lease-expiry, hour-boundary, identity, outage, cooldown, and failed-publish tests
+are required before release. The feature is not live until the store, source-validated
+ID coverage, page integration, and production page-triggered proof are reviewed.
 
 ## CI floor gate (deterministic, mechanical — no LLM, no manual curation)
 - `scripts/firmware_floor_audit.py` reads the **stored** `popularity` (not a live fetch) → fully
