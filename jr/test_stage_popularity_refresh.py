@@ -146,8 +146,8 @@ def test_a_record_an_open_tick_pr_holds_is_deferred_with_no_upstream_call(tmp_pa
 
 def test_a_vetoed_record_is_still_refreshed(tmp_path):
     """A veto rejected a proposal (mapped signals), not the catalogued record's counts."""
-    vetoed = _record(tmp_path, "vetoed", "owner/vetoed", {"stars": 10, "forks": 2, "as_of": "2026-09-20"})
-    ctx, _ = _pending_ctx(tmp_path, {"full_name": "owner/vetoed", "id": 7, "stargazers_count": 11, "forks_count": 3})
+    vetoed = _record(tmp_path, "vetoed", "owner/vetoed", {"stars": 100, "forks": 2, "as_of": "2026-09-20"})
+    ctx, _ = _pending_ctx(tmp_path, {"full_name": "owner/vetoed", "id": 7, "stargazers_count": 101, "forks_count": 3})
     result = refresh.run(ctx)
-    assert result.paths == ["data/firmware/vetoed/firmware.md"] and _fm(vetoed)["popularity"]["stars"] == 11
+    assert result.paths == ["data/firmware/vetoed/firmware.md"] and _fm(vetoed)["popularity"]["stars"] == 101
     assert "pending deferred" not in result.summary
