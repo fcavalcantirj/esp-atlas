@@ -9,9 +9,11 @@ license: MIT
 capabilities:
 - wifi
 popularity:
-  stars: 94567
-  forks: 12520
-  as_of: '2026-09-20'
+  stars: 102825
+  forks: 13341
+  as_of: '2026-11-07'
+  github_repo_id: 997737944
+  github_as_of: '2026-11-07T17:01:02Z'
 socs:
 - esp32-c5
 - esp32-c6
@@ -35,6 +37,18 @@ sources:
 - field: socs
   url: https://github.com/ruvnet/RuView/blob/main/.github/workflows/firmware-ci.yml
   verified: '2026-11-03'
+- field: popularity.forks
+  url: https://github.com/ruvnet/RuView
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/ruvnet/RuView
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/ruvnet/RuView
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/ruvnet/RuView
+  verified: '2026-11-07'
 summary: "RuView is a WiFi\u2011based sensing platform that captures Channel State\
   \ Information from low\u2011cost ESP32 nodes to detect presence, occupancy, breathing,\
   \ heart rate, activity, and camera\u2011free 17\u2011keypoint pose through walls,\
