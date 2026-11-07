@@ -415,6 +415,7 @@ class Receipt:
     excluded: int = 0
     quarantined: int = 0
     quarantined_ids: list = field(default_factory=list)
+    excluded_ids: list = field(default_factory=list)
     reason: str | None = None
 
     def line(self) -> str:
@@ -424,6 +425,8 @@ class Receipt:
                  f"parent={self.parent or '-'}", f"catalog={self.catalog_revision or '-'}"]
         if self.quarantined_ids:
             parts.append("quarantined_ids=" + ",".join(self.quarantined_ids))
+        if self.excluded_ids:
+            parts.append("excluded_ids=" + ",".join(self.excluded_ids))
         if self.reason:
             parts.append(f"reason={json.dumps(self.reason)}")
         return "runtime-popularity: " + " ".join(parts)
@@ -447,7 +450,8 @@ def run(*, git, gh, remote: str, branch: str, catalog_ref: str, budget: Budget, 
             receipt.parent = parent
             result = collect(entries, (previous or {}).get("records", {}), gh=gh, budget=budget, now=now)
             receipt.published, receipt.kept_last_good = len(result.fresh), len(result.kept_last_good)
-            receipt.excluded = len(catalog_excluded) + len(result.excluded)
+            receipt.excluded_ids = sorted({**catalog_excluded, **result.excluded})
+            receipt.excluded = len(receipt.excluded_ids)
             receipt.quarantined, receipt.quarantined_ids = len(result.quarantined), sorted(result.quarantined)
             snapshot = build_snapshot(revision, result.records, now)
             errors = validate_snapshot(snapshot, now=now)

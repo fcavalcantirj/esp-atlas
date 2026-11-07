@@ -472,7 +472,7 @@ def test_run_publishes_and_reports_receipt_counts(repos, tmp_path):
     assert (receipt.published, receipt.kept_last_good, receipt.excluded, receipt.quarantined) == (2, 0, 0, 1)
     line = receipt.line()
     assert "published=2" in line and "kept_last_good=0" in line and "quarantined=1" in line
-    assert "excluded=0" in line and receipt.commit in line
+    assert "excluded=0" in line and receipt.commit in line and "quarantined_ids=gamma" in line
     doc = json.loads(_sh(origin, "show", f"{rp.BRANCH}:popularity.json"))
     assert rp.validate_snapshot(doc, now=NOW) == [] and sorted(doc["records"]) == ["alpha", "beta"]
     assert doc["catalog_revision"] == _sh(work, "rev-parse", "main")
@@ -552,3 +552,8 @@ def test_main_reports_a_crash_as_an_error_receipt(monkeypatch, tmp_path, capsys)
     monkeypatch.setattr(rp, "run", boom)
     assert rp.main(["--repo", str(tmp_path), "--lock-path", str(tmp_path / "x.lock")]) == 1
     assert "status=error" in capsys.readouterr().out
+
+
+def test_receipt_names_every_excluded_firmware(repos, tmp_path):
+    receipt = _run(repos, tmp_path, FakeGH({**GOOD, "octo/beta": None}), dry_run=True, out=tmp_path / "o.json")
+    assert receipt.excluded_ids == ["beta"] and "excluded_ids=beta" in receipt.line()
