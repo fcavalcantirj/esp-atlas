@@ -71,7 +71,8 @@ class AtlasSim:
         """As `gh pr list --json …,files,changedFiles` lists a PR: only its FIRST 100 files."""
         return {k: pr[k] for k in ("number", "state", "headRefName", "createdAt", "closedAt", "mergedAt",
                                    "mergeable", "labels", "body")} | {
-            "files": [{"path": p} for p in pr["files"][:100]], "changedFiles": len(pr["files"])}
+            "files": [{"path": p} for p in pr["files"][:100]], "changedFiles": len(pr["files"]),
+            "headRefOid": f"oid{pr['number']}"}
 
     def _rest_files(self, number):
         """`gh api repos/o/r/pulls/<n>/files?per_page=100 --paginate`: REST pages printed back to back."""
@@ -97,6 +98,10 @@ class AtlasSim:
         if a[:1] == ("api",) and a[1].startswith("repos/o/r/pulls/") and a[2:] == ("--paginate",):
             number = a[1].split("/")[4]
             return Proc(returncode=self.files_rc, stdout=self._rest_files(number) if self.files_rc == 0 else "")
+        if a[:3] == ("api", "-H", pending_prs.RAW_MEDIA):     # a file committed at a PR's head, raw
+            path, oid = a[3].removeprefix("repos/o/r/contents/").split("?ref=")
+            text = self._pr(oid.removeprefix("oid"))["tree"].get(path)
+            return Proc(returncode=0 if text else 1, stdout=text or "")
         if a[:1] == ("api",) and a[1].startswith("repos/o/r/contents/"):
             path, ref = a[1].removeprefix("repos/o/r/contents/").split("?ref=")
             pr = next(p for p in self.prs if p["headRefName"] == ref)

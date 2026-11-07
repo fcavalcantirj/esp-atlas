@@ -23,7 +23,11 @@ Identity is the repository, not its name: an upstream rename turns `oldtool` int
 GitHub's numeric repository id stays. Every tick PR's body carries a hidden identity marker (the id
 admission read from GitHub for each firmware it proposes, render_identity); a hold keeps that id and
 its slug as the alias it was proposed under, and match() looks a candidate up by id BEFORE slug. A
-marker entry for a firmware the PR does not hold verifies nothing. When id and slug disagree — the
+marker entry for a firmware the PR does not hold verifies nothing, and only the body's single marker
+counts: a second opening (a forged or unclosed one inside item text) verifies nothing at all. A PR whose
+marker does not cover every firmware it holds (one older than the marker) is verified from the
+jr/proposed_ledger.json committed at its head — one raw contents read, only when the PR changes that
+ledger; an unreadable one is a gap, a record without the id leaves it unknown. When id and slug disagree — the
 held slug under another id — or a slug collides where either id is unknown, the candidate is held,
 never admitted: name similarity is never identity.
 
@@ -43,7 +47,10 @@ from datetime import datetime, timedelta, timezone
 VETO_TTL_DAYS = 30        # the tick PR body's promise: "Close = veto … does not propose it again for 30 days"
 CLOSED_PR_LIMIT = 200     # closed-unmerged tick PRs inside the TTL (11 in the 30 days to 2026-11-07)
 REST_FILES_CAP = 3000     # GitHub's REST pulls/<n>/files lists at most this many files of a PR
-PR_LIST_FIELDS = "files,changedFiles,body"   # changedFiles proves `files` whole; body carries the identity marker
+PR_LIST_FIELDS = "files,changedFiles,body,headRefOid"   # changedFiles proves `files` whole; body carries the
+                                                         # identity marker; headRefOid pins the committed ledger
+LEDGER_PATH = "jr/proposed_ledger.json"
+RAW_MEDIA = "Accept: application/vnd.github.raw+json"   # the contents API answers with the file itself
 TICK_BRANCH_PREFIX = "jr/tick-"
 OPEN, VETOED = "open", "vetoed"
 AMBIGUOUS = "identity_ambiguous"
@@ -53,6 +60,7 @@ _FIRMWARE_PATH_RE = re.compile(r"^data/firmware/([^/]+)/")
 _RECIPE_PATH_RE = re.compile(r"^data/recipes/[^/]+__([^/]+)/")
 _RECORD_ONLY_RE = re.compile(r"^data/firmware/[^/]+/firmware\.md$")
 _IDENTITY_RE = re.compile(r"<!--\s*" + IDENTITY_MARKER + r":\s*(.*?)\s*-->", re.S)
+_IDENTITY_OPEN_RE = re.compile(r"<!--\s*" + IDENTITY_MARKER + r"\s*:")
 _GITHUB_PREFIX = "https://github.com/"
 
 
@@ -150,14 +158,18 @@ def render_identity(items) -> str:
            for it in items if it.get("kind") == "firmware" and it.get("id") and type(it.get("repo_id")) is int]
     if not ids:
         return ""
-    payload = json.dumps(ids, sort_keys=True).replace("-->", "--\\u003e")    # a "-->" must not end the comment
+    payload = (json.dumps(ids, sort_keys=True).replace("<", "\\u003c")     # no second marker opening inside
+               .replace("-->", "--\\u003e"))                                 # a "-->" must not end the comment
     return f"<!-- {IDENTITY_MARKER}: {payload} -->"
 
 
 def identities(body) -> dict:
     """{firmware id: (repo id, owner/repo)} a PR body's identity marker names; {} when it has none or
-    it is unreadable. A firmware named under two ids verifies neither."""
-    m = _IDENTITY_RE.search(body or "") if isinstance(body, str) else None
+    it is unreadable, or when the body opens a marker more than once (a forged or unclosed one in item
+    text). A firmware named under two ids verifies neither."""
+    if not isinstance(body, str) or len(_IDENTITY_OPEN_RE.findall(body)) != 1:
+        return {}
+    m = _IDENTITY_RE.search(body)
     try:
         entries = json.loads(m.group(1)) if m else []
     except json.JSONDecodeError:
@@ -201,8 +213,9 @@ def _veto_until(pr: dict, now: datetime) -> datetime | None:
 
 
 def _held(pr: dict, ids, state: str, until: datetime | None) -> list[Hold]:
-    """PR `pr`'s holds on `ids`, each with the repository id its identity marker verified for it."""
-    verified = identities(pr.get("body"))
+    """PR `pr`'s holds on `ids`, each with the repository id verified for it: by load() from its marker
+    and committed ledger (`_identities`), else from its identity marker."""
+    verified = pr["_identities"] if "_identities" in pr else identities(pr.get("body"))
     return [Hold(fid, f"#{pr.get('number')}", state, until, *verified.get(fid, (None, None))) for fid in sorted(ids)]
 
 
@@ -294,6 +307,49 @@ def _whole(gh, slug: str, pr: dict) -> dict | None:
     return None if paths is None or len(paths) != count else {**pr, "files": [{"path": p} for p in paths]}
 
 
+def _ledger_identities(gh, slug: str, pr: dict, ids) -> dict | None:
+    """{firmware id: (repo id, owner/repo)} the ledger committed at `pr`'s head records for `ids` (one
+    raw contents read); None when unreadable. A record without an int repo_id verifies nothing."""
+    oid = pr.get("headRefOid")
+    if not slug or not isinstance(oid, str) or not oid:
+        return None
+    p = gh("api", "-H", RAW_MEDIA, f"repos/{slug}/contents/{LEDGER_PATH}?ref={oid}")
+    try:
+        led = json.loads(getattr(p, "stdout", "") or "") if getattr(p, "returncode", 1) == 0 else None
+    except json.JSONDecodeError:
+        return None
+    by_id = led.get("by_id") if isinstance(led, dict) else None
+    if not isinstance(by_id, dict):
+        return None
+    out = {}
+    for fid in ids:
+        rec = by_id.get(fid)
+        rid = rec.get("repo_id") if isinstance(rec, dict) else None
+        if type(rid) is int:
+            repo = rec.get("repo")
+            out[fid] = (rid, repo.lower() if isinstance(repo, str) else None)
+    return out
+
+
+def _verified(gh, slug: str, prs: list, held_ids, gaps: list) -> list:
+    """`prs`, each with the identities verified for the firmware it holds (`held_ids(paths)`): its
+    marker's, and — when the marker misses one and the PR changes the ledger — the committed ledger's
+    for the rest. A ledger that cannot be read is a gap and its PR is dropped."""
+    out = []
+    for pr in prs:
+        paths = _paths(pr)
+        verified = identities(pr.get("body"))
+        missing = held_ids(paths) - verified.keys()
+        if missing and LEDGER_PATH in paths:
+            from_ledger = _ledger_identities(gh, slug, pr, missing)
+            if from_ledger is None:
+                gaps.append(f"Jr PR #{pr.get('number')}'s committed {LEDGER_PATH} cannot be read")
+                continue
+            verified = {**from_ledger, **verified}
+        out.append({**pr, "_identities": verified})
+    return out
+
+
 def _list_gaps(open_prs: list, closed: list, open_limit: int) -> list[str]:
     gaps = []
     if len(open_prs) >= open_limit:
@@ -328,4 +384,6 @@ def load(gh, open_prs: list, now: datetime, *, slug: str, open_limit: int) -> Pe
         return build([], [], now, tuple(gaps))
     opened = _shown_whole(gh, slug, [pr for pr in open_prs if _is_tick_pr(pr)], gaps)
     vetoes = _shown_whole(gh, slug, [pr for pr in closed if _is_tick_pr(pr) and _veto_until(pr, now)], gaps)
+    opened = _verified(gh, slug, opened, firmware_ids, gaps)
+    vetoes = _verified(gh, slug, vetoes, proposed_ids, gaps)
     return build(opened, vetoes, now, tuple(gaps))

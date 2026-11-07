@@ -97,6 +97,14 @@ def _admit_first(sim, catalog, entry, fid, repo_id):
     return pr
 
 
+def _unverified(pr):
+    """`pr` as a PR older than the identity marker: no marker, and no repository id in its committed ledger."""
+    led = json.loads(pr["tree"]["jr/proposed_ledger.json"])
+    for rec in led["by_id"].values():
+        rec.pop("repo_id", None)
+    pr["body"], pr["tree"]["jr/proposed_ledger.json"] = "", json.dumps(led)
+
+
 def _admit(r):
     return next(s for s in r.stages if s["name"] == "admit")
 
@@ -167,7 +175,7 @@ def test_another_repository_with_a_held_slug_is_routed_fail_closed(sim, catalog,
 
 def test_a_held_slug_whose_id_the_pr_never_verified_still_holds(sim, catalog):
     pr = _admit_first(sim, catalog, NEWTOOL, "newtool", REPO_ID)
-    pr["body"] = ""                                    # a PR older than the identity marker: id unknown
+    _unverified(pr)                                    # a PR older than the identity marker: id unknown
     catalog[:] = [NEWTOOL_ELSEWHERE]
     sim.serve("m/newtool", OTHER_ID)
     r = sim.tick(T0 + timedelta(hours=1))

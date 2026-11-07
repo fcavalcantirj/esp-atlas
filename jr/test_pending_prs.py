@@ -27,7 +27,10 @@ def _pr(number, paths, branch="jr/tick-20261107-0300", **kw):
 
 OPEN = _pr(1500, ["data/firmware/nightdriverstrip/firmware.md", "data/firmware/nightdriverstrip/signals.json",
                   "data/recipes/m5stick-c__nightdriverstrip/recipe.md", "data/recipes/m5cardputer__newtool/recipe.md",
-                  "jr/proposed_ledger.json", "docs/telemetry/data-trend.jsonl"])
+                  "jr/proposed_ledger.json", "docs/telemetry/data-trend.jsonl"],
+           body=pending_prs.render_identity([                     # a current tick PR carries its marker
+               {"kind": "firmware", "id": fid, "url": f"https://github.com/n/{fid}", "repo_id": rid}
+               for fid, rid in (("nightdriverstrip", 1111), ("newtool", 2222))]))
 
 NEWTOOL_PR_FILES = ["data/firmware/newtool/firmware.md", "data/recipes/m5cardputer__newtool/recipe.md"]   # an admit ships both
 
@@ -383,3 +386,17 @@ def test_a_second_identity_marker_in_the_body_verifies_nothing():
         pr = {**_pr(1500, LEGACY_FILES), "body": body}
         idx = _load(_gh([], ledgers={"oid1500": _ledger(oldtool=4242)}), [pr])
         assert idx.match("newtool", 4242).firmware == "oldtool", forged
+
+
+def test_a_pr_listed_without_its_head_oid_cannot_have_its_ledger_read_and_is_a_gap():
+    pr = {k: v for k, v in _pr(1500, LEGACY_FILES).items() if k != "headRefOid"}
+    calls = []
+    idx = _load(_gh([], calls=calls), [pr])
+    assert not idx.complete and "#1500" in "; ".join(idx.gaps)
+    assert not [c for c in calls if c[:2] == ("api", "-H")]
+
+
+def test_a_marker_opening_inside_a_repo_name_does_not_void_the_real_marker():
+    marker = pending_prs.render_identity([{"kind": "firmware", "id": "oldtool", "repo_id": 4242,
+                                           "url": "https://github.com/n/<!-- jr-identity: x"}])
+    assert pending_prs.identities(f"body\n{marker}\n") == {"oldtool": (4242, "n/<!-- jr-identity: x")}

@@ -155,14 +155,27 @@ main was forgotten the same way.
   GitHub's numeric repository id stays. Every tick PR body carries a hidden
   `<!-- jr-identity: [{"id", "repo", "repo_id"}] -->` marker — the id admission read from GitHub
   for each firmware it proposes (`stage_admit` and `stage_admit_topics`). Both PR lists also ask
-  for `body`. A hold keeps that verified id and its slug as the alias it was proposed under; a
-  marker entry for a firmware the PR does not hold verifies nothing, and one firmware named under
-  two ids verifies neither. Admission matches the fetched id **before** the slug:
+  for `body` and `headRefOid`. A hold keeps that verified id and its slug as the alias it was
+  proposed under; a marker entry for a firmware the PR does not hold verifies nothing, and one
+  firmware named under two ids verifies neither. Only the body's single marker counts: a body
+  that opens `jr-identity` more than once (a forged, duplicate or unclosed marker in item text)
+  verifies nothing from its body (the renderer escapes `<` so a real marker never opens twice).
+  - **The committed ledger backs a marker that falls short.** When a tick PR changes
+    `jr/proposed_ledger.json` and its marker does not cover every firmware it holds (a PR older
+    than the marker, a forged body), the ledger committed at its head is read once:
+    `gh api -H "Accept: application/vnd.github.raw+json"
+    repos/<slug>/contents/jr/proposed_ledger.json?ref=<headRefOid>` (`RAW_MEDIA`), and each
+    uncovered held firmware takes the `repo_id` of its record there. An unreadable ledger (or
+    one with no head oid to read it at) is a gap: the index is incomplete and the tick aborts. A
+    record without the id leaves it unknown and the hold stays matched by slug. A marker that
+    covers every held firmware costs no read; a PR that does not change the ledger is not read.
+  Admission matches the fetched id **before** the slug:
   - same id under a new slug → held as the original (`already_proposed` / `vetoed`), named with
     both slugs, the id and the PR (rename provenance);
   - the held slug under **another** id → `identity_ambiguous`: never admitted, nothing written to
     the ledger (not a decision), named with both ids and the PR, re-checked every tick until the
-    hold ends;
+    hold ends; a submission issue is left open and unanswered (`deferred, identity_ambiguous` in
+    the summary), so it is read again once the hold ends;
   - a slug collision where either id is unknown (a PR older than the marker, an unreadable
     candidate) → held, fail closed. A hold without a verified id is still skipped before the
     metadata fetch; one with an id costs that one fetch to decide.
