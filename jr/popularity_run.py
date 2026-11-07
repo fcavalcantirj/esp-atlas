@@ -48,7 +48,10 @@ def _state_integrity(path: Path) -> bool:
     return (isinstance(value, dict) and
             ("deliveries" not in value or
              (isinstance(value["deliveries"], list) and
-              all(isinstance(row, dict) for row in value["deliveries"]))) and
+              all(isinstance(row, dict) and row.get("state") in
+                  {"pending", "merged", "deployed", "invalidated", "readback_verified",
+                   "deployed_no_count_change", "closed", "superseded"}
+                  for row in value["deliveries"]))) and
             ("published_head" not in value or isinstance(value["published_head"], dict)))
 
 
