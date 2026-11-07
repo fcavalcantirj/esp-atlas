@@ -355,38 +355,51 @@ def _valid_for(work: Path) -> dict:
     return doc
 
 
-def test_first_publish_creates_an_orphan_holding_only_popularity_json(repos):
+def _bootstrap(repos, *, state=True, state_json=None):
+    """Local deployment-safe branch fixture, independent of the publisher under test."""
     origin, work = repos
-    main_before, head_before = _remote_ref(origin, "main"), _sh(work, "rev-parse", "HEAD")
-    git = rp.make_git(work)
-    parent, previous = rp.observe_branch(git, "origin", rp.BRANCH)
-    assert (parent, previous) == (None, None)
-    commit = rp.publish(git, remote="origin", branch=rp.BRANCH, parent=None,
-                        snapshot=_valid_for(work), now=NOW)
-    assert _remote_ref(origin, rp.BRANCH) == commit
-    assert _sh(origin, "ls-tree", "-r", "--name-only", commit) == "popularity.json"
-    assert _sh(origin, "rev-list", "--parents", "-n1", commit) == commit
-    assert json.loads(_sh(origin, "show", f"{commit}:popularity.json")) == _valid_for(work)
-    assert _remote_ref(origin, "main") == main_before
-    assert _sh(work, "rev-parse", "HEAD") == head_before
+    config = json.dumps({"git": {"deploymentEnabled": {rp.BRANCH: False}}})
+    config_blob = _sh(work, "hash-object", "-w", "--stdin", input=config)
+    web = _sh(work, "mktree", input=f"100644 blob {config_blob}\tvercel.json\n")
+    apps = _sh(work, "mktree", input=f"040000 tree {web}\tweb\n")
+    blob = _sh(work, "hash-object", "-w", "--stdin", input=json.dumps(_valid_for(work)))
+    tree = _sh(work, "mktree", input=f"040000 tree {apps}\tapps\n100644 blob {blob}\tpopularity.json\n")
+    trailer = state_json if state_json is not None else '{"quarantine":{},"cooldown_until":null}'
+    commit = _sh(work, "commit-tree", tree, "-m", "Local bootstrap",
+                 *(["-m", rp.STATE_TRAILER + trailer] if state else []))
+    _sh(work, "push", "-q", "origin", f"{commit}:refs/heads/{rp.BRANCH}")
+    return commit
+
+
+def test_first_publish_refuses_a_branch_without_deployment_configuration(repos):
+    origin, work = repos
+    before = _remote_ref(origin, "main")
+    with pytest.raises(rp.Refused, match="bootstrap"):
+        rp.publish(rp.make_git(work), remote="origin", branch=rp.BRANCH, parent=None,
+                   snapshot=_valid_for(work), now=NOW)
+    assert _remote_ref(origin, rp.BRANCH) is None
+    assert _remote_ref(origin, "main") == before
     assert _sh(work, "status", "--porcelain") == ""
+
 
 
 def test_second_publish_chains_on_the_observed_parent(repos):
     origin, work = repos
+    bootstrap = _bootstrap(repos)
     git = rp.make_git(work)
-    first = rp.publish(git, remote="origin", branch=rp.BRANCH, parent=None, snapshot=_valid_for(work), now=NOW)
+    first = rp.publish(git, remote="origin", branch=rp.BRANCH, parent=bootstrap, snapshot=_valid_for(work), now=NOW)
     parent, previous = rp.observe_branch(git, "origin", rp.BRANCH)
     assert parent == first and previous == _valid_for(work)
     second = rp.publish(git, remote="origin", branch=rp.BRANCH, parent=parent, snapshot=_valid_for(work), now=NOW)
     assert _sh(origin, "rev-parse", f"{second}^") == first
-    assert _sh(origin, "ls-tree", "-r", "--name-only", second) == "popularity.json"
+    assert _sh(origin, "ls-tree", "-r", "--name-only", second).splitlines() == ["apps/web/vercel.json", "popularity.json"]
 
 
 def test_concurrent_parent_move_refuses_and_leaves_branch_unchanged(repos, tmp_path):
     origin, work = repos
+    bootstrap = _bootstrap(repos)
     git = rp.make_git(work)
-    first = rp.publish(git, remote="origin", branch=rp.BRANCH, parent=None, snapshot=_valid_for(work), now=NOW)
+    first = rp.publish(git, remote="origin", branch=rp.BRANCH, parent=bootstrap, snapshot=_valid_for(work), now=NOW)
     observed, _ = rp.observe_branch(git, "origin", rp.BRANCH)
     rival = tmp_path / "rival"
     _sh(tmp_path, "clone", "-q", "-b", rp.BRANCH, str(origin), str(rival))
@@ -406,7 +419,7 @@ def test_branch_created_by_a_rival_after_observing_absence_refuses(repos, tmp_pa
     rival = tmp_path / "rival"
     _sh(tmp_path, "clone", "-q", str(origin), str(rival))
     _sh(rival, "push", "-q", "origin", f"main:refs/heads/{rp.BRANCH}")
-    with pytest.raises(rp.LostRace):
+    with pytest.raises(rp.Refused, match="bootstrap"):
         rp.publish(git, remote="origin", branch=rp.BRANCH, parent=None, snapshot=_valid_for(work), now=NOW)
     assert _remote_ref(origin, rp.BRANCH) == _remote_ref(origin, "main")
 
@@ -431,13 +444,14 @@ def test_publishing_to_main_is_refused(repos):
 
 def test_rejected_push_without_a_moved_branch_is_refused(repos):
     origin, work = repos
+    bootstrap = _bootstrap(repos)
     hook = origin / "hooks" / "pre-receive"
     hook.write_text("#!/bin/sh\nexit 1\n")
     hook.chmod(0o755)
     with pytest.raises(rp.Refused):
-        rp.publish(rp.make_git(work), remote="origin", branch=rp.BRANCH, parent=None,
+        rp.publish(rp.make_git(work), remote="origin", branch=rp.BRANCH, parent=bootstrap,
                    snapshot=_valid_for(work), now=NOW)
-    assert _remote_ref(origin, rp.BRANCH) is None
+    assert _remote_ref(origin, rp.BRANCH) == bootstrap
 
 
 def test_invalid_previous_snapshot_fails_closed(repos):
@@ -467,6 +481,7 @@ def _run(repos, tmp_path, gh, **kw):
 
 def test_run_publishes_and_reports_receipt_counts(repos, tmp_path):
     origin, work = repos
+    _bootstrap(repos)
     receipt = _run(repos, tmp_path, FakeGH({**GOOD, "octo/gamma": node("octo/gamma", 31, 1, 1)}))
     assert receipt.exit_code == 0 and receipt.status == "published"
     assert (receipt.published, receipt.kept_last_good, receipt.excluded, receipt.quarantined) == (2, 0, 0, 1)
@@ -509,11 +524,12 @@ def test_held_lock_refuses_without_side_effects(repos, tmp_path):
 
 def test_lost_race_reports_nonzero(repos, tmp_path, monkeypatch):
     origin, work = repos
+    _bootstrap(repos)
     real_observe = rp.observe_branch
 
     def observe_then_rival_moves(git, remote, branch, **kw):
         observed = real_observe(git, remote, branch, **kw)
-        _sh(work, "push", "-q", "origin", f"main:refs/heads/{branch}")
+        _sh(work, "push", "-q", "--force", "origin", f"main:refs/heads/{branch}")
         return observed
 
     monkeypatch.setattr(rp, "observe_branch", observe_then_rival_moves)
@@ -562,6 +578,8 @@ def test_receipt_names_every_excluded_firmware(repos, tmp_path):
 # --- checker round 1: persistent quarantine, cooldown, honest push outcome, total validator -------
 
 def _at(repos, tmp_path, gh, hours: float, **kw):
+    if _remote_ref(repos[0], rp.BRANCH) is None:
+        _bootstrap(repos)
     return rp.run(git=rp.make_git(repos[1]), gh=gh, remote="origin", branch=rp.BRANCH, catalog_ref="main",
                   budget=Budget(), now=NOW + timedelta(hours=hours), lock_path=tmp_path / "rp.lock", **kw)
 
@@ -630,18 +648,20 @@ def test_malformed_state_trailer_fails_closed(repos):
 
 def test_push_that_landed_despite_a_client_error_is_published(repos):
     origin, work = repos
+    bootstrap = _bootstrap(repos)
     real = rp.make_git(work)
 
     def git(*args, **kw):
         p = real(*args, **kw)
         return subprocess.CompletedProcess(args, 124, "", "timed out") if args[0] == "push" else p
 
-    commit = rp.publish(git, remote="origin", branch=rp.BRANCH, parent=None, snapshot=_valid_for(work), now=NOW)
+    commit = rp.publish(git, remote="origin", branch=rp.BRANCH, parent=bootstrap, snapshot=_valid_for(work), now=NOW)
     assert _remote_ref(origin, rp.BRANCH) == commit
 
 
 def test_rival_moving_after_our_accepted_push_is_not_a_lost_race(repos, tmp_path):
     origin, work = repos
+    bootstrap = _bootstrap(repos)
     real = rp.make_git(work)
 
     def git(*args, **kw):
@@ -650,7 +670,7 @@ def test_rival_moving_after_our_accepted_push_is_not_a_lost_race(repos, tmp_path
             _sh(work, "push", "-q", "--force", "origin", f"main:refs/heads/{rp.BRANCH}")
         return p
 
-    commit = rp.publish(git, remote="origin", branch=rp.BRANCH, parent=None, snapshot=_valid_for(work), now=NOW)
+    commit = rp.publish(git, remote="origin", branch=rp.BRANCH, parent=bootstrap, snapshot=_valid_for(work), now=NOW)
     assert commit and _remote_ref(origin, rp.BRANCH) == _remote_ref(origin, "main")
 
 
@@ -725,11 +745,8 @@ def test_a_human_state_commit_releases_a_quarantine(repos, tmp_path):
 
 
 def _commit_with_state(work: Path, origin: Path, state_json: str) -> None:
-    doc = _valid_for(work)
-    blob = _sh(work, "hash-object", "-w", "--stdin", input=json.dumps(doc))
-    tree = _sh(work, "mktree", input=f"100644 blob {blob}\tpopularity.json\n")
-    commit = _sh(work, "commit-tree", tree, "-m", "s", "-m", rp.STATE_TRAILER + state_json)
-    _sh(work, "push", "-q", "--force", "origin", f"{commit}:refs/heads/{rp.BRANCH}")
+    _bootstrap((origin, work), state_json=state_json)
+
 
 
 def test_cooldown_beyond_a_day_is_refused_not_obeyed(repos, tmp_path):
@@ -768,13 +785,9 @@ def test_invalid_next_state_is_never_committed(repos, tmp_path, monkeypatch):
 
 
 def _foreign_tip(repos) -> str:
-    """A valid popularity.json pushed by another producer, with no collector-state trailer."""
-    origin, work = repos
-    blob = _sh(work, "hash-object", "-w", "--stdin", input=json.dumps(_valid_for(work)))
-    tree = _sh(work, "mktree", input=f"100644 blob {blob}\tpopularity.json\n")
-    commit = _sh(work, "commit-tree", tree, "-m", "bootstrap by another producer")
-    _sh(work, "push", "-q", "origin", f"{commit}:refs/heads/{rp.BRANCH}")
-    return commit
+    """A deployment-safe snapshot from another producer, with no state trailer."""
+    return _bootstrap(repos, state=False)
+
 
 
 def test_unstated_tip_is_refused_unless_explicitly_adopted(repos, tmp_path):
@@ -801,3 +814,54 @@ def test_cli_adopt_flag(repos, tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(rp, "default_gh", FakeGH(GOOD))
     code = rp.main(["--repo", str(work), "--adopt-unstated-tip", "--lock-path", str(tmp_path / "c.lock")])
     assert code == 0 and "status=published" in capsys.readouterr().out
+
+
+# --- preserve the bootstrap's deployment configuration and unrelated tree entries ----------------
+
+def test_publish_changes_only_json_and_preserves_modes_and_unusual_paths(repos, tmp_path):
+    origin, work = repos
+    _bootstrap(repos)
+    setup = tmp_path / "branch-setup"
+    _sh(tmp_path, "clone", "-q", "-b", rp.BRANCH, str(origin), str(setup))
+    (setup / "helper.sh").write_text("#!/bin/sh\nexit 0\n")
+    (setup / "helper.sh").chmod(0o755)
+    (setup / "helper-link").symlink_to("helper.sh")
+    (setup / 'quoted "name"\nwith-tab\t').write_text("untouched\n")
+    _sh(setup, "add", "-A")
+    _sh(setup, "commit", "-q", "-m", "extra branch content")
+    _sh(setup, "push", "-q", "origin", rp.BRANCH)
+    git = rp.make_git(work)
+    parent, _ = rp.observe_branch(git, "origin", rp.BRANCH, now=NOW)
+    before = git("ls-tree", "-r", "-z", parent).stdout.split("\0")
+    commit = rp.publish(git, remote="origin", branch=rp.BRANCH, parent=parent,
+                        snapshot=_valid_for(work), now=NOW)
+    after = git("ls-tree", "-r", "-z", commit).stdout.split("\0")
+    keep = lambda entries: [e for e in entries if e and not e.endswith("\tpopularity.json")]
+    assert keep(after) == keep(before)
+    assert _sh(work, "diff", "--name-only", parent, commit) == "popularity.json"
+    assert json.loads(_sh(work, "show", f"{commit}:apps/web/vercel.json"))["git"]["deploymentEnabled"][rp.BRANCH] is False
+    assert _sh(work, "status", "--porcelain") == ""
+
+
+@pytest.mark.parametrize("config", [None, "broken JSON", "{}", "[]",
+    '{"git":{"deploymentEnabled":{"runtime-popularity":true}}}',
+    '{"git":{"deploymentEnabled":{"runtime-popularity":"false"}}}'])
+def test_unsafe_deployment_config_refuses_without_a_push(repos, tmp_path, config):
+    origin, work = repos
+    _bootstrap(repos)
+    setup = tmp_path / "unsafe-setup"
+    _sh(tmp_path, "clone", "-q", "-b", rp.BRANCH, str(origin), str(setup))
+    target = setup / "apps/web/vercel.json"
+    if config is None:
+        target.unlink()
+    else:
+        target.write_text(config)
+    _sh(setup, "add", "-A")
+    _sh(setup, "commit", "-q", "-m", "unsafe deployment configuration")
+    _sh(setup, "push", "-q", "origin", rp.BRANCH)
+    git = rp.make_git(work)
+    parent, _ = rp.observe_branch(git, "origin", rp.BRANCH, now=NOW)
+    with pytest.raises(rp.Refused):
+        rp.publish(git, remote="origin", branch=rp.BRANCH, parent=parent,
+                   snapshot=_valid_for(work), now=NOW)
+    assert _remote_ref(origin, rp.BRANCH) == parent

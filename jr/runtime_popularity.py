@@ -52,7 +52,7 @@ PUBLISH_RESERVE_SECONDS = 10  # never start a push the time bound would cut off
 COMMIT_IDENTITY = ("espatlas-jr", "hello@esp-atlas.com")
 PROTECTED_BRANCHES = {"main", "master"}
 # Collector state that must outlive one run (identity quarantines, GitHub's cooldown) rides as a
-# JSON trailer on the branch commit's message: the published tree stays popularity.json alone.
+# JSON trailer on the branch commit's message: no second runtime data file is needed.
 STATE_TRAILER = "Runtime-Popularity-State: "
 DEFAULT_LOCK = Path(tempfile.gettempdir()) / "jr-runtime-popularity.lock"
 DEFAULT_DRY_RUN_OUT = Path(tempfile.gettempdir()) / "runtime-popularity.json"
@@ -438,9 +438,26 @@ def _remote_tip(git, remote: str, ref: str) -> str | None:
     return p.stdout.split()[0]
 
 
+def _preserved_entries(git, parent: str | None, branch: str) -> list[str]:
+    """Keep the pinned parent's tree, including its required deployment exclusion."""
+    if not parent:
+        raise Refused("bootstrap the data branch with its Vercel deployment exclusion before publishing")
+    raw = _out(git, "show", f"{parent}:apps/web/vercel.json", what="reading deployment exclusion")
+    try:
+        disabled = json.loads(raw)
+    except ValueError:
+        raise Refused("data branch deployment configuration is not JSON") from None
+    for key in ("git", "deploymentEnabled", branch):
+        disabled = disabled.get(key) if isinstance(disabled, dict) else None
+    if disabled is not False:
+        raise Refused(f"data branch must explicitly disable Vercel deployments for {branch}")
+    listing = _out(git, "ls-tree", "-z", parent, what="reading parent tree")
+    return [entry for entry in listing.split("\0") if entry and entry.split("\t", 1)[1] != FILENAME]
+
+
 def publish(git, *, remote: str, branch: str, parent: str | None, snapshot: dict, now: datetime,
             state: dict | None = None) -> str:
-    """Commit ONLY popularity.json on top of `parent` (orphan when None) and push it with a lease
+    """Change ONLY popularity.json on a bootstrapped `parent` and push it with a lease
     that expects exactly `parent`. Returns the new commit; LostRace when the branch moved.
 
     An accepted push is the outcome, whatever a rival does afterwards. A push that reports failure
@@ -451,9 +468,11 @@ def publish(git, *, remote: str, branch: str, parent: str | None, snapshot: dict
     errors = validate_snapshot(snapshot, now=now)
     if errors:
         raise Refused(f"snapshot invalid: {errors[0]}")
+    entries = _preserved_entries(git, parent, branch)
     text = json.dumps(snapshot, indent=2, sort_keys=True) + "\n"
     blob = _out(git, "hash-object", "-w", "--stdin", input=text, what="hash-object")
-    tree = _out(git, "mktree", input=f"100644 blob {blob}\t{FILENAME}\n", what="mktree")
+    entries.append(f"100644 blob {blob}\t{FILENAME}")
+    tree = _out(git, "mktree", "-z", input="\0".join(entries) + "\0", what="mktree")
     subject = f"popularity: runtime snapshot {snapshot['published_at']} (catalog {snapshot['catalog_revision'][:12]})"
     trailer = STATE_TRAILER + json.dumps(state or _empty_state(), sort_keys=True, separators=(",", ":"))
     name, email = COMMIT_IDENTITY
