@@ -23,8 +23,11 @@ Identity is the repository, not its name: an upstream rename turns `oldtool` int
 GitHub's numeric repository id stays. A hold keeps that id and its slug as the alias it was proposed
 under, and match() looks a candidate up by id BEFORE slug. The id comes from the jr/proposed_ledger.json
 committed at the PR's head (one raw contents read, only when the PR changes that ledger) and from
-nowhere else: a PR body is editable by anyone who can edit the PR, so its hidden identity marker
-(render_identity) is never trusted alone — a marker id the ledger contradicts or does not record is
+nowhere else — and committed text is itself only a claim any later commit can rewrite, so a ledger id
+counts only on a PR the Jr bot (JR_LOGIN) authored from a branch of this repository (no fork), read at
+the pinned headRefOid, and only once `gh api repos/<owner/repo the record names>` (GitHub follows a
+rename's redirect) answers that same id; otherwise the firmware is held by slug alone. A PR body is
+editable by anyone who can edit the PR, so its hidden identity marker (render_identity) is never trusted alone — a marker id the ledger contradicts or does not record is
 ignored, and a PR without a marker (one older than it) is verified the same way. A body whose marker
 is ambiguous — opened twice, a firmware named twice, unreadable — is a gap: the tick fails closed
 before anything is written. An unreadable committed ledger is a gap too; a record without the id
@@ -45,11 +48,14 @@ import re
 from dataclasses import dataclass, field, replace
 from datetime import datetime, timedelta, timezone
 
+from publish import JR_LOGIN   # the account the tick opens its own PRs as (the trust ladder's author)
+
 VETO_TTL_DAYS = 30        # the tick PR body's promise: "Close = veto … does not propose it again for 30 days"
 CLOSED_PR_LIMIT = 200     # closed-unmerged tick PRs inside the TTL (11 in the 30 days to 2026-11-07)
 REST_FILES_CAP = 3000     # GitHub's REST pulls/<n>/files lists at most this many files of a PR
-PR_LIST_FIELDS = "files,changedFiles,body,headRefOid"   # changedFiles proves `files` whole; body carries the
-                                                         # identity marker; headRefOid pins the committed ledger
+PR_LIST_FIELDS = ("files,changedFiles,body,headRefOid,"   # changedFiles proves `files` whole; body carries the
+                  "author,isCrossRepository")             # identity marker; headRefOid pins the committed ledger,
+                                                          # trusted only from the bot's own same-repo PR
 LEDGER_PATH = "jr/proposed_ledger.json"
 RAW_MEDIA = "Accept: application/vnd.github.raw+json"   # the contents API answers with the file itself
 TICK_BRANCH_PREFIX = "jr/tick-"
@@ -63,6 +69,7 @@ _RECORD_ONLY_RE = re.compile(r"^data/firmware/[^/]+/firmware\.md$")
 _IDENTITY_RE = re.compile(r"<!--\s*" + IDENTITY_MARKER + r":\s*(.*?)\s*-->", re.S)
 _IDENTITY_OPEN_RE = re.compile(r"<!--\s*" + IDENTITY_MARKER + r"\s*:")
 _GITHUB_PREFIX = "https://github.com/"
+_OWNER_REPO_RE = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
 
 
 @dataclass(frozen=True)
@@ -318,9 +325,28 @@ def _whole(gh, slug: str, pr: dict) -> dict | None:
     return None if paths is None or len(paths) != count else {**pr, "files": [{"path": p} for p in paths]}
 
 
+def _from_jr_bot(pr: dict) -> bool:
+    """`pr` was opened by the Jr bot from a branch of the base repository itself, not a fork."""
+    author = pr.get("author")
+    return isinstance(author, dict) and author.get("login") == JR_LOGIN and pr.get("isCrossRepository") is False
+
+
+def _github_confirms(gh, repo, rid: int) -> bool:
+    """GitHub's own metadata for `repo` (a rename's redirect followed) answers repository id `rid`."""
+    if not isinstance(repo, str) or not _OWNER_REPO_RE.fullmatch(repo) or ".." in repo.split("/"):
+        return False
+    p = gh("api", f"repos/{repo}")
+    try:
+        meta = json.loads(getattr(p, "stdout", "") or "") if getattr(p, "returncode", 1) == 0 else None
+    except json.JSONDecodeError:
+        return False
+    return isinstance(meta, dict) and type(meta.get("id")) is int and meta["id"] == rid
+
+
 def _ledger_identities(gh, slug: str, pr: dict, ids) -> dict | None:
     """{firmware id: (repo id, owner/repo)} the ledger committed at `pr`'s head records for `ids` (one
-    raw contents read); None when unreadable. A record without an int repo_id verifies nothing."""
+    raw contents read) AND GitHub confirms for that owner/repo; None when unreadable. A record without
+    an int repo_id, or one GitHub does not answer with that id, verifies nothing."""
     oid = pr.get("headRefOid")
     if not slug or not isinstance(oid, str) or not oid:
         return None
@@ -336,17 +362,16 @@ def _ledger_identities(gh, slug: str, pr: dict, ids) -> dict | None:
     for fid in ids:
         rec = by_id.get(fid)
         rid = rec.get("repo_id") if isinstance(rec, dict) else None
-        if type(rid) is int:
-            repo = rec.get("repo")
-            out[fid] = (rid, repo.lower() if isinstance(repo, str) else None)
+        if type(rid) is int and _github_confirms(gh, rec.get("repo"), rid):
+            out[fid] = (rid, rec["repo"].lower())
     return out
 
 
 def _verified(gh, slug: str, prs: list, held_ids, gaps: list) -> list:
     """`prs`, each with the identities verified for the firmware it holds (`held_ids(paths)`): what the
-    ledger committed at its head records, when the PR changes that ledger; none otherwise. The body
-    marker only claims: an ambiguous one on a PR that holds something, or a ledger that cannot be
-    read, is a gap and its PR dropped. A PR that holds nothing decides nothing, whatever its body."""
+    ledger committed at its head records and GitHub confirms, when the Jr bot's own same-repo PR changes
+    that ledger; none otherwise. The body marker only claims: an ambiguous one on a PR that holds
+    something, or a ledger that cannot be read, is a gap and its PR dropped. A PR that holds nothing decides nothing, whatever its body."""
     out = []
     for pr in prs:
         n, paths = pr.get("number"), _paths(pr)
@@ -355,7 +380,7 @@ def _verified(gh, slug: str, prs: list, held_ids, gaps: list) -> list:
             gaps.append(f"Jr PR #{n}'s identity marker is ambiguous (opened twice, a firmware named twice "
                         "or unreadable)")
             continue
-        if held and LEDGER_PATH in paths:
+        if held and LEDGER_PATH in paths and _from_jr_bot(pr):
             verified = _ledger_identities(gh, slug, pr, held)
             if verified is None:
                 gaps.append(f"Jr PR #{n}'s committed {LEDGER_PATH} cannot be read")

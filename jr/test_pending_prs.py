@@ -558,7 +558,7 @@ def _newtool_index(vetoed, ledger_id=4242, repos=None, calls=None, **kw):
 def _held_by_slug_only(idx, rid):
     assert idx.complete, idx.gaps                                                  # no new gap: just no id
     assert idx.hold("newtool").repo_id is None and not idx.by_repo_id
-    assert idx.match("newtool", rid).reason == "already_proposed"                  # the slug still holds
+    assert idx.match("newtool", rid).reason in ("already_proposed", "vetoed")      # the slug still holds
     assert idx.match("renamedtool", rid) is None and idx.match("renamedtool", 4242) is None
 
 
