@@ -16,13 +16,27 @@ sources:
 - field: summary
   url: https://github.com/aat440hz/CardSkimmerDetector-M5Cardputer
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/aat440hz/CardSkimmerDetector-M5Cardputer
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/aat440hz/CardSkimmerDetector-M5Cardputer
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/aat440hz/CardSkimmerDetector-M5Cardputer
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/aat440hz/CardSkimmerDetector-M5Cardputer
+  verified: '2026-11-07'
 maintainer: aat440hz
 capabilities:
 - ble
 popularity:
-  stars: 30
+  stars: 31
   forks: 1
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 777925318
+  github_as_of: '2026-11-07T04:00:56Z'
 summary: "CardSkimmerDetector is an open\u2011source firmware for the M5Cardputer\
   \ that continuously scans BLE signals, identifies known Bluetooth skimming devices\
   \ by name and MAC address prefixes, and alerts the user on the device\u2019s screen.\
