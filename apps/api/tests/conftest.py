@@ -5,6 +5,13 @@ from esp_atlas_core.index_build import build_index
 
 from esp_atlas_api.main import create_app
 
+
+@pytest.fixture(autouse=True)
+def runtime_metrics_off_by_default(monkeypatch):
+    # Never inherit production storage credentials/enabled state in tests.
+    monkeypatch.setenv("POPULARITY_RUNTIME_ENABLED", "0")
+    monkeypatch.delenv("POPULARITY_REDIS_READ_TOKEN", raising=False)
+
 # Plain helpers/constants (BOARD_PATH, SOC_PATH, client_with_llm, marauder_*) live in _shared.py,
 # NOT here: a bare `from conftest import ...` collides with apps/cli/tests/conftest.py when the
 # core+api+cli suites run together. Only real fixtures — auto-discovered per-directory by pytest,

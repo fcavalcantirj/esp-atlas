@@ -21,6 +21,15 @@ const REVALIDATE_SECONDS = 3600;
 // NOT the fix: it was tried (0c8ce8c) and reverted (9a3a614) because it sent every render to a
 // cold Python function that rebuilds its SQLite index at import.
 export const CATALOG_TAG = "catalog";
+export const POPULARITY_TAG = "popularity";
+
+/** Metrics-bearing responses keep catalog eviction and a shorter independent TTL. */
+export function catalogCachePolicy(path: string): { revalidate: number; tags: string[] } {
+  const pathname = path.split("?")[0];
+  return pathname === "/examples" || pathname === "/firmware" || pathname.startsWith("/firmware/")
+    ? { revalidate: 240, tags: [CATALOG_TAG, POPULARITY_TAG] }
+    : { revalidate: REVALIDATE_SECONDS, tags: [CATALOG_TAG] };
+}
 // The API is a serverless Python function that boots an interpreter, imports
 // FastAPI/pydantic/jsonschema and builds the SQLite index before it can answer.
 // Warm, that is well under a second; cold, it is seconds -- and a fresh deploy
@@ -64,7 +73,7 @@ export type ServerFetchResult<T> =
 async function attempt<T>(path: string, timeoutMs: number): Promise<ServerFetchResult<T>> {
   const base = serverApiBase();
   const res = await fetch(`${base}${path}`, {
-    next: { revalidate: REVALIDATE_SECONDS, tags: [CATALOG_TAG] },
+    next: catalogCachePolicy(path),
     headers: serverApiHeaders(base),
     signal: AbortSignal.timeout(timeoutMs),
   });
