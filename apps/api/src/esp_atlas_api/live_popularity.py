@@ -244,18 +244,31 @@ class PostgresPopularityStore:
 
 
 async def fetch_github(identity: Identity):
-    """A single bounded complete read; timeout includes connect, headers and body."""
+    """One bounded read; rate-limit headers survive body/cleanup failure."""
     url = "https://api.github.com/repos/" + "/".join(quote(p, safe="") for p in identity.full_name.split("/"))
-    async with asyncio.timeout(_FETCH_DEADLINE):
-        async with httpx.AsyncClient(timeout=httpx.Timeout(4.5), follow_redirects=False) as client:
-            async with client.stream("GET", url, headers={"Accept": "application/vnd.github+json",
-                                                            "User-Agent": "esp-atlas-on-view"}) as response:
-                body = bytearray()
-                async for chunk in response.aiter_bytes():
-                    body.extend(chunk)
-                    if len(body) > 65536:
-                        raise ValueError("GitHub response too large")
-                return response.status_code, bytes(body), dict(response.headers)
+    rate_limit = None
+    try:
+        async with asyncio.timeout(_FETCH_DEADLINE):
+            async with httpx.AsyncClient(timeout=httpx.Timeout(4.5), follow_redirects=False) as client:
+                async with client.stream("GET", url, headers={"Accept": "application/vnd.github+json",
+                                                                "User-Agent": "esp-atlas-on-view"}) as response:
+                    if response.status_code in (403, 429):
+                        # A rate-limited response needs only its headers. Do not
+                        # read an error body that might time out or exceed our cap.
+                        rate_limit = (response.status_code, b"", dict(response.headers))
+                        return rate_limit
+                    body = bytearray()
+                    async for chunk in response.aiter_bytes():
+                        body.extend(chunk)
+                        if len(body) > 65536:
+                            raise ValueError("GitHub response too large")
+                    return response.status_code, bytes(body), dict(response.headers)
+    except Exception:
+        if rate_limit is not None:
+            # The 5s deadline or transport cleanup may fail after headers.
+            # Preserve the observed 403/429 so the caller sets global cooldown.
+            return rate_limit
+        raise
 
 
 def _cooldown(headers: dict) -> int:

@@ -3,6 +3,7 @@
 The database must have migrations/20261106_live_popularity.sql applied. This suite uses
 only that disposable database and never calls GitHub.
 """
+import asyncio
 import os
 import threading
 import time
@@ -187,3 +188,50 @@ def test_failure_cooldown_starts_after_lock_wait(pg_store, monkeypatch):
                 released.set()
             future.result(timeout=2)
     assert _row(pg_store.dsn, "popularity_refresh_budget")["cooldown_until"] == after + timedelta(seconds=60)
+
+
+@pytest.mark.parametrize("fault", ["body_timeout", "body_read_error", "oversized_body"])
+def test_rate_limit_headers_survive_bad_body_and_block_other_repo(pg_store, monkeypatch, fault):
+    """A 429 is acted on from headers, even when its body cannot be consumed."""
+    seen = {"body_reads": 0, "http_calls": 0}
+
+    class Response:
+        status_code = 429
+        headers = {"Retry-After": "120"}
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *exc):
+            if fault == "body_timeout":
+                raise TimeoutError("response body timed out")
+            if fault == "body_read_error":
+                raise popularity_module.httpx.ReadError("response body failed")
+
+        async def aiter_bytes(self):
+            seen["body_reads"] += 1
+            yield b"x" * 65537  # would exceed the normal body cap if consumed
+
+    class Client:
+        def __init__(self, **kwargs):
+            pass
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *exc):
+            pass
+
+        def stream(self, *args, **kwargs):
+            seen["http_calls"] += 1
+            return Response()
+
+    monkeypatch.setattr(popularity_module.httpx, "AsyncClient", Client)
+    response = asyncio.run(popularity_module.live_popularity(RECORD, store=pg_store))
+    assert response["outcome"] == "unavailable" and response["retry_after_seconds"] == 120
+    assert seen == {"body_reads": 0, "http_calls": 1}
+    identity = identity_from_record(RECORD)
+    other = replace(identity, repo_id=987, full_name="other/repo")
+    blocked = pg_store.claim(other, "other-repo")
+    assert blocked.action == "wait" and blocked.retry_after_seconds > 0
+    assert _row(pg_store.dsn, "popularity_refresh_budget")["used"] == 1

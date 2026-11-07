@@ -217,6 +217,9 @@ Malformed, nonfinite, expired or out-of-range 403/429 headers cannot skip the gl
 cooldown; the fallback is at least 60 seconds. The database clock is sampled only
 after the singleton and repository locks have been acquired, so a lock wait cannot
 extend an expired lease or charge the wrong UTC hour.
+The handler records 403/429 status and headers before reading the response body;
+body-read timeout, transport failure or oversized error body cannot convert a
+rate limit into only a per-repository backoff.
 Missing/unavailable storage means no GitHub call. SQL and concurrent-instance,
 lease-expiry, hour-boundary, identity, outage, cooldown, and failed-publish tests
 are required before release. The feature is not live until the store, source-validated
