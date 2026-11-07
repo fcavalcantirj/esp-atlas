@@ -3,6 +3,80 @@
 Owner: backend `codex_seo_audit_20261105`; frontend DESIGN. This is a review plan,
 not authorization to provision storage or turn on live GitHub calls.
 
+## Current decision and lean options
+
+The existing git-tracked firmware frontmatter is already the durable catalog for
+the page's cited counts. The deployed hourly Jr job is script-only and invokes
+no LLM. Each run selects at most seven distinct repositories; the 24-hour due
+threshold and rotating slots aim for a daily pass when runs succeed. A count can
+be older after a skipped run, failed lookup, floor/provenance deferral, or delayed
+deploy. The page already displays the individual GitHub source date, including
+historical snapshots. **Hourly execution is not a one-hour freshness guarantee.**
+
+There are two concrete user-visible choices:
+
+| Choice | What a page view shows | Additional shared resource | Trade-off |
+| --- | --- | --- | --- |
+| Existing catalog only | Last committed cited counts and their source date | None | Leanest operating path; a view cannot cause a fresh GitHub lookup. |
+| Catalog plus optional on-view overlay (this PR) | The same cited fallback, plus a newer verified GitHub count when eligible and available | One read-write shared coordinator | A view can refresh an eligible repo, subject to the global budget, cache and cooldown; requires resource, migration and deployment approval. |
+
+The earlier on-view request remains in scope. Felipe's later condition permits
+the hourly no-LLM job but does not withdraw that request or authorize storage.
+Keep this PR draft and the endpoint disabled until the resource and release gates
+below are decided. A static JSON export of the catalog can help a client read
+data, but a Vercel function's local JSON file is not shared durable storage for
+cross-instance leases or an atomic hourly reservation. The regional Runtime
+Cache likewise cannot be the sole global coordinator. The current Postgres
+implementation is the smallest reviewed shared coordinator for the stated
+20-per-hour hard cap and single-fetch deduplication; no esp-atlas database
+resource exists yet.
+
+## Wire and failure contract for frontend preparation
+
+`GET /api/firmware/{id}/popularity/live` returns `Cache-Control: no-store` and
+`firmware_id`, `outcome` (`fresh`, `cached`, `stale`, `unavailable`, `ineligible`),
+`catalog` (`stars`, `forks`, `github_as_of`, `source_url`, `repo_id`), nullable
+`github` (`stars`, `forks`, `observed_at`, `source_url`, `repo_id`), and nullable
+`retry_after_seconds`. Catalog fields may be null when the source has no cited
+value; zero counts are real values. The UI may use `github` only when non-null;
+the backend exposes it only when its observation is newer than the catalog's
+GitHub date and its stable repository ID and full name match the canonical
+record. The UI always keeps the cited catalog and source date as fallback.
+
+With `POPULARITY_DATABASE_URL` unset, an eligible record returns
+`outcome: unavailable`, `github: null`, and makes **zero** GitHub calls.
+An uncited/invalid ID, date or non-bare GitHub URL returns `ineligible` and also
+makes zero calls. A store outage returns the catalog without a GitHub call.
+After a successful store claim, a GitHub timeout, invalid payload, exhausted
+budget or cooldown uses a newer last-good eligible overlay when available,
+otherwise the catalog; neither failure path fabricates zero counts or edits
+catalog files.
+Frontend fixtures and parser tests can be prepared against this fixed shape
+without activating a live request in production.
+
+## Request budget and local evidence
+
+The on-view coordinator reserves at most **20 GitHub requests per UTC hour**
+across all page instances, before network I/O. It has one global and one
+per-repository lease, so concurrent cold views of the same repo coalesce to
+one fetch. A valid overlay is cached for one hour and retained for up to seven
+days as last-good fallback. Each claim makes at most one GitHub request with a
+five-second total deadline and no same-view retry. A 403/429 applies global
+cooldown, even if its body cannot be read; other failures back off the repo.
+The separate hourly Jr stage has an at-most-seven-repo ceiling per tick, so
+these two popularity paths together can attempt at most 27 repository lookups
+in one hour when both are enabled. This is a cap on this application's calls,
+not a promise about GitHub's rate-limit allowance or whole-catalog freshness.
+
+The repaired backend code at `30a85b2834e4e9378daaaaab593aa70a326ecc15`
+has local evidence: 162 offline API tests passed; 48 focused tests passed with
+a disposable Postgres primary, including 12 real-SQL cases for contention,
+lease expiry, hour boundary, identity fencing and damaged 403/429 responses;
+catalog validation passed 611/611. The disposable database was stopped. These
+are draft-code tests, not production on-view proof. CI, current-head review,
+the approved store, source-ID coverage, frontend integration and a natural
+page-triggered production receipt remain separate gates.
+
 ## Repository ID coverage
 
 At immutable main `97f7b6a4d09b976182ded3fc1ff9efc3e24c2f4f`, a read-only
