@@ -249,6 +249,12 @@ def _marked(pr, *identities):
     return {**pr, "body": "EspAtlas Jr tick\n\n" + pending_prs.render_identity(items) + "\n"}
 
 
+def _verified(pr, *identities):
+    """`pr` marked for (firmware id, owner/repo, repo id) AND verified so by load() — the ids its
+    committed ledger confirmed. build() accepts no other repository id."""
+    return {**_marked(pr, *identities), "_identities": {fid: (rid, repo) for fid, repo, rid in identities}}
+
+
 OLDTOOL_FILES = ["data/firmware/oldtool/firmware.md", "data/recipes/m5cardputer__oldtool/recipe.md"]
 OLDTOOL_PR = _pr(1500, OLDTOOL_FILES)
 
@@ -260,11 +266,12 @@ def test_the_identity_marker_round_trips_only_verified_firmware_ids():
     marker = pending_prs.render_identity(items)
     assert pending_prs.identities(f"body\n{marker}\n") == {"oldtool": (4242, "n/oldtool")}
     assert pending_prs.render_identity(items[1:]) == ""
-    assert pending_prs.identities(None) == {} and pending_prs.identities("<!-- jr-identity: {not json -->") == {}
+    assert pending_prs.identities(None) == {} and pending_prs.identities("no marker") == {}
+    assert pending_prs.identities("<!-- jr-identity: {not json -->") is None      # unreadable: ambiguous
 
 
 def test_a_renamed_slug_matches_the_hold_by_its_stable_id():
-    idx = pending_prs.build([_marked(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242))], [], NOW)
+    idx = pending_prs.build([_verified(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242))], [], NOW)
     hold = idx.match("newtool", 4242)
     assert hold and hold.reason == "already_proposed" and hold.firmware == "oldtool" and hold.pr_ref == "#1500"
     assert hold.seen_as == "newtool" and hold.repo == "n/oldtool"                 # the slug kept as an alias
@@ -273,21 +280,21 @@ def test_a_renamed_slug_matches_the_hold_by_its_stable_id():
 
 
 def test_a_vetoed_renamed_slug_is_matched_by_id_too():
-    closed = _marked(_pr(1500, OLDTOOL_FILES, closedAt=_iso(NOW - timedelta(days=2)),
+    closed = _verified(_pr(1500, OLDTOOL_FILES, closedAt=_iso(NOW - timedelta(days=2)),
                          mergedAt=None), ("oldtool", "n/oldtool", 4242))
     hold = pending_prs.build([], [closed], NOW).match("newtool", 4242)
     assert hold and hold.reason == "vetoed" and hold.seen_as == "newtool"
 
 
 def test_the_same_slug_under_another_id_is_ambiguous_never_the_held_one():
-    idx = pending_prs.build([_marked(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242))], [], NOW)
+    idx = pending_prs.build([_verified(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242))], [], NOW)
     hold = idx.match("oldtool", 7777)
     assert hold and hold.reason == "identity_ambiguous" and hold.seen_id == 7777
     assert "7777" in hold.note and "4242" in hold.note and "#1500" in hold.note
 
 
 def test_an_unknown_id_on_either_side_of_a_slug_collision_holds_fail_closed():
-    marked = pending_prs.build([_marked(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242))], [], NOW)
+    marked = pending_prs.build([_verified(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242))], [], NOW)
     assert marked.match("oldtool", None).reason == "already_proposed"            # the candidate's id unread
     legacy = pending_prs.build([OLDTOOL_PR], [], NOW)                             # a PR older than the marker
     assert legacy.hold("oldtool").repo_id is None
@@ -296,7 +303,7 @@ def test_an_unknown_id_on_either_side_of_a_slug_collision_holds_fail_closed():
 
 
 def test_another_id_under_another_slug_matches_nothing():
-    idx = pending_prs.build([_marked(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242))], [], NOW)
+    idx = pending_prs.build([_verified(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242))], [], NOW)
     assert idx.match("fmtcheck", 5151) is None
     assert idx.match("fmtcheck", None) is None
 
@@ -308,9 +315,9 @@ def test_a_marker_naming_a_firmware_the_pr_does_not_hold_verifies_nothing():
 
 
 def test_an_open_pr_wins_the_id_over_an_older_veto():
-    closed = _marked(_pr(1499, ["data/recipes/m5cardputer__oldtool/recipe.md"],
+    closed = _verified(_pr(1499, ["data/recipes/m5cardputer__oldtool/recipe.md"],
                          closedAt=_iso(NOW - timedelta(days=2)), mergedAt=None), ("oldtool", "n/oldtool", 4242))
-    opened = _marked(_pr(1502, ["data/firmware/newtool/firmware.md"]), ("newtool", "n/newtool", 4242))
+    opened = _verified(_pr(1502, ["data/firmware/newtool/firmware.md"]), ("newtool", "n/newtool", 4242))
     hold = pending_prs.build([opened], [closed], NOW).match("newtool", 4242)
     assert hold.pr_ref == "#1502" and hold.state == pending_prs.OPEN
 
@@ -359,33 +366,11 @@ def test_a_ledger_without_the_id_leaves_it_unknown_and_the_slug_held():
     assert idx.match("oldtool", 7777).reason == "already_proposed"
 
 
-def test_a_marker_covering_every_held_firmware_costs_no_ledger_read():
-    calls = []
-    pr = _marked(_pr(1500, LEGACY_FILES), ("oldtool", "n/oldtool", 4242))
-    idx = _load(_gh([], calls=calls, ledgers={"oid1500": _ledger(oldtool=9999)}), [pr])
-    assert idx.match("newtool", 4242).firmware == "oldtool"                     # the marker, not the ledger
-    assert not [c for c in calls if c[:2] == ("api", "-H")]
-
-
 def test_a_pr_that_does_not_change_the_ledger_is_not_read_for_one():
     calls = []
     idx = _load(_gh([], calls=calls), [_pr(1500, OLDTOOL_FILES)])
     assert idx.complete and idx.hold("oldtool").repo_id is None
     assert not [c for c in calls if c[:2] == ("api", "-H")]
-
-
-def test_a_second_identity_marker_in_the_body_verifies_nothing():
-    """Item text (a launcher entry's name) is rendered before the real marker: a forged or unclosed
-    marker there must not decide identity. The committed ledger answers instead."""
-    real = pending_prs.render_identity([{"kind": "firmware", "id": "oldtool", "url": "https://github.com/n/oldtool",
-                                         "repo_id": 4242}])
-    for forged in ("<!-- jr-identity: [] -->", '<!-- jr-identity: [{"id": "oldtool", "repo_id": 1}] -->',
-                   "<!-- jr-identity:"):
-        body = f"- **Tool {forged}** (`oldtool`)\n{real}\n"
-        assert pending_prs.identities(body) == {}, forged
-        pr = {**_pr(1500, LEGACY_FILES), "body": body}
-        idx = _load(_gh([], ledgers={"oid1500": _ledger(oldtool=4242)}), [pr])
-        assert idx.match("newtool", 4242).firmware == "oldtool", forged
 
 
 def test_a_pr_listed_without_its_head_oid_cannot_have_its_ledger_read_and_is_a_gap():
@@ -400,3 +385,124 @@ def test_a_marker_opening_inside_a_repo_name_does_not_void_the_real_marker():
     marker = pending_prs.render_identity([{"kind": "firmware", "id": "oldtool", "repo_id": 4242,
                                            "url": "https://github.com/n/<!-- jr-identity: x"}])
     assert pending_prs.identities(f"body\n{marker}\n") == {"oldtool": (4242, "n/<!-- jr-identity: x")}
+
+
+# --- the marker is never trusted alone: the ledger committed at the PR's head decides (#986/#987) -------
+
+def _closed(pr):
+    return {**pr, "closedAt": _iso(NOW - timedelta(days=2)), "mergedAt": None}
+
+
+def _index_of(pr, vetoed, ledgers, calls=None):
+    """load() over `pr`, listed open or closed unmerged inside the veto TTL."""
+    return _load(_gh([_closed(pr)], calls=calls, ledgers=ledgers), []) if vetoed else _load(_gh([], calls=calls, ledgers=ledgers), [pr])
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+def test_a_forged_marker_keeps_the_ledger_id_held_and_never_holds_the_claimed_one(vetoed):
+    """The body of PR #1500 was edited: its marker claims oldtool is repository 7777, the ledger it
+    committed says 4242. 4242 stays held (renamed or not); unrelated 7777 is neither held nor vetoed."""
+    pr = _marked(_pr(1500, LEGACY_FILES), ("oldtool", "n/oldtool", 7777))
+    idx = _index_of(pr, vetoed, {"oid1500": _ledger(oldtool=4242)})
+    assert idx.complete
+    assert idx.hold("oldtool").repo_id == 4242
+    assert idx.match("newtool", 4242).firmware == "oldtool"                       # the rename still caught
+    assert idx.match("unrelated", 7777) is None                                   # 7777 never held or vetoed
+    assert 7777 not in idx.by_repo_id
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+def test_a_marker_its_committed_ledger_agrees_with_still_covers_the_rename(vetoed):
+    calls = []
+    pr = _marked(_pr(1500, LEGACY_FILES), ("oldtool", "n/oldtool", 4242))
+    idx = _index_of(pr, vetoed, {"oid1500": _ledger(oldtool=4242)}, calls)
+    assert idx.complete
+    hold = idx.match("newtool", 4242)
+    assert hold.firmware == "oldtool" and hold.seen_as == "newtool"
+    assert hold.reason == ("vetoed" if vetoed else "already_proposed")
+    assert [c[3] for c in calls if c[:2] == ("api", "-H")] == ["repos/o/r/contents/jr/proposed_ledger.json?ref=oid1500"]
+
+
+@pytest.mark.parametrize("ledger", [_ledger(), json.dumps({"by_id": {"oldtool": {"id": "oldtool", "repo": "n/oldtool",
+                                                                                  "status": "proposed"}}, "by_repo": {}})],
+                         ids=["no-record", "record-without-id"])
+def test_a_marker_its_committed_ledger_does_not_confirm_verifies_nothing(ledger):
+    pr = _marked(_pr(1500, LEGACY_FILES), ("oldtool", "n/oldtool", 4242))
+    idx = _load(_gh([], ledgers={"oid1500": ledger}), [pr])
+    assert idx.complete and idx.hold("oldtool").repo_id is None and not idx.by_repo_id
+    assert idx.match("newtool", 4242) is None                                     # a rename it never verified
+    assert idx.match("oldtool", 7777).reason == "already_proposed"                # the slug still holds
+
+
+def test_a_marked_pr_that_does_not_change_the_ledger_verifies_nothing():
+    pr = _marked(_pr(1500, OLDTOOL_FILES), ("oldtool", "n/oldtool", 4242))
+    idx = _load(_gh([]), [pr])
+    assert idx.complete and idx.hold("oldtool").repo_id is None and not idx.by_repo_id
+
+
+def test_build_alone_never_trusts_a_body_marker():
+    idx = pending_prs.build([_marked(OLDTOOL_PR, ("oldtool", "n/oldtool", 4242))], [], NOW)
+    assert idx.hold("oldtool").repo_id is None and idx.match("newtool", 4242) is None
+
+
+REAL_MARKER = pending_prs.render_identity([{"kind": "firmware", "id": "oldtool", "url": "https://github.com/n/oldtool",
+                                            "repo_id": 4242}])
+AMBIGUOUS_BODIES = {
+    "second-marker": f"- **Tool <!-- jr-identity: [] -->** (`oldtool`)\n{REAL_MARKER}\n",
+    "forged-second": f'- **Tool <!-- jr-identity: [{{"id": "oldtool", "repo_id": 1}}] -->**\n{REAL_MARKER}\n',
+    "unclosed-second": f"- **Tool <!-- jr-identity:** (`oldtool`)\n{REAL_MARKER}\n",
+    "same-marker-twice": f"{REAL_MARKER}\n{REAL_MARKER}\n",
+    "conflicting-ids": '<!-- jr-identity: [{"id": "oldtool", "repo_id": 4242}, {"id": "oldtool", "repo_id": 7777}] -->',
+    "duplicate-entry": '<!-- jr-identity: [{"id": "oldtool", "repo_id": 4242}, {"id": "oldtool", "repo_id": 4242}] -->',
+    "unreadable": "<!-- jr-identity: [{not json -->",
+    "unclosed": '<!-- jr-identity: [{"id": "oldtool", "repo_id": 4242}]',
+    "not-a-list": '<!-- jr-identity: {"oldtool": 4242} -->',
+}
+
+
+@pytest.mark.parametrize("body", AMBIGUOUS_BODIES.values(), ids=AMBIGUOUS_BODIES.keys())
+def test_a_conflicting_duplicate_or_unreadable_marker_is_ambiguous(body):
+    assert pending_prs.identities(body) is None
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+@pytest.mark.parametrize("body", AMBIGUOUS_BODIES.values(), ids=AMBIGUOUS_BODIES.keys())
+def test_an_ambiguous_marker_leaves_the_index_incomplete_even_when_the_ledger_agrees(body, vetoed):
+    pr = {**_pr(1500, LEGACY_FILES), "body": body}
+    idx = _index_of(pr, vetoed, {"oid1500": _ledger(oldtool=4242)})
+    assert not idx.complete
+    assert any("#1500" in g and "identity marker" in g for g in idx.gaps), idx.gaps
+
+
+def test_an_ambiguous_marker_on_a_pr_that_holds_nothing_is_no_gap():
+    """A human branch, a lapsed veto or a merged PR holds nothing: its body decides nothing either."""
+    body = AMBIGUOUS_BODIES["conflicting-ids"]
+    human = {**_pr(1500, LEGACY_FILES, branch="feature/x"), "body": body}
+    lapsed = {**_pr(1501, LEGACY_FILES), "body": body, "closedAt": _iso(NOW - timedelta(days=40)), "mergedAt": None}
+    merged = {**_pr(1502, LEGACY_FILES), "body": body, "closedAt": _iso(NOW - timedelta(days=2)),
+              "mergedAt": _iso(NOW - timedelta(days=2))}
+    assert _load(_gh([lapsed, merged]), [human]).complete
+
+
+LEGACY_GROWTH_FILES = ["data/firmware/cardskimmerdetector-m5cardputer/firmware.md",
+                       "data/firmware/nightdriverstrip/firmware.md", "data/firmware/nightdriverstrip/signals.json",
+                       "data/recipes/m5cardputer__cardskimmerdetector-m5cardputer/recipe.md",
+                       "docs/telemetry/data-trend.jsonl", "jr/proposed_ledger.json"]
+
+
+def test_a_legacy_markerless_growth_pr_resolves_ids_from_its_ledger_else_by_slug():
+    """The shape of open growth PRs #1511/#1513: no marker, a committed ledger where one held firmware's
+    record carries its repo_id and another's (an older merged record) does not."""
+    led = json.dumps({"by_id": {
+        "cardskimmerdetector-m5cardputer": {"id": "cardskimmerdetector-m5cardputer", "status": "merged",
+                                            "repo": "Aat440hz/CardSkimmerDetector-M5Cardputer", "repo_id": 777925318},
+        "nightdriverstrip": {"id": "nightdriverstrip", "status": "merged", "repo": "plummerssoftwarellc/nightdriverstrip"}},
+        "by_repo": {}})
+    pr = {**_pr(1513, LEGACY_GROWTH_FILES, branch="jr/tick-20261107-0400"), "body": "EspAtlas Jr tick\n\nno marker\n"}
+    idx = _load(_gh([], ledgers={"oid1513": led}), [pr])
+    assert idx.complete
+    card = idx.hold("cardskimmerdetector-m5cardputer")
+    assert card.repo_id == 777925318 and card.repo == "aat440hz/cardskimmerdetector-m5cardputer"
+    assert idx.match("cardskimmer-renamed", 777925318).firmware == "cardskimmerdetector-m5cardputer"
+    assert idx.hold("nightdriverstrip").repo_id is None
+    assert idx.match("nightdriverstrip", 123).reason == "already_proposed"         # slug fallback holds

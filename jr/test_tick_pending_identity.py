@@ -205,3 +205,83 @@ def test_another_repository_with_another_name_is_admitted_normally(sim, catalog)
     assert "data/firmware/fmtcheck/firmware.md" in r.paths, r.paths
     assert any(p.startswith("data/recipes/") and p.rstrip("/").endswith("__fmtcheck") for p in r.paths), r.paths
     assert _new_prs_holding(sim, "fmtcheck", pr["number"])
+
+
+# --- the marker is never trusted alone (#986/#987): the ledger committed at the PR's head decides ---------
+
+def _ledgers_written(sim):
+    """Every jr/proposed_ledger.json the ticks wrote: the worktree's and each PR's committed one."""
+    texts = [p["tree"].get("jr/proposed_ledger.json") for p in sim.prs] + [sim.main.get("jr/proposed_ledger.json")]
+    wt_ledger = sim.wt / "jr" / "proposed_ledger.json"
+    texts.append(wt_ledger.read_text() if wt_ledger.is_file() else None)
+    return [json.loads(t) for t in texts if t]
+
+
+def _owners_of(sim, repo_id):
+    """The firmware ids any written ledger records as GitHub repository `repo_id`."""
+    return {fid for led in _ledgers_written(sim) for fid, rec in led["by_id"].items() if rec.get("repo_id") == repo_id}
+
+
+def _forge(pr, fid, repo_id):
+    """`pr`'s body edited so its marker claims `fid` is repository `repo_id` (its committed ledger untouched)."""
+    pr["body"] = pending_prs.render_identity([{"kind": "firmware", "id": fid, "url": f"https://github.com/n/{fid}",
+                                               "repo_id": repo_id}])
+
+
+UNRELATED = _entry("n/fmtcheck", "Fmt Check")
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+def test_a_forged_marker_keeps_the_real_repository_held_and_never_holds_the_claimed_one(sim, catalog, vetoed):
+    pr = _admit_first(sim, catalog, OLDTOOL, "oldtool", REPO_ID)
+    _forge(pr, "oldtool", OTHER_ID)
+    if vetoed:
+        sim.owner_closes(pr["number"], T0 + timedelta(hours=2))
+    catalog[:] = [NEWTOOL, UNRELATED]
+    sim.serve("n/newtool", REPO_ID, "n/oldtool")
+    sim.serve("n/fmtcheck", OTHER_ID)                  # the id the forged marker claims: an unrelated repository
+    r = sim.tick(T0 + timedelta(hours=3))
+    assert not r.aborted, r.aborted
+    assert _staged_for(r, "newtool") == [], "repository 4242 admitted again under its new name"
+    assert r.rejects.get("vetoed" if vetoed else "already_proposed") == 1, r.rejects
+    assert "data/firmware/fmtcheck/firmware.md" in r.paths, "unrelated 7777 held by a forged marker"
+    assert _owners_of(sim, OTHER_ID) <= {"fmtcheck"}, "the forged id was written into a ledger"
+
+
+def test_a_conflicting_marker_aborts_the_tick_before_anything_is_written(sim, catalog):
+    pr = _admit_first(sim, catalog, OLDTOOL, "oldtool", REPO_ID)
+    pr["body"] += "\n" + pending_prs.render_identity([{"kind": "firmware", "id": "oldtool",
+                                                        "url": "https://github.com/n/oldtool", "repo_id": OTHER_ID}])
+    main_before, prs_before = dict(sim.main), len(sim.prs)
+    catalog[:] = [NEWTOOL, UNRELATED]
+    sim.serve("n/newtool", REPO_ID, "n/oldtool")
+    sim.serve("n/fmtcheck", OTHER_ID)
+    sim.git_calls.clear()
+    r = sim.tick(T0 + timedelta(hours=1))
+    assert "incomplete" in r.aborted and f"#{pr['number']}" in r.aborted and "identity marker" in r.aborted, r.aborted
+    assert r.paths == [] and len(sim.prs) == prs_before and sim.main == main_before
+    assert not [c for c in sim.git_calls if c[:2] == ("worktree", "add")], "a worktree (and its ledger) was written"
+    assert _owners_of(sim, OTHER_ID) == set()
+
+
+def test_a_markerless_pr_is_verified_from_its_committed_ledger_across_a_rename(sim, catalog):
+    """The shape of the open growth PRs #1511/#1513: no marker, the repository id in the committed ledger."""
+    pr = _admit_first(sim, catalog, OLDTOOL, "oldtool", REPO_ID)
+    pr["body"] = "EspAtlas Jr tick\n\nno identity marker\n"
+    _rename_upstream(sim, catalog)
+    r = sim.tick(T0 + timedelta(hours=1))
+    assert not r.aborted, r.aborted
+    assert _staged_for(r, "newtool") == []
+    assert r.rejects.get("already_proposed") == 1, r.rejects
+
+
+def test_an_ambiguous_slug_collision_writes_the_other_id_nowhere(sim, catalog):
+    pr = _admit_first(sim, catalog, NEWTOOL, "newtool", REPO_ID)
+    catalog[:] = [NEWTOOL_ELSEWHERE]
+    sim.serve("m/newtool", OTHER_ID)
+    r = sim.tick(T0 + timedelta(hours=1))
+    assert not r.aborted, r.aborted
+    assert r.rejects.get("identity_ambiguous") == 1, r.rejects
+    assert _owners_of(sim, OTHER_ID) == set(), "an unverified repository id was persisted"
+    assert _owners_of(sim, REPO_ID) == {"newtool"}
+    assert not _new_prs_holding(sim, "newtool", pr["number"])
