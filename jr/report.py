@@ -346,4 +346,4 @@ def render_pr_body(r: TickReport) -> str:
     lines.append("</details>")
     lines.append("")
     lines.append("— 🤖 EspAtlas Jr · hourly tick")
-    return "\n".join(lines)
+    return "\n".join(line if line == identity else pending_prs.defang(line) for line in lines)   # one marker opening

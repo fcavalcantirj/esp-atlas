@@ -164,6 +164,12 @@ def render_identity(items) -> str:
     return f"<!-- {IDENTITY_MARKER}: {payload} -->"
 
 
+def defang(text: str) -> str:
+    """`text` with every identity-marker opening escaped (`&lt;` renders as `<`): third-party text in
+    a tick PR body — a launcher name, a stage summary — must never open a second marker."""
+    return _IDENTITY_OPEN_RE.sub(lambda m: "&lt;" + m.group(0)[1:], text)
+
+
 def identities(body) -> dict | None:
     """{firmware id: (repo id, owner/repo)} a PR body's identity marker CLAIMS — never proof on its own
     (load() accepts only what the committed ledger records). {} when the body has no marker; None when
