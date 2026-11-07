@@ -407,3 +407,65 @@ def test_topics_item_renders_in_the_pr_body_with_real_url_board_and_recipe_and_n
     assert "31 ★ / 4 forks" in body
     assert (f"  - ✅ board `{it['board']}` (esp32-s3): surfaced by `topic:cardputer`; recipe cites "
             f"https://github.com/n/newtool → recipe `{it['board']}__newtool`, status unverified") in body
+
+
+# --- stable repository identity (jr/pending_prs.py): the GitHub id is matched before the slug -------------
+
+def _identity_pending(fid, owner_repo, rid, vetoed=False):
+    """An index whose one tick PR holds `fid` and verified it as repository `rid` in its body."""
+    pr = {"number": 1500, "headRefName": "jr/tick-20261106-2200", "mergedAt": None,
+          "files": [{"path": f"data/firmware/{fid}/firmware.md"}, {"path": f"data/recipes/m5cardputer__{fid}/recipe.md"}],
+          "body": pending_prs.render_identity([{"kind": "firmware", "id": fid, "url": f"https://github.com/{owner_repo}",
+                                                "repo_id": rid}])}
+    if vetoed:
+        return pending_prs.build([], [{**pr, "closedAt": (NOW - timedelta(days=2)).isoformat()}], NOW)
+    return pending_prs.build([pr], [], NOW)
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_a_held_repository_renamed_upstream_is_not_authored_again(root, monkeypatch, vetoed, dry_run):
+    entries = [_topic_entry("New Tool", "https://github.com/n/newtool", "A Cardputer tool")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(
+        {"n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=4242)}))
+    ctx = _ctx(root, dry_run=dry_run)
+    ctx.pending = _identity_pending("oldtool", "n/oldtool", 4242, vetoed=vetoed)
+
+    res = stage_admit_topics.run(ctx, budget=1)
+
+    assert res.admitted == 0 and res.paths == [] and not (root / "data" / "firmware" / "newtool").exists()
+    assert not getattr(res, "would_write", None) or not any("newtool" in w["path"] for w in res.would_write)
+    reason = "vetoed" if vetoed else "already_proposed"
+    assert res.rejects.get(reason) == 1 and "skipped_scoring" not in res.rejects, res.rejects
+    assert "oldtool" in res.summary and "4242" in res.summary and "#1500" in res.summary, res.summary
+
+
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_another_repository_with_a_held_slug_is_routed_fail_closed(root, monkeypatch, dry_run):
+    entries = [_topic_entry("New Tool", "https://github.com/m/newtool", "A Cardputer tool")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(
+        {"m/newtool": _meta("m/newtool", stars=30, description="A Cardputer tool", rid=7777)}))
+    ctx = _ctx(root, dry_run=dry_run)
+    ctx.pending = _identity_pending("newtool", "n/newtool", 4242)
+
+    res = stage_admit_topics.run(ctx, budget=1)
+
+    assert res.admitted == 0 and res.paths == [] and not (root / "data" / "firmware" / "newtool").exists()
+    assert res.rejects.get("identity_ambiguous") == 1 and "already_proposed" not in res.rejects, res.rejects
+    assert "7777" in res.summary and "4242" in res.summary, res.summary
+
+
+def test_another_repository_with_another_name_is_authored_with_its_id(root, monkeypatch):
+    entries = [_topic_entry("Fmt Check", "https://github.com/n/fmtcheck", "A Cardputer tool")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(
+        {"n/fmtcheck": _meta("n/fmtcheck", stars=30, description="A Cardputer tool", rid=5151)}))
+    ctx = _ctx(root)
+    ctx.pending = _identity_pending("oldtool", "n/oldtool", 4242)
+
+    res = stage_admit_topics.run(ctx, budget=1)
+
+    assert res.admitted == 1 and "data/firmware/fmtcheck/firmware.md" in res.paths
+    assert [it.get("repo_id") for it in res.items] == [5151]           # the next tick holds it by this id
