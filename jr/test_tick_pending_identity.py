@@ -228,7 +228,7 @@ def _forge(pr, fid, repo_id):
                                                "repo_id": repo_id}])
 
 
-UNRELATED = _entry("n/fmtcheck", "Fmt Check")
+UNRELATED = _entry("n/fmtcheck", "Unrelated Fmt Check")   # listed after New Tool: the held one is met first
 
 
 @pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])

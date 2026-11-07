@@ -155,20 +155,25 @@ main was forgotten the same way.
   GitHub's numeric repository id stays. Every tick PR body carries a hidden
   `<!-- jr-identity: [{"id", "repo", "repo_id"}] -->` marker — the id admission read from GitHub
   for each firmware it proposes (`stage_admit` and `stage_admit_topics`). Both PR lists also ask
-  for `body` and `headRefOid`. A hold keeps that verified id and its slug as the alias it was
-  proposed under; a marker entry for a firmware the PR does not hold verifies nothing, and one
-  firmware named under two ids verifies neither. Only the body's single marker counts: a body
-  that opens `jr-identity` more than once (a forged, duplicate or unclosed marker in item text)
-  verifies nothing from its body (the renderer escapes `<` so a real marker never opens twice).
-  - **The committed ledger backs a marker that falls short.** When a tick PR changes
-    `jr/proposed_ledger.json` and its marker does not cover every firmware it holds (a PR older
-    than the marker, a forged body), the ledger committed at its head is read once:
+  for `body` and `headRefOid`. A hold keeps its verified id and its slug as the alias it was
+  proposed under.
+  - **The marker is never trusted alone; the committed ledger decides.** A PR body is editable by
+    anyone who can edit the PR, so the marker only claims. When a tick PR changes
+    `jr/proposed_ledger.json`, the ledger committed at its head is read once:
     `gh api -H "Accept: application/vnd.github.raw+json"
-    repos/<slug>/contents/jr/proposed_ledger.json?ref=<headRefOid>` (`RAW_MEDIA`), and each
-    uncovered held firmware takes the `repo_id` of its record there. An unreadable ledger (or
-    one with no head oid to read it at) is a gap: the index is incomplete and the tick aborts. A
-    record without the id leaves it unknown and the hold stays matched by slug. A marker that
-    covers every held firmware costs no read; a PR that does not change the ledger is not read.
+    repos/<slug>/contents/jr/proposed_ledger.json?ref=<headRefOid>` (`RAW_MEDIA`), and each held
+    firmware takes the `repo_id` of its record there — and only that. A marker id the ledger
+    contradicts is ignored (a forged `4242 → 7777` keeps 4242 held and never holds or vetoes
+    7777); one the ledger does not record verifies nothing (the hold stays matched by slug). A
+    marker that agrees still covers the rename. A PR without a marker (one older than it, like
+    growth PRs #1511/#1513) is verified the same way, else matched by slug. A PR that does not
+    change the ledger is not read: its ids stay unknown.
+  - **An ambiguous marker fails closed.** A body that opens `jr-identity` more than once (a
+    forged, duplicate or unclosed marker), whose marker is unreadable, or that names one firmware
+    twice is a gap: the index is incomplete and the tick aborts before its worktree — nothing is
+    written to the ledger or memory. So is an unreadable ledger (or one with no head oid to read it
+    at). The renderer escapes `<` inside the marker and defangs any `jr-identity` opening in item
+    text and stage summaries, so a body Jr wrote opens the marker exactly once.
   Admission matches the fetched id **before** the slug:
   - same id under a new slug → held as the original (`already_proposed` / `vetoed`), named with
     both slugs, the id and the PR (rename provenance);

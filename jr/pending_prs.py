@@ -20,16 +20,17 @@ firmware.md (a popularity refresh) vetoes nothing for it. Nothing is persisted: 
 merge or a lapsed veto releases the firmware on its own.
 
 Identity is the repository, not its name: an upstream rename turns `oldtool` into `newtool` while
-GitHub's numeric repository id stays. Every tick PR's body carries a hidden identity marker (the id
-admission read from GitHub for each firmware it proposes, render_identity); a hold keeps that id and
-its slug as the alias it was proposed under, and match() looks a candidate up by id BEFORE slug. A
-marker entry for a firmware the PR does not hold verifies nothing, and only the body's single marker
-counts: a second opening (a forged or unclosed one inside item text) verifies nothing at all. A PR whose
-marker does not cover every firmware it holds (one older than the marker) is verified from the
-jr/proposed_ledger.json committed at its head — one raw contents read, only when the PR changes that
-ledger; an unreadable one is a gap, a record without the id leaves it unknown. When id and slug disagree — the
-held slug under another id — or a slug collides where either id is unknown, the candidate is held,
-never admitted: name similarity is never identity.
+GitHub's numeric repository id stays. A hold keeps that id and its slug as the alias it was proposed
+under, and match() looks a candidate up by id BEFORE slug. The id comes from the jr/proposed_ledger.json
+committed at the PR's head (one raw contents read, only when the PR changes that ledger) and from
+nowhere else: a PR body is editable by anyone who can edit the PR, so its hidden identity marker
+(render_identity) is never trusted alone — a marker id the ledger contradicts or does not record is
+ignored, and a PR without a marker (one older than it) is verified the same way. A body whose marker
+is ambiguous — opened twice, a firmware named twice, unreadable — is a gap: the tick fails closed
+before anything is written. An unreadable committed ledger is a gap too; a record without the id
+leaves it unknown and the hold matched by slug. When id and slug disagree — the held slug under
+another id — or a slug collides where either id is unknown, the candidate is held, never admitted:
+name similarity is never identity.
 
 An index that may miss a hold is as blind as an unreadable one, so it names its gaps and the tick
 fails closed on any: an open or closed list that returned its full limit (it may be cut), or a held
@@ -163,26 +164,30 @@ def render_identity(items) -> str:
     return f"<!-- {IDENTITY_MARKER}: {payload} -->"
 
 
-def identities(body) -> dict:
-    """{firmware id: (repo id, owner/repo)} a PR body's identity marker names; {} when it has none or
-    it is unreadable, or when the body opens a marker more than once (a forged or unclosed one in item
-    text). A firmware named under two ids verifies neither."""
-    if not isinstance(body, str) or len(_IDENTITY_OPEN_RE.findall(body)) != 1:
+def identities(body) -> dict | None:
+    """{firmware id: (repo id, owner/repo)} a PR body's identity marker CLAIMS — never proof on its own
+    (load() accepts only what the committed ledger records). {} when the body has no marker; None when
+    the marker is ambiguous: opened more than once (a forged, duplicate or unclosed one in item text),
+    unreadable, or naming a firmware twice."""
+    opened = len(_IDENTITY_OPEN_RE.findall(body)) if isinstance(body, str) else 0
+    if opened == 0:
         return {}
     m = _IDENTITY_RE.search(body)
     try:
-        entries = json.loads(m.group(1)) if m else []
+        entries = json.loads(m.group(1)) if opened == 1 and m else None
     except json.JSONDecodeError:
-        return {}
-    out, clash = {}, set()
-    for e in entries if isinstance(entries, list) else []:
+        return None
+    if not isinstance(entries, list):
+        return None
+    out = {}
+    for e in entries:
         fid, rid = (e.get("id"), e.get("repo_id")) if isinstance(e, dict) else (None, None)
         if not isinstance(fid, str) or type(rid) is not int:
             continue
-        if fid in out and out[fid][0] != rid:
-            clash.add(fid)
+        if fid in out:
+            return None
         out[fid] = (rid, e.get("repo") if isinstance(e.get("repo"), str) else None)
-    return {k: v for k, v in out.items() if k not in clash}
+    return out
 
 
 def _paths(pr: dict) -> list[str]:
@@ -213,9 +218,9 @@ def _veto_until(pr: dict, now: datetime) -> datetime | None:
 
 
 def _held(pr: dict, ids, state: str, until: datetime | None) -> list[Hold]:
-    """PR `pr`'s holds on `ids`, each with the repository id verified for it: by load() from its marker
-    and committed ledger (`_identities`), else from its identity marker."""
-    verified = pr["_identities"] if "_identities" in pr else identities(pr.get("body"))
+    """PR `pr`'s holds on `ids`, each with the repository id load() verified for it from the ledger
+    committed at its head (`_identities`); unknown for any other — a body marker is never proof."""
+    verified = pr.get("_identities") or {}
     return [Hold(fid, f"#{pr.get('number')}", state, until, *verified.get(fid, (None, None))) for fid in sorted(ids)]
 
 
@@ -332,20 +337,22 @@ def _ledger_identities(gh, slug: str, pr: dict, ids) -> dict | None:
 
 
 def _verified(gh, slug: str, prs: list, held_ids, gaps: list) -> list:
-    """`prs`, each with the identities verified for the firmware it holds (`held_ids(paths)`): its
-    marker's, and — when the marker misses one and the PR changes the ledger — the committed ledger's
-    for the rest. A ledger that cannot be read is a gap and its PR is dropped."""
+    """`prs`, each with the identities verified for the firmware it holds (`held_ids(paths)`): what the
+    ledger committed at its head records, when the PR changes that ledger; none otherwise. The body
+    marker only claims: an ambiguous one, or a ledger that cannot be read, is a gap and its PR dropped."""
     out = []
     for pr in prs:
-        paths = _paths(pr)
-        verified = identities(pr.get("body"))
-        missing = held_ids(paths) - verified.keys()
-        if missing and LEDGER_PATH in paths:
-            from_ledger = _ledger_identities(gh, slug, pr, missing)
-            if from_ledger is None:
-                gaps.append(f"Jr PR #{pr.get('number')}'s committed {LEDGER_PATH} cannot be read")
+        n, paths = pr.get("number"), _paths(pr)
+        if identities(pr.get("body")) is None:
+            gaps.append(f"Jr PR #{n}'s identity marker is ambiguous (opened twice, a firmware named twice "
+                        "or unreadable)")
+            continue
+        held, verified = held_ids(paths), {}
+        if held and LEDGER_PATH in paths:
+            verified = _ledger_identities(gh, slug, pr, held)
+            if verified is None:
+                gaps.append(f"Jr PR #{n}'s committed {LEDGER_PATH} cannot be read")
                 continue
-            verified = {**from_ledger, **verified}
         out.append({**pr, "_identities": verified})
     return out
 

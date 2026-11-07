@@ -413,8 +413,9 @@ def test_topics_item_renders_in_the_pr_body_with_real_url_board_and_recipe_and_n
 # --- stable repository identity (jr/pending_prs.py): the GitHub id is matched before the slug -------------
 
 def _identity_pending(fid, owner_repo, rid, vetoed=False):
-    """An index whose one tick PR holds `fid` and verified it as repository `rid` in its body."""
-    pr = {"number": 1500, "headRefName": "jr/tick-20261106-2200", "mergedAt": None,
+    """An index whose one tick PR holds `fid` and verified it as repository `rid` (by load(), from the
+    ledger committed at its head: `_identities`)."""
+    pr = {"number": 1500, "headRefName": "jr/tick-20261106-2200", "mergedAt": None, "_identities": {fid: (rid, owner_repo)},
           "files": [{"path": f"data/firmware/{fid}/firmware.md"}, {"path": f"data/recipes/m5cardputer__{fid}/recipe.md"}],
           "body": pending_prs.render_identity([{"kind": "firmware", "id": fid, "url": f"https://github.com/{owner_repo}",
                                                 "repo_id": rid}])}

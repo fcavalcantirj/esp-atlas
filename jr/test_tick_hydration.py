@@ -293,13 +293,14 @@ def test_run_tick_authors_when_no_open_pr(wt, monkeypatch):
 
 
 def test_hydrate_records_the_stable_repo_id_the_pending_index_verified(tmp_path):
-    """The ledger hydration carries the GitHub id the open PR's identity marker verified, so the
-    ledger's own by_repo_id gate also sees the held repository after an upstream rename."""
+    """The ledger hydration carries the GitHub id the pending index verified for the open PR (from the
+    ledger committed at its head), so the ledger's own by_repo_id gate also sees the held repository
+    after an upstream rename."""
     import pending_prs
     lp = tmp_path / "proposed_ledger.json"
     body = pending_prs.render_identity([{"kind": "firmware", "id": "newtool", "url": "https://github.com/n/newtool",
                                          "repo_id": 4242}])
-    pending = pending_prs.build([{**OPEN_PR[0], "body": body}], [], NOW)
+    pending = pending_prs.build([{**OPEN_PR[0], "body": body, "_identities": {"newtool": (4242, "n/newtool")}}], [], NOW)
     tick.hydrate_open_pr_ledger(gh(prs=json.dumps(OPEN_PR)), NOW, lp, pending=pending)
     led = memory.load(lp)
     assert led["by_id"]["newtool"]["repo_id"] == 4242
@@ -317,3 +318,16 @@ def test_hydrate_takes_the_repo_id_only_from_the_pr_it_records(tmp_path):
     assert pending.hold("newtool").pr_ref == "#160"
     tick.hydrate_open_pr_ledger(gh(prs=json.dumps(OPEN_PR)), NOW, lp, pending=pending)
     assert "repo_id" not in memory.load(lp)["by_id"]["newtool"]
+
+
+def test_hydrate_never_records_an_id_only_a_body_marker_claims(tmp_path):
+    """A marker is never proof on its own: a PR the pending index could not verify from its committed
+    ledger hydrates without a repository id, so no unverified id reaches the durable ledger."""
+    import pending_prs
+    lp = tmp_path / "proposed_ledger.json"
+    body = pending_prs.render_identity([{"kind": "firmware", "id": "newtool", "url": "https://github.com/n/newtool",
+                                         "repo_id": 7777}])
+    pending = pending_prs.build([{**OPEN_PR[0], "body": body}], [], NOW)
+    tick.hydrate_open_pr_ledger(gh(prs=json.dumps(OPEN_PR)), NOW, lp, pending=pending)
+    led = memory.load(lp)
+    assert "repo_id" not in led["by_id"]["newtool"] and 7777 not in led["by_repo_id"]

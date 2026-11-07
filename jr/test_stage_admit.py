@@ -481,10 +481,11 @@ def test_admit_stops_scanning_the_launcher_at_its_call_share_but_still_answers_s
 # --- stable repository identity (jr/pending_prs.py): the fetched GitHub id is matched before the slug ----
 
 def _held_as(fid, owner_repo, rid):
-    """A pending index whose open tick PR #1500 holds `fid`, verified as repository `rid`."""
+    """A pending index whose open tick PR #1500 holds `fid`, verified as repository `rid` (by load(),
+    from the ledger committed at its head: `_identities`)."""
     body = pending_prs.render_identity([{"kind": "firmware", "id": fid, "url": f"https://github.com/{owner_repo}",
                                          "repo_id": rid}])
-    pr = {"number": 1500, "headRefName": "jr/tick-20261107-0300", "body": body,
+    pr = {"number": 1500, "headRefName": "jr/tick-20261107-0300", "body": body, "_identities": {fid: (rid, owner_repo)},
           "files": [{"path": f"data/firmware/{fid}/firmware.md"}, {"path": f"data/recipes/m5cardputer__{fid}/recipe.md"}]}
     return pending_prs.build([pr], [], NOW)
 

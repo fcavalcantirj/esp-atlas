@@ -114,7 +114,7 @@ def test_load_reads_closed_unmerged_tick_prs_with_one_read_only_call():
     closed = _pr(1478, NEWTOOL_PR_FILES, closedAt=_iso(NOW - timedelta(days=2)), mergedAt=None)
     idx = _load(_gh([closed], calls=calls), [OPEN])
     assert idx.hold("newtool").state == pending_prs.OPEN and idx.hold("nightdriverstrip")
-    assert len(calls) == 1
+    assert len([c for c in calls if c[:1] == ("pr",)]) == 1                      # + OPEN's committed ledger, read raw
     argv = calls[0]
     assert argv[:4] == ("pr", "list", "--state", "closed")
     assert {"files", "changedFiles"} <= set(argv[argv.index("--json") + 1].split(","))
