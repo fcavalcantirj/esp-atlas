@@ -15,7 +15,7 @@ popularity:
   forks: 3
   as_of: '2026-11-07'
   github_repo_id: 1096825391
-  github_as_of: '2026-11-07T09:00:55Z'
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/adammelancon/cardputer-satellite-tracker

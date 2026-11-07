@@ -37,9 +37,11 @@ not_required:
 - capability: ble
 - capability: storage
 popularity:
-  stars: 18691
-  forks: 4357
-  as_of: '2026-09-20'
+  stars: 18995
+  forks: 4452
+  as_of: '2026-11-07'
+  github_repo_id: 76990209
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/wled/WLED
@@ -62,6 +64,18 @@ sources:
 - field: summary
   url: https://github.com/wled/WLED
   verified: '2026-10-06'
+- field: popularity.forks
+  url: https://github.com/wled/WLED
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/wled/WLED
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/wled/WLED
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/wled/WLED
+  verified: '2026-11-07'
 summary: "WLED is a fast, feature\u2011rich firmware for ESP32 microcontrollers that\
   \ controls addressable LEDs\u2014from simple strips to large 2D matrices and HUB75\
   \ panels\u2014offering hundreds of built\u2011in effects, segment control, and extensive\

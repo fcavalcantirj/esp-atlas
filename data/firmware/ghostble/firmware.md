@@ -16,6 +16,18 @@ sources:
 - field: summary
   url: https://github.com/SmonSE/GhostBLE
   verified: '2026-10-06'
+- field: popularity.forks
+  url: https://github.com/SmonSE/GhostBLE
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/SmonSE/GhostBLE
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/SmonSE/GhostBLE
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/SmonSE/GhostBLE
+  verified: '2026-11-07'
 maintainer: smonse
 capabilities:
 - ble
@@ -24,9 +36,11 @@ capabilities:
 - on-device-web-ui
 - wifi
 popularity:
-  stars: 32
+  stars: 41
   forks: 1
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 973142264
+  github_as_of: '2026-11-07T13:05:00Z'
 summary: GhostBLE is a BLE privacy scanner firmware for M5Stack devices that passively
   discovers nearby BLE devices, analyzes their privacy and security posture, and logs
   detailed information with features like beacon detection, GPS wardriving, a web

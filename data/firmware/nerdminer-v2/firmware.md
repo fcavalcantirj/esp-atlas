@@ -26,9 +26,9 @@ requires:
 popularity:
   stars: 2830
   forks: 656
-  as_of: '2026-11-06'
+  as_of: '2026-11-07'
   github_repo_id: 616222670
-  github_as_of: '2026-11-06T21:00:55Z'
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/BitMaker-hub/NerdMiner_v2
@@ -47,16 +47,16 @@ sources:
   verified: '2026-09-20'
 - field: popularity.forks
   url: https://github.com/BitMaker-hub/NerdMiner_v2
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.github_as_of
   url: https://github.com/BitMaker-hub/NerdMiner_v2
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.github_repo_id
   url: https://github.com/BitMaker-hub/NerdMiner_v2
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.stars
   url: https://github.com/BitMaker-hub/NerdMiner_v2
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 summary: "NerdMiner v2 is an open\u2011source firmware for ESP32\u2011based boards\
   \ that implements the Stratum protocol to mine Bitcoin solo on low\u2011difficulty\
   \ pools, displaying mining statistics on the device screen and allowing configuration\

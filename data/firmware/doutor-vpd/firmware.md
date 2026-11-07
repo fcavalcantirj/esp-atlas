@@ -14,6 +14,8 @@ popularity:
   forks: 0
   editorial_home: https://www.doutorvpd.com.br/
   as_of: '2026-10-21'
+  github_repo_id: 1427214302
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/fcavalcantirj/doutor-vpd-firmware
@@ -24,6 +26,18 @@ sources:
 - field: popularity
   url: https://github.com/fcavalcantirj/doutor-vpd-firmware
   verified: '2026-10-21'
+- field: popularity.forks
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/fcavalcantirj/doutor-vpd-firmware
+  verified: '2026-11-07'
 ---
 
 # Doutor VPD

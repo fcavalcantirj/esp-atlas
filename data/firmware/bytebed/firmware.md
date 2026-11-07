@@ -32,7 +32,7 @@ popularity:
   editorial_home: https://bytebed.com
   as_of: '2026-10-08'
   github_repo_id: 1173776053
-  github_as_of: '2026-11-07T12:00:55Z'
+  github_as_of: '2026-11-07T13:05:00Z'
 ---
 
 Admitted by jr/scorer.py rule authored.

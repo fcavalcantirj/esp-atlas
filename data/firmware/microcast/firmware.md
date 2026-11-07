@@ -11,9 +11,11 @@ capabilities:
 socs:
 - esp32-s3
 popularity:
-  stars: 43
+  stars: 45
   forks: 2
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 1083391033
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/digital-farms/MicroCast
@@ -24,6 +26,18 @@ sources:
 - field: summary
   url: https://github.com/digital-farms/MicroCast
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/digital-farms/MicroCast
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/digital-farms/MicroCast
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/digital-farms/MicroCast
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/digital-farms/MicroCast
+  verified: '2026-11-07'
 summary: "MicroCast is a pocket social microblogging firmware for the M5Cardputer\
   \ (ESP32\u2011S3) that lets users post short messages, like and comment on posts,\
   \ manage WiFi and notifications, and access the same feed through a browser\u2011\

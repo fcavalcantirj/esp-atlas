@@ -8,9 +8,11 @@ maintainer: sky18dragon
 capabilities:
 - ble
 popularity:
-  stars: 32
-  forks: 9
-  as_of: '2026-09-20'
+  stars: 46
+  forks: 11
+  as_of: '2026-11-07'
+  github_repo_id: 1289709148
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32-s3
 sources:
@@ -20,6 +22,18 @@ sources:
 - field: popularity
   url: https://github.com/sky18Dragon/RICOH-GR-Live-View-Shooting
   verified: '2026-09-02'
+- field: popularity.forks
+  url: https://github.com/sky18Dragon/RICOH-GR-Live-View-Shooting
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/sky18Dragon/RICOH-GR-Live-View-Shooting
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/sky18Dragon/RICOH-GR-Live-View-Shooting
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/sky18Dragon/RICOH-GR-Live-View-Shooting
+  verified: '2026-11-07'
 ---
 
 运行在 M5Stack StickS3 上的理光 (RICOH) GR 远程实时取景器与 BLE 遥控快门固件。 A wireless live-view shooting and BLE remote shutter firmware running on the M5Stack StickS3 for RICOH GR cameras.

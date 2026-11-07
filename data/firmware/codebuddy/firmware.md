@@ -16,11 +16,25 @@ sources:
 - field: summary
   url: https://github.com/CharlexH/CodeBuddy
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/CharlexH/CodeBuddy
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/CharlexH/CodeBuddy
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/CharlexH/CodeBuddy
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/CharlexH/CodeBuddy
+  verified: '2026-11-07'
 maintainer: charlexh
 popularity:
-  stars: 70
+  stars: 71
   forks: 10
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 1216668171
+  github_as_of: '2026-11-07T13:05:00Z'
 summary: Code Buddy is a macOS bridge and StickS3 firmware that turns the StickS3
   into a hardware companion for the Codex CLI, showing approvals, status, quota and
   other information on the device while you run codex normally.

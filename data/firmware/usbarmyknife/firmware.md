@@ -20,9 +20,11 @@ requires:
     all need the SoC's native USB peripheral
   board_signal: native-usb
 popularity:
-  stars: 2916
-  forks: 282
-  as_of: '2026-09-20'
+  stars: 2992
+  forks: 286
+  as_of: '2026-11-07'
+  github_repo_id: 864064230
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/i-am-shodan/USBArmyKnife
@@ -39,6 +41,18 @@ sources:
 - field: summary
   url: https://github.com/i-am-shodan/USBArmyKnife
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/i-am-shodan/USBArmyKnife
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/i-am-shodan/USBArmyKnife
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/i-am-shodan/USBArmyKnife
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/i-am-shodan/USBArmyKnife
+  verified: '2026-11-07'
 summary: "USB Army Knife is a compact ESP32\u2011based USB dongle that can emulate\
   \ HID keyboards, mass\u2011storage devices, and network adapters while performing\
   \ Wi\u2011Fi/Bluetooth attacks, all controllable via a web UI and a DuckyScript\u2011\

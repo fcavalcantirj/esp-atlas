@@ -6,9 +6,11 @@ url: https://github.com/benbaker76/Pigtail
 category: multi
 maintainer: benbaker76
 popularity:
-  stars: 56
+  stars: 61
   forks: 3
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 1125984917
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32-s3
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/benbaker76/Pigtail
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/benbaker76/Pigtail
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/benbaker76/Pigtail
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/benbaker76/Pigtail
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/benbaker76/Pigtail
+  verified: '2026-11-07'
 summary: "Pigtail is an ESP32\u2011S3 firmware that passively scans nearby Wi\u2011\
   Fi and BLE signals, tracks devices over time, assigns a suspicion/interest score,\
   \ and visualizes them on a 240\xD7135 display using distinct icons, colors and retro\

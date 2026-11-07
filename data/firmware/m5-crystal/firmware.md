@@ -30,9 +30,11 @@ requires:
 not_required:
 - capability: psram
 popularity:
-  stars: 84
-  forks: 3
-  as_of: '2026-09-20'
+  stars: 108
+  forks: 4
+  as_of: '2026-11-07'
+  github_repo_id: 831710789
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/Dlazder/m5_crystal_firmware
@@ -43,6 +45,18 @@ sources:
 - field: summary
   url: https://github.com/Dlazder/m5_crystal_firmware
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/Dlazder/m5_crystal_firmware
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/Dlazder/m5_crystal_firmware
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/Dlazder/m5_crystal_firmware
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/Dlazder/m5_crystal_firmware
+  verified: '2026-11-07'
 summary: "M5 Crystal is a multifunctional firmware for M5Stack devices that combines\
   \ pentesting capabilities\u2014such as Wi\u2011Fi attacks, Bluetooth scanning, NFC\
   \ read/write, IR control, and BadUSB\u2014with everyday utilities like file management,\

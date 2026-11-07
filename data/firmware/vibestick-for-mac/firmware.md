@@ -6,9 +6,11 @@ url: https://github.com/HanminYIN/VibeStick-for-Mac
 category: multi
 maintainer: hanminyin
 popularity:
-  stars: 101
+  stars: 100
   forks: 2
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 1330523734
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32-s3
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/HanminYIN/VibeStick-for-Mac
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/HanminYIN/VibeStick-for-Mac
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/HanminYIN/VibeStick-for-Mac
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/HanminYIN/VibeStick-for-Mac
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/HanminYIN/VibeStick-for-Mac
+  verified: '2026-11-07'
 summary: "VibeStick for Mac is a macOS application and firmware that turns an M5Stack\
   \ StickS3 into a tiny desktop companion, displaying coding\u2011agent status and\
   \ quota while providing push\u2011to\u2011talk transcription that is automatically\

@@ -1,0 +1,1198 @@
+{
+  "attempted_repositories": 146,
+  "eligible_repositories": 146,
+  "graphql_cost_spent_known": 7,
+  "graphql_cost_unknown_requests": 0,
+  "graphql_http_requests": 7,
+  "graphql_rate": {
+    "cost": 1,
+    "remaining": 4960,
+    "resetAt": "2026-11-07T13:27:50Z"
+  },
+  "outcomes": {
+    "attempted_invalid_identity_or_counts": 1,
+    "excluded_wrong_source": 1,
+    "validated_update": 145
+  },
+  "records": [
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "acid-drop",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "acidvegas/acid-drop"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "advanceos-for-cardputer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "bomberman30/advanceos-for-cardputer"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "ai-cardputer-adv-a-portable-ai-assistant",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "thebolined/ai-cardputer-adv-a-portable-ai-assistant"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "ai-stackchan2-readme",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "robo8080/ai_stackchan2_readme"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "area512",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "engneer-hamachan/area512"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "atom-watch",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "fbiego/atom-watch"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "axisorange",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "naninunenoy/axisorange"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "badcard",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "voidnoi/badcard"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "bbn-m5stack-tough",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "bareboat-necessities/bbn-m5stack-tough"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "bettermochi",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "neodoggy/bettermochi"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "bitmap16dx",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "bradmcnally/bitmap16dx"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "boot-linux-esp32s3-playground",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "esp32de/boot-linux-esp32s3-playground"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "breach-os",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "zedward856-spec/breach_os"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "breezybox-cardputer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "chrisdiana/breezybox-cardputer"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "bruce",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "brucedevices/firmware"
+    },
+    {
+      "age_before_seconds": 3845,
+      "attempted": true,
+      "firmware_id": "bytebed",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "amiika/bytebed"
+    },
+    {
+      "age_before_seconds": 11020,
+      "attempted": true,
+      "firmware_id": "c-p-s-cardputer-syhnth",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "oldtokage-collab/c.p.s.--cardputer-syhnth--"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "cardputer-adv-wifi-ble-radar",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "zeloksa/cardputer-adv-wifi-ble-radar"
+    },
+    {
+      "age_before_seconds": 18245,
+      "attempted": true,
+      "firmware_id": "cardputer-ai",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "therezor/cardputer-ai"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "cardputer-drums",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "johnhw/cardputer_drums"
+    },
+    {
+      "age_before_seconds": 14645,
+      "attempted": true,
+      "firmware_id": "cardputer-iss-tracker",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "adammelancon/cardputer-satellite-tracker"
+    },
+    {
+      "age_before_seconds": 57845,
+      "attempted": true,
+      "firmware_id": "cardputer-microhydra",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "echo-lalia/microhydra"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "cardputer-morse-trainer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "jfduhart/cardputer-morse-trainer"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "cardputergpsmap",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "lunarc3/cardputergpsmap"
+    },
+    {
+      "age_before_seconds": 18245,
+      "attempted": true,
+      "firmware_id": "cardputerlorachat",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "nonik0/cardputerlorachat"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "cardradio",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "mithug3/cardradio"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "cardskimmerdetector-m5cardputer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "aat440hz/cardskimmerdetector-m5cardputer"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "cathack",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "stachugit/cathack"
+    },
+    {
+      "age_before_seconds": 18245,
+      "attempted": true,
+      "firmware_id": "circuitpython",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "adafruit/circuitpython"
+    },
+    {
+      "age_before_seconds": 57845,
+      "attempted": true,
+      "firmware_id": "claude-desktop-buddy-cardputer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "y88huang/claude-desktop-buddy-cardputer"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "clawdmeter",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "hermannbjorgvin/clawdmeter"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "clawputer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "bryant24hao/clawputer"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "clawy",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "marcvermeeren/clawy"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "codebuddy",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "charlexh/codebuddy"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "crowos",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "jonaslacerda/crowos"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "cyber-controller",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "lxveace/cyber-controller"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "cypher-puter-os",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "dkyazzentwatwa/cypher-puter-os"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "daoa-mini-cardputeradv",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "chatelp/daoa-mini-cardputeradv"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "deskpet-firmware",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "bryant24hao/deskpet-firmware"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "doolittle",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "justinknight93/doolittle"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "doutor-vpd",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "fcavalcantirj/doutor-vpd-firmware"
+    },
+    {
+      "age_before_seconds": 18245,
+      "attempted": true,
+      "firmware_id": "draftling",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "clackups/draftling"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "droidputter",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "fcavalcantirj/droidputer"
+    },
+    {
+      "age_before_seconds": 11020,
+      "attempted": true,
+      "firmware_id": "dualpid",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "knifter/dualpid"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "esp-claw",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "espressif/esp-claw"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "esp-game-server",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "incursiohack/esp-game-server"
+    },
+    {
+      "age_before_seconds": 14645,
+      "attempted": true,
+      "firmware_id": "esp32-bit-pirate",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "geo-tp/esp32-bit-pirate"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "esp32-homekit-remote",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "megabitsenmzq/esp32-homekit-remote"
+    },
+    {
+      "age_before_seconds": 7445,
+      "attempted": true,
+      "firmware_id": "esp32-r4sgate-for-redmond",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "alutov/esp32-r4sgate-for-redmond"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "esp32marauder",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "justcallmekoko/esp32marauder"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "esphome",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "esphome/esphome"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "evil-m5project",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "7h30th3r0n3/evil-m5project"
+    },
+    {
+      "age_before_seconds": 57845,
+      "attempted": true,
+      "firmware_id": "evil-portal-m5stack",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "marivaaldo/evil-portal-m5stack"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "flipper-zero-esp32-adv",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "sor3nt/flipper-zero-esp32-port"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "flipper-zero-meets-m5stack-cardputer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "elicoftz/flipper-zero-meets-m5stack-cardputer"
+    },
+    {
+      "age_before_seconds": 14645,
+      "attempted": true,
+      "firmware_id": "flock-you",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "colonelpanichacks/flock-you"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "fraudtagger-cardputer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "forshaws/fraudtagger-cardputer"
+    },
+    {
+      "age_before_seconds": 7445,
+      "attempted": true,
+      "firmware_id": "furble",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "gkoh/furble"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "ghost-esp",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "spooks4576/ghost_esp"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "ghostble",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "smonse/ghostble"
+    },
+    {
+      "age_before_seconds": 11020,
+      "attempted": true,
+      "firmware_id": "ghostesp",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "ghostesp-revival/ghostesp"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "icenav-v3",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "jgauchia/icenav-v3"
+    },
+    {
+      "age_before_seconds": 7445,
+      "attempted": true,
+      "firmware_id": "infiltra",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "d3crypt-1/infiltra-firmware"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "interactivesetup-m5cardputer-sshclient",
+      "outcome": "attempted_invalid_identity_or_counts",
+      "repository": "fernando-moretes/tool-m5cardputer-sshclient"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "launcher",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "bmorcelli/launcher"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "little-devhelper",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "chrisdacrunk/little-devhelper"
+    },
+    {
+      "age_before_seconds": 57845,
+      "attempted": true,
+      "firmware_id": "m5-clicker-hamster",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "shlappa1000/m5-clicker-hamster"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5-crystal",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "dlazder/m5_crystal_firmware"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5-palnagotchi",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "viniciusbo/m5-palnagotchi"
+    },
+    {
+      "age_before_seconds": 3845,
+      "attempted": true,
+      "firmware_id": "m5apps",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "d4rkmen/m5apps"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5cardputer-chat-with-gemini-api",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "vanshksingh/m5cardputer-chat-with-gemini-api"
+    },
+    {
+      "age_before_seconds": 18245,
+      "attempted": true,
+      "firmware_id": "m5cardputer-display-off",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "kestrelrain/m5cardputer_display_off"
+    },
+    {
+      "age_before_seconds": 7445,
+      "attempted": true,
+      "firmware_id": "m5cardputer-sun-rider",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "treblewolf/m5cardputer-sun-rider"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5cardputer-userdemo",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "m5stack/m5cardputer-userdemo"
+    },
+    {
+      "age_before_seconds": 7445,
+      "attempted": true,
+      "firmware_id": "m5cardputer-voice-changer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "pierrebak/m5cardputer_voice-changer"
+    },
+    {
+      "age_before_seconds": 11020,
+      "attempted": true,
+      "firmware_id": "m5cardputer-webradio",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "cyberwisk/m5cardputer_webradio"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5cardputermathgame",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "seanbutler/m5cardputermathgame"
+    },
+    {
+      "age_before_seconds": 18245,
+      "attempted": true,
+      "firmware_id": "m5claw",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "fwz233-re/m5claw"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5gotchi",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "devsur11/m5gotchi"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5hamradio",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "armel/m5hamradio"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5isobusvt",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "raibisch/m5isobusvt"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5mp3",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "volosr/m5mp3"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5porkchop",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "0ct0sec/m5porkchop"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5stack-avatar-mic",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "mongonta0716/m5stack-avatar-mic"
+    },
+    {
+      "age_before_seconds": 7445,
+      "attempted": true,
+      "firmware_id": "m5stack-cardputer-sparks",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "kylebing/m5stack-cardputer-sparks"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5stack-cardputer-ssh",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "mangox0567/m5stack-cardputer-ssh"
+    },
+    {
+      "age_before_seconds": 14645,
+      "attempted": true,
+      "firmware_id": "m5stack-sd-updater",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "tobozo/m5stack-sd-updater"
+    },
+    {
+      "age_before_seconds": 3845,
+      "attempted": true,
+      "firmware_id": "m5stamp-c3dev",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "h1romas4/m5stamp-c3dev"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5stick-nemo",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "n0xa/m5stick-nemo"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5stickcplus2-seamonsue",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "hsbsbz/m5stickcplus2-seamonsue"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "m5tool",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "sonys9/m5tool"
+    },
+    {
+      "age_before_seconds": 3845,
+      "attempted": true,
+      "firmware_id": "mclite",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "laserir/mclite"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "meshcore-cardputer-adv",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "sosprz/meshcore-cardputer-adv"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "meshcoreterm",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "dabeani/meshcoreterm"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "meshtastic",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "meshtastic/firmware"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "meshtastic-adv",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "anton-vinogradov/meshtastic-adv"
+    },
+    {
+      "age_before_seconds": 3845,
+      "attempted": true,
+      "firmware_id": "micro-journal",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "unkyulee/micro-journal"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "microcast",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "digital-farms/microcast"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "microgroove",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "matoslav/microgroove"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "miniacid",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "urtubia/miniacid"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "minigotchi-esp32",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "dj1ch/minigotchi-esp32"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "mp3playerform5cardputer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "sanchitminda/mp3playerform5cardputer"
+    },
+    {
+      "age_before_seconds": 57845,
+      "attempted": true,
+      "firmware_id": "nerdminer-v2",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "bitmaker-hub/nerdminer_v2"
+    },
+    {
+      "age_before_seconds": 3845,
+      "attempted": true,
+      "firmware_id": "nightdriverstrip",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "plummerssoftwarellc/nightdriverstrip"
+    },
+    {
+      "age_before_seconds": 57845,
+      "attempted": true,
+      "firmware_id": "nucleoos",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "indecenti/nucleoos"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": false,
+      "firmware_id": "nyan",
+      "outcome": "excluded_wrong_source",
+      "repository": "temporal/nyan-mode"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "openhasp",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "haswitchplate/openhasp"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "openmqttgateway",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "1technophile/openmqttgateway"
+    },
+    {
+      "age_before_seconds": 14645,
+      "attempted": true,
+      "firmware_id": "orca-one",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "oceantroop/orca-one"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "paperweb",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "artem76228/paperweb"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "pathshield",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "lukeswitz/pathshield"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "pd-camera-m5",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "abenokobo/pd-camera-m5"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "picoware",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "jblanked/picoware"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "pigtail",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "benbaker76/pigtail"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "pip-boy-weather-clock",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "nishad2m8/pip-boy-weather-clock"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "plai",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "d4rkmen/plai"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "pydos",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "retiredwizard/pydos"
+    },
+    {
+      "age_before_seconds": 11020,
+      "attempted": true,
+      "firmware_id": "pyxis",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "torlando-tech/pyxis"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "raising-hell-cardputer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "acpayers-alt/raising-hell-cardputer"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "ratcom",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "ratspeak/rscardputer"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "ricoh-gr-live-view-shooting",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "sky18dragon/ricoh-gr-live-view-shooting"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "rogueduck",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "m5rogueops/m5sticks3-rogueduck"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "ruview",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "ruvnet/ruview"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "saturn",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "henriquesebastiao/saturn"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "semi-evil-m5dial",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "dagnazty/semi-evil-m5dial"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "solotputer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "aspikray/solotputer"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "sound-terrarium",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "kariagepompadour/sound-terrarium"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "squachwatch-cyd",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "skizzophrenic/squachwatch-cyd"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "stack-chan",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "stack-chan/stack-chan"
+    },
+    {
+      "age_before_seconds": 14645,
+      "attempted": true,
+      "firmware_id": "stackchan-mcp",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "kisaragi-mochi/stackchan-mcp"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "stellar-map",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "wisnc/stellar-map"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "t-deck",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "xinyuan-lilygo/t-deck"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "tagtinker-adv",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "i12bp8/tagtinker-adv"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "tamaputer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "mindovermiles262/tamaputer"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "taskhub-for-sticks3",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "sheepxux/taskhub-for-sticks3"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "tasmota",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "arendst/tasmota"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "tiny-journal",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "joejee90/tiny-journal"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "trail-mate",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "vicliu624/trail-mate"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "usbarmyknife",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "i-am-shodan/usbarmyknife"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "vanguard",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "mahdy-gribkov/vanguard"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "vibestick-for-mac",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "hanminyin/vibestick-for-mac"
+    },
+    {
+      "age_before_seconds": 11020,
+      "attempted": true,
+      "firmware_id": "wadamesh",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "allfather-bv/wadamesh"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "wall-of-flippers",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "k3yomi/wall-of-flippers"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "wifi-capture-page-m5cardputer",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "zrutra/wifi-capture-page-m5cardputer"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "wled",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "wled/wled"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "xiaozhi-esp32",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "78/xiaozhi-esp32"
+    },
+    {
+      "age_before_seconds": null,
+      "attempted": true,
+      "firmware_id": "zx-spectrum-cardputer-internal",
+      "observed_after": "2026-11-07T13:05:00Z",
+      "outcome": "validated_update",
+      "repository": "andyaicardputer/zx-spectrum-cardputer-external"
+    }
+  ],
+  "run_at": "2026-11-07T13:05:00Z",
+  "schema": 1,
+  "source_revision": "80e0b0d0a43be3c060d029aa14db7babd48a4158",
+  "state": "proposed_not_deployed",
+  "validated_repositories": 145
+}

@@ -6,9 +6,11 @@ url: https://github.com/mindovermiles262/tamaputer
 category: multi
 maintainer: mindovermiles262
 popularity:
-  stars: 25
-  forks: 1
-  as_of: '2026-09-20'
+  stars: 28
+  forks: 2
+  as_of: '2026-11-07'
+  github_repo_id: 1104768732
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32-s3
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/mindovermiles262/tamaputer
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/mindovermiles262/tamaputer
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/mindovermiles262/tamaputer
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/mindovermiles262/tamaputer
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/mindovermiles262/tamaputer
+  verified: '2026-11-07'
 summary: Tamaputer is a Tamagotchi P1 emulator for the M5Stack Cardputer that runs
   the original game ROM from an SD card using the tamalib library, with keyboard keys
   mapped to the virtual Tamagotchi buttons and optimized display rendering.

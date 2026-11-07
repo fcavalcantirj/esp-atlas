@@ -7,8 +7,10 @@ category: multi
 maintainer: marcvermeeren
 popularity:
   stars: 40
-  forks: 5
-  as_of: '2026-09-20'
+  forks: 6
+  as_of: '2026-11-07'
+  github_repo_id: 1158162724
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/marcvermeeren/clawy
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/marcvermeeren/clawy
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/marcvermeeren/clawy
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/marcvermeeren/clawy
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/marcvermeeren/clawy
+  verified: '2026-11-07'
 summary: "Clawy is a pocket-sized M5StickC\u202FPlus\u202F2 device that integrates\
   \ with Claude Code via hooks to show animated session states, let you approve or\
   \ deny actions with physical buttons, and display session statistics, turning a\

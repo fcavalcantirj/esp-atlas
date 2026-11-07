@@ -8,7 +8,9 @@ maintainer: justinknight93
 popularity:
   stars: 46
   forks: 2
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 845724857
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32-s3
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/justinknight93/Doolittle
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/justinknight93/Doolittle
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/justinknight93/Doolittle
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/justinknight93/Doolittle
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/justinknight93/Doolittle
+  verified: '2026-11-07'
 summary: Doolittle is a JavaScript application loader for the M5 Cardputer that automatically
   runs scripts (e.g., boot.js) and exposes native functions for hardware I/O, display
   drawing, networking, and timing.

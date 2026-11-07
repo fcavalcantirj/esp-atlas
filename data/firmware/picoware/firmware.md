@@ -6,9 +6,11 @@ url: https://github.com/jblanked/Picoware
 category: multi
 maintainer: jblanked
 popularity:
-  stars: 334
-  forks: 40
-  as_of: '2026-09-20'
+  stars: 367
+  forks: 43
+  as_of: '2026-11-07'
+  github_repo_id: 989766763
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32-s3
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/jblanked/Picoware
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/jblanked/Picoware
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/jblanked/Picoware
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/jblanked/Picoware
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/jblanked/Picoware
+  verified: '2026-11-07'
 summary: "Picoware is an open\u2011source custom firmware for ESP32 and Raspberry\u202F\
   Pi\u202FPico devices\u2014including PicoCalc, Cardputer ADV, and Flipper Zero\u2014\
   that delivers a comprehensive on\u2011device environment with a code editor, REPL,\

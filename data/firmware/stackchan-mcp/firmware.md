@@ -7,10 +7,10 @@ category: multi
 maintainer: kisaragi-mochi
 popularity:
   stars: 176
-  forks: 68
+  forks: 67
   as_of: '2026-11-07'
   github_repo_id: 1226065142
-  github_as_of: '2026-11-07T09:00:55Z'
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32-s3
 sources:

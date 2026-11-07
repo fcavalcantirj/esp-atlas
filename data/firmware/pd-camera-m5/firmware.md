@@ -8,7 +8,9 @@ maintainer: abenokobo
 popularity:
   stars: 31
   forks: 3
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 685390587
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32-s3
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/abenokobo/pd-camera-m5
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/abenokobo/pd-camera-m5
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/abenokobo/pd-camera-m5
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/abenokobo/pd-camera-m5
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/abenokobo/pd-camera-m5
+  verified: '2026-11-07'
 summary: "PD\u2011Camera for M5Stack supplies firmware for an M5Stack CoreS3 that\
   \ serves as the camera accessory for the Playdate handheld, enabling the Playdate\
   \ to capture 1\u2011bit QVGA photos and animated GIFs over a USB connection without\

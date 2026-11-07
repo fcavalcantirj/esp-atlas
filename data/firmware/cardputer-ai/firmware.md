@@ -36,7 +36,7 @@ popularity:
   forks: 15
   as_of: '2026-11-07'
   github_repo_id: 1267077321
-  github_as_of: '2026-11-07T08:00:55Z'
+  github_as_of: '2026-11-07T13:05:00Z'
 summary: "Cardputer AI is an open\u2011source chatbot firmware that runs entirely\
   \ offline on an ESP32\u2011S3\u2011based Cardputer device with 512\u202FKB RAM,\
   \ using an 8\u2011million\u2011parameter TinyTalk\u20112 model to hold simple English\

@@ -6,10 +6,12 @@ url: https://github.com/HermannBjorgvin/Clawdmeter
 category: multi
 maintainer: hermannbjorgvin
 popularity:
-  stars: 2319
-  forks: 408
+  stars: 2328
+  forks: 410
   downloads: 0
   as_of: '2026-11-03'
+  github_repo_id: 1235122687
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32
 - esp32-c6
@@ -30,6 +32,18 @@ sources:
 - field: socs
   url: https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-waveshare_amoled_18_c6.json
   verified: '2026-11-03'
+- field: popularity.forks
+  url: https://github.com/HermannBjorgvin/Clawdmeter
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/HermannBjorgvin/Clawdmeter
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/HermannBjorgvin/Clawdmeter
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/HermannBjorgvin/Clawdmeter
+  verified: '2026-11-07'
 ---
 
 ESP32 display that shows you your Claude Code usage

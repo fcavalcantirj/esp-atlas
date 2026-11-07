@@ -8,9 +8,9 @@ maintainer: indecenti
 popularity:
   stars: 100
   forks: 7
-  as_of: '2026-11-06'
+  as_of: '2026-11-07'
   github_repo_id: 1268267248
-  github_as_of: '2026-11-06T21:00:55Z'
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32-s3
 sources:
@@ -25,16 +25,16 @@ sources:
   verified: '2026-10-06'
 - field: popularity.forks
   url: https://github.com/indecenti/NucleoOs
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.github_as_of
   url: https://github.com/indecenti/NucleoOs
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.github_repo_id
   url: https://github.com/indecenti/NucleoOs
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.stars
   url: https://github.com/indecenti/NucleoOs
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 summary: "NucleoOS is a web\u2011native operating system for the M5Stack Cardputer\
   \ (ESP32\u2011S3) that offers a multi\u2011app OS with both a native on\u2011device\
   \ UI and a browser\u2011based desktop shell, providing features such as an offline\

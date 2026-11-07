@@ -8,9 +8,11 @@ maintainer: robo8080
 socs:
 - esp32
 popularity:
-  stars: 42
+  stars: 43
   forks: 0
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 645739110
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/robo8080/AI_StackChan2_README
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/robo8080/AI_StackChan2_README
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/robo8080/AI_StackChan2_README
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/robo8080/AI_StackChan2_README
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/robo8080/AI_StackChan2_README
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/robo8080/AI_StackChan2_README
+  verified: '2026-11-07'
 summary: "AI StackChan 2 is firmware for M5Stack devices that provides voice interaction\
   \ using Web\u2011based VOICEVOX for speech synthesis and either Google Cloud STT\
   \ or OpenAI Whisper for speech recognition, configurable via Wi\u2011Fi and API\

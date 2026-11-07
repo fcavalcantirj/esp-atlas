@@ -10,9 +10,11 @@ capabilities:
 socs:
 - esp32-s3
 popularity:
-  stars: 71
+  stars: 75
   forks: 1
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 1132722777
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/sosprz/meshcore-cardputer-adv
@@ -23,6 +25,18 @@ sources:
 - field: summary
   url: https://github.com/sosprz/meshcore-cardputer-adv
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/sosprz/meshcore-cardputer-adv
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/sosprz/meshcore-cardputer-adv
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/sosprz/meshcore-cardputer-adv
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/sosprz/meshcore-cardputer-adv
+  verified: '2026-11-07'
 summary: "Meshcore is a firmware for the M5Stack Cardputer ADV (ESP32\u2011S3) that\
   \ adds UI changes and is based on the MeshCore project. The README provides multiple\
   \ ways to flash the firmware onto the device."

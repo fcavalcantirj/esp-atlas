@@ -10,7 +10,7 @@ popularity:
   forks: 3
   as_of: '2026-11-07'
   github_repo_id: 277762803
-  github_as_of: '2026-11-07T10:01:20Z'
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32
 sources:

@@ -44,7 +44,7 @@ popularity:
   editorial_home: https://ghostesp.net
   as_of: '2026-10-19'
   github_repo_id: 891566125
-  github_as_of: '2026-11-07T10:01:20Z'
+  github_as_of: '2026-11-07T13:05:00Z'
 ---
 
 Admitted by jr/scorer.py rule authored.

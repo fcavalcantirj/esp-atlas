@@ -34,7 +34,7 @@ popularity:
   forks: 12
   as_of: '2026-11-07'
   github_repo_id: 1260665366
-  github_as_of: '2026-11-07T08:00:55Z'
+  github_as_of: '2026-11-07T13:05:00Z'
 summary: "Draftling is firmware for e\u2011paper or LCD writer devices that provides\
   \ a distraction\u2011free WYSIWYG editor for Markdown and Fountain screenplay files,\
   \ supporting BLE keyboards, split\u2011screen editing, Git synchronization, and\

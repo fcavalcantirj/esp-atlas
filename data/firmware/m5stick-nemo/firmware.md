@@ -26,9 +26,11 @@ requires:
 not_required:
 - capability: psram
 popularity:
-  stars: 1306
-  forks: 206
-  as_of: '2026-09-20'
+  stars: 1319
+  forks: 210
+  as_of: '2026-11-07'
+  github_repo_id: 694486730
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/n0xa/m5stick-nemo
@@ -39,6 +41,18 @@ sources:
 - field: summary
   url: https://github.com/n0xa/m5stick-nemo
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/n0xa/m5stick-nemo
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/n0xa/m5stick-nemo
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/n0xa/m5stick-nemo
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/n0xa/m5stick-nemo
+  verified: '2026-11-07'
 summary: "M5Stick\u2011NEMO is firmware for M5Stack ESP32 devices (M5Stick\u2011C,\
   \ Stick\u2011C\u2011Plus, Cardputer) that provides a menu\u2011driven suite of prank\
   \ and security\u2011testing tools\u2014including BadUSB detection, BLE/Wi\u2011\

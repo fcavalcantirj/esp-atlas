@@ -10,7 +10,9 @@ socs:
 popularity:
   stars: 31
   forks: 3
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 772078076
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/hsbsbz/M5StickCPlus2-Seamonsue
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/hsbsbz/M5StickCPlus2-Seamonsue
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/hsbsbz/M5StickCPlus2-Seamonsue
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/hsbsbz/M5StickCPlus2-Seamonsue
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/hsbsbz/M5StickCPlus2-Seamonsue
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/hsbsbz/M5StickCPlus2-Seamonsue
+  verified: '2026-11-07'
 summary: A digital pet game for the M5StickC Plus2 where players raise arthropod-like
   creatures by feeding, playing games, and cleaning, with various interactive screens
   and button controls.

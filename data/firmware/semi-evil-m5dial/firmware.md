@@ -16,6 +16,18 @@ sources:
 - field: summary
   url: https://github.com/dagnazty/Semi-Evil-M5Dial
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/dagnazty/Semi-Evil-M5Dial
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/dagnazty/Semi-Evil-M5Dial
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/dagnazty/Semi-Evil-M5Dial
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/dagnazty/Semi-Evil-M5Dial
+  verified: '2026-11-07'
 maintainer: dagnazty
 capabilities:
 - badusb
@@ -23,7 +35,9 @@ capabilities:
 popularity:
   stars: 31
   forks: 4
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 904506947
+  github_as_of: '2026-11-07T13:05:00Z'
 summary: "Semi-Evil M5Dial is a custom firmware for the M5Dial ESP32 device that adds\
   \ Wi\u2011Fi captive portal, SSID management, Karma\u2011style SSID spoofing, BadUSB\
   \ HID script execution, and a web\u2011based SPIFFS file uploader, all configurable\

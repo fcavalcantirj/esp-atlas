@@ -6,9 +6,11 @@ url: https://github.com/Sonys9/M5Tool
 category: multi
 maintainer: sonys9
 popularity:
-  stars: 25
+  stars: 26
   forks: 2
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 861274052
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/Sonys9/M5Tool
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/Sonys9/M5Tool
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/Sonys9/M5Tool
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/Sonys9/M5Tool
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/Sonys9/M5Tool
+  verified: '2026-11-07'
 summary: "M5Tool is a user\u2011friendly application for flashing M5StickC Plus2/Plus1.1\
   \ and Cardputer devices, supporting firmware such as Bruce, Nemo, Marauder, and\
   \ CatHack, and automatically installing required drivers."

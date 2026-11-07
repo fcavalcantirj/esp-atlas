@@ -11,7 +11,7 @@ popularity:
   downloads: 2040
   as_of: '2026-10-06'
   github_repo_id: 850672057
-  github_as_of: '2026-11-06T21:00:55Z'
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32
 sources:
@@ -26,16 +26,16 @@ sources:
   verified: '2026-10-06'
 - field: popularity.forks
   url: https://github.com/shlappa1000/M5-Clicker-Hamster
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.github_as_of
   url: https://github.com/shlappa1000/M5-Clicker-Hamster
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.github_repo_id
   url: https://github.com/shlappa1000/M5-Clicker-Hamster
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.stars
   url: https://github.com/shlappa1000/M5-Clicker-Hamster
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 summary: "Clicker Hamster is a simple clicker game firmware for the M5StickC\u2011\
   Plus2 that displays a hamster picture and increments a counter each time the user\
   \ taps the screen."

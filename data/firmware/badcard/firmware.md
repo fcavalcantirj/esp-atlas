@@ -11,9 +11,11 @@ capabilities:
 socs:
 - esp32-s3
 popularity:
-  stars: 148
+  stars: 157
   forks: 18
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 765438156
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/VoidNoi/BadCard
@@ -24,6 +26,18 @@ sources:
 - field: summary
   url: https://github.com/VoidNoi/BadCard
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/VoidNoi/BadCard
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/VoidNoi/BadCard
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/VoidNoi/BadCard
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/VoidNoi/BadCard
+  verified: '2026-11-07'
 summary: "BadCard is a BadUSB firmware for the Cardputer that processes and executes\
   \ Ducky Script payloads. It adds Bluetooth connectivity, on\u2011device file editing,\
   \ folder navigation, and support for many keyboard layouts."

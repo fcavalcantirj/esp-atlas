@@ -6,9 +6,11 @@ url: https://github.com/LxveAce/cyber-controller
 category: pentest
 maintainer: lxveace
 popularity:
-  stars: 150
-  forks: 26
-  as_of: '2026-09-20'
+  stars: 93
+  forks: 19
+  as_of: '2026-11-07'
+  github_repo_id: 1265491204
+  github_as_of: '2026-11-07T13:05:00Z'
 socs:
 - esp32
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/LxveAce/cyber-controller
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/LxveAce/cyber-controller
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/LxveAce/cyber-controller
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/LxveAce/cyber-controller
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/LxveAce/cyber-controller
+  verified: '2026-11-07'
 summary: "Cyber Controller is a cross\u2011platform application that lets you select,\
   \ flash, and manage over 50 firmware profiles for a variety of ESP32, ESP8266, Realtek,\
   \ Flipper, and other boards, providing serial monitoring and device\u2011specific\

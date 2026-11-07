@@ -12,7 +12,9 @@ socs:
 popularity:
   stars: 52
   forks: 4
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 793197340
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/IncursioHack/ESP-Game-Server
@@ -23,6 +25,18 @@ sources:
 - field: summary
   url: https://github.com/IncursioHack/ESP-Game-Server
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/IncursioHack/ESP-Game-Server
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/IncursioHack/ESP-Game-Server
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/IncursioHack/ESP-Game-Server
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/IncursioHack/ESP-Game-Server
+  verified: '2026-11-07'
 summary: "ESP Game Server is firmware for ESP32, M5 Cardputer, and M5 StickC devices\
   \ that turns them into a classic console emulator server, letting users play classic\
   \ games through a web browser over Wi\u2011Fi on phones, computers, Smart TVs, and\

@@ -8,9 +8,11 @@ socs:
 - esp32
 - esp32-s3
 popularity:
-  stars: 2647
-  forks: 250
-  as_of: '2026-09-20'
+  stars: 2837
+  forks: 266
+  as_of: '2026-11-07'
+  github_repo_id: 734739273
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: github
   url: https://github.com/7h30th3r0n3/Evil-M5Project
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/7h30th3r0n3/Evil-M5Project
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/7h30th3r0n3/Evil-M5Project
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/7h30th3r0n3/Evil-M5Project
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/7h30th3r0n3/Evil-M5Project
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/7h30th3r0n3/Evil-M5Project
+  verified: '2026-11-07'
 summary: "Evil-M5Project is a firmware suite for M5Stack devices that enables ethical\
   \ Wi\u2011Fi network scanning, monitoring, and interaction\u2014including attacks\
   \ like deauthentication, captive portals, and wardriving\u2014intended for educational\

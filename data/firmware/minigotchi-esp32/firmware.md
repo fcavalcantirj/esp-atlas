@@ -8,9 +8,11 @@ maintainer: dj1ch
 socs:
 - esp32
 popularity:
-  stars: 292
-  forks: 25
-  as_of: '2026-09-20'
+  stars: 305
+  forks: 26
+  as_of: '2026-11-07'
+  github_repo_id: 783438652
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: '*'
   url: https://github.com/dj1ch/minigotchi-ESP32
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/dj1ch/minigotchi-ESP32
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/dj1ch/minigotchi-ESP32
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/dj1ch/minigotchi-ESP32
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/dj1ch/minigotchi-ESP32
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/dj1ch/minigotchi-ESP32
+  verified: '2026-11-07'
 summary: "Minigotchi-ESP32 is a firmware port of the Minigotchi (a Pwnagotchi\u2011\
   style device) to run on ESP32 microcontrollers, providing peer detection, Wi\u2011\
   Fi/BLE wardriving, deauthentication and related features on ESP32 hardware."

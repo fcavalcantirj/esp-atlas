@@ -32,11 +32,11 @@ maintainer: colonelpanichacks
 capabilities:
 - gps
 popularity:
-  stars: 1501
+  stars: 1502
   forks: 216
   as_of: '2026-11-07'
   github_repo_id: 1041765798
-  github_as_of: '2026-11-07T09:00:55Z'
+  github_as_of: '2026-11-07T13:05:00Z'
 summary: "Flock\u2011You is firmware for an ESP32\u2011S3 board that passively monitors\
   \ 2.4\u202FGHz Wi\u2011Fi (and BLE) traffic to identify Flock Cam cameras by their\
   \ MAC OUIs and probe\u2011request signatures, logging detections locally and streaming\

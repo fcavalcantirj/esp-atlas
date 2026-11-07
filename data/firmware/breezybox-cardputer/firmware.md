@@ -16,14 +16,28 @@ sources:
 - field: summary
   url: https://github.com/chrisdiana/breezybox-cardputer
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/chrisdiana/breezybox-cardputer
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/chrisdiana/breezybox-cardputer
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/chrisdiana/breezybox-cardputer
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/chrisdiana/breezybox-cardputer
+  verified: '2026-11-07'
 maintainer: chrisdiana
 capabilities:
 - ble
 - wifi
 popularity:
-  stars: 32
-  forks: 1
-  as_of: '2026-09-20'
+  stars: 36
+  forks: 3
+  as_of: '2026-11-07'
+  github_repo_id: 1240332176
+  github_as_of: '2026-11-07T13:05:00Z'
 summary: "BreezyBox for Cardputer is a BusyBox\u2011inspired shell and virtual terminal\
   \ system for ESP32\u2011based Cardputer, Cardputer\u202FADV, and StickS3 devices,\
   \ offering Unix\u2011like commands, multiple virtual terminals, Wi\u2011Fi, Bluetooth\

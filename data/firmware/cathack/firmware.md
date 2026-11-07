@@ -15,9 +15,11 @@ capabilities:
 socs:
 - esp32
 popularity:
-  stars: 768
+  stars: 773
   forks: 37
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 831550610
+  github_as_of: '2026-11-07T13:05:00Z'
 sources:
 - field: category
   url: https://github.com/Stachugit/CatHack
@@ -37,6 +39,18 @@ sources:
 - field: summary
   url: https://github.com/Stachugit/CatHack
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/Stachugit/CatHack
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/Stachugit/CatHack
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/Stachugit/CatHack
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/Stachugit/CatHack
+  verified: '2026-11-07'
 summary: "CatHack is a multi\u2011tool firmware for the M5StickC\u2011Plus2 that provides\
   \ infrared remote control (including TVBGone and a universal TV remote), Sub\u2011\
   GHz signal transmission and analysis, Wi\u2011Fi and Bluetooth testing utilities,\
