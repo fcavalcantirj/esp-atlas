@@ -209,8 +209,13 @@ when every eligible repository was attempted AND no record was deferred; the rec
 discloses the deferred count. Publication recovery checks the same index's OPEN holds
 before any recovery side effect: an orphan pushed branch (no PR) whose saved intent paths
 or verified branch diff touch an OPEN-held record gets no PR, its intent and branch stay
-untouched for review, and the run reports the recovery as deferred. Recovery that only
-books an existing or merged PR is unchanged.
+untouched for review, and the run reports the recovery as deferred. The branch diff is
+taken only at the freshly fetched commit verified equal to the intent commit; a fetch
+that cannot be read or a branch that moved defers the same way, with no PR. A PR the
+recovery creates is read back and pinned only when it is Jr's OPEN PR at that verified
+commit; otherwise nothing is pinned, the intent stays, the mismatch is reported, and an
+armed PR read back as Jr's is disarmed (a human or unverified PR is never modified).
+Recovery that only books an existing or merged PR is unchanged.
 
 A per-record receipt separates attempted/validated/deferred/excluded outcomes and age at
 run start. GitHub GraphQL request count, observed point cost and remaining quota are

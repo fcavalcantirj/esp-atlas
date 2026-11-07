@@ -150,8 +150,8 @@ def _save_published_head(path: Path, published: publish.PublishResult, *,
 
 
 class RecoveryDeferred(Exception):
-    """An orphan popularity branch changes a record an OPEN Jr tick PR holds: no PR is opened,
-    its intent and branch stay untouched for review."""
+    """An orphan popularity branch changes a record an OPEN Jr tick PR holds, or no longer sits at
+    the intent commit: nothing is pinned, its intent and branch stay untouched for review."""
 
 
 def _open_holds(paths, index: pending_prs.PendingIndex) -> list[str]:
@@ -160,24 +160,68 @@ def _open_holds(paths, index: pending_prs.PendingIndex) -> list[str]:
     return [f"{h.pr_ref}: {h.firmware}" for h in holds if h is not None and h.state == pending_prs.OPEN]
 
 
+def _fetched_head(branch: str, git) -> str | None:
+    """The exact commit a fresh fetch of `branch` brought (FETCH_HEAD); None when unreadable."""
+    if getattr(git("fetch", "origin", f"refs/heads/{branch}"), "returncode", 1) != 0:
+        return None
+    head = git("rev-parse", "--verify", "--quiet", "FETCH_HEAD^{commit}")
+    sha = (getattr(head, "stdout", "") or "").strip()
+    if getattr(head, "returncode", 1) != 0 or len(sha) != 40 or \
+            any(ch not in "0123456789abcdef" for ch in sha):
+        return None
+    return sha
+
+
 def _check_orphan_holds(intent: dict, index: pending_prs.PendingIndex, git) -> None:
     """Refuse to open a PR for an orphan branch that edits an OPEN-held record.
 
     Checks the saved intent paths, then what the pushed branch really changes since it left
-    main; a branch diff git cannot list counts as held. The diff is skipped only when no
-    record is OPEN-held at all."""
+    main; a branch diff git cannot list counts as held. The branch may move after ls-remote,
+    so the diff is taken only at the fetched commit verified equal to the intent commit. The
+    fetch and diff are skipped only when no record is OPEN-held at all."""
     branch = intent["branch"]
     held = _open_holds(intent["paths"], index)
     if not held and any(h.state == pending_prs.OPEN for h in index.holds.values()):
-        diff = None
-        if getattr(git("fetch", "origin", f"refs/heads/{branch}"), "returncode", 1) == 0:
-            diff = git("diff", "--name-only", f"origin/main...{intent['sha']}")
+        fetched = _fetched_head(branch, git)
+        if fetched is None:
+            raise RecoveryDeferred(f"orphan branch {branch} fetch unreadable")
+        if fetched != intent["sha"]:
+            raise RecoveryDeferred(f"orphan branch {branch} moved to {fetched} "
+                                   f"since intent {intent['sha']}")
+        diff = git("diff", "--name-only", f"origin/main...{fetched}")
         if getattr(diff, "returncode", 1) != 0:
             raise RecoveryDeferred(f"orphan branch {branch} changes unreadable")
         held = _open_holds((diff.stdout or "").splitlines(), index)
     if held:
         raise RecoveryDeferred(f"orphan branch {branch} changes a record an open Jr tick PR holds ("
                                + ", ".join(held) + ")")
+
+
+def _verify_created_head(url: str, sha: str, gh) -> None:
+    """A recovery-created PR may be pinned only as Jr's OPEN PR at the verified intent commit.
+
+    The branch can move between the fetch and `gh pr create`; the PR then carries a head
+    nobody checked. Anything else keeps the intent (RecoveryDeferred); an armed PR read back
+    as Jr's is disarmed, a human or unverified PR is never modified."""
+    response = gh("pr", "view", url, "--json", "url,state,headRefOid,author,autoMergeRequest")
+    try:
+        pr = json.loads(response.stdout or "") if getattr(response, "returncode", 1) == 0 else None
+    except (TypeError, ValueError):
+        pr = None
+    if not isinstance(pr, dict) or not isinstance(pr.get("headRefOid"), str):
+        raise RecoveryDeferred(f"recovery PR {url} head unreadable; not pinned, intent kept")
+    jr = pr.get("url") == url and _bot_authored(pr)
+    head = pr["headRefOid"]
+    if jr and head == sha and pr.get("state") == "OPEN":
+        return
+    if not jr:
+        disarm = f"not modified (author {(pr.get('author') or {}).get('login')} unverified as Jr)"
+    elif "autoMergeRequest" in pr and pr["autoMergeRequest"] is None:
+        disarm = "not armed"
+    else:
+        disarm = _disarm_pinned(url, head, gh)
+    raise RecoveryDeferred(f"recovery PR {url} reads back head {head} state {pr.get('state')}, "
+                           f"not intent {sha}; not pinned, intent kept; disarm {disarm}")
 
 
 def _recover_publication_intent(path: Path, gh, git, *, index: pending_prs.PendingIndex) -> str | None:
@@ -257,6 +301,7 @@ def _recover_publication_intent(path: Path, gh, git, *, index: pending_prs.Pendi
             recovered_url = (getattr(created, "stdout", "") or "").strip()
             if not recovered_url.startswith("https://github.com/"):
                 raise RuntimeError("recovery PR URL unreadable")
+            _verify_created_head(recovered_url, sha, gh)
     if recovered_state == "OPEN":
         labelled, why = publish.apply_review_label(recovered_url, gh=gh)
         if not labelled:
@@ -334,7 +379,7 @@ def _disarm_failure(seen: list, sha: str) -> str:
 
 
 def _disarm_pinned(url: str, sha: str, gh) -> str:
-    """Disable auto-merge on the pinned head via publish._ensure_disarmed, read back."""
+    """Disable auto-merge on an exact Jr PR head via publish._ensure_disarmed, read back."""
     seen = []
 
     def recording(*args):
