@@ -81,7 +81,7 @@ def test_at_the_cap_the_tick_skips_review_producing_stages_and_reports_it(wt_dir
     _fake_stage_modules(monkeypatch, calls)
     prs = [_review_pr(910 + i, 5 + i) for i in range(review_routing.MAX_OPEN_REVIEW_PRS)]
     r = run(git=git_ok(wt_dir), gh=gh_with_prs(prs), stages=None)
-    assert not r.aborted and calls == [("popularity_refresh",)]
+    assert not r.aborted and calls == []
     assert any("jr-review cap reached (10/10 open)" in w and "skipped 4 review-producing stage(s)" in w for w in r.warnings)
     assert r.review_capped
 
@@ -91,7 +91,7 @@ def test_below_the_cap_the_stages_run(wt_dir, monkeypatch):
     _fake_stage_modules(monkeypatch, calls)
     prs = [_review_pr(920 + i, 5) for i in range(review_routing.MAX_OPEN_REVIEW_PRS - 1)]
     r = run(git=git_ok(wt_dir), gh=gh_with_prs(prs), stages=None)
-    assert not r.aborted and len(calls) == 5 and not r.review_capped
+    assert not r.aborted and len(calls) == 4 and not r.review_capped
 
 
 def test_the_cap_keeps_a_stage_that_declares_it_never_produces_review(wt_dir):

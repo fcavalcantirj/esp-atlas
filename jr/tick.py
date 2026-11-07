@@ -149,7 +149,8 @@ def hourly_stages(split: dict) -> list:
     Fixed at TOPICS_PER_TICK, outside the allocator's split — it never competes with Track A/B for
     units, and runs after boardmap so an admitted topics firmware's widening waits for its
     own next tick (mirrors admit/boardmap ordering being the ONE thing that matters within a track,
-    not across tracks). Popularity runs last, with at most seven repository calls.
+    not across tracks). The full popularity pass runs separately before this growth tick,
+    in its own guarded worktree/PR, so review-required growth cannot hold its counts.
 
     `split` is {"backfill": n, "firmware": m}. The firmware units are shared admit≈boardmap
     (boardmap takes the odd one), and admit's call_share is its fraction of the firmware units."""
@@ -171,8 +172,6 @@ def hourly_stages(split: dict) -> list:
             out.append(lambda ctx, n=bmap: stage_boardmap.run(ctx, budget=n))
     import stage_admit_topics
     out.append(lambda ctx: stage_admit_topics.run(ctx, budget=TOPICS_PER_TICK))
-    import stage_popularity_refresh
-    out.append(stage_popularity_refresh.run)
     return out
 
 
@@ -785,7 +784,7 @@ def stages_for(track: str | None, budget_units: int, only: list[str] | None = No
     raise SystemExit(f"unknown track {track!r} (tracks A and B)")
 
 
-def main(argv=None) -> int:
+def main(argv=None, *, popularity_runner=None) -> int:
     signal.signal(signal.SIGTERM, _on_sigterm)
     ap = argparse.ArgumentParser(description="EspAtlas Jr hourly tick")
     ap.add_argument("--dry-run", action="store_true",
@@ -803,11 +802,17 @@ def main(argv=None) -> int:
     only = [f.strip() for f in args.firmware.split(",") if f.strip()] if args.firmware else None
     if only and (args.track or "").upper() != "B":
         ap.error("--firmware needs --track B")
+    popularity = None
+    if args.track is None:
+        import popularity_run
+        runner = popularity_run.run if popularity_runner is None else popularity_runner
+        popularity = runner(dry_run=args.dry_run, auto_merge=not args.no_auto_merge)
+        print(popularity_run.render_line(popularity))
     r = run_tick(dry_run=args.dry_run, telegram=not args.no_telegram,
                  budget=Budget(max_calls=args.max_calls, max_seconds=args.max_seconds),
                  stages=stages_for(args.track, args.budget, only), auto_merge=not args.no_auto_merge,
                  lock_path=Path(os.environ["JR_TICK_LOCK"]) if os.environ.get("JR_TICK_LOCK") else None)
-    return 1 if r.aborted else 0
+    return 1 if r.aborted or (popularity is not None and not popularity["ok"]) else 0
 
 
 if __name__ == "__main__":

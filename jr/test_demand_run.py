@@ -325,7 +325,8 @@ def test_auto_merge_is_requested_through_the_same_protection_and_trust_gate(tmp_
     gh = gh_ok()
     res = run(tmp_path, gh=gh)
     assert res.auto_merge is True
-    assert ("pr", "merge", "https://github.com/fcavalcantirj/esp-atlas/pull/1401", "--auto", "--squash") in gh.calls
+    assert any(c[:5] == ("pr", "merge", "https://github.com/fcavalcantirj/esp-atlas/pull/1401",
+                          "--auto", "--squash") and "--match-head-commit" in c for c in gh.calls)
 
 
 def test_auto_merge_is_withheld_when_trust_is_not_earned(tmp_path, monkeypatch):

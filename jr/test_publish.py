@@ -10,6 +10,7 @@ Run: cd jr && python3 -m pytest test_publish.py -v
 from __future__ import annotations
 
 import json
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
@@ -107,6 +108,151 @@ def test_remove_worktree_forces_and_prunes():
 def test_is_clean_reads_porcelain_status():
     assert publish.is_clean(WT, git=recorder({("status",): (0, "")}))
     assert not publish.is_clean(WT, git=recorder({("status",): (0, " M data/x\n")}))
+
+
+def test_prepare_pending_popularity_head_merges_main_without_rewriting_history():
+    branch = "jr/popularity-20261107-0100"
+    expected = "b" * 40
+    base = "a" * 40
+    ref = f"refs/remotes/origin/{branch}"
+    git = recorder({("rev-parse", "--verify", f"{ref}^{{commit}}"): (0, expected + "\n")})
+    publish.prepare_existing_popularity_worktree(publish.Worktree(WT.path, base), branch, expected, git=git)
+    calls = norm_calls(git)
+    assert calls[:4] == [("fetch", "origin", f"refs/heads/{branch}:{ref}"),
+                         ("rev-parse", "--verify", f"{ref}^{{commit}}"),
+                         ("checkout", "-q", "--detach", expected),
+                         ("merge", "--no-edit", base)]
+    assert ("merge-base", "--is-ancestor", expected, "HEAD") in calls
+    assert ("merge-base", "--is-ancestor", base, "HEAD") in calls
+    assert not any(c[0] == "push" for c in calls)
+
+
+def test_prepare_pending_popularity_uses_pinned_base_if_origin_main_advances():
+    branch = "jr/popularity-20261107-0100"
+    expected, pinned, advanced = "b" * 40, "a" * 40, "c" * 40
+    ref = f"refs/remotes/origin/{branch}"
+    mutable_main = {"sha": pinned}
+    calls = []
+
+    def git(*args):
+        normalized = args[2:] if args[:1] == ("-C",) else args
+        calls.append(normalized)
+        if normalized[:2] == ("fetch", "origin"):
+            mutable_main["sha"] = advanced  # concurrent main fetch after base was pinned
+        if normalized == ("rev-parse", "--verify", f"{ref}^{{commit}}"):
+            return Proc(returncode=0, stdout=expected + "\n")
+        if normalized[:2] == ("merge", "--no-edit"):
+            assert normalized[2] == pinned and normalized[2] != mutable_main["sha"]
+        return Proc()
+
+    publish.prepare_existing_popularity_worktree(publish.Worktree(WT.path, pinned),
+                                                branch, expected, git=git)
+    assert ("merge", "--no-edit", pinned) in calls
+    assert ("merge-base", "--is-ancestor", pinned, "HEAD") in calls
+
+
+@pytest.mark.parametrize("failure,match", [
+    ("changed", "changed before"),
+    ("conflict", "cannot merge"),
+    ("ancestry", "lacks old PR"),
+])
+def test_prepare_pending_popularity_head_fails_closed(failure, match):
+    branch = "jr/popularity-20261107-0100"
+    expected = "b" * 40
+    ref = f"refs/remotes/origin/{branch}"
+    script = {("rev-parse", "--verify", f"{ref}^{{commit}}"): (
+        0, ("c" * 40 if failure == "changed" else expected) + "\n")}
+    if failure == "conflict":
+        script[("merge", "--no-edit")] = (1, "")
+    if failure == "ancestry":
+        script[("merge-base", "--is-ancestor", expected)] = (1, "")
+    git = recorder(script)
+    with pytest.raises(RuntimeError, match=match):
+        publish.prepare_existing_popularity_worktree(publish.Worktree(WT.path, "a" * 40),
+                                                    branch, expected, git=git)
+    assert not any(c[0] == "push" for c in norm_calls(git))
+
+
+@pytest.mark.parametrize("concurrent_human_commit", [False, True])
+@pytest.mark.parametrize("advance_origin_main", [False, True])
+def test_real_git_pending_popularity_refresh_preserves_history_and_rejects_race(
+        tmp_path, concurrent_human_commit, advance_origin_main):
+    """A bare remote proves the normal push's fast-forward and race behavior."""
+    remote, clone = tmp_path / "remote.git", tmp_path / "clone"
+
+    def git_at(cwd, *args, ok=True):
+        p = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True)
+        if ok:
+            assert p.returncode == 0, (args, p.stderr)
+        return p
+
+    git_at(tmp_path, "init", "--bare", "--initial-branch=main", str(remote))
+    git_at(tmp_path, "clone", str(remote), str(clone))
+    git_at(clone, "config", "user.email", "jr@example.invalid")
+    git_at(clone, "config", "user.name", "Jr test")
+    git_at(clone, "switch", "-c", "main")
+    (clone / "base.txt").write_text("base\n")
+    git_at(clone, "add", "base.txt")
+    git_at(clone, "commit", "-m", "base")
+    git_at(clone, "push", "-u", "origin", "main")
+    branch = "jr/popularity-20261107-0100"
+    git_at(clone, "switch", "-c", branch)
+    (clone / "popularity.txt").write_text("first\n")
+    git_at(clone, "add", "popularity.txt")
+    git_at(clone, "commit", "-m", "first popularity snapshot")
+    prior = git_at(clone, "rev-parse", "HEAD").stdout.strip()
+    git_at(clone, "push", "-u", "origin", branch)
+    git_at(clone, "switch", "main")
+    (clone / "main.txt").write_text("later main\n")
+    git_at(clone, "add", "main.txt")
+    git_at(clone, "commit", "-m", "main advanced")
+    base = git_at(clone, "rev-parse", "HEAD").stdout.strip()
+    git_at(clone, "push", "origin", "main")
+    git_at(clone, "fetch", "origin", "main")
+    advanced_base = None
+    if advance_origin_main:
+        (clone / "advanced.txt").write_text("fetched after the receipt pinned its base\n")
+        git_at(clone, "add", "advanced.txt")
+        git_at(clone, "commit", "-m", "concurrent main update")
+        advanced_base = git_at(clone, "rev-parse", "HEAD").stdout.strip()
+        git_at(clone, "push", "origin", "main")
+        git_at(clone, "fetch", "origin", "main")
+
+    def injected_git(*args):
+        return git_at(clone, *args, ok=False)
+
+    publish.prepare_existing_popularity_worktree(publish.Worktree(clone, base), branch, prior,
+                                                 git=injected_git)
+    git_at(clone, "merge-base", "--is-ancestor", prior, "HEAD")
+    git_at(clone, "merge-base", "--is-ancestor", base, "HEAD")
+    if advanced_base:
+        assert git_at(clone, "merge-base", "--is-ancestor", advanced_base, "HEAD",
+                      ok=False).returncode != 0
+    git_at(clone, "checkout", "-B", branch)
+    (clone / "popularity.txt").write_text("second\n")
+    git_at(clone, "add", "popularity.txt")
+    git_at(clone, "commit", "-m", "second popularity snapshot")
+
+    if concurrent_human_commit:
+        other = tmp_path / "other"
+        git_at(tmp_path, "clone", str(remote), str(other))
+        git_at(other, "config", "user.email", "human@example.invalid")
+        git_at(other, "config", "user.name", "Human test")
+        git_at(other, "switch", "-c", branch, "--track", f"origin/{branch}")
+        (other / "human.txt").write_text("preserve me\n")
+        git_at(other, "add", "human.txt")
+        git_at(other, "commit", "-m", "human changed pending PR")
+        human_sha = git_at(other, "rev-parse", "HEAD").stdout.strip()
+        git_at(other, "push", "origin", branch)
+
+    push = git_at(clone, "push", "origin", branch, ok=False)
+    remote_head = git_at(tmp_path, "--git-dir", str(remote), "rev-parse", branch).stdout.strip()
+    if concurrent_human_commit:
+        assert push.returncode != 0 and remote_head == human_sha
+    else:
+        assert push.returncode == 0
+        assert remote_head == git_at(clone, "rev-parse", "HEAD").stdout.strip()
+        git_at(clone, "merge-base", "--is-ancestor", prior, remote_head)
 
 
 # --- protection preflight ----------------------------------------------------------------------
@@ -224,7 +370,8 @@ def test_publish_stages_only_the_pathspec_plus_ledger_then_commits_pushes_and_op
     assert ("commit", "-q", "-m", "feat(jr): tick") in calls
     assert ("push", "-u", "origin", "jr/tick-20260905-0407") in calls
     assert gh.calls[0][:6] == ("pr", "create", "--base", "main", "--head", "jr/tick-20260905-0407")
-    assert gh.calls[1] == ("pr", "merge", "https://github.com/o/r/pull/9", "--auto", "--squash")
+    assert gh.calls[1] == ("pr", "merge", "https://github.com/o/r/pull/9", "--auto", "--squash",
+                           "--match-head-commit", "feedbee")
     assert res.published and res.auto_merge and res.commit == "feedbee"
     assert res.pr_url == "https://github.com/o/r/pull/9"
     # every git write happened inside the worktree, never on the clone's checkout
@@ -319,6 +466,51 @@ def test_publish_reports_a_failed_push_without_opening_a_pr():
     res = publish.publish(WT, ["data/firmware/x"], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK)
     assert not res.published and res.reason == "push failed"
     assert gh.calls == []
+
+
+def test_failed_pre_push_intent_write_prevents_any_remote_effect():
+    git, gh = _git_ok(), recorder()
+    result = publish.publish(WT, ["docs/telemetry/popularity/x.json"], "s", "b",
+        git=git, gh=gh, protection=PROTECTED_OK,
+        on_committed=lambda *a: (_ for _ in ()).throw(OSError("disk unavailable")))
+    assert not result.published and "intent persistence failed" in result.reason
+    assert not any(c[0] == "push" for c in norm_calls(git))
+    assert gh.calls == []
+
+
+def test_failed_pr_delivery_write_prevents_auto_merge_arming():
+    git = _git_ok()
+    gh = recorder({("pr", "create"): (0, "https://github.com/o/r/pull/9\n")})
+    events = []
+    result = publish.publish(WT, ["docs/telemetry/popularity/x.json"], "s", "b",
+        git=git, gh=gh, protection=PROTECTED_OK, trust=TRUSTED,
+        on_committed=lambda *a: events.append("intent"),
+        on_pr_ready=lambda *a: (_ for _ in ()).throw(OSError("disk unavailable")))
+    assert not result.published and "delivery persistence failed" in result.reason
+    assert events == ["intent"]
+    assert ("push", "-u", "origin", result.branch) in norm_calls(git)
+    assert any(c[:2] == ("pr", "create") for c in gh.calls)
+    assert all(c[:2] != ("pr", "merge") for c in gh.calls)
+
+
+def test_durable_intent_and_pr_delivery_are_recorded_before_exact_head_arming():
+    git = _git_ok()
+    events = []
+    def gh(*args):
+        if args[:2] == ("pr", "create"):
+            events.append("create")
+            return Proc(returncode=0, stdout="https://github.com/o/r/pull/9\n")
+        if args[:2] == ("pr", "merge"):
+            events.append("arm")
+            assert events == ["intent", "create", "delivery", "arm"]
+            assert args[-2:] == ("--match-head-commit", "feedbee")
+        return Proc()
+    result = publish.publish(WT, ["docs/telemetry/popularity/x.json"], "s", "b",
+        git=git, gh=gh, protection=PROTECTED_OK, trust=TRUSTED,
+        on_committed=lambda *a: events.append("intent"),
+        on_pr_ready=lambda *a: events.append("delivery"))
+    assert result.published and result.auto_merge
+    assert events == ["intent", "create", "delivery", "arm"]
 
 
 def test_no_git_call_ever_writes_to_main():
@@ -532,6 +724,149 @@ def test_publish_uses_a_caller_named_branch_when_given():
     assert ("push", "-u", "origin", "jr/demand-20261103-0930") in norm_calls(git)
 
 
+def test_existing_popularity_pr_is_updated_by_normal_fast_forward_push():
+    branch = "jr/popularity-20261107-0100"
+    url = "https://github.com/o/r/pull/8"
+    prior = "b" * 40
+    git = _git_ok()
+    calls = []
+    def gh(*args):
+        calls.append(args)
+        if args[:2] == ("pr", "view"):
+            head = prior if sum(c[:2] == ("pr", "view") for c in calls) == 1 else "feedbee"
+            return Proc(returncode=0, stdout=json.dumps({"state": "OPEN", "headRefOid": head,
+                                                          "autoMergeRequest": None}))
+        return Proc()
+    gh.calls = calls
+    result = publish.publish(WT, ["docs/telemetry/popularity/2026-11-07T02.json"], "new", "new body",
+                             git=git, gh=gh, now=NOW, protection=PROTECTED_OK, trust=TRUSTED,
+                             branch=branch, existing_pr_url=url, expected_head_sha=prior)
+    assert result.published and result.pr_url == url and result.auto_merge
+    assert ("push", "origin", branch) in norm_calls(git)
+    assert not any("--force" in " ".join(call) for call in norm_calls(git) if call[0] == "push")
+    assert ("pr", "view", url, "--json", "state,headRefOid,autoMergeRequest") in gh.calls
+    assert ("pr", "edit", url, "--title", "new", "--body", "new body") in gh.calls
+    assert all(call[:2] != ("pr", "create") for call in gh.calls)
+
+
+def test_existing_popularity_pr_rejects_bad_lease_or_changed_remote_head():
+    branch = "jr/popularity-20261107-0100"
+    url = "https://github.com/o/r/pull/8"
+    git = _git_ok()
+    gh = recorder()
+    bad = publish.publish(WT, ["data/firmware/x"], "s", "b", git=git, gh=gh,
+                          protection=PROTECTED_OK, branch=branch, existing_pr_url=url,
+                          expected_head_sha="not-a-sha")
+    assert not bad.published and gh.calls == []
+    gh = recorder({("pr", "view"): (0, json.dumps({"state": "OPEN", "headRefOid": "some-other-head",
+                                                   "autoMergeRequest": None}))})
+    changed = publish.publish(WT, ["data/firmware/x"], "s", "b", git=git, gh=gh,
+                              protection=PROTECTED_OK, branch=branch, existing_pr_url=url,
+                              expected_head_sha="b" * 40)
+    assert not changed.published and "unsafe before replacement" in changed.reason
+    assert all(call[:2] not in (("pr", "edit"), ("pr", "merge")) for call in gh.calls)
+
+
+def _armed_refresh_gh(prior, *, disable_fails=False, disable_sticks=True):
+    calls = []
+    state = {"head": prior, "armed": True}
+    def gh(*args):
+        calls.append(args)
+        if args[:2] == ("pr", "view"):
+            return Proc(returncode=0, stdout=json.dumps({"state": "OPEN", "headRefOid": state["head"],
+                "autoMergeRequest": {"enabledAt": "now"} if state["armed"] else None}))
+        if args[:3] == ("pr", "merge", "https://github.com/o/r/pull/8") and "--disable-auto" in args:
+            if disable_fails:
+                return Proc(returncode=1)
+            if disable_sticks:
+                state["armed"] = False
+        if args[:2] == ("pr", "merge") and "--auto" in args:
+            if "--match-head-commit" in args and args[args.index("--match-head-commit") + 1] != state["head"]:
+                return Proc(returncode=1)
+            state["armed"] = True
+        return Proc()
+    gh.calls, gh.state = calls, state
+    return gh
+
+
+@pytest.mark.parametrize("auto_merge,trust,needs_human", [
+    (False, TRUSTED, False),
+    (True, publish.TrustStatus(False, 0, 0, reason="untrusted"), False),
+    (True, TRUSTED, True),
+])
+def test_refresh_disarms_existing_auto_merge_when_policy_withholds(auto_merge, trust, needs_human):
+    prior = "b" * 40
+    gh = _armed_refresh_gh(prior)
+    original = _git_ok()
+    def git(*args):
+        out = original(*args)
+        if "push" in args and out.returncode == 0:
+            gh.state["head"] = "feedbee"
+        return out
+    result = publish.publish(WT, ["docs/telemetry/popularity/x.json"], "s", "b",
+        git=git, gh=gh, now=NOW, protection=PROTECTED_OK, trust=trust,
+        branch="jr/popularity-20261107-0100", existing_pr_url="https://github.com/o/r/pull/8",
+        expected_head_sha=prior, auto_merge=auto_merge, needs_human=needs_human)
+    assert result.published and not result.auto_merge and not gh.state["armed"]
+    assert any("--disable-auto" in call for call in gh.calls)
+
+
+@pytest.mark.parametrize("disable_fails,disable_sticks", [(True, True), (False, False)])
+def test_refresh_refuses_if_remote_auto_merge_cannot_be_verified_off(disable_fails, disable_sticks):
+    prior = "b" * 40
+    gh = _armed_refresh_gh(prior, disable_fails=disable_fails, disable_sticks=disable_sticks)
+    git = _git_ok()
+    result = publish.publish(WT, ["docs/telemetry/popularity/x.json"], "s", "b",
+        git=git, gh=gh, protection=PROTECTED_OK, branch="jr/popularity-20261107-0100",
+        existing_pr_url="https://github.com/o/r/pull/8", expected_head_sha=prior)
+    assert not result.published and "unsafe before replacement" in result.reason
+    assert not any("push" in call for call in norm_calls(git))
+
+
+def test_concurrent_head_change_after_lookup_rejects_lease():
+    prior = "b" * 40
+    gh = _armed_refresh_gh(prior)
+    git = _git_ok()
+    original = git
+    def raced(*args):
+        if "push" in args:
+            original.calls.append(args)
+            return Proc(returncode=1, stderr="stale lease")
+        return original(*args)
+    result = publish.publish(WT, ["docs/telemetry/popularity/x.json"], "s", "b",
+        git=raced, gh=gh, protection=PROTECTED_OK, branch="jr/popularity-20261107-0100",
+        existing_pr_url="https://github.com/o/r/pull/8", expected_head_sha=prior)
+    assert not result.published and result.reason == "push failed"
+    assert not gh.state["armed"]
+
+
+@pytest.mark.parametrize("race_at", ["edit", "arm"])
+def test_refresh_never_arms_a_human_head_after_bot_push(race_at):
+    prior = "b" * 40
+    gh = _armed_refresh_gh(prior)
+    original_gh = gh
+    original_git = _git_ok()
+    def git(*args):
+        result = original_git(*args)
+        if "push" in args and result.returncode == 0:
+            gh.state["head"] = "feedbee"
+        return result
+    def raced_gh(*args):
+        if race_at == "edit" and args[:2] == ("pr", "edit"):
+            gh.state["head"] = "h" * 40
+        if race_at == "arm" and args[:2] == ("pr", "merge") and "--auto" in args:
+            gh.state["head"] = "h" * 40
+        return original_gh(*args)
+    result = publish.publish(WT, ["docs/telemetry/popularity/x.json"], "s", "b",
+        git=git, gh=raced_gh, protection=PROTECTED_OK, trust=TRUSTED,
+        branch="jr/popularity-20261107-0100", existing_pr_url="https://github.com/o/r/pull/8",
+        expected_head_sha=prior)
+    assert not result.published and not result.auto_merge
+    assert gh.state["head"] == "h" * 40 and not gh.state["armed"]
+    assert all(not (c[:2] == ("pr", "merge") and "--auto" in c and
+                    "--match-head-commit" not in c) for c in gh.calls)
+
+
 # --- risk-based review routing (SPEC-jr-review-routing.md) -----------------------------------------
 
 def _label_calls(gh):
@@ -551,12 +886,32 @@ def test_a_new_firmware_pr_is_routed_to_review_labelled_and_auto_merge_withheld(
     assert all(c[:2] != ("pr", "merge") for c in gh.calls)
 
 
+def test_review_label_is_applied_before_delivery_is_persisted():
+    git = _git_ok(deletions=_z(("A", "data/firmware/newtool/firmware.md")))
+    events = []
+
+    def gh(*args):
+        if args[:2] == ("pr", "create"):
+            return Proc(returncode=0, stdout="https://github.com/o/r/pull/11\n")
+        if args[:2] == ("pr", "edit") and "--add-label" in args:
+            events.append("label")
+        return Proc()
+
+    result = publish.publish(WT, ["data/firmware/newtool"], "s", "b", git=git,
+        gh=gh, protection=PROTECTED_OK, trust=TRUSTED,
+        on_committed=lambda *a: events.append("intent"),
+        on_pr_ready=lambda *a: events.append("delivery"))
+    assert result.published and result.route == "review" and not result.auto_merge
+    assert events == ["intent", "label", "delivery"]
+
+
 def test_a_bookkeeping_only_pr_stays_auto_and_is_never_labelled():
     git, gh = _git_ok(), recorder({("pr", "create"): (0, "https://github.com/o/r/pull/12\n")})
     res = publish.publish(WT, [], "s", "b", git=git, gh=gh, now=NOW, protection=PROTECTED_OK, trust=TRUSTED)
     assert res.published and res.auto_merge and res.route == "auto" and not res.labelled
     assert _label_calls(gh) == []
-    assert ("pr", "merge", "https://github.com/o/r/pull/12", "--auto", "--squash") in gh.calls
+    assert ("pr", "merge", "https://github.com/o/r/pull/12", "--auto", "--squash",
+            "--match-head-commit", "feedbee") in gh.calls
 
 
 def test_a_label_failure_still_withholds_auto_merge_and_says_so():
@@ -565,7 +920,7 @@ def test_a_label_failure_still_withholds_auto_merge_and_says_so():
                    ("pr", "edit"): (1, ""), ("label", "create"): (1, ""), ("api", "--method", "POST"): (1, "")})
     res = publish.publish(WT, ["data/recipes/b__x"], "s", "b", git=git, gh=gh, now=NOW,
                           protection=PROTECTED_OK, trust=TRUSTED)
-    assert res.published and not res.auto_merge and res.route == "review" and not res.labelled
+    assert not res.published and not res.auto_merge and res.route == "review" and not res.labelled
     assert "jr-review label FAILED" in res.reason and "withheld" in res.reason
     assert all(c[:2] != ("pr", "merge") for c in gh.calls)
 
