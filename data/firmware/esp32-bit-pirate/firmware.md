@@ -22,9 +22,11 @@ requires:
     radio
   board_signal: radio-wifi
 popularity:
-  stars: 5876
-  forks: 487
-  as_of: '2026-09-20'
+  stars: 6350
+  forks: 546
+  as_of: '2026-11-07'
+  github_repo_id: 1014515436
+  github_as_of: '2026-11-07T09:00:55Z'
 sources:
 - field: '*'
   url: https://github.com/geo-tp/ESP32-Bit-Pirate
@@ -44,6 +46,18 @@ sources:
 - field: socs
   url: https://github.com/geo-tp/ESP32-Bit-Pirate#readme
   verified: '2026-09-21'
+- field: popularity.forks
+  url: https://github.com/geo-tp/ESP32-Bit-Pirate
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/geo-tp/ESP32-Bit-Pirate
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/geo-tp/ESP32-Bit-Pirate
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/geo-tp/ESP32-Bit-Pirate
+  verified: '2026-11-07'
 summary: "ESP32 Bus Pirate is an open\u2011source firmware for ESP32\u2011S3 devices\
   \ that turns the hardware into a multi\u2011protocol hacking tool, offering an interactive\
   \ CLI over USB serial or Wi\u2011Fi to sniff, send, script and control numerous\
