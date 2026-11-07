@@ -323,7 +323,8 @@ def _disarm_failure(seen: list, sha: str) -> str:
         state = json.loads(getattr(response, "stdout", "") or "")
     except (TypeError, ValueError):
         state = None
-    if getattr(response, "returncode", 1) != 0 or not isinstance(state, dict):
+    if getattr(response, "returncode", 1) != 0 or not isinstance(state, dict) or \
+            "autoMergeRequest" not in state:
         return "merge state unreadable"
     if state.get("state") != "OPEN":
         return f"state {state.get('state')} not OPEN"
@@ -376,7 +377,7 @@ def _disarm_outcome(state_file: Path, gh, *, dry_run: bool) -> tuple[str, str]:
 
 
 def _disarm_on_hold(result: dict, state_file: Path, gh, *, dry_run: bool) -> dict:
-    """Every HOLD return: no pinned bot popularity PR may stay armed while held.
+    """On an inventory, recovery, pin or held-branch HOLD: no pinned bot popularity PR may stay armed.
 
     Records result['disarm'] and result['hold_safe'] and says on the HOLD
     line whether the hold is safe. Never raises."""
