@@ -26,7 +26,9 @@ committed at the PR's head (one raw contents read, only when the PR changes that
 nowhere else — and committed text is itself only a claim any later commit can rewrite, so a ledger id
 counts only on a PR the Jr bot (JR_LOGIN) authored from a branch of this repository (no fork), read at
 the pinned headRefOid, and only once `gh api repos/<owner/repo the record names>` (GitHub follows a
-rename's redirect) answers that same id; otherwise the firmware is held by slug alone. A PR body is
+rename's redirect) answers that same id. An id that ledger records but GitHub does not confirm (404, 5xx,
+malformed metadata, the name now another repository's) is a gap, never a silent slug-only hold; a PR
+the ledger is not trusted from holds by slug alone. A PR body is
 editable by anyone who can edit the PR, so its hidden identity marker (render_identity) is never trusted alone — a marker id the ledger contradicts or does not record is
 ignored, and a PR without a marker (one older than it) is verified the same way. A body whose marker
 is ambiguous — opened twice, a firmware named twice, unreadable — is a gap: the tick fails closed
@@ -372,10 +374,10 @@ def _github_confirms(gh, repo, rid: int) -> bool:
     return isinstance(meta, dict) and type(meta.get("id")) is int and meta["id"] == rid
 
 
-def _ledger_identities(gh, slug: str, pr: dict, ids) -> dict | None:
-    """{firmware id: (repo id, owner/repo)} the ledger committed at `pr`'s head records for `ids` (one
-    raw contents read) AND GitHub confirms for that owner/repo; None when unreadable. A record without
-    an int repo_id, or one GitHub does not answer with that id, verifies nothing."""
+def _ledger_identities(gh, slug: str, pr: dict, ids) -> tuple[dict, list] | None:
+    """({firmware id: (repo id, owner/repo)} the ledger committed at `pr`'s head records for `ids` (one
+    raw contents read) AND GitHub confirms for that owner/repo, [ids whose recorded int repo_id GitHub
+    does not confirm]); None when unreadable. A record without an int repo_id claims nothing."""
     oid = pr.get("headRefOid")
     if not slug or not isinstance(oid, str) or not oid:
         return None
@@ -387,20 +389,26 @@ def _ledger_identities(gh, slug: str, pr: dict, ids) -> dict | None:
     by_id = led.get("by_id") if isinstance(led, dict) else None
     if not isinstance(by_id, dict):
         return None
-    out = {}
-    for fid in ids:
+    out, unresolved = {}, []
+    for fid in sorted(ids):
         rec = by_id.get(fid)
         rid = rec.get("repo_id") if isinstance(rec, dict) else None
-        if type(rid) is int and _github_confirms(gh, rec.get("repo"), rid):
+        if type(rid) is not int:
+            continue
+        if _github_confirms(gh, rec.get("repo"), rid):
             out[fid] = (rid, rec["repo"].lower())
-    return out
+        else:
+            unresolved.append(fid)
+    return out, unresolved
 
 
 def _verified(gh, slug: str, prs: list, held_ids, gaps: list) -> list:
     """`prs`, each with the identities verified for the firmware it holds (`held_ids(paths)`): what the
     ledger committed at its head records and GitHub confirms, when the Jr bot's own same-repo PR changes
     that ledger; none otherwise. The body marker only claims: an ambiguous one on a PR that holds
-    something, or a ledger that cannot be read, is a gap and its PR dropped. A PR that holds nothing decides nothing, whatever its body."""
+    something, or a ledger that cannot be read, is a gap and its PR dropped. A ledger id GitHub does not
+    confirm (404, 5xx, malformed metadata, the name now another repository's) is a gap too, never a
+    silent slug-only hold: the PR keeps its holds. A PR that holds nothing decides nothing, whatever its body."""
     out = []
     for pr in prs:
         n, paths = pr.get("number"), _paths(pr)
@@ -410,10 +418,13 @@ def _verified(gh, slug: str, prs: list, held_ids, gaps: list) -> list:
                         "or unreadable)")
             continue
         if held and LEDGER_PATH in paths and _from_jr_bot(pr):
-            verified = _ledger_identities(gh, slug, pr, held)
-            if verified is None:
+            read = _ledger_identities(gh, slug, pr, held)
+            if read is None:
                 gaps.append(f"Jr PR #{n}'s committed {LEDGER_PATH} cannot be read")
                 continue
+            verified, unresolved = read
+            if unresolved:
+                gaps.append(f"Jr PR #{n}'s committed repo id for {', '.join(unresolved)} is not confirmed by GitHub")
         out.append({**pr, "_identities": verified})
     return out
 
