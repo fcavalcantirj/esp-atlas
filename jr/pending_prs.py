@@ -39,7 +39,8 @@ An index that may miss a hold is as blind as an unreadable one, so it names its 
 fails closed on any: an open or closed list that returned its full limit (it may be cut), or a held
 tick PR whose file list cannot be shown whole. `gh pr list --json files` carries only a PR's first
 100 files, so a tick PR whose `files` fall short of its `changedFiles` is re-read through the REST
-listing, paginated, and must then match its count exactly.
+listing, paginated, and must then match its count exactly — as distinct paths, with GitHub answering
+the PR's listed head and count both before and after the pages (an edit between pages is a gap).
 """
 from __future__ import annotations
 
@@ -311,9 +312,37 @@ def _rest_paths(gh, slug: str, number) -> list[str] | None:
     return [e["filename"] for e in entries]
 
 
+def _head(gh, slug: str, number) -> tuple[str, int] | None:
+    """(head sha, changed_files) GitHub answers for PR `number` right now, or None when unreadable."""
+    p = gh("api", f"repos/{slug}/pulls/{number}")
+    try:
+        meta = json.loads(getattr(p, "stdout", "") or "") if getattr(p, "returncode", 1) == 0 else None
+    except json.JSONDecodeError:
+        return None
+    meta = meta if isinstance(meta, dict) else {}
+    head = meta.get("head") if isinstance(meta.get("head"), dict) else {}
+    sha, count = head.get("sha"), meta.get("changed_files")
+    return (sha, count) if isinstance(sha, str) and sha and type(count) is int else None
+
+
+def _pinned_paths(gh, slug: str, pr: dict, count: int) -> list[str] | None:
+    """The REST listing of `pr`, only when it is bound to one head: GitHub answers the head the PR list
+    showed (headRefOid) with `count` changed files both before and after the pages are read, and the
+    pages hold exactly `count` distinct paths. Pages are not a snapshot — an edit between them can
+    repeat a row and drop another — so a moved head, a repeated path or a count mismatch fails closed
+    (never deduplicated into a listing that only looks whole)."""
+    number, pinned = pr.get("number"), (pr.get("headRefOid"), count)
+    if _head(gh, slug, number) != pinned:
+        return None
+    paths = _rest_paths(gh, slug, number)
+    if paths is None or len(paths) != count or len(set(paths)) != count:
+        return None
+    return paths if _head(gh, slug, number) == pinned else None
+
+
 def _whole(gh, slug: str, pr: dict) -> dict | None:
     """`pr` with its whole file list, or None when it cannot be shown whole. The listed `files` are
-    whole when they number exactly `changedFiles`; otherwise the REST listing must."""
+    whole when they number exactly `changedFiles`; otherwise the REST listing pinned to its head must."""
     count = pr.get("changedFiles")
     if type(count) is not int or count < 0:
         return None
@@ -321,8 +350,8 @@ def _whole(gh, slug: str, pr: dict) -> dict | None:
         return pr
     if count > REST_FILES_CAP or not slug:
         return None
-    paths = _rest_paths(gh, slug, pr.get("number"))
-    return None if paths is None or len(paths) != count else {**pr, "files": [{"path": p} for p in paths]}
+    paths = _pinned_paths(gh, slug, pr, count)
+    return None if paths is None else {**pr, "files": [{"path": p} for p in paths]}
 
 
 def _from_jr_bot(pr: dict) -> bool:

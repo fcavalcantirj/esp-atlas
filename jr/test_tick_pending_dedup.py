@@ -100,6 +100,9 @@ class AtlasSim:
         if a[:1] == ("api",) and a[1].startswith("repos/o/r/pulls/") and a[2:] == ("--paginate",):
             number = a[1].split("/")[4]
             return Proc(returncode=self.files_rc, stdout=self._rest_files(number) if self.files_rc == 0 else "")
+        if a[:1] == ("api",) and len(a) == 2 and a[1].removeprefix("repos/o/r/pulls/").isdigit():
+            pr = self._pr(a[1].split("/")[4])                 # the PR's head and count, read around the pages
+            return Proc(stdout=json.dumps({"head": {"sha": f"oid{pr['number']}"}, "changed_files": len(pr["files"])}))
         if a[:3] == ("api", "-H", pending_prs.RAW_MEDIA):     # a file committed at a PR's head, raw
             path, oid = a[3].removeprefix("repos/o/r/contents/").split("?ref=")
             text = self._pr(oid.removeprefix("oid"))["tree"].get(path)

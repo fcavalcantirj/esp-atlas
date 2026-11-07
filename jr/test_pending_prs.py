@@ -58,7 +58,8 @@ def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0, ledgers=None, repos
     in REST pages of 100 printed back to back, as gh prints them (`pages`: PR number -> the pages served
     instead, as a PR edited mid-listing serves them). `gh api …/pulls/<n>` answers head sha `oid<n>`
     (`heads`: PR number -> the shas successive reads answer) and changed_files len(files) (`counts`
-    overrides). `ledgers`: head oid -> the raw jr/proposed_ledger.json committed there (None: unreadable); any other head serves an empty one.
+    overrides). `ledgers`: head oid -> the raw jr/proposed_ledger.json committed there (None: unreadable);
+    any other head serves an empty one.
     `repos`: owner/repo -> the id `gh api repos/<owner/repo>` answers (redirects followed; None or
     absent: the call fails); by default the ids the served ledgers record."""
     repos = _ledger_repos(ledgers) if repos is None else repos
@@ -209,7 +210,7 @@ def test_a_101_file_open_tick_pr_is_read_whole_and_holds_the_firmware_its_101st_
     idx = _load(_gh([], calls=calls, files={1520: WIDE}), [wide])
     assert idx.complete, idx.gaps
     assert idx.hold("lintd").state == pending_prs.OPEN and idx.hold("lintd").pr_ref == "#1520"
-    api = [c for c in calls if c[:1] == ("api",)]
+    api = [c for c in calls if c[:1] == ("api",) and c[1].endswith("/files?per_page=100")]
     assert api == [("api", f"repos/{SLUG}/pulls/1520/files?per_page=100", "--paginate")]
 
 
@@ -265,7 +266,11 @@ def test_an_unreadable_rest_file_listing_leaves_the_index_incomplete(stdout):
 
 def test_rest_pages_separated_by_whitespace_are_read_as_one_listing():
     pages = json.dumps([{"filename": p} for p in WIDE[:100]]) + "\n" + json.dumps([{"filename": WIDE[100]}]) + "\n"
-    gh = lambda *a: SimpleNamespace(returncode=0, stdout=pages if a[:1] == ("api",) else "[]", stderr="")  # noqa: E731
+    head = json.dumps({"head": {"sha": "oid1520"}, "changed_files": len(WIDE)})
+
+    def gh(*a):
+        stdout = (pages if a[1].endswith("/files?per_page=100") else head) if a[:1] == ("api",) else "[]"
+        return SimpleNamespace(returncode=0, stdout=stdout, stderr="")
     assert _load(gh, [_pr(1520, WIDE)]).hold("lintd")
 
 
