@@ -64,11 +64,20 @@ def fw(fid: str) -> str:
     return f"data/firmware/{fid}/firmware.md"
 
 
-def gh_metrics(prs, files, statuses=None, base=None, head=None, compare_rc=0, refs_rc=0):
+def merged_ledger(ids, status="merged", pr_ref="#1530"):
+    return {"by_id": {f: {"id": f, "repo": f"o/{f}", "status": status, "reason": None, "pr_ref": pr_ref,
+                          "timestamp": "2026-10-01T00:00:00+00:00", "expires": None} for f in ids},
+            "by_repo": {f"o/{f}": f for f in ids}}
+
+
+def gh_metrics(prs, files, statuses=None, base=None, head=None, tip=None, ledger_doc=None, compare_rc=0, refs_rc=0):
     """gh_with_prs plus the read-only diff reads: `pr view N --json baseRefName,headRefOid`, the
-    compare API (merge base + per-file status) and the contents API at both commits."""
+    compare API (merge base + per-file status) and the raw contents API at the merge base, the PR
+    head and the base branch tip (`main`: the records still catalogued there, and the ledger)."""
     inner = gh_with_prs(prs, files=files)
     statuses, base, head = statuses or {}, base or {}, head or {}
+    tip = dict(OLD if tip is None else tip)
+    tip["jr/proposed_ledger.json"] = json.dumps(merged_ledger(IDS) if ledger_doc is None else ledger_doc)
 
     def fn(*args):
         if args[:2] == ("pr", "view") and args[3:] == ("--json", "baseRefName,headRefOid"):
@@ -83,10 +92,12 @@ def gh_metrics(prs, files, statuses=None, base=None, head=None, compare_rc=0, re
         if args[:1] == ("api",) and "/contents/" in args[1]:
             inner.calls.append(args)
             path, ref = args[1].split("/contents/", 1)[1].split("?ref=")
-            text = (base if ref.startswith("base") else head).get(path)
+            text = (tip if ref == "main" else base if ref.startswith("base") else head).get(path)
             if text is None:
                 return Proc(returncode=1, stdout="", stderr="HTTP 404")
-            return Proc(stdout=base64.b64encode(text.encode()).decode() + "\n")
+            if "-H" in args:                              # raw media type: the file itself
+                return Proc(stdout=text)
+            return Proc(stdout=base64.b64encode(text.encode()).decode() + "\n")   # hydration's `-q .content`
         return inner(*args)
     fn.calls = inner.calls
     return fn
@@ -136,6 +147,15 @@ def test_a_body_or_non_popularity_source_change_is_not_popularity_only():
     assert not superseded_metrics.popularity_only(old, new.replace("- field: popularity.stars", "- field: socs"))
 
 
+def test_a_text_only_edit_outside_popularity_is_not_popularity_only():
+    """The DIFF must touch only popularity: an edit YAML parses to the same value still counts."""
+    old, new = OLD[fw("clawdmeter")], NEW[fw("clawdmeter")]
+    assert not superseded_metrics.popularity_only(old, new.replace("category: multi", "category: 'multi'"))
+    assert not superseded_metrics.popularity_only(old, new.replace("category: multi", "category: multi  # note"))
+    assert not superseded_metrics.popularity_only(old, new.replace("Tool firmware.\n", "Tool firmware.\n\n"))
+    assert not superseded_metrics.popularity_only(old, new.replace("summary: A tool.\n", "summary: B tool.\nsummary: A tool.\n"))
+
+
 def test_an_unreadable_record_is_not_popularity_only():
     assert not superseded_metrics.popularity_only(None, NEW[fw("clawdmeter")])
     assert not superseded_metrics.popularity_only(OLD[fw("clawdmeter")], "no frontmatter")
@@ -168,6 +188,7 @@ def test_the_diff_is_read_against_the_merge_base_with_read_only_calls(wt_dir):
              and c[1].endswith(("?ref=base1530", "?ref=head1530"))]   # not the hydration's branch reads
     assert sorted(c[1] for c in reads) == sorted(f"repos/o/r/contents/{p}?ref={ref}"
                                                  for p in OLD for ref in ("base1530", "head1530"))
+    assert any(c[1] == "repos/o/r/contents/jr/proposed_ledger.json?ref=main" for c in gh.calls if c[:1] == ("api",))
     assert any(c[:2] == ("api", "repos/o/r/compare/main...head1530") for c in gh.calls)
 
 
@@ -242,10 +263,7 @@ def test_a_young_mergeable_metrics_pr_is_left_alone_and_its_diff_never_read(wt_d
 # --- (3) closing records no rejection ----------------------------------------------------------
 
 def test_closing_a_metrics_pr_leaves_the_ledger_unchanged(wt_dir):
-    # as on main after PR 1530: the refreshed ids are `merged`, some even citing the closed PR's ref
-    led = {"by_id": {f: {"id": f, "repo": f"o/{f}", "status": "merged", "reason": None, "pr_ref": "#1530",
-                         "timestamp": "2026-10-01T00:00:00+00:00", "expires": None} for f in IDS},
-           "by_repo": {f"o/{f}": f for f in IDS}}
+    led = merged_ledger(IDS)      # as on main after PR 1530: `merged`, some even citing the closed PR's ref
     (wt_dir / "jr" / "proposed_ledger.json").write_text(json.dumps(led, indent=2) + "\n")
     for f in IDS:                                    # the worktree's catalog: these ids are catalogued
         (wt_dir / fw(f)).parent.mkdir(parents=True)
@@ -264,3 +282,65 @@ def test_a_jr_review_metrics_pr_is_skipped_never_closed_and_never_diffed(wt_dir)
     r = run(git=git_ok(wt_dir), gh=gh)
     assert not r.aborted and _closes(gh) == []
     assert not any(c[:1] == ("api",) and "/compare/" in c[1] for c in gh.calls)
+
+
+# --- (2)/(3) the ids must be catalogued AND merged on the base branch tip ------------------------
+
+def test_an_id_still_proposed_for_this_pr_keeps_it_stuck_so_no_rejection_can_follow(wt_dir):
+    gh = gh_metrics([_tick_pr(1530, STALE)], {1530: METRICS_PR}, base=OLD, head=NEW,
+                    ledger_doc=merged_ledger(IDS[:1]) | {"by_id": {**merged_ledger(IDS[:1])["by_id"],
+                                                                   **merged_ledger(IDS[1:], status="proposed")["by_id"]}})
+    r = run(git=git_ok(wt_dir), gh=gh)
+    assert _closes(gh) == [] and "needs a human" in r.aborted
+
+
+def test_an_id_missing_from_the_ledger_or_an_unreadable_ledger_keeps_it_stuck(wt_dir):
+    for led in (merged_ledger(IDS[:1]), "not json"):
+        gh = gh_metrics([_tick_pr(1530, STALE)], {1530: METRICS_PR}, base=OLD, head=NEW, ledger_doc=led)
+        r = run(git=git_ok(wt_dir), gh=gh)
+        assert _closes(gh) == [] and "needs a human" in r.aborted, led
+
+
+def test_a_record_no_longer_catalogued_on_the_base_tip_keeps_it_stuck(wt_dir):
+    gh = gh_metrics([_tick_pr(1530, STALE)], {1530: METRICS_PR}, base=OLD, head=NEW, tip={fw("clawdmeter"): OLD[fw("clawdmeter")]})
+    r = run(git=git_ok(wt_dir), gh=gh)
+    assert _closes(gh) == [] and "needs a human" in r.aborted
+
+
+def test_a_renamed_bookkeeping_path_keeps_it_stuck(wt_dir):
+    gh = gh_metrics([_tick_pr(1530, STALE)], {1530: METRICS_PR}, statuses={"jr/proposed_ledger.json": "renamed"},
+                    base=OLD, head=NEW)
+    r = run(git=git_ok(wt_dir), gh=gh)
+    assert _closes(gh) == [] and "needs a human" in r.aborted
+
+
+# --- the tick's own control flow is never swallowed by the diff check ---------------------------
+
+def test_a_spent_budget_or_a_sigterm_during_the_diff_read_still_aborts_the_tick(wt_dir):
+    from budget import BudgetExceeded
+    for exc, expected in ((BudgetExceeded("gh calls 150/150"), "budget: gh calls 150/150"),
+                          (tick.TickAbort("terminated by SIGTERM (timeout)"), "terminated by SIGTERM (timeout)")):
+        inner = gh_metrics([_tick_pr(1530, FRESH, mergeable="CONFLICTING")], {1530: METRICS_PR}, base=OLD, head=NEW)
+
+        def gh(*args, exc=exc, inner=inner):
+            if args[:1] == ("api",) and "/compare/" in args[1]:
+                raise exc
+            return inner(*args)
+        gh.calls = inner.calls
+        r = run(git=git_ok(wt_dir), gh=gh)
+        assert r.aborted == expected and _closes(inner) == []
+
+
+def test_the_repo_slug_is_resolved_only_when_a_metrics_candidate_needs_it(wt_dir):
+    """A bookkeeping-only PR is closed before a bad origin aborts the tick, as before."""
+    git = git_ok(wt_dir)
+
+    def bad_origin(*args):
+        if args[-3:] == ("remote", "get-url", "origin"):
+            git.calls.append(args)
+            return Proc(stdout="https://example.com/not-github.git\n")
+        return git(*args)
+    bad_origin.calls = git.calls
+    gh = gh_metrics([_tick_pr(785, STALE)], {785: ["jr/proposed_ledger.json"]})
+    r = run(git=bad_origin, gh=gh)
+    assert [c[2] for c in _closes(gh)] == ["785"] and "not a GitHub remote" in r.aborted
