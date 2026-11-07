@@ -33,7 +33,7 @@ import stage_admit_topics
 import tools
 from test_tick_pending_dedup import T0, _staged_for
 from test_tick_pending_identity import REPO_ID, OTHER_ID, RenameSim, _new_prs_holding, _owners_of
-from test_tick import run, wt_dir  # noqa: F401 — wt_dir is a fixture
+from test_tick import Proc, run, wt_dir  # noqa: F401 — wt_dir is a fixture
 
 pytestmark = pytest.mark.usefixtures("esp_sketch_raw")   # the device-build gate passes (conftest)
 
@@ -271,3 +271,64 @@ def test_a_rejected_later_occupant_of_the_canonical_name_never_overwrites_the_se
     assert str(OTHER_ID) not in led_txt, led_txt
     assert pending_prs.identities(pr["body"]) == {"newtool": (REPO_ID, "n/newtool")}, pr["body"]
     assert str(OTHER_ID) not in pr["body"], pr["body"]
+
+
+# R2h: the ledger committed at a vetoed PR's head CLAIMS newtool is repository 4242 under n/newtool; since
+# then upstream renamed it n/renamedtool. When GitHub cannot confirm that claim — n/newtool answers 404,
+# 503 or malformed metadata, or the name now belongs to unrelated repository 7777 — the claim used to be
+# dropped silently and the index stayed complete: newtool held by slug only, so n/renamedtool (4242) was
+# admitted inside the veto. An unresolved claimed identity is a gap: the tick fails closed.
+
+def _answering(sim, name, proc):
+    """`sim`'s GitHub answering `gh api repos/<name>` with `proc`; every other call as before."""
+    real = sim.gh
+    sim.gh = lambda *a: proc if a == ("api", f"repos/{name}") else real(*a)
+
+
+def _renamed_without_redirect(sim):
+    sim.serve("n/renamedtool", REPO_ID)                 # 4242's new name; n/newtool redirects nowhere (yet)
+    sim.repos.pop("n/newtool", None)
+
+
+UNRESOLVED_CLAIMS = {
+    "404": lambda sim: _renamed_without_redirect(sim),
+    "503": lambda sim: (_renamed_without_redirect(sim),
+                        _answering(sim, "n/newtool", Proc(returncode=1, stderr="HTTP 503 Service Unavailable"))),
+    "malformed": lambda sim: (_renamed_without_redirect(sim),
+                              _answering(sim, "n/newtool", Proc(stdout='{"id": "4242", "full_name": '))),
+    "name-reused-by-7777": lambda sim: (_renamed_without_redirect(sim), sim.serve("n/newtool", OTHER_ID)),
+}
+
+
+def _vetoed_then_renamed(sim, listing, upstream):
+    pr = _admit_aligned(sim, listing)
+    sim.owner_closes(pr["number"], T0 + timedelta(hours=2))
+    listing[:] = [RENAMED]
+    upstream(sim)
+    return pr
+
+
+@pytest.mark.parametrize("upstream", UNRESOLVED_CLAIMS.values(), ids=UNRESOLVED_CLAIMS.keys())
+def test_a_vetoed_claimed_id_github_cannot_confirm_fails_the_tick_closed(sim, listing, monkeypatch, upstream):
+    import memory
+    pr = _vetoed_then_renamed(sim, listing, upstream)
+    prs_before, main_before = len(sim.prs), dict(sim.main)
+    proposed = []
+    monkeypatch.setattr(memory, "record_proposed", lambda *a, **kw: proposed.append((a, kw)))
+    sim.git_calls.clear()
+    r = sim.tick(T0 + timedelta(hours=3))
+    assert "incomplete" in (r.aborted or "") and f"#{pr['number']}" in r.aborted, (r.aborted, r.paths)
+    assert _staged_for(r, "renamedtool") == [] and r.paths == [], r.paths     # no firmware, no recipe
+    assert len(sim.prs) == prs_before and sim.main == main_before
+    assert not [c for c in sim.git_calls if c[:2] == ("worktree", "add")], "a worktree (and its ledger) was written"
+    assert proposed == [], "an identity was recorded"
+    assert _owners_of(sim, REPO_ID) == {"newtool"} and _owners_of(sim, OTHER_ID) == set()
+
+
+def test_a_vetoed_claimed_id_confirmed_through_the_redirect_still_blocks_the_renamed_repository(sim, listing):
+    pr = _vetoed_then_renamed(sim, listing, lambda s: s.serve("n/renamedtool", REPO_ID, "n/newtool"))
+    r = sim.tick(T0 + timedelta(hours=3))
+    assert not r.aborted, r.aborted
+    assert _staged_for(r, "renamedtool") == [] and r.rejects.get("vetoed") == 1, (r.paths, r.rejects)
+    assert not _new_prs_holding(sim, "renamedtool", pr["number"])
+    assert _owners_of(sim, REPO_ID) == {"newtool"}

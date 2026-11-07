@@ -625,11 +625,17 @@ def test_a_bot_same_repo_ledger_id_github_confirms_is_accepted(vetoed):
     assert NEWTOOL_META_CALL in calls                                              # independently confirmed
 
 
+def _unconfirmed_gap(idx):
+    """R2h: a claimed id GitHub does not confirm is no silent slug-only hold — it is a gap naming the PR."""
+    assert not idx.complete, "an unresolved claimed identity left the index complete"
+    assert any("#1500" in g and "newtool" in g for g in idx.gaps), idx.gaps
+
+
 @pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
-def test_a_ledger_id_altered_by_a_later_commit_is_rejected_and_the_slug_held(vetoed):
+def test_a_ledger_id_altered_by_a_later_commit_is_a_gap(vetoed):
     """A later commit on the bot's own PR rewrote the ledger: newtool is 7777. GitHub says n/newtool is 4242."""
     idx = _newtool_index(vetoed, ledger_id=7777)
-    _held_by_slug_only(idx, 7777)
+    _unconfirmed_gap(idx)
     assert 7777 not in idx.by_repo_id and idx.match("unrelated", 7777) is None
 
 
@@ -645,12 +651,30 @@ def test_a_ledger_id_on_a_fork_head_is_never_accepted(vetoed, cross):
     _held_by_slug_only(_newtool_index(vetoed, isCrossRepository=cross), 4242)
 
 
+def _answering(gh, route, stdout="", returncode=0):
+    """`gh` answering `gh api <route>` with this output; every other call as before."""
+    return lambda *a: (SimpleNamespace(returncode=returncode, stdout=stdout, stderr="HTTP 503" if returncode else "")
+                       if a == ("api", route) else gh(*a))
+
+
+UNCONFIRMED = {                                                                  # how `gh api repos/n/newtool` answers
+    "404": lambda gh: gh,                                                        # served: no such repository
+    "503": lambda gh: _answering(gh, "repos/n/newtool", returncode=1),
+    "malformed": lambda gh: _answering(gh, "repos/n/newtool", '{"id": 4242, "full_name": '),
+    "id-not-an-int": lambda gh: _answering(gh, "repos/n/newtool", '{"id": "4242"}'),
+    "name-reused-by-7777": lambda gh: _answering(gh, "repos/n/newtool", '{"id": 7777, "full_name": "n/newtool"}'),
+}
+
+
 @pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
-def test_a_ledger_id_github_metadata_cannot_confirm_is_not_accepted(vetoed):
+@pytest.mark.parametrize("answer", UNCONFIRMED.values(), ids=UNCONFIRMED.keys())
+def test_a_ledger_id_github_metadata_cannot_confirm_is_a_gap(vetoed, answer):
     calls = []
-    idx = _newtool_index(vetoed, repos={}, calls=calls)                            # gh api repos/n/newtool fails
-    _held_by_slug_only(idx, 4242)
-    assert NEWTOOL_META_CALL in calls
+    pr = _pr(1500, NEWTOOL_LEDGER_FILES)
+    gh = answer(_gh([_closed(pr)] if vetoed else [], calls=calls, ledgers={"oid1500": _ledger(newtool=4242)}, repos={}))
+    idx = _load(gh, []) if vetoed else _load(gh, [pr])
+    _unconfirmed_gap(idx)
+    assert 4242 not in idx.by_repo_id and idx.hold("newtool").reason in ("already_proposed", "vetoed")
 
 
 @pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
@@ -664,11 +688,11 @@ def test_a_ledger_id_recorded_under_a_renamed_repo_is_confirmed_through_the_redi
     assert ("api", "repos/n/oldtool") in calls
 
 
-def test_a_ledger_repo_that_is_no_plain_owner_and_name_is_never_asked_for():
+def test_a_ledger_repo_that_is_no_plain_owner_and_name_is_never_asked_for_and_is_a_gap():
     led = json.dumps({"by_id": {"oldtool": {"id": "oldtool", "repo": "n/../../user", "repo_id": 4242}}, "by_repo": {}})
     calls = []
     idx = _load(_gh([], calls=calls, ledgers={"oid1500": led}, repos={}), [_pr(1500, LEGACY_FILES)])
-    assert idx.complete and idx.hold("oldtool").repo_id is None
+    assert not idx.complete and any("#1500" in g and "oldtool" in g for g in idx.gaps), idx.gaps
     assert not [c for c in calls if c[:1] == ("api",) and len(c) == 2 and "/pulls/" not in c[1]]
 
 
