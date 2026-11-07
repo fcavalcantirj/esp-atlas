@@ -38,6 +38,7 @@ from pathlib import Path
 import board_alias
 import derive
 import memory
+import pending_prs
 import tools
 import writers
 from budget import BudgetExceeded
@@ -222,20 +223,37 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
     api = api or (lambda path: json.loads(ctx.gh("api", path).stdout))    # ctx.gh is budget-wrapped
     raw = ctx.budget.wrap(raw or derive.default_raw, "raw")
     led = memory.load(ctx.ledger_path)   # read-only: the open-PR skip reads the hydrated ledger (tick.hydrate_open_pr_ledger)
+    pending = pending_prs.of(ctx)
     paths, lines, admitted, rejects, needs_human, items, would_write = [], [], 0, {}, False, [], []
+
+    def reject(key):
+        rejects[key] = rejects.get(key, 0) + 1
+
     if only:
-        chosen = []
+        candidates = []
         for fid in only:
             fmd = ctx.root / "data" / "firmware" / fid / "firmware.md"
             if not fmd.exists() or not owner_repo_of(tools._frontmatter(fmd).get("url", "")):
                 lines.append(f"{fid}: not a catalogued firmware with a GitHub url, skipped")
                 continue
-            chosen.append(fid)
+            candidates.append(fid)
     else:
-        chosen = select_firmware(ctx.root, budget, now, fresh_days)
-
-    def reject(key):
-        rejects[key] = rejects.get(key, 0) + 1
+        candidates = select_firmware(ctx.root, budget + len(pending), now, fresh_days)
+    # A firmware an open (or vetoed) Jr tick PR changes — its record or ANY of its recipes, read from
+    # the PR's own file list (jr/pending_prs.py) — is never mapped again, onto the same boards or new
+    # ones: origin/main still shows it under-mapped, so the selector re-picks it every hour, and its
+    # ledger record cannot say so when it is already catalogued (`merged`; #1500 … #1511). Skipped
+    # before the budget: the slot goes to the next firmware.
+    chosen = []
+    for fid in candidates:
+        if not only and len(chosen) >= budget:
+            break
+        hold = pending.hold(fid)
+        if hold:
+            reject(hold.reason)
+            lines.append(f"{fid}: skip {hold.reason} ({hold.note})")
+            continue
+        chosen.append(fid)
 
     for fid in chosen:
         # An id already sitting in an OPEN Jr PR — marked `proposed` in the worktree ledger at tick
