@@ -2,27 +2,31 @@
 id: interactivesetup-m5cardputer-sshclient
 type: firmware
 name: Interactive SSH client and VPN
-url: https://github.com/fernando-moretes/tool-m5cardputer-sshclient
+url: https://github.com/fernandofatech/tool-m5cardputer-sshclient
 category: multi
-maintainer: fernando-moretes
+maintainer: fernandofatech
 capabilities:
 - wifi
 socs:
 - esp32-s3
 popularity:
-  stars: 67
+  stars: 69
   forks: 13
-  as_of: '2026-09-02'
+  as_of: '2026-11-07'
+  github_repo_id: 734161317
 sources:
 - field: '*'
-  url: https://github.com/fernando-moretes/tool-m5cardputer-sshclient
-  verified: '2026-09-02'
+  url: https://github.com/fernandofatech/tool-m5cardputer-sshclient
+  verified: '2026-11-07'
 - field: popularity
-  url: https://github.com/fernando-moretes/tool-m5cardputer-sshclient
-  verified: '2026-09-04'
+  url: https://github.com/fernandofatech/tool-m5cardputer-sshclient
+  verified: '2026-11-07'
 - field: summary
-  url: https://github.com/fernando-moretes/tool-m5cardputer-sshclient
+  url: https://github.com/fernandofatech/tool-m5cardputer-sshclient
   verified: '2026-09-20'
+- field: popularity.github_repo_id
+  url: https://github.com/fernandofatech/tool-m5cardputer-sshclient
+  verified: '2026-11-07'
 summary: The firmware is an experimental SSH client for the M5Cardputer, targeting
   embedded, IoT, and developer tooling use cases.
 readme_lang: pt
