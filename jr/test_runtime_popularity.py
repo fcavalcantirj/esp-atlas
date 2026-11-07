@@ -69,18 +69,22 @@ def repos(tmp_path):
 class FakeGH:
     """A GraphQL-only `gh` double: answers aliases from `nodes` (repo -> node or None)."""
 
-    def __init__(self, nodes: dict, *, remaining: int = 4000, limited: bool = False, fail: bool = False):
+    def __init__(self, nodes: dict, *, remaining: int = 4000, limited: bool = False, fail: bool = False,
+                 limited_from_call: int | None = None):
         self.nodes, self.remaining, self.limited, self.fail = nodes, remaining, limited, fail
+        self.limited_from_call = limited_from_call
         self.calls: list[tuple] = []
 
-    def __call__(self, *args):
+    def __call__(self, *args, **_timeout):
         self.calls.append(args)
         assert args[:2] == ("api", "graphql"), args
         if self.fail:
             return subprocess.CompletedProcess(args, 1, "", "network down")
         query = args[-1]
-        data = {"rateLimit": {"cost": 1, "remaining": self.remaining, "resetAt": "2026-11-07T20:00:00Z"}}
-        errors = [{"type": "RATE_LIMITED", "message": "rate limit"}] if self.limited else []
+        remaining = self.remaining - (len(self.calls) - 1)  # each call spends one point
+        data = {"rateLimit": {"cost": 1, "remaining": remaining, "resetAt": "2026-11-07T20:00:00Z"}}
+        limited = self.limited or (self.limited_from_call is not None and len(self.calls) >= self.limited_from_call)
+        errors = [{"type": "RATE_LIMITED", "message": "rate limit"}] if limited else []
         for alias, owner, name in re.findall(r'(r\d+):repository\(owner:"([^"]+)",name:"([^"]+)"\)', query):
             node = self.nodes.get(f"{owner}/{name}")
             data[alias] = node
@@ -174,8 +178,10 @@ def test_canonical_repository():
 def test_catalog_is_read_from_the_pinned_revision_not_the_working_tree(repos):
     _, work = repos
     pinned = _sh(work, "rev-parse", "main")
-    _write_firmware(work, "uncommitted", "https://github.com/octo/uncommitted")
+    _sh(work, "checkout", "-q", "-b", "side")
     _write_firmware(work, "alpha", "https://github.com/octo/elsewhere")
+    _sh(work, "commit", "-q", "-am", "diverge HEAD from main")
+    _write_firmware(work, "uncommitted", "https://github.com/octo/uncommitted")
     revision, entries, excluded = rp.read_catalog(rp.make_git(work), "main")
     assert revision == pinned
     assert [(e.firmware_id, e.repo, e.repository_url, e.catalog_id) for e in entries] == [
@@ -287,6 +293,54 @@ def test_repositories_are_batched(repos, monkeypatch):
     assert len(gh.calls) == 3  # probe + two batches
 
 
+def test_rate_limit_mid_run_keeps_last_good_for_the_rest(repos, monkeypatch):
+    monkeypatch.setattr(rp.gql, "BATCH_SIZE", 1)
+    previous = {"gamma": record("https://github.com/octo/gamma", 30, 9, 9)}
+    gh = FakeGH(GOOD, limited_from_call=3)  # probe, alpha, then beta's batch says RATE_LIMITED
+    result = _collect(repos, gh, previous)
+    # beta's alias still answered in that HTTP-200 envelope, so it counts; gamma is never asked
+    assert result.fresh == ["alpha", "beta"] and result.kept_last_good == ["gamma"]
+    assert len(gh.calls) == 3
+
+
+def test_quota_draining_mid_run_stops_before_the_next_batch(repos, monkeypatch):
+    monkeypatch.setattr(rp.gql, "BATCH_SIZE", 1)
+    gh = FakeGH(GOOD, remaining=51)  # the probe leaves 51, alpha's batch leaves 50
+    result = _collect(repos, gh)
+    assert result.fresh == ["alpha"] and len(gh.calls) == 2
+    assert set(result.excluded.values()) == {"unattempted_rate_limit"}
+
+
+def test_failed_batch_marks_the_tail_unattempted(repos, monkeypatch):
+    monkeypatch.setattr(rp.gql, "BATCH_SIZE", 1)
+    calls = []
+
+    def gh(*args, **_):
+        calls.append(args)
+        if len(calls) == 1:
+            return FakeGH(GOOD)(*args)
+        return subprocess.CompletedProcess(args, 1, "", "boom")
+
+    result = _collect(repos, gh)
+    assert result.excluded == {"alpha": "attempted_query_failure", "beta": "unattempted_query_failure",
+                               "gamma": "unattempted_query_failure"}
+
+
+def test_last_good_contradicting_the_catalog_id_is_not_kept(repos):
+    previous = {"gamma": record("https://github.com/octo/gamma", 31, 9, 9)}
+    result = _collect(repos, FakeGH({**GOOD, "octo/gamma": None}), previous)
+    assert "gamma" not in result.records and result.excluded == {"gamma": "excluded_identity_mismatch"}
+
+
+def test_invalid_catalog_repo_id_is_excluded(tmp_path):
+    work = tmp_path / "cat"
+    _sh(tmp_path, "init", "-q", str(work))
+    _write_firmware(work, "alpha", "https://github.com/octo/alpha", {"github_repo_id": "10"})
+    _sh(work, "add", "-A")
+    _sh(work, "commit", "-q", "-m", "c")
+    assert rp.read_catalog(rp.make_git(work), "HEAD")[2] == {"alpha": "excluded_invalid_record"}
+
+
 # --- publishing (parent-SHA compare-and-swap) ----------------------------------------------------
 
 def _remote_ref(origin: Path, ref: str) -> str | None:
@@ -366,6 +420,26 @@ def test_invalid_snapshot_is_never_published(repos):
     assert _remote_ref(origin, rp.BRANCH) is None
 
 
+def test_publishing_to_main_is_refused(repos):
+    origin, work = repos
+    before = _remote_ref(origin, "main")
+    with pytest.raises(rp.Refused):
+        rp.publish(rp.make_git(work), remote="origin", branch="main", parent=before,
+                   snapshot=_valid_for(work), now=NOW)
+    assert _remote_ref(origin, "main") == before
+
+
+def test_rejected_push_without_a_moved_branch_is_refused(repos):
+    origin, work = repos
+    hook = origin / "hooks" / "pre-receive"
+    hook.write_text("#!/bin/sh\nexit 1\n")
+    hook.chmod(0o755)
+    with pytest.raises(rp.Refused):
+        rp.publish(rp.make_git(work), remote="origin", branch=rp.BRANCH, parent=None,
+                   snapshot=_valid_for(work), now=NOW)
+    assert _remote_ref(origin, rp.BRANCH) is None
+
+
 def test_invalid_previous_snapshot_fails_closed(repos):
     origin, work = repos
     git = rp.make_git(work)
@@ -429,6 +503,7 @@ def test_held_lock_refuses_without_side_effects(repos, tmp_path):
         gh = FakeGH(GOOD)
         receipt = _run(repos, tmp_path, gh)
     assert receipt.exit_code == 2 and receipt.status == "refused" and gh.calls == []
+    assert 'reason="another collector run holds' in receipt.line()
     assert _remote_ref(origin, rp.BRANCH) is None
 
 
@@ -436,8 +511,8 @@ def test_lost_race_reports_nonzero(repos, tmp_path, monkeypatch):
     origin, work = repos
     real_observe = rp.observe_branch
 
-    def observe_then_rival_moves(git, remote, branch):
-        observed = real_observe(git, remote, branch)
+    def observe_then_rival_moves(git, remote, branch, **kw):
+        observed = real_observe(git, remote, branch, **kw)
         _sh(work, "push", "-q", "origin", f"main:refs/heads/{branch}")
         return observed
 
@@ -468,3 +543,12 @@ def test_main_dry_run_cli(repos, tmp_path, monkeypatch, capsys):
 def test_default_gh_refuses_anything_but_graphql():
     with pytest.raises(ValueError):
         rp.default_gh("pr", "list")
+
+
+def test_main_reports_a_crash_as_an_error_receipt(monkeypatch, tmp_path, capsys):
+    def boom(**_):
+        raise OSError("disk gone")
+
+    monkeypatch.setattr(rp, "run", boom)
+    assert rp.main(["--repo", str(tmp_path), "--lock-path", str(tmp_path / "x.lock")]) == 1
+    assert "status=error" in capsys.readouterr().out
