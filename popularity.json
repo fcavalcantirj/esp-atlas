@@ -1,6 +1,6 @@
 {
   "catalog_revision": "a3afe2e274f223a668a2ef4a8b8fe7b1ef735f66",
-  "published_at": "2026-11-07T19:44:13.499913+00:00",
+  "published_at": "2026-11-07T19:56:16.296474+00:00",
   "records": {
     "acid-drop": {
       "forks": 12,
@@ -730,13 +730,6 @@
       "repository_url": "https://github.com/indecenti/nucleoos",
       "stars": 101
     },
-    "nyan": {
-      "forks": 68,
-      "github_as_of": "2026-11-07T19:44:08.163653+00:00",
-      "github_repo_id": 2238443,
-      "repository_url": "https://github.com/temporal/nyan-mode",
-      "stars": 845
-    },
     "openhasp": {
       "forks": 300,
       "github_as_of": "2026-11-07T19:44:08.288007+00:00",
@@ -1026,5 +1019,5 @@
     }
   },
   "schema_version": 1,
-  "version": "independent-live-2026-11-07T19:44:13.499913+00:00"
+  "version": "bootstrap-quarantined-20261107T195616Z"
 }
