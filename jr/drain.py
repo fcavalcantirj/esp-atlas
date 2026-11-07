@@ -236,6 +236,7 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
             "forks": forks_count,
             "homepage": meta.get("homepage"),
             "description": (meta.get("description") or e.get("description") or "").strip(),
+            "repo_id": meta.get("id"),   # the GitHub id THIS fetch read, carried with its own candidate
         })
     return scored, skipped
 
@@ -300,7 +301,7 @@ def _cleanup(firmware_id: str) -> None:
 
 
 def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
-                    today: str | None = None) -> tuple[list[str], list[dict]]:
+                    today: str | None = None, authored_candidates: list | None = None) -> tuple[list[str], list[dict]]:
     """Author each selected candidate as firmware + recipe via the SAME tools.
     author_firmware_and_recipes() the old LLM loop used, then immediately run_guard() it — a
     record that reds the guard is rolled back (never left half-written) and reported with why,
@@ -317,6 +318,7 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
     re-verify it later without a live fetch — this is exactly the signal that used to be checked
     ONLY live at admission and so was invisible to the offline per-tick guard, making an
     editorial-home-only candidate re-discovered and re-rejected every tick forever.
+    `authored_candidates`, when given, collects each authored candidate object itself.
     Returns (authored_ids, dropped: [{id, reason}])."""
     existing_ids = set(tools.catalogued_firmware_ids()) if existing_ids is None else set(existing_ids)
     authored: list[str] = []
@@ -346,6 +348,8 @@ def author_selected(selected: list[dict], existing_ids: set[str] | None = None,
             continue
         existing_ids.add(fid)
         authored.append(fid)
+        if authored_candidates is not None:
+            authored_candidates.append(s)
     return authored, dropped
 
 
@@ -379,7 +383,8 @@ def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
         ledger.record_seen(s["firmware_id"], s["repo"], path=ledger_path)
     ranked = rank_juicy(scored)
     selected, dropped_cap = cap_categories(ranked, max_per_category=max_per_category, batch_size=batch_size)
-    authored, dropped_guard = author_selected(selected, today=today)
+    authored_candidates: list[dict] = []
+    authored, dropped_guard = author_selected(selected, today=today, authored_candidates=authored_candidates)
     guard = tools.run_guard()
     return {
         "fetched": len(entries),
@@ -391,6 +396,9 @@ def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
         "selected": len(selected),
         "dropped_cap": len(dropped_cap),
         "authored": authored,
+        # each authored id -> the GitHub id read by the fetch that produced THAT candidate (never a
+        # later fetch of the same name); authored ids are unique, so the key loses nothing
+        "repo_ids": {s["record"]["id"]: s["repo_id"] for s in authored_candidates if type(s.get("repo_id")) is int},
         "dropped_guard": dropped_guard,
         "guard": guard,
     }

@@ -258,13 +258,13 @@ def _without_held(entries: list, pending) -> tuple[list, list]:
     return keep, held
 
 
-def _identity_gated(fetch_meta, pending, late: list, ids: dict):
+def _identity_gated(fetch_meta, pending, late: list):
     """`fetch_meta` that also asks the pending index by the GitHub id it read (pending_prs match():
     id before slug). A held candidate — a held repository renamed upstream, a held slug under another
     id, a held slug whose id is unread — answers as an error, so run_drain never scores it; its hold
-    is appended to `late`. Every other id read lands in `ids` under the CANONICAL owner/repo GitHub
-    answered (meta full_name — the name a renamed repository's redirect resolves to, and the one the
-    scorer authors the record under), for the PR body's identity marker and the ledger's repo_id."""
+    is appended to `late`. Every other meta goes through unchanged: its id travels WITH the candidate
+    that fetch produced (drain's report `repo_ids`), never through state shared by canonical name — a
+    later fetch of the same name, another repository now living there, cannot rewrite it."""
     def fetch(github):
         meta = fetch_meta(github)
         rid = meta.get("id") if isinstance(meta, dict) else None
@@ -272,9 +272,6 @@ def _identity_gated(fetch_meta, pending, late: list, ids: dict):
         if hold:
             late.append((github.strip(), hold))
             return {"error": f"{hold.reason}: {hold.note}"}
-        if type(rid) is int:
-            canonical = meta.get("full_name")
-            ids[_repo_key(f"github.com/{canonical}" if isinstance(canonical, str) else github)] = rid
         return meta
     return fetch
 
@@ -314,8 +311,8 @@ def run(ctx, budget: int, raw=None):
     entries, held = _without_held(entries, pending)
     fetch_limit = budget * SCORE_MULTIPLIER
     evidence = _evidence(ctx, raw)
-    late, ids = [], {}
-    gate = lambda fetch: _identity_gated(fetch, pending, late, ids)   # noqa: E731
+    late = []
+    gate = lambda fetch: _identity_gated(fetch, pending, late)   # noqa: E731
 
     if ctx.dry_run:
         catalogued_repos, catalogued_tokens = tools._catalogued_repos_and_tokens(ctx.root / "data" / "firmware")
@@ -361,7 +358,7 @@ def run(ctx, budget: int, raw=None):
     except BudgetExceeded as e:
         return tick.StageResult("admit_topics", paths=[], summary=f"stopped: {e}", admitted=0, rejects={})
 
-    authored = report["authored"]
+    authored, repo_ids = report["authored"], report["repo_ids"]
     paths = _written_paths(ctx.root, authored)
     source_of = _source_by_repo(entries)
     items = []
@@ -369,8 +366,8 @@ def run(ctx, budget: int, raw=None):
         fmd = ctx.root / "data" / "firmware" / fid / "firmware.md"
         owner_repo = _owner_repo_from_firmware_md(fmd) if fmd.exists() else None
         if owner_repo:
-            memory.record_proposed(fid, owner_repo, repo_id=ids.get(owner_repo), path=ctx.ledger_path, now=ctx.now)
-        items.append(_firmware_item(ctx.root, fid, source_of.get(owner_repo), ids.get(owner_repo)))
+            memory.record_proposed(fid, owner_repo, repo_id=repo_ids.get(fid), path=ctx.ledger_path, now=ctx.now)
+        items.append(_firmware_item(ctx.root, fid, source_of.get(owner_repo), repo_ids.get(fid)))
 
     # run_drain's only ledger write for below-floor skips is ledger.record_seen (jr/ledger.py) —
     # a v1, TTL-less write that scripts/ledger_guard.py rejects (a "seen" record with no
