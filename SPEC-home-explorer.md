@@ -123,6 +123,9 @@ Almost no site crosses **all** the flashers. esp-atlas does:
   when an asynchronous response arrives. Guide failures offer a working retry;
   parser failure explains the keyword fallback. Empty and malformed responses
   must produce visible feedback, never a silent or broken page.
+- During parsing or guide loading, show the progress message once in the answer
+  region. Keep one accessible live status outside the busy region; its nonvisual
+  announcement must not duplicate the visible message in the accessibility tree.
 - The prompt stays busy through guide loading. Keyword matches for a build guide
   remain secondary and do not pull focus away from the primary answer.
 - No dead intents: every chip resolves to ≥1 board (oracle invariant, like the

@@ -162,10 +162,11 @@ export default function HomeView({ examples }: { examples: Example[] }) {
   return (
     <div className="home">
       <IntentPrompt onSubmit={text => void onIntent(text)} loading={busy} />
-      <p className={status ? "home-answer-status" : "sr-only"} role="status" aria-atomic="true">{status}</p>
+      {/* Announce outside aria-busy; the answer shows the loading message once. */}
+      <p className={status && !busy ? "home-answer-status" : "sr-only"} role="status" aria-atomic="true">{status}</p>
       {answer.kind === "idle" ? <ExamplesGrid examples={examples} /> : (
         <section className="home-answer" ref={answerRef} tabIndex={-1} aria-label="Your atlas answer" aria-busy={busy}>
-          {answer.kind === "parsing" && <p className="results-loading">Reading your request…</p>}
+          {answer.kind === "parsing" && <p className="results-loading" aria-hidden="true">{status}</p>}
           {parse && (parse.understood.length > 0 || (parse.kind === "filters" && parse.unmapped.length > 0)) && (
             <div className="intent-parse">
               {parse.understood.length > 0 && <p className="intent-parse-row"><span className="intent-parse-label">Understood</span>
@@ -175,7 +176,7 @@ export default function HomeView({ examples }: { examples: Example[] }) {
           )}
           {(answer.kind === "firmware" || answer.kind === "build") && (
             <div className="home-results">
-              {answer.loading && <p className="results-loading">{status}</p>}
+              {answer.loading && <p className="results-loading" aria-hidden="true">{status}</p>}
               {answer.error && <div className="empty-state"><h2>We couldn&apos;t load this guide</h2><p>{answer.error}</p>
                 <button type="button" className="btn" onClick={() => void onIntent(answer.text)}>Try again</button></div>}
               {answer.kind === "firmware" && answer.data && <RunGuideAnswer guide={answer.data} />}
