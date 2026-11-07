@@ -29,9 +29,26 @@ def test_status_returns_200_with_documented_shape(client):
     assert body["generated_at"]
     assert [c["name"] for c in body["components"]] == _COMPONENT_NAMES
     for component in body["components"]:
-        assert set(component) == {"name", "status", "detail"}
+        expected = {"name", "status", "detail"} | ({"revision"} if component["name"] == "Deploy" else set())
+        assert set(component) == expected
         assert component["status"] in ("ok", "warn", "down")
         assert isinstance(component["detail"], str) and component["detail"]
+
+
+_FULL_SHA = "97f7b6a4e1c2d3b4a5968778695a4b3c2d1e0f9a"
+
+
+@pytest.mark.parametrize("sha, revision", [(_FULL_SHA, _FULL_SHA), ("abcdef1234567890", None), (None, None)])
+def test_status_deploy_component_serves_the_full_revision_or_null(client, monkeypatch, sha, revision):
+    monkeypatch.delenv("VERCEL_GIT_COMMIT_REF", raising=False)
+    monkeypatch.delenv("VERCEL_ENV", raising=False)
+    if sha is None:
+        monkeypatch.delenv("VERCEL_GIT_COMMIT_SHA", raising=False)
+    else:
+        monkeypatch.setenv("VERCEL_GIT_COMMIT_SHA", sha)
+    deploy = next(c for c in client.get("/status").json()["components"] if c["name"] == "Deploy")
+    assert "revision" in deploy and deploy["revision"] == revision
+    assert deploy["detail"] == ("local" if sha is None else f"commit {sha[:7]}")
 
 
 def test_status_operational_on_healthy_fixture(client):

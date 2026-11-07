@@ -131,8 +131,22 @@ it itself (`jr/demand_closure.py`, called from `demand_broker.reserve`):
   another item (`raw_terms`) is not proof, because the group's `resolved` describes its first
   wording, so that case stays pending. `checked_at` is the run's UTC clock, so a merge that
   lands mid-run stays pending.
-- `catalog_search`: the broker never performs or invents a live search, so such work stays
-  pending with that reason until a real deployment-search receipt exists.
+- `catalog_search` (live search, 2026-11-06): the observation is a live public search read
+  through a getter injected into the closure (`demand_run.run`'s default is
+  `demand_closure.default_fetch`: stdlib urllib, 10 s timeout, `Cache-Control: no-cache`). It
+  GETs `https://esp-atlas.com/api/status` for the Deploy component's full 40-hex `revision`,
+  `https://esp-atlas.com/api/search?q=<term>` for the exact `results[].id` and
+  that response's own full 40-hex `revision`, then `/api/status` again. The search
+  revision and both status revisions must match. `contains_merge` is
+  `git merge-base --is-ancestor <merge> <revision>` through the injected `git`. The receipt is
+  exactly `http` (200), `deployment` (the revision), `ids`, `query` (the candidate's term),
+  `checked_at` (UTC now), `merge_sha`, `contains_merge`. A missing, short, non-hex or changed
+  revision (including a missing, malformed, or different search revision), a
+  non-200, a timeout or network error, or unreadable JSON builds no receipt: pending,
+  nothing written. Missing, extra or sibling ids are pending by `verify_resolution`'s exact-set
+  rule. Without an injected getter no live search is invented (pending). An unmerged PR is never
+  searched. It runs only on RECONCILE inside the existing daily demand run: no new scheduler, no
+  LLM, never `/api/intent`. A delivered history entry names the `deployment`, not a snapshot.
 - `research_work.verify_resolution` is the only judge and is not weakened by the broker.
 - `delivered`: the queue candidate becomes `closed` with `outcome` = the verification evidence,
   `closed_on`, and one appended `history` entry (`event: closed`, carrying any earlier `outcome`

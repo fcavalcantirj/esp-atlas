@@ -28,6 +28,20 @@ def test_search_no_params_returns_all(client):
     assert len(r.json()["results"]) > 0
 
 
+def test_search_response_names_its_own_full_deployment_revision(client, monkeypatch):
+    revision = "a" * 40
+    monkeypatch.setenv("VERCEL_GIT_COMMIT_SHA", revision)
+    body = client.get("/search", params={"q": "zigbee"}).json()
+    assert body["revision"] == revision
+    assert "esp32-c6" in [record["id"] for record in body["results"]]
+    assert "revision" not in client.get("/parts").json()
+
+
+def test_search_response_is_unverifiable_without_a_full_revision(client, monkeypatch):
+    monkeypatch.setenv("VERCEL_GIT_COMMIT_SHA", "abc1234")
+    assert client.get("/search", params={"q": "zigbee"}).json()["revision"] is None
+
+
 def test_search_free_text_zigbee(client):
     r = client.get("/search", params={"q": "zigbee"})
     assert r.status_code == 200

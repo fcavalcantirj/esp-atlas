@@ -12,18 +12,26 @@ and hands both to research_work.verify_resolution, unchanged. Only its verdict d
 
 A `demand_resolution` observation is THIS run's miner result: the snapshot it just mined, at the
 catalog revision it mined (`mined_revision`), whose ancestry of the merge is asked of the injected
-`git`. A `catalog_search` observation would need a live public search at a deployment containing
-the merge; this module never invents one, so such work stays pending here.
+`git`. A `catalog_search` observation is a live public search through the injected `fetch` getter:
+GET /api/status for the full deployed revision, GET /api/search?q=<term> for the exact ids it
+returns, then /api/status again, so both reads name one deployment; `git merge-base --is-ancestor`
+says whether that revision contains the merge. Any unreadable answer (a missing, short or changed
+revision, a non-200, a timeout, unreadable JSON) is no receipt at all, so the work stays pending;
+without a getter no live search is invented. Never /api/intent.
 
-Pure apart from the injected gh/git calls: inputs are never mutated, no file is written.
+Pure apart from the injected gh/git/fetch calls: inputs are never mutated, no file is written.
 """
 from __future__ import annotations
 
 import copy
+import http.client
 import json
 import re
+import urllib.error
+import urllib.parse
+import urllib.request
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 
 import research_work as rw
 
@@ -32,6 +40,11 @@ PR_FIELDS = "url,state,mergedAt,mergeCommit"
 PR_STATES = {"OPEN", "CLOSED", "MERGED"}
 _SHA_RE = re.compile(r"[0-9a-f]{7,40}")      # never hand git an option-looking or arbitrary string
 DEMAND_RELDIR = "docs/demand"
+SITE = "https://esp-atlas.com"
+STATUS_URL = f"{SITE}/api/status"
+FETCH_TIMEOUT_S = 10
+_REVISION_RE = re.compile(r"[0-9a-f]{40}")   # only the full deployed SHA: a short one may be ambiguous
+_urlopen = urllib.request.urlopen            # default_fetch's only network effect (jr tests keep it offline)
 
 
 @dataclass(frozen=True)
@@ -92,15 +105,92 @@ def _miner_receipt(candidate: dict, pr: dict, snap: dict, *, mined_revision, git
             "checked_at": now.isoformat()}, ""
 
 
-def observe(candidate: dict, pr: dict, snap: dict, *, mined_revision, git, now: datetime) -> tuple[dict | None, str]:
+def default_fetch(url: str) -> tuple[int, bytes]:
+    """GET `url` with a short timeout and no cache: (HTTP status, body). An HTTP error status is
+    answered, not raised; a network failure or timeout raises (OSError), as urllib does."""
+    request = urllib.request.Request(url, headers={"Cache-Control": "no-cache", "User-Agent": "esp-atlas-jr"})
+    try:
+        with _urlopen(request, timeout=FETCH_TIMEOUT_S) as response:
+            return response.status, response.read()
+    except urllib.error.HTTPError as e:
+        return e.code, b""
+
+
+def search_url(term: str) -> str:
+    return f"{SITE}/api/search?{urllib.parse.urlencode({'q': term})}"
+
+
+class _Unread(Exception):
+    """A live read that proves nothing: the receipt is not built."""
+
+
+def _get_json(fetch, url: str):
+    try:
+        status, body = fetch(url)
+    except (OSError, ValueError, TypeError, http.client.HTTPException) as e:   # incl. a malformed answer
+        raise _Unread(f"GET {url} failed: {e}") from e
+    if status != 200:
+        raise _Unread(f"GET {url} answered HTTP {status}")
+    try:
+        return json.loads(body)
+    except (ValueError, TypeError) as e:
+        raise _Unread(f"GET {url} answered unreadable JSON") from e
+
+
+def _deployed_revision(fetch) -> str:
+    doc = _get_json(fetch, STATUS_URL)
+    components = doc.get("components") if isinstance(doc, dict) else None
+    deploys = [c for c in components if isinstance(c, dict) and c.get("name") == "Deploy"] \
+        if isinstance(components, list) else []
+    revision = deploys[0].get("revision") if len(deploys) == 1 else None
+    if not (isinstance(revision, str) and _REVISION_RE.fullmatch(revision)):
+        raise _Unread("deployed revision unreadable: /api/status serves no full 40-hex Deploy revision")
+    return revision
+
+
+def _search_ids(fetch, term: str, expected_revision: str) -> list[str]:
+    url = search_url(term)
+    doc = _get_json(fetch, url)
+    results = doc.get("results") if isinstance(doc, dict) else None
+    if not (isinstance(results, list) and all(isinstance(r, dict) and rw._text(r.get("id")) for r in results)):
+        raise _Unread(f"GET {url} answered unreadable search results")
+    revision = doc.get("revision")
+    if not (isinstance(revision, str) and _REVISION_RE.fullmatch(revision)):
+        raise _Unread(f"GET {url} answered unreadable search revision")
+    if revision != expected_revision:
+        raise _Unread(f"GET {url} search revision differs from /api/status")
+    return [r["id"] for r in results]
+
+
+def _live_search_receipt(candidate: dict, pr: dict, *, fetch, git, now: datetime) -> tuple[dict | None, str]:
+    """The catalog_search receipt verify_resolution judges, or (None, why). The search is bracketed by
+    two /api/status reads naming the same full revision, so its ids came from that deployment."""
+    if fetch is None:
+        return None, ("catalog_search verification needs a live public search getter; none was injected, "
+                      "so none is invented")
+    if not rw._text(candidate.get("term")):
+        return None, "catalog_search live check: no readable term to search"
+    try:
+        revision = _deployed_revision(fetch)
+        ids = _search_ids(fetch, candidate["term"], revision)
+        if _deployed_revision(fetch) != revision:
+            raise _Unread("deployed revision changed during the live search")
+    except _Unread as e:
+        return None, f"catalog_search live check: {e}"
+    return {"http": 200, "deployment": revision, "ids": ids, "query": candidate["term"],
+            "checked_at": now.astimezone(timezone.utc).isoformat(), "merge_sha": pr.get("merge_sha"),
+            "contains_merge": contains_merge(git, pr.get("merge_sha"), revision)}, ""
+
+
+def observe(candidate: dict, pr: dict, snap: dict, *, mined_revision, git, now: datetime,
+            fetch=None) -> tuple[dict | None, str]:
     """The observation receipt for the validation's verification kind, or (None, why)."""
     validation = rw.readable_validation(candidate) or {}
     kind = validation.get("verification_kind", rw.KIND_CATALOG_SEARCH)
-    if kind == rw.KIND_CATALOG_SEARCH:
-        return None, ("catalog_search verification needs a live public search at a deployment containing "
-                      "the merge; the broker never invents one")
-    if kind != rw.KIND_DEMAND_RESOLUTION or not pr.get("merged"):
+    if kind not in (rw.KIND_CATALOG_SEARCH, rw.KIND_DEMAND_RESOLUTION) or not pr.get("merged"):
         return None, ""                 # verify_resolution names the problem
+    if kind == rw.KIND_CATALOG_SEARCH:
+        return _live_search_receipt(candidate, pr, fetch=fetch, git=git, now=now)
     return _miner_receipt(candidate, pr, snap, mined_revision=mined_revision, git=git, now=now)
 
 
@@ -128,7 +218,7 @@ def _closed(queue: dict, ckey: str, receipts: list, key: str, record: dict, hist
 
 
 def resolve(queue: dict, receipts: list, key: str, snap: dict, *, gh, git, mined_revision,
-            today: str, now: datetime) -> Closure:
+            today: str, now: datetime, fetch=None) -> Closure:
     """Verify the linked work `key` and, when delivered or rejected, return the closed records."""
     found = [(k, c) for k, c in (queue.get("candidates") or {}).items()
              if isinstance(c, dict) and rw.candidate_key(c) == key]
@@ -144,13 +234,17 @@ def resolve(queue: dict, receipts: list, key: str, snap: dict, *, gh, git, mined
     pr = read_pr(gh, url)
     if pr is None:
         return _pending(f"linked PR {url} unreadable: merge state deferred")
-    observed, why = observe(candidate, pr, snap, mined_revision=mined_revision, git=git, now=now)
+    observed, why = observe(candidate, pr, snap, mined_revision=mined_revision, git=git, now=now, fetch=fetch)
     res = rw.verify_resolution(candidate, pr, observed, today, work_receipts=receipts)
     if res.status == PENDING:
         return _pending("; ".join(filter(None, [why, res.reason])))
     history = {"event": "closed", "date": today, "resolution": res.status, "work": key, "pr_url": url}
     if res.status == DELIVERED:
-        history.update(merge_sha=pr["merge_sha"], snapshot=f"{DEMAND_RELDIR}/{snap.get('date')}.json")
+        history["merge_sha"] = pr["merge_sha"]
+        if "deployment" in res.evidence:           # catalog_search: the deployment searched, not a snapshot
+            history["deployment"] = res.evidence["deployment"]
+        else:
+            history["snapshot"] = f"{DEMAND_RELDIR}/{snap.get('date')}.json"
         resolution = {"status": DELIVERED, "reason": res.reason, "closed_on": res.closed_on,
                       "evidence": copy.deepcopy(res.evidence)}
         return _closed(queue, ckey, receipts, key, copy.deepcopy(res.evidence), history, DELIVERED, resolution)

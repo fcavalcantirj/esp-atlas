@@ -508,6 +508,8 @@ export interface StatusComponent {
   name: string;
   status: ComponentStatus;
   detail: string;
+  /** Deploy only: the full deployed commit SHA, or null (machine field, not rendered). */
+  revision?: string | null;
 }
 
 export interface Status {

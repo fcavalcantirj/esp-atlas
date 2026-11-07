@@ -5,6 +5,7 @@ import shutil
 
 import pytest
 
+import demand_closure
 import derive
 import device_evidence
 import drain
@@ -26,7 +27,9 @@ def _no_live_device_evidence(monkeypatch):
     so the candidate is skipped, never fetched), and the drain's live device-build
     evidence check (jr/device_evidence.py) passes by default so the gates a drain test targets stay
     the only ones that bite; tests of that gate inject `evidence=` or patch it themselves. The
-    gate's GET of a release asset is offline the same way."""
+    gate's GET of a release asset is offline the same way, and so is the demand closure's live
+    catalog search (demand_closure.default_fetch, the daily run's default getter)."""
+    monkeypatch.setattr(demand_closure, "_urlopen", _offline)
     monkeypatch.setattr(derive, "default_api", _offline)
     monkeypatch.setattr(derive, "default_raw", _offline)
     monkeypatch.setattr(device_evidence, "default_fetch", _offline)
