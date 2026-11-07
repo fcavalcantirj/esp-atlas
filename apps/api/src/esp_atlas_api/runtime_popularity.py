@@ -48,6 +48,14 @@ def _date(value):
         return None
 
 
+def _catalog_date(value):
+    # The catalog schema also permits a date without a time. Use the start of
+    # that day only for comparison; preserve the original evidence verbatim.
+    if isinstance(value, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        return _date(value + "T00:00:00Z")
+    return _date(value)
+
+
 def validate_snapshot(value, *, now=None):
     now = now or datetime.now(timezone.utc)
     if not isinstance(value, dict) or type(value.get("schema_version")) is not int or value["schema_version"] != 1:
@@ -125,7 +133,7 @@ def resolve_records(records, snapshot, *, now=None):
         pop = dict(result.get("popularity") or {})
         row = (snapshot or {}).get("records", {}).get(record["id"])
         source = canonical_repository(record.get("url"))
-        catalog_date = _date(pop.get("github_as_of"))
+        catalog_date = _catalog_date(pop.get("github_as_of"))
         if row and source and source == canonical_repository(row["repository_url"]) and (
             pop.get("github_repo_id") is None or pop["github_repo_id"] == row["github_repo_id"]
         ) and (catalog_date is None or _date(row["github_as_of"]) >= catalog_date):
@@ -138,7 +146,7 @@ def resolve_records(records, snapshot, *, now=None):
         elif pop:
             pop.update(origin="catalog")
         if pop:
-            observed = _date(pop.get("github_as_of"))
+            observed = _catalog_date(pop.get("github_as_of"))
             pop["stale"] = observed is None or now - observed > timedelta(hours=2)
             result["popularity"] = pop
         resolved.append(result)

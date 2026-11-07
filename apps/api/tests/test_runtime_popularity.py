@@ -68,6 +68,21 @@ def test_a_newer_cited_catalog_observation_is_not_replaced_by_an_old_snapshot():
     assert pop["stars"] == 100 and pop["origin"] == "catalog"
 
 
+def test_catalog_day_precision_is_not_treated_as_a_missing_observation():
+    records = catalog()
+    records[0]["popularity"]["github_as_of"] = "2026-11-07"
+    older = snapshot(github_as_of="2026-11-06T23:59:59Z")
+    pop = resolve_records(records, older, now=NOW)[0]["popularity"]
+    assert pop["stars"] == 100 and pop["origin"] == "catalog"
+    assert pop["github_as_of"] == "2026-11-07"
+    assert resolve_records(records, snapshot(), now=NOW)[0]["popularity"]["stars"] == 0
+
+
+def test_runtime_observations_still_require_time_and_timezone():
+    with pytest.raises(ValueError):
+        validate_snapshot(snapshot(github_as_of="2026-11-07"), now=NOW)
+
+
 def test_missing_catalog_id_can_use_the_exact_approved_url_but_other_firmware_cannot():
     records = catalog()
     del records[0]["popularity"]["github_repo_id"]
