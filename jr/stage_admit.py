@@ -26,6 +26,7 @@ import derive
 import device_evidence
 import launcher_resolve
 import memory
+import pending_prs
 import review_memory
 import scorer
 import tools
@@ -268,6 +269,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         return tick.StageResult("admit", paths=[], summary="catalog unreadable: not a list",
                                 admitted=0, rejects={}, needs_human=True)
 
+    pending = pending_prs.of(ctx)   # what an open or vetoed tick PR holds (from its own file list)
     led = memory.load(ctx.ledger_path)   # read-only here; writes below honor dry-run
     cat_repos, cat_toks = tools._catalogued_repos_and_tokens(ctx.root / "data" / "firmware")
     # Per-firmware token sets (not the flat cat_toks pool above) so scorer.score_entry's
@@ -421,17 +423,21 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         # id (its owner/repo is not recoverable from a file path), so the repo gate above cannot see
         # it; this id gate catches it. The authored id is deterministic from the github url alone
         # (scorer derives it the same way), so this fires BEFORE any meta fetch — no wasted call —
-        # and stops two consecutive ticks producing a duplicate PR (#158/#159, #162/#163).
+        # and stops two consecutive ticks producing a duplicate PR (#158/#159, #162/#163). The PR's own
+        # file list (jr/pending_prs.py) backs it: an id an open tick PR changes — or one a closed-unmerged
+        # tick PR changed inside the veto TTL — is held even when the ledger hydration could not see it.
         cand_id = scorer._slug(scorer._repo_name_from_url(github))
         cand_rec = memory.lookup(led, firmware_id=cand_id) if cand_id else None
-        if cand_rec and cand_rec.get("status") == "proposed" and not memory.is_expired(cand_rec, ctx.now):
-            reject("already_proposed")
+        hold = pending.hold(cand_id)
+        if hold or (cand_rec and cand_rec.get("status") == "proposed" and not memory.is_expired(cand_rec, ctx.now)):
+            why = hold.reason if hold else "already_proposed"
+            reject(why)
             if issue:
-                _answer(ctx, slug, issue, _verdict_text(
-                    f"already_proposed: {cand_rec.get('pr_ref') or 'an open PR covers this firmware'}", False, False))
-                lines.append(f"submission #{issue}: already proposed ({cand_id})")
+                where = hold.note if hold else cand_rec.get("pr_ref") or "an open PR covers this firmware"
+                _answer(ctx, slug, issue, _verdict_text(f"{why}: {where}", False, False))
+                lines.append(f"submission #{issue}: {why.replace('_', ' ')} ({cand_id})")
             else:
-                launcher_skips["already_proposed"] = launcher_skips.get("already_proposed", 0) + 1
+                launcher_skips[why] = launcher_skips.get(why, 0) + 1
             continue
         if ctx.budget.remaining_calls() < MIN_CALLS_TO_CONTINUE:
             lines.append(f"stopped before {owner_repo}: tick budget low "

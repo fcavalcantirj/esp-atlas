@@ -254,3 +254,17 @@ def test_the_veto_lapses_after_its_ttl(sim):
     r = sim.tick(T0 + timedelta(days=pending_prs.VETO_TTL_DAYS + 1))
     assert not r.aborted, r.aborted
     assert _staged_for(r, CAT)                                               # reconsidered once the TTL ran out
+
+
+def test_a_tick_blind_to_closed_prs_fails_closed_and_opens_nothing(sim):
+    _first_tick(sim)
+    real = sim.gh
+
+    def blind(*a):
+        if a[:4] == ("pr", "list", "--state", "closed"):
+            return Proc(returncode=1, stderr="HTTP 502")
+        return real(*a)
+    sim.gh = blind
+    r = sim.tick(T0 + timedelta(hours=1))
+    assert "cannot see which firmware a Jr PR holds" in r.aborted
+    assert len(sim.prs) == 1 and r.paths == []

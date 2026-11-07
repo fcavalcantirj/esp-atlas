@@ -16,7 +16,9 @@ One tick, in order (PLAN §3.2):
     needs a human. A PR labelled `jr-review` (jr/review_routing.py) is waiting for the owner ON
     PURPOSE: it is never stuck and never closed, whatever its age; it is listed in the report with
     its age, and at MAX_OPEN_REVIEW_PRS open ones the review-producing stages are skipped (the cap,
-    SPEC-jr-review-routing.md). Last: branch protection on `main` requires schema + tests + jr-tests and
+    SPEC-jr-review-routing.md). Then the pending index (jr/pending_prs.py): every firmware an open
+    tick PR changes, or a tick PR closed unmerged < 30 d ago changed, read from GitHub's own file
+    lists — no stage stages it again, record or recipe. Last: branch protection on `main` requires schema + tests + jr-tests and
     auto-merge is allowed. Any of these red → the tick ABORTS before touching anything; every
     query failure here fails CLOSED. Protection missing is the one that matters most: without it
     "PR + auto-merge" is direct-to-main under another name.
@@ -57,7 +59,6 @@ import argparse
 import fcntl
 import json
 import os
-import re
 import signal
 import subprocess
 import sys
@@ -74,6 +75,7 @@ if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
 import ledger   # noqa: E402
 import memory   # noqa: E402
+import pending_prs  # noqa: E402
 import publish  # noqa: E402
 import report   # noqa: E402
 import allocator  # noqa: E402
@@ -88,7 +90,7 @@ MIN_RATE_LIMIT = 500
 STALE_PR_HOURS = 3.0
 OPEN_PR_LIMIT = 500   # gh pr list returns 30 by default, newest first: jr-review PRs are the OLDEST open
                       # ones by design, so without a limit they would fall off the list and escape the cap
-TICK_BRANCH_PREFIX = "jr/tick-"
+TICK_BRANCH_PREFIX = pending_prs.TICK_BRANCH_PREFIX
 TICK_LOCK_NAME = "jr-tick-run.lock"   # NOT scripts/jr-tick.sh's jr-tick.lock: its `flock` holds that
                                       # file for the tick's whole life, so re-locking it would always fail
 DEFAULT_TICK_LOCK = Path(tempfile.gettempdir()) / TICK_LOCK_NAME   # outside the repo tree
@@ -117,6 +119,7 @@ class TickContext:
     budget: Budget
     dry_run: bool
     env: dict
+    pending: pending_prs.PendingIndex = pending_prs.EMPTY   # firmware an open or vetoed tick PR holds: never staged
 
 
 @dataclass
@@ -257,10 +260,11 @@ SUPERSEDED_COMMENT = ("Superseded by later Jr ticks. This PR only touched tick b
 
 
 def _list_open_prs(gh) -> list | None:
-    """Every open PR with its age, mergeability and labels, or None when the query itself fails —
-    fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not open another."""
+    """Every open PR with its age, mergeability, labels and changed files, or None when the query
+    itself fails — fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not
+    open another. The files feed jr/pending_prs.py: what an open tick PR holds is never staged again."""
     p = gh("pr", "list", "--state", "open", "--limit", str(OPEN_PR_LIMIT),
-           "--json", "number,createdAt,headRefName,mergeable,labels")
+           "--json", "number,createdAt,headRefName,mergeable,labels,files")
     if getattr(p, "returncode", 1) != 0:
         return None
     try:
@@ -388,10 +392,6 @@ def _repo_slug(git) -> str:
 # later (observed live: #158/#159 and #162/#163 were identical re-proposals). Firmware ids come
 # from the changed-file paths of every currently-open Jr tick PR.
 
-_FIRMWARE_PATH_RE = re.compile(r"^data/firmware/([^/]+)/")
-_RECIPE_PATH_RE = re.compile(r"^data/recipes/[^/]+__([^/]+)/")
-
-
 def _open_tick_prs(gh) -> list:
     """Open PRs whose branch is a Jr tick branch. Best-effort: [] on any gh/parse failure (the
     stale-PR preflight already fails CLOSED on a pr-list failure, so this only re-reads it)."""
@@ -448,13 +448,8 @@ def _pr_firmware_ids(gh, number) -> list[str]:
         data = json.loads(p.stdout or "{}")
     except json.JSONDecodeError:
         return []
-    ids = set()
-    for f in (data.get("files") or []):
-        path = f.get("path") or "" if isinstance(f, dict) else ""
-        m = _FIRMWARE_PATH_RE.match(path) or _RECIPE_PATH_RE.match(path)
-        if m:
-            ids.add(m.group(1))
-    return sorted(ids)
+    return sorted(pending_prs.firmware_ids(str(f.get("path") or "") for f in (data.get("files") or [])
+                                           if isinstance(f, dict)))
 
 
 def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None) -> list[str]:
@@ -554,6 +549,9 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                 r.warnings.append(f"closed superseded bookkeeping-only tick PR #{pr.get('number')}")
         if stuck:
             raise TickAbort(_stuck_message(stuck[0], stale_pr_hours))
+        pending = pending_prs.load(gh_c, open_prs, now)
+        if pending is None:
+            raise TickAbort("gh pr list --state closed failed (cannot see which firmware a Jr PR holds)")
         slug = repo_slug or _repo_slug(git)
         protection = publish.protection_status(slug, gh=gh_c)
         if not protection.ok:
@@ -694,7 +692,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
 
         # 6. stages
         ctx = TickContext(root=root, ledger_path=ledger_path, now=now, gh=gh_c, git=git,
-                          budget=budget, dry_run=dry_run, env=env)
+                          budget=budget, dry_run=dry_run, env=env, pending=pending)
         for stage in stages:
             res = stage(ctx)
             r.stages.append({"name": res.name, "paths": list(res.paths), "summary": res.summary,

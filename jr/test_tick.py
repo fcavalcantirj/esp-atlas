@@ -641,12 +641,13 @@ def test_a_failing_worktree_removal_is_a_warning_not_a_lost_report(wt_dir, capsy
 
 def test_publish_gets_the_uncounted_gh_so_budget_cannot_cut_it_off_mid_publish(wt_dir):
     gh = gh_ok()
-    # preflight = rate_limit + pr list + rules + protection + allow_auto_merge = 5 counted calls; the budget
-    # is exactly that, so publish's own pr create / pr merge would die if they were counted
+    # preflight = rate_limit + pr list + closed pr list (jr/pending_prs.py) + rules + protection +
+    # allow_auto_merge = 6 counted calls; the budget is exactly that, so publish's own pr create /
+    # pr merge would die if they were counted
     r = run(git=git_ok(wt_dir, diff=SIGNALS_REFRESH), gh=gh, stages=[_stage(["data/firmware/x"])],
-            budget=Budget(max_calls=5, clock=lambda: 0.0))
+            budget=Budget(max_calls=6, clock=lambda: 0.0))
     assert not r.aborted and r.publish["published"] and r.publish["auto_merge"]
-    assert r.budget.startswith("gh calls 5/5")
+    assert r.budget.startswith("gh calls 6/6")
 
 
 def test_guard_env_points_core_at_the_worktree(tmp_path):

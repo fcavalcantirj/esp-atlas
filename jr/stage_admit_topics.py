@@ -52,6 +52,8 @@ import device_evidence
 import drain
 import ledger
 import memory
+import pending_prs
+import scorer
 import source_topics
 import tools
 from budget import BudgetExceeded
@@ -231,6 +233,28 @@ def _would_write(selected, skipped) -> list[dict]:
     return out
 
 
+def _without_held(entries: list, pending) -> tuple[list, list]:
+    """(the entries no Jr tick PR holds, the holds of the others) — jr/pending_prs.py: an id an open
+    tick PR changes, or a closed-unmerged one changed inside the veto TTL, is never authored again,
+    even when the ledger never heard of it. The id is the scorer's (slug of the repo name), so a held
+    entry is dropped before drain.prefilter and never costs a metadata fetch."""
+    keep, held = [], []
+    for e in entries:
+        hold = pending.hold(scorer._slug(scorer._repo_name_from_url(e.get("github") or "")))
+        (held if hold else keep).append(hold or e)
+    return keep, held
+
+
+def _held_lines(held: list) -> list[str]:
+    return [f"{h.firmware}: {h.reason} ({h.note})" for h in held]
+
+
+def _count_held(rejects: dict, held: list) -> dict:
+    for h in held:
+        rejects[h.reason] = rejects.get(h.reason, 0) + 1
+    return rejects
+
+
 def run(ctx, budget: int, raw=None):
     """The topics stage for jr/tick.py: admits AT MOST `budget` firmware from the GitHub-topics
     source in one tick, via jr/drain.run_drain — the same author+guard+ledger pipeline
@@ -252,6 +276,7 @@ def run(ctx, budget: int, raw=None):
         return tick.StageResult("admit_topics", paths=[], summary=f"topics source unreadable: {type(e).__name__}: {str(e)[:120]}",
                                 admitted=0, rejects={}, needs_human=True)
 
+    entries, held = _without_held(entries, pending_prs.of(ctx))
     fetch_limit = budget * SCORE_MULTIPLIER
     evidence = _evidence(ctx, raw)
 
@@ -268,12 +293,13 @@ def run(ctx, budget: int, raw=None):
         except BudgetExceeded as e:
             return tick.StageResult("admit_topics", paths=[], summary=f"stopped: {e}", admitted=0, rejects={})
         selected, _dropped_cap = drain.cap_categories(drain.rank_juicy(scored), max_per_category=budget, batch_size=budget)
-        lines = [f"{s['record']['id']}: would admit" for s in selected]
+        lines = _held_lines(held) + [f"{s['record']['id']}: would admit" for s in selected]
         review, review_txt = _review(skipped)
         summary = f"{topics_txt} " + ("; ".join(lines) if lines else "no candidates") + review_txt
         rejects = _device_rejects(skipped)
         if len(skipped) > sum(rejects.values()):
             rejects["skipped_scoring"] = len(skipped) - sum(rejects.values())
+        _count_held(rejects, held)
         would_write = _would_write(selected, skipped)
         return tick.StageResult("admit_topics", paths=[], summary=summary, admitted=0, rejects=rejects, review=review,
                                 would_write=would_write)
@@ -321,7 +347,7 @@ def run(ctx, budget: int, raw=None):
         memory.record_rejected(s["firmware_id"], s["repo"], s["reason"],
                                ttl_days=device_evidence.ttl_days(s["reason"]), path=ctx.ledger_path, now=ctx.now)
 
-    rejects = _device_rejects(report["skipped_device"])
+    rejects = _count_held(_device_rejects(report["skipped_device"]), held)
     if report["skipped_popularity"]:
         rejects["below_floor"] = len(report["skipped_popularity"])
     other_skipped = report["skipped_scoring"] - len(report["skipped_popularity"]) - len(report["skipped_device"])
@@ -336,6 +362,8 @@ def run(ctx, budget: int, raw=None):
               f"scored_clean={report['scored_clean']} authored={len(authored)}")
     if items:
         summary += "; " + ", ".join(f"{it['id']}<-{it['source'] or 'topic:?'}" for it in items)
+    if held:
+        summary += "; " + "; ".join(_held_lines(held))
     if report["dropped_guard"]:
         summary += "; " + "; ".join(f"{d['id']}: {d['reason']}" for d in report["dropped_guard"])
     if not report["guard"].get("ok"):

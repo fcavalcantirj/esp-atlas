@@ -115,3 +115,34 @@ bookkeeping change (signals refreshes, other floor rejects, cooldowns) onto revi
   previous record, minus its own `history`, to `history`. Records are never deleted.
 - **Nothing is weakened.** The classifier, the floor, the cap and every gate are unchanged: a new
   or changed target still opens a `jr-review` PR, and new firmware/recipes still route to review.
+
+### 6. Pending and vetoed proposals — never re-stage what a Jr PR already holds
+
+**Incident (main ce0f72af).** Open jr-review tick PRs #1500 #1501 #1503 #1506 #1508 #1511 each
+re-added the same nightdriverstrip recipes + signals (and squachwatch-cyd's). Those firmware were
+already catalogued, so their ledger record is `merged`; the open-PR hydration's `proposed` write is
+refused over a merged record, so boardmap's "already proposed" skip never fired and every hourly
+tick re-derived the firmware into another review PR. A veto of a PR whose proposal never reached
+main was forgotten the same way.
+
+**The contract** (`jr/pending_prs.py`, tick preflight):
+
+- **Source of truth: the PR's own changed-file list**, read-only from GitHub — never a ledger
+  status. A firmware id is held when a `jr/tick-*` PR changes `data/firmware/<id>/…` or
+  `data/recipes/<board>__<id>/…`.
+- **Open → held** (`already_proposed`) for as long as the PR is open. The preflight's
+  `gh pr list --state open` carries `files`; no extra call.
+- **Closed unmerged → vetoed** for `VETO_TTL_DAYS` = 30 from `closedAt` (the tick PR body's
+  "Close = veto … not again for 30 days"). One counted
+  `gh pr list --state closed --search "is:unmerged closed:>=<now-30d>" --json …,files`; dates,
+  branch and `mergedAt` are re-checked client-side. An open PR wins over an older veto.
+- **Merged → nothing held**: the firmware is catalogued on main and the ledger reconciles it.
+- **Unreadable → the tick aborts** before the worktree (fail closed, like every preflight query).
+- **Every staging stage obeys it.** `stage_admit` and `stage_admit_topics` skip a held id (derived
+  from the repo url exactly as the scorer authors it) before any metadata fetch; `stage_boardmap`
+  maps no held firmware — no recipe on the same boards and none on a NEW board (no stacking onto
+  an unmerged firmware) — and gives the slot to the next candidate. `--track B --firmware` obeys it
+  too. Skips are counted `already_proposed` / `vetoed` and named with the PR in the stage summary.
+- **Nothing persisted, nothing weakened.** The index is rebuilt every tick, so a merge or a lapsed
+  veto releases the firmware on its own. Hydration, review decisions (§5), the classifier, the
+  device-evidence gate, the `jr-review` label and the open-review cap are unchanged.

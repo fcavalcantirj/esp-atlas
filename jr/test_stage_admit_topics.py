@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import json
 import shutil
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -16,6 +16,7 @@ import yaml
 import drain
 import ledger
 import memory
+import pending_prs
 import source_topics
 import stage_admit_topics
 import tick
@@ -193,6 +194,32 @@ def test_second_tick_does_not_reauthor_an_open_pr_candidate(root, monkeypatch):
     second = stage_admit_topics.run(_ctx(root), budget=2)
     assert second.admitted == 0 and second.paths == []
 
+
+
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_an_id_an_open_or_vetoed_tick_pr_holds_never_reaches_the_drain(root, monkeypatch, dry_run):
+    """jr/pending_prs.py: the PR's own file list holds the id even when the ledger never heard of it
+    (the proposal lives only on the un-merged PR branch, or that PR was closed: a veto)."""
+    entries = [_topic_entry("My Cardputer Tool", "https://github.com/n/newtool", "A Cardputer tool"),
+               _topic_entry("Second Cardputer Tool", "https://github.com/n/second", "Another Cardputer tool")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    fetched = []
+    metas = {"n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=101),
+             "n/second": _meta("n/second", stars=40, description="Another Cardputer tool", rid=102)}
+    fetch = _fake_fetch_meta(metas)
+    monkeypatch.setattr(drain, "default_fetch_meta", lambda url: fetched.append(url) or fetch(url))
+    closed = {"number": 1478, "headRefName": "jr/tick-20261106-0900", "mergedAt": None,
+              "closedAt": (NOW - timedelta(days=2)).isoformat(), "files": [{"path": "data/firmware/second/firmware.md"}]}
+    opened = {"number": 1500, "headRefName": "jr/tick-20261106-2200",
+              "files": [{"path": "data/recipes/m5cardputer__newtool/recipe.md"}]}
+    ctx = _ctx(root, dry_run=dry_run)
+    ctx.pending = pending_prs.build([opened], [closed], NOW)
+
+    res = stage_admit_topics.run(ctx, budget=2)
+
+    assert res.admitted == 0 and res.paths == [] and fetched == []
+    assert res.rejects.get("already_proposed") == 1 and res.rejects.get("vetoed") == 1
+    assert "newtool: already_proposed (#1500 open)" in res.summary and "second: vetoed (#1478" in res.summary
 
 def _hour_surfacing(root, topic):
     """A tick clock whose rotation slice includes `topic` — so a test can pin which seed topic
