@@ -73,6 +73,33 @@ the one knob to flip — say so and §3.B drops out.
 
 ## 3. Backend changes
 
+### Optional on-view detail overlay (prepared, disabled by default)
+
+The firmware detail page may use the reviewed
+`GET /api/firmware/{id}/popularity/live` contract in SPEC-firmware-floor.md.
+`NEXT_PUBLIC_ON_VIEW_POPULARITY_ENABLED=1` is required to activate the client;
+unset or any other value makes no request. Production activation remains a
+separate reviewed storage/deployment decision.
+
+- Server HTML and no-JavaScript visits retain the cited catalog counts and date.
+  Index ordering, JSON-LD, recipes and compatibility evidence are unchanged.
+- Request once after hydration for a canonical, cited repository identity. Bound
+  the request to ten seconds and 16 KiB; abort on departure, ignore late responses and never
+  poll, retry, or refetch on focus. Re-entering the page is a new visit.
+- A response must match the firmware ID, exact canonical source URL and stored
+  positive repository ID. Counts must be complete, nonnegative safe integers
+  (zero is valid). Validate observation dates, reject timestamps more than one
+  minute ahead of the client clock, and require the overlay to be newer than both
+  the rendered catalog and the response catalog. Date-only catalog values require
+  a later UTC calendar day; do not invent a same-day ordering.
+- Fresh/cached/stale observations retain their actual source date and identify
+  their status. Never label a cached or stale observation as fetched on this visit.
+  Unavailable, ineligible, malformed, failed and aborted responses leave the
+  rendered catalog untouched. Preserve keyboard focus throughout.
+- Prove the disabled path, SSR/no-JavaScript fallback, identity/date validation,
+  navigation cancellation and each response outcome with deterministic fixtures.
+  Local preparation does not prove production refresh or authorize resources.
+
 ### 3.A `/firmware` list — already has popularity; add server-side sort (optional but preferred)
 - `core_list_firmware()` returns full records incl. `popularity`. The web index can sort
   client/server-side. **Preferred:** add an optional `sort` query param to `/firmware`:

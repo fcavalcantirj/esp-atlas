@@ -119,6 +119,7 @@ export interface FirmwarePopularity {
   forks?: number | null;
   as_of?: string | null;
   github_as_of?: string | null;
+  github_repo_id?: number | null;
   downloads_as_of?: string | null;
   editorial_home_as_of?: string | null;
 }

@@ -13,6 +13,18 @@ const answer = (page: Page) => page.getByRole("region", { name: "Your atlas answ
 const result = (page: Page) => page.getByRole("region", { name: "Results", exact: true });
 const tracker = (page: Page) => page.getByRole("heading", { name: "Satellite/ISS Tracker", exact: true });
 const json = (route: Route, payload: unknown, status = 200) => route.fulfill({ status, json: payload, headers: { "Access-Control-Allow-Origin": "*" } });
+
+test("default-off popularity preserves the dated catalog without a live request", async ({ page }) => {
+  let requests = 0;
+  await page.route("**/popularity/live", route => { requests++; return route.abort(); });
+  await page.goto("/firmware/fixture-00");
+  await expect(page.locator(".firmware-popularity")).toContainText("24 stars · 0 forks");
+  await expect(page.locator(".firmware-popularity")).toContainText("GitHub repo · as of 2026-11-06 17:00 UTC");
+  await page.getByRole("link", { name: "View the repo", exact: true }).focus();
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await page.waitForTimeout(300);
+  expect(requests).toBe(0);
+});
 function gate() {
   let release!: () => void;
   const waiting = new Promise<void>(resolve => { release = resolve; });
@@ -278,7 +290,8 @@ test("repository dates remain visible on the home shelf, index and firmware deta
   await page.goto("/");
   await expect(page.getByText("GitHub repo · as of 2026-11-06 17:00 UTC", { exact: true }).first()).toBeVisible();
   await page.goto("/firmware");
-  await expect(page.getByText("GitHub repo · as of 2026-11-06 17:00 UTC", { exact: true })).toBeVisible();
+  const datedCard = page.locator(".part-card").filter({ has: page.locator('a[href="/firmware/fixture-00"]') });
+  await expect(datedCard.getByText("GitHub repo · as of 2026-11-06 17:00 UTC", { exact: true })).toBeVisible();
   await expect(page.getByText(/GitHub repo.*2026-10-01/)).toHaveCount(0);
   await page.locator('a[href="/firmware/fixture-00"]').click();
   await expect(page.getByRole("heading", { name: "Equal name", level: 1, exact: true })).toBeVisible();

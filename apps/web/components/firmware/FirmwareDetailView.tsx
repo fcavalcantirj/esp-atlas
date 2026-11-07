@@ -2,11 +2,12 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import FirmwareReadme from "@/components/firmware/FirmwareReadme";
 import FirmwareViewTracker from "@/components/firmware/FirmwareViewTracker";
+import FirmwarePopularity from "@/components/firmware/FirmwarePopularity";
 import JsonLd from "@/components/JsonLd";
 import RecipeGroupList from "@/components/RecipeGroupList";
 import TrackedLink from "@/components/TrackedLink";
 import type { Firmware, PartRecord, Recipe } from "@/lib/api";
-import { firmwareCategoryLabel, repositorySnapshot } from "@/lib/format";
+import { firmwareCategoryLabel } from "@/lib/format";
 import type { RepoReadme } from "@/lib/readme";
 import { firmwareBoardRows } from "@/lib/recipe-rows";
 import { firmwareGraph } from "@/lib/structured-data";
@@ -79,18 +80,8 @@ export default function FirmwareDetailView({
           <p className="firmware-dek-marker muted">auto-summary</p>
         </>
       )}
-      {firmware.popularity && (firmware.popularity.stars != null || firmware.popularity.forks != null) && (
-        <p className="firmware-popularity">
-          {firmware.popularity.stars != null && <><span className="firmware-popularity-figure">{firmware.popularity.stars}</span> stars</>}
-          {firmware.popularity.forks != null && (
-            <>
-              {firmware.popularity.stars != null && " · "}
-              <span className="firmware-popularity-figure">{firmware.popularity.forks}</span> forks
-            </>
-          )}
-          <span className="popularity-glance-scope">{repositorySnapshot(firmware.popularity)}</span>
-        </p>
-      )}
+      <FirmwarePopularity firmware={{ id: firmware.id, url: firmware.url, popularity: firmware.popularity,
+        sources: firmware.sources.filter(source => source.field === "popularity.github_repo_id" || source.field === "popularity.github_as_of") }} />
       {details.length > 0 && (
         <section aria-label="Details">
           <dl className="spec-dl">

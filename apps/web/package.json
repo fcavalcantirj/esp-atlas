@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "node --test lib/*.test.ts",
     "test:browser": "playwright test",
+    "test:browser:popularity": "PLAYWRIGHT_POPULARITY=1 playwright test",
     "vercel-build": "rm -rf api/_bundle && mkdir -p api/_bundle && cp -r ../../data ../../schema api/_bundle/ && cp -r ../../apps/core/src/esp_atlas_core ../../apps/api/src/esp_atlas_api api/_bundle/ && next build"
   },
   "dependencies": {
