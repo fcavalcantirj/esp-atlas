@@ -39,9 +39,11 @@ not_required:
     \ Inkplate-10, which ships 8MB PSRAM). PSRAM need depends on the board framebuffer\
     \ size, not the firmware"
 popularity:
-  stars: 11712
-  forks: 5641
-  as_of: '2026-09-20'
+  stars: 12045
+  forks: 5791
+  as_of: '2026-11-07'
+  github_repo_id: 128479644
+  github_as_of: '2026-11-07T01:00:56Z'
 sources:
 - field: '*'
   url: https://github.com/esphome/esphome
@@ -61,6 +63,18 @@ sources:
 - field: summary
   url: https://github.com/esphome/esphome
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/esphome/esphome
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/esphome/esphome
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/esphome/esphome
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/esphome/esphome
+  verified: '2026-11-07'
 summary: ESPHome is a firmware project designed for ESP-based hardware.
 readme_lang: en
 readme_sha: 1c54cf43c54cc139720bd37f349fd4372c38fee2d36bd4664f863bb91cdf2b31

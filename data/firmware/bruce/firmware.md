@@ -2,7 +2,7 @@
 id: bruce
 type: firmware
 name: Bruce
-seo_title: "Bruce — ESP32/ESP32-S3 pentest firmware & flash guide"
+seo_title: "Bruce \u2014 ESP32/ESP32-S3 pentest firmware & flash guide"
 url: https://github.com/BruceDevices/firmware
 category: pentest
 maintainer: brucedevices
@@ -46,9 +46,11 @@ not_required:
 - capability: psram
   why: tool buffers fit SRAM
 popularity:
-  stars: 6789
-  forks: 2266
-  as_of: '2026-09-20'
+  stars: 7164
+  forks: 2404
+  as_of: '2026-11-07'
+  github_repo_id: 795166961
+  github_as_of: '2026-11-07T01:00:56Z'
 sources:
 - field: '*'
   url: https://github.com/BruceDevices/firmware
@@ -65,6 +67,18 @@ sources:
 - field: summary
   url: https://github.com/BruceDevices/firmware
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/BruceDevices/firmware
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/BruceDevices/firmware
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/BruceDevices/firmware
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/BruceDevices/firmware
+  verified: '2026-11-07'
 summary: "Bruce is an ESP32\u2011based firmware that delivers a comprehensive suite\
   \ of offensive security tools\u2014including Wi\u2011Fi, Bluetooth, RF, RFID, IR,\
   \ FM, and scripting capabilities\u2014for fast, portable Red Team operations, and\
