@@ -209,7 +209,8 @@ def test_an_id_an_open_or_vetoed_tick_pr_holds_never_reaches_the_drain(root, mon
     fetch = _fake_fetch_meta(metas)
     monkeypatch.setattr(drain, "default_fetch_meta", lambda url: fetched.append(url) or fetch(url))
     closed = {"number": 1478, "headRefName": "jr/tick-20261106-0900", "mergedAt": None,
-              "closedAt": (NOW - timedelta(days=2)).isoformat(), "files": [{"path": "data/firmware/second/firmware.md"}]}
+              "closedAt": (NOW - timedelta(days=2)).isoformat(), "files": [{"path": "data/firmware/second/firmware.md"},
+                                                                                         {"path": "data/recipes/m5cardputer__second/recipe.md"}]}
     opened = {"number": 1500, "headRefName": "jr/tick-20261106-2200",
               "files": [{"path": "data/recipes/m5cardputer__newtool/recipe.md"}]}
     ctx = _ctx(root, dry_run=dry_run)

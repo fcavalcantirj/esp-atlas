@@ -552,6 +552,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         pending = pending_prs.load(gh_c, open_prs, now)
         if pending is None:
             raise TickAbort("gh pr list --state closed failed (cannot see which firmware a Jr PR holds)")
+        if pending.truncated:
+            r.warnings.append(f"closed Jr PRs cut at {pending_prs.CLOSED_PR_LIMIT}: an older veto may be unseen")
         slug = repo_slug or _repo_slug(git)
         protection = publish.protection_status(slug, gh=gh_c)
         if not protection.ok:

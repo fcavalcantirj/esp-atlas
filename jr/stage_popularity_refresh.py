@@ -18,6 +18,7 @@ from pathlib import Path
 import yaml
 
 import backfill_popularity
+import pending_prs
 import review_routing
 from esp_atlas_core.floor import CURATED_EXEMPT, clears_popularity_floor
 
@@ -103,11 +104,17 @@ def _atomic_write(path: Path, content: str) -> None:
         tmp_path.unlink(missing_ok=True)
 
 
+def _in_open_pr(pending, path: Path) -> bool:
+    hold = pending.hold(path.parent.name)
+    return hold is not None and hold.state == pending_prs.OPEN
+
+
 def run(ctx):
     """Return a StageResult; `ctx.gh` is already charged by the tick Budget."""
     from tick import StageResult
 
     now = ctx.now.astimezone(timezone.utc)
+    pending = pending_prs.of(ctx)
     grouped: dict[str, list[tuple[Path, dict, str]]] = {}
     for path in sorted((ctx.root / "data" / "firmware").glob("*/firmware.md")):
         original = path.read_text(encoding="utf-8")
@@ -128,7 +135,7 @@ def run(ctx):
     hour = int(now.timestamp() // 3600)
     selected = [repo for i, repo in enumerate(repos) if i % slots == hour % slots]
     result = StageResult("popularity_refresh")
-    refreshed = unchanged = skipped = floor_deferred = review_deferred = 0
+    refreshed = unchanged = skipped = floor_deferred = review_deferred = pending_deferred = 0
     for repo in selected:
         if ctx.budget.remaining_calls() < MIN_REMAINING_CALLS or \
                 ctx.budget.remaining_seconds() < MIN_REMAINING_SECONDS:
@@ -136,8 +143,14 @@ def run(ctx):
             continue
         due = [(p, fm, original) for p, fm, original in grouped[repo]
                if _due(fm.get("popularity"), now)]
+        # An OPEN Jr tick PR already changes this record (jr/pending_prs.py): a second edit of the
+        # same firmware.md would conflict with it. The refresh waits for that PR; a veto does not
+        # block it (the veto rejected a proposal, not the catalogued record's counts).
+        held = [d for d in due if _in_open_pr(pending, d[0])]
+        pending_deferred += len(held)
+        due = [d for d in due if d not in held]
         if not due:
-            unchanged += len(grouped[repo])
+            unchanged += len(grouped[repo]) - len(held)
             continue
         response = ctx.gh("api", f"repos/{repo}")
         if getattr(response, "returncode", 1) != 0:
@@ -186,7 +199,8 @@ def run(ctx):
             refreshed += 1
     result.summary = (f"GitHub popularity: {refreshed} {'would refresh' if ctx.dry_run else 'refreshed'}, "
                       f"{unchanged} current, {skipped} skipped, {floor_deferred} below-floor deferred, "
-                      f"{review_deferred} provenance deferred; "
+                      f"{review_deferred} provenance deferred"
+                      + (f", {pending_deferred} pending deferred" if pending_deferred else "") + "; "
                       f"{len(selected)} repos in slot")
     return result
 

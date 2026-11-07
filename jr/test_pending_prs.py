@@ -25,6 +25,8 @@ OPEN = _pr(1500, ["data/firmware/nightdriverstrip/firmware.md", "data/firmware/n
                   "data/recipes/m5stick-c__nightdriverstrip/recipe.md", "data/recipes/m5cardputer__newtool/recipe.md",
                   "jr/proposed_ledger.json", "docs/telemetry/data-trend.jsonl"])
 
+NEWTOOL_PR_FILES = ["data/firmware/newtool/firmware.md", "data/recipes/m5cardputer__newtool/recipe.md"]   # an admit ships both
+
 
 def _gh(closed=(), rc=0, calls=None):
     def gh(*a):
@@ -57,30 +59,30 @@ def test_a_human_branch_and_a_bookkeeping_only_pr_hold_nothing():
 
 
 def test_a_tick_pr_closed_unmerged_inside_the_veto_ttl_holds_its_firmware_as_vetoed():
-    closed = _pr(1478, ["data/firmware/newtool/firmware.md"], closedAt=_iso(NOW - timedelta(days=29)), mergedAt=None)
+    closed = _pr(1478, NEWTOOL_PR_FILES, closedAt=_iso(NOW - timedelta(days=29)), mergedAt=None)
     hold = pending_prs.build([], [closed], NOW).hold("newtool")
     assert hold and hold.state == pending_prs.VETOED and hold.pr_ref == "#1478" and hold.reason == "vetoed"
     assert "closed unmerged" in hold.note
 
 
 def test_a_veto_lapses_after_the_ttl_and_a_merged_pr_is_never_a_veto():
-    old = _pr(1100, ["data/firmware/newtool/firmware.md"],
+    old = _pr(1100, NEWTOOL_PR_FILES,
               closedAt=_iso(NOW - timedelta(days=pending_prs.VETO_TTL_DAYS, seconds=1)), mergedAt=None)
-    merged = _pr(1496, ["data/firmware/squachwatch-cyd/firmware.md"],
+    merged = _pr(1496, ["data/firmware/squachwatch-cyd/signals.json"],
                  closedAt=_iso(NOW - timedelta(hours=1)), mergedAt=_iso(NOW - timedelta(hours=1)))
-    undated = _pr(1101, ["data/firmware/other/firmware.md"], mergedAt=None)
+    undated = _pr(1101, ["data/recipes/m5cardputer__other/recipe.md"], mergedAt=None)
     assert len(pending_prs.build([], [old, merged, undated], NOW)) == 0
 
 
 def test_an_open_pr_wins_over_an_older_veto_of_the_same_firmware():
-    closed = _pr(1478, ["data/firmware/newtool/firmware.md"], closedAt=_iso(NOW - timedelta(days=1)), mergedAt=None)
+    closed = _pr(1478, NEWTOOL_PR_FILES, closedAt=_iso(NOW - timedelta(days=1)), mergedAt=None)
     hold = pending_prs.build([OPEN], [closed], NOW).hold("newtool")
     assert hold.state == pending_prs.OPEN and hold.pr_ref == "#1500"
 
 
 def test_load_reads_closed_unmerged_tick_prs_with_one_read_only_call():
     calls = []
-    closed = _pr(1478, ["data/firmware/newtool/firmware.md"], closedAt=_iso(NOW - timedelta(days=2)), mergedAt=None)
+    closed = _pr(1478, NEWTOOL_PR_FILES, closedAt=_iso(NOW - timedelta(days=2)), mergedAt=None)
     idx = pending_prs.load(_gh([closed], calls=calls), [OPEN], NOW)
     assert idx.hold("newtool").state == pending_prs.OPEN and idx.hold("nightdriverstrip")
     assert len(calls) == 1
@@ -120,6 +122,6 @@ def test_a_closed_pr_that_only_refreshed_a_record_vetoes_nothing_an_open_one_sti
 
 def test_a_closed_list_cut_at_its_limit_is_flagged_truncated(monkeypatch):
     monkeypatch.setattr(pending_prs, "CLOSED_PR_LIMIT", 1)
-    closed = _pr(1478, ["data/firmware/newtool/firmware.md"], closedAt=_iso(NOW - timedelta(days=2)), mergedAt=None)
+    closed = _pr(1478, NEWTOOL_PR_FILES, closedAt=_iso(NOW - timedelta(days=2)), mergedAt=None)
     assert pending_prs.load(_gh([closed]), [], NOW).truncated
     assert not pending_prs.load(_gh([]), [], NOW).truncated
