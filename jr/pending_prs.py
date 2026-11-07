@@ -30,8 +30,7 @@ at that same head names (`url:`) — a later commit can rewrite the ledger's rep
 truthfully confirms — and only once `gh api repos/<that source>` (GitHub follows a rename's redirect)
 answers that same id. An id that ledger records but its firmware.md source does not bind (a mismatch, an
 unreadable record) or GitHub does not confirm (404, 5xx, malformed metadata, the name now another
-repository's) is a gap, never a held or persisted foreign id nor a silent slug-only hold; a PR
-the ledger is not trusted from holds by slug alone. A PR body is
+repository's) is a gap, never a held or persisted foreign id nor a silent slug-only hold. A PR body is
 editable by anyone who can edit the PR, so its hidden identity marker (render_identity) is never trusted alone — a marker id the ledger contradicts or does not record is
 ignored, and a PR without a marker (one older than it) is verified the same way. A body whose marker
 is ambiguous — opened twice, a firmware named twice, unreadable — is a gap: the tick fails closed
@@ -39,6 +38,10 @@ before anything is written. An unreadable committed ledger is a gap too; a recor
 leaves it unknown and the hold matched by slug. When id and slug disagree — the held slug under
 another id — or a slug collides where either id is unknown, the candidate is held, never admitted:
 name similarity is never identity.
+
+Eligibility is decided before anything else: a tick PR is one the Jr bot authored from a branch of
+this repository. Anyone can name a fork's branch jr/tick-*, so any other PR — a foreign author, a fork,
+an unknown head — contributes nothing: no hold, no identity marker read, no gap (R2j).
 
 An index that may miss a hold is as blind as an unreadable one, so it names its gaps and the tick
 fails closed on any: an open or closed list that returned its full limit (it may be cut), or a held
@@ -365,6 +368,13 @@ def _from_jr_bot(pr: dict) -> bool:
     return isinstance(author, dict) and author.get("login") == JR_LOGIN and pr.get("isCrossRepository") is False
 
 
+def _eligible(pr: dict) -> bool:
+    """`pr` is one of Jr's own tick PRs: a jr/tick-* branch the Jr bot opened in this repository. Anyone
+    can name a fork's branch jr/tick-*: an ineligible PR holds nothing, its body and files are never
+    read, and it opens no gap — it can neither hold a victim firmware nor stop the tick."""
+    return _is_tick_pr(pr) and _from_jr_bot(pr)
+
+
 def _github_confirms(gh, repo, rid: int) -> bool:
     """GitHub's own metadata for `repo` (a rename's redirect followed) answers repository id `rid`."""
     if not isinstance(repo, str) or not _OWNER_REPO_RE.fullmatch(repo) or ".." in repo.split("/"):
@@ -477,16 +487,17 @@ def _shown_whole(gh, slug: str, prs: list, gaps: list) -> list:
 def load(gh, open_prs: list, now: datetime, *, slug: str, open_limit: int) -> PendingIndex | None:
     """The tick's index from the preflight's open-PR list (asked for at most `open_limit`) plus the
     closed-unmerged ones; None when GitHub is unreadable — the caller fails closed (a tick blind to
-    its PRs must not open another). Every tick PR that can hold something is shown whole first; one
-    that cannot, or a list that may be cut, is a gap the caller fails closed on too."""
+    its PRs must not open another). Eligibility comes first: only the Jr bot's own same-repo tick PR
+    is read at all (`_eligible`). Every one that can hold something is shown whole first; one that
+    cannot, or a list that may be cut, is a gap the caller fails closed on too."""
     closed = list_closed_tick_prs(gh, now)
     if closed is None:
         return None
     gaps = _list_gaps(open_prs, closed, open_limit)
     if gaps:
         return build([], [], now, tuple(gaps))
-    opened = _shown_whole(gh, slug, [pr for pr in open_prs if _is_tick_pr(pr)], gaps)
-    vetoes = _shown_whole(gh, slug, [pr for pr in closed if _is_tick_pr(pr) and _veto_until(pr, now)], gaps)
+    opened = _shown_whole(gh, slug, [pr for pr in open_prs if _eligible(pr)], gaps)
+    vetoes = _shown_whole(gh, slug, [pr for pr in closed if _eligible(pr) and _veto_until(pr, now)], gaps)
     opened = _verified(gh, slug, opened, firmware_ids, gaps)
     vetoes = _verified(gh, slug, vetoes, proposed_ids, gaps)
     return build(opened, vetoes, now, tuple(gaps))
