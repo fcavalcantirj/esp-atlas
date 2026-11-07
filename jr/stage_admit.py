@@ -328,8 +328,12 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     def held_by_pr(hold, cand_id, issue):
         """A candidate an open or vetoed tick PR holds (jr/pending_prs.py): counted, never admitted,
         nothing remembered — the index is rebuilt every tick. A rename or an identity ambiguity is
-        named on its own line, with both ids and the PR."""
+        named on its own line, with both ids and the PR. An ambiguous submission is no decision: its
+        issue stays open and unanswered, read again once the hold ends (fail closed)."""
         reject(hold.reason)
+        if issue and hold.seen_id is not None:
+            lines.append(f"submission #{issue}: deferred, {hold.reason} ({hold.note})")
+            return
         if issue:
             _answer(ctx, slug, issue, _verdict_text(f"{hold.reason}: {hold.note}", False, False))
             lines.append(f"submission #{issue}: {hold.reason.replace('_', ' ')} ({cand_id})")
