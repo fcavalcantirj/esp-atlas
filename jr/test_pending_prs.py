@@ -48,10 +48,17 @@ def _ledger_repos(ledgers) -> dict:
     return out
 
 
-def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0, ledgers=None, repos=None):
+def _number_in(route: str) -> int:
+    return int(route.split("/pulls/")[1].split("/")[0])
+
+
+def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0, ledgers=None, repos=None, pages=None, heads=None,
+        counts=None):
     """`files`: PR number -> every changed path, served by `gh api …/pulls/<n>/files --paginate`
-    in REST pages of 100 printed back to back, as gh prints them. `ledgers`: head oid -> the raw
-    jr/proposed_ledger.json committed there (None: unreadable); any other head serves an empty one.
+    in REST pages of 100 printed back to back, as gh prints them (`pages`: PR number -> the pages served
+    instead, as a PR edited mid-listing serves them). `gh api …/pulls/<n>` answers head sha `oid<n>`
+    (`heads`: PR number -> the shas successive reads answer) and changed_files len(files) (`counts`
+    overrides). `ledgers`: head oid -> the raw jr/proposed_ledger.json committed there (None: unreadable); any other head serves an empty one.
     `repos`: owner/repo -> the id `gh api repos/<owner/repo>` answers (redirects followed; None or
     absent: the call fails); by default the ids the served ledgers record."""
     repos = _ledger_repos(ledgers) if repos is None else repos
@@ -67,12 +74,22 @@ def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0, ledgers=None, repos
             ref = a[3].split("?ref=")[1]
             text = (ledgers or {}).get(ref, json.dumps({"by_id": {}, "by_repo": {}}))
             return SimpleNamespace(returncode=0 if text is not None else 1, stdout=text or "", stderr="")
+        if a[:1] == ("api",) and a[1].split("/pulls/")[1].isdigit():
+            number = int(a[1].split("/pulls/")[1])
+            shas = (heads or {}).get(number) or [f"oid{number}"]
+            sha = shas.pop(0) if len(shas) > 1 else shas[0]
+            count = (counts or {}).get(number, len((files or {}).get(number, [])))
+            return SimpleNamespace(returncode=0, stdout=json.dumps({"head": {"sha": sha}, "changed_files": count}),
+                                   stderr="")
+        if a[:1] == ("api",) and _number_in(a[1]) in (pages or {}):
+            served = "".join(json.dumps([{"filename": p} for p in page]) for page in pages[_number_in(a[1])])
+            return SimpleNamespace(returncode=0, stdout=served, stderr="")
         if a[:1] == ("api",):
-            number = int(a[1].split("/pulls/")[1].split("/")[0])
+            number = _number_in(a[1])
             paths = (files or {}).get(number, [])
-            pages = "".join(json.dumps([{"filename": p} for p in paths[i:i + 100]])
-                            for i in range(0, max(len(paths), 1), 100))
-            return SimpleNamespace(returncode=files_rc, stdout=pages if files_rc == 0 else "", stderr="")
+            served = "".join(json.dumps([{"filename": p} for p in paths[i:i + 100]])
+                             for i in range(0, max(len(paths), 1), 100))
+            return SimpleNamespace(returncode=files_rc, stdout=served if files_rc == 0 else "", stderr="")
         return SimpleNamespace(returncode=rc, stdout=json.dumps(list(closed)) if rc == 0 else "", stderr="")
     return gh
 
@@ -259,6 +276,38 @@ def test_a_tick_pr_past_what_rest_can_list_is_incomplete_without_a_call_and_one_
     assert not idx.complete and "#1520" in idx.gaps[0] and not [c for c in calls if c[:1] == ("api",)]
     idx = _load(_gh([], files={1520: at_cap}), [_pr(1520, at_cap)])
     assert idx.complete and idx.hold("lintd")
+
+
+def test_a_listing_edited_between_pages_that_repeats_one_path_and_drops_the_held_one_is_incomplete():
+    shifted = [WIDE[:100], WIDE[99:100]]           # an edit mid-listing: page 2 restarts one row early
+    gh = _gh([], files={1520: WIDE}, pages={1520: shifted})
+    idx = _load(gh, [_pr(1520, WIDE)])             # 101 rows, as counted — but 100 paths, lintd's missing
+    assert not idx.complete and "#1520" in idx.gaps[0]
+
+
+def test_a_head_that_moves_while_the_pages_are_read_leaves_the_index_incomplete():
+    gh = _gh([], files={1520: WIDE}, heads={1520: ["oid1520", "oid1520-pushed"]})
+    idx = _load(gh, [_pr(1520, WIDE)])
+    assert not idx.complete and "#1520" in idx.gaps[0]
+
+
+@pytest.mark.parametrize("heads, counts", [
+    ({1520: ["oid1520-stale", "oid1520-stale"]}, None),     # stable, but not the head the PR list showed
+    (None, {1520: 102}),                                    # GitHub now counts another changed file
+], ids=["not-the-listed-head", "count-mismatch"])
+def test_pages_not_bound_to_the_listed_head_and_count_leave_the_index_incomplete(heads, counts):
+    idx = _load(_gh([], files={1520: WIDE}, heads=heads, counts=counts), [_pr(1520, WIDE)])
+    assert not idx.complete and "#1520" in idx.gaps[0]
+
+
+def test_stable_pages_whose_unique_paths_number_changed_files_are_whole_bound_by_two_head_reads():
+    calls = []
+    idx = _load(_gh([], calls=calls, files={1520: WIDE}), [_pr(1520, WIDE)])
+    assert idx.complete, idx.gaps
+    assert idx.hold("lintd").state == pending_prs.OPEN
+    head = ("api", f"repos/{SLUG}/pulls/1520")
+    assert [c for c in calls if c[:1] == ("api",)] == [
+        head, ("api", f"repos/{SLUG}/pulls/1520/files?per_page=100", "--paginate"), head]
 
 
 # --- stable repository identity: the GitHub id a tick PR verified, matched before the slug ---------------
