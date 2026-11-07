@@ -109,3 +109,27 @@ def test_cooldown_state_survives_a_new_runner_process(tmp_path):
     assert popularity_run._load_cooldown(path) == "2026-11-07T04:00:00+00:00"
     path.write_text("{damaged")
     assert popularity_run._load_cooldown(path) is None
+
+
+def test_nonzero_http200_graphql_rate_error_persists_runner_cooldown(tmp_path, monkeypatch):
+    _record(tmp_path, "fw", "owner/repo-001", {"stars": 30, "forks": 3})
+    monkeypatch.setattr(publish, "protection_status", lambda *a, **k: publish.ProtectionStatus(True))
+    monkeypatch.setattr(publish, "add_worktree", lambda **k: publish.Worktree(tmp_path, "a" * 40))
+    monkeypatch.setattr(publish, "is_clean", lambda *a, **k: True)
+    monkeypatch.setattr(publish, "remove_worktree", lambda *a, **k: None)
+    monkeypatch.setattr(publish, "cleanup_branch", lambda *a, **k: None)
+    monkeypatch.setattr(popularity_run, "_pending_popularity_pr", lambda gh: None)
+    monkeypatch.setattr(publish, "publish", lambda *a, **k: publish.PublishResult(
+        True, branch=k["branch"], pr_url="https://github.com/o/r/pull/1", route="auto"))
+
+    def rate_error(doc, call_number):
+        return {"errors": [{"type": "RATE_LIMITED", "message": "rate limit exceeded"}]} if call_number == 2 else doc
+
+    ctx, calls = _ctx(tmp_path, doc_transform=rate_error, nonzero_calls=(2,))
+    state = tmp_path / "cooldown.json"
+    result = popularity_run.run(now=NOW, gh=ctx.gh, guard=lambda root: {"ok": True},
+                                repo_slug="o/r", budget=ctx.budget, state_file=state)
+    assert len(calls) == 2
+    assert result["cooldown_until"] == popularity_run._load_cooldown(state)
+    assert result["cooldown_until"] >= "2026-11-07T03:00:00"
+    assert result["coverage"]["attempted_repositories"] == 1

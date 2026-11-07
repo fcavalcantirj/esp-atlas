@@ -18,7 +18,7 @@ ALIAS = re.compile(r'r(\d+):repository\(owner:"([^"]+)",name:"([^"]+)"\)')
 
 def _ctx(root, *, remaining=4999, bad_batch=None, bad_status=500, transform=None,
          doc_transform=None, header_remaining=None, max_calls=12, dry_run=False,
-         cooldown_until=None):
+         cooldown_until=None, nonzero_calls=()):
     calls = []
     budget = Budget(max_calls=max_calls, max_seconds=150)
 
@@ -43,7 +43,8 @@ def _ctx(root, *, remaining=4999, bad_batch=None, bad_status=500, transform=None
         headers = "X-RateLimit-Resource: graphql\n"
         if header_remaining is not None:
             headers += f"X-RateLimit-Remaining: {header_remaining}\n"
-        return SimpleNamespace(returncode=0, stdout="HTTP/2.0 200 OK\n"
+        return SimpleNamespace(returncode=1 if len(calls) in nonzero_calls else 0,
+                               stdout="HTTP/2.0 200 OK\n"
                                + headers + "\n" + json.dumps(doc), stderr="")
 
     ctx = SimpleNamespace(root=root, now=NOW, gh=budget.wrap(gh), budget=budget,
@@ -146,7 +147,7 @@ def test_http_200_partial_rate_error_keeps_valid_siblings_and_stops(tmp_path):
                               "path": ["r4"]}]
         return doc
 
-    ctx, calls = _ctx(tmp_path, doc_transform=partial)
+    ctx, calls = _ctx(tmp_path, doc_transform=partial, nonzero_calls=(2,))
     result = full.run(ctx)
     receipt = _receipt(tmp_path)
     assert len(calls) == 2
@@ -170,7 +171,7 @@ def test_http_200_rate_error_envelope_with_no_data_stops_first_batch(tmp_path):
     def error_envelope(doc, call_number):
         return {"errors": [{"type": "RATE_LIMITED", "message": "rate limit exceeded"}]} if call_number == 2 else doc
 
-    ctx, calls = _ctx(tmp_path, doc_transform=error_envelope)
+    ctx, calls = _ctx(tmp_path, doc_transform=error_envelope, nonzero_calls=(2,))
     result = full.run(ctx)
     receipt = _receipt(tmp_path)
     assert len(calls) == 2 and receipt["attempted_repositories"] == 25

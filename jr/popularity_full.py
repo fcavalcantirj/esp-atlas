@@ -62,13 +62,21 @@ def _call(ctx, query: str) -> tuple[dict | None, dict[str, str], int | None]:
     if status is None:
         match = re.search(r"HTTP\s+(403|429)", getattr(response, "stderr", "") or "")
         status = int(match.group(1)) if match else None
-    if getattr(response, "returncode", 1) != 0:
-        return None, headers, status
     try:
         doc = json.loads(raw)
     except (TypeError, ValueError):
         return None, headers, status
-    return (doc if isinstance(doc, dict) else None), headers, status
+    if not isinstance(doc, dict):
+        return None, headers, status
+    # gh exits nonzero for GraphQL errors even when HTTP is 200 and the JSON
+    # contains valid sibling aliases. Preserve that envelope so per-alias
+    # successes and an HTTP-200 RATE_LIMITED error are both handled. A transport
+    # failure or non-200 HTTP response cannot publish data.
+    if getattr(response, "returncode", 1) != 0 and status != 200:
+        return None, headers, status
+    if status is not None and status != 200:
+        return None, headers, status
+    return doc, headers, status
 
 
 def _cooldown_until(now: datetime, headers: dict[str, str], quota: dict | None = None) -> datetime:
