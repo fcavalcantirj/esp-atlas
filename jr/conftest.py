@@ -1,7 +1,11 @@
 """Shared jr/ test fixtures."""
 from __future__ import annotations
 
+import os
+import pwd
 import shutil
+import subprocess
+from pathlib import Path
 
 import pytest
 
@@ -11,6 +15,62 @@ import device_evidence
 import drain
 import tick
 import tools
+
+
+@pytest.fixture(autouse=True)
+def _no_live_popularity_state_or_gh(tmp_path, monkeypatch):
+    """A forgotten injection in a Jr test must fail before touching the live bot.
+
+    The hourly runner has a persistent state file and can open/arm a real PR. Keep
+    every test's default state in its own tmp directory and reject an explicit
+    live-state path or a real gh subprocess, including calls through default_gh.
+    """
+    import popularity_run
+
+    # Resolve the account home independently of HOME: the suite may set HOME to
+    # an empty sandbox, but a hard-coded path to the real state must still fail.
+    live_state_root = (Path(pwd.getpwuid(os.getuid()).pw_dir) / ".local" / "state").resolve()
+    test_state = tmp_path / "jr-popularity.json"
+    monkeypatch.setenv("JR_POPULARITY_STATE_FILE", str(test_state))
+    monkeypatch.setattr(popularity_run, "DEFAULT_STATE_FILE", test_state)
+    monkeypatch.setenv("GH_CONFIG_DIR", str(tmp_path / "empty-gh-config"))
+    monkeypatch.delenv("GH_TOKEN", raising=False)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+
+    def check_state_path(path):
+        resolved = Path(path).expanduser().resolve()
+        if resolved == live_state_root or live_state_root in resolved.parents:
+            raise AssertionError(f"Jr test attempted live state access: {resolved}")
+
+    for name in ("_state_integrity", "_load_state", "_write_state"):
+        original = getattr(popularity_run, name)
+
+        def guarded_state(path, *args, _original=original, **kwargs):
+            check_state_path(path)
+            return _original(path, *args, **kwargs)
+
+        monkeypatch.setattr(popularity_run, name, guarded_state)
+
+    def is_gh(argv):
+        executable = argv[0] if isinstance(argv, (list, tuple)) and argv else argv
+        words = str(executable).split() if executable else []
+        return bool(words) and Path(words[0]).name == "gh"
+
+    original_run = subprocess.run
+    original_popen = subprocess.Popen
+
+    def guarded_run(argv, *args, **kwargs):
+        if is_gh(argv):
+            raise AssertionError("Jr test attempted real gh subprocess")
+        return original_run(argv, *args, **kwargs)
+
+    def guarded_popen(argv, *args, **kwargs):
+        if is_gh(argv):
+            raise AssertionError("Jr test attempted real gh subprocess")
+        return original_popen(argv, *args, **kwargs)
+
+    monkeypatch.setattr(subprocess, "run", guarded_run)
+    monkeypatch.setattr(subprocess, "Popen", guarded_popen)
 
 
 @pytest.fixture(autouse=True)

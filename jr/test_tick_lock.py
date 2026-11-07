@@ -45,11 +45,12 @@ def test_the_default_lock_lives_outside_the_repo_and_apart_from_the_wrapper_lock
 def test_main_honors_jr_tick_lock_from_the_environment(monkeypatch):
     seen = {}
     monkeypatch.setattr(tick, "run_tick", lambda **kw: seen.update(kw) or tick.report.TickReport(when=NOW))
+    popularity = lambda **kw: {"ok": True, "stage": "prepared", "graphql_budget": "0", "all_gh_calls": 0}
     monkeypatch.setenv("JR_TICK_LOCK", "/run/jr/tick.lock")
-    tick.main(["--no-telegram"])
+    tick.main(["--no-telegram"], popularity_runner=popularity)
     assert seen["lock_path"] == Path("/run/jr/tick.lock")
     monkeypatch.delenv("JR_TICK_LOCK")
-    tick.main(["--no-telegram"])
+    tick.main(["--no-telegram"], popularity_runner=popularity)
     assert seen["lock_path"] is None
 
 

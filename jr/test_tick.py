@@ -578,24 +578,47 @@ def test_a_failing_demand_loader_warns_but_never_aborts(tmp_path, monkeypatch):
 # --- CLI ---------------------------------------------------------------------------------------
 
 def test_main_exit_code_follows_aborted(monkeypatch):
-    import popularity_run
-    monkeypatch.setattr(popularity_run, "run", lambda **kw: {"ok": True, "stage": "prepared", "graphql_budget": "0", "all_gh_calls": 0})
+    seen = []
+
+    def popularity(**kwargs):
+        seen.append(kwargs)
+        return {"ok": True, "stage": "prepared", "graphql_budget": "0", "all_gh_calls": 0}
+
     monkeypatch.setattr(tick, "run_tick", lambda **kw: tick.report.TickReport(when=NOW))
-    assert tick.main(["--dry-run"]) == 0
+    assert tick.main(["--dry-run"], popularity_runner=popularity) == 0
     monkeypatch.setattr(tick, "run_tick", lambda **kw: tick.report.TickReport(when=NOW, aborted="x"))
-    assert tick.main(["--dry-run", "--no-telegram", "--max-calls", "10"]) == 1
+    assert tick.main(["--dry-run", "--no-telegram", "--max-calls", "10"],
+                     popularity_runner=popularity) == 1
+    assert seen == [{"dry_run": True, "auto_merge": True}] * 2
 
 
 def test_main_runs_popularity_before_growth_and_growth_after_popularity_failure(monkeypatch):
-    import popularity_run
     calls = []
-    monkeypatch.setattr(popularity_run, "run", lambda **kw: calls.append("popularity") or
-                        {"ok": False, "stage": "rate limited", "complete_attempt": False,
-                         "graphql_budget": "0", "all_gh_calls": 1})
+    popularity = lambda **kw: calls.append("popularity") or {
+        "ok": False, "stage": "rate limited", "complete_attempt": False,
+        "graphql_budget": "0", "all_gh_calls": 1}
     monkeypatch.setattr(tick, "run_tick", lambda **kw: calls.append("growth") or
                         tick.report.TickReport(when=NOW))
-    assert tick.main(["--no-telegram"]) == 1
+    assert tick.main(["--no-telegram"], popularity_runner=popularity) == 1
     assert calls == ["popularity", "growth"]
+
+
+def test_main_non_dry_uses_injected_popularity_without_real_gh(monkeypatch):
+    """A non-dry CLI test must not fall through to the live popularity runner."""
+    import popularity_run
+    calls = []
+
+    def fake_popularity(**kwargs):
+        calls.append(("popularity", kwargs))
+        return {"ok": True, "stage": "prepared", "graphql_budget": "0", "all_gh_calls": 0}
+
+    monkeypatch.setattr(popularity_run, "run",
+                        lambda **kwargs: (_ for _ in ()).throw(AssertionError("live popularity runner")))
+    monkeypatch.setattr(tick, "run_tick", lambda **kwargs: calls.append(("growth", kwargs)) or
+                        tick.report.TickReport(when=NOW))
+    assert tick.main(["--no-telegram"], popularity_runner=fake_popularity) == 0
+    assert [name for name, _ in calls] == ["popularity", "growth"]
+    assert calls[0][1] == {"dry_run": False, "auto_merge": True}
 
 
 def test_stages_registry_is_empty_in_phase_two():
@@ -696,7 +719,8 @@ def test_default_guard_runs_the_ci_tests_only_when_asked(tmp_path, monkeypatch):
 def test_main_installs_a_sigterm_handler_that_aborts_instead_of_dying(monkeypatch):
     import signal
     monkeypatch.setattr(tick, "run_tick", lambda **kw: tick.report.TickReport(when=NOW))
-    tick.main(["--dry-run"])
+    tick.main(["--dry-run"], popularity_runner=lambda **kw: {
+        "ok": True, "stage": "prepared", "graphql_budget": "0", "all_gh_calls": 0})
     handler = signal.getsignal(signal.SIGTERM)
     assert handler is tick._on_sigterm
     with pytest.raises(tick.TickAbort):

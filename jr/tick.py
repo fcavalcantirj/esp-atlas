@@ -784,7 +784,7 @@ def stages_for(track: str | None, budget_units: int, only: list[str] | None = No
     raise SystemExit(f"unknown track {track!r} (tracks A and B)")
 
 
-def main(argv=None) -> int:
+def main(argv=None, *, popularity_runner=None) -> int:
     signal.signal(signal.SIGTERM, _on_sigterm)
     ap = argparse.ArgumentParser(description="EspAtlas Jr hourly tick")
     ap.add_argument("--dry-run", action="store_true",
@@ -805,8 +805,8 @@ def main(argv=None) -> int:
     popularity = None
     if args.track is None:
         import popularity_run
-        popularity = popularity_run.run(dry_run=args.dry_run,
-                                        auto_merge=not args.no_auto_merge)
+        runner = popularity_run.run if popularity_runner is None else popularity_runner
+        popularity = runner(dry_run=args.dry_run, auto_merge=not args.no_auto_merge)
         print(popularity_run.render_line(popularity))
     r = run_tick(dry_run=args.dry_run, telegram=not args.no_telegram,
                  budget=Budget(max_calls=args.max_calls, max_seconds=args.max_seconds),

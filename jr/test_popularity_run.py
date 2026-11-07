@@ -88,7 +88,8 @@ def test_runner_publishes_only_popularity_paths_and_receipt(tmp_path, monkeypatc
     monkeypatch.setattr(publish, "publish", fake_publish)
     ctx, _ = _ctx(tmp_path)
     result = popularity_run.run(now=NOW, gh=ctx.gh, guard=lambda root: {"ok": True},
-                                repo_slug="o/r", budget=ctx.budget)
+                                repo_slug="o/r", budget=ctx.budget,
+                                state_file=tmp_path / "state.json")
     assert result["ok"] and result["publish"]["route"] == "auto"
     assert captured["paths"] == ["data/firmware/fw/firmware.md",
                                  "docs/telemetry/popularity/2026-11-07T02.json"]
@@ -108,7 +109,8 @@ def test_guard_failure_keeps_everything_off_remote(tmp_path, monkeypatch):
     monkeypatch.setattr(publish, "publish", lambda *a, **k: (_ for _ in ()).throw(AssertionError("must not publish")))
     ctx, _ = _ctx(tmp_path)
     result = popularity_run.run(now=NOW, gh=ctx.gh, guard=lambda root: {"ok": False, "output": "bad citation"},
-                                repo_slug="o/r", budget=ctx.budget)
+                                repo_slug="o/r", budget=ctx.budget,
+                                state_file=tmp_path / "state.json")
     assert not result["ok"] and result["reason"].startswith("guard red")
     assert result["publish"] is None
 
