@@ -363,7 +363,8 @@ def _admit_newtool(root, monkeypatch, **meta_kw):
 def test_firmware_item_carries_the_fields_of_the_record_it_wrote(root, monkeypatch):
     """PR #1434 rendered '— None' / 'board None (None)' because this stage's item carried only
     kind/id/source. It now carries what stage_admit's item does, read back from the firmware.md
-    and recipe.md it actually wrote — never invented."""
+    and recipe.md it actually wrote — never invented — plus the GitHub id the metadata fetch read
+    (the PR body's identity marker, jr/pending_prs.py)."""
     res = _admit_newtool(root, monkeypatch, stars=31, forks=4)
 
     fm = _read_fm(root / "data" / "firmware" / "newtool" / "firmware.md")
@@ -371,7 +372,7 @@ def test_firmware_item_carries_the_fields_of_the_record_it_wrote(root, monkeypat
     rc = _read_fm(rdir / "recipe.md")
     [it] = res.items
     assert it == {"kind": "firmware", "id": "newtool", "source": "topic:cardputer",
-                  "name": fm["name"], "url": "https://github.com/n/newtool",
+                  "name": fm["name"], "url": "https://github.com/n/newtool", "repo_id": 101,
                   "stars": 31, "forks": 4, "license": None,
                   "board": rc["board"], "chip": rc["chip_family"], "recipe": rdir.name,
                   "evidence": "surfaced by `topic:cardputer`; recipe cites https://github.com/n/newtool",

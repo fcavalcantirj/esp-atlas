@@ -151,6 +151,23 @@ main was forgotten the same way.
   maps no held firmware — no recipe on the same boards and none on a NEW board (no stacking onto
   an unmerged firmware) — and gives the slot to the next candidate. `--track B --firmware` obeys it
   too. Skips are counted `already_proposed` / `vetoed` and named with the PR in the stage summary.
+- **Identity is the repository, not its name.** An upstream rename turns `oldtool` into `newtool`;
+  GitHub's numeric repository id stays. Every tick PR body carries a hidden
+  `<!-- jr-identity: [{"id", "repo", "repo_id"}] -->` marker — the id admission read from GitHub
+  for each firmware it proposes (`stage_admit` and `stage_admit_topics`). Both PR lists also ask
+  for `body`. A hold keeps that verified id and its slug as the alias it was proposed under; a
+  marker entry for a firmware the PR does not hold verifies nothing, and one firmware named under
+  two ids verifies neither. Admission matches the fetched id **before** the slug:
+  - same id under a new slug → held as the original (`already_proposed` / `vetoed`), named with
+    both slugs, the id and the PR (rename provenance);
+  - the held slug under **another** id → `identity_ambiguous`: never admitted, nothing written to
+    the ledger (not a decision), named with both ids and the PR, re-checked every tick until the
+    hold ends;
+  - a slug collision where either id is unknown (a PR older than the marker, an unreadable
+    candidate) → held, fail closed. A hold without a verified id is still skipped before the
+    metadata fetch; one with an id costs that one fetch to decide.
+  - name similarity is never identity. The open-PR ledger hydration also records the verified
+    `repo_id`, so the ledger's own `by_repo_id` gate agrees.
 - **Nothing persisted, nothing weakened.** The index is rebuilt every tick, so a merge or a lapsed
   veto releases the firmware on its own. Hydration, review decisions (§5), the classifier, the
   device-evidence gate, the `jr-review` label and the open-review cap are unchanged.

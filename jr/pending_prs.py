@@ -19,6 +19,14 @@ new firmware ships one) or mapped signals; a closed PR that only rewrote a catal
 firmware.md (a popularity refresh) vetoes nothing for it. Nothing is persisted: the index is rebuilt every tick, so a
 merge or a lapsed veto releases the firmware on its own.
 
+Identity is the repository, not its name: an upstream rename turns `oldtool` into `newtool` while
+GitHub's numeric repository id stays. Every tick PR's body carries a hidden identity marker (the id
+admission read from GitHub for each firmware it proposes, render_identity); a hold keeps that id and
+its slug as the alias it was proposed under, and match() looks a candidate up by id BEFORE slug. A
+marker entry for a firmware the PR does not hold verifies nothing. When id and slug disagree — the
+held slug under another id — or a slug collides where either id is unknown, the candidate is held,
+never admitted: name similarity is never identity.
+
 An index that may miss a hold is as blind as an unreadable one, so it names its gaps and the tick
 fails closed on any: an open or closed list that returned its full limit (it may be cut), or a held
 tick PR whose file list cannot be shown whole. `gh pr list --json files` carries only a PR's first
@@ -29,19 +37,23 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timedelta, timezone
 
 VETO_TTL_DAYS = 30        # the tick PR body's promise: "Close = veto … does not propose it again for 30 days"
 CLOSED_PR_LIMIT = 200     # closed-unmerged tick PRs inside the TTL (11 in the 30 days to 2026-11-07)
 REST_FILES_CAP = 3000     # GitHub's REST pulls/<n>/files lists at most this many files of a PR
-PR_LIST_FIELDS = "files,changedFiles"   # both lists: changedFiles proves a listed `files` whole
+PR_LIST_FIELDS = "files,changedFiles,body"   # changedFiles proves `files` whole; body carries the identity marker
 TICK_BRANCH_PREFIX = "jr/tick-"
 OPEN, VETOED = "open", "vetoed"
+AMBIGUOUS = "identity_ambiguous"
+IDENTITY_MARKER = "jr-identity"
 
 _FIRMWARE_PATH_RE = re.compile(r"^data/firmware/([^/]+)/")
 _RECIPE_PATH_RE = re.compile(r"^data/recipes/[^/]+__([^/]+)/")
 _RECORD_ONLY_RE = re.compile(r"^data/firmware/[^/]+/firmware\.md$")
+_IDENTITY_RE = re.compile(r"<!--\s*" + IDENTITY_MARKER + r":\s*(.*?)\s*-->", re.S)
+_GITHUB_PREFIX = "https://github.com/"
 
 
 @dataclass(frozen=True)
@@ -51,25 +63,51 @@ class Hold:
     pr_ref: str
     state: str
     until: datetime | None = None        # a veto's lapse; None for an open PR
+    repo_id: int | None = None           # GitHub's stable repository id the PR verified; None = unknown
+    repo: str | None = None              # owner/repo it was proposed under (the slug alias)
+    seen_as: str | None = None           # match(): the candidate's own slug, when renamed since
+    seen_id: int | None = None           # match(): the candidate's other id under this slug (ambiguous)
 
     @property
     def reason(self) -> str:
+        if self.seen_id is not None:
+            return AMBIGUOUS
         return "already_proposed" if self.state == OPEN else "vetoed"
 
     @property
     def note(self) -> str:
-        if self.state == OPEN:
-            return f"{self.pr_ref} open"
-        return f"{self.pr_ref} closed unmerged, veto until {self.until:%Y-%m-%d}"
+        where = (f"{self.pr_ref} open" if self.state == OPEN
+                 else f"{self.pr_ref} closed unmerged, veto until {self.until:%Y-%m-%d}")
+        if self.seen_id is not None:
+            return (f"{self.firmware} is repo id {self.repo_id} in {where}; this one is repo id "
+                    f"{self.seen_id}: held for the owner, never admitted")
+        if self.seen_as is not None:
+            return f"{where}; repo id {self.repo_id}, proposed as {self.firmware} ({self.repo}), renamed {self.seen_as}"
+        return where
 
 
 @dataclass(frozen=True)
 class PendingIndex:
     holds: dict = field(default_factory=dict)     # firmware id -> Hold
     gaps: tuple = ()                              # why a hold may be unseen; any gap = fail closed
+    by_repo_id: dict = field(default_factory=dict)   # verified GitHub repository id -> Hold
 
     def hold(self, firmware_id: str | None) -> Hold | None:
         return self.holds.get(firmware_id) if firmware_id else None
+
+    def match(self, firmware_id: str | None, repo_id) -> Hold | None:
+        """The hold on a candidate whose GitHub id is `repo_id` (None when unread): by stable id first —
+        under another slug it is the held repository renamed (`seen_as`) — then by slug. A held slug
+        verified under ANOTHER id is ambiguous (`seen_id`, reason identity_ambiguous); an id unknown
+        on either side of a slug collision keeps the hold. Never None where a hold might apply."""
+        rid = repo_id if type(repo_id) is int else None
+        by_id = self.by_repo_id.get(rid) if rid is not None else None
+        if by_id is not None:
+            return by_id if by_id.firmware == firmware_id else replace(by_id, seen_as=firmware_id)
+        hold = self.hold(firmware_id)
+        if hold is None or hold.repo_id is None or rid is None:
+            return hold
+        return replace(hold, seen_id=rid)
 
     def __len__(self) -> int:
         return len(self.holds)
@@ -104,6 +142,37 @@ def proposed_ids(paths) -> set[str]:
     return firmware_ids(p for p in paths if not _RECORD_ONLY_RE.match(p))
 
 
+def render_identity(items) -> str:
+    """The hidden comment a tick PR body carries: the GitHub repository id admission verified for each
+    firmware it proposes. "" when none carries one (a recipe-only PR, a firmware without an id)."""
+    ids = [{"id": it["id"], "repo": str(it.get("url") or "").removeprefix(_GITHUB_PREFIX).lower() or None,
+            "repo_id": it["repo_id"]}
+           for it in items if it.get("kind") == "firmware" and it.get("id") and type(it.get("repo_id")) is int]
+    if not ids:
+        return ""
+    payload = json.dumps(ids, sort_keys=True).replace("-->", "--\\u003e")    # a "-->" must not end the comment
+    return f"<!-- {IDENTITY_MARKER}: {payload} -->"
+
+
+def identities(body) -> dict:
+    """{firmware id: (repo id, owner/repo)} a PR body's identity marker names; {} when it has none or
+    it is unreadable. A firmware named under two ids verifies neither."""
+    m = _IDENTITY_RE.search(body or "") if isinstance(body, str) else None
+    try:
+        entries = json.loads(m.group(1)) if m else []
+    except json.JSONDecodeError:
+        return {}
+    out, clash = {}, set()
+    for e in entries if isinstance(entries, list) else []:
+        fid, rid = (e.get("id"), e.get("repo_id")) if isinstance(e, dict) else (None, None)
+        if not isinstance(fid, str) or type(rid) is not int:
+            continue
+        if fid in out and out[fid][0] != rid:
+            clash.add(fid)
+        out[fid] = (rid, e.get("repo") if isinstance(e.get("repo"), str) else None)
+    return {k: v for k, v in out.items() if k not in clash}
+
+
 def _paths(pr: dict) -> list[str]:
     return [str(f.get("path") or "") for f in (pr.get("files") or []) if isinstance(f, dict)]
 
@@ -131,22 +200,40 @@ def _veto_until(pr: dict, now: datetime) -> datetime | None:
     return until if until > now else None
 
 
+def _held(pr: dict, ids, state: str, until: datetime | None) -> list[Hold]:
+    """PR `pr`'s holds on `ids`, each with the repository id its identity marker verified for it."""
+    verified = identities(pr.get("body"))
+    return [Hold(fid, f"#{pr.get('number')}", state, until, *verified.get(fid, (None, None))) for fid in sorted(ids)]
+
+
+def _wins(new: Hold, old: Hold | None) -> bool:
+    """An open PR wins over a veto (the later listed open PR over another); among vetoes, the one
+    that lapses last."""
+    if old is None or new.state == OPEN:
+        return True
+    return old.state == VETOED and new.until > old.until
+
+
 def build(open_prs: list, closed_prs: list, now: datetime, gaps: tuple = ()) -> PendingIndex:
-    """The index over open tick PRs and closed-unmerged ones still inside VETO_TTL_DAYS. An open PR
-    wins over a veto of the same firmware; among vetoes, the one that lapses last."""
-    holds: dict = {}
+    """The index over open tick PRs and closed-unmerged ones still inside VETO_TTL_DAYS, by firmware
+    id and by verified repository id. An open PR wins over a veto of the same firmware; among
+    vetoes, the one that lapses last."""
+    found: list[Hold] = []
     for pr in closed_prs:
         until = _veto_until(pr, now) if _is_tick_pr(pr) else None
-        if until is None:
-            continue
-        for fid in proposed_ids(_paths(pr)):
-            if fid not in holds or until > holds[fid].until:
-                holds[fid] = Hold(fid, f"#{pr.get('number')}", VETOED, until)
+        if until is not None:
+            found += _held(pr, proposed_ids(_paths(pr)), VETOED, until)
     for pr in open_prs:
         if _is_tick_pr(pr):
-            for fid in firmware_ids(_paths(pr)):
-                holds[fid] = Hold(fid, f"#{pr.get('number')}", OPEN)
-    return PendingIndex(holds, tuple(gaps))
+            found += _held(pr, firmware_ids(_paths(pr)), OPEN, None)
+    holds: dict = {}
+    by_repo_id: dict = {}
+    for h in found:
+        if _wins(h, holds.get(h.firmware)):
+            holds[h.firmware] = h
+        if h.repo_id is not None and _wins(h, by_repo_id.get(h.repo_id)):
+            by_repo_id[h.repo_id] = h
+    return PendingIndex(holds, tuple(gaps), by_repo_id)
 
 
 def list_closed_tick_prs(gh, now: datetime) -> list | None:

@@ -453,7 +453,7 @@ def _pr_firmware_ids(gh, number) -> list[str]:
                                            if isinstance(f, dict)))
 
 
-def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None) -> list[str]:
+def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None, pending=None) -> list[str]:
     """Mark every firmware id in an OPEN Jr tick PR as `proposed` in the worktree ledger, keyed by
     the REAL owner/repo, so BOTH dedup gates see firmware already awaiting merge (the duplicate-PR
     fix; see the note above). stage_admit dedups by firmware id, but the firmware DRAIN's prefilter
@@ -469,6 +469,8 @@ def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None) -> list[str]:
     already merged/catalogued — already deduped by catalogued_repos), the id stands in for the repo,
     the pre-fix behavior, so nothing regresses. Each PR/id is wrapped so one bad fetch can't abort
     hydration. `repo_slug` is the esp-atlas repo the contents API reads (None → id-as-repo for all).
+    `pending` (jr/pending_prs.py's index) supplies the GitHub repository id the open PR verified, so
+    the ledger's by_repo_id gate also holds the repository after an upstream rename.
     Returns the ids hydrated."""
     hydrated = []
     for pr in _open_tick_prs(gh):
@@ -481,7 +483,9 @@ def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None) -> list[str]:
                     repo = _pr_firmware_repo(gh, repo_slug, head_ref, fid)
                 except Exception:  # noqa: BLE001 — one bad fetch must not abort hydration
                     repo = None
-            memory.record_proposed(fid, repo or fid, pr_ref=f"#{n}", path=ledger_path, now=now)
+            hold = (pending or pending_prs.EMPTY).hold(fid)
+            repo_id = hold.repo_id if hold and hold.state == pending_prs.OPEN else None
+            memory.record_proposed(fid, repo or fid, repo_id=repo_id, pr_ref=f"#{n}", path=ledger_path, now=now)
             hydrated.append(fid)
     return hydrated
 
@@ -592,7 +596,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         #     the stages enforce the budget. memory.record_proposed already refuses to downgrade
         #     a merged or permanently-rejected record.
         try:
-            r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug)
+            r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug, pending=pending)
         except Exception as e:  # noqa: BLE001
             r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")
         # 3c. owner-review decisions (SPEC-jr-review-routing.md §5): every target an open or closed

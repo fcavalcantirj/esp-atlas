@@ -309,6 +309,9 @@ def render_pr_body(r: TickReport) -> str:
         elif it.get("kind") == "recipes":
             n_recipes += len(it.get("written") or [])
             lines += _fmt_recipes_item(it)
+    identity = pending_prs.render_identity([it for _stage, it in items])
+    if identity:
+        lines.append(identity)          # the repository ids the next ticks hold this PR's firmware by
     lines.append("")
     lines += render_demand_section(r)
     lines.append("### Skipped this tick (not in this PR; remembered with a TTL)")
