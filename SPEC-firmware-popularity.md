@@ -142,7 +142,45 @@ Define now even if v1 renders-all, so pagination is a drop-in later:
 - k-formatting (94.6k), forks shown next to stars (D5).
 
 ## 9. Non-goals
-- No new popularity data source / refresh mechanism (that's Jr's job; 117/117 covered).
+- The original card-display work did not change refresh mechanisms. The hourly
+  runtime refresh below supersedes that limitation.
 - No sorting UI/dropdown in v1 (single popularity-ranked default). A `sort=` toggle can
   come later since the API supports it.
 - No infinite-scroll (explicit button, per request).
+
+## 10. Hourly runtime counts
+
+GitHub stars and forks refresh independently of Jr. An hourly GitHub Actions job
+reads the published catalog and updates `popularity.json` on the existing
+repository's `runtime-popularity` branch. It uses deterministic code and GitHub's
+API, with no LLM, new storage service, catalog edits, or PR actions.
+
+Only that JSON file may change in each publication. Existing branch files,
+including the Vercel deployment exclusion, must remain intact. Publication uses
+the observed parent SHA so two writers cannot overwrite each other. Unknown or
+changed repository identities are excluded; source failures retain dated
+observations. Legitimate zero and decreasing counts are accepted without
+applying the catalog admission floor.
+
+The website reads this JSON over HTTPS. It matches each observation to the
+catalog's firmware/source/identity before applying counts and then sorts the
+result. Firmware lists, detail pages and home examples use the same observations.
+Older runtime evidence cannot replace newer catalog evidence, including dates
+recorded with day precision. Failed reads use the last valid snapshot or dated
+catalog fallback. GitHub and web caches may delay visibility.
+
+The workflow runs at minute 7 each hour, subject to GitHub scheduler delays. It
+runs only in this repository on `main`, with one concurrency group and a bounded
+collector process. Scheduled publication is disabled until the repository
+Actions variable `POPULARITY_RUNTIME_ENABLED` is `1`. Manual dispatch defaults
+to a dry run. The Vercel environment variable of the same name independently
+controls the reader. Changing that environment requires a deployment; hourly
+JSON updates do not.
+
+Release requires independent review of the collector and reader/workflow,
+current-main integration checks, a verified publication with unchanged branch
+configuration, and API/rendered-page readback. A manually seeded branch may need
+one explicit `--adopt-unstated-tip` invocation; the recurring workflow must never
+pass that flag. Two natural hourly run receipts establish scheduled operation.
+Rollback disables the Actions variable and deploys the reader with its Vercel
+flag off; dated catalog counts remain available.
