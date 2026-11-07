@@ -304,3 +304,16 @@ def test_hydrate_records_the_stable_repo_id_the_pending_index_verified(tmp_path)
     led = memory.load(lp)
     assert led["by_id"]["newtool"]["repo_id"] == 4242
     assert memory.is_blocked(led, repo_id=4242, now=NOW)
+
+
+def test_hydrate_takes_the_repo_id_only_from_the_pr_it_records(tmp_path):
+    """Another open PR's hold on the same id (here a recipe-only PR #160 without an id) must not lend
+    or drop the id hydration records for PR #158."""
+    import pending_prs
+    lp = tmp_path / "proposed_ledger.json"
+    other = {"number": 160, "headRefName": "jr/tick-20260908-0500", "body": "",
+             "files": [{"path": "data/recipes/m5stick-c__newtool/recipe.md"}]}
+    pending = pending_prs.build([{**OPEN_PR[0], "body": ""}, other], [], NOW)
+    assert pending.hold("newtool").pr_ref == "#160"
+    tick.hydrate_open_pr_ledger(gh(prs=json.dumps(OPEN_PR)), NOW, lp, pending=pending)
+    assert "repo_id" not in memory.load(lp)["by_id"]["newtool"]

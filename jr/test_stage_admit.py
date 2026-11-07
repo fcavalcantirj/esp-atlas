@@ -14,6 +14,7 @@ import yaml
 
 import device_evidence
 import memory
+import pending_prs
 import safe_fetch
 import stage_admit
 import tick
@@ -475,3 +476,49 @@ def test_admit_stops_scanning_the_launcher_at_its_call_share_but_still_answers_s
     assert "admit's call share used (7 of the tick's calls); the rest is Track B's" in res.summary
     assert b.calls <= 7 + 3 + 2                                       # issues list + submission meta + a few launcher metas
     assert res.rejects.get("below_floor", 0) < 20                     # most of the backlog was left for the next tick
+
+
+# --- stable repository identity (jr/pending_prs.py): the fetched GitHub id is matched before the slug ----
+
+def _held_as(fid, owner_repo, rid):
+    """A pending index whose open tick PR #1500 holds `fid`, verified as repository `rid`."""
+    body = pending_prs.render_identity([{"kind": "firmware", "id": fid, "url": f"https://github.com/{owner_repo}",
+                                         "repo_id": rid}])
+    pr = {"number": 1500, "headRefName": "jr/tick-20261107-0300", "body": body,
+          "files": [{"path": f"data/firmware/{fid}/firmware.md"}, {"path": f"data/recipes/m5cardputer__{fid}/recipe.md"}]}
+    return pending_prs.build([pr], [], NOW)
+
+
+def test_a_submitted_repository_renamed_since_its_pr_is_answered_held_and_closed(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
+    ctx = _ctx_sub(root, [_issue(12, "https://github.com/n/newtool\nBoards: Cardputer")],
+                   {"repos/n/newtool": _meta("n/newtool", stars=30, rid=4242)})
+    ctx.pending = _held_as("oldtool", "n/oldtool", 4242)
+    res = stage_admit.run(ctx, budget=1)
+    assert res.admitted == 0 and res.paths == [] and res.rejects == {"already_proposed": 1}
+    a = _answers(ctx)
+    assert "already_proposed" in a[0][2] and "oldtool" in a[0][2] and "4242" in a[0][2] and a[1][0] == "PATCH"
+
+
+def test_a_submission_whose_slug_is_held_under_another_id_is_left_open_unanswered(root, monkeypatch):
+    """Identity ambiguity is not a decision: the submitter's issue stays open (submissions are read
+    from open issues only) and is looked at again once the hold ends."""
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
+    ctx = _ctx_sub(root, [_issue(13, "https://github.com/m/newtool\nBoards: Cardputer")],
+                   {"repos/m/newtool": _meta("m/newtool", stars=30, rid=7777)})
+    ctx.pending = _held_as("newtool", "n/newtool", 4242)
+    res = stage_admit.run(ctx, budget=1)
+    assert res.admitted == 0 and res.paths == [] and res.rejects == {"identity_ambiguous": 1}
+    assert _answers(ctx) == []
+    assert "submission #13: deferred, identity_ambiguous" in res.summary and "7777" in res.summary
+
+
+def test_a_dry_run_never_would_admit_a_held_repository_renamed_upstream(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [
+        {"name": "New Tool", "description": "A Cardputer tool", "category": "cardputer",
+         "github": "https://github.com/n/newtool", "download": 100}])
+    ctx = _ctx_sub(root, [], {"repos/n/newtool": _meta("n/newtool", stars=30, rid=4242)}, dry_run=True)
+    ctx.pending = _held_as("oldtool", "n/oldtool", 4242)
+    res = stage_admit.run(ctx, budget=1)
+    assert res.rejects == {"already_proposed": 1} and not res.would_write
+    assert "renamed newtool" in res.summary

@@ -21,8 +21,8 @@ def _iso(dt):
 
 def _pr(number, paths, branch="jr/tick-20261107-0300", **kw):
     """A PR as `gh pr list --json …,files,changedFiles` lists it: at most the first 100 files."""
-    return {"number": number, "headRefName": branch, "files": [{"path": p} for p in paths[:100]],
-            "changedFiles": len(paths), **kw}
+    return {"number": number, "headRefName": branch, "headRefOid": f"oid{number}",
+            "files": [{"path": p} for p in paths[:100]], "changedFiles": len(paths), **kw}
 
 
 OPEN = _pr(1500, ["data/firmware/nightdriverstrip/firmware.md", "data/firmware/nightdriverstrip/signals.json",
@@ -32,12 +32,17 @@ OPEN = _pr(1500, ["data/firmware/nightdriverstrip/firmware.md", "data/firmware/n
 NEWTOOL_PR_FILES = ["data/firmware/newtool/firmware.md", "data/recipes/m5cardputer__newtool/recipe.md"]   # an admit ships both
 
 
-def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0):
+def _gh(closed=(), rc=0, calls=None, files=None, files_rc=0, ledgers=None):
     """`files`: PR number -> every changed path, served by `gh api …/pulls/<n>/files --paginate`
-    in REST pages of 100 printed back to back, as gh prints them."""
+    in REST pages of 100 printed back to back, as gh prints them. `ledgers`: head oid -> the raw
+    jr/proposed_ledger.json committed there (None: unreadable); any other head serves an empty one."""
     def gh(*a):
         if calls is not None:
             calls.append(a)
+        if a[:3] == ("api", "-H", pending_prs.RAW_MEDIA):
+            ref = a[3].split("?ref=")[1]
+            text = (ledgers or {}).get(ref, json.dumps({"by_id": {}, "by_repo": {}}))
+            return SimpleNamespace(returncode=0 if text is not None else 1, stdout=text or "", stderr="")
         if a[:1] == ("api",):
             number = int(a[1].split("/pulls/")[1].split("/")[0])
             paths = (files or {}).get(number, [])
@@ -309,3 +314,72 @@ def test_an_open_pr_wins_the_id_over_an_older_veto():
 
 def test_the_pr_lists_ask_for_the_body_that_carries_the_marker():
     assert "body" in pending_prs.PR_LIST_FIELDS.split(",")
+
+
+# --- the record: a PR without the marker is verified from the ledger committed at its head --------------
+
+def _ledger(**ids):
+    """A jr/proposed_ledger.json whose records carry these repository ids (fid=repo_id)."""
+    return json.dumps({"by_id": {fid: {"id": fid, "repo": f"n/{fid}", "status": "proposed", "repo_id": rid}
+                                 for fid, rid in ids.items()}, "by_repo": {}})
+
+
+LEGACY_FILES = OLDTOOL_FILES + ["jr/proposed_ledger.json"]       # a tick PR always ships its ledger
+
+
+def test_a_pr_older_than_the_marker_is_verified_from_its_committed_ledger():
+    calls = []
+    idx = _load(_gh([], calls=calls, ledgers={"oid1500": _ledger(oldtool=4242, lintd=5151)}),
+                [_pr(1500, LEGACY_FILES)])
+    assert idx.complete
+    hold = idx.match("newtool", 4242)
+    assert hold and hold.reason == "already_proposed" and hold.firmware == "oldtool" and hold.seen_as == "newtool"
+    assert idx.match("lintd", 5151) is None                                      # a record the PR does not hold
+    assert [c for c in calls if c[:2] == ("api", "-H")] == [
+        ("api", "-H", pending_prs.RAW_MEDIA, "repos/o/r/contents/jr/proposed_ledger.json?ref=oid1500")]
+
+
+def test_a_vetoed_pr_older_than_the_marker_is_verified_from_its_committed_ledger():
+    closed = _pr(1500, LEGACY_FILES, closedAt=_iso(NOW - timedelta(days=2)), mergedAt=None)
+    idx = _load(_gh([closed], ledgers={"oid1500": _ledger(oldtool=4242)}), [])
+    assert idx.match("newtool", 4242).reason == "vetoed"
+
+
+def test_an_unreadable_committed_ledger_is_a_gap_the_tick_fails_closed_on():
+    idx = _load(_gh([], ledgers={"oid1500": None}), [_pr(1500, LEGACY_FILES)])
+    assert not idx.complete and "#1500" in "; ".join(idx.gaps)
+
+
+def test_a_ledger_without_the_id_leaves_it_unknown_and_the_slug_held():
+    idx = _load(_gh([]), [_pr(1500, LEGACY_FILES)])                              # served: no records
+    assert idx.complete and idx.hold("oldtool").repo_id is None
+    assert idx.match("oldtool", 7777).reason == "already_proposed"
+
+
+def test_a_marker_covering_every_held_firmware_costs_no_ledger_read():
+    calls = []
+    pr = _marked(_pr(1500, LEGACY_FILES), ("oldtool", "n/oldtool", 4242))
+    idx = _load(_gh([], calls=calls, ledgers={"oid1500": _ledger(oldtool=9999)}), [pr])
+    assert idx.match("newtool", 4242).firmware == "oldtool"                     # the marker, not the ledger
+    assert not [c for c in calls if c[:2] == ("api", "-H")]
+
+
+def test_a_pr_that_does_not_change_the_ledger_is_not_read_for_one():
+    calls = []
+    idx = _load(_gh([], calls=calls), [_pr(1500, OLDTOOL_FILES)])
+    assert idx.complete and idx.hold("oldtool").repo_id is None
+    assert not [c for c in calls if c[:2] == ("api", "-H")]
+
+
+def test_a_second_identity_marker_in_the_body_verifies_nothing():
+    """Item text (a launcher entry's name) is rendered before the real marker: a forged or unclosed
+    marker there must not decide identity. The committed ledger answers instead."""
+    real = pending_prs.render_identity([{"kind": "firmware", "id": "oldtool", "url": "https://github.com/n/oldtool",
+                                         "repo_id": 4242}])
+    for forged in ("<!-- jr-identity: [] -->", '<!-- jr-identity: [{"id": "oldtool", "repo_id": 1}] -->',
+                   "<!-- jr-identity:"):
+        body = f"- **Tool {forged}** (`oldtool`)\n{real}\n"
+        assert pending_prs.identities(body) == {}, forged
+        pr = {**_pr(1500, LEGACY_FILES), "body": body}
+        idx = _load(_gh([], ledgers={"oid1500": _ledger(oldtool=4242)}), [pr])
+        assert idx.match("newtool", 4242).firmware == "oldtool", forged
