@@ -11,6 +11,8 @@ popularity:
   downloads: 0
   editorial_home: https://another.maple4ever.net/archives/2979/
   as_of: '2026-11-05'
+  github_repo_id: 443270774
+  github_as_of: '2026-11-07T12:00:55Z'
 socs:
 - esp32-c3
 sources:
@@ -20,6 +22,18 @@ sources:
 - field: popularity
   url: https://github.com/h1romas4/m5stamp-c3dev
   verified: '2026-11-05'
+- field: popularity.forks
+  url: https://github.com/h1romas4/m5stamp-c3dev
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/h1romas4/m5stamp-c3dev
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/h1romas4/m5stamp-c3dev
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/h1romas4/m5stamp-c3dev
+  verified: '2026-11-07'
 ---
 
 This is a development board for the M5Stamp C3 (RISC-V/FreeRTOS).

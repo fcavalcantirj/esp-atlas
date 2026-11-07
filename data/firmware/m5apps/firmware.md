@@ -8,9 +8,11 @@ maintainer: d4rkmen
 socs:
 - esp32-s3
 popularity:
-  stars: 91
+  stars: 100
   forks: 4
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 1103740185
+  github_as_of: '2026-11-07T12:00:55Z'
 sources:
 - field: '*'
   url: https://github.com/d4rkmen/M5Apps
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/d4rkmen/M5Apps
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/d4rkmen/M5Apps
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/d4rkmen/M5Apps
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/d4rkmen/M5Apps
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/d4rkmen/M5Apps
+  verified: '2026-11-07'
 summary: "M5Apps is a full\u2011featured firmware bundle for the M5 CardPuter that\
   \ provides a multi\u2011application launcher, enabling installation, management,\
   \ and execution of up to 16 apps from remote repositories, SD cards, or USB drives,\
