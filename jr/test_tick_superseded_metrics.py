@@ -164,7 +164,8 @@ def test_a_stale_mergeable_metrics_only_pr_is_closed_too(wt_dir):
 def test_the_diff_is_read_against_the_merge_base_with_read_only_calls(wt_dir):
     gh = gh_metrics([_tick_pr(1530, STALE)], {1530: METRICS_PR}, base=OLD, head=NEW)
     run(git=git_ok(wt_dir), gh=gh)
-    reads = [c for c in gh.calls if c[:1] == ("api",) and "/contents/" in c[1]]
+    reads = [c for c in gh.calls if c[:1] == ("api",) and "/contents/" in c[1]
+             and c[1].endswith(("?ref=base1530", "?ref=head1530"))]   # not the hydration's branch reads
     assert sorted(c[1] for c in reads) == sorted(f"repos/o/r/contents/{p}?ref={ref}"
                                                  for p in OLD for ref in ("base1530", "head1530"))
     assert any(c[:2] == ("api", "repos/o/r/compare/main...head1530") for c in gh.calls)
@@ -184,6 +185,14 @@ def test_a_pr_adding_a_new_firmware_is_never_auto_closed(wt_dir):
                     statuses={fw("brand-new"): "added"}, base=OLD, head=head)
     r = run(git=git_ok(wt_dir), gh=gh)
     assert _closes(gh) == [] and "#1532" in r.aborted and "needs a human" in r.aborted
+
+
+def test_only_a_modified_record_counts_whatever_its_contents_say(wt_dir):
+    for status in ("added", "removed", "renamed"):     # contents readable and popularity-only: status alone decides
+        gh = gh_metrics([_tick_pr(1539, STALE)], {1539: METRICS_PR}, statuses={fw("rogueduck"): status},
+                        base=OLD, head=NEW)
+        r = run(git=git_ok(wt_dir), gh=gh)
+        assert _closes(gh) == [] and "needs a human" in r.aborted, status
 
 
 def test_a_metrics_pr_that_also_changes_a_non_popularity_field_stays_stuck(wt_dir):
@@ -233,7 +242,8 @@ def test_a_young_mergeable_metrics_pr_is_left_alone_and_its_diff_never_read(wt_d
 # --- (3) closing records no rejection ----------------------------------------------------------
 
 def test_closing_a_metrics_pr_leaves_the_ledger_unchanged(wt_dir):
-    led = {"by_id": {f: {"id": f, "repo": f"o/{f}", "status": "merged", "reason": None, "pr_ref": "#100",
+    # as on main after PR 1530: the refreshed ids are `merged`, some even citing the closed PR's ref
+    led = {"by_id": {f: {"id": f, "repo": f"o/{f}", "status": "merged", "reason": None, "pr_ref": "#1530",
                          "timestamp": "2026-10-01T00:00:00+00:00", "expires": None} for f in IDS},
            "by_repo": {f"o/{f}": f for f in IDS}}
     (wt_dir / "jr" / "proposed_ledger.json").write_text(json.dumps(led, indent=2) + "\n")

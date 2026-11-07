@@ -158,6 +158,15 @@ Real writes replace a file atomically in Jr's isolated worktree; its guard and C
 staged result before publication. A true count that would put a non-exempt record below this
 spec's floor is deferred for data review rather than aborting unrelated tick work.
 
+### 2026-11-07: hourly in-catalog refresh retired
+
+GitHub counts are now published by the separate runtime JSON publisher
+(`jr/runtime_popularity.py`, `runtime-popularity.yml`; SPEC-firmware-popularity.md §10), so the
+hourly tick no longer runs `jr/stage_popularity_refresh.py` and never opens a PR that only edits
+counts in existing records. The module stays importable: the runtime publisher reuses its
+validation helpers. A tick PR it left open is closed by the tick preflight as superseded metrics
+(SPEC-jr-review-routing.md §3).
+
 `github_as_of` dates the GitHub counts; `downloads_as_of` and `editorial_home_as_of` are set
 only when those signals were observed and cited by their own sources. Scheduled GitHub refresh
 preserves launcher/home values and the legacy mixed-signal `as_of` without inferring a date

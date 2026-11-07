@@ -13,7 +13,11 @@ One tick, in order (PLAN §3.2):
     regenerates those files, so nothing is lost; dry-run only reports it). A stale one touching
     anything else (data/**) is NEVER closed — jr/memory.py reads a closed PR as a permanent
     rejection of its firmware — so the tick aborts naming it, whether it conflicts, and that it
-    needs a human. A PR labelled `jr-review` (jr/review_routing.py) is waiting for the owner ON
+    needs a human. One exception, superseded METRICS: a PR whose diff against its merge base (read
+    via read-only gh, jr/superseded_metrics.py) changes only bookkeeping and the popularity block /
+    popularity.* citations of existing catalogued firmware.md records — the retired in-catalog
+    popularity writer's output, now owned by jr/runtime_popularity.py. Those ids are `merged`, so
+    closing records no rejection; it is closed like a bookkeeping PR. A PR labelled `jr-review` (jr/review_routing.py) is waiting for the owner ON
     PURPOSE: it is never stuck and never closed, whatever its age; it is listed in the report with
     its age, and at MAX_OPEN_REVIEW_PRS open ones the review-producing stages are skipped (the cap,
     SPEC-jr-review-routing.md). Last: branch protection on `main` requires schema + tests + jr-tests and
@@ -80,6 +84,7 @@ import allocator  # noqa: E402
 import demand_signal  # noqa: E402
 import review_routing  # noqa: E402
 import review_memory  # noqa: E402
+import superseded_metrics  # noqa: E402
 import dry_run_tree  # noqa: E402
 from budget import Budget, BudgetExceeded  # noqa: E402
 
@@ -149,7 +154,9 @@ def hourly_stages(split: dict) -> list:
     Fixed at TOPICS_PER_TICK, outside the allocator's split — it never competes with Track A/B for
     units, and runs after boardmap so an admitted topics firmware's widening waits for its
     own next tick (mirrors admit/boardmap ordering being the ONE thing that matters within a track,
-    not across tracks). Popularity runs last, with at most seven repository calls.
+    not across tracks). GitHub popularity is NOT an hourly stage: the separate runtime JSON
+    publisher (jr/runtime_popularity.py, runtime-popularity.yml) owns it, so a tick never opens a
+    PR that only edits counts in existing records (jr/stage_popularity_refresh stays importable).
 
     `split` is {"backfill": n, "firmware": m}. The firmware units are shared admit≈boardmap
     (boardmap takes the odd one), and admit's call_share is its fraction of the firmware units."""
@@ -171,8 +178,6 @@ def hourly_stages(split: dict) -> list:
             out.append(lambda ctx, n=bmap: stage_boardmap.run(ctx, budget=n))
     import stage_admit_topics
     out.append(lambda ctx: stage_admit_topics.run(ctx, budget=TOPICS_PER_TICK))
-    import stage_popularity_refresh
-    out.append(stage_popularity_refresh.run)
     return out
 
 
@@ -254,6 +259,13 @@ SUPERSEDED_COMMENT = ("Superseded by later Jr ticks. This PR only touched tick b
                       "(jr/proposed_ledger.json, jr/board_cooldown.json, docs/telemetry/**), which later ticks regenerate "
                       "(a dropped board cooldown is re-derived the next time that board fails), so closing it loses "
                       "nothing. Closed automatically by the jr/tick.py preflight.")
+SUPERSEDED_METRICS_COMMENT = ("Superseded GitHub metrics. Against its merge base this PR only refreshed the popularity "
+                              "block (and its popularity.* citations) of firmware records already in the catalog, plus "
+                              "tick bookkeeping. Star/fork counts are now published by the separate runtime popularity "
+                              "JSON publisher (jr/runtime_popularity.py), so closing it loses nothing, and no rejection "
+                              "is recorded: those firmware ids are already merged. Closed automatically by the "
+                              "jr/tick.py preflight.")
+BOOKKEEPING, METRICS = "bookkeeping", "metrics"
 
 
 def _list_open_prs(gh) -> list | None:
@@ -310,11 +322,15 @@ def _pr_changed_paths(gh, number) -> list[str]:
         raise TickAbort(f"gh pr view #{number} files failed (cannot tell whether it is superseded)") from None
 
 
-def _triage_tick_prs(gh, prs: list, now: datetime, hours: float) -> tuple[list, list]:
-    """Split the open tick PRs that need attention into (superseded, stuck).
+def _triage_tick_prs(gh, prs: list, now: datetime, hours: float, slug: str | None = None) -> tuple[list, list]:
+    """Split the open tick PRs that need attention into (superseded, stuck); each superseded PR
+    carries `superseded`: BOOKKEEPING or METRICS.
 
     Only a CONFLICTING or stale (> `hours`) PR is looked at. One whose changed files are ALL
     bookkeeping is superseded: a later tick already rewrote those files, so it can be closed.
+    So is superseded METRICS: every path bookkeeping or an existing catalogued firmware.md whose
+    diff against the merge base (read-only gh on repo `slug`) is popularity-only — the runtime
+    publisher owns those counts and the ids are `merged`, so closing rejects nothing.
     A stale one that touches anything else (data/**, …) is stuck and needs a human — it is NEVER
     closed here, because jr/memory.py reads a closed proposed PR as a PERMANENT rejection of its
     firmware. A young conflicting content PR is left alone until it goes stale. A PR labelled
@@ -330,17 +346,20 @@ def _triage_tick_prs(gh, prs: list, now: datetime, hours: float) -> tuple[list, 
             continue
         paths = _pr_changed_paths(gh, pr.get("number"))
         if paths and all(_is_bookkeeping(p) for p in paths):
-            superseded.append(pr)
+            superseded.append({**pr, "superseded": BOOKKEEPING})
+        elif superseded_metrics.is_metrics_only(gh, slug, pr.get("number"), paths):
+            superseded.append({**pr, "superseded": METRICS})
         elif is_stale:
             stuck.append({**pr, "content": [p for p in paths if not _is_bookkeeping(p)]})
     return superseded, stuck
 
 
 def _close_superseded(gh, pr: dict) -> None:
-    n = pr.get("number")
-    p = gh("pr", "close", str(n), "--comment", SUPERSEDED_COMMENT, "--delete-branch")
+    n, kind = pr.get("number"), pr.get("superseded", BOOKKEEPING)
+    comment = SUPERSEDED_METRICS_COMMENT if kind == METRICS else SUPERSEDED_COMMENT
+    p = gh("pr", "close", str(n), "--comment", comment, "--delete-branch")
     if getattr(p, "returncode", 1) != 0:
-        raise TickAbort(f"gh pr close #{n} failed (superseded bookkeeping PR still open)")
+        raise TickAbort(f"gh pr close #{n} failed (superseded {kind} PR still open)")
 
 
 def _stuck_message(pr: dict, hours: float) -> str:
@@ -545,16 +564,17 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             raise TickAbort("gh pr list failed (cannot see open Jr PRs)")
         r.review_prs = _open_review_prs(open_prs, now)
         tick_prs = [pr for pr in open_prs if _is_tick_pr(pr)]
-        superseded, stuck = _triage_tick_prs(gh_c, tick_prs, now, stale_pr_hours)
+        slug = repo_slug or _repo_slug(git)
+        superseded, stuck = _triage_tick_prs(gh_c, tick_prs, now, stale_pr_hours, slug=slug)
         for pr in superseded:
+            what = f"superseded {pr['superseded']}-only tick PR #{pr.get('number')}"
             if dry_run:
-                r.warnings.append(f"would close superseded bookkeeping-only tick PR #{pr.get('number')}")
+                r.warnings.append(f"would close {what}")
             else:
                 _close_superseded(gh_c, pr)
-                r.warnings.append(f"closed superseded bookkeeping-only tick PR #{pr.get('number')}")
+                r.warnings.append(f"closed {what}")
         if stuck:
             raise TickAbort(_stuck_message(stuck[0], stale_pr_hours))
-        slug = repo_slug or _repo_slug(git)
         protection = publish.protection_status(slug, gh=gh_c)
         if not protection.ok:
             if dry_run:
