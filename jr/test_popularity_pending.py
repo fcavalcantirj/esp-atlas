@@ -68,6 +68,11 @@ class FakeGh:
         if args[:2] == ("pr", "create"):
             self.events.append("pr_create")
             return subprocess.CompletedProcess(args, 0, "https://github.com/o/r/pull/9\n", "")
+        if args[:3] == ("pr", "view", "https://github.com/o/r/pull/9"):
+            self.events.append("pr_readback")
+            return subprocess.CompletedProcess(args, 0, json.dumps({
+                "url": args[2], "state": "OPEN", "headRefOid": "c" * 40,
+                "author": {"login": publish.JR_LOGIN}, "autoMergeRequest": None}), "")
         if args[0] == "api" and "/pulls/" in args[1]:
             self.events.append("rest_files")
             return subprocess.CompletedProcess(args, 1, "", "HTTP 502")
@@ -454,6 +459,8 @@ def _orphan_git(diff):
             return subprocess.CompletedProcess(args, 0, "c" * 40 + f"\trefs/heads/{ORPHAN}\n", "")
         if args[:2] == ("fetch", "origin"):
             return subprocess.CompletedProcess(args, 0, "", "")
+        if args[:2] == ("rev-parse", "--verify"):
+            return subprocess.CompletedProcess(args, 0, "c" * 40 + "\n", "")
         if args[:2] == ("diff", "--name-only"):
             return subprocess.CompletedProcess(args, 1 if diff is None else 0, "\n".join(diff or []), "")
         raise AssertionError(f"unexpected git call {args}")

@@ -257,6 +257,10 @@ def test_intent_after_push_before_pr_creates_unarmed_pr_and_registers_delivery(t
             return subprocess.CompletedProcess(args, 0, "[]", "")
         if args[:2] == ("pr", "create"):
             return subprocess.CompletedProcess(args, 0, "https://github.com/o/r/pull/9\n", "")
+        if args[:3] == ("pr", "view", "https://github.com/o/r/pull/9"):
+            return subprocess.CompletedProcess(args, 0, json.dumps({
+                "url": args[2], "state": "OPEN", "headRefOid": "c" * 40,
+                "author": {"login": publish.JR_LOGIN}, "autoMergeRequest": None}), "")
         raise AssertionError(args)
     def git(*args):
         assert args[:2] == ("ls-remote", "origin")
