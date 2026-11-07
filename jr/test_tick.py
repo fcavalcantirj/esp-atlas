@@ -364,7 +364,8 @@ def test_stage_output_is_guarded_then_published_with_auto_merge(wt_dir):
     assert ("add", "--", "data/firmware/x", "jr/proposed_ledger.json") in calls
     assert any(c[:3] == ("checkout", "-q", "-B") and c[3] == "jr/tick-20260905-0407" for c in calls)
     assert ("push", "-u", "origin", "jr/tick-20260905-0407") in calls
-    assert gh.calls[-1] == ("pr", "merge", "https://github.com/o/r/pull/1", "--auto", "--squash")
+    assert gh.calls[-1] == ("pr", "merge", "https://github.com/o/r/pull/1", "--auto", "--squash",
+                            "--match-head-commit", "feedbee")
     assert calls[-3:] == [("worktree", "remove", "--force", str(wt_dir)), ("worktree", "prune"),
                           ("branch", "-D", "jr/tick-20260905-0407")]
     body = [c for c in gh.calls if c[:2] == ("pr", "create")][0]

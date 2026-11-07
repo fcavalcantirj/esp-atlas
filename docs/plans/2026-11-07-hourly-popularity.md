@@ -33,15 +33,18 @@ model invocation. `tick.py` invokes the popularity pass before growth; both
 execute under `scripts/jr-tick.sh`'s thermal check, one outer `flock` and a
 600-second hard timeout. Growth retains its 150-call/360-second budget.
 Popularity has a separate maximum of 12 source GraphQL HTTP requests and a
-60-second source window. Each source request has an eight-second deadline;
-catalog validation has a separate 60-second deadline. On the measured
+60-second source window starting when source retrieval begins, after delivery
+reconciliation and worktree preparation. A separate 210-second overall popularity
+runtime reserve includes reconciliation, source reads, guard and publication;
+the pass defers source work if too little of that reserve remains. Each source
+request has an eight-second deadline; catalog validation has a separate
+60-second deadline. On the measured
 146-candidate tree, one quota probe plus `ceil(146/25)=6` batches is seven
 GraphQL HTTP requests. [GitHub's GraphQL rate rules](https://docs.github.com/en/graphql/overview/rate-limits-and-query-limits-for-the-graphql-api)
 use point cost separately from HTTP request count; the pass records both and
 admits a new scalar-only batch only when its one-point bound leaves at least
-50 points afterward. The 60+60+360=480 second
-configured windows leave 120 seconds under the wrapper for preflight,
-worktrees, git, PR and other overhead. A slow operation can still hit the
+50 points afterward. The 210+360=570 second popularity reserve and growth
+budget leave 30 seconds under the wrapper for process overhead. A slow operation can still hit the
 wrapper timeout; no complete-coverage claim is made without natural timing.
 
 Each alias is bound to the requested canonical owner/repo. The response must
@@ -60,23 +63,32 @@ has an attempted/failed/deferred/excluded outcome and age in the receipt.
 The popularity pass uses its own fresh worktree and guarded PR. Its publisher
 stages only the returned firmware popularity paths, a per-record JSON receipt
 and the unchanged ledger pathspec; unrelated recipes cannot enter the commit.
-If one bot-owned AUTO popularity PR remains open at the next run, the new
-snapshot replaces its branch only when its head equals the prior head pinned
-in Jr's persistent box-local publication state. The publisher disarms and
-reads back any existing auto-merge request before replacement, uses an
-exact-head force-with-lease, and verifies the same PR and safe merge state
-afterward. A missing pin, review-labelled or ambiguous/multiple
-pending PR blocks replacement for human resolution. A push/PR failure is
+If one bot-owned AUTO popularity PR remains open at the next run, Jr advances
+its branch only when its head equals the prior head pinned in persistent
+box-local publication state. It fetches that exact head, merges current main
+locally before collecting the next snapshot, and makes a normal fast-forward
+push. The publisher disarms and reads back any existing auto-merge request
+before publication, then verifies the same PR and safe merge state afterward.
+No remote branch history is rewritten; a concurrent divergent change rejects
+the push. A missing pin, merge conflict, review-labelled or ambiguous/multiple
+pending PR blocks publication for human resolution. A push/PR failure is
 reported; the growth tick still runs. Existing branch protection, required
-CI and Jr's earned-trust auto-merge rule remain in force. Fetching or opening
+CI and Jr's earned-trust auto-merge rule remain in force. Before pushing, Jr
+persists an exact commit/branch/receipt intent. If the process stops after
+push or PR creation, the next run compares that intent with remote branch and
+PR heads, completing an exact orphan-branch as a draft, review-labelled PR
+without auto-merge or holding
+ambiguous state for review. The PR/delivery record is persisted before an
+auto-merge request, which is bound atomically to the exact bot commit using
+`--match-head-commit`; a changed head cannot be armed by this runner. Fetching or opening
 a PR is not a claim of committed or deployed freshness. The persistent state
 also tracks every publication through pending, merged, deployed, invalidated
 and sampled API plus rendered-page readback. Each natural hourly run advances
 this sequence, bounded to one live delivery check. A persisted least-recently
 checked sequence gives older unresolved and newly merged deliveries fair turns
-across process restarts, even as new PRs arrive. If a later merged commit is
-proven to descend from an older merge and changes one of its sampled firmware
-IDs, the older expectation is marked superseded with the newer PR/merge SHA;
+across process restarts, even as new PRs arrive. If a later *verified live*
+snapshot is proven to descend from an older merge and changes one of its sampled
+firmware IDs, the older expectation is marked superseded with the newer PR/merge SHA;
 it is never marked delivered. Other failed steps are retried on later runs and
 never recorded as delivered. The deploy gate reads the
 public API's full revision and proves the merge is its ancestor. Only after
@@ -93,9 +105,10 @@ runtime restarts; an unreadable state blocks publication.
 Offline tests cover the 146-candidate six-batch path, Nyan exclusion,
 duplicate/budget accounting, stable ID and count failures, below-floor
 deferral, partial GraphQL data, 200/403/429 rate errors with damaged bodies,
-cooldown, pinned-head pending PR replacement, remote auto-merge disarming,
+cooldown, pinned-head non-rewriting PR advance, crash recovery around push/PR/
+state persistence, exact-head auto-merge arming and remote disarming,
 quota boundaries, exact page-count parsing, fair recurring delivery transitions,
-merged supersession and popularity-only pathspec.
+deployment-lag readback, verified-live supersession and popularity-only pathspec.
 Catalog validation is required. The macOS local full Jr suite has unrelated
 fixture constraints (local HTTPS and Linux `bwrap`/preexec tests); required
 Linux CI is the authoritative gate for those. No paid inference test is run.

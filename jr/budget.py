@@ -33,6 +33,15 @@ class Budget:
     def elapsed(self) -> float:
         return self._clock() - self._start
 
+    def start_window(self) -> None:
+        """Start the bounded stage window after prerequisite work has completed.
+
+        A charged budget cannot be restarted: doing so would hide source work.
+        """
+        if self.calls:
+            raise RuntimeError("cannot restart a charged budget")
+        self._start = self._clock()
+
     def remaining_calls(self) -> int:
         return max(0, self.max_calls - self.calls)
 

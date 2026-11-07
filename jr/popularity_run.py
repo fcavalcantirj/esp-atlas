@@ -11,6 +11,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
@@ -26,6 +27,8 @@ MAX_GRAPHQL_CALLS = 12  # quota probe + ceil(146/25), with bounded catalog growt
 MAX_SECONDS = 60.0
 SOURCE_REQUEST_TIMEOUT = 8.0
 GUARD_TIMEOUT = 60.0
+MAX_RUN_SECONDS = 210.0  # leave 390s of the 600s wrapper for growth and overhead
+PUBLICATION_RESERVE = 30.0
 DEFAULT_STATE_FILE = Path.home() / ".local/state/esp-atlas/jr-popularity.json"
 BRANCH_PREFIX = "jr/popularity-"
 
@@ -52,7 +55,8 @@ def _state_integrity(path: Path) -> bool:
                   {"pending", "merged", "deployed", "invalidated", "readback_verified",
                    "deployed_no_count_change", "closed", "superseded"}
                   for row in value["deliveries"]))) and
-            ("published_head" not in value or isinstance(value["published_head"], dict)))
+            ("published_head" not in value or isinstance(value["published_head"], dict)) and
+            ("publication_intent" not in value or isinstance(value["publication_intent"], dict)))
 
 
 def _load_cooldown(path: Path) -> str | None:
@@ -87,8 +91,9 @@ def _save_cooldown(path: Path, until: str) -> None:
 def _pinned_head(path: Path, pending: dict) -> bool:
     """Only a head this runner previously published may be replaced.
 
-    The PR author and a force-with-lease alone cannot establish provenance: a
-    human commit already on the branch at lookup time would satisfy the lease.
+    The PR author and a normal fast-forward push alone cannot establish
+    provenance: a human commit already on the branch at lookup time would be
+    included unless the previously published head was pinned independently.
     Lost or corrupt local state therefore blocks refresh until reviewed.
     """
     pin = _load_state(path).get("published_head")
@@ -97,23 +102,141 @@ def _pinned_head(path: Path, pending: dict) -> bool:
             pin.get("sha") == pending.get("headRefOid"))
 
 
-def _save_published_head(path: Path, published: publish.PublishResult, *, root: Path,
-                         paths: list[str], now: datetime, receipt: str) -> None:
+def _save_publication_intent(path: Path, *, sha: str, branch: str, paths: list[str],
+                             samples: list[dict], receipt: str, subject: str, body: str,
+                             existing_pr_url: str | None, expected_head_sha: str | None,
+                             now: datetime) -> None:
+    if not isinstance(sha, str) or len(sha) != 40 or any(ch not in "0123456789abcdef" for ch in sha):
+        raise ValueError("new popularity commit lacks full SHA")
+    value = _load_state(path)
+    if value.get("publication_intent"):
+        raise RuntimeError("unrecovered popularity publication intent exists")
+    value["publication_intent"] = {"sha": sha, "branch": branch, "paths": paths,
+                                   "samples": samples, "receipt": receipt,
+                                   "subject": subject, "body": body,
+                                   "existing_pr_url": existing_pr_url,
+                                   "expected_head_sha": expected_head_sha,
+                                   "started_at": now.isoformat()}
+    _write_state(path, value)
+
+
+def _clear_publication_intent(path: Path) -> None:
+    value = _load_state(path)
+    value.pop("publication_intent", None)
+    _write_state(path, value)
+
+
+def _save_published_head(path: Path, published: publish.PublishResult, *,
+                         samples: list[dict], now: datetime, receipt: str) -> None:
     if not published.commit or len(published.commit) != 40 or \
             any(ch not in "0123456789abcdef" for ch in published.commit):
         raise ValueError("published popularity head lacks full commit SHA")
     value = _load_state(path)
+    intent = value.get("publication_intent")
+    if not isinstance(intent, dict) or intent.get("sha") != published.commit or \
+            intent.get("branch") != published.branch:
+        raise RuntimeError("publication intent does not match the remote PR")
     value["published_head"] = {"url": published.pr_url, "branch": published.branch,
                                "sha": published.commit}
-    popularity_delivery.register(value, published, popularity_delivery.expected_samples(root, paths),
-                                 now, receipt)
+    popularity_delivery.register(value, published, samples, now, receipt)
+    del value["publication_intent"]
     _write_state(path, value)
 
 
+def _recover_publication_intent(path: Path, gh, git) -> str | None:
+    """Resolve a durable pre-push intent against exact remote branch/PR state.
+
+    A process may stop after push or PR creation. Never infer success from a
+    branch name alone; only the recorded commit can become a delivery. An
+    orphan exact branch can be given an unarmed PR; any ambiguity stays on
+    disk and blocks the next publication for review.
+    """
+    intent = _load_state(path).get("publication_intent")
+    if intent is None:
+        return None
+    if not isinstance(intent, dict):
+        raise RuntimeError("publication intent malformed")
+    sha, branch = intent.get("sha"), intent.get("branch")
+    if not isinstance(sha, str) or len(sha) != 40 or any(ch not in "0123456789abcdef" for ch in sha) or \
+            not isinstance(branch, str) or not branch.startswith(BRANCH_PREFIX) or \
+            not isinstance(intent.get("paths"), list) or not isinstance(intent.get("samples"), list):
+        raise RuntimeError("publication intent lacks exact commit or paths")
+    url = intent.get("existing_pr_url")
+    recovered_state = "OPEN"
+    if url:
+        response = gh("pr", "view", url, "--json", "url,state,headRefOid,author")
+        if getattr(response, "returncode", 1) != 0:
+            raise RuntimeError("pending PR unavailable during publication recovery")
+        try:
+            pr = json.loads(response.stdout or "")
+        except (TypeError, ValueError):
+            raise RuntimeError("pending PR unreadable during publication recovery") from None
+        if not isinstance(pr, dict) or pr.get("url") != url or \
+                (pr.get("author") or {}).get("login") != publish.JR_LOGIN:
+            raise RuntimeError("pending PR identity changed during publication recovery")
+        if pr.get("headRefOid") == intent.get("expected_head_sha") and pr.get("state") == "OPEN":
+            _clear_publication_intent(path)  # push never happened
+            return "discarded unpushed intent"
+        if pr.get("headRefOid") != sha or pr.get("state") not in ("OPEN", "MERGED"):
+            raise RuntimeError("pending PR head changed during publication recovery")
+        recovered_url = url
+        recovered_state = pr["state"]
+    else:
+        response = gh("pr", "list", "--state", "all", "--head", branch, "--limit", "100",
+                      "--json", "url,state,headRefOid,author")
+        if getattr(response, "returncode", 1) != 0:
+            raise RuntimeError("PR search unavailable during publication recovery")
+        try:
+            prs = json.loads(response.stdout or "")
+        except (TypeError, ValueError):
+            raise RuntimeError("PR search unreadable during publication recovery") from None
+        if not isinstance(prs, list) or len(prs) > 1:
+            raise RuntimeError("PR search ambiguous during publication recovery")
+        if prs:
+            pr = prs[0]
+            if not isinstance(pr, dict) or pr.get("headRefOid") != sha or \
+                    pr.get("state") not in ("OPEN", "MERGED") or \
+                    (pr.get("author") or {}).get("login") != publish.JR_LOGIN or \
+                    not isinstance(pr.get("url"), str):
+                raise RuntimeError("remote PR differs from persisted publication intent")
+            recovered_url = pr["url"]
+            recovered_state = pr["state"]
+        else:
+            remote = git("ls-remote", "origin", f"refs/heads/{branch}")
+            if getattr(remote, "returncode", 1) != 0:
+                raise RuntimeError("remote branch unreadable during publication recovery")
+            lines = (getattr(remote, "stdout", "") or "").strip().splitlines()
+            if not lines:
+                _clear_publication_intent(path)  # no remote effect
+                return "discarded unpushed intent"
+            if len(lines) != 1 or lines[0].split() != [sha, f"refs/heads/{branch}"]:
+                raise RuntimeError("remote branch differs from persisted publication intent")
+            created = gh("pr", "create", "--draft", "--base", "main", "--head", branch,
+                         "--title", intent.get("subject") or "", "--body", intent.get("body") or "")
+            if getattr(created, "returncode", 1) != 0:
+                raise RuntimeError("exact pushed branch lacks PR; recovery creation failed")
+            recovered_url = (getattr(created, "stdout", "") or "").strip()
+            if not recovered_url.startswith("https://github.com/"):
+                raise RuntimeError("recovery PR URL unreadable")
+    if recovered_state == "OPEN":
+        labelled, why = publish.apply_review_label(recovered_url, gh=gh)
+        if not labelled:
+            raise RuntimeError(f"recovered open PR needs jr-review label: {why}")
+    published = publish.PublishResult(True, branch=branch, commit=sha, pr_url=recovered_url,
+                                      paths=intent["paths"])
+    try:
+        when = datetime.fromisoformat(intent["started_at"])
+    except (KeyError, TypeError, ValueError):
+        when = datetime.now(timezone.utc)
+    _save_published_head(path, published, samples=intent["samples"], now=when,
+                         receipt=intent.get("receipt") or "")
+    return f"recovered exact popularity PR {recovered_url} at {sha}"
+
+
 def _pending_popularity_pr(gh) -> dict | None:
-    """Find at most one bot-owned AUTO popularity PR to update with a lease."""
+    """Find at most one bot-owned AUTO popularity PR to update without rewriting."""
     response = gh("pr", "list", "--state", "open", "--limit", "500", "--json",
-                  "number,url,headRefName,headRefOid,baseRefName,labels,author")
+                  "number,url,headRefName,headRefOid,baseRefName,labels,author,isDraft")
     if getattr(response, "returncode", 1) != 0:
         raise RuntimeError("open popularity PR list unavailable")
     try:
@@ -131,7 +254,7 @@ def _pending_popularity_pr(gh) -> dict | None:
     if not pending:
         return None
     pr = pending[0]
-    if (pr.get("baseRefName") != "main" or
+    if (pr.get("baseRefName") != "main" or pr.get("isDraft") is True or
             any((label.get("name") or "").casefold() == "jr-review"
                 for label in pr.get("labels") or [] if isinstance(label, dict)) or
             not isinstance(pr.get("url"), str) or
@@ -158,8 +281,9 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
         git=publish.default_git, gh=publish.default_gh, guard=None,
         repo_slug: str | None = None, auto_merge: bool = True,
         budget: Budget | None = None, state_file: Path | None = None,
-        fetch=None, revalidate=publish.revalidate_catalog) -> dict:
+        fetch=None, revalidate=publish.revalidate_catalog, clock=time.monotonic) -> dict:
     now = now or datetime.now(timezone.utc)
+    overall_started = clock()
     guard = guard or default_guard
     budget = budget or Budget(max_calls=MAX_GRAPHQL_CALLS, max_seconds=MAX_SECONDS)
     state_file = state_file or Path(os.environ.get("JR_POPULARITY_STATE_FILE", DEFAULT_STATE_FILE))
@@ -176,6 +300,7 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
     wt = None
     scratch = None
     observed_calls = 0
+    source_window_started = False
 
     def observed_gh(*args):
         nonlocal observed_calls
@@ -195,6 +320,13 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
     try:
         if not dry_run:
             try:
+                recovered = _recover_publication_intent(state_file, observed_gh, git)
+                if recovered:
+                    result["recovery"] = recovered
+            except Exception as exc:
+                result["reason"] = f"publication recovery held: {type(exc).__name__}: {exc}"
+                return result
+            try:
                 result["delivery"] = popularity_delivery.reconcile(
                     state_file, load_state=_load_state, write_state=_write_state,
                     gh=observed_gh, git=git, secret=os.environ.get("REVALIDATE_SECRET"),
@@ -209,11 +341,22 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
         if not protection.ok:
             result["reason"] = "branch protection: " + protection.reason
             return result
+        pending = None if dry_run else _pending_popularity_pr(observed_gh)
+        result["pending_pr"] = pending.get("url") if pending else None
+        if pending and not _pinned_head(state_file, pending):
+            result["reason"] = "pending popularity PR head lacks matching local bot publication pin; preserve branch for review"
+            return result
+        if clock() - overall_started > MAX_RUN_SECONDS - MAX_SECONDS - GUARD_TIMEOUT - PUBLICATION_RESERVE:
+            result["reason"] = "overall popularity runtime reserve exhausted before source pass; eligible records deferred"
+            return result
         if dry_run:
             scratch = dry_run_tree.copy(REPO)
             root, base_sha = scratch, "dry-run-local-copy"
         else:
             wt = publish.add_worktree(git=git)
+            if pending:
+                publish.prepare_existing_popularity_worktree(
+                    wt, pending["headRefName"], pending["headRefOid"], git=git)
             if not publish.is_clean(wt, git=git):
                 result["reason"] = "fresh popularity worktree is not clean"
                 return result
@@ -221,6 +364,8 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
         ctx = SimpleNamespace(root=root, now=now, gh=budget.wrap(observed_gh),
                               budget=budget, dry_run=dry_run, base_sha=base_sha,
                               cooldown_until=_load_cooldown(state_file))
+        budget.start_window()
+        source_window_started = True
         stage = popularity_full.run(ctx)
         result["stage"] = stage.summary
         result["coverage"] = next((item["coverage"] for item in stage.items
@@ -239,14 +384,15 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
             result["ok"] = complete_attempt
             result["would_write"] = len(stage.would_write)
             return result
+        if clock() - overall_started > MAX_RUN_SECONDS - GUARD_TIMEOUT - PUBLICATION_RESERVE:
+            result["reason"] = "overall popularity runtime reserve exhausted before guard; staged values unpublished"
+            return result
         verdict = guard(root)
         if not verdict.get("ok"):
             result["reason"] = "guard red: " + str(verdict.get("output") or "")[-300:]
             return result
-        pending = _pending_popularity_pr(observed_gh)
-        result["pending_pr"] = pending.get("url") if pending else None
-        if pending and not _pinned_head(state_file, pending):
-            result["reason"] = "pending popularity PR head lacks matching local bot publication pin; preserve branch for review"
+        if clock() - overall_started > MAX_RUN_SECONDS - PUBLICATION_RESERVE:
+            result["reason"] = "overall popularity runtime reserve exhausted before publication; staged values unpublished"
             return result
         body = ("Deterministic hourly full-catalog popularity pass; no LLM.\n\n"
                 f"Base: `{base_sha}`. {stage.summary}\n\n"
@@ -259,17 +405,30 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
                 "runtime observation. No source-read retries.")
         branch = pending["headRefName"] if pending else BRANCH_PREFIX + now.strftime("%Y%m%d-%H%M")
         subject = "feat(jr): popularity " + now.strftime("%Y-%m-%d %H:%M") + " UTC"
+        samples = popularity_delivery.expected_samples(root, stage.paths)
+
+        def on_committed(sha, commit_branch, paths):
+            _save_publication_intent(state_file, sha=sha, branch=commit_branch, paths=paths,
+                                     samples=samples, receipt=result["receipt"], subject=subject,
+                                     body=body, existing_pr_url=pending["url"] if pending else None,
+                                     expected_head_sha=pending["headRefOid"] if pending else None,
+                                     now=now)
+
+        def on_pr_ready(url, sha, pr_branch, paths):
+            saved = publish.PublishResult(True, branch=pr_branch, commit=sha, pr_url=url,
+                                          paths=paths)
+            _save_published_head(state_file, saved, samples=samples, now=now,
+                                 receipt=result["receipt"])
+
         published = publish.publish(wt, stage.paths, subject, body, git=git, gh=observed_gh,
                                     now=now, repo_slug=slug, protection=protection,
                                     auto_merge=auto_merge, branch=branch,
                                     existing_pr_url=pending["url"] if pending else None,
                                     expected_head_sha=pending["headRefOid"] if pending else None,
+                                    on_committed=on_committed, on_pr_ready=on_pr_ready,
                                     stages=[{"name": stage.name, "paths": list(stage.paths),
                                              "needs_human": False}])
         result["publish"] = published.as_dict()
-        if published.published and published.pr_url and published.commit:
-            _save_published_head(state_file, published, root=root, paths=stage.paths,
-                                 now=now, receipt=result["receipt"])
         result["ok"] = published.published and complete_attempt
         result["reason"] = published.reason + ("; incomplete repository attempt coverage" if not complete_attempt else "")
         return result
@@ -287,8 +446,10 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
                 result["ok"] = False
         if scratch is not None:
             dry_run_tree.remove(scratch)
-        result["graphql_budget"] = budget.summary()
+        result["graphql_budget"] = (budget.summary() if source_window_started else
+                                    f"gh calls {budget.calls}/{budget.max_calls} · source window not started")
         result["all_gh_calls"] = observed_calls
+        result["overall_seconds"] = round(clock() - overall_started, 1)
 
 
 def render_line(result: dict) -> str:
@@ -306,4 +467,5 @@ def render_line(result: dict) -> str:
         delivery_note += f" error:{result['delivery_error']}"
     return (f"jr-popularity {status}: {result.get('stage') or result.get('reason')} · "
             f"{pr} · {result.get('graphql_budget')} · gh CLI invocations {result.get('all_gh_calls')}"
+            + (f" · recovery {result['recovery']}" if result.get("recovery") else "")
             + (f" · delivery {delivery_note}" if delivery_note else ""))

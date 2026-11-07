@@ -165,6 +165,10 @@ def test_newer_merged_snapshot_supersedes_stale_older_sample_without_certifying_
         raise AssertionError(url)
     def purge(secret):
         return {"ok": True, "status": 200, "body": '{"revalidated":true,"tag":"catalog"}'}
+    first = _reconcile(path, gh, git, fetch, purge)
+    assert [r["state"] for r in first] == ["invalidated", "merged"]
+    second = _reconcile(path, gh, git, fetch, purge)
+    assert [r["state"] for r in second] == ["invalidated", "readback_verified"]
     rows = _reconcile(path, gh, git, fetch, purge)
     assert [r["state"] for r in rows] == ["superseded", "readback_verified"]
     saved = popularity_run._load_state(path)["deliveries"]
@@ -220,6 +224,64 @@ def test_live_delivery_schedule_is_fair_across_restarts_without_supersession_pro
     state = popularity_run._load_state(path)
     assert state["deliveries"][0]["live_check_sequence"] == 3
     assert state["deliveries"][2]["live_check_sequence"] == 2
+
+
+def test_steady_one_deployment_lag_still_verifies_ready_predecessors(tmp_path):
+    path = tmp_path / "state.json"
+    live = {"revision": 1}
+    calls = []
+
+    def row(number, sequence):
+        return {"pr_url": f"https://github.com/o/r/pull/{number}",
+                "head_sha": "a" * 39 + str(number), "state": "merged",
+                "merge_sha": str(number) * 40, "changed_ids": ["fw"],
+                "live_check_sequence": sequence,
+                "samples": [{"id": "fw", "stars": number * 10, "forks": 5,
+                             "github_as_of": f"2026-11-07T0{number}:00:00Z"}]}
+
+    popularity_run._write_state(path, {"deliveries": [row(2, 0)]})
+
+    def gh(*args):
+        raise AssertionError("all PRs already merged")
+
+    def git(*args):
+        if args[:2] == ("merge-base", "--is-ancestor"):
+            return SimpleNamespace(returncode=0 if int(args[2][0]) <= int(args[3][0]) else 1)
+        return SimpleNamespace(returncode=0)
+
+    def fetch(url):
+        number = live["revision"]
+        if url.endswith("/api/status"):
+            return 200, json.dumps({"components": [{"name": "Deploy", "revision": str(number) * 40}]}).encode()
+        if url.endswith("/api/firmware/fw"):
+            calls.append(("api", number))
+            return 200, json.dumps({"popularity": {"stars": number * 10, "forks": 5,
+                "github_as_of": f"2026-11-07T0{number}:00:00Z"}}).encode()
+        if url.endswith("/firmware/fw"):
+            calls.append(("page", number))
+            return 200, _page(number * 10, 5, f"2026-11-07 0{number}:00 UTC")
+        raise AssertionError(url)
+
+    def purge(secret):
+        calls.append(("purge", live["revision"]))
+        return {"ok": True, "status": 200, "body": '{"revalidated":true,"tag":"catalog"}'}
+
+    first = _reconcile(path, gh, git, fetch, purge)  # merge 2; deployed 1
+    assert [r["state"] for r in first] == ["merged"] and not calls
+    state = popularity_run._load_state(path)
+    state["deliveries"].append(row(3, state["delivery_live_sequence"]))
+    popularity_run._write_state(path, state)
+    live["revision"] = 2
+    second = _reconcile(path, gh, git, fetch, purge)  # merge 3; deployed 2
+    assert [r["state"] for r in second] == ["readback_verified", "merged"]
+    state = popularity_run._load_state(path)
+    state["deliveries"].append(row(4, state["delivery_live_sequence"]))
+    popularity_run._write_state(path, state)
+    live["revision"] = 3
+    third = _reconcile(path, gh, git, fetch, purge)  # merge 4; deployed 3
+    assert [r["state"] for r in third] == ["readback_verified", "readback_verified", "merged"]
+    assert calls == [("purge", 2), ("api", 2), ("page", 2),
+                     ("purge", 3), ("api", 3), ("page", 3)]
 
 
 def test_register_supersedes_only_unmerged_head_and_samples_changed_record(tmp_path):

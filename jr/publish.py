@@ -115,6 +115,35 @@ def add_worktree(git=default_git, root: Path | None = None) -> Worktree:
     return wt
 
 
+def prepare_existing_popularity_worktree(wt: Worktree, branch: str, expected_head_sha: str,
+                                        git=default_git) -> None:
+    """Preserve a pending PR's commits and merge current main before refreshing it.
+
+    The local branch must be the exact previously pinned head. A normal push of
+    a descendant then rejects concurrent remote changes without rewriting PR
+    history. Any fetch, identity or merge uncertainty leaves the PR untouched.
+    """
+    if not re.fullmatch(r"jr/popularity-[0-9]{8}-[0-9]{4}", branch) or \
+            not re.fullmatch(r"[0-9a-f]{40,64}", expected_head_sha):
+        raise RuntimeError("pending popularity branch/head malformed")
+    ref = f"refs/remotes/origin/{branch}"
+    p = git("fetch", "origin", f"refs/heads/{branch}:{ref}")
+    if not _ok(p):
+        raise RuntimeError("pending popularity branch fetch failed")
+    fetched = _commit(git("rev-parse", "--verify", f"{ref}^{{commit}}"))
+    if fetched != expected_head_sha:
+        raise RuntimeError("pending popularity branch changed before worktree preparation")
+    p = git("-C", str(wt.path), "checkout", "-q", "--detach", expected_head_sha)
+    if not _ok(p):
+        raise RuntimeError("pending popularity head checkout failed")
+    p = git("-C", str(wt.path), "merge", "--no-edit", "origin/main")
+    if not _ok(p):
+        raise RuntimeError("pending popularity branch cannot merge current main cleanly")
+    for ancestor in (expected_head_sha, wt.base_sha):
+        if not _ok(git("-C", str(wt.path), "merge-base", "--is-ancestor", ancestor, "HEAD")):
+            raise RuntimeError("prepared popularity head lacks old PR or current main ancestry")
+
+
 def _commit(p) -> str:
     """The commit id a successful `rev-parse --verify` printed, or "" — never an arbitrary string."""
     sha = (getattr(p, "stdout", "") or "").strip()
@@ -399,7 +428,8 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
             protection: ProtectionStatus | None = None, auto_merge: bool = True,
             trust: TrustStatus | None = None, branch: str | None = None,
             stages: list | None = None, existing_pr_url: str | None = None,
-            expected_head_sha: str | None = None) -> PublishResult:
+            expected_head_sha: str | None = None,
+            on_committed=None, on_pr_ready=None) -> PublishResult:
     """Stage `paths` (+ the ledger) in the worktree, commit, push a fresh `jr/tick-…` branch (or
     the caller's `branch`, e.g. the daily demand runner's `jr/demand-…`), open the PR, and request
     auto-merge only when allowed (see the module docstring). `stages` are the tick's stage-result
@@ -429,6 +459,7 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
         git("-C", str(wt.path), "reset", "-q", "--", *pathspec)
         return PublishResult(False, branch=branch, paths=pathspec,
                              reason=f"deletion refused (G2 guard not in CI): {', '.join(protected)}")
+    route = review_routing.classify(changes, stages or (), needs_human=needs_human)
 
     # A pending PR may already be armed from a prior run. Disarm and verify
     # before replacing its head; otherwise a later policy veto could inherit
@@ -445,12 +476,20 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
     if not _ok(p):
         return PublishResult(False, branch=branch, paths=pathspec, reason="commit failed")
     sha = (getattr(git("-C", str(wt.path), "rev-parse", "HEAD"), "stdout", "") or "").strip()
+    if existing_pr_url and not _ok(git("-C", str(wt.path), "merge-base", "--is-ancestor",
+                                   expected_head_sha, "HEAD")):
+        return PublishResult(False, branch=branch, commit=sha, paths=pathspec,
+                             reason="refreshed PR head is not a descendant of its pinned head")
+    if on_committed is not None:
+        try:
+            on_committed(sha, branch, pathspec)
+        except Exception as exc:
+            return PublishResult(False, branch=branch, commit=sha, paths=pathspec,
+                                 reason=f"publication intent persistence failed: {type(exc).__name__}: {exc}")
     if existing_pr_url:
-        # The bot-owned popularity PR is refreshed from current main each hour.
-        # A precise lease rejects human/other-agent edits or a branch deleted
-        # after merge, rather than overwriting them.
-        p = git("-C", str(wt.path), "push",
-                f"--force-with-lease=refs/heads/{branch}:{expected_head_sha}", "origin", branch)
+        # The prepared head contains the prior PR commit. A normal fast-forward
+        # push preserves history and rejects any concurrent divergent update.
+        p = git("-C", str(wt.path), "push", "origin", branch)
     else:
         p = git("-C", str(wt.path), "push", "-u", "origin", branch)
     if not _ok(p):
@@ -460,25 +499,46 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
     if existing_pr_url:
         if not _ensure_disarmed(existing_pr_url, sha, gh):
             return PublishResult(False, branch=branch, commit=sha, paths=pathspec,
-                                 reason="existing PR changed, closed or armed after leased push")
+                                 reason="existing PR changed, closed or armed after fast-forward push")
         edited = gh("pr", "edit", existing_pr_url, "--title", subject, "--body", body)
         if not _ok(edited):
             return PublishResult(False, branch=branch, commit=sha, paths=pathspec,
                                  reason="existing PR body update failed")
         pr_url = existing_pr_url
+        if not _ensure_disarmed(pr_url, sha, gh):
+            return PublishResult(False, branch=branch, commit=sha, paths=pathspec,
+                                 reason="existing PR changed or armed during body update")
     else:
         pr = gh("pr", "create", "--base", "main", "--head", branch, "--title", subject, "--body", body)
         if not _ok(pr):
             return PublishResult(False, branch=branch, commit=sha, paths=pathspec, reason="pr create failed")
         pr_url = (getattr(pr, "stdout", "") or "").strip()
 
-    # 5. risk routing: a review route is labelled and NEVER auto-merges, labelled or not
-    route = review_routing.classify(changes, stages or (), needs_human=needs_human)
+    # Apply a required review label before declaring the PR recoverably
+    # published. A crash before this point leaves the durable intent; recovery
+    # conservatively labels the PR for review. No unlabelled REVIEW branch can
+    # be mistaken for AUTO by the next hourly run.
+    labelled = False
     if route.review:
         labelled, why = apply_review_label(pr_url, gh=gh, repo_slug=repo_slug)
-        reason = f"jr-review ({'; '.join(route.reasons)[:300]}): auto-merge withheld"
         if not labelled:
-            reason += f" · jr-review label FAILED ({why}) — the owner must find this PR by hand"
+            return PublishResult(False, branch=branch, commit=sha, pr_url=pr_url, paths=pathspec,
+                                 reason=f"jr-review label FAILED ({why}); auto-merge withheld",
+                                 route=route.route, review_reasons=list(route.reasons), labelled=False)
+
+    # The durable delivery record must exist before any auto-merge request.
+    # If a crash/write failure occurs here, the pre-push intent lets the next
+    # scheduled run recover the exact remote PR without inventing delivery.
+    if on_pr_ready is not None:
+        try:
+            on_pr_ready(pr_url, sha, branch, pathspec)
+        except Exception as exc:
+            return PublishResult(False, branch=branch, commit=sha, pr_url=pr_url, paths=pathspec,
+                                 reason=f"publication delivery persistence failed: {type(exc).__name__}: {exc}")
+
+    # 5. risk routing: a review route is labelled and NEVER auto-merges.
+    if route.review:
+        reason = f"jr-review ({'; '.join(route.reasons)[:300]}): auto-merge withheld"
         if existing_pr_url and not _ensure_disarmed(pr_url, sha, gh):
             return PublishResult(False, branch, sha, pr_url, False, pathspec,
                                  reason=reason + "; remote auto-merge state unsafe", route=route.route,
@@ -487,7 +547,13 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
                              route=route.route, review_reasons=list(route.reasons), labelled=labelled)
 
     # 6. auto-merge only when the gate is real
-    armed, reason = _auto_merge(pr_url, gh, git, auto_merge, deleted, protection, trust, repo_slug)
+    armed, reason = _auto_merge(pr_url, gh, git, auto_merge, deleted, protection, trust, repo_slug, sha)
+    if existing_pr_url:
+        remote = _pr_merge_state(pr_url, gh)
+        if not remote or remote.get("state") != "OPEN" or remote.get("headRefOid") != sha:
+            return PublishResult(False, branch, sha, pr_url, False, pathspec,
+                                 reason="existing PR head changed before/after auto-merge decision",
+                                 route=route.route)
     if existing_pr_url and not armed and not _ensure_disarmed(pr_url, sha, gh):
         return PublishResult(False, branch, sha, pr_url, False, pathspec,
                              reason=reason + "; remote auto-merge state unsafe", route=route.route)
@@ -495,7 +561,7 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
 
 
 def _auto_merge(pr_url: str, gh, git, auto_merge: bool, deleted: list, protection, trust,
-                repo_slug) -> tuple[bool, str]:
+                repo_slug, expected_sha: str) -> tuple[bool, str]:
     """(auto_merge_armed, reason) for an AUTO-routed PR: the caller, deletions, branch protection
     and earned trust must all allow it before `gh pr merge --auto` is requested."""
     if not auto_merge:
@@ -512,7 +578,8 @@ def _auto_merge(pr_url: str, gh, git, auto_merge: bool, deleted: list, protectio
     trust = trust_status(gh=gh) if trust is None else trust
     if not trust.ok:
         return False, f"auto-merge withheld: {trust.reason}"
-    if not _ok(gh("pr", "merge", pr_url, "--auto", "--squash")):
+    if not _ok(gh("pr", "merge", pr_url, "--auto", "--squash",
+                  "--match-head-commit", expected_sha)):
         return False, "gh pr merge --auto failed"
     return True, ""
 

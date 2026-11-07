@@ -49,6 +49,9 @@ def register(state: dict, published: publish.PublishResult, samples: list[dict],
     deliveries = state.setdefault("deliveries", [])
     if not isinstance(deliveries, list):
         raise ValueError("popularity delivery state malformed")
+    if any(row.get("pr_url") == published.pr_url and row.get("head_sha") == published.commit
+           for row in deliveries if isinstance(row, dict)):
+        return
     for row in deliveries:
         if row.get("pr_url") == published.pr_url and row.get("state") == "pending":
             row["state"] = "superseded"
@@ -208,16 +211,18 @@ def reconcile(state_file: Path, *, load_state, write_state, gh, git, secret: str
                 continue
             row.update(state="merged", merge_sha=merge_sha, merged_at=pr.get("mergedAt"), reason="")
             save(row)
-    # A later merged commit may intentionally replace a sampled record before
-    # an older delivery is observed on the site. Prove commit order, then mark
-    # the older expectation superseded rather than forever retrying or claiming
-    # it was delivered. Missing ancestry evidence leaves it pending.
+    # A later *verified live* snapshot may replace a sampled record. Mere merge
+    # ancestry is insufficient: with a one-deployment lag the older revision
+    # can be ready for readback now, while the newer merge is not deployed yet.
+    # Certify the ready predecessor first. Only verified newer page evidence
+    # can supersede it; missing ancestry leaves the older delivery pending.
     active_states = {"merged", "deployed", "invalidated"}
     merged_evidence = [r for r in deliveries if isinstance(r, dict) and
-                       r.get("state") in active_states | {"readback_verified", "superseded"} and
+                       r.get("state") in active_states | {"readback_verified"} and
                        isinstance(r.get("merge_sha"), str) and SHA.fullmatch(r["merge_sha"])]
     candidates = [(old, new) for old in merged_evidence if old.get("state") in active_states
-                  for new in merged_evidence if new is not old and new["merge_sha"] != old["merge_sha"]
+                  for new in merged_evidence if new.get("state") == "readback_verified"
+                  and new is not old and new["merge_sha"] != old["merge_sha"]
                   and {s.get("id") for s in old.get("samples") or [] if isinstance(s, dict)} &
                   set(new.get("changed_ids") or [s.get("id") for s in new.get("samples") or []
                                                  if isinstance(s, dict)])]

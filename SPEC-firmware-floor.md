@@ -178,8 +178,10 @@ The seven-repository slice above is the deployed behavior until this change merg
 the runtime clone updates. The hourly scheduler's existing script-only, no-LLM wrapper
 will run `jr/popularity_run.py` before the growth tick, under
 the same thermal check, process lock and 600-second wrapper deadline. The popularity pass
-gets a separate bounded GraphQL source-read budget and isolated worktree. It requests at
-most 25 repositories per query through aliases bound to their canonical owner/name,
+gets a separate bounded GraphQL source-read budget and isolated worktree. Its
+12-call/60-second source window starts after delivery reconciliation; a separate
+210-second overall popularity runtime reserve may defer source work. It requests
+at most 25 repositories per query through aliases bound to their canonical owner/name,
 asks for `nameWithOwner`, numeric `databaseId`/`fullDatabaseId`, `stargazerCount` and
 `forkCount`, and checks every response against the URL and any previously cited stable ID.
 The opaque GraphQL node `id` is never used as the REST repository ID. The
@@ -199,14 +201,17 @@ box-local cooldown. Failed/partial responses retain each record's last-good cite
 The publisher stages only popularity files and that receipt, applies `scripts/validate.py`
 and the existing review classifier, then opens or exact-head-updates a bot-owned
 popularity-only PR. An existing head must match Jr's independently persisted
-publication pin; the publisher verifies auto-merge is disarmed before and after
-replacement and refuses an uncertain remote state. It never stages a growth recipe.
+publication pin; Jr merges current main into that head and publishes only by
+normal fast-forward push. The publisher verifies auto-merge is disarmed before
+and after the update and refuses an uncertain remote state. A durable exact
+commit intent precedes any push, delivery is saved before auto-merge arming,
+and arming is tied to the bot commit with `--match-head-commit`. It never stages a growth recipe.
 Branch protection, required checks and earned-trust auto-merge remain gates.
 Every hourly run also reconciles pending popularity PRs through merge, deployed
 API revision containing the merge, successful catalog cache invalidation and
 sampled API plus exact rendered-count readback. Each transition and the fair
 live-check sequence are persisted outside the repo for restart recovery. A
-later merged snapshot that changes a sampled firmware supersedes an older
+later live-verified snapshot that changes a sampled firmware supersedes an older
 expectation only when commit ancestry proves the order; it does not certify
 the older count. A fetched value is not visible merely because Jr wrote a PR.
 
