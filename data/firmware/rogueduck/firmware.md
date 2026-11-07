@@ -25,8 +25,10 @@ not_required:
 - capability: storage
 popularity:
   stars: 6
-  forks: 1
-  as_of: '2026-09-20'
+  forks: 2
+  as_of: '2026-11-07'
+  github_repo_id: 1276009813
+  github_as_of: '2026-11-07T16:00:55Z'
 sources:
 - field: '*'
   url: https://github.com/M5RogueOps/M5StickS3-RogueDuck
@@ -37,6 +39,18 @@ sources:
 - field: summary
   url: https://github.com/M5RogueOps/M5StickS3-RogueDuck
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/M5RogueOps/M5StickS3-RogueDuck
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/M5RogueOps/M5StickS3-RogueDuck
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/M5RogueOps/M5StickS3-RogueDuck
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/M5RogueOps/M5StickS3-RogueDuck
+  verified: '2026-11-07'
 summary: "RogueDuck V2.1 is a custom firmware for the M5Stack StickS3 that turns the\
   \ device into a dual\u2011mode (AP\u202F+\u202FSTA) USB HID BadUSB platform with\
   \ a mobile\u2011first web interface for uploading, editing, and executing DuckyScript\
