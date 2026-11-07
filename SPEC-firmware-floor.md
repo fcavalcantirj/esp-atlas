@@ -194,6 +194,18 @@ URLs, six records with cited ID/date, and one known wrong-source Nyan URL, so 14
 candidates pending each response's identity check. This is candidate coverage, not a
 claim that all 146 source mappings have been independently validated.
 
+Before publication recovery, delivery reconciliation, any quota probe or GraphQL read,
+worktree or publication, the runner loads the growth tick's own pending-PR index
+(`jr/pending_prs.py`, its open-PR list and eligibility rule unchanged). An open or closed
+PR list that may be cut, or a Jr tick PR whose changed files cannot be listed whole,
+fails the whole pass closed: nothing is queried, staged or published. A record an OPEN
+Jr tick PR already changes is `deferred_open_tick_pr` (not attempted, bytes untouched,
+never grouped for a query); a repository whose every record is so held costs no source
+call, and a shared repository is queried only for its unheld records. A veto (closed
+unmerged) is no edit hold on a catalogued record's counts. `complete_attempt` holds only
+when every queryable repository was attempted AND no record was deferred; the receipt
+discloses the deferred count.
+
 A per-record receipt separates attempted/validated/deferred/excluded outcomes and age at
 run start. GitHub GraphQL request count, observed point cost and remaining quota are
 recorded separately; malformed or rate-limited responses stop later batches and set a

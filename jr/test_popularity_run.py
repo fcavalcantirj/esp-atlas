@@ -16,6 +16,16 @@ from test_stage_popularity_refresh import _record
 NOW = datetime(2026, 11, 7, 2, tzinfo=timezone.utc)
 
 
+def _no_tick_prs(gh):
+    """`gh` behind an empty, complete pending-PR inventory: no open or closed Jr tick PR holds
+    anything (jr/test_popularity_pending.py covers the holds)."""
+    def answered(*args):
+        if args[:2] == ("pr", "list") and ("closed" in args or "files" in args[-1]):
+            return subprocess.CompletedProcess(args, 0, "[]", "")
+        return gh(*args)
+    return answered
+
+
 @pytest.mark.parametrize("delivery_seconds,expected_attempts", [(40, 1), (70, 0)])
 def test_slow_delivery_has_separate_source_and_overall_clocks(
         tmp_path, monkeypatch, delivery_seconds, expected_attempts):
@@ -51,7 +61,7 @@ def test_slow_delivery_has_separate_source_and_overall_clocks(
         return ctx.gh(*args)
 
     budget = Budget(max_calls=12, max_seconds=60, clock=clock)
-    result = popularity_run.run(now=NOW, gh=source_gh, guard=lambda root: {"ok": True},
+    result = popularity_run.run(now=NOW, gh=_no_tick_prs(source_gh), guard=lambda root: {"ok": True},
                                 repo_slug="o/r", budget=budget,
                                 state_file=tmp_path / "state.json", clock=clock)
     assert len(source_calls) == expected_attempts + (1 if expected_attempts else 0)
@@ -87,7 +97,7 @@ def test_runner_publishes_only_popularity_paths_and_receipt(tmp_path, monkeypatc
 
     monkeypatch.setattr(publish, "publish", fake_publish)
     ctx, _ = _ctx(tmp_path)
-    result = popularity_run.run(now=NOW, gh=ctx.gh, guard=lambda root: {"ok": True},
+    result = popularity_run.run(now=NOW, gh=_no_tick_prs(ctx.gh), guard=lambda root: {"ok": True},
                                 repo_slug="o/r", budget=ctx.budget,
                                 state_file=tmp_path / "state.json")
     assert result["ok"] and result["publish"]["route"] == "auto"
@@ -108,7 +118,7 @@ def test_guard_failure_keeps_everything_off_remote(tmp_path, monkeypatch):
     monkeypatch.setattr(popularity_run, "_pending_popularity_pr", lambda gh: None)
     monkeypatch.setattr(publish, "publish", lambda *a, **k: (_ for _ in ()).throw(AssertionError("must not publish")))
     ctx, _ = _ctx(tmp_path)
-    result = popularity_run.run(now=NOW, gh=ctx.gh, guard=lambda root: {"ok": False, "output": "bad citation"},
+    result = popularity_run.run(now=NOW, gh=_no_tick_prs(ctx.gh), guard=lambda root: {"ok": False, "output": "bad citation"},
                                 repo_slug="o/r", budget=ctx.budget,
                                 state_file=tmp_path / "state.json")
     assert not result["ok"] and result["reason"].startswith("guard red")
@@ -142,7 +152,7 @@ def test_pending_pr_is_reused_only_after_pinned_head_preparation(tmp_path, monke
 
     monkeypatch.setattr(publish, "publish", fake_publish)
     ctx, _ = _ctx(tmp_path)
-    result = popularity_run.run(now=NOW, gh=ctx.gh, guard=lambda root: {"ok": True},
+    result = popularity_run.run(now=NOW, gh=_no_tick_prs(ctx.gh), guard=lambda root: {"ok": True},
                                 repo_slug="o/r", budget=ctx.budget, state_file=state_file)
     assert result["ok"] and result["pending_pr"] == pending["url"]
     assert captured["branch"] == pending["headRefName"]
@@ -166,7 +176,7 @@ def test_existing_human_head_before_lookup_is_preserved(tmp_path, monkeypatch):
     popularity_run._write_state(state_file, {"published_head": {
         "url": pending["url"], "branch": pending["headRefName"], "sha": "b" * 40}})
     ctx, _ = _ctx(tmp_path)
-    result = popularity_run.run(now=NOW, gh=ctx.gh, guard=lambda root: {"ok": True},
+    result = popularity_run.run(now=NOW, gh=_no_tick_prs(ctx.gh), guard=lambda root: {"ok": True},
                                 repo_slug="o/r", budget=ctx.budget, state_file=state_file)
     assert not result["ok"] and "preserve branch" in result["reason"]
 
@@ -326,7 +336,7 @@ def test_nonzero_http200_graphql_rate_error_persists_runner_cooldown(tmp_path, m
 
     ctx, calls = _ctx(tmp_path, doc_transform=rate_error, nonzero_calls=(2,))
     state = tmp_path / "cooldown.json"
-    result = popularity_run.run(now=NOW, gh=ctx.gh, guard=lambda root: {"ok": True},
+    result = popularity_run.run(now=NOW, gh=_no_tick_prs(ctx.gh), guard=lambda root: {"ok": True},
                                 repo_slug="o/r", budget=ctx.budget, state_file=state)
     assert len(calls) == 2
     assert result["cooldown_until"] == popularity_run._load_cooldown(state)
@@ -347,6 +357,8 @@ def test_timed_out_rate_headers_persist_cooldown_and_suppress_next_run(tmp_path,
         True, branch=k["branch"], pr_url="https://github.com/o/r/pull/1", route="auto"))
     calls = []
     def fake_subprocess(argv, **kwargs):
+        if argv[1:3] == ["pr", "list"]:   # an empty, complete pending-PR inventory
+            return subprocess.CompletedProcess(argv, 0, "[]", "")
         calls.append(argv)
         if len(calls) == 1:
             return subprocess.CompletedProcess(argv, 0,

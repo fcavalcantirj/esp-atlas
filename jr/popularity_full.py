@@ -3,6 +3,11 @@
 This runs separately from Jr's growth tick. One GraphQL query carries at most
 25 repository aliases; every canonical, non-quarantined repository is either
 queried once or explicitly recorded as unattempted. No LLM or same-run retry.
+
+A record an OPEN Jr tick PR already changes (jr/pending_prs.py, the index the runner
+passes on ctx) is deferred_open_tick_pr: never queried, never rewritten, and the attempt
+is not complete while one is deferred. A veto is no edit hold for a catalogued record's
+counts (the same rule as stage_popularity_refresh).
 """
 from __future__ import annotations
 
@@ -17,6 +22,7 @@ from pathlib import Path
 import yaml
 
 import backfill_popularity
+import pending_prs
 import review_routing
 import stage_popularity_refresh as legacy
 from esp_atlas_core.floor import CURATED_EXEMPT, clears_popularity_floor
@@ -25,6 +31,7 @@ BATCH_SIZE = 25
 MIN_GRAPHQL_POINTS = 50  # leave headroom for other consumers of Jr's token
 MIN_REMAINING_SECONDS = 20
 RECEIPT_DIR = Path("docs/telemetry/popularity")
+DEFERRED_OPEN = "deferred_open_tick_pr"
 
 
 def _next_batch_cost_bound(repos: list[str]) -> int:
@@ -193,6 +200,7 @@ def _stats(node, repo: str, old_id: object) -> dict | None:
 
 
 def _inventory(ctx, now: datetime):
+    pending = pending_prs.of(ctx)
     grouped: dict[str, list[tuple[Path, dict, str]]] = {}
     outcomes: dict[str, dict] = {}
     for path in sorted((ctx.root / "data" / "firmware").glob("*/firmware.md")):
@@ -216,6 +224,8 @@ def _inventory(ctx, now: datetime):
             outcomes[fid]["outcome"] = "excluded_invalid_url"
         elif (fid, repo) in legacy.QUARANTINED:
             outcomes[fid]["outcome"] = "excluded_wrong_source"
+        elif legacy._in_open_pr(pending, path):
+            outcomes[fid]["outcome"] = DEFERRED_OPEN
         else:
             grouped.setdefault(repo, []).append((path, fm, original))
     return grouped, outcomes
@@ -231,14 +241,16 @@ def _receipt(ctx, now: datetime, result, outcomes: dict, *, quota: dict | None,
              attempted_repos: int, successful_repos: int) -> None:
     rows = [outcomes[fid] for fid in sorted(outcomes)]
     counts = Counter(row["outcome"] for row in rows)
+    queryable = [row for row in rows if not row["outcome"].startswith("excluded_") and
+                 row["outcome"] != DEFERRED_OPEN]
     receipt = {
         "schema": 1,
         "run_at": now.isoformat(timespec="seconds").replace("+00:00", "Z"),
         "source_revision": getattr(ctx, "base_sha", None),
         "state": "proposed_not_deployed",
-        "eligible_repositories": len({row["repository"] for row in rows
-                                      if row["repository"] and not row["outcome"].startswith("excluded_")}),
+        "eligible_repositories": len({row["repository"] for row in queryable if row["repository"]}),
         "attempted_repositories": attempted_repos,
+        DEFERRED_OPEN: counts[DEFERRED_OPEN],
         "validated_repositories": successful_repos,
         "outcomes": dict(sorted(counts.items())),
         "graphql_rate": quota,
@@ -249,7 +261,8 @@ def _receipt(ctx, now: datetime, result, outcomes: dict, *, quota: dict | None,
     }
     result.items.append({"coverage": {"eligible_repositories": receipt["eligible_repositories"],
                                       "attempted_repositories": attempted_repos,
-                                      "validated_repositories": successful_repos}})
+                                      "validated_repositories": successful_repos,
+                                      DEFERRED_OPEN: counts[DEFERRED_OPEN]}})
     relative = RECEIPT_DIR / (now.strftime("%Y-%m-%dT%H") + ".json")
     if ctx.dry_run:
         result.would_write.append({"path": str(relative), "field": "*", "value": receipt})

@@ -3,6 +3,11 @@
 Called by tick.py before the ordinary growth tick, under scripts/jr-tick.sh's
 thermal gate, flock and hard timeout. Uses a separate worktree and a small
 GraphQL budget; no LLM, direct-to-main write or runtime database.
+
+Before any recovery, delivery, source read, worktree or publication it reads the
+same pending-PR index the growth tick does (jr/pending_prs.py): a firmware an OPEN
+Jr tick PR already changes is deferred, never rewritten; an inventory that may miss
+such a hold fails closed.
 """
 from __future__ import annotations
 
@@ -17,6 +22,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import dry_run_tree
+import pending_prs
 import popularity_delivery
 import popularity_full
 import publish
@@ -263,6 +269,17 @@ def _pending_popularity_pr(gh) -> dict | None:
     return pr
 
 
+def load_pending(gh, now: datetime, slug: str) -> pending_prs.PendingIndex | None:
+    """The growth tick's own pending-PR index: its open-PR list, then pending_prs.load unchanged.
+    None when the open list is unreadable; the caller fails closed on that and on any gap."""
+    from tick import OPEN_PR_LIMIT, _list_open_prs
+
+    open_prs = _list_open_prs(gh)
+    if open_prs is None:
+        return None
+    return pending_prs.load(gh, open_prs, now, slug=slug, open_limit=OPEN_PR_LIMIT)
+
+
 def default_guard(root: Path) -> dict:
     """Validate the isolated popularity tree; CI runs required tests on the PR."""
     from tick import guard_env
@@ -318,6 +335,16 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
         return gh(*args)
 
     try:
+        slug = repo_slug
+        if slug is None:
+            remote = git("remote", "get-url", "origin")
+            slug = publish.owner_repo(getattr(remote, "stdout", "") or "")
+        pending_index = load_pending(observed_gh, now, slug)
+        if pending_index is None or not pending_index.complete:
+            gaps = "; ".join(pending_index.gaps) if pending_index else "Jr PR list unreadable"
+            result["reason"] = ("pending-PR inventory incomplete, nothing queried, staged or published: "
+                                + gaps)
+            return result
         if not dry_run:
             try:
                 recovered = _recover_publication_intent(state_file, observed_gh, git)
@@ -333,10 +360,6 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
                     fetch=fetch, revalidate=revalidate, now=now)
             except Exception as exc:
                 result["delivery_error"] = f"{type(exc).__name__}: {exc}"
-        slug = repo_slug
-        if slug is None:
-            remote = git("remote", "get-url", "origin")
-            slug = publish.owner_repo(getattr(remote, "stdout", "") or "")
         protection = publish.protection_status(slug, gh=observed_gh)
         if not protection.ok:
             result["reason"] = "branch protection: " + protection.reason
@@ -363,7 +386,7 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
             root, base_sha = wt.path, wt.base_sha
         ctx = SimpleNamespace(root=root, now=now, gh=budget.wrap(observed_gh),
                               budget=budget, dry_run=dry_run, base_sha=base_sha,
-                              cooldown_until=_load_cooldown(state_file))
+                              cooldown_until=_load_cooldown(state_file), pending=pending_index)
         budget.start_window()
         source_window_started = True
         stage = popularity_full.run(ctx)
@@ -371,7 +394,9 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
         result["coverage"] = next((item["coverage"] for item in stage.items
                                    if isinstance(item, dict) and "coverage" in item), {})
         coverage = result["coverage"]
-        complete_attempt = coverage.get("eligible_repositories") == coverage.get("attempted_repositories")
+        # A record an open Jr tick PR holds was not attempted: the pass is incomplete until it is.
+        complete_attempt = (coverage.get("eligible_repositories") == coverage.get("attempted_repositories")
+                            and coverage.get(popularity_full.DEFERRED_OPEN) == 0)
         result["complete_attempt"] = complete_attempt
         result["receipt"] = str(popularity_full.RECEIPT_DIR / (now.strftime("%Y-%m-%dT%H") + ".json"))
         cooldowns = [item.get("cooldown_until") for item in stage.items
@@ -430,7 +455,9 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
                                              "needs_human": False}])
         result["publish"] = published.as_dict()
         result["ok"] = published.published and complete_attempt
-        result["reason"] = published.reason + ("; incomplete repository attempt coverage" if not complete_attempt else "")
+        result["reason"] = published.reason + (
+            f"; incomplete repository attempt coverage ({coverage.get(popularity_full.DEFERRED_OPEN)} "
+            "deferred to an open Jr tick PR)" if not complete_attempt else "")
         return result
     except Exception as exc:  # a failed popularity pass must not hide the growth tick's result
         result["reason"] = f"{type(exc).__name__}: {exc}"
