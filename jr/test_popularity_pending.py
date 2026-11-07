@@ -302,3 +302,118 @@ def test_guarded_non_dry_tick_main_makes_no_real_gh_call_and_touches_no_live_sta
     assert published == [["data/firmware/free/firmware.md", RECEIPT]]
     assert held.read_bytes() == before
 
+
+
+# --- checker follow-ups ---------------------------------------------------------------------------
+
+POPULARITY_PR = {"number": 8, "url": "https://github.com/o/r/pull/8", "headRefName": "jr/popularity-20261107-0100",
+                 "headRefOid": "b" * 40}
+
+
+def _reuse_popularity_pr(tmp_path, monkeypatch, diff):
+    """An earlier hour's bot popularity PR is reused at its pinned head; `diff` is what its prepared
+    branch changes against main (`git diff --name-only`), or None when git cannot tell."""
+    monkeypatch.setattr(popularity_run, "_pending_popularity_pr", lambda gh: POPULARITY_PR)
+    monkeypatch.setattr(publish, "prepare_existing_popularity_worktree", lambda *a, **k: None)
+    popularity_run._write_state(tmp_path / "state.json", {"published_head": {
+        "url": POPULARITY_PR["url"], "branch": POPULARITY_PR["headRefName"], "sha": POPULARITY_PR["headRefOid"]}})
+    seen = []
+
+    def git(*args):
+        seen.append(args)
+        assert args == ("-C", str(tmp_path), "diff", "--name-only", "a" * 40, "HEAD"), args
+        return subprocess.CompletedProcess(args, 1 if diff is None else 0, "\n".join(diff or []), "")
+    return git, seen
+
+
+@pytest.mark.parametrize("diff", [["data/firmware/held/firmware.md", RECEIPT], None])
+def test_reused_popularity_pr_already_changing_a_held_record_is_preserved_unpublished(
+        tmp_path, effects, monkeypatch, diff):
+    _record(tmp_path, "held", "owner/repo-001", {"stars": 30, "forks": 3})
+    _record(tmp_path, "free", "owner/repo-002", {"stars": 30, "forks": 3})
+    events, published = effects
+    git, seen = _reuse_popularity_pr(tmp_path, monkeypatch, diff)
+    gh = FakeGh(tmp_path, events, open_prs=[_tick_pr(1500, ["held"])])
+    result = popularity_run.run(now=NOW, gh=gh, git=git, guard=lambda root: {"ok": True},
+                                repo_slug="o/r", state_file=tmp_path / "state.json")
+    assert seen and not result["ok"] and result["publish"] is None and published == []
+    assert gh.queries == [] and result["stage"] is None
+    assert "preserve branch for review" in result["reason"]
+    if diff:
+        assert "held" in result["reason"] and "#1500" in result["reason"]
+
+
+def test_reused_popularity_pr_not_touching_a_held_record_is_still_updated(tmp_path, effects, monkeypatch):
+    _record(tmp_path, "held", "owner/repo-001", {"stars": 30, "forks": 3})
+    _record(tmp_path, "free", "owner/repo-002", {"stars": 30, "forks": 3})
+    events, published = effects
+    git, _ = _reuse_popularity_pr(tmp_path, monkeypatch, ["data/firmware/free/firmware.md", RECEIPT])
+    gh = FakeGh(tmp_path, events, open_prs=[_tick_pr(1500, ["held"])])
+    result = popularity_run.run(now=NOW, gh=gh, git=git, guard=lambda root: {"ok": True},
+                                repo_slug="o/r", state_file=tmp_path / "state.json")
+    assert published == [["data/firmware/free/firmware.md", RECEIPT]]
+    assert result["complete_attempt"] is False
+    assert "1 deferred to an open Jr tick PR" in result["reason"]
+
+
+@pytest.mark.parametrize("case,gap", [("open_list_fails", "unreadable"), ("closed_list_fails", "unreadable"),
+                                      ("open_list_cut", "hit its limit"),
+                                      ("file_list_incomplete", "cannot be listed whole")])
+def test_fail_closed_reason_names_the_real_gap(tmp_path, effects, case, gap):
+    events, _ = effects
+    open_prs = {"open_list_cut": [_tick_pr(n, []) for n in range(tick.OPEN_PR_LIMIT)],
+                "file_list_incomplete": [_tick_pr(1500, ["held"], changed=2)]}.get(case, [])
+    gh = FakeGh(tmp_path, events, open_prs=open_prs, open_rc=1 if case == "open_list_fails" else 0,
+                closed_rc=1 if case == "closed_list_fails" else 0)
+    result = _run(tmp_path, gh)
+    assert gap in result["reason"]
+
+
+def test_pending_load_raising_fails_closed_before_any_effect(tmp_path, effects, monkeypatch):
+    _record(tmp_path, "fw", "owner/repo-001", {"stars": 30, "forks": 3})
+    events, published = effects
+    monkeypatch.setattr(pending_prs, "load", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("boom")))
+    gh = FakeGh(tmp_path, events)
+    result = _run(tmp_path, gh)
+    assert not result["ok"] and result["stage"] is None and "boom" in result["reason"]
+    assert gh.queries == [] and published == []
+    assert not {"protection", "worktree", "delivery", "publish", "popularity_pr_lookup"} & set(events)
+
+
+def test_incomplete_for_another_reason_does_not_blame_a_tick_pr(tmp_path, effects):
+    _record(tmp_path, "fw", "owner/repo-001", {"stars": 30, "forks": 3})
+    events, _ = effects
+    gh = FakeGh(tmp_path, events)
+    gh.source, gh.queries = _ctx(tmp_path, remaining=40)      # quota too low: nothing attempted
+    result = _run(tmp_path, gh)
+    assert result["complete_attempt"] is False
+    assert "incomplete repository attempt coverage" in result["reason"]
+    assert "deferred to an open Jr tick PR" not in result["reason"]
+
+
+def _index(*held):
+    return pending_prs.build([_tick_pr(1500, list(held))], [], NOW)
+
+
+def test_dry_run_defers_held_record_without_a_would_write(tmp_path):
+    _record(tmp_path, "held", "owner/repo-001", {"stars": 30, "forks": 3})
+    _record(tmp_path, "free", "owner/repo-002", {"stars": 30, "forks": 3})
+    ctx, calls = _ctx(tmp_path, dry_run=True)
+    ctx.pending = _index("held")
+    result = popularity_full.run(ctx)
+    assert [w["path"] for w in result.would_write if w["field"] == "popularity"] == ["data/firmware/free/firmware.md"]
+    receipt = next(w["value"] for w in result.would_write if w["field"] == "*")
+    assert receipt["deferred_open_tick_pr"] == 1
+    assert [[f"{o}/{n}" for _, o, n in ALIAS.findall(q)] for q in calls] == [[], ["owner/repo-002"]]
+
+
+@pytest.mark.parametrize("kwargs", [{"cooldown_until": "2026-11-07T05:00:00+00:00"}, {"max_calls": 0}])
+def test_early_return_keeps_held_records_deferred(tmp_path, kwargs):
+    _record(tmp_path, "held", "owner/repo-001", {"stars": 30, "forks": 3})
+    _record(tmp_path, "free", "owner/repo-002", {"stars": 30, "forks": 3})
+    ctx, calls = _ctx(tmp_path, **kwargs)
+    ctx.pending = _index("held")
+    popularity_full.run(ctx)
+    receipt = json.loads((tmp_path / RECEIPT).read_text())
+    assert calls == [] and _row(receipt, "held")["outcome"] == "deferred_open_tick_pr"
+    assert _row(receipt, "free")["outcome"].startswith("unattempted_")
