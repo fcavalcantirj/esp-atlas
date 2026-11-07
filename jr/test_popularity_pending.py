@@ -65,6 +65,9 @@ class FakeGh:
                 return subprocess.CompletedProcess(args, self.closed_rc, json.dumps(self.closed_prs), "")
             self.events.append("popularity_pr_lookup")
             return subprocess.CompletedProcess(args, 0, "[]", "")
+        if args[:2] == ("pr", "create"):
+            self.events.append("pr_create")
+            return subprocess.CompletedProcess(args, 0, "https://github.com/o/r/pull/9\n", "")
         if args[0] == "api" and "/pulls/" in args[1]:
             self.events.append("rest_files")
             return subprocess.CompletedProcess(args, 1, "", "HTTP 502")
@@ -417,3 +420,117 @@ def test_early_return_keeps_held_records_deferred(tmp_path, kwargs):
     receipt = json.loads((tmp_path / RECEIPT).read_text())
     assert calls == [] and _row(receipt, "held")["outcome"] == "deferred_open_tick_pr"
     assert _row(receipt, "free")["outcome"].startswith("unattempted_")
+
+
+# --- reviewer follow-ups: recovery honours OPEN holds; held repositories stay eligible ------------
+
+ORPHAN = "jr/popularity-20261107-0100"
+EARLIER_PIN = {"url": "https://github.com/o/r/pull/7", "branch": "jr/popularity-20261106-2300", "sha": "e" * 40}
+
+
+def _orphan_intent(tmp_path, paths):
+    """A pushed fresh popularity branch whose PR was never created (the process stopped after push)."""
+    state_file = tmp_path / "state.json"
+    popularity_run._write_state(state_file, {"published_head": dict(EARLIER_PIN)})
+    popularity_run._save_publication_intent(
+        state_file, sha="c" * 40, branch=ORPHAN, paths=paths, samples=[], receipt=RECEIPT,
+        subject="s", body="b", existing_pr_url=None, expected_head_sha=None, now=NOW)
+    return state_file
+
+
+def _orphan_git(diff):
+    """The remote holds the exact intent commit; `diff` is what that branch changes against main,
+    or None when git cannot tell."""
+    seen = []
+
+    def git(*args):
+        seen.append(args)
+        if args[:2] == ("ls-remote", "origin"):
+            return subprocess.CompletedProcess(args, 0, "c" * 40 + f"\trefs/heads/{ORPHAN}\n", "")
+        if args[:2] == ("fetch", "origin"):
+            return subprocess.CompletedProcess(args, 0, "", "")
+        if args[:2] == ("diff", "--name-only"):
+            return subprocess.CompletedProcess(args, 1 if diff is None else 0, "\n".join(diff or []), "")
+        raise AssertionError(f"unexpected git call {args}")
+    return git, seen
+
+
+@pytest.mark.parametrize("intent_paths,diff", [
+    (["data/firmware/held/firmware.md", RECEIPT], ["data/firmware/held/firmware.md", RECEIPT]),
+    (["data/firmware/free/firmware.md", RECEIPT], ["data/firmware/held/firmware.md", RECEIPT]),
+    (["data/firmware/free/firmware.md", RECEIPT], None),
+], ids=["intent_paths_held", "branch_diff_held", "branch_diff_unreadable"])
+def test_runner_defers_orphan_recovery_touching_an_open_held_record(
+        tmp_path, effects, monkeypatch, intent_paths, diff):
+    _record(tmp_path, "held", "owner/repo-001", {"stars": 30, "forks": 3})
+    _record(tmp_path, "free", "owner/repo-002", {"stars": 30, "forks": 3})
+    state_file = _orphan_intent(tmp_path, intent_paths)
+    intent = popularity_run._load_state(state_file)["publication_intent"]
+    monkeypatch.setattr(publish, "apply_review_label",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("no label on a deferred recovery")))
+    events, published = effects
+    git, seen = _orphan_git(diff)
+    gh = FakeGh(tmp_path, events, open_prs=[_tick_pr(1500, ["held"])])
+    result = popularity_run.run(now=NOW, gh=gh, git=git, guard=lambda root: {"ok": True},
+                                repo_slug="o/r", state_file=state_file)
+    assert not any(call[:2] == ("pr", "create") for call in gh.calls) and "pr_create" not in events
+    state = popularity_run._load_state(state_file)
+    assert state["publication_intent"] == intent                    # kept for review
+    assert state["published_head"] == EARLIER_PIN                  # unchanged
+    assert "deliveries" not in state
+    assert not any(args[0] in ("push", "branch", "update-ref") or "--delete" in args for args in seen)
+    assert not result["ok"] and result["stage"] is None and result["publish"] is None
+    assert gh.queries == [] and published == []
+    assert not {"delivery", "protection", "worktree", "publish"} & set(events)
+    assert "recovery deferred" in result["reason"] and ORPHAN in result["reason"]
+    if diff is not None:
+        assert "#1500: held" in result["reason"]
+    assert "deferred" in result["recovery"]
+
+
+def test_runner_recovers_orphan_branch_not_touching_a_held_record(tmp_path, effects, monkeypatch):
+    _record(tmp_path, "held", "owner/repo-001", {"stars": 30, "forks": 3})
+    _record(tmp_path, "free", "owner/repo-002", {"stars": 30, "forks": 3})
+    paths = ["data/firmware/free/firmware.md", RECEIPT]
+    state_file = _orphan_intent(tmp_path, paths)
+    monkeypatch.setattr(publish, "apply_review_label", lambda *a, **k: (True, ""))
+    events, published = effects
+    git, _ = _orphan_git(paths)
+    gh = FakeGh(tmp_path, events, open_prs=[_tick_pr(1500, ["held"])])
+    result = popularity_run.run(now=NOW, gh=gh, git=git, guard=lambda root: {"ok": True},
+                                repo_slug="o/r", state_file=state_file)
+    creates = [call for call in gh.calls if call[:2] == ("pr", "create")]
+    assert len(creates) == 1 and "--draft" in creates[0] and ORPHAN in creates[0]
+    state = popularity_run._load_state(state_file)
+    assert "publication_intent" not in state
+    assert state["published_head"] == {"url": "https://github.com/o/r/pull/9", "branch": ORPHAN, "sha": "c" * 40}
+    assert "recovered exact popularity PR https://github.com/o/r/pull/9" in result["recovery"]
+    assert published == [["data/firmware/free/firmware.md", RECEIPT]]   # the pass then runs as before
+
+
+def test_held_only_repository_stays_in_the_eligible_denominator(tmp_path, effects):
+    _record(tmp_path, "held", "owner/repo-001", {"stars": 30, "forks": 3})
+    events, _ = effects
+    result = _run(tmp_path, FakeGh(tmp_path, events, open_prs=[_tick_pr(1500, ["held"])]))
+    assert result["coverage"] == {"eligible_repositories": 1, "attempted_repositories": 0,
+                                  "validated_repositories": 0, "deferred_open_tick_pr": 1}
+    receipt = _receipt(tmp_path)
+    assert (receipt["eligible_repositories"], receipt["attempted_repositories"]) == (1, 0)
+    assert result["complete_attempt"] is False
+
+
+def test_held_repository_plus_distinct_unheld_repository_is_eligible_two_attempted_one(tmp_path, effects):
+    held = _record(tmp_path, "held", "owner/repo-001", {"stars": 30, "forks": 3})
+    _record(tmp_path, "free", "owner/repo-002", {"stars": 30, "forks": 3})
+    before = held.read_bytes()
+    events, published = effects
+    gh = FakeGh(tmp_path, events, open_prs=[_tick_pr(1500, ["held"])])
+    result = _run(tmp_path, gh)
+    assert gh.source_repos() == [[], ["owner/repo-002"]]          # still never queried
+    assert held.read_bytes() == before                            # still never written
+    assert published == [["data/firmware/free/firmware.md", RECEIPT]]
+    assert result["coverage"] == {"eligible_repositories": 2, "attempted_repositories": 1,
+                                  "validated_repositories": 1, "deferred_open_tick_pr": 1}
+    receipt = _receipt(tmp_path)
+    assert (receipt["eligible_repositories"], receipt["attempted_repositories"]) == (2, 1)
+    assert result["complete_attempt"] is False and result["ok"] is False

@@ -202,9 +202,15 @@ fails the whole pass closed: nothing is queried, staged or published. A record a
 Jr tick PR already changes is `deferred_open_tick_pr` (not attempted, bytes untouched,
 never grouped for a query); a repository whose every record is so held costs no source
 call, and a shared repository is queried only for its unheld records. A veto (closed
-unmerged) is no edit hold on a catalogued record's counts. `complete_attempt` holds only
-when every queryable repository was attempted AND no record was deferred; the receipt
-discloses the deferred count.
+unmerged) is no edit hold on a catalogued record's counts. A held repository stays in
+`eligible_repositories` (the coverage denominator) though it is never queried or written:
+a held-only repository is eligible 1, attempted 0. `complete_attempt` holds only
+when every eligible repository was attempted AND no record was deferred; the receipt
+discloses the deferred count. Publication recovery checks the same index's OPEN holds
+before any recovery side effect: an orphan pushed branch (no PR) whose saved intent paths
+or verified branch diff touch an OPEN-held record gets no PR, its intent and branch stay
+untouched for review, and the run reports the recovery as deferred. Recovery that only
+books an existing or merged PR is unchanged.
 
 A per-record receipt separates attempted/validated/deferred/excluded outcomes and age at
 run start. GitHub GraphQL request count, observed point cost and remaining quota are
