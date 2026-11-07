@@ -220,6 +220,42 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
+    "heltec-wireless-stick-v3": {
+      "board": "heltec-wireless-stick-v3",
+      "expires": "2026-11-14T07:00:59.363875+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-07T07:00:59.363875+00:00"
+    },
+    "heltec-wireless-tracker": {
+      "board": "heltec-wireless-tracker",
+      "expires": "2026-11-14T07:00:59.363875+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-07T07:00:59.363875+00:00"
+    },
+    "lilygo-t-beam": {
+      "board": "lilygo-t-beam",
+      "expires": "2026-11-14T07:00:59.363875+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-07T07:00:59.363875+00:00"
+    },
     "lolin-s3": {
       "board": "lolin-s3",
       "expires": "2026-11-11T19:00:59.711024+00:00",
