@@ -280,6 +280,18 @@ def load_pending(gh, now: datetime, slug: str) -> pending_prs.PendingIndex | Non
     return pending_prs.load(gh, open_prs, now, slug=slug, open_limit=OPEN_PR_LIMIT)
 
 
+def _held_in_branch(wt, index: pending_prs.PendingIndex, git) -> list[str] | None:
+    """The OPEN holds (`#pr: firmware`) a reused popularity branch already changes against main.
+
+    An earlier hour's commit stays on that branch; republishing it would land an edit of a
+    record a Jr tick PR now changes. None when git cannot list what the branch changes."""
+    p = git("-C", str(wt.path), "diff", "--name-only", wt.base_sha, "HEAD")
+    if getattr(p, "returncode", 1) != 0:
+        return None
+    holds = [index.hold(fid) for fid in sorted(pending_prs.firmware_ids((p.stdout or "").splitlines()))]
+    return [f"{h.pr_ref}: {h.firmware}" for h in holds if h is not None and h.state == pending_prs.OPEN]
+
+
 def default_guard(root: Path) -> dict:
     """Validate the isolated popularity tree; CI runs required tests on the PR."""
     from tick import guard_env
@@ -341,7 +353,7 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
             slug = publish.owner_repo(getattr(remote, "stdout", "") or "")
         pending_index = load_pending(observed_gh, now, slug)
         if pending_index is None or not pending_index.complete:
-            gaps = "; ".join(pending_index.gaps) if pending_index else "Jr PR list unreadable"
+            gaps = "; ".join(pending_index.gaps) if pending_index is not None else "Jr PR list unreadable"
             result["reason"] = ("pending-PR inventory incomplete, nothing queried, staged or published: "
                                 + gaps)
             return result
@@ -380,6 +392,13 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
             if pending:
                 publish.prepare_existing_popularity_worktree(
                     wt, pending["headRefName"], pending["headRefOid"], git=git)
+                held = _held_in_branch(wt, pending_index, git)
+                if held is None or held:
+                    result["reason"] = ("pending popularity PR " + (
+                        "changes unreadable" if held is None else
+                        "already changes a record an open Jr tick PR holds (" + ", ".join(held) + ")")
+                        + "; preserve branch for review")
+                    return result
             if not publish.is_clean(wt, git=git):
                 result["reason"] = "fresh popularity worktree is not clean"
                 return result
@@ -455,9 +474,10 @@ def run(*, now: datetime | None = None, dry_run: bool = False,
                                              "needs_human": False}])
         result["publish"] = published.as_dict()
         result["ok"] = published.published and complete_attempt
+        deferred = coverage.get(popularity_full.DEFERRED_OPEN)
         result["reason"] = published.reason + (
-            f"; incomplete repository attempt coverage ({coverage.get(popularity_full.DEFERRED_OPEN)} "
-            "deferred to an open Jr tick PR)" if not complete_attempt else "")
+            "" if complete_attempt else "; incomplete repository attempt coverage"
+            + (f" ({deferred} deferred to an open Jr tick PR)" if deferred else ""))
         return result
     except Exception as exc:  # a failed popularity pass must not hide the growth tick's result
         result["reason"] = f"{type(exc).__name__}: {exc}"

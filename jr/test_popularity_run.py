@@ -151,8 +151,13 @@ def test_pending_pr_is_reused_only_after_pinned_head_preparation(tmp_path, monke
                                      pr_url=pending["url"], route="auto")
 
     monkeypatch.setattr(publish, "publish", fake_publish)
+
+    def git(*args):   # what the prepared branch already changes against main: no held record
+        assert args[3:] == ("diff", "--name-only", "a" * 40, "HEAD"), args
+        return subprocess.CompletedProcess(args, 0, "data/firmware/fw/firmware.md\n", "")
+
     ctx, _ = _ctx(tmp_path)
-    result = popularity_run.run(now=NOW, gh=_no_tick_prs(ctx.gh), guard=lambda root: {"ok": True},
+    result = popularity_run.run(now=NOW, gh=_no_tick_prs(ctx.gh), git=git, guard=lambda root: {"ok": True},
                                 repo_slug="o/r", budget=ctx.budget, state_file=state_file)
     assert result["ok"] and result["pending_pr"] == pending["url"]
     assert captured["branch"] == pending["headRefName"]
