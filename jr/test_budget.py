@@ -38,6 +38,19 @@ def test_time_cap_refuses_once_elapsed():
     assert "time budget" in str(e.value)
 
 
+def test_stage_window_can_begin_after_prerequisites_but_not_after_a_charge():
+    clk = Clock()
+    bud = b.Budget(max_calls=2, max_seconds=60, clock=clk)
+    clk.t = 40.0
+    bud.start_window()
+    assert bud.elapsed() == 0
+    bud.charge()
+    clk.t = 41.0
+    with pytest.raises(RuntimeError, match="charged budget"):
+        bud.start_window()
+    assert bud.elapsed() == 1 and bud.calls == 1
+
+
 def test_wrap_charges_one_per_call_and_delegates():
     calls = []
     bud = b.Budget(max_calls=2, clock=Clock())
