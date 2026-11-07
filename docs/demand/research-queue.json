@@ -44,7 +44,7 @@
     "position": 8.2
    },
    "snapshot": "docs/demand/2026-11-06.json",
-   "status": "linked",
+   "status": "closed",
    "classification": "alias_typo",
    "evidence": {
     "rule": "vendor-prefix match: the term is a board id without its brand prefix, or a model-number token of one record's title",
@@ -85,9 +85,54 @@
    "linked_work": [
     "https://github.com/fcavalcantirj/esp-atlas/pull/1476"
    ],
-   "outcome": null,
-   "closed_on": null,
-   "history": []
+   "outcome": {
+    "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1476",
+    "merge_sha": "1407ff2ec6bde72753fd22e15bc6c71df49fb713",
+    "merged_at": "2026-11-06T09:19:44Z",
+    "verification_kind": "demand_resolution",
+    "query": "fnk0104s",
+    "checked_at": "2026-11-07T11:15:54.346434+00:00",
+    "expected_ids": [
+     "freenove-fnk0104s"
+    ],
+    "forbidden_ids": [
+     "freenove-fnk0104a",
+     "freenove-fnk0104b"
+    ],
+    "source": "gsc_query",
+    "window": {
+     "start": "2026-10-09",
+     "end": "2026-11-06"
+    },
+    "metrics": {
+     "impressions": 22,
+     "clicks": 1,
+     "position": 8.2
+    },
+    "mined_revision": "d1dab3b1e532cb0ca45d116ae560724ca5b52d95",
+    "exit_code": 0,
+    "resolved": {
+     "board": "freenove-fnk0104s",
+     "board_model": "fnk0104s",
+     "chip": "esp32-s3",
+     "firmware_token": null,
+     "capability": [],
+     "part": null
+    },
+    "gap": "COVERED_OK"
+   },
+   "closed_on": "2026-11-07",
+   "history": [
+    {
+     "event": "closed",
+     "date": "2026-11-07",
+     "resolution": "delivered",
+     "work": "a721c3339f3d6348",
+     "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1476",
+     "merge_sha": "1407ff2ec6bde72753fd22e15bc6c71df49fb713",
+     "snapshot": "docs/demand/2026-11-07.json"
+    }
+   ]
   }
  }
 }
