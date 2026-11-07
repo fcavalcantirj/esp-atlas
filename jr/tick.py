@@ -16,8 +16,9 @@ One tick, in order (PLAN §3.2):
     needs a human. One exception, superseded METRICS: a PR whose diff against its merge base (read
     via read-only gh, jr/superseded_metrics.py) changes only bookkeeping and the popularity block /
     popularity.* citations of existing catalogued firmware.md records — the retired in-catalog
-    popularity writer's output, now owned by jr/runtime_popularity.py. Those ids are `merged`, so
-    closing records no rejection; it is closed like a bookkeeping PR. A PR labelled `jr-review` (jr/review_routing.py) is waiting for the owner ON
+    popularity writer's output, now owned by jr/runtime_popularity.py. Each id must still be
+    catalogued and `merged` in main's ledger, so closing records no rejection; it is closed like a
+    bookkeeping PR. A PR labelled `jr-review` (jr/review_routing.py) is waiting for the owner ON
     PURPOSE: it is never stuck and never closed, whatever its age; it is listed in the report with
     its age, and at MAX_OPEN_REVIEW_PRS open ones the review-producing stages are skipped (the cap,
     SPEC-jr-review-routing.md). Last: branch protection on `main` requires schema + tests + jr-tests and
@@ -322,14 +323,16 @@ def _pr_changed_paths(gh, number) -> list[str]:
         raise TickAbort(f"gh pr view #{number} files failed (cannot tell whether it is superseded)") from None
 
 
-def _triage_tick_prs(gh, prs: list, now: datetime, hours: float, slug: str | None = None) -> tuple[list, list]:
+def _triage_tick_prs(gh, prs: list, now: datetime, hours: float,
+                     slug: Callable[[], str] | None = None) -> tuple[list, list]:
     """Split the open tick PRs that need attention into (superseded, stuck); each superseded PR
     carries `superseded`: BOOKKEEPING or METRICS.
 
     Only a CONFLICTING or stale (> `hours`) PR is looked at. One whose changed files are ALL
     bookkeeping is superseded: a later tick already rewrote those files, so it can be closed.
     So is superseded METRICS: every path bookkeeping or an existing catalogued firmware.md whose
-    diff against the merge base (read-only gh on repo `slug`) is popularity-only — the runtime
+    diff against the merge base (read-only gh on the repo `slug()` names, resolved only for such a
+    candidate) is popularity-only and whose ids are catalogued and `merged` on main — the runtime
     publisher owns those counts and the ids are `merged`, so closing rejects nothing.
     A stale one that touches anything else (data/**, …) is stuck and needs a human — it is NEVER
     closed here, because jr/memory.py reads a closed proposed PR as a PERMANENT rejection of its
@@ -347,7 +350,8 @@ def _triage_tick_prs(gh, prs: list, now: datetime, hours: float, slug: str | Non
         paths = _pr_changed_paths(gh, pr.get("number"))
         if paths and all(_is_bookkeeping(p) for p in paths):
             superseded.append({**pr, "superseded": BOOKKEEPING})
-        elif superseded_metrics.is_metrics_only(gh, slug, pr.get("number"), paths):
+        elif slug and superseded_metrics.candidate(paths) and \
+                superseded_metrics.is_metrics_only(gh, slug(), pr.get("number"), paths):
             superseded.append({**pr, "superseded": METRICS})
         elif is_stale:
             stuck.append({**pr, "content": [p for p in paths if not _is_bookkeeping(p)]})
@@ -564,8 +568,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             raise TickAbort("gh pr list failed (cannot see open Jr PRs)")
         r.review_prs = _open_review_prs(open_prs, now)
         tick_prs = [pr for pr in open_prs if _is_tick_pr(pr)]
-        slug = repo_slug or _repo_slug(git)
-        superseded, stuck = _triage_tick_prs(gh_c, tick_prs, now, stale_pr_hours, slug=slug)
+        superseded, stuck = _triage_tick_prs(gh_c, tick_prs, now, stale_pr_hours,
+                                             slug=lambda: repo_slug or _repo_slug(git))
         for pr in superseded:
             what = f"superseded {pr['superseded']}-only tick PR #{pr.get('number')}"
             if dry_run:
@@ -575,6 +579,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                 r.warnings.append(f"closed {what}")
         if stuck:
             raise TickAbort(_stuck_message(stuck[0], stale_pr_hours))
+        slug = repo_slug or _repo_slug(git)
         protection = publish.protection_status(slug, gh=gh_c)
         if not protection.ok:
             if dry_run:

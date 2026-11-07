@@ -59,10 +59,12 @@ requested on a `review` route. If labelling still fails, the result says so
 - **Superseded metrics** (2026-11-07): an unlabelled stale or conflicting tick PR is closed like a
   bookkeeping-only one — with a comment, branch deleted, no rejection recorded — only when its diff
   against the merge base, read via read-only `gh` (`jr/superseded_metrics.py`), changes nothing but
-  bookkeeping and *modified* `data/firmware/<id>/firmware.md` records whose body and frontmatter are
-  identical apart from `popularity` and its `popularity` / `popularity.*` source entries. Those ids
-  are catalogued (`merged`), and `jr/memory.reconcile_prs` settles only `proposed` records. A new
-  record, a recipe, any other field, a file list that disagrees, or an unreadable diff keeps it stuck.
+  bookkeeping (modified/added) and *modified* `data/firmware/<id>/firmware.md` records whose text —
+  body and every frontmatter line — is byte-identical apart from the `popularity` block and its
+  `popularity` / `popularity.*` source items. Each id must still be catalogued on main and `merged` in
+  main's `jr/proposed_ledger.json`, because `jr/memory.reconcile_prs` rejects only `proposed` records.
+  A new record, a recipe, a rename, any other field (even a comment or re-quoting), a file list that
+  disagrees, an id not `merged`, or an unreadable diff/ledger keeps it stuck.
 - **Cap:** `MAX_OPEN_REVIEW_PRS = 10` concurrent open `jr-review` PRs (any branch). At or above the
   cap the tick skips every review-producing stage (every content stage unless it declares
   `produces_review = False`) and reports `jr-review cap reached …` instead of piling up. Memory
