@@ -62,6 +62,7 @@ TOP_KEYS = {"schema_version", "version", "catalog_revision", "published_at", "re
 RECORD_KEYS = {"repository_url", "github_repo_id", "stars", "forks", "github_as_of"}
 MAX_SAFE_INT = 2**53 - 1
 CLOCK_SKEW = timedelta(minutes=5)
+MAX_COOLDOWN = timedelta(days=1)  # popularity_graphql._cooldown_until never reaches past this
 _FIRMWARE_ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 _FIRMWARE_PATH = re.compile(r"data/firmware/([^/]+)/firmware\.md")
 _UTC_STAMP = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|\+00:00)")
@@ -201,7 +202,7 @@ def _entry(fid: str, text: str) -> Entry | str:
         return "excluded_wrong_source"
     pop = fm.get("popularity") if isinstance(fm.get("popularity"), dict) else {}
     catalog_id = pop.get("github_repo_id")
-    if catalog_id is not None and (type(catalog_id) is not int or catalog_id <= 0):
+    if catalog_id is not None and (type(catalog_id) is not int or not 0 < catalog_id <= MAX_SAFE_INT):
         return "excluded_invalid_record"
     return Entry(fid, repo, url, catalog_id)
 
@@ -259,6 +260,7 @@ class Collection:
     kept_last_good: list = field(default_factory=list)
     excluded: dict = field(default_factory=dict)
     quarantined: dict = field(default_factory=dict)
+    carried: dict = field(default_factory=dict)  # pins of firmware absent from this run's catalog
     cooldown_until: str | None = None
 
 
@@ -330,17 +332,28 @@ def _same_source(row: dict | None, entry: Entry) -> dict | None:
 
 
 def collect(entries: list[Entry], previous_records: dict, *, gh, budget: Budget, now: datetime,
-            quarantine: dict | None = None) -> Collection:
+            quarantine: dict | None = None, fetch: bool = True) -> Collection:
     """Fresh validated records, last-good fallbacks, exclusions and identity quarantines.
 
     Pins: the previous snapshot's id, a quarantine carried from earlier runs, the catalog's id.
-    A quarantine lasts until GitHub reports the pinned id again or the catalog moves the source."""
-    stats, failed, cooldown = _fetch(sorted({entry.repo for entry in entries}), gh=gh, budget=budget, now=now)
+    A quarantine lasts until GitHub reports the pinned id again, the catalog moves the source, or
+    the catalog records a different github_repo_id (a curated decision). A firmware missing from
+    this run's catalog keeps its pin. `fetch=False` (cooldown) never queries GitHub."""
+    repos = sorted({entry.repo for entry in entries})
+    if fetch:
+        stats, failed, cooldown = _fetch(repos, gh=gh, budget=budget, now=now)
+    else:
+        stats, failed, cooldown = {}, {repo: "unattempted_cooldown" for repo in repos}, None
+    quarantine = quarantine or {}
     result = Collection(cooldown_until=_stamp(cooldown) if cooldown else None)
+    present = {entry.firmware_id for entry in entries}
+    result.carried = {fid: pin for fid, pin in quarantine.items() if fid not in present}
     for entry in sorted(entries, key=lambda e: e.firmware_id):
         fid = entry.firmware_id
         previous = _same_source(previous_records.get(fid), entry)
-        held = _same_source((quarantine or {}).get(fid), entry)
+        held = _same_source(quarantine.get(fid), entry)
+        if held and entry.catalog_id not in (None, held["pinned_repo_id"]):
+            held = None  # the catalog curated a different identity: it, not the old pin, now rules
         pins = ([previous["github_repo_id"]] if previous else []) + ([held["pinned_repo_id"]] if held else []) \
             + ([entry.catalog_id] if entry.catalog_id is not None else [])
         found = stats.get(entry.repo)
@@ -388,12 +401,12 @@ def _state_is_valid(state) -> bool:
 
 
 def read_state(git, commit: str) -> dict:
-    """The collector state carried on `commit`'s message; empty when it has none, Refused when
-    it is malformed (the identity pins in it must never silently vanish)."""
+    """The collector state carried on `commit`'s message. Missing or malformed is Refused: the
+    identity pins in it must never silently vanish (e.g. behind a hand edit of the branch)."""
     message = _out(git, "log", "-1", "--format=%B", commit, what="reading collector state")
     lines = [line for line in message.splitlines() if line.startswith(STATE_TRAILER)]
     if not lines:
-        return _empty_state()
+        raise Refused(f"{commit[:12]} carries no collector state; restore it before publishing again")
     try:
         state = json.loads(lines[-1][len(STATE_TRAILER):])
     except ValueError:
@@ -404,8 +417,9 @@ def read_state(git, commit: str) -> dict:
 
 
 def _next_state(result: Collection) -> dict:
-    return {"quarantine": {fid: {"repository_url": row["repository_url"], "pinned_repo_id": row["pinned_repo_id"]}
-                           for fid, row in sorted(result.quarantined.items())},
+    held = {**result.carried, **{fid: {"repository_url": row["repository_url"], "pinned_repo_id": row["pinned_repo_id"]}
+                                 for fid, row in result.quarantined.items()}}
+    return {"quarantine": dict(sorted(held.items())),
             "cooldown_until": result.cooldown_until}
 
 
@@ -526,12 +540,12 @@ def run(*, git, gh, remote: str, branch: str, catalog_ref: str, budget: Budget, 
             receipt.parent = parent
             state = read_state(git, parent) if parent else _empty_state()
             cooldown = _utc(state["cooldown_until"])
-            if cooldown and now < cooldown:
-                receipt.status, receipt.exit_code, receipt.cooldown_until = "cooldown", 0, state["cooldown_until"]
-                return receipt
+            if cooldown and cooldown > now + MAX_COOLDOWN:
+                raise Refused(f"cooldown {state['cooldown_until']} is beyond any GitHub reset; state is suspect")
+            cooling = bool(cooldown and now < cooldown)
             result = collect(entries, (previous or {}).get("records", {}), gh=gh, budget=budget, now=now,
-                             quarantine=state["quarantine"])
-            receipt.cooldown_until = result.cooldown_until
+                             quarantine=state["quarantine"], fetch=not cooling)
+            receipt.cooldown_until = state["cooldown_until"] if cooling else result.cooldown_until
             receipt.published, receipt.kept_last_good = len(result.fresh), len(result.kept_last_good)
             receipt.excluded_ids = sorted({**catalog_excluded, **result.excluded})
             receipt.excluded = len(receipt.excluded_ids)
@@ -544,10 +558,16 @@ def run(*, git, gh, remote: str, branch: str, catalog_ref: str, budget: Budget, 
                 _write_local(out or DEFAULT_DRY_RUN_OUT, snapshot)
                 receipt.status, receipt.exit_code = "dry_run", 0
                 return receipt
+            if cooling:  # nothing fresh to say; the published snapshot already holds every last-good
+                receipt.status, receipt.exit_code = "cooldown", 0
+                return receipt
+            next_state = _next_state(result)
+            if not _state_is_valid(next_state):
+                raise Refused("collector state for the next commit is invalid")
             if budget.remaining_seconds() < PUBLISH_RESERVE_SECONDS:
                 raise Refused("too little time left in the run's bound to push safely")
             receipt.commit = publish(git, remote=remote, branch=branch, parent=parent, snapshot=snapshot,
-                                     now=now, state=_next_state(result))
+                                     now=now, state=next_state)
             receipt.status, receipt.exit_code = "published", 0
     except Refused as e:
         receipt.status, receipt.exit_code, receipt.reason = "refused", 2, str(e)

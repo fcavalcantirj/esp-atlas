@@ -623,8 +623,9 @@ def test_malformed_state_trailer_fails_closed(repos):
     bad = _sh(work, "commit-tree", tree, "-m", "s", "-m", rp.STATE_TRAILER + '{"quarantine": {"a": 1}}')
     with pytest.raises(rp.Refused):
         rp.read_state(rp.make_git(work), bad)
-    plain = _sh(work, "commit-tree", tree, "-m", "no trailer")
-    assert rp.read_state(rp.make_git(work), plain) == {"quarantine": {}, "cooldown_until": None}
+    plain = _sh(work, "commit-tree", tree, "-m", "no trailer")  # a hand edit or foreign tool
+    with pytest.raises(rp.Refused):
+        rp.read_state(rp.make_git(work), plain)
 
 
 def test_push_that_landed_despite_a_client_error_is_published(repos):
@@ -670,3 +671,83 @@ def test_too_little_time_left_refuses_to_push(repos, tmp_path, monkeypatch):
 def test_impossible_dates_are_errors_not_crashes():
     assert rp.validate_snapshot(_mutate(("published_at",), "2026-13-01T00:00:00Z"), now=NOW)
     assert rp.validate_snapshot(_mutate(("records", "alpha", "github_as_of"), "2026-02-30T00:00:00Z"), now=NOW)
+
+
+# --- checker round 2: pins survive catalog churn, bounded cooldown, total state -------------------
+
+def _quarantine_alpha(repos, tmp_path):
+    _at(repos, tmp_path, FakeGH(GOOD), 0)
+    assert _at(repos, tmp_path, FakeGH({**GOOD, "octo/alpha": node("Octo/Alpha", 11, 9, 9)}), 1).quarantined_ids == ["alpha"]
+
+
+def _state_now(repos):
+    origin, work = repos
+    return rp.read_state(rp.make_git(work), _remote_ref(origin, rp.BRANCH))
+
+
+def test_quarantine_survives_the_entry_leaving_the_catalog_for_a_run(repos, tmp_path):
+    _, work = repos
+    _quarantine_alpha(repos, tmp_path)
+    path = work / "data" / "firmware" / "alpha" / "firmware.md"
+    original = path.read_text()
+    path.write_text("---\n: [\n---\n")
+    _sh(work, "commit", "-q", "-am", "alpha broken")
+    _at(repos, tmp_path, FakeGH(GOOD), 2)
+    assert _state_now(repos)["quarantine"]["alpha"]["pinned_repo_id"] == 10
+    path.write_text(original)
+    _sh(work, "commit", "-q", "-am", "alpha restored")
+    receipt = _at(repos, tmp_path, FakeGH({**GOOD, "octo/alpha": node("Octo/Alpha", 11, 9, 9)}), 3)
+    assert receipt.quarantined_ids == ["alpha"]
+
+
+def test_curated_catalog_id_releases_a_quarantine(repos, tmp_path):
+    _, work = repos
+    _quarantine_alpha(repos, tmp_path)
+    _write_firmware(work, "alpha", "https://github.com/Octo/Alpha", {"github_repo_id": 11})
+    _sh(work, "commit", "-q", "-am", "curator accepts the new alpha identity")
+    receipt = _at(repos, tmp_path, FakeGH({**GOOD, "octo/alpha": node("Octo/Alpha", 11, 9, 9)}), 2)
+    assert receipt.quarantined_ids == [] and receipt.published == 3
+    assert _state_now(repos)["quarantine"] == {}
+
+
+def _commit_with_state(work: Path, origin: Path, state_json: str) -> None:
+    doc = _valid_for(work)
+    blob = _sh(work, "hash-object", "-w", "--stdin", input=json.dumps(doc))
+    tree = _sh(work, "mktree", input=f"100644 blob {blob}\tpopularity.json\n")
+    commit = _sh(work, "commit-tree", tree, "-m", "s", "-m", rp.STATE_TRAILER + state_json)
+    _sh(work, "push", "-q", "--force", "origin", f"{commit}:refs/heads/{rp.BRANCH}")
+
+
+def test_cooldown_beyond_a_day_is_refused_not_obeyed(repos, tmp_path):
+    origin, work = repos
+    _commit_with_state(work, origin, '{"cooldown_until":"2099-01-01T00:00:00Z","quarantine":{}}')
+    gh = FakeGH(GOOD)
+    receipt = _run(repos, tmp_path, gh)
+    assert receipt.status == "refused" and receipt.exit_code == 2 and gh.calls == []
+
+
+def test_dry_run_during_a_cooldown_writes_last_good_without_querying(repos, tmp_path):
+    origin, work = repos
+    _at(repos, tmp_path, FakeGH(GOOD), 0)
+    _at(repos, tmp_path, FakeGH(GOOD, limited=True), 1)
+    gh, out = FakeGH(GOOD), tmp_path / "cool.json"
+    receipt = _at(repos, tmp_path, gh, 1.5, dry_run=True, out=out)
+    assert receipt.status == "dry_run" and receipt.exit_code == 0 and gh.calls == []
+    assert receipt.cooldown_until == "2026-11-07T21:00:00Z" and receipt.kept_last_good == 3
+    assert sorted(json.loads(out.read_text())["records"]) == ["alpha", "beta", "gamma"]
+
+
+def test_catalog_id_beyond_safe_integers_is_excluded(tmp_path):
+    work = tmp_path / "cat"
+    _sh(tmp_path, "init", "-q", str(work))
+    _write_firmware(work, "alpha", "https://github.com/octo/alpha", {"github_repo_id": 2**53})
+    _sh(work, "add", "-A")
+    _sh(work, "commit", "-q", "-m", "c")
+    assert rp.read_catalog(rp.make_git(work), "HEAD")[2] == {"alpha": "excluded_invalid_record"}
+
+
+def test_invalid_next_state_is_never_committed(repos, tmp_path, monkeypatch):
+    origin, _ = repos
+    monkeypatch.setattr(rp, "_next_state", lambda *a, **k: {"quarantine": {"Bad": 1}, "cooldown_until": None})
+    receipt = _run(repos, tmp_path, FakeGH(GOOD))
+    assert receipt.status == "refused" and _remote_ref(origin, rp.BRANCH) is None
