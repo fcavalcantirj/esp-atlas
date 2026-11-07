@@ -105,6 +105,16 @@ def test_a_redirected_repository_held_by_an_open_pr_is_not_admitted_again(sim, l
     assert not r.aborted, r.aborted
     assert _staged_for(r, "newtool") == [], "a second record for repository 4242"
     assert not _new_prs_holding(sim, "newtool", pr["number"])
+
+
+def test_a_redirected_repository_stays_held_by_its_id_when_the_ledger_hydration_is_blind(sim, listing):
+    pr = _admit_through_redirect(sim, listing)
+    listing[:] = [CANONICAL]
+    sim.view_rc = 1                                    # `gh pr view --json files` fails: nothing hydrated
+    r = sim.tick(T0 + timedelta(hours=1))
+    assert not r.aborted, r.aborted
+    assert _staged_for(r, "newtool") == [], "a second record for repository 4242"
+    assert not _new_prs_holding(sim, "newtool", pr["number"])
     assert r.rejects.get("already_proposed") == 1, r.rejects
     summary = next(s for s in r.stages if s["name"] == "admit_topics")["summary"]
     assert f"#{pr['number']}" in summary and str(REPO_ID) in summary, summary
