@@ -297,7 +297,8 @@ def main(argv=None) -> int:
     except (RecordError, ValueError, KeyError, OSError) as e:
         print(f"work-record: {e}", file=sys.stderr)
         return 1
-    mode = "dry-run, nothing written" if args.dry_run and args.cmd != "check" else "written"
+    mode = ("read-only" if args.cmd == "check"
+            else "dry-run, nothing written" if args.dry_run else "written")
     summary = result.get("status") or result.get("state") or ""
     print(f"work-record: {args.cmd} {getattr(args, 'key', '')} → {summary} ({mode})".replace("  ", " "))
     print(json.dumps(result, indent=1, ensure_ascii=False))
