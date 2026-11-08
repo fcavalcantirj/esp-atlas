@@ -140,3 +140,57 @@ def test_hydration_persists_the_id_bound_to_the_firmware_source(sim, catalog, tm
     pending, rec = _hydrated_record(sim, tmp_path)
     assert pending.complete, pending.gaps
     assert rec["repo"] == "n/oldtool" and rec["repo_id"] == REPO_ID, rec
+
+
+# --- a renamed upstream: the ledger keeps the old name, firmware.md the new one ---------------------------
+
+def _repo_reads(calls):
+    return [c[1] for c in calls if c[:1] == ("api",) and len(c) == 2 and c[1].startswith("repos/")]
+
+
+def _identities(ledger_repo, repos, sources=None, calls=None):
+    """_ledger_identities over bot PR #1500 holding oldtool: ledger records `ledger_repo` under 4242;
+    firmware.md at oid1500 names n/oldtool unless `sources` says otherwise."""
+    gh = _gh([], calls=calls, ledgers={"oid1500": _ledger_naming(ledger_repo, REPO_ID)}, repos=repos,
+             sources={("oid1500", "oldtool"): "n/oldtool"} if sources is None else sources)
+    return pending_prs._ledger_identities(gh, "o/r", _pr(1500, LEGACY_FILES), {"oldtool"})
+
+
+def test_a_rename_both_names_confirming_the_same_id_binds_to_the_firmware_source():
+    calls = []
+    got = _identities("p/Oldname", {"n/oldtool": REPO_ID, "p/oldname": REPO_ID}, calls=calls)
+    assert got == ({"oldtool": (REPO_ID, "n/oldtool")}, [])
+    assert sorted(_repo_reads(calls)) == ["repos/n/oldtool", "repos/p/Oldname"]
+
+
+def test_a_rename_whose_old_ledger_name_answers_another_id_stays_unresolved():
+    assert _identities("p/oldname", {"n/oldtool": REPO_ID, "p/oldname": OTHER_ID}) == ({}, ["oldtool"])
+
+
+def test_a_rename_whose_old_ledger_name_is_404_stays_unresolved():
+    assert _identities("p/oldname", {"n/oldtool": REPO_ID}) == ({}, ["oldtool"])
+
+
+def test_a_rename_whose_firmware_source_is_unconfirmed_stays_unresolved_even_if_the_ledger_name_confirms():
+    assert _identities("p/oldname", {"n/oldtool": OTHER_ID, "p/oldname": REPO_ID}) == ({}, ["oldtool"])
+    assert _identities("p/oldname", {"p/oldname": REPO_ID}) == ({}, ["oldtool"])
+
+
+def test_a_rename_without_a_readable_firmware_source_stays_unresolved():
+    assert _identities("p/oldname", {"n/oldtool": REPO_ID, "p/oldname": REPO_ID}, sources={}) == ({}, ["oldtool"])
+
+
+def test_equal_slugs_take_exactly_one_repos_call():
+    calls = []
+    assert _identities("n/oldtool", {"n/oldtool": REPO_ID}, calls=calls) == ({"oldtool": (REPO_ID, "n/oldtool")}, [])
+    assert _repo_reads(calls) == ["repos/n/oldtool"]
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+def test_a_renamed_upstream_leaves_the_index_complete(vetoed):
+    pr = _pr(1500, LEGACY_FILES)
+    gh = _gh([_closed(pr)] if vetoed else [], ledgers={"oid1500": _ledger_naming("p/oldname", REPO_ID)},
+             repos={"n/oldtool": REPO_ID, "p/oldname": REPO_ID}, sources={("oid1500", "oldtool"): "n/oldtool"})
+    idx = _load(gh, []) if vetoed else _load(gh, [pr])
+    assert idx.complete, idx.gaps
+    assert idx.hold("oldtool").repo_id == REPO_ID and set(idx.by_repo_id) == {REPO_ID}
