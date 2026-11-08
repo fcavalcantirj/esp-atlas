@@ -169,18 +169,29 @@ Older runtime evidence cannot replace newer catalog evidence, including dates
 recorded with day precision. Failed reads use the last valid snapshot or dated
 catalog fallback. GitHub and web caches may delay visibility.
 
-The workflow runs at minute 7 each hour, subject to GitHub scheduler delays. It
+The workflow is invoked at minute 07 UTC each hour by an operator-run OS timer on
+the always-on runner (`scripts/counts-dispatch.sh`, a `workflow_dispatch` with
+`publish=true` and `source=host-timer`). GitHub's native `on.schedule` trigger was
+retired on 2026-11-08 after it fired one slot in six; the workflow file carries no
+`schedule:`. Every run's name states its origin (`counts (host-timer)`,
+`counts (manual-testing)`, `counts (manual)`), so a hand-started run is never read
+as automation. The dispatcher holds a host lock, skips the hour when a run is
+already queued or in progress, bounds every call, and appends one JSON receipt per
+invocation (run id, conclusion, data-branch commit, `published_at`). The workflow
 runs only in this repository on `main`, with one concurrency group and a bounded
-collector process. Scheduled publication is disabled until the repository
-Actions variable `POPULARITY_RUNTIME_ENABLED` is `1`. Manual dispatch defaults
-to a dry run. The Vercel environment variable of the same name independently
-controls the reader. Changing that environment requires a deployment; hourly
-JSON updates do not.
+collector process. Publication requires both `publish=true` and the repository
+Actions variable `POPULARITY_RUNTIME_ENABLED` set to `1`; with the variable off a
+publish request is skipped. Manual dispatch defaults to a dry run. The Vercel
+environment variable of the same name independently controls the reader. Changing
+that environment requires a deployment; hourly JSON updates do not.
 
 Release requires independent review of the collector and reader/workflow,
 current-main integration checks, a verified publication with unchanged branch
 configuration, and API/rendered-page readback. A manually seeded branch may need
 one explicit `--adopt-unstated-tip` invocation; the recurring workflow must never
-pass that flag. Two natural hourly run receipts establish scheduled operation.
-Rollback disables the Actions variable and deploys the reader with its Vercel
-flag off; dated catalog counts remain available.
+pass that flag. Two consecutive host-timer receipts, each matched to its workflow
+run id, `popularity.json` commit and live readback, establish hourly operation; a
+manually started run is never counted as that proof. Rollback stops the host timer
+(`systemctl --user disable --now esp-atlas-counts.timer`), disables the Actions
+variable and deploys the reader with its Vercel flag off; dated catalog counts
+remain available.

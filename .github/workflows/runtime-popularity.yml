@@ -1,14 +1,23 @@
 name: hourly GitHub counts
+# Every run says where it came from: "counts (host-timer)" is the operator's OS timer,
+# "counts (manual-testing)" a hand-run test, "counts (manual)" a plain dispatch.
+run-name: counts (${{ inputs.source }})
 
+# No `schedule:` here on purpose. GitHub's cron dropped most hourly slots (2026-11-07/08: one run
+# in six), so an operator-run OS timer on the always-on runner dispatches this workflow at minute
+# 07 UTC through scripts/counts-dispatch.sh (see DEPLOY.md, "Hourly GitHub counts"). The job, the
+# collector, the Git JSON and the concurrency group are unchanged.
 on:
-  schedule:
-    - cron: '7 * * * *'
   workflow_dispatch:
     inputs:
       publish:
         description: Publish the JSON snapshot after review
         type: boolean
         default: false
+      source:
+        description: Who asked for this run (host-timer, manual-testing, manual)
+        type: string
+        default: manual
 
 permissions:
   contents: read
@@ -19,11 +28,13 @@ concurrency:
 
 jobs:
   refresh:
-    # Scheduled publication is opt-in. Manual runs default to a read-only check.
+    # Publication is opt-in twice: the dispatcher asks for it (publish=true) AND the repository
+    # variable allows it; with the variable off, a publish request is skipped, not dry-run.
+    # A manual run without publish=true is a read-only check.
     if: >-
       github.repository == 'fcavalcantirj/esp-atlas' &&
       github.ref == 'refs/heads/main' &&
-      (github.event_name == 'workflow_dispatch' || vars.POPULARITY_RUNTIME_ENABLED == '1')
+      (inputs.publish != true || vars.POPULARITY_RUNTIME_ENABLED == '1')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -41,7 +52,7 @@ jobs:
       - name: Collect counts and optionally publish the single Git JSON file
         env:
           GH_TOKEN: ${{ github.token }}
-          PUBLISH: ${{ github.event_name == 'schedule' || inputs.publish }}
+          PUBLISH: ${{ inputs.publish }}
           PYTHONPATH: ${{ github.workspace }}/apps/core/src:${{ github.workspace }}/jr
         shell: bash
         run: |
