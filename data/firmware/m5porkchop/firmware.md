@@ -12,9 +12,11 @@ capabilities:
 socs:
 - esp32-s3
 popularity:
-  stars: 875
-  forks: 61
-  as_of: '2026-09-20'
+  stars: 949
+  forks: 66
+  as_of: '2026-11-08'
+  github_repo_id: 1110910539
+  github_as_of: '2026-11-08T00:00:55Z'
 sources:
 - field: '*'
   url: https://github.com/0ct0sec/M5PORKCHOP
@@ -25,6 +27,18 @@ sources:
 - field: summary
   url: https://github.com/0ct0sec/M5PORKCHOP
   verified: '2026-10-06'
+- field: popularity.forks
+  url: https://github.com/0ct0sec/M5PORKCHOP
+  verified: '2026-11-08'
+- field: popularity.github_as_of
+  url: https://github.com/0ct0sec/M5PORKCHOP
+  verified: '2026-11-08'
+- field: popularity.github_repo_id
+  url: https://github.com/0ct0sec/M5PORKCHOP
+  verified: '2026-11-08'
+- field: popularity.stars
+  url: https://github.com/0ct0sec/M5PORKCHOP
+  verified: '2026-11-08'
 summary: "PORKCHOP is firmware for the M5Cardputer (ESP32\u2011S3) that turns the\
   \ device into a dual\u2011band Wi\u2011Fi pentesting companion, providing packet\
   \ capture, handshake/PMKID extraction, GPS\u2011enabled wardriving, spectrum analysis,\

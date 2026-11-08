@@ -762,13 +762,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "bitcoin-card-wallet": {
+      "expired_at": "2026-11-08T00:00:55.177876+00:00",
       "expires": "2026-11-07T23:52:12.575946+00:00",
       "id": "bitcoin-card-wallet",
       "pr_ref": null,
       "reason": "already_catalogued: geo-tp/bitcoin-card-wallet is already in the atlas",
       "repo": "geo-tp/bitcoin-card-wallet",
       "repo_id": 910995702,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "bitmap16dx": {
@@ -811,13 +812,14 @@
       "timestamp": "2026-09-12T02:00:23.345419+00:00"
     },
     "bluetoothmidicontrollermusicconductor-m5": {
+      "expired_at": "2026-11-08T00:00:55.177876+00:00",
       "expires": "2026-11-07T23:52:12.575946+00:00",
       "id": "bluetoothmidicontrollermusicconductor-m5",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 2 forks",
       "repo": "aat440hz/bluetoothmidicontrollermusicconductor-m5stickcplus2",
       "repo_id": 792540344,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "bme280-sensor-m5unified": {
@@ -877,13 +879,14 @@
       "timestamp": "2026-11-07T08:00:55.079521+00:00"
     },
     "breakoutatoms3": {
+      "expired_at": "2026-11-08T00:00:55.177876+00:00",
       "expires": "2026-11-07T23:52:12.575946+00:00",
       "id": "breakoutatoms3",
       "pr_ref": null,
       "reason": "below_floor: 9 stars / 1 forks",
       "repo": "armel/breakoutatoms3",
       "repo_id": 615460994,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "breezybox-cardputer": {
@@ -906,13 +909,14 @@
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "brokensignal-next": {
+      "expired_at": "2026-11-08T00:00:55.177876+00:00",
       "expires": "2026-11-07T23:52:12.575946+00:00",
       "id": "brokensignal-next",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 3 forks",
       "repo": "rythlan/brokensignal-next",
       "repo_id": 1274358512,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "bruce": {
@@ -923,13 +927,14 @@
       "timestamp": "2026-11-07T08:00:55.079521+00:00"
     },
     "bruce-a-c-edition": {
+      "expired_at": "2026-11-08T00:00:55.177876+00:00",
       "expires": "2026-11-07T23:52:12.575946+00:00",
       "id": "bruce-a-c-edition",
       "pr_ref": null,
       "reason": "fork_of_catalogued: source=brucedevices/firmware",
       "repo": "tutyr2-jpg/bruce-a-c-edition",
       "repo_id": 1206340152,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "bruce-cardputer-zh": {
@@ -943,13 +948,14 @@
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
     "bruce-firmware-wdgwars": {
+      "expired_at": "2026-11-08T00:00:55.177876+00:00",
       "expires": "2026-11-07T23:52:12.575946+00:00",
       "id": "bruce-firmware-wdgwars",
       "pr_ref": null,
       "reason": "fork_of_catalogued: source=brucedevices/firmware",
       "repo": "locosp/bruce-firmware-wdgwars",
       "repo_id": 1205405202,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "bruce-js-tooling": {
@@ -983,13 +989,14 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "bruce-shark-bait-m5stackc-plus2-wifi-def": {
+      "expired_at": "2026-11-08T00:00:55.177876+00:00",
       "expires": "2026-11-07T23:52:12.575946+00:00",
       "id": "bruce-shark-bait-m5stackc-plus2-wifi-def",
       "pr_ref": null,
       "reason": "below_floor: 8 stars / 0 forks",
       "repo": "coreymillia/bruce-shark-bait-m5stackc-plus2-wifi-defense",
       "repo_id": 1075971457,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "brucedevices": {
@@ -1285,7 +1292,7 @@
       "pr_ref": "#1500",
       "repo": "jay-jayismyname1/cardputer-adv-b-radar",
       "status": "proposed",
-      "timestamp": "2026-11-07T23:00:55.239259+00:00"
+      "timestamp": "2026-11-08T00:00:55.177876+00:00"
     },
     "cardputer-adv-basic": {
       "expires": "2026-11-08T01:00:12.099811+00:00",
@@ -3241,13 +3248,14 @@
       "timestamp": "2026-09-08T17:00:16.540728+00:00"
     },
     "esp32-bus-pirate": {
+      "expired_at": "2026-11-08T00:00:55.177876+00:00",
       "expires": "2026-11-07T23:52:12.575946+00:00",
       "id": "esp32-bus-pirate",
       "pr_ref": null,
       "reason": "already_catalogued: geo-tp/esp32-bus-pirate is already in the atlas",
       "repo": "geo-tp/esp32-bus-pirate",
       "repo_id": 1014515436,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "esp32-c3-mini": {
@@ -7181,13 +7189,14 @@
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
     },
     "m5core2-soundbouncer": {
+      "expired_at": "2026-11-08T00:00:55.177876+00:00",
       "expires": "2026-11-07T23:52:12.575946+00:00",
       "id": "m5core2-soundbouncer",
       "pr_ref": null,
       "reason": "below_floor: 6 stars / 0 forks",
       "repo": "tobozo/m5core2-soundbouncer",
       "repo_id": 470675818,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "m5core2-touchpanel-recovery": {
@@ -8510,13 +8519,14 @@
       "timestamp": "2026-09-09T04:00:10.126216+00:00"
     },
     "m5unified": {
+      "expired_at": "2026-11-08T00:00:55.177876+00:00",
       "expires": "2026-11-07T23:52:12.575946+00:00",
       "id": "m5unified",
       "pr_ref": null,
       "reason": "already_catalogued: m5stack/m5unified is already in the atlas",
       "repo": "m5stack/m5unified",
       "repo_id": 415172079,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "m5unified-stackchan": {
@@ -10744,13 +10754,14 @@
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
     },
     "shark-bait-add-on-bruce-firmware-m5stack": {
+      "expired_at": "2026-11-08T00:00:55.177876+00:00",
       "expires": "2026-11-07T23:52:12.575946+00:00",
       "id": "shark-bait-add-on-bruce-firmware-m5stack",
       "pr_ref": null,
       "reason": "below_floor: 16 stars / 0 forks",
       "repo": "coreymillia/shark-bait-add-on-bruce-firmware-m5stackc-plus-",
       "repo_id": 1074985230,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "signalrf": {
@@ -11269,13 +11280,14 @@
       "timestamp": "2026-10-09T14:00:12.109822+00:00"
     },
     "t-embed": {
+      "expired_at": "2026-11-08T00:00:55.177876+00:00",
       "expires": "2026-11-07T23:52:12.575946+00:00",
       "id": "t-embed",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "xinyuan-lilygo/t-embed",
       "repo_id": 510276327,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
     "tab5-adb": {
