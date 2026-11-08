@@ -1,1030 +1,1030 @@
 {
-  "catalog_revision": "fc606be088a0dc9920945e0670837b923c0b58c7",
-  "published_at": "2026-11-08T17:07:13Z",
+  "catalog_revision": "23b14854b41685d2d4d7e7cec119c1e36b03142f",
+  "published_at": "2026-11-08T18:07:12Z",
   "records": {
     "acid-drop": {
       "forks": 12,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 802650177,
       "repository_url": "https://github.com/acidvegas/acid-drop",
       "stars": 156
     },
     "advanceos-for-cardputer": {
       "forks": 10,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1099556447,
       "repository_url": "https://github.com/bomberman30/advanceos-for-cardputer",
       "stars": 103
     },
     "ai-cardputer-adv-a-portable-ai-assistant": {
       "forks": 6,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1147887551,
       "repository_url": "https://github.com/thebolined/ai-cardputer-adv-a-portable-ai-assistant",
       "stars": 26
     },
     "ai-stackchan2-readme": {
       "forks": 0,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 645739110,
       "repository_url": "https://github.com/robo8080/ai_stackchan2_readme",
       "stars": 43
     },
     "area512": {
       "forks": 8,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1288290564,
       "repository_url": "https://github.com/engneer-hamachan/area512",
       "stars": 108
     },
     "atom-watch": {
       "forks": 4,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 977168025,
       "repository_url": "https://github.com/fbiego/atom-watch",
       "stars": 27
     },
     "axisorange": {
       "forks": 10,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 194375702,
       "repository_url": "https://github.com/naninunenoy/axisorange",
       "stars": 51
     },
     "badcard": {
       "forks": 18,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 765438156,
       "repository_url": "https://github.com/voidnoi/badcard",
       "stars": 157
     },
     "bbn-m5stack-tough": {
       "forks": 19,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 615000425,
       "repository_url": "https://github.com/bareboat-necessities/bbn-m5stack-tough",
       "stars": 130
     },
     "bettermochi": {
       "forks": 7,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 893776419,
       "repository_url": "https://github.com/neodoggy/bettermochi",
       "stars": 51
     },
     "bitmap16dx": {
       "forks": 0,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1146877244,
       "repository_url": "https://github.com/bradmcnally/bitmap16dx",
       "stars": 37
     },
     "boot-linux-esp32s3-playground": {
       "forks": 43,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 641708105,
       "repository_url": "https://github.com/esp32de/boot-linux-esp32s3-playground",
       "stars": 464
     },
     "breach-os": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1277625033,
       "repository_url": "https://github.com/zedward856-spec/breach_os",
       "stars": 28
     },
     "breezybox-cardputer": {
       "forks": 3,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1240332176,
       "repository_url": "https://github.com/chrisdiana/breezybox-cardputer",
       "stars": 37
     },
     "bruce": {
       "forks": 2416,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 795166961,
       "repository_url": "https://github.com/brucedevices/firmware",
-      "stars": 7178
+      "stars": 7180
     },
     "bytebed": {
       "forks": 0,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1173776053,
       "repository_url": "https://github.com/amiika/bytebed",
       "stars": 3
     },
     "c-p-s-cardputer-syhnth": {
       "forks": 3,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1285537940,
       "repository_url": "https://github.com/oldtokage-collab/c.p.s.--cardputer-syhnth--",
       "stars": 37
     },
     "cardputer-adv-wifi-ble-radar": {
       "forks": 1,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1185965185,
       "repository_url": "https://github.com/zeloksa/cardputer-adv-wifi-ble-radar",
       "stars": 58
     },
     "cardputer-ai": {
       "forks": 15,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1267077321,
       "repository_url": "https://github.com/therezor/cardputer-ai",
       "stars": 129
     },
     "cardputer-drums": {
       "forks": 1,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 848185095,
       "repository_url": "https://github.com/johnhw/cardputer_drums",
       "stars": 41
     },
     "cardputer-iss-tracker": {
       "forks": 3,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1096825391,
       "repository_url": "https://github.com/adammelancon/cardputer-satellite-tracker",
       "stars": 70
     },
     "cardputer-microhydra": {
       "forks": 41,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 752958524,
       "repository_url": "https://github.com/echo-lalia/microhydra",
       "stars": 325
     },
     "cardputer-morse-trainer": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 858486303,
       "repository_url": "https://github.com/jfduhart/cardputer-morse-trainer",
       "stars": 11
     },
     "cardputergpsmap": {
       "forks": 0,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1256789038,
       "repository_url": "https://github.com/lunarc3/cardputergpsmap",
       "stars": 28
     },
     "cardputerlorachat": {
       "forks": 12,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 741309601,
       "repository_url": "https://github.com/nonik0/cardputerlorachat",
       "stars": 124
     },
     "cardradio": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 959705365,
       "repository_url": "https://github.com/mithug3/cardradio",
       "stars": 5
     },
     "cardskimmerdetector-m5cardputer": {
       "forks": 1,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 777925318,
       "repository_url": "https://github.com/aat440hz/cardskimmerdetector-m5cardputer",
       "stars": 31
     },
     "cathack": {
       "forks": 37,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 831550610,
       "repository_url": "https://github.com/stachugit/cathack",
       "stars": 773
     },
     "circuitpython": {
       "forks": 1425,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 66166069,
       "repository_url": "https://github.com/adafruit/circuitpython",
       "stars": 4584
     },
     "claude-desktop-buddy-cardputer": {
       "forks": 5,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1215683262,
       "repository_url": "https://github.com/y88huang/claude-desktop-buddy-cardputer",
       "stars": 28
     },
     "clawdmeter": {
       "forks": 410,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1235122687,
       "repository_url": "https://github.com/hermannbjorgvin/clawdmeter",
       "stars": 2333
     },
     "clawputer": {
       "forks": 23,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1171006398,
       "repository_url": "https://github.com/bryant24hao/clawputer",
       "stars": 160
     },
     "clawy": {
       "forks": 6,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1158162724,
       "repository_url": "https://github.com/marcvermeeren/clawy",
       "stars": 40
     },
     "codebuddy": {
       "forks": 10,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1216668171,
       "repository_url": "https://github.com/charlexh/codebuddy",
       "stars": 71
     },
     "crowos": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 750191902,
       "repository_url": "https://github.com/jonaslacerda/crowos",
       "stars": 24
     },
     "cyber-controller": {
       "forks": 19,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1265491204,
       "repository_url": "https://github.com/lxveace/cyber-controller",
       "stars": 93
     },
     "cypher-puter-os": {
       "forks": 3,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1239312378,
       "repository_url": "https://github.com/dkyazzentwatwa/cypher-puter-os",
       "stars": 21
     },
     "daoa-mini-cardputeradv": {
       "forks": 1,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1327755395,
       "repository_url": "https://github.com/chatelp/daoa-mini-cardputeradv",
       "stars": 6
     },
     "deskpet-firmware": {
       "forks": 5,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1213831079,
       "repository_url": "https://github.com/bryant24hao/deskpet-firmware",
       "stars": 36
     },
     "doolittle": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 845724857,
       "repository_url": "https://github.com/justinknight93/doolittle",
       "stars": 46
     },
     "doutor-vpd": {
       "forks": 0,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1427214302,
       "repository_url": "https://github.com/fcavalcantirj/doutor-vpd-firmware",
       "stars": 0
     },
     "draftling": {
       "forks": 14,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1260665366,
       "repository_url": "https://github.com/clackups/draftling",
       "stars": 127
     },
     "droidputter": {
       "forks": 7,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1354773174,
       "repository_url": "https://github.com/fcavalcantirj/droidputer",
       "stars": 60
     },
     "dualpid": {
       "forks": 3,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 277762803,
       "repository_url": "https://github.com/knifter/dualpid",
       "stars": 56
     },
     "esp-claw": {
       "forks": 516,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1213212865,
       "repository_url": "https://github.com/espressif/esp-claw",
-      "stars": 2363
+      "stars": 2364
     },
     "esp-game-server": {
       "forks": 4,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 793197340,
       "repository_url": "https://github.com/incursiohack/esp-game-server",
       "stars": 52
     },
     "esp32-bit-pirate": {
       "forks": 546,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1014515436,
       "repository_url": "https://github.com/geo-tp/esp32-bit-pirate",
       "stars": 6358
     },
     "esp32-homekit-remote": {
       "forks": 4,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 562570781,
       "repository_url": "https://github.com/megabitsenmzq/esp32-homekit-remote",
       "stars": 52
     },
     "esp32-r4sgate-for-redmond": {
       "forks": 21,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 278231913,
       "repository_url": "https://github.com/alutov/esp32-r4sgate-for-redmond",
       "stars": 261
     },
     "esp32marauder": {
       "forks": 1581,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 208325027,
       "repository_url": "https://github.com/justcallmekoko/esp32marauder",
       "stars": 13032
     },
     "esphome": {
-      "forks": 5791,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "forks": 5790,
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 128479644,
       "repository_url": "https://github.com/esphome/esphome",
       "stars": 12069
     },
     "evil-m5project": {
       "forks": 266,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 734739273,
       "repository_url": "https://github.com/7h30th3r0n3/evil-m5project",
       "stars": 2843
     },
     "evil-portal-m5stack": {
       "forks": 9,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 731870880,
       "repository_url": "https://github.com/marivaaldo/evil-portal-m5stack",
       "stars": 58
     },
     "flipper-zero-esp32-adv": {
       "forks": 129,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1200697573,
       "repository_url": "https://github.com/sor3nt/flipper-zero-esp32-port",
       "stars": 574
     },
     "flipper-zero-meets-m5stack-cardputer": {
       "forks": 9,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1288804579,
       "repository_url": "https://github.com/elicoftz/flipper-zero-meets-m5stack-cardputer",
       "stars": 45
     },
     "flock-you": {
       "forks": 217,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1041765798,
       "repository_url": "https://github.com/colonelpanichacks/flock-you",
       "stars": 1502
     },
     "fraudtagger-cardputer": {
       "forks": 0,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1032109319,
       "repository_url": "https://github.com/forshaws/fraudtagger-cardputer",
       "stars": 9
     },
     "furble": {
       "forks": 40,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 295602252,
       "repository_url": "https://github.com/gkoh/furble",
       "stars": 258
     },
     "ghost-esp": {
       "forks": 234,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 772586891,
       "repository_url": "https://github.com/spooks4576/ghost_esp",
       "stars": 1185
     },
     "ghostble": {
       "forks": 1,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 973142264,
       "repository_url": "https://github.com/smonse/ghostble",
       "stars": 42
     },
     "ghostesp": {
       "forks": 199,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 891566125,
       "repository_url": "https://github.com/ghostesp-revival/ghostesp",
       "stars": 1130
     },
     "icenav-v3": {
       "forks": 64,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 474676130,
       "repository_url": "https://github.com/jgauchia/icenav-v3",
       "stars": 488
     },
     "infiltra": {
       "forks": 14,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 917929512,
       "repository_url": "https://github.com/d3crypt-1/infiltra-firmware",
       "stars": 207
     },
     "interactivesetup-m5cardputer-sshclient": {
       "forks": 13,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 734161317,
       "repository_url": "https://github.com/fernandofatech/tool-m5cardputer-sshclient",
       "stars": 69
     },
     "launcher": {
       "forks": 281,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 755727720,
       "repository_url": "https://github.com/bmorcelli/launcher",
       "stars": 2339
     },
     "little-devhelper": {
       "forks": 1,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1109157152,
       "repository_url": "https://github.com/chrisdacrunk/little-devhelper",
       "stars": 8
     },
     "m5-clicker-hamster": {
       "forks": 0,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 850672057,
       "repository_url": "https://github.com/shlappa1000/m5-clicker-hamster",
       "stars": 0
     },
     "m5-crystal": {
       "forks": 4,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 831710789,
       "repository_url": "https://github.com/dlazder/m5_crystal_firmware",
       "stars": 110
     },
     "m5-palnagotchi": {
       "forks": 8,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 757564943,
       "repository_url": "https://github.com/viniciusbo/m5-palnagotchi",
       "stars": 82
     },
     "m5apps": {
       "forks": 4,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1103740185,
       "repository_url": "https://github.com/d4rkmen/m5apps",
       "stars": 100
     },
     "m5cardputer-chat-with-gemini-api": {
       "forks": 6,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 797631420,
       "repository_url": "https://github.com/vanshksingh/m5cardputer-chat-with-gemini-api",
       "stars": 58
     },
     "m5cardputer-display-off": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 850505308,
       "repository_url": "https://github.com/kestrelrain/m5cardputer_display_off",
       "stars": 8
     },
     "m5cardputer-sun-rider": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 967709462,
       "repository_url": "https://github.com/treblewolf/m5cardputer-sun-rider",
       "stars": 13
     },
     "m5cardputer-userdemo": {
       "forks": 115,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 704333424,
       "repository_url": "https://github.com/m5stack/m5cardputer-userdemo",
       "stars": 359
     },
     "m5cardputer-voice-changer": {
       "forks": 0,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1022586894,
       "repository_url": "https://github.com/pierrebak/m5cardputer_voice-changer",
       "stars": 5
     },
     "m5cardputer-webradio": {
       "forks": 30,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 731736959,
       "repository_url": "https://github.com/cyberwisk/m5cardputer_webradio",
       "stars": 137
     },
     "m5cardputermathgame": {
       "forks": 1,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 710963385,
       "repository_url": "https://github.com/seanbutler/m5cardputermathgame",
       "stars": 36
     },
     "m5claw": {
       "forks": 11,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1180676135,
       "repository_url": "https://github.com/fwz233-re/m5claw",
       "stars": 53
     },
     "m5gotchi": {
       "forks": 14,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 837642781,
       "repository_url": "https://github.com/devsur11/m5gotchi",
       "stars": 184
     },
     "m5hamradio": {
       "forks": 16,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 545245958,
       "repository_url": "https://github.com/armel/m5hamradio",
       "stars": 168
     },
     "m5isobusvt": {
       "forks": 12,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 621494549,
       "repository_url": "https://github.com/raibisch/m5isobusvt",
       "stars": 44
     },
     "m5mp3": {
       "forks": 15,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 867004686,
       "repository_url": "https://github.com/volosr/m5mp3",
       "stars": 78
     },
     "m5porkchop": {
       "forks": 66,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1110910539,
       "repository_url": "https://github.com/0ct0sec/m5porkchop",
       "stars": 949
     },
     "m5stack-avatar-mic": {
       "forks": 15,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 584058638,
       "repository_url": "https://github.com/mongonta0716/m5stack-avatar-mic",
       "stars": 54
     },
     "m5stack-cardputer-sparks": {
       "forks": 3,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1290150695,
       "repository_url": "https://github.com/kylebing/m5stack-cardputer-sparks",
       "stars": 38
     },
     "m5stack-cardputer-ssh": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1331629803,
       "repository_url": "https://github.com/mangox0567/m5stack-cardputer-ssh",
       "stars": 56
     },
     "m5stack-sd-updater": {
       "forks": 45,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 124610272,
       "repository_url": "https://github.com/tobozo/m5stack-sd-updater",
       "stars": 351
     },
     "m5stamp-c3dev": {
       "forks": 6,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 443270774,
       "repository_url": "https://github.com/h1romas4/m5stamp-c3dev",
       "stars": 25
     },
     "m5stick-nemo": {
       "forks": 210,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 694486730,
       "repository_url": "https://github.com/n0xa/m5stick-nemo",
       "stars": 1320
     },
     "m5stickcplus2-seamonsue": {
       "forks": 3,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 772078076,
       "repository_url": "https://github.com/hsbsbz/m5stickcplus2-seamonsue",
       "stars": 31
     },
     "m5tool": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 861274052,
       "repository_url": "https://github.com/sonys9/m5tool",
       "stars": 26
     },
     "mclite": {
       "forks": 7,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1192491458,
       "repository_url": "https://github.com/laserir/mclite",
       "stars": 42
     },
     "meshcore-cardputer-adv": {
       "forks": 1,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1132722777,
       "repository_url": "https://github.com/sosprz/meshcore-cardputer-adv",
       "stars": 75
     },
     "meshcoreterm": {
       "forks": 10,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1135169816,
       "repository_url": "https://github.com/dabeani/meshcoreterm",
       "stars": 144
     },
     "meshtastic": {
       "forks": 2900,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 237647258,
       "repository_url": "https://github.com/meshtastic/firmware",
       "stars": 8549
     },
     "meshtastic-adv": {
       "forks": 3,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1288636423,
       "repository_url": "https://github.com/anton-vinogradov/meshtastic-adv",
       "stars": 44
     },
     "micro-journal": {
       "forks": 48,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 766912219,
       "repository_url": "https://github.com/unkyulee/micro-journal",
       "stars": 1083
     },
     "microcast": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1083391033,
       "repository_url": "https://github.com/digital-farms/microcast",
       "stars": 45
     },
     "microgroove": {
       "forks": 5,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1298349202,
       "repository_url": "https://github.com/matoslav/microgroove",
       "stars": 73
     },
     "miniacid": {
       "forks": 9,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1106865891,
       "repository_url": "https://github.com/urtubia/miniacid",
       "stars": 118
     },
     "minigotchi-esp32": {
       "forks": 26,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 783438652,
       "repository_url": "https://github.com/dj1ch/minigotchi-esp32",
       "stars": 306
     },
     "mp3playerform5cardputer": {
       "forks": 14,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 779741482,
       "repository_url": "https://github.com/sanchitminda/mp3playerform5cardputer",
       "stars": 54
     },
     "nerdminer-v2": {
       "forks": 657,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 616222670,
       "repository_url": "https://github.com/bitmaker-hub/nerdminer_v2",
       "stars": 2831
     },
     "nightdriverstrip": {
       "forks": 241,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 408525324,
       "repository_url": "https://github.com/plummerssoftwarellc/nightdriverstrip",
       "stars": 1595
     },
     "nucleoos": {
       "forks": 7,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1268267248,
       "repository_url": "https://github.com/indecenti/nucleoos",
       "stars": 102
     },
     "openhasp": {
       "forks": 300,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 234790574,
       "repository_url": "https://github.com/haswitchplate/openhasp",
       "stars": 1032
     },
     "openmqttgateway": {
       "forks": 912,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 68460326,
       "repository_url": "https://github.com/1technophile/openmqttgateway",
       "stars": 4118
     },
     "orca-one": {
       "forks": 28,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 743251983,
       "repository_url": "https://github.com/oceantroop/orca-one",
       "stars": 376
     },
     "paperweb": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1189881877,
       "repository_url": "https://github.com/artem76228/paperweb",
       "stars": 31
     },
     "pathshield": {
       "forks": 5,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 825982450,
       "repository_url": "https://github.com/lukeswitz/pathshield",
       "stars": 56
     },
     "pd-camera-m5": {
       "forks": 3,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 685390587,
       "repository_url": "https://github.com/abenokobo/pd-camera-m5",
       "stars": 31
     },
     "picoware": {
       "forks": 42,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 989766763,
       "repository_url": "https://github.com/jblanked/picoware",
       "stars": 366
     },
     "pigtail": {
       "forks": 3,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1125984917,
       "repository_url": "https://github.com/benbaker76/pigtail",
       "stars": 61
     },
     "pip-boy-weather-clock": {
       "forks": 5,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 872118368,
       "repository_url": "https://github.com/nishad2m8/pip-boy-weather-clock",
       "stars": 48
     },
     "plai": {
       "forks": 15,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1169090650,
       "repository_url": "https://github.com/d4rkmen/plai",
       "stars": 198
     },
     "pydos": {
       "forks": 20,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 372102663,
       "repository_url": "https://github.com/retiredwizard/pydos",
       "stars": 182
     },
     "pyxis": {
       "forks": 7,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1151831633,
       "repository_url": "https://github.com/torlando-tech/pyxis",
       "stars": 57
     },
     "raising-hell-cardputer": {
       "forks": 1,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1150124550,
       "repository_url": "https://github.com/acpayers-alt/raising-hell-cardputer",
       "stars": 106
     },
     "ratcom": {
       "forks": 4,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1172559501,
       "repository_url": "https://github.com/ratspeak/rscardputer",
       "stars": 57
     },
     "ricoh-gr-live-view-shooting": {
       "forks": 11,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1289709148,
       "repository_url": "https://github.com/sky18dragon/ricoh-gr-live-view-shooting",
       "stars": 47
     },
     "rogueduck": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1276009813,
       "repository_url": "https://github.com/m5rogueops/m5sticks3-rogueduck",
       "stars": 6
     },
     "ruview": {
-      "forks": 13372,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "forks": 13374,
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 997737944,
       "repository_url": "https://github.com/ruvnet/ruview",
-      "stars": 103024
+      "stars": 103029
     },
     "saturn": {
       "forks": 10,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 809302289,
       "repository_url": "https://github.com/henriquesebastiao/saturn",
       "stars": 87
     },
     "semi-evil-m5dial": {
       "forks": 4,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 904506947,
       "repository_url": "https://github.com/dagnazty/semi-evil-m5dial",
       "stars": 31
     },
     "solotputer": {
       "forks": 0,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 907510425,
       "repository_url": "https://github.com/aspikray/solotputer",
       "stars": 3
     },
     "sound-terrarium": {
       "forks": 3,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1352091379,
       "repository_url": "https://github.com/kariagepompadour/sound-terrarium",
       "stars": 35
     },
     "squachwatch-cyd": {
       "forks": 82,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1348440753,
       "repository_url": "https://github.com/skizzophrenic/squachwatch-cyd",
-      "stars": 487
+      "stars": 488
     },
     "stack-chan": {
       "forks": 250,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 374381865,
       "repository_url": "https://github.com/stack-chan/stack-chan",
       "stars": 1855
     },
     "stackchan-mcp": {
       "forks": 67,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1226065142,
       "repository_url": "https://github.com/kisaragi-mochi/stackchan-mcp",
       "stars": 178
     },
     "stellar-map": {
       "forks": 3,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1254985000,
       "repository_url": "https://github.com/wisnc/stellar-map",
       "stars": 80
     },
     "t-deck": {
       "forks": 117,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 626223534,
       "repository_url": "https://github.com/xinyuan-lilygo/t-deck",
       "stars": 620
     },
     "tagtinker-adv": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1361884510,
       "repository_url": "https://github.com/i12bp8/tagtinker-adv",
       "stars": 53
     },
     "tamaputer": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1104768732,
       "repository_url": "https://github.com/mindovermiles262/tamaputer",
       "stars": 29
     },
     "taskhub-for-sticks3": {
       "forks": 3,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1256057070,
       "repository_url": "https://github.com/sheepxux/taskhub-for-sticks3",
       "stars": 31
     },
     "tasmota": {
       "forks": 5208,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 80286288,
       "repository_url": "https://github.com/arendst/tasmota",
       "stars": 24971
     },
     "tiny-journal": {
       "forks": 4,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1106575137,
       "repository_url": "https://github.com/joejee90/tiny-journal",
       "stars": 46
     },
     "trail-mate": {
       "forks": 62,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1136847791,
       "repository_url": "https://github.com/vicliu624/trail-mate",
       "stars": 561
     },
     "usbarmyknife": {
       "forks": 286,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 864064230,
       "repository_url": "https://github.com/i-am-shodan/usbarmyknife",
       "stars": 2996
     },
     "vanguard": {
       "forks": 0,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1129874947,
       "repository_url": "https://github.com/mahdy-gribkov/vanguard",
       "stars": 7
     },
     "vibestick-for-mac": {
       "forks": 2,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1330523734,
       "repository_url": "https://github.com/hanminyin/vibestick-for-mac",
       "stars": 100
     },
     "wadamesh": {
       "forks": 63,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1267772932,
       "repository_url": "https://github.com/allfather-bv/wadamesh",
       "stars": 195
     },
     "wall-of-flippers": {
       "forks": 69,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 652336197,
       "repository_url": "https://github.com/k3yomi/wall-of-flippers",
       "stars": 1049
     },
     "wifi-capture-page-m5cardputer": {
       "forks": 0,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 845135016,
       "repository_url": "https://github.com/zrutra/wifi-capture-page-m5cardputer",
       "stars": 7
     },
     "wled": {
       "forks": 4453,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 76990209,
       "repository_url": "https://github.com/wled/wled",
-      "stars": 19000
+      "stars": 18999
     },
     "xiaozhi-esp32": {
-      "forks": 7762,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "forks": 7763,
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 850267588,
       "repository_url": "https://github.com/78/xiaozhi-esp32",
-      "stars": 32893
+      "stars": 32895
     },
     "zx-spectrum-cardputer-internal": {
       "forks": 11,
-      "github_as_of": "2026-11-08T17:07:13Z",
+      "github_as_of": "2026-11-08T18:07:12Z",
       "github_repo_id": 1097136443,
       "repository_url": "https://github.com/andyaicardputer/zx-spectrum-cardputer-external",
       "stars": 51
     }
   },
   "schema_version": 1,
-  "version": "sha256:d991a85d8ac857781d35ce1eaf795bf6ad0e81361a1969484bce860179744444"
+  "version": "sha256:2dfc6ee50c740cc9aaec3aa77a07c83b0b123c10cfba1dd285c2754828c9c284"
 }
