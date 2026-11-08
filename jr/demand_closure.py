@@ -162,6 +162,59 @@ def _search_ids(fetch, term: str, expected_revision: str) -> list[str]:
     return [r["id"] for r in results]
 
 
+def parts_url(part_id: str) -> str:
+    return f"{SITE}/api/parts/{urllib.parse.quote(part_id, safe='')}"
+
+
+def _part_present(fetch, part_id: str) -> bool:
+    """Whether the public part endpoint serves `part_id` as itself: 200 with that `id` in its body is
+    present, 404 is absent (a readable answer, not a failure), anything else proves nothing."""
+    url = parts_url(part_id)
+    try:
+        status, body = fetch(url)
+    except (OSError, ValueError, TypeError, http.client.HTTPException) as e:
+        raise _Unread(f"GET {url} failed: {e}") from e
+    if status == 404:
+        return False
+    if status != 200:
+        raise _Unread(f"GET {url} answered HTTP {status}")
+    try:
+        doc = json.loads(body)
+    except (ValueError, TypeError) as e:
+        raise _Unread(f"GET {url} answered unreadable JSON") from e
+    return isinstance(doc, dict) and doc.get("id") == part_id
+
+
+def _catalog_part_receipt(candidate: dict, validation: dict, pr: dict, *, fetch, git,
+                          now: datetime) -> tuple[dict | None, str]:
+    """The catalog_part receipt verify_resolution judges, or (None, why): a missing BOARD is verified
+    at the exact public part endpoint, never through the fuzzy search of its name. Bracketed by two
+    /api/status reads naming the same full revision: every expected id must be served by
+    /api/parts/<id> (200, its own `id`) AND listed by /api/search?q=<id> at that same revision; every
+    forbidden sibling must answer 404. A 404 on an expected id or a 200 on a forbidden one is a
+    readable "not yet" (recorded, pending); any other failure builds no receipt."""
+    if fetch is None:
+        return None, ("catalog_part verification needs a live public catalog getter; none was injected, "
+                      "so none is invented")
+    expected = [i for i in (validation.get("expected_ids") or []) if rw._text(i)]
+    forbidden = list(rw._forbidden_ids(validation) or [])
+    if not expected or not rw._text(candidate.get("term")):
+        return None, "catalog_part live check: no readable expected ids"
+    try:
+        revision = _deployed_revision(fetch)
+        present = [i for i in expected if _part_present(fetch, i)]
+        hits = [i for i in forbidden if _part_present(fetch, i)]
+        present = [i for i in present if i in _search_ids(fetch, i, revision)]
+        if _deployed_revision(fetch) != revision:
+            raise _Unread("deployed revision changed during the live check")
+    except _Unread as e:
+        return None, f"catalog_part live check: {e}"
+    return {"kind": rw.KIND_CATALOG_PART, "http": 200, "deployment": revision, "ids": present,
+            "missing": [i for i in expected if i not in present], "forbidden_hits": hits,
+            "query": candidate["term"], "checked_at": now.astimezone(timezone.utc).isoformat(),
+            "merge_sha": pr.get("merge_sha"), "contains_merge": contains_merge(git, pr.get("merge_sha"), revision)}, ""
+
+
 def _live_search_receipt(candidate: dict, pr: dict, *, fetch, git, now: datetime) -> tuple[dict | None, str]:
     """The catalog_search receipt verify_resolution judges, or (None, why). The search is bracketed by
     two /api/status reads naming the same full revision, so its ids came from that deployment."""
@@ -187,10 +240,12 @@ def observe(candidate: dict, pr: dict, snap: dict, *, mined_revision, git, now: 
     """The observation receipt for the validation's verification kind, or (None, why)."""
     validation = rw.readable_validation(candidate) or {}
     kind = validation.get("verification_kind", rw.KIND_CATALOG_SEARCH)
-    if kind not in (rw.KIND_CATALOG_SEARCH, rw.KIND_DEMAND_RESOLUTION) or not pr.get("merged"):
+    if kind not in rw._KIND_CHECKS or not pr.get("merged"):
         return None, ""                 # verify_resolution names the problem
     if kind == rw.KIND_CATALOG_SEARCH:
         return _live_search_receipt(candidate, pr, fetch=fetch, git=git, now=now)
+    if kind == rw.KIND_CATALOG_PART:
+        return _catalog_part_receipt(candidate, validation, pr, fetch=fetch, git=git, now=now)
     return _miner_receipt(candidate, pr, snap, mined_revision=mined_revision, git=git, now=now)
 
 
