@@ -406,12 +406,21 @@ def _firmware_source(gh, slug: str, oid: str, fid: str) -> str | None:
     return "/".join(url.strip().rstrip("/").removeprefix(_GITHUB_PREFIX).lower().split("/")[:2]) or None
 
 
+def _same_repository(gh, recorded, source: str, rid: int) -> bool:
+    """The ledger's `recorded` owner/repo is `source` (GitHub already confirmed `rid` for it), or a
+    former name of it GitHub still answers with that same `rid` — a rename after the ledger was written."""
+    return str(recorded or "").lower() == source or _github_confirms(gh, recorded, rid)
+
+
 def _ledger_identities(gh, slug: str, pr: dict, ids) -> tuple[dict, list] | None:
     """({firmware id: (repo id, owner/repo)} the ledger committed at `pr`'s head records for `ids` (one
-    raw contents read) whose owner/repo IS the source the firmware.md at that same head names AND
-    GitHub confirms for it, [ids whose recorded int repo_id is not bound so]); None when unreadable. A
-    record without an int repo_id claims nothing. A later commit can rewrite the ledger's repo and id
-    as a pair GitHub truthfully confirms; only the held record's own source binds the id to it."""
+    raw contents read) whose repo id GitHub confirms for the source the firmware.md at that same head
+    names, [ids whose recorded int repo_id is not bound so]); None when unreadable. A record without an
+    int repo_id claims nothing. The ledger's owner/repo must be that source, or — an upstream renamed
+    after the ledger was written (pr3y/bruce, now brucedevices/firmware) — a name GitHub answers with
+    the SAME id: both names resolving to one repository is what binds the id. A later commit can rewrite
+    the ledger's repo and id as a pair GitHub truthfully confirms; that pair names another repository,
+    so only the held record's own source binds the id to it. Equal names take one repos/ read."""
     oid = pr.get("headRefOid")
     if not slug or not isinstance(oid, str) or not oid:
         return None
@@ -430,7 +439,7 @@ def _ledger_identities(gh, slug: str, pr: dict, ids) -> tuple[dict, list] | None
         if type(rid) is not int:
             continue
         source = _firmware_source(gh, slug, oid, fid)
-        if source and str(rec.get("repo") or "").lower() == source and _github_confirms(gh, source, rid):
+        if source and _github_confirms(gh, source, rid) and _same_repository(gh, rec.get("repo"), source, rid):
             out[fid] = (rid, source)
         else:
             unresolved.append(fid)
