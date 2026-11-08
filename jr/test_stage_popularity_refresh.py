@@ -9,6 +9,7 @@ from types import SimpleNamespace
 import yaml
 import jsonschema
 
+import pending_prs
 import stage_popularity_refresh as refresh
 from budget import Budget
 
@@ -121,3 +122,32 @@ def test_slice_is_bounded_and_a_stable_catalog_is_covered(tmp_path):
         assert len(calls) <= refresh.MAX_REPOS_PER_TICK
         seen.update(call[1] for call in calls)
     assert len(seen) == 145
+
+
+def _pending_ctx(root: Path, response: dict):
+    ctx, calls = _ctx(root, response)
+    ctx.pending = pending_prs.build(
+        [{"number": 1511, "headRefName": "jr/tick-20261107-0300", "files": [{"path": "data/firmware/held/firmware.md"}]}],
+        [{"number": 1478, "headRefName": "jr/tick-20261106-0900", "mergedAt": None, "closedAt": "2026-11-05T00:00:00Z",
+          "files": [{"path": "data/firmware/vetoed/signals.json"}]}], NOW)
+    return ctx, calls
+
+
+def test_a_record_an_open_tick_pr_holds_is_deferred_with_no_upstream_call(tmp_path):
+    """jr/pending_prs.py: an OPEN tick PR already changes this firmware.md — a second edit would
+    conflict with it, so the refresh waits for that PR."""
+    held = _record(tmp_path, "held", "owner/held", {"stars": 10, "forks": 2, "as_of": "2026-09-20"})
+    original = held.read_text()
+    ctx, calls = _pending_ctx(tmp_path, {"full_name": "owner/held", "id": 7, "stargazers_count": 11, "forks_count": 3})
+    result = refresh.run(ctx)
+    assert held.read_text() == original and calls == [] and result.paths == []
+    assert "0 current" in result.summary and "1 pending deferred" in result.summary
+
+
+def test_a_vetoed_record_is_still_refreshed(tmp_path):
+    """A veto rejected a proposal (mapped signals), not the catalogued record's counts."""
+    vetoed = _record(tmp_path, "vetoed", "owner/vetoed", {"stars": 100, "forks": 2, "as_of": "2026-09-20"})
+    ctx, _ = _pending_ctx(tmp_path, {"full_name": "owner/vetoed", "id": 7, "stargazers_count": 101, "forks_count": 3})
+    result = refresh.run(ctx)
+    assert result.paths == ["data/firmware/vetoed/firmware.md"] and _fm(vetoed)["popularity"]["stars"] == 101
+    assert "pending deferred" not in result.summary

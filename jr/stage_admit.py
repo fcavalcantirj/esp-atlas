@@ -26,6 +26,7 @@ import derive
 import device_evidence
 import launcher_resolve
 import memory
+import pending_prs
 import review_memory
 import scorer
 import tools
@@ -268,6 +269,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         return tick.StageResult("admit", paths=[], summary="catalog unreadable: not a list",
                                 admitted=0, rejects={}, needs_human=True)
 
+    pending = pending_prs.of(ctx)   # what an open or vetoed tick PR holds (from its own file list)
     led = memory.load(ctx.ledger_path)   # read-only here; writes below honor dry-run
     cat_repos, cat_toks = tools._catalogued_repos_and_tokens(ctx.root / "data" / "firmware")
     # Per-firmware token sets (not the flat cat_toks pool above) so scorer.score_entry's
@@ -322,6 +324,27 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     def note(line):
         if line:
             lines.append(line)
+
+    def held_by_pr(hold, cand_id, issue):
+        """A candidate an open or vetoed tick PR holds (jr/pending_prs.py): counted, never admitted,
+        nothing remembered — the index is rebuilt every tick. A rename or an identity ambiguity is
+        named on its own line, with both ids and the PR. An ambiguous candidate is no decision: nothing
+        is persisted — not even a resolved launcher entry's note — and a submission's issue stays open
+        and unanswered, read again once the hold ends (fail closed)."""
+        nonlocal pending_note
+        reject(hold.reason)
+        if hold.seen_id is not None:
+            pending_note = None
+        if issue and hold.seen_id is not None:
+            lines.append(f"submission #{issue}: deferred, {hold.reason} ({hold.note})")
+            return
+        if issue:
+            _answer(ctx, slug, issue, _verdict_text(f"{hold.reason}: {hold.note}", False, False))
+            lines.append(f"submission #{issue}: {hold.reason.replace('_', ' ')} ({cand_id})")
+            return
+        launcher_skips[hold.reason] = launcher_skips.get(hold.reason, 0) + 1
+        if hold.seen_as is not None or hold.seen_id is not None:
+            lines.append(f"{cand_id}: {hold.reason} ({hold.note})")
 
     resolver_calls = 0
 
@@ -421,14 +444,22 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         # id (its owner/repo is not recoverable from a file path), so the repo gate above cannot see
         # it; this id gate catches it. The authored id is deterministic from the github url alone
         # (scorer derives it the same way), so this fires BEFORE any meta fetch — no wasted call —
-        # and stops two consecutive ticks producing a duplicate PR (#158/#159, #162/#163).
+        # and stops two consecutive ticks producing a duplicate PR (#158/#159, #162/#163). The PR's own
+        # file list (jr/pending_prs.py) backs it: an id an open tick PR changes — or one a closed-unmerged
+        # tick PR changed inside the veto TTL — is held even when the ledger hydration could not see it.
+        # A hold whose PR verified the repository's GitHub id is decided by that id once the metadata
+        # is read (below): the same slug under another id is ambiguous, not the held firmware.
         cand_id = scorer._slug(scorer._repo_name_from_url(github))
         cand_rec = memory.lookup(led, firmware_id=cand_id) if cand_id else None
-        if cand_rec and cand_rec.get("status") == "proposed" and not memory.is_expired(cand_rec, ctx.now):
+        hold = pending.hold(cand_id)
+        if hold and hold.repo_id is None:
+            held_by_pr(hold, cand_id, issue)
+            continue
+        if not hold and cand_rec and cand_rec.get("status") == "proposed" and not memory.is_expired(cand_rec, ctx.now):
             reject("already_proposed")
             if issue:
-                _answer(ctx, slug, issue, _verdict_text(
-                    f"already_proposed: {cand_rec.get('pr_ref') or 'an open PR covers this firmware'}", False, False))
+                where = cand_rec.get("pr_ref") or "an open PR covers this firmware"
+                _answer(ctx, slug, issue, _verdict_text(f"already_proposed: {where}", False, False))
                 lines.append(f"submission #{issue}: already proposed ({cand_id})")
             else:
                 launcher_skips["already_proposed"] = launcher_skips.get("already_proposed", 0) + 1
@@ -446,6 +477,12 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             lines.append(f"stopped during {owner_repo}: {e}")   # meta fetch is read-only: nothing half-written
             break
         repo_id = meta.get("id")
+        # Identity is the repository: a held repository renamed upstream keeps its GitHub id, so the
+        # id is matched before the slug, and a held slug under another id is never admitted.
+        hold = pending.match(cand_id, repo_id)
+        if hold:
+            held_by_pr(hold, cand_id, issue)
+            continue
         held = held or (review_memory.live_decision(led, ctx.now, repo_id=repo_id) if repo_id is not None else None)
         rev_ev = review_memory.evidence(meta, downloads=entry.get("download")) if not meta.get("error") else None
         rev = review_memory.evidence_rev(rev_ev) if rev_ev is not None else None
@@ -609,7 +646,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
                   else f"{evidence.get('kind')} signal `{evidence.get('token')}` ({evidence.get('url')})")
         else:
             ev = "named in the repository name/description"
-        items.append({"kind": "firmware", "id": out_id, "name": rec["name"], "url": repo_url,
+        items.append({"kind": "firmware", "id": out_id, "name": rec["name"], "url": repo_url, "repo_id": repo_id,
                       "stars": meta.get("stars"), "forks": meta.get("forks"), "fork": bool(meta.get("fork")),
                       "archived": bool(meta.get("archived")), "license": meta.get("license"),
                       "board": rec["board"], "chip": rec["chip"], "recipe": f"{rec['board']}__{out_id}",

@@ -13,6 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 
+import pending_prs
 import review_memory
 
 
@@ -308,6 +309,9 @@ def render_pr_body(r: TickReport) -> str:
         elif it.get("kind") == "recipes":
             n_recipes += len(it.get("written") or [])
             lines += _fmt_recipes_item(it)
+    identity = pending_prs.render_identity([it for _stage, it in items])
+    if identity:
+        lines.append(identity)          # the repository ids the next ticks hold this PR's firmware by
     lines.append("")
     lines += render_demand_section(r)
     lines.append("### Skipped this tick (not in this PR; remembered with a TTL)")
@@ -324,7 +328,8 @@ def render_pr_body(r: TickReport) -> str:
     lines.append(f"{n_records} record(s) · {n_recipes} recipe(s) · guard {guard} · memory expired {mem.get('expired', 0)} / "
                  f"merged {mem.get('merged', 0)} / rejected {mem.get('rejected', 0)} / removed {mem.get('removed', 0)} · {r.budget}")
     lines.append("")
-    lines.append("**Merge = accept. Close = veto** (Jr records the veto and does not propose it again for 30 days). "
+    lines.append("**Merge = accept. Close = veto** (Jr records the veto and does not propose it again for "
+                 f"{pending_prs.VETO_TTL_DAYS} days). "
                  "Every path is additive; nothing is deleted by a tick.")
     lines.append("")
     lines.append("<details><summary>Stage log</summary>")
@@ -341,4 +346,4 @@ def render_pr_body(r: TickReport) -> str:
     lines.append("</details>")
     lines.append("")
     lines.append("— 🤖 EspAtlas Jr · hourly tick")
-    return "\n".join(lines)
+    return "\n".join(line if line == identity else pending_prs.defang(line) for line in lines)   # one marker opening

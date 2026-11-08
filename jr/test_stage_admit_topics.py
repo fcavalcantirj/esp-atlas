@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import json
 import shutil
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -16,6 +16,7 @@ import yaml
 import drain
 import ledger
 import memory
+import pending_prs
 import source_topics
 import stage_admit_topics
 import tick
@@ -194,6 +195,33 @@ def test_second_tick_does_not_reauthor_an_open_pr_candidate(root, monkeypatch):
     assert second.admitted == 0 and second.paths == []
 
 
+
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_an_id_an_open_or_vetoed_tick_pr_holds_never_reaches_the_drain(root, monkeypatch, dry_run):
+    """jr/pending_prs.py: the PR's own file list holds the id even when the ledger never heard of it
+    (the proposal lives only on the un-merged PR branch, or that PR was closed: a veto)."""
+    entries = [_topic_entry("My Cardputer Tool", "https://github.com/n/newtool", "A Cardputer tool"),
+               _topic_entry("Second Cardputer Tool", "https://github.com/n/second", "Another Cardputer tool")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    fetched = []
+    metas = {"n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=101),
+             "n/second": _meta("n/second", stars=40, description="Another Cardputer tool", rid=102)}
+    fetch = _fake_fetch_meta(metas)
+    monkeypatch.setattr(drain, "default_fetch_meta", lambda url: fetched.append(url) or fetch(url))
+    closed = {"number": 1478, "headRefName": "jr/tick-20261106-0900", "mergedAt": None,
+              "closedAt": (NOW - timedelta(days=2)).isoformat(), "files": [{"path": "data/firmware/second/firmware.md"},
+                                                                                         {"path": "data/recipes/m5cardputer__second/recipe.md"}]}
+    opened = {"number": 1500, "headRefName": "jr/tick-20261106-2200",
+              "files": [{"path": "data/recipes/m5cardputer__newtool/recipe.md"}]}
+    ctx = _ctx(root, dry_run=dry_run)
+    ctx.pending = pending_prs.build([opened], [closed], NOW)
+
+    res = stage_admit_topics.run(ctx, budget=2)
+
+    assert res.admitted == 0 and res.paths == [] and fetched == []
+    assert res.rejects.get("already_proposed") == 1 and res.rejects.get("vetoed") == 1
+    assert "newtool: already_proposed (#1500 open)" in res.summary and "second: vetoed (#1478" in res.summary
+
 def _hour_surfacing(root, topic):
     """A tick clock whose rotation slice includes `topic` — so a test can pin which seed topic
     the stage searches without hard-coding the seed list's order."""
@@ -335,7 +363,8 @@ def _admit_newtool(root, monkeypatch, **meta_kw):
 def test_firmware_item_carries_the_fields_of_the_record_it_wrote(root, monkeypatch):
     """PR #1434 rendered '— None' / 'board None (None)' because this stage's item carried only
     kind/id/source. It now carries what stage_admit's item does, read back from the firmware.md
-    and recipe.md it actually wrote — never invented."""
+    and recipe.md it actually wrote — never invented — plus the GitHub id the metadata fetch read
+    (the PR body's identity marker, jr/pending_prs.py)."""
     res = _admit_newtool(root, monkeypatch, stars=31, forks=4)
 
     fm = _read_fm(root / "data" / "firmware" / "newtool" / "firmware.md")
@@ -343,7 +372,7 @@ def test_firmware_item_carries_the_fields_of_the_record_it_wrote(root, monkeypat
     rc = _read_fm(rdir / "recipe.md")
     [it] = res.items
     assert it == {"kind": "firmware", "id": "newtool", "source": "topic:cardputer",
-                  "name": fm["name"], "url": "https://github.com/n/newtool",
+                  "name": fm["name"], "url": "https://github.com/n/newtool", "repo_id": 101,
                   "stars": 31, "forks": 4, "license": None,
                   "board": rc["board"], "chip": rc["chip_family"], "recipe": rdir.name,
                   "evidence": "surfaced by `topic:cardputer`; recipe cites https://github.com/n/newtool",
@@ -379,3 +408,66 @@ def test_topics_item_renders_in_the_pr_body_with_real_url_board_and_recipe_and_n
     assert "31 ★ / 4 forks" in body
     assert (f"  - ✅ board `{it['board']}` (esp32-s3): surfaced by `topic:cardputer`; recipe cites "
             f"https://github.com/n/newtool → recipe `{it['board']}__newtool`, status unverified") in body
+
+
+# --- stable repository identity (jr/pending_prs.py): the GitHub id is matched before the slug -------------
+
+def _identity_pending(fid, owner_repo, rid, vetoed=False):
+    """An index whose one tick PR holds `fid` and verified it as repository `rid` (by load(), from the
+    ledger committed at its head: `_identities`)."""
+    pr = {"number": 1500, "headRefName": "jr/tick-20261106-2200", "mergedAt": None, "_identities": {fid: (rid, owner_repo)},
+          "files": [{"path": f"data/firmware/{fid}/firmware.md"}, {"path": f"data/recipes/m5cardputer__{fid}/recipe.md"}],
+          "body": pending_prs.render_identity([{"kind": "firmware", "id": fid, "url": f"https://github.com/{owner_repo}",
+                                                "repo_id": rid}])}
+    if vetoed:
+        return pending_prs.build([], [{**pr, "closedAt": (NOW - timedelta(days=2)).isoformat()}], NOW)
+    return pending_prs.build([pr], [], NOW)
+
+
+@pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_a_held_repository_renamed_upstream_is_not_authored_again(root, monkeypatch, vetoed, dry_run):
+    entries = [_topic_entry("New Tool", "https://github.com/n/newtool", "A Cardputer tool")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(
+        {"n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=4242)}))
+    ctx = _ctx(root, dry_run=dry_run)
+    ctx.pending = _identity_pending("oldtool", "n/oldtool", 4242, vetoed=vetoed)
+
+    res = stage_admit_topics.run(ctx, budget=1)
+
+    assert res.admitted == 0 and res.paths == [] and not (root / "data" / "firmware" / "newtool").exists()
+    assert not getattr(res, "would_write", None) or not any("newtool" in w["path"] for w in res.would_write)
+    reason = "vetoed" if vetoed else "already_proposed"
+    assert res.rejects.get(reason) == 1 and "skipped_scoring" not in res.rejects, res.rejects
+    assert "oldtool" in res.summary and "4242" in res.summary and "#1500" in res.summary, res.summary
+
+
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_another_repository_with_a_held_slug_is_routed_fail_closed(root, monkeypatch, dry_run):
+    entries = [_topic_entry("New Tool", "https://github.com/m/newtool", "A Cardputer tool")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(
+        {"m/newtool": _meta("m/newtool", stars=30, description="A Cardputer tool", rid=7777)}))
+    ctx = _ctx(root, dry_run=dry_run)
+    ctx.pending = _identity_pending("newtool", "n/newtool", 4242)
+
+    res = stage_admit_topics.run(ctx, budget=1)
+
+    assert res.admitted == 0 and res.paths == [] and not (root / "data" / "firmware" / "newtool").exists()
+    assert res.rejects.get("identity_ambiguous") == 1 and "already_proposed" not in res.rejects, res.rejects
+    assert "7777" in res.summary and "4242" in res.summary, res.summary
+
+
+def test_another_repository_with_another_name_is_authored_with_its_id(root, monkeypatch):
+    entries = [_topic_entry("Fmt Check", "https://github.com/n/fmtcheck", "A Cardputer tool")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(
+        {"n/fmtcheck": _meta("n/fmtcheck", stars=30, description="A Cardputer tool", rid=5151)}))
+    ctx = _ctx(root)
+    ctx.pending = _identity_pending("oldtool", "n/oldtool", 4242)
+
+    res = stage_admit_topics.run(ctx, budget=1)
+
+    assert res.admitted == 1 and "data/firmware/fmtcheck/firmware.md" in res.paths
+    assert [it.get("repo_id") for it in res.items] == [5151]           # the next tick holds it by this id
