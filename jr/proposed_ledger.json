@@ -1117,43 +1117,47 @@
       "timestamp": "2026-10-19T20:00:59.732759+00:00"
     },
     "calcputer": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "calcputer",
       "pr_ref": null,
       "reason": "below_floor: 6 stars / 0 forks",
       "repo": "advascript/calcputer",
       "repo_id": 1240549444,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "camillia-mt": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "camillia-mt",
       "pr_ref": null,
       "reason": "below_floor: 11 stars / 2 forks",
       "repo": "oumike/camillia-mt",
       "repo_id": 1191979607,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "candy-bricks": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "candy-bricks",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "oliverxing2025/candy-bricks",
       "repo_id": 1333150404,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "card-craft": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "card-craft",
       "pr_ref": null,
       "reason": "below_floor: 20 stars / 1 forks",
       "repo": "therezor/card-craft",
       "repo_id": 1342100641,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardcaliper": {
@@ -1177,13 +1181,14 @@
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
     "cardcharge": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardcharge",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 1 forks",
       "repo": "spreedated/cardcharge",
       "repo_id": 1350316488,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardelbrot": {
@@ -1197,23 +1202,25 @@
       "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "cardlife": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardlife",
       "pr_ref": null,
       "reason": "below_floor: 2 stars / 0 forks",
       "repo": "personwithbeans/cardlife",
       "repo_id": 1091474456,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardmeteo": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardmeteo",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 1 forks",
       "repo": "rythlan/cardmeteo",
       "repo_id": 1267533242,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardmotion": {
@@ -1268,13 +1275,14 @@
       "timestamp": "2026-09-11T17:00:55.936325+00:00"
     },
     "cardputer-8-bit-tape-loader": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardputer-8-bit-tape-loader",
       "pr_ref": null,
       "reason": "below_floor: 11 stars / 0 forks",
       "repo": "slowlane112/cardputer_8_bit_tape_loader",
       "repo_id": 1170463474,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-abc": {
@@ -1292,16 +1300,17 @@
       "pr_ref": "#1500",
       "repo": "jay-jayismyname1/cardputer-adv-b-radar",
       "status": "proposed",
-      "timestamp": "2026-11-08T00:00:55.177876+00:00"
+      "timestamp": "2026-11-08T01:00:55.198528+00:00"
     },
     "cardputer-adv-basic": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardputer-adv-basic",
       "pr_ref": null,
       "reason": "below_floor: 10 stars / 1 forks",
       "repo": "prstoetzer/cardputer_adv_basic",
       "repo_id": 1253835246,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-adv-csi-radar": {
@@ -1346,13 +1355,14 @@
       "timestamp": "2026-10-20T19:00:59.748673+00:00"
     },
     "cardputer-adv-recorder": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardputer-adv-recorder",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "moskic/cardputer-adv-recorder",
       "repo_id": 1264969863,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-adv-sport-companion": {
@@ -1414,23 +1424,25 @@
       "timestamp": "2026-10-09T02:00:12.078416+00:00"
     },
     "cardputer-ballistic-calculator": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardputer-ballistic-calculator",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 0 forks",
       "repo": "gremlin1987/cardputer-ballistic-calculator",
       "repo_id": 1211943227,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-barcode-wedge": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardputer-barcode-wedge",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 1 forks",
       "repo": "douglasrubims/cardputer-barcode-wedge",
       "repo_id": 1061512601,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-camera": {
@@ -1445,13 +1457,14 @@
       "timestamp": "2026-09-12T16:00:03.112838+00:00"
     },
     "cardputer-camera-companion": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardputer-camera-companion",
       "pr_ref": null,
       "reason": "below_floor: 4 stars / 0 forks",
       "repo": "joejee90/cardputer-camera-companion",
       "repo_id": 1106171672,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-cc1101-manufactured": {
@@ -1572,13 +1585,14 @@
       "timestamp": "2026-10-09T02:00:12.078416+00:00"
     },
     "cardputer-gps-info": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardputer-gps-info",
       "pr_ref": null,
       "reason": "below_floor: 11 stars / 3 forks",
       "repo": "alcor55/cardputer-gps-info",
       "repo_id": 1093489936,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-ha-remote": {
@@ -1621,13 +1635,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "cardputer-laptop-monitor": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardputer-laptop-monitor",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 1 forks",
       "repo": "jjugs/cardputer-laptop-monitor",
       "repo_id": 1178373884,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-lightmeter-cpp": {
@@ -1688,13 +1703,14 @@
       "timestamp": "2026-09-02T16:03:27.995186+00:00"
     },
     "cardputer-mouse-jiggler": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardputer-mouse-jiggler",
       "pr_ref": null,
       "reason": "below_floor: 18 stars / 4 forks",
       "repo": "serginator/cardputer-mouse-jiggler",
       "repo_id": 852753827,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-mp3-adv": {
@@ -1760,13 +1776,14 @@
       "timestamp": "2026-10-09T02:00:12.078416+00:00"
     },
     "cardputer-radiopod": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardputer-radiopod",
       "pr_ref": null,
       "reason": "below_floor: 6 stars / 0 forks",
       "repo": "halbeshuhn/cardputer-radiopod",
       "repo_id": 1358938417,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-remote-cloner": {
@@ -1780,13 +1797,14 @@
       "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "cardputer-rng": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardputer-rng",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "kaini-industries/cardputer-rng",
       "repo_id": 1102238394,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputer-squawkbox": {
@@ -2002,13 +2020,14 @@
       "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "cardputerhomekit": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardputerhomekit",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "kwonbowon/cardputerhomekit",
       "repo_id": 908689190,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardputerlegotraincontrol": {
@@ -2127,13 +2146,14 @@
       "timestamp": "2026-11-07T08:00:55.079521+00:00"
     },
     "cardsaber": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardsaber",
       "pr_ref": null,
       "reason": "below_floor: 3 stars / 1 forks",
       "repo": "volosr/cardsaber",
       "repo_id": 1169062824,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardskimmerdetector-m5atoms3lite": {
@@ -2156,13 +2176,14 @@
       "timestamp": "2026-09-19T17:00:45.426940+00:00"
     },
     "cardskimmerdetector-m5stickcplus": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardskimmerdetector-m5stickcplus",
       "pr_ref": null,
       "reason": "below_floor: 10 stars / 1 forks",
       "repo": "aat440hz/cardskimmerdetector-m5stickcplus",
       "repo_id": 737394697,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardskimmerdetector-m5stickcplus2": {
@@ -2216,13 +2237,14 @@
       "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "cardui": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cardui",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 1 forks",
       "repo": "bubbergamesites/cardui",
       "repo_id": 1296706232,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cardulator": {
@@ -2277,13 +2299,14 @@
       "timestamp": "2026-10-09T02:00:12.078416+00:00"
     },
     "cave-mine-cardputer-alpha1": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cave-mine-cardputer-alpha1",
       "pr_ref": null,
       "reason": "below_floor: 24 stars / 2 forks",
       "repo": "question-and-answer/cave-mine-cardputer-alpha1",
       "repo_id": 1185415679,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cc": {
@@ -2460,13 +2483,14 @@
       "timestamp": "2026-09-29T16:00:28.597305+00:00"
     },
     "columns-m5stick-plus-2": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "columns-m5stick-plus-2",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "coreymillia/columns-m5stick-plus-2",
       "repo_id": 1092082906,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "commercial-firmesp32": {
@@ -2521,13 +2545,14 @@
       "timestamp": "2026-09-10T09:00:16.033731+00:00"
     },
     "core2-otr-stream": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "core2-otr-stream",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "coreymillia/core2-otr-stream",
       "repo_id": 1195926385,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "coreink-meteo": {
@@ -2601,13 +2626,14 @@
       "timestamp": "2026-10-09T03:00:12.533071+00:00"
     },
     "cpv-tools": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cpv-tools",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "sushiware-online/cpv-tools",
       "repo_id": 1268503947,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "crawlbot": {
@@ -2780,13 +2806,14 @@
       "timestamp": "2026-11-06T21:00:55.650872+00:00"
     },
     "cyd-gb-emulator": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "cyd-gb-emulator",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "sijan246/cyd-gb-emulator",
       "repo_id": 1331997397,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "cyd-stream-deck": {
@@ -3005,13 +3032,14 @@
       "timestamp": "2026-10-09T13:00:11.675780+00:00"
     },
     "downloader": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "downloader",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "erwantesti23/downloader",
       "repo_id": 892703780,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "dradis": {
@@ -3130,13 +3158,14 @@
       "timestamp": "2026-10-14T14:00:59.746831+00:00"
     },
     "emu-sys": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "emu-sys",
       "pr_ref": null,
       "reason": "below_floor: 6 stars / 0 forks",
       "repo": "brian-sheldon/emu-sys",
       "repo_id": 1238425634,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "enso": {
@@ -3290,13 +3319,14 @@
       "timestamp": "2026-10-07T23:00:07.958729+00:00"
     },
     "esp32-cyd-pda": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "esp32-cyd-pda",
       "pr_ref": null,
       "reason": "stopword_name: 'CYD PDA' names a radio, not a firmware",
       "repo": "sau412/esp32_cyd_pda",
       "repo_id": 1238808257,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "esp32-dragon-radar": {
@@ -7912,13 +7942,14 @@
       "timestamp": "2026-09-13T04:00:43.509217+00:00"
     },
     "m5stack-papers3": {
+      "expired_at": "2026-11-08T01:00:55.198528+00:00",
       "expires": "2026-11-08T01:00:12.099811+00:00",
       "id": "m5stack-papers3",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 1 forks",
       "repo": "javicar31/m5stack_papers3",
       "repo_id": 1033222249,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "m5stack-sd-updater": {
