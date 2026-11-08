@@ -60,10 +60,9 @@ requested on a `review` route. If labelling still fails, the result says so
   cap the tick skips every review-producing stage (every content stage unless it declares
   `produces_review = False`) and reports `jr-review cap reached …` instead of piling up. Memory
   reconciliation and the telemetry snapshot still ship (they route AUTO).
-  `stage_popularity_refresh.run` may opt out only because it checks each proposed record
-  against this same staged-diff classifier before writing. Any change classified REVIEW is
-  deferred and counted in its summary, so the stage cannot open a new review PR through the
-  cap. A normal legacy snapshot plus new, exact GitHub field citations stays AUTO.
+  GitHub count refresh is no longer a tick stage: the independent runtime JSON publisher
+  updates counts without catalog PRs. The cap does not block that publisher. Stale content
+  PRs retain the human-review rule above, including historical count-refresh PRs.
 
 ### 4. Tick report
 

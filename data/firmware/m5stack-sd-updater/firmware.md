@@ -8,9 +8,11 @@ maintainer: tobozo
 capabilities:
 - wifi
 popularity:
-  stars: 348
+  stars: 350
   forks: 45
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 124610272
+  github_as_of: '2026-11-07T09:00:55Z'
 socs:
 - esp32
 - esp32-s3
@@ -27,6 +29,18 @@ sources:
 - field: summary
   url: https://github.com/tobozo/M5Stack-SD-Updater
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/tobozo/M5Stack-SD-Updater
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/tobozo/M5Stack-SD-Updater
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/tobozo/M5Stack-SD-Updater
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/tobozo/M5Stack-SD-Updater
+  verified: '2026-11-07'
 summary: "M5Stack\u2011SD\u2011Updater is an Arduino/PlatformIO library for M5Stack\
   \ and compatible devices that lets you package ESP32 sketches as binaries on a FAT32\
   \ SD card and launch them from a menu, with support for OTA partitions, custom callbacks,\

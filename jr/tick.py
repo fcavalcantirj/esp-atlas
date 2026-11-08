@@ -154,7 +154,8 @@ def hourly_stages(split: dict) -> list:
     Fixed at TOPICS_PER_TICK, outside the allocator's split — it never competes with Track A/B for
     units, and runs after boardmap so an admitted topics firmware's widening waits for its
     own next tick (mirrors admit/boardmap ordering being the ONE thing that matters within a track,
-    not across tracks). Popularity runs last, with at most seven repository calls.
+    not across tracks). GitHub counts are refreshed separately by runtime_popularity.py;
+    the hourly tick does not write count updates into catalog records.
 
     `split` is {"backfill": n, "firmware": m}. The firmware units are shared admit≈boardmap
     (boardmap takes the odd one), and admit's call_share is its fraction of the firmware units."""
@@ -176,8 +177,6 @@ def hourly_stages(split: dict) -> list:
             out.append(lambda ctx, n=bmap: stage_boardmap.run(ctx, budget=n))
     import stage_admit_topics
     out.append(lambda ctx: stage_admit_topics.run(ctx, budget=TOPICS_PER_TICK))
-    import stage_popularity_refresh
-    out.append(stage_popularity_refresh.run)
     return out
 
 

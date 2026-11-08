@@ -119,7 +119,7 @@ test("a mixed cached revision gets one full-collection retry with a new tagged c
     const path = url.pathname;
     const fresh = url.searchParams.has("_atlas_refresh");
     calls.push({ path, fresh });
-    assert.deepEqual(init?.next, { revalidate: 3600, tags: ["catalog"] });
+    assert.deepEqual(init?.next, path === "/firmware" ? { revalidate: 240, tags: ["catalog", "popularity"] } : { revalidate: 3600, tags: ["catalog"] });
     const body = path === "/firmware" && !fresh
       ? { results: [{ ...firmware, boards: 0 }], total: 1 }
       : envelopes()[path];
@@ -156,7 +156,7 @@ test("only transport failures retry with 3s then 9s signals; HTTP and invalid JS
   }
 });
 
-test("server entry point keeps catalog-tagged hourly cache and never disables caching", async (t) => {
+test("server entry point keeps catalog caching with a shorter metrics TTL", async (t) => {
   const requests: { url: string; init: RequestInit & { next?: unknown } }[] = [];
   t.mock.method(globalThis, "fetch", (async (input, init) => {
     requests.push({ url: String(input), init: init ?? {} });
@@ -166,7 +166,7 @@ test("server entry point keeps catalog-tagged hourly cache and never disables ca
   assert.equal(requests.length, 3);
   for (const { url, init } of requests) {
     assert.match(url, /^https?:\/\//);
-    assert.deepEqual(init.next, { revalidate: 3600, tags: ["catalog"] });
+    assert.deepEqual(init.next, new URL(url).pathname === "/firmware" ? { revalidate: 240, tags: ["catalog", "popularity"] } : { revalidate: 3600, tags: ["catalog"] });
     assert.equal(init.cache, undefined);
   }
 });

@@ -8,9 +8,11 @@ maintainer: laserir
 capabilities:
 - mesh
 popularity:
-  stars: 37
+  stars: 42
   forks: 7
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 1192491458
+  github_as_of: '2026-11-07T12:00:55Z'
 socs:
 - esp32-s3
 sources:
@@ -23,6 +25,18 @@ sources:
 - field: summary
   url: https://github.com/laserir/MCLite
   verified: '2026-10-06'
+- field: popularity.forks
+  url: https://github.com/laserir/MCLite
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/laserir/MCLite
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/laserir/MCLite
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/laserir/MCLite
+  verified: '2026-11-07'
 summary: "MCLite is a lightweight off\u2011grid messaging firmware for the LilyGo\
   \ T\u2011Deck\u202FPlus and T\u2011Watch\u202FUltra that uses the MeshCore LoRa\
   \ mesh to enable encrypted direct and group chats, GPS sharing, and basic safety\

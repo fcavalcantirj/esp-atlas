@@ -10,9 +10,11 @@ capabilities:
 - mesh
 - wifi
 popularity:
-  stars: 134
-  forks: 7
-  as_of: '2026-09-20'
+  stars: 143
+  forks: 10
+  as_of: '2026-11-07'
+  github_repo_id: 1135169816
+  github_as_of: '2026-11-07T14:00:55Z'
 socs:
 - esp32-s3
 sources:
@@ -25,6 +27,18 @@ sources:
 - field: summary
   url: https://github.com/dabeani/meshcoreterm
   verified: '2026-10-06'
+- field: popularity.forks
+  url: https://github.com/dabeani/meshcoreterm
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/dabeani/meshcoreterm
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/dabeani/meshcoreterm
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/dabeani/meshcoreterm
+  verified: '2026-11-07'
 summary: "MC Term is a companion firmware for MeshCore LoRa radios that adds a retro\u2011\
   style touchscreen/keyboard interface and a WebUI, enabling off\u2011grid chat, map\
   \ viewing, sensor graphs and repeater management without needing a phone or internet\

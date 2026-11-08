@@ -237,6 +237,9 @@ class ExampleRecord(BaseModel):
     forks: Optional[int] = None
     github_as_of: Optional[str] = None
     as_of: Optional[str] = None
+    origin: Optional[str] = None
+    snapshot_version: Optional[str] = None
+    stale: Optional[bool] = None
 
 
 class ExamplesResponse(BaseModel):
@@ -425,6 +428,9 @@ class Popularity(BaseModel):
     downloads_as_of: Optional[str] = None
     editorial_home_as_of: Optional[str] = None
     as_of: Optional[str] = None
+    origin: Optional[str] = None
+    snapshot_version: Optional[str] = None
+    stale: Optional[bool] = None
 
 
 class FirmwareRecord(BaseModel):

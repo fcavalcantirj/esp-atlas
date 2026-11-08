@@ -6,9 +6,11 @@ url: https://github.com/bradmcnally/bitmap16dx
 category: multi
 maintainer: bradmcnally
 popularity:
-  stars: 36
+  stars: 37
   forks: 0
-  as_of: '2026-09-20'
+  as_of: '2026-11-08'
+  github_repo_id: 1146877244
+  github_as_of: '2026-11-08T00:00:55Z'
 socs:
 - esp32-s3
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/bradmcnally/bitmap16dx
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/bradmcnally/bitmap16dx
+  verified: '2026-11-08'
+- field: popularity.github_as_of
+  url: https://github.com/bradmcnally/bitmap16dx
+  verified: '2026-11-08'
+- field: popularity.github_repo_id
+  url: https://github.com/bradmcnally/bitmap16dx
+  verified: '2026-11-08'
+- field: popularity.stars
+  url: https://github.com/bradmcnally/bitmap16dx
+  verified: '2026-11-08'
 summary: "BitMap16 DX is a lightweight pixel\u2011art sketchbook firmware for the\
   \ M5Stack Cardputer ADV that lets users draw, edit, and manage 8\xD78, 16\xD716,\
   \ and 32\xD732 pixel canvases, use built\u2011in or custom palettes, and export\

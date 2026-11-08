@@ -8,7 +8,9 @@ maintainer: knifter
 popularity:
   stars: 56
   forks: 3
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 277762803
+  github_as_of: '2026-11-07T10:01:20Z'
 socs:
 - esp32
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/knifter/DualPID
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/knifter/DualPID
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/knifter/DualPID
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/knifter/DualPID
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/knifter/DualPID
+  verified: '2026-11-07'
 summary: "DualPID is firmware for M5Stack devices that provides two independent, configurable\
   \ PID control channels, each capable of reading a sensor and driving an output (on/off\
   \ or H\u2011Bridge) for applications such as temperature, humidity, or reflow oven\

@@ -8,9 +8,11 @@ maintainer: gkoh
 capabilities:
 - ble
 popularity:
-  stars: 236
-  forks: 38
-  as_of: '2026-09-20'
+  stars: 258
+  forks: 40
+  as_of: '2026-11-07'
+  github_repo_id: 295602252
+  github_as_of: '2026-11-07T11:00:55Z'
 socs:
 - esp32
 - esp32-s3
@@ -30,6 +32,18 @@ sources:
 - field: socs
   url: https://github.com/gkoh/furble/releases/download/v3.9.1/manifest_m5stack-core.json
   verified: '2026-09-21'
+- field: popularity.forks
+  url: https://github.com/gkoh/furble
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/gkoh/furble
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/gkoh/furble
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/gkoh/furble
+  verified: '2026-11-07'
 summary: "furble is an ESP32\u2011based firmware for M5Stack controllers that provides\
   \ a Bluetooth Low Energy remote for triggering shutters, focus, GPS tagging, and\
   \ intervalometer functions on supported Fujifilm, Canon, Ricoh, Nikon, and Sony\

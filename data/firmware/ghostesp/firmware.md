@@ -22,15 +22,29 @@ sources:
 - field: socs
   url: https://github.com/GhostESP-Revival/GhostESP/blob/Development-deki/.github/workflows/compile_all.yml
   verified: '2026-10-19'
+- field: popularity.forks
+  url: https://github.com/GhostESP-Revival/GhostESP
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/GhostESP-Revival/GhostESP
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/GhostESP-Revival/GhostESP
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/GhostESP-Revival/GhostESP
+  verified: '2026-11-07'
 maintainer: ghostesp-revival
 capabilities:
 - ble
 - wifi
 popularity:
-  stars: 1080
-  forks: 188
+  stars: 1123
+  forks: 200
   editorial_home: https://ghostesp.net
   as_of: '2026-10-19'
+  github_repo_id: 891566125
+  github_as_of: '2026-11-07T10:01:20Z'
 ---
 
 Admitted by jr/scorer.py rule authored.
