@@ -1302,7 +1302,7 @@
       "pr_ref": "#1500",
       "repo": "jay-jayismyname1/cardputer-adv-b-radar",
       "status": "proposed",
-      "timestamp": "2026-11-08T11:00:55.153235+00:00"
+      "timestamp": "2026-11-08T12:00:55.441580+00:00"
     },
     "cardputer-adv-basic": {
       "expired_at": "2026-11-08T01:00:55.198528+00:00",
@@ -2983,23 +2983,25 @@
       "timestamp": "2026-10-20T07:00:59.645797+00:00"
     },
     "dht11-and-dht22-m5stick": {
+      "expired_at": "2026-11-08T12:00:55.441580+00:00",
       "expires": "2026-11-08T12:00:11.265432+00:00",
       "id": "dht11-and-dht22-m5stick",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "facelesstech/dht11_and_dht22_m5stick",
       "repo_id": 1069608330,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T12:00:11.265432+00:00"
     },
     "dice-vessel-cardputer": {
+      "expired_at": "2026-11-08T12:00:55.441580+00:00",
       "expires": "2026-11-08T12:00:11.265432+00:00",
       "id": "dice-vessel-cardputer",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "andrfuentz/dice-vessel-cardputer",
       "repo_id": 1304933811,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T12:00:11.265432+00:00"
     },
     "diceroller-cardputeradv": {
@@ -3044,13 +3046,14 @@
       "timestamp": "2026-10-09T13:00:11.675780+00:00"
     },
     "dodge-tetris-m5stickc-plus2": {
+      "expired_at": "2026-11-08T12:00:55.441580+00:00",
       "expires": "2026-11-08T12:00:11.265432+00:00",
       "id": "dodge-tetris-m5stickc-plus2",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "coreymillia/dodge-tetris-m5stickc-plus2",
       "repo_id": 1089105830,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T12:00:11.265432+00:00"
     },
     "doolittle": {
@@ -3085,13 +3088,14 @@
       "timestamp": "2026-10-09T01:00:12.099811+00:00"
     },
     "dradis": {
+      "expired_at": "2026-11-08T12:00:55.441580+00:00",
       "expires": "2026-11-08T12:00:11.265432+00:00",
       "id": "dradis",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 0 forks",
       "repo": "armel/dradis",
       "repo_id": 679701817,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T12:00:11.265432+00:00"
     },
     "draftling": {
@@ -7471,13 +7475,14 @@
       "timestamp": "2026-10-10T01:00:13.423265+00:00"
     },
     "m5module-dmx512": {
+      "expired_at": "2026-11-08T12:00:55.441580+00:00",
       "expires": "2026-11-08T12:00:11.265432+00:00",
       "id": "m5module-dmx512",
       "pr_ref": null,
       "reason": "below_floor: 14 stars / 3 forks",
       "repo": "m5stack/m5module-dmx512",
       "repo_id": 510206205,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T12:00:11.265432+00:00"
     },
     "m5monsterc5-cardputeradv": {
@@ -8118,13 +8123,14 @@
       "timestamp": "2026-09-13T06:00:47.661752+00:00"
     },
     "m5stick-crystal-firmware": {
+      "expired_at": "2026-11-08T12:00:55.441580+00:00",
       "expires": "2026-11-08T12:00:11.265432+00:00",
       "id": "m5stick-crystal-firmware",
       "pr_ref": null,
       "reason": "already_catalogued: dlazder/m5stick_crystal_firmware is already in the atlas",
       "repo": "dlazder/m5stick_crystal_firmware",
       "repo_id": 831710789,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T12:00:11.265432+00:00"
     },
     "m5stick-handheld-tally-clicker": {
@@ -8507,13 +8513,14 @@
       "timestamp": "2026-09-11T21:00:02.504737+00:00"
     },
     "m5tab-macintosh": {
+      "expired_at": "2026-11-08T12:00:55.441580+00:00",
       "expires": "2026-11-08T12:00:11.265432+00:00",
       "id": "m5tab-macintosh",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "amcchord/m5tab-macintosh",
       "repo_id": 1131376734,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-09T12:00:11.265432+00:00"
     },
     "m5tab5-animal-quiz": {
