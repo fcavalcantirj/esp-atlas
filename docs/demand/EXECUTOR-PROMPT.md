@@ -20,9 +20,11 @@ branch.
    your receipt and, for a PAM key, its `candidate.feed.lead` (`source_id`, `name_hint`,
    `chip_hint`, `source_pointers`). For a search key read the term and its snapshot item in
    `docs/demand/<date>.json`. Then `python3 jr/work_record.py attempt WORK_KEY --date TODAY` and
-   commit it: `git commit -am "chore(demand): attempt WORK_KEY on TODAY"`. **Every `work_record.py`
-   write below is committed on `BRANCH` the same way, right after it**: the receipts and queue live
-   in `docs/demand/`, and a change left in the working tree is lost when the run ends.
+   commit it: `git add -A docs/demand && git commit -m "chore(demand): attempt WORK_KEY on TODAY"`.
+   **Every `work_record.py` write below is committed on `BRANCH` the same way, right after it**: the
+   receipts and queue live in `docs/demand/`, and a change left in the working tree is lost when the
+   run ends. Commit only `docs/demand/` and the board files you authored; never leave anything
+   untracked in the checkout.
 2. **Research the exact identity against primary sources only.** A PAM feed hint, a store page or a
    reseller is a lead, never a source. Open the manufacturer's product page and datasheet/schematic.
    Decide which of these is true and stop at the first that fits:
@@ -35,7 +37,9 @@ branch.
      identity, model numbers and aliases): `settle --state rejected --reason "already catalogued as
      <id>: <evidence>"`, commit, step 6.
    - **A real, distinct board missing from the catalog**: continue.
-3. **Record the validation before any catalog write.** Write a JSON file with `validated_by` (your
+3. **Record the validation before any catalog write.** Write a JSON file **outside the repository**
+   (a temporary directory, never inside the checkout: an untracked file makes the clone dirty and
+   every later executor run refuses to start) with `validated_by` (your
    job name and run id), `primary_sources` (the manufacturer urls you read), `expected_ids` (the one
    catalog id you will author, e.g. `arduino-nano-esp32`), `forbidden_ids` (sibling SKUs that must NOT
    appear, e.g. a V3 when you author the V4, `[]` when there are none), `notes` (what distinguishes the
