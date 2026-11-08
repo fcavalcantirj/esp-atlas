@@ -5,43 +5,66 @@ this file pins the generator's shape: one firmware example per recipe-backed
 firmware, needs drawn only from KNOWN_NEEDS, counts that match the wizard, and
 deterministic output.
 """
+from collections import Counter
+
+import pytest
+
 from esp_atlas_core.examples import GROUPS, RUN_FIRMWARE, generate_examples, read_examples
-from esp_atlas_core.firmware import get_firmware, list_firmware, recipes_for_firmware, sort_by_popularity
+from esp_atlas_core.firmware import list_firmware, list_recipes, sort_by_popularity
 from esp_atlas_core.wizard import KNOWN_NEEDS, wizard
+
+
+@pytest.fixture(scope="module")
+def catalog():
+    """list_firmware() and list_recipes() read once for the module.
+
+    get_firmware(id) and recipes_for_firmware(id) each re-parse every data file,
+    so calling them per example made these tests do tens of thousands of parses.
+    `firmware_by_id` answers get_firmware(id); `recipe_counts` answers
+    len(recipes_for_firmware(id)), grouped by the same `firmware` field. Tests
+    that monkeypatch list_firmware/list_recipes must not use this fixture.
+    """
+    firmware = list_firmware()
+    return {
+        "firmware": firmware,
+        "firmware_by_id": {fw["id"]: fw for fw in firmware},
+        "recipe_counts": Counter(r.get("firmware") for r in list_recipes()),
+    }
 
 
 def _by_kind(examples, kind):
     return [e for e in examples if e["kind"] == kind]
 
 
-def test_firmware_examples_one_per_recipe_backed_firmware(built_db_path):
+def test_firmware_examples_one_per_recipe_backed_firmware(built_db_path, catalog):
     examples = _by_kind(generate_examples(db_path=built_db_path), "firmware")
-    expected = {fw["id"]: fw for fw in list_firmware() if recipes_for_firmware(fw["id"])}
+    recipe_counts = catalog["recipe_counts"]
+    expected = {fw["id"]: fw for fw in catalog["firmware"] if recipe_counts[fw["id"]]}
 
     assert {e["firmware"] for e in examples} == set(expected)
     for e in examples:
         fw = expected[e["firmware"]]
         assert e["id"] == f"run-{fw['id']}"
         assert e["label"] == f"Run {fw['name']}"
-        assert e["count"] == len(recipes_for_firmware(fw["id"]))
+        assert e["count"] == recipe_counts[fw["id"]]
         assert "needs" not in e
 
 
-def test_firmware_examples_ordered_by_the_shared_popularity_comparator(built_db_path):
+def test_firmware_examples_ordered_by_the_shared_popularity_comparator(built_db_path, catalog):
     """SPEC-firmware-popularity.md §3.B/§3.C: the home shelf must rank exactly
     like `/firmware?sort=popularity` -- both reuse esp_atlas_core.firmware.
     sort_by_popularity, so they can never diverge."""
     examples = _by_kind(generate_examples(db_path=built_db_path), "firmware")
-    recipe_backed = {fw["id"] for fw in list_firmware() if recipes_for_firmware(fw["id"])}
+    recipe_backed = {fw["id"] for fw in catalog["firmware"] if catalog["recipe_counts"][fw["id"]]}
     expected_order = [
-        fw["id"] for fw in sort_by_popularity(list_firmware()) if fw["id"] in recipe_backed
+        fw["id"] for fw in sort_by_popularity(catalog["firmware"]) if fw["id"] in recipe_backed
     ]
     assert [e["firmware"] for e in examples] == expected_order
 
 
-def test_firmware_examples_carry_stars_and_forks_from_their_firmware(built_db_path):
+def test_firmware_examples_carry_stars_and_forks_from_their_firmware(built_db_path, catalog):
     for e in _by_kind(generate_examples(db_path=built_db_path), "firmware"):
-        fw = get_firmware(e["firmware"])
+        fw = catalog["firmware_by_id"].get(e["firmware"])
         popularity = fw.get("popularity") or {}
         assert e.get("stars") == popularity.get("stars"), e["id"]
         assert e.get("forks") == popularity.get("forks"), e["id"]
@@ -112,7 +135,7 @@ def test_generate_examples_is_deterministic(built_db_path):
     assert generate_examples(db_path=built_db_path) == generate_examples(db_path=built_db_path)
 
 
-def test_firmware_examples_describe_themselves_from_real_fields(built_db_path):
+def test_firmware_examples_describe_themselves_from_real_fields(built_db_path, catalog):
     """The card's middle tier is derived, never editorial copy.
 
     Every firmware carries a `category`, so every firmware example must describe
@@ -120,12 +143,11 @@ def test_firmware_examples_describe_themselves_from_real_fields(built_db_path):
     capabilities the record actually declares.
     """
     from esp_atlas_core.examples import _CATEGORY_LABELS
-    from esp_atlas_core.firmware import get_firmware
 
     for e in _by_kind(generate_examples(db_path=built_db_path), "firmware"):
         description = e.get("description")
         assert description, f"{e['id']} has no description"
-        fw = get_firmware(e["firmware"])
+        fw = catalog["firmware_by_id"].get(e["firmware"])
         assert description.startswith(_CATEGORY_LABELS.get(fw["category"], fw["category"]))
         for capability in description.split(" · ")[1].split(", ") if " · " in description else []:
             assert capability in fw["capabilities"], f"{e['id']}: invented capability {capability!r}"

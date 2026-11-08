@@ -112,3 +112,56 @@ curl https://<your-deployment>/sitemap.xml
 
 `/api/health` returns `{"status": "ok", "count": <n>}` once the function has
 built its SQLite index from the bundled `data/` on cold start.
+
+## Hourly GitHub counts
+
+Stars and forks are refreshed by the `hourly GitHub counts` workflow
+(`.github/workflows/runtime-popularity.yml`), which publishes one file,
+`popularity.json`, on the `runtime-popularity` branch; the API reads it over HTTPS
+(`apps/api/README.md`). The workflow has **no `schedule:` trigger**: GitHub's cron
+dropped most hourly slots, so an operator-run OS timer on an always-on host invokes
+it instead, through `scripts/counts-dispatch.sh`.
+
+The dispatcher needs `gh` (logged in with the `repo` scope), `flock`, `jq`,
+`curl` and `timeout`. One invocation makes at most one dispatch
+(`gh workflow run runtime-popularity.yml --ref main -f publish=true -f source=...`),
+skips the hour when a run is already queued or in progress, waits (bounded) for the
+run to finish, reads back the data-branch commit and `published_at`, and appends one
+JSON line to its receipts file (default `$XDG_STATE_HOME/esp-atlas-counts/receipts.jsonl`).
+Exit codes: `0` success or skipped, `1` dispatch failed, `2` run missing or failed,
+`75` another invocation holds the lock. All knobs are environment variables,
+documented at the top of the script.
+
+Suggested systemd user units on the host (the only place host paths live):
+
+```ini
+# esp-atlas-counts.timer
+[Timer]
+OnCalendar=*-*-* *:07:00 UTC
+AccuracySec=30s
+Persistent=true
+[Install]
+WantedBy=timers.target
+
+# esp-atlas-counts.service
+[Service]
+Type=oneshot
+Environment=COUNTS_SOURCE=host-timer
+ExecStart=/path/to/checkout/scripts/counts-dispatch.sh
+TimeoutStartSec=8min
+```
+
+Operate it with:
+
+```bash
+systemctl --user enable --now esp-atlas-counts.timer     # start
+systemctl --user disable --now esp-atlas-counts.timer    # STOP: no more hourly dispatches
+systemctl --user list-timers esp-atlas-counts.timer      # next / last firing
+```
+
+Every run's name says who asked for it: `counts (host-timer)` is automation,
+`counts (manual-testing)` a hand-run test. Run a test by hand with
+`COUNTS_SOURCE=manual-testing scripts/counts-dispatch.sh`, never with the timer's
+label. Publication also requires the repository Actions variable
+`POPULARITY_RUNTIME_ENABLED=1`; setting it to `0` skips publish requests while the
+timer keeps running, which is the GitHub-side stop.

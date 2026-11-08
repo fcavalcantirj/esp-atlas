@@ -10,6 +10,8 @@ popularity:
   forks: 2
   downloads: 2153
   as_of: '2026-10-06'
+  github_repo_id: 858486303
+  github_as_of: '2026-11-07T23:00:55Z'
 socs:
 - esp32-s3
 sources:
@@ -22,6 +24,18 @@ sources:
 - field: summary
   url: https://github.com/jfduhart/Cardputer-Morse-Trainer
   verified: '2026-10-06'
+- field: popularity.forks
+  url: https://github.com/jfduhart/Cardputer-Morse-Trainer
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/jfduhart/Cardputer-Morse-Trainer
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/jfduhart/Cardputer-Morse-Trainer
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/jfduhart/Cardputer-Morse-Trainer
+  verified: '2026-11-07'
 summary: "Morse Trainer is a simple Morse code training application for the M5Stack\
   \ Cardputer that lets users adjust speed, level, and volume, offers a game mode\
   \ with high\u2011score tracking per level and a test mode with random characters,\

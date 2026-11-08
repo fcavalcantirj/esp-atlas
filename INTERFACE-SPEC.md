@@ -69,7 +69,13 @@ query ─▶ structured filter (radio/band/protocol/form) + FTS (name/prose/note
 
 **API** (FastAPI)
 - `POST /ask {question}` → grounded answer + citations
-- `GET  /search?q=&radio=&protocol=&form=&brand=` → structured+FTS results
+- `GET  /search?q=&radio=&protocol=&form=&brand=` → structured+FTS results as
+  `{results: [record...], revision: "<40-hex sha>" | null}`. `revision` is the
+  serving handler's full deployed commit SHA from `VERCEL_GIT_COMMIT_SHA`,
+  lowercased; it is `null` when that value is missing or malformed. The search
+  response names its own revision so a client can bind the result IDs to the
+  deployment that served them. Other search-shaped routes such as `/parts` do
+  not include this field.
 - `POST /wizard {needs}` → deterministic ranked parts
 - `GET  /facets` → distinct values + counts per filterable column, for building UI
   dropdowns from the data. `vendor_or_brand` entries are `{value, count,
@@ -108,7 +114,7 @@ query ─▶ structured filter (radio/band/protocol/form) + FTS (name/prose/note
       {"name": "API", "status": "ok | warn | down", "detail": "..."},
       {"name": "Data", "status": "ok | warn | down", "detail": "..."},
       {"name": "Jr / catalog", "status": "ok | warn | down", "detail": "..."},
-      {"name": "Deploy", "status": "ok | warn | down", "detail": "..."}
+      {"name": "Deploy", "status": "ok | warn | down", "detail": "...", "revision": "<40-hex sha> | null"}
     ]
   }
   ```
@@ -131,6 +137,12 @@ query ─▶ structured filter (radio/band/protocol/form) + FTS (name/prose/note
     when `VERCEL_GIT_COMMIT_SHA` is set, else `local`. Vercel's system env vars
     (per its own docs) carry no deployment-build timestamp, so this reports
     commit + branch + environment rather than inventing a build time. Always `ok`.
+    The Deploy component (only it) also carries a machine field `revision`: the
+    full deployed commit SHA from `VERCEL_GIT_COMMIT_SHA`, lowercased, when that
+    is exactly 40 hex digits; `null` when the variable is missing or anything
+    else. `detail` stays the human text above, unchanged. Jr's demand closure
+    matches it against `/search`'s own `revision` to prove which deployment
+    served the live catalog result.
   - **Overall status**: `down` iff the API component is `down`; else `degraded`
     if any component (including Data/Jr/Deploy) is `warn` or `down`; else
     `operational`.

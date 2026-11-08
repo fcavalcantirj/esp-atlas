@@ -5,6 +5,8 @@ frontmatter fixtures (coding-domain ESP32/firmware records, never lorem
 ipsum), the same way apps/core/tests/conftest.py's built_db_path does for the
 full seeded dataset.
 """
+import pytest
+
 from esp_atlas_core import db as dbmod
 from esp_atlas_core.index_build import build_index
 from esp_atlas_core.status import compute_status
@@ -256,6 +258,52 @@ def test_deploy_component_reports_commit_branch_and_env_from_vercel_vars(built_d
     assert "abcdef1" in deploy["detail"]
     assert "main" in deploy["detail"]
     assert "production" in deploy["detail"]
+
+
+_FULL_SHA = "97f7b6a4e1c2d3b4a5968778695a4b3c2d1e0f9a"
+
+
+def _deploy(db_path):
+    return next(c for c in compute_status(db_path=db_path)["components"] if c["name"] == "Deploy")
+
+
+def test_deploy_component_carries_the_full_deployed_revision(built_db_path, monkeypatch):
+    """The machine field a live catalog check reads (jr/demand_closure.py): the full 40-hex SHA,
+    beside the unchanged human detail."""
+    monkeypatch.setenv("VERCEL_GIT_COMMIT_SHA", _FULL_SHA)
+    monkeypatch.setenv("VERCEL_GIT_COMMIT_REF", "main")
+    monkeypatch.setenv("VERCEL_ENV", "production")
+    deploy = _deploy(built_db_path)
+    assert deploy["revision"] == _FULL_SHA
+    assert deploy["detail"] == "commit 97f7b6a · main · production"
+    assert deploy["status"] == "ok"
+
+
+def test_deploy_revision_is_null_without_vercel_env(built_db_path, monkeypatch):
+    monkeypatch.delenv("VERCEL_GIT_COMMIT_SHA", raising=False)
+    deploy = _deploy(built_db_path)
+    assert deploy["revision"] is None and deploy["detail"] == "local"
+
+
+@pytest.mark.parametrize("sha", ["abcdef1234567890", _FULL_SHA + "0", _FULL_SHA[:-1] + "g", " " + _FULL_SHA[1:],
+                                 "--" + _FULL_SHA[2:], ""])
+def test_deploy_revision_is_null_unless_the_sha_is_exactly_40_hex(built_db_path, monkeypatch, sha):
+    monkeypatch.setenv("VERCEL_GIT_COMMIT_SHA", sha)
+    deploy = _deploy(built_db_path)
+    assert deploy["revision"] is None
+    assert deploy["detail"].startswith(f"commit {sha[:7]}" if sha else "local")   # the human detail is unchanged
+
+
+def test_an_uppercase_sha_is_still_40_hex_and_served_lowercase(built_db_path, monkeypatch):
+    monkeypatch.setenv("VERCEL_GIT_COMMIT_SHA", _FULL_SHA.upper())
+    assert _deploy(built_db_path)["revision"] == _FULL_SHA
+
+
+def test_only_the_deploy_component_carries_a_revision(built_db_path, monkeypatch):
+    monkeypatch.setenv("VERCEL_GIT_COMMIT_SHA", _FULL_SHA)
+    for component in compute_status(db_path=built_db_path)["components"]:
+        expected = {"name", "status", "detail"} | ({"revision"} if component["name"] == "Deploy" else set())
+        assert set(component) == expected
 
 
 def test_api_component_is_down_when_index_was_never_built(tmp_path):

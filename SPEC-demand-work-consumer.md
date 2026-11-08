@@ -12,9 +12,14 @@ inference availability monitor. Implementation is not activation.
 ## Required execution path
 
 1. The existing daily demand runner reserves work after mining; the existing daily
-   checkup agent executes the reservation automatically. These are the selected
-   runtime hooks, subject to verified integration and the configured prompt. The
-   broker reads the latest committed queue and reconciles
+   Jr job on the runner (`jr-daily`, hours after the reservation) executes the
+   reservation automatically through the operator's coding delegate on the work's
+   deterministic branch (2026-11-08; the observation-only checkup job never
+   executes). These are the selected runtime hooks, subject to verified integration
+   and the configured prompt (`docs/demand/EXECUTOR-PROMPT.md`). The executor's only
+   writes into the queue/receipts pair go through `jr/work_record.py` (adopt,
+   validate, link, attempt, settle), which refuses any pair the broker would defer
+   on. The broker reads the latest committed queue and reconciles
    previously linked work before selecting anything new. Its actual job ID,
    command/prompt, cadence, code revision and run receipt must be recorded locally
    without credentials, recipient tokens or maintainer host paths in public docs.
@@ -39,11 +44,18 @@ inference availability monitor. Implementation is not activation.
   PAM potential identity gaps join as typed `pam_feed` research work under
   `SPEC-pam-discovery.md`; they retain original minimal feed provenance without a
   fabricated search window or metrics. Existing work is recovered before any new
-  work, and new search demand has priority over market leads under the same caps.
+  work of its own class.
 
-- Initial hard cap: one newly started work item per UTC day, one item per run and
-  one outstanding catalog-authoring work item. Reconciliation is allowed at the
-  cap. An interrupted/retried item consumes the same slot, not another one.
+- Hard cap, per source class (decision 2026-11-08, replacing the initial single
+  shared slot that starved market leads behind daily search demand): the two
+  classes are search demand (GSC/GA4) and PAM market leads (`pam_feed`). Each
+  class starts at most one new work item per UTC day and keeps at most one
+  outstanding catalog-authoring item; one action per broker pass. The daily runner
+  makes one pass per class (search first, then PAM), so a day with new search
+  demand still starts one feed lead. Reconciliation is allowed at the cap. An
+  interrupted/retried item consumes the same slot, not another one. The
+  fail-closed checks over the whole pair (unreadable receipts, unknown statuses,
+  orphan receipts, inconsistent closures) block both classes.
 - Candidate key: normalized term plus its current lifecycle opening date, so a
   permitted future reopening is distinguishable from a retry. Derive a stable
   opaque work ID and deterministic branch name from that key. Never derive shell
@@ -106,11 +118,17 @@ inference availability monitor. Implementation is not activation.
 
 ### Verification must match the actual defect
 
-The validation receipt declares a verification kind. For missing catalog content,
-verify exact public search/catalog IDs at a deployment containing the merge. For a
-miner-resolver repair, verify a fresh successful miner run at code containing the
-merge, its resolved target and expected classification. The receipt must name the
-same merge and be observed on the current UTC day; HTTP success alone is insufficient.
+The validation receipt declares a verification kind. For missing catalog content
+found by an exact search term (a bare SKU), verify exact public search IDs at a
+deployment containing the merge (`catalog_search`). For a missing BOARD named by a
+hint that is not an exact search term (every PAM lead: "Arduino Nano ESP32" is 132
+fuzzy results, never one), verify each expected id at the exact public part
+endpoint and each forbidden sibling's absence there, at a deployment containing the
+merge (`catalog_part`, 2026-11-08; `jr/work_record.py validate` writes it as the
+default kind for `pam_feed` work). For a miner-resolver repair, verify a fresh
+successful miner run at code containing the merge, its resolved target and expected
+classification. The receipt must name the same merge and be observed on the current
+UTC day; HTTP success alone is insufficient.
 
 ### Autonomous RECONCILE closure (broker, 2026-11-06)
 
@@ -131,8 +149,35 @@ it itself (`jr/demand_closure.py`, called from `demand_broker.reserve`):
   another item (`raw_terms`) is not proof, because the group's `resolved` describes its first
   wording, so that case stays pending. `checked_at` is the run's UTC clock, so a merge that
   lands mid-run stays pending.
-- `catalog_search`: the broker never performs or invents a live search, so such work stays
-  pending with that reason until a real deployment-search receipt exists.
+- `catalog_search` (live search, 2026-11-06): the observation is a live public search read
+  through a getter injected into the closure (`demand_run.run`'s default is
+  `demand_closure.default_fetch`: stdlib urllib, 10 s timeout, `Cache-Control: no-cache`). It
+  GETs `https://esp-atlas.com/api/status` for the Deploy component's full 40-hex `revision`,
+  `https://esp-atlas.com/api/search?q=<term>` for the exact `results[].id` and
+  that response's own full 40-hex `revision`, then `/api/status` again. The search
+  revision and both status revisions must match. `contains_merge` is
+  `git merge-base --is-ancestor <merge> <revision>` through the injected `git`. The receipt is
+  exactly `http` (200), `deployment` (the revision), `ids`, `query` (the candidate's term),
+  `checked_at` (UTC now), `merge_sha`, `contains_merge`. A missing, short, non-hex or changed
+  revision (including a missing, malformed, or different search revision), a
+  non-200, a timeout or network error, or unreadable JSON builds no receipt: pending,
+  nothing written. Missing, extra or sibling ids are pending by `verify_resolution`'s exact-set
+  rule. Without an injected getter no live search is invented (pending). An unmerged PR is never
+  searched. It runs only on RECONCILE inside the existing daily demand run: no new scheduler, no
+  LLM, never `/api/intent`. A delivered history entry names the `deployment`, not a snapshot.
+- `catalog_part` (live parts, 2026-11-08): the observation is read through the same injected
+  getter. It GETs `https://esp-atlas.com/api/status` for the Deploy component's full 40-hex
+  `revision`, then for every `expected_ids` entry `https://esp-atlas.com/api/parts/<id>` (200 with
+  that very `id` in the body is present; 404 is absent, a readable "not yet"), for every
+  `forbidden_ids` entry the same endpoint (200 is a forbidden sibling present; 404 is absent), then
+  `https://esp-atlas.com/api/search?q=<expected id>` (the id must be among `results[].id` and that
+  response's own `revision` must equal the deployment's, binding the part reads to one deployment),
+  then `/api/status` again. The receipt is exactly `kind` (`catalog_part`), `http` (200),
+  `deployment`, `ids` (the expected ids present), `missing`, `forbidden_hits`, `query` (the
+  candidate's term), `checked_at`, `merge_sha`, `contains_merge`. Any other status, a timeout,
+  unreadable JSON, a changed or mismatched revision builds no receipt (pending, nothing written). A
+  missing expected id or a present forbidden id is pending by the judge's exact rule. A
+  `catalog_search` receipt never satisfies `catalog_part` work, nor the reverse.
 - `research_work.verify_resolution` is the only judge and is not weakened by the broker.
 - `delivered`: the queue candidate becomes `closed` with `outcome` = the verification evidence,
   `closed_on`, and one appended `history` entry (`event: closed`, carrying any earlier `outcome`
@@ -167,9 +212,11 @@ it itself (`jr/demand_closure.py`, called from `demand_broker.reserve`):
   only from the broker's explicit result, never from before/after file bytes, so a file another
   writer changed is never landed as this run's work. The broker also hands that result to a
   caller-supplied list as soon as both files are durable, so the closure still lands if the
-  re-plan then raises. Its second PAM pass
-  (`new_pam`) also runs after a closure, not only after a NOOP. That pass is `close=False`, so a
-  run closes at most one item.
+  re-plan then raises. Its second pass is the PAM class's own pass (`source_class`, 2026-11-08):
+  it runs after every search pass, recovers/reconciles existing feed work from its durable
+  snapshot even when the feed refresh failed, and starts a new lead only after a successful
+  refresh (`new_pam` = the refresh succeeded, 304 included). That pass is `close=False` when the
+  search pass already closed an item, so a run closes at most one item.
 
 The first genuine candidate identified is GSC `fnk0104s`, snapshot 2026-11-05,
 window 2026-10-08..2026-11-05: 22 impressions, 1 click, position 8.2, UNRESOLVED.

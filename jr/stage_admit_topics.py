@@ -52,6 +52,8 @@ import device_evidence
 import drain
 import ledger
 import memory
+import pending_prs
+import scorer
 import source_topics
 import tools
 from budget import BudgetExceeded
@@ -175,7 +177,7 @@ def _frontmatter(path: Path) -> dict:
     return tools._frontmatter(path) if path.exists() else {}
 
 
-def _firmware_item(root: Path, fid: str, source: str | None) -> dict:
+def _firmware_item(root: Path, fid: str, source: str | None, repo_id: int | None = None) -> dict:
     """The PR-body item for one authored id — the same fields stage_admit's item carries, read
     back from the firmware.md and recipe.md run_drain actually wrote (never invented): a field
     the record does not carry stays None, and jr/report.py omits it or says `unknown`.
@@ -189,7 +191,7 @@ def _firmware_item(root: Path, fid: str, source: str | None) -> dict:
     if cites:
         evidence.append(f"recipe cites {cites}")
     return {"kind": "firmware", "id": fid, "source": source,
-            "name": fm.get("name"), "url": fm.get("url"),
+            "name": fm.get("name"), "url": fm.get("url"), "repo_id": repo_id,
             "stars": pop.get("stars"), "forks": pop.get("forks"), "license": fm.get("license"),
             "board": rc.get("board"), "chip": rc.get("chip_family"), "recipe": rdirs[0].name if rdirs else None,
             "evidence": "; ".join(evidence) or None,
@@ -209,9 +211,14 @@ def _source_by_repo(entries) -> dict:
     surfaced it), so each admit can be traced back to its topic."""
     out = {}
     for e in entries:
-        fn = (e.get("github") or "").split("github.com/", 1)[-1].strip("/").lower()
-        out.setdefault("/".join(fn.split("/")[:2]), e.get("source"))
+        out.setdefault(_repo_key(e.get("github")), e.get("source"))
     return out
+
+
+def _repo_key(github: str | None) -> str:
+    """owner/repo (lowercased) of a GitHub url, as _owner_repo_from_firmware_md reads it back."""
+    fn = (github or "").split("github.com/", 1)[-1].strip().strip("/").lower()
+    return "/".join(fn.split("/")[:2])
 
 
 def _would_write(selected, skipped) -> list[dict]:
@@ -229,6 +236,54 @@ def _would_write(selected, skipped) -> list[dict]:
     out += [{"path": memory.LEDGER_RELPATH, "field": f"by_id.{s['firmware_id']}",
              "value": f"rejected ({s['reason'].split(':')[0]})"} for s in drain.device_skips(skipped)]
     return out
+
+
+def _firmware_id(github: str | None) -> str:
+    return scorer._slug(scorer._repo_name_from_url(github or ""))
+
+
+def _without_held(entries: list, pending) -> tuple[list, list]:
+    """(the entries no Jr tick PR holds, the holds of the others) — jr/pending_prs.py: an id an open
+    tick PR changes, or a closed-unmerged one changed inside the veto TTL, is never authored again,
+    even when the ledger never heard of it. The id is the scorer's (slug of the repo name), so a held
+    entry is dropped before drain.prefilter and never costs a metadata fetch — unless its PR verified
+    the repository's GitHub id: then the fetched id decides (_identity_gated)."""
+    keep, held = [], []
+    for e in entries:
+        hold = pending.hold(_firmware_id(e.get("github")))
+        if hold and hold.repo_id is None:
+            held.append(hold)
+        else:
+            keep.append(e)
+    return keep, held
+
+
+def _identity_gated(fetch_meta, pending, late: list):
+    """`fetch_meta` that also asks the pending index by the GitHub id it read (pending_prs match():
+    id before slug). A held candidate — a held repository renamed upstream, a held slug under another
+    id, a held slug whose id is unread — answers as an error, so run_drain never scores it; its hold
+    is appended to `late`. Every other meta goes through unchanged: its id travels WITH the candidate
+    that fetch produced (drain's report `repo_ids`), never through state shared by canonical name — a
+    later fetch of the same name, another repository now living there, cannot rewrite it."""
+    def fetch(github):
+        meta = fetch_meta(github)
+        rid = meta.get("id") if isinstance(meta, dict) else None
+        hold = pending.match(_firmware_id(github), rid)
+        if hold:
+            late.append((github.strip(), hold))
+            return {"error": f"{hold.reason}: {hold.note}"}
+        return meta
+    return fetch
+
+
+def _held_lines(held: list) -> list[str]:
+    return [f"{h.firmware}: {h.reason} ({h.note})" for h in held]
+
+
+def _count_held(rejects: dict, held: list) -> dict:
+    for h in held:
+        rejects[h.reason] = rejects.get(h.reason, 0) + 1
+    return rejects
 
 
 def run(ctx, budget: int, raw=None):
@@ -252,14 +307,18 @@ def run(ctx, budget: int, raw=None):
         return tick.StageResult("admit_topics", paths=[], summary=f"topics source unreadable: {type(e).__name__}: {str(e)[:120]}",
                                 admitted=0, rejects={}, needs_human=True)
 
+    pending = pending_prs.of(ctx)
+    entries, held = _without_held(entries, pending)
     fetch_limit = budget * SCORE_MULTIPLIER
     evidence = _evidence(ctx, raw)
+    late = []
+    gate = lambda fetch: _identity_gated(fetch, pending, late)   # noqa: E731
 
     if ctx.dry_run:
         catalogued_repos, catalogued_tokens = tools._catalogued_repos_and_tokens(ctx.root / "data" / "firmware")
         led = ledger.load_ledger(ctx.ledger_path)
         prefiltered = drain.prefilter(entries, catalogued_repos, catalogued_tokens, ledger_state=led)[:fetch_limit]
-        fetch_meta = ctx.budget.wrap(drain.default_fetch_meta, "gh")
+        fetch_meta = gate(ctx.budget.wrap(drain.default_fetch_meta, "gh"))
         try:
             scored, skipped = drain.score_candidates(prefiltered, catalogued_repos, catalogued_tokens,
                                                       fetch_meta=fetch_meta, ledger_state=led,
@@ -267,18 +326,22 @@ def run(ctx, budget: int, raw=None):
                                                       evidence=evidence)
         except BudgetExceeded as e:
             return tick.StageResult("admit_topics", paths=[], summary=f"stopped: {e}", admitted=0, rejects={})
+        late_urls = {url for url, _hold in late}
+        skipped = [s for s in skipped if s.get("github") not in late_urls]
+        held += [h for _url, h in late]
         selected, _dropped_cap = drain.cap_categories(drain.rank_juicy(scored), max_per_category=budget, batch_size=budget)
-        lines = [f"{s['record']['id']}: would admit" for s in selected]
+        lines = _held_lines(held) + [f"{s['record']['id']}: would admit" for s in selected]
         review, review_txt = _review(skipped)
         summary = f"{topics_txt} " + ("; ".join(lines) if lines else "no candidates") + review_txt
         rejects = _device_rejects(skipped)
         if len(skipped) > sum(rejects.values()):
             rejects["skipped_scoring"] = len(skipped) - sum(rejects.values())
+        _count_held(rejects, held)
         would_write = _would_write(selected, skipped)
         return tick.StageResult("admit_topics", paths=[], summary=summary, admitted=0, rejects=rejects, review=review,
                                 would_write=would_write)
 
-    fetch_meta = ctx.budget.wrap(drain.default_fetch_meta, "gh")
+    fetch_meta = gate(ctx.budget.wrap(drain.default_fetch_meta, "gh"))
     try:
         with _rooted_tools(ctx.root):
             report = drain.run_drain(
@@ -295,7 +358,7 @@ def run(ctx, budget: int, raw=None):
     except BudgetExceeded as e:
         return tick.StageResult("admit_topics", paths=[], summary=f"stopped: {e}", admitted=0, rejects={})
 
-    authored = report["authored"]
+    authored, repo_ids = report["authored"], report["repo_ids"]
     paths = _written_paths(ctx.root, authored)
     source_of = _source_by_repo(entries)
     items = []
@@ -303,8 +366,8 @@ def run(ctx, budget: int, raw=None):
         fmd = ctx.root / "data" / "firmware" / fid / "firmware.md"
         owner_repo = _owner_repo_from_firmware_md(fmd) if fmd.exists() else None
         if owner_repo:
-            memory.record_proposed(fid, owner_repo, path=ctx.ledger_path, now=ctx.now)
-        items.append(_firmware_item(ctx.root, fid, source_of.get(owner_repo)))
+            memory.record_proposed(fid, owner_repo, repo_id=repo_ids.get(fid), path=ctx.ledger_path, now=ctx.now)
+        items.append(_firmware_item(ctx.root, fid, source_of.get(owner_repo), repo_ids.get(fid)))
 
     # run_drain's only ledger write for below-floor skips is ledger.record_seen (jr/ledger.py) —
     # a v1, TTL-less write that scripts/ledger_guard.py rejects (a "seen" record with no
@@ -321,10 +384,12 @@ def run(ctx, budget: int, raw=None):
         memory.record_rejected(s["firmware_id"], s["repo"], s["reason"],
                                ttl_days=device_evidence.ttl_days(s["reason"]), path=ctx.ledger_path, now=ctx.now)
 
-    rejects = _device_rejects(report["skipped_device"])
+    held += [h for _url, h in late]                  # answered as errors: run_drain counted them as scoring skips
+    rejects = _count_held(_device_rejects(report["skipped_device"]), held)
     if report["skipped_popularity"]:
         rejects["below_floor"] = len(report["skipped_popularity"])
-    other_skipped = report["skipped_scoring"] - len(report["skipped_popularity"]) - len(report["skipped_device"])
+    other_skipped = (report["skipped_scoring"] - len(report["skipped_popularity"]) - len(report["skipped_device"])
+                     - len(late))
     if other_skipped > 0:
         rejects["skipped_scoring"] = other_skipped
     if report["dropped_cap"]:
@@ -336,6 +401,8 @@ def run(ctx, budget: int, raw=None):
               f"scored_clean={report['scored_clean']} authored={len(authored)}")
     if items:
         summary += "; " + ", ".join(f"{it['id']}<-{it['source'] or 'topic:?'}" for it in items)
+    if held:
+        summary += "; " + "; ".join(_held_lines(held))
     if report["dropped_guard"]:
         summary += "; " + "; ".join(f"{d['id']}: {d['reason']}" for d in report["dropped_guard"])
     if not report["guard"].get("ok"):

@@ -331,14 +331,15 @@ def test_a_foreign_receipts_edit_before_the_second_pass_never_lands_a_one_sided_
     assert res.published is True and "Work closed" not in pr_body(gh)
 
 
-def noop_then_real(after=None):
-    """demand_broker.reserve, but the first pass finds nothing (NOOP) and the PAM pass closes; `after`
-    runs once the real broker returned — a foreign writer at the publication boundary."""
+def real_then_noop(after=None):
+    """demand_broker.reserve, but only the search pass is real (it closes the linked search work); the
+    PAM pass finds nothing (NOOP). `after` runs once the real broker returned — a foreign writer at
+    the publication boundary, before the PAM pass and the publication read the pair again."""
     real, calls = demand_run.demand_broker.reserve, []
 
     def reserve(demand_dir, *args, **kw):
         calls.append(kw)
-        if len(calls) == 1:
+        if len(calls) > 1:
             return demand_run.demand_broker.Outcome(rw.NOOP, "nothing eligible")
         out = real(demand_dir, *args, **kw)
         if after:
@@ -359,7 +360,7 @@ def pam_only_day(tmp_path):
 
 def test_the_pam_only_publication_never_lands_a_foreign_queue_as_the_closure(tmp_path, monkeypatch):
     root, git, gh = pam_only_day(tmp_path), git_ok(), gh_all()
-    monkeypatch.setattr(demand_run.demand_broker, "reserve", noop_then_real(
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", real_then_noop(
         lambda d: (d / "research-queue.json").write_bytes(FOREIGN_QUEUE)))
     res = run(root, git=git, gh=gh, pam_refresh=pam_updated)
     assert res.published is True and STATE_PATH in staged(git)           # the PAM metadata still lands
@@ -371,7 +372,7 @@ def test_the_pam_only_publication_never_lands_a_foreign_queue_as_the_closure(tmp
 
 def test_the_pam_only_publication_never_lands_foreign_receipts_as_the_closure(tmp_path, monkeypatch):
     root, git, gh = pam_only_day(tmp_path), git_ok(), gh_all()
-    monkeypatch.setattr(demand_run.demand_broker, "reserve", noop_then_real(
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", real_then_noop(
         lambda d: (d / "work-receipts.json").write_bytes(FOREIGN_RECEIPTS)))
     res = run(root, git=git, gh=gh, pam_refresh=pam_updated)
     assert res.published is True and STATE_PATH in staged(git)
@@ -381,7 +382,7 @@ def test_the_pam_only_publication_never_lands_foreign_receipts_as_the_closure(tm
 
 def test_the_pam_only_publication_still_lands_an_owned_closure_pair(tmp_path, monkeypatch):
     root, git, gh = pam_only_day(tmp_path), git_ok(), gh_all()
-    monkeypatch.setattr(demand_run.demand_broker, "reserve", noop_then_real())
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", real_then_noop())
     res = run(root, git=git, gh=gh, pam_refresh=pam_updated)
     assert res.published is True and res.aborted == ""
     assert {STATE_PATH, QUEUE_PATH, RECEIPTS_PATH} <= set(staged(git))
@@ -433,7 +434,7 @@ def test_a_second_pass_over_foreign_receipts_never_lands_them(tmp_path):
 
 def test_a_closure_over_a_foreign_queue_is_never_this_runs_own(tmp_path, monkeypatch):
     root, git, gh = pam_only_day(tmp_path), git_ok(), gh_all()
-    monkeypatch.setattr(demand_run.demand_broker, "reserve", noop_then_real())
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", real_then_noop())
     foreign = json.loads(QUEUE_RAW)
     foreign["edited_by"] = "a concurrent triage"
     res = run(root, git=git, gh=gh,
@@ -536,3 +537,28 @@ def test_a_live_receipt_restored_before_the_re_plan_aborts_without_reporting_the
     assert "inconsistent" in res.aborted and res.published is False and staged(git) == []
     assert (root / RECEIPTS_PATH).read_bytes() == RECEIPTS_RAW
     assert f"closed {KEY}" not in res.line() and "not landed" in res.line()
+
+
+def test_the_daily_run_hands_its_live_getter_to_a_catalog_search_closure(tmp_path):
+    """catalog_search work closes inside the existing daily demand run, through the getter `run`
+    was given (production: demand_closure.default_fetch); no other scheduler, never /api/intent."""
+    from test_demand_closure import queue_bytes
+    from test_demand_closure_live_search import DEPLOYED, STATUS_URL, Getter
+    queue = json.loads(queue_bytes(lambda c: c["validation"].update(verification_kind="catalog_search")))
+    root, git, fetch = tree(tmp_path), git_ok(), Getter()
+    (root / QUEUE_PATH).write_text(json.dumps(queue, indent=1), encoding="utf-8")
+    res = run(root, git=git, miner=snapshot_miner(SNAP, queue=queue), fetch=fetch)
+    assert res.aborted == "" and res.published is True
+    assert f"closed {KEY} (delivered)" in res.work
+    assert fetch.calls[0] == STATUS_URL and fetch.calls[-1] == STATUS_URL and len(fetch.calls) == 3
+    assert not [u for u in fetch.calls if "/api/intent" in u]
+    assert ("merge-base", "--is-ancestor", MERGE_SHA, DEPLOYED) in [c[-4:] for c in git.calls]
+    outcome = json.loads((root / QUEUE_PATH).read_text(encoding="utf-8"))["candidates"]["fnk0104s"]["outcome"]
+    assert outcome["verification_kind"] == "catalog_search" and outcome["deployment"] == DEPLOYED
+
+
+def test_the_default_live_getter_is_the_urllib_one():
+    import inspect
+
+    import demand_closure
+    assert inspect.signature(demand_run.run).parameters["fetch"].default is demand_closure.default_fetch

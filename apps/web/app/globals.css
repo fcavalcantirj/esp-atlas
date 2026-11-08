@@ -45,6 +45,7 @@
   --surface: #f1efe9;
   --surface-2: #dfddd5;
   --accent: #b93814;
+  --popularity-accent: #245f65;
   --accent-fg: #ffffff;
   --accent-soft: #e7d6c9;
   --danger: #a42e1c;
@@ -63,6 +64,7 @@
   --surface: #111416;
   --surface-2: #1c2124;
   --accent: #ff7648;
+  --popularity-accent: #7ca7ad;
   --accent-fg: #100c0a;
   --accent-soft: #302019;
   --danger: #ff9b86;
@@ -1338,12 +1340,12 @@ input[type="checkbox"]:checked::after {
   color: var(--fg);
 }
 
-/* SPEC-firmware-popularity.md §2: the compact stars/forks glance. Mono, quiet
-   -- it reads as a datum, not a call to action. */
+/* SPEC-firmware-popularity.md §2: compact repository popularity and provenance.
+   Restrained blue-teal distinguishes repository data from orange recipe links. */
 .popularity-glance {
   font-family: var(--font-data);
   font-size: 0.72rem;
-  color: var(--muted);
+  color: var(--popularity-accent);
   white-space: nowrap;
 }
 

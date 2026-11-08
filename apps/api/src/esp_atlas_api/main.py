@@ -42,6 +42,7 @@ from esp_atlas_core.search import brand_page as core_brand_page
 from esp_atlas_core.search import get_part as core_get_part
 from esp_atlas_core.search import search as core_search
 from esp_atlas_core.status import compute_status as core_compute_status
+from esp_atlas_core.status import deployed_revision as core_deployed_revision
 from esp_atlas_core.validate import validate_frontmatter as core_validate_frontmatter
 from esp_atlas_core.validate import validate_markdown as core_validate_markdown
 from esp_atlas_core.wizard import wizard as core_wizard
@@ -65,6 +66,7 @@ from esp_atlas_api.models import (
     RecipeListResponse,
     RunGuideResponse,
     SearchResponse,
+    VersionedSearchResponse,
     StatusResponse,
     ValidateRequest,
     ValidateResponse,
@@ -73,6 +75,7 @@ from esp_atlas_api.models import (
 )
 from esp_atlas_api.security import build_limiter, resolve_cors_origins, resolve_rate_limits
 from esp_atlas_api.settings import resolve_db_path
+from esp_atlas_api.runtime_popularity import SnapshotReader, enabled as runtime_popularity_enabled, resolve_records
 
 _ALL_PARTS_LIMIT = 10_000
 logger = logging.getLogger(__name__)
@@ -129,10 +132,16 @@ def get_llm_client(request: Request):
     return getattr(request.app.state, "llm_client", None)
 
 
-def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=None):
+def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=None, popularity_reader=None):
     app = FastAPI(title="esp-atlas API", lifespan=_lifespan)
     app.state.db_path = db_path or resolve_db_path()
     app.state.llm_client = llm_client
+    app.state.popularity_reader = popularity_reader if popularity_reader is not None else SnapshotReader()
+
+    def observed_firmware(records):
+        if not runtime_popularity_enabled():
+            return records
+        return resolve_records(records, app.state.popularity_reader.read())
 
     # Same-origin frontend (apps/web/lib/api.ts) needs no cross-origin
     # access at all; the allowlist exists for local dev and nothing else.
@@ -162,7 +171,7 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
 
     limiter.exempt(health)  # uptime/monitoring checks must never 429
 
-    @app.get("/status", response_model=StatusResponse)
+    @app.get("/status", response_model=StatusResponse, response_model_exclude_unset=True)
     def status(db_path=Depends(get_db_path)):
         """Public live health snapshot (INTERFACE-SPEC.md `GET /status`).
 
@@ -178,7 +187,7 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
 
     limiter.exempt(status)  # public status page polls every 30s, must never 429
 
-    @app.get("/search", response_model=SearchResponse)
+    @app.get("/search", response_model=VersionedSearchResponse)
     def search(
         q: str = "",
         type: Optional[PartType] = None,
@@ -231,7 +240,10 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
             results = core_search(q, filters=filters, db_path=db_path)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
-        return SearchResponse(results=results)
+        # This revision belongs to the same handler deployment that produced
+        # results, so a status A / search B / status A race cannot masquerade
+        # as a search from A in Jr's live catalog verification.
+        return VersionedSearchResponse(results=results, revision=core_deployed_revision())
 
     @app.post("/wizard", response_model=WizardResponse)
     @limiter.limit(limits["llm"])
@@ -411,7 +423,22 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
 
     @app.get("/examples", response_model=ExamplesResponse, response_model_exclude_none=True)
     def examples(db_path=Depends(get_db_path)):
-        return ExamplesResponse(results=core_read_examples(db_path=db_path))
+        examples = core_read_examples(db_path=db_path)
+        if runtime_popularity_enabled():
+            records = core_sort_by_mode(observed_firmware(core_list_firmware()), "popularity")
+            by_id = {r["id"]: r for r in records}
+            rank = {r["id"]: i for i, r in enumerate(records)}
+            fields = ("stars", "forks", "github_as_of", "as_of", "origin", "snapshot_version", "stale")
+            firmware_examples = []
+            for example in examples:
+                if example.get("kind") == "firmware":
+                    updated = {k: v for k, v in example.items() if k not in fields}
+                    pop = by_id.get(example.get("firmware"), {}).get("popularity") or {}
+                    updated.update({k: pop[k] for k in fields if k in pop})
+                    firmware_examples.append(updated)
+            ordered = iter(sorted(firmware_examples, key=lambda e: rank.get(e.get("firmware"), len(rank))))
+            examples = [next(ordered) if e.get("kind") == "firmware" else e for e in examples]
+        return ExamplesResponse(results=examples)
 
     @app.get("/brands/{slug}", response_model=BrandPageResponse)
     def brand_page(slug: str, db_path=Depends(get_db_path)):
@@ -429,7 +456,7 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
         clamps to popularity rather than 422ing (sort_by_mode's own rule).
         `limit` unset preserves the old behavior of returning everything, just
         in the new default order; slicing always happens after sort."""
-        records = [_with_readme_en(r) for r in core_list_firmware()]
+        records = [_with_readme_en(r) for r in observed_firmware(core_list_firmware())]
         records = core_sort_by_mode(records, sort)
         total = len(records)
         sliced = records[offset : offset + limit] if limit is not None else records[offset:]
@@ -440,7 +467,7 @@ def create_app(db_path=None, llm_client=None, cors_origins=None, rate_limits=Non
         record = core_get_firmware(firmware_id)
         if record is None:
             raise HTTPException(status_code=404, detail=f"firmware not found: {firmware_id}")
-        return _with_readme_en(record)
+        return _with_readme_en(observed_firmware([record])[0])
 
     @app.get("/recipes", response_model=RecipeListResponse)
     def list_recipes(board: Optional[str] = None, firmware: Optional[str] = None):

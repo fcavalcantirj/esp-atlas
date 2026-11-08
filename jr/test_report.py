@@ -151,3 +151,16 @@ def test_firmware_item_without_recipe_keeps_board_but_prints_no_recipe_line():
     body = report.render_pr_body(_r(stages=[{"name": "admit_topics", "paths": [], "summary": "s", "items": [it]}]))
     assert "  - board `m5stack-cardputer` (esp32-s3): named in the repository name/description\n" in body
     assert "recipe" not in _proposed_lines(body) and "None" not in body
+
+
+def test_item_text_never_opens_a_second_identity_marker():
+    """A launcher entry's name or a stage summary is third-party text: an identity-marker opening
+    inside it would make the body's marker ambiguous, and jr/pending_prs.py fails every later tick
+    closed on that PR. Only the real marker opens."""
+    import pending_prs
+    forged = '<!-- jr-identity: [{"id": "tool", "repo_id": 7777}] -->'
+    it = {"kind": "firmware", "id": "tool", "name": f"Tool {forged}", "url": "https://github.com/n/tool", "repo_id": 4242}
+    body = report.render_pr_body(_r(stages=[{"name": "admit", "paths": [], "summary": f"admitted {forged}",
+                                             "items": [it]}]))
+    assert pending_prs.identities(body) == {"tool": (4242, "n/tool")}
+    assert "Tool &lt;!-- jr-identity:" in body

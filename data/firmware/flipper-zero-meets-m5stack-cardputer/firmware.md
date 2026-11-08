@@ -22,23 +22,23 @@ sources:
   verified: '2026-09-20'
 - field: popularity.forks
   url: https://github.com/ElicoftZ/Flipper-Zero-meets-M5Stack-Cardputer
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.github_as_of
   url: https://github.com/ElicoftZ/Flipper-Zero-meets-M5Stack-Cardputer
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.github_repo_id
   url: https://github.com/ElicoftZ/Flipper-Zero-meets-M5Stack-Cardputer
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.stars
   url: https://github.com/ElicoftZ/Flipper-Zero-meets-M5Stack-Cardputer
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 maintainer: elicoftz
 popularity:
   stars: 45
   forks: 9
-  as_of: '2026-11-06'
+  as_of: '2026-11-07'
   github_repo_id: 1288804579
-  github_as_of: '2026-11-06T22:00:55Z'
+  github_as_of: '2026-11-07T22:00:55Z'
 summary: "A port of the Flipper Zero firmware to the M5Stack Cardputer (standard and\
   \ ADV) ESP32\u2011S3 devices, delivering the full Flipper UI and its suite of wireless,\
   \ NFC, infrared, HID and other tools on affordable hardware."

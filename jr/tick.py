@@ -7,17 +7,21 @@ One tick, in order (PLAN §3.2):
 
  1. Preflight — a real run first takes an exclusive non-blocking flock (DEFAULT_TICK_LOCK, outside
     the repo; JR_TICK_LOCK overrides): held → "another tick is running", nothing else happens.
-    Then: GitHub rate limit ≥ 500 remaining. Then the open Jr tick PRs: one that is CONFLICTING or
-    open longer than 3 h and changes ONLY bookkeeping (jr/proposed_ledger.json, docs/telemetry/**)
-    was superseded by later ticks — it is closed with a comment and its branch deleted (every tick
-    regenerates those files, so nothing is lost; dry-run only reports it). A stale one touching
+    Then: GitHub rate limit ≥ 500 remaining. Then the open Jr tick PRs — the Jr bot's
+    own, never a fork's (pending_prs.eligible): one that is CONFLICTING or open longer than 3 h
+    and changes ONLY bookkeeping (jr/proposed_ledger.json, docs/telemetry/**) was superseded by
+    later ticks — it is closed with a comment and its branch deleted (every tick regenerates
+    those files, so nothing is lost; dry-run only reports it). A stale one touching
     anything else (data/**) is NEVER closed — jr/memory.py reads a closed PR as a permanent
     rejection of its firmware — so the tick aborts naming it, whether it conflicts, and that it
     needs a human. A PR labelled `jr-review` (jr/review_routing.py) is waiting for the owner ON
     PURPOSE: it is never stuck and never closed, whatever its age; it is listed in the report with
     its age, and at MAX_OPEN_REVIEW_PRS open ones the review-producing stages are skipped (the cap,
-    SPEC-jr-review-routing.md). Last: branch protection on `main` requires schema + tests + jr-tests and
-    auto-merge is allowed. Any of these red → the tick ABORTS before touching anything; every
+    SPEC-jr-review-routing.md). Then the pending index (jr/pending_prs.py): every firmware an open
+    tick PR changes, or a tick PR closed unmerged < 30 d ago changed, read from GitHub's own file
+    lists — no stage stages it again, record or recipe; an index that may miss a hold (a list at its
+    limit, a PR's files not shown whole) aborts like an unreadable one. Last: branch protection on
+    `main` requires schema + tests + jr-tests and auto-merge is allowed. Any of these red → the tick ABORTS before touching anything; every
     query failure here fails CLOSED. Protection missing is the one that matters most: without it
     "PR + auto-merge" is direct-to-main under another name.
  2. Worktree — a fresh `git worktree` detached at `origin/main`, outside the repo tree. Every
@@ -57,7 +61,6 @@ import argparse
 import fcntl
 import json
 import os
-import re
 import signal
 import subprocess
 import sys
@@ -74,6 +77,7 @@ if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
 import ledger   # noqa: E402
 import memory   # noqa: E402
+import pending_prs  # noqa: E402
 import publish  # noqa: E402
 import report   # noqa: E402
 import allocator  # noqa: E402
@@ -88,7 +92,7 @@ MIN_RATE_LIMIT = 500
 STALE_PR_HOURS = 3.0
 OPEN_PR_LIMIT = 500   # gh pr list returns 30 by default, newest first: jr-review PRs are the OLDEST open
                       # ones by design, so without a limit they would fall off the list and escape the cap
-TICK_BRANCH_PREFIX = "jr/tick-"
+TICK_BRANCH_PREFIX = pending_prs.TICK_BRANCH_PREFIX
 TICK_LOCK_NAME = "jr-tick-run.lock"   # NOT scripts/jr-tick.sh's jr-tick.lock: its `flock` holds that
                                       # file for the tick's whole life, so re-locking it would always fail
 DEFAULT_TICK_LOCK = Path(tempfile.gettempdir()) / TICK_LOCK_NAME   # outside the repo tree
@@ -117,6 +121,7 @@ class TickContext:
     budget: Budget
     dry_run: bool
     env: dict
+    pending: pending_prs.PendingIndex = pending_prs.EMPTY   # firmware an open or vetoed tick PR holds: never staged
 
 
 @dataclass
@@ -149,7 +154,8 @@ def hourly_stages(split: dict) -> list:
     Fixed at TOPICS_PER_TICK, outside the allocator's split — it never competes with Track A/B for
     units, and runs after boardmap so an admitted topics firmware's widening waits for its
     own next tick (mirrors admit/boardmap ordering being the ONE thing that matters within a track,
-    not across tracks). Popularity runs last, with at most seven repository calls.
+    not across tracks). GitHub counts are refreshed separately by runtime_popularity.py;
+    the hourly tick does not write count updates into catalog records.
 
     `split` is {"backfill": n, "firmware": m}. The firmware units are shared admit≈boardmap
     (boardmap takes the odd one), and admit's call_share is its fraction of the firmware units."""
@@ -171,8 +177,6 @@ def hourly_stages(split: dict) -> list:
             out.append(lambda ctx, n=bmap: stage_boardmap.run(ctx, budget=n))
     import stage_admit_topics
     out.append(lambda ctx: stage_admit_topics.run(ctx, budget=TOPICS_PER_TICK))
-    import stage_popularity_refresh
-    out.append(stage_popularity_refresh.run)
     return out
 
 
@@ -257,10 +261,11 @@ SUPERSEDED_COMMENT = ("Superseded by later Jr ticks. This PR only touched tick b
 
 
 def _list_open_prs(gh) -> list | None:
-    """Every open PR with its age, mergeability and labels, or None when the query itself fails —
-    fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not open another."""
+    """Every open PR with its age, mergeability, labels and changed files, or None when the query
+    itself fails — fail CLOSED, like the rate-limit probe: a tick that cannot see its own PRs must not
+    open another. The files feed jr/pending_prs.py: what an open tick PR holds is never staged again."""
     p = gh("pr", "list", "--state", "open", "--limit", str(OPEN_PR_LIMIT),
-           "--json", "number,createdAt,headRefName,mergeable,labels")
+           "--json", f"number,createdAt,headRefName,mergeable,labels,{pending_prs.PR_LIST_FIELDS}")
     if getattr(p, "returncode", 1) != 0:
         return None
     try:
@@ -268,10 +273,6 @@ def _list_open_prs(gh) -> list | None:
     except json.JSONDecodeError:
         return None
     return [pr for pr in prs if isinstance(pr, dict)] if isinstance(prs, list) else None
-
-
-def _is_tick_pr(pr: dict) -> bool:
-    return str(pr.get("headRefName", "")).startswith(TICK_BRANCH_PREFIX)
 
 
 def _pr_age_hours(pr: dict, now: datetime) -> float | None:
@@ -388,22 +389,18 @@ def _repo_slug(git) -> str:
 # later (observed live: #158/#159 and #162/#163 were identical re-proposals). Firmware ids come
 # from the changed-file paths of every currently-open Jr tick PR.
 
-_FIRMWARE_PATH_RE = re.compile(r"^data/firmware/([^/]+)/")
-_RECIPE_PATH_RE = re.compile(r"^data/recipes/[^/]+__([^/]+)/")
-
-
 def _open_tick_prs(gh) -> list:
-    """Open PRs whose branch is a Jr tick branch. Best-effort: [] on any gh/parse failure (the
-    stale-PR preflight already fails CLOSED on a pr-list failure, so this only re-reads it)."""
-    p = gh("pr", "list", "--state", "open", "--json", "number,headRefName")
+    """The open Jr tick PRs (pending_prs.eligible: the Jr bot's own, from this repository). Best-effort:
+    [] on any gh/parse failure (the stale-PR preflight already fails CLOSED on a pr-list failure, so
+    this only re-reads it)."""
+    p = gh("pr", "list", "--state", "open", "--json", "number,headRefName,author,isCrossRepository")
     if getattr(p, "returncode", 1) != 0:
         return []
     try:
         prs = json.loads(p.stdout or "[]")
     except json.JSONDecodeError:
         return []
-    return [pr for pr in prs if isinstance(pr, dict)
-            and str(pr.get("headRefName", "")).startswith(TICK_BRANCH_PREFIX)]
+    return [pr for pr in prs if isinstance(pr, dict) and pending_prs.eligible(pr)]
 
 
 def _owner_repo_from_url(url: str) -> str:
@@ -448,16 +445,25 @@ def _pr_firmware_ids(gh, number) -> list[str]:
         data = json.loads(p.stdout or "{}")
     except json.JSONDecodeError:
         return []
-    ids = set()
-    for f in (data.get("files") or []):
-        path = f.get("path") or "" if isinstance(f, dict) else ""
-        m = _FIRMWARE_PATH_RE.match(path) or _RECIPE_PATH_RE.match(path)
-        if m:
-            ids.add(m.group(1))
-    return sorted(ids)
+    return sorted(pending_prs.firmware_ids(str(f.get("path") or "") for f in (data.get("files") or [])
+                                           if isinstance(f, dict)))
 
 
-def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None) -> list[str]:
+def _hydrated_identity(fid, read_repo, hold, pr_ref) -> tuple[str, int | None]:
+    """(owner/repo, repo id) hydration records for `fid` in open PR `pr_ref`. The id pending_prs verified
+    rides only with the source it verified it for at the PR's pinned head (`hold.repo`): `read_repo` was
+    read at the mutable branch, which may have moved since — naming another repository it records no id
+    (unknown), never the old one. Unreadable, the verified pair itself; unverified, no id at all."""
+    verified = (hold is not None and hold.state == pending_prs.OPEN and hold.pr_ref == pr_ref
+                and hold.repo_id is not None and bool(hold.repo))
+    if not verified:
+        return read_repo or fid, None
+    if read_repo is None:
+        return hold.repo, hold.repo_id
+    return read_repo, hold.repo_id if read_repo == hold.repo else None
+
+
+def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None, pending=None, open_prs=None) -> list[str]:
     """Mark every firmware id in an OPEN Jr tick PR as `proposed` in the worktree ledger, keyed by
     the REAL owner/repo, so BOTH dedup gates see firmware already awaiting merge (the duplicate-PR
     fix; see the note above). stage_admit dedups by firmware id, but the firmware DRAIN's prefilter
@@ -473,9 +479,16 @@ def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None) -> list[str]:
     already merged/catalogued — already deduped by catalogued_repos), the id stands in for the repo,
     the pre-fix behavior, so nothing regresses. Each PR/id is wrapped so one bad fetch can't abort
     hydration. `repo_slug` is the esp-atlas repo the contents API reads (None → id-as-repo for all).
+    `pending` (jr/pending_prs.py's index) supplies the GitHub repository id the ledger committed at
+    THIS open PR's head verified (never another PR's, never a body marker's claim), so the ledger's
+    by_repo_id gate also holds the repository after an upstream rename — only alongside the source it
+    was verified for (`_hydrated_identity`): a branch moved since to another source records no id.
+    `open_prs` is the tick's own preflight snapshot (None: re-listed); either way only an eligible PR
+    (pending_prs.eligible) is hydrated — a foreign-author or fork jr/tick-* PR marks nothing proposed.
     Returns the ids hydrated."""
     hydrated = []
-    for pr in _open_tick_prs(gh):
+    prs = _open_tick_prs(gh) if open_prs is None else [pr for pr in open_prs if pending_prs.eligible(pr)]
+    for pr in prs:
         n = pr.get("number")
         head_ref = pr.get("headRefName")
         for fid in _pr_firmware_ids(gh, n):
@@ -485,7 +498,8 @@ def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None) -> list[str]:
                     repo = _pr_firmware_repo(gh, repo_slug, head_ref, fid)
                 except Exception:  # noqa: BLE001 — one bad fetch must not abort hydration
                     repo = None
-            memory.record_proposed(fid, repo or fid, pr_ref=f"#{n}", path=ledger_path, now=now)
+            repo, repo_id = _hydrated_identity(fid, repo, (pending or pending_prs.EMPTY).hold(fid), f"#{n}")
+            memory.record_proposed(fid, repo, repo_id=repo_id, pr_ref=f"#{n}", path=ledger_path, now=now)
             hydrated.append(fid)
     return hydrated
 
@@ -544,7 +558,9 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         if open_prs is None:
             raise TickAbort("gh pr list failed (cannot see open Jr PRs)")
         r.review_prs = _open_review_prs(open_prs, now)
-        tick_prs = [pr for pr in open_prs if _is_tick_pr(pr)]
+        # Only the Jr bot's own same-repo tick PR is triaged, closed or hydrated: anyone can name a
+        # fork's branch jr/tick-*, and pending_prs.eligible is the one rule for all of them (R2j).
+        tick_prs = [pr for pr in open_prs if pending_prs.eligible(pr)]
         superseded, stuck = _triage_tick_prs(gh_c, tick_prs, now, stale_pr_hours)
         for pr in superseded:
             if dry_run:
@@ -555,6 +571,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         if stuck:
             raise TickAbort(_stuck_message(stuck[0], stale_pr_hours))
         slug = repo_slug or _repo_slug(git)
+        pending = pending_prs.load(gh_c, open_prs, now, slug=slug, open_limit=OPEN_PR_LIMIT)
+        if pending is None:
+            raise TickAbort("gh pr list --state closed failed (cannot see which firmware a Jr PR holds)")
+        if not pending.complete:
+            raise TickAbort("pending-PR inventory incomplete, nothing staged or published: " + "; ".join(pending.gaps))
         protection = publish.protection_status(slug, gh=gh_c)
         if not protection.ok:
             if dry_run:
@@ -591,7 +612,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         #     the stages enforce the budget. memory.record_proposed already refuses to downgrade
         #     a merged or permanently-rejected record.
         try:
-            r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug)
+            r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug, pending=pending,
+                                                open_prs=tick_prs)
         except Exception as e:  # noqa: BLE001
             r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")
         # 3c. owner-review decisions (SPEC-jr-review-routing.md §5): every target an open or closed
@@ -694,7 +716,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
 
         # 6. stages
         ctx = TickContext(root=root, ledger_path=ledger_path, now=now, gh=gh_c, git=git,
-                          budget=budget, dry_run=dry_run, env=env)
+                          budget=budget, dry_run=dry_run, env=env, pending=pending)
         for stage in stages:
             res = stage(ctx)
             r.stages.append({"name": res.name, "paths": list(res.paths), "summary": res.summary,

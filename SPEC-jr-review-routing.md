@@ -60,10 +60,9 @@ requested on a `review` route. If labelling still fails, the result says so
   cap the tick skips every review-producing stage (every content stage unless it declares
   `produces_review = False`) and reports `jr-review cap reached …` instead of piling up. Memory
   reconciliation and the telemetry snapshot still ship (they route AUTO).
-  `stage_popularity_refresh.run` may opt out only because it checks each proposed record
-  against this same staged-diff classifier before writing. Any change classified REVIEW is
-  deferred and counted in its summary, so the stage cannot open a new review PR through the
-  cap. A normal legacy snapshot plus new, exact GitHub field citations stays AUTO.
+  GitHub count refresh is no longer a tick stage: the independent runtime JSON publisher
+  updates counts without catalog PRs. The cap does not block that publisher. Stale content
+  PRs retain the human-review rule above, including historical count-refresh PRs.
 
 ### 4. Tick report
 
@@ -115,3 +114,77 @@ bookkeeping change (signals refreshes, other floor rejects, cooldowns) onto revi
   previous record, minus its own `history`, to `history`. Records are never deleted.
 - **Nothing is weakened.** The classifier, the floor, the cap and every gate are unchanged: a new
   or changed target still opens a `jr-review` PR, and new firmware/recipes still route to review.
+
+### 6. Pending and vetoed proposals — never re-stage what a Jr PR already holds
+
+**Incident (main ce0f72af).** Open jr-review tick PRs #1500 #1501 #1503 #1506 #1508 #1511 each
+re-added the same nightdriverstrip recipes + signals (and squachwatch-cyd's). Those firmware were
+already catalogued, so their ledger record is `merged`; the open-PR hydration's `proposed` write is
+refused over a merged record, so boardmap's "already proposed" skip never fired and every hourly
+tick re-derived the firmware into another review PR. A veto of a PR whose proposal never reached
+main was forgotten the same way.
+
+**The contract** (`jr/pending_prs.py`, tick preflight):
+
+- **Source of truth: the PR's own changed-file list**, read-only from GitHub — never a ledger
+  status. A firmware id is held when a `jr/tick-*` PR changes `data/firmware/<id>/…` or
+  `data/recipes/<board>__<id>/…`.
+- **Open → held** (`already_proposed`) for as long as the PR is open. The preflight's
+  `gh pr list --state open` carries `files`; no extra call.
+- **Closed unmerged → vetoed** for `VETO_TTL_DAYS` = 30 from `closedAt` (the tick PR body's
+  "Close = veto … not again for 30 days"). One counted
+  `gh pr list --state closed --search "is:unmerged closed:>=<now-30d>" --json …,files`; dates,
+  branch and `mergedAt` are re-checked client-side. An open PR wins over an older veto.
+- **Merged → nothing held**: the firmware is catalogued on main and the ledger reconciles it.
+- **Unreadable → the tick aborts** before the worktree (fail closed, like every preflight query).
+- **Incomplete → the tick aborts too**, naming the gap: an index that may miss a hold is as blind
+  as an unreadable one, so no content stage runs and nothing is published (no admit, topics,
+  boardmap, recipe or popularity write). Incomplete means any of: the open list returned
+  `OPEN_PR_LIMIT` PRs, the closed list returned `CLOSED_PR_LIMIT` PRs (both may be cut), or a held
+  tick PR's file list cannot be shown whole. `gh pr list --json files` carries at most the first
+  100 files of a PR, so both lists also ask for `changedFiles`; a tick PR whose `files` count is
+  not its `changedFiles` is re-read with `gh api repos/<slug>/pulls/<n>/files?per_page=100
+  --paginate` and must then match `changedFiles` exactly (that REST listing stops at 3000 files).
+- **Every staging stage obeys it.** `stage_admit` and `stage_admit_topics` skip a held id (derived
+  from the repo url exactly as the scorer authors it) before any metadata fetch; `stage_boardmap`
+  maps no held firmware — no recipe on the same boards and none on a NEW board (no stacking onto
+  an unmerged firmware) — and gives the slot to the next candidate. `--track B --firmware` obeys it
+  too. Skips are counted `already_proposed` / `vetoed` and named with the PR in the stage summary.
+- **Identity is the repository, not its name.** An upstream rename turns `oldtool` into `newtool`;
+  GitHub's numeric repository id stays. Every tick PR body carries a hidden
+  `<!-- jr-identity: [{"id", "repo", "repo_id"}] -->` marker — the id admission read from GitHub
+  for each firmware it proposes (`stage_admit` and `stage_admit_topics`). Both PR lists also ask
+  for `body` and `headRefOid`. A hold keeps its verified id and its slug as the alias it was
+  proposed under.
+  - **The marker is never trusted alone; the committed ledger decides.** A PR body is editable by
+    anyone who can edit the PR, so the marker only claims. When a tick PR changes
+    `jr/proposed_ledger.json`, the ledger committed at its head is read once:
+    `gh api -H "Accept: application/vnd.github.raw+json"
+    repos/<slug>/contents/jr/proposed_ledger.json?ref=<headRefOid>` (`RAW_MEDIA`), and each held
+    firmware takes the `repo_id` of its record there — and only that. A marker id the ledger
+    contradicts is ignored (a forged `4242 → 7777` keeps 4242 held and never holds or vetoes
+    7777); one the ledger does not record verifies nothing (the hold stays matched by slug). A
+    marker that agrees still covers the rename. A PR without a marker (one older than it, like
+    growth PRs #1511/#1513) is verified the same way, else matched by slug. A PR that does not
+    change the ledger is not read: its ids stay unknown.
+  - **An ambiguous marker fails closed.** On a tick PR that holds a firmware, a body that opens
+    `jr-identity` more than once (a forged, duplicate or unclosed marker), whose marker is
+    unreadable, or that names one firmware twice is a gap (a PR that holds nothing decides nothing): the index is incomplete and the tick aborts before its worktree — nothing is
+    written to the ledger or memory. So is an unreadable ledger (or one with no head oid to read it
+    at). The renderer escapes `<` inside the marker and defangs any `jr-identity` opening in item
+    text and stage summaries, so a body Jr wrote opens the marker exactly once.
+  Admission matches the fetched id **before** the slug:
+  - same id under a new slug → held as the original (`already_proposed` / `vetoed`), named with
+    both slugs, the id and the PR (rename provenance);
+  - the held slug under **another** id → `identity_ambiguous`: never admitted, nothing written to
+    the ledger (not a decision — not even a search-resolved launcher entry's `resolved:` note), named with both ids and the PR, re-checked every tick until the
+    hold ends; a submission issue is left open and unanswered (`deferred, identity_ambiguous` in
+    the summary), so it is read again once the hold ends;
+  - a slug collision where either id is unknown (a PR older than the marker, an unreadable
+    candidate) → held, fail closed. A hold without a verified id is still skipped before the
+    metadata fetch; one with an id costs that one fetch to decide.
+  - name similarity is never identity. The open-PR ledger hydration also records the verified
+    `repo_id` — only the one verified for that same PR — so the ledger's own `by_repo_id` gate agrees.
+- **Nothing persisted, nothing weakened.** The index is rebuilt every tick, so a merge or a lapsed
+  veto releases the firmware on its own. Hydration, review decisions (§5), the classifier, the
+  device-evidence gate, the `jr-review` label and the open-review cap are unchanged.

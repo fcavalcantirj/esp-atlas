@@ -16,6 +16,18 @@ sources:
 - field: summary
   url: https://github.com/anton-vinogradov/meshtastic-adv
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/anton-vinogradov/meshtastic-adv
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/anton-vinogradov/meshtastic-adv
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/anton-vinogradov/meshtastic-adv
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/anton-vinogradov/meshtastic-adv
+  verified: '2026-11-07'
 maintainer: anton-vinogradov
 capabilities:
 - ble
@@ -24,9 +36,11 @@ capabilities:
 - mqtt
 - wifi
 popularity:
-  stars: 29
+  stars: 43
   forks: 3
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 1288636423
+  github_as_of: '2026-11-07T14:00:55Z'
 summary: "Meshtastic\u202FADV is a keyboard\u2011first Meshtastic client for the M5Stack\
   \ Cardputer\u202FADV that offers a full\u2011screen chat UI using the device\u2019\
   s QWERTY keyboard, supporting LoRa or BLE\u2011companion radio, Unicode/emoji input,\

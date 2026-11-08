@@ -47,10 +47,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import demand_broker  # noqa: E402
+import demand_closure  # noqa: E402
 import demand_signal  # noqa: E402
 import publish  # noqa: E402
 import pam_run  # noqa: E402
 import research_queue  # noqa: E402
+import research_work as rw  # noqa: E402
 import review_routing  # noqa: E402
 from tick import guard_env  # noqa: E402 — the one "esp_atlas_core sees the worktree" env
 
@@ -449,7 +451,7 @@ def _note_work(d: Decision, work: demand_broker.Outcome) -> None:
 
 def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str | None,
                   *, new_pam: bool = False, git=None, mined_revision: str | None = None,
-                  close: bool = True) -> str:
+                  close: bool = True, fetch=None, source_class: str | None = None) -> str:
     """Bookkeeping after a SUCCESSFUL mine: at most one work reservation, after closing linked work
     the broker verified against this run's snapshot mined at `mined_revision`. A broker failure is
     reported on the run line, never allowed to block the demand snapshot itself; a closure the
@@ -462,6 +464,8 @@ def _reserve_work(wt_path: Path, d: Decision, gh, now: datetime, repo_slug: str 
         work = demand_broker.reserve(wt_path / DEMAND_RELDIR, d.snap, gh=gh, today=today,
                                      repo_slug=repo_slug, new_pam=new_pam, git=git,
                                      mined_revision=mined_revision, now=now, close=close, closures=closures,
+                                     source_class=source_class,   # this pass's daily-slot class
+                                     fetch=fetch,       # catalog_search/catalog_part: the live public getter
                                      writes=d.owned,    # the exact bytes of each durable broker write
                                      expected=expected)     # ownership history, checked before every pass
     except RunAbort:
@@ -517,7 +521,7 @@ def _refresh_pam(wt_path: Path, d: Decision, res: RunResult, refresh, now: datet
 def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
         python: str = DEFAULT_DEMAND_PYTHON, telegram: bool = False, now: datetime | None = None,
         root: Path | None = None, repo_slug: str | None = None, auto_merge: bool = True,
-        pam_refresh=None) -> RunResult:
+        pam_refresh=None, fetch=demand_closure.default_fetch) -> RunResult:
     now = now or datetime.now(timezone.utc)
     res = RunResult()
     wt = branch = None
@@ -547,19 +551,22 @@ def run(*, git=publish.default_git, gh=publish.default_gh, miner=default_miner,
                                 False, "search refresh unavailable", pam_only=True)
         res.date = decision.snap["date"]
         decision.base = {research_queue.QUEUE_NAME: queue_before, demand_broker.RECEIPTS_NAME: main_receipts}
-        closer = {"git": git, "mined_revision": wt.base_sha}     # the catalog revision this run mined
+        closer = {"git": git, "mined_revision": wt.base_sha,      # the catalog revision this run mined
+                  "fetch": fetch}                                # the live getter catalog_search reads through
         receipts_before = _read_bytes(demand_dir / demand_broker.RECEIPTS_NAME)
         if not res.source_error:
-            res.work = _reserve_work(wt.path, decision, gh, now, repo_slug, **closer)
+            res.work = _reserve_work(wt.path, decision, gh, now, repo_slug, source_class=rw.CLASS_SEARCH,
+                                     **closer)
         _refresh_pam(wt.path, decision, res, pam_refresh, now)
-        # The first pass already recovers existing PAM branches/PRs from valid
-        # cached provenance. Only a prior NOOP or a closure permits starting new feed
-        # work. Existing work, caps, unreadable remote state and timeouts retain priority.
-        if (not res.source_error and decision.pam_ready
-                and (decision.work_action == "noop" or decision.work_closed)):
-            second = _reserve_work(wt.path, decision, gh, now, repo_slug, new_pam=True,
-                                   close=not decision.work_closed, **closer)   # one closure per run
-            res.work = f"{res.work} · then {second}" if decision.work_closed else second
+        # One daily slot PER SOURCE CLASS (decision 2026-11-08): the second pass is the PAM class's
+        # own pass, whatever search demand did. It recovers/reconciles existing feed work from its
+        # durable snapshot every run; it starts ONE new lead only after a successful refresh (304
+        # included), from the refresh's current classification. Caps, unreadable remote state and
+        # timeouts retain priority; a run closes at most one item.
+        if not res.source_error:
+            second = _reserve_work(wt.path, decision, gh, now, repo_slug, new_pam=decision.pam_ready,
+                                   source_class=rw.CLASS_PAM, close=not decision.work_closed, **closer)
+            res.work = f"{res.work} · then {second}"
         if res.pam_receipt:
             revision = git("rev-parse", "HEAD")
             res.pam_receipt["runner_revision"] = ((getattr(revision, "stdout", "") or "").strip()

@@ -319,12 +319,14 @@ class _Closer:
     mined_revision: str | None
     now: datetime
     closures: list | None = None
+    fetch: object = None              # the live getter a catalog_search closure reads through
 
 
 def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | None = None,
             new_pam: bool = True, git=None, mined_revision: str | None = None,
             now: datetime | None = None, close: bool = True, closures: list | None = None,
-            writes: dict | None = None, expected: dict | None = None) -> Outcome:
+            writes: dict | None = None, expected: dict | None = None, fetch=None,
+            source_class: str | None = None) -> Outcome:
     """Plan one action over the committed queue + snapshot + feed state + receipts. START appends ONE
     reservation atomically. RECONCILE verifies the linked work (jr/demand_closure.py) against `snap`,
     which must be the snapshot this run just mined at `mined_revision`; a delivered or rejected
@@ -337,10 +339,16 @@ def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | No
     `expected`, when given, maps each pair file to the bytes the caller last left there (None: absent).
     Every pass — this one and the re-plan after a closure, which expects the closure's own writes —
     first checks the pair it read against what it expects: a file another writer changed is never
-    planned over, written or owned; the pass defers naming it in `Outcome.foreign`."""
-    closer = _Closer(git, mined_revision, now or datetime.now(timezone.utc), closures) if close else None
+    planned over, written or owned; the pass defers naming it in `Outcome.foreign`. `fetch` is the
+    live getter a catalog_search closure reads the public site through (demand_closure.default_fetch
+    in production); without one such work stays pending. `source_class` (research_work.CLASS_SEARCH
+    or CLASS_PAM) narrows this pass — and the re-plan after a closure — to one daily-slot class."""
+    if source_class is not None and source_class not in rw.CLASSES:
+        raise ValueError(f"unknown work source class {source_class!r}: one of {sorted(rw.CLASSES)}")
+    closer = _Closer(git, mined_revision, now or datetime.now(timezone.utc), closures, fetch) if close else None
     return _reserve(Path(demand_dir), snap, gh=gh, today=today, repo_slug=repo_slug, new_pam=new_pam,
-                    closer=closer, writes={} if writes is None else writes, expected=expected)
+                    closer=closer, writes={} if writes is None else writes, expected=expected,
+                    source_class=source_class)
 
 
 def _writer_bytes(doc: dict) -> bytes:
@@ -392,12 +400,13 @@ def _undo_queue(qpath: Path, queue_raw: bytes | None, queue_bytes: bytes, why: s
 
 
 def _close(demand_dir: Path, snap: dict, plan: rw.Plan, reason: str, state: dict, *, gh, today: str,
-           repo_slug, new_pam: bool, closer: _Closer, writes: dict) -> Outcome:
+           repo_slug, new_pam: bool, closer: _Closer, writes: dict, source_class: str | None = None) -> Outcome:
     key = plan.work.key
     if len(state["remote"].prs.get(plan.work.branch, [])) > 1:      # START's duplicate check, before any verdict
         return Outcome(rw.DEFER, f"duplicate remote PRs on {plan.work.branch}: no closure", key)
     closure = demand_closure.resolve(state["queue"], state["receipts"], key, snap, gh=gh, git=closer.git,
-                                     mined_revision=closer.mined_revision, today=today, now=closer.now)
+                                     mined_revision=closer.mined_revision, today=today, now=closer.now,
+                                     fetch=closer.fetch)
     if closure.status == demand_closure.PENDING:
         return Outcome(rw.RECONCILE, f"{reason}; {closure.reason}", key)
     problem = _write_closure(demand_dir, closure, state["doc"], state["queue_raw"], state["raw"], writes)
@@ -410,7 +419,8 @@ def _close(demand_dir: Path, snap: dict, plan: rw.Plan, reason: str, state: dict
     own = {research_queue.QUEUE_NAME: writes[research_queue.QUEUE_NAME],
            RECEIPTS_NAME: writes[RECEIPTS_NAME] if closure.receipts_changed else state["raw"]}
     following = _reserve(demand_dir, snap, gh=gh, today=today, repo_slug=repo_slug, new_pam=new_pam,
-                         closer=None, writes=writes, expected=own)   # re-plan ONCE, only over its own bytes
+                         closer=None, writes=writes, expected=own,   # re-plan ONCE, only over its own bytes
+                         source_class=source_class)
     return dataclasses.replace(following, changed=True, queue_changed=True,
                                receipts_changed=following.receipts_changed or closure.receipts_changed,
                                closed=key, resolution=closure.status)
@@ -428,7 +438,8 @@ def _foreign(expected: dict | None, read: dict) -> Outcome | None:
 
 
 def _reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | None,
-             new_pam: bool, closer: _Closer | None, writes: dict, expected: dict | None = None) -> Outcome:
+             new_pam: bool, closer: _Closer | None, writes: dict, expected: dict | None = None,
+             source_class: str | None = None) -> Outcome:
     path = Path(demand_dir) / RECEIPTS_NAME
     raw = _read(path)
     queue_raw, queue = _load_queue(Path(demand_dir))
@@ -473,14 +484,15 @@ def _reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | N
                  for b in [_branch(c)] if b}
     unrecorded = remote.open_branches() - set(live)     # open remote PRs no live receipt accounts for
     prefer = unrecorded | {rw.branch_for(key) for key in recovering}
-    plan = rw.plan_work(view, receipts, today, remote_complete=remote.complete, prefer=prefer)
+    plan = rw.plan_work(view, receipts, today, remote_complete=remote.complete, prefer=prefer,
+                        source_class=source_class)
     reason = "; ".join(filter(None, [plan.reason, remote.reason]))
     key = plan.work.key if plan.work else ""
     if plan.action == rw.RECONCILE and closer is not None:
         state = {"queue": queue, "queue_raw": queue_raw, "doc": doc, "raw": raw, "receipts": receipts,
                  "remote": remote}
         return _close(Path(demand_dir), snap, plan, reason, state, gh=gh, today=today, repo_slug=repo_slug,
-                      new_pam=new_pam, closer=closer, writes=writes)
+                      new_pam=new_pam, closer=closer, writes=writes, source_class=source_class)
     if plan.action != rw.START:
         if plan.action == rw.NOOP and pam_error:
             return Outcome(rw.DEFER, pam_error)

@@ -26,7 +26,7 @@ test("server fetches stay in the Data Cache, tagged so a purge can reach them", 
     // Regression guard: `cache: "no-store"` (0c8ce8c) sent every render to a cold Python
     // function and was reverted (9a3a614). The cache stays; deletions are purged by tag.
     assert.equal(init.cache, undefined);
-    assert.deepEqual(init.next, { revalidate: 3600, tags: [CATALOG_TAG] });
+    assert.deepEqual(init.next, { revalidate: 240, tags: [CATALOG_TAG, "popularity"] });
     assert.equal(CATALOG_TAG, "catalog");
   } finally {
     stub.restore();
@@ -63,7 +63,7 @@ test("entity fetches carry the same tag and an AbortSignal.timeout signal", asyn
     await fetchFirmware("x");
     assert.equal(stub.calls.length, 1);
     const init = stub.calls[0] as Record<string, unknown>;
-    assert.deepEqual(init.next, { revalidate: 3600, tags: [CATALOG_TAG] });
+    assert.deepEqual(init.next, { revalidate: 240, tags: [CATALOG_TAG, "popularity"] });
     assert.ok(init.signal instanceof AbortSignal);
   } finally {
     stub.restore();

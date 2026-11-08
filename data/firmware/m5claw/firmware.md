@@ -8,9 +8,11 @@ maintainer: fwz233-re
 capabilities:
 - wifi
 popularity:
-  stars: 52
+  stars: 53
   forks: 11
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 1180676135
+  github_as_of: '2026-11-07T08:00:55Z'
 socs:
 - esp32-s3
 sources:
@@ -23,6 +25,18 @@ sources:
 - field: summary
   url: https://github.com/fwz233-RE/M5Claw
   verified: '2026-10-06'
+- field: popularity.forks
+  url: https://github.com/fwz233-RE/M5Claw
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/fwz233-RE/M5Claw
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/fwz233-RE/M5Claw
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/fwz233-RE/M5Claw
+  verified: '2026-11-07'
 summary: "M5Claw is an AI assistant firmware for the M5Stack Cardputer that runs on\
   \ an ESP32\u2011S3, offering a local companion interface with keyboard and voice\
   \ chat, TTS, WeChat connectivity, weather display, scheduled tasks, persistent memory\

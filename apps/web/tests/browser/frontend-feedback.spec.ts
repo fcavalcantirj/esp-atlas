@@ -26,6 +26,72 @@ async function noOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
 }
 
+async function oneLoadingMessage(page: Page, text: string) {
+  const status = page.getByRole("status");
+  await expect(status).toHaveCount(1);
+  await expect(status).toHaveText(text);
+  await expect(status).toHaveAttribute("aria-atomic", "true");
+  expect(await status.evaluate(element => element.closest('[aria-busy="true"]') === null)).toBe(true);
+  await expect(answer(page).getByText(text, { exact: true })).toBeInViewport();
+  // A visually clipped live region remains accessible, but must not paint a
+  // second readable message. Check geometry rather than Playwright :visible,
+  // which also matches the clipped one-pixel screen-reader announcement.
+  const readableCopies = await page.getByText(text, { exact: true }).evaluateAll(elements => elements.filter(element => {
+    const bounds = element.getBoundingClientRect();
+    return bounds.width > 1 && bounds.height > 1;
+  }).length);
+  expect(readableCopies).toBe(1);
+  expect((await page.locator("body").ariaSnapshot()).split(text).length - 1).toBe(1);
+  await expect(page.getByRole("button", { name: "Searching…", exact: true })).toBeDisabled();
+  await noOverflow(page);
+}
+
+for (const kind of ["firmware", "unmapped"] as const) {
+  test(`${kind} progress appears and is announced once through parsing, failure, retry and repeated submission`, async ({ page }) => {
+    const attempts = Array.from({ length: 3 }, () => ({ parsing: gate(), loading: gate() }));
+    let intentRequests = 0, guideRequests = 0;
+    await page.route("**/intent", async route => {
+      const attempt = attempts[intentRequests++];
+      await attempt.parsing.waiting;
+      await json(route, { ...intent, kind });
+    });
+    await page.route(kind === "firmware" ? "**/run/*" : "**/build", async route => {
+      const index = guideRequests++;
+      await attempts[index].loading.waiting;
+      await json(route, index === 0 ? { detail: "Fixture unavailable" } : kind === "firmware" ? guide : build, index === 0 ? 503 : 200);
+    });
+    const text = kind === "firmware" ? "a gps tracker" : "Plant health monitor";
+    try {
+      await page.goto("/");
+      for (let index = 0; index < attempts.length; index++) {
+        if (index === 1) await page.getByRole("button", { name: "Try again", exact: true }).click();
+        else await ask(page, text);
+        await oneLoadingMessage(page, "Reading your request…");
+        await expect(answer(page)).toBeFocused();
+        attempts[index].parsing.release();
+        await oneLoadingMessage(page, kind === "firmware" ? "Finding recorded recipes…" : "Working out what you need…");
+        if (index === 0) await page.screenshot({ path: test.info().outputPath("loading.png") });
+        const input = page.getByLabel("Tell me what you want to build or run…");
+        await input.focus();
+        await input.press("Enter");
+        expect(intentRequests).toBe(index + 1);
+        expect(guideRequests).toBe(index + 1);
+        attempts[index].loading.release();
+        await expect(page.getByRole("status")).toHaveText(index === 0
+          ? "The guide could not be loaded. You can try again." : "Your guide is ready.");
+        await expect(input).toBeFocused();
+        await expect(page.getByRole("button", { name: "Go", exact: true })).toBeEnabled();
+        await expect(answer(page).locator(".results-loading")).toHaveCount(0);
+        if (index === 0) await expect(answer(page).getByRole("heading", { name: "We couldn't load this guide" })).toBeVisible();
+        else await expect(kind === "firmware" ? tracker(page)
+          : page.getByRole("heading", { name: "To build a fixture project, you need" })).toBeVisible();
+      }
+    } finally {
+      attempts.forEach(attempt => { attempt.parsing.release(); attempt.loading.release(); });
+    }
+  });
+}
+
 test("GPS guide is visible and focused; repeated queries and board/guide transitions show only the current answer", async ({ page }) => {
   let requests = 0;
   await page.route("**/intent", route => {

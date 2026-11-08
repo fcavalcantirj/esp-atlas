@@ -33,9 +33,11 @@ not_required:
   why: fully configurable headless over its web UI; a screen is optional (some device
     templates add one)
 popularity:
-  stars: 24769
-  forks: 5183
-  as_of: '2026-09-20'
+  stars: 24969
+  forks: 5208
+  as_of: '2026-11-07'
+  github_repo_id: 80286288
+  github_as_of: '2026-11-07T15:00:55Z'
 sources:
 - field: '*'
   url: https://github.com/arendst/Tasmota
@@ -64,6 +66,18 @@ sources:
 - field: socs
   url: https://github.com/arendst/Tasmota/blob/development/platformio_tasmota_env32.ini#L273
   verified: '2026-10-18'
+- field: popularity.forks
+  url: https://github.com/arendst/Tasmota
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/arendst/Tasmota
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/arendst/Tasmota
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/arendst/Tasmota
+  verified: '2026-11-07'
 summary: "Tasmota is an alternative open\u2011source firmware for ESP8266 and ESP32\
   \ based devices that offers easy web\u2011UI configuration, OTA updates, automation\
   \ via timers or rules, and fully local control through MQTT, HTTP, Serial or KNX."

@@ -139,9 +139,21 @@ downloads). Fix — store the numbers, dated like a citation (popularity drifts)
 - Backfill: a one-off pass stamps `popularity` onto existing firmware (fetch live once) so the
   gate has data for today's catalog.
 
-### 2026-11-06: bounded GitHub count refresh
+### 2026-11-07: independent runtime GitHub counts
 
-`jr/stage_popularity_refresh.py` runs in the existing hourly Jr tick. It groups the catalog
+The hourly tick no longer invokes `jr/stage_popularity_refresh.py`. Its helpers remain
+available to `jr/runtime_popularity.py`, which publishes `popularity.json` on the separate
+`runtime-popularity` branch through `.github/workflows/runtime-popularity.yml`. This
+deterministic publisher does not modify catalog records, create PRs, or call an LLM.
+The website reads that snapshot; catalog popularity remains dated admission evidence.
+Runtime counts may decrease or reach zero without applying the admission floor.
+
+Removing the old stage does not change PR triage or ledger rejection rules. Historical
+count-refresh PRs require individual review; they are not automatically closed.
+
+### 2026-11-06: bounded GitHub count refresh (retired)
+
+The retired `jr/stage_popularity_refresh.py` stage ran in the hourly Jr tick. It groups the catalog
 by bare GitHub owner/repository URL, excludes the known wrong Nyan URL until its separate cited
 correction, and visits a deterministic slice of at most seven distinct repositories each hour.
 At the current 144 eligible repositories, 24 hourly slots cover the catalog once per day when

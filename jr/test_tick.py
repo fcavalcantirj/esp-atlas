@@ -26,6 +26,7 @@ from budget import Budget
 
 NOW = datetime(2026, 9, 5, 4, 7, tzinfo=timezone.utc)
 PROTECTION_RULE = json.dumps({"required_status_checks": {"contexts": ["schema", "tests", "jr-tests"]}})
+JR_OWN = {"author": {"login": publish.JR_LOGIN}, "isCrossRepository": False}   # pending_prs.eligible: Jr's own PR
 
 
 class Proc(SimpleNamespace):
@@ -208,8 +209,8 @@ def test_hourly_path_runs_the_content_stages_from_the_split_heavier_first(capsys
     assert not r.aborted
     assert "boards 42.5% -> backfill 4 / firmware 2 (hourly)" in out   # allocate(42.5, 6): backfill-heavy (finite thin)
     # backfill runs first; firmware (2 units) → admit 1 + boardmap 1; topics always runs last, fixed budget
-    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
-    assert [s["name"] for s in r.stages] == ["backfill", "admit", "boardmap", "admit_topics", "popularity_refresh"]
+    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK)]
+    assert [s["name"] for s in r.stages] == ["backfill", "admit", "boardmap", "admit_topics"]
     assert "backfilled 4" in out and "mapped 1" in out and "scored 1" in out
 
 
@@ -218,19 +219,19 @@ def test_hourly_stages_backfill_first_then_firmware_and_skip_empty_tracks(monkey
     _fake_stage_modules(monkeypatch, calls)
     for fn in tick.hourly_stages({"backfill": 4, "firmware": 2}):   # finite thin
         fn(None)
-    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
     for fn in tick.hourly_stages({"backfill": 2, "firmware": 4}):   # finite covered
         fn(None)
-    assert calls == [("backfill", 2), ("admit", 2, 0.5), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("backfill", 2), ("admit", 2, 0.5), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
     for fn in tick.hourly_stages({"backfill": 3, "firmware": 0}):   # firmware track empty
         fn(None)
-    assert calls == [("backfill", 3), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("backfill", 3), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
     for fn in tick.hourly_stages({"backfill": 0, "firmware": 3}):   # backfill track empty; boardmap takes odd unit
         fn(None)
-    assert calls == [("admit", 1, 0.33), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("admit", 1, 0.33), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
 
 
@@ -241,10 +242,10 @@ def test_hourly_stages_topics_stage_runs_even_with_both_tracks_empty(monkeypatch
     calls = []
     _fake_stage_modules(monkeypatch, calls)
     fns = tick.hourly_stages({"backfill": 0, "firmware": 0})
-    assert len(fns) == 2
+    assert len(fns) == 1
     for fn in fns:
         fn(None)
-    assert calls == [("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("admit_topics", tick.TOPICS_PER_TICK)]
 
 
 def test_dry_run_with_real_gauge_reads_the_repo_tree(checkout, tmp_path):
@@ -274,7 +275,7 @@ def test_aborts_on_low_rate_limit_before_any_worktree(tmp_path):
 
 def test_aborts_when_a_tick_pr_is_open_too_long(tmp_path):
     old = (NOW - timedelta(hours=4)).isoformat().replace("+00:00", "Z")
-    prs = json.dumps([{"number": 7, "createdAt": old, "headRefName": "jr/tick-20260905-0007"},
+    prs = json.dumps([{"number": 7, "createdAt": old, "headRefName": "jr/tick-20260905-0007", **JR_OWN},
                       {"number": 8, "createdAt": old, "headRefName": "feat/human-branch"}])
     r = run(git=git_ok(tmp_path), gh=gh_ok(prs=prs))
     assert r.aborted.startswith("a Jr tick PR has been open > 3 h: #7")
@@ -282,7 +283,8 @@ def test_aborts_when_a_tick_pr_is_open_too_long(tmp_path):
 
 def test_recent_tick_pr_does_not_abort(tmp_path, wt_dir):
     recent = (NOW - timedelta(minutes=30)).isoformat().replace("+00:00", "Z")
-    prs = json.dumps([{"number": 9, "createdAt": recent, "headRefName": "jr/tick-20260905-0337"}])
+    prs = json.dumps([{"number": 9, "createdAt": recent, "headRefName": "jr/tick-20260905-0337", "files": [], "changedFiles": 0,
+                       **JR_OWN}])
     r = run(git=git_ok(wt_dir), gh=gh_ok(prs=prs))
     assert not r.aborted
 
@@ -641,12 +643,13 @@ def test_a_failing_worktree_removal_is_a_warning_not_a_lost_report(wt_dir, capsy
 
 def test_publish_gets_the_uncounted_gh_so_budget_cannot_cut_it_off_mid_publish(wt_dir):
     gh = gh_ok()
-    # preflight = rate_limit + pr list + rules + protection + allow_auto_merge = 5 counted calls; the budget
-    # is exactly that, so publish's own pr create / pr merge would die if they were counted
+    # preflight = rate_limit + pr list + closed pr list (jr/pending_prs.py) + rules + protection +
+    # allow_auto_merge = 6 counted calls; the budget is exactly that, so publish's own pr create /
+    # pr merge would die if they were counted
     r = run(git=git_ok(wt_dir, diff=SIGNALS_REFRESH), gh=gh, stages=[_stage(["data/firmware/x"])],
-            budget=Budget(max_calls=5, clock=lambda: 0.0))
+            budget=Budget(max_calls=6, clock=lambda: 0.0))
     assert not r.aborted and r.publish["published"] and r.publish["auto_merge"]
-    assert r.budget.startswith("gh calls 5/5")
+    assert r.budget.startswith("gh calls 6/6")
 
 
 def test_guard_env_points_core_at_the_worktree(tmp_path):
@@ -769,13 +772,15 @@ BOOKKEEPING = ["jr/proposed_ledger.json", "docs/telemetry/data-trend.jsonl", "do
 
 def _tick_pr(number, created, mergeable="MERGEABLE"):
     return {"number": number, "createdAt": created, "headRefName": f"jr/tick-20260905-{number:04d}",
-            "mergeable": mergeable}
+            "mergeable": mergeable, "files": [], "changedFiles": 0, **JR_OWN}
 
 
 def gh_with_prs(prs, files=None, view_rc=0, close_rc=0, **kw):
-    """gh_ok plus scripted `pr view N --json files` and `pr close N` answers per PR number."""
-    base = gh_ok(prs=json.dumps(prs), **kw)
+    """gh_ok plus scripted `pr view N --json files` and `pr close N` answers per PR number; `pr list` lists them too."""
     files = files or {}
+    listed = [{**pr, "files": [{"path": p} for p in files[pr["number"]]], "changedFiles": len(files[pr["number"]])}
+              if pr.get("number") in files else pr for pr in prs]
+    base = gh_ok(prs=json.dumps(listed), **kw)
 
     def fn(*args):
         if args[:2] == ("pr", "view") and args[3:] == ("--json", "files"):
@@ -872,16 +877,6 @@ def test_dry_run_only_reports_the_superseded_pr_it_would_close(tmp_path):
     r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
     assert not r.aborted and _closes(gh) == []
     assert any("would close" in w and "#785" in w for w in r.warnings)
-
-
-
-
-
-
-
-
-
-
 
 
 def test_an_unparseable_pr_list_aborts_closed(tmp_path):

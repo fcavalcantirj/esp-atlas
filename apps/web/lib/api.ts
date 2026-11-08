@@ -115,6 +115,9 @@ export interface BrandPage {
 /** A firmware's cited popularity (data/firmware/<id>/firmware.md `popularity`),
  * sourced via a `sources` entry whose field is "popularity". */
 export interface FirmwarePopularity {
+  origin?: "runtime" | "catalog" | null;
+  snapshot_version?: string | null;
+  stale?: boolean | null;
   stars?: number | null;
   forks?: number | null;
   as_of?: string | null;
@@ -222,6 +225,9 @@ export interface WizardNeeds {
 export type ExampleGroup = "run-firmware" | "build-project" | "just-show-me";
 
 export interface FirmwareExample {
+  origin?: "runtime" | "catalog" | null;
+  snapshot_version?: string | null;
+  stale?: boolean | null;
   id: string;
   label: string;
   kind: "firmware";
@@ -508,6 +514,8 @@ export interface StatusComponent {
   name: string;
   status: ComponentStatus;
   detail: string;
+  /** Deploy only: the full deployed commit SHA, or null (machine field, not rendered). */
+  revision?: string | null;
 }
 
 export interface Status {

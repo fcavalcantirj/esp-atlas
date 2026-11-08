@@ -18,6 +18,7 @@ import shutil
 from datetime import datetime, timedelta, timezone
 
 import memory
+import pending_prs
 import review_routing
 import stage_admit
 import tools
@@ -56,7 +57,9 @@ class GitHubSim:
                 RELEASES.format(REPO): [], "repos/t/tiny": _meta("t/tiny", stars=1, rid=77)}
 
     def open_prs(self):
-        return [p for p in self.prs if p["state"] == "OPEN"]
+        """As `gh pr list --json …,files,changedFiles` lists them."""
+        return [{**p, "files": [{"path": f} for f in p["files"]], "changedFiles": len(p["files"]),
+                 "headRefOid": f"oid{p['number']}"} for p in self.prs if p["state"] == "OPEN"]
 
     def review_prs(self):
         return [p for p in self.prs if review_routing.has_review_label(p)]
@@ -72,6 +75,8 @@ class GitHubSim:
         if a[:2] == ("pr", "view") and a[3:] == ("--json", "files"):
             pr = next(p for p in self.prs if p["number"] == int(a[2]))
             return Proc(stdout=json.dumps({"files": [{"path": f} for f in pr["files"]]}))
+        if a[:3] == ("api", "-H", pending_prs.RAW_MEDIA):     # the ledger committed at a PR's head, raw
+            return Proc(stdout=self._pr(a[3].split("?ref=oid")[1])["ledger"])
         if a[:2] == ("pr", "create"):
             self.n += 1
             self.prs.append({"number": self.n, "state": "OPEN", "createdAt": _iso(self.now), "mergedAt": None,

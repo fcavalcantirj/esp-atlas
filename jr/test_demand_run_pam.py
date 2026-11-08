@@ -149,17 +149,19 @@ def test_open_pam_pr_without_saved_receipt_recovers_before_eligible_search(
         return remote(*args)
     result = run(root, git=git, gh=gh, miner=snapshot_miner(REAL_SNAPSHOT), pam_refresh=refresh)
     assert result.published and not result.aborted
-    assert result.work.startswith(f"reserved {key}")
+    assert f"reserved {key}" in result.work
     receipts_path = root / "docs/demand/work-receipts.json"
     rows = json.loads(receipts_path.read_text())["receipts"]
-    assert len(rows) == 1
+    assert len(rows) == 1                     # the unrecorded remote work defers the search class's new start
     assert rows[0]["key"] == key and rows[0]["source"] == "pam_feed"
     assert rows[0]["linked_work"] == [research_url] and rows[0]["pr_url"] == research_url
     assert rows[0]["feed"]["checked_at"] == state["checked_at"]
     assert "docs/demand/work-receipts.json" in staged(git)
-    before = receipts_path.read_bytes()
+    pam_row = rows[0]
     replay = run(root, gh=gh, miner=snapshot_miner(REAL_SNAPSHOT), pam_refresh=refresh)
-    assert replay.work.startswith("reconcile") and receipts_path.read_bytes() == before
+    rows = json.loads(receipts_path.read_text())["receipts"]
+    assert f"reconcile {key}" in replay.work and [r for r in rows if r["key"] == key] == [pam_row]
+    assert {r["source"] for r in rows} <= {"pam_feed", "gsc_query"}   # the search class may now take ITS slot
     creates = [call for call in remote.calls if call[:2] == ("pr", "create")]
     assert all(branch not in call for call in creates)  # only the metadata publisher can create a PR
 
@@ -249,7 +251,7 @@ def test_pam_and_fnk_reservation_survive_in_the_same_publication(tmp_path):
     assert result.published
     assert pam_run.STATE_PATH in staged(git) and "docs/demand/work-receipts.json" in staged(git)
     receipts = json.loads((root / "docs/demand/work-receipts.json").read_text())["receipts"]
-    assert len(receipts) == 1 and receipts[0]["term"] == "fnk0104s"
+    assert [r["term"] for r in receipts] == ["fnk0104s", "ES3N28P"]   # one slot per source class
 
 
 def test_existing_scheduled_cli_enables_pam_without_a_new_flag_or_job(monkeypatch):
@@ -269,3 +271,25 @@ def test_job_receipt_records_runner_and_catalog_revisions(tmp_path):
     result = run(tree(tmp_path))
     assert result.pam_receipt["runner_revision"] == "abc1234"
     assert result.pam_receipt["catalog_revision"] == "abc1234"
+
+
+def test_a_search_start_still_runs_the_pam_pass_the_same_day(tmp_path):
+    """One daily slot per source class (decision 2026-11-08): the day's new search demand no longer
+    starves the feed lead. Both reservations land in the one daily publication."""
+    root, git = tree(tmp_path), git_ok()
+    result = run(root, git=git, miner=snapshot_miner(REAL_SNAPSHOT))    # fnk0104s is UNRESOLVED here
+    assert result.published and not result.aborted
+    rows = json.loads((root / "docs/demand/work-receipts.json").read_text())["receipts"]
+    assert [r["source"] for r in rows] == ["gsc_query", "pam_feed"]
+    assert all(r["started_on"] == rows[0]["started_on"] for r in rows)
+    assert result.work.count("reserved ") == 2 and " · then " in result.work
+    assert "docs/demand/work-receipts.json" in staged(git) and pam_run.STATE_PATH in staged(git)
+
+
+def test_a_failed_refresh_still_reconciles_existing_pam_work_but_starts_none(tmp_path):
+    root = tree(tmp_path)
+    run(root)                                                            # reserves the first lead
+    result = run(root, pam_refresh=pam_failed)
+    rows = json.loads((root / "docs/demand/work-receipts.json").read_text())["receipts"]
+    assert [r["source"] for r in rows] == ["pam_feed"]
+    assert "reconcile pam-" in result.work and "PAM deferred" in result.line()

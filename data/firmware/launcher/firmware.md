@@ -31,11 +31,11 @@ not_required:
 - capability: wifi
   why: radios are irrelevant to the loader itself
 popularity:
-  stars: 2324
-  forks: 282
-  as_of: '2026-11-06'
+  stars: 2331
+  forks: 281
+  as_of: '2026-11-07'
   github_repo_id: 755727720
-  github_as_of: '2026-11-06T22:00:55Z'
+  github_as_of: '2026-11-07T22:00:55Z'
 sources:
 - field: '*'
   url: https://github.com/bmorcelli/Launcher
@@ -51,16 +51,16 @@ sources:
   verified: '2026-10-06'
 - field: popularity.forks
   url: https://github.com/bmorcelli/Launcher
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.github_as_of
   url: https://github.com/bmorcelli/Launcher
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.github_repo_id
   url: https://github.com/bmorcelli/Launcher
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 - field: popularity.stars
   url: https://github.com/bmorcelli/Launcher
-  verified: '2026-11-06'
+  verified: '2026-11-07'
 summary: "Launcher is a firmware application for ESP32\u2011based devices (such as\
   \ M5Stack, Lilygo, SeeedStudio, Waveshare, CYD, Marauder, etc.) that offers a menu\u2011\
   driven interface to install and manage other binaries via OTA, SD card, or a Web\
