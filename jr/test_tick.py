@@ -208,8 +208,8 @@ def test_hourly_path_runs_the_content_stages_from_the_split_heavier_first(capsys
     assert not r.aborted
     assert "boards 42.5% -> backfill 4 / firmware 2 (hourly)" in out   # allocate(42.5, 6): backfill-heavy (finite thin)
     # backfill runs first; firmware (2 units) → admit 1 + boardmap 1; topics always runs last, fixed budget
-    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
-    assert [s["name"] for s in r.stages] == ["backfill", "admit", "boardmap", "admit_topics", "popularity_refresh"]
+    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK)]
+    assert [s["name"] for s in r.stages] == ["backfill", "admit", "boardmap", "admit_topics"]
     assert "backfilled 4" in out and "mapped 1" in out and "scored 1" in out
 
 
@@ -218,19 +218,19 @@ def test_hourly_stages_backfill_first_then_firmware_and_skip_empty_tracks(monkey
     _fake_stage_modules(monkeypatch, calls)
     for fn in tick.hourly_stages({"backfill": 4, "firmware": 2}):   # finite thin
         fn(None)
-    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("backfill", 4), ("admit", 1, 0.5), ("boardmap", 1), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
     for fn in tick.hourly_stages({"backfill": 2, "firmware": 4}):   # finite covered
         fn(None)
-    assert calls == [("backfill", 2), ("admit", 2, 0.5), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("backfill", 2), ("admit", 2, 0.5), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
     for fn in tick.hourly_stages({"backfill": 3, "firmware": 0}):   # firmware track empty
         fn(None)
-    assert calls == [("backfill", 3), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("backfill", 3), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
     for fn in tick.hourly_stages({"backfill": 0, "firmware": 3}):   # backfill track empty; boardmap takes odd unit
         fn(None)
-    assert calls == [("admit", 1, 0.33), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("admit", 1, 0.33), ("boardmap", 2), ("admit_topics", tick.TOPICS_PER_TICK)]
     calls.clear()
 
 
@@ -241,10 +241,10 @@ def test_hourly_stages_topics_stage_runs_even_with_both_tracks_empty(monkeypatch
     calls = []
     _fake_stage_modules(monkeypatch, calls)
     fns = tick.hourly_stages({"backfill": 0, "firmware": 0})
-    assert len(fns) == 2
+    assert len(fns) == 1
     for fn in fns:
         fn(None)
-    assert calls == [("admit_topics", tick.TOPICS_PER_TICK), ("popularity_refresh",)]
+    assert calls == [("admit_topics", tick.TOPICS_PER_TICK)]
 
 
 def test_dry_run_with_real_gauge_reads_the_repo_tree(checkout, tmp_path):
