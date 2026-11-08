@@ -256,26 +256,37 @@ def check(demand_dir: Path, *, today: str) -> dict:
 
 # --- CLI --------------------------------------------------------------------------------------------------
 
-def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="EspAtlas Jr demand work records — the executor's write path")
+def build_parser() -> argparse.ArgumentParser:
+    """The CLI. `--date` and `--dry-run` are accepted both before and after the subcommand (the
+    executor prompt writes them after it; a global option is the usual place), with one meaning."""
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--date", default=argparse.SUPPRESS, help="UTC date (YYYY-MM-DD; default today)")
+    common.add_argument("--dry-run", action="store_true", default=argparse.SUPPRESS,
+                        help="apply and guard, print the result, write nothing")
+    ap = argparse.ArgumentParser(description="EspAtlas Jr demand work records — the executor's write path",
+                                 parents=[common])     # no set_defaults here: parents share Action objects
     ap.add_argument("--demand-dir", default=str(DEFAULT_DEMAND_DIR), help="docs/demand of the checkout to record in")
-    ap.add_argument("--date", default=dt.datetime.now(dt.timezone.utc).date().isoformat(), help="UTC date (YYYY-MM-DD)")
-    ap.add_argument("--dry-run", action="store_true", help="apply and guard, print the result, write nothing")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("adopt").add_argument("key")
-    p = sub.add_parser("validate")
+    sub.add_parser("adopt", parents=[common]).add_argument("key")
+    p = sub.add_parser("validate", parents=[common])
     p.add_argument("key")
     p.add_argument("--json", required=True, help="file with the validation object")
-    p = sub.add_parser("link")
+    p = sub.add_parser("link", parents=[common])
     p.add_argument("key")
     p.add_argument("pr_url")
-    sub.add_parser("attempt").add_argument("key")
-    p = sub.add_parser("settle")
+    sub.add_parser("attempt", parents=[common]).add_argument("key")
+    p = sub.add_parser("settle", parents=[common])
     p.add_argument("key")
     p.add_argument("--state", required=True, choices=SETTLE_STATES)
     p.add_argument("--reason", required=True)
-    sub.add_parser("check")
-    args = ap.parse_args(argv)
+    sub.add_parser("check", parents=[common])
+    return ap
+
+
+def main(argv=None) -> int:
+    args = build_parser().parse_args(argv)
+    args.date = getattr(args, "date", None) or dt.datetime.now(dt.timezone.utc).date().isoformat()
+    args.dry_run = getattr(args, "dry_run", False)
     d = Path(args.demand_dir)
     try:
         if args.cmd == "check":

@@ -286,3 +286,49 @@ def test_cli_never_writes_under_data(tmp_path):
     with pytest.raises(ValueError):
         research_queue.write_bytes(b"{}", research_queue.REPO / "data" / "x.json")
     assert Path(work_record.DEFAULT_DEMAND_DIR).name == "demand"
+
+
+# --- the executor prompt and the CLI cannot drift ------------------------------------------------------
+
+PROMPT = Path(__file__).resolve().parent.parent / "docs" / "demand" / "EXECUTOR-PROMPT.md"
+
+
+def prompt_command_lines():
+    """Every `python3 jr/work_record.py …` command the executor prompt quotes, placeholders filled."""
+    import re
+    import shlex
+    text = PROMPT.read_text(encoding="utf-8")
+    found = re.findall(r"`python3 jr/work_record\.py ([^`]+)`", text)
+    assert found, "the prompt quotes no work_record command"
+    subs = {"WORK_KEY": "pam-" + "0" * 24, "TODAY": "2026-11-09", "<file>": "v.json", "<pr url>": PAM_PR,
+            '"<one sentence with the evidence url>"': '"evidence"', '"<one sentence with the\n   evidence url>"': '"evidence"',
+            '"already catalogued as\n     <id>: <evidence>"': '"already catalogued"'}
+    out = []
+    for cmd in found:
+        cmd = " ".join(cmd.split())                     # the prompt wraps long commands over two lines
+        for k, v in subs.items():
+            cmd = cmd.replace(" ".join(k.split()), v)
+        cmd = re.sub(r'"<[^"]*>"', '"text"', cmd)       # any other quoted placeholder
+        out.append(shlex.split(cmd))
+    return out
+
+
+@pytest.mark.parametrize("argv", prompt_command_lines(), ids=lambda a: " ".join(a[:3]))
+def test_every_command_the_executor_prompt_quotes_parses(argv):
+    args = work_record.build_parser().parse_args(argv)
+    assert args.cmd in {"check", "attempt", "adopt", "validate", "link", "settle"}
+    assert args.date == "2026-11-09"                    # --date after the subcommand reaches the run
+
+
+def test_date_and_dry_run_are_accepted_before_or_after_the_subcommand():
+    before = work_record.build_parser().parse_args(["--date", "2026-11-09", "--dry-run", "check"])
+    after = work_record.build_parser().parse_args(["check", "--date", "2026-11-09", "--dry-run"])
+    assert (before.date, before.dry_run) == (after.date, after.dry_run) == ("2026-11-09", True)
+    plain = work_record.build_parser().parse_args(["check"])
+    assert not hasattr(plain, "dry_run") and not hasattr(plain, "date")   # main() fills today / False
+
+
+def test_cli_date_after_the_subcommand_reaches_the_record(tmp_path):
+    d, key = pam_dir(tmp_path)
+    assert work_record.main(["--demand-dir", str(d), "attempt", key, "--date", NEXT]) == 0
+    assert receipt(d, key)["last_attempt_on"] == NEXT
