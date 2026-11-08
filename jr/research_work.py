@@ -43,8 +43,33 @@ TERMINAL_STATES = {"delivered", "rejected", "abandoned"}
 
 KIND_CATALOG_SEARCH = "catalog_search"     # missing catalog content: exact public search ids
 KIND_DEMAND_RESOLUTION = "demand_resolution"  # miner-resolver repair: a fresh resolved miner run
+KIND_CATALOG_PART = "catalog_part"         # missing board: the exact public part endpoint serves each id
 COVERED_GAP = "COVERED_OK"
 SOURCE_PAM = "pam_feed"
+
+# One daily work slot PER SOURCE CLASS (decision 2026-11-08): search demand (GSC/GA4) and PAM market
+# leads each start at most MAX_NEW_PER_DAY new items a day and each recover their own live item, so a
+# day with new search demand still starts one feed lead. plan_work(source_class=...) narrows a pass to
+# one class; without it the single shared budget of before applies (direct callers, older tests).
+CLASS_SEARCH, CLASS_PAM = "search", "pam"
+CLASSES = {CLASS_SEARCH, CLASS_PAM}
+
+
+def class_of(source) -> str:
+    """The daily-slot class a work source belongs to: `pam_feed` is PAM, everything else is search."""
+    return CLASS_PAM if source == SOURCE_PAM else CLASS_SEARCH
+
+
+source_class = class_of
+
+
+def default_verification_kind(candidate: dict) -> str:
+    """The kind jr/work_record.py writes into a validation that names none: a PAM lead is a missing
+    BOARD, checked at the exact part endpoint (a name hint is never an exact search); search demand
+    keeps the exact public search of its term. The judge itself (verify_resolution) still reads a
+    validation without a kind as catalog_search, as every validation written before 2026-11-08 was."""
+    return KIND_CATALOG_PART if isinstance(candidate, dict) and candidate.get("source") == SOURCE_PAM \
+        else KIND_CATALOG_SEARCH
 
 _TOKEN_RE = re.compile(r"[^\W_]+")
 
@@ -306,12 +331,18 @@ def one_sided_closures(queue, receipts, base_receipts=()) -> list[str]:
 
 
 def plan_work(queue: dict, receipts: list[dict], today: str, *, remote_complete: bool = False,
-              prefer: set | frozenset = frozenset()) -> Plan:
+              prefer: set | frozenset = frozenset(), source_class: str | None = None) -> Plan:
     """The one action this run may take. `receipts` are the consumer's persisted work receipts;
     `remote_complete` says the deterministic branches and PRs/issues in all states were listed
     completely. An uncertain listing permits nothing: no blind create, no resumed execution.
     `prefer` names branches whose remote work exists unrecorded: such work starts first, so it is
-    recovered before any other new work takes the day's slot."""
+    recovered before any other new work takes the day's slot. `source_class` (CLASS_SEARCH or
+    CLASS_PAM) narrows the pass to one daily-slot class: only that class's live work is recovered or
+    reconciled, only its candidates may start, and the daily cap counts that class's starts; the
+    fail-closed checks over the whole pair (unreadable receipts, unknown statuses, orphans,
+    inconsistent closures) still block every class. None keeps the single shared budget."""
+    if source_class is not None and source_class not in CLASSES:
+        raise ValueError(f"unknown work source class {source_class!r}: one of {sorted(CLASSES)}")
     if _date(today) is None:
         return Plan(DEFER, reason=f"unreadable run date {today!r}")
     if not remote_complete:
@@ -344,11 +375,12 @@ def plan_work(queue: dict, receipts: list[dict], today: str, *, remote_complete:
         if len({r["pr_url"] for r in own if "pr_url" in r}) > 1:
             blocked.append(f"{work.term!r}: duplicate remote PRs for work {work.key}")
             continue
+        in_class = source_class is None or class_of(work.source) == source_class
         action = _existing_action(c, own, today)
-        if action:
+        if action and in_class:
             return Plan(action, work, reason=f"existing work {work.key}")
-        if not own:
-            startable.append((c, work))
+        if not action and not own and in_class:
+            startable.append((c, work))        # another class's live work is that class's pass to recover
 
     orphans = {r["key"] for r in receipts if r["state"] not in TERMINAL_STATES} - open_keys - settled_keys
     if blocked or orphans:
@@ -356,8 +388,11 @@ def plan_work(queue: dict, receipts: list[dict], today: str, *, remote_complete:
         return Plan(DEFER, reason="; ".join(detail))
     if not startable:
         return Plan(NOOP, reason="no open candidate needs work")
-    if len({r["key"] for r in receipts if r["started_on"] == today}) >= MAX_NEW_PER_DAY:
-        return Plan(DEFER, reason=f"daily cap of {MAX_NEW_PER_DAY} new work item(s) reached")
+    started = {r["key"] for r in receipts if r["started_on"] == today
+               and (source_class is None or class_of(r.get("source")) == source_class)}
+    if len(started) >= MAX_NEW_PER_DAY:
+        which = f" {source_class}" if source_class else ""
+        return Plan(DEFER, reason=f"daily cap of {MAX_NEW_PER_DAY} new{which} work item(s) reached")
     startable.sort(key=lambda cw: (cw[1].branch not in prefer, cw[1].source == SOURCE_PAM,
                                   cw[1].phase != PHASE_AUTHOR))  # search demand before market leads
     return Plan(START, startable[0][1], reason="new work")
@@ -436,9 +471,30 @@ def _demand_resolution_problem(receipt: dict, expected: list, forbidden: list) -
     return None
 
 
+def _catalog_part_problem(receipt: dict, expected: list, forbidden: list) -> str | None:
+    """Exact parts: every expected id is served by the public part endpoint (and listed by a search
+    for that very id) at the deployment, and no forbidden sibling is. A missing id stays open; a
+    forbidden one present stays open. Unreadable lists stay open, never raise."""
+    if receipt.get("http") != 200 or not _text(receipt.get("deployment")):
+        return "live part reads not successful at a known deployment"
+    lists = {f: receipt.get(f) for f in ("ids", "missing", "forbidden_hits")}
+    for name, value in lists.items():
+        if not (isinstance(value, list) and all(_text(i) for i in value)):
+            return f"live part {name} unreadable"
+    absent = [i for i in expected if i not in lists["ids"] or i in lists["missing"]]
+    if absent:
+        return f"live catalog lacks expected parts {absent}"
+    siblings = [i for i in forbidden if i in lists["forbidden_hits"] or i in lists["ids"]]
+    if siblings:
+        return f"live catalog also serves forbidden sibling parts {siblings}"
+    return None
+
+
 _KIND_CHECKS = {KIND_CATALOG_SEARCH: (_catalog_search_problem, ("http", "deployment", "ids")),
                 KIND_DEMAND_RESOLUTION: (_demand_resolution_problem,
-                                         ("mined_revision", "exit_code", "resolved", "gap"))}
+                                         ("mined_revision", "exit_code", "resolved", "gap")),
+                KIND_CATALOG_PART: (_catalog_part_problem,
+                                    ("http", "deployment", "ids", "missing", "forbidden_hits"))}
 
 
 def verify_resolution(candidate: dict, pr: dict, observed_receipt: dict, today: str, *,

@@ -331,14 +331,15 @@ def test_a_foreign_receipts_edit_before_the_second_pass_never_lands_a_one_sided_
     assert res.published is True and "Work closed" not in pr_body(gh)
 
 
-def noop_then_real(after=None):
-    """demand_broker.reserve, but the first pass finds nothing (NOOP) and the PAM pass closes; `after`
-    runs once the real broker returned — a foreign writer at the publication boundary."""
+def real_then_noop(after=None):
+    """demand_broker.reserve, but only the search pass is real (it closes the linked search work); the
+    PAM pass finds nothing (NOOP). `after` runs once the real broker returned — a foreign writer at
+    the publication boundary, before the PAM pass and the publication read the pair again."""
     real, calls = demand_run.demand_broker.reserve, []
 
     def reserve(demand_dir, *args, **kw):
         calls.append(kw)
-        if len(calls) == 1:
+        if len(calls) > 1:
             return demand_run.demand_broker.Outcome(rw.NOOP, "nothing eligible")
         out = real(demand_dir, *args, **kw)
         if after:
@@ -359,7 +360,7 @@ def pam_only_day(tmp_path):
 
 def test_the_pam_only_publication_never_lands_a_foreign_queue_as_the_closure(tmp_path, monkeypatch):
     root, git, gh = pam_only_day(tmp_path), git_ok(), gh_all()
-    monkeypatch.setattr(demand_run.demand_broker, "reserve", noop_then_real(
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", real_then_noop(
         lambda d: (d / "research-queue.json").write_bytes(FOREIGN_QUEUE)))
     res = run(root, git=git, gh=gh, pam_refresh=pam_updated)
     assert res.published is True and STATE_PATH in staged(git)           # the PAM metadata still lands
@@ -371,7 +372,7 @@ def test_the_pam_only_publication_never_lands_a_foreign_queue_as_the_closure(tmp
 
 def test_the_pam_only_publication_never_lands_foreign_receipts_as_the_closure(tmp_path, monkeypatch):
     root, git, gh = pam_only_day(tmp_path), git_ok(), gh_all()
-    monkeypatch.setattr(demand_run.demand_broker, "reserve", noop_then_real(
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", real_then_noop(
         lambda d: (d / "work-receipts.json").write_bytes(FOREIGN_RECEIPTS)))
     res = run(root, git=git, gh=gh, pam_refresh=pam_updated)
     assert res.published is True and STATE_PATH in staged(git)
@@ -381,7 +382,7 @@ def test_the_pam_only_publication_never_lands_foreign_receipts_as_the_closure(tm
 
 def test_the_pam_only_publication_still_lands_an_owned_closure_pair(tmp_path, monkeypatch):
     root, git, gh = pam_only_day(tmp_path), git_ok(), gh_all()
-    monkeypatch.setattr(demand_run.demand_broker, "reserve", noop_then_real())
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", real_then_noop())
     res = run(root, git=git, gh=gh, pam_refresh=pam_updated)
     assert res.published is True and res.aborted == ""
     assert {STATE_PATH, QUEUE_PATH, RECEIPTS_PATH} <= set(staged(git))
@@ -433,7 +434,7 @@ def test_a_second_pass_over_foreign_receipts_never_lands_them(tmp_path):
 
 def test_a_closure_over_a_foreign_queue_is_never_this_runs_own(tmp_path, monkeypatch):
     root, git, gh = pam_only_day(tmp_path), git_ok(), gh_all()
-    monkeypatch.setattr(demand_run.demand_broker, "reserve", noop_then_real())
+    monkeypatch.setattr(demand_run.demand_broker, "reserve", real_then_noop())
     foreign = json.loads(QUEUE_RAW)
     foreign["edited_by"] = "a concurrent triage"
     res = run(root, git=git, gh=gh,
