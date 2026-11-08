@@ -98,7 +98,7 @@
    "branch": "jr/research-f89f790e4ecb4d13",
    "term": "keeloq_mfcodes",
    "phase": "research",
-   "state": "reserved",
+   "state": "abandoned",
    "started_on": "2026-11-07",
    "source": "gsc_query",
    "linked_work": [],
@@ -120,6 +120,14 @@
      "prs": []
     },
     "reserved_by": "jr/demand_run.py"
+   },
+   "resolution": {
+    "status": "abandoned",
+    "reason": "Not catalog content: 'keeloq_mfcodes' is the Flipper Zero Sub-GHz manufacturer-code asset file (proprietary KeeLoq rolling-code keys), not an ESP32 board or firmware; the GSC rows (10-14 impressions/day, position ~9-10, 2026-11-03..08) land on firmware/flipper-zero-esp32-adv, which already exists and does not mention KeeLoq. Nothing to author; publishing manufacturer codes is out of scope.",
+    "closed_on": "2026-11-08",
+    "evidence": {
+     "settled_by": "jr/work_record.py"
+    }
    }
   }
  ]
