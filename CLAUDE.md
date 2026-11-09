@@ -46,3 +46,40 @@ was to make the official source the authority. That rule is now structural.)*
 SPEC before code · oracle/TDD first · cite-or-omit · verify the **real path** before
 declaring done · land on main. Deterministic where it matters — no LLM in an answer path
 that must be reproducible (board ranking, pin assignment, confidence gates).
+
+## How the catalog grows itself (operations, 2026-11-09)
+
+- **Hourly GitHub counts** (`.github/workflows/runtime-popularity.yml`) have **no `schedule:`**: GitHub's
+  cron dropped most hourly slots (1 of 6 on 2026-11-07). An operator-run OS timer on the always-on runner
+  dispatches the workflow at minute 07 UTC through `scripts/counts-dispatch.sh` (`workflow_dispatch`,
+  `publish=true`, `source=host-timer`). Every run's name says who asked: `counts (host-timer)` is
+  automation, `counts (manual-testing)` a hand test, and a hand-run is never evidence that automation
+  works. Stop: disable the timer on the runner, or set the repo variable `POPULARITY_RUNTIME_ENABLED=0`.
+  Details and the unit sketch: `DEPLOY.md` "Hourly GitHub counts"; reader in `apps/api/README.md`.
+- **Demand → reviewed work → recorded outcome** (`SPEC-demand-work-consumer.md`, `SPEC-pam-discovery.md`).
+  The daily demand runner makes one pass per **source class**, search demand (GSC/GA4) then PAM market
+  leads, each with its own one-new-item-per-day slot (2026-11-08; a single shared slot had starved every
+  PAM lead). A reservation is a receipt in `docs/demand/work-receipts.json` and a deterministic branch
+  `jr/research-<key>`. The operator's coding delegate executes it from `docs/demand/EXECUTOR-PROMPT.md`;
+  a relay step pushes the branch and opens the draft `jr-review` PR. After merge the runner verifies the
+  deployed result itself: `catalog_search` (the exact public search of a bare SKU term) or
+  `catalog_part` (each expected board id at `/api/parts/<id>`, the fuzzy search never closes a name hint).
+  **`jr/work_record.py` is the only write path** into the queue/receipts pair for anyone but the broker
+  (adopt, validate, link, attempt, settle, check); it refuses any state the broker would defer on. Never
+  edit those two JSON files by hand.
+- **Jr's tick never re-proposes what a tick PR already holds** (`jr/pending_prs.py`, §6 of
+  `SPEC-jr-review-routing.md`): an OPEN tick PR holds every firmware it touches; a tick PR **closed
+  unmerged is a 30-day veto of everything it proposed**. Disposing of duplicate tick PRs therefore means
+  merge the one you keep first, then close the rest. A renamed upstream binds by GitHub's numeric repo id
+  (both names must resolve to the same id); a slug mismatch alone never blocks.
+- **Change discipline that worked.** Spec before code; RED test first and quote the RED count; every
+  claim labelled `[TEST]` (offline) or `[REAL]` (observed on the live system); an independent reviewer
+  reads the **exact head** and the merge is `gh pr merge --match-head-commit <sha>`; isolation in a
+  worktree off `origin/main`, never in a shared checkout; two consecutive natural runs matched end to end
+  (host receipt ↔ run id ↔ data commit ↔ live value) are the acceptance of an automation, nothing less.
+  Coordination with the runner's operator happens in the project's Solvr room; claim a lane before
+  editing, release it after.
+- **Running the Python suites**: `PYTHONPATH=apps/core/src python3 -m pytest jr scripts -q` with Python
+  **3.11 or newer** (older `fromisoformat` cannot read a trailing `Z`; macOS's 3.10 fails two tests on
+  main for that reason alone). `jr/test_esp_image.py` and the sandbox tests need
+  `pip install -r jr/requirements-image.txt` and a Linux host (`preexec_fn` limits). CI is 3.12.
