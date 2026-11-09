@@ -66,6 +66,18 @@
       "reason": "doc-unreachable",
       "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
+    "adafruit-feather-esp32-s3": {
+      "board": "adafruit-feather-esp32-s3",
+      "expires": "2026-11-16T04:00:55.175597+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T04:00:55.175597+00:00"
+    },
     "adafruit-feather-esp32-s3-no-psram": {
       "board": "adafruit-feather-esp32-s3-no-psram",
       "expires": "2026-11-13T21:00:55.650872+00:00",
@@ -101,6 +113,40 @@
       },
       "reason": "doc-unreachable",
       "timestamp": "2026-11-06T21:00:55.650872+00:00"
+    },
+    "adafruit-funhouse": {
+      "board": "adafruit-funhouse",
+      "expires": "2026-11-16T04:00:55.175597+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-09T04:00:55.175597+00:00"
+    },
+    "adafruit-magtag": {
+      "board": "adafruit-magtag",
+      "expires": "2026-11-16T04:00:55.175597+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-09T04:00:55.175597+00:00"
     },
     "adafruit-qt-py-esp32": {
       "board": "adafruit-qt-py-esp32",

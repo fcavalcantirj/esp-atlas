@@ -413,6 +413,16 @@
       "status": "rejected",
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
+    "amstradcpc464cardputeradv": {
+      "expires": "2026-12-09T04:00:55.175597+00:00",
+      "id": "amstradcpc464cardputeradv",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "nexodevlab/amstradcpc464cardputeradv",
+      "repo_id": 1448790531,
+      "status": "rejected",
+      "timestamp": "2026-11-09T04:00:55.175597+00:00"
+    },
     "anarch-cardputer": {
       "expires": "2026-12-05T19:01:17.341039+00:00",
       "id": "anarch-cardputer",
@@ -1278,7 +1288,7 @@
       "pr_ref": "#1500",
       "repo": "jay-jayismyname1/cardputer-adv-b-radar",
       "status": "proposed",
-      "timestamp": "2026-11-09T03:00:55.181581+00:00"
+      "timestamp": "2026-11-09T04:00:55.175597+00:00"
     },
     "cardputer-adv-basic": {
       "expired_at": "2026-11-08T01:00:55.198528+00:00",
@@ -13824,6 +13834,7 @@
     "nanucek/pocket-gambler": "pocket-gambler",
     "nasonliu/papers3-weread": "papers3-weread",
     "negawatt": "negawatt",
+    "nexodevlab/amstradcpc464cardputeradv": "amstradcpc464cardputeradv",
     "nishad2m8/cardputer-games": "cardputer-games",
     "nishad2m8/geminiputer": "geminiputer",
     "nishad2m8/pdaputer": "pdaputer",
