@@ -43,7 +43,8 @@ branch.
    job name and run id), `primary_sources` (the manufacturer urls you read), `expected_ids` (the one
    catalog id you will author, e.g. `arduino-nano-esp32`), `forbidden_ids` (sibling SKUs that must NOT
    appear, e.g. a V3 when you author the V4, `[]` when there are none), `notes` (what distinguishes the
-   siblings). For a PAM key first `python3 jr/work_record.py adopt WORK_KEY --date TODAY`, then
+   siblings). First `python3 jr/work_record.py adopt WORK_KEY --date TODAY` (every key: the committed
+   queue row is what the closure verifies against), then
    `python3 jr/work_record.py validate WORK_KEY --json <file> --date TODAY`, then commit
    (`chore(demand): validate WORK_KEY`). The kind defaults to `catalog_part` for a PAM lead and
    `catalog_search` for a search term; do not override it.
