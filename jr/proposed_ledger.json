@@ -409,7 +409,7 @@
       "repo": "abdallahnatsheh/al-anqa-firmware",
       "repo_id": 714360231,
       "status": "proposed",
-      "timestamp": "2026-11-09T14:00:55.216516+00:00"
+      "timestamp": "2026-11-09T15:00:55.170283+00:00"
     },
     "alles": {
       "expires": "2026-12-05T20:00:59.980852+00:00",
@@ -1328,7 +1328,7 @@
       "pr_ref": "#1500",
       "repo": "jay-jayismyname1/cardputer-adv-b-radar",
       "status": "proposed",
-      "timestamp": "2026-11-09T14:00:55.216516+00:00"
+      "timestamp": "2026-11-09T15:00:55.170283+00:00"
     },
     "cardputer-adv-basic": {
       "expired_at": "2026-11-08T01:00:55.198528+00:00",
@@ -4475,7 +4475,7 @@
       "repo": "bambam1121/inw-mesh",
       "repo_id": 1365718458,
       "status": "proposed",
-      "timestamp": "2026-11-09T14:00:55.216516+00:00"
+      "timestamp": "2026-11-09T15:00:55.170283+00:00"
     },
     "io-framework-for-xr": {
       "expired_at": "2026-11-08T18:00:55.494967+00:00",
