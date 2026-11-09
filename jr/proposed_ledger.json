@@ -1278,7 +1278,7 @@
       "pr_ref": "#1500",
       "repo": "jay-jayismyname1/cardputer-adv-b-radar",
       "status": "proposed",
-      "timestamp": "2026-11-09T00:00:55.223346+00:00"
+      "timestamp": "2026-11-09T01:00:56.202438+00:00"
     },
     "cardputer-adv-basic": {
       "expired_at": "2026-11-08T01:00:55.198528+00:00",
@@ -7759,13 +7759,14 @@
       "timestamp": "2026-10-14T11:00:59.640476+00:00"
     },
     "m5gemini": {
+      "expired_at": "2026-11-09T01:00:56.202438+00:00",
       "expires": "2026-11-09T01:00:13.423265+00:00",
       "id": "m5gemini",
       "pr_ref": null,
       "reason": "already_catalogued: d4rkmen/m5gemini is already in the atlas",
       "repo": "d4rkmen/m5gemini",
       "repo_id": 970539892,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-10T01:00:13.423265+00:00"
     },
     "m5gfx": {
@@ -7796,13 +7797,14 @@
       "timestamp": "2026-09-02T17:03:09.159001+00:00"
     },
     "m5guruguru-starter": {
+      "expired_at": "2026-11-09T01:00:56.202438+00:00",
       "expires": "2026-11-09T01:00:13.423265+00:00",
       "id": "m5guruguru-starter",
       "pr_ref": null,
       "reason": "below_floor: 5 stars / 0 forks",
       "repo": "nananauno/m5guruguru-starter",
       "repo_id": 1282983055,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-10T01:00:13.423265+00:00"
     },
     "m5hamradio": {
@@ -7815,13 +7817,14 @@
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
     },
     "m5kiten": {
+      "expired_at": "2026-11-09T01:00:56.202438+00:00",
       "expires": "2026-11-09T01:00:13.423265+00:00",
       "id": "m5kiten",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "ki10-bot/m5kiten",
       "repo_id": 1306940511,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-10T01:00:13.423265+00:00"
     },
     "m5module-dmx512": {
