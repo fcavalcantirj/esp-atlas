@@ -222,7 +222,8 @@ def settle(demand_dir: Path, key: str, *, state: str, reason: str, today: str, d
         raise RecordError("a settled receipt needs a reason")
     queue, doc = _load(demand_dir)
     receipt = _live(_receipt(doc, key))
-    resolution = {"status": state, "reason": reason.strip(), "closed_on": today, "evidence": {"settled_by": SETTLED_BY}}
+    resolution = {"status": state, "reason": reason.strip(), "closed_on": today,
+                  "evidence": {rw.SETTLED_BY_KEY: SETTLED_BY}}     # hand-settled: see research_work.hand_settled
     receipt.update(state=state, resolution=resolution)
     queue_changed = False
     rows = [(k, c) for k, c in queue["candidates"].items() if isinstance(c, dict) and rw.candidate_key(c) == key]

@@ -309,20 +309,37 @@ def inconsistent_closures(queue, receipts) -> list[str]:
     return sorted(closed & live)
 
 
+SETTLED_BY_KEY = "settled_by"    # resolution.evidence[SETTLED_BY_KEY]: a receipt settled by hand (jr/work_record.py)
+
+
+def hand_settled(receipt: dict) -> bool:
+    """The receipt's resolution was written by the executor's record tool, not by a broker closure."""
+    resolution = receipt.get("resolution") if isinstance(receipt, dict) else None
+    evidence = resolution.get("evidence") if isinstance(resolution, dict) else None
+    return isinstance(evidence, dict) and _text(evidence.get(SETTLED_BY_KEY))
+
+
 def one_sided_closures(queue, receipts, base_receipts=()) -> list[str]:
     """Work ids whose closure the pair records on one side only, in either direction: a receipt a
     closure settled (it carries the closure's `resolution`) with no closed event for that work in the
     queue's history, or a closed candidate whose receipt — in `receipts` or the `base_receipts` it
-    was settled from — is absent or still live. A closure that had no receipt to settle needs none.
-    Sorted; [] when the queue is unreadable (plan_work refuses that on its own)."""
+    was settled from — is absent or still live. A closure that had no receipt to settle needs none,
+    and a receipt settled BY HAND (`hand_settled`: jr/work_record.py's `settle`) owes the queue a
+    closed event only when the queue holds a candidate for that work: a search term that lives only in
+    the daily snapshot has no queue row to close (2026-11-09: keeloq_mfcodes, settled abandoned, had
+    withheld every daily publication). A broker closure always closes a queue candidate, so one whose
+    candidate is gone stays one-sided. Sorted; [] when the queue is unreadable (plan_work refuses that
+    on its own)."""
     rows = _open_candidates(queue)
     if rows is None:
         return []
     rows_of = [r for r in receipts or [] if isinstance(r, dict)]
     recorded = {h.get("work") for c in rows for h in c.get("history") or []
                 if isinstance(h, dict) and h.get("event") == "closed"}
+    with_candidate = {candidate_key(c) for c in rows} - {None}
     settled = {r.get("key") for r in rows_of
-               if r.get("state") in TERMINAL_STATES and isinstance(r.get("resolution"), dict)}
+               if r.get("state") in TERMINAL_STATES and isinstance(r.get("resolution"), dict)
+               and (not hand_settled(r) or r.get("key") in with_candidate)}
     present = {r.get("key") for r in rows_of}
     live = {r.get("key") for r in rows_of if r.get("state") not in TERMINAL_STATES}
     had = {r.get("key") for r in base_receipts or [] if isinstance(r, dict)}

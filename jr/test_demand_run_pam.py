@@ -293,3 +293,24 @@ def test_a_failed_refresh_still_reconciles_existing_pam_work_but_starts_none(tmp
     rows = json.loads((root / "docs/demand/work-receipts.json").read_text())["receipts"]
     assert [r["source"] for r in rows] == ["pam_feed"]
     assert "reconcile pam-" in result.work and "PAM deferred" in result.line()
+
+
+def test_a_hand_settled_snapshot_only_receipt_on_main_does_not_withhold_the_days_reservations(tmp_path):
+    """2026-11-09: keeloq_mfcodes (a GSC term with no queue row) had been settled abandoned by
+    work_record; the landing guard treated it as a one-sided closure and withheld BOTH new reservations
+    on every run. Such a receipt owes the queue nothing; the reservations land."""
+    root, git = tree(tmp_path), git_ok()
+    key = rw.work_key("keeloq_mfcodes", "2026-11-03")
+    receipt = {"key": key, "branch": rw.branch_for(key), "term": "keeloq_mfcodes", "phase": "research",
+               "state": "abandoned", "started_on": "2026-11-04", "source": "gsc_query", "linked_work": [],
+               "window": {"start": "2026-10-07", "end": "2026-11-04"}, "metrics": {"impressions": 13, "clicks": 1, "position": 9.8},
+               "resolution": {"status": "abandoned", "reason": "not catalog content", "closed_on": "2026-11-05",
+                              "evidence": {"settled_by": "jr/work_record.py"}}}
+    assert rw._readable_receipt(receipt)
+    (root / "docs/demand/work-receipts.json").write_text(json.dumps({"version": 1, "receipts": [receipt]}, indent=1) + "\n")
+    result = run(root, git=git, miner=snapshot_miner(REAL_SNAPSHOT))      # fnk0104s UNRESOLVED + a PAM lead
+    assert result.published and not result.aborted
+    assert "not landed" not in result.work and "one side only" not in result.work
+    rows = json.loads((root / "docs/demand/work-receipts.json").read_text())["receipts"]
+    assert [r["state"] for r in rows] == ["abandoned", "reserved", "reserved"]
+    assert "docs/demand/work-receipts.json" in staged(git)
