@@ -11,8 +11,11 @@ inconsistent_closures) over the whole pair and refuses to write a pair plan_work
 queue is written first, through its atomic writer; a refused change leaves both files byte-identical.
 
 Commands (CLI: python3 jr/work_record.py [--demand-dir docs/demand] [--date YYYY-MM-DD] [--dry-run] ...):
-  adopt    <key>                          a PAM receipt's candidate becomes a committed queue row
-                                          (closure looks the candidate up in the committed queue)
+  adopt    <key>                          the work's candidate becomes a committed queue row (a PAM
+                                          receipt carries its snapshot; a search receipt is rebuilt from
+                                          its own provenance); closure and settle both need that row
+  repair-settled <key>                    an already-settled receipt whose candidate never reached the
+                                          queue gets its closed row (the pair settle would have written)
   validate <key> --json FILE              the identity/primary-source receipt: validated_by,
                                           primary_sources, expected_ids[, forbidden_ids,
                                           verification_kind, notes, verified_on]; status -> validated
@@ -20,7 +23,8 @@ Commands (CLI: python3 jr/work_record.py [--demand-dir docs/demand] [--date YYYY
   attempt  <key>                          today's try: last_attempt_on (RESUME becomes RECONCILE today)
   settle   <key> --state abandoned|rejected --reason TEXT
                                           a supported negative result: the receipt turns terminal with
-                                          a resolution; an adopted candidate closes consistently
+                                          a resolution and its queue candidate (adopted first when
+                                          absent) closes with the matching `closed` event
   check                                   the broker view of the pair, nothing written
 
 No network, no git, no gh: the PR is recorded as given; the broker verifies it on RECONCILE.
@@ -107,6 +111,9 @@ def _guard(queue: dict, doc: dict, today: str) -> None:
     inconsistent = rw.inconsistent_closures(queue, receipts)
     if inconsistent:
         raise RecordError(f"inconsistent closure of work {inconsistent}")
+    one_sided = rw.one_sided_closures(queue, receipts, receipts)
+    if one_sided:          # the pair the daily runner would refuse to land (2026-11-09: keeloq_mfcodes)
+        raise RecordError(f"closure of work {one_sided} would be recorded on one side only")
     if rw._date(today) is None:
         raise RecordError(f"unreadable date {today!r}")
 
@@ -122,25 +129,54 @@ def _write(demand_dir: Path, queue: dict, doc: dict, *, queue_changed: bool, dry
 
 # --- commands --------------------------------------------------------------------------------------------
 
+def _search_candidate(receipt: dict) -> dict:
+    """A search receipt's candidate, rebuilt from the receipt's own provenance exactly as the broker's
+    intake derives it from the daily snapshot (demand_broker._gsc_candidate): the term, its source, the
+    signal window and metrics the reservation snapshotted, the lifecycle opening date. Keyed by the
+    queue's term key, as research_queue.update_queue keys search rows."""
+    prov = receipt.get("provenance") if isinstance(receipt.get("provenance"), dict) else {}
+    opened = prov.get("opened_on") or receipt.get("started_on")
+    return {"term": receipt["term"], "status": rw.STATUS_NEW, "source": receipt.get("source"),
+            "first_seen": opened, "last_seen": opened,
+            "window": copy.deepcopy(receipt.get("window")), "metrics": copy.deepcopy(receipt.get("metrics")),
+            "linked_work": [], "history": [], "outcome": None, "closed_on": None,
+            "snapshot": prov.get("snapshot") or f"docs/demand/{research_queue.QUEUE_NAME}"}
+
+
+def _materialize(queue: dict, receipt: dict) -> tuple[str, dict, bool]:
+    """(queue key, candidate, created) for the receipt's work: the present committed row, else a new one
+    built from the receipt (a PAM receipt carries its lifecycle snapshot; a search receipt is rebuilt)."""
+    key = receipt["key"]
+    present = [(k, c) for k, c in queue["candidates"].items() if isinstance(c, dict) and rw.candidate_key(c) == key]
+    if present:
+        return present[0][0], present[0][1], False
+    if receipt.get("source") == rw.SOURCE_PAM:
+        candidate, qkey = copy.deepcopy(receipt.get("candidate")), key
+        if not isinstance(candidate, dict) or not pam_leads.readable_work_provenance(candidate.get("feed")):
+            raise RecordError(f"work {key}: the receipt carries no readable candidate snapshot")
+    else:
+        candidate, qkey = _search_candidate(receipt), research_queue.term_key(receipt.get("term"))
+    if rw.candidate_key(candidate) != key:
+        raise RecordError(f"work {key}: the rebuilt candidate keys as {rw.candidate_key(candidate)!r}, not {key!r}")
+    if qkey in queue["candidates"]:
+        raise RecordError(f"queue key {qkey!r} is taken by another candidate")
+    queue["candidates"][qkey] = candidate
+    return qkey, candidate, True
+
+
 def adopt(demand_dir: Path, key: str, *, today: str, dry_run: bool = False) -> dict:
-    """The PAM receipt's lifecycle snapshot (`candidate`) becomes the committed queue row under its own
-    `pam-` key — never under the term key, where a later GA4 row with the same wording would refresh
-    it with a search window and make its provenance unreadable. Idempotent; never rewrites a row."""
+    """The work's candidate becomes a committed queue row: the closure (demand_closure.resolve) and
+    `settle` both look it up there. A PAM receipt's `candidate` snapshot is adopted under its own `pam-`
+    key (never the term key, where a GA4 row with the same wording would refresh it with a search window);
+    a search receipt is rebuilt from its own provenance under the queue's term key. Idempotent; never
+    rewrites a present row."""
     queue, doc = _load(demand_dir)
     receipt = _live(_receipt(doc, key))
-    if receipt.get("source") != rw.SOURCE_PAM:
-        raise RecordError(f"work {key} is {receipt.get('source')!r} work: only a PAM lead is adopted "
-                          "(search candidates come from the daily snapshot)")
-    present = [c for c in queue["candidates"].values() if isinstance(c, dict) and rw.candidate_key(c) == key]
-    if present:
-        return copy.deepcopy(present[0])
-    candidate = copy.deepcopy(receipt.get("candidate"))
-    if not isinstance(candidate, dict) or rw.candidate_key(candidate) != key \
-            or not pam_leads.readable_work_provenance(candidate.get("feed")):
-        raise RecordError(f"work {key}: the receipt carries no readable candidate snapshot")
-    if key in queue["candidates"]:
-        raise RecordError(f"queue key {key!r} is taken by another candidate")
-    queue["candidates"][key] = candidate
+    _qkey, candidate, created = _materialize(queue, receipt)
+    if not created:
+        return copy.deepcopy(candidate)
+    if rw._work(candidate, doc["receipts"]) is None:
+        raise RecordError(f"work {key}: the rebuilt candidate's provenance is not readable")
     _guard(queue, doc, today)
     _write(demand_dir, queue, doc, queue_changed=True, dry_run=dry_run)
     return copy.deepcopy(candidate)
@@ -211,33 +247,55 @@ def attempt(demand_dir: Path, key: str, *, today: str, dry_run: bool = False) ->
     return copy.deepcopy(receipt)
 
 
+def _close_candidate(candidate: dict, *, key: str, state: str, reason: str, today: str) -> None:
+    history = {"event": "closed", "date": today, "resolution": state, "work": key, "reason": reason}
+    if candidate.get("outcome") is not None:
+        history["previous_outcome"] = copy.deepcopy(candidate["outcome"])
+    candidate.update(status=rw.STATUS_CLOSED, outcome={"status": state, "reason": reason}, closed_on=today)
+    candidate["history"] = [*(candidate.get("history") or []), history]
+
+
 def settle(demand_dir: Path, key: str, *, state: str, reason: str, today: str, dry_run: bool = False) -> dict:
-    """A supported negative result: the live receipt becomes `abandoned` or `rejected` with a resolution
-    naming the reason; a committed (adopted) candidate of that work closes in the same write, with the
-    outcome and a `closed` history entry naming the work — the pair the broker's closure would leave.
-    A search term that lives only in the daily snapshot has no queue row and needs none."""
+    """A supported negative result, recorded on BOTH sides in one guarded write, exactly the pair a broker
+    closure leaves: the live receipt becomes `abandoned` or `rejected` with a resolution naming the reason,
+    and its queue candidate — adopted first when the queue has none, a search term living only in the
+    daily snapshot included — closes with the outcome and a `closed` history event naming the work. The
+    daily runner refuses to land a resolution without that event (2026-11-09: keeloq_mfcodes)."""
     if state not in SETTLE_STATES:
         raise RecordError(f"state must be one of {SETTLE_STATES}, not {state!r} (delivered is the broker's verdict)")
     if not (isinstance(reason, str) and reason.strip()):
         raise RecordError("a settled receipt needs a reason")
+    reason = reason.strip()
     queue, doc = _load(demand_dir)
     receipt = _live(_receipt(doc, key))
-    resolution = {"status": state, "reason": reason.strip(), "closed_on": today, "evidence": {"settled_by": SETTLED_BY}}
-    receipt.update(state=state, resolution=resolution)
-    queue_changed = False
-    rows = [(k, c) for k, c in queue["candidates"].items() if isinstance(c, dict) and rw.candidate_key(c) == key]
-    for _ckey, c in rows:
-        if c.get("status") == rw.STATUS_CLOSED:
-            continue
-        history = {"event": "closed", "date": today, "resolution": state, "work": key, "reason": reason.strip()}
-        if c.get("outcome") is not None:
-            history["previous_outcome"] = copy.deepcopy(c["outcome"])
-        c.update(status=rw.STATUS_CLOSED, outcome={"status": state, "reason": reason.strip()}, closed_on=today)
-        c["history"] = [*(c.get("history") or []), history]
-        queue_changed = True
+    _qkey, candidate, _created = _materialize(queue, receipt)
+    if candidate.get("status") != rw.STATUS_CLOSED:
+        _close_candidate(candidate, key=key, state=state, reason=reason, today=today)
+    receipt.update(state=state, resolution={"status": state, "reason": reason, "closed_on": today,
+                                            "evidence": {"settled_by": SETTLED_BY}})
     _guard(queue, doc, today)
-    _write(demand_dir, queue, doc, queue_changed=queue_changed, dry_run=dry_run)
+    _write(demand_dir, queue, doc, queue_changed=True, dry_run=dry_run)
     return copy.deepcopy(receipt)
+
+
+def repair_settled(demand_dir: Path, key: str, *, today: str, dry_run: bool = False) -> dict:
+    """An already-settled receipt (terminal, with a resolution) whose candidate never reached the queue
+    gets the closed row `settle` would have written, from the resolution's own status, reason and
+    closed_on. Nothing else changes; a receipt that already has its row is a no-op."""
+    queue, doc = _load(demand_dir)
+    receipt = _receipt(doc, key)
+    resolution = receipt.get("resolution")
+    if receipt.get("state") not in rw.TERMINAL_STATES or not isinstance(resolution, dict):
+        raise RecordError(f"work {key} is not a settled receipt (state {receipt.get('state')!r}): nothing to repair")
+    _qkey, candidate, created = _materialize(queue, receipt)
+    if not created and candidate.get("status") == rw.STATUS_CLOSED:
+        return copy.deepcopy(candidate)
+    state = resolution.get("status") if resolution.get("status") in (*SETTLE_STATES, "delivered") else receipt["state"]
+    _close_candidate(candidate, key=key, state=state, reason=str(resolution.get("reason") or "settled"),
+                     today=str(resolution.get("closed_on") or today))
+    _guard(queue, doc, today)
+    _write(demand_dir, queue, doc, queue_changed=True, dry_run=dry_run)
+    return copy.deepcopy(candidate)
 
 
 def check(demand_dir: Path, *, today: str) -> dict:
@@ -279,6 +337,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("key")
     p.add_argument("--state", required=True, choices=SETTLE_STATES)
     p.add_argument("--reason", required=True)
+    sub.add_parser("repair-settled", parents=[common]).add_argument("key")
     sub.add_parser("check", parents=[common])
     return ap
 
@@ -303,6 +362,8 @@ def main(argv=None) -> int:
             result = link(d, args.key, args.pr_url, today=args.date, dry_run=args.dry_run)
         elif args.cmd == "attempt":
             result = attempt(d, args.key, today=args.date, dry_run=args.dry_run)
+        elif args.cmd == "repair-settled":
+            result = repair_settled(d, args.key, today=args.date, dry_run=args.dry_run)
         else:
             result = settle(d, args.key, state=args.state, reason=args.reason, today=args.date, dry_run=args.dry_run)
     except (RecordError, ValueError, KeyError, OSError) as e:

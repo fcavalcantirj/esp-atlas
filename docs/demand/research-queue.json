@@ -133,6 +133,38 @@
      "snapshot": "docs/demand/2026-11-07.json"
     }
    ]
+  },
+  "keeloq mfcodes": {
+   "term": "keeloq_mfcodes",
+   "status": "closed",
+   "source": "gsc_query",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-03",
+   "window": {
+    "start": "2026-10-10",
+    "end": "2026-11-07"
+   },
+   "metrics": {
+    "impressions": 13,
+    "clicks": 1,
+    "position": 9.3
+   },
+   "linked_work": [],
+   "history": [
+    {
+     "event": "closed",
+     "date": "2026-11-08",
+     "resolution": "abandoned",
+     "work": "f89f790e4ecb4d13",
+     "reason": "Not catalog content: 'keeloq_mfcodes' is the Flipper Zero Sub-GHz manufacturer-code asset file (proprietary KeeLoq rolling-code keys), not an ESP32 board or firmware; the GSC rows (10-14 impressions/day, position ~9-10, 2026-11-03..08) land on firmware/flipper-zero-esp32-adv, which already exists and does not mention KeeLoq. Nothing to author; publishing manufacturer codes is out of scope."
+    }
+   ],
+   "outcome": {
+    "status": "abandoned",
+    "reason": "Not catalog content: 'keeloq_mfcodes' is the Flipper Zero Sub-GHz manufacturer-code asset file (proprietary KeeLoq rolling-code keys), not an ESP32 board or firmware; the GSC rows (10-14 impressions/day, position ~9-10, 2026-11-03..08) land on firmware/flipper-zero-esp32-adv, which already exists and does not mention KeeLoq. Nothing to author; publishing manufacturer codes is out of scope."
+   },
+   "closed_on": "2026-11-08",
+   "snapshot": "docs/demand/2026-11-07.json"
   }
  }
 }

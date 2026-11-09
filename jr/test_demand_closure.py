@@ -610,6 +610,31 @@ def test_a_closure_without_a_receipt_and_a_reopened_candidate_stay_consistent():
     assert rw.one_sided_closures(queue, settled, base) == []              # its closure stays in history
 
 
+def hand_settled(receipt, state="abandoned"):
+    return {**receipt, "state": state, "resolution": {"status": state, "reason": "not catalog content",
+                                                      "closed_on": NEXT_DAY, "evidence": {"settled_by": "jr/work_record.py"}}}
+
+
+def test_a_hand_settled_receipt_without_its_queue_candidate_is_one_sided():
+    """The invariant: a resolution on a receipt <=> a closed event on its queue candidate, whoever wrote
+    it. keeloq_mfcodes (2026-11-09) was settled by hand with no queue row and withheld every publication;
+    the fix is that work_record always writes the row (test_work_record), not a weaker guard here."""
+    base = json.loads(RECEIPTS_RAW)["receipts"]
+    orphan = {**base[0], "key": KEELOQ_KEY, "branch": rw.branch_for(KEELOQ_KEY), "term": "keeloq_mfcodes",
+              "phase": "research", "linked_work": []}
+    orphan.pop("pr_url", None)
+    settled = [*base, hand_settled(orphan)]
+    assert rw.one_sided_closures(json.loads(QUEUE_RAW), settled, base) == [KEELOQ_KEY]
+
+
+def test_a_hand_settled_receipt_with_its_closed_candidate_is_consistent():
+    base = json.loads(RECEIPTS_RAW)["receipts"]
+    settled = [hand_settled(base[0], "rejected")]                 # fnk0104s IS a queue candidate
+    assert rw.one_sided_closures(json.loads(QUEUE_RAW), settled, base) == [KEY]   # no event yet
+    queue, _, _ = closed_pair()
+    assert rw.one_sided_closures(queue, settled, base) == []       # its closed event is recorded
+
+
 def test_the_bytes_wrapper_reads_the_pair_and_refuses_nothing_unreadable():
     queue, settled, base = closed_pair()
     as_bytes = [json.dumps(x).encode() for x in (queue, {"version": 1, "receipts": []}, {"version": 1, "receipts": base})]
