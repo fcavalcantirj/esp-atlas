@@ -1288,7 +1288,7 @@
       "pr_ref": "#1500",
       "repo": "jay-jayismyname1/cardputer-adv-b-radar",
       "status": "proposed",
-      "timestamp": "2026-11-09T06:00:55.503275+00:00"
+      "timestamp": "2026-11-09T07:00:55.242731+00:00"
     },
     "cardputer-adv-basic": {
       "expired_at": "2026-11-08T01:00:55.198528+00:00",
@@ -5523,6 +5523,15 @@
       "repo": "launcher:2118529634514075650",
       "status": "rejected",
       "timestamp": "2026-11-06T21:00:55.650872+00:00"
+    },
+    "launcher-2119222805013372929": {
+      "expires": "2026-11-16T07:00:55.242731+00:00",
+      "id": "launcher-2119222805013372929",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for '2048 user:crackulator'",
+      "repo": "launcher:2119222805013372929",
+      "status": "rejected",
+      "timestamp": "2026-11-09T07:00:55.242731+00:00"
     },
     "launcher-2124f637db75857c962f9097575271f4": {
       "expires": "2026-11-11T02:00:59.526867+00:00",
@@ -13537,6 +13546,7 @@
     "launcher:2106759842569265153": "launcher-2106759842569265153",
     "launcher:2111813107178622978": "launcher-2111813107178622978",
     "launcher:2118529634514075650": "launcher-2118529634514075650",
+    "launcher:2119222805013372929": "launcher-2119222805013372929",
     "launcher:2124f637db75857c962f9097575271f4": "launcher-2124f637db75857c962f9097575271f4",
     "launcher:214c554f9da22d70e6837d4db79fc793": "launcher-214c554f9da22d70e6837d4db79fc793",
     "launcher:215b511e97a94512db05452db92ba0bf": "launcher-215b511e97a94512db05452db92ba0bf",
