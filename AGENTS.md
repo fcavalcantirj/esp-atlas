@@ -89,6 +89,35 @@ field list, types, and enums (not this doc, which will drift).
    (`python3 scripts/validate.py`) — a clean local run means a green PR check.
 5. **Open a PR** with your source links in the description.
 
+## Demand work records (for the executor, human or delegate)
+
+The daily demand runner reserves work items (`docs/demand/work-receipts.json`, branch
+`jr/research-<key>`). Whoever executes one follows `docs/demand/EXECUTOR-PROMPT.md` and records
+every step with **`jr/work_record.py`**, the only write path into the queue/receipts pair:
+
+```bash
+python3 jr/work_record.py check --date <UTC date>                # the broker's view, nothing written
+python3 jr/work_record.py attempt <key> --date <UTC date>        # today's try (RESUME becomes RECONCILE)
+python3 jr/work_record.py adopt <key> --date <UTC date>          # a PAM lead becomes a committed queue row
+python3 jr/work_record.py validate <key> --json <file> --date …  # identity/primary-source receipt
+python3 jr/work_record.py link <key> <pr url> --date …           # the one reviewed PR
+python3 jr/work_record.py settle <key> --state abandoned|rejected --reason "…" --date …
+```
+
+Rules: write the validation JSON **outside** the checkout (an untracked file wedges the executor's
+dirty-tree guards); commit `docs/demand/` on the work branch right after each write
+(`git add -A docs/demand && git commit`); never edit `research-queue.json` or `work-receipts.json`
+by hand; a refused command means the broker would defer, so report the message and stop. A board
+written for a PAM lead is a normal catalog record (rules above) and is verified after deploy at
+`/api/parts/<id>`, so `expected_ids` is the exact catalog id you author and `forbidden_ids` the
+sibling SKUs that must stay absent.
+
+## Running the tests
+
+`PYTHONPATH=apps/core/src python3 -m pytest jr scripts -q` with Python 3.11+ (CI uses 3.12).
+Image-validator tests need `pip install -r jr/requirements-image.txt` and a Linux host.
+Jr's tests write only under temporary directories; run them serially.
+
 ## Also see
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) — human-facing contribution guide (same rules).

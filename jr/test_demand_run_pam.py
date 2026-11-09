@@ -293,3 +293,48 @@ def test_a_failed_refresh_still_reconciles_existing_pam_work_but_starts_none(tmp
     rows = json.loads((root / "docs/demand/work-receipts.json").read_text())["receipts"]
     assert [r["source"] for r in rows] == ["pam_feed"]
     assert "reconcile pam-" in result.work and "PAM deferred" in result.line()
+
+
+def settled_keeloq():
+    key = rw.work_key("keeloq_mfcodes", "2026-11-03")
+    receipt = {"key": key, "branch": rw.branch_for(key), "term": "keeloq_mfcodes", "phase": "research",
+               "state": "abandoned", "started_on": "2026-11-04", "source": "gsc_query", "linked_work": [],
+               "window": {"start": "2026-10-07", "end": "2026-11-04"}, "metrics": {"impressions": 13, "clicks": 1, "position": 9.8},
+               "provenance": {"snapshot": "docs/demand/2026-11-04.json", "opened_on": "2026-11-03", "status": "new"},
+               "resolution": {"status": "abandoned", "reason": "not catalog content", "closed_on": "2026-11-05",
+                              "evidence": {"settled_by": "jr/work_record.py"}}}
+    assert rw._readable_receipt(receipt)
+    return key, receipt
+
+
+def test_a_settled_receipt_whose_closed_row_is_in_the_queue_does_not_withhold_the_days_reservations(tmp_path):
+    """2026-11-09: keeloq_mfcodes had been settled with no queue row and the landing guard withheld BOTH
+    new reservations. With its closed row in the queue (what work_record now always writes), they land."""
+    root, git = tree(tmp_path), git_ok()
+    key, receipt = settled_keeloq()
+    (root / "docs/demand/work-receipts.json").write_text(json.dumps({"version": 1, "receipts": [receipt]}, indent=1) + "\n")
+    q = json.loads((root / "docs/demand/research-queue.json").read_text())
+    q["candidates"]["keeloq_mfcodes"] = {
+        "term": "keeloq_mfcodes", "status": "closed", "source": "gsc_query", "first_seen": "2026-11-03",
+        "last_seen": "2026-11-03", "window": receipt["window"], "metrics": receipt["metrics"], "linked_work": [],
+        "outcome": {"status": "abandoned", "reason": "not catalog content"}, "closed_on": "2026-11-05",
+        "history": [{"event": "closed", "date": "2026-11-05", "resolution": "abandoned", "work": key, "reason": "not catalog content"}],
+        "snapshot": "docs/demand/2026-11-04.json"}
+    (root / "docs/demand/research-queue.json").write_text(json.dumps(q, indent=1) + "\n")
+    # the real miner's queue rewrite is append-only (research_queue.update_queue); the fake must keep the row
+    result = run(root, git=git, miner=snapshot_miner(REAL_SNAPSHOT, queue=q))   # fnk0104s UNRESOLVED + a PAM lead
+    assert result.published and not result.aborted
+    assert "not landed" not in result.work and "one side only" not in result.work
+    rows = json.loads((root / "docs/demand/work-receipts.json").read_text())["receipts"]
+    assert [r["state"] for r in rows] == ["abandoned", "reserved", "reserved"]
+    assert "docs/demand/work-receipts.json" in staged(git)
+
+
+def test_a_settled_receipt_without_its_queue_row_still_withholds_the_pair(tmp_path):
+    """The invariant stands: the pair is one-sided, nothing lands, the line says so."""
+    root, git = tree(tmp_path), git_ok()
+    key, receipt = settled_keeloq()
+    (root / "docs/demand/work-receipts.json").write_text(json.dumps({"version": 1, "receipts": [receipt]}, indent=1) + "\n")
+    result = run(root, git=git, miner=snapshot_miner(REAL_SNAPSHOT))
+    assert "one side only" in result.work and key in result.work
+    assert "docs/demand/work-receipts.json" not in staged(git)
