@@ -615,29 +615,24 @@ def hand_settled(receipt, state="abandoned"):
                                                       "closed_on": NEXT_DAY, "evidence": {"settled_by": "jr/work_record.py"}}}
 
 
-def test_a_hand_settled_receipt_without_a_queue_candidate_owes_the_queue_nothing():
-    """keeloq_mfcodes, 2026-11-09: a search term that lives only in the daily snapshot was settled
-    abandoned by work_record; it has no queue row, so no closed event can exist, and the pair is whole."""
+def test_a_hand_settled_receipt_without_its_queue_candidate_is_one_sided():
+    """The invariant: a resolution on a receipt <=> a closed event on its queue candidate, whoever wrote
+    it. keeloq_mfcodes (2026-11-09) was settled by hand with no queue row and withheld every publication;
+    the fix is that work_record always writes the row (test_work_record), not a weaker guard here."""
     base = json.loads(RECEIPTS_RAW)["receipts"]
     orphan = {**base[0], "key": KEELOQ_KEY, "branch": rw.branch_for(KEELOQ_KEY), "term": "keeloq_mfcodes",
               "phase": "research", "linked_work": []}
     orphan.pop("pr_url", None)
     settled = [*base, hand_settled(orphan)]
-    assert rw.one_sided_closures(json.loads(QUEUE_RAW), settled, base) == []
-    assert rw.one_sided_closures(json.loads(FOREIGN), settled, base) == []
+    assert rw.one_sided_closures(json.loads(QUEUE_RAW), settled, base) == [KEELOQ_KEY]
 
 
-def test_a_hand_settled_receipt_whose_candidate_is_in_the_queue_still_needs_the_closed_event():
+def test_a_hand_settled_receipt_with_its_closed_candidate_is_consistent():
     base = json.loads(RECEIPTS_RAW)["receipts"]
     settled = [hand_settled(base[0], "rejected")]                 # fnk0104s IS a queue candidate
-    assert rw.one_sided_closures(json.loads(QUEUE_RAW), settled, base) == [KEY]
+    assert rw.one_sided_closures(json.loads(QUEUE_RAW), settled, base) == [KEY]   # no event yet
     queue, _, _ = closed_pair()
     assert rw.one_sided_closures(queue, settled, base) == []       # its closed event is recorded
-
-
-def test_a_broker_settled_receipt_without_its_candidate_stays_one_sided():
-    _, settled, base = closed_pair()                               # no settled_by: a closure wrote it
-    assert rw.one_sided_closures(json.loads(FOREIGN), settled, base) == [KEY]
 
 
 def test_the_bytes_wrapper_reads_the_pair_and_refuses_nothing_unreadable():
