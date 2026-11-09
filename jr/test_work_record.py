@@ -71,13 +71,42 @@ def test_adopt_is_idempotent_and_never_rewrites_a_present_row(tmp_path):
     assert pair(d) == before
 
 
-def test_adopt_refuses_a_search_receipt_and_an_unknown_key(tmp_path):
-    d = demand_dir(tmp_path)
+def search_dir(tmp_path):
+    """A demand dir whose only receipt is a fresh SEARCH reservation (fnk0104s from the snapshot; no queue row)."""
+    prepare(tmp_path, catalog=[])
+    out = reserve(tmp_path, REAL_SNAPSHOT, source_class=rw.CLASS_SEARCH)
+    assert out.action == rw.START and not out.key.startswith("pam-")
+    return tmp_path, out.key
+
+
+def test_adopt_rebuilds_a_search_receipts_candidate_under_its_term_key(tmp_path):
+    d, key = search_dir(tmp_path)
+    assert queue(d)["candidates"] == {}
+    c = work_record.adopt(d, key, today=DAY)
+    row = queue(d)["candidates"]["fnk0104s"]
+    assert row == c and rw.candidate_key(row) == key and row["status"] == "new"
+    assert row["source"] == "gsc_query" and row["window"] == receipt(d, key)["window"]
+    assert row["metrics"] == receipt(d, key)["metrics"] and row["first_seen"] == receipt(d, key)["provenance"]["opened_on"]
+    assert rw._work(row, ledger(d)["receipts"]) is not None
+    assert plan(d, rw.CLASS_SEARCH).action == rw.RECONCILE          # same-day reservation, nothing else changes
+    before = pair(d)
+    work_record.adopt(d, key, today=DAY)                            # idempotent
+    assert pair(d) == before
+
+
+def test_adopt_refuses_an_unknown_key_and_a_taken_queue_key(tmp_path):
+    d, key = search_dir(tmp_path)
     before = pair(d)
     with pytest.raises(work_record.RecordError):
-        work_record.adopt(d, FNK_KEY, today=NEXT)
-    with pytest.raises(work_record.RecordError):
-        work_record.adopt(d, "pam-" + "0" * 24, today=NEXT)
+        work_record.adopt(d, "pam-" + "0" * 24, today=DAY)
+    q = queue(d)
+    q["candidates"]["fnk0104s"] = {"term": "fnk0104s", "status": "new", "source": "ga4 search_empty",
+                                   "first_seen": "2026-10-01", "window": {"start": "2026-09-01", "end": "2026-10-01"},
+                                   "metrics": {"searches": 3}, "linked_work": [], "history": []}   # another lifecycle
+    (d / QUEUE).write_text(json.dumps(q))
+    before = pair(d)
+    with pytest.raises(work_record.RecordError, match="taken"):
+        work_record.adopt(d, key, today=DAY)
     assert pair(d) == before
 
 
@@ -177,51 +206,62 @@ def test_attempt_stamps_the_receipt(tmp_path):
 
 # --- settle: abandoned / rejected ---------------------------------------------------------------------
 
-def test_settle_abandons_a_search_receipt_so_the_next_item_can_start(tmp_path):
-    prepare(tmp_path, catalog=[])
-    out = reserve(tmp_path, REAL_SNAPSHOT, source_class=rw.CLASS_SEARCH)
-    key = out.key
-    r = work_record.settle(tmp_path, key, state="abandoned", reason="not catalog content", today=NEXT)
+def test_settle_abandons_a_search_receipt_and_closes_its_queue_row_so_the_next_item_can_start(tmp_path):
+    """The 2026-11-09 defect: a settle without the queue row withheld every daily publication."""
+    d, key = search_dir(tmp_path)
+    r = work_record.settle(d, key, state="abandoned", reason="not catalog content", today=NEXT)
     assert r["state"] == "abandoned"
     assert r["resolution"] == {"status": "abandoned", "reason": "not catalog content", "closed_on": NEXT,
                                "evidence": {"settled_by": work_record.SETTLED_BY}}
-    assert rw._readable_receipt(receipt(tmp_path, key))
-    nxt = plan(tmp_path, rw.CLASS_SEARCH, today=NEXT)
+    row = queue(d)["candidates"]["fnk0104s"]                         # adopted AND closed in the same write
+    assert row["status"] == "closed" and row["closed_on"] == NEXT and rw.candidate_key(row) == key
+    assert row["history"][-1] == {"event": "closed", "date": NEXT, "resolution": "abandoned", "work": key,
+                                  "reason": "not catalog content"}
+    assert rw.one_sided_closures(queue(d), ledger(d)["receipts"], ledger(d)["receipts"]) == []
+    assert rw._readable_receipt(receipt(d, key))
+    nxt = plan(d, rw.CLASS_SEARCH, today=NEXT)
     assert nxt.action == rw.START and nxt.key != key                 # keeloq_mfcodes takes the slot
 
 
-def test_settle_closes_an_adopted_pam_candidate_consistently(tmp_path):
-    d, key = pam_dir(tmp_path)
-    work_record.adopt(d, key, today=DAY)
-    work_record.settle(d, key, state="rejected", reason="kit, not a board", today=NEXT)
-    c = queue(d)["candidates"][key]
-    assert c["status"] == "closed" and c["closed_on"] == NEXT
-    assert c["outcome"] == {"status": "rejected", "reason": "kit, not a board"}
-    assert c["history"][-1] == {"event": "closed", "date": NEXT, "resolution": "rejected", "work": key,
-                                "reason": "kit, not a board"}
-    assert rw.inconsistent_closures(queue(d), ledger(d)["receipts"]) == []
-    nxt = plan(d, rw.CLASS_PAM, today=NEXT)
-    assert nxt.action == rw.START and nxt.key != key                 # the next lead; this one is handled
-
-
-@pytest.mark.parametrize("state", ["delivered", "proposed", "done"])
-def test_settle_accepts_only_abandoned_or_rejected(tmp_path, state):
-    d, key = pam_dir(tmp_path)
-    before = pair(d)
-    with pytest.raises(work_record.RecordError):
-        work_record.settle(d, key, state=state, reason="x", today=DAY)
-    assert pair(d) == before
-
-
-def test_settle_needs_a_reason_and_a_live_receipt(tmp_path):
-    d, key = pam_dir(tmp_path)
-    with pytest.raises(work_record.RecordError):
-        work_record.settle(d, key, state="abandoned", reason="  ", today=DAY)
-    work_record.settle(d, key, state="abandoned", reason="dup", today=DAY)
-    before = pair(d)
+def test_repair_settled_materializes_the_closed_row_for_an_already_settled_receipt(tmp_path):
+    """main's state after #1557: keeloq abandoned by an older work_record, no queue row."""
+    d, key = search_dir(tmp_path)
+    r = ledger(d)
+    r["receipts"][0].update(state="abandoned", resolution={"status": "abandoned", "reason": "old settle",
+                                                           "closed_on": "2026-11-08", "evidence": {"settled_by": work_record.SETTLED_BY}})
+    (d / RECEIPTS).write_text(json.dumps(r))
+    assert rw.one_sided_closures(queue(d), ledger(d)["receipts"], ledger(d)["receipts"]) == [key]
     with pytest.raises(work_record.RecordError, match="not live"):
-        work_record.settle(d, key, state="abandoned", reason="again", today=DAY)
+        work_record.settle(d, key, state="abandoned", reason="again", today=NEXT)
+    c = work_record.repair_settled(d, key, today=NEXT)
+    assert c["status"] == "closed" and c["closed_on"] == "2026-11-08"
+    assert c["history"][-1] == {"event": "closed", "date": "2026-11-08", "resolution": "abandoned", "work": key,
+                                "reason": "old settle"}
+    assert rw.one_sided_closures(queue(d), ledger(d)["receipts"], ledger(d)["receipts"]) == []
+    before = pair(d)
+    assert work_record.repair_settled(d, key, today=NEXT) == c and pair(d) == before   # idempotent
+    with pytest.raises(work_record.RecordError, match="not a settled"):
+        work_record.repair_settled(pam_dir(tmp_path / "live")[0], pam_dir(tmp_path / "live2")[1], today=NEXT)
+
+
+def test_the_guard_refuses_any_write_while_the_pair_holds_a_one_sided_closure(tmp_path):
+    d, search_key = search_dir(tmp_path)
+    pam = reserve(d, REAL_SNAPSHOT, source_class=rw.CLASS_PAM)        # a second, live receipt
+    assert pam.action == rw.START
+    r = ledger(d)
+    for row in r["receipts"]:
+        if row["key"] == search_key:                                  # settled by hand, no queue row: one-sided
+            row.update(state="abandoned", resolution={"status": "abandoned", "reason": "x", "closed_on": "2026-11-08",
+                                                      "evidence": {"settled_by": "hand"}})
+    (d / RECEIPTS).write_text(json.dumps(r))
+    before = pair(d)
+    with pytest.raises(work_record.RecordError, match="one side only"):
+        work_record.attempt(d, pam.key, today=NEXT)
     assert pair(d) == before
+    assert any("one side only" in p for p in work_record.check(d, today=NEXT)["problems"])
+    work_record.repair_settled(d, search_key, today=NEXT)             # the repair clears it
+    assert work_record.check(d, today=NEXT)["problems"] == []
+    assert work_record.attempt(d, pam.key, today=NEXT)["last_attempt_on"] == NEXT
 
 
 # --- the guard: nothing plan_work would refuse is ever written ----------------------------------------

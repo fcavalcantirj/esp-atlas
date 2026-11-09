@@ -1,5 +1,17 @@
 {
   "by_board": {
+    "adafruit-feather-esp32-c6": {
+      "board": "adafruit-feather-esp32-c6",
+      "expires": "2026-11-16T03:00:55.181581+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-09T03:00:55.181581+00:00"
+    },
     "adafruit-feather-esp32-s2": {
       "board": "adafruit-feather-esp32-s2",
       "expires": "2026-11-13T20:00:59.122628+00:00",
@@ -54,6 +66,18 @@
       "reason": "doc-unreachable",
       "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
+    "adafruit-feather-esp32-s3": {
+      "board": "adafruit-feather-esp32-s3",
+      "expires": "2026-11-16T04:00:55.175597+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T04:00:55.175597+00:00"
+    },
     "adafruit-feather-esp32-s3-no-psram": {
       "board": "adafruit-feather-esp32-s3-no-psram",
       "expires": "2026-11-13T21:00:55.650872+00:00",
@@ -90,6 +114,106 @@
       "reason": "doc-unreachable",
       "timestamp": "2026-11-06T21:00:55.650872+00:00"
     },
+    "adafruit-funhouse": {
+      "board": "adafruit-funhouse",
+      "expires": "2026-11-16T04:00:55.175597+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-09T04:00:55.175597+00:00"
+    },
+    "adafruit-magtag": {
+      "board": "adafruit-magtag",
+      "expires": "2026-11-16T04:00:55.175597+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-09T04:00:55.175597+00:00"
+    },
+    "adafruit-matrixportal-s3": {
+      "board": "adafruit-matrixportal-s3",
+      "expires": "2026-11-16T05:00:55.174523+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T05:00:55.174523+00:00"
+    },
+    "adafruit-metro-esp32-s2": {
+      "board": "adafruit-metro-esp32-s2",
+      "expires": "2026-11-16T05:00:55.174523+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-09T05:00:55.174523+00:00"
+    },
+    "adafruit-metro-esp32-s3": {
+      "board": "adafruit-metro-esp32-s3",
+      "expires": "2026-11-16T05:00:55.174523+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T05:00:55.174523+00:00"
+    },
+    "adafruit-pycamera-s3": {
+      "board": "adafruit-pycamera-s3",
+      "expires": "2026-11-16T06:00:55.503275+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        },
+        "images": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-09T06:00:55.503275+00:00"
+    },
     "adafruit-qt-py-esp32": {
       "board": "adafruit-qt-py-esp32",
       "expires": "2026-11-11T02:00:59.526867+00:00",
@@ -101,6 +225,54 @@
       },
       "reason": "doc-unreachable",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
+    },
+    "adafruit-qt-py-esp32-c3": {
+      "board": "adafruit-qt-py-esp32-c3",
+      "expires": "2026-11-16T06:00:55.503275+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T06:00:55.503275+00:00"
+    },
+    "adafruit-qt-py-esp32-s2": {
+      "board": "adafruit-qt-py-esp32-s2",
+      "expires": "2026-11-16T06:00:55.503275+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T06:00:55.503275+00:00"
+    },
+    "adafruit-qt-py-esp32-s3": {
+      "board": "adafruit-qt-py-esp32-s3",
+      "expires": "2026-11-16T07:00:55.242731+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T07:00:55.242731+00:00"
+    },
+    "adafruit-qt-py-esp32-s3-no-psram": {
+      "board": "adafruit-qt-py-esp32-s3-no-psram",
+      "expires": "2026-11-16T07:00:55.242731+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-09T07:00:55.242731+00:00"
     },
     "adafruit-qualia-esp32-s3": {
       "board": "adafruit-qualia-esp32-s3",
@@ -129,6 +301,98 @@
       },
       "reason": "nothing-groundable",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
+    },
+    "beetle-esp32-c6": {
+      "board": "beetle-esp32-c6",
+      "expires": "2026-11-16T07:00:55.242731+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T07:00:55.242731+00:00"
+    },
+    "elecrow-crowpanel-esp32-s3-579-epaper": {
+      "board": "elecrow-crowpanel-esp32-s3-579-epaper",
+      "expires": "2026-11-16T09:00:55.341443+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T09:00:55.341443+00:00"
+    },
+    "firebeetle-2-esp32-c6": {
+      "board": "firebeetle-2-esp32-c6",
+      "expires": "2026-11-16T08:00:55.303911+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T08:00:55.303911+00:00"
+    },
+    "firebeetle-2-esp32-e": {
+      "board": "firebeetle-2-esp32-e",
+      "expires": "2026-11-16T08:00:55.303911+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T08:00:55.303911+00:00"
+    },
+    "firebeetle-2-esp32-s3": {
+      "board": "firebeetle-2-esp32-s3",
+      "expires": "2026-11-16T08:00:55.303911+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T08:00:55.303911+00:00"
+    },
+    "firebeetle-esp32": {
+      "board": "firebeetle-esp32",
+      "expires": "2026-11-16T09:00:55.341443+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T09:00:55.341443+00:00"
     },
     "freenove-fnk0104a": {
       "board": "freenove-fnk0104a",
@@ -222,7 +486,7 @@
     },
     "heltec-wireless-stick-v3": {
       "board": "heltec-wireless-stick-v3",
-      "expires": "2026-11-15T19:00:55.531067+00:00",
+      "expires": "2026-11-15T20:00:54.954530+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -230,11 +494,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-08T19:00:55.531067+00:00"
+      "timestamp": "2026-11-08T20:00:54.954530+00:00"
     },
     "heltec-wireless-tracker": {
       "board": "heltec-wireless-tracker",
-      "expires": "2026-11-15T19:00:55.531067+00:00",
+      "expires": "2026-11-15T20:00:54.954530+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -242,11 +506,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-08T19:00:55.531067+00:00"
+      "timestamp": "2026-11-08T20:00:54.954530+00:00"
     },
     "lilygo-t-beam": {
       "board": "lilygo-t-beam",
-      "expires": "2026-11-15T19:00:55.531067+00:00",
+      "expires": "2026-11-15T20:00:54.954530+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -254,7 +518,208 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-08T19:00:55.531067+00:00"
+      "timestamp": "2026-11-08T20:00:54.954530+00:00"
+    },
+    "lilygo-t-deck": {
+      "board": "lilygo-t-deck",
+      "expires": "2026-11-15T21:00:55.166276+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-08T21:00:55.166276+00:00"
+    },
+    "lilygo-t-display": {
+      "board": "lilygo-t-display",
+      "expires": "2026-11-15T22:00:55.187463+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-08T22:00:55.187463+00:00"
+    },
+    "lilygo-t-display-s3": {
+      "board": "lilygo-t-display-s3",
+      "expires": "2026-11-15T21:00:55.166276+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-08T21:00:55.166276+00:00"
+    },
+    "lilygo-t-display-s3-amoled": {
+      "board": "lilygo-t-display-s3-amoled",
+      "expires": "2026-11-15T21:00:55.166276+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-08T21:00:55.166276+00:00"
+    },
+    "lilygo-t-dongle-s3": {
+      "board": "lilygo-t-dongle-s3",
+      "expires": "2026-11-15T22:00:55.187463+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-08T22:00:55.187463+00:00"
+    },
+    "lilygo-t-embed": {
+      "board": "lilygo-t-embed",
+      "expires": "2026-11-15T22:00:55.187463+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-08T22:00:55.187463+00:00"
+    },
+    "lilygo-t-qt-pro": {
+      "board": "lilygo-t-qt-pro",
+      "expires": "2026-11-15T23:00:55.209139+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-08T23:00:55.209139+00:00"
+    },
+    "lilygo-t-watch-s3": {
+      "board": "lilygo-t-watch-s3",
+      "expires": "2026-11-15T23:00:55.209139+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-08T23:00:55.209139+00:00"
+    },
+    "lilygo-t5-epaper-s3-pro": {
+      "board": "lilygo-t5-epaper-s3-pro",
+      "expires": "2026-11-15T23:00:55.209139+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-08T23:00:55.209139+00:00"
+    },
+    "lolin-c3-mini": {
+      "board": "lolin-c3-mini",
+      "expires": "2026-11-16T00:00:55.223346+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T00:00:55.223346+00:00"
+    },
+    "lolin-d32": {
+      "board": "lolin-d32",
+      "expires": "2026-11-16T00:00:55.223346+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T00:00:55.223346+00:00"
+    },
+    "lolin-d32-pro": {
+      "board": "lolin-d32-pro",
+      "expires": "2026-11-16T00:00:55.223346+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T00:00:55.223346+00:00"
+    },
+    "lolin-s2-mini": {
+      "board": "lolin-s2-mini",
+      "expires": "2026-11-16T01:00:56.202438+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T01:00:56.202438+00:00"
     },
     "lolin-s3": {
       "board": "lolin-s3",
@@ -595,6 +1060,52 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-05T03:01:00.115486+00:00"
     },
+    "sparkfun-iot-redboard-esp32": {
+      "board": "sparkfun-iot-redboard-esp32",
+      "expires": "2026-11-16T01:00:56.202438+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T01:00:56.202438+00:00"
+    },
+    "sparkfun-micromod-esp32-processor": {
+      "board": "sparkfun-micromod-esp32-processor",
+      "expires": "2026-11-16T02:00:55.229234+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T02:00:55.229234+00:00"
+    },
+    "sparkfun-thing-plus-esp32-s2-wroom": {
+      "board": "sparkfun-thing-plus-esp32-s2-wroom",
+      "expires": "2026-11-16T02:00:55.229234+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T02:00:55.229234+00:00"
+    },
     "um-feathers3": {
       "board": "um-feathers3",
       "expires": "2026-11-12T05:01:00.482196+00:00",
@@ -631,6 +1142,52 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
+    "um-tinys3": {
+      "board": "um-tinys3",
+      "expires": "2026-11-16T02:00:55.229234+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T02:00:55.229234+00:00"
+    },
+    "waveshare-esp32-s3-rlcd-42": {
+      "board": "waveshare-esp32-s3-rlcd-42",
+      "expires": "2026-11-16T03:00:55.181581+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "source_gated"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T03:00:55.181581+00:00"
+    },
+    "waveshare-esp32-s3-touch-lcd-349": {
+      "board": "waveshare-esp32-s3-touch-lcd-349",
+      "expires": "2026-11-16T03:00:55.181581+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "source_gated"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T03:00:55.181581+00:00"
+    },
     "xiao-esp32c3": {
       "board": "xiao-esp32c3",
       "expires": "2026-11-12T01:01:14.781862+00:00",
@@ -663,6 +1220,19 @@
       },
       "reason": "doc-unreachable",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
+    },
+    "xiao-esp32c6": {
+      "board": "xiao-esp32c6",
+      "expires": "2026-11-16T01:00:56.202438+00:00",
+      "field_reasons": {
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "no_pattern_match",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T01:00:56.202438+00:00"
     },
     "xiao-esp32s3": {
       "board": "xiao-esp32s3",

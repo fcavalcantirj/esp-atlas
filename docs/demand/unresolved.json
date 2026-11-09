@@ -9,18 +9,18 @@
    "source": [
     "gsc_query"
    ],
-   "impressions": 14,
+   "impressions": 15,
    "clicks": 1,
-   "ctr": 0.0714,
+   "ctr": 0.0667,
    "position": 9.1,
    "events": null,
    "zero_result": null,
-   "weight": 11.83,
+   "weight": 12.74,
    "resolved": null,
    "gap": "UNRESOLVED",
    "landing_page": "https://esp-atlas.com/firmware/flipper-zero-esp32-adv",
    "first_seen": "2026-11-03",
-   "last_seen": "2026-11-08"
+   "last_seen": "2026-11-09"
   },
   {
    "term": "term512",
@@ -30,18 +30,18 @@
    "source": [
     "gsc_query"
    ],
-   "impressions": 12,
+   "impressions": 15,
    "clicks": null,
    "ctr": 0.0,
-   "position": 8.6,
+   "position": 7.1,
    "events": null,
    "zero_result": null,
-   "weight": 10.32,
+   "weight": 10.65,
    "resolved": null,
    "gap": "UNRESOLVED",
    "landing_page": "https://esp-atlas.com/firmware/area512",
    "first_seen": "2026-11-08",
-   "last_seen": "2026-11-08"
+   "last_seen": "2026-11-09"
   }
  ]
 }
