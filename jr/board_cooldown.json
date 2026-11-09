@@ -250,6 +250,30 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-09T06:00:55.503275+00:00"
     },
+    "adafruit-qt-py-esp32-s3": {
+      "board": "adafruit-qt-py-esp32-s3",
+      "expires": "2026-11-16T07:00:55.242731+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T07:00:55.242731+00:00"
+    },
+    "adafruit-qt-py-esp32-s3-no-psram": {
+      "board": "adafruit-qt-py-esp32-s3-no-psram",
+      "expires": "2026-11-16T07:00:55.242731+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-09T07:00:55.242731+00:00"
+    },
     "adafruit-qualia-esp32-s3": {
       "board": "adafruit-qualia-esp32-s3",
       "expires": "2026-11-11T02:00:59.526867+00:00",
@@ -277,6 +301,23 @@
       },
       "reason": "nothing-groundable",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
+    },
+    "beetle-esp32-c6": {
+      "board": "beetle-esp32-c6",
+      "expires": "2026-11-16T07:00:55.242731+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "no_manifest",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T07:00:55.242731+00:00"
     },
     "freenove-fnk0104a": {
       "board": "freenove-fnk0104a",
