@@ -403,6 +403,14 @@
       "status": "rejected",
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
+    "al-anqa-firmware": {
+      "id": "al-anqa-firmware",
+      "pr_ref": "#1580",
+      "repo": "abdallahnatsheh/al-anqa-firmware",
+      "repo_id": 714360231,
+      "status": "proposed",
+      "timestamp": "2026-11-09T13:00:55.803979+00:00"
+    },
     "alles": {
       "expires": "2026-12-05T20:00:59.980852+00:00",
       "id": "alles",
@@ -1320,7 +1328,7 @@
       "pr_ref": "#1500",
       "repo": "jay-jayismyname1/cardputer-adv-b-radar",
       "status": "proposed",
-      "timestamp": "2026-11-09T11:00:55.303145+00:00"
+      "timestamp": "2026-11-09T13:00:55.803979+00:00"
     },
     "cardputer-adv-basic": {
       "expired_at": "2026-11-08T01:00:55.198528+00:00",
@@ -4460,6 +4468,14 @@
       "repo_id": 779484879,
       "status": "merged",
       "timestamp": "2026-09-01T23:04:00.148167+00:00"
+    },
+    "inw-mesh": {
+      "id": "inw-mesh",
+      "pr_ref": "#1580",
+      "repo": "bambam1121/inw-mesh",
+      "repo_id": 1365718458,
+      "status": "proposed",
+      "timestamp": "2026-11-09T13:00:55.803979+00:00"
     },
     "io-framework-for-xr": {
       "expired_at": "2026-11-08T18:00:55.494967+00:00",
@@ -9372,15 +9388,12 @@
       "timestamp": "2026-11-07T08:00:55.079521+00:00"
     },
     "meshcoreterm": {
-      "expired_at": "2026-10-13T01:00:11.508432+00:00",
-      "expires": "2026-10-13T00:00:37.681486+00:00",
       "id": "meshcoreterm",
-      "pr_ref": null,
-      "reason": "already_catalogued: dabeani/meshcoreterm is already in the atlas",
+      "pr_ref": "#1580",
       "repo": "dabeani/meshcoreterm",
       "repo_id": 1135169816,
-      "status": "expired",
-      "timestamp": "2026-09-13T00:00:37.681486+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-09T13:00:55.803979+00:00"
     },
     "meshpunk": {
       "expired_at": "2026-10-09T16:00:11.685578+00:00",
@@ -9430,15 +9443,12 @@
       "timestamp": "2026-09-19T21:00:06.721536+00:00"
     },
     "microcast": {
-      "expired_at": "2026-10-09T16:00:11.685578+00:00",
-      "expires": "2026-10-09T15:00:32.435406+00:00",
       "id": "microcast",
-      "pr_ref": null,
-      "reason": "already_catalogued: digital-farms/microcast is already in the atlas",
+      "pr_ref": "#1580",
       "repo": "digital-farms/microcast",
       "repo_id": 1083391033,
-      "status": "expired",
-      "timestamp": "2026-09-09T15:00:32.435406+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-09T13:00:55.803979+00:00"
     },
     "microcom": {
       "expired_at": "2026-10-09T16:00:11.685578+00:00",
@@ -9990,14 +10000,14 @@
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
     "oshw-reterminal-series-e-d": {
-      "expires": "2026-11-09T13:00:11.869707+00:00",
+      "expires": "2026-12-09T13:00:55.803979+00:00",
       "id": "oshw-reterminal-series-e-d",
       "pr_ref": null,
-      "reason": "below_floor: 17 stars / 4 forks",
+      "reason": "below_floor: 18 stars / 3 forks",
       "repo": "seeed-projects/oshw-reterminal-series-e-d",
       "repo_id": 1249796155,
       "status": "rejected",
-      "timestamp": "2026-10-10T13:00:11.869707+00:00"
+      "timestamp": "2026-11-09T13:00:55.803979+00:00"
     },
     "oshw-reterminal-sticky": {
       "expired_at": "2026-09-20T06:00:25.457978+00:00",
@@ -13010,6 +13020,7 @@
     "aat440hz/rf433any-m5stickcplus": "rf433any-m5stickcplus",
     "aat440hz/rf433any-m5stickcplus2": "rf433any-m5stickcplus2",
     "aat440hz/usbhost-m5cardputer": "usbhost-m5cardputer",
+    "abdallahnatsheh/al-anqa-firmware": "al-anqa-firmware",
     "abenokobo/pd-camera-m5": "pd-camera-m5",
     "acidvegas/acid-drop": "acid-drop",
     "acpayers-alt/raising-hell-cardputer": "raising-hell-cardputer",
@@ -13080,6 +13091,7 @@
     "autoflowdanilo-it/blipputer": "blipputer",
     "awesomelionel/bus-aunty-mini": "bus-aunty-mini",
     "azure/iot-central-firmware": "iot-central-firmware",
+    "bambam1121/inw-mesh": "inw-mesh",
     "beakes/teenygpstestbed_c2": "teenygpstestbed-c2",
     "beanpiechen/micropythonshell": "micropythonshell",
     "ben7147/bruceextled.git": "bruceextled",
