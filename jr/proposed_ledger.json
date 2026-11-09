@@ -1320,7 +1320,7 @@
       "pr_ref": "#1500",
       "repo": "jay-jayismyname1/cardputer-adv-b-radar",
       "status": "proposed",
-      "timestamp": "2026-11-09T10:00:55.175045+00:00"
+      "timestamp": "2026-11-09T11:00:55.303145+00:00"
     },
     "cardputer-adv-basic": {
       "expired_at": "2026-11-08T01:00:55.198528+00:00",
@@ -9533,13 +9533,12 @@
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
     "misspoppyrabbit": {
-      "expired_at": "2026-11-08T18:00:55.494967+00:00",
-      "expires": "2026-11-08T16:00:11.685578+00:00",
+      "expires": "2026-12-09T11:00:55.303145+00:00",
       "id": "misspoppyrabbit",
       "pr_ref": null,
       "repo": "sebaspinto/misspoppyrabbit",
-      "status": "expired",
-      "timestamp": "2026-10-09T16:00:11.685578+00:00"
+      "status": "seen",
+      "timestamp": "2026-11-09T11:00:55.303145+00:00"
     },
     "mk75-watch": {
       "expired_at": "2026-10-09T12:00:11.265432+00:00",
