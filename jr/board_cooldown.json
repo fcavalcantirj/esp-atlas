@@ -399,6 +399,47 @@
       "reason": "doc-unreachable",
       "timestamp": "2026-11-08T23:00:55.209139+00:00"
     },
+    "lolin-c3-mini": {
+      "board": "lolin-c3-mini",
+      "expires": "2026-11-16T00:00:55.223346+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        },
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T00:00:55.223346+00:00"
+    },
+    "lolin-d32": {
+      "board": "lolin-d32",
+      "expires": "2026-11-16T00:00:55.223346+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T00:00:55.223346+00:00"
+    },
+    "lolin-d32-pro": {
+      "board": "lolin-d32-pro",
+      "expires": "2026-11-16T00:00:55.223346+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-09T00:00:55.223346+00:00"
+    },
     "lolin-s3": {
       "board": "lolin-s3",
       "expires": "2026-11-11T19:00:59.711024+00:00",
