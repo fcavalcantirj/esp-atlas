@@ -166,6 +166,37 @@
    "closed_on": "2026-11-08",
    "snapshot": "docs/demand/2026-11-07.json"
   },
+  "term512": {
+   "term": "term512",
+   "status": "closed",
+   "source": "gsc_query",
+   "first_seen": "2026-11-08",
+   "last_seen": "2026-11-08",
+   "window": {
+    "start": "2026-10-13",
+    "end": "2026-11-10"
+   },
+   "metrics": {
+    "impressions": 21,
+    "position": 7.2
+   },
+   "linked_work": [],
+   "history": [
+    {
+     "event": "closed",
+     "date": "2026-11-10",
+     "resolution": "abandoned",
+     "work": "a12a2a3be93aa793",
+     "reason": "term512 is TERM512, a CardputerAdv expansion kit (3D-printed CapTFT enclosure + 2.8in ILI9341 display + AMS1117 module, no MCU) for the already-catalogued area512 firmware, not a board: https://github.com/Prokuon/term512"
+    }
+   ],
+   "outcome": {
+    "status": "abandoned",
+    "reason": "term512 is TERM512, a CardputerAdv expansion kit (3D-printed CapTFT enclosure + 2.8in ILI9341 display + AMS1117 module, no MCU) for the already-catalogued area512 firmware, not a board: https://github.com/Prokuon/term512"
+   },
+   "closed_on": "2026-11-10",
+   "snapshot": "docs/demand/2026-11-10.json"
+  },
   "pam-0fb4ec9f138e2a6f989bcb03": {
    "term": "Arduino Nano ESP32",
    "source": "pam_feed",
