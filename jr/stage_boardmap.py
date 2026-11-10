@@ -38,6 +38,7 @@ from pathlib import Path
 import board_alias
 import derive
 import memory
+import pending_prs
 import tools
 import writers
 from budget import BudgetExceeded
@@ -145,22 +146,16 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
         out["failed"] = True
         out["notes"].append(f"read failed ({out['errors']} unavailable endpoint(s)), nothing persisted")
         return out
+    sig_path = fmd.parent / "signals.json"
+    old = _load_json(sig_path)
     if dry_run:
-        out["would_write"] = [f"{b}__{fid}" for b in res["boards"]
-                              if not (root / "data" / "recipes" / f"{b}__{fid}" / "recipe.md").exists()]
-        return out
+        return _would_map(out, fid, fm, res, root=root, board_soc=board_soc, fmd=fmd, sig_path=sig_path, old=old)
     w = writers.write_recipes(fid, fm.get("url", ""), res, root=root, today=today, board_soc=board_soc)
     out.update(written=w["written"], existing=w["existing"], refused=w["refused"])
     out["paths"] += w["paths"]
     # socs: widen to the cited union, one source per page that proves an added chip
-    before = set(fm.get("socs") or [])
-    new_socs = sorted(set(w["socs"]) - before)
+    new_socs, urls = _socs_to_widen(fm, w["socs"], w["refused"], res, board_soc)
     if new_socs:
-        refused = {b for b, _ in w["refused"]}
-        urls: list[str] = []
-        for soc in new_socs:
-            urls += _soc_proof_urls(soc, res, refused, board_soc)
-        urls = list(dict.fromkeys(urls))
         if not urls:
             out["notes"].append(f"socs not widened (+{','.join(new_socs)}): no citable signal")
         else:
@@ -171,11 +166,9 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
             except ValueError as e:
                 out["notes"].append(f"socs not widened: {str(e)[:160]}")
     # signals.json: the evidence the G1 audit reads offline
-    sig_path = fmd.parent / "signals.json"
-    old = _load_json(sig_path)
     old_boards = set(((old or {}).get("resolved") or {}).get("boards") or [])
     new_boards = set(res["boards"])
-    if out["errors"] and old and not new_boards >= old_boards:
+    if _keeps_old_signals(out["errors"], old, new_boards):
         out["notes"].append(f"degraded read ({out['errors']} unavailable endpoint(s), "
                             f"{len(old_boards)} -> {len(new_boards)} boards): previous signals kept")
     else:
@@ -184,6 +177,39 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
         sig_path.write_text(json.dumps(payload, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
         out["paths"].append(str(sig_path.relative_to(root)))
     return out
+
+
+def _socs_to_widen(fm: dict, socs: list, refused_pairs: list, res: dict, board_soc) -> tuple[list, list]:
+    """(the chips the firmware would gain, the pages that prove them) — empty urls: not citable."""
+    new_socs = sorted(set(socs) - set(fm.get("socs") or []))
+    refused = {b for b, _ in refused_pairs}
+    urls: list[str] = []
+    for soc in new_socs:
+        urls += _soc_proof_urls(soc, res, refused, board_soc)
+    return new_socs, list(dict.fromkeys(urls))
+
+
+def _would_map(out: dict, fid: str, fm: dict, res: dict, *, root: Path, board_soc, fmd: Path,
+               sig_path: Path, old) -> dict:
+    """Dry-run: what map_one would write — new recipes, the socs widening, signals.json — as
+    out["would_write"] (recipe ids) and out["would_write_paths"] ({"path", "field", "value"})."""
+    plan = writers.plan_recipes(fid, res, root=root, board_soc=board_soc)
+    out.update(existing=plan["existing"], refused=plan["refused"])
+    out["would_write"] = [rid for rid, *_ in plan["new"]]
+    writes = [{"path": f"data/recipes/{rid}/recipe.md", "field": "*", "value": rid} for rid in out["would_write"]]
+    new_socs, urls = _socs_to_widen(fm, plan["socs"], plan["refused"], res, board_soc)
+    if new_socs and urls:
+        writes.append({"path": str(fmd.relative_to(root)), "field": "socs", "value": new_socs})
+    if not _keeps_old_signals(out["errors"], old, res["boards"]):
+        writes.append({"path": str(sig_path.relative_to(root)), "field": "*", "value": None})
+    out["would_write_paths"] = writes
+    return out
+
+
+def _keeps_old_signals(errors: int, old: dict | None, new_boards) -> bool:
+    """A degraded read (some endpoints failed) that resolved fewer boards keeps the old signals.json."""
+    old_boards = set(((old or {}).get("resolved") or {}).get("boards") or [])
+    return bool(errors and old and not set(new_boards) >= old_boards)
 
 
 def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int = FRESH_DAYS,
@@ -197,20 +223,37 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
     api = api or (lambda path: json.loads(ctx.gh("api", path).stdout))    # ctx.gh is budget-wrapped
     raw = ctx.budget.wrap(raw or derive.default_raw, "raw")
     led = memory.load(ctx.ledger_path)   # read-only: the open-PR skip reads the hydrated ledger (tick.hydrate_open_pr_ledger)
-    paths, lines, admitted, rejects, needs_human, items = [], [], 0, {}, False, []
+    pending = pending_prs.of(ctx)
+    paths, lines, admitted, rejects, needs_human, items, would_write = [], [], 0, {}, False, [], []
+
+    def reject(key):
+        rejects[key] = rejects.get(key, 0) + 1
+
     if only:
-        chosen = []
+        candidates = []
         for fid in only:
             fmd = ctx.root / "data" / "firmware" / fid / "firmware.md"
             if not fmd.exists() or not owner_repo_of(tools._frontmatter(fmd).get("url", "")):
                 lines.append(f"{fid}: not a catalogued firmware with a GitHub url, skipped")
                 continue
-            chosen.append(fid)
+            candidates.append(fid)
     else:
-        chosen = select_firmware(ctx.root, budget, now, fresh_days)
-
-    def reject(key):
-        rejects[key] = rejects.get(key, 0) + 1
+        candidates = select_firmware(ctx.root, budget + len(pending), now, fresh_days)
+    # A firmware an open (or vetoed) Jr tick PR changes — its record or ANY of its recipes, read from
+    # the PR's own file list (jr/pending_prs.py) — is never mapped again, onto the same boards or new
+    # ones: origin/main still shows it under-mapped, so the selector re-picks it every hour, and its
+    # ledger record cannot say so when it is already catalogued (`merged`; #1500 … #1511). Skipped
+    # before the budget: the slot goes to the next firmware.
+    chosen = []
+    for fid in candidates:
+        if not only and len(chosen) >= budget:
+            break
+        hold = pending.hold(fid)
+        if hold:
+            reject(hold.reason)
+            lines.append(f"{fid}: skip {hold.reason} ({hold.note})")
+            continue
+        chosen.append(fid)
 
     for fid in chosen:
         # An id already sitting in an OPEN Jr PR — marked `proposed` in the worktree ledger at tick
@@ -252,6 +295,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
             reject("chip_clash" if "disagrees" in why else "no_soc")
         extra = "".join(f"; {n}" for n in r["notes"] if n.startswith(("socs not widened", "degraded read")))
         if ctx.dry_run:
+            would_write += r.get("would_write_paths", [])
             lines.append(f"{fid}: {r['signals']} signals, would write {len(r.get('would_write', []))} recipe(s), "
                          f"{r['unresolved']} unresolved{extra}")
         else:
@@ -260,4 +304,4 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
                          + (f", socs +{','.join(r['socs_added'])}" if r["socs_added"] else "") + extra)
     summary = "; ".join(lines) if lines else "no firmware selected"
     return tick.StageResult("boardmap", paths=paths, summary=summary, admitted=admitted, rejects=rejects,
-                            needs_human=needs_human, items=items)
+                            needs_human=needs_human, items=items, would_write=would_write)

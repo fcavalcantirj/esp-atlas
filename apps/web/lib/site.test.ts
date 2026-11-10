@@ -26,3 +26,37 @@ test("round-trips through JSON.stringify/parse unchanged", () => {
   const parsed = JSON.parse(JSON.stringify(action));
   assert.deepEqual(parsed, action);
 });
+
+test("live GA property is enabled only for production deployment", async () => {
+  const importFresh = (suffix: string) => import("./site.ts?" + suffix);
+  const original = {
+    deployment: process.env.VERCEL_ENV,
+    mode: process.env.NEXT_PUBLIC_GA_ENABLED,
+    id: process.env.NEXT_PUBLIC_GA_ID,
+  };
+  try {
+    delete process.env.NEXT_PUBLIC_GA_ENABLED;
+    delete process.env.NEXT_PUBLIC_GA_ID;
+    process.env.VERCEL_ENV = "preview";
+    assert.equal((await importFresh("preview")).GA_ID, undefined);
+    process.env.VERCEL_ENV = "production";
+    assert.equal((await importFresh("production")).GA_ID, "G-66L7SDXKJZ");
+    process.env.NEXT_PUBLIC_GA_ENABLED = "0";
+    assert.equal((await importFresh("disabled")).GA_ID, undefined);
+    process.env.VERCEL_ENV = "preview";
+    process.env.NEXT_PUBLIC_GA_ENABLED = "1";
+    process.env.NEXT_PUBLIC_GA_ID = "G-66L7SDXKJZ";
+    assert.equal((await importFresh("preview-live-id")).GA_ID, undefined);
+    process.env.NEXT_PUBLIC_GA_ID = "G-TESTATLAS1";
+    assert.equal((await importFresh("preview-test-id")).GA_ID, "G-TESTATLAS1");
+  } finally {
+    for (const [key, value] of [
+      ["VERCEL_ENV", original.deployment],
+      ["NEXT_PUBLIC_GA_ENABLED", original.mode],
+      ["NEXT_PUBLIC_GA_ID", original.id],
+    ] as const) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});

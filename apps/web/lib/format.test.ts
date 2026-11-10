@@ -31,12 +31,12 @@ test("boardsLabel is null for zero/missing boards, never '0 boards'", () => {
 });
 
 test("boardsLabel singularizes exactly 1 board", () => {
-  assert.equal(boardsLabel(1), "Runs on 1 board");
+  assert.equal(boardsLabel(1), "Recipes for 1 board");
 });
 
 test("boardsLabel pluralizes 2+ boards", () => {
-  assert.equal(boardsLabel(2), "Runs on 2 boards");
-  assert.equal(boardsLabel(12), "Runs on 12 boards");
+  assert.equal(boardsLabel(2), "Recipes for 2 boards");
+  assert.equal(boardsLabel(12), "Recipes for 12 boards");
 });
 
 // firmwareMetaTitle()/firmwareMetaDescription() are shared by the firmware
@@ -44,10 +44,10 @@ test("boardsLabel pluralizes 2+ boards", () => {
 // (which pulls in the rest of the app's "@/" alias graph and can't run under
 // plain `node --test` — see faq-jsonld.test.ts) — this is the testable seam
 // for both call sites. SPEC-serp-ctr.md: titles <=60 chars, descriptions
-// <=155 chars, snippet leads with the boards/socs a firmware is verified to
-// run on (the click-through lever), never fabricated.
+// <=155 chars, snippet leads with the boards a firmware has recipes for and
+// the socs it targets (the click-through lever), never fabricated.
 
-test("firmware title leads with the name and states the boards + socs it's verified for", () => {
+test("firmware title leads with the name and states its recipe board count + socs", () => {
   const title = firmwareMetaTitle({ name: "ESPHome", socs: ["esp32", "esp32-s3"], boards: 12 });
   assert.equal(title, "ESPHome — flash guide for ESP32/ESP32-S3, 12 boards");
   assert.ok(title.length <= TITLE_MAX);
@@ -183,11 +183,11 @@ test("falls back to the category/socs/boards template when there is no summary",
     boards: 12,
     summary: undefined,
   });
-  assert.equal(description, "ESPHome: Home firmware for ESP32, ESP32-S3. Verified to flash on 12 boards.");
+  assert.equal(description, "ESPHome: Home firmware for ESP32, ESP32-S3. Recipes for 12 boards, each labelled with its trust tier.");
   assert.ok(description.length <= DESCRIPTION_MAX);
 });
 
-test("template omits the boards clause when there is no verified board count", () => {
+test("template omits the boards clause when there is no recipe board count", () => {
   const description = firmwareMetaDescription({
     name: "Bruce",
     category: "pentest",
@@ -245,7 +245,7 @@ test("part title falls back to a bare type when the record cites no headline spe
   assert.equal(title, "Generic Module — Module specs");
 });
 
-test("part title shortens a long name at a word boundary instead of dropping the spec", () => {
+test("part title preserves a long board name and shortens generic specs", () => {
   const title = partMetaTitle({
     name: "M5Stack Core2 v1.1 with AWS IoT EduKit Bundle and Extra Long Product Name",
     type: "board",
@@ -256,8 +256,8 @@ test("part title shortens a long name at a word boundary instead of dropping the
     usb_native: false,
     form_factor: null,
   });
-  assert.ok(title.length <= TITLE_MAX, `expected <=${TITLE_MAX} chars, got ${title.length}: ${title}`);
-  assert.ok(title.endsWith("… — Wi-Fi 4 + BLE 4.2 Board specs"));
+  assert.ok(title.startsWith("M5Stack Core2 v1.1 with AWS IoT EduKit Bundle and Extra Long Product Name"));
+  assert.ok(title.endsWith(" — Board specs"));
 });
 
 // pinout in the title: search-intent word ("lolin s2 mini pinout") that Google
@@ -300,7 +300,7 @@ test("part title is unchanged and omits 'pinout' when the part has no pinout dia
   assert.equal(title, partMetaTitle(soc));
 });
 
-test("a long name plus pinout still fits TITLE_MAX (data/boards/m5stack/m5stack-core2/board.md images.pinout)", () => {
+test("a long name plus pinout preserves exact identity (data/boards/m5stack/m5stack-core2/board.md images.pinout)", () => {
   const title = partMetaTitle(
     {
       name: "Core2 v1.1 with AWS IoT EduKit Bundle and Extra Long Product Name",
@@ -314,8 +314,36 @@ test("a long name plus pinout still fits TITLE_MAX (data/boards/m5stack/m5stack-
     },
     true,
   );
-  assert.ok(title.length <= TITLE_MAX, `expected <=${TITLE_MAX} chars, got ${title.length}: ${title}`);
+  assert.ok(title.startsWith("Core2 v1.1 with AWS IoT EduKit Bundle and Extra Long Product Name"));
   assert.ok(title.includes("pinout"), `expected title to include "pinout": ${title}`);
+});
+
+test("all 17 board names in the November audit collision groups remain distinct", () => {
+  const names = [
+    "Adafruit ESP32-S3 Feather (4MB Flash 2MB PSRAM)",
+    "Adafruit ESP32-S3 Feather (8MB Flash No PSRAM)",
+    "Adafruit ESP32-S3 Reverse TFT Feather (4MB Flash 2MB PSRAM)",
+    "Adafruit QT Py ESP32-C3 WiFi Dev Board with STEMMA QT",
+    "Adafruit QT Py ESP32-S3 WiFi Dev Board with STEMMA QT (8 MB Flash No PSRAM)",
+    "Adafruit QT Py ESP32-S3 WiFi Dev Board with STEMMA QT (8MB Flash No PSRAM)",
+    "Adafruit Sparkle Motion",
+    "Adafruit Sparkle Motion Mini",
+    "Adafruit Sparkle Motion Stick",
+    "DFRobot FireBeetle 2 ESP32-E",
+    "DFRobot FireBeetle ESP32",
+    "ESP32-S3 Display FNK0104A",
+    "ESP32-S3 Display FNK0104B",
+    "ESP32-S3 Display FNK0104S",
+    "Seeed Studio XIAO ESP32C3",
+    "Seeed Studio XIAO ESP32S3",
+    "Seeed Studio XIAO ESP32S3 Sense",
+  ];
+  const titles = names.map((name) => partMetaTitle({
+    name, type: "board", wifi_standard: "wifi-4", ble_version: "5", ieee802154: false,
+    ieee802154_protocols: null, usb_native: false, form_factor: null,
+  }, true));
+  assert.equal(new Set(titles).size, 17);
+  titles.forEach((title, i) => assert.ok(title.startsWith(names[i]), title));
 });
 
 const NO_SPEC_PART = {
@@ -396,25 +424,42 @@ test("popularityGlance formats both metrics, full numbers in the aria-label", ()
   assert.deepEqual(glance, {
     stars: "94.6k",
     forks: "12.4k",
-    ariaLabel: "94,567 GitHub stars, 12,411 forks",
+    ariaLabel: "94,567 GitHub stars, 12,411 forks. GitHub repo · date not recorded",
+    title: "94,567 GitHub stars, 12,411 forks. GitHub repo · date not recorded",
+    scope: "GitHub repo · date not recorded",
   });
 });
 
-test("popularityGlance puts as_of in a title tooltip, never inline", () => {
+test("popularityGlance labels legacy dates as historical snapshots", () => {
   const glance = popularityGlance({ stars: 94567, forks: 12411, as_of: "2026-09-14" });
-  assert.equal(glance?.title, "stars as of 2026-09-14");
+  assert.equal(glance?.scope, "GitHub repo · historical snapshot 2026-09-14");
 });
 
 test("popularityGlance omits a null/absent metric silently, no zero", () => {
   const starsOnly = popularityGlance({ stars: 42, forks: null });
-  assert.deepEqual(starsOnly, { stars: "42", ariaLabel: "42 GitHub stars" });
+  assert.equal(starsOnly?.stars, "42");
+  assert.equal(starsOnly?.forks, undefined);
 
   const forksOnly = popularityGlance({ stars: undefined, forks: 7 });
-  assert.deepEqual(forksOnly, { forks: "7", ariaLabel: "7 forks" });
+  assert.equal(forksOnly?.forks, "7");
+  assert.equal(forksOnly?.stars, undefined);
 });
 
 test("popularityGlance is null when there is nothing to show", () => {
   assert.equal(popularityGlance(null), null);
   assert.equal(popularityGlance(undefined), null);
   assert.equal(popularityGlance({ stars: null, forks: null }), null);
+});
+
+
+test("GitHub-specific date takes precedence over the legacy snapshot", () => {
+  const glance = popularityGlance({ stars: 0, forks: 7, as_of: "2026-09-14", github_as_of: "2026-11-06T17:00:00Z" });
+  assert.equal(glance?.scope, "GitHub repo · as of 2026-11-06 17:00 UTC");
+  assert.equal(glance?.stars, "0");
+  assert.ok(glance?.ariaLabel.includes("0 GitHub stars, 7 forks"));
+});
+
+test("GitHub timestamps display in UTC regardless of their encoded offset", () => {
+  assert.equal(popularityGlance({ stars: 7, github_as_of: "2026-11-06T15:30:20-03:00" })?.scope,
+    "GitHub repo · as of 2026-11-06 18:30 UTC");
 });

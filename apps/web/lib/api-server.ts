@@ -21,6 +21,15 @@ const REVALIDATE_SECONDS = 3600;
 // NOT the fix: it was tried (0c8ce8c) and reverted (9a3a614) because it sent every render to a
 // cold Python function that rebuilds its SQLite index at import.
 export const CATALOG_TAG = "catalog";
+export const POPULARITY_TAG = "popularity";
+
+/** Metrics-bearing responses keep catalog eviction and a shorter independent TTL. */
+export function catalogCachePolicy(path: string): { revalidate: number; tags: string[] } {
+  const pathname = path.split("?")[0];
+  return pathname === "/examples" || pathname === "/firmware" || pathname.startsWith("/firmware/")
+    ? { revalidate: 240, tags: [CATALOG_TAG, POPULARITY_TAG] }
+    : { revalidate: REVALIDATE_SECONDS, tags: [CATALOG_TAG] };
+}
 // The API is a serverless Python function that boots an interpreter, imports
 // FastAPI/pydantic/jsonschema and builds the SQLite index before it can answer.
 // Warm, that is well under a second; cold, it is seconds -- and a fresh deploy
@@ -45,14 +54,27 @@ export function serverApiBase(): string {
   return "http://localhost:8000";
 }
 
+/** Preview deployments are protected from their own server-side HTTP fetches.
+ * Vercel injects this system secret only when automation bypass is configured.
+ * Never forward it to API_INTERNAL_URL, NEXT_PUBLIC_API_URL, or another host. */
+export function serverApiHeaders(base = serverApiBase()): HeadersInit | undefined {
+  const deployment = process.env.VERCEL_URL;
+  const secret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+  if (process.env.VERCEL_ENV !== "preview" || !deployment || !secret) return undefined;
+  if (base !== `https://${deployment}/api`) return undefined;
+  return { "x-vercel-protection-bypass": secret };
+}
+
 export type ServerFetchResult<T> =
   | { status: "ok"; data: T }
   | { status: "not_found" }
   | { status: "error"; message: string };
 
 async function attempt<T>(path: string, timeoutMs: number): Promise<ServerFetchResult<T>> {
-  const res = await fetch(`${serverApiBase()}${path}`, {
-    next: { revalidate: REVALIDATE_SECONDS, tags: [CATALOG_TAG] },
+  const base = serverApiBase();
+  const res = await fetch(`${base}${path}`, {
+    next: catalogCachePolicy(path),
+    headers: serverApiHeaders(base),
     signal: AbortSignal.timeout(timeoutMs),
   });
   if (res.status === 404) return { status: "not_found" };
@@ -78,8 +100,12 @@ export function fetchPartDetail(id: string): Promise<ServerFetchResult<PartDetai
   return serverFetch<PartDetail>(`/parts/${encodeURIComponent(id)}`);
 }
 
+export function fetchAllPartsResult(): Promise<ServerFetchResult<{ results: PartRecord[] }>> {
+  return serverFetch<{ results: PartRecord[] }>(`/parts`);
+}
+
 export async function fetchAllParts(): Promise<PartRecord[]> {
-  const result = await serverFetch<{ results: PartRecord[] }>(`/parts`);
+  const result = await fetchAllPartsResult();
   return result.status === "ok" ? result.data.results : [];
 }
 

@@ -30,6 +30,10 @@
 | `SPEC-hosting-lane.md` | The **server-capable memory lane**: `psram_min`/`flash_min` filters + oracle invariants. (UI naming/placement per §3 here.) |
 | `SPEC-pin-planner.md` | **Pin Planner + Power Budget** (the crown jewel): `board.io.gpio_pins` structured pin set; deterministic `/plan` GPIO assignment (free = gpio_pins − reserved_pins), no-fit honesty, power verdict from `power_out`+`drive`. |
 | `SPEC-io-power.md` | **I/O exposure & power delivery**: board `io` (exposed/free GPIO count, `power_out`) + soc `drive` (per-pad current); build-guide `io_heavy` ranking + load-aware honesty note. |
+| `SPEC-demand-research-queue.md` | **Zero-result site-search research queue**: `docs/demand/research-queue.json`, term dedupe + rate limit, the offline missing_content / alias_typo / search_defect / unclear classifier, the candidate lifecycle. Never writes `data/**`. |
+| `SPEC-demand-work-consumer.md` | **Demand to executed work**: bounded/deduplicated reservations, automatic consumption on existing demand/checkup cadences, source-validation receipts, reviewed proposals and defect-specific outcome verification. No new cron; the miner still never writes `data/**`. |
+| `SPEC-pam-discovery.md` | **PAM discovery leads**: bounded conditional feed reads, minimal unverified metadata/provenance, exact identity hints, last-good atomic persistence, the existing daily demand CLI hook and typed feed intake under the shared work budget/recovery policy. No third-party fact import, new schedule or catalog authority. Publication still follows primary-source and consumer review gates. |
+| `SPEC-jr-review-routing.md` | **Jr risk-based review routing**: the `jr-review` classifier (review vs auto), publish's label + withheld auto-merge, tick triage that never aborts on a labelled PR, the open-review cap. |
 
 ## 2. Canonical glossary (fixed names — use these, nothing else)
 - **Board Wizard** — the deterministic board-picker (`SPEC.md`/`INTERFACE-SPEC.md`).

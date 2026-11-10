@@ -6,9 +6,11 @@ url: https://github.com/alutov/ESP32-R4sGate-for-Redmond
 category: multi
 maintainer: alutov
 popularity:
-  stars: 258
+  stars: 261
   forks: 21
-  as_of: '2026-09-20'
+  as_of: '2026-11-07'
+  github_repo_id: 278231913
+  github_as_of: '2026-11-07T11:00:55Z'
 socs:
 - esp32
 sources:
@@ -21,6 +23,18 @@ sources:
 - field: summary
   url: https://github.com/alutov/ESP32-R4sGate-for-Redmond
   verified: '2026-09-20'
+- field: popularity.forks
+  url: https://github.com/alutov/ESP32-R4sGate-for-Redmond
+  verified: '2026-11-07'
+- field: popularity.github_as_of
+  url: https://github.com/alutov/ESP32-R4sGate-for-Redmond
+  verified: '2026-11-07'
+- field: popularity.github_repo_id
+  url: https://github.com/alutov/ESP32-R4sGate-for-Redmond
+  verified: '2026-11-07'
+- field: popularity.stars
+  url: https://github.com/alutov/ESP32-R4sGate-for-Redmond
+  verified: '2026-11-07'
 summary: "The ESP32\u2011R4sGate firmware turns an ESP32/ESP32\u2011C3/ESP32\u2011\
   S3 into a BLE gateway that connects Redmond, Xiaomi and other smart appliances to\
   \ home\u2011automation platforms (Home Assistant, OpenHab, ioBroker, etc.) via MQTT,\

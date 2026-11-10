@@ -9,13 +9,17 @@ import urllib.parse
 from datetime import timedelta
 from types import SimpleNamespace
 
+import pytest
+
 import launcher_resolve
 import memory
 import stage_admit
 import tick
 import tools
 from budget import Budget
-from test_stage_admit import NOW, _meta, root  # noqa: F401 — `root` is the shared tmp-tree fixture
+from test_stage_admit import DEVICE_TREE, NOW, _meta, root  # noqa: F401 — `root` is the shared tmp-tree fixture
+
+pytestmark = pytest.mark.usefixtures("esp_sketch_raw")
 
 IBUTTON = {"fid": "ec0b5f11b7a6a85445a1d4dc5ad65508", "name": "IButton M5Stick C Plus2",
            "author": "geo_tp", "github": "https://github.com/geo-tp", "category": "stickc",
@@ -50,6 +54,8 @@ class FakeGh:
                                                                      "incomplete_results": False,
                                                                      "items": items}), stderr="")
         doc = {k.lower(): v for k, v in self.metas.items()}.get(a[1].lower())
+        if doc is None and "/git/trees/" in a[1]:
+            doc = DEVICE_TREE              # the device-build evidence gate passes: not under test here
         if doc is None:
             return SimpleNamespace(returncode=1, stdout="", stderr="404 not found")
         return SimpleNamespace(returncode=0, stdout=json.dumps(doc), stderr="")
@@ -223,3 +229,23 @@ def test_resolved_and_admitted_entry_keeps_the_seen_ttl(root, monkeypatch):
     stage_admit.run(_ctx(root, fake), budget=3)
     note = _ledger(root)["by_id"]["launcher-ec0b5f11b7a6a85445a1d4dc5ad65508"]
     assert note["expires"] == (NOW + timedelta(days=memory.SEEN_TTL_DAYS)).isoformat()
+
+
+def test_a_resolved_entry_whose_slug_is_held_under_another_id_persists_nothing(root, monkeypatch):
+    """Identity ambiguity is no decision: the resolved entry's own note is not written either, so the
+    entry is searched again next tick instead of hiding behind a 30-day `resolved:` note."""
+    from test_stage_admit import _held_as
+    _catalog(monkeypatch, [IBUTTON])
+    fake = FakeGh(
+        metas={"repos/geo-tp/M5Stick-IButton": _meta("geo-tp/M5Stick-IButton", stars=60, forks=5, rid=5001)},
+        searches={"ibutton user:geo-tp": [_item("geo-tp/M5Stick-IButton")]})
+    ctx = _ctx(root, fake)
+    ctx.pending = _held_as("m5stick-ibutton", "other/m5stick-ibutton", 4242)
+    res = stage_admit.run(ctx, budget=3)
+    assert res.admitted == 0 and res.rejects == {"identity_ambiguous": 1}, res.summary
+    assert _ledger(root)["by_id"] == {}, "an ambiguous candidate was remembered"
+    again = FakeGh(metas=fake.metas, searches=fake.searches)
+    ctx = _ctx(root, again)
+    ctx.pending = _held_as("m5stick-ibutton", "other/m5stick-ibutton", 4242)
+    stage_admit.run(ctx, budget=3)
+    assert len(again.searched()) == 1                      # re-checked, not hidden behind a note

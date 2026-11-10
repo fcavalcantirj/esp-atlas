@@ -5,7 +5,6 @@ REAL scripts/validate.py over the real (currently-clean) dataset — that's a lo
 not network, and is what makes "passes on the C5 reference" a genuine integration check.
 """
 import json
-import shutil
 import sys
 from pathlib import Path
 
@@ -19,26 +18,21 @@ import tools
 REPO = tools.REPO
 BOARD_SCHEMA = json.loads((REPO / "schema/board.schema.json").read_text())
 
-TEST_BRAND = "zzz-test-fixture-vendor"    # real brand folder under data/boards/, always cleaned up
+TEST_BRAND = "zzz-test-fixture-vendor"    # throwaway brand folder under tmp_atlas's data/boards/
 
 
 @pytest.fixture
-def real_board_dir():
-    """author_board() computes its return path via .relative_to(REPO), so it must write under
-    the REAL data/boards/ tree (BOARDS_DIR can't be monkeypatched to an outside tmp_path for
-    these tests). Cleans up the throwaway brand dir after every test, pass or fail."""
-    yield REPO / "data/boards" / TEST_BRAND
-    shutil.rmtree(REPO / "data/boards" / TEST_BRAND, ignore_errors=True)
+def tmp_board_dir(tmp_atlas):
+    """The throwaway brand dir under tmp_atlas's copy of data/boards/ (author_board() computes its
+    return path via .relative_to(tools.REPO), which tmp_atlas points at the copy)."""
+    return tmp_atlas / "data/boards" / TEST_BRAND
 
 
 @pytest.fixture
-def real_metro_board_dir():
+def tmp_metro_board_dir(tmp_atlas):
     """The replay test's payload uses the real `adafruit` brand (matching the exact live-failure
-    payload) rather than TEST_BRAND, so it needs its own narrow cleanup: only the one throwaway
-    board_id dir under the real adafruit/ brand, never the whole (real, populated) brand dir."""
-    d = REPO / "data/boards/adafruit/metro-esp32-s2"
-    yield d
-    shutil.rmtree(d, ignore_errors=True)
+    payload) rather than TEST_BRAND: its board_id dir under tmp_atlas's copy of adafruit/."""
+    return tmp_atlas / "data/boards/adafruit/metro-esp32-s2"
 
 
 class _FakeHeadResponse:
@@ -245,7 +239,7 @@ def _c5_like_sources():
     ]
 
 
-def test_author_board_writes_schema_valid_frontmatter(real_board_dir):
+def test_author_board_writes_schema_valid_frontmatter(tmp_board_dir):
     result = tools.author_board(
         "test-devkit-1", TEST_BRAND, "Test-DevKit-1",
         fields={"form_factor": "devkit", "usb": {"connector": "usb-c"}, "extras": ["rgb-led"],
@@ -258,8 +252,8 @@ def test_author_board_writes_schema_valid_frontmatter(real_board_dir):
 
     assert "error" not in result
     assert result["board_id"] == "test-devkit-1"
-    path = REPO / result["path"]
-    assert path == real_board_dir / "test-devkit-1" / "board.md"
+    path = tools.REPO / result["path"]
+    assert path == tmp_board_dir / "test-devkit-1" / "board.md"
 
     fm = yaml.safe_load(path.read_text().split("---", 2)[1])
     assert fm["id"] == "test-devkit-1"
@@ -268,7 +262,7 @@ def test_author_board_writes_schema_valid_frontmatter(real_board_dir):
     jsonschema.validate(fm, BOARD_SCHEMA)          # the authoritative contract itself
 
 
-def test_author_board_only_writes_provided_fields(real_board_dir):
+def test_author_board_only_writes_provided_fields(tmp_board_dir):
     result = tools.author_board(
         "bare-board", TEST_BRAND, "Bare Board",
         fields={"form_factor": "devkit"},
@@ -277,12 +271,12 @@ def test_author_board_only_writes_provided_fields(real_board_dir):
         soc="esp32-c5",
     )
 
-    fm = yaml.safe_load((REPO / result["path"]).read_text().split("---", 2)[1])
+    fm = yaml.safe_load((tools.REPO / result["path"]).read_text().split("---", 2)[1])
     for absent in ("display", "power", "io", "extras", "psram_mb", "flash_mb", "dimensions_mm"):
         assert absent not in fm                   # cite-or-omit: never write a field not given
 
 
-def test_author_board_rejects_both_soc_and_module(real_board_dir):
+def test_author_board_rejects_both_soc_and_module(tmp_board_dir):
     result = tools.author_board(
         "bad-board", TEST_BRAND, "Bad Board", fields={},
         sources=[{"field": "*", "url": "https://example.com", "verified": "2026-08-28"}],
@@ -290,10 +284,10 @@ def test_author_board_rejects_both_soc_and_module(real_board_dir):
     )
 
     assert "error" in result
-    assert not (real_board_dir / "bad-board").exists()
+    assert not (tmp_board_dir / "bad-board").exists()
 
 
-def test_author_board_rejects_neither_soc_nor_module(real_board_dir):
+def test_author_board_rejects_neither_soc_nor_module(tmp_board_dir):
     result = tools.author_board(
         "bad-board-2", TEST_BRAND, "Bad Board 2", fields={},
         sources=[{"field": "*", "url": "https://example.com", "verified": "2026-08-28"}],
@@ -303,7 +297,7 @@ def test_author_board_rejects_neither_soc_nor_module(real_board_dir):
     assert "error" in result
 
 
-def test_author_board_rejects_missing_source(real_board_dir):
+def test_author_board_rejects_missing_source(tmp_board_dir):
     result = tools.author_board(
         "uncited-board", TEST_BRAND, "Uncited Board",
         fields={"display": "1.9in 170x320 IPS"},        # set...
@@ -313,10 +307,10 @@ def test_author_board_rejects_missing_source(real_board_dir):
 
     assert "error" in result
     assert "display" in result["error"]
-    assert not (real_board_dir / "uncited-board").exists()
+    assert not (tmp_board_dir / "uncited-board").exists()
 
 
-def test_author_board_drops_unknown_field_silently(real_board_dir):
+def test_author_board_drops_unknown_field_silently(tmp_board_dir):
     """A weak model's unknown field key must never crash/reject the call — it's silently
     omitted, not a schema property author_board raises or errors on (SPEC: cite-or-omit applies
     to what IS written; junk keys just never make it into the record)."""
@@ -328,12 +322,12 @@ def test_author_board_drops_unknown_field_silently(real_board_dir):
     )
 
     assert "error" not in result, result
-    fm = yaml.safe_load((REPO / result["path"]).read_text().split("---", 2)[1])
+    fm = yaml.safe_load((tools.REPO / result["path"]).read_text().split("---", 2)[1])
     assert "clock_speed_ghz" not in fm
     assert fm["form_factor"] == "devkit"
 
 
-def test_author_board_coerces_bare_usb_string(real_board_dir):
+def test_author_board_coerces_bare_usb_string(tmp_board_dir):
     result = tools.author_board(
         "usb-string-board", TEST_BRAND, "USB String Board",
         fields={"usb": "USB-C"},
@@ -342,12 +336,12 @@ def test_author_board_coerces_bare_usb_string(real_board_dir):
     )
 
     assert "error" not in result, result
-    fm = yaml.safe_load((REPO / result["path"]).read_text().split("---", 2)[1])
+    fm = yaml.safe_load((tools.REPO / result["path"]).read_text().split("---", 2)[1])
     assert fm["usb"] == {"connector": "usb-c"}
     jsonschema.validate(fm, BOARD_SCHEMA)
 
 
-def test_author_board_drops_unrecognized_usb_string(real_board_dir):
+def test_author_board_drops_unrecognized_usb_string(tmp_board_dir):
     result = tools.author_board(
         "usb-junk-board", TEST_BRAND, "USB Junk Board",
         fields={"usb": "some-nonsense-connector", "form_factor": "devkit"},
@@ -356,11 +350,11 @@ def test_author_board_drops_unrecognized_usb_string(real_board_dir):
     )
 
     assert "error" not in result, result
-    fm = yaml.safe_load((REPO / result["path"]).read_text().split("---", 2)[1])
+    fm = yaml.safe_load((tools.REPO / result["path"]).read_text().split("---", 2)[1])
     assert "usb" not in fm
 
 
-def test_author_board_normalizes_bool_verified_when_today_given(real_board_dir):
+def test_author_board_normalizes_bool_verified_when_today_given(tmp_board_dir):
     """A weak model sometimes emits a bare bool `verified` instead of a date. When the caller
     supplies `today`, that bool (or a missing verified) is normalized to a real ISO date."""
     result = tools.author_board(
@@ -372,11 +366,11 @@ def test_author_board_normalizes_bool_verified_when_today_given(real_board_dir):
     )
 
     assert "error" not in result, result
-    fm = yaml.safe_load((REPO / result["path"]).read_text().split("---", 2)[1])
+    fm = yaml.safe_load((tools.REPO / result["path"]).read_text().split("---", 2)[1])
     assert fm["sources"][0]["verified"] == "2026-08-28"
 
 
-def test_author_board_leaves_verified_alone_when_today_is_none(real_board_dir):
+def test_author_board_leaves_verified_alone_when_today_is_none(tmp_board_dir):
     """Without `today`, a bool `verified` is left as-is (still truthy, still accepted) rather
     than silently rewritten — no datetime call happens at all."""
     result = tools.author_board(
@@ -387,11 +381,11 @@ def test_author_board_leaves_verified_alone_when_today_is_none(real_board_dir):
     )
 
     assert "error" not in result, result
-    fm = yaml.safe_load((REPO / result["path"]).read_text().split("---", 2)[1])
+    fm = yaml.safe_load((tools.REPO / result["path"]).read_text().split("---", 2)[1])
     assert fm["sources"][0]["verified"] is True
 
 
-def test_author_board_still_rejects_source_missing_field(real_board_dir):
+def test_author_board_still_rejects_source_missing_field(tmp_board_dir):
     """cite-or-omit stays enforced as a clean error, never a raise, for a genuinely broken
     sources[] entry (e.g. missing 'field')."""
     result = tools.author_board(
@@ -402,10 +396,10 @@ def test_author_board_still_rejects_source_missing_field(real_board_dir):
     )
 
     assert "error" in result
-    assert not (real_board_dir / "bad-source-board").exists()
+    assert not (tmp_board_dir / "bad-source-board").exists()
 
 
-def test_author_board_callable_with_body_omitted(real_board_dir):
+def test_author_board_callable_with_body_omitted(tmp_board_dir):
     """The live-failure shape: Groq omits `body` entirely. Must not raise, and must still write a
     valid (empty-body) record rather than hard-failing on a missing required schema property."""
     result = tools.author_board(
@@ -416,13 +410,13 @@ def test_author_board_callable_with_body_omitted(real_board_dir):
     )
 
     assert "error" not in result, result
-    path = REPO / result["path"]
+    path = tools.REPO / result["path"]
     assert path.read_text().strip().endswith("---")   # empty body after the frontmatter, no raise
 
 
 # ─────────────────────────── author_board replay (live-failure payload) ───────────────────────────
 
-def test_author_board_replay_of_live_failure_payload_never_raises(real_metro_board_dir):
+def test_author_board_replay_of_live_failure_payload_never_raises(tmp_metro_board_dir):
     """The exact payload from the live Groq run that crashed on the missing `extra` schema
     property. It must always come back as a dict (success or {"error": ...}), never raise, and
     board_triple_validate() must then return a real verdict for it."""
@@ -575,16 +569,7 @@ def test_board_triple_validate_skips_chip_family_check_when_page_names_no_chip(m
 FW_POP_FIXTURE_ID = "zzz-test-fixture-tools-firmware"
 
 
-@pytest.fixture
-def cleanup_firmware_fixture():
-    yield
-    shutil.rmtree(tools.FIRMWARE_DIR / FW_POP_FIXTURE_ID, ignore_errors=True)
-    for rdir in (REPO / "data/recipes").glob(f"*__{FW_POP_FIXTURE_ID}"):
-        shutil.rmtree(rdir, ignore_errors=True)
-    # No run-case to unwind: authoring no longer edits apps/core/tests/test_coverage_matrix.py.
-
-
-def test_author_firmware_and_recipes_persists_popularity_snapshot(cleanup_firmware_fixture):
+def test_author_firmware_and_recipes_persists_popularity_snapshot(tmp_atlas):
     """(a) author_firmware_and_recipes writes a dated popularity{stars,forks,as_of} block from
     the passed repo stars/forks (never downloads — not a stored metric), cites it, and stamps
     `today` (injected) on the popularity snapshot AND the source verified dates. Deterministic —
@@ -598,17 +583,17 @@ def test_author_firmware_and_recipes_persists_popularity_snapshot(cleanup_firmwa
 
     assert "error" not in result, result
     fm = tools._frontmatter(tools.FIRMWARE_DIR / FW_POP_FIXTURE_ID / "firmware.md")
-    assert fm["popularity"] == {"stars": 42, "forks": 17, "as_of": "2026-09-01"}
+    assert fm["popularity"] == {"stars": 42, "forks": 17, "github_as_of": "2026-09-01", "as_of": "2026-09-01"}
     assert "downloads" not in fm["popularity"]
-    pop_srcs = [s for s in fm["sources"] if s["field"] == "popularity"]
-    assert len(pop_srcs) == 1
-    assert pop_srcs[0]["verified"] == "2026-09-01"
+    pop_srcs = [s for s in fm["sources"] if s["field"].startswith("popularity.")]
+    assert {s["field"] for s in pop_srcs} == {"popularity.stars", "popularity.forks", "popularity.github_as_of"}
+    assert all(s["verified"] == "2026-09-01" for s in pop_srcs)
     # the '*' record source's verified is the same injected run date
     star_src = next(s for s in fm["sources"] if s["field"] == "*")
     assert star_src["verified"] == "2026-09-01"
 
 
-def test_author_firmware_and_recipes_persists_downloads_when_known(cleanup_firmware_fixture):
+def test_author_firmware_and_recipes_persists_downloads_when_known(tmp_atlas):
     """(b) The fourth floor signal (SPEC-firmware-floor.md): a launcher download count, when
     passed, is persisted into the SAME dated popularity snapshot as stars/forks — so a record
     that clears the floor only via downloads still carries the number for every offline guard
@@ -622,10 +607,12 @@ def test_author_firmware_and_recipes_persists_downloads_when_known(cleanup_firmw
 
     assert "error" not in result, result
     fm = tools._frontmatter(tools.FIRMWARE_DIR / FW_POP_FIXTURE_ID / "firmware.md")
-    assert fm["popularity"] == {"stars": 1, "forks": 0, "downloads": 120_000, "as_of": "2026-09-01"}
+    assert fm["popularity"] == {"stars": 1, "forks": 0, "github_as_of": "2026-09-01",
+                                "downloads": 120_000, "downloads_as_of": "2026-09-01", "as_of": "2026-09-01"}
+    assert any(s["field"] == "popularity.downloads" and s["url"] == tools.LAUNCHERHUB for s in fm["sources"])
 
 
-def test_author_firmware_and_recipes_omits_popularity_when_unknown(cleanup_firmware_fixture):
+def test_author_firmware_and_recipes_omits_popularity_when_unknown(tmp_atlas):
     """Never invent: with no stars/forks passed, no popularity block (or citation) is written."""
     result = tools.author_firmware_and_recipes(
         firmware_id=FW_POP_FIXTURE_ID, name="Zzz Tools Fixture Firmware",

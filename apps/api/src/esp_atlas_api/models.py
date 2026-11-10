@@ -42,11 +42,14 @@ OverallStatus = Literal["operational", "degraded", "down"]
 
 
 class StatusComponent(BaseModel):
-    """One GET /status component -- see esp_atlas_core.status."""
+    """One GET /status component -- see esp_atlas_core.status. Only Deploy
+    carries `revision` (the full deployed SHA or null); the route serializes
+    with exclude_unset so the other components never grow the key."""
 
     name: str
     status: ComponentStatus
     detail: str
+    revision: Optional[str] = None
 
 
 class StatusResponse(BaseModel):
@@ -172,6 +175,12 @@ class SearchResponse(BaseModel):
     results: list[Record]
 
 
+class VersionedSearchResponse(SearchResponse):
+    """GET /search binds its result IDs to the serving deployment revision."""
+
+    revision: Optional[str]
+
+
 class WizardResponse(BaseModel):
     results: list[WizardRecord]
 
@@ -226,6 +235,11 @@ class ExampleRecord(BaseModel):
     #: can show stars/forks without a second request. Absent on needs-examples.
     stars: Optional[int] = None
     forks: Optional[int] = None
+    github_as_of: Optional[str] = None
+    as_of: Optional[str] = None
+    origin: Optional[str] = None
+    snapshot_version: Optional[str] = None
+    stale: Optional[bool] = None
 
 
 class ExamplesResponse(BaseModel):
@@ -403,11 +417,20 @@ class ValidateResponse(BaseModel):
 
 class Popularity(BaseModel):
     """A firmware's cited popularity (data/firmware/<id>/firmware.md `popularity`),
-    sourced via a `sources` entry whose field is "popularity"."""
+    with independent observation dates for GitHub, launcher and homepage signals."""
 
     stars: Optional[int] = None
     forks: Optional[int] = None
+    downloads: Optional[int] = None
+    editorial_home: Optional[str] = None
+    github_repo_id: Optional[int] = None
+    github_as_of: Optional[str] = None
+    downloads_as_of: Optional[str] = None
+    editorial_home_as_of: Optional[str] = None
     as_of: Optional[str] = None
+    origin: Optional[str] = None
+    snapshot_version: Optional[str] = None
+    stale: Optional[bool] = None
 
 
 class FirmwareRecord(BaseModel):

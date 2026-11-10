@@ -167,10 +167,15 @@ def test_get_firmware_unknown_id_returns_404(client):
 
 
 def test_get_firmware_returns_cited_popularity(client):
+    # The contract is fidelity to the checked-out catalog, not a permanently
+    # fixed GitHub count. Normal catalog refreshes must not break this test.
+    expected = next(r for r in core_list_firmware() if r["id"] == "ai-stackchan2-readme")
     r = client.get("/firmware/ai-stackchan2-readme")
     assert r.status_code == 200
     body = r.json()
-    assert body["popularity"]["stars"] == 42
+    for field, value in expected["popularity"].items():
+        assert body["popularity"][field] == value
+    assert body["sources"] == expected["sources"]
 
 
 def test_get_firmware_with_a_summary_reads_the_cached_english_translation_from_disk(client, monkeypatch, tmp_path):

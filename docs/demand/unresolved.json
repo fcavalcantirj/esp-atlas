@@ -2,27 +2,6 @@
  "count": 2,
  "items": [
   {
-   "term": "fnk0104s",
-   "raw_terms": [
-    "fnk0104s"
-   ],
-   "source": [
-    "gsc_query"
-   ],
-   "impressions": 23,
-   "clicks": 1,
-   "ctr": 0.0435,
-   "position": 8.4,
-   "events": null,
-   "zero_result": null,
-   "weight": 18.48,
-   "resolved": null,
-   "gap": "UNRESOLVED",
-   "landing_page": "https://esp-atlas.com/parts/esp32-s3",
-   "first_seen": "2026-11-03",
-   "last_seen": "2026-11-03"
-  },
-  {
    "term": "keeloq_mfcodes",
    "raw_terms": [
     "keeloq_mfcodes"
@@ -30,18 +9,39 @@
    "source": [
     "gsc_query"
    ],
-   "impressions": 10,
-   "clicks": null,
-   "ctr": 0.0,
-   "position": 10.0,
+   "impressions": 15,
+   "clicks": 1,
+   "ctr": 0.0667,
+   "position": 9.1,
    "events": null,
    "zero_result": null,
-   "weight": 10.0,
+   "weight": 12.74,
    "resolved": null,
    "gap": "UNRESOLVED",
-   "landing_page": "https://esp-atlas.com/firmware/flipper-zero-meets-m5stack-cardputer",
+   "landing_page": "https://esp-atlas.com/firmware/flipper-zero-esp32-adv",
    "first_seen": "2026-11-03",
-   "last_seen": "2026-11-03"
+   "last_seen": "2026-11-09"
+  },
+  {
+   "term": "term512",
+   "raw_terms": [
+    "term512"
+   ],
+   "source": [
+    "gsc_query"
+   ],
+   "impressions": 15,
+   "clicks": null,
+   "ctr": 0.0,
+   "position": 7.1,
+   "events": null,
+   "zero_result": null,
+   "weight": 10.65,
+   "resolved": null,
+   "gap": "UNRESOLVED",
+   "landing_page": "https://esp-atlas.com/firmware/area512",
+   "first_seen": "2026-11-08",
+   "last_seen": "2026-11-09"
   }
  ]
 }

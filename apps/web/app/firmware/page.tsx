@@ -16,7 +16,7 @@ export const revalidate = 300;
 
 const TITLE = "ESP32 firmware — what runs on what";
 const DESCRIPTION =
-  "Every flashable ESP32 firmware project in the esp-atlas dataset — Marauder, NEMO, Launcher and more — cited to its own repo, with the boards it's verified to run on.";
+  "Every flashable ESP32 firmware project in the esp-atlas dataset — Marauder, NEMO, Launcher and more — cited to its own repo, with the boards it has recipes for and each recipe's trust tier.";
 
 export async function generateMetadata({ searchParams }: PageProps<"/firmware">): Promise<Metadata> {
   const { sort: rawSort } = await searchParams;
@@ -55,7 +55,8 @@ export default async function FirmwareIndexPage({ searchParams }: PageProps<"/fi
       {firmware.length > 0 && (
         <>
           <FirmwareSortControl sort={sort} />
-          <FirmwareBrowseList firmware={firmware} />
+          <p className="firmware-metric-note">★ Stars · ⑂ Forks. Counts cover the linked GitHub repository, including shared repositories. Recipe evidence determines board compatibility.</p>
+          <FirmwareBrowseList key={sort} firmware={firmware} />
         </>
       )}
     </main>

@@ -28,6 +28,7 @@ class Ctx:
         self.root = root
         self.now = dt.datetime(2026, 9, 8, 12, 0)
         self.budget = budget or FakeBudget()
+        self.dry_run = False
 
 
 def _mk_boards(root, names):
@@ -45,7 +46,7 @@ def _mk_brand_boards(root, brand, names):
 
 
 def _fake_backfill(statuses, monkeypatch):
-    def fake_bb(path, data_root, fetch, today):
+    def fake_bb(path, data_root, fetch, today, write=True):
         bid = path.parent.name
         st = statuses[bid]
         base = {"board_id": bid, "status": st}
@@ -128,7 +129,7 @@ def test_brand_without_a_registered_resolver_is_not_in_the_worklist(tmp_path, mo
     _mk_brand_boards(tmp_path, "noresolver-vendor", ["noresolver-vendor-esp32-s3-touch"])
     seen = []
 
-    def fake_bb(path, data_root, fetch, today):
+    def fake_bb(path, data_root, fetch, today, write=True):
         seen.append(str(path))
         return {"board_id": path.parent.name, "status": "skipped", "reason": "x"}
 
@@ -148,3 +149,27 @@ def test_a_board_needs_a_call_for_each_of_its_three_sources(tmp_path, monkeypatc
     assert "budget low" in res.summary
     res = stage_backfill.run(Ctx(tmp_path, FakeBudget(calls=3)), budget=5)
     assert res.paths == ["data/boards/espressif/b1/board.md"]
+
+
+def test_dry_run_writes_nothing_and_lists_every_would_be_write(tmp_path, monkeypatch):
+    _mk_boards(tmp_path, ["b1", "b2"])
+    asked = []
+
+    def fake_bb(path, data_root, fetch, today, write=True):
+        asked.append(write)
+        if path.parent.name == "b1":
+            return {"board_id": "b1", "status": "backfilled", "written": ["usb_serial"], "omitted": [],
+                    "values": {"usb_serial": "ch340"}}
+        return {"board_id": "b2", "status": "skipped", "reason": "doc-unreachable"}
+    monkeypatch.setattr(board_backfill, "backfill_board", fake_bb)
+    ctx = Ctx(tmp_path)
+    ctx.dry_run = True
+    res = stage_backfill.run(ctx, budget=4)
+    assert asked == [False, False]                       # the per-board writer is told not to write
+    assert res.paths == []
+    assert not (tmp_path / "jr" / "board_cooldown.json").exists()
+    assert sorted(res.would_write, key=lambda w: w["path"]) == [
+        {"path": "data/boards/espressif/b1/board.md", "field": "usb_serial", "value": "ch340"},
+        {"path": "jr/board_cooldown.json", "field": "by_board.b2", "value": "doc-unreachable"},
+    ]
+    assert "would backfill 1" in res.summary and "would cool 1" in res.summary

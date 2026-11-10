@@ -1,0 +1,30 @@
+{
+  "firmware": "nucleoos",
+  "repo": "indecenti/NucleoOs",
+  "action": "edge_correction",
+  "deletes": [
+    "data/recipes/esp32-s3-devkitc-1__nucleoos/recipe.md",
+    "data/recipes/firebeetle-2-esp32-s3__nucleoos/recipe.md",
+    "data/recipes/lilygo-t-display-s3__nucleoos/recipe.md",
+    "data/recipes/m5stack-cores3__nucleoos/recipe.md",
+    "data/recipes/m5stick-s3__nucleoos/recipe.md",
+    "data/recipes/waveshare-esp32-s3-rlcd-42__nucleoos/recipe.md"
+  ],
+  "classification": "vendored_study_tree_not_build_target",
+  "why": "The six declared edges were mined (commit 7ab78445, jr/backfill_boards) from reference/esp-claw/application/edge_agent/boards, a vendored third-party ESP-Claw study copy inside NucleoOs, not a NucleoOS build target: its pinned reference/README.md says the reference trees are not part of NucleoOS and are not built or shipped, and the upstream commit that removed them says nothing builds against them. The historical parent still contains that boards tree; it is provenance for how the edges were mined, not evidence of NucleoOS support. NucleoOS itself and its README-declared m5cardputer edge stay.",
+  "sources": [
+    "https://github.com/indecenti/NucleoOs/blob/e7ede674956304c4fa043b8cb18731cb863d559d/reference/README.md",
+    "https://github.com/indecenti/NucleoOs/commit/0ad6cd1657229c49a31880736f5de2efec130c13"
+  ],
+  "historical_parent_sha": "b5e1b917ce0c9f036d21c209e2583f17758fd779",
+  "directed_by": "owner",
+  "date": "2026-11-04",
+  "originals": {
+    "data/recipes/esp32-s3-devkitc-1__nucleoos/recipe.md": "---\nid: esp32-s3-devkitc-1__nucleoos\ntype: recipe\nboard: esp32-s3-devkitc-1\nfirmware: nucleoos\nstatus: declared\nchip_family: esp32-s3\nsources:\n- field: boards\n  url: https://github.com/indecenti/NucleoOs/tree/main/reference/esp-claw/application/edge_agent/boards\n  verified: '2026-09-21'\n---\n\n# esp32-s3-devkitc-1 x nucleoos\n\n`nucleoos` declares `esp32-s3-devkitc-1` (esp32-s3) in its manifest tree. Status `declared` until a build/flasher manifest or a human confirms it on hardware.\n",
+    "data/recipes/firebeetle-2-esp32-s3__nucleoos/recipe.md": "---\nid: firebeetle-2-esp32-s3__nucleoos\ntype: recipe\nboard: firebeetle-2-esp32-s3\nfirmware: nucleoos\nstatus: declared\nchip_family: esp32-s3\nsources:\n- field: boards\n  url: https://github.com/indecenti/NucleoOs/tree/main/reference/esp-claw/application/edge_agent/boards\n  verified: '2026-09-21'\n---\n\n# firebeetle-2-esp32-s3 x nucleoos\n\n`nucleoos` declares `firebeetle-2-esp32-s3` (esp32-s3) in its manifest tree. Status `declared` until a build/flasher manifest or a human confirms it on hardware.\n",
+    "data/recipes/lilygo-t-display-s3__nucleoos/recipe.md": "---\nid: lilygo-t-display-s3__nucleoos\ntype: recipe\nboard: lilygo-t-display-s3\nfirmware: nucleoos\nstatus: declared\nchip_family: esp32-s3\nsources:\n- field: boards\n  url: https://github.com/indecenti/NucleoOs/tree/main/reference/esp-claw/application/edge_agent/boards\n  verified: '2026-09-21'\n---\n\n# lilygo-t-display-s3 x nucleoos\n\n`nucleoos` declares `lilygo-t-display-s3` (esp32-s3) in its manifest tree. Status `declared` until a build/flasher manifest or a human confirms it on hardware.\n",
+    "data/recipes/m5stack-cores3__nucleoos/recipe.md": "---\nid: m5stack-cores3__nucleoos\ntype: recipe\nboard: m5stack-cores3\nfirmware: nucleoos\nstatus: declared\nchip_family: esp32-s3\nsources:\n- field: boards\n  url: https://github.com/indecenti/NucleoOs/tree/main/reference/esp-claw/application/edge_agent/boards\n  verified: '2026-09-21'\n---\n\n# m5stack-cores3 x nucleoos\n\n`nucleoos` declares `m5stack-cores3` (esp32-s3) in its manifest tree. Status `declared` until a build/flasher manifest or a human confirms it on hardware.\n",
+    "data/recipes/m5stick-s3__nucleoos/recipe.md": "---\nid: m5stick-s3__nucleoos\ntype: recipe\nboard: m5stick-s3\nfirmware: nucleoos\nstatus: declared\nchip_family: esp32-s3\nsources:\n- field: boards\n  url: https://github.com/indecenti/NucleoOs/tree/main/reference/esp-claw/application/edge_agent/boards\n  verified: '2026-09-21'\n---\n\n# m5stick-s3 x nucleoos\n\n`nucleoos` declares `m5stick-s3` (esp32-s3) in its manifest tree. Status `declared` until a build/flasher manifest or a human confirms it on hardware.\n",
+    "data/recipes/waveshare-esp32-s3-rlcd-42__nucleoos/recipe.md": "---\nid: waveshare-esp32-s3-rlcd-42__nucleoos\ntype: recipe\nboard: waveshare-esp32-s3-rlcd-42\nfirmware: nucleoos\nstatus: declared\nchip_family: esp32-s3\nsources:\n- field: boards\n  url: https://github.com/indecenti/NucleoOs/tree/main/reference/esp-claw/application/edge_agent/boards\n  verified: '2026-09-21'\n---\n\n# waveshare-esp32-s3-rlcd-42 x nucleoos\n\n`nucleoos` declares `waveshare-esp32-s3-rlcd-42` (esp32-s3) in its manifest tree. Status `declared` until a build/flasher manifest or a human confirms it on hardware.\n"
+  }
+}

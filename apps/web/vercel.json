@@ -1,4 +1,5 @@
 {
+  "git": { "deploymentEnabled": { "runtime-popularity": false } },
   "functions": { "api/index.py": { "includeFiles": "api/_bundle/**" } },
   "rewrites": [{ "source": "/api/(.*)", "destination": "/api/index" }]
 }

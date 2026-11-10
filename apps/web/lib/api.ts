@@ -4,6 +4,8 @@
 // Same-origin in production (the API is deployed as a Vercel function under
 // /api, routed by apps/web/vercel.json) unless NEXT_PUBLIC_API_URL overrides
 // it; local dev talks to the standalone uvicorn server on :8000.
+import { assertBuildGuideResponse, assertIntentResponse, assertPartResults, assertRunGuideResponse } from "./home-response";
+
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || (process.env.NODE_ENV === "production" ? "/api" : "http://localhost:8000");
 
@@ -113,9 +115,15 @@ export interface BrandPage {
 /** A firmware's cited popularity (data/firmware/<id>/firmware.md `popularity`),
  * sourced via a `sources` entry whose field is "popularity". */
 export interface FirmwarePopularity {
+  origin?: "runtime" | "catalog" | null;
+  snapshot_version?: string | null;
+  stale?: boolean | null;
   stars?: number | null;
   forks?: number | null;
   as_of?: string | null;
+  github_as_of?: string | null;
+  downloads_as_of?: string | null;
+  editorial_home_as_of?: string | null;
 }
 
 export interface Firmware {
@@ -133,7 +141,7 @@ export interface Firmware {
   sources: SourceEntry[];
   popularity?: FirmwarePopularity | null;
   /** Recipe count for this firmware (SPEC-firmware-ordering.md §4.A) -- how
-   * many boards it's verified to run on, projected server-side. */
+   * many boards it has a recipe for, at any trust tier, projected server-side. */
   boards?: number;
   /** Groq-generated grounded one-liner, cached on the record. */
   summary?: string;
@@ -147,7 +155,7 @@ export interface Firmware {
   readme_en?: string;
 }
 
-export type RecipeStatus = "known-good" | "reported" | "unverified" | "broken";
+export type RecipeStatus = "known-good" | "reported" | "declared" | "unverified" | "broken";
 
 export interface RecipeFlash {
   method: string | null;
@@ -217,6 +225,9 @@ export interface WizardNeeds {
 export type ExampleGroup = "run-firmware" | "build-project" | "just-show-me";
 
 export interface FirmwareExample {
+  origin?: "runtime" | "catalog" | null;
+  snapshot_version?: string | null;
+  stale?: boolean | null;
   id: string;
   label: string;
   kind: "firmware";
@@ -228,6 +239,8 @@ export interface FirmwareExample {
   /** Carried through from the firmware's own `popularity` (SPEC-firmware-popularity.md §3.B). */
   stars?: number | null;
   forks?: number | null;
+  as_of?: string | null;
+  github_as_of?: string | null;
 }
 
 export interface NeedsExample {
@@ -396,23 +409,35 @@ export class ApiError extends Error {
   }
 }
 
-async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...init,
-    headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
-  });
-  if (!res.ok) {
-    let detail = res.statusText;
-    try {
-      const body = await res.json();
-      detail = body.detail ? JSON.stringify(body.detail) : detail;
-    } catch {
-      // response wasn't JSON — fall back to statusText
+async function apiFetch<T>(path: string, init?: RequestInit, timeoutMs?: number): Promise<T> {
+  const controller = timeoutMs ? new AbortController() : null;
+  const timeout = controller ? setTimeout(() => controller.abort(), timeoutMs) : undefined;
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      ...init,
+      ...(controller ? { signal: controller.signal } : {}),
+      headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
+    });
+    if (!res.ok) {
+      let detail = res.statusText;
+      try {
+        const body = await res.json();
+        detail = body.detail ? JSON.stringify(body.detail) : detail;
+      } catch {
+        // response wasn't JSON — fall back to statusText
+      }
+      throw new ApiError(res.status, path.split("?")[0], detail);
     }
-    throw new ApiError(res.status, path.split("?")[0], detail);
+    return await res.json() as T;
+  } catch (error) {
+    if (controller?.signal.aborted) throw new Error("The request timed out. Please try again.");
+    throw error;
+  } finally {
+    clearTimeout(timeout);
   }
-  return res.json() as Promise<T>;
 }
+
+const QUERY_TIMEOUT_MS = 20_000;
 
 function buildQuery(filters: object): string {
   const params = new URLSearchParams();
@@ -423,12 +448,16 @@ function buildQuery(filters: object): string {
   return qs ? `?${qs}` : "";
 }
 
-export function searchParts(filters: SearchFilters): Promise<{ results: PartRecord[] }> {
-  return apiFetch(`/search${buildQuery(filters)}`);
+export async function searchParts(filters: SearchFilters): Promise<{ results: PartRecord[] }> {
+  const data = await apiFetch(`/search${buildQuery(filters)}`, undefined, QUERY_TIMEOUT_MS);
+  assertPartResults(data);
+  return data;
 }
 
-export function runWizard(needs: WizardNeeds): Promise<{ results: WizardRecord[] }> {
-  return apiFetch(`/wizard`, { method: "POST", body: JSON.stringify({ needs }) });
+export async function runWizard(needs: WizardNeeds): Promise<{ results: WizardRecord[] }> {
+  const data = await apiFetch<{ results: WizardRecord[] }>(`/wizard`, { method: "POST", body: JSON.stringify({ needs }) }, QUERY_TIMEOUT_MS);
+  assertPartResults(data);
+  return data;
 }
 
 export function listParts(): Promise<{ results: PartRecord[] }> {
@@ -459,17 +488,23 @@ export function getRecipesForFirmware(firmwareId: string): Promise<{ results: Re
   return apiFetch(`/recipes?firmware=${encodeURIComponent(firmwareId)}`);
 }
 
-export function parseIntent(query: string): Promise<IntentParse> {
-  return apiFetch(`/intent`, { method: "POST", body: JSON.stringify({ query }) });
+export async function parseIntent(query: string): Promise<IntentParse> {
+  const data = await apiFetch(`/intent`, { method: "POST", body: JSON.stringify({ query }) }, QUERY_TIMEOUT_MS);
+  assertIntentResponse(data);
+  return data;
 }
 
-export function runGuide(firmwareId: string, constraints?: string): Promise<RunGuideResponse> {
+export async function runGuide(firmwareId: string, constraints?: string): Promise<RunGuideResponse> {
   const qs = constraints ? `?constraints=${encodeURIComponent(constraints)}` : "";
-  return apiFetch(`/run/${encodeURIComponent(firmwareId)}${qs}`);
+  const data = await apiFetch(`/run/${encodeURIComponent(firmwareId)}${qs}`, undefined, QUERY_TIMEOUT_MS);
+  assertRunGuideResponse(data, firmwareId);
+  return data;
 }
 
-export function buildGuide(query: string): Promise<BuildGuide> {
-  return apiFetch(`/build`, { method: "POST", body: JSON.stringify({ query }) });
+export async function buildGuide(query: string): Promise<BuildGuide> {
+  const data = await apiFetch(`/build`, { method: "POST", body: JSON.stringify({ query }) }, QUERY_TIMEOUT_MS);
+  assertBuildGuideResponse(data);
+  return data;
 }
 
 export type ComponentStatus = "ok" | "warn" | "down";
@@ -479,6 +514,8 @@ export interface StatusComponent {
   name: string;
   status: ComponentStatus;
   detail: string;
+  /** Deploy only: the full deployed commit SHA, or null (machine field, not rendered). */
+  revision?: string | null;
 }
 
 export interface Status {

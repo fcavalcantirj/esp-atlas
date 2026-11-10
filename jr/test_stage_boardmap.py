@@ -12,6 +12,7 @@ from types import SimpleNamespace
 import pytest
 
 import memory
+import pending_prs
 import stage_boardmap as sb
 import tick
 from budget import Budget, BudgetExceeded
@@ -167,6 +168,12 @@ def test_map_one_resolves_against_root_not_the_clone(root):
 def test_map_one_dry_run_writes_nothing_but_reports(root):
     r = sb.map_one("marauder", root=root, api=fake_api, raw=fake_raw, today="2026-09-07", dry_run=True)
     assert r["paths"] == [] and "m5cardputer__marauder" in r["would_write"]
+    paths = {w["path"] for w in r["would_write_paths"]}
+    assert "data/recipes/m5cardputer__marauder/recipe.md" in paths
+    assert "data/firmware/marauder/signals.json" in paths
+    socs = [w for w in r["would_write_paths"] if w["field"] == "socs"]   # the same widening a real map_one makes
+    assert socs and socs[0]["path"] == "data/firmware/marauder/firmware.md"
+    assert {"esp32-s3", "esp32-c6"} <= set(socs[0]["value"])
     assert not (root / "data/firmware/marauder/signals.json").exists()
     assert not list((root / "data/recipes").iterdir())
 
@@ -234,6 +241,7 @@ def test_stage_run_dry_run_reads_the_network_charged_but_writes_nothing(root):
     c = ctx(root, dry_run=True, budget=b, counter=n)
     res = sb.run(c, budget=2, raw=lambda u: (n.__setitem__("raw", n["raw"] + 1), None)[1])
     assert res.paths == [] and "would write" in res.summary
+    assert {"path": "data/firmware/marauder/signals.json", "field": "*", "value": None} in res.would_write
     assert b.calls == n["api"] + n["raw"] >= 3
     assert not list((root / "data/recipes").iterdir()) and not (root / "data/firmware/marauder/signals.json").exists()
 
@@ -320,3 +328,29 @@ def test_stage_run_only_maps_the_named_firmware_in_order_ignoring_freshness(root
     res = sb.run(ctx(root), budget=1, raw=fake_raw, only=["nosuch", "nogithub", "marauder"])
     assert res.summary.startswith("nosuch: not a catalogued firmware with a GitHub url, skipped; nogithub: not a catalogued firmware")
     assert "marauder: +" in res.summary and res.admitted >= 3
+
+
+def test_stage_run_never_maps_a_firmware_a_tick_pr_holds_and_gives_its_slot_to_the_next(root):
+    """#1500 … #1511: an already-catalogued firmware (ledger `merged`) widened by an OPEN jr-review PR
+    was re-mapped every hour. The PR's own file list (jr/pending_prs.py) holds it — any recipe of it,
+    on any board — and the held firmware does not eat the budget: the next one is mapped instead."""
+    (root / "data" / "firmware" / "second").mkdir()
+    (root / "data" / "firmware" / "second" / "firmware.md").write_text(FW.replace("id: marauder", "id: second"))
+    (root / "data" / "recipes" / "m5cardputer__second").mkdir()          # second ranks after marauder
+    c = ctx(root)
+    c.pending = pending_prs.build([{"number": 1500, "headRefName": "jr/tick-20261106-2200",
+                                    "files": [{"path": "data/recipes/m5stick-c__marauder/recipe.md"}]}], [], NOW)
+    res = sb.run(c, budget=1, raw=fake_raw)
+    assert "marauder: skip already_proposed (#1500 open)" in res.summary and res.rejects.get("already_proposed") == 1
+    assert not any("marauder" in p for p in res.paths) and list((root / "data/recipes").glob("*__marauder")) == []
+    assert "second: +" in res.summary
+
+
+def test_stage_run_only_still_refuses_a_vetoed_firmware(root):
+    c = ctx(root)
+    c.pending = pending_prs.build([], [{"number": 1478, "headRefName": "jr/tick-20261106-0900", "mergedAt": None,
+                                        "closedAt": "2026-09-06T00:00:00Z",
+                                        "files": [{"path": "data/firmware/marauder/signals.json"}]}], NOW)
+    res = sb.run(c, budget=1, raw=fake_raw, only=["marauder"])
+    assert "marauder: skip vetoed (#1478 closed unmerged, veto until 2026-10-06)" in res.summary
+    assert res.paths == [] and res.rejects == {"vetoed": 1}

@@ -16,14 +16,18 @@ worktree. Track B widens the recipes from the build files, in the same tick (adm
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from pathlib import Path
 
 import re
 
 import board_alias
 import derive
+import device_evidence
 import launcher_resolve
 import memory
+import pending_prs
+import review_memory
 import scorer
 import tools
 import writers
@@ -50,6 +54,12 @@ REASON_HELP = {
     "already_catalogued": "this repository is already in the catalog",
     "no_board_evidence": "name a catalogued board in the Boards line (esp-atlas.com/boards), or ship release assets / a platformio.ini that name one",
     "archived": "archived repositories are not catalogued",
+    device_evidence.NOT_DEVICE_FIRMWARE: "a firmware must build for an ESP: an espressif32 platformio.ini, an ESP-IDF "
+                                         "project, an Arduino sketch or a release .bin (companion apps and servers are not firmware)",
+    device_evidence.NEEDS_REVIEW_TARGET: "the repository builds something but never states that it targets an ESP chip, so the "
+                                         "owner reviews it by hand. To be admitted automatically, state the target: an espressif32 "
+                                         "platformio.ini, CONFIG_IDF_TARGET in sdkconfig.defaults, a sketch.yaml "
+                                         "`default_fqbn: esp32:esp32:<board>`, or a release .bin that is an ESP image",
     "repo_unresolved": "the repository could not be read (private, renamed or missing)",
     "invalid": "the issue must contain a github.com/owner/repo URL",
 }
@@ -124,6 +134,12 @@ def _derived_board(ctx, owner_repo: str, atlas: dict, raw=None) -> tuple[str | N
     return best[0][0], dict(best[0][1][0])
 
 
+def _device_evidence(ctx, owner_repo: str, ref: str | None, raw=None) -> dict:
+    """jr/device_evidence.check through the tick's counted gh and raw reader."""
+    return device_evidence.check(owner_repo, api=device_evidence.gh_api(ctx.gh), raw=ctx.budget.wrap(raw or derive.default_raw, "raw"),
+                                 fetch=ctx.budget.wrap(device_evidence.default_fetch, "raw"), ref=ref)
+
+
 def _answer(ctx, slug: str, issue: int, text: str, close: bool = True) -> None:
     """Comment the verdict on the submission issue and close it. Dry-run: nothing."""
     if ctx.dry_run or not issue:
@@ -153,6 +169,9 @@ REJECT_TTLS = {
     launcher_resolve.NO_SOURCE_REPO: memory.UNRESOLVED_REJECT_DAYS,
     "archived": memory.ARCHIVED_REJECT_DAYS,
     "below_floor": memory.FLOOR_REJECT_DAYS,
+    device_evidence.NOT_DEVICE_FIRMWARE: memory.NO_BUILD_SIGNAL_DAYS,
+    device_evidence.NEEDS_REVIEW_TARGET: memory.NO_BUILD_SIGNAL_DAYS,
+    device_evidence.EVIDENCE_UNREADABLE: memory.UNRESOLVED_REJECT_DAYS,
 }
 
 
@@ -208,6 +227,24 @@ def _catalogued_ids(led: dict, now) -> dict:
     return out
 
 
+def _raised_where(decision: dict) -> str:
+    rv = decision.get("review") or {}
+    return f"{rv.get('pr_ref')} {rv.get('outcome')}" if rv.get("pr_ref") else rv.get("outcome") or "raised"
+
+
+def _hold(ctx, decision: dict, ev: dict | None, rev: str | None, repo_id) -> None:
+    """A held decision is left as it is — except one raised before revisions existed, which gets
+    this tick's evidence revision (and repo_id) backfilled, keeping its outcome, PR and expiry."""
+    rv = decision.get("review") or {}
+    if ctx.dry_run or rv.get("evidence_rev") or rev is None:
+        return
+    raised = datetime.fromisoformat(rv["raised_at"]) if rv.get("raised_at") else ctx.now
+    memory.record_review_decision(decision["id"], decision.get("repo") or "", decision.get("reason") or "",
+                                  repo_id=repo_id, evidence=ev, evidence_rev=rev, pr_ref=rv.get("pr_ref"),
+                                  outcome=rv.get("outcome") or "raised", raised_at=raised,
+                                  path=ctx.ledger_path, now=ctx.now)
+
+
 def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     """The Track A stage for jr/tick.py: returns a tick.StageResult. `raw` (tests) replaces
     derive.default_raw for the build-file reads a submission without a board hint triggers.
@@ -232,6 +269,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         return tick.StageResult("admit", paths=[], summary="catalog unreadable: not a list",
                                 admitted=0, rejects={}, needs_human=True)
 
+    pending = pending_prs.of(ctx)   # what an open or vetoed tick PR holds (from its own file list)
     led = memory.load(ctx.ledger_path)   # read-only here; writes below honor dry-run
     cat_repos, cat_toks = tools._catalogued_repos_and_tokens(ctx.root / "data" / "firmware")
     # Per-firmware token sets (not the flat cat_toks pool above) so scorer.score_entry's
@@ -240,7 +278,11 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     cat_token_sets = tools._catalogued_token_sets(ctx.root / "data" / "firmware")
     cat_ids = _catalogued_ids(led, ctx.now)
     paths, lines, admitted, rejects, needs_human = [], [], 0, {}, False
-    would_admit, decided, items = 0, 0, []
+    would_admit, decided, items, review, would_write = 0, 0, [], [], []
+
+    def would(path, field, value=None):
+        """Dry-run: a write a real run would make, for the tick report."""
+        would_write.append({"path": path, "field": field, "value": value})
 
     def reject(key):
         rejects[key] = rejects.get(key, 0) + 1
@@ -252,11 +294,12 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         reject(key)
         launcher_skips[key] = launcher_skips.get(key, 0) + 1
 
-    def skip_reject(fid, owner_repo, reason, repo_id, issue=None):
+    def skip_reject(fid, owner_repo, reason, repo_id, issue=None, review_ev=None):
         """Record the rejection (memory, counts). Returns a report line for a submission (rare and
         meaningful — the submitter reads it), or None for a launcher entry (aggregated below).
         An empty id or repo is never recorded (a falsy ledger key is corruption): counted
-        `unkeyed` instead."""
+        `unkeyed` instead. `review_ev` (evidence, rev) makes it an owner-review decision
+        (SPEC-jr-review-routing.md §5) instead of a plain rejection."""
         if not fid or not owner_repo:
             count_skip("unkeyed")
             return None
@@ -264,7 +307,12 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         reject(key)
         if pending_note and owner_repo != pending_note["key"][1]:
             pending_note["ttl"] = REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS)   # the note follows its repo's decision
-        if not ctx.dry_run:
+        if ctx.dry_run:
+            would(memory.LEDGER_RELPATH, f"by_id.{fid}", f"rejected ({key})")
+        elif review_ev is not None:
+            memory.record_review_decision(fid, owner_repo, reason, repo_id=repo_id, evidence=review_ev[0],
+                                          evidence_rev=review_ev[1], path=ctx.ledger_path, now=ctx.now)
+        else:
             memory.record_rejected(fid, owner_repo, reason,
                                    ttl_days=REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS),
                                    repo_id=repo_id, path=ctx.ledger_path, now=ctx.now)
@@ -276,6 +324,27 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     def note(line):
         if line:
             lines.append(line)
+
+    def held_by_pr(hold, cand_id, issue):
+        """A candidate an open or vetoed tick PR holds (jr/pending_prs.py): counted, never admitted,
+        nothing remembered — the index is rebuilt every tick. A rename or an identity ambiguity is
+        named on its own line, with both ids and the PR. An ambiguous candidate is no decision: nothing
+        is persisted — not even a resolved launcher entry's note — and a submission's issue stays open
+        and unanswered, read again once the hold ends (fail closed)."""
+        nonlocal pending_note
+        reject(hold.reason)
+        if hold.seen_id is not None:
+            pending_note = None
+        if issue and hold.seen_id is not None:
+            lines.append(f"submission #{issue}: deferred, {hold.reason} ({hold.note})")
+            return
+        if issue:
+            _answer(ctx, slug, issue, _verdict_text(f"{hold.reason}: {hold.note}", False, False))
+            lines.append(f"submission #{issue}: {hold.reason.replace('_', ' ')} ({cand_id})")
+            return
+        launcher_skips[hold.reason] = launcher_skips.get(hold.reason, 0) + 1
+        if hold.seen_as is not None or hold.seen_id is not None:
+            lines.append(f"{cand_id}: {hold.reason} ({hold.note})")
 
     resolver_calls = 0
 
@@ -322,7 +391,9 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
 
     def flush_note():
         nonlocal pending_note
-        if pending_note and not ctx.dry_run:
+        if pending_note and ctx.dry_run:
+            would(memory.LEDGER_RELPATH, f"by_id.{pending_note['key'][0]}", "seen")
+        elif pending_note:
             kid, krepo = pending_note["key"]
             memory.record_seen(kid, krepo, reason=f"resolved: {pending_note['repo']}",
                                ttl_days=pending_note["ttl"], path=ctx.ledger_path, now=ctx.now)
@@ -356,7 +427,10 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             entry = dict(entry, github=github)      # the scorer reads the entry's own github
             pending_note = {"key": launcher_resolve.ledger_key(entry), "repo": resolved, "ttl": memory.SEEN_TTL_DAYS}
         owner_repo = scorer._owner_repo(github)
-        if memory.is_blocked(led, repo=owner_repo, now=ctx.now) or memory.is_seen(led, repo=owner_repo, now=ctx.now):
+        # A live owner-review decision is not a plain block: it holds only while the evidence it was
+        # taken on is unchanged, which takes the repo's metadata to tell (SPEC-jr-review-routing.md §5).
+        held = review_memory.live_decision(led, ctx.now, repo=owner_repo)
+        if not held and (memory.is_blocked(led, repo=owner_repo, now=ctx.now) or memory.is_seen(led, repo=owner_repo, now=ctx.now)):
             decided += 1
             if issue:
                 prior = memory.lookup(led, repo=owner_repo) or {}
@@ -370,14 +444,22 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         # id (its owner/repo is not recoverable from a file path), so the repo gate above cannot see
         # it; this id gate catches it. The authored id is deterministic from the github url alone
         # (scorer derives it the same way), so this fires BEFORE any meta fetch — no wasted call —
-        # and stops two consecutive ticks producing a duplicate PR (#158/#159, #162/#163).
+        # and stops two consecutive ticks producing a duplicate PR (#158/#159, #162/#163). The PR's own
+        # file list (jr/pending_prs.py) backs it: an id an open tick PR changes — or one a closed-unmerged
+        # tick PR changed inside the veto TTL — is held even when the ledger hydration could not see it.
+        # A hold whose PR verified the repository's GitHub id is decided by that id once the metadata
+        # is read (below): the same slug under another id is ambiguous, not the held firmware.
         cand_id = scorer._slug(scorer._repo_name_from_url(github))
         cand_rec = memory.lookup(led, firmware_id=cand_id) if cand_id else None
-        if cand_rec and cand_rec.get("status") == "proposed" and not memory.is_expired(cand_rec, ctx.now):
+        hold = pending.hold(cand_id)
+        if hold and hold.repo_id is None:
+            held_by_pr(hold, cand_id, issue)
+            continue
+        if not hold and cand_rec and cand_rec.get("status") == "proposed" and not memory.is_expired(cand_rec, ctx.now):
             reject("already_proposed")
             if issue:
-                _answer(ctx, slug, issue, _verdict_text(
-                    f"already_proposed: {cand_rec.get('pr_ref') or 'an open PR covers this firmware'}", False, False))
+                where = cand_rec.get("pr_ref") or "an open PR covers this firmware"
+                _answer(ctx, slug, issue, _verdict_text(f"already_proposed: {where}", False, False))
                 lines.append(f"submission #{issue}: already proposed ({cand_id})")
             else:
                 launcher_skips["already_proposed"] = launcher_skips.get("already_proposed", 0) + 1
@@ -395,10 +477,29 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             lines.append(f"stopped during {owner_repo}: {e}")   # meta fetch is read-only: nothing half-written
             break
         repo_id = meta.get("id")
-        if repo_id is not None and (memory.is_blocked(led, repo_id=repo_id, now=ctx.now)
-                                    or memory.is_seen(led, repo_id=repo_id, now=ctx.now)):
+        # Identity is the repository: a held repository renamed upstream keeps its GitHub id, so the
+        # id is matched before the slug, and a held slug under another id is never admitted.
+        hold = pending.match(cand_id, repo_id)
+        if hold:
+            held_by_pr(hold, cand_id, issue)
+            continue
+        held = held or (review_memory.live_decision(led, ctx.now, repo_id=repo_id) if repo_id is not None else None)
+        rev_ev = review_memory.evidence(meta, downloads=entry.get("download")) if not meta.get("error") else None
+        rev = review_memory.evidence_rev(rev_ev) if rev_ev is not None else None
+        if held and review_memory.holds(held, rev):
+            decided += 1
+            _hold(ctx, held, rev_ev, rev, repo_id)
+            lines.append(f"review already raised: {owner_repo} ({_raised_where(held)}), evidence unchanged")
+            if issue:
+                _answer(ctx, slug, issue, _verdict_text(f"already_decided: {held.get('reason')} (until {held.get('expires')})",
+                                                        False, False))
+            continue
+        if repo_id is not None and memory.lookup(led, repo_id=repo_id) is not held and (
+                memory.is_blocked(led, repo_id=repo_id, now=ctx.now) or memory.is_seen(led, repo_id=repo_id, now=ctx.now)):
             decided += 1
             continue
+        if held:                                     # new evidence: reconsidered as if new, never its own duplicate
+            cat_ids = {k: v for k, v in cat_ids.items() if v != held.get("id")}
         fid = scorer._slug(scorer._repo_name_from_url(github)) or owner_repo   # empty -> skip_reject counts it `unkeyed`
         # Popularity floor (SPEC-firmware-floor.md, via esp_atlas_core.floor — never re-typed):
         # below stars AND forks AND no independent editorial home AND no qualifying download
@@ -455,12 +556,48 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             if issue:
                 _answer(ctx, slug, issue, _verdict_text(f"already_catalogued: {out_id}", False, False))
             continue
+        # Device-build evidence (jr/device_evidence.py, review finding 3): a record says "flash this
+        # onto an ESP", so the repo itself must build for one. Topics/description naming a board
+        # are not enough — rebelthor/warble, a Go server, passed every gate above on them alone.
+        if ctx.budget.remaining_calls() < device_evidence.MAX_CALLS:
+            lines.append(f"stopped before {owner_repo}'s build evidence: tick budget low "
+                         f"({ctx.budget.remaining_calls()} calls left)")
+            break
+        try:
+            ev = _device_evidence(ctx, owner_repo, meta.get("default_branch"), raw=raw)
+        except BudgetExceeded as e:
+            lines.append(f"stopped during {owner_repo}: {e}")
+            break
+        if ev["ok"] is None and issue:
+            # Unreadable is not a verdict, and submissions are read from OPEN issues only: leave
+            # it open and unremembered so the next tick checks it again.
+            lines.append(f"submission #{issue}: deferred, build evidence unreadable")
+            continue
+        if not ev["ok"]:
+            reason = device_evidence.reject_reason(ev)
+            asks = ev.get("verdict") == device_evidence.NEEDS_REVIEW
+            note(skip_reject(out_id, owner_repo, reason, repo_id, issue=issue,
+                             review_ev=(rev_ev, rev) if asks else None))
+            if asks:
+                # Ambiguous, never guessed: not admitted, and listed in the tick report for the owner —
+                # once: the decision it records holds the target until its evidence changes or it expires.
+                review.append({"id": out_id, "repo": owner_repo, **device_evidence.review_note(ev),
+                               "repo_id": repo_id, "evidence_rev": rev, "evidence": rev_ev, "reason": reason})
+                lines.append(f"needs owner review: {owner_repo} ({ev['kind']}) {ev['url']}")
+            if issue:
+                _answer(ctx, slug, issue, _verdict_text(reason, False, False))
+            continue
         if res.get("needs_human"):
             needs_human = True
         if ctx.dry_run:
             lines.append(f"{out_id}: would admit{' (needs_human)' if res.get('needs_human') else ''}"
                          + (f" (submission #{issue})" if issue else ""))
             would_admit += 1
+            would(str(fmd.relative_to(ctx.root)), "*", out_id)
+            rdir = ctx.root / "data" / "recipes" / f"{rec['board']}__{out_id}"
+            if not (rdir / "recipe.md").exists():
+                would(str((rdir / "recipe.md").relative_to(ctx.root)), "*", f"{rec['board']}__{out_id}")
+            would(memory.LEDGER_RELPATH, f"by_id.{out_id}", "proposed")
             continue
         repo_url = rec["url"]
         # Coerce whatever GitHub actually returned; a missing forks_count stays None so the
@@ -509,7 +646,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
                   else f"{evidence.get('kind')} signal `{evidence.get('token')}` ({evidence.get('url')})")
         else:
             ev = "named in the repository name/description"
-        items.append({"kind": "firmware", "id": out_id, "name": rec["name"], "url": repo_url,
+        items.append({"kind": "firmware", "id": out_id, "name": rec["name"], "url": repo_url, "repo_id": repo_id,
                       "stars": meta.get("stars"), "forks": meta.get("forks"), "fork": bool(meta.get("fork")),
                       "archived": bool(meta.get("archived")), "license": meta.get("license"),
                       "board": rec["board"], "chip": rec["chip"], "recipe": f"{rec['board']}__{out_id}",
@@ -530,4 +667,5 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     elif decided:
         summary = f"{decided} already decided, skipped"
     return tick.StageResult("admit", paths=paths, summary=summary, admitted=admitted,
-                            rejects=rejects, needs_human=needs_human, items=items)
+                            rejects=rejects, needs_human=needs_human, items=items, review=review,
+                            would_write=would_write)

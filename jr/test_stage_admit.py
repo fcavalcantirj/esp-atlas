@@ -12,12 +12,16 @@ from types import SimpleNamespace
 import pytest
 import yaml
 
+import device_evidence
 import memory
+import pending_prs
+import safe_fetch
 import stage_admit
 import tick
 import tools
 import writers
 from budget import Budget
+from test_device_evidence import VALID_S3_IMAGE
 
 REPO = Path(__file__).resolve().parent.parent
 NOW = datetime(2026, 9, 7, 12, 0, tzinfo=timezone.utc)
@@ -68,15 +72,31 @@ def root(tmp_path):
     return tmp_path
 
 
+# The device-build evidence gate (jr/device_evidence.py) reads every candidate's tree: unless a test
+# serves its own, a repo has an Arduino sketch whose sketch.yaml names an ESP board (served by the
+# esp_sketch_raw fixture), so the gates under test here are the only ones that bite.
+DEVICE_TREE = {"tree": [{"path": "src/main.ino", "type": "blob"}, {"path": "src/sketch.yaml", "type": "blob"}], "truncated": False}
+pytestmark = pytest.mark.usefixtures("esp_sketch_raw")
+
+
+def _reply(doc, path):
+    """A fake `gh api` reply: a missing doc is 404 (a tree defaults to DEVICE_TREE), a doc
+    {"__status__": msg} a failed call with that stderr."""
+    if doc is None and "/git/trees/" in path:
+        doc = DEVICE_TREE
+    if doc is None:
+        return SimpleNamespace(returncode=1, stdout="", stderr="404 not found")
+    if isinstance(doc, dict) and "__status__" in doc:
+        return SimpleNamespace(returncode=1, stdout="", stderr=doc["__status__"])
+    return SimpleNamespace(returncode=0, stdout=json.dumps(doc), stderr="")
+
+
 def _ctx(root, dry_run=False, budget=None, metas=None):
     metas = metas or {}
     budget = budget or Budget(clock=lambda: 0.0)
 
     def gh(*a):
-        doc = metas.get(a[1])
-        if doc is None:
-            return SimpleNamespace(returncode=1, stdout="", stderr="404 not found")
-        return SimpleNamespace(returncode=0, stdout=json.dumps(doc), stderr="")
+        return _reply(metas.get(a[1]), a[1])
 
     return tick.TickContext(root=root, ledger_path=root / "jr" / "proposed_ledger.json", now=NOW,
                             gh=budget.wrap(gh), git=lambda *a: None,
@@ -239,6 +259,11 @@ def test_dry_run_scores_and_reports_but_writes_nothing(root, monkeypatch):
     assert "would admit" in res.summary
     assert not (root / "data" / "firmware" / "newtool").exists()
     assert not (root / "jr" / "proposed_ledger.json").exists()   # memory untouched
+    writes = {(w["path"], w["field"]) for w in res.would_write}
+    assert ("data/firmware/newtool/firmware.md", "*") in writes
+    assert ("jr/proposed_ledger.json", "by_id.newtool") in writes
+    assert ("jr/proposed_ledger.json", "by_id.tiny") in writes      # the below-floor rejection a real run records
+    assert any(p.startswith("data/recipes/") and p.endswith("__newtool/recipe.md") for p, _ in writes)
 
 
 def test_repo_id_memory_hit_skips_before_fetch(root, monkeypatch):
@@ -286,9 +311,7 @@ def _ctx_sub(root, issues, metas=None, api_docs=None, dry_run=False, budget=None
         doc = metas.get(a[1]) if len(a) > 1 else None
         if doc is None:
             doc = api_docs.get(a[1]) if len(a) > 1 else None
-        if doc is None:
-            return SimpleNamespace(returncode=1, stdout="", stderr="404 not found")
-        return SimpleNamespace(returncode=0, stdout=json.dumps(doc), stderr="")
+        return _reply(doc, a[1] if len(a) > 1 else "")
     ctx = tick.TickContext(root=root, ledger_path=root / "jr" / "proposed_ledger.json", now=NOW,
                            gh=budget.wrap(gh), git=lambda *a: None, budget=budget, dry_run=dry_run, env={})
     ctx.calls = calls   # type: ignore[attr-defined]
@@ -329,6 +352,7 @@ def test_submission_with_a_board_hint_is_admitted_first_and_answered(root, monke
     assert ctx.calls[0][:2] == ("api", ISSUES_PATH)                       # listed before any meta fetch
 
 
+@pytest.mark.sandbox
 def test_submission_without_a_hint_uses_the_repo_build_files_as_evidence(root, monkeypatch):
     monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
     issues = [_issue(8, "https://github.com/s/relwriter")]
@@ -337,6 +361,8 @@ def test_submission_without_a_hint_uses_the_repo_build_files_as_evidence(root, m
                     {"name": "relwriter-v1.2.0-m5cardputer.bin", "size": 10, "browser_download_url": "https://github.com/s/relwriter/releases/download/v1/relwriter-v1.2.0-m5cardputer.bin"},
                     {"name": "relwriter-v1.2.0-m5stick_cplus2.bin", "size": 10, "browser_download_url": "https://github.com/s/relwriter/releases/download/v1/relwriter-v1.2.0-m5stick_cplus2.bin"}]},
                 "repos/s/relwriter/git/trees/main?recursive=1": {"tree": [{"path": "README.md", "type": "blob"}], "truncated": False}}
+    api_docs["repos/s/relwriter/releases?per_page=10"] = [api_docs["repos/s/relwriter/releases/latest"]]   # the evidence gate's read
+    monkeypatch.setattr(device_evidence, "default_fetch", lambda url: safe_fetch.Fetched(VALID_S3_IMAGE, url=url))   # the gate's GET: a whole S3 image
     ctx = _ctx_sub(root, issues, metas, api_docs)
     res = stage_admit.run(ctx, budget=1, raw=lambda u: None)          # no network: raw files absent
     assert res.admitted == 1 and "relwriter: +record (submission #8)" in res.summary
@@ -450,3 +476,50 @@ def test_admit_stops_scanning_the_launcher_at_its_call_share_but_still_answers_s
     assert "admit's call share used (7 of the tick's calls); the rest is Track B's" in res.summary
     assert b.calls <= 7 + 3 + 2                                       # issues list + submission meta + a few launcher metas
     assert res.rejects.get("below_floor", 0) < 20                     # most of the backlog was left for the next tick
+
+
+# --- stable repository identity (jr/pending_prs.py): the fetched GitHub id is matched before the slug ----
+
+def _held_as(fid, owner_repo, rid):
+    """A pending index whose open tick PR #1500 holds `fid`, verified as repository `rid` (by load(),
+    from the ledger committed at its head: `_identities`)."""
+    body = pending_prs.render_identity([{"kind": "firmware", "id": fid, "url": f"https://github.com/{owner_repo}",
+                                         "repo_id": rid}])
+    pr = {"number": 1500, "headRefName": "jr/tick-20261107-0300", "body": body, "_identities": {fid: (rid, owner_repo)},
+          "files": [{"path": f"data/firmware/{fid}/firmware.md"}, {"path": f"data/recipes/m5cardputer__{fid}/recipe.md"}]}
+    return pending_prs.build([pr], [], NOW)
+
+
+def test_a_submitted_repository_renamed_since_its_pr_is_answered_held_and_closed(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
+    ctx = _ctx_sub(root, [_issue(12, "https://github.com/n/newtool\nBoards: Cardputer")],
+                   {"repos/n/newtool": _meta("n/newtool", stars=30, rid=4242)})
+    ctx.pending = _held_as("oldtool", "n/oldtool", 4242)
+    res = stage_admit.run(ctx, budget=1)
+    assert res.admitted == 0 and res.paths == [] and res.rejects == {"already_proposed": 1}
+    a = _answers(ctx)
+    assert "already_proposed" in a[0][2] and "oldtool" in a[0][2] and "4242" in a[0][2] and a[1][0] == "PATCH"
+
+
+def test_a_submission_whose_slug_is_held_under_another_id_is_left_open_unanswered(root, monkeypatch):
+    """Identity ambiguity is not a decision: the submitter's issue stays open (submissions are read
+    from open issues only) and is looked at again once the hold ends."""
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
+    ctx = _ctx_sub(root, [_issue(13, "https://github.com/m/newtool\nBoards: Cardputer")],
+                   {"repos/m/newtool": _meta("m/newtool", stars=30, rid=7777)})
+    ctx.pending = _held_as("newtool", "n/newtool", 4242)
+    res = stage_admit.run(ctx, budget=1)
+    assert res.admitted == 0 and res.paths == [] and res.rejects == {"identity_ambiguous": 1}
+    assert _answers(ctx) == []
+    assert "submission #13: deferred, identity_ambiguous" in res.summary and "7777" in res.summary
+
+
+def test_a_dry_run_never_would_admit_a_held_repository_renamed_upstream(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [
+        {"name": "New Tool", "description": "A Cardputer tool", "category": "cardputer",
+         "github": "https://github.com/n/newtool", "download": 100}])
+    ctx = _ctx_sub(root, [], {"repos/n/newtool": _meta("n/newtool", stars=30, rid=4242)}, dry_run=True)
+    ctx.pending = _held_as("oldtool", "n/oldtool", 4242)
+    res = stage_admit.run(ctx, budget=1)
+    assert res.rejects == {"already_proposed": 1} and not res.would_write
+    assert "renamed newtool" in res.summary

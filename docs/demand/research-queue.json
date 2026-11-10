@@ -1,0 +1,170 @@
+{
+ "version": 1,
+ "max_new_per_day": 5,
+ "reopen_after_days": 30,
+ "candidates": {
+  "es3c28p": {
+   "term": "es3c28p",
+   "first_seen": "2026-11-05",
+   "last_seen": "2026-11-05",
+   "source": "ga4 search_empty",
+   "window": {
+    "start": "2026-10-07",
+    "end": "2026-11-04"
+   },
+   "searches": 1,
+   "zero_result_searches": 1,
+   "status": "closed",
+   "classification": "missing_content",
+   "evidence": {
+    "rule": "no catalog id, title or alias matches",
+    "ids": [],
+    "matches": [],
+    "checked": 284
+   },
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1449"
+   ],
+   "outcome": "Catalogued lcdwiki-es3c28p via PR #1449 (merged 2a359d5). Deployed search es3c28p resolves only that board; sibling es3n28p does not match. Verified 2026-11-05. No firmware recipe added.",
+   "closed_on": "2026-11-05",
+   "history": []
+  },
+  "fnk0104s": {
+   "term": "fnk0104s",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-06",
+   "source": "gsc_query",
+   "window": {
+    "start": "2026-10-09",
+    "end": "2026-11-06"
+   },
+   "metrics": {
+    "impressions": 22,
+    "clicks": 1,
+    "position": 8.2
+   },
+   "snapshot": "docs/demand/2026-11-06.json",
+   "status": "closed",
+   "classification": "alias_typo",
+   "evidence": {
+    "rule": "vendor-prefix match: the term is a board id without its brand prefix, or a model-number token of one record's title",
+    "ids": [
+     "freenove-fnk0104s"
+    ],
+    "matches": [
+     {
+      "id": "freenove-fnk0104s",
+      "kind": "board",
+      "via": "id",
+      "label": "freenove-fnk0104s",
+      "distance": 0
+     }
+    ],
+    "checked": 292
+   },
+   "defect": "miner_resolution: jr/demand.py resolve_entity returns no board for the bare model number and classify_gap has no board anchor, so the GSC item stays UNRESOLVED although public search returns freenove-fnk0104s",
+   "validation": {
+    "term_key": "fnk0104s",
+    "identity_verified": true,
+    "validated_by": "dasbrow_brains (esp-atlas-daily-checkup run 40554a423a92415f885b1dd7e8eee50f)",
+    "verified_on": "2026-11-06",
+    "primary_sources": [
+     "https://github.com/Freenove/Freenove_ESP32_S3_Display/blob/main/README.md",
+     "https://docs.freenove.com/projects/fnk0104/en/latest/"
+    ],
+    "expected_ids": [
+     "freenove-fnk0104s"
+    ],
+    "forbidden_ids": [
+     "freenove-fnk0104a",
+     "freenove-fnk0104b"
+    ],
+    "verification_kind": "demand_resolution",
+    "notes": "Vendor README lists FNK0104A (2.8in ILI9341 NonTouch), FNK0104B (2.8in ILI9341 Touch), FNK0104N (3.5in Touch) and FNK0104S (4.0in ST7789 Touch) as distinct variants; FNK0104N is not catalogued. Display-controller facts untouched."
+   },
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1476"
+   ],
+   "outcome": {
+    "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1476",
+    "merge_sha": "1407ff2ec6bde72753fd22e15bc6c71df49fb713",
+    "merged_at": "2026-11-06T09:19:44Z",
+    "verification_kind": "demand_resolution",
+    "query": "fnk0104s",
+    "checked_at": "2026-11-07T11:15:54.346434+00:00",
+    "expected_ids": [
+     "freenove-fnk0104s"
+    ],
+    "forbidden_ids": [
+     "freenove-fnk0104a",
+     "freenove-fnk0104b"
+    ],
+    "source": "gsc_query",
+    "window": {
+     "start": "2026-10-09",
+     "end": "2026-11-06"
+    },
+    "metrics": {
+     "impressions": 22,
+     "clicks": 1,
+     "position": 8.2
+    },
+    "mined_revision": "d1dab3b1e532cb0ca45d116ae560724ca5b52d95",
+    "exit_code": 0,
+    "resolved": {
+     "board": "freenove-fnk0104s",
+     "board_model": "fnk0104s",
+     "chip": "esp32-s3",
+     "firmware_token": null,
+     "capability": [],
+     "part": null
+    },
+    "gap": "COVERED_OK"
+   },
+   "closed_on": "2026-11-07",
+   "history": [
+    {
+     "event": "closed",
+     "date": "2026-11-07",
+     "resolution": "delivered",
+     "work": "a721c3339f3d6348",
+     "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1476",
+     "merge_sha": "1407ff2ec6bde72753fd22e15bc6c71df49fb713",
+     "snapshot": "docs/demand/2026-11-07.json"
+    }
+   ]
+  },
+  "keeloq mfcodes": {
+   "term": "keeloq_mfcodes",
+   "status": "closed",
+   "source": "gsc_query",
+   "first_seen": "2026-11-03",
+   "last_seen": "2026-11-03",
+   "window": {
+    "start": "2026-10-10",
+    "end": "2026-11-07"
+   },
+   "metrics": {
+    "impressions": 13,
+    "clicks": 1,
+    "position": 9.3
+   },
+   "linked_work": [],
+   "history": [
+    {
+     "event": "closed",
+     "date": "2026-11-08",
+     "resolution": "abandoned",
+     "work": "f89f790e4ecb4d13",
+     "reason": "Not catalog content: 'keeloq_mfcodes' is the Flipper Zero Sub-GHz manufacturer-code asset file (proprietary KeeLoq rolling-code keys), not an ESP32 board or firmware; the GSC rows (10-14 impressions/day, position ~9-10, 2026-11-03..08) land on firmware/flipper-zero-esp32-adv, which already exists and does not mention KeeLoq. Nothing to author; publishing manufacturer codes is out of scope."
+    }
+   ],
+   "outcome": {
+    "status": "abandoned",
+    "reason": "Not catalog content: 'keeloq_mfcodes' is the Flipper Zero Sub-GHz manufacturer-code asset file (proprietary KeeLoq rolling-code keys), not an ESP32 board or firmware; the GSC rows (10-14 impressions/day, position ~9-10, 2026-11-03..08) land on firmware/flipper-zero-esp32-adv, which already exists and does not mention KeeLoq. Nothing to author; publishing manufacturer codes is out of scope."
+   },
+   "closed_on": "2026-11-08",
+   "snapshot": "docs/demand/2026-11-07.json"
+  }
+ }
+}

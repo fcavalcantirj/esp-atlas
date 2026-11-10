@@ -114,6 +114,20 @@ Almost no site crosses **all** the flashers. esp-atlas does:
 3. **L3 — live + smart:** click-analytics ranking + the external-signal cron.
 
 ## 9. Constraints / honesty (non-negotiable)
+- Every submitted question activates one current answer: parsing, board results,
+  firmware guide, or build guide. Hide the example shelves immediately; a prior
+  wizard result must not remain beside a newer firmware answer. Repeating the
+  same question is a new attempt, and a late response cannot replace that attempt.
+- Bring the current answer into view when the user submits, with a focusable
+  answer region and a live loading/result/error status. Do not steal focus again
+  when an asynchronous response arrives. Guide failures offer a working retry;
+  parser failure explains the keyword fallback. Empty and malformed responses
+  must produce visible feedback, never a silent or broken page.
+- During parsing or guide loading, show the progress message once in the answer
+  region. Keep one accessible live status outside the busy region; its nonvisual
+  announcement must not duplicate the visible message in the accessibility tree.
+- The prompt stays busy through guide loading. Keyword matches for a build guide
+  remain secondary and do not pull focus away from the primary answer.
 - No dead intents: every chip resolves to ≥1 board (oracle invariant, like the
   wizard's "no dead options").
 - No faked signal: trending/new always cites source + date.

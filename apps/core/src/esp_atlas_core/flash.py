@@ -132,7 +132,7 @@ def bin_url_for(recipe_id, part=None):
     open proxy. The host is checked anyway, in case a record itself is wrong.
     """
     recipe = get_recipe(recipe_id)
-    if recipe is None:
+    if recipe is None or recipe.get("status") == "broken":
         return None
     flash = recipe.get("flash") or {}
 
@@ -150,7 +150,7 @@ def bin_url_for(recipe_id, part=None):
 def build_manifest(recipe_id, db_path=None, proxy_url=PROXY_PATH):
     """An ESP Web Tools manifest for one recipe, or None if it cannot flash in-browser."""
     recipe = get_recipe(recipe_id)
-    if recipe is None:
+    if recipe is None or recipe.get("status") == "broken":
         return None
 
     flash = recipe.get("flash") or {}

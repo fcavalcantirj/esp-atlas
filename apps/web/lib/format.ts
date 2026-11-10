@@ -67,11 +67,12 @@ export const PRICE_TIER_NOTE =
   "Approximate, editorial street-price tier — not a datasheet-verified spec. Used only by the wizard's budget filter.";
 
 // Trust tiers, most to least trusted (SPEC-wizard.md "the honesty layer").
-export const RECIPE_TIER_ORDER = ["known-good", "reported", "unverified", "broken"] as const;
+export const RECIPE_TIER_ORDER = ["known-good", "reported", "declared", "unverified", "broken"] as const;
 
 export const RECIPE_TIER_LABEL: Record<string, string> = {
   "known-good": "Known good",
   reported: "Reported",
+  declared: "Declared",
   unverified: "Unverified",
   broken: "Broken",
 };
@@ -102,11 +103,12 @@ export function firmwareCategoryLabel(category: string): string {
   return FIRMWARE_CATEGORY_LABEL[category] ?? category;
 }
 
-/** "Runs on N boards" card glance (SPEC-firmware-ordering.md §4.A/§5) -- null
- * below 1 so an un-recipe'd firmware renders nothing rather than "0 boards". */
+/** "Recipes for N boards" card glance (SPEC-firmware-ordering.md §4.A/§5) -- the
+ * count spans every trust tier, so it never says "runs on". Null below 1 so an
+ * un-recipe'd firmware renders nothing rather than "0 boards". */
 export function boardsLabel(boards: number | null | undefined): string | null {
   if (!boards || boards < 1) return null;
-  return `Runs on ${boards} board${boards === 1 ? "" : "s"}`;
+  return `Recipes for ${boards} board${boards === 1 ? "" : "s"}`;
 }
 
 // Google truncates SERP titles/descriptions mid-word around these lengths
@@ -145,8 +147,8 @@ function buildMetaTitle(name: string, benefit: string): string {
 
 /**
  * SERP title for a firmware: leads with its exact name, then the strongest
- * flash/install benefit its own record can prove -- the boards it's
- * verified to run on when that count exists, else the SoCs it targets,
+ * flash/install benefit its own record can prove -- how many boards it has
+ * recipes for (any trust tier) when that count exists, else the SoCs it targets,
  * else a bare flash-guide fallback. Cite-or-omit: never states a board
  * count or SoC the record doesn't carry.
  *
@@ -195,7 +197,8 @@ export function firmwareMetaDescription(
   if (firmware.summary) return truncateAtWord(firmware.summary, DESCRIPTION_MAX);
   const socsLabel = firmware.socs.length > 0 ? firmware.socs.map(socDisplay).join(", ") : "ESP32";
   const boards = firmware.boards ?? 0;
-  const boardsClause = boards > 0 ? ` Verified to flash on ${boards} board${boards === 1 ? "" : "s"}.` : "";
+  // `boards` counts recipes at every trust tier, unverified leads included — never "verified".
+  const boardsClause = boards > 0 ? ` Recipes for ${boards} board${boards === 1 ? "" : "s"}, each labelled with its trust tier.` : "";
   const base = `${firmware.name}: ${firmwareCategoryLabel(firmware.category)} firmware for ${socsLabel}.${boardsClause}`;
   return truncateAtWord(base, DESCRIPTION_MAX);
 }
@@ -263,6 +266,12 @@ export function partMetaTitle(
 ): string {
   const specs = partKeySpecs(part);
   const benefit = specs.length > 0 ? `${specs.join(" + ")} ${typeLabel(part.type)} specs` : `${typeLabel(part.type)} specs`;
+  if (part.type === "board") {
+    const full = `${part.name}${hasPinout ? " pinout" : ""} — ${benefit}`;
+    if (full.length <= TITLE_MAX) return full;
+    // Exact model/SKU identity wins over a length target and generic radio text.
+    return `${part.name} — ${hasPinout ? "pinout & " : ""}Board specs`;
+  }
   if (!hasPinout) return buildMetaTitle(part.name, benefit);
 
   // "pinout" must survive truncation, so it can't ride inside the name
@@ -370,9 +379,11 @@ export function compactCount(n: number): string {
 }
 
 export interface PopularityInput {
+  stale?: boolean | null;
   stars?: number | null;
   forks?: number | null;
   as_of?: string | null;
+  github_as_of?: string | null;
 }
 
 export interface PopularityGlance {
@@ -380,16 +391,28 @@ export interface PopularityGlance {
   forks?: string;
   ariaLabel: string;
   title?: string;
+  scope: string;
 }
 
 /** SPEC-firmware-popularity.md §2: the compact "★ 94.6k · ⑂ 12.4k" card glance.
- * `ariaLabel` carries the full, unabbreviated counts; `title` carries the
- * `as_of` tooltip when cited. Null when neither metric is present -- the
+ * Full counts remain accessible; scope and the source-specific date are visible.
+ * Legacy dates are explicitly historical. Null when neither metric is present -- the
  * caller must render nothing, never a "0" or an empty glyph. */
+export function repositorySnapshot(popularity: PopularityInput): string {
+  const raw = popularity.github_as_of;
+  const date = raw && !Number.isNaN(Date.parse(raw))
+    ? raw.length === 10 ? raw : `${new Date(raw).toISOString().slice(0, 16).replace("T", " ")} UTC`
+    : null;
+  const scope = date ? `GitHub repo · as of ${date}`
+    : popularity.as_of ? `GitHub repo · historical snapshot ${popularity.as_of}` : "GitHub repo · date not recorded";
+  return popularity.stale ? `${scope} · stale` : scope;
+}
+
 export function popularityGlance(popularity: PopularityInput | null | undefined): PopularityGlance | null {
   if (!popularity) return null;
   const labelParts: string[] = [];
-  const glance: PopularityGlance = { ariaLabel: "" };
+  const scope = repositorySnapshot(popularity);
+  const glance: PopularityGlance = { ariaLabel: "", scope };
   if (popularity.stars != null) {
     glance.stars = compactCount(popularity.stars);
     labelParts.push(`${popularity.stars.toLocaleString("en-US")} GitHub stars`);
@@ -399,8 +422,8 @@ export function popularityGlance(popularity: PopularityInput | null | undefined)
     labelParts.push(`${popularity.forks.toLocaleString("en-US")} forks`);
   }
   if (labelParts.length === 0) return null;
-  glance.ariaLabel = labelParts.join(", ");
-  if (popularity.as_of) glance.title = `stars as of ${popularity.as_of}`;
+  glance.ariaLabel = `${labelParts.join(", ")}. ${scope}`;
+  glance.title = glance.ariaLabel;
   return glance;
 }
 

@@ -1,0 +1,82 @@
+name: hourly GitHub counts
+# Every run says where it came from: "counts (host-timer)" is the operator's OS timer,
+# "counts (manual-testing)" a hand-run test, "counts (manual)" a plain dispatch.
+run-name: counts (${{ inputs.source }})
+
+# No `schedule:` here on purpose. GitHub's cron dropped most hourly slots (2026-11-07/08: one run
+# in six), so an operator-run OS timer on the always-on runner dispatches this workflow at minute
+# 07 UTC through scripts/counts-dispatch.sh (see DEPLOY.md, "Hourly GitHub counts"). The job, the
+# collector, the Git JSON and the concurrency group are unchanged.
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the JSON snapshot after review
+        type: boolean
+        default: false
+      source:
+        description: Who asked for this run (host-timer, manual-testing, manual)
+        type: string
+        default: manual
+
+permissions:
+  contents: read
+
+concurrency:
+  group: runtime-popularity
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    # Publication is opt-in twice: the dispatcher asks for it (publish=true) AND the repository
+    # variable allows it; with the variable off, a publish request is skipped, not dry-run.
+    # A manual run without publish=true is a read-only check.
+    if: >-
+      github.repository == 'fcavalcantirj/esp-atlas' &&
+      github.ref == 'refs/heads/main' &&
+      (inputs.publish != true || vars.POPULARITY_RUNTIME_ENABLED == '1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install the collector's parser
+        run: python -m pip install PyYAML
+      - name: Collect counts and optionally publish the single Git JSON file
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PUBLISH: ${{ inputs.publish }}
+          PYTHONPATH: ${{ github.workspace }}/apps/core/src:${{ github.workspace }}/jr
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--repo "$GITHUB_WORKSPACE" --remote origin --branch runtime-popularity
+                --catalog-ref main --lock-path "$RUNNER_TEMP/runtime-popularity.lock"
+                --timeout 180 --max-calls 64)
+          if [ "$PUBLISH" = true ]; then
+            gh auth setup-git --hostname github.com
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          else
+            args+=(--dry-run --out "$RUNNER_TEMP/popularity.json")
+          fi
+          cd jr
+          timeout --kill-after=10s 190s python runtime_popularity.py "${args[@]}" \
+            | tee "$RUNNER_TEMP/popularity-receipt.txt"
+      - name: Keep the run receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-popularity-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/popularity-receipt.txt
+            ${{ runner.temp }}/popularity.json
+          if-no-files-found: warn
+          retention-days: 7

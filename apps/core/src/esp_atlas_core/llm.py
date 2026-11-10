@@ -34,6 +34,15 @@ class GroqRateLimitError(RuntimeError):
     """Raised when Groq keeps returning 429 past the retry budget."""
 
 
+class GroqUnavailableError(RuntimeError):
+    """Provider failure with safe diagnostic fields, never a response body/key."""
+
+    def __init__(self, reason, status_code=None):
+        super().__init__("Groq inference is unavailable.")
+        self.reason = reason
+        self.status_code = status_code
+
+
 def _parse_wait_seconds(value):
     if value is None:
         return None
@@ -91,7 +100,10 @@ class GroqClient:
         try:
             attempt = 0
             while True:
-                response = client.post(GROQ_CHAT_URL, json=payload, headers=headers)
+                try:
+                    response = client.post(GROQ_CHAT_URL, json=payload, headers=headers)
+                except httpx.RequestError:
+                    raise GroqUnavailableError("transport") from None
                 if response.status_code == 429:
                     attempt += 1
                     if attempt > self._max_retries:
@@ -100,9 +112,17 @@ class GroqClient:
                         )
                     self._sleep(self._backoff_seconds(response.headers, attempt))
                     continue
-                response.raise_for_status()
-                data = response.json()
-                return data["choices"][0]["message"]["content"]
+                try:
+                    response.raise_for_status()
+                except httpx.HTTPStatusError:
+                    raise GroqUnavailableError("http_status", response.status_code) from None
+                try:
+                    content = response.json()["choices"][0]["message"]["content"]
+                    if not isinstance(content, str):
+                        raise TypeError("message content must be text")
+                except (ValueError, KeyError, IndexError, TypeError):
+                    raise GroqUnavailableError("invalid_response") from None
+                return content
         finally:
             if owns_client:
                 client.close()

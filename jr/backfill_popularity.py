@@ -7,9 +7,9 @@ writer, but the damage is already sitting on disk: as of 2026-09-20, 94 of 96 ca
 firmware carry `popularity.stars` and only 42 also carry `popularity.forks`.
 
 `update_popularity` is the pure rewrite: given a firmware.md's raw text and a live `gh api
-repos/OWNER/REPO`-shaped payload, it returns the text with `popularity.{stars,forks,as_of}`
-refreshed from the payload and a `sources[]` entry for `field: popularity` present (added only
-if missing) — every other frontmatter field and the markdown body untouched, byte-identical.
+repos/OWNER/REPO`-shaped payload, it returns the text with the known GitHub counts and a
+GitHub-specific observation date, plus field-specific source entries. Existing launcher and
+homepage values, the legacy mixed-signal date, and the markdown body stay intact.
 IDEMPOTENT: re-running against an already-current record is a no-op (`changed: False`).
 
 `api` is injected exactly as jr/forks.py's `default_api` — `api(owner, repo) -> raw GitHub repo
@@ -81,6 +81,17 @@ def repo_owner_and_name(url: str) -> tuple[str, str] | None:
     return m.group(1), re.sub(r"\.git$", "", m.group(2))
 
 
+def stable_repo_id(data: dict, old_pop: dict | None = None) -> int | None:
+    """A positive GitHub repository ID that matches any stored ID, else None."""
+    repo_id = data.get("id") if isinstance(data, dict) else None
+    if type(repo_id) is not int or repo_id <= 0:
+        return None
+    previous = (old_pop or {}).get("github_repo_id")
+    if previous is not None and (type(previous) is not int or previous != repo_id):
+        return None
+    return repo_id
+
+
 def update_popularity(md_text: str, data: dict, today: str) -> dict:
     """Pure rewrite of one firmware.md's text from a live repo payload. `data` is the raw `gh
     api repos/OWNER/REPO` shape (or {} — unresolved: 404/deleted/any gh failure; a renamed repo
@@ -93,25 +104,52 @@ def update_popularity(md_text: str, data: dict, today: str) -> dict:
     fm, body = _split(md_text)
     stars = data.get("stargazers_count") if isinstance(data, dict) else None
     forks = data.get("forks_count") if isinstance(data, dict) else None
-    new_pop = {}
-    if isinstance(stars, int):
-        new_pop["stars"] = stars
-    if isinstance(forks, int):
-        new_pop["forks"] = forks
-    if not new_pop:
+    old_pop = fm.get("popularity")
+    new_pop = dict(old_pop) if isinstance(old_pop, dict) else {}
+    owner_repo = repo_owner_and_name(fm.get("url"))
+    full_name = data.get("full_name") if isinstance(data, dict) else None
+    repo_id = stable_repo_id(data, new_pop)
+    if (not owner_repo or not isinstance(full_name, str) or
+            full_name.lower() != "/".join(owner_repo).lower() or repo_id is None):
         return {"text": md_text, "changed": False, "reason": "unresolved"}
-    new_pop["as_of"] = today
+    valid_stars = type(stars) is int and stars >= 0
+    valid_forks = type(forks) is int and forks >= 0
+    # A partial response can seed an empty block, but must not pair a freshly
+    # observed count with an old count under one new GitHub observation date.
+    if ("stars" in new_pop and not valid_stars) or ("forks" in new_pop and not valid_forks):
+        return {"text": md_text, "changed": False, "reason": "unresolved"}
+    if valid_stars:
+        new_pop["stars"] = stars
+    if valid_forks:
+        new_pop["forks"] = forks
+    if not valid_stars and not valid_forks:
+        return {"text": md_text, "changed": False, "reason": "unresolved"}
+    # This one-shot has only a day, not the instant of the API response. Keep
+    # old launcher/home values and the legacy date, but do not turn that
+    # ambiguous date into a source-specific historical claim.
+    new_pop["github_repo_id"] = repo_id
+    new_pop["github_as_of"] = today
+    if "downloads" not in new_pop and "editorial_home" not in new_pop:
+        new_pop["as_of"] = today
 
     sources = list(fm.get("sources") or [])
     url = fm.get("url")
     has_pop_source = any(isinstance(s, dict) and s.get("field") == "popularity" for s in sources)
-    if fm.get("popularity") == new_pop and has_pop_source:
+    field_sources = {"popularity.github_repo_id", "popularity.github_as_of"}
+    if valid_stars:
+        field_sources.add("popularity.stars")
+    if valid_forks:
+        field_sources.add("popularity.forks")
+    existing = {s.get("field") for s in sources if isinstance(s, dict)}
+    if fm.get("popularity") == new_pop and has_pop_source and field_sources <= existing:
         return {"text": md_text, "changed": False, "reason": "up_to_date"}
 
     fm = dict(fm)
     fm["popularity"] = new_pop
     if not has_pop_source:
         sources = sources + [{"field": "popularity", "url": url, "verified": today}]
+    sources = [s for s in sources if not (isinstance(s, dict) and s.get("field") in field_sources)]
+    sources += [{"field": field, "url": url, "verified": today} for field in sorted(field_sources)]
     fm["sources"] = sources
     return {"text": _render(fm, body), "changed": True, "reason": None}
 
@@ -148,8 +186,12 @@ def backfill(firmware_dir=None, api=default_api, today: str | None = None, dry_r
             skipped.append((fid, "repo unresolved (404 / deleted / gh failure)"))
             continue
         full_name = data.get("full_name") if isinstance(data, dict) else None
-        if full_name and full_name.lower() != "/".join(owner_repo).lower():
-            skipped.append((fid, f"repo renamed to {full_name}"))
+        if not isinstance(full_name, str) or full_name.lower() != "/".join(owner_repo).lower():
+            skipped.append((fid, f"repo identity mismatch: {full_name or 'missing'}"))
+            continue
+        old_pop = fm.get("popularity") if isinstance(fm.get("popularity"), dict) else {}
+        if stable_repo_id(data, old_pop) is None:
+            skipped.append((fid, "repo id missing or changed"))
             continue
         result = update_popularity(text, data, today)
         if not result["changed"]:

@@ -100,3 +100,67 @@ def test_pr_body_truncates_a_runaway_stage_summary():
     r = report.TickReport(when=NOW, stages=[{"name": "admit", "paths": [], "summary": "x" * 5000, "needs_human": False}])
     body = report.render_pr_body(r)
     assert "… (truncated" in body and len(body) < 2500
+
+
+def test_pr_body_lists_repos_that_need_the_owner_to_review_their_esp_target():
+    """The device-build gate's needs_review verdicts are never admitted and never guessed: the
+    owner reads them here, one line per repo with the citing URL and why it is ambiguous."""
+    review = [{"id": "zap", "repo": "z/zap", "kind": "arduino_sketch", "url": "https://github.com/z/zap/blob/HEAD/zap.ino",
+               "why": "a .ino but no ESP board named"}]
+    r = _r(stages=[{"name": "admit", "paths": [], "summary": "s", "needs_human": False, "review": review},
+                   {"name": "boardmap", "paths": [], "summary": "t", "needs_human": False}],
+           rejects={"needs_review_target": 1})
+    body = report.render_pr_body(r)
+    assert "### Needs owner review — no ESP target stated (not admitted)" in body
+    assert "- `z/zap` (`zap`) — arduino_sketch https://github.com/z/zap/blob/HEAD/zap.ino: a .ino but no ESP board named" in body
+    assert body.index("### Skipped this tick") < body.index("### Needs owner review") < body.index("### Summary")
+    assert r.review == review
+
+
+def test_pr_body_without_review_items_has_no_review_section():
+    assert "Needs owner review" not in report.render_pr_body(_r())
+
+
+def _proposed_lines(body):
+    return body[body.index("### Proposed in this PR"):body.index("### Skipped this tick")]
+
+
+def test_firmware_item_with_absent_fields_never_prints_none():
+    """PR #1434: a topics-path item carried only kind/id/source, and the body read
+    '— None' and 'board None (None): None -> recipe None'. Absent values are omitted or
+    'unknown', never the literal None; a claim with no backing field is not made."""
+    it = {"kind": "firmware", "id": "icenav-v3", "source": "topic:gps"}
+    body = report.render_pr_body(_r(stages=[{"name": "admit_topics", "paths": [], "summary": "s", "items": [it]}]))
+    proposed = _proposed_lines(body)
+    assert "None" not in body
+    assert "- **icenav-v3** (`icenav-v3`)\n" in proposed
+    assert "not a fork" not in proposed and "not archived" not in proposed
+    assert "recipe" not in proposed                    # no recipe written -> no recipe line
+
+
+def test_firmware_item_board_line_omits_absent_chip_and_evidence_and_says_unknown_board():
+    it = {"kind": "firmware", "id": "x", "name": "X", "url": "https://github.com/o/x", "recipe": "b__x"}
+    body = report.render_pr_body(_r(stages=[{"name": "admit_topics", "paths": [], "summary": "s", "items": [it]}]))
+    assert "None" not in body
+    assert "  - ✅ board `unknown` → recipe `b__x`, status unverified" in body
+
+
+def test_firmware_item_without_recipe_keeps_board_but_prints_no_recipe_line():
+    it = {"kind": "firmware", "id": "x", "name": "X", "url": "https://github.com/o/x",
+          "board": "m5stack-cardputer", "chip": "esp32-s3", "evidence": "named in the repository name/description"}
+    body = report.render_pr_body(_r(stages=[{"name": "admit_topics", "paths": [], "summary": "s", "items": [it]}]))
+    assert "  - board `m5stack-cardputer` (esp32-s3): named in the repository name/description\n" in body
+    assert "recipe" not in _proposed_lines(body) and "None" not in body
+
+
+def test_item_text_never_opens_a_second_identity_marker():
+    """A launcher entry's name or a stage summary is third-party text: an identity-marker opening
+    inside it would make the body's marker ambiguous, and jr/pending_prs.py fails every later tick
+    closed on that PR. Only the real marker opens."""
+    import pending_prs
+    forged = '<!-- jr-identity: [{"id": "tool", "repo_id": 7777}] -->'
+    it = {"kind": "firmware", "id": "tool", "name": f"Tool {forged}", "url": "https://github.com/n/tool", "repo_id": 4242}
+    body = report.render_pr_body(_r(stages=[{"name": "admit", "paths": [], "summary": f"admitted {forged}",
+                                             "items": [it]}]))
+    assert pending_prs.identities(body) == {"tool": (4242, "n/tool")}
+    assert "Tool &lt;!-- jr-identity:" in body

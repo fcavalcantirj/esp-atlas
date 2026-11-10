@@ -30,6 +30,8 @@ import tick
 import tools
 from budget import Budget
 
+pytestmark = pytest.mark.usefixtures("esp_sketch_raw")   # the device-build gate passes (conftest)
+
 REPO = Path(__file__).resolve().parent.parent
 NOW = datetime(2026, 9, 8, 5, 0, tzinfo=timezone.utc)
 RECENT = (NOW - timedelta(minutes=30)).isoformat().replace("+00:00", "Z")
@@ -38,12 +40,14 @@ PROTECTION_RULE = json.dumps({"required_status_checks": {"contexts": ["schema", 
 # One real-ish tick PR (the previous hour's un-merged proposal) whose changed files add a new
 # firmware record + its first recipe — exactly what an admit tick writes.
 OPEN_PR_NUMBER = 158
-OPEN_PR = [{"number": OPEN_PR_NUMBER, "createdAt": RECENT, "headRefName": "jr/tick-20260908-0400"}]
 PR_FILES = json.dumps({"files": [
     {"path": "data/firmware/newtool/firmware.md"},
     {"path": "data/firmware/newtool/signals.json"},
     {"path": "data/recipes/m5cardputer__newtool/recipe.md"},
 ]})
+JR_OWN = {"author": {"login": "espatlas-jr"}, "isCrossRepository": False}   # pending_prs.eligible: Jr's own PR
+OPEN_PR = [{"number": OPEN_PR_NUMBER, "createdAt": RECENT, "headRefName": "jr/tick-20260908-0400",
+            **json.loads(PR_FILES), "changedFiles": 3, **JR_OWN}]     # `gh pr list` lists the same files
 
 
 class Proc(SimpleNamespace):
@@ -69,7 +73,8 @@ def recorder(script=None):
 def git_ok(wt_dir: Path):
     return recorder({
         ("remote", "get-url", "origin"): (0, "https://github.com/o/r.git\n"),
-        ("rev-parse", "origin/main"): (0, "6190d21abc\n"),
+        ("rev-parse", "--verify", "origin/main^{commit}"): (0, "6190d21abc\n"),
+        ("rev-parse", "--verify", "HEAD^{commit}"): (0, "6190d21abc\n"),   # the worktree's HEAD
         ("status", "--porcelain"): (0, ""),
         ("diff", "--cached", "--quiet"): (1, ""),   # something staged
         ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, "A\0data/firmware/newtool/firmware.md\0"),
@@ -92,6 +97,10 @@ def gh(prs="[]", pr_files=PR_FILES):
             "topics": [], "homepage": None, "default_branch": "main", "stargazers_count": 30,
             "archived": False, "forks_count": 2, "id": 4242, "fork": False, "source": None,
             "parent": None, "pushed_at": "2026-09-01T00:00:00Z", "language": "C"})),
+        # The device-build evidence gate reads the tree before authoring: an Arduino sketch whose
+        # sketch.yaml names an ESP board (esp_sketch_raw) passes it.
+        ("api", "repos/n/newtool/git/trees/main?recursive=1"): (0, json.dumps({"tree": [{"path": "newtool.ino", "type": "blob"},
+                                                                                          {"path": "sketch.yaml", "type": "blob"}]})),
         ("pr", "create"): (0, "https://github.com/o/r/pull/159\n"),
         ("pr", "merge"): (0, ""),
     })
@@ -182,11 +191,12 @@ def test_hydrate_open_pr_ledger_never_downgrades_a_merged_record(tmp_path):
 
 M5_PR_NUMBER = 189
 M5_HEAD = "jr/tick-20260909-1800"
-M5_PR = [{"number": M5_PR_NUMBER, "createdAt": RECENT, "headRefName": M5_HEAD}]
 M5_PR_FILES = json.dumps({"files": [
     {"path": "data/firmware/m5stack-sd-updater/firmware.md"},
     {"path": "data/recipes/m5stack-core__m5stack-sd-updater/recipe.md"},
 ]})
+M5_PR = [{"number": M5_PR_NUMBER, "createdAt": RECENT, "headRefName": M5_HEAD, **json.loads(M5_PR_FILES), "changedFiles": 2,
+          **JR_OWN}]
 M5_FIRMWARE_MD = (
     "---\n"
     "id: m5stack-sd-updater\n"
@@ -282,3 +292,45 @@ def test_run_tick_authors_when_no_open_pr(wt, monkeypatch):
     assert r.admitted == 1
     assert (wt / "data" / "firmware" / "newtool" / "firmware.md").exists()       # authored as before
     assert any(c[:2] == ("api", "repos/n/newtool") for c in g.calls)             # meta WAS fetched
+
+
+def test_hydrate_records_the_stable_repo_id_the_pending_index_verified(tmp_path):
+    """The ledger hydration carries the GitHub id the pending index verified for the open PR (from the
+    ledger committed at its head), so the ledger's own by_repo_id gate also sees the held repository
+    after an upstream rename."""
+    import pending_prs
+    lp = tmp_path / "proposed_ledger.json"
+    body = pending_prs.render_identity([{"kind": "firmware", "id": "newtool", "url": "https://github.com/n/newtool",
+                                         "repo_id": 4242}])
+    pending = pending_prs.build([{**OPEN_PR[0], "body": body, "_identities": {"newtool": (4242, "n/newtool")}}], [], NOW)
+    tick.hydrate_open_pr_ledger(gh(prs=json.dumps(OPEN_PR)), NOW, lp, pending=pending)
+    led = memory.load(lp)
+    assert led["by_id"]["newtool"]["repo_id"] == 4242
+    assert memory.is_blocked(led, repo_id=4242, now=NOW)
+
+
+def test_hydrate_takes_the_repo_id_only_from_the_pr_it_records(tmp_path):
+    """Another open PR's hold on the same id (here a recipe-only PR #160 whose own committed ledger
+    verified another repository id) must not lend its id to the record hydration writes for PR #158."""
+    import pending_prs
+    lp = tmp_path / "proposed_ledger.json"
+    other = {"number": 160, "headRefName": "jr/tick-20260908-0500", "body": "",
+             "files": [{"path": "data/recipes/m5stick-c__newtool/recipe.md"}],
+             "_identities": {"newtool": (9999, "x/newtool")}}     # verified for #160's commit, not #158's
+    pending = pending_prs.build([{**OPEN_PR[0], "body": ""}, other], [], NOW)
+    assert pending.hold("newtool").pr_ref == "#160" and pending.hold("newtool").repo_id == 9999
+    tick.hydrate_open_pr_ledger(gh(prs=json.dumps(OPEN_PR)), NOW, lp, pending=pending)
+    assert "repo_id" not in memory.load(lp)["by_id"]["newtool"] and 9999 not in memory.load(lp)["by_repo_id"]
+
+
+def test_hydrate_never_records_an_id_only_a_body_marker_claims(tmp_path):
+    """A marker is never proof on its own: a PR the pending index could not verify from its committed
+    ledger hydrates without a repository id, so no unverified id reaches the durable ledger."""
+    import pending_prs
+    lp = tmp_path / "proposed_ledger.json"
+    body = pending_prs.render_identity([{"kind": "firmware", "id": "newtool", "url": "https://github.com/n/newtool",
+                                         "repo_id": 7777}])
+    pending = pending_prs.build([{**OPEN_PR[0], "body": body}], [], NOW)
+    tick.hydrate_open_pr_ledger(gh(prs=json.dumps(OPEN_PR)), NOW, lp, pending=pending)
+    led = memory.load(lp)
+    assert "repo_id" not in led["by_id"]["newtool"] and 7777 not in led["by_repo_id"]

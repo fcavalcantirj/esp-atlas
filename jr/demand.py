@@ -12,8 +12,9 @@ current atlas (`data/firmware/`, `data/recipes/` — the same ground truth `tool
 reads) into one of UNCOVERED / RANKS_POORLY / COVERED_OK / UNRESOLVED.
 
 **READ-ONLY.** This module never authors a record, opens a PR, or touches `main`. It writes
-a git-tracked snapshot (`docs/demand/<date>.json`) and a Telegram digest — that's it. See
-SPEC §12 Phase 1.
+a git-tracked snapshot (`docs/demand/<date>.json`), the zero-result research queue
+(`docs/demand/research-queue.json`, SPEC-demand-research-queue.md) and a Telegram digest —
+that's it. See SPEC §12 Phase 1.
 
 The only network-touching function is `_pull_live()` — every other function in this module
 is a pure function over plain dicts/lists, so `test_demand.py` runs entirely offline.
@@ -33,6 +34,8 @@ import notify  # stdlib-only
 import telemetry  # import is side-effect free (composio loads lazily); only the floor is read here
 import tools
 import analytics_cross  # reuses fetch_trends() verbatim (SPEC-analytics-cross.md §7) — not forked here
+import demand_signal  # is_dated_snapshot: the one rule for which docs/demand/*.json is a snapshot
+import research_queue  # the zero-result research lane (SPEC-demand-research-queue.md)
 from capability_map import capabilities_from_text
 from device_map import device_from_text
 
@@ -53,6 +56,7 @@ TRENDS_BOOST_MAX = 0.5                  # v2: Trends interest=100 -> +50% weight
 GA4_SEARCH_SUBMIT = "search_submit"
 GA4_SEARCH_EMPTY = "search_empty"
 GA4_SITE_SEARCH_EVENTS = (GA4_SEARCH_SUBMIT, GA4_SEARCH_EMPTY)
+GA4_RESEARCH_SOURCE = f"ga4 {GA4_SEARCH_EMPTY}"   # the research queue's provenance for these counts
 GA4_PLACEHOLDER_TERMS = {"(not set)", "(other)"}  # no `q` sent / high-cardinality rollup — never a typed term
 
 # RANKS_POORLY thresholds (§4) — "high-impression + low-CTR + weak-position" made concrete
@@ -147,21 +151,27 @@ def _chip_part_candidate(term: str) -> str | None:
     return f"esp32-{m.group(1)}" if m else None
 
 
-def resolve_entity(term: str, firmware_ids: set[str]) -> dict:
+def resolve_entity(term: str, firmware_ids: set[str], catalog: list[dict] | None = None) -> dict:
     """Term -> entity candidates, PARSING ONLY via the scorer's existing maps (§4.1): no new
     intelligence, no LLM. `board` via `device_map.device_from_text` (only ever a catalogued
-    board id, by construction). `chip` from the board's ground-truth soc if a board matched,
-    else any specific chip family named directly in the term. `firmware_token` via substring
-    match against catalogued firmware ids. `part` via `_chip_part_candidate` — a SHAPE-matched
+    board id, by construction); failing that, and only for a term with no `firmware_token` and
+    no `part` (their behaviour stays exactly as without a catalog), via the research queue's
+    vendor-prefix model-key rule against `catalog` (`research_queue.model_board`: a model number
+    like 'fnk0104s' held by exactly one board record), with that key kept as `board_model`.
+    `chip` from the board's ground-truth soc if a board matched, else any specific chip family
+    named directly in the term. `firmware_token` via substring match against catalogued
+    firmware ids. `part` via `_chip_part_candidate` — a SHAPE-matched
     esp32-<variant> chip/part id (§4's part/chip fix; existence checked later by classify_gap
     against the live catalog, never here). `capability` via `capability_map`'s controlled
     vocabulary. Any of these may be None/[] — the caller decides what that means (classify_gap)."""
-    board = device_from_text(term)
-    chip = tools.board_soc(board) if board else _chip_from_term(term)
     firmware_token = _firmware_token_match(_words(term), firmware_ids)
-    capability = capabilities_from_text(term)
     part = _chip_part_candidate(term)
-    return {"board": board, "chip": chip, "firmware_token": firmware_token,
+    board, board_model = device_from_text(term), None
+    if not (board or firmware_token or part) and catalog:
+        board, board_model = research_queue.model_board(term, catalog) or (None, None)
+    chip = tools.board_soc(board) if board else _chip_from_term(term)
+    capability = capabilities_from_text(term)
+    return {"board": board, "board_model": board_model, "chip": chip, "firmware_token": firmware_token,
             "capability": capability, "part": part}
 
 
@@ -213,9 +223,10 @@ def classify_gap(resolved: dict, firmware_ids: set[str], recipe_pairs: set[str],
                  part_ids: set[str] | None = None) -> str:
     """§4 gap classification — the crux of the miner.
 
-    A `firmware_token` or a `part` is the required anchor for anything but UNRESOLVED: with
-    zero-LLM, reuse-only resolution, `board`/`chip`/`capability` alone never identify a SPECIFIC
-    missing catalog entity (a board-only match is by construction an ALREADY-catalogued board —
+    A `firmware_token`, a `part` or a `board_model` is the required anchor for anything but
+    UNRESOLVED: with zero-LLM, reuse-only resolution, a device-map `board`, `chip` or
+    `capability` alone never identify a SPECIFIC missing catalog entity (a board-only match is
+    by construction an ALREADY-catalogued board —
     device_map only maps to those — so it can't signal a gap; a bare chip or capability token
     is too generic to say what's missing). Those partial-signal terms are exactly what §4 means
     by UNRESOLVED: "high-volume unresolved clusters are a signal to Felipe" for possible new
@@ -235,7 +246,11 @@ def classify_gap(resolved: dict, firmware_ids: set[str], recipe_pairs: set[str],
       actually catalogued yet — a real populate gap, no `board` pairing concept for parts).
     - otherwise it already exists in the atlas -> RANKS_POORLY or COVERED_OK by the same D1
       metrics test as firmware (⟨Q3 RESOLVED⟩: RANKS_POORLY is a report for Felipe+us, never an
-      authoring target for Jr, same as the firmware case above)."""
+      authoring target for Jr, same as the firmware case above).
+
+    Else, given a `board_model` (the term IS one catalogued board's model number, e.g.
+    'fnk0104s' -> freenove-fnk0104s): that board already exists -> RANKS_POORLY or COVERED_OK
+    by the same D1 metrics test."""
     firmware_token = resolved.get("firmware_token")
     if firmware_token:
         if firmware_token not in firmware_ids:
@@ -249,6 +264,9 @@ def classify_gap(resolved: dict, firmware_ids: set[str], recipe_pairs: set[str],
     if part:
         if part not in (part_ids or set()):
             return GAP_UNCOVERED
+        return _rank_or_covered(metrics)
+
+    if resolved.get("board") and resolved.get("board_model"):
         return _rank_or_covered(metrics)
 
     return GAP_UNRESOLVED
@@ -329,6 +347,34 @@ def _ga4_event_count(row: dict) -> int:
         return 0
 
 
+def _ga4_terms(raw_rows: list[dict]) -> list[dict]:
+    """Per normalized term: `searches` (`search_submit` count), `zero_result_searches`
+    (`search_empty` count) and `has_empty` (any `search_empty` row at all). Rows with an
+    empty/placeholder term, another event name or the legacy single-dimension shape are dropped."""
+    by_term: dict[str, dict] = {}
+    for r in raw_rows or []:
+        dims = r.get("dimensionValues") or []
+        if len(dims) < 2:
+            continue
+        event_name = (dims[0] or {}).get("value")
+        term = normalize_term((dims[1] or {}).get("value"))
+        if event_name not in GA4_SITE_SEARCH_EVENTS or not term or term in GA4_PLACEHOLDER_TERMS:
+            continue
+        row = by_term.setdefault(term, {"term": term, "searches": 0, "zero_result_searches": 0, "has_empty": False})
+        if event_name == GA4_SEARCH_SUBMIT:
+            row["searches"] += _ga4_event_count(r)
+        else:
+            row["zero_result_searches"] += _ga4_event_count(r)
+            row["has_empty"] = True
+    return list(by_term.values())
+
+
+def ga4_term_counts(raw_rows: list[dict]) -> list[dict]:
+    """`{term, searches, zero_result_searches}` per normalized term, UNfloored — the research
+    queue's input (SPEC-demand-research-queue.md)."""
+    return [{k: t[k] for k in ("term", "searches", "zero_result_searches")} for t in _ga4_terms(raw_rows)]
+
+
 def parse_ga4_searchterm_rows(raw_rows: list[dict]) -> tuple[list[dict], bool]:
     """Raw `GOOGLE_ANALYTICS_RUN_REPORT` rows (dims `[eventName, customEvent:q]`, metric
     `eventCount`, filtered to `GA4_SITE_SEARCH_EVENTS` — see `_pull_live`) -> one plain dict per
@@ -340,21 +386,8 @@ def parse_ga4_searchterm_rows(raw_rows: list[dict]) -> tuple[list[dict], bool]:
     name, or the legacy single-dimension shape are dropped, never raised; `d2_available` is
     True only when at least one real term parses — otherwise the miner runs on D1/D4 only
     (§8: 'no silent degradation')."""
-    by_term: dict[str, dict] = {}
-    for r in raw_rows or []:
-        dims = r.get("dimensionValues") or []
-        if len(dims) < 2:
-            continue
-        event_name = (dims[0] or {}).get("value")
-        term = normalize_term((dims[1] or {}).get("value"))
-        if event_name not in GA4_SITE_SEARCH_EVENTS or not term or term in GA4_PLACEHOLDER_TERMS:
-            continue
-        row = by_term.setdefault(term, {"term": term, "events": 0, "zero_result": False})
-        if event_name == GA4_SEARCH_SUBMIT:
-            row["events"] += _ga4_event_count(r)
-        else:
-            row["zero_result"] = True
-    parsed = list(by_term.values())
+    parsed = [{"term": t["term"], "events": t["searches"], "zero_result": t["has_empty"]}
+              for t in _ga4_terms(raw_rows)]
     return parsed, bool(parsed)
 
 
@@ -397,6 +430,7 @@ def build_demand_items(
     prior_first_seen: dict[str, str] | None = None,
     part_ids: set[str] | None = None,
     trends: dict[str, int] | None = None,
+    catalog: list[dict] | None = None,
 ) -> list[dict]:
     """The pure miner (§3): normalize -> floor-filter -> resolve -> dedup/merge -> weight ->
     classify -> emit a ranked `List[DemandItem]` (schema §9), NO network. `gsc_query_rows` /
@@ -406,7 +440,9 @@ def build_demand_items(
     `classify_gap` checks part demand against (§4's part/chip fix). `trends` is an already-fetched
     `{normalized_query: 0..100}` Google Trends map (`analytics_cross.fetch_trends`'s return shape,
     reused verbatim, SPEC-analytics-cross.md §7) applied via `apply_trends_boost` — absent/None/{}
-    degrades every item's weight to exactly its pre-Trends value (§3.6 extension)."""
+    degrades every item's weight to exactly its pre-Trends value (§3.6 extension). `catalog` is
+    `research_queue.load_catalog()`'s read-only index, used by `resolve_entity` to resolve a
+    board by its model number; None skips that rule."""
     firmware_ids = firmware_ids if firmware_ids is not None else set()
     recipe_pairs = recipe_pairs if recipe_pairs is not None else set()
     part_ids = part_ids if part_ids is not None else set()
@@ -424,7 +460,7 @@ def build_demand_items(
     groups: dict[tuple, dict] = {}
 
     for row in d1_rows:
-        resolved = resolve_entity(row["term"], firmware_ids)
+        resolved = resolve_entity(row["term"], firmware_ids, catalog)
         key = _dedup_key(row["term"], resolved)
         g = groups.setdefault(key, _new_group(resolved))
         g["raw_terms"].add(row["raw_term"])
@@ -438,7 +474,7 @@ def build_demand_items(
             g["landing_page"] = page
 
     for row in ga4_parsed:
-        resolved = resolve_entity(row["term"], firmware_ids)
+        resolved = resolve_entity(row["term"], firmware_ids, catalog)
         key = _dedup_key(row["term"], resolved)
         g = groups.setdefault(key, _new_group(resolved))
         g["raw_terms"].add(row["term"])
@@ -536,7 +572,7 @@ def _latest_prior_snapshot(demand_dir: Path = DEMAND_DIR) -> list[dict]:
     """The most recent dated snapshot's items (for carrying `first_seen` forward), or []."""
     if not demand_dir.exists():
         return []
-    files = sorted(p for p in demand_dir.glob("*.json") if p.stem != "unresolved")
+    files = sorted(p for p in demand_dir.glob("*.json") if demand_signal.is_dated_snapshot(p))
     if not files:
         return []
     try:
@@ -579,11 +615,18 @@ _GAP_EMOJI = {GAP_UNCOVERED: "🆕", GAP_RANKS_POORLY: "📉", GAP_COVERED_OK: "
 
 
 def _d2_status_line(d2_available: bool, d2_pull_failed: bool) -> str:
+    """The digest's D2 line. 'Live' is PARTIAL coverage, never all site searches: the bounded
+    producer contract sends `q` only for eligible exact model tokens and is still rolling out
+    (not yet deployed everywhere), so the window may also hold legacy free-form terms. The line
+    must not claim the live producer already enforces that restriction."""
+    # d2_available: at least one valid non-placeholder term parsed (see parse_ga4_searchterm_rows).
     if d2_pull_failed:
         return "🔴 D2 blind: GA4 site-search pull failed (customEvent:q) — check Composio/GA4"
     if not d2_available:
         return "🔴 D2 blind: no site-search terms in GA4 this window (customEvent:q)"
-    return "🟢 D2 live: first-party site-search terms captured"
+    return ("🟢 D2 live (partial coverage): GA4 q is live — the bounded producer contract sends q "
+            "only for eligible exact model tokens; it is rolling out, not yet deployed everywhere, "
+            "and this window may include legacy free-form terms")
 
 
 def build_digest(items: list[dict], d2_available: bool, window: dict, top_n: int = 10,
@@ -635,6 +678,7 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
     firmware_ids = tools.catalogued_firmware_ids()
     recipe_pairs = _recipe_pairs()
     part_ids = _catalogued_part_ids()
+    catalog = research_queue.load_catalog(REPO)
     today = dt.date.today().isoformat()
     prior_first_seen = _prior_first_seen_map(_latest_prior_snapshot(demand_dir))
 
@@ -645,15 +689,35 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
         live["gsc_query_rows"], live["gsc_query_page_rows"], ga4_raw,
         firmware_ids=firmware_ids, recipe_pairs=recipe_pairs,
         today=today, prior_first_seen=prior_first_seen, part_ids=part_ids,
-        trends=live.get("trends"),
+        trends=live.get("trends"), catalog=catalog,
     )
     write_snapshot(items, d2_available, live["window"], today, demand_dir)
     write_unresolved(items, demand_dir)
+    try:
+        research_line, research = update_research_queue(ga4_raw, today, live["window"], demand_dir)
+    except Exception as e:  # noqa: BLE001 — the research lane must never block the demand steer
+        research = {"error": f"{type(e).__name__}: {e}"}
+        research_line = f"🔴 research queue NOT updated: {research['error'][:160]}"
     digest = build_digest(items, d2_available, live["window"],
-                          d2_pull_failed=not live.get("ga4_pull_ok", True))
+                          d2_pull_failed=not live.get("ga4_pull_ok", True)) + "\n" + research_line
     if send_telegram:
         notify.send_telegram(digest)
-    return {"items": items, "digest": digest, "d2_available": d2_available}
+    return {"items": items, "digest": digest, "d2_available": d2_available, "research": research}
+
+
+def update_research_queue(ga4_raw_rows: list[dict], today: str, window: dict,
+                          demand_dir: Path = DEMAND_DIR) -> tuple[str, dict]:
+    """The zero-result research lane (SPEC-demand-research-queue.md): every UNfloored GA4 term
+    that returned nothing becomes (or refreshes) a candidate in `research-queue.json`, classified
+    against the catalog read-only. `today` is the intake date; `window` is the {start, end} the
+    GA4 pull queried, stored as the counts' provenance. Returns (digest line, run report). Writes
+    only that file."""
+    path = demand_dir / research_queue.QUEUE_NAME
+    queue, report = research_queue.update_queue(
+        research_queue.load_queue(path), ga4_term_counts(ga4_raw_rows),
+        research_queue.load_catalog(REPO), today, source=GA4_RESEARCH_SOURCE, window=window)
+    research_queue.write_queue(queue, path)
+    return research_queue.digest_line(queue, report), report
 
 
 def main(argv=None) -> int:

@@ -12,6 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import demand  # noqa: E402
+import demand_signal  # noqa: E402
 from test_demand import D1_ROWS, D4_ROWS, _build  # noqa: E402
 
 
@@ -181,6 +182,19 @@ def test_digest_says_ga4_pull_failed_instead_of_no_terms():
     assert "no site-search terms" in empty
 
 
+def test_digest_live_line_admits_partial_eligible_token_coverage():
+    """The web app sends `q` only for exact public model tokens (FNKddddL, ES3CddP, ...);
+    every other query arrives as `q_length` only — D2 live must never read as full coverage."""
+    window = {"start": "2026-08-03", "end": "2026-08-31"}
+    digest = demand.build_digest(_build(), d2_available=True, window=window)
+    live = next(line for line in digest.splitlines() if "D2 live" in line)
+    assert "partial" in live
+    assert "eligible" in live
+    assert "all searches" not in live
+    assert "all site searches" not in live
+    assert "site-search terms captured" not in live
+
+
 def test_mine_reports_failed_ga4_pull_in_digest(tmp_path, monkeypatch):
     monkeypatch.setattr(demand, "_pull_live", lambda days=demand.WINDOW_DAYS: {
         "window": {"start": "2026-08-03", "end": "2026-08-31"},
@@ -199,7 +213,7 @@ def test_mine_d2_term_above_floor_reaches_the_snapshot(tmp_path, monkeypatch):
         "gsc_query_rows": D1_ROWS, "gsc_query_page_rows": D4_ROWS, "ga4_searchterm_raw_rows": ga4,
     })
     demand.mine(send_telegram=False, demand_dir=tmp_path)
-    snapshot = json.loads(next(p for p in tmp_path.glob("*.json") if p.stem != "unresolved").read_text())
+    snapshot = json.loads(next(p for p in tmp_path.glob("*.json") if demand_signal.is_dated_snapshot(p)).read_text())
     waveshare = next(it for it in snapshot["items"] if it["term"] == "waveshare")
     assert waveshare["zero_result"] is True
     assert waveshare["events"] == 6
@@ -213,7 +227,7 @@ def test_mine_marks_d2_available_from_live_shaped_ga4_rows(tmp_path, monkeypatch
     })
     result = demand.mine(send_telegram=False, demand_dir=tmp_path)
     assert result["d2_available"] is True
-    snapshot = json.loads(next(p for p in tmp_path.glob("*.json") if p.stem != "unresolved").read_text())
+    snapshot = json.loads(next(p for p in tmp_path.glob("*.json") if demand_signal.is_dated_snapshot(p)).read_text())
     assert snapshot["d2_available"] is True
 
 

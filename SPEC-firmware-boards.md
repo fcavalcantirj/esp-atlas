@@ -117,6 +117,41 @@ signal. `--ci` emits a `::warning` per under-mapped firmware and exits 0 (warn m
 firmware with no `signals.json`, or one with `errors > 0` and no signals, is
 `unmeasured`, never a failure.
 
+**How G2 runs.** `scripts/g2_guard.py` (CI job `g2-guard`, offline) diffs BASE...HEAD and
+judges every deletion against the record as it was at BASE:
+
+- **Firmware deletion.** A deleted `data/firmware/<id>/firmware.md` that is curated-exempt,
+  floor-passing, or ≥1000 stars fails unless `jr/overrides/<id>.json` exists at HEAD (the
+  whole-firmware override, e.g. `jr/overrides/warble.json`). Below-floor records stay
+  deletable.
+- **Recipe deletion, firmware also deleted.** Passes when that firmware deletion itself
+  passes (below floor, or under its override).
+- **Recipe deletion, firmware kept — edge correction.** Fails unless an **edge-correction
+  override** `jr/overrides/<firmware>__edges.json` is **added or modified in the same
+  change** (one merely present at HEAD and untouched authorizes nothing) and lists that
+  exact path. This is for a real firmware with a false board edge (e.g. a recipe mined
+  from a vendored study tree). Required keys:
+
+  | key | rule |
+  |---|---|
+  | `firmware` | equals the `<firmware>` in the file name; `data/firmware/<firmware>/firmware.md` exists at HEAD and is **not** deleted in the change |
+  | `action` | `"edge_correction"` |
+  | `deletes` | non-empty list of exact `data/recipes/<board>__<firmware>/recipe.md` paths, each actually deleted in the change |
+  | `classification` | non-empty string (e.g. `vendored_study_tree_not_build_target`) |
+  | `sources` | non-empty list of `https://` URLs (pinned README, removal commit, …) |
+  | `historical_parent_sha` | 7–40 char lowercase hex git sha |
+  | `directed_by` | non-empty string |
+  | `date` | `YYYY-MM-DD` |
+  | `originals` | map of each `deletes` path → its full original recipe text, which must **byte-match** the file at BASE; no keys beyond `deletes` |
+
+  Fail-closed: malformed JSON, any missing/malformed field, a wrong firmware id, a path
+  that is not that firmware's recipe or is not deleted, or an originals mismatch voids the
+  whole override (it fails the change even when nothing else is deleted), and any deleted
+  recipe it does not list still fails. An edge override never stands in for
+  `jr/overrides/<id>.json`: deleting the firmware is judged by the firmware rule above.
+  Deletions still route to human review (`SPEC-jr-review-routing.md`); G2 only decides
+  whether the deletion is guarded at all.
+
 ## 5. Reliability doctrine (the rules every ingest/enrichment adapter obeys)
 
 Distilled from how reliable autonomous data pipelines are actually built:

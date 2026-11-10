@@ -139,6 +139,51 @@ downloads). Fix — store the numbers, dated like a citation (popularity drifts)
 - Backfill: a one-off pass stamps `popularity` onto existing firmware (fetch live once) so the
   gate has data for today's catalog.
 
+### 2026-11-07: independent runtime GitHub counts
+
+The hourly tick no longer invokes `jr/stage_popularity_refresh.py`. Its helpers remain
+available to `jr/runtime_popularity.py`, which publishes `popularity.json` on the separate
+`runtime-popularity` branch through `.github/workflows/runtime-popularity.yml`. This
+deterministic publisher does not modify catalog records, create PRs, or call an LLM.
+The website reads that snapshot; catalog popularity remains dated admission evidence.
+Runtime counts may decrease or reach zero without applying the admission floor.
+
+Removing the old stage does not change PR triage or ledger rejection rules. Historical
+count-refresh PRs require individual review; they are not automatically closed.
+
+### 2026-11-06: bounded GitHub count refresh (retired)
+
+The retired `jr/stage_popularity_refresh.py` stage ran in the hourly Jr tick. It groups the catalog
+by bare GitHub owner/repository URL, excludes the known wrong Nyan URL until its separate cited
+correction, and visits a deterministic slice of at most seven distinct repositories each hour.
+At the current 144 eligible repositories, 24 hourly slots cover the catalog once per day when
+ticks complete. A record with a GitHub observation less than 24 hours old is skipped. The tick
+uses its existing counted GitHub-call and wall-clock budget; failed calls are not retried in
+the same tick. A 404 skips only that repository; rate or transport failure stops the slice.
+
+A response may replace the last-good snapshot only when `full_name` equals the record URL,
+`id` is a positive integer matching any stored `popularity.github_repo_id`, and both
+`stargazers_count` and `forks_count` are nonnegative integers (including real zero). Both
+one-shot backfill writers also require the same exact name and positive stable ID; missing
+data is skipped, never stamped as zero. On first observation the repository ID is persisted.
+Real writes replace a file atomically in Jr's isolated worktree; its guard and CI validate the
+staged result before publication. A true count that would put a non-exempt record below this
+spec's floor is deferred for data review rather than aborting unrelated tick work.
+
+`github_as_of` dates the GitHub counts; `downloads_as_of` and `editorial_home_as_of` are set
+only when those signals were observed and cited by their own sources. Scheduled GitHub refresh
+preserves launcher/home values and the legacy mixed-signal `as_of` without inferring a date
+for either source. It adds or updates field-exact GitHub citations. A legacy source conflict or
+any other change that would route to `jr-review` is deferred by the stage, including at the
+open-review cap. The backend `/firmware` and `/examples` responses expose optional GitHub and
+legacy dates so clients can label scope honestly.
+
+This code is not operational proof: the first natural scheduled tick must provide its run ID,
+source revision, upstream results, persisted counts and deployed readback. A page view must not
+call GitHub. A live stale-while-revalidate endpoint remains dependent on an atomic shared
+cross-instance coordinator and global rate budget; the current regional Runtime Cache cannot
+provide either alone.
+
 ## CI floor gate (deterministic, mechanical — no LLM, no manual curation)
 - `scripts/firmware_floor_audit.py` reads the **stored** `popularity` (not a live fetch) → fully
   offline/deterministic.

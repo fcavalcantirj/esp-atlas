@@ -2,13 +2,16 @@
 
 No test here runs git, gh, validate.py, pytest, Telegram or the network: git/gh are scripted
 recorders, the gauge/guard/notifier/pr_state/revalidate are injected fakes, and the "worktree"
-is a tmp_path. The real data/ tree is read by exactly one test (the dry-run gauge).
+is a tmp_path. A dry run copies tick.REPO, so every test points it at a tmp checkout with a known
+jr/ state (the `checkout` fixture); the real data/ tree is read by exactly one test (the dry-run
+gauge), and the clone's jr/proposed_ledger.json by none.
 
 Run: cd jr && python3 -m pytest test_tick.py -v
 """
 from __future__ import annotations
 
 import json
+import shutil
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from types import SimpleNamespace
@@ -23,6 +26,7 @@ from budget import Budget
 
 NOW = datetime(2026, 9, 5, 4, 7, tzinfo=timezone.utc)
 PROTECTION_RULE = json.dumps({"required_status_checks": {"contexts": ["schema", "tests", "jr-tests"]}})
+JR_OWN = {"author": {"login": publish.JR_LOGIN}, "isCrossRepository": False}   # pending_prs.eligible: Jr's own PR
 
 
 class Proc(SimpleNamespace):
@@ -60,13 +64,19 @@ def gh_ok(rate="4999", prs="[]", protection_rc=0, allow="true", pr_url="https://
     })
 
 
-def git_ok(wt_dir: Path, staged=True):
+SIGNALS_REFRESH = "M\0data/firmware/x/signals.json\0"      # review_routing: AUTO
+LEDGER_ONLY = "M\0jr/proposed_ledger.json\0"                # review_routing: AUTO
+
+
+def git_ok(wt_dir: Path, staged=True, diff="A\0data/firmware/x/firmware.md\0"):
+    """`diff` is the staged `--name-status -z` answer; the default (a new firmware) routes REVIEW."""
     return recorder({
         ("remote", "get-url", "origin"): (0, "https://github.com/o/r.git\n"),
-        ("rev-parse", "origin/main"): (0, "6190d21abc\n"),
+        ("rev-parse", "--verify", "origin/main^{commit}"): (0, "6190d21abc\n"),
+        ("rev-parse", "--verify", "HEAD^{commit}"): (0, "6190d21abc\n"),   # the worktree's HEAD
         ("status", "--porcelain"): (0, ""),
         ("diff", "--cached", "--quiet"): (1 if staged else 0, ""),
-        ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, "A\0data/firmware/x/firmware.md\0"),
+        ("diff", "--cached", "--name-status", "--no-renames", "-z"): (0, diff),
         ("rev-parse", "HEAD"): (0, "feedbee\n"),
     })
 
@@ -83,6 +93,40 @@ def wt_dir(tmp_path, monkeypatch):
     (d / "jr").mkdir()
     monkeypatch.setattr(tick.publish.tempfile, "mkdtemp", lambda prefix="": str(d))
     return d
+
+
+REAL_REPO = tick.REPO
+EMPTY_LEDGER = {"by_id": {}, "by_repo": {}}
+
+
+def write_jr_state(checkout: Path, ledger_doc=None, cooldown_doc=None) -> None:
+    """The checkout's committed Jr decisions (jr/proposed_ledger.json, jr/board_cooldown.json)."""
+    (checkout / "jr").mkdir(parents=True, exist_ok=True)
+    (checkout / "jr" / "proposed_ledger.json").write_text(json.dumps(ledger_doc or EMPTY_LEDGER, indent=2) + "\n")
+    (checkout / "jr" / "board_cooldown.json").write_text(json.dumps(cooldown_doc or {"by_board": {}}, indent=2) + "\n")
+
+
+@pytest.fixture(autouse=True)
+def checkout(tmp_path, monkeypatch):
+    """A dry run copies tick.REPO's data/, docs/ and jr/*.json, then reconciles the copied ledger
+    against gh. Pointed at the real clone, a test would read whatever the clone's ledger holds — and
+    an open jr-review PR's `proposed` entries make the dry run `gh pr view` them (#1434, #1439 broke
+    every tick PR's jr-tests that way). Every test here gets a tmp checkout with a known, empty state."""
+    root = tmp_path / "checkout"
+    (root / "data" / "firmware").mkdir(parents=True)
+    (root / "docs" / "telemetry").mkdir(parents=True)
+    write_jr_state(root)
+    monkeypatch.setattr(tick, "REPO", root)
+    return root
+
+
+def is_read_only_gh(call) -> bool:
+    """The gh calls a dry run may make: preflight reads, and `gh pr view <ref> --json …` (the
+    memory step's PR-state and open-PR file reads). Anything else may write to GitHub."""
+    if call[:2] == ("pr", "view"):
+        return "--json" in call
+    return call[:2] in (("api", "rate_limit"), ("pr", "list"), ("api", "repos/o/r/rules/branches/main"),
+                        ("api", "repos/o/r/branches/main/protection"), ("api", "repos/o/r"))
 
 
 NO_SNAPSHOT = lambda root, date: (None, None, [])   # noqa: E731 — default: write no trend paths
@@ -110,12 +154,34 @@ def test_dry_run_prints_gauge_allocation_and_nothing_to_do_and_writes_nothing(ca
     out = capsys.readouterr().out
     assert not r.aborted
     assert "jr-tick (dry-run)" in out and "boards 42.5%" in out
-    assert "boards 42.5% -> A0/B0 (no content stages registered)" in out and "nothing to do" in out
-    # read-only: no worktree, no add/commit/push, no PR, only read calls to gh
+    assert "boards 42.5% -> A0/B0 (no content stages registered)" in out
+    # a real tick always writes the day's trend snapshot, so the dry run says so instead of "nothing to do"
+    assert "no PR (dry-run)" in out and "would write" in out and "docs/telemetry/data-trend.jsonl[row 2026-09-05]" in out
+    # read-only: no worktree, no add/commit/push, no PR, only read calls to gh — and with an empty
+    # ledger and no open PRs, nothing for the memory step to `gh pr view`
     assert all(c[0] not in ("worktree", "add", "commit", "push", "checkout") for c in norm(git))
-    assert all(c[:2] in (("api", "rate_limit"), ("pr", "list"), ("api", "repos/o/r/rules/branches/main"),
-                         ("api", "repos/o/r/branches/main/protection"), ("api", "repos/o/r")) for c in gh.calls)
+    assert all(is_read_only_gh(c) and c[:2] != ("pr", "view") for c in gh.calls)
     assert r.memory == {} and any("dry-run" in w for w in r.warnings)
+
+
+def test_dry_run_reads_the_checkout_ledger_not_the_real_clone(checkout, tmp_path):
+    proposed = {"id": "fw-under-review", "repo": "o/fw-under-review", "status": "proposed", "reason": None,
+                "pr_ref": "#9999", "timestamp": NOW.isoformat(), "expires": None}
+    write_jr_state(checkout, {"by_id": {"fw-under-review": proposed}, "by_repo": {"o/fw-under-review": "fw-under-review"}})
+    gh = gh_ok()
+    r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
+    assert not r.aborted
+    # the seeded entry (not the clone's ledger) is what the memory step settles
+    assert [c for c in gh.calls if c[:2] == ("pr", "view")] == [("pr", "view", "#9999", "--json", "state,mergedAt")]
+    assert all(is_read_only_gh(c) for c in gh.calls), [c for c in gh.calls if not is_read_only_gh(c)]
+    assert json.loads((checkout / "jr" / "proposed_ledger.json").read_text())["by_id"]["fw-under-review"] == proposed
+
+
+def test_read_only_gh_allows_pr_view_only_with_json():
+    assert is_read_only_gh(("pr", "view", "#9999", "--json", "state,mergedAt"))
+    assert not is_read_only_gh(("pr", "view", "#9999", "--web"))
+    assert not is_read_only_gh(("pr", "close", "#9999"))
+    assert not is_read_only_gh(("pr", "merge", "#9999", "--auto"))
 
 
 def _fake_stage_modules(monkeypatch, calls):
@@ -123,10 +189,16 @@ def _fake_stage_modules(monkeypatch, calls):
     import stage_admit_topics
     import stage_boardmap
     import stage_backfill
+    import stage_popularity_refresh
     monkeypatch.setattr(stage_backfill, "run", lambda ctx, budget, fetch=None: calls.append(("backfill", budget)) or tick.StageResult("backfill", summary=f"backfilled {budget}"))
     monkeypatch.setattr(stage_boardmap, "run", lambda ctx, budget, only=None: calls.append(("boardmap", budget)) or tick.StageResult("boardmap", summary=f"mapped {budget}"))
     monkeypatch.setattr(stage_admit, "run", lambda ctx, budget, call_share=1.0: calls.append(("admit", budget, round(call_share, 2))) or tick.StageResult("admit", summary=f"scored {budget}"))
     monkeypatch.setattr(stage_admit_topics, "run", lambda ctx, budget: calls.append(("admit_topics", budget)) or tick.StageResult("admit_topics", summary=f"scored {budget}"))
+    def popularity_refresh(ctx):
+        calls.append(("popularity_refresh",))
+        return tick.StageResult("popularity_refresh")
+    popularity_refresh.produces_review = False
+    monkeypatch.setattr(stage_popularity_refresh, "run", popularity_refresh)
 
 
 def test_hourly_path_runs_the_content_stages_from_the_split_heavier_first(capsys, tmp_path, monkeypatch):
@@ -171,13 +243,18 @@ def test_hourly_stages_topics_stage_runs_even_with_both_tracks_empty(monkeypatch
     _fake_stage_modules(monkeypatch, calls)
     fns = tick.hourly_stages({"backfill": 0, "firmware": 0})
     assert len(fns) == 1
-    fns[0](None)
+    for fn in fns:
+        fn(None)
     assert calls == [("admit_topics", tick.TOPICS_PER_TICK)]
 
 
-def test_dry_run_with_real_gauge_reads_the_repo_tree(tmp_path):
-    if not (tick.REPO / "data" / "boards").is_dir():
+def test_dry_run_with_real_gauge_reads_the_repo_tree(checkout, tmp_path):
+    if not (REAL_REPO / "data" / "boards").is_dir():
         pytest.skip("tick.py is not inside the repo (scratch run)")
+    # the real catalog and the gauge's scripts/, but the checkout's known jr/ state, never the clone's
+    shutil.rmtree(checkout / "data")
+    (checkout / "data").symlink_to(REAL_REPO / "data")
+    (checkout / "scripts").symlink_to(REAL_REPO / "scripts")
     r = run(dry_run=True, git=git_ok(tmp_path), gh=gh_ok(), gauge=tick.default_gauge)
     assert not r.aborted and r.boards_pct is not None and 0 < r.boards_pct < 100
 
@@ -198,7 +275,7 @@ def test_aborts_on_low_rate_limit_before_any_worktree(tmp_path):
 
 def test_aborts_when_a_tick_pr_is_open_too_long(tmp_path):
     old = (NOW - timedelta(hours=4)).isoformat().replace("+00:00", "Z")
-    prs = json.dumps([{"number": 7, "createdAt": old, "headRefName": "jr/tick-20260905-0007"},
+    prs = json.dumps([{"number": 7, "createdAt": old, "headRefName": "jr/tick-20260905-0007", **JR_OWN},
                       {"number": 8, "createdAt": old, "headRefName": "feat/human-branch"}])
     r = run(git=git_ok(tmp_path), gh=gh_ok(prs=prs))
     assert r.aborted.startswith("a Jr tick PR has been open > 3 h: #7")
@@ -206,7 +283,8 @@ def test_aborts_when_a_tick_pr_is_open_too_long(tmp_path):
 
 def test_recent_tick_pr_does_not_abort(tmp_path, wt_dir):
     recent = (NOW - timedelta(minutes=30)).isoformat().replace("+00:00", "Z")
-    prs = json.dumps([{"number": 9, "createdAt": recent, "headRefName": "jr/tick-20260905-0337"}])
+    prs = json.dumps([{"number": 9, "createdAt": recent, "headRefName": "jr/tick-20260905-0337", "files": [], "changedFiles": 0,
+                       **JR_OWN}])
     r = run(git=git_ok(wt_dir), gh=gh_ok(prs=prs))
     assert not r.aborted
 
@@ -245,7 +323,8 @@ def test_real_run_with_a_memory_change_uses_a_worktree_and_ships_the_ledger_only
     calls = norm(git)
     i = calls.index(("fetch", "origin", "main"))
     assert calls[i + 1] == ("worktree", "prune")
-    assert calls[i + 2] == ("worktree", "add", "--detach", str(wt_dir), "origin/main")
+    assert calls[i + 2] == ("rev-parse", "--verify", "origin/main^{commit}")
+    assert calls[i + 3] == ("worktree", "add", "--detach", str(wt_dir), "6190d21abc")   # the resolved commit
     assert all(c[0] != "worktree" for c in calls[:i])            # nothing before the fetch
     assert ("worktree", "remove", "--force", str(wt_dir)) in calls
     assert ("add", "--", "jr/proposed_ledger.json") in calls
@@ -282,7 +361,7 @@ def _stage(paths, needs_human=False, admitted=1, rejects=None):
 
 
 def test_stage_output_is_guarded_then_published_with_auto_merge(wt_dir):
-    git, gh = git_ok(wt_dir), gh_ok()
+    git, gh = git_ok(wt_dir, diff=SIGNALS_REFRESH), gh_ok()     # a low-risk diff: the AUTO route
     guard_calls = []
     r = run(git=git, gh=gh, stages=[_stage(["data/firmware/x"], rejects={"fork": 2})],
             guard=lambda root: guard_calls.append(root) or {"ok": True, "output": ""})
@@ -300,10 +379,28 @@ def test_stage_output_is_guarded_then_published_with_auto_merge(wt_dir):
     assert "- **fake** — wrote" in body[body.index("--body") + 1]
 
 
+def test_a_stage_review_list_reaches_the_published_pr_body(wt_dir):
+    """The device-build gate's needs_review repos are for the owner: they must survive the trip
+    from StageResult.review into the PR body the owner reads."""
+    review = [{"id": "zap", "repo": "z/zap", "kind": "arduino_sketch", "url": "https://github.com/z/zap/blob/main/zap.ino",
+               "why": "a .ino but no ESP board named"}]
+
+    def stage(ctx):
+        return tick.StageResult("admit", paths=["data/firmware/x"], summary="wrote", admitted=1,
+                                rejects={"needs_review_target": 1}, review=review)
+    gh = gh_ok()
+    r = run(git=git_ok(wt_dir), gh=gh, stages=[stage])
+    assert r.review == review
+    body = [c for c in gh.calls if c[:2] == ("pr", "create")][0]
+    text = body[body.index("--body") + 1]
+    assert "### Needs owner review" in text and "- `z/zap` (`zap`) — arduino_sketch https://github.com/z/zap/blob/main/zap.ino" in text
+
+
 def test_needs_human_withholds_auto_merge(wt_dir):
     gh = gh_ok()
-    r = run(git=git_ok(wt_dir), gh=gh, stages=[_stage(["data/firmware/x"], needs_human=True)])
-    assert r.publish["published"] and not r.publish["auto_merge"]
+    # a low-risk diff, so ONLY the stage's needs_human can withhold auto-merge here
+    r = run(git=git_ok(wt_dir, diff=SIGNALS_REFRESH), gh=gh, stages=[_stage(["data/firmware/x"], needs_human=True)])
+    assert r.publish["published"] and not r.publish["auto_merge"] and r.publish["route"] == "review"
     assert all(c[:2] != ("pr", "merge") for c in gh.calls)
 
 
@@ -505,7 +602,7 @@ def test_a_ledger_only_change_is_published_without_running_the_guard(wt_dir):
     and every hourly tick redoes it. No data changed, so validate.py is skipped."""
     lp = wt_dir / "jr" / "proposed_ledger.json"
     ledger.record_proposed("done", "o/done", pr_ref="https://github.com/o/r/pull/4", path=lp)
-    git, gh, guard_calls = git_ok(wt_dir), gh_ok(), []
+    git, gh, guard_calls = git_ok(wt_dir, diff=LEDGER_ONLY), gh_ok(), []
     r = run(git=git, gh=gh, pr_state=lambda ref: "merged", revalidate=lambda s: {"ok": True},
             guard=lambda root: guard_calls.append(root) or {"ok": True, "output": ""})
     assert not r.aborted and guard_calls == [] and r.guard is None
@@ -546,11 +643,13 @@ def test_a_failing_worktree_removal_is_a_warning_not_a_lost_report(wt_dir, capsy
 
 def test_publish_gets_the_uncounted_gh_so_budget_cannot_cut_it_off_mid_publish(wt_dir):
     gh = gh_ok()
-    # preflight = rate_limit + pr list + rules + protection + allow_auto_merge = 5 counted calls; the budget
-    # is exactly that, so publish's own pr create / pr merge would die if they were counted
-    r = run(git=git_ok(wt_dir), gh=gh, stages=[_stage(["data/firmware/x"])], budget=Budget(max_calls=5, clock=lambda: 0.0))
+    # preflight = rate_limit + pr list + closed pr list (jr/pending_prs.py) + rules + protection +
+    # allow_auto_merge = 6 counted calls; the budget is exactly that, so publish's own pr create /
+    # pr merge would die if they were counted
+    r = run(git=git_ok(wt_dir, diff=SIGNALS_REFRESH), gh=gh, stages=[_stage(["data/firmware/x"])],
+            budget=Budget(max_calls=6, clock=lambda: 0.0))
     assert not r.aborted and r.publish["published"] and r.publish["auto_merge"]
-    assert r.budget.startswith("gh calls 5/5")
+    assert r.budget.startswith("gh calls 6/6")
 
 
 def test_guard_env_points_core_at_the_worktree(tmp_path):
@@ -664,7 +763,7 @@ def test_main_firmware_and_no_auto_merge_flags_reach_the_stage_and_run_tick(monk
         tick.main(["--dry-run", "--track", "A", "--firmware", "wled", "--no-telegram"])      # --firmware is Track B only
 
 
-# --- preflight: superseded tick PRs + the overlap lock (incident 2026-10-09, #785) --------------
+# --- preflight: superseded tick PRs (incident 2026-10-09, #785; the overlap lock: test_tick_lock.py)
 
 STALE = (NOW - timedelta(hours=4)).isoformat().replace("+00:00", "Z")
 FRESH = (NOW - timedelta(minutes=30)).isoformat().replace("+00:00", "Z")
@@ -673,13 +772,15 @@ BOOKKEEPING = ["jr/proposed_ledger.json", "docs/telemetry/data-trend.jsonl", "do
 
 def _tick_pr(number, created, mergeable="MERGEABLE"):
     return {"number": number, "createdAt": created, "headRefName": f"jr/tick-20260905-{number:04d}",
-            "mergeable": mergeable}
+            "mergeable": mergeable, "files": [], "changedFiles": 0, **JR_OWN}
 
 
 def gh_with_prs(prs, files=None, view_rc=0, close_rc=0, **kw):
-    """gh_ok plus scripted `pr view N --json files` and `pr close N` answers per PR number."""
-    base = gh_ok(prs=json.dumps(prs), **kw)
+    """gh_ok plus scripted `pr view N --json files` and `pr close N` answers per PR number; `pr list` lists them too."""
     files = files or {}
+    listed = [{**pr, "files": [{"path": p} for p in files[pr["number"]]], "changedFiles": len(files[pr["number"]])}
+              if pr.get("number") in files else pr for pr in prs]
+    base = gh_ok(prs=json.dumps(listed), **kw)
 
     def fn(*args):
         if args[:2] == ("pr", "view") and args[3:] == ("--json", "files"):
@@ -716,11 +817,12 @@ def test_a_stale_bookkeeping_only_tick_pr_is_closed_even_when_mergeable(wt_dir):
 
 
 def test_a_fresh_mergeable_tick_pr_is_left_alone_and_its_files_never_fetched(tmp_path):
-    # dry-run: the memory step's open-PR hydration (which reads files too) does not run there
+    # dry-run (no publish). The triage never reads its files; the ONE files read is the memory
+    # step's open-PR hydration, which a dry run runs too (on its throwaway ledger copy).
     gh = gh_with_prs([_tick_pr(790, FRESH)], files={790: BOOKKEEPING})
     r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
     assert not r.aborted and _closes(gh) == [] and not any("superseded" in w for w in r.warnings)
-    assert all(c[:2] != ("pr", "view") or c[3:] != ("--json", "files") for c in gh.calls)
+    assert sum(c[:2] == ("pr", "view") and c[3:] == ("--json", "files") for c in gh.calls) == 1
 
 
 def test_a_stale_conflicting_content_pr_is_never_closed_and_aborts_naming_it(wt_dir):
@@ -777,52 +879,6 @@ def test_dry_run_only_reports_the_superseded_pr_it_would_close(tmp_path):
     assert any("would close" in w and "#785" in w for w in r.warnings)
 
 
-def test_a_held_lock_aborts_cleanly_before_any_github_call(tmp_path):
-    import fcntl
-    lock = tmp_path / "held.lock"
-    gh = gh_ok()
-    with open(lock, "a+") as fh:
-        fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        r = run(git=git_ok(tmp_path), gh=gh, lock_path=lock)
-    assert r.aborted == f"another tick is running (lock held: {lock})"
-    assert gh.calls == []
-
-
-def test_the_lock_is_released_after_a_tick_and_after_an_abort(wt_dir, tmp_path):
-    import fcntl
-    lock = tmp_path / "run.lock"
-    for gh in (gh_ok(), gh_ok(rate="1")):          # a clean tick, then an aborted one
-        run(git=git_ok(wt_dir), gh=gh, lock_path=lock)
-        with open(lock, "a+") as fh:
-            fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)    # raises BlockingIOError if still held
-
-
-def test_the_default_lock_lives_outside_the_repo_and_apart_from_the_wrapper_lock():
-    # scripts/jr-tick.sh's `flock` holds /tmp/jr-tick.lock for its child's whole life; the tick
-    # re-locking that same file would see it held by its own parent and abort every hour.
-    # (conftest pins tick.DEFAULT_TICK_LOCK into tmp_path, so check what it is built from.)
-    default = Path(tick.tempfile.gettempdir()) / tick.TICK_LOCK_NAME
-    assert tick.REPO not in default.parents
-    assert tick.TICK_LOCK_NAME != "jr-tick.lock"
-
-
-def test_main_honors_jr_tick_lock_from_the_environment(monkeypatch):
-    seen = {}
-    monkeypatch.setattr(tick, "run_tick", lambda **kw: seen.update(kw) or tick.report.TickReport(when=NOW))
-    monkeypatch.setenv("JR_TICK_LOCK", "/run/jr/tick.lock")
-    tick.main(["--no-telegram"])
-    assert seen["lock_path"] == Path("/run/jr/tick.lock")
-    monkeypatch.delenv("JR_TICK_LOCK")
-    tick.main(["--no-telegram"])
-    assert seen["lock_path"] is None
-
-
-def test_dry_run_takes_no_lock(tmp_path):
-    lock = tmp_path / "never.lock"
-    run(dry_run=True, git=git_ok(tmp_path), gh=gh_ok(), lock_path=lock)
-    assert not lock.exists()
-
-
 def test_an_unparseable_pr_list_aborts_closed(tmp_path):
     r = run(git=git_ok(tmp_path), gh=gh_ok(prs="not json"))
     assert r.aborted == "gh pr list failed (cannot see open Jr PRs)"
@@ -834,9 +890,3 @@ def test_a_pr_with_an_unreadable_age_is_judged_by_mergeability_alone(tmp_path):
     r = run(dry_run=True, git=git_ok(tmp_path), gh=gh)
     assert not r.aborted
     assert [w for w in r.warnings if "would close" in w] == ["would close superseded bookkeeping-only tick PR #787"]
-
-
-def test_an_unopenable_lock_aborts_closed(tmp_path):
-    gh = gh_ok()
-    r = run(git=git_ok(tmp_path), gh=gh, lock_path=tmp_path / "no-such-dir" / "x.lock")
-    assert r.aborted.startswith("cannot open tick lock") and gh.calls == []

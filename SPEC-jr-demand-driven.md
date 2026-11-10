@@ -132,6 +132,33 @@ is missing/weak**. This **reuses `jr/scorer.py`** — no new intelligence:
    (device/board tokens) and `capability_map` (category/capability tokens) as a *parser*:
    extract any board (`cardputer`, `stickc-plus2`), chip (`esp32-s3`), or firmware/capability
    token (`marauder`, `evil-portal`, `deauth`) present in the term.
+   - **`board_model` anchor (catalogued model number).** Applies only when `device_map`
+     found no board and the term has no `firmware_token` and no `part` (those terms resolve
+     exactly as without it). The term is then tried against the research queue's
+     vendor-prefix model-key rule (`SPEC-demand-research-queue.md` rule 4,
+     `research_queue.model_board`): a key is a board id without its `<brand>-` prefix or a
+     title token — 5+ characters, a letter and a digit, not a generic word. On a match,
+     `board` is that board and `board_model` is the key (`fnk0104s` →
+     `freenove-fnk0104s`, `board_model: "fnk0104s"`); otherwise `board_model` is `null`.
+     - **Whole-identifier boundary.** A key matches only as a whole model identifier:
+       never when an alphanumeric affix is attached to it, on either side, by any run of
+       `-`, `_`, `.`, `/` or a Unicode hyphen/dash (`fnk0104s-a`, `fnk0104s_b`,
+       `fnk0104s.b`, `fnk0104s--a`, `fnk0104s–a`, `x-fnk0104s` name no board; `fnk0104sx`
+       is a different token). The one exception is a joined identifier the board's own id,
+       title or alias spells (its vendor prefix `freenove-fnk0104s`, its aka
+       `freenove_fnk0104s`). Whitespace-separated words stay separate words
+       (`fnk0104s datasheet`, `freenove fnk0104s` resolve) and are never joined into a
+       key (`feather s3` is not `feathers3`). The boundary is deliberately strict: a joined
+       generic word or file extension (`esp32-fnk0104s`, `fnk0104s.pdf`) also resolves no
+       board, and a spaced variant letter (`fnk0104s b`) is a descriptive phrase that still
+       resolves. No fuzzy matching, no LLM, no network.
+     - **One holder.** The key must be carried — in any id, title or alias — by exactly
+       one catalog record, and that record must be a board; a key two records share
+       (`esp32s3`), a bare chip (`esp32`, `s3`), an uncatalogued model (`fnk0104n`) or a
+       term naming two different boards resolves no board.
+     - **Siblings stay distinct.** A model key equals its own record only: `fnk0104a` →
+       `freenove-fnk0104a`, `fnk0104b` → `freenove-fnk0104b`, and neither ever reaches
+       `freenove-fnk0104s` (nor it them).
 2. **Gap classification** — join resolved entity against the current atlas (`index.json` /
    `esp-atlas.db`):
    - **`UNCOVERED`** — resolved entity (or firmware×board pair) has **no** catalog record
@@ -141,6 +168,12 @@ is missing/weak**. This **reuses `jr/scorer.py`** — no new intelligence:
      **Felipe + DasBrowCoder** as a human/agent task (a report to us), **never** Jr's
      authoring path. Jr's lane is strictly authoring catalog records for `UNCOVERED`.
    - **`COVERED_OK`** — record exists and converts fine → **skip** (already served).
+   - The anchor that makes a term classifiable is, first match wins, a `firmware_token`, a
+     `part`, or a `board` together with its `board_model` (§4.1). A `board_model` anchor
+     names an already-catalogued board, so it is only ever `RANKS_POORLY` or `COVERED_OK`
+     by the D1 metrics; a device-map `board`, a `chip` or a `capability` alone is
+     `UNRESOLVED`. A compound that fails the whole-identifier boundary (`fnk0104s-a`) has
+     no `board`, so it is never `COVERED_OK`.
    - **`UNRESOLVED`** — term maps to no known entity (e.g. `"esp32 tutorial pdf"`) →
      bucket to a `unresolved_demand.json` review list; **never** author from an unresolved
      term. High-volume unresolved clusters are a signal *to Felipe*, not to the authoring
@@ -234,7 +267,8 @@ a record to satisfy demand** (§7).
   "events": 37, "zero_result": true,      // D2/D3 (nullable)
   "weight": 1795.2,                        // §3 formula output
   "resolved": {                            // §4 scorer output (nullable)
-    "board": "m5-cardputer", "chip": "esp32-s3",
+    "board": "m5-cardputer", "board_model": null, // board_model: the §4.1 model key, else null
+    "chip": "esp32-s3", "part": null,
     "firmware_token": "esp32marauder", "capability": ["wifi-attack","deauth"]
   },
   "gap": "UNCOVERED",                       // UNCOVERED|RANKS_POORLY|COVERED_OK|UNRESOLVED

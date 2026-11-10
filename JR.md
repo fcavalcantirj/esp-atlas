@@ -184,8 +184,11 @@ repeat:
 
 **Body: the hourly tick** (`jr/tick.py`) — deterministic, no LLM in any answer path. Each
 tick: preflight → worktree → memory → gauge → allocation → stages (Track A admits cited
-firmware, Track B maps cited boards as recipes) → guard → PR, auto-merged on green unless
-a stage flags `needs_human` (a human may always veto) → one report line. Until the cutover
+firmware, Track B maps cited boards as recipes) → guard → PR, auto-merged on green only when
+`jr/review_routing.py` routes it AUTO (bookkeeping, snapshots, star/date refreshes); anything riskier
+— new firmware, recipes, board flashing fields, a needs_review item, `needs_human`, or anything it
+does not recognise — is labelled `jr-review` and waits for the owner without blocking later ticks
+(`SPEC-jr-review-routing.md`; a human may always veto) → one report line. Until the cutover
 the stages run by hand (`--track A/B`, human-merged PRs) and the hourly job stays paused.
 
 ---

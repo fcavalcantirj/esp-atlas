@@ -1,0 +1,15 @@
+{
+  "id": "warble",
+  "repo": "rebelthor/warble",
+  "action": "delete",
+  "deletes": [
+    "data/firmware/warble/firmware.md",
+    "data/firmware/warble/signals.json",
+    "data/recipes/m5stack-cores3__warble/recipe.md"
+  ],
+  "classification": "host_only_backend_not_esp_firmware",
+  "why": "Falsely catalogued: rebelthor/warble is a host-only voice backend (whisper.cpp, Silero VAD, Ollama, Piper) that runs on a Linux or macOS machine for the M5Stack StackChan; it is not ESP firmware, and the CoreS3 runs xiaozhi-esp32 separately. Removal directed by the repository owner.",
+  "source": "https://github.com/rebelthor/warble#readme",
+  "directed_by": "repository owner",
+  "date": "2026-11-04"
+}

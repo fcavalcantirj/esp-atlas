@@ -23,6 +23,7 @@ export default function PopularityGlance({ popularity }: { popularity: Popularit
           {glance.forks}
         </span>
       )}
+      <span className="popularity-glance-scope">{glance.scope}</span>
     </span>
   );
 }

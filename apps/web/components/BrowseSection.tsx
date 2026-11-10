@@ -30,7 +30,10 @@ export default function BrowseSection({
 }) {
   if (items.length === 0) return null;
   return (
-    <section className="browse-section" aria-labelledby={`${id}-title`}>
+    <section
+      className={`browse-section${origin === "popular_firmware" ? " browse-section--firmware" : ""}`}
+      aria-labelledby={`${id}-title`}
+    >
       <h2 id={`${id}-title`} className="panel-title">
         {title}
       </h2>

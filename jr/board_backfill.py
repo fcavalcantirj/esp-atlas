@@ -7,6 +7,11 @@ explicitly-stated fields via plain text/regex over the fetched doc, and writes t
 the board's frontmatter — each quote-and-cited to that URL. Anything it cannot ground is
 OMITTED, never guessed.
 
+The PlatformIO manifest and the Arduino-ESP32 boards.txt (pinned commits) are corroboration only
+(owner mandate G3, jr/board_corroboration.py): they never write `usb_serial` or `download_mode`;
+a vendor `usb_serial` they contradict is withheld and routed to review (`needs_review`), and
+download mode is never inferred from the chip.
+
 This is SAFETY-CRITICAL: a wrong download-mode instruction can leave a user unable to
 flash (or brick) their board. So the rule is strictly cite-or-omit — when the doc does
 not explicitly state a field, the field is left absent.
@@ -322,17 +327,16 @@ def _missing_fields(fm: dict) -> list[str]:
 # same filename heuristic, same function object). The registry drives images grounding in
 # _extract_for below, keyed by brand, falling back to the espressif heuristic for any brand
 # with no dedicated extractor.
-# Second source per field (G3a): the PlatformIO espressif32 board manifest at a pinned commit,
-# plus the per-field skip reasons every source reports (jr/board_manifest.py).
+# The per-field skip reasons every source reports (jr/board_manifest.py).
 from board_manifest import (  # noqa: E402
     DOC_UNREACHABLE,
     FIELD_ABSENT,
     NO_PATTERN_MATCH,
     SOURCE_GATED,
-    ground_from_manifest,
 )
-# Third source for usb_serial only (G3b): the Arduino-ESP32 core boards.txt at a pinned commit.
-from board_arduino import ground_from_boards_txt  # noqa: E402
+# The PlatformIO manifest (G3a) and the Arduino-ESP32 boards.txt (G3b), both at pinned commits, are
+# CORROBORATION ONLY (owner mandate G3): consulted and cited, never written.
+import board_corroboration  # noqa: E402
 from board_image_extractors import (  # noqa: E402,F401
     IMAGE_EXTRACTORS,
     extract_images,
@@ -385,12 +389,14 @@ def _write_fields(path: Path, fm: dict, body: str, extracted: dict, citations: d
     path.write_text(f"---\n{front}\n---\n\n{body.strip()}\n")
 
 
-def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
+def backfill_board(path: Path, data_root: Path, fetch, today: str, write: bool = True) -> dict:
     """Backfill ONE board.md. Returns a report entry with `status`:
       * "complete"    — nothing was missing (not part of the worklist).
       * "skipped"     — doc-unreachable / no-soc / nothing-groundable; NOT modified.
       * "backfilled"  — >=1 missing field grounded and written; `written`/`omitted` list
-                        which; `partial` is True when some missing field was omitted."""
+                        which; `partial` is True when some missing field was omitted.
+    `write=False` (the tick's dry-run) grounds exactly the same way but leaves the file alone:
+    `written` then names what a real run WOULD write, `values` what, and `modified` is False."""
     fm, body = parse_frontmatter(path)
     board_id = fm.get("id") or path.parent.name
     brand = fm.get("brand") or path.parent.parent.name
@@ -413,35 +419,33 @@ def backfill_board(path: Path, data_root: Path, fetch, today: str) -> dict:
 
     res, url = _fetch_first(resolver(board_id, soc), fetch)
     extracted, vendor_reasons = _ground_from_vendor(res, url, missing, brand)
-    citations = {f: url for f in extracted}
 
-    # Second source: the PlatformIO manifest fills ONLY the fields the vendor page left missing.
-    pio = ground_from_manifest(fm, board_id, soc, data_root,
-                               [f for f in missing if f not in extracted], fetch)
-    for field, value in pio["values"].items():
-        extracted[field] = value
-        citations[field] = pio["url"]
-    # Third source: boards.txt, again ONLY for what both sources before it left missing.
-    ard = ground_from_boards_txt(board_id, soc, data_root,
-                                 [f for f in missing if f not in extracted], fetch)
-    for field, value in ard["values"].items():
-        extracted[field] = value
-        citations[field] = ard["url"]
+    # The toolchain sources only corroborate the vendor's board-specific values: a value of theirs
+    # is never written, and one that disagrees withholds the vendor's and routes it to review.
+    toolchain = board_corroboration.consult(fm, board_id, soc, data_root, missing, fetch)
+    corroboration = board_corroboration.assess(extracted, toolchain)
+    review = board_corroboration.needs_review(corroboration)
+    for field in review:
+        del extracted[field]
+        vendor_reasons[field] = board_corroboration.NEEDS_REVIEW
+    citations = {f: url for f in extracted}
     field_reasons = _field_reasons(missing, extracted, vendor_reasons,
-                                   {"manifest": pio["reasons"], "boards_txt": ard["reasons"]})
+                                   board_corroboration.source_reasons(toolchain, corroboration))
+    checked = {"corroboration": corroboration, "needs_review": review,
+               "field_reasons": field_reasons}
 
     if not extracted:
-        reason = "doc-unreachable" if res is None else "nothing-groundable"
-        return {**base, "status": "skipped", "reason": reason, "url": url,
-                "field_reasons": field_reasons}
+        reason = ("needs-review" if review else
+                  "doc-unreachable" if res is None else "nothing-groundable")
+        return {**base, "status": "skipped", "reason": reason, "url": url, **checked}
 
-    _write_fields(path, fm, body, extracted, citations, today)
+    if write:
+        _write_fields(path, fm, body, extracted, citations, today)
     written = [f for f in BACKFILL_FIELDS if f in extracted]
     omitted = [f for f in missing if f not in extracted]
-    return {**base, "status": "backfilled",
-            "url": url if res is not None else next(iter(citations.values())),
-            "written": written, "omitted": omitted, "partial": bool(omitted), "modified": True,
-            "citations": citations, "field_reasons": field_reasons}
+    return {**base, "status": "backfilled", "url": url,
+            "written": written, "omitted": omitted, "partial": bool(omitted), "modified": write,
+            "values": {f: extracted[f] for f in written}, "citations": citations, **checked}
 
 
 def _fetch_first(candidates: list[str], fetch) -> tuple[dict | None, str | None]:
@@ -586,12 +590,14 @@ def pr_body(report: dict) -> str:
         if e.get("omitted"):
             line += f" (omitted: {', '.join(e['omitted'])})"
         lines.append(line)
+        lines += _corroboration_lines(e)
 
     lines += ["", f"### Skipped ({len(report['skipped'])})"]
     if not report["skipped"]:
         lines.append("- none")
     for e in report["skipped"]:
         lines.append(f"- `{e['board_id']}` — {e.get('reason', '')} — {e.get('url', '') or 'n/a'}")
+        lines += _corroboration_lines(e)
 
     others = report.get("needs_doc_url", [])
     lines += ["", f"### Out of scope — needs doc URL ({len(others)})",
@@ -603,17 +609,24 @@ def pr_body(report: dict) -> str:
     lines += [
         "",
         "Cite-or-omit STRICTLY: every written field carries its own `{field,url,verified}` "
-        "citation to its source — the board's official vendor doc, or its PlatformIO "
-        "espressif32 manifest or the Arduino-ESP32 core boards.txt, each at a pinned "
-        "commit; anything the source did not "
-        "explicitly state was OMITTED (a wrong download-mode step is safety-critical). "
-        "No LLM, no API key — extraction is regex/text over the fetched doc.",
+        "citation to the board's official vendor doc; anything it did not explicitly state "
+        "was OMITTED (a wrong download-mode step is safety-critical). The PlatformIO "
+        "espressif32 manifest and the Arduino-ESP32 core boards.txt, each at a pinned commit, "
+        "are corroboration only: they never write a field, and a `usb_serial` they contradict "
+        "is withheld for review. No LLM, no API key — extraction is regex/text over the "
+        "fetched doc.",
         "",
         "**Bot proposes, humans dispose** — skim, then merge (or drop any you don't want).",
         "",
         "— 🤖 EspAtlas Jr · Track A (finite-ground backfill)",
     ]
     return "\n".join(lines)
+
+
+def _corroboration_lines(entry: dict) -> list[str]:
+    """What the toolchain sources said about the board, each value with its pinned citation."""
+    return [f"  - {note}" for note in
+            board_corroboration.describe(entry.get("corroboration") or {})]
 
 
 def open_backfill_pr(report: dict, git=default_git, gh=default_gh,
@@ -640,8 +653,12 @@ def main(run=run, git=default_git, gh=default_gh, now: datetime | None = None,
          data_root: Path | None = None, fetch=default_fetch, today: str | None = None) -> dict:
     report = run(data_root=data_root, fetch=fetch, today=today)
     if not report["backfilled"]:
+        review = [e for e in report["skipped"] if e.get("needs_review")]
         print(f"jr-board-backfill: nothing to backfill — no board fields grounded "
-              f"({len(report['skipped'])} skipped)")
+              f"({len(report['skipped'])} skipped, {len(review)} needing review)")
+        for e in review:  # a conflict opens no PR here, so a human must see it in the output
+            for note in board_corroboration.describe(e["corroboration"]):
+                print(f"  {e['board_id']}: {note}")
         return {"report": report, "pr": None}
     pr = open_backfill_pr(report, git=git, gh=gh, now=now)
     link = pr.get("pr_url") or "(PR creation failed)"
