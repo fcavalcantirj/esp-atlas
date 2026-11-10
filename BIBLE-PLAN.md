@@ -13,6 +13,18 @@
 > Legend: `[ ]` todo · `[~]` in progress · `[x]` done+verified+shipped.
 > Each task notes its kind (spec/code/data/web) and how it will be verified.
 
+## Growth goal (owner, 2026-11-10): always increasing
+
+- North star stays **1,000,000 users**, with **no date** (about 570 new users a month today, so a dated 1M is
+  not a plan).
+- Operational goal, checked weekly: **every completed 28-day window has Google Search clicks ≥ the previous
+  window AND spam-adjusted engaged sessions ≥ the previous window.** The weekly digest prints both deltas
+  (▲/▼). Two consecutive ▼ on either metric is a review item in the project's Solvr room, not a failure.
+- Spam-adjusted = minus referral hosts in the committed denylist and minus segments that match the behavioural
+  junk rule (`jr/telemetry.py`). Raw numbers stay printed next to adjusted ones.
+- Title/description work follows `SPEC-serp-ctr.md`: evidence file first, editorial overrides only restating
+  record facts, re-measured after 14 days.
+
 ## Done already (this thread)
 - [x] io-power schema (`board.io`, `soc.drive`, `soc.reserved_pins`) + validate owner-rule
 - [x] SoC layer: `drive` 11/11, `reserved_pins` 10/11 (h4 omitted — no source), `esp32-s31` created (datasheet-verified)
