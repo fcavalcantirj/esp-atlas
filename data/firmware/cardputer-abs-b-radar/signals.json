@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-11-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "Jay-Jayismyname1/Cardputer-ADV-B-Radar",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "ADV-S.Flight.Radar"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "ADV-S.Flight.Radar.bin",
+    "release": "3"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ADV-S.Flight.Radar",
+   "url": "https://github.com/Jay-Jayismyname1/Cardputer-ADV-B-Radar/releases/download/3/ADV-S.Flight.Radar.bin"
+  }
+ ]
+}

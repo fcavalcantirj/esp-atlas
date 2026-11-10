@@ -408,8 +408,8 @@
       "pr_ref": "#1580",
       "repo": "abdallahnatsheh/al-anqa-firmware",
       "repo_id": 714360231,
-      "status": "proposed",
-      "timestamp": "2026-11-10T00:00:57.576877+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-10T01:00:55.546212+00:00"
     },
     "alles": {
       "expires": "2026-12-05T20:00:59.980852+00:00",
@@ -1018,15 +1018,14 @@
       "timestamp": "2026-09-07T21:12:07.418911+00:00"
     },
     "bruce-shark-bait-m5stackc-plus2-wifi-def": {
-      "expired_at": "2026-11-08T00:00:55.177876+00:00",
-      "expires": "2026-11-07T23:52:12.575946+00:00",
+      "expires": "2026-12-10T01:00:55.546212+00:00",
       "id": "bruce-shark-bait-m5stackc-plus2-wifi-def",
       "pr_ref": null,
-      "reason": "below_floor: 8 stars / 0 forks",
+      "reason": "below_floor: 10 stars / 0 forks",
       "repo": "coreymillia/bruce-shark-bait-m5stackc-plus2-wifi-defense",
       "repo_id": 1075971457,
-      "status": "expired",
-      "timestamp": "2026-10-08T23:52:12.575946+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-10T01:00:55.546212+00:00"
     },
     "brucedevices": {
       "expired_at": "2026-11-07T17:01:02.416158+00:00",
@@ -1327,8 +1326,9 @@
       "id": "cardputer-abs-b-radar",
       "pr_ref": "#1500",
       "repo": "jay-jayismyname1/cardputer-adv-b-radar",
-      "status": "proposed",
-      "timestamp": "2026-11-10T00:00:57.576877+00:00"
+      "repo_id": 1310139441,
+      "status": "merged",
+      "timestamp": "2026-11-10T01:00:55.546212+00:00"
     },
     "cardputer-adv-basic": {
       "expired_at": "2026-11-08T01:00:55.198528+00:00",
@@ -4474,8 +4474,8 @@
       "pr_ref": "#1580",
       "repo": "bambam1121/inw-mesh",
       "repo_id": 1365718458,
-      "status": "proposed",
-      "timestamp": "2026-11-10T00:00:57.576877+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-10T01:00:55.546212+00:00"
     },
     "io-framework-for-xr": {
       "expired_at": "2026-11-08T18:00:55.494967+00:00",

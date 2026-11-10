@@ -1,0 +1,105 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-11-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "abdallahnatsheh/AL-ANQA-FIRMWARE",
+ "resolved": {
+  "boards": [
+   "lilygo-t-deck"
+  ],
+  "socs": [],
+  "unresolved": [
+   "T-Deck-Plus",
+   "al-anqa-T-Deck",
+   "al-anqa-T-Deck-Plus",
+   "esp32s3box",
+   "ttgo-t-oi-plus"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "al-anqa-T-Deck-Plus-v2.0.0.bin",
+    "release": "v2.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "al-anqa-T-Deck-Plus",
+   "url": "https://github.com/abdallahnatsheh/AL-ANQA-FIRMWARE/releases/download/v2.0.0/al-anqa-T-Deck-Plus-v2.0.0.bin"
+  },
+  {
+   "extra": {
+    "asset": "al-anqa-T-Deck-v2.0.0.bin",
+    "release": "v2.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "al-anqa-T-Deck",
+   "url": "https://github.com/abdallahnatsheh/AL-ANQA-FIRMWARE/releases/download/v2.0.0/al-anqa-T-Deck-v2.0.0.bin"
+  },
+  {
+   "extra": {
+    "env": "T-Keyboard",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 137,
+   "rank": 2,
+   "soc": null,
+   "token": "ttgo-t-oi-plus",
+   "url": "https://github.com/abdallahnatsheh/AL-ANQA-FIRMWARE/blob/main/platformio.ini#L137"
+  },
+  {
+   "extra": {
+    "env": "T-Deck",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 145,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3box",
+   "url": "https://github.com/abdallahnatsheh/AL-ANQA-FIRMWARE/blob/main/platformio.ini#L145"
+  },
+  {
+   "extra": {
+    "env": "T-Deck-Plus",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 168,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32s3box",
+   "url": "https://github.com/abdallahnatsheh/AL-ANQA-FIRMWARE/blob/main/platformio.ini#L168"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "T-Deck",
+   "url": "https://github.com/abdallahnatsheh/AL-ANQA-FIRMWARE/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "T-Deck-Plus",
+   "url": "https://github.com/abdallahnatsheh/AL-ANQA-FIRMWARE/blob/main/.github/workflows/build.yml"
+  }
+ ]
+}
