@@ -1,0 +1,591 @@
+{
+ "calls": 19,
+ "errors": 0,
+ "fetched": "2026-11-08",
+ "notes": [],
+ "ref": "main",
+ "repo": "vicliu624/trail-mate",
+ "resolved": {
+  "boards": [
+   "lilygo-t-deck",
+   "lilygo-t-watch-s3"
+  ],
+  "socs": [],
+  "unresolved": [
+   ".",
+   ".pio/build",
+   "T-Deck-Pro",
+   "builds/pio_nrf52",
+   "builds/pio_nrf52/.pio/build",
+   "c6-companion",
+   "cardputer-zero",
+   "clang++",
+   "g++",
+   "gat562_mesh_evb_pro",
+   "lilygo-t-lora-pager",
+   "lilygo-twatch-s3-webflash",
+   "t-display-cm0",
+   "t-display-p4-amoled-webflash",
+   "t-display-p4-tft-webflash",
+   "t-echo-lite",
+   "t_display_p4_amoled",
+   "t_display_p4_tft",
+   "tdeck-webflash",
+   "tlora-pager-lr1121-webflash",
+   "tlora-pager-sx1262-webflash",
+   "tlora_pager_lr1121",
+   "tlora_pager_sx1262",
+   "wio-tracker-l2-webflash",
+   "wio_tracker_l2"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "trail-mate-c6-companion-v1.0.1.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "c6-companion",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-c6-companion-v1.0.1.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-gat562_mesh_evb_pro-v1.0.1.uf2",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "gat562_mesh_evb_pro",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-gat562_mesh_evb_pro-v1.0.1.uf2"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-lilygo-twatch-s3-webflash.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo-twatch-s3-webflash",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-lilygo-twatch-s3-webflash.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-lilygo_twatch_s3-v1.0.1.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo_twatch_s3",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-lilygo_twatch_s3-v1.0.1.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-t-display-p4-amoled-webflash.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "t-display-p4-amoled-webflash",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-t-display-p4-amoled-webflash.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-t-display-p4-tft-webflash.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "t-display-p4-tft-webflash",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-t-display-p4-tft-webflash.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-t-echo-lite-v1.0.1.uf2",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "t-echo-lite",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-t-echo-lite-v1.0.1.uf2"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-tdeck-v1.0.1.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tdeck",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-tdeck-v1.0.1.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-tdeck-webflash.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tdeck-webflash",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-tdeck-webflash.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-tlora-pager-lr1121-webflash.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tlora-pager-lr1121-webflash",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-tlora-pager-lr1121-webflash.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-tlora-pager-sx1262-webflash.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tlora-pager-sx1262-webflash",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-tlora-pager-sx1262-webflash.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-tlora_pager_lr1121-v1.0.1.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tlora_pager_lr1121",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-tlora_pager_lr1121-v1.0.1.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-tlora_pager_sx1262-v1.0.1.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tlora_pager_sx1262",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-tlora_pager_sx1262-v1.0.1.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-t_display_p4_amoled-v1.0.1.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "t_display_p4_amoled",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-t_display_p4_amoled-v1.0.1.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-t_display_p4_tft-v1.0.1.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "t_display_p4_tft",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-t_display_p4_tft-v1.0.1.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-wio-tracker-l2-webflash.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "wio-tracker-l2-webflash",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-wio-tracker-l2-webflash.bin"
+  },
+  {
+   "extra": {
+    "asset": "trail-mate-wio_tracker_l2-v1.0.1.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "wio_tracker_l2",
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-wio_tracker_l2-v1.0.1.bin"
+  },
+  {
+   "extra": {
+    "env": "gat562_mesh_evb_pro",
+    "file": "variants/gat562_mesh_evb_pro/envs/gat562_mesh_evb_pro.ini"
+   },
+   "kind": "platformio",
+   "line": 5,
+   "rank": 2,
+   "soc": null,
+   "token": "gat562_mesh_evb_pro",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/variants/gat562_mesh_evb_pro/envs/gat562_mesh_evb_pro.ini#L5"
+  },
+  {
+   "extra": {
+    "env": "tlora_pager_sx1262",
+    "file": "variants/lilygo_tlora_pager/envs/tlora_pager.ini"
+   },
+   "kind": "platformio",
+   "line": 3,
+   "rank": 2,
+   "soc": null,
+   "token": "lilygo-t-lora-pager",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/variants/lilygo_tlora_pager/envs/tlora_pager.ini#L3"
+  },
+  {
+   "extra": {
+    "env": "tlora_pager_lr1121",
+    "file": "variants/lilygo_tlora_pager/envs/tlora_pager.ini"
+   },
+   "kind": "platformio",
+   "line": 51,
+   "rank": 2,
+   "soc": null,
+   "token": "lilygo-t-lora-pager",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/variants/lilygo_tlora_pager/envs/tlora_pager.ini#L51"
+  },
+  {
+   "extra": {
+    "env": "tlora_pager_sx1262_debug",
+    "file": "variants/lilygo_tlora_pager/envs/tlora_pager.ini"
+   },
+   "kind": "platformio",
+   "line": 101,
+   "rank": 2,
+   "soc": null,
+   "token": "lilygo-t-lora-pager",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/variants/lilygo_tlora_pager/envs/tlora_pager.ini#L101"
+  },
+  {
+   "extra": {
+    "env": "tlora_pager_lr1121_debug",
+    "file": "variants/lilygo_tlora_pager/envs/tlora_pager.ini"
+   },
+   "kind": "platformio",
+   "line": 153,
+   "rank": 2,
+   "soc": null,
+   "token": "lilygo-t-lora-pager",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/variants/lilygo_tlora_pager/envs/tlora_pager.ini#L153"
+  },
+  {
+   "extra": {
+    "env": "lilygo_twatch_s3",
+    "file": "variants/lilygo_twatch_s3/envs/lilygo_twatch_s3.ini"
+   },
+   "kind": "platformio",
+   "line": 3,
+   "rank": 2,
+   "soc": null,
+   "token": "lilygo-t-watch-s3",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/variants/lilygo_twatch_s3/envs/lilygo_twatch_s3.ini#L3"
+  },
+  {
+   "extra": {
+    "env": "lilygo_twatch_s3_debug",
+    "file": "variants/lilygo_twatch_s3/envs/lilygo_twatch_s3.ini"
+   },
+   "kind": "platformio",
+   "line": 48,
+   "rank": 2,
+   "soc": null,
+   "token": "lilygo-t-watch-s3",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/variants/lilygo_twatch_s3/envs/lilygo_twatch_s3.ini#L48"
+  },
+  {
+   "extra": {
+    "env": "tdeck",
+    "file": "variants/tdeck/envs/tdeck.ini"
+   },
+   "kind": "platformio",
+   "line": 3,
+   "rank": 2,
+   "soc": null,
+   "token": "T-Deck",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/variants/tdeck/envs/tdeck.ini#L3"
+  },
+  {
+   "extra": {
+    "env": "tdeck_debug",
+    "file": "variants/tdeck/envs/tdeck.ini"
+   },
+   "kind": "platformio",
+   "line": 55,
+   "rank": 2,
+   "soc": null,
+   "token": "T-Deck",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/variants/tdeck/envs/tdeck.ini#L55"
+  },
+  {
+   "extra": {
+    "env": "tdeck_pro_a7682e",
+    "file": "variants/tdeck_pro/envs/tdeck_pro.ini"
+   },
+   "kind": "platformio",
+   "line": 3,
+   "rank": 2,
+   "soc": null,
+   "token": "T-Deck-Pro",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/variants/tdeck_pro/envs/tdeck_pro.ini#L3"
+  },
+  {
+   "extra": {
+    "env": "tdeck_pro_a7682e_debug",
+    "file": "variants/tdeck_pro/envs/tdeck_pro.ini"
+   },
+   "kind": "platformio",
+   "line": 62,
+   "rank": 2,
+   "soc": null,
+   "token": "T-Deck-Pro",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/variants/tdeck_pro/envs/tdeck_pro.ini#L62"
+  },
+  {
+   "extra": {
+    "env": "tdeck_pro_pcm512a",
+    "file": "variants/tdeck_pro/envs/tdeck_pro.ini"
+   },
+   "kind": "platformio",
+   "line": 129,
+   "rank": 2,
+   "soc": null,
+   "token": "T-Deck-Pro",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/variants/tdeck_pro/envs/tdeck_pro.ini#L129"
+  },
+  {
+   "extra": {
+    "env": "wio_tracker_l2",
+    "file": "variants/wio_tracker_l2/envs/wio_tracker_l2.ini"
+   },
+   "kind": "platformio",
+   "line": 3,
+   "rank": 2,
+   "soc": null,
+   "token": "wio_tracker_l2",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/variants/wio_tracker_l2/envs/wio_tracker_l2.ini#L3"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tlora_pager_sx1262",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": ".",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": ".pio/build",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tlora_pager_lr1121",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "tdeck",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "wio_tracker_l2",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "lilygo_twatch_s3",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "gat562_mesh_evb_pro",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "t-echo-lite",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "builds/pio_nrf52",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "builds/pio_nrf52/.pio/build",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "t_display_p4_tft",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "t_display_p4_amoled",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/linux-device-packages.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cardputer-zero",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/linux-device-packages.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/linux-device-packages.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "t-display-cm0",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/linux-device-packages.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/tmap-dependency.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "g++",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/tmap-dependency.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/tmap-dependency.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "clang++",
+   "url": "https://github.com/vicliu624/trail-mate/blob/main/.github/workflows/tmap-dependency.yml"
+  }
+ ]
+}
