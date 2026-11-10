@@ -10173,13 +10173,14 @@
       "timestamp": "2026-09-10T06:00:59.439106+00:00"
     },
     "pancake": {
+      "expired_at": "2026-11-10T14:00:55.876896+00:00",
       "expires": "2026-11-10T14:00:11.430842+00:00",
       "id": "pancake",
       "pr_ref": null,
       "reason": "below_floor: 10 stars / 1 forks",
       "repo": "h4w9/pancake",
       "repo_id": 1173854658,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-11T14:00:11.430842+00:00"
     },
     "panicplayertab5": {
@@ -12459,9 +12460,8 @@
       "id": "unigeek",
       "pr_ref": "#1607",
       "repo": "lshaf/unigeek",
-      "repo_id": 1160809961,
       "status": "proposed",
-      "timestamp": "2026-11-10T13:00:55.199340+00:00"
+      "timestamp": "2026-11-10T14:00:55.876896+00:00"
     },
     "unitcams3-userdemo": {
       "expired_at": "2026-10-12T04:00:11.878766+00:00",
