@@ -4287,6 +4287,14 @@
       "status": "expired",
       "timestamp": "2026-10-09T16:00:11.685578+00:00"
     },
+    "herodio": {
+      "expires": "2026-12-10T10:00:55.135052+00:00",
+      "id": "herodio",
+      "pr_ref": null,
+      "repo": "ryosaeba89/herodio",
+      "status": "seen",
+      "timestamp": "2026-11-10T10:00:55.135052+00:00"
+    },
     "hi5stack-m5stack-papsers3-m5papers3": {
       "expired_at": "2026-10-12T20:00:11.871872+00:00",
       "expires": "2026-10-12T19:00:24.500904+00:00",
@@ -4321,15 +4329,12 @@
       "timestamp": "2026-10-09T16:00:11.685578+00:00"
     },
     "honeypot": {
-      "expired_at": "2026-11-08T18:00:55.494967+00:00",
-      "expires": "2026-11-08T17:00:11.481511+00:00",
+      "expires": "2026-12-10T10:00:55.135052+00:00",
       "id": "honeypot",
       "pr_ref": null,
-      "reason": "below_floor: 4 stars / 0 forks",
       "repo": "wsalmi/honeypot",
-      "repo_id": 1260796595,
-      "status": "expired",
-      "timestamp": "2026-10-09T17:00:11.481511+00:00"
+      "status": "seen",
+      "timestamp": "2026-11-10T10:00:55.135052+00:00"
     },
     "hotspot-arcade-cardputer": {
       "expired_at": "2026-11-05T19:01:17.341039+00:00",
@@ -4611,6 +4616,14 @@
       "repo": "junfactorya04",
       "status": "expired",
       "timestamp": "2026-09-08T05:25:25.049296+00:00"
+    },
+    "juno": {
+      "expires": "2026-12-10T10:00:55.135052+00:00",
+      "id": "juno",
+      "pr_ref": null,
+      "repo": "jabrena/juno",
+      "status": "seen",
+      "timestamp": "2026-11-10T10:00:55.135052+00:00"
     },
     "k85os": {
       "expired_at": "2026-11-08T20:00:54.954530+00:00",
@@ -6773,6 +6786,14 @@
       "status": "expired",
       "timestamp": "2026-10-09T21:00:11.572797+00:00"
     },
+    "lerobot-rc": {
+      "expires": "2026-12-10T10:00:55.135052+00:00",
+      "id": "lerobot-rc",
+      "pr_ref": null,
+      "repo": "moeru-ai/lerobot-rc",
+      "status": "seen",
+      "timestamp": "2026-11-10T10:00:55.135052+00:00"
+    },
     "letterfromthedeep-tab5": {
       "expired_at": "2026-10-24T16:00:59.962228+00:00",
       "expires": "2026-10-24T16:00:56.308279+00:00",
@@ -6984,6 +7005,14 @@
       "repo": "asg02fever/m5-dial-rgb-light-strip-controller-",
       "status": "expired",
       "timestamp": "2026-09-02T17:03:09.109173+00:00"
+    },
+    "m5-fumoji": {
+      "expires": "2026-12-10T10:00:55.135052+00:00",
+      "id": "m5-fumoji",
+      "pr_ref": null,
+      "repo": "litomore/m5-fumoji",
+      "status": "seen",
+      "timestamp": "2026-11-10T10:00:55.135052+00:00"
     },
     "m5-gesticatormidi": {
       "expired_at": "2026-11-08T18:00:55.494967+00:00",
@@ -8289,6 +8318,14 @@
       "repo_id": 1226290715,
       "status": "expired",
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
+    "m5stack-cardcomputer-mu": {
+      "expires": "2026-12-10T10:00:55.135052+00:00",
+      "id": "m5stack-cardcomputer-mu",
+      "pr_ref": null,
+      "repo": "tsssu27/m5stack-cardcomputer-mu",
+      "status": "seen",
+      "timestamp": "2026-11-10T10:00:55.135052+00:00"
     },
     "m5stack-cardputer-adv-gps-tracker": {
       "expired_at": "2026-11-05T22:00:59.905926+00:00",
@@ -11464,6 +11501,14 @@
       "status": "expired",
       "timestamp": "2026-09-11T19:00:59.205076+00:00"
     },
+    "singularity-firmware": {
+      "expires": "2026-12-10T10:00:55.135052+00:00",
+      "id": "singularity-firmware",
+      "pr_ref": null,
+      "repo": "kacpx-pl/singularity-firmware",
+      "status": "seen",
+      "timestamp": "2026-11-10T10:00:55.135052+00:00"
+    },
     "sixi-tdeck-plus": {
       "expires": "2026-11-28T18:00:59.695134+00:00",
       "id": "sixi-tdeck-plus",
@@ -12545,6 +12590,14 @@
       "status": "seen",
       "timestamp": "2026-11-10T09:00:55.291604+00:00"
     },
+    "viperpet": {
+      "expires": "2026-12-10T10:00:55.135052+00:00",
+      "id": "viperpet",
+      "pr_ref": null,
+      "repo": "viper0013/viperpet",
+      "status": "seen",
+      "timestamp": "2026-11-10T10:00:55.135052+00:00"
+    },
     "voice-mixer-3000": {
       "expired_at": "2026-11-05T19:01:17.341039+00:00",
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -13560,6 +13613,7 @@
     "isalicema/m5-stopwatch-dashboard": "m5-stopwatch-dashboard",
     "isonimus/adversary": "adversary",
     "isonimus/esp32-dragon-radar": "esp32-dragon-radar",
+    "jabrena/juno": "juno",
     "jagoda/meshcadet": "meshcadet",
     "james-p-d/flipperzeroirplayer": "flipperzeroirplayer",
     "james-p-d/tonegenerator": "tonegenerator",
@@ -13609,6 +13663,7 @@
     "k-natori/poodle": "poodle",
     "k-yama2010/world-market-clock": "world-market-clock",
     "k3yomi/wall-of-flippers": "wall-of-flippers",
+    "kacpx-pl/singularity-firmware": "singularity-firmware",
     "kaini-industries/cardputer-chess": "cardputer-chess",
     "kaini-industries/cardputer-rng": "cardputer-rng",
     "kariagepompadour/cardputer-adv-keyspeaker": "cardputer-adv-keyspeaker",
@@ -13904,6 +13959,7 @@
     "linclip/m5_gesticatormidi": "m5-gesticatormidi",
     "linclip/m5stickc_tvremote": "m5stickc-tvremote",
     "liptoon/cardputerradiacode": "cardputerradiacode",
+    "litomore/m5-fumoji": "m5-fumoji",
     "littlesound/rizumutimer": "rizumutimer",
     "liyongjian5179/m5stack_sticks3_lucky_slots": "m5stack-sticks3-lucky-slots",
     "locosp/bruce-firmware-wdgwars": "bruce-firmware-wdgwars",
@@ -14008,6 +14064,7 @@
     "mochimochi-man/98tab5": "98tab5",
     "mochimochi-man/letterfromthedeep_tab5": "letterfromthedeep-tab5",
     "mochimochi-man/np2_tab5": "np2-tab5",
+    "moeru-ai/lerobot-rc": "lerobot-rc",
     "moge800/m5papers3_calculator": "m5papers3-calculator",
     "mohith-das/pomodoro-card": "pomodoro-card",
     "mohith-das/wiview": "wiview",
@@ -14168,6 +14225,7 @@
     "ruvnet/ruview": "ruview",
     "ry-ops/liner": "liner",
     "rymicka": "rymicka",
+    "ryosaeba89/herodio": "herodio",
     "rythlan/brokensignal-next": "brokensignal-next",
     "rythlan/cardmeteo": "cardmeteo",
     "ryuzaki-mrl/espeon.git": "espeon",
@@ -14293,6 +14351,7 @@
     "troglodyte420/voice-mixer-3000": "voice-mixer-3000",
     "truonglangquan/idk-firmware": "idk-firmware",
     "truonglangquan/idk-test": "idk-test",
+    "tsssu27/m5stack-cardcomputer-mu": "m5stack-cardcomputer-mu",
     "turbohsu/badapple_cardputer_adv": "badapple-cardputer-adv",
     "tutyr2-jpg/bruce-a-c-edition": "bruce-a-c-edition",
     "twsnmp/twesp32sensor": "twesp32sensor",
@@ -14318,6 +14377,7 @@
     "vicliu624/trail-mate": "trail-mate",
     "viniciusbo/m5-palnagotchi": "m5-palnagotchi",
     "viniciushnf/m5sticks3-gps-gnss-monitor": "m5sticks3-gps-gnss-monitor",
+    "viper0013/viperpet": "viperpet",
     "vlastimilcerveny34/guitar-audio-tools": "guitar-audio-tools",
     "voidnoi/badcard": "badcard",
     "volos-tv-remote": "volos-tv-remote",
