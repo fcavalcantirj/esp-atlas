@@ -1,0 +1,43 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-11-10",
+ "notes": [],
+ "ref": "master",
+ "repo": "Xinyuan-LilyGO/T-Deck",
+ "resolved": {
+  "boards": [
+   "lilygo-t-deck"
+  ],
+  "socs": [],
+  "unresolved": [
+   "ttgo-t-oi-plus"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "T-Keyboard",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 41,
+   "rank": 2,
+   "soc": null,
+   "token": "ttgo-t-oi-plus",
+   "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/platformio.ini#L41"
+  },
+  {
+   "extra": {
+    "env": "T-Deck",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 47,
+   "rank": 2,
+   "soc": null,
+   "token": "T-Deck",
+   "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/platformio.ini#L47"
+  }
+ ]
+}

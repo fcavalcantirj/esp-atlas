@@ -1,0 +1,68 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-11-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "BamBam1121/inw-mesh",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "esp32-s3-devkitc-1",
+   "otadata-blank"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "otadata-blank.bin",
+    "release": "v1.2.15"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "otadata-blank",
+   "url": "https://github.com/BamBam1121/inw-mesh/releases/download/v1.2.15/otadata-blank.bin"
+  },
+  {
+   "extra": {
+    "env": "t-lora-pager-public",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 10,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/BamBam1121/inw-mesh/blob/main/platformio.ini#L10"
+  },
+  {
+   "extra": {
+    "env": "t-lora-pager",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 10,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/BamBam1121/inw-mesh/blob/main/platformio.ini#L10"
+  },
+  {
+   "extra": {
+    "env": "t-lora-pager-dev",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 10,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/BamBam1121/inw-mesh/blob/main/platformio.ini#L10"
+  }
+ ]
+}
