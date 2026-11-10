@@ -10579,11 +10579,12 @@
       "timestamp": "2026-09-02T17:03:09.135130+00:00"
     },
     "pocket-wui": {
+      "expired_at": "2026-11-10T13:00:55.199340+00:00",
       "expires": "2026-11-10T13:00:19.731429+00:00",
       "id": "pocket-wui",
       "pr_ref": null,
       "repo": "afetisa/pocket-wui",
-      "status": "seen",
+      "status": "expired",
       "timestamp": "2026-10-11T13:00:19.731429+00:00"
     },
     "pocketmo-m5": {
@@ -12460,7 +12461,7 @@
       "repo": "lshaf/unigeek",
       "repo_id": 1160809961,
       "status": "proposed",
-      "timestamp": "2026-11-10T12:00:55.152801+00:00"
+      "timestamp": "2026-11-10T13:00:55.199340+00:00"
     },
     "unitcams3-userdemo": {
       "expired_at": "2026-10-12T04:00:11.878766+00:00",
