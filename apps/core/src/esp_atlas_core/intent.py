@@ -161,6 +161,10 @@ _FIRMWARE_STOPWORDS = frozenset({
     "esp32", "esp", "m5", "the", "for", "and", "run", "runs",
     "wifi", "wifi4", "wifi6", "bluetooth", "ble", "lora", "zigbee",
     "thread", "matter", "ethernet", "radio", "wireless",
+    # "mesh" is a category and the word for Thread/Zigbee/Matter and LoRa networks; a firmware
+    # named "<x>-mesh" is still reachable by its full name (2026-11-09: inw-mesh hijacked
+    # "thread zigbee matter smart-home mesh").
+    "mesh",
 })
 _MIN_FIRMWARE_TOKEN = 4
 
