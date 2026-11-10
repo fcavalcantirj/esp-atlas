@@ -216,3 +216,20 @@ def test_validated_filters_are_a_subset_of_search_filters(built_db_path):
     )
     assert set(filters) <= (_KNOWN_FILTERS | {"budget"})
     assert wizard(filters, db_path=built_db_path), "a valid parse must resolve to parts"
+
+
+def test_a_bare_capability_token_in_a_firmware_name_never_hijacks_a_capability_query(monkeypatch):
+    """`mesh` is capability vocabulary (schema category, "smart-home mesh"), like lora/zigbee/
+    thread/matter: a firmware whose name merely contains it stays reachable by its full name
+    and never captures a capability query (SPEC-coverage-verification.md, Phase 2). The 2026-11-09
+    12:00Z tick proposed `inw-mesh` and flipped "thread zigbee matter smart-home mesh" from
+    filters to firmware."""
+    from esp_atlas_core import intent
+
+    fake = [{"id": "acme-mesh", "name": "acme-mesh"}, {"id": "marauder", "name": "ESP32 Marauder"}]
+    monkeypatch.setattr(intent, "list_firmware", lambda: fake)
+
+    assert firmware_named_in("thread zigbee matter smart-home mesh") == []
+    assert firmware_named_in("a lora mesh node") == []
+    assert [fw["id"] for fw in firmware_named_in("run acme-mesh")] == ["acme-mesh"]
+    assert [fw["id"] for fw in firmware_named_in("run marauder")] == ["marauder"]

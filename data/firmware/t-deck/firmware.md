@@ -11,6 +11,8 @@ popularity:
   downloads: 0
   editorial_home: https://lilygo.cc/
   as_of: '2026-11-05'
+  github_repo_id: 626223534
+  github_as_of: '2026-11-06T22:00:55Z'
 socs:
 - esp32-s3
 sources:
@@ -20,6 +22,18 @@ sources:
 - field: popularity
   url: https://github.com/Xinyuan-LilyGO/T-Deck
   verified: '2026-11-05'
+- field: popularity.forks
+  url: https://github.com/Xinyuan-LilyGO/T-Deck
+  verified: '2026-11-06'
+- field: popularity.github_as_of
+  url: https://github.com/Xinyuan-LilyGO/T-Deck
+  verified: '2026-11-06'
+- field: popularity.github_repo_id
+  url: https://github.com/Xinyuan-LilyGO/T-Deck
+  verified: '2026-11-06'
+- field: popularity.stars
+  url: https://github.com/Xinyuan-LilyGO/T-Deck
+  verified: '2026-11-06'
 ---
 
 LilyGo-T-Deck & T-Deck-Plus
