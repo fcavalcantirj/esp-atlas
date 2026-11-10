@@ -169,10 +169,12 @@
   "pam-0fb4ec9f138e2a6f989bcb03": {
    "term": "Arduino Nano ESP32",
    "source": "pam_feed",
-   "status": "validated",
+   "status": "linked",
    "first_seen": "2026-11-06",
    "history": [],
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1622"
+   ],
    "snapshot": "docs/demand/pam-leads.json",
    "feed": {
     "checked_at": "2026-11-06T04:22:34.124739Z",
