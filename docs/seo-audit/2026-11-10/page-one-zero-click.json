@@ -1,0 +1,200 @@
+[
+  {
+    "page": "/parts/m5stick-s3",
+    "top_query": "m5 stick s3",
+    "impressions": 203,
+    "position": 8.6,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/",
+    "top_query": "advanceos for cardputer adv",
+    "impressions": 69,
+    "position": 6.7,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/firmware/tamaputer",
+    "top_query": null,
+    "impressions": 55,
+    "position": 5.2,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/firmware/draftling",
+    "top_query": null,
+    "impressions": 37,
+    "position": 7.4,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/parts/esp32-wrover-e",
+    "top_query": "esp32-wrover-e",
+    "impressions": 28,
+    "position": 9.4,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/parts/esp32-s31",
+    "top_query": null,
+    "impressions": 27,
+    "position": 9.5,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/firmware/mclite",
+    "top_query": "mclite",
+    "impressions": 26,
+    "position": 7.7,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/firmware/m5hamradio",
+    "top_query": null,
+    "impressions": 25,
+    "position": 7.6,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/parts/xiao-esp32s3",
+    "top_query": null,
+    "impressions": 25,
+    "position": 8.0,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/firmware/esp32-homekit-remote",
+    "top_query": null,
+    "impressions": 23,
+    "position": 7.7,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/parts/esp32-c5-devkitc-1",
+    "top_query": null,
+    "impressions": 22,
+    "position": 8.1,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/firmware/meshcore-cardputer-adv",
+    "top_query": "sosprz",
+    "impressions": 21,
+    "position": 8.2,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/parts/m5stack-papers3",
+    "top_query": "papers3",
+    "impressions": 18,
+    "position": 8.6,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/firmware/m5tool",
+    "top_query": null,
+    "impressions": 17,
+    "position": 8.9,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/firmware/esphome",
+    "top_query": null,
+    "impressions": 16,
+    "position": 8.6,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/parts/lolin-s3-mini",
+    "top_query": null,
+    "impressions": 16,
+    "position": 4.2,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/parts/esp32-devkitc-v4",
+    "top_query": null,
+    "impressions": 15,
+    "position": 7.4,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  },
+  {
+    "page": "/parts/lolin-d32",
+    "top_query": null,
+    "impressions": 15,
+    "position": 9.9,
+    "clicks": 0,
+    "window": {
+      "start": "2026-10-11",
+      "end": "2026-11-07"
+    }
+  }
+]
