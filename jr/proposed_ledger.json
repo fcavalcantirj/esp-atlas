@@ -7172,6 +7172,14 @@
       "status": "expired",
       "timestamp": "2026-09-21T14:00:10.738854+00:00"
     },
+    "m5-trackpad-module": {
+      "expires": "2026-12-10T09:00:55.291604+00:00",
+      "id": "m5-trackpad-module",
+      "pr_ref": null,
+      "repo": "74th/m5-trackpad-module",
+      "status": "seen",
+      "timestamp": "2026-11-10T09:00:55.291604+00:00"
+    },
     "m5-vids": {
       "expires": "2026-11-20T12:00:59.681161+00:00",
       "id": "m5-vids",
@@ -7916,6 +7924,14 @@
       "repo_id": 545245958,
       "status": "merged",
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
+    },
+    "m5home": {
+      "expires": "2026-12-10T09:00:55.291604+00:00",
+      "id": "m5home",
+      "pr_ref": null,
+      "repo": "hjgode/m5home",
+      "status": "seen",
+      "timestamp": "2026-11-10T09:00:55.291604+00:00"
     },
     "m5kiten": {
       "expired_at": "2026-11-09T01:00:56.202438+00:00",
@@ -9095,6 +9111,14 @@
       "status": "expired",
       "timestamp": "2026-10-08T23:52:12.575946+00:00"
     },
+    "m5unified-cw-decoder": {
+      "expires": "2026-12-10T09:00:55.291604+00:00",
+      "id": "m5unified-cw-decoder",
+      "pr_ref": null,
+      "repo": "jj1lfo/m5unified_cw_decoder",
+      "status": "seen",
+      "timestamp": "2026-11-10T09:00:55.291604+00:00"
+    },
     "m5unified-stackchan": {
       "expired_at": "2026-10-13T15:01:04.291122+00:00",
       "expires": "2026-10-13T15:00:47.787699+00:00",
@@ -9193,6 +9217,14 @@
       "repo_id": 1272312427,
       "status": "expired",
       "timestamp": "2026-09-09T04:00:10.126216+00:00"
+    },
+    "magicfocus": {
+      "expires": "2026-12-10T09:00:55.291604+00:00",
+      "id": "magicfocus",
+      "pr_ref": null,
+      "repo": "kenfilms/magicfocus",
+      "status": "seen",
+      "timestamp": "2026-11-10T09:00:55.291604+00:00"
     },
     "magichatebot-m5stickc-plus2": {
       "expired_at": "2026-10-09T12:00:11.265432+00:00",
@@ -10529,6 +10561,14 @@
       "repo_id": 1132515428,
       "status": "expired",
       "timestamp": "2026-09-11T15:00:52.423877+00:00"
+    },
+    "poketch": {
+      "expires": "2026-12-10T09:00:55.291604+00:00",
+      "id": "poketch",
+      "pr_ref": null,
+      "repo": "toshi-pono/poketch",
+      "status": "seen",
+      "timestamp": "2026-11-10T09:00:55.291604+00:00"
     },
     "pomodora-m5stick": {
       "expired_at": "2026-10-12T00:00:11.483938+00:00",
@@ -12497,6 +12537,14 @@
       "status": "expired",
       "timestamp": "2026-09-12T03:00:29.761890+00:00"
     },
+    "vibsense": {
+      "expires": "2026-12-10T09:00:55.291604+00:00",
+      "id": "vibsense",
+      "pr_ref": null,
+      "repo": "nexus1203/vibsense",
+      "status": "seen",
+      "timestamp": "2026-11-10T09:00:55.291604+00:00"
+    },
     "voice-mixer-3000": {
       "expired_at": "2026-11-05T19:01:17.341039+00:00",
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -13052,6 +13100,7 @@
     "5tufil1k3/m5stick-handheld-tally-clicker": "m5stick-handheld-tally-clicker",
     "610t/m5bit-less": "m5bit-less",
     "610t/m5scratch": "m5scratch",
+    "74th/m5-trackpad-module": "m5-trackpad-module",
     "74th/m5atoms3u-wifi-usb-keyboard": "m5atoms3u-wifi-usb-keyboard",
     "78/xiaozhi-esp32": "xiaozhi-esp32",
     "78/xiaozhi-esp32.git": "xiaozhi-esp32",
@@ -13475,6 +13524,7 @@
     "hiroki-kawakami/tab5-media-player": "tab5-media-player",
     "hiroki-kawakami/tab5-screen-streamer": "tab5-screen-streamer",
     "hiroki-kawakami/tab5-uvc-display": "tab5-uvc-display",
+    "hjgode/m5home": "m5home",
     "homertrix/meshtastic-tdisplay-p4": "meshtastic-tdisplay-p4",
     "horseyofcoursey/ember": "ember",
     "hougeai/xiaozhipro": "xiaozhipro",
@@ -13532,6 +13582,7 @@
     "ji1ore/wifi_rig_ctrl": "wifi-rig-ctrl",
     "jimgat/cym": "cym",
     "jimgat/cym-nm28c5": "cym-nm28c5",
+    "jj1lfo/m5unified_cw_decoder": "m5unified-cw-decoder",
     "jjugs": "jjugs",
     "jjugs/cardputer-laptop-monitor": "cardputer-laptop-monitor",
     "jkpe/eight-sleep-m5stack-atoms3": "eight-sleep-m5stack-atoms3",
@@ -13565,6 +13616,7 @@
     "kariagepompadour/sound-terrarium": "sound-terrarium",
     "kataigp/m5cardputer_dht11_sensor": "m5cardputer-dht11-sensor",
     "kataigp/m5cardputer_hcsr04_sensor": "m5cardputer-hcsr04-sensor",
+    "kenfilms/magicfocus": "magicfocus",
     "kestrelrain/m5cardputer_display_off": "m5cardputer-display-off",
     "ki10-bot/m5kiten": "m5kiten",
     "kin1009/m5os": "m5os",
@@ -13997,6 +14049,7 @@
     "nasonliu/papers3-weread": "papers3-weread",
     "negawatt": "negawatt",
     "nexodevlab/amstradcpc464cardputeradv": "amstradcpc464cardputeradv",
+    "nexus1203/vibsense": "vibsense",
     "nishad2m8/cardputer-games": "cardputer-games",
     "nishad2m8/geminiputer": "geminiputer",
     "nishad2m8/pdaputer": "pdaputer",
@@ -14232,6 +14285,7 @@
     "tommycng/m5faces-rpn-calculator.git": "m5faces-rpn-calculator",
     "tomorrow56/m5atom-socket-examples": "m5atom-socket-examples",
     "torlando-tech/pyxis": "pyxis",
+    "toshi-pono/poketch": "poketch",
     "toshihiromakuuchi/ai_stackchan2": "ai-stackchan2",
     "toshihiromakuuchi/stackchan-bluetooth-simple": "stackchan-bluetooth-simple",
     "toshihiromakuuchi/wled": "wled",
