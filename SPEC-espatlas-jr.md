@@ -246,6 +246,16 @@ agent's entity — initiate the connection per-entity and send the OAuth link.)*
   **high-impression / low-CTR pages** (title/desc opportunities); indexed-coverage changes.
 - **Health**: Core Web Vitals / PSI trend; 404s (feeds the liveness/NotFound signal).
 
+**Raw vs spam-adjusted GA4 (2026-11-10):** the GA4 line prints the **raw** no-dimension distinct
+total (active users / sessions, unchanged) beside **spam-adjusted** sessions and engaged sessions.
+Adjusted = raw minus the `sessionSource` rows (a second GA4 report: sessions, engagedSessions,
+averageSessionDuration) whose host is in the committed `jr/referral_denylist.json` (each entry:
+`host`, `reason`, ISO `added_on`; a malformed file raises — the digest fails closed rather than
+publish unfiltered numbers) and minus the rows matching the behavioural junk rule
+(`_is_junk_segment`; source `(direct)` is the Direct channel). A row matching both is excluded
+once. Two **28-day growth deltas** follow, one line each with ↑/↓/→ and both numbers: GSC clicks
+and adjusted engaged sessions for the completed 28-day window vs the 28 days before it.
+
 **The steering loop (this is why it's Jr's, not a bystander's):** GSC **demand** is a first-class
 **data-priority signal** — queries with impressions but no matching record, or a thin one, jump
 the staleness/population queue. *People are searching for a board/firmware we don't cover well →
