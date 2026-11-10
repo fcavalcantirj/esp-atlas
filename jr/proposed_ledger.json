@@ -9368,6 +9368,14 @@
       "status": "rejected",
       "timestamp": "2026-09-01T21:03:57.312015+00:00"
     },
+    "meshcadet": {
+      "expires": "2026-12-09T12:00:55.152668+00:00",
+      "id": "meshcadet",
+      "pr_ref": null,
+      "repo": "jagoda/meshcadet",
+      "status": "seen",
+      "timestamp": "2026-11-09T12:00:55.152668+00:00"
+    },
     "meshcore": {
       "expired_at": "2026-10-12T03:00:11.697751+00:00",
       "expires": "2026-10-12T02:00:23.345419+00:00",
@@ -9394,6 +9402,14 @@
       "repo_id": 1135169816,
       "status": "merged",
       "timestamp": "2026-11-09T13:00:55.803979+00:00"
+    },
+    "meshdeck": {
+      "expires": "2026-12-09T12:00:55.152668+00:00",
+      "id": "meshdeck",
+      "pr_ref": null,
+      "repo": "meshdeck-os/meshdeck",
+      "status": "seen",
+      "timestamp": "2026-11-09T12:00:55.152668+00:00"
     },
     "meshpunk": {
       "expired_at": "2026-10-09T16:00:11.685578+00:00",
@@ -9582,6 +9598,14 @@
       "repo_id": 1180109374,
       "status": "expired",
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
+    },
+    "monster-mesh": {
+      "expires": "2026-12-09T12:00:55.152668+00:00",
+      "id": "monster-mesh",
+      "pr_ref": null,
+      "repo": "goatsandmonkeys/monster_mesh",
+      "status": "seen",
+      "timestamp": "2026-11-09T12:00:55.152668+00:00"
     },
     "moonshot-m5glass": {
       "expired_at": "2026-10-09T22:00:11.580160+00:00",
@@ -11527,6 +11551,14 @@
       "status": "merged",
       "timestamp": "2026-11-07T08:00:55.079521+00:00"
     },
+    "sshdeck": {
+      "expires": "2026-12-09T12:00:55.152668+00:00",
+      "id": "sshdeck",
+      "pr_ref": null,
+      "repo": "zales/sshdeck",
+      "status": "seen",
+      "timestamp": "2026-11-09T12:00:55.152668+00:00"
+    },
     "stack-chan-tester": {
       "expired_at": "2026-10-11T21:00:11.605277+00:00",
       "expires": "2026-10-11T20:01:00.775055+00:00",
@@ -12109,6 +12141,14 @@
       "repo_id": 1092246589,
       "status": "expired",
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
+    },
+    "thistle-os": {
+      "expires": "2026-12-09T12:00:55.152668+00:00",
+      "id": "thistle-os",
+      "pr_ref": null,
+      "repo": "wan0net/thistle-os",
+      "status": "seen",
+      "timestamp": "2026-11-09T12:00:55.152668+00:00"
     },
     "threetris-m5stickc-plus2": {
       "expired_at": "2026-10-12T00:00:11.483938+00:00",
@@ -13373,6 +13413,7 @@
     "girs1982/cardputeradv-cc1101-manufactured": "cardputeradv-cc1101-manufactured",
     "girs1982/ganstawificyberpunker": "ganstawificyberpunker",
     "github.com/marstechhan": "marstechhan",
+    "goatsandmonkeys/monster_mesh": "monster-mesh",
     "graysonreid2011/esp-now-chat-firmware": "esp-now-chat-firmware",
     "gremlin1987/cardputer-ballistic-calculator": "cardputer-ballistic-calculator",
     "gridgrad/advaita": "advaita",
@@ -13451,6 +13492,7 @@
     "isalicema/m5-stopwatch-dashboard": "m5-stopwatch-dashboard",
     "isonimus/adversary": "adversary",
     "isonimus/esp32-dragon-radar": "esp32-dragon-radar",
+    "jagoda/meshcadet": "meshcadet",
     "james-p-d/flipperzeroirplayer": "flipperzeroirplayer",
     "james-p-d/tonegenerator": "tonegenerator",
     "jasisz/grajek": "grajek",
@@ -13876,6 +13918,7 @@
     "mehflexx17": "mehflexx17",
     "meister5/m5stack-cardputer-adv-gps-tracker": "m5stack-cardputer-adv-gps-tracker",
     "meister5/synthcard": "synthcard",
+    "meshdeck-os/meshdeck": "meshdeck",
     "meshtastic/firmware": "meshtastic",
     "mhrsntrk/ask-master": "ask-master",
     "michaelrizn/hi5stack-m5stack-papsers3-m5papers3": "hi5stack-m5stack-papsers3-m5papers3",
@@ -14215,6 +14258,7 @@
     "w-ockham/actpaddle": "actpaddle",
     "w-ockham/m5spotchan": "m5spotchan",
     "w35m17h/cardputer-mqtt": "cardputer-mqtt",
+    "wan0net/thistle-os": "thistle-os",
     "warko-san/cardputer-remote-cloner": "cardputer-remote-cloner",
     "washishi/m5stack-avatar-mic-nekomimi_led": "m5stack-avatar-mic-nekomimi-led",
     "washishi/simplespectrumanalyzer-atommatrix": "simplespectrumanalyzer-atommatrix",
@@ -14259,6 +14303,7 @@
     "z4y-d3n/modbus-tcp-auditor-tool": "modbus-tcp-auditor-tool",
     "z4y-d3n/s7comm-auditor-tool": "s7comm-auditor-tool",
     "zabaglione/koebiyori": "koebiyori",
+    "zales/sshdeck": "sshdeck",
     "zaratton/cardputermidimonitor": "cardputermidimonitor",
     "zedward856-spec/breach_os": "breach-os",
     "zeloksa/ai-offline-chat-adv": "ai-offline-chat-adv",
