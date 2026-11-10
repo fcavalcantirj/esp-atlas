@@ -477,3 +477,15 @@ def test_digest_fails_closed_on_a_malformed_denylist(monkeypatch, tmp_path):
     with pytest.raises(ValueError):
         _run_digest(monkeypatch, tmp_path, _fake_ex(calls))
     assert calls == []   # refused before any GA4/GSC call
+
+
+def test_digest_states_the_undated_horizon_and_the_always_increasing_goal(monkeypatch, tmp_path):
+    """Owner, 2026-11-10 (BIBLE-PLAN 'Growth goal'): 1,000,000 users is a horizon with no date; the
+    operational goal is every completed 28-day window at or above the previous one."""
+    calls = []
+    message = _run_digest(monkeypatch, tmp_path, _fake_ex(calls))
+    assert telemetry.GOAL_LINE in message
+    assert "1,000,000 users" in telemetry.GOAL_LINE and "no date" in telemetry.GOAL_LINE
+    assert "28d window" in telemetry.GOAL_LINE and "≥" in telemetry.GOAL_LINE
+    assert "days left" not in message and " by 20" not in message
+    assert not hasattr(telemetry, "TARGET_DATE")
