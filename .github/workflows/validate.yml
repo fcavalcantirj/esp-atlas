@@ -149,3 +149,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 scripts/jr_pr_guard.py
+
+  jr-lock-install:
+    # Recipe/install verification of jr/runtime-lock/ on x86_64 with a CI-built esptool wheel,
+    # NOT proof of the Pi archive (aarch64). Downloads hash-pinned wheels + the esptool sdist,
+    # builds esptool offline, then installs --no-index --require-hashes and runs negative checks.
+    # No env, no secrets: the script is the whole job.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Hash-locked offline install of Jr's runtime (x86_64 / CPython 3.12)
+        run: bash scripts/ci/jr_lock_install_check.sh
