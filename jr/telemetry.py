@@ -8,6 +8,8 @@ are surfaced as Jr's data-priority signal. Run with the composio venv:
 """
 from __future__ import annotations
 import datetime as dt
+import json
+import re
 import sys
 from pathlib import Path
 
@@ -86,6 +88,95 @@ def _ga4_breakdown_totals(rows: list) -> dict:
     return {"raw": raw, "adjusted": adjusted}
 
 
+REFERRAL_DENYLIST_PATH = Path(__file__).resolve().parent / "referral_denylist.json"
+GA4_SOURCE_METRICS = ["sessions", "engagedSessions", "averageSessionDuration"]
+_BARE_HOST = re.compile(r"^[a-z0-9-]+(\.[a-z0-9-]+)+$")
+_ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _valid_entry(entry) -> bool:
+    if not isinstance(entry, dict):
+        return False
+    host, reason, added_on = entry.get("host"), entry.get("reason"), entry.get("added_on")
+    if not (isinstance(host, str) and _BARE_HOST.match(host)):
+        return False
+    if not (isinstance(reason, str) and reason.strip()):
+        return False
+    if not (isinstance(added_on, str) and _ISO_DATE.match(added_on)):
+        return False
+    try:
+        dt.date.fromisoformat(added_on)
+    except ValueError:
+        return False
+    return True
+
+
+def load_referral_denylist(path: Path | None = None) -> frozenset:
+    """The committed referral-spam hosts. Fails closed: a missing, unparsable or malformed file
+    (any entry without a bare lowercase `host`, a non-blank `reason` and an ISO `added_on`, or a
+    duplicate host) raises ValueError -- the digest must never publish unfiltered numbers."""
+    path = path or REFERRAL_DENYLIST_PATH
+    try:
+        entries = json.loads(Path(path).read_text())
+    except (OSError, ValueError) as exc:
+        raise ValueError(f"referral denylist unreadable: {exc}") from exc
+    if not isinstance(entries, list):
+        raise ValueError("referral denylist must be a JSON list")
+    hosts = set()
+    for i, entry in enumerate(entries):
+        if not _valid_entry(entry):
+            raise ValueError(f"referral denylist entry {i} is malformed: {entry!r}")
+        if entry["host"] in hosts:
+            raise ValueError(f"referral denylist host {entry['host']!r} is duplicated")
+        hosts.add(entry["host"])
+    return frozenset(hosts)
+
+
+def _is_denylisted(source: str, denylist: frozenset) -> bool:
+    host = source.strip().lower()
+    return any(host == d or host.endswith("." + d) for d in denylist)
+
+
+def _channel_of(source: str) -> str:
+    """GA4's Direct channel is exactly the `(direct)` session source; other sources are not
+    Direct, which is all _is_junk_segment asks."""
+    return "Direct" if source == "(direct)" else source
+
+
+def spam_adjusted(raw_sessions: float, rows: list, denylist: frozenset) -> dict:
+    """Adjusted sessions = raw minus sessionSource rows that are denylisted or behavioural junk
+    (each excluded row once); adjusted engaged sessions = all rows' engaged minus the same rows."""
+    excluded_sessions = engaged = 0.0
+    for row in rows:
+        dims = row.get("dimensionValues", [])
+        source = dims[0].get("value", "") if dims else ""
+        mvals = row.get("metricValues", [])
+        m = {name: float(mvals[i]["value"]) if i < len(mvals) else 0.0
+             for i, name in enumerate(GA4_SOURCE_METRICS)}
+        rate = (m["engagedSessions"] / m["sessions"]) if m["sessions"] else 0.0
+        if (_is_denylisted(source, denylist)
+                or _is_junk_segment(_channel_of(source), m["averageSessionDuration"], rate)):
+            excluded_sessions += m["sessions"]
+        else:
+            engaged += m["engagedSessions"]
+    return {"sessions": int(max(0.0, raw_sessions - excluded_sessions)),
+            "engaged_sessions": int(engaged)}
+
+
+def prior_window(start: str, end: str) -> tuple[str, str]:
+    """The equal-length inclusive window ending the day before `start`."""
+    s, e = dt.date.fromisoformat(start), dt.date.fromisoformat(end)
+    prior_end = s - dt.timedelta(days=1)
+    return (prior_end - (e - s)).isoformat(), prior_end.isoformat()
+
+
+def delta_line(label: str, current, prior) -> str:
+    if current is None or prior is None:
+        return f"📈 28d {label}: unavailable"
+    arrow = "↑" if current > prior else "↓" if current < prior else "→"
+    return f"📈 28d {label}: {arrow} {current} vs {prior} prior 28d"
+
+
 def top_search_demand(rows: list, n: int = 6, min_impressions: int = MIN_IMPRESSIONS) -> list:
     """The weekly digest's "Top search demand" rows: GSC query rows at or above the demand miner's
     own impression floor (MIN_IMPRESSIONS), first `n` — no 1-impression noise."""
@@ -102,23 +193,65 @@ def completed_window(days: int = 7, today_utc: dt.date | None = None) -> tuple[s
     return start.isoformat(), end.isoformat()
 
 
-def weekly_digest(days: int = 7) -> str:
-    S, E = completed_window(days)
-    end = dt.date.fromisoformat(E)
-
+def _ga4_source_rows(start: str, end: str) -> list | None:
+    """The sessionSource breakdown behind the spam-adjusted numbers; None when the fetch fails."""
     ga = _ex("GOOGLE_ANALYTICS_RUN_REPORT", {"property": GA4_PROPERTY,
-             "dateRanges": [{"startDate": S, "endDate": E}],
+             "dateRanges": [{"startDate": start, "endDate": end}],
+             "dimensions": [{"name": "sessionSource"}],
+             "metrics": [{"name": name} for name in GA4_SOURCE_METRICS]})
+    return None if ga is None else ga.get("rows", [])
+
+
+def _adjusted_engaged(start: str, end: str, denylist: frozenset) -> int | None:
+    rows = _ga4_source_rows(start, end)
+    return None if rows is None else spam_adjusted(0, rows, denylist)["engaged_sessions"]
+
+
+def _gsc_total(start: str, end: str) -> dict | None:
+    tot = _ex("GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY",
+              {"siteUrl": GSC_SITE, "startDate": start, "endDate": end, "dimensions": [], "rowLimit": 1})
+    return ((tot or {}).get("rows") or [None])[0]
+
+
+def _gsc_clicks(start: str, end: str) -> int | None:
+    t = _gsc_total(start, end)
+    return None if t is None else t.get("clicks", 0)
+
+
+def _ga4_line(start: str, end: str, denylist: frozenset) -> str:
+    ga = _ex("GOOGLE_ANALYTICS_RUN_REPORT", {"property": GA4_PROPERTY,
+             "dateRanges": [{"startDate": start, "endDate": end}],
              "dimensions": [],
              "metrics": [{"name": "activeUsers"}, {"name": "sessions"}]})
     try:
         row = ga["rows"][0]["metricValues"]
-        ga_line = f"👥 GA4: *{int(float(row[0]['value']))}* distinct active users / {int(float(row[1]['value']))} sessions"
+        users, sessions = int(float(row[0]["value"])), int(float(row[1]["value"]))
     except Exception:
-        ga_line = "👥 GA4: unavailable (no complete no-dimension total)"
+        return "👥 GA4: unavailable (no complete no-dimension total)"
+    raw = f"👥 GA4: raw *{users}* distinct active users / {sessions} sessions"
+    rows = _ga4_source_rows(start, end)
+    if rows is None:
+        return raw + " · spam-adjusted unavailable"
+    adj = spam_adjusted(sessions, rows, denylist)
+    return raw + f" · spam-adjusted {adj['sessions']} sessions / {adj['engaged_sessions']} engaged sessions"
 
-    tot = _ex("GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY",
-              {"siteUrl": GSC_SITE, "startDate": S, "endDate": E, "dimensions": [], "rowLimit": 1})
-    t = ((tot or {}).get("rows") or [None])[0]
+
+def _growth_lines(denylist: frozenset) -> list:
+    """GSC clicks and adjusted engaged sessions: the completed 28d window vs the 28d before it."""
+    cur = completed_window(28)
+    prev = prior_window(*cur)
+    return [delta_line("GSC clicks", _gsc_clicks(*cur), _gsc_clicks(*prev)),
+            delta_line("adjusted engaged sessions",
+                       _adjusted_engaged(*cur, denylist), _adjusted_engaged(*prev, denylist))]
+
+
+def weekly_digest(days: int = 7) -> str:
+    denylist = load_referral_denylist(REFERRAL_DENYLIST_PATH)   # fail closed before any fetch
+    S, E = completed_window(days)
+
+    ga_line = _ga4_line(S, E, denylist)
+
+    t = _gsc_total(S, E)
     if t is None:
         gsc_line = "🔎 GSC: unavailable (fetch failed or returned no total row)"
     else:
@@ -135,6 +268,7 @@ def weekly_digest(days: int = 7) -> str:
     lines = [f"🤖 *Jr — weekly telemetry* · esp-atlas.com · {S}→{E}",
              ga_line,
              gsc_line,
+             *_growth_lines(denylist),
              f"🎯 1,000,000 by {TARGET_DATE} — **{days_left} days left**",
              "",
              "*Top search demand* — Jr's data-priority signal:"]
