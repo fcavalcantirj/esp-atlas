@@ -16,6 +16,7 @@ popularity:
   as_of: '2026-11-10'
 socs:
 - esp32
+- esp32-s3
 sources:
 - field: '*'
   url: https://github.com/lshaf/unigeek
@@ -40,6 +41,9 @@ sources:
   verified: '2026-11-10'
 - field: popularity.editorial_home_as_of
   url: https://unigeek.xid.run/
+  verified: '2026-11-10'
+- field: socs
+  url: https://github.com/lshaf/unigeek/releases/tag/1.9.0
   verified: '2026-11-10'
 ---
 

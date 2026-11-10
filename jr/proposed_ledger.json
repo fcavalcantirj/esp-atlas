@@ -12140,6 +12140,15 @@
       "status": "merged",
       "timestamp": "2026-09-07T23:00:28.148172+00:00"
     },
+    "tasmocompiler": {
+      "expires": "2027-01-09T15:00:55.865826+00:00",
+      "id": "tasmocompiler",
+      "pr_ref": null,
+      "reason": "not_device_firmware: no espressif32 platformio.ini, ESP-IDF project, Arduino sketch or release .bin",
+      "repo": "benzino77/tasmocompiler",
+      "status": "rejected",
+      "timestamp": "2026-11-10T15:00:55.865826+00:00"
+    },
     "tasmota": {
       "expired_at": "2026-10-12T00:00:11.483938+00:00",
       "expires": "2026-10-12T00:00:11.345845+00:00",
@@ -12460,8 +12469,8 @@
       "id": "unigeek",
       "pr_ref": "#1607",
       "repo": "lshaf/unigeek",
-      "status": "proposed",
-      "timestamp": "2026-11-10T14:00:55.876896+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-10T15:00:55.865826+00:00"
     },
     "unitcams3-userdemo": {
       "expired_at": "2026-10-12T04:00:11.878766+00:00",
@@ -13264,6 +13273,7 @@
     "beanpiechen/micropythonshell": "micropythonshell",
     "ben7147/bruceextled.git": "bruceextled",
     "benbaker76/pigtail": "pigtail",
+    "benzino77/tasmocompiler": "tasmocompiler",
     "besermenji/cardvault": "cardvault",
     "beyondourordinary/boocore": "boocore",
     "big-bratan/make-ap": "make-ap",
