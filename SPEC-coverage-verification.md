@@ -68,7 +68,7 @@ Intent routing = deterministic firmware **name-match** OR LLM→**allowlisted fi
 name-match is imprecise both directions:
 - **Too greedy:** "a wifi 6 board" matches a firmware whose *name* contains "wifi" → hijacks the
   `radio: wifi-6` filter. **Fix:** a **capability vocabulary** (wifi-6, wifi, lora, zigbee, ble,
-  thread, matter, sub-ghz, 5ghz, ethernet…) present in a query **forces the filter path**, never
+  thread, matter, mesh, sub-ghz, 5ghz, ethernet…) present in a query **forces the filter path**, never
   overridable by a firmware-name match.
 - **Too weak:** `m5gotchi` / `meowusb-ble` / `space-clock` don't route to their own names.
   **Fix:** tighten name-matching so a firmware's distinctive name routes to *it*, without generic
