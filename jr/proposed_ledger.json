@@ -672,6 +672,15 @@
       "status": "rejected",
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
+    "awesome-esp32": {
+      "expires": "2027-01-09T04:00:55.198965+00:00",
+      "id": "awesome-esp32",
+      "pr_ref": null,
+      "reason": "not_device_firmware: no espressif32 platformio.ini, ESP-IDF project, Arduino sketch or release .bin",
+      "repo": "s0lness/awesome-esp32",
+      "status": "rejected",
+      "timestamp": "2026-11-10T04:00:55.198965+00:00"
+    },
     "awokxdag": {
       "expires": "2026-11-28T20:00:59.735845+00:00",
       "id": "awokxdag",
@@ -14109,6 +14118,7 @@
     "rythlan/brokensignal-next": "brokensignal-next",
     "rythlan/cardmeteo": "cardmeteo",
     "ryuzaki-mrl/espeon.git": "espeon",
+    "s0lness/awesome-esp32": "awesome-esp32",
     "sacriphanius/wdgwatch": "wdgwatch",
     "sacriphanius/zhilly": "zhilly",
     "sakkra-adv/battleship": "battleship",
