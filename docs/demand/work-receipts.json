@@ -135,7 +135,7 @@
    "branch": "jr/research-a12a2a3be93aa793",
    "term": "term512",
    "phase": "research",
-   "state": "reserved",
+   "state": "abandoned",
    "started_on": "2026-11-10",
    "source": "gsc_query",
    "linked_work": [],
@@ -157,7 +157,15 @@
     },
     "reserved_by": "jr/demand_run.py"
    },
-   "last_attempt_on": "2026-11-10"
+   "last_attempt_on": "2026-11-10",
+   "resolution": {
+    "status": "abandoned",
+    "reason": "term512 is TERM512, a CardputerAdv expansion kit (3D-printed CapTFT enclosure + 2.8in ILI9341 display + AMS1117 module, no MCU) for the already-catalogued area512 firmware, not a board: https://github.com/Prokuon/term512",
+    "closed_on": "2026-11-10",
+    "evidence": {
+     "settled_by": "jr/work_record.py"
+    }
+   }
   },
   {
    "key": "pam-0fb4ec9f138e2a6f989bcb03",
