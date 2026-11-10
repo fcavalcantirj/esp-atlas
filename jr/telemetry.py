@@ -19,7 +19,8 @@ import notify  # stdlib-only
 ENTITY = "7UQIn73xcXnpKIQiaTJzjrCRZk0VznPv"
 GA4_PROPERTY = "properties/551132215"
 GSC_SITE = "sc-domain:esp-atlas.com"
-TARGET_DATE = dt.date(2026, 11, 27)   # 1MM-user north-star (§3d)
+GOAL_LINE = ("🎯 1,000,000 users is the horizon (no date) · goal: every completed 28d window ≥ the previous "
+             "one on GSC clicks and adjusted engaged sessions")   # owner, 2026-11-10 (BIBLE-PLAN)
 # GSC query floor — rows below it are statistically thin (SPEC-jr-demand-driven.md §3.3). Lives
 # HERE, stdlib-only, because jr-telemetry runs this module in the composio venv where demand.py's
 # `tools` -> esp_atlas_core import cannot load; demand.py re-exports this one value.
@@ -264,12 +265,11 @@ def weekly_digest(days: int = 7) -> str:
              {"siteUrl": GSC_SITE, "startDate": S, "endDate": E, "dimensions": ["query"], "rowLimit": 50})
     queries = top_search_demand((tq or {}).get("rows", []))
 
-    days_left = (TARGET_DATE - dt.datetime.now(dt.timezone.utc).date()).days
     lines = [f"🤖 *Jr — weekly telemetry* · esp-atlas.com · {S}→{E}",
              ga_line,
              gsc_line,
              *_growth_lines(denylist),
-             f"🎯 1,000,000 by {TARGET_DATE} — **{days_left} days left**",
+             GOAL_LINE,
              "",
              "*Top search demand* — Jr's data-priority signal:"]
     if not queries:

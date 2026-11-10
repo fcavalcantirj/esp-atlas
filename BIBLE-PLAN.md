@@ -19,7 +19,7 @@
   not a plan).
 - Operational goal, checked weekly: **every completed 28-day window has Google Search clicks ≥ the previous
   window AND spam-adjusted engaged sessions ≥ the previous window.** The weekly digest prints both deltas
-  (▲/▼). Two consecutive ▼ on either metric is a review item in the project's Solvr room, not a failure.
+  (↑/↓/→). Two consecutive ↓ on either metric is a review item in the project's Solvr room, not a failure.
 - Spam-adjusted = minus referral hosts in the committed denylist and minus segments that match the behavioural
   junk rule (`jr/telemetry.py`). Raw numbers stay printed next to adjusted ones.
 - Title/description work follows `SPEC-serp-ctr.md`: evidence file first, editorial overrides only restating

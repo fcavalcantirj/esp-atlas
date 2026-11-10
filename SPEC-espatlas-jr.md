@@ -268,8 +268,9 @@ steer-data only — never a growth lever.
 
 **RESOLVED ⟨Q15⟩ — both outputs**: a **weekly Telegram summary** AND a committed
 `docs/telemetry/<date>.md` snapshot (git-tracked history, so trends are auditable).
-**1MM target date: 2026-11-27** (3 months from 2026-08-27, set by Felipe) — the digest reports
-required weekly-active-user growth pace vs. this deadline.
+**1MM is a horizon with no date** (owner, 2026-11-10; it replaced the 2026-11-27 target date set on
+2026-08-27) — the digest prints the goal line and the two 28-day deltas above; the operational goal is
+every completed 28-day window ≥ the previous one (`BIBLE-PLAN.md`, "Growth goal").
 
 ## 4. Anatomy of one job (the loop)
 
