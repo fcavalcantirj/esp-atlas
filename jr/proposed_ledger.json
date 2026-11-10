@@ -1,12 +1,13 @@
 {
   "by_id": {
     "(unnamed entry)": {
+      "expired_at": "2026-11-10T23:00:56.316191+00:00",
       "expires": "2026-11-10T22:00:59.977833+00:00",
       "id": "(unnamed entry)",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo ''",
       "repo": "",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-03T22:00:59.977833+00:00"
     },
     "0m3gx": {
@@ -2758,12 +2759,13 @@
       "timestamp": "2026-09-11T23:00:11.214000+00:00"
     },
     "cric-ric": {
+      "expired_at": "2026-11-10T23:00:56.316191+00:00",
       "expires": "2026-11-10T22:00:59.977833+00:00",
       "id": "cric-ric",
       "pr_ref": null,
       "reason": "repo_unresolved: unparseable repo 'cric-ric'",
       "repo": "cric-ric",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-03T22:00:59.977833+00:00"
     },
     "crossink": {
