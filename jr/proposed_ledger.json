@@ -5589,6 +5589,15 @@
       "status": "rejected",
       "timestamp": "2026-11-09T07:00:55.242731+00:00"
     },
+    "launcher-2119809553573519361": {
+      "expires": "2026-11-17T03:00:55.203387+00:00",
+      "id": "launcher-2119809553573519361",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'bridges user:crackulator'",
+      "repo": "launcher:2119809553573519361",
+      "status": "rejected",
+      "timestamp": "2026-11-10T03:00:55.203387+00:00"
+    },
     "launcher-2124f637db75857c962f9097575271f4": {
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-2124f637db75857c962f9097575271f4",
@@ -13677,6 +13686,7 @@
     "launcher:2111813107178622978": "launcher-2111813107178622978",
     "launcher:2118529634514075650": "launcher-2118529634514075650",
     "launcher:2119222805013372929": "launcher-2119222805013372929",
+    "launcher:2119809553573519361": "launcher-2119809553573519361",
     "launcher:2124f637db75857c962f9097575271f4": "launcher-2124f637db75857c962f9097575271f4",
     "launcher:214c554f9da22d70e6837d4db79fc793": "launcher-214c554f9da22d70e6837d4db79fc793",
     "launcher:215b511e97a94512db05452db92ba0bf": "launcher-215b511e97a94512db05452db92ba0bf",
