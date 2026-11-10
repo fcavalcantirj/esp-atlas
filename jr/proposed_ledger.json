@@ -1064,6 +1064,14 @@
       "status": "rejected",
       "timestamp": "2026-09-01T22:03:43.370272+00:00"
     },
+    "brucer-lite-esp32doit": {
+      "expires": "2026-12-10T16:00:54.825639+00:00",
+      "id": "brucer-lite-esp32doit",
+      "pr_ref": null,
+      "repo": "neryjah-del/brucer-lite-esp32doit",
+      "status": "seen",
+      "timestamp": "2026-11-10T16:00:54.825639+00:00"
+    },
     "btcsigner-cardputer": {
       "expires": "2026-12-05T20:00:59.980852+00:00",
       "id": "btcsigner-cardputer",
@@ -3846,6 +3854,14 @@
       "repo_id": 1310995186,
       "status": "expired",
       "timestamp": "2026-10-09T15:00:11.478381+00:00"
+    },
+    "gadgets-tools": {
+      "expires": "2026-12-10T16:00:54.825639+00:00",
+      "id": "gadgets-tools",
+      "pr_ref": null,
+      "repo": "26zl/gadgets-tools",
+      "status": "seen",
+      "timestamp": "2026-11-10T16:00:54.825639+00:00"
     },
     "galaga-cardputer": {
       "expired_at": "2026-11-08T18:00:55.494967+00:00",
@@ -9925,6 +9941,13 @@
       "status": "expired",
       "timestamp": "2026-09-13T01:00:38.965157+00:00"
     },
+    "nucleoos": {
+      "id": "nucleoos",
+      "pr_ref": "#1616",
+      "repo": "indecenti/nucleoos",
+      "status": "merged",
+      "timestamp": "2026-11-10T16:00:54.825639+00:00"
+    },
     "nvs-manager": {
       "expired_at": "2026-10-19T15:00:59.658125+00:00",
       "expires": "2026-10-19T15:00:30.165949+00:00",
@@ -12460,8 +12483,8 @@
       "id": "unigeek",
       "pr_ref": "#1607",
       "repo": "lshaf/unigeek",
-      "status": "proposed",
-      "timestamp": "2026-11-10T14:00:55.876896+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-10T16:00:54.825639+00:00"
     },
     "unitcams3-userdemo": {
       "expired_at": "2026-10-12T04:00:11.878766+00:00",
@@ -13149,6 +13172,7 @@
     "0x1abin/crossmux": "crossmux",
     "0xhalloween/flipper-zero-esp32-adv": "flipper-zero-esp32-adv",
     "1technophile/openmqttgateway": "openmqttgateway",
+    "26zl/gadgets-tools": "gadgets-tools",
     "3110/atom-babies-firmware": "atom-babies-firmware",
     "3110/m5atoms3": "m5atoms3",
     "3110/m5dial-crazy-eyes": "m5dial-crazy-eyes",
@@ -13614,6 +13638,7 @@
     "imshox/oxotp": "oxotp",
     "imxnoobx/fstick": "fstick",
     "incursiohack/esp-game-server": "esp-game-server",
+    "indecenti/nucleoos": "nucleoos",
     "inkone/sticky-lotus": "sticky-lotus",
     "integerquant/baitnswitch": "baitnswitch",
     "io-nji/lab_mini_os": "lab-mini-os",
@@ -14113,6 +14138,7 @@
     "nanucek/pocket-gambler": "pocket-gambler",
     "nasonliu/papers3-weread": "papers3-weread",
     "negawatt": "negawatt",
+    "neryjah-del/brucer-lite-esp32doit": "brucer-lite-esp32doit",
     "nexodevlab/amstradcpc464cardputeradv": "amstradcpc464cardputeradv",
     "nexus1203/vibsense": "vibsense",
     "nishad2m8/cardputer-games": "cardputer-games",
