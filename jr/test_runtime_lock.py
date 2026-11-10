@@ -163,3 +163,24 @@ def test_script_labels_itself_as_not_proof_of_the_pi_archive():
 def _logical_lines(text: str) -> list[str]:
     """Join backslash-continued shell lines so one command reads as one string."""
     return text.replace("\\\n", " ").splitlines()
+
+
+REQUIREMENTS_IMAGE = ROOT / "jr" / "requirements-image.txt"
+
+
+def _pins(path: Path) -> dict[str, str]:
+    pins: dict[str, str] = {}
+    for line in path.read_text().splitlines():
+        line = line.split("#", 1)[0].strip()
+        match = REQ_LINE.match(line)
+        if match:
+            pins[_canonical(match.group(1))] = match.group(2)
+    return pins
+
+
+def test_runtime_in_carries_every_pin_of_requirements_image_unchanged():
+    """jr/requirements-image.txt is what the image checks install from; runtime.in is what the
+    lock verifies. A bump in one without the other leaves CI proving a runtime nobody runs."""
+    image, runtime = _pins(REQUIREMENTS_IMAGE), _pins(RUNTIME_IN)
+    drift = {name: (ver, runtime.get(name)) for name, ver in image.items() if runtime.get(name) != ver}
+    assert not drift, f"requirements-image.txt vs runtime.in (image, runtime.in): {drift}"
