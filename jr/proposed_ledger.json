@@ -3566,13 +3566,14 @@
       "timestamp": "2026-09-11T18:00:57.443532+00:00"
     },
     "esp32-wifi-hash-monster": {
+      "expired_at": "2026-11-10T19:00:55.672334+00:00",
       "expires": "2026-11-10T19:00:11.582762+00:00",
       "id": "esp32-wifi-hash-monster",
       "pr_ref": null,
       "reason": "no_board_evidence: no catalogued device named",
       "repo": "g4lile0/esp32-wifi-hash-monster",
       "repo_id": 222137237,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-11T19:00:11.582762+00:00"
     },
     "esp32-wifi-penetration-too": {
