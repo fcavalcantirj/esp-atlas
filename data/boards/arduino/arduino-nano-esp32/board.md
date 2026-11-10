@@ -49,7 +49,7 @@ notes:
   the record references the soc directly because the catalog has no NORA-W106 module
   record. The 8 MB octal-SPI PSRAM is embedded in the NORA-W106-10B; the 16 MB flash
   is an external GD25B128EWIGR (U3) on the board.
-- Arduino's user manual (SKU ABX00083) describes the board "with and without headers".
+- Arduino's datasheet (SKU ABX00083) describes the board "with and without headers".
 - 'io.gpio_pins is the raw header-exposed set from Arduino''s full pinout (SKU ABX00083):
   D0-D13 = GPIO44, 43, 5, 6, 7, 8, 9, 10, 17, 18, 21, 38, 47, 48; A0-A7 = GPIO1, 2,
   3, 4, 11, 12, 13, 14; B0 = GPIO46 and B1 = GPIO0. D13 (GPIO48) is LED_BUILTIN.'
@@ -60,9 +60,9 @@ notes:
 - D1/TX0 has a 499 ohm series resistor, which limits the current that pin can drive
   (Arduino full pinout, page 3).
 - 'Power: VIN accepts 6-21 V, USB-C 4.8-5.5 V; logic is 3.3 V and there is no 5 V
-  pin -- VBUS carries 5 V only when the board is powered over USB (user manual §3, §11).'
+  pin -- VBUS carries 5 V only when the board is powered over USB (datasheet §3, §11).'
 - 'Board recovery: Arduino''s bootloader is entered by double-tapping the reset button
-  right after power-up (user manual §14.5).'
+  right after power-up (datasheet §14.5).'
 getting_started: https://docs.arduino.cc/hardware/nano-esp32/
 sources:
 - field: '*'
