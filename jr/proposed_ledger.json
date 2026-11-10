@@ -2991,6 +2991,15 @@
       "status": "rejected",
       "timestamp": "2026-11-06T21:00:55.650872+00:00"
     },
+    "deki-lilygo-boards": {
+      "expires": "2027-01-09T12:00:55.152801+00:00",
+      "id": "deki-lilygo-boards",
+      "pr_ref": null,
+      "reason": "not_device_firmware: no espressif32 platformio.ini, ESP-IDF project, Arduino sketch or release .bin",
+      "repo": "dekiengine/deki-lilygo-boards",
+      "status": "rejected",
+      "timestamp": "2026-11-10T12:00:55.152801+00:00"
+    },
     "demonym": {
       "expires": "2026-11-12T11:00:59.617685+00:00",
       "id": "demonym",
@@ -10570,11 +10579,12 @@
       "timestamp": "2026-09-02T17:03:09.135130+00:00"
     },
     "pocket-wui": {
+      "expired_at": "2026-11-10T13:00:55.199340+00:00",
       "expires": "2026-11-10T13:00:19.731429+00:00",
       "id": "pocket-wui",
       "pr_ref": null,
       "repo": "afetisa/pocket-wui",
-      "status": "seen",
+      "status": "expired",
       "timestamp": "2026-10-11T13:00:19.731429+00:00"
     },
     "pocketmo-m5": {
@@ -12447,11 +12457,11 @@
     },
     "unigeek": {
       "id": "unigeek",
-      "pr_ref": null,
+      "pr_ref": "#1607",
       "repo": "lshaf/unigeek",
       "repo_id": 1160809961,
       "status": "proposed",
-      "timestamp": "2026-11-10T11:00:59.068830+00:00"
+      "timestamp": "2026-11-10T13:00:55.199340+00:00"
     },
     "unitcams3-userdemo": {
       "expired_at": "2026-10-12T04:00:11.878766+00:00",
@@ -13404,6 +13414,7 @@
     "davervw/m5_minijoystickc_gamepad": "m5-minijoystickc-gamepad",
     "dayou-ht/morsetrainer-cardputer": "morsetrainer-cardputer",
     "ddd": "ddd",
+    "dekiengine/deki-lilygo-boards": "deki-lilygo-boards",
     "demonkingfukai/m5stickc-plus-mouse-jiggler": "m5stickc-plus-mouse-jiggler",
     "derunix/m5stack-stick-s3-animation": "m5stack-stick-s3-animation",
     "destillegast/m5cardputer-hid-tools": "m5cardputer-hid-tools",

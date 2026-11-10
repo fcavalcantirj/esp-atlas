@@ -129,6 +129,231 @@
      "settled_by": "jr/work_record.py"
     }
    }
+  },
+  {
+   "key": "a12a2a3be93aa793",
+   "branch": "jr/research-a12a2a3be93aa793",
+   "term": "term512",
+   "phase": "research",
+   "state": "reserved",
+   "started_on": "2026-11-10",
+   "source": "gsc_query",
+   "linked_work": [],
+   "window": {
+    "start": "2026-10-13",
+    "end": "2026-11-10"
+   },
+   "metrics": {
+    "impressions": 21,
+    "position": 7.2
+   },
+   "provenance": {
+    "snapshot": "docs/demand/2026-11-10.json",
+    "opened_on": "2026-11-08",
+    "status": "new",
+    "remote": {
+     "branch": false,
+     "prs": []
+    },
+    "reserved_by": "jr/demand_run.py"
+   }
+  },
+  {
+   "key": "pam-0fb4ec9f138e2a6f989bcb03",
+   "branch": "jr/research-pam-0fb4ec9f138e2a6f989bcb03",
+   "term": "Arduino Nano ESP32",
+   "phase": "research",
+   "state": "reserved",
+   "started_on": "2026-11-10",
+   "source": "pam_feed",
+   "linked_work": [],
+   "feed": {
+    "checked_at": "2026-11-06T04:22:34.124739Z",
+    "feeds": {
+     "products": {
+      "url": "https://pamfinds.com/api/products.json",
+      "fetched_at": "2026-11-06T04:22:34.124739Z",
+      "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+      "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+      "bytes": 110684
+     },
+     "specs": {
+      "url": "https://pamfinds.com/api/specs.json",
+      "fetched_at": "2026-11-06T04:22:34.124739Z",
+      "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+      "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+      "bytes": 349157
+     }
+    },
+    "lead": {
+     "source_id": "arduino-nano-esp32",
+     "name_hint": "Arduino Nano ESP32",
+     "chip_hint": "ESP32-S3",
+     "page": "https://pamfinds.com/esp32/arduino-nano-esp32/",
+     "source_pointers": {
+      "cpu_arch": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "cpu_cores": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "cpu_freq_mhz": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "flash_mb": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "sram_kb": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "psram_mb": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "wifi": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "ble": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "gpio_count": [
+       "https://docs.arduino.cc/hardware/nano-esp32/"
+      ],
+      "adc_channels": [
+       "https://docs.arduino.cc/hardware/nano-esp32/"
+      ],
+      "spi": [
+       "https://docs.arduino.cc/hardware/nano-esp32/"
+      ],
+      "i2c": [
+       "https://docs.arduino.cc/hardware/nano-esp32/"
+      ],
+      "uart": [
+       "https://docs.arduino.cc/hardware/nano-esp32/"
+      ],
+      "usb_type": [
+       "https://docs.arduino.cc/hardware/nano-esp32/"
+      ],
+      "input_voltage": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "operating_voltage": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+      ],
+      "dimensions_mm": [
+       "https://docs.arduino.cc/hardware/nano-esp32/"
+      ],
+      "form_factor": [
+       "https://docs.arduino.cc/hardware/nano-esp32/"
+      ]
+     },
+     "fingerprint": "fc279054ab4722d31c6e17c77257649f8dab0a49927d4477687fab0531e852a5",
+     "matches": [],
+     "status": "potential_identity_gap"
+    }
+   },
+   "candidate": {
+    "term": "Arduino Nano ESP32",
+    "source": "pam_feed",
+    "status": "new",
+    "first_seen": "2026-11-06",
+    "history": [],
+    "linked_work": [],
+    "snapshot": "docs/demand/pam-leads.json",
+    "feed": {
+     "checked_at": "2026-11-06T04:22:34.124739Z",
+     "feeds": {
+      "products": {
+       "url": "https://pamfinds.com/api/products.json",
+       "fetched_at": "2026-11-06T04:22:34.124739Z",
+       "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+       "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+       "bytes": 110684
+      },
+      "specs": {
+       "url": "https://pamfinds.com/api/specs.json",
+       "fetched_at": "2026-11-06T04:22:34.124739Z",
+       "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+       "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+       "bytes": 349157
+      }
+     },
+     "lead": {
+      "source_id": "arduino-nano-esp32",
+      "name_hint": "Arduino Nano ESP32",
+      "chip_hint": "ESP32-S3",
+      "page": "https://pamfinds.com/esp32/arduino-nano-esp32/",
+      "source_pointers": {
+       "cpu_arch": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "cpu_cores": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "cpu_freq_mhz": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "flash_mb": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "sram_kb": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "psram_mb": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "wifi": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "ble": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "gpio_count": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "adc_channels": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "spi": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "i2c": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "uart": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "usb_type": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "input_voltage": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "operating_voltage": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "dimensions_mm": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "form_factor": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ]
+      },
+      "fingerprint": "fc279054ab4722d31c6e17c77257649f8dab0a49927d4477687fab0531e852a5",
+      "matches": [],
+      "status": "potential_identity_gap"
+     }
+    }
+   },
+   "provenance": {
+    "snapshot": "docs/demand/pam-leads.json",
+    "opened_on": "2026-11-06",
+    "status": "new",
+    "remote": {
+     "branch": false,
+     "prs": []
+    },
+    "reserved_by": "jr/demand_run.py"
+   }
   }
  ]
 }
