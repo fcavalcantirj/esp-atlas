@@ -3,6 +3,7 @@ id: lolin-d32
 type: board
 brand: lolin
 name: LOLIN D32
+seo_title: "LOLIN D32 pinout \u2014 ESP32 board, LiPo charging, 4MB flash"
 aka:
 - d32
 soc: esp32

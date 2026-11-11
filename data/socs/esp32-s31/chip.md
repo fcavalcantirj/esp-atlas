@@ -3,6 +3,7 @@ id: esp32-s31
 type: soc
 vendor: espressif
 name: ESP32-S31
+seo_title: "ESP32-S31 \u2014 RISC-V SoC: Wi-Fi 6, BT 5.4, Thread, Zigbee"
 cpu:
   arch: risc-v
   cores: 2

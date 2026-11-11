@@ -3,6 +3,7 @@ id: esp32-c5-devkitc-1
 type: board
 brand: espressif
 name: ESP32-C5-DevKitC-1
+seo_title: "ESP32-C5-DevKitC-1 pinout \u2014 dual-band Wi-Fi 6 board specs"
 aka:
 - esp32-c5-devkitc1-n16r4
 - esp32-c5-devkitc1-n4

@@ -3,6 +3,7 @@ id: m5stick-s3
 type: board
 brand: m5stack
 name: M5StickS3
+seo_title: "M5StickS3 \u2014 M5Stack Stick S3 specs: ESP32-S3, 8MB PSRAM, IMU"
 soc: esp32-s3
 flash_mb: 8
 psram_mb: 8

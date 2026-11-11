@@ -3,6 +3,7 @@ id: xiao-esp32s3
 type: board
 brand: seeed
 name: Seeed Studio XIAO ESP32S3
+seo_title: "Seeed Studio XIAO ESP32S3 pinout \u2014 8MB flash, 8MB PSRAM"
 aka:
 - seeed_xiao_esp32s3
 soc: esp32-s3

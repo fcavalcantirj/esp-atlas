@@ -3,6 +3,7 @@ id: lolin-s3-mini
 type: board
 brand: lolin
 name: LOLIN S3 mini
+seo_title: "LOLIN S3 mini pinout \u2014 ESP32-S3, 27 IO, 4MB flash, 2MB PSRAM"
 soc: esp32-s3
 flash_mb: 4
 psram_mb: 2

@@ -3,6 +3,7 @@ id: esp32-devkitc-v4
 type: board
 brand: espressif
 name: ESP32-DevKitC V4
+seo_title: "ESP32-DevKitC V4 pinout \u2014 ESP32-WROOM-32E board specs"
 module: esp32-wroom-32e
 flash_mb: 4
 psram_mb: 0
