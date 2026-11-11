@@ -1,0 +1,740 @@
+{
+ "calls": 21,
+ "errors": 0,
+ "fetched": "2026-11-10",
+ "notes": [],
+ "ref": "main",
+ "repo": "lshaf/unigeek",
+ "resolved": {
+  "boards": [
+   "lilygo-t-display",
+   "lilygo-t-display-s3",
+   "m5cardputer",
+   "m5stack-cores3",
+   "m5stick-cplus2",
+   "m5stick-s3"
+  ],
+  "socs": [],
+  "unresolved": [
+   "cyd_2432s028",
+   "cyd_2432s028_2usb",
+   "cyd_2432w328c",
+   "cyd_2432w328c_2",
+   "cyd_2432w328r",
+   "cyd_3248s035",
+   "cyd_3248s035c",
+   "cyd_3248s035r",
+   "diy_marauder",
+   "diy_smoochie",
+   "m5_cardputer_adv",
+   "m5stickcplus_11",
+   "reaper",
+   "t_display_s3_touch",
+   "t_embed_cc1101",
+   "t_lora_pager"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "unigeek-cyd_2432s028.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cyd_2432s028",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-cyd_2432s028.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-cyd_2432s028_2usb.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cyd_2432s028_2usb",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-cyd_2432s028_2usb.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-cyd_2432w328c.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cyd_2432w328c",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-cyd_2432w328c.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-cyd_2432w328c_2.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cyd_2432w328c_2",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-cyd_2432w328c_2.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-cyd_2432w328r.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cyd_2432w328r",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-cyd_2432w328r.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-cyd_3248s035c.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cyd_3248s035c",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-cyd_3248s035c.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-cyd_3248s035r.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cyd_3248s035r",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-cyd_3248s035r.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-diy_smoochie.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "diy_smoochie",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-diy_smoochie.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-m5stickcplus_11.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stickcplus_11",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-m5stickcplus_11.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-m5stickcplus_2.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stickcplus_2",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-m5stickcplus_2.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-m5sticks3.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5sticks3",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-m5sticks3.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-m5_cardputer.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5_cardputer",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-m5_cardputer.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-m5_cardputer_adv.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5_cardputer_adv",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-m5_cardputer_adv.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-m5_cores3.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5_cores3",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-m5_cores3.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-t_display.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "t_display",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-t_display.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-t_display_s3.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "t_display_s3",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-t_display_s3.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-t_display_s3_touch.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "t_display_s3_touch",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-t_display_s3_touch.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-t_embed_cc1101.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "t_embed_cc1101",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-t_embed_cc1101.bin"
+  },
+  {
+   "extra": {
+    "asset": "unigeek-t_lora_pager.bin",
+    "release": "1.9.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "t_lora_pager",
+   "url": "https://github.com/lshaf/unigeek/releases/download/1.9.0/unigeek-t_lora_pager.bin"
+  },
+  {
+   "extra": {
+    "env": "cyd_2432w328r",
+    "file": "firmware/boards/cyd/config.ini"
+   },
+   "kind": "platformio",
+   "line": 18,
+   "rank": 2,
+   "soc": null,
+   "token": "cyd_2432w328r",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/cyd/config.ini#L18"
+  },
+  {
+   "extra": {
+    "env": "cyd_2432s028",
+    "file": "firmware/boards/cyd/config.ini"
+   },
+   "kind": "platformio",
+   "line": 36,
+   "rank": 2,
+   "soc": null,
+   "token": "cyd_2432s028",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/cyd/config.ini#L36"
+  },
+  {
+   "extra": {
+    "env": "cyd_2432s028_2usb",
+    "file": "firmware/boards/cyd/config.ini"
+   },
+   "kind": "platformio",
+   "line": 57,
+   "rank": 2,
+   "soc": null,
+   "token": "cyd_2432s028",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/cyd/config.ini#L57"
+  },
+  {
+   "extra": {
+    "env": "cyd_2432w328c",
+    "file": "firmware/boards/cyd/config.ini"
+   },
+   "kind": "platformio",
+   "line": 78,
+   "rank": 2,
+   "soc": null,
+   "token": "cyd_2432w328c",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/cyd/config.ini#L78"
+  },
+  {
+   "extra": {
+    "env": "cyd_2432w328c_2",
+    "file": "firmware/boards/cyd/config.ini"
+   },
+   "kind": "platformio",
+   "line": 90,
+   "rank": 2,
+   "soc": null,
+   "token": "cyd_2432w328c",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/cyd/config.ini#L90"
+  },
+  {
+   "extra": {
+    "env": "cyd_3248s035r",
+    "file": "firmware/boards/cyd/config.ini"
+   },
+   "kind": "platformio",
+   "line": 105,
+   "rank": 2,
+   "soc": null,
+   "token": "cyd_3248s035",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/cyd/config.ini#L105"
+  },
+  {
+   "extra": {
+    "env": "cyd_3248s035c",
+    "file": "firmware/boards/cyd/config.ini"
+   },
+   "kind": "platformio",
+   "line": 128,
+   "rank": 2,
+   "soc": null,
+   "token": "cyd_3248s035",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/cyd/config.ini#L128"
+  },
+  {
+   "extra": {
+    "env": "diy_marauder",
+    "file": "firmware/boards/diy_marauder/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "diy_marauder",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/diy_marauder/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "diy_smoochie",
+    "file": "firmware/boards/diy_smoochie/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "diy_smoochie",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/diy_smoochie/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "m5_cardputer",
+    "file": "firmware/boards/m5_cardputer/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "m5_cardputer",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/m5_cardputer/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "m5_cardputer_adv",
+    "file": "firmware/boards/m5_cardputer_adv/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "m5_cardputer_adv",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/m5_cardputer_adv/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "m5_cores3",
+    "file": "firmware/boards/m5_cores3/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "m5_cores3",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/m5_cores3/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "m5_cores3_unified",
+    "file": "firmware/boards/m5_cores3_unified/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "m5_cores3",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/m5_cores3_unified/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "m5stickcplus_11",
+    "file": "firmware/boards/m5stickcplus_11/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stickcplus_11",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/m5stickcplus_11/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "m5stickcplus_2",
+    "file": "firmware/boards/m5stickcplus_2/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stickcplus_2",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/m5stickcplus_2/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "m5sticks3",
+    "file": "firmware/boards/m5sticks3/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "m5sticks3",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/m5sticks3/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "reaper",
+    "file": "firmware/boards/reaper/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "reaper",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/reaper/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "t_display",
+    "file": "firmware/boards/t_display/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "t_display",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/t_display/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "t_display_s3",
+    "file": "firmware/boards/t_display_s3/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "t_display_s3",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/t_display_s3/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "t_display_s3_touch",
+    "file": "firmware/boards/t_display_s3/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "t_display_s3",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/t_display_s3/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "t_embed_cc1101",
+    "file": "firmware/boards/t_embed_cc1101/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "t_embed_cc1101",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/t_embed_cc1101/config.ini#L2"
+  },
+  {
+   "extra": {
+    "env": "t_lora_pager",
+    "file": "firmware/boards/t_lora_pager/config.ini"
+   },
+   "kind": "platformio",
+   "line": 2,
+   "rank": 2,
+   "soc": null,
+   "token": "t_lora_pager",
+   "url": "https://github.com/lshaf/unigeek/blob/main/firmware/boards/t_lora_pager/config.ini#L2"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stickcplus_11",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stickcplus_2",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "t_lora_pager",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5_cardputer",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5_cardputer_adv",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "t_display",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "t_display_s3",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "t_display_s3_touch",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "diy_smoochie",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "t_embed_cc1101",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5_cores3",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5sticks3",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_2432w328r",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_2432s028",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_2432s028_2usb",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_2432w328c",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_2432w328c_2",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_3248s035r",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cyd_3248s035c",
+   "url": "https://github.com/lshaf/unigeek/blob/main/.github/workflows/release.yml"
+  }
+ ]
+}
