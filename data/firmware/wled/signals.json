@@ -1,7 +1,7 @@
 {
  "calls": 12,
  "errors": 0,
- "fetched": "2026-11-03",
+ "fetched": "2026-11-11",
  "notes": [],
  "ref": "main",
  "repo": "wled/WLED",
@@ -464,11 +464,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 519,
+   "line": 520,
    "rank": 2,
    "soc": null,
    "token": "esp32-c6-devkitc-1",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L519"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L520"
   },
   {
    "extra": {
@@ -476,11 +476,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 544,
+   "line": 545,
    "rank": 2,
    "soc": null,
    "token": "esp32-c6-devkitm-1",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L544"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L545"
   },
   {
    "extra": {
@@ -488,11 +488,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 556,
+   "line": 557,
    "rank": 2,
    "soc": null,
    "token": "esp32-c5-devkitc-1",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L556"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L557"
   },
   {
    "extra": {
@@ -500,11 +500,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 575,
+   "line": 576,
    "rank": 2,
    "soc": null,
    "token": "esp32-c5-devkitc1-n8r4",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L575"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L576"
   },
   {
    "extra": {
@@ -512,11 +512,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 601,
+   "line": 602,
    "rank": 2,
    "soc": null,
    "token": "esp32-p4-evboard",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L601"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L602"
   },
   {
    "extra": {
@@ -524,11 +524,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 622,
+   "line": 623,
    "rank": 2,
    "soc": null,
    "token": "esp32-p4-evboard",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L622"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L623"
   },
   {
    "extra": {
@@ -536,11 +536,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 642,
+   "line": 643,
    "rank": 2,
    "soc": null,
    "token": "nodemcuv2",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L642"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L643"
   },
   {
    "extra": {
@@ -548,11 +548,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 642,
+   "line": 643,
    "rank": 2,
    "soc": null,
    "token": "nodemcuv2",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L642"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L643"
   },
   {
    "extra": {
@@ -560,11 +560,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 642,
+   "line": 643,
    "rank": 2,
    "soc": null,
    "token": "nodemcuv2",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L642"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L643"
   },
   {
    "extra": {
@@ -572,11 +572,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 667,
+   "line": 668,
    "rank": 2,
    "soc": null,
    "token": "esp_wroom_02",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L667"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L668"
   },
   {
    "extra": {
@@ -584,11 +584,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 667,
+   "line": 668,
    "rank": 2,
    "soc": null,
    "token": "esp_wroom_02",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L667"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L668"
   },
   {
    "extra": {
@@ -596,11 +596,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 667,
+   "line": 668,
    "rank": 2,
    "soc": null,
    "token": "esp_wroom_02",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L667"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L668"
   },
   {
    "extra": {
@@ -608,11 +608,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 697,
+   "line": 698,
    "rank": 2,
    "soc": null,
    "token": "esp_wroom_02",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L697"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L698"
   },
   {
    "extra": {
@@ -620,11 +620,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 724,
+   "line": 725,
    "rank": 2,
    "soc": null,
    "token": "esp01_1m",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L724"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L725"
   },
   {
    "extra": {
@@ -632,11 +632,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 724,
+   "line": 725,
    "rank": 2,
    "soc": null,
    "token": "esp01_1m",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L724"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L725"
   },
   {
    "extra": {
@@ -644,11 +644,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 724,
+   "line": 725,
    "rank": 2,
    "soc": null,
    "token": "esp01_1m",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L724"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L725"
   },
   {
    "extra": {
@@ -656,11 +656,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 754,
+   "line": 755,
    "rank": 2,
    "soc": null,
    "token": "esp32dev",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L754"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L755"
   },
   {
    "extra": {
@@ -668,11 +668,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 770,
+   "line": 771,
    "rank": 2,
    "soc": null,
    "token": "esp32dev",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L770"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L771"
   },
   {
    "extra": {
@@ -680,11 +680,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 770,
+   "line": 771,
    "rank": 2,
    "soc": null,
    "token": "esp32dev",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L770"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L771"
   },
   {
    "extra": {
@@ -692,11 +692,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 804,
+   "line": 805,
    "rank": 2,
    "soc": null,
    "token": "esp32dev",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L804"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L805"
   },
   {
    "extra": {
@@ -704,11 +704,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 820,
+   "line": 821,
    "rank": 2,
    "soc": null,
    "token": "esp32dev",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L820"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L821"
   },
   {
    "extra": {
@@ -716,11 +716,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 838,
+   "line": 839,
    "rank": 2,
    "soc": null,
    "token": "esp32-poe",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L838"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L839"
   },
   {
    "extra": {
@@ -728,11 +728,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 854,
+   "line": 855,
    "rank": 2,
    "soc": null,
    "token": "esp32-poe",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L854"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L855"
   },
   {
    "extra": {
@@ -740,11 +740,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 873,
+   "line": 874,
    "rank": 2,
    "soc": null,
    "token": "ttgo-t7-v14-mini32",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L873"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L874"
   },
   {
    "extra": {
@@ -752,11 +752,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 887,
+   "line": 888,
    "rank": 2,
    "soc": null,
    "token": "esp32-c3-devkitm-1",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L887"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L888"
   },
   {
    "extra": {
@@ -764,11 +764,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 887,
+   "line": 888,
    "rank": 2,
    "soc": null,
    "token": "esp32-c3-devkitm-1",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L887"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L888"
   },
   {
    "extra": {
@@ -776,11 +776,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 907,
+   "line": 908,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L907"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L908"
   },
   {
    "extra": {
@@ -788,11 +788,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 930,
+   "line": 931,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L930"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L931"
   },
   {
    "extra": {
@@ -800,11 +800,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 930,
+   "line": 931,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L930"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L931"
   },
   {
    "extra": {
@@ -812,11 +812,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 963,
+   "line": 964,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L963"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L964"
   },
   {
    "extra": {
@@ -824,11 +824,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 977,
+   "line": 978,
    "rank": 2,
    "soc": null,
    "token": "esp32s3camlcd",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L977"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L978"
   },
   {
    "extra": {
@@ -836,11 +836,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 977,
+   "line": 978,
    "rank": 2,
    "soc": null,
    "token": "esp32s3camlcd",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L977"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L978"
   },
   {
    "extra": {
@@ -848,11 +848,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1017,
+   "line": 1018,
    "rank": 2,
    "soc": null,
    "token": "lolin_s3_mini",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1017"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1018"
   },
   {
    "extra": {
@@ -860,11 +860,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1035,
+   "line": 1036,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1035"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1036"
   },
   {
    "extra": {
@@ -872,11 +872,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1049,
+   "line": 1050,
    "rank": 2,
    "soc": null,
    "token": "lolin_s2_mini",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1049"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1050"
   },
   {
    "extra": {
@@ -884,23 +884,23 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 754,
+   "line": 771,
    "rank": 2,
    "soc": null,
    "token": "esp32dev",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L754"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L771"
   },
   {
    "extra": {
-    "env": "usermods_V5",
+    "env": "usermods_P4",
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 622,
+   "line": 623,
    "rank": 2,
    "soc": null,
    "token": "esp32-p4-evboard",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L622"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L623"
   },
   {
    "extra": {
@@ -908,11 +908,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 754,
+   "line": 771,
    "rank": 2,
    "soc": null,
    "token": "esp32dev",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L754"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L771"
   },
   {
    "extra": {
@@ -920,11 +920,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 754,
+   "line": 771,
    "rank": 2,
    "soc": null,
    "token": "esp32dev",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L754"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L771"
   },
   {
    "extra": {
@@ -932,11 +932,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 930,
+   "line": 931,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L930"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L931"
   },
   {
    "extra": {
@@ -944,11 +944,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1150,
+   "line": 1151,
    "rank": 2,
    "soc": null,
    "token": "adafruit_matrixportal_esp32s3_wled",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1150"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1151"
   },
   {
    "extra": {
@@ -956,11 +956,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 977,
+   "line": 978,
    "rank": 2,
    "soc": null,
    "token": "esp32s3camlcd",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L977"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L978"
   },
   {
    "extra": {
@@ -968,11 +968,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 1184,
+   "line": 1185,
    "rank": 2,
    "soc": null,
    "token": "lilygo-t7-s3",
-   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1184"
+   "url": "https://github.com/wled/WLED/blob/main/platformio.ini#L1185"
   }
  ]
 }
