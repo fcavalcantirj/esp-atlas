@@ -1,18 +1,20 @@
 {
  "calls": 6,
  "errors": 0,
- "fetched": "2026-11-03",
+ "fetched": "2026-11-11",
  "notes": [],
  "ref": "main",
  "repo": "0ct0sec/M5PORKCHOP",
  "resolved": {
   "boards": [
-   "m5cardputer",
-   "m5stamp-s3"
+   "m5cardputer"
   ],
-  "socs": [],
+  "socs": [
+   "esp32-s3"
+  ],
   "unresolved": [
    "firmware_v0.1.8b-PSTH-PRE-RELEASE",
+   "m5stack-stamps3",
    "porkchop_v0.1.8b-PSTH-PRE-RELEASE_m5burner"
   ]
  },
@@ -44,7 +46,10 @@
   {
    "extra": {
     "env": "m5cardputer",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 5,
@@ -56,7 +61,10 @@
   {
    "extra": {
     "env": "m5cardputer-debug",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 5,
