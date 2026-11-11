@@ -88,6 +88,15 @@ Each extracted item keeps its **source URL + source type** for provenance.
   error to swallow. Do NOT invent a recipe for a board not in the catalog.
 - SoCs: union the resolved boards' chip families into `firmware.socs` (esp-claw gains
   esp32-p4, esp32-c5).
+- **A module id under a product build is not a board edge (2026-11-11).** A product built on a
+  bare module reuses the module's PlatformIO board id: the M5 Cardputer declares
+  `board = m5stack-stamps3`. For a carrier module (`m5stamp-s3`), a rank-2 `platformio` signal
+  whose env name, `lib_deps` or `build_flags` names a product built around it (`cardputer`,
+  `sticks3`, `m5dial`, `dinmeter`, `capsule`) proves the chip, not the bare module: chip evidence
+  only, never a recipe on the module. An env that resolves exactly to a catalogued product still
+  goes to that product (`[env:cardputer]` to `m5cardputer`). An env with no product marker keeps
+  the module (`stamps3`, `release`). A wrong edge already on main is removed through
+  `jr/overrides/<firmware>__edges.json`, which `scripts/g2_guard.py` requires.
 
 ## 5. Provenance + verification ladder
 Each recipe gains explicit status:

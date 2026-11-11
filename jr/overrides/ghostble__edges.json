@@ -1,0 +1,20 @@
+{
+  "firmware": "ghostble",
+  "repo": "SmonSE/GhostBLE",
+  "action": "edge_correction",
+  "deletes": [
+    "data/recipes/m5stamp-s3__ghostble/recipe.md"
+  ],
+  "classification": "module_board_id_under_product_build",
+  "why": "`board = m5stack-stamps3` names the module inside the product, not a bare Stamp S3 target. Env ghostble_sticks3 sets -DM5STICKS3, so the build targets the StickS3, not a bare Stamp S3. The README never mentions a Stamp. The firmware and its product recipe stay.",
+  "sources": [
+    "https://github.com/SmonSE/GhostBLE/blob/main/platformio.ini#L25",
+    "https://github.com/SmonSE/GhostBLE/blob/main/README.md"
+  ],
+  "historical_parent_sha": "7755e3e63bec8f1280452e7d812a5cd08aafe0c0",
+  "directed_by": "owner",
+  "date": "2026-11-11",
+  "originals": {
+    "data/recipes/m5stamp-s3__ghostble/recipe.md": "---\nid: m5stamp-s3__ghostble\ntype: recipe\nboard: m5stamp-s3\nfirmware: ghostble\nstatus: unverified\nchip_family: esp32-s3\nflash:\n  env: \"ghostble_sticks3\"\nnotes: \"ghostble names this board as m5stack-stamps3 in its platformio.ini (env ghostble_sticks3); derived from the repo's own build files, not verified on hardware.\"\nsources:\n- field: '*'\n  url: https://github.com/SmonSE/GhostBLE\n  verified: '2026-09-19'\n- field: flash.env\n  url: https://github.com/SmonSE/GhostBLE/blob/main/platformio.ini#L26\n  verified: '2026-09-19'\n- field: board\n  url: https://github.com/SmonSE/GhostBLE/blob/main/platformio.ini#L26\n  verified: '2026-09-19'\n---\n\n# m5stamp-s3 x ghostble\n\n`ghostble` declares `m5stack-stamps3` in its platformio.ini; that name resolves to the catalogued board `m5stamp-s3` (esp32-s3). Status `unverified` until someone with the hardware confirms it.\n\n- rank 2 platformio: `m5stack-stamps3` — https://github.com/SmonSE/GhostBLE/blob/main/platformio.ini#L26\n"
+  }
+}

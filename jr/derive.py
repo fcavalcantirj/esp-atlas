@@ -416,6 +416,37 @@ def _chip_priority(path: str) -> tuple:
     return (0 if "esp32" in lp else 1, path)
 
 
+# Products built around a carrier module reuse its PlatformIO board id (SPEC-firmware-board-mapping.md section 4).
+_CARRIER_MODULES = {"m5stamp-s3"}
+_PRODUCT_MARKERS = ("cardputer", "sticks3", "m5dial", "dinmeter", "capsule")
+
+
+def _option_values(sections: dict, name: str, option: str, depth: int = 0, seen: frozenset = frozenset()) -> list[str] | None:
+    """The interpolated values of `option` for a section, resolved the way board_of resolves
+    `board`: its own option replaces its parents', else the LAST listed extends parent wins."""
+    sec = sections.get(name)
+    if sec is None or depth > 6 or name in seen:
+        return None
+    seen = seen | {name}
+    if option in sec:
+        return _interpolate(sec[option]["values"], sections)
+    for parent in reversed((sec.get("extends") or {"values": []})["values"]):
+        found = _option_values(sections, parent, option, depth + 1, seen)
+        if found is not None:
+            return found
+    return None
+
+
+def _product_markers(sections: dict, env: str) -> list[str]:
+    """Which products this env's lib_deps and build_flags name; the `[env]` section is the default."""
+    values: list[str] = []
+    for option in ("lib_deps", "build_flags"):
+        found = _option_values(sections, f"env:{env}", option)
+        values += found if found is not None else (_option_values(sections, "env", option) or [])
+    text = board_alias.compact(" ".join(values))
+    return [m for m in _PRODUCT_MARKERS if m in text]
+
+
 def platformio_signals(owner_repo: str, ref: str, calls: _Calls, notes: list[str], tree: list[str] | None) -> list[Signal]:
     base_raw = f"https://raw.githubusercontent.com/{owner_repo}/{ref}/"
     base_blob = f"https://github.com/{owner_repo}/blob/{ref}/"
@@ -449,8 +480,12 @@ def platformio_signals(owner_repo: str, ref: str, calls: _Calls, notes: list[str
     for env, info in envs_of(merged).items():
         if env in IGNORED_ENVS or not info["board"] or "${" in info["board"]:
             continue
+        extra = {"env": env, "file": info["file"]}
+        markers = _product_markers(merged, env)
+        if markers:
+            extra["product_markers"] = markers
         out.append(Signal(2, "platformio", info["board"], f"{base_blob}{info['file']}#L{info['line']}",
-                          line=info["line"], extra={"env": env, "file": info["file"]}))
+                          line=info["line"], extra=extra))
     return out
 
 
@@ -602,6 +637,17 @@ def _generic_base(signal: dict, atlas_id: str, atlas: dict) -> bool:
     return not (_DEVKIT_ENV.match(env) or "devkit" in env or board_alias.compact(atlas_id) in env)
 
 
+def _carrier_product_build(signal: dict, atlas_id: str) -> bool:
+    """True when a rank-2 platformio `board =` value names a carrier module but the env's name,
+    libraries or flags name a product built around it. Runs after _env_product, so an env that
+    resolves exactly to a catalogued product has already gone to that product."""
+    if signal.get("kind") != "platformio" or atlas_id not in _CARRIER_MODULES:
+        return False
+    extra = signal.get("extra") or {}
+    env = board_alias.compact(str(extra.get("env") or ""))
+    return bool(extra.get("product_markers")) or any(m in env for m in _PRODUCT_MARKERS)
+
+
 def _env_product(signal: dict, board_atlas_id: str, atlas: dict) -> str | None:
     """The atlas board a rank-2 platformio env NAMES, when that differs from the board its `board =`
     value resolves to. A product device is often built on a bare module and reuses the module's
@@ -640,14 +686,15 @@ def resolve(derived: dict, boards: dict[str, dict] | None = None) -> dict:
             # bare module it is built on. The product wins (see _env_product) — never a duplicate
             # module recipe (the CatHack-adjacent over-mapping class, DECISION-LOG).
             boards.setdefault(product, []).append({**s, "how": "env"})
-        elif r and r.get("atlas_id") and _generic_base(s, r["atlas_id"], atlas):
-            # An Espressif devkit id used as the BASE of a product-specific PlatformIO env (Bruce's
-            # `board = esp32-s3-devkitc1-n16r8` under env `elecrow-advance-35-s3`) proves the chip,
-            # not that the firmware targets the bare devkit: chip evidence only, never a recipe.
+        elif r and r.get("atlas_id") and (base := "generic_base" if _generic_base(s, r["atlas_id"], atlas)
+                                          else "carrier_product" if _carrier_product_build(s, r["atlas_id"]) else None):
+            # A devkit or carrier-module id used as the BASE of a product build (Bruce's
+            # `board = esp32-s3-devkitc1-n16r8` under env `elecrow-advance-35-s3`, a Cardputer build
+            # on `m5stack-stamps3`) proves the chip, not the bare board: chip evidence only, never a recipe.
             chip = atlas[r["atlas_id"]].get("soc")
             if chip:
                 socs.setdefault(chip, []).append(s)
-            unresolved.append({**s, "how": "generic_base"})
+            unresolved.append({**s, "how": base})
         elif r and r.get("atlas_id"):
             boards.setdefault(r["atlas_id"], []).append({**s, "how": r["how"]})
         elif r and r.get("soc"):
