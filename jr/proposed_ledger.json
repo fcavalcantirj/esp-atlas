@@ -4739,7 +4739,7 @@
       "repo": "haris16-code/kryonos",
       "repo_id": 1271567896,
       "status": "proposed",
-      "timestamp": "2026-11-11T21:00:55.411983+00:00"
+      "timestamp": "2026-11-11T22:00:55.257777+00:00"
     },
     "kvxputer": {
       "expired_at": "2026-11-05T19:01:17.341039+00:00",
@@ -4905,30 +4905,33 @@
       "timestamp": "2026-11-04T00:00:59.597130+00:00"
     },
     "launcher-096107bca354e8c6ac3f7400fc2f27ed": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-096107bca354e8c6ac3f7400fc2f27ed",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'audio spectrum analyzer user:cryptohasher'",
       "repo": "launcher:096107bca354e8c6ac3f7400fc2f27ed",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-0bcfa83e71bb823e69ec698fd127d3f6": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-0bcfa83e71bb823e69ec698fd127d3f6",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'badmonster user:madmind'",
       "repo": "launcher:0bcfa83e71bb823e69ec698fd127d3f6",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-0cc23347ba289784665068ea291b37ce": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-0cc23347ba289784665068ea291b37ce",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:0cc23347ba289784665068ea291b37ce",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-0db638a89b11e7027f6f04313943e92f": {
@@ -5726,12 +5729,13 @@
       "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
     "launcher-2668136b33fc4e91f6db9e8e06ea7165": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-2668136b33fc4e91f6db9e8e06ea7165",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'atoms3rxiaoling voice assistant user:m5stack'",
       "repo": "launcher:2668136b33fc4e91f6db9e8e06ea7165",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-26a11df753185ce8f4ceb5eaf78984ec": {
@@ -5799,12 +5803,13 @@
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-3160ff37678051b48081e9ac0a135e99": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-3160ff37678051b48081e9ac0a135e99",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'aura msx user:altaris'",
       "repo": "launcher:3160ff37678051b48081e9ac0a135e99",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-325fb76f75421950848dfa2abff6b21c": {
@@ -6095,12 +6100,13 @@
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-67154bae11fb638647ce63fadebd0a8b": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-67154bae11fb638647ce63fadebd0a8b",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'blackjack adv error 500 user:vc1235'",
       "repo": "launcher:67154bae11fb638647ce63fadebd0a8b",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-677b48b6a379c902273029595993d42b": {
@@ -6197,12 +6203,13 @@
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-79dd6703b4f58e9b444f20f2adf52d4d": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-79dd6703b4f58e9b444f20f2adf52d4d",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:79dd6703b4f58e9b444f20f2adf52d4d",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-7d46a337dcdf6795806bb5e406bd8ab6": {
@@ -6597,12 +6604,13 @@
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-c6f87a687e831a51d604e3e4aae316cf": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-c6f87a687e831a51d604e3e4aae316cf",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'pageturner grove user:linclip'",
       "repo": "launcher:c6f87a687e831a51d604e3e4aae316cf",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-ca75b9ef7f63fd43a720fa96e3c82680": {
@@ -6833,12 +6841,13 @@
       "timestamp": "2026-11-05T03:01:00.115486+00:00"
     },
     "launcher-f1ded42005c7fe2bc769783034446f5b": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-f1ded42005c7fe2bc769783034446f5b",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:f1ded42005c7fe2bc769783034446f5b",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-f63f1ce293103e722882eb21b0e5fc4f": {
@@ -6935,7 +6944,7 @@
       "repo": "maxmoneycash/lilyshark",
       "repo_id": 1332691105,
       "status": "proposed",
-      "timestamp": "2026-11-11T21:00:55.411983+00:00"
+      "timestamp": "2026-11-11T22:00:55.257777+00:00"
     },
     "liner": {
       "expired_at": "2026-11-08T21:00:55.166276+00:00",
