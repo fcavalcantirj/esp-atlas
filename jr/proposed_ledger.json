@@ -4380,6 +4380,14 @@
       "status": "expired",
       "timestamp": "2026-09-02T17:03:09.129057+00:00"
     },
+    "hsbl-s100-01": {
+      "expires": "2026-12-11T06:00:55.537468+00:00",
+      "id": "hsbl-s100-01",
+      "pr_ref": null,
+      "repo": "hsbl-ko-gyo/hsbl-s100-01",
+      "status": "seen",
+      "timestamp": "2026-11-11T06:00:55.537468+00:00"
+    },
     "hsbl-s101": {
       "expires": "2026-12-09T10:00:55.175045+00:00",
       "id": "hsbl-s101",
@@ -12438,6 +12446,14 @@
       "status": "expired",
       "timestamp": "2026-09-11T22:00:03.963388+00:00"
     },
+    "touchwasd": {
+      "expires": "2026-12-11T06:00:55.537468+00:00",
+      "id": "touchwasd",
+      "pr_ref": null,
+      "repo": "controllercustom/touchwasd",
+      "status": "seen",
+      "timestamp": "2026-11-11T06:00:55.537468+00:00"
+    },
     "trail-mate": {
       "id": "trail-mate",
       "pr_ref": "#1447",
@@ -13429,6 +13445,7 @@
     "codigohardwareecia/m5cardputer_knowledge": "m5cardputer-knowledge",
     "codigohardwareecia/m5cardputer_mp3_manager": "m5cardputer-mp3-manager",
     "comeraperuibe944/stickcontroller": "stickcontroller",
+    "controllercustom/touchwasd": "touchwasd",
     "coolguy76o/sai-poc": "sai-poc",
     "coreymillia/113-matrix-rain-effects-m5stack-core1-basic": "113-matrix-rain-effects-m5stack-core1-ba",
     "coreymillia/1942-tetrimino-m5stickc-plus2": "1942-tetrimino-m5stickc-plus2",
@@ -13699,6 +13716,7 @@
     "homertrix/meshtastic-tdisplay-p4": "meshtastic-tdisplay-p4",
     "horseyofcoursey/ember": "ember",
     "hougeai/xiaozhipro": "xiaozhipro",
+    "hsbl-ko-gyo/hsbl-s100-01": "hsbl-s100-01",
     "hsbl-ko-gyo/hsbl-s101": "hsbl-s101",
     "hsbsbz/m5stickcplus2-seamonsue": "m5stickcplus2-seamonsue",
     "hsgarcia22/m5-mousejiggler": "m5-mousejiggler",
