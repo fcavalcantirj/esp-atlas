@@ -768,9 +768,9 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-11T21:00:55.411983+00:00"
     },
-    "m5nanoc6": {
-      "board": "m5nanoc6",
-      "expires": "2026-11-11T21:00:59.635399+00:00",
+    "m5atoms3": {
+      "board": "m5atoms3",
+      "expires": "2026-11-18T22:00:55.257777+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -778,58 +778,41 @@
         },
         "usb_serial": {
           "boards_txt": "field_absent",
-          "manifest": "field_absent",
+          "manifest": "corroboration_only",
           "vendor": "field_absent"
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-04T21:00:59.635399+00:00"
+      "timestamp": "2026-11-11T22:00:55.257777+00:00"
     },
-    "m5stack-core": {
-      "board": "m5stack-core",
-      "expires": "2026-11-11T21:00:59.635399+00:00",
+    "m5atoms3-lite": {
+      "board": "m5atoms3-lite",
+      "expires": "2026-11-18T22:00:55.257777+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
-          "vendor": "doc_unreachable"
-        },
-        "getting_started": {
-          "vendor": "doc_unreachable"
-        },
-        "images": {
-          "vendor": "doc_unreachable"
+          "vendor": "no_pattern_match"
         },
         "usb_serial": {
           "boards_txt": "no_board_key",
           "manifest": "no_manifest",
-          "vendor": "doc_unreachable"
+          "vendor": "field_absent"
         }
       },
-      "reason": "doc-unreachable",
-      "timestamp": "2026-11-04T21:00:59.635399+00:00"
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-11T22:00:55.257777+00:00"
     },
-    "m5stack-core-aws": {
-      "board": "m5stack-core-aws",
-      "expires": "2026-11-11T21:00:59.635399+00:00",
+    "m5cardputer": {
+      "board": "m5cardputer",
+      "expires": "2026-11-18T22:00:55.257777+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
-          "vendor": "doc_unreachable"
-        },
-        "getting_started": {
-          "vendor": "doc_unreachable"
-        },
-        "images": {
-          "vendor": "doc_unreachable"
-        },
-        "usb_serial": {
-          "boards_txt": "no_board_key",
-          "manifest": "no_manifest",
-          "vendor": "doc_unreachable"
+          "vendor": "no_pattern_match"
         }
       },
-      "reason": "doc-unreachable",
-      "timestamp": "2026-11-04T21:00:59.635399+00:00"
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-11T22:00:55.257777+00:00"
     },
     "m5stack-core2": {
       "board": "m5stack-core2",
