@@ -1,22 +1,27 @@
 {
  "calls": 7,
  "errors": 0,
- "fetched": "2026-11-03",
+ "fetched": "2026-11-11",
  "notes": [],
  "ref": "main",
  "repo": "benbaker76/Pigtail",
  "resolved": {
-  "boards": [
-   "m5stamp-s3"
+  "boards": [],
+  "socs": [
+   "esp32-s3"
   ],
-  "socs": [],
-  "unresolved": []
+  "unresolved": [
+   "m5stack-stamps3"
+  ]
  },
  "signals": [
   {
    "extra": {
     "env": "m5stack-stamps3",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 13,
