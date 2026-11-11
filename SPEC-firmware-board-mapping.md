@@ -98,6 +98,21 @@ Each extracted item keeps its **source URL + source type** for provenance.
   the module (`stamps3`, `release`). A wrong edge already on main is removed through
   `jr/overrides/<firmware>__edges.json`, which `scripts/g2_guard.py` requires.
 
+### 4.1 Jr retracts its own wrong edges (owner, 2026-11-11: "atlas jr's auto fixes himself")
+When boardmap re-reads a firmware it also checks that firmware's existing recipes. It retracts a recipe
+only on **positive evidence**, never because evidence went missing. All of these must hold:
+- the read had no unavailable endpoint;
+- a fresh `platformio` signal for that board was classified as base-only (`carrier_product` or
+  `generic_base`), and its env equals the recipe's `flash.env`;
+- no fresh signal still maps the firmware to that board;
+- the recipe's status is `unverified`, so anything a person confirmed is never touched;
+- the firmware keeps at least one other recipe, and has no earlier edge override;
+- the tick is under its cap (`MAX_SELF_CORRECTIONS`).
+
+A retraction writes the same audited `jr/overrides/<firmware>__edges.json` a person would, with the
+byte-exact original, then deletes the recipe and lets it merge by the AUTO route. A wrong retraction is
+undone by restoring `originals`. Everything else that looks wrong stays a report for review.
+
 ## 5. Provenance + verification ladder
 Each recipe gains explicit status:
 - `seed` — genesis hand-seed, no repo source (today's 224 are effectively this,

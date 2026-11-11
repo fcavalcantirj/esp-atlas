@@ -32,6 +32,10 @@ SIGNALS_NAME = "signals.json"
 FLASHING_BOARD_FIELDS = ("usb", "usb_serial", "download_mode", "first_flash_notes", "flash_mb")
 REFRESH_KEYS = ("popularity",)          # stars / forks / as_of
 REFRESH_SOURCE_KEYS = ("verified",)     # a re-verified citation date
+SELF_CORRECTION_AUTHOR = "jr-self-correction"
+SELF_CORRECTION_CLASSES = {"carrier_product": "module_board_id_under_product_build",
+                           "generic_base": "devkit_board_id_under_product_build"}
+MAX_SELF_CORRECTIONS = 3                # recipes one tick may retract without a person
 GITHUB_POPULARITY_KEYS = frozenset({"stars", "forks", "github_repo_id", "github_as_of", "as_of"})
 GITHUB_SOURCE_FIELDS = frozenset({
     "popularity.stars", "popularity.forks", "popularity.github_repo_id", "popularity.github_as_of",
