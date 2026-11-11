@@ -4738,7 +4738,7 @@
       "repo": "haris16-code/kryonos",
       "repo_id": 1271567896,
       "status": "proposed",
-      "timestamp": "2026-11-11T09:00:55.188426+00:00"
+      "timestamp": "2026-11-11T10:00:55.197674+00:00"
     },
     "kvxputer": {
       "expired_at": "2026-11-05T19:01:17.341039+00:00",
@@ -6916,7 +6916,7 @@
       "repo": "maxmoneycash/lilyshark",
       "repo_id": 1332691105,
       "status": "proposed",
-      "timestamp": "2026-11-11T09:00:55.188426+00:00"
+      "timestamp": "2026-11-11T10:00:55.197674+00:00"
     },
     "liner": {
       "expired_at": "2026-11-08T21:00:55.166276+00:00",
@@ -9665,6 +9665,15 @@
       "repo_id": 1192864379,
       "status": "expired",
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
+    },
+    "meshterm": {
+      "expires": "2027-01-10T10:00:55.197674+00:00",
+      "id": "meshterm",
+      "pr_ref": null,
+      "reason": "not_device_firmware: no espressif32 platformio.ini, ESP-IDF project, Arduino sketch or release .bin",
+      "repo": "jpmartineau/meshterm",
+      "status": "rejected",
+      "timestamp": "2026-11-11T10:00:55.197674+00:00"
     },
     "micro-journal": {
       "evidence_url": "https://github.com/unkyulee/micro-journal",
@@ -13816,6 +13825,7 @@
     "jong-9999/nemomodified.git": "nemomodified",
     "josssphzhou/groki-bot": "groki-bot",
     "jpmarquesss/m5stickcp2oscilloscope": "m5stickcp2oscilloscope",
+    "jpmartineau/meshterm": "meshterm",
     "jrdntnnr/m5chord": "m5chord",
     "jrydval/m5cardputer-env-iv-app": "m5cardputer-env-iv-app",
     "jtcozart/atom-artificial-horizon": "atom-artificial-horizon",
