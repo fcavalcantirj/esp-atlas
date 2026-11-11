@@ -16,6 +16,10 @@
     "brand": { "type": "string", "description": "vendor/maker; matches data/boards/<brand>/ folder" },
     "name": { "type": "string" },
     "aka": { "type": "array", "items": { "type": "string" } },
+    "seo_title": {
+      "type": "string",
+      "description": "OPTIONAL per-record override of the SERP <title> (apps/web/lib/format.ts partMetaTitle()), for the rare high-demand page where the generic formula buries the identity people actually search for. Authored editorial copy built only from facts present in this record (SPEC-serp-ctr.md section 3), not grounded from a source -- no sources[] entry required. Render-time clamps to TITLE_MAX (60 chars) at a word boundary if the author's string overflows."
+    },
     "module": { "type": "string", "description": "id of the module it uses (must exist in data/modules/)" },
     "soc": { "type": "string", "description": "id of the SoC, when the board uses a bare chip (must exist in data/socs/)" },
     "flash_mb": { "type": "number" },
