@@ -416,6 +416,91 @@ def test_resolve_env_names_the_product_when_board_is_the_module_it_is_built_on(r
     assert {s["extra"]["env"] for s in r["boards"]["m5stamp-s3"]} == {"stamps3", "release"}
 
 
+def test_resolve_treats_a_carrier_module_under_a_product_build_as_chip_evidence_only(real_catalog):
+    """SPEC-firmware-board-mapping.md section 4. Env names that do not resolve exactly, and builds
+    whose libraries or flags name the product, prove the chip and never the bare Stamp S3. An exact
+    product env still wins, and a module env with no product marker keeps the module."""
+    base = {"rank": 2, "kind": "platformio", "token": "m5stack-stamps3", "url": "u", "soc": None, "line": 1}
+    wrong = [
+        {"env": "cardputer_release", "file": "platformio.ini"},                                        # adversary
+        {"env": "cardputer-adv", "file": "platformio.ini"},                                            # daoa-mini
+        {"env": "Cardputer-dev", "file": "platformio.ini"},                                            # m5gotchi
+        {"env": "ghostble_sticks3", "file": "platformio.ini"},                                         # GhostBLE
+        {"env": "m5stack-stamps3", "file": "platformio.ini", "product_markers": ["cardputer"]},        # tamaputer: module env, Cardputer library
+        {"env": "m5stack-stamps3", "file": "platformio.ini", "product_markers": ["m5dial"]},           # Semi-Evil-M5Dial
+    ]
+    keep = [{"env": e, "file": "platformio.ini"} for e in ("m5stack-stamps3", "M5-StampS3", "stamps3", "release")]
+    r = derive.resolve({"signals": [dict(base, extra=x) for x in wrong + keep + [{"env": "cardputer", "file": "platformio.ini"}]]},
+                       boards=real_catalog)
+    assert {s["extra"]["env"] for s in r["boards"]["m5cardputer"]} == {"cardputer"}
+    assert sorted(s["extra"]["env"] for s in r["boards"]["m5stamp-s3"]) == sorted(x["env"] for x in keep)
+    assert not any(s["extra"].get("product_markers") for s in r["boards"]["m5stamp-s3"])
+    assert len(r["socs"]["esp32-s3"]) == len(wrong)
+    assert [s["how"] for s in r["unresolved"]] == ["carrier_product"] * len(wrong)
+
+
+def test_carrier_product_rule_is_scoped_to_carrier_modules(real_catalog):
+    """A marker on a board that is not a carrier module changes nothing."""
+    s = {"rank": 2, "kind": "platformio", "token": "m5stack-cardputer", "url": "u", "soc": None, "line": 1,
+         "extra": {"env": "cardputer_release", "file": "platformio.ini", "product_markers": ["cardputer"]}}
+    r = derive.resolve({"signals": [s]}, boards=real_catalog)
+    assert set(r["boards"]) == {"m5cardputer"}
+    assert r["unresolved"] == []
+
+
+def _platformio_extras(ini: str) -> dict:
+    class F:
+        def api(self, *a, **k): return None
+        def raw(self, u): return ini
+    f = F()
+    sigs = derive.platformio_signals("o/r", "main", derive._Calls(f.api, f.raw, 10), [], tree=["platformio.ini"])
+    return {s.extra["env"]: s.extra for s in sigs}
+
+
+def test_platformio_signals_record_product_markers_from_libs_flags_and_parents():
+    """Markers follow PlatformIO's own inheritance: extends, ${env.lib_deps}, and an env's own
+    option replacing its parent's. Signals with no marker keep the old two-key shape."""
+    extras = _platformio_extras("""
+[env]
+lib_deps =
+  bblanchon/ArduinoJson
+
+[env:cardputer]
+board = m5stack-stamps3
+build_flags =
+  -DTARGET_CARDPUTER=1
+
+[env:cardputer_release]
+extends = env:cardputer
+build_flags =
+  ${env:cardputer.build_flags}
+  -DLOG=1
+
+[env:tama]
+board = m5stack-stamps3
+lib_deps =
+  ${env.lib_deps}
+  m5stack/M5Cardputer@^1.1.1
+
+[env:dial]
+board = m5stack-stamps3
+lib_deps = https://github.com/m5stack/M5Dial.git#1.0.2
+
+[env:stamp]
+board = m5stack-stamps3
+lib_deps =
+  m5stack/M5Unified@^0.2.7
+  ${env.lib_deps}
+build_flags =
+  -DDEVICE_M5STAMPS3
+""")
+    assert extras["cardputer"]["product_markers"] == ["cardputer"]
+    assert extras["cardputer_release"]["product_markers"] == ["cardputer"]
+    assert extras["tama"]["product_markers"] == ["cardputer"]
+    assert extras["dial"]["product_markers"] == ["m5dial"]
+    assert extras["stamp"] == {"env": "stamp", "file": "platformio.ini"}
+
+
 def test_release_assets_named_repo_dash_board_and_multipart_images_yield_one_token_per_board():
     """draftling ships `draftling-<board>.bin` + `-bootloader.bin` + `-partition-table.bin` per
     device: the repo name is not a stamp (no digit), so the common-prefix rule keeps it; the
