@@ -4732,6 +4732,14 @@
       "status": "expired",
       "timestamp": "2026-09-02T17:03:09.190259+00:00"
     },
+    "kryonos": {
+      "id": "kryonos",
+      "pr_ref": null,
+      "repo": "haris16-code/kryonos",
+      "repo_id": 1271567896,
+      "status": "proposed",
+      "timestamp": "2026-11-11T08:00:55.170556+00:00"
+    },
     "kvxputer": {
       "expired_at": "2026-11-05T19:01:17.341039+00:00",
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -6901,6 +6909,14 @@
       "repo_id": 1385546050,
       "status": "expired",
       "timestamp": "2026-09-24T16:00:56.308279+00:00"
+    },
+    "lilyshark": {
+      "id": "lilyshark",
+      "pr_ref": null,
+      "repo": "maxmoneycash/lilyshark",
+      "repo_id": 1332691105,
+      "status": "proposed",
+      "timestamp": "2026-11-11T08:00:55.170556+00:00"
     },
     "liner": {
       "expired_at": "2026-11-08T21:00:55.166276+00:00",
@@ -9671,6 +9687,14 @@
       "status": "expired",
       "timestamp": "2026-09-09T15:00:32.435406+00:00"
     },
+    "microos": {
+      "expires": "2026-12-11T08:00:55.170556+00:00",
+      "id": "microos",
+      "pr_ref": null,
+      "repo": "microos-project/microos",
+      "status": "seen",
+      "timestamp": "2026-11-11T08:00:55.170556+00:00"
+    },
     "micropythonshell": {
       "expires": "2026-10-09T15:00:32.435406+00:00",
       "id": "micropythonshell",
@@ -12272,6 +12296,14 @@
       "status": "seen",
       "timestamp": "2026-10-27T20:00:59.573410+00:00"
     },
+    "tdeck-screenfix": {
+      "expires": "2026-12-11T08:00:55.170556+00:00",
+      "id": "tdeck-screenfix",
+      "pr_ref": null,
+      "repo": "hermes-gadget/tdeck-screenfix",
+      "status": "seen",
+      "timestamp": "2026-11-11T08:00:55.170556+00:00"
+    },
     "teenygpstestbed-c2": {
       "expired_at": "2026-11-07T17:01:02.416158+00:00",
       "expires": "2026-11-07T17:00:59.604583+00:00",
@@ -12565,6 +12597,14 @@
       "repo_id": 889469427,
       "status": "expired",
       "timestamp": "2026-09-13T08:00:57.847621+00:00"
+    },
+    "ultima-v-native": {
+      "expires": "2026-12-11T08:00:55.170556+00:00",
+      "id": "ultima-v-native",
+      "pr_ref": null,
+      "repo": "thekojac304/ultima-v-native",
+      "status": "seen",
+      "timestamp": "2026-11-11T08:00:55.170556+00:00"
     },
     "ultimate-remote": {
       "expired_at": "2026-10-12T03:00:11.697751+00:00",
@@ -13697,12 +13737,14 @@
     "hansgao0422/deskclock-cardputer": "deskclock-cardputer",
     "hardcore-gamer/cardputeradv-nas-mp3player": "cardputeradv-nas-mp3player",
     "hardcoreerik/orcsdr": "orcsdr",
+    "haris16-code/kryonos": "kryonos",
     "haswitchplate/openhasp": "openhasp",
     "helloruru/ruru-reader-papers3": "ruru-reader-papers3",
     "hengmyj/xiaozhi-adv-car": "xiaozhi-adv-car",
     "henriquesebastiao/saturn": "saturn",
     "hermannbjorgvin/clawdmeter": "clawdmeter",
     "hermes-gadget/sigurdos-tdeck": "sigurdos-tdeck",
+    "hermes-gadget/tdeck-screenfix": "tdeck-screenfix",
     "hey-its-brian/tab5-cyberdeck": "tab5-cyberdeck",
     "hiroki-kawakami/kyoshin": "kyoshin",
     "hiroki-kawakami/namecardknot": "namecardknot",
@@ -14176,6 +14218,7 @@
     "mattb00ker/m5stack-core2-digital-photo-album": "m5stack-core2-digital-photo-album",
     "matthew-5pl/gb_cardputer": "gb-cardputer",
     "matthew-5plpeanut-gb": "matthew-5plpeanut-gb",
+    "maxmoneycash/lilyshark": "lilyshark",
     "mbogatyr/m5spectrumanalyzer": "m5spectrumanalyzer",
     "megabitsenmzq/esp32-homekit-remote": "esp32-homekit-remote",
     "mehflexx17": "mehflexx17",
@@ -14188,6 +14231,7 @@
     "micokonsep/flipcard-papers3": "flipcard-papers3",
     "micokonsep/pomodoro-papers3": "pomodoro-papers3",
     "microdev-steve/circuitpython_m5stickplus2": "circuitpython-m5stickplus2",
+    "microos-project/microos": "microos",
     "mindovermiles262/tamaputer": "tamaputer",
     "mingrzou/papermono-launcher": "papermono-launcher",
     "minkleee/cardputersshclient": "cardputersshclient",
@@ -14461,6 +14505,7 @@
     "thebolined/ai-cardputer-adv-a-portable-ai-assistant": "ai-cardputer-adv-a-portable-ai-assistant",
     "thebricktop/anarch-cardputer": "anarch-cardputer",
     "thedeadlypixel/audiowiz": "audiowiz",
+    "thekojac304/ultima-v-native": "ultima-v-native",
     "theminer203/porttest": "porttest",
     "themusicnerd/m5-atommatrix-companion-v4-satellite": "m5-atommatrix-companion-v4-satellite",
     "themusicnerd/m5-atoms3-companion-v4-satellite": "m5-atoms3-companion-v4-satellite",
