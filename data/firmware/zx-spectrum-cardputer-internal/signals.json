@@ -1,17 +1,18 @@
 {
  "calls": 4,
  "errors": 0,
- "fetched": "2026-11-03",
+ "fetched": "2026-11-11",
  "notes": [],
  "ref": "main",
  "repo": "AndyAiCardputer/zx-spectrum-cardputer-external",
  "resolved": {
-  "boards": [
-   "m5stamp-s3"
+  "boards": [],
+  "socs": [
+   "esp32-s3"
   ],
-  "socs": [],
   "unresolved": [
-   "ZX_Spectrum_External"
+   "ZX_Spectrum_External",
+   "m5stack-stamps3"
   ]
  },
  "signals": [
@@ -30,7 +31,10 @@
   {
    "extra": {
     "env": "m5stack-cardputer-adv",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 7,
