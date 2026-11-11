@@ -1,7 +1,7 @@
 {
  "calls": 30,
  "errors": 0,
- "fetched": "2026-11-04",
+ "fetched": "2026-11-11",
  "notes": [
   "extra_configs matched more than 40 files; kept the 40 naming an ESP32 family first",
   "call budget exhausted while expanding extra_configs",
@@ -11,6 +11,7 @@
  "repo": "bmorcelli/Launcher",
  "resolved": {
   "boards": [
+   "lcdwiki-es3c28p",
    "lilygo-t-deck",
    "lilygo-t-display-s3-amoled",
    "lilygo-t-watch-s3",
@@ -45,7 +46,7 @@
    "CYD-4827S043R",
    "CYD-8048S043C",
    "CYD-8048W550C",
-   "ES3C28P",
+   "ES3C40P",
    "ESP32-E32R40T",
    "Marauder-Mini",
    "Marauder-v4-OG",
@@ -62,12 +63,16 @@
    "elecrow-35Bv2_2",
    "elecrow-esp32p4-7in",
    "elecrow-esp32s3-5in",
+   "elecrow-thinknode-m9",
    "esp32p4_es",
    "headless-esp32-4mb",
    "headless-esp32-8mb",
    "headless-esp32s3-16mb",
    "headless-esp32s3-4mb",
    "headless-esp32s3-8mb",
+   "headless-xiao-esp32c5-8mb",
+   "headless-xiao-esp32s3-16mb",
+   "headless-xiao-esp32s3-8mb",
    "lilygo-t-deck-plus",
    "lilygo-t-deck-pro",
    "lilygo-t-display-S3-amoled-plus",
@@ -86,18 +91,27 @@
    "m5stack-dinmeter",
    "m5stack-paper",
    "m5stack-paper-color",
+   "m5stack-paper-diy",
    "m5stack-paper-mono",
    "m5stack-plus",
    "m5stack-sticks3",
    "m5stack-tab5",
    "pancake",
    "reaper",
+   "renphone-accretion",
+   "seeedstudio-esp32s3-touch-147",
+   "seeedstudio-reterminal-d1001",
+   "seeedstudio-reterminal-e1001",
    "seeedstudio-reterminal-sticky",
+   "seeedstudio-sensecap",
+   "seeedstudio-wio-tracker-l2",
    "smoochiee-board",
    "waveshare-esp32-c5-lcd-147",
+   "waveshare-esp32-c5-touch-lcd-35",
    "waveshare-esp32-c6-lcd-130",
    "waveshare-esp32-c6-lcd-147",
    "waveshare-esp32-s3-lcd-147",
+   "waveshare-esp32-s3-touch-amoled-206",
    "xteink-x3-x4",
    "xteink-x4pro",
    "xueersi-xiaomiao"
@@ -107,974 +121,1142 @@
   {
    "extra": {
     "asset": "Launcher-arduino-nesso-n1.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "arduino-nesso-n1",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-arduino-nesso-n1.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-arduino-nesso-n1.bin"
   },
   {
    "extra": {
     "asset": "Launcher-Awok-Mini.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Awok-Mini",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-Awok-Mini.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-Awok-Mini.bin"
   },
   {
    "extra": {
     "asset": "Launcher-Awok-Touch.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Awok-Touch",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-Awok-Touch.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-Awok-Touch.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-2-USB.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-2-USB",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-2-USB.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-2-USB.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-2432S022C.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-2432S022C",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-2432S022C.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-2432S022C.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-2432S024R.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-2432S024R",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-2432S024R.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-2432S024R.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-2432S028.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-2432S028",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-2432S028.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-2432S028.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-2432S032C.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-2432S032C",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-2432S032C.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-2432S032C.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-2432S032R.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-2432S032R",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-2432S032R.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-2432S032R.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-2432W328C.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-2432W328C",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-2432W328C.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-2432W328C.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-2432W328C_2.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-2432W328C_2",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-2432W328C_2.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-2432W328C_2.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-2432W328R.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-2432W328R",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-2432W328R.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-2432W328R.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-3248S035C.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-3248S035C",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-3248S035C.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-3248S035C.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-3248S035R.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-3248S035R",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-3248S035R.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-3248S035R.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-3248W535C.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-3248W535C",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-3248W535C.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-3248W535C.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-4827S043R.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-4827S043R",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-4827S043R.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-4827S043R.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-8048S043C.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-8048S043C",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-8048S043C.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-8048S043C.bin"
   },
   {
    "extra": {
     "asset": "Launcher-CYD-8048W550C.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "CYD-8048W550C",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-CYD-8048W550C.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-CYD-8048W550C.bin"
   },
   {
    "extra": {
     "asset": "Launcher-elecrow-24B.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "elecrow-24B",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-elecrow-24B.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-elecrow-24B.bin"
   },
   {
    "extra": {
     "asset": "Launcher-elecrow-28B.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "elecrow-28B",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-elecrow-28B.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-elecrow-28B.bin"
   },
   {
    "extra": {
     "asset": "Launcher-elecrow-35B.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "elecrow-35B",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-elecrow-35B.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-elecrow-35B.bin"
   },
   {
    "extra": {
     "asset": "Launcher-elecrow-35Bv2_2.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "elecrow-35Bv2_2",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-elecrow-35Bv2_2.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-elecrow-35Bv2_2.bin"
   },
   {
    "extra": {
     "asset": "Launcher-elecrow-esp32p4-7in.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "elecrow-esp32p4-7in",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-elecrow-esp32p4-7in.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-elecrow-esp32p4-7in.bin"
   },
   {
    "extra": {
     "asset": "Launcher-elecrow-esp32s3-5in.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "elecrow-esp32s3-5in",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-elecrow-esp32s3-5in.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-elecrow-esp32s3-5in.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-elecrow-thinknode-m9.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "elecrow-thinknode-m9",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-elecrow-thinknode-m9.bin"
   },
   {
    "extra": {
     "asset": "Launcher-ES3C28P.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "ES3C28P",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-ES3C28P.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-ES3C28P.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-ES3C40P.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "ES3C40P",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-ES3C40P.bin"
   },
   {
    "extra": {
     "asset": "Launcher-ESP32-E32R40T.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "ESP32-E32R40T",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-ESP32-E32R40T.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-ESP32-E32R40T.bin"
   },
   {
    "extra": {
     "asset": "Launcher-headless-esp32-4mb.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "headless-esp32-4mb",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-headless-esp32-4mb.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-headless-esp32-4mb.bin"
   },
   {
    "extra": {
     "asset": "Launcher-headless-esp32-8mb.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "headless-esp32-8mb",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-headless-esp32-8mb.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-headless-esp32-8mb.bin"
   },
   {
    "extra": {
     "asset": "Launcher-headless-esp32s3-16mb.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "headless-esp32s3-16mb",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-headless-esp32s3-16mb.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-headless-esp32s3-16mb.bin"
   },
   {
    "extra": {
     "asset": "Launcher-headless-esp32s3-4mb.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "headless-esp32s3-4mb",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-headless-esp32s3-4mb.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-headless-esp32s3-4mb.bin"
   },
   {
    "extra": {
     "asset": "Launcher-headless-esp32s3-8mb.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "headless-esp32s3-8mb",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-headless-esp32s3-8mb.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-headless-esp32s3-8mb.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-headless-xiao-esp32c5-8mb.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "headless-xiao-esp32c5-8mb",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-headless-xiao-esp32c5-8mb.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-headless-xiao-esp32s3-16mb.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "headless-xiao-esp32s3-16mb",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-headless-xiao-esp32s3-16mb.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-headless-xiao-esp32s3-8mb.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "headless-xiao-esp32s3-8mb",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-headless-xiao-esp32s3-8mb.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-deck-plus.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-deck-plus",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-deck-plus.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-deck-plus.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-deck-pro.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-deck-pro",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-deck-pro.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-deck-pro.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-deck.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-deck",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-deck.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-deck.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-display-c5.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-display-c5",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-display-c5.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-display-c5.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-display-p4.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-display-p4",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-display-p4.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-display-p4.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-display-S3-amoled-plus.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-display-S3-amoled-plus",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-display-S3-amoled-plus.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-display-S3-amoled-plus.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-display-S3-amoled.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-display-S3-amoled",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-display-S3-amoled.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-display-S3-amoled.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-display-S3-pro.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-display-S3-pro",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-display-S3-pro.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-display-S3-pro.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-display-S3-touch.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-display-S3-touch",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-display-S3-touch.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-display-S3-touch.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-dongle-c5-tft.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-dongle-c5-tft",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-dongle-c5-tft.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-dongle-c5-tft.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-dongle-s3-tft.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-dongle-s3-tft",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-dongle-s3-tft.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-dongle-s3-tft.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-embed-all.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-embed-all",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-embed-all.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-embed-all.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-hmi.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-hmi",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-hmi.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-hmi.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-lora-pager.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-lora-pager",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-lora-pager.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-lora-pager.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-watch-s3.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-watch-s3",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-watch-s3.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-watch-s3.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t-watch-ultra.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t-watch-ultra",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t-watch-ultra.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t-watch-ultra.bin"
   },
   {
    "extra": {
     "asset": "Launcher-lilygo-t5-epaper-s3-pro.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-t5-epaper-s3-pro",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-lilygo-t5-epaper-s3-pro.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-lilygo-t5-epaper-s3-pro.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-cardputer.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-cardputer",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-cardputer.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-cardputer.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-core-4Mb.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-core-4Mb",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-core-4Mb.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-core-4Mb.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-core.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-core",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-core.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-core.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-core2.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-core2",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-core2.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-core2.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-cores3.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-cores3",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-cores3.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-cores3.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-cplus2.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-cplus2",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-cplus2.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-cplus2.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-dinmeter.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-dinmeter",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-dinmeter.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-dinmeter.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-paper-color.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-paper-color",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-paper-color.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-paper-color.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-m5stack-paper-diy.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stack-paper-diy",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-paper-diy.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-paper-mono.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-paper-mono",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-paper-mono.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-paper-mono.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-paper-s3.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-paper-s3",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-paper-s3.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-paper-s3.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-paper.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-paper",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-paper.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-paper.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-plus.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-plus",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-plus.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-plus.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-sticks3.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-sticks3",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-sticks3.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-sticks3.bin"
   },
   {
    "extra": {
     "asset": "Launcher-m5stack-tab5.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack-tab5",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-m5stack-tab5.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-m5stack-tab5.bin"
   },
   {
    "extra": {
     "asset": "Launcher-Marauder-Mini.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Marauder-Mini",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-Marauder-Mini.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-Marauder-Mini.bin"
   },
   {
    "extra": {
     "asset": "Launcher-Marauder-v4-OG.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Marauder-v4-OG",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-Marauder-v4-OG.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-Marauder-v4-OG.bin"
   },
   {
    "extra": {
     "asset": "Launcher-Marauder-v61.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Marauder-v61",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-Marauder-v61.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-Marauder-v61.bin"
   },
   {
    "extra": {
     "asset": "Launcher-Marauder-v7.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Marauder-v7",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-Marauder-v7.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-Marauder-v7.bin"
   },
   {
    "extra": {
     "asset": "Launcher-Marauder-v8.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Marauder-v8",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-Marauder-v8.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-Marauder-v8.bin"
   },
   {
    "extra": {
     "asset": "Launcher-NM-CYD-C5.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "NM-CYD-C5",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-NM-CYD-C5.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-NM-CYD-C5.bin"
   },
   {
    "extra": {
     "asset": "Launcher-pancake.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "pancake",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-pancake.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-pancake.bin"
   },
   {
    "extra": {
     "asset": "Launcher-Phantom_S024R.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "Phantom_S024R",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-Phantom_S024R.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-Phantom_S024R.bin"
   },
   {
    "extra": {
     "asset": "Launcher-reaper.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "reaper",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-reaper.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-reaper.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-renphone-accretion.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "renphone-accretion",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-renphone-accretion.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-seeedstudio-esp32s3-touch-147.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "seeedstudio-esp32s3-touch-147",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-seeedstudio-esp32s3-touch-147.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-seeedstudio-reterminal-d1001.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "seeedstudio-reterminal-d1001",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-seeedstudio-reterminal-d1001.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-seeedstudio-reterminal-e1001.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "seeedstudio-reterminal-e1001",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-seeedstudio-reterminal-e1001.bin"
   },
   {
    "extra": {
     "asset": "Launcher-seeedstudio-reterminal-sticky.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "seeedstudio-reterminal-sticky",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-seeedstudio-reterminal-sticky.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-seeedstudio-reterminal-sticky.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-seeedstudio-sensecap.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "seeedstudio-sensecap",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-seeedstudio-sensecap.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-seeedstudio-wio-tracker-l2.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "seeedstudio-wio-tracker-l2",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-seeedstudio-wio-tracker-l2.bin"
   },
   {
    "extra": {
     "asset": "Launcher-smoochiee-board.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "smoochiee-board",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-smoochiee-board.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-smoochiee-board.bin"
   },
   {
    "extra": {
     "asset": "Launcher-WaveSentry-R1.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "WaveSentry-R1",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-WaveSentry-R1.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-WaveSentry-R1.bin"
   },
   {
    "extra": {
     "asset": "Launcher-waveshare-esp32-c5-lcd-147.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare-esp32-c5-lcd-147",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-waveshare-esp32-c5-lcd-147.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-waveshare-esp32-c5-lcd-147.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-waveshare-esp32-c5-touch-lcd-35.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "waveshare-esp32-c5-touch-lcd-35",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-waveshare-esp32-c5-touch-lcd-35.bin"
   },
   {
    "extra": {
     "asset": "Launcher-waveshare-esp32-c6-lcd-130.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare-esp32-c6-lcd-130",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-waveshare-esp32-c6-lcd-130.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-waveshare-esp32-c6-lcd-130.bin"
   },
   {
    "extra": {
     "asset": "Launcher-waveshare-esp32-c6-lcd-147.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare-esp32-c6-lcd-147",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-waveshare-esp32-c6-lcd-147.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-waveshare-esp32-c6-lcd-147.bin"
   },
   {
    "extra": {
     "asset": "Launcher-waveshare-esp32-s3-lcd-147.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare-esp32-s3-lcd-147",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-waveshare-esp32-s3-lcd-147.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-waveshare-esp32-s3-lcd-147.bin"
+  },
+  {
+   "extra": {
+    "asset": "Launcher-waveshare-esp32-s3-touch-amoled-206.bin",
+    "release": "3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "waveshare-esp32-s3-touch-amoled-206",
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-waveshare-esp32-s3-touch-amoled-206.bin"
   },
   {
    "extra": {
     "asset": "Launcher-xteink-x3-x4.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "xteink-x3-x4",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-xteink-x3-x4.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-xteink-x3-x4.bin"
   },
   {
    "extra": {
     "asset": "Launcher-xteink-x4pro.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "xteink-x4pro",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-xteink-x4pro.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-xteink-x4pro.bin"
   },
   {
    "extra": {
     "asset": "Launcher-xueersi-xiaomiao.bin",
-    "release": "2.9.1"
+    "release": "3.0.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "xueersi-xiaomiao",
-   "url": "https://github.com/bmorcelli/Launcher/releases/download/2.9.1/Launcher-xueersi-xiaomiao.bin"
+   "url": "https://github.com/bmorcelli/Launcher/releases/download/3.0.0/Launcher-xueersi-xiaomiao.bin"
   },
   {
    "extra": {
