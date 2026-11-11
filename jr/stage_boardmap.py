@@ -24,7 +24,8 @@ retried next run); a read that hit unavailable endpoints and came back narrower 
 persisted signals keeps the previous file. One firmware's failure never kills the stage: it is
 counted, reported, and the tick's PR is flagged needs_human.
 
-Everything is additive: recipes are only created, `socs` only widened, signals.json replaced.
+Additive, with one exception: recipes are created, `socs` only widened, signals.json replaced, and a
+recipe Jr itself wrote is retracted only on positive evidence (jr/self_correct.py).
 A dry run reads the network (charged) but writes nothing. Until the Phase 6 cutover this stage
 is driven by hand — `python3 jr/tick.py --track B --budget 3` — and its PRs are human-merged.
 """
@@ -39,6 +40,8 @@ import board_alias
 import derive
 import memory
 import pending_prs
+import review_routing
+import self_correct
 import tools
 import writers
 from budget import BudgetExceeded
@@ -125,7 +128,7 @@ def _soc_proof_urls(soc: str, res: dict, refused: set[str], board_soc) -> list[s
 
 
 def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False,
-            max_calls: int = 30) -> dict:
+            max_calls: int = 30, retract_limit: int = 0, head=lambda: None) -> dict:
     """Derive → resolve (against `root`'s boards) → write recipes → widen socs → persist signals
     for one firmware. Returns {"paths": [...], "written": [...], "existing": [...], "refused": [...],
     "socs_added": [...], "signals": n, "unresolved": n, "calls": n, "errors": n, "notes": [...]}
@@ -148,8 +151,23 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
         return out
     sig_path = fmd.parent / "signals.json"
     old = _load_json(sig_path)
+    picks, retract_notes = ([], []) if out["errors"] else self_correct.plan(fid, res, root)
+    out["notes"] += retract_notes
+    out["retracted"] = []
+    if len(picks) > retract_limit:
+        if picks:
+            out["notes"].append(f"retraction deferred: {len(picks)} recipe(s), {retract_limit} left this tick")
+        picks = []
     if dry_run:
+        out["would_retract"] = [p["recipe"] for p in picks]
         return _would_map(out, fid, fm, res, root=root, board_soc=board_soc, fmd=fmd, sig_path=sig_path, old=old)
+    if picks:
+        base = head()
+        if self_correct.valid_base(base):
+            out["paths"] += self_correct.apply(fid, owner_repo, picks, root, today, base)
+            out["retracted"] = [p["recipe"] for p in picks]
+        else:
+            out["notes"].append("retraction deferred: no base commit to record")
     w = writers.write_recipes(fid, fm.get("url", ""), res, root=root, today=today, board_soc=board_soc)
     out.update(written=w["written"], existing=w["existing"], refused=w["refused"])
     out["paths"] += w["paths"]
@@ -225,6 +243,13 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
     led = memory.load(ctx.ledger_path)   # read-only: the open-PR skip reads the hydrated ledger (tick.hydrate_open_pr_ledger)
     pending = pending_prs.of(ctx)
     paths, lines, admitted, rejects, needs_human, items, would_write = [], [], 0, {}, False, [], []
+    retract_left = review_routing.MAX_SELF_CORRECTIONS
+
+    def base_commit():
+        try:
+            return (getattr(ctx.git("-C", str(ctx.root), "rev-parse", "HEAD"), "stdout", "") or "").strip()
+        except Exception:  # noqa: BLE001 — no base commit means no retraction, never a failed tick
+            return None
 
     def reject(key):
         rejects[key] = rejects.get(key, 0) + 1
@@ -272,7 +297,8 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
                          f"{ctx.budget.remaining_seconds():.0f}s left)")
             break
         try:
-            r = map_one(fid, root=ctx.root, api=api, raw=raw, today=today, dry_run=ctx.dry_run)
+            r = map_one(fid, root=ctx.root, api=api, raw=raw, today=today, dry_run=ctx.dry_run,
+                        retract_limit=retract_left, head=base_commit)
         except BudgetExceeded as e:
             lines.append(f"stopped during {fid}: {e}")          # derive is read-only: nothing half-written
             break
@@ -287,13 +313,16 @@ def run(ctx, budget: int = DEFAULT_BUDGET, api=None, raw=None, fresh_days: int =
             continue
         paths += r["paths"]
         admitted += len(r["written"])
+        retract_left -= len(r["retracted"])
         if not ctx.dry_run and (r["written"] or r["socs_added"]):
             items.append({"kind": "recipes", "firmware": fid, "written": list(r["written"]), "existing": len(r["existing"]),
                           "socs_added": list(r["socs_added"]), "signals": r["signals"], "unresolved": r["unresolved"],
                           "kinds": dict(r.get("kinds") or {}), "notes": [n for n in r["notes"] if "release" in n or "degraded" in n]})
         for _, why in r["refused"]:
             reject("chip_clash" if "disagrees" in why else "no_soc")
-        extra = "".join(f"; {n}" for n in r["notes"] if n.startswith(("socs not widened", "degraded read")))
+        extra = "".join(f"; {n}" for n in r["notes"] if n.startswith(("socs not widened", "degraded read", "retraction deferred")))
+        if r["retracted"]:
+            extra += f"; retracted {', '.join(r['retracted'])}"
         if ctx.dry_run:
             would_write += r.get("would_write_paths", [])
             lines.append(f"{fid}: {r['signals']} signals, would write {len(r.get('would_write', []))} recipe(s), "

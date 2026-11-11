@@ -13,10 +13,10 @@ direct answer to that:
 2. **Pathspec only.** `git add -- <paths>` with the exact paths the stages report, plus the
    ledger (memory.staged_paths()). Nothing else in the worktree can reach a commit, however it
    got there.
-3. **Additive until the G2 guard exists.** A staged deletion under `data/firmware/` or
-   `data/recipes/` is REFUSED — no commit, no PR — because no record may be deleted until
-   `scripts/g2_guard.py` gates it in CI (Phase 6). Deletions elsewhere (state files) are allowed
-   but withhold auto-merge.
+3. **Additive, except Jr's own audited retraction.** A staged deletion under `data/firmware/` or
+   `data/recipes/` is REFUSED — no commit, no PR — unless review_routing.self_correction_paths
+   recognises it (SPEC-firmware-board-mapping.md section 4.1), which `scripts/g2_guard.py` re-checks
+   in CI. Deletions elsewhere (state files) are allowed but withhold auto-merge.
 4. **Branch protection is the gate.** With no protection on `main`, `gh pr merge --auto` merges
    immediately (verified on #103), so "PR + auto-merge" would silently be direct-to-main.
    `protection_status()` reads the live rule; auto-merge is requested ONLY when `main` requires
@@ -334,6 +334,8 @@ def _staged_changes(wt: Worktree, git) -> list:
         old = new = None
         if status.startswith("M") and path.startswith("data/") and path.endswith(".md"):
             old, new = _git_text(wt, git, f"HEAD:{path}"), _git_text(wt, git, f":{path}")
+        elif status.startswith("A") and path.startswith("jr/overrides/"):
+            new = _git_text(wt, git, f":{path}")
         changes.append(review_routing.Change(path, status, old, new))
     return changes
 
@@ -392,7 +394,8 @@ def publish(wt: Worktree, paths: list[str], subject: str, body: str, *,
 
     # 2. G2: no record deletion may be committed until the guard exists in CI
     changes = _staged_changes(wt, git)
-    deleted = [c.path for c in changes if c.status.startswith("D")]
+    retraction = review_routing.self_correction_paths(changes)      # Jr's own audited retraction, CI re-checks it (G2)
+    deleted = [c.path for c in changes if c.status.startswith("D") and c.path not in retraction]
     protected = [d for d in deleted if d.startswith(PROTECTED_PREFIXES)]
     if protected:
         git("-C", str(wt.path), "reset", "-q", "--", *pathspec)

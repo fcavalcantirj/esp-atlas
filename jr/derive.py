@@ -694,7 +694,7 @@ def resolve(derived: dict, boards: dict[str, dict] | None = None) -> dict:
             chip = atlas[r["atlas_id"]].get("soc")
             if chip:
                 socs.setdefault(chip, []).append(s)
-            unresolved.append({**s, "how": base})
+            unresolved.append({**s, "how": base, "atlas_id": r["atlas_id"]})
         elif r and r.get("atlas_id"):
             boards.setdefault(r["atlas_id"], []).append({**s, "how": r["how"]})
         elif r and r.get("soc"):

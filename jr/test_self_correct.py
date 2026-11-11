@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+import memory
 import publish
 import review_routing as rr
 import stage_boardmap as sb
@@ -225,6 +226,9 @@ def test_the_real_path_git_routing_publish_and_g2_agree(root):
     def git(*a):
         return subprocess.run(["git", *a], capture_output=True, text=True)
     g = lambda *a: git("-C", str(root), *a)  # noqa: E731
+    for bookkeeping in memory.staged_paths():      # publish always stages these
+        (root / bookkeeping).parent.mkdir(parents=True, exist_ok=True)
+        (root / bookkeeping).write_text("{}\n")
     assert g("init", "-q").returncode == 0
     g("config", "user.email", "t@t"), g("config", "user.name", "t")
     g("add", "-A"), g("commit", "-q", "-m", "base")

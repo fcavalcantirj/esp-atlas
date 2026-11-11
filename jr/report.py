@@ -330,7 +330,8 @@ def render_pr_body(r: TickReport) -> str:
     lines.append("")
     lines.append("**Merge = accept. Close = veto** (Jr records the veto and does not propose it again for "
                  f"{pending_prs.VETO_TTL_DAYS} days). "
-                 "Every path is additive; nothing is deleted by a tick.")
+                 "A tick adds records; the only removal is Jr retracting its own unverified recipe, "
+                 "with the original kept in `jr/overrides/`.")
     lines.append("")
     lines.append("<details><summary>Stage log</summary>")
     lines.append("")
