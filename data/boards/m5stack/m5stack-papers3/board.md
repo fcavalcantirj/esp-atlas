@@ -3,6 +3,7 @@ id: m5stack-papers3
 type: board
 brand: m5stack
 name: PaperS3
+seo_title: "PaperS3 \u2014 M5Stack 4.7in e-ink touch, ESP32-S3, 16MB flash"
 aka:
 - m5stack_papers3
 soc: esp32-s3

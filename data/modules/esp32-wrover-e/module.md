@@ -3,6 +3,7 @@ id: esp32-wrover-e
 type: module
 vendor: espressif
 name: ESP32-WROVER-E
+seo_title: "ESP32-WROVER-E \u2014 ESP32 module specs: 8MB PSRAM, PCB antenna"
 soc: esp32
 flash_mb: 4
 psram_mb: 8
