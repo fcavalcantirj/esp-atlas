@@ -10685,13 +10685,12 @@
       "timestamp": "2026-09-02T17:03:09.135130+00:00"
     },
     "pocket-wui": {
-      "expired_at": "2026-11-10T13:00:55.199340+00:00",
-      "expires": "2026-11-10T13:00:19.731429+00:00",
+      "expires": "2026-12-11T07:00:55.212503+00:00",
       "id": "pocket-wui",
       "pr_ref": null,
       "repo": "afetisa/pocket-wui",
-      "status": "expired",
-      "timestamp": "2026-10-11T13:00:19.731429+00:00"
+      "status": "seen",
+      "timestamp": "2026-11-11T07:00:55.212503+00:00"
     },
     "pocketmo-m5": {
       "expired_at": "2026-10-11T16:00:12.884585+00:00",
