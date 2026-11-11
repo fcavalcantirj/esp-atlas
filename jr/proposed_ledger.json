@@ -4732,6 +4732,14 @@
       "status": "expired",
       "timestamp": "2026-09-02T17:03:09.190259+00:00"
     },
+    "kryonos": {
+      "id": "kryonos",
+      "pr_ref": "#1642",
+      "repo": "haris16-code/kryonos",
+      "repo_id": 1271567896,
+      "status": "proposed",
+      "timestamp": "2026-11-11T09:00:55.188426+00:00"
+    },
     "kvxputer": {
       "expired_at": "2026-11-05T19:01:17.341039+00:00",
       "expires": "2026-11-05T17:47:57.745208+00:00",
@@ -6902,6 +6910,14 @@
       "status": "expired",
       "timestamp": "2026-09-24T16:00:56.308279+00:00"
     },
+    "lilyshark": {
+      "id": "lilyshark",
+      "pr_ref": "#1642",
+      "repo": "maxmoneycash/lilyshark",
+      "repo_id": 1332691105,
+      "status": "proposed",
+      "timestamp": "2026-11-11T09:00:55.188426+00:00"
+    },
     "liner": {
       "expired_at": "2026-11-08T21:00:55.166276+00:00",
       "expires": "2026-11-08T21:00:11.572797+00:00",
@@ -7082,6 +7098,13 @@
       "repo_id": 850672057,
       "status": "rejected",
       "timestamp": "2026-11-06T20:00:59.122628+00:00"
+    },
+    "m5-crystal": {
+      "id": "m5-crystal",
+      "pr_ref": "#1642",
+      "repo": "dlazder/m5_crystal_firmware",
+      "status": "merged",
+      "timestamp": "2026-11-11T09:00:55.188426+00:00"
     },
     "m5-crystal-firmware": {
       "expired_at": "2026-11-08T03:00:55.229912+00:00",
@@ -11777,6 +11800,13 @@
       "status": "seen",
       "timestamp": "2026-11-09T12:00:55.152668+00:00"
     },
+    "stack-chan": {
+      "id": "stack-chan",
+      "pr_ref": "#1642",
+      "repo": "stack-chan/stack-chan",
+      "status": "merged",
+      "timestamp": "2026-11-11T09:00:55.188426+00:00"
+    },
     "stack-chan-tester": {
       "expired_at": "2026-10-11T21:00:11.605277+00:00",
       "expires": "2026-10-11T20:01:00.775055+00:00",
@@ -13555,7 +13585,7 @@
     "djark13/simple-magic-8-ball": "simple-magic-8-ball",
     "djflix/cardputer_i2c_scan": "cardputer-i2c-scan",
     "dkyazzentwatwa/cypher-puter-os": "cypher-puter-os",
-    "dlazder/m5_crystal_firmware": "m5-crystal-firmware",
+    "dlazder/m5_crystal_firmware": "m5-crystal",
     "dlazder/m5stick_crystal_firmware": "m5stick-crystal-firmware",
     "dma3002/laser-for-stickc-plus2": "laser-for-stickc-plus2",
     "dominicklee/3d-print-bed-leveler": "3d-print-bed-leveler",
@@ -13697,6 +13727,7 @@
     "hansgao0422/deskclock-cardputer": "deskclock-cardputer",
     "hardcore-gamer/cardputeradv-nas-mp3player": "cardputeradv-nas-mp3player",
     "hardcoreerik/orcsdr": "orcsdr",
+    "haris16-code/kryonos": "kryonos",
     "haswitchplate/openhasp": "openhasp",
     "helloruru/ruru-reader-papers3": "ruru-reader-papers3",
     "hengmyj/xiaozhi-adv-car": "xiaozhi-adv-car",
@@ -14176,6 +14207,7 @@
     "mattb00ker/m5stack-core2-digital-photo-album": "m5stack-core2-digital-photo-album",
     "matthew-5pl/gb_cardputer": "gb-cardputer",
     "matthew-5plpeanut-gb": "matthew-5plpeanut-gb",
+    "maxmoneycash/lilyshark": "lilyshark",
     "mbogatyr/m5spectrumanalyzer": "m5spectrumanalyzer",
     "megabitsenmzq/esp32-homekit-remote": "esp32-homekit-remote",
     "mehflexx17": "mehflexx17",
@@ -14434,6 +14466,7 @@
     "stachugit/cathack": "cathack",
     "stachugit/m5spoticontroller": "m5spoticontroller",
     "stachugit/meshcore-cardputer-adv": "meshcore-cardputer-adv",
+    "stack-chan/stack-chan": "stack-chan",
     "steveatinfincia/circuitpython": "circuitpython",
     "stevenselcuk/nearplane": "nearplane",
     "stewmoss/cardputer-wardriver": "cardputer-wardriver",
