@@ -1,0 +1,166 @@
+{
+ "calls": 9,
+ "errors": 0,
+ "fetched": "2026-11-11",
+ "notes": [],
+ "ref": "main",
+ "repo": "Isonimus/adversary",
+ "resolved": {
+  "boards": [
+   "m5cardputer",
+   "m5stamp-s3"
+  ],
+  "socs": [],
+  "unresolved": [
+   "cardputer-alpha-app",
+   "cardputer-alpha-factory",
+   "cardputer-factory",
+   "esp32-pico-devkitm-2",
+   "m5stick",
+   "native",
+   "pio run -e cardputer",
+   "pio run -e m5stick",
+   "pio test -e native"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "adversary-cardputer-factory.bin",
+    "release": "v0.8.0-alpha"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cardputer-factory",
+   "url": "https://github.com/Isonimus/adversary/releases/download/v0.8.0-alpha/adversary-cardputer-factory.bin"
+  },
+  {
+   "extra": {
+    "asset": "adversary-cardputer-v0.8.0-alpha-app.bin",
+    "release": "v0.8.0-alpha"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cardputer-alpha-app",
+   "url": "https://github.com/Isonimus/adversary/releases/download/v0.8.0-alpha/adversary-cardputer-v0.8.0-alpha-app.bin"
+  },
+  {
+   "extra": {
+    "asset": "adversary-cardputer-v0.8.0-alpha-factory.bin",
+    "release": "v0.8.0-alpha"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cardputer-alpha-factory",
+   "url": "https://github.com/Isonimus/adversary/releases/download/v0.8.0-alpha/adversary-cardputer-v0.8.0-alpha-factory.bin"
+  },
+  {
+   "extra": {
+    "env": "cardputer",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 58,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/Isonimus/adversary/blob/main/platformio.ini#L58"
+  },
+  {
+   "extra": {
+    "env": "cardputer_release",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 58,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/Isonimus/adversary/blob/main/platformio.ini#L58"
+  },
+  {
+   "extra": {
+    "env": "m5stick",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 121,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-pico-devkitm-2",
+   "url": "https://github.com/Isonimus/adversary/blob/main/platformio.ini#L121"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "native",
+   "url": "https://github.com/Isonimus/adversary/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "pio test -e native",
+   "url": "https://github.com/Isonimus/adversary/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cardputer",
+   "url": "https://github.com/Isonimus/adversary/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "pio run -e cardputer",
+   "url": "https://github.com/Isonimus/adversary/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stick",
+   "url": "https://github.com/Isonimus/adversary/blob/main/.github/workflows/ci.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/ci.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "pio run -e m5stick",
+   "url": "https://github.com/Isonimus/adversary/blob/main/.github/workflows/ci.yml"
+  }
+ ]
+}
