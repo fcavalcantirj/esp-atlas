@@ -1,7 +1,7 @@
 {
  "calls": 5,
  "errors": 0,
- "fetched": "2026-11-03",
+ "fetched": "2026-11-11",
  "notes": [],
  "ref": "main",
  "repo": "OceanTroop/orca-one",
@@ -81,7 +81,10 @@
   {
    "extra": {
     "env": "m5stack-cardputer",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 118,
