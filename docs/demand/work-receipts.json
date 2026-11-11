@@ -171,11 +171,13 @@
    "key": "pam-0fb4ec9f138e2a6f989bcb03",
    "branch": "jr/research-pam-0fb4ec9f138e2a6f989bcb03",
    "term": "Arduino Nano ESP32",
-   "phase": "research",
+   "phase": "author",
    "state": "reserved",
    "started_on": "2026-11-10",
    "source": "pam_feed",
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1622"
+   ],
    "feed": {
     "checked_at": "2026-11-06T04:22:34.124739Z",
     "feeds": {
@@ -362,7 +364,9 @@
      "prs": []
     },
     "reserved_by": "jr/demand_run.py"
-   }
+   },
+   "last_attempt_on": "2026-11-10",
+   "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1622"
   }
  ]
 }
