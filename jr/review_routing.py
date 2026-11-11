@@ -14,6 +14,8 @@ recognise — including a diff it cannot read.
 from __future__ import annotations
 
 import copy
+import json
+import re
 from dataclasses import dataclass, field
 from datetime import date
 
@@ -32,6 +34,10 @@ SIGNALS_NAME = "signals.json"
 FLASHING_BOARD_FIELDS = ("usb", "usb_serial", "download_mode", "first_flash_notes", "flash_mb")
 REFRESH_KEYS = ("popularity",)          # stars / forks / as_of
 REFRESH_SOURCE_KEYS = ("verified",)     # a re-verified citation date
+SELF_CORRECTION_AUTHOR = "jr-self-correction"
+SELF_CORRECTION_CLASSES = {"carrier_product": "module_board_id_under_product_build",
+                           "generic_base": "devkit_board_id_under_product_build"}
+MAX_SELF_CORRECTIONS = 3                # recipes one tick may retract without a person
 GITHUB_POPULARITY_KEYS = frozenset({"stars", "forks", "github_repo_id", "github_as_of", "as_of"})
 GITHUB_SOURCE_FIELDS = frozenset({
     "popularity.stars", "popularity.forks", "popularity.github_repo_id", "popularity.github_as_of",
@@ -208,6 +214,37 @@ def _change_reason(change: Change) -> str | None:
     return f"not on the low-risk list ({status or '?'}): {path}"
 
 
+def self_correction_paths(changes) -> set[str]:
+    """The paths of an exact Jr retraction: each ADDED override authored by Jr with a known class,
+    and the recipes it lists, all of them that firmware's and all deleted in this diff. Anything
+    unreadable, or over the cap, authorizes nothing."""
+    by_path = {c.path: c for c in changes}
+    out: set[str] = set()
+    for c in changes:
+        m = re.fullmatch(r"jr/overrides/([^/]+)__edges\.json", c.path)
+        if not m or not c.status.startswith("A"):
+            continue
+        try:
+            rec = json.loads(c.new or "")
+        except ValueError:
+            continue
+        if not isinstance(rec, dict):
+            continue
+        deletes, originals = rec.get("deletes"), rec.get("originals")
+        if (rec.get("firmware") != m.group(1) or rec.get("action") != "edge_correction"
+                or rec.get("directed_by") != SELF_CORRECTION_AUTHOR
+                or rec.get("classification") not in SELF_CORRECTION_CLASSES.values()
+                or not isinstance(deletes, list) or not deletes or not isinstance(originals, dict)
+                or set(originals) != set(deletes)):
+            continue
+        recipe = re.compile(r"data/recipes/[^/]+__" + re.escape(m.group(1)) + r"/recipe\.md")
+        if all(isinstance(p, str) and recipe.fullmatch(p) and p in by_path
+               and by_path[p].status.startswith("D") for p in deletes):
+            out |= {c.path, *deletes}
+    n_recipes = sum(1 for p in out if p.startswith("data/recipes/"))
+    return out if n_recipes <= MAX_SELF_CORRECTIONS else set()
+
+
 def _stage_reasons(stages) -> list[str]:
     out = []
     for s in stages or ():
@@ -223,7 +260,8 @@ def classify(changes, stages=(), needs_human: bool = False) -> Route:
     tick's stage-result dicts (`needs_human`, `review`). Every reason that forced review is kept, so
     the report can say why. An empty diff is REVIEW: something was staged and we cannot see what."""
     reasons = [] if changes else ["staged diff unreadable or empty"]
-    reasons += [r for r in (_change_reason(c) for c in changes) if r]
+    retraction = self_correction_paths(changes)
+    reasons += [r for r in (_change_reason(c) for c in changes if c.path not in retraction) if r]
     reasons += _stage_reasons(stages)
     if needs_human:
         reasons.append("needs_human set by the caller")

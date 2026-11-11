@@ -7,7 +7,7 @@ recipes, and says which socs the firmware is now shown to build for.
 
 Rules, all deterministic:
 
-- **Additive.** An existing recipe dir is never rewritten or removed (G2: no record deletion
+- **Additive.** This writer never rewrites or removes an existing recipe dir (retraction is jr/self_correct.py; G2: no record deletion
   until the guard exists; and a human may have upgraded `status`). Only missing recipes are
   written, `status: unverified`.
 - **Cite where a reader can SEE it.** Every recipe carries `sources[]`: `field: '*'` → the

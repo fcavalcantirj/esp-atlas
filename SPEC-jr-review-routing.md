@@ -39,6 +39,13 @@ names every path/stage that forced review.
   `field: popularity` citation may only advance its verification date with an old-style
   count refresh, never change URL or scope.
 
+- **Jr's own retraction (owner, 2026-11-11).** A recipe deletion is AUTO only when the same diff adds
+  `jr/overrides/<firmware>__edges.json` with `directed_by: jr-self-correction`, a known classification,
+  and `deletes` and `originals` naming exactly those deleted recipes of that firmware, at most
+  `MAX_SELF_CORRECTIONS` per tick. Any other recipe or firmware deletion stays REVIEW or refused.
+  `scripts/g2_guard.py` still verifies the override byte for byte in CI. Details:
+  `SPEC-firmware-board-mapping.md` section 4.1.
+
 ### 2. Publish applies the label — fail closed
 
 A `review` route opens the PR, ensures the label (`gh label create jr-review … --force`, idempotent; a
