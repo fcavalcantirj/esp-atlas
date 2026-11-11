@@ -1,18 +1,20 @@
 {
  "calls": 7,
  "errors": 0,
- "fetched": "2026-11-03",
+ "fetched": "2026-11-11",
  "notes": [],
  "ref": "main",
  "repo": "Devsur11/M5Gotchi",
  "resolved": {
   "boards": [
    "m5cardputer",
-   "m5stamp-s3",
    "m5stick-s3"
   ],
-  "socs": [],
+  "socs": [
+   "esp32-s3"
+  ],
   "unresolved": [
+   "m5stack-stamps3",
    "m5stick"
   ]
  },
@@ -68,7 +70,10 @@
   {
    "extra": {
     "env": "m5sticks3",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "sticks3"
+    ]
    },
    "kind": "platformio",
    "line": 76,
