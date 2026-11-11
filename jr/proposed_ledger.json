@@ -4867,12 +4867,13 @@
       "timestamp": "2026-11-04T01:00:59.777703+00:00"
     },
     "launcher-0816d632de9903bcf924498354bb2b28": {
+      "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-0816d632de9903bcf924498354bb2b28",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:0816d632de9903bcf924498354bb2b28",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-0870128d7e7bf8073ec04ab6871d9d16": {
@@ -5665,12 +5666,13 @@
       "timestamp": "2026-11-10T03:00:55.203387+00:00"
     },
     "launcher-2124f637db75857c962f9097575271f4": {
+      "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-2124f637db75857c962f9097575271f4",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:2124f637db75857c962f9097575271f4",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-214c554f9da22d70e6837d4db79fc793": {
@@ -6160,12 +6162,13 @@
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-79bfc1fb6702f9347b429c44d3edb3c7": {
+      "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-79bfc1fb6702f9347b429c44d3edb3c7",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'airq data over espnow user:javicar31'",
       "repo": "launcher:79bfc1fb6702f9347b429c44d3edb3c7",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-79dd6703b4f58e9b444f20f2adf52d4d": {
@@ -6178,12 +6181,13 @@
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-7d46a337dcdf6795806bb5e406bd8ab6": {
+      "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-7d46a337dcdf6795806bb5e406bd8ab6",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'spiffsfile management system user:peien'",
       "repo": "launcher:7d46a337dcdf6795806bb5e406bd8ab6",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-7f6c7acb9cfd3d0aa051ba3830a75fd5": {
@@ -6353,12 +6357,13 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-9bec161e36ac6f9b119d76b791144473": {
+      "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-9bec161e36ac6f9b119d76b791144473",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'afternoon paralysis user:jrdntnnr'",
       "repo": "launcher:9bec161e36ac6f9b119d76b791144473",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-9fb9a50e180cd108832b614a7751ba7b": {
@@ -6437,12 +6442,13 @@
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-b52861e0a60548f81d846255312d68fe": {
+      "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-b52861e0a60548f81d846255312d68fe",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:b52861e0a60548f81d846255312d68fe",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-b6d59b635d6b7c195962973632662a68": {
@@ -6512,12 +6518,13 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-c3c3e139ecb9add9e14fe86d263645b6": {
+      "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-c3c3e139ecb9add9e14fe86d263645b6",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'afterburner user:aleknes'",
       "repo": "launcher:c3c3e139ecb9add9e14fe86d263645b6",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-c496984bd4f905e2fe45d2f3a7fe1cae": {
@@ -6530,12 +6537,13 @@
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-c4dce0a2fbb839e71a7e1ce44108d41a": {
+      "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-c4dce0a2fbb839e71a7e1ce44108d41a",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'airq userdemo user:m5stack'",
       "repo": "launcher:c4dce0a2fbb839e71a7e1ce44108d41a",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-c4ee795e7515501d51a31aa9c2c40fb2": {
@@ -6630,12 +6638,13 @@
       "timestamp": "2026-11-04T01:00:59.777703+00:00"
     },
     "launcher-d56ab7be200d0fdb509ba0d8005f2ac4": {
+      "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-d56ab7be200d0fdb509ba0d8005f2ac4",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:d56ab7be200d0fdb509ba0d8005f2ac4",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-d6c68178418e1a70a197abe3efb4fe8c": {
@@ -6658,12 +6667,13 @@
       "timestamp": "2026-11-04T00:00:59.597130+00:00"
     },
     "launcher-d79558c810dc19522b497d9b7fad94ea": {
+      "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
       "id": "launcher-d79558c810dc19522b497d9b7fad94ea",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'advanceos cap tft ili9341 user:rizumu'",
       "repo": "launcher:d79558c810dc19522b497d9b7fad94ea",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-d8e03f66387bd5ac7bd543ca8d81d975": {
@@ -7213,6 +7223,16 @@
       "repo": "eduardez/m5-pomodoro",
       "status": "seen",
       "timestamp": "2026-10-27T13:00:59.692190+00:00"
+    },
+    "m5-retroboy-os": {
+      "expires": "2026-12-11T03:00:55.156011+00:00",
+      "id": "m5-retroboy-os",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "adfffgyujyhkbvuyyhcbhj/m5-retroboy-os",
+      "repo_id": 1450231390,
+      "status": "rejected",
+      "timestamp": "2026-11-11T03:00:55.156011+00:00"
     },
     "m5-roguemail": {
       "expired_at": "2026-10-11T18:00:11.638224+00:00",
@@ -13281,6 +13301,7 @@
     "acpayers-alt/raising-hell-cardputer": "raising-hell-cardputer",
     "adafruit/circuitpython": "circuitpython",
     "adammelancon/cardputer-satellite-tracker": "cardputer-iss-tracker",
+    "adfffgyujyhkbvuyyhcbhj/m5-retroboy-os": "m5-retroboy-os",
     "advascript/calcputer": "calcputer",
     "afetisa/pocket-wui": "pocket-wui",
     "ah2005na": "ah2005na",
