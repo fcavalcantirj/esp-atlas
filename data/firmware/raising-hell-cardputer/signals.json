@@ -1,16 +1,17 @@
 {
  "calls": 4,
  "errors": 0,
- "fetched": "2026-11-03",
+ "fetched": "2026-11-11",
  "notes": [],
  "ref": "main",
  "repo": "acpayers-alt/raising-hell-cardputer",
  "resolved": {
-  "boards": [
-   "m5stamp-s3"
+  "boards": [],
+  "socs": [
+   "esp32-s3"
   ],
-  "socs": [],
   "unresolved": [
+   "m5stack-stamps3",
    "raising_hell_cpADV"
   ]
  },
@@ -30,7 +31,10 @@
   {
    "extra": {
     "env": "cardputer_adv_dev",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 3,
@@ -42,7 +46,10 @@
   {
    "extra": {
     "env": "cardputer_adv_public",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 40,
