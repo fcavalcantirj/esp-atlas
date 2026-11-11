@@ -1,7 +1,7 @@
 {
  "calls": 11,
  "errors": 0,
- "fetched": "2026-11-02",
+ "fetched": "2026-11-11",
  "notes": [],
  "ref": "master",
  "repo": "gkoh/furble",
@@ -389,7 +389,10 @@
   {
    "extra": {
     "env": "m5stick-s3",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "sticks3"
+    ]
    },
    "kind": "platformio",
    "line": 40,
