@@ -1,7 +1,7 @@
 {
  "calls": 30,
  "errors": 0,
- "fetched": "2026-11-03",
+ "fetched": "2026-11-11",
  "notes": [
   "call budget exhausted at 30"
  ],
@@ -40,1284 +40,1336 @@
    "Clawdmeter — Waveshare ESP32-S3 AMOLED 2.16\"",
    "Clawdmeter — Waveshare ESP32-S3 LCD 1.54\"",
    "Clawdmeter — Waveshare ESP32-S3 LCD 1.83\"",
+   "Clawdmeter — Waveshare ESP32-S3 LCD 2.1\" (round)",
    "Clawdmeter — Waveshare ESP32-S3 LCD 4\"",
    "Clawdmeter — Waveshare ESP32-S3 Touch LCD 2\"",
    "Clawdmeter — Waveshare ESP32-S3 ePaper 1.54\"",
    "Clawdmeter — Xingzhi Cube 1.83 inch TFT WiFi",
    "esp32_2432s024c",
-   "esp32_2432s024c-v2.2.5.part0",
-   "esp32_2432s024c-v2.2.5.part1",
+   "esp32_2432s024c-v2.4.0.part0",
+   "esp32_2432s024c-v2.4.0.part1",
    "esp32_2432s024c_landscape",
-   "esp32_2432s024c_landscape-v2.2.5.part0",
-   "esp32_2432s024c_landscape-v2.2.5.part1",
+   "esp32_2432s024c_landscape-v2.4.0.part0",
+   "esp32_2432s024c_landscape-v2.4.0.part1",
    "esp32_2432s028r",
-   "esp32_2432s028r-v2.2.5.part0",
-   "esp32_2432s028r-v2.2.5.part1",
+   "esp32_2432s028r-v2.4.0.part0",
+   "esp32_2432s028r-v2.4.0.part1",
    "esp32_2432s028r_landscape",
-   "esp32_2432s028r_landscape-v2.2.5.part0",
-   "esp32_2432s028r_landscape-v2.2.5.part1",
+   "esp32_2432s028r_landscape-v2.4.0.part0",
+   "esp32_2432s028r_landscape-v2.4.0.part1",
    "esp32_s3_4848s040",
-   "esp32_s3_4848s040-v2.2.5.part0",
-   "esp32_s3_4848s040-v2.2.5.part1",
+   "esp32_s3_4848s040-v2.4.0.part0",
+   "esp32_s3_4848s040-v2.4.0.part1",
    "freenove_s3_display_nontouch",
-   "freenove_s3_display_nontouch-v2.2.5.part0",
-   "freenove_s3_display_nontouch-v2.2.5.part1",
+   "freenove_s3_display_nontouch-v2.4.0.part0",
+   "freenove_s3_display_nontouch-v2.4.0.part1",
    "lilygo_t4s3",
-   "lilygo_t4s3-v2.2.5.part0",
-   "lilygo_t4s3-v2.2.5.part1",
-   "lilygo_t_display_s3-v2.2.5.part0",
-   "lilygo_t_display_s3-v2.2.5.part1",
-   "m5stack_fire-v2.2.5.part0",
-   "m5stack_fire-v2.2.5.part1",
-   "m5sticks3-v2.2.5.part0",
-   "m5sticks3-v2.2.5.part1",
+   "lilygo_t4s3-v2.4.0.part0",
+   "lilygo_t4s3-v2.4.0.part1",
+   "lilygo_t_display_s3-v2.4.0.part0",
+   "lilygo_t_display_s3-v2.4.0.part1",
+   "m5stack_fire-v2.4.0.part0",
+   "m5stack_fire-v2.4.0.part1",
+   "m5sticks3-v2.4.0.part0",
+   "m5sticks3-v2.4.0.part1",
    "sensecap_indicator_d1l",
-   "sensecap_indicator_d1l-v2.2.5.part0",
-   "sensecap_indicator_d1l-v2.2.5.part1",
+   "sensecap_indicator_d1l-v2.4.0.part0",
+   "sensecap_indicator_d1l-v2.4.0.part1",
    "spotpear_s3_154",
-   "spotpear_s3_154-v2.2.5.part0",
-   "spotpear_s3_154-v2.2.5.part1",
+   "spotpear_s3_154-v2.4.0.part0",
+   "spotpear_s3_154-v2.4.0.part1",
    "waveshare_amoled_132",
-   "waveshare_amoled_132-v2.2.5.part0",
-   "waveshare_amoled_132-v2.2.5.part1",
+   "waveshare_amoled_132-v2.4.0.part0",
+   "waveshare_amoled_132-v2.4.0.part1",
    "waveshare_amoled_143",
-   "waveshare_amoled_143-v2.2.5.part0",
-   "waveshare_amoled_143-v2.2.5.part1",
+   "waveshare_amoled_143-v2.4.0.part0",
+   "waveshare_amoled_143-v2.4.0.part1",
    "waveshare_amoled_18",
-   "waveshare_amoled_18-v2.2.5.part0",
-   "waveshare_amoled_18-v2.2.5.part1",
+   "waveshare_amoled_18-v2.4.0.part0",
+   "waveshare_amoled_18-v2.4.0.part1",
    "waveshare_amoled_18_c6",
-   "waveshare_amoled_18_c6-v2.2.5.part0",
-   "waveshare_amoled_18_c6-v2.2.5.part1",
+   "waveshare_amoled_18_c6-v2.4.0.part0",
+   "waveshare_amoled_18_c6-v2.4.0.part1",
    "waveshare_amoled_206",
-   "waveshare_amoled_206-v2.2.5.part0",
-   "waveshare_amoled_206-v2.2.5.part1",
+   "waveshare_amoled_206-v2.4.0.part0",
+   "waveshare_amoled_206-v2.4.0.part1",
    "waveshare_amoled_216",
-   "waveshare_amoled_216-v2.2.5.part0",
-   "waveshare_amoled_216-v2.2.5.part1",
+   "waveshare_amoled_216-v2.4.0.part0",
+   "waveshare_amoled_216-v2.4.0.part1",
    "waveshare_amoled_216_c6",
-   "waveshare_amoled_216_c6-v2.2.5.part0",
-   "waveshare_amoled_216_c6-v2.2.5.part1",
+   "waveshare_amoled_216_c6-v2.4.0.part0",
+   "waveshare_amoled_216_c6-v2.4.0.part1",
    "waveshare_epaper_154",
-   "waveshare_epaper_154-v2.2.5.part0",
-   "waveshare_epaper_154-v2.2.5.part1",
+   "waveshare_epaper_154-v2.4.0.part0",
+   "waveshare_epaper_154-v2.4.0.part1",
    "waveshare_lcd_154",
-   "waveshare_lcd_154-v2.2.5.part0",
-   "waveshare_lcd_154-v2.2.5.part1",
+   "waveshare_lcd_154-v2.4.0.part0",
+   "waveshare_lcd_154-v2.4.0.part1",
    "waveshare_lcd_183",
-   "waveshare_lcd_183-v2.2.5.part0",
-   "waveshare_lcd_183-v2.2.5.part1",
+   "waveshare_lcd_183-v2.4.0.part0",
+   "waveshare_lcd_183-v2.4.0.part1",
    "waveshare_lcd_2",
-   "waveshare_lcd_2-v2.2.5.part0",
-   "waveshare_lcd_2-v2.2.5.part1",
+   "waveshare_lcd_2-v2.4.0.part0",
+   "waveshare_lcd_2-v2.4.0.part1",
+   "waveshare_lcd_21",
+   "waveshare_lcd_21-v2.4.0.part0",
+   "waveshare_lcd_21-v2.4.0.part1",
    "waveshare_lcd_4",
-   "waveshare_lcd_4-v2.2.5.part0",
-   "waveshare_lcd_4-v2.2.5.part1",
+   "waveshare_lcd_4-v2.4.0.part0",
+   "waveshare_lcd_4-v2.4.0.part1",
    "xingzhi_cube_183",
-   "xingzhi_cube_183-v2.2.5.part0",
-   "xingzhi_cube_183-v2.2.5.part1"
+   "xingzhi_cube_183-v2.4.0.part0",
+   "xingzhi_cube_183-v2.4.0.part1"
   ]
  },
  "signals": [
   {
    "extra": {
-    "asset": "esp32_2432s024c-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_2432s024c-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32_2432s024c",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_2432s024c-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_2432s024c-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "esp32_2432s024c-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_2432s024c-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "esp32_2432s024c-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_2432s024c-v2.2.5.part0.bin"
+   "token": "esp32_2432s024c-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_2432s024c-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "esp32_2432s024c-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_2432s024c-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "esp32_2432s024c-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_2432s024c-v2.2.5.part1.bin"
+   "token": "esp32_2432s024c-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_2432s024c-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "esp32_2432s024c_landscape-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_2432s024c_landscape-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32_2432s024c_landscape",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_2432s024c_landscape-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_2432s024c_landscape-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "esp32_2432s024c_landscape-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_2432s024c_landscape-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "esp32_2432s024c_landscape-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_2432s024c_landscape-v2.2.5.part0.bin"
+   "token": "esp32_2432s024c_landscape-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_2432s024c_landscape-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "esp32_2432s024c_landscape-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_2432s024c_landscape-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "esp32_2432s024c_landscape-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_2432s024c_landscape-v2.2.5.part1.bin"
+   "token": "esp32_2432s024c_landscape-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_2432s024c_landscape-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "esp32_2432s028r-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_2432s028r-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32_2432s028r",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_2432s028r-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_2432s028r-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "esp32_2432s028r-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_2432s028r-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "esp32_2432s028r-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_2432s028r-v2.2.5.part0.bin"
+   "token": "esp32_2432s028r-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_2432s028r-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "esp32_2432s028r-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_2432s028r-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "esp32_2432s028r-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_2432s028r-v2.2.5.part1.bin"
+   "token": "esp32_2432s028r-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_2432s028r-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "esp32_2432s028r_landscape-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_2432s028r_landscape-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32_2432s028r_landscape",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_2432s028r_landscape-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_2432s028r_landscape-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "esp32_2432s028r_landscape-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_2432s028r_landscape-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "esp32_2432s028r_landscape-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_2432s028r_landscape-v2.2.5.part0.bin"
+   "token": "esp32_2432s028r_landscape-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_2432s028r_landscape-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "esp32_2432s028r_landscape-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_2432s028r_landscape-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "esp32_2432s028r_landscape-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_2432s028r_landscape-v2.2.5.part1.bin"
+   "token": "esp32_2432s028r_landscape-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_2432s028r_landscape-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "esp32_s3_4848s040-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_s3_4848s040-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32_s3_4848s040",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_s3_4848s040-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_s3_4848s040-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "esp32_s3_4848s040-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_s3_4848s040-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "esp32_s3_4848s040-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_s3_4848s040-v2.2.5.part0.bin"
+   "token": "esp32_s3_4848s040-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_s3_4848s040-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "esp32_s3_4848s040-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "esp32_s3_4848s040-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "esp32_s3_4848s040-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/esp32_s3_4848s040-v2.2.5.part1.bin"
+   "token": "esp32_s3_4848s040-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/esp32_s3_4848s040-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "freenove_s3_display_nontouch-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "freenove_s3_display_nontouch-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "freenove_s3_display_nontouch",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/freenove_s3_display_nontouch-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/freenove_s3_display_nontouch-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "freenove_s3_display_nontouch-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "freenove_s3_display_nontouch-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "freenove_s3_display_nontouch-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/freenove_s3_display_nontouch-v2.2.5.part0.bin"
+   "token": "freenove_s3_display_nontouch-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/freenove_s3_display_nontouch-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "freenove_s3_display_nontouch-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "freenove_s3_display_nontouch-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "freenove_s3_display_nontouch-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/freenove_s3_display_nontouch-v2.2.5.part1.bin"
+   "token": "freenove_s3_display_nontouch-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/freenove_s3_display_nontouch-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "lilygo_t4s3-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "lilygo_t4s3-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo_t4s3",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/lilygo_t4s3-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/lilygo_t4s3-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "lilygo_t4s3-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "lilygo_t4s3-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "lilygo_t4s3-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/lilygo_t4s3-v2.2.5.part0.bin"
+   "token": "lilygo_t4s3-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/lilygo_t4s3-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "lilygo_t4s3-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "lilygo_t4s3-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "lilygo_t4s3-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/lilygo_t4s3-v2.2.5.part1.bin"
+   "token": "lilygo_t4s3-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/lilygo_t4s3-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "lilygo_t_display_s3-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "lilygo_t_display_s3-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo_t_display_s3",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/lilygo_t_display_s3-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/lilygo_t_display_s3-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "lilygo_t_display_s3-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "lilygo_t_display_s3-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "lilygo_t_display_s3-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/lilygo_t_display_s3-v2.2.5.part0.bin"
+   "token": "lilygo_t_display_s3-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/lilygo_t_display_s3-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "lilygo_t_display_s3-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "lilygo_t_display_s3-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "lilygo_t_display_s3-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/lilygo_t_display_s3-v2.2.5.part1.bin"
+   "token": "lilygo_t_display_s3-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/lilygo_t_display_s3-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "m5stack_fire-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "m5stack_fire-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5stack_fire",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/m5stack_fire-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/m5stack_fire-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "m5stack_fire-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "m5stack_fire-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "m5stack_fire-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/m5stack_fire-v2.2.5.part0.bin"
+   "token": "m5stack_fire-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/m5stack_fire-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "m5stack_fire-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "m5stack_fire-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "m5stack_fire-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/m5stack_fire-v2.2.5.part1.bin"
+   "token": "m5stack_fire-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/m5stack_fire-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "m5sticks3-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "m5sticks3-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "m5sticks3",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/m5sticks3-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/m5sticks3-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "m5sticks3-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "m5sticks3-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "m5sticks3-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/m5sticks3-v2.2.5.part0.bin"
+   "token": "m5sticks3-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/m5sticks3-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "m5sticks3-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "m5sticks3-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "m5sticks3-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/m5sticks3-v2.2.5.part1.bin"
+   "token": "m5sticks3-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/m5sticks3-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "sensecap_indicator_d1l-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "sensecap_indicator_d1l-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "sensecap_indicator_d1l",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/sensecap_indicator_d1l-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/sensecap_indicator_d1l-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "sensecap_indicator_d1l-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "sensecap_indicator_d1l-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "sensecap_indicator_d1l-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/sensecap_indicator_d1l-v2.2.5.part0.bin"
+   "token": "sensecap_indicator_d1l-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/sensecap_indicator_d1l-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "sensecap_indicator_d1l-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "sensecap_indicator_d1l-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "sensecap_indicator_d1l-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/sensecap_indicator_d1l-v2.2.5.part1.bin"
+   "token": "sensecap_indicator_d1l-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/sensecap_indicator_d1l-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "spotpear_s3_154-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "spotpear_s3_154-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "spotpear_s3_154",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/spotpear_s3_154-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/spotpear_s3_154-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "spotpear_s3_154-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "spotpear_s3_154-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "spotpear_s3_154-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/spotpear_s3_154-v2.2.5.part0.bin"
+   "token": "spotpear_s3_154-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/spotpear_s3_154-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "spotpear_s3_154-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "spotpear_s3_154-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "spotpear_s3_154-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/spotpear_s3_154-v2.2.5.part1.bin"
+   "token": "spotpear_s3_154-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/spotpear_s3_154-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_132-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_132-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_amoled_132",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_132-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_132-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_132-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_132-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_132-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_132-v2.2.5.part0.bin"
+   "token": "waveshare_amoled_132-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_132-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_132-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_132-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_132-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_132-v2.2.5.part1.bin"
+   "token": "waveshare_amoled_132-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_132-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_143-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_143-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_amoled_143",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_143-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_143-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_143-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_143-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_143-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_143-v2.2.5.part0.bin"
+   "token": "waveshare_amoled_143-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_143-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_143-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_143-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_143-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_143-v2.2.5.part1.bin"
+   "token": "waveshare_amoled_143-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_143-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_18-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_18-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_amoled_18",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_18-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_18-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_18-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_18-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_18-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_18-v2.2.5.part0.bin"
+   "token": "waveshare_amoled_18-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_18-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_18-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_18-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_18-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_18-v2.2.5.part1.bin"
+   "token": "waveshare_amoled_18-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_18-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_18_c6-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_18_c6-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_amoled_18_c6",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_18_c6-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_18_c6-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_18_c6-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_18_c6-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_18_c6-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_18_c6-v2.2.5.part0.bin"
+   "token": "waveshare_amoled_18_c6-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_18_c6-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_18_c6-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_18_c6-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_18_c6-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_18_c6-v2.2.5.part1.bin"
+   "token": "waveshare_amoled_18_c6-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_18_c6-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_206-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_206-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_amoled_206",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_206-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_206-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_206-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_206-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_206-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_206-v2.2.5.part0.bin"
+   "token": "waveshare_amoled_206-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_206-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_206-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_206-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_206-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_206-v2.2.5.part1.bin"
+   "token": "waveshare_amoled_206-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_206-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_216-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_216-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_amoled_216",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_216-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_216-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_216-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_216-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_216-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_216-v2.2.5.part0.bin"
+   "token": "waveshare_amoled_216-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_216-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_216-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_216-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_216-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_216-v2.2.5.part1.bin"
+   "token": "waveshare_amoled_216-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_216-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_216_c6-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_216_c6-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_amoled_216_c6",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_216_c6-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_216_c6-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_216_c6-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_216_c6-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_216_c6-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_216_c6-v2.2.5.part0.bin"
+   "token": "waveshare_amoled_216_c6-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_216_c6-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_amoled_216_c6-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_amoled_216_c6-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_amoled_216_c6-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_amoled_216_c6-v2.2.5.part1.bin"
+   "token": "waveshare_amoled_216_c6-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_amoled_216_c6-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_epaper_154-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_epaper_154-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_epaper_154",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_epaper_154-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_epaper_154-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_epaper_154-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_epaper_154-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_epaper_154-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_epaper_154-v2.2.5.part0.bin"
+   "token": "waveshare_epaper_154-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_epaper_154-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_epaper_154-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_epaper_154-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_epaper_154-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_epaper_154-v2.2.5.part1.bin"
+   "token": "waveshare_epaper_154-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_epaper_154-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_lcd_154-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_lcd_154-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_lcd_154",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_lcd_154-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_154-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_lcd_154-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_lcd_154-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_lcd_154-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_lcd_154-v2.2.5.part0.bin"
+   "token": "waveshare_lcd_154-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_154-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_lcd_154-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_lcd_154-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_lcd_154-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_lcd_154-v2.2.5.part1.bin"
+   "token": "waveshare_lcd_154-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_154-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_lcd_183-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_lcd_183-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_lcd_183",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_lcd_183-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_183-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_lcd_183-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_lcd_183-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_lcd_183-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_lcd_183-v2.2.5.part0.bin"
+   "token": "waveshare_lcd_183-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_183-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_lcd_183-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_lcd_183-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_lcd_183-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_lcd_183-v2.2.5.part1.bin"
+   "token": "waveshare_lcd_183-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_183-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_lcd_2-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_lcd_2-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_lcd_2",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_lcd_2-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_2-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_lcd_2-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_lcd_2-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_lcd_2-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_lcd_2-v2.2.5.part0.bin"
+   "token": "waveshare_lcd_2-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_2-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_lcd_2-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_lcd_2-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_lcd_2-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_lcd_2-v2.2.5.part1.bin"
+   "token": "waveshare_lcd_2-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_2-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_lcd_4-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_lcd_21-v2.4.0.bin",
+    "release": "v2.4.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "waveshare_lcd_21",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_21-v2.4.0.bin"
+  },
+  {
+   "extra": {
+    "asset": "waveshare_lcd_21-v2.4.0.part0.bin",
+    "release": "v2.4.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "waveshare_lcd_21-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_21-v2.4.0.part0.bin"
+  },
+  {
+   "extra": {
+    "asset": "waveshare_lcd_21-v2.4.0.part1.bin",
+    "release": "v2.4.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "waveshare_lcd_21-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_21-v2.4.0.part1.bin"
+  },
+  {
+   "extra": {
+    "asset": "waveshare_lcd_4-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "waveshare_lcd_4",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_lcd_4-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_4-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_lcd_4-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_lcd_4-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_lcd_4-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_lcd_4-v2.2.5.part0.bin"
+   "token": "waveshare_lcd_4-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_4-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "waveshare_lcd_4-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "waveshare_lcd_4-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "waveshare_lcd_4-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/waveshare_lcd_4-v2.2.5.part1.bin"
+   "token": "waveshare_lcd_4-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/waveshare_lcd_4-v2.4.0.part1.bin"
   },
   {
    "extra": {
-    "asset": "xingzhi_cube_183-v2.2.5.bin",
-    "release": "v2.2.5"
+    "asset": "xingzhi_cube_183-v2.4.0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "xingzhi_cube_183",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/xingzhi_cube_183-v2.2.5.bin"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/xingzhi_cube_183-v2.4.0.bin"
   },
   {
    "extra": {
-    "asset": "xingzhi_cube_183-v2.2.5.part0.bin",
-    "release": "v2.2.5"
+    "asset": "xingzhi_cube_183-v2.4.0.part0.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "xingzhi_cube_183-v2.2.5.part0",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/xingzhi_cube_183-v2.2.5.part0.bin"
+   "token": "xingzhi_cube_183-v2.4.0.part0",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/xingzhi_cube_183-v2.4.0.part0.bin"
   },
   {
    "extra": {
-    "asset": "xingzhi_cube_183-v2.2.5.part1.bin",
-    "release": "v2.2.5"
+    "asset": "xingzhi_cube_183-v2.4.0.part1.bin",
+    "release": "v2.4.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "xingzhi_cube_183-v2.2.5.part1",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/xingzhi_cube_183-v2.2.5.part1.bin"
+   "token": "xingzhi_cube_183-v2.4.0.part1",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/xingzhi_cube_183-v2.4.0.part1.bin"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "Clawdmeter — ESP32-2432S024C CYD 2.4\" (portrait)",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-esp32_2432s024c.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-esp32_2432s024c.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "Clawdmeter — ESP32-2432S024C CYD 2.4\" (landscape)",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-esp32_2432s024c_landscape.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-esp32_2432s024c_landscape.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "Clawdmeter — ESP32-2432S028R CYD 2.8\" (portrait)",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-esp32_2432s028r.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-esp32_2432s028r.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "Clawdmeter — ESP32-2432S028R CYD 2.8\" (landscape)",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-esp32_2432s028r_landscape.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-esp32_2432s028r_landscape.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Guition ESP32-S3 4848S040 (4\")",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-esp32_s3_4848s040.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-esp32_s3_4848s040.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Freenove ESP32-S3 Display 2.8 inch (non-touch)",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-freenove_s3_display_nontouch.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-freenove_s3_display_nontouch.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — LILYGO T4-S3 AMOLED 2.41\"",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-lilygo_t4s3.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-lilygo_t4s3.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — LILYGO T-Display S3",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-lilygo_t_display_s3.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-lilygo_t_display_s3.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "Clawdmeter — M5Stack FIRE",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-m5stack_fire.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-m5stack_fire.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — M5Stack M5StickS3",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-m5sticks3.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-m5sticks3.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Seeed SenseCAP Indicator D1L",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-sensecap_indicator_d1l.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-sensecap_indicator_d1l.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — SpotPear ESP32-S3 LCD 1.54\" MUMA",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-spotpear_s3_154.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-spotpear_s3_154.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Waveshare ESP32-S3 AMOLED 1.32\" (round)",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-waveshare_amoled_132.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-waveshare_amoled_132.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Waveshare ESP32-S3 AMOLED 1.43\" (round)",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-waveshare_amoled_143.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-waveshare_amoled_143.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Waveshare ESP32-S3 AMOLED 1.8\"",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-waveshare_amoled_18.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-waveshare_amoled_18.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-C6",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-c6",
    "token": "Clawdmeter — Waveshare ESP32-C6 AMOLED 1.8\"",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-waveshare_amoled_18_c6.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-waveshare_amoled_18_c6.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Waveshare ESP32-S3 AMOLED 2.06\" (watch)",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-waveshare_amoled_206.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-waveshare_amoled_206.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Waveshare ESP32-S3 AMOLED 2.16\"",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-waveshare_amoled_216.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-waveshare_amoled_216.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-C6",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-c6",
    "token": "Clawdmeter — Waveshare ESP32-C6 AMOLED 2.16\"",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-waveshare_amoled_216_c6.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-waveshare_amoled_216_c6.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Waveshare ESP32-S3 ePaper 1.54\"",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-waveshare_epaper_154.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-waveshare_epaper_154.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Waveshare ESP32-S3 LCD 1.54\"",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-waveshare_lcd_154.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-waveshare_lcd_154.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Waveshare ESP32-S3 LCD 1.83\"",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-waveshare_lcd_183.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-waveshare_lcd_183.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Waveshare ESP32-S3 Touch LCD 2\"",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-waveshare_lcd_2.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-waveshare_lcd_2.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "Clawdmeter — Waveshare ESP32-S3 LCD 2.1\" (round)",
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-waveshare_lcd_21.json"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-S3",
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Waveshare ESP32-S3 LCD 4\"",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-waveshare_lcd_4.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-waveshare_lcd_4.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v2.2.5"
+    "release": "v2.4.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "Clawdmeter — Xingzhi Cube 1.83 inch TFT WiFi",
-   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.2.5/webtools-xingzhi_cube_183.json"
+   "url": "https://github.com/HermannBjorgvin/Clawdmeter/releases/download/v2.4.0/webtools-xingzhi_cube_183.json"
   }
  ]
 }
