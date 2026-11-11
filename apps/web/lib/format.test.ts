@@ -10,6 +10,7 @@ import {
   popularityGlance,
   readmeLanguageName,
 } from "./format.ts";
+import { firmwareForChip } from "./chip-firmware.ts";
 
 const TITLE_MAX = 60;
 const DESCRIPTION_MAX = 155;
@@ -344,6 +345,99 @@ test("all 17 board names in the November audit collision groups remain distinct"
   }, true));
   assert.equal(new Set(titles).size, 17);
   titles.forEach((title, i) => assert.ok(title.startsWith(names[i]), title));
+});
+
+// The chip hub (SPEC-serp-ctr.md §4): a SoC with related parts is the hub for
+// "<chip> specs, boards and firmware", so its title says so when it fits.
+
+const ESP32_C6 = {
+  name: "ESP32-C6",
+  type: "soc",
+  wifi_standard: "wifi-6",
+  ble_version: "5.3",
+  ieee802154: true,
+  ieee802154_protocols: "zigbee-3.0,thread-1.3,matter",
+  usb_native: true,
+  form_factor: null,
+};
+
+test("a SoC with related parts uses the hub benefit 'SoC: specs, boards, firmware'", () => {
+  const title = partMetaTitle(ESP32_C6, false, true);
+  assert.equal(title, "ESP32-C6 — Wi-Fi 6 + BLE 5.3 SoC: specs, boards, firmware");
+  assert.ok(title.length <= TITLE_MAX);
+});
+
+test("a SoC without related parts keeps today's 'SoC specs' title byte-identically", () => {
+  assert.equal(partMetaTitle(ESP32_C6, false, false), "ESP32-C6 — Wi-Fi 6 + BLE 5.3 SoC specs");
+  assert.equal(partMetaTitle(ESP32_C6, false, false), partMetaTitle(ESP32_C6));
+});
+
+test("the hub title is used when it is exactly TITLE_MAX chars", () => {
+  const soc = { ...ESP32_C6, name: "ESP32-S3-PICO", wifi_standard: "wifi-4", ble_version: "5" };
+  const title = partMetaTitle(soc, false, true);
+  assert.equal(title, "ESP32-S3-PICO — Wi-Fi 4 + BLE 5 SoC: specs, boards, firmware");
+  assert.equal(title.length, TITLE_MAX);
+});
+
+test("the hub title falls back to today's 'SoC specs' when it would exceed TITLE_MAX", () => {
+  const soc = { ...ESP32_C6, name: "ESP32-S3-PICO-1", wifi_standard: "wifi-4", ble_version: "5" };
+  assert.equal(partMetaTitle(soc, false, true), "ESP32-S3-PICO-1 — Wi-Fi 4 + BLE 5 SoC specs");
+});
+
+test("'pinout' counts against the hub title's cap", () => {
+  const soc = { ...ESP32_C6, name: "ESP32-C3", wifi_standard: "wifi-4", ble_version: "5" };
+  assert.equal(partMetaTitle(soc, true, true), "ESP32-C3 pinout — Wi-Fi 4 + BLE 5 SoC specs");
+});
+
+test("hasRelated never changes a non-SoC title", () => {
+  const board = { ...ESP32_C6, name: "ESP32-C6-DevKitC-1", type: "board" };
+  assert.equal(partMetaTitle(board, false, true), partMetaTitle(board, false, false));
+});
+
+// Part seo_title (SPEC-serp-ctr.md §3): the firmwareMetaTitle semantics exactly.
+
+test("part title returns a non-empty seo_title verbatim, over hub and pinout", () => {
+  const seoTitle = "ESP32-C6 specs, boards and firmware — Wi-Fi 6, Thread";
+  assert.equal(partMetaTitle({ ...ESP32_C6, seo_title: seoTitle }, true, true), seoTitle);
+});
+
+test("part title clamps an over-long seo_title to TITLE_MAX at a word boundary", () => {
+  const seoTitle = "ESP32-C6 — every Wi-Fi 6, Thread and Zigbee board, module and firmware in one place";
+  const title = partMetaTitle({ ...ESP32_C6, seo_title: seoTitle });
+  assert.ok(title.length <= TITLE_MAX, `${title.length}: ${title}`);
+  assert.ok(title.endsWith("…"));
+  const kept = title.slice(0, -1);
+  assert.ok(seoTitle.startsWith(kept));
+  assert.equal(seoTitle[kept.length], " ", "cut must land on a word boundary");
+});
+
+test("part title with an empty or missing seo_title is byte-identical to the formula", () => {
+  for (const [hasPinout, hasRelated] of [[false, false], [true, false], [false, true], [true, true]]) {
+    const formula = partMetaTitle(ESP32_C6, hasPinout, hasRelated);
+    assert.equal(partMetaTitle({ ...ESP32_C6, seo_title: "" }, hasPinout, hasRelated), formula);
+    assert.equal(partMetaTitle({ ...ESP32_C6, seo_title: undefined }, hasPinout, hasRelated), formula);
+    assert.equal(partMetaTitle({ ...ESP32_C6, seo_title: null }, hasPinout, hasRelated), formula);
+  }
+});
+
+// Firmware for a chip (SPEC-serp-ctr.md §4): every firmware whose `socs`
+// names the chip, in index order; none means the hub section renders nothing.
+
+const fw = (id: string, socs: string[]) => ({ id, name: id, category: "multi", socs });
+
+test("firmwareForChip keeps only firmware whose socs name the chip, in index order", () => {
+  const list = [fw("bruce", ["esp32", "esp32-c6"]), fw("tasmota", ["esp32"]), fw("esphome", ["esp32-c6", "esp32-s3"])];
+  assert.deepEqual(firmwareForChip(list, "esp32-c6").map((f) => f.id), ["bruce", "esphome"]);
+});
+
+test("firmwareForChip matches the soc id exactly, not by prefix", () => {
+  const list = [fw("a", ["esp32-c61"]), fw("b", ["esp32"])];
+  assert.deepEqual(firmwareForChip(list, "esp32-c6"), []);
+});
+
+test("firmwareForChip is empty when no firmware names the chip (n = 0 renders nothing)", () => {
+  assert.deepEqual(firmwareForChip([fw("tasmota", ["esp32"])], "esp32-p4"), []);
+  assert.deepEqual(firmwareForChip([], "esp32-c6"), []);
 });
 
 const NO_SPEC_PART = {

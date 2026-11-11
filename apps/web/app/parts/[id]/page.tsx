@@ -4,7 +4,9 @@ import JsonLd from "@/components/JsonLd";
 import PartDetailView from "@/components/part/PartDetailView";
 import PartViewTracker from "@/components/part/PartViewTracker";
 import type { RecipeRow } from "@/components/RecipeGroupList";
+import type { Firmware } from "@/lib/api";
 import { fetchFirmwareList, fetchPartDetail, fetchRecipesForBoard } from "@/lib/api-server";
+import { firmwareForChip } from "@/lib/chip-firmware";
 import { detailRobots } from "@/lib/detail-robots";
 import { partMetaDescription, partMetaTitle } from "@/lib/format";
 import { asString, fmObject } from "@/lib/frontmatter";
@@ -25,6 +27,13 @@ async function fetchBoardFirmwareRows(
   if (recipesResult.status !== "ok") return [];
   const firmware = firmwareResult.status === "ok" ? firmwareResult.data.results : [];
   return boardFirmwareRows(recipesResult.data.results, firmware, boardName, usbConnector, downloadMode);
+}
+
+// The chip hub's firmware (SPEC-serp-ctr.md §4); a failed firmware fetch
+// yields no rows, so the section simply doesn't render.
+async function fetchChipFirmware(socId: string): Promise<Firmware[]> {
+  const result = await fetchFirmwareList();
+  return result.status === "ok" ? firmwareForChip(result.data.results, socId) : [];
 }
 
 // The board's cited download_mode frontmatter (mode/steps/note), for the flash
@@ -51,7 +60,8 @@ export async function generateMetadata({ params }: PageProps<"/parts/[id]">): Pr
   }
   const part = result.data;
   const hasPinout = Boolean(asString(fmObject(part.frontmatter, "images")?.pinout));
-  const title = partMetaTitle(part, hasPinout);
+  const seoTitle = asString(part.frontmatter.seo_title);
+  const title = partMetaTitle({ ...part, seo_title: seoTitle }, hasPinout, part.related.length > 0);
   const description = partMetaDescription(part, part.body);
   const path = `/parts/${encodeURIComponent(part.id)}`;
   // Nested metadata objects replace the root ones wholesale, so siteName and
@@ -78,12 +88,13 @@ export default async function PartPage({ params }: PageProps<"/parts/[id]">) {
   const boardFirmwareRows = result.data.type === "board"
     ? await fetchBoardFirmwareRows(id, result.data.name, usbConnector, downloadMode)
     : null;
+  const chipFirmware = result.data.type === "soc" ? await fetchChipFirmware(id) : [];
 
   return (
     <main id="main" className="container" tabIndex={-1}>
       <JsonLd data={partGraph(result.data)} />
       <PartViewTracker part={result.data} />
-      <PartDetailView part={result.data} boardFirmwareRows={boardFirmwareRows} />
+      <PartDetailView part={result.data} boardFirmwareRows={boardFirmwareRows} chipFirmware={chipFirmware} />
     </main>
   );
 }

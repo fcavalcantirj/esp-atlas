@@ -1,6 +1,7 @@
 import BoardFirmware from "@/components/part/BoardFirmware";
 import BoardFlashCta from "@/components/part/BoardFlashCta";
 import BoardImage from "@/components/part/BoardImage";
+import ChipFirmware from "@/components/part/ChipFirmware";
 import ChipChain from "@/components/part/ChipChain";
 import PartBody from "@/components/part/PartBody";
 import PartFaq from "@/components/part/PartFaq";
@@ -12,20 +13,23 @@ import SpecGroups from "@/components/part/SpecGroups";
 import type { RecipeRow } from "@/components/RecipeGroupList";
 import TrackedLink from "@/components/TrackedLink";
 import VerifyBoard from "@/components/verify/VerifyBoard";
-import type { PartDetail } from "@/lib/api";
+import type { Firmware, PartDetail } from "@/lib/api";
 import { asStringArray } from "@/lib/frontmatter";
 import { editSourceUrl, newIssueUrl, viewSourceUrl } from "@/lib/github";
 
 // Presentational: used by the server-rendered page and by the client fallback.
 // boardFirmwareRows is only fetched server-side (board pages, see
 // app/parts/[id]/page.tsx) — the client fallback renders without it, same
-// graceful degradation as everything else on a cold API.
+// graceful degradation as everything else on a cold API. chipFirmware likewise
+// (SoC pages only, already filtered to the chip).
 export default function PartDetailView({
   part,
   boardFirmwareRows = null,
+  chipFirmware = [],
 }: {
   part: PartDetail;
   boardFirmwareRows?: RecipeRow[] | null;
+  chipFirmware?: Firmware[];
 }) {
   const notes = asStringArray(part.frontmatter.notes);
   // Cited first-flash gotchas (schema `first_flash_notes`): the one kind of note
@@ -56,6 +60,7 @@ export default function PartDetailView({
         <PartBody body={part.body} />
         {part.type === "board" && boardFirmwareRows !== null && <BoardFirmware rows={boardFirmwareRows} />}
         {isHub && <SocHub part={part} />}
+        {part.type === "soc" && <ChipFirmware part={part} firmware={chipFirmware} />}
         {part.type === "soc" && <PartFaq items={part.faq} />}
         {(notes.length > 0 || gotchas.length > 0) && (
           <section aria-label="Notes">

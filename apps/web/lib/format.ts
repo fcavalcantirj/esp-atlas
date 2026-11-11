@@ -259,13 +259,32 @@ function partKeySpecs(part: Pick<PartRecord, "wifi_standard" | "ble_version" | "
  * own frontmatter.images.pinout is non-empty (BoardImage.tsx's "Pinout"
  * figure); `false`/omitted keeps the title byte-identical to before this
  * param existed.
+ *
+ * `hasRelated` marks a SoC page as the chip hub (SPEC-serp-ctr.md §4): its
+ * benefit becomes "<specs> SoC: specs, boards, firmware" when the whole title
+ * fits TITLE_MAX, else today's "<specs> SoC specs". Ignored for other types.
+ *
+ * A non-empty `seo_title` (the part's frontmatter, opt-in per record) wins
+ * outright with exactly firmwareMetaTitle's semantics: verbatim, clamped at a
+ * word boundary; empty/absent falls through to the formula byte-identically.
  */
 export function partMetaTitle(
-  part: Pick<PartRecord, "name" | "type" | "wifi_standard" | "ble_version" | "ieee802154" | "ieee802154_protocols" | "usb_native" | "form_factor">,
+  part: Pick<PartRecord, "name" | "type" | "wifi_standard" | "ble_version" | "ieee802154" | "ieee802154_protocols" | "usb_native" | "form_factor"> & {
+    seo_title?: string | null;
+  },
   hasPinout = false,
+  hasRelated = false,
 ): string {
+  if (part.seo_title) {
+    return truncateAtWord(part.seo_title, TITLE_MAX);
+  }
   const specs = partKeySpecs(part);
-  const benefit = specs.length > 0 ? `${specs.join(" + ")} ${typeLabel(part.type)} specs` : `${typeLabel(part.type)} specs`;
+  const specsPrefix = specs.length > 0 ? `${specs.join(" + ")} ` : "";
+  if (part.type === "soc" && hasRelated) {
+    const hubTitle = `${part.name}${hasPinout ? " pinout" : ""} — ${specsPrefix}${typeLabel(part.type)}: specs, boards, firmware`;
+    if (hubTitle.length <= TITLE_MAX) return hubTitle;
+  }
+  const benefit = `${specsPrefix}${typeLabel(part.type)} specs`;
   if (part.type === "board") {
     const full = `${part.name}${hasPinout ? " pinout" : ""} — ${benefit}`;
     if (full.length <= TITLE_MAX) return full;
