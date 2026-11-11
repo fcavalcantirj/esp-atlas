@@ -1,7 +1,7 @@
 {
  "calls": 30,
  "errors": 0,
- "fetched": "2026-11-03",
+ "fetched": "2026-11-11",
  "notes": [
   "call budget exhausted while expanding extra_configs",
   "call budget exhausted at 30"
@@ -10,6 +10,7 @@
  "repo": "BruceDevices/firmware",
  "resolved": {
   "boards": [
+   "lcdwiki-es3c28p",
    "lilygo-t-deck",
    "lilygo-t-display-s3",
    "lilygo-t-embed",
@@ -86,7 +87,6 @@
    "Bruce-reaper",
    "Bruce-smoochiee-board",
    "CYD-2432S028",
-   "ES3C28P",
    "ESP-General",
    "_New-Device-Model",
    "arduino-nesso-n1",
@@ -1068,7 +1068,10 @@
   {
    "extra": {
     "env": "arduino-nesso-n1",
-    "file": "boards/arduino-nesso-n1/platformio.ini"
+    "file": "boards/arduino-nesso-n1/platformio.ini",
+    "product_markers": [
+     "dinmeter"
+    ]
    },
    "kind": "platformio",
    "line": 12,
@@ -1344,7 +1347,10 @@
   {
    "extra": {
     "env": "m5stack-cardputer",
-    "file": "boards/m5stack-cardputer/m5stack-cardputer.ini"
+    "file": "boards/m5stack-cardputer/m5stack-cardputer.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 12,
@@ -1440,7 +1446,10 @@
   {
    "extra": {
     "env": "m5stack-dinmeter",
-    "file": "boards/m5stack-dinmeter/platformio.ini"
+    "file": "boards/m5stack-dinmeter/platformio.ini",
+    "product_markers": [
+     "dinmeter"
+    ]
    },
    "kind": "platformio",
    "line": 12,
@@ -1452,7 +1461,10 @@
   {
    "extra": {
     "env": "m5stack-sticks3",
-    "file": "boards/m5stack-sticks3/m5stack-sticks3.ini"
+    "file": "boards/m5stack-sticks3/m5stack-sticks3.ini",
+    "product_markers": [
+     "sticks3"
+    ]
    },
    "kind": "platformio",
    "line": 12,
