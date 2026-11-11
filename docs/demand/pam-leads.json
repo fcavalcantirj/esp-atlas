@@ -1,7 +1,7 @@
 {
  "version": 1,
  "source": "pam_feed",
- "checked_at": "2026-11-06T04:22:34.124739Z",
+ "checked_at": "2026-11-11T11:15:54.289042Z",
  "feeds": {
   "products": {
    "url": "https://pamfinds.com/api/products.json",
@@ -81,8 +81,10 @@
     ]
    },
    "fingerprint": "fc279054ab4722d31c6e17c77257649f8dab0a49927d4477687fab0531e852a5",
-   "matches": [],
-   "status": "potential_identity_gap"
+   "matches": [
+    "arduino-nano-esp32"
+   ],
+   "status": "possible_match"
   },
   {
    "source_id": "esp32-c3-devkitm",
