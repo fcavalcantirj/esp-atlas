@@ -2,6 +2,7 @@
 id: tamaputer
 type: firmware
 name: Tamaputer
+seo_title: "Tamaputer \u2014 Tamagotchi emulator firmware for Cardputer"
 url: https://github.com/mindovermiles262/tamaputer
 category: multi
 maintainer: mindovermiles262

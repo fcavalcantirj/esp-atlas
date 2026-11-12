@@ -2,6 +2,7 @@
 id: draftling
 type: firmware
 name: draftling
+seo_title: "draftling \u2014 Markdown writer firmware for ESP32-S3 e-paper"
 url: https://github.com/clackups/draftling
 category: multi
 socs:

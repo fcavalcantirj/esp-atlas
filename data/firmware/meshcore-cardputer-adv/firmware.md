@@ -2,6 +2,7 @@
 id: meshcore-cardputer-adv
 type: firmware
 name: Meshcore
+seo_title: "Meshcore by sosprz \u2014 MeshCore firmware for Cardputer ADV"
 url: https://github.com/sosprz/meshcore-cardputer-adv
 category: mesh
 maintainer: sosprz
