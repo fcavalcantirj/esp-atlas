@@ -45,6 +45,7 @@ class TickReport:
     publish: dict | None = None                       # PublishResult.as_dict()
     budget: str = ""
     warnings: list = field(default_factory=list)      # dry-run preflight notes, never fatal
+    ci_watch: dict = field(default_factory=dict)      # jr/ci_watch.watch() result (SPEC-jr-self-heal.md)
     dry_writes: list = field(default_factory=list)    # dry-run: tick-owned would-be writes (ledger, trend), {"path","field","value"}
     aborted: str = ""                                 # non-empty → the tick stopped early, why
 

@@ -34,6 +34,7 @@
 | `SPEC-demand-work-consumer.md` | **Demand to executed work**: bounded/deduplicated reservations, automatic consumption on existing demand/checkup cadences, source-validation receipts, reviewed proposals and defect-specific outcome verification. No new cron; the miner still never writes `data/**`. |
 | `SPEC-pam-discovery.md` | **PAM discovery leads**: bounded conditional feed reads, minimal unverified metadata/provenance, exact identity hints, last-good atomic persistence, the existing daily demand CLI hook and typed feed intake under the shared work budget/recovery policy. No third-party fact import, new schedule or catalog authority. Publication still follows primary-source and consumer review gates. |
 | `SPEC-jr-review-routing.md` | **Jr risk-based review routing**: the `jr-review` classifier (review vs auto), publish's label + withheld auto-merge, tick triage that never aborts on a labelled PR, the open-review cap. |
+| `SPEC-jr-self-heal.md` | **Jr self-heal**: deterministic detection of a red required check (`jr/ci_watch.py`, fingerprint, incident record), the known-cause table (rerun, ignore), dispatch of the operator's coding delegate for an unknown cause on `jr/heal-<fp>`, the relay's hard limits, the `jr-heal` label and the dispatch budget. Never merges; the review gate is unchanged. |
 
 ## 2. Canonical glossary (fixed names — use these, nothing else)
 - **Board Wizard** — the deterministic board-picker (`SPEC.md`/`INTERFACE-SPEC.md`).
