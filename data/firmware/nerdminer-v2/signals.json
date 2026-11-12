@@ -1,7 +1,7 @@
 {
  "calls": 6,
  "errors": 0,
- "fetched": "2026-11-03",
+ "fetched": "2026-11-11",
  "notes": [],
  "ref": "main",
  "repo": "BitMaker-hub/NerdMiner_v2",
@@ -1283,7 +1283,10 @@
   {
    "extra": {
     "env": "M5-Cardputer-Adv",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 1198,
