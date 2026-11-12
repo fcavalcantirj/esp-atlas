@@ -9337,10 +9337,11 @@
     },
     "m5tool": {
       "id": "m5tool",
-      "pr_ref": "#1506",
+      "pr_ref": null,
+      "reason": "removed_by_owner: Windows desktop flasher program (M5Tool.py, driver installers, esptool-win64) that flashes other firmware onto M5 devices, not ESP firmware (https://github.com/Sonys9/M5Tool#readme); see jr/overrides/m5tool.json",
       "repo": "sonys9/m5tool",
-      "status": "merged",
-      "timestamp": "2026-11-07T08:00:55.079521+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-12T17:41:48.826331+00:00"
     },
     "m5tracker": {
       "expired_at": "2026-10-09T12:00:11.265432+00:00",
