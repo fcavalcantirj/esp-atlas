@@ -21,6 +21,7 @@ search text never reaches a branch name, a command or a path.
 from __future__ import annotations
 
 import copy
+import dataclasses
 import datetime as dt
 import hashlib
 import re
@@ -29,6 +30,8 @@ from dataclasses import dataclass, field
 import pam_leads
 
 MAX_NEW_PER_DAY = 1           # newly started work items per UTC day (an item retried later keeps its slot)
+MAX_WORK_DAYS = 2             # UTC days a live receipt without a PR may be worked (SPEC "Research window")
+EXHAUSTED = "exhausted"       # _existing_action's verdict for such a receipt past its window: never a Plan action
 KEY_HEX_CHARS = 16
 BRANCH_PREFIX = "jr/research-"
 
@@ -203,6 +206,8 @@ def _readable_receipt(r) -> bool:
         return False
     if "last_attempt_on" in r and _date(r["last_attempt_on"]) is None:
         return False
+    if "retry_on" in r and _date(r["retry_on"]) is None:
+        return False
     return "pr_url" not in r or _text(r["pr_url"])
 
 
@@ -226,6 +231,7 @@ class Plan:
     action: str
     work: Work | None = None
     reason: str = ""
+    exhausted: tuple = ()             # live work past its research window: needs a human settle or retry
 
 
 def _provenance(candidate: dict, own: list[dict]) -> dict:
@@ -267,8 +273,28 @@ def _work(candidate: dict, receipts: list[dict]) -> Work | None:
                 **prov)
 
 
+def exhausted(receipt: dict, today: str) -> bool:
+    """A live receipt without a PR whose research window is over: MAX_WORK_DAYS UTC days from its
+    `retry_on` (a human re-armed it) else its `started_on`. Computed from fields main always holds:
+    attempt stamps live on the work branch and reach main only with a PR."""
+    if receipt.get("state") in TERMINAL_STATES or "pr_url" in receipt:
+        return False
+    start, day = _date(receipt.get("retry_on") or receipt.get("started_on")), _date(today)
+    return start is not None and day is not None and (day - start).days >= MAX_WORK_DAYS
+
+
+def launch_state(receipt: dict, today: str) -> str:
+    """The operator launcher's one rule for a receipt (main's or a work branch's): `busy` (terminal,
+    a PR exists, or already attempted today), `exhausted` (past its research window) or `free`."""
+    if (receipt.get("state") in TERMINAL_STATES or "pr_url" in receipt
+            or receipt.get("last_attempt_on") == today):
+        return "busy"
+    return EXHAUSTED if exhausted(receipt, today) else "free"
+
+
 def _existing_action(candidate: dict, own: list[dict], today: str) -> str | None:
-    """reconcile / resume for a candidate that already has work this lifecycle, else None."""
+    """reconcile / resume for a candidate that already has work this lifecycle, EXHAUSTED for work
+    past its research window, else None."""
     if candidate.get("status") == STATUS_LINKED or _links(candidate):
         return RECONCILE                            # existing controller work is reconciled, never duplicated
     live = [r for r in own if r["state"] not in TERMINAL_STATES]
@@ -276,6 +302,8 @@ def _existing_action(candidate: dict, own: list[dict], today: str) -> str | None
         return None
     if any("pr_url" in r for r in own):
         return RECONCILE
+    if all(exhausted(r, today) for r in live):
+        return EXHAUSTED                            # never resumed; no longer holds its class
     last = max(r.get("last_attempt_on") or r["started_on"] for r in live)
     return RECONCILE if last >= today else RESUME   # one attempt per day; a later day retries
 
@@ -377,25 +405,51 @@ def plan_work(queue: dict, receipts: list[dict], today: str, *, remote_complete:
             continue
         in_class = source_class is None or class_of(work.source) == source_class
         action = _existing_action(c, own, today)
+        if action == EXHAUSTED:
+            continue                           # neither resumed nor startable; _naming reports it
         if action and in_class:
-            return Plan(action, work, reason=f"existing work {work.key}")
+            return _naming(Plan(action, work, reason=f"existing work {work.key}"), rows, receipts, today,
+                           source_class)
         if not action and not own and in_class:
             startable.append((c, work))        # another class's live work is that class's pass to recover
 
     orphans = {r["key"] for r in receipts if r["state"] not in TERMINAL_STATES} - open_keys - settled_keys
+    def named(plan: Plan) -> Plan:
+        return _naming(plan, rows, receipts, today, source_class)
+
     if blocked or orphans:
         detail = blocked + [f"outstanding work {k} matches no open candidate" for k in sorted(orphans)]
-        return Plan(DEFER, reason="; ".join(detail))
+        return named(Plan(DEFER, reason="; ".join(detail)))
     if not startable:
-        return Plan(NOOP, reason="no open candidate needs work")
+        return named(Plan(NOOP, reason="no open candidate needs work"))
     started = {r["key"] for r in receipts if r["started_on"] == today
                and (source_class is None or class_of(r.get("source")) == source_class)}
     if len(started) >= MAX_NEW_PER_DAY:
         which = f" {source_class}" if source_class else ""
-        return Plan(DEFER, reason=f"daily cap of {MAX_NEW_PER_DAY} new{which} work item(s) reached")
+        return named(Plan(DEFER, reason=f"daily cap of {MAX_NEW_PER_DAY} new{which} work item(s) reached"))
     startable.sort(key=lambda cw: (cw[1].branch not in prefer, cw[1].source == SOURCE_PAM,
                                   cw[1].phase != PHASE_AUTHOR))  # search demand before market leads
-    return Plan(START, startable[0][1], reason="new work")
+    return named(Plan(START, startable[0][1], reason="new work"))
+
+
+def _naming(plan: Plan, rows: list[dict], receipts: list[dict], today: str, source_class: str | None) -> Plan:
+    """`plan` carrying every exhausted work item of its class in `exhausted` and in its reason, so
+    every broker pass reports what needs a human."""
+    keys = set()
+    for c in rows:
+        status = c.get("status")
+        work = (_work(c, receipts) if isinstance(status, str) and status in STATUSES and status != STATUS_CLOSED
+                else None)
+        if work and (source_class is None or class_of(work.source) == source_class):
+            own = [r for r in receipts if r["key"] == work.key]
+            if _existing_action(c, own, today) == EXHAUSTED:
+                keys.add(work.key)
+    if not keys:
+        return plan
+    note = (f"exhausted after {MAX_WORK_DAYS} days without a PR, needs a human settle or retry: "
+            + ", ".join(sorted(keys)))
+    return dataclasses.replace(plan, exhausted=tuple(sorted(keys)),
+                               reason="; ".join(filter(None, [plan.reason, note])))
 
 
 # ═══════════════════════════ verify_resolution ═══════════════════════════

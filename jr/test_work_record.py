@@ -204,6 +204,44 @@ def test_attempt_stamps_the_receipt(tmp_path):
     assert plan(d, rw.CLASS_PAM, today=NEXT).action == rw.RECONCILE
 
 
+def test_retry_is_refused_unless_the_receipt_is_exhausted_and_then_rearms_one_window(tmp_path):
+    """SPEC "Research window": a human's second chance for a lead whose two days ran out."""
+    d, key = pam_dir(tmp_path)
+    day3 = (rw._date(DAY) + rw.dt.timedelta(days=rw.MAX_WORK_DAYS)).isoformat()
+    before = pair(d)
+    with pytest.raises(work_record.RecordError, match="not exhausted"):
+        work_record.retry(d, key, today=NEXT)
+    assert pair(d) == before
+    assert rw.launch_state(receipt(d, key), day3) == "exhausted"
+    r = work_record.retry(d, key, today=day3)
+    assert r["retry_on"] == day3 and receipt(d, key) == r
+    assert rw.launch_state(r, day3) == "free"
+    assert plan(d, rw.CLASS_PAM, today=day3).action == rw.RESUME
+
+
+def test_the_broker_never_resumes_an_exhausted_lead_and_names_it(tmp_path):
+    """The broker's own pass (intake + plan) on the third day: no RESUME of the stuck PAM lead, and
+    its key is in the reason every pass reports."""
+    d, key = pam_dir(tmp_path)
+    day3 = (rw._date(DAY) + rw.dt.timedelta(days=rw.MAX_WORK_DAYS)).isoformat()
+    assert plan(d, rw.CLASS_PAM, today=NEXT).action == rw.RESUME
+    out = plan(d, rw.CLASS_PAM, today=day3)
+    assert out.action != rw.RESUME and out.key != key
+    assert key in out.reason and "exhausted" in out.reason
+
+
+def test_cli_launch_state_reads_a_receipts_file_or_stdin(tmp_path, capsys, monkeypatch):
+    d, key = pam_dir(tmp_path)
+    day3 = (rw._date(DAY) + rw.dt.timedelta(days=rw.MAX_WORK_DAYS)).isoformat()
+    path = d / RECEIPTS
+    assert work_record.main(["launch-state", key, "--date", NEXT, "--receipts", str(path)]) == 0
+    assert capsys.readouterr().out.strip() == "free"
+    monkeypatch.setattr("sys.stdin", __import__("io").StringIO(path.read_text()))
+    assert work_record.main(["launch-state", key, "--date", day3, "--receipts", "-"]) == 0
+    assert capsys.readouterr().out.strip() == "exhausted"
+    assert work_record.main(["launch-state", "pam-nope", "--date", NEXT, "--receipts", str(path)]) == 1
+
+
 # --- settle: abandoned / rejected ---------------------------------------------------------------------
 
 def test_settle_abandons_a_search_receipt_and_closes_its_queue_row_so_the_next_item_can_start(tmp_path):
