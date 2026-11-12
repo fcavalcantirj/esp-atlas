@@ -485,7 +485,7 @@
    "branch": "jr/research-pam-63e3fabd029c0c3489322572",
    "term": "ESP32-CAM (AI-Thinker)",
    "phase": "research",
-   "state": "reserved",
+   "state": "abandoned",
    "started_on": "2026-11-11",
    "source": "pam_feed",
    "linked_work": [],
@@ -681,6 +681,15 @@
      "prs": []
     },
     "reserved_by": "jr/demand_run.py"
+   },
+   "last_attempt_on": "2026-11-12",
+   "resolution": {
+    "status": "abandoned",
+    "reason": "real board missing from the catalog, but no live primary source: docs.ai-thinker.com/en/esp32-cam serves only the site's JS shell (same bytes as a non-existent path) and ai-thinker.com does not answer, checked 2026-11-12",
+    "closed_on": "2026-11-12",
+    "evidence": {
+     "settled_by": "jr/work_record.py"
+    }
    }
   }
  ]
