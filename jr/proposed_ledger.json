@@ -11827,6 +11827,14 @@
       "status": "expired",
       "timestamp": "2026-09-11T20:01:00.775055+00:00"
     },
+    "sondedeck": {
+      "id": "sondedeck",
+      "pr_ref": "#1668",
+      "repo": "aarondrew313/sondedeck",
+      "repo_id": 1318654722,
+      "status": "proposed",
+      "timestamp": "2026-11-12T09:00:55.366986+00:00"
+    },
     "sonicthehedgehog-m5stickc-plus2": {
       "expired_at": "2026-10-11T21:00:11.605277+00:00",
       "expires": "2026-10-11T20:01:00.775055+00:00",
@@ -13451,6 +13459,7 @@
     "8432r983/yamb_game_cardputer": "yamb-game-cardputer",
     "868meshbot/saitama": "saitama",
     "a-uta/ai_stackchan_minimal": "ai-stackchan-minimal",
+    "aarondrew313/sondedeck": "sondedeck",
     "aat440hz/8encoderunit-brainwavegenerator-bluetooth-m5stickcplus2": "8encoderunit-brainwavegenerator-bluetoot",
     "aat440hz/8encoderunit-brainwavegenerator-m5stickcplus2": "8encoderunit-brainwavegenerator-m5stickc",
     "aat440hz/bluetoothmidicontrollermusicconductor-m5stickcplus2": "bluetoothmidicontrollermusicconductor-m5",
