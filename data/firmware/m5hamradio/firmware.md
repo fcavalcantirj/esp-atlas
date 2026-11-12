@@ -2,6 +2,7 @@
 id: m5hamradio
 type: firmware
 name: M5HamRadio Core2
+seo_title: "M5HamRadio Core2 \u2014 Ham Radio firmware for M5Stack devices"
 url: https://github.com/armel/M5HamRadio
 category: multi
 maintainer: armel

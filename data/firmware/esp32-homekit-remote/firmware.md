@@ -2,6 +2,7 @@
 id: esp32-homekit-remote
 type: firmware
 name: ESP32-HomeKit-Remote
+seo_title: "ESP32-HomeKit-Remote \u2014 HomeKit AC firmware for M5Atom Lite"
 url: https://github.com/megabitsenmzq/ESP32-HomeKit-Remote
 category: multi
 maintainer: megabitsenmzq
