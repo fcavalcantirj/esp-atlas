@@ -1109,7 +1109,7 @@
     },
     "um-feathers3": {
       "board": "um-feathers3",
-      "expires": "2026-11-12T05:01:00.482196+00:00",
+      "expires": "2026-11-19T06:00:55.520793+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -1117,11 +1117,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-05T05:01:00.482196+00:00"
+      "timestamp": "2026-11-12T06:00:55.520793+00:00"
     },
     "um-nanos3": {
       "board": "um-nanos3",
-      "expires": "2026-11-12T05:01:00.482196+00:00",
+      "expires": "2026-11-19T06:00:55.520793+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -1129,11 +1129,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-05T05:01:00.482196+00:00"
+      "timestamp": "2026-11-12T06:00:55.520793+00:00"
     },
     "um-pros3": {
       "board": "um-pros3",
-      "expires": "2026-11-12T05:01:00.482196+00:00",
+      "expires": "2026-11-19T06:00:55.520793+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -1141,7 +1141,7 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-05T05:01:00.482196+00:00"
+      "timestamp": "2026-11-12T06:00:55.520793+00:00"
     },
     "um-tinys3": {
       "board": "um-tinys3",
