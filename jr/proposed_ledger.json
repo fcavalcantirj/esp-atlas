@@ -4064,7 +4064,7 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "grajek": {
-      "expired_at": "2026-11-11T20:00:54.844878+00:00",
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T20:00:11.871872+00:00",
       "id": "grajek",
       "pr_ref": null,
@@ -4739,7 +4739,7 @@
       "repo": "haris16-code/kryonos",
       "repo_id": 1271567896,
       "status": "proposed",
-      "timestamp": "2026-11-11T20:00:54.844878+00:00"
+      "timestamp": "2026-11-12T02:00:55.136275+00:00"
     },
     "kvxputer": {
       "expired_at": "2026-11-05T19:01:17.341039+00:00",
@@ -4829,21 +4829,23 @@
       "timestamp": "2026-11-04T00:00:59.597130+00:00"
     },
     "launcher-01beaea52d74eac7ab36ac2861da70cc": {
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T20:00:59.893271+00:00",
       "id": "launcher-01beaea52d74eac7ab36ac2861da70cc",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:01beaea52d74eac7ab36ac2861da70cc",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-02acdf9cd5755ba69bf1c99080234aa6": {
+      "expired_at": "2026-11-11T23:00:55.141588+00:00",
       "expires": "2026-11-11T22:00:59.737834+00:00",
       "id": "launcher-02acdf9cd5755ba69bf1c99080234aa6",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'balac user user:m5stack'",
       "repo": "launcher:02acdf9cd5755ba69bf1c99080234aa6",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-03e1b4703fa5641ba0e8c804d29a7f66": {
@@ -4904,34 +4906,37 @@
       "timestamp": "2026-11-04T00:00:59.597130+00:00"
     },
     "launcher-096107bca354e8c6ac3f7400fc2f27ed": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-096107bca354e8c6ac3f7400fc2f27ed",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'audio spectrum analyzer user:cryptohasher'",
       "repo": "launcher:096107bca354e8c6ac3f7400fc2f27ed",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-0bcfa83e71bb823e69ec698fd127d3f6": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-0bcfa83e71bb823e69ec698fd127d3f6",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'badmonster user:madmind'",
       "repo": "launcher:0bcfa83e71bb823e69ec698fd127d3f6",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-0cc23347ba289784665068ea291b37ce": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-0cc23347ba289784665068ea291b37ce",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:0cc23347ba289784665068ea291b37ce",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-0db638a89b11e7027f6f04313943e92f": {
-      "expired_at": "2026-11-11T20:00:54.844878+00:00",
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T19:00:59.711024+00:00",
       "id": "launcher-0db638a89b11e7027f6f04313943e92f",
       "pr_ref": null,
@@ -4960,21 +4965,23 @@
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-0facba8295ac5547acc9dbc8b326f447": {
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T20:00:59.893271+00:00",
       "id": "launcher-0facba8295ac5547acc9dbc8b326f447",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'atoms3r cam m12 user user:m5stack'",
       "repo": "launcher:0facba8295ac5547acc9dbc8b326f447",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-0ff9a71bfdfdcc1f85b791098336c6b7": {
+      "expired_at": "2026-11-12T01:00:57.508990+00:00",
       "expires": "2026-11-12T00:00:59.720006+00:00",
       "id": "launcher-0ff9a71bfdfdcc1f85b791098336c6b7",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bokireader user:zenhall'",
       "repo": "launcher:0ff9a71bfdfdcc1f85b791098336c6b7",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-1037f94a2cb5a240fa480bf26555b7bb": {
@@ -5007,12 +5014,13 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-166d16d006eeb0b251cf18b92d258871": {
+      "expired_at": "2026-11-11T23:00:55.141588+00:00",
       "expires": "2026-11-11T22:00:59.737834+00:00",
       "id": "launcher-166d16d006eeb0b251cf18b92d258871",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:166d16d006eeb0b251cf18b92d258871",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-16d2c9ac8c0a7982e60fa99b98c1d368": {
@@ -5585,34 +5593,37 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-1d67dee222a62c2550006206728b476c": {
+      "expired_at": "2026-11-11T23:00:55.141588+00:00",
       "expires": "2026-11-11T22:00:59.737834+00:00",
       "id": "launcher-1d67dee222a62c2550006206728b476c",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1d67dee222a62c2550006206728b476c",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-1f1b51d7e43d46cffd1e76b545906420": {
+      "expired_at": "2026-11-12T01:00:57.508990+00:00",
       "expires": "2026-11-12T00:00:59.720006+00:00",
       "id": "launcher-1f1b51d7e43d46cffd1e76b545906420",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bonnethead adv user:yarjun'",
       "repo": "launcher:1f1b51d7e43d46cffd1e76b545906420",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-1f4b658f3462d2b2b3e6068bbf3e4a7d": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-1f4b658f3462d2b2b3e6068bbf3e4a7d",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1f4b658f3462d2b2b3e6068bbf3e4a7d",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-200c164bf2eb0580d08e36bc257689b3": {
-      "expired_at": "2026-11-11T20:00:54.844878+00:00",
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T19:00:59.711024+00:00",
       "id": "launcher-200c164bf2eb0580d08e36bc257689b3",
       "pr_ref": null,
@@ -5714,7 +5725,7 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-2548946a6457aaec0fdb7586e1eec770": {
-      "expired_at": "2026-11-11T20:00:54.844878+00:00",
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T19:00:59.711024+00:00",
       "id": "launcher-2548946a6457aaec0fdb7586e1eec770",
       "pr_ref": null,
@@ -5724,12 +5735,13 @@
       "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
     "launcher-2668136b33fc4e91f6db9e8e06ea7165": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-2668136b33fc4e91f6db9e8e06ea7165",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'atoms3rxiaoling voice assistant user:m5stack'",
       "repo": "launcher:2668136b33fc4e91f6db9e8e06ea7165",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-26a11df753185ce8f4ceb5eaf78984ec": {
@@ -5760,12 +5772,13 @@
       "timestamp": "2026-11-05T03:01:00.115486+00:00"
     },
     "launcher-2915edede061a51733e704e5ba67a121": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-2915edede061a51733e704e5ba67a121",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:2915edede061a51733e704e5ba67a121",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-2a79e3af332931b6e2ec802755c6726b": {
@@ -5788,21 +5801,23 @@
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-30dfdf3153ecccba3069ced825074fa4": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-30dfdf3153ecccba3069ced825074fa4",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:30dfdf3153ecccba3069ced825074fa4",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-3160ff37678051b48081e9ac0a135e99": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-3160ff37678051b48081e9ac0a135e99",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'aura msx user:altaris'",
       "repo": "launcher:3160ff37678051b48081e9ac0a135e99",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-325fb76f75421950848dfa2abff6b21c": {
@@ -5825,7 +5840,7 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-37d482c7364519ecac63b03addf68900": {
-      "expired_at": "2026-11-11T20:00:54.844878+00:00",
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T19:00:59.711024+00:00",
       "id": "launcher-37d482c7364519ecac63b03addf68900",
       "pr_ref": null,
@@ -5854,12 +5869,13 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-41c846bb489ed1a3829b82a1714f6dd4": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-41c846bb489ed1a3829b82a1714f6dd4",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bitcoin ticker user:kwindapp'",
       "repo": "launcher:41c846bb489ed1a3829b82a1714f6dd4",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-42f94b0a097a0f2f719602007442674e": {
@@ -5912,21 +5928,23 @@
       "timestamp": "2026-11-04T01:00:59.777703+00:00"
     },
     "launcher-48ff88bb1f77bdb1ea89d6c3a35505b6": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-48ff88bb1f77bdb1ea89d6c3a35505b6",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bruce user:finch'",
       "repo": "launcher:48ff88bb1f77bdb1ea89d6c3a35505b6",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-49508dd8cab1c07e077d0f57dec9a54f": {
+      "expired_at": "2026-11-11T23:00:55.141588+00:00",
       "expires": "2026-11-11T22:00:59.737834+00:00",
       "id": "launcher-49508dd8cab1c07e077d0f57dec9a54f",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:49508dd8cab1c07e077d0f57dec9a54f",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-4cb1cd8f952f004131cb5b2163dd6246": {
@@ -5968,12 +5986,13 @@
       "timestamp": "2026-11-05T03:01:00.115486+00:00"
     },
     "launcher-519497f4510432bcbbfdb25565bbaae2": {
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T20:00:59.893271+00:00",
       "id": "launcher-519497f4510432bcbbfdb25565bbaae2",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:519497f4510432bcbbfdb25565bbaae2",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-52de7443325c3dd101e5e605bd5df9c9": {
@@ -6016,25 +6035,27 @@
       "timestamp": "2026-11-04T01:00:59.777703+00:00"
     },
     "launcher-5f406244bc0d8f04612565b9acf13516": {
+      "expired_at": "2026-11-11T23:00:55.141588+00:00",
       "expires": "2026-11-11T22:00:59.737834+00:00",
       "id": "launcher-5f406244bc0d8f04612565b9acf13516",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:5f406244bc0d8f04612565b9acf13516",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-5f647d94aa0375b54dea385ed4c91e4f": {
+      "expired_at": "2026-11-11T23:00:55.141588+00:00",
       "expires": "2026-11-11T22:00:59.737834+00:00",
       "id": "launcher-5f647d94aa0375b54dea385ed4c91e4f",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'backrooms walker user:andjiang'",
       "repo": "launcher:5f647d94aa0375b54dea385ed4c91e4f",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-5fc0406f725cf94d240e7c3ade99078a": {
-      "expired_at": "2026-11-11T20:00:54.844878+00:00",
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T19:00:59.711024+00:00",
       "id": "launcher-5fc0406f725cf94d240e7c3ade99078a",
       "pr_ref": null,
@@ -6044,12 +6065,13 @@
       "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
     "launcher-6036b1aed48dabcd924fd1634371ab45": {
+      "expired_at": "2026-11-11T23:00:55.141588+00:00",
       "expires": "2026-11-11T22:00:59.737834+00:00",
       "id": "launcher-6036b1aed48dabcd924fd1634371ab45",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:6036b1aed48dabcd924fd1634371ab45",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-6094706fa0444730779a65e0fb26e60f": {
@@ -6092,12 +6114,13 @@
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-67154bae11fb638647ce63fadebd0a8b": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-67154bae11fb638647ce63fadebd0a8b",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'blackjack adv error 500 user:vc1235'",
       "repo": "launcher:67154bae11fb638647ce63fadebd0a8b",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-677b48b6a379c902273029595993d42b": {
@@ -6110,21 +6133,23 @@
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-68a20ce2541db6e5a2cb9ae48b561c57": {
+      "expired_at": "2026-11-11T23:00:55.141588+00:00",
       "expires": "2026-11-11T22:00:59.737834+00:00",
       "id": "launcher-68a20ce2541db6e5a2cb9ae48b561c57",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'badgeos user:zhuzhe'",
       "repo": "launcher:68a20ce2541db6e5a2cb9ae48b561c57",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-692cae318ad7e2b6422c0f072081047b": {
+      "expired_at": "2026-11-12T01:00:57.508990+00:00",
       "expires": "2026-11-12T00:00:59.720006+00:00",
       "id": "launcher-692cae318ad7e2b6422c0f072081047b",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bridges user:crackulator'",
       "repo": "launcher:692cae318ad7e2b6422c0f072081047b",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-6befae08a0d4700385c1d322c0c6ad64": {
@@ -6148,30 +6173,33 @@
       "timestamp": "2026-11-04T01:00:59.777703+00:00"
     },
     "launcher-6d73ed9db08cce88481a21b024840375": {
+      "expired_at": "2026-11-12T01:00:57.508990+00:00",
       "expires": "2026-11-12T00:00:59.720006+00:00",
       "id": "launcher-6d73ed9db08cce88481a21b024840375",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bluetooth speaker user:deepcoder'",
       "repo": "launcher:6d73ed9db08cce88481a21b024840375",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-718699861aa2ce0039b2a64eb508c47f": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-718699861aa2ce0039b2a64eb508c47f",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:718699861aa2ce0039b2a64eb508c47f",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-75fc17a62184ee86e28e7725844d8dc8": {
+      "expired_at": "2026-11-12T01:00:57.508990+00:00",
       "expires": "2026-11-12T00:00:59.720006+00:00",
       "id": "launcher-75fc17a62184ee86e28e7725844d8dc8",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'booklet film reading crin user:hookby'",
       "repo": "launcher:75fc17a62184ee86e28e7725844d8dc8",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-78b1ffce115a35308b558323d323778b": {
@@ -6194,12 +6222,13 @@
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-79dd6703b4f58e9b444f20f2adf52d4d": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-79dd6703b4f58e9b444f20f2adf52d4d",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:79dd6703b4f58e9b444f20f2adf52d4d",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-7d46a337dcdf6795806bb5e406bd8ab6": {
@@ -6222,12 +6251,13 @@
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-7fd26487cff4749001b90ed3b29ff2cc": {
+      "expired_at": "2026-11-11T23:00:55.141588+00:00",
       "expires": "2026-11-11T22:00:59.737834+00:00",
       "id": "launcher-7fd26487cff4749001b90ed3b29ff2cc",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:7fd26487cff4749001b90ed3b29ff2cc",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-8273f2a66f4de0b6b72e824a46f3ca0d": {
@@ -6240,12 +6270,13 @@
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-82cf10ad6cd62aa24966fdd244292450": {
+      "expired_at": "2026-11-11T23:00:55.141588+00:00",
       "expires": "2026-11-11T22:00:59.737834+00:00",
       "id": "launcher-82cf10ad6cd62aa24966fdd244292450",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'ballmaze user:lovyan03'",
       "repo": "launcher:82cf10ad6cd62aa24966fdd244292450",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-840c997c1d7296bd95d4f0c80ba2d614": {
@@ -6268,12 +6299,13 @@
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-87c4a536a5e3c3b1326fc5ca03dc6afb": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-87c4a536a5e3c3b1326fc5ca03dc6afb",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:87c4a536a5e3c3b1326fc5ca03dc6afb",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-8b81b628277f2f924126ed60adf717f1": {
@@ -6286,16 +6318,17 @@
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-8c56ed2a4282991fc83aaae55de9c502": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-8c56ed2a4282991fc83aaae55de9c502",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:8c56ed2a4282991fc83aaae55de9c502",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-8ce57fb3a0b25847993375b6522ed164": {
-      "expired_at": "2026-11-11T20:00:54.844878+00:00",
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T19:00:59.711024+00:00",
       "id": "launcher-8ce57fb3a0b25847993375b6522ed164",
       "pr_ref": null,
@@ -6305,21 +6338,23 @@
       "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
     "launcher-9118417a854217d88f373f61496b3267": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-9118417a854217d88f373f61496b3267",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'blink user:bonnie404'",
       "repo": "launcher:9118417a854217d88f373f61496b3267",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-912ad7003044186a4e34e23bb6b82c10": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-912ad7003044186a4e34e23bb6b82c10",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bareiron user:s0meyosh1no'",
       "repo": "launcher:912ad7003044186a4e34e23bb6b82c10",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-9470218aef2a345c4fc24c3becbe1deb": {
@@ -6333,30 +6368,33 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-9492946b033c1078ef5d851fca226d64": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-9492946b033c1078ef5d851fca226d64",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:9492946b033c1078ef5d851fca226d64",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-96b58272db31a8979f84922809ca9cf9": {
+      "expired_at": "2026-11-12T01:00:57.508990+00:00",
       "expires": "2026-11-12T00:00:59.720006+00:00",
       "id": "launcher-96b58272db31a8979f84922809ca9cf9",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:96b58272db31a8979f84922809ca9cf9",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-9a02fe0eee253b43434cc2e4e4f76094": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-9a02fe0eee253b43434cc2e4e4f76094",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:9a02fe0eee253b43434cc2e4e4f76094",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-9af63f465978e26577886f92b749affd": {
@@ -6420,25 +6458,27 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-ad32239e5b8177b358b1488168e02b58": {
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T20:00:59.893271+00:00",
       "id": "launcher-ad32239e5b8177b358b1488168e02b58",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'lite factory test user:m5stack'",
       "repo": "launcher:ad32239e5b8177b358b1488168e02b58",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-ae49de74b08f0515cf14d0c56501611d": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-ae49de74b08f0515cf14d0c56501611d",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'block blast user:muart'",
       "repo": "launcher:ae49de74b08f0515cf14d0c56501611d",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-afe6f6a0dcc3868491160a92a42a0725": {
-      "expired_at": "2026-11-11T20:00:54.844878+00:00",
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T19:00:59.711024+00:00",
       "id": "launcher-afe6f6a0dcc3868491160a92a42a0725",
       "pr_ref": null,
@@ -6448,21 +6488,23 @@
       "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
     "launcher-b27129ff66ec74facb416cdd3e601d81": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-b27129ff66ec74facb416cdd3e601d81",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:b27129ff66ec74facb416cdd3e601d81",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-b285f3915e27de2728764e3d8a272bce": {
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T20:00:59.893271+00:00",
       "id": "launcher-b285f3915e27de2728764e3d8a272bce",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:b285f3915e27de2728764e3d8a272bce",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-b52861e0a60548f81d846255312d68fe": {
@@ -6486,25 +6528,27 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-b9645cf75e61a61cdaa2874ff0405a6a": {
+      "expired_at": "2026-11-12T01:00:57.508990+00:00",
       "expires": "2026-11-12T00:00:59.720006+00:00",
       "id": "launcher-b9645cf75e61a61cdaa2874ff0405a6a",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:b9645cf75e61a61cdaa2874ff0405a6a",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-ba47d3cb377a65ca92fced7cb42636b0": {
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T20:00:59.893271+00:00",
       "id": "launcher-ba47d3cb377a65ca92fced7cb42636b0",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'atomnyan argh miss ver user:goooood-san'",
       "repo": "launcher:ba47d3cb377a65ca92fced7cb42636b0",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-bbadbfe92da9f9ad7f91c4ef54dd8fcf": {
-      "expired_at": "2026-11-11T20:00:54.844878+00:00",
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T19:00:59.711024+00:00",
       "id": "launcher-bbadbfe92da9f9ad7f91c4ef54dd8fcf",
       "pr_ref": null,
@@ -6553,12 +6597,13 @@
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-c496984bd4f905e2fe45d2f3a7fe1cae": {
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T20:00:59.893271+00:00",
       "id": "launcher-c496984bd4f905e2fe45d2f3a7fe1cae",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'matrix factory test user:m5stack'",
       "repo": "launcher:c496984bd4f905e2fe45d2f3a7fe1cae",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-c4dce0a2fbb839e71a7e1ce44108d41a": {
@@ -6590,12 +6635,13 @@
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-c6f87a687e831a51d604e3e4aae316cf": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-c6f87a687e831a51d604e3e4aae316cf",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'pageturner grove user:linclip'",
       "repo": "launcher:c6f87a687e831a51d604e3e4aae316cf",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-ca75b9ef7f63fd43a720fa96e3c82680": {
@@ -6608,25 +6654,27 @@
       "timestamp": "2026-11-05T03:01:00.115486+00:00"
     },
     "launcher-cd52ab8d7b985fb76c73abe3ec32ed43": {
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T20:00:59.893271+00:00",
       "id": "launcher-cd52ab8d7b985fb76c73abe3ec32ed43",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'atoms3r m12volcano engine voice user:m5stack'",
       "repo": "launcher:cd52ab8d7b985fb76c73abe3ec32ed43",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-cfe1b9c8e0b8eef5c469e7bfc9ab6468": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-cfe1b9c8e0b8eef5c469e7bfc9ab6468",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bitcoin price ticker user:kwindapp'",
       "repo": "launcher:cfe1b9c8e0b8eef5c469e7bfc9ab6468",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-d3cc2e38753d28c587f190d0343cdbc3": {
-      "expired_at": "2026-11-11T20:00:54.844878+00:00",
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T19:00:59.711024+00:00",
       "id": "launcher-d3cc2e38753d28c587f190d0343cdbc3",
       "pr_ref": null,
@@ -6645,12 +6693,13 @@
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-d4e8c7866e5c475d12c7d3888f5b2fe4": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-d4e8c7866e5c475d12c7d3888f5b2fe4",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:d4e8c7866e5c475d12c7d3888f5b2fe4",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-d4f56ec2f3f5ec691cfae54052bb3b53": {
@@ -6674,12 +6723,13 @@
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-d6c68178418e1a70a197abe3efb4fe8c": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-d6c68178418e1a70a197abe3efb4fe8c",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:d6c68178418e1a70a197abe3efb4fe8c",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-d73f7e34785d6a6a3d788ca8815e06ac": {
@@ -6731,21 +6781,23 @@
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-e3db56097796a4a3e6e5a61aea154edb": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-e3db56097796a4a3e6e5a61aea154edb",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'blank keyboard user:theoddcell'",
       "repo": "launcher:e3db56097796a4a3e6e5a61aea154edb",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-e46ca36b8c19e52749b41acbf0a9044d": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-e46ca36b8c19e52749b41acbf0a9044d",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:e46ca36b8c19e52749b41acbf0a9044d",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-e7c7cb4167ad20780376f0452d035b0f": {
@@ -6807,12 +6859,13 @@
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-f12da35838482eda5f02c5eae01f3a9e": {
+      "expired_at": "2026-11-12T01:00:57.508990+00:00",
       "expires": "2026-11-12T00:00:59.720006+00:00",
       "id": "launcher-f12da35838482eda5f02c5eae01f3a9e",
       "pr_ref": null,
       "reason": "no_source_repo: 3 matches for 'breakout user:boochow'",
       "repo": "launcher:f12da35838482eda5f02c5eae01f3a9e",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-f1ca395414e9c8f508cdf544d1351b4d": {
@@ -6825,12 +6878,13 @@
       "timestamp": "2026-11-05T03:01:00.115486+00:00"
     },
     "launcher-f1ded42005c7fe2bc769783034446f5b": {
+      "expired_at": "2026-11-11T22:00:55.257777+00:00",
       "expires": "2026-11-11T21:00:59.635399+00:00",
       "id": "launcher-f1ded42005c7fe2bc769783034446f5b",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:f1ded42005c7fe2bc769783034446f5b",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-f63f1ce293103e722882eb21b0e5fc4f": {
@@ -6843,7 +6897,7 @@
       "timestamp": "2026-11-05T03:01:00.115486+00:00"
     },
     "launcher-f94f2406b46c7159bec94b0fead00ac5": {
-      "expired_at": "2026-11-11T20:00:54.844878+00:00",
+      "expired_at": "2026-11-11T21:00:55.411983+00:00",
       "expires": "2026-11-11T19:00:59.711024+00:00",
       "id": "launcher-f94f2406b46c7159bec94b0fead00ac5",
       "pr_ref": null,
@@ -6862,12 +6916,13 @@
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-fca74c9f24f8850b47da3931fe1ed2c1": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-fca74c9f24f8850b47da3931fe1ed2c1",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:fca74c9f24f8850b47da3931fe1ed2c1",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-salmi-fork": {
@@ -6927,7 +6982,7 @@
       "repo": "maxmoneycash/lilyshark",
       "repo_id": 1332691105,
       "status": "proposed",
-      "timestamp": "2026-11-11T20:00:54.844878+00:00"
+      "timestamp": "2026-11-12T02:00:55.136275+00:00"
     },
     "liner": {
       "expired_at": "2026-11-08T21:00:55.166276+00:00",
