@@ -925,9 +925,9 @@
       "reason": "doc-unreachable",
       "timestamp": "2026-11-12T00:00:55.202334+00:00"
     },
-    "m5stick-c": {
-      "board": "m5stick-c",
-      "expires": "2026-11-12T00:00:59.720006+00:00",
+    "m5stack-fire": {
+      "board": "m5stack-fire",
+      "expires": "2026-11-19T01:00:57.508990+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -946,42 +946,32 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-05T00:00:59.720006+00:00"
+      "timestamp": "2026-11-12T01:00:57.508990+00:00"
     },
-    "m5stick-cplus": {
-      "board": "m5stick-cplus",
-      "expires": "2026-11-12T00:00:59.720006+00:00",
+    "m5stamp-c3": {
+      "board": "m5stamp-c3",
+      "expires": "2026-11-19T01:00:57.508990+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
-          "vendor": "doc_unreachable"
-        },
-        "getting_started": {
-          "vendor": "doc_unreachable"
-        },
-        "images": {
-          "vendor": "doc_unreachable"
-        },
-        "usb_serial": {
-          "boards_txt": "field_absent",
-          "manifest": "field_absent",
-          "vendor": "doc_unreachable"
+          "vendor": "no_pattern_match"
         }
       },
-      "reason": "doc-unreachable",
-      "timestamp": "2026-11-05T00:00:59.720006+00:00"
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-12T01:00:57.508990+00:00"
     },
-    "m5stick-cplus2": {
-      "board": "m5stick-cplus2",
-      "expires": "2026-11-12T00:00:59.720006+00:00",
+    "m5stamp-s3": {
+      "board": "m5stamp-s3",
+      "expires": "2026-11-19T01:00:57.508990+00:00",
       "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
           "vendor": "field_absent"
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-05T00:00:59.720006+00:00"
+      "timestamp": "2026-11-12T01:00:57.508990+00:00"
     },
     "m5stick-s3": {
       "board": "m5stick-s3",
