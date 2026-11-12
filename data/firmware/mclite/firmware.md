@@ -2,6 +2,7 @@
 id: mclite
 type: firmware
 name: MCLite
+seo_title: "MCLite \u2014 MeshCore LoRa firmware for LilyGo T-Deck Plus"
 url: https://github.com/laserir/MCLite
 category: mesh
 maintainer: laserir

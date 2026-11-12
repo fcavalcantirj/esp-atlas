@@ -1,0 +1,57 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-11-12",
+ "notes": [
+  "latest release None has no binaries; read v0.1.0-alpha.7 instead"
+ ],
+ "ref": "main",
+ "repo": "maxmoneycash/lilyshark",
+ "resolved": {
+  "boards": [
+   "lilygo-t-deck"
+  ],
+  "socs": [],
+  "unresolved": [
+   "tdeck.factory"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "lilyshark-tdeck.bin",
+    "release": "v0.1.0-alpha.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tdeck",
+   "url": "https://github.com/maxmoneycash/lilyshark/releases/download/v0.1.0-alpha.7/lilyshark-tdeck.bin"
+  },
+  {
+   "extra": {
+    "asset": "lilyshark-tdeck.factory.bin",
+    "release": "v0.1.0-alpha.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tdeck.factory",
+   "url": "https://github.com/maxmoneycash/lilyshark/releases/download/v0.1.0-alpha.7/lilyshark-tdeck.factory.bin"
+  },
+  {
+   "extra": {
+    "env": "t-deck",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 26,
+   "rank": 2,
+   "soc": null,
+   "token": "T-Deck",
+   "url": "https://github.com/maxmoneycash/lilyshark/blob/main/platformio.ini#L26"
+  }
+ ]
+}

@@ -2,6 +2,7 @@
 id: esphome
 type: firmware
 name: ESPHome
+seo_title: "ESPHome \u2014 Home Assistant firmware for ESP32, web flasher"
 url: https://github.com/esphome/esphome
 category: home
 maintainer: esphome
