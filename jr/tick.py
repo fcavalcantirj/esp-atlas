@@ -21,7 +21,10 @@ One tick, in order (PLAN §3.2):
     tick PR changes, or a tick PR closed unmerged < 30 d ago changed, read from GitHub's own file
     lists — no stage stages it again, record or recipe; an index that may miss a hold (a list at its
     limit, a PR's files not shown whole) aborts like an unreadable one. Last: branch protection on
-    `main` requires schema + tests + jr-tests and auto-merge is allowed. Any of these red → the tick ABORTS before touching anything; every
+    `main` requires schema + tests + jr-tests and auto-merge is allowed. Before the PR triage, the CI
+    watch (jr/ci_watch.py, SPEC-jr-self-heal.md) reads the required checks of main and the newest tick
+    PRs: a cancelled check is re-run once, a failure shared by two tick PRs (or on main) becomes an
+    incident in the runner-local store for the operator's heal launcher; it never aborts the tick. Any of these red → the tick ABORTS before touching anything; every
     query failure here fails CLOSED. Protection missing is the one that matters most: without it
     "PR + auto-merge" is direct-to-main under another name.
  2. Worktree — a fresh `git worktree` detached at `origin/main`, outside the repo tree. Every
@@ -83,6 +86,7 @@ import report   # noqa: E402
 import allocator  # noqa: E402
 import demand_signal  # noqa: E402
 import review_routing  # noqa: E402
+import ci_watch  # noqa: E402
 import review_memory  # noqa: E402
 import dry_run_tree  # noqa: E402
 from budget import Budget, BudgetExceeded  # noqa: E402
@@ -337,6 +341,22 @@ def _triage_tick_prs(gh, prs: list, now: datetime, hours: float) -> tuple[list, 
     return superseded, stuck
 
 
+def default_ci_watcher(gh, slug: str, now: datetime, dry_run: bool) -> dict:
+    """The hourly CI watch: incidents go to the runner-local store (JR_HEAL_STATE overrides)."""
+    state = Path(os.environ["JR_HEAL_STATE"]) if os.environ.get("JR_HEAL_STATE") else ci_watch.DEFAULT_STATE
+    return ci_watch.watch(gh, slug, ci_watch.Store(state), now.isoformat(), dry_run=dry_run)
+
+
+def _note_ci_watch(r: report.TickReport) -> None:
+    w = r.ci_watch
+    if w.get("status") != "ok":
+        r.warnings.append(f"ci_watch unavailable: {w.get('why')}")
+    elif w.get("verdict") == "incident":
+        r.warnings.append(f"CI incident {w.get('incident') or w.get('would')}: a required check is red outside any PR")
+    elif w.get("verdict") == "rerun":
+        r.warnings.append(f"CI rerun {w.get('rerun') or w.get('would')}")
+
+
 def _close_superseded(gh, pr: dict) -> None:
     n = pr.get("number")
     p = gh("pr", "close", str(n), "--comment", SUPERSEDED_COMMENT, "--delete-branch")
@@ -535,7 +555,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              repo_slug: str | None = None, min_rate_limit: int = MIN_RATE_LIMIT,
              stale_pr_hours: float = STALE_PR_HOURS, telegram: bool = True,
              auto_merge: bool = True, lock_path: Path | None = None,
-             review_cap: int = review_routing.MAX_OPEN_REVIEW_PRS) -> report.TickReport:
+             review_cap: int = review_routing.MAX_OPEN_REVIEW_PRS,
+             ci_watcher: Callable | None = None) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
     env = os.environ if env is None else env
     budget = budget or Budget()
@@ -558,6 +579,10 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         if open_prs is None:
             raise TickAbort("gh pr list failed (cannot see open Jr PRs)")
         r.review_prs = _open_review_prs(open_prs, now)
+        slug = repo_slug or _repo_slug(git)
+        if ci_watcher is not None:      # SPEC-jr-self-heal.md: before anything that may abort; never aborts
+            r.ci_watch = ci_watcher(gh_c, slug, now, dry_run) or {}
+            _note_ci_watch(r)
         # Only the Jr bot's own same-repo tick PR is triaged, closed or hydrated: anyone can name a
         # fork's branch jr/tick-*, and pending_prs.eligible is the one rule for all of them (R2j).
         tick_prs = [pr for pr in open_prs if pending_prs.eligible(pr)]
@@ -570,7 +595,6 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                 r.warnings.append(f"closed superseded bookkeeping-only tick PR #{pr.get('number')}")
         if stuck:
             raise TickAbort(_stuck_message(stuck[0], stale_pr_hours))
-        slug = repo_slug or _repo_slug(git)
         pending = pending_prs.load(gh_c, open_prs, now, slug=slug, open_limit=OPEN_PR_LIMIT)
         if pending is None:
             raise TickAbort("gh pr list --state closed failed (cannot see which firmware a Jr PR holds)")
@@ -780,6 +804,12 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             notifier(line)
         except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
             pass
+    if telegram and not dry_run and notifier is not None:
+        for nudge in (r.ci_watch or {}).get("nudges") or []:     # SPEC-jr-self-heal.md: one per state change
+            try:
+                notifier(nudge)
+            except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
+                pass
     return r
 
 
@@ -828,7 +858,8 @@ def main(argv=None) -> int:
     r = run_tick(dry_run=args.dry_run, telegram=not args.no_telegram,
                  budget=Budget(max_calls=args.max_calls, max_seconds=args.max_seconds),
                  stages=stages_for(args.track, args.budget, only), auto_merge=not args.no_auto_merge,
-                 lock_path=Path(os.environ["JR_TICK_LOCK"]) if os.environ.get("JR_TICK_LOCK") else None)
+                 lock_path=Path(os.environ["JR_TICK_LOCK"]) if os.environ.get("JR_TICK_LOCK") else None,
+                 ci_watcher=default_ci_watcher)
     return 1 if r.aborted else 0
 
 

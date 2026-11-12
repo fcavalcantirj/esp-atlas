@@ -1,0 +1,94 @@
+2026-11-12T11:34:40.0073556Z ##[group]Runner Image Provisioner
+2026-11-12T11:34:40.0074434Z Hosted Compute Agent
+2026-11-12T11:34:40.0075218Z Version: 20261028.624
+2026-11-12T11:34:40.0075899Z Commit: 54898b74c23fde5556c9b3c3a2290865feef0dfe
+2026-11-12T11:34:40.0084430Z ##[group]Runner Image
+2026-11-12T11:34:40.0085068Z Image: ubuntu-24.04
+2026-11-12T11:34:40.0085654Z Version: 20261101.360.1
+2026-11-12T11:34:40.0087026Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261101.360/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-12T11:35:10.9918556Z ##[group]Run cd jr && python3 -c "import image_sandbox as sb; print(sb.unavailable_reason() or 'sandbox available')"
+2026-11-12T11:35:10.9919428Z [36;1mcd jr && python3 -c "import image_sandbox as sb; print(sb.unavailable_reason() or 'sandbox available')"[0m
+2026-11-12T11:35:11.0476826Z sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:35:12.9988146Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[app_esp32s3.bin] SKIPPED [  1%]
+2026-11-12T11:35:12.9994978Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[app_esp32s3_no_sha256.bin] SKIPPED [  3%]
+2026-11-12T11:35:13.0002139Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[bad_checksum.bin] SKIPPED [  4%]
+2026-11-12T11:35:13.0022860Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[bad_sha256.bin] SKIPPED [  6%]
+2026-11-12T11:35:13.0024384Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[corrupt_after_first_segment.bin] SKIPPED [  8%]
+2026-11-12T11:35:13.0025976Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[corrupt_last_segment.bin] SKIPPED [  9%]
+2026-11-12T11:35:13.0027592Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[merged_bootloader_0x0.bin] SKIPPED [ 11%]
+2026-11-12T11:35:13.0029961Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[merged_bootloader_0x1000.bin] SKIPPED [ 12%]
+2026-11-12T11:35:13.0036380Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[not_esp.bin] SKIPPED [ 14%]
+2026-11-12T11:35:13.0041530Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[padding_segment.bin] SKIPPED [ 16%]
+2026-11-12T11:35:13.0047667Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[truncated.bin] SKIPPED [ 17%]
+2026-11-12T11:35:13.0053265Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[truncated_late_segment.bin] SKIPPED [ 19%]
+2026-11-12T11:35:13.0059984Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[unknown_chip.bin] SKIPPED [ 20%]
+2026-11-12T11:35:13.0065974Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[xor_cancelling_pair.bin] SKIPPED [ 22%]
+2026-11-12T11:35:13.0071727Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[zero_length_segment.bin] SKIPPED [ 24%]
+2026-11-12T11:35:13.0077664Z jr/test_image_sandbox.py::test_the_isolated_validator_agrees_with_the_in_process_one[esp32-wifi-penetration-tool-v1.0.bin] SKIPPED [ 25%]
+2026-11-12T11:35:13.0082814Z jr/test_image_sandbox.py::test_a_valid_image_is_esp_target_through_the_sandbox SKIPPED [ 27%]
+2026-11-12T11:35:13.0088908Z jr/test_image_sandbox.py::test_a_child_that_tries_to_open_a_socket_fails SKIPPED [ 29%]
+2026-11-12T11:35:13.0094509Z jr/test_image_sandbox.py::test_the_socket_module_is_patched_before_esptool_is_imported SKIPPED [ 30%]
+2026-11-12T11:35:13.0099603Z jr/test_image_sandbox.py::test_a_child_cannot_open_a_serial_port SKIPPED [ 32%]
+2026-11-12T11:35:13.0105680Z jr/test_image_sandbox.py::test_a_child_sees_none_of_the_parent_s_environment SKIPPED [ 33%]
+2026-11-12T11:35:13.0110989Z jr/test_image_sandbox.py::test_a_child_cannot_start_a_process SKIPPED    [ 35%]
+2026-11-12T11:35:13.0118933Z jr/test_image_sandbox.py::test_a_child_cannot_write_files SKIPPED (n...) [ 37%]
+2026-11-12T11:35:13.0125081Z jr/test_image_sandbox.py::test_the_asset_reaches_the_child_on_stdin_only SKIPPED [ 38%]
+2026-11-12T11:35:13.0130493Z jr/test_image_sandbox.py::test_a_crashing_child_is_a_failure_with_its_error SKIPPED [ 40%]
+2026-11-12T11:35:13.0139075Z jr/test_image_sandbox.py::test_a_child_over_the_wall_clock_is_killed SKIPPED [ 41%]
+2026-11-12T11:35:13.0147635Z jr/test_image_sandbox.py::test_a_child_over_the_cpu_limit_is_killed SKIPPED [ 43%]
+2026-11-12T11:35:13.0154323Z jr/test_image_sandbox.py::test_a_child_over_the_memory_limit_fails SKIPPED [ 45%]
+2026-11-12T11:35:13.0159824Z jr/test_image_sandbox.py::test_non_json_output_is_a_failure SKIPPED      [ 46%]
+2026-11-12T11:35:13.0166344Z jr/test_image_sandbox.py::test_validate_maps_every_child_failure_to_needs_review[raise SystemExit(3)-exit] SKIPPED [ 48%]
+2026-11-12T11:35:13.0172759Z jr/test_image_sandbox.py::test_validate_maps_every_child_failure_to_needs_review[import time\ntime.sleep(30)-wall] SKIPPED [ 50%]
+2026-11-12T11:35:13.0178717Z jr/test_image_sandbox.py::test_validate_maps_every_child_failure_to_needs_review[print('garbage')\nreturn {}-not JSON] SKIPPED [ 51%]
+2026-11-12T11:35:13.0186817Z jr/test_image_sandbox.py::test_validate_maps_every_child_failure_to_needs_review[return {'status': 'esp_target', 'chip': None, 'reasons': ['x']}-malformed] SKIPPED [ 53%]
+2026-11-12T11:35:13.0192767Z jr/test_image_sandbox.py::test_validate_maps_every_child_failure_to_needs_review[return {'status': 'esp_target', 'chip': 'esp32', 'reasons': 'x'}-malformed] SKIPPED [ 54%]
+2026-11-12T11:35:13.0198570Z jr/test_image_sandbox.py::test_validate_maps_every_child_failure_to_needs_review[return {'status': 'ok', 'chip': 'esp32', 'reasons': ['x']}-malformed] SKIPPED [ 56%]
+2026-11-12T11:35:13.0204845Z jr/test_image_sandbox.py::test_validate_maps_every_child_failure_to_needs_review[return ['esp_target']-malformed] SKIPPED [ 58%]
+2026-11-12T11:35:13.0210185Z jr/test_image_sandbox.py::test_validate_passes_a_well_formed_esp_target_through SKIPPED [ 59%]
+2026-11-12T11:35:13.0215790Z jr/test_image_sandbox.py::test_a_child_that_cannot_start_is_a_failure SKIPPED [ 61%]
+2026-11-12T11:35:13.0220923Z jr/test_image_sandbox.py::test_a_child_cannot_reach_libc_through_ctypes SKIPPED [ 62%]
+2026-11-12T11:35:13.0226915Z jr/test_image_sandbox.py::test_a_child_cannot_change_existing_files SKIPPED [ 64%]
+2026-11-12T11:35:13.0232778Z jr/test_image_sandbox.py::test_a_child_cannot_signal_other_processes SKIPPED [ 66%]
+2026-11-12T11:35:13.0238881Z jr/test_image_sandbox.py::test_a_child_cannot_read_credentials_outside_the_interpreter_and_its_module SKIPPED [ 67%]
+2026-11-12T11:35:13.0245911Z jr/test_image_sandbox.py::test_a_child_cannot_raise_its_own_limits SKIPPED [ 69%]
+2026-11-12T11:35:13.0251188Z jr/test_image_sandbox.py::test_the_child_can_still_import_the_library_it_needs SKIPPED [ 70%]
+2026-11-12T11:35:13.0256938Z jr/test_image_sandbox.py::test_without_the_guard_the_network_is_unreachable SKIPPED [ 72%]
+2026-11-12T11:35:13.0262167Z jr/test_image_sandbox.py::test_without_the_guard_no_host_file_is_there_to_read SKIPPED [ 74%]
+2026-11-12T11:35:13.0267962Z jr/test_image_sandbox.py::test_without_the_guard_nothing_can_be_written_or_changed SKIPPED [ 75%]
+2026-11-12T11:35:13.0273327Z jr/test_image_sandbox.py::test_without_the_guard_no_serial_device_exists SKIPPED [ 77%]
+2026-11-12T11:35:13.0279155Z jr/test_image_sandbox.py::test_without_the_guard_processes_outside_the_sandbox_are_invisible SKIPPED [ 79%]
+2026-11-12T11:35:13.0284700Z jr/test_image_sandbox.py::test_without_the_guard_the_child_cannot_start_a_process SKIPPED [ 80%]
+2026-11-12T11:35:13.0289919Z jr/test_image_sandbox.py::test_without_the_guard_the_hard_limits_cannot_be_raised SKIPPED [ 82%]
+2026-11-12T11:35:13.0295790Z jr/test_image_sandbox.py::test_without_the_guard_the_hard_limits_are_the_ones_set SKIPPED [ 83%]
+2026-11-12T11:35:13.0304077Z jr/test_image_sandbox.py::test_without_the_guard_the_validator_still_agrees SKIPPED [ 85%]
+2026-11-12T11:35:13.2039375Z jr/test_image_sandbox_fail_closed.py::test_a_real_namespace_refusal_is_sandbox_unavailable SKIPPED [100%]
+2026-11-12T11:35:13.2041400Z SKIPPED [16] jr/test_image_sandbox.py:44: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:35:13.2042969Z SKIPPED [30] jr/test_image_sandbox.py: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:35:13.2044177Z SKIPPED [7] jr/test_image_sandbox.py:188: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:35:13.2045368Z SKIPPED [1] jr/test_image_sandbox_fail_closed.py:123: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:35:13.2046247Z ======================== 8 passed, 54 skipped in 0.50s =========================
+2026-11-12T11:44:41.1439849Z SKIPPED [1] jr/test_device_evidence.py:129: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1441927Z SKIPPED [1] jr/test_device_evidence.py:221: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1445345Z SKIPPED [7] jr/test_device_evidence.py:229: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1446793Z SKIPPED [1] jr/test_device_evidence.py:269: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1448079Z SKIPPED [1] jr/test_device_evidence_fetch.py:34: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1449364Z SKIPPED [1] jr/test_device_evidence_fetch.py:42: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1450642Z SKIPPED [1] jr/test_device_evidence_fetch.py:120: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1451897Z SKIPPED [16] jr/test_image_sandbox.py:44: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1453448Z SKIPPED [30] jr/test_image_sandbox.py: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1454655Z SKIPPED [7] jr/test_image_sandbox.py:188: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1455942Z SKIPPED [1] jr/test_image_sandbox_fail_closed.py:123: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1457173Z SKIPPED [1] jr/test_image_sandbox_output.py:168: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1458146Z SKIPPED [1] jr/test_image_sandbox_output.py:180: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1459105Z SKIPPED [1] jr/test_image_sandbox_output.py:192: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1460036Z SKIPPED [2] jr/test_image_sandbox_output.py:199: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1461162Z SKIPPED [1] jr/test_image_sandbox_output.py:211: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1462099Z SKIPPED [1] jr/test_image_sandbox_output.py:224: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1463359Z SKIPPED [1] jr/test_image_sandbox_output.py:231: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1464302Z SKIPPED [1] jr/test_image_sandbox_output.py:238: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1465206Z SKIPPED [1] jr/test_stage_admit.py:355: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1466117Z SKIPPED [1] jr/test_stage_admit_device_gate.py:68: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1467066Z SKIPPED [1] jr/test_stage_admit_device_gate.py:184: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1467997Z SKIPPED [1] jr/test_topics_device_gate.py:57: needs the bwrap image sandbox, unavailable on this host: sandbox_unavailable: /usr/bin/bwrap not found
+2026-11-12T11:44:41.1468614Z 3526 passed, 80 skipped in 567.37s (0:09:27)

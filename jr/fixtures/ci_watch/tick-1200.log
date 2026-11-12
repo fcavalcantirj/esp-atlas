@@ -1,0 +1,24 @@
+2026-11-12T12:02:52.6114187Z ##[group]Runner Image Provisioner
+2026-11-12T12:02:52.6115605Z Hosted Compute Agent
+2026-11-12T12:02:52.6116805Z Version: 20261028.624
+2026-11-12T12:02:52.6117986Z Commit: 54898b74c23fde5556c9b3c3a2290865feef0dfe
+2026-11-12T12:02:52.6132746Z ##[group]Runner Image
+2026-11-12T12:02:52.6133956Z Image: ubuntu-26.04
+2026-11-12T12:02:52.6135045Z Version: 20261101.186.1
+2026-11-12T12:02:52.6137436Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261101.186/images/ubuntu/Ubuntu2604-Readme.md
+2026-11-12T12:03:14.4434840Z ##[group]Run cd jr && python3 -c "import image_sandbox as sb; print(sb.unavailable_reason() or 'sandbox available')"
+2026-11-12T12:03:14.4435661Z [36;1mcd jr && python3 -c "import image_sandbox as sb; print(sb.unavailable_reason() or 'sandbox available')"[0m
+2026-11-12T12:03:14.6886135Z sandbox available
+2026-11-12T12:03:23.5550115Z jr/test_image_sandbox.py::test_without_the_guard_no_host_file_is_there_to_read FAILED [ 74%]
+2026-11-12T12:03:24.4976322Z =================================== FAILURES ===================================
+2026-11-12T12:03:24.4993127Z >       assert out["list /"].startswith("PermissionError") and out["list /home"].startswith("PermissionError"), out
+2026-11-12T12:03:24.4994577Z E       AssertionError: {'token file': "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-0/config1/hosts.yml'", 'passwd': 'done: validator:x:1001:1001::/nonexistent:/nonexistent
+2026-11-12T12:03:24.4996374Z E         ', 'parent environ': "FileNotFoundError: [Errno 2] No such file or directory: '/proc/1/environ'", 'repo': "FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/esp-atlas/esp-atlas/jr/tick.py'", ...}
+2026-11-12T12:03:24.4997231Z E       assert (True and False)
+2026-11-12T12:03:24.4997660Z E        +  where True = <built-in method startswith of str object at 0x75efd1ad4e70>('PermissionError')
+2026-11-12T12:03:24.4998426Z E        +    where <built-in method startswith of str object at 0x75efd1ad4e70> = "PermissionError: [Errno 13] Permission denied: '/'".startswith
+2026-11-12T12:03:24.4999183Z E        +  and   False = <built-in method startswith of str object at 0x75efd15914c0>('PermissionError')
+2026-11-12T12:03:24.4999992Z E        +    where <built-in method startswith of str object at 0x75efd15914c0> = "FileNotFoundError: [Errno 2] No such file or directory: '/home'".startswith
+2026-11-12T12:03:24.5000647Z jr/test_image_sandbox.py:355: AssertionError
+2026-11-12T12:03:24.5000994Z ========================= 1 failed, 61 passed in 9.06s =========================
+2026-11-12T12:03:24.5571209Z ##[error]Process completed with exit code 1.

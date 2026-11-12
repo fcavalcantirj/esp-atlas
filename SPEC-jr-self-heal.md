@@ -53,7 +53,8 @@ row with the incident that taught it.
 ## 3. Unknown cause — dispatch the coding delegate
 
 - **Incident record** (runner-local state, outside the repo because the repo is public): fingerprint,
-  first seen, context (§1), state `open → dispatched → pr_opened → resolved | abandoned`. One record
+  first seen, context (§1), state `open → dispatched → pr_opened → resolved`, or `needs_human` /
+  `stalled` (§5). One record
   per fingerprint. A record still open when the same fingerprint appears again is not re-dispatched.
 - **Hand-off:** the tick writes the record. An operator-side launcher (the same mechanism that runs
   the demand executor) picks up `open` records within the hour and launches the delegate detached,
@@ -82,11 +83,28 @@ row with the incident that taught it.
 - The tick marks the incident `resolved` when the required check is green on main and on the next
   tick PR, and records time to detect, time to PR and time to green.
 
-## 5. Budget
+## 5. No loop: limits, timeouts and the owner's nudge
 
-At most one dispatch per fingerprint while its record is open, and at most two dispatches per UTC
-day across all fingerprints. The wall clock is the delegate's own cap. A fingerprint that comes back
-after its heal PR merged is a new incident (suffix `-2`).
+Owner, 2026-11-12: "make sure we won't loop … timeouts and how many times it can be called without a
+human intervention, telegram nudge to me". Every limit is enforced in `jr/ci_watch.py`, not by a
+prompt:
+
+| Limit | Value | When reached |
+|---|---|---|
+| Dispatches per break (fingerprint) | 2: the first time, and one recurrence after its fix merged | the 3rd occurrence is recorded `needs_human`, never dispatched, and stays human-only for good |
+| Dispatches without a human | 3 since the last `python3 jr/ci_watch.py ack` on the runner | `claim` halts the lane; nothing is dispatched until a human acks |
+| Dispatches per UTC day | 2, all breaks together | the next day |
+| Same incident seen again while live | 0 new records | nothing: one record per break, whatever the number of red ticks |
+| Time from dispatch to a heal PR | 4 h (`STALL_HOURS`) | `stalled`, never retried automatically |
+| Delegate run | the operator's wall-clock cap (`MAX_WALL_SECONDS` of the delegate) | the run ends; no PR, so the 4 h stall rule applies |
+| The tick itself | the runner's tick `timeout`; every GitHub read in the watch fails open | the tick goes on; the report says `ci_watch unavailable` |
+
+So with no human at all, the lane makes at most 3 dispatches, then stops and says so.
+
+**Telegram nudge.** Every state change of an incident sends exactly one message to the owner's
+Telegram through the tick's notifier: opened, dispatched, PR open, resolved, `needs_human`,
+`stalled`, and the halt (once, naming the `ack` command). An hour with no change sends nothing. A dry
+run and `--no-telegram` send nothing.
 
 ## 6. Acceptance
 
@@ -96,7 +114,10 @@ after its heal PR merged is a new incident (suffix `-2`).
   - one red PR with green main gives no incident;
   - `cancelled` gives one rerun and no incident, and two in a row give an incident;
   - different nodeids give different fingerprints;
-  - a closed incident's fingerprint coming back is `-2`;
+  - a closed incident's fingerprint coming back is `-2`, and a third time `needs_human`;
+  - three dispatches without an `ack` halt `claim` until `ack`; a dispatch with no PR after 4 h is
+    `stalled` and never handed out again;
+  - every state change yields one nudge, a repeat hour none, and a dry run sends nothing;
   - a branch that adds `pytest.mark.skip`, touches `data/**`, or exceeds 300 lines is refused by
     the relay check;
   - every GitHub read failure leaves the tick running and records "ci_watch unavailable" in the
