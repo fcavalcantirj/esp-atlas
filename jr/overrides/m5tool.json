@@ -1,0 +1,16 @@
+{
+  "id": "m5tool",
+  "repo": "Sonys9/M5Tool",
+  "action": "delete",
+  "deletes": [
+    "data/firmware/m5tool/firmware.md",
+    "data/firmware/m5tool/readme.en.md",
+    "data/firmware/m5tool/signals.json",
+    "data/recipes/m5stick-cplus2__m5tool/recipe.md"
+  ],
+  "classification": "host_only_flasher_not_esp_firmware",
+  "why": "Falsely catalogued: Sonys9/M5Tool is a Windows desktop program (M5Tool.py, bundled USB driver installers and esptool-win64) that flashes other projects' firmware (Bruce, Nemo, Marauder, CatHack) onto M5StickC Plus2, Plus1.1 and Cardputer. It runs on the PC, not on the ESP32. Removed under the owner's standing rule that false claims are corrected without asking (2026-11-11).",
+  "source": "https://github.com/Sonys9/M5Tool#readme",
+  "directed_by": "repository owner (standing rule 2026-11-11)",
+  "date": "2026-11-12"
+}
