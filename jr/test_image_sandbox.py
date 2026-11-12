@@ -352,7 +352,14 @@ def test_without_the_guard_no_host_file_is_there_to_read(tmp_path, tmp_path_fact
     assert out["token file"].startswith("FileNotFoundError") and out["parent environ"].startswith("FileNotFoundError"), out
     assert out["repo"].startswith("FileNotFoundError"), out
     assert out["passwd"] == "done: validator:x:%d:%d::/nonexistent:/nonexistent\n" % (os.getuid(), os.getgid()), out
-    assert out["list /"].startswith("PermissionError") and out["list /home"].startswith("PermissionError"), out
+    # The root is always one of the 0111 directories bwrap makes, so it is never listable. /home is
+    # made (0111 too) only when a bind lies under it: jr/.venv in a home checkout. Where every bind
+    # is elsewhere (CI: the toolcache in /opt, the probe in /tmp) the jail has no /home at all.
+    # Either way the host's /home is out of reach; the exact error is fixed by the bind layout.
+    cmd = sb.sandbox_command(sb._python_roots() + [str(tmp_path)], [], passwd=os.devnull)
+    home_made = any(cmd[i:i + 3] == ["--chmod", "0111", "/home"] for i in range(len(cmd) - 2))
+    assert out["list /"].startswith("PermissionError"), out
+    assert out["list /home"].startswith("PermissionError" if home_made else "FileNotFoundError"), out
     assert out["environ"] == "done: ['LC_CTYPE']" and "ghp_secret" not in str(out), out
 
 

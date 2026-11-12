@@ -1463,14 +1463,14 @@
       "timestamp": "2026-10-09T15:00:11.478381+00:00"
     },
     "cardputer-apollo-sim": {
-      "expires": "2026-12-12T04:00:55.529482+00:00",
+      "expires": "2026-12-12T05:00:55.352053+00:00",
       "id": "cardputer-apollo-sim",
       "pr_ref": null,
       "reason": "below_floor: 0 stars / 0 forks",
       "repo": "andriiborodin/cardputer-apollo-sim",
       "repo_id": 1450448415,
       "status": "rejected",
-      "timestamp": "2026-11-12T04:00:55.529482+00:00"
+      "timestamp": "2026-11-12T05:00:55.352053+00:00"
     },
     "cardputer-aprs": {
       "expired_at": "2026-11-08T02:00:55.246637+00:00",
@@ -4074,13 +4074,12 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "grajek": {
-      "expired_at": "2026-11-11T21:00:55.411983+00:00",
-      "expires": "2026-11-11T20:00:11.871872+00:00",
+      "expires": "2026-12-12T07:00:55.247122+00:00",
       "id": "grajek",
       "pr_ref": null,
       "repo": "jasisz/grajek",
-      "status": "expired",
-      "timestamp": "2026-10-12T20:00:11.871872+00:00"
+      "status": "seen",
+      "timestamp": "2026-11-12T07:00:55.247122+00:00"
     },
     "groki-bot": {
       "expires": "2027-01-04T04:02:36+00:00",
@@ -4749,7 +4748,7 @@
       "repo": "haris16-code/kryonos",
       "repo_id": 1271567896,
       "status": "merged",
-      "timestamp": "2026-11-12T04:00:55.529482+00:00"
+      "timestamp": "2026-11-12T05:00:55.352053+00:00"
     },
     "kvxputer": {
       "expired_at": "2026-11-05T19:01:17.341039+00:00",
@@ -4859,25 +4858,27 @@
       "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-03e1b4703fa5641ba0e8c804d29a7f66": {
+      "expired_at": "2026-11-12T06:00:55.520793+00:00",
       "expires": "2026-11-12T05:01:00.482196+00:00",
       "id": "launcher-03e1b4703fa5641ba0e8c804d29a7f66",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:03e1b4703fa5641ba0e8c804d29a7f66",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-050022b88eaa02904d55fa1efdd2d879": {
+      "expired_at": "2026-11-12T06:00:55.520793+00:00",
       "expires": "2026-11-12T05:01:00.482196+00:00",
       "id": "launcher-050022b88eaa02904d55fa1efdd2d879",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:050022b88eaa02904d55fa1efdd2d879",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-05e50b9c5044ac2d0cf2af212ebe2610": {
-      "expired_at": "2026-11-12T04:00:55.529482+00:00",
+      "expired_at": "2026-11-12T05:00:55.352053+00:00",
       "expires": "2026-11-12T03:01:00.115486+00:00",
       "id": "launcher-05e50b9c5044ac2d0cf2af212ebe2610",
       "pr_ref": null,
@@ -4967,12 +4968,13 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-0f6b4e97837a7a40dc0b1b5f05ec8139": {
+      "expired_at": "2026-11-12T06:00:55.520793+00:00",
       "expires": "2026-11-12T05:01:00.482196+00:00",
       "id": "launcher-0f6b4e97837a7a40dc0b1b5f05ec8139",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bruce backup user:blank'",
       "repo": "launcher:0f6b4e97837a7a40dc0b1b5f05ec8139",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-0facba8295ac5547acc9dbc8b326f447": {
@@ -5585,12 +5587,13 @@
       "timestamp": "2026-11-08T23:00:55.209139+00:00"
     },
     "launcher-18b280f247c39830af38681b63e0d4a8": {
+      "expired_at": "2026-11-12T06:00:55.520793+00:00",
       "expires": "2026-11-12T05:01:00.482196+00:00",
       "id": "launcher-18b280f247c39830af38681b63e0d4a8",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:18b280f247c39830af38681b63e0d4a8",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-1a9569cffe9c1a81b34e577fc1e8c7a4": {
@@ -5717,7 +5720,7 @@
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-214c554f9da22d70e6837d4db79fc793": {
-      "expired_at": "2026-11-12T04:00:55.529482+00:00",
+      "expired_at": "2026-11-12T05:00:55.352053+00:00",
       "expires": "2026-11-12T03:01:00.115486+00:00",
       "id": "launcher-214c554f9da22d70e6837d4db79fc793",
       "pr_ref": null,
@@ -5775,7 +5778,7 @@
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-27ad23e8fdf2598ba71fade2b237f668": {
-      "expired_at": "2026-11-12T04:00:55.529482+00:00",
+      "expired_at": "2026-11-12T05:00:55.352053+00:00",
       "expires": "2026-11-12T03:01:00.115486+00:00",
       "id": "launcher-27ad23e8fdf2598ba71fade2b237f668",
       "pr_ref": null,
@@ -5961,7 +5964,7 @@
       "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-4cb1cd8f952f004131cb5b2163dd6246": {
-      "expired_at": "2026-11-12T04:00:55.529482+00:00",
+      "expired_at": "2026-11-12T05:00:55.352053+00:00",
       "expires": "2026-11-12T03:01:00.115486+00:00",
       "id": "launcher-4cb1cd8f952f004131cb5b2163dd6246",
       "pr_ref": null,
@@ -5991,7 +5994,7 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-50b4a4ea4f181baf92a2bf73a5026a00": {
-      "expired_at": "2026-11-12T04:00:55.529482+00:00",
+      "expired_at": "2026-11-12T05:00:55.352053+00:00",
       "expires": "2026-11-12T03:01:00.115486+00:00",
       "id": "launcher-50b4a4ea4f181baf92a2bf73a5026a00",
       "pr_ref": null,
@@ -6021,7 +6024,7 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-541f1776c11e1cb66bfab09877672a5b": {
-      "expired_at": "2026-11-12T04:00:55.529482+00:00",
+      "expired_at": "2026-11-12T05:00:55.352053+00:00",
       "expires": "2026-11-12T03:01:00.115486+00:00",
       "id": "launcher-541f1776c11e1cb66bfab09877672a5b",
       "pr_ref": null,
@@ -6140,12 +6143,13 @@
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-677b48b6a379c902273029595993d42b": {
+      "expired_at": "2026-11-12T06:00:55.520793+00:00",
       "expires": "2026-11-12T05:01:00.482196+00:00",
       "id": "launcher-677b48b6a379c902273029595993d42b",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:677b48b6a379c902273029595993d42b",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-68a20ce2541db6e5a2cb9ae48b561c57": {
@@ -6306,12 +6310,13 @@
       "timestamp": "2026-11-04T00:00:59.597130+00:00"
     },
     "launcher-8465f3a091d11b91dd826e469bac04aa": {
+      "expired_at": "2026-11-12T06:00:55.520793+00:00",
       "expires": "2026-11-12T05:01:00.482196+00:00",
       "id": "launcher-8465f3a091d11b91dd826e469bac04aa",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:8465f3a091d11b91dd826e469bac04aa",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-87c4a536a5e3c3b1326fc5ca03dc6afb": {
@@ -6325,12 +6330,13 @@
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-8b81b628277f2f924126ed60adf717f1": {
+      "expired_at": "2026-11-12T06:00:55.520793+00:00",
       "expires": "2026-11-12T05:01:00.482196+00:00",
       "id": "launcher-8b81b628277f2f924126ed60adf717f1",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:8b81b628277f2f924126ed60adf717f1",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-8c56ed2a4282991fc83aaae55de9c502": {
@@ -6584,12 +6590,13 @@
       "timestamp": "2026-11-04T00:00:59.597130+00:00"
     },
     "launcher-bfd70243673a0bbda4ed16999c5eb0d9": {
+      "expired_at": "2026-11-12T06:00:55.520793+00:00",
       "expires": "2026-11-12T05:01:00.482196+00:00",
       "id": "launcher-bfd70243673a0bbda4ed16999c5eb0d9",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:bfd70243673a0bbda4ed16999c5eb0d9",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-c2765e6d5eadbe38a82e0f195573d33f": {
@@ -6633,7 +6640,7 @@
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-c4ee795e7515501d51a31aa9c2c40fb2": {
-      "expired_at": "2026-11-12T04:00:55.529482+00:00",
+      "expired_at": "2026-11-12T05:00:55.352053+00:00",
       "expires": "2026-11-12T03:01:00.115486+00:00",
       "id": "launcher-c4ee795e7515501d51a31aa9c2c40fb2",
       "pr_ref": null,
@@ -6789,12 +6796,13 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-e09fbd20fa140adf097d65d6248542c4": {
+      "expired_at": "2026-11-12T06:00:55.520793+00:00",
       "expires": "2026-11-12T05:01:00.482196+00:00",
       "id": "launcher-e09fbd20fa140adf097d65d6248542c4",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:e09fbd20fa140adf097d65d6248542c4",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-e3db56097796a4a3e6e5a61aea154edb": {
@@ -6867,12 +6875,13 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-f0e3d703b1360cf6b3857a135e48ead1": {
+      "expired_at": "2026-11-12T06:00:55.520793+00:00",
       "expires": "2026-11-12T05:01:00.482196+00:00",
       "id": "launcher-f0e3d703b1360cf6b3857a135e48ead1",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:f0e3d703b1360cf6b3857a135e48ead1",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-f12da35838482eda5f02c5eae01f3a9e": {
@@ -6886,7 +6895,7 @@
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-f1ca395414e9c8f508cdf544d1351b4d": {
-      "expired_at": "2026-11-12T04:00:55.529482+00:00",
+      "expired_at": "2026-11-12T05:00:55.352053+00:00",
       "expires": "2026-11-12T03:01:00.115486+00:00",
       "id": "launcher-f1ca395414e9c8f508cdf544d1351b4d",
       "pr_ref": null,
@@ -6906,7 +6915,7 @@
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-f63f1ce293103e722882eb21b0e5fc4f": {
-      "expired_at": "2026-11-12T04:00:55.529482+00:00",
+      "expired_at": "2026-11-12T05:00:55.352053+00:00",
       "expires": "2026-11-12T03:01:00.115486+00:00",
       "id": "launcher-f63f1ce293103e722882eb21b0e5fc4f",
       "pr_ref": null,
@@ -7001,7 +7010,7 @@
       "repo": "maxmoneycash/lilyshark",
       "repo_id": 1332691105,
       "status": "merged",
-      "timestamp": "2026-11-12T04:00:55.529482+00:00"
+      "timestamp": "2026-11-12T05:00:55.352053+00:00"
     },
     "liner": {
       "expired_at": "2026-11-08T21:00:55.166276+00:00",
@@ -11818,6 +11827,14 @@
       "status": "expired",
       "timestamp": "2026-09-11T20:01:00.775055+00:00"
     },
+    "sondedeck": {
+      "id": "sondedeck",
+      "pr_ref": "#1668",
+      "repo": "aarondrew313/sondedeck",
+      "repo_id": 1318654722,
+      "status": "proposed",
+      "timestamp": "2026-11-12T11:00:55.239192+00:00"
+    },
     "sonicthehedgehog-m5stickc-plus2": {
       "expired_at": "2026-10-11T21:00:11.605277+00:00",
       "expires": "2026-10-11T20:01:00.775055+00:00",
@@ -13442,6 +13459,7 @@
     "8432r983/yamb_game_cardputer": "yamb-game-cardputer",
     "868meshbot/saitama": "saitama",
     "a-uta/ai_stackchan_minimal": "ai-stackchan-minimal",
+    "aarondrew313/sondedeck": "sondedeck",
     "aat440hz/8encoderunit-brainwavegenerator-bluetooth-m5stickcplus2": "8encoderunit-brainwavegenerator-bluetoot",
     "aat440hz/8encoderunit-brainwavegenerator-m5stickcplus2": "8encoderunit-brainwavegenerator-m5stickc",
     "aat440hz/bluetoothmidicontrollermusicconductor-m5stickcplus2": "bluetoothmidicontrollermusicconductor-m5",
