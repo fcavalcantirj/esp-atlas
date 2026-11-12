@@ -4999,12 +4999,13 @@
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-1037f94a2cb5a240fa480bf26555b7bb": {
+      "expired_at": "2026-11-12T20:00:55.759999+00:00",
       "expires": "2026-11-12T19:01:17.341039+00:00",
       "id": "launcher-1037f94a2cb5a240fa480bf26555b7bb",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1037f94a2cb5a240fa480bf26555b7bb",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-12cdb71fb672a72ed256c472ee1e5908": {
@@ -5761,21 +5762,23 @@
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-26a11df753185ce8f4ceb5eaf78984ec": {
+      "expired_at": "2026-11-12T20:00:55.759999+00:00",
       "expires": "2026-11-12T19:01:17.341039+00:00",
       "id": "launcher-26a11df753185ce8f4ceb5eaf78984ec",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:26a11df753185ce8f4ceb5eaf78984ec",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-26ce262bdb2de3c68120a1ffb723f806": {
+      "expired_at": "2026-11-12T20:00:55.759999+00:00",
       "expires": "2026-11-12T19:01:17.341039+00:00",
       "id": "launcher-26ce262bdb2de3c68120a1ffb723f806",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bruce stable user:beeplov'",
       "repo": "launcher:26ce262bdb2de3c68120a1ffb723f806",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-27ad23e8fdf2598ba71fade2b237f668": {
@@ -5809,12 +5812,13 @@
       "timestamp": "2026-11-04T00:00:59.597130+00:00"
     },
     "launcher-30105e850db998bf13b85a6c3edf0441": {
+      "expired_at": "2026-11-12T20:00:55.759999+00:00",
       "expires": "2026-11-12T19:01:17.341039+00:00",
       "id": "launcher-30105e850db998bf13b85a6c3edf0441",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bruce fixed user:tydeanp'",
       "repo": "launcher:30105e850db998bf13b85a6c3edf0441",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-30dfdf3153ecccba3069ced825074fa4": {
@@ -5838,12 +5842,13 @@
       "timestamp": "2026-11-04T21:00:59.635399+00:00"
     },
     "launcher-325fb76f75421950848dfa2abff6b21c": {
+      "expired_at": "2026-11-12T20:00:55.759999+00:00",
       "expires": "2026-11-12T19:01:17.341039+00:00",
       "id": "launcher-325fb76f75421950848dfa2abff6b21c",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bruce first ver user:aaidaar'",
       "repo": "launcher:325fb76f75421950848dfa2abff6b21c",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-35b809ece6e36393c5e963a4257bf11d": {
@@ -6125,12 +6130,13 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-666e304624dc1960c297ded42d37ad95": {
+      "expired_at": "2026-11-12T20:00:55.759999+00:00",
       "expires": "2026-11-12T19:01:17.341039+00:00",
       "id": "launcher-666e304624dc1960c297ded42d37ad95",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bruce mass bad user:irisihrz'",
       "repo": "launcher:666e304624dc1960c297ded42d37ad95",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-67154bae11fb638647ce63fadebd0a8b": {
@@ -6282,12 +6288,13 @@
       "timestamp": "2026-11-04T22:00:59.737834+00:00"
     },
     "launcher-8273f2a66f4de0b6b72e824a46f3ca0d": {
+      "expired_at": "2026-11-12T20:00:55.759999+00:00",
       "expires": "2026-11-12T19:01:17.341039+00:00",
       "id": "launcher-8273f2a66f4de0b6b72e824a46f3ca0d",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bruce user:ryanwires'",
       "repo": "launcher:8273f2a66f4de0b6b72e824a46f3ca0d",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-82cf10ad6cd62aa24966fdd244292450": {
@@ -6651,12 +6658,13 @@
       "timestamp": "2026-11-05T03:01:00.115486+00:00"
     },
     "launcher-c670f362100587f9c0e1c9a7ecfa860c": {
+      "expired_at": "2026-11-12T20:00:55.759999+00:00",
       "expires": "2026-11-12T19:01:17.341039+00:00",
       "id": "launcher-c670f362100587f9c0e1c9a7ecfa860c",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:c670f362100587f9c0e1c9a7ecfa860c",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-c6f87a687e831a51d604e3e4aae316cf": {
@@ -6709,12 +6717,13 @@
       "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
     "launcher-d480910db79f7ceb22ef990719e337bc": {
+      "expired_at": "2026-11-12T20:00:55.759999+00:00",
       "expires": "2026-11-12T19:01:17.341039+00:00",
       "id": "launcher-d480910db79f7ceb22ef990719e337bc",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:d480910db79f7ceb22ef990719e337bc",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-d4e8c7866e5c475d12c7d3888f5b2fe4": {
@@ -6778,12 +6787,13 @@
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-d8e03f66387bd5ac7bd543ca8d81d975": {
+      "expired_at": "2026-11-12T20:00:55.759999+00:00",
       "expires": "2026-11-12T19:01:17.341039+00:00",
       "id": "launcher-d8e03f66387bd5ac7bd543ca8d81d975",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:d8e03f66387bd5ac7bd543ca8d81d975",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-d923a163b974bb421bd948e4bc1e252b": {
