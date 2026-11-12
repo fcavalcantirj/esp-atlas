@@ -80,10 +80,11 @@ jobs:
       - name: Install core (jr and scripts import esp_atlas_core)
         run: pip install -e apps/core
       - name: Can this runner build the image sandbox? (bwrap + unprivileged user namespaces)
-        # jr/image_sandbox.py runs the parser under bubblewrap. The stock ubuntu image ships no
-        # bwrap and Ubuntu 24.04 restricts unprivileged user namespaces (AppArmor), so expect
-        # "sandbox_unavailable" here: that is the FAIL-CLOSED path, asserted by
-        # jr/test_image_sandbox_fail_closed.py. The `sandbox`-marked tests then SKIP with this reason.
+        # jr/image_sandbox.py runs the parser under bubblewrap. The ubuntu-24.04 image ships no
+        # bwrap and restricts unprivileged user namespaces (AppArmor): there this prints
+        # "sandbox_unavailable", the FAIL-CLOSED path asserted by jr/test_image_sandbox_fail_closed.py,
+        # and the `sandbox`-marked tests SKIP with this reason. The ubuntu-26.04 image (ubuntu-latest
+        # from 2026-11-12) ships bwrap and prints "sandbox available": the jail tests run for real.
         run: cd jr && python3 -c "import image_sandbox as sb; print(sb.unavailable_reason() or 'sandbox available')"
       - name: Image sandbox tests (every skip listed with its reason)
         run: python3 -m pytest jr/test_image_sandbox.py jr/test_image_sandbox_fail_closed.py -v -rs
