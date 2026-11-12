@@ -877,12 +877,37 @@
       "reason": "doc-unreachable",
       "timestamp": "2026-11-11T23:00:55.141588+00:00"
     },
-    "m5stack-fire": {
-      "board": "m5stack-fire",
-      "expires": "2026-11-11T23:00:59.660094+00:00",
+    "m5stack-core2": {
+      "board": "m5stack-core2",
+      "expires": "2026-11-19T00:00:55.202334+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-12T00:00:55.202334+00:00"
+    },
+    "m5stack-cores3": {
+      "board": "m5stack-cores3",
+      "expires": "2026-11-19T00:00:55.202334+00:00",
+      "field_reasons": {
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-12T00:00:55.202334+00:00"
+    },
+    "m5stack-cores3-se": {
+      "board": "m5stack-cores3-se",
+      "expires": "2026-11-19T00:00:55.202334+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
           "vendor": "doc_unreachable"
         },
         "getting_started": {
@@ -892,38 +917,13 @@
           "vendor": "doc_unreachable"
         },
         "usb_serial": {
-          "boards_txt": "field_absent",
-          "manifest": "field_absent",
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
           "vendor": "doc_unreachable"
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-04T23:00:59.660094+00:00"
-    },
-    "m5stamp-c3": {
-      "board": "m5stamp-c3",
-      "expires": "2026-11-11T23:00:59.660094+00:00",
-      "field_reasons": {
-        "download_mode": {
-          "manifest": "field_absent",
-          "vendor": "no_pattern_match"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-04T23:00:59.660094+00:00"
-    },
-    "m5stamp-s3": {
-      "board": "m5stamp-s3",
-      "expires": "2026-11-11T23:00:59.660094+00:00",
-      "field_reasons": {
-        "usb_serial": {
-          "boards_txt": "field_absent",
-          "manifest": "corroboration_only",
-          "vendor": "field_absent"
-        }
-      },
-      "reason": "nothing-groundable",
-      "timestamp": "2026-11-04T23:00:59.660094+00:00"
+      "timestamp": "2026-11-12T00:00:55.202334+00:00"
     },
     "m5stick-c": {
       "board": "m5stick-c",

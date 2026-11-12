@@ -4739,7 +4739,7 @@
       "repo": "haris16-code/kryonos",
       "repo_id": 1271567896,
       "status": "proposed",
-      "timestamp": "2026-11-11T23:00:55.141588+00:00"
+      "timestamp": "2026-11-12T00:00:55.202334+00:00"
     },
     "kvxputer": {
       "expired_at": "2026-11-05T19:01:17.341039+00:00",
@@ -5769,12 +5769,13 @@
       "timestamp": "2026-11-05T03:01:00.115486+00:00"
     },
     "launcher-2915edede061a51733e704e5ba67a121": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-2915edede061a51733e704e5ba67a121",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:2915edede061a51733e704e5ba67a121",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-2a79e3af332931b6e2ec802755c6726b": {
@@ -5864,12 +5865,13 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-41c846bb489ed1a3829b82a1714f6dd4": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-41c846bb489ed1a3829b82a1714f6dd4",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bitcoin ticker user:kwindapp'",
       "repo": "launcher:41c846bb489ed1a3829b82a1714f6dd4",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-42f94b0a097a0f2f719602007442674e": {
@@ -6174,12 +6176,13 @@
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-718699861aa2ce0039b2a64eb508c47f": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-718699861aa2ce0039b2a64eb508c47f",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:718699861aa2ce0039b2a64eb508c47f",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-75fc17a62184ee86e28e7725844d8dc8": {
@@ -6306,12 +6309,13 @@
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-8c56ed2a4282991fc83aaae55de9c502": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-8c56ed2a4282991fc83aaae55de9c502",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:8c56ed2a4282991fc83aaae55de9c502",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-8ce57fb3a0b25847993375b6522ed164": {
@@ -6325,21 +6329,23 @@
       "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
     "launcher-9118417a854217d88f373f61496b3267": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-9118417a854217d88f373f61496b3267",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'blink user:bonnie404'",
       "repo": "launcher:9118417a854217d88f373f61496b3267",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-912ad7003044186a4e34e23bb6b82c10": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-912ad7003044186a4e34e23bb6b82c10",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bareiron user:s0meyosh1no'",
       "repo": "launcher:912ad7003044186a4e34e23bb6b82c10",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-9470218aef2a345c4fc24c3becbe1deb": {
@@ -6371,12 +6377,13 @@
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-9a02fe0eee253b43434cc2e4e4f76094": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-9a02fe0eee253b43434cc2e4e4f76094",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:9a02fe0eee253b43434cc2e4e4f76094",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-9af63f465978e26577886f92b749affd": {
@@ -6450,12 +6457,13 @@
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-ae49de74b08f0515cf14d0c56501611d": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-ae49de74b08f0515cf14d0c56501611d",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'block blast user:muart'",
       "repo": "launcher:ae49de74b08f0515cf14d0c56501611d",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-afe6f6a0dcc3868491160a92a42a0725": {
@@ -6643,12 +6651,13 @@
       "timestamp": "2026-11-04T20:00:59.893271+00:00"
     },
     "launcher-cfe1b9c8e0b8eef5c469e7bfc9ab6468": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-cfe1b9c8e0b8eef5c469e7bfc9ab6468",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bitcoin price ticker user:kwindapp'",
       "repo": "launcher:cfe1b9c8e0b8eef5c469e7bfc9ab6468",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-d3cc2e38753d28c587f190d0343cdbc3": {
@@ -6757,12 +6766,13 @@
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-e3db56097796a4a3e6e5a61aea154edb": {
+      "expired_at": "2026-11-12T00:00:55.202334+00:00",
       "expires": "2026-11-11T23:00:59.660094+00:00",
       "id": "launcher-e3db56097796a4a3e6e5a61aea154edb",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'blank keyboard user:theoddcell'",
       "repo": "launcher:e3db56097796a4a3e6e5a61aea154edb",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-e46ca36b8c19e52749b41acbf0a9044d": {
@@ -6954,7 +6964,7 @@
       "repo": "maxmoneycash/lilyshark",
       "repo_id": 1332691105,
       "status": "proposed",
-      "timestamp": "2026-11-11T23:00:55.141588+00:00"
+      "timestamp": "2026-11-12T00:00:55.202334+00:00"
     },
     "liner": {
       "expired_at": "2026-11-08T21:00:55.166276+00:00",
