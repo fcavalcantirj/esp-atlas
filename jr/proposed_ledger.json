@@ -3021,13 +3021,14 @@
       "timestamp": "2026-11-10T12:00:55.152801+00:00"
     },
     "demonym": {
+      "expired_at": "2026-11-12T19:01:01.750361+00:00",
       "expires": "2026-11-12T11:00:59.617685+00:00",
       "id": "demonym",
       "pr_ref": null,
       "reason": "below_floor: 10 stars / 0 forks",
       "repo": "eyeofbri/demonym",
       "repo_id": 1365064131,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-13T11:00:59.617685+00:00"
     },
     "deskclock-cardputer": {
@@ -7846,13 +7847,14 @@
       "timestamp": "2026-09-12T03:00:29.761890+00:00"
     },
     "m5chord": {
+      "expired_at": "2026-11-12T19:01:01.750361+00:00",
       "expires": "2026-11-12T18:00:59.582998+00:00",
       "id": "m5chord",
       "pr_ref": null,
       "reason": "below_floor: 7 stars / 0 forks",
       "repo": "jrdntnnr/m5chord",
       "repo_id": 1368443857,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-13T18:00:59.582998+00:00"
     },
     "m5claw": {
@@ -11832,8 +11834,8 @@
       "pr_ref": "#1668",
       "repo": "aarondrew313/sondedeck",
       "repo_id": 1318654722,
-      "status": "proposed",
-      "timestamp": "2026-11-12T11:00:55.239192+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-12T19:01:01.750361+00:00"
     },
     "sonicthehedgehog-m5stickc-plus2": {
       "expired_at": "2026-10-11T21:00:11.605277+00:00",

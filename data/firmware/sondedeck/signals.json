@@ -1,0 +1,29 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-11-12",
+ "notes": [],
+ "ref": "main",
+ "repo": "aarondrew313/SondeDeck",
+ "resolved": {
+  "boards": [
+   "lilygo-t-deck"
+  ],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "T-Deck",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 7,
+   "rank": 2,
+   "soc": null,
+   "token": "T-Deck",
+   "url": "https://github.com/aarondrew313/SondeDeck/blob/main/platformio.ini#L7"
+  }
+ ]
+}
