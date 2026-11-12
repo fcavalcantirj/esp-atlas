@@ -165,6 +165,49 @@ def test_claim_stops_at_two_dispatches_per_utc_day(tmp_path):
     assert store.claim("2026-11-13T00:30:00+00:00") is not None
 
 
+def test_a_stale_writer_cannot_undo_a_claim(tmp_path):
+    """Review B1 (#1681): the hourly tick and the runner's launcher are two processes writing one store.
+    The tick loads, the launcher claims, the tick saves what it loaded: without a lock the incident goes
+    back to open and the no-human counter back to 0, so the loop limits are bypassed."""
+    import threading
+    path = tmp_path / "incidents.json"
+    cw.Store(path).record(incident(), NOW)
+    tick, launcher = cw.Store(path), cw.Store(path)
+    real_load, done = tick._load, {}
+
+    def interleaved():
+        data = real_load()
+        t = threading.Thread(target=lambda: done.setdefault("rec", launcher.claim(NOW)))
+        t.start()
+        t.join(timeout=1.0)          # a locked store keeps the launcher waiting here
+        done["thread"] = t
+        return data
+
+    tick._load = interleaved
+    assert tick.nudges()             # the tick's write of what it loaded
+    done["thread"].join(timeout=10)
+    assert done.get("rec") and done["rec"]["state"] == "dispatched"
+    final = cw.Store(path)._load()
+    assert [r["state"] for r in final["incidents"].values()] == ["dispatched"]
+    assert final["auto_since_ack"] == 1
+
+
+def test_the_cli_clock_is_utc():
+    """Review N1: the runner's host clock is UTC-3; the spec's daily budget is per UTC day."""
+    from datetime import datetime, timedelta
+    assert datetime.fromisoformat(cw._now()).utcoffset() == timedelta(0)
+
+
+def test_the_daily_budget_follows_the_utc_day_whatever_the_offset_of_now(tmp_path):
+    store = cw.Store(tmp_path / "incidents.json")
+    for n in range(3):
+        log = RED_1200.replace("no_host_file_is_there_to_read", f"case_{n}")
+        store.record(cw.evaluate([red(2, log), red(1, log), green("main", None)], REQUIRED), NOW)
+    assert store.claim(NOW) and store.claim(NOW)
+    assert store.claim("2026-11-12T20:59:00-03:00") is None       # 23:59Z, same UTC day
+    assert store.claim("2026-11-12T22:30:00-03:00") is not None   # 01:30Z, the next UTC day
+
+
 def test_an_unreadable_store_is_refused_not_overwritten(tmp_path):
     p = tmp_path / "incidents.json"
     p.write_text("{not json")
@@ -243,6 +286,28 @@ def test_the_relay_refuses_what_the_spec_forbids(tmp_path, changes, needle):
              "docs/demand/work-receipts.json": "[]\n", ".github/workflows/v.yml": "on: push\n"}
     problems = repo_with(tmp_path, files, changes)
     assert problems and any(needle in p for p in problems), problems
+
+
+SELECTION_FILES = {"jr/a.py": "x = 1\n", "jr/test_a.py": TEST, "pytest.ini": "[pytest]\n",
+                   "jr/conftest.py": "import pytest\n",
+                   ".github/workflows/v.yml": "jobs:\n  t:\n    steps:\n      - run: python3 -m pytest jr -q\n"}
+
+
+@pytest.mark.parametrize("changes", [
+    {"pytest.ini": "[pytest]\naddopts = --deselect jr/test_a.py::test_x\n"},
+    {"jr/conftest.py": "import pytest\ndef pytest_collection_modifyitems(items):\n    items.clear()\n"},
+    {".github/workflows/v.yml": "jobs:\n  t:\n    steps:\n      - run: python3 -m pytest jr -q -k 'not test_x'\n"},
+])
+def test_the_relay_refuses_a_change_to_test_selection(tmp_path, changes):
+    """Review N2: deselecting a test through config or the workflow is a skip by another name."""
+    problems = repo_with(tmp_path, SELECTION_FILES, changes, body="fix")
+    assert any("test selection" in p for p in problems), problems
+
+
+def test_a_test_selection_change_named_in_the_body_passes(tmp_path):
+    changes = {"pytest.ini": "[pytest]\naddopts = -p no:cacheprovider\n"}
+    body = "Test selection changed: pytest.ini because the evidence shows ..."
+    assert repo_with(tmp_path, SELECTION_FILES, changes, body=body) == []
 
 
 def test_a_removed_assert_needs_the_pr_body_to_name_it(tmp_path):

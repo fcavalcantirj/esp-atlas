@@ -36,6 +36,10 @@ public); the launcher supplies the checkout, the branch and the incident file.
    - a new `pytest.mark.skip`, `skipif` or `xfail`, or `pytest.skip()`, or a deleted test file;
    - a removed `assert`, unless the PR body has a line starting `Assertion changed:` that names the
      test file and gives the evidence that the assertion was wrong;
+   - a change to test selection (`conftest.py`, `pytest.ini`, or a pytest line such as `-k`,
+     `--deselect`, `--ignore`, `addopts` or `testpaths` in a workflow, `pyproject.toml`, `setup.cfg`
+     or `tox.ini`), unless the PR body has a line starting `Test selection changed:` that names the
+     file and gives the evidence;
    - a change to workflow `permissions` or `secrets`;
    - more than 300 changed lines.
 5. **Run what the failing job runs** (the same pytest selection) and the rest of the suite it
@@ -46,7 +50,8 @@ public); the launcher supplies the checkout, the branch and the incident file.
    - the RED, with a run id or a local command and its output;
    - the GREEN you ran, and the GREEN the reviewer must see (the failing check passing on the same
      runner image as the red run, not skipped);
-   - what the reviewer must check, including any `Assertion changed:` line.
+   - what the reviewer must check, including any `Assertion changed:` or
+     `Test selection changed:` line.
 7. **Stop.** The relay runs the relay check, pushes `BRANCH`, opens the PR labelled `jr-heal` and
    posts it for review. Review and merge belong to an independent reviewer. Never run Jr's tick,
    drain or demand runner, and never mark the incident resolved yourself: the tick does that when

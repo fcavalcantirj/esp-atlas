@@ -52,7 +52,9 @@ row with the incident that taught it.
 
 ## 3. Unknown cause — dispatch the coding delegate
 
-- **Incident record** (runner-local state, outside the repo because the repo is public): fingerprint,
+- **Incident record** (runner-local state, outside the repo because the repo is public; the tick and
+  the operator's launcher both write it, so every load-modify-save holds an exclusive `flock` on a
+  sidecar `<store>.lock`, and the store is replaced atomically from a per-process temporary file): fingerprint,
   first seen, context (§1), state `open → dispatched → pr_opened → resolved`, or `needs_human` /
   `stalled` (§5). One record
   per fingerprint. A record still open when the same fingerprint appears again is not re-dispatched.
@@ -68,7 +70,10 @@ row with the incident that taught it.
   4. write the PR body: cause, evidence, RED, GREEN expectation, and what the reviewer must check.
 - **Hard limits** (the relay refuses a branch that breaks one and posts why): no change under
   `data/**` or `docs/demand/**`; no new `skip`, `skipif`, `xfail` or deleted test; no removed
-  `assert` unless the PR body names that assertion and shows with evidence why it was wrong; no
+  `assert` unless the PR body names that assertion and shows with evidence why it was wrong; no change
+  to test selection (`conftest.py`, `pytest.ini`, or a pytest line such as `-k`, `--deselect`,
+  `--ignore`, `addopts`, `testpaths` in a workflow, `pyproject.toml`, `setup.cfg` or `tox.ini`)
+  unless the PR body has a `Test selection changed:` line naming the file with evidence; no
   change to workflow `permissions`, secrets, branch protection or `required` checks; at most 300
   changed lines; never merge, never run Jr's tick, drain or demand runner.
 - **No root cause found:** the delegate commits nothing to code and writes its findings. The relay
@@ -93,7 +98,7 @@ prompt:
 |---|---|---|
 | Dispatches per break (fingerprint) | 2: the first time, and one recurrence after its fix merged | the 3rd occurrence is recorded `needs_human`, never dispatched, and stays human-only for good |
 | Dispatches without a human | 3 since the last `python3 jr/ci_watch.py ack` on the runner | `claim` halts the lane; nothing is dispatched until a human acks |
-| Dispatches per UTC day | 2, all breaks together | the next day |
+| Dispatches per UTC day | 2, all breaks together (the CLI clock is UTC; a timestamp with any offset is counted on its UTC day) | the next day |
 | Same incident seen again while live | 0 new records | nothing: one record per break, whatever the number of red ticks |
 | Time from dispatch to a heal PR | 4 h (`STALL_HOURS`) | `stalled`, never retried automatically |
 | Delegate run | the operator's wall-clock cap (`MAX_WALL_SECONDS` of the delegate) | the run ends; no PR, so the 4 h stall rule applies |
@@ -118,8 +123,10 @@ run and `--no-telegram` send nothing.
   - three dispatches without an `ack` halt `claim` until `ack`; a dispatch with no PR after 4 h is
     `stalled` and never handed out again;
   - every state change yields one nudge, a repeat hour none, and a dry run sends nothing;
-  - a branch that adds `pytest.mark.skip`, touches `data/**`, or exceeds 300 lines is refused by
-    the relay check;
+  - a branch that adds `pytest.mark.skip`, touches `data/**`, deselects a test through
+    `conftest.py`, `pytest.ini` or a workflow pytest line, or exceeds 300 lines is refused by the
+    relay check;
+  - a stale writer (the tick) that loaded before the launcher's `claim` cannot undo that claim;
   - every GitHub read failure leaves the tick running and records "ci_watch unavailable" in the
     report.
 - **Real:** the first natural incident end to end: detection within one tick of the second red tick

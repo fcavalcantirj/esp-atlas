@@ -21,14 +21,17 @@ delegate on the incident's branch with docs/ops/HEAL-PROMPT.md, and runs
 from __future__ import annotations
 
 import argparse
+import fcntl
+import functools
 import hashlib
 import json
 import os
 import re
 import subprocess
 import sys
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 FAILURE = "FAILURE"
@@ -219,6 +222,15 @@ def evaluate(observations: list[Observation], required: list[str]) -> Verdict:
 
 # --- the incident store (runner-local) ---------------------------------------------------------------
 
+def _exclusive(method):
+    """The whole load-modify-save of a Store method runs under the store's lock."""
+    @functools.wraps(method)
+    def run(self, *args, **kwargs):
+        with self._locked():
+            return method(self, *args, **kwargs)
+    return run
+
+
 class Store:
     def __init__(self, path: Path = DEFAULT_STATE):
         self.path = Path(path)
@@ -234,15 +246,28 @@ class Store:
             raise StoreError(f"incident store {self.path} has no incidents map")
         return data
 
+    @contextmanager
+    def _locked(self):
+        """One load-modify-save at a time across processes: the hourly tick and the runner's launcher
+        both write this store (review B1 of #1681). flock is released by the kernel if a holder dies."""
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.path.with_name(self.path.name + ".lock"), "a") as fh:
+            fcntl.flock(fh, fcntl.LOCK_EX)
+            try:
+                yield
+            finally:
+                fcntl.flock(fh, fcntl.LOCK_UN)
+
     def _save(self, data: dict) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = self.path.with_suffix(".tmp")
+        tmp = self.path.with_name(f"{self.path.name}.{os.getpid()}.tmp")
         tmp.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
         os.replace(tmp, self.path)
 
     def get(self, incident_id: str) -> dict | None:
         return self._load()["incidents"].get(incident_id)
 
+    @_exclusive
     def record(self, verdict: Verdict, now: str) -> dict | None:
         """A new open incident for `verdict`, or None (not an incident, or this fingerprint is
         already open). A fingerprint that comes back after it was resolved gets a -N suffix."""
@@ -262,6 +287,7 @@ class Store:
         self._save(data)
         return rec
 
+    @_exclusive
     def claim(self, now: str) -> dict | None:
         """The oldest open incident, marked dispatched, unless today's (UTC) budget is spent."""
         data = self._load()
@@ -273,8 +299,8 @@ class Store:
                 data["halted"] = True
                 self._save(data)
             return None
-        day = now[:10]
-        spent = sum(1 for r in data["incidents"].values() if str(r.get("dispatched_at", ""))[:10] == day)
+        day = _utc_day(now)
+        spent = sum(1 for r in data["incidents"].values() if _utc_day(r.get("dispatched_at")) == day)
         if spent >= DAILY_DISPATCHES:
             return None
         rec = waiting[0]
@@ -283,12 +309,14 @@ class Store:
         self._save(data)
         return rec
 
+    @_exclusive
     def ack(self, now: str) -> None:
         """A human looked: the count of dispatches without one starts again."""
         data = self._load()
         data.update(auto_since_ack=0, halted=False, halt_nudged=False, acked_at=now)
         self._save(data)
 
+    @_exclusive
     def progress(self, heal_prs: dict, now: str) -> list[str]:
         """Dispatched incidents: a PR on the incident's branch -> pr_opened; none after STALL_HOURS ->
         stalled (never re-dispatched). Returns the ids that stalled."""
@@ -307,6 +335,7 @@ class Store:
             self._save(data)
         return stalled
 
+    @_exclusive
     def nudges(self) -> list[str]:
         """One message per state change since the last call (the tick sends them to Telegram)."""
         data, out = self._load(), []
@@ -323,6 +352,7 @@ class Store:
             self._save(data)
         return out
 
+    @_exclusive
     def resolve_green(self, green_checks: list[str], now: str) -> list[str]:
         """Close every live incident whose check is green again on main and on the newest tick PR."""
         data, closed = self._load(), []
@@ -333,6 +363,17 @@ class Store:
         if closed:
             self._save(data)
         return closed
+
+
+def _utc_day(stamp) -> str:
+    """The UTC calendar day of an ISO timestamp, whatever its offset ("" when unreadable)."""
+    try:
+        moment = datetime.fromisoformat(str(stamp))
+    except ValueError:
+        return ""
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=timezone.utc)
+    return moment.astimezone(timezone.utc).date().isoformat()
 
 
 def _hours(start: str | None, now: str) -> float:
@@ -474,6 +515,14 @@ def watch(gh, slug: str, store: Store, now: str, dry_run: bool = False) -> dict:
 
 _TEST_FILE = re.compile(r"(^|/)test_[^/]*\.py$|(^|/)tests/")
 _SKIP = re.compile(r"pytest\.mark\.(skipif|skip|xfail)|pytest\.(skip|xfail)\(")
+# Deselecting a test by configuration is a skip by another name (review N2 of #1681).
+_SELECTION_FILE = re.compile(r"(^|/)(conftest\.py|pytest\.ini)$")
+_SELECTION_CONFIG = re.compile(r"^\.github/workflows/|(^|/)(pyproject\.toml|setup\.cfg|tox\.ini)$")
+_SELECTION_LINE = re.compile(r"pytest|addopts|testpaths|norecursedirs|python_files|--deselect|--ignore")
+
+
+def _justified(body: str, marker: str, path: str) -> bool:
+    return marker in body and path in body
 
 
 def _git(repo: Path, *args: str) -> str:
@@ -497,6 +546,8 @@ def relay_problems(repo: Path, base: str, head: str, body: str = "") -> list[str
             problems.append(f"touches docs/demand/: {path}")
         if status == "D" and _TEST_FILE.search(path):
             problems.append(f"deletes test file {path}")
+        if _SELECTION_FILE.search(path) and not _justified(body, "Test selection changed:", path):
+            problems.append(f"changes test selection in {path} without 'Test selection changed:' naming it in the PR body")
     current = None
     for line in _git(repo, "diff", "-U0", "--no-renames", rng).splitlines():
         if line.startswith("+++ "):
@@ -510,12 +561,15 @@ def relay_problems(repo: Path, base: str, head: str, body: str = "") -> list[str
             continue
         if current.startswith(".github/workflows/") and line[:1] in "+-" and re.search(r"permissions|secrets\.", line):
             problems.append(f"workflow permissions or secrets changed in {current}")
+        if (_SELECTION_CONFIG.search(current) and line[:1] in "+-" and _SELECTION_LINE.search(line)
+                and not _justified(body, "Test selection changed:", current)):
+            problems.append(f"changes test selection in {current} without 'Test selection changed:' naming it in the PR body")
         if line.startswith("+") and current.endswith(".py"):
             m = _SKIP.search(line)
             if m:
                 problems.append(f"adds {m.group(0)} in {current}")
         if line.startswith("-") and line[1:].strip().startswith("assert "):
-            if not ("Assertion changed:" in body and current in body):
+            if not _justified(body, "Assertion changed:", current):
                 problems.append(f"removes an assert in {current} without 'Assertion changed:' naming it in the PR body")
     return sorted(set(problems))
 
@@ -523,7 +577,7 @@ def relay_problems(repo: Path, base: str, head: str, body: str = "") -> list[str
 # --- CLI for the operator's launcher and relay --------------------------------------------------------------
 
 def _now() -> str:
-    return datetime.now().astimezone().isoformat()
+    return datetime.now(timezone.utc).isoformat()
 
 
 def main(argv=None) -> int:
