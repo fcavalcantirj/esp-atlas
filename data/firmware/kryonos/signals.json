@@ -1,0 +1,275 @@
+{
+ "calls": 12,
+ "errors": 0,
+ "fetched": "2026-11-12",
+ "notes": [],
+ "ref": "main",
+ "repo": "Haris16-code/KryonOS",
+ "resolved": {
+  "boards": [
+   "esp32-s3-devkitc-1",
+   "lilygo-t-deck",
+   "m5cardputer"
+  ],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "esp32-s3-devkitc-1",
+   "esp32-s3-devkitc-1-n16r8-bootloader-0x0000",
+   "esp32-s3-devkitc-1-n16r8-firmware-0x10000",
+   "esp32-s3-devkitc-1-n16r8-partitions-0x8000",
+   "lilygo-t-deck-bootloader-0x0000",
+   "lilygo-t-deck-firmware-0x10000",
+   "lilygo-t-deck-partitions-0x8000",
+   "lilygo-t-hmi",
+   "lilygo-t-hmi-bootloader-0x0000",
+   "lilygo-t-hmi-firmware-0x10000",
+   "lilygo-t-hmi-partitions-0x8000",
+   "m5stack-cardputer-bootloader-0x0000",
+   "m5stack-cardputer-firmware-0x10000",
+   "m5stack-cardputer-partitions-0x8000"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "KryonOS-v3.0.0-esp32-s3-devkitc-1-n16r8-bootloader-0x0000.bin",
+    "release": "v3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1-n16r8-bootloader-0x0000",
+   "url": "https://github.com/Haris16-code/KryonOS/releases/download/v3.0.0/KryonOS-v3.0.0-esp32-s3-devkitc-1-n16r8-bootloader-0x0000.bin"
+  },
+  {
+   "extra": {
+    "asset": "KryonOS-v3.0.0-esp32-s3-devkitc-1-n16r8-firmware-0x10000.bin",
+    "release": "v3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1-n16r8-firmware-0x10000",
+   "url": "https://github.com/Haris16-code/KryonOS/releases/download/v3.0.0/KryonOS-v3.0.0-esp32-s3-devkitc-1-n16r8-firmware-0x10000.bin"
+  },
+  {
+   "extra": {
+    "asset": "KryonOS-v3.0.0-esp32-s3-devkitc-1-n16r8-partitions-0x8000.bin",
+    "release": "v3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1-n16r8-partitions-0x8000",
+   "url": "https://github.com/Haris16-code/KryonOS/releases/download/v3.0.0/KryonOS-v3.0.0-esp32-s3-devkitc-1-n16r8-partitions-0x8000.bin"
+  },
+  {
+   "extra": {
+    "asset": "KryonOS-v3.0.0-lilygo-t-deck-bootloader-0x0000.bin",
+    "release": "v3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo-t-deck-bootloader-0x0000",
+   "url": "https://github.com/Haris16-code/KryonOS/releases/download/v3.0.0/KryonOS-v3.0.0-lilygo-t-deck-bootloader-0x0000.bin"
+  },
+  {
+   "extra": {
+    "asset": "KryonOS-v3.0.0-lilygo-t-deck-firmware-0x10000.bin",
+    "release": "v3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo-t-deck-firmware-0x10000",
+   "url": "https://github.com/Haris16-code/KryonOS/releases/download/v3.0.0/KryonOS-v3.0.0-lilygo-t-deck-firmware-0x10000.bin"
+  },
+  {
+   "extra": {
+    "asset": "KryonOS-v3.0.0-lilygo-t-deck-partitions-0x8000.bin",
+    "release": "v3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo-t-deck-partitions-0x8000",
+   "url": "https://github.com/Haris16-code/KryonOS/releases/download/v3.0.0/KryonOS-v3.0.0-lilygo-t-deck-partitions-0x8000.bin"
+  },
+  {
+   "extra": {
+    "asset": "KryonOS-v3.0.0-lilygo-t-hmi-bootloader-0x0000.bin",
+    "release": "v3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo-t-hmi-bootloader-0x0000",
+   "url": "https://github.com/Haris16-code/KryonOS/releases/download/v3.0.0/KryonOS-v3.0.0-lilygo-t-hmi-bootloader-0x0000.bin"
+  },
+  {
+   "extra": {
+    "asset": "KryonOS-v3.0.0-lilygo-t-hmi-firmware-0x10000.bin",
+    "release": "v3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo-t-hmi-firmware-0x10000",
+   "url": "https://github.com/Haris16-code/KryonOS/releases/download/v3.0.0/KryonOS-v3.0.0-lilygo-t-hmi-firmware-0x10000.bin"
+  },
+  {
+   "extra": {
+    "asset": "KryonOS-v3.0.0-lilygo-t-hmi-partitions-0x8000.bin",
+    "release": "v3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo-t-hmi-partitions-0x8000",
+   "url": "https://github.com/Haris16-code/KryonOS/releases/download/v3.0.0/KryonOS-v3.0.0-lilygo-t-hmi-partitions-0x8000.bin"
+  },
+  {
+   "extra": {
+    "asset": "KryonOS-v3.0.0-m5stack-cardputer-bootloader-0x0000.bin",
+    "release": "v3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stack-cardputer-bootloader-0x0000",
+   "url": "https://github.com/Haris16-code/KryonOS/releases/download/v3.0.0/KryonOS-v3.0.0-m5stack-cardputer-bootloader-0x0000.bin"
+  },
+  {
+   "extra": {
+    "asset": "KryonOS-v3.0.0-m5stack-cardputer-firmware-0x10000.bin",
+    "release": "v3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stack-cardputer-firmware-0x10000",
+   "url": "https://github.com/Haris16-code/KryonOS/releases/download/v3.0.0/KryonOS-v3.0.0-m5stack-cardputer-firmware-0x10000.bin"
+  },
+  {
+   "extra": {
+    "asset": "KryonOS-v3.0.0-m5stack-cardputer-partitions-0x8000.bin",
+    "release": "v3.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "m5stack-cardputer-partitions-0x8000",
+   "url": "https://github.com/Haris16-code/KryonOS/releases/download/v3.0.0/KryonOS-v3.0.0-m5stack-cardputer-partitions-0x8000.bin"
+  },
+  {
+   "extra": {
+    "env": "esp32-s3-devkitc-1-n16r8",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 22,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/Haris16-code/KryonOS/blob/main/platformio.ini#L22"
+  },
+  {
+   "extra": {
+    "env": "lilygo-t-deck",
+    "file": "src/Hal/Boards/board_configs/t_deck.ini"
+   },
+   "kind": "platformio",
+   "line": 10,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/Haris16-code/KryonOS/blob/main/src/Hal/Boards/board_configs/t_deck.ini#L10"
+  },
+  {
+   "extra": {
+    "env": "m5stack-cardputer",
+    "file": "src/Hal/Boards/board_configs/cardputer.ini",
+    "product_markers": [
+     "cardputer"
+    ]
+   },
+   "kind": "platformio",
+   "line": 8,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/Haris16-code/KryonOS/blob/main/src/Hal/Boards/board_configs/cardputer.ini#L8"
+  },
+  {
+   "extra": {
+    "env": "lilygo-t-hmi",
+    "file": "src/Hal/Boards/board_configs/t_hmi.ini"
+   },
+   "kind": "platformio",
+   "line": 7,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/Haris16-code/KryonOS/blob/main/src/Hal/Boards/board_configs/t_hmi.ini#L7"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "lilygo-t-deck",
+   "url": "https://github.com/Haris16-code/KryonOS/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1-n16r8",
+   "url": "https://github.com/Haris16-code/KryonOS/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "m5stack-cardputer",
+   "url": "https://github.com/Haris16-code/KryonOS/blob/main/.github/workflows/release.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/release.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "lilygo-t-hmi",
+   "url": "https://github.com/Haris16-code/KryonOS/blob/main/.github/workflows/release.yml"
+  }
+ ]
+}

@@ -1046,7 +1046,7 @@
     },
     "sparkfun-esp32-thing": {
       "board": "sparkfun-esp32-thing",
-      "expires": "2026-11-12T03:01:00.115486+00:00",
+      "expires": "2026-11-19T04:00:55.529482+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -1059,7 +1059,7 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-05T03:01:00.115486+00:00"
+      "timestamp": "2026-11-12T04:00:55.529482+00:00"
     },
     "sparkfun-iot-redboard-esp32": {
       "board": "sparkfun-iot-redboard-esp32",
@@ -1237,7 +1237,7 @@
     },
     "xiao-esp32s3": {
       "board": "xiao-esp32s3",
-      "expires": "2026-11-12T03:01:00.115486+00:00",
+      "expires": "2026-11-19T04:00:55.529482+00:00",
       "field_reasons": {
         "usb_serial": {
           "boards_txt": "no_pattern_match",
@@ -1246,11 +1246,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-05T03:01:00.115486+00:00"
+      "timestamp": "2026-11-12T04:00:55.529482+00:00"
     },
     "xiao-esp32s3-sense": {
       "board": "xiao-esp32s3-sense",
-      "expires": "2026-11-12T03:01:00.115486+00:00",
+      "expires": "2026-11-19T04:00:55.529482+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -1266,7 +1266,7 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-05T03:01:00.115486+00:00"
+      "timestamp": "2026-11-12T04:00:55.529482+00:00"
     }
   }
 }
