@@ -166,43 +166,22 @@
    "closed_on": "2026-11-08",
    "snapshot": "docs/demand/2026-11-07.json"
   },
-  "term512": {
-   "term": "term512",
-   "status": "closed",
-   "source": "gsc_query",
-   "first_seen": "2026-11-08",
-   "last_seen": "2026-11-08",
-   "window": {
-    "start": "2026-10-13",
-    "end": "2026-11-10"
-   },
-   "metrics": {
-    "impressions": 21,
-    "position": 7.2
-   },
-   "linked_work": [],
-   "history": [
-    {
-     "event": "closed",
-     "date": "2026-11-10",
-     "resolution": "abandoned",
-     "work": "a12a2a3be93aa793",
-     "reason": "term512 is TERM512, a CardputerAdv expansion kit (3D-printed CapTFT enclosure + 2.8in ILI9341 display + AMS1117 module, no MCU) for the already-catalogued area512 firmware, not a board: https://github.com/Prokuon/term512"
-    }
-   ],
-   "outcome": {
-    "status": "abandoned",
-    "reason": "term512 is TERM512, a CardputerAdv expansion kit (3D-printed CapTFT enclosure + 2.8in ILI9341 display + AMS1117 module, no MCU) for the already-catalogued area512 firmware, not a board: https://github.com/Prokuon/term512"
-   },
-   "closed_on": "2026-11-10",
-   "snapshot": "docs/demand/2026-11-10.json"
-  },
   "pam-0fb4ec9f138e2a6f989bcb03": {
    "term": "Arduino Nano ESP32",
    "source": "pam_feed",
-   "status": "linked",
+   "status": "closed",
    "first_seen": "2026-11-06",
-   "history": [],
+   "history": [
+    {
+     "event": "closed",
+     "date": "2026-11-11",
+     "resolution": "delivered",
+     "work": "pam-0fb4ec9f138e2a6f989bcb03",
+     "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1622",
+     "merge_sha": "12bfb117014b58a04c5dd0d7b1755cc3dd0c21c8",
+     "deployment": "52ae3bfa4f07131b2be86f6d9facc291eb4b5e32"
+    }
+   ],
    "linked_work": [
     "https://github.com/fcavalcantirj/esp-atlas/pull/1622"
    ],
@@ -311,7 +290,146 @@
     "notes": "Arduino Nano ESP32 is one PCB (u-blox NORA-W106-10B, ESP32-S3, 16 MB GD25B128 flash, 8 MB PSRAM, USB-C) sold as two SKUs: ABX00092 without headers and ABX00083 with headers. The ABX00083 user manual covers both ('with and without headers'), so they are one catalog record with both SKUs as aka, never two ids. Not to be confused with Nano 33 IoT / Nano RP2040 Connect, whose u-blox NINA-W102 (ESP32) is only a radio co-processor.",
     "identity_verified": true,
     "term_key": "arduino nano esp32"
-   }
+   },
+   "outcome": {
+    "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1622",
+    "merge_sha": "12bfb117014b58a04c5dd0d7b1755cc3dd0c21c8",
+    "merged_at": "2026-11-11T00:13:50Z",
+    "verification_kind": "catalog_part",
+    "query": "Arduino Nano ESP32",
+    "checked_at": "2026-11-11T11:15:54.289042+00:00",
+    "expected_ids": [
+     "arduino-nano-esp32"
+    ],
+    "forbidden_ids": [
+     "arduino-nano-esp32-with-headers",
+     "arduino-nano-esp32-without-headers"
+    ],
+    "source": "pam_feed",
+    "feed": {
+     "checked_at": "2026-11-06T04:22:34.124739Z",
+     "feeds": {
+      "products": {
+       "url": "https://pamfinds.com/api/products.json",
+       "fetched_at": "2026-11-06T04:22:34.124739Z",
+       "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+       "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+       "bytes": 110684
+      },
+      "specs": {
+       "url": "https://pamfinds.com/api/specs.json",
+       "fetched_at": "2026-11-06T04:22:34.124739Z",
+       "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+       "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+       "bytes": 349157
+      }
+     },
+     "lead": {
+      "source_id": "arduino-nano-esp32",
+      "name_hint": "Arduino Nano ESP32",
+      "chip_hint": "ESP32-S3",
+      "page": "https://pamfinds.com/esp32/arduino-nano-esp32/",
+      "source_pointers": {
+       "cpu_arch": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "cpu_cores": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "cpu_freq_mhz": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "flash_mb": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "sram_kb": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "psram_mb": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "wifi": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "ble": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "gpio_count": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "adc_channels": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "spi": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "i2c": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "uart": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "usb_type": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "input_voltage": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "operating_voltage": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf"
+       ],
+       "dimensions_mm": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ],
+       "form_factor": [
+        "https://docs.arduino.cc/hardware/nano-esp32/"
+       ]
+      },
+      "fingerprint": "fc279054ab4722d31c6e17c77257649f8dab0a49927d4477687fab0531e852a5",
+      "matches": [],
+      "status": "potential_identity_gap"
+     }
+    },
+    "http": 200,
+    "deployment": "52ae3bfa4f07131b2be86f6d9facc291eb4b5e32",
+    "ids": [
+     "arduino-nano-esp32"
+    ],
+    "missing": [],
+    "forbidden_hits": []
+   },
+   "closed_on": "2026-11-11"
+  },
+  "term512": {
+   "term": "term512",
+   "status": "closed",
+   "source": "gsc_query",
+   "first_seen": "2026-11-08",
+   "last_seen": "2026-11-08",
+   "window": {
+    "start": "2026-10-13",
+    "end": "2026-11-10"
+   },
+   "metrics": {
+    "impressions": 21,
+    "position": 7.2
+   },
+   "linked_work": [],
+   "history": [
+    {
+     "event": "closed",
+     "date": "2026-11-10",
+     "resolution": "abandoned",
+     "work": "a12a2a3be93aa793",
+     "reason": "term512 is TERM512, a CardputerAdv expansion kit (3D-printed CapTFT enclosure + 2.8in ILI9341 display + AMS1117 module, no MCU) for the already-catalogued area512 firmware, not a board: https://github.com/Prokuon/term512"
+    }
+   ],
+   "outcome": {
+    "status": "abandoned",
+    "reason": "term512 is TERM512, a CardputerAdv expansion kit (3D-printed CapTFT enclosure + 2.8in ILI9341 display + AMS1117 module, no MCU) for the already-catalogued area512 firmware, not a board: https://github.com/Prokuon/term512"
+   },
+   "closed_on": "2026-11-10",
+   "snapshot": "docs/demand/2026-11-10.json"
   }
  }
 }

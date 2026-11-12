@@ -1,7 +1,7 @@
 {
- "calls": 16,
+ "calls": 19,
  "errors": 0,
- "fetched": "2026-11-03",
+ "fetched": "2026-11-11",
  "notes": [],
  "ref": "development",
  "repo": "1technophile/OpenMQTTGateway",
@@ -51,12 +51,12 @@
    "esp32c3_lolin_mini_with_serial-firmware",
    "esp32c3u-m5stamp-firmware",
    "esp32dev",
+   "esp32dev-all-test-firmware",
    "esp32dev-ble-aws-firmware",
    "esp32dev-ble-broker-firmware",
    "esp32dev-ble-datatest-firmware",
    "esp32dev-ble-firmware",
    "esp32dev-ble-idf-firmware",
-   "esp32dev-ble-idf-ota_data_initial",
    "esp32dev-ble-mqtt-undecoded-firmware",
    "esp32dev-gf-sun-inverter-firmware",
    "esp32dev-ir-firmware",
@@ -67,6 +67,7 @@
    "esp32dev-pilight-somfy-cc1101-firmware",
    "esp32dev-rf-firmware",
    "esp32dev-rtl_433-firmware",
+   "esp32dev-rtl_433-fsk-firmware",
    "esp32dev-somfy-cc1101-firmware",
    "esp32dev-weatherstation-firmware",
    "esp32doit-devkit-v1",
@@ -82,14 +83,20 @@
    "heltec-wifi-lora-32-firmware",
    "heltec_wifi_lora_32",
    "heltec_wifi_lora_32_V2",
+   "isno-super-firmware",
    "lilygo-ble-firmware",
    "lilygo-rtl_433-firmware",
    "lilygo-rtl_433-fsk-firmware",
    "lilygo-t3-s3",
+   "lilygo-t3-s3-rtl_433-firmware",
+   "lilygo-t3-s3-rtl_433-fsk-firmware",
    "lolin32",
    "m5stack-core-esp32",
+   "manual-wifi-test-firmware",
    "nodemcuv2",
    "nodemcuv2-2g-firmware",
+   "nodemcuv2-all-test-firmware",
+   "nodemcuv2-fastled-test-firmware",
    "nodemcuv2-ir-firmware",
    "nodemcuv2-pilight-firmware",
    "nodemcuv2-rf-cc1101-firmware",
@@ -123,914 +130,998 @@
   {
    "extra": {
     "asset": "airm2m_core_esp32c3-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "airm2m_core_esp32c3-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/airm2m_core_esp32c3-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/airm2m_core_esp32c3-firmware.bin"
   },
   {
    "extra": {
     "asset": "avatto-bakeey-ir-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "avatto-bakeey-ir-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/avatto-bakeey-ir-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/avatto-bakeey-ir-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-lolin32lite-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-lolin32lite-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-lolin32lite-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32-lolin32lite-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-m5atom-lite-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-m5atom-lite-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5atom-lite-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32-m5atom-lite-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-m5atom-matrix-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-m5atom-matrix-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5atom-matrix-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32-m5atom-matrix-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-m5stack-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-m5stack-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5stack-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32-m5stack-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-m5stick-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-m5stick-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5stick-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32-m5stick-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-m5stick-c-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-m5stick-c-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5stick-c-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32-m5stick-c-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-m5stick-cp-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-m5stick-cp-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5stick-cp-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32-m5stick-cp-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-m5tough-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-m5tough-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-m5tough-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32-m5tough-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-olimex-gtw-ble-eth-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-olimex-gtw-ble-eth-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-olimex-gtw-ble-eth-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32-olimex-gtw-ble-eth-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-olimex-gtw-ble-poe-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-olimex-gtw-ble-poe-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-olimex-gtw-ble-poe-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32-olimex-gtw-ble-poe-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-olimex-gtw-ble-poe-iso-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-olimex-gtw-ble-poe-iso-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-olimex-gtw-ble-poe-iso-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32-olimex-gtw-ble-poe-iso-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-olimex-gtw-ble-wifi-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-olimex-gtw-ble-wifi-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-olimex-gtw-ble-wifi-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32-olimex-gtw-ble-wifi-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-wt32-eth01-ble-eth-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-wt32-eth01-ble-eth-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32-wt32-eth01-ble-eth-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32-wt32-eth01-ble-eth-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32c3-dev-c2-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32c3-dev-c2-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3-dev-c2-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32c3-dev-c2-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32c3-dev-c2-ble-no-serial-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32c3-dev-c2-ble-no-serial-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3-dev-c2-ble-no-serial-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32c3-dev-c2-ble-no-serial-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32c3-dev-m1-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32c3-dev-m1-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3-dev-m1-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32c3-dev-m1-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32c3-m5stamp-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32c3-m5stamp-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3-m5stamp-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32c3-m5stamp-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32c3u-m5stamp-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32c3u-m5stamp-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3u-m5stamp-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32c3u-m5stamp-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32c3_lolin_mini-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32c3_lolin_mini-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3_lolin_mini-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32c3_lolin_mini-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32c3_lolin_mini_with_serial-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32c3_lolin_mini_with_serial-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32c3_lolin_mini_with_serial-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32c3_lolin_mini_with_serial-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-all-test-firmware.bin",
+    "release": "v1.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-all-test-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-all-test-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-ble-aws-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-ble-aws-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-aws-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-ble-aws-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-ble-broker-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-ble-broker-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-broker-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-ble-broker-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-ble-datatest-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-ble-datatest-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-datatest-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-ble-datatest-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-ble-idf-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-ble-idf-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-idf-firmware.bin"
-  },
-  {
-   "extra": {
-    "asset": "esp32dev-ble-idf-ota_data_initial.bin",
-    "release": "v1.8.1"
-   },
-   "kind": "asset",
-   "line": null,
-   "rank": 1,
-   "soc": null,
-   "token": "esp32dev-ble-idf-ota_data_initial",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-idf-ota_data_initial.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-ble-idf-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-ble-mqtt-undecoded-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-ble-mqtt-undecoded-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ble-mqtt-undecoded-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-ble-mqtt-undecoded-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-gf-sun-inverter-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-gf-sun-inverter-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-gf-sun-inverter-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-gf-sun-inverter-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-ir-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-ir-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-ir-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-ir-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-multi_receiver-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-multi_receiver-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-multi_receiver-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-multi_receiver-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-multi_receiver-pilight-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-multi_receiver-pilight-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-multi_receiver-pilight-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-multi_receiver-pilight-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-pilight-cc1101-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-pilight-cc1101-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-pilight-cc1101-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-pilight-cc1101-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-pilight-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-pilight-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-pilight-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-pilight-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-pilight-somfy-cc1101-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-pilight-somfy-cc1101-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-pilight-somfy-cc1101-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-pilight-somfy-cc1101-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-rf-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-rf-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-rf-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-rf-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-rtl_433-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-rtl_433-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-rtl_433-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-rtl_433-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "esp32dev-rtl_433-fsk-firmware.bin",
+    "release": "v1.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "esp32dev-rtl_433-fsk-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-rtl_433-fsk-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-somfy-cc1101-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-somfy-cc1101-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-somfy-cc1101-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-somfy-cc1101-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32dev-weatherstation-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32dev-weatherstation-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32dev-weatherstation-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32dev-weatherstation-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32doitv1-aithinker-r01-sx1278-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32doitv1-aithinker-r01-sx1278-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32doitv1-aithinker-r01-sx1278-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32doitv1-aithinker-r01-sx1278-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32feather-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32feather-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32feather-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32feather-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32s3-atomS3U-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32s3-atomS3U-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32s3-atomS3U-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32s3-atomS3U-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32s3-dev-c1-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32s3-dev-c1-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32s3-dev-c1-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32s3-dev-c1-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32s3-m5stack-stamps3-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32s3-m5stack-stamps3-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/esp32s3-m5stack-stamps3-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/esp32s3-m5stack-stamps3-firmware.bin"
   },
   {
    "extra": {
     "asset": "heltec-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "heltec-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/heltec-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/heltec-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "heltec-rtl_433-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "heltec-rtl_433-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/heltec-rtl_433-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/heltec-rtl_433-firmware.bin"
   },
   {
    "extra": {
     "asset": "heltec-rtl_433-fsk-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "heltec-rtl_433-fsk-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/heltec-rtl_433-fsk-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/heltec-rtl_433-fsk-firmware.bin"
   },
   {
    "extra": {
     "asset": "heltec-wifi-lora-32-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "heltec-wifi-lora-32-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/heltec-wifi-lora-32-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/heltec-wifi-lora-32-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "isno-super-firmware.bin",
+    "release": "v1.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "isno-super-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/isno-super-firmware.bin"
   },
   {
    "extra": {
     "asset": "lilygo-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/lilygo-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/lilygo-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "lilygo-rtl_433-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-rtl_433-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/lilygo-rtl_433-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/lilygo-rtl_433-firmware.bin"
   },
   {
    "extra": {
     "asset": "lilygo-rtl_433-fsk-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-rtl_433-fsk-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/lilygo-rtl_433-fsk-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/lilygo-rtl_433-fsk-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "lilygo-t3-s3-rtl_433-firmware.bin",
+    "release": "v1.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo-t3-s3-rtl_433-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/lilygo-t3-s3-rtl_433-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "lilygo-t3-s3-rtl_433-fsk-firmware.bin",
+    "release": "v1.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "lilygo-t3-s3-rtl_433-fsk-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/lilygo-t3-s3-rtl_433-fsk-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "manual-wifi-test-firmware.bin",
+    "release": "v1.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "manual-wifi-test-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/manual-wifi-test-firmware.bin"
   },
   {
    "extra": {
     "asset": "nodemcuv2-2g-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "nodemcuv2-2g-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-2g-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/nodemcuv2-2g-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "nodemcuv2-all-test-firmware.bin",
+    "release": "v1.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "nodemcuv2-all-test-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/nodemcuv2-all-test-firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "nodemcuv2-fastled-test-firmware.bin",
+    "release": "v1.9.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "nodemcuv2-fastled-test-firmware",
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/nodemcuv2-fastled-test-firmware.bin"
   },
   {
    "extra": {
     "asset": "nodemcuv2-ir-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "nodemcuv2-ir-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-ir-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/nodemcuv2-ir-firmware.bin"
   },
   {
    "extra": {
     "asset": "nodemcuv2-pilight-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "nodemcuv2-pilight-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-pilight-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/nodemcuv2-pilight-firmware.bin"
   },
   {
    "extra": {
     "asset": "nodemcuv2-rf-cc1101-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "nodemcuv2-rf-cc1101-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-rf-cc1101-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/nodemcuv2-rf-cc1101-firmware.bin"
   },
   {
    "extra": {
     "asset": "nodemcuv2-rf-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "nodemcuv2-rf-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-rf-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/nodemcuv2-rf-firmware.bin"
   },
   {
    "extra": {
     "asset": "nodemcuv2-rf2-cc1101-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "nodemcuv2-rf2-cc1101-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-rf2-cc1101-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/nodemcuv2-rf2-cc1101-firmware.bin"
   },
   {
    "extra": {
     "asset": "nodemcuv2-rf2-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "nodemcuv2-rf2-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-rf2-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/nodemcuv2-rf2-firmware.bin"
   },
   {
    "extra": {
     "asset": "nodemcuv2-serial-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "nodemcuv2-serial-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-serial-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/nodemcuv2-serial-firmware.bin"
   },
   {
    "extra": {
     "asset": "nodemcuv2-somfy-cc1101-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "nodemcuv2-somfy-cc1101-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-somfy-cc1101-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/nodemcuv2-somfy-cc1101-firmware.bin"
   },
   {
    "extra": {
     "asset": "nodemcuv2-weatherstation-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "nodemcuv2-weatherstation-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/nodemcuv2-weatherstation-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/nodemcuv2-weatherstation-firmware.bin"
   },
   {
    "extra": {
     "asset": "rf-wifi-gateway-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "rf-wifi-gateway-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/rf-wifi-gateway-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/rf-wifi-gateway-firmware.bin"
   },
   {
    "extra": {
     "asset": "rfbridge-direct-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "rfbridge-direct-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/rfbridge-direct-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/rfbridge-direct-firmware.bin"
   },
   {
    "extra": {
     "asset": "rfbridge-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "rfbridge-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/rfbridge-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/rfbridge-firmware.bin"
   },
   {
    "extra": {
     "asset": "shelly-plus1-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "shelly-plus1-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/shelly-plus1-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/shelly-plus1-firmware.bin"
   },
   {
    "extra": {
     "asset": "sonoff-basic-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "sonoff-basic-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/sonoff-basic-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/sonoff-basic-firmware.bin"
   },
   {
    "extra": {
     "asset": "sonoff-basic-rfr3-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "sonoff-basic-rfr3-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/sonoff-basic-rfr3-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/sonoff-basic-rfr3-firmware.bin"
   },
   {
    "extra": {
     "asset": "theengs-bridge-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "theengs-bridge-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/theengs-bridge-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/theengs-bridge-firmware.bin"
   },
   {
    "extra": {
     "asset": "theengs-bridge-v11-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "theengs-bridge-v11-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/theengs-bridge-v11-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/theengs-bridge-v11-firmware.bin"
   },
   {
    "extra": {
     "asset": "theengs-plug-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "theengs-plug-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/theengs-plug-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/theengs-plug-firmware.bin"
   },
   {
    "extra": {
     "asset": "thingpulse-espgateway-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "thingpulse-espgateway-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/thingpulse-espgateway-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/thingpulse-espgateway-firmware.bin"
   },
   {
    "extra": {
     "asset": "tinypico-ble-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tinypico-ble-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/tinypico-ble-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/tinypico-ble-firmware.bin"
   },
   {
    "extra": {
     "asset": "ttgo-lora32-v1-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "ttgo-lora32-v1-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/ttgo-lora32-v1-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/ttgo-lora32-v1-firmware.bin"
   },
   {
    "extra": {
     "asset": "ttgo-lora32-v21-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "ttgo-lora32-v21-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/ttgo-lora32-v21-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/ttgo-lora32-v21-firmware.bin"
   },
   {
    "extra": {
     "asset": "ttgo-t-beam-firmware.bin",
-    "release": "v1.8.1"
+    "release": "v1.9.1"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "ttgo-t-beam-firmware",
-   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.8.1/ttgo-t-beam-firmware.bin"
+   "url": "https://github.com/1technophile/OpenMQTTGateway/releases/download/v1.9.1/ttgo-t-beam-firmware.bin"
   },
   {
    "extra": {
