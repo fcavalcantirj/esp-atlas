@@ -448,7 +448,7 @@
     },
     "heltec-wifi-kit-32-v3": {
       "board": "heltec-wifi-kit-32-v3",
-      "expires": "2026-11-12T20:00:59.980852+00:00",
+      "expires": "2026-11-19T21:00:55.047326+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -456,11 +456,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-05T20:00:59.980852+00:00"
+      "timestamp": "2026-11-12T21:00:55.047326+00:00"
     },
     "heltec-wifi-lora-32-v3": {
       "board": "heltec-wifi-lora-32-v3",
-      "expires": "2026-11-12T20:00:59.980852+00:00",
+      "expires": "2026-11-19T21:00:55.047326+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -468,11 +468,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-05T20:00:59.980852+00:00"
+      "timestamp": "2026-11-12T21:00:55.047326+00:00"
     },
     "heltec-wireless-paper": {
       "board": "heltec-wireless-paper",
-      "expires": "2026-11-12T20:00:59.980852+00:00",
+      "expires": "2026-11-19T21:00:55.047326+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -483,7 +483,7 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-05T20:00:59.980852+00:00"
+      "timestamp": "2026-11-12T21:00:55.047326+00:00"
     },
     "heltec-wireless-stick-v3": {
       "board": "heltec-wireless-stick-v3",
