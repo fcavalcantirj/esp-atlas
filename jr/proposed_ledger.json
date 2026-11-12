@@ -4739,7 +4739,7 @@
       "repo": "haris16-code/kryonos",
       "repo_id": 1271567896,
       "status": "proposed",
-      "timestamp": "2026-11-12T01:00:57.508990+00:00"
+      "timestamp": "2026-11-12T02:00:55.136275+00:00"
     },
     "kvxputer": {
       "expired_at": "2026-11-05T19:01:17.341039+00:00",
@@ -5613,12 +5613,13 @@
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-1f4b658f3462d2b2b3e6068bbf3e4a7d": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-1f4b658f3462d2b2b3e6068bbf3e4a7d",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1f4b658f3462d2b2b3e6068bbf3e4a7d",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-200c164bf2eb0580d08e36bc257689b3": {
@@ -5800,12 +5801,13 @@
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-30dfdf3153ecccba3069ced825074fa4": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-30dfdf3153ecccba3069ced825074fa4",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:30dfdf3153ecccba3069ced825074fa4",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-3160ff37678051b48081e9ac0a135e99": {
@@ -5926,12 +5928,13 @@
       "timestamp": "2026-11-04T01:00:59.777703+00:00"
     },
     "launcher-48ff88bb1f77bdb1ea89d6c3a35505b6": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-48ff88bb1f77bdb1ea89d6c3a35505b6",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bruce user:finch'",
       "repo": "launcher:48ff88bb1f77bdb1ea89d6c3a35505b6",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-49508dd8cab1c07e077d0f57dec9a54f": {
@@ -6296,12 +6299,13 @@
       "timestamp": "2026-11-05T05:01:00.482196+00:00"
     },
     "launcher-87c4a536a5e3c3b1326fc5ca03dc6afb": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-87c4a536a5e3c3b1326fc5ca03dc6afb",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:87c4a536a5e3c3b1326fc5ca03dc6afb",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-8b81b628277f2f924126ed60adf717f1": {
@@ -6364,12 +6368,13 @@
       "timestamp": "2026-11-03T23:00:59.739871+00:00"
     },
     "launcher-9492946b033c1078ef5d851fca226d64": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-9492946b033c1078ef5d851fca226d64",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:9492946b033c1078ef5d851fca226d64",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-96b58272db31a8979f84922809ca9cf9": {
@@ -6483,12 +6488,13 @@
       "timestamp": "2026-11-04T19:00:59.711024+00:00"
     },
     "launcher-b27129ff66ec74facb416cdd3e601d81": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-b27129ff66ec74facb416cdd3e601d81",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:b27129ff66ec74facb416cdd3e601d81",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-b285f3915e27de2728764e3d8a272bce": {
@@ -6687,12 +6693,13 @@
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "launcher-d4e8c7866e5c475d12c7d3888f5b2fe4": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-d4e8c7866e5c475d12c7d3888f5b2fe4",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:d4e8c7866e5c475d12c7d3888f5b2fe4",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-d4f56ec2f3f5ec691cfae54052bb3b53": {
@@ -6716,12 +6723,13 @@
       "timestamp": "2026-11-04T02:00:59.526867+00:00"
     },
     "launcher-d6c68178418e1a70a197abe3efb4fe8c": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-d6c68178418e1a70a197abe3efb4fe8c",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:d6c68178418e1a70a197abe3efb4fe8c",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-d73f7e34785d6a6a3d788ca8815e06ac": {
@@ -6783,12 +6791,13 @@
       "timestamp": "2026-11-04T23:00:59.660094+00:00"
     },
     "launcher-e46ca36b8c19e52749b41acbf0a9044d": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-e46ca36b8c19e52749b41acbf0a9044d",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:e46ca36b8c19e52749b41acbf0a9044d",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-e7c7cb4167ad20780376f0452d035b0f": {
@@ -6907,12 +6916,13 @@
       "timestamp": "2026-11-05T00:00:59.720006+00:00"
     },
     "launcher-fca74c9f24f8850b47da3931fe1ed2c1": {
+      "expired_at": "2026-11-12T02:00:55.136275+00:00",
       "expires": "2026-11-12T01:01:14.781862+00:00",
       "id": "launcher-fca74c9f24f8850b47da3931fe1ed2c1",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:fca74c9f24f8850b47da3931fe1ed2c1",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-05T01:01:14.781862+00:00"
     },
     "launcher-salmi-fork": {
@@ -6972,7 +6982,7 @@
       "repo": "maxmoneycash/lilyshark",
       "repo_id": 1332691105,
       "status": "proposed",
-      "timestamp": "2026-11-12T01:00:57.508990+00:00"
+      "timestamp": "2026-11-12T02:00:55.136275+00:00"
     },
     "liner": {
       "expired_at": "2026-11-08T21:00:55.166276+00:00",
