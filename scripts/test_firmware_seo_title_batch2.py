@@ -26,7 +26,6 @@ BATCH_2_FIRMWARE_IDS = [
     "m5hamradio",
     "esp32-homekit-remote",
     "meshcore-cardputer-adv",
-    "m5tool",
     "esphome",
 ]
 

@@ -2,7 +2,6 @@
 id: m5tool
 type: firmware
 name: M5Tool
-seo_title: "M5Tool \u2014 firmware flasher for M5StickC Plus2 and Cardputer"
 url: https://github.com/Sonys9/M5Tool
 category: multi
 maintainer: sonys9
