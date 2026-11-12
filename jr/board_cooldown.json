@@ -1031,6 +1031,19 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-12T02:00:55.136275+00:00"
     },
+    "m5stick-s3": {
+      "board": "m5stick-s3",
+      "expires": "2026-11-19T03:00:55.332668+00:00",
+      "field_reasons": {
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-12T03:00:55.332668+00:00"
+    },
     "sparkfun-esp32-thing": {
       "board": "sparkfun-esp32-thing",
       "expires": "2026-11-12T03:01:00.115486+00:00",
@@ -1175,6 +1188,39 @@
       },
       "reason": "nothing-groundable",
       "timestamp": "2026-11-09T03:00:55.181581+00:00"
+    },
+    "xiao-esp32c3": {
+      "board": "xiao-esp32c3",
+      "expires": "2026-11-19T03:00:55.332668+00:00",
+      "field_reasons": {
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_pattern_match",
+          "vendor": "field_absent"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-12T03:00:55.332668+00:00"
+    },
+    "xiao-esp32c5": {
+      "board": "xiao-esp32c5",
+      "expires": "2026-11-19T03:00:55.332668+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_pattern_match",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-12T03:00:55.332668+00:00"
     },
     "xiao-esp32c6": {
       "board": "xiao-esp32c6",
