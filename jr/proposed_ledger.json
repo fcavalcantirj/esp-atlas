@@ -13363,6 +13363,30 @@
       "repo": "soykhaler/zx-spectrum-cardputer-internal",
       "status": "expired",
       "timestamp": "2026-09-02T16:03:28.027423+00:00"
+    },
+    "tdeck-screenfix": {
+      "expires": "2026-12-11T08:00:55.170556+00:00",
+      "id": "tdeck-screenfix",
+      "pr_ref": null,
+      "repo": "hermes-gadget/tdeck-screenfix",
+      "status": "seen",
+      "timestamp": "2026-11-11T08:00:55.170556+00:00"
+    },
+    "ultima-v-native": {
+      "expires": "2026-12-11T08:00:55.170556+00:00",
+      "id": "ultima-v-native",
+      "pr_ref": null,
+      "repo": "thekojac304/ultima-v-native",
+      "status": "seen",
+      "timestamp": "2026-11-11T08:00:55.170556+00:00"
+    },
+    "microos": {
+      "expires": "2026-12-11T08:00:55.170556+00:00",
+      "id": "microos",
+      "pr_ref": null,
+      "repo": "microos-project/microos",
+      "status": "seen",
+      "timestamp": "2026-11-11T08:00:55.170556+00:00"
     }
   },
   "by_repo": {
@@ -14713,6 +14737,9 @@
     "zuens2020/cardputer-typeless": "cardputer-typeless",
     "zusyaku/malware-collection-part-2": "malware-collection-part-2",
     "zxcurch/bad-apple-on-m5stickc-plus2": "bad-apple-on-m5stickc-plus2",
-    "zyntraio/airserial": "airserial"
+    "zyntraio/airserial": "airserial",
+    "microos-project/microos": "microos",
+    "thekojac304/ultima-v-native": "ultima-v-native",
+    "hermes-gadget/tdeck-screenfix": "tdeck-screenfix"
   }
 }
