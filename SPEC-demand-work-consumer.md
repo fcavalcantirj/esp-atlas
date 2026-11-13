@@ -56,6 +56,18 @@ inference availability monitor. Implementation is not activation.
   interrupted/retried item consumes the same slot, not another one. The
   fail-closed checks over the whole pair (unreadable receipts, unknown statuses,
   orphan receipts, inconsistent closures) block both classes.
+- Research window (decision 2026-11-12, after `pam-63e3`, the AI-Thinker ESP32-CAM, was retried on
+  2026-11-11 and 2026-11-12 against the same missing manufacturer source and kept the PAM class from
+  starting anything else): a live receipt without a PR may be worked on its start day and the next
+  UTC day (`MAX_WORK_DAYS = 2`, counted from `retry_on` when a human re-armed it, else `started_on`).
+  From the third day it is **exhausted**: the broker never resumes it, the operator's launcher never
+  launches it, and it no longer holds its class, so the next candidate of that class may start. It
+  stays live and is reported in every broker pass as needing a human settle (`work_record.py settle`)
+  or one more window (`work_record.py retry`, allowed only on an exhausted receipt). The window is
+  computed from `started_on`, which main always holds; attempt stamps live on the work branch and
+  reach main only with a PR, so a count of attempts would never fire where the broker reads.
+  `work_record.py launch-state <key>` is the one rule the launcher applies to a receipts file (main's
+  or a branch's): `free`, `busy` (a PR, attempted today, or terminal) or `exhausted`.
 - Candidate key: normalized term plus its current lifecycle opening date, so a
   permitted future reopening is distinguishable from a retry. Derive a stable
   opaque work ID and deterministic branch name from that key. Never derive shell
@@ -241,7 +253,11 @@ autonomously authored PR.
 7. Merged PR plus stale/wrong live response: candidate stays open.
 8. Merged PR plus exact live postcondition: outcome and closure persist on main,
    with original provenance and a readable verification receipt.
-9. Report controlled fixture results, configured activation, an actual no-op run,
+9. A live receipt without a PR on its third UTC day is exhausted: the broker's plan neither
+   resumes nor reconciles it, names it as needing a human, and starts the class's next candidate;
+   `launch-state` answers `exhausted`; `retry` re-arms it once for a new window and is refused on
+   a receipt that is not exhausted.
+10. Report controlled fixture results, configured activation, an actual no-op run,
    and the first genuine production candidate outcome as separate evidence tiers.
 
 The broker/runtime implementation, configured existing worker and first genuine

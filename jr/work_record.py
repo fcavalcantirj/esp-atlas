@@ -21,6 +21,10 @@ Commands (CLI: python3 jr/work_record.py [--demand-dir docs/demand] [--date YYYY
                                           verification_kind, notes, verified_on]; status -> validated
   link     <key> <pr_url>                 the reviewed PR: status -> linked, receipt pr_url, phase author
   attempt  <key>                          today's try: last_attempt_on (RESUME becomes RECONCILE today)
+  retry    <key>                          a human re-arms an EXHAUSTED receipt for one more research
+                                          window (retry_on today); refused on any other receipt
+  launch-state <key> [--receipts FILE|-]  read-only: free | busy | exhausted for the operator's launcher
+                                          (research_work.launch_state over main's or a branch's receipts)
   settle   <key> --state abandoned|rejected --reason TEXT
                                           a supported negative result: the receipt turns terminal with
                                           a resolution and its queue candidate (adopted first when
@@ -247,6 +251,36 @@ def attempt(demand_dir: Path, key: str, *, today: str, dry_run: bool = False) ->
     return copy.deepcopy(receipt)
 
 
+def retry(demand_dir: Path, key: str, *, today: str, dry_run: bool = False) -> dict:
+    """A human's second chance (SPEC "Research window"): only an exhausted receipt, which gets a new
+    window from today. Its last attempt stays recorded."""
+    queue, doc = _load(demand_dir)
+    receipt = _live(_receipt(doc, key))
+    if not rw.exhausted(receipt, today):
+        raise RecordError(f"{key} is not exhausted on {today}: retry only re-arms work whose "
+                          f"{rw.MAX_WORK_DAYS}-day research window is over")
+    receipt["retry_on"] = today
+    _guard(queue, doc, today)
+    _write(demand_dir, queue, doc, queue_changed=False, dry_run=dry_run)
+    return copy.deepcopy(receipt)
+
+
+def launch_state(receipts_text: str, key: str, *, today: str) -> str:
+    """research_work.launch_state of `key` in a receipts document's text; RecordError when the key is
+    absent or its receipt unreadable (the launcher then launches nothing for it)."""
+    try:
+        doc = json.loads(receipts_text)
+    except ValueError as e:
+        raise RecordError(f"unreadable receipts: {e}") from e
+    rows = doc.get("receipts") if isinstance(doc, dict) else doc
+    found = [r for r in rows or [] if isinstance(r, dict) and r.get("key") == key] if isinstance(rows, list) else []
+    if len(found) != 1:
+        raise RecordError(f"{key}: {len(found)} receipts in the document, expected exactly 1")
+    if not rw._readable_receipt(found[0]):
+        raise RecordError(f"{key}: unreadable receipt")
+    return rw.launch_state(found[0], today)
+
+
 def _close_candidate(candidate: dict, *, key: str, state: str, reason: str, today: str) -> None:
     history = {"event": "closed", "date": today, "resolution": state, "work": key, "reason": reason}
     if candidate.get("outcome") is not None:
@@ -333,6 +367,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("key")
     p.add_argument("pr_url")
     sub.add_parser("attempt", parents=[common]).add_argument("key")
+    sub.add_parser("retry", parents=[common]).add_argument("key")
+    p = sub.add_parser("launch-state", parents=[common])
+    p.add_argument("key")
+    p.add_argument("--receipts", help="a receipts JSON file, or - for stdin (default: the demand dir's)")
     p = sub.add_parser("settle", parents=[common])
     p.add_argument("key")
     p.add_argument("--state", required=True, choices=SETTLE_STATES)
@@ -347,6 +385,15 @@ def main(argv=None) -> int:
     args.date = getattr(args, "date", None) or dt.datetime.now(dt.timezone.utc).date().isoformat()
     args.dry_run = getattr(args, "dry_run", False)
     d = Path(args.demand_dir)
+    if args.cmd == "launch-state":                  # read-only, one word on stdout for the launcher
+        try:
+            src = args.receipts or str(d / "work-receipts.json")
+            text = sys.stdin.read() if src == "-" else Path(src).read_text(encoding="utf-8")
+            print(launch_state(text, args.key, today=args.date))
+        except (RecordError, OSError) as e:
+            print(f"work-record: {e}", file=sys.stderr)
+            return 1
+        return 0
     try:
         if args.cmd == "check":
             result = check(d, today=args.date)
@@ -362,6 +409,8 @@ def main(argv=None) -> int:
             result = link(d, args.key, args.pr_url, today=args.date, dry_run=args.dry_run)
         elif args.cmd == "attempt":
             result = attempt(d, args.key, today=args.date, dry_run=args.dry_run)
+        elif args.cmd == "retry":
+            result = retry(d, args.key, today=args.date, dry_run=args.dry_run)
         elif args.cmd == "repair-settled":
             result = repair_settled(d, args.key, today=args.date, dry_run=args.dry_run)
         else:

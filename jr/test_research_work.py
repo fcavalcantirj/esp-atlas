@@ -266,3 +266,65 @@ def test_live_receipt_must_correspond_to_this_merge_and_today():
     c, pr = linked()
     assert rw.verify_resolution(c, pr, live_receipt(merge_sha="different-merge"), DAY).status == "pending"
     assert rw.verify_resolution(c, pr, live_receipt(), "2026-11-06").status == "pending"
+
+
+# ═══════════ research window (SPEC "Research window", decision 2026-11-12) ═══════════
+
+D2, D3, D4, D5 = "2026-11-06", "2026-11-07", "2026-11-08", "2026-11-09"
+
+
+def test_work_without_a_pr_may_run_on_its_start_day_and_the_next():
+    c = candidate()
+    assert rw.plan_work(queue(c), [reserve(c, last_attempt_on="2026-11-05")], D2,
+                        remote_complete=True).action == "resume"
+
+
+def test_work_without_a_pr_is_exhausted_on_its_third_day_and_frees_its_class():
+    """pam-63e3: two days against the same missing source, and the class started nothing else."""
+    stuck, nxt = candidate(), candidate("next123x")
+    r = reserve(stuck)
+    p = rw.plan_work(queue(stuck, nxt), [r], D3, remote_complete=True)
+    assert p.action == "start" and p.work.term == "next123x"
+    assert p.exhausted == (r["key"],) and r["key"] in p.reason and "human" in p.reason
+
+
+def test_an_exhausted_item_alone_is_a_noop_that_still_names_it():
+    c = candidate()
+    r = reserve(c)
+    p = rw.plan_work(queue(c), [r], D5, remote_complete=True)
+    assert p.action == "noop" and p.exhausted == (r["key"],) and r["key"] in p.reason
+
+
+def test_work_with_a_pr_or_a_linked_candidate_is_never_exhausted():
+    c = candidate()
+    pr = reserve(c, state="proposed", pr_url="https://github.com/o/r/pull/1")
+    p = rw.plan_work(queue(c), [pr], D5, remote_complete=True)
+    assert p.action == "reconcile" and p.exhausted == ()
+    linked = candidate(status="linked")
+    linked["linked_work"] = ["https://github.com/o/r/pull/1"]
+    p = rw.plan_work(queue(linked), [reserve(linked)], D5, remote_complete=True)
+    assert p.action == "reconcile" and p.exhausted == ()
+
+
+def test_retry_on_rearms_one_window():
+    c = candidate()
+    r = reserve(c, retry_on=D3)
+    assert rw.plan_work(queue(c), [r], D3, remote_complete=True).action == "resume"
+    assert rw.plan_work(queue(c), [r], D4, remote_complete=True).action == "resume"
+    assert rw.plan_work(queue(c), [r], D5, remote_complete=True).exhausted == (r["key"],)
+
+
+def test_an_unreadable_retry_on_fails_closed():
+    c = candidate()
+    assert rw.plan_work(queue(c), [reserve(c, retry_on="soon")], D2, remote_complete=True).action == "defer"
+
+
+def test_launch_state_is_the_one_rule_for_the_launcher():
+    c = candidate()
+    r = reserve(c, last_attempt_on="2026-11-05")
+    assert rw.launch_state(r, "2026-11-05") == "busy"            # attempted today
+    assert rw.launch_state(r, D2) == "free"
+    assert rw.launch_state(r, D3) == "exhausted"
+    assert rw.launch_state({**r, "pr_url": "https://github.com/o/r/pull/1"}, D5) == "busy"
+    assert rw.launch_state({**r, "state": "abandoned"}, D2) == "busy"
+    assert rw.launch_state({**r, "retry_on": D3}, D3) == "free"

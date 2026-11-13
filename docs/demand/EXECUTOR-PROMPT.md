@@ -36,6 +36,12 @@ branch.
    - **Already catalogued under another id** (search `data/boards/` and `data/firmware/` for the
      identity, model numbers and aliases): `settle --state rejected --reason "already catalogued as
      <id>: <evidence>"`, commit, step 6.
+   - **A real, distinct board with no live primary source** (the manufacturer's product page and
+     datasheet/schematic are gone, answer no content, or serve the same page for any path; a store,
+     reseller, wiki, PlatformIO or Arduino board list is not a primary source): nothing can be cited,
+     so it cannot be catalogued. `settle --state abandoned --reason "no live primary source: <each
+     manufacturer url you tried and what it returned>"`, commit, step 6. Do not leave it for the next
+     day: the broker stops resuming any work without a PR after its second day anyway.
    - **A real, distinct board missing from the catalog**: continue.
 3. **Record the validation before any catalog write.** Write a JSON file **outside the repository**
    (a temporary directory, never inside the checkout: an untracked file makes the clone dirty and

@@ -65,8 +65,10 @@ that must be reproducible (board ranking, pin assignment, confidence gates).
   deployed result itself: `catalog_search` (the exact public search of a bare SKU term) or
   `catalog_part` (each expected board id at `/api/parts/<id>`, the fuzzy search never closes a name hint).
   **`jr/work_record.py` is the only write path** into the queue/receipts pair for anyone but the broker
-  (adopt, validate, link, attempt, settle, check); it refuses any state the broker would defer on. Never
-  edit those two JSON files by hand.
+  (adopt, validate, link, attempt, settle, retry, check); it refuses any state the broker would defer on. Never
+  edit those two JSON files by hand. A live receipt without a PR gets two UTC days of work; from the third it
+  is exhausted (never resumed or launched, no longer holds its class) until a human settles or `retry`s it,
+  and `work_record.py launch-state <key>` is the one launch rule for the operator's launcher.
 - **Jr's tick never re-proposes what a tick PR already holds** (`jr/pending_prs.py`, §6 of
   `SPEC-jr-review-routing.md`): an OPEN tick PR holds every firmware it touches; a tick PR **closed
   unmerged is a 30-day veto of everything it proposed**. Disposing of duplicate tick PRs therefore means
