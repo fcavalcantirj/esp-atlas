@@ -231,8 +231,27 @@ class FakeGh:
         return SimpleNamespace(returncode=1, stdout="", stderr="no route")
 
 
+# `GET repos/<slug>/branches/main` as the tick's own (non-admin) token read it on 2026-11-13. The protection
+# endpoint answered that token 404 on every tick since 2026-11-12: it needs admin rights.
+BRANCH_MAIN = json.dumps({"name": "main", "protected": True, "protection": {"enabled": True, "required_status_checks": {
+    "checks": [{"app_id": 15368, "context": c} for c in REQUIRED], "contexts": REQUIRED,
+    "enforcement_level": "non_admins"}}})
+NOT_ADMIN = {"protection/required_status_checks": (1, "gh: Not Found (HTTP 404)")}
+
+
 def test_required_checks_come_from_branch_protection():
     gh = FakeGh({"protection/required_status_checks": (0, json.dumps({"contexts": REQUIRED}))})
+    assert cw.required_checks(gh, "o/r") == REQUIRED
+
+
+def test_required_checks_are_read_by_a_token_without_admin_rights():
+    gh = FakeGh({**NOT_ADMIN, "branches/main": (0, BRANCH_MAIN)})
+    assert cw.required_checks(gh, "o/r") == REQUIRED
+
+
+def test_a_branch_read_without_required_checks_falls_back_to_the_protection_endpoint():
+    bare = json.dumps({"name": "main", "protected": True, "protection": {"enabled": True}})
+    gh = FakeGh({"protection/required_status_checks": (0, json.dumps({"contexts": REQUIRED})), "branches/main": (0, bare)})
     assert cw.required_checks(gh, "o/r") == REQUIRED
 
 
@@ -341,7 +360,8 @@ def github(tick_concl=("FAILURE", "FAILURE"), main_concl="success"):
             "createdAt": "2026-11-12T03:44:29Z", "statusCheckRollup": rollup(63, 631, "FAILURE")}]
     jobs = {"jobs": [{"name": n, "id": i, "conclusion": main_concl} for n, i in (("schema", 1), ("tests", 2), ("jr-tests", 3))]}
     return FakeGh({
-        "protection/required_status_checks": (0, json.dumps({"contexts": REQUIRED})),
+        **NOT_ADMIN,                                   # the runner's real token (2026-11-13)
+        "branches/main": (0, BRANCH_MAIN),
         "run list": (0, json.dumps([{"databaseId": 10, "headSha": "d9beef5f" + "0" * 32, "attempt": 1, "status": "completed"}])),
         "runs/10/jobs": (0, json.dumps(jobs)),
         "jobs/781/logs": (0, RED_1700), "jobs/771/logs": (0, RED_1200), "jobs/3/logs": (0, GREEN),
@@ -462,3 +482,37 @@ def test_the_halt_nudges_once_with_the_ack_command(tmp_path):
     assert len(halts) == 1 and "jr/ci_watch.py ack" in halts[0]
     store.claim("2026-11-15T10:00:00+00:00")
     assert not any("halted" in m for m in store.nudges())
+
+
+# --- a blind watch says so (2026-11-13: 23 silent `unavailable` ticks went unnoticed) ---------------------
+
+def blind_tick(store, at, dry_run=False):
+    return cw.watch(FakeGh({}), "o/r", store, at, dry_run=dry_run)
+
+
+def test_a_blind_watch_nudges_on_its_third_tick_then_once_per_utc_day(tmp_path):
+    store = cw.Store(tmp_path / "i.json")
+    assert "nudges" not in blind_tick(store, "2026-11-13T01:00:00+00:00")
+    assert "nudges" not in blind_tick(store, "2026-11-13T02:00:00+00:00")
+    third = blind_tick(store, "2026-11-13T03:00:00+00:00")
+    assert third["status"] == "unavailable" and len(third["nudges"]) == 1
+    assert "blind" in third["nudges"][0] and "required checks unreadable" in third["nudges"][0]
+    assert "nudges" not in blind_tick(store, "2026-11-13T23:00:00+00:00")
+    assert len(blind_tick(store, "2026-11-14T00:00:00+00:00")["nudges"]) == 1
+
+
+def test_a_seeing_tick_resets_the_blind_streak(tmp_path):
+    store = cw.Store(tmp_path / "i.json")
+    blind_tick(store, "2026-11-13T01:00:00+00:00")
+    blind_tick(store, "2026-11-13T02:00:00+00:00")
+    assert cw.watch(github(tick_concl=("SUCCESS", "SUCCESS")), "o/r", store, "2026-11-13T03:00:00+00:00")["status"] == "ok"
+    blind_tick(store, "2026-11-13T04:00:00+00:00")
+    assert "nudges" not in blind_tick(store, "2026-11-13T05:00:00+00:00")
+    assert len(blind_tick(store, "2026-11-13T06:00:00+00:00")["nudges"]) == 1
+
+
+def test_a_dry_run_counts_no_blind_tick(tmp_path):
+    p = tmp_path / "i.json"
+    for h in range(1, 5):
+        assert "nudges" not in blind_tick(cw.Store(p), f"2026-11-13T0{h}:00:00+00:00", dry_run=True)
+    assert not p.exists()

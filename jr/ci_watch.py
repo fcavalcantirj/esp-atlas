@@ -47,6 +47,7 @@ LOG_EXCERPT_LINES = 200
 TICK_BRANCH = "jr/tick-"
 HEAL_BRANCH = "jr/heal-"
 DEFAULT_STATE = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local" / "state") / "espatlas-jr" / "heal-incidents.json"
+BLIND_AFTER = 3          # consecutive `unavailable` ticks before the owner is told the watch is blind
 
 _STAMP = re.compile(r"^﻿?\d{4}-\d\d-\d\dT[\d:.]+Z ?")
 _NODE_FAILED = re.compile(r"^(\S+::\S+) FAILED\b|^FAILED (\S+::\S+)|^ERROR (\S+\.py)\b")
@@ -364,6 +365,30 @@ class Store:
             self._save(data)
         return closed
 
+    @_exclusive
+    def blind(self, why: str, now: str) -> list[str]:
+        """Count one tick that could not see CI. The BLIND_AFTER-th in a row nudges, then at most once
+        per UTC day while it lasts (2026-11-13: 23 silent `unavailable` ticks went unnoticed)."""
+        data = self._load()
+        streak = data.get("blind") or {"since": now, "ticks": 0}
+        streak.update(ticks=int(streak.get("ticks", 0)) + 1, why=why)
+        out = []
+        if streak["ticks"] >= BLIND_AFTER and streak.get("nudged_day") != _utc_day(now):
+            out.append(f"👁 Jr CI watch blind for {streak['ticks']} ticks since {streak['since']}: {why}. "
+                       "Self-heal sees no CI break until this clears.")
+            streak["nudged_day"] = _utc_day(now)
+        data["blind"] = streak
+        self._save(data)
+        return out
+
+    @_exclusive
+    def seeing(self) -> None:
+        """A tick that read CI ends any blind streak."""
+        data = self._load()
+        if "blind" in data:
+            del data["blind"]
+            self._save(data)
+
 
 def _utc_day(stamp) -> str:
     """The UTC calendar day of an ISO timestamp, whatever its offset ("" when unreadable)."""
@@ -410,10 +435,19 @@ def _json(gh, *args):
         return None
 
 
-def required_checks(gh, slug: str) -> list[str] | None:
-    data = _json(gh, "api", f"repos/{slug}/branches/main/protection/required_status_checks")
+def _contexts(data) -> list[str] | None:
     contexts = data.get("contexts") if isinstance(data, dict) else None
     return [str(c) for c in contexts] if isinstance(contexts, list) and contexts else None
+
+
+def required_checks(gh, slug: str) -> list[str] | None:
+    """main's required checks. The branch read works for any token that can read the repo; the
+    protection endpoint needs admin rights and answered the tick's own token 404 (2026-11-12/13), so it
+    is only the fallback."""
+    branch = _json(gh, "api", f"repos/{slug}/branches/main")
+    protection = branch.get("protection") if isinstance(branch, dict) else None
+    found = _contexts(protection.get("required_status_checks") if isinstance(protection, dict) else None)
+    return found or _contexts(_json(gh, "api", f"repos/{slug}/branches/main/protection/required_status_checks"))
 
 
 def _job_log(gh, slug: str, job_id: str) -> str:
@@ -471,7 +505,24 @@ def _tick_observations(gh, slug: str, required: list[str], prs: list[dict]) -> l
 
 def watch(gh, slug: str, store: Store, now: str, dry_run: bool = False) -> dict:
     """One tick's CI watch. Never raises: GitHub or store trouble reads as `unavailable`. About four
-    GitHub calls on a green CI; a dry run reruns nothing and writes no store."""
+    GitHub calls on a green CI; a dry run reruns nothing and writes no store. A watch that stays blind
+    says so: the third `unavailable` tick in a row nudges, then at most once per UTC day."""
+    out = _watch(gh, slug, store, now, dry_run)
+    if dry_run:
+        return out
+    try:
+        if out.get("status") == "unavailable":
+            blind = store.blind(out.get("why", ""), now)
+            if blind:
+                out["nudges"] = blind
+        else:
+            store.seeing()
+    except Exception:           # noqa: BLE001 — the tick must keep running whatever happens here
+        pass
+    return out
+
+
+def _watch(gh, slug: str, store: Store, now: str, dry_run: bool) -> dict:
     try:
         required = required_checks(gh, slug)
         if not required:
