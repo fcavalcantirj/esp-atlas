@@ -5057,13 +5057,13 @@
       "timestamp": "2026-11-05T20:00:59.980852+00:00"
     },
     "launcher-1897200000000000010": {
-      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000000010",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'atomxiaozhi user:peien'",
       "repo": "launcher:1897200000000000010",
       "status": "rejected",
-      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+      "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000000023": {
       "expires": "2026-11-19T21:00:55.047326+00:00",
@@ -5147,12 +5147,13 @@
       "timestamp": "2026-11-08T21:00:55.166276+00:00"
     },
     "launcher-1897200000000000274": {
+      "expired_at": "2026-11-13T21:00:55.139769+00:00",
       "expires": "2026-11-13T20:00:59.122628+00:00",
       "id": "launcher-1897200000000000274",
       "pr_ref": null,
       "reason": "no_source_repo: no searchable name tokens or owner",
       "repo": "launcher:1897200000000000274",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-06T20:00:59.122628+00:00"
     },
     "launcher-1897200000000000291": {
@@ -5219,13 +5220,13 @@
       "timestamp": "2026-11-08T22:00:55.187463+00:00"
     },
     "launcher-1897200000000000938": {
-      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000000938",
       "pr_ref": null,
-      "reason": "no_source_repo: 28 matches for 'userdemo user:m5stack'",
+      "reason": "no_source_repo: 29 matches for 'userdemo user:m5stack'",
       "repo": "launcher:1897200000000000938",
       "status": "rejected",
-      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+      "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000000959": {
       "expires": "2026-11-15T22:00:55.187463+00:00",
@@ -5246,13 +5247,13 @@
       "timestamp": "2026-11-12T21:00:55.047326+00:00"
     },
     "launcher-1897200000000001167": {
-      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000001167",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'blynkuniversal user:peien'",
       "repo": "launcher:1897200000000001167",
       "status": "rejected",
-      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+      "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000001262": {
       "expires": "2026-11-15T22:00:55.187463+00:00",
@@ -5273,13 +5274,13 @@
       "timestamp": "2026-11-08T20:00:54.954530+00:00"
     },
     "launcher-1897200000000001281": {
-      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000001281",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'atomu stt user:m5stack'",
       "repo": "launcher:1897200000000001281",
       "status": "rejected",
-      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+      "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000001385": {
       "expires": "2026-11-15T22:00:55.187463+00:00",
@@ -5291,13 +5292,13 @@
       "timestamp": "2026-11-08T22:00:55.187463+00:00"
     },
     "launcher-1897200000000001435": {
-      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000001435",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'tasmotafirmware user:peien'",
       "repo": "launcher:1897200000000001435",
       "status": "rejected",
-      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+      "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000001549": {
       "expires": "2026-11-15T23:00:55.209139+00:00",
@@ -5327,13 +5328,13 @@
       "timestamp": "2026-11-06T21:00:55.650872+00:00"
     },
     "launcher-1897200000000001652": {
-      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000001652",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'spiffsfile management system user:peien'",
       "repo": "launcher:1897200000000001652",
       "status": "rejected",
-      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+      "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000001680": {
       "expires": "2026-12-08T21:00:55.166276+00:00",
@@ -5390,13 +5391,13 @@
       "timestamp": "2026-11-12T21:00:55.047326+00:00"
     },
     "launcher-1897200000000002066": {
-      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000002066",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'afternoon paralysis user:jrdntnnr'",
       "repo": "launcher:1897200000000002066",
       "status": "rejected",
-      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+      "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000002325": {
       "expires": "2026-11-15T20:00:54.954530+00:00",
@@ -5426,13 +5427,13 @@
       "timestamp": "2026-11-08T20:00:54.954530+00:00"
     },
     "launcher-1897200000000002434": {
-      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000002434",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002434",
       "status": "rejected",
-      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+      "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000002468": {
       "expires": "2026-11-19T21:00:55.047326+00:00",
@@ -5516,13 +5517,13 @@
       "timestamp": "2026-11-08T22:00:55.187463+00:00"
     },
     "launcher-1897200000000002873": {
-      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000002873",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002873",
       "status": "rejected",
-      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+      "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000002904": {
       "expires": "2026-11-19T21:00:55.047326+00:00",
@@ -5534,13 +5535,13 @@
       "timestamp": "2026-11-12T21:00:55.047326+00:00"
     },
     "launcher-1897200000000003208": {
-      "expires": "2026-11-13T20:00:59.122628+00:00",
+      "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000003208",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'printer emqx user:fancyoung'",
       "repo": "launcher:1897200000000003208",
       "status": "rejected",
-      "timestamp": "2026-11-06T20:00:59.122628+00:00"
+      "timestamp": "2026-11-13T21:00:55.139769+00:00"
     },
     "launcher-1897200000000003276": {
       "expires": "2026-11-15T23:00:55.209139+00:00",
