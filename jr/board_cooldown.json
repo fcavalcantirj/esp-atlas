@@ -80,7 +80,7 @@
     },
     "adafruit-feather-esp32-s3-no-psram": {
       "board": "adafruit-feather-esp32-s3-no-psram",
-      "expires": "2026-11-13T21:00:55.650872+00:00",
+      "expires": "2026-11-20T22:00:55.476104+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -88,11 +88,11 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-06T21:00:55.650872+00:00"
+      "timestamp": "2026-11-13T22:00:55.476104+00:00"
     },
     "adafruit-feather-esp32-s3-reverse-tft": {
       "board": "adafruit-feather-esp32-s3-reverse-tft",
-      "expires": "2026-11-13T21:00:55.650872+00:00",
+      "expires": "2026-11-20T22:00:55.476104+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -100,11 +100,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-06T21:00:55.650872+00:00"
+      "timestamp": "2026-11-13T22:00:55.476104+00:00"
     },
     "adafruit-feather-esp32-s3-tft": {
       "board": "adafruit-feather-esp32-s3-tft",
-      "expires": "2026-11-13T21:00:55.650872+00:00",
+      "expires": "2026-11-20T22:00:55.476104+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -112,7 +112,7 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-06T21:00:55.650872+00:00"
+      "timestamp": "2026-11-13T22:00:55.476104+00:00"
     },
     "adafruit-funhouse": {
       "board": "adafruit-funhouse",
