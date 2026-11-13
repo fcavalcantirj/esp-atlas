@@ -23,7 +23,10 @@ Runs in the tick's preflight, after the open-PR triage, from the same GitHub rea
 the tick: a red CI wastes a tick PR but does not make the tick unsafe.
 
 - **Required checks** are read from branch protection on `main` (today `schema`, `tests`,
-  `jr-tests`), never hard-coded.
+  `jr-tests`), never hard-coded. The source is `GET repos/<slug>/branches/main`
+  (`protection.required_status_checks.contexts`), which any token that can read the repo may call. The
+  dedicated `.../protection/required_status_checks` endpoint needs admin rights: it answered the tick's
+  own token 404 on every tick from 2026-11-12 to 2026-11-13, so it is only the fallback.
 - **Evidence read:** the required checks of (a) the newest completed `validate` run on `main` and
   (b) the newest three tick PRs, open or closed as superseded, with their head SHAs.
 - **Incident** when a required check concluded `failure` on main, or on two consecutive tick PRs
@@ -103,13 +106,17 @@ prompt:
 | Time from dispatch to a heal PR | 4 h (`STALL_HOURS`) | `stalled`, never retried automatically |
 | Delegate run | the operator's wall-clock cap (`MAX_WALL_SECONDS` of the delegate) | the run ends; no PR, so the 4 h stall rule applies |
 | The tick itself | the runner's tick `timeout`; every GitHub read in the watch fails open | the tick goes on; the report says `ci_watch unavailable` |
+| A blind watch | 3 consecutive `unavailable` ticks (`BLIND_AFTER`) | one "CI watch blind" nudge, then at most one per UTC day until a tick reads CI again |
 
 So with no human at all, the lane makes at most 3 dispatches, then stops and says so.
 
 **Telegram nudge.** Every state change of an incident sends exactly one message to the owner's
 Telegram through the tick's notifier: opened, dispatched, PR open, resolved, `needs_human`,
 `stalled`, and the halt (once, naming the `ack` command). An hour with no change sends nothing. A dry
-run and `--no-telegram` send nothing.
+run and `--no-telegram` send nothing. A watch that cannot see CI says so too: the third `unavailable`
+tick in a row sends "CI watch blind" with the reason, at most once per UTC day, and the first tick that
+reads CI again ends the streak (2026-11-13: 23 silent `unavailable` ticks were found only by the
+weekly review).
 
 ## 6. Acceptance
 
@@ -128,7 +135,11 @@ run and `--no-telegram` send nothing.
     relay check;
   - a stale writer (the tick) that loaded before the launcher's `claim` cannot undo that claim;
   - every GitHub read failure leaves the tick running and records "ci_watch unavailable" in the
-    report.
+    report;
+  - the required checks are read with a token that gets 404 from the protection endpoint (the
+    runner's real case), and the protection endpoint is the fallback;
+  - three blind ticks nudge once, a fourth the same UTC day nothing, the next UTC day once more; a
+    tick that reads CI resets the streak; a dry run counts nothing.
 - **Real:** the first natural incident end to end: detection within one tick of the second red tick
   PR, one dispatch, a `jr-heal` PR, an independent review, merge, green main. Until then the lane is
   unproven, however many fixtures pass.
