@@ -1,0 +1,31 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-11-14",
+ "notes": [],
+ "ref": "main",
+ "repo": "bruceblay/rill-world",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "esp32-s3-devkitc-1"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "sticks3",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 3,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/bruceblay/rill-world/blob/main/platformio.ini#L3"
+  }
+ ]
+}
