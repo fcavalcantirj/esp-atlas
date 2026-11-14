@@ -3,7 +3,7 @@ id: the-tithe
 type: firmware
 name: The Tithe
 url: https://github.com/the-tithe/the-tithe
-category: pentest
+category: multi
 socs:
 - esp32-s3
 sources:
