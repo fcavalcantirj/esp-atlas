@@ -48,8 +48,7 @@ notes:
   of Life) Boards; the user guide points ESP32-P4X-Function-EV-Board (chip revision
   v3.x) users to that board''s own guide -- a separate product, not this record'
 - 'Wireless comes from an onboard ESP32-C6-MINI-1 module (2.4 GHz Wi-Fi 6 & Bluetooth
-  5 LE), with its own programming connector for ESP-Prog or other UART tools; the
-  ESP32-P4 itself has no radio'
+  5 LE), with its own programming connector for ESP-Prog or other UART tools'
 - 'Three USB Type-C ports plus one USB Type-A: USB Serial/JTAG port (recommended for
   flashing and debugging), USB Full-speed port, and a USB 2.0 Type-C port wired to the
   P4''s USB 2.0 OTG High-Speed interface (device role); the USB 2.0 Type-A port shares
@@ -61,8 +60,8 @@ notes:
   15-pin 1.0 mm FPC connectors, power switch, BOOT and Reset buttons'
 - 'Optional accessories (not on the board itself): 7-inch 1024 x 600 capacitive touch
   LCD with adapter board, and a 2MP MIPI CSI camera with adapter board'
-- PSRAM size for this board is not stated in the user guide (only that the ESP32-P4
-  supports up to 32 MB PSRAM), so psram_mb is omitted rather than guessed
+- PSRAM size is not stated for this board in its user guide or schematic, so psram_mb
+  is omitted rather than guessed
 - 'J1 header pins NC(0), NC(1) and NC(45) are excluded from gpio_pins: GPIO0/GPIO1
   need the 32.768 kHz XTAL function disabled (move R61/R59 to R199/R197) and GPIO45
   needs SD_PWRn disabled (move R231 to R100)'
@@ -111,6 +110,9 @@ sources:
 - field: notes
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide_v1.4.html
   verified: '2026-11-14'
+- field: notes
+  url: https://dl.espressif.com/dl/schematics/esp32-p4-function-ev-board-schematics_v1.52.pdf
+  verified: '2026-11-14'
 - field: aka
   url: https://github.com/pioarduino/platform-espressif32/blob/32f6bf400b276b0f61cf42c50490a7808ee3457e/boards/esp32-p4-evboard.json
   verified: '2026-11-14'
@@ -118,4 +120,4 @@ sources:
 
 # ESP32-P4-Function-EV-Board
 
-Espressif's (now end-of-life) ESP32-P4 multimedia devkit: an ESP32-C6-MINI-1 handles Wi-Fi 6/BLE for a radio-less P4, with 16 MB SPI flash, MIPI CSI/DSI connectors, 10/100 Ethernet, MicroSD, an ES8311 audio path and native USB Serial/JTAG flashing. Not to be confused with its successor, the ESP32-P4X-Function-EV-Board.
+Espressif's (now end-of-life) ESP32-P4 multimedia devkit: an ESP32-C6-MINI-1 module provides Wi-Fi 6/BLE, with 16 MB SPI flash, MIPI CSI/DSI connectors, 10/100 Ethernet, MicroSD, an ES8311 audio path and native USB Serial/JTAG flashing. Not to be confused with its successor, the ESP32-P4X-Function-EV-Board.
