@@ -38,6 +38,7 @@ class TickReport:
     memory: dict = field(default_factory=dict)        # {"expired", "merged", "rejected", "removed"}
     hydrated: list = field(default_factory=list)       # firmware ids marked proposed from open Jr PRs at tick start
     review_decisions: list = field(default_factory=list)  # ids whose owner-review decision was read from jr-review PRs
+    carried: list = field(default_factory=list)         # [{"pr", "id"}]: TTL'd decisions carried from open tick PRs
     review_prs: list = field(default_factory=list)     # open jr-review PRs: {"number", "headRefName", "age_hours", "conflicting"}
     review_capped: str = ""                            # non-empty → the jr-review cap skipped stages, why
     revalidate: dict | None = None
@@ -100,7 +101,8 @@ def render_line(r: TickReport) -> str:
         return f"🛑 {head} {stamp}: aborted — {r.aborted}{render_review_prs(r)} · {r.budget}".rstrip(" ·")
     mem = r.memory or {}
     mem_txt = (f"memory expired {mem.get('expired', 0)} / merged {mem.get('merged', 0)} / "
-               f"rejected {mem.get('rejected', 0)} / removed {mem.get('removed', 0)}")
+               f"rejected {mem.get('rejected', 0)} / removed {mem.get('removed', 0)}"
+               + (f" / carried {len(r.carried)}" if r.carried else ""))
     rej = ", ".join(f"{k} {v}" for k, v in sorted(r.rejects.items())) or "none"
     if r.publish and r.publish.get("published"):
         pr = r.publish.get("pr_url") or "(no url)"
@@ -314,6 +316,10 @@ def render_pr_body(r: TickReport) -> str:
     identity = pending_prs.render_identity([it for _stage, it in items])
     if identity:
         lines.append(identity)          # the repository ids the next ticks hold this PR's firmware by
+    if r.carried:
+        refs = ", ".join(dict.fromkeys(c.get("pr") for c in r.carried))
+        lines.append(f"Carried {len(r.carried)} decision(s) from open tick PR(s) {refs} (held for review or "
+                     "superseded), so they reach main with this PR.")
     lines.append("")
     lines += render_demand_section(r)
     lines.append("### Skipped this tick (not in this PR; remembered with a TTL)")
