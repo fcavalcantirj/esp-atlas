@@ -696,11 +696,13 @@
    "key": "pam-cb130861ab40bc958c3c0e44",
    "branch": "jr/research-pam-cb130861ab40bc958c3c0e44",
    "term": "ESP32-P4 Function EV Board",
-   "phase": "research",
+   "phase": "author",
    "state": "reserved",
    "started_on": "2026-11-13",
    "source": "pam_feed",
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1706"
+   ],
    "feed": {
     "checked_at": "2026-11-11T11:15:54.289042Z",
     "feeds": {
@@ -911,7 +913,9 @@
      "prs": []
     },
     "reserved_by": "jr/demand_run.py"
-   }
+   },
+   "last_attempt_on": "2026-11-14",
+   "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1706"
   }
  ]
 }
