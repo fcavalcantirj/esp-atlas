@@ -16,6 +16,7 @@ worktree. Track B widens the recipes from the build files, in the same tick (adm
 from __future__ import annotations
 
 import json
+import random
 from datetime import datetime
 from pathlib import Path
 
@@ -215,6 +216,106 @@ def _fetch_meta(gh, owner_repo: str):
         return {"error": f"unparseable api response: {e}"}, False
 
 
+REPO_NOTE_PREFIX = "repo-note:"
+
+
+def repo_note_key(owner_repo: str) -> str:
+    """The ledger key that remembers a decision about `owner_repo` when the decision's own record
+    cannot be written: memory._write refuses a rejection over a `merged` record (the renamed-upstream
+    duplicate_of case, pr3y/bruce -> brucedevices/firmware). Like `launcher-<fid>`, it is a key of its
+    own, never a firmware id, and it carries no repo_id, so the by_repo_id identity view is untouched."""
+    return REPO_NOTE_PREFIX + owner_repo.lower()
+
+
+def _downloads(entry: dict) -> int:
+    try:
+        return max(0, int(str(entry.get("download") or 0).strip() or 0))
+    except ValueError:
+        return 0
+
+
+def _interleave(ordered: list, seed: str) -> list:
+    """Even slots: `ordered` (the download order). Odd slots: the same items shuffled by `seed`.
+    Each item appears once. The seed is the tick's UTC hour, so an hour replays the same order and the
+    next hour explores other repos: a decision that fails to stick can never hold every paid slot."""
+    shuffled = list(ordered)
+    random.Random(f"admit-queue:{seed}").shuffle(shuffled)
+    out, taken, i, j = [], set(), 0, 0
+    while len(out) < len(ordered):
+        for lane, at in ((ordered, "i"), (shuffled, "j")):
+            k = i if at == "i" else j
+            while k < len(lane) and id(lane[k]) in taken:
+                k += 1
+            if k < len(lane):
+                out.append(lane[k])
+                taken.add(id(lane[k]))
+                k += 1
+            if at == "i":
+                i = k
+            else:
+                j = k
+    return out
+
+
+def launcher_queue(catalog: list, led: dict, cat_repos: set, now, pending=None,
+                   seed: str | None = None) -> tuple[list, int, str]:
+    """Admit's launcher backlog, built with ZERO calls (SPEC-espatlas-jr.md, the backlog queue).
+
+    Entries are grouped by repo (an entry with no repo by its launcher ledger key), one entry per
+    group (its most-downloaded one), ranked by the group's TOTAL downloads. Returns
+    (ordered entries, undecided count, top label):
+      1. the undecided backlog, what the call share is for: most downloads first, interleaved with
+         a shuffle seeded by `seed` (the tick's UTC hour; see _interleave) so the most wanted repo
+         goes first and every other paid slot explores;
+      2. the decided, which the loop skips for free (memory, catalogued with a live id, merged);
+      3. the tail, which needs a call but decides nothing new: a catalogued repo whose id no live
+         record holds (the rename-proof identity refresh), a live owner-review decision (evidence
+         re-check), an id an open or vetoed tick PR holds. They never stand in front of new work.
+    Before this (2026-11-12 to 2026-11-14) the loop walked the alphabet from "A" every tick and
+    stopped before brucedevices/firmware every hour: 1,205 undecided repos were never reached."""
+    groups: dict = {}
+    for i, e in enumerate(catalog):
+        github = (e.get("github") or "").strip()
+        if launcher_resolve.needs_resolution(e):
+            k = launcher_resolve.ledger_key(e)
+            key = ("launcher", k[0]) if k else ("unkeyed", i)
+        else:
+            owner_repo = scorer._owner_repo(github)
+            key = ("repo", owner_repo) if owner_repo and "/" in owner_repo else ("unkeyed", i)
+        groups.setdefault(key, []).append(e)
+    undecided, decided, tail = [], [], []
+    for (kind, k), es in groups.items():
+        rep = sorted(es, key=lambda e: (-_downloads(e), e.get("name") or "", e.get("github") or ""))[0]
+        item = (-sum(_downloads(e) for e in es), rep.get("name") or "", rep.get("github") or "", k, rep)
+        if kind == "unkeyed":
+            decided.append(item)
+        elif kind == "launcher":
+            done = memory.is_blocked(led, firmware_id=k, now=now) or memory.is_seen(led, firmware_id=k, now=now)
+            (decided if done else undecided).append(item)
+        else:
+            rec = memory.lookup(led, repo=k)
+            live_id = bool(rec and rec.get("repo_id") is not None and not memory.is_expired(rec, now))
+            cand_id = scorer._slug(scorer._repo_name_from_url(rep.get("github") or ""))
+            if review_memory.live_decision(led, now, repo=k):
+                tail.append(item)
+            elif memory.is_blocked(led, repo=k, now=now) or memory.is_seen(led, repo=k, now=now) or (
+                    rec and rec.get("status") == "merged"):
+                decided.append(item)
+            elif scorer.catalogued_reason(k, cat_repos):
+                (decided if live_id else tail).append(item)
+            elif pending is not None and cand_id and pending.hold(cand_id):
+                tail.append(item)
+            else:
+                undecided.append(item)
+    undecided.sort(key=lambda t: t[:3])
+    if seed is not None and len(undecided) > 2:
+        undecided = _interleave(undecided, seed)
+    decided.sort(key=lambda t: (t[1], t[2]))
+    tail.sort(key=lambda t: t[:3])
+    top = f"{undecided[0][3]}, {-undecided[0][0]} downloads" if undecided else "none"
+    return [t[4] for t in undecided + decided + tail], len(undecided), top
+
+
 def _catalogued_ids(led: dict, now) -> dict:
     """{repo_id: firmware_id} over every memory record that has not expired — the rename-proof
     identity net behind the scorer's duplicate_of rule (a repo the catalog knows under an old
@@ -287,7 +388,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     def reject(key):
         rejects[key] = rejects.get(key, 0) + 1
 
-    launcher_skips: dict = {}      # launcher entries are skipped by the hundred: one aggregate line, never one per entry
+    launcher_skips: dict = {}      # launcher repos are skipped by the hundred: one aggregate line, never one per repo
     fetched_this_tick: set = set()   # owner/repo already paid a meta fetch this tick: one paid decision per repo
 
     def count_skip(key):
@@ -314,13 +415,27 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             memory.record_review_decision(fid, owner_repo, reason, repo_id=repo_id, evidence=review_ev[0],
                                           evidence_rev=review_ev[1], path=ctx.ledger_path, now=ctx.now)
         else:
-            memory.record_rejected(fid, owner_repo, reason,
-                                   ttl_days=REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS),
-                                   repo_id=repo_id, path=ctx.ledger_path, now=ctx.now)
+            after = memory.record_rejected(fid, owner_repo, reason,
+                                           ttl_days=REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS),
+                                           repo_id=repo_id, path=ctx.ledger_path, now=ctx.now)
+            remember_repo(owner_repo, reason, key, after)
         if issue:
             return f"{fid}: skip {key} (submission #{issue})"
         launcher_skips[key] = launcher_skips.get(key, 0) + 1
         return None
+
+    def remember_repo(owner_repo, reason, key, after=None):
+        """A decision the ledger refused to record under its own id (memory._write keeps a `merged`
+        record) is kept under the repo's note key, so the repo is never paid for again while it
+        holds (the backlog queue's guarantee: every paid call ends in a remembered decision)."""
+        if after is not None and (memory.is_blocked(after, repo=owner_repo, now=ctx.now)
+                                  or memory.is_seen(after, repo=owner_repo, now=ctx.now)):
+            return
+        if ctx.dry_run:
+            would(memory.LEDGER_RELPATH, f"by_id.{repo_note_key(owner_repo)}", f"rejected ({key})")
+            return
+        memory.record_rejected(repo_note_key(owner_repo), owner_repo, reason,
+                               ttl_days=REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS), path=ctx.ledger_path, now=ctx.now)
 
     def note(line):
         if line:
@@ -404,7 +519,10 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     slug = (ctx.env or {}).get("JR_REPO_SLUG") or DEFAULT_REPO_SLUG
     submissions = _submission_entries(ctx, slug)
     atlas = board_alias.atlas_boards(ctx.root) if submissions else {}
-    entries = [dict(e) for e in submissions] + sorted(catalog, key=lambda e: ((e.get("name") or ""), (e.get("github") or "")))
+    queue, backlog, top = launcher_queue(catalog, led, cat_repos, ctx.now, pending,
+                                         seed=ctx.now.strftime("%Y-%m-%dT%H"))
+    lines.append(f"backlog {backlog} undecided (top: {top})")
+    entries = [dict(e) for e in submissions] + [dict(e) for e in queue]
 
     for entry in entries:
         flush_note()          # the previous entry reached a decision (a break never gets here)
@@ -455,6 +573,10 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
                              f"skip already_catalogued (submission #{issue})")
             else:
                 count_skip("already_catalogued")
+            continue
+        merged = None if held else memory.lookup(led, repo=owner_repo)
+        if not issue and merged and merged.get("status") == "merged":
+            count_skip("already_catalogued")          # we have it: reconciled from the catalog itself
             continue
         if not issue and owner_repo in fetched_this_tick:
             count_skip("same_repo_this_tick")   # this tick already paid for this repo's decision
@@ -575,6 +697,8 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         fmd = ctx.root / "data" / "firmware" / out_id / "firmware.md"
         if fmd.exists():
             lines.append(f"{out_id}: record exists, nothing written")
+            reject("already_catalogued")
+            remember_repo(owner_repo, f"already_catalogued: record {out_id} exists", "already_catalogued")
             if issue:
                 _answer(ctx, slug, issue, _verdict_text(f"already_catalogued: {out_id}", False, False))
             continue
@@ -682,7 +806,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         flush_note()          # the last entry reached a decision
     if launcher_skips:
         total = sum(launcher_skips.values())
-        lines.append(f"skipped {total} launcher entries: " + ", ".join(f"{k} {v}" for k, v in sorted(launcher_skips.items(), key=lambda kv: (-kv[1], kv[0]))))
+        lines.append(f"skipped {total} launcher repos: " + ", ".join(f"{k} {v}" for k, v in sorted(launcher_skips.items(), key=lambda kv: (-kv[1], kv[0]))))
     summary = "; ".join(lines) if lines else "no candidates"
     if decided and lines:
         summary += f" ({decided} already decided, skipped)"
@@ -690,4 +814,4 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         summary = f"{decided} already decided, skipped"
     return tick.StageResult("admit", paths=paths, summary=summary, admitted=admitted,
                             rejects=rejects, needs_human=needs_human, items=items, review=review,
-                            would_write=would_write)
+                            would_write=would_write, backlog=backlog)

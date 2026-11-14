@@ -157,16 +157,37 @@ that's a coverage hole to close, not a silent gap.
     `RESOLVER_CALLS_PER_TICK` searches per tick, inside the tick budget AND admit's call share.
     Nothing is ever recorded with an empty id or repo: such an entry is dropped before the
     ledger with a counted `unkeyed` skip.
-  - **A decided repo never spends the scan's calls (2026-11-14).** Admit's launcher scan has a
-    call share per tick. A repo the catalog already holds, and whose GitHub id a live ledger record
-    already carries (a `merged` record, typically), is skipped as `already_catalogued` before any
-    call, by the scorer's own rule (`scorer.catalogued_reason`: the repo or its owner is in the
-    catalog). Without a live id it is fetched once, as before, so its id refreshes the rename-proof
-    identity net. Within one tick a repo pays at most one meta fetch: its other launcher entries
-    are counted `same_repo_this_tick`. Before this rule every tick from 2026-11-12 to 2026-11-14
-    admitted nothing: merged repos were re-fetched on every tick (only `blocked`/`seen` records
-    skipped for free), and Bruce's ~35 launcher entries used up the ~46-call share, so about 2,070
-    of 2,297 entries were never reached.
+  - **The backlog queue (2026-11-14).** Admit never walks the launcher list alphabetically. Each tick
+    `stage_admit.launcher_queue` builds the backlog with **zero calls**:
+    - Entries are grouped by repo; an entry with no repo is grouped by its `launcher-<fid>` key.
+    - Each group is represented by its most-downloaded entry and ranked by the group's **total
+      downloads** (launcherhub's `download`, the popularity signal that costs no call).
+    - Everything already decided is set aside, using local data only: memory (blocked, seen, merged),
+      catalogued with a live ledger id (`scorer.catalogued_reason`), an unkeyed entry.
+    - Work that needs a call but decides nothing new goes to the **tail**, behind all new work: a
+      catalogued repo whose id no live record holds (the rename-proof identity refresh), a live
+      owner-review decision, an id an open or vetoed tick PR holds.
+
+    Admit's call share is spent on the undecided backlog, one paid fetch per repo per tick, in an
+    **interleaved order**. Even slots follow the download order; odd slots are the same repos
+    shuffled with a seed of the tick's UTC hour (`_interleave`). So:
+    - the top k by downloads are always within the first 2k slots;
+    - an hour replays the same order, so it is reproducible;
+    - the next hour explores other repos. A decision that fails to stick can never take every paid
+      slot (owner, 2026-11-14: "add some random/shuffle, otherwise always fetching the same"). Every paid call ends in a remembered decision. A decision the ledger refuses
+    under its own id (memory._write keeps a `merged` record, as with a renamed upstream scoring
+    `duplicate_of`) is kept under the repo's note key `repo-note:<owner/repo>`, which carries no
+    repo_id. So the backlog shrinks on every tick while it is not empty.
+
+    The stage summary starts with `backlog N undecided (top: <repo>, <downloads> downloads)`.
+    **Stall alarm** (`jr/admit_progress.py`, runner-local state): when the backlog does not shrink for
+    `STALL_AFTER` = 3 consecutive ticks, the tick sends one Telegram nudge, and then at most one per
+    UTC day. A shrinking or empty backlog clears it. An unreadable state file is a nudge, never
+    silence, and a dry run counts nothing.
+
+    Why: from 2026-11-12 to 2026-11-14 the alphabetical rescan re-paid for catalogued repos every tick
+    and stopped before brucedevices/firmware every hour (Bruce has ~35 entries under "B"). 1,205
+    undecided repos with 1.35 M downloads were never reached, and nothing said so.
   - Second firmware source in the same family: **M5Burner API** (`m5burner-api.m5stack.com`,
     live) for the M5Stack ecosystem.
   - **Only after the launcher backlog is drained** do the long-tail sources (below) matter for
