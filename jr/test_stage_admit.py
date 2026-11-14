@@ -444,7 +444,8 @@ def test_launcher_skips_are_one_aggregate_line_never_one_per_entry(root, monkeyp
     metas = {"repos/t/tiny": _meta("t/tiny", stars=1, forks=0, rid=12)}
     res = stage_admit.run(_ctx(root, metas=metas), budget=3)
     # the empty-github entry has no fid to key it by: a counted `unkeyed` skip, never a ledger row (G1b)
-    assert res.summary == "skipped 3 launcher entries: below_floor 1, repo_unresolved 1, unkeyed 1"
+    assert res.summary == ("backlog 2 undecided (top: n/nameless, 100 downloads); "
+                           "skipped 3 launcher repos: below_floor 1, repo_unresolved 1, unkeyed 1")
     assert res.rejects == {"repo_unresolved": 1, "below_floor": 1, "unkeyed": 1}
     assert ": skip" not in res.summary
 
@@ -560,7 +561,7 @@ def test_a_merged_catalogued_repository_costs_no_call_and_never_starves_the_scan
     res = stage_admit.run(ctx, budget=3, call_share=0.05)            # 5% of 150 = 7 calls for the scan
     assert "repos/o/original" not in asked                           # the catalogued repo is decided for free
     assert res.admitted == 1 and "data/firmware/newtool/firmware.md" in res.paths
-    assert res.rejects.get("already_catalogued") == 30
+    assert res.rejects.get("already_catalogued") == 1                # 30 entries of one repo: one free decision
     assert "call share used" not in res.summary
 
 
@@ -612,3 +613,113 @@ def test_a_submission_of_a_merged_catalogued_repository_is_answered_without_a_fe
     assert not [a for a in ctx.calls if len(a) > 1 and a[1] == "repos/o/original"]
     a = _answers(ctx)
     assert a and "already_catalogued" in a[0][2] and a[1][:2] == ("PATCH", "repos/fcavalcantirj/esp-atlas/issues/41")
+
+
+# --- the backlog queue (2026-11-14): admit walks the UNDECIDED backlog by downloads, never the alphabet ----
+# The alphabetical rescan from "A" with a fixed call share stopped before brucedevices/firmware every
+# hour from 2026-11-12: 1,205 undecided repos (1.35 M downloads) were never reached.
+
+def _paid(asked, repo):
+    return asked.count(f"repos/{repo}")
+
+
+def test_the_queue_decides_the_most_downloaded_repo_first(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [
+        _entry("Aaa Cardputer Low", "https://github.com/l/low", download=10),
+        _entry("Zzz Cardputer High", "https://github.com/h/high", download=5000)])
+    metas = {"repos/l/low": _meta("l/low", stars=30, description="A Cardputer tool", rid=21),
+             "repos/h/high": _meta("h/high", stars=30, description="A Cardputer tool", rid=22)}
+    ctx, asked = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0))
+    res = stage_admit.run(ctx, budget=1)
+    assert res.admitted == 1 and res.paths[0] == "data/firmware/high/firmware.md"
+    assert _paid(asked, "l/low") == 0
+
+
+def test_a_repo_listed_many_times_is_one_item_ranked_by_its_total_downloads(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: (
+        [_entry(f"Multi Cardputer {i}", "https://github.com/m/multi", download=100) for i in range(5)]
+        + [_entry("Aaa Cardputer Single", "https://github.com/s/single", download=400)]))
+    metas = {"repos/m/multi": _meta("m/multi", stars=30, description="A Cardputer tool", rid=31),
+             "repos/s/single": _meta("s/single", stars=30, description="A Cardputer tool", rid=32)}
+    ctx, asked = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0))
+    res = stage_admit.run(ctx, budget=1)
+    assert res.paths[0] == "data/firmware/multi/firmware.md" and _paid(asked, "m/multi") == 1
+
+
+def test_a_refused_decision_is_remembered_so_the_repo_is_never_paid_again(root, monkeypatch):
+    """A renamed upstream (pr3y/bruce -> brucedevices/firmware) scores duplicate_of the merged record,
+    and memory._write refuses any rejection over `merged`: nothing was remembered, so it was paid
+    for on every tick. The decision is now kept under the repo's own note key."""
+    _merged("widget", "orig/widget", 9001, root)
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Widget", "https://github.com/fork2/widget")])
+    metas = {"repos/fork2/widget": _meta("fork2/widget", stars=30, rid=9001)}
+    paid = 0
+    for _ in range(3):
+        ctx, asked = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0))
+        res = stage_admit.run(ctx, budget=3)
+        paid += _paid(asked, "fork2/widget")
+    assert paid == 1 and res.backlog == 0
+    led = memory.load(root / "jr" / "proposed_ledger.json")
+    assert led["by_id"]["widget"]["status"] == "merged"                 # the merged record is untouched
+    assert memory.is_blocked(led, repo="fork2/widget", now=NOW)
+
+
+def test_a_catalogued_repo_without_a_live_id_waits_behind_new_work(root, monkeypatch):
+    """The identity refresh (rename net) still happens, but only after the real backlog."""
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [
+        _entry("Aaa Seed", "https://github.com/o/original", download=90000),
+        _entry("Zed Cardputer Tool", "https://github.com/n/newtool", download=5)])
+    metas = {"repos/o/original": _meta("o/original", rid=7002),
+             "repos/n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=13)}
+    ctx, asked = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0))
+    stage_admit.run(ctx, budget=3)
+    assert "repos/n/newtool" in asked and "repos/o/original" in asked
+    assert asked.index("repos/n/newtool") < asked.index("repos/o/original")
+
+
+def test_the_backlog_counts_only_undecided_repos_and_leads_the_summary(root, monkeypatch):
+    path = root / "jr" / "proposed_ledger.json"
+    memory.record_rejected("blocked", "b/blocked", "below_floor: 1 stars / 0 forks", ttl_days=60, path=path, now=NOW)
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [
+        _entry("Seed", "https://github.com/o/original"),                 # catalogued: not backlog
+        _entry("Blocked", "https://github.com/b/blocked"),               # decided in memory: not backlog
+        _entry("New Cardputer Tool", "https://github.com/n/newtool", download=50),
+        _entry("Tiny", "https://github.com/t/tiny", download=20)])
+    metas = {"repos/o/original": _meta("o/original", rid=7002),
+             "repos/n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=13),
+             "repos/t/tiny": _meta("t/tiny", stars=1, forks=0, rid=12)}
+    ctx, _ = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0), dry_run=True)
+    res = stage_admit.run(ctx, budget=3)
+    assert res.backlog == 2
+    assert res.summary.startswith("backlog 2 undecided (top: n/newtool, 50 downloads)")
+
+
+def test_the_backlog_drains_every_tick_and_no_repo_is_paid_twice(root, monkeypatch):
+    """60 below-floor repos plus 3 renamed duplicates of merged records, at a 10-call share: the
+    backlog shrinks on every tick until it is empty, and each repo is fetched exactly once."""
+    for i in range(3):
+        _merged(f"w{i}", f"orig/w{i}", 9100 + i, root)
+    entries = [_entry(f"Tool {i:02}", f"https://github.com/d/tool{i:02}", download=1000 - i) for i in range(60)]
+    entries += [_entry(f"W {i}", f"https://github.com/fork2/w{i}", download=2000 + i) for i in range(3)]
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: entries)
+    metas = {f"repos/d/tool{i:02}": _meta(f"d/tool{i:02}", stars=1, forks=0, rid=200 + i) for i in range(60)}
+    metas.update({f"repos/fork2/w{i}": _meta(f"fork2/w{i}", stars=30, rid=9100 + i) for i in range(3)})
+    seen, sizes = [], []
+    for _ in range(12):
+        ctx, asked = _counting_ctx(root, metas, Budget(max_calls=200, clock=lambda: 0.0))
+        res = stage_admit.run(ctx, budget=3, call_share=0.05)               # 5% of 200 = 10 calls
+        sizes.append(res.backlog)
+        seen += [p for p in asked if p.startswith("repos/d/") or p.startswith("repos/fork2/")]
+        if res.backlog == 0:
+            break
+    assert sizes[0] == 63 and sizes[-1] == 0 and len(sizes) <= 10
+    assert all(b < a for a, b in zip(sizes, sizes[1:]))                   # strictly shrinking, every tick
+    assert len(seen) == len(set(seen)) == 63                              # each repo paid exactly once
+
+
+def test_a_repo_with_a_merged_record_costs_no_call_even_outside_the_catalog_strings(root, monkeypatch):
+    _merged("gone", "m/gone", 9300, root)               # merged, but no data/firmware url names m/gone
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Gone", "https://github.com/m/gone", download=9999)])
+    ctx, asked = _counting_ctx(root, {"repos/m/gone": _meta("m/gone", stars=30, rid=9300)}, Budget(max_calls=150, clock=lambda: 0.0))
+    res = stage_admit.run(ctx, budget=3)
+    assert "repos/m/gone" not in asked and res.backlog == 0

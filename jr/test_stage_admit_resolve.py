@@ -139,7 +139,7 @@ def test_empty_github_entry_never_reaches_the_ledger_and_is_a_counted_skip(root,
     fake = FakeGh()
     res = stage_admit.run(_ctx(root, fake), budget=3)
     assert res.rejects == {"unkeyed": 2}
-    assert res.summary == "skipped 2 launcher entries: unkeyed 2"
+    assert res.summary == "backlog 0 undecided (top: none); skipped 2 launcher repos: unkeyed 2"
     assert fake.calls == []                                                   # no key -> no search
     led = _ledger(root)
     assert led["by_id"] == {} and led["by_repo"] == {}

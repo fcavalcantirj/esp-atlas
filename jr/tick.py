@@ -86,6 +86,7 @@ import report   # noqa: E402
 import allocator  # noqa: E402
 import demand_signal  # noqa: E402
 import review_routing  # noqa: E402
+import admit_progress  # noqa: E402
 import ci_watch  # noqa: E402
 import review_memory  # noqa: E402
 import dry_run_tree  # noqa: E402
@@ -139,6 +140,7 @@ class StageResult:
     items: list = field(default_factory=list)      # structured facts per proposed record, for the PR body's verdict
     review: list = field(default_factory=list)     # repos the owner must judge: {"id", "repo", "kind", "url", "why"}
     would_write: list = field(default_factory=list)  # dry-run only: {"path", "field", "value"} a real run would write
+    backlog: int | None = None                     # admit only: undecided launcher repos at the start of the stage
 
 
 Stage = Callable[[TickContext], StageResult]
@@ -345,6 +347,12 @@ def default_ci_watcher(gh, slug: str, now: datetime, dry_run: bool) -> dict:
     """The hourly CI watch: incidents go to the runner-local store (JR_HEAL_STATE overrides)."""
     state = Path(os.environ["JR_HEAL_STATE"]) if os.environ.get("JR_HEAL_STATE") else ci_watch.DEFAULT_STATE
     return ci_watch.watch(gh, slug, ci_watch.Store(state), now.isoformat(), dry_run=dry_run)
+
+
+def default_admit_watcher(backlog: int, where: str, now: datetime, dry_run: bool) -> dict:
+    """The admit stall alarm (jr/admit_progress.py): runner-local state, JR_ADMIT_STATE overrides."""
+    state = Path(os.environ["JR_ADMIT_STATE"]) if os.environ.get("JR_ADMIT_STATE") else admit_progress.DEFAULT_STATE
+    return admit_progress.watch(admit_progress.Store(state), backlog, where, now.isoformat(), dry_run=dry_run)
 
 
 def _note_ci_watch(r: report.TickReport) -> None:
@@ -556,7 +564,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              stale_pr_hours: float = STALE_PR_HOURS, telegram: bool = True,
              auto_merge: bool = True, lock_path: Path | None = None,
              review_cap: int = review_routing.MAX_OPEN_REVIEW_PRS,
-             ci_watcher: Callable | None = None) -> report.TickReport:
+             ci_watcher: Callable | None = None,
+             admit_watcher: Callable | None = None) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
     env = os.environ if env is None else env
     budget = budget or Budget()
@@ -749,6 +758,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             r.admitted += res.admitted
             for k, v in res.rejects.items():
                 r.rejects[k] = r.rejects.get(k, 0) + v
+            if admit_watcher is not None and res.name == "admit" and res.backlog is not None:
+                try:      # the stall alarm (jr/admit_progress.py) never aborts the tick
+                    r.admit_progress = admit_watcher(res.backlog, res.summary, now, dry_run) or {}
+                except Exception as e:  # noqa: BLE001
+                    r.warnings.append(f"admit progress unavailable: {type(e).__name__}: {e}")
 
         # 7. guard once (data writes only), 8. publish — when a stage wrote OR memory changed;
         #    a ledger-only tick still ships, or every reconciliation would die with the worktree.
@@ -805,7 +819,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
             pass
     if telegram and not dry_run and notifier is not None:
-        for nudge in (r.ci_watch or {}).get("nudges") or []:     # SPEC-jr-self-heal.md: one per state change
+        for nudge in ((r.ci_watch or {}).get("nudges") or []) + ((r.admit_progress or {}).get("nudges") or []):
             try:
                 notifier(nudge)
             except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
@@ -859,7 +873,7 @@ def main(argv=None) -> int:
                  budget=Budget(max_calls=args.max_calls, max_seconds=args.max_seconds),
                  stages=stages_for(args.track, args.budget, only), auto_merge=not args.no_auto_merge,
                  lock_path=Path(os.environ["JR_TICK_LOCK"]) if os.environ.get("JR_TICK_LOCK") else None,
-                 ci_watcher=default_ci_watcher)
+                 ci_watcher=default_ci_watcher, admit_watcher=default_admit_watcher)
     return 1 if r.aborted else 0
 
 
