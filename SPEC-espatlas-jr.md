@@ -197,8 +197,10 @@ that's a coverage hole to close, not a silent gap.
       tick PR committed (`pending_prs.eligible`, one raw read at its pinned `headRefOid`, only when the
       PR changes that ledger; unreadable = a warning, never an abort);
     - in the memory step, after the open-PR hydration, applies `memory.carry_decisions`: a live
-      `seen`/`rejected` record **with `expires`** and no `review` block is copied verbatim when this
-      ledger lacks it or holds an older unprotected one. Never over a merged, proposed or permanent
+      `seen`/`rejected` record **with `expires`** and no `review` block is copied when this ledger
+      lacks it or holds an older unprotected one that is not a live owner-review decision. What the
+      older record knew is kept as `memory._write` keeps it: its history and itself go into `history`,
+      aliases are unioned (#1705 review, 2026-11-14). Never over a merged, proposed or permanent
       record, never under a repo id another protected record owns: `memory._write`'s refusals, so
       `scripts/ledger_guard.py` passes by construction. Proposals stay `hydrate_open_pr_ledger`'s and
       owner-review decisions `review_memory`'s.
