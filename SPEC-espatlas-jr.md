@@ -168,8 +168,13 @@ that's a coverage hole to close, not a silent gap.
       catalogued repo whose id no live record holds (the rename-proof identity refresh), a live
       owner-review decision, an id an open or vetoed tick PR holds.
 
-    Admit's call share is spent on the undecided backlog, most downloads first, one paid fetch per
-    repo per tick. Every paid call ends in a remembered decision. A decision the ledger refuses
+    Admit's call share is spent on the undecided backlog, one paid fetch per repo per tick, in an
+    **interleaved order**. Even slots follow the download order; odd slots are the same repos
+    shuffled with a seed of the tick's UTC hour (`_interleave`). So:
+    - the top k by downloads are always within the first 2k slots;
+    - an hour replays the same order, so it is reproducible;
+    - the next hour explores other repos. A decision that fails to stick can never take every paid
+      slot (owner, 2026-11-14: "add some random/shuffle, otherwise always fetching the same"). Every paid call ends in a remembered decision. A decision the ledger refuses
     under its own id (memory._write keeps a `merged` record, as with a renamed upstream scoring
     `duplicate_of`) is kept under the repo's note key `repo-note:<owner/repo>`, which carries no
     repo_id. So the backlog shrinks on every tick while it is not empty.

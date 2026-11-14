@@ -723,3 +723,60 @@ def test_a_repo_with_a_merged_record_costs_no_call_even_outside_the_catalog_stri
     ctx, asked = _counting_ctx(root, {"repos/m/gone": _meta("m/gone", stars=30, rid=9300)}, Budget(max_calls=150, clock=lambda: 0.0))
     res = stage_admit.run(ctx, budget=3)
     assert "repos/m/gone" not in asked and res.backlog == 0
+
+
+# --- exploration (2026-11-14, owner: "add some random/shuffle, otherwise always fetching the same") ----
+# The paid order interleaves the download order with a shuffle seeded by the tick's UTC hour: the most
+# wanted repo still goes first, every other paid slot is a random undecided repo, an hour replays the
+# same order (reproducible), and the next hour explores different repos.
+
+def _hour(h):
+    return NOW.replace(hour=h)
+
+
+def _fetched_in(root, monkeypatch, entries, metas, hour):
+    ctx, asked = _counting_ctx(root, metas, Budget(max_calls=200, clock=lambda: 0.0), dry_run=True)
+    ctx = tick.TickContext(root=ctx.root, ledger_path=ctx.ledger_path, now=_hour(hour), gh=ctx.gh, git=ctx.git,
+                           budget=ctx.budget, dry_run=True, env=ctx.env)
+    stage_admit.run(ctx, budget=3, call_share=0.05)                       # 10 calls: a few paid slots
+    return [p for p in asked if p.startswith("repos/d/")]
+
+
+def _forty(monkeypatch):
+    entries = [_entry(f"Tool {i:02}", f"https://github.com/d/tool{i:02}", download=10_000 - i) for i in range(40)]
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: entries)
+    return entries, {f"repos/d/tool{i:02}": _meta(f"d/tool{i:02}", stars=1, forks=0, rid=400 + i) for i in range(40)}
+
+
+def test_an_hour_is_reproducible_and_the_most_wanted_repo_goes_first(root, monkeypatch):
+    entries, metas = _forty(monkeypatch)
+    a = _fetched_in(root, monkeypatch, entries, metas, 10)
+    b = _fetched_in(root, monkeypatch, entries, metas, 10)
+    assert a == b and a[0] == "repos/d/tool00"
+
+
+def test_each_hour_explores_repos_the_download_order_alone_would_not_reach(root, monkeypatch):
+    """A dry run remembers nothing, so it shows the bare paid order: with the download order alone
+    every hour would fetch the very same few repos (any decision that fails to stick would hold the
+    head of the queue forever). Six hours must reach well beyond one hour's set."""
+    entries, metas = _forty(monkeypatch)
+    hours = [_fetched_in(root, monkeypatch, entries, metas, h) for h in range(10, 16)]
+    one = set(hours[0])
+    union = set().union(*map(set, hours))
+    assert all(h[0] == "repos/d/tool00" for h in hours)                    # exploitation: the top is always first
+    assert len(union) >= 2 * len(one)                                      # exploration: other repos each hour
+    assert any(set(h) != one for h in hours[1:])
+
+
+def test_the_queue_interleaves_the_download_order_with_a_seeded_shuffle(root):
+    catalog = [_entry(f"T{i:02}", f"https://github.com/d/t{i:02}", download=1000 - i) for i in range(30)]
+    led = memory.load(root / "jr" / "proposed_ledger.json")
+    q1, n1, _ = stage_admit.launcher_queue(catalog, led, set(), NOW, seed="2026-09-07T12")
+    q2, _, _ = stage_admit.launcher_queue(catalog, led, set(), NOW, seed="2026-09-07T12")
+    q3, _, _ = stage_admit.launcher_queue(catalog, led, set(), NOW, seed="2026-09-07T13")
+    names = lambda q: [e["name"] for e in q]
+    assert n1 == 30 and names(q1) == names(q2) and names(q1) != names(q3)
+    assert sorted(names(q1)) == sorted(names(q3))                          # a permutation: nothing lost or doubled
+    for q in (q1, q3):                                                     # the download lane's guarantee:
+        for k in range(1, 11):                                             # the top k are always in the first 2k
+            assert {f"T{i:02}" for i in range(k)} <= set(names(q)[:2 * k])

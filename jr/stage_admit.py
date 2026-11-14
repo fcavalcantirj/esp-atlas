@@ -16,6 +16,7 @@ worktree. Track B widens the recipes from the build files, in the same tick (adm
 from __future__ import annotations
 
 import json
+import random
 from datetime import datetime
 from pathlib import Path
 
@@ -233,13 +234,39 @@ def _downloads(entry: dict) -> int:
         return 0
 
 
-def launcher_queue(catalog: list, led: dict, cat_repos: set, now, pending=None) -> tuple[list, int, str]:
+def _interleave(ordered: list, seed: str) -> list:
+    """Even slots: `ordered` (the download order). Odd slots: the same items shuffled by `seed`.
+    Each item appears once. The seed is the tick's UTC hour, so an hour replays the same order and the
+    next hour explores other repos: a decision that fails to stick can never hold every paid slot."""
+    shuffled = list(ordered)
+    random.Random(f"admit-queue:{seed}").shuffle(shuffled)
+    out, taken, i, j = [], set(), 0, 0
+    while len(out) < len(ordered):
+        for lane, at in ((ordered, "i"), (shuffled, "j")):
+            k = i if at == "i" else j
+            while k < len(lane) and id(lane[k]) in taken:
+                k += 1
+            if k < len(lane):
+                out.append(lane[k])
+                taken.add(id(lane[k]))
+                k += 1
+            if at == "i":
+                i = k
+            else:
+                j = k
+    return out
+
+
+def launcher_queue(catalog: list, led: dict, cat_repos: set, now, pending=None,
+                   seed: str | None = None) -> tuple[list, int, str]:
     """Admit's launcher backlog, built with ZERO calls (SPEC-espatlas-jr.md, the backlog queue).
 
     Entries are grouped by repo (an entry with no repo by its launcher ledger key), one entry per
     group (its most-downloaded one), ranked by the group's TOTAL downloads. Returns
     (ordered entries, undecided count, top label):
-      1. the undecided backlog, most downloads first, then name: what the call share is for;
+      1. the undecided backlog, what the call share is for: most downloads first, interleaved with
+         a shuffle seeded by `seed` (the tick's UTC hour; see _interleave) so the most wanted repo
+         goes first and every other paid slot explores;
       2. the decided, which the loop skips for free (memory, catalogued with a live id, merged);
       3. the tail, which needs a call but decides nothing new: a catalogued repo whose id no live
          record holds (the rename-proof identity refresh), a live owner-review decision (evidence
@@ -281,6 +308,8 @@ def launcher_queue(catalog: list, led: dict, cat_repos: set, now, pending=None) 
             else:
                 undecided.append(item)
     undecided.sort(key=lambda t: t[:3])
+    if seed is not None and len(undecided) > 2:
+        undecided = _interleave(undecided, seed)
     decided.sort(key=lambda t: (t[1], t[2]))
     tail.sort(key=lambda t: t[:3])
     top = f"{undecided[0][3]}, {-undecided[0][0]} downloads" if undecided else "none"
@@ -490,7 +519,8 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
     slug = (ctx.env or {}).get("JR_REPO_SLUG") or DEFAULT_REPO_SLUG
     submissions = _submission_entries(ctx, slug)
     atlas = board_alias.atlas_boards(ctx.root) if submissions else {}
-    queue, backlog, top = launcher_queue(catalog, led, cat_repos, ctx.now, pending)
+    queue, backlog, top = launcher_queue(catalog, led, cat_repos, ctx.now, pending,
+                                         seed=ctx.now.strftime("%Y-%m-%dT%H"))
     lines.append(f"backlog {backlog} undecided (top: {top})")
     entries = [dict(e) for e in submissions] + [dict(e) for e in queue]
 
