@@ -543,7 +543,7 @@
   "pam-cb130861ab40bc958c3c0e44": {
    "term": "ESP32-P4 Function EV Board",
    "source": "pam_feed",
-   "status": "new",
+   "status": "validated",
    "first_seen": "2026-11-11",
    "history": [],
    "linked_work": [],
@@ -643,6 +643,29 @@
      "matches": [],
      "status": "potential_identity_gap"
     }
+   },
+   "validation": {
+    "verified_on": "2026-11-14",
+    "forbidden_ids": [
+     "esp32-p4x-function-ev-board",
+     "esp32-p4x-c5-function-ev-board",
+     "esp32-p4-eye",
+     "esp32-p4x-eye"
+    ],
+    "verification_kind": "catalog_part",
+    "validated_by": "jr-demand-executor (DasBrowCoder delegate) run pam-cb130861ab40bc958c3c0e44@2026-11-14",
+    "primary_sources": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide.html",
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4-function-ev-board/user_guide_v1.4.html",
+     "https://dl.espressif.com/dl/schematics/esp32-p4-function-ev-board-schematics_v1.52.pdf",
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4x-function-ev-board/user_guide.html"
+    ],
+    "expected_ids": [
+     "esp32-p4-function-ev-board"
+    ],
+    "notes": "ESP32-P4-Function-EV-Board (Espressif, now listed under EOL boards; hardware v1.5.2 documented, v1.4 older revision of the same product) carries a pre-v3 ESP32-P4 plus an ESP32-C6-MINI-1 radio module. The successor ESP32-P4X-Function-EV-Board (chip revision v3.x), the ESP32-P4X-C5-Function-EV-Board (ESP32-C5 radio) and the ESP32-P4-EYE / ESP32-P4X-EYE camera boards are distinct products with their own user guides and must not be merged into this id. v1.4 differs from v1.5.2 by a CP2102N USB-to-UART port instead of native USB Serial/JTAG and by IO24/IO25 on the header.",
+    "identity_verified": true,
+    "term_key": "esp32 p4 function ev board"
    }
   }
  }
