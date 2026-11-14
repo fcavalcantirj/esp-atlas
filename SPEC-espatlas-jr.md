@@ -157,6 +157,16 @@ that's a coverage hole to close, not a silent gap.
     `RESOLVER_CALLS_PER_TICK` searches per tick, inside the tick budget AND admit's call share.
     Nothing is ever recorded with an empty id or repo: such an entry is dropped before the
     ledger with a counted `unkeyed` skip.
+  - **A decided repo never spends the scan's calls (2026-11-14).** Admit's launcher scan has a
+    call share per tick. A repo the catalog already holds, and whose GitHub id a live ledger record
+    already carries (a `merged` record, typically), is skipped as `already_catalogued` before any
+    call, by the scorer's own rule (`scorer.catalogued_reason`: the repo or its owner is in the
+    catalog). Without a live id it is fetched once, as before, so its id refreshes the rename-proof
+    identity net. Within one tick a repo pays at most one meta fetch: its other launcher entries
+    are counted `same_repo_this_tick`. Before this rule every tick from 2026-11-12 to 2026-11-14
+    admitted nothing: merged repos were re-fetched on every tick (only `blocked`/`seen` records
+    skipped for free), and Bruce's ~35 launcher entries used up the ~46-call share, so about 2,070
+    of 2,297 entries were never reached.
   - Second firmware source in the same family: **M5Burner API** (`m5burner-api.m5stack.com`,
     live) for the M5Stack ecosystem.
   - **Only after the launcher backlog is drained** do the long-tail sources (below) matter for

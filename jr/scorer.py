@@ -183,6 +183,15 @@ def _owner_repo(github_url: str) -> str:
     return "/".join(fn.split("/")[:2])
 
 
+def catalogued_reason(owner_repo: str, catalogued_repos: set[str]) -> str | None:
+    """The `already_catalogued` rule, one copy: the repo, or its owner, is in the catalog's repo
+    set (tools._catalogued_repos_and_tokens). A pure string test that needs no GitHub metadata,
+    so jr/stage_admit.py can apply it before the paid fetch (SPEC-espatlas-jr.md, admit scan)."""
+    if owner_repo and (owner_repo in catalogued_repos or owner_repo.split("/")[0] in catalogued_repos):
+        return f"already_catalogued: {owner_repo} is already in the atlas"
+    return None
+
+
 def _repo_name_from_url(github_url: str) -> str:
     """The bare repo NAME (not owner/repo) a launcher-catalog github url points at — the path
     segment immediately after the owner. `_owner_repo` already keeps only the first two path
@@ -283,8 +292,9 @@ def score_entry(entry: dict, repo_meta: dict, catalogued_repos: set[str],
             return {"decision": "skip", "reason": f"fork_of_catalogued: source={source}"}
         return {"decision": "skip", "reason": f"fork_of_uncatalogued: source={source}"}
 
-    if owner_repo in catalogued_repos or owner_repo.split("/")[0] in catalogued_repos:
-        return {"decision": "skip", "reason": f"already_catalogued: {owner_repo} is already in the atlas"}
+    reason = catalogued_reason(owner_repo, catalogued_repos)
+    if reason:
+        return {"decision": "skip", "reason": reason}
 
     # Rename-proof identity: the repo id survives owner/repo renames, the strings above do
     # not. Checked before the fuzzy name-token match so identity beats resemblance.

@@ -523,3 +523,92 @@ def test_a_dry_run_never_would_admit_a_held_repository_renamed_upstream(root, mo
     res = stage_admit.run(ctx, budget=1)
     assert res.rejects == {"already_proposed": 1} and not res.would_write
     assert "renamed newtool" in res.summary
+
+
+# --- the admit wall (2026-11-14): a catalogued repository never spends the launcher scan's call share ----
+# Every tick from 2026-11-12 to 2026-11-14 read "admitted 0 · stopped before brucedevices/firmware":
+# a repo whose ledger record is `merged` was fetched again on every tick (only blocked/seen records
+# skip for free, and memory._write refuses an already_catalogued rejection over a merged record),
+# Bruce alone has ~35 launcher entries, and the ~46-call share ran out inside them every hour.
+
+def _merged(fid, owner_repo, rid, root):
+    path = root / "jr" / "proposed_ledger.json"
+    memory.record_proposed(fid, owner_repo, pr_ref="#1", repo_id=rid, path=path, now=NOW)
+    memory.reconcile_merged({fid}, path=path, now=NOW)
+
+
+def _counting_ctx(root, metas, budget, dry_run=False):
+    """_ctx whose gh records every path it is asked for."""
+    asked = []
+
+    def gh(*a):
+        asked.append(a[1] if len(a) > 1 else "")
+        return _reply(metas.get(a[1]), a[1])
+
+    ctx = tick.TickContext(root=root, ledger_path=root / "jr" / "proposed_ledger.json", now=NOW,
+                           gh=budget.wrap(gh), git=lambda *a: None, budget=budget, dry_run=dry_run, env={})
+    return ctx, asked
+
+
+def test_a_merged_catalogued_repository_costs_no_call_and_never_starves_the_scan(root, monkeypatch):
+    _merged("seed-original", "o/original", 7001, root)
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: (
+        [_entry(f"Aaa Seed {i:02}", "https://github.com/o/original") for i in range(30)]
+        + [_entry("Zed Cardputer Tool", "https://github.com/n/newtool")]))
+    metas = {"repos/n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=13)}
+    ctx, asked = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0))
+    res = stage_admit.run(ctx, budget=3, call_share=0.05)            # 5% of 150 = 7 calls for the scan
+    assert "repos/o/original" not in asked                           # the catalogued repo is decided for free
+    assert res.admitted == 1 and "data/firmware/newtool/firmware.md" in res.paths
+    assert res.rejects.get("already_catalogued") == 30
+    assert "call share used" not in res.summary
+
+
+def test_a_catalogued_repository_with_no_known_id_is_fetched_once_and_its_id_recorded(root, monkeypatch):
+    """The free skip needs the repo's GitHub id in a live ledger record: that id is the rename-proof
+    identity net (_catalogued_ids). With none, the repo is fetched as before and the id recorded."""
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Seed", "https://github.com/o/original")])
+    metas = {"repos/o/original": _meta("o/original", rid=7002)}
+    ctx, asked = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0))
+    first = stage_admit.run(ctx, budget=3)
+    assert asked.count("repos/o/original") == 1 and first.rejects == {"already_catalogued": 1}
+    led = memory.load(root / "jr" / "proposed_ledger.json")
+    assert memory.lookup(led, repo_id=7002) is not None
+    ctx, asked = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0))
+    stage_admit.run(ctx, budget=3)
+    assert "repos/o/original" not in asked
+
+
+def test_an_expired_record_does_not_count_as_a_known_id(root, monkeypatch):
+    path = root / "jr" / "proposed_ledger.json"
+    memory.record_rejected("seed-original", "o/original", "already_catalogued: o/original is already in the atlas",
+                           ttl_days=1, repo_id=7003, path=path, now=datetime(2026, 8, 1, tzinfo=timezone.utc))
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Seed", "https://github.com/o/original")])
+    metas = {"repos/o/original": _meta("o/original", rid=7003)}
+    ctx, asked = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0))
+    stage_admit.run(ctx, budget=3)
+    assert asked.count("repos/o/original") == 1                      # refreshed, so the identity net stays live
+
+
+def test_one_paid_fetch_per_repository_per_tick(root, monkeypatch):
+    """A dry run writes no rejection, so before this every launcher entry of one repo paid again."""
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: (
+        [_entry(f"Aaa Tiny {i:02}", "https://github.com/t/tiny") for i in range(20)]
+        + [_entry("Zed Cardputer Tool", "https://github.com/n/newtool")]))
+    metas = {"repos/t/tiny": _meta("t/tiny", stars=1, forks=0, rid=12),
+             "repos/n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=13)}
+    ctx, asked = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0), dry_run=True)
+    res = stage_admit.run(ctx, budget=3, call_share=0.05)
+    assert asked.count("repos/t/tiny") == 1
+    assert "would admit" in res.summary and "call share used" not in res.summary
+
+
+def test_a_submission_of_a_merged_catalogued_repository_is_answered_without_a_fetch(root, monkeypatch):
+    _merged("seed-original", "o/original", 7004, root)
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [])
+    ctx = _ctx_sub(root, [_issue(41, "https://github.com/o/original\nBoards: Cardputer")],
+                   metas={"repos/o/original": _meta("o/original", rid=7004)})
+    stage_admit.run(ctx, budget=3)
+    assert not [a for a in ctx.calls if len(a) > 1 and a[1] == "repos/o/original"]
+    a = _answers(ctx)
+    assert a and "already_catalogued" in a[0][2] and a[1][:2] == ("PATCH", "repos/fcavalcantirj/esp-atlas/issues/41")

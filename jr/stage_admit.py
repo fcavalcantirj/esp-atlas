@@ -288,6 +288,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         rejects[key] = rejects.get(key, 0) + 1
 
     launcher_skips: dict = {}      # launcher entries are skipped by the hundred: one aggregate line, never one per entry
+    fetched_this_tick: set = set()   # owner/repo already paid a meta fetch this tick: one paid decision per repo
 
     def count_skip(key):
         """A launcher skip that writes nothing: counted in rejects and the aggregate line."""
@@ -438,6 +439,26 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
                                                         + (f" (until {prior['expires']})" if prior.get("expires") else ""), False, False))
                 lines.append(f"submission #{issue}: already decided")
             continue
+        # The admit wall (2026-11-14): a catalogued repo whose GitHub id a live ledger record already
+        # holds (a `merged` record, typically) is decided without the paid meta fetch. It used to pay
+        # one call per launcher entry per tick and score `already_catalogued`, a write memory._write
+        # refuses over `merged`; Bruce's ~35 entries ate admit's whole call share every hour. The rule
+        # is the scorer's own (scorer.catalogued_reason). Without a live id the repo is fetched as
+        # before, so the rename-proof identity net (_catalogued_ids) keeps its id.
+        cat_reason = None if held else scorer.catalogued_reason(owner_repo, cat_repos)
+        known = memory.lookup(led, repo=owner_repo) if cat_reason else None
+        if cat_reason and known and known.get("repo_id") is not None and not memory.is_expired(known, ctx.now):
+            if issue:
+                reject("already_catalogued")
+                _answer(ctx, slug, issue, _verdict_text(cat_reason, False, False))
+                lines.append(f"{scorer._slug(scorer._repo_name_from_url(github)) or owner_repo}: "
+                             f"skip already_catalogued (submission #{issue})")
+            else:
+                count_skip("already_catalogued")
+            continue
+        if not issue and owner_repo in fetched_this_tick:
+            count_skip("same_repo_this_tick")   # this tick already paid for this repo's decision
+            continue
         # An id already sitting in an OPEN Jr PR — hydrated into the worktree ledger at tick start
         # (tick.hydrate_open_pr_ledger) because this worktree reads origin/main's ledger, which
         # lacks the un-merged PR's own `proposed` entry. A hydrated record is keyed by the firmware
@@ -471,6 +492,7 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         if not issue and ctx.budget.calls - calls_at_start >= call_cap:
             lines.append(f"stopped before {owner_repo}: admit's call share used ({call_cap} of the tick's calls); the rest is Track B's")
             break
+        fetched_this_tick.add(owner_repo)
         try:
             meta, _fetched = _fetch_meta(ctx.gh, owner_repo)
         except BudgetExceeded as e:
