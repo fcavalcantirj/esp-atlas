@@ -382,6 +382,70 @@ def record_proposed(firmware_id: str, repo: str, pr_ref: str | None = None,
                   pr_ref, path, now)
 
 
+def _carry_refusal(led: dict, view: dict, fid, rec, now: datetime) -> str | None:
+    """Why record `rec` (keyed `fid` in an open tick PR's ledger) is NOT carried, or None to carry it."""
+    if not fid or not isinstance(rec, dict) or rec.get("id") != fid:
+        return "malformed"
+    if rec.get("status") not in EXPIRABLE_STATUSES or not rec.get("expires"):
+        return "not a TTL'd decision"          # proposals: hydrate_open_pr_ledger; vetoes: a closed PR or a human
+    if rec.get("review"):
+        return "owner-review decision"         # review_memory.reconcile owns those
+    if is_expired(rec, now):
+        return "expired"
+    ours = led["by_id"].get(fid)
+    if ours == rec:
+        return "same"
+    if is_protected(ours):
+        return "protected"
+    if ours is not None:
+        mine, theirs = _parse(ours.get("timestamp")), _parse(rec.get("timestamp"))
+        if theirs is None or (mine is not None and _aware(mine) >= _aware(theirs)):
+            return "ours is newer"
+    rid = rec.get("repo_id")
+    try:
+        owner = view.get(int(rid)) if rid is not None else None
+    except (TypeError, ValueError):
+        return "malformed"
+    if owner is not None and owner != fid and is_protected(led["by_id"].get(owner)):
+        return "repo id held by a protected record"
+    return None
+
+
+def carry_decisions(sources, path: Path | None = None, now: datetime | None = None) -> list[tuple[str, str]]:
+    """Carry the TTL'd decisions open tick PRs committed into this ledger (SPEC-espatlas-jr.md, memory step).
+
+    A tick starts from origin/main, so a decision another tick recorded in a PR that has not merged — a
+    jr-review PR waiting for the owner, or a bookkeeping PR about to be closed as superseded — would be
+    paid for again every hour. `sources` is [(pr_ref, by_id)] read from those PRs' committed ledgers,
+    oldest first. A record is copied verbatim (timestamp, expires, reason, repo_id, history) only when it
+    is a live `seen` / `rejected` decision WITH `expires`, carries no `review` block, and either this
+    ledger lacks it or holds an older unprotected one. Never over a merged, proposed or permanent record;
+    never under a repo id a different protected record owns; by_repo never moves off a protected record.
+    Those are memory._write's refusals, so scripts/ledger_guard.py passes by construction.
+    Saves once, only when something was carried. Returns [(pr_ref, firmware_id)] carried."""
+    now = _aware(now)
+    path = _path(path)
+    led = load(path)
+    carried = []
+    for pr_ref, by_id in sources or []:
+        if not isinstance(by_id, dict):
+            continue
+        for fid, rec in by_id.items():
+            if _carry_refusal(led, led["by_repo_id"], fid, rec, now) is not None:
+                continue
+            rec = dict(rec)
+            led["by_id"][fid] = rec
+            repo_key = str(rec.get("repo") or fid).lower()
+            if not is_protected(led["by_id"].get(led["by_repo"].get(repo_key))):
+                led["by_repo"][repo_key] = fid
+            if rec.get("repo_id") is not None and not is_protected(led["by_id"].get(led["by_repo_id"].get(int(rec["repo_id"])))):
+                led["by_repo_id"][int(rec["repo_id"])] = fid
+            carried.append((pr_ref, fid))
+    if carried:
+        _save(led, path)
+    return carried
+
+
 def expire(path: Path | None = None, now: datetime | None = None) -> list[str]:
     """Flip every `seen` / `rejected` record whose `expires` has passed to status `expired`
     (history kept: `timestamp` stays the decision time, `expired_at` records the lapse). Never

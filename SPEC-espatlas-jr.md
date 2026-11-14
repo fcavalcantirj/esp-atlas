@@ -188,6 +188,24 @@ that's a coverage hole to close, not a silent gap.
     Why: from 2026-11-12 to 2026-11-14 the alphabetical rescan re-paid for catalogued repos every tick
     and stopped before brucedevices/firmware every hour (Bruce has ~35 entries under "B"). 1,205
     undecided repos with 1.35 M downloads were never reached, and nothing said so.
+
+    **Decisions held in open tick PRs are carried (2026-11-14).** A tick starts from `origin/main`, and
+    its decisions live in its own PR. A `jr-review` PR waits for the owner, and a superseded
+    bookkeeping PR is closed, so their decisions never reached main and the next ticks paid for them
+    again (15Z→16Z on 2026-11-14: backlog 1200→1199, 17 of 41 decisions re-paid). Now every tick:
+    - in the preflight, **before any superseded PR is closed**, reads the ledger each eligible open
+      tick PR committed (`pending_prs.eligible`, one raw read at its pinned `headRefOid`, only when the
+      PR changes that ledger; unreadable = a warning, never an abort);
+    - in the memory step, after the open-PR hydration, applies `memory.carry_decisions`: a live
+      `seen`/`rejected` record **with `expires`** and no `review` block is copied verbatim when this
+      ledger lacks it or holds an older unprotected one. Never over a merged, proposed or permanent
+      record, never under a repo id another protected record owns: `memory._write`'s refusals, so
+      `scripts/ledger_guard.py` passes by construction. Proposals stay `hydrate_open_pr_ledger`'s and
+      owner-review decisions `review_memory`'s.
+
+    The carried decisions ride this tick's PR (a carry alone publishes a memory-reconciliation PR), and
+    the PR body says `Carried N decision(s) from open tick PR(s) #…`. So the backlog guarantee above
+    holds even while a review question waits.
   - Second firmware source in the same family: **M5Burner API** (`m5burner-api.m5stack.com`,
     live) for the M5Stack ecosystem.
   - **Only after the launcher backlog is drained** do the long-tail sources (below) matter for

@@ -11,7 +11,8 @@ One tick, in order (PLAN §3.2):
     own, never a fork's (pending_prs.eligible): one that is CONFLICTING or open longer than 3 h
     and changes ONLY bookkeeping (jr/proposed_ledger.json, docs/telemetry/**) was superseded by
     later ticks — it is closed with a comment and its branch deleted (every tick regenerates
-    those files, so nothing is lost; dry-run only reports it). A stale one touching
+    those files, and its ledger decisions were read first and are carried in step 3, so nothing is
+    lost; dry-run only reports it). A stale one touching
     anything else (data/**) is NEVER closed — jr/memory.py reads a closed PR as a permanent
     rejection of its firmware — so the tick aborts naming it, whether it conflicts, and that it
     needs a human. A PR labelled `jr-review` (jr/review_routing.py) is waiting for the owner ON
@@ -37,8 +38,10 @@ One tick, in order (PLAN §3.2):
     merged → merged); mark ledger ids now in the catalog as merged; a merged id that vanished
     from the catalog becomes a permanent rejection. (jr/memory.py) Every target an open or closed
     jr-review PR raised becomes a live owner-review decision, so it is not asked again while its
-    evidence is unchanged (jr/review_memory.py). If anything merged or was
-    removed, purge the site's catalog cache (POST /api/revalidate, PR 0.5).
+    evidence is unchanged (jr/review_memory.py). The TTL'd decisions every open tick PR committed
+    (read in the preflight at each PR's head, before any superseded close) are carried into this
+    ledger (memory.carry_decisions), so a PR waiting for the owner never holds them off main. If
+    anything merged or was removed, purge the site's catalog cache (POST /api/revalidate, PR 0.5).
  4. Gauge — scripts/data_completion.compute_completion over the worktree's data/.
   5. Allocation — the hourly path splits HOURLY_TRACK_UNITS gauge-driven units between
      Track A (finite backfill) and Track B (firmware drain = admit + board-map) via
@@ -262,8 +265,9 @@ BOOKKEEPING_FILES = review_routing.BOOKKEEPING_FILES     # one definition: the c
 BOOKKEEPING_DIRS = review_routing.BOOKKEEPING_DIRS
 SUPERSEDED_COMMENT = ("Superseded by later Jr ticks. This PR only touched tick bookkeeping "
                       "(jr/proposed_ledger.json, jr/board_cooldown.json, docs/telemetry/**), which later ticks regenerate "
-                      "(a dropped board cooldown is re-derived the next time that board fails), so closing it loses "
-                      "nothing. Closed automatically by the jr/tick.py preflight.")
+                      "(a dropped board cooldown is re-derived the next time that board fails), and its ledger decisions were "
+                      "carried into the next tick first, so closing it loses nothing. Closed automatically by "
+                      "the jr/tick.py preflight.")
 
 
 def _list_open_prs(gh) -> list | None:
@@ -532,6 +536,34 @@ def hydrate_open_pr_ledger(gh, now, ledger_path, repo_slug=None, pending=None, o
     return hydrated
 
 
+def _open_pr_ledgers(gh, slug, prs) -> tuple[list, list[str]]:
+    """([(pr_ref, by_id)], warnings): the ledger each eligible open tick PR committed, read raw at its
+    pinned head (headRefOid) — one call per PR, and only for a PR that changes that ledger. The input
+    to memory.carry_decisions: a jr-review PR waits for the owner and a superseded bookkeeping PR is
+    closed, and either way the decisions it recorded would never reach main. Called in the preflight
+    BEFORE any superseded PR is closed, so nothing depends on a deleted branch. Best-effort: a PR whose
+    ledger cannot be read is a warning (its decisions are re-made, as before), never an abort."""
+    sources, warnings = [], []
+    for pr in sorted((pr for pr in prs if pending_prs.eligible(pr)), key=lambda pr: pr.get("number") or 0):
+        n, oid = pr.get("number"), pr.get("headRefOid")
+        paths = [f.get("path") for f in (pr.get("files") or []) if isinstance(f, dict)]
+        if pending_prs.LEDGER_PATH not in paths:
+            continue
+        try:
+            if not slug or not isinstance(oid, str) or not oid:
+                raise ValueError("no pinned head")
+            p = gh("api", "-H", pending_prs.RAW_MEDIA, f"repos/{slug}/contents/{pending_prs.LEDGER_PATH}?ref={oid}")
+            if getattr(p, "returncode", 1) != 0:
+                raise ValueError("gh api failed")
+            by_id = json.loads(getattr(p, "stdout", "") or "").get("by_id")
+            if not isinstance(by_id, dict):
+                raise ValueError("no by_id")
+            sources.append((f"#{n}", by_id))
+        except Exception as e:  # noqa: BLE001 — one PR's ledger must never abort the tick
+            warnings.append(f"open-PR decisions from #{n} unreadable: {type(e).__name__}: {e}")
+    return sources, warnings
+
+
 # --- dry run -----------------------------------------------------------------------------------
 
 def _ledger_changes(before: dict, ledger_path: Path) -> list[dict]:
@@ -595,6 +627,9 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         # Only the Jr bot's own same-repo tick PR is triaged, closed or hydrated: anyone can name a
         # fork's branch jr/tick-*, and pending_prs.eligible is the one rule for all of them (R2j).
         tick_prs = [pr for pr in open_prs if pending_prs.eligible(pr)]
+        # Before any close: the decisions every open tick PR committed (memory.carry_decisions, step 3).
+        open_pr_ledgers, carry_warnings = _open_pr_ledgers(gh_c, slug, tick_prs)
+        r.warnings += carry_warnings
         superseded, stuck = _triage_tick_prs(gh_c, tick_prs, now, stale_pr_hours)
         for pr in superseded:
             if dry_run:
@@ -649,6 +684,14 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                                                 open_prs=tick_prs)
         except Exception as e:  # noqa: BLE001
             r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")
+        # 3b'. carry the TTL'd decisions open tick PRs committed (read in the preflight, before any
+        #     close): a jr-review PR waiting for the owner, or a superseded bookkeeping PR, must not
+        #     hold admit's progress off main — they ride this tick's PR. Best-effort like hydration.
+        try:
+            r.carried = [{"pr": ref, "id": fid}
+                         for ref, fid in memory.carry_decisions(open_pr_ledgers, path=ledger_path, now=now)]
+        except Exception as e:  # noqa: BLE001
+            r.warnings.append(f"open-PR decision carry failed: {type(e).__name__}: {e}")
         # 3c. owner-review decisions (SPEC-jr-review-routing.md §5): every target an open or closed
         #     jr-review PR raised becomes a live decision in this ledger BEFORE the stages, so the
         #     admit gate holds an unchanged one instead of asking again — and the decision rides this
@@ -766,7 +809,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
 
         # 7. guard once (data writes only), 8. publish — when a stage wrote OR memory changed;
         #    a ledger-only tick still ships, or every reconciliation would die with the worktree.
-        ledger_changed = bool(r.review_decisions) or (any(r.memory.values()) if r.memory else False)
+        ledger_changed = (bool(r.review_decisions) or bool(r.carried)
+                          or (any(r.memory.values()) if r.memory else False))
         if (r.paths or ledger_changed) and not dry_run:
             if r.paths:
                 r.guard = guard(root)
