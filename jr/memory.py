@@ -397,6 +397,8 @@ def _carry_refusal(led: dict, view: dict, fid, rec, now: datetime) -> str | None
         return "same"
     if is_protected(ours):
         return "protected"
+    if ours is not None and ours.get("review") and ours.get("status") != "expired" and not is_expired(ours, now):
+        return "live owner-review decision here"   # review_memory owns it; it is replaced only through _write
     if ours is not None:
         mine, theirs = _parse(ours.get("timestamp")), _parse(rec.get("timestamp"))
         if theirs is None or (mine is not None and _aware(mine) >= _aware(theirs)):
@@ -411,15 +413,33 @@ def _carry_refusal(led: dict, view: dict, fid, rec, now: datetime) -> str | None
     return None
 
 
+def _kept(ours: dict | None, rec: dict) -> dict:
+    """`rec` as carried over `ours`, keeping what _write keeps: past a review or history, `ours` and its
+    history go first into `history` (then any of `rec`'s own entries not already there); aliases are
+    the union, ours first."""
+    rec = dict(rec)
+    if not ours:
+        return rec
+    if ours.get("review") or ours.get("history"):
+        hist = _history(ours)
+        hist += [h for h in rec.get("history") or [] if h not in hist]
+        rec["history"] = hist
+    aliases = list(dict.fromkeys(list(ours.get("aliases") or []) + list(rec.get("aliases") or [])))
+    if aliases:
+        rec["aliases"] = aliases
+    return rec
+
+
 def carry_decisions(sources, path: Path | None = None, now: datetime | None = None) -> list[tuple[str, str]]:
     """Carry the TTL'd decisions open tick PRs committed into this ledger (SPEC-espatlas-jr.md, memory step).
 
     A tick starts from origin/main, so a decision another tick recorded in a PR that has not merged — a
     jr-review PR waiting for the owner, or a bookkeeping PR about to be closed as superseded — would be
     paid for again every hour. `sources` is [(pr_ref, by_id)] read from those PRs' committed ledgers,
-    oldest first. A record is copied verbatim (timestamp, expires, reason, repo_id, history) only when it
-    is a live `seen` / `rejected` decision WITH `expires`, carries no `review` block, and either this
-    ledger lacks it or holds an older unprotected one. Never over a merged, proposed or permanent record;
+    oldest first. A record is copied (timestamp, expires, reason, repo_id) only when it is a live `seen` /
+    `rejected` decision WITH `expires`, carries no `review` block, and either this ledger lacks it or holds
+    an older unprotected one that is not a live owner-review decision. What the older record knew is kept
+    as _write keeps it (`_kept`: its history and itself into `history`, aliases unioned). Never over a merged, proposed or permanent record;
     never under a repo id a different protected record owns; by_repo never moves off a protected record.
     Those are memory._write's refusals, so scripts/ledger_guard.py passes by construction.
     Saves once, only when something was carried. Returns [(pr_ref, firmware_id)] carried."""
@@ -433,7 +453,7 @@ def carry_decisions(sources, path: Path | None = None, now: datetime | None = No
         for fid, rec in by_id.items():
             if _carry_refusal(led, led["by_repo_id"], fid, rec, now) is not None:
                 continue
-            rec = dict(rec)
+            rec = _kept(led["by_id"].get(fid), rec)
             led["by_id"][fid] = rec
             repo_key = str(rec.get("repo") or fid).lower()
             if not is_protected(led["by_id"].get(led["by_repo"].get(repo_key))):

@@ -143,3 +143,48 @@ def test_property_guard_clean_and_idempotent(tmp_path):
         after = json.loads(lp.read_text())
         assert ledger_guard.check(before, after) == [], (trial, ledger_guard.check(before, after))
         assert memory.carry_decisions(sources, path=lp, now=NOW) == []        # idempotent
+
+
+# --- what our older record knew is kept, like memory._write keeps it (#1705 review, DasBrow) ------
+
+def test_a_carry_keeps_our_older_records_history_and_aliases(tmp_path):
+    old = {"id": "prev", "status": "rejected", "reason": "first look", "timestamp": iso(NOW - timedelta(days=40))}
+    ours = rec("a", hours_ago=9, reason="ours", history=[old], aliases=["o/a-old"])
+    lp = write(tmp_path / "l.json", ours)
+    theirs = rec("a", hours_ago=2, reason="theirs", aliases=["o/a-new"])
+    assert memory.carry_decisions([src(theirs)], path=lp, now=NOW) == [("#9", "a")]
+    got = by_id(lp)["a"]
+    assert got["reason"] == "theirs"
+    assert got["history"][0] == old                                   # ours' own history, first
+    assert got["history"][1] == {k: v for k, v in ours.items() if k != "history"}   # then ours itself
+    assert set(got["aliases"]) == {"o/a-old", "o/a-new"}
+
+
+def test_a_carry_never_duplicates_history_the_pr_already_has(tmp_path):
+    old = {"id": "prev", "status": "rejected", "reason": "first look", "timestamp": iso(NOW - timedelta(days=40))}
+    ours = rec("a", hours_ago=9, reason="ours", history=[old])
+    lp = write(tmp_path / "l.json", ours)
+    snapshot = {k: v for k, v in ours.items() if k != "history"}
+    theirs = rec("a", hours_ago=2, reason="theirs", history=[old, snapshot])   # the PR's _write already kept them
+    memory.carry_decisions([src(theirs)], path=lp, now=NOW)
+    assert by_id(lp)["a"]["history"] == [old, snapshot]
+
+
+def test_a_plain_older_record_adds_no_history(tmp_path):
+    lp = write(tmp_path / "l.json", rec("a", hours_ago=9, reason="ours"))
+    memory.carry_decisions([src(rec("a", hours_ago=2, reason="theirs"))], path=lp, now=NOW)
+    assert "history" not in by_id(lp)["a"]                            # _write adds history only past a review/history
+
+
+def test_a_live_owner_review_decision_on_main_is_never_replaced(tmp_path):
+    ours = rec("a", hours_ago=9, reason="needs_review_target: …", review={"outcome": "open", "pr_ref": "#1703"})
+    lp = write(tmp_path / "l.json", ours)
+    assert memory.carry_decisions([src(rec("a", hours_ago=2, reason="theirs"))], path=lp, now=NOW) == []
+    assert by_id(lp)["a"] == ours
+
+
+def test_a_lapsed_review_decision_may_be_replaced_and_is_kept_in_history(tmp_path):
+    ours = {**rec("a", hours_ago=24 * 70, ttl_days=60, review={"outcome": "closed"}), "status": "expired"}
+    lp = write(tmp_path / "l.json", ours)
+    assert memory.carry_decisions([src(rec("a", hours_ago=2, reason="theirs"))], path=lp, now=NOW) == [("#9", "a")]
+    assert by_id(lp)["a"]["history"][-1] == ours
