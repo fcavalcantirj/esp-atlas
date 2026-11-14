@@ -1,0 +1,29 @@
+{
+ "calls": 7,
+ "errors": 0,
+ "fetched": "2026-11-14",
+ "notes": [],
+ "ref": "master",
+ "repo": "mhrsntrk/ask-master",
+ "resolved": {
+  "boards": [
+   "m5cardputer"
+  ],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "ask-master-cardputer.bin",
+    "release": "v1.4.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cardputer",
+   "url": "https://github.com/mhrsntrk/ask-master/releases/download/v1.4.1/ask-master-cardputer.bin"
+  }
+ ]
+}
