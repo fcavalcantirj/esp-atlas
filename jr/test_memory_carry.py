@@ -127,6 +127,10 @@ def _random_record(rng, fid):
     extra = {"repo_id": rng.choice([1, 2, 3])} if rng.random() < 0.3 else {}
     if rng.random() < 0.1:
         extra["review"] = {"outcome": "raised"}
+    if rng.random() < 0.3:                                            # the ledger's real alias shape
+        extra["aliases"] = [{"id": f"{fid}-{n}", "repo": f"o/{fid}-{n}"} for n in rng.sample(range(3), rng.randint(1, 2))]
+    if rng.random() < 0.2:
+        extra["history"] = [{"id": fid, "status": "rejected", "timestamp": iso(NOW - timedelta(days=90))}]
     return rec(fid, status=status, repo=f"o/{rng.choice('abcdef')}", hours_ago=rng.randint(1, 24 * 40),
                ttl_days=ttl, **extra)
 
@@ -149,15 +153,16 @@ def test_property_guard_clean_and_idempotent(tmp_path):
 
 def test_a_carry_keeps_our_older_records_history_and_aliases(tmp_path):
     old = {"id": "prev", "status": "rejected", "reason": "first look", "timestamp": iso(NOW - timedelta(days=40))}
-    ours = rec("a", hours_ago=9, reason="ours", history=[old], aliases=["o/a-old"])
+    a_old, a_new = {"id": "a-old", "repo": "o/a-old"}, {"id": "a-new", "repo": "o/a-new"}   # memory._with_alias shape
+    ours = rec("a", hours_ago=9, reason="ours", history=[old], aliases=[a_old])
     lp = write(tmp_path / "l.json", ours)
-    theirs = rec("a", hours_ago=2, reason="theirs", aliases=["o/a-new"])
+    theirs = rec("a", hours_ago=2, reason="theirs", aliases=[a_new, dict(a_old)])
     assert memory.carry_decisions([src(theirs)], path=lp, now=NOW) == [("#9", "a")]
     got = by_id(lp)["a"]
     assert got["reason"] == "theirs"
     assert got["history"][0] == old                                   # ours' own history, first
     assert got["history"][1] == {k: v for k, v in ours.items() if k != "history"}   # then ours itself
-    assert set(got["aliases"]) == {"o/a-old", "o/a-new"}
+    assert got["aliases"] == [a_old, a_new]                           # union by equality, ours first, no duplicate
 
 
 def test_a_carry_never_duplicates_history_the_pr_already_has(tmp_path):

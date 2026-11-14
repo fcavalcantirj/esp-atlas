@@ -424,7 +424,10 @@ def _kept(ours: dict | None, rec: dict) -> dict:
         hist = _history(ours)
         hist += [h for h in rec.get("history") or [] if h not in hist]
         rec["history"] = hist
-    aliases = list(dict.fromkeys(list(ours.get("aliases") or []) + list(rec.get("aliases") or [])))
+    aliases = list(ours.get("aliases") or [])
+    for alias in rec.get("aliases") or []:         # {"id", "repo"} dicts (_with_alias): union by equality
+        if alias not in aliases:
+            aliases.append(alias)
     if aliases:
         rec["aliases"] = aliases
     return rec
