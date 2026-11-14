@@ -220,6 +220,19 @@ def _slug(repo_name: str) -> str:
     return s[:40]
 
 
+# Purpose keywords that are ALSO the start or middle of unrelated words match only as whole words:
+# "rogue" sits inside "roguelike"/"roguelite" (#1708: the-tithe, a Cardputer roguelike, labeled
+# pentest), "nemo" inside "anemometer". Every other keyword keeps substring matching, because the
+# catalogued pentest firmware is named in compounds (ghostesp, deauther, pwnagotchi).
+_WHOLE_WORD_KEYWORDS = frozenset({"rogue", "nemo"})
+
+
+def _keyword_in(keyword: str, pool: str) -> bool:
+    if keyword in _WHOLE_WORD_KEYWORDS:
+        return re.search(r"(?<![a-z0-9])" + re.escape(keyword) + r"(?![a-z0-9])", pool) is not None
+    return keyword in pool
+
+
 def _category_from_purpose(name: str, repo_description: str | None,
                             readme_title: str | None) -> str | None:
     """Purpose-first classifier: an offensive-security/mesh/badusb/display/home-automation
@@ -231,7 +244,7 @@ def _category_from_purpose(name: str, repo_description: str | None,
         return None
     pool = f" {pool} "
     for category, keywords in _PURPOSE_SIGNALS:
-        if any(keyword in pool for keyword in keywords):
+        if any(_keyword_in(keyword, pool) for keyword in keywords):
             return category
     return None
 

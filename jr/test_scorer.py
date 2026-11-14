@@ -25,6 +25,7 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import scorer  # noqa: E402
 from scorer import (  # noqa: E402
     FORK_FLOOR, STAR_FLOOR, clears_popularity_floor, score_entry, _repo_name_from_url, _slug,
 )
@@ -742,3 +743,25 @@ def test_score_entry_genuine_firmware_still_authored_with_no_library_signal(desc
     repo_meta = _lib_style_repo_meta(full_name="someone/real-firmware", description=description)
     result = score_entry(entry, repo_meta, set(), set())
     assert result["decision"] == "authored", f"expected authored, got {result}"
+
+
+# ─────────────── Bug: a purpose keyword matched inside an unrelated word ───────────────
+# Real bug (#1708, 2026-11-14): the-tithe ("A go-outside roguelike for the Cardputer") was labeled
+# pentest because "rogue" is a substring of "roguelike". "nemo" sits inside "anemometer" the same
+# way. Those two keywords match only as whole words; the compound-name keywords (ghostesp,
+# deauther, pwnagotchi) keep substring matching, which the catalogued pentest records rely on.
+
+@pytest.mark.parametrize("name,description,expected", [
+    ("The Tithe", "A go-outside roguelike for the Cardputer, inspired by Balatro", None),
+    ("Dungeon", "A roguelite dungeon crawler for M5Stack", None),
+    ("Wind Station", "Cup anemometer weather station for ESP32", None),
+    ("Rogue AP Detector", "Detects rogue access points around you", "pentest"),
+    ("rogue-ap", "evil twin / rogue-ap toolkit", "pentest"),
+    ("M5Stick NEMO", "Pocket tool", "pentest"),
+    ("m5stick-nemo", None, "pentest"),
+    ("GhostESP", "ghostesp firmware", "pentest"),
+    ("ESP32 Deauther", None, "pentest"),
+], ids=["roguelike", "roguelite", "anemometer", "rogue-ap-words", "rogue-ap-hyphen", "nemo-word",
+       "nemo-slug", "ghostesp-compound", "deauther-compound"])
+def test_purpose_keywords_rogue_and_nemo_match_only_whole_words(name, description, expected):
+    assert scorer._category_from_purpose(name, description, None) == expected
