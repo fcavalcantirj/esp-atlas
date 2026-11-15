@@ -99,3 +99,42 @@ def test_carrier_module_under_a_product_env_fails_and_a_module_env_passes(catalo
     assert _v("m5stamp-s3", catalog, platformio=product, readme="Cardputer (M5Stack StampS3)").verdict == autoreview.FAIL
     module = product + "[env:stamps3]\nboard = m5stack-stamps3\n"
     assert _v("m5stamp-s3", catalog, platformio=module).verdict == autoreview.PASS
+
+
+# --- DasBrow's adversarial review of #1722 (room 12156): 7 inputs that read as PASS -----------------
+
+@pytest.mark.parametrize("text", [
+    "Firmware for the M5Stack Cardputer (ADV). Uses the TCA8418 keyboard.",
+    "Runs on the ADV Cardputer only.",
+    "Built for the Cardputer Advanced edition.",
+], ids=["adv-in-parens", "adv-before", "advanced"])
+def test_adv_phrasings_never_pass_as_the_original(text, catalog):
+    assert _v("m5cardputer", catalog, description=text).verdict in (autoreview.FAIL, autoreview.UNCERTAIN)
+
+
+@pytest.mark.parametrize("text", [
+    "Ported from the Cardputer version; this build runs on the LilyGO T-Deck.",
+    "Supported: T-Deck. Planned: Cardputer",
+    "Inspired by the M5Stack Cardputer launcher, for the T-Display S3.",
+    "Requires Cardputer v2 hardware (the new keyboard).",
+], ids=["ported-from", "planned", "inspired-by", "unknown-version"])
+def test_a_mention_that_is_not_a_target_is_uncertain(text, catalog):
+    assert _v("m5cardputer", catalog, description=text).verdict == autoreview.UNCERTAIN
+
+
+def test_a_target_mention_beside_a_provenance_one_still_passes(catalog):
+    v = _v("m5cardputer", catalog, readme="Inspired by M5Launcher. Runs on the M5Stack Cardputer.")
+    assert v.verdict == autoreview.PASS
+
+
+def test_adv_in_parentheses_alone_is_the_adv(catalog):
+    assert _v("m5cardputer", catalog, description="Firmware for the M5Stack Cardputer (ADV).").verdict == autoreview.FAIL
+
+
+def test_the_adv_keyboard_chip_alone_marks_the_adv(catalog):
+    assert _v("m5cardputer", catalog, description="Cardputer firmware. Uses the TCA8418 keyboard.").verdict == autoreview.UNCERTAIN
+
+
+def test_a_build_env_for_the_board_is_a_target_even_when_prose_says_ported_from(catalog):
+    v = _v("m5cardputer", catalog, readme="Ported from the Cardputer version.", platformio="[env:cardputer]\nboard = m5stack-stamps3\n")
+    assert v.verdict == autoreview.PASS

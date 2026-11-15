@@ -19,7 +19,9 @@ RULES_VERSION = "1"
 # Boards whose name is the prefix of a more specific product that is NOT compatible hardware.
 # claimed board -> regex of the sibling that does not prove it (SIBLING_LABEL names it in reasons).
 SIBLINGS: dict[str, str] = {
-    "m5cardputer": r"cardputer[\s_-]*adv(?![a-z])",
+    # "Cardputer ADV", "Cardputer (ADV)", "ADV Cardputer", "Cardputer Advanced", or its ADV-only keyboard chip
+    "m5cardputer": (r"cardputer[\s_-]*\(?\s*adv(anced)?(?![a-z])|\badv(anced)?[\s_-]*(m5\s*(stack\s*)?)?cardputer"
+                    r"|\btca8418\b"),
 }
 SIBLING_LABEL: dict[str, str] = {"m5cardputer": "Cardputer ADV"}
 # A plain mention of the claimed board that still counts once a sibling is named: it must single the
@@ -34,6 +36,11 @@ EXPLICIT_ORIGINAL: dict[str, str] = {
 CARRIERS: dict[str, tuple[str, ...]] = {
     "m5stamp-s3": ("cardputer", "sticks3", "stick_s3", "dial", "dinmeter", "capsule", "atoms3", "airq"),
 }
+# A mention that does not say the firmware targets the board: provenance, roadmap, or a hardware version
+# that does not exist (the Cardputer is v1.0 / v1.1; "v2" names something else). DasBrow's #1722 review.
+NONTARGET = re.compile(r"\b(ported\s+from|port\s+of|inspired\s+by|based\s+on|fork(ed)?\s+(of|from)|derived\s+from"
+                       r"|planned|roadmap|coming\s+soon|to-?do|will\s+(support|add|come))\b"
+                       r"|cardputer\s*v(?!1(\.\d)?\b)\d", re.I)
 NEGATION = re.compile(r"\b(not|no longer|isn'?t|doesn'?t|does not|won'?t|unsupported|incompatible)\b", re.I)
 # A sentence that rules the claimed board out: the sibling "only", or a negation bound to a support verb.
 EXCLUSION: dict[str, str] = {
@@ -158,6 +165,11 @@ def check(board: str, sources: dict, catalog: dict) -> Verdict:
             return Verdict(UNCERTAIN, [f"sibling: the source names the {SIBLING_LABEL[board]} and {board} only generically"])
     if not named:
         return Verdict(FAIL, [f"named: the source never names {board}"])
+    # named is not targets: at least one mention must be a target, not provenance or a roadmap
+    built = any(_names_plain(board, e["name"], catalog) for e in envs) or _names_plain(board, assets, catalog)
+    mentions = [x for x in re.split(r"(?<=[.!?])\s+|\n", _prose(prose)) if x.strip() and _names_plain(board, x, catalog)]
+    if not built and mentions and all(NONTARGET.search(x) for x in mentions):
+        return Verdict(UNCERTAIN, [f"context: {board} is named only as provenance or a plan: '{mentions[0].strip()[:100]}'"])
     for sentence in re.split(r"(?<=[.!?])\s+|\n", prose):
         if _names_plain(board, sentence, catalog) and NEGATION.search(sentence):
             return Verdict(UNCERTAIN, [f"negation: '{sentence.strip()[:120]}'"])
