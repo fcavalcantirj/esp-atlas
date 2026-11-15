@@ -73,6 +73,14 @@ name-match is imprecise both directions:
 - **Too weak:** `m5gotchi` / `meowusb-ble` / `space-clock` don't route to their own names.
   **Fix:** tighten name-matching so a firmware's distinctive name routes to *it*, without generic
   tokens leaking.
+- **Generic name words (2026-11-15, derived, no hand list):** a single word of a firmware's name
+  routes on its own only if it is not common English (Zipf >= 3.6 in the vendored, generated
+  `apps/core/src/esp_atlas_core/common_words_en.txt`, see `scripts/gen_common_words.py`) and not
+  hardware vocabulary (a word of any catalogued board, module, chip or brand id or name). The full
+  name and id always route, and so does the name's lead pair of words (leading capability words
+  skipped, no hardware word in it): "run evil portal" and "run bit-pirate" route, while a later pair
+  ("ai assistant", "ssh client") and a lone common word never do. Misses are preferred to hijacks:
+  "army knife" falls to the LLM path, and "cardputer" no longer lands on an unrelated firmware.
 
 ## Order (Felipe: coverage first)
 1. **Phase 1** — remove the gate + recipe `tested` field + replacement test → **CI green**.
