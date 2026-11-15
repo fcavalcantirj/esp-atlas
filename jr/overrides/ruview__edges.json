@@ -1,0 +1,21 @@
+{
+  "firmware": "ruview",
+  "repo": "ruvnet/RuView",
+  "action": "edge_correction",
+  "deletes": [
+    "data/recipes/m5cardputer__ruview/recipe.md"
+  ],
+  "classification": "repo_hardware_requirement_excludes_board",
+  "why": "RuView's own Hardware Requirements (firmware/esp32-csi-node/README.md at 3bae24a1) require an ESP32-S3 with \"PSRAM | 8 MB | 640 KB used for WASM arenas\" and recommend ESP32-S3-DevKitC-1 / XIAO ESP32-S3. The original Cardputer is an ESP32-S3FN8 with no PSRAM (m5cardputer psram_mb 0), and the 640 KB of WASM arenas alone exceed the ESP32-S3's entire 512 KB internal SRAM (Espressif datasheet), so the firmware as specified cannot run on it. The recipe itself recorded that its board pairing was uncited (a third-party launcher listing only). The Cardputer-Adv (also ESP32-S3FN8, no PSRAM) is excluded for the same reason. The firmware and its esp32-s3-devkitc-1 and esp32-c6-devkitc-1 recipes stay.",
+  "sources": [
+    "https://github.com/ruvnet/RuView/blob/3bae24a1231e0d9809e84eb35edba7231b8d1913/firmware/esp32-csi-node/README.md#L344-L353",
+    "https://documentation.espressif.com/esp32-s3_datasheet_en.pdf",
+    "https://docs.m5stack.com/en/core/Cardputer"
+  ],
+  "historical_parent_sha": "5e88736060af72d5a57e90339c9ff22cc61af8f5",
+  "directed_by": "owner",
+  "date": "2026-11-15",
+  "originals": {
+    "data/recipes/m5cardputer__ruview/recipe.md": "---\nid: m5cardputer__ruview\ntype: recipe\nboard: m5cardputer\nfirmware: ruview\nstatus: unverified\nchip_family: esp32-s3\nnotes: \"Weakest of the three RuView recipes, and deliberately labelled as such. RuView's own repo says nothing about the M5Stack Cardputer — no README mention, no build overlay, no release asset naming it. The only evidence is a third-party entry in the Launcher/M5Burner community catalog (`api.launcherhub.net/giveMeTheList`, fid e6ddd6ee4d27df6a0d04e072b2b78312) published by author `runtz`, listing name \\\"RuView\\\", category `cardputer`, esp `s3`, 126 downloads, 0 stars, pointing at RuView's own `v0.8.3-esp32` release tag. That catalog is marked DISCOVERY ONLY in seeds.json — a signal that something exists, not a maintainer's support claim. The pairing is chip-plausible (Cardputer is an esp32-s3 with 8 MB flash, and RuView's default build compiles display support in, so a screened board is the default target rather than the exception) but nothing upstream confirms it. No `flash` block: no Cardputer-specific artifact exists to cite, and RuView's generic install is a four-file bundle write, not a single merged image.\"\nsources:\n- field: '*'\n  url: https://github.com/ruvnet/RuView\n  verified: '2026-09-04'\n- field: 'board'\n  url: https://api.launcherhub.net/giveMeTheList\n  verified: '2026-09-04'\n---\n\n# m5cardputer x ruview\n\n**Treat this one as a lead, not a recipe.** RuView's repository never mentions\nthe Cardputer — no README line, no build overlay, no release asset named for it.\n\nWhat does exist is a community upload: the Launcher/M5Burner catalog carries an\nentry called \"RuView\" (author `runtz`, category `cardputer`, chip `s3`, 126\ndownloads) pointing back at RuView's own `v0.8.3-esp32` release tag. This atlas\ntreats that catalog as a discovery signal only, never as a maintainer's support\nclaim.\n\nThe pairing is at least chip-plausible: the Cardputer is an ESP32-S3 with 8 MB of\nflash, and RuView's default build compiles display support in — so a board with a\nscreen is the ordinary target, not a special case. That is reasoning, not\nevidence.\n\nNo flash instructions are recorded here because no Cardputer-specific artifact\nexists to point at. If you want to try it, start from the generic ESP32-S3 path —\nthe `esp32-s3-devkitc-1` recipe for this firmware spells it out — but take the\n`s3-8mb` bundle rather than the 4 MB one, since the Cardputer carries 8 MB, and\nexpect to sort out the display and keyboard yourself.\n\n`unverified` — and the board pairing itself is uncited.\n"
+  }
+}
