@@ -253,3 +253,27 @@ of writing) must come out `FAIL` or `UNCERTAIN`, and the edges both blind audits
 agreed are correct must come out `PASS` or `UNCERTAIN`. A false `PASS` on a known-wrong edge blocks
 phase 2. Phase 2 (a separate change) lets the tick auto-merge one fully passing review PR a day,
 at its exact head, with a kill switch and the review cap kept.
+
+### 8. Jr keeps its own review PRs mergeable (2026-11-15)
+
+**Why.** Every tick PR edits `jr/proposed_ledger.json`, so a `jr-review` PR conflicts with main as soon as
+any other tick PR merges. A person then had to resolve it before the reviewer's exact-head approval meant
+anything: three times on 2026-11-15 alone, and once (#1730) taking main's ledger would have dropped ~40
+decisions that existed only in the PR.
+
+**The refresh (`jr/review_refresh.py`).** After its own publish, each tick refreshes at most
+`REFRESH_MAX` (2) of its own open review PRs, and only within the limits the reviewer set:
+- the Jr bot's own same-repo tick PR (`pending_prs.eligible`), labelled `jr-review`, that GitHub reports
+  `CONFLICTING`;
+- every commit on it is the bot's: a PR carrying a human commit is never touched;
+- the head is still the one the tick listed;
+- every conflicted path is bookkeeping (`review_routing.is_bookkeeping`); a content conflict is left
+  for a person;
+- the ledger becomes `memory.merge_pr_ledger(main, merge base, PR head)`: main's, plus every record the PR
+  changed under `carry_decisions`' rules, plus the PR's own proposals; every other bookkeeping file is
+  main's (a PR's own `jr/board_cooldown.json` entries are dropped and re-derived the next time that board
+  fails, as for a superseded bookkeeping PR). `scripts/ledger_guard.py` must be green against main, and every catalog file the PR changed must
+  be byte-identical to its head (a silent auto-merge into a reviewed file is refused);
+- the result is a merge commit on top of the PR head, pushed without force (fast-forward only).
+Anything else is a skip with the reason in the tick report; nothing is pushed. A dry run reports
+`would_refresh`. The reviewer's exact-head content review stays the only human step.
