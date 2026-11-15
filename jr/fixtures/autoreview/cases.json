@@ -3396,5 +3396,51 @@
    "unigeek-t_embed_cc1101.bin",
    "unigeek-t_lora_pager.bin"
   ]
+ },
+ {
+  "firmware": "webradio-wusiu-cardputer-adv",
+  "repo": "wusiu/WebRadio_WuSiU_Cardputer_Adv",
+  "board": "m5cardputer",
+  "label": "wrong",
+  "class": "adv_only_target_not_original_cardputer",
+  "description": "WebRadio adapted for Caedputer ADV",
+  "readme_lines": [
+   "# Cardputer Adv WebRadio",
+   "An advanced internet radio for **M5Stack Cardputer Adv** with SD card station list support, Wi-Fi memory, and additional audio features.",
+   "![Cardputer ADV WebRadio – running](images/WebRadio.jpg)",
+   "## ⌨️ Controls (Cardputer Adv Keyboard)",
+   "- M5Stack Cardputer Adv  ",
+   "Choose the correct board for Cardputer:",
+   "**M5Cardputer**",
+   "Based on the original project:  ",
+   "https://github.com/cyberwisk/M5Cardputer_WebRadio",
+   "Original author: cyberwisk"
+  ],
+  "platformio": "",
+  "assets": []
+ },
+ {
+  "firmware": "glide-synth-cardputer-adv",
+  "repo": "CHARL3X/GLIDE-Synth-Cardputer-ADV",
+  "board": "m5cardputer",
+  "label": "correct",
+  "class": "readme_names_original_and_adv",
+  "description": "Make music on your Cardputer: a playable instrument with fretless-style glide, near-impossible wrong notes, and 1-of-1 generative sounds, so no two units sound alike.",
+  "readme_lines": [
+   "Firmware for the M5Stack Cardputer, original (v1.1) and ADV. By **[CHARL3X](https://github.com/CHARL3X)**.",
+   "- **It finds a song's key by ear.** Hold `fn`+`k` and the mic listens to whatever's playing in the room, works out the key (root, mode, even the tempo) and retunes the instrument so you can solo over anything. ADV only, since it needs the mic.",
+   "GLIDE is installed onto the Cardputer's own flash through **[bmorcelli's Launcher](https://github.com/bmorcelli/Launcher)**. Launcher is flashed once; after that, the card is how a build *arrives*, and Launcher is what installs it.",
+   "1. **Flash Launcher first** (one time only). Follow the [Launcher instructions](https://github.com/bmorcelli/Launcher); its web flasher is the easy way. If your Cardputer already runs Launcher, skip this step.",
+   "2. **[Download the latest `GLIDE.bin`](https://github.com/CHARL3X/GLIDE-Synth-Cardputer-ADV/releases/latest/download/GLIDE.bin)** and copy it to the `/apps/` folder on the microSD card. That link always points at the newest build; the [Releases page](https://github.com/CHARL3X/GLIDE-Synth-Cardputer-",
+   "> **It only charges switched ON.** Plug in a Cardputer with the side switch off and the battery stays exactly as empty as it started: no light, no charge. Switch it on first, then plug in. Charging with GLIDE running is fine; for a dim screen instead, restart into Launcher → **CFG** → **charge mode*",
+   "- **Card.** [Download the latest `GLIDE.bin`](https://github.com/CHARL3X/GLIDE-Synth-Cardputer-ADV/releases/latest/download/GLIDE.bin), put it in `/apps/`, then **delete the installed GLIDE in Launcher first** and install the new one from `SD` → `apps`. Launcher *adds* an app rather than replacing i",
+   "- **Slide a chord.** The same move, with more fingers: hold a shape across rows, then re-finger it a few columns over while the old notes still ring. Every voice glides to its new target. This is the thing.",
+   "- **Match whatever's playing.** Hold `fn`+`k` and the mic retunes the instrument to the song's key (ADV): your shapes stay where they are, the notes underneath them move. A single tap of `fn`+`k` changes the key by hand.",
+   "- **Two modes, Basic and Advanced.** A new GLIDE starts in **Basic**: the essentials, every key doing one job, everything you can do named on the screen. **Advanced** is Basic plus chord mode, harmony, the live sound knobs, effects and modulation. Switch any time on the first row of settings; switch",
+   "- **The second wave: five new sound characters.** Randomize's archetype pool grows from nine to fourteen: a breathy **slide whistle** that always glides (the instrument's original soul), a **drawbar organ** spinning under a rotary, a **tine piano** for comping, a **wobble bass** whose filter pumps i",
+   "- **Auto key detection.** Hold `fn`+`k` and GLIDE listens to a song through the mic, works out its key, and retunes so you can solo straight over it. (ADV only; it needs the mic.)"
+  ],
+  "platformio": "",
+  "assets": []
  }
 ]

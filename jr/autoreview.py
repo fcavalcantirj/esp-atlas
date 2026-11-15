@@ -163,7 +163,8 @@ def check(board: str, sources: dict, catalog: dict) -> Verdict:
         # "the original Cardputer is untested" is a caveat, not support: it never counts on its own
         explicit = any(statement(x) and not CAVEAT.search(x) for x in orig)
         # v2: the original and the sibling as separate table rows or list items enumerate both devices
-        items = [x for x in _prose(all_text).splitlines() if x.strip().startswith(("|", "-", "*", "+"))]
+        # a table row or a list item ("- ", "* ", "+ "): bold text ("**M5Cardputer**") starts with '*' too
+        items = [x for x in _prose(all_text).splitlines() if re.match(r"\s*(\||[-*+]\s)", x)]
         # a device row is short and is the device name itself ("M5Cardputer", "**M5Stack Cardputer ADV**"),
         # never a sentence that mentions it in passing ("Pair the Cardputer with your phone")
         cells = [re.split(r"\s\|\s|\|", x.strip().strip("|"), maxsplit=1)[0] for x in items]

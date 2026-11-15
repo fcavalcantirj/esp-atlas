@@ -193,3 +193,11 @@ def test_a_separate_adv_branch_means_the_default_build_is_the_original(catalog):
 def test_v2_still_refuses_the_adv_only_shapes(catalog):
     assert _v("m5cardputer", catalog, readme="| Device |\n| M5Cardputer ADV | ✅ |").verdict == autoreview.FAIL
     assert _v("m5cardputer", catalog, readme="Firmware for the Cardputer ADV.\nGyro: gx (ADV only)").verdict == autoreview.FAIL
+
+
+def test_a_bold_board_name_is_not_a_device_row(catalog):
+    """WebRadio_WuSiU_Cardputer_Adv (#1715): its README tells Arduino users to pick the board definition
+    `**M5Cardputer**`. Bold text starts with '*' but is not a list item; only '- ', '* ', '+ ' or '|' are."""
+    readme = ("# Cardputer Adv WebRadio\nAn internet radio for **M5Stack Cardputer Adv**.\n"
+              "- M5Stack Cardputer Adv\nChoose the correct board for Cardputer:\n**M5Cardputer**\n")
+    assert _v("m5cardputer", catalog, description="WebRadio adapted for Caedputer ADV", readme=readme).verdict != autoreview.PASS
