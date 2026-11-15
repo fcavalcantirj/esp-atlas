@@ -201,3 +201,15 @@ def test_a_bold_board_name_is_not_a_device_row(catalog):
     readme = ("# Cardputer Adv WebRadio\nAn internet radio for **M5Stack Cardputer Adv**.\n"
               "- M5Stack Cardputer Adv\nChoose the correct board for Cardputer:\n**M5Cardputer**\n")
     assert _v("m5cardputer", catalog, description="WebRadio adapted for Caedputer ADV", readme=readme).verdict != autoreview.PASS
+
+
+def test_not_the_original_is_an_exclusion(catalog):
+    """SquachWatch-CYD's support table (#1728): 'M5Stack Cardputer ADV | BETA | ... Not the original Cardputer.'"""
+    row = "| M5Stack Cardputer ADV | BETA | Driven from its keyboard, with hotkeys. Not the original Cardputer. SD card |"
+    assert _v("m5cardputer", catalog, readme=row).verdict == autoreview.FAIL
+
+
+def test_first_gen_cardputer_is_explicit_original_support(catalog):
+    """M5MonsterC5-CardputerADV (#1729): 'App for the M5Stack Cardputer AVD and for first gen Cardputer'."""
+    v = _v("m5cardputer", catalog, readme="- App for the M5Stack Cardputer ADV and for first gen Cardputer - flasher")
+    assert v.verdict == autoreview.PASS

@@ -28,7 +28,7 @@ SIBLING_BOARD: dict[str, str] = {"m5cardputer": "m5cardputer-adv"}   # the catal
 # A plain mention of the claimed board that still counts once a sibling is named: it must single the
 # original out (an "original"/"v1.1"/"standard" qualifier, or the pair named side by side).
 EXPLICIT_ORIGINAL: dict[str, str] = {
-    "m5cardputer": (r"original\s+(m5\s*(stack\s*)?)?cardputer|if\s+you\s+(are\s+using|use|have)\s+(a\s+|an\s+|the\s+)?(m5\s*(stack\s*)?)?cardputer[\s_-]*adv(?![a-z])|cardputer\s*(\(|-)?\s*(v?1\.[01]|standard|original|non[- ]adv)"
+    "m5cardputer": (r"(original|first[\s-]*gen(eration)?)\s+(m5\s*(stack\s*)?)?cardputer|if\s+you\s+(are\s+using|use|have)\s+(a\s+|an\s+|the\s+)?(m5\s*(stack\s*)?)?cardputer[\s_-]*adv(?![a-z])|cardputer\s*(\(|-)?\s*(v?1\.[01]|standard|original|non[- ]adv)"
                     r"|cardputer\s*(&|and|/|,|or)\s*(the\s+)?(m5\s*)?(cardputer)?[\s_-]*adv(?![a-z])"
                     r"|cardputer[\s_-]*adv(?![a-z])\s*(&|and|/|,|or)\s*(the\s+)?(original\s+|standard\s+)?(m5\s*)?cardputer(?![\s_-]*adv)"),
 }
@@ -52,7 +52,8 @@ NEGATION = re.compile(r"(\bnot|\bno longer|isn'?t|doesn'?t|does not|won'?t|canno
 EXCLUSION: dict[str, str] = {
     "m5cardputer": (r"cardputer[\s_-]*adv[\s_-]*only|only\s+(for|on|supports?|targets?)\s+(the\s+)?(m5\s*)?cardputer[\s_-]*adv"
                     r"|(not|isn'?t|is not|doesn'?t|does not|won'?t|cannot|can'?t)\s+(be\s+)?(supported|support|work|run|compatible)"
-                    r"|\b(unsupported|incompatible)\b|\bno\s+support\b"),
+                    r"|\b(unsupported|incompatible)\b|\bno\s+support\b"
+                    r"|\bnot\s+(for\s+|on\s+)?(the\s+|an?\s+)?(original|first[\s-]*gen(eration)?|regular|standard)\s+(m5\s*(stack\s*)?)?cardputer"),
 }
 
 
