@@ -1,13 +1,14 @@
 {
  "calls": 27,
  "errors": 0,
- "fetched": "2026-11-08",
+ "fetched": "2026-11-15",
  "notes": [],
  "ref": "master",
  "repo": "skizzophrenic/SquachWatch-CYD",
  "resolved": {
   "boards": [
-   "lilygo-t-watch-s3"
+   "lilygo-t-watch-s3",
+   "m5cardputer-adv"
   ],
   "socs": [
    "esp32",
@@ -82,662 +83,662 @@
   {
    "extra": {
     "asset": "awok-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "awok-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/awok-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/awok-firmware.bin"
   },
   {
    "extra": {
     "asset": "cardputer-adv-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cardputer-adv-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/cardputer-adv-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/cardputer-adv-firmware.bin"
   },
   {
    "extra": {
     "asset": "crowpanel7-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "crowpanel7-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/crowpanel7-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/crowpanel7-firmware.bin"
   },
   {
    "extra": {
     "asset": "cyd-fast-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cyd-fast-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/cyd-fast-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/cyd-fast-firmware.bin"
   },
   {
    "extra": {
     "asset": "cyd-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cyd-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/cyd-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/cyd-firmware.bin"
   },
   {
    "extra": {
     "asset": "cyd-ili9341-fast-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cyd-ili9341-fast-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/cyd-ili9341-fast-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/cyd-ili9341-fast-firmware.bin"
   },
   {
    "extra": {
     "asset": "cyd-ili9341-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cyd-ili9341-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/cyd-ili9341-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/cyd-ili9341-firmware.bin"
   },
   {
    "extra": {
     "asset": "cyd32c-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cyd32c-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/cyd32c-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/cyd32c-firmware.bin"
   },
   {
    "extra": {
     "asset": "cyd35-fast-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cyd35-fast-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/cyd35-fast-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/cyd35-fast-firmware.bin"
   },
   {
    "extra": {
     "asset": "cyd35c-fast-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "cyd35c-fast-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/cyd35c-fast-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/cyd35c-fast-firmware.bin"
   },
   {
    "extra": {
     "asset": "esp32-otadata.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "esp32-otadata",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/esp32-otadata.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/esp32-otadata.bin"
   },
   {
    "extra": {
     "asset": "firmware-awok-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-awok-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-awok-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-awok-merged.bin"
   },
   {
    "extra": {
     "asset": "firmware-cardputer-adv-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-cardputer-adv-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-cardputer-adv-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-cardputer-adv-merged.bin"
   },
   {
    "extra": {
     "asset": "firmware-crowpanel7-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-crowpanel7-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-crowpanel7-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-crowpanel7-merged.bin"
   },
   {
    "extra": {
     "asset": "firmware-cyd-ili9341-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-cyd-ili9341-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-cyd-ili9341-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-cyd-ili9341-merged.bin"
   },
   {
    "extra": {
     "asset": "firmware-cyd-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-cyd-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-cyd-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-cyd-merged.bin"
   },
   {
    "extra": {
     "asset": "firmware-cyd32c-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-cyd32c-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-cyd32c-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-cyd32c-merged.bin"
   },
   {
    "extra": {
     "asset": "firmware-freenove-s3-35-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-freenove-s3-35-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-freenove-s3-35-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-freenove-s3-35-merged.bin"
   },
   {
    "extra": {
     "asset": "firmware-freenove-s3-40mhz-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-freenove-s3-40mhz-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-freenove-s3-40mhz-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-freenove-s3-40mhz-merged.bin"
   },
   {
    "extra": {
     "asset": "firmware-freenove-s3-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-freenove-s3-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-freenove-s3-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-freenove-s3-merged.bin"
   },
   {
    "extra": {
     "asset": "firmware-freenove32-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-freenove32-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-freenove32-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-freenove32-merged.bin"
   },
   {
    "extra": {
     "asset": "firmware-rlphantom-r-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-rlphantom-r-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-rlphantom-r-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-rlphantom-r-merged.bin"
   },
   {
    "extra": {
     "asset": "firmware-sticks3-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-sticks3-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-sticks3-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-sticks3-merged.bin"
   },
   {
    "extra": {
     "asset": "firmware-tdeck-plus-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-tdeck-plus-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-tdeck-plus-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-tdeck-plus-merged.bin"
   },
   {
    "extra": {
     "asset": "firmware-twatch-s3-merged.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "firmware-twatch-s3-merged",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/firmware-twatch-s3-merged.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/firmware-twatch-s3-merged.bin"
   },
   {
    "extra": {
     "asset": "freenove-s3-35-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "freenove-s3-35-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/freenove-s3-35-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/freenove-s3-35-firmware.bin"
   },
   {
    "extra": {
     "asset": "freenove-s3-40mhz-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "freenove-s3-40mhz-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/freenove-s3-40mhz-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/freenove-s3-40mhz-firmware.bin"
   },
   {
    "extra": {
     "asset": "freenove-s3-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "freenove-s3-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/freenove-s3-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/freenove-s3-firmware.bin"
   },
   {
    "extra": {
     "asset": "freenove32-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "freenove32-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/freenove32-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/freenove32-firmware.bin"
   },
   {
    "extra": {
     "asset": "marauder-v8-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "marauder-v8-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/marauder-v8-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/marauder-v8-firmware.bin"
   },
   {
    "extra": {
     "asset": "nm-cyd-c5-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "nm-cyd-c5-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/nm-cyd-c5-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/nm-cyd-c5-firmware.bin"
   },
   {
    "extra": {
     "asset": "rlphantom-r-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "rlphantom-r-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/rlphantom-r-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/rlphantom-r-firmware.bin"
   },
   {
    "extra": {
     "asset": "sticks3-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "sticks3-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/sticks3-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/sticks3-firmware.bin"
   },
   {
    "extra": {
     "asset": "tdeck-plus-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tdeck-plus-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/tdeck-plus-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/tdeck-plus-firmware.bin"
   },
   {
    "extra": {
     "asset": "twatch-s3-firmware.bin",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "twatch-s3-firmware",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/twatch-s3-firmware.bin"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/twatch-s3-firmware.bin"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "SquachWatch-CYD (AWOK 2.4\")",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-awok.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-awok.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "SquachWatch-CYD (M5Stack Cardputer ADV BETA)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-cardputer-adv.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-cardputer-adv.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "SquachWatch-CYD (Elecrow CrowPanel Advance 7.0\")",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-crowpanel7.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-crowpanel7.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "SquachWatch-CYD (2.8\" CYD, 80MHz)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-cyd-fast.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-cyd-fast.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "SquachWatch-CYD (2.8\" CYD, ILI9341, 80MHz)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-cyd-ili9341-fast.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-cyd-ili9341-fast.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "SquachWatch-CYD (2.8\" CYD, ILI9341)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-cyd-ili9341.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-cyd-ili9341.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "SquachWatch-CYD (2.8\" CYD)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-cyd.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-cyd.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "SquachWatch-CYD (3.2\" capacitive, ESP32-2432S032C)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-cyd32c.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-cyd32c.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "SquachWatch-CYD (3.5\" BETA)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-cyd35-fast.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-cyd35-fast.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "SquachWatch-CYD (3.5\" capacitive BETA)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-cyd35c-fast.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-cyd35c-fast.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "SquachWatch-CYD (Freenove ESP32-S3 3.5\")",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-freenove-s3-35.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-freenove-s3-35.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "SquachWatch-CYD (Freenove ESP32-S3 2.8\", 40 MHz screen)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-freenove-s3-40mhz.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-freenove-s3-40mhz.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "SquachWatch-CYD (Freenove ESP32-S3 2.8\")",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-freenove-s3.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-freenove-s3.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "SquachWatch-CYD (Freenove 3.2\")",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-freenove32.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-freenove32.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-C5",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-c5",
    "token": "SquachWatch-CYD (Marauder V8, 2.8\" on an ESP32-C5)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-marauder-v8.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-marauder-v8.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-C5",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-c5",
    "token": "SquachWatch-CYD (RockBase NM-CYD-C5, 2.8\" on an ESP32-C5)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-nm-cyd-c5.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-nm-cyd-c5.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32",
    "token": "SquachWatch-CYD (RL Phantom 2.4\")",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-rlphantom-r.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-rlphantom-r.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "SquachWatch-CYD (M5Stack StickS3 BETA)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-sticks3.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-sticks3.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "SquachWatch-CYD (LilyGo T-Deck Plus)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-tdeck-plus.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-tdeck-plus.json"
   },
   {
    "extra": {
     "chipFamily": "ESP32-S3",
-    "release": "v1.41.0"
+    "release": "v1.45.0"
    },
    "kind": "manifest",
    "line": null,
    "rank": 1,
    "soc": "esp32-s3",
    "token": "SquachWatch-CYD (LilyGo T-Watch S3)",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.41.0/manifest-twatch-s3.json"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/releases/download/v1.45.0/manifest-twatch-s3.json"
   },
   {
    "extra": {
@@ -958,7 +959,10 @@
   {
    "extra": {
     "env": "sticks3",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "sticks3"
+    ]
    },
    "kind": "platformio",
    "line": 428,
@@ -970,7 +974,40 @@
   {
    "extra": {
     "env": "cardputer-adv",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
+   },
+   "kind": "platformio",
+   "line": 457,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L457"
+  },
+  {
+   "extra": {
+    "env": "sticks3-dev",
+    "file": "platformio.ini",
+    "product_markers": [
+     "sticks3"
+    ]
+   },
+   "kind": "platformio",
+   "line": 428,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L428"
+  },
+  {
+   "extra": {
+    "env": "cardputer-adv-dev",
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 457,
@@ -997,11 +1034,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 498,
+   "line": 513,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L498"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L513"
   },
   {
    "extra": {
@@ -1009,11 +1046,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 498,
+   "line": 513,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L498"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L513"
   },
   {
    "extra": {
@@ -1021,11 +1058,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 498,
+   "line": 513,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L498"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L513"
   },
   {
    "extra": {
@@ -1033,11 +1070,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 498,
+   "line": 513,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L498"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L513"
   },
   {
    "extra": {
@@ -1045,11 +1082,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 591,
+   "line": 606,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L591"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L606"
   },
   {
    "extra": {
@@ -1057,11 +1094,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 633,
+   "line": 648,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L633"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L648"
   },
   {
    "extra": {
@@ -1081,11 +1118,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 689,
+   "line": 704,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L689"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L704"
   },
   {
    "extra": {
@@ -1093,11 +1130,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 689,
+   "line": 704,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L689"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L704"
   },
   {
    "extra": {
@@ -1105,11 +1142,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 689,
+   "line": 704,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L689"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L704"
   },
   {
    "extra": {
@@ -1117,11 +1154,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 689,
+   "line": 704,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L689"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L704"
   },
   {
    "extra": {
@@ -1129,11 +1166,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 689,
+   "line": 704,
    "rank": 2,
    "soc": null,
    "token": "esp32-s3-devkitc-1",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L689"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L704"
   },
   {
    "extra": {
@@ -1141,11 +1178,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 758,
+   "line": 773,
    "rank": 2,
    "soc": null,
    "token": "nm-cyd-c5",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L758"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L773"
   },
   {
    "extra": {
@@ -1153,11 +1190,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 798,
+   "line": 813,
    "rank": 2,
    "soc": null,
    "token": "marauder-v8",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L798"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L813"
   },
   {
    "extra": {
@@ -1165,11 +1202,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 842,
+   "line": 857,
    "rank": 2,
    "soc": null,
    "token": "tab5",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L842"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L857"
   },
   {
    "extra": {
@@ -1177,11 +1214,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 842,
+   "line": 857,
    "rank": 2,
    "soc": null,
    "token": "tab5",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L842"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L857"
   },
   {
    "extra": {
@@ -1189,11 +1226,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 842,
+   "line": 857,
    "rank": 2,
    "soc": null,
    "token": "tab5",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L842"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L857"
   },
   {
    "extra": {
@@ -1201,11 +1238,11 @@
     "file": "platformio.ini"
    },
    "kind": "platformio",
-   "line": 913,
+   "line": 928,
    "rank": 2,
    "soc": null,
    "token": "waveshare-c5-28",
-   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L913"
+   "url": "https://github.com/skizzophrenic/SquachWatch-CYD/blob/master/platformio.ini#L928"
   }
  ]
 }
