@@ -108,8 +108,10 @@ def select_firmware(root: Path, budget: int, now: datetime, fresh_days: int = FR
             continue
         n_recipes = len(list((root / "data" / "recipes").glob(f"*__{fid}")))
         boards = ((doc or {}).get("resolved") or {}).get("boards") or []
+        removed = writers.removed_recipes(fid, root) or set()     # unreadable: counted, plan_recipes refuses
         missing = sum(1 for b in boards
-                      if not (root / "data" / "recipes" / f"{b}__{fid}" / "recipe.md").exists())
+                      if not (root / "data" / "recipes" / f"{b}__{fid}" / "recipe.md").exists()
+                      and f"data/recipes/{b}__{fid}/recipe.md" not in removed)
         cands.append((-missing, n_recipes, -(age if age is not None else 10**6), fid))
     cands.sort()
     return [fid for _, _, _, fid in cands[:budget]]
