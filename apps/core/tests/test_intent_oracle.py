@@ -233,3 +233,18 @@ def test_a_bare_capability_token_in_a_firmware_name_never_hijacks_a_capability_q
     assert firmware_named_in("a lora mesh node") == []
     assert [fw["id"] for fw in firmware_named_in("run acme-mesh")] == ["acme-mesh"]
     assert [fw["id"] for fw in firmware_named_in("run marauder")] == ["marauder"]
+
+
+def test_a_firmware_named_in_full_beats_one_that_only_shares_a_name_token(monkeypatch):
+    """#1726: sosprz's firmware is NAMED "Meshcore" (id meshcore-cardputer-adv); arthubhub's
+    meshcore-cardputer matches "run Meshcore" only through its name token "meshcore". Equal key length
+    left the winner to catalog order. An exact full name or id outranks a token, whatever the order."""
+    from esp_atlas_core import intent
+
+    fake = [{"id": "meshcore-cardputer", "name": "meshcore-cardputer"},
+            {"id": "meshcore-cardputer-adv", "name": "Meshcore"}]
+    for order in (fake, list(reversed(fake))):
+        monkeypatch.setattr(intent, "list_firmware", lambda order=order: order)
+        assert firmware_named_in("run Meshcore")[0]["id"] == "meshcore-cardputer-adv"
+        assert firmware_named_in("run meshcore-cardputer")[0]["id"] == "meshcore-cardputer"
+        assert firmware_named_in("run meshcore-cardputer-adv")[0]["id"] == "meshcore-cardputer-adv"

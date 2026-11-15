@@ -83,6 +83,7 @@ if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
 import ledger   # noqa: E402
 import memory   # noqa: E402
+import review_refresh  # noqa: E402
 import pending_prs  # noqa: E402
 import publish  # noqa: E402
 import report   # noqa: E402
@@ -147,6 +148,7 @@ class StageResult:
 
 
 Stage = Callable[[TickContext], StageResult]
+REFRESH_MAX = 2   # review PRs refreshed per tick (SPEC-jr-review-routing.md §8)
 STAGES: list = []   # extra stages appended by hand; the hourly content stages come from hourly_stages()
 
 
@@ -597,7 +599,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              auto_merge: bool = True, lock_path: Path | None = None,
              review_cap: int = review_routing.MAX_OPEN_REVIEW_PRS,
              ci_watcher: Callable | None = None,
-             admit_watcher: Callable | None = None) -> report.TickReport:
+             admit_watcher: Callable | None = None,
+             refresher: Callable | None = None) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
     env = os.environ if env is None else env
     budget = budget or Budget()
@@ -607,6 +610,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
     stages = STAGES if hourly else stages
     wt = lock = scratch = None
     baseline: dict = {}
+    tick_prs: list = []
     try:
         # 1. preflight
         if not dry_run:
@@ -854,6 +858,16 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             _release_tick_lock(lock)
         r.budget = budget.summary()
 
+    # 9. keep Jr's own review PRs mergeable (jr/review_refresh.py, SPEC-jr-review-routing.md §8): after the
+    #    tick's own worktree is gone, refresh at most REFRESH_MAX of its CONFLICTING jr-review PRs. Each
+    #    refresh decides its own limits and skips with a reason; a failure warns, never aborts the tick.
+    if refresher is not None and not r.aborted:
+        due = [pr for pr in tick_prs if review_routing.has_review_label(pr) and pr.get("mergeable") == "CONFLICTING"]
+        for pr in due[:REFRESH_MAX]:
+            try:
+                r.refreshed.append(refresher(pr, git=git, gh=gh_c, now=now, dry_run=dry_run))
+            except Exception as e:  # noqa: BLE001
+                r.warnings.append(f"review PR refresh #{pr.get('number')} failed: {type(e).__name__}: {e}")
     line = report.render_line(r)
     print(line)
     review_opened = (r.publish or {}).get("route") == review_routing.REVIEW
@@ -917,7 +931,8 @@ def main(argv=None) -> int:
                  budget=Budget(max_calls=args.max_calls, max_seconds=args.max_seconds),
                  stages=stages_for(args.track, args.budget, only), auto_merge=not args.no_auto_merge,
                  lock_path=Path(os.environ["JR_TICK_LOCK"]) if os.environ.get("JR_TICK_LOCK") else None,
-                 ci_watcher=default_ci_watcher, admit_watcher=default_admit_watcher)
+                 ci_watcher=default_ci_watcher, admit_watcher=default_admit_watcher,
+                 refresher=review_refresh.refresh)
     return 1 if r.aborted else 0
 
 

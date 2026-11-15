@@ -193,17 +193,21 @@ def firmware_named_in(query):
         # register with an arbitrary short shared token ("cardputer") instead of
         # its full name, so "most specific wins" was fed garbage and the winner
         # flipped across processes. Longest match is deterministic and correct.
-        best = 0
+        best, full = 0, False
+        whole = {fw["id"].lower(), fw["name"].lower()}
         for key in _firmware_keys(fw):
             # Word boundaries, not substrings: "m5stick" is a substring of
             # "m5sticks3", so a naive match sends "run M5StickS3 RogueDuck" to
             # M5Stick NEMO. Longer, more specific names must win outright.
             if re.search(rf"(?<![a-z0-9]){re.escape(key)}(?![a-z0-9])", haystack):
                 best = max(best, len(key))
+                full = full or key in whole
         if best:
-            matched.append((best, fw))
-    # most specific name first, so an exact product name beats a shared prefix
-    return [fw for _length, fw in sorted(matched, key=lambda m: -m[0])]
+            matched.append((full, best, fw))
+    # A firmware whose WHOLE name or id was matched outranks one that only shares a name token
+    # ("run Meshcore": the firmware named "Meshcore", not meshcore-cardputer through its token);
+    # then the longest match, so an exact product name beats a shared prefix.
+    return [fw for _full, _length, fw in sorted(matched, key=lambda m: (not m[0], -m[1]))]
 
 
 def _valid_values(db_path):

@@ -52,6 +52,7 @@ memory.record_seen instead, and the legacy lane is deleted in Phase 6.
 """
 from __future__ import annotations
 
+import copy
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -449,6 +450,29 @@ def carry_decisions(sources, path: Path | None = None, now: datetime | None = No
     now = _aware(now)
     path = _path(path)
     led = load(path)
+    carried = _carry_into(led, sources, now)
+    if carried:
+        _save(led, path)
+    return carried
+
+
+def _with_repo_id_view(led: dict) -> dict:
+    """`led` plus the derived by_repo_id view load() builds (same rule: a protected record wins)."""
+    view = {}
+    for fid, rec in led["by_id"].items():
+        try:
+            rid = int(rec["repo_id"]) if isinstance(rec, dict) and rec.get("repo_id") is not None else None
+        except (TypeError, ValueError):
+            rid = None
+        if rid is None or (rid in view and is_protected(led["by_id"][view[rid]]) and not is_protected(rec)):
+            continue
+        view[rid] = fid
+    led["by_repo_id"] = view
+    return led
+
+
+def _carry_into(led: dict, sources, now: datetime) -> list[tuple[str, str]]:
+    """carry_decisions on an in-memory ledger (with its by_repo_id view); returns what it carried."""
     carried = []
     for pr_ref, by_id in sources or []:
         if not isinstance(by_id, dict):
@@ -464,9 +488,31 @@ def carry_decisions(sources, path: Path | None = None, now: datetime | None = No
             if rec.get("repo_id") is not None and not is_protected(led["by_id"].get(led["by_repo_id"].get(int(rec["repo_id"])))):
                 led["by_repo_id"][int(rec["repo_id"])] = fid
             carried.append((pr_ref, fid))
-    if carried:
-        _save(led, path)
     return carried
+
+
+def merge_pr_ledger(main: dict, base: dict, pr: dict, now: datetime | None = None) -> dict:
+    """The ledger a jr-review PR should carry after main moved (SPEC-jr-review-routing.md §8): main's,
+    plus every record the PR changed since the merge base under carry_decisions' rules, plus the PR's own
+    `proposed` records where main holds nothing newer and nothing protected. Pure: inputs untouched.
+    Everything it writes is what carry_decisions or a proposal would, so scripts/ledger_guard.py passes."""
+    now = _aware(now)
+    led = _with_repo_id_view({"by_id": copy.deepcopy(main.get("by_id") or {}),
+                              "by_repo": copy.deepcopy(main.get("by_repo") or {})})
+    base_by_id = base.get("by_id") or {}
+    changed = {k: v for k, v in (pr.get("by_id") or {}).items() if base_by_id.get(k) != v}
+    _carry_into(led, [("pr", changed)], now)
+    for fid, rec in sorted(changed.items()):
+        if not isinstance(rec, dict) or rec.get("status") != "proposed" or rec.get("id") != fid:
+            continue
+        ours = led["by_id"].get(fid)
+        if ours is not None and (is_protected(ours) or
+                                 (_parse(ours.get("timestamp")) or now) > (_parse(rec.get("timestamp")) or now)):
+            continue
+        led["by_id"][fid] = copy.deepcopy(rec)
+        led["by_repo"][str(rec.get("repo") or fid).lower()] = fid
+    led.pop("by_repo_id", None)
+    return led
 
 
 def expire(path: Path | None = None, now: datetime | None = None) -> list[str]:
