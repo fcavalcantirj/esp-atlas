@@ -1,7 +1,7 @@
 {
  "version": 1,
  "source": "pam_feed",
- "checked_at": "2026-11-11T11:15:54.289042Z",
+ "checked_at": "2026-11-15T11:15:30.873895Z",
  "feeds": {
   "products": {
    "url": "https://pamfinds.com/api/products.json",
@@ -584,8 +584,10 @@
     ]
    },
    "fingerprint": "6e67a9a5cf55e8db8f5f6c834123d887a5b93f8c258dcb1e862034028f61dac7",
-   "matches": [],
-   "status": "potential_identity_gap"
+   "matches": [
+    "esp32-p4-function-ev-board"
+   ],
+   "status": "possible_match"
   },
   {
    "source_id": "esp32-s2-devkitm",
