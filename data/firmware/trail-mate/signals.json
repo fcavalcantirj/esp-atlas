@@ -1,7 +1,7 @@
 {
  "calls": 19,
  "errors": 0,
- "fetched": "2026-11-08",
+ "fetched": "2026-11-15",
  "notes": [],
  "ref": "main",
  "repo": "vicliu624/trail-mate",
@@ -42,207 +42,207 @@
  "signals": [
   {
    "extra": {
-    "asset": "trail-mate-c6-companion-v1.0.1.bin",
-    "release": "v1.0.1"
+    "asset": "trail-mate-c6-companion-v1.2.3.bin",
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "c6-companion",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-c6-companion-v1.0.1.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-c6-companion-v1.2.3.bin"
   },
   {
    "extra": {
-    "asset": "trail-mate-gat562_mesh_evb_pro-v1.0.1.uf2",
-    "release": "v1.0.1"
+    "asset": "trail-mate-gat562_mesh_evb_pro-v1.2.3.uf2",
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "gat562_mesh_evb_pro",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-gat562_mesh_evb_pro-v1.0.1.uf2"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-gat562_mesh_evb_pro-v1.2.3.uf2"
   },
   {
    "extra": {
     "asset": "trail-mate-lilygo-twatch-s3-webflash.bin",
-    "release": "v1.0.1"
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo-twatch-s3-webflash",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-lilygo-twatch-s3-webflash.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-lilygo-twatch-s3-webflash.bin"
   },
   {
    "extra": {
-    "asset": "trail-mate-lilygo_twatch_s3-v1.0.1.bin",
-    "release": "v1.0.1"
+    "asset": "trail-mate-lilygo_twatch_s3-v1.2.3.bin",
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "lilygo_twatch_s3",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-lilygo_twatch_s3-v1.0.1.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-lilygo_twatch_s3-v1.2.3.bin"
   },
   {
    "extra": {
     "asset": "trail-mate-t-display-p4-amoled-webflash.bin",
-    "release": "v1.0.1"
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "t-display-p4-amoled-webflash",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-t-display-p4-amoled-webflash.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-t-display-p4-amoled-webflash.bin"
   },
   {
    "extra": {
     "asset": "trail-mate-t-display-p4-tft-webflash.bin",
-    "release": "v1.0.1"
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "t-display-p4-tft-webflash",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-t-display-p4-tft-webflash.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-t-display-p4-tft-webflash.bin"
   },
   {
    "extra": {
-    "asset": "trail-mate-t-echo-lite-v1.0.1.uf2",
-    "release": "v1.0.1"
+    "asset": "trail-mate-t-echo-lite-v1.2.3.uf2",
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "t-echo-lite",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-t-echo-lite-v1.0.1.uf2"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-t-echo-lite-v1.2.3.uf2"
   },
   {
    "extra": {
-    "asset": "trail-mate-tdeck-v1.0.1.bin",
-    "release": "v1.0.1"
+    "asset": "trail-mate-tdeck-v1.2.3.bin",
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tdeck",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-tdeck-v1.0.1.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-tdeck-v1.2.3.bin"
   },
   {
    "extra": {
     "asset": "trail-mate-tdeck-webflash.bin",
-    "release": "v1.0.1"
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tdeck-webflash",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-tdeck-webflash.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-tdeck-webflash.bin"
   },
   {
    "extra": {
     "asset": "trail-mate-tlora-pager-lr1121-webflash.bin",
-    "release": "v1.0.1"
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tlora-pager-lr1121-webflash",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-tlora-pager-lr1121-webflash.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-tlora-pager-lr1121-webflash.bin"
   },
   {
    "extra": {
     "asset": "trail-mate-tlora-pager-sx1262-webflash.bin",
-    "release": "v1.0.1"
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tlora-pager-sx1262-webflash",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-tlora-pager-sx1262-webflash.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-tlora-pager-sx1262-webflash.bin"
   },
   {
    "extra": {
-    "asset": "trail-mate-tlora_pager_lr1121-v1.0.1.bin",
-    "release": "v1.0.1"
+    "asset": "trail-mate-tlora_pager_lr1121-v1.2.3.bin",
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tlora_pager_lr1121",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-tlora_pager_lr1121-v1.0.1.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-tlora_pager_lr1121-v1.2.3.bin"
   },
   {
    "extra": {
-    "asset": "trail-mate-tlora_pager_sx1262-v1.0.1.bin",
-    "release": "v1.0.1"
+    "asset": "trail-mate-tlora_pager_sx1262-v1.2.3.bin",
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "tlora_pager_sx1262",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-tlora_pager_sx1262-v1.0.1.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-tlora_pager_sx1262-v1.2.3.bin"
   },
   {
    "extra": {
-    "asset": "trail-mate-t_display_p4_amoled-v1.0.1.bin",
-    "release": "v1.0.1"
+    "asset": "trail-mate-t_display_p4_amoled-v1.2.3.bin",
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "t_display_p4_amoled",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-t_display_p4_amoled-v1.0.1.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-t_display_p4_amoled-v1.2.3.bin"
   },
   {
    "extra": {
-    "asset": "trail-mate-t_display_p4_tft-v1.0.1.bin",
-    "release": "v1.0.1"
+    "asset": "trail-mate-t_display_p4_tft-v1.2.3.bin",
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "t_display_p4_tft",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-t_display_p4_tft-v1.0.1.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-t_display_p4_tft-v1.2.3.bin"
   },
   {
    "extra": {
     "asset": "trail-mate-wio-tracker-l2-webflash.bin",
-    "release": "v1.0.1"
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "wio-tracker-l2-webflash",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-wio-tracker-l2-webflash.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-wio-tracker-l2-webflash.bin"
   },
   {
    "extra": {
-    "asset": "trail-mate-wio_tracker_l2-v1.0.1.bin",
-    "release": "v1.0.1"
+    "asset": "trail-mate-wio_tracker_l2-v1.2.3.bin",
+    "release": "v1.2.3"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "wio_tracker_l2",
-   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.0.1/trail-mate-wio_tracker_l2-v1.0.1.bin"
+   "url": "https://github.com/vicliu624/trail-mate/releases/download/v1.2.3/trail-mate-wio_tracker_l2-v1.2.3.bin"
   },
   {
    "extra": {
