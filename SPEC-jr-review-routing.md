@@ -225,6 +225,28 @@ the mapping mistake it is checking for. The rules, each one tested on the real c
 A `PASS` says only that the cited upstream text targets the claimed board. The recipe stays
 `unverified` (not hardware-tested), and a PR passes only if **every** claim it adds passes.
 
+**Step 1: the gate inside generation (owner, 2026-11-15: "algorithm must clearly improve").** The same
+check runs **before** Jr writes an edge, at both write points: the admit stage's first recipe (the board
+picked from the repo's name or description; submissions and build-file signals keep their own evidence)
+and boardmap's `writers.plan_recipes`. The evidence is what Jr already read (description, the
+`platformio.ini` derive fetched, release asset names) plus one counted README read per candidate.
+- `FAIL` → the edge is not written (admit records `evidence_check: <reason>`; boardmap lists it refused).
+- "Cardputer" named only generically beside an ADV-only source, where the Cardputer-Adv passes → the
+  Cardputer-Adv edge is written instead (`writers.evidence_gate`).
+- An edge found only for the Cardputer-Adv whose source also names the original explicitly → both edges
+  (`writers.reverse_siblings`).
+- Every written edge carries its receipt in the recipe notes: `Evidence check v<N> <PASS|UNCERTAIN> — <reason>`.
+
+Measured with `jr/autoreview_replay.py` (Jr's real admit + boardmap code, replayed offline on recorded
+GitHub answers; `jr/fixtures/autoreview/replay-metrics.json`):
+
+| | without the gate | with the gate |
+|---|---|---|
+| known-wrong edges written | 8 / 43 | **0 / 43** |
+| known-correct edges found | 17 / 23 | **20 / 23** |
+| Cardputer-Adv edges for the 22 ADV-only firmware | 9 / 22 | **16 / 22** |
+| written edges that PASS (auto-merge eligible) | 88.4 % | **100 %** |
+
 **Shadow, then canary.** Phase 1 runs the checker and reports; it never merges. It is replayed on
 the labelled history: every wrong edge preserved in `jr/overrides/*__edges.json` (42 at the time
 of writing) must come out `FAIL` or `UNCERTAIN`, and the edges both blind audits of 2026-11-15

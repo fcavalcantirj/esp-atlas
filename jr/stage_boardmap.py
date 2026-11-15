@@ -36,6 +36,7 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
+import autoreview
 import board_alias
 import derive
 import memory
@@ -139,8 +140,10 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
     fm = tools._frontmatter(fmd)
     owner_repo = owner_repo_of(fm.get("url", ""))
     board_soc = lambda b: tools.board_soc(b, repo=root)  # noqa: E731
-    d = derive.derive(owner_repo, api=api, raw=raw, max_calls=max_calls, today=today)
-    res = derive.resolve(d, boards=board_alias.atlas_boards(root))
+    cap = autoreview.Capture(api, raw)            # the evidence gate reads what derive read (§7)
+    d = derive.derive(owner_repo, api=cap.api, raw=cap.raw, max_calls=max_calls, today=today)
+    catalog = board_alias.atlas_boards(root)
+    res = derive.resolve(d, boards=catalog)
     kinds: dict = {}
     for s in d["signals"]:
         kinds[s.get("kind") or "?"] = kinds.get(s.get("kind") or "?", 0) + 1
@@ -160,9 +163,11 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
         if picks:
             out["notes"].append(f"retraction deferred: {len(picks)} recipe(s), {retract_limit} left this tick")
         picks = []
+    evidence = cap.evidence(owner_repo, cap.readme(owner_repo)) if res["boards"] else None
     if dry_run:
         out["would_retract"] = [p["recipe"] for p in picks]
-        return _would_map(out, fid, fm, res, root=root, board_soc=board_soc, fmd=fmd, sig_path=sig_path, old=old)
+        return _would_map(out, fid, fm, res, root=root, board_soc=board_soc, fmd=fmd, sig_path=sig_path, old=old,
+                          evidence=evidence, catalog=catalog)
     if picks:
         base = head()
         if self_correct.valid_base(base):
@@ -170,7 +175,8 @@ def map_one(fid: str, *, root: Path, api, raw, today: str, dry_run: bool = False
             out["retracted"] = [p["recipe"] for p in picks]
         else:
             out["notes"].append("retraction deferred: no base commit to record")
-    w = writers.write_recipes(fid, fm.get("url", ""), res, root=root, today=today, board_soc=board_soc)
+    w = writers.write_recipes(fid, fm.get("url", ""), res, root=root, today=today, board_soc=board_soc,
+                              evidence=evidence, catalog=catalog)
     out.update(written=w["written"], existing=w["existing"], refused=w["refused"])
     out["paths"] += w["paths"]
     # socs: widen to the cited union, one source per page that proves an added chip
@@ -210,10 +216,10 @@ def _socs_to_widen(fm: dict, socs: list, refused_pairs: list, res: dict, board_s
 
 
 def _would_map(out: dict, fid: str, fm: dict, res: dict, *, root: Path, board_soc, fmd: Path,
-               sig_path: Path, old) -> dict:
+               sig_path: Path, old, evidence: dict | None = None, catalog: dict | None = None) -> dict:
     """Dry-run: what map_one would write — new recipes, the socs widening, signals.json — as
     out["would_write"] (recipe ids) and out["would_write_paths"] ({"path", "field", "value"})."""
-    plan = writers.plan_recipes(fid, res, root=root, board_soc=board_soc)
+    plan = writers.plan_recipes(fid, res, root=root, board_soc=board_soc, evidence=evidence, catalog=catalog)
     out.update(existing=plan["existing"], refused=plan["refused"])
     out["would_write"] = [rid for rid, *_ in plan["new"]]
     writes = [{"path": f"data/recipes/{rid}/recipe.md", "field": "*", "value": rid} for rid in out["would_write"]]

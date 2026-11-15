@@ -159,3 +159,57 @@ def test_an_untested_caveat_beside_explicit_support_still_passes(catalog):
     readme = ("| Supported devices | M5Stack CardputerADV, original Cardputer (auto-detected at boot) |\n"
               "- Original Cardputer support hasn't been verified on real hardware by the developer yet")
     assert _v("m5cardputer", catalog, readme=readme).verdict == autoreview.PASS
+
+
+# --- v2 rules, from the real correct edges the v1 checker left UNCERTAIN ----------------------------
+
+def test_separate_rows_for_the_original_and_the_adv_are_explicit(catalog):
+    readme = "| Device | Status |\n| M5Cardputer    | ✅ Supported |\n| M5Cardputer adv| ✅ Supported |"
+    assert _v("m5cardputer", catalog, readme=readme).verdict == autoreview.PASS
+    rows = "| **M5Stack Cardputer ADV** | ESP32-S3 |\n| **M5Stack Cardputer** | ESP32-S3 |"
+    assert _v("m5cardputer", catalog, readme=rows).verdict == autoreview.PASS
+
+
+def test_original_m5stack_cardputer_is_explicit(catalog):
+    v = _v("m5cardputer", catalog, readme="NucleoOS runs on both the original M5Stack Cardputer and the newer Cardputer ADV")
+    assert v.verdict == autoreview.PASS
+
+
+def test_a_negation_not_about_support_is_not_a_doubt(catalog):
+    v = _v("m5cardputer", catalog, readme="Runs on the Cardputer and Cardputer ADV.\nThe key goes to the provider — the Cardputer isn't in the loop.")
+    assert v.verdict == autoreview.PASS
+
+
+def test_feature_level_adv_only_notes_imply_the_original(catalog):
+    v = _v("m5cardputer", catalog, readme="Embedded bytebeats for Cardputer\n+ Accelerometer: ax, ay, az (Cardputer ADV only)")
+    assert v.verdict == autoreview.PASS
+
+
+def test_a_separate_adv_branch_means_the_default_build_is_the_original(catalog):
+    v = _v("m5cardputer", catalog, readme="M5Cardputer user demo.\nIf you are using Cardputer ADV, please use the CardputerADV branch.")
+    assert v.verdict == autoreview.PASS
+
+
+def test_v2_still_refuses_the_adv_only_shapes(catalog):
+    assert _v("m5cardputer", catalog, readme="| Device |\n| M5Cardputer ADV | ✅ |").verdict == autoreview.FAIL
+    assert _v("m5cardputer", catalog, readme="Firmware for the Cardputer ADV.\nGyro: gx (ADV only)").verdict == autoreview.FAIL
+
+
+def test_a_bold_board_name_is_not_a_device_row(catalog):
+    """WebRadio_WuSiU_Cardputer_Adv (#1715): its README tells Arduino users to pick the board definition
+    `**M5Cardputer**`. Bold text starts with '*' but is not a list item; only '- ', '* ', '+ ' or '|' are."""
+    readme = ("# Cardputer Adv WebRadio\nAn internet radio for **M5Stack Cardputer Adv**.\n"
+              "- M5Stack Cardputer Adv\nChoose the correct board for Cardputer:\n**M5Cardputer**\n")
+    assert _v("m5cardputer", catalog, description="WebRadio adapted for Caedputer ADV", readme=readme).verdict != autoreview.PASS
+
+
+def test_not_the_original_is_an_exclusion(catalog):
+    """SquachWatch-CYD's support table (#1728): 'M5Stack Cardputer ADV | BETA | ... Not the original Cardputer.'"""
+    row = "| M5Stack Cardputer ADV | BETA | Driven from its keyboard, with hotkeys. Not the original Cardputer. SD card |"
+    assert _v("m5cardputer", catalog, readme=row).verdict == autoreview.FAIL
+
+
+def test_first_gen_cardputer_is_explicit_original_support(catalog):
+    """M5MonsterC5-CardputerADV (#1729): 'App for the M5Stack Cardputer AVD and for first gen Cardputer'."""
+    v = _v("m5cardputer", catalog, readme="- App for the M5Stack Cardputer ADV and for first gen Cardputer - flasher")
+    assert v.verdict == autoreview.PASS

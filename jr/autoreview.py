@@ -14,7 +14,7 @@ import re
 from dataclasses import dataclass, field
 
 PASS, FAIL, UNCERTAIN = "PASS", "FAIL", "UNCERTAIN"
-RULES_VERSION = "1"
+RULES_VERSION = "2"
 
 # Boards whose name is the prefix of a more specific product that is NOT compatible hardware.
 # claimed board -> regex of the sibling that does not prove it (SIBLING_LABEL names it in reasons).
@@ -24,10 +24,11 @@ SIBLINGS: dict[str, str] = {
                     r"|\btca8418\b"),
 }
 SIBLING_LABEL: dict[str, str] = {"m5cardputer": "Cardputer ADV"}
+SIBLING_BOARD: dict[str, str] = {"m5cardputer": "m5cardputer-adv"}   # the catalogued board the sibling text names
 # A plain mention of the claimed board that still counts once a sibling is named: it must single the
 # original out (an "original"/"v1.1"/"standard" qualifier, or the pair named side by side).
 EXPLICIT_ORIGINAL: dict[str, str] = {
-    "m5cardputer": (r"original\s+(m5\s*)?cardputer|cardputer\s*(\(|-)?\s*(v?1\.[01]|standard|original|non[- ]adv)"
+    "m5cardputer": (r"(original|first[\s-]*gen(eration)?)\s+(m5\s*(stack\s*)?)?cardputer|if\s+you\s+(are\s+using|use|have)\s+(a\s+|an\s+|the\s+)?(m5\s*(stack\s*)?)?cardputer[\s_-]*adv(?![a-z])|cardputer\s*(\(|-)?\s*(v?1\.[01]|standard|original|non[- ]adv)"
                     r"|cardputer\s*(&|and|/|,|or)\s*(the\s+)?(m5\s*)?(cardputer)?[\s_-]*adv(?![a-z])"
                     r"|cardputer[\s_-]*adv(?![a-z])\s*(&|and|/|,|or)\s*(the\s+)?(original\s+|standard\s+)?(m5\s*)?cardputer(?![\s_-]*adv)"),
 }
@@ -44,12 +45,15 @@ CAVEAT = re.compile(r"\b(untested|not\s+(yet\s+)?tested|unverified|not\s+(yet\s+
 NONTARGET = re.compile(r"\b(ported\s+from|port\s+of|inspired\s+by|based\s+on|fork(ed)?\s+(of|from)|derived\s+from"
                        r"|planned|roadmap|coming\s+soon|to-?do|will\s+(support|add|come))\b"
                        r"|cardputer\s*v(?!1(\.\d)?\b)\d", re.I)
-NEGATION = re.compile(r"\b(not|no longer|isn'?t|doesn'?t|does not|won'?t|unsupported|incompatible)\b", re.I)
+# A doubt only when the negation is about support ("doesn't run on", "not supported"), never any "not".
+NEGATION = re.compile(r"(\bnot|\bno longer|isn'?t|doesn'?t|does not|won'?t|cannot|can'?t)\s+(be\s+|yet\s+)*(supported|support|work|run|compatible)"
+                      r"|\b(unsupported|incompatible)\b", re.I)
 # A sentence that rules the claimed board out: the sibling "only", or a negation bound to a support verb.
 EXCLUSION: dict[str, str] = {
     "m5cardputer": (r"cardputer[\s_-]*adv[\s_-]*only|only\s+(for|on|supports?|targets?)\s+(the\s+)?(m5\s*)?cardputer[\s_-]*adv"
                     r"|(not|isn'?t|is not|doesn'?t|does not|won'?t|cannot|can'?t)\s+(be\s+)?(supported|support|work|run|compatible)"
-                    r"|\b(unsupported|incompatible)\b|\bno\s+support\b"),
+                    r"|\b(unsupported|incompatible)\b|\bno\s+support\b"
+                    r"|\bnot\s+(for\s+|on\s+)?(the\s+|an?\s+)?(original|first[\s-]*gen(eration)?|regular|standard)\s+(m5\s*(stack\s*)?)?cardputer"),
 }
 
 
@@ -159,16 +163,37 @@ def check(board: str, sources: dict, catalog: dict) -> Verdict:
             return Verdict(FAIL, ["sibling: the source rules the original out explicitly"])
         # "the original Cardputer is untested" is a caveat, not support: it never counts on its own
         explicit = any(statement(x) and not CAVEAT.search(x) for x in orig)
+        # v2: the original and the sibling as separate table rows or list items enumerate both devices
+        # a table row or a list item ("- ", "* ", "+ "): bold text ("**M5Cardputer**") starts with '*' too
+        items = [x for x in _prose(all_text).splitlines() if re.match(r"\s*(\||[-*+]\s)", x)]
+        # a device row is short and is the device name itself ("M5Cardputer", "**M5Stack Cardputer ADV**"),
+        # never a sentence that mentions it in passing ("Pair the Cardputer with your phone")
+        cells = [re.split(r"\s\|\s|\|", x.strip().strip("|"), maxsplit=1)[0] for x in items]
+        first = [c for c in (re.sub(r"[*_`\[\]]|^[-+*]\s*", "", c).strip() for c in cells) if 0 < len(c) <= 32]
+        sib_items = [x for x in first if re.search(sib, x, re.I)]
+        plain_items = [x for x in first if not re.search(sib, x, re.I) and _names_plain(board, x, catalog)]
+        enumerated = bool(sib_items and plain_items)
+        # v2: a feature marked "(... ADV only)" without contrasting the original implies the rest runs on it
+        feature_only = excl and any(re.search(r"adv[\s_-]*only", x, re.I) and not re.search(EXPLICIT_ORIGINAL[board], x, re.I)
+                                    for x in sentences)
         names = [_compact(a) for a in assets.split()]
         both_assets = any("adv" in a for a in names) and any("cardputer" in a and "adv" not in a for a in names)
         env_names = {_compact(e["name"]) for e in envs}
         both_envs = any("adv" in n for n in env_names) and any(_names_plain(board, e["name"], catalog) for e in envs)
         if not named:
             return Verdict(FAIL, [f"sibling: the source names only the {SIBLING_LABEL[board]}, never {board} itself"])
-        if not (explicit or both_envs or both_assets):
+        if not (explicit or both_envs or both_assets or enumerated or feature_only):
             return Verdict(UNCERTAIN, [f"sibling: the source names the {SIBLING_LABEL[board]} and {board} only generically"])
     if not named:
         return Verdict(FAIL, [f"named: the source never names {board}"])
+    # a statement that names the board and rules it out ("Not for the original Cardputer") is a FAIL
+    # whether or not a sibling is named (#1724 review of SquachWatch-CYD)
+    excl = EXCLUSION.get(board)
+    if excl:
+        for x in re.split(r"(?<=[.!?])\s+|\n", _prose(prose)):
+            if (x.strip() and not x.strip().strip("*_ ").endswith("?") and re.search(excl, x, re.I)
+                    and re.search(EXPLICIT_ORIGINAL.get(board, r"(?!)"), x, re.I)):
+                return Verdict(FAIL, [f"exclusion: the source rules {board} out: '{x.strip()[:100]}'"])
     # named is not targets: at least one mention must be a target, not provenance or a roadmap
     built = any(_names_plain(board, e["name"], catalog) for e in envs) or _names_plain(board, assets, catalog)
     mentions = [x for x in re.split(r"(?<=[.!?])\s+|\n", _prose(prose)) if x.strip() and _names_plain(board, x, catalog)]
@@ -178,3 +203,41 @@ def check(board: str, sources: dict, catalog: dict) -> Verdict:
         if _names_plain(board, sentence, catalog) and NEGATION.search(sentence):
             return Verdict(UNCERTAIN, [f"negation: '{sentence.strip()[:120]}'"])
     return Verdict(PASS, [f"named: the source names {board}"])
+
+
+class Capture:
+    """Wraps derive's `api`/`raw` callables and keeps what they answered, so the evidence gate reads the
+    exact upstream text Jr's own derivation read (no second fetch). `readme()` is the one extra call."""
+
+    def __init__(self, api, raw):
+        self._api, self._raw, self.api_answers, self.raw_answers = api, raw, {}, {}
+
+    def api(self, path: str):
+        out = self._api(path)
+        self.api_answers[path] = out
+        return out
+
+    def raw(self, url: str):
+        out = self._raw(url)
+        self.raw_answers[url] = out
+        return out
+
+    def readme(self, owner_repo: str) -> str:
+        import base64
+        try:
+            doc = self._api(f"repos/{owner_repo}/readme")
+            return base64.b64decode(doc.get("content") or "").decode("utf-8", "ignore") if isinstance(doc, dict) else ""
+        except Exception:  # noqa: BLE001 — no README is evidence of nothing, never an error
+            return ""
+
+    def evidence(self, owner_repo: str, readme: str) -> dict:
+        meta = self.api_answers.get(f"repos/{owner_repo}") or {}
+        assets = []
+        for path, doc in self.api_answers.items():
+            if "/releases" in path:
+                for rel in (doc if isinstance(doc, list) else [doc]):
+                    if isinstance(rel, dict):
+                        assets += [a.get("name", "") for a in rel.get("assets") or [] if isinstance(a, dict)]
+        pio = "\n".join(t for u, t in self.raw_answers.items() if t and u.endswith("platformio.ini"))
+        return {"description": (meta.get("description") if isinstance(meta, dict) else "") or "",
+                "readme": readme or "", "platformio": pio, "assets": " ".join(dict.fromkeys(assets))}
