@@ -133,7 +133,8 @@ UNREADABLE = None
 
 def removed_recipes(firmware_id: str, root: Path):
     """The recipe paths a person removed for `firmware_id` (the `deletes` of
-    jr/overrides/<firmware_id>__edges.json, SPEC-firmware-board-mapping.md §4): boardmap never writes
+    jr/overrides/<firmware_id>__edges.json and of every earlier record kept in its `history`,
+    SPEC-firmware-board-mapping.md §4): boardmap never writes
     them back. An empty set when there is no override; UNREADABLE (None) when the file exists but
     cannot be read, and then the caller writes nothing for this firmware (a broken override must
     never silently re-enable what a person removed)."""
@@ -141,12 +142,21 @@ def removed_recipes(firmware_id: str, root: Path):
     if not path.exists():
         return set()
     try:
-        deletes = json.loads(path.read_text(encoding="utf-8")).get("deletes")
-    except (OSError, ValueError, AttributeError):
+        record = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
         return UNREADABLE
-    if not isinstance(deletes, list):
+    # A second correction keeps the earlier record in `history` (g2_guard checks only the top level,
+    # what THIS change deletes); every removal, current and earlier, stays guarded.
+    if not isinstance(record, dict) or not isinstance(record.get("history", []), list):
         return UNREADABLE
-    return {str(d) for d in deletes}
+    records = [record, *record.get("history", [])]
+    removed = set()
+    for rec in records:
+        deletes = rec.get("deletes") if isinstance(rec, dict) else None
+        if not isinstance(deletes, list):
+            return UNREADABLE
+        removed |= {str(d) for d in deletes}
+    return removed
 
 
 def plan_recipes(firmware_id: str, resolved: dict, *, root: Path, board_soc=None) -> dict:

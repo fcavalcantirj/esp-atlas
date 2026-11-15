@@ -100,7 +100,10 @@ Each extracted item keeps its **source URL + source type** for provenance.
   guard against a write-back (2026-11-15): boardmap (`writers.plan_recipes`) never writes a recipe whose
   path is in its firmware's override `deletes`, even while derive still resolves that board, and
   `select_firmware` does not count it as missing. An override that cannot be read refuses every new
-  recipe for that firmware ("a person decides"), never re-enables them.
+  recipe for that firmware ("a person decides"), never re-enables them. A firmware corrected a second
+  time keeps ONE override file: the top level is the new correction (what `g2_guard` checks: deleted in
+  this change, originals byte-exact), and the earlier record moves unchanged into a `history` list, whose
+  `deletes` stay guarded too.
 
 ### 4.1 Jr retracts its own wrong edges (owner, 2026-11-11: "atlas jr's auto fixes himself")
 When boardmap re-reads a firmware it also checks that firmware's existing recipes. It retracts a recipe
