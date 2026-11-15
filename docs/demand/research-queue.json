@@ -805,10 +805,12 @@
   "pam-551c01f820f3ab0d27e6b388": {
    "term": "ESP32-S2-DevKitM-1",
    "source": "pam_feed",
-   "status": "validated",
+   "status": "linked",
    "first_seen": "2026-11-15",
    "history": [],
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1743"
+   ],
    "snapshot": "docs/demand/pam-leads.json",
    "feed": {
     "checked_at": "2026-11-15T11:15:30.873895Z",
