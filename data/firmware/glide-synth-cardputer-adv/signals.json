@@ -1,0 +1,42 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-11-15",
+ "notes": [],
+ "ref": "master",
+ "repo": "CHARL3X/GLIDE-Synth-Cardputer-ADV",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "GLIDE",
+   "GLIDE-MIDI"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "GLIDE-MIDI.bin",
+    "release": "v3.9"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "GLIDE-MIDI",
+   "url": "https://github.com/CHARL3X/GLIDE-Synth-Cardputer-ADV/releases/download/v3.9/GLIDE-MIDI.bin"
+  },
+  {
+   "extra": {
+    "asset": "GLIDE.bin",
+    "release": "v3.9"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "GLIDE",
+   "url": "https://github.com/CHARL3X/GLIDE-Synth-Cardputer-ADV/releases/download/v3.9/GLIDE.bin"
+  }
+ ]
+}
