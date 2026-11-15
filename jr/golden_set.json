@@ -231,7 +231,7 @@
           "name": "AdvanceOS For Cardputer ADV",
           "url": "https://github.com/bomberman30/AdvanceOS-for-cardputer",
           "category": "multi",
-          "board": "m5cardputer",
+          "board": "m5cardputer-adv",
           "chip": "esp32-s3",
           "capabilities": [],
           "maintainer": "bomberman30"

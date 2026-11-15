@@ -4,8 +4,8 @@
 // FirmwareDetailView calls it — the firmware, its recipes, and the parts.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { firmwareGraph } from "./structured-data.ts";
-import type { Firmware, PartRecord, Recipe } from "./api.ts";
+import { firmwareGraph, partGraph } from "./structured-data.ts";
+import type { Firmware, PartDetail, PartRecord, Recipe } from "./api.ts";
 
 const CIRCUITPYTHON: Firmware = {
   id: "circuitpython",
@@ -109,4 +109,36 @@ test("a recipe whose board record is missing is left out, and no recipes means n
     ["Cardputer"],
   );
   assert.equal(boardList([]), undefined);
+});
+
+
+// GSC "Product snippets" (2026-11-14): every part page nested an `about` Product with no offers,
+// review or aggregateRating, which Google reports as an invalid item. esp-atlas has no verified
+// price or rating to cite (cite-or-omit), so a part page must never carry a Product node at all.
+function hasType(node: unknown, type: string): boolean {
+  if (Array.isArray(node)) return node.some((n) => hasType(n, type));
+  if (!node || typeof node !== "object") return false;
+  const t = (node as Record<string, unknown>)["@type"];
+  if (t === type || (Array.isArray(t) && t.includes(type))) return true;
+  return Object.values(node as Record<string, unknown>).some((v) => hasType(v, type));
+}
+
+function partDetail(type: string): PartDetail {
+  return {
+    id: "esp32-s3", type, name: "ESP32-S3", vendor_or_brand: "espressif", brand_name: "Espressif",
+    sources: [{ field: "*", url: "https://documentation.espressif.com/esp32-s3_datasheet_en.pdf", verified: "2026-08-26" }],
+    frontmatter: {}, body: "Dual-core SoC.", related: [], faq: [],
+  } as unknown as PartDetail;
+}
+
+for (const type of ["soc", "module", "board"]) {
+  test(`a ${type} page carries no Product node, so Google sees no invalid product snippet`, () => {
+    assert.equal(hasType(partGraph(partDetail(type)), "Product"), false);
+  });
+}
+
+test("the article still says what it is about, as a plain Thing", () => {
+  const graph = partGraph(partDetail("soc"))["@graph"] as Record<string, unknown>[];
+  const article = graph.find((n) => n["@type"] === "TechArticle") as { about?: Record<string, unknown> };
+  assert.deepEqual(article.about, { "@type": "Thing", name: "ESP32-S3" });
 });

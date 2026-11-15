@@ -17,7 +17,13 @@ DEVICE_BOARD_PATTERNS: list[tuple[str, str]] = [
     (r"atom\s*s3", "m5atoms3"),
     (r"core\s*s3", "m5stack-cores3"),
     (r"core\s*2\b", "m5stack-core2"),
-    (r"cardputer", "m5cardputer"),          # covers "Cardputer", "Cardputer ADV", "Cardputer & ADV"
+    # Cardputer-Adv is its own board (Stamp-S3A, TCA8418 I2C keyboard; docs.m5stack.com/en/core/Cardputer-Adv),
+    # not the original's GPIO key matrix. Any plain "Cardputer" mention keeps the original, including
+    # "Cardputer & ADV" / "Cardputer / Cardputer-ADV" (firmware that names both supports the original);
+    # only text naming the ADV alone ("Cardputer ADV", "Cardputer-Adv", "cardputeradv") maps to the ADV.
+    # "adv" must end there: "Cardputer AdvanceOS" / "Cardputer Adventure" name the original.
+    (r"cardputer(?!\s*[-_]?\s*adv(?![a-z]))", "m5cardputer"),
+    (r"cardputer\s*[-_]?\s*adv(?![a-z])", "m5cardputer-adv"),
     (r"stamp\s*s3", "m5stamp-s3"),
     (r"stamp\s*c3", "m5stamp-c3"),
     (r"nano\s*c6", "m5nanoc6"),
@@ -42,6 +48,7 @@ CATEGORY_BOARD_FALLBACK: dict[str, str] = {
     "core2": "m5stack-core2",
     "cores3": "m5stack-cores3",
     "cardputer": "m5cardputer",
+    "cardputer-adv": "m5cardputer-adv",
     "stamps3": "m5stamp-s3",
 }
 

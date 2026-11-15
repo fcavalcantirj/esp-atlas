@@ -1,0 +1,29 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-11-14",
+ "notes": [],
+ "ref": "main",
+ "repo": "the-tithe/the-tithe",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "Tithe"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "Tithe-v0.6.2.bin",
+    "release": "v0.6.2"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Tithe",
+   "url": "https://github.com/the-tithe/the-tithe/releases/download/v0.6.2/Tithe-v0.6.2.bin"
+  }
+ ]
+}

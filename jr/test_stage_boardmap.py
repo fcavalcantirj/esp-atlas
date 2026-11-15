@@ -354,3 +354,47 @@ def test_stage_run_only_still_refuses_a_vetoed_firmware(root):
     res = sb.run(c, budget=1, raw=fake_raw, only=["marauder"])
     assert "marauder: skip vetoed (#1478 closed unmerged, veto until 2026-10-06)" in res.summary
     assert res.paths == [] and res.rejects == {"vetoed": 1}
+
+
+# --- a recipe a person removed is never written back (jr/overrides/<fid>__edges.json `deletes`) ----
+# DasBrow's review gap (2026-11-15): boardmap wrote every resolved board without a recipe, and nothing
+# read an edge override's deletes. While derive still resolves the board (an ADV build whose env is
+# named `cardputer`), the next pass would re-create the recipe the person removed.
+
+def _override(root, fid, *deleted):
+    d = root / "jr" / "overrides"
+    d.mkdir(parents=True, exist_ok=True)
+    (d / f"{fid}__edges.json").write_text(json.dumps({
+        "firmware": fid, "action": "edge_correction", "deletes": [f"data/recipes/{r}/recipe.md" for r in deleted],
+        "originals": {f"data/recipes/{r}/recipe.md": "x\n" for r in deleted}, "why": "test",
+        "directed_by": "owner", "date": "2026-11-15"}))
+
+
+def test_map_one_never_rewrites_a_recipe_a_person_removed(root):
+    _override(root, "marauder", "m5cardputer__marauder")
+    r = sb.map_one("marauder", root=root, api=fake_api, raw=fake_raw, today="2026-11-15")
+    assert "m5cardputer__marauder" not in r["written"]
+    assert not (root / "data/recipes/m5cardputer__marauder").exists()
+    assert ("m5cardputer", "removed by a person: jr/overrides/marauder__edges.json") in r["refused"]
+    assert r["written"]                                       # every other resolved board is still written
+
+
+def test_map_one_dry_run_never_plans_a_removed_recipe(root):
+    _override(root, "marauder", "m5cardputer__marauder")
+    r = sb.map_one("marauder", root=root, api=fake_api, raw=fake_raw, today="2026-11-15", dry_run=True)
+    assert "m5cardputer__marauder" not in r["would_write"]
+
+
+def test_select_firmware_does_not_count_a_removed_recipe_as_missing(root):
+    (root / "data" / "firmware" / "full").mkdir()
+    (root / "data" / "firmware" / "full" / "firmware.md").write_text(FW.replace("id: marauder", "id: full"))
+    (root / "data" / "firmware" / "full" / "signals.json").write_text(json.dumps({
+        "fetched": "2026-08-01", "errors": 0, "signals": [{"token": "t"}],
+        "resolved": {"boards": ["m5cardputer", "m5nanoc6"], "socs": [], "unresolved": []}}))
+    (root / "data" / "firmware" / "other").mkdir()
+    (root / "data" / "firmware" / "other" / "firmware.md").write_text(FW.replace("id: marauder", "id: other"))
+    (root / "data" / "firmware" / "other" / "signals.json").write_text(json.dumps({
+        "fetched": "2026-08-01", "errors": 0, "signals": [{"token": "t"}],
+        "resolved": {"boards": ["m5stick-cplus2"], "socs": [], "unresolved": []}}))
+    _override(root, "full", "m5cardputer__full", "m5nanoc6__full")      # both of full's boards were removed
+    assert sb.select_firmware(root, 1, NOW) == ["other"]                 # full has 0 missing, other has 1
