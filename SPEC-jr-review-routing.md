@@ -242,10 +242,10 @@ GitHub answers; `jr/fixtures/autoreview/replay-metrics.json`):
 
 | | without the gate | with the gate |
 |---|---|---|
-| known-wrong edges written | 8 / 42 | **0 / 42** |
-| known-correct edges found | 16 / 22 | **19 / 22** |
+| known-wrong edges written | 8 / 43 | **0 / 43** |
+| known-correct edges found | 17 / 23 | **20 / 23** |
 | Cardputer-Adv edges for the 22 ADV-only firmware | 9 / 22 | **16 / 22** |
-| written edges that PASS (auto-merge eligible) | 88.1 % | **100 %** |
+| written edges that PASS (auto-merge eligible) | 88.4 % | **100 %** |
 
 **Shadow, then canary.** Phase 1 runs the checker and reports; it never merges. It is replayed on
 the labelled history: every wrong edge preserved in `jr/overrides/*__edges.json` (42 at the time
