@@ -1,0 +1,164 @@
+"""EspAtlas Jr — autoreview: an independent evidence check of one recipe edge (SPEC-jr-review-routing.md §7).
+
+`check(board, sources, catalog)` answers PASS / FAIL / UNCERTAIN for the claim "firmware targets <board>",
+from the upstream text the recipe cites (repository description, README, platformio.ini). Pure and
+deterministic: no network, no LLM, and none of Jr's own mapping code (jr/device_map, jr/board_alias, the
+admit scorer), so it cannot repeat the mapping mistake it checks for. Shadow only: it reports, never merges.
+
+PASS means the cited upstream text targets the claimed board; the recipe still says `unverified`
+(never hardware-tested). Anything the rules do not cover is UNCERTAIN, never a guess.
+"""
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+
+PASS, FAIL, UNCERTAIN = "PASS", "FAIL", "UNCERTAIN"
+RULES_VERSION = "1"
+
+# Boards whose name is the prefix of a more specific product that is NOT compatible hardware.
+# claimed board -> regex of the sibling that does not prove it (SIBLING_LABEL names it in reasons).
+SIBLINGS: dict[str, str] = {
+    "m5cardputer": r"cardputer[\s_-]*adv(?![a-z])",
+}
+SIBLING_LABEL: dict[str, str] = {"m5cardputer": "Cardputer ADV"}
+# A plain mention of the claimed board that still counts once a sibling is named: it must single the
+# original out (an "original"/"v1.1"/"standard" qualifier, or the pair named side by side).
+EXPLICIT_ORIGINAL: dict[str, str] = {
+    "m5cardputer": (r"original\s+(m5\s*)?cardputer|cardputer\s*(\(|-)?\s*(v?1\.[01]|standard|original|non[- ]adv)"
+                    r"|cardputer\s*(&|and|/|,|or)\s*(the\s+)?(m5\s*)?(cardputer)?[\s_-]*adv(?![a-z])"
+                    r"|cardputer[\s_-]*adv(?![a-z])\s*(&|and|/|,|or)\s*(the\s+)?(original\s+|standard\s+)?(m5\s*)?cardputer(?![\s_-]*adv)"),
+}
+# Carrier modules: a build env on the module whose name, libraries or flags name a product built on it
+# proves that product, not the bare module.
+CARRIERS: dict[str, tuple[str, ...]] = {
+    "m5stamp-s3": ("cardputer", "sticks3", "stick_s3", "dial", "dinmeter", "capsule", "atoms3", "airq"),
+}
+NEGATION = re.compile(r"\b(not|no longer|isn'?t|doesn'?t|does not|won'?t|unsupported|incompatible)\b", re.I)
+# A sentence that rules the claimed board out: the sibling "only", or a negation bound to a support verb.
+EXCLUSION: dict[str, str] = {
+    "m5cardputer": (r"cardputer[\s_-]*adv[\s_-]*only|only\s+(for|on|supports?|targets?)\s+(the\s+)?(m5\s*)?cardputer[\s_-]*adv"
+                    r"|(not|isn'?t|is not|doesn'?t|does not|won'?t|cannot|can'?t)\s+(be\s+)?(supported|support|work|run|compatible)"
+                    r"|\b(unsupported|incompatible)\b|\bno\s+support\b"),
+}
+
+
+@dataclass
+class Verdict:
+    verdict: str
+    reasons: list = field(default_factory=list)
+    rules_version: str = RULES_VERSION
+
+
+def _compact(s: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "", (s or "").lower())
+
+
+def _board_terms(board: str, catalog: dict) -> list[str]:
+    """How the claimed board is written: its id and catalog name/aka, compacted (>= 5 chars, so a
+    bare 'm5' or 's3' never counts)."""
+    rec = catalog.get(board) or {}
+    terms = {board, rec.get("name") or ""} | set(rec.get("aka") or [])
+    out = {_compact(t) for t in terms if t}
+    return sorted(t for t in out if len(t) >= 5)
+
+
+def _envs(platformio: str) -> list[dict]:
+    """[{name, board, text}] for each [env:<name>] section (text = its options, lowercased)."""
+    out, cur = [], None
+    for line in (platformio or "").splitlines():
+        m = re.match(r"\s*\[env:([^\]]+)\]", line)
+        if m:
+            cur = {"name": m.group(1).strip(), "board": "", "text": ""}
+            out.append(cur)
+            continue
+        if re.match(r"\s*\[", line):
+            cur = None
+            continue
+        if cur is not None:
+            b = re.match(r"\s*board\s*=\s*(\S+)", line)
+            if b:
+                cur["board"] = b.group(1).strip().lower()
+            cur["text"] += line.lower() + "\n"
+    return out
+
+
+_NOT_PROSE = re.compile(r"https?://\S+|\b[\w.-]+/[\w.-]+@[\w.^~-]+|\b[\w/.-]*\.(h|hpp|cpp|ino|py|json)\b"
+                        r"|\b(m5stack|lib_deps|#include)\s*[/=<]\s*\S+|\bm5cardputer\s+(library|lib)\b", re.I)
+
+
+def _prose(text: str) -> str:
+    """Upstream text minus what is not a statement about hardware: URLs, library and include references
+    (the M5Cardputer library shares its name with the board id)."""
+    return _NOT_PROSE.sub(" ", text or "")
+
+
+def _names_plain(board: str, text: str, catalog: dict) -> bool:
+    low = _prose(text).lower()
+    sib = SIBLINGS.get(board)
+    if sib:
+        low = re.sub(sib, " ", low)          # a sibling mention is not a mention of the board
+    comp = _compact(low)
+    if any(t in comp for t in _board_terms(board, catalog)):
+        return True
+    # the product's own short name (the catalog id without the vendor prefix): "cardputer", "sticks3"
+    short = re.sub(r"^(m5stack-|m5|lilygo-|waveshare-)", "", board)
+    pattern = "[-_ ]?".join(re.escape(part) for part in short.split("-"))
+    return len(short) >= 6 and re.search(rf"(?<![a-z0-9]){pattern}(?![a-z0-9])", low) is not None
+
+
+def check(board: str, sources: dict, catalog: dict) -> Verdict:
+    """`sources`: {"description": str, "readme": str, "platformio": str} as cited for the edge."""
+    texts = {k: v or "" for k, v in (sources or {}).items()}
+    if not any(texts.values()):
+        return Verdict(UNCERTAIN, ["no readable upstream source"])
+    prose = "\n".join([texts.get("description", ""), texts.get("readme", "")])
+    assets = texts.get("assets", "")
+    envs = _envs(texts.get("platformio", ""))
+
+    # carrier: a module claimed from a product build. Naming the module as the MCU inside a product
+    # ("Cardputer (M5Stack StampS3)") is exactly the confusion; only a module-only build counts.
+    if board in CARRIERS:
+        products = CARRIERS[board]
+        def _product(s: str) -> bool:
+            return any(p in _compact(s) for p in products)
+        hits = [e["name"] for e in envs if _product(e["name"]) or _product(e["text"])]
+        own = [e["name"] for e in envs if not (_product(e["name"]) or _product(e["text"]))
+               and "stamps3" in _compact(e["board"] + e["name"])]
+        if own:
+            return Verdict(PASS, [f"carrier: module-only build env(s) {', '.join(own[:3])}"])
+        if hits or _product(_prose(prose)):
+            return Verdict(FAIL, [f"carrier: {board} appears only as the base of a product build"
+                                  + (f" ({', '.join(hits[:3])})" if hits else "")])
+
+    all_text = prose + "\n" + "\n".join(e["name"] for e in envs) + "\n" + assets
+    named = _names_plain(board, all_text, catalog)
+    sib = SIBLINGS.get(board)
+    sib_named = bool(sib and re.search(sib, all_text, re.I))
+    if sib_named:
+        sentences = [x for x in re.split(r"(?<=[.!?])\s+|\n", _prose(all_text)) if x.strip()]
+        orig = [x for x in sentences if re.search(EXPLICIT_ORIGINAL.get(board, r"(?!)"), x, re.I)]
+        excl = EXCLUSION.get(board)
+        statement = lambda x: not x.strip().strip("*_ ").endswith("?")  # noqa: E731
+        # "ADV only" rules the original out only when it is about the device, i.e. contrasted with the
+        # original in the same sentence ("Cardputer ADV only - the original Cardputer has a different
+        # keyboard"); a feature note ("Accelerometer (Cardputer ADV only)") is not.
+        adv_only = excl and any(re.search(excl, x, re.I) and re.search(r"only", x, re.I)
+                                and re.search(EXPLICIT_ORIGINAL[board], x, re.I) for x in sentences if statement(x))
+        if adv_only or any(excl and re.search(excl, x, re.I) and statement(x) for x in orig):
+            return Verdict(FAIL, ["sibling: the source rules the original out explicitly"])
+        explicit = any(statement(x) for x in orig)
+        names = [_compact(a) for a in assets.split()]
+        both_assets = any("adv" in a for a in names) and any("cardputer" in a and "adv" not in a for a in names)
+        env_names = {_compact(e["name"]) for e in envs}
+        both_envs = any("adv" in n for n in env_names) and any(_names_plain(board, e["name"], catalog) for e in envs)
+        if not named:
+            return Verdict(FAIL, [f"sibling: the source names only the {SIBLING_LABEL[board]}, never {board} itself"])
+        if not (explicit or both_envs or both_assets):
+            return Verdict(UNCERTAIN, [f"sibling: the source names the {SIBLING_LABEL[board]} and {board} only generically"])
+    if not named:
+        return Verdict(FAIL, [f"named: the source never names {board}"])
+    for sentence in re.split(r"(?<=[.!?])\s+|\n", prose):
+        if _names_plain(board, sentence, catalog) and NEGATION.search(sentence):
+            return Verdict(UNCERTAIN, [f"negation: '{sentence.strip()[:120]}'"])
+    return Verdict(PASS, [f"named: the source names {board}"])
