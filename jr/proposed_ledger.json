@@ -4113,7 +4113,7 @@
       "pr_ref": "#1717",
       "repo": "charl3x/glide-synth-cardputer-adv",
       "status": "proposed",
-      "timestamp": "2026-11-15T08:00:31.415117+00:00"
+      "timestamp": "2026-11-15T06:00:32.532426+00:00"
     },
     "google-dino-for-m5stickcplus2": {
       "expired_at": "2026-10-12T20:00:11.871872+00:00",
@@ -11568,7 +11568,7 @@
       "repo": "arthubhub/meshcore-cardputer",
       "repo_id": 1444906952,
       "status": "proposed",
-      "timestamp": "2026-11-15T08:00:31.415117+00:00"
+      "timestamp": "2026-11-15T06:00:32.532426+00:00"
     },
     "meshcore-cardputer-adv": {
       "id": "meshcore-cardputer-adv",
@@ -13836,12 +13836,13 @@
       "timestamp": "2026-10-21T12:00:59.681161+00:00"
     },
     "sigurdos-tdeck": {
+      "evidence_url": "https://github.com/hermes-gadget/SigurdOS-tdeck",
       "id": "sigurdos-tdeck",
-      "pr_ref": "#1728",
+      "pr_ref": null,
       "repo": "hermes-gadget/sigurdos-tdeck",
       "repo_id": 1239026804,
       "status": "proposed",
-      "timestamp": "2026-11-15T08:00:31.415117+00:00"
+      "timestamp": "2026-11-15T06:00:32.532426+00:00"
     },
     "silicon-bubbles-cardputeradv": {
       "expired_at": "2026-10-11T20:00:11.593510+00:00",
@@ -15226,7 +15227,7 @@
       "pr_ref": "#1715",
       "repo": "wusiu/webradio_wusiu_cardputer_adv",
       "status": "proposed",
-      "timestamp": "2026-11-15T08:00:31.415117+00:00"
+      "timestamp": "2026-11-15T06:00:32.532426+00:00"
     },
     "whatsapp-cardputer-m5stack": {
       "expired_at": "2026-10-12T06:00:12.168824+00:00",
