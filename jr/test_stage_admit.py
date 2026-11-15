@@ -780,3 +780,54 @@ def test_the_queue_interleaves_the_download_order_with_a_seeded_shuffle(root):
     for q in (q1, q3):                                                     # the download lane's guarantee:
         for k in range(1, 11):                                             # the top k are always in the first 2k
             assert {f"T{i:02}" for i in range(k)} <= set(names(q)[:2 * k])
+
+
+# --- the evidence gate on admission (SPEC-jr-review-routing.md §7, step 1) ---------------------------
+# A board picked from the repo's name/description passes the same independent check as boardmap's edges,
+# reading the README (one counted call). The ask-master class: description "using M5Stack Cardputer",
+# README "Cardputer ADV firmware" -> the edge is the ADV, never the original.
+
+import base64  # noqa: E402
+
+
+def _readme(text):
+    return {"content": base64.b64encode(text.encode()).decode()}
+
+
+def test_admit_writes_the_adv_edge_when_the_readme_targets_only_the_adv(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Desk Tool", "https://github.com/n/desk")])
+    metas = {"repos/n/desk": _meta("n/desk", stars=30, description="A desk helper using M5Stack Cardputer", rid=31),
+             "repos/n/desk/readme": _readme("Cardputer ADV firmware. Select your Cardputer ADV and click Burn.")}
+    res = stage_admit.run(_ctx(root, metas=metas), budget=3)
+    assert res.admitted == 1
+    assert (root / "data/recipes/m5cardputer-adv__desk/recipe.md").exists()
+    assert not (root / "data/recipes/m5cardputer__desk").exists()
+    assert "Evidence check v2 PASS" in (root / "data/recipes/m5cardputer-adv__desk/recipe.md").read_text()
+
+
+def test_admit_refuses_an_edge_the_readme_rules_out(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Odd Tool", "https://github.com/n/odd")])
+    metas = {"repos/n/odd": _meta("n/odd", stars=30, description="A tool for the Cardputer", rid=32),
+             "repos/n/odd/readme": _readme("**Cardputer ADV only** — the original Cardputer has a different keyboard.")}
+    res = stage_admit.run(_ctx(root, metas=metas), budget=3)
+    assert res.admitted == 0 and res.rejects.get("evidence_check") == 1
+    assert not (root / "data/firmware/odd").exists()
+    rec = memory.load(root / "jr" / "proposed_ledger.json")["by_id"]["odd"]
+    assert rec["status"] == "rejected" and rec["reason"].startswith("evidence_check: ") and rec["expires"]
+
+
+def test_admit_with_no_readme_still_writes_what_the_description_proves(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("My Cardputer Tool", "https://github.com/n/newtool")])
+    metas = {"repos/n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=13)}
+    res = stage_admit.run(_ctx(root, metas=metas), budget=3)
+    assert res.admitted == 1 and (root / "data/recipes/m5cardputer__newtool/recipe.md").exists()
+
+
+def test_admit_writes_the_original_too_when_the_readme_names_both(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Area Tool", "https://github.com/n/area", category="cardputer-adv")])
+    metas = {"repos/n/area": _meta("n/area", stars=30, description="An OS for the Cardputer ADV", rid=33),
+             "repos/n/area/readme": _readme("Supports Cardputer ADV and Cardputer v1.1.")}
+    res = stage_admit.run(_ctx(root, metas=metas), budget=3)
+    assert res.admitted == 1
+    assert (root / "data/recipes/m5cardputer-adv__area/recipe.md").exists()
+    assert (root / "data/recipes/m5cardputer__area/recipe.md").exists()

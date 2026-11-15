@@ -159,3 +159,37 @@ def test_an_untested_caveat_beside_explicit_support_still_passes(catalog):
     readme = ("| Supported devices | M5Stack CardputerADV, original Cardputer (auto-detected at boot) |\n"
               "- Original Cardputer support hasn't been verified on real hardware by the developer yet")
     assert _v("m5cardputer", catalog, readme=readme).verdict == autoreview.PASS
+
+
+# --- v2 rules, from the real correct edges the v1 checker left UNCERTAIN ----------------------------
+
+def test_separate_rows_for_the_original_and_the_adv_are_explicit(catalog):
+    readme = "| Device | Status |\n| M5Cardputer    | ✅ Supported |\n| M5Cardputer adv| ✅ Supported |"
+    assert _v("m5cardputer", catalog, readme=readme).verdict == autoreview.PASS
+    rows = "| **M5Stack Cardputer ADV** | ESP32-S3 |\n| **M5Stack Cardputer** | ESP32-S3 |"
+    assert _v("m5cardputer", catalog, readme=rows).verdict == autoreview.PASS
+
+
+def test_original_m5stack_cardputer_is_explicit(catalog):
+    v = _v("m5cardputer", catalog, readme="NucleoOS runs on both the original M5Stack Cardputer and the newer Cardputer ADV")
+    assert v.verdict == autoreview.PASS
+
+
+def test_a_negation_not_about_support_is_not_a_doubt(catalog):
+    v = _v("m5cardputer", catalog, readme="Runs on the Cardputer and Cardputer ADV.\nThe key goes to the provider — the Cardputer isn't in the loop.")
+    assert v.verdict == autoreview.PASS
+
+
+def test_feature_level_adv_only_notes_imply_the_original(catalog):
+    v = _v("m5cardputer", catalog, readme="Embedded bytebeats for Cardputer\n+ Accelerometer: ax, ay, az (Cardputer ADV only)")
+    assert v.verdict == autoreview.PASS
+
+
+def test_a_separate_adv_branch_means_the_default_build_is_the_original(catalog):
+    v = _v("m5cardputer", catalog, readme="M5Cardputer user demo.\nIf you are using Cardputer ADV, please use the CardputerADV branch.")
+    assert v.verdict == autoreview.PASS
+
+
+def test_v2_still_refuses_the_adv_only_shapes(catalog):
+    assert _v("m5cardputer", catalog, readme="| Device |\n| M5Cardputer ADV | ✅ |").verdict == autoreview.FAIL
+    assert _v("m5cardputer", catalog, readme="Firmware for the Cardputer ADV.\nGyro: gx (ADV only)").verdict == autoreview.FAIL

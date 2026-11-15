@@ -45,6 +45,7 @@ from pathlib import Path
 
 import yaml
 
+import autoreview
 import tools
 
 RANK_KIND = {0: "repository name/description", 1: "release", 2: "platformio.ini", 3: "CI matrix", 4: "build target"}
@@ -83,7 +84,7 @@ def _flash_from(signal: dict) -> dict | None:
 
 
 def render_recipe(recipe_id: str, board: str, firmware: str, chip_family: str, firmware_url: str,
-                  signals: list[dict], today: str) -> str:
+                  signals: list[dict], today: str, receipt: str | None = None) -> str:
     """The recipe.md text for one board, from its signals (best rank first). Pure."""
     ordered = sorted(signals, key=lambda s: (s["rank"], s["token"]))
     best = ordered[0]
@@ -105,6 +106,8 @@ def render_recipe(recipe_id: str, board: str, firmware: str, chip_family: str, f
     note += ("; named by the submitter, not verified on hardware." if kind == "submission"
              else "; named in the repository itself, not verified on hardware." if kind == "repo"
              else "; derived from the repo's own build files, not verified on hardware.")
+    if receipt:
+        note += f" Evidence check {receipt}."
     lines = ["---", f"id: {recipe_id}", "type: recipe", f"board: {board}", f"firmware: {firmware}",
              "status: unverified", f"chip_family: {chip_family}"]
     if flash:
@@ -159,15 +162,75 @@ def removed_recipes(firmware_id: str, root: Path):
     return removed
 
 
-def plan_recipes(firmware_id: str, resolved: dict, *, root: Path, board_soc=None) -> dict:
+def evidence_gate(board: str, evidence: dict, catalog: dict) -> tuple[str | None, str, list]:
+    """(board to write or None, receipt, [(refused board, reason)]) for one candidate edge, from the
+    independent evidence check (jr/autoreview.py, SPEC-jr-review-routing.md §7). FAIL refuses it. An
+    original named only generically next to its catalogued sibling, where the sibling passes, becomes the
+    sibling edge. PASS and UNCERTAIN are written; the receipt says which and why."""
+    v = autoreview.check(board, evidence, catalog)
+    why = (v.reasons or [""])[0]
+    if v.verdict == autoreview.FAIL:
+        return None, "", [(board, f"evidence check v{v.rules_version}: {why}")]
+    sib = autoreview.SIBLING_BOARD.get(board)
+    if sib and sib in catalog and v.verdict == autoreview.UNCERTAIN and why.startswith("sibling"):
+        sv = autoreview.check(sib, evidence, catalog)
+        if sv.verdict == autoreview.PASS:
+            return sib, f"v{sv.rules_version} {sv.verdict} — {(sv.reasons or [''])[0]}", \
+                [(board, f"evidence check v{v.rules_version}: {why}; wrote {sib} instead")]
+    return board, f"v{v.rules_version} {v.verdict} — {why}", []
+
+
+def reverse_siblings(boards, evidence: dict, catalog: dict) -> list[tuple[str, str]]:
+    """[(original board, receipt)] for each catalogued sibling in `boards` (an edge Jr found for the
+    Cardputer-Adv) whose source ALSO names the original explicitly: firmware that supports both gets both
+    edges. Only a PASS adds one."""
+    out = []
+    for orig, sib in autoreview.SIBLING_BOARD.items():
+        if sib in boards and orig not in boards and orig in catalog:
+            v = autoreview.check(orig, evidence, catalog)
+            if v.verdict == autoreview.PASS:
+                out.append((orig, f"v{v.rules_version} {v.verdict} — {(v.reasons or [''])[0]}"))
+    return out
+
+
+def _sibling_signal(signals: list[dict], board: str, catalog: dict) -> list[dict]:
+    """The candidate's best signal, renamed for the board the evidence check moved the edge to."""
+    best = sorted(signals, key=lambda s: (s["rank"], s["token"]))[0]
+    return [dict(best, token=(catalog.get(board) or {}).get("name") or board, extra={})]
+
+
+def plan_recipes(firmware_id: str, resolved: dict, *, root: Path, board_soc=None,
+                 evidence: dict | None = None, catalog: dict | None = None) -> dict:
     """What write_recipes would do for `firmware_id` under `root`, writing nothing (the tick's
     dry-run reports it). Returns {"new": [(recipe_id, atlas_id, soc, signals)…],
-    "existing": [recipe_id…], "refused": [(atlas_id, why)…], "socs": sorted cited union}."""
+    "existing": [recipe_id…], "refused": [(atlas_id, why)…], "socs": sorted cited union,
+    "receipts": {recipe_id: evidence-check receipt}}. With `evidence` (the upstream description,
+    README, platformio.ini and asset names) and `catalog`, every NEW edge passes the evidence gate
+    first (`evidence_gate`); without it, today's behaviour."""
     board_soc = board_soc or (lambda b: tools.board_soc(b, repo=root))
-    new, existing, refused, socs = [], [], [], set()
+    new, existing, refused, socs, receipts = [], [], [], set(), {}
     removed = removed_recipes(firmware_id, root)
     override = f"jr/overrides/{firmware_id}__edges.json"
-    for atlas_id, signals in sorted(resolved.get("boards", {}).items()):
+    candidates = dict(resolved.get("boards", {}))
+    if evidence is not None and catalog is not None:
+        gated = {}
+        for board, signals in sorted(candidates.items()):
+            if (root / "data" / "recipes" / f"{board}__{firmware_id}" / "recipe.md").exists():
+                gated.setdefault(board, signals)
+                continue
+            target, receipt, refusals = evidence_gate(board, evidence, catalog)
+            refused += refusals
+            if target is None:
+                continue
+            gated.setdefault(target, signals if target == board else _sibling_signal(signals, target, catalog))
+            receipts[f"{target}__{firmware_id}"] = receipt
+        # the reverse: an edge Jr found only for the sibling, whose source also names the original explicitly
+        for orig, receipt in reverse_siblings(gated, evidence, catalog):
+            sib = autoreview.SIBLING_BOARD[orig]
+            gated[orig] = _sibling_signal(gated[sib], orig, catalog)
+            receipts[f"{orig}__{firmware_id}"] = receipt
+        candidates = gated
+    for atlas_id, signals in sorted(candidates.items()):
         soc = board_soc(atlas_id)
         if not soc:
             refused.append((atlas_id, "board has no catalogued soc"))
@@ -190,21 +253,23 @@ def plan_recipes(firmware_id: str, resolved: dict, *, root: Path, board_soc=None
         new.append((rid, atlas_id, soc, signals))
     for soc in resolved.get("socs", {}):
         socs.add(soc)
-    return {"new": new, "existing": existing, "refused": refused, "socs": sorted(socs)}
+    return {"new": new, "existing": existing, "refused": refused, "socs": sorted(socs),
+            "receipts": {k: v for k, v in receipts.items() if any(n[0] == k for n in new)}}
 
 
 def write_recipes(firmware_id: str, firmware_url: str, resolved: dict, *, root: Path, today: str,
-                  board_soc=None) -> dict:
+                  board_soc=None, evidence: dict | None = None, catalog: dict | None = None) -> dict:
     """Write the missing recipes for `firmware_id` under `root`. Returns
     {"written": [recipe_id…], "paths": [relative dir…], "existing": [recipe_id…],
      "refused": [(atlas_id, why)…], "socs": sorted cited union}.
     `board_soc` defaults to reading `root`'s own board records."""
-    plan = plan_recipes(firmware_id, resolved, root=root, board_soc=board_soc)
+    plan = plan_recipes(firmware_id, resolved, root=root, board_soc=board_soc, evidence=evidence, catalog=catalog)
     written, paths = [], []
     for rid, atlas_id, soc, signals in plan["new"]:
         rdir = root / "data" / "recipes" / rid
         rdir.mkdir(parents=True, exist_ok=True)
-        (rdir / "recipe.md").write_text(render_recipe(rid, atlas_id, firmware_id, soc, firmware_url, signals, today), encoding="utf-8")
+        (rdir / "recipe.md").write_text(render_recipe(rid, atlas_id, firmware_id, soc, firmware_url, signals, today,
+                                                      receipt=plan["receipts"].get(rid)), encoding="utf-8")
         written.append(rid)
         paths.append(str((rdir).relative_to(root)))
     return {"written": written, "paths": paths, "existing": plan["existing"], "refused": plan["refused"],

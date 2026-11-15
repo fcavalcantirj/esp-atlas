@@ -331,3 +331,72 @@ def test_a_malformed_history_fails_closed(tmp_path):
         {"firmware": "marauder", "deletes": ["data/recipes/x__marauder/recipe.md"], "history": "oops"}))
     plan = writers.plan_recipes("marauder", {"boards": {"m5cardputer": [SIG_ASSET]}, "socs": {}}, root=root, board_soc=SOC.get)
     assert plan["new"] == [] and "unreadable" in plan["refused"][0][1]
+
+
+# --- the evidence gate inside generation (SPEC-jr-review-routing.md §7, step 1) ----------------------
+
+import autoreview  # noqa: E402
+import board_alias  # noqa: E402
+
+CAT = board_alias.atlas_boards()
+SOCS = {b: r["soc"] for b, r in CAT.items()}
+SIG_REPO = {"rank": 0, "kind": "repo", "token": "Cardputer", "url": "https://github.com/o/fw", "soc": None, "line": None, "extra": {}}
+
+
+def _plan(resolved, evidence, root):
+    return writers.plan_recipes("fw", resolved, root=root, board_soc=SOCS.get, evidence=evidence, catalog=CAT)
+
+
+def test_a_failing_edge_is_refused_with_the_check_reason(tmp_path):
+    plan = _plan({"boards": {"m5cardputer": [SIG_REPO]}, "socs": {}}, {"description": "A tool for the XIAO ESP32-S3"}, tmp_path)
+    assert plan["new"] == [] and plan["refused"][0][0] == "m5cardputer"
+    assert plan["refused"][0][1].startswith("evidence check v2: named:")
+
+
+def test_a_generic_original_with_an_adv_only_source_writes_the_adv_instead(tmp_path):
+    ev = {"description": "Physical HITL for AI agents using M5Stack Cardputer", "readme": "Select your Cardputer ADV and click Burn"}
+    plan = _plan({"boards": {"m5cardputer": [SIG_REPO]}, "socs": {}}, ev, tmp_path)
+    assert [n[1] for n in plan["new"]] == ["m5cardputer-adv"]
+    assert plan["refused"][0][0] == "m5cardputer" and "m5cardputer-adv instead" in plan["refused"][0][1]
+    assert plan["receipts"]["m5cardputer-adv__fw"].startswith("v2 PASS")
+
+
+def test_an_adv_edge_with_explicit_original_support_also_writes_the_original(tmp_path):
+    ev = {"readme": "Runs on the Cardputer ADV and the original Cardputer"}
+    sig = dict(SIG_REPO, token="Cardputer ADV")
+    plan = _plan({"boards": {"m5cardputer-adv": [sig]}, "socs": {}}, ev, tmp_path)
+    assert sorted(n[1] for n in plan["new"]) == ["m5cardputer", "m5cardputer-adv"]
+
+
+def test_an_uncertain_edge_is_still_written_and_says_why(tmp_path):
+    ev = {"readme": "Flash it to your Cardputer ADV or any M5Stack Cardputer"}
+    plan = _plan({"boards": {"m5stick-s3": [dict(SIG_REPO, token="StickS3")]}, "socs": {}},
+                 {"readme": "This doesn't run on the StickS3 yet"}, tmp_path)
+    assert [n[1] for n in plan["new"]] == ["m5stick-s3"]
+    assert plan["receipts"]["m5stick-s3__fw"].startswith("v2 UNCERTAIN")
+
+
+def test_the_receipt_is_in_the_written_recipe(tmp_path):
+    (tmp_path / "data" / "recipes").mkdir(parents=True)
+    w = writers.write_recipes("fw", "https://github.com/o/fw", {"boards": {"m5cardputer": [SIG_REPO]}, "socs": {}},
+                              root=tmp_path, today=TODAY, board_soc=SOCS.get,
+                              evidence={"description": "A synth for the M5Stack Cardputer"}, catalog=CAT)
+    text = (tmp_path / "data/recipes/m5cardputer__fw/recipe.md").read_text()
+    assert w["written"] == ["m5cardputer__fw"] and "Evidence check v2 PASS" in text
+
+
+def test_no_evidence_keeps_todays_behaviour(tmp_path):
+    plan = writers.plan_recipes("fw", {"boards": {"m5cardputer": [SIG_REPO]}, "socs": {}}, root=tmp_path, board_soc=SOCS.get)
+    assert [n[1] for n in plan["new"]] == ["m5cardputer"] and plan["receipts"] == {}
+
+
+def test_a_persons_removal_beats_the_evidence_swap(tmp_path):
+    """The gate may move a generic Cardputer edge to the Cardputer-Adv, but never onto a recipe a person
+    removed through an edge override (SPEC-firmware-board-mapping.md §4 wins over §7)."""
+    (tmp_path / "jr" / "overrides").mkdir(parents=True)
+    (tmp_path / "jr" / "overrides" / "fw__edges.json").write_text(json.dumps(
+        {"firmware": "fw", "deletes": ["data/recipes/m5cardputer-adv__fw/recipe.md"]}))
+    ev = {"description": "Physical HITL for AI agents using M5Stack Cardputer", "readme": "Select your Cardputer ADV and click Burn"}
+    plan = _plan({"boards": {"m5cardputer": [SIG_REPO]}, "socs": {}}, ev, tmp_path)
+    assert plan["new"] == []
+    assert ("m5cardputer-adv", "removed by a person: jr/overrides/fw__edges.json") in plan["refused"]
