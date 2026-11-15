@@ -7,10 +7,9 @@
 import type { BrandFacet, Firmware, PartDetail, PartRecord, Recipe } from "@/lib/api";
 // Relative (not "@/") runtime imports so plain `node --test` can load this file
 // (see structured-data.test.ts); type-only imports are erased and may stay "@/".
-import { brandLabel } from "./brand.ts";
 import { faqPage } from "./faq.ts";
 import { tierClaim } from "./flash-copy.ts";
-import { firmwareMetaDescription, partMetaDescription, typeLabel, typePlural } from "./format.ts";
+import { firmwareMetaDescription, partMetaDescription, typePlural } from "./format.ts";
 import { typeIndexPath } from "./routes.ts";
 import { dataFolderUrl, repoUrl } from "./github.ts";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, websiteSearchAction } from "./site.ts";
@@ -346,13 +345,10 @@ export function partGraph(part: PartDetail) {
     publisher: { "@id": ORG_ID },
     ...(verified.length ? { dateModified: verified[verified.length - 1] } : {}),
     ...(citation.length ? { citation } : {}),
-    about: {
-      "@type": "Product",
-      name: part.name,
-      brand: { "@type": "Brand", name: brandLabel(part) },
-      manufacturer: { "@type": "Organization", name: brandLabel(part) },
-      category: `ESP32 ${typeLabel(part.type)}`,
-    },
+    // A plain Thing, never a Product: Google validates every Product as a product snippet, which
+    // needs offers, review or aggregateRating, and esp-atlas has no verified price or rating to
+    // cite (cite-or-omit). GSC flagged the nested Product as invalid on the SoC pages (2026-11-14).
+    about: { "@type": "Thing", name: part.name },
   };
 
   const indexPath = typeIndexPath(part.type);
