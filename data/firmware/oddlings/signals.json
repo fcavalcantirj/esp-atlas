@@ -1,0 +1,68 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-11-15",
+ "notes": [],
+ "ref": "main",
+ "repo": "ericliberda7/oddlings",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "Full_Merged",
+   "Oddlings",
+   "Tab5_Hub",
+   "Tab5_Hub_Full_Merged"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "Oddlings.bin",
+    "release": "v2.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Oddlings",
+   "url": "https://github.com/ericliberda7/oddlings/releases/download/v2.7/Oddlings.bin"
+  },
+  {
+   "extra": {
+    "asset": "Oddlings_Full_Merged.bin",
+    "release": "v2.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Full_Merged",
+   "url": "https://github.com/ericliberda7/oddlings/releases/download/v2.7/Oddlings_Full_Merged.bin"
+  },
+  {
+   "extra": {
+    "asset": "Oddlings_Tab5_Hub.bin",
+    "release": "v2.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Tab5_Hub",
+   "url": "https://github.com/ericliberda7/oddlings/releases/download/v2.7/Oddlings_Tab5_Hub.bin"
+  },
+  {
+   "extra": {
+    "asset": "Oddlings_Tab5_Hub_Full_Merged.bin",
+    "release": "v2.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Tab5_Hub_Full_Merged",
+   "url": "https://github.com/ericliberda7/oddlings/releases/download/v2.7/Oddlings_Tab5_Hub_Full_Merged.bin"
+  }
+ ]
+}
