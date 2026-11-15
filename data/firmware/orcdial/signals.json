@@ -1,0 +1,64 @@
+{
+ "calls": 9,
+ "errors": 0,
+ "fetched": "2026-11-15",
+ "notes": [],
+ "ref": "main",
+ "repo": "hardcoreerik/OrcDial",
+ "resolved": {
+  "boards": [
+   "m5dial"
+  ],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "M5Dial-orcdial-beta.1",
+   "m5stack-stamps3"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "OrcDial-M5Dial-orcdial-v0.1.0-beta.1.bin",
+    "release": "orcdial-v0.1.0-beta.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "M5Dial-orcdial-beta.1",
+   "url": "https://github.com/hardcoreerik/OrcDial/releases/download/orcdial-v0.1.0-beta.1/OrcDial-M5Dial-orcdial-v0.1.0-beta.1.bin"
+  },
+  {
+   "extra": {
+    "env": "dial",
+    "file": "platformio.ini",
+    "product_markers": [
+     "m5dial"
+    ]
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/hardcoreerik/OrcDial/blob/main/platformio.ini#L13"
+  },
+  {
+   "extra": {
+    "env": "doc_capture",
+    "file": "platformio.ini",
+    "product_markers": [
+     "m5dial"
+    ]
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stamps3",
+   "url": "https://github.com/hardcoreerik/OrcDial/blob/main/platformio.ini#L13"
+  }
+ ]
+}

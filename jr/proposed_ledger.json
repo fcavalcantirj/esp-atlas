@@ -4141,7 +4141,7 @@
       "pr_ref": "#1717",
       "repo": "charl3x/glide-synth-cardputer-adv",
       "status": "merged",
-      "timestamp": "2026-11-15T11:00:32.244008+00:00"
+      "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "google-dino-for-m5stickcplus2": {
       "expired_at": "2026-10-12T20:00:11.871872+00:00",
@@ -10367,9 +10367,8 @@
       "id": "m5monsterc5-cardputeradv",
       "pr_ref": "#1729",
       "repo": "c5lab/m5monsterc5-cardputeradv",
-      "repo_id": 1121236821,
-      "status": "merged",
-      "timestamp": "2026-11-15T11:00:32.244008+00:00"
+      "status": "proposed",
+      "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "m5monsterc5-tab5": {
       "expires": "2026-12-14T15:00:55.432444+00:00",
@@ -11940,9 +11939,8 @@
       "id": "meshcore-cardputer",
       "pr_ref": "#1726",
       "repo": "arthubhub/meshcore-cardputer",
-      "repo_id": 1444906952,
-      "status": "merged",
-      "timestamp": "2026-11-15T11:00:32.244008+00:00"
+      "status": "proposed",
+      "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "meshcore-cardputer-adv": {
       "id": "meshcore-cardputer-adv",
@@ -12671,12 +12669,13 @@
       "timestamp": "2026-11-14T23:00:56.203733+00:00"
     },
     "opensailingrc-display": {
+      "evidence_url": "https://github.com/FRA-222/OpenSailingRC-Display",
       "id": "opensailingrc-display",
-      "pr_ref": "#1733",
+      "pr_ref": null,
       "repo": "fra-222/opensailingrc-display",
       "repo_id": 990062494,
       "status": "proposed",
-      "timestamp": "2026-11-15T11:00:32.244008+00:00"
+      "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "opensailingrc-joystick-v2": {
       "expired_at": "2026-10-11T14:00:11.430842+00:00",
@@ -12720,12 +12719,13 @@
       "timestamp": "2026-09-11T13:00:49.050627+00:00"
     },
     "orcdial": {
+      "evidence_url": "https://github.com/hardcoreerik/OrcDial",
       "id": "orcdial",
-      "pr_ref": "#1733",
+      "pr_ref": null,
       "repo": "hardcoreerik/orcdial",
       "repo_id": 1404717120,
       "status": "merged",
-      "timestamp": "2026-11-15T11:00:32.244008+00:00"
+      "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "orcsdr": {
       "expires": "2026-12-14T20:00:55.786187+00:00",
@@ -14277,7 +14277,7 @@
       "repo": "hermes-gadget/sigurdos-tdeck",
       "repo_id": 1239026804,
       "status": "merged",
-      "timestamp": "2026-11-15T11:00:32.244008+00:00"
+      "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "sila": {
       "expires": "2026-12-15T11:00:32.244008+00:00",
@@ -14366,7 +14366,7 @@
       "repo": "nongxl/skycompass_satellite",
       "repo_id": 1265708629,
       "status": "proposed",
-      "timestamp": "2026-11-15T11:00:32.244008+00:00"
+      "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "smfpc": {
       "expires": "2026-12-15T11:00:32.244008+00:00",
@@ -15688,7 +15688,7 @@
       "pr_ref": "#1715",
       "repo": "wusiu/webradio_wusiu_cardputer_adv",
       "status": "merged",
-      "timestamp": "2026-11-15T11:00:32.244008+00:00"
+      "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "whatsapp-cardputer-m5stack": {
       "expired_at": "2026-10-12T06:00:12.168824+00:00",

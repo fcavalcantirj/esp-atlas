@@ -47,7 +47,8 @@ class TickReport:
     budget: str = ""
     warnings: list = field(default_factory=list)      # dry-run preflight notes, never fatal
     ci_watch: dict = field(default_factory=dict)      # jr/ci_watch.watch() result (SPEC-jr-self-heal.md)
-    admit_progress: dict = field(default_factory=dict)  # jr/admit_progress.watch() result: the admit stall alarm
+    admit_progress: dict = field(default_factory=dict)
+    refreshed: list = field(default_factory=list)      # jr/review_refresh.refresh() results for own review PRs  # jr/admit_progress.watch() result: the admit stall alarm
     dry_writes: list = field(default_factory=list)    # dry-run: tick-owned would-be writes (ledger, trend), {"path","field","value"}
     aborted: str = ""                                 # non-empty → the tick stopped early, why
 
@@ -118,6 +119,9 @@ def render_line(r: TickReport) -> str:
     if r.revalidate:
         reval = " · revalidate " + ("ok" if r.revalidate.get("ok") else str(r.revalidate.get("status") or r.revalidate.get("skipped") or "failed"))
     warn = "".join(f" · ⚠ {w}" for w in r.warnings)
+    done = [f"#{x.get('pr')}" for x in r.refreshed if x.get("status") in ("refreshed", "would_refresh")]
+    if done:
+        warn = f" · refreshed {', '.join(done)}" + warn
     stage_txt = "".join(f" · {s.get('name', 'stage')}: {s.get('summary', '')[:300]}" for s in r.stages if s.get("summary"))
     if r.dry_run and r.would_write:
         stage_txt += render_would_write(r.would_write)
