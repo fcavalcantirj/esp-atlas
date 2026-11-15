@@ -805,7 +805,7 @@
   "pam-551c01f820f3ab0d27e6b388": {
    "term": "ESP32-S2-DevKitM-1",
    "source": "pam_feed",
-   "status": "new",
+   "status": "validated",
    "first_seen": "2026-11-15",
    "history": [],
    "linked_work": [],
@@ -890,6 +890,26 @@
      "matches": [],
      "status": "potential_identity_gap"
     }
+   },
+   "validation": {
+    "verified_on": "2026-11-15",
+    "forbidden_ids": [
+     "esp32-s2-devkitm-1u",
+     "esp32-s2-devkitm-1ru"
+    ],
+    "verification_kind": "catalog_part",
+    "validated_by": "dasbrow-coder demand executor / run jr-research-pam-551c01f820f3ab0d27e6b388-2026-11-15",
+    "primary_sources": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html",
+     "https://dl.espressif.com/dl/schematics/ESP32-S2-DevKitM-1_V1_Schematics.pdf",
+     "https://dl.espressif.com/dl/schematics/ESP32-S2-DevKitM-1_V1_Dimensions.pdf"
+    ],
+    "expected_ids": [
+     "esp32-s2-devkitm-1"
+    ],
+    "notes": "Espressif's user guide lists six ordering codes: ESP32-S2-DevKitM-1-N4R2 (ESP32-S2-MINI-2, 4 MB flash, 2 MB PSRAM, PCB antenna), ESP32-S2-DevKitM-1 (EOL, ESP32-S2-MINI-1, 4 MB, no PSRAM, PCB antenna), ESP32-S2-DevKitM-1R (EOL, MINI-1, 4 MB, 2 MB PSRAM, PCB antenna), and the -1U/-1U-N4R2/-1RU counterparts with an external antenna connector (MINI-1U/MINI-2U). The record covers the PCB-antenna DevKitM-1 board; the U (external antenna) SKUs stay distinct and must not be authored under this id. PSRAM differs between PCB-antenna variants (0 or 2 MB), so psram_mb is omitted. Distinct from catalogued esp32-s2-devkitc-1 (SOLO/WROOM module, 8 MB flash) and esp32-s2-saola-1.",
+    "identity_verified": true,
+    "term_key": "esp32 s2 devkitm 1"
    }
   }
  }
