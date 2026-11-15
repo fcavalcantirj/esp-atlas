@@ -20,7 +20,7 @@ RULES_VERSION = "1"
 # claimed board -> regex of the sibling that does not prove it (SIBLING_LABEL names it in reasons).
 SIBLINGS: dict[str, str] = {
     # "Cardputer ADV", "Cardputer (ADV)", "ADV Cardputer", "Cardputer Advanced", or its ADV-only keyboard chip
-    "m5cardputer": (r"cardputer[\s_-]*\(?\s*adv(anced)?(?![a-z])|\badv(anced)?[\s_-]*(m5\s*(stack\s*)?)?cardputer"
+    "m5cardputer": (r"cardputer[\s_-]*[\(\[\{]?\s*adv(anced)?(?![a-z])|\badv(anced)?[\s_-]*(m5\s*(stack\s*)?)?cardputer"
                     r"|\btca8418\b"),
 }
 SIBLING_LABEL: dict[str, str] = {"m5cardputer": "Cardputer ADV"}
@@ -36,6 +36,9 @@ EXPLICIT_ORIGINAL: dict[str, str] = {
 CARRIERS: dict[str, tuple[str, ...]] = {
     "m5stamp-s3": ("cardputer", "sticks3", "stick_s3", "dial", "dinmeter", "capsule", "atoms3", "airq"),
 }
+# A caveat about the original, not a claim of support (DasBrow, room 12192)
+CAVEAT = re.compile(r"\b(untested|not\s+(yet\s+)?tested|unverified|not\s+(yet\s+)?(been\s+)?verified"
+                    r"|hasn'?t\s+(yet\s+)?been\s+(tested|verified)|experimental)\b", re.I)
 # A mention that does not say the firmware targets the board: provenance, roadmap, or a hardware version
 # that does not exist (the Cardputer is v1.0 / v1.1; "v2" names something else). DasBrow's #1722 review.
 NONTARGET = re.compile(r"\b(ported\s+from|port\s+of|inspired\s+by|based\s+on|fork(ed)?\s+(of|from)|derived\s+from"
@@ -154,7 +157,8 @@ def check(board: str, sources: dict, catalog: dict) -> Verdict:
                                 and re.search(EXPLICIT_ORIGINAL[board], x, re.I) for x in sentences if statement(x))
         if adv_only or any(excl and re.search(excl, x, re.I) and statement(x) for x in orig):
             return Verdict(FAIL, ["sibling: the source rules the original out explicitly"])
-        explicit = any(statement(x) for x in orig)
+        # "the original Cardputer is untested" is a caveat, not support: it never counts on its own
+        explicit = any(statement(x) and not CAVEAT.search(x) for x in orig)
         names = [_compact(a) for a in assets.split()]
         both_assets = any("adv" in a for a in names) and any("cardputer" in a and "adv" not in a for a in names)
         env_names = {_compact(e["name"]) for e in envs}

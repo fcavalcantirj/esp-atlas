@@ -138,3 +138,24 @@ def test_the_adv_keyboard_chip_alone_marks_the_adv(catalog):
 def test_a_build_env_for_the_board_is_a_target_even_when_prose_says_ported_from(catalog):
     v = _v("m5cardputer", catalog, readme="Ported from the Cardputer version.", platformio="[env:cardputer]\nboard = m5stack-stamps3\n")
     assert v.verdict == autoreview.PASS
+
+
+# --- DasBrow's review of #1722 @180e2c70 (room 12192) --------------------------------------------------
+
+@pytest.mark.parametrize("text", ["Firmware for the Cardputer [ADV] edition.", "Firmware for the Cardputer {ADV}."],
+                         ids=["brackets", "braces"])
+def test_adv_in_any_bracket_is_the_adv(text, catalog):
+    assert _v("m5cardputer", catalog, description=text).verdict == autoreview.FAIL
+
+
+def test_an_untested_original_is_a_caveat_not_support(catalog):
+    v = _v("m5cardputer", catalog, description="Requires Cardputer ADV; the original Cardputer is untested.")
+    assert v.verdict == autoreview.UNCERTAIN
+
+
+def test_an_untested_caveat_beside_explicit_support_still_passes(catalog):
+    """c-p-s (labelled correct): "Supported devices | M5Stack CardputerADV, original Cardputer" AND "Original
+    Cardputer support hasn't been verified on real hardware by the developer yet"."""
+    readme = ("| Supported devices | M5Stack CardputerADV, original Cardputer (auto-detected at boot) |\n"
+              "- Original Cardputer support hasn't been verified on real hardware by the developer yet")
+    assert _v("m5cardputer", catalog, readme=readme).verdict == autoreview.PASS
