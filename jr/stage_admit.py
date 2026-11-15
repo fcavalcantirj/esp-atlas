@@ -195,6 +195,24 @@ def _meta_from_api(doc: dict) -> dict:
     }
 
 
+def _fetch_readme(gh, owner_repo: str) -> str:
+    """The README text (one charged `gh api repos/<o>/<r>/readme`), '' when there is none or it cannot
+    be read: the evidence gate then judges on the description alone, never on a guess."""
+    import base64
+    try:
+        p = gh("api", f"repos/{owner_repo}/readme")
+    except BudgetExceeded:
+        raise
+    except Exception:  # noqa: BLE001
+        return ""
+    if getattr(p, "returncode", 1) != 0:
+        return ""
+    try:
+        return base64.b64decode(json.loads(p.stdout or "{}").get("content") or "").decode("utf-8", "ignore")
+    except (ValueError, AttributeError):
+        return ""
+
+
 def _fetch_meta(gh, owner_repo: str):
     """One charged `gh api repos/<owner>/<repo>`; (meta, fetched). Unparseable owner/repo or
     any gh failure maps to {"error": ...} without raising, so the scorer's repo_unresolved
@@ -733,6 +751,29 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             if issue:
                 _answer(ctx, slug, issue, _verdict_text(reason, False, False))
             continue
+        # The evidence gate (SPEC-jr-review-routing.md §7): a board picked from the repo's name or
+        # description passes the independent check, which also reads the README (one charged call).
+        # FAIL refuses the candidate; "Cardputer" named only generically next to an ADV-only README
+        # becomes the Cardputer-Adv edge. Submissions and build-file signals carry their own evidence.
+        receipt, ev_text = None, None
+        if not (evidence is not None and rec["board"] == hint_board):
+            ev_text = {"description": " ".join(x for x in (entry.get("name"), meta.get("description"),
+                                                         entry.get("description")) if x),
+                       "readme": _fetch_readme(ctx.gh, owner_repo)}
+            target, receipt, refusals = writers.evidence_gate(rec["board"], ev_text, board_alias.atlas_boards(ctx.root))
+            if target is None:
+                reason = "evidence_check: " + refusals[0][1].split(": ", 1)[1]
+                note(skip_reject(out_id, owner_repo, reason, repo_id, issue=issue))
+                if issue:
+                    _answer(ctx, slug, issue, _verdict_text(reason, False, False))
+                continue
+            if target != rec["board"]:
+                if tools.board_soc(target, repo=ctx.root) != rec["chip"]:
+                    note(skip_reject(out_id, owner_repo, f"chip_family_mismatch: evidence moved the edge to '{target}'",
+                                     repo_id, issue=issue))
+                    continue
+                lines.append(f"{out_id}: evidence check moved the edge {rec['board']} -> {target}")
+                rec = dict(rec, board=target)
         if res.get("needs_human"):
             needs_human = True
         if ctx.dry_run:
@@ -783,8 +824,20 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
             rdir.mkdir(parents=True, exist_ok=True)
             (rdir / "recipe.md").write_text(
                 writers.render_recipe(f"{rec['board']}__{out_id}", rec["board"], out_id, rec["chip"],
-                                      repo_url, [signal], today), encoding="utf-8")
+                                      repo_url, [signal], today, receipt=receipt), encoding="utf-8")
             paths.append(str(rdir.relative_to(ctx.root)))
+            # firmware that names both the Cardputer-Adv and the original explicitly gets both edges (§7)
+            if ev_text is not None:
+                cat = board_alias.atlas_boards(ctx.root)
+                for orig, orig_receipt in writers.reverse_siblings({rec["board"]}, ev_text, cat):
+                    odir = ctx.root / "data" / "recipes" / f"{orig}__{out_id}"
+                    if tools.board_soc(orig, repo=ctx.root) == rec["chip"] and not (odir / "recipe.md").exists():
+                        odir.mkdir(parents=True, exist_ok=True)
+                        osig = dict(signal, token=(cat.get(orig) or {}).get("name") or orig, extra={})
+                        (odir / "recipe.md").write_text(
+                            writers.render_recipe(f"{orig}__{out_id}", orig, out_id, rec["chip"], repo_url, [osig],
+                                                  today, receipt=orig_receipt), encoding="utf-8")
+                        paths.append(str(odir.relative_to(ctx.root)))
         memory.record_proposed(out_id, owner_repo, repo_id=repo_id, evidence_url=repo_url,
                                path=ctx.ledger_path, now=ctx.now)
         if evidence is not None and rec["board"] == hint_board:

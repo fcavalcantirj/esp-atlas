@@ -196,6 +196,64 @@ main was forgotten the same way.
   veto releases the firmware on its own. Hydration, review decisions (§5), the classifier, the
   device-evidence gate, the `jr-review` label and the open-review cap are unchanged.
 
+### 7. Autoreview: an independent evidence check of every jr-review edge (shadow first, 2026-11-15)
+
+**Why.** Every new firmware and recipe routes `jr-review` and waits for a person or agent reviewer.
+Over 14 days (Nov 1–14) that was 53 tick PRs, median wait 8.5 h (p90 17 h, max 74 h), and the
+cap of 10 open review PRs stops admission. Review is not optional, though: in the same window it
+caught recipes whose cited evidence named a sibling variant (the "Cardputer ADV" firmware filed
+under the original Cardputer; a Plus2 env read as a StickC), a carrier-module id under a product
+build, and a category keyword matched inside another word. One of those was missed by both
+reviewers. Autonomy therefore means a stronger, mechanical review, not skipping review.
+
+**The checker (`jr/autoreview.py`).** Pure, deterministic, offline-testable. For one recipe edge
+`<board>__<firmware>` and the text of the source it cites (fetched at a pinned commit where the
+URL allows), it returns `PASS`, `FAIL` or `UNCERTAIN` with reasons. It has its **own** rules and
+tables; it never calls `jr/device_map`, `jr/board_alias` or the admit scorer, so it cannot repeat
+the mapping mistake it is checking for. The rules, each one tested on the real cases above:
+- **named:** the source names the claimed board itself (its catalog name or an alias in the
+  checker's table), as text, not only through a URL or a generated note. Not named → `FAIL`.
+- **sibling:** the source names a more specific sibling of the claimed board (Cardputer **ADV**
+  for `m5cardputer`, Stick**C Plus2** for a StickC, a product built on a carrier module) and never
+  the claimed board on its own → `FAIL`.
+- **negation:** a mention of the claimed board in a sentence that says it is not supported → `UNCERTAIN`.
+- **carrier:** the claimed board is a carrier module (`m5stamp-s3`) and the evidence is a build
+  environment or library that names a product built on it → `FAIL`.
+- **unreadable:** no source, an unpinned or unreachable source, or an evidence class the checker
+  does not know → `UNCERTAIN`. Never a guess.
+
+A `PASS` says only that the cited upstream text targets the claimed board. The recipe stays
+`unverified` (not hardware-tested), and a PR passes only if **every** claim it adds passes.
+
+**Step 1: the gate inside generation (owner, 2026-11-15: "algorithm must clearly improve").** The same
+check runs **before** Jr writes an edge, at both write points: the admit stage's first recipe (the board
+picked from the repo's name or description; submissions and build-file signals keep their own evidence)
+and boardmap's `writers.plan_recipes`. The evidence is what Jr already read (description, the
+`platformio.ini` derive fetched, release asset names) plus one counted README read per candidate.
+- `FAIL` → the edge is not written (admit records `evidence_check: <reason>`; boardmap lists it refused).
+- "Cardputer" named only generically beside an ADV-only source, where the Cardputer-Adv passes → the
+  Cardputer-Adv edge is written instead (`writers.evidence_gate`).
+- An edge found only for the Cardputer-Adv whose source also names the original explicitly → both edges
+  (`writers.reverse_siblings`).
+- Every written edge carries its receipt in the recipe notes: `Evidence check v<N> <PASS|UNCERTAIN> — <reason>`.
+
+Measured with `jr/autoreview_replay.py` (Jr's real admit + boardmap code, replayed offline on recorded
+GitHub answers; `jr/fixtures/autoreview/replay-metrics.json`):
+
+| | without the gate | with the gate |
+|---|---|---|
+| known-wrong edges written | 8 / 43 | **0 / 43** |
+| known-correct edges found | 17 / 23 | **20 / 23** |
+| Cardputer-Adv edges for the 22 ADV-only firmware | 9 / 22 | **16 / 22** |
+| written edges that PASS (auto-merge eligible) | 88.4 % | **100 %** |
+
+**Shadow, then canary.** Phase 1 runs the checker and reports; it never merges. It is replayed on
+the labelled history: every wrong edge preserved in `jr/overrides/*__edges.json` (42 at the time
+of writing) must come out `FAIL` or `UNCERTAIN`, and the edges both blind audits of 2026-11-15
+agreed are correct must come out `PASS` or `UNCERTAIN`. A false `PASS` on a known-wrong edge blocks
+phase 2. Phase 2 (a separate change) lets the tick auto-merge one fully passing review PR a day,
+at its exact head, with a kill switch and the review cap kept.
+
 ### 8. Jr keeps its own review PRs mergeable (2026-11-15)
 
 **Why.** Every tick PR edits `jr/proposed_ledger.json`, so a `jr-review` PR conflicts with main as soon as
@@ -213,7 +271,8 @@ decisions that existed only in the PR.
   for a person;
 - the ledger becomes `memory.merge_pr_ledger(main, merge base, PR head)`: main's, plus every record the PR
   changed under `carry_decisions`' rules, plus the PR's own proposals; every other bookkeeping file is
-  main's. `scripts/ledger_guard.py` must be green against main, and every catalog file the PR changed must
+  main's (a PR's own `jr/board_cooldown.json` entries are dropped and re-derived the next time that board
+  fails, as for a superseded bookkeeping PR). `scripts/ledger_guard.py` must be green against main, and every catalog file the PR changed must
   be byte-identical to its head (a silent auto-merge into a reviewed file is refused);
 - the result is a merge commit on top of the PR head, pushed without force (fast-forward only).
 Anything else is a skip with the reason in the tick report; nothing is pushed. A dry run reports
