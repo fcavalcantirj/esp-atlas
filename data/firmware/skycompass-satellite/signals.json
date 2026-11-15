@@ -1,0 +1,32 @@
+{
+ "calls": 6,
+ "errors": 0,
+ "fetched": "2026-11-15",
+ "notes": [],
+ "ref": "main",
+ "repo": "nongxl/SkyCompass_Satellite",
+ "resolved": {
+  "boards": [
+   "m5cardputer"
+  ],
+  "socs": [],
+  "unresolved": []
+ },
+ "signals": [
+  {
+   "extra": {
+    "env": "m5stack-cardputer",
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
+   },
+   "kind": "platformio",
+   "line": 5,
+   "rank": 2,
+   "soc": null,
+   "token": "esp32-s3-devkitc-1",
+   "url": "https://github.com/nongxl/SkyCompass_Satellite/blob/main/platformio.ini#L5"
+  }
+ ]
+}
