@@ -97,6 +97,13 @@ Each extracted item keeps its **source URL + source type** for provenance.
   goes to that product (`[env:cardputer]` to `m5cardputer`). An env with no product marker keeps
   the module (`stamps3`, `release`). A wrong edge already on main is removed through
   `jr/overrides/<firmware>__edges.json`, which `scripts/g2_guard.py` requires.
+- **Cardputer-Adv is its own board (2026-11-14).** `m5cardputer-adv` (docs.m5stack.com/en/core/Cardputer-Adv:
+  Stamp-S3A, TCA8418 I2C keyboard, ES8311, BMI270, EXT 2.54-14P) is not the original `m5cardputer` (GPIO key
+  matrix). `jr/device_map.py` maps text naming the ADV alone ("Cardputer ADV", "Cardputer-Adv",
+  "cardputeradv"; "adv" must end there, so "AdvanceOS" is not it) to `m5cardputer-adv`; any plain "Cardputer"
+  mention, including "Cardputer & ADV", keeps `m5cardputer`. The Launcher category `cardputer-adv` falls back
+  to `m5cardputer-adv`, and `[env:cardputer-adv]` resolves to it by the catalog name. Toolchains have no
+  single-product id for it (`m5stack_cardputer` covers both), so it carries no `aka`.
 
 ### 4.1 Jr retracts its own wrong edges (owner, 2026-11-11: "atlas jr's auto fixes himself")
 When boardmap re-reads a firmware it also checks that firmware's existing recipes. It retracts a recipe
