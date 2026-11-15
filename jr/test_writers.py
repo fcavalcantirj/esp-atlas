@@ -286,3 +286,25 @@ def test_render_firmware_neither_present_writes_no_popularity_block():
     assert "popularity" not in fm
     fm2 = _rendered_fm(writers.render_firmware(FW_RECORD, FW_SOURCES, TODAY, popularity=None))
     assert "popularity" not in fm2
+
+
+def test_plan_recipes_refuses_a_recipe_a_person_removed(tmp_path):
+    root = tmp_path
+    (root / "jr" / "overrides").mkdir(parents=True)
+    (root / "jr" / "overrides" / "marauder__edges.json").write_text(json.dumps(
+        {"firmware": "marauder", "deletes": ["data/recipes/m5cardputer__marauder/recipe.md"]}))
+    resolved = {"boards": {"m5cardputer": [SIG_ASSET], "esp32-s3-devkitc-1": [SIG_PIO]}, "socs": {}}
+    plan = writers.plan_recipes("marauder", resolved, root=root, board_soc=SOC.get)
+    assert [n[0] for n in plan["new"]] == ["esp32-s3-devkitc-1__marauder"]
+    assert plan["refused"] == [("m5cardputer", "removed by a person: jr/overrides/marauder__edges.json")]
+
+
+def test_an_unreadable_override_blocks_every_write_for_that_firmware(tmp_path):
+    """A broken override must not silently re-enable writes: it refuses every board of that firmware."""
+    root = tmp_path
+    (root / "jr" / "overrides").mkdir(parents=True)
+    (root / "jr" / "overrides" / "marauder__edges.json").write_text("{not json")
+    resolved = {"boards": {"m5cardputer": [SIG_ASSET]}, "socs": {}}
+    plan = writers.plan_recipes("marauder", resolved, root=root, board_soc=SOC.get)
+    assert plan["new"] == []
+    assert plan["refused"] == [("m5cardputer", "edge override jr/overrides/marauder__edges.json is unreadable: a person decides")]

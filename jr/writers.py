@@ -39,6 +39,7 @@ tools.capability_vocab(). It returns text; the caller writes it.
 """
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -127,12 +128,35 @@ def render_recipe(recipe_id: str, board: str, firmware: str, chip_family: str, f
     return "\n".join(lines) + "\n\n" + "\n".join(body) + "\n"
 
 
+UNREADABLE = None
+
+
+def removed_recipes(firmware_id: str, root: Path):
+    """The recipe paths a person removed for `firmware_id` (the `deletes` of
+    jr/overrides/<firmware_id>__edges.json, SPEC-firmware-board-mapping.md §4): boardmap never writes
+    them back. An empty set when there is no override; UNREADABLE (None) when the file exists but
+    cannot be read, and then the caller writes nothing for this firmware (a broken override must
+    never silently re-enable what a person removed)."""
+    path = root / "jr" / "overrides" / f"{firmware_id}__edges.json"
+    if not path.exists():
+        return set()
+    try:
+        deletes = json.loads(path.read_text(encoding="utf-8")).get("deletes")
+    except (OSError, ValueError, AttributeError):
+        return UNREADABLE
+    if not isinstance(deletes, list):
+        return UNREADABLE
+    return {str(d) for d in deletes}
+
+
 def plan_recipes(firmware_id: str, resolved: dict, *, root: Path, board_soc=None) -> dict:
     """What write_recipes would do for `firmware_id` under `root`, writing nothing (the tick's
     dry-run reports it). Returns {"new": [(recipe_id, atlas_id, soc, signals)…],
     "existing": [recipe_id…], "refused": [(atlas_id, why)…], "socs": sorted cited union}."""
     board_soc = board_soc or (lambda b: tools.board_soc(b, repo=root))
     new, existing, refused, socs = [], [], [], set()
+    removed = removed_recipes(firmware_id, root)
+    override = f"jr/overrides/{firmware_id}__edges.json"
     for atlas_id, signals in sorted(resolved.get("boards", {}).items()):
         soc = board_soc(atlas_id)
         if not soc:
@@ -146,6 +170,12 @@ def plan_recipes(firmware_id: str, resolved: dict, *, root: Path, board_soc=None
         socs.add(soc)
         if (root / "data" / "recipes" / rid / "recipe.md").exists():
             existing.append(rid)
+            continue
+        if removed is UNREADABLE:
+            refused.append((atlas_id, f"edge override {override} is unreadable: a person decides"))
+            continue
+        if f"data/recipes/{rid}/recipe.md" in removed:
+            refused.append((atlas_id, f"removed by a person: {override}"))
             continue
         new.append((rid, atlas_id, soc, signals))
     for soc in resolved.get("socs", {}):
