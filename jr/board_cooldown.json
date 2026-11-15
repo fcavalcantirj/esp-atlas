@@ -487,7 +487,7 @@
     },
     "heltec-wireless-stick-v3": {
       "board": "heltec-wireless-stick-v3",
-      "expires": "2026-11-15T20:00:54.954530+00:00",
+      "expires": "2026-11-22T21:00:31.486348+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -495,11 +495,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-08T20:00:54.954530+00:00"
+      "timestamp": "2026-11-15T21:00:31.486348+00:00"
     },
     "heltec-wireless-tracker": {
       "board": "heltec-wireless-tracker",
-      "expires": "2026-11-15T20:00:54.954530+00:00",
+      "expires": "2026-11-22T21:00:31.486348+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -507,19 +507,19 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-08T20:00:54.954530+00:00"
+      "timestamp": "2026-11-15T21:00:31.486348+00:00"
     },
     "lilygo-t-beam": {
       "board": "lilygo-t-beam",
-      "expires": "2026-11-15T20:00:54.954530+00:00",
+      "expires": "2026-11-22T21:00:31.486348+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
-          "vendor": "doc_unreachable"
+          "vendor": "field_absent"
         }
       },
-      "reason": "doc-unreachable",
-      "timestamp": "2026-11-08T20:00:54.954530+00:00"
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-15T21:00:31.486348+00:00"
     },
     "lilygo-t-deck": {
       "board": "lilygo-t-deck",
