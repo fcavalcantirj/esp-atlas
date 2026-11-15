@@ -248,3 +248,74 @@ def test_a_firmware_named_in_full_beats_one_that_only_shares_a_name_token(monkey
         assert firmware_named_in("run Meshcore")[0]["id"] == "meshcore-cardputer-adv"
         assert firmware_named_in("run meshcore-cardputer")[0]["id"] == "meshcore-cardputer"
         assert firmware_named_in("run meshcore-cardputer-adv")[0]["id"] == "meshcore-cardputer-adv"
+
+
+def test_a_generic_name_token_never_hijacks_a_filter_query(monkeypatch):
+    """PR 1736: Jr admitted `smart-rattle` (name "Smart rattle"); its lone name token "smart" became
+    a firmware key and captured "thread zigbee matter smart-home mesh" (coverage matrix case 18).
+    A common English word is not a firmware's identity; its full name and id still route."""
+    from esp_atlas_core import intent
+
+    fake = [{"id": "smart-rattle", "name": "Smart rattle"}, {"id": "marauder", "name": "ESP32 Marauder"}]
+    monkeypatch.setattr(intent, "list_firmware", lambda: fake)
+
+    assert firmware_named_in("thread zigbee matter smart-home mesh") == []
+    assert firmware_named_in("a smart board for my home") == []
+    assert [fw["id"] for fw in firmware_named_in("run smart-rattle")] == ["smart-rattle"]
+    assert [fw["id"] for fw in firmware_named_in("run Smart rattle")] == ["smart-rattle"]
+    assert [fw["id"] for fw in firmware_named_in("run marauder")] == ["marauder"]
+
+
+def test_a_name_token_inside_a_hyphenated_compound_is_not_the_firmware(monkeypatch):
+    """A distinctive token still must not match a mere piece of a hyphenated word in the query:
+    "rattle-proof case" is not "Smart rattle". The firmware's own hyphenated name still routes."""
+    from esp_atlas_core import intent
+
+    fake = [{"id": "smart-rattle", "name": "Smart rattle"}, {"id": "marauder", "name": "ESP32 Marauder"}]
+    monkeypatch.setattr(intent, "list_firmware", lambda: fake)
+
+    assert firmware_named_in("a rattle-proof case") == []
+    assert [fw["id"] for fw in firmware_named_in("a rattle toy")] == ["smart-rattle"]
+    assert [fw["id"] for fw in firmware_named_in("run esp32-marauder")] == ["marauder"]
+
+
+def test_the_smart_home_filter_query_stays_a_filter_query(built_db_path, monkeypatch):
+    """End to end: with a generic-named firmware in the catalogue, parse_intent still answers
+    the capability query with filters (coverage matrix 18_thread_zigbee_matter)."""
+    from esp_atlas_core import intent
+
+    real = intent.list_firmware()
+    monkeypatch.setattr(intent, "list_firmware", lambda: real + [{"id": "smart-rattle", "name": "Smart rattle"}])
+    stub = StubLLM({"filters": {"radio": "thread"}, "unmapped": []})
+    parsed = parse_intent("thread zigbee matter smart-home mesh", llm_client=stub,
+                          db_path=built_db_path, use_cache=False)
+    assert parsed["kind"] != "firmware"
+    assert stub.calls, "a filter query must reach the parser"
+
+
+def test_a_barred_generic_word_still_ranks_the_firmware_that_carries_it(monkeypatch):
+    """Barring "portal" as a lone key must not turn "run evil portal" into a catalogue-order coin
+    toss among every firmware sharing the token "evil": the one whose name carries both words wins."""
+    from esp_atlas_core import intent
+
+    fake = [{"id": "evil-m5project", "name": "Evil-M5Project"},
+            {"id": "evil-portal-m5stack", "name": "Evil Portal for Cardputer"},
+            {"id": "semi-evil-m5dial", "name": "Semi-Evil M5Dial"}]
+    for order in (fake, list(reversed(fake))):
+        monkeypatch.setattr(intent, "list_firmware", lambda order=order: order)
+        assert firmware_named_in("run evil portal")[0]["id"] == "evil-portal-m5stack"
+        assert firmware_named_in("a captive portal board") == []
+
+
+def test_a_compound_made_of_the_firmwares_own_name_words_still_routes(monkeypatch):
+    """The hyphen rule bars a token glued to a FOREIGN word ("smart-home"); a compound spelled
+    entirely from the firmware's own name ("flipper-zero", "bit-pirate") still names it."""
+    from esp_atlas_core import intent
+
+    fake = [{"id": "flipper-zero-esp32-adv", "name": "Flipper Zero Meets Cardputers"},
+            {"id": "esp32-bit-pirate", "name": "ESP32 Bit Pirate"}]
+    monkeypatch.setattr(intent, "list_firmware", lambda: fake)
+
+    assert [fw["id"] for fw in firmware_named_in("run flipper-zero")] == ["flipper-zero-esp32-adv"]
+    assert [fw["id"] for fw in firmware_named_in("run bit-pirate")] == ["esp32-bit-pirate"]
+    assert firmware_named_in("a pirate-themed case") == []
