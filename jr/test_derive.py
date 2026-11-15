@@ -419,11 +419,12 @@ def test_resolve_env_names_the_product_when_board_is_the_module_it_is_built_on(r
 def test_resolve_treats_a_carrier_module_under_a_product_build_as_chip_evidence_only(real_catalog):
     """SPEC-firmware-board-mapping.md section 4. Env names that do not resolve exactly, and builds
     whose libraries or flags name the product, prove the chip and never the bare Stamp S3. An exact
-    product env still wins, and a module env with no product marker keeps the module."""
+    product env still wins, and a module env with no product marker keeps the module. (daoa-mini's
+    `[env:cardputer-adv]` left this list on 2026-11-14: it now resolves exactly to the catalogued
+    m5cardputer-adv, see test_cardputer_adv.py.)"""
     base = {"rank": 2, "kind": "platformio", "token": "m5stack-stamps3", "url": "u", "soc": None, "line": 1}
     wrong = [
         {"env": "cardputer_release", "file": "platformio.ini"},                                        # adversary
-        {"env": "cardputer-adv", "file": "platformio.ini"},                                            # daoa-mini
         {"env": "Cardputer-dev", "file": "platformio.ini"},                                            # m5gotchi
         {"env": "ghostble_sticks3", "file": "platformio.ini"},                                         # GhostBLE
         {"env": "m5stack-stamps3", "file": "platformio.ini", "product_markers": ["cardputer"]},        # tamaputer: module env, Cardputer library

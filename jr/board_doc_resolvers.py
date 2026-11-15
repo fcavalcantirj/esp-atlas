@@ -88,6 +88,7 @@ def doc_url_candidates(board_id: str, soc: str) -> list[str]:
 # stick/atom/stamp doc tree on docs.m5stack.com — the product name alone selects the page).
 M5STACK_DOC_PATHS: dict[str, str] = {
     "m5cardputer": "core/Cardputer",
+    "m5cardputer-adv": "core/Cardputer-Adv",
     "m5stack-core2": "core/core2",
     "m5stack-cores3": "core/CoreS3",
     "m5stack-papers3": "core/papers3",
