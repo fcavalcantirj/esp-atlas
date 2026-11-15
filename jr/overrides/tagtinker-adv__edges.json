@@ -1,0 +1,20 @@
+{
+  "firmware": "tagtinker-adv",
+  "repo": "i12bp8/tagtinker-adv",
+  "action": "edge_correction",
+  "deletes": [
+    "data/recipes/m5cardputer__tagtinker-adv/recipe.md"
+  ],
+  "classification": "adv_only_target_not_original_cardputer",
+  "why": "The repository targets the M5Stack Cardputer-Adv (README: \"TagTinker ADV turns the Cardputer ADV into a handheld infrared shelf-label editor.\"), a different board from the original Cardputer (Stamp-S3A with a TCA8418 I2C keyboard, ES8311, BMI270, versus the original's GPIO key matrix), and states no support for the original. The m5cardputer recipe was Jr's old 'Cardputer ADV -> m5cardputer' mapping; the edge now lives in m5cardputer-adv__tagtinker-adv. ADV-only in two independent blind audits (review room entries 12118 and 12122).",
+  "sources": [
+    "https://github.com/i12bp8/tagtinker-adv/blob/fb8a0669bbdfe77c51bdbd5adbb8cb2ab00f2db2/README.md",
+    "https://docs.m5stack.com/en/core/Cardputer-Adv"
+  ],
+  "historical_parent_sha": "5e88736060af72d5a57e90339c9ff22cc61af8f5",
+  "directed_by": "owner",
+  "date": "2026-11-15",
+  "originals": {
+    "data/recipes/m5cardputer__tagtinker-adv/recipe.md": "---\nid: m5cardputer__tagtinker-adv\ntype: recipe\nboard: m5cardputer\nfirmware: tagtinker-adv\nstatus: unverified\nchip_family: esp32-s3\nnotes: \"tagtinker-adv names this board as Cardputer in its repository name/description; named in the repository itself, not verified on hardware.\"\nsources:\n- field: '*'\n  url: https://github.com/i12bp8/tagtinker-adv\n  verified: '2026-09-11'\n- field: board\n  url: https://github.com/i12bp8/tagtinker-adv\n  verified: '2026-09-11'\n---\n\n# m5cardputer x tagtinker-adv\n\n`tagtinker-adv` declares `Cardputer` in its repository name/description; that name resolves to the catalogued board `m5cardputer` (esp32-s3). Status `unverified` until someone with the hardware confirms it.\n\n- rank 0 repo: `Cardputer` — https://github.com/i12bp8/tagtinker-adv\n"
+  }
+}

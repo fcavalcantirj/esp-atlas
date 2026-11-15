@@ -1,0 +1,20 @@
+{
+  "firmware": "flipper-zero-esp32-adv",
+  "repo": "Sor3nt/Flipper-Zero-ESP32-Port",
+  "action": "edge_correction",
+  "deletes": [
+    "data/recipes/m5cardputer__flipper-zero-esp32-adv/recipe.md"
+  ],
+  "classification": "adv_only_target_not_original_cardputer",
+  "why": "The repository targets the M5Stack Cardputer-Adv (README: \"M5Stick S3 and Cardputer ADV are early bring-up\"), a different board from the original Cardputer (Stamp-S3A with a TCA8418 I2C keyboard, ES8311, BMI270, versus the original's GPIO key matrix), and states no support for the original. The m5cardputer recipe was Jr's old 'Cardputer ADV -> m5cardputer' mapping; the edge now lives in m5cardputer-adv__flipper-zero-esp32-adv. ADV-only in two independent blind audits (review room entries 12118 and 12122).",
+  "sources": [
+    "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/e6ec11972a8e025d7ab686a6ef3016cf52360834/README.md",
+    "https://docs.m5stack.com/en/core/Cardputer-Adv"
+  ],
+  "historical_parent_sha": "5e88736060af72d5a57e90339c9ff22cc61af8f5",
+  "directed_by": "owner",
+  "date": "2026-11-15",
+  "originals": {
+    "data/recipes/m5cardputer__flipper-zero-esp32-adv/recipe.md": "---\nid: m5cardputer__flipper-zero-esp32-adv\ntype: recipe\nboard: m5cardputer\nfirmware: flipper-zero-esp32-adv\nstatus: unverified\nchip_family: esp32-s3\nsources:\n- field: '*'\n  url: https://github.com/0xhalloween/Flipper-Zero-ESP32-ADV\n  verified: '2026-08-27'\n---\n\nFlipper Zero Meets Cardputers on the m5cardputer (esp32-s3). `unverified`; the repo lists m5cardputer as a supported device.\n"
+  }
+}

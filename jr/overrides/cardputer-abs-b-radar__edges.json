@@ -1,0 +1,20 @@
+{
+  "firmware": "cardputer-abs-b-radar",
+  "repo": "Jay-Jayismyname1/Cardputer-ADV-B-Radar",
+  "action": "edge_correction",
+  "deletes": [
+    "data/recipes/m5cardputer__cardputer-abs-b-radar/recipe.md"
+  ],
+  "classification": "adv_only_target_not_original_cardputer",
+  "why": "The repository targets the M5Stack Cardputer-Adv (README: \"A flight tracking firmware for the Cardputer ADV\"), a different board from the original Cardputer (Stamp-S3A with a TCA8418 I2C keyboard, ES8311, BMI270, versus the original's GPIO key matrix), and states no support for the original. The m5cardputer recipe was Jr's old 'Cardputer ADV -> m5cardputer' mapping; the edge now lives in m5cardputer-adv__cardputer-abs-b-radar. ADV-only in two independent blind audits (review room entries 12118 and 12122).",
+  "sources": [
+    "https://github.com/Jay-Jayismyname1/Cardputer-ADV-B-Radar/blob/9df5e7de309d8469393a626465dde6d8b6bf5147/README.md",
+    "https://docs.m5stack.com/en/core/Cardputer-Adv"
+  ],
+  "historical_parent_sha": "5e88736060af72d5a57e90339c9ff22cc61af8f5",
+  "directed_by": "owner",
+  "date": "2026-11-15",
+  "originals": {
+    "data/recipes/m5cardputer__cardputer-abs-b-radar/recipe.md": "---\nid: m5cardputer__cardputer-abs-b-radar\ntype: recipe\nboard: m5cardputer\nfirmware: cardputer-abs-b-radar\nstatus: unverified\nchip_family: esp32-s3\nnotes: \"The repository says it is firmware for the Cardputer ADV, not the original Cardputer this record describes. Compatibility with the original Cardputer is unverified: no build for it is published, and it has not been tested on hardware.\"\nsources:\n- field: '*'\n  url: https://github.com/Jay-Jayismyname1/Cardputer-ADV-B-Radar\n  verified: '2026-11-10'\n- field: board\n  url: https://github.com/Jay-Jayismyname1/Cardputer-ADV-B-Radar/blob/9df5e7de309d8469393a626465dde6d8b6bf5147/README.md\n  verified: '2026-11-10'\n---\n\n# m5cardputer x cardputer-abs-b-radar\n\n`cardputer-abs-b-radar` describes itself as \"A flight tracking firmware for the Cardputer ADV\". The Cardputer ADV is different hardware from the original Cardputer (`m5cardputer`), so whether this firmware runs on the original Cardputer is unverified. Status `unverified` until someone with the hardware confirms it.\n\n- README — https://github.com/Jay-Jayismyname1/Cardputer-ADV-B-Radar/blob/9df5e7de309d8469393a626465dde6d8b6bf5147/README.md\n"
+  }
+}
