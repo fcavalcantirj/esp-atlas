@@ -166,16 +166,68 @@ _FIRMWARE_STOPWORDS = frozenset({
     # "thread zigbee matter smart-home mesh").
     "mesh",
 })
+# Common English words a firmware NAME may contain but that never identify it: "smart" in
+# "Smart rattle", "game" in a game firmware. As a lone name token each would capture any query
+# using the word ("thread zigbee matter smart-home mesh" -> smart-rattle, 2026-11-15), so a token
+# must be distinctive to name a firmware. The full name and id still route; this bars tokens only.
+_GENERIC_NAME_TOKENS = frozenset({
+    "smart", "home", "clock", "game", "games", "music", "light", "lights", "tool", "tools",
+    "mini", "micro", "tiny", "little", "pocket", "plus", "pro", "lite", "max", "zero",
+    "box", "hub", "kit", "lab", "demo", "beta", "test", "user", "your", "world", "live",
+    "assistant", "buddy", "mate", "pet", "toy", "camera", "capture", "channel", "client",
+    "server", "controller", "remote", "display", "screen", "keyboard", "sound", "voice", "audio",
+    "player", "scanner", "tracker", "sensor", "monitor", "station", "weather",
+    "desktop", "digital", "interactive", "offline", "page", "port", "portal", "view", "wall",
+    "deck", "drop", "flight", "journal", "master", "trail", "trainer", "changer", "clicker",
+    "firmware", "project", "watch", "timer", "shooting", "raising", "meets",
+})
 _MIN_FIRMWARE_TOKEN = 4
 
 
-def _firmware_keys(fw):
-    """The strings that identify this firmware in a query."""
-    keys = {fw["id"].lower(), fw["name"].lower()}
-    for token in fw["name"].lower().replace("-", " ").split():
-        if len(token) >= _MIN_FIRMWARE_TOKEN and token not in _FIRMWARE_STOPWORDS:
-            keys.add(token)
-    return {k for k in keys if k not in _FIRMWARE_STOPWORDS}
+def _whole_keys(fw):
+    """The firmware's full id and name, with spaces and hyphens read as the same separator."""
+    keys = set()
+    for whole in (fw["id"].lower(), fw["name"].lower()):
+        keys |= {whole, whole.replace("-", " "), whole.replace(" ", "-")}
+    return keys - _FIRMWARE_STOPWORDS
+
+
+def _token_keys(fw):
+    """The distinctive single words of the firmware's name that identify it on their own."""
+    return {
+        token for token in fw["name"].lower().replace("-", " ").split()
+        if len(token) >= _MIN_FIRMWARE_TOKEN
+        and token not in _FIRMWARE_STOPWORDS and token not in _GENERIC_NAME_TOKENS
+    }
+
+
+def _name_words(fw):
+    """Every word of the firmware's name and id, however short or generic."""
+    return set(re.split(r"[\s-]+", f"{fw['name']} {fw['id']}".lower())) - {""}
+
+
+def _word_at(key, haystack):
+    """Spans where key stands as its own word: "m5stick" is not inside "m5sticks3"."""
+    return re.finditer(rf"(?<![a-z0-9]){re.escape(key)}(?![a-z0-9])", haystack)
+
+
+def _token_stands_for(fw, token, haystack):
+    """True if a name token in the query refers to this firmware. Inside a hyphenated compound it
+    only counts when every other part is also a word of the firmware's name: "flipper-zero" names
+    Flipper Zero, but "smart-home" is a different word and does not name "Smart rattle"."""
+    words = _name_words(fw)
+    for m in _word_at(token, haystack):
+        left = re.search(r"(?:[a-z0-9]+-)*$", haystack[:m.start()]).group()
+        right = re.match(r"(?:-[a-z0-9]+)*", haystack[m.end():]).group()
+        if all(part in words for part in (left + right).split("-") if part):
+            return True
+    return False
+
+
+def _support(fw, haystack):
+    """How much of the firmware's name the query spells out, generic words included -- the
+    tiebreak when several firmwares share their best key ("run evil portal")."""
+    return sum(len(word) for word in _name_words(fw) if _token_stands_for(fw, word, haystack))
 
 
 def firmware_named_in(query):
@@ -188,26 +240,24 @@ def firmware_named_in(query):
     matched = []
     for fw in list_firmware():
         # Register this firmware by its LONGEST matching key, not the first one
-        # that happens to hit. _firmware_keys is a set, so iteration order is
+        # that happens to hit. The keys are sets, so iteration order is
         # hash-seed dependent -- breaking on the first match made a firmware
         # register with an arbitrary short shared token ("cardputer") instead of
         # its full name, so "most specific wins" was fed garbage and the winner
         # flipped across processes. Longest match is deterministic and correct.
-        best, full = 0, False
-        whole = {fw["id"].lower(), fw["name"].lower()}
-        for key in _firmware_keys(fw):
-            # Word boundaries, not substrings: "m5stick" is a substring of
-            # "m5sticks3", so a naive match sends "run M5StickS3 RogueDuck" to
-            # M5Stick NEMO. Longer, more specific names must win outright.
-            if re.search(rf"(?<![a-z0-9]){re.escape(key)}(?![a-z0-9])", haystack):
-                best = max(best, len(key))
-                full = full or key in whole
+        # Word boundaries, not substrings: "m5stick" is a substring of
+        # "m5sticks3", so a naive match sends "run M5StickS3 RogueDuck" to
+        # M5Stick NEMO. Longer, more specific names must win outright.
+        wholes = [len(k) for k in _whole_keys(fw) if any(_word_at(k, haystack))]
+        tokens = [len(k) for k in _token_keys(fw) if _token_stands_for(fw, k, haystack)]
+        best = max(wholes + tokens, default=0)
         if best:
-            matched.append((full, best, fw))
+            matched.append((not wholes, -best, -_support(fw, haystack), fw))
     # A firmware whose WHOLE name or id was matched outranks one that only shares a name token
     # ("run Meshcore": the firmware named "Meshcore", not meshcore-cardputer through its token);
-    # then the longest match, so an exact product name beats a shared prefix.
-    return [fw for _full, _length, fw in sorted(matched, key=lambda m: (not m[0], -m[1]))]
+    # then the longest match, so an exact product name beats a shared prefix; then the one whose
+    # name the query spells out most fully.
+    return [m[-1] for m in sorted(matched, key=lambda m: m[:3])]
 
 
 def _valid_values(db_path):
