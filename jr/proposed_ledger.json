@@ -10464,9 +10464,8 @@
       "id": "m5monsterc5-cardputeradv",
       "pr_ref": "#1729",
       "repo": "c5lab/m5monsterc5-cardputeradv",
-      "repo_id": 1121236821,
-      "status": "merged",
-      "timestamp": "2026-11-15T12:00:31.921339+00:00"
+      "status": "proposed",
+      "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "m5monsterc5-tab5": {
       "expires": "2026-12-14T15:00:55.432444+00:00",
@@ -12046,9 +12045,8 @@
       "id": "meshcore-cardputer",
       "pr_ref": "#1726",
       "repo": "arthubhub/meshcore-cardputer",
-      "repo_id": 1444906952,
-      "status": "merged",
-      "timestamp": "2026-11-15T12:00:31.921339+00:00"
+      "status": "proposed",
+      "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "meshcore-cardputer-adv": {
       "id": "meshcore-cardputer-adv",
@@ -12782,8 +12780,8 @@
       "pr_ref": null,
       "repo": "fra-222/opensailingrc-display",
       "repo_id": 990062494,
-      "status": "merged",
-      "timestamp": "2026-11-15T12:00:31.921339+00:00"
+      "status": "proposed",
+      "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "opensailingrc-joystick-v2": {
       "expired_at": "2026-10-11T14:00:11.430842+00:00",
@@ -14245,31 +14243,13 @@
       "timestamp": "2026-11-15T02:00:31.969279+00:00"
     },
     "sanotts": {
-      "expires": "2027-01-14T11:02:36+00:00",
-      "history": [
-        {
-          "expires": "2027-01-14T11:00:32.244008+00:00",
-          "id": "sanotts",
-          "pr_ref": null,
-          "reason": "needs_review_target: idf_project: undeclared_project_dir: ESP-IDF project.cmake (mcu/ports/esp32c3/app/CMakeLists.txt) is in a subdir of a host-side repo that its README / build file never points to; arduino_sketch: vendored_or_example_only: an ESP board named ",
-          "repo": "ampixa/sanotts",
-          "status": "rejected",
-          "timestamp": "2026-11-15T11:00:32.244008+00:00"
-        }
-      ],
+      "expires": "2027-01-14T11:00:32.244008+00:00",
       "id": "sanotts",
       "pr_ref": null,
-      "reason": "needs_review_target: owner review raised in #1734",
+      "reason": "needs_review_target: idf_project: undeclared_project_dir: ESP-IDF project.cmake (mcu/ports/esp32c3/app/CMakeLists.txt) is in a subdir of a host-side repo that its README / build file never points to; arduino_sketch: vendored_or_example_only: an ESP board named ",
       "repo": "ampixa/sanotts",
-      "review": {
-        "evidence": null,
-        "evidence_rev": null,
-        "outcome": "open",
-        "pr_ref": "#1734",
-        "raised_at": "2026-11-15T11:02:36+00:00"
-      },
       "status": "rejected",
-      "timestamp": "2026-11-15T11:02:36+00:00"
+      "timestamp": "2026-11-15T11:00:32.244008+00:00"
     },
     "sas": {
       "expired_at": "2026-10-11T21:00:11.605277+00:00",
@@ -14512,7 +14492,7 @@
       "repo": "nongxl/skycompass_satellite",
       "repo_id": 1265708629,
       "status": "proposed",
-      "timestamp": "2026-11-15T12:00:31.921339+00:00"
+      "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
     "smart-rattle": {
       "evidence_url": "https://github.com/abdrakhmanov/smart-rattle",

@@ -1,0 +1,231 @@
+{
+ "calls": 7,
+ "errors": 0,
+ "fetched": "2026-11-15",
+ "notes": [],
+ "ref": "main",
+ "repo": "arthubhub/meshcore-cardputer",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "cardputer_adv_companion_ble",
+   "cardputer_adv_demo",
+   "cardputer_adv_dual",
+   "cardputer_adv_standalone",
+   "cardputer_adv_standalone_map",
+   "m5stack_cardputer_adv"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "cardputer_adv_companion_ble-v0.8.1.bin",
+    "release": "cardputer-v0.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cardputer_adv_companion_ble",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/releases/download/cardputer-v0.8.1/cardputer_adv_companion_ble-v0.8.1.bin"
+  },
+  {
+   "extra": {
+    "asset": "cardputer_adv_demo-v0.8.1.bin",
+    "release": "cardputer-v0.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cardputer_adv_demo",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/releases/download/cardputer-v0.8.1/cardputer_adv_demo-v0.8.1.bin"
+  },
+  {
+   "extra": {
+    "asset": "cardputer_adv_dual-v0.8.1.bin",
+    "release": "cardputer-v0.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cardputer_adv_dual",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/releases/download/cardputer-v0.8.1/cardputer_adv_dual-v0.8.1.bin"
+  },
+  {
+   "extra": {
+    "asset": "cardputer_adv_standalone-v0.8.1.bin",
+    "release": "cardputer-v0.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cardputer_adv_standalone",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/releases/download/cardputer-v0.8.1/cardputer_adv_standalone-v0.8.1.bin"
+  },
+  {
+   "extra": {
+    "asset": "cardputer_adv_standalone_map-v0.8.1.bin",
+    "release": "cardputer-v0.8.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "cardputer_adv_standalone_map",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/releases/download/cardputer-v0.8.1/cardputer_adv_standalone_map-v0.8.1.bin"
+  },
+  {
+   "extra": {
+    "env": "cardputer_adv_companion_ble",
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
+   },
+   "kind": "platformio",
+   "line": 26,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack_cardputer_adv",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/blob/main/platformio.ini#L26"
+  },
+  {
+   "extra": {
+    "env": "cardputer_adv_standalone",
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
+   },
+   "kind": "platformio",
+   "line": 26,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack_cardputer_adv",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/blob/main/platformio.ini#L26"
+  },
+  {
+   "extra": {
+    "env": "cardputer_adv_standalone_map",
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
+   },
+   "kind": "platformio",
+   "line": 26,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack_cardputer_adv",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/blob/main/platformio.ini#L26"
+  },
+  {
+   "extra": {
+    "env": "cardputer_adv_demo",
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
+   },
+   "kind": "platformio",
+   "line": 26,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack_cardputer_adv",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/blob/main/platformio.ini#L26"
+  },
+  {
+   "extra": {
+    "env": "cardputer_adv_dual_standalone",
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
+   },
+   "kind": "platformio",
+   "line": 26,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack_cardputer_adv",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/blob/main/platformio.ini#L26"
+  },
+  {
+   "extra": {
+    "env": "cardputer_adv_dual_companion",
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
+   },
+   "kind": "platformio",
+   "line": 26,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack_cardputer_adv",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/blob/main/platformio.ini#L26"
+  },
+  {
+   "extra": {
+    "env": "cardputer_adv_dual_dbtest",
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
+   },
+   "kind": "platformio",
+   "line": 26,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack_cardputer_adv",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/blob/main/platformio.ini#L26"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/cardputer.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cardputer_adv_companion_ble",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/blob/main/.github/workflows/cardputer.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/cardputer.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cardputer_adv_standalone",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/blob/main/.github/workflows/cardputer.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/cardputer.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cardputer_adv_standalone_map",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/blob/main/.github/workflows/cardputer.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/cardputer.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "cardputer_adv_demo",
+   "url": "https://github.com/arthubhub/meshcore-cardputer/blob/main/.github/workflows/cardputer.yml"
+  }
+ ]
+}
