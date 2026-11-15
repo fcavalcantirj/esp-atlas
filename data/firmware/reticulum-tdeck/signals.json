@@ -1,0 +1,68 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-11-14",
+ "notes": [],
+ "ref": "master",
+ "repo": "varna9000/reticulum-tdeck",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "tdeck_firmware",
+   "tdeck_pro_firmware",
+   "tdeck_pro_update",
+   "tdeck_update"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "tdeck_firmware.bin",
+    "release": "v1.15.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tdeck_firmware",
+   "url": "https://github.com/varna9000/reticulum-tdeck/releases/download/v1.15.0/tdeck_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "tdeck_pro_firmware.bin",
+    "release": "v1.15.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tdeck_pro_firmware",
+   "url": "https://github.com/varna9000/reticulum-tdeck/releases/download/v1.15.0/tdeck_pro_firmware.bin"
+  },
+  {
+   "extra": {
+    "asset": "tdeck_pro_update.bin",
+    "release": "v1.15.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tdeck_pro_update",
+   "url": "https://github.com/varna9000/reticulum-tdeck/releases/download/v1.15.0/tdeck_pro_update.bin"
+  },
+  {
+   "extra": {
+    "asset": "tdeck_update.bin",
+    "release": "v1.15.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "tdeck_update",
+   "url": "https://github.com/varna9000/reticulum-tdeck/releases/download/v1.15.0/tdeck_update.bin"
+  }
+ ]
+}
