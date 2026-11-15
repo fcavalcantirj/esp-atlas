@@ -1,0 +1,251 @@
+{
+ "calls": 8,
+ "errors": 0,
+ "fetched": "2026-11-15",
+ "notes": [],
+ "ref": "main",
+ "repo": "C5Lab/M5MonsterC5-CardputerADV",
+ "resolved": {
+  "boards": [],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "adv",
+   "adv-full",
+   "adv-launcher",
+   "bootloader-adv",
+   "bootloader-k132",
+   "k132",
+   "k132-full",
+   "k132-launcher",
+   "partition-table-adv",
+   "partition-table-k132"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "bootloader-adv.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "bootloader-adv",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/bootloader-adv.bin"
+  },
+  {
+   "extra": {
+    "asset": "bootloader-k132.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "bootloader-k132",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/bootloader-k132.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5MonsterC5-CardputerADV-adv-1.8.7.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "adv",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/M5MonsterC5-CardputerADV-adv-1.8.7.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5MonsterC5-CardputerADV-adv-full-1.8.7.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "adv-full",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/M5MonsterC5-CardputerADV-adv-full-1.8.7.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5MonsterC5-CardputerADV-adv-full.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "adv-full",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/M5MonsterC5-CardputerADV-adv-full.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5MonsterC5-CardputerADV-adv-launcher-1.8.7.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "adv-launcher",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/M5MonsterC5-CardputerADV-adv-launcher-1.8.7.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5MonsterC5-CardputerADV-adv-launcher.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "adv-launcher",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/M5MonsterC5-CardputerADV-adv-launcher.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5MonsterC5-CardputerADV-adv.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "adv",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/M5MonsterC5-CardputerADV-adv.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5MonsterC5-CardputerADV-k132-1.8.7.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "k132",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/M5MonsterC5-CardputerADV-k132-1.8.7.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5MonsterC5-CardputerADV-k132-full-1.8.7.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "k132-full",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/M5MonsterC5-CardputerADV-k132-full-1.8.7.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5MonsterC5-CardputerADV-k132-full.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "k132-full",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/M5MonsterC5-CardputerADV-k132-full.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5MonsterC5-CardputerADV-k132-launcher-1.8.7.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "k132-launcher",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/M5MonsterC5-CardputerADV-k132-launcher-1.8.7.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5MonsterC5-CardputerADV-k132-launcher.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "k132-launcher",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/M5MonsterC5-CardputerADV-k132-launcher.bin"
+  },
+  {
+   "extra": {
+    "asset": "M5MonsterC5-CardputerADV-k132.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "k132",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/M5MonsterC5-CardputerADV-k132.bin"
+  },
+  {
+   "extra": {
+    "asset": "partition-table-adv.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "partition-table-adv",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/partition-table-adv.bin"
+  },
+  {
+   "extra": {
+    "asset": "partition-table-k132.bin",
+    "release": "v1.8.7"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "partition-table-k132",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/releases/download/v1.8.7/partition-table-k132.bin"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/esp32s3-build-master.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "adv",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/blob/main/.github/workflows/esp32s3-build-master.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/esp32s3-build-master.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "k132",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/blob/main/.github/workflows/esp32s3-build-master.yml"
+  },
+  {
+   "extra": {},
+   "kind": "idf",
+   "line": 4,
+   "rank": 4,
+   "soc": "esp32-s3",
+   "token": "esp32s3",
+   "url": "https://github.com/C5Lab/M5MonsterC5-CardputerADV/blob/main/sdkconfig.defaults#L4"
+  }
+ ]
+}
