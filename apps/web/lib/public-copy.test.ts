@@ -75,12 +75,11 @@ test("the unverified tier claim is source-neutral", () => {
   assert.doesNotMatch(claim, /no (cited )?source/i);
 });
 
-test("the RuView Cardputer caveat renders at the flash action", () => {
-  const recipeMd = readFileSync(path.join(REPO_ROOT, "data/recipes/m5cardputer__ruview/recipe.md"), "utf8");
-  const quoted = recipeMd.match(/^notes: (".*")$/m);
-  assert.ok(quoted, "m5cardputer__ruview must keep its notes caveat");
-  const notes: string = JSON.parse(quoted[1]);
-  assert.match(notes, /DISCOVERY ONLY/);
+test("a recipe caveat renders at the flash action", () => {
+  // A fixture caveat, not a catalog record: this tests the rendering, and a catalog record can be
+  // corrected away (m5cardputer__ruview, the original example, was removed on 2026-11-15 because
+  // RuView requires 8 MB PSRAM and the Cardputer has none).
+  const notes = "Weakest recipe, deliberately labelled as such: the only evidence is a community catalog entry, DISCOVERY ONLY.";
 
   assert.equal(recipeCaveat({ notes }), notes);
   assert.equal(recipeCaveat({ notes: null }), null);
