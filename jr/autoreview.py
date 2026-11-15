@@ -186,6 +186,14 @@ def check(board: str, sources: dict, catalog: dict) -> Verdict:
             return Verdict(UNCERTAIN, [f"sibling: the source names the {SIBLING_LABEL[board]} and {board} only generically"])
     if not named:
         return Verdict(FAIL, [f"named: the source never names {board}"])
+    # a statement that names the board and rules it out ("Not for the original Cardputer") is a FAIL
+    # whether or not a sibling is named (#1724 review of SquachWatch-CYD)
+    excl = EXCLUSION.get(board)
+    if excl:
+        for x in re.split(r"(?<=[.!?])\s+|\n", _prose(prose)):
+            if (x.strip() and not x.strip().strip("*_ ").endswith("?") and re.search(excl, x, re.I)
+                    and re.search(EXPLICIT_ORIGINAL.get(board, r"(?!)"), x, re.I)):
+                return Verdict(FAIL, [f"exclusion: the source rules {board} out: '{x.strip()[:100]}'"])
     # named is not targets: at least one mention must be a target, not provenance or a roadmap
     built = any(_names_plain(board, e["name"], catalog) for e in envs) or _names_plain(board, assets, catalog)
     mentions = [x for x in re.split(r"(?<=[.!?])\s+|\n", _prose(prose)) if x.strip() and _names_plain(board, x, catalog)]

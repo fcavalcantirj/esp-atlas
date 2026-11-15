@@ -169,14 +169,16 @@ def evidence_gate(board: str, evidence: dict, catalog: dict) -> tuple[str | None
     sibling edge. PASS and UNCERTAIN are written; the receipt says which and why."""
     v = autoreview.check(board, evidence, catalog)
     why = (v.reasons or [""])[0]
-    if v.verdict == autoreview.FAIL:
-        return None, "", [(board, f"evidence check v{v.rules_version}: {why}")]
     sib = autoreview.SIBLING_BOARD.get(board)
-    if sib and sib in catalog and v.verdict == autoreview.UNCERTAIN and why.startswith("sibling"):
+    # the sibling is tried whenever the doubt IS the sibling: named only generically beside it
+    # (UNCERTAIN), or ruled out / named only as it (FAIL). The source then targets the sibling.
+    if sib and sib in catalog and v.verdict != autoreview.PASS and why.startswith("sibling"):
         sv = autoreview.check(sib, evidence, catalog)
         if sv.verdict == autoreview.PASS:
             return sib, f"v{sv.rules_version} {sv.verdict} — {(sv.reasons or [''])[0]}", \
                 [(board, f"evidence check v{v.rules_version}: {why}; wrote {sib} instead")]
+    if v.verdict == autoreview.FAIL:
+        return None, "", [(board, f"evidence check v{v.rules_version}: {why}")]
     return board, f"v{v.rules_version} {v.verdict} — {why}", []
 
 

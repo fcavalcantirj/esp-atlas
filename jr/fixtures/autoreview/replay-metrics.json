@@ -2,11 +2,11 @@
  "about": "jr/autoreview_replay.py on the labelled edges (jr/fixtures/autoreview/cases.json), Jr's real admit + boardmap code replayed offline on GitHub answers recorded 2026-11-15. 'without_gate' = the algorithm on main; 'with_gate' = the evidence gate inside generation (SPEC-jr-review-routing.md \u00a77, step 1).",
  "without_gate": {
   "metrics": {
-   "M1_of": 42,
+   "M1_of": 43,
    "M1_wrong_edges_written": 8,
    "M1_wrong_written_as_PASS": 0,
    "M2_correct_edges_found": 16,
-   "M2_of": 22,
+   "M2_of": 23,
    "M3_adv_edges_written": 9,
    "M3_of": 22,
    "M4_pass_share_of_written": 0.881,
@@ -28,17 +28,21 @@
    "m5cardputer__c-p-s-cardputer-syhnth",
    "m5cardputer__evil-m5project",
    "m5cardputer__flipper-zero-meets-m5stack-cardputer",
+   "m5cardputer__glide-synth-cardputer-adv",
    "m5cardputer__m5cardputer-userdemo"
   ],
-  "errors": []
+  "errors": [
+   "glide-synth-cardputer-adv: KeyError: 'meta not recorded for https://github.com/CHARL3X/GLIDE-Synth-Cardputer-ADV'",
+   "webradio-wusiu-cardputer-adv: KeyError: 'meta not recorded for https://github.com/wusiu/WebRadio_WuSiU_Cardputer_Adv'"
+  ]
  },
  "with_gate": {
   "metrics": {
-   "M1_of": 42,
+   "M1_of": 43,
    "M1_wrong_edges_written": 0,
    "M1_wrong_written_as_PASS": 0,
    "M2_correct_edges_found": 19,
-   "M2_of": 22,
+   "M2_of": 23,
    "M3_adv_edges_written": 16,
    "M3_of": 22,
    "M4_pass_share_of_written": 1.0,
@@ -48,8 +52,12 @@
   "correct_edges_missed": [
    "m5cardputer__bruce",
    "m5cardputer__evil-m5project",
+   "m5cardputer__glide-synth-cardputer-adv",
    "m5cardputer__m5cardputer-userdemo"
   ],
-  "errors": []
+  "errors": [
+   "glide-synth-cardputer-adv: KeyError: 'meta not recorded for https://github.com/CHARL3X/GLIDE-Synth-Cardputer-ADV'",
+   "webradio-wusiu-cardputer-adv: KeyError: 'meta not recorded for https://github.com/wusiu/WebRadio_WuSiU_Cardputer_Adv'"
+  ]
  }
 }

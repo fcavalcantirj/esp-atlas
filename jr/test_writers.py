@@ -400,3 +400,11 @@ def test_a_persons_removal_beats_the_evidence_swap(tmp_path):
     plan = _plan({"boards": {"m5cardputer": [SIG_REPO]}, "socs": {}}, ev, tmp_path)
     assert plan["new"] == []
     assert ("m5cardputer-adv", "removed by a person: jr/overrides/fw__edges.json") in plan["refused"]
+
+
+def test_a_source_that_rules_the_original_out_writes_the_adv(tmp_path):
+    """raising-hell class: the original FAILs because the source excludes it; the ADV edge is the right one."""
+    ev = {"description": "Virtual pet for the Cardputer", "readme": "**Cardputer ADV only** — the original Cardputer has a different keyboard"}
+    plan = _plan({"boards": {"m5cardputer": [SIG_REPO]}, "socs": {}}, ev, tmp_path)
+    assert [n[1] for n in plan["new"]] == ["m5cardputer-adv"]
+    assert plan["refused"][0][0] == "m5cardputer" and "m5cardputer-adv instead" in plan["refused"][0][1]

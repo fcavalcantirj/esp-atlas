@@ -805,10 +805,19 @@ def test_admit_writes_the_adv_edge_when_the_readme_targets_only_the_adv(root, mo
     assert "Evidence check v2 PASS" in (root / "data/recipes/m5cardputer-adv__desk/recipe.md").read_text()
 
 
+def test_admit_moves_to_the_adv_when_the_readme_rules_the_original_out(root, monkeypatch):
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Pet Tool", "https://github.com/n/pet")])
+    metas = {"repos/n/pet": _meta("n/pet", stars=30, description="A tool for the Cardputer", rid=34),
+             "repos/n/pet/readme": _readme("**Cardputer ADV only** — the original Cardputer has a different keyboard.")}
+    res = stage_admit.run(_ctx(root, metas=metas), budget=3)
+    assert res.admitted == 1 and (root / "data/recipes/m5cardputer-adv__pet/recipe.md").exists()
+    assert not (root / "data/recipes/m5cardputer__pet").exists()
+
+
 def test_admit_refuses_an_edge_the_readme_rules_out(root, monkeypatch):
     monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Odd Tool", "https://github.com/n/odd")])
     metas = {"repos/n/odd": _meta("n/odd", stars=30, description="A tool for the Cardputer", rid=32),
-             "repos/n/odd/readme": _readme("**Cardputer ADV only** — the original Cardputer has a different keyboard.")}
+             "repos/n/odd/readme": _readme("Runs on the LilyGO T-Deck. Not for the original Cardputer.")}
     res = stage_admit.run(_ctx(root, metas=metas), budget=3)
     assert res.admitted == 0 and res.rejects.get("evidence_check") == 1
     assert not (root / "data/firmware/odd").exists()
