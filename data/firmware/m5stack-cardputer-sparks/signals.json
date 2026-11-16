@@ -1,7 +1,7 @@
 {
  "calls": 6,
  "errors": 0,
- "fetched": "2026-11-09",
+ "fetched": "2026-11-16",
  "notes": [],
  "ref": "main",
  "repo": "KyleBing/m5stack-cardputer-sparks",
@@ -30,7 +30,10 @@
   {
    "extra": {
     "env": "m5stack-cardputer",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 13,
