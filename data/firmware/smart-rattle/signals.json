@@ -1,0 +1,55 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-11-16",
+ "notes": [],
+ "ref": "master",
+ "repo": "abdrakhmanov/smart-rattle",
+ "resolved": {
+  "boards": [
+   "m5stick-cplus2"
+  ],
+  "socs": [],
+  "unresolved": [
+   "firmware.factory"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "firmware.factory.bin",
+    "release": "v1.1.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "firmware.factory",
+   "url": "https://github.com/abdrakhmanov/smart-rattle/releases/download/v1.1.0/firmware.factory.bin"
+  },
+  {
+   "extra": {
+    "env": "m5stack-stickc-plus2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 6,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stickc-plus2",
+   "url": "https://github.com/abdrakhmanov/smart-rattle/blob/master/platformio.ini#L6"
+  },
+  {
+   "extra": {
+    "env": "trace",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 6,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-stickc-plus2",
+   "url": "https://github.com/abdrakhmanov/smart-rattle/blob/master/platformio.ini#L6"
+  }
+ ]
+}
