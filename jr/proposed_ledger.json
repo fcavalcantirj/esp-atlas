@@ -17240,6 +17240,15 @@
       "status": "proposed",
       "timestamp": "2026-11-16T14:00:31.914738+00:00"
     },
+    "smart-rattle": {
+      "evidence_url": "https://github.com/abdrakhmanov/smart-rattle",
+      "id": "smart-rattle",
+      "pr_ref": null,
+      "repo": "abdrakhmanov/smart-rattle",
+      "repo_id": 1414617935,
+      "status": "proposed",
+      "timestamp": "2026-11-15T12:00:31.921339+00:00"
+    },
     "smfpc": {
       "expires": "2026-12-15T11:00:32.244008+00:00",
       "id": "smfpc",

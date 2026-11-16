@@ -1,0 +1,43 @@
+{
+ "calls": 4,
+ "errors": 0,
+ "fetched": "2026-11-15",
+ "notes": [],
+ "ref": "main",
+ "repo": "FRA-222/OpenSailingRC-Display",
+ "resolved": {
+  "boards": [
+   "m5stack-core2"
+  ],
+  "socs": [],
+  "unresolved": [
+   "OpenSailingRC_Display"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "OpenSailingRC_Display_v1.0.1.bin",
+    "release": "v1.0.1"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "OpenSailingRC_Display",
+   "url": "https://github.com/FRA-222/OpenSailingRC-Display/releases/download/v1.0.1/OpenSailingRC_Display_v1.0.1.bin"
+  },
+  {
+   "extra": {
+    "env": "m5stack-core2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 13,
+   "rank": 2,
+   "soc": null,
+   "token": "m5stack-core2",
+   "url": "https://github.com/FRA-222/OpenSailingRC-Display/blob/main/platformio.ini#L13"
+  }
+ ]
+}

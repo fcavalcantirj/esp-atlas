@@ -1,0 +1,637 @@
+{
+ "calls": 16,
+ "errors": 0,
+ "fetched": "2026-11-15",
+ "notes": [],
+ "ref": "dev",
+ "repo": "hermes-gadget/SigurdOS-tdeck",
+ "resolved": {
+  "boards": [
+   "lilygo-t-deck"
+  ],
+  "socs": [
+   "esp32-s3"
+  ],
+  "unresolved": [
+   "SigurdOS T-Deck",
+   "SigurdOS_TDeck",
+   "SigurdOS_TDeck_ble_agent",
+   "SigurdOS_TDeck_ble_validation",
+   "SigurdOS_TDeck_companion_usb",
+   "SigurdOS_TDeck_debug",
+   "SigurdOS_TDeck_debug_869",
+   "SigurdOS_TDeck_debug_diag",
+   "SigurdOS_TDeck_debug_display",
+   "SigurdOS_TDeck_debug_map",
+   "SigurdOS_TDeck_debug_mesh",
+   "SigurdOS_TDeck_debug_ui",
+   "SigurdOS_TDeck_esp32_components",
+   "SigurdOS_TDeck_gps_validation",
+   "SigurdOS_TDeck_gps_validation_wifi",
+   "SigurdOS_TDeck_meshv2",
+   "SigurdOS_TDeck_remote_test",
+   "SigurdOS_TDeck_remote_test_radio",
+   "SigurdOS_TDeck_remote_test_radio_meshv2",
+   "SigurdOS_TDeck_telemetry",
+   "SigurdOS_TDeck_telemetry_diff",
+   "SigurdOS_TDeck_trackball_debug",
+   "firmware-debug",
+   "firmware-merged",
+   "full",
+   "launcher"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "firmware-debug.bin",
+    "release": "main-1.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "firmware-debug",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/releases/download/main-1.0.0/firmware-debug.bin"
+  },
+  {
+   "extra": {
+    "asset": "firmware-merged.bin",
+    "release": "main-1.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "firmware-merged",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/releases/download/main-1.0.0/firmware-merged.bin"
+  },
+  {
+   "extra": {
+    "asset": "sigurdos-tdeck-full.bin",
+    "release": "main-1.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "full",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/releases/download/main-1.0.0/sigurdos-tdeck-full.bin"
+  },
+  {
+   "extra": {
+    "asset": "SigurdOS-tdeck-launcher.bin",
+    "release": "main-1.0.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "launcher",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/releases/download/main-1.0.0/SigurdOS-tdeck-launcher.bin"
+  },
+  {
+   "extra": {
+    "chipFamily": "ESP32-S3",
+    "release": "main-1.0.0"
+   },
+   "kind": "manifest",
+   "line": null,
+   "rank": 1,
+   "soc": "esp32-s3",
+   "token": "SigurdOS T-Deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/releases/download/main-1.0.0/manifest.json"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_ble_validation",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_ble_agent",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_meshv2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_trackball_debug",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_debug",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_debug_869",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_debug_display",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_debug_mesh",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_debug_ui",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_debug_map",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_debug_diag",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_telemetry",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_telemetry_diff",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_remote_test",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_remote_test_radio",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_remote_test_radio_testfreq",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_remote_test_radio_roomtest",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_remote_test_radio_usca",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_remote_test_radio_usca_rxonly",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_remote_test_radio_meshv2",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_companion_usb",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_gps_validation",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_esp32_components",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "env": "SigurdOS_TDeck_gps_validation_wifi",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 114,
+   "rank": 2,
+   "soc": null,
+   "token": "t-deck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/platformio.ini#L114"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_ble_validation",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_ble_agent",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_meshv2",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_trackball_debug",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_debug",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_debug_869",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_debug_display",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_debug_mesh",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_debug_ui",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_debug_map",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_debug_diag",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_telemetry",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_telemetry_diff",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_remote_test",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_remote_test_radio",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_remote_test_radio_meshv2",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_companion_usb",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_gps_validation",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_gps_validation_wifi",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build-validation-matrix.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "SigurdOS_TDeck_esp32_components",
+   "url": "https://github.com/hermes-gadget/SigurdOS-tdeck/blob/dev/.github/workflows/build-validation-matrix.yml"
+  }
+ ]
+}
