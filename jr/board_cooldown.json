@@ -666,7 +666,7 @@
     },
     "lolin-c3-mini": {
       "board": "lolin-c3-mini",
-      "expires": "2026-11-16T00:00:55.223346+00:00",
+      "expires": "2026-11-23T01:00:31.941223+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -679,11 +679,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-09T00:00:55.223346+00:00"
+      "timestamp": "2026-11-16T01:00:31.941223+00:00"
     },
     "lolin-d32": {
       "board": "lolin-d32",
-      "expires": "2026-11-16T00:00:55.223346+00:00",
+      "expires": "2026-11-23T01:00:31.941223+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -691,11 +691,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-09T00:00:55.223346+00:00"
+      "timestamp": "2026-11-16T01:00:31.941223+00:00"
     },
     "lolin-d32-pro": {
       "board": "lolin-d32-pro",
-      "expires": "2026-11-16T00:00:55.223346+00:00",
+      "expires": "2026-11-23T01:00:31.941223+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -703,7 +703,7 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-09T00:00:55.223346+00:00"
+      "timestamp": "2026-11-16T01:00:31.941223+00:00"
     },
     "lolin-s2-mini": {
       "board": "lolin-s2-mini",
