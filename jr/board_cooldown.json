@@ -339,7 +339,7 @@
     },
     "firebeetle-2-esp32-c6": {
       "board": "firebeetle-2-esp32-c6",
-      "expires": "2026-11-16T08:00:55.303911+00:00",
+      "expires": "2026-11-23T09:00:32.393504+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -352,11 +352,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-09T08:00:55.303911+00:00"
+      "timestamp": "2026-11-16T09:00:32.393504+00:00"
     },
     "firebeetle-2-esp32-e": {
       "board": "firebeetle-2-esp32-e",
-      "expires": "2026-11-16T08:00:55.303911+00:00",
+      "expires": "2026-11-23T09:00:32.393504+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -364,11 +364,11 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-09T08:00:55.303911+00:00"
+      "timestamp": "2026-11-16T09:00:32.393504+00:00"
     },
     "firebeetle-2-esp32-s3": {
       "board": "firebeetle-2-esp32-s3",
-      "expires": "2026-11-16T08:00:55.303911+00:00",
+      "expires": "2026-11-23T09:00:32.393504+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -381,7 +381,7 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-09T08:00:55.303911+00:00"
+      "timestamp": "2026-11-16T09:00:32.393504+00:00"
     },
     "firebeetle-esp32": {
       "board": "firebeetle-esp32",
