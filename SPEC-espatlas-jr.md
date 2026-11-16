@@ -184,6 +184,17 @@ that's a coverage hole to close, not a silent gap.
     `STALL_AFTER` = 3 consecutive ticks, the tick sends one Telegram nudge, and then at most one per
     UTC day. A shrinking or empty backlog clears it. An unreadable state file is a nudge, never
     silence, and a dry run counts nothing.
+  - **The GitHub-topics source remembers every paid decision (2026-11-16).** `jr/stage_admit_topics.py`
+    scores at most `budget * SCORE_MULTIPLIER` prefiltered repos per tick, in the search's star order.
+    Every repo it paid a metadata fetch for ends in a remembered decision, the launcher's rule: a
+    scorer skip (`no_board_evidence`, `library_*`, `archived`, `duplicate_of`, ...), an unreadable
+    repo (`repo_unresolved`) or an id the ledger already holds (`already_*`) is recorded `rejected`
+    under the repo's note key `repo-note:<owner/repo>` with `stage_admit.REJECT_TTLS` (archived 90 d,
+    unresolved 7 d, anything else 30 d). Below-floor and device-evidence skips keep their own records,
+    and a repo an open tick PR holds is never recorded. So the next tick's prefilter walks past them to
+    the next repos of the same search. Before this rule the skips were forgotten: for 24 ticks
+    (Nov 15-16) every topic pair re-scored the same top 10 with `scored_clean=0`, while 6 of the 24
+    pairs held 428 prefiltered repos behind them (read-only search, 2026-11-16).
 
     Why: from 2026-11-12 to 2026-11-14 the alphabetical rescan re-paid for catalogued repos every tick
     and stopped before brucedevices/firmware every hour (Bruce has ~35 entries under "B"). 1,205

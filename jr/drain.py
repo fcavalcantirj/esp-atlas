@@ -391,6 +391,7 @@ def run_drain(fetch_limit: int = PREFILTER_LIMIT, batch_size: int = BATCH_SIZE,
         "prefiltered": len(prefiltered),
         "scored_clean": len(scored),
         "skipped_scoring": len(skipped),
+        "skipped": skipped,           # every skip, for a caller that remembers them (stage_admit_topics)
         "skipped_popularity": skipped_popularity,
         "skipped_device": device_skips(skipped),
         "selected": len(selected),

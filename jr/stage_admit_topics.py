@@ -55,6 +55,7 @@ import memory
 import pending_prs
 import scorer
 import source_topics
+import stage_admit
 import tools
 from budget import BudgetExceeded
 
@@ -109,6 +110,23 @@ def _device_rejects(skipped) -> dict:
     for s in drain.device_skips(skipped):
         key = s["reason"].split(":")[0]
         out[key] = out.get(key, 0) + 1
+    return out
+
+
+def _paid_skips(skipped, held_urls) -> list[tuple[str, str]]:
+    """(owner/repo, reason) for each skip no other writer remembers: not below the floor (recorded
+    seen), not a device-evidence skip (recorded with its own TTL), not a repo an open tick PR holds
+    (held, never a decision). A skip without an owner/repo is never recorded (a falsy ledger key is
+    corruption)."""
+    device = {id(s) for s in drain.device_skips(skipped)}
+    out = []
+    for s in skipped:
+        url = s.get("github") or ""
+        if s.get("reason") == "below-popularity-floor" or id(s) in device or url in held_urls:
+            continue
+        owner_repo = drain._owner_repo(url)
+        if owner_repo.count("/") == 1 and all(owner_repo.split("/")):
+            out.append((owner_repo, str(s.get("reason") or "skipped")))
     return out
 
 
@@ -383,6 +401,15 @@ def run(ctx, budget: int, raw=None):
     for s in report["skipped_device"]:
         memory.record_rejected(s["firmware_id"], s["repo"], s["reason"],
                                ttl_days=device_evidence.ttl_days(s["reason"]), path=ctx.ledger_path, now=ctx.now)
+
+    # Every other paid skip (a scorer skip, an unreadable repo, an id the ledger holds) is remembered
+    # too, so the next tick's prefilter walks past it to the next repos of the same search
+    # (SPEC-espatlas-jr.md §3b "The GitHub-topics source remembers every paid decision").
+    for owner_repo, reason in _paid_skips(report["skipped"], {url for url, _hold in late}):
+        key = reason.split(":")[0]
+        memory.record_rejected(stage_admit.repo_note_key(owner_repo), owner_repo, reason,
+                               ttl_days=stage_admit.REJECT_TTLS.get(key, memory.SEEN_TTL_DAYS),
+                               path=ctx.ledger_path, now=ctx.now)
 
     held += [h for _url, h in late]                  # answered as errors: run_drain counted them as scoring skips
     rejects = _count_held(_device_rejects(report["skipped_device"]), held)
