@@ -1047,11 +1047,13 @@
    "key": "pam-551c01f820f3ab0d27e6b388",
    "branch": "jr/research-pam-551c01f820f3ab0d27e6b388",
    "term": "ESP32-S2-DevKitM-1",
-   "phase": "research",
+   "phase": "author",
    "state": "reserved",
    "started_on": "2026-11-15",
    "source": "pam_feed",
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1743"
+   ],
    "feed": {
     "checked_at": "2026-11-15T11:15:30.873895Z",
     "feeds": {
@@ -1232,7 +1234,9 @@
      "prs": []
     },
     "reserved_by": "jr/demand_run.py"
-   }
+   },
+   "last_attempt_on": "2026-11-15",
+   "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1743"
   }
  ]
 }
