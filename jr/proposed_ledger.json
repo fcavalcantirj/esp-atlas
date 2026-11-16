@@ -1491,7 +1491,7 @@
       "repo": "mtoolstec/cardputer-adv-uhf-expansion",
       "repo_id": 1334897822,
       "status": "proposed",
-      "timestamp": "2026-11-16T07:00:31.998433+00:00"
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
     },
     "cardputer-adv-wifi-ble-radar": {
       "id": "cardputer-adv-wifi-ble-radar",
@@ -5719,6 +5719,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T05:00:32.367472+00:00"
     },
+    "launcher-1897200000000000271": {
+      "expires": "2026-11-23T08:00:31.910120+00:00",
+      "id": "launcher-1897200000000000271",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'zigbee off light nanoc6 user:m5stack'",
+      "repo": "launcher:1897200000000000271",
+      "status": "rejected",
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
+    },
     "launcher-1897200000000000274": {
       "expires": "2026-11-21T17:00:55.342931+00:00",
       "id": "launcher-1897200000000000274",
@@ -5817,6 +5826,15 @@
       "repo": "launcher:1897200000000000358",
       "status": "rejected",
       "timestamp": "2026-11-15T03:00:32.103528+00:00"
+    },
+    "launcher-1897200000000000365": {
+      "expires": "2026-11-23T08:00:31.910120+00:00",
+      "id": "launcher-1897200000000000365",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'spiffsfile management system user:peien'",
+      "repo": "launcher:1897200000000000365",
+      "status": "rejected",
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
     },
     "launcher-1897200000000000387": {
       "expires": "2026-11-21T19:00:55.274449+00:00",
@@ -5997,6 +6015,15 @@
       "repo": "launcher:1897200000000000523",
       "status": "rejected",
       "timestamp": "2026-11-16T00:00:31.813641+00:00"
+    },
+    "launcher-1897200000000000542": {
+      "expires": "2026-11-23T08:00:31.910120+00:00",
+      "id": "launcher-1897200000000000542",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:1897200000000000542",
+      "status": "rejected",
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
     },
     "launcher-1897200000000000547": {
       "expires": "2026-12-14T16:00:55.104121+00:00",
@@ -6459,6 +6486,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T10:00:35.647124+00:00"
     },
+    "launcher-1897200000000001040": {
+      "expires": "2026-11-23T08:00:31.910120+00:00",
+      "id": "launcher-1897200000000001040",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'gl1tch user:gl1tch'",
+      "repo": "launcher:1897200000000001040",
+      "status": "rejected",
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
+    },
     "launcher-1897200000000001058": {
       "expires": "2026-11-22T04:00:34.403128+00:00",
       "id": "launcher-1897200000000001058",
@@ -6485,6 +6521,15 @@
       "repo": "launcher:1897200000000001079",
       "status": "rejected",
       "timestamp": "2026-11-14T16:00:55.104121+00:00"
+    },
+    "launcher-1897200000000001089": {
+      "expires": "2026-11-23T08:00:31.910120+00:00",
+      "id": "launcher-1897200000000001089",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:1897200000000001089",
+      "status": "rejected",
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
     },
     "launcher-1897200000000001110": {
       "expires": "2026-11-21T18:00:55.491519+00:00",
@@ -8671,6 +8716,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T06:00:32.532426+00:00"
     },
+    "launcher-1897200000000003137": {
+      "expires": "2026-12-16T08:00:31.910120+00:00",
+      "id": "launcher-1897200000000003137",
+      "pr_ref": null,
+      "reason": "resolved: m5stack/ESP32-DAPLink",
+      "repo": "launcher:1897200000000003137",
+      "status": "seen",
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
+    },
     "launcher-1897200000000003139": {
       "expires": "2026-11-23T04:00:31.943499+00:00",
       "id": "launcher-1897200000000003139",
@@ -8707,6 +8761,15 @@
       "status": "rejected",
       "timestamp": "2026-11-14T16:00:55.104121+00:00"
     },
+    "launcher-1897200000000003178": {
+      "expires": "2026-11-23T08:00:31.910120+00:00",
+      "id": "launcher-1897200000000003178",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:1897200000000003178",
+      "status": "rejected",
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
+    },
     "launcher-1897200000000003188": {
       "expires": "2026-11-21T17:00:55.342931+00:00",
       "id": "launcher-1897200000000003188",
@@ -8724,6 +8787,15 @@
       "repo": "launcher:1897200000000003208",
       "status": "rejected",
       "timestamp": "2026-11-13T21:00:55.139769+00:00"
+    },
+    "launcher-1897200000000003216": {
+      "expires": "2026-11-23T08:00:31.910120+00:00",
+      "id": "launcher-1897200000000003216",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:1897200000000003216",
+      "status": "rejected",
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
     },
     "launcher-1897200000000003219": {
       "expires": "2026-11-22T20:00:31.795538+00:00",
@@ -9019,6 +9091,15 @@
       "repo": "launcher:200c164bf2eb0580d08e36bc257689b3",
       "status": "expired",
       "timestamp": "2026-11-04T19:00:59.711024+00:00"
+    },
+    "launcher-2089640807996628993": {
+      "expires": "2026-12-16T08:00:31.910120+00:00",
+      "id": "launcher-2089640807996628993",
+      "pr_ref": null,
+      "reason": "resolved: m5stack/M5PaperMono-UserDemo",
+      "repo": "launcher:2089640807996628993",
+      "status": "seen",
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
     },
     "launcher-2095418985687408641": {
       "expires": "2026-11-22T19:00:32.749098+00:00",
@@ -9363,12 +9444,13 @@
       "timestamp": "2026-11-15T12:00:31.921339+00:00"
     },
     "launcher-2119222805013372929": {
+      "expired_at": "2026-11-16T08:00:31.910120+00:00",
       "expires": "2026-11-16T07:00:55.242731+00:00",
       "id": "launcher-2119222805013372929",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for '2048 user:crackulator'",
       "repo": "launcher:2119222805013372929",
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-11-09T07:00:55.242731+00:00"
     },
     "launcher-2119223184715325442": {
@@ -10307,6 +10389,15 @@
       "status": "rejected",
       "timestamp": "2026-11-14T23:00:56.203733+00:00"
     },
+    "launcher-CFWa0eec74d3dbb4148aca52cd462b59": {
+      "expires": "2026-11-23T08:00:31.910120+00:00",
+      "id": "launcher-CFWa0eec74d3dbb4148aca52cd462b59",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:cfwa0eec74d3dbb4148aca52cd462b59",
+      "status": "rejected",
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
+    },
     "launcher-CFWa657f6c4ff37fc27e3067e4285a4c": {
       "expires": "2026-11-22T17:00:31.529719+00:00",
       "id": "launcher-CFWa657f6c4ff37fc27e3067e4285a4c",
@@ -10961,7 +11052,7 @@
       "pr_ref": "#1744",
       "repo": "valleytechsolutions/lora-tunnel",
       "status": "proposed",
-      "timestamp": "2026-11-16T07:00:31.998433+00:00"
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
     },
     "lorachat-for-as923": {
       "expires": "2026-11-22T17:00:31.529719+00:00",
@@ -12342,15 +12433,14 @@
       "timestamp": "2026-11-16T04:00:31.943499+00:00"
     },
     "m5papermono-userdemo": {
-      "expired_at": "2026-10-11T15:00:11.554058+00:00",
-      "expires": "2026-10-11T14:00:50.412232+00:00",
+      "expires": "2026-12-16T08:00:31.910120+00:00",
       "id": "m5papermono-userdemo",
       "pr_ref": null,
-      "reason": "below_floor: 11 stars / 1 forks",
+      "reason": "below_floor: 17 stars / 2 forks",
       "repo": "m5stack/m5papermono-userdemo",
       "repo_id": 1231578458,
-      "status": "expired",
-      "timestamp": "2026-09-11T14:00:50.412232+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
     },
     "m5papers3-animal-quiz": {
       "expires": "2026-12-14T22:00:55.399488+00:00",
@@ -16638,7 +16728,7 @@
       "repo": "abdrakhmanov/smart-rattle",
       "repo_id": 1414617935,
       "status": "proposed",
-      "timestamp": "2026-11-16T07:00:31.998433+00:00"
+      "timestamp": "2026-11-16T08:00:31.910120+00:00"
     },
     "smfpc": {
       "expires": "2026-12-15T11:00:32.244008+00:00",
@@ -19318,6 +19408,7 @@
     "launcher:1897200000000000218": "launcher-1897200000000000218",
     "launcher:1897200000000000238": "launcher-1897200000000000238",
     "launcher:1897200000000000243": "launcher-1897200000000000243",
+    "launcher:1897200000000000271": "launcher-1897200000000000271",
     "launcher:1897200000000000274": "launcher-1897200000000000274",
     "launcher:1897200000000000276": "launcher-1897200000000000276",
     "launcher:1897200000000000284": "launcher-1897200000000000284",
@@ -19329,6 +19420,7 @@
     "launcher:1897200000000000334": "launcher-1897200000000000334",
     "launcher:1897200000000000344": "launcher-1897200000000000344",
     "launcher:1897200000000000358": "launcher-1897200000000000358",
+    "launcher:1897200000000000365": "launcher-1897200000000000365",
     "launcher:1897200000000000387": "launcher-1897200000000000387",
     "launcher:1897200000000000390": "launcher-1897200000000000390",
     "launcher:1897200000000000395": "launcher-1897200000000000395",
@@ -19349,6 +19441,7 @@
     "launcher:1897200000000000501": "launcher-1897200000000000501",
     "launcher:1897200000000000518": "launcher-1897200000000000518",
     "launcher:1897200000000000523": "launcher-1897200000000000523",
+    "launcher:1897200000000000542": "launcher-1897200000000000542",
     "launcher:1897200000000000547": "launcher-1897200000000000547",
     "launcher:1897200000000000568": "launcher-1897200000000000568",
     "launcher:1897200000000000577": "launcher-1897200000000000577",
@@ -19400,9 +19493,11 @@
     "launcher:1897200000000001026": "launcher-1897200000000001026",
     "launcher:1897200000000001028": "launcher-1897200000000001028",
     "launcher:1897200000000001031": "launcher-1897200000000001031",
+    "launcher:1897200000000001040": "launcher-1897200000000001040",
     "launcher:1897200000000001058": "launcher-1897200000000001058",
     "launcher:1897200000000001069": "launcher-1897200000000001069",
     "launcher:1897200000000001079": "launcher-1897200000000001079",
+    "launcher:1897200000000001089": "launcher-1897200000000001089",
     "launcher:1897200000000001110": "launcher-1897200000000001110",
     "launcher:1897200000000001132": "launcher-1897200000000001132",
     "launcher:1897200000000001133": "launcher-1897200000000001133",
@@ -19645,12 +19740,15 @@
     "launcher:1897200000000003094": "launcher-1897200000000003094",
     "launcher:1897200000000003117": "launcher-1897200000000003117",
     "launcher:1897200000000003126": "launcher-1897200000000003126",
+    "launcher:1897200000000003137": "launcher-1897200000000003137",
     "launcher:1897200000000003139": "launcher-1897200000000003139",
     "launcher:1897200000000003146": "launcher-1897200000000003146",
     "launcher:1897200000000003153": "launcher-1897200000000003153",
     "launcher:1897200000000003173": "launcher-1897200000000003173",
+    "launcher:1897200000000003178": "launcher-1897200000000003178",
     "launcher:1897200000000003188": "launcher-1897200000000003188",
     "launcher:1897200000000003208": "launcher-1897200000000003208",
+    "launcher:1897200000000003216": "launcher-1897200000000003216",
     "launcher:1897200000000003219": "launcher-1897200000000003219",
     "launcher:1897200000000003222": "launcher-1897200000000003222",
     "launcher:1897200000000003227": "launcher-1897200000000003227",
@@ -19683,6 +19781,7 @@
     "launcher:1f1b51d7e43d46cffd1e76b545906420": "launcher-1f1b51d7e43d46cffd1e76b545906420",
     "launcher:1f4b658f3462d2b2b3e6068bbf3e4a7d": "launcher-1f4b658f3462d2b2b3e6068bbf3e4a7d",
     "launcher:200c164bf2eb0580d08e36bc257689b3": "launcher-200c164bf2eb0580d08e36bc257689b3",
+    "launcher:2089640807996628993": "launcher-2089640807996628993",
     "launcher:2095418985687408641": "launcher-2095418985687408641",
     "launcher:2095691882913476609": "launcher-2095691882913476609",
     "launcher:2098301580688445441": "launcher-2098301580688445441",
@@ -19842,6 +19941,7 @@
     "launcher:cfw8de5cb68e03e4bda71f078b68fb97": "launcher-CFW8de5cb68e03e4bda71f078b68fb97",
     "launcher:cfw90423a6e548652c02652927293bcb": "launcher-CFW90423a6e548652c02652927293bcb",
     "launcher:cfw95253bac7d0c179e5867e7790190c": "launcher-CFW95253bac7d0c179e5867e7790190c",
+    "launcher:cfwa0eec74d3dbb4148aca52cd462b59": "launcher-CFWa0eec74d3dbb4148aca52cd462b59",
     "launcher:cfwa657f6c4ff37fc27e3067e4285a4c": "launcher-CFWa657f6c4ff37fc27e3067e4285a4c",
     "launcher:cfwb5d031f685c85ea5342e5c1ba276f": "launcher-CFWb5d031f685c85ea5342e5c1ba276f",
     "launcher:cfwdbdca57257744705cbb90113b404b": "launcher-CFWdbdca57257744705cbb90113b404b",
