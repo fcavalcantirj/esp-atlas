@@ -1,0 +1,84 @@
+{
+ "calls": 5,
+ "errors": 0,
+ "fetched": "2026-11-16",
+ "notes": [],
+ "ref": "main",
+ "repo": "valleytechsolutions/LORA-Tunnel",
+ "resolved": {
+  "boards": [],
+  "socs": [],
+  "unresolved": [
+   "Cardputer-ADV-LoRa1262-FACTORY-0x0",
+   "Cardputer-ADV-LoRa1262-LAUNCHER-APP",
+   "Heltec-V4-R8-TFT-HIGH-BAND-FACTORY-0x0",
+   "cardputer_adv_lora1262",
+   "heltec_v4_r8_tft"
+  ]
+ },
+ "signals": [
+  {
+   "extra": {
+    "asset": "LORA-Tunnel-0.5.0-Cardputer-ADV-LoRa1262-FACTORY-0x0.bin",
+    "release": "v0.5.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Cardputer-ADV-LoRa1262-FACTORY-0x0",
+   "url": "https://github.com/valleytechsolutions/LORA-Tunnel/releases/download/v0.5.0/LORA-Tunnel-0.5.0-Cardputer-ADV-LoRa1262-FACTORY-0x0.bin"
+  },
+  {
+   "extra": {
+    "asset": "LORA-Tunnel-0.5.0-Cardputer-ADV-LoRa1262-LAUNCHER-APP.bin",
+    "release": "v0.5.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Cardputer-ADV-LoRa1262-LAUNCHER-APP",
+   "url": "https://github.com/valleytechsolutions/LORA-Tunnel/releases/download/v0.5.0/LORA-Tunnel-0.5.0-Cardputer-ADV-LoRa1262-LAUNCHER-APP.bin"
+  },
+  {
+   "extra": {
+    "asset": "LORA-Tunnel-0.5.0-Heltec-V4-R8-TFT-HIGH-BAND-FACTORY-0x0.bin",
+    "release": "v0.5.0"
+   },
+   "kind": "asset",
+   "line": null,
+   "rank": 1,
+   "soc": null,
+   "token": "Heltec-V4-R8-TFT-HIGH-BAND-FACTORY-0x0",
+   "url": "https://github.com/valleytechsolutions/LORA-Tunnel/releases/download/v0.5.0/LORA-Tunnel-0.5.0-Heltec-V4-R8-TFT-HIGH-BAND-FACTORY-0x0.bin"
+  },
+  {
+   "extra": {
+    "env": "heltec-v4-r8-tft",
+    "file": "platformio.ini"
+   },
+   "kind": "platformio",
+   "line": 8,
+   "rank": 2,
+   "soc": null,
+   "token": "heltec_v4_r8_tft",
+   "url": "https://github.com/valleytechsolutions/LORA-Tunnel/blob/main/platformio.ini#L8"
+  },
+  {
+   "extra": {
+    "env": "cardputer-adv-lora1262",
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
+   },
+   "kind": "platformio",
+   "line": 45,
+   "rank": 2,
+   "soc": null,
+   "token": "cardputer_adv_lora1262",
+   "url": "https://github.com/valleytechsolutions/LORA-Tunnel/blob/main/platformio.ini#L45"
+  }
+ ]
+}

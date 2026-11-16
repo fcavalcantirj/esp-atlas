@@ -1490,8 +1490,8 @@
       "pr_ref": "#1747",
       "repo": "mtoolstec/cardputer-adv-uhf-expansion",
       "repo_id": 1334897822,
-      "status": "proposed",
-      "timestamp": "2026-11-16T14:00:31.914738+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-16T15:00:33.094076+00:00"
     },
     "cardputer-adv-wifi-ble-radar": {
       "id": "cardputer-adv-wifi-ble-radar",
@@ -5782,6 +5782,15 @@
       "status": "rejected",
       "timestamp": "2026-11-14T17:00:55.342931+00:00"
     },
+    "launcher-1897200000000000275": {
+      "expires": "2026-11-23T15:00:33.094076+00:00",
+      "id": "launcher-1897200000000000275",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'papers3filesbrowser user:hookby'",
+      "repo": "launcher:1897200000000000275",
+      "status": "rejected",
+      "timestamp": "2026-11-16T15:00:33.094076+00:00"
+    },
     "launcher-1897200000000000276": {
       "expires": "2026-11-21T21:00:55.045531+00:00",
       "id": "launcher-1897200000000000276",
@@ -5808,6 +5817,15 @@
       "repo": "launcher:1897200000000000291",
       "status": "rejected",
       "timestamp": "2026-11-12T21:00:55.047326+00:00"
+    },
+    "launcher-1897200000000000309": {
+      "expires": "2026-11-23T15:00:33.094076+00:00",
+      "id": "launcher-1897200000000000309",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'big looting unstable machine user:morgan-wild'",
+      "repo": "launcher:1897200000000000309",
+      "status": "rejected",
+      "timestamp": "2026-11-16T15:00:33.094076+00:00"
     },
     "launcher-1897200000000000313": {
       "expires": "2026-11-21T14:00:56.621804+00:00",
@@ -6528,6 +6546,15 @@
       "repo": "launcher:1897200000000000984",
       "status": "rejected",
       "timestamp": "2026-11-16T14:00:31.914738+00:00"
+    },
+    "launcher-1897200000000000990": {
+      "expires": "2026-11-23T15:00:33.094076+00:00",
+      "id": "launcher-1897200000000000990",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'rain chamber user:andjiang'",
+      "repo": "launcher:1897200000000000990",
+      "status": "rejected",
+      "timestamp": "2026-11-16T15:00:33.094076+00:00"
     },
     "launcher-1897200000000000994": {
       "expires": "2026-11-23T02:00:31.729728+00:00",
@@ -7467,6 +7494,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T17:00:31.529719+00:00"
     },
+    "launcher-1897200000000001647": {
+      "expires": "2026-11-23T15:00:33.094076+00:00",
+      "id": "launcher-1897200000000001647",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'm5stacktab5musicboxjp user:ayama'",
+      "repo": "launcher:1897200000000001647",
+      "status": "rejected",
+      "timestamp": "2026-11-16T15:00:33.094076+00:00"
+    },
     "launcher-1897200000000001652": {
       "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000001652",
@@ -7682,6 +7718,15 @@
       "repo": "launcher:1897200000000001805",
       "status": "rejected",
       "timestamp": "2026-11-14T16:00:55.104121+00:00"
+    },
+    "launcher-1897200000000001806": {
+      "expires": "2026-11-23T15:00:33.094076+00:00",
+      "id": "launcher-1897200000000001806",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'orb chaos classic mode user:coreymillia'",
+      "repo": "launcher:1897200000000001806",
+      "status": "rejected",
+      "timestamp": "2026-11-16T15:00:33.094076+00:00"
     },
     "launcher-1897200000000001816": {
       "expires": "2026-11-21T20:00:55.786187+00:00",
@@ -8206,6 +8251,15 @@
       "status": "rejected",
       "timestamp": "2026-11-16T06:00:32.710404+00:00"
     },
+    "launcher-1897200000000002354": {
+      "expires": "2026-11-23T15:00:33.094076+00:00",
+      "id": "launcher-1897200000000002354",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'coffee dashboard user:oya'",
+      "repo": "launcher:1897200000000002354",
+      "status": "rejected",
+      "timestamp": "2026-11-16T15:00:33.094076+00:00"
+    },
     "launcher-1897200000000002361": {
       "expires": "2026-11-22T09:00:31.430360+00:00",
       "id": "launcher-1897200000000002361",
@@ -8288,14 +8342,13 @@
       "timestamp": "2026-11-16T07:00:31.998433+00:00"
     },
     "launcher-1897200000000002401": {
-      "expired_at": "2026-11-15T21:00:31.486348+00:00",
-      "expires": "2026-11-15T20:00:54.954530+00:00",
+      "expires": "2026-11-23T15:00:33.094076+00:00",
       "id": "launcher-1897200000000002401",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000002401",
-      "status": "expired",
-      "timestamp": "2026-11-08T20:00:54.954530+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-16T15:00:33.094076+00:00"
     },
     "launcher-1897200000000002402": {
       "expires": "2026-11-23T11:00:31.939782+00:00",
@@ -9226,6 +9279,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T15:00:31.835014+00:00"
     },
+    "launcher-1897200000000003230": {
+      "expires": "2026-11-23T15:00:33.094076+00:00",
+      "id": "launcher-1897200000000003230",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'oraculo user:gabrielwlucio'",
+      "repo": "launcher:1897200000000003230",
+      "status": "rejected",
+      "timestamp": "2026-11-16T15:00:33.094076+00:00"
+    },
     "launcher-1897200000000003237": {
       "expires": "2026-11-21T18:00:55.491519+00:00",
       "id": "launcher-1897200000000003237",
@@ -9898,6 +9960,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T13:00:31.808604+00:00"
     },
+    "launcher-2118238930734776322": {
+      "expires": "2026-11-23T15:00:33.094076+00:00",
+      "id": "launcher-2118238930734776322",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'stackchan spk test user:kur1k0'",
+      "repo": "launcher:2118238930734776322",
+      "status": "rejected",
+      "timestamp": "2026-11-16T15:00:33.094076+00:00"
+    },
     "launcher-2118529634514075650": {
       "expires": "2026-11-20T22:00:55.476104+00:00",
       "id": "launcher-2118529634514075650",
@@ -9915,6 +9986,15 @@
       "repo": "launcher:2118705378773082114",
       "status": "rejected",
       "timestamp": "2026-11-15T12:00:31.921339+00:00"
+    },
+    "launcher-2118985784638480386": {
+      "expires": "2026-11-23T15:00:33.094076+00:00",
+      "id": "launcher-2118985784638480386",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:2118985784638480386",
+      "status": "rejected",
+      "timestamp": "2026-11-16T15:00:33.094076+00:00"
     },
     "launcher-2119222805013372929": {
       "expired_at": "2026-11-16T08:00:31.910120+00:00",
@@ -11551,8 +11631,8 @@
       "id": "lora-tunnel",
       "pr_ref": "#1744",
       "repo": "valleytechsolutions/lora-tunnel",
-      "status": "proposed",
-      "timestamp": "2026-11-16T14:00:31.914738+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-16T15:00:33.094076+00:00"
     },
     "lorachat-for-as923": {
       "expires": "2026-11-22T17:00:31.529719+00:00",
@@ -17233,21 +17313,13 @@
       "timestamp": "2026-11-15T13:00:31.808604+00:00"
     },
     "smart-rattle": {
-      "id": "smart-rattle",
-      "pr_ref": "#1736",
-      "repo": "abdrakhmanov/smart-rattle",
-      "repo_id": 1414617935,
-      "status": "proposed",
-      "timestamp": "2026-11-16T14:00:31.914738+00:00"
-    },
-    "smart-rattle": {
       "evidence_url": "https://github.com/abdrakhmanov/smart-rattle",
       "id": "smart-rattle",
       "pr_ref": null,
       "repo": "abdrakhmanov/smart-rattle",
       "repo_id": 1414617935,
-      "status": "proposed",
-      "timestamp": "2026-11-15T12:00:31.921339+00:00"
+      "status": "merged",
+      "timestamp": "2026-11-16T15:00:33.094076+00:00"
     },
     "smfpc": {
       "expires": "2026-12-15T11:00:32.244008+00:00",
@@ -19934,9 +20006,11 @@
     "launcher:1897200000000000243": "launcher-1897200000000000243",
     "launcher:1897200000000000271": "launcher-1897200000000000271",
     "launcher:1897200000000000274": "launcher-1897200000000000274",
+    "launcher:1897200000000000275": "launcher-1897200000000000275",
     "launcher:1897200000000000276": "launcher-1897200000000000276",
     "launcher:1897200000000000284": "launcher-1897200000000000284",
     "launcher:1897200000000000291": "launcher-1897200000000000291",
+    "launcher:1897200000000000309": "launcher-1897200000000000309",
     "launcher:1897200000000000313": "launcher-1897200000000000313",
     "launcher:1897200000000000317": "launcher-1897200000000000317",
     "launcher:1897200000000000319": "launcher-1897200000000000319",
@@ -20017,6 +20091,7 @@
     "launcher:1897200000000000975": "launcher-1897200000000000975",
     "launcher:1897200000000000980": "launcher-1897200000000000980",
     "launcher:1897200000000000984": "launcher-1897200000000000984",
+    "launcher:1897200000000000990": "launcher-1897200000000000990",
     "launcher:1897200000000000994": "launcher-1897200000000000994",
     "launcher:1897200000000000999": "launcher-1897200000000000999",
     "launcher:1897200000000001001": "launcher-1897200000000001001",
@@ -20121,6 +20196,7 @@
     "launcher:1897200000000001636": "launcher-1897200000000001636",
     "launcher:1897200000000001638": "launcher-1897200000000001638",
     "launcher:1897200000000001645": "launcher-1897200000000001645",
+    "launcher:1897200000000001647": "launcher-1897200000000001647",
     "launcher:1897200000000001652": "launcher-1897200000000001652",
     "launcher:1897200000000001653": "launcher-1897200000000001653",
     "launcher:1897200000000001678": "launcher-1897200000000001678",
@@ -20145,6 +20221,7 @@
     "launcher:1897200000000001772": "launcher-1897200000000001772",
     "launcher:1897200000000001794": "launcher-1897200000000001794",
     "launcher:1897200000000001805": "launcher-1897200000000001805",
+    "launcher:1897200000000001806": "launcher-1897200000000001806",
     "launcher:1897200000000001816": "launcher-1897200000000001816",
     "launcher:1897200000000001825": "launcher-1897200000000001825",
     "launcher:1897200000000001835": "launcher-1897200000000001835",
@@ -20203,6 +20280,7 @@
     "launcher:1897200000000002329": "launcher-1897200000000002329",
     "launcher:1897200000000002332": "launcher-1897200000000002332",
     "launcher:1897200000000002335": "launcher-1897200000000002335",
+    "launcher:1897200000000002354": "launcher-1897200000000002354",
     "launcher:1897200000000002361": "launcher-1897200000000002361",
     "launcher:1897200000000002363": "launcher-1897200000000002363",
     "launcher:1897200000000002378": "launcher-1897200000000002378",
@@ -20316,6 +20394,7 @@
     "launcher:1897200000000003222": "launcher-1897200000000003222",
     "launcher:1897200000000003223": "launcher-1897200000000003223",
     "launcher:1897200000000003227": "launcher-1897200000000003227",
+    "launcher:1897200000000003230": "launcher-1897200000000003230",
     "launcher:1897200000000003237": "launcher-1897200000000003237",
     "launcher:1897200000000003247": "launcher-1897200000000003247",
     "launcher:1897200000000003268": "launcher-1897200000000003268",
@@ -20390,8 +20469,10 @@
     "launcher:2114725415522476034": "launcher-2114725415522476034",
     "launcher:2116107881660669953": "launcher-2116107881660669953",
     "launcher:2117671811206971393": "launcher-2117671811206971393",
+    "launcher:2118238930734776322": "launcher-2118238930734776322",
     "launcher:2118529634514075650": "launcher-2118529634514075650",
     "launcher:2118705378773082114": "launcher-2118705378773082114",
+    "launcher:2118985784638480386": "launcher-2118985784638480386",
     "launcher:2119222805013372929": "launcher-2119222805013372929",
     "launcher:2119223184715325442": "launcher-2119223184715325442",
     "launcher:2119808775022616577": "launcher-2119808775022616577",
