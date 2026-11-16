@@ -471,3 +471,144 @@ def test_another_repository_with_another_name_is_authored_with_its_id(root, monk
 
     assert res.admitted == 1 and "data/firmware/fmtcheck/firmware.md" in res.paths
     assert [it.get("repo_id") for it in res.items] == [5151]           # the next tick holds it by this id
+
+
+# --- every paid decision is remembered (SPEC-espatlas-jr.md §3b, "The GitHub-topics source remembers") ---
+
+def _expires_days(rec):
+    t = datetime.fromisoformat(rec["timestamp"])
+    return (datetime.fromisoformat(rec["expires"]) - t).days
+
+
+def test_scorer_and_unresolved_skips_are_remembered_with_their_ttl(root, monkeypatch):
+    """Nov 15-16: 24 ticks of prefiltered=10 scored_clean=0 — a scorer skip was never recorded, so
+    every tick paid for the same top repos again. Each paid decision is now a TTL'd rejection under
+    the repo's note key, and the ledger it ships passes the ledger guard."""
+    import stage_admit
+    entries = [
+        _topic_entry("Old Cardputer Tool", "https://github.com/n/old", "A Cardputer tool"),
+        _topic_entry("Vague Thing", "https://github.com/n/vague", "a thing"),
+        _topic_entry("Gone Cardputer Tool", "https://github.com/n/gone", "A Cardputer tool"),
+    ]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    metas = {
+        "n/old": _meta("n/old", archived=True, description="A Cardputer tool", rid=201),
+        "n/vague": _meta("n/vague", description="a thing", rid=202),
+    }
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(metas))
+
+    res = stage_admit_topics.run(_ctx(root), budget=1)
+
+    assert res.admitted == 0
+    led = json.loads((root / "jr" / "proposed_ledger.json").read_text())
+    recs = {r: led["by_id"].get(stage_admit.repo_note_key(r)) for r in ("n/old", "n/vague", "n/gone")}
+    assert all(rec and rec["status"] == "rejected" for rec in recs.values()), recs
+    assert recs["n/old"]["reason"].startswith("archived")
+    assert _expires_days(recs["n/old"]) == memory.ARCHIVED_REJECT_DAYS
+    assert recs["n/gone"]["reason"].startswith("repo_unresolved")
+    assert _expires_days(recs["n/gone"]) == memory.UNRESOLVED_REJECT_DAYS
+    assert _expires_days(recs["n/vague"]) == memory.SEEN_TTL_DAYS
+
+    import sys
+    sys.path.insert(0, str(REPO / "scripts"))
+    import ledger_guard  # noqa: E402
+    assert ledger_guard.check({"by_id": {}}, led) == []
+
+
+def test_the_next_tick_walks_past_remembered_skips_to_the_next_repos(root, monkeypatch):
+    """The point of the memory: with budget 1 a tick scores 5 repos; 5 archived repos lead the star
+    order and a good one sits 6th. Tick 1 admits nothing, tick 2 reaches and admits the 6th."""
+    junk = [_topic_entry(f"Junk Cardputer Tool {i}", f"https://github.com/j/junk{i}", "A Cardputer tool") for i in range(5)]
+    good = _topic_entry("My Cardputer Tool", "https://github.com/n/newtool", "A Cardputer tool")
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: junk + [good])
+    metas = {f"j/junk{i}": _meta(f"j/junk{i}", archived=True, description="A Cardputer tool", rid=300 + i) for i in range(5)}
+    metas["n/newtool"] = _meta("n/newtool", stars=30, description="A Cardputer tool", rid=101)
+    fetched = []
+    fetch = _fake_fetch_meta(metas)
+    monkeypatch.setattr(drain, "default_fetch_meta", lambda url: fetched.append(url) or fetch(url))
+
+    first = stage_admit_topics.run(_ctx(root), budget=1)
+    second = stage_admit_topics.run(_ctx(root, now=NOW + timedelta(hours=1)), budget=1)
+
+    assert first.admitted == 0 and second.admitted == 1
+    assert {it["id"] for it in second.items} == {"newtool"}
+    assert fetched.count("https://github.com/j/junk0") == 1      # paid once, never again while it holds
+
+
+def test_a_remembered_skip_is_scored_again_after_its_ttl(root, monkeypatch):
+    """A TTL is a re-check, not a veto: once the 30-day note expires the tick's expire() step
+    reopens the repo and the prefilter scores it again."""
+    import stage_admit
+    entries = [_topic_entry("Vague Thing", "https://github.com/n/vague", "a thing")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta({"n/vague": _meta("n/vague", description="a thing", rid=202)}))
+    stage_admit_topics.run(_ctx(root), budget=1)
+    later = NOW + timedelta(days=memory.SEEN_TTL_DAYS + 1)
+    memory.expire(path=root / "jr" / "proposed_ledger.json", now=later)
+    led = ledger.load_ledger(root / "jr" / "proposed_ledger.json")
+    assert not ledger.is_blocked(led, repo="n/vague")
+    assert led["by_id"][stage_admit.repo_note_key("n/vague")]["status"] == "expired"
+
+
+def test_dry_run_records_no_skip(root, monkeypatch):
+    entries = [_topic_entry("Old Cardputer Tool", "https://github.com/n/old", "A Cardputer tool")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta({"n/old": _meta("n/old", archived=True, rid=201)}))
+    stage_admit_topics.run(_ctx(root, dry_run=True), budget=1)
+    assert not (root / "jr" / "proposed_ledger.json").exists()
+
+
+def _repo_note(root, owner_repo):
+    import stage_admit
+    path = root / "jr" / "proposed_ledger.json"
+    led = json.loads(path.read_text()) if path.exists() else {"by_id": {}}
+    return led["by_id"].get(stage_admit.repo_note_key(owner_repo))
+
+
+@pytest.mark.parametrize("pending,repo", [
+    (("oldtool", "n/oldtool", 4242, False), "n/newtool"),   # renamed upstream an open PR holds
+    (("oldtool", "n/oldtool", 4242, True), "n/newtool"),    # ... a closed PR vetoes
+    (("newtool", "n/newtool", 4242, False), "m/newtool"),   # another repo with a held slug
+], ids=["open", "vetoed", "ambiguous"])
+def test_a_repo_a_tick_pr_holds_is_held_not_remembered(root, monkeypatch, pending, repo):
+    """A hold is the open PR's decision, not this tick's: remembering it as a rejection would
+    outlive the PR (and the veto's own 30 days)."""
+    fid, held_repo, rid, vetoed = pending
+    entries = [_topic_entry("New Tool", f"https://github.com/{repo}", "A Cardputer tool")]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta(
+        {repo: _meta(repo, stars=30, description="A Cardputer tool", rid=4242 if repo == "n/newtool" else 7777)}))
+    ctx = _ctx(root)
+    ctx.pending = _identity_pending(fid, held_repo, rid, vetoed=vetoed)
+
+    res = stage_admit_topics.run(ctx, budget=1)
+
+    assert res.admitted == 0
+    assert _repo_note(root, repo) is None
+
+
+def test_below_floor_and_device_skips_keep_their_own_records_only(root, monkeypatch):
+    """Below the floor is a soft `seen` note and a device-evidence skip a rejection with the
+    device TTL, both under the firmware id; neither also gets a 30-day repo-note rejection."""
+    entries = [
+        _topic_entry("Filler Cardputer Tool", "https://github.com/n/filler", "A filler Cardputer tool"),
+        _topic_entry("Server Cardputer Tool", "https://github.com/n/server", "A Cardputer tool server"),
+    ]
+    monkeypatch.setattr(source_topics, "fetch_topic_repos", lambda topics, search=None: entries)
+    monkeypatch.setattr(drain, "default_fetch_meta", _fake_fetch_meta({
+        "n/filler": _meta("n/filler", stars=3, forks=0, description="A filler Cardputer tool", rid=102),
+        "n/server": _meta("n/server", stars=30, description="A Cardputer tool server", rid=103),
+    }))
+
+    def gh(*a):
+        if len(a) > 1 and "/git/trees/" in a[1] and "n/server" in a[1]:
+            return SimpleNamespace(returncode=0, stdout=json.dumps({"tree": [{"path": "main.go", "type": "blob"},
+                                                                             {"path": "go.mod", "type": "blob"}]}), stderr="")
+        return _default_gh(*a)
+
+    res = stage_admit_topics.run(_ctx(root, gh=gh), budget=2)
+
+    assert res.rejects.get("below_floor") == 1
+    assert sum(v for k, v in res.rejects.items() if k not in ("below_floor",)) == 1, res.rejects
+    assert _repo_note(root, "n/filler") is None
+    assert _repo_note(root, "n/server") is None
