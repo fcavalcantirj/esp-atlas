@@ -3,6 +3,7 @@ fake network. The tmp root carries a COPY of the real data/boards + data/modules
 resolves chips against the tree it writes), so nothing real is written."""
 from __future__ import annotations
 
+import autoreview
 import json
 import shutil
 from datetime import datetime, timezone
@@ -802,7 +803,7 @@ def test_admit_writes_the_adv_edge_when_the_readme_targets_only_the_adv(root, mo
     assert res.admitted == 1
     assert (root / "data/recipes/m5cardputer-adv__desk/recipe.md").exists()
     assert not (root / "data/recipes/m5cardputer__desk").exists()
-    assert "Evidence check v2 PASS" in (root / "data/recipes/m5cardputer-adv__desk/recipe.md").read_text()
+    assert f"Evidence check v{autoreview.RULES_VERSION} PASS" in (root / "data/recipes/m5cardputer-adv__desk/recipe.md").read_text()
 
 
 def test_admit_moves_to_the_adv_when_the_readme_rules_the_original_out(root, monkeypatch):

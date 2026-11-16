@@ -213,3 +213,15 @@ def test_first_gen_cardputer_is_explicit_original_support(catalog):
     """M5MonsterC5-CardputerADV (#1729): 'App for the M5Stack Cardputer AVD and for first gen Cardputer'."""
     v = _v("m5cardputer", catalog, readme="- App for the M5Stack Cardputer ADV and for first gen Cardputer - flasher")
     assert v.verdict == autoreview.PASS
+
+
+def test_a_library_link_with_a_framework_word_is_not_a_device_row(catalog):
+    """cardputer-adv-uhf-expansion (#1747): an ADV-only README whose 'Links' list carries
+    '- [M5Cardputer Arduino library](...)'. The library shares the board's name; v2 read the list item as a
+    device row beside the '| Cardputer ADV |' table and PASSed the original Cardputer."""
+    readme = ("Firmware for the **M5Stack Cardputer ADV**.\n| Cardputer ADV | Firmware function |\n"
+              "- [M5Cardputer Arduino library](https://github.com/m5stack/M5Cardputer)\n")
+    assert _v("m5cardputer", catalog, description="Cardputer ADV firmware", readme=readme).verdict == autoreview.FAIL
+    for ref in ("M5Cardputer PlatformIO library", "the M5Cardputer SDK", "M5Cardputer libraries", "M5Cardputer ESP-IDF component"):
+        v = _v("m5cardputer", catalog, readme=f"Runs on the T-Deck.\n- {ref}\n")
+        assert v.verdict == autoreview.FAIL, (ref, v.reasons)

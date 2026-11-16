@@ -212,7 +212,10 @@ URL allows), it returns `PASS`, `FAIL` or `UNCERTAIN` with reasons. It has its *
 tables; it never calls `jr/device_map`, `jr/board_alias` or the admit scorer, so it cannot repeat
 the mapping mistake it is checking for. The rules, each one tested on the real cases above:
 - **named:** the source names the claimed board itself (its catalog name or an alias in the
-  checker's table), as text, not only through a URL or a generated note. Not named → `FAIL`.
+  checker's table), as text, not only through a URL or a generated note. Not named → `FAIL`. A name
+  followed by a library or SDK word ("M5Cardputer Arduino library", "… SDK", "… component") is a
+  software reference, not the device (rules v3, 2026-11-16: an ADV-only README's library link had
+  PASSed the original Cardputer in tick #1747, and the gate's reverse-sibling step wrote that edge).
 - **sibling:** the source names a more specific sibling of the claimed board (Cardputer **ADV**
   for `m5cardputer`, Stick**C Plus2** for a StickC, a product built on a carrier module) and never
   the claimed board on its own → `FAIL`.
@@ -240,12 +243,12 @@ and boardmap's `writers.plan_recipes`. The evidence is what Jr already read (des
 Measured with `jr/autoreview_replay.py` (Jr's real admit + boardmap code, replayed offline on recorded
 GitHub answers; `jr/fixtures/autoreview/replay-metrics.json`):
 
-| | without the gate | with the gate |
+| | without the gate | with the gate (rules v3) |
 |---|---|---|
-| known-wrong edges written | 8 / 43 | **0 / 43** |
-| known-correct edges found | 17 / 23 | **20 / 23** |
+| known-wrong edges written | 8 / 44 | **0 / 44** (rules v2: 1, written as PASS) |
+| known-correct edges found | 18 / 24 | **21 / 24** |
 | Cardputer-Adv edges for the 22 ADV-only firmware | 9 / 22 | **16 / 22** |
-| written edges that PASS (auto-merge eligible) | 88.4 % | **100 %** |
+| written edges that PASS (auto-merge eligible) | 88.5 % | **100 %** |
 
 **Shadow, then canary.** Phase 1 runs the checker and reports; it never merges. It is replayed on
 the labelled history: every wrong edge preserved in `jr/overrides/*__edges.json` (42 at the time

@@ -14,7 +14,7 @@ import re
 from dataclasses import dataclass, field
 
 PASS, FAIL, UNCERTAIN = "PASS", "FAIL", "UNCERTAIN"
-RULES_VERSION = "2"
+RULES_VERSION = "3"
 
 # Boards whose name is the prefix of a more specific product that is NOT compatible hardware.
 # claimed board -> regex of the sibling that does not prove it (SIBLING_LABEL names it in reasons).
@@ -98,7 +98,10 @@ def _envs(platformio: str) -> list[dict]:
 
 
 _NOT_PROSE = re.compile(r"https?://\S+|\b[\w.-]+/[\w.-]+@[\w.^~-]+|\b[\w/.-]*\.(h|hpp|cpp|ino|py|json)\b"
-                        r"|\b(m5stack|lib_deps|#include)\s*[/=<]\s*\S+|\bm5cardputer\s+(library|lib)\b", re.I)
+                        r"|\b(m5stack|lib_deps|#include)\s*[/=<]\s*\S+"
+                        # v3: a name followed by a library/SDK word is a software reference, not a device
+                        # ("M5Cardputer Arduino library" in an ADV-only README, #1747)
+                        r"|\b[\w.-]+\s+((arduino|platformio|esp[\s-]?idf|idf)\s+)?(library|libraries|lib|sdk|bsp|component)\b", re.I)
 
 
 def _prose(text: str) -> str:

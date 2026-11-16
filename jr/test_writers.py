@@ -350,7 +350,7 @@ def _plan(resolved, evidence, root):
 def test_a_failing_edge_is_refused_with_the_check_reason(tmp_path):
     plan = _plan({"boards": {"m5cardputer": [SIG_REPO]}, "socs": {}}, {"description": "A tool for the XIAO ESP32-S3"}, tmp_path)
     assert plan["new"] == [] and plan["refused"][0][0] == "m5cardputer"
-    assert plan["refused"][0][1].startswith("evidence check v2: named:")
+    assert plan["refused"][0][1].startswith(f"evidence check v{autoreview.RULES_VERSION}: named:")
 
 
 def test_a_generic_original_with_an_adv_only_source_writes_the_adv_instead(tmp_path):
@@ -358,7 +358,7 @@ def test_a_generic_original_with_an_adv_only_source_writes_the_adv_instead(tmp_p
     plan = _plan({"boards": {"m5cardputer": [SIG_REPO]}, "socs": {}}, ev, tmp_path)
     assert [n[1] for n in plan["new"]] == ["m5cardputer-adv"]
     assert plan["refused"][0][0] == "m5cardputer" and "m5cardputer-adv instead" in plan["refused"][0][1]
-    assert plan["receipts"]["m5cardputer-adv__fw"].startswith("v2 PASS")
+    assert plan["receipts"]["m5cardputer-adv__fw"].startswith(f"v{autoreview.RULES_VERSION} PASS")
 
 
 def test_an_adv_edge_with_explicit_original_support_also_writes_the_original(tmp_path):
@@ -373,7 +373,7 @@ def test_an_uncertain_edge_is_still_written_and_says_why(tmp_path):
     plan = _plan({"boards": {"m5stick-s3": [dict(SIG_REPO, token="StickS3")]}, "socs": {}},
                  {"readme": "This doesn't run on the StickS3 yet"}, tmp_path)
     assert [n[1] for n in plan["new"]] == ["m5stick-s3"]
-    assert plan["receipts"]["m5stick-s3__fw"].startswith("v2 UNCERTAIN")
+    assert plan["receipts"]["m5stick-s3__fw"].startswith(f"v{autoreview.RULES_VERSION} UNCERTAIN")
 
 
 def test_the_receipt_is_in_the_written_recipe(tmp_path):
@@ -382,7 +382,7 @@ def test_the_receipt_is_in_the_written_recipe(tmp_path):
                               root=tmp_path, today=TODAY, board_soc=SOCS.get,
                               evidence={"description": "A synth for the M5Stack Cardputer"}, catalog=CAT)
     text = (tmp_path / "data/recipes/m5cardputer__fw/recipe.md").read_text()
-    assert w["written"] == ["m5cardputer__fw"] and "Evidence check v2 PASS" in text
+    assert w["written"] == ["m5cardputer__fw"] and f"Evidence check v{autoreview.RULES_VERSION} PASS" in text
 
 
 def test_no_evidence_keeps_todays_behaviour(tmp_path):
