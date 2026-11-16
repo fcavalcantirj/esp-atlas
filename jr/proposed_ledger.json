@@ -5701,6 +5701,15 @@
       "status": "rejected",
       "timestamp": "2026-11-14T23:00:56.203733+00:00"
     },
+    "launcher-1897200000000000194": {
+      "expires": "2026-11-23T20:00:32.230506+00:00",
+      "id": "launcher-1897200000000000194",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:1897200000000000194",
+      "status": "rejected",
+      "timestamp": "2026-11-16T20:00:32.230506+00:00"
+    },
     "launcher-1897200000000000200": {
       "expires": "2026-11-22T08:00:31.415117+00:00",
       "id": "launcher-1897200000000000200",
@@ -6033,6 +6042,15 @@
       "repo": "launcher:1897200000000000471",
       "status": "rejected",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
+    },
+    "launcher-1897200000000000475": {
+      "expires": "2026-12-16T20:00:32.230506+00:00",
+      "id": "launcher-1897200000000000475",
+      "pr_ref": null,
+      "reason": "resolved: m5stack/M5Unit-PoE-P4-UserDemo",
+      "repo": "launcher:1897200000000000475",
+      "status": "seen",
+      "timestamp": "2026-11-16T20:00:32.230506+00:00"
     },
     "launcher-1897200000000000477": {
       "expires": "2026-11-22T11:00:32.244008+00:00",
@@ -6745,6 +6763,15 @@
       "status": "rejected",
       "timestamp": "2026-11-16T14:00:31.914738+00:00"
     },
+    "launcher-1897200000000001048": {
+      "expires": "2026-11-23T20:00:32.230506+00:00",
+      "id": "launcher-1897200000000001048",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'uiflow2 user:m5stack'",
+      "repo": "launcher:1897200000000001048",
+      "status": "rejected",
+      "timestamp": "2026-11-16T20:00:32.230506+00:00"
+    },
     "launcher-1897200000000001050": {
       "expires": "2026-11-23T09:00:32.393504+00:00",
       "id": "launcher-1897200000000001050",
@@ -6997,6 +7024,15 @@
       "status": "rejected",
       "timestamp": "2026-11-16T04:00:31.943499+00:00"
     },
+    "launcher-1897200000000001213": {
+      "expires": "2026-11-23T20:00:32.230506+00:00",
+      "id": "launcher-1897200000000001213",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:1897200000000001213",
+      "status": "rejected",
+      "timestamp": "2026-11-16T20:00:32.230506+00:00"
+    },
     "launcher-1897200000000001221": {
       "expires": "2026-11-21T16:00:55.104121+00:00",
       "id": "launcher-1897200000000001221",
@@ -7079,14 +7115,13 @@
       "timestamp": "2026-11-16T02:00:31.729728+00:00"
     },
     "launcher-1897200000000001262": {
-      "expired_at": "2026-11-15T23:00:31.847601+00:00",
-      "expires": "2026-11-15T22:00:55.187463+00:00",
+      "expires": "2026-11-23T20:00:32.230506+00:00",
       "id": "launcher-1897200000000001262",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000001262",
-      "status": "expired",
-      "timestamp": "2026-11-08T22:00:55.187463+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-16T20:00:32.230506+00:00"
     },
     "launcher-1897200000000001268": {
       "expires": "2026-11-23T05:00:31.772256+00:00",
@@ -9122,6 +9157,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T02:00:31.969279+00:00"
     },
+    "launcher-1897200000000002937": {
+      "expires": "2026-11-23T20:00:32.230506+00:00",
+      "id": "launcher-1897200000000002937",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'sailing alone user:maoamao'",
+      "repo": "launcher:1897200000000002937",
+      "status": "rejected",
+      "timestamp": "2026-11-16T20:00:32.230506+00:00"
+    },
     "launcher-1897200000000002952": {
       "expires": "2026-11-21T20:00:55.786187+00:00",
       "id": "launcher-1897200000000002952",
@@ -9839,6 +9883,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T03:00:32.103528+00:00"
     },
+    "launcher-2100472444758638594": {
+      "expires": "2026-11-23T20:00:32.230506+00:00",
+      "id": "launcher-2100472444758638594",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'test user:kur1k0'",
+      "repo": "launcher:2100472444758638594",
+      "status": "rejected",
+      "timestamp": "2026-11-16T20:00:32.230506+00:00"
+    },
     "launcher-2100775811707944961": {
       "expires": "2026-11-22T02:00:31.969279+00:00",
       "id": "launcher-2100775811707944961",
@@ -10244,6 +10297,15 @@
       "status": "rejected",
       "timestamp": "2026-11-16T15:00:33.094076+00:00"
     },
+    "launcher-2118367043565223938": {
+      "expires": "2026-11-23T20:00:32.230506+00:00",
+      "id": "launcher-2118367043565223938",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:2118367043565223938",
+      "status": "rejected",
+      "timestamp": "2026-11-16T20:00:32.230506+00:00"
+    },
     "launcher-2118529634514075650": {
       "expires": "2026-11-20T22:00:55.476104+00:00",
       "id": "launcher-2118529634514075650",
@@ -10261,6 +10323,15 @@
       "repo": "launcher:2118705378773082114",
       "status": "rejected",
       "timestamp": "2026-11-15T12:00:31.921339+00:00"
+    },
+    "launcher-2118908350228504577": {
+      "expires": "2026-11-23T20:00:32.230506+00:00",
+      "id": "launcher-2118908350228504577",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:2118908350228504577",
+      "status": "rejected",
+      "timestamp": "2026-11-16T20:00:32.230506+00:00"
     },
     "launcher-2118985784638480386": {
       "expires": "2026-11-23T15:00:33.094076+00:00",
@@ -10370,6 +10441,15 @@
       "repo": "launcher:2121566698689478657",
       "status": "rejected",
       "timestamp": "2026-11-14T20:00:55.786187+00:00"
+    },
+    "launcher-2121871437058752513": {
+      "expires": "2026-11-23T20:00:32.230506+00:00",
+      "id": "launcher-2121871437058752513",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'evil m5tab5 user:7h30th3r0n3'",
+      "repo": "launcher:2121871437058752513",
+      "status": "rejected",
+      "timestamp": "2026-11-16T20:00:32.230506+00:00"
     },
     "launcher-2121974375890501633": {
       "expires": "2026-11-23T13:00:32.318887+00:00",
@@ -14540,6 +14620,16 @@
       "repo_id": 386674138,
       "status": "rejected",
       "timestamp": "2026-11-15T10:00:35.647124+00:00"
+    },
+    "m5unit-poe-p4-userdemo": {
+      "expires": "2026-12-16T20:00:32.230506+00:00",
+      "id": "m5unit-poe-p4-userdemo",
+      "pr_ref": null,
+      "reason": "below_floor: 2 stars / 2 forks",
+      "repo": "m5stack/m5unit-poe-p4-userdemo",
+      "repo_id": 1133373477,
+      "status": "rejected",
+      "timestamp": "2026-11-16T20:00:32.230506+00:00"
     },
     "m5unit-thermal2-internal-fw": {
       "expires": "2026-12-16T03:00:32.040222+00:00",
@@ -20317,6 +20407,7 @@
     "launcher:1897200000000000174": "launcher-1897200000000000174",
     "launcher:1897200000000000176": "launcher-1897200000000000176",
     "launcher:1897200000000000179": "launcher-1897200000000000179",
+    "launcher:1897200000000000194": "launcher-1897200000000000194",
     "launcher:1897200000000000200": "launcher-1897200000000000200",
     "launcher:1897200000000000202": "launcher-1897200000000000202",
     "launcher:1897200000000000207": "launcher-1897200000000000207",
@@ -20354,6 +20445,7 @@
     "launcher:1897200000000000457": "launcher-1897200000000000457",
     "launcher:1897200000000000468": "launcher-1897200000000000468",
     "launcher:1897200000000000471": "launcher-1897200000000000471",
+    "launcher:1897200000000000475": "launcher-1897200000000000475",
     "launcher:1897200000000000477": "launcher-1897200000000000477",
     "launcher:1897200000000000484": "launcher-1897200000000000484",
     "launcher:1897200000000000486": "launcher-1897200000000000486",
@@ -20433,6 +20525,7 @@
     "launcher:1897200000000001031": "launcher-1897200000000001031",
     "launcher:1897200000000001040": "launcher-1897200000000001040",
     "launcher:1897200000000001047": "launcher-1897200000000001047",
+    "launcher:1897200000000001048": "launcher-1897200000000001048",
     "launcher:1897200000000001050": "launcher-1897200000000001050",
     "launcher:1897200000000001058": "launcher-1897200000000001058",
     "launcher:1897200000000001069": "launcher-1897200000000001069",
@@ -20461,6 +20554,7 @@
     "launcher:1897200000000001200": "launcher-1897200000000001200",
     "launcher:1897200000000001207": "launcher-1897200000000001207",
     "launcher:1897200000000001210": "launcher-1897200000000001210",
+    "launcher:1897200000000001213": "launcher-1897200000000001213",
     "launcher:1897200000000001221": "launcher-1897200000000001221",
     "launcher:1897200000000001222": "launcher-1897200000000001222",
     "launcher:1897200000000001234": "launcher-1897200000000001234",
@@ -20697,6 +20791,7 @@
     "launcher:1897200000000002911": "launcher-1897200000000002911",
     "launcher:1897200000000002927": "launcher-1897200000000002927",
     "launcher:1897200000000002928": "launcher-1897200000000002928",
+    "launcher:1897200000000002937": "launcher-1897200000000002937",
     "launcher:1897200000000002952": "launcher-1897200000000002952",
     "launcher:1897200000000002954": "launcher-1897200000000002954",
     "launcher:1897200000000002955": "launcher-1897200000000002955",
@@ -20776,6 +20871,7 @@
     "launcher:2095691882913476609": "launcher-2095691882913476609",
     "launcher:2095718795906584578": "launcher-2095718795906584578",
     "launcher:2098301580688445441": "launcher-2098301580688445441",
+    "launcher:2100472444758638594": "launcher-2100472444758638594",
     "launcher:2100775811707944961": "launcher-2100775811707944961",
     "launcher:2100777141080014849": "launcher-2100777141080014849",
     "launcher:2102952029751865346": "launcher-2102952029751865346",
@@ -20821,8 +20917,10 @@
     "launcher:2117671811206971393": "launcher-2117671811206971393",
     "launcher:2117768802100412418": "launcher-2117768802100412418",
     "launcher:2118238930734776322": "launcher-2118238930734776322",
+    "launcher:2118367043565223938": "launcher-2118367043565223938",
     "launcher:2118529634514075650": "launcher-2118529634514075650",
     "launcher:2118705378773082114": "launcher-2118705378773082114",
+    "launcher:2118908350228504577": "launcher-2118908350228504577",
     "launcher:2118985784638480386": "launcher-2118985784638480386",
     "launcher:2119222805013372929": "launcher-2119222805013372929",
     "launcher:2119223184715325442": "launcher-2119223184715325442",
@@ -20835,6 +20933,7 @@
     "launcher:2121127992329453569": "launcher-2121127992329453569",
     "launcher:2121294395242135554": "launcher-2121294395242135554",
     "launcher:2121566698689478657": "launcher-2121566698689478657",
+    "launcher:2121871437058752513": "launcher-2121871437058752513",
     "launcher:2121974375890501633": "launcher-2121974375890501633",
     "launcher:2122139606327443458": "launcher-2122139606327443458",
     "launcher:2122191762896142337": "launcher-2122191762896142337",
@@ -21091,6 +21190,7 @@
     "m5stack/m5unified": "m5unified",
     "m5stack/m5unit-kmeter-internal-fw": "m5unit-kmeter-internal-fw",
     "m5stack/m5unit-lcd-internal-fw": "m5unit-lcd-internal-fw",
+    "m5stack/m5unit-poe-p4-userdemo": "m5unit-poe-p4-userdemo",
     "m5stack/m5unit-thermal2-internal-fw": "m5unit-thermal2-internal-fw",
     "m5stack/uiflow-micropython": "uiflow-micropython",
     "m5stack/unitcams3-userdemo": "unitcams3-userdemo",
