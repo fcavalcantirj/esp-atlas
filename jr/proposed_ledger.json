@@ -1491,7 +1491,7 @@
       "repo": "mtoolstec/cardputer-adv-uhf-expansion",
       "repo_id": 1334897822,
       "status": "proposed",
-      "timestamp": "2026-11-16T10:00:32.342729+00:00"
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
     },
     "cardputer-adv-wifi-ble-radar": {
       "id": "cardputer-adv-wifi-ble-radar",
@@ -2531,6 +2531,16 @@
       "repo_id": 1395566008,
       "status": "rejected",
       "timestamp": "2026-11-03T03:00:59.632283+00:00"
+    },
+    "chirpr-os-t-deck-pro": {
+      "expires": "2026-12-16T11:00:31.939782+00:00",
+      "id": "chirpr-os-t-deck-pro",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "aussie5380/chirpr-os---t-deck-pro",
+      "repo_id": 993230127,
+      "status": "rejected",
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
     },
     "christdadriver": {
       "expires": "2026-12-06T20:00:59.122628+00:00",
@@ -5404,14 +5414,13 @@
       "timestamp": "2026-11-12T21:00:55.047326+00:00"
     },
     "launcher-1897200000000000024": {
-      "expired_at": "2026-11-15T21:00:31.486348+00:00",
-      "expires": "2026-11-15T20:00:54.954530+00:00",
+      "expires": "2026-11-23T11:00:31.939782+00:00",
       "id": "launcher-1897200000000000024",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'atomos windows like atomu user:szuszjan'",
       "repo": "launcher:1897200000000000024",
-      "status": "expired",
-      "timestamp": "2026-11-08T20:00:54.954530+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
     },
     "launcher-1897200000000000029": {
       "expires": "2026-12-15T12:00:31.921339+00:00",
@@ -6323,14 +6332,13 @@
       "timestamp": "2026-11-16T09:00:32.393504+00:00"
     },
     "launcher-1897200000000000859": {
-      "expired_at": "2026-11-15T23:00:31.847601+00:00",
-      "expires": "2026-11-15T22:00:55.187463+00:00",
+      "expires": "2026-11-23T11:00:31.939782+00:00",
       "id": "launcher-1897200000000000859",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bitcoin ticker user:kwindapp'",
       "repo": "launcher:1897200000000000859",
-      "status": "expired",
-      "timestamp": "2026-11-08T22:00:55.187463+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
     },
     "launcher-1897200000000000875": {
       "expires": "2026-11-23T07:00:31.998433+00:00",
@@ -6396,14 +6404,13 @@
       "timestamp": "2026-11-14T22:00:55.399488+00:00"
     },
     "launcher-1897200000000000959": {
-      "expired_at": "2026-11-15T23:00:31.847601+00:00",
-      "expires": "2026-11-15T22:00:55.187463+00:00",
+      "expires": "2026-11-23T11:00:31.939782+00:00",
       "id": "launcher-1897200000000000959",
       "pr_ref": null,
       "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
       "repo": "launcher:1897200000000000959",
-      "status": "expired",
-      "timestamp": "2026-11-08T22:00:55.187463+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
     },
     "launcher-1897200000000000960": {
       "expires": "2026-11-21T20:00:55.786187+00:00",
@@ -6467,6 +6474,15 @@
       "repo": "launcher:1897200000000001001",
       "status": "seen",
       "timestamp": "2026-11-15T10:00:35.647124+00:00"
+    },
+    "launcher-1897200000000001010": {
+      "expires": "2026-11-23T11:00:31.939782+00:00",
+      "id": "launcher-1897200000000001010",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'evil portal killer user:coreymillia'",
+      "repo": "launcher:1897200000000001010",
+      "status": "rejected",
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
     },
     "launcher-1897200000000001011": {
       "expires": "2026-11-22T08:00:31.415117+00:00",
@@ -6874,6 +6890,15 @@
       "status": "rejected",
       "timestamp": "2026-11-16T05:00:31.772256+00:00"
     },
+    "launcher-1897200000000001274": {
+      "expires": "2026-11-23T11:00:31.939782+00:00",
+      "id": "launcher-1897200000000001274",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'easylauncher user:pkolbas'",
+      "repo": "launcher:1897200000000001274",
+      "status": "rejected",
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
+    },
     "launcher-1897200000000001281": {
       "expires": "2026-11-20T21:00:55.139769+00:00",
       "id": "launcher-1897200000000001281",
@@ -7081,6 +7106,15 @@
       "repo": "launcher:1897200000000001460",
       "status": "rejected",
       "timestamp": "2026-11-14T20:00:55.786187+00:00"
+    },
+    "launcher-1897200000000001464": {
+      "expires": "2026-11-23T11:00:31.939782+00:00",
+      "id": "launcher-1897200000000001464",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:1897200000000001464",
+      "status": "rejected",
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
     },
     "launcher-1897200000000001470": {
       "expires": "2026-11-22T09:00:31.430360+00:00",
@@ -7704,6 +7738,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T23:00:31.847601+00:00"
     },
+    "launcher-1897200000000002019": {
+      "expires": "2026-11-23T11:00:31.939782+00:00",
+      "id": "launcher-1897200000000002019",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'm5stickcplusfingerprint manager user:peien'",
+      "repo": "launcher:1897200000000002019",
+      "status": "rejected",
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
+    },
     "launcher-1897200000000002020": {
       "expires": "2026-11-23T00:00:31.813641+00:00",
       "id": "launcher-1897200000000002020",
@@ -8082,6 +8125,15 @@
       "repo": "launcher:1897200000000002401",
       "status": "expired",
       "timestamp": "2026-11-08T20:00:54.954530+00:00"
+    },
+    "launcher-1897200000000002402": {
+      "expires": "2026-11-23T11:00:31.939782+00:00",
+      "id": "launcher-1897200000000002402",
+      "pr_ref": null,
+      "reason": "no_source_repo: gh: Validation Failed (HTTP 422)",
+      "repo": "launcher:1897200000000002402",
+      "status": "rejected",
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
     },
     "launcher-1897200000000002434": {
       "expires": "2026-11-20T21:00:55.139769+00:00",
@@ -8939,6 +8991,15 @@
       "repo": "launcher:1897200000000003222",
       "status": "rejected",
       "timestamp": "2026-11-15T18:00:31.614867+00:00"
+    },
+    "launcher-1897200000000003223": {
+      "expires": "2026-11-23T11:00:31.939782+00:00",
+      "id": "launcher-1897200000000003223",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'powerhub userdemo user:m5stack'",
+      "repo": "launcher:1897200000000003223",
+      "status": "rejected",
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
     },
     "launcher-1897200000000003227": {
       "expires": "2026-11-22T15:00:31.835014+00:00",
@@ -10513,6 +10574,15 @@
       "status": "seen",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
+    "launcher-CFW7f2e1bed99ba4a1f316844dc737e4": {
+      "expires": "2026-12-16T11:00:31.939782+00:00",
+      "id": "launcher-CFW7f2e1bed99ba4a1f316844dc737e4",
+      "pr_ref": null,
+      "reason": "resolved: Aussie5380/ChirpR-OS---T-Deck-Pro",
+      "repo": "launcher:cfw7f2e1bed99ba4a1f316844dc737e4",
+      "status": "seen",
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
+    },
     "launcher-CFW7f6c56ac6e373eaf4f34152130f59": {
       "expires": "2026-11-22T10:00:35.647124+00:00",
       "id": "launcher-CFW7f6c56ac6e373eaf4f34152130f59",
@@ -11212,7 +11282,7 @@
       "pr_ref": "#1744",
       "repo": "valleytechsolutions/lora-tunnel",
       "status": "proposed",
-      "timestamp": "2026-11-16T10:00:32.342729+00:00"
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
     },
     "lorachat-for-as923": {
       "expires": "2026-11-22T17:00:31.529719+00:00",
@@ -16888,7 +16958,7 @@
       "repo": "abdrakhmanov/smart-rattle",
       "repo_id": 1414617935,
       "status": "proposed",
-      "timestamp": "2026-11-16T10:00:32.342729+00:00"
+      "timestamp": "2026-11-16T11:00:31.939782+00:00"
     },
     "smfpc": {
       "expires": "2026-12-15T11:00:32.244008+00:00",
@@ -18973,6 +19043,7 @@
     "atomnft/cyd-wifi-hash-monster-port-flasher": "cyd-wifi-hash-monster-port-flasher",
     "atomnft/m5stick-marauder": "m5stick-marauder",
     "atomnft/rogue-radar": "rogue-radar",
+    "aussie5380/chirpr-os---t-deck-pro": "chirpr-os-t-deck-pro",
     "autoflowdanilo-it/blipputer": "blipputer",
     "awesomelionel/bus-aunty-mini": "bus-aunty-mini",
     "azure/iot-central-firmware": "iot-central-firmware",
@@ -19651,6 +19722,7 @@
     "launcher:1897200000000000980": "launcher-1897200000000000980",
     "launcher:1897200000000000994": "launcher-1897200000000000994",
     "launcher:1897200000000001001": "launcher-1897200000000001001",
+    "launcher:1897200000000001010": "launcher-1897200000000001010",
     "launcher:1897200000000001011": "launcher-1897200000000001011",
     "launcher:1897200000000001012": "launcher-1897200000000001012",
     "launcher:1897200000000001020": "launcher-1897200000000001020",
@@ -19696,6 +19768,7 @@
     "launcher:1897200000000001259": "launcher-1897200000000001259",
     "launcher:1897200000000001262": "launcher-1897200000000001262",
     "launcher:1897200000000001268": "launcher-1897200000000001268",
+    "launcher:1897200000000001274": "launcher-1897200000000001274",
     "launcher:1897200000000001281": "launcher-1897200000000001281",
     "launcher:1897200000000001289": "launcher-1897200000000001289",
     "launcher:1897200000000001301": "launcher-1897200000000001301",
@@ -19719,6 +19792,7 @@
     "launcher:1897200000000001445": "launcher-1897200000000001445",
     "launcher:1897200000000001457": "launcher-1897200000000001457",
     "launcher:1897200000000001460": "launcher-1897200000000001460",
+    "launcher:1897200000000001464": "launcher-1897200000000001464",
     "launcher:1897200000000001470": "launcher-1897200000000001470",
     "launcher:1897200000000001480": "launcher-1897200000000001480",
     "launcher:1897200000000001481": "launcher-1897200000000001481",
@@ -19788,6 +19862,7 @@
     "launcher:1897200000000001996": "launcher-1897200000000001996",
     "launcher:1897200000000001997": "launcher-1897200000000001997",
     "launcher:1897200000000001999": "launcher-1897200000000001999",
+    "launcher:1897200000000002019": "launcher-1897200000000002019",
     "launcher:1897200000000002020": "launcher-1897200000000002020",
     "launcher:1897200000000002028": "launcher-1897200000000002028",
     "launcher:1897200000000002033": "launcher-1897200000000002033",
@@ -19830,6 +19905,7 @@
     "launcher:1897200000000002393": "launcher-1897200000000002393",
     "launcher:1897200000000002396": "launcher-1897200000000002396",
     "launcher:1897200000000002401": "launcher-1897200000000002401",
+    "launcher:1897200000000002402": "launcher-1897200000000002402",
     "launcher:1897200000000002434": "launcher-1897200000000002434",
     "launcher:1897200000000002447": "launcher-1897200000000002447",
     "launcher:1897200000000002456": "launcher-1897200000000002456",
@@ -19925,6 +20001,7 @@
     "launcher:1897200000000003216": "launcher-1897200000000003216",
     "launcher:1897200000000003219": "launcher-1897200000000003219",
     "launcher:1897200000000003222": "launcher-1897200000000003222",
+    "launcher:1897200000000003223": "launcher-1897200000000003223",
     "launcher:1897200000000003227": "launcher-1897200000000003227",
     "launcher:1897200000000003237": "launcher-1897200000000003237",
     "launcher:1897200000000003247": "launcher-1897200000000003247",
@@ -20115,6 +20192,7 @@
     "launcher:cfw364aa5e5e0e5d189788dd01929297": "launcher-CFW364aa5e5e0e5d189788dd01929297",
     "launcher:cfw37b7e2ef16137a810822d039ea3e3": "launcher-CFW37b7e2ef16137a810822d039ea3e3",
     "launcher:cfw61a7faa10a8016f54b1f765d0f3be": "launcher-CFW61a7faa10a8016f54b1f765d0f3be",
+    "launcher:cfw7f2e1bed99ba4a1f316844dc737e4": "launcher-CFW7f2e1bed99ba4a1f316844dc737e4",
     "launcher:cfw7f6c56ac6e373eaf4f34152130f59": "launcher-CFW7f6c56ac6e373eaf4f34152130f59",
     "launcher:cfw8de5cb68e03e4bda71f078b68fb97": "launcher-CFW8de5cb68e03e4bda71f078b68fb97",
     "launcher:cfw90423a6e548652c02652927293bcb": "launcher-CFW90423a6e548652c02652927293bcb",
