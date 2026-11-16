@@ -68,7 +68,7 @@
     },
     "adafruit-feather-esp32-s3": {
       "board": "adafruit-feather-esp32-s3",
-      "expires": "2026-11-16T04:00:55.175597+00:00",
+      "expires": "2026-11-23T05:00:31.772256+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -76,7 +76,7 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-09T04:00:55.175597+00:00"
+      "timestamp": "2026-11-16T05:00:31.772256+00:00"
     },
     "adafruit-feather-esp32-s3-no-psram": {
       "board": "adafruit-feather-esp32-s3-no-psram",
@@ -116,7 +116,7 @@
     },
     "adafruit-funhouse": {
       "board": "adafruit-funhouse",
-      "expires": "2026-11-16T04:00:55.175597+00:00",
+      "expires": "2026-11-23T05:00:31.772256+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -129,11 +129,11 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-09T04:00:55.175597+00:00"
+      "timestamp": "2026-11-16T05:00:31.772256+00:00"
     },
     "adafruit-magtag": {
       "board": "adafruit-magtag",
-      "expires": "2026-11-16T04:00:55.175597+00:00",
+      "expires": "2026-11-23T05:00:31.772256+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -146,7 +146,7 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-09T04:00:55.175597+00:00"
+      "timestamp": "2026-11-16T05:00:31.772256+00:00"
     },
     "adafruit-matrixportal-s3": {
       "board": "adafruit-matrixportal-s3",
