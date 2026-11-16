@@ -1,7 +1,7 @@
 {
  "calls": 4,
  "errors": 0,
- "fetched": "2026-11-09",
+ "fetched": "2026-11-16",
  "notes": [],
  "ref": "main",
  "repo": "i12bp8/tagtinker-adv",
@@ -16,7 +16,10 @@
   {
    "extra": {
     "env": "m5stack-cardputer",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 6,
