@@ -1,17 +1,18 @@
 {
- "about": "jr/autoreview_replay.py on the labelled edges (jr/fixtures/autoreview/cases.json), Jr's real admit + boardmap code replayed offline on GitHub answers recorded 2026-11-15. 'without_gate' = the algorithm on main; 'with_gate' = the evidence gate inside generation (SPEC-jr-review-routing.md \u00a77, step 1).",
+ "about": "jr/autoreview_replay.py on the labelled edges (jr/fixtures/autoreview/cases.json), Jr's real admit + boardmap code replayed offline on GitHub answers recorded 2026-11-15 (cardputer-adv-uhf-expansion added 2026-11-16). 'without_gate' = the algorithm on main; 'with_gate' = the evidence gate inside generation (SPEC-jr-review-routing.md \u00a77, step 1). Checker rules v3 (a library/SDK reference is not a device mention); v2 with the gate wrote m5cardputer__cardputer-adv-uhf-expansion as PASS.",
  "without_gate": {
   "metrics": {
-   "M1_of": 43,
+   "M1_of": 44,
    "M1_wrong_edges_written": 8,
    "M1_wrong_written_as_PASS": 0,
-   "M2_correct_edges_found": 17,
-   "M2_of": 23,
+   "M2_correct_edges_found": 18,
+   "M2_of": 24,
    "M3_adv_edges_written": 9,
    "M3_of": 22,
-   "M4_pass_share_of_written": 0.884,
-   "edges_written": 86
+   "M4_pass_share_of_written": 0.885,
+   "edges_written": 87
   },
+  "errors": [],
   "wrong_edges_written": [
    "m5cardputer__ask-master",
    "m5cardputer__bitmap16dx",
@@ -29,27 +30,26 @@
    "m5cardputer__evil-m5project",
    "m5cardputer__flipper-zero-meets-m5stack-cardputer",
    "m5cardputer__m5cardputer-userdemo"
-  ],
-  "errors": []
+  ]
  },
  "with_gate": {
   "metrics": {
-   "M1_of": 43,
+   "M1_of": 44,
    "M1_wrong_edges_written": 0,
    "M1_wrong_written_as_PASS": 0,
-   "M2_correct_edges_found": 20,
-   "M2_of": 23,
+   "M2_correct_edges_found": 21,
+   "M2_of": 24,
    "M3_adv_edges_written": 16,
    "M3_of": 22,
    "M4_pass_share_of_written": 1.0,
-   "edges_written": 87
+   "edges_written": 88
   },
+  "errors": [],
   "wrong_edges_written": [],
   "correct_edges_missed": [
    "m5cardputer__bruce",
    "m5cardputer__evil-m5project",
    "m5cardputer__m5cardputer-userdemo"
-  ],
-  "errors": []
+  ]
  }
 }
