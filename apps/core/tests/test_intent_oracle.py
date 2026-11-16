@@ -248,3 +248,152 @@ def test_a_firmware_named_in_full_beats_one_that_only_shares_a_name_token(monkey
         assert firmware_named_in("run Meshcore")[0]["id"] == "meshcore-cardputer-adv"
         assert firmware_named_in("run meshcore-cardputer")[0]["id"] == "meshcore-cardputer"
         assert firmware_named_in("run meshcore-cardputer-adv")[0]["id"] == "meshcore-cardputer-adv"
+
+
+def test_a_generic_name_token_never_hijacks_a_filter_query(monkeypatch):
+    """PR 1736: Jr admitted `smart-rattle` (name "Smart rattle"); its lone name token "smart" became
+    a firmware key and captured "thread zigbee matter smart-home mesh" (coverage matrix case 18).
+    A common English word is not a firmware's identity; its full name and id still route."""
+    from esp_atlas_core import intent
+
+    fake = [{"id": "smart-rattle", "name": "Smart rattle"}, {"id": "marauder", "name": "ESP32 Marauder"}]
+    monkeypatch.setattr(intent, "list_firmware", lambda: fake)
+
+    assert firmware_named_in("thread zigbee matter smart-home mesh") == []
+    assert firmware_named_in("a smart board for my home") == []
+    assert [fw["id"] for fw in firmware_named_in("run smart-rattle")] == ["smart-rattle"]
+    assert [fw["id"] for fw in firmware_named_in("run Smart rattle")] == ["smart-rattle"]
+    assert [fw["id"] for fw in firmware_named_in("run marauder")] == ["marauder"]
+
+
+def test_a_name_token_inside_a_hyphenated_compound_is_not_the_firmware(monkeypatch):
+    """A distinctive token still must not match a mere piece of a hyphenated word in the query:
+    "rattle-proof case" is not "Smart rattle". The firmware's own hyphenated name still routes."""
+    from esp_atlas_core import intent
+
+    fake = [{"id": "smart-rattle", "name": "Smart rattle"}, {"id": "marauder", "name": "ESP32 Marauder"}]
+    monkeypatch.setattr(intent, "list_firmware", lambda: fake)
+
+    assert firmware_named_in("a rattle-proof case") == []
+    assert [fw["id"] for fw in firmware_named_in("a rattle toy")] == ["smart-rattle"]
+    assert [fw["id"] for fw in firmware_named_in("run esp32-marauder")] == ["marauder"]
+
+
+def test_the_smart_home_filter_query_stays_a_filter_query(built_db_path, monkeypatch):
+    """End to end: with a generic-named firmware in the catalogue, parse_intent still answers
+    the capability query with filters (coverage matrix 18_thread_zigbee_matter)."""
+    from esp_atlas_core import intent
+
+    real = intent.list_firmware()
+    monkeypatch.setattr(intent, "list_firmware", lambda: real + [{"id": "smart-rattle", "name": "Smart rattle"}])
+    stub = StubLLM({"filters": {"radio": "thread"}, "unmapped": []})
+    parsed = parse_intent("thread zigbee matter smart-home mesh", llm_client=stub,
+                          db_path=built_db_path, use_cache=False)
+    assert parsed["kind"] != "firmware"
+    assert stub.calls, "a filter query must reach the parser"
+
+
+def test_a_barred_generic_word_still_ranks_the_firmware_that_carries_it(monkeypatch):
+    """Barring "portal" as a lone key must not turn "run evil portal" into a catalogue-order coin
+    toss among every firmware sharing the token "evil": the one whose name carries both words wins."""
+    from esp_atlas_core import intent
+
+    fake = [{"id": "evil-m5project", "name": "Evil-M5Project"},
+            {"id": "evil-portal-m5stack", "name": "Evil Portal for Cardputer"},
+            {"id": "semi-evil-m5dial", "name": "Semi-Evil M5Dial"}]
+    for order in (fake, list(reversed(fake))):
+        monkeypatch.setattr(intent, "list_firmware", lambda order=order: order)
+        assert firmware_named_in("run evil portal")[0]["id"] == "evil-portal-m5stack"
+        assert firmware_named_in("a captive portal board") == []
+
+
+def test_a_compound_made_of_the_firmwares_own_name_words_still_routes(monkeypatch):
+    """The hyphen rule bars a token glued to a FOREIGN word ("smart-home"); a compound spelled
+    entirely from the firmware's own name ("flipper-zero", "bit-pirate") still names it."""
+    from esp_atlas_core import intent
+
+    fake = [{"id": "flipper-zero-esp32-adv", "name": "Flipper Zero Meets Cardputers"},
+            {"id": "esp32-bit-pirate", "name": "ESP32 Bit Pirate"}]
+    monkeypatch.setattr(intent, "list_firmware", lambda: fake)
+
+    assert [fw["id"] for fw in firmware_named_in("run flipper-zero")] == ["flipper-zero-esp32-adv"]
+    assert [fw["id"] for fw in firmware_named_in("run bit-pirate")] == ["esp32-bit-pirate"]
+    assert firmware_named_in("a pirate-themed case") == []
+
+
+def _ids(query):
+    return [fw["id"] for fw in firmware_named_in(query)]
+
+
+def test_a_common_english_name_word_never_routes_alone_and_needs_no_hand_list(monkeypatch):
+    """A name word identifies a firmware on its own only if it is not common English. #1738 barred
+    "smart" with a hand list, which a catalog that grows by itself never keeps up with: "Ocean
+    Lantern" would capture "an ocean buoy logger" the day it lands. Commonness comes from the
+    vendored word-frequency list (common_words_en.txt), so no word has to be added by hand."""
+    from esp_atlas_core import intent
+
+    fake = [{"id": "ocean-lantern", "name": "Ocean Lantern"}, {"id": "zorbix-pager", "name": "Zorbix Pager"}]
+    monkeypatch.setattr(intent, "list_firmware", lambda: fake)
+
+    assert firmware_named_in("an ocean buoy logger") == []
+    assert firmware_named_in("a lantern for camping") == []
+    assert _ids("run ocean lantern") == ["ocean-lantern"]  # the full name always routes
+    assert _ids("run zorbix") == ["zorbix-pager"]  # a coined word identifies on its own
+    # #1738's incident words stay barred without any list naming them
+    for word in ("smart", "home", "game", "weather", "sound", "voice", "world", "server", "demo"):
+        monkeypatch.setattr(intent, "list_firmware", lambda word=word: [{"id": "x", "name": f"Zorbix {word.title()}"}])
+        assert firmware_named_in(f"a {word} project") == [], word
+
+
+def test_only_the_lead_pair_of_name_words_names_a_firmware(monkeypatch):
+    """"Evil Portal" routes by its lead pair, but a later pair describes the firmware rather than
+    naming it: "Zorbix Weather Clock" must not capture "a weather clock with e-ink"."""
+    from esp_atlas_core import intent
+
+    fake = [{"id": "zorbix-weather-clock", "name": "Zorbix Weather Clock"},
+            {"id": "grand-harbor", "name": "Grand Harbor Weather Clock"}]
+    monkeypatch.setattr(intent, "list_firmware", lambda: fake)
+    assert firmware_named_in("a weather clock with e-ink") == []
+    assert _ids("run grand harbor") == ["grand-harbor"]
+    assert _ids("run zorbix") == ["zorbix-weather-clock"]
+
+
+def test_a_hardware_word_in_a_firmware_name_never_routes_alone(monkeypatch):
+    """Board, module, chip and brand names are hardware vocabulary: "heltec board with lora" asks
+    for a board and must not land on a firmware whose name happens to mention Heltec."""
+    from esp_atlas_core import intent
+
+    monkeypatch.setattr(intent, "list_firmware", lambda: [{"id": "heltec-zorbix", "name": "Heltec Zorbix"}])
+    assert firmware_named_in("heltec board with lora") == []
+    assert firmware_named_in("cardputer games") == []
+    assert _ids("run zorbix") == ["heltec-zorbix"]
+    # nor as the lead pair of a name: "Cardputer User Demo" is not named by "cardputer user manual"
+    monkeypatch.setattr(intent, "list_firmware", lambda: [{"id": "cardputer-user-demo", "name": "Cardputer User Demo"}])
+    assert firmware_named_in("cardputer user manual") == []
+
+
+def test_firmware_is_domain_vocabulary_not_a_name(monkeypatch):
+    from esp_atlas_core import intent
+
+    monkeypatch.setattr(intent, "list_firmware", lambda: [{"id": "deskpet-firmware", "name": "Deskpet Firmware"}])
+    assert firmware_named_in("firmware for a weather station") == []
+    assert _ids("run deskpet") == ["deskpet-firmware"]
+
+
+def test_the_common_word_list_is_generated_and_attributed():
+    """The vendored list is data with provenance: regenerated by scripts/gen_common_words.py, never
+    edited by hand, and it carries the wordfreq attribution its CC-BY-SA 4.0 license requires."""
+    import re
+    from pathlib import Path
+
+    from esp_atlas_core import intent
+
+    text = Path(intent.__file__).with_name("common_words_en.txt").read_text(encoding="utf-8")
+    header = [line for line in text.splitlines() if line.startswith("#")]
+    words = [line for line in text.splitlines() if line and not line.startswith("#")]
+    assert any("wordfreq" in line for line in header)
+    assert any("CC-BY-SA 4.0" in line for line in header)
+    assert any("scripts/gen_common_words.py" in line for line in header)
+    assert words == sorted(set(words)), "sorted and unique, as the generator writes it"
+    assert all(re.fullmatch(r"[a-z]{4,}", w) for w in words)
+    assert "marauder" not in words and "smart" in words

@@ -29,11 +29,14 @@ query string alone -- see the intent_cache table.
 import json
 import re
 from datetime import datetime, timezone
+from functools import lru_cache
+from pathlib import Path
 
 from esp_atlas_core import db as dbmod
 from esp_atlas_core.examples import describe_firmware
 from esp_atlas_core.facets import facets
 from esp_atlas_core.firmware import list_firmware, recipes_for_firmware
+from esp_atlas_core.frontmatter import iter_data_files, parse_frontmatter
 from esp_atlas_core.llm import FAST_MODEL, GroqClient
 from esp_atlas_core.wizard import KNOWN_NEEDS
 
@@ -165,17 +168,108 @@ _FIRMWARE_STOPWORDS = frozenset({
     # named "<x>-mesh" is still reachable by its full name (2026-11-09: inw-mesh hijacked
     # "thread zigbee matter smart-home mesh").
     "mesh",
+    # The domain's own word: "firmware for a weather station" names no firmware.
+    "firmware",
 })
+# A firmware name word identifies it on its own only if it is neither common English nor hardware
+# vocabulary. "smart" in "Smart rattle" captured "thread zigbee matter smart-home mesh" (2026-11-15);
+# a hand list of such words cannot keep up with a catalog that grows by itself, so both sets are
+# derived: common English from the vendored word-frequency list (scripts/gen_common_words.py), and
+# hardware vocabulary from the catalog's own board, module, chip and brand names. The full name and
+# id still route; this bars single words only.
+_COMMON_WORDS_PATH = Path(__file__).with_name("common_words_en.txt")
+_HARDWARE_KINDS = ("board", "module", "soc", "brand")
+
+
+@lru_cache(maxsize=1)
+def _common_english():
+    lines = _COMMON_WORDS_PATH.read_text(encoding="utf-8").splitlines()
+    return frozenset(line for line in lines if line and not line.startswith("#"))
+
+
+def _hardware_words():
+    """Every word of a catalogued board, module, chip or brand id and name ("cardputer", "heltec").
+    Parsing them costs ~250 ms, so the result is cached on the files' paths and mtimes: a ~5 ms
+    walk, and a data change is still seen at once."""
+    files = tuple(
+        (str(path), path.stat().st_mtime_ns) for kind, path in iter_data_files() if kind in _HARDWARE_KINDS
+    )
+    return _hardware_words_of(files)
+
+
+@lru_cache(maxsize=4)
+def _hardware_words_of(files):
+    words = set()
+    for path, _mtime in files:
+        fm = parse_frontmatter(Path(path))[0]
+        for field in (fm.get("id"), fm.get("name")):
+            words |= set(re.split(r"[^a-z0-9]+", str(field or "").lower()))
+    return frozenset(words - {""})
+
+
 _MIN_FIRMWARE_TOKEN = 4
 
 
-def _firmware_keys(fw):
-    """The strings that identify this firmware in a query."""
-    keys = {fw["id"].lower(), fw["name"].lower()}
-    for token in fw["name"].lower().replace("-", " ").split():
-        if len(token) >= _MIN_FIRMWARE_TOKEN and token not in _FIRMWARE_STOPWORDS:
-            keys.add(token)
-    return {k for k in keys if k not in _FIRMWARE_STOPWORDS}
+def _whole_keys(fw):
+    """The firmware's full id and name, with spaces and hyphens read as the same separator."""
+    keys = set()
+    for whole in (fw["id"].lower(), fw["name"].lower()):
+        keys |= {whole, whole.replace("-", " "), whole.replace(" ", "-")}
+    return keys - _FIRMWARE_STOPWORDS
+
+
+def _token_keys(fw, generic):
+    """The distinctive single words of the firmware's name that identify it on their own."""
+    return {
+        token for token in fw["name"].lower().replace("-", " ").split()
+        if len(token) >= _MIN_FIRMWARE_TOKEN
+        and token not in _FIRMWARE_STOPWORDS and token not in generic
+    }
+
+
+def _lead_phrase_keys(fw, hardware):
+    """The name's first two words as one key ("evil portal", "bit pirate"), leading capability words
+    skipped. A product's leading words are its brand even when each is common English, so "run evil
+    portal" still routes while "a captive portal board" does not. Only the lead pair counts: a later
+    pair such as "ai assistant" or "ssh client" describes the firmware rather than naming it."""
+    words = [w for w in re.split(r"[\s-]+", fw["name"].lower()) if w]
+    while words and words[0] in _FIRMWARE_STOPWORDS:
+        words.pop(0)
+    if len(words) < 2:
+        return set()
+    lead = words[:2]
+    if min(len(w) for w in lead) < 3 or set(lead) & (_FIRMWARE_STOPWORDS | hardware):
+        return set()
+    return {" ".join(lead), "-".join(lead)}
+
+
+def _name_words(fw):
+    """Every word of the firmware's name and id, however short or generic."""
+    return set(re.split(r"[\s-]+", f"{fw['name']} {fw['id']}".lower())) - {""}
+
+
+def _word_at(key, haystack):
+    """Spans where key stands as its own word: "m5stick" is not inside "m5sticks3"."""
+    return re.finditer(rf"(?<![a-z0-9]){re.escape(key)}(?![a-z0-9])", haystack)
+
+
+def _token_stands_for(fw, token, haystack):
+    """True if a name token in the query refers to this firmware. Inside a hyphenated compound it
+    only counts when every other part is also a word of the firmware's name: "flipper-zero" names
+    Flipper Zero, but "smart-home" is a different word and does not name "Smart rattle"."""
+    words = _name_words(fw)
+    for m in _word_at(token, haystack):
+        left = re.search(r"(?:[a-z0-9]+-)*$", haystack[:m.start()]).group()
+        right = re.match(r"(?:-[a-z0-9]+)*", haystack[m.end():]).group()
+        if all(part in words for part in (left + right).split("-") if part):
+            return True
+    return False
+
+
+def _support(fw, haystack):
+    """How much of the firmware's name the query spells out, generic words included -- the
+    tiebreak when several firmwares share their best key ("run evil portal")."""
+    return sum(len(word) for word in _name_words(fw) if _token_stands_for(fw, word, haystack))
 
 
 def firmware_named_in(query):
@@ -185,29 +279,30 @@ def firmware_named_in(query):
     land they should share this one rather than keeping two copies.)
     """
     haystack = query.lower()
+    hardware = _hardware_words()
+    generic = _common_english() | hardware
     matched = []
     for fw in list_firmware():
         # Register this firmware by its LONGEST matching key, not the first one
-        # that happens to hit. _firmware_keys is a set, so iteration order is
+        # that happens to hit. The keys are sets, so iteration order is
         # hash-seed dependent -- breaking on the first match made a firmware
         # register with an arbitrary short shared token ("cardputer") instead of
         # its full name, so "most specific wins" was fed garbage and the winner
         # flipped across processes. Longest match is deterministic and correct.
-        best, full = 0, False
-        whole = {fw["id"].lower(), fw["name"].lower()}
-        for key in _firmware_keys(fw):
-            # Word boundaries, not substrings: "m5stick" is a substring of
-            # "m5sticks3", so a naive match sends "run M5StickS3 RogueDuck" to
-            # M5Stick NEMO. Longer, more specific names must win outright.
-            if re.search(rf"(?<![a-z0-9]){re.escape(key)}(?![a-z0-9])", haystack):
-                best = max(best, len(key))
-                full = full or key in whole
+        # Word boundaries, not substrings: "m5stick" is a substring of
+        # "m5sticks3", so a naive match sends "run M5StickS3 RogueDuck" to
+        # M5Stick NEMO. Longer, more specific names must win outright.
+        wholes = [len(k) for k in _whole_keys(fw) if any(_word_at(k, haystack))]
+        keys = _token_keys(fw, generic) | _lead_phrase_keys(fw, hardware)
+        tokens = [len(k) for k in keys if _token_stands_for(fw, k, haystack)]
+        best = max(wholes + tokens, default=0)
         if best:
-            matched.append((full, best, fw))
+            matched.append((not wholes, -best, -_support(fw, haystack), fw))
     # A firmware whose WHOLE name or id was matched outranks one that only shares a name token
     # ("run Meshcore": the firmware named "Meshcore", not meshcore-cardputer through its token);
-    # then the longest match, so an exact product name beats a shared prefix.
-    return [fw for _full, _length, fw in sorted(matched, key=lambda m: (not m[0], -m[1]))]
+    # then the longest match, so an exact product name beats a shared prefix; then the one whose
+    # name the query spells out most fully.
+    return [m[-1] for m in sorted(matched, key=lambda m: m[:3])]
 
 
 def _valid_values(db_path):
