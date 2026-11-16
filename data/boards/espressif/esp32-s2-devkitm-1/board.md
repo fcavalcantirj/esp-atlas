@@ -18,7 +18,7 @@ usb:
 extras:
 - rgb-led
 io:
-  gpio_free: 32
+  gpio_free: 31
   gpio_pins:
   - 0
   - 1
@@ -69,12 +69,16 @@ notes:
 - Addressable RGB LED on GPIO18
 - Dimensions 54.00 x 25.40 mm board outline, from the ESP32-S2-DevKitM-1 V1 Dimensions
   PDF
-- 'io.gpio_free=32 DERIVED, not quoted (SPEC-io-power.md §5.3). Headers J1+J3 break
+- 'io.gpio_free=31 DERIVED, not quoted (SPEC-io-power.md §5.3). Headers J1+J3 break
   out 37 pads total (quoted from the user guide pin tables: J1 = GPIO 0-17; J3 = GPIO
   18-21,26,33-46). Subtracting esp32-s2''s soc.reserved_pins that are exposed -- strapping
   {0,45,46} (GPIO46 also listed under input_only, so counted once) and usb_flash_tied
-  {19,20} -- 5 unique reserved pins exposed -- gives 37 - 5 = 32. GPIO18 (RGB LED)
-  is not subtracted. Math not vendor-stated; verify before treating as exact.'
+  {19,20} -- 5 unique reserved pins, and GPIO26, which the ESP32-S2-MINI-2 datasheet
+  says "is used by the embedded PSRAM on the ESP32-S2-MINI-2-N4R2 ... and cannot be used
+  for other purposes" (the user guide lists header pin 26 as SPICS1) -- gives 37 - 5 - 1
+  = 31 on the recommended N4R2. On the EOL no-PSRAM ESP32-S2-DevKitM-1, GPIO26 is free
+  (32). GPIO18 (RGB LED) is not subtracted. Math not vendor-stated; verify before treating
+  as exact.'
 download_mode:
   mode: manual
   steps: Holding down Boot and then pressing Reset initiates Firmware Download mode
@@ -91,6 +95,9 @@ sources:
 - field: io.gpio_free
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html
   verified: '2026-11-15'
+- field: io.gpio_free
+  url: https://www.espressif.com/sites/default/files/documentation/esp32-s2-mini-2_esp32-s2-mini-2u_datasheet_en.pdf
+  verified: '2026-11-16'
 - field: io.gpio_pins
   url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html
   verified: '2026-11-15'
