@@ -19,7 +19,9 @@ branch.
 1. **Read the work.** `python3 jr/work_record.py check --date TODAY` must report no problems. Read
    your receipt and, for a PAM key, its `candidate.feed.lead` (`source_id`, `name_hint`,
    `chip_hint`, `source_pointers`). For a search key read the term and its snapshot item in
-   `docs/demand/<date>.json`. Then `python3 jr/work_record.py attempt WORK_KEY --date TODAY` and
+   `docs/demand/<date>.json`. For a **hygiene key (`fix-…`)** read `candidate.quote`: the `record`
+   (one `data/**/*.md` path), its `id`, the `quotes` the daily check found on none of the record's
+   cited pages, and the cited `urls`; this work is the "Hygiene work" path below, not steps 2-4. Then `python3 jr/work_record.py attempt WORK_KEY --date TODAY` and
    commit it: `git add -A docs/demand && git commit -m "chore(demand): attempt WORK_KEY on TODAY"`.
    **Every `work_record.py` write below is committed on `BRANCH` the same way, right after it**: the
    receipts and queue live in `docs/demand/`, and a change left in the working tree is lost when the
@@ -76,6 +78,25 @@ branch.
    your next attempt must fix (re-read the page; quote it as written, or omit the claim). The owner can
    still veto by closing. The daily runner verifies the deployed result and records the outcome. Never
    mark anything delivered yourself.
+
+## Hygiene work (a `fix-…` key, source `quote_check`)
+
+The record exists and is wrong in one specific way: a span written between double quotes in its
+frontmatter does not appear on any page the record cites (`scripts/check_quotes.py`, which CI runs on every
+PR and the daily runner over the whole catalog). Fix exactly that, nothing else:
+
+1. `attempt` and commit as in step 1.
+2. For each listed quote, open the cited pages (`candidate.quote.urls`) and find the passage the note
+   meant. Then either **quote it as written** — copy the page's own words, including its spacing of
+   units and its punctuation; an elision is written `...`; do not paraphrase — or, when the page does not
+   say it, **drop the quote marks and the claim they carried** (cite-or-omit: a note may describe, it may
+   not quote what is not there). A table row the page renders as cells is quoted as the page's text, not
+   as a pipe-separated line you composed. A quote inside a quote uses single quotes.
+3. Run `python3 scripts/check_quotes.py <record path>`: every quote PASS (or no quotes left). Run
+   `python3 scripts/validate.py`. Touch only that record.
+4. Validation (step 3 of the main path): `expected_ids` is `[<the record's id>]`, `forbidden_ids` `[]`;
+   the kind defaults to `catalog_quote` (the record's quotes PASS at the merge). Commit, open the ONE
+   draft PR titled `fix(catalog): <id> quotes (demand work WORK_KEY)`, `link`, push, stop (steps 5-6).
 
 ## Rules
 

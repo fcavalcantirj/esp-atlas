@@ -402,3 +402,4 @@ def test_a_settle_may_create_the_closed_candidate_for_its_term(tmp_path):
     _write(r, dg.RECEIPTS, json.dumps(rc, indent=1))
     _commit(r, f"chore(demand): settle {KEY} abandoned")
     assert _settle_check(r)[0] == []
+
