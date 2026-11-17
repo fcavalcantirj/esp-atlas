@@ -113,6 +113,18 @@ curl https://<your-deployment>/sitemap.xml
 `/api/health` returns `{"status": "ok", "count": <n>}` once the function has
 built its SQLite index from the bundled `data/` on cold start.
 
+## Jr's merge switches (2026-11-17)
+
+Jr merges its own demand PRs (`jr/research-*`) through the `demand-canary` job in `validate.yml` when two
+switches allow: `jr/autonomy.json` `demand_automerge: true` (a reviewed PR) and the repository variable
+`JR_DEMAND_AUTOMERGE` not set to `0`. **Stop it instantly:** `gh variable set JR_DEMAND_AUTOMERGE --body 0`
+(repo settings → Variables also works); no PR needed. Re-enable by deleting the variable or setting `1`.
+Optional repository secret `ESPATLAS_JR_TOKEN` (the bot's PAT): with it the canary's merge is made by the
+bot and triggers main's workflows like a person's merge; without it the workflow token merges and main's
+push-triggered runs do not fire for that merge (the PR's checks at the same head stand). `tick_automerge`
+and `code_automerge` (`JR_TICK_AUTOMERGE`, `JR_CODE_AUTOMERGE`) follow the same pattern when their canaries
+exist.
+
 ## Hourly GitHub counts
 
 Stars and forks are refreshed by the `hourly GitHub counts` workflow

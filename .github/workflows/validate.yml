@@ -152,6 +152,37 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: python3 scripts/demand_guard.py
 
+  demand-canary:
+    # The click a person used to make on a demand PR (scripts/demand_canary.py): when every job this one
+    # needs is green, jr/autonomy.json says demand_automerge true AND the repository variable
+    # JR_DEMAND_AUTOMERGE is not 0 (the kill switch), the quotes re-run here has no FAIL and no
+    # INCONCLUSIVE, and no other jr/research-* PR merged today, the PR is marked ready and
+    # `gh pr merge --auto --match-head-commit <head>` is requested: it lands only when every required
+    # check is green at exactly this head. A quote FAIL gets a comment and the label needs-human instead.
+    # The token: the bot's PAT when the secret exists (so the merge triggers main's workflows like a
+    # person's merge does), else the workflow token.
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'jr/research-') && vars.JR_DEMAND_AUTOMERGE != '0'
+    needs: [schema, tests, jr-tests, quotes, demand-guard, jr-pr-guard, g2-guard, ledger-guard]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install httpx pyyaml pypdf
+      - name: Install core (the quotes re-check reads frontmatter with esp_atlas_core)
+        run: pip install -e apps/core
+      - name: Decide and, when every switch and check allows, request the merge at the exact head
+        env:
+          GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
+          JR_DEMAND_AUTOMERGE: ${{ vars.JR_DEMAND_AUTOMERGE }}
+        run: python3 scripts/demand_canary.py --pr ${{ github.event.pull_request.number }} --head ${{ github.event.pull_request.head.sha }} --branch ${{ github.head_ref }}
+
   g2-guard:
     runs-on: ubuntu-latest
     steps:

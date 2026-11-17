@@ -173,3 +173,35 @@ def test_the_demand_guard_gets_the_pr_url_and_full_history_and_nothing_swallows_
     assert not SHELL_OPERATORS.search(step["run"]), step["run"]
     checkout = next(s for s in jobs["demand-guard"]["steps"] if str(s.get("uses", "")).startswith("actions/checkout"))
     assert checkout.get("with", {}).get("fetch-depth") == 0
+
+
+# --- the demand-canary job (scripts/demand_canary.py, 2026-11-17): the merge click, as a job ----------
+
+CANARY = "scripts/demand_canary.py"
+
+
+def _canary_step(jobs):
+    steps = _steps_running(jobs["demand-canary"], CANARY)
+    assert len(steps) == 1
+    return steps[0]
+
+
+def test_the_canary_needs_every_machine_check_and_both_switches(jobs):
+    job = jobs["demand-canary"]
+    assert set(job["needs"]) >= {"schema", "tests", "jr-tests", "quotes", "demand-guard", "jr-pr-guard", "g2-guard", "ledger-guard"}
+    cond = job["if"]
+    assert "startsWith(github.head_ref, 'jr/research-')" in cond and "vars.JR_DEMAND_AUTOMERGE != '0'" in cond
+    assert job["permissions"] == {"contents": "write", "pull-requests": "write"}
+
+
+def test_the_canary_merges_at_the_exact_head_it_was_given(jobs):
+    step = _canary_step(jobs)
+    assert "--head ${{ github.event.pull_request.head.sha }}" in step["run"]
+    assert "--pr ${{ github.event.pull_request.number }}" in step["run"]
+    assert step["env"]["JR_DEMAND_AUTOMERGE"] == "${{ vars.JR_DEMAND_AUTOMERGE }}"
+    assert "secrets.ESPATLAS_JR_TOKEN || github.token" in step["env"]["GH_TOKEN"]
+    assert "continue-on-error" not in step and not SHELL_OPERATORS.search(step["run"]), step["run"]
+
+
+def test_nothing_needs_the_canary(jobs):
+    assert not any("demand-canary" in (j.get("needs") or []) for j in jobs.values())

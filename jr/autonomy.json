@@ -1,0 +1,6 @@
+{
+  "_about": "Jr's own merge switches (SPEC-demand-work-consumer.md, 'Machine review of a demand PR'). Each flag is turned on by a reviewed PR to this file; the matching repository variable (JR_DEMAND_AUTOMERGE, JR_TICK_AUTOMERGE, JR_CODE_AUTOMERGE) set to 0 is the instant kill switch that needs no PR. Both must allow before a canary merges anything.",
+  "demand_automerge": false,
+  "tick_automerge": false,
+  "code_automerge": false
+}
