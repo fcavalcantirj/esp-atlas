@@ -1351,11 +1351,13 @@
    "key": "pam-23266c59174397dbf41b0a7b",
    "branch": "jr/research-pam-23266c59174397dbf41b0a7b",
    "term": "Freenove ESP32-WROVER Starter Kit",
-   "phase": "research",
+   "phase": "author",
    "state": "reserved",
    "started_on": "2026-11-17",
    "source": "pam_feed",
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1800"
+   ],
    "feed": {
     "checked_at": "2026-11-17T11:15:31.248373Z",
     "feeds": {
@@ -1500,7 +1502,9 @@
      "prs": []
     },
     "reserved_by": "jr/demand_run.py"
-   }
+   },
+   "last_attempt_on": "2026-11-17",
+   "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1800"
   }
  ]
 }
