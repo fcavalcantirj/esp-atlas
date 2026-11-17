@@ -17432,6 +17432,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T23:00:31.847601+00:00"
     },
+    "repo-note:aknabi/smalltalkje": {
+      "expires": "2026-12-17T05:00:31.748945+00:00",
+      "id": "repo-note:aknabi/smalltalkje",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "aknabi/smalltalkje",
+      "status": "rejected",
+      "timestamp": "2026-11-17T05:00:31.748945+00:00"
+    },
     "repo-note:alaltitov/waveshare-esp32-p4-86-panel-eth-2ro": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
       "id": "repo-note:alaltitov/waveshare-esp32-p4-86-panel-eth-2ro",
@@ -17440,6 +17449,15 @@
       "repo": "alaltitov/waveshare-esp32-p4-86-panel-eth-2ro",
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
+    "repo-note:arthurfdlr/br-m5": {
+      "expires": "2026-12-17T05:00:31.748945+00:00",
+      "id": "repo-note:arthurfdlr/br-m5",
+      "pr_ref": null,
+      "reason": "stopword_name: 'BR-M5' names a radio, not a firmware",
+      "repo": "arthurfdlr/br-m5",
+      "status": "rejected",
+      "timestamp": "2026-11-17T05:00:31.748945+00:00"
     },
     "repo-note:b1scuitdev/e07xesp32c5": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
@@ -17621,6 +17639,15 @@
       "status": "rejected",
       "timestamp": "2026-11-14T17:00:55.342931+00:00"
     },
+    "repo-note:joengenduvel/espwv32": {
+      "expires": "2026-12-17T05:00:31.748945+00:00",
+      "id": "repo-note:joengenduvel/espwv32",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "joengenduvel/espwv32",
+      "status": "rejected",
+      "timestamp": "2026-11-17T05:00:31.748945+00:00"
+    },
     "repo-note:john30/ebusd-esp32": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
       "id": "repo-note:john30/ebusd-esp32",
@@ -17693,6 +17720,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
     },
+    "repo-note:landonr/homething": {
+      "expires": "2026-12-17T05:00:31.748945+00:00",
+      "id": "repo-note:landonr/homething",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "landonr/homething",
+      "status": "rejected",
+      "timestamp": "2026-11-17T05:00:31.748945+00:00"
+    },
     "repo-note:louishitchcock/fpvgatec5mk": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
       "id": "repo-note:louishitchcock/fpvgatec5mk",
@@ -17701,6 +17737,15 @@
       "repo": "louishitchcock/fpvgatec5mk",
       "status": "rejected",
       "timestamp": "2026-11-17T02:00:33.347838+00:00"
+    },
+    "repo-note:lovyan03/esp32_screenshotreceiver": {
+      "expires": "2026-12-17T05:00:31.748945+00:00",
+      "id": "repo-note:lovyan03/esp32_screenshotreceiver",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "lovyan03/esp32_screenshotreceiver",
+      "status": "rejected",
+      "timestamp": "2026-11-17T05:00:31.748945+00:00"
     },
     "repo-note:m-abozaid/esp32-c3-adblock": {
       "expires": "2026-12-17T01:00:31.817229+00:00",
@@ -17728,6 +17773,15 @@
       "repo": "marlinfirmware/marlin",
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
+    },
+    "repo-note:marspre/wristmorse": {
+      "expires": "2026-12-17T05:00:31.748945+00:00",
+      "id": "repo-note:marspre/wristmorse",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "marspre/wristmorse",
+      "status": "rejected",
+      "timestamp": "2026-11-17T05:00:31.748945+00:00"
     },
     "repo-note:maxgramser/homeassistant_espscreen": {
       "expires": "2026-12-16T23:00:31.827862+00:00",
@@ -17873,6 +17927,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
     },
+    "repo-note:smh17/m5stackwifisniffer": {
+      "expires": "2026-12-17T05:00:31.748945+00:00",
+      "id": "repo-note:smh17/m5stackwifisniffer",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "smh17/m5stackwifisniffer",
+      "status": "rejected",
+      "timestamp": "2026-11-17T05:00:31.748945+00:00"
+    },
     "repo-note:spooks4576/ghost_esp": {
       "expires": "2027-02-13T22:00:31.751655+00:00",
       "id": "repo-note:spooks4576/ghost_esp",
@@ -17963,6 +18026,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T04:00:31.831476+00:00"
     },
+    "repo-note:tuupola/axp192": {
+      "expires": "2026-12-17T05:00:31.748945+00:00",
+      "id": "repo-note:tuupola/axp192",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'driver'",
+      "repo": "tuupola/axp192",
+      "status": "rejected",
+      "timestamp": "2026-11-17T05:00:31.748945+00:00"
+    },
     "repo-note:twotoz/c5vrx": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
       "id": "repo-note:twotoz/c5vrx",
@@ -18016,6 +18088,24 @@
       "repo": "waveshareteam/wavego_pro",
       "status": "rejected",
       "timestamp": "2026-11-17T04:00:31.831476+00:00"
+    },
+    "repo-note:yokohama-miyazawa/m5hlsplayer": {
+      "expires": "2026-12-17T05:00:31.748945+00:00",
+      "id": "repo-note:yokohama-miyazawa/m5hlsplayer",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "yokohama-miyazawa/m5hlsplayer",
+      "status": "rejected",
+      "timestamp": "2026-11-17T05:00:31.748945+00:00"
+    },
+    "repo-note:z4ziggy/m5stickcoscilloscope": {
+      "expires": "2026-12-17T05:00:31.748945+00:00",
+      "id": "repo-note:z4ziggy/m5stickcoscilloscope",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "z4ziggy/m5stickcoscilloscope",
+      "status": "rejected",
+      "timestamp": "2026-11-17T05:00:31.748945+00:00"
     },
     "reterminal-d1001": {
       "expires": "2026-12-14T21:00:55.045531+00:00",
@@ -20743,6 +20833,7 @@
     "ah2005na/m5stick-shark": "m5stick-shark",
     "aircoookie/wled": "wled",
     "airpocket-soundman/tab5_ssh_client": "tab5-ssh-client",
+    "aknabi/smalltalkje": "repo-note:aknabi/smalltalkje",
     "akoerner/kprox": "kprox",
     "al83m/nodepad": "nodepad",
     "alaltitov/waveshare-esp32-p4-86-panel-eth-2ro": "repo-note:alaltitov/waveshare-esp32-p4-86-panel-eth-2ro",
@@ -20814,6 +20905,7 @@
     "artem76228/paperos": "paperos",
     "artem76228/paperweb": "paperweb",
     "arthubhub/meshcore-cardputer": "meshcore-cardputer",
+    "arthurfdlr/br-m5": "repo-note:arthurfdlr/br-m5",
     "arturockpk/bme280-sensor-m5unified": "bme280-sensor-m5unified",
     "arturockpk/imufishinggame": "imufishinggame",
     "arturockpk/m5stickradio.git": "m5stickradio",
@@ -21301,6 +21393,7 @@
     "jl1nie/wifikey2": "wifikey2",
     "joejee90/cardputer-camera-companion": "cardputer-camera-companion",
     "joejee90/tiny-journal": "tiny-journal",
+    "joengenduvel/espwv32": "repo-note:joengenduvel/espwv32",
     "john30/ebusd-esp32": "repo-note:john30/ebusd-esp32",
     "johnhw/cardputer_drums": "cardputer-drums",
     "jojorel/rfid-pn532-i2c-cardputer": "rfid-pn532-i2c-cardputer",
@@ -21380,6 +21473,7 @@
     "lamzaakdok/sticks3-toolbox": "sticks3-toolbox",
     "lamzaakdok/sticks3-weather-clock": "sticks3-weather-clock",
     "lamzaakdok/zhangshang-zhanbu": "zhangshang-zhanbu",
+    "landonr/homething": "repo-note:landonr/homething",
     "laserir/mclite": "mclite",
     "launcher:00f51d5d4b94fd46c46a017f9b0964f8": "launcher-00f51d5d4b94fd46c46a017f9b0964f8",
     "launcher:0108d9ac943687bbcde26452540d4aee": "launcher-0108d9ac943687bbcde26452540d4aee",
@@ -22217,6 +22311,7 @@
     "lordlexat/m5core2_simpleclock": "m5core2-simpleclock",
     "lostdataprotocol/onemorefloor": "onemorefloor",
     "louishitchcock/fpvgatec5mk": "repo-note:louishitchcock/fpvgatec5mk",
+    "lovyan03/esp32_screenshotreceiver": "repo-note:lovyan03/esp32_screenshotreceiver",
     "lovyan03/lovyangfx": "lovyangfx",
     "lovyan03/m5stack_breakoutblock": "m5stack-breakoutblock",
     "lshaf/cores3-arcade": "cores3-arcade",
@@ -22303,6 +22398,7 @@
     "marivaaldo/esp32marauder": "esp32marauder",
     "marivaaldo/evil-portal-m5stack": "evil-portal-m5stack",
     "marlinfirmware/marlin": "repo-note:marlinfirmware/marlin",
+    "marspre/wristmorse": "repo-note:marspre/wristmorse",
     "marstechhan/crosspoint-reader-mono": "crosspoint-reader-mono",
     "marstechhan/papercolor-frame": "papercolor-frame",
     "martin78b/corem5s3-tv": "corem5s3-tv",
@@ -22616,6 +22712,7 @@
     "slowlane112/cardputer_8_bit_tape_loader": "cardputer-8-bit-tape-loader",
     "slsafenull-dev/galaga-cardputer": "galaga-cardputer",
     "slsafenull-dev/space-invaders-cardputer": "space-invaders-cardputer",
+    "smh17/m5stackwifisniffer": "repo-note:smh17/m5stackwifisniffer",
     "smonse/ghostble": "ghostble",
     "sndjy1986/cyberkey": "cyberkey",
     "soe6/aethertone": "aethertone",
@@ -22719,6 +22816,7 @@
     "turbohsu/badapple_cardputer_adv": "badapple-cardputer-adv",
     "turbulentgoat/cardputer-adv-mp3-player": "cardputer-adv-mp3-player",
     "tutyr2-jpg/bruce-a-c-edition": "bruce-a-c-edition",
+    "tuupola/axp192": "repo-note:tuupola/axp192",
     "twotoz/c5vrx": "repo-note:twotoz/c5vrx",
     "twsnmp/twesp32sensor": "twesp32sensor",
     "u-tanick/ai_stackchan2_for_debug": "ai-stackchan2-for-debug",
@@ -22814,6 +22912,7 @@
     "yh1224/m5-midi-heartopia": "m5-midi-heartopia",
     "yo3hjv/ham5dsp": "ham5dsp",
     "yo3hjv/runman1": "runman1",
+    "yokohama-miyazawa/m5hlsplayer": "repo-note:yokohama-miyazawa/m5hlsplayer",
     "youeiken/monosuite": "monosuite",
     "youranonelf": "youranonelf",
     "yuikawa-akira/pict_camera": "pict-camera",
@@ -22824,6 +22923,7 @@
     "z4b333/sticky-toybox": "sticky-toybox",
     "z4y-d3n/modbus-tcp-auditor-tool": "modbus-tcp-auditor-tool",
     "z4y-d3n/s7comm-auditor-tool": "s7comm-auditor-tool",
+    "z4ziggy/m5stickcoscilloscope": "repo-note:z4ziggy/m5stickcoscilloscope",
     "zabaglione/koebiyori": "koebiyori",
     "zales/sshdeck": "sshdeck",
     "zaratton/cardputermidimonitor": "cardputermidimonitor",
