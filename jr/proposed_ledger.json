@@ -10830,13 +10830,13 @@
       "timestamp": "2026-11-16T06:00:32.710404+00:00"
     },
     "launcher-2119809553573519361": {
-      "expires": "2026-11-17T03:00:55.203387+00:00",
+      "expires": "2026-11-24T04:00:31.831476+00:00",
       "id": "launcher-2119809553573519361",
       "pr_ref": null,
       "reason": "no_source_repo: 0 matches for 'bridges user:crackulator'",
       "repo": "launcher:2119809553573519361",
       "status": "rejected",
-      "timestamp": "2026-11-10T03:00:55.203387+00:00"
+      "timestamp": "2026-11-17T04:00:31.831476+00:00"
     },
     "launcher-2119853442271453186": {
       "expires": "2026-11-23T00:00:31.813641+00:00",
@@ -17459,6 +17459,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
     },
+    "repo-note:bokunimowakaru/esp": {
+      "expires": "2026-12-17T04:00:31.831476+00:00",
+      "id": "repo-note:bokunimowakaru/esp",
+      "pr_ref": null,
+      "reason": "stopword_name: 'esp' names a radio, not a firmware",
+      "repo": "bokunimowakaru/esp",
+      "status": "rejected",
+      "timestamp": "2026-11-17T04:00:31.831476+00:00"
+    },
     "repo-note:copych/esp32_sd_sampler": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
       "id": "repo-note:copych/esp32_sd_sampler",
@@ -17467,6 +17476,24 @@
       "repo": "copych/esp32_sd_sampler",
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
+    "repo-note:cziter15/ksiotframeworklib": {
+      "expires": "2026-12-17T04:00:31.831476+00:00",
+      "id": "repo-note:cziter15/ksiotframeworklib",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "cziter15/ksiotframeworklib",
+      "status": "rejected",
+      "timestamp": "2026-11-17T04:00:31.831476+00:00"
+    },
+    "repo-note:datasith/ai_demos_esp32": {
+      "expires": "2026-12-17T04:00:31.831476+00:00",
+      "id": "repo-note:datasith/ai_demos_esp32",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "datasith/ai_demos_esp32",
+      "status": "rejected",
+      "timestamp": "2026-11-17T04:00:31.831476+00:00"
     },
     "repo-note:dvucinozd/pajoniiir": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
@@ -17756,6 +17783,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T04:00:34.403128+00:00"
     },
+    "repo-note:omreps/esp32dash": {
+      "expires": "2026-12-17T04:00:31.831476+00:00",
+      "id": "repo-note:omreps/esp32dash",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "omreps/esp32dash",
+      "status": "rejected",
+      "timestamp": "2026-11-17T04:00:31.831476+00:00"
+    },
     "repo-note:opensurface/sonosesp": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
       "id": "repo-note:opensurface/sonosesp",
@@ -17819,6 +17855,15 @@
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
     },
+    "repo-note:s60sc/esp32-cam_mjpeg2sd": {
+      "expires": "2026-12-17T04:00:31.831476+00:00",
+      "id": "repo-note:s60sc/esp32-cam_mjpeg2sd",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "s60sc/esp32-cam_mjpeg2sd",
+      "status": "rejected",
+      "timestamp": "2026-11-17T04:00:31.831476+00:00"
+    },
     "repo-note:sams0n1te/lakeshark": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
       "id": "repo-note:sams0n1te/lakeshark",
@@ -17836,6 +17881,15 @@
       "repo": "spooks4576/ghost_esp",
       "status": "rejected",
       "timestamp": "2026-11-15T22:00:31.751655+00:00"
+    },
+    "repo-note:stryderuk/bluetoothhid": {
+      "expires": "2026-12-17T04:00:31.831476+00:00",
+      "id": "repo-note:stryderuk/bluetoothhid",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "stryderuk/bluetoothhid",
+      "status": "rejected",
+      "timestamp": "2026-11-17T04:00:31.831476+00:00"
     },
     "repo-note:sub0pt1mal/interactivesetup-m5cardputer-sshclient": {
       "expires": "2026-12-14T16:00:55.104121+00:00",
@@ -17900,6 +17954,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
     },
+    "repo-note:touchgadget/usbkwa": {
+      "expires": "2026-12-17T04:00:31.831476+00:00",
+      "id": "repo-note:touchgadget/usbkwa",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "touchgadget/usbkwa",
+      "status": "rejected",
+      "timestamp": "2026-11-17T04:00:31.831476+00:00"
+    },
     "repo-note:twotoz/c5vrx": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
       "id": "repo-note:twotoz/c5vrx",
@@ -17908,6 +17971,15 @@
       "repo": "twotoz/c5vrx",
       "status": "rejected",
       "timestamp": "2026-11-17T02:00:33.347838+00:00"
+    },
+    "repo-note:vincasmiliunas/esp32-arduino-tb6612fng": {
+      "expires": "2026-12-17T04:00:31.831476+00:00",
+      "id": "repo-note:vincasmiliunas/esp32-arduino-tb6612fng",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "vincasmiliunas/esp32-arduino-tb6612fng",
+      "status": "rejected",
+      "timestamp": "2026-11-17T04:00:31.831476+00:00"
     },
     "repo-note:warwick320/nova-x": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
@@ -17926,6 +17998,24 @@
       "repo": "waveshareteam/e-paper",
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
+    },
+    "repo-note:waveshareteam/roarm_m2": {
+      "expires": "2026-12-17T04:00:31.831476+00:00",
+      "id": "repo-note:waveshareteam/roarm_m2",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "waveshareteam/roarm_m2",
+      "status": "rejected",
+      "timestamp": "2026-11-17T04:00:31.831476+00:00"
+    },
+    "repo-note:waveshareteam/wavego_pro": {
+      "expires": "2026-12-17T04:00:31.831476+00:00",
+      "id": "repo-note:waveshareteam/wavego_pro",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "waveshareteam/wavego_pro",
+      "status": "rejected",
+      "timestamp": "2026-11-17T04:00:31.831476+00:00"
     },
     "reterminal-d1001": {
       "expires": "2026-12-14T21:00:55.045531+00:00",
@@ -20761,6 +20851,7 @@
     "bmorcelli/esp32marauder": "esp32marauder",
     "bmorcelli/launcher": "launcher",
     "bmorcelli/m5stick-launcher": "m5stick-launcher",
+    "bokunimowakaru/esp": "repo-note:bokunimowakaru/esp",
     "bomberman30/advanceos-for-cardputer": "advanceos-for-cardputer",
     "bomberman30/carduboy-arduboy-for-cardputer": "carduboy-arduboy-for-cardputer",
     "bpivk/20questions": "20questions",
@@ -20899,6 +20990,7 @@
     "cvhviz/cairn": "cairn",
     "cyberwisk/m5cardputer_audiospectrum": "m5cardputer-audiospectrum",
     "cyberwisk/m5cardputer_webradio": "m5cardputer-webradio",
+    "cziter15/ksiotframeworklib": "repo-note:cziter15/ksiotframeworklib",
     "d3crypt-1/infiltra-firmware": "infiltra-firmware",
     "d4rkmen/m5apps": "m5apps",
     "d4rkmen/m5gemini": "m5gemini",
@@ -20917,6 +21009,7 @@
     "darabos/m5-mod-wheel": "m5-mod-wheel",
     "darabos/tamagacha": "tamagacha",
     "darkflippers/unleashed-firmware": "unleashed-firmware",
+    "datasith/ai_demos_esp32": "repo-note:datasith/ai_demos_esp32",
     "datjan/m5stack_examples": "m5stack-examples",
     "davervw/cardputer-game-station-emulators": "cardputer-game-station-emulators",
     "davervw/m5_minijoystickc_gamepad": "m5-minijoystickc-gamepad",
@@ -22357,6 +22450,7 @@
     "oliverxing2025/stopwatch-chronotrace": "stopwatch-chronotrace",
     "oliverxing2025/vibestick-codex": "vibestick-codex",
     "oliverxing2025/vibestick-hourglass-liquid": "vibestick-hourglass-liquid",
+    "omreps/esp32dash": "repo-note:omreps/esp32dash",
     "ooxxu/xiaozhi-esp32": "xiaozhi-esp32",
     "opensurface/sonosesp": "repo-note:opensurface/sonosesp",
     "osamusg/m5papercolor-calendar": "m5papercolor-calendar",
@@ -22472,6 +22566,7 @@
     "ryuzaki-mrl/espeon.git": "espeon",
     "s0lness/awesome-esp32": "awesome-esp32",
     "s1z0v/s1-adv": "s1-adv",
+    "s60sc/esp32-cam_mjpeg2sd": "repo-note:s60sc/esp32-cam_mjpeg2sd",
     "sacriphanius/wdgwatch": "wdgwatch",
     "sacriphanius/zhilly": "zhilly",
     "sakkra-adv/battleship": "battleship",
@@ -22550,6 +22645,7 @@
     "stevenselcuk/nearplane": "nearplane",
     "stewmoss/cardputer-wardriver": "cardputer-wardriver",
     "stonedev-app/atoms3rss": "atoms3rss",
+    "stryderuk/bluetoothhid": "repo-note:stryderuk/bluetoothhid",
     "styles01/m5stack-ollama-meter": "m5stack-ollama-meter",
     "styles01/stackchan-openclaw-hermes": "stackchan-openclaw-hermes",
     "sub0pt1mal/interactivesetup-m5cardputer-sshclient": "repo-note:sub0pt1mal/interactivesetup-m5cardputer-sshclient",
@@ -22614,6 +22710,7 @@
     "toshihiromakuuchi/ai_stackchan2": "ai-stackchan2",
     "toshihiromakuuchi/stackchan-bluetooth-simple": "stackchan-bluetooth-simple",
     "toshihiromakuuchi/wled": "wled",
+    "touchgadget/usbkwa": "repo-note:touchgadget/usbkwa",
     "treblewolf/m5cardputer-sun-rider": "m5cardputer-sun-rider",
     "troglodyte420/voice-mixer-3000": "voice-mixer-3000",
     "truonglangquan/idk-firmware": "idk-firmware",
@@ -22647,6 +22744,7 @@
     "vc1235-ui/vibe-cardputer": "vibe-cardputer",
     "vicliu624/cardputer_mp3_adv": "cardputer-mp3-adv",
     "vicliu624/trail-mate": "trail-mate",
+    "vincasmiliunas/esp32-arduino-tb6612fng": "repo-note:vincasmiliunas/esp32-arduino-tb6612fng",
     "viniciusbo/m5-palnagotchi": "m5-palnagotchi",
     "viniciushnf/m5sticks3-gps-gnss-monitor": "m5sticks3-gps-gnss-monitor",
     "viper0013/viperpet": "viperpet",
@@ -22670,6 +22768,8 @@
     "washishi/m5stack-avatar-mic-nekomimi_led": "m5stack-avatar-mic-nekomimi-led",
     "washishi/simplespectrumanalyzer-atommatrix": "simplespectrumanalyzer-atommatrix",
     "waveshareteam/e-paper": "repo-note:waveshareteam/e-paper",
+    "waveshareteam/roarm_m2": "repo-note:waveshareteam/roarm_m2",
+    "waveshareteam/wavego_pro": "repo-note:waveshareteam/wavego_pro",
     "weavefront/wikiputer": "wikiputer",
     "wenston-dev/tianji-cardputer": "tianji-cardputer",
     "whippedflunky/ircito": "ircito",
