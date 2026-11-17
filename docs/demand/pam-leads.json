@@ -1,7 +1,7 @@
 {
  "version": 1,
  "source": "pam_feed",
- "checked_at": "2026-11-15T11:15:30.873895Z",
+ "checked_at": "2026-11-17T11:15:31.248373Z",
  "feeds": {
   "products": {
    "url": "https://pamfinds.com/api/products.json",
@@ -648,8 +648,10 @@
     ]
    },
    "fingerprint": "984732bc4d27728673e2266dabc4f312339a0a2b3f676eb25bccfaed3b4012b2",
-   "matches": [],
-   "status": "potential_identity_gap"
+   "matches": [
+    "esp32-s2-devkitm-1"
+   ],
+   "status": "possible_match"
   },
   {
    "source_id": "esp32-s3-devkitc",
