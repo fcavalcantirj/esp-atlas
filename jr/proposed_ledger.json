@@ -17495,6 +17495,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T05:00:31.748945+00:00"
     },
+    "repo-note:awehttam/binkterm-php": {
+      "expires": "2026-12-17T10:00:32.143438+00:00",
+      "id": "repo-note:awehttam/binkterm-php",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "awehttam/binkterm-php",
+      "status": "rejected",
+      "timestamp": "2026-11-17T10:00:32.143438+00:00"
+    },
     "repo-note:b1scuitdev/e07xesp32c5": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
       "id": "repo-note:b1scuitdev/e07xesp32c5",
@@ -17801,6 +17810,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T02:00:33.347838+00:00"
     },
+    "repo-note:jonastollenaere/sparrow-3d": {
+      "expires": "2026-12-17T10:00:32.143438+00:00",
+      "id": "repo-note:jonastollenaere/sparrow-3d",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "jonastollenaere/sparrow-3d",
+      "status": "rejected",
+      "timestamp": "2026-11-17T10:00:32.143438+00:00"
+    },
     "repo-note:jonnybergdahl/homeassistant_um_smartusbhub_integration": {
       "expires": "2026-12-16T23:00:31.827862+00:00",
       "id": "repo-note:jonnybergdahl/homeassistant_um_smartusbhub_integration",
@@ -17873,6 +17891,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
     },
+    "repo-note:kmx415/meshpoint": {
+      "expires": "2026-12-17T10:00:32.143438+00:00",
+      "id": "repo-note:kmx415/meshpoint",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "kmx415/meshpoint",
+      "status": "rejected",
+      "timestamp": "2026-11-17T10:00:32.143438+00:00"
+    },
     "repo-note:konsumer/msc-poc": {
       "expires": "2026-12-17T08:00:31.747262+00:00",
       "id": "repo-note:konsumer/msc-poc",
@@ -17926,6 +17953,15 @@
       "repo": "m-abozaid/esp32-c3-adblock",
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
+    },
+    "repo-note:m0nka/mchf": {
+      "expires": "2026-12-17T10:00:32.143438+00:00",
+      "id": "repo-note:m0nka/mchf",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "m0nka/mchf",
+      "status": "rejected",
+      "timestamp": "2026-11-17T10:00:32.143438+00:00"
     },
     "repo-note:makepkg/securegen": {
       "expires": "2026-12-17T07:00:32.097367+00:00",
@@ -17999,6 +18035,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T09:00:32.446822+00:00"
     },
+    "repo-note:meshmapper/meshmapper_flutter_app": {
+      "expires": "2026-12-17T10:00:32.143438+00:00",
+      "id": "repo-note:meshmapper/meshmapper_flutter_app",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "meshmapper/meshmapper_flutter_app",
+      "status": "rejected",
+      "timestamp": "2026-11-17T10:00:32.143438+00:00"
+    },
     "repo-note:mrcodetastic/esp32-hub75-matrixpanel-dma": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
       "id": "repo-note:mrcodetastic/esp32-hub75-matrixpanel-dma",
@@ -18062,6 +18107,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T04:00:31.831476+00:00"
     },
+    "repo-note:openhop-dev/openhop_repeater": {
+      "expires": "2026-12-17T10:00:32.143438+00:00",
+      "id": "repo-note:openhop-dev/openhop_repeater",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'library'",
+      "repo": "openhop-dev/openhop_repeater",
+      "status": "rejected",
+      "timestamp": "2026-11-17T10:00:32.143438+00:00"
+    },
     "repo-note:opensurface/sonosesp": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
       "id": "repo-note:opensurface/sonosesp",
@@ -18079,6 +18133,15 @@
       "repo": "paciente8159/ucnc",
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
+    },
+    "repo-note:pelgraine/meck": {
+      "expires": "2026-12-17T10:00:32.143438+00:00",
+      "id": "repo-note:pelgraine/meck",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "pelgraine/meck",
+      "status": "rejected",
+      "timestamp": "2026-11-17T10:00:32.143438+00:00"
     },
     "repo-note:platformio/platformio-core": {
       "expires": "2026-12-17T00:00:31.875326+00:00",
@@ -18196,6 +18259,15 @@
       "repo": "spooks4576/ghost_esp",
       "status": "rejected",
       "timestamp": "2026-11-15T22:00:31.751655+00:00"
+    },
+    "repo-note:ssaprus/whisperos": {
+      "expires": "2026-12-17T10:00:32.143438+00:00",
+      "id": "repo-note:ssaprus/whisperos",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "ssaprus/whisperos",
+      "status": "rejected",
+      "timestamp": "2026-11-17T10:00:32.143438+00:00"
     },
     "repo-note:stickfirmware/stick": {
       "expires": "2027-02-15T07:00:32.097367+00:00",
@@ -18332,6 +18404,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T02:00:33.347838+00:00"
     },
+    "repo-note:vbart/meshcoretel-firmware": {
+      "expires": "2026-12-17T10:00:32.143438+00:00",
+      "id": "repo-note:vbart/meshcoretel-firmware",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "vbart/meshcoretel-firmware",
+      "status": "rejected",
+      "timestamp": "2026-11-17T10:00:32.143438+00:00"
+    },
     "repo-note:vincasmiliunas/esp32-arduino-tb6612fng": {
       "expires": "2026-12-17T04:00:31.831476+00:00",
       "id": "repo-note:vincasmiliunas/esp32-arduino-tb6612fng",
@@ -18403,6 +18484,15 @@
       "repo": "xlyric/lilygo-t5-4.7-meteo-and-domoticz-",
       "status": "rejected",
       "timestamp": "2026-11-17T07:00:32.097367+00:00"
+    },
+    "repo-note:yeraze/meshmonitor": {
+      "expires": "2026-12-17T10:00:32.143438+00:00",
+      "id": "repo-note:yeraze/meshmonitor",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "yeraze/meshmonitor",
+      "status": "rejected",
+      "timestamp": "2026-11-17T10:00:32.143438+00:00"
     },
     "repo-note:yokohama-miyazawa/m5hlsplayer": {
       "expires": "2026-12-17T05:00:31.748945+00:00",
@@ -21245,6 +21335,7 @@
     "atomnft/rogue-radar": "rogue-radar",
     "aussie5380/chirpr-os---t-deck-pro": "chirpr-os-t-deck-pro",
     "autoflowdanilo-it/blipputer": "blipputer",
+    "awehttam/binkterm-php": "repo-note:awehttam/binkterm-php",
     "awesomelionel/bus-aunty-mini": "bus-aunty-mini",
     "azure/iot-central-firmware": "iot-central-firmware",
     "b1scuitdev/e07xesp32c5": "repo-note:b1scuitdev/e07xesp32c5",
@@ -21738,6 +21829,7 @@
     "johnhw/cardputer_drums": "cardputer-drums",
     "jojorel/rfid-pn532-i2c-cardputer": "rfid-pn532-i2c-cardputer",
     "jonaslacerda/crowos": "crowos",
+    "jonastollenaere/sparrow-3d": "repo-note:jonastollenaere/sparrow-3d",
     "jong-9999/nemomodified.git": "nemomodified",
     "jonnybergdahl/homeassistant_um_smartusbhub_integration": "repo-note:jonnybergdahl/homeassistant_um_smartusbhub_integration",
     "joplayxyz/bruceapp": "repo-note:joplayxyz/bruceapp",
@@ -21788,6 +21880,7 @@
     "kirosapm8120/spacewar-m5stickc-plus2": "spacewar-m5stickc-plus2",
     "kisaragi-mochi/stackchan-mcp": "stackchan-mcp",
     "kkq-kkq/m5stickc-audiospectrum": "m5stickc-audiospectrum",
+    "kmx415/meshpoint": "repo-note:kmx415/meshpoint",
     "konradmohr/pbashos": "pbashos",
     "konsumer/cardputer-examples": "cardputer-examples",
     "konsumer/msc-poc": "repo-note:konsumer/msc-poc",
@@ -22676,6 +22769,7 @@
     "lyzbn/adv-tarot-firmware": "adv-tarot-firmware",
     "lyzbn/guanxiang-firmware": "guanxiang-firmware",
     "m-abozaid/esp32-c3-adblock": "repo-note:m-abozaid/esp32-c3-adblock",
+    "m0nka/mchf": "repo-note:m0nka/mchf",
     "m0rg0t/catputer": "catputer",
     "m5dev1000/m5-ble-controller": "m5-ble-controller",
     "m5dev1000/m5-clicker-hamster": "m5-clicker-hamster",
@@ -22775,6 +22869,7 @@
     "meister5/m5stack-cardputer-adv-gps-tracker": "m5stack-cardputer-adv-gps-tracker",
     "meister5/synthcard": "synthcard",
     "meshdeck-os/meshdeck": "meshdeck",
+    "meshmapper/meshmapper_flutter_app": "repo-note:meshmapper/meshmapper_flutter_app",
     "meshtastic/firmware": "meshtastic",
     "mhrsntrk/ask-master": "ask-master",
     "michaelrizn/hi5stack-m5stack-papsers3-m5papers3": "hi5stack-m5stack-papsers3-m5papers3",
@@ -22898,6 +22993,7 @@
     "oliverxing2025/vibestick-hourglass-liquid": "vibestick-hourglass-liquid",
     "omreps/esp32dash": "repo-note:omreps/esp32dash",
     "ooxxu/xiaozhi-esp32": "xiaozhi-esp32",
+    "openhop-dev/openhop_repeater": "repo-note:openhop-dev/openhop_repeater",
     "opensurface/sonosesp": "repo-note:opensurface/sonosesp",
     "osamusg/m5papercolor-calendar": "m5papercolor-calendar",
     "oumike/camillia-mt": "camillia-mt",
@@ -22913,6 +23009,7 @@
     "pawneemilitia/infiltra-firmware": "infiltra-firmware",
     "pdrix": "pdrix",
     "pedrominatel/m5stack-capsule-tv-b-gone": "m5stack-capsule-tv-b-gone",
+    "pelgraine/meck": "repo-note:pelgraine/meck",
     "pelgraine/meck-p4": "meck-p4",
     "pepa1555/ollama-cardputer": "ollama-cardputer",
     "pepeangell5/bwifikill-cardputer-adv": "bwifikill-cardputer-adv",
@@ -23087,6 +23184,7 @@
     "spooks4576/ghost_esp": "repo-note:spooks4576/ghost_esp",
     "spreedated/cardcharge": "cardcharge",
     "squirmen/papers3weather": "papers3weather",
+    "ssaprus/whisperos": "repo-note:ssaprus/whisperos",
     "st4lk3r-unit/beamstalker": "beamstalker",
     "stachugit/cathack": "cathack",
     "stachugit/m5spoticontroller": "m5spoticontroller",
@@ -23197,6 +23295,7 @@
     "vanshksingh/m5cardputer-chat-with-gemini-api": "m5cardputer-chat-with-gemini-api",
     "vanzt/z80-4-m5cardputer": "z80-4-m5cardputer",
     "varna9000/reticulum-tdeck": "reticulum-tdeck",
+    "vbart/meshcoretel-firmware": "repo-note:vbart/meshcoretel-firmware",
     "vc1235-ui/vibe-cardputer": "vibe-cardputer",
     "vicliu624/cardputer_mp3_adv": "cardputer-mp3-adv",
     "vicliu624/trail-mate": "trail-mate",
@@ -23270,6 +23369,7 @@
     "yejun/tab5-fancy-clock": "tab5-fancy-clock",
     "yejun/tab5-pc": "tab5-pc",
     "yejun/tab5-web-display": "tab5-web-display",
+    "yeraze/meshmonitor": "repo-note:yeraze/meshmonitor",
     "yh1224/m5-midi-heartopia": "m5-midi-heartopia",
     "yo3hjv/ham5dsp": "ham5dsp",
     "yo3hjv/runman1": "runman1",
