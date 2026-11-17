@@ -1,7 +1,7 @@
 {
  "calls": 5,
  "errors": 0,
- "fetched": "2026-11-10",
+ "fetched": "2026-11-17",
  "notes": [],
  "ref": "main",
  "repo": "BamBam1121/inw-mesh",
@@ -19,14 +19,14 @@
   {
    "extra": {
     "asset": "otadata-blank.bin",
-    "release": "v1.2.15"
+    "release": "v1.2.16"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
    "token": "otadata-blank",
-   "url": "https://github.com/BamBam1121/inw-mesh/releases/download/v1.2.15/otadata-blank.bin"
+   "url": "https://github.com/BamBam1121/inw-mesh/releases/download/v1.2.16/otadata-blank.bin"
   },
   {
    "extra": {

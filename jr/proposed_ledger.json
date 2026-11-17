@@ -17540,6 +17540,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T05:00:31.748945+00:00"
     },
+    "repo-note:at0m-b0mb/wraith-flipperzero": {
+      "expires": "2026-12-17T12:00:31.695549+00:00",
+      "id": "repo-note:at0m-b0mb/wraith-flipperzero",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "at0m-b0mb/wraith-flipperzero",
+      "status": "rejected",
+      "timestamp": "2026-11-17T12:00:31.695549+00:00"
+    },
     "repo-note:awehttam/binkterm-php": {
       "expires": "2026-12-17T10:00:32.143438+00:00",
       "id": "repo-note:awehttam/binkterm-php",
@@ -17602,6 +17611,15 @@
       "repo": "cheerlights/cheerlights-esp32",
       "status": "rejected",
       "timestamp": "2026-11-17T08:00:31.747262+00:00"
+    },
+    "repo-note:codycrizzle/rfmap": {
+      "expires": "2026-12-17T12:00:31.695549+00:00",
+      "id": "repo-note:codycrizzle/rfmap",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "codycrizzle/rfmap",
+      "status": "rejected",
+      "timestamp": "2026-11-17T12:00:31.695549+00:00"
     },
     "repo-note:copych/esp32_sd_sampler": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
@@ -17836,6 +17854,15 @@
       "repo": "iho77/loratomqtt",
       "status": "rejected",
       "timestamp": "2026-11-17T09:00:32.446822+00:00"
+    },
+    "repo-note:ikegee/cyd2usb_menu": {
+      "expires": "2026-12-17T12:00:31.695549+00:00",
+      "id": "repo-note:ikegee/cyd2usb_menu",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "ikegee/cyd2usb_menu",
+      "status": "rejected",
+      "timestamp": "2026-11-17T12:00:31.695549+00:00"
     },
     "repo-note:jaqvil/t-displ_js8_mon": {
       "expires": "2026-12-17T08:00:31.747262+00:00",
@@ -18107,6 +18134,15 @@
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
     },
+    "repo-note:maxpill/jc2432w328": {
+      "expires": "2026-12-17T12:00:31.695549+00:00",
+      "id": "repo-note:maxpill/jc2432w328",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "maxpill/jc2432w328",
+      "status": "rejected",
+      "timestamp": "2026-11-17T12:00:31.695549+00:00"
+    },
     "repo-note:mcorts/jaleometro": {
       "expires": "2026-12-17T09:00:32.446822+00:00",
       "id": "repo-note:mcorts/jaleometro",
@@ -18134,6 +18170,24 @@
       "status": "rejected",
       "timestamp": "2026-11-17T10:00:32.143438+00:00"
     },
+    "repo-note:mmcoms/penware": {
+      "expires": "2026-12-17T12:00:31.695549+00:00",
+      "id": "repo-note:mmcoms/penware",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "mmcoms/penware",
+      "status": "rejected",
+      "timestamp": "2026-11-17T12:00:31.695549+00:00"
+    },
+    "repo-note:mor1k/irbis-ir": {
+      "expires": "2026-12-17T12:00:31.695549+00:00",
+      "id": "repo-note:mor1k/irbis-ir",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "mor1k/irbis-ir",
+      "status": "rejected",
+      "timestamp": "2026-11-17T12:00:31.695549+00:00"
+    },
     "repo-note:mrcodetastic/esp32-hub75-matrixpanel-dma": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
       "id": "repo-note:mrcodetastic/esp32-hub75-matrixpanel-dma",
@@ -18160,6 +18214,15 @@
       "repo": "mx3353672833-debug/moto-gps-waveshare",
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
+    },
+    "repo-note:ninedter/defcon-defense": {
+      "expires": "2026-12-17T12:00:31.695549+00:00",
+      "id": "repo-note:ninedter/defcon-defense",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "ninedter/defcon-defense",
+      "status": "rejected",
+      "timestamp": "2026-11-17T12:00:31.695549+00:00"
     },
     "repo-note:nochkin/esp_test": {
       "expires": "2026-12-17T08:00:31.747262+00:00",
@@ -18232,6 +18295,15 @@
       "repo": "pelgraine/meck",
       "status": "rejected",
       "timestamp": "2026-11-17T10:00:32.143438+00:00"
+    },
+    "repo-note:pingequalab/sigroam-wardriving": {
+      "expires": "2026-12-17T12:00:31.695549+00:00",
+      "id": "repo-note:pingequalab/sigroam-wardriving",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "pingequalab/sigroam-wardriving",
+      "status": "rejected",
+      "timestamp": "2026-11-17T12:00:31.695549+00:00"
     },
     "repo-note:platformio/platformio-core": {
       "expires": "2026-12-17T00:00:31.875326+00:00",
@@ -18368,6 +18440,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T11:00:31.753985+00:00"
     },
+    "repo-note:squazaryu/tumocompanion": {
+      "expires": "2026-12-17T12:00:31.695549+00:00",
+      "id": "repo-note:squazaryu/tumocompanion",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "squazaryu/tumocompanion",
+      "status": "rejected",
+      "timestamp": "2026-11-17T12:00:31.695549+00:00"
+    },
     "repo-note:ssaprus/whisperos": {
       "expires": "2026-12-17T10:00:32.143438+00:00",
       "id": "repo-note:ssaprus/whisperos",
@@ -18421,6 +18502,15 @@
       "repo": "tasmota/install",
       "status": "rejected",
       "timestamp": "2026-11-17T02:00:33.347838+00:00"
+    },
+    "repo-note:th3-priest/vigilance": {
+      "expires": "2026-12-17T12:00:31.695549+00:00",
+      "id": "repo-note:th3-priest/vigilance",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "th3-priest/vigilance",
+      "status": "rejected",
+      "timestamp": "2026-11-17T12:00:31.695549+00:00"
     },
     "repo-note:thatblend/espressway32": {
       "expires": "2026-12-17T08:00:31.747262+00:00",
@@ -21448,6 +21538,7 @@
     "arturockpk/stickbananaboxing": "stickbananaboxing",
     "asg02fever/m5-dial-rgb-light-strip-controller-": "m5-dial-rgb-light-strip-controller",
     "aspikray/solotputer": "solotputer",
+    "at0m-b0mb/wraith-flipperzero": "repo-note:at0m-b0mb/wraith-flipperzero",
     "atomdreams/cardputersmagps": "cardputersmagps",
     "atomnft/cyd-wifi-hash-monster-port-flasher": "cyd-wifi-hash-monster-port-flasher",
     "atomnft/m5stick-marauder": "m5stick-marauder",
@@ -21540,6 +21631,7 @@
     "cmd": "cmd",
     "codigohardwareecia/m5cardputer_knowledge": "m5cardputer-knowledge",
     "codigohardwareecia/m5cardputer_mp3_manager": "m5cardputer-mp3-manager",
+    "codycrizzle/rfmap": "repo-note:codycrizzle/rfmap",
     "comeraperuibe944/stickcontroller": "stickcontroller",
     "controllercustom/touchwasd": "touchwasd",
     "coolguy76o/sai-poc": "sai-poc",
@@ -21885,6 +21977,7 @@
     "iele/m5papers3-nc1020-emu": "m5papers3-nc1020-emu",
     "iho77/loratomqtt": "repo-note:iho77/loratomqtt",
     "iitazz/sticks3-plane-tracker": "sticks3-plane-tracker",
+    "ikegee/cyd2usb_menu": "repo-note:ikegee/cyd2usb_menu",
     "ilanovikov088-source/controller-s3": "controller-s3",
     "ilanovikov088-source/dinorune-sticks3": "dinorune-sticks3",
     "ilanovikov088-source/pingpongs3": "pingpongs3",
@@ -22981,6 +23074,7 @@
     "mauricioaalmeida/m5stickc-plus2-avionics-vario": "m5stickc-plus2-avionics-vario",
     "maxgramser/homeassistant_espscreen": "repo-note:maxgramser/homeassistant_espscreen",
     "maxmoneycash/lilyshark": "lilyshark",
+    "maxpill/jc2432w328": "repo-note:maxpill/jc2432w328",
     "mbogatyr/m5dice": "m5dice",
     "mbogatyr/m5fractal": "m5fractal",
     "mbogatyr/m5legoduplotrain": "m5legoduplotrain",
@@ -23015,6 +23109,7 @@
     "mk324234/atoms3-lite-tvbgone": "atoms3-lite-tvbgone",
     "mk324234/m5stickcp2-tvbgone": "m5stickcp2-tvbgone",
     "mkme/xnode": "xnode",
+    "mmcoms/penware": "repo-note:mmcoms/penware",
     "mochimochi-man/98tab5": "98tab5",
     "mochimochi-man/letterfromthedeep_tab5": "letterfromthedeep-tab5",
     "mochimochi-man/np2_tab5": "np2-tab5",
@@ -23031,6 +23126,7 @@
     "moo93egy/cardping_multi.git": "cardping-multi",
     "moo93egy/cardputer_mp3_adv.git": "cardputer-mp3-adv",
     "mor1k/ibutton-firmware-for-m5-stickc-plus2": "ibutton-firmware-for-m5-stickc-plus2",
+    "mor1k/irbis-ir": "repo-note:mor1k/irbis-ir",
     "moskic/cardputer-adv-recorder": "cardputer-adv-recorder",
     "moskic/m5roulette": "m5roulette",
     "moskic/m5stopwatch-userdemo-arduino": "m5stopwatch-userdemo-arduino",
@@ -23070,6 +23166,7 @@
     "nexodevlab/spectrum48kcardputeradv": "spectrum48kcardputeradv",
     "nexus1203/vibsense": "vibsense",
     "nikoniko78/paperweathermain": "paperweathermain",
+    "ninedter/defcon-defense": "repo-note:ninedter/defcon-defense",
     "nishad2m8/cardputer-games": "cardputer-games",
     "nishad2m8/geminiputer": "geminiputer",
     "nishad2m8/pdaputer": "pdaputer",
@@ -23150,6 +23247,7 @@
     "philmo6/meshpunk-dev": "meshpunk-dev",
     "piaoxuebingfeng/m5tab5-demos": "m5tab5-demos",
     "pierrebak/m5cardputer_voice-changer": "m5cardputer-voice-changer",
+    "pingequalab/sigroam-wardriving": "repo-note:pingequalab/sigroam-wardriving",
     "pinoyunknown/ghost-firmware": "ghost-firmware",
     "pkolbas/m5-guitartuner": "m5-guitartuner",
     "platformio/platformio-core": "repo-note:platformio/platformio-core",
@@ -23312,6 +23410,7 @@
     "spooks4576/ghost_esp": "repo-note:spooks4576/ghost_esp",
     "spreedated/cardcharge": "cardcharge",
     "spuder/openspool": "repo-note:spuder/openspool",
+    "squazaryu/tumocompanion": "repo-note:squazaryu/tumocompanion",
     "squirmen/papers3weather": "papers3weather",
     "ssaprus/whisperos": "repo-note:ssaprus/whisperos",
     "st4lk3r-unit/beamstalker": "beamstalker",
@@ -23352,6 +23451,7 @@
     "teapot174/airmouses3": "airmouses3",
     "teapot174/esp-graber": "esp-graber",
     "technoblogy/ulisp-cardputer": "ulisp-cardputer",
+    "th3-priest/vigilance": "repo-note:th3-priest/vigilance",
     "thatblend/espressway32": "repo-note:thatblend/espressway32",
     "the-tithe/the-tithe": "the-tithe",
     "thebolined/ai-cardputer-adv-a-portable-ai-assistant": "ai-cardputer-adv-a-portable-ai-assistant",
