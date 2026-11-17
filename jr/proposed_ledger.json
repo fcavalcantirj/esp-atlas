@@ -17558,6 +17558,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T07:00:32.097367+00:00"
     },
+    "repo-note:cyberman54/esp32-paxcounter": {
+      "expires": "2026-12-17T09:00:32.446822+00:00",
+      "id": "repo-note:cyberman54/esp32-paxcounter",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "cyberman54/esp32-paxcounter",
+      "status": "rejected",
+      "timestamp": "2026-11-17T09:00:32.446822+00:00"
+    },
     "repo-note:cziter15/ksiotframeworklib": {
       "expires": "2026-12-17T04:00:31.831476+00:00",
       "id": "repo-note:cziter15/ksiotframeworklib",
@@ -17666,6 +17675,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T07:00:32.097367+00:00"
     },
+    "repo-note:fluddel94/mvg_abfahrtsdisplay_e290": {
+      "expires": "2026-12-17T09:00:32.446822+00:00",
+      "id": "repo-note:fluddel94/mvg_abfahrtsdisplay_e290",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "fluddel94/mvg_abfahrtsdisplay_e290",
+      "status": "rejected",
+      "timestamp": "2026-11-17T09:00:32.446822+00:00"
+    },
     "repo-note:frameos/frameos": {
       "expires": "2026-12-16T23:00:31.827862+00:00",
       "id": "repo-note:frameos/frameos",
@@ -17684,6 +17702,24 @@
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
     },
+    "repo-note:heltecautomation/cubecell-arduino": {
+      "expires": "2026-12-17T09:00:32.446822+00:00",
+      "id": "repo-note:heltecautomation/cubecell-arduino",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "heltecautomation/cubecell-arduino",
+      "status": "rejected",
+      "timestamp": "2026-11-17T09:00:32.446822+00:00"
+    },
+    "repo-note:heltecautomation/platform-asrmicro650x": {
+      "expires": "2027-02-15T09:00:32.446822+00:00",
+      "id": "repo-note:heltecautomation/platform-asrmicro650x",
+      "pr_ref": null,
+      "reason": "archived: heltecautomation/platform-asrmicro650x is archived",
+      "repo": "heltecautomation/platform-asrmicro650x",
+      "status": "rejected",
+      "timestamp": "2026-11-17T09:00:32.446822+00:00"
+    },
     "repo-note:highcodeh/tentacleos": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
       "id": "repo-note:highcodeh/tentacleos",
@@ -17701,6 +17737,15 @@
       "repo": "hybridgroup/go-haystack",
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
+    },
+    "repo-note:iho77/loratomqtt": {
+      "expires": "2026-12-17T09:00:32.446822+00:00",
+      "id": "repo-note:iho77/loratomqtt",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "iho77/loratomqtt",
+      "status": "rejected",
+      "timestamp": "2026-11-17T09:00:32.446822+00:00"
     },
     "repo-note:jaqvil/t-displ_js8_mon": {
       "expires": "2026-12-17T08:00:31.747262+00:00",
@@ -17728,6 +17773,15 @@
       "repo": "jaylikesbunda/ghost_esp",
       "status": "rejected",
       "timestamp": "2026-11-14T17:00:55.342931+00:00"
+    },
+    "repo-note:jhiggason/lorawirelesstracker": {
+      "expires": "2026-12-17T09:00:32.446822+00:00",
+      "id": "repo-note:jhiggason/lorawirelesstracker",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "jhiggason/lorawirelesstracker",
+      "status": "rejected",
+      "timestamp": "2026-11-17T09:00:32.446822+00:00"
     },
     "repo-note:joengenduvel/espwv32": {
       "expires": "2026-12-17T05:00:31.748945+00:00",
@@ -17891,6 +17945,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
     },
+    "repo-note:marekwo/mc-webui": {
+      "expires": "2026-12-17T09:00:32.446822+00:00",
+      "id": "repo-note:marekwo/mc-webui",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "marekwo/mc-webui",
+      "status": "rejected",
+      "timestamp": "2026-11-17T09:00:32.446822+00:00"
+    },
     "repo-note:marlinfirmware/marlin": {
       "expires": "2026-12-17T00:00:31.875326+00:00",
       "id": "repo-note:marlinfirmware/marlin",
@@ -17917,6 +17980,24 @@
       "repo": "maxgramser/homeassistant_espscreen",
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
+    },
+    "repo-note:mcorts/jaleometro": {
+      "expires": "2026-12-17T09:00:32.446822+00:00",
+      "id": "repo-note:mcorts/jaleometro",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "mcorts/jaleometro",
+      "status": "rejected",
+      "timestamp": "2026-11-17T09:00:32.446822+00:00"
+    },
+    "repo-note:mcorts/meteoestacionlora": {
+      "expires": "2026-12-17T09:00:32.446822+00:00",
+      "id": "repo-note:mcorts/meteoestacionlora",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "mcorts/meteoestacionlora",
+      "status": "rejected",
+      "timestamp": "2026-11-17T09:00:32.446822+00:00"
     },
     "repo-note:mrcodetastic/esp32-hub75-matrixpanel-dma": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
@@ -18214,6 +18295,15 @@
       "repo": "tlack/babytalk",
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
+    "repo-note:todd-herbert/heltec-eink-modules": {
+      "expires": "2026-12-17T09:00:32.446822+00:00",
+      "id": "repo-note:todd-herbert/heltec-eink-modules",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "todd-herbert/heltec-eink-modules",
+      "status": "rejected",
+      "timestamp": "2026-11-17T09:00:32.446822+00:00"
     },
     "repo-note:touchgadget/usbkwa": {
       "expires": "2026-12-17T04:00:31.831476+00:00",
@@ -19503,6 +19593,16 @@
       "repo_id": 1326291692,
       "status": "rejected",
       "timestamp": "2026-11-15T16:00:31.979974+00:00"
+    },
+    "stock-trading-simulator-cardputer-adv": {
+      "expires": "2026-12-17T09:00:32.446822+00:00",
+      "id": "stock-trading-simulator-cardputer-adv",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "graysonreid2011/stock-trading-simulator-cardputer-adv",
+      "repo_id": 1461119333,
+      "status": "rejected",
+      "timestamp": "2026-11-17T09:00:32.446822+00:00"
     },
     "stopwatch-chronotrace": {
       "expired_at": "2026-11-08T02:00:55.246637+00:00",
@@ -21310,6 +21410,7 @@
     "cubic9com/m5core2_gravsim": "m5core2-gravsim",
     "cubic9com/m5core2_voronoi": "m5core2-voronoi",
     "cvhviz/cairn": "cairn",
+    "cyberman54/esp32-paxcounter": "repo-note:cyberman54/esp32-paxcounter",
     "cyberwisk/m5cardputer_audiospectrum": "m5cardputer-audiospectrum",
     "cyberwisk/m5cardputer_webradio": "m5cardputer-webradio",
     "cziter15/ksiotframeworklib": "repo-note:cziter15/ksiotframeworklib",
@@ -21435,6 +21536,7 @@
     "flashertwelve/ir_replay": "ir-replay",
     "flipper-zero-esp32-adv": "flipper-zero-esp32-adv",
     "flock-you": "flock-you",
+    "fluddel94/mvg_abfahrtsdisplay_e290": "repo-note:fluddel94/mvg_abfahrtsdisplay_e290",
     "forairaaaaa/stupinake.git": "stupinake",
     "forshaws/cardputer-ntfy": "cardputer-ntfy",
     "forshaws/fraudtagger-cardputer": "fraudtagger-cardputer",
@@ -21492,6 +21594,7 @@
     "github.com/marstechhan": "marstechhan",
     "goatsandmonkeys/monster_mesh": "monster-mesh",
     "graysonreid2011/esp-now-chat-firmware": "esp-now-chat-firmware",
+    "graysonreid2011/stock-trading-simulator-cardputer-adv": "stock-trading-simulator-cardputer-adv",
     "gremlin1987/cardputer-ballistic-calculator": "cardputer-ballistic-calculator",
     "gridgrad/advaita": "advaita",
     "griffithsb/m5stack-webcam": "m5stack-webcam",
@@ -21528,6 +21631,8 @@
     "haswitchplate/openhasp": "openhasp",
     "hedykan/feiyuos": "feiyuos",
     "helloruru/ruru-reader-papers3": "ruru-reader-papers3",
+    "heltecautomation/cubecell-arduino": "repo-note:heltecautomation/cubecell-arduino",
+    "heltecautomation/platform-asrmicro650x": "repo-note:heltecautomation/platform-asrmicro650x",
     "hengmyj/xiaozhi-adv-car": "xiaozhi-adv-car",
     "henriquesebastiao/saturn": "saturn",
     "hermannbjorgvin/clawdmeter": "clawdmeter",
@@ -21564,6 +21669,7 @@
     "ideealab/wheecon-for-whee-arhackathon": "wheecon-for-whee-arhackathon",
     "iele/m5cardputer-c64-emulator": "m5cardputer-c64-emulator",
     "iele/m5papers3-nc1020-emu": "m5papers3-nc1020-emu",
+    "iho77/loratomqtt": "repo-note:iho77/loratomqtt",
     "iitazz/sticks3-plane-tracker": "sticks3-plane-tracker",
     "ilanovikov088-source/controller-s3": "controller-s3",
     "ilanovikov088-source/dinorune-sticks3": "dinorune-sticks3",
@@ -21613,6 +21719,7 @@
     "jcldf/uart-buddy": "uart-buddy",
     "jfduhart/cardputer-morse-trainer": "cardputer-morse-trainer",
     "jgauchia/icenav-v3": "icenav-v3",
+    "jhiggason/lorawirelesstracker": "repo-note:jhiggason/lorawirelesstracker",
     "ji1ore/m5corehamcat": "m5corehamcat",
     "ji1ore/remotekeyer_wifi": "remotekeyer-wifi",
     "ji1ore/wifi_rig_ctrl": "wifi-rig-ctrl",
@@ -22633,6 +22740,7 @@
     "marcelloemme/paperspecimens3": "paperspecimens3",
     "marcorr/brokensignal": "brokensignal",
     "marekor555/m5rally": "m5rally",
+    "marekwo/mc-webui": "repo-note:marekwo/mc-webui",
     "mariovirgili/advutil": "advutil",
     "marivaaldo/esp32marauder": "esp32marauder",
     "marivaaldo/evil-portal-m5stack": "evil-portal-m5stack",
@@ -22660,6 +22768,8 @@
     "mbogatyr/m5talkingtom": "m5talkingtom",
     "mbogatyr/m5tvset": "m5tvset",
     "mbogatyr/m5voicerecorder": "m5voicerecorder",
+    "mcorts/jaleometro": "repo-note:mcorts/jaleometro",
+    "mcorts/meteoestacionlora": "repo-note:mcorts/meteoestacionlora",
     "megabitsenmzq/esp32-homekit-remote": "esp32-homekit-remote",
     "mehflexx17": "mehflexx17",
     "meister5/m5stack-cardputer-adv-gps-tracker": "m5stack-cardputer-adv-gps-tracker",
@@ -23044,6 +23154,7 @@
     "tobozo/m5stack-nyancat": "m5stack-nyancat",
     "tobozo/m5stack-sd-updater": "m5stack-sd-updater",
     "tobozo/wifichanviz": "wifichanviz",
+    "todd-herbert/heltec-eink-modules": "repo-note:todd-herbert/heltec-eink-modules",
     "tomcasa/m5cardputer-webradio-fr": "m5cardputer-webradio-fr",
     "tommycng/m5faces-rpn-calculator": "m5faces-rpn-calculator",
     "tommycng/m5faces-rpn-calculator.git": "m5faces-rpn-calculator",
