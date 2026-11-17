@@ -1,7 +1,7 @@
 {
  "calls": 4,
  "errors": 0,
- "fetched": "2026-11-09",
+ "fetched": "2026-11-17",
  "notes": [],
  "ref": "main",
  "repo": "joejee90/Tiny-Journal",
@@ -9,21 +9,21 @@
   "boards": [],
   "socs": [],
   "unresolved": [
-   "Tiny_Journal.ino.merged"
+   "M5Burner"
   ]
  },
  "signals": [
   {
    "extra": {
-    "asset": "Tiny_Journal.ino.merged.bin",
-    "release": "v2026.06.06"
+    "asset": "Tiny-Journal-V2026.11.14-M5Burner.bin",
+    "release": "v2026.11.14"
    },
    "kind": "asset",
    "line": null,
    "rank": 1,
    "soc": null,
-   "token": "Tiny_Journal.ino.merged",
-   "url": "https://github.com/joejee90/Tiny-Journal/releases/download/v2026.06.06/Tiny_Journal.ino.merged.bin"
+   "token": "M5Burner",
+   "url": "https://github.com/joejee90/Tiny-Journal/releases/download/v2026.11.14/Tiny-Journal-V2026.11.14-M5Burner.bin"
   }
  ]
 }
