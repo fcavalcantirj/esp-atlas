@@ -192,6 +192,18 @@ that's a coverage hole to close, not a silent gap.
     `STALL_AFTER` = 3 consecutive ticks, the tick sends one Telegram nudge, and then at most one per
     UTC day. A shrinking or empty backlog clears it. An unreadable state file is a nudge, never
     silence, and a dry run counts nothing.
+  - **A build-file board for every candidate (2026-11-17), not only submissions.** When the prose names
+    no catalogued board (`no_board_evidence`), admit and the topics path run the device-build evidence
+    gate first and take the board from the targets it already read: `device_evidence.check` returns
+    `targets` ([{kind, token, url}]: every platformio `[env:*] board =`, a sketch.yaml fqbn's board, an
+    ESP-IDF target chip, in file order), and `device_evidence.board_from_targets` picks the first token
+    `board_alias.resolve_token` maps to a catalogued board. A chip-only target (`esp32s3`, `esp32dev`) is
+    a chip, not a board: no devkit is ever guessed, the candidate stays `no_board_evidence`. The board
+    enters the scorer as the hint (the submission path's own mechanism), so the first recipe cites the
+    build file and line, and the gate is not run twice. Why: 8 of the 76 above-floor `no_board_evidence`
+    rejects of 2026-11-17 carried a root platformio.ini whose `board =` was a catalogued board
+    (esp32-s3-devkitc-1, esp32-c3-devkitm-1, lolin-s3-mini, lilygo-t-display-s3, m5stick-c), e.g.
+    esp32-c3-adblock (3,597 stars) and project_aura (797).
   - **The GitHub-topics source remembers every paid decision (2026-11-16).** `jr/stage_admit_topics.py`
     scores at most `budget * SCORE_MULTIPLIER` prefiltered repos per tick, in the search's star order.
     Every repo it paid a metadata fetch for ends in a remembered decision, the launcher's rule: a
