@@ -17684,6 +17684,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T04:00:31.831476+00:00"
     },
+    "repo-note:botofancalin/m5stack-multiapp-advanced": {
+      "expires": "2026-12-17T21:00:31.805157+00:00",
+      "id": "repo-note:botofancalin/m5stack-multiapp-advanced",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "botofancalin/m5stack-multiapp-advanced",
+      "status": "rejected",
+      "timestamp": "2026-11-17T21:00:31.805157+00:00"
+    },
     "repo-note:celliesprojects/esp32_vs1053_stream": {
       "expires": "2026-12-17T18:00:31.692410+00:00",
       "id": "repo-note:celliesprojects/esp32_vs1053_stream",
@@ -18044,6 +18053,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T15:00:33.111992+00:00"
     },
+    "repo-note:goroman/vibewatch": {
+      "expires": "2026-12-17T21:00:31.805157+00:00",
+      "id": "repo-note:goroman/vibewatch",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "goroman/vibewatch",
+      "status": "rejected",
+      "timestamp": "2026-11-17T21:00:31.805157+00:00"
+    },
     "repo-note:gurugio/lowlevelprogramming-university": {
       "expires": "2027-02-15T15:00:33.111992+00:00",
       "id": "repo-note:gurugio/lowlevelprogramming-university",
@@ -18160,6 +18178,15 @@
       "repo": "ikegee/cyd2usb_menu",
       "status": "rejected",
       "timestamp": "2026-11-17T12:00:31.695549+00:00"
+    },
+    "repo-note:impulseadventure/guislice": {
+      "expires": "2026-12-17T21:00:31.805157+00:00",
+      "id": "repo-note:impulseadventure/guislice",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "impulseadventure/guislice",
+      "status": "rejected",
+      "timestamp": "2026-11-17T21:00:31.805157+00:00"
     },
     "repo-note:jaqvil/t-displ_js8_mon": {
       "expires": "2026-12-17T08:00:31.747262+00:00",
@@ -18449,6 +18476,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T05:00:31.748945+00:00"
     },
+    "repo-note:lovyan03/m5stack_lovyanlauncher": {
+      "expires": "2026-12-17T21:00:31.805157+00:00",
+      "id": "repo-note:lovyan03/m5stack_lovyanlauncher",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "lovyan03/m5stack_lovyanlauncher",
+      "status": "rejected",
+      "timestamp": "2026-11-17T21:00:31.805157+00:00"
+    },
     "repo-note:m-abozaid/esp32-c3-adblock": {
       "expires": "2026-12-17T01:00:31.817229+00:00",
       "id": "repo-note:m-abozaid/esp32-c3-adblock",
@@ -18466,6 +18502,15 @@
       "repo": "m0nka/mchf",
       "status": "rejected",
       "timestamp": "2026-11-17T10:00:32.143438+00:00"
+    },
+    "repo-note:m5ez/m5ez": {
+      "expires": "2026-12-17T21:00:31.805157+00:00",
+      "id": "repo-note:m5ez/m5ez",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "m5ez/m5ez",
+      "status": "rejected",
+      "timestamp": "2026-11-17T21:00:31.805157+00:00"
     },
     "repo-note:makepkg/securegen": {
       "expires": "2026-12-17T07:00:32.097367+00:00",
@@ -18664,6 +18709,15 @@
       "repo": "nodemcu/nodemcu-firmware",
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
+    },
+    "repo-note:nopnop2002/esp-idf-ili9340": {
+      "expires": "2026-12-17T21:00:31.805157+00:00",
+      "id": "repo-note:nopnop2002/esp-idf-ili9340",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'driver'",
+      "repo": "nopnop2002/esp-idf-ili9340",
+      "status": "rejected",
+      "timestamp": "2026-11-17T21:00:31.805157+00:00"
     },
     "repo-note:ocean-lhy/xiaozhi-esp32": {
       "expires": "2026-12-15T04:00:34.403128+00:00",
@@ -18899,6 +18953,24 @@
       "status": "rejected",
       "timestamp": "2026-11-17T15:00:33.111992+00:00"
     },
+    "repo-note:ryuzaki-mrl/espeon": {
+      "expires": "2026-12-17T21:00:31.805157+00:00",
+      "id": "repo-note:ryuzaki-mrl/espeon",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "ryuzaki-mrl/espeon",
+      "status": "rejected",
+      "timestamp": "2026-11-17T21:00:31.805157+00:00"
+    },
+    "repo-note:rzeldent/esp32cam-rtsp": {
+      "expires": "2026-12-17T21:00:31.805157+00:00",
+      "id": "repo-note:rzeldent/esp32cam-rtsp",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "rzeldent/esp32cam-rtsp",
+      "status": "rejected",
+      "timestamp": "2026-11-17T21:00:31.805157+00:00"
+    },
     "repo-note:s60sc/esp32-cam_mjpeg2sd": {
       "expires": "2026-12-17T04:00:31.831476+00:00",
       "id": "repo-note:s60sc/esp32-cam_mjpeg2sd",
@@ -18943,6 +19015,15 @@
       "repo": "sfeli/esp32pro_sht30_epaper",
       "status": "rejected",
       "timestamp": "2026-11-17T20:00:31.733970+00:00"
+    },
+    "repo-note:sieren/homepoint": {
+      "expires": "2026-12-17T21:00:31.805157+00:00",
+      "id": "repo-note:sieren/homepoint",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sieren/homepoint",
+      "status": "rejected",
+      "timestamp": "2026-11-17T21:00:31.805157+00:00"
     },
     "repo-note:silvainobsolete395/ant-card": {
       "expires": "2026-12-17T06:00:32.296687+00:00",
@@ -19069,6 +19150,15 @@
       "repo": "sukesh-ak/um-esp32-s3-samples",
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
+    },
+    "repo-note:takkao/openfontrender": {
+      "expires": "2026-12-17T21:00:31.805157+00:00",
+      "id": "repo-note:takkao/openfontrender",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "takkao/openfontrender",
+      "status": "rejected",
+      "timestamp": "2026-11-17T21:00:31.805157+00:00"
     },
     "repo-note:tasmota/install": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
@@ -22242,6 +22332,7 @@
     "bokunimowakaru/esp": "repo-note:bokunimowakaru/esp",
     "bomberman30/advanceos-for-cardputer": "advanceos-for-cardputer",
     "bomberman30/carduboy-arduboy-for-cardputer": "carduboy-arduboy-for-cardputer",
+    "botofancalin/m5stack-multiapp-advanced": "repo-note:botofancalin/m5stack-multiapp-advanced",
     "bpivk/20questions": "20questions",
     "bpivk/m5-ssh-wireguard": "m5-ssh-wireguard",
     "bradmcnally/beepbotdx": "beepbotdx",
@@ -22582,6 +22673,7 @@
     "git-psi/noxpass": "noxpass",
     "github.com/marstechhan": "marstechhan",
     "goatsandmonkeys/monster_mesh": "monster-mesh",
+    "goroman/vibewatch": "repo-note:goroman/vibewatch",
     "graysonreid2011/esp-now-chat-firmware": "esp-now-chat-firmware",
     "graysonreid2011/stock-trading-simulator-cardputer-adv": "stock-trading-simulator-cardputer-adv",
     "gremlin1987/cardputer-ballistic-calculator": "cardputer-ballistic-calculator",
@@ -22678,6 +22770,7 @@
     "imliubo/retro-go": "retro-go",
     "imlunchtime/tab5_launcher": "tab5-launcher",
     "impapaghost/puter": "puter",
+    "impulseadventure/guislice": "repo-note:impulseadventure/guislice",
     "imshox/oxotp": "oxotp",
     "imxnoobx/fstick": "fstick",
     "incursiohack/esp-game-server": "esp-game-server",
@@ -23672,6 +23765,7 @@
     "lovyan03/esp32_screenshotreceiver": "repo-note:lovyan03/esp32_screenshotreceiver",
     "lovyan03/lovyangfx": "lovyangfx",
     "lovyan03/m5stack_breakoutblock": "m5stack-breakoutblock",
+    "lovyan03/m5stack_lovyanlauncher": "repo-note:lovyan03/m5stack_lovyanlauncher",
     "lshaf/cores3-arcade": "cores3-arcade",
     "lshaf/netgotchi": "netgotchi",
     "lshaf/unigeek": "unigeek",
@@ -23694,6 +23788,7 @@
     "m5dev1000/m5-ble-controller": "m5-ble-controller",
     "m5dev1000/m5-clicker-hamster": "m5-clicker-hamster",
     "m5dev1000/m5-clicker_game": "m5-clicker-game",
+    "m5ez/m5ez": "repo-note:m5ez/m5ez",
     "m5fly-kanazawa/m5stampfly": "m5stampfly",
     "m5rogueops/echoglass-the-mindful-tracker": "echoglass-the-mindful-tracker",
     "m5rogueops/m5-roguemail": "m5-roguemail",
@@ -23897,6 +23992,7 @@
     "nongxl/venom_esp32": "venom-esp32",
     "nonik0/cardputerlegotraincontrol": "cardputerlegotraincontrol",
     "nonik0/cardputerlorachat": "cardputerlorachat",
+    "nopnop2002/esp-idf-ili9340": "repo-note:nopnop2002/esp-idf-ili9340",
     "ns96/cardputermictalk": "cardputermictalk",
     "nullbeing/magpie-buddy": "magpie-buddy",
     "nullbeing/raincity-m5stack-cores3": "raincity-m5stack-cores3",
@@ -24049,7 +24145,9 @@
     "ryosaeba89/herodio": "herodio",
     "rythlan/brokensignal-next": "brokensignal-next",
     "rythlan/cardmeteo": "cardmeteo",
+    "ryuzaki-mrl/espeon": "repo-note:ryuzaki-mrl/espeon",
     "ryuzaki-mrl/espeon.git": "espeon",
+    "rzeldent/esp32cam-rtsp": "repo-note:rzeldent/esp32cam-rtsp",
     "s0lness/awesome-esp32": "awesome-esp32",
     "s1z0v/s1-adv": "s1-adv",
     "s60sc/esp32-cam_mjpeg2sd": "repo-note:s60sc/esp32-cam_mjpeg2sd",
@@ -24094,6 +24192,7 @@
     "shizz828/idkos": "idkos",
     "shlappa1000/c4-stick": "c4-stick",
     "shlxz/caplab": "caplab",
+    "sieren/homepoint": "repo-note:sieren/homepoint",
     "sijan246/cyd-gb-emulator": "cyd-gb-emulator",
     "silvainobsolete395/ant-card": "repo-note:silvainobsolete395/ant-card",
     "simisimis/blinkmeter": "repo-note:simisimis/blinkmeter",
@@ -24163,6 +24262,7 @@
     "t413/navboxesp": "navboxesp",
     "tabozen/ucplayground": "ucplayground",
     "tactilityproject/tactility": "tactility",
+    "takkao/openfontrender": "repo-note:takkao/openfontrender",
     "takosatou/atoms3_lifegame": "atoms3-lifegame",
     "taraskad3o/fox-hunt-for-m5sticks3": "fox-hunt-for-m5sticks3",
     "taraskad3o/m5stack-atoms3-ble-remote-for-canon": "m5stack-atoms3-ble-remote-for-canon",
