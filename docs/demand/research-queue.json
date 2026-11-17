@@ -400,6 +400,233 @@
    },
    "closed_on": "2026-11-11"
   },
+  "pam-551c01f820f3ab0d27e6b388": {
+   "term": "ESP32-S2-DevKitM-1",
+   "source": "pam_feed",
+   "status": "closed",
+   "first_seen": "2026-11-15",
+   "history": [
+    {
+     "event": "closed",
+     "date": "2026-11-17",
+     "resolution": "delivered",
+     "work": "pam-551c01f820f3ab0d27e6b388",
+     "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1743",
+     "merge_sha": "284bbc1139536c57f92024267d8489ab5d55050e",
+     "deployment": "baca6fc0401866e654308a285d63f0a170030652"
+    }
+   ],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1743"
+   ],
+   "snapshot": "docs/demand/pam-leads.json",
+   "feed": {
+    "checked_at": "2026-11-15T11:15:30.873895Z",
+    "feeds": {
+     "products": {
+      "url": "https://pamfinds.com/api/products.json",
+      "fetched_at": "2026-11-06T04:22:34.124739Z",
+      "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+      "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+      "bytes": 110684
+     },
+     "specs": {
+      "url": "https://pamfinds.com/api/specs.json",
+      "fetched_at": "2026-11-06T04:22:34.124739Z",
+      "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+      "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+      "bytes": 349157
+     }
+    },
+    "lead": {
+     "source_id": "esp32-s2-devkitm",
+     "name_hint": "ESP32-S2-DevKitM-1",
+     "chip_hint": "ESP32-S2",
+     "page": "https://pamfinds.com/esp32/esp32-s2-devkitm/",
+     "source_pointers": {
+      "cpu_arch": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+      ],
+      "cpu_cores": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+      ],
+      "cpu_freq_mhz": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+      ],
+      "flash_mb": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+      ],
+      "sram_kb": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+      ],
+      "psram_mb": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+      ],
+      "wifi": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+      ],
+      "gpio_count": [
+       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+      ],
+      "adc_channels": [
+       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+      ],
+      "spi": [
+       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+      ],
+      "i2c": [
+       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+      ],
+      "uart": [
+       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+      ],
+      "usb_type": [
+       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+      ],
+      "input_voltage": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+      ],
+      "deep_sleep_ua": [
+       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+      ],
+      "dimensions_mm": [
+       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+      ],
+      "form_factor": [
+       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+      ]
+     },
+     "fingerprint": "984732bc4d27728673e2266dabc4f312339a0a2b3f676eb25bccfaed3b4012b2",
+     "matches": [],
+     "status": "potential_identity_gap"
+    }
+   },
+   "validation": {
+    "verified_on": "2026-11-15",
+    "forbidden_ids": [
+     "esp32-s2-devkitm-1u",
+     "esp32-s2-devkitm-1ru"
+    ],
+    "verification_kind": "catalog_part",
+    "validated_by": "dasbrow-coder demand executor / run jr-research-pam-551c01f820f3ab0d27e6b388-2026-11-15",
+    "primary_sources": [
+     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html",
+     "https://dl.espressif.com/dl/schematics/ESP32-S2-DevKitM-1_V1_Schematics.pdf",
+     "https://dl.espressif.com/dl/schematics/ESP32-S2-DevKitM-1_V1_Dimensions.pdf"
+    ],
+    "expected_ids": [
+     "esp32-s2-devkitm-1"
+    ],
+    "notes": "Espressif's user guide lists six ordering codes: ESP32-S2-DevKitM-1-N4R2 (ESP32-S2-MINI-2, 4 MB flash, 2 MB PSRAM, PCB antenna), ESP32-S2-DevKitM-1 (EOL, ESP32-S2-MINI-1, 4 MB, no PSRAM, PCB antenna), ESP32-S2-DevKitM-1R (EOL, MINI-1, 4 MB, 2 MB PSRAM, PCB antenna), and the -1U/-1U-N4R2/-1RU counterparts with an external antenna connector (MINI-1U/MINI-2U). The record covers the PCB-antenna DevKitM-1 board; the U (external antenna) SKUs stay distinct and must not be authored under this id. PSRAM differs between PCB-antenna variants (0 or 2 MB), so psram_mb is omitted. Distinct from catalogued esp32-s2-devkitc-1 (SOLO/WROOM module, 8 MB flash) and esp32-s2-saola-1.",
+    "identity_verified": true,
+    "term_key": "esp32 s2 devkitm 1"
+   },
+   "outcome": {
+    "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1743",
+    "merge_sha": "284bbc1139536c57f92024267d8489ab5d55050e",
+    "merged_at": "2026-11-16T14:53:56Z",
+    "verification_kind": "catalog_part",
+    "query": "ESP32-S2-DevKitM-1",
+    "checked_at": "2026-11-17T11:15:31.248373+00:00",
+    "expected_ids": [
+     "esp32-s2-devkitm-1"
+    ],
+    "forbidden_ids": [
+     "esp32-s2-devkitm-1u",
+     "esp32-s2-devkitm-1ru"
+    ],
+    "source": "pam_feed",
+    "feed": {
+     "checked_at": "2026-11-15T11:15:30.873895Z",
+     "feeds": {
+      "products": {
+       "url": "https://pamfinds.com/api/products.json",
+       "fetched_at": "2026-11-06T04:22:34.124739Z",
+       "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+       "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+       "bytes": 110684
+      },
+      "specs": {
+       "url": "https://pamfinds.com/api/specs.json",
+       "fetched_at": "2026-11-06T04:22:34.124739Z",
+       "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+       "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+       "bytes": 349157
+      }
+     },
+     "lead": {
+      "source_id": "esp32-s2-devkitm",
+      "name_hint": "ESP32-S2-DevKitM-1",
+      "chip_hint": "ESP32-S2",
+      "page": "https://pamfinds.com/esp32/esp32-s2-devkitm/",
+      "source_pointers": {
+       "cpu_arch": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+       ],
+       "cpu_cores": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+       ],
+       "cpu_freq_mhz": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+       ],
+       "flash_mb": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+       ],
+       "sram_kb": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+       ],
+       "psram_mb": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+       ],
+       "wifi": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+       ],
+       "gpio_count": [
+        "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+       ],
+       "adc_channels": [
+        "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+       ],
+       "spi": [
+        "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+       ],
+       "i2c": [
+        "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+       ],
+       "uart": [
+        "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+       ],
+       "usb_type": [
+        "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+       ],
+       "input_voltage": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+       ],
+       "deep_sleep_ua": [
+        "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
+       ],
+       "dimensions_mm": [
+        "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+       ],
+       "form_factor": [
+        "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
+       ]
+      },
+      "fingerprint": "984732bc4d27728673e2266dabc4f312339a0a2b3f676eb25bccfaed3b4012b2",
+      "matches": [],
+      "status": "potential_identity_gap"
+     }
+    },
+    "http": 200,
+    "deployment": "baca6fc0401866e654308a285d63f0a170030652",
+    "ids": [
+     "esp32-s2-devkitm-1"
+    ],
+    "missing": [],
+    "forbidden_hits": []
+   },
+   "closed_on": "2026-11-17"
+  },
   "pam-63e3fabd029c0c3489322572": {
    "term": "ESP32-CAM (AI-Thinker)",
    "source": "pam_feed",
@@ -801,118 +1028,6 @@
    },
    "closed_on": "2026-11-10",
    "snapshot": "docs/demand/2026-11-10.json"
-  },
-  "pam-551c01f820f3ab0d27e6b388": {
-   "term": "ESP32-S2-DevKitM-1",
-   "source": "pam_feed",
-   "status": "linked",
-   "first_seen": "2026-11-15",
-   "history": [],
-   "linked_work": [
-    "https://github.com/fcavalcantirj/esp-atlas/pull/1743"
-   ],
-   "snapshot": "docs/demand/pam-leads.json",
-   "feed": {
-    "checked_at": "2026-11-15T11:15:30.873895Z",
-    "feeds": {
-     "products": {
-      "url": "https://pamfinds.com/api/products.json",
-      "fetched_at": "2026-11-06T04:22:34.124739Z",
-      "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
-      "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
-      "bytes": 110684
-     },
-     "specs": {
-      "url": "https://pamfinds.com/api/specs.json",
-      "fetched_at": "2026-11-06T04:22:34.124739Z",
-      "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
-      "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
-      "bytes": 349157
-     }
-    },
-    "lead": {
-     "source_id": "esp32-s2-devkitm",
-     "name_hint": "ESP32-S2-DevKitM-1",
-     "chip_hint": "ESP32-S2",
-     "page": "https://pamfinds.com/esp32/esp32-s2-devkitm/",
-     "source_pointers": {
-      "cpu_arch": [
-       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
-      ],
-      "cpu_cores": [
-       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
-      ],
-      "cpu_freq_mhz": [
-       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
-      ],
-      "flash_mb": [
-       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
-      ],
-      "sram_kb": [
-       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
-      ],
-      "psram_mb": [
-       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
-      ],
-      "wifi": [
-       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
-      ],
-      "gpio_count": [
-       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
-      ],
-      "adc_channels": [
-       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
-      ],
-      "spi": [
-       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
-      ],
-      "i2c": [
-       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
-      ],
-      "uart": [
-       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
-      ],
-      "usb_type": [
-       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
-      ],
-      "input_voltage": [
-       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
-      ],
-      "deep_sleep_ua": [
-       "https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf"
-      ],
-      "dimensions_mm": [
-       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
-      ],
-      "form_factor": [
-       "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html"
-      ]
-     },
-     "fingerprint": "984732bc4d27728673e2266dabc4f312339a0a2b3f676eb25bccfaed3b4012b2",
-     "matches": [],
-     "status": "potential_identity_gap"
-    }
-   },
-   "validation": {
-    "verified_on": "2026-11-15",
-    "forbidden_ids": [
-     "esp32-s2-devkitm-1u",
-     "esp32-s2-devkitm-1ru"
-    ],
-    "verification_kind": "catalog_part",
-    "validated_by": "dasbrow-coder demand executor / run jr-research-pam-551c01f820f3ab0d27e6b388-2026-11-15",
-    "primary_sources": [
-     "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-devkitm-1/user_guide.html",
-     "https://dl.espressif.com/dl/schematics/ESP32-S2-DevKitM-1_V1_Schematics.pdf",
-     "https://dl.espressif.com/dl/schematics/ESP32-S2-DevKitM-1_V1_Dimensions.pdf"
-    ],
-    "expected_ids": [
-     "esp32-s2-devkitm-1"
-    ],
-    "notes": "Espressif's user guide lists six ordering codes: ESP32-S2-DevKitM-1-N4R2 (ESP32-S2-MINI-2, 4 MB flash, 2 MB PSRAM, PCB antenna), ESP32-S2-DevKitM-1 (EOL, ESP32-S2-MINI-1, 4 MB, no PSRAM, PCB antenna), ESP32-S2-DevKitM-1R (EOL, MINI-1, 4 MB, 2 MB PSRAM, PCB antenna), and the -1U/-1U-N4R2/-1RU counterparts with an external antenna connector (MINI-1U/MINI-2U). The record covers the PCB-antenna DevKitM-1 board; the U (external antenna) SKUs stay distinct and must not be authored under this id. PSRAM differs between PCB-antenna variants (0 or 2 MB), so psram_mb is omitted. Distinct from catalogued esp32-s2-devkitc-1 (SOLO/WROOM module, 8 MB flash) and esp32-s2-saola-1.",
-    "identity_verified": true,
-    "term_key": "esp32 s2 devkitm 1"
-   }
   }
  }
 }
