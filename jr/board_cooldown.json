@@ -395,6 +395,18 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-16T10:00:32.342729+00:00"
     },
+    "freenove-esp32-wrover": {
+      "board": "freenove-esp32-wrover",
+      "expires": "2026-11-24T20:00:31.733970+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-17T20:00:31.733970+00:00"
+    },
     "freenove-fnk0104a": {
       "board": "freenove-fnk0104a",
       "expires": "2026-11-19T20:00:55.759999+00:00",
