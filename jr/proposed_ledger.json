@@ -10621,6 +10621,15 @@
       "status": "rejected",
       "timestamp": "2026-11-16T02:00:31.729728+00:00"
     },
+    "launcher-2113563234542100481": {
+      "expires": "2026-11-24T02:00:33.347838+00:00",
+      "id": "launcher-2113563234542100481",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'm5unit dof userdemo user:m5stack'",
+      "repo": "launcher:2113563234542100481",
+      "status": "rejected",
+      "timestamp": "2026-11-17T02:00:33.347838+00:00"
+    },
     "launcher-2113900593171210241": {
       "expires": "2026-11-23T21:00:32.122497+00:00",
       "id": "launcher-2113900593171210241",
@@ -17413,6 +17422,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T23:00:31.847601+00:00"
     },
+    "repo-note:b1scuitdev/e07xesp32c5": {
+      "expires": "2026-12-17T02:00:33.347838+00:00",
+      "id": "repo-note:b1scuitdev/e07xesp32c5",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "b1scuitdev/e07xesp32c5",
+      "status": "rejected",
+      "timestamp": "2026-11-17T02:00:33.347838+00:00"
+    },
     "repo-note:bblanchon/arduinojson": {
       "expires": "2026-12-17T00:00:31.875326+00:00",
       "id": "repo-note:bblanchon/arduinojson",
@@ -17439,6 +17457,15 @@
       "repo": "esp-rs/std-training",
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
+    },
+    "repo-note:evil-project-team/esp32-c5-j4ck3d": {
+      "expires": "2026-12-17T02:00:33.347838+00:00",
+      "id": "repo-note:evil-project-team/esp32-c5-j4ck3d",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "evil-project-team/esp32-c5-j4ck3d",
+      "status": "rejected",
+      "timestamp": "2026-11-17T02:00:33.347838+00:00"
     },
     "repo-note:expresslrs/expresslrs": {
       "expires": "2026-12-17T00:00:31.875326+00:00",
@@ -17476,6 +17503,15 @@
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
     },
+    "repo-note:highcodeh/tentacleos": {
+      "expires": "2026-12-17T02:00:33.347838+00:00",
+      "id": "repo-note:highcodeh/tentacleos",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "highcodeh/tentacleos",
+      "status": "rejected",
+      "timestamp": "2026-11-17T02:00:33.347838+00:00"
+    },
     "repo-note:hybridgroup/go-haystack": {
       "expires": "2026-12-17T01:00:31.817229+00:00",
       "id": "repo-note:hybridgroup/go-haystack",
@@ -17485,6 +17521,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
     },
+    "repo-note:jason2866/esp32tool": {
+      "expires": "2026-12-17T02:00:33.347838+00:00",
+      "id": "repo-note:jason2866/esp32tool",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "jason2866/esp32tool",
+      "status": "rejected",
+      "timestamp": "2026-11-17T02:00:33.347838+00:00"
+    },
     "repo-note:jaylikesbunda/ghost_esp": {
       "expires": "2026-12-14T17:00:55.342931+00:00",
       "id": "repo-note:jaylikesbunda/ghost_esp",
@@ -17493,6 +17538,15 @@
       "repo": "jaylikesbunda/ghost_esp",
       "status": "rejected",
       "timestamp": "2026-11-14T17:00:55.342931+00:00"
+    },
+    "repo-note:john30/ebusd-esp32": {
+      "expires": "2026-12-17T02:00:33.347838+00:00",
+      "id": "repo-note:john30/ebusd-esp32",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "john30/ebusd-esp32",
+      "status": "rejected",
+      "timestamp": "2026-11-17T02:00:33.347838+00:00"
     },
     "repo-note:jonnybergdahl/homeassistant_um_smartusbhub_integration": {
       "expires": "2026-12-16T23:00:31.827862+00:00",
@@ -17557,6 +17611,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
     },
+    "repo-note:louishitchcock/fpvgatec5mk": {
+      "expires": "2026-12-17T02:00:33.347838+00:00",
+      "id": "repo-note:louishitchcock/fpvgatec5mk",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "louishitchcock/fpvgatec5mk",
+      "status": "rejected",
+      "timestamp": "2026-11-17T02:00:33.347838+00:00"
+    },
     "repo-note:m-abozaid/esp32-c3-adblock": {
       "expires": "2026-12-17T01:00:31.817229+00:00",
       "id": "repo-note:m-abozaid/esp32-c3-adblock",
@@ -17592,6 +17655,15 @@
       "repo": "maxgramser/homeassistant_espscreen",
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
+    },
+    "repo-note:muellera/esp32-c5-its": {
+      "expires": "2026-12-17T02:00:33.347838+00:00",
+      "id": "repo-note:muellera/esp32-c5-its",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "muellera/esp32-c5-its",
+      "status": "rejected",
+      "timestamp": "2026-11-17T02:00:33.347838+00:00"
     },
     "repo-note:mx3353672833-debug/moto-gps-waveshare": {
       "expires": "2026-12-16T23:00:31.827862+00:00",
@@ -17692,6 +17764,15 @@
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
     },
+    "repo-note:tasmota/install": {
+      "expires": "2026-12-17T02:00:33.347838+00:00",
+      "id": "repo-note:tasmota/install",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "tasmota/install",
+      "status": "rejected",
+      "timestamp": "2026-11-17T02:00:33.347838+00:00"
+    },
     "repo-note:theminer203/m5mp3": {
       "expires": "2026-12-14T20:00:55.786187+00:00",
       "id": "repo-note:theminer203/m5mp3",
@@ -17718,6 +17799,24 @@
       "repo": "tinygo-org/tinygo",
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
+    },
+    "repo-note:twotoz/c5vrx": {
+      "expires": "2026-12-17T02:00:33.347838+00:00",
+      "id": "repo-note:twotoz/c5vrx",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "twotoz/c5vrx",
+      "status": "rejected",
+      "timestamp": "2026-11-17T02:00:33.347838+00:00"
+    },
+    "repo-note:warwick320/nova-x": {
+      "expires": "2026-12-17T02:00:33.347838+00:00",
+      "id": "repo-note:warwick320/nova-x",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "warwick320/nova-x",
+      "status": "rejected",
+      "timestamp": "2026-11-17T02:00:33.347838+00:00"
     },
     "repo-note:waveshareteam/e-paper": {
       "expires": "2026-12-16T23:00:31.827862+00:00",
@@ -20538,6 +20637,7 @@
     "autoflowdanilo-it/blipputer": "blipputer",
     "awesomelionel/bus-aunty-mini": "bus-aunty-mini",
     "azure/iot-central-firmware": "iot-central-firmware",
+    "b1scuitdev/e07xesp32c5": "repo-note:b1scuitdev/e07xesp32c5",
     "bambam1121/inw-mesh": "inw-mesh",
     "bblanchon/arduinojson": "repo-note:bblanchon/arduinojson",
     "beakes/teenygpstestbed_c2": "teenygpstestbed-c2",
@@ -20787,6 +20887,7 @@
     "esphome/esphome": "esphome",
     "espressif/esp-claw": "esp-claw",
     "espressif/esp-hosted-mcu": "esp-hosted-mcu",
+    "evil-project-team/esp32-c5-j4ck3d": "repo-note:evil-project-team/esp32-c5-j4ck3d",
     "evil0ctopus/poseidon_adv": "poseidon-adv",
     "evilkbgy9/cardnet": "cardnet",
     "exphinx/zhanggua": "zhanggua",
@@ -20912,6 +21013,7 @@
     "hermes-gadget/tdeck-screenfix": "tdeck-screenfix",
     "hey-its-brian/m5weather": "m5weather",
     "hey-its-brian/tab5-cyberdeck": "tab5-cyberdeck",
+    "highcodeh/tentacleos": "repo-note:highcodeh/tentacleos",
     "hiroki-kawakami/kyoshin": "kyoshin",
     "hiroki-kawakami/namecardknot": "namecardknot",
     "hiroki-kawakami/tab5-adb": "tab5-adb",
@@ -20973,6 +21075,7 @@
     "james-p-d/flipperzeroirplayer": "flipperzeroirplayer",
     "james-p-d/tonegenerator": "tonegenerator",
     "jasisz/grajek": "grajek",
+    "jason2866/esp32tool": "repo-note:jason2866/esp32tool",
     "javicar31/m5dial_volume_hid": "m5dial-volume-hid",
     "javicar31/m5stack_papers3": "m5stack-papers3",
     "jaxson79541/project": "project",
@@ -21000,6 +21103,7 @@
     "jl1nie/wifikey2": "wifikey2",
     "joejee90/cardputer-camera-companion": "cardputer-camera-companion",
     "joejee90/tiny-journal": "tiny-journal",
+    "john30/ebusd-esp32": "repo-note:john30/ebusd-esp32",
     "johnhw/cardputer_drums": "cardputer-drums",
     "jojorel/rfid-pn532-i2c-cardputer": "rfid-pn532-i2c-cardputer",
     "jonaslacerda/crowos": "crowos",
@@ -21688,6 +21792,7 @@
     "launcher:2112569732558573569": "launcher-2112569732558573569",
     "launcher:2113453725203111937": "launcher-2113453725203111937",
     "launcher:2113542725980987393": "launcher-2113542725980987393",
+    "launcher:2113563234542100481": "launcher-2113563234542100481",
     "launcher:2113900593171210241": "launcher-2113900593171210241",
     "launcher:2114161102906793986": "launcher-2114161102906793986",
     "launcher:2114554019936804866": "launcher-2114554019936804866",
@@ -21913,6 +22018,7 @@
     "lolzik-2/medusa": "medusa",
     "lordlexat/m5core2_simpleclock": "m5core2-simpleclock",
     "lostdataprotocol/onemorefloor": "onemorefloor",
+    "louishitchcock/fpvgatec5mk": "repo-note:louishitchcock/fpvgatec5mk",
     "lovyan03/lovyangfx": "lovyangfx",
     "lovyan03/m5stack_breakoutblock": "m5stack-breakoutblock",
     "lshaf/cores3-arcade": "cores3-arcade",
@@ -22073,6 +22179,7 @@
     "mtoolstec/cardputer-adv-uhf-expansion": "cardputer-adv-uhf-expansion",
     "mtoolstec/mt-firmware": "mt-firmware",
     "mu373/atoms3-hello-world": "atoms3-hello-world",
+    "muellera/esp32-c5-its": "repo-note:muellera/esp32-c5-its",
     "multimote/meshcore-cardputer-adv": "meshcore-cardputer-adv",
     "murmuri/webampadv": "webampadv",
     "musicajack/m5stack_tab5_converter": "m5stack-tab5-converter",
@@ -22355,6 +22462,7 @@
     "taraskad3o/fox-hunt-for-m5sticks3": "fox-hunt-for-m5sticks3",
     "taraskad3o/m5stack-atoms3-ble-remote-for-canon": "m5stack-atoms3-ble-remote-for-canon",
     "taraskad3o/sticks3-canonremote": "sticks3-canonremote",
+    "tasmota/install": "repo-note:tasmota/install",
     "tavden/tavden-field-suite": "tavden-field-suite",
     "teapot174/airmouses3": "airmouses3",
     "teapot174/esp-graber": "esp-graber",
@@ -22403,6 +22511,7 @@
     "turbohsu/badapple_cardputer_adv": "badapple-cardputer-adv",
     "turbulentgoat/cardputer-adv-mp3-player": "cardputer-adv-mp3-player",
     "tutyr2-jpg/bruce-a-c-edition": "bruce-a-c-edition",
+    "twotoz/c5vrx": "repo-note:twotoz/c5vrx",
     "twsnmp/twesp32sensor": "twesp32sensor",
     "u-tanick/ai_stackchan2_for_debug": "ai-stackchan2-for-debug",
     "ubo07": "ubo07",
@@ -22446,6 +22555,7 @@
     "w35m17h/cardputer-mqtt": "cardputer-mqtt",
     "wan0net/thistle-os": "thistle-os",
     "warko-san/cardputer-remote-cloner": "cardputer-remote-cloner",
+    "warwick320/nova-x": "repo-note:warwick320/nova-x",
     "washishi/m5stack-avatar-mic-nekomimi_led": "m5stack-avatar-mic-nekomimi-led",
     "washishi/simplespectrumanalyzer-atommatrix": "simplespectrumanalyzer-atommatrix",
     "waveshareteam/e-paper": "repo-note:waveshareteam/e-paper",
