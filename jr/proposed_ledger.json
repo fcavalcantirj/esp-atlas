@@ -10937,6 +10937,24 @@
       "status": "rejected",
       "timestamp": "2026-11-16T13:00:32.318887+00:00"
     },
+    "launcher-2122558170192625665": {
+      "expires": "2026-11-24T08:00:31.747262+00:00",
+      "id": "launcher-2122558170192625665",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'arduventure black white touch user:gywan94'",
+      "repo": "launcher:2122558170192625665",
+      "status": "rejected",
+      "timestamp": "2026-11-17T08:00:31.747262+00:00"
+    },
+    "launcher-2122586321891311618": {
+      "expires": "2026-11-24T08:00:31.747262+00:00",
+      "id": "launcher-2122586321891311618",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'rovercpro self test stickcplus user:kur1k0'",
+      "repo": "launcher:2122586321891311618",
+      "status": "rejected",
+      "timestamp": "2026-11-17T08:00:31.747262+00:00"
+    },
     "launcher-2124f637db75857c962f9097575271f4": {
       "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
@@ -17414,6 +17432,15 @@
       "status": "expired",
       "timestamp": "2026-09-12T07:00:39.726979+00:00"
     },
+    "repo-note:0015/esp32berry": {
+      "expires": "2027-02-15T08:00:31.747262+00:00",
+      "id": "repo-note:0015/esp32berry",
+      "pr_ref": null,
+      "reason": "archived: 0015/esp32berry is archived",
+      "repo": "0015/esp32berry",
+      "status": "rejected",
+      "timestamp": "2026-11-17T08:00:31.747262+00:00"
+    },
     "repo-note:21cncstudio/project_aura": {
       "expires": "2026-12-16T23:00:31.827862+00:00",
       "id": "repo-note:21cncstudio/project_aura",
@@ -17504,6 +17531,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T04:00:31.831476+00:00"
     },
+    "repo-note:cheerlights/cheerlights-esp32": {
+      "expires": "2026-12-17T08:00:31.747262+00:00",
+      "id": "repo-note:cheerlights/cheerlights-esp32",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "cheerlights/cheerlights-esp32",
+      "status": "rejected",
+      "timestamp": "2026-11-17T08:00:31.747262+00:00"
+    },
     "repo-note:copych/esp32_sd_sampler": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
       "id": "repo-note:copych/esp32_sd_sampler",
@@ -17539,6 +17575,15 @@
       "repo": "datasith/ai_demos_esp32",
       "status": "rejected",
       "timestamp": "2026-11-17T04:00:31.831476+00:00"
+    },
+    "repo-note:dekiengine/deki-editor": {
+      "expires": "2026-12-17T08:00:31.747262+00:00",
+      "id": "repo-note:dekiengine/deki-editor",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "dekiengine/deki-editor",
+      "status": "rejected",
+      "timestamp": "2026-11-17T08:00:31.747262+00:00"
     },
     "repo-note:dvucinozd/pajoniiir": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
@@ -17657,6 +17702,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
     },
+    "repo-note:jaqvil/t-displ_js8_mon": {
+      "expires": "2026-12-17T08:00:31.747262+00:00",
+      "id": "repo-note:jaqvil/t-displ_js8_mon",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "jaqvil/t-displ_js8_mon",
+      "status": "rejected",
+      "timestamp": "2026-11-17T08:00:31.747262+00:00"
+    },
     "repo-note:jason2866/esp32tool": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
       "id": "repo-note:jason2866/esp32tool",
@@ -17764,6 +17818,15 @@
       "repo": "khoih-prog/espasync_wifimanager",
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
+    },
+    "repo-note:konsumer/msc-poc": {
+      "expires": "2026-12-17T08:00:31.747262+00:00",
+      "id": "repo-note:konsumer/msc-poc",
+      "pr_ref": null,
+      "reason": "stopword_name: 'msc-poc' names a radio, not a firmware",
+      "repo": "konsumer/msc-poc",
+      "status": "rejected",
+      "timestamp": "2026-11-17T08:00:31.747262+00:00"
     },
     "repo-note:lahirunirmalx/neoled": {
       "expires": "2026-12-17T07:00:32.097367+00:00",
@@ -17882,6 +17945,15 @@
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
     },
+    "repo-note:nochkin/esp_test": {
+      "expires": "2026-12-17T08:00:31.747262+00:00",
+      "id": "repo-note:nochkin/esp_test",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "nochkin/esp_test",
+      "status": "rejected",
+      "timestamp": "2026-11-17T08:00:31.747262+00:00"
+    },
     "repo-note:nodemcu/nodemcu-firmware": {
       "expires": "2026-12-17T00:00:31.875326+00:00",
       "id": "repo-note:nodemcu/nodemcu-firmware",
@@ -17980,6 +18052,15 @@
       "repo": "roblatour/esp32timeserver",
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
+    "repo-note:russhughes/st7789_mpy": {
+      "expires": "2026-12-17T08:00:31.747262+00:00",
+      "id": "repo-note:russhughes/st7789_mpy",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: GitHub topics match ['driver']",
+      "repo": "russhughes/st7789_mpy",
+      "status": "rejected",
+      "timestamp": "2026-11-17T08:00:31.747262+00:00"
     },
     "repo-note:rust-embedded-community/epd-waveshare": {
       "expires": "2026-12-16T23:00:31.827862+00:00",
@@ -18080,6 +18161,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T02:00:33.347838+00:00"
     },
+    "repo-note:thatblend/espressway32": {
+      "expires": "2026-12-17T08:00:31.747262+00:00",
+      "id": "repo-note:thatblend/espressway32",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "thatblend/espressway32",
+      "status": "rejected",
+      "timestamp": "2026-11-17T08:00:31.747262+00:00"
+    },
     "repo-note:theminer203/m5mp3": {
       "expires": "2026-12-14T20:00:55.786187+00:00",
       "id": "repo-note:theminer203/m5mp3",
@@ -18088,6 +18178,15 @@
       "repo": "theminer203/m5mp3",
       "status": "rejected",
       "timestamp": "2026-11-14T20:00:55.786187+00:00"
+    },
+    "repo-note:tiffanyytu/module1_ces": {
+      "expires": "2026-12-17T08:00:31.747262+00:00",
+      "id": "repo-note:tiffanyytu/module1_ces",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "tiffanyytu/module1_ces",
+      "status": "rejected",
+      "timestamp": "2026-11-17T08:00:31.747262+00:00"
     },
     "repo-note:tinygo-org/bluetooth": {
       "expires": "2026-12-17T01:00:31.817229+00:00",
@@ -18151,6 +18250,15 @@
       "repo": "vincasmiliunas/esp32-arduino-tb6612fng",
       "status": "rejected",
       "timestamp": "2026-11-17T04:00:31.831476+00:00"
+    },
+    "repo-note:vnovikov-f028/twin-void": {
+      "expires": "2026-12-17T08:00:31.747262+00:00",
+      "id": "repo-note:vnovikov-f028/twin-void",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "vnovikov-f028/twin-void",
+      "status": "rejected",
+      "timestamp": "2026-11-17T08:00:31.747262+00:00"
     },
     "repo-note:wadadawadada/blackbox_node": {
       "expires": "2026-12-17T07:00:32.097367+00:00",
@@ -20881,6 +20989,7 @@
   "by_repo": {
     "": "(unnamed entry)",
     "\" asdasd": "asdasd",
+    "0015/esp32berry": "repo-note:0015/esp32berry",
     "0015/pocketssh": "pocketssh",
     "01mayo01/meowusb-ble": "meowusb-ble",
     "04hm4n/flipper-bruce-dualboot-cardputeradv": "flipper-bruce-dualboot-cardputeradv",
@@ -21103,6 +21212,7 @@
     "chatelp/daoa-mini-cardputeradv": "daoa-mini-cardputeradv",
     "chatelp/geek-casino-cardputeradv": "geek-casino-cardputeradv",
     "chatelp/silicon-bubbles-cardputeradv": "silicon-bubbles-cardputeradv",
+    "cheerlights/cheerlights-esp32": "repo-note:cheerlights/cheerlights-esp32",
     "chillyc0de/minimaze-for-cardputer-adv": "minimaze-for-cardputer-adv",
     "chillyc0de/totp-auth-for-cardputer-adv": "totp-auth-for-cardputer-adv",
     "chinderdelis/meshtastic-arduino-nesso-n1": "meshtastic-arduino-nesso-n1",
@@ -21229,6 +21339,7 @@
     "dcarnicer/paperdiy-reader": "paperdiy-reader",
     "dcarnicer/tamagotcho": "tamagotcho",
     "ddd": "ddd",
+    "dekiengine/deki-editor": "repo-note:dekiengine/deki-editor",
     "dekiengine/deki-lilygo-boards": "deki-lilygo-boards",
     "demonkingfukai/m5stickc-plus-mouse-jiggler": "m5stickc-plus-mouse-jiggler",
     "derunix/m5stack-stick-s3-animation": "m5stack-stick-s3-animation",
@@ -21485,6 +21596,7 @@
     "jagoda/meshcadet": "meshcadet",
     "james-p-d/flipperzeroirplayer": "flipperzeroirplayer",
     "james-p-d/tonegenerator": "tonegenerator",
+    "jaqvil/t-displ_js8_mon": "repo-note:jaqvil/t-displ_js8_mon",
     "jasisz/grajek": "grajek",
     "jason2866/esp32tool": "repo-note:jason2866/esp32tool",
     "javicar31/m5dial_volume_hid": "m5dial-volume-hid",
@@ -21571,6 +21683,7 @@
     "kkq-kkq/m5stickc-audiospectrum": "m5stickc-audiospectrum",
     "konradmohr/pbashos": "pbashos",
     "konsumer/cardputer-examples": "cardputer-examples",
+    "konsumer/msc-poc": "repo-note:konsumer/msc-poc",
     "konsumer/weathergrrl": "weathergrrl",
     "korexil/gpu-duet": "gpu-duet",
     "korrie71/meshwatch": "meshwatch",
@@ -22241,6 +22354,8 @@
     "launcher:2121974375890501633": "launcher-2121974375890501633",
     "launcher:2122139606327443458": "launcher-2122139606327443458",
     "launcher:2122191762896142337": "launcher-2122191762896142337",
+    "launcher:2122558170192625665": "launcher-2122558170192625665",
+    "launcher:2122586321891311618": "launcher-2122586321891311618",
     "launcher:2124f637db75857c962f9097575271f4": "launcher-2124f637db75857c962f9097575271f4",
     "launcher:214c554f9da22d70e6837d4db79fc793": "launcher-214c554f9da22d70e6837d4db79fc793",
     "launcher:215b511e97a94512db05452db92ba0bf": "launcher-215b511e97a94512db05452db92ba0bf",
@@ -22629,6 +22744,7 @@
     "nishad2m8/pip-boy-weather-clock": "pip-boy-weather-clock",
     "nishad2m8/wled-cardputer": "wled-cardputer",
     "nishad2m8/x-mas-tree-animated-gif": "x-mas-tree-animated-gif",
+    "nochkin/esp_test": "repo-note:nochkin/esp_test",
     "nodemcu/nodemcu-firmware": "repo-note:nodemcu/nodemcu-firmware",
     "noest-d/esp32-emulatorjs": "esp32-emulatorjs",
     "nongxl/agar-cardputer": "agar-cardputer",
@@ -22777,6 +22893,7 @@
     "ronron-gh/ai_stackchan_ex": "ai-stackchan-ex",
     "rubio473/mantishid-msc": "mantishid-msc",
     "runaque/adv_wardriver": "adv-wardriver",
+    "russhughes/st7789_mpy": "repo-note:russhughes/st7789_mpy",
     "russoz87/hourglass_adv": "hourglass-adv",
     "rust-embedded-community/epd-waveshare": "repo-note:rust-embedded-community/epd-waveshare",
     "ruvnet/ruview": "ruview",
@@ -22898,6 +23015,7 @@
     "teapot174/airmouses3": "airmouses3",
     "teapot174/esp-graber": "esp-graber",
     "technoblogy/ulisp-cardputer": "ulisp-cardputer",
+    "thatblend/espressway32": "repo-note:thatblend/espressway32",
     "the-tithe/the-tithe": "the-tithe",
     "thebolined/ai-cardputer-adv-a-portable-ai-assistant": "ai-cardputer-adv-a-portable-ai-assistant",
     "thebricktop/anarch-cardputer": "anarch-cardputer",
@@ -22916,6 +23034,7 @@
     "therezor/hazke": "hazke",
     "therezor/pocket-apocalypse": "pocket-apocalypse",
     "therezor/pocket-notes": "pocket-notes",
+    "tiffanyytu/module1_ces": "repo-note:tiffanyytu/module1_ces",
     "tinygo-org/bluetooth": "repo-note:tinygo-org/bluetooth",
     "tinygo-org/tinygo": "repo-note:tinygo-org/tinygo",
     "tkaminski21-beep/-phantom-os-": "phantom-os",
@@ -22975,6 +23094,7 @@
     "viniciushnf/m5sticks3-gps-gnss-monitor": "m5sticks3-gps-gnss-monitor",
     "viper0013/viperpet": "viperpet",
     "vlastimilcerveny34/guitar-audio-tools": "guitar-audio-tools",
+    "vnovikov-f028/twin-void": "repo-note:vnovikov-f028/twin-void",
     "voidnoi/badcard": "badcard",
     "volos-tv-remote": "volos-tv-remote",
     "volosr/cardputer": "cardputer",
