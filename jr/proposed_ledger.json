@@ -17477,6 +17477,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T02:00:33.347838+00:00"
     },
+    "repo-note:batear-io/batear": {
+      "expires": "2026-12-17T07:00:32.097367+00:00",
+      "id": "repo-note:batear-io/batear",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "batear-io/batear",
+      "status": "rejected",
+      "timestamp": "2026-11-17T07:00:32.097367+00:00"
+    },
     "repo-note:bblanchon/arduinojson": {
       "expires": "2026-12-17T00:00:31.875326+00:00",
       "id": "repo-note:bblanchon/arduinojson",
@@ -17503,6 +17512,15 @@
       "repo": "copych/esp32_sd_sampler",
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
+    "repo-note:cryptspeak/m5uploader": {
+      "expires": "2026-12-17T07:00:32.097367+00:00",
+      "id": "repo-note:cryptspeak/m5uploader",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "cryptspeak/m5uploader",
+      "status": "rejected",
+      "timestamp": "2026-11-17T07:00:32.097367+00:00"
     },
     "repo-note:cziter15/ksiotframeworklib": {
       "expires": "2026-12-17T04:00:31.831476+00:00",
@@ -17593,6 +17611,15 @@
       "repo": "fastled/fastled",
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
+    },
+    "repo-note:filippocappa/netstalker": {
+      "expires": "2026-12-17T07:00:32.097367+00:00",
+      "id": "repo-note:filippocappa/netstalker",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "filippocappa/netstalker",
+      "status": "rejected",
+      "timestamp": "2026-11-17T07:00:32.097367+00:00"
     },
     "repo-note:frameos/frameos": {
       "expires": "2026-12-16T23:00:31.827862+00:00",
@@ -17738,6 +17765,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
     },
+    "repo-note:lahirunirmalx/neoled": {
+      "expires": "2026-12-17T07:00:32.097367+00:00",
+      "id": "repo-note:lahirunirmalx/neoled",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: GitHub topics match ['esp-idf-component']",
+      "repo": "lahirunirmalx/neoled",
+      "status": "rejected",
+      "timestamp": "2026-11-17T07:00:32.097367+00:00"
+    },
     "repo-note:landonr/homething": {
       "expires": "2026-12-17T05:00:31.748945+00:00",
       "id": "repo-note:landonr/homething",
@@ -17773,6 +17809,15 @@
       "repo": "m-abozaid/esp32-c3-adblock",
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
+    },
+    "repo-note:makepkg/securegen": {
+      "expires": "2026-12-17T07:00:32.097367+00:00",
+      "id": "repo-note:makepkg/securegen",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "makepkg/securegen",
+      "status": "rejected",
+      "timestamp": "2026-11-17T07:00:32.097367+00:00"
     },
     "repo-note:makerspet/oomwoo": {
       "expires": "2026-12-17T00:00:31.875326+00:00",
@@ -17891,6 +17936,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
     },
+    "repo-note:quadule/knobby": {
+      "expires": "2026-12-17T07:00:32.097367+00:00",
+      "id": "repo-note:quadule/knobby",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "quadule/knobby",
+      "status": "rejected",
+      "timestamp": "2026-11-17T07:00:32.097367+00:00"
+    },
     "repo-note:ratspeak/ratcom": {
       "expires": "2026-12-16T01:00:31.941223+00:00",
       "id": "repo-note:ratspeak/ratcom",
@@ -17908,6 +17962,15 @@
       "repo": "raysan5/raylib",
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
+    },
+    "repo-note:retroelec/t-hmi-c64": {
+      "expires": "2026-12-17T07:00:32.097367+00:00",
+      "id": "repo-note:retroelec/t-hmi-c64",
+      "pr_ref": null,
+      "reason": "stopword_name: 'T-HMI-C64' names a radio, not a firmware",
+      "repo": "retroelec/t-hmi-c64",
+      "status": "rejected",
+      "timestamp": "2026-11-17T07:00:32.097367+00:00"
     },
     "repo-note:roblatour/esp32timeserver": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
@@ -17971,6 +18034,15 @@
       "repo": "spooks4576/ghost_esp",
       "status": "rejected",
       "timestamp": "2026-11-15T22:00:31.751655+00:00"
+    },
+    "repo-note:stickfirmware/stick": {
+      "expires": "2027-02-15T07:00:32.097367+00:00",
+      "id": "repo-note:stickfirmware/stick",
+      "pr_ref": null,
+      "reason": "archived: stickfirmware/stick is archived",
+      "repo": "stickfirmware/stick",
+      "status": "rejected",
+      "timestamp": "2026-11-17T07:00:32.097367+00:00"
     },
     "repo-note:stryderuk/bluetoothhid": {
       "expires": "2026-12-17T04:00:31.831476+00:00",
@@ -18080,6 +18152,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T04:00:31.831476+00:00"
     },
+    "repo-note:wadadawadada/blackbox_node": {
+      "expires": "2026-12-17T07:00:32.097367+00:00",
+      "id": "repo-note:wadadawadada/blackbox_node",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "wadadawadada/blackbox_node",
+      "status": "rejected",
+      "timestamp": "2026-11-17T07:00:32.097367+00:00"
+    },
     "repo-note:warwick320/nova-x": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
       "id": "repo-note:warwick320/nova-x",
@@ -18115,6 +18196,15 @@
       "repo": "waveshareteam/wavego_pro",
       "status": "rejected",
       "timestamp": "2026-11-17T04:00:31.831476+00:00"
+    },
+    "repo-note:xlyric/lilygo-t5-4.7-meteo-and-domoticz-": {
+      "expires": "2026-12-17T07:00:32.097367+00:00",
+      "id": "repo-note:xlyric/lilygo-t5-4.7-meteo-and-domoticz-",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "xlyric/lilygo-t5-4.7-meteo-and-domoticz-",
+      "status": "rejected",
+      "timestamp": "2026-11-17T07:00:32.097367+00:00"
     },
     "repo-note:yokohama-miyazawa/m5hlsplayer": {
       "expires": "2026-12-17T05:00:31.748945+00:00",
@@ -20950,6 +21040,7 @@
     "azure/iot-central-firmware": "iot-central-firmware",
     "b1scuitdev/e07xesp32c5": "repo-note:b1scuitdev/e07xesp32c5",
     "bambam1121/inw-mesh": "inw-mesh",
+    "batear-io/batear": "repo-note:batear-io/batear",
     "bblanchon/arduinojson": "repo-note:bblanchon/arduinojson",
     "beakes/teenygpstestbed_c2": "teenygpstestbed-c2",
     "beanpiechen/micropythonshell": "micropythonshell",
@@ -21101,6 +21192,7 @@
     "cric-ric": "cric-ric",
     "crosspoint-reader/crosspoint-reader": "crosspoint-reader",
     "cryptspeak/cscardputer": "cscardputer",
+    "cryptspeak/m5uploader": "repo-note:cryptspeak/m5uploader",
     "cubic9com/m5core2_audio_analyzer": "m5core2-audio-analyzer",
     "cubic9com/m5core2_defrag": "m5core2-defrag",
     "cubic9com/m5core2_delaunay": "m5core2-delaunay",
@@ -21228,6 +21320,7 @@
     "fermintm/tab5-weather-clock-tmp711v4": "tab5-weather-clock-tmp711v4",
     "ffrafat/tomatoclock_m5cardputer": "tomatoclock-m5cardputer",
     "filipo3221/cardtube": "cardtube",
+    "filippocappa/netstalker": "repo-note:filippocappa/netstalker",
     "flashertwelve/ir_replay": "ir-replay",
     "flipper-zero-esp32-adv": "flipper-zero-esp32-adv",
     "flock-you": "flock-you",
@@ -21499,6 +21592,7 @@
     "kysutrung/yolo_watchdog": "yolo-watchdog",
     "kyya/paperdarkroom": "paperdarkroom",
     "laccom/zizi-for-m5-stick-c-plus-2": "zizi-for-m5-stick-c-plus-2",
+    "lahirunirmalx/neoled": "repo-note:lahirunirmalx/neoled",
     "lamzaakdok/sticks3-toolbox": "sticks3-toolbox",
     "lamzaakdok/sticks3-weather-clock": "sticks3-weather-clock",
     "lamzaakdok/zhangshang-zhanbu": "zhangshang-zhanbu",
@@ -22413,6 +22507,7 @@
     "madboy134/saldotransporte": "saldotransporte",
     "mahdy-gribkov/vanguard": "vanguard",
     "majstertukan/cardputer-ha-remote": "cardputer-ha-remote",
+    "makepkg/securegen": "repo-note:makepkg/securegen",
     "makerspet/oomwoo": "repo-note:makerspet/oomwoo",
     "malonestar/paperdiy-reader": "paperdiy-reader",
     "manba036/m5core2_sg90_stackchan_voicetext_ataru": "m5core2-sg90-stackchan-voicetext-ataru",
@@ -22625,6 +22720,7 @@
     "psychoplath9450/sumi": "sumi",
     "purplxhazee/purplx-": "purplx",
     "qqshi13/m5timer": "m5timer",
+    "quadule/knobby": "repo-note:quadule/knobby",
     "question-and-answer/cave-mine-cardputer-alpha1": "cave-mine-cardputer-alpha1",
     "qwertyuu/cardputer-adv-tracker": "cardputer-adv-tracker",
     "r0sin/alpha-buddy": "alpha-buddy",
@@ -22655,6 +22751,7 @@
     "rennancockles/m5-chameleon-ultra": "m5-chameleon-ultra",
     "retr0kr0dy/non-magical-csi": "non-magical-csi",
     "retr0kr0dy/tab5-launchpad": "tab5-launchpad",
+    "retroelec/t-hmi-c64": "repo-note:retroelec/t-hmi-c64",
     "revolution81/lukewarmcard-adv": "lukewarmcard-adv",
     "reydeargentina/cardtastic": "cardtastic",
     "rhuaneverton/gpsdata-m5cardputer": "gpsdata-m5cardputer",
@@ -22771,6 +22868,7 @@
     "steveatinfincia/circuitpython": "circuitpython",
     "stevenselcuk/nearplane": "nearplane",
     "stewmoss/cardputer-wardriver": "cardputer-wardriver",
+    "stickfirmware/stick": "repo-note:stickfirmware/stick",
     "stonedev-app/atoms3rss": "atoms3rss",
     "stryderuk/bluetoothhid": "repo-note:stryderuk/bluetoothhid",
     "styles01/m5stack-ollama-meter": "m5stack-ollama-meter",
@@ -22890,6 +22988,7 @@
     "w-ockham/actpaddle": "actpaddle",
     "w-ockham/m5spotchan": "m5spotchan",
     "w35m17h/cardputer-mqtt": "cardputer-mqtt",
+    "wadadawadada/blackbox_node": "repo-note:wadadawadada/blackbox_node",
     "wan0net/thistle-os": "thistle-os",
     "warko-san/cardputer-remote-cloner": "cardputer-remote-cloner",
     "warwick320/nova-x": "repo-note:warwick320/nova-x",
@@ -22931,6 +23030,7 @@
     "xinyuan-lilygo/t-deck": "t-deck",
     "xinyuan-lilygo/t-display-c5": "t-display-c5",
     "xinyuan-lilygo/t-embed": "t-embed",
+    "xlyric/lilygo-t5-4.7-meteo-and-domoticz-": "repo-note:xlyric/lilygo-t5-4.7-meteo-and-domoticz-",
     "xpy-us/commercial-firmesp32": "commercial-firmesp32",
     "xxtrippxx88/airmouse-m5stick-c-plus": "airmouse-m5stick-c-plus",
     "y88huang/claude-desktop-buddy-cardputer": "claude-desktop-buddy-cardputer",
