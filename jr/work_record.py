@@ -154,9 +154,11 @@ def _materialize(queue: dict, receipt: dict) -> tuple[str, dict, bool]:
     present = [(k, c) for k, c in queue["candidates"].items() if isinstance(c, dict) and rw.candidate_key(c) == key]
     if present:
         return present[0][0], present[0][1], False
-    if receipt.get("source") == rw.SOURCE_PAM:
+    if receipt.get("source") in (rw.SOURCE_PAM, rw.SOURCE_QUOTE):
         candidate, qkey = copy.deepcopy(receipt.get("candidate")), key
-        if not isinstance(candidate, dict) or not pam_leads.readable_work_provenance(candidate.get("feed")):
+        readable = (pam_leads.readable_work_provenance(candidate.get("feed")) if receipt.get("source") == rw.SOURCE_PAM
+                    else rw.readable_quote_provenance(candidate.get("quote"))) if isinstance(candidate, dict) else False
+        if not readable:
             raise RecordError(f"work {key}: the receipt carries no readable candidate snapshot")
     else:
         candidate, qkey = _search_candidate(receipt), research_queue.term_key(receipt.get("term"))

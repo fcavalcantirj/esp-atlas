@@ -26,14 +26,18 @@ from __future__ import annotations
 import copy
 import http.client
 import json
+import sys
 import re
 import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
+from pathlib import Path
 from datetime import datetime, timezone
 
 import research_work as rw
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))   # scripts/check_quotes.py, the quote re-check
 
 DELIVERED, REJECTED, PENDING = "delivered", "rejected", "pending"
 PR_FIELDS = "url,state,mergedAt,mergeCommit"
@@ -235,6 +239,57 @@ def _live_search_receipt(candidate: dict, pr: dict, *, fetch, git, now: datetime
             "contains_merge": contains_merge(git, pr.get("merge_sha"), revision)}, ""
 
 
+def _page_through(fetch, url: str):
+    """A scripts/check_quotes Page read through the closure's injected getter (url -> (status, bytes)),
+    so the quote re-check reads the same way every other closure does and tests inject the pages."""
+    import check_quotes
+    try:
+        status, body = fetch(check_quotes.fetch_url(url))
+    except Exception as e:  # noqa: BLE001 — a page that did not answer is unreadable, never a verdict
+        return check_quotes.Page(url, None, type(e).__name__)
+    if status != 200:
+        return check_quotes.Page(url, None, f"HTTP {status}")
+    data = body if isinstance(body, (bytes, bytearray)) else str(body).encode()
+    if check_quotes.fetch_url(url).lower().endswith(".pdf") or data[:5] == b"%PDF-":
+        text = check_quotes.pdf_to_text(bytes(data))
+        return check_quotes.Page(url, (check_quotes.normalize(text) + " " + check_quotes.normalize(url)) if text is not None else None,
+                                 "pdf" if text is not None else "pdf not readable")
+    text = data.decode("utf-8", "replace")
+    if "<html" in text[:2000].lower() or "<body" in text[:4000].lower():
+        text = check_quotes.html_to_text(text)
+    return check_quotes.Page(url, check_quotes.normalize(text) + " " + check_quotes.normalize(url), "HTTP 200")
+
+
+def _catalog_quote_receipt(candidate: dict, validation: dict, pr: dict, *, fetch, git,
+                           now: datetime) -> tuple[dict | None, str]:
+    """The catalog_quote receipt verify_resolution judges, or (None, why): record hygiene is verified by
+    re-running scripts/check_quotes.py on the record AS MERGED (`git show <merge sha>:<record>`), reading
+    every cited page through the injected getter. PASS closes; FAIL and INCONCLUSIVE are recorded and stay
+    pending; an unreadable record or merge builds no receipt."""
+    import check_quotes
+    quote = candidate.get("quote") if isinstance(candidate.get("quote"), dict) else None
+    if not rw.readable_quote_provenance(quote):
+        return None, "catalog_quote check: the candidate carries no readable quote provenance"
+    if fetch is None:
+        return None, "catalog_quote verification needs a live page getter; none was injected, so none is invented"
+    merge = pr.get("merge_sha")
+    if not rw._text(merge):
+        return None, "catalog_quote check: the merged PR names no merge sha"
+    shown = git("show", f"{merge}:{quote['record']}")
+    if getattr(shown, "returncode", 1) != 0 or not (getattr(shown, "stdout", "") or "").strip():
+        return None, f"catalog_quote check: {quote['record']} not readable at {merge[:8]}"
+    from esp_atlas_core.frontmatter import parse_frontmatter_text
+    try:
+        fm, _ = parse_frontmatter_text(shown.stdout)
+    except ValueError as e:
+        return None, f"catalog_quote check: record unparsable at the merge ({e})"
+    report = check_quotes.check_record(Path(quote["record"]), fm, {}, lambda url: _page_through(fetch, url))
+    return {"kind": rw.KIND_CATALOG_QUOTE, "record": quote["record"], "id": fm.get("id") or quote["id"],
+            "merge_sha": merge, "verdict": report.verdict if report.quotes else "PASS",
+            "quotes": [{"quote": q.quote, "verdict": q.verdict, "where": q.where} for q in report.quotes],
+            "checked_at": now.astimezone(timezone.utc).isoformat()}, ""
+
+
 def observe(candidate: dict, pr: dict, snap: dict, *, mined_revision, git, now: datetime,
             fetch=None) -> tuple[dict | None, str]:
     """The observation receipt for the validation's verification kind, or (None, why)."""
@@ -246,6 +301,8 @@ def observe(candidate: dict, pr: dict, snap: dict, *, mined_revision, git, now: 
         return _live_search_receipt(candidate, pr, fetch=fetch, git=git, now=now)
     if kind == rw.KIND_CATALOG_PART:
         return _catalog_part_receipt(candidate, validation, pr, fetch=fetch, git=git, now=now)
+    if kind == rw.KIND_CATALOG_QUOTE:
+        return _catalog_quote_receipt(candidate, validation, pr, fetch=fetch, git=git, now=now)
     return _miner_receipt(candidate, pr, snap, mined_revision=mined_revision, git=git, now=now)
 
 
