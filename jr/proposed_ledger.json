@@ -1228,6 +1228,16 @@
       "status": "rejected",
       "timestamp": "2026-11-14T14:00:56.621804+00:00"
     },
+    "card-gcalc": {
+      "expires": "2026-12-17T03:00:31.684665+00:00",
+      "id": "card-gcalc",
+      "pr_ref": null,
+      "reason": "below_floor: 0 stars / 0 forks",
+      "repo": "minoruinachi/card-gcalc",
+      "repo_id": 1458383268,
+      "status": "rejected",
+      "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
     "cardcaliper": {
       "expires": "2026-12-05T20:00:59.980852+00:00",
       "id": "cardcaliper",
@@ -17422,6 +17432,15 @@
       "status": "rejected",
       "timestamp": "2026-11-15T23:00:31.847601+00:00"
     },
+    "repo-note:alaltitov/waveshare-esp32-p4-86-panel-eth-2ro": {
+      "expires": "2026-12-17T03:00:31.684665+00:00",
+      "id": "repo-note:alaltitov/waveshare-esp32-p4-86-panel-eth-2ro",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "alaltitov/waveshare-esp32-p4-86-panel-eth-2ro",
+      "status": "rejected",
+      "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
     "repo-note:b1scuitdev/e07xesp32c5": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
       "id": "repo-note:b1scuitdev/e07xesp32c5",
@@ -17440,6 +17459,24 @@
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
     },
+    "repo-note:copych/esp32_sd_sampler": {
+      "expires": "2026-12-17T03:00:31.684665+00:00",
+      "id": "repo-note:copych/esp32_sd_sampler",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "copych/esp32_sd_sampler",
+      "status": "rejected",
+      "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
+    "repo-note:dvucinozd/pajoniiir": {
+      "expires": "2026-12-17T03:00:31.684665+00:00",
+      "id": "repo-note:dvucinozd/pajoniiir",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "dvucinozd/pajoniiir",
+      "status": "rejected",
+      "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
     "repo-note:emenstanougat/esp32-bluejammer": {
       "expires": "2026-12-17T00:00:31.875326+00:00",
       "id": "repo-note:emenstanougat/esp32-bluejammer",
@@ -17448,6 +17485,15 @@
       "repo": "emenstanougat/esp32-bluejammer",
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
+    },
+    "repo-note:esp-cpp/espp": {
+      "expires": "2026-12-17T03:00:31.684665+00:00",
+      "id": "repo-note:esp-cpp/espp",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "esp-cpp/espp",
+      "status": "rejected",
+      "timestamp": "2026-11-17T03:00:31.684665+00:00"
     },
     "repo-note:esp-rs/std-training": {
       "expires": "2026-12-17T01:00:31.817229+00:00",
@@ -17475,6 +17521,15 @@
       "repo": "expresslrs/expresslrs",
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
+    },
+    "repo-note:fabkury/p3a": {
+      "expires": "2026-12-17T03:00:31.684665+00:00",
+      "id": "repo-note:fabkury/p3a",
+      "pr_ref": null,
+      "reason": "stopword_name: 'p3a' names a radio, not a firmware",
+      "repo": "fabkury/p3a",
+      "status": "rejected",
+      "timestamp": "2026-11-17T03:00:31.684665+00:00"
     },
     "repo-note:fastled/fastled": {
       "expires": "2026-12-17T00:00:31.875326+00:00",
@@ -17656,6 +17711,15 @@
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
     },
+    "repo-note:mrcodetastic/esp32-hub75-matrixpanel-dma": {
+      "expires": "2026-12-17T03:00:31.684665+00:00",
+      "id": "repo-note:mrcodetastic/esp32-hub75-matrixpanel-dma",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "mrcodetastic/esp32-hub75-matrixpanel-dma",
+      "status": "rejected",
+      "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
     "repo-note:muellera/esp32-c5-its": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
       "id": "repo-note:muellera/esp32-c5-its",
@@ -17691,6 +17755,15 @@
       "repo": "ocean-lhy/xiaozhi-esp32",
       "status": "rejected",
       "timestamp": "2026-11-15T04:00:34.403128+00:00"
+    },
+    "repo-note:opensurface/sonosesp": {
+      "expires": "2026-12-17T03:00:31.684665+00:00",
+      "id": "repo-note:opensurface/sonosesp",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "opensurface/sonosesp",
+      "status": "rejected",
+      "timestamp": "2026-11-17T03:00:31.684665+00:00"
     },
     "repo-note:paciente8159/ucnc": {
       "expires": "2026-12-17T01:00:31.817229+00:00",
@@ -17728,6 +17801,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
     },
+    "repo-note:roblatour/esp32timeserver": {
+      "expires": "2026-12-17T03:00:31.684665+00:00",
+      "id": "repo-note:roblatour/esp32timeserver",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "roblatour/esp32timeserver",
+      "status": "rejected",
+      "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
     "repo-note:rust-embedded-community/epd-waveshare": {
       "expires": "2026-12-16T23:00:31.827862+00:00",
       "id": "repo-note:rust-embedded-community/epd-waveshare",
@@ -17736,6 +17818,15 @@
       "repo": "rust-embedded-community/epd-waveshare",
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
+    },
+    "repo-note:sams0n1te/lakeshark": {
+      "expires": "2026-12-17T03:00:31.684665+00:00",
+      "id": "repo-note:sams0n1te/lakeshark",
+      "pr_ref": null,
+      "reason": "chip_family_mismatch: repo names ['esp32-p4'], but board 'm5cardputer' is esp32-s3",
+      "repo": "sams0n1te/lakeshark",
+      "status": "rejected",
+      "timestamp": "2026-11-17T03:00:31.684665+00:00"
     },
     "repo-note:spooks4576/ghost_esp": {
       "expires": "2027-02-13T22:00:31.751655+00:00",
@@ -17799,6 +17890,15 @@
       "repo": "tinygo-org/tinygo",
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
+    },
+    "repo-note:tlack/babytalk": {
+      "expires": "2026-12-17T03:00:31.684665+00:00",
+      "id": "repo-note:tlack/babytalk",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'framework'",
+      "repo": "tlack/babytalk",
+      "status": "rejected",
+      "timestamp": "2026-11-17T03:00:31.684665+00:00"
     },
     "repo-note:twotoz/c5vrx": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
@@ -20555,6 +20655,7 @@
     "airpocket-soundman/tab5_ssh_client": "tab5-ssh-client",
     "akoerner/kprox": "kprox",
     "al83m/nodepad": "nodepad",
+    "alaltitov/waveshare-esp32-p4-86-panel-eth-2ro": "repo-note:alaltitov/waveshare-esp32-p4-86-panel-eth-2ro",
     "alcor55/cardputer-gps-info": "cardputer-gps-info",
     "aleksalcdel/tetris-for-m5stickcplus2": "tetris-for-m5stickcplus2",
     "aleksalcdel/two-button_tetris_for_scplus2.": "two-button-tetris-for-scplus2",
@@ -20719,6 +20820,7 @@
     "comeraperuibe944/stickcontroller": "stickcontroller",
     "controllercustom/touchwasd": "touchwasd",
     "coolguy76o/sai-poc": "sai-poc",
+    "copych/esp32_sd_sampler": "repo-note:copych/esp32_sd_sampler",
     "coreymillia/113-matrix-rain-effects-m5stack-core1-basic": "113-matrix-rain-effects-m5stack-core1-ba",
     "coreymillia/1942-tetrimino-m5stickc-plus2": "1942-tetrimino-m5stickc-plus2",
     "coreymillia/2-player-tilt-pong-m5stickc-plus-1-2": "2-player-tilt-pong-m5stickc-plus-1-2",
@@ -20851,6 +20953,7 @@
     "drrhesus/rhesus-radio-v3": "rhesus-radio-v3",
     "drw41823/pocket-studio-cardputer-adv": "pocket-studio-cardputer-adv",
     "dukeko369/cardputer-drum-machine.git": "cardputer-drum-machine",
+    "dvucinozd/pajoniiir": "repo-note:dvucinozd/pajoniiir",
     "dwlf256/m5cardputer-simple-calculator": "m5cardputer-simple-calculator",
     "dxvexx/m5stick-minigame-launcher-firmware": "m5stick-minigame-launcher-firmware",
     "echo-lalia/cardputer-microhydra": "cardputer-microhydra",
@@ -20881,6 +20984,7 @@
     "erwantesti23/heart_calculator.git": "heart-calculator",
     "erwantesti23/operating-system-cardputer": "operating-system-cardputer",
     "erwantesti23/operating-system-code": "operating-system-code",
+    "esp-cpp/espp": "repo-note:esp-cpp/espp",
     "esp-rs/std-training": "repo-note:esp-rs/std-training",
     "esp32-bit-pirate": "esp32-bit-pirate",
     "esp32de/boot-linux-esp32s3-playground": "boot-linux-esp32s3-playground",
@@ -20893,6 +20997,7 @@
     "exphinx/zhanggua": "zhanggua",
     "expresslrs/expresslrs": "repo-note:expresslrs/expresslrs",
     "eyeofbri/demonym": "demonym",
+    "fabkury/p3a": "repo-note:fabkury/p3a",
     "facelesstech/dht11_and_dht22_m5stick": "dht11-and-dht22-m5stick",
     "failpowers/dualmesh-cardputer": "dualmesh-cardputer",
     "fancyoung/cardputer-abc": "cardputer-abc",
@@ -22143,6 +22248,7 @@
     "mingrzou/papermono-launcher": "papermono-launcher",
     "minkleee/cardputersshclient": "cardputersshclient",
     "minoruinachi/alles": "alles",
+    "minoruinachi/card-gcalc": "card-gcalc",
     "minoruinachi/paperdiyos": "paperdiyos",
     "minoruinachi/tulipcc": "tulipcc",
     "mithug3/cardradio": "cardradio",
@@ -22174,6 +22280,7 @@
     "mraanderson/cardputeradv-motionlab": "cardputeradv-motionlab",
     "mrarm/hakrwatch": "hakrwatch",
     "mrchaosbude/esp32-cyd-aquarium": "esp32-cyd-aquarium",
+    "mrcodetastic/esp32-hub75-matrixpanel-dma": "repo-note:mrcodetastic/esp32-hub75-matrixpanel-dma",
     "mrnet15/ravenrf": "ravenrf",
     "msm187/stickpet": "stickpet",
     "mtoolstec/cardputer-adv-uhf-expansion": "cardputer-adv-uhf-expansion",
@@ -22251,6 +22358,7 @@
     "oliverxing2025/vibestick-codex": "vibestick-codex",
     "oliverxing2025/vibestick-hourglass-liquid": "vibestick-hourglass-liquid",
     "ooxxu/xiaozhi-esp32": "xiaozhi-esp32",
+    "opensurface/sonosesp": "repo-note:opensurface/sonosesp",
     "osamusg/m5papercolor-calendar": "m5papercolor-calendar",
     "oumike/camillia-mt": "camillia-mt",
     "oumike/plumeria-mc": "plumeria-mc",
@@ -22339,6 +22447,7 @@
     "rlee203/cardputeros.git": "cardputeros",
     "rlee203/purple.git": "purple",
     "robertklofgren/cardelbrot": "cardelbrot",
+    "roblatour/esp32timeserver": "repo-note:roblatour/esp32timeserver",
     "robo8080/ai_stackchan2_readme": "ai-stackchan2-readme",
     "robo8080/m5stack_sokoban": "m5stack-sokoban",
     "robo8080/m5stickc_webradio_radiko_avatar": "m5stickc-webradio-radiko-avatar",
@@ -22369,6 +22478,7 @@
     "sakkra-adv/magic8ball": "magic8ball",
     "sakkra-adv/spaceship": "spaceship",
     "samdenty/wi-pwn": "wi-pwn",
+    "sams0n1te/lakeshark": "repo-note:sams0n1te/lakeshark",
     "samucarre/m5cores3-automatic-irrigation": "m5cores3-automatic-irrigation",
     "samucarre/m5papers3-animal-quiz": "m5papers3-animal-quiz",
     "samucarre/m5tab5-animal-quiz": "m5tab5-animal-quiz",
@@ -22488,6 +22598,7 @@
     "tinygo-org/bluetooth": "repo-note:tinygo-org/bluetooth",
     "tinygo-org/tinygo": "repo-note:tinygo-org/tinygo",
     "tkaminski21-beep/-phantom-os-": "phantom-os",
+    "tlack/babytalk": "repo-note:tlack/babytalk",
     "tobozo/esp32-hector": "esp32-hector",
     "tobozo/m5core2-soundbouncer": "m5core2-soundbouncer",
     "tobozo/m5stack-nyancat": "m5stack-nyancat",
