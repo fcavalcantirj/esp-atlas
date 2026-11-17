@@ -192,6 +192,19 @@ that's a coverage hole to close, not a silent gap.
     `STALL_AFTER` = 3 consecutive ticks, the tick sends one Telegram nudge, and then at most one per
     UTC day. A shrinking or empty backlog clears it. An unreadable state file is a nudge, never
     silence, and a dry run counts nothing.
+  - **Admission names boards with the catalog's own vocabulary (2026-11-17).** The scorer's board
+    evidence is, in order: `jr/device_map.py` (the precise M5Stack sibling rules), the launcher
+    category, a submission's resolved hint, then `jr/board_names.boards_named_in` over the repo's own
+    words — name, description, GitHub topics (author-declared, on the repo page) and README title, not
+    the README body (a support matrix names many boards; widening is Track B's job). The vocabulary is
+    data/boards itself: every board's id, brand + name, aka, and its bare name only when it carries a
+    digit ("T-Display-S3", "StickC-Plus2"); whole-word matches with separators optional; URLs, library
+    and SDK references are not prose; the specific board beats the general one it contains. Exactly
+    one board is evidence; several is `ambiguous_board`, a skip, never a guess; none is
+    `no_board_evidence`. The SOC cross-check, the device-build evidence gate and the evidence checker
+    still run after it. Why: `device_map` covered 14 of 118 boards, all M5Stack; 92 of the 130 topic
+    rejects on main were `no_board_evidence`, 16 of them naming a catalogued Heltec, LilyGO or StickC
+    board in their own description or topics (`jr/fixtures/board_names/no_board_evidence_2026-11-17.json`).
   - **The GitHub-topics source remembers every paid decision (2026-11-16).** `jr/stage_admit_topics.py`
     scores at most `budget * SCORE_MULTIPLIER` prefiltered repos per tick, in the search's star order.
     Every repo it paid a metadata fetch for ends in a remembered decision, the launcher's rule: a

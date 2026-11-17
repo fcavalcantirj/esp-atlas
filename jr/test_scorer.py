@@ -765,3 +765,45 @@ def test_score_entry_genuine_firmware_still_authored_with_no_library_signal(desc
        "nemo-slug", "ghostesp-compound", "deauther-compound"])
 def test_purpose_keywords_rogue_and_nemo_match_only_whole_words(name, description, expected):
     assert scorer._category_from_purpose(name, description, None) == expected
+
+
+# ─────────── the catalog's own vocabulary (jr/board_names, 2026-11-17) ───────────
+# device_map.py covered 14 of 118 catalogued boards, all M5Stack: a Heltec, LilyGO or Espressif-devkit
+# firmware that named its board in its own description was still `no_board_evidence`. score_entry now
+# falls back to the catalog vocabulary over name + description + GitHub topics + README title.
+
+def _plain_repo_meta(full_name, description, topics=None, stars=60):
+    return {"full_name": full_name, "fork": False, "source_full_name": None, "stars": stars, "id": 4242,
+            "description": description, "topics": topics or [], "readme_title": None, "readme_body": None,
+            "license": "MIT"}
+
+
+def test_score_entry_admits_a_heltec_board_named_in_the_description():
+    entry = {"name": "LoRa Wireless Tracker", "description": None, "category": None,
+             "github": "https://github.com/jh/lorawirelesstracker", "download": 0}
+    res = score_entry(entry, _plain_repo_meta("jh/lorawirelesstracker", "Heltec Wireless Tracker ESP32/Oled/GNSS/Lora"), set(), set())
+    assert res["decision"] == "authored", res
+    assert res["record"]["board"] == "heltec-wireless-tracker" and res["record"]["chip"] == "esp32-s3"
+
+
+def test_score_entry_reads_the_repo_s_github_topics_as_the_author_s_own_words():
+    entry = {"name": "Knobby", "description": None, "category": None, "github": "https://github.com/q/knobby", "download": 0}
+    meta = _plain_repo_meta("q/knobby", "A little Spotify remote to remind you that there's a lot of music out there.",
+                            topics=["arduino", "esp32", "esp32-s3", "lilygo", "lilygo-tdisplay-s3", "music"])
+    res = score_entry(entry, meta, set(), set())
+    assert res["decision"] == "authored" and res["record"]["board"] == "lilygo-t-display-s3", res
+
+
+def test_score_entry_never_guesses_between_two_named_boards():
+    entry = {"name": "Homething", "description": None, "category": None, "github": "https://github.com/l/homething", "download": 0}
+    meta = _plain_repo_meta("l/homething", "Wifi Smart Home Remotes that run on ESPHome", topics=["m5stickc", "m5stickcplus"])
+    res = score_entry(entry, meta, set(), set())
+    assert res["decision"] == "skip" and res["reason"] == "ambiguous_board: names m5stick-c, m5stick-cplus"
+
+
+def test_score_entry_still_rejects_a_substring_that_only_looks_like_a_board():
+    entry = {"name": "std-training", "description": None, "category": None, "github": "https://github.com/esp-rs/std-training", "download": 0}
+    meta = _plain_repo_meta("esp-rs/std-training", "Embedded Rust on Espressif training material.",
+                            topics=["esp32", "esp32-c3", "rust-embedded", "rustlang", "training"])
+    res = score_entry(entry, meta, set(), set())
+    assert res["decision"] == "skip" and res["reason"].startswith("no_board_evidence")

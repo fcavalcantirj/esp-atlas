@@ -649,7 +649,7 @@
     },
     {
       "id": "ambiguous_bare_stickc_plus_no2",
-      "failure_mode": "deliberately-ambiguous bare device name — \"M5StickC Plus\" (no \"2\") is NOT catalogued (only m5stick-cplus2 exists); device_map.py's documented design refuses to guess, must stay a skip",
+      "failure_mode": "bare \"M5StickC Plus\" (no \"2\"): device_map.py refuses to guess between the Plus and the Plus2 (its documented design). Since 2026-11-17 the catalog's own vocabulary (jr/board_names) names the catalogued m5stick-cplus from the repo's own words — \"StickC Plus\" without a \"2\" is the Plus, a catalogued board, not a guess; a text naming both Plus and Plus2 would be ambiguous_board",
       "entry": {
         "name": "M5StickC Plus Resistor Calculator",
         "description": "A very simple M5Stick C Plus colour-ring resistor calculator",
@@ -667,8 +667,17 @@
         "archived": false
       },
       "expected": {
-        "decision": "skip",
-        "reason_substring": "no_board_evidence"
+        "decision": "authored",
+        "record": {
+          "id": "stickc-resistor-calculator",
+          "name": "M5StickC Plus Resistor Calculator",
+          "url": "https://github.com/IcingTomato/M5StickC-Resistor-Calculator",
+          "category": "multi",
+          "board": "m5stick-cplus",
+          "chip": "esp32",
+          "capabilities": [],
+          "maintainer": "icingtomato"
+        }
       }
     },
     {
