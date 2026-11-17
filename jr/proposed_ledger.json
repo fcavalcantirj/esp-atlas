@@ -17558,6 +17558,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T16:00:31.699892+00:00"
     },
+    "repo-note:amirbawab/avr-cheat-sheet": {
+      "expires": "2026-12-17T22:00:32.010942+00:00",
+      "id": "repo-note:amirbawab/avr-cheat-sheet",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "amirbawab/avr-cheat-sheet",
+      "status": "rejected",
+      "timestamp": "2026-11-17T22:00:32.010942+00:00"
+    },
     "repo-note:arduino/arduino": {
       "expires": "2026-12-17T15:00:33.111992+00:00",
       "id": "repo-note:arduino/arduino",
@@ -18620,6 +18629,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T10:00:32.143438+00:00"
     },
+    "repo-note:microsoft/pxt-common-packages": {
+      "expires": "2026-12-17T22:00:32.010942+00:00",
+      "id": "repo-note:microsoft/pxt-common-packages",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "microsoft/pxt-common-packages",
+      "status": "rejected",
+      "timestamp": "2026-11-17T22:00:32.010942+00:00"
+    },
     "repo-note:mmcoms/penware": {
       "expires": "2026-12-17T12:00:31.695549+00:00",
       "id": "repo-note:mmcoms/penware",
@@ -19025,6 +19043,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T21:00:31.805157+00:00"
     },
+    "repo-note:siliconlabssoftware/arduino": {
+      "expires": "2026-12-17T22:00:32.010942+00:00",
+      "id": "repo-note:siliconlabssoftware/arduino",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "siliconlabssoftware/arduino",
+      "status": "rejected",
+      "timestamp": "2026-11-17T22:00:32.010942+00:00"
+    },
     "repo-note:silvainobsolete395/ant-card": {
       "expires": "2026-12-17T06:00:32.296687+00:00",
       "id": "repo-note:silvainobsolete395/ant-card",
@@ -19078,6 +19105,69 @@
       "repo": "spacehuhntech/esp8266_deauther",
       "status": "rejected",
       "timestamp": "2026-11-17T15:00:33.111992+00:00"
+    },
+    "repo-note:sparkfun/hx711-load-cell-amplifier": {
+      "expires": "2026-12-17T22:00:32.010942+00:00",
+      "id": "repo-note:sparkfun/hx711-load-cell-amplifier",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sparkfun/hx711-load-cell-amplifier",
+      "status": "rejected",
+      "timestamp": "2026-11-17T22:00:32.010942+00:00"
+    },
+    "repo-note:sparkfun/sparkfun-kicad-libraries": {
+      "expires": "2026-12-17T22:00:32.010942+00:00",
+      "id": "repo-note:sparkfun/sparkfun-kicad-libraries",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sparkfun/sparkfun-kicad-libraries",
+      "status": "rejected",
+      "timestamp": "2026-11-17T22:00:32.010942+00:00"
+    },
+    "repo-note:sparkfun/sparkfun_can-bus_arduino_library": {
+      "expires": "2026-12-17T22:00:32.010942+00:00",
+      "id": "repo-note:sparkfun/sparkfun_can-bus_arduino_library",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "sparkfun/sparkfun_can-bus_arduino_library",
+      "status": "rejected",
+      "timestamp": "2026-11-17T22:00:32.010942+00:00"
+    },
+    "repo-note:sparkfun/sparkfun_eagle_settings": {
+      "expires": "2026-12-17T22:00:32.010942+00:00",
+      "id": "repo-note:sparkfun/sparkfun_eagle_settings",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sparkfun/sparkfun_eagle_settings",
+      "status": "rejected",
+      "timestamp": "2026-11-17T22:00:32.010942+00:00"
+    },
+    "repo-note:sparkfun/sparkfun_mlx90640_arduino_example": {
+      "expires": "2026-12-17T22:00:32.010942+00:00",
+      "id": "repo-note:sparkfun/sparkfun_mlx90640_arduino_example",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sparkfun/sparkfun_mlx90640_arduino_example",
+      "status": "rejected",
+      "timestamp": "2026-11-17T22:00:32.010942+00:00"
+    },
+    "repo-note:sparkfun/sparkfun_mpu-9250-dmp_arduino_library": {
+      "expires": "2026-12-17T22:00:32.010942+00:00",
+      "id": "repo-note:sparkfun/sparkfun_mpu-9250-dmp_arduino_library",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "sparkfun/sparkfun_mpu-9250-dmp_arduino_library",
+      "status": "rejected",
+      "timestamp": "2026-11-17T22:00:32.010942+00:00"
+    },
+    "repo-note:sparkfun/sparkfun_ublox_arduino_library": {
+      "expires": "2027-02-15T22:00:32.010942+00:00",
+      "id": "repo-note:sparkfun/sparkfun_ublox_arduino_library",
+      "pr_ref": null,
+      "reason": "archived: sparkfun/sparkfun_ublox_arduino_library is archived",
+      "repo": "sparkfun/sparkfun_ublox_arduino_library",
+      "status": "rejected",
+      "timestamp": "2026-11-17T22:00:32.010942+00:00"
     },
     "repo-note:spooks4576/ghost_esp": {
       "expires": "2027-02-13T22:00:31.751655+00:00",
@@ -22232,6 +22322,7 @@
     "amcchord/m5tab-macintosh": "m5tab-macintosh",
     "amiika/bytebed": "bytebed",
     "amin45mh/custom-m5core2-factorytest": "custom-m5core2-factorytest",
+    "amirbawab/avr-cheat-sheet": "repo-note:amirbawab/avr-cheat-sheet",
     "ampixa/sanotts": "sanotts",
     "andgohq/seed-phrase-checker": "seed-phrase-checker",
     "andjiang0083/cardputer-charge-station": "cardputer-charge-station",
@@ -23895,6 +23986,7 @@
     "micokonsep/pomodoro-papers3": "pomodoro-papers3",
     "microdev-steve/circuitpython_m5stickplus2": "circuitpython-m5stickplus2",
     "microos-project/microos": "microos",
+    "microsoft/pxt-common-packages": "repo-note:microsoft/pxt-common-packages",
     "mindovermiles262/tamaputer": "tamaputer",
     "mingrzou/papermono-launcher": "papermono-launcher",
     "minkleee/cardputersshclient": "cardputersshclient",
@@ -24194,6 +24286,7 @@
     "shlxz/caplab": "caplab",
     "sieren/homepoint": "repo-note:sieren/homepoint",
     "sijan246/cyd-gb-emulator": "cyd-gb-emulator",
+    "siliconlabssoftware/arduino": "repo-note:siliconlabssoftware/arduino",
     "silvainobsolete395/ant-card": "repo-note:silvainobsolete395/ant-card",
     "simisimis/blinkmeter": "repo-note:simisimis/blinkmeter",
     "simont73/schimihack": "schimihack",
@@ -24227,6 +24320,13 @@
     "soykhaler/zx-spectrum-cardputer-internal": "zx-spectrum-cardputer-internal",
     "soynx/hacking-pentesting-utils": "hacking-pentesting-utils",
     "spacehuhntech/esp8266_deauther": "repo-note:spacehuhntech/esp8266_deauther",
+    "sparkfun/hx711-load-cell-amplifier": "repo-note:sparkfun/hx711-load-cell-amplifier",
+    "sparkfun/sparkfun-kicad-libraries": "repo-note:sparkfun/sparkfun-kicad-libraries",
+    "sparkfun/sparkfun_can-bus_arduino_library": "repo-note:sparkfun/sparkfun_can-bus_arduino_library",
+    "sparkfun/sparkfun_eagle_settings": "repo-note:sparkfun/sparkfun_eagle_settings",
+    "sparkfun/sparkfun_mlx90640_arduino_example": "repo-note:sparkfun/sparkfun_mlx90640_arduino_example",
+    "sparkfun/sparkfun_mpu-9250-dmp_arduino_library": "repo-note:sparkfun/sparkfun_mpu-9250-dmp_arduino_library",
+    "sparkfun/sparkfun_ublox_arduino_library": "repo-note:sparkfun/sparkfun_ublox_arduino_library",
     "spooks4576/ghost_esp": "repo-note:spooks4576/ghost_esp",
     "spreedated/cardcharge": "cardcharge",
     "spuder/openspool": "repo-note:spuder/openspool",
