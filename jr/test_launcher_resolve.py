@@ -127,6 +127,46 @@ def test_a_failed_search_resolves_to_nothing_with_the_error():
     assert res["repo"] is None and "422" in res["error"]
 
 
+GITHUB_422_OWNER_MISSING = {"message": "Validation Failed", "errors": [{
+    "message": "The listed users and repositories cannot be searched either because the resources do not "
+               "exist or you do not have permission to view them.", "resource": "Search", "field": "q", "code": "invalid"}],
+    "documentation_url": "https://docs.github.com/v3/search/", "status": "422"}
+
+
+def _failing_gh(body, stderr="gh: Validation Failed (HTTP 422)"):
+    """`gh api` on a failed search: the JSON error body on stdout, gh's one-line summary on stderr
+    (observed 2026-11-17 for q='print bed leveling user:gkdesing', an author who is not a login)."""
+    def gh(*a):
+        return SimpleNamespace(returncode=1, stdout=json.dumps(body) if body is not None else "", stderr=stderr)
+    return gh
+
+
+def test_a_422_for_an_owner_who_is_not_a_github_login_is_classified_owner_missing():
+    """213 launcher entries (146 authors, e.g. GKDESING) were re-searched every 7 days for a month:
+    the author is not a GitHub account, which the body says and no retry changes."""
+    entry = dict(NONE_ENTRY, author="GKDESING", name="3D Print Bed Leveling Tool")
+    res = lr.resolve(entry, _failing_gh(GITHUB_422_OWNER_MISSING))
+    assert res["repo"] is None and res["error_kind"] == lr.OWNER_MISSING
+    assert res["error"].startswith("owner not on GitHub (gkdesing)") and "422" in res["error"]
+
+
+@pytest.mark.parametrize("body, stderr", [
+    (None, "422 bad user"),                                                  # no body at all
+    ({"message": "Service Unavailable"}, "gh: Service Unavailable (HTTP 503)"),
+    ({"message": "Validation Failed", "errors": [{"message": "The search is longer than 256 characters.",
+                                                  "resource": "Search", "field": "q", "code": "invalid"}]},
+     "gh: Validation Failed (HTTP 422)"),                                    # another 422: not this class
+])
+def test_every_other_failed_search_has_no_error_kind_and_is_retried_later(body, stderr):
+    res = lr.resolve(NONE_ENTRY, _failing_gh(body, stderr))
+    assert res["repo"] is None and res["error_kind"] is None and res["error"] == stderr
+
+
+def test_a_successful_search_carries_no_error_kind():
+    doc = {"total_count": 1, "incomplete_results": False, "items": [_item("muart/pocket-synth")]}
+    assert lr.resolve(NONE_ENTRY, _gh(doc, []))["error_kind"] is None
+
+
 def test_no_searchable_tokens_makes_no_call():
     calls = []
     res = lr.resolve({"fid": "f", "name": "Cardputer", "github": None, "author": "a"}, _gh({}, calls))

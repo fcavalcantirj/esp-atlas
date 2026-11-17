@@ -40,8 +40,9 @@ class FakeGh:
     keyed by the decoded q (repo paths case-insensitive, like GitHub); records every call except
     the submissions listing every admit run makes."""
 
-    def __init__(self, metas=None, searches=None):
+    def __init__(self, metas=None, searches=None, failures=None):
         self.metas, self.searches, self.calls = metas or {}, searches or {}, []
+        self.failures = failures or {}          # decoded q -> (stdout body or None, stderr): a failed search
 
     def __call__(self, *a):
         if "/issues?" in a[1]:
@@ -49,6 +50,9 @@ class FakeGh:
         self.calls.append(a)
         if a[1].startswith("search/repositories?"):
             q = urllib.parse.parse_qs(urllib.parse.urlsplit(a[1]).query)["q"][0]
+            if q in self.failures:
+                body, stderr = self.failures[q]
+                return SimpleNamespace(returncode=1, stdout=json.dumps(body) if body is not None else "", stderr=stderr)
             items = self.searches.get(q, [])
             return SimpleNamespace(returncode=0, stdout=json.dumps({"total_count": len(items),
                                                                      "incomplete_results": False,
@@ -132,6 +136,41 @@ def test_none_entry_with_zero_hits_is_no_source_repo(root, monkeypatch):
     assert res.rejects == {"no_source_repo": 1} and len(fake.searched()) == 1
     rec = _ledger(root)["by_id"]["launcher-0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f"]
     assert rec["status"] == "rejected" and "0 matches" in rec["reason"]
+
+
+LEVELING = {"fid": "0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d", "name": "3D Print Bed Leveling Tool", "author": "GKDESING",
+            "github": None, "category": "stickc", "download": 218, "description": None}
+OWNER_MISSING_422 = ({"message": "Validation Failed", "errors": [{
+    "message": "The listed users and repositories cannot be searched either because the resources do not "
+               "exist or you do not have permission to view them.", "resource": "Search", "field": "q", "code": "invalid"}],
+    "status": "422"}, "gh: Validation Failed (HTTP 422)")
+
+
+def test_an_author_who_is_not_a_github_login_is_decided_for_a_quarter_not_a_week(root, monkeypatch):
+    """2026-11-17: 213 live launcher entries (146 authors) hit GitHub's 422 'listed users ... do not
+    exist' and were recorded no_source_repo for 7 days, so every week ~213 searches (10 resolver slots
+    a tick) re-asked a question whose answer cannot change. The class gets the archived TTL."""
+    _catalog(monkeypatch, [LEVELING])
+    fake = FakeGh(failures={"print bed leveling user:gkdesing": OWNER_MISSING_422})
+    res = stage_admit.run(_ctx(root, fake), budget=3)
+    assert res.admitted == 0 and res.rejects == {"owner_missing": 1} and len(fake.searched()) == 1
+    rec = _ledger(root)["by_id"]["launcher-0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d"]
+    assert rec["status"] == "rejected" and rec["reason"].startswith("owner_missing: owner not on GitHub (gkdesing)")
+    assert rec["expires"] == (NOW + timedelta(days=memory.ARCHIVED_REJECT_DAYS)).isoformat()
+    again = FakeGh(failures=fake.failures)
+    second = stage_admit.run(_ctx(root, again), budget=3)
+    assert again.calls == [] and second.rejects == {} and "1 already decided" in second.summary
+
+
+def test_a_transient_search_failure_keeps_the_seven_day_retry(root, monkeypatch):
+    _catalog(monkeypatch, [LEVELING])
+    fake = FakeGh(failures={"print bed leveling user:gkdesing": ({"message": "Service Unavailable"},
+                                                                      "gh: Service Unavailable (HTTP 503)")})
+    res = stage_admit.run(_ctx(root, fake), budget=3)
+    assert res.rejects == {"no_source_repo": 1}
+    rec = _ledger(root)["by_id"]["launcher-0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d"]
+    assert rec["reason"] == "no_source_repo: gh: Service Unavailable (HTTP 503)"
+    assert rec["expires"] == (NOW + timedelta(days=memory.UNRESOLVED_REJECT_DAYS)).isoformat()
 
 
 def test_empty_github_entry_never_reaches_the_ledger_and_is_a_counted_skip(root, monkeypatch):

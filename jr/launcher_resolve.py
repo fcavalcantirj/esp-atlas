@@ -30,6 +30,13 @@ RESOLVER_CALLS_PER_TICK = 10
 SEARCH_PER_PAGE = 30
 MAX_QUERY_TOKENS = 4
 NO_SOURCE_REPO = "no_source_repo"
+# The `user:<owner>` qualifier names no GitHub account (the launcher `author` is a display name, not a
+# login: GKDESING, CriC-10, ...). GitHub answers 422 with this sentence in the body's errors; gh's stderr
+# only says "Validation Failed (HTTP 422)". The owner's absence does not change from week to week, so the
+# caller records this class with the long (archived) TTL, not the 7-day retry every other failure gets.
+# 2026-11-17: 213 live entries (146 authors) had been re-searched every 7 days for a month.
+OWNER_MISSING = "owner_missing"
+_OWNER_MISSING_RE = re.compile(r"cannot be searched|do(?:es)? not exist", re.I)
 LEDGER_ID_PREFIX = "launcher-"
 LEDGER_REPO_PREFIX = "launcher:"   # ':' never appears in a GitHub owner, so no real repo collides
 
@@ -118,12 +125,26 @@ def match_hits(entry: dict, items: list) -> list[str]:
     return out
 
 
+def owner_missing(stdout: str) -> bool:
+    """True when a failed search's JSON body says the listed users cannot be searched because they
+    do not exist (GitHub's 422 for an unknown `user:` qualifier). Read from the body, never from
+    gh's one-line stderr; an unparsable or empty body is never this class."""
+    try:
+        doc = json.loads(stdout or "")
+    except json.JSONDecodeError:
+        return False
+    errors = doc.get("errors") if isinstance(doc, dict) else None
+    return any(isinstance(e, dict) and _OWNER_MISSING_RE.search(str(e.get("message") or ""))
+               for e in (errors if isinstance(errors, list) else []))
+
+
 def resolve(entry: dict, gh) -> dict:
-    """{repo, query, matches, error}: `repo` is the one accepted owner/repo, else None. One `gh`
-    call at most (none when there is nothing to search for). BudgetExceeded propagates; any other
-    failure resolves to nothing with the error, never raises."""
+    """{repo, query, matches, error, error_kind}: `repo` is the one accepted owner/repo, else None.
+    One `gh` call at most (none when there is nothing to search for). BudgetExceeded propagates; any
+    other failure resolves to nothing with the error, never raises. `error_kind` is OWNER_MISSING
+    when the failure is GitHub's "listed users do not exist" 422 (see owner_missing), else None."""
     q = build_query(entry)
-    out = {"repo": None, "query": q, "matches": [], "error": None}
+    out = {"repo": None, "query": q, "matches": [], "error": None, "error_kind": None}
     if q is None:
         out["error"] = "no searchable name tokens or owner"
         return out
@@ -135,7 +156,11 @@ def resolve(entry: dict, gh) -> dict:
         out["error"] = f"{type(e).__name__}: {str(e)[:120]}"
         return out
     if getattr(p, "returncode", 1) != 0:
-        out["error"] = (getattr(p, "stderr", "") or "search failed").strip()[:120]
+        stderr = (getattr(p, "stderr", "") or "search failed").strip()
+        if owner_missing(getattr(p, "stdout", "")):
+            out["error_kind"] = OWNER_MISSING
+            stderr = f"owner not on GitHub ({owner_hint(entry)}); {stderr}"
+        out["error"] = stderr[:120]
         return out
     try:
         doc = json.loads(getattr(p, "stdout", "") or "{}")

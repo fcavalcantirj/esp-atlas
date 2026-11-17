@@ -168,6 +168,7 @@ def _verdict_text(reason: str | None, admitted: bool, needs_human: bool, page_id
 REJECT_TTLS = {
     "repo_unresolved": memory.UNRESOLVED_REJECT_DAYS,
     launcher_resolve.NO_SOURCE_REPO: memory.UNRESOLVED_REJECT_DAYS,
+    launcher_resolve.OWNER_MISSING: memory.ARCHIVED_REJECT_DAYS,   # the author is no GitHub login: a week changes nothing
     "archived": memory.ARCHIVED_REJECT_DAYS,
     "below_floor": memory.FLOOR_REJECT_DAYS,
     device_evidence.NOT_DEVICE_FIRMWARE: memory.NO_BUILD_SIGNAL_DAYS,
@@ -502,7 +503,8 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         """G1b: a launcher entry with no repo (github None / owner-only) -> ("repo", owner/repo)
         to score normally, ("skip", None) when it is decided, keyless or deferred to the next
         tick, or ("stop", None) when admit's budget cannot afford the search plus the meta fetch.
-        Inconclusive searches are recorded once as no_source_repo under the launcher fid."""
+        Inconclusive searches are recorded once as no_source_repo under the launcher fid (7 d);
+        a search GitHub refuses because the author is not a login is owner_missing (90 d)."""
         nonlocal decided, resolver_calls
         key = launcher_resolve.ledger_key(entry)
         if key is None:
@@ -532,7 +534,9 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         if res["repo"]:
             return "repo", res["repo"]
         detail = res["error"] or f"{len(res['matches'])} matches for {res['query']!r}"
-        skip_reject(kid, krepo, f"{launcher_resolve.NO_SOURCE_REPO}: {detail[:100]}", None)
+        key = launcher_resolve.OWNER_MISSING if res.get("error_kind") == launcher_resolve.OWNER_MISSING \
+            else launcher_resolve.NO_SOURCE_REPO
+        skip_reject(kid, krepo, f"{key}: {detail[:100]}", None)
         return "skip", None
 
     # A resolved entry's own note {key, repo, ttl}, written once its repo is decided, with that
