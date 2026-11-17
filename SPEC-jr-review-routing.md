@@ -254,8 +254,23 @@ GitHub answers; `jr/fixtures/autoreview/replay-metrics.json`):
 the labelled history: every wrong edge preserved in `jr/overrides/*__edges.json` (42 at the time
 of writing) must come out `FAIL` or `UNCERTAIN`, and the edges both blind audits of 2026-11-15
 agreed are correct must come out `PASS` or `UNCERTAIN`. A false `PASS` on a known-wrong edge blocks
-phase 2. Phase 2 (a separate change) lets the tick auto-merge one fully passing review PR a day,
-at its exact head, with a kill switch and the review cap kept.
+phase 2.
+
+**Phase 2: the tick canary (2026-11-17).** Two CI jobs on every `jr/tick-*` pull request:
+- `receipt-guard` (`scripts/receipt_guard.py`): eligible on receipts alone when every recipe the PR ADDS
+  carries a `PASS` receipt (E1) that holds AGAIN when the checker is re-run here on the live upstream —
+  the firmware repo's description, README, root `platformio.ini`, release asset names (E2); the PR edits no
+  existing record and deletes nothing under `data/` (E3); it adds at least one recipe (E4). A stale or
+  misstated receipt cannot merge. An upstream that does not answer is no verdict (exit 2).
+- `tick-canary` (`scripts/tick_canary.py`, needs schema, tests, jr-tests, receipt-guard, jr-pr-guard,
+  g2-guard, ledger-guard): when `jr/autonomy.json` has `tick_automerge: true` (a reviewed PR) AND the
+  repository variable `JR_TICK_AUTOMERGE` is not `0` (the kill switch), the PR carries `jr-review`, no
+  other review-routed tick PR merged today (UTC; **one a day**), and the receipt guard says eligible, it
+  requests `gh pr merge --auto --match-head-commit <head>`: the merge lands only when every required check
+  is green at exactly that head. The routing itself does not change: the PR is still labelled `jr-review`
+  and the review cap still holds; the canary is the reader. A PR the guard refuses (an edit to an existing
+  record, an UNCERTAIN receipt, a receipt the live upstream no longer supports) waits for the agent
+  reviewer or a person. A person audits the first five canary merges after the fact and holds the switch.
 
 ### 8. Jr keeps its own review PRs mergeable (2026-11-15)
 

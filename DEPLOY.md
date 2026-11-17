@@ -121,9 +121,10 @@ switches allow: `jr/autonomy.json` `demand_automerge: true` (a reviewed PR) and 
 (repo settings → Variables also works); no PR needed. Re-enable by deleting the variable or setting `1`.
 Optional repository secret `ESPATLAS_JR_TOKEN` (the bot's PAT): with it the canary's merge is made by the
 bot and triggers main's workflows like a person's merge; without it the workflow token merges and main's
-push-triggered runs do not fire for that merge (the PR's checks at the same head stand). `tick_automerge`
-and `code_automerge` (`JR_TICK_AUTOMERGE`, `JR_CODE_AUTOMERGE`) follow the same pattern when their canaries
-exist.
+push-triggered runs do not fire for that merge (the PR's checks at the same head stand). `tick_automerge` /
+`JR_TICK_AUTOMERGE` is the same pattern for review-routed tick PRs (`tick-canary`, one a day, every added
+recipe's PASS receipt re-verified live by `receipt-guard`); `code_automerge` / `JR_CODE_AUTOMERGE` follows
+when the agent reviewer exists. Stop the tick canary: `gh variable set JR_TICK_AUTOMERGE --body 0`.
 
 ## Hourly GitHub counts
 

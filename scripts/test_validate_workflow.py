@@ -205,3 +205,25 @@ def test_the_canary_merges_at_the_exact_head_it_was_given(jobs):
 
 def test_nothing_needs_the_canary(jobs):
     assert not any("demand-canary" in (j.get("needs") or []) for j in jobs.values())
+
+
+# --- receipt-guard + tick-canary (2026-11-17): a review-routed tick PR merges on its receipts ----------
+
+def test_the_receipt_guard_runs_on_tick_pull_requests_only_with_full_history(jobs):
+    job = jobs["receipt-guard"]
+    assert "startsWith(github.head_ref, 'jr/tick-')" in job["if"] and "github.event_name == 'pull_request'" in job["if"]
+    step = next(s for s in job["steps"] if "scripts/receipt_guard.py" in str(s.get("run", "")))
+    assert "continue-on-error" not in step and not SHELL_OPERATORS.search(step["run"])
+    checkout = next(s for s in job["steps"] if str(s.get("uses", "")).startswith("actions/checkout"))
+    assert checkout["with"]["fetch-depth"] == 0
+
+
+def test_the_tick_canary_needs_the_receipt_guard_and_every_machine_check_and_both_switches(jobs):
+    job = jobs["tick-canary"]
+    assert set(job["needs"]) >= {"schema", "tests", "jr-tests", "receipt-guard", "jr-pr-guard", "g2-guard", "ledger-guard"}
+    assert "startsWith(github.head_ref, 'jr/tick-')" in job["if"] and "vars.JR_TICK_AUTOMERGE != '0'" in job["if"]
+    assert job["permissions"] == {"contents": "write", "pull-requests": "write"}
+    step = next(s for s in job["steps"] if "scripts/tick_canary.py" in str(s.get("run", "")))
+    assert "--head ${{ github.event.pull_request.head.sha }}" in step["run"]
+    assert step["env"]["JR_TICK_AUTOMERGE"] == "${{ vars.JR_TICK_AUTOMERGE }}"
+    assert not any("tick-canary" in (j.get("needs") or []) for j in jobs.values())

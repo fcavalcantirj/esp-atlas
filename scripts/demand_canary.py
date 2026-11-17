@@ -55,29 +55,33 @@ def default_gh(*args: str) -> str:
     return p.stdout
 
 
-def switches(autonomy_path: Path, env: dict) -> tuple[bool, str]:
-    """(on, why) for the two switches: the reviewed file flag AND the kill variable."""
+def switches(autonomy_path: Path, env: dict, flag: str = FLAG, variable: str = VARIABLE) -> tuple[bool, str]:
+    """(on, why) for the two switches: the reviewed file flag AND the kill variable. The tick canary
+    (scripts/tick_canary.py) uses the same rule with its own flag and variable."""
     try:
         doc = json.loads(Path(autonomy_path).read_text())
     except (OSError, json.JSONDecodeError) as e:
         return False, f"D1 {autonomy_path} unreadable ({type(e).__name__}): off"
-    if doc.get(FLAG) is not True:
-        return False, f"D1 {FLAG} is {doc.get(FLAG)!r} in jr/autonomy.json: off (a reviewed PR turns it on)"
-    if str(env.get(VARIABLE, "1")).strip() == "0":
-        return False, f"D2 repository variable {VARIABLE}=0: off (the kill switch)"
-    return True, f"D1 {FLAG} true; D2 {VARIABLE} not 0"
+    if doc.get(flag) is not True:
+        return False, f"D1 {flag} is {doc.get(flag)!r} in jr/autonomy.json: off (a reviewed PR turns it on)"
+    if str(env.get(variable, "1")).strip() == "0":
+        return False, f"D2 repository variable {variable}=0: off (the kill switch)"
+    return True, f"D1 {flag} true; D2 {variable} not 0"
 
 
-def merged_today(gh, repo_slug: str, today: str) -> list[str]:
-    """Head branches of the jr/research-* PRs merged on `today` (UTC)."""
-    out = gh("pr", "list", "--repo", repo_slug, "--state", "merged", "--search", f"merged:>={today}",
-             "--json", "headRefName,mergedAt", "--limit", "50")
+def merged_today(gh, repo_slug: str, today: str, prefix: str = BRANCH_PREFIX, label: str | None = None) -> list[str]:
+    """Head branches of the `prefix*` PRs merged on `today` (UTC); with `label`, only those carrying it."""
+    args = ["pr", "list", "--repo", repo_slug, "--state", "merged", "--search", f"merged:>={today}",
+            "--json", "headRefName,mergedAt", "--limit", "50"]
+    if label:
+        args += ["--label", label]
+    out = gh(*args)
     try:
         rows = json.loads(out or "[]")
     except json.JSONDecodeError as e:
         raise Unreadable(f"merged list unparsable: {e}") from e
     return sorted(r["headRefName"] for r in rows
-                  if str(r.get("headRefName", "")).startswith(BRANCH_PREFIX) and str(r.get("mergedAt", ""))[:10] == today)
+                  if str(r.get("headRefName", "")).startswith(prefix) and str(r.get("mergedAt", ""))[:10] == today)
 
 
 def quotes_verdict(base: str, fetch=None, repo: Path = REPO) -> tuple[str, list[str]]:

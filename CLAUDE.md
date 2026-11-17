@@ -72,7 +72,10 @@ that must be reproducible (board ranking, pin assignment, confidence gates).
   demand PR is the machine's** (2026-11-17): the `quotes` job (every quoted span on a cited page),
   `demand-guard` (the PR changes exactly what its work item says) and the `demand-canary` job that merges at
   the exact head when both switches allow (`jr/autonomy.json` + repo variable `JR_DEMAND_AUTOMERGE`, see
-  `DEPLOY.md` "Jr's merge switches"); a person audits after the fact and holds the kill switch.
+  `DEPLOY.md` "Jr's merge switches"); a person audits after the fact and holds the kill switch. A
+  **review-routed tick PR** merges the same way when every recipe it adds carries a PASS evidence receipt
+  that `receipt-guard` re-verifies on the live upstream (`tick-canary`, one a day, `tick_automerge` +
+  `JR_TICK_AUTOMERGE`); the rest wait for a reviewer.
 - **Jr's tick never re-proposes what a tick PR already holds** (`jr/pending_prs.py`, §6 of
   `SPEC-jr-review-routing.md`): an OPEN tick PR holds every firmware it touches; a tick PR **closed
   unmerged is a 30-day veto of everything it proposed**. Disposing of duplicate tick PRs therefore means
