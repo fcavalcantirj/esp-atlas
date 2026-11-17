@@ -1032,7 +1032,7 @@
   "pam-23266c59174397dbf41b0a7b": {
    "term": "Freenove ESP32-WROVER Starter Kit",
    "source": "pam_feed",
-   "status": "new",
+   "status": "validated",
    "first_seen": "2026-11-17",
    "history": [],
    "linked_work": [],
@@ -1099,6 +1099,27 @@
      "matches": [],
      "status": "potential_identity_gap"
     }
+   },
+   "validation": {
+    "verified_on": "2026-11-17",
+    "forbidden_ids": [
+     "freenove-esp32-wroom",
+     "freenove-esp32-s3-wroom"
+    ],
+    "verification_kind": "catalog_part",
+    "validated_by": "jr-demand-executor (Claude Code delegate) run 2026-11-17/pam-23266c59174397dbf41b0a7b",
+    "primary_sources": [
+     "https://docs.freenove.com/projects/fnk0060/en/latest/fnk0060/codes/C/Preface.html",
+     "https://docs.freenove.com/projects/fnk0060/en/latest/",
+     "https://github.com/Freenove/Freenove_ESP32_WROVER_Board",
+     "https://raw.githubusercontent.com/Freenove/Freenove_ESP32_WROVER_Board/main/ESP32_Pinout_V3.0.png"
+    ],
+    "expected_ids": [
+     "freenove-esp32-wrover"
+    ],
+    "notes": "The PAM lead is Freenove's starter kit; the one board it ships is the Freenove ESP32-WROVER board (kit FNK0060, repo Freenove_ESP32_WROVER_Board 'Apply to FNK0060'). Freenove's FNK0060 Preface describes it: built on the PCB-antenna ESP32-WROVER module, CH340 for code download, camera interface, reset and boot buttons. Two board revisions share the product (the earlier one is no longer mass-produced); both are this one record. Siblings kept distinct: the Freenove ESP32-WROOM board (repo Freenove_ESP32_WROOM_Board, 'Apply to FNK0090') and the Freenove ESP32-S3-WROOM board are different boards and must not be authored here.",
+    "identity_verified": true,
+    "term_key": "freenove esp32 wrover starter kit"
    }
   }
  }
