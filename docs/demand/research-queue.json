@@ -1032,10 +1032,12 @@
   "pam-23266c59174397dbf41b0a7b": {
    "term": "Freenove ESP32-WROVER Starter Kit",
    "source": "pam_feed",
-   "status": "validated",
+   "status": "linked",
    "first_seen": "2026-11-17",
    "history": [],
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1800"
+   ],
    "snapshot": "docs/demand/pam-leads.json",
    "feed": {
     "checked_at": "2026-11-17T11:15:31.248373Z",
