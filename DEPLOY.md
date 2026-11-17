@@ -123,8 +123,9 @@ Optional repository secret `ESPATLAS_JR_TOKEN` (the bot's PAT): with it the cana
 bot and triggers main's workflows like a person's merge; without it the workflow token merges and main's
 push-triggered runs do not fire for that merge (the PR's checks at the same head stand). `tick_automerge` /
 `JR_TICK_AUTOMERGE` is the same pattern for review-routed tick PRs (`tick-canary`, one a day, every added
-recipe's PASS receipt re-verified live by `receipt-guard`); `code_automerge` / `JR_CODE_AUTOMERGE` follows
-when the agent reviewer exists. Stop the tick canary: `gh variable set JR_TICK_AUTOMERGE --body 0`.
+recipe's PASS receipt re-verified live by `receipt-guard`); `code_automerge` / `JR_CODE_AUTOMERGE` is the
+code canary (`.github/workflows/agent-review.yml`: the agent reviewer's PASS at the exact head, one merge an
+hour); it needs the repository secret `ANTHROPIC_API_KEY`. Stop it: `gh variable set JR_CODE_AUTOMERGE --body 0`. Stop the tick canary: `gh variable set JR_TICK_AUTOMERGE --body 0`.
 
 ## Hourly GitHub counts
 

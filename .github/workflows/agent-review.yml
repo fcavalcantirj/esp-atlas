@@ -1,0 +1,86 @@
+name: agent-review
+
+# The independent exact-head review of a code pull request, run by an agent (docs/REVIEW-CONTRACT.md),
+# and the merge click when it says PASS and the repository's switches allow (scripts/code_canary.py).
+# Not for jr/tick-* (receipt-guard + tick-canary) nor jr/research-* (quotes + demand-guard +
+# demand-canary). Needs the repository secret ANTHROPIC_API_KEY; without it the review job says so and
+# nothing merges. Felipe, 2026-11-17: "everything must be automated, even if it means rarely using
+# Claude Code dynamically" — this is that rare use: one agent run per push to a code PR.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  agent-review:
+    if: >-
+      github.event_name == 'pull_request' &&
+      !startsWith(github.head_ref, 'jr/tick-') &&
+      !startsWith(github.head_ref, 'jr/research-') &&
+      github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    outputs:
+      verdict: ${{ steps.review.outputs.structured_output }}
+      head: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Is the reviewer configured?
+        id: key
+        run: |
+          if [ -z "${{ secrets.ANTHROPIC_API_KEY }}" ]; then echo "configured=false" >> "$GITHUB_OUTPUT"; echo "no ANTHROPIC_API_KEY secret: no agent review, no auto-merge"; else echo "configured=true" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/setup-python@v5
+        if: steps.key.outputs.configured == 'true'
+        with:
+          python-version: "3.12"
+      - name: Install what the reviewer may run (the touched test files)
+        if: steps.key.outputs.configured == 'true'
+        run: pip install pyyaml jsonschema requests pytest pytrends httpx pypdf && pip install -e apps/core
+      - name: Review the exact head against docs/REVIEW-CONTRACT.md
+        if: steps.key.outputs.configured == 'true'
+        id: review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            HEAD: ${{ github.event.pull_request.head.sha }}
+
+            You are the independent reviewer defined in docs/REVIEW-CONTRACT.md (read it first, follow it
+            exactly). The PR branch is checked out at HEAD. Read the whole diff with `gh pr diff`, read the
+            PR body with `gh pr view`, match every [TEST] and [REAL] claim, run only the test files the diff
+            adds or changes with `python3 -m pytest <files> -q` (PYTHONPATH=apps/core/src), and answer with
+            the structured verdict. If the verdict is BLOCK, post the findings as ONE comment with
+            `gh pr comment` first. Never edit, commit, push, merge or label anything.
+          claude_args: |
+            --max-turns 40
+            --allowedTools "Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr comment:*),Bash(python3 -m pytest:*),Bash(PYTHONPATH=apps/core/src python3 -m pytest:*),Read,Grep,Glob"
+            --json-schema '{"type":"object","required":["verdict","head","findings","checked"],"properties":{"verdict":{"type":"string","enum":["PASS","BLOCK"]},"head":{"type":"string"},"findings":{"type":"array","items":{"type":"object","required":["file","summary","failure"],"properties":{"file":{"type":"string"},"line":{"type":"integer"},"summary":{"type":"string"},"failure":{"type":"string"}}}},"checked":{"type":"array","items":{"type":"string"}}}}'
+
+  code-canary:
+    # The click: PASS at exactly this head + every required check green + both switches on + at most one
+    # agent-merged PR an hour -> `gh pr merge --auto --match-head-commit <head>`. BLOCK -> label needs-human.
+    needs: agent-review
+    if: needs.agent-review.outputs.verdict != '' && vars.JR_CODE_AUTOMERGE != '0'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Decide on the verdict and, when allowed, request the merge at the exact head
+        env:
+          GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
+          JR_CODE_AUTOMERGE: ${{ vars.JR_CODE_AUTOMERGE }}
+          VERDICT_JSON: ${{ needs.agent-review.outputs.verdict }}
+        run: python3 scripts/code_canary.py --pr ${{ github.event.pull_request.number }} --head ${{ github.event.pull_request.head.sha }} --author ${{ github.event.pull_request.user.login }}

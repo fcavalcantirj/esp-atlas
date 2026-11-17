@@ -272,6 +272,23 @@ phase 2.
   record, an UNCERTAIN receipt, a receipt the live upstream no longer supports) waits for the agent
   reviewer or a person. A person audits the first five canary merges after the fact and holds the switch.
 
+### 7b. Code pull requests: the agent reviewer and the code canary (2026-11-17)
+
+Every other pull request — Jr's code, the operators' code — used to wait for a person's exact-head
+review (43 merges a week). `docs/REVIEW-CONTRACT.md` writes that review down; `.github/workflows/
+agent-review.yml` runs it: the official `anthropics/claude-code-action@v1`, in agent mode, with the
+contract as its prompt, tools limited to `gh pr diff`, `gh pr view`, `gh pr comment`, reading the checkout
+and running the test files the diff touches — never a write — and a structured verdict
+`{verdict: PASS|BLOCK, head, findings, checked}` bound to the exact head. The `code-canary` job then: C1
+`jr/autonomy.json` `code_automerge: true`, C2 repository variable `JR_CODE_AUTOMERGE` not `0`, C3 a PASS
+verdict naming THIS head (another sha is no verdict), C4 at most one agent-merged PR an hour (label
+`agent-pass`), C5 `gh pr merge --auto --match-head-commit <head>`, landing only when every required check
+is green there. A BLOCK labels the PR `needs-human` with the findings already posted; the author's next push
+is a new review; nobody waits. The job needs the repository secret `ANTHROPIC_API_KEY`; without it the
+review job says so and nothing merges. The action's agent mode is documented as experimental; this is the
+one place an LLM sits in the loop, and it decides nothing the catalog shows: a wrong PASS is caught by the
+same after-the-fact audit as a wrong human approval, and the switch turns it off in one command.
+
 ### 8. Jr keeps its own review PRs mergeable (2026-11-15)
 
 **Why.** Every tick PR edits `jr/proposed_ledger.json`, so a `jr-review` PR conflicts with main as soon as
