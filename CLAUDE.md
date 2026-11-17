@@ -47,6 +47,29 @@ SPEC before code · oracle/TDD first · cite-or-omit · verify the **real path**
 declaring done · land on main. Deterministic where it matters — no LLM in an answer path
 that must be reproducible (board ranking, pin assignment, confidence gates).
 
+## North star — Jr runs the catalog by itself (2026-11-17)
+
+**Jr runs the catalog by itself.** Demand (GSC queries and pages, GA4 site search, trends) and the data gauge
+decide what Jr works on; measured yield decides how Jr splits each hour between **new boards**, **deepening
+existing boards** and **new firmware**; a lane that has yielded nothing long enough hands its item to a coding
+agent (the delegate) with a written prompt, one PR, machine-reviewed. Humans hold kill switches and audit
+after the fact. Nothing in the loop is a person, a hand edit or a hard-coded list; every constant that steers
+is read from a committed file and every decision prints its inputs.
+
+**The model boundary (owner, 2026-11-17): an LLM solves CODE problems, never fills inventory.** The delegate
+writes and fixes resolvers, tests and stages; catalog values are produced by deterministic resolvers the hourly
+tick runs, so every value is reproducible from the cited page. The one tolerated exception is the daily demand
+executor authoring a brand-new board from primary sources under cite-or-omit + the quotes job + guards (one a
+day); it is not widened. A work item is never "fill field X on board Y"; it is "write the resolver for vendor V
+× field X, with a fixture page and a RED test". Page demand (impressions, `RANKS_POORLY`) may ORDER data work;
+it never touches SEO text (titles, descriptions, launch), which stays the owner's.
+
+Measured state when this was written (tick outputs Nov 15 19Z → Nov 17 20Z, 50 ticks): admitted 0, backfilled 0,
+recipes 0, topics authored 0; the only steer wire (demand bias) 0.0 for two weeks; the four largest gauge gaps
+(pinout 16 %, download_mode 29 %, usb_serial 54 %, dimensions_mm 55 %) had no stage able to write them. The
+plan that follows from it: yield ledger + adaptive split, the resolver lane, stall → coding agent, demand
+plumbing, switches (`SPEC-espatlas-jr.md` §3d).
+
 ## How the catalog grows itself (operations, 2026-11-09)
 
 - **Hourly GitHub counts** (`.github/workflows/runtime-popularity.yml`) have **no `schedule:`**: GitHub's
@@ -59,7 +82,8 @@ that must be reproducible (board ranking, pin assignment, confidence gates).
 - **Demand → reviewed work → recorded outcome** (`SPEC-demand-work-consumer.md`, `SPEC-pam-discovery.md`).
   The daily demand runner makes one pass per **source class**, search demand (GSC/GA4) then PAM market
   leads, each with its own one-new-item-per-day slot (2026-11-08; a single shared slot had starved every
-  PAM lead). A reservation is a receipt in `docs/demand/work-receipts.json` and a deterministic branch
+  PAM lead); hygiene (quote FAILs) and resolver work (a vendor × field extractor, never a record) are the
+  classes the north star above adds. A reservation is a receipt in `docs/demand/work-receipts.json` and a deterministic branch
   `jr/research-<key>`. The operator's coding delegate executes it from `docs/demand/EXECUTOR-PROMPT.md`;
   a relay step pushes the branch and opens the draft `jr-review` PR. After merge the runner verifies the
   deployed result itself: `catalog_search` (the exact public search of a bare SKU term) or

@@ -332,6 +332,31 @@ the staleness/population queue. *People are searching for a board/firmware we do
 Jr prioritizes authoring/deepening it.* Analytics thus steers **which data Jr keeps**, closing the
 loop between what users want and what the atlas provides — without Jr ever touching growth levers.
 
+**The steering rule, rewritten from measurement (owner, 2026-11-17).** Between 2026-11-03 and 11-17 every
+demand snapshot held 0 `UNCOVERED` items, so the one wire from demand to the hourly split (a bias of at most
+one unit in six, `jr/allocator.py`) was 0.0 for two weeks, and 50 consecutive ticks (Nov 15 19Z → Nov 17
+20Z) produced nothing: admitted 0, backfilled 0, recipes 0, topics authored 0, while coverage sat at
+61.7 % and the four largest gauge gaps (pinout, download_mode, usb_serial, dimensions_mm) had no stage able
+to write them. The rule therefore becomes:
+
+1. **Three lanes, split by yield.** New boards (the demand executor, one a day), deepening existing boards
+   (the hourly backfill through deterministic resolvers) and new firmware (admit, boardmap, topics). A yield
+   ledger (`docs/telemetry/yield.jsonl`, one row per stage per tick) feeds the allocator; a lane with zero
+   yield over the window drops to its floor and its units go to the lane that produces; constants live in
+   a committed `jr/steering.json` and every tick prints the inputs of its split.
+2. **Demand orders, the gauge fills.** `UNCOVERED` still jumps the queue. `RANKS_POORLY` and page
+   impressions ORDER which vendor × field gets a resolver first; they never change SEO text (owner's).
+3. **The model boundary: an LLM solves code problems, never fills inventory.** The delegate's work items are
+   resolvers (vendor × field, fixture page + RED test), stage fixes and CI fixes; the only record it authors
+   is a brand-new board under the executor prompt. Catalog values come from deterministic resolvers so each
+   is reproducible from its cited page.
+4. **A stalled lane dispatches the coding agent.** Zero yield over the stall window (`jr/steering.json`),
+   `scored_clean == 0` over the topics window, or an identical demand snapshot seven days running is an
+   incident of kind `stall` in `jr/ci_watch.py`, claimed by the same heal launcher, same caps and `ack`,
+   same `jr-heal` review route; the prompt diagnoses from the yield rows first and fixes or reports.
+5. **Humans hold kill switches and audit after the fact**: `jr/autonomy.json` + repo variables, the tick
+   report's audit block, the weekly digest.
+
 **RESOLVED ⟨Q14⟩ — Jr hosts the telemetry cron + digest** (its crons + §7 outbound + the
 data-priority tie-in make it the natural home), under the hard boundary above: measure / report /
 steer-data only — never a growth lever.
