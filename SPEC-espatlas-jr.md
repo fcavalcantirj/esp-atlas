@@ -163,7 +163,12 @@ that's a coverage hole to close, not a silent gap.
     - Each group is represented by its most-downloaded entry and ranked by the group's **total
       downloads** (launcherhub's `download`, the popularity signal that costs no call).
     - Everything already decided is set aside, using local data only: memory (blocked, seen, merged),
-      catalogued with a live ledger id (`scorer.catalogued_reason`), an unkeyed entry.
+      catalogued with a live ledger id (`scorer.catalogued_reason`), an unkeyed entry — and a repo
+      whose path record carries a GitHub id that another live record decides (`_decided_by_id`): a
+      repo renamed upstream and rejected under its new path (`ji1ore/remotekeyer_wifi` ->
+      `Wifi_Rig_CW`, 2026-11-17) is decided by its id, in the queue and in the loop, before any fetch.
+      The derived `by_repo_id` view ranks two records sharing an id by `memory._view_rank`: protected
+      first, then the later-expiring one, so an expired alias never shadows the live decision.
     - Work that needs a call but decides nothing new goes to the **tail**, behind all new work: a
       catalogued repo whose id no live record holds (the rename-proof identity refresh), a live
       owner-review decision, an id an open or vetoed tick PR holds.

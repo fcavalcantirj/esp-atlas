@@ -275,6 +275,22 @@ def _interleave(ordered: list, seed: str) -> list:
     return out
 
 
+def _decided_by_id(led: dict, rec: dict | None, now) -> bool:
+    """A path record whose GitHub id a DIFFERENT live record holds: the repo was renamed upstream and
+    decided under its new path (ji1ore/remotekeyer_wifi -> ji1ore/Wifi_Rig_CW, rejected below_floor as
+    wifi-rig-cw). The loop's id gate takes exactly this decision after a paid meta fetch; the queue
+    takes it with zero calls, so the dead path never leads the undecided backlog again (2026-11-17:
+    12+ ticks of "top: ji1ore/remotekeyer_wifi", one wasted call each)."""
+    rid = (rec or {}).get("repo_id")
+    if rid is None:
+        return False
+    other = memory.lookup(led, repo_id=rid)
+    if other is None or other is rec:
+        return False
+    return (memory.is_blocked(led, repo_id=rid, now=now) or memory.is_seen(led, repo_id=rid, now=now)
+            or other.get("status") == "merged")
+
+
 def launcher_queue(catalog: list, led: dict, cat_repos: set, now, pending=None,
                    seed: str | None = None) -> tuple[list, int, str]:
     """Admit's launcher backlog, built with ZERO calls (SPEC-espatlas-jr.md, the backlog queue).
@@ -317,7 +333,7 @@ def launcher_queue(catalog: list, led: dict, cat_repos: set, now, pending=None,
             if review_memory.live_decision(led, now, repo=k):
                 tail.append(item)
             elif memory.is_blocked(led, repo=k, now=now) or memory.is_seen(led, repo=k, now=now) or (
-                    rec and rec.get("status") == "merged"):
+                    rec and rec.get("status") == "merged") or _decided_by_id(led, rec, now):
                 decided.append(item)
             elif scorer.catalogued_reason(k, cat_repos):
                 (decided if live_id else tail).append(item)
@@ -574,6 +590,11 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
                 _answer(ctx, slug, issue, _verdict_text(f"already_decided: {prior.get('reason') or prior.get('status') or 'seen'}"
                                                         + (f" (until {prior['expires']})" if prior.get("expires") else ""), False, False))
                 lines.append(f"submission #{issue}: already decided")
+            continue
+        # A renamed repo decided under its GitHub id by another live record (the queue's rule,
+        # _decided_by_id) is decided here too, before the paid meta fetch the id gate below needs.
+        if not issue and not held and _decided_by_id(led, memory.lookup(led, repo=owner_repo), ctx.now):
+            decided += 1
             continue
         # The admit wall (2026-11-14): a catalogued repo whose GitHub id a live ledger record already
         # holds (a `merged` record, typically) is decided without the paid meta fetch. It used to pay
