@@ -150,7 +150,10 @@ that's a coverage hole to close, not a silent gap.
     token; the accepted repo then goes through the normal scorer and popularity floor
     unchanged (the floor stays the only admission gate). Zero or several matches → recorded
     once as `rejected` / `no_source_repo` with the unresolved TTL (7 d), keyed
-    `launcher-<fid>` (repo `launcher:<fid>`), so it is not re-searched hourly. A resolved entry
+    `launcher-<fid>` (repo `launcher:<fid>`), so it is not re-searched hourly. A search GitHub
+    refuses with its "listed users ... do not exist" 422 (the `author` is a display name, not a
+    login) is `owner_missing`, recorded with the archived TTL (90 d): the owner's absence does not
+    change from week to week (2026-11-17: 213 entries, 146 authors, re-searched weekly for a month). A resolved entry
     leaves a `seen` note under the same key (`resolved: owner/repo`) once its repo reached a
     decision, with that decision's TTL (30 d by default, 7 d when the repo fetch failed), so
     resolved entries do not eat the next tick's searches. At most
