@@ -695,6 +695,44 @@ def test_the_backlog_counts_only_undecided_repos_and_leads_the_summary(root, mon
     assert res.summary.startswith("backlog 2 undecided (top: n/newtool, 50 downloads)")
 
 
+def test_a_repo_renamed_upstream_and_decided_under_its_id_is_never_paid_by_the_queue(root, monkeypatch):
+    """ji1ore/remotekeyer_wifi became ji1ore/Wifi_Rig_CW (same GitHub id). The old path's record had
+    expired; the new path's record, under the same id, was a live below_floor rejection. The queue
+    looks records up by PATH, so the old path led the undecided backlog on every tick (2026-11-17:
+    12+ ticks, "top: ji1ore/remotekeyer_wifi, 132 downloads"), paid one meta fetch, and the loop's id
+    gate then took the decision silently. The queue now takes it for free, by the record's repo_id."""
+    from datetime import timedelta
+    path = root / "jr" / "proposed_ledger.json"
+    memory.record_rejected("old-name", "ji/old-name", "below_floor: 1 stars / 0 forks", ttl_days=30,
+                           repo_id=4242, path=path, now=NOW - timedelta(days=60))        # expired
+    memory.record_rejected("new-name", "ji/new-name", "below_floor: 1 stars / 0 forks", ttl_days=30,
+                           repo_id=4242, path=path, now=NOW)                             # live, same id
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [
+        _entry("Old Name", "https://github.com/ji/old-name", download=132),
+        _entry("New Cardputer Tool", "https://github.com/n/newtool", download=50)])
+    metas = {"repos/ji/old-name": _meta("ji/old-name", stars=1, forks=0, rid=4242),
+             "repos/n/newtool": _meta("n/newtool", stars=30, description="A Cardputer tool", rid=13)}
+    ctx, asked = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0), dry_run=True)
+    res = stage_admit.run(ctx, budget=3)
+    assert _paid(asked, "ji/old-name") == 0
+    assert res.backlog == 1 and res.summary.startswith("backlog 1 undecided (top: n/newtool, 50 downloads)")
+
+
+def test_a_renamed_repo_whose_id_record_has_expired_too_is_undecided_again(root, monkeypatch):
+    """Both records expired: nothing live decides the repo, so it is back in the backlog and paid once."""
+    from datetime import timedelta
+    path = root / "jr" / "proposed_ledger.json"
+    memory.record_rejected("old-name", "ji/old-name", "below_floor: 1 stars / 0 forks", ttl_days=30,
+                           repo_id=4242, path=path, now=NOW - timedelta(days=60))
+    memory.record_rejected("new-name", "ji/new-name", "below_floor: 1 stars / 0 forks", ttl_days=30,
+                           repo_id=4242, path=path, now=NOW - timedelta(days=45))
+    monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda: [_entry("Old Name", "https://github.com/ji/old-name", download=132)])
+    metas = {"repos/ji/old-name": _meta("ji/old-name", stars=1, forks=0, rid=4242)}
+    ctx, asked = _counting_ctx(root, metas, Budget(max_calls=150, clock=lambda: 0.0), dry_run=True)
+    res = stage_admit.run(ctx, budget=3)
+    assert res.backlog == 1 and _paid(asked, "ji/old-name") == 1
+
+
 def test_the_backlog_drains_every_tick_and_no_repo_is_paid_twice(root, monkeypatch):
     """60 below-floor repos plus 3 renamed duplicates of merged records, at a 10-call share: the
     backlog shrinks on every tick until it is empty, and each repo is fetched exactly once."""

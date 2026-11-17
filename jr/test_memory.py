@@ -97,6 +97,25 @@ def test_seen_default_ttl_is_thirty_days(path):
 
 # --- repo_id + evidence_url ------------------------------------------------------------------
 
+def test_by_repo_id_prefers_a_live_record_over_an_expired_one_whatever_the_order(path):
+    """Two unprotected records share an id after a rename (ji1ore/remotekeyer_wifi -> Wifi_Rig_CW):
+    the expired one must never shadow the live decision, whether the file (sorted by id) lists the
+    live record after the expired one or before it."""
+    memory.record_rejected("a-old", "ji/a-old", "below_floor: 1 stars / 0 forks", ttl_days=30,
+                           repo_id=4242, path=path, now=NOW - timedelta(days=60))        # expired, sorts first
+    memory.record_rejected("b-new", "ji/b-new", "below_floor: 1 stars / 0 forks", ttl_days=30,
+                           repo_id=4242, path=path, now=NOW)                             # live, sorts last
+    led = memory.load(path)
+    assert led["by_repo_id"] == {4242: "b-new"} and memory.is_blocked(led, repo_id=4242, now=NOW)
+    path.unlink()
+    memory.record_rejected("z-old", "ji/z-old", "below_floor: 1 stars / 0 forks", ttl_days=30,
+                           repo_id=4242, path=path, now=NOW - timedelta(days=60))        # expired, sorts last
+    memory.record_rejected("m-new", "ji/m-new", "below_floor: 1 stars / 0 forks", ttl_days=30,
+                           repo_id=4242, path=path, now=NOW)                             # live, sorts first
+    led = memory.load(path)
+    assert led["by_repo_id"] == {4242: "m-new"} and memory.is_blocked(led, repo_id=4242, now=NOW)
+
+
 def test_by_repo_id_is_derived_and_survives_renames(path):
     memory.record_rejected("firmware", "brucedevices/firmware", "duplicate_of bruce",
                            repo_id=795166961, path=path, now=NOW)

@@ -113,25 +113,41 @@ def is_protected(record: dict | None) -> bool:
 
 # --- reading ---------------------------------------------------------------------------------
 
+def _view_rank(rec: dict) -> tuple:
+    """How two records sharing a repo_id compete for the by_repo_id view: a protected record (a
+    permanent veto, merged, proposed) beats any TTL'd one; between TTL'd records the one that
+    expires LATER wins (it is the newer decision), so an expired alias of a renamed repo
+    (ji1ore/remotekeyer_wifi -> Wifi_Rig_CW, 2026-11-17) never shadows the live decision whatever
+    the records' order in the file. Clock-free: the same file always ranks the same way."""
+    exp = _parse(rec.get("expires"))
+    return (1 if is_protected(rec) else 0, exp.timestamp() if exp is not None else float("inf"))
+
+
+def _repo_id_view(led: dict) -> dict:
+    """{repo_id: firmware_id} over every record that carries a parsable `repo_id`, by _view_rank."""
+    view, rank = {}, {}
+    for fid, rec in led["by_id"].items():
+        if not isinstance(rec, dict) or rec.get("repo_id") is None:
+            continue
+        try:
+            rid = int(rec["repo_id"])
+        except (TypeError, ValueError):
+            continue
+        r = _view_rank(rec)
+        if rid in view and r <= rank[rid]:
+            continue
+        view[rid], rank[rid] = fid, r
+    return view
+
+
 def load(path: Path | None = None) -> dict:
     """The ledger (jr/ledger.py's shape) plus a DERIVED `by_repo_id` view: {repo_id: firmware_id}
     over every record that carries a `repo_id`. ledger._save strips it, so it can never go stale
     relative to the records. Two records sharing a repo_id (a rename written before canonical_id)
-    resolve to the protected one, so a permanent veto is never shadowed by a later TTL'd record."""
+    resolve by _view_rank: the protected one, else the later-expiring one, so a permanent veto is
+    never shadowed by a later TTL'd record and a live decision never by an expired alias."""
     led = load_ledger(_path(path))
-    view = {}
-    for fid, rec in led["by_id"].items():
-        rid = rec.get("repo_id")
-        if rid is None:
-            continue
-        try:
-            rid = int(rid)
-        except (TypeError, ValueError):
-            continue
-        if rid in view and is_protected(led["by_id"][view[rid]]) and not is_protected(rec):
-            continue
-        view[rid] = fid
-    led["by_repo_id"] = view
+    led["by_repo_id"] = _repo_id_view(led)
     return led
 
 
@@ -457,17 +473,8 @@ def carry_decisions(sources, path: Path | None = None, now: datetime | None = No
 
 
 def _with_repo_id_view(led: dict) -> dict:
-    """`led` plus the derived by_repo_id view load() builds (same rule: a protected record wins)."""
-    view = {}
-    for fid, rec in led["by_id"].items():
-        try:
-            rid = int(rec["repo_id"]) if isinstance(rec, dict) and rec.get("repo_id") is not None else None
-        except (TypeError, ValueError):
-            rid = None
-        if rid is None or (rid in view and is_protected(led["by_id"][view[rid]]) and not is_protected(rec)):
-            continue
-        view[rid] = fid
-    led["by_repo_id"] = view
+    """`led` plus the derived by_repo_id view load() builds (same rule: _view_rank)."""
+    led["by_repo_id"] = _repo_id_view(led)
     return led
 
 
