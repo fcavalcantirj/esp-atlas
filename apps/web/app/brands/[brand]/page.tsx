@@ -9,6 +9,15 @@ import { typePlural } from "@/lib/format";
 import { OG_IMAGE, SITE_NAME } from "@/lib/site";
 import { brandGraph } from "@/lib/structured-data";
 
+// Render each detail page on its first visit, then serve it from the cache (ISR) instead of rendering
+// every request (2026-11-18: these routes were dynamic, `cache-control: private, no-store`, x-vercel-cache
+// MISS on every hit). No path is pre-rendered at build (an empty list): the catalog API is not reachable
+// during a Vercel build, and a cold first render is the same as today's every render. The data fetches keep
+// their own revalidate and `catalog`/`popularity` tags, so POST /api/revalidate still purges these pages.
+export function generateStaticParams() {
+  return [];
+}
+
 // Brand hub: the brand's editorial identity (data/brands/<slug>/brand.md) plus
 // every part the core returns for it, server-rendered like the part pages. The
 // slug in the URL is the dataset's canonical folder name (vendor_or_brand); an

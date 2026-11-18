@@ -15,6 +15,15 @@ import { SITE_NAME } from "@/lib/site";
 import { partGraph } from "@/lib/structured-data";
 import type { DownloadMode } from "@/lib/troubleshooter";
 
+// Render each detail page on its first visit, then serve it from the cache (ISR) instead of rendering
+// every request (2026-11-18: these routes were dynamic, `cache-control: private, no-store`, x-vercel-cache
+// MISS on every hit). No path is pre-rendered at build (an empty list): the catalog API is not reachable
+// during a Vercel build, and a cold first render is the same as today's every render. The data fetches keep
+// their own revalidate and `catalog`/`popularity` tags, so POST /api/revalidate still purges these pages.
+export function generateStaticParams() {
+  return [];
+}
+
 // Two API responses joined for display (lib/recipe-rows.ts); a failed recipes
 // fetch yields no rows rather than an error.
 async function fetchBoardFirmwareRows(

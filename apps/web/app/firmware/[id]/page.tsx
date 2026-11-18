@@ -10,6 +10,15 @@ import { firmwareMetaDescription, firmwareMetaTitle } from "@/lib/format";
 import { fetchReadme, type RepoReadme } from "@/lib/readme";
 import { SITE_NAME } from "@/lib/site";
 
+// Render each detail page on its first visit, then serve it from the cache (ISR) instead of rendering
+// every request (2026-11-18: these routes were dynamic, `cache-control: private, no-store`, x-vercel-cache
+// MISS on every hit). No path is pre-rendered at build (an empty list): the catalog API is not reachable
+// during a Vercel build, and a cold first render is the same as today's every render. The data fetches keep
+// their own revalidate and `catalog`/`popularity` tags, so POST /api/revalidate still purges these pages.
+export function generateStaticParams() {
+  return [];
+}
+
 // Firmware hub: the project's own identity (GET /firmware/<id>) plus the
 // reverse view — every board a recipe targets it for, grouped by trust tier,
 // same shape as the board page's "Firmware for this board" section but from
