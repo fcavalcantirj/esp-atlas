@@ -378,6 +378,14 @@ def default_stall_watcher(stall: dict | None, yields: dict | None, stages: list,
                                 stages=stages, rejects=rejects)
 
 
+def default_chores_runner(gh, now: datetime, dry_run: bool) -> dict:
+    """The chores (SPEC-jr-self-heal.md §1d): the same runner-local incident store as the CI watch."""
+    import chores
+    state = Path(os.environ["JR_HEAL_STATE"]) if os.environ.get("JR_HEAL_STATE") else ci_watch.DEFAULT_STATE
+    slug = os.environ.get("JR_REPO_SLUG") or "fcavalcantirj/esp-atlas"
+    return chores.run(gh, ci_watch.Store(state), now.isoformat(), slug=slug, dry_run=dry_run)
+
+
 def _note_stall_watch(r: report.TickReport) -> None:
     w = r.stall_watch
     if not w:
@@ -645,7 +653,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              ci_watcher: Callable | None = None,
              stall_watcher: Callable | None = None,
              admit_watcher: Callable | None = None,
-             refresher: Callable | None = None) -> report.TickReport:
+             refresher: Callable | None = None,
+             chores_runner: Callable | None = None) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
     env = os.environ if env is None else env
     budget = budget or Budget()
@@ -966,6 +975,18 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                 r.refreshed.append(refresher(pr, git=git, gh=gh_c, now=now, dry_run=dry_run))
             except Exception as e:  # noqa: BLE001
                 r.warnings.append(f"review PR refresh #{pr.get('number')} failed: {type(e).__name__}: {e}")
+    # 10. chores (jr/chores.py, SPEC-jr-self-heal.md §1d): what a person did on open PRs — a conflict or an
+    #     agent BLOCK becomes a PR-fix incident, cleared ones resolve, a daily digest names what still needs
+    #     a human. Runs after an abort too (the PRs need it most then); never changes the tick's outcome.
+    if chores_runner is not None:
+        try:
+            r.chores = chores_runner(gh_c, now, dry_run) or {}
+        except Exception as e:  # noqa: BLE001
+            r.chores = {"status": "unavailable", "why": f"{type(e).__name__}: {e}"}
+        if r.chores.get("status") != "ok":
+            r.warnings.append(f"chores unavailable: {r.chores.get('why')}")
+        for i in r.chores.get("recorded") or []:
+            r.warnings.append(f"chore incident {i} recorded")
     line = report.render_line(r)
     print(line)
     review_opened = (r.publish or {}).get("route") == review_routing.REVIEW
@@ -975,7 +996,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
             pass
     if telegram and not dry_run and notifier is not None:
-        for nudge in ((r.ci_watch or {}).get("nudges") or []) + ((r.stall_watch or {}).get("nudges") or []) + ((r.admit_progress or {}).get("nudges") or []):
+        for nudge in ((r.ci_watch or {}).get("nudges") or []) + ((r.stall_watch or {}).get("nudges") or []) + ((r.admit_progress or {}).get("nudges") or []) \
+                + ((r.chores or {}).get("nudges") or []) + ([r.chores["digest"]] if (r.chores or {}).get("digest") else []):
             try:
                 notifier(nudge)
             except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
@@ -1030,7 +1052,7 @@ def main(argv=None) -> int:
                  stages=stages_for(args.track, args.budget, only), auto_merge=not args.no_auto_merge,
                  lock_path=Path(os.environ["JR_TICK_LOCK"]) if os.environ.get("JR_TICK_LOCK") else None,
                  ci_watcher=default_ci_watcher, stall_watcher=default_stall_watcher, admit_watcher=default_admit_watcher,
-                 refresher=review_refresh.refresh)
+                 refresher=review_refresh.refresh, chores_runner=default_chores_runner)
     return 1 if r.aborted else 0
 
 

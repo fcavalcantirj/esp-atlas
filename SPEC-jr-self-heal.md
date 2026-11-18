@@ -58,6 +58,33 @@ either fixes the stage at the cause or writes the finding to `docs/incidents/<id
 outside the code. The incident resolves when the lane produces again over the yield window
 (`Store.resolve_producing`). Nothing here may fill inventory: an LLM solves code problems, never records.
 
+### 1d. The chores on open PRs (2026-11-18)
+
+Owner, Nov 18: "make jr automatically do chores. site must be self sufficient." Measured that night: 31 open
+PRs, 25 code PRs waiting on one human reviewer, 8 conflicting with main and resolved by hand, every agent
+BLOCK waiting for a person, stacked PRs retargeted by hand. Now:
+- **Retarget** is GitHub's own: `delete_branch_on_merge` is on, so a stacked PR moves to `main` when its base
+  merges.
+- **`jr/chores.py`**, run by every hourly tick after its own work (even after an abort): a code PR (same
+  repository, not draft, based on `main`, not `jr/tick-*` — `review_refresh` owns those — nor
+  `jr/research-*` — the demand retry owns those) that GitHub reports DIRTY is a `conflict:#n` incident; a PR
+  labelled `needs-human` whose newest agent verdict for its CURRENT head is BLOCK is a `review-fix:#n`
+  incident carrying the findings. Evidence: `pr`, `pr_branch`, `pr_head`. Fingerprint = kind + PR, so the
+  same PR failing twice after a fix goes to a human (`MAX_PER_FINGERPRINT`).
+- **Dispatch** only through `ci_watch.py claim --pr-fix` (a launcher that checks out `pr_head`, pushes the
+  delegate's commits fast-forward to `pr_branch`, opens no PR) and the `pr_fix_dispatch` switch
+  (`jr/autonomy.json` + `JR_PR_FIX_DISPATCH`), against its own budget of `PR_FIX_DAILY` (4) a UTC day.
+  `relay-check --pr-fix` judges only the delegate's first-parent commits; a merge counts only its conflict
+  resolution (`git show --remerge-diff`), never what `main` brings.
+- **Progress**: a dispatched fix whose PR has a new head is `pushed` (the agent review re-judges it); none
+  after `STALL_HOURS` is stalled; a cleared condition or a closed PR resolves the incident. **A PR the fix
+  led to merge resets the ack brake** (`MAX_AUTO_WITHOUT_ACK` counts dispatches since a human ack OR the
+  last productive merge), so only an unproductive loop halts.
+- **Heal PRs are code**: the agent review covers `jr/heal-*` too; only tick and demand PRs have their own
+  canaries.
+- **The owner's audit**: once a UTC day from 12Z one Telegram line names what still needs a human
+  (`needs-human` PRs with age, `needs_human`/stalled incidents, a halted heal). Nothing waits → no line.
+
 ## 2. Known causes — handled in code, no model
 
 | Signal | Action |

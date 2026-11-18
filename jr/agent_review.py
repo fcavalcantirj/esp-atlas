@@ -34,7 +34,7 @@ REPO = Path(__file__).resolve().parent.parent
 MARKER = "<!-- agent-review verdict -->"
 FALLBACK_LABEL = "review-fallback"
 FALLBACK_PER_DAY = 3
-SKIP_PREFIXES = ("jr/tick-", "jr/research-", "jr/heal-")
+SKIP_PREFIXES = ("jr/tick-", "jr/research-")   # a heal PR is code: the agent reviews it too (§1d, 2026-11-18)
 LANES = ("subscription", "api")
 DOWN_PATTERNS = re.compile(r"CLAUDE_CODE_OAUTH_TOKEN|setup-token|usage limit|rate.?limit|too many requests|"
                            r"\b(401|403|429)\b|unauthori[sz]ed|authentication|credit balance|billing", re.I)

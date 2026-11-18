@@ -31,7 +31,6 @@ jobs:
       github.event.label.name == 'review-fallback' &&
       !startsWith(github.head_ref, 'jr/tick-') &&
       !startsWith(github.head_ref, 'jr/research-') &&
-      !startsWith(github.head_ref, 'jr/heal-') &&
       github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:

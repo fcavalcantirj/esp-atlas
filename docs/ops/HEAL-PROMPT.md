@@ -84,3 +84,23 @@ counts (`already_catalogued`, `skipped_scoring`, …). Steps 1–7 above hold wi
 4. **Prove it** with the stage's tests and, where the host can, a dry run of the tick
    (`python3 jr/tick.py --dry-run`): the would-write list must show the lane producing.
 5. The incident resolves itself when the lane produces again over the yield window; never mark it.
+
+## When `INCIDENT.context.check` starts with `conflict:` or `review-fix:` (fix an open PR in place)
+
+The break is an open PR, not main (`SPEC-jr-self-heal.md` §1d). `INCIDENT.context.evidence` names it: `pr`,
+`pr_branch`, `pr_head` (the head you start from; the launcher checked it out for you). Your commits go on
+top of `pr_head` and are pushed, fast-forward only, to `pr_branch`; no new PR is opened. The relay check
+runs with `--pr-fix`: it counts only your commits (a merge of `main` counts only its conflict resolution)
+under the same limits (no `data/**`, no `docs/demand/**`, no test deletion or skip, at most 300 lines).
+
+- **`conflict:`** — GitHub reports the PR conflicting with `main`. Merge `origin/main` into the branch
+  (never rebase, never force) and resolve every conflict so that BOTH sides' intent survives: the PR's
+  change and what `main` changed meanwhile. A file both sides only added to (two CI jobs, two test blocks,
+  two switches) keeps both additions, each verbatim. Change no behaviour beyond the resolution. Run the
+  tests of every file you touched and the suites of the PR's own files; quote the counts in BODY.
+- **`review-fix:`** — the agent review BLOCKed the PR at `pr_head`; `evidence.findings` lists why. Fix
+  exactly those findings at their cause, with a RED test first where a finding is a behaviour, and nothing
+  else. A finding you measure to be wrong is answered in BODY with the evidence, not "fixed". The agent
+  review judges your new head; a second BLOCK on the same PR goes to a human.
+- Never close, merge, retitle or relabel the PR; never touch another PR's branch.
+

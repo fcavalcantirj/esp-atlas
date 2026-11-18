@@ -36,8 +36,9 @@ def test_the_api_lane_runs_only_when_the_runner_labelled_the_pr_review_fallback(
     cond = jobs["agent-review"]["if"]
     assert "github.event.label.name == 'review-fallback'" in cond
     for part in ("!startsWith(github.head_ref, 'jr/tick-')", "!startsWith(github.head_ref, 'jr/research-')",
-                 "!startsWith(github.head_ref, 'jr/heal-')", "github.event.pull_request.draft == false"):
+                 "github.event.pull_request.draft == false"):
         assert part in cond, part
+    assert "jr/heal-" not in cond                                      # a heal PR is code: reviewed too (§1d)
 
 
 def test_the_reviewer_is_the_pinned_official_action_with_the_contract_and_a_verdict_schema(jobs):
