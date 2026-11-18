@@ -3343,6 +3343,14 @@
       "status": "expired",
       "timestamp": "2026-10-09T13:00:11.675780+00:00"
     },
+    "e512w3d": {
+      "expires": "2026-12-18T05:00:31.893243+00:00",
+      "id": "e512w3d",
+      "pr_ref": null,
+      "repo": "ebicochineal/e512w3d",
+      "status": "seen",
+      "timestamp": "2026-11-18T05:00:31.893243+00:00"
+    },
     "easyshortcutkey": {
       "expires": "2026-12-15T21:00:31.486348+00:00",
       "id": "easyshortcutkey",
@@ -3505,6 +3513,14 @@
       "repo_id": 882997253,
       "status": "rejected",
       "timestamp": "2026-11-15T23:00:31.847601+00:00"
+    },
+    "esp-idf-ultrasonic": {
+      "expires": "2026-12-18T05:00:31.893243+00:00",
+      "id": "esp-idf-ultrasonic",
+      "pr_ref": null,
+      "repo": "nopnop2002/esp-idf-ultrasonic",
+      "status": "seen",
+      "timestamp": "2026-11-18T05:00:31.893243+00:00"
     },
     "esp-iot-solution": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
@@ -3900,6 +3916,14 @@
       "repo": "brucedevices/firmware",
       "status": "rejected",
       "timestamp": "2026-09-04T00:00:00+00:00"
+    },
+    "fishfeeder": {
+      "expires": "2026-12-18T05:00:31.893243+00:00",
+      "id": "fishfeeder",
+      "pr_ref": null,
+      "repo": "itohio/fishfeeder",
+      "status": "seen",
+      "timestamp": "2026-11-18T05:00:31.893243+00:00"
     },
     "flappy-for-m5stickc-plus2": {
       "expires": "2026-12-15T11:00:32.244008+00:00",
@@ -12763,6 +12787,14 @@
       "status": "rejected",
       "timestamp": "2026-11-15T00:00:55.378741+00:00"
     },
+    "m5-esp32-keyer": {
+      "expires": "2026-12-18T05:00:31.893243+00:00",
+      "id": "m5-esp32-keyer",
+      "pr_ref": null,
+      "repo": "ok1cdj/m5-esp32-keyer",
+      "status": "seen",
+      "timestamp": "2026-11-18T05:00:31.893243+00:00"
+    },
     "m5-fumoji": {
       "expires": "2026-12-10T10:00:55.135052+00:00",
       "id": "m5-fumoji",
@@ -17792,6 +17824,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T04:00:31.831476+00:00"
     },
+    "repo-note:botanicfields/bf-018": {
+      "expires": "2026-12-18T05:00:31.893243+00:00",
+      "id": "repo-note:botanicfields/bf-018",
+      "pr_ref": null,
+      "reason": "stopword_name: 'BF-018' names a radio, not a firmware",
+      "repo": "botanicfields/bf-018",
+      "status": "rejected",
+      "timestamp": "2026-11-18T05:00:31.893243+00:00"
+    },
     "repo-note:botofancalin/m5stack-multiapp-advanced": {
       "expires": "2026-12-17T21:00:31.805157+00:00",
       "id": "repo-note:botofancalin/m5stack-multiapp-advanced",
@@ -18341,6 +18382,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T20:00:31.733970+00:00"
     },
+    "repo-note:happy83/m5watch": {
+      "expires": "2026-12-18T05:00:31.893243+00:00",
+      "id": "repo-note:happy83/m5watch",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "happy83/m5watch",
+      "status": "rejected",
+      "timestamp": "2026-11-18T05:00:31.893243+00:00"
+    },
     "repo-note:haqqscripter/esp_cam_io_parl": {
       "expires": "2026-12-17T17:00:31.748345+00:00",
       "id": "repo-note:haqqscripter/esp_cam_io_parl",
@@ -18412,6 +18462,15 @@
       "repo": "hn/bsh-home-appliances",
       "status": "rejected",
       "timestamp": "2026-11-17T11:00:31.753985+00:00"
+    },
+    "repo-note:hshin-git/gyrom5": {
+      "expires": "2026-12-18T05:00:31.893243+00:00",
+      "id": "repo-note:hshin-git/gyrom5",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "hshin-git/gyrom5",
+      "status": "rejected",
+      "timestamp": "2026-11-18T05:00:31.893243+00:00"
     },
     "repo-note:huskerminion/techo5": {
       "expires": "2026-12-17T11:00:31.753985+00:00",
@@ -19052,6 +19111,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T17:00:31.748345+00:00"
     },
+    "repo-note:mrarm/hakrwatch": {
+      "expires": "2026-12-18T05:00:31.893243+00:00",
+      "id": "repo-note:mrarm/hakrwatch",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "mrarm/hakrwatch",
+      "status": "rejected",
+      "timestamp": "2026-11-18T05:00:31.893243+00:00"
+    },
     "repo-note:mrcodetastic/esp32-hub75-matrixpanel-dma": {
       "expires": "2026-12-17T03:00:31.684665+00:00",
       "id": "repo-note:mrcodetastic/esp32-hub75-matrixpanel-dma",
@@ -19141,6 +19209,15 @@
       "repo": "nopnop2002/esp-idf-ili9340",
       "status": "rejected",
       "timestamp": "2026-11-17T21:00:31.805157+00:00"
+    },
+    "repo-note:nopnop2002/esp-idf-irsend": {
+      "expires": "2026-12-18T05:00:31.893243+00:00",
+      "id": "repo-note:nopnop2002/esp-idf-irsend",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "nopnop2002/esp-idf-irsend",
+      "status": "rejected",
+      "timestamp": "2026-11-18T05:00:31.893243+00:00"
     },
     "repo-note:ocean-lhy/xiaozhi-esp32": {
       "expires": "2026-12-15T04:00:34.403128+00:00",
@@ -19330,6 +19407,15 @@
       "repo": "rbel12b/lpf2",
       "status": "rejected",
       "timestamp": "2026-11-18T04:00:31.917403+00:00"
+    },
+    "repo-note:remixer-dec/m5stack_experiments": {
+      "expires": "2026-12-18T05:00:31.893243+00:00",
+      "id": "repo-note:remixer-dec/m5stack_experiments",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "remixer-dec/m5stack_experiments",
+      "status": "rejected",
+      "timestamp": "2026-11-18T05:00:31.893243+00:00"
     },
     "repo-note:retro-esp32/retroesp32": {
       "expires": "2026-12-17T19:00:32.203883+00:00",
@@ -22992,6 +23078,7 @@
     "bokunimowakaru/esp": "repo-note:bokunimowakaru/esp",
     "bomberman30/advanceos-for-cardputer": "advanceos-for-cardputer",
     "bomberman30/carduboy-arduboy-for-cardputer": "carduboy-arduboy-for-cardputer",
+    "botanicfields/bf-018": "repo-note:botanicfields/bf-018",
     "botofancalin/m5stack-multiapp-advanced": "repo-note:botofancalin/m5stack-multiapp-advanced",
     "boumedinebillal/esp32-p4-jit": "repo-note:boumedinebillal/esp32-p4-jit",
     "boumedinebillal/esp32-pie-asr": "repo-note:boumedinebillal/esp32-pie-asr",
@@ -23217,6 +23304,7 @@
     "dwlf256/m5cardputer-simple-calculator": "m5cardputer-simple-calculator",
     "dxvexx/m5stick-minigame-launcher-firmware": "m5stick-minigame-launcher-firmware",
     "easytarget/esp32-cam-webserver": "repo-note:easytarget/esp32-cam-webserver",
+    "ebicochineal/e512w3d": "e512w3d",
     "echo-lalia/cardputer-microhydra": "cardputer-microhydra",
     "eduardez/m5-pomodoro": "m5-pomodoro",
     "einoko/tomato32": "repo-note:einoko/tomato32",
@@ -23385,6 +23473,7 @@
     "halbeshuhn/cardputer-webradio": "cardputer-webradio",
     "hallard/wemos-matrix-shield-dma": "repo-note:hallard/wemos-matrix-shield-dma",
     "hansgao0422/deskclock-cardputer": "deskclock-cardputer",
+    "happy83/m5watch": "repo-note:happy83/m5watch",
     "haqqscripter/esp_cam_io_parl": "repo-note:haqqscripter/esp_cam_io_parl",
     "hardcore-gamer/cardputeradv-nas-mp3player": "cardputeradv-nas-mp3player",
     "hardcoreerik/orcdial": "orcdial",
@@ -23423,6 +23512,7 @@
     "hsbl-ko-gyo/hsbl-s101": "hsbl-s101",
     "hsbsbz/m5stickcplus2-seamonsue": "m5stickcplus2-seamonsue",
     "hsgarcia22/m5-mousejiggler": "m5-mousejiggler",
+    "hshin-git/gyrom5": "repo-note:hshin-git/gyrom5",
     "http:/": "http:/",
     "https:/": "https:/",
     "huskerminion/techo5": "repo-note:huskerminion/techo5",
@@ -23470,6 +23560,7 @@
     "isonimus/esp-32-toki-pona-dict": "esp-32-toki-pona-dict",
     "isonimus/esp32-dragon-radar": "esp32-dragon-radar",
     "isonimus/wifi-sapper": "wifi-sapper",
+    "itohio/fishfeeder": "fishfeeder",
     "j15marti/stackchan-gpt": "stackchan-gpt",
     "jabrena/juno": "juno",
     "jagoda/meshcadet": "meshcadet",
@@ -24627,7 +24718,7 @@
     "mr-paui/esp32-binforge": "repo-note:mr-paui/esp32-binforge",
     "mr-paui/gameboy-enhanced-firmware-m5stack-cardputer-": "gameboy-enhanced-firmware-m5stack-cardpu",
     "mraanderson/cardputeradv-motionlab": "cardputeradv-motionlab",
-    "mrarm/hakrwatch": "hakrwatch",
+    "mrarm/hakrwatch": "repo-note:mrarm/hakrwatch",
     "mrchaosbude/esp32-cyd-aquarium": "esp32-cyd-aquarium",
     "mrcodetastic/esp32-hub75-matrixpanel-dma": "repo-note:mrcodetastic/esp32-hub75-matrixpanel-dma",
     "mrnet15/ravenrf": "ravenrf",
@@ -24690,6 +24781,8 @@
     "nonik0/cardputerlegotraincontrol": "cardputerlegotraincontrol",
     "nonik0/cardputerlorachat": "cardputerlorachat",
     "nopnop2002/esp-idf-ili9340": "repo-note:nopnop2002/esp-idf-ili9340",
+    "nopnop2002/esp-idf-irsend": "repo-note:nopnop2002/esp-idf-irsend",
+    "nopnop2002/esp-idf-ultrasonic": "esp-idf-ultrasonic",
     "ns96/cardputermictalk": "cardputermictalk",
     "nullbeing/magpie-buddy": "magpie-buddy",
     "nullbeing/raincity-m5stack-cores3": "raincity-m5stack-cores3",
@@ -24700,6 +24793,7 @@
     "ocean-lhy/stopwatch-grokbot": "stopwatch-grokbot",
     "ocean-lhy/xiaozhi-esp32": "repo-note:ocean-lhy/xiaozhi-esp32",
     "oceantroop/orca-one": "orca-one",
+    "ok1cdj/m5-esp32-keyer": "m5-esp32-keyer",
     "olaf-biu/esp32-p4-ai-meeting": "repo-note:olaf-biu/esp32-p4-ai-meeting",
     "oldtokage-collab/c.p.s.--cardputer-syhnth--": "c-p-s-cardputer-syhnth",
     "oldtokage-collab/enso": "enso",
@@ -24802,6 +24896,7 @@
     "realclearwave/cardputer86": "cardputer86",
     "rebelthor/warble": "warble",
     "redredred777/cinevocab": "cinevocab",
+    "remixer-dec/m5stack_experiments": "repo-note:remixer-dec/m5stack_experiments",
     "rennancockles/m5-amiibolink": "m5-amiibolink",
     "rennancockles/m5-chameleon-ultra": "m5-chameleon-ultra",
     "retr0kr0dy/non-magical-csi": "non-magical-csi",
