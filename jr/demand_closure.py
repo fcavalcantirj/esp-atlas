@@ -290,6 +290,53 @@ def _catalog_quote_receipt(candidate: dict, validation: dict, pr: dict, *, fetch
             "checked_at": now.astimezone(timezone.utc).isoformat()}, ""
 
 
+def _board_has_field(git, ref: str, path: str, dotted: str) -> bool | None:
+    """Whether the record at `ref` carries the gauge field (`dotted`), None when unreadable there."""
+    import data_completion
+    from esp_atlas_core.frontmatter import parse_frontmatter_text
+    shown = git("show", f"{ref}:{path}")
+    if getattr(shown, "returncode", 1) != 0 or not (getattr(shown, "stdout", "") or "").strip():
+        return None
+    try:
+        fm, _ = parse_frontmatter_text(shown.stdout)
+    except ValueError:
+        return None
+    return bool(data_completion._is_present(data_completion._get_nested(fm, dotted)))
+
+
+def _resolver_live_receipt(candidate: dict, validation: dict, pr: dict, *, git, now: datetime) -> tuple[dict | None, str]:
+    """The resolver_live receipt verify_resolution judges: the delegate's PR added CODE (an extractor with
+    fixtures and tests), so the proof is the hourly backfill writing the field on the vendor's boards
+    afterwards. For each expected board (the row's boards missing the field at report time) the record on
+    main now (`HEAD`) is read; `gained` are the ones that carry the field now and did not at the merge sha.
+    PASS at min(3, len(expected)) gained; fewer is PENDING and the item stays live."""
+    import data_completion
+    prov = candidate.get("resolver") if isinstance(candidate.get("resolver"), dict) else None
+    if not rw.readable_resolver_provenance(prov):
+        return None, "resolver_live check: the candidate carries no readable resolver provenance"
+    merge = pr.get("merge_sha")
+    if not rw._text(merge):
+        return None, "resolver_live check: the merged PR names no merge sha"
+    dotted = dict(data_completion.FIELD_SPECS["boards"]).get(prov["field"])
+    if not dotted:
+        return None, f"resolver_live check: unknown gauge field {prov['field']!r}"
+    expected = [b for b in (validation.get("expected_ids") or []) if rw._text(b)]
+    gained, unreadable = [], []
+    for board in expected:
+        path = f"data/boards/{prov['vendor']}/{board}/board.md"
+        now_has = _board_has_field(git, "HEAD", path, dotted)
+        if now_has is None:
+            unreadable.append(board)
+            continue
+        if now_has and _board_has_field(git, merge, path, dotted) is False:
+            gained.append(board)
+    need = min(3, len(expected))
+    return {"kind": rw.KIND_RESOLVER_LIVE, "vendor": prov["vendor"], "field": prov["field"], "merge_sha": merge,
+            "expected": expected, "gained": gained, "unreadable": unreadable,
+            "verdict": "PASS" if expected and len(gained) >= need else "PENDING",
+            "checked_at": now.astimezone(timezone.utc).isoformat()}, ""
+
+
 def observe(candidate: dict, pr: dict, snap: dict, *, mined_revision, git, now: datetime,
             fetch=None) -> tuple[dict | None, str]:
     """The observation receipt for the validation's verification kind, or (None, why)."""
@@ -303,6 +350,8 @@ def observe(candidate: dict, pr: dict, snap: dict, *, mined_revision, git, now: 
         return _catalog_part_receipt(candidate, validation, pr, fetch=fetch, git=git, now=now)
     if kind == rw.KIND_CATALOG_QUOTE:
         return _catalog_quote_receipt(candidate, validation, pr, fetch=fetch, git=git, now=now)
+    if kind == rw.KIND_RESOLVER_LIVE:
+        return _resolver_live_receipt(candidate, validation, pr, git=git, now=now)
     return _miner_receipt(candidate, pr, snap, mined_revision=mined_revision, git=git, now=now)
 
 

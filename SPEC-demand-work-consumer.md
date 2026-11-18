@@ -185,6 +185,30 @@ Acceptance: `jr/test_research_work_hygiene.py`, `jr/test_hygiene_work_intake.py`
 `jr/test_demand_closure_catalog_quote.py`, `jr/test_quote_run.py`, `jr/test_demand_run_hygiene.py`,
 `scripts/test_check_quotes.py` (the report).
 
+### Resolver work: a gauge gap becomes CODE for the delegate, never a record (class `resolver`, 2026-11-17)
+
+The model boundary (owner, 2026-11-17; `CLAUDE.md` "North star"): an LLM solves code problems, never fills
+inventory. The fourth source class ranks the boards gauge per vendor × field (`scripts/data_completion.per_vendor`)
+in `jr/resolver_run.py`: rows with at least 3 boards of one vendor missing one field, ordered by boards
+missing, then by page demand (GSC impressions of those boards' `/parts/<id>` pages in the day's snapshot,
+`RANKS_POORLY` count; demand may ORDER data work, never touch SEO text), then vendor and field. The report is
+`docs/demand/resolver-report.json`, landed only when the ranking changed, always complete (no network). The
+broker turns each row into one candidate: source `gauge_gap`, term `resolver <vendor> <field>`, key
+`resolver-<sha256(vendor, field, report date)[:24]>`, provenance the row (`resolver: {vendor, field, missing,
+records, boards, report_date}`); a vendor × field with open resolver work is never reserved twice. The
+executor's path is `docs/demand/EXECUTOR-PROMPT.md` "Resolver work": fixtures saved from the vendor's pages,
+a RED test, the extractor, registered for the vendor and field; only `jr/**` changes. `scripts/demand_guard.py`
+R5 for this class: no `data/**`, no workflow, a changed `jr/test_*.py`, the vendor named in a changed `jr/`
+path, `expected_ids` = the row's boards. Closure kind `resolver_live` (`jr/demand_closure._resolver_live_receipt`):
+for each expected board, the record on main now carries the field and did not at the merge sha (`gained`);
+PASS at min(3, expected) gained, else PENDING and the item stays live for a second delegate run with the
+backfill log. Measured worklist on 2026-11-17: adafruit × download_mode 20 boards, espressif × dimensions_mm
+17, m5stack × download_mode 14, m5stack × usb_serial 13, m5stack × pinout 12.
+
+Acceptance: `jr/test_research_work_resolver.py`, `jr/test_resolver_work_intake.py`, `jr/test_resolver_run.py`,
+`jr/test_demand_run_resolver.py`, `jr/test_demand_closure_resolver_live.py`, `scripts/test_demand_guard.py`
+(resolver R5), `scripts/test_data_completion.py` (per_vendor).
+
 ### Verification must match the actual defect
 
 The validation receipt declares a verification kind. For missing catalog content

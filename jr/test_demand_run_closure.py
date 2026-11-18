@@ -144,8 +144,8 @@ def test_the_second_pass_after_a_closure_never_closes_again(tmp_path, monkeypatc
     run(root, miner=snapshot_miner(without_unresolved(SNAP), queue=json.loads(QUEUE_RAW)),
         pam_refresh=pam_unchanged)
     # search pass closes; the PAM pass and the hygiene pass (2026-11-17) only reconcile after a closure
-    assert [(c["new_pam"], c.get("close", True)) for c in calls] == [(False, True), (True, False), (False, False)]
-    assert [c.get("source_class") for c in calls] == [rw.CLASS_SEARCH, rw.CLASS_PAM, rw.CLASS_HYGIENE]
+    assert [(c["new_pam"], c.get("close", True)) for c in calls] == [(False, True), (True, False), (False, False), (False, False)]
+    assert [c.get("source_class") for c in calls] == [rw.CLASS_SEARCH, rw.CLASS_PAM, rw.CLASS_HYGIENE, rw.CLASS_RESOLVER]
 
 
 FOREIGN_QUEUE = b'{"version": 1, "candidates": {}, "edited_by": "a concurrent triage"}\n'

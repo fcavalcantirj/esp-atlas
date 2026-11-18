@@ -70,6 +70,7 @@ def _gsc_metrics(item: dict) -> dict:
 
 
 QUOTE_REPORT_NAME = "quote-report.json"
+RESOLVER_REPORT_NAME = "resolver-report.json"
 
 
 def read_quote_report(path: Path) -> dict | None:
@@ -86,6 +87,22 @@ def read_quote_report(path: Path) -> dict | None:
     if not isinstance(rows, list) or not all(isinstance(r, dict) for r in rows):
         return None
     return doc
+
+
+def read_resolver_report(path: Path) -> dict | None:
+    """The daily resolver report the demand run writes (`docs/demand/resolver-report.json`, jr/resolver_run.py):
+    {version 1, date, complete, records: [{vendor, field, missing, records, boards, ...}]} ordered by the gauge.
+    None when absent or unreadable; an incomplete report starts no new work."""
+    return read_quote_report(path)          # the same envelope; the rows are judged by readable_resolver_provenance
+
+
+def _resolver_candidate(row: dict, report: dict) -> dict | None:
+    prov = {**{k: row.get(k) for k in ("vendor", "field", "missing", "records", "boards")}, "report_date": report["date"]}
+    if not rw.readable_resolver_provenance(prov):
+        return None
+    return {"term": rw.resolver_term(prov), "source": rw.SOURCE_RESOLVER, "status": rw.STATUS_NEW,
+            "first_seen": report["date"], "history": [], "linked_work": [],
+            "snapshot": f"{DEMAND_RELDIR}/{RESOLVER_REPORT_NAME}", "resolver": prov}
 
 
 def _quote_candidate(row: dict, report: dict) -> dict | None:
@@ -112,7 +129,8 @@ def _gsc_candidate(item, snap: dict) -> dict | None:
 
 
 def intake(queue, snap: dict, *, pam_state=None, receipts=(), new_pam=True,
-           recovering_pam_keys=(), quote_report=None, new_quote=False) -> dict | None:
+           recovering_pam_keys=(), quote_report=None, new_quote=False, resolver_report=None,
+           new_resolver=False) -> dict | None:
     """The broker's view: the committed queue's candidates plus each eligible GSC UNRESOLVED item
     whose term the queue does not already hold (the queue carries lifecycle state, so it wins).
     Typed feed gaps join behind search demand; original PAM lifecycle snapshots recover first.
@@ -144,6 +162,17 @@ def intake(queue, snap: dict, *, pam_state=None, receipts=(), new_pam=True,
             if c and c["quote"]["record"] not in open_records:
                 open_records.add(c["quote"]["record"])
                 view["candidates"].setdefault(rw.quote_key(c["quote"]), c)
+    # Resolver work (2026-11-17): the gauge's top vendor × field gaps become CODE items, in the report's
+    # order (boards missing, then page demand); a vendor × field with open resolver work is never twice.
+    if new_resolver and isinstance(resolver_report, dict) and resolver_report.get("complete") is True:
+        open_gaps = {(c["resolver"]["vendor"], c["resolver"]["field"]) for c in view["candidates"].values()
+                     if isinstance(c, dict) and c.get("source") == rw.SOURCE_RESOLVER
+                     and c.get("status") != rw.STATUS_CLOSED and isinstance(c.get("resolver"), dict)}
+        for row in resolver_report.get("records") or []:
+            c = _resolver_candidate(row, resolver_report)
+            if c and (c["resolver"]["vendor"], c["resolver"]["field"]) not in open_gaps:
+                open_gaps.add((c["resolver"]["vendor"], c["resolver"]["field"]))
+                view["candidates"].setdefault(rw.resolver_key(c["resolver"]), c)
     if pam_state is not None:
         handled = {r.get("key") for r in receipts if isinstance(r, dict)}
         recovering = set(recovering_pam_keys)
@@ -334,6 +363,8 @@ def _receipt(work: rw.Work, candidate: dict, remote: Remote, today: str) -> dict
         receipt.update(feed=copy.deepcopy(work.feed), candidate=copy.deepcopy(candidate))
     elif work.source == rw.SOURCE_QUOTE:
         receipt.update(quote=copy.deepcopy(work.quote), candidate=copy.deepcopy(candidate))
+    elif work.source == rw.SOURCE_RESOLVER:
+        receipt.update(resolver=copy.deepcopy(work.resolver), candidate=copy.deepcopy(candidate))
     else:
         receipt.update(window=copy.deepcopy(work.window), metrics=copy.deepcopy(work.metrics))
     if prs:
@@ -367,7 +398,7 @@ def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | No
             new_pam: bool = True, git=None, mined_revision: str | None = None,
             now: datetime | None = None, close: bool = True, closures: list | None = None,
             writes: dict | None = None, expected: dict | None = None, fetch=None,
-            source_class: str | None = None, new_quote: bool = False) -> Outcome:
+            source_class: str | None = None, new_quote: bool = False, new_resolver: bool = False) -> Outcome:
     """Plan one action over the committed queue + snapshot + feed state + receipts. START appends ONE
     reservation atomically. RECONCILE verifies the linked work (jr/demand_closure.py) against `snap`,
     which must be the snapshot this run just mined at `mined_revision`; a delivered or rejected
@@ -389,7 +420,7 @@ def reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | No
     closer = _Closer(git, mined_revision, now or datetime.now(timezone.utc), closures, fetch) if close else None
     return _reserve(Path(demand_dir), snap, gh=gh, today=today, repo_slug=repo_slug, new_pam=new_pam,
                     closer=closer, writes={} if writes is None else writes, expected=expected,
-                    source_class=source_class, new_quote=new_quote)
+                    source_class=source_class, new_quote=new_quote, new_resolver=new_resolver)
 
 
 def _writer_bytes(doc: dict) -> bytes:
@@ -442,7 +473,7 @@ def _undo_queue(qpath: Path, queue_raw: bytes | None, queue_bytes: bytes, why: s
 
 def _close(demand_dir: Path, snap: dict, plan: rw.Plan, reason: str, state: dict, *, gh, today: str,
            repo_slug, new_pam: bool, closer: _Closer, writes: dict, source_class: str | None = None,
-           new_quote: bool = False) -> Outcome:
+           new_quote: bool = False, new_resolver: bool = False) -> Outcome:
     key = plan.work.key
     if len(state["remote"].prs.get(plan.work.branch, [])) > 1:      # START's duplicate check, before any verdict
         return Outcome(rw.DEFER, f"duplicate remote PRs on {plan.work.branch}: no closure", key)
@@ -462,7 +493,7 @@ def _close(demand_dir: Path, snap: dict, plan: rw.Plan, reason: str, state: dict
            RECEIPTS_NAME: writes[RECEIPTS_NAME] if closure.receipts_changed else state["raw"]}
     following = _reserve(demand_dir, snap, gh=gh, today=today, repo_slug=repo_slug, new_pam=new_pam,
                          closer=None, writes=writes, expected=own,   # re-plan ONCE, only over its own bytes
-                         source_class=source_class, new_quote=new_quote)
+                         source_class=source_class, new_quote=new_quote, new_resolver=new_resolver)
     return dataclasses.replace(following, changed=True, queue_changed=True,
                                receipts_changed=following.receipts_changed or closure.receipts_changed,
                                closed=key, resolution=closure.status)
@@ -481,7 +512,7 @@ def _foreign(expected: dict | None, read: dict) -> Outcome | None:
 
 def _reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | None,
              new_pam: bool, closer: _Closer | None, writes: dict, expected: dict | None = None,
-             source_class: str | None = None, new_quote: bool = False) -> Outcome:
+             source_class: str | None = None, new_quote: bool = False, new_resolver: bool = False) -> Outcome:
     path = Path(demand_dir) / RECEIPTS_NAME
     raw = _read(path)
     queue_raw, queue = _load_queue(Path(demand_dir))
@@ -506,7 +537,11 @@ def _reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | N
     quote_report = read_quote_report(Path(demand_dir) / QUOTE_REPORT_NAME)
     quote_error = ("quote report unreadable or absent; no new hygiene work"
                    if new_quote and quote_report is None else "")
-    view = intake(queue, snap, receipts=receipts, quote_report=quote_report, new_quote=new_quote)
+    resolver_report = read_resolver_report(Path(demand_dir) / RESOLVER_REPORT_NAME)
+    resolver_error = ("resolver report unreadable or absent; no new resolver work"
+                      if new_resolver and resolver_report is None else "")
+    view = intake(queue, snap, receipts=receipts, quote_report=quote_report, new_quote=new_quote,
+                  resolver_report=resolver_report, new_resolver=new_resolver)
     live = [r["branch"] for r in receipts if isinstance(r, dict) and isinstance(r.get("branch"), str)
             and r.get("state") not in rw.TERMINAL_STATES]
     candidates = view.get("candidates", {}).values() if isinstance(view, dict) else []
@@ -523,7 +558,8 @@ def _reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | N
                    if rw.branch_for(pam_leads.work_key(lead)) in recoverable}
                   if pam_state is not None and remote.complete else set())
     view = intake(queue, snap, pam_state=pam_state, receipts=receipts, new_pam=new_pam,
-                  recovering_pam_keys=recovering, quote_report=quote_report, new_quote=new_quote)
+                  recovering_pam_keys=recovering, quote_report=quote_report, new_quote=new_quote,
+                  resolver_report=resolver_report, new_resolver=new_resolver)
     candidates = view.get("candidates", {}).values() if isinstance(view, dict) else []
     open_work = {b for c in candidates if isinstance(c, dict) and c.get("status") != rw.STATUS_CLOSED
                  for b in [_branch(c)] if b}
@@ -537,12 +573,12 @@ def _reserve(demand_dir: Path, snap: dict, *, gh, today: str, repo_slug: str | N
         state = {"queue": queue, "queue_raw": queue_raw, "doc": doc, "raw": raw, "receipts": receipts,
                  "remote": remote}
         return _close(Path(demand_dir), snap, plan, reason, state, gh=gh, today=today, repo_slug=repo_slug,
-                      new_pam=new_pam, closer=closer, writes=writes, source_class=source_class, new_quote=new_quote)
+                      new_pam=new_pam, closer=closer, writes=writes, source_class=source_class, new_quote=new_quote, new_resolver=new_resolver)
     if plan.action != rw.START:
         if plan.action == rw.NOOP and pam_error:
             return Outcome(rw.DEFER, pam_error)
-        if plan.action == rw.NOOP and quote_error:
-            return Outcome(rw.NOOP, "; ".join(filter(None, [reason, quote_error])))
+        if plan.action == rw.NOOP and (quote_error or resolver_error):
+            return Outcome(rw.NOOP, "; ".join(filter(None, [reason, quote_error, resolver_error])))
         return Outcome(plan.action, reason, key)
     stray = sorted(unrecorded - open_work)
     if stray:
