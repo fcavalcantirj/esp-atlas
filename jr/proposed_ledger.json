@@ -10982,6 +10982,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T11:00:31.753985+00:00"
     },
+    "launcher-2122856028905095170": {
+      "expires": "2026-11-25T02:00:31.876893+00:00",
+      "id": "launcher-2122856028905095170",
+      "pr_ref": null,
+      "reason": "no_source_repo: 0 matches for 'card gcalc original user:halasun'",
+      "repo": "launcher:2122856028905095170",
+      "status": "rejected",
+      "timestamp": "2026-11-18T02:00:31.876893+00:00"
+    },
     "launcher-2124f637db75857c962f9097575271f4": {
       "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
@@ -17495,6 +17504,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T06:00:32.296687+00:00"
     },
+    "repo-note:463n7/cerberus-dev-board": {
+      "expires": "2026-12-18T02:00:31.876893+00:00",
+      "id": "repo-note:463n7/cerberus-dev-board",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "463n7/cerberus-dev-board",
+      "status": "rejected",
+      "timestamp": "2026-11-18T02:00:31.876893+00:00"
+    },
     "repo-note:ace-trump-tech/mindpaw": {
       "expires": "2026-12-18T00:00:31.739025+00:00",
       "id": "repo-note:ace-trump-tech/mindpaw",
@@ -17584,6 +17602,15 @@
       "repo": "arduino/arduino",
       "status": "rejected",
       "timestamp": "2026-11-17T15:00:33.111992+00:00"
+    },
+    "repo-note:arn-c0de/ad8232-emg": {
+      "expires": "2026-12-18T02:00:31.876893+00:00",
+      "id": "repo-note:arn-c0de/ad8232-emg",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "arn-c0de/ad8232-emg",
+      "status": "rejected",
+      "timestamp": "2026-11-18T02:00:31.876893+00:00"
     },
     "repo-note:arthurfdlr/br-m5": {
       "expires": "2026-12-17T05:00:31.748945+00:00",
@@ -17675,6 +17702,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T20:00:31.733970+00:00"
     },
+    "repo-note:biofieldua/esp-coordinator": {
+      "expires": "2026-12-18T02:00:31.876893+00:00",
+      "id": "repo-note:biofieldua/esp-coordinator",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "biofieldua/esp-coordinator",
+      "status": "rejected",
+      "timestamp": "2026-11-18T02:00:31.876893+00:00"
+    },
     "repo-note:blackymas/nspanel_ha_blueprint": {
       "expires": "2026-12-17T11:00:31.753985+00:00",
       "id": "repo-note:blackymas/nspanel_ha_blueprint",
@@ -17728,6 +17764,15 @@
       "repo": "botofancalin/m5stack-multiapp-advanced",
       "status": "rejected",
       "timestamp": "2026-11-17T21:00:31.805157+00:00"
+    },
+    "repo-note:camemake/cm_esp_p4_c5-open-hardware-platform": {
+      "expires": "2026-12-18T02:00:31.876893+00:00",
+      "id": "repo-note:camemake/cm_esp_p4_c5-open-hardware-platform",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "camemake/cm_esp_p4_c5-open-hardware-platform",
+      "status": "rejected",
+      "timestamp": "2026-11-18T02:00:31.876893+00:00"
     },
     "repo-note:celliesprojects/esp32_vs1053_stream": {
       "expires": "2026-12-17T18:00:31.692410+00:00",
@@ -17854,6 +17899,15 @@
       "repo": "darkflippers/flipperzero-subbrute",
       "status": "rejected",
       "timestamp": "2026-11-17T13:00:31.835731+00:00"
+    },
+    "repo-note:datanoisetv/esp-hosted-open": {
+      "expires": "2026-12-18T02:00:31.876893+00:00",
+      "id": "repo-note:datanoisetv/esp-hosted-open",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "datanoisetv/esp-hosted-open",
+      "status": "rejected",
+      "timestamp": "2026-11-18T02:00:31.876893+00:00"
     },
     "repo-note:datasith/ai_demos_esp32": {
       "expires": "2026-12-17T04:00:31.831476+00:00",
@@ -18206,6 +18260,24 @@
       "status": "rejected",
       "timestamp": "2026-11-17T17:00:31.748345+00:00"
     },
+    "repo-note:hellz0wnzj00/hellzgate": {
+      "expires": "2026-12-18T02:00:31.876893+00:00",
+      "id": "repo-note:hellz0wnzj00/hellzgate",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "hellz0wnzj00/hellzgate",
+      "status": "rejected",
+      "timestamp": "2026-11-18T02:00:31.876893+00:00"
+    },
+    "repo-note:hellz0wnzj00/hellzgate-espnow-cluster": {
+      "expires": "2026-12-18T02:00:31.876893+00:00",
+      "id": "repo-note:hellz0wnzj00/hellzgate-espnow-cluster",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "hellz0wnzj00/hellzgate-espnow-cluster",
+      "status": "rejected",
+      "timestamp": "2026-11-18T02:00:31.876893+00:00"
+    },
     "repo-note:heltecautomation/cubecell-arduino": {
       "expires": "2026-12-17T09:00:32.446822+00:00",
       "id": "repo-note:heltecautomation/cubecell-arduino",
@@ -18530,6 +18602,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T10:00:32.143438+00:00"
     },
+    "repo-note:kodediy/kode_slave_c5": {
+      "expires": "2026-12-18T02:00:31.876893+00:00",
+      "id": "repo-note:kodediy/kode_slave_c5",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "kodediy/kode_slave_c5",
+      "status": "rejected",
+      "timestamp": "2026-11-18T02:00:31.876893+00:00"
+    },
     "repo-note:konsumer/msc-poc": {
       "expires": "2026-12-17T08:00:31.747262+00:00",
       "id": "repo-note:konsumer/msc-poc",
@@ -18610,6 +18691,15 @@
       "repo": "louishitchcock/fpvgatec5mk",
       "status": "rejected",
       "timestamp": "2026-11-17T02:00:33.347838+00:00"
+    },
+    "repo-note:louishitchcock/fpvgatec5rx": {
+      "expires": "2026-12-18T02:00:31.876893+00:00",
+      "id": "repo-note:louishitchcock/fpvgatec5rx",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "louishitchcock/fpvgatec5rx",
+      "status": "rejected",
+      "timestamp": "2026-11-18T02:00:31.876893+00:00"
     },
     "repo-note:lovyan03/esp32_screenshotreceiver": {
       "expires": "2026-12-17T05:00:31.748945+00:00",
@@ -18952,6 +19042,15 @@
       "repo": "opensurface/sonosesp",
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
+    "repo-note:oxidezap/whatsapp-rust-esp32": {
+      "expires": "2026-12-18T02:00:31.876893+00:00",
+      "id": "repo-note:oxidezap/whatsapp-rust-esp32",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "oxidezap/whatsapp-rust-esp32",
+      "status": "rejected",
+      "timestamp": "2026-11-18T02:00:31.876893+00:00"
     },
     "repo-note:ozinfl/elecrow-3.5-rgb-tft-squareline-example": {
       "expires": "2026-12-17T16:00:31.699892+00:00",
@@ -22514,6 +22613,7 @@
     "3110/m5stack-image-viewer": "m5stack-image-viewer",
     "3110/m5watchclicker": "m5watchclicker",
     "3110/never-push-me": "never-push-me",
+    "463n7/cerberus-dev-board": "repo-note:463n7/cerberus-dev-board",
     "4hoenix0/frequencygencardputer": "frequencygencardputer",
     "4n6jones-commits/cardputerrokuremote": "cardputerrokuremote",
     "5tufil1k3/airmouse-m5stick-c-plus": "airmouse-m5stick-c-plus",
@@ -22639,6 +22739,7 @@
     "armel/m5hamradio": "m5hamradio",
     "armel/rrfremote": "rrfremote",
     "armel/uv-k1-k5v3-firmware-custom": "uv-k1-k5v3-firmware-custom",
+    "arn-c0de/ad8232-emg": "repo-note:arn-c0de/ad8232-emg",
     "aroum/cardmotion": "cardmotion",
     "aroum/cardulator": "cardulator",
     "artem76228/paperos": "paperos",
@@ -22682,6 +22783,7 @@
     "big-bratan/make-ap": "make-ap",
     "billybag2/m5tab5-userdemo-docker": "m5tab5-userdemo-docker",
     "billybag2/tab5-burner": "tab5-burner",
+    "biofieldua/esp-coordinator": "repo-note:biofieldua/esp-coordinator",
     "bitmaker-hub/nerdminer_v2": "nerdminer-v2",
     "blackymas/nspanel_ha_blueprint": "repo-note:blackymas/nspanel_ha_blueprint",
     "blamouche/cardputer-dwight": "cardputer-dwight",
@@ -22723,6 +22825,7 @@
     "c5lab/pancake": "pancake",
     "cabra-vabra/ruleta-rusa": "ruleta-rusa",
     "calcaware/tama-search-uni": "tama-search-uni",
+    "camemake/cm_esp_p4_c5-open-hardware-platform": "repo-note:camemake/cm_esp_p4_c5-open-hardware-platform",
     "captainchorche/cardcaliper": "cardcaliper",
     "carlosdanieldev/copyrfid": "copyrfid",
     "cattivole/darkroomtimer": "darkroomtimer",
@@ -22864,6 +22967,7 @@
     "darabos/tamagacha": "tamagacha",
     "darkflippers/flipperzero-subbrute": "repo-note:darkflippers/flipperzero-subbrute",
     "darkflippers/unleashed-firmware": "unleashed-firmware",
+    "datanoisetv/esp-hosted-open": "repo-note:datanoisetv/esp-hosted-open",
     "datasith/ai_demos_esp32": "repo-note:datasith/ai_demos_esp32",
     "datjan/m5stack_examples": "m5stack-examples",
     "davervw/cardputer-game-station-emulators": "cardputer-game-station-emulators",
@@ -23088,6 +23192,8 @@
     "haswitchplate/openhasp": "openhasp",
     "hedykan/feiyuos": "feiyuos",
     "helloruru/ruru-reader-papers3": "ruru-reader-papers3",
+    "hellz0wnzj00/hellzgate": "repo-note:hellz0wnzj00/hellzgate",
+    "hellz0wnzj00/hellzgate-espnow-cluster": "repo-note:hellz0wnzj00/hellzgate-espnow-cluster",
     "heltecautomation/cubecell-arduino": "repo-note:heltecautomation/cubecell-arduino",
     "heltecautomation/platform-asrmicro650x": "repo-note:heltecautomation/platform-asrmicro650x",
     "hengmyj/xiaozhi-adv-car": "xiaozhi-adv-car",
@@ -23262,6 +23368,7 @@
     "kiwibryn/sx127x-netcore": "repo-note:kiwibryn/sx127x-netcore",
     "kkq-kkq/m5stickc-audiospectrum": "m5stickc-audiospectrum",
     "kmx415/meshpoint": "repo-note:kmx415/meshpoint",
+    "kodediy/kode_slave_c5": "repo-note:kodediy/kode_slave_c5",
     "konradmohr/pbashos": "pbashos",
     "konsumer/cardputer-examples": "cardputer-examples",
     "konsumer/msc-poc": "repo-note:konsumer/msc-poc",
@@ -23942,6 +24049,7 @@
     "launcher:2122586321891311618": "launcher-2122586321891311618",
     "launcher:2122590750057119746": "launcher-2122590750057119746",
     "launcher:2122601783576444930": "launcher-2122601783576444930",
+    "launcher:2122856028905095170": "launcher-2122856028905095170",
     "launcher:2124f637db75857c962f9097575271f4": "launcher-2124f637db75857c962f9097575271f4",
     "launcher:214c554f9da22d70e6837d4db79fc793": "launcher-214c554f9da22d70e6837d4db79fc793",
     "launcher:215b511e97a94512db05452db92ba0bf": "launcher-215b511e97a94512db05452db92ba0bf",
@@ -24138,6 +24246,7 @@
     "lordlexat/m5core2_simpleclock": "m5core2-simpleclock",
     "lostdataprotocol/onemorefloor": "onemorefloor",
     "louishitchcock/fpvgatec5mk": "repo-note:louishitchcock/fpvgatec5mk",
+    "louishitchcock/fpvgatec5rx": "repo-note:louishitchcock/fpvgatec5rx",
     "lovyan03/esp32_screenshotreceiver": "repo-note:lovyan03/esp32_screenshotreceiver",
     "lovyan03/lovyangfx": "lovyangfx",
     "lovyan03/m5stack_breakoutblock": "m5stack-breakoutblock",
@@ -24405,6 +24514,7 @@
     "oumike/camillia-mt": "camillia-mt",
     "oumike/plumeria-mc": "plumeria-mc",
     "overcyber/esp32-wifi-hash-monster": "esp32-wifi-hash-monster",
+    "oxidezap/whatsapp-rust-esp32": "repo-note:oxidezap/whatsapp-rust-esp32",
     "oxoooox/stackchan-remote-sticks3-joystick2": "stackchan-remote-sticks3-joystick2",
     "ozinfl/elecrow-3.5-rgb-tft-squareline-example": "repo-note:ozinfl/elecrow-3.5-rgb-tft-squareline-example",
     "paciente8159/ucnc": "repo-note:paciente8159/ucnc",
