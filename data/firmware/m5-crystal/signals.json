@@ -1,24 +1,21 @@
 {
  "calls": 6,
  "errors": 0,
- "fetched": "2026-11-11",
+ "fetched": "2026-11-18",
  "notes": [],
  "ref": "main",
  "repo": "Dlazder/m5_crystal_firmware",
  "resolved": {
   "boards": [
+   "m5cardputer-adv",
    "m5stick-cplus2",
    "m5stick-s3"
   ],
-  "socs": [
-   "esp32-s3"
-  ],
+  "socs": [],
   "unresolved": [
-   "cardputer-adv",
    "crystal_firmware_cardputer-adv",
    "crystal_firmware_m5stick-c-plus2",
-   "crystal_firmware_m5sticks3",
-   "esp32-s3-devkitc-1"
+   "crystal_firmware_m5sticks3"
   ]
  },
  "signals": [
