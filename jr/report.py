@@ -26,6 +26,9 @@ class TickReport:
     boards_pct: float | None = None
     overall_pct: float | None = None
     allocation: str = ""
+    split: dict | None = None                          # the hourly {"backfill", "firmware"} units this tick ran
+    yields: dict | None = None                         # jr/yield_ledger.lane_yield over the trailing window
+    stall: dict | None = None                          # {"lanes", "stall_ticks", "yields"} when a lane produced nothing over the stall window
     stages: list = field(default_factory=list)        # [{"name", "paths", "summary", "needs_human", "items", "review"}]
     extra_paths: list = field(default_factory=list)    # tick-owned paths outside stages (data-trend snapshot)
     data_row: dict | None = None                       # SPEC-data-trend.md row for this tick
