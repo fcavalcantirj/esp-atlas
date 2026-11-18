@@ -92,7 +92,7 @@ def _write_prev(wt: Path, date: str, items, window=None):
     demand.write_unresolved(items, d)
 
 
-def fake_miner(rows=GSC_ROWS, rc=0, today=TODAY):
+def fake_miner(rows=GSC_ROWS, rc=0, today=TODAY, gsc_pull_ok=True):
     """Stands in for `<composio python> jr/demand.py` run inside the worktree."""
     seen = {}
 
@@ -101,7 +101,7 @@ def fake_miner(rows=GSC_ROWS, rc=0, today=TODAY):
         if rc == 0:
             items = _items(rows, today)
             d = wt_path / "docs" / "demand"
-            demand.write_snapshot(items, False, {"start": "2026-10-06", "end": today}, today, d)
+            demand.write_snapshot(items, False, {"start": "2026-10-06", "end": today}, today, d, gsc_pull_ok=gsc_pull_ok)
             demand.write_unresolved(items, d)
         return Proc(returncode=rc, stdout="", stderr="composio: 401" if rc else "")
 
@@ -243,6 +243,15 @@ def test_an_empty_pull_is_treated_as_an_outage_not_as_zero_demand(tmp_path):
     gh = gh_ok()
     res = run(tmp_path, gh=gh, miner=fake_miner(rows=[]))
     assert res.published is False and "no demand items" in res.aborted
+    assert not any(c[:2] == ("pr", "create") for c in gh.calls)
+
+
+def test_a_failed_gsc_pull_never_lands_a_snapshot_without_search_demand(tmp_path):
+    """2026-11-18: before, a GA4-only pull above the floor would have replaced the GSC steer."""
+    _write_prev(tmp_path, "2026-09-09", _items(GSC_ROWS, "2026-09-09"))
+    gh = gh_ok()
+    res = run(tmp_path, gh=gh, miner=fake_miner(gsc_pull_ok=False))
+    assert res.published is False and "GSC pull failed" in res.aborted
     assert not any(c[:2] == ("pr", "create") for c in gh.calls)
 
 

@@ -6,6 +6,7 @@ test_demand.py to keep both files under the size ceiling; shares its GSC fixture
 Run: cd jr && python3 -m pytest test_demand_ga4.py -v
 """
 from __future__ import annotations
+import datetime as dt
 import json
 import sys
 from pathlib import Path
@@ -236,3 +237,47 @@ def test_digest_shows_event_counts_for_first_party_items():
     items = _build(ga4=ga4)
     digest = demand.build_digest(items, d2_available=True, window={"start": "2026-08-03", "end": "2026-08-31"})
     assert "events 37" in digest
+
+
+# --- plumbing (2026-11-18): a GSC-only outage is refused, the window lags two days, trends follow demand ---
+
+def test_pull_live_flags_a_failed_gsc_call(monkeypatch):
+    import telemetry
+    monkeypatch.setattr(telemetry, "_ex", lambda slug, args: None if slug.startswith("GOOGLE_SEARCH_CONSOLE") else {"rows": []})
+    monkeypatch.setattr(demand.analytics_cross, "fetch_trends", lambda terms: {})
+    live = demand._pull_live(days=7)
+    assert live["gsc_pull_ok"] is False and live["gsc_query_rows"] == [] and live["ga4_pull_ok"] is True
+
+
+def test_pull_live_asks_for_the_completed_window_two_days_back(monkeypatch):
+    import telemetry
+    seen = {}
+    def fake_ex(slug, args):
+        seen.setdefault(slug, args)
+        return {"rows": []}
+    monkeypatch.setattr(telemetry, "_ex", fake_ex)
+    monkeypatch.setattr(demand.analytics_cross, "fetch_trends", lambda terms: {})
+    live = demand._pull_live(days=28)
+    S, E = telemetry.completed_window(28)
+    assert live["window"] == {"start": S, "end": E} and live["gsc_pull_ok"] is True
+    assert seen["GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY"]["endDate"] == E
+    assert seen["GOOGLE_ANALYTICS_RUN_REPORT"]["dateRanges"] == [{"startDate": S, "endDate": E}]
+    assert (dt.date.fromisoformat(E) - dt.date.fromisoformat(S)).days == 27
+
+
+def test_trends_get_the_five_terms_with_the_most_impressions_not_the_first_five_alphabetically(monkeypatch):
+    sent = {}
+    monkeypatch.setattr(demand.analytics_cross, "fetch_trends", lambda terms: sent.setdefault("terms", list(terms)) and {t: 50 for t in terms})
+    rows = [{"keys": [f"term {c}"], "impressions": imp} for c, imp in zip("abcdefg", (10, 900, 20, 800, 30, 700, 600))]
+    rows.append({"keys": ["Term B"], "impressions": 100})          # the same normalized term: impressions add up
+    got = demand._pull_trends(rows)
+    assert sent["terms"] == ["term b", "term d", "term f", "term g", "term e"]
+    assert got == {t: 50 for t in sent["terms"]}
+
+
+def test_a_snapshot_records_whether_gsc_answered(tmp_path):
+    p = demand.write_snapshot([], False, {"start": "2026-10-20", "end": "2026-11-16"}, "2026-11-18", tmp_path, gsc_pull_ok=False)
+    doc = json.loads(p.read_text())
+    assert doc["gsc_pull_ok"] is False
+    p = demand.write_snapshot([], False, {"start": "2026-10-20", "end": "2026-11-16"}, "2026-11-18", tmp_path)
+    assert json.loads(p.read_text())["gsc_pull_ok"] is True
