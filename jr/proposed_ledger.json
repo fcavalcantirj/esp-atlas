@@ -3760,7 +3760,7 @@
       "repo": "mcuw/esp32-template",
       "repo_id": 613261284,
       "status": "proposed",
-      "timestamp": "2026-11-18T08:00:31.492566+00:00"
+      "timestamp": "2026-11-18T09:00:32.863482+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -18294,6 +18294,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
     },
+    "repo-note:faytor/moon_phase_calculator": {
+      "expires": "2026-12-18T09:00:32.863482+00:00",
+      "id": "repo-note:faytor/moon_phase_calculator",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "faytor/moon_phase_calculator",
+      "status": "rejected",
+      "timestamp": "2026-11-18T09:00:32.863482+00:00"
+    },
     "repo-note:fberrez/quietdash.com": {
       "expires": "2026-12-17T23:00:31.883511+00:00",
       "id": "repo-note:fberrez/quietdash.com",
@@ -18537,6 +18546,24 @@
       "status": "rejected",
       "timestamp": "2026-11-17T11:00:31.753985+00:00"
     },
+    "repo-note:holyszewski/microhamclock": {
+      "expires": "2026-12-18T09:00:32.863482+00:00",
+      "id": "repo-note:holyszewski/microhamclock",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "holyszewski/microhamclock",
+      "status": "rejected",
+      "timestamp": "2026-11-18T09:00:32.863482+00:00"
+    },
+    "repo-note:hotwolf/lorameshnodes": {
+      "expires": "2026-12-18T09:00:32.863482+00:00",
+      "id": "repo-note:hotwolf/lorameshnodes",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "hotwolf/lorameshnodes",
+      "status": "rejected",
+      "timestamp": "2026-11-18T09:00:32.863482+00:00"
+    },
     "repo-note:hshin-git/gyrom5": {
       "expires": "2026-12-18T05:00:31.893243+00:00",
       "id": "repo-note:hshin-git/gyrom5",
@@ -18591,6 +18618,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T01:00:32.420498+00:00"
     },
+    "repo-note:iho77/heltec_eclipse_esp-idf": {
+      "expires": "2026-12-18T09:00:32.863482+00:00",
+      "id": "repo-note:iho77/heltec_eclipse_esp-idf",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "iho77/heltec_eclipse_esp-idf",
+      "status": "rejected",
+      "timestamp": "2026-11-18T09:00:32.863482+00:00"
+    },
     "repo-note:iho77/loratomqtt": {
       "expires": "2026-12-17T09:00:32.446822+00:00",
       "id": "repo-note:iho77/loratomqtt",
@@ -18626,6 +18662,15 @@
       "repo": "imshentastic/crumble",
       "status": "rejected",
       "timestamp": "2026-11-18T01:00:32.420498+00:00"
+    },
+    "repo-note:iz0kew/weatherstation2meshtastic": {
+      "expires": "2026-12-18T09:00:32.863482+00:00",
+      "id": "repo-note:iz0kew/weatherstation2meshtastic",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "iz0kew/weatherstation2meshtastic",
+      "status": "rejected",
+      "timestamp": "2026-11-18T09:00:32.863482+00:00"
     },
     "repo-note:james-mcshinsky/droid-beacon": {
       "expires": "2026-12-18T08:00:31.492566+00:00",
@@ -19140,6 +19185,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T10:00:32.143438+00:00"
     },
+    "repo-note:michtronics/axloratnc": {
+      "expires": "2026-12-18T09:00:32.863482+00:00",
+      "id": "repo-note:michtronics/axloratnc",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "michtronics/axloratnc",
+      "status": "rejected",
+      "timestamp": "2026-11-18T09:00:32.863482+00:00"
+    },
     "repo-note:micromkr/esp32-radio-internet-streamers": {
       "expires": "2026-12-18T03:00:33.620784+00:00",
       "id": "repo-note:micromkr/esp32-radio-internet-streamers",
@@ -19437,6 +19491,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T10:00:32.143438+00:00"
     },
+    "repo-note:phfbertoleti/placa_lorawan": {
+      "expires": "2026-12-18T09:00:32.863482+00:00",
+      "id": "repo-note:phfbertoleti/placa_lorawan",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "phfbertoleti/placa_lorawan",
+      "status": "rejected",
+      "timestamp": "2026-11-18T09:00:32.863482+00:00"
+    },
     "repo-note:pingequalab/sigroam-wardriving": {
       "expires": "2026-12-17T12:00:31.695549+00:00",
       "id": "repo-note:pingequalab/sigroam-wardriving",
@@ -19553,6 +19616,15 @@
       "repo": "retroelec/t-hmi-c64",
       "status": "rejected",
       "timestamp": "2026-11-17T07:00:32.097367+00:00"
+    },
+    "repo-note:rmh78/no2-measurement": {
+      "expires": "2026-12-18T09:00:32.863482+00:00",
+      "id": "repo-note:rmh78/no2-measurement",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "rmh78/no2-measurement",
+      "status": "rejected",
+      "timestamp": "2026-11-18T09:00:32.863482+00:00"
     },
     "repo-note:roblatour/esp32remoteforvictron": {
       "expires": "2026-12-18T07:00:31.406931+00:00",
@@ -20183,6 +20255,24 @@
       "repo": "vbart/meshcoretel-firmware",
       "status": "rejected",
       "timestamp": "2026-11-17T10:00:32.143438+00:00"
+    },
+    "repo-note:vhuynen/cubecell-ab01-lorawan-helium-mailbox-notifier": {
+      "expires": "2026-12-18T09:00:32.863482+00:00",
+      "id": "repo-note:vhuynen/cubecell-ab01-lorawan-helium-mailbox-notifier",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "vhuynen/cubecell-ab01-lorawan-helium-mailbox-notifier",
+      "status": "rejected",
+      "timestamp": "2026-11-18T09:00:32.863482+00:00"
+    },
+    "repo-note:vhuynen/cubecell-ab01-lorawan-helium-rain-gauge": {
+      "expires": "2026-12-18T09:00:32.863482+00:00",
+      "id": "repo-note:vhuynen/cubecell-ab01-lorawan-helium-rain-gauge",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "vhuynen/cubecell-ab01-lorawan-helium-rain-gauge",
+      "status": "rejected",
+      "timestamp": "2026-11-18T09:00:32.863482+00:00"
     },
     "repo-note:vincasmiliunas/esp32-arduino-tb6612fng": {
       "expires": "2026-12-17T04:00:31.831476+00:00",
@@ -23531,6 +23621,7 @@
     "fangbrbr/m5musictab5": "m5musictab5",
     "farouk15160/sentinelarm-6": "repo-note:farouk15160/sentinelarm-6",
     "fastled/fastled": "repo-note:fastled/fastled",
+    "faytor/moon_phase_calculator": "repo-note:faytor/moon_phase_calculator",
     "fberrez/quietdash.com": "repo-note:fberrez/quietdash.com",
     "fbiego/atom-watch": "atom-watch",
     "fbiego/chronos-navio": "chronos-navio",
@@ -23681,9 +23772,11 @@
     "hiroki-kawakami/tab5-uvc-display": "tab5-uvc-display",
     "hjgode/m5home": "m5home",
     "hn/bsh-home-appliances": "repo-note:hn/bsh-home-appliances",
+    "holyszewski/microhamclock": "repo-note:holyszewski/microhamclock",
     "homertrix/meshtastic-tdisplay-p4": "meshtastic-tdisplay-p4",
     "hongxin/m5paper-shizi": "m5paper-shizi",
     "horseyofcoursey/ember": "ember",
+    "hotwolf/lorameshnodes": "repo-note:hotwolf/lorameshnodes",
     "hougeai/xiaozhipro": "xiaozhipro",
     "hsbl-ko-gyo/hsbl-s100-01": "hsbl-s100-01",
     "hsbl-ko-gyo/hsbl-s101": "hsbl-s101",
@@ -23706,6 +23799,7 @@
     "iele/m5cardputer-c64-emulator": "m5cardputer-c64-emulator",
     "iele/m5papers3-nc1020-emu": "m5papers3-nc1020-emu",
     "igrikxd/wspr-beacon": "repo-note:igrikxd/wspr-beacon",
+    "iho77/heltec_eclipse_esp-idf": "repo-note:iho77/heltec_eclipse_esp-idf",
     "iho77/loratomqtt": "repo-note:iho77/loratomqtt",
     "iitazz/sticks3-plane-tracker": "sticks3-plane-tracker",
     "ikegee/cyd2usb_menu": "repo-note:ikegee/cyd2usb_menu",
@@ -23738,6 +23832,7 @@
     "isonimus/esp32-dragon-radar": "esp32-dragon-radar",
     "isonimus/wifi-sapper": "wifi-sapper",
     "itohio/fishfeeder": "fishfeeder",
+    "iz0kew/weatherstation2meshtastic": "repo-note:iz0kew/weatherstation2meshtastic",
     "j15marti/stackchan-gpt": "stackchan-gpt",
     "jabrena/juno": "juno",
     "jagoda/meshcadet": "meshcadet",
@@ -24854,6 +24949,7 @@
     "meshtastic/firmware": "meshtastic",
     "mhrsntrk/ask-master": "ask-master",
     "michaelrizn/hi5stack-m5stack-papsers3-m5papers3": "hi5stack-m5stack-papsers3-m5papers3",
+    "michtronics/axloratnc": "repo-note:michtronics/axloratnc",
     "micokonsep/flipcard-papers3": "flipcard-papers3",
     "micokonsep/pomodoro-papers3": "pomodoro-papers3",
     "microdev-steve/circuitpython_m5stickplus2": "circuitpython-m5stickplus2",
@@ -25023,6 +25119,7 @@
     "petsven/s3_decibel_meter": "s3-decibel-meter",
     "pfefferle/m5-atoms3-palnagotchi": "m5-atoms3-palnagotchi",
     "pfrankov/codex-microputer-adv": "codex-microputer-adv",
+    "phfbertoleti/placa_lorawan": "repo-note:phfbertoleti/placa_lorawan",
     "phillowcompiler/2048_m5stack": "2048-m5stack",
     "philmo6/meshpunk": "meshpunk",
     "philmo6/meshpunk-dev": "meshpunk-dev",
@@ -25098,6 +25195,7 @@
     "riviarammer/m5wsjtx": "m5wsjtx",
     "rlee203/cardputeros.git": "cardputeros",
     "rlee203/purple.git": "purple",
+    "rmh78/no2-measurement": "repo-note:rmh78/no2-measurement",
     "robertklofgren/cardelbrot": "cardelbrot",
     "roblatour/esp32remoteforvictron": "repo-note:roblatour/esp32remoteforvictron",
     "roblatour/esp32timeserver": "repo-note:roblatour/esp32timeserver",
@@ -25356,6 +25454,8 @@
     "varna9000/reticulum-tdeck": "reticulum-tdeck",
     "vbart/meshcoretel-firmware": "repo-note:vbart/meshcoretel-firmware",
     "vc1235-ui/vibe-cardputer": "vibe-cardputer",
+    "vhuynen/cubecell-ab01-lorawan-helium-mailbox-notifier": "repo-note:vhuynen/cubecell-ab01-lorawan-helium-mailbox-notifier",
+    "vhuynen/cubecell-ab01-lorawan-helium-rain-gauge": "repo-note:vhuynen/cubecell-ab01-lorawan-helium-rain-gauge",
     "vicliu624/cardputer_mp3_adv": "cardputer-mp3-adv",
     "vicliu624/trail-mate": "trail-mate",
     "vincasmiliunas/esp32-arduino-tb6612fng": "repo-note:vincasmiliunas/esp32-arduino-tb6612fng",
