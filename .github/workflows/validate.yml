@@ -107,6 +107,51 @@ jobs:
       - name: Check every cited source URL is still live
         run: python3 scripts/check_sources_live.py
 
+  quotes:
+    # Every quoted span in a record this PR adds or changes must appear verbatim on a page the record
+    # cites (scripts/check_quotes.py): the part of a human review that was still done by hand on
+    # 2026-11-17 (#1800), made mechanical so Jr's demand PRs can be judged by a machine. FAIL only when
+    # every cited page was readable and none holds the quote; an unreadable page is INCONCLUSIVE and
+    # never fails the job (the sources-live rule). Records untouched by the PR are never looked at.
+    # pypdf reads the cited datasheet PDFs; without it a PDF-only citation is inconclusive, not wrong.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # diffs against the PR's merge base
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install httpx pyyaml pypdf
+      - name: Install core (the check reads frontmatter with esp_atlas_core)
+        run: pip install -e apps/core
+      - name: Quoted text appears on a cited page (changed records only)
+        run: python3 scripts/check_quotes.py
+
+  demand-guard:
+    # A jr/research-<KEY> PR (Jr's demand work) changes exactly what its work item says: the queue
+    # candidate KEY linked to this PR and nothing else in the two demand files, the catalog records added
+    # are exactly its expected_ids with no forbidden sibling anywhere, and the demand files changed only
+    # in chore(demand): commits (scripts/demand_guard.py). The part of a demand PR's review that a human
+    # did by reading the JSON diff (2026-11-17, #1800), as a job. Other branches: not run.
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'jr/research-')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the diff and the commit subjects against the PR's merge base
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Install core (research_work reads the validation receipt)
+        run: pip install -e apps/core
+      - name: The PR changes exactly what its work item says
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: python3 scripts/demand_guard.py
+
   g2-guard:
     runs-on: ubuntu-latest
     steps:

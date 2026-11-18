@@ -57,9 +57,10 @@ that must be reproducible (board ranking, pin assignment, confidence gates).
   works. Stop: disable the timer on the runner, or set the repo variable `POPULARITY_RUNTIME_ENABLED=0`.
   Details and the unit sketch: `DEPLOY.md` "Hourly GitHub counts"; reader in `apps/api/README.md`.
 - **Demand → reviewed work → recorded outcome** (`SPEC-demand-work-consumer.md`, `SPEC-pam-discovery.md`).
-  The daily demand runner makes one pass per **source class**, search demand (GSC/GA4) then PAM market
-  leads, each with its own one-new-item-per-day slot (2026-11-08; a single shared slot had starved every
-  PAM lead). A reservation is a receipt in `docs/demand/work-receipts.json` and a deterministic branch
+  The daily demand runner makes one pass per **source class**, search demand (GSC/GA4), then PAM market
+  leads, then hygiene (2026-11-17: a record whose quoted text no cited page holds, from the daily
+  `docs/demand/quote-report.json` of `scripts/check_quotes.py`), each with its own one-new-item-per-day
+  slot (2026-11-08; a single shared slot had starved every PAM lead). A reservation is a receipt in `docs/demand/work-receipts.json` and a deterministic branch
   `jr/research-<key>`. The operator's coding delegate executes it from `docs/demand/EXECUTOR-PROMPT.md`;
   a relay step pushes the branch and opens the draft `jr-review` PR. After merge the runner verifies the
   deployed result itself: `catalog_search` (the exact public search of a bare SKU term) or

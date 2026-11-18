@@ -128,6 +128,57 @@ inference availability monitor. Implementation is not activation.
 - Preserve original GA4 source/window/counts and historical classification evidence.
   Do not generate fake production searches or analytics events to demonstrate flow.
 
+### Machine review of a demand PR (2026-11-17)
+
+The owner's review of a researched record was, in practice, three mechanical checks and a merge: the
+schema and the live citations (already CI), each quoted sentence appearing verbatim on a cited page
+(by hand), and the two demand files changed only through `jr/work_record.py` (by hand). The North
+star is that none of this needs a person, so each becomes a CI job a PR must pass:
+
+- **`quotes`** (`scripts/check_quotes.py`, pull requests only): every double-quoted span of at least
+  12 characters embedded in a changed record's frontmatter values (any field but `sources`) must appear
+  on at least one of the record's cited URLs, compared after the same normalization on both sides
+  (whitespace collapsed, curly quotes and dashes straightened, soft hyphens dropped, case folded; a
+  GitHub `blob` URL read raw, a PDF read with pypdf). PASS when a readable cited page holds it; FAIL
+  when every cited page was readable and none does; INCONCLUSIVE when a cited page could not be read
+  (timeout, bot wall, 429, 5xx, unparsable PDF) and no readable page holds it — the sources-live rule:
+  a server that will not answer is never evidence against a citation. Only FAIL fails the job. A YAML
+  scalar merely written with double quotes is not a quote (values are read after `yaml.safe_load`).
+- **`demand-guard`** (next): on a `jr/research-*` PR, the receipt named by `Demand work: <KEY>` is
+  `linked` to this PR and nothing else in the two demand files changed; the ids added under
+  `data/boards/**` are exactly its `expected_ids`, no `forbidden_id` appears in the diff, and the demand
+  files changed only in `chore(demand):` commits.
+- **Canary auto-merge** (after both): a `jr/research-*` PR with every required job green, `quotes` with
+  no FAIL and no INCONCLUSIVE on the new record, `jr/autonomy.json` `demand_automerge` true and the repo
+  variable `JR_DEMAND_AUTOMERGE` not `0`, is marked ready and merged at its exact head, at most one per
+  UTC day; the 11:15Z `catalog_part` verification stays the recorded outcome. INCONCLUSIVE re-checks
+  itself on the next run; a FAIL closes the PR with the quote named and the receipt goes back to the
+  executor for a re-research. A person audits after the fact and holds the kill switch; nobody waits
+  for one.
+
+### Hygiene: quote FAILs become work (class `hygiene`, 2026-11-17)
+
+A third source class beside search demand and PAM leads, with its own one-new-item-a-day slot and its
+own pass in the daily run (after PAM). Its source is `jr/quote_run.py`: in the run's worktree,
+`scripts/check_quotes.report` judges every catalog record's quoted spans against the pages it cites
+(pages fetched once, four at a time, inside a time budget) and lands the FAIL rows as
+`docs/demand/quote-report.json` — only when the rows changed, like the PAM state; `complete: false` when
+the budget ran out. The broker (`jr/demand_broker.intake`) turns each FAIL row of a COMPLETE report into
+one candidate: source `quote_check`, term `quote fix <id>`, key `fix-<sha256(record, report date)[:24]>`,
+provenance the row itself (`quote: {record, id, report_date, quotes, urls}`), no window, no metrics. A
+record with open quote work is never reserved twice; a later report that no longer lists a record leaves
+its open work to recover (the receipt carries the candidate snapshot, as PAM's does). The executor's path
+is `docs/demand/EXECUTOR-PROMPT.md` "Hygiene work": quote the page as written or drop the claim, touch
+only that record, `expected_ids` = the record's id, kind `catalog_quote`. Closure
+(`jr/demand_closure._catalog_quote_receipt`): at the merge, `git show <merge sha>:<record>` is re-checked
+by the same `check_quotes` rule through the closure's page getter; PASS (or no quoted text left)
+delivers, FAIL and INCONCLUSIVE stay pending and are recorded. An unreadable or absent report starts no
+hygiene work and says so; every fail-closed rule of the pair applies unchanged.
+
+Acceptance: `jr/test_research_work_hygiene.py`, `jr/test_hygiene_work_intake.py`,
+`jr/test_demand_closure_catalog_quote.py`, `jr/test_quote_run.py`, `jr/test_demand_run_hygiene.py`,
+`scripts/test_check_quotes.py` (the report).
+
 ### Verification must match the actual defect
 
 The validation receipt declares a verification kind. For missing catalog content
