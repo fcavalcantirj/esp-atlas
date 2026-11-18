@@ -42,6 +42,22 @@ the tick: a red CI wastes a tick PR but does not make the tick unsafe.
   commit range between them, both runner images (`Image:`/`Version:` lines of the job log), and the
   failing job's log cut to the failure block (at most 200 lines).
 
+### 1b. A silent lane is a break too (2026-11-17)
+
+Measured over the 160 tick PRs of 2026-11-10 → 11-17: backfill produced 0 in 160/160 ticks; a 51-tick
+zero streak across every lane (Nov 15 21Z → Nov 17 23Z) raised nothing but a Telegram line. The yield
+ledger (`SPEC-data-completion.md` "Yield") now says, each tick, whether a lane that had units produced
+over the stall window (`jr/steering.json`: `yield.stall_ticks` 24, `yield.topics_stall_ticks` 48). A lane
+silent over a full window is an incident of kind `stall` (`jr/ci_watch.stall_watch`, run after the
+stages): `check` = `stall:<lane>`, fingerprint = sha256 of the lane (one break = one incident while it is
+live; a recurrence after resolution gets the `-N` suffix), `evidence` = the lane's yield over the window,
+this tick's stage summaries and counters for the lane, the tick's reject counts. It enters the SAME store,
+`claim`, daily budget, `ack` halt and `jr-heal` review route as a red check; the delegate's prompt
+(`docs/ops/HEAL-PROMPT.md`, "When `check` starts with `stall:`") diagnoses from the yield rows first and
+either fixes the stage at the cause or writes the finding to `docs/incidents/<id>.md` when the cause is
+outside the code. The incident resolves when the lane produces again over the yield window
+(`Store.resolve_producing`). Nothing here may fill inventory: an LLM solves code problems, never records.
+
 ## 2. Known causes — handled in code, no model
 
 | Signal | Action |
@@ -123,6 +139,10 @@ weekly review).
 - **Offline, deterministic** (`jr/test_ci_watch.py`, fixtures from the 2026-11-12 runs):
   - six red tick PRs with the same failing nodeid give one fingerprint and one `open` record on the
     second red PR;
+  - (§1b, `jr/test_ci_watch_stall.py`, `jr/test_tick_dry_run.py`) a lane silent over the stall window is one
+    `open` stall incident with the tick's evidence, not a second one next tick; the lane producing again
+    resolves it and a later silence is `-2`; the launcher claims it like a CI incident; a dry run records
+    nothing; the first tick after merge (no rows) runs no stall watch;
   - one red PR with green main gives no incident;
   - `cancelled` gives one rerun and no incident, and two in a row give an incident;
   - different nodeids give different fingerprints;

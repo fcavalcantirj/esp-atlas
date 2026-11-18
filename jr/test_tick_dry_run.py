@@ -120,11 +120,11 @@ def offline(monkeypatch):
     monkeypatch.setattr(tools, "fetch_launcher_catalog", lambda *a, **k: [])
 
 
-def _run(dry_run: bool, git, tmp_path: Path, gh=None):
+def _run(dry_run: bool, git, tmp_path: Path, gh=None, stall_watcher=None):
     return tick.run_tick(dry_run=dry_run, git=git, gh=gh or gh_ok(), now=NOW, env={}, stages=None,
                          gauge=GAUGE, guard=GUARD_OK, notifier=None, snapshot=NO_SNAPSHOT,
                          demand=NO_DEMAND, budget=Budget(clock=lambda: 0.0),
-                         lock_path=tmp_path / "lock")
+                         lock_path=tmp_path / "lock", stall_watcher=stall_watcher)
 
 
 def test_dry_run_with_the_real_stages_leaves_the_checkout_byte_identical(tmp_path, monkeypatch, offline, capsys):
@@ -229,3 +229,38 @@ def test_a_dry_run_that_aborts_mid_stage_still_reports_its_strays_and_drops_the_
     assert r.aborted == "RuntimeError: boom"
     assert _fingerprint(checkout) == before
     assert ("data/half.json", "*") in {(w["path"], w["field"]) for w in r.would_write}
+
+
+def test_the_stall_watch_runs_only_once_the_ledger_holds_rows_and_gets_the_ticks_evidence(tmp_path, monkeypatch, offline):
+    """SPEC-jr-self-heal.md §1b: the first tick has no yield rows, so no stall watch; with a full silent window
+    the watcher gets the stall, the yields, this tick's stage summaries and rejects."""
+    import yield_ledger as yl
+    from datetime import timedelta
+    calls = []
+    def watcher(stall, yields, stages, rejects, now, dry_run):
+        calls.append({"stall": stall, "yields": yields, "stages": [s["name"] for s in stages], "dry_run": dry_run})
+        return {"status": "ok", "incidents": ["deadbeef0000"] if stall else [], "resolved": [], "nudges": []}
+    checkout = _checkout(tmp_path / "checkout")
+    monkeypatch.setattr(tick, "REPO", checkout)
+    wt = tmp_path / "wt"
+    shutil.copytree(checkout, wt)
+    monkeypatch.setattr(publish.tempfile, "mkdtemp", lambda prefix="": str(wt))
+    r = _run(False, git_ok(wt, diff=f"M\0{GROUNDABLE_MD}\0"), tmp_path, stall_watcher=watcher)
+    assert not r.aborted and calls == [] and r.stall_watch == {}          # no rows before this tick: nothing to judge
+    # a second checkout whose ledger says every lane was silent for 24 ticks
+    checkout2 = _checkout(tmp_path / "checkout2")
+    rows = []
+    for h in range(24, 0, -1):
+        rows += yl.rows_for_tick([{"name": n, "produced": 0, "paths": [], "counts": {}} for n in ("backfill", "admit", "boardmap", "admit_topics")],
+                                 {"backfill": 3, "firmware": 3}, NOW - timedelta(hours=h), units_topics=2)
+    yl.append_rows(checkout2 / "docs/telemetry/yield.jsonl", rows)
+    monkeypatch.setattr(tick, "REPO", checkout2)
+    wt2 = tmp_path / "wt2"
+    shutil.copytree(checkout2, wt2)
+    monkeypatch.setattr(publish.tempfile, "mkdtemp", lambda prefix="": str(wt2))
+    r = _run(False, git_ok(wt2, diff=f"M\0{GROUNDABLE_MD}\0"), tmp_path, stall_watcher=watcher)
+    assert not r.aborted, r.aborted
+    assert len(calls) == 1 and set(calls[0]["stall"]["lanes"]) >= {"firmware", "topics"} and calls[0]["dry_run"] is False
+    assert calls[0]["yields"]["ticks_in_window"] == 24 and "backfill" in calls[0]["stages"]
+    assert r.stall_watch["incidents"] == ["deadbeef0000"]
+    assert any("stall incident deadbeef0000" in w for w in r.warnings) and any(w.startswith("stall:") for w in r.warnings)

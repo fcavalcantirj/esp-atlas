@@ -95,6 +95,60 @@ class Verdict:
     last_green_sha: str | None = None
     green_image: str | None = None
     log_excerpt: str = ""
+    kind_detail: str = ""       # "ci" (a red required check) or "stall" (a lane that produced nothing, SPEC §1b)
+    evidence: dict = field(default_factory=dict)   # stall: the yield window, the lane's last stage summary and rejects
+
+
+# --- a stalled lane (SPEC-jr-self-heal.md §1b, 2026-11-17) ------------------------------------------------
+# The yield ledger (jr/yield_ledger.py) says a lane produced nothing over the stall window although it had
+# units every tick. That is a break outside any PR, like a red required check: the same store, the same
+# claim/ack/caps, the same heal branch and review route; the delegate's prompt branches on `check`.
+STALL_CHECK = "stall:"
+
+
+def stall_fingerprint(lane: str) -> str:
+    return hashlib.sha256(f"stall\n{lane}".encode()).hexdigest()
+
+
+def stall_verdicts(stall: dict | None, stages: list[dict] | None = None, rejects: dict | None = None) -> list[Verdict]:
+    """One incident Verdict per stalled lane named by the tick's `stall` ({lanes, stall_ticks, yields})."""
+    if not isinstance(stall, dict) or not stall.get("lanes"):
+        return []
+    names = {"backfill": ("backfill",), "firmware": ("admit", "boardmap"), "topics": ("admit_topics",)}
+    out = []
+    for lane in stall["lanes"]:
+        summaries = {s.get("name"): (s.get("summary") or "")[:400] for s in (stages or [])
+                     if s.get("name") in names.get(lane, (lane,))}
+        counts = {s.get("name"): dict(s.get("counts") or {}) for s in (stages or []) if s.get("name") in names.get(lane, (lane,))}
+        evidence = {"lane": lane, "stall_ticks": stall.get("stall_ticks"),
+                    "yield": (stall.get("yields") or {}).get(lane), "window": (stall.get("yields") or {}).get("ticks_in_window"),
+                    "stage_summaries": summaries, "stage_counts": counts, "tick_rejects": dict(rejects or {})}
+        out.append(Verdict(kind="incident", source="yield", check=f"{STALL_CHECK}{lane}", fingerprint=stall_fingerprint(lane),
+                           failed=f"{lane} produced nothing over {stall.get('stall_ticks')} ticks", kind_detail="stall",
+                           evidence=evidence))
+    return out
+
+
+def stall_watch(store: "Store", stall: dict | None, yields: dict | None, now: str, dry_run: bool = False,
+                stages: list[dict] | None = None, rejects: dict | None = None) -> dict:
+    """After the stages: record one incident per stalled lane (the store keeps one per fingerprint while it is
+    live) and resolve the stall incidents of every lane that produced over the window. Never raises."""
+    try:
+        verdicts = stall_verdicts(stall, stages, rejects)
+        producing = [lane for lane in ("backfill", "firmware", "topics")
+                     if int(((yields or {}).get(lane) or {}).get("produced") or 0) > 0]
+        if dry_run:
+            return {"status": "ok", "would": [f"record stall incident {v.check}" for v in verdicts]
+                    + [f"resolve stall:{lane}" for lane in producing]}
+        out = {"status": "ok", "incidents": [], "resolved": []}
+        for v in verdicts:
+            rec = store.record(v, now)
+            out["incidents"].append(rec["id"] if rec else f"{v.check} already open")
+        out["resolved"] = store.resolve_producing(producing, now)
+        out["nudges"] = store.nudges()
+        return out
+    except Exception as e:      # noqa: BLE001 — the tick must keep running whatever happens here
+        return {"status": "unavailable", "why": f"{type(e).__name__}: {e}"[:300]}
 
 
 # --- reading a job log ------------------------------------------------------------------------------
@@ -366,6 +420,19 @@ class Store:
         return closed
 
     @_exclusive
+    def resolve_producing(self, lanes: list[str], now: str) -> list[str]:
+        """Close every live stall incident of a lane that produced again over the yield window."""
+        checks = {f"{STALL_CHECK}{lane}" for lane in lanes}
+        data, closed = self._load(), []
+        for rec in data["incidents"].values():
+            if rec["state"] in LIVE and rec["context"].get("check") in checks:
+                rec.update(state="resolved", resolved_at=now)
+                closed.append(rec["id"])
+        if closed:
+            self._save(data)
+        return closed
+
+    @_exclusive
     def blind(self, why: str, now: str) -> list[str]:
         """Count one tick that could not see CI. The BLIND_AFTER-th in a row nudges, then at most once
         per UTC day while it lasts (2026-11-13: 23 silent `unavailable` ticks went unnoticed)."""
@@ -410,7 +477,12 @@ def _hours(start: str | None, now: str) -> float:
 
 def _nudge(rec: dict, auto: int) -> str:
     c, i = rec["context"], rec["id"]
-    what = f"{c.get('check')} red outside any PR ({c.get('failed') or c.get('error') or 'see log'})"
+    if str(c.get("check") or "").startswith(STALL_CHECK):
+        what = f"{c.get('failed') or c.get('check')} (yield {((c.get('evidence') or {}).get('yield') or {})})"
+        if rec["state"] == "resolved":
+            return f"✅ Jr stall {i} resolved: {str(c.get('check'))[len(STALL_CHECK):]} produced again over the yield window."
+    else:
+        what = f"{c.get('check')} red outside any PR ({c.get('failed') or c.get('error') or 'see log'})"
     return {
         "open": f"🔧 Jr CI incident {i}: {what}. The heal delegate gets it within the hour "
                 f"({auto}/{MAX_AUTO_WITHOUT_ACK} automatic dispatches used since a human last looked).",
