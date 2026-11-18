@@ -89,6 +89,22 @@ field list, types, and enums (not this doc, which will drift).
    (`python3 scripts/validate.py`) — a clean local run means a green PR check.
 5. **Open a PR** with your source links in the description.
 
+## What Jr does on its own (and what no agent may do)
+
+Jr is autonomous: demand and the data gauge choose the work, measured yield splits the hour between new
+boards, deepening existing boards and new firmware, and a stalled lane dispatches a coding agent. Humans
+hold kill switches and audit after the fact. The specs: `SPEC-espatlas-jr.md` (§3d steering, §3b sources),
+`SPEC-demand-work-consumer.md` (work items and their classes), `SPEC-jr-review-routing.md` (what merges
+by machine), `SPEC-jr-self-heal.md` (CI and stall incidents).
+
+**An LLM solves code problems; it never fills inventory.** If you are a model or a delegate working here:
+you may write a resolver, an extractor, a test, a fixture, a stage fix; you may author a brand-new board
+from primary sources only as the daily demand executor under `docs/demand/EXECUTOR-PROMPT.md`. You may not
+fill a missing field on an existing record by hand or from memory: that is a resolver's job, so the value
+is reproducible from the cited page every hour. A proposal that reads "fill field X on board Y" is wrong
+by construction; the right item is "write the resolver for vendor V × field X" (see `CLAUDE.md`, "North
+star"). Page demand may order data work; SEO text is the owner's.
+
 ## Demand work records (for the executor, human or delegate)
 
 The daily demand runner reserves work items (`docs/demand/work-receipts.json`, branch

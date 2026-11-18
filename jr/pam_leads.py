@@ -18,7 +18,7 @@ from urllib.parse import urlsplit
 
 
 ENDPOINTS = {name: f"https://pamfinds.com/api/{name}.json" for name in ("products", "specs")}
-MAX_BYTES = 524_288
+MAX_BYTES = 2_097_152        # 2 MiB; specs.json was 349 KiB on 2026-11-17, 67 % of the old 512 KiB cap
 MAX_PRODUCTS = 500
 TIMEOUT_SECONDS = 15
 VERSION = 1

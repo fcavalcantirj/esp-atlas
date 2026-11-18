@@ -503,6 +503,7 @@ def build_demand_items(
             "impressions": impressions or None, "clicks": clicks or None, "ctr": ctr, "position": position,
             "events": events or None, "zero_result": g["zero_result"] if events else None,
             "weight": weight,
+            "trends_interest": trends.get(term),      # the Trends score the weight carried, or None (auditable)
             "resolved": resolved_out,
             "gap": gap,
             "landing_page": g["landing_page"],
@@ -522,7 +523,14 @@ def _pull_trends(gsc_query_rows: list[dict]) -> dict[str, int]:
     keys line up exactly with `build_demand_items`'s `display_term`. `fetch_trends` itself never
     raises (degrades to `{}` on any pytrends/import/network failure); this wrapper adds one more
     layer of defense so a Trends outage can never take down `_pull_live()` / snapshot writing."""
-    terms = sorted({normalize_term(r["keys"][0]) for r in gsc_query_rows or [] if r.get("keys")})
+    # pytrends takes 5 terms a call: send the five with the most impressions (2026-11-18; before, the
+    # first five alphabetically), so the boost reaches the demand that matters and the choice is auditable.
+    by_term: dict[str, int] = {}
+    for r in gsc_query_rows or []:
+        if r.get("keys"):
+            t = normalize_term(r["keys"][0])
+            by_term[t] = by_term.get(t, 0) + int(r.get("impressions") or 0)
+    terms = sorted(by_term, key=lambda t: (-by_term[t], t))[:analytics_cross.TRENDS_KW_LIST_CAP]
     try:
         return analytics_cross.fetch_trends(terms)
     except Exception:
@@ -537,9 +545,9 @@ def _pull_live(days: int = WINDOW_DAYS) -> dict:
     this module; everything else (`build_demand_items` and everything it calls) is pure.
     Importing `telemetry` never requires a composio key/package (it builds the client on the first
     `_ex()` call), so `test_demand.py` stays fully offline, per SPEC Phase 1."""
-    end = dt.date.today()
-    start = end - dt.timedelta(days=days)
-    S, E = start.isoformat(), end.isoformat()
+    # The window ends two UTC days back, like the weekly digest (telemetry.completed_window): GSC and
+    # GA4 finish a day's rows about 48 h later, so a window ending today held partial last days (2026-11-18).
+    S, E = telemetry.completed_window(days)
 
     gsc_query = telemetry._ex("GOOGLE_SEARCH_CONSOLE_SEARCH_ANALYTICS_QUERY",
         {"siteUrl": telemetry.GSC_SITE, "startDate": S, "endDate": E,
@@ -562,6 +570,7 @@ def _pull_live(days: int = WINDOW_DAYS) -> dict:
         "gsc_query_page_rows": (gsc_query_page or {}).get("rows") or [],
         "ga4_searchterm_raw_rows": (ga4_searchterm or {}).get("rows") or [],
         "ga4_pull_ok": ga4_searchterm is not None,  # `_ex` returns None on a Composio failure
+        "gsc_pull_ok": gsc_query is not None,       # a GSC failure must never land a GA4-only steer (2026-11-18)
         "trends": _pull_trends(gsc_query_rows),
     }
 
@@ -587,14 +596,14 @@ def _prior_first_seen_map(prior_items: list[dict]) -> dict[str, str]:
 
 
 def write_snapshot(items: list[dict], d2_available: bool, window: dict,
-                   today: str | None = None, demand_dir: Path = DEMAND_DIR) -> Path:
+                   today: str | None = None, demand_dir: Path = DEMAND_DIR, gsc_pull_ok: bool = True) -> Path:
     """Git-tracked, auditable, diffable — `docs/demand/<date>.json` (§9)."""
     today = today or dt.date.today().isoformat()
     demand_dir.mkdir(parents=True, exist_ok=True)
     path = demand_dir / f"{today}.json"
     payload = {
         "date": today, "window": window, "weight_formula_version": WEIGHT_FORMULA_VERSION,
-        "d2_available": d2_available, "count": len(items), "items": items,
+        "d2_available": d2_available, "gsc_pull_ok": bool(gsc_pull_ok), "count": len(items), "items": items,
     }
     path.write_text(json.dumps(payload, indent=1))
     return path
@@ -691,7 +700,7 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
         today=today, prior_first_seen=prior_first_seen, part_ids=part_ids,
         trends=live.get("trends"), catalog=catalog,
     )
-    write_snapshot(items, d2_available, live["window"], today, demand_dir)
+    write_snapshot(items, d2_available, live["window"], today, demand_dir, gsc_pull_ok=live.get("gsc_pull_ok", True))
     write_unresolved(items, demand_dir)
     try:
         research_line, research = update_research_queue(ga4_raw, today, live["window"], demand_dir)
@@ -700,6 +709,8 @@ def mine(days: int = WINDOW_DAYS, send_telegram: bool = True, demand_dir: Path =
         research_line = f"🔴 research queue NOT updated: {research['error'][:160]}"
     digest = build_digest(items, d2_available, live["window"],
                           d2_pull_failed=not live.get("ga4_pull_ok", True)) + "\n" + research_line
+    if not live.get("gsc_pull_ok", True):
+        digest = "🔴 GSC blind: the Search Console pull failed — this snapshot carries no search demand and the runner will not land it\n" + digest
     if send_telegram:
         notify.send_telegram(digest)
     return {"items": items, "digest": digest, "d2_available": d2_available, "research": research}
