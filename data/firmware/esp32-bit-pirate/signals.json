@@ -1,7 +1,7 @@
 {
  "calls": 8,
  "errors": 0,
- "fetched": "2026-11-11",
+ "fetched": "2026-11-18",
  "notes": [],
  "ref": "pioarduino",
  "repo": "geo-tp/ESP32-Bit-Pirate",
@@ -11,6 +11,7 @@
    "heltec-wifi-lora-32-v3",
    "lilygo-t-display-s3",
    "m5cardputer",
+   "m5cardputer-adv",
    "m5stamp-s3",
    "um-pros3",
    "xiao-esp32s3"
@@ -39,8 +40,7 @@
    "esp32-s3-devkitc-1",
    "esp32-s3-devkitc1-n16r2",
    "esp32-s3-devkitc1-n16r8",
-   "esp32-s3-fh4r2",
-   "m5stack-stamps3"
+   "esp32-s3-fh4r2"
   ]
  },
  "signals": [

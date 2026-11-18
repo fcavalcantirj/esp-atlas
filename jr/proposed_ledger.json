@@ -303,13 +303,14 @@
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
     "ai-stackchan-ex": {
+      "expired_at": "2026-11-18T17:00:31.710557+00:00",
       "expires": "2026-11-18T16:01:00.079676+00:00",
       "id": "ai-stackchan-ex",
       "pr_ref": null,
       "reason": "name_token_matches_catalogued: likely a port/variant",
       "repo": "ronron-gh/ai_stackchan_ex",
       "repo_id": 906883136,
-      "status": "rejected",
+      "status": "expired",
       "timestamp": "2026-10-19T16:01:00.079676+00:00"
     },
     "ai-stackchan-minimal": {
@@ -3779,7 +3780,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-18T16:00:32.097075+00:00"
+      "timestamp": "2026-11-18T17:00:31.710557+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -13265,14 +13266,14 @@
       "timestamp": "2026-11-15T16:00:31.979974+00:00"
     },
     "m5cardputer-c64-emulator": {
-      "expires": "2026-11-18T16:01:00.079676+00:00",
+      "expires": "2026-12-18T17:00:31.710557+00:00",
       "id": "m5cardputer-c64-emulator",
       "pr_ref": null,
       "reason": "noise_non_firmware: name matches a game/emulator/platform token",
       "repo": "iele/m5cardputer-c64-emulator",
       "repo_id": 824837911,
       "status": "rejected",
-      "timestamp": "2026-10-19T16:01:00.079676+00:00"
+      "timestamp": "2026-11-18T17:00:31.710557+00:00"
     },
     "m5cardputer-chat-with-gemini-api": {
       "id": "m5cardputer-chat-with-gemini-api",
