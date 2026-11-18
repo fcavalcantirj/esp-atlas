@@ -1,20 +1,18 @@
 {
  "calls": 5,
  "errors": 0,
- "fetched": "2026-11-11",
+ "fetched": "2026-11-18",
  "notes": [],
  "ref": "main",
  "repo": "y88huang/claude-desktop-buddy-cardputer",
  "resolved": {
   "boards": [
+   "m5cardputer-adv",
    "m5stick-cplus"
   ],
-  "socs": [
-   "esp32-s3"
-  ],
+  "socs": [],
   "unresolved": [
-   "claude-buddy-cardputer",
-   "m5stack-stamps3"
+   "claude-buddy-cardputer"
   ]
  },
  "signals": [
