@@ -353,6 +353,46 @@ def _triage_tick_prs(gh, prs: list, now: datetime, hours: float) -> tuple[list, 
     return superseded, stuck
 
 
+def work_audit(receipts_path: Path) -> dict:
+    """{class: {state: count}} over main's demand receipts (jr/research_work.class_of); {} without a file."""
+    import research_work as rw
+    if not Path(receipts_path).is_file():
+        return {}
+    doc = json.loads(Path(receipts_path).read_text(encoding="utf-8"))
+    out: dict = {}
+    for rec in doc.get("receipts") or []:
+        if not isinstance(rec, dict):
+            continue
+        cls = rw.class_of(rec.get("source"))
+        state = str(rec.get("state") or "?")
+        out.setdefault(cls, {})
+        out[cls][state] = out[cls].get(state, 0) + 1
+    return out
+
+
+def default_stall_watcher(stall: dict | None, yields: dict | None, stages: list, rejects: dict, now: datetime,
+                          dry_run: bool) -> dict:
+    """The stall watch (SPEC-jr-self-heal.md §1b): the same runner-local incident store as the CI watch."""
+    state = Path(os.environ["JR_HEAL_STATE"]) if os.environ.get("JR_HEAL_STATE") else ci_watch.DEFAULT_STATE
+    return ci_watch.stall_watch(ci_watch.Store(state), stall, yields, now.isoformat(), dry_run=dry_run,
+                                stages=stages, rejects=rejects)
+
+
+def _note_stall_watch(r: report.TickReport) -> None:
+    w = r.stall_watch
+    if not w:
+        return
+    if w.get("status") != "ok":
+        r.warnings.append(f"stall watch unavailable: {w.get('why')}")
+        return
+    for i in w.get("incidents") or []:
+        r.warnings.append(f"stall incident {i}: a lane produced nothing over the stall window; the heal delegate gets it")
+    for would in w.get("would") or []:
+        r.warnings.append(f"would {would}")
+    for i in w.get("resolved") or []:
+        r.warnings.append(f"stall incident {i} resolved")
+
+
 def default_ci_watcher(gh, slug: str, now: datetime, dry_run: bool) -> dict:
     """The hourly CI watch: incidents go to the runner-local store (JR_HEAL_STATE overrides)."""
     state = Path(os.environ["JR_HEAL_STATE"]) if os.environ.get("JR_HEAL_STATE") else ci_watch.DEFAULT_STATE
@@ -603,6 +643,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              auto_merge: bool = True, lock_path: Path | None = None,
              review_cap: int = review_routing.MAX_OPEN_REVIEW_PRS,
              ci_watcher: Callable | None = None,
+             stall_watcher: Callable | None = None,
              admit_watcher: Callable | None = None,
              refresher: Callable | None = None) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
@@ -853,6 +894,20 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                                          "value": None})
             except Exception as e:  # noqa: BLE001
                 r.warnings.append(f"yield ledger write failed: {type(e).__name__}: {e}")
+            # 6d. the audit block's demand-work counts (SPEC-espatlas-jr.md §3d rule 5): receipts by class/state
+            try:
+                r.work_audit = work_audit(root / "docs" / "demand" / "work-receipts.json")
+            except Exception as e:  # noqa: BLE001
+                r.warnings.append(f"work audit unavailable: {type(e).__name__}: {e}")
+            # 6c. stall watch (SPEC-jr-self-heal.md §1b): a lane silent over the stall window is an incident
+            #     for the heal delegate, with this tick's stage summaries as evidence; a lane producing again
+            #     resolves its incident. Never aborts the tick.
+            if stall_watcher is not None and (r.stall or (r.yields and r.yields.get("ticks_in_window"))):
+                try:
+                    r.stall_watch = stall_watcher(r.stall, r.yields, r.stages, r.rejects, now, dry_run) or {}
+                except Exception as e:  # noqa: BLE001
+                    r.stall_watch = {"status": "unavailable", "why": f"{type(e).__name__}: {e}"}
+                _note_stall_watch(r)
 
         # 7. guard once (data writes only), 8. publish — when a stage wrote OR memory changed;
         #    a ledger-only tick still ships, or every reconciliation would die with the worktree.
@@ -920,7 +975,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
             pass
     if telegram and not dry_run and notifier is not None:
-        for nudge in ((r.ci_watch or {}).get("nudges") or []) + ((r.admit_progress or {}).get("nudges") or []):
+        for nudge in ((r.ci_watch or {}).get("nudges") or []) + ((r.stall_watch or {}).get("nudges") or []) + ((r.admit_progress or {}).get("nudges") or []):
             try:
                 notifier(nudge)
             except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
@@ -974,7 +1029,7 @@ def main(argv=None) -> int:
                  budget=Budget(max_calls=args.max_calls, max_seconds=args.max_seconds),
                  stages=stages_for(args.track, args.budget, only), auto_merge=not args.no_auto_merge,
                  lock_path=Path(os.environ["JR_TICK_LOCK"]) if os.environ.get("JR_TICK_LOCK") else None,
-                 ci_watcher=default_ci_watcher, admit_watcher=default_admit_watcher,
+                 ci_watcher=default_ci_watcher, stall_watcher=default_stall_watcher, admit_watcher=default_admit_watcher,
                  refresher=review_refresh.refresh)
     return 1 if r.aborted else 0
 
