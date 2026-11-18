@@ -52,6 +52,7 @@ export type EventName =
   | "flash_handoff"
   | "flash_consent"
   | "flash_connect"
+  | "flash_outcome"
   // Above-the-fold board-page CTA that jumps to #board-firmware (see BoardFlashCta) --
   // distinct from flash_open (fired per-recipe by FlashAction further down the page).
   | "board_flash_cta_click"
