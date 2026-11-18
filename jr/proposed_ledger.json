@@ -3779,7 +3779,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-18T15:00:31.763832+00:00"
+      "timestamp": "2026-11-18T16:00:32.097075+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -18097,6 +18097,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T03:00:33.620784+00:00"
     },
+    "repo-note:bradmb/knoblin": {
+      "expires": "2026-12-18T16:00:32.097075+00:00",
+      "id": "repo-note:bradmb/knoblin",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "bradmb/knoblin",
+      "status": "rejected",
+      "timestamp": "2026-11-18T16:00:32.097075+00:00"
+    },
     "repo-note:byjaps/esp32-max35-tv": {
       "expires": "2026-12-18T14:00:31.448865+00:00",
       "id": "repo-note:byjaps/esp32-max35-tv",
@@ -18348,6 +18357,15 @@
       "repo": "derpyspike/jentastic",
       "status": "rejected",
       "timestamp": "2026-11-18T10:00:31.757324+00:00"
+    },
+    "repo-note:devmicrocore/fos": {
+      "expires": "2026-12-18T16:00:32.097075+00:00",
+      "id": "repo-note:devmicrocore/fos",
+      "pr_ref": null,
+      "reason": "stopword_name: 'fOS' names a radio, not a firmware",
+      "repo": "devmicrocore/fos",
+      "status": "rejected",
+      "timestamp": "2026-11-18T16:00:32.097075+00:00"
     },
     "repo-note:djsime1/awesome-flipperzero": {
       "expires": "2026-12-17T13:00:31.835731+00:00",
@@ -18691,6 +18709,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T21:00:31.805157+00:00"
     },
+    "repo-note:grimmnorth/departure-board": {
+      "expires": "2026-12-18T16:00:32.097075+00:00",
+      "id": "repo-note:grimmnorth/departure-board",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "grimmnorth/departure-board",
+      "status": "rejected",
+      "timestamp": "2026-11-18T16:00:32.097075+00:00"
+    },
     "repo-note:gsurma/jetson": {
       "expires": "2026-12-17T23:00:31.883511+00:00",
       "id": "repo-note:gsurma/jetson",
@@ -18807,6 +18834,15 @@
       "repo": "hn/bsh-home-appliances",
       "status": "rejected",
       "timestamp": "2026-11-17T11:00:31.753985+00:00"
+    },
+    "repo-note:hogu-dev/diy-wol-panel-esp32": {
+      "expires": "2026-12-18T16:00:32.097075+00:00",
+      "id": "repo-note:hogu-dev/diy-wol-panel-esp32",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "hogu-dev/diy-wol-panel-esp32",
+      "status": "rejected",
+      "timestamp": "2026-11-18T16:00:32.097075+00:00"
     },
     "repo-note:holyszewski/microhamclock": {
       "expires": "2026-12-18T09:00:32.863482+00:00",
@@ -19131,6 +19167,15 @@
       "repo": "khoih-prog/espasync_wifimanager",
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
+    },
+    "repo-note:kiwibryn/fieldgateway.lora.netduinoclient": {
+      "expires": "2026-12-18T16:00:32.097075+00:00",
+      "id": "repo-note:kiwibryn/fieldgateway.lora.netduinoclient",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "kiwibryn/fieldgateway.lora.netduinoclient",
+      "status": "rejected",
+      "timestamp": "2026-11-18T16:00:32.097075+00:00"
     },
     "repo-note:kiwibryn/rfm9xlora-net": {
       "expires": "2027-02-15T16:00:31.699892+00:00",
@@ -19690,6 +19735,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T01:00:32.420498+00:00"
     },
+    "repo-note:ndom91/crowpanel-homelab-dashboard": {
+      "expires": "2026-12-18T16:00:32.097075+00:00",
+      "id": "repo-note:ndom91/crowpanel-homelab-dashboard",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "ndom91/crowpanel-homelab-dashboard",
+      "status": "rejected",
+      "timestamp": "2026-11-18T16:00:32.097075+00:00"
+    },
     "repo-note:nerdlang/nerd": {
       "expires": "2026-12-18T15:00:31.763832+00:00",
       "id": "repo-note:nerdlang/nerd",
@@ -19906,6 +19960,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T16:00:31.699892+00:00"
     },
+    "repo-note:papercodein/elecrow-coin-collector": {
+      "expires": "2026-12-18T16:00:32.097075+00:00",
+      "id": "repo-note:papercodein/elecrow-coin-collector",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "papercodein/elecrow-coin-collector",
+      "status": "rejected",
+      "timestamp": "2026-11-18T16:00:32.097075+00:00"
+    },
     "repo-note:pelgraine/meck": {
       "expires": "2026-12-17T10:00:32.143438+00:00",
       "id": "repo-note:pelgraine/meck",
@@ -20077,6 +20140,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T10:00:31.757324+00:00"
     },
+    "repo-note:reinhardjesolowitz24/esp32-shelly-zendure-monitor": {
+      "expires": "2026-12-18T16:00:32.097075+00:00",
+      "id": "repo-note:reinhardjesolowitz24/esp32-shelly-zendure-monitor",
+      "pr_ref": null,
+      "reason": "chip_family_mismatch: repo names ['esp32-s3'], but board 'm5stack-core2' is esp32",
+      "repo": "reinhardjesolowitz24/esp32-shelly-zendure-monitor",
+      "status": "rejected",
+      "timestamp": "2026-11-18T16:00:32.097075+00:00"
+    },
     "repo-note:remixer-dec/m5stack_experiments": {
       "expires": "2026-12-18T05:00:31.893243+00:00",
       "id": "repo-note:remixer-dec/m5stack_experiments",
@@ -20157,6 +20229,15 @@
       "repo": "roman885-85/potuzhne-radio-es3c35p",
       "status": "rejected",
       "timestamp": "2026-11-17T20:00:31.733970+00:00"
+    },
+    "repo-note:rowanseymour/crowtides": {
+      "expires": "2026-12-18T16:00:32.097075+00:00",
+      "id": "repo-note:rowanseymour/crowtides",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "rowanseymour/crowtides",
+      "status": "rejected",
+      "timestamp": "2026-11-18T16:00:32.097075+00:00"
     },
     "repo-note:russhughes/st7789_mpy": {
       "expires": "2026-12-17T08:00:31.747262+00:00",
@@ -20859,6 +20940,15 @@
       "repo": "vnovikov-f028/twin-void",
       "status": "rejected",
       "timestamp": "2026-11-17T08:00:31.747262+00:00"
+    },
+    "repo-note:voidrot/3d-designs": {
+      "expires": "2026-12-18T16:00:32.097075+00:00",
+      "id": "repo-note:voidrot/3d-designs",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "voidrot/3d-designs",
+      "status": "rejected",
+      "timestamp": "2026-11-18T16:00:32.097075+00:00"
     },
     "repo-note:wadadawadada/blackbox_node": {
       "expires": "2026-12-17T07:00:32.097367+00:00",
@@ -23964,6 +24054,7 @@
     "boumedinebillal/yolo26n_esp": "repo-note:boumedinebillal/yolo26n_esp",
     "bpivk/20questions": "20questions",
     "bpivk/m5-ssh-wireguard": "m5-ssh-wireguard",
+    "bradmb/knoblin": "repo-note:bradmb/knoblin",
     "bradmcnally/beepbotdx": "beepbotdx",
     "bradmcnally/bitmap16dx": "bitmap16dx",
     "brian-sheldon/emu-sys": "emu-sys",
@@ -24157,6 +24248,7 @@
     "destillegast/m5cardputer-hid-tools": "m5cardputer-hid-tools",
     "devedale/marauder_csi_stickc_plus2": "marauder-csi-stickc-plus2",
     "devinwatson/cardputer-adv-gps-info": "cardputer-adv-gps-info",
+    "devmicrocore/fos": "repo-note:devmicrocore/fos",
     "devsur11/klipper-printercontroller-for-m5sticks3": "klipper-printercontroller-for-m5sticks3",
     "devsur11/m5gotchi": "m5gotchi",
     "devsur11/m5tracker": "m5tracker",
@@ -24340,6 +24432,7 @@
     "gremlin1987/cardputer-ballistic-calculator": "cardputer-ballistic-calculator",
     "gridgrad/advaita": "advaita",
     "griffithsb/m5stack-webcam": "m5stack-webcam",
+    "grimmnorth/departure-board": "repo-note:grimmnorth/departure-board",
     "grvmind/xiaozhi-cardputer": "xiaozhi-cardputer",
     "gsurma/jetson": "repo-note:gsurma/jetson",
     "gurugio/lowlevelprogramming-university": "repo-note:gurugio/lowlevelprogramming-university",
@@ -24401,6 +24494,7 @@
     "hiroki-kawakami/tab5-uvc-display": "tab5-uvc-display",
     "hjgode/m5home": "m5home",
     "hn/bsh-home-appliances": "repo-note:hn/bsh-home-appliances",
+    "hogu-dev/diy-wol-panel-esp32": "repo-note:hogu-dev/diy-wol-panel-esp32",
     "holyszewski/microhamclock": "repo-note:holyszewski/microhamclock",
     "homertrix/meshtastic-tdisplay-p4": "meshtastic-tdisplay-p4",
     "hongxin/m5paper-shizi": "m5paper-shizi",
@@ -24561,6 +24655,7 @@
     "kion85/keyboard-stick": "keyboard-stick",
     "kirosapm8120/spacewar-m5stickc-plus2": "spacewar-m5stickc-plus2",
     "kisaragi-mochi/stackchan-mcp": "stackchan-mcp",
+    "kiwibryn/fieldgateway.lora.netduinoclient": "repo-note:kiwibryn/fieldgateway.lora.netduinoclient",
     "kiwibryn/rfm9xlora-net": "repo-note:kiwibryn/rfm9xlora-net",
     "kiwibryn/rfm9xlora-netmf": "repo-note:kiwibryn/rfm9xlora-netmf",
     "kiwibryn/rfm9xlora-tinyclr": "repo-note:kiwibryn/rfm9xlora-tinyclr",
@@ -25668,6 +25763,7 @@
     "narstybits/macos-duckyscripts": "repo-note:narstybits/macos-duckyscripts",
     "narukara/std-training-zh-cn": "repo-note:narukara/std-training-zh-cn",
     "nasonliu/papers3-weread": "papers3-weread",
+    "ndom91/crowpanel-homelab-dashboard": "repo-note:ndom91/crowpanel-homelab-dashboard",
     "negawatt": "negawatt",
     "nerdlang/nerd": "repo-note:nerdlang/nerd",
     "neryjah-del/brucer-lite-esp32doit": "brucer-lite-esp32doit",
@@ -25756,6 +25852,7 @@
     "panpanweijie/cardputer-adv-pocket-market.git": "cardputer-adv-pocket-market",
     "panpanweijie/cardputer-adv-sport-companion.git": "cardputer-adv-sport-companion",
     "papercodein/elecrow": "repo-note:papercodein/elecrow",
+    "papercodein/elecrow-coin-collector": "repo-note:papercodein/elecrow-coin-collector",
     "pavelprosto94/christmas_tree_clock": "christmas-tree-clock",
     "pavelprosto94/space_clock": "space-clock",
     "pawneemilitia/infiltra-firmware": "infiltra-firmware",
@@ -25836,6 +25933,7 @@
     "rebelthor/warble": "warble",
     "recrof/nrf_dfu_py": "repo-note:recrof/nrf_dfu_py",
     "redredred777/cinevocab": "cinevocab",
+    "reinhardjesolowitz24/esp32-shelly-zendure-monitor": "repo-note:reinhardjesolowitz24/esp32-shelly-zendure-monitor",
     "remixer-dec/m5stack_experiments": "repo-note:remixer-dec/m5stack_experiments",
     "renbrant/meshcrossway": "repo-note:renbrant/meshcrossway",
     "rennancockles/m5-amiibolink": "m5-amiibolink",
@@ -25871,6 +25969,7 @@
     "roman885-85/potuzhne-radio-es3c35p": "repo-note:roman885-85/potuzhne-radio-es3c35p",
     "ronron-gh/ai_stackchan2_devcam": "ai-stackchan2-devcam",
     "ronron-gh/ai_stackchan_ex": "ai-stackchan-ex",
+    "rowanseymour/crowtides": "repo-note:rowanseymour/crowtides",
     "rubio473/mantishid-msc": "mantishid-msc",
     "runaque/adv_wardriver": "adv-wardriver",
     "russhughes/st7789_mpy": "repo-note:russhughes/st7789_mpy",
@@ -26132,6 +26231,7 @@
     "vlastimilcerveny34/guitar-audio-tools": "guitar-audio-tools",
     "vnovikov-f028/twin-void": "repo-note:vnovikov-f028/twin-void",
     "voidnoi/badcard": "badcard",
+    "voidrot/3d-designs": "repo-note:voidrot/3d-designs",
     "volos-tv-remote": "volos-tv-remote",
     "volosr/cardputer": "cardputer",
     "volosr/cardsaber": "cardsaber",
