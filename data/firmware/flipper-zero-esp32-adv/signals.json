@@ -1,7 +1,7 @@
 {
  "calls": 8,
  "errors": 0,
- "fetched": "2026-11-10",
+ "fetched": "2026-11-17",
  "notes": [],
  "ref": "main",
  "repo": "Sor3nt/Flipper-Zero-ESP32-Port",
@@ -16,10 +16,13 @@
   "unresolved": [
    "16MB",
    "8MB",
+   "build_fatalcore",
    "build_s3",
    "build_t_embed",
    "build_waveshare_c6",
+   "fatalcore",
    "flipper-esp32s3-generic",
+   "flipper-fatalcore",
    "flipper-lilygo-t-embed-cc1101",
    "flipper-waveshare-c6-1.9",
    "furi_esp32",
@@ -205,6 +208,39 @@
    "rank": 3,
    "soc": null,
    "token": "8MB",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "fatalcore",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "build_fatalcore",
+   "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
+  },
+  {
+   "extra": {
+    "workflow": ".github/workflows/build.yml"
+   },
+   "kind": "ci",
+   "line": null,
+   "rank": 3,
+   "soc": null,
+   "token": "flipper-fatalcore",
    "url": "https://github.com/Sor3nt/Flipper-Zero-ESP32-Port/blob/main/.github/workflows/build.yml"
   },
   {

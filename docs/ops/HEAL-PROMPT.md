@@ -56,3 +56,31 @@ public); the launcher supplies the checkout, the branch and the incident file.
    posts it for review. Review and merge belong to an independent reviewer. Never run Jr's tick,
    drain or demand runner, and never mark the incident resolved yourself: the tick does that when
    the check is green on main and on the next tick PR.
+
+## When `INCIDENT.context.check` starts with `stall:` (a lane that produced nothing)
+
+The break is not a red check: `INCIDENT.context.evidence` says a Jr lane (`backfill`, `firmware` =
+admit + boardmap, or `topics`) had units every tick and produced nothing over the stall window
+(`SPEC-jr-self-heal.md` §1b). The evidence carries the lane's yield over the window, this tick's stage
+summaries and counters for that lane (e.g. `backfilled 0, skipped 0, cooling 84`), and the tick's reject
+counts (`already_catalogued`, `skipped_scoring`, …). Steps 1–7 above hold with these readings:
+
+1. **Evidence** is `docs/telemetry/yield.jsonl` (the lane's rows over the window), the stage summaries in
+   the evidence and in the last tick PR bodies (`gh pr list --search "head:jr/tick-"`), and the stage's
+   code (`jr/stage_backfill.py`, `jr/stage_admit.py`, `jr/stage_boardmap.py`, `jr/stage_admit_topics.py`,
+   `jr/drain.py`, `jr/scorer.py`). There is no green/red diff: compare the last tick in which the lane
+   produced with the first silent one (`git log` of `docs/telemetry/yield.jsonl` and the tick PRs).
+2. **Root cause** candidates you must measure, not guess: the worklist is exhausted or cooling (every
+   board of the lane's vendors on cooldown, every launcher repo decided), the source dried up (a topic
+   search or catalog answering nothing), the scorer rejects everything (`skipped_scoring`, a vocabulary
+   gap: `jr/board_names.py`), the budget is cut before the stage runs, or a bug. Name it MEASURED/INFERRED.
+3. **Fix at the cause, within the same limits** (no `data/**`, no `docs/demand/**`, no test deletion or
+   widening, at most 300 lines). A stage that correctly has nothing to do (cause outside the code: the
+   vendor's docs gone, the launcher pool drained) is not fixed by code: write the finding instead as
+   `docs/incidents/<INCIDENT id>.md` (MEASURED/INFERRED, what would change it, e.g. a resolver work item
+   for the vendor, a new topic seed) and commit that alone. **Never fill a catalog field, author a record
+   or widen a scorer to accept what it cannot verify**: an LLM solves code problems here, never inventory
+   (`CLAUDE.md`, "North star").
+4. **Prove it** with the stage's tests and, where the host can, a dry run of the tick
+   (`python3 jr/tick.py --dry-run`): the would-write list must show the lane producing.
+5. The incident resolves itself when the lane produces again over the yield window; never mark it.

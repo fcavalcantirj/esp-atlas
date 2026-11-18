@@ -47,6 +47,8 @@ LOG_EXCERPT_LINES = 200
 TICK_BRANCH = "jr/tick-"
 HEAL_BRANCH = "jr/heal-"
 DEFAULT_STATE = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local" / "state") / "espatlas-jr" / "heal-incidents.json"
+AUTONOMY_PATH = Path(__file__).resolve().parent / "autonomy.json"   # jr/autonomy.json, the reviewed switches
+STALL_FLAG, STALL_VARIABLE = "stall_dispatch", "JR_STALL_DISPATCH"
 BLIND_AFTER = 3          # consecutive `unavailable` ticks before the owner is told the watch is blind
 
 _STAMP = re.compile(r"^﻿?\d{4}-\d\d-\d\dT[\d:.]+Z ?")
@@ -95,6 +97,60 @@ class Verdict:
     last_green_sha: str | None = None
     green_image: str | None = None
     log_excerpt: str = ""
+    kind_detail: str = ""       # "ci" (a red required check) or "stall" (a lane that produced nothing, SPEC §1b)
+    evidence: dict = field(default_factory=dict)   # stall: the yield window, the lane's last stage summary and rejects
+
+
+# --- a stalled lane (SPEC-jr-self-heal.md §1b, 2026-11-17) ------------------------------------------------
+# The yield ledger (jr/yield_ledger.py) says a lane produced nothing over the stall window although it had
+# units every tick. That is a break outside any PR, like a red required check: the same store, the same
+# claim/ack/caps, the same heal branch and review route; the delegate's prompt branches on `check`.
+STALL_CHECK = "stall:"
+
+
+def stall_fingerprint(lane: str) -> str:
+    return hashlib.sha256(f"stall\n{lane}".encode()).hexdigest()
+
+
+def stall_verdicts(stall: dict | None, stages: list[dict] | None = None, rejects: dict | None = None) -> list[Verdict]:
+    """One incident Verdict per stalled lane named by the tick's `stall` ({lanes, stall_ticks, yields})."""
+    if not isinstance(stall, dict) or not stall.get("lanes"):
+        return []
+    names = {"backfill": ("backfill",), "firmware": ("admit", "boardmap"), "topics": ("admit_topics",)}
+    out = []
+    for lane in stall["lanes"]:
+        summaries = {s.get("name"): (s.get("summary") or "")[:400] for s in (stages or [])
+                     if s.get("name") in names.get(lane, (lane,))}
+        counts = {s.get("name"): dict(s.get("counts") or {}) for s in (stages or []) if s.get("name") in names.get(lane, (lane,))}
+        evidence = {"lane": lane, "stall_ticks": stall.get("stall_ticks"),
+                    "yield": (stall.get("yields") or {}).get(lane), "window": (stall.get("yields") or {}).get("ticks_in_window"),
+                    "stage_summaries": summaries, "stage_counts": counts, "tick_rejects": dict(rejects or {})}
+        out.append(Verdict(kind="incident", source="yield", check=f"{STALL_CHECK}{lane}", fingerprint=stall_fingerprint(lane),
+                           failed=f"{lane} produced nothing over {stall.get('stall_ticks')} ticks", kind_detail="stall",
+                           evidence=evidence))
+    return out
+
+
+def stall_watch(store: "Store", stall: dict | None, yields: dict | None, now: str, dry_run: bool = False,
+                stages: list[dict] | None = None, rejects: dict | None = None) -> dict:
+    """After the stages: record one incident per stalled lane (the store keeps one per fingerprint while it is
+    live) and resolve the stall incidents of every lane that produced over the window. Never raises."""
+    try:
+        verdicts = stall_verdicts(stall, stages, rejects)
+        producing = [lane for lane in ("backfill", "firmware", "topics")
+                     if int(((yields or {}).get(lane) or {}).get("produced") or 0) > 0]
+        if dry_run:
+            return {"status": "ok", "would": [f"record stall incident {v.check}" for v in verdicts]
+                    + [f"resolve stall:{lane}" for lane in producing]}
+        out = {"status": "ok", "incidents": [], "resolved": []}
+        for v in verdicts:
+            rec = store.record(v, now)
+            out["incidents"].append(rec["id"] if rec else f"{v.check} already open")
+        out["resolved"] = store.resolve_producing(producing, now)
+        out["nudges"] = store.nudges()
+        return out
+    except Exception as e:      # noqa: BLE001 — the tick must keep running whatever happens here
+        return {"status": "unavailable", "why": f"{type(e).__name__}: {e}"[:300]}
 
 
 # --- reading a job log ------------------------------------------------------------------------------
@@ -289,10 +345,14 @@ class Store:
         return rec
 
     @_exclusive
-    def claim(self, now: str) -> dict | None:
-        """The oldest open incident, marked dispatched, unless today's (UTC) budget is spent."""
+    def claim(self, now: str, allow_stall: bool = True) -> dict | None:
+        """The oldest open incident, marked dispatched, unless today's (UTC) budget is spent. With
+        `allow_stall` false (SPEC §5: the `stall_dispatch` switch off, or its kill variable 0) stall
+        incidents stay open and are never handed out; CI incidents are unaffected."""
         data = self._load()
-        waiting = sorted((r for r in data["incidents"].values() if r["state"] == "open"), key=lambda r: r["first_seen"])
+        waiting = sorted((r for r in data["incidents"].values() if r["state"] == "open"
+                          and (allow_stall or not str(r["context"].get("check") or "").startswith(STALL_CHECK))),
+                         key=lambda r: r["first_seen"])
         if not waiting:
             return None
         if data.get("auto_since_ack", 0) >= MAX_AUTO_WITHOUT_ACK:
@@ -366,6 +426,19 @@ class Store:
         return closed
 
     @_exclusive
+    def resolve_producing(self, lanes: list[str], now: str) -> list[str]:
+        """Close every live stall incident of a lane that produced again over the yield window."""
+        checks = {f"{STALL_CHECK}{lane}" for lane in lanes}
+        data, closed = self._load(), []
+        for rec in data["incidents"].values():
+            if rec["state"] in LIVE and rec["context"].get("check") in checks:
+                rec.update(state="resolved", resolved_at=now)
+                closed.append(rec["id"])
+        if closed:
+            self._save(data)
+        return closed
+
+    @_exclusive
     def blind(self, why: str, now: str) -> list[str]:
         """Count one tick that could not see CI. The BLIND_AFTER-th in a row nudges, then at most once
         per UTC day while it lasts (2026-11-13: 23 silent `unavailable` ticks went unnoticed)."""
@@ -410,7 +483,12 @@ def _hours(start: str | None, now: str) -> float:
 
 def _nudge(rec: dict, auto: int) -> str:
     c, i = rec["context"], rec["id"]
-    what = f"{c.get('check')} red outside any PR ({c.get('failed') or c.get('error') or 'see log'})"
+    if str(c.get("check") or "").startswith(STALL_CHECK):
+        what = f"{c.get('failed') or c.get('check')} (yield {((c.get('evidence') or {}).get('yield') or {})})"
+        if rec["state"] == "resolved":
+            return f"✅ Jr stall {i} resolved: {str(c.get('check'))[len(STALL_CHECK):]} produced again over the yield window."
+    else:
+        what = f"{c.get('check')} red outside any PR ({c.get('failed') or c.get('error') or 'see log'})"
     return {
         "open": f"🔧 Jr CI incident {i}: {what}. The heal delegate gets it within the hour "
                 f"({auto}/{MAX_AUTO_WITHOUT_ACK} automatic dispatches used since a human last looked).",
@@ -627,6 +705,19 @@ def relay_problems(repo: Path, base: str, head: str, body: str = "") -> list[str
 
 # --- CLI for the operator's launcher and relay --------------------------------------------------------------
 
+def stall_dispatch_allowed(autonomy_path: Path, env) -> bool:
+    """SPEC-jr-self-heal.md §5: a stall incident reaches the delegate only when `jr/autonomy.json` has
+    `stall_dispatch: true` (a reviewed PR) AND the variable JR_STALL_DISPATCH is not 0 (the instant kill).
+    Unreadable file or flag absent: off. CI incidents never consult this."""
+    try:
+        doc = json.loads(Path(autonomy_path).read_text())
+    except (OSError, json.JSONDecodeError):
+        return False
+    if not isinstance(doc, dict) or doc.get(STALL_FLAG) is not True:
+        return False
+    return str(env.get(STALL_VARIABLE, "1")).strip() != "0"
+
+
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -655,7 +746,7 @@ def main(argv=None) -> int:
         print("acknowledged: automatic heal dispatches may resume")
         return 0
     if args.cmd == "claim":
-        rec = store.claim(_now())
+        rec = store.claim(_now(), allow_stall=stall_dispatch_allowed(AUTONOMY_PATH, os.environ))
         if rec is None:
             return 3
         print(json.dumps(rec, indent=2))
