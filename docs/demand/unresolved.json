@@ -9,18 +9,19 @@
    "source": [
     "gsc_query"
    ],
-   "impressions": 42,
+   "impressions": 45,
    "clicks": 1,
-   "ctr": 0.0238,
-   "position": 8.2,
+   "ctr": 0.0222,
+   "position": 8.1,
    "events": null,
    "zero_result": null,
-   "weight": 33.62,
+   "weight": 35.64,
+   "trends_interest": 0,
    "resolved": null,
    "gap": "UNRESOLVED",
    "landing_page": "https://esp-atlas.com/firmware/area512",
    "first_seen": "2026-11-08",
-   "last_seen": "2026-11-17"
+   "last_seen": "2026-11-18"
   },
   {
    "term": "keeloq_mfcodes",
@@ -30,18 +31,19 @@
    "source": [
     "gsc_query"
    ],
-   "impressions": 16,
+   "impressions": 17,
    "clicks": 1,
-   "ctr": 0.0625,
-   "position": 6.1,
+   "ctr": 0.0588,
+   "position": 6.4,
    "events": null,
    "zero_result": null,
-   "weight": 9.15,
+   "weight": 10.24,
+   "trends_interest": null,
    "resolved": null,
    "gap": "UNRESOLVED",
    "landing_page": "https://esp-atlas.com/firmware/flipper-zero-esp32-adv",
    "first_seen": "2026-11-03",
-   "last_seen": "2026-11-17"
+   "last_seen": "2026-11-18"
   }
  ]
 }
