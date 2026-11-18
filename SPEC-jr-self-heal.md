@@ -117,6 +117,7 @@ prompt:
 |---|---|---|
 | Dispatches per break (fingerprint) | 2: the first time, and one recurrence after its fix merged | the 3rd occurrence is recorded `needs_human`, never dispatched, and stays human-only for good |
 | Dispatches without a human | 3 since the last `python3 jr/ci_watch.py ack` on the runner | `claim` halts the lane; nothing is dispatched until a human acks |
+| A stall incident (§1b) while `jr/autonomy.json` has `stall_dispatch: false`, or the runner variable `JR_STALL_DISPATCH=0` | `claim` never hands it out (it stays `open`, visible in `show` and the nudge); CI incidents are unaffected. The flag turns on by a reviewed PR; the variable is the instant kill (2026-11-18) |
 | Dispatches per UTC day | 2, all breaks together (the CLI clock is UTC; a timestamp with any offset is counted on its UTC day) | the next day |
 | Same incident seen again while live | 0 new records | nothing: one record per break, whatever the number of red ticks |
 | Time from dispatch to a heal PR | 4 h (`STALL_HOURS`) | `stalled`, never retried automatically |

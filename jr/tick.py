@@ -353,6 +353,23 @@ def _triage_tick_prs(gh, prs: list, now: datetime, hours: float) -> tuple[list, 
     return superseded, stuck
 
 
+def work_audit(receipts_path: Path) -> dict:
+    """{class: {state: count}} over main's demand receipts (jr/research_work.class_of); {} without a file."""
+    import research_work as rw
+    if not Path(receipts_path).is_file():
+        return {}
+    doc = json.loads(Path(receipts_path).read_text(encoding="utf-8"))
+    out: dict = {}
+    for rec in doc.get("receipts") or []:
+        if not isinstance(rec, dict):
+            continue
+        cls = rw.class_of(rec.get("source"))
+        state = str(rec.get("state") or "?")
+        out.setdefault(cls, {})
+        out[cls][state] = out[cls].get(state, 0) + 1
+    return out
+
+
 def default_stall_watcher(stall: dict | None, yields: dict | None, stages: list, rejects: dict, now: datetime,
                           dry_run: bool) -> dict:
     """The stall watch (SPEC-jr-self-heal.md §1b): the same runner-local incident store as the CI watch."""
@@ -877,6 +894,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                                          "value": None})
             except Exception as e:  # noqa: BLE001
                 r.warnings.append(f"yield ledger write failed: {type(e).__name__}: {e}")
+            # 6d. the audit block's demand-work counts (SPEC-espatlas-jr.md §3d rule 5): receipts by class/state
+            try:
+                r.work_audit = work_audit(root / "docs" / "demand" / "work-receipts.json")
+            except Exception as e:  # noqa: BLE001
+                r.warnings.append(f"work audit unavailable: {type(e).__name__}: {e}")
             # 6c. stall watch (SPEC-jr-self-heal.md §1b): a lane silent over the stall window is an incident
             #     for the heal delegate, with this tick's stage summaries as evidence; a lane producing again
             #     resolves its incident. Never aborts the tick.

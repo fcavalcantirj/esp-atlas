@@ -47,6 +47,8 @@ LOG_EXCERPT_LINES = 200
 TICK_BRANCH = "jr/tick-"
 HEAL_BRANCH = "jr/heal-"
 DEFAULT_STATE = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local" / "state") / "espatlas-jr" / "heal-incidents.json"
+AUTONOMY_PATH = Path(__file__).resolve().parent / "autonomy.json"   # jr/autonomy.json, the reviewed switches
+STALL_FLAG, STALL_VARIABLE = "stall_dispatch", "JR_STALL_DISPATCH"
 BLIND_AFTER = 3          # consecutive `unavailable` ticks before the owner is told the watch is blind
 
 _STAMP = re.compile(r"^﻿?\d{4}-\d\d-\d\dT[\d:.]+Z ?")
@@ -343,10 +345,14 @@ class Store:
         return rec
 
     @_exclusive
-    def claim(self, now: str) -> dict | None:
-        """The oldest open incident, marked dispatched, unless today's (UTC) budget is spent."""
+    def claim(self, now: str, allow_stall: bool = True) -> dict | None:
+        """The oldest open incident, marked dispatched, unless today's (UTC) budget is spent. With
+        `allow_stall` false (SPEC §5: the `stall_dispatch` switch off, or its kill variable 0) stall
+        incidents stay open and are never handed out; CI incidents are unaffected."""
         data = self._load()
-        waiting = sorted((r for r in data["incidents"].values() if r["state"] == "open"), key=lambda r: r["first_seen"])
+        waiting = sorted((r for r in data["incidents"].values() if r["state"] == "open"
+                          and (allow_stall or not str(r["context"].get("check") or "").startswith(STALL_CHECK))),
+                         key=lambda r: r["first_seen"])
         if not waiting:
             return None
         if data.get("auto_since_ack", 0) >= MAX_AUTO_WITHOUT_ACK:
@@ -699,6 +705,19 @@ def relay_problems(repo: Path, base: str, head: str, body: str = "") -> list[str
 
 # --- CLI for the operator's launcher and relay --------------------------------------------------------------
 
+def stall_dispatch_allowed(autonomy_path: Path, env) -> bool:
+    """SPEC-jr-self-heal.md §5: a stall incident reaches the delegate only when `jr/autonomy.json` has
+    `stall_dispatch: true` (a reviewed PR) AND the variable JR_STALL_DISPATCH is not 0 (the instant kill).
+    Unreadable file or flag absent: off. CI incidents never consult this."""
+    try:
+        doc = json.loads(Path(autonomy_path).read_text())
+    except (OSError, json.JSONDecodeError):
+        return False
+    if not isinstance(doc, dict) or doc.get(STALL_FLAG) is not True:
+        return False
+    return str(env.get(STALL_VARIABLE, "1")).strip() != "0"
+
+
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -727,7 +746,7 @@ def main(argv=None) -> int:
         print("acknowledged: automatic heal dispatches may resume")
         return 0
     if args.cmd == "claim":
-        rec = store.claim(_now())
+        rec = store.claim(_now(), allow_stall=stall_dispatch_allowed(AUTONOMY_PATH, os.environ))
         if rec is None:
             return 3
         print(json.dumps(rec, indent=2))
