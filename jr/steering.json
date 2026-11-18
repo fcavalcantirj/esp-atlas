@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hourly_units": 6,
+  "yield": {
+    "window_ticks": 24,
+    "floor_units": 1,
+    "stall_ticks": 24,
+    "topics_stall_ticks": 48
+  },
+  "delegate_runs_per_day": 2
+}

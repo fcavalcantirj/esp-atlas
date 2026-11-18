@@ -54,8 +54,30 @@ def _backfill_share(boards_pct: float) -> float:
     return 0.5
 
 
+def yield_caps(yields: dict | None, window_ticks: int, floor_units: int = 1) -> dict:
+    """SPEC-data-completion.md "Yield": the demand caps the trailing yield ledger implies. A split lane
+    observed over a FULL window (`ticks >= window_ticks`) that produced nothing while the other lane
+    produced is capped at `floor_units`; its spare units spill to the producer through the need_* caps
+    below. Both lanes silent, or a window not yet full → no cap (the gauge split stands; a stall is the
+    caller's to report). Returns {"need_backfill": n|None, "need_firmware": n|None, "dead": [...]}."""
+    out = {"need_backfill": None, "need_firmware": None, "dead": []}
+    if not isinstance(yields, dict):
+        return out
+    lanes = ("backfill", "firmware")
+    produced = {l: int((yields.get(l) or {}).get("produced") or 0) for l in lanes}
+    ticks = {l: int((yields.get(l) or {}).get("ticks") or 0) for l in lanes}
+    if not any(produced.values()):
+        return out
+    for lane in lanes:
+        if ticks[lane] >= int(window_ticks) and produced[lane] == 0:
+            out[f"need_{lane}"] = max(0, int(floor_units))
+            out["dead"].append(lane)
+    return out
+
+
 def allocate(boards_pct: float, budget_units: int, need_backfill: int | None = None,
-             need_firmware: int | None = None, bias: float = 0.0) -> dict:
+             need_firmware: int | None = None, bias: float = 0.0, yields: dict | None = None,
+             window_ticks: int = 24, floor_units: int = 1) -> dict:
     """Split `budget_units` between finite backfill and the infinite firmware drain.
 
     The band sets the first split (backfill gets round(units * share), firmware the rest, so
@@ -86,6 +108,14 @@ def allocate(boards_pct: float, budget_units: int, need_backfill: int | None = N
         backfill = max(backfill, floor)
 
     firmware = units - backfill
+    # yield rule (SPEC-data-completion.md "Yield"): a lane dead over a full window keeps only the floor.
+    # It is a cap like the demand caps, so the finite-floor clamp above still holds for the base split
+    # and the explicit need_* arguments, when given, win (min of the two).
+    caps = yield_caps(yields, window_ticks, floor_units)
+    if caps["need_backfill"] is not None:
+        need_backfill = caps["need_backfill"] if need_backfill is None else min(need_backfill, caps["need_backfill"])
+    if caps["need_firmware"] is not None:
+        need_firmware = caps["need_firmware"] if need_firmware is None else min(need_firmware, caps["need_firmware"])
     if need_backfill is not None and backfill > need_backfill:
         firmware += backfill - need_backfill
         backfill = need_backfill

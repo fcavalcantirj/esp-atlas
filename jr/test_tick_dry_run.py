@@ -136,6 +136,7 @@ def test_dry_run_with_the_real_stages_leaves_the_checkout_byte_identical(tmp_pat
     r = _run(True, git_ok(tmp_path), tmp_path, gh=gh)
 
     assert not r.aborted, r.aborted
+    assert any(w["path"] == "docs/telemetry/yield.jsonl" for w in r.dry_writes)   # the ledger is a listed would-be write
     assert _fingerprint(checkout) == before          # no byte changed, no file or dir appeared
     assert _real_clone_state() == clone_before       # nor in the clone the module REPO constants point at
     assert _mutating(gh) == []                       # no PR, comment, close or label on GitHub
@@ -183,6 +184,11 @@ def test_the_same_tick_for_real_writes_the_field_so_the_fixture_is_groundable(tm
     cooled = json.loads((wt / "jr" / "board_cooldown.json").read_text())["by_board"]
     assert UNREACHABLE in cooled and ALREADY_COOLING in cooled
     assert GROUNDABLE_MD in r.paths and "jr/board_cooldown.json" in r.paths
+    # the yield ledger (SPEC-data-completion.md "Yield"): one row per content stage, riding the tick's commit
+    rows = [json.loads(l) for l in (wt / "docs/telemetry/yield.jsonl").read_text().splitlines()]
+    assert "docs/telemetry/yield.jsonl" in r.extra_paths and sum(r.split.values()) == 6 and r.split["backfill"] >= 1
+    assert {x["stage"]: x["produced"] for x in rows}["backfill"] == 1 and {x["stage"] for x in rows} >= {"backfill", "admit_topics"}
+    assert "yield" not in r.allocation          # no earlier rows: nothing to steer by, nothing claimed
 
 
 def test_a_step_that_ignores_dry_run_writes_only_the_copy_and_is_reported(tmp_path, monkeypatch, offline):

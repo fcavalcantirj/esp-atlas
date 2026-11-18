@@ -90,6 +90,8 @@ import report   # noqa: E402
 import allocator  # noqa: E402
 import demand_signal  # noqa: E402
 import review_routing  # noqa: E402
+import steering  # noqa: E402
+import yield_ledger  # noqa: E402
 import admit_progress  # noqa: E402
 import ci_watch  # noqa: E402
 import review_memory  # noqa: E402
@@ -145,6 +147,8 @@ class StageResult:
     review: list = field(default_factory=list)     # repos the owner must judge: {"id", "repo", "kind", "url", "why"}
     would_write: list = field(default_factory=list)  # dry-run only: {"path", "field", "value"} a real run would write
     backlog: int | None = None                     # admit only: undecided launcher repos at the start of the stage
+    produced: int = 0                              # yield ledger: records/recipes/fields this stage wrote (0 → `admitted`)
+    counts: dict = field(default_factory=dict)     # yield ledger: the stage's own counters (filled, skipped, cooling, …)
 
 
 Stage = Callable[[TickContext], StageResult]
@@ -775,10 +779,31 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                     except Exception as e:  # noqa: BLE001
                         bias = 0.0
                         r.warnings.append(f"demand steer failed: {type(e).__name__}: {e}")
-            split = allocator.allocate(r.boards_pct, allocator.HOURLY_TRACK_UNITS, bias=bias)
+            # 5a. yield (SPEC-data-completion.md "Yield"): the trailing ledger per lane; a lane dead over a
+            #     full window keeps the floor, the producer gets the rest; both dead → stall, split unchanged.
+            steer_cfg, steer_warnings = steering.load(root)
+            r.warnings += steer_warnings
+            ycfg = steer_cfg["yield"]
+            try:
+                r.yields = yield_ledger.lane_yield(yield_ledger.read_rows(root / yield_ledger.RELPATH), now,
+                                                   ycfg["window_ticks"])
+            except Exception as e:  # noqa: BLE001 — a report/steer step must never abort the tick
+                r.yields = None
+                r.warnings.append(f"yield ledger unreadable: {type(e).__name__}: {e}")
+            split = allocator.allocate(r.boards_pct, steer_cfg["hourly_units"], bias=bias, yields=r.yields,
+                                       window_ticks=ycfg["window_ticks"], floor_units=ycfg["floor_units"])
             steer = f" · demand bias {bias:+g}" if bias else ""
+            ytxt = ""
+            if r.yields and r.yields.get("ticks_in_window"):      # no rows yet: nothing to steer by, nothing claimed
+                dead = yield_ledger.dead_lanes(r.yields, ycfg["window_ticks"])
+                stalled = yield_ledger.stalled_lanes(r.yields, ycfg["stall_ticks"])
+                ytxt = " · " + yield_ledger.summary(r.yields) + (f" → {', '.join(dead)} at floor" if dead else "")
+                if stalled:
+                    r.stall = {"lanes": stalled, "stall_ticks": ycfg["stall_ticks"], "yields": r.yields}
+                    r.warnings.append(f"stall: {', '.join(stalled)} produced nothing over {ycfg['stall_ticks']} ticks")
             r.allocation = (f"boards {r.boards_pct:.1f}% -> "
-                            f"backfill {split['backfill']} / firmware {split['firmware']} (hourly){steer}")
+                            f"backfill {split['backfill']} / firmware {split['firmware']} (hourly){steer}{ytxt}")
+            r.split = dict(split)
             stages = list(stages) + hourly_stages(split)
         else:
             n = len(stages)
@@ -801,7 +826,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             res = stage(ctx)
             r.stages.append({"name": res.name, "paths": list(res.paths), "summary": res.summary,
                              "needs_human": res.needs_human, "items": list(res.items), "review": list(res.review),
-                             "would_write": list(res.would_write) if dry_run else []})
+                             "would_write": list(res.would_write) if dry_run else [],
+                             "produced": int(res.produced or res.admitted or 0), "counts": dict(res.counts)})
             r.admitted += res.admitted
             for k, v in res.rejects.items():
                 r.rejects[k] = r.rejects.get(k, 0) + v
@@ -810,6 +836,23 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
                     r.admit_progress = admit_watcher(res.backlog, res.summary, now, dry_run) or {}
                 except Exception as e:  # noqa: BLE001
                     r.warnings.append(f"admit progress unavailable: {type(e).__name__}: {e}")
+
+        # 6b. yield ledger (SPEC-data-completion.md "Yield"): one row per content stage this tick, an AUTO
+        #     bookkeeping path (docs/telemetry/) that rides the tick's commit like the trend snapshot. A ledger
+        #     failure warns and never aborts; the dry run lists the would-be rows.
+        if hourly and r.split is not None:
+            try:
+                rows = yield_ledger.rows_for_tick(r.stages, r.split, now, calls=budget.calls,
+                                                  seconds=budget.elapsed(), units_topics=TOPICS_PER_TICK)
+                if rows and not dry_run:
+                    yield_ledger.append_rows(root / yield_ledger.RELPATH, rows)
+                    if yield_ledger.RELPATH not in r.extra_paths:
+                        r.extra_paths.append(yield_ledger.RELPATH)
+                elif rows:
+                    r.dry_writes.append({"path": yield_ledger.RELPATH, "field": f"{len(rows)} row(s) {yield_ledger.tick_stamp(now)}",
+                                         "value": None})
+            except Exception as e:  # noqa: BLE001
+                r.warnings.append(f"yield ledger write failed: {type(e).__name__}: {e}")
 
         # 7. guard once (data writes only), 8. publish — when a stage wrote OR memory changed;
         #    a ledger-only tick still ships, or every reconciliation would die with the worktree.
