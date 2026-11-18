@@ -443,7 +443,7 @@ def test_items_ranked_by_weight_descending():
 def test_demand_item_schema_shape():
     """Every item matches the §9 DemandItem field set exactly."""
     expected_fields = {"term", "raw_terms", "source", "impressions", "clicks", "ctr", "position",
-                       "events", "zero_result", "weight", "resolved", "gap", "landing_page",
+                       "events", "zero_result", "weight", "trends_interest", "resolved", "gap", "landing_page",
                        "first_seen", "last_seen"}
     items = _build()
     assert items
@@ -705,3 +705,13 @@ def test_module_does_not_modify_scorer_or_maps():
     for forbidden in ("open(JR_DIR / \"scorer.py\"", "open(JR_DIR / \"device_map.py\"",
                       "open(JR_DIR / \"capability_map.py\""):
         assert forbidden not in src
+
+
+def test_items_carry_the_trends_interest_their_weight_used():
+    """2026-11-18: the Trends boost was applied and never written, so it could not be audited."""
+    items = _build(trends={"marauder cardputer": 80})
+    by = {it["term"]: it for it in items}
+    assert by["marauder cardputer"]["trends_interest"] == 80
+    assert all(it["trends_interest"] is None for t, it in by.items() if t != "marauder cardputer")
+    plain = {it["term"]: it["weight"] for it in _build()}
+    assert by["marauder cardputer"]["weight"] > plain["marauder cardputer"]

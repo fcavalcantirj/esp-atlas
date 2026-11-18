@@ -354,6 +354,9 @@ def _mine_and_decide(wt: publish.Worktree, miner, python: str, telegram: bool) -
              if queue_after is not None and queue_after != queue_before else {})   # the miner's own write
     queue_changed = _queue_comparable(queue_after) != _queue_comparable(queue_before)
     research = _queue_line(demand_dir, queue_before)
+    if new.get("gsc_pull_ok") is False:
+        _restore_demand_files(demand_dir, files_before)      # a GA4-only pull is not the steer; GSC is (2026-11-18)
+        raise MiningUnavailable("GSC pull failed — not landing a snapshot without search demand")
     if not new.get("items"):
         _restore_demand_files(demand_dir, files_before)      # an empty pull never replaces the snapshot
         if not queue_changed:
