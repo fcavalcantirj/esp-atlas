@@ -17495,6 +17495,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T06:00:32.296687+00:00"
     },
+    "repo-note:ace-trump-tech/mindpaw": {
+      "expires": "2026-12-18T00:00:31.739025+00:00",
+      "id": "repo-note:ace-trump-tech/mindpaw",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "ace-trump-tech/mindpaw",
+      "status": "rejected",
+      "timestamp": "2026-11-18T00:00:31.739025+00:00"
+    },
     "repo-note:adammelancon/cardputer-iss-tracker": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
       "id": "repo-note:adammelancon/cardputer-iss-tracker",
@@ -17675,6 +17684,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T11:00:31.753985+00:00"
     },
+    "repo-note:blinker-iot/blinker-library": {
+      "expires": "2026-12-18T00:00:31.739025+00:00",
+      "id": "repo-note:blinker-iot/blinker-library",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "blinker-iot/blinker-library",
+      "status": "rejected",
+      "timestamp": "2026-11-18T00:00:31.739025+00:00"
+    },
     "repo-note:blynk-technologies/blynk-library": {
       "expires": "2026-12-17T19:00:32.203883+00:00",
       "id": "repo-note:blynk-technologies/blynk-library",
@@ -17683,6 +17701,15 @@
       "repo": "blynk-technologies/blynk-library",
       "status": "rejected",
       "timestamp": "2026-11-17T19:00:32.203883+00:00"
+    },
+    "repo-note:bodmer/tft_espi": {
+      "expires": "2026-12-18T00:00:31.739025+00:00",
+      "id": "repo-note:bodmer/tft_espi",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "bodmer/tft_espi",
+      "status": "rejected",
+      "timestamp": "2026-11-18T00:00:31.739025+00:00"
     },
     "repo-note:bokunimowakaru/esp": {
       "expires": "2026-12-17T04:00:31.831476+00:00",
@@ -17774,6 +17801,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
     },
+    "repo-note:crankyoldgit/irremoteesp8266": {
+      "expires": "2026-12-18T00:00:31.739025+00:00",
+      "id": "repo-note:crankyoldgit/irremoteesp8266",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "crankyoldgit/irremoteesp8266",
+      "status": "rejected",
+      "timestamp": "2026-11-18T00:00:31.739025+00:00"
+    },
     "repo-note:cryptspeak/m5uploader": {
       "expires": "2026-12-17T07:00:32.097367+00:00",
       "id": "repo-note:cryptspeak/m5uploader",
@@ -17827,6 +17863,15 @@
       "repo": "davidkreidler/openco2_sensor",
       "status": "rejected",
       "timestamp": "2026-11-17T18:00:31.692410+00:00"
+    },
+    "repo-note:davidmonterocrespo24/velxio": {
+      "expires": "2026-12-18T00:00:31.739025+00:00",
+      "id": "repo-note:davidmonterocrespo24/velxio",
+      "pr_ref": null,
+      "reason": "chip_family_mismatch: repo names ['esp32-c3'], but board 'm5cardputer' is esp32-s3",
+      "repo": "davidmonterocrespo24/velxio",
+      "status": "rejected",
+      "timestamp": "2026-11-18T00:00:31.739025+00:00"
     },
     "repo-note:dawningw/einkassistant": {
       "expires": "2026-12-17T23:00:31.883511+00:00",
@@ -18089,6 +18134,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T15:00:33.111992+00:00"
     },
+    "repo-note:gioblu/pjon": {
+      "expires": "2026-12-18T00:00:31.739025+00:00",
+      "id": "repo-note:gioblu/pjon",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "gioblu/pjon",
+      "status": "rejected",
+      "timestamp": "2026-11-18T00:00:31.739025+00:00"
+    },
     "repo-note:goroman/vibewatch": {
       "expires": "2026-12-17T21:00:31.805157+00:00",
       "id": "repo-note:goroman/vibewatch",
@@ -18160,6 +18214,15 @@
       "repo": "heltecautomation/platform-asrmicro650x",
       "status": "rejected",
       "timestamp": "2026-11-17T09:00:32.446822+00:00"
+    },
+    "repo-note:heywillow/willow": {
+      "expires": "2026-12-18T00:00:31.739025+00:00",
+      "id": "repo-note:heywillow/willow",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "heywillow/willow",
+      "status": "rejected",
+      "timestamp": "2026-11-18T00:00:31.739025+00:00"
     },
     "repo-note:highcodeh/tentacleos": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
@@ -18674,6 +18737,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T10:00:32.143438+00:00"
     },
+    "repo-note:microsoft/devicescript": {
+      "expires": "2027-02-16T00:00:31.739025+00:00",
+      "id": "repo-note:microsoft/devicescript",
+      "pr_ref": null,
+      "reason": "archived: microsoft/devicescript is archived",
+      "repo": "microsoft/devicescript",
+      "status": "rejected",
+      "timestamp": "2026-11-18T00:00:31.739025+00:00"
+    },
     "repo-note:microsoft/pxt-common-packages": {
       "expires": "2026-12-17T22:00:32.010942+00:00",
       "id": "repo-note:microsoft/pxt-common-packages",
@@ -18898,6 +18970,15 @@
       "repo": "project-march/input-device",
       "status": "rejected",
       "timestamp": "2026-11-17T20:00:31.733970+00:00"
+    },
+    "repo-note:pschatzmann/esp32-a2dp": {
+      "expires": "2026-12-18T00:00:31.739025+00:00",
+      "id": "repo-note:pschatzmann/esp32-a2dp",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "pschatzmann/esp32-a2dp",
+      "status": "rejected",
+      "timestamp": "2026-11-18T00:00:31.739025+00:00"
     },
     "repo-note:quadule/knobby": {
       "expires": "2026-12-17T07:00:32.097367+00:00",
@@ -19249,6 +19330,15 @@
       "repo": "spuder/openspool",
       "status": "rejected",
       "timestamp": "2026-11-17T11:00:31.753985+00:00"
+    },
+    "repo-note:sqfmi/watchy": {
+      "expires": "2026-12-18T00:00:31.739025+00:00",
+      "id": "repo-note:sqfmi/watchy",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: repo root has an Arduino/PlatformIO library.properties or library.json manifest",
+      "repo": "sqfmi/watchy",
+      "status": "rejected",
+      "timestamp": "2026-11-18T00:00:31.739025+00:00"
     },
     "repo-note:squazaryu/tumocompanion": {
       "expires": "2026-12-17T12:00:31.695549+00:00",
@@ -22372,6 +22462,7 @@
     "abdallahnatsheh/al-anqa-firmware": "al-anqa-firmware",
     "abdrakhmanov/smart-rattle": "smart-rattle",
     "abenokobo/pd-camera-m5": "pd-camera-m5",
+    "ace-trump-tech/mindpaw": "repo-note:ace-trump-tech/mindpaw",
     "acidvegas/acid-drop": "acid-drop",
     "acpayers-alt/raising-hell-cardputer": "raising-hell-cardputer",
     "adafruit/circuitpython": "circuitpython",
@@ -22504,12 +22595,14 @@
     "bitmaker-hub/nerdminer_v2": "nerdminer-v2",
     "blackymas/nspanel_ha_blueprint": "repo-note:blackymas/nspanel_ha_blueprint",
     "blamouche/cardputer-dwight": "cardputer-dwight",
+    "blinker-iot/blinker-library": "repo-note:blinker-iot/blinker-library",
     "bluedskim/cardputer_adv_firmware": "cardputer-adv-firmware",
     "bluemage/cardputeradv-basicav": "cardputeradv-basicav",
     "blynk-technologies/blynk-library": "repo-note:blynk-technologies/blynk-library",
     "bmorcelli/esp32marauder": "esp32marauder",
     "bmorcelli/launcher": "launcher",
     "bmorcelli/m5stick-launcher": "m5stick-launcher",
+    "bodmer/tft_espi": "repo-note:bodmer/tft_espi",
     "bokunimowakaru/esp": "repo-note:bokunimowakaru/esp",
     "bomberman30/advanceos-for-cardputer": "advanceos-for-cardputer",
     "bomberman30/carduboy-arduboy-for-cardputer": "carduboy-arduboy-for-cardputer",
@@ -22645,6 +22738,7 @@
     "cparadaa/m5tabos-sistema": "m5tabos-sistema",
     "crackulator/meow-sound-player-for-cardputer-adv": "meow-sound-player-for-cardputer-adv",
     "craigdianesmith-glitch/tab5-adsb-flight-tracker-cpp": "tab5-adsb-flight-tracker-cpp",
+    "crankyoldgit/irremoteesp8266": "repo-note:crankyoldgit/irremoteesp8266",
     "cric-ric": "cric-ric",
     "crosspoint-reader/crosspoint-reader": "crosspoint-reader",
     "cryptspeak/cscardputer": "cscardputer",
@@ -22684,6 +22778,7 @@
     "davervw/cardputer-game-station-emulators": "cardputer-game-station-emulators",
     "davervw/m5_minijoystickc_gamepad": "m5-minijoystickc-gamepad",
     "davidkreidler/openco2_sensor": "repo-note:davidkreidler/openco2_sensor",
+    "davidmonterocrespo24/velxio": "repo-note:davidmonterocrespo24/velxio",
     "dawningw/einkassistant": "repo-note:dawningw/einkassistant",
     "dayou-ht/morsetrainer-cardputer": "morsetrainer-cardputer",
     "dcarnicer/paperdiy-reader": "paperdiy-reader",
@@ -22851,6 +22946,7 @@
     "ggerganov/ggwave": "repo-note:ggerganov/ggwave",
     "ghost-esp": "ghost-esp",
     "ghostesp-revival/ghostesp": "ghostesp",
+    "gioblu/pjon": "repo-note:gioblu/pjon",
     "girs1982/cardputer-cc1101-manufactured-": "cardputer-cc1101-manufactured",
     "girs1982/cardputeradv-cc1101-manufactured": "cardputeradv-cc1101-manufactured",
     "girs1982/ganstawificyberpunker": "ganstawificyberpunker",
@@ -22910,6 +23006,7 @@
     "hermes-gadget/tdeck-screenfix": "tdeck-screenfix",
     "hey-its-brian/m5weather": "m5weather",
     "hey-its-brian/tab5-cyberdeck": "tab5-cyberdeck",
+    "heywillow/willow": "repo-note:heywillow/willow",
     "highcodeh/tentacleos": "repo-note:highcodeh/tentacleos",
     "hiroki-kawakami/kyoshin": "kyoshin",
     "hiroki-kawakami/namecardknot": "namecardknot",
@@ -24081,6 +24178,7 @@
     "micokonsep/pomodoro-papers3": "pomodoro-papers3",
     "microdev-steve/circuitpython_m5stickplus2": "circuitpython-m5stickplus2",
     "microos-project/microos": "microos",
+    "microsoft/devicescript": "repo-note:microsoft/devicescript",
     "microsoft/pxt-common-packages": "repo-note:microsoft/pxt-common-packages",
     "mindovermiles262/tamaputer": "tamaputer",
     "mingrzou/papermono-launcher": "papermono-launcher",
@@ -24255,6 +24353,7 @@
     "prstoetzer/papersat": "papersat",
     "prstoetzer/papersatcolor": "papersatcolor",
     "prstoetzer/sticksat": "sticksat",
+    "pschatzmann/esp32-a2dp": "repo-note:pschatzmann/esp32-a2dp",
     "psonnera/m5_nightscoutmon": "m5-nightscoutmon",
     "psonnera/m5stack_xdripmon": "m5stack-xdripmon",
     "psychoplath9450/sumi": "sumi",
@@ -24427,6 +24526,7 @@
     "spooks4576/ghost_esp": "repo-note:spooks4576/ghost_esp",
     "spreedated/cardcharge": "cardcharge",
     "spuder/openspool": "repo-note:spuder/openspool",
+    "sqfmi/watchy": "repo-note:sqfmi/watchy",
     "squazaryu/tumocompanion": "repo-note:squazaryu/tumocompanion",
     "squirmen/papers3weather": "papers3weather",
     "ssaprus/whisperos": "repo-note:ssaprus/whisperos",
