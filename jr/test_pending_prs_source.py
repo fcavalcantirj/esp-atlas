@@ -212,12 +212,14 @@ def _ledger_with(record):
     return json.dumps({"by_id": {"oldtool": dict(record)}, "by_repo": {}})
 
 
-def _stale_index(head_record=STALE, base_record=STALE, bases=None, repos=None):
+def _stale_index(head_record=STALE, base_record=STALE, bases=None, repos=None, base_source="n/oldtool"):
     pr = _pr(1500, LEGACY_FILES)
+    sources = {("oid1500", "oldtool"): "n/oldtool"}
+    if base_source:
+        sources[("base1500", "oldtool")] = base_source
     gh = _gh([], ledgers={"oid1500": _ledger_with(head_record), "base1500": _ledger_with(base_record)},
-             repos={"n/oldtool": REPO_ID, "u/unrelated": OTHER_ID} if repos is None else repos,
-             sources={("oid1500", "oldtool"): "n/oldtool"},
-             bases={"oid1500": "base1500"} if bases is None else bases)
+             repos={"n/oldtool": REPO_ID, "u/unrelated": OTHER_ID, "e/evil": 6666} if repos is None else repos,
+             sources=sources, bases={"oid1500": "base1500"} if bases is None else bases)
     return _load(gh, [pr])
 
 
@@ -239,3 +241,13 @@ def test_an_unreadable_merge_base_keeps_the_gap():
 def test_a_stale_record_with_an_unconfirmed_source_keeps_the_gap():
     idx = _stale_index(repos={"u/unrelated": OTHER_ID})                     # GitHub no longer answers n/oldtool
     assert not idx.complete and any("#1500" in g and "oldtool" in g for g in idx.gaps), idx.gaps
+
+
+def test_a_source_the_pr_repointed_keeps_the_gap():
+    # a commit on the PR moved firmware.md away from the source committed at the merge base: the PR, not
+    # history, would choose the identity — strict rule
+    _source_gap(_stale_index(base_source="e/evil"))
+
+
+def test_a_firmware_md_absent_at_the_merge_base_keeps_the_gap():
+    _source_gap(_stale_index(base_source=None))

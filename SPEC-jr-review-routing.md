@@ -181,10 +181,11 @@ main was forgotten the same way.
     `wled` for a rejected fork (`toshihiromakuuchi/wled`, 846066903, `expired`), while the held
     `data/firmware/wled/firmware.md` names `wled/WLED` (76990209); four hourly ticks aborted. A
     record that fails the binding but is byte-identical in the ledger at the PR's merge base with
-    its base branch (`gh api repos/<slug>/compare/<base>...<head>` → `merge_base_commit`) is history,
-    not this PR's claim: the hold takes the id GitHub answers for the firmware.md source itself. A
-    record the PR changed keeps the strict rule; an unreadable merge base, base ledger or source
-    stays a gap.
+    its base branch (`gh api repos/<slug>/compare/<base>...<head>` → `merge_base_commit`), for a
+    firmware whose `firmware.md` source at the merge base is the same as at the head, is history, not
+    this PR's claim: the hold takes the id GitHub answers for that source. A record or a source the PR
+    changed keeps the strict rule (no commit on the PR chooses the identity); an unreadable merge
+    base, base ledger or source stays a gap.
   - **An ambiguous marker fails closed.** On a tick PR that holds a firmware, a body that opens
     `jr-identity` more than once (a forged, duplicate or unclosed marker), whose marker is
     unreadable, or that names one firmware twice is a gap (a PR that holds nothing decides nothing): the index is incomplete and the tick aborts before its worktree — nothing is
