@@ -277,6 +277,61 @@ def evaluate(observations: list[Observation], required: list[str]) -> Verdict:
     return Verdict(kind="none")
 
 
+# --- a tick that keeps aborting (SPEC-jr-self-heal.md §1c, 2026-11-18) -------------------------------------
+# Four ticks in a row aborted on the same pending-PR gap (18Z..21Z Nov 18) and nothing reacted but Telegram:
+# an aborted tick writes no yield rows, so the stall rule cannot see it, and CI was green. The tick hands its
+# outcome here; the second consecutive abort with the same normalised reason is an incident in the same
+# store, claim, budget, ack halt and review route as a red check. Aborts that clear by themselves (GitHub
+# unreadable or rate-limited, the lock, the call budget) or that only a human can clear (a stuck tick PR,
+# branch protection) never open one and never break a streak. A completed tick resolves every live one.
+ABORT_CHECK = "abort:"
+ABORT_AFTER = 2                 # consecutive identical aborts before an incident
+NOT_FOR_THE_DELEGATE = ("gh ", "GitHub rate limit low", "another tick is running", "cannot open tick lock",
+                        "budget:", "branch protection:", "a Jr tick PR has been open >")
+
+
+def _abort_norm(reason: str) -> str:
+    s = re.sub(r"\b[0-9a-f]{7,40}\b", "H", reason.strip().lower())    # shas; then every number (PR, id, count)
+    return re.sub(r"\d+", "N", s)
+
+
+def abort_kind(reason: str) -> str:
+    """`pending-pr-inventory-incomplete`, `typeerror`, `guard-red`: the reason's head, before ':' , ',' or '—'."""
+    head = re.split(r"[:,—(]", reason.strip(), maxsplit=1)[0]
+    return (re.sub(r"[^a-z0-9]+", "-", head.lower()).strip("-")[:40]) or "unknown"
+
+
+def abort_fingerprint(reason: str) -> str:
+    return hashlib.sha256(f"abort\n{_abort_norm(reason)}".encode()).hexdigest()
+
+
+def abort_watch(store: "Store", reason: str | None, now: str, dry_run: bool = False) -> dict:
+    """After the tick: `reason` is its abort, or None when it completed. Never raises."""
+    try:
+        if reason is None:
+            if dry_run:
+                return {"status": "ok", "incidents": [], "resolved": [], "would": ["resolve abort incidents"]}
+            return {"status": "ok", "incidents": [], "resolved": store.resolve_aborts(now), "nudges": store.nudges()}
+        if reason.startswith(NOT_FOR_THE_DELEGATE):
+            return {"status": "ok", "incidents": [], "resolved": [], "skipped": "transient or needs a human"}
+        fp, kind = abort_fingerprint(reason), abort_kind(reason)
+        if dry_run:
+            return {"status": "ok", "incidents": [], "resolved": [], "would": [f"count abort {ABORT_CHECK}{kind}"]}
+        streak = store.abort_seen(fp, reason, now)
+        out = {"status": "ok", "incidents": [], "resolved": [], "consecutive": streak["count"]}
+        if streak["count"] >= ABORT_AFTER:
+            v = Verdict(kind="incident", source="tick", check=f"{ABORT_CHECK}{kind}", fingerprint=fp,
+                        failed=reason[:400], kind_detail="abort",
+                        evidence={"reason": reason[:2000], "consecutive": streak["count"],
+                                  "first_seen": streak["first_seen"], "last_seen": now})
+            rec = store.record(v, now)
+            out["incidents"].append(rec["id"] if rec else f"{v.check} already open")
+        out["nudges"] = store.nudges()
+        return out
+    except Exception as e:      # noqa: BLE001 — the tick's report must print whatever happens here
+        return {"status": "unavailable", "why": f"{type(e).__name__}: {e}"[:300]}
+
+
 # --- the incident store (runner-local) ---------------------------------------------------------------
 
 def _exclusive(method):
@@ -439,6 +494,33 @@ class Store:
         return closed
 
     @_exclusive
+    def abort_seen(self, fingerprint: str, reason: str, now: str) -> dict:
+        """Count one tick aborted with `fingerprint`: the streak grows while the same abort repeats, and
+        starts over at 1 on a different one."""
+        data = self._load()
+        streak = data.get("abort_streak") or {}
+        if streak.get("fingerprint") == fingerprint:
+            streak.update(count=int(streak.get("count") or 0) + 1, last_seen=now, reason=reason[:2000])
+        else:
+            streak = {"fingerprint": fingerprint, "count": 1, "first_seen": now, "last_seen": now, "reason": reason[:2000]}
+        data["abort_streak"] = streak
+        self._save(data)
+        return dict(streak)
+
+    @_exclusive
+    def resolve_aborts(self, now: str) -> list[str]:
+        """A tick completed: the streak ends and every live abort incident is resolved."""
+        data, closed = self._load(), []
+        for rec in data["incidents"].values():
+            if rec["state"] in LIVE and str(rec["context"].get("check") or "").startswith(ABORT_CHECK):
+                rec.update(state="resolved", resolved_at=now)
+                closed.append(rec["id"])
+        if closed or data.get("abort_streak"):
+            data.pop("abort_streak", None)
+            self._save(data)
+        return closed
+
+    @_exclusive
     def blind(self, why: str, now: str) -> list[str]:
         """Count one tick that could not see CI. The BLIND_AFTER-th in a row nudges, then at most once
         per UTC day while it lasts (2026-11-13: 23 silent `unavailable` ticks went unnoticed)."""
@@ -487,6 +569,11 @@ def _nudge(rec: dict, auto: int) -> str:
         what = f"{c.get('failed') or c.get('check')} (yield {((c.get('evidence') or {}).get('yield') or {})})"
         if rec["state"] == "resolved":
             return f"✅ Jr stall {i} resolved: {str(c.get('check'))[len(STALL_CHECK):]} produced again over the yield window."
+    elif str(c.get("check") or "").startswith(ABORT_CHECK):
+        what = (f"the tick aborted {(c.get('evidence') or {}).get('consecutive')} times in a row: "
+                f"{str(c.get('failed') or '')[:300]}")
+        if rec["state"] == "resolved":
+            return f"✅ Jr tick-abort incident {i} resolved: a tick completed again."
     else:
         what = f"{c.get('check')} red outside any PR ({c.get('failed') or c.get('error') or 'see log'})"
     return {

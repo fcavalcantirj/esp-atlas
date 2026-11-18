@@ -378,6 +378,25 @@ def default_stall_watcher(stall: dict | None, yields: dict | None, stages: list,
                                 stages=stages, rejects=rejects)
 
 
+def default_abort_watcher(reason: str | None, now: datetime, dry_run: bool) -> dict:
+    """The abort watch (SPEC-jr-self-heal.md §1c): the same runner-local incident store as the CI watch."""
+    state = Path(os.environ["JR_HEAL_STATE"]) if os.environ.get("JR_HEAL_STATE") else ci_watch.DEFAULT_STATE
+    return ci_watch.abort_watch(ci_watch.Store(state), reason, now.isoformat(), dry_run=dry_run)
+
+
+def _note_abort_watch(r: report.TickReport) -> None:
+    w = r.abort_watch
+    if not w:
+        return
+    if w.get("status") != "ok":
+        r.warnings.append(f"abort watch unavailable: {w.get('why')}")
+        return
+    for i in w.get("incidents") or []:
+        r.warnings.append(f"abort incident {i}: the same abort twice in a row; the heal delegate gets it")
+    for i in w.get("resolved") or []:
+        r.warnings.append(f"abort incident {i} resolved")
+
+
 def _note_stall_watch(r: report.TickReport) -> None:
     w = r.stall_watch
     if not w:
@@ -645,6 +664,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
              ci_watcher: Callable | None = None,
              stall_watcher: Callable | None = None,
              admit_watcher: Callable | None = None,
+             abort_watcher: Callable | None = None,
              refresher: Callable | None = None) -> report.TickReport:
     now = now or datetime.now(timezone.utc)
     env = os.environ if env is None else env
@@ -956,6 +976,15 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             _release_tick_lock(lock)
         r.budget = budget.summary()
 
+    # 8b. abort watch (SPEC-jr-self-heal.md §1c): the same abort twice in a row is an incident for the heal
+    #     delegate; a completed tick resolves it. Never changes the tick's outcome.
+    if abort_watcher is not None:
+        try:
+            r.abort_watch = abort_watcher(r.aborted or None, now, dry_run) or {}
+        except Exception as e:  # noqa: BLE001
+            r.abort_watch = {"status": "unavailable", "why": f"{type(e).__name__}: {e}"}
+        _note_abort_watch(r)
+
     # 9. keep Jr's own review PRs mergeable (jr/review_refresh.py, SPEC-jr-review-routing.md §8): after the
     #    tick's own worktree is gone, refresh at most REFRESH_MAX of its CONFLICTING jr-review PRs. Each
     #    refresh decides its own limits and skips with a reason; a failure warns, never aborts the tick.
@@ -975,7 +1004,8 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
             pass
     if telegram and not dry_run and notifier is not None:
-        for nudge in ((r.ci_watch or {}).get("nudges") or []) + ((r.stall_watch or {}).get("nudges") or []) + ((r.admit_progress or {}).get("nudges") or []):
+        for nudge in ((r.ci_watch or {}).get("nudges") or []) + ((r.stall_watch or {}).get("nudges") or []) \
+                + ((r.admit_progress or {}).get("nudges") or []) + ((r.abort_watch or {}).get("nudges") or []):
             try:
                 notifier(nudge)
             except Exception:  # noqa: BLE001 — Telegram down must not fail the tick
@@ -1030,7 +1060,7 @@ def main(argv=None) -> int:
                  stages=stages_for(args.track, args.budget, only), auto_merge=not args.no_auto_merge,
                  lock_path=Path(os.environ["JR_TICK_LOCK"]) if os.environ.get("JR_TICK_LOCK") else None,
                  ci_watcher=default_ci_watcher, stall_watcher=default_stall_watcher, admit_watcher=default_admit_watcher,
-                 refresher=review_refresh.refresh)
+                 abort_watcher=default_abort_watcher, refresher=review_refresh.refresh)
     return 1 if r.aborted else 0
 
 

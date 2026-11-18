@@ -84,3 +84,26 @@ counts (`already_catalogued`, `skipped_scoring`, …). Steps 1–7 above hold wi
 4. **Prove it** with the stage's tests and, where the host can, a dry run of the tick
    (`python3 jr/tick.py --dry-run`): the would-write list must show the lane producing.
 5. The incident resolves itself when the lane produces again over the yield window; never mark it.
+
+## When `INCIDENT.context.check` starts with `abort:` (the tick keeps aborting)
+
+The break is not a red check: the hourly tick aborted with the same reason at least twice in a row
+(`SPEC-jr-self-heal.md` §1c). `INCIDENT.context.evidence.reason` is the full abort text, `consecutive` how
+many ticks in a row, `first_seen`/`last_seen` when. Steps 1–7 above hold with these readings:
+
+1. **Evidence** is the abort text itself and the code that raised it: `grep -n "raise TickAbort" jr/tick.py`
+   names every abort; follow the one whose text matches into the module it calls (for the pending-PR
+   inventory, `jr/pending_prs.py`). Read the data the text names, read-only: the PR (`gh pr view <n>`),
+   the files committed at its head (`gh api repos/<slug>/contents/<path>?ref=<sha>`), the ledger there.
+2. **Root cause** must be measured on that data: reproduce the abort by calling the raising function
+   read-only against the same PR and head (no tick run), then name it MEASURED/INFERRED. A rule that fails
+   closed correctly on a real inconsistency is not the bug; a rule that fails closed on data it should
+   understand (2026-11-18: a September ledger record for a rejected fork under the reused id `wled`) is.
+3. **Fix at the cause, within the same limits.** Never close, merge, relabel or edit a Jr PR to make the
+   abort go away (closing a tick PR vetoes its firmware for 30 days), never edit `jr/proposed_ledger.json`
+   or `docs/demand/**` by hand, never loosen a fail-closed check beyond the case you reproduced. A cause
+   outside the code goes to `docs/incidents/<INCIDENT id>.md` (MEASURED/INFERRED, what a human must do).
+4. **Prove it** with a RED test of the exact shape you reproduced, then the same read-only call against
+   the live PR showing the abort gone.
+5. The incident resolves itself when a tick completes; never mark it.
+
