@@ -76,6 +76,20 @@ Demand steering is best-effort and never a gate:
   needs the composio venv the tick lacks). A load/parse failure is caught, warned, and treated
   as "no steer".
 
+## Plumbing fixes from the 2026-11-17 360 (landed 2026-11-18)
+
+- **A GSC outage is refused, not steered around.** `_pull_live` reports `gsc_pull_ok` beside `ga4_pull_ok`;
+  the snapshot carries it; `demand_run` restores the previous files and raises `MiningUnavailable` when it
+  is false (before, a GA4-only pull above the floor would have replaced the GSC steer; only the fully empty
+  case was refused). The digest prints a red "GSC blind" line.
+- **The window ends two UTC days back** (`telemetry.completed_window`, the weekly digest's rule): GSC and
+  GA4 finish a day's rows about 48 h later, so a window ending today held partial last days.
+- **Trends follow demand**: pytrends takes five terms a call; they are now the five with the most
+  impressions (before: the first five alphabetically), and each item records the `trends_interest` its
+  weight used, so the boost is auditable in the snapshot.
+- PAM feed cap raised to 2 MiB (`specs.json` was at 67 % of 512 KiB); the dead `scripts/jr-drain.sh`
+  (it called a module removed long ago) is gone.
+
 ## The alignment report
 
 `alignment(snapshot, supply_row)` is a deterministic supply×demand report (no clock, no I/O):

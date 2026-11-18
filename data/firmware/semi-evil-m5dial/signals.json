@@ -1,22 +1,27 @@
 {
  "calls": 7,
  "errors": 0,
- "fetched": "2026-11-10",
+ "fetched": "2026-11-17",
  "notes": [],
  "ref": "main",
  "repo": "dagnazty/Semi-Evil-M5Dial",
  "resolved": {
-  "boards": [
-   "m5stamp-s3"
+  "boards": [],
+  "socs": [
+   "esp32-s3"
   ],
-  "socs": [],
-  "unresolved": []
+  "unresolved": [
+   "m5stack-stamps3"
+  ]
  },
  "signals": [
   {
    "extra": {
     "env": "m5stack-stamps3",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "m5dial"
+    ]
    },
    "kind": "platformio",
    "line": 13,
