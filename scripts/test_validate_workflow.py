@@ -149,6 +149,9 @@ def test_the_quotes_job_installs_its_readers_before_the_check(jobs):
 
 def test_the_quotes_checkout_has_full_history_for_the_base_diff(jobs):
     checkout = next(s for s in jobs["quotes"]["steps"] if str(s.get("uses", "")).startswith("actions/checkout"))
+    assert checkout.get("with", {}).get("fetch-depth") == 0
+
+
 # --- the demand-guard job (scripts/demand_guard.py, 2026-11-17): a demand PR changes only what it says ---
 
 DEMAND_GUARD = "scripts/demand_guard.py"
