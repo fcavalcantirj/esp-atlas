@@ -3770,7 +3770,7 @@
       "repo": "mcuw/esp32-template",
       "repo_id": 613261284,
       "status": "proposed",
-      "timestamp": "2026-11-18T11:00:31.972357+00:00"
+      "timestamp": "2026-11-18T12:00:31.958773+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -17901,6 +17901,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T02:00:33.347838+00:00"
     },
+    "repo-note:badgib/brucescripts": {
+      "expires": "2026-12-18T12:00:31.958773+00:00",
+      "id": "repo-note:badgib/brucescripts",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "badgib/brucescripts",
+      "status": "rejected",
+      "timestamp": "2026-11-18T12:00:31.958773+00:00"
+    },
     "repo-note:batear-io/batear": {
       "expires": "2026-12-17T07:00:32.097367+00:00",
       "id": "repo-note:batear-io/batear",
@@ -18756,6 +18765,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T15:00:33.111992+00:00"
     },
+    "repo-note:iamjond/samsung-smartthings-hub": {
+      "expires": "2026-12-18T12:00:31.958773+00:00",
+      "id": "repo-note:iamjond/samsung-smartthings-hub",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "iamjond/samsung-smartthings-hub",
+      "status": "rejected",
+      "timestamp": "2026-11-18T12:00:31.958773+00:00"
+    },
     "repo-note:igrikxd/wspr-beacon": {
       "expires": "2026-12-18T01:00:32.420498+00:00",
       "id": "repo-note:igrikxd/wspr-beacon",
@@ -19269,6 +19287,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
     },
+    "repo-note:manujabadrajith/diy-ir-emitter": {
+      "expires": "2026-12-18T12:00:31.958773+00:00",
+      "id": "repo-note:manujabadrajith/diy-ir-emitter",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "manujabadrajith/diy-ir-emitter",
+      "status": "rejected",
+      "timestamp": "2026-11-18T12:00:31.958773+00:00"
+    },
     "repo-note:marekwo/mc-webui": {
       "expires": "2026-12-17T09:00:32.446822+00:00",
       "id": "repo-note:marekwo/mc-webui",
@@ -19422,6 +19449,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T12:00:31.695549+00:00"
     },
+    "repo-note:monescuteodor/blocky-os-v7.6": {
+      "expires": "2026-12-18T12:00:31.958773+00:00",
+      "id": "repo-note:monescuteodor/blocky-os-v7.6",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "monescuteodor/blocky-os-v7.6",
+      "status": "rejected",
+      "timestamp": "2026-11-18T12:00:31.958773+00:00"
+    },
     "repo-note:mor1k/irbis-ir": {
       "expires": "2026-12-17T12:00:31.695549+00:00",
       "id": "repo-note:mor1k/irbis-ir",
@@ -19511,6 +19547,15 @@
       "repo": "ninedter/defcon-defense",
       "status": "rejected",
       "timestamp": "2026-11-17T12:00:31.695549+00:00"
+    },
+    "repo-note:nnbtg/m5flasher_1": {
+      "expires": "2026-12-18T12:00:31.958773+00:00",
+      "id": "repo-note:nnbtg/m5flasher_1",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "nnbtg/m5flasher_1",
+      "status": "rejected",
+      "timestamp": "2026-11-18T12:00:31.958773+00:00"
     },
     "repo-note:nochkin/esp_test": {
       "expires": "2026-12-17T08:00:31.747262+00:00",
@@ -19701,6 +19746,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T00:00:31.875326+00:00"
     },
+    "repo-note:poovarasanmsd/avenger": {
+      "expires": "2026-12-18T12:00:31.958773+00:00",
+      "id": "repo-note:poovarasanmsd/avenger",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "poovarasanmsd/avenger",
+      "status": "rejected",
+      "timestamp": "2026-11-18T12:00:31.958773+00:00"
+    },
     "repo-note:project-march/input-device": {
       "expires": "2027-02-15T20:00:31.733970+00:00",
       "id": "repo-note:project-march/input-device",
@@ -19718,6 +19772,24 @@
       "repo": "pschatzmann/esp32-a2dp",
       "status": "rejected",
       "timestamp": "2026-11-18T00:00:31.739025+00:00"
+    },
+    "repo-note:qtwillyg/osgui": {
+      "expires": "2026-12-18T12:00:31.958773+00:00",
+      "id": "repo-note:qtwillyg/osgui",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'library'",
+      "repo": "qtwillyg/osgui",
+      "status": "rejected",
+      "timestamp": "2026-11-18T12:00:31.958773+00:00"
+    },
+    "repo-note:qtwillyg/t-embed-custom-firmware": {
+      "expires": "2026-12-18T12:00:31.958773+00:00",
+      "id": "repo-note:qtwillyg/t-embed-custom-firmware",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "qtwillyg/t-embed-custom-firmware",
+      "status": "rejected",
+      "timestamp": "2026-11-18T12:00:31.958773+00:00"
     },
     "repo-note:quadule/knobby": {
       "expires": "2026-12-17T07:00:32.097367+00:00",
@@ -19934,6 +20006,15 @@
       "repo": "sams0n1te/lakeshark",
       "status": "rejected",
       "timestamp": "2026-11-17T03:00:31.684665+00:00"
+    },
+    "repo-note:sandfoxy/claudeonbruce": {
+      "expires": "2026-12-18T12:00:31.958773+00:00",
+      "id": "repo-note:sandfoxy/claudeonbruce",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sandfoxy/claudeonbruce",
+      "status": "rejected",
+      "timestamp": "2026-11-18T12:00:31.958773+00:00"
     },
     "repo-note:sanjidahjahan/row-the-boat": {
       "expires": "2026-12-18T08:00:31.492566+00:00",
@@ -23550,6 +23631,7 @@
     "ayushsharma82/elegantota": "repo-note:ayushsharma82/elegantota",
     "azure/iot-central-firmware": "iot-central-firmware",
     "b1scuitdev/e07xesp32c5": "repo-note:b1scuitdev/e07xesp32c5",
+    "badgib/brucescripts": "repo-note:badgib/brucescripts",
     "bambam1121/inw-mesh": "inw-mesh",
     "batear-io/batear": "repo-note:batear-io/batear",
     "bblanchon/arduinojson": "repo-note:bblanchon/arduinojson",
@@ -24043,6 +24125,7 @@
     "i12bp8/echo": "echo",
     "i12bp8/tagtinker-adv": "tagtinker-adv",
     "i12bp8/wmbuster-adv": "wmbuster-adv",
+    "iamjond/samsung-smartthings-hub": "repo-note:iamjond/samsung-smartthings-hub",
     "icingtomato/stickc-resistor-calculator": "stickc-resistor-calculator",
     "id8872/cardputer-squawkbox": "cardputer-squawkbox",
     "ideealab/wheecon-for-whee-arhackathon": "wheecon-for-whee-arhackathon",
@@ -25156,6 +25239,7 @@
     "manba036/m5core2_sg90_stackchan_voicetext_ataru": "m5core2-sg90-stackchan-voicetext-ataru",
     "manfredi90/cardputer-modem": "cardputer-modem",
     "mangox0567/m5stack-cardputer-ssh": "m5stack-cardputer-ssh",
+    "manujabadrajith/diy-ir-emitter": "repo-note:manujabadrajith/diy-ir-emitter",
     "marauder 0.13.6 for m5stickcplus2": "marauder-0-13-6-for-m5stickcplus2",
     "marceld23/commputer": "commputer",
     "marcelloemme/paperspecimens3": "paperspecimens3",
@@ -25235,6 +25319,7 @@
     "mohith-das/pomodoro-card": "pomodoro-card",
     "mohith-das/wiview": "wiview",
     "mokuichi147/atomicmicbaseaudiorec": "atomicmicbaseaudiorec",
+    "monescuteodor/blocky-os-v7.6": "repo-note:monescuteodor/blocky-os-v7.6",
     "mongonta0716/m5stack-avatar-mic": "m5stack-avatar-mic",
     "mongonta0716/stack-chan-tester": "stack-chan-tester",
     "mongonta0716/stackchan-bluetooth-simple": "stackchan-bluetooth-simple",
@@ -25293,6 +25378,7 @@
     "nishad2m8/pip-boy-weather-clock": "pip-boy-weather-clock",
     "nishad2m8/wled-cardputer": "wled-cardputer",
     "nishad2m8/x-mas-tree-animated-gif": "x-mas-tree-animated-gif",
+    "nnbtg/m5flasher_1": "repo-note:nnbtg/m5flasher_1",
     "nochkin/esp_test": "repo-note:nochkin/esp_test",
     "nodemcu/nodemcu-firmware": "repo-note:nodemcu/nodemcu-firmware",
     "noest-d/esp32-emulatorjs": "esp32-emulatorjs",
@@ -25387,6 +25473,7 @@
     "pkolbas/m5-guitartuner": "m5-guitartuner",
     "platformio/platformio-core": "repo-note:platformio/platformio-core",
     "plummerssoftwarellc/nightdriverstrip": "nightdriverstrip",
+    "poovarasanmsd/avenger": "repo-note:poovarasanmsd/avenger",
     "power-pill/ascii-aquarium": "ascii-aquarium",
     "ppyne/lx_shell": "lx-shell",
     "pr3y/bruce": "bruce",
@@ -25405,6 +25492,8 @@
     "psychoplath9450/sumi": "sumi",
     "purplxhazee/purplx-": "purplx",
     "qqshi13/m5timer": "m5timer",
+    "qtwillyg/osgui": "repo-note:qtwillyg/osgui",
+    "qtwillyg/t-embed-custom-firmware": "repo-note:qtwillyg/t-embed-custom-firmware",
     "quadule/knobby": "repo-note:quadule/knobby",
     "quecpython/solution-xiaozhiai": "repo-note:quecpython/solution-xiaozhiai",
     "question-and-answer/cave-mine-cardputer-alpha1": "cave-mine-cardputer-alpha1",
@@ -25502,6 +25591,7 @@
     "samucarre/m5tab5-animal-quiz": "m5tab5-animal-quiz",
     "sanchitminda/m5cardputer_windows": "m5cardputer-windows",
     "sanchitminda/mp3playerform5cardputer": "mp3playerform5cardputer",
+    "sandfoxy/claudeonbruce": "repo-note:sandfoxy/claudeonbruce",
     "sanjidahjahan/row-the-boat": "repo-note:sanjidahjahan/row-the-boat",
     "santoru/pihole-dashboard": "repo-note:santoru/pihole-dashboard",
     "sarah-c/m5stickc_plus_slot_machine": "m5stickc-plus-slot-machine",
