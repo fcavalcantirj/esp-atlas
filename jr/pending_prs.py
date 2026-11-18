@@ -389,6 +389,40 @@ def _github_confirms(gh, repo, rid: int) -> bool:
     return isinstance(meta, dict) and type(meta.get("id")) is int and meta["id"] == rid
 
 
+def _github_id(gh, repo) -> int | None:
+    """The repository id GitHub answers for `repo` (a rename's redirect followed), or None."""
+    if not isinstance(repo, str) or not _OWNER_REPO_RE.fullmatch(repo) or ".." in repo.split("/"):
+        return None
+    p = gh("api", f"repos/{repo}")
+    try:
+        meta = json.loads(getattr(p, "stdout", "") or "") if getattr(p, "returncode", 1) == 0 else None
+    except json.JSONDecodeError:
+        return None
+    return meta["id"] if isinstance(meta, dict) and type(meta.get("id")) is int else None
+
+
+def _ledger_at_merge_base(gh, slug: str, pr: dict) -> dict | None:
+    """The `by_id` of the ledger committed at `pr`'s merge base with its base branch, or None when the
+    merge base or that ledger cannot be read."""
+    oid = pr.get("headRefOid")
+    base = pr.get("baseRefName") or "main"
+    p = gh("api", f"repos/{slug}/compare/{base}...{oid}")
+    try:
+        meta = json.loads(getattr(p, "stdout", "") or "") if getattr(p, "returncode", 1) == 0 else None
+    except json.JSONDecodeError:
+        return None
+    sha = ((meta or {}).get("merge_base_commit") or {}).get("sha") if isinstance(meta, dict) else None
+    if not isinstance(sha, str) or not sha:
+        return None
+    q = gh("api", "-H", RAW_MEDIA, f"repos/{slug}/contents/{LEDGER_PATH}?ref={sha}")
+    try:
+        led = json.loads(getattr(q, "stdout", "") or "") if getattr(q, "returncode", 1) == 0 else None
+    except json.JSONDecodeError:
+        return None
+    by_id = led.get("by_id") if isinstance(led, dict) else None
+    return by_id if isinstance(by_id, dict) else None
+
+
 def _firmware_source(gh, slug: str, oid: str, fid: str) -> str | None:
     """The owner/repo data/firmware/<fid>/firmware.md committed at head `oid` names as its source
     (`url:`, lowercased as tick._owner_repo_from_url keys it), or None when unreadable or absent."""
@@ -420,7 +454,10 @@ def _ledger_identities(gh, slug: str, pr: dict, ids) -> tuple[dict, list] | None
     after the ledger was written (pr3y/bruce, now brucedevices/firmware) — a name GitHub answers with
     the SAME id: both names resolving to one repository is what binds the id. A later commit can rewrite
     the ledger's repo and id as a pair GitHub truthfully confirms; that pair names another repository,
-    so only the held record's own source binds the id to it. Equal names take one repos/ read."""
+    so only the held record's own source binds the id to it. Equal names take one repos/ read.
+    A record that fails that binding but is byte-identical at the PR's merge base with its base branch was
+    not written by the PR (a stale record under a reused id): the identity is then the one GitHub confirms
+    for the firmware.md source itself; an unreadable merge base or source keeps it unresolved."""
     oid = pr.get("headRefOid")
     if not slug or not isinstance(oid, str) or not oid:
         return None
@@ -433,6 +470,8 @@ def _ledger_identities(gh, slug: str, pr: dict, ids) -> tuple[dict, list] | None
     if not isinstance(by_id, dict):
         return None
     out, unresolved = {}, []
+    base_by_id: dict | None = None
+    base_read = False
     for fid in sorted(ids):
         rec = by_id.get(fid)
         rid = rec.get("repo_id") if isinstance(rec, dict) else None
@@ -441,8 +480,19 @@ def _ledger_identities(gh, slug: str, pr: dict, ids) -> tuple[dict, list] | None
         source = _firmware_source(gh, slug, oid, fid)
         if source and _github_confirms(gh, source, rid) and _same_repository(gh, rec.get("repo"), source, rid):
             out[fid] = (rid, source)
-        else:
-            unresolved.append(fid)
+            continue
+        # A record identical at the merge base was not written by this PR (2026-11-18: a September record
+        # for a rejected fork under the reused id `wled` aborted every tick while #1839 was open). It is
+        # history, not this PR's claim: the hold takes the identity GitHub confirms for the held
+        # firmware.md's own source. A record the PR changed keeps the strict rule above (R2i).
+        if source:
+            if not base_read:
+                base_by_id, base_read = _ledger_at_merge_base(gh, slug, pr), True
+            sid = _github_id(gh, source) if base_by_id is not None and base_by_id.get(fid) == rec else None
+            if sid is not None:
+                out[fid] = (sid, source)
+                continue
+        unresolved.append(fid)
     return out, unresolved
 
 

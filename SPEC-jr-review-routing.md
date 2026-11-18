@@ -174,6 +174,17 @@ main was forgotten the same way.
     marker that agrees still covers the rename. A PR without a marker (one older than it, like
     growth PRs #1511/#1513) is verified the same way, else matched by slug. A PR that does not
     change the ledger is not read: its ids stay unknown.
+  - **The ledger id binds only to the held firmware.md's own source** (R2i): the `firmware.md`
+    committed at the same head names a repository, and GitHub must answer that repository with the
+    ledger's `repo_id`; otherwise it is a gap. **Exception, a record the PR never wrote**
+    (2026-11-18): the ledger at #1839's head still carried a September record under the reused id
+    `wled` for a rejected fork (`toshihiromakuuchi/wled`, 846066903, `expired`), while the held
+    `data/firmware/wled/firmware.md` names `wled/WLED` (76990209); four hourly ticks aborted. A
+    record that fails the binding but is byte-identical in the ledger at the PR's merge base with
+    its base branch (`gh api repos/<slug>/compare/<base>...<head>` → `merge_base_commit`) is history,
+    not this PR's claim: the hold takes the id GitHub answers for the firmware.md source itself. A
+    record the PR changed keeps the strict rule; an unreadable merge base, base ledger or source
+    stays a gap.
   - **An ambiguous marker fails closed.** On a tick PR that holds a firmware, a body that opens
     `jr-identity` more than once (a forged, duplicate or unclosed marker), whose marker is
     unreadable, or that names one firmware twice is a gap (a PR that holds nothing decides nothing): the index is incomplete and the tick aborts before its worktree — nothing is

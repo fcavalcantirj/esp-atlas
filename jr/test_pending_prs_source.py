@@ -194,3 +194,48 @@ def test_a_renamed_upstream_leaves_the_index_complete(vetoed):
     idx = _load(gh, []) if vetoed else _load(gh, [pr])
     assert idx.complete, idx.gaps
     assert idx.hold("oldtool").repo_id == REPO_ID and set(idx.by_repo_id) == {REPO_ID}
+
+
+
+# --- a stale record the PR never wrote (2026-11-18, the wled abort) ----------------------------------------
+# Tick PR #1839 held `wled` (data/firmware/wled, source wled/WLED, GitHub id 76990209). The ledger at its head
+# still carried a September record under the same id for a rejected fork (toshihiromakuuchi/wled, 846066903,
+# status expired) — unchanged since long before the PR. The strict rule above read it as this PR's claim and
+# aborted every tick for four hours. A record identical at the PR's head and at its merge base with main is
+# history, not the PR's claim: the hold takes its identity from the held firmware.md's own source as GitHub
+# confirms it. A record the PR changed keeps the strict rule (R2i), and anything unreadable stays a gap.
+
+STALE = {"id": "oldtool", "repo": "u/unrelated", "repo_id": OTHER_ID, "status": "expired", "reason": "below_floor: 0 stars / 0 forks"}
+
+
+def _ledger_with(record):
+    return json.dumps({"by_id": {"oldtool": dict(record)}, "by_repo": {}})
+
+
+def _stale_index(head_record=STALE, base_record=STALE, bases=None, repos=None):
+    pr = _pr(1500, LEGACY_FILES)
+    gh = _gh([], ledgers={"oid1500": _ledger_with(head_record), "base1500": _ledger_with(base_record)},
+             repos={"n/oldtool": REPO_ID, "u/unrelated": OTHER_ID} if repos is None else repos,
+             sources={("oid1500", "oldtool"): "n/oldtool"},
+             bases={"oid1500": "base1500"} if bases is None else bases)
+    return _load(gh, [pr])
+
+
+def test_a_stale_record_the_pr_never_wrote_takes_the_identity_of_the_firmware_source():
+    idx = _stale_index()
+    assert idx.complete, idx.gaps
+    assert idx.hold("oldtool").repo_id == REPO_ID and set(idx.by_repo_id) == {REPO_ID}
+    assert idx.match("unrelated", OTHER_ID) is None                         # the stale fork id is not held
+
+
+def test_a_record_the_pr_rewrote_keeps_the_strict_rule():
+    _source_gap(_stale_index(head_record={**STALE, "status": "proposed"}))
+
+
+def test_an_unreadable_merge_base_keeps_the_gap():
+    _source_gap(_stale_index(bases={}))
+
+
+def test_a_stale_record_with_an_unconfirmed_source_keeps_the_gap():
+    idx = _stale_index(repos={"u/unrelated": OTHER_ID})                     # GitHub no longer answers n/oldtool
+    assert not idx.complete and any("#1500" in g and "oldtool" in g for g in idx.gaps), idx.gaps
