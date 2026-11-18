@@ -59,6 +59,14 @@ def test_the_same_abort_for_another_pr_number_is_the_same_break(tmp_path):
     assert len(_abort_incidents(store)) == 1
 
 
+def test_the_same_kind_with_another_detail_continues_the_streak(tmp_path):
+    store = _store(tmp_path)
+    cw.abort_watch(store, WLED, T1)
+    out = cw.abort_watch(store, WLED.replace("wled", "circuitpython"), T2)
+    assert out["consecutive"] == 2 and len(_abort_incidents(store)) == 1
+    assert _abort_incidents(store)[0]["context"]["evidence"]["reason"].count("circuitpython") == 1
+
+
 def test_a_different_abort_restarts_the_count(tmp_path):
     store = _store(tmp_path)
     cw.abort_watch(store, WLED, T1)

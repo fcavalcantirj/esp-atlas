@@ -64,10 +64,11 @@ Measured: four hourly ticks in a row (Nov 18, 18Z → 21Z) aborted on the same p
 ledger record under a reused firmware id) and nothing reacted but a Telegram line. An aborted tick writes
 no yield rows, so §1b cannot see it, and CI was green. Every hourly tick now hands its outcome to
 `jr/ci_watch.abort_watch` after its worktree and lock are released: the abort reason, or nothing when it
-completed. Fingerprint = sha256 of the reason lowercased with shas and every number normalised (the same
-gap for another PR number is the same break). The **second consecutive** abort with one fingerprint is an
-incident: `check` = `abort:<kind>` (the reason's head, e.g. `abort:pending-pr-inventory-incomplete`,
-`abort:typeerror`), `evidence` = the full reason, the streak count, first and last seen. It enters the
+completed. Its kind is the reason's head (`pending-pr-inventory-incomplete`, `typeerror`, `guard-red`,
+`terminated-by-sigterm`), and the fingerprint is sha256 of the kind: a tick stuck on the same check is one
+break even when the detail changes each hour (another firmware in the gap, other files in a red guard). The
+**second consecutive** abort of one kind is an incident: `check` = `abort:<kind>`, `evidence` = the latest
+full reason, the streak count, first and last seen. It enters the
 SAME store, `claim`, daily budget, `ack` halt and `jr-heal` review route as a red check (it is not gated
 by `stall_dispatch`). Aborts the delegate cannot fix never open one and never break a streak: GitHub
 unreadable or rate-limited (`gh …`, `GitHub rate limit low`), the tick lock, the call budget, branch

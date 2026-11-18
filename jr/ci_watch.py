@@ -290,11 +290,6 @@ NOT_FOR_THE_DELEGATE = ("gh ", "GitHub rate limit low", "another tick is running
                         "budget:", "branch protection:", "a Jr tick PR has been open >")
 
 
-def _abort_norm(reason: str) -> str:
-    s = re.sub(r"\b[0-9a-f]{7,40}\b", "H", reason.strip().lower())    # shas; then every number (PR, id, count)
-    return re.sub(r"\d+", "N", s)
-
-
 def abort_kind(reason: str) -> str:
     """`pending-pr-inventory-incomplete`, `typeerror`, `guard-red`: the reason's head, before ':' , ',' or '—'."""
     head = re.split(r"[:,—(]", reason.strip(), maxsplit=1)[0]
@@ -302,7 +297,9 @@ def abort_kind(reason: str) -> str:
 
 
 def abort_fingerprint(reason: str) -> str:
-    return hashlib.sha256(f"abort\n{_abort_norm(reason)}".encode()).hexdigest()
+    """By kind, not by detail: a tick stuck on the same check is one break even when the detail changes
+    every hour (another firmware in the gap, other files in a red guard). The full reasons ride in evidence."""
+    return hashlib.sha256(f"abort\n{abort_kind(reason)}".encode()).hexdigest()
 
 
 def abort_watch(store: "Store", reason: str | None, now: str, dry_run: bool = False) -> dict:
