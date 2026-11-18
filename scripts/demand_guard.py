@@ -14,7 +14,8 @@ PR adds are the ones the validation receipt promised. This script is that readin
   R4  every OTHER candidate, receipt and top-level field is byte-identical to the base;
   R5  the catalog records the PR adds under data/boards/<vendor>/<id>/board.md are exactly
       validation.expected_ids; no forbidden id appears in any changed path or added record id; no other
-      data/** file changes;
+      data/** file changes. Hygiene work (source quote_check, 2026-11-17) instead MODIFIES exactly the one
+      record its quote row names, and expected_ids is that record's id;
   R6  every commit that touches docs/demand has a subject starting with `chore(demand):`. Not counted: a
       two-parent merge of the base's history whose docs/demand is exactly git's automatic merge of its
       parents (a refresh of the branch, GitHub's test merge). A hand-resolved or edited merge is counted.
@@ -196,16 +197,27 @@ def check(repo: Path, *, base: str, head: str, branch: str, pr_url: str | None) 
         problems.append(f"R4 a receipt other than {key}, or a receipts top-level field, changed")
     lines.append("R4 every other candidate and receipt unchanged" if not any(p.startswith("R4") for p in problems) else "R4 see above")
 
-    added_ids = {m.group(1) for s, p in changes if s == "A" and (m := _BOARD.match(p))}
-    other_data = sorted(p for s, p in changes if p.startswith("data/") and not (s == "A" and _BOARD.match(p)))
-    if added_ids != expected:
-        problems.append(f"R5 records added {sorted(added_ids)} != expected_ids {sorted(expected)}")
-    hit = sorted(f for f in forbidden if f in added_ids or any(f"/{f}/" in p for p in paths))
-    if hit:
-        problems.append(f"R5 forbidden id(s) in the change: {', '.join(hit)}")
-    if other_data:
-        problems.append(f"R5 data/** changed beyond the expected records: {', '.join(other_data)}")
-    lines.append(f"R5 records added: {sorted(added_ids)}")
+    quote = cand.get("quote") if cand.get("source") == rw.SOURCE_QUOTE and isinstance(cand.get("quote"), dict) else None
+    if quote is not None:
+        # Hygiene work (2026-11-17): the one allowed catalog change is a MODIFICATION of the record the quote
+        # report named, and the validation's expected id is that record's id. Nothing added, nothing else.
+        data_changes = sorted((s, p) for s, p in changes if p.startswith("data/"))
+        if data_changes != [("M", quote.get("record"))]:
+            problems.append(f"R5 hygiene work may only modify {quote.get('record')}; data changes: {data_changes}")
+        if expected != {quote.get("id")}:
+            problems.append(f"R5 hygiene expected_ids {sorted(expected)} != the record's id [{quote.get('id')}]")
+        lines.append(f"R5 hygiene: record modified {quote.get('record')}")
+    else:
+        added_ids = {m.group(1) for s, p in changes if s == "A" and (m := _BOARD.match(p))}
+        other_data = sorted(p for s, p in changes if p.startswith("data/") and not (s == "A" and _BOARD.match(p)))
+        if added_ids != expected:
+            problems.append(f"R5 records added {sorted(added_ids)} != expected_ids {sorted(expected)}")
+        hit = sorted(f for f in forbidden if f in added_ids or any(f"/{f}/" in p for p in paths))
+        if hit:
+            problems.append(f"R5 forbidden id(s) in the change: {', '.join(hit)}")
+        if other_data:
+            problems.append(f"R5 data/** changed beyond the expected records: {', '.join(other_data)}")
+        lines.append(f"R5 records added: {sorted(added_ids)}")
 
     _check_commits(repo, base, head, problems, lines)
     return problems, lines

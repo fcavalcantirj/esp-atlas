@@ -403,3 +403,57 @@ def test_a_settle_may_create_the_closed_candidate_for_its_term(tmp_path):
     _commit(r, f"chore(demand): settle {KEY} abandoned")
     assert _settle_check(r)[0] == []
 
+
+# --- hygiene work (source quote_check, 2026-11-17): the PR modifies exactly the record the report named ---
+
+HKEY = "fix-aaaaaaaaaaaaaaaaaaaaaaaa"
+HBRANCH = f"jr/research-{HKEY}"
+HPR = "https://github.com/o/r/pull/11"
+HQUOTE = {"record": "data/boards/freenove/freenove-fnk0104a/board.md", "id": "freenove-fnk0104a", "report_date": "2026-11-17",
+          "quotes": ["4 MB flash"], "urls": ["https://docs.freenove.com/x"]}
+
+
+def _hqueue(status="linked", links=(HPR,), expected=("freenove-fnk0104a",)):
+    v = _validation(expected=expected, forbidden=())
+    v["term_key"] = "quote fix freenove fnk0104a"
+    v["verification_kind"] = "catalog_quote"
+    return {"version": 1, "max_new_per_day": 1, "reopen_after_days": 14, "candidates": {
+        HKEY: {"term": "quote fix freenove-fnk0104a", "source": "quote_check", "status": status, "first_seen": "2026-11-17",
+               "history": [], "linked_work": list(links), "quote": dict(HQUOTE), "validation": v}}}
+
+
+def _hreceipts(phase="author", pr_url=HPR):
+    return {"version": 1, "receipts": [{"key": HKEY, "branch": HBRANCH, "term": "quote fix freenove-fnk0104a", "phase": phase,
+                                        "state": "reserved", "started_on": "2026-11-17", "source": "quote_check",
+                                        "linked_work": [pr_url], "pr_url": pr_url, "quote": dict(HQUOTE)}]}
+
+
+@pytest.fixture
+def hrepo(tmp_path):
+    r = tmp_path / "repo"
+    r.mkdir()
+    _git(r, "init", "-q", "-b", "main")
+    _write(r, dg.QUEUE, json.dumps(_hqueue(status="validated", links=()), indent=1))
+    _write(r, dg.RECEIPTS, json.dumps(_hreceipts(phase="research", pr_url=None), indent=1).replace(', "pr_url": null', ''))
+    _write(r, HQUOTE["record"], BOARD.format(bid="freenove-fnk0104a", name="FNK0104A"))
+    _commit(r, "base")
+    _git(r, "checkout", "-q", "-b", HBRANCH)
+    _write(r, HQUOTE["record"], BOARD.format(bid="freenove-fnk0104a", name="FNK0104A (quote fixed)"))
+    _commit(r, f"fix(catalog): freenove-fnk0104a quotes (demand work {HKEY})")
+    _write(r, dg.QUEUE, json.dumps(_hqueue(), indent=1))
+    _write(r, dg.RECEIPTS, json.dumps(_hreceipts(), indent=1))
+    _commit(r, f"chore(demand): link work {HKEY} to draft PR #11")
+    return r
+
+
+def test_hygiene_work_that_modifies_exactly_its_record_passes(hrepo):
+    problems, lines = dg.check(hrepo, base="main", head="HEAD", branch=HBRANCH, pr_url=HPR)
+    assert problems == [], problems
+    assert any("R5 hygiene: record modified data/boards/freenove/freenove-fnk0104a/board.md" in ln for ln in lines)
+
+
+def test_hygiene_work_touching_another_record_or_adding_one_fails(hrepo):
+    _write(hrepo, "data/boards/freenove/freenove-extra/board.md", BOARD.format(bid="freenove-extra", name="Extra"))
+    _commit(hrepo, "feat(catalog): one more board")
+    problems = dg.check(hrepo, base="main", head="HEAD", branch=HBRANCH, pr_url=HPR)[0]
+    assert any(p.startswith("R5 hygiene work may only modify") for p in problems)
