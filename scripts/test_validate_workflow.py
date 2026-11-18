@@ -113,3 +113,63 @@ def test_npm_test_runs_the_public_copy_guard():
     assert argv[:2] == ["node", "--test"]
     ran = {p.relative_to(WEB).as_posix() for pattern in argv[2:] for p in WEB.glob(pattern)}
     assert "lib/public-copy.test.ts" in ran
+
+
+# --- the quotes job (scripts/check_quotes.py, 2026-11-17): the verbatim check of a human review, in CI ---
+
+QUOTES = "scripts/check_quotes.py"
+
+
+def _quotes_step(jobs):
+    steps = _steps_running(jobs["quotes"], QUOTES)
+    assert len(steps) == 1, "the quotes job must run the quote check exactly once"
+    return steps[0]
+
+
+def test_the_quotes_job_runs_the_quote_check_on_pull_requests_only(jobs):
+    assert _quotes_step(jobs)
+    assert jobs["quotes"].get("if") == "github.event_name == 'pull_request'"
+
+
+def test_nothing_swallows_the_quote_check_exit_code(jobs):
+    step = _quotes_step(jobs)
+    assert "continue-on-error" not in step and "continue-on-error" not in jobs["quotes"]
+    assert not SHELL_OPERATORS.search(step["run"]), step["run"]
+
+
+def test_the_quotes_job_installs_its_readers_before_the_check(jobs):
+    """httpx fetches, PyYAML reads frontmatter, pypdf reads the cited datasheets (without it a PDF-only
+    citation is inconclusive, never a verdict); esp_atlas_core is the frontmatter parser."""
+    steps = jobs["quotes"]["steps"]
+    at = next(i for i, s in enumerate(steps) if QUOTES in str(s.get("run", "")))
+    runs = " ".join(str(s.get("run", "")) for s in steps[:at])
+    for pkg in ("httpx", "pyyaml", "pypdf", "apps/core"):
+        assert pkg in runs, pkg
+
+
+def test_the_quotes_checkout_has_full_history_for_the_base_diff(jobs):
+    checkout = next(s for s in jobs["quotes"]["steps"] if str(s.get("uses", "")).startswith("actions/checkout"))
+# --- the demand-guard job (scripts/demand_guard.py, 2026-11-17): a demand PR changes only what it says ---
+
+DEMAND_GUARD = "scripts/demand_guard.py"
+
+
+def _demand_guard_step(jobs):
+    steps = _steps_running(jobs["demand-guard"], DEMAND_GUARD)
+    assert len(steps) == 1, "the demand-guard job must run the guard exactly once"
+    return steps[0]
+
+
+def test_the_demand_guard_runs_only_on_demand_pull_requests(jobs):
+    assert _demand_guard_step(jobs)
+    cond = jobs["demand-guard"].get("if", "")
+    assert "github.event_name == 'pull_request'" in cond and "startsWith(github.head_ref, 'jr/research-')" in cond
+
+
+def test_the_demand_guard_gets_the_pr_url_and_full_history_and_nothing_swallows_its_exit(jobs):
+    step = _demand_guard_step(jobs)
+    assert step.get("env", {}).get("PR_URL") == "${{ github.event.pull_request.html_url }}"
+    assert "continue-on-error" not in step and "continue-on-error" not in jobs["demand-guard"]
+    assert not SHELL_OPERATORS.search(step["run"]), step["run"]
+    checkout = next(s for s in jobs["demand-guard"]["steps"] if str(s.get("uses", "")).startswith("actions/checkout"))
+    assert checkout.get("with", {}).get("fetch-depth") == 0

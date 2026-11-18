@@ -1,0 +1,299 @@
+"""scripts/demand_guard.py — a demand PR changes exactly what its work item says. Throwaway git repos:
+a base commit with the queue, the receipts and a seed board, then the PR's commits on a
+jr/research-<KEY> branch, written the way jr/work_record.py writes them. No network."""
+from __future__ import annotations
+
+import json
+import subprocess
+from pathlib import Path
+
+import pytest
+
+import demand_guard as dg
+
+KEY = "pam-aa11bb22cc33dd44ee55ff66"
+BRANCH = f"jr/research-{KEY}"
+PR = "https://github.com/o/r/pull/7"
+BOARD = """---
+id: {bid}
+type: board
+brand: freenove
+name: {name}
+soc: esp32
+sources:
+- field: '*'
+  url: https://github.com/Freenove/{bid}
+  verified: '2026-11-17'
+---
+
+Body.
+"""
+
+
+def _git(repo: Path, *args: str) -> str:
+    p = subprocess.run(["git", *args], cwd=repo, capture_output=True, text=True, timeout=60)
+    assert p.returncode == 0, (args, p.stderr)
+    return p.stdout
+
+
+def _commit(repo: Path, subject: str) -> None:
+    _git(repo, "add", "-A")
+    _git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", subject)
+
+
+def _validation(expected=("freenove-esp32-wrover",), forbidden=("freenove-esp32-wroom",)):
+    return {"verified_on": "2026-11-17", "forbidden_ids": list(forbidden), "verification_kind": "catalog_part",
+            "validated_by": "jr-demand-executor run 1", "primary_sources": ["https://docs.freenove.com/x"],
+            "expected_ids": list(expected), "identity_verified": True, "term_key": "freenove esp32 wrover starter kit"}
+
+
+def _queue(status="validated", links=(), other_status="new"):
+    return {"version": 1, "max_new_per_day": 1, "reopen_after_days": 14, "candidates": {
+        KEY: {"term": "Freenove ESP32-WROVER Starter Kit", "source": "pam_feed", "status": status,
+              "first_seen": "2026-11-17", "history": [], "linked_work": list(links), "validation": _validation()},
+        "pam-other": {"term": "Other Kit", "source": "pam_feed", "status": other_status, "first_seen": "2026-11-16",
+                      "history": [], "linked_work": []}}}
+
+
+def _receipts(phase="research", pr_url=None, links=(), other_state="delivered"):
+    r = {"key": KEY, "branch": BRANCH, "term": "Freenove ESP32-WROVER Starter Kit", "phase": phase, "state": "reserved",
+         "started_on": "2026-11-17", "source": "pam_feed", "linked_work": list(links)}
+    if pr_url:
+        r["pr_url"] = pr_url
+    return {"version": 1, "receipts": [r, {"key": "pam-other", "branch": "jr/research-pam-other", "term": "Other Kit",
+                                           "phase": "author", "state": other_state, "started_on": "2026-11-16",
+                                           "source": "pam_feed", "linked_work": []}]}
+
+
+def _write(repo: Path, rel: str, text: str) -> None:
+    p = repo / rel
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(text)
+
+
+@pytest.fixture
+def repo(tmp_path):
+    """main at the base commit; the PR branch checked out, with the link commit and the record commit."""
+    r = tmp_path / "repo"
+    r.mkdir()
+    _git(r, "init", "-q", "-b", "main")
+    _write(r, dg.QUEUE, json.dumps(_queue(), indent=1))
+    _write(r, dg.RECEIPTS, json.dumps(_receipts(), indent=1))
+    _write(r, "docs/demand/pam-leads.json", "{}")
+    _write(r, "data/boards/freenove/freenove-fnk0104a/board.md", BOARD.format(bid="freenove-fnk0104a", name="FNK0104A"))
+    _commit(r, "base")
+    _git(r, "checkout", "-q", "-b", BRANCH)
+    _write(r, "data/boards/freenove/freenove-esp32-wrover/board.md", BOARD.format(bid="freenove-esp32-wrover", name="ESP32-WROVER"))
+    _commit(r, f"feat(catalog): Freenove ESP32-WROVER board (demand work {KEY})")
+    _write(r, dg.QUEUE, json.dumps(_queue(status="linked", links=[PR]), indent=1))
+    _write(r, dg.RECEIPTS, json.dumps(_receipts(phase="author", pr_url=PR, links=[PR]), indent=1))
+    _commit(r, f"chore(demand): link work {KEY} to draft PR #7")
+    return r
+
+
+def run(repo, **kw):
+    args = dict(base="main", head="HEAD", branch=BRANCH, pr_url=PR)
+    args.update(kw)
+    return dg.check(repo, **args)
+
+
+def test_the_real_shape_of_a_demand_pr_passes_every_rule(repo):
+    problems, lines = run(repo)
+    assert problems == [], problems
+    assert any("R5 records added: ['freenove-esp32-wrover']" in ln for ln in lines)
+    assert any("R6 demand commits: 1, all chore(demand):" in ln for ln in lines)
+
+
+def test_main_exit_codes_follow_the_verdict(repo, capsys):
+    assert dg.main(["--repo", str(repo), "--base", "main", "--branch", BRANCH, "--pr-url", PR]) == 0
+    assert "✓ demand guard" in capsys.readouterr().out
+    assert dg.main(["--repo", str(repo), "--base", "main", "--branch", "feat/not-demand"]) == 2
+
+
+def test_r1_another_demand_file_changed(repo):
+    _write(repo, "docs/demand/pam-leads.json", '{"leads": []}')
+    _commit(repo, "chore(demand): refresh leads")
+    problems, _ = run(repo)
+    assert any(p.startswith("R1") and "pam-leads.json" in p for p in problems)
+
+
+def test_r2_the_candidate_must_link_exactly_this_pr(repo):
+    assert any(p.startswith("R2") for p in run(repo, pr_url="https://github.com/o/r/pull/8")[0])
+    q = _queue(status="linked", links=[PR, "https://github.com/o/r/pull/9"])
+    _write(repo, dg.QUEUE, json.dumps(q, indent=1))
+    _commit(repo, "chore(demand): second link")
+    assert any(p.startswith("R2") and "not exactly this PR" in p for p in run(repo)[0])
+
+
+def test_r2_an_unreadable_validation_fails(repo):
+    q = _queue(status="linked", links=[PR])
+    q["candidates"][KEY]["validation"]["expected_ids"] = []
+    _write(repo, dg.QUEUE, json.dumps(q, indent=1))
+    _commit(repo, "chore(demand): broken validation")
+    assert any(p.startswith("R2") and "readable validation" in p for p in run(repo)[0])
+
+
+def test_r3_the_receipt_must_name_the_same_pr_in_the_author_phase(repo):
+    _write(repo, dg.RECEIPTS, json.dumps(_receipts(phase="research", pr_url="https://github.com/o/r/pull/8", links=[PR]), indent=1))
+    _commit(repo, "chore(demand): odd receipt")
+    problems = run(repo)[0]
+    assert any("R3" in p and "pr_url" in p for p in problems) and any("R3" in p and "phase" in p for p in problems)
+
+
+def test_r4_touching_another_candidate_or_receipt_fails(repo):
+    _write(repo, dg.QUEUE, json.dumps(_queue(status="linked", links=[PR], other_status="closed"), indent=1))
+    _commit(repo, "chore(demand): sneaky close of another candidate")
+    assert any(p.startswith("R4") and "candidate other than" in p for p in run(repo)[0])
+    _write(repo, dg.QUEUE, json.dumps(_queue(status="linked", links=[PR]), indent=1))
+    _write(repo, dg.RECEIPTS, json.dumps(_receipts(phase="author", pr_url=PR, links=[PR], other_state="abandoned"), indent=1))
+    _commit(repo, "chore(demand): sneaky settle of another receipt")
+    assert any(p.startswith("R4") and "receipt other than" in p for p in run(repo)[0])
+
+
+def test_r5_the_records_added_must_be_exactly_the_expected_ids(repo):
+    _write(repo, "data/boards/freenove/freenove-extra/board.md", BOARD.format(bid="freenove-extra", name="Extra"))
+    _commit(repo, "feat(catalog): one more board")
+    assert any(p.startswith("R5") and "!= expected_ids" in p for p in run(repo)[0])
+
+
+def test_r5_a_forbidden_sibling_anywhere_in_the_change_fails(repo):
+    _write(repo, "data/boards/freenove/freenove-esp32-wroom/board.md", BOARD.format(bid="freenove-esp32-wroom", name="WROOM"))
+    _commit(repo, "feat(catalog): the sibling too")
+    problems = run(repo)[0]
+    assert any(p.startswith("R5") and "forbidden" in p and "freenove-esp32-wroom" in p for p in problems)
+
+
+def test_r5_editing_an_existing_record_is_out_of_scope(repo):
+    _write(repo, "data/boards/freenove/freenove-fnk0104a/board.md", BOARD.format(bid="freenove-fnk0104a", name="FNK0104A v2"))
+    _commit(repo, "fix(catalog): touch the seed")
+    assert any(p.startswith("R5") and "beyond the expected records" in p for p in run(repo)[0])
+
+
+def test_r6_a_demand_file_changed_outside_a_chore_demand_commit_fails(repo):
+    _write(repo, dg.RECEIPTS, json.dumps(_receipts(phase="author", pr_url=PR, links=[PR]), indent=1) + "\n")
+    _commit(repo, "feat(catalog): also tweak the receipts by hand")
+    assert any(p.startswith("R6") and "feat(catalog): also tweak" in p for p in run(repo)[0])
+
+
+def test_key_of_reads_the_branch_name_only():
+    assert dg.key_of(BRANCH) == KEY and dg.key_of(f"refs/heads/{BRANCH}") == KEY
+    assert dg.key_of("jr/research-") is None and dg.key_of("main") is None and dg.key_of(None) is None
+
+
+# --- hygiene work (source quote_check, 2026-11-17): the PR modifies exactly the record the report named ---
+
+HKEY = "fix-aaaaaaaaaaaaaaaaaaaaaaaa"
+HBRANCH = f"jr/research-{HKEY}"
+HPR = "https://github.com/o/r/pull/11"
+HQUOTE = {"record": "data/boards/freenove/freenove-fnk0104a/board.md", "id": "freenove-fnk0104a", "report_date": "2026-11-17",
+          "quotes": ["4 MB flash"], "urls": ["https://docs.freenove.com/x"]}
+
+
+def _hqueue(status="linked", links=(HPR,), expected=("freenove-fnk0104a",)):
+    v = _validation(expected=expected, forbidden=())
+    v["term_key"] = "quote fix freenove fnk0104a"
+    v["verification_kind"] = "catalog_quote"
+    return {"version": 1, "max_new_per_day": 1, "reopen_after_days": 14, "candidates": {
+        HKEY: {"term": "quote fix freenove-fnk0104a", "source": "quote_check", "status": status, "first_seen": "2026-11-17",
+               "history": [], "linked_work": list(links), "quote": dict(HQUOTE), "validation": v}}}
+
+
+def _hreceipts(phase="author", pr_url=HPR):
+    return {"version": 1, "receipts": [{"key": HKEY, "branch": HBRANCH, "term": "quote fix freenove-fnk0104a", "phase": phase,
+                                        "state": "reserved", "started_on": "2026-11-17", "source": "quote_check",
+                                        "linked_work": [pr_url], "pr_url": pr_url, "quote": dict(HQUOTE)}]}
+
+
+@pytest.fixture
+def hrepo(tmp_path):
+    r = tmp_path / "repo"
+    r.mkdir()
+    _git(r, "init", "-q", "-b", "main")
+    _write(r, dg.QUEUE, json.dumps(_hqueue(status="validated", links=()), indent=1))
+    _write(r, dg.RECEIPTS, json.dumps(_hreceipts(phase="research", pr_url=None), indent=1).replace(', "pr_url": null', ''))
+    _write(r, HQUOTE["record"], BOARD.format(bid="freenove-fnk0104a", name="FNK0104A"))
+    _commit(r, "base")
+    _git(r, "checkout", "-q", "-b", HBRANCH)
+    _write(r, HQUOTE["record"], BOARD.format(bid="freenove-fnk0104a", name="FNK0104A (quote fixed)"))
+    _commit(r, f"fix(catalog): freenove-fnk0104a quotes (demand work {HKEY})")
+    _write(r, dg.QUEUE, json.dumps(_hqueue(), indent=1))
+    _write(r, dg.RECEIPTS, json.dumps(_hreceipts(), indent=1))
+    _commit(r, f"chore(demand): link work {HKEY} to draft PR #11")
+    return r
+
+
+def test_hygiene_work_that_modifies_exactly_its_record_passes(hrepo):
+    problems, lines = dg.check(hrepo, base="main", head="HEAD", branch=HBRANCH, pr_url=HPR)
+    assert problems == [], problems
+    assert any("R5 hygiene: record modified data/boards/freenove/freenove-fnk0104a/board.md" in ln for ln in lines)
+
+
+def test_hygiene_work_touching_another_record_or_adding_one_fails(hrepo):
+    _write(hrepo, "data/boards/freenove/freenove-extra/board.md", BOARD.format(bid="freenove-extra", name="Extra"))
+    _commit(hrepo, "feat(catalog): one more board")
+    problems = dg.check(hrepo, base="main", head="HEAD", branch=HBRANCH, pr_url=HPR)[0]
+    assert any(p.startswith("R5 hygiene work may only modify") for p in problems)
+
+
+# --- resolver work (source gauge_gap, 2026-11-17): CODE under jr/**, never data/** ---------------------------
+
+RKEY = "resolver-bbbbbbbbbbbbbbbbbbbbbbbb"
+RBRANCH = f"jr/research-{RKEY}"
+RPR = "https://github.com/o/r/pull/12"
+RBOARDS = ["adafruit-feather-esp32-s3", "adafruit-qtpy-esp32-c3", "adafruit-metro-esp32-s3"]
+RPROV = {"vendor": "adafruit", "field": "download_mode", "missing": 20, "records": 26, "boards": RBOARDS, "report_date": "2026-11-18"}
+
+
+def _rqueue(status="linked", links=(RPR,)):
+    v = _validation(expected=tuple(RBOARDS), forbidden=())
+    v["term_key"] = "resolver adafruit download_mode"
+    v["verification_kind"] = "resolver_live"
+    return {"version": 1, "max_new_per_day": 1, "reopen_after_days": 14, "candidates": {
+        RKEY: {"term": "resolver adafruit download_mode", "source": "gauge_gap", "status": status, "first_seen": "2026-11-18",
+               "history": [], "linked_work": list(links), "resolver": dict(RPROV), "validation": v}}}
+
+
+def _rreceipts(phase="author", pr_url=RPR):
+    row = {"key": RKEY, "branch": RBRANCH, "term": "resolver adafruit download_mode", "phase": phase, "state": "reserved",
+           "started_on": "2026-11-18", "source": "gauge_gap", "linked_work": [pr_url] if pr_url else [], "resolver": dict(RPROV)}
+    if pr_url:
+        row["pr_url"] = pr_url
+    return {"version": 1, "receipts": [row]}
+
+
+@pytest.fixture
+def rrepo(tmp_path):
+    r = tmp_path / "repo"
+    r.mkdir()
+    _git(r, "init", "-q", "-b", "main")
+    _write(r, dg.QUEUE, json.dumps(_rqueue(status="validated", links=()), indent=1))
+    _write(r, dg.RECEIPTS, json.dumps(_rreceipts(phase="research", pr_url=None), indent=1))
+    _write(r, "jr/board_backfill.py", "EXTRACTORS = {}\n")
+    _commit(r, "base")
+    _git(r, "checkout", "-q", "-b", RBRANCH)
+    _write(r, "jr/vendor_extractors/adafruit.py", "def extract_download_mode(text):\n    return None\n")
+    _write(r, "jr/fixtures/doc_resolvers/adafruit/adafruit-feather-esp32-s3.html", "<html>Hold BOOT</html>\n")
+    _write(r, "jr/test_vendor_adafruit_download_mode.py", "def test_x():\n    assert True\n")
+    _write(r, "jr/board_backfill.py", "EXTRACTORS = {'adafruit': 1}\n")
+    _commit(r, f"feat(jr): adafruit download_mode extractor (demand work {RKEY})")
+    _write(r, dg.QUEUE, json.dumps(_rqueue(), indent=1))
+    _write(r, dg.RECEIPTS, json.dumps(_rreceipts(), indent=1))
+    _commit(r, f"chore(demand): link work {RKEY} to draft PR #12")
+    return r
+
+
+def test_resolver_work_that_adds_an_extractor_with_a_test_passes(rrepo):
+    problems, lines = dg.check(rrepo, base="main", head="HEAD", branch=RBRANCH, pr_url=RPR)
+    assert problems == [], problems
+    assert any("R5 resolver: adafruit × download_mode, 1 test file(s) changed" in ln for ln in lines)
+
+
+def test_resolver_work_touching_data_or_without_a_test_fails(rrepo):
+    _write(rrepo, "data/boards/adafruit/adafruit-feather-esp32-s3/board.md", BOARD.format(bid="adafruit-feather-esp32-s3", name="Feather"))
+    _commit(rrepo, "feat(catalog): filled by hand")
+    problems = dg.check(rrepo, base="main", head="HEAD", branch=RBRANCH, pr_url=RPR)[0]
+    assert any(p.startswith("R5 resolver work may change only jr/**") and "data/boards/adafruit" in p for p in problems)
+    _git(rrepo, "rm", "-q", "jr/test_vendor_adafruit_download_mode.py")
+    _commit(rrepo, "test dropped")
+    problems = dg.check(rrepo, base="main", head="HEAD", branch=RBRANCH, pr_url=RPR)[0]
+    assert "R5 resolver work must add or change a jr/test_*.py" in problems
