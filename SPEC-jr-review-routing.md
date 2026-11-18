@@ -272,22 +272,37 @@ phase 2.
   record, an UNCERTAIN receipt, a receipt the live upstream no longer supports) waits for the agent
   reviewer or a person. A person audits the first five canary merges after the fact and holds the switch.
 
-### 7b. Code pull requests: the agent reviewer and the code canary (2026-11-17)
+### 7b. Code pull requests: the agent reviewer and the code canary (2026-11-17, lanes 2026-11-18)
 
 Every other pull request — Jr's code, the operators' code — used to wait for a person's exact-head
-review (43 merges a week). `docs/REVIEW-CONTRACT.md` writes that review down; `.github/workflows/
-agent-review.yml` runs it: the official `anthropics/claude-code-action@v1`, in agent mode, with the
-contract as its prompt, tools limited to `gh pr diff`, `gh pr view`, `gh pr comment`, reading the checkout
-and running the test files the diff touches — never a write — and a structured verdict
-`{verdict: PASS|BLOCK, head, findings, checked}` bound to the exact head. The `code-canary` job then: C1
-`jr/autonomy.json` `code_automerge: true`, C2 repository variable `JR_CODE_AUTOMERGE` not `0`, C3 a PASS
-verdict naming THIS head (another sha is no verdict), C4 at most one agent-merged PR an hour (label
-`agent-pass`), C5 `gh pr merge --auto --match-head-commit <head>`, landing only when every required check
-is green there. A BLOCK labels the PR `needs-human` with the findings already posted; the author's next push
-is a new review; nobody waits. The job needs the repository secret `ANTHROPIC_API_KEY`; without it the
-review job says so and nothing merges. The action's agent mode is documented as experimental; this is the
-one place an LLM sits in the loop, and it decides nothing the catalog shows: a wrong PASS is caught by the
-same after-the-fact audit as a wrong human approval, and the switch turns it off in one command.
+review (43 merges a week). `docs/REVIEW-CONTRACT.md` writes that review down. **Two lanes run it, the owner's
+rule "subscription and api as fallback":**
+
+- **Subscription lane (primary).** `jr/agent_review.py once`, an hourly job on the runner, calls the same
+  coding delegate the demand executor and the CI heal use (Claude subscription, no API key, read-only:
+  `--no-ship --no-merge`) on the oldest open code PR whose current head has no verdict, in a detached
+  worktree at that head, with `docs/ops/REVIEW-PROMPT.md` as the task. The agent writes the structured
+  verdict `{verdict: PASS|BLOCK, head, findings, checked}` to a file outside the repo; the runner posts it as
+  ONE PR comment beginning with `<!-- agent-review verdict -->` (lane `subscription`). Not for `jr/tick-*`,
+  `jr/research-*`, `jr/heal-*` or drafts.
+- **API lane (fallback).** Only when the delegate's own answer says the lane is DOWN (no
+  `CLAUDE_CODE_OAUTH_TOKEN`, usage limit, 401/403/429), the runner labels that PR `review-fallback` — at most
+  `FALLBACK_PER_DAY` (3) a UTC day, counted in the runner's state — and `.github/workflows/agent-review.yml`
+  (trigger: that label) runs `anthropics/claude-code-action@v1` with `ANTHROPIC_API_KEY`, tools limited to
+  `gh pr diff`, `gh pr view`, reading the checkout and running the touched test files, then posts the same
+  comment (lane `api`) and removes the label. BUSY (the delegate's lock is held) is not down: the PR waits an
+  hour. Without the secret the fallback job says so and the PR waits for the subscription lane.
+- **The code canary** (`scripts/code_canary.py`, workflow trigger: a marker comment on a PR) reads the newest
+  verdict comment naming the PR's current head, whichever lane wrote it, then: C1 `jr/autonomy.json`
+  `code_automerge: true`, C2 repository variable `JR_CODE_AUTOMERGE` not `0`, C3 a PASS naming THIS head
+  (another sha is no verdict), C4 at most one agent-merged PR an hour (label `agent-pass`), C5 `gh pr merge
+  --auto --match-head-commit <head>`, landing only when every required check is green there. A BLOCK labels
+  the PR `needs-human` with the findings already in the comment; the author's next push is a new review;
+  nobody waits.
+
+This is the one place an LLM sits in the loop, and it decides nothing the catalog shows: a wrong PASS is
+caught by the same after-the-fact audit as a wrong human approval, and the switch turns it off in one
+command. The action's agent mode is documented as experimental; the primary lane does not depend on it.
 
 ### 8. Jr keeps its own review PRs mergeable (2026-11-15)
 

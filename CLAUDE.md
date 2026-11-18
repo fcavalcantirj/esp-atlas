@@ -76,8 +76,10 @@ that must be reproducible (board ranking, pin assignment, confidence gates).
   **review-routed tick PR** merges the same way when every recipe it adds carries a PASS evidence receipt
   that `receipt-guard` re-verifies on the live upstream (`tick-canary`, one a day, `tick_automerge` +
   `JR_TICK_AUTOMERGE`). **Code PRs** get the same exact-head review from the agent reviewer
-  (`docs/REVIEW-CONTRACT.md`, `.github/workflows/agent-review.yml`) and merge through the code canary
-  (`code_automerge` + `JR_CODE_AUTOMERGE`, one an hour) on a PASS; a BLOCK is labelled `needs-human`.
+  (`docs/REVIEW-CONTRACT.md`): the runner's subscription delegate first (`jr/agent_review.py`, hourly), the
+  API lane in `.github/workflows/agent-review.yml` only as a capped fallback when that lane is down; the
+  verdict is one marker comment, and the code canary merges on a PASS (`code_automerge` +
+  `JR_CODE_AUTOMERGE`, one an hour); a BLOCK is labelled `needs-human`.
 - **Jr's tick never re-proposes what a tick PR already holds** (`jr/pending_prs.py`, §6 of
   `SPEC-jr-review-routing.md`): an OPEN tick PR holds every firmware it touches; a tick PR **closed
   unmerged is a 30-day veto of everything it proposed**. Disposing of duplicate tick PRs therefore means

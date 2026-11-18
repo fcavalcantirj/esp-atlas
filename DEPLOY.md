@@ -125,7 +125,10 @@ push-triggered runs do not fire for that merge (the PR's checks at the same head
 `JR_TICK_AUTOMERGE` is the same pattern for review-routed tick PRs (`tick-canary`, one a day, every added
 recipe's PASS receipt re-verified live by `receipt-guard`); `code_automerge` / `JR_CODE_AUTOMERGE` is the
 code canary (`.github/workflows/agent-review.yml`: the agent reviewer's PASS at the exact head, one merge an
-hour); it needs the repository secret `ANTHROPIC_API_KEY`. Stop it: `gh variable set JR_CODE_AUTOMERGE --body 0`. Stop the tick canary: `gh variable set JR_TICK_AUTOMERGE --body 0`.
+hour). The review runs on the runner's subscription delegate first (`jr/agent_review.py once`, hourly; the
+job is the runner operator's, like the heal launcher) and falls back to Actions with the repository secret
+`ANTHROPIC_API_KEY` only when the delegate reports its lane down, at most 3 a day (label `review-fallback`).
+Stop it: `gh variable set JR_CODE_AUTOMERGE --body 0`. Stop the tick canary: `gh variable set JR_TICK_AUTOMERGE --body 0`.
 
 ## Hourly GitHub counts
 

@@ -85,3 +85,50 @@ def test_dry_run_never_writes(autonomy):
     gh = FakeGh()
     assert run(autonomy(True), gh, verdict(), dry_run=True) == "dry_run" and gh.writes() == []
     assert run(autonomy(True), gh, verdict("BLOCK"), dry_run=True) == "block" and gh.writes() == []
+
+
+# --- the verdict comment is the one source of truth (both lanes write it; the canary reads it) --------------
+
+def test_verdict_from_comments_takes_the_newest_marker_comment_for_the_current_head():
+    import sys
+    sys.path.insert(0, str(cc.REPO / "jr"))
+    import agent_review as ar
+    older = ar.render_comment(json.loads(verdict("BLOCK", head=HEAD, findings=[{"file": "x.py", "line": 3, "summary": "s", "failure": "f"}])), "subscription")
+    newer = ar.render_comment(json.loads(verdict("PASS", head=HEAD)), "api")
+    other = ar.render_comment(json.loads(verdict("PASS", head="a" * 40)), "subscription")
+    calls = []
+    def gh(*args):
+        calls.append(args)
+        if args[:2] == ("pr", "view"):
+            return json.dumps({"headRefOid": HEAD.upper()})
+        if args[:1] == ("api",):
+            return json.dumps([{"body": "a human comment"}, {"body": older}, {"body": other}, {"body": newer}])
+        return ""
+    head, vj = cc.verdict_from_comments(gh, "o/r", 1797)
+    assert head == HEAD and json.loads(vj)["verdict"] == "PASS" and json.loads(vj)["head"] == HEAD
+    head, vj = cc.verdict_from_comments(lambda *a: json.dumps({"headRefOid": "b" * 40}) if a[:2] == ("pr", "view") else json.dumps([{"body": newer}]), "o/r", 1797)
+    assert vj is None                                                  # a verdict for another head is no verdict
+
+
+def test_the_cli_from_comments_is_a_noop_without_a_verdict_and_decides_with_one(monkeypatch, autonomy, capsys):
+    import sys
+    sys.path.insert(0, str(cc.REPO / "jr"))
+    import agent_review as ar
+    comment = ar.render_comment(json.loads(verdict("PASS", head=HEAD)), "subscription")
+    store = {"comments": []}
+    def gh(*args):
+        if args[:2] == ("pr", "view"):
+            return json.dumps({"headRefOid": HEAD})
+        if args[:1] == ("api",):
+            return json.dumps(store["comments"])
+        if args[:2] == ("pr", "list"):
+            return "[]"
+        return ""
+    monkeypatch.setattr(cc.demand_canary, "default_gh", gh)
+    monkeypatch.setattr(cc.demand_canary, "AUTONOMY", autonomy(on=True))
+    assert cc.main(["--pr", "1797", "--from-comments", "--dry-run"]) == 0
+    assert "outcome: no_verdict" in capsys.readouterr().out
+    store["comments"] = [{"body": comment}]
+    assert cc.main(["--pr", "1797", "--from-comments", "--dry-run"]) == 0
+    out = capsys.readouterr().out
+    assert "outcome: dry_run" in out and f"--match-head-commit {HEAD}" in out

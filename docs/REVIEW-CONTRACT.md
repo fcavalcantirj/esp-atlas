@@ -56,3 +56,17 @@ One structured answer, nothing else decides:
 (`jr/autonomy.json` `code_automerge`, repository variable `JR_CODE_AUTOMERGE`), at most one such merge an
 hour, after every required check is green. `BLOCK` labels the PR `needs-human`; nobody waits — the author's
 next push starts a new review. A person audits merged PRs after the fact and holds the kill switch.
+
+## Who runs it (owner, 2026-11-18: "subscription and api as fallback")
+
+- **Primary: the runner's coding delegate on the Claude subscription** (`jr/agent_review.py once`, hourly on
+  the runner, `docs/ops/REVIEW-PROMPT.md` as the task). It reviews the oldest open code PR without a verdict
+  for its current head, in a detached worktree at that head, read-only, and posts the verdict as ONE comment
+  that begins with the marker `<!-- agent-review verdict -->` (lane `subscription`).
+- **Fallback: GitHub Actions with the API key**, only when the primary lane reports it is DOWN (no
+  subscription token, usage limit, auth failure). The runner then labels that PR `review-fallback`, at most
+  three a UTC day; the label triggers `.github/workflows/agent-review.yml`, which runs
+  `anthropics/claude-code-action` with `ANTHROPIC_API_KEY` for that PR alone and posts the same comment (lane
+  `api`), then removes the label. A busy delegate is not a down lane: the PR waits an hour.
+- **The verdict comment is the one source of truth**: the code canary reads the newest marker comment naming
+  the PR's current head, whichever lane wrote it. A later push needs a new comment.

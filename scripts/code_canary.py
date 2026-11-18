@@ -88,17 +88,44 @@ def decide(*, pr: int, head: str, verdict_json: str | None, repo_slug: str, now:
     return "merge_requested"
 
 
+def verdict_from_comments(gh, repo_slug: str, pr: int) -> tuple[str, str | None]:
+    """(current head, newest verdict JSON for that head or None) from the PR's marker comments — the one
+    source of truth both review lanes write (jr/agent_review.py, docs/REVIEW-CONTRACT.md "Who runs it")."""
+    sys.path.insert(0, str(REPO / "jr"))
+    import agent_review
+    try:
+        head = json.loads(gh("pr", "view", str(pr), "--repo", repo_slug, "--json", "headRefOid") or "{}")["headRefOid"]
+        comments = json.loads(gh("api", f"repos/{repo_slug}/issues/{pr}/comments", "--paginate") or "[]")
+    except (json.JSONDecodeError, KeyError, TypeError) as e:
+        raise Unreadable(f"PR head or comments unreadable: {e}") from e
+    v = agent_review.verdict_for_head(comments, head)
+    return head.lower(), (json.dumps({k: v[k] for k in ("verdict", "head", "findings", "checked")}) if v else None)
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--pr", type=int, required=True)
-    ap.add_argument("--head", required=True)
+    ap.add_argument("--head", help="the exact head (default: the PR's current head when --from-comments)")
     ap.add_argument("--author", default="")
     ap.add_argument("--repo-slug", default=os.environ.get("GITHUB_REPOSITORY", "fcavalcantirj/esp-atlas"))
+    ap.add_argument("--from-comments", action="store_true",
+                    help="read the newest marker verdict comment for the PR's current head instead of VERDICT_JSON")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args(argv)
     try:
-        outcome = decide(pr=a.pr, head=a.head, verdict_json=os.environ.get("VERDICT_JSON"), repo_slug=a.repo_slug,
-                         now=datetime.now(timezone.utc), env=dict(os.environ), dry_run=a.dry_run)
+        head, verdict_json = a.head, os.environ.get("VERDICT_JSON")
+        if a.from_comments:
+            head, verdict_json = verdict_from_comments(demand_canary.default_gh, a.repo_slug, a.pr)
+            if verdict_json is None:
+                print(f"code canary: no verdict comment for #{a.pr} at its current head {head[:8]}; nothing to do")
+                print("outcome: no_verdict")
+                return 0
+        if not head:
+            print("code canary: --head is required without --from-comments", file=sys.stderr)
+            return 2
+        outcome = decide(pr=a.pr, head=head, verdict_json=verdict_json, repo_slug=a.repo_slug,
+                         now=datetime.now(timezone.utc), env=dict(os.environ), dry_run=a.dry_run,
+                         autonomy_path=demand_canary.AUTONOMY, gh=demand_canary.default_gh)
     except Unreadable as e:
         print(f"code canary: cannot act: {e}", file=sys.stderr)
         return 2
