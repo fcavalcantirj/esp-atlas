@@ -1224,10 +1224,12 @@
   "pam-c2beecd3b941f4023d832c9d": {
    "term": "Heltec WiFi LoRa 32 V4",
    "source": "pam_feed",
-   "status": "validated",
+   "status": "linked",
    "first_seen": "2026-11-17",
    "history": [],
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1846"
+   ],
    "snapshot": "docs/demand/pam-leads.json",
    "feed": {
     "checked_at": "2026-11-17T11:15:31.248373Z",

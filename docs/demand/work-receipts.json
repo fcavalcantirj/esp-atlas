@@ -1601,11 +1601,13 @@
    "key": "pam-c2beecd3b941f4023d832c9d",
    "branch": "jr/research-pam-c2beecd3b941f4023d832c9d",
    "term": "Heltec WiFi LoRa 32 V4",
-   "phase": "research",
+   "phase": "author",
    "state": "reserved",
    "started_on": "2026-11-18",
    "source": "pam_feed",
-   "linked_work": [],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1846"
+   ],
    "feed": {
     "checked_at": "2026-11-17T11:15:31.248373Z",
     "feeds": {
@@ -1793,7 +1795,8 @@
     },
     "reserved_by": "jr/demand_run.py"
    },
-   "last_attempt_on": "2026-11-18"
+   "last_attempt_on": "2026-11-18",
+   "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1846"
   }
  ]
 }
