@@ -35,7 +35,9 @@
   font-size: var(--t-sm);
   letter-spacing: var(--track-label);
   text-transform: uppercase;
-  color: var(--accent);
+  /* --accent on --accent-soft is 4.08:1 at this size (Lighthouse, 2026-11-18); a fifth of the ink brings it
+     to ~5.3:1 in light mode and only lightens it further in dark mode, so AA holds in both themes. */
+  color: color-mix(in srgb, var(--accent) 80%, var(--fg));
   box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
   transition: box-shadow 0.2s ease, background 0.2s ease;
 }
@@ -82,8 +84,9 @@
   border-style: dashed;
   border-color: var(--border-strong);
   background: var(--bg);
+  /* No opacity: at 0.85 the muted text fell to 3.99:1 (title) and 4.26:1 (tags); the dashed outline and the
+     missing glow already say "not in the browser". */
   color: var(--muted);
-  opacity: 0.85;
   box-shadow: none;
 }
 

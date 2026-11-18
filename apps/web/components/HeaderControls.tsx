@@ -119,7 +119,7 @@ function FontSizeControls() {
         className="icon-btn"
         onClick={() => step(-1)}
         disabled={index <= 0}
-        aria-label="Smaller text"
+        aria-label="A− smaller text"
         title="Smaller text"
       >
         A<span className="font-controls-sign" aria-hidden="true">−</span>
@@ -129,7 +129,7 @@ function FontSizeControls() {
         className="icon-btn"
         onClick={() => step(1)}
         disabled={index >= FONT_SCALES.length - 1}
-        aria-label="Larger text"
+        aria-label="A+ larger text"
         title="Larger text"
       >
         A<span className="font-controls-sign" aria-hidden="true">+</span>
