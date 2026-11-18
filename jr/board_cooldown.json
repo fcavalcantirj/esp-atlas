@@ -216,7 +216,7 @@
     },
     "adafruit-qt-py-esp32": {
       "board": "adafruit-qt-py-esp32",
-      "expires": "2026-11-18T03:00:55.156011+00:00",
+      "expires": "2026-11-25T04:00:31.917403+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -224,7 +224,7 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-11T03:00:55.156011+00:00"
+      "timestamp": "2026-11-18T04:00:31.917403+00:00"
     },
     "adafruit-qt-py-esp32-c3": {
       "board": "adafruit-qt-py-esp32-c3",
@@ -276,7 +276,7 @@
     },
     "adafruit-qualia-esp32-s3": {
       "board": "adafruit-qualia-esp32-s3",
-      "expires": "2026-11-18T03:00:55.156011+00:00",
+      "expires": "2026-11-25T04:00:31.917403+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "no_manifest",
@@ -284,11 +284,11 @@
         }
       },
       "reason": "doc-unreachable",
-      "timestamp": "2026-11-11T03:00:55.156011+00:00"
+      "timestamp": "2026-11-18T04:00:31.917403+00:00"
     },
     "beetle-esp32-c3": {
       "board": "beetle-esp32-c3",
-      "expires": "2026-11-18T03:00:55.156011+00:00",
+      "expires": "2026-11-25T04:00:31.917403+00:00",
       "field_reasons": {
         "download_mode": {
           "manifest": "field_absent",
@@ -301,7 +301,7 @@
         }
       },
       "reason": "nothing-groundable",
-      "timestamp": "2026-11-11T03:00:55.156011+00:00"
+      "timestamp": "2026-11-18T04:00:31.917403+00:00"
     },
     "beetle-esp32-c6": {
       "board": "beetle-esp32-c6",
