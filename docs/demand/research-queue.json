@@ -1224,7 +1224,7 @@
   "pam-c2beecd3b941f4023d832c9d": {
    "term": "Heltec WiFi LoRa 32 V4",
    "source": "pam_feed",
-   "status": "new",
+   "status": "validated",
    "first_seen": "2026-11-17",
    "history": [],
    "linked_work": [],
@@ -1312,6 +1312,27 @@
      "matches": [],
      "status": "potential_identity_gap"
     }
+   },
+   "validation": {
+    "verified_on": "2026-11-18",
+    "forbidden_ids": [
+     "heltec-wifi-lora-32-v4-r8"
+    ],
+    "verification_kind": "catalog_part",
+    "validated_by": "demand-executor delegate (Claude Code), run jr/research-pam-c2beecd3b941f4023d832c9d 2026-11-18",
+    "primary_sources": [
+     "https://heltec.org/project/wifi-lora-32-v4/",
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.3.1_Datasheet.pdf",
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/datasheet/WiFi_LoRa_32_V4.2.0.pdf",
+     "https://resource.heltec.cn/download/WiFi_LoRa_32_V4/Pinmap/V4_pinmap.png",
+     "https://wiki.heltec.org/docs/devices/open-source-hardware/esp32-series/lora-32/wifi-lora-32-v4/"
+    ],
+    "expected_ids": [
+     "heltec-wifi-lora-32-v4"
+    ],
+    "notes": "Heltec WiFi LoRa 32 V4 (model HTIT-WB32LAF): ESP32-S3R2 (2MB PSRAM) + external 16MB flash + SX1262, CP2102 removed (native USB). The product page now sells a sibling WiFi LoRa 32 V4-R8 (ESP32-S3R8, 8MB PSRAM, different firmware and Vext/VGNSS/LED pin map) which is a distinct SKU and must not be authored by this work. The predecessor WiFi LoRa 32 V3 (ESP32-S3FN8, CP2102) is already catalogued as heltec-wifi-lora-32-v3 and stays separate. The low-power HTIT-WB32LAF-N-HF/-LF/-433 radio variants (21 dBm) are the same board with a different LoRa front end and are covered in notes, not as separate ids.",
+    "identity_verified": true,
+    "term_key": "heltec wifi lora 32 v4"
    }
   }
  }
