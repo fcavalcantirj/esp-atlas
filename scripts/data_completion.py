@@ -198,6 +198,35 @@ def compute_completion(data_dir=None):
     }
 
 
+def per_vendor(data_dir=None):
+    """The boards gauge broken down by vendor x field (SPEC-demand-work-consumer.md "Resolver work"):
+    {"version": 1, "vendors": {<brand>: {"records": n, "fields": {<label>: {"missing": n, "boards": [ids]}}}}}.
+    Pure and deterministic; a board without a readable id or brand is counted under its folder names."""
+    data_dir = Path(data_dir or _default_data_dir())
+    pattern = DATA_PATTERNS[_PATTERN_KEY["boards"]]
+    vendors = {}
+    for path in sorted(data_dir.glob(pattern)):
+        try:
+            fm, _body = parse_frontmatter(path)
+        except (ValueError, OSError):
+            continue
+        if not isinstance(fm, dict):
+            continue
+        brand = str(fm.get("brand") or path.parent.parent.name)
+        board_id = str(fm.get("id") or path.parent.name)
+        v = vendors.setdefault(brand, {"records": 0, "fields": {label: {"missing": 0, "boards": []}
+                                                                     for label, _d in FIELD_SPECS["boards"]}})
+        v["records"] += 1
+        for label, dotted in FIELD_SPECS["boards"]:
+            if not _is_present(_get_nested(fm, dotted)):
+                v["fields"][label]["missing"] += 1
+                v["fields"][label]["boards"].append(board_id)
+    for v in vendors.values():
+        for f in v["fields"].values():
+            f["boards"].sort()
+    return {"version": 1, "vendors": dict(sorted(vendors.items()))}
+
+
 def print_report(report, gaps_limit=8):
     print("FINITE-GROUND DATA-COMPLETION GAUGE (presence, v1)\n")
     for entity, data in report["entities"].items():
