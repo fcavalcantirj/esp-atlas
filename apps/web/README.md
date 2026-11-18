@@ -70,7 +70,10 @@ reviewed formats in `lib/analytics-params.ts` are the sole exception: on
 `search_submit` and `search_empty`, the token is emitted as GA4 `q` for Jr's
 existing `customEvent:q` demand query. This intentionally gives Jr only partial
 first-party term coverage; GSC supplies unconstrained search terms. Set localStorage
-`esp-atlas:analytics-disabled` to `1` before loading to opt out. Events:
+`esp-atlas:analytics-disabled` to `1` before loading to opt out. **Our own visits:** open any page once with
+`?internal=1` (`?internal=0` undoes it); that browser then tags every hit, the automatic `page_view`
+included, with `internal=1` (`lib/analytics-boot.ts`), so usage reports can leave the maintainers out.
+Events:
 
 | Event | Params |
 |---|---|
@@ -105,12 +108,15 @@ also collect `page_location` with a `?q=` search term. Configure web-stream
 query-parameter redaction for `q` and verify its effect in DebugView before
 using query-bearing pages for analytics. See Google's [page view](https://developers.google.com/analytics/devguides/collection/ga4/views?technology=websites)
 and [redaction](https://support.google.com/analytics/answer/13544947) documentation.
-Custom parameters are only reportable after you
-register them in GA4 Admin → Custom definitions: dimensions `part_id, part_type,
-origin, q, q_length, form, budget, radio, band, protocol, type, field,
-theme, link_type, preset, example, kind, relation, part_ids, removed_key, host,
-surface, outcome, stage, fallback, lens`; metrics
-`result_count, position, scale, selected_count, needs_count, filter_count, latency_ms`.
+Custom parameters are only reportable after you register them in GA4 Admin → Custom definitions
+(registration is not retroactive). **Registered, read back from the Admin API on 2026-11-18 (33 event
+dimensions):** `band, brand, budget, direction, endpoint, field, filters, form, from_id, has_query, host,
+ieee802154, link_type, needs, open, origin, panel, part_id, part_ids, part_type, path, preset, protocol, q,
+radio, relation, removed_key, soc_ref, status, theme, to_id, type, usb_native`. **Collected but not yet
+registered, so unreportable** (register these, event scope): `reason, recipe_id, method, outcome, surface,
+kind, chip, overall, identified_by, lens, sort, example, internal, result` (47 of GA4's 50 slots;
+`attempt_id` stays unregistered on purpose). Key events should be `outbound_click`, `result_click`,
+`flash_connect`, `flash_outcome`, `verify_result`; event-data retention 14 months.
 
 ## Layout
 

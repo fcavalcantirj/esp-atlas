@@ -6,6 +6,7 @@
 import { sendGAEvent } from "@next/third-parties/google";
 import { GA_DEBUG } from "@/lib/site";
 import { trackedEventParams, type EventParams } from "./analytics-params";
+import { OPT_OUT_KEY } from "./analytics-boot";
 export type { EventParams } from "./analytics-params";
 
 export type EventName =
@@ -114,7 +115,7 @@ export function track(name: EventName, params: EventParams = {}): void {
     return;
   }
   try {
-    if (window.localStorage.getItem("esp-atlas:analytics-disabled") === "1") return;
+    if (window.localStorage.getItem(OPT_OUT_KEY) === "1") return;
   } catch {
     // Storage can be unavailable; the build-time switch still controls collection.
   }
