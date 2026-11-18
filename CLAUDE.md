@@ -68,7 +68,9 @@ Measured state when this was written (tick outputs Nov 15 19Z → Nov 17 20Z, 50
 recipes 0, topics authored 0; the only steer wire (demand bias) 0.0 for two weeks; the four largest gauge gaps
 (pinout 16 %, download_mode 29 %, usb_serial 54 %, dimensions_mm 55 %) had no stage able to write them. The
 plan that follows from it: yield ledger + adaptive split, the resolver lane, stall → coding agent, demand
-plumbing, switches (`SPEC-espatlas-jr.md` §3d).
+plumbing, switches (`SPEC-espatlas-jr.md` §3d). **Switches:** `jr/autonomy.json` flags turn on only by a
+reviewed PR; the matching `JR_*` variable set to `0` is the instant kill; every tick PR ends with an
+"Autonomy audit" block.
 
 ## How the catalog grows itself (operations, 2026-11-09)
 

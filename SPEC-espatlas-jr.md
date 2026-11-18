@@ -354,8 +354,11 @@ to write them. The rule therefore becomes:
    `scored_clean == 0` over the topics window, or an identical demand snapshot seven days running is an
    incident of kind `stall` in `jr/ci_watch.py`, claimed by the same heal launcher, same caps and `ack`,
    same `jr-heal` review route; the prompt diagnoses from the yield rows first and fixes or reports.
-5. **Humans hold kill switches and audit after the fact**: `jr/autonomy.json` + repo variables, the tick
-   report's audit block, the weekly digest.
+5. **Humans hold kill switches and audit after the fact**: `jr/autonomy.json` (`demand_automerge`,
+   `tick_automerge`, `code_automerge`, `stall_dispatch`; each turned on by a reviewed PR) + the matching
+   repository/runner variables as instant kills (`JR_*=0`); every tick PR body ends with an **Autonomy
+   audit** block (the split and the lanes' yield over the window, stall incidents recorded/resolved, demand
+   work by class and state from main's receipts, `jr/report.render_audit_section`); the weekly digest.
 
 **RESOLVED ⟨Q14⟩ — Jr hosts the telemetry cron + digest** (its crons + §7 outbound + the
 data-priority tie-in make it the natural home), under the hard boundary above: measure / report /
