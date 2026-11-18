@@ -253,13 +253,16 @@ def _write(firmware_id: str, repo: str, status: str, reason: str | None, ttl_day
     incoming_permanent = status == "rejected" and ttl_days is None
     if is_permanent_rejection(existing) and not incoming_permanent:
         return led
+    # A refused write backfills a missing repo_id ONLY from the same repository: a namesake fork's
+    # refused decision must never stamp the fork's id on the record that owns the firmware id (2026-11-18).
+    same_repo = bool(existing) and str(existing.get("repo") or "").lower() == str(repo or "").lower()
     if existing and existing.get("status") == "merged" and not incoming_permanent:
-        if repo_id is not None and existing.get("repo_id") is None:
+        if repo_id is not None and existing.get("repo_id") is None and same_repo:
             existing["repo_id"] = int(repo_id)          # by_repo_id is derived at load time
             _save(led, path)
         return led
     if existing and existing.get("status") == "proposed" and (status == "seen" or (status == "rejected" and not incoming_permanent)):
-        if repo_id is not None and existing.get("repo_id") is None:
+        if repo_id is not None and existing.get("repo_id") is None and same_repo:
             existing["repo_id"] = int(repo_id)          # by_repo_id is derived at load time
             _save(led, path)
         return led
@@ -561,6 +564,66 @@ def reconcile_merged(catalogued_ids: set[str], path: Path | None = None,
     if flipped:
         _save(led, path)
     return flipped
+
+
+REPO_NOTE_PREFIX = "repo-note:"
+
+
+def repo_note_key(owner_repo: str) -> str:
+    """The ledger key that remembers a decision about `owner_repo` when the decision's own record cannot
+    hold it (a `merged` record owns the firmware id): a key of its own, never a firmware id, carrying no
+    repo_id, so the by_repo_id identity view is untouched."""
+    return REPO_NOTE_PREFIX + owner_repo.lower()
+
+
+def reconcile_catalogued(sources: dict[str, str], path: Path | None = None,
+                         now: datetime | None = None) -> dict:
+    """A catalogued firmware's id belongs to its own source repository (2026-11-18). `sources` maps each
+    catalogued firmware id to the owner/repo its firmware.md `url:` names (lowercased). For each:
+    - no record → a `merged` record of that source ("added");
+    - a TTL'd rejection, `seen`, `expired` or `merged` record of ANOTHER repository (a namesake fork that
+      derived the same slug; a fork the catalog was later pointed away from, e.g. sshclient, Sep 2) →
+      that record moves, unchanged but for its key and without repo_id, to repo_note_key(<its repo>) so
+      the other repository stays decided, and the id gets the `merged` record ("moved"): the reviewed
+      catalog record is the authority on whose id this is;
+    - a permanent rejection (a human veto) or a `proposed` record (an open PR) of another repository is
+      never touched ("kept"; a human or reconcile_prs decides those).
+    The source record carries no repo_id: GitHub's id is backfilled by the next same-repo decision.
+    Nothing is deleted (scripts/ledger_guard.py: append-only). An empty `sources` does nothing (a tick
+    looking at the wrong tree, as reconcile_removed refuses). Returns {"added", "moved", "kept"}."""
+    out = {"added": [], "moved": [], "kept": []}
+    if not sources:
+        return out
+    now = _aware(now)
+    path = _path(path)
+    led = load_ledger(path)
+    for fid, repo in sorted(sources.items()):
+        repo = (repo or "").lower()
+        if not fid or not repo:
+            continue
+        rec = led["by_id"].get(fid)
+        if rec is not None and str(rec.get("repo") or "").lower() == repo:
+            continue
+        if rec is not None and (is_permanent_rejection(rec) or rec.get("status") == "proposed"):
+            out["kept"].append(fid)
+            continue
+        if rec is not None:
+            other = str(rec.get("repo") or "").lower()
+            key = repo_note_key(other)
+            if key not in led["by_id"]:
+                note = {k: v for k, v in rec.items() if k != "repo_id"}
+                note["id"] = key
+                led["by_id"][key] = note
+            led["by_repo"][other] = key
+            out["moved"].append(fid)
+        else:
+            out["added"].append(fid)
+        led["by_id"][fid] = {"id": fid, "repo": repo, "status": "merged", "timestamp": _iso(now), "pr_ref": None,
+                             "reason": "present in the catalog (reconciled from its firmware.md)"}
+        led["by_repo"][repo] = fid
+    if out["added"] or out["moved"]:
+        _save(led, path)
+    return out
 
 
 def reconcile_removed(catalogued_ids: set[str], path: Path | None = None,

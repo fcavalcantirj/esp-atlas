@@ -489,6 +489,22 @@ def _owner_repo_from_url(url: str) -> str:
     return "/".join(fn.split("/")[:2])
 
 
+def _catalog_sources(firmware_dir: Path) -> dict[str, str]:
+    """{firmware id: owner/repo} for every data/firmware/<id>/firmware.md whose `url:` is a GitHub
+    repository, keyed as _owner_repo_from_url keys it. An unreadable record names no source."""
+    from esp_atlas_core import frontmatter
+    out = {}
+    for md in sorted(Path(firmware_dir).glob("*/firmware.md")):
+        try:
+            fm, _ = frontmatter.parse_frontmatter_text(md.read_text())
+        except Exception:  # noqa: BLE001 — one bad record must not stop the reconciliation
+            continue
+        url = str((fm or {}).get("url") or "")
+        if url.startswith("https://github.com/") and len(_owner_repo_from_url(url).split("/")) == 2:
+            out[md.parent.name] = _owner_repo_from_url(url)
+    return out
+
+
 def _pr_firmware_repo(gh, repo_slug, head_ref, fid) -> str | None:
     """The REAL owner/repo of firmware `fid` in an open PR, from data/firmware/<fid>/firmware.md's
     `url:` frontmatter read at the PR's head ref. Without this the ledger would key the firmware by
@@ -758,8 +774,12 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         # catalogued on GitHub but not yet in this worktree: treat what reconcile_prs just
         # settled as catalogued, or it would be rejected as "removed from catalog".
         removed = memory.reconcile_removed(catalogued | set(settled["merged"]), path=ledger_path, now=now)
+        # 3d. every catalogued firmware's id belongs to its own source (2026-11-18): a namesake fork's
+        #     decision under that id moves to its repo note, so no tick PR aborts on a borrowed identity.
+        owned = memory.reconcile_catalogued(_catalog_sources(root / "data" / "firmware"), path=ledger_path, now=now)
         counts = {"expired": len(expired), "merged": len(settled["merged"]) + len(merged),
-                  "rejected": len(settled["rejected"]), "removed": len(removed)}
+                  "rejected": len(settled["rejected"]), "removed": len(removed),
+                  "catalogued": len(owned["added"]) + len(owned["moved"])}
         purge = bool(settled["merged"] or merged or removed)
         if dry_run:
             r.memory = {}
