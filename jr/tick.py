@@ -179,7 +179,9 @@ def hourly_stages(split: dict) -> list:
     fw = int(split.get("firmware") or 0)
     if bf:
         import stage_backfill
-        out.append(lambda ctx, n=bf: stage_backfill.run(ctx, budget=n))
+        backfill = lambda ctx, n=bf: stage_backfill.run(ctx, budget=n)   # noqa: E731
+        backfill.firmware_free = True     # writes data/boards only; never reads a firmware hold
+        out.append(backfill)
     if fw:
         import stage_admit
         import stage_boardmap
@@ -712,7 +714,11 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         if pending is None:
             raise TickAbort("gh pr list --state closed failed (cannot see which firmware a Jr PR holds)")
         if not pending.complete:
-            raise TickAbort("pending-PR inventory incomplete, nothing staged or published: " + "; ".join(pending.gaps))
+            # Degraded, not aborted (2026-11-18: one firmware's identity gap in #1839 stopped every lane for
+            # four ticks). What could act on an unverified hold is skipped below: every stage not declared
+            # `firmware_free`, open-PR hydration and the decision carry. GitHub unreadable stays an abort.
+            r.degraded = ("pending-PR inventory incomplete, firmware stages skipped: " + "; ".join(pending.gaps))
+            r.warnings.append(f"degraded: {r.degraded}")
         protection = publish.protection_status(slug, gh=gh_c)
         if not protection.ok:
             if dry_run:
@@ -749,16 +755,17 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
         #     the stages enforce the budget. memory.record_proposed already refuses to downgrade
         #     a merged or permanently-rejected record.
         try:
-            r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug, pending=pending,
-                                                open_prs=tick_prs)
+            if not r.degraded:          # degraded: the open PRs' content is exactly what failed to verify
+                r.hydrated = hydrate_open_pr_ledger(gh_c, now, ledger_path, repo_slug=slug, pending=pending,
+                                                    open_prs=tick_prs)
         except Exception as e:  # noqa: BLE001
             r.warnings.append(f"open-PR ledger hydration failed: {type(e).__name__}: {e}")
         # 3b'. carry the TTL'd decisions open tick PRs committed (read in the preflight, before any
         #     close): a jr-review PR waiting for the owner, or a superseded bookkeeping PR, must not
         #     hold admit's progress off main — they ride this tick's PR. Best-effort like hydration.
         try:
-            r.carried = [{"pr": ref, "id": fid}
-                         for ref, fid in memory.carry_decisions(open_pr_ledgers, path=ledger_path, now=now)]
+            r.carried = [] if r.degraded else [{"pr": ref, "id": fid}
+                                               for ref, fid in memory.carry_decisions(open_pr_ledgers, path=ledger_path, now=now)]
         except Exception as e:  # noqa: BLE001
             r.warnings.append(f"open-PR decision carry failed: {type(e).__name__}: {e}")
         # 3c. owner-review decisions (SPEC-jr-review-routing.md §5): every target an open or closed
@@ -880,6 +887,13 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
             r.warnings.append(r.review_capped)
             stages = keep
 
+        # 5c. degraded (pending-PR inventory incomplete): only stages declared `firmware_free` run; unsure ->
+        #     the stage could act on an unverified hold and is skipped.
+        if r.degraded:
+            keep = [s for s in stages if getattr(s, "firmware_free", False) is True]
+            r.warnings.append(f"degraded: skipped {len(stages) - len(keep)} firmware stage(s)")
+            stages = keep
+
         # 6. stages
         ctx = TickContext(root=root, ledger_path=ledger_path, now=now, gh=gh_c, git=git,
                           budget=budget, dry_run=dry_run, env=env, pending=pending)
@@ -980,7 +994,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
     #     delegate; a completed tick resolves it. Never changes the tick's outcome.
     if abort_watcher is not None:
         try:
-            r.abort_watch = abort_watcher(r.aborted or None, now, dry_run) or {}
+            r.abort_watch = abort_watcher(r.aborted or r.degraded or None, now, dry_run) or {}
         except Exception as e:  # noqa: BLE001
             r.abort_watch = {"status": "unavailable", "why": f"{type(e).__name__}: {e}"}
         _note_abort_watch(r)
@@ -998,7 +1012,7 @@ def run_tick(*, dry_run: bool = False, git=publish.default_git, gh=publish.defau
     line = report.render_line(r)
     print(line)
     review_opened = (r.publish or {}).get("route") == review_routing.REVIEW
-    if telegram and not dry_run and notifier is not None and (r.aborted or r.needs_human or review_opened):
+    if telegram and not dry_run and notifier is not None and (r.aborted or r.degraded or r.needs_human or review_opened):
         try:
             notifier(line)
         except Exception:  # noqa: BLE001 — Telegram down must not fail the tick

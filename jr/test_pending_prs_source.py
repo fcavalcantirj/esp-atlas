@@ -106,14 +106,15 @@ def _held_pr(sim, catalog, substituted, vetoed=False):
 
 
 @pytest.mark.parametrize("vetoed", [False, True], ids=["open", "vetoed"])
-def test_a_substituted_ledger_pair_fails_the_tick_closed_and_4242_stays_protected(sim, catalog, vetoed):
+def test_a_substituted_ledger_pair_degrades_the_tick_and_4242_stays_protected(sim, catalog, vetoed):
     pr = _held_pr(sim, catalog, substituted=True, vetoed=vetoed)
     prs_before, main_before = len(sim.prs), dict(sim.main)
     r = sim.tick(T0 + timedelta(hours=3))
     assert _staged_for(r, "newtool") == [] and r.paths == [], r.paths          # no firmware, no recipe for 4242
     assert not _new_prs_holding(sim, "newtool", pr["number"])
-    assert "incomplete" in (r.aborted or "") and f"#{pr['number']}" in r.aborted, r.aborted
-    assert len(sim.prs) == prs_before and sim.main == main_before
+    assert not r.aborted and f"#{pr['number']}" in r.degraded, (r.aborted, r.degraded)
+    assert r.stages == [] and sim.main == main_before
+    assert not [f for x in sim.prs[prs_before:] for f in x["files"] if str(f).startswith(("data/firmware/", "data/recipes/"))]
     assert _later_owners_of(sim, OTHER_ID, pr["number"]) == set(), "unrelated 7777 was persisted"
 
 
