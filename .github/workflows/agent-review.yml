@@ -17,6 +17,9 @@ on:
     types: [labeled, synchronize]
   issue_comment:
     types: [created]
+  # The hourly catch-up, started by the runner after its reviews: the code canary sweeps every open PR that
+  # has a verdict for its current head. No other job runs on this event.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -144,10 +147,14 @@ jobs:
     # The click, on every marker comment (either lane): PASS at exactly the PR's current head + every
     # required check green + both switches on + at most one agent-merged PR an hour -> merge --auto at the
     # exact head. BLOCK -> label needs-human.
+    # Every run then SWEEPS the other open PRs that have a verdict for their current head (2026-11-19: the
+    # hourly cap said "waits for the next run" and there was none; a pending run in this concurrency group
+    # is replaced by a newer one; the first canary run ever crashed). A dispatch is a sweep and nothing else.
     if: >-
-      github.event_name == 'issue_comment' &&
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'issue_comment' &&
       github.event.issue.pull_request &&
-      contains(github.event.comment.body, '<!-- agent-review verdict -->')
+      contains(github.event.comment.body, '<!-- agent-review verdict -->'))
     concurrency:
       group: code-canary   # one at a time, so two runs never both see the hourly cap free
       cancel-in-progress: false
@@ -165,10 +172,17 @@ jobs:
       # `import yaml` the first time it ever ran (2026-11-19)
       - run: pip install httpx pyyaml pypdf
       - name: Decide on the newest verdict for the PR's current head and, when allowed, request the merge
+        if: github.event_name == 'issue_comment'
         env:
           GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
           JR_CODE_AUTOMERGE: ${{ vars.JR_CODE_AUTOMERGE }}
         run: python3 scripts/code_canary.py --pr ${{ github.event.issue.number }} --from-comments
+      - name: Sweep - the same decision for every other open PR with a verdict for its current head
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.ESPATLAS_JR_TOKEN || github.token }}
+          JR_CODE_AUTOMERGE: ${{ vars.JR_CODE_AUTOMERGE }}
+        run: python3 scripts/code_canary.py --sweep
       - name: main gets its CI even when this job's token merged (a workflow-token push starts no workflow)
         # 2026-11-19: #1799, the first PR the machine merged, left main's new head with zero runs. Dispatch is
         # the documented exception.
