@@ -3892,7 +3892,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-19T12:00:33.449912+00:00"
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4048,7 +4048,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-19T12:00:33.449912+00:00"
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -17265,7 +17265,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-19T12:00:33.449912+00:00"
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -19247,6 +19247,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T16:00:32.097075+00:00"
     },
+    "repo-note:grugnoymeme/flipperzero-badusb": {
+      "expires": "2026-12-19T13:00:31.983678+00:00",
+      "id": "repo-note:grugnoymeme/flipperzero-badusb",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "grugnoymeme/flipperzero-badusb",
+      "status": "rejected",
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
+    },
     "repo-note:gsurma/jetson": {
       "expires": "2026-12-17T23:00:31.883511+00:00",
       "id": "repo-note:gsurma/jetson",
@@ -19553,6 +19562,24 @@
       "status": "rejected",
       "timestamp": "2026-11-18T01:00:32.420498+00:00"
     },
+    "repo-note:infosecredd/redds-pcap-uploader": {
+      "expires": "2026-12-19T13:00:31.983678+00:00",
+      "id": "repo-note:infosecredd/redds-pcap-uploader",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "infosecredd/redds-pcap-uploader",
+      "status": "rejected",
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
+    },
+    "repo-note:infosecredd/repg": {
+      "expires": "2026-12-19T13:00:31.983678+00:00",
+      "id": "repo-note:infosecredd/repg",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "infosecredd/repg",
+      "status": "rejected",
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
+    },
     "repo-note:iodn/android-ir-blaster": {
       "expires": "2026-12-18T13:00:31.999065+00:00",
       "id": "repo-note:iodn/android-ir-blaster",
@@ -19660,6 +19687,15 @@
       "repo": "johz-chen/mcp-bridge",
       "status": "rejected",
       "timestamp": "2026-11-17T14:00:31.883198+00:00"
+    },
+    "repo-note:jon4hz/fztea": {
+      "expires": "2026-12-19T13:00:31.983678+00:00",
+      "id": "repo-note:jon4hz/fztea",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "jon4hz/fztea",
+      "status": "rejected",
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
     },
     "repo-note:jonastollenaere/sparrow-3d": {
       "expires": "2026-12-17T10:00:32.143438+00:00",
@@ -20273,6 +20309,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T09:00:33.766355+00:00"
     },
+    "repo-note:meoker/pagger": {
+      "expires": "2026-12-19T13:00:31.983678+00:00",
+      "id": "repo-note:meoker/pagger",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "meoker/pagger",
+      "status": "rejected",
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
+    },
     "repo-note:meshmapper/meshmapper_flutter_app": {
       "expires": "2026-12-17T10:00:32.143438+00:00",
       "id": "repo-note:meshmapper/meshmapper_flutter_app",
@@ -20390,6 +20435,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T17:00:31.748345+00:00"
     },
+    "repo-note:mr-proxy-source/badusb-payloads": {
+      "expires": "2026-12-19T13:00:31.983678+00:00",
+      "id": "repo-note:mr-proxy-source/badusb-payloads",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "mr-proxy-source/badusb-payloads",
+      "status": "rejected",
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
+    },
     "repo-note:mrarm/hakrwatch": {
       "expires": "2026-12-18T05:00:31.893243+00:00",
       "id": "repo-note:mrarm/hakrwatch",
@@ -20506,6 +20560,15 @@
       "repo": "nmicic/urtb",
       "status": "rejected",
       "timestamp": "2026-11-19T09:00:33.766355+00:00"
+    },
+    "repo-note:nmrr/flipperzero-geigercounter": {
+      "expires": "2026-12-19T13:00:31.983678+00:00",
+      "id": "repo-note:nmrr/flipperzero-geigercounter",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "nmrr/flipperzero-geigercounter",
+      "status": "rejected",
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
     },
     "repo-note:nnbtg/m5flasher_1": {
       "expires": "2026-12-18T12:00:31.958773+00:00",
@@ -21812,6 +21875,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T16:00:31.699892+00:00"
     },
+    "repo-note:tuconnaisyouknow/badusb_passstealer": {
+      "expires": "2026-12-19T13:00:31.983678+00:00",
+      "id": "repo-note:tuconnaisyouknow/badusb_passstealer",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "tuconnaisyouknow/badusb_passstealer",
+      "status": "rejected",
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
+    },
     "repo-note:tuupola/axp192": {
       "expires": "2026-12-17T05:00:31.748945+00:00",
       "id": "repo-note:tuupola/axp192",
@@ -21883,6 +21955,15 @@
       "repo": "unclerus/esp-idf-lib",
       "status": "rejected",
       "timestamp": "2026-11-17T18:00:31.692410+00:00"
+    },
+    "repo-note:undedinside/duckyscriptpayloads": {
+      "expires": "2026-12-19T13:00:31.983678+00:00",
+      "id": "repo-note:undedinside/duckyscriptpayloads",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "undedinside/duckyscriptpayloads",
+      "status": "rejected",
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
     },
     "repo-note:vbart/meshcoretel-firmware": {
       "expires": "2026-12-17T10:00:32.143438+00:00",
@@ -22081,6 +22162,15 @@
       "repo": "xmasterx/all-the-plugins",
       "status": "rejected",
       "timestamp": "2026-11-17T13:00:31.835731+00:00"
+    },
+    "repo-note:xunholy/promptzero": {
+      "expires": "2026-12-19T13:00:31.983678+00:00",
+      "id": "repo-note:xunholy/promptzero",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "xunholy/promptzero",
+      "status": "rejected",
+      "timestamp": "2026-11-19T13:00:31.983678+00:00"
     },
     "repo-note:xuzerui6/movemate": {
       "expires": "2026-12-18T14:00:31.448865+00:00",
@@ -25530,6 +25620,7 @@
     "gridgrad/advaita": "advaita",
     "griffithsb/m5stack-webcam": "m5stack-webcam",
     "grimmnorth/departure-board": "repo-note:grimmnorth/departure-board",
+    "grugnoymeme/flipperzero-badusb": "repo-note:grugnoymeme/flipperzero-badusb",
     "grvmind/xiaozhi-cardputer": "xiaozhi-cardputer",
     "gsurma/jetson": "repo-note:gsurma/jetson",
     "guimpt/iot_hdmi_mux": "repo-note:guimpt/iot_hdmi_mux",
@@ -25648,6 +25739,8 @@
     "imxnoobx/fstick": "fstick",
     "incursiohack/esp-game-server": "esp-game-server",
     "indecenti/nucleoos": "nucleoos",
+    "infosecredd/redds-pcap-uploader": "repo-note:infosecredd/redds-pcap-uploader",
+    "infosecredd/repg": "repo-note:infosecredd/repg",
     "inkone/sticky-lotus": "sticky-lotus",
     "integerquant/baitnswitch": "baitnswitch",
     "io-nji/lab_mini_os": "lab-mini-os",
@@ -25707,6 +25800,7 @@
     "johnhw/cardputer_drums": "cardputer-drums",
     "johz-chen/mcp-bridge": "repo-note:johz-chen/mcp-bridge",
     "jojorel/rfid-pn532-i2c-cardputer": "rfid-pn532-i2c-cardputer",
+    "jon4hz/fztea": "repo-note:jon4hz/fztea",
     "jonaslacerda/crowos": "crowos",
     "jonastollenaere/sparrow-3d": "repo-note:jonastollenaere/sparrow-3d",
     "jong-9999/nemomodified.git": "nemomodified",
@@ -26808,6 +26902,7 @@
     "mehflexx17": "mehflexx17",
     "meister5/m5stack-cardputer-adv-gps-tracker": "m5stack-cardputer-adv-gps-tracker",
     "meister5/synthcard": "synthcard",
+    "meoker/pagger": "repo-note:meoker/pagger",
     "meshdeck-os/meshdeck": "meshdeck",
     "meshmapper/meshmapper_flutter_app": "repo-note:meshmapper/meshmapper_flutter_app",
     "meshtastic/firmware": "meshtastic",
@@ -26862,6 +26957,7 @@
     "moy-lightening-firmware/m5-cardputer-sd-security-firmware": "m5-cardputer-sd-security-firmware",
     "mr-paui/esp32-binforge": "repo-note:mr-paui/esp32-binforge",
     "mr-paui/gameboy-enhanced-firmware-m5stack-cardputer-": "gameboy-enhanced-firmware-m5stack-cardpu",
+    "mr-proxy-source/badusb-payloads": "repo-note:mr-proxy-source/badusb-payloads",
     "mraanderson/cardputeradv-motionlab": "cardputeradv-motionlab",
     "mrarm/hakrwatch": "repo-note:mrarm/hakrwatch",
     "mrchaosbude/esp32-cyd-aquarium": "esp32-cyd-aquarium",
@@ -26912,6 +27008,7 @@
     "nishad2m8/wled-cardputer": "wled-cardputer",
     "nishad2m8/x-mas-tree-animated-gif": "x-mas-tree-animated-gif",
     "nmicic/urtb": "repo-note:nmicic/urtb",
+    "nmrr/flipperzero-geigercounter": "repo-note:nmrr/flipperzero-geigercounter",
     "nnbtg/m5flasher_1": "repo-note:nnbtg/m5flasher_1",
     "nochkin/esp_test": "repo-note:nochkin/esp_test",
     "nodemcu/nodemcu-firmware": "repo-note:nodemcu/nodemcu-firmware",
@@ -27351,6 +27448,7 @@
     "truonglangquan/idk-firmware": "idk-firmware",
     "truonglangquan/idk-test": "idk-test",
     "tsssu27/m5stack-cardcomputer-mu": "m5stack-cardcomputer-mu",
+    "tuconnaisyouknow/badusb_passstealer": "repo-note:tuconnaisyouknow/badusb_passstealer",
     "turbohsu/badapple_cardputer_adv": "badapple-cardputer-adv",
     "turbulentgoat/cardputer-adv-mp3-player": "cardputer-adv-mp3-player",
     "tutyr2-jpg/bruce-a-c-edition": "bruce-a-c-edition",
@@ -27366,6 +27464,7 @@
     "ubo07": "ubo07",
     "ugursayar/nesso_base": "nesso-base",
     "unclerus/esp-idf-lib": "repo-note:unclerus/esp-idf-lib",
+    "undedinside/duckyscriptpayloads": "repo-note:undedinside/duckyscriptpayloads",
     "unizersion/aurora-player.git": "aurora-player",
     "unizersion/orbit-drum.git": "orbit-drum",
     "unizersion/tab5-launcher.git": "tab5-launcher",
@@ -27465,6 +27564,7 @@
     "xlyric/lilygo-t5-4.7-meteo-and-domoticz-": "repo-note:xlyric/lilygo-t5-4.7-meteo-and-domoticz-",
     "xmasterx/all-the-plugins": "repo-note:xmasterx/all-the-plugins",
     "xpy-us/commercial-firmesp32": "commercial-firmesp32",
+    "xunholy/promptzero": "repo-note:xunholy/promptzero",
     "xuzerui6/movemate": "repo-note:xuzerui6/movemate",
     "xx220xx/threadesp32": "repo-note:xx220xx/threadesp32",
     "xxazvdxx/llm-live2d-vrm-ai-girlfriend-ios": "repo-note:xxazvdxx/llm-live2d-vrm-ai-girlfriend-ios",
