@@ -6,7 +6,7 @@ The independent exact-head review of a code PR (docs/REVIEW-CONTRACT.md) is run 
 - **Primary lane** = the runner's coding delegate on the Claude subscription (the same binary and token the
   demand executor and the CI heal use). An hourly job on the runner calls `python3 jr/agent_review.py once
   --delegate <path> --checkout <dir> ...`: it lists the open code PRs that have no verdict for their current
-  head, checks out the oldest one's head in a throwaway worktree, runs the delegate with
+  head, checks out the next one's head (see `candidates`) in a throwaway worktree, runs the delegate with
   `docs/ops/REVIEW-PROMPT.md` as the task (read-only: --no-ship --no-merge), reads the structured verdict the
   agent wrote to VERDICT_FILE, and posts it as ONE PR comment that starts with MARKER. The code canary
   (scripts/code_canary.py) reads that comment.
@@ -190,7 +190,7 @@ def note_fallback(state: dict, day: str, pr: int) -> dict:
 def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_run: bool = False,
              fallback_per_day: int = FALLBACK_PER_DAY, prompt: str | None = None, out=None,
              review_python: str | None = None, contract: str | None = None) -> dict:
-    """One hourly pass: review the oldest unreviewed code PR on the subscription lane; on a DOWN lane,
+    """One hourly pass: review the next unreviewed code PR (`candidates` order) on the subscription lane; on a DOWN lane,
     hand that PR to the API lane (label) within the daily budget. Returns a small report dict.
     `gh(*args) -> str`, `git(*args) -> str`, `delegate(task, repo_path, env) -> (returncode, delegate_verdict_dict,
     review_verdict_text_or_None)`."""

@@ -60,8 +60,9 @@ next push starts a new review. A person audits merged PRs after the fact and hol
 ## Who runs it (owner, 2026-11-18: "subscription and api as fallback")
 
 - **Primary: the runner's coding delegate on the Claude subscription** (`jr/agent_review.py once`, hourly on
-  the runner, `docs/ops/REVIEW-PROMPT.md` as the task). It reviews the oldest open code PR without a verdict
-  for its current head, in a detached worktree at that head, read-only, and posts the verdict as ONE comment
+  the runner, `docs/ops/REVIEW-PROMPT.md` as the task). It reviews the next open code PR without a verdict
+  for its current head (first one that was reviewed before and has a new head, a fix waiting to be judged;
+  then the oldest update), in a detached worktree at that head, read-only, and posts the verdict as ONE comment
   that begins with the marker `<!-- agent-review verdict -->` (lane `subscription`).
 - **Fallback: GitHub Actions with the API key**, only when the primary lane reports it is DOWN (no
   subscription token, usage limit, auth failure). The runner then labels that PR `review-fallback`, at most
