@@ -180,3 +180,18 @@ def test_no_other_job_runs_on_a_dispatch(jobs):
         cond = str(job.get("if", "")).replace("\n", " ")
         assert "github.event_name == 'pull_request'" in cond or "needs.agent-review.result != 'skipped'" in cond, name
 
+
+def test_the_api_lane_proves_its_shell_sandbox_starts_before_it_reviews(jobs):
+    # 2026-11-19: the lane's first run posted "BLOCK: sandbox failed to initialize, socat not installed" on #1876
+    steps = jobs["agent-review"]["steps"]
+    i = next(n for n, s in enumerate(steps) if "bubblewrap" in str(s.get("run", "")))
+    review = next(n for n, s in enumerate(steps) if str(s.get("uses", "")).startswith("anthropics/claude-code-action@"))
+    assert i < review and steps[i]["if"] == steps[review]["if"]
+    lines = [ln.strip() for ln in steps[i]["run"].splitlines() if ln.strip() and not ln.strip().startswith("#")]
+    assert any("apt-get install" in ln and "socat bubblewrap" in ln and "Acquire::Retries=3" in ln for ln in lines)
+    assert "for attempt in 1 2 3; do" in lines                    # the mirror blinked on the first live run
+    # the two proofs end the step and nothing swallows their exit code: a sandbox that cannot start fails the job
+    assert lines[-2:] == ["command -v socat", "bwrap --ro-bind / / --unshare-net true"]
+    assert not steps[i].get("continue-on-error")
+    assert steps[review]["env"]["CLAUDE_CODE_SUBPROCESS_ENV_SCRUB"] == "1"     # the reason the sandbox is required
+
