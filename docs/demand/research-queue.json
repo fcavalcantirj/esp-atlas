@@ -1457,7 +1457,7 @@
   "pam-93c3816cefd99e10e97cc0a4": {
    "term": "LILYGO T-Beam Supreme",
    "source": "pam_feed",
-   "status": "new",
+   "status": "validated",
    "first_seen": "2026-11-19",
    "history": [],
    "linked_work": [],
@@ -1563,6 +1563,28 @@
      "matches": [],
      "status": "potential_identity_gap"
     }
+   },
+   "validation": {
+    "verified_on": "2026-11-19",
+    "forbidden_ids": [
+     "lilygo-t-beam-supreme-144",
+     "lilygo-t-beam-bpf",
+     "lilygo-t-beam-1w"
+    ],
+    "verification_kind": "catalog_part",
+    "validated_by": "jr-demand-executor (Claude Code delegate) run 2026-11-19/pam-93c3816cefd99e10e97cc0a4",
+    "primary_sources": [
+     "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/docs/en/t_beam_supreme/t_beam_supreme_hw.md",
+     "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/schematic/T-Beam-S3-Supreme/T-Beam-S3-Core.pdf",
+     "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/schematic/T-Beam-S3-Supreme/T-Beam-S3-Supreme-V3.1.pdf",
+     "https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/docs/en/t_beam_supreme/t_beam_supreme_144_hw.md"
+    ],
+    "expected_ids": [
+     "lilygo-t-beam-supreme"
+    ],
+    "notes": "LILYGO's official LoRa-Series hardware doc describes the T-Beam Supreme (T-Beam S3 Supreme): ESP32-S3FN8, 8MB flash, 8MB PSRAM, SX1262 or LR1121 radio, L76K or u-blox M10 GNSS, SH1106 OLED, AXP2101 PMU with an 18650 holder, USB-C. The radio/GNSS options are SKUs of this one board and stay in one record (as the catalogued T-Beam does). Kept distinct: the original ESP32 T-Beam (already catalogued as lilygo-t-beam, unchanged), the T-Beam Supreme 144-148MHz (SX1278, its own LILYGO hardware page), the T-Beam-BPF and the T-Beam-1W (separate LILYGO boards). lilygo.cc product pages answered HTTP 429 throughout the run, so the store page is not cited.",
+    "identity_verified": true,
+    "term_key": "lilygo t beam supreme"
    }
   }
  }
