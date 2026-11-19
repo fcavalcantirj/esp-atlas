@@ -105,7 +105,8 @@ def test_a_pass_receipt_that_holds_live_makes_the_pr_eligible(repo):
     add_edge(repo)
     problems, lines = run(repo, description="UHF expansion firmware for the M5Stack Cardputer-Adv")
     assert problems == [], problems
-    assert any("receipt v3 PASS; live re-check v3 PASS" in ln for ln in lines)
+    # an old v3 receipt is re-judged by the CURRENT rules (v4 since 2026-11-19): that is the guard's point
+    assert any("receipt v3 PASS; live re-check v4 PASS" in ln for ln in lines)
 
 
 def test_a_receipt_that_no_longer_holds_on_the_live_upstream_is_not_eligible(repo):
@@ -164,6 +165,17 @@ def test_a_renamed_and_edited_existing_record_is_not_eligible(repo):
     _commit(repo, "feat(jr): rename and edit the seed")
     problems = run(repo, description="Cardputer-Adv tool")[0]
     assert any(p.startswith("E3") for p in problems), problems
+
+
+
+def test_an_old_pass_receipt_the_current_rules_no_longer_grant_is_not_eligible(repo):
+    # tick PR #1828 (2026-11-19): recipe m5cardputer__m5-crystal carried "Evidence check v3 PASS"; upstream says
+    # "Cardputer-ADV (Cardputer v1.1)" and builds only [env:cardputer-adv]. Rules v4 answer UNCERTAIN.
+    add_edge(repo, fid="m5-crystal", board="m5cardputer", name="Cardputer",
+             receipt=" Evidence check v3 PASS — named: the source names m5cardputer.")
+    problems = run(repo, description="Firmware for M5Stack devices",
+                   readme="- Devices: M5StickCPlus2, M5StickS3, Cardputer-ADV (Cardputer v1.1)")[0]
+    assert any(p.startswith("E2") and "UNCERTAIN" in p for p in problems), problems
 
 
 
