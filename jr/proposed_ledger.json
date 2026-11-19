@@ -3892,7 +3892,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-19T13:00:31.983678+00:00"
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4048,7 +4048,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-19T13:00:31.983678+00:00"
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -17265,7 +17265,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-19T13:00:31.983678+00:00"
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -19931,6 +19931,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T03:00:33.620784+00:00"
     },
+    "repo-note:kodiwxbiznes-glitch/basanos-esp32-s3": {
+      "expires": "2026-12-19T14:00:32.325670+00:00",
+      "id": "repo-note:kodiwxbiznes-glitch/basanos-esp32-s3",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "kodiwxbiznes-glitch/basanos-esp32-s3",
+      "status": "rejected",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
+    },
     "repo-note:konsumer/msc-poc": {
       "expires": "2026-12-17T08:00:31.747262+00:00",
       "id": "repo-note:konsumer/msc-poc",
@@ -20804,6 +20813,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T16:00:32.097075+00:00"
     },
+    "repo-note:pathink1973/aimilia-companion": {
+      "expires": "2026-12-19T14:00:32.325670+00:00",
+      "id": "repo-note:pathink1973/aimilia-companion",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "pathink1973/aimilia-companion",
+      "status": "rejected",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
+    },
     "repo-note:pdlsurya/esp32-riscv-bare-metal-sdk": {
       "expires": "2026-12-19T03:00:32.057965+00:00",
       "id": "repo-note:pdlsurya/esp32-riscv-bare-metal-sdk",
@@ -21353,6 +21371,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T15:00:31.763832+00:00"
     },
+    "repo-note:sdjdd/dashachun": {
+      "expires": "2026-12-19T14:00:32.325670+00:00",
+      "id": "repo-note:sdjdd/dashachun",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "sdjdd/dashachun",
+      "status": "rejected",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
+    },
     "repo-note:seanchangx/qbit": {
       "expires": "2026-12-18T01:00:32.420498+00:00",
       "id": "repo-note:seanchangx/qbit",
@@ -21650,6 +21677,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T14:00:31.448865+00:00"
     },
+    "repo-note:stanleychanh/xiaozhiflash": {
+      "expires": "2026-12-19T14:00:32.325670+00:00",
+      "id": "repo-note:stanleychanh/xiaozhiflash",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "stanleychanh/xiaozhiflash",
+      "status": "rejected",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
+    },
     "repo-note:steveatinfincia/circuitpython": {
       "expires": "2026-12-14T22:00:55.399488+00:00",
       "id": "repo-note:steveatinfincia/circuitpython",
@@ -21739,6 +21775,15 @@
       "repo": "tasmota/install",
       "status": "rejected",
       "timestamp": "2026-11-17T02:00:33.347838+00:00"
+    },
+    "repo-note:tboxai/tbox-iot-esp32-s3": {
+      "expires": "2026-12-19T14:00:32.325670+00:00",
+      "id": "repo-note:tboxai/tbox-iot-esp32-s3",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "tboxai/tbox-iot-esp32-s3",
+      "status": "rejected",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
     },
     "repo-note:th3-priest/vigilance": {
       "expires": "2026-12-17T12:00:31.695549+00:00",
@@ -21965,6 +22010,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T13:00:31.983678+00:00"
     },
+    "repo-note:vansamaevo/xiaoyin-esp32-s3": {
+      "expires": "2026-12-19T14:00:32.325670+00:00",
+      "id": "repo-note:vansamaevo/xiaoyin-esp32-s3",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "vansamaevo/xiaoyin-esp32-s3",
+      "status": "rejected",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
+    },
     "repo-note:vbart/meshcoretel-firmware": {
       "expires": "2026-12-17T10:00:32.143438+00:00",
       "id": "repo-note:vbart/meshcoretel-firmware",
@@ -21973,6 +22027,15 @@
       "repo": "vbart/meshcoretel-firmware",
       "status": "rejected",
       "timestamp": "2026-11-17T10:00:32.143438+00:00"
+    },
+    "repo-note:vcxzvfe/codex-pet-bridge": {
+      "expires": "2026-12-19T14:00:32.325670+00:00",
+      "id": "repo-note:vcxzvfe/codex-pet-bridge",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "vcxzvfe/codex-pet-bridge",
+      "status": "rejected",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
     },
     "repo-note:vhuynen/cubecell-ab01-lorawan-helium-mailbox-notifier": {
       "expires": "2026-12-18T09:00:32.863482+00:00",
@@ -22054,6 +22117,24 @@
       "repo": "wadadawadada/melody_machine",
       "status": "rejected",
       "timestamp": "2026-11-18T07:00:31.406931+00:00"
+    },
+    "repo-note:wan7up/vx-agent-access": {
+      "expires": "2026-12-19T14:00:32.325670+00:00",
+      "id": "repo-note:wan7up/vx-agent-access",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "wan7up/vx-agent-access",
+      "status": "rejected",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
+    },
+    "repo-note:wangjianlin2026/zhiying-danmu": {
+      "expires": "2026-12-19T14:00:32.325670+00:00",
+      "id": "repo-note:wangjianlin2026/zhiying-danmu",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "wangjianlin2026/zhiying-danmu",
+      "status": "rejected",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
     },
     "repo-note:warwick320/nova-x": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
@@ -24760,6 +24841,14 @@
       "status": "rejected",
       "timestamp": "2026-11-15T14:00:31.673907+00:00"
     },
+    "xiaotian-esp32-ai": {
+      "expires": "2026-12-19T14:00:32.325670+00:00",
+      "id": "xiaotian-esp32-ai",
+      "pr_ref": null,
+      "repo": "shengyu-u71/xiaotian-esp32-ai",
+      "status": "seen",
+      "timestamp": "2026-11-19T14:00:32.325670+00:00"
+    },
     "xiaozhi-adv-car": {
       "expired_at": "2026-10-13T13:00:59.634297+00:00",
       "expires": "2026-10-13T13:00:33.517833+00:00",
@@ -25871,6 +25960,7 @@
     "kodediy/kode-sdk": "repo-note:kodediy/kode-sdk",
     "kodediy/kode_slave_c5": "repo-note:kodediy/kode_slave_c5",
     "kodediy/kodeos": "repo-note:kodediy/kodeos",
+    "kodiwxbiznes-glitch/basanos-esp32-s3": "repo-note:kodiwxbiznes-glitch/basanos-esp32-s3",
     "konradmohr/pbashos": "pbashos",
     "konsumer/cardputer-examples": "cardputer-examples",
     "konsumer/msc-poc": "repo-note:konsumer/msc-poc",
@@ -27087,6 +27177,7 @@
     "panpanweijie/cardputer-adv-sport-companion.git": "cardputer-adv-sport-companion",
     "papercodein/elecrow": "repo-note:papercodein/elecrow",
     "papercodein/elecrow-coin-collector": "repo-note:papercodein/elecrow-coin-collector",
+    "pathink1973/aimilia-companion": "repo-note:pathink1973/aimilia-companion",
     "pavelprosto94/christmas_tree_clock": "christmas-tree-clock",
     "pavelprosto94/space_clock": "space-clock",
     "pawneemilitia/infiltra-firmware": "infiltra-firmware",
@@ -27269,6 +27360,7 @@
     "schnoog/joystick_esp32s2": "repo-note:schnoog/joystick_esp32s2",
     "scottbez1/splitflap": "repo-note:scottbez1/splitflap",
     "scsagentclub/worldcuplive_esp": "worldcuplive-esp",
+    "sdjdd/dashachun": "repo-note:sdjdd/dashachun",
     "sduenasg/pio_palnagotchi": "pio-palnagotchi",
     "seanbutler/m5cardputermathgame": "m5cardputermathgame",
     "seanchangx/qbit": "repo-note:seanchangx/qbit",
@@ -27288,6 +27380,7 @@
     "shapoco/devour-sphere": "devour-sphere",
     "shapoco/lcdtap": "lcdtap",
     "sheepxux/taskhub-for-sticks3": "taskhub-for-sticks3",
+    "shengyu-u71/xiaotian-esp32-ai": "xiaotian-esp32-ai",
     "shi78ge/roll_a_ball": "roll-a-ball",
     "shinemoon/m5readpaper": "m5readpaper",
     "shizz828/idkos": "idkos",
@@ -27357,6 +27450,7 @@
     "stachugit/meshcore-cardputer-adv": "meshcore-cardputer-adv",
     "stack-chan/stack-chan": "stack-chan",
     "stanleychanh/mcp2xiaozhi": "repo-note:stanleychanh/mcp2xiaozhi",
+    "stanleychanh/xiaozhiflash": "repo-note:stanleychanh/xiaozhiflash",
     "steveatinfincia/circuitpython": "repo-note:steveatinfincia/circuitpython",
     "stevenselcuk/nearplane": "nearplane",
     "stewmoss/cardputer-wardriver": "cardputer-wardriver",
@@ -27390,6 +27484,7 @@
     "taraskad3o/sticks3-canonremote": "sticks3-canonremote",
     "tasmota/install": "repo-note:tasmota/install",
     "tavden/tavden-field-suite": "tavden-field-suite",
+    "tboxai/tbox-iot-esp32-s3": "repo-note:tboxai/tbox-iot-esp32-s3",
     "teapot174/airmouses3": "airmouses3",
     "teapot174/esp-graber": "esp-graber",
     "technoblogy/ulisp-cardputer": "ulisp-cardputer",
@@ -27479,11 +27574,13 @@
     "v11859752/m5airmouse": "m5airmouse",
     "valleytechsolutions/dragon-detector": "dragon-detector",
     "valleytechsolutions/lora-tunnel": "lora-tunnel",
+    "vansamaevo/xiaoyin-esp32-s3": "repo-note:vansamaevo/xiaoyin-esp32-s3",
     "vanshksingh/m5cardputer-chat-with-gemini-api": "m5cardputer-chat-with-gemini-api",
     "vanzt/z80-4-m5cardputer": "z80-4-m5cardputer",
     "varna9000/reticulum-tdeck": "reticulum-tdeck",
     "vbart/meshcoretel-firmware": "repo-note:vbart/meshcoretel-firmware",
     "vc1235-ui/vibe-cardputer": "vibe-cardputer",
+    "vcxzvfe/codex-pet-bridge": "repo-note:vcxzvfe/codex-pet-bridge",
     "vhuynen/cubecell-ab01-lorawan-helium-mailbox-notifier": "repo-note:vhuynen/cubecell-ab01-lorawan-helium-mailbox-notifier",
     "vhuynen/cubecell-ab01-lorawan-helium-rain-gauge": "repo-note:vhuynen/cubecell-ab01-lorawan-helium-rain-gauge",
     "vicliu624/cardputer_mp3_adv": "cardputer-mp3-adv",
@@ -27514,6 +27611,8 @@
     "wadadawadada/blackbox_node": "repo-note:wadadawadada/blackbox_node",
     "wadadawadada/melody_machine": "repo-note:wadadawadada/melody_machine",
     "wan0net/thistle-os": "thistle-os",
+    "wan7up/vx-agent-access": "repo-note:wan7up/vx-agent-access",
+    "wangjianlin2026/zhiying-danmu": "repo-note:wangjianlin2026/zhiying-danmu",
     "warko-san/cardputer-remote-cloner": "cardputer-remote-cloner",
     "warwick320/nova-x": "repo-note:warwick320/nova-x",
     "washishi/m5stack-avatar-mic-nekomimi_led": "m5stack-avatar-mic-nekomimi-led",
