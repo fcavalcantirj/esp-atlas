@@ -18,7 +18,8 @@ REPO = Path(__file__).resolve().parent.parent
 def test_the_committed_switch_file_has_every_flag_off():
     doc = json.loads((REPO / "jr" / "autonomy.json").read_text())
     assert {k: v for k, v in doc.items() if not k.startswith("_")} == {
-        "demand_automerge": False, "tick_automerge": False, "code_automerge": False, "stall_dispatch": False}
+        "demand_automerge": False, "tick_automerge": False, "code_automerge": False, "stall_dispatch": False,
+        "pr_fix_dispatch": False}
     assert cw.stall_dispatch_allowed(REPO / "jr" / "autonomy.json", {}) is False
 
 

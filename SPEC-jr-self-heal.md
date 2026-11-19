@@ -78,6 +78,43 @@ the streak and resolves every live abort incident (`Store.resolve_aborts`). The 
 (`docs/ops/HEAL-PROMPT.md`, "When `check` starts with `abort:`") fixes the code that raised the abort; it
 never closes or merges a Jr PR to make the abort go away.
 
+### 1d. The chores on open PRs (2026-11-18)
+
+Owner, Nov 18: "make jr automatically do chores. site must be self sufficient." Measured that night: 31 open
+PRs, 25 code PRs waiting on one human reviewer, 8 conflicting with main and resolved by hand, every agent
+BLOCK waiting for a person, stacked PRs retargeted by hand. Now:
+- **Retarget** is GitHub's own: `delete_branch_on_merge` is on, so a stacked PR moves to `main` when its base
+  merges.
+- **`jr/chores.py`**, run by every hourly tick after its own work (even after an abort): a code PR (same
+  repository, not draft, based on `main`, not `jr/tick-*` — `review_refresh` owns those — nor
+  `jr/research-*` — the demand retry owns those) that GitHub reports DIRTY is a `conflict:#n` incident; a PR
+  labelled `needs-human` whose newest agent verdict for its CURRENT head is BLOCK is a `review-fix:#n`
+  incident carrying the findings. Evidence: `pr`, `pr_branch`, `pr_head`. Fingerprint = kind + PR, so the
+  same PR failing twice after a fix goes to a human (`MAX_PER_FINGERPRINT`).
+- **A red required check on any open PR** (2026-11-19: tick PR #1828 sat red on `tests` all day; the CI
+  watch only declares a tick break when the two newest tick PRs fail alike), once per PR and failing test, in order:
+  rerun the failed jobs (a flake clears itself); still red and behind `main` → merge `main` in through
+  `PUT /pulls/<n>/update-branch` with `expected_head_sha` (the fix may already be on `main`); still red and
+  up to date → a Jr tick/demand PR is ONE `pr-red:` incident per failing test (fingerprint = check + node +
+  assertion), healed on `main` by the CI launcher: the delegate fixes main's code or test, never the data,
+  and writes a finding when the record itself is wrong; a code PR is a `ci-fix:#n` PR-fix. Non-required
+  checks (`sources-live`) and cancelled/timed-out runs are never a chore. The rerun and the merge of
+  `main` happen once per PR, check and failing test node (never per head: `main` moves hourly, and a key that
+  changes every run would loop). A `pr-red:` incident resolves when
+  no open PR shows that failure.
+- **Dispatch** only through `ci_watch.py claim --pr-fix` (a launcher that checks out `pr_head`, pushes the
+  delegate's commits fast-forward to `pr_branch`, opens no PR) and the `pr_fix_dispatch` switch
+  (`jr/autonomy.json` + `JR_PR_FIX_DISPATCH`), against its own budget of `PR_FIX_DAILY` (4) a UTC day.
+  `relay-check --pr-fix` judges only the delegate's first-parent commits; a merge counts only its conflict
+  resolution (`git show --remerge-diff`), never what `main` brings.
+- **Progress**: a dispatched fix whose PR has a new head is `pushed` (the agent review re-judges it); none
+  after `STALL_HOURS` is stalled; a cleared condition or a closed PR resolves the incident. **PR fixes never move the human-ack brake**: they are bounded by their own daily budget and per PR
+  (one fix + one recurrence, then a human). A merged CI-heal PR (`jr/heal-*`) resets the brake.
+- **Heal PRs are code**: the agent review covers `jr/heal-*` too; only tick and demand PRs have their own
+  canaries.
+- **The owner's audit**: once a UTC day from 12Z one Telegram line names what still needs a human
+  (`needs-human` PRs with age, `needs_human`/stalled incidents, a halted heal). Nothing waits → no line.
+
 ## 2. Known causes — handled in code, no model
 
 | Signal | Action |
@@ -122,8 +159,10 @@ row with the incident that taught it.
 
 - The relay pushes the branch, opens the PR labelled `jr-heal` (always the REVIEW route), and posts
   in the coordination room and the operator's notification channel within the hour.
-- **Gate unchanged:** an independent exact-head reviewer who is not the delegate, merged with
-  `gh pr merge --match-head-commit`. Jr never merges a `jr-heal` PR.
+- **Gate (owner, 2026-11-19: "autonomous, subscription with API fallback"):** the agent review
+  (`jr/agent_review.py`, a fresh reviewer run that is not the delegate's session) judges the heal PR at its exact
+  head like any code PR, and the code canary merges a PASS (`code_automerge` + `JR_CODE_AUTOMERGE`, one an hour,
+  `--match-head-commit`). A BLOCK is a `review-fix:` chore: one fix and one recurrence, the third BLOCK goes to a human.
 - The tick marks the incident `resolved` when the required check is green on main and on the next
   tick PR, and records time to detect, time to PR and time to green.
 
@@ -187,5 +226,4 @@ weekly review).
 
 ## Not in scope
 
-Auto-merging a heal PR. A second review agent with auto-merge may follow after three natural heals
-were merged without a reviewer change, as its own spec.
+(Auto-merging a heal PR moved into scope on 2026-11-19: see §4 "Gate" and §1d.)
