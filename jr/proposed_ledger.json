@@ -1223,6 +1223,14 @@
       "status": "rejected",
       "timestamp": "2026-11-05T19:01:17.341039+00:00"
     },
+    "cadv": {
+      "expires": "2026-12-19T06:00:32.213183+00:00",
+      "id": "cadv",
+      "pr_ref": null,
+      "repo": "vvenv/cadv",
+      "status": "seen",
+      "timestamp": "2026-11-19T06:00:32.213183+00:00"
+    },
     "cairn": {
       "expires": "2026-12-19T01:00:32.121052+00:00",
       "id": "cairn",
@@ -3641,15 +3649,14 @@
       "timestamp": "2026-11-16T03:00:32.040222+00:00"
     },
     "esp-now-chat-firmware": {
-      "expired_at": "2026-10-12T19:00:13.240021+00:00",
-      "expires": "2026-10-12T18:00:17.136349+00:00",
+      "expires": "2026-12-19T06:00:32.213183+00:00",
       "id": "esp-now-chat-firmware",
       "pr_ref": null,
       "reason": "below_floor: 1 stars / 0 forks",
       "repo": "graysonreid2011/esp-now-chat-firmware",
       "repo_id": 1269518201,
-      "status": "expired",
-      "timestamp": "2026-09-12T18:00:17.136349+00:00"
+      "status": "rejected",
+      "timestamp": "2026-11-19T06:00:32.213183+00:00"
     },
     "esp1312": {
       "expires": "2026-12-03T09:00:59.699915+00:00",
@@ -3868,7 +3875,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-19T05:00:32.307897+00:00"
+      "timestamp": "2026-11-19T06:00:32.213183+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -26987,6 +26994,7 @@
     "volosr/m5sticks3saber": "m5sticks3saber",
     "volosr/minicar": "minicar",
     "volosr/onebutton": "onebutton",
+    "vvenv/cadv": "cadv",
     "w-ockham/actpaddle": "actpaddle",
     "w-ockham/m5spotchan": "m5spotchan",
     "w35m17h/cardputer-mqtt": "cardputer-mqtt",
