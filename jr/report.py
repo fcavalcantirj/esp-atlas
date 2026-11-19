@@ -26,6 +26,9 @@ class TickReport:
     boards_pct: float | None = None
     overall_pct: float | None = None
     allocation: str = ""
+    split: dict | None = None                          # the hourly {"backfill", "firmware"} units this tick ran
+    yields: dict | None = None                         # jr/yield_ledger.lane_yield over the trailing window
+    stall: dict | None = None                          # {"lanes", "stall_ticks", "yields"} when a lane produced nothing over the stall window
     stages: list = field(default_factory=list)        # [{"name", "paths", "summary", "needs_human", "items", "review"}]
     extra_paths: list = field(default_factory=list)    # tick-owned paths outside stages (data-trend snapshot)
     data_row: dict | None = None                       # SPEC-data-trend.md row for this tick
@@ -47,10 +50,16 @@ class TickReport:
     budget: str = ""
     warnings: list = field(default_factory=list)      # dry-run preflight notes, never fatal
     ci_watch: dict = field(default_factory=dict)      # jr/ci_watch.watch() result (SPEC-jr-self-heal.md)
+    stall_watch: dict = field(default_factory=dict)   # jr/ci_watch.stall_watch() result (§1b: a silent lane is an incident)
+    abort_watch: dict = field(default_factory=dict)   # jr/ci_watch.abort_watch() result (§1c: a repeated abort is an incident)
+
+    chores: dict = field(default_factory=dict)        # jr/chores.run() result (§1d: conflicts and agent BLOCKs become PR fixes)
+    work_audit: dict = field(default_factory=dict)    # {class: {state: n}} from docs/demand/work-receipts.json (the audit block)
     admit_progress: dict = field(default_factory=dict)
     refreshed: list = field(default_factory=list)      # jr/review_refresh.refresh() results for own review PRs  # jr/admit_progress.watch() result: the admit stall alarm
     dry_writes: list = field(default_factory=list)    # dry-run: tick-owned would-be writes (ledger, trend), {"path","field","value"}
     aborted: str = ""                                 # non-empty → the tick stopped early, why
+    degraded: str = ""                                # non-empty → firmware stages skipped (pending-PR inventory incomplete), why
 
     @property
     def paths(self) -> list[str]:
@@ -100,6 +109,7 @@ def render_line(r: TickReport) -> str:
     head = "jr-tick" + (" (dry-run)" if r.dry_run else "")
     if r.aborted:
         return f"🛑 {head} {stamp}: aborted — {r.aborted}{render_review_prs(r)} · {r.budget}".rstrip(" ·")
+    deg = f"⚠️ degraded — {r.degraded} · " if r.degraded else ""
     mem = r.memory or {}
     mem_txt = (f"memory expired {mem.get('expired', 0)} / merged {mem.get('merged', 0)} / "
                f"rejected {mem.get('rejected', 0)} / removed {mem.get('removed', 0)}"
@@ -125,7 +135,7 @@ def render_line(r: TickReport) -> str:
     stage_txt = "".join(f" · {s.get('name', 'stage')}: {s.get('summary', '')[:300]}" for s in r.stages if s.get("summary"))
     if r.dry_run and r.would_write:
         stage_txt += render_would_write(r.would_write)
-    return (f"🤖 {head} {stamp}: boards {_pct(r.boards_pct)} (overall {_pct(r.overall_pct)}) · "
+    return (f"🤖 {head} {stamp}: {deg}boards {_pct(r.boards_pct)} (overall {_pct(r.overall_pct)}) · "
             f"{r.allocation or 'allocation n/a'} · admitted {r.admitted} · rejects {rej} · "
             f"{mem_txt}{guard_txt}{reval} · {pr_txt}{render_review_prs(r)}{stage_txt}{warn} · {r.budget}").rstrip(" ·")
 
@@ -291,6 +301,38 @@ def render_review_section(r: TickReport) -> list[str]:
     return lines
 
 
+def render_audit_section(r: TickReport) -> list[str]:
+    """SPEC-espatlas-jr.md §3d rule 5: the after-the-fact audit of Jr's autonomy, in every tick PR: the
+    units each lane got and what it produced over the window, the stall incidents this tick recorded or
+    resolved, and the demand work by class and state (from main's receipts). Empty when the tick carried
+    none of it (a manual --track run)."""
+    out: list[str] = []
+    if r.split:
+        out.append("### Autonomy audit")
+        out.append(f"- split: backfill {r.split.get('backfill')} / firmware {r.split.get('firmware')} unit(s)"
+                   + (f" · {_yield_text(r.yields)}" if r.yields and r.yields.get('ticks_in_window') else " · yield: no window yet"))
+        if r.stall_watch:
+            rec = r.stall_watch.get("incidents") or []
+            res = r.stall_watch.get("resolved") or []
+            would = r.stall_watch.get("would") or []
+            out.append(f"- stall incidents: recorded {len([i for i in rec if 'already open' not in str(i)])}, "
+                       f"already open {len([i for i in rec if 'already open' in str(i)])}, resolved {len(res)}"
+                       + (f", dry run would {len(would)}" if would else "")
+                       + ("" if r.stall_watch.get("status") == "ok" else f" · watch {r.stall_watch.get('status')}"))
+        if r.work_audit:
+            parts = [f"{cls}: " + ", ".join(f"{state} {n}" for state, n in sorted(states.items()))
+                     for cls, states in sorted(r.work_audit.items())]
+            out.append("- demand work (receipts on main): " + " · ".join(parts))
+        out.append("")
+    return out
+
+
+def _yield_text(y: dict) -> str:
+    lanes = ("backfill", "firmware", "topics")
+    return "yield " + " ".join(f"{l} {(y.get(l) or {}).get('produced', 0)}/{(y.get(l) or {}).get('units', 0)}u" for l in lanes) \
+        + f" over {y.get('ticks_in_window')} tick(s)"
+
+
 def render_pr_body(r: TickReport) -> str:
     """The PR as a VERDICT a human can read top to bottom: what is proposed and which gates it
     passed (one checklist per record), what was skipped (counts only — the launcher backlog is
@@ -345,6 +387,7 @@ def render_pr_body(r: TickReport) -> str:
                  "A tick adds records; the only removal is Jr retracting its own unverified recipe, "
                  "with the original kept in `jr/overrides/`.")
     lines.append("")
+    lines += render_audit_section(r)
     lines.append("<details><summary>Stage log</summary>")
     lines.append("")
     for s in r.stages:

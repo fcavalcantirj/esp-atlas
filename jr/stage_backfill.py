@@ -127,7 +127,8 @@ def run(ctx, budget: int = DEFAULT_BUDGET, fetch=None):
     if lines:
         summary += " · " + "; ".join(lines)
     return tick.StageResult("backfill", paths=paths, summary=summary, needs_human=needs_human,
-                            would_write=would_write)
+                            would_write=would_write, produced=0 if ctx.dry_run else filled,
+                            counts={"filled": filled, "skipped": skipped, "cooled": cooled, "cooling": cooling})
 
 
 def _with_corroboration(line: str, entry: dict) -> str:

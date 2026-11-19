@@ -1,13 +1,13 @@
 {
  "calls": 5,
  "errors": 0,
- "fetched": "2026-11-10",
+ "fetched": "2026-11-17",
  "notes": [],
  "ref": "main",
  "repo": "MangoX0567/M5Stack-Cardputer-SSH",
  "resolved": {
   "boards": [
-   "m5stamp-s3"
+   "m5cardputer-adv"
   ],
   "socs": [],
   "unresolved": [
@@ -30,7 +30,10 @@
   {
    "extra": {
     "env": "m5cardputer-adv",
-    "file": "platformio.ini"
+    "file": "platformio.ini",
+    "product_markers": [
+     "cardputer"
+    ]
    },
    "kind": "platformio",
    "line": 6,

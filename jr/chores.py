@@ -1,0 +1,394 @@
+"""EspAtlas Jr — chores: the routine work a person used to do on open PRs (SPEC-jr-self-heal.md §1d).
+
+Owner, 2026-11-18: "make jr automatically do chores. site must be self sufficient." That night 8 of 31 open
+PRs conflicted with main and every agent BLOCK waited for a person. The hourly tick calls `run` after its
+own work. Deterministic: no model here; the fixing is the heal delegate's, on the PR's own branch.
+
+- A code PR (same repository, not draft, based on main, not a Jr tick or demand branch: those have their own
+  refresh and retry) that GitHub reports DIRTY → a `conflict:#n` incident.
+- A PR labelled `needs-human` whose newest agent-review verdict for its CURRENT head is BLOCK → a
+  `review-fix:#n` incident carrying the findings. A BLOCK for an older head is stale: the agent re-judges first.
+- Every live chore incident whose condition cleared, or whose PR closed, is resolved; a PR the fix led to
+  merge resets the ack brake (ci_watch.Store.pr_fix_progress).
+- Once a UTC day from DIGEST_HOUR, one line to the owner (`daily`): the last 24 h of merges by Jr vs by a
+  person, what still needs a human, and the run of consecutive self-sufficient days. That line is the audit
+  after the fact, and the only place "self-sufficient" may be claimed.
+Incidents are recorded always; they reach the delegate only through `ci_watch.py claim --pr-fix` and the
+`pr_fix_dispatch` switch. Never raises: a failure is `{"status": "unavailable"}`.
+"""
+from __future__ import annotations
+
+import json
+import time
+from datetime import datetime, timedelta
+from pathlib import Path
+
+import agent_review
+import ci_watch
+import publish
+
+SKIP_PREFIXES = ("jr/tick-", "jr/research-")   # review_refresh and the demand retry own those
+CONTENT_PREFIXES = SKIP_PREFIXES                 # Jr's catalog PRs: a red check on one is healed on MAIN
+HUMAN_LABEL = "needs-human"
+DIGEST_HOUR = 12
+PR_FIELDS = ("number,headRefName,headRefOid,mergeStateStatus,isDraft,labels,baseRefName,isCrossRepository,updatedAt,"
+             "createdAt,statusCheckRollup")
+
+
+# GitHub computes mergeability lazily: the first listing after main moves answers UNKNOWN for most PRs
+# (2026-11-19, measured: 17 of 25 UNKNOWN, 12 s later 6 CONFLICTING). A listing with UNKNOWN in it is read again.
+SLEEP = time.sleep
+SETTLE_WAIT, SETTLE_TRIES = 10, 3
+REQUIRED_LABELS = {"agent-pass": "0E8A16", "needs-human": "B60205", "review-fallback": "FBCA04", "jr-heal": "D93F0B"}
+
+
+def list_settled(fetch, unknown, tries: int = SETTLE_TRIES, wait: int = SETTLE_WAIT):
+    """`fetch()` -> a PR list or None; read again (after `wait` s) while `unknown(pr)` holds for any PR, at most
+    `tries` listings in all. The last listing is returned as it is: a PR still unknown is simply not judged."""
+    prs = fetch()
+    for _ in range(max(tries, 1) - 1):
+        if prs is None or not any(unknown(p) for p in prs):
+            break
+        SLEEP(wait)
+        again = fetch()
+        if again is None:
+            break
+        prs = again
+    return prs
+
+
+def ensure_labels(gh, store: ci_watch.Store, now: str) -> list[str]:
+    """Once a UTC day: create every label the machine needs that the repository lacks (2026-11-19: four were
+    missing and every `gh pr edit --add-label` would have raised). Best-effort; returns the names created."""
+    day = now[:10]
+    data = store._load()
+    if data.get("labels_day") == day:
+        return []
+    have = ci_watch._json(gh, "label", "list", "--limit", "200", "--json", "name")
+    if have is None:
+        return []
+    names = {str(l.get("name")) for l in have if isinstance(l, dict)}
+    created = []
+    for name, color in REQUIRED_LABELS.items():
+        if name not in names and getattr(gh("label", "create", name, "--color", color), "returncode", 1) == 0:
+            created.append(name)
+    data = store._load()
+    data["labels_day"] = day
+    store._save(data)
+    return created
+
+
+def _labels(pr: dict) -> set:
+    return {(l.get("name") if isinstance(l, dict) else l) for l in (pr.get("labels") or [])}
+
+
+def _eligible(pr: dict) -> bool:
+    return (not pr.get("isDraft") and not pr.get("isCrossRepository") and pr.get("baseRefName") == "main"
+            and bool(pr.get("headRefOid")) and not str(pr.get("headRefName") or "").startswith(SKIP_PREFIXES))
+
+
+def _red_required(pr: dict, required: list) -> list[tuple[str, str, str]]:
+    """(check, run id, job id) of every REQUIRED check that FAILED at the PR's head. Cancelled/timed-out
+    runs and non-required checks (sources-live, a cited site blinking) are never a chore."""
+    out = []
+    for c in pr.get("statusCheckRollup") or []:
+        if c.get("name") in required and str(c.get("conclusion") or "").upper() == ci_watch.FAILURE:
+            m = ci_watch._RUN_JOB.search(str(c.get("detailsUrl") or ""))
+            if m:
+                out.append((c["name"], m.group(1), m.group(2)))
+    return out
+
+
+def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool) -> dict:
+    """A red required check on any open PR (2026-11-19: tick PR #1828 sat red; ci_watch only declares a tick
+    break when the two NEWEST tick PRs fail alike). In order, once per PR and FAILURE (never per head: main
+    moves hourly, so per-head memory looped rerun → update → rerun with no incident, review BLOCK of #1857):
+    (1) rerun the failed jobs (a flake clears itself); (2) still red and behind main → merge main into it (the
+    fix may be on main already: a heal PR, any PR); (3) still red → a Jr content PR is one `pr-red:` heal incident on main per failing
+    test (the delegate fixes main's code or test, never the data; the PRs are evidence), a code PR is a
+    `ci-fix:#n`, fixed in place. Returns {"reruns", "verdicts", "fingerprints", "update_branch"}."""
+    out = {"reruns": [], "verdicts": [], "fingerprints": set(), "update_branch": []}
+    candidates = [p for p in prs if not p.get("isDraft") and not p.get("isCrossRepository")
+                  and p.get("baseRefName") == "main" and p.get("headRefOid")]
+    if not any(p.get("statusCheckRollup") for p in candidates):
+        return out
+    required = ci_watch.required_checks(gh, slug) or []
+    data = store._load() if not dry_run else {}
+    seen = data.get("reruns") or {}
+    updated = data.get("updated_branch") or {}
+    # a PR whose fix the delegate is working on is never moved under it (its push must fast-forward)
+    in_flight = {((r["context"].get("evidence") or {}).get("pr")) for r in (data.get("incidents") or {}).values()
+                 if ci_watch.is_pr_fix(r) and r["state"] in ("dispatched", "pushed")}
+    # a pr-red heal that MERGED earns the red PRs one more merge of main (its fix is on main now)
+    healed = {r["fingerprint"] for r in (data.get("incidents") or {}).values()
+              if str(r["context"].get("check") or "").startswith(ci_watch.PR_RED_CHECK) and r.get("merged")}
+    groups: dict = {}
+    for p in candidates:
+        n, head, branch = p["number"], p["headRefOid"], p["headRefName"]
+        for check, run_id, job_id in _red_required(p, required)[:1]:
+            parsed = ci_watch.parse_job_log(ci_watch._job_log(gh, slug, job_id))
+            content = branch.startswith(CONTENT_PREFIXES)
+            fp = (ci_watch.fingerprint(check, parsed) or ci_watch.hashlib.sha256(f"pr-red\n{check}".encode()).hexdigest())
+            if content:
+                out["fingerprints"].add(fp)          # still a live break until the PR is green
+            # the memory key is the failing NODE, not the fingerprint: an assertion line can carry a tmp path or a
+            # uuid that changes every run, and a key that never matches loops forever (2nd review of #1857)
+            key = f"{n}:{check}:{parsed.failed or parsed.error or '?'}"
+            if key not in seen:
+                out["reruns"].append((n, run_id))
+                seen[key] = run_id
+                continue
+            ukey = key if key not in updated or fp not in healed else f"{key}:after-heal"
+            if ukey not in updated and n not in in_flight and _behind_main(gh, slug, head):
+                out["update_branch"].append((n, head))
+                updated[ukey] = head
+                continue
+            if content:
+                g = groups.setdefault(fp, {"check": check, "parsed": parsed, "prs": []})
+                g["prs"].append(n)
+            elif _eligible(p):
+                out["verdicts"].append(ci_watch.pr_fix_verdict("ci-fix", n, branch, head, {
+                    "check": check, "failed": parsed.failed, "assertion": parsed.assertion,
+                    "log_excerpt": (parsed.excerpt or "")[-4000:]}))
+    for fp, g in groups.items():
+        parsed = g["parsed"]
+        out["verdicts"].append(ci_watch.Verdict(
+            kind="incident", source="pr", check=f"{ci_watch.PR_RED_CHECK}#{g['prs'][0]}:{g['check']}", fingerprint=fp,
+            failed=parsed.failed, assertion=parsed.assertion, error=parsed.error, log_excerpt=(parsed.excerpt or "")[-4000:],
+            kind_detail="pr-red", evidence={"prs": sorted(g["prs"]), "check": g["check"]}))
+    if not dry_run:
+        data = store._load()
+        data["reruns"] = dict(list(seen.items())[-300:])
+        data["updated_branch"] = dict(list(updated.items())[-300:])
+        store._save(data)
+    return out
+
+
+# --- canary retry ---------------------------------------------------------------------------------------
+# A canary (scripts/demand_canary.py, scripts/tick_canary.py) runs only on a pull-request event. A Jr content
+# PR it did not merge (capped today, a quoted page that did not answer, a guard fixed on main since) was never
+# looked at again: these chores skip such branches and the tick refreshes only its own CONFLICTING tick PRs
+# (2026-11-19: demand PR #1846, judged once on Nov 18). Each gets one more look per UTC day.
+RETRY_LANES = {"jr/research-": ("demand_automerge", "demand-canary"), "jr/tick-": ("tick_automerge", "tick-canary")}
+RETRY_PER_TICK = 2
+
+
+def _ok(p) -> bool:
+    return getattr(p, "returncode", 1) == 0
+
+
+def canary_retry(gh, slug: str, prs: list, store: ci_watch.Store, now: str, dry_run: bool,
+                 autonomy_path: Path = ci_watch.AUTONOMY_PATH) -> dict:
+    """One more canary decision for an open Jr content PR, at most once per PR per UTC day and RETRY_PER_TICK
+    per tick, oldest first; only for a lane whose switch in jr/autonomy.json is true. A demand PR behind main
+    is merged with main (a new event: main's current guards and canary judge it); otherwise the failed jobs of
+    its last run are rerun (the canary behind them follows), or the canary job alone. A tick PR is only ever
+    rerun: jr/review_refresh.py owns its merges with main. Left alone: needs-human, a red REQUIRED check on a
+    PR that is not a draft (red_prs' business; it never looks at drafts), checks still running, no run at all, a
+    fork, another base, an AUTO-route tick PR, a PR whose fix the delegate is working on. The day's memory is
+    written BEFORE each call (the tick's GitHub budget can end the run between two calls; review BLOCK of #1874),
+    so a retry that was sent, refused or cut short is never sent twice in a day.
+    Returns {"update_branch": [(n, head)], "rerun": [(n, run id)], "failed": [n]}."""
+    out = {"update_branch": [], "rerun": [], "failed": []}
+    try:
+        flags = json.loads(Path(autonomy_path).read_text())
+    except (OSError, ValueError):
+        return out
+    lanes = {prefix: job for prefix, (flag, job) in RETRY_LANES.items() if isinstance(flags, dict) and flags.get(flag) is True}
+    data = store._load()
+    seen, day = dict(data.get("canary_retry") or {}), ci_watch._utc_day(now)
+    in_flight = {((r["context"].get("evidence") or {}).get("pr")) for r in (data.get("incidents") or {}).values()
+                 if ci_watch.is_pr_fix(r) and r["state"] in ("dispatched", "pushed")}
+    required = None
+    for p in sorted(prs, key=lambda p: int(p.get("number") or 0)):
+        if len(out["update_branch"]) + len(out["rerun"]) + len(out["failed"]) >= RETRY_PER_TICK:
+            break
+        n, head, branch = p.get("number"), p.get("headRefOid"), str(p.get("headRefName") or "")
+        prefix = next((x for x in lanes if branch.startswith(x)), None)
+        rollup = [c for c in p.get("statusCheckRollup") or [] if c.get("name")]          # check runs, not statuses
+        if (prefix is None or not head or p.get("isCrossRepository") or p.get("baseRefName") != "main"
+                or HUMAN_LABEL in _labels(p) or n in in_flight or seen.get(str(n)) == day or not rollup
+                or any(str(c.get("status") or "COMPLETED").upper() != "COMPLETED" for c in rollup)):
+            continue
+        if prefix == "jr/tick-" and (p.get("isDraft") or "jr-review" not in _labels(p)):
+            continue
+        if required is None:
+            required = ci_watch.required_checks(gh, slug) or []
+        if _red_required(p, required) and not p.get("isDraft"):
+            continue
+        # the run that holds this lane's canary: a failure in another workflow's run (the agent review, a
+        # deploy preview) is not what stands between the PR and its canary
+        runs = {id(c): ci_watch._RUN_JOB.search(str(c.get("detailsUrl") or "")) for c in rollup}
+        canary = next((runs[id(c)] for c in rollup if c.get("name") == lanes[prefix] and runs[id(c)]), None)
+        if canary is None:
+            continue
+        failed = [c for c in rollup if str(c.get("conclusion") or "").upper() == ci_watch.FAILURE
+                  and runs[id(c)] and runs[id(c)].group(1) == canary.group(1)]
+        if prefix == "jr/research-" and _behind_main(gh, slug, head):
+            kind, call = "update_branch", ("api", "-X", "PUT", f"repos/{slug}/pulls/{n}/update-branch", "-f", f"expected_head_sha={head}")
+        elif failed:
+            kind, call = "rerun", ("run", "rerun", canary.group(1), "--failed")
+        else:
+            kind, call = "rerun", ("api", "-X", "POST", f"repos/{slug}/actions/jobs/{canary.group(2)}/rerun")
+        if not dry_run:
+            data = store._load()                       # fresh each time: the other chores write this store too
+            data["canary_retry"] = dict(list({**(data.get("canary_retry") or {}), str(n): day}.items())[-300:])
+            store._save(data)
+        if dry_run or _ok(gh(*call)):
+            out[kind].append((n, head) if kind == "update_branch" else (n, canary.group(1)))
+        else:
+            out["failed"].append(n)
+    return out
+
+
+def _behind_main(gh, slug: str, head: str) -> bool:
+    """main has commits the PR head lacks (compare head...main: ahead_by > 0). Unreadable → False: never
+    merge into a PR on a guess."""
+    cmp = ci_watch._json(gh, "api", f"repos/{slug}/compare/{head}...main")
+    return isinstance(cmp, dict) and int(cmp.get("ahead_by") or 0) > 0
+
+
+def _comments(gh, slug: str, number: int) -> list:
+    return ci_watch._json(gh, "api", f"repos/{slug}/issues/{number}/comments", "--paginate") or []
+
+
+def plan(gh, slug: str, prs: list) -> list[ci_watch.Verdict]:
+    """The chore incidents the open PRs call for now."""
+    out = []
+    for pr in prs:
+        if not _eligible(pr):
+            continue
+        n, branch, head = pr["number"], pr["headRefName"], pr["headRefOid"]
+        if pr.get("mergeStateStatus") == "DIRTY":
+            out.append(ci_watch.pr_fix_verdict("conflict", n, branch, head))
+        if HUMAN_LABEL in _labels(pr):
+            v = agent_review.verdict_for_head(_comments(gh, slug, n), head)
+            if v and v["verdict"] == "BLOCK":
+                out.append(ci_watch.pr_fix_verdict("review-fix", n, branch, head,
+                                                   {"findings": list(v.get("findings") or [])}))
+    return out
+
+
+def _closed(gh, store: ci_watch.Store, open_numbers: set) -> dict:
+    """{number: MERGED|CLOSED} for the PRs behind live chore incidents that are no longer open."""
+    out = {}
+    for rec in store._load()["incidents"].values():
+        n = ((rec["context"].get("evidence") or {}).get("pr"))
+        if not ci_watch.is_pr_fix(rec) or rec["state"] not in ci_watch.LIVE or n in open_numbers or n in out:
+            continue
+        st = (ci_watch._json(gh, "pr", "view", str(n), "--json", "state") or {}).get("state")
+        if st in ("MERGED", "CLOSED"):
+            out[n] = st
+    return out
+
+
+def _hours_since(stamp: str | None, now: str) -> float:
+    return ci_watch._hours(str(stamp or "").replace("Z", "+00:00") or None, now)
+
+
+SELF_SUFFICIENT_DAYS = 7
+SCOREBOARD_KEEP = 60
+
+
+def _machine(login: str | None) -> bool:
+    """A merge Jr or a workflow made (a canary's `gh pr merge --auto` shows its token's account)."""
+    login = str(login or "")
+    return login == publish.JR_LOGIN or login.endswith("[bot]") or login.startswith("app/")
+
+
+def daily(gh, store: ci_watch.Store, prs: list, now: str) -> str | None:
+    """Once a UTC day from DIGEST_HOUR: the owner's audit and the self-sufficiency scoreboard in one line.
+    A day is self-sufficient when nothing merged in the last 24 h was merged by a person, no PR waits on
+    `needs-human`, and no heal incident is stuck (needs_human, stalled, halted). Merges unreadable → not
+    proven → not self-sufficient. The consecutive count is kept in the store; SELF_SUFFICIENT_DAYS in a
+    row is the claim (SPEC-jr-self-heal.md §1d) and nothing less is."""
+    when = datetime.fromisoformat(now)
+    data = store._load()
+    day = when.strftime("%Y-%m-%d")
+    if when.hour < DIGEST_HOUR or data.get("digest_day") == day:
+        return None
+    since = (when - timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    merged = ci_watch._json(gh, "pr", "list", "--state", "merged", "--limit", "200", "--search", f"merged:>={since}",
+                            "--json", "number,headRefName,mergedBy")
+    waiting = [f"#{p['number']} needs-human {_hours_since(p.get('updatedAt'), now):.0f} h" for p in prs
+               if HUMAN_LABEL in _labels(p)]
+    # an open, non-draft PR still open a day after it was opened is waiting on someone too, label or not
+    # (Nov 18: 25 code PRs waited on one reviewer with no label at all). createdAt, not updatedAt: CI runs and
+    # label changes touch updatedAt without anyone deciding anything.
+    idle = sorted((p for p in prs if not p.get("isDraft") and HUMAN_LABEL not in _labels(p)
+                   and _hours_since(p.get("createdAt"), now) >= 24),
+                  key=lambda p: str(p.get("createdAt") or ""))
+    if idle:
+        waiting.append(f"{len(idle)} PR(s) open ≥ 24 h (oldest #{idle[0]['number']}, "
+                       f"{_hours_since(idle[0].get('createdAt'), now):.0f} h)")
+    stuck = [f"{r['id']} {r['state']}" for r in data["incidents"].values() if r["state"] in ("needs_human", "stalled")]
+    if data.get("halted"):
+        stuck.append("self-heal halted (run `ci_watch.py ack`)")
+    if merged is None:
+        by_jr = by_person = None
+        ok = False
+    else:
+        by_jr = sum(1 for m in merged if _machine((m.get("mergedBy") or {}).get("login")))
+        by_person = len(merged) - by_jr
+        ok = by_person == 0 and not waiting and not stuck
+    rows = [r for r in (data.get("scoreboard") or []) if r.get("day") != day]
+    rows.append({"day": day, "by_jr": by_jr, "by_person": by_person, "waiting": len(waiting), "stuck": len(stuck), "ok": ok})
+    rows = rows[-SCOREBOARD_KEEP:]
+    streak = 0
+    for r in reversed(rows):
+        if not r.get("ok"):
+            break
+        streak += 1
+    data.update(digest_day=day, scoreboard=rows)
+    store._save(data)
+    merges = "merges unreadable" if merged is None else f"merged by Jr {by_jr} · by a person {by_person}"
+    held = ("needs a human: " + ", ".join(waiting + stuck)) if (waiting or stuck) else "nothing waits on a human"
+    verdict = (f"self-sufficient {min(streak, SELF_SUFFICIENT_DAYS)}/{SELF_SUFFICIENT_DAYS} days"
+               + (" — SELF-SUFFICIENT" if streak >= SELF_SUFFICIENT_DAYS else ""))
+    return f"🧹 Jr daily {day} (last 24 h): {merges} · {held} · {verdict}"
+
+
+def run(gh, store: ci_watch.Store, now: str, *, slug: str, dry_run: bool = False,
+        autonomy_path: Path = ci_watch.AUTONOMY_PATH) -> dict:
+    try:
+        prs = list_settled(lambda: ci_watch._json(gh, "pr", "list", "--state", "open", "--limit", "200", "--json", PR_FIELDS),
+                           lambda p: p.get("mergeStateStatus") == "UNKNOWN")
+        if prs is None:
+            return {"status": "unavailable", "why": "gh pr list failed"}
+        wanted = plan(gh, slug, prs)
+        reds = red_prs(gh, slug, prs, store, dry_run)
+        wanted += reds["verdicts"]
+        touched = {n for n, _ in reds["reruns"]} | {n for n, _ in reds["update_branch"]}
+        rest = [p for p in prs if p.get("number") not in touched]
+        if dry_run:
+            retries = canary_retry(gh, slug, rest, store, now, True, autonomy_path=autonomy_path)
+            return {"status": "ok", "would": [f"record {v.check}" for v in wanted]
+                    + [f"rerun #{n} run {r}" for n, r in reds["reruns"]]
+                    + [f"merge main into #{n}" for n, _ in reds["update_branch"]]
+                    + [f"canary retry #{n} (merge main)" for n, _ in retries["update_branch"]]
+                    + [f"canary retry #{n} (rerun {r})" for n, r in retries["rerun"]], "digest": None}
+        for _, run_id in reds["reruns"]:
+            gh("run", "rerun", str(run_id), "--failed")
+        for n, head in reds["update_branch"]:
+            # REST, not `gh pr update-branch` (the runner's gh 2.46 has no such subcommand); expected_head_sha
+            # makes GitHub refuse if the PR moved since we looked
+            gh("api", "-X", "PUT", f"repos/{slug}/pulls/{n}/update-branch", "-f", f"expected_head_sha={head}")
+        # after the actions red_prs already remembered: a budget that ends here must never cost them
+        retries = canary_retry(gh, slug, rest, store, now, False, autonomy_path=autonomy_path)
+        recorded = []
+        for v in wanted:
+            rec = store.record(v, now)
+            if rec:
+                recorded.append(rec["id"])
+        progress = store.pr_fix_progress({p["number"]: p.get("headRefOid") for p in prs},
+                                         {v.check for v in wanted if ci_watch.is_pr_fix(v.check)},
+                                         _closed(gh, store, {p["number"] for p in prs}), now)
+        progress["resolved"] += store.resolve_pr_red(reds["fingerprints"], now)
+        return {"status": "ok", "recorded": recorded, "labels_created": ensure_labels(gh, store, now),
+                "reruns": [n for n, _ in reds["reruns"]],
+                "canary_retries": [n for n, _ in retries["update_branch"] + retries["rerun"]],
+                "canary_retry_failed": retries["failed"],
+                "updated": [n for n, _ in reds["update_branch"]], "resolved": progress["resolved"], "pushed": progress["pushed"],
+                "stalled": progress["stalled"], "nudges": store.nudges(), "digest": daily(gh, store, prs, now)}
+    except Exception as e:      # noqa: BLE001 — the tick must keep running whatever happens here
+        return {"status": "unavailable", "why": f"{type(e).__name__}: {e}"[:300]}

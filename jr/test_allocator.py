@@ -97,3 +97,46 @@ def test_bias_still_sums_to_budget_and_respects_need_caps():
                 assert s["backfill"] + s["firmware"] == units, (pct, units, bias, s)
     # need caps applied AFTER the bias still spill correctly
     assert allocator.allocate(42.5, 6, need_firmware=1, bias=0.15) == {"backfill": 5, "firmware": 1}
+
+
+# --- the yield rule (SPEC-data-completion.md "Yield", 2026-11-17) -----------------------------------------
+
+def _y(backfill=(24, 72, 0), firmware=(24, 72, 3)):
+    """(ticks, units, produced) per lane, the shape jr/yield_ledger.lane_yield returns."""
+    return {"backfill": dict(zip(("ticks", "units", "produced"), backfill)),
+            "firmware": dict(zip(("ticks", "units", "produced"), firmware)), "window_ticks": 24, "ticks_in_window": 24}
+
+
+def test_a_lane_dead_over_a_full_window_keeps_only_the_floor_and_the_producer_gets_the_rest():
+    # measured Nov 10-17: backfill 0 produced in 160/160 ticks on 3 units an hour; firmware produced
+    assert allocator.allocate(61.7, 6, yields=_y()) == {"backfill": 1, "firmware": 5}
+    assert allocator.allocate(61.7, 6, yields=_y(backfill=(24, 72, 4), firmware=(24, 72, 0))) == {"backfill": 5, "firmware": 1}
+    assert allocator.yield_caps(_y(), 24)["dead"] == ["backfill"]
+
+
+def test_both_lanes_silent_is_a_stall_not_a_tilt():
+    assert allocator.allocate(61.7, 6, yields=_y(backfill=(24, 72, 0), firmware=(24, 72, 0))) == {"backfill": 3, "firmware": 3}
+    assert allocator.yield_caps(_y(backfill=(24, 72, 0), firmware=(24, 72, 0)), 24) == {"need_backfill": None, "need_firmware": None, "dead": []}
+
+
+def test_a_window_not_yet_full_never_moves_units():
+    assert allocator.allocate(61.7, 6, yields=_y(backfill=(23, 69, 0))) == {"backfill": 3, "firmware": 3}
+    assert allocator.allocate(61.7, 6, yields=_y(backfill=(0, 0, 0))) == {"backfill": 3, "firmware": 3}   # a parked lane is not dead
+
+
+def test_the_floor_is_configurable_and_the_split_still_sums():
+    assert allocator.allocate(61.7, 6, yields=_y(), floor_units=2) == {"backfill": 2, "firmware": 4}
+    for units in (1, 2, 5, 6, 7):
+        s = allocator.allocate(42.5, units, yields=_y())
+        assert s["backfill"] + s["firmware"] == units
+
+
+def test_explicit_need_caps_and_the_yield_cap_compose_as_a_min():
+    assert allocator.allocate(61.7, 6, yields=_y(), need_backfill=0) == {"backfill": 0, "firmware": 6}
+    assert allocator.allocate(61.7, 6, yields=_y(), need_backfill=2) == {"backfill": 1, "firmware": 5}
+
+
+def test_no_yields_is_byte_for_byte_the_previous_behaviour():
+    for pct in (0.0, 42.5, 61.7, 80.1, 100.0):
+        assert allocator.allocate(pct, 6, yields=None) == allocator.allocate(pct, 6)
+        assert allocator.allocate(pct, 6, yields={}) == allocator.allocate(pct, 6)

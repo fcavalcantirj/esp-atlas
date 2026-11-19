@@ -207,6 +207,18 @@ that's a coverage hole to close, not a silent gap.
     still run after it. Why: `device_map` covered 14 of 118 boards, all M5Stack; 92 of the 130 topic
     rejects on main were `no_board_evidence`, 16 of them naming a catalogued Heltec, LilyGO or StickC
     board in their own description or topics (`jr/fixtures/board_names/no_board_evidence_2026-11-17.json`).
+  - **A build-file board for every candidate (2026-11-17), not only submissions.** When the prose names
+    no catalogued board (`no_board_evidence`), admit and the topics path run the device-build evidence
+    gate first and take the board from the targets it already read: `device_evidence.check` returns
+    `targets` ([{kind, token, url}]: every platformio `[env:*] board =`, a sketch.yaml fqbn's board, an
+    ESP-IDF target chip, in file order), and `device_evidence.board_from_targets` picks the first token
+    `board_alias.resolve_token` maps to a catalogued board. A chip-only target (`esp32s3`, `esp32dev`) is
+    a chip, not a board: no devkit is ever guessed, the candidate stays `no_board_evidence`. The board
+    enters the scorer as the hint (the submission path's own mechanism), so the first recipe cites the
+    build file and line, and the gate is not run twice. Why: 8 of the 76 above-floor `no_board_evidence`
+    rejects of 2026-11-17 carried a root platformio.ini whose `board =` was a catalogued board
+    (esp32-s3-devkitc-1, esp32-c3-devkitm-1, lolin-s3-mini, lilygo-t-display-s3, m5stick-c), e.g.
+    esp32-c3-adblock (3,597 stars) and project_aura (797).
   - **The GitHub-topics source remembers every paid decision (2026-11-16).** `jr/stage_admit_topics.py`
     scores at most `budget * SCORE_MULTIPLIER` prefiltered repos per tick, in the search's star order.
     Every repo it paid a metadata fetch for ends in a remembered decision, the launcher's rule: a
@@ -346,6 +358,34 @@ and adjusted engaged sessions for the completed 28-day window vs the 28 days bef
 the staleness/population queue. *People are searching for a board/firmware we don't cover well →
 Jr prioritizes authoring/deepening it.* Analytics thus steers **which data Jr keeps**, closing the
 loop between what users want and what the atlas provides — without Jr ever touching growth levers.
+
+**The steering rule, rewritten from measurement (owner, 2026-11-17).** Between 2026-11-03 and 11-17 every
+demand snapshot held 0 `UNCOVERED` items, so the one wire from demand to the hourly split (a bias of at most
+one unit in six, `jr/allocator.py`) was 0.0 for two weeks, and 50 consecutive ticks (Nov 15 19Z → Nov 17
+20Z) produced nothing: admitted 0, backfilled 0, recipes 0, topics authored 0, while coverage sat at
+61.7 % and the four largest gauge gaps (pinout, download_mode, usb_serial, dimensions_mm) had no stage able
+to write them. The rule therefore becomes:
+
+1. **Three lanes, split by yield.** New boards (the demand executor, one a day), deepening existing boards
+   (the hourly backfill through deterministic resolvers) and new firmware (admit, boardmap, topics). A yield
+   ledger (`docs/telemetry/yield.jsonl`, one row per stage per tick) feeds the allocator; a lane with zero
+   yield over the window drops to its floor and its units go to the lane that produces; constants live in
+   a committed `jr/steering.json` and every tick prints the inputs of its split.
+2. **Demand orders, the gauge fills.** `UNCOVERED` still jumps the queue. `RANKS_POORLY` and page
+   impressions ORDER which vendor × field gets a resolver first; they never change SEO text (owner's).
+3. **The model boundary: an LLM solves code problems, never fills inventory.** The delegate's work items are
+   resolvers (vendor × field, fixture page + RED test), stage fixes and CI fixes; the only record it authors
+   is a brand-new board under the executor prompt. Catalog values come from deterministic resolvers so each
+   is reproducible from its cited page.
+4. **A stalled lane dispatches the coding agent.** Zero yield over the stall window (`jr/steering.json`),
+   `scored_clean == 0` over the topics window, or an identical demand snapshot seven days running is an
+   incident of kind `stall` in `jr/ci_watch.py`, claimed by the same heal launcher, same caps and `ack`,
+   same `jr-heal` review route; the prompt diagnoses from the yield rows first and fixes or reports.
+5. **Humans hold kill switches and audit after the fact**: `jr/autonomy.json` (`demand_automerge`,
+   `tick_automerge`, `code_automerge`, `stall_dispatch`; each turned on by a reviewed PR) + the matching
+   repository/runner variables as instant kills (`JR_*=0`); every tick PR body ends with an **Autonomy
+   audit** block (the split and the lanes' yield over the window, stall incidents recorded/resolved, demand
+   work by class and state from main's receipts, `jr/report.render_audit_section`); the weekly digest.
 
 **RESOLVED ⟨Q14⟩ — Jr hosts the telemetry cron + digest** (its crons + §7 outbound + the
 data-priority tie-in make it the natural home), under the hard boundary above: measure / report /

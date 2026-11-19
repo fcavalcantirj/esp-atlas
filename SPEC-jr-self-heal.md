@@ -42,6 +42,110 @@ the tick: a red CI wastes a tick PR but does not make the tick unsafe.
   commit range between them, both runner images (`Image:`/`Version:` lines of the job log), and the
   failing job's log cut to the failure block (at most 200 lines).
 
+### 1b. A silent lane is a break too (2026-11-17)
+
+Measured over the 160 tick PRs of 2026-11-10 → 11-17: backfill produced 0 in 160/160 ticks; a 51-tick
+zero streak across every lane (Nov 15 21Z → Nov 17 23Z) raised nothing but a Telegram line. The yield
+ledger (`SPEC-data-completion.md` "Yield") now says, each tick, whether a lane that had units produced
+over the stall window (`jr/steering.json`: `yield.stall_ticks` 24, `yield.topics_stall_ticks` 48). A lane
+silent over a full window is an incident of kind `stall` (`jr/ci_watch.stall_watch`, run after the
+stages): `check` = `stall:<lane>`, fingerprint = sha256 of the lane (one break = one incident while it is
+live; a recurrence after resolution gets the `-N` suffix), `evidence` = the lane's yield over the window,
+this tick's stage summaries and counters for the lane, the tick's reject counts. It enters the SAME store,
+`claim`, daily budget, `ack` halt and `jr-heal` review route as a red check; the delegate's prompt
+(`docs/ops/HEAL-PROMPT.md`, "When `check` starts with `stall:`") diagnoses from the yield rows first and
+either fixes the stage at the cause or writes the finding to `docs/incidents/<id>.md` when the cause is
+outside the code. The incident resolves when the lane produces again over the yield window
+(`Store.resolve_producing`). Nothing here may fill inventory: an LLM solves code problems, never records.
+
+### 1c. A tick that keeps aborting is a break too (2026-11-18)
+
+Measured: four hourly ticks in a row (Nov 18, 18Z → 21Z) aborted on the same pending-PR gap (a stale
+ledger record under a reused firmware id) and nothing reacted but a Telegram line. An aborted tick writes
+no yield rows, so §1b cannot see it, and CI was green. Every hourly tick now hands its outcome to
+`jr/ci_watch.abort_watch` after its worktree and lock are released: the abort reason, the degraded reason
+(an incomplete pending-PR inventory no longer aborts; it skips the firmware stages, `SPEC-jr-review-routing.md`
+§6, and counts here like an abort), or nothing when it completed. Its kind is the reason's head (`pending-pr-inventory-incomplete`, `typeerror`, `guard-red`,
+`terminated-by-sigterm`), and the fingerprint is sha256 of the kind: a tick stuck on the same check is one
+break even when the detail changes each hour (another firmware in the gap, other files in a red guard). The
+**second consecutive** abort of one kind is an incident: `check` = `abort:<kind>`, `evidence` = the latest
+full reason, the streak count, first and last seen. It enters the
+SAME store, `claim`, daily budget, `ack` halt and `jr-heal` review route as a red check (it is not gated
+by `stall_dispatch`). Aborts the delegate cannot fix never open one and never break a streak: GitHub
+unreadable or rate-limited (`gh …`, `GitHub rate limit low`), the tick lock, the call budget, branch
+protection, and a tick PR open too long (that one already says it needs a human). A completed tick ends
+the streak and resolves every live abort incident (`Store.resolve_aborts`). The delegate's prompt
+(`docs/ops/HEAL-PROMPT.md`, "When `check` starts with `abort:`") fixes the code that raised the abort; it
+never closes or merges a Jr PR to make the abort go away.
+
+### 1d. The chores on open PRs (2026-11-18)
+
+Owner, Nov 18: "make jr automatically do chores. site must be self sufficient." Measured that night: 31 open
+PRs, 25 code PRs waiting on one human reviewer, 8 conflicting with main and resolved by hand, every agent
+BLOCK waiting for a person, stacked PRs retargeted by hand. Now:
+- **Retarget** is GitHub's own: `delete_branch_on_merge` is on, so a stacked PR moves to `main` when its base
+  merges.
+- **`jr/chores.py`**, run by every hourly tick after its own work (even after an abort): a code PR (same
+  repository, not draft, based on `main`, not `jr/tick-*` — `review_refresh` owns those — nor
+  `jr/research-*` — the demand retry owns those) that GitHub reports DIRTY is a `conflict:#n` incident; a PR
+  labelled `needs-human` whose newest agent verdict for its CURRENT head is BLOCK is a `review-fix:#n`
+  incident carrying the findings. Evidence: `pr`, `pr_branch`, `pr_head`. Fingerprint = kind + PR, so the
+  same PR failing twice after a fix goes to a human (`MAX_PER_FINGERPRINT`).
+- **A red required check on any open PR** (2026-11-19: tick PR #1828 sat red on `tests` all day; the CI
+  watch only declares a tick break when the two newest tick PRs fail alike), once per PR and failing test, in order:
+  rerun the failed jobs (a flake clears itself); still red and behind `main` → merge `main` in through
+  `PUT /pulls/<n>/update-branch` with `expected_head_sha` (the fix may already be on `main`); still red and
+  up to date → a Jr tick/demand PR is ONE `pr-red:` incident per failing test (fingerprint = check + node +
+  assertion), healed on `main` by the CI launcher: the delegate fixes main's code or test, never the data,
+  and writes a finding when the record itself is wrong; a code PR is a `ci-fix:#n` PR-fix. Non-required
+  checks (`sources-live`) and cancelled/timed-out runs are never a chore. The rerun and the merge of
+  `main` happen once per PR, check and failing test node (never per head: `main` moves hourly, and a key that
+  changes every run would loop). A `pr-red:` incident resolves when
+  no open PR shows that failure.
+- **Mergeability is read until GitHub has computed it** (2026-11-19, measured: the first listing after `main`
+  moved read UNKNOWN for 17 of 25 PRs; 12 s later 6 were CONFLICTING; #1835/#1836 stayed conflicting 14 h while
+  `review_refresh`'s dry run said `would_refresh`). `chores.list_settled` re-reads a listing with UNKNOWN in it
+  (10 s apart, 3 listings at most); the tick's preflight listing uses it too. A PR still UNKNOWN is not judged.
+- **The labels the machine needs exist:** once a UTC day the chores create any of `agent-pass`, `needs-human`,
+  `review-fallback`, `jr-heal` the repository lacks (all four were missing on 2026-11-19; every
+  `gh pr edit --add-label` would have raised).
+- **`disarm-on-push` leaves Jr's AUTO-routed tick PR alone** (a `jr/tick-*` PR without `jr-review`): its
+  auto-merge is the bot's own and a push to it is the bot's refresh or the chores' merge of `main`.
+- **Dispatch** only through `ci_watch.py claim --pr-fix` (a launcher that checks out `pr_head`, pushes the
+  delegate's commits fast-forward to `pr_branch`, opens no PR) and the `pr_fix_dispatch` switch
+  (`jr/autonomy.json` + `JR_PR_FIX_DISPATCH`), against its own budget of `PR_FIX_DAILY` (4) a UTC day.
+  `relay-check --pr-fix` judges only the delegate's first-parent commits; a merge counts only its conflict
+  resolution (`git show --remerge-diff`), never what `main` brings.
+- **Progress**: a dispatched fix whose PR has a new head is `pushed` (the agent review re-judges it); none
+  after `STALL_HOURS` is stalled; a cleared condition or a closed PR resolves the incident. **PR fixes never move the human-ack brake**: they are bounded by their own daily budget and per PR
+  (one fix + one recurrence, then a human). A merged CI-heal PR (`jr/heal-*`) resets the brake.
+- **Heal PRs are code**: the agent review covers `jr/heal-*` too; only tick and demand PRs have their own
+  canaries.
+- **The owner's audit**: once a UTC day from 12Z one Telegram line names what still needs a human
+  (`needs-human` PRs with age, `needs_human`/stalled incidents, a halted heal). Nothing waits → no line.
+
+### 1e. A canary that said "not now" is asked again (2026-11-19)
+
+A canary (`scripts/demand_canary.py`, `scripts/tick_canary.py`) runs only on a pull-request event. A Jr content
+PR it did not merge — capped for the day, a quoted page that did not answer, a guard since fixed on main — was
+never looked at again: the chores skip `jr/research-*` and `jr/tick-*`, and the tick refreshes only its own
+conflicting tick PRs. Measured: demand PR #1846, judged once on Nov 18 and waiting since.
+
+`jr/chores.py canary_retry`, every tick, oldest PR first, at most **once per PR per UTC day** and **two per
+tick**, only for a lane whose switch in `jr/autonomy.json` is true:
+
+- a demand PR behind main is merged with main (`PUT …/update-branch` at the exact head): a new event, so main's
+  current guards and canary judge it;
+- otherwise the failed jobs of its last run are rerun (the canary behind them follows), or the canary job alone;
+- a review-routed tick PR is only ever rerun; `jr/review_refresh.py` owns its merges with main.
+
+Left alone: `needs-human`, a red required check on a PR that is not a draft (that is `red_prs`, which never
+looks at drafts), checks still running, no run at all, a PR without its lane's canary check, a fork, another
+base, an AUTO-route tick PR, a PR whose fix the delegate is working on. Only failures in the canary's own run
+count. Memory: `canary_retry` in the incident store, written **before** each call, so a retry that was sent,
+refused, or cut short by the tick's call budget is never sent twice in a day; it runs after the actions
+`red_prs` already remembered. No delegate, no model.
+
 ## 2. Known causes — handled in code, no model
 
 | Signal | Action |
@@ -86,8 +190,10 @@ row with the incident that taught it.
 
 - The relay pushes the branch, opens the PR labelled `jr-heal` (always the REVIEW route), and posts
   in the coordination room and the operator's notification channel within the hour.
-- **Gate unchanged:** an independent exact-head reviewer who is not the delegate, merged with
-  `gh pr merge --match-head-commit`. Jr never merges a `jr-heal` PR.
+- **Gate (owner, 2026-11-19: "autonomous, subscription with API fallback"):** the agent review
+  (`jr/agent_review.py`, a fresh reviewer run that is not the delegate's session) judges the heal PR at its exact
+  head like any code PR, and the code canary merges a PASS (`code_automerge` + `JR_CODE_AUTOMERGE`, one an hour,
+  `--match-head-commit`). A BLOCK is a `review-fix:` chore: one fix and one recurrence, the third BLOCK goes to a human.
 - The tick marks the incident `resolved` when the required check is green on main and on the next
   tick PR, and records time to detect, time to PR and time to green.
 
@@ -101,6 +207,7 @@ prompt:
 |---|---|---|
 | Dispatches per break (fingerprint) | 2: the first time, and one recurrence after its fix merged | the 3rd occurrence is recorded `needs_human`, never dispatched, and stays human-only for good |
 | Dispatches without a human | 3 since the last `python3 jr/ci_watch.py ack` on the runner | `claim` halts the lane; nothing is dispatched until a human acks |
+| A stall incident (§1b) while `jr/autonomy.json` has `stall_dispatch: false`, or the runner variable `JR_STALL_DISPATCH=0` | `claim` never hands it out (it stays `open`, visible in `show` and the nudge); CI incidents are unaffected. The flag turns on by a reviewed PR; the variable is the instant kill (2026-11-18) |
 | Dispatches per UTC day | 2, all breaks together (the CLI clock is UTC; a timestamp with any offset is counted on its UTC day) | the next day |
 | Same incident seen again while live | 0 new records | nothing: one record per break, whatever the number of red ticks |
 | Time from dispatch to a heal PR | 4 h (`STALL_HOURS`) | `stalled`, never retried automatically |
@@ -123,6 +230,10 @@ weekly review).
 - **Offline, deterministic** (`jr/test_ci_watch.py`, fixtures from the 2026-11-12 runs):
   - six red tick PRs with the same failing nodeid give one fingerprint and one `open` record on the
     second red PR;
+  - (§1b, `jr/test_ci_watch_stall.py`, `jr/test_tick_dry_run.py`) a lane silent over the stall window is one
+    `open` stall incident with the tick's evidence, not a second one next tick; the lane producing again
+    resolves it and a later silence is `-2`; the launcher claims it like a CI incident; a dry run records
+    nothing; the first tick after merge (no rows) runs no stall watch;
   - one red PR with green main gives no incident;
   - `cancelled` gives one rerun and no incident, and two in a row give an incident;
   - different nodeids give different fingerprints;
@@ -146,5 +257,4 @@ weekly review).
 
 ## Not in scope
 
-Auto-merging a heal PR. A second review agent with auto-merge may follow after three natural heals
-were merged without a reviewer change, as its own spec.
+(Auto-merging a heal PR moved into scope on 2026-11-19: see §4 "Gate" and §1d.)

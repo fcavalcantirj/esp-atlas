@@ -400,6 +400,198 @@
    },
    "closed_on": "2026-11-11"
   },
+  "pam-23266c59174397dbf41b0a7b": {
+   "term": "Freenove ESP32-WROVER Starter Kit",
+   "source": "pam_feed",
+   "status": "closed",
+   "first_seen": "2026-11-17",
+   "history": [
+    {
+     "event": "closed",
+     "date": "2026-11-18",
+     "resolution": "delivered",
+     "work": "pam-23266c59174397dbf41b0a7b",
+     "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1800",
+     "merge_sha": "978cf97fdc6fb93126358481c1d3e054926e4fe9",
+     "deployment": "efeccc69e95277ff357d45fc1d233f1c5cc30220"
+    }
+   ],
+   "linked_work": [
+    "https://github.com/fcavalcantirj/esp-atlas/pull/1800"
+   ],
+   "snapshot": "docs/demand/pam-leads.json",
+   "feed": {
+    "checked_at": "2026-11-17T11:15:31.248373Z",
+    "feeds": {
+     "products": {
+      "url": "https://pamfinds.com/api/products.json",
+      "fetched_at": "2026-11-06T04:22:34.124739Z",
+      "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+      "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+      "bytes": 110684
+     },
+     "specs": {
+      "url": "https://pamfinds.com/api/specs.json",
+      "fetched_at": "2026-11-06T04:22:34.124739Z",
+      "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+      "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+      "bytes": 349157
+     }
+    },
+    "lead": {
+     "source_id": "freenove-esp32-wrover-kit",
+     "name_hint": "Freenove ESP32-WROVER Starter Kit",
+     "chip_hint": "ESP32",
+     "page": "https://pamfinds.com/kits/freenove-esp32-wrover-kit/",
+     "source_pointers": {
+      "included_board": [
+       "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+      ],
+      "component_count": [
+       "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+      ],
+      "tutorial_count": [
+       "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+      ],
+      "skill_level": [
+       "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+      ],
+      "includes_breadboard": [
+       "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+      ],
+      "includes_power_supply": [
+       "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+      ],
+      "includes_sensors": [
+       "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+      ],
+      "includes_display": [
+       "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+      ],
+      "includes_motors": [
+       "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+      ],
+      "includes_camera": [
+       "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+      ],
+      "project_book": [
+       "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+      ]
+     },
+     "fingerprint": "ca31b8dbed6eea51f76bd06c98774a96e11495d9b89dbe7b36ebed6dcf41d8a9",
+     "matches": [],
+     "status": "potential_identity_gap"
+    }
+   },
+   "validation": {
+    "verified_on": "2026-11-17",
+    "forbidden_ids": [
+     "freenove-esp32-wroom",
+     "freenove-esp32-s3-wroom"
+    ],
+    "verification_kind": "catalog_part",
+    "validated_by": "jr-demand-executor (Claude Code delegate) run 2026-11-17/pam-23266c59174397dbf41b0a7b",
+    "primary_sources": [
+     "https://docs.freenove.com/projects/fnk0060/en/latest/fnk0060/codes/C/Preface.html",
+     "https://docs.freenove.com/projects/fnk0060/en/latest/",
+     "https://github.com/Freenove/Freenove_ESP32_WROVER_Board",
+     "https://raw.githubusercontent.com/Freenove/Freenove_ESP32_WROVER_Board/main/ESP32_Pinout_V3.0.png"
+    ],
+    "expected_ids": [
+     "freenove-esp32-wrover"
+    ],
+    "notes": "The PAM lead is Freenove's starter kit; the one board it ships is the Freenove ESP32-WROVER board (kit FNK0060, repo Freenove_ESP32_WROVER_Board 'Apply to FNK0060'). Freenove's FNK0060 Preface describes it: built on the PCB-antenna ESP32-WROVER module, CH340 for code download, camera interface, reset and boot buttons. Two board revisions share the product (the earlier one is no longer mass-produced); both are this one record. Siblings kept distinct: the Freenove ESP32-WROOM board (repo Freenove_ESP32_WROOM_Board, 'Apply to FNK0090') and the Freenove ESP32-S3-WROOM board are different boards and must not be authored here.",
+    "identity_verified": true,
+    "term_key": "freenove esp32 wrover starter kit"
+   },
+   "outcome": {
+    "pr_url": "https://github.com/fcavalcantirj/esp-atlas/pull/1800",
+    "merge_sha": "978cf97fdc6fb93126358481c1d3e054926e4fe9",
+    "merged_at": "2026-11-17T19:06:35Z",
+    "verification_kind": "catalog_part",
+    "query": "Freenove ESP32-WROVER Starter Kit",
+    "checked_at": "2026-11-18T11:15:30.905170+00:00",
+    "expected_ids": [
+     "freenove-esp32-wrover"
+    ],
+    "forbidden_ids": [
+     "freenove-esp32-wroom",
+     "freenove-esp32-s3-wroom"
+    ],
+    "source": "pam_feed",
+    "feed": {
+     "checked_at": "2026-11-17T11:15:31.248373Z",
+     "feeds": {
+      "products": {
+       "url": "https://pamfinds.com/api/products.json",
+       "fetched_at": "2026-11-06T04:22:34.124739Z",
+       "etag": "\"e947ba7886184638fbeb77f9c74b99be\"",
+       "sha256": "ad4657f7d12f1d04606c6b85b4bc022e2175d8b622c2781f34ab122e6131b091",
+       "bytes": 110684
+      },
+      "specs": {
+       "url": "https://pamfinds.com/api/specs.json",
+       "fetched_at": "2026-11-06T04:22:34.124739Z",
+       "etag": "\"ac6284e1617c500ba9f2e2bb75c3c5a9\"",
+       "sha256": "ed0e3fdefe0615c59f32519a256357e2d8a0a99e15ef2a9c75b365dd904516f4",
+       "bytes": 349157
+      }
+     },
+     "lead": {
+      "source_id": "freenove-esp32-wrover-kit",
+      "name_hint": "Freenove ESP32-WROVER Starter Kit",
+      "chip_hint": "ESP32",
+      "page": "https://pamfinds.com/kits/freenove-esp32-wrover-kit/",
+      "source_pointers": {
+       "included_board": [
+        "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+       ],
+       "component_count": [
+        "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+       ],
+       "tutorial_count": [
+        "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+       ],
+       "skill_level": [
+        "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+       ],
+       "includes_breadboard": [
+        "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+       ],
+       "includes_power_supply": [
+        "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+       ],
+       "includes_sensors": [
+        "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+       ],
+       "includes_display": [
+        "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+       ],
+       "includes_motors": [
+        "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+       ],
+       "includes_camera": [
+        "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+       ],
+       "project_book": [
+        "https://github.com/Freenove/Freenove_ESP32_WROVER_Board"
+       ]
+      },
+      "fingerprint": "ca31b8dbed6eea51f76bd06c98774a96e11495d9b89dbe7b36ebed6dcf41d8a9",
+      "matches": [],
+      "status": "potential_identity_gap"
+     }
+    },
+    "http": 200,
+    "deployment": "efeccc69e95277ff357d45fc1d233f1c5cc30220",
+    "ids": [
+     "freenove-esp32-wrover"
+    ],
+    "missing": [],
+    "forbidden_hits": []
+   },
+   "closed_on": "2026-11-18"
+  },
   "pam-551c01f820f3ab0d27e6b388": {
    "term": "ESP32-S2-DevKitM-1",
    "source": "pam_feed",

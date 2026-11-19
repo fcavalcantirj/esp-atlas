@@ -47,6 +47,31 @@ SPEC before code · oracle/TDD first · cite-or-omit · verify the **real path**
 declaring done · land on main. Deterministic where it matters — no LLM in an answer path
 that must be reproducible (board ranking, pin assignment, confidence gates).
 
+## North star — Jr runs the catalog by itself (2026-11-17)
+
+**Jr runs the catalog by itself.** Demand (GSC queries and pages, GA4 site search, trends) and the data gauge
+decide what Jr works on; measured yield decides how Jr splits each hour between **new boards**, **deepening
+existing boards** and **new firmware**; a lane that has yielded nothing long enough hands its item to a coding
+agent (the delegate) with a written prompt, one PR, machine-reviewed. Humans hold kill switches and audit
+after the fact. Nothing in the loop is a person, a hand edit or a hard-coded list; every constant that steers
+is read from a committed file and every decision prints its inputs.
+
+**The model boundary (owner, 2026-11-17): an LLM solves CODE problems, never fills inventory.** The delegate
+writes and fixes resolvers, tests and stages; catalog values are produced by deterministic resolvers the hourly
+tick runs, so every value is reproducible from the cited page. The one tolerated exception is the daily demand
+executor authoring a brand-new board from primary sources under cite-or-omit + the quotes job + guards (one a
+day); it is not widened. A work item is never "fill field X on board Y"; it is "write the resolver for vendor V
+× field X, with a fixture page and a RED test". Page demand (impressions, `RANKS_POORLY`) may ORDER data work;
+it never touches SEO text (titles, descriptions, launch), which stays the owner's.
+
+Measured state when this was written (tick outputs Nov 15 19Z → Nov 17 20Z, 50 ticks): admitted 0, backfilled 0,
+recipes 0, topics authored 0; the only steer wire (demand bias) 0.0 for two weeks; the four largest gauge gaps
+(pinout 16 %, download_mode 29 %, usb_serial 54 %, dimensions_mm 55 %) had no stage able to write them. The
+plan that follows from it: yield ledger + adaptive split, the resolver lane, stall → coding agent, demand
+plumbing, switches (`SPEC-espatlas-jr.md` §3d). **Switches:** `jr/autonomy.json` flags turn on only by a
+reviewed PR; the matching `JR_*` variable set to `0` is the instant kill; every tick PR ends with an
+"Autonomy audit" block.
+
 ## How the catalog grows itself (operations, 2026-11-09)
 
 - **Hourly GitHub counts** (`.github/workflows/runtime-popularity.yml`) have **no `schedule:`**: GitHub's
@@ -59,7 +84,8 @@ that must be reproducible (board ranking, pin assignment, confidence gates).
 - **Demand → reviewed work → recorded outcome** (`SPEC-demand-work-consumer.md`, `SPEC-pam-discovery.md`).
   The daily demand runner makes one pass per **source class**, search demand (GSC/GA4) then PAM market
   leads, each with its own one-new-item-per-day slot (2026-11-08; a single shared slot had starved every
-  PAM lead). A reservation is a receipt in `docs/demand/work-receipts.json` and a deterministic branch
+  PAM lead); hygiene (quote FAILs) and resolver work (a vendor × field extractor, never a record) are the
+  classes the north star above adds. A reservation is a receipt in `docs/demand/work-receipts.json` and a deterministic branch
   `jr/research-<key>`. The operator's coding delegate executes it from `docs/demand/EXECUTOR-PROMPT.md`;
   a relay step pushes the branch and opens the draft `jr-review` PR. After merge the runner verifies the
   deployed result itself: `catalog_search` (the exact public search of a bare SKU term) or
@@ -68,7 +94,18 @@ that must be reproducible (board ranking, pin assignment, confidence gates).
   (adopt, validate, link, attempt, settle, retry, check); it refuses any state the broker would defer on. Never
   edit those two JSON files by hand. A live receipt without a PR gets two UTC days of work; from the third it
   is exhausted (never resumed or launched, no longer holds its class) until a human settles or `retry`s it,
-  and `work_record.py launch-state <key>` is the one launch rule for the operator's launcher.
+  and `work_record.py launch-state <key>` is the one launch rule for the operator's launcher. **Review of a
+  demand PR is the machine's** (2026-11-17): the `quotes` job (every quoted span on a cited page),
+  `demand-guard` (the PR changes exactly what its work item says) and the `demand-canary` job that merges at
+  the exact head when both switches allow (`jr/autonomy.json` + repo variable `JR_DEMAND_AUTOMERGE`, see
+  `DEPLOY.md` "Jr's merge switches"); a person audits after the fact and holds the kill switch. A
+  **review-routed tick PR** merges the same way when every recipe it adds carries a PASS evidence receipt
+  that `receipt-guard` re-verifies on the live upstream (`tick-canary`, one a day, `tick_automerge` +
+  `JR_TICK_AUTOMERGE`). **Code PRs** get the same exact-head review from the agent reviewer
+  (`docs/REVIEW-CONTRACT.md`): the runner's subscription delegate first (`jr/agent_review.py`, hourly), the
+  API lane in `.github/workflows/agent-review.yml` only as a capped fallback when that lane is down; the
+  verdict is one marker comment, and the code canary merges on a PASS (`code_automerge` +
+  `JR_CODE_AUTOMERGE`, one an hour); a BLOCK is labelled `needs-human`.
 - **Jr's tick never re-proposes what a tick PR already holds** (`jr/pending_prs.py`, §6 of
   `SPEC-jr-review-routing.md`): an OPEN tick PR holds every firmware it touches; a tick PR **closed
   unmerged is a 30-day veto of everything it proposed**. Disposing of duplicate tick PRs therefore means

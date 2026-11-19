@@ -56,3 +56,97 @@ public); the launcher supplies the checkout, the branch and the incident file.
    posts it for review. Review and merge belong to an independent reviewer. Never run Jr's tick,
    drain or demand runner, and never mark the incident resolved yourself: the tick does that when
    the check is green on main and on the next tick PR.
+
+## When `INCIDENT.context.check` starts with `stall:` (a lane that produced nothing)
+
+The break is not a red check: `INCIDENT.context.evidence` says a Jr lane (`backfill`, `firmware` =
+admit + boardmap, or `topics`) had units every tick and produced nothing over the stall window
+(`SPEC-jr-self-heal.md` §1b). The evidence carries the lane's yield over the window, this tick's stage
+summaries and counters for that lane (e.g. `backfilled 0, skipped 0, cooling 84`), and the tick's reject
+counts (`already_catalogued`, `skipped_scoring`, …). Steps 1–7 above hold with these readings:
+
+1. **Evidence** is `docs/telemetry/yield.jsonl` (the lane's rows over the window), the stage summaries in
+   the evidence and in the last tick PR bodies (`gh pr list --search "head:jr/tick-"`), and the stage's
+   code (`jr/stage_backfill.py`, `jr/stage_admit.py`, `jr/stage_boardmap.py`, `jr/stage_admit_topics.py`,
+   `jr/drain.py`, `jr/scorer.py`). There is no green/red diff: compare the last tick in which the lane
+   produced with the first silent one (`git log` of `docs/telemetry/yield.jsonl` and the tick PRs).
+2. **Root cause** candidates you must measure, not guess: the worklist is exhausted or cooling (every
+   board of the lane's vendors on cooldown, every launcher repo decided), the source dried up (a topic
+   search or catalog answering nothing), the scorer rejects everything (`skipped_scoring`, a vocabulary
+   gap: `jr/board_names.py`), the budget is cut before the stage runs, or a bug. Name it MEASURED/INFERRED.
+3. **Fix at the cause, within the same limits** (no `data/**`, no `docs/demand/**`, no test deletion or
+   widening, at most 300 lines). A stage that correctly has nothing to do (cause outside the code: the
+   vendor's docs gone, the launcher pool drained) is not fixed by code: write the finding instead as
+   `docs/incidents/<INCIDENT id>.md` (MEASURED/INFERRED, what would change it, e.g. a resolver work item
+   for the vendor, a new topic seed) and commit that alone. **Never fill a catalog field, author a record
+   or widen a scorer to accept what it cannot verify**: an LLM solves code problems here, never inventory
+   (`CLAUDE.md`, "North star").
+4. **Prove it** with the stage's tests and, where the host can, a dry run of the tick
+   (`python3 jr/tick.py --dry-run`): the would-write list must show the lane producing.
+5. The incident resolves itself when the lane produces again over the yield window; never mark it.
+
+## When `INCIDENT.context.check` starts with `abort:` (the tick keeps aborting)
+
+The break is not a red check: the hourly tick aborted with the same reason at least twice in a row
+(`SPEC-jr-self-heal.md` §1c). `INCIDENT.context.evidence.reason` is the full abort text, `consecutive` how
+many ticks in a row, `first_seen`/`last_seen` when. Steps 1–7 above hold with these readings:
+
+1. **Evidence** is the abort text itself and the code that raised it: `grep -n "raise TickAbort" jr/tick.py`
+   names every abort; follow the one whose text matches into the module it calls (for the pending-PR
+   inventory, `jr/pending_prs.py`). Read the data the text names, read-only: the PR (`gh pr view <n>`),
+   the files committed at its head (`gh api repos/<slug>/contents/<path>?ref=<sha>`), the ledger there.
+2. **Root cause** must be measured on that data: reproduce the abort by calling the raising function
+   read-only against the same PR and head (no tick run), then name it MEASURED/INFERRED. A rule that fails
+   closed correctly on a real inconsistency is not the bug; a rule that fails closed on data it should
+   understand (2026-11-18: a September ledger record for a rejected fork under the reused id `wled`) is.
+3. **Fix at the cause, within the same limits.** Never close, merge, relabel or edit a Jr PR to make the
+   abort go away (closing a tick PR vetoes its firmware for 30 days), never edit `jr/proposed_ledger.json`
+   or `docs/demand/**` by hand, never loosen a fail-closed check beyond the case you reproduced. A cause
+   outside the code goes to `docs/incidents/<INCIDENT id>.md` (MEASURED/INFERRED, what a human must do).
+4. **Prove it** with a RED test of the exact shape you reproduced, then the same read-only call against
+   the live PR showing the abort gone.
+5. The incident resolves itself when a tick completes; never mark it.
+
+## When `INCIDENT.context.check` starts with `conflict:` or `review-fix:` (fix an open PR in place)
+
+The break is an open PR, not main (`SPEC-jr-self-heal.md` §1d). `INCIDENT.context.evidence` names it: `pr`,
+`pr_branch`, `pr_head` (the head you start from; the launcher checked it out for you). Your commits go on
+top of `pr_head` and are pushed, fast-forward only, to `pr_branch`; no new PR is opened. The relay check
+runs with `--pr-fix`: it counts only your commits (a merge of `main` counts only its conflict resolution)
+under the same limits (no `data/**`, no `docs/demand/**`, no test deletion or skip, at most 300 lines).
+
+- **`conflict:`** — GitHub reports the PR conflicting with `main`. Merge `origin/main` into the branch
+  (never rebase, never force) and resolve every conflict so that BOTH sides' intent survives: the PR's
+  change and what `main` changed meanwhile. A file both sides only added to (two CI jobs, two test blocks,
+  two switches) keeps both additions, each verbatim. Change no behaviour beyond the resolution. Run the
+  tests of every file you touched and the suites of the PR's own files; quote the counts in BODY.
+- **`review-fix:`** — the agent review BLOCKed the PR at `pr_head`; `evidence.findings` lists why. Fix
+  exactly those findings at their cause, with a RED test first where a finding is a behaviour, and nothing
+  else. A finding you measure to be wrong is answered in BODY with the evidence, not "fixed". The agent
+  review judges your new head; the third BLOCK on the same PR goes to a human.
+- **`ci-fix:`** — a required check (`evidence.check`) is red on this code PR at `pr_head`, after one rerun and
+  with `main` merged in; `evidence.failed` / `evidence.assertion` / `evidence.log_excerpt` say where. Reproduce
+  the failing node on the PR's head, fix the PR's code at the cause (RED first if it is behaviour), never by
+  deleting, skipping or loosening a test unless the test itself is wrong (then `Assertion changed:` in BODY).
+- Never close, merge, retitle or relabel the PR; never touch another PR's branch.
+
+## When `INCIDENT.context.check` starts with `pr-red:` (a Jr catalog PR is red; fix MAIN)
+
+A Jr tick or demand PR (`evidence.prs`) is red on the required check `evidence.check` at a head that already
+has `main` merged in and was rerun once, so it is neither a flake nor something `main` already fixed.
+`INCIDENT.context` carries the failing node (`failed`), its assertion and the log excerpt. The PR's catalog
+data is not yours to change: an LLM never writes records. Your branch starts from `main`, like any heal.
+
+1. Reproduce on the PR's head (`gh pr checkout` in a scratch worktree, or `git show <head>:<path>`), run
+   the failing node, quote the RED.
+2. Decide, measured: **(a)** main's code or test is wrong for valid catalog growth (2026-11-19: three tests
+   pinned an exact recipe set with `==`, so every new recipe turned CI red; the fix was `>=`, intent kept)
+   → fix main, with the assertion change named in BODY (`Assertion changed:`); **(b)** the PR's record is
+   really wrong (a guard or schema rule caught a bad value) → change no code; write
+   `docs/incidents/<INCIDENT id>.md` (MEASURED: which record, which rule, why) and commit that alone: the
+   reviewed content canary or a human closes the PR.
+3. Prove it: the failing node passes on the PR's content with your change (run it in the scratch worktree
+   with your files copied in), and the suites of every file you touched pass on main.
+4. After your heal merges, the chores merge `main` into the red PR once more and its CI reruns; the
+   incident resolves when no open PR has shown that failure for two passes in a row.
+

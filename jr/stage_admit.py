@@ -235,7 +235,7 @@ def _fetch_meta(gh, owner_repo: str):
         return {"error": f"unparseable api response: {e}"}, False
 
 
-REPO_NOTE_PREFIX = "repo-note:"
+REPO_NOTE_PREFIX = memory.REPO_NOTE_PREFIX
 
 
 def repo_note_key(owner_repo: str) -> str:
@@ -722,6 +722,30 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
                     break
         res = scorer.score_entry(entry, meta, cat_repos, cat_toks, cat_ids,
                                  catalogued_token_sets=cat_token_sets, board_hint=hint_board)
+        # A build-file board for every candidate (2026-11-17), not only submissions: the prose names no
+        # catalogued board, but the repo's own platformio.ini / sketch.yaml may (`board = esp32-s3-devkitc-1`,
+        # project_aura 797 stars; the ESP32-C3-DevKitM-1 of esp32-c3-adblock, 3597). The device-build
+        # evidence gate below reads those files anyway: run it first here, take the board from the targets
+        # it returns (device_evidence.board_from_targets: the first catalogued board, a chip is never one),
+        # and score again with it as the hint — the submission path's own mechanism, so the recipe cites
+        # the build file line and the evidence gate is not run twice.
+        pre_ev = None
+        if (not issue and res["decision"] == "skip" and res["reason"].startswith("no_board_evidence")
+                and ctx.budget.remaining_calls() >= device_evidence.MAX_CALLS + MIN_CALLS_TO_CONTINUE):
+            try:
+                pre_ev = _device_evidence(ctx, owner_repo, meta.get("default_branch"), raw=raw)
+            except BudgetExceeded as e:
+                lines.append(f"stopped during {owner_repo}: {e}")
+                break
+            if pre_ev.get("ok"):
+                atlas = atlas or board_alias.atlas_boards(ctx.root)
+                built_board, built_signal = device_evidence.board_from_targets(pre_ev, atlas)
+                if built_board:
+                    hint_board, evidence = built_board, built_signal
+                    res = scorer.score_entry(entry, meta, cat_repos, cat_toks, cat_ids,
+                                             catalogued_token_sets=cat_token_sets, board_hint=hint_board)
+                    if res["decision"] != "skip":
+                        lines.append(f"{res['record']['id']}: board {built_board} from {built_signal['kind']} ({built_signal['url']})")
         if res["decision"] == "skip":
             note(skip_reject(fid, owner_repo, res["reason"], repo_id, issue=issue))
             if issue:
@@ -748,15 +772,18 @@ def run(ctx, budget: int = DEFAULT_BUDGET, raw=None, call_share: float = 1.0):
         # Device-build evidence (jr/device_evidence.py, review finding 3): a record says "flash this
         # onto an ESP", so the repo itself must build for one. Topics/description naming a board
         # are not enough — rebelthor/warble, a Go server, passed every gate above on them alone.
-        if ctx.budget.remaining_calls() < device_evidence.MAX_CALLS:
-            lines.append(f"stopped before {owner_repo}'s build evidence: tick budget low "
-                         f"({ctx.budget.remaining_calls()} calls left)")
-            break
-        try:
-            ev = _device_evidence(ctx, owner_repo, meta.get("default_branch"), raw=raw)
-        except BudgetExceeded as e:
-            lines.append(f"stopped during {owner_repo}: {e}")
-            break
+        if pre_ev is not None:
+            ev = pre_ev                                   # already read for the board above: one gate run
+        else:
+            if ctx.budget.remaining_calls() < device_evidence.MAX_CALLS:
+                lines.append(f"stopped before {owner_repo}'s build evidence: tick budget low "
+                             f"({ctx.budget.remaining_calls()} calls left)")
+                break
+            try:
+                ev = _device_evidence(ctx, owner_repo, meta.get("default_branch"), raw=raw)
+            except BudgetExceeded as e:
+                lines.append(f"stopped during {owner_repo}: {e}")
+                break
         if ev["ok"] is None and issue:
             # Unreadable is not a verdict, and submissions are read from OPEN issues only: leave
             # it open and unremembered so the next tick checks it again.
