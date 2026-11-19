@@ -309,7 +309,7 @@ def _vetoed_then_renamed(sim, listing, upstream):
 
 
 @pytest.mark.parametrize("upstream", UNRESOLVED_CLAIMS.values(), ids=UNRESOLVED_CLAIMS.keys())
-def test_a_vetoed_claimed_id_github_cannot_confirm_fails_the_tick_closed(sim, listing, monkeypatch, upstream):
+def test_a_vetoed_claimed_id_github_cannot_confirm_degrades_the_tick(sim, listing, monkeypatch, upstream):
     import memory
     pr = _vetoed_then_renamed(sim, listing, upstream)
     prs_before, main_before = len(sim.prs), dict(sim.main)
@@ -317,11 +317,12 @@ def test_a_vetoed_claimed_id_github_cannot_confirm_fails_the_tick_closed(sim, li
     monkeypatch.setattr(memory, "record_proposed", lambda *a, **kw: proposed.append((a, kw)))
     sim.git_calls.clear()
     r = sim.tick(T0 + timedelta(hours=3))
-    assert "incomplete" in (r.aborted or "") and f"#{pr['number']}" in r.aborted, (r.aborted, r.paths)
-    assert _staged_for(r, "renamedtool") == [] and r.paths == [], r.paths     # no firmware, no recipe
-    assert len(sim.prs) == prs_before and sim.main == main_before
-    assert not [c for c in sim.git_calls if c[:2] == ("worktree", "add")], "a worktree (and its ledger) was written"
-    assert proposed == [], "an identity was recorded"
+    assert not r.aborted and f"#{pr['number']}" in r.degraded, (r.aborted, r.degraded)   # degraded since 2026-11-18
+    assert _staged_for(r, "renamedtool") == [] and r.stages == [], r.paths                 # no firmware stage ran
+    assert not [p for p in r.paths if p.startswith(("data/firmware/", "data/recipes/"))], r.paths
+    assert {k for k in set(sim.main) | set(main_before) if sim.main.get(k) != main_before.get(k)} <= {"jr/proposed_ledger.json"} and not [f for x in sim.prs[prs_before:] for f in x["files"]
+                                            if str(f).startswith(("data/firmware/", "data/recipes/"))]
+    assert proposed == [], "an identity was recorded"                                     # no hydration either
     assert _owners_of(sim, REPO_ID) == {"newtool"} and _owners_of(sim, OTHER_ID) == set()
 
 
