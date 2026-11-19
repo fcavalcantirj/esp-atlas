@@ -45,6 +45,13 @@ def test_a_board_is_named_by_its_id_its_brand_and_name_an_aka_or_a_digit_bearing
     "M5Cardputer Arduino library for anything",                                     # a library reference is not a device
     "https://github.com/lilygo/t-display-s3-examples",                              # a URL is not prose
     "Intel Core2Duo benchmark port",                                                # 'core2' inside a longer word
+    # #1797 review: a brandless coined name ("PaperS3", "TinyS3", "Core2") is one word in the catalog;
+    # a separator inside it turns it into an English phrase that names no board
+    "Weather station for the LilyGO T5 4.7 inch E-Paper S3",                        # 'paper s3' is not the PaperS3
+    "CrowPanel ESP32 E-Paper S3 HMI",
+    "a tiny S3 board",                                                              # not the UM TinyS3
+    "Pro S3 board",                                                                 # not the UM ProS3
+    "dual core 2.4 GHz",                                                            # not the M5Stack Core2
     "M5Stack AtomS3R camera demo",                                                  # the S3R is a sibling, not the AtomS3
     "",
 ])
@@ -56,6 +63,14 @@ def test_a_bare_digitless_name_needs_its_brand_or_a_known_vendor_prefix():
     assert named("LilyGO T-Deck chat") == ["lilygo-t-deck"]
     assert named("TTGO T-Beam tracker") == ["lilygo-t-beam"]
     assert named("M5 StickC thing") == ["m5stick-c"]
+
+
+def test_a_brandless_coined_name_matches_only_as_the_catalog_spells_it_but_its_brand_frees_the_separators():
+    assert named("PaperS3 clock") == ["m5stack-papers3"]
+    assert named("TinyS3 synth") == ["um-tinys3"]
+    assert named("M5Stack Paper S3 clock") == ["m5stack-papers3"]                   # brand + name
+    assert named("Unexpected Maker Tiny S3 synth") == ["um-tinys3"]
+    assert named("T-Display S3 remote") == ["lilygo-t-display-s3"]                 # the catalog's own word break
 
 
 def test_the_specific_board_wins_over_the_general_one_it_contains():

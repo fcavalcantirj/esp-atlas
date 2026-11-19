@@ -807,3 +807,16 @@ def test_score_entry_still_rejects_a_substring_that_only_looks_like_a_board():
                             topics=["esp32", "esp32-c3", "rust-embedded", "rustlang", "training"])
     res = score_entry(entry, meta, set(), set())
     assert res["decision"] == "skip" and res["reason"].startswith("no_board_evidence")
+
+
+@pytest.mark.parametrize("description, topics", [
+    ("Weather station for the LilyGO T5 4.7 inch E-Paper S3", ["lilygo", "epaper", "esp32s3"]),
+    ("CrowPanel ESP32 E-Paper S3 HMI weather display", ["esp32s3", "epaper"]),
+    ("a tiny S3 board that shows the weather", ["esp32s3"]),
+], ids=["lilygo-t5-epaper", "crowpanel-epaper", "tiny-s3-phrase"])
+def test_score_entry_never_authors_a_board_from_a_generic_phrase(description, topics):
+    """#1797 review: "E-Paper S3" named the M5Stack PaperS3 (same esp32-s3, so the SOC cross-check
+    passed) and the firmware of an uncatalogued LilyGO board was authored as m5stack-papers3."""
+    entry = {"name": "T5 Weather", "description": None, "category": None, "github": "https://github.com/x/t5-weather", "download": 0}
+    res = score_entry(entry, _plain_repo_meta("x/t5-weather", description, topics=topics), set(), set())
+    assert res["decision"] == "skip" and res["reason"].startswith("no_board_evidence"), res

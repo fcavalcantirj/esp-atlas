@@ -198,7 +198,9 @@ that's a coverage hole to close, not a silent gap.
     words — name, description, GitHub topics (author-declared, on the repo page) and README title, not
     the README body (a support matrix names many boards; widening is Track B's job). The vocabulary is
     data/boards itself: every board's id, brand + name, aka, and its bare name only when it carries a
-    digit ("T-Display-S3", "StickC-Plus2"); whole-word matches with separators optional; URLs, library
+    digit ("T-Display-S3", "StickC-Plus2"); whole-word matches, separators optional anywhere in a term
+    that carries the brand, but only at the catalog's own word breaks in a brandless one ("E-Paper S3"
+    never names the PaperS3, "a tiny S3" never the TinyS3: the #1797 review); URLs, library
     and SDK references are not prose; the specific board beats the general one it contains. Exactly
     one board is evidence; several is `ambiguous_board`, a skip, never a guess; none is
     `no_board_evidence`. The SOC cross-check, the device-build evidence gate and the evidence checker

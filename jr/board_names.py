@@ -9,14 +9,18 @@ resolver (jr/board_alias.py) knew every one of those boards but served only the 
 This module is the one rule for "which catalogued boards does this prose name", built from data/boards
 itself (board_alias.atlas_boards: id, name, aka, brand, soc), deterministic, no model:
 
-  - A board is named by a WHOLE-WORD match of one of its terms, a separator optional between every
-    character ("T-Display S3", "tdisplay-s3", "T_DISPLAY_S3" and "M5Stick C Plus" all count; never
-    "rust-embedded" for the T-Embed — a compact-containment rule did, the one false positive in the
-    spike). A term is: the catalog id (brand-prefixed by construction), the brand plus the catalog name
-    ("heltec wireless tracker", "m5stack fire"), any aka (toolchain ids, exact), and the bare name only
-    when it carries a digit (an "S3"/"V3"/"2": "T-Display-S3", "StickC-Plus2", "Inkplate 6"). A bare
-    name without a digit ("Fire", "Core", "Wireless Tracker", "T-Deck") is English or a product line and
-    needs its brand in front — jr/device_map.py, which runs first, keeps the precise M5Stack sibling rules.
+  - A board is named by a WHOLE-WORD match of one of its terms (never "rust-embedded" for the T-Embed —
+    a compact-containment rule did, the one false positive in the spike). A term is: the catalog id
+    (brand-prefixed by construction), the brand plus the catalog name ("heltec wireless tracker",
+    "m5stack fire"), any aka (toolchain ids, exact), and the bare name only when it carries a digit (an
+    "S3"/"V3"/"2": "T-Display-S3", "StickC-Plus2", "Inkplate 6"). A bare name without a digit ("Fire",
+    "Core", "Wireless Tracker", "T-Deck") is English or a product line and needs its brand in front —
+    jr/device_map.py, which runs first, keeps the precise M5Stack sibling rules.
+  - A term that carries the brand (the id, brand + name, a name that starts with it) takes a separator anywhere ("M5Stick C Plus",
+    "lilygo-tdisplay-s3", "M5Stack Paper S3"). A brandless term (an aka, the bare name) takes one only
+    where the catalog spells a word break ("T-Display S3", "TDisplayS3"): its coined words stay whole, so
+    "E-Paper S3" never names the PaperS3, "a tiny S3" the TinyS3 nor "dual core 2.4" the Core2 (#1797
+    review: an uncatalogued LilyGO e-paper firmware was authored as m5stack-papers3, same esp32-s3).
   - Chip-only terms (`esp32s3`) and generic words (board_alias._GENERIC) never name a board; terms
     shorter than MIN_TERM alphanumerics never count.
   - Specific beats general: a match whose span lies inside another board's match is dropped ("T-Display
@@ -50,37 +54,39 @@ def _qualifies(parts: list[str]) -> bool:
             and compact not in board_alias._GENERIC)
 
 
-def _pattern(parts: list[str]) -> re.Pattern:
-    """Whole-word, a separator optional between EVERY character: the catalog writes "m5stick-cplus",
-    a README "M5Stick C Plus" or "M5StickCPlus"; all three are the one board."""
-    return re.compile(r"(?<![a-z0-9])" + _SEP.join(map(re.escape, "".join(parts))) + r"(?![a-z0-9])")
+def _pattern(parts: list[str], branded: bool) -> re.Pattern:
+    """Whole-word. Branded: a separator optional between EVERY character (the catalog writes
+    "m5stick-cplus", a README "M5Stick C Plus" or "M5StickCPlus"; all three are the one board).
+    Brandless: a separator optional only between the catalog's own words ("papers3" stays one word)."""
+    units = list("".join(parts)) if branded else parts
+    return re.compile(r"(?<![a-z0-9])" + _SEP.join(map(re.escape, units)) + r"(?![a-z0-9])")
 
 
-def _terms(board: dict) -> list[list[str]]:
-    """The term part-lists a board may be named by (see the module docstring for the rule)."""
-    out: list[list[str]] = []
+def _terms(board: dict) -> list[tuple[list[str], bool]]:
+    """The (term part-list, carries its brand) pairs a board may be named by (see the module docstring)."""
+    out: list[tuple[list[str], bool]] = []
     bid, name, brand = board.get("id") or "", board.get("name") or "", board.get("brand") or ""
-    out.append(_parts(bid))
-    for prefix in sorted({brand, *board_alias._BRAND_PREFIXES.get(brand, set())}):
-        if prefix:
-            out.append(_parts(prefix) + _parts(name))
+    prefixes = [p for p in sorted({brand, *board_alias._BRAND_PREFIXES.get(brand, set())}) if p]
+    out.append((_parts(bid), True))
+    for prefix in prefixes:
+        out.append((_parts(prefix) + _parts(name), True))
     for aka in board.get("aka") or []:
-        out.append(_parts(aka))
-    if re.search(r"\d", name):
-        out.append(_parts(name))
+        out.append((_parts(aka), False))
+    if re.search(r"\d", name):        # "Unexpected Maker TinyS3" carries its brand, "PaperS3" does not
+        out.append((_parts(name), "".join(_parts(name)).startswith(tuple("".join(_parts(p)) for p in prefixes))))
     seen, uniq = set(), []
-    for p in out:
+    for p, branded in out:
         key = tuple(p)
         if p and key not in seen and _qualifies(p):
             seen.add(key)
-            uniq.append(p)
+            uniq.append((p, branded))
     return uniq
 
 
 @lru_cache(maxsize=4)
 def _table(root: Path | None) -> list[tuple[str, re.Pattern]]:
     boards = board_alias.atlas_boards(root)
-    return [(bid, _pattern(p)) for bid, b in sorted(boards.items()) for p in _terms(b)]
+    return [(bid, _pattern(p, branded)) for bid, b in sorted(boards.items()) for p, branded in _terms(b)]
 
 
 def clear_caches() -> None:
