@@ -489,3 +489,17 @@ def test_digest_states_the_undated_horizon_and_the_always_increasing_goal(monkey
     assert "28d window" in telemetry.GOAL_LINE and "≥" in telemetry.GOAL_LINE
     assert "days left" not in message and " by 20" not in message
     assert not hasattr(telemetry, "TARGET_DATE")
+
+
+
+def test_the_digest_carries_the_feature_usage_section_and_survives_its_failure(monkeypatch, tmp_path):
+    import feature_usage
+    monkeypatch.setattr(feature_usage, "build", lambda ex, prop, end: feature_usage.Report(end=end, rows=[
+        feature_usage.FeatureRow("atlas", [12, 5, 0, 0], [2, 2, 0, 1], [10, 4, 0, 1], low_use=True)]))
+    msg = _run_digest(monkeypatch, tmp_path, _fake_ex([]))
+    assert "*Feature usage*" in msg and "  • atlas — 2 of 12 who reached it (17 %)" in msg
+    def boom(ex, prop, end):
+        raise RuntimeError("GA4 down")
+    monkeypatch.setattr(feature_usage, "build", boom)
+    msg = _run_digest(monkeypatch, tmp_path, _fake_ex([]))
+    assert "*Feature usage* — unavailable (RuntimeError: GA4 down)" in msg and "*Top search demand*" in msg
