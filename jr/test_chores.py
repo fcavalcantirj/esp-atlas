@@ -31,7 +31,7 @@ def pr(n, state="CLEAN", branch="feat/x", head=H1, labels=(), draft=False, base=
 
 def block(head=H1, findings=("jr/x.py:3 the loop never ends",)):
     v = {"verdict": "BLOCK", "head": head, "findings": list(findings), "checked": ["pytest"]}
-    return {"body": ar.render_comment(v, "subscription")}
+    return {"user": {"login": "espatlas-jr"}, "body": ar.render_comment(v, "subscription")}
 
 
 class Gh:

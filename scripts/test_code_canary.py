@@ -17,13 +17,15 @@ def verdict(v="PASS", head=HEAD, findings=(), checked=("gh pr diff", "pytest jr/
 
 
 class FakeGh:
-    def __init__(self, merged=()):
-        self.calls, self.merged = [], list(merged)
+    def __init__(self, merged=(), queued=()):
+        self.calls, self.merged, self.queued = [], list(merged), list(queued)
 
     def __call__(self, *args):
         self.calls.append(args)
         if args[:2] == ("pr", "list"):
             assert "--label" in args and args[args.index("--label") + 1] == cc.PASS_LABEL
+            if args[args.index("--state") + 1] == "open":
+                return json.dumps([{"number": n} for n in self.queued])
             return json.dumps([{"number": n, "mergedAt": t} for n, t in self.merged])
         return ""
 
@@ -102,11 +104,11 @@ def test_verdict_from_comments_takes_the_newest_marker_comment_for_the_current_h
         if args[:2] == ("pr", "view"):
             return json.dumps({"headRefOid": HEAD.upper()})
         if args[:1] == ("api",):
-            return json.dumps([{"body": "a human comment"}, {"body": older}, {"body": other}, {"body": newer}])
+            return json.dumps([{"body": "a human comment"}, {"user": {"login": "espatlas-jr"}, "body": older}, {"user": {"login": "espatlas-jr"}, "body": other}, {"user": {"login": "espatlas-jr"}, "body": newer}])
         return ""
     head, vj = cc.verdict_from_comments(gh, "o/r", 1797)
     assert head == HEAD and json.loads(vj)["verdict"] == "PASS" and json.loads(vj)["head"] == HEAD
-    head, vj = cc.verdict_from_comments(lambda *a: json.dumps({"headRefOid": "b" * 40}) if a[:2] == ("pr", "view") else json.dumps([{"body": newer}]), "o/r", 1797)
+    head, vj = cc.verdict_from_comments(lambda *a: json.dumps({"headRefOid": "b" * 40}) if a[:2] == ("pr", "view") else json.dumps([{"user": {"login": "espatlas-jr"}, "body": newer}]), "o/r", 1797)
     assert vj is None                                                  # a verdict for another head is no verdict
 
 
@@ -128,7 +130,17 @@ def test_the_cli_from_comments_is_a_noop_without_a_verdict_and_decides_with_one(
     monkeypatch.setattr(cc.demand_canary, "AUTONOMY", autonomy(on=True))
     assert cc.main(["--pr", "1797", "--from-comments", "--dry-run"]) == 0
     assert "outcome: no_verdict" in capsys.readouterr().out
-    store["comments"] = [{"body": comment}]
+    store["comments"] = [{"user": {"login": "mallory"}, "body": comment}]          # forged: still no verdict
+    assert cc.main(["--pr", "1797", "--from-comments", "--dry-run"]) == 0
+    assert "outcome: no_verdict" in capsys.readouterr().out
+    store["comments"] = [{"user": {"login": "espatlas-jr"}, "body": comment}]
     assert cc.main(["--pr", "1797", "--from-comments", "--dry-run"]) == 0
     out = capsys.readouterr().out
     assert "outcome: dry_run" in out and f"--match-head-commit {HEAD}" in out
+
+
+
+def test_a_pass_already_queued_for_auto_merge_counts_against_the_hourly_cap(autonomy):
+    # review BLOCK of #1809: --auto merges wait for checks, so only counting MERGED PRs let two land in one hour
+    gh = FakeGh(queued=[1791])
+    assert run(autonomy(True), gh, verdict()) == "capped" and gh.writes() == []

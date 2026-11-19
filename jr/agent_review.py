@@ -35,6 +35,11 @@ MARKER = "<!-- agent-review verdict -->"
 FALLBACK_LABEL = "review-fallback"
 FALLBACK_PER_DAY = 3
 SKIP_PREFIXES = ("jr/tick-", "jr/research-")   # a heal PR is code: the agent reviews it too (§1d, 2026-11-18)
+# Only the reviewers' own accounts carry a verdict: the Jr bot (subscription lane, the runner's GH_TOKEN) and
+# GitHub Actions (API lane, the workflow token). The repo is public: a marker comment from anyone else — a
+# PR's author included — is ignored, never a PASS (review BLOCK of #1809, 2026-11-19). A fork's workflow
+# token is read-only and cannot comment.
+TRUSTED_AUTHORS = ("espatlas-jr", "github-actions[bot]")
 LANES = ("subscription", "api")
 DOWN_PATTERNS = re.compile(r"CLAUDE_CODE_OAUTH_TOKEN|setup-token|usage limit|rate.?limit|too many requests|"
                            r"\b(401|403|429)\b|unauthori[sz]ed|authentication|credit balance|billing", re.I)
@@ -98,10 +103,17 @@ def parse_comment(body: str) -> dict | None:
     return v
 
 
+def _author(comment: dict) -> str:
+    who = (comment or {}).get("user") or (comment or {}).get("author") or {}
+    return str(who.get("login") or "") if isinstance(who, dict) else ""
+
+
 def verdict_for_head(comments: list[dict], head: str) -> dict | None:
-    """The newest verdict comment naming `head`, or None."""
+    """The newest verdict comment naming `head` written by a TRUSTED_AUTHORS account, or None."""
     found = None
     for c in comments:
+        if _author(c) not in TRUSTED_AUTHORS:
+            continue
         v = parse_comment((c or {}).get("body", ""))
         if v and v["head"] == head.lower():
             found = v
