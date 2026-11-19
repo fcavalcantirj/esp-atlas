@@ -142,6 +142,9 @@ jobs:
         run: |
           gh pr merge "$PR_NUMBER" --repo "$REPO" --disable-auto || true
           gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label agent-pass || true
+          # needs-human is about a verdict at the old head (a BLOCK, or a PASS a person must merge). On a new
+          # head nobody has been asked anything yet; the canary sets it again if the new verdict says so.
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label needs-human || true
 
   code-canary:
     # The click, on every marker comment (either lane): PASS at exactly the PR's current head + every
