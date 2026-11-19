@@ -62,6 +62,7 @@ def changed(monkeypatch):
 def run(autonomy_path, gh, fetch, env=None, **kw):
     args = dict(pr=1800, head=HEAD, branch=BRANCH, base="origin/main", repo_slug="o/r", today="2026-11-17",
                 env=env or {}, autonomy_path=autonomy_path, gh=gh, fetch=fetch)
+    args.setdefault("paths", ["data/boards/x/board.md"])
     args.update(kw)
     return dc.decide(**args)
 
@@ -144,3 +145,32 @@ def test_a_pr_with_no_quoted_text_still_merges_on_the_other_checks(autonomy, tmp
 def test_the_shipped_autonomy_file_starts_with_every_flag_off():
     doc = json.loads((Path(__file__).resolve().parent.parent / "jr" / "autonomy.json").read_text())
     assert doc["demand_automerge"] is False and doc["tick_automerge"] is False and doc["code_automerge"] is False
+
+
+
+# --- review BLOCK of #1809 (2026-11-19): a PR could switch its own canary on, or carry code the canary would merge
+
+def test_a_pr_that_changes_anything_outside_its_scope_is_never_merged(autonomy):
+    for paths in (["jr/autonomy.json"], ["data/boards/x/board.md", "scripts/demand_canary.py"], [".github/workflows/validate.yml"]):
+        gh = FakeGh()
+        assert run(autonomy(True), gh, fake_fetch(pages()), paths=paths) == "out_of_scope", paths
+        assert not [c for c in gh.calls if c[:2] in (("pr", "merge"), ("pr", "ready"), ("pr", "edit"))]
+    import demand_canary
+    assert demand_canary.out_of_scope(None, demand_canary.DEMAND_SCOPE) is None          # unreadable: never merged
+
+
+def test_the_switch_is_read_from_main_never_from_the_prs_tree(tmp_path):
+    import subprocess as sp
+    env = {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t", "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t", "PATH": __import__("os").environ["PATH"]}
+    g = lambda *a: sp.run(["git", *a], cwd=tmp_path, env=env, check=True, capture_output=True)
+    g("init", "-q", "-b", "main")
+    (tmp_path / "jr").mkdir()
+    (tmp_path / "jr" / "autonomy.json").write_text('{"demand_automerge": false, "tick_automerge": false}')
+    g("add", "."), g("commit", "-qm", "main")
+    g("checkout", "-qb", "pr")
+    (tmp_path / "jr" / "autonomy.json").write_text('{"demand_automerge": true, "tick_automerge": true}')
+    g("commit", "-qam", "the PR turns itself on")
+    import demand_canary
+    p = demand_canary.trusted_autonomy("main", tmp_path)
+    assert __import__("json").loads(p.read_text()) == {"demand_automerge": False, "tick_automerge": False}
+    assert not demand_canary.trusted_autonomy("no-such-ref", tmp_path).exists()
