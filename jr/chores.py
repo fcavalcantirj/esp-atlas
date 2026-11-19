@@ -119,7 +119,7 @@ def _behind_main(gh, slug: str, head: str) -> bool:
 
 
 def _comments(gh, slug: str, number: int) -> list:
-    return ci_watch._json(gh, "api", f"repos/{slug}/issues/{number}/comments") or []
+    return ci_watch._json(gh, "api", f"repos/{slug}/issues/{number}/comments", "--paginate") or []
 
 
 def plan(gh, slug: str, prs: list) -> list[ci_watch.Verdict]:

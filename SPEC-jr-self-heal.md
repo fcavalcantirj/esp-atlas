@@ -140,8 +140,10 @@ row with the incident that taught it.
 
 - The relay pushes the branch, opens the PR labelled `jr-heal` (always the REVIEW route), and posts
   in the coordination room and the operator's notification channel within the hour.
-- **Gate unchanged:** an independent exact-head reviewer who is not the delegate, merged with
-  `gh pr merge --match-head-commit`. Jr never merges a `jr-heal` PR.
+- **Gate (owner, 2026-11-19: "autonomous, subscription with API fallback"):** the agent review
+  (`jr/agent_review.py`, a fresh reviewer run that is not the delegate's session) judges the heal PR at its exact
+  head like any code PR, and the code canary merges a PASS (`code_automerge` + `JR_CODE_AUTOMERGE`, one an hour,
+  `--match-head-commit`). A BLOCK is a `review-fix:` chore; a second BLOCK goes to a human.
 - The tick marks the incident `resolved` when the required check is green on main and on the next
   tick PR, and records time to detect, time to PR and time to green.
 
@@ -205,5 +207,4 @@ weekly review).
 
 ## Not in scope
 
-Auto-merging a heal PR. A second review agent with auto-merge may follow after three natural heals
-were merged without a reviewer change, as its own spec.
+(Auto-merging a heal PR moved into scope on 2026-11-19: see §4 "Gate" and §1d.)

@@ -110,7 +110,9 @@ def test_comments_are_read_only_for_prs_labelled_needs_human(tmp_path):
 def test_a_fixed_pr_resolves_its_incident(tmp_path):
     store = _store(tmp_path)
     chores.run(Gh([pr(7, "DIRTY")]), store, NOW, slug="o/r")
-    out = chores.run(Gh([pr(7, "CLEAN", head=H2)]), store, LATER, slug="o/r")
+    chores.run(Gh([pr(7, "CLEAN", head=H2)]), store, LATER, slug="o/r")
+    assert _incidents(store)["conflict:#7"]["state"] == "open"                 # one absent pass may be a blink
+    out = chores.run(Gh([pr(7, "CLEAN", head=H2)]), store, "2026-11-19T14:05:00+00:00", slug="o/r")
     assert _incidents(store)["conflict:#7"]["state"] == "resolved" and len(out["resolved"]) == 1
 
 
@@ -461,3 +463,29 @@ def test_a_failure_whose_assertion_text_changes_every_run_still_becomes_a_job(tm
     data = store._load()
     assert len(data["reruns"]) == 1 and len(data["updated_branch"]) == 1
     assert [r for r in data["incidents"].values() if r["context"]["check"].startswith("pr-red:")]
+
+
+
+# --- 3rd review of #1857 (2026-11-19): blinks, and the pushed -> productive path ---------------------------
+
+def test_a_dispatched_fix_is_never_resolved_by_a_blink_and_a_pushed_fix_that_clears_lifts_the_brake(tmp_path):
+    store = _store(tmp_path)
+    chores.run(Gh([pr(7, "DIRTY", head=H1)]), store, NOW, slug="o/r")
+    store.claim(NOW, allow_pr_fix=True)
+    for t in ("13", "14"):                                                    # blinks while the fix is in flight
+        chores.run(Gh([pr(7, "UNKNOWN", head=H1)]), store, f"2026-11-19T{t}:05:00+00:00", slug="o/r")
+    assert _incidents(store)["conflict:#7"]["state"] == "dispatched"
+    data = store._load()
+    data["auto_since_ack"] = 2
+    store._save(data)
+    chores.run(Gh([pr(7, "CLEAN", head=H2)]), store, "2026-11-19T15:05:00+00:00", slug="o/r")   # our push
+    assert _incidents(store)["conflict:#7"]["state"] == "pushed"
+    chores.run(Gh([pr(7, "CLEAN", head=H2)]), store, "2026-11-19T16:05:00+00:00", slug="o/r")
+    assert _incidents(store)["conflict:#7"]["state"] == "resolved" and store._load()["auto_since_ack"] == 0
+
+
+def test_a_one_pass_blink_never_records_a_second_incident(tmp_path):
+    store = _store(tmp_path)
+    for t, state in (("12", "DIRTY"), ("13", "UNKNOWN"), ("14", "DIRTY")):
+        chores.run(Gh([pr(7, state)]), store, f"2026-11-19T{t}:05:00+00:00", slug="o/r")
+    assert len(store._load()["incidents"]) == 1 and _incidents(store)["conflict:#7"]["state"] == "open"

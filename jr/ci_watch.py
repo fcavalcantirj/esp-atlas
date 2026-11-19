@@ -472,21 +472,30 @@ class Store:
                 rec.update(state="resolved", resolved_at=now, closed_as=closed[n])
                 out["resolved"].append(rec["id"])
                 continue
-            if check not in active:
-                rec.update(state="resolved", resolved_at=now)
-                out["resolved"].append(rec["id"])
-                continue
             head = open_prs.get(n)
+            # a dispatched fix that pushed a new head is `pushed` FIRST, whatever the condition shows this pass
             if rec["state"] == "dispatched" and head and head != ev.get("pr_head"):
-                rec.update(state="pushed", pushed_head=head, pushed_at=now)
+                rec.update(state="pushed", pushed_head=head, pushed_at=now, absent=0)   # absence counts from the push
                 out["pushed"].append(rec["id"])
-            elif rec["state"] == "dispatched" and _hours(rec.get("dispatched_at"), now) > STALL_HOURS:
-                rec.update(state="stalled", stalled_at=now)
-                out["stalled"].append(rec["id"])
+            if check in active:
+                rec.pop("absent", None)
+                if rec["state"] == "dispatched" and _hours(rec.get("dispatched_at"), now) > STALL_HOURS:
+                    rec.update(state="stalled", stalled_at=now)
+                    out["stalled"].append(rec["id"])
+                continue
+            # the condition is gone this pass. GitHub's merge state blinks (UNKNOWN while it recomputes) and a
+            # comment read can fail: only two absent passes in a row resolve, and a fix still in flight
+            # (dispatched, no push yet) is never resolved by a blink (3rd review of #1857, 2026-11-19).
+            rec["absent"] = int(rec.get("absent") or 0) + 1
+            if rec["state"] == "dispatched" or rec["absent"] < 2:
+                continue
+            if rec["state"] == "pushed":
+                out["productive"].append(rec["id"])       # our pushed fix cleared the condition
+            rec.update(state="resolved", resolved_at=now)
+            out["resolved"].append(rec["id"])
         if out["productive"]:
             data.update(auto_since_ack=0, halted=False, halt_nudged=False)
-        if any(out.values()):
-            self._save(data)
+        self._save(data)
         return out
 
     @_exclusive
