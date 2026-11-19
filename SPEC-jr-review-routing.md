@@ -266,8 +266,55 @@ GitHub answers; `jr/fixtures/autoreview/replay-metrics.json`):
 the labelled history: every wrong edge preserved in `jr/overrides/*__edges.json` (42 at the time
 of writing) must come out `FAIL` or `UNCERTAIN`, and the edges both blind audits of 2026-11-15
 agreed are correct must come out `PASS` or `UNCERTAIN`. A false `PASS` on a known-wrong edge blocks
-phase 2. Phase 2 (a separate change) lets the tick auto-merge one fully passing review PR a day,
-at its exact head, with a kill switch and the review cap kept.
+phase 2.
+
+**Phase 2: the tick canary (2026-11-17).** Two CI jobs on every `jr/tick-*` pull request:
+- `receipt-guard` (`scripts/receipt_guard.py`): eligible on receipts alone when every recipe the PR ADDS
+  carries a `PASS` receipt (E1) that holds AGAIN when the checker is re-run here on the live upstream —
+  the firmware repo's description, README, root `platformio.ini`, release asset names (E2); the PR edits no
+  existing record and deletes nothing under `data/` (E3); it adds at least one recipe (E4). A stale or
+  misstated receipt cannot merge. An upstream that does not answer is no verdict (exit 2).
+- `tick-canary` (`scripts/tick_canary.py`, needs schema, tests, jr-tests, receipt-guard, jr-pr-guard,
+  g2-guard, ledger-guard): when `jr/autonomy.json` has `tick_automerge: true` (a reviewed PR) AND the
+  repository variable `JR_TICK_AUTOMERGE` is not `0` (the kill switch), the PR carries `jr-review`, no
+  other review-routed tick PR merged today (UTC; **one a day**), and the receipt guard says eligible, it
+  requests `gh pr merge --auto --match-head-commit <head>`: the merge lands only when every required check
+  is green at exactly that head. The routing itself does not change: the PR is still labelled `jr-review`
+  and the review cap still holds; the canary is the reader. A PR the guard refuses (an edit to an existing
+  record, an UNCERTAIN receipt, a receipt the live upstream no longer supports) waits for the agent
+  reviewer or a person. A person audits the first five canary merges after the fact and holds the switch.
+
+### 7b. Code pull requests: the agent reviewer and the code canary (2026-11-17, lanes 2026-11-18)
+
+Every other pull request — Jr's code, the operators' code — used to wait for a person's exact-head
+review (43 merges a week). `docs/REVIEW-CONTRACT.md` writes that review down. **Two lanes run it, the owner's
+rule "subscription and api as fallback":**
+
+- **Subscription lane (primary).** `jr/agent_review.py once`, an hourly job on the runner, calls the same
+  coding delegate the demand executor and the CI heal use (Claude subscription, no API key, read-only:
+  `--no-ship --no-merge`) on the oldest open code PR whose current head has no verdict, in a detached
+  worktree at that head, with `docs/ops/REVIEW-PROMPT.md` as the task. The agent writes the structured
+  verdict `{verdict: PASS|BLOCK, head, findings, checked}` to a file outside the repo; the runner posts it as
+  ONE PR comment beginning with `<!-- agent-review verdict -->` (lane `subscription`). Not for `jr/tick-*`,
+  `jr/research-*`, `jr/heal-*` or drafts.
+- **API lane (fallback).** Only when the delegate's own answer says the lane is DOWN (no
+  `CLAUDE_CODE_OAUTH_TOKEN`, usage limit, 401/403/429), the runner labels that PR `review-fallback` — at most
+  `FALLBACK_PER_DAY` (3) a UTC day, counted in the runner's state — and `.github/workflows/agent-review.yml`
+  (trigger: that label) runs `anthropics/claude-code-action@v1` with `ANTHROPIC_API_KEY`, tools limited to
+  `gh pr diff`, `gh pr view`, reading the checkout and running the touched test files, then posts the same
+  comment (lane `api`) and removes the label. BUSY (the delegate's lock is held) is not down: the PR waits an
+  hour. Without the secret the fallback job says so and the PR waits for the subscription lane.
+- **The code canary** (`scripts/code_canary.py`, workflow trigger: a marker comment on a PR) reads the newest
+  verdict comment naming the PR's current head, whichever lane wrote it, then: C1 `jr/autonomy.json`
+  `code_automerge: true`, C2 repository variable `JR_CODE_AUTOMERGE` not `0`, C3 a PASS naming THIS head
+  (another sha is no verdict), C4 at most one agent-merged PR an hour (label `agent-pass`), C5 `gh pr merge
+  --auto --match-head-commit <head>`, landing only when every required check is green there. A BLOCK labels
+  the PR `needs-human` with the findings already in the comment; the author's next push is a new review;
+  nobody waits.
+
+This is the one place an LLM sits in the loop, and it decides nothing the catalog shows: a wrong PASS is
+caught by the same after-the-fact audit as a wrong human approval, and the switch turns it off in one
+command. The action's agent mode is documented as experimental; the primary lane does not depend on it.
 
 ### 8. Jr keeps its own review PRs mergeable (2026-11-15)
 
