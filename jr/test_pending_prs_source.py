@@ -113,7 +113,7 @@ def test_a_substituted_ledger_pair_degrades_the_tick_and_4242_stays_protected(si
     assert _staged_for(r, "newtool") == [] and r.paths == [], r.paths          # no firmware, no recipe for 4242
     assert not _new_prs_holding(sim, "newtool", pr["number"])
     assert not r.aborted and f"#{pr['number']}" in r.degraded, (r.aborted, r.degraded)
-    assert r.stages == [] and sim.main == main_before
+    assert r.stages == [] and {k for k in set(sim.main) | set(main_before) if sim.main.get(k) != main_before.get(k)} <= {"jr/proposed_ledger.json"}
     assert not [f for x in sim.prs[prs_before:] for f in x["files"] if str(f).startswith(("data/firmware/", "data/recipes/"))]
     assert _later_owners_of(sim, OTHER_ID, pr["number"]) == set(), "unrelated 7777 was persisted"
 

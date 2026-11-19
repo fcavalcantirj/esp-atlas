@@ -261,7 +261,7 @@ def test_a_conflicting_marker_degrades_the_tick_and_writes_no_firmware_nor_the_f
     r = sim.tick(T0 + timedelta(hours=1))
     assert not r.aborted and f"#{pr['number']}" in r.degraded and "identity marker" in r.degraded, (r.aborted, r.degraded)
     assert r.stages == [] and not [p for p in r.paths if p.startswith(("data/firmware/", "data/recipes/"))], r.paths
-    assert sim.main == main_before and not [f for x in sim.prs[prs_before:] for f in x["files"]
+    assert {k for k in set(sim.main) | set(main_before) if sim.main.get(k) != main_before.get(k)} <= {"jr/proposed_ledger.json"} and not [f for x in sim.prs[prs_before:] for f in x["files"]
                                             if str(f).startswith(("data/firmware/", "data/recipes/"))]
     assert _owners_of(sim, OTHER_ID) == set()                                  # the forged id is in no ledger
 

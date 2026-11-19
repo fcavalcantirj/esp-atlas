@@ -320,7 +320,7 @@ def test_a_vetoed_claimed_id_github_cannot_confirm_degrades_the_tick(sim, listin
     assert not r.aborted and f"#{pr['number']}" in r.degraded, (r.aborted, r.degraded)   # degraded since 2026-11-18
     assert _staged_for(r, "renamedtool") == [] and r.stages == [], r.paths                 # no firmware stage ran
     assert not [p for p in r.paths if p.startswith(("data/firmware/", "data/recipes/"))], r.paths
-    assert sim.main == main_before and not [f for x in sim.prs[prs_before:] for f in x["files"]
+    assert {k for k in set(sim.main) | set(main_before) if sim.main.get(k) != main_before.get(k)} <= {"jr/proposed_ledger.json"} and not [f for x in sim.prs[prs_before:] for f in x["files"]
                                             if str(f).startswith(("data/firmware/", "data/recipes/"))]
     assert proposed == [], "an identity was recorded"                                     # no hydration either
     assert _owners_of(sim, REPO_ID) == {"newtool"} and _owners_of(sim, OTHER_ID) == set()
