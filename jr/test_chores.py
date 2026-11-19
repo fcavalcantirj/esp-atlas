@@ -117,11 +117,12 @@ def test_a_fixed_pr_resolves_its_incident(tmp_path):
 def test_a_merged_fixed_pr_resets_the_ack_brake_a_closed_one_does_not(tmp_path):
     store = _store(tmp_path)
     chores.run(Gh([pr(7, "DIRTY"), pr(8, "DIRTY")]), store, NOW, slug="o/r")
+    store.claim(NOW, allow_pr_fix=True), store.claim(NOW, allow_pr_fix=True)     # both fixes in flight
     data = store._load()
     data["auto_since_ack"] = 2
     store._save(data)
     chores.run(Gh([pr(8, "DIRTY")], states={7: "CLOSED"}), store, LATER, slug="o/r")
-    assert store._load()["auto_since_ack"] == 2 and _incidents(store)["conflict:#8"]["state"] == "open"
+    assert store._load()["auto_since_ack"] == 2 and _incidents(store)["conflict:#8"]["state"] == "dispatched"
     chores.run(Gh([], states={8: "MERGED"}), store, LATER, slug="o/r")
     assert store._load()["auto_since_ack"] == 0
     assert {r["state"] for r in _incidents(store).values()} == {"resolved"}
@@ -413,3 +414,27 @@ def test_drafts_and_forks_are_never_rerun(tmp_path):
     gh = RedGh([a, b])
     chores.run(gh, _store(tmp_path), NOW, slug="o/r")
     assert not [c for c in gh.calls if c[:2] == ("run", "rerun")]
+
+
+
+# --- review BLOCK of #1857 (2026-11-19) ------------------------------------------------------------------
+
+def test_rerun_and_merge_main_happen_once_per_failure_not_per_head_so_a_red_pr_becomes_a_job(tmp_path):
+    # main moves every hour: each update-branch makes a new head; per-head memory looped forever (0 incidents)
+    store = _store(tmp_path)
+    heads = ["%040x" % i for i in range(1, 12)]
+    for hour, head in enumerate(heads):
+        chores.run(RedGh([tick_pr(28, [red()], head=head)], behind=1), store, f"2026-11-19T{hour:02d}:05:00+00:00", slug="o/r")
+    data = store._load()
+    assert [r for r in data["incidents"].values() if r["context"]["check"].startswith("pr-red:")]
+    assert len(data.get("reruns") or {}) == 1 and len(data.get("updated_branch") or {}) == 1
+
+
+def test_a_person_merging_a_pr_whose_chore_was_never_dispatched_does_not_lift_the_brake(tmp_path):
+    store = _store(tmp_path)
+    chores.run(Gh([pr(50, "DIRTY")]), store, NOW, slug="o/r")              # recorded, switch off: never dispatched
+    data = store._load()
+    data.update(auto_since_ack=3, halted=True)
+    store._save(data)
+    chores.run(Gh([], states={50: "MERGED"}), store, LATER, slug="o/r")
+    assert store._load()["auto_since_ack"] == 3 and store._load()["halted"] is True

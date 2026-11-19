@@ -55,9 +55,10 @@ def _red_required(pr: dict, required: list) -> list[tuple[str, str, str]]:
 
 def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool) -> dict:
     """A red required check on any open PR (2026-11-19: tick PR #1828 sat red; ci_watch only declares a tick
-    break when the two NEWEST tick PRs fail alike). In order, once per head: (1) rerun the failed jobs (a flake
-    clears itself); (2) still red and behind main → merge main into it (the fix may be on main already: a heal
-    PR, any PR); (3) still red, up to date → a Jr content PR is one `pr-red:` heal incident on main per failing
+    break when the two NEWEST tick PRs fail alike). In order, once per PR and FAILURE (never per head: main
+    moves hourly, so per-head memory looped rerun → update → rerun with no incident, review BLOCK of #1857):
+    (1) rerun the failed jobs (a flake clears itself); (2) still red and behind main → merge main into it (the
+    fix may be on main already: a heal PR, any PR); (3) still red → a Jr content PR is one `pr-red:` heal incident on main per failing
     test (the delegate fixes main's code or test, never the data; the PRs are evidence), a code PR is a
     `ci-fix:#n`, fixed in place. Returns {"reruns", "verdicts", "fingerprints", "update_branch"}."""
     out = {"reruns": [], "verdicts": [], "fingerprints": set(), "update_branch": []}
@@ -73,19 +74,19 @@ def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool) -> d
     for p in candidates:
         n, head, branch = p["number"], p["headRefOid"], p["headRefName"]
         for check, run_id, job_id in _red_required(p, required)[:1]:
-            key = f"{n}@{head}"
-            if key not in seen:
-                out["reruns"].append((n, run_id))
-                seen[key] = run_id
-                continue
             parsed = ci_watch.parse_job_log(ci_watch._job_log(gh, slug, job_id))
             content = branch.startswith(CONTENT_PREFIXES)
             fp = (ci_watch.fingerprint(check, parsed) or ci_watch.hashlib.sha256(f"pr-red\n{check}".encode()).hexdigest())
             if content:
                 out["fingerprints"].add(fp)          # still a live break until the PR is green
-            if updated.get(str(n)) != head and _behind_main(gh, slug, head):
+            key = f"{n}:{fp}"
+            if key not in seen:
+                out["reruns"].append((n, run_id))
+                seen[key] = run_id
+                continue
+            if key not in updated and _behind_main(gh, slug, head):
                 out["update_branch"].append((n, head))
-                updated[str(n)] = head
+                updated[key] = head
                 continue
             if content:
                 g = groups.setdefault(fp, {"check": check, "parsed": parsed, "prs": []})
@@ -103,7 +104,7 @@ def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool) -> d
     if not dry_run:
         data = store._load()
         data["reruns"] = dict(list(seen.items())[-300:])
-        data["updated_branch"] = updated
+        data["updated_branch"] = dict(list(updated.items())[-300:])
         store._save(data)
     return out
 

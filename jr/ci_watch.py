@@ -465,10 +465,12 @@ class Store:
             ev = rec["context"].get("evidence") or {}
             n, check = ev.get("pr"), rec["context"].get("check")
             if n in closed:
+                # productive only when OUR fix was in flight: a person merging a PR whose chore never reached
+                # the delegate lifts no brake (review BLOCK of #1857, 2026-11-19)
+                if closed[n] == "MERGED" and rec["state"] in ("dispatched", "pushed"):
+                    out["productive"].append(rec["id"])
                 rec.update(state="resolved", resolved_at=now, closed_as=closed[n])
                 out["resolved"].append(rec["id"])
-                if closed[n] == "MERGED":
-                    out["productive"].append(rec["id"])
                 continue
             if check not in active:
                 rec.update(state="resolved", resolved_at=now)
@@ -769,13 +771,34 @@ def _changes(repo: Path, base: str, head: str, pr_fix: bool, fmt: str) -> list[s
     return out
 
 
-def relay_problems(repo: Path, base: str, head: str, body: str = "", pr_fix: bool = False) -> list[str]:
+def _merges_only_main(repo: Path, base: str, head: str, main_ref: str) -> list[str]:
+    """Every merge among the delegate's first-parent commits must have exactly two parents and bring in only
+    `main` (its second parent an ancestor of `main_ref`): a clean merge of any other branch shows nothing in
+    --remerge-diff and would smuggle its changes past every rule (review BLOCK of #1857, 2026-11-19)."""
+    out = []
+    for c in _git(repo, "rev-list", "--first-parent", "--reverse", f"{base}..{head}").split():
+        parents = _git(repo, "rev-list", "--parents", "-n", "1", c).split()[1:]
+        if len(parents) > 2:
+            out.append(f"{c[:12]} is an octopus merge")
+        elif len(parents) == 2 and subprocess.run(["git", "merge-base", "--is-ancestor", parents[1], main_ref],
+                                                  cwd=repo, capture_output=True).returncode != 0:
+            out.append(f"{c[:12]} merges {parents[1][:12]}, which is not on main")
+    return out
+
+
+def relay_problems(repo: Path, base: str, head: str, body: str = "", pr_fix: bool = False,
+                   main_ref: str = "origin/main") -> list[str]:
     """Why the heal branch `head` must not be pushed (empty list: it may). `pr_fix` (§1d): `base` is the PR
-    head the fix started from; `head` must fast-forward it and only the delegate's own changes count."""
+    head the fix started from; `head` must fast-forward it, any merge may bring in only `main_ref`, and only
+    the delegate's own changes count."""
     problems = []
     if pr_fix and subprocess.run(["git", "merge-base", "--is-ancestor", base, head], cwd=repo,
                                  capture_output=True).returncode != 0:
         return [f"{head} is not a fast-forward of the PR head {base}"]
+    if pr_fix:
+        bad = _merges_only_main(repo, base, head, main_ref)
+        if bad:
+            return bad
     total = 0
     for line in _changes(repo, base, head, pr_fix, "--numstat"):
         added, deleted, path = line.split("\t", 2)
@@ -864,10 +887,11 @@ def main(argv=None) -> int:
     r.add_argument("--body", type=Path)
     r.add_argument("--repo", type=Path, default=Path.cwd())
     r.add_argument("--pr-fix", action="store_true", help="base is the PR head; judge only the delegate's commits (§1d)")
+    r.add_argument("--main", default="origin/main", help="the ref a PR-fix merge may bring in (default origin/main)")
     args = ap.parse_args(argv)
     if args.cmd == "relay-check":
         body = args.body.read_text() if args.body else ""
-        problems = relay_problems(args.repo, args.base, args.head, body, pr_fix=args.pr_fix)
+        problems = relay_problems(args.repo, args.base, args.head, body, pr_fix=args.pr_fix, main_ref=args.main)
         for p in problems:
             print(f"REFUSED: {p}")
         return 1 if problems else 0
