@@ -12,6 +12,9 @@
       green at exactly this head. A BLOCK verdict labels the PR `needs-human` (the reviewer already posted
       the findings) and merges nothing.
 
+`--sweep` gives the same decision to every open PR that has a verdict for its current head: the hourly
+catch-up for a PASS the cap made wait and for a verdict whose canary run never answered.
+
 Every decision is printed; exit 0 always except an unreadable input (2); `--dry-run` never acts.
 """
 from __future__ import annotations
@@ -132,9 +135,58 @@ def verdict_from_comments(gh, repo_slug: str, pr: int) -> tuple[str, str | None]
     return head.lower(), (json.dumps({k: v[k] for k in ("verdict", "head", "findings", "checked")}) if v else None)
 
 
+def sweep(*, repo_slug: str, now: datetime, env: dict, autonomy_path: Path = demand_canary.AUTONOMY,
+          gh=demand_canary.default_gh, dry_run: bool = False, out=None) -> dict:
+    """{pr number: outcome} for every open PR that has a verdict for its CURRENT head: the same decision a
+    marker comment gets, for the verdicts nobody acted on (the hourly cap printed "waits for the next run" and
+    there was none; a canary run that crashed answered nothing). Oldest PR first. Left alone: drafts, forks, a
+    PR whose merge is already requested, a verdict for another head. A BLOCK or a human-only PASS that already
+    carries its label costs no write. One unreadable PR never stops the others; switches off -> {} and no call."""
+    out = out or sys.stdout
+    on, why = demand_canary.switches(autonomy_path, env, flag=FLAG, variable=VARIABLE)
+    if not on:
+        print(f"sweep: off ({why})", file=out)
+        return {}
+    try:
+        prs = json.loads(gh("pr", "list", "--repo", repo_slug, "--state", "open", "--base", "main", "--limit", "100",
+                            "--json", "number,isDraft,isCrossRepository,labels") or "[]")
+    except json.JSONDecodeError as e:
+        raise Unreadable(f"open PR list unparsable: {e}") from e
+    results, capped = {}, False
+    for pr in sorted(prs, key=lambda p: int(p.get("number") or 0)):
+        n = int(pr["number"])
+        if pr.get("isDraft") or pr.get("isCrossRepository"):
+            continue
+        labels = {str(x.get("name")) for x in pr.get("labels") or []}
+        if PASS_LABEL in labels:
+            results[n] = "queued"                       # merge already requested; it lands when its checks do
+            continue
+        try:
+            head, vj = verdict_from_comments(gh, repo_slug, n)
+            if vj is None:
+                continue
+            is_pass = json.loads(vj).get("verdict") == "PASS"
+            if not is_pass and HUMAN_LABEL in labels:
+                results[n] = "block_known"
+            elif is_pass and HUMAN_LABEL in labels and human_only_paths(gh, repo_slug, n) != []:
+                results[n] = "human_only_known"
+            elif is_pass and capped:
+                results[n] = "capped"
+            else:
+                print(f"sweep: #{n} at {head[:8]}", file=out)
+                results[n] = decide(pr=n, head=head, verdict_json=vj, repo_slug=repo_slug, now=now, env=env,
+                                    autonomy_path=autonomy_path, gh=gh, dry_run=dry_run, out=out)
+                capped = capped or results[n] == "capped"
+        except Exception as e:  # noqa: BLE001 — Unreadable, a gh failure: this PR waits, the others do not
+            results[n] = f"unreadable: {str(e)[:160]}"
+    return results
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--pr", type=int, required=True)
+    ap.add_argument("--pr", type=int)
+    ap.add_argument("--sweep", action="store_true",
+                    help="decide on every open PR that has a verdict for its current head (the hourly catch-up)")
     ap.add_argument("--head", help="the exact head (default: the PR's current head when --from-comments)")
     ap.add_argument("--author", default="")
     ap.add_argument("--repo-slug", default=os.environ.get("GITHUB_REPOSITORY", "fcavalcantirj/esp-atlas"))
@@ -142,6 +194,19 @@ def main(argv=None) -> int:
                     help="read the newest marker verdict comment for the PR's current head instead of VERDICT_JSON")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args(argv)
+    if a.sweep == (a.pr is not None):
+        ap.error("give exactly one of --pr and --sweep")
+    if a.sweep:
+        try:
+            results = sweep(repo_slug=a.repo_slug, now=datetime.now(timezone.utc), env=dict(os.environ),
+                            autonomy_path=demand_canary.AUTONOMY, gh=demand_canary.default_gh, dry_run=a.dry_run)
+        except Exception as e:  # noqa: BLE001 — a catch-up that cannot read GitHub tries again next hour
+            print(f"sweep: unavailable: {str(e)[:200]}")
+            return 0
+        for n, outcome in results.items():
+            print(f"sweep: #{n} {outcome}")
+        print(f"sweep: {len(results)} PR(s) with a verdict for their head")
+        return 0
     try:
         head, verdict_json = a.head, os.environ.get("VERDICT_JSON")
         if a.from_comments:
