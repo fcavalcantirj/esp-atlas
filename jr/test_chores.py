@@ -879,4 +879,5 @@ def test_the_fix_prompt_tells_the_agent_how_to_correct_a_pr_description_and_to_l
     assert "`[REAL]` only on something already observed" in section
     assert "git commit --allow-empty" in section                       # a verdict is tied to the head
     assert "do not refactor or split files" in section                 # the 516-line split the relay refused
+    assert "Never create a virtualenv" in prompt and "`PYTHON`" in prompt   # /tmp filled up and reviews stopped
 

@@ -144,6 +144,13 @@ under the same limits (no `data/**`, no `docs/demand/**`, no test deletion or sk
   deleting, skipping or loosening a test unless the test itself is wrong (then `Assertion changed:` in BODY).
 - Never close, merge, retitle or relabel the PR; never touch another PR's branch.
 
+## The machine you run on
+
+Run every test with the interpreter named `PYTHON` in "This run": pytest and the test dependencies CI installs
+are in it. Never create a virtualenv, and never write under `/tmp`: it is a small RAM disk shared with every
+other job (2026-11-19: leftover virtualenvs of ~320 MB each filled it, and no review could start). Scratch
+files go in the `scratch` directory beside INCIDENT, which the launcher owns.
+
 ## When `INCIDENT.context.check` starts with `pr-red:` (a Jr catalog PR is red; fix MAIN)
 
 A Jr tick or demand PR (`evidence.prs`) is red on the required check `evidence.check` at a head that already
