@@ -3892,7 +3892,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-19T10:00:34.922574+00:00"
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4048,7 +4048,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-19T10:00:34.922574+00:00"
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -4615,6 +4615,15 @@
       "repo_id": 1115714307,
       "status": "expired",
       "timestamp": "2026-09-10T00:00:50.127806+00:00"
+    },
+    "ha-watermeter": {
+      "expires": "2027-01-18T11:00:35.342145+00:00",
+      "id": "ha-watermeter",
+      "pr_ref": null,
+      "reason": "not_device_firmware: no espressif32 platformio.ini, ESP-IDF project, Arduino sketch or release .bin",
+      "repo": "zibous/ha-watermeter",
+      "status": "rejected",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
     },
     "hacking-pentesting-utils": {
       "expires": "2027-01-04T12:02:47+00:00",
@@ -11238,6 +11247,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T01:00:32.121052+00:00"
     },
+    "launcher-2123365058572402690": {
+      "expires": "2026-12-19T11:00:35.342145+00:00",
+      "id": "launcher-2123365058572402690",
+      "pr_ref": null,
+      "reason": "resolved: m5stack/M5Chain-Captain-UserDemo",
+      "repo": "launcher:2123365058572402690",
+      "status": "seen",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
+    },
     "launcher-2124f637db75857c962f9097575271f4": {
       "expired_at": "2026-11-11T03:00:55.156011+00:00",
       "expires": "2026-11-11T02:00:59.526867+00:00",
@@ -13718,6 +13736,16 @@
       "repo_id": 732089751,
       "status": "rejected",
       "timestamp": "2026-11-16T01:00:31.941223+00:00"
+    },
+    "m5chain-captain-userdemo": {
+      "expires": "2026-12-19T11:00:35.342145+00:00",
+      "id": "m5chain-captain-userdemo",
+      "pr_ref": null,
+      "reason": "below_floor: 1 stars / 0 forks",
+      "repo": "m5stack/m5chain-captain-userdemo",
+      "repo_id": 1308275084,
+      "status": "rejected",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
     },
     "m5chord": {
       "expired_at": "2026-11-12T19:01:01.750361+00:00",
@@ -17237,7 +17265,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-19T10:00:34.922574+00:00"
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -18256,6 +18284,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T19:00:32.203883+00:00"
     },
+    "repo-note:azoninc/doorman": {
+      "expires": "2026-12-19T11:00:35.342145+00:00",
+      "id": "repo-note:azoninc/doorman",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "azoninc/doorman",
+      "status": "rejected",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
+    },
     "repo-note:b1scuitdev/e07xesp32c5": {
       "expires": "2026-12-17T02:00:33.347838+00:00",
       "id": "repo-note:b1scuitdev/e07xesp32c5",
@@ -18633,6 +18670,15 @@
       "repo": "dalaofei1154/rotating-flower",
       "status": "rejected",
       "timestamp": "2026-11-18T01:00:32.420498+00:00"
+    },
+    "repo-note:danpeig/esp32energymonitor": {
+      "expires": "2026-12-19T11:00:35.342145+00:00",
+      "id": "repo-note:danpeig/esp32energymonitor",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "danpeig/esp32energymonitor",
+      "status": "rejected",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
     },
     "repo-note:darkflippers/flipperzero-subbrute": {
       "expires": "2026-12-17T13:00:31.835731+00:00",
@@ -19120,6 +19166,24 @@
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
     },
+    "repo-note:gbroeckling/padspanha": {
+      "expires": "2026-12-19T11:00:35.342145+00:00",
+      "id": "repo-note:gbroeckling/padspanha",
+      "pr_ref": null,
+      "reason": "library_or_demo_not_firmware: matched keyword 'demo'",
+      "repo": "gbroeckling/padspanha",
+      "status": "rejected",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
+    },
+    "repo-note:geerlingguy/pico-w-garage-door-sensor": {
+      "expires": "2026-12-19T11:00:35.342145+00:00",
+      "id": "repo-note:geerlingguy/pico-w-garage-door-sensor",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "geerlingguy/pico-w-garage-door-sensor",
+      "status": "rejected",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
+    },
     "repo-note:gemi254/plantstatus-lilygo-ttgo-higrow": {
       "expires": "2026-12-18T07:00:31.406931+00:00",
       "id": "repo-note:gemi254/plantstatus-lilygo-ttgo-higrow",
@@ -19371,6 +19435,15 @@
       "repo": "huskerminion/techo5",
       "status": "rejected",
       "timestamp": "2026-11-17T11:00:31.753985+00:00"
+    },
+    "repo-note:huskerminion/techo5-dot": {
+      "expires": "2026-12-19T11:00:35.342145+00:00",
+      "id": "repo-note:huskerminion/techo5-dot",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "huskerminion/techo5-dot",
+      "status": "rejected",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
     },
     "repo-note:hxelec/antc3": {
       "expires": "2026-12-18T04:00:31.917403+00:00",
@@ -19632,6 +19705,15 @@
       "repo": "joukos/papertty",
       "status": "rejected",
       "timestamp": "2026-11-16T23:00:31.827862+00:00"
+    },
+    "repo-note:jtenniswood/espframe": {
+      "expires": "2026-12-19T11:00:35.342145+00:00",
+      "id": "repo-note:jtenniswood/espframe",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "jtenniswood/espframe",
+      "status": "rejected",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
     },
     "repo-note:juanpabloaj/lolin_d32_waveshare": {
       "expires": "2026-12-17T20:00:31.733970+00:00",
@@ -19984,6 +20066,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T21:00:31.805157+00:00"
     },
+    "repo-note:lubeda/esphomatrix": {
+      "expires": "2027-02-17T11:00:35.342145+00:00",
+      "id": "repo-note:lubeda/esphomatrix",
+      "pr_ref": null,
+      "reason": "archived: lubeda/esphomatrix is archived",
+      "repo": "lubeda/esphomatrix",
+      "status": "rejected",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
+    },
     "repo-note:lubeda/esphomatrixv2": {
       "expires": "2026-12-18T11:00:31.972357+00:00",
       "id": "repo-note:lubeda/esphomatrixv2",
@@ -20245,6 +20336,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T01:00:32.420498+00:00"
     },
+    "repo-note:mikeroyal/raspberry-pi-guide": {
+      "expires": "2026-12-19T11:00:35.342145+00:00",
+      "id": "repo-note:mikeroyal/raspberry-pi-guide",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "mikeroyal/raspberry-pi-guide",
+      "status": "rejected",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
+    },
     "repo-note:mive82/psa_esp32": {
       "expires": "2026-12-18T04:00:31.917403+00:00",
       "id": "repo-note:mive82/psa_esp32",
@@ -20505,6 +20605,15 @@
       "repo": "olaf-biu/esp32-p4-ai-meeting",
       "status": "rejected",
       "timestamp": "2026-11-17T14:00:31.883198+00:00"
+    },
+    "repo-note:oleost/visionstate": {
+      "expires": "2026-12-19T11:00:35.342145+00:00",
+      "id": "repo-note:oleost/visionstate",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "oleost/visionstate",
+      "status": "rejected",
+      "timestamp": "2026-11-19T11:00:35.342145+00:00"
     },
     "repo-note:olikraus/u8g2": {
       "expires": "2026-12-17T15:00:33.111992+00:00",
@@ -24967,6 +25076,7 @@
     "awehttam/binkterm-php": "repo-note:awehttam/binkterm-php",
     "awesomelionel/bus-aunty-mini": "bus-aunty-mini",
     "ayushsharma82/elegantota": "repo-note:ayushsharma82/elegantota",
+    "azoninc/doorman": "repo-note:azoninc/doorman",
     "azure/iot-central-firmware": "iot-central-firmware",
     "b1scuitdev/e07xesp32c5": "repo-note:b1scuitdev/e07xesp32c5",
     "badgib/brucescripts": "repo-note:badgib/brucescripts",
@@ -25185,6 +25295,7 @@
     "dalianblue/m5voicestick": "m5voicestick",
     "dalianblue/mbti_book": "mbti-book",
     "daniebker/paperos": "paperos",
+    "danpeig/esp32energymonitor": "repo-note:danpeig/esp32energymonitor",
     "danpodeanu/seeed-reterminal-e100x": "seeed-reterminal-e100x",
     "danst0/fennek": "fennek",
     "darabos/imu-data": "imu-data",
@@ -25375,9 +25486,11 @@
     "gato001k1/esp32marauder-for-m5stickc-non-plus_and_plus2": "esp32marauder-for-m5stickc-non-plus-and-",
     "gato001k1/io433": "io433",
     "gato001k1/lorachat_m5_stickc-_-2": "lorachat-m5-stickc-2",
+    "gbroeckling/padspanha": "repo-note:gbroeckling/padspanha",
     "gdantas04/cardputer-connect-4": "cardputer-connect-4",
     "gdantas04/cardputer-system-monitor": "cardputer-system-monitor",
     "gebeto/macroreader-paper-s3": "macroreader-paper-s3",
+    "geerlingguy/pico-w-garage-door-sensor": "repo-note:geerlingguy/pico-w-garage-door-sensor",
     "gemi254/plantstatus-lilygo-ttgo-higrow": "repo-note:gemi254/plantstatus-lilygo-ttgo-higrow",
     "gemmayclee-droid/papers3weather-calendar": "papers3weather-calendar",
     "generaldussduss/poseidon": "poseidon",
@@ -25497,6 +25610,7 @@
     "http:/": "http:/",
     "https:/": "https:/",
     "huskerminion/techo5": "repo-note:huskerminion/techo5",
+    "huskerminion/techo5-dot": "repo-note:huskerminion/techo5-dot",
     "hxelec/antc3": "repo-note:hxelec/antc3",
     "hybridgroup/cylon": "repo-note:hybridgroup/cylon",
     "hybridgroup/go-haystack": "repo-note:hybridgroup/go-haystack",
@@ -25608,6 +25722,7 @@
     "jsaludes/mccc": "mccc",
     "jtcozart/atom-artificial-horizon": "atom-artificial-horizon",
     "jtcozart/atom-plane-tracker": "atom-plane-tracker",
+    "jtenniswood/espframe": "repo-note:jtenniswood/espframe",
     "juanpabloaj/lolin_d32_waveshare": "repo-note:juanpabloaj/lolin_d32_waveshare",
     "juicecultus/crosspoint-reader-papers3": "crosspoint-reader-papers3",
     "juicecultus/epub-m5stack-paper-s3": "epub-m5stack-paper-s3",
@@ -26347,6 +26462,7 @@
     "launcher:2122856028905095170": "launcher-2122856028905095170",
     "launcher:2122980972947259394": "launcher-2122980972947259394",
     "launcher:2123152497574887425": "launcher-2123152497574887425",
+    "launcher:2123365058572402690": "launcher-2123365058572402690",
     "launcher:2124f637db75857c962f9097575271f4": "launcher-2124f637db75857c962f9097575271f4",
     "launcher:214c554f9da22d70e6837d4db79fc793": "launcher-214c554f9da22d70e6837d4db79fc793",
     "launcher:215b511e97a94512db05452db92ba0bf": "launcher-215b511e97a94512db05452db92ba0bf",
@@ -26557,6 +26673,7 @@
     "lshaf/cores3-arcade": "cores3-arcade",
     "lshaf/netgotchi": "netgotchi",
     "lshaf/unigeek": "unigeek",
+    "lubeda/esphomatrix": "repo-note:lubeda/esphomatrix",
     "lubeda/esphomatrixv2": "repo-note:lubeda/esphomatrixv2",
     "lucasineth/pomodora-m5stick-": "pomodora-m5stick",
     "lucetre-snu/theremini": "repo-note:lucetre-snu/theremini",
@@ -26601,6 +26718,7 @@
     "m5stack/esp32-daplink": "esp32-daplink",
     "m5stack/m5cardputer": "m5cardputer",
     "m5stack/m5cardputer-userdemo": "m5cardputer-userdemo",
+    "m5stack/m5chain-captain-userdemo": "m5chain-captain-userdemo",
     "m5stack/m5core2-touchpanel-recovery": "m5core2-touchpanel-recovery",
     "m5stack/m5dial-userdemo": "m5dial-userdemo",
     "m5stack/m5dualkey-userdemo": "m5dualkey-userdemo",
@@ -26705,6 +26823,7 @@
     "microsoft/devicescript": "repo-note:microsoft/devicescript",
     "microsoft/pxt-common-packages": "repo-note:microsoft/pxt-common-packages",
     "migit/verhobot": "repo-note:migit/verhobot",
+    "mikeroyal/raspberry-pi-guide": "repo-note:mikeroyal/raspberry-pi-guide",
     "mindovermiles262/tamaputer": "tamaputer",
     "mingrzou/papermono-launcher": "papermono-launcher",
     "minkleee/cardputersshclient": "cardputersshclient",
@@ -26840,6 +26959,7 @@
     "oldtokage-collab/miasmora": "miasmora",
     "oldtokage-collab/morphase": "morphase",
     "olekalek112233/web-browser-cardputer-adv": "web-browser-cardputer-adv",
+    "oleost/visionstate": "repo-note:oleost/visionstate",
     "olikraus/u8g2": "repo-note:olikraus/u8g2",
     "oliverxing2025/candy-bricks": "candy-bricks",
     "oliverxing2025/nostalgic-fruit-machine": "nostalgic-fruit-machine",
@@ -27396,6 +27516,7 @@
     "zhoux77899/luma": "luma",
     "zhuzhe1983/grok-bot-esp32-stopwatch": "grok-bot-esp32-stopwatch",
     "zhuzhe1983/inkos": "inkos",
+    "zibous/ha-watermeter": "ha-watermeter",
     "zmactep/m5stickc_morse": "m5stickc-morse",
     "zmattmanz/claude-usage": "claude-usage",
     "zmattmanz/plume": "plume",
