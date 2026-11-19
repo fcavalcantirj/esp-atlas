@@ -216,18 +216,22 @@ row with the incident that taught it.
 
 ## 5. No loop: limits, timeouts and the owner's nudge
 
+**Jr never parks work on a person (owner, 2026-11-19).** Each limit below used to end in "needs a human".
+Each now ends by itself: a pause runs out, a stalled job gets one more try, and what fails twice is given
+up with one line to the owner. The daily budgets bound the cost; nothing waits for anyone.
+
 Owner, 2026-11-12: "make sure we won't loop … timeouts and how many times it can be called without a
 human intervention, telegram nudge to me". Every limit is enforced in `jr/ci_watch.py`, not by a
 prompt:
 
 | Limit | Value | When reached |
 |---|---|---|
-| Dispatches per break (fingerprint) | 2: the first time, and one recurrence after its fix merged | the 3rd occurrence is recorded `needs_human`, never dispatched, and stays human-only for good |
-| Dispatches without a human | 3 since the last `python3 jr/ci_watch.py ack` on the runner | `claim` halts the lane; nothing is dispatched until a human acks |
+| Dispatches per break (fingerprint) | 2: the first time, and one recurrence after its fix merged | the 3rd occurrence is recorded `abandoned` (given up): never dispatched, one Telegram line, and for a PR one comment (Jr's own heal PR is closed). The break is not recorded again for 7 days (`ABANDON_DAYS`); after that it counts afresh |
+| Dispatches without a merged fix | 3 (`MAX_AUTO_WITHOUT_ACK`) | `claim` pauses the lane until the next UTC day, then resumes by itself; a merged heal PR or `python3 jr/ci_watch.py ack` resumes it at once |
 | A stall incident (§1b) while `jr/autonomy.json` has `stall_dispatch: false`, or the runner variable `JR_STALL_DISPATCH=0` | `claim` never hands it out (it stays `open`, visible in `show` and the nudge); CI incidents are unaffected. The flag turns on by a reviewed PR; the variable is the instant kill (2026-11-18) |
 | Dispatches per UTC day | 2, all breaks together (the CLI clock is UTC; a timestamp with any offset is counted on its UTC day) | the next day |
 | Same incident seen again while live | 0 new records | nothing: one record per break, whatever the number of red ticks |
-| Time from dispatch to a heal PR | 4 h (`STALL_HOURS`) | `stalled`, never retried automatically |
+| Time from dispatch to a heal PR | 4 h (`STALL_HOURS`) | `stalled`; opened once more 24 h later (`RETRY_AFTER_HOURS`); a second stall is `abandoned` |
 | Delegate run | the operator's wall-clock cap (`MAX_WALL_SECONDS` of the delegate) | the run ends; no PR, so the 4 h stall rule applies |
 | The tick itself | the runner's tick `timeout`; every GitHub read in the watch fails open | the tick goes on; the report says `ci_watch unavailable` |
 | A blind watch | 3 consecutive `unavailable` ticks (`BLIND_AFTER`) | one "CI watch blind" nudge, then at most one per UTC day until a tick reads CI again |
