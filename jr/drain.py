@@ -36,6 +36,7 @@ from pathlib import Path
 _JR_DIR = Path(__file__).resolve().parent
 if str(_JR_DIR) not in sys.path:
     sys.path.insert(0, str(_JR_DIR))
+import board_alias  # noqa: E402
 import device_evidence  # noqa: E402
 import forks  # noqa: E402
 import ledger  # noqa: E402
@@ -181,11 +182,22 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
                             "reason": f"repo_unresolved: {meta.get('error') if meta else 'no metadata'}"})
             continue
         result = score_entry(e, meta, catalogued_repos, catalogued_tokens)
+        owner_repo = _owner_repo(gh)
+        pre_ev = None
+        if result["decision"] != "authored" and result["reason"].startswith("no_board_evidence"):
+            # A build-file board (2026-11-17): the prose names no catalogued board, but the repo's own
+            # platformio.ini / sketch.yaml may. The gate below reads those files anyway: run it now, take
+            # the first catalogued board its targets name (a chip is never one), score again with it as
+            # the hint, and reuse the result below — one gate run, zero extra calls.
+            pre_ev = (evidence or default_device_evidence)(owner_repo, meta.get("default_branch"))
+            if pre_ev.get("ok"):
+                built_board, _signal = device_evidence.board_from_targets(pre_ev, board_alias.atlas_boards(Path(tools.REPO)))
+                if built_board:
+                    result = score_entry(e, meta, catalogued_repos, catalogued_tokens, board_hint=built_board)
         if result["decision"] != "authored":
             skipped.append({"name": e.get("name"), "github": gh, "reason": result["reason"]})
             continue
         rec = result["record"]
-        owner_repo = _owner_repo(gh)
         stars, forks_count = meta.get("stars") or 0, meta.get("forks") or 0
 
         if resolve_source is not None:
@@ -221,7 +233,10 @@ def score_candidates(entries: list[dict], catalogued_repos: set[str], catalogued
                             "stars": stars, "forks": forks_count})
             continue
         authored_repo = _owner_repo(rec["url"])
-        ev = (evidence or default_device_evidence)(authored_repo, meta.get("default_branch") if authored_repo == owner_repo else None)
+        if pre_ev is not None and authored_repo == owner_repo:
+            ev = pre_ev
+        else:
+            ev = (evidence or default_device_evidence)(authored_repo, meta.get("default_branch") if authored_repo == owner_repo else None)
         if not ev.get("ok"):
             skip = {"name": e.get("name"), "github": gh, "reason": device_evidence.reject_reason(ev),
                     "firmware_id": rec["id"], "repo": authored_repo}

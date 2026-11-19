@@ -842,3 +842,38 @@ def test_run_drain_skips_a_candidate_already_proposed_in_an_injected_ledger(tmp_
     assert report["prefiltered"] == 0        # blocked at prefilter, before any (fake) network fetch
     assert report["authored"] == []
     assert not (tools.FIRMWARE_DIR / FIXTURE_ID).exists()
+
+
+# ─────────────────────────── a build-file board in the topics path (2026-11-17) ───────────────────────────
+
+def _targets_evidence(*tokens, kind="platformio"):
+    calls = []
+
+    def evidence(owner_repo, ref):
+        calls.append((owner_repo, ref))
+        return {"ok": True, "verdict": "esp_target", "kind": kind, "url": f"https://github.com/{owner_repo}/blob/main/platformio.ini#L4",
+                "calls": 3, "notes": [], "ambiguous": [],
+                "targets": [{"kind": kind, "token": t, "url": f"https://github.com/{owner_repo}/blob/main/platformio.ini#L4"} for t in tokens]}
+    return evidence, calls
+
+
+def test_score_candidates_takes_the_board_from_the_build_file_when_the_prose_names_none():
+    entry = {"name": "Air Quality Station", "description": None, "category": None,
+             "github": "https://github.com/c/aura", "download": 0}
+    meta = _fake_meta(full_name="c/aura", stars=797, description="ESP32-S3 air-quality station with LVGL UI, MQTT, Home Assistant")
+    evidence, calls = _targets_evidence("esp32-s3-devkitc-1")
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta, evidence=evidence)
+    assert skipped == [] and len(scored) == 1
+    assert scored[0]["record"]["board"] == "esp32-s3-devkitc-1" and scored[0]["record"]["chip"] == "esp32-s3"
+    assert len(calls) == 1                                                  # the gate ran once for both purposes
+
+
+def test_score_candidates_keeps_no_board_evidence_when_the_build_file_names_only_a_chip():
+    entry = {"name": "Any Station", "description": None, "category": None,
+             "github": "https://github.com/c/any", "download": 0}
+    meta = _fake_meta(full_name="c/any", stars=90, description="ESP32 station")
+    evidence, _ = _targets_evidence("esp32dev")
+    scored, skipped = drain.score_candidates([entry], CATALOGUED_REPOS, CATALOGUED_TOKENS,
+                                             fetch_meta=lambda url: meta, evidence=evidence)
+    assert scored == [] and skipped[0]["reason"].startswith("no_board_evidence")
