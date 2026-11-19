@@ -901,6 +901,42 @@
       "reason": "nothing-groundable",
       "timestamp": "2026-11-19T08:00:32.756472+00:00"
     },
+    "m5stack-cores3": {
+      "board": "m5stack-cores3",
+      "expires": "2026-11-26T09:00:33.766355+00:00",
+      "field_reasons": {
+        "usb_serial": {
+          "boards_txt": "field_absent",
+          "manifest": "corroboration_only",
+          "vendor": "no_pattern_match"
+        }
+      },
+      "reason": "nothing-groundable",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
+    },
+    "m5stack-cores3-se": {
+      "board": "m5stack-cores3-se",
+      "expires": "2026-11-26T09:00:33.766355+00:00",
+      "field_reasons": {
+        "download_mode": {
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        },
+        "getting_started": {
+          "vendor": "doc_unreachable"
+        },
+        "images": {
+          "vendor": "doc_unreachable"
+        },
+        "usb_serial": {
+          "boards_txt": "no_board_key",
+          "manifest": "no_manifest",
+          "vendor": "doc_unreachable"
+        }
+      },
+      "reason": "doc-unreachable",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
+    },
     "sparkfun-iot-redboard-esp32": {
       "board": "sparkfun-iot-redboard-esp32",
       "expires": "2026-11-23T02:00:31.729728+00:00",

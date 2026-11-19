@@ -3785,6 +3785,14 @@
       "status": "rejected",
       "timestamp": "2026-11-15T02:00:31.969279+00:00"
     },
+    "esp32-hellowifi": {
+      "expires": "2026-12-19T09:00:33.766355+00:00",
+      "id": "esp32-hellowifi",
+      "pr_ref": null,
+      "repo": "m1k0s/esp32-hellowifi",
+      "status": "seen",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
+    },
     "esp32-homekit-remote": {
       "id": "esp32-homekit-remote",
       "pr_ref": "#1501",
@@ -3875,7 +3883,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-19T08:00:32.756472+00:00"
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4032,7 +4040,7 @@
       "repo": "danst0/fennek",
       "repo_id": 1266907380,
       "status": "proposed",
-      "timestamp": "2026-11-19T08:00:32.756472+00:00"
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -4755,6 +4763,14 @@
       "repo_id": 1087432527,
       "status": "rejected",
       "timestamp": "2026-11-15T18:00:31.614867+00:00"
+    },
+    "heltec-ai-usage-dashboard": {
+      "expires": "2026-12-19T09:00:33.766355+00:00",
+      "id": "heltec-ai-usage-dashboard",
+      "pr_ref": null,
+      "repo": "pitiworks/heltec-ai-usage-dashboard",
+      "status": "seen",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
     },
     "hermes-gadget-sdk": {
       "expires": "2026-12-14T21:00:55.045531+00:00",
@@ -17214,7 +17230,7 @@
       "repo": "fluidfortune/pisces-moon-os",
       "repo_id": 1213090064,
       "status": "proposed",
-      "timestamp": "2026-11-19T08:00:32.756472+00:00"
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -18728,6 +18744,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T20:00:31.733970+00:00"
     },
+    "repo-note:dmoibm/lorawan_bme280_thp": {
+      "expires": "2026-12-19T09:00:33.766355+00:00",
+      "id": "repo-note:dmoibm/lorawan_bme280_thp",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "dmoibm/lorawan_bme280_thp",
+      "status": "rejected",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
+    },
     "repo-note:drew-alleman/powershell-backdoor-generator": {
       "expires": "2026-12-18T13:00:31.999065+00:00",
       "id": "repo-note:drew-alleman/powershell-backdoor-generator",
@@ -19051,6 +19076,15 @@
       "repo": "francescopace/espectre",
       "status": "rejected",
       "timestamp": "2026-11-17T19:00:32.203883+00:00"
+    },
+    "repo-note:funpythonec/upylora": {
+      "expires": "2026-12-19T09:00:33.766355+00:00",
+      "id": "repo-note:funpythonec/upylora",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "funpythonec/upylora",
+      "status": "rejected",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
     },
     "repo-note:galusperes/hometiles": {
       "expires": "2026-12-16T23:00:31.827862+00:00",
@@ -19457,6 +19491,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T02:00:33.347838+00:00"
     },
+    "repo-note:javierre/nodemcu": {
+      "expires": "2026-12-19T09:00:33.766355+00:00",
+      "id": "repo-note:javierre/nodemcu",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "javierre/nodemcu",
+      "status": "rejected",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
+    },
     "repo-note:jaylikesbunda/ghost_esp": {
       "expires": "2026-12-14T17:00:55.342931+00:00",
       "id": "repo-note:jaylikesbunda/ghost_esp",
@@ -19835,6 +19878,15 @@
       "status": "rejected",
       "timestamp": "2026-11-19T07:00:32.950177+00:00"
     },
+    "repo-note:lorawahnsinn/lorakastl": {
+      "expires": "2026-12-19T09:00:33.766355+00:00",
+      "id": "repo-note:lorawahnsinn/lorakastl",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "lorawahnsinn/lorakastl",
+      "status": "rejected",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
+    },
     "repo-note:lorenzwolf/crab-puck": {
       "expires": "2026-12-18T08:00:31.492566+00:00",
       "id": "repo-note:lorenzwolf/crab-puck",
@@ -20069,6 +20121,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T17:00:31.748345+00:00"
     },
+    "repo-note:medialabuniovi/iot_airquality_drone": {
+      "expires": "2026-12-19T09:00:33.766355+00:00",
+      "id": "repo-note:medialabuniovi/iot_airquality_drone",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "medialabuniovi/iot_airquality_drone",
+      "status": "rejected",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
+    },
     "repo-note:meshmapper/meshmapper_flutter_app": {
       "expires": "2026-12-17T10:00:32.143438+00:00",
       "id": "repo-note:meshmapper/meshmapper_flutter_app",
@@ -20285,6 +20346,15 @@
       "status": "rejected",
       "timestamp": "2026-11-17T12:00:31.695549+00:00"
     },
+    "repo-note:nmicic/urtb": {
+      "expires": "2026-12-19T09:00:33.766355+00:00",
+      "id": "repo-note:nmicic/urtb",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "nmicic/urtb",
+      "status": "rejected",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
+    },
     "repo-note:nnbtg/m5flasher_1": {
       "expires": "2026-12-18T12:00:31.958773+00:00",
       "id": "repo-note:nnbtg/m5flasher_1",
@@ -20329,6 +20399,15 @@
       "repo": "nopnop2002/esp-idf-irsend",
       "status": "rejected",
       "timestamp": "2026-11-18T05:00:31.893243+00:00"
+    },
+    "repo-note:nuto/loratemperaturesensor": {
+      "expires": "2026-12-19T09:00:33.766355+00:00",
+      "id": "repo-note:nuto/loratemperaturesensor",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "nuto/loratemperaturesensor",
+      "status": "rejected",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
     },
     "repo-note:nvmedeiros/module3sjnm": {
       "expires": "2026-12-18T08:00:31.492566+00:00",
@@ -20626,6 +20705,15 @@
       "repo": "project-march/input-device",
       "status": "rejected",
       "timestamp": "2026-11-17T20:00:31.733970+00:00"
+    },
+    "repo-note:projectsape/ape-firmware-center": {
+      "expires": "2026-12-19T09:00:33.766355+00:00",
+      "id": "repo-note:projectsape/ape-firmware-center",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "projectsape/ape-firmware-center",
+      "status": "rejected",
+      "timestamp": "2026-11-19T09:00:33.766355+00:00"
     },
     "repo-note:pschatzmann/esp32-a2dp": {
       "expires": "2026-12-18T00:00:31.739025+00:00",
@@ -25055,6 +25143,7 @@
     "dlloydev/esp32-esp32s2-analogwrite": "repo-note:dlloydev/esp32-esp32s2-analogwrite",
     "dma3002/laser-for-stickc-plus2": "laser-for-stickc-plus2",
     "dmohammed/lcd_touch_lcdwiki": "repo-note:dmohammed/lcd_touch_lcdwiki",
+    "dmoibm/lorawan_bme280_thp": "repo-note:dmoibm/lorawan_bme280_thp",
     "dominicklee/3d-print-bed-leveler": "3d-print-bed-leveler",
     "douglasrubims/cardputer-barcode-wedge": "cardputer-barcode-wedge",
     "dr3d/somafm-for-cardputer": "somafm-for-cardputer",
@@ -25187,6 +25276,7 @@
     "frontendency/gallery_for_cardputeradv": "gallery-for-cardputeradv",
     "frostynova/m5stack-tab5-pal": "m5stack-tab5-pal",
     "fujizx/sticks3-pomodoro-hourglass": "sticks3-pomodoro-hourglass",
+    "funpythonec/upylora": "repo-note:funpythonec/upylora",
     "fwz233-re/m5claw": "m5claw",
     "g-hostproxy/cardputerremote": "cardputerremote",
     "g4lile0/esp32-wifi-hash-monster": "esp32-wifi-hash-monster",
@@ -25379,6 +25469,7 @@
     "jason2866/esp32tool": "repo-note:jason2866/esp32tool",
     "javicar31/m5dial_volume_hid": "m5dial-volume-hid",
     "javicar31/m5stack_papers3": "m5stack-papers3",
+    "javierre/nodemcu": "repo-note:javierre/nodemcu",
     "jaxson79541/project": "project",
     "jay-jayismyname1/cardputer-abs-b-radar": "cardputer-abs-b-radar",
     "jay-jayismyname1/cardputer-adv-b-radar": "cardputer-abs-b-radar",
@@ -26360,6 +26451,7 @@
     "llams/esp-md": "repo-note:llams/esp-md",
     "locosp/bruce-firmware-wdgwars": "bruce-firmware-wdgwars",
     "lolzik-2/medusa": "medusa",
+    "lorawahnsinn/lorakastl": "repo-note:lorawahnsinn/lorakastl",
     "lordlexat/m5core2_simpleclock": "m5core2-simpleclock",
     "lorenzwolf/crab-puck": "repo-note:lorenzwolf/crab-puck",
     "lostdataprotocol/onemorefloor": "onemorefloor",
@@ -26393,6 +26485,7 @@
     "m-abozaid/esp32-c3-adblock": "repo-note:m-abozaid/esp32-c3-adblock",
     "m0nka/mchf": "repo-note:m0nka/mchf",
     "m0rg0t/catputer": "catputer",
+    "m1k0s/esp32-hellowifi": "esp32-hellowifi",
     "m5dev1000/m5-ble-controller": "m5-ble-controller",
     "m5dev1000/m5-clicker-hamster": "m5-clicker-hamster",
     "m5dev1000/m5-clicker_game": "m5-clicker-game",
@@ -26498,6 +26591,7 @@
     "mcorts/meteoestacionlora": "repo-note:mcorts/meteoestacionlora",
     "mcuw/esp32-template": "esp32-template",
     "mcuw/esp32-thread-br": "repo-note:mcuw/esp32-thread-br",
+    "medialabuniovi/iot_airquality_drone": "repo-note:medialabuniovi/iot_airquality_drone",
     "megabitsenmzq/esp32-homekit-remote": "esp32-homekit-remote",
     "mehflexx17": "mehflexx17",
     "meister5/m5stack-cardputer-adv-gps-tracker": "m5stack-cardputer-adv-gps-tracker",
@@ -26604,6 +26698,7 @@
     "nishad2m8/pip-boy-weather-clock": "pip-boy-weather-clock",
     "nishad2m8/wled-cardputer": "wled-cardputer",
     "nishad2m8/x-mas-tree-animated-gif": "x-mas-tree-animated-gif",
+    "nmicic/urtb": "repo-note:nmicic/urtb",
     "nnbtg/m5flasher_1": "repo-note:nnbtg/m5flasher_1",
     "nochkin/esp_test": "repo-note:nochkin/esp_test",
     "nodemcu/nodemcu-firmware": "repo-note:nodemcu/nodemcu-firmware",
@@ -26632,6 +26727,7 @@
     "nullbeing/magpie-buddy": "magpie-buddy",
     "nullbeing/raincity-m5stack-cores3": "raincity-m5stack-cores3",
     "nullpainter/stackchan": "stackchan",
+    "nuto/loratemperaturesensor": "repo-note:nuto/loratemperaturesensor",
     "nvmedeiros/module3sjnm": "repo-note:nvmedeiros/module3sjnm",
     "nw-lab/easyshortcutkey": "easyshortcutkey",
     "nyatla/geoputer": "geoputer",
@@ -26708,6 +26804,7 @@
     "pingequalab/scout-lite": "repo-note:pingequalab/scout-lite",
     "pingequalab/sigroam-wardriving": "repo-note:pingequalab/sigroam-wardriving",
     "pinoyunknown/ghost-firmware": "ghost-firmware",
+    "pitiworks/heltec-ai-usage-dashboard": "heltec-ai-usage-dashboard",
     "pkolbas/m5-guitartuner": "m5-guitartuner",
     "platformio/platformio-core": "repo-note:platformio/platformio-core",
     "playmean/fap-list": "repo-note:playmean/fap-list",
@@ -26721,6 +26818,7 @@
     "prashantkamdar/m5stickcplus.internet_radio": "repo-note:prashantkamdar/m5stickcplus.internet_radio",
     "pro1bossssss/flappystick": "flappystick",
     "project-march/input-device": "repo-note:project-march/input-device",
+    "projectsape/ape-firmware-center": "repo-note:projectsape/ape-firmware-center",
     "prostosergik/m5stack_cardputer_thermalprinter_printputer": "m5stack-cardputer-thermalprinter-printpu",
     "prstoetzer/cardputer_adv_basic": "cardputer-adv-basic",
     "prstoetzer/papersat": "papersat",
