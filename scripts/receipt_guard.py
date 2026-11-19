@@ -179,6 +179,8 @@ def main(argv=None) -> int:
     ap.add_argument("--base", default=None)
     ap.add_argument("--head", default="HEAD")
     ap.add_argument("--branch", default=None)
+    ap.add_argument("--report-only", action="store_true",
+                    help="print the verdict and exit 0 whatever it is (the CI job: the tick canary recomputes it)")
     a = ap.parse_args(argv)
     repo = Path(a.repo)
     try:
@@ -186,14 +188,14 @@ def main(argv=None) -> int:
         problems, lines = check(repo, base=a.base or default_base(), head=a.head, branch=branch)
     except Unreadable as e:
         print(f"receipt guard: cannot read: {e}", file=sys.stderr)
-        return 2
+        return 0 if a.report_only else 2
     for ln in lines:
         print(f"  {ln}")
     if problems:
         print("\nNOT ELIGIBLE on receipts alone:")
         for p in problems:
             print(f"  ✗ {p}")
-        return 1
+        return 0 if a.report_only else 1
     print("\n✓ receipt guard: every added recipe carries a PASS receipt that holds on the live upstream")
     return 0
 
