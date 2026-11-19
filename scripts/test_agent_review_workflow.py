@@ -32,7 +32,7 @@ def _review_step(jobs):
 
 
 def test_the_api_lane_runs_only_when_the_runner_labelled_the_pr_review_fallback(wf, jobs):
-    assert wf[True]["pull_request"]["types"] == ["labeled"]          # never a push: the subscription lane owns those
+    assert wf[True]["pull_request"]["types"] == ["labeled", "synchronize"]   # synchronize only disarms (below)
     cond = jobs["agent-review"]["if"]
     assert "github.event.label.name == 'review-fallback'" in cond
     for part in ("!startsWith(github.head_ref, 'jr/tick-')", "!startsWith(github.head_ref, 'jr/research-')",
@@ -109,3 +109,13 @@ def test_every_canary_runs_one_at_a_time(jobs, wf):
     v = yaml.safe_load((Path(__file__).resolve().parent.parent / ".github/workflows/validate.yml").read_text())["jobs"]
     for job in (jobs["code-canary"], v["demand-canary"], v["tick-canary"]):
         assert job["concurrency"]["cancel-in-progress"] is False and job["concurrency"]["group"]
+
+
+
+def test_a_push_disarms_any_queued_auto_merge_and_drops_agent_pass(jobs):
+    job = jobs["disarm-on-push"]
+    assert job["if"] == "github.event_name == 'pull_request' && github.event.action == 'synchronize'"
+    run = job["steps"][0]["run"]
+    assert '--disable-auto' in run and "--remove-label agent-pass" in run and "${{" not in run
+    # the review lane never runs on a push
+    assert "github.event.label.name == 'review-fallback'" in jobs["agent-review"]["if"]

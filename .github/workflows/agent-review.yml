@@ -14,7 +14,7 @@ name: agent-review
 
 on:
   pull_request:
-    types: [labeled]
+    types: [labeled, synchronize]
   issue_comment:
     types: [created]
 
@@ -116,6 +116,25 @@ jobs:
           VERDICT_JSON: ${{ needs.agent-review.outputs.verdict }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: python3 jr/agent_review.py comment --pr "$PR_NUMBER" --lane api
+
+  disarm-on-push:
+    # a new head is a new review: any auto-merge a canary queued for the old head is switched off and the
+    # agent-pass label removed, so nothing merges a commit no reviewer saw (6th review of #1809, 2026-11-19:
+    # GitHub cancels auto-merge only on pushes by users WITHOUT write access)
+    if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Disarm auto-merge and drop agent-pass on the new head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh pr merge "$PR_NUMBER" --repo "$REPO" --disable-auto || true
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label agent-pass || true
 
   code-canary:
     # The click, on every marker comment (either lane): PASS at exactly the PR's current head + every
