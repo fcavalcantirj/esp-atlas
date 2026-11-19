@@ -81,7 +81,7 @@ def test_candidates_are_open_non_draft_code_prs_without_a_verdict_for_their_head
            pr(11, head=HEAD2, updated="2026-11-18T00:00:00Z"), pr(12, branch="jr/heal-deadbeef")]
     comments = {11: [{"user": BOT, "body": ar.render_comment(verdict("PASS", head=HEAD2), "subscription")}],
                 10: [{"user": BOT, "body": ar.render_comment(verdict("PASS", head="d" * 40), "subscription")}]}   # stale: another head
-    assert [p["number"] for p in ar.candidates(prs, comments)] == [10, 5]
+    assert [p["number"] for p in ar.candidates(prs, comments)] == [10, 12, 5]       # a heal PR is code too
 
 
 def test_lane_state_reads_the_delegates_own_answer():
