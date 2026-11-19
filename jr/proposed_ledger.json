@@ -3584,14 +3584,14 @@
       "timestamp": "2026-11-14T14:00:56.621804+00:00"
     },
     "enso": {
-      "expires": "2026-11-19T17:01:00.035235+00:00",
+      "expires": "2026-12-19T18:00:33.048349+00:00",
       "id": "enso",
       "pr_ref": null,
-      "reason": "below_floor: 15 stars / 1 forks",
+      "reason": "below_floor: 18 stars / 1 forks",
       "repo": "oldtokage-collab/enso",
       "repo_id": 1378312757,
       "status": "rejected",
-      "timestamp": "2026-10-20T17:01:00.035235+00:00"
+      "timestamp": "2026-11-19T18:00:33.048349+00:00"
     },
     "envmonitor-coreink": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
@@ -3924,7 +3924,7 @@
       "pr_ref": "#1828",
       "repo": "mcuw/esp32-template",
       "status": "proposed",
-      "timestamp": "2026-11-19T17:00:32.102851+00:00"
+      "timestamp": "2026-11-19T19:00:34.793788+00:00"
     },
     "esp32-usb-stick": {
       "expires": "2026-12-15T23:00:31.847601+00:00",
@@ -4080,7 +4080,7 @@
       "pr_ref": "#1875",
       "repo": "danst0/fennek",
       "status": "proposed",
-      "timestamp": "2026-11-19T17:00:32.102851+00:00"
+      "timestamp": "2026-11-19T19:00:34.793788+00:00"
     },
     "firmware": {
       "id": "firmware",
@@ -17297,7 +17297,7 @@
       "pr_ref": "#1875",
       "repo": "fluidfortune/pisces-moon-os",
       "status": "proposed",
-      "timestamp": "2026-11-19T17:00:32.102851+00:00"
+      "timestamp": "2026-11-19T19:00:34.793788+00:00"
     },
     "pixel-tower-defense": {
       "expires": "2026-12-15T02:00:31.969279+00:00",
@@ -17937,6 +17937,15 @@
       "repo": "0015/a3d",
       "status": "rejected",
       "timestamp": "2026-11-19T03:00:32.057965+00:00"
+    },
+    "repo-note:0015/esp32-s2-s3-projects": {
+      "expires": "2026-12-19T18:00:33.048349+00:00",
+      "id": "repo-note:0015/esp32-s2-s3-projects",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "0015/esp32-s2-s3-projects",
+      "status": "rejected",
+      "timestamp": "2026-11-19T18:00:33.048349+00:00"
     },
     "repo-note:0015/esp32berry": {
       "expires": "2027-02-15T08:00:31.747262+00:00",
@@ -18784,6 +18793,15 @@
       "status": "rejected",
       "timestamp": "2026-11-18T11:00:31.972357+00:00"
     },
+    "repo-note:deckerego/ampule": {
+      "expires": "2026-12-19T18:00:33.048349+00:00",
+      "id": "repo-note:deckerego/ampule",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "deckerego/ampule",
+      "status": "rejected",
+      "timestamp": "2026-11-19T18:00:33.048349+00:00"
+    },
     "repo-note:dekiengine/deki-editor": {
       "expires": "2026-12-17T08:00:31.747262+00:00",
       "id": "repo-note:dekiengine/deki-editor",
@@ -19026,6 +19044,15 @@
       "repo": "esp32-project-tinggg/loa-ting-releases",
       "status": "rejected",
       "timestamp": "2026-11-17T14:00:31.883198+00:00"
+    },
+    "repo-note:esp32beans/esp32usbmidi": {
+      "expires": "2026-12-19T18:00:33.048349+00:00",
+      "id": "repo-note:esp32beans/esp32usbmidi",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "esp32beans/esp32usbmidi",
+      "status": "rejected",
+      "timestamp": "2026-11-19T18:00:33.048349+00:00"
     },
     "repo-note:espargos/t-dongle-c5-transmitter": {
       "expires": "2026-12-19T02:00:32.224989+00:00",
@@ -19855,6 +19882,33 @@
       "status": "rejected",
       "timestamp": "2026-11-17T01:00:31.817229+00:00"
     },
+    "repo-note:khoih-prog/asyncmqtt_esp32": {
+      "expires": "2027-02-17T18:00:33.048349+00:00",
+      "id": "repo-note:khoih-prog/asyncmqtt_esp32",
+      "pr_ref": null,
+      "reason": "archived: khoih-prog/asyncmqtt_esp32 is archived",
+      "repo": "khoih-prog/asyncmqtt_esp32",
+      "status": "rejected",
+      "timestamp": "2026-11-19T18:00:33.048349+00:00"
+    },
+    "repo-note:khoih-prog/esp32_isr_servo": {
+      "expires": "2027-02-17T18:00:33.048349+00:00",
+      "id": "repo-note:khoih-prog/esp32_isr_servo",
+      "pr_ref": null,
+      "reason": "archived: khoih-prog/esp32_isr_servo is archived",
+      "repo": "khoih-prog/esp32_isr_servo",
+      "status": "rejected",
+      "timestamp": "2026-11-19T18:00:33.048349+00:00"
+    },
+    "repo-note:khoih-prog/esp32_pwm": {
+      "expires": "2027-02-17T18:00:33.048349+00:00",
+      "id": "repo-note:khoih-prog/esp32_pwm",
+      "pr_ref": null,
+      "reason": "archived: khoih-prog/esp32_pwm is archived",
+      "repo": "khoih-prog/esp32_pwm",
+      "status": "rejected",
+      "timestamp": "2026-11-19T18:00:33.048349+00:00"
+    },
     "repo-note:khoih-prog/esp32timerinterrupt": {
       "expires": "2027-02-15T01:00:31.817229+00:00",
       "id": "repo-note:khoih-prog/esp32timerinterrupt",
@@ -19908,6 +19962,15 @@
       "repo": "khoih-prog/espasync_wifimanager_lite",
       "status": "rejected",
       "timestamp": "2026-11-19T01:00:32.121052+00:00"
+    },
+    "repo-note:khoih-prog/webserver_wt32_eth01": {
+      "expires": "2027-02-17T18:00:33.048349+00:00",
+      "id": "repo-note:khoih-prog/webserver_wt32_eth01",
+      "pr_ref": null,
+      "reason": "archived: khoih-prog/webserver_wt32_eth01 is archived",
+      "repo": "khoih-prog/webserver_wt32_eth01",
+      "status": "rejected",
+      "timestamp": "2026-11-19T18:00:33.048349+00:00"
     },
     "repo-note:kiwibryn/fieldgateway.lora.duinoclientco2": {
       "expires": "2026-12-19T16:00:34.301043+00:00",
@@ -20097,6 +20160,15 @@
       "repo": "lboshuizen/crowpanel-p4-c6-sdio-ota",
       "status": "rejected",
       "timestamp": "2026-11-17T16:00:31.699892+00:00"
+    },
+    "repo-note:leeebo/esp-drone": {
+      "expires": "2027-02-17T18:00:33.048349+00:00",
+      "id": "repo-note:leeebo/esp-drone",
+      "pr_ref": null,
+      "reason": "archived: leeebo/esp-drone is archived",
+      "repo": "leeebo/esp-drone",
+      "status": "rejected",
+      "timestamp": "2026-11-19T18:00:33.048349+00:00"
     },
     "repo-note:lemonscientist/m5stack-cryptoticker": {
       "expires": "2026-12-18T04:00:31.917403+00:00",
@@ -22266,6 +22338,15 @@
       "repo": "voidrot/3d-designs",
       "status": "rejected",
       "timestamp": "2026-11-18T16:00:32.097075+00:00"
+    },
+    "repo-note:vonkonow/leetai": {
+      "expires": "2026-12-19T18:00:33.048349+00:00",
+      "id": "repo-note:vonkonow/leetai",
+      "pr_ref": null,
+      "reason": "no_board_evidence: no catalogued device named",
+      "repo": "vonkonow/leetai",
+      "status": "rejected",
+      "timestamp": "2026-11-19T18:00:33.048349+00:00"
     },
     "repo-note:wadadawadada/blackbox_node": {
       "expires": "2026-12-17T07:00:32.097367+00:00",
@@ -25104,6 +25185,14 @@
       "status": "rejected",
       "timestamp": "2026-11-15T16:00:31.979974+00:00"
     },
+    "xmas-tree": {
+      "id": "xmas-tree",
+      "pr_ref": "#1895",
+      "repo": "designer2k2/xmas-tree",
+      "repo_id": 71814059,
+      "status": "proposed",
+      "timestamp": "2026-11-19T19:00:34.793788+00:00"
+    },
     "xmod-lib": {
       "expires": "2026-12-15T03:00:32.103528+00:00",
       "id": "xmod-lib",
@@ -25246,6 +25335,7 @@
     "": "(unnamed entry)",
     "\" asdasd": "asdasd",
     "0015/a3d": "repo-note:0015/a3d",
+    "0015/esp32-s2-s3-projects": "repo-note:0015/esp32-s2-s3-projects",
     "0015/esp32berry": "repo-note:0015/esp32berry",
     "0015/grid_board": "repo-note:0015/grid_board",
     "0015/pocketssh": "pocketssh",
@@ -25684,11 +25774,13 @@
     "dcarnicer/trmnl-paperdiy": "trmnl-paperdiy",
     "dckiller51/bodymiscale": "repo-note:dckiller51/bodymiscale",
     "ddd": "ddd",
+    "deckerego/ampule": "repo-note:deckerego/ampule",
     "dekiengine/deki-editor": "repo-note:dekiengine/deki-editor",
     "dekiengine/deki-lilygo-boards": "deki-lilygo-boards",
     "demonkingfukai/m5stickc-plus-mouse-jiggler": "m5stickc-plus-mouse-jiggler",
     "derpyspike/jentastic": "repo-note:derpyspike/jentastic",
     "derunix/m5stack-stick-s3-animation": "m5stack-stick-s3-animation",
+    "designer2k2/xmas-tree": "xmas-tree",
     "destillegast/m5cardputer-hid-tools": "m5cardputer-hid-tools",
     "devedale/marauder_csi_stickc_plus2": "marauder-csi-stickc-plus2",
     "devinwatson/cardputer-adv-gps-info": "cardputer-adv-gps-info",
@@ -25777,6 +25869,7 @@
     "esp-rs/std-training": "repo-note:esp-rs/std-training",
     "esp32-bit-pirate": "esp32-bit-pirate",
     "esp32-project-tinggg/loa-ting-releases": "repo-note:esp32-project-tinggg/loa-ting-releases",
+    "esp32beans/esp32usbmidi": "repo-note:esp32beans/esp32usbmidi",
     "esp32de/boot-linux-esp32s3-playground": "boot-linux-esp32s3-playground",
     "espargos/t-dongle-c5-transmitter": "repo-note:espargos/t-dongle-c5-transmitter",
     "esphome/esphome": "esphome",
@@ -26122,12 +26215,16 @@
     "keralots/bambuhelper": "repo-note:keralots/bambuhelper",
     "keralots/smalloled-pcmonitor": "repo-note:keralots/smalloled-pcmonitor",
     "kestrelrain/m5cardputer_display_off": "m5cardputer-display-off",
+    "khoih-prog/asyncmqtt_esp32": "repo-note:khoih-prog/asyncmqtt_esp32",
+    "khoih-prog/esp32_isr_servo": "repo-note:khoih-prog/esp32_isr_servo",
+    "khoih-prog/esp32_pwm": "repo-note:khoih-prog/esp32_pwm",
     "khoih-prog/esp32timerinterrupt": "repo-note:khoih-prog/esp32timerinterrupt",
     "khoih-prog/esp_doubleresetdetector": "repo-note:khoih-prog/esp_doubleresetdetector",
     "khoih-prog/esp_wifimanager": "repo-note:khoih-prog/esp_wifimanager",
     "khoih-prog/esp_wifimanager_lite": "repo-note:khoih-prog/esp_wifimanager_lite",
     "khoih-prog/espasync_wifimanager": "repo-note:khoih-prog/espasync_wifimanager",
     "khoih-prog/espasync_wifimanager_lite": "repo-note:khoih-prog/espasync_wifimanager_lite",
+    "khoih-prog/webserver_wt32_eth01": "repo-note:khoih-prog/webserver_wt32_eth01",
     "ki10-bot/m5kiten": "m5kiten",
     "kin1009/m5os": "m5os",
     "kindle15/dino_game_port_for_cardputer": "dino-game-port-for-cardputer",
@@ -27014,6 +27111,7 @@
     "lbjudo/m5-arcade": "m5-arcade",
     "lboshuizen/crowpanel-p4-c6-sdio-ota": "repo-note:lboshuizen/crowpanel-p4-c6-sdio-ota",
     "leandrosummo/m5cybernews-world": "m5cybernews-world",
+    "leeebo/esp-drone": "repo-note:leeebo/esp-drone",
     "lemin2/esp-iot-solution": "esp-iot-solution",
     "lemin2/imgui-lovyangfx": "imgui-lovyangfx",
     "lemonscientist/m5stack-cryptoticker": "repo-note:lemonscientist/m5stack-cryptoticker",
@@ -27810,6 +27908,7 @@
     "volosr/m5sticks3saber": "m5sticks3saber",
     "volosr/minicar": "minicar",
     "volosr/onebutton": "onebutton",
+    "vonkonow/leetai": "repo-note:vonkonow/leetai",
     "vvenv/cadv": "cadv",
     "w-ockham/actpaddle": "actpaddle",
     "w-ockham/m5spotchan": "m5spotchan",

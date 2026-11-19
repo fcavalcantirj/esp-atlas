@@ -195,3 +195,21 @@ def test_the_api_lane_proves_its_shell_sandbox_starts_before_it_reviews(jobs):
     assert not steps[i].get("continue-on-error")
     assert steps[review]["env"]["CLAUDE_CODE_SUBPROCESS_ENV_SCRUB"] == "1"     # the reason the sandbox is required
 
+
+def test_a_test_file_the_reviewer_cannot_run_is_read_and_left_to_the_required_check(jobs):
+    # 2026-11-19: #1840, #1843 and #1851 were BLOCKed on "the reviewer could not run the test file" alone:
+    # TypeScript tests under apps/web, which neither review lane can run and CI's required `tests` check does
+    contract = (REPO / "docs" / "REVIEW-CONTRACT.md").read_text()
+    prompt = (REPO / "docs" / "ops" / "REVIEW-PROMPT.md").read_text()
+    step = _review_step(jobs)
+    for text in (contract, prompt, step["with"]["prompt"]):
+        flat = " ".join(text.split())
+        assert "apps/web/" in flat and "gh pr checks" in flat
+        assert "READ, not run" in flat or "is read, not run" in flat
+    assert '"I could not run it" is never a finding' in " ".join(contract.split())
+    allowed = re.search(r'--allowedTools "([^"]+)"', step["with"]["claude_args"]).group(1)
+    assert "Bash(gh pr checks:*)" in allowed
+    # the web suite really is inside the required check the rule leans on
+    validate = yaml.safe_load((REPO / ".github" / "workflows" / "validate.yml").read_text())
+    assert any(str(s.get("run", "")).strip() == "npm test" for s in validate["jobs"]["tests"]["steps"])
+
