@@ -24,7 +24,6 @@ import argparse
 import json
 import os
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -185,8 +184,7 @@ def note_fallback(state: dict, day: str, pr: int) -> dict:
 
 def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_run: bool = False,
              fallback_per_day: int = FALLBACK_PER_DAY, prompt: str | None = None, out=None,
-             worktree: Path | None = None, review_python: str | None = None, contract: str | None = None,
-             checkout: Path | None = None) -> dict:
+             review_python: str | None = None, contract: str | None = None) -> dict:
     """One hourly pass: review the oldest unreviewed code PR on the subscription lane; on a DOWN lane,
     hand that PR to the API lane (label) within the daily budget. Returns a small report dict.
     `gh(*args) -> str`, `git(*args) -> str`, `delegate(task, repo_path, env) -> (returncode, delegate_verdict_dict,
@@ -212,27 +210,20 @@ def run_once(*, gh, git, delegate, slug: str, now: datetime, state: dict, dry_ru
         return {"outcome": "dry_run", "pr": number, "head": head, "state": state}
     task = (prompt if prompt is not None else PROMPT_PATH.read_text(encoding="utf-8"))
     with tempfile.TemporaryDirectory(prefix="agent-review-") as tmp:
-        # a FIXED worktree path (when given) lets the delegate's own code guard find a policy entry for it
-        # instead of running the repo's tests in its own venv and re-running the agent for a "fix round"
-        wt = own_worktree(worktree, checkout or REPO) if worktree is not None else Path(tmp) / "pr"
+        # always a throwaway directory: nothing here ever deletes a configurable path (three reviews of #1866
+        # found three ways a fixed, self-cleaned path could delete or stall; the feature was dropped)
+        wt = Path(tmp) / "pr"
         verdict_file = Path(tmp) / "verdict.json"
         contract_file = Path(tmp) / "REVIEW-CONTRACT.md"
         contract_file.write_text(contract if contract is not None else CONTRACT_PATH.read_text(encoding="utf-8"),
                                  encoding="utf-8")
         git("fetch", "origin", f"pull/{number}/head")
-        if worktree is not None:
-            clear_worktree(git, wt)                                  # whatever a killed run left there
-            _owner_marker(wt).parent.mkdir(parents=True, exist_ok=True)
-            _owner_marker(wt).write_text("jr/agent_review.py owns the directory next to this file\n")
         git("worktree", "add", "--detach", str(wt), "FETCH_HEAD")
         try:
             env = {"REPO_SLUG": slug, "PR_NUMBER": str(number), "HEAD": head, "VERDICT_FILE": str(verdict_file)}
             rc, dv, review_text = delegate(task + run_block(verdict_file, contract_file, review_python), str(wt), env)
         finally:
-            if worktree is not None:
-                clear_worktree(git, wt)
-            else:
-                git("worktree", "remove", "--force", str(wt))
+            git("worktree", "remove", "--force", str(wt))
     # the review the agent WROTE is the deliverable: a verdict for this exact head is posted whatever the
     # delegate's own code guard said about the read-only tree (2026-11-19, first real run: the guard went RED
     # because the PR's tests could not import the core package in the delegate's venv, and the review was lost)
@@ -303,71 +294,6 @@ def last_json_object(text: str) -> dict | None:
         i = end
 
 
-OWNER_SUFFIX = ".agent-review-owner"     # sibling marker: this path is ours to delete
-
-
-def own_worktree(wt, checkout) -> Path:
-    """The fixed review worktree path, resolved, or ValueError. It is a path this tool will DELETE, so it must be
-    unmistakably its own (2nd review of #1866, 2026-11-19: `--worktree ""` resolved to the working directory and
-    the cleanup wiped the checkout). Refused: empty or relative, the checkout itself, anything the checkout or
-    the home directory lives under, a shallow path, and a directory that is a repository's main tree."""
-    raw = str(wt) if wt is not None else ""
-    if not raw.strip() or not Path(raw).is_absolute():
-        raise ValueError(f"--worktree must be an absolute path, got {raw!r}")
-    path, co, home = Path(raw).resolve(), Path(checkout).resolve(), Path.home().resolve()
-    if len(path.parts) < 4:
-        raise ValueError(f"--worktree {path} is too shallow to be a dedicated directory")
-    for keep in (co, home):
-        if path == keep or path in keep.parents:
-            raise ValueError(f"--worktree {path} is, or contains, {keep}")
-    if co in path.parents:
-        raise ValueError(f"--worktree {path} is inside the checkout {co}")
-    if (path / ".git").is_dir():
-        raise ValueError(f"--worktree {path} is a repository's main tree")
-    return path
-
-
-def _owner_marker(wt: Path) -> Path:
-    return wt.with_name(wt.name + OWNER_SUFFIX)
-
-
-def clear_worktree(git, wt: Path) -> None:
-    """Leave nothing at `wt`, whatever a killed run left: a registered worktree (even locked while it was being
-    created), one whose .git file is gone, a plain directory with read-only or mode-000 parts, a file. Deletes
-    ONLY a path that carries our sibling owner marker (run_once writes it before the first add); anything else
-    raises ValueError and is left untouched. `wt` must come from own_worktree()."""
-    wt = Path(wt)
-    for args in (("worktree", "unlock", str(wt)), ("worktree", "remove", "--force", "--force", str(wt))):
-        try:
-            git(*args)
-        except Exception:  # noqa: BLE001 — not locked / not registered / git refuses the broken one: handled below
-            pass
-    if wt.is_symlink() or wt.is_file():
-        if not _owner_marker(wt).exists():
-            raise ValueError(f"{wt} exists and is not ours (no {_owner_marker(wt).name}); not deleting it")
-        wt.unlink()
-    elif wt.exists():
-        if not _owner_marker(wt).exists():
-            raise ValueError(f"{wt} exists and is not ours (no {_owner_marker(wt).name}); not deleting it")
-
-        # make every directory writable and listable first, top-down, never following a symlink: a mode-000 or
-        # read-only leftover must not survive (rmtree's error callback cannot retry portably across versions)
-        stack = [str(wt)]
-        while stack:
-            d = stack.pop()
-            try:
-                os.chmod(d, 0o700)
-                with os.scandir(d) as it:
-                    stack.extend(e.path for e in it if e.is_dir(follow_symlinks=False))
-            except OSError:
-                pass
-        shutil.rmtree(wt, ignore_errors=True)
-    try:
-        git("worktree", "prune")
-    except Exception:  # noqa: BLE001
-        pass
-
-
 def run_block(verdict_file: Path, contract_file: Path, review_python: str | None) -> str:
     """What this run hands the reviewer, as text: the verdict path is NOT in the process environment, so the
     PR's own code (the tests the reviewer runs) cannot read it there."""
@@ -419,8 +345,6 @@ def main(argv=None) -> int:
     once.add_argument("--state", type=Path, default=DEFAULT_STATE)
     once.add_argument("--fallback-per-day", type=int, default=int(os.environ.get("JR_REVIEW_FALLBACK_PER_DAY", FALLBACK_PER_DAY)))
     once.add_argument("--dry-run", action="store_true")
-    once.add_argument("--worktree", type=Path, default=None,
-                      help="a fixed path for the review worktree (list it in the delegate guard's policy)")
     once.add_argument("--review-python", default=None, help="the interpreter the reviewer runs the PR's tests with")
     com = sub.add_parser("comment", help="post a verdict comment (the API lane's workflow step)")
     com.add_argument("--pr", type=int, required=True)
@@ -441,8 +365,7 @@ def main(argv=None) -> int:
     state = load_state(args.state)
     rep = run_once(gh=default_gh, git=make_git(args.checkout), delegate=make_delegate(args.delegate, args.python),
                    slug=args.slug, now=datetime.now(timezone.utc), state=state, dry_run=args.dry_run,
-                   fallback_per_day=args.fallback_per_day, worktree=args.worktree, review_python=args.review_python,
-                   checkout=args.checkout)
+                   fallback_per_day=args.fallback_per_day, review_python=args.review_python)
     if not args.dry_run:
         save_state(args.state, rep["state"])
     return 0
