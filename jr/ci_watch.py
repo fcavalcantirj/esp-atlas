@@ -460,15 +460,24 @@ class Store:
         data = self._load()
         out = {"pushed": [], "stalled": [], "resolved": [], "productive": []}
         for rec in data["incidents"].values():
+            ev = rec["context"].get("evidence") or {}
+            # credit lands at MERGE (spec §1d): a fix that cleared its condition and was resolved earlier is
+            # credited when its PR merges (4th review of #1857, 2026-11-19)
+            if (is_pr_fix(rec) and rec["state"] == "resolved" and rec.get("fixed") and not rec.get("credited")
+                    and closed.get(ev.get("pr")) == "MERGED"):
+                rec["credited"] = True
+                out["productive"].append(rec["id"])
+                continue
             if not is_pr_fix(rec) or rec["state"] not in LIVE:
                 continue
             ev = rec["context"].get("evidence") or {}
             n, check = ev.get("pr"), rec["context"].get("check")
             if n in closed:
-                # productive only when OUR fix was in flight: a person merging a PR whose chore never reached
-                # the delegate lifts no brake (review BLOCK of #1857, 2026-11-19)
+                # productive only when OUR fix was in flight and the PR MERGED: a person merging a PR whose chore
+                # never reached the delegate lifts no brake (review BLOCK of #1857, 2026-11-19)
                 if closed[n] == "MERGED" and rec["state"] in ("dispatched", "pushed"):
                     out["productive"].append(rec["id"])
+                    rec["credited"] = True
                 rec.update(state="resolved", resolved_at=now, closed_as=closed[n])
                 out["resolved"].append(rec["id"])
                 continue
@@ -479,8 +488,9 @@ class Store:
                 out["pushed"].append(rec["id"])
             if check in active:
                 rec.pop("absent", None)
-                if rec["state"] == "dispatched" and _hours(rec.get("dispatched_at"), now) > STALL_HOURS:
-                    rec.update(state="stalled", stalled_at=now)
+                since = rec.get("pushed_at") if rec["state"] == "pushed" else rec.get("dispatched_at")
+                if rec["state"] in ("dispatched", "pushed") and _hours(since, now) > STALL_HOURS:
+                    rec.update(state="stalled", stalled_at=now)     # a push that did not clear it: a human
                     out["stalled"].append(rec["id"])
                 continue
             # the condition is gone this pass. GitHub's merge state blinks (UNKNOWN while it recomputes) and a
@@ -490,7 +500,7 @@ class Store:
             if rec["state"] == "dispatched" or rec["absent"] < 2:
                 continue
             if rec["state"] == "pushed":
-                out["productive"].append(rec["id"])       # our pushed fix cleared the condition
+                rec["fixed"] = True                       # credited only if the PR merges (above)
             rec.update(state="resolved", resolved_at=now)
             out["resolved"].append(rec["id"])
         if out["productive"]:
@@ -500,15 +510,22 @@ class Store:
 
     @_exclusive
     def resolve_pr_red(self, active_fingerprints: set, now: str) -> list[str]:
-        """Close every live `pr-red:` incident whose failing test no open content PR shows any more."""
+        """Close a live `pr-red:` incident once no open content PR has shown its failing test for two passes in
+        a row, and never while the delegate is working on it (`dispatched`): a PR whose checks are pending
+        right after a refresh shows no failure for one pass (4th review of #1857, 2026-11-19)."""
         data, closed = self._load(), []
         for rec in data["incidents"].values():
-            if (rec["state"] in LIVE and str(rec["context"].get("check") or "").startswith(PR_RED_CHECK)
-                    and rec["fingerprint"] not in active_fingerprints):
-                rec.update(state="resolved", resolved_at=now)
-                closed.append(rec["id"])
-        if closed:
-            self._save(data)
+            if rec["state"] not in LIVE or not str(rec["context"].get("check") or "").startswith(PR_RED_CHECK):
+                continue
+            if rec["fingerprint"] in active_fingerprints:
+                rec.pop("absent", None)
+                continue
+            rec["absent"] = int(rec.get("absent") or 0) + 1
+            if rec["state"] == "dispatched" or rec["absent"] < 2:
+                continue
+            rec.update(state="resolved", resolved_at=now)
+            closed.append(rec["id"])
+        self._save(data)
         return closed
 
     @_exclusive

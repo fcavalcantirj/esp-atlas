@@ -392,8 +392,10 @@ def test_a_red_content_pr_resolves_its_incident_when_it_turns_green(tmp_path):
     chores.run(RedGh([tick_pr(28, [red()])]), store, NOW, slug="o/r")
     chores.run(RedGh([tick_pr(28, [red()])]), store, LATER, slug="o/r")
     rec = next(r for r in store._load()["incidents"].values() if r["context"]["check"].startswith("pr-red:"))
-    chores.run(RedGh([tick_pr(28, [{"name": "tests", "conclusion": "SUCCESS", "detailsUrl": ""}], head=H2)]),
-               store, "2026-11-19T16:05:00+00:00", slug="o/r")
+    green = RedGh([tick_pr(28, [{"name": "tests", "conclusion": "SUCCESS", "detailsUrl": ""}], head=H2)])
+    chores.run(green, store, "2026-11-19T16:05:00+00:00", slug="o/r")
+    assert store.get(rec["id"])["state"] == "open"                         # one green pass may be a blink
+    chores.run(green, store, "2026-11-19T17:05:00+00:00", slug="o/r")
     assert store.get(rec["id"])["state"] == "resolved"
 
 
@@ -468,7 +470,7 @@ def test_a_failure_whose_assertion_text_changes_every_run_still_becomes_a_job(tm
 
 # --- 3rd review of #1857 (2026-11-19): blinks, and the pushed -> productive path ---------------------------
 
-def test_a_dispatched_fix_is_never_resolved_by_a_blink_and_a_pushed_fix_that_clears_lifts_the_brake(tmp_path):
+def test_a_dispatched_fix_is_never_resolved_by_a_blink_and_a_pushed_fix_is_credited_when_its_pr_merges(tmp_path):
     store = _store(tmp_path)
     chores.run(Gh([pr(7, "DIRTY", head=H1)]), store, NOW, slug="o/r")
     store.claim(NOW, allow_pr_fix=True)
@@ -481,7 +483,9 @@ def test_a_dispatched_fix_is_never_resolved_by_a_blink_and_a_pushed_fix_that_cle
     chores.run(Gh([pr(7, "CLEAN", head=H2)]), store, "2026-11-19T15:05:00+00:00", slug="o/r")   # our push
     assert _incidents(store)["conflict:#7"]["state"] == "pushed"
     chores.run(Gh([pr(7, "CLEAN", head=H2)]), store, "2026-11-19T16:05:00+00:00", slug="o/r")
-    assert _incidents(store)["conflict:#7"]["state"] == "resolved" and store._load()["auto_since_ack"] == 0
+    assert _incidents(store)["conflict:#7"]["state"] == "resolved" and store._load()["auto_since_ack"] == 2   # not merged yet
+    chores.run(Gh([], states={7: "MERGED"}), store, "2026-11-19T17:05:00+00:00", slug="o/r")
+    assert store._load()["auto_since_ack"] == 0                                # credited at the merge
 
 
 def test_a_one_pass_blink_never_records_a_second_incident(tmp_path):
@@ -489,3 +493,43 @@ def test_a_one_pass_blink_never_records_a_second_incident(tmp_path):
     for t, state in (("12", "DIRTY"), ("13", "UNKNOWN"), ("14", "DIRTY")):
         chores.run(Gh([pr(7, state)]), store, f"2026-11-19T{t}:05:00+00:00", slug="o/r")
     assert len(store._load()["incidents"]) == 1 and _incidents(store)["conflict:#7"]["state"] == "open"
+
+
+
+# --- 4th review of #1857 (2026-11-19) -------------------------------------------------------------------
+
+def test_a_pr_red_heal_in_flight_is_never_resolved_by_one_pending_pass(tmp_path):
+    store = _store(tmp_path)
+    chores.run(RedGh([tick_pr(28, [red()])]), store, NOW, slug="o/r")
+    chores.run(RedGh([tick_pr(28, [red()])]), store, LATER, slug="o/r")
+    rec = store.claim(LATER)
+    assert rec and rec["context"]["check"].startswith("pr-red:")
+    pending = {"name": "tests", "conclusion": None, "status": "IN_PROGRESS", "detailsUrl": ""}
+    chores.run(RedGh([tick_pr(28, [pending])]), store, "2026-11-19T14:05:00+00:00", slug="o/r")
+    chores.run(RedGh([tick_pr(28, [red()])]), store, "2026-11-19T15:05:00+00:00", slug="o/r")
+    assert store.get(rec["id"])["state"] == "dispatched"
+    assert len([r for r in store._load()["incidents"] if r.startswith(rec["id"])]) == 1   # no -2
+
+
+def test_an_unjudged_push_lifts_no_brake(tmp_path):
+    store = _store(tmp_path)
+    gh = Gh([pr(11, labels=["needs-human"], head=H1)], comments={11: [block(H1)]})
+    chores.run(gh, store, NOW, slug="o/r")
+    store.claim(NOW, allow_pr_fix=True)
+    data = store._load()
+    data.update(auto_since_ack=3, halted=True)
+    store._save(data)
+    unjudged = Gh([pr(11, labels=["needs-human"], head=H2)], comments={11: [block(H1)]})
+    for t in ("13", "14", "15"):
+        chores.run(unjudged, store, f"2026-11-19T{t}:05:00+00:00", slug="o/r")
+    assert store._load()["auto_since_ack"] == 3 and store._load()["halted"] is True
+
+
+def test_a_pushed_fix_that_stays_broken_stalls_for_a_human(tmp_path):
+    store = _store(tmp_path)
+    chores.run(Gh([pr(7, "DIRTY", head=H1)]), store, NOW, slug="o/r")
+    store.claim(NOW, allow_pr_fix=True)
+    chores.run(Gh([pr(7, "DIRTY", head=H2)]), store, LATER, slug="o/r")
+    assert _incidents(store)["conflict:#7"]["state"] == "pushed"
+    chores.run(Gh([pr(7, "DIRTY", head=H2)]), store, "2026-11-19T19:05:00+00:00", slug="o/r")
+    assert _incidents(store)["conflict:#7"]["state"] == "stalled"

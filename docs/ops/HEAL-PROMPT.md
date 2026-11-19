@@ -125,6 +125,6 @@ data is not yours to change: an LLM never writes records. Your branch starts fro
    reviewed content canary or a human closes the PR.
 3. Prove it: the failing node passes on the PR's content with your change (run it in the scratch worktree
    with your files copied in), and the suites of every file you touched pass on main.
-4. After your heal merges, the chores merge `main` into the red PR and its CI reruns; the incident resolves
-   when no open PR shows that failure.
+4. After your heal merges, the chores merge `main` into the red PR once more and its CI reruns; the
+   incident resolves when no open PR has shown that failure for two passes in a row.
 
