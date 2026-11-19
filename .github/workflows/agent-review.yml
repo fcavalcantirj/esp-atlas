@@ -67,6 +67,11 @@ jobs:
         # leaves, the post job releases the label, and the subscription lane reviews the PR.
         if: steps.key.outputs.configured == 'true'
         run: |
+          # DIAGNOSTIC (temporary, removed before review): why apt cannot fetch on this runner
+          { command -v bwrap socat; cat /etc/apt/apt-mirrors.txt; ulimit -n; env | grep -iE "^(https?|no)_proxy=" ;
+            curl -sS -m 20 -o /dev/null -w "azure mirror: %{http_code} %{time_total}s\n" http://azure.archive.ubuntu.com/ubuntu/dists/resolute/InRelease;
+            curl -sS -m 20 -o /dev/null -w "archive https: %{http_code} %{time_total}s\n" https://archive.ubuntu.com/ubuntu/dists/resolute/InRelease;
+            sudo apt-get update 2>&1 | tail -15; apt-cache policy socat bubblewrap | head -12; } || true
           # the mirror blinks (first live run: "Failed to fetch … socat … Resource temporarily unavailable")
           for attempt in 1 2 3; do
             sudo apt-get update -qq && sudo apt-get install -y -qq -o Acquire::Retries=3 socat bubblewrap && break
