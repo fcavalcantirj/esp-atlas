@@ -78,7 +78,7 @@ def test_the_code_canary_runs_on_marker_comments_reads_them_and_respects_the_kil
     assert "github.event_name == 'issue_comment'" in job["if"] and "github.event.issue.pull_request" in job["if"]
     assert "contains(github.event.comment.body, '<!-- agent-review verdict -->')" in job["if"]
     assert "vars." not in job["if"]                                   # the script enforces the kill variable
-    assert job["permissions"] == {"contents": "write", "pull-requests": "write"}
+    assert job["permissions"] == {"contents": "write", "pull-requests": "write", "actions": "write"}
     step = next(s for s in job["steps"] if "scripts/code_canary.py" in str(s.get("run", "")))
     assert "--pr ${{ github.event.issue.number }}" in step["run"] and "--from-comments" in step["run"]
     assert step["env"]["JR_CODE_AUTOMERGE"] == "${{ vars.JR_CODE_AUTOMERGE }}"

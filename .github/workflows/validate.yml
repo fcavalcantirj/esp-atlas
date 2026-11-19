@@ -4,6 +4,9 @@ on:
   pull_request:
   push:
     branches: [main]
+  # A PR merged by a workflow's own token pushes to main without starting any workflow; the canaries start
+  # this one by dispatch instead (scripts/validate_main.py). The pull-request-only jobs stay off such a run.
+  workflow_dispatch:
 
 jobs:
   schema:
@@ -172,6 +175,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write     # only to start validate on main after a merge (last step)
     steps:
       # main's code decides; the PR is only DATA in pr/ (review BLOCK of #1809, 2026-11-19: with the PR's own
       # checkout, a commit on the branch could rewrite the canary that judges it)
@@ -199,6 +203,14 @@ jobs:
           PR_HEAD: ${{ github.event.pull_request.head.sha }}
           PR_BRANCH: ${{ github.head_ref }}   # via env, never pasted into the shell (4th review of #1809)
         run: python3 trusted/scripts/demand_canary.py --repo pr --pr "$PR_NUMBER" --head "$PR_HEAD" --branch "$PR_BRANCH"
+      - name: main gets its CI even when this job's token merged (a workflow-token push starts no workflow)
+        # 2026-11-19: #1799, the first PR the machine merged, left main's new head with zero runs. Dispatch is
+        # the documented exception. A PR whose base predates the script has nothing to run and says so.
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f trusted/scripts/validate_main.py ]; then python3 trusted/scripts/validate_main.py; else echo "validate-main: this PR's base predates the script; skipped"; fi
 
   receipt-guard:
     # A jr/tick-* PR: is it mergeable on its evidence receipts alone? Every recipe it adds must carry a PASS
@@ -240,6 +252,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write     # only to start validate on main after a merge (last step)
     steps:
       # main's code decides; the PR is only DATA in pr/ (review BLOCK of #1809, 2026-11-19: with the PR's own
       # checkout, a commit on the branch could rewrite the canary that judges it)
@@ -268,6 +281,14 @@ jobs:
           PR_HEAD: ${{ github.event.pull_request.head.sha }}
           PR_BRANCH: ${{ github.head_ref }}
         run: python3 trusted/scripts/tick_canary.py --repo pr --pr "$PR_NUMBER" --head "$PR_HEAD" --branch "$PR_BRANCH"
+      - name: main gets its CI even when this job's token merged (a workflow-token push starts no workflow)
+        # 2026-11-19: #1799, the first PR the machine merged, left main's new head with zero runs. Dispatch is
+        # the documented exception. A PR whose base predates the script has nothing to run and says so.
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f trusted/scripts/validate_main.py ]; then python3 trusted/scripts/validate_main.py; else echo "validate-main: this PR's base predates the script; skipped"; fi
 
   g2-guard:
     runs-on: ubuntu-latest
