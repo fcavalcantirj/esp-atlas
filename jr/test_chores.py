@@ -438,3 +438,26 @@ def test_a_person_merging_a_pr_whose_chore_was_never_dispatched_does_not_lift_th
     store._save(data)
     chores.run(Gh([], states={50: "MERGED"}), store, LATER, slug="o/r")
     assert store._load()["auto_since_ack"] == 3 and store._load()["halted"] is True
+
+
+
+def test_a_failure_whose_assertion_text_changes_every_run_still_becomes_a_job(tmp_path):
+    # 2nd review of #1857: a tmp path in the assertion made a new key every hour -> 24 reruns, 0 incidents
+    store = _store(tmp_path)
+
+    class Varying(RedGh):
+        n = 0
+
+        def __call__(self, *a):
+            if a[:1] == ("api",) and "/actions/jobs/" in a[1]:
+                Varying.n += 1
+                self.calls.append(a)
+                log = LOG.replace("{'m5cardputer__m5-crystal'}", "{'/tmp/pytest-%s/x'}" % ("abcdefgh"[Varying.n % 8] * 6))
+                return SimpleNamespace(returncode=0, stdout=log, stderr="")
+            return super().__call__(*a)
+    for hour in range(6):
+        gh = Varying([tick_pr(28, [red()], head="%040x" % (hour + 1))], behind=1)
+        chores.run(gh, store, f"2026-11-19T{hour:02d}:05:00+00:00", slug="o/r")
+    data = store._load()
+    assert len(data["reruns"]) == 1 and len(data["updated_branch"]) == 1
+    assert [r for r in data["incidents"].values() if r["context"]["check"].startswith("pr-red:")]

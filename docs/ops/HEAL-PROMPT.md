@@ -102,6 +102,10 @@ under the same limits (no `data/**`, no `docs/demand/**`, no test deletion or sk
   exactly those findings at their cause, with a RED test first where a finding is a behaviour, and nothing
   else. A finding you measure to be wrong is answered in BODY with the evidence, not "fixed". The agent
   review judges your new head; a second BLOCK on the same PR goes to a human.
+- **`ci-fix:`** — a required check (`evidence.check`) is red on this code PR at `pr_head`, after one rerun and
+  with `main` merged in; `evidence.failed` / `evidence.assertion` / `evidence.log_excerpt` say where. Reproduce
+  the failing node on the PR's head, fix the PR's code at the cause (RED first if it is behaviour), never by
+  deleting, skipping or loosening a test unless the test itself is wrong (then `Assertion changed:` in BODY).
 - Never close, merge, retitle or relabel the PR; never touch another PR's branch.
 
 ## When `INCIDENT.context.check` starts with `pr-red:` (a Jr catalog PR is red; fix MAIN)

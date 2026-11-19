@@ -79,7 +79,9 @@ def red_prs(gh, slug: str, prs: list, store: ci_watch.Store, dry_run: bool) -> d
             fp = (ci_watch.fingerprint(check, parsed) or ci_watch.hashlib.sha256(f"pr-red\n{check}".encode()).hexdigest())
             if content:
                 out["fingerprints"].add(fp)          # still a live break until the PR is green
-            key = f"{n}:{fp}"
+            # the memory key is the failing NODE, not the fingerprint: an assertion line can carry a tmp path or a
+            # uuid that changes every run, and a key that never matches loops forever (2nd review of #1857)
+            key = f"{n}:{check}:{parsed.failed or parsed.error or '?'}"
             if key not in seen:
                 out["reruns"].append((n, run_id))
                 seen[key] = run_id
